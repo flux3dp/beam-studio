@@ -27,7 +27,6 @@ declare global {
       logFile?: any;
       timestamp: number;
       version: string;
-      websockets: any;
     };
     jQuery: any;
     requirejs: (deps: string[], callback: (...modules: any[]) => void) => void;

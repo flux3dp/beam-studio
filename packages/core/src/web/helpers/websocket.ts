@@ -1,6 +1,6 @@
-import Alert from '@core/app/actions/alert-caller';
+import alertCaller from '@core/app/actions/alert-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import AlertConstants from '@core/app/constants/alert-constants';
+import alertConstants from '@core/app/constants/alert-constants';
 import blobSegments from '@core/helpers/blob-segments';
 import i18n from '@core/helpers/i18n';
 import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
@@ -8,19 +8,23 @@ import isJson from '@core/helpers/is-json';
 import isWeb from '@core/helpers/is-web';
 import Logger from '@core/helpers/logger';
 import outputError from '@core/helpers/output-error';
+import storage from '@core/implementations/storage';
 import type { Option, WrappedWebSocket } from '@core/interfaces/WebSocket';
-
-window.FLUX.websockets = [];
-window.FLUX.websockets.list = () => {
-  window.FLUX.websockets.forEach((conn, i) => {
-    console.log(i, conn.url);
-  });
-};
 
 const WsLogger = Logger('websocket');
 const logLimit = 100;
 let wsErrorCount = 0;
 let wsCreateFailedCount = 0;
+let WS_ERROR_ALERT_THRESHOLD = 50;
+let CREATE_FAILED_ALERT_THRESHOLD = 200;
+
+export const setCurrentVersion = (version: string): void => {
+  // Make sure this is called before beambox init write last-installed-version'
+  if (!isWeb() && version !== storage.get('last-installed-version')) {
+    WS_ERROR_ALERT_THRESHOLD *= 2;
+    CREATE_FAILED_ALERT_THRESHOLD *= 2;
+  }
+};
 
 // options:
 //      hostname      - host name (Default: 127.0.0.1)
@@ -28,7 +32,7 @@ let wsCreateFailedCount = 0;
 //      method        - method be called
 //      autoReconnect - auto reconnect on close
 //      onMessage     - fired on receive message
-//      onError       - fired on a normal error happend
+//      onError       - fired on a normal error happened
 //      onFatal       - fired on a fatal error closed
 //      onClose       - fired on connection closed
 //      onOpen        - fired on connection connecting
@@ -63,7 +67,7 @@ export default (options: Option): WrappedWebSocket => {
 
     return message;
   };
-  const origanizeOptions = (opts: Option) => {
+  const organizeOptions = (opts: Option) => {
     const keys = Object.keys(defaultOptions) as Array<keyof Option>;
     const newOpts = { ...opts };
 
@@ -71,13 +75,13 @@ export default (options: Option): WrappedWebSocket => {
       const name = keys[i];
 
       if (!['hostname', 'port'].includes(name) && typeof opts[name] === 'undefined') {
-        newOpts[name] = defaultOptions[name];
+        newOpts[name] = defaultOptions[name] as any;
       }
     }
 
     return newOpts;
   };
-  const socketOptions = origanizeOptions(options);
+  const socketOptions = organizeOptions(options);
   const wsLog: { log: string[]; url: string } = {
     log: [],
     url: `/ws/${options.method}`,
@@ -85,18 +89,18 @@ export default (options: Option): WrappedWebSocket => {
   const handleCreateWebSocketFailed = () => {
     wsCreateFailedCount += 1;
 
-    if (wsCreateFailedCount === 100 && !isWeb()) {
+    if (wsCreateFailedCount === CREATE_FAILED_ALERT_THRESHOLD && !isWeb()) {
       const LANG = i18n.lang.beambox.popup;
 
-      Alert.popById('backend-error');
-      Alert.popUp({
-        buttonType: AlertConstants.YES_NO,
+      alertCaller.popById('backend-error');
+      alertCaller.popUp({
+        buttonType: alertConstants.YES_NO,
         id: 'backend-error',
         message: LANG.backend_connect_failed_ask_to_upload,
         onYes: () => {
           outputError.uploadBackendErrorLog();
         },
-        type: AlertConstants.SHOW_POPUP_ERROR,
+        type: alertConstants.SHOW_POPUP_ERROR,
       });
       MessageCaller.openMessage({
         content: LANG.backend_error_hint,
@@ -146,19 +150,19 @@ export default (options: Option): WrappedWebSocket => {
     nodeWs.onerror = () => {
       wsErrorCount += 1;
 
-      // If ws error count exceed certian number Alert user there may be problems with backend
-      if (wsErrorCount === 50 && !isWeb()) {
+      // If ws error count exceed certain number Alert user there may be problems with backend
+      if (wsErrorCount === WS_ERROR_ALERT_THRESHOLD && !isWeb()) {
         const LANG = i18n.lang.beambox.popup;
 
-        Alert.popById('backend-error');
-        Alert.popUp({
-          buttonType: AlertConstants.YES_NO,
+        alertCaller.popById('backend-error');
+        alertCaller.popUp({
+          buttonType: alertConstants.YES_NO,
           id: 'backend-error',
           message: LANG.backend_connect_failed_ask_to_upload,
           onYes: () => {
             outputError.uploadBackendErrorLog();
           },
-          type: AlertConstants.SHOW_POPUP_ERROR,
+          type: alertConstants.SHOW_POPUP_ERROR,
         });
         MessageCaller.openMessage({
           content: LANG.backend_error_hint,
@@ -173,6 +177,7 @@ export default (options: Option): WrappedWebSocket => {
     nodeWs.onopen = (e) => {
       socketOptions.onOpen?.(e);
       wsErrorCount = 0;
+      alertCaller.popById('backend-error');
       MessageCaller.closeMessage('backend-error-hint');
     };
 
@@ -263,7 +268,7 @@ export default (options: Option): WrappedWebSocket => {
     nodeWs.onclose = (result: CloseEvent) => {
       socketOptions.onClose?.(result);
 
-      // The connection was closed abnormally without sending or receving data
+      // The connection was closed abnormally without sending or receiving data
       // ref: http://tools.ietf.org/html/rfc6455#section-7.4.1
       if (result?.code === 1006) {
         wsLog.log.push('**abnormal disconnection**');
@@ -359,8 +364,6 @@ export default (options: Option): WrappedWebSocket => {
     },
     url: `/ws/${options.method}`,
   };
-
-  window.FLUX.websockets.push(wsobj);
 
   WsLogger.append(wsLog);
 
