@@ -1,35 +1,34 @@
 import React, { memo, type ReactNode, useState } from 'react';
 
-import { LeftOutlined } from '@ant-design/icons';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import type { DrawerProps } from 'antd';
 import { Drawer as AntdDrawer, ConfigProvider } from 'antd';
+import classNames from 'classnames';
 import type { Enable } from 're-resizable';
 import { Resizable } from 're-resizable';
 
 import styles from './Drawer.module.scss';
 
-export type Props = Pick<
-  DrawerProps,
-  'classNames' | 'closeIcon' | 'destroyOnClose' | 'getContainer' | 'rootClassName' | 'title'
-> & {
+export type Props = DrawerProps & {
   children: ReactNode;
   enableResizable?: Enable | false;
   isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
+  onClose: () => void;
   showHandle?: boolean;
 };
 
 const Drawer = memo(
   ({
     children,
-    classNames,
+    classNames: propClassNames,
     closeIcon,
     destroyOnClose,
     enableResizable,
     getContainer = false,
     isOpen,
+    onClose,
+    placement = 'left',
     rootClassName,
-    setIsOpen,
     showHandle = true,
     title,
   }: Props) => {
@@ -37,12 +36,11 @@ const Drawer = memo(
     // default motion duration for the drawer
     // this is used to disable the animation when resizing the drawer
     const [motionDurationSlow, setMotionDurationSlow] = useState('0.3s');
-    const onClose = () => setIsOpen(false);
 
     return (
       <ConfigProvider theme={{ token: { motionDurationSlow } }}>
         <AntdDrawer
-          classNames={classNames}
+          classNames={propClassNames}
           closable={false}
           closeIcon={closeIcon}
           destroyOnClose={destroyOnClose}
@@ -50,7 +48,7 @@ const Drawer = memo(
           mask={false}
           onClose={onClose}
           open={isOpen}
-          placement="left"
+          placement={placement}
           rootClassName={rootClassName}
           // use style to override :where
           styles={{
@@ -61,13 +59,13 @@ const Drawer = memo(
           width={width}
         >
           {showHandle && (
-            <div className={styles.handle} onClick={onClose}>
-              <LeftOutlined />
+            <div className={classNames(styles.handle, styles[placement])} onClick={onClose}>
+              {placement === 'left' ? <LeftOutlined /> : <RightOutlined />}
             </div>
           )}
           <Resizable
             enable={enableResizable}
-            handleClasses={{ right: styles['resizable-handle'] }}
+            handleClasses={{ [placement === 'left' ? 'right' : 'left']: styles['resizable-handle'] }}
             maxWidth={638}
             minWidth={360}
             onResize={(_event, _direction, elementRef) => {

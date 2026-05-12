@@ -32,7 +32,7 @@ jobs:
           python-version: ${{ matrix.python-version }}
 
       - name: Setup Pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           run_install: false
 
@@ -60,13 +60,13 @@ jobs:
         uses: ./apps/app/.github/actions/beamify
 
       - name: Install Fluxsvg
-        uses: flux3dp/fluxsvg@2.7.7
+        uses: flux3dp/fluxsvg@2.7.8
 
       - name: Checkout FluxClient
         uses: actions/checkout@v5
         with:
           repository: flux3dp/fluxclient-dev
-          ref: 2.10.2
+          ref: 2.10.3
           token: ${{ secrets.REPO_TOKEN }}
           path: ./apps/app/.github/actions/fluxclient
 

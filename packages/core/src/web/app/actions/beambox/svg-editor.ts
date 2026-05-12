@@ -26,6 +26,7 @@ import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
+import { addPolygonSides, decreasePolygonSides } from '@core/app/svgedit/polygon';
 import selectionManager from '@core/app/svgedit/selection';
 import {
   copySelectedElements,
@@ -60,7 +61,6 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 
 import { pdfHelper } from '@core/implementations/pdfHelper';
-import storage from '@core/implementations/storage';
 
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';
@@ -69,7 +69,6 @@ import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getStorage } from '@core/app/stores/storageStore';
-import layerManager from '@core/app/svgedit/layer/layerManager';
 import {
   getMouseMode,
   setCursor,
@@ -80,6 +79,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { showPanel } from '@core/app/widgets/dockable/utils';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { resizeSelector } from '@core/app/svgedit/selector';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -117,51 +117,36 @@ declare global {
 }
 
 export interface ISVGEditor {
-  addExtension: () => void;
   canvas: any;
   clearScene: () => Promise<void>;
   clickSelect: (clearSelection?: boolean) => void;
-  clipboardData: any;
   copySelected: () => void;
   curConfig: ISVGConfig;
   cutSelected: () => void;
   deleteSelected: () => void;
-  dimensions: number[];
   handleFile: (file: any) => Promise<void>;
   init: () => void;
-  isClipboardDataReady: any;
   readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>;
   replaceBitmap: any;
-  setConfig: (opts: any, cfgCfg: any) => void;
   setPanning: (active: any) => void;
-  storagePromptClosed: boolean;
   updateContextPanel: () => void;
 }
 
 const svgEditor = (window['svgEditor'] = (function () {
   // STATE MAINTENANCE PROPERTIES
-  const workarea = useDocumentStore.getState().workarea;
-  const { pxDisplayHeight, pxHeight, pxWidth } = getWorkarea(workarea);
   const editor: ISVGEditor = {
-    addExtension: () => {},
     canvas: null,
     clearScene: async () => {},
     clickSelect: () => {},
-    clipboardData: null,
     copySelected: () => {},
     curConfig: null as any,
     cutSelected: () => {},
     deleteSelected: () => {},
-    dimensions: [pxWidth, pxDisplayHeight ?? pxHeight],
     handleFile: async (file) => {},
     init: () => {},
-    isClipboardDataReady: false,
     readSVG: async (blob: any, type: any, layerName: any) => {},
-    ready: () => {},
     replaceBitmap: null,
-    setConfig: (opts: any, cfgCfg: any) => {},
     setPanning: (active: any) => {},
-    storage: storage,
     updateContextPanel: () => {},
   };
 
@@ -189,147 +174,18 @@ const svgEditor = (window['svgEditor'] = (function () {
   /**
    * PREFS AND CONFIG
    */
-  var curConfig: ISVGConfig = {
-      /**
-       * Can use window.location.origin to indicate the current
-       * origin. Can contain a '*' to allow all domains or 'null' (as
-       * a string) to support all file:// URLs. Cannot be set by
-       * URL for security reasons (not safe, at least for
-       * privacy or data integrity of SVG content).
-       * Might have been fairly safe to allow
-       *   `new URL(window.location.href).origin` by default but
-       *   avoiding it ensures some more security that even third
-       *   party apps on the same domain also cannot communicate
-       *   with this app by default.
-       * For use with ext-xdomain-messaging.js
-       * @todo We might instead make as a user-facing preference.
-       */
-      allowedOrigins: [],
-      // We do not put on defaultConfig to simplify object copying
-      //   procedures (we obtain instead from defaultExtensions)
-      extensions: [],
+  let curConfig: ISVGConfig = {};
+  const defaultConfig: ISVGConfig = {
+    initFill: {
+      color: 'FFFFFF',
+      opacity: 0,
     },
-    defaultExtensions = ['ext-polygon.js'],
-    defaultConfig: ISVGConfig = {
-      baseUnit: 'px',
-      // Change the following to preferences and add pref controls to the UI (e.g., initTool, wireframe, showlayers)?
-      canvasName: 'default',
-      // DOCUMENT PROPERTIES
-      // Change the following to a preference (already in the Document Properties dialog)?
-      dimensions: editor.dimensions,
-      extPath: 'js/lib/svgeditor/extensions/',
-      // EDITOR OPTIONS
-      // Change the following to preferences (already in the Editor Options dialog)?
-      gridSnapping: false,
-      // PATH CONFIGURATION
-      // The following path configuration items are disallowed in the URL (as should any future path configurations)
-      initFill: {
-        color: 'FFFFFF',
-        opacity: 0,
-      },
-      initOpacity: 1,
-      initStroke: {
-        color: '000000', // solid black
-        opacity: 1,
-        width: 1,
-      },
-      initTool: 'select',
-      langPath: 'js/lib/svgeditor/locale/',
-      // EXTENSION CONFIGURATION (see also preventAllURLConfig)
-      lockExtensions: false, // Disallowed in URL setting
-      no_save_warning: true,
-      noDefaultExtensions: false, // noDefaultExtensions can only be meaningfully used in config.js or in the URL
-      // URL BEHAVIOR CONFIGURATION
-      preventAllURLConfig: true,
-      preventURLContentLoading: true,
-      // EXTENSION-RELATED (GRID)
-      showlayers: true,
-      snappingStep: 10,
-    };
-  /**
-   * EXPORTS
-   */
-
-  /**
-   * EDITOR PUBLIC METHODS
-   * locale.js also adds "putLang" and "readLang" as editor methods
-   * @todo Sort these methods per invocation order, ideally with init at the end
-   * @todo Prevent execution until init executes if dependent on it?
-   */
-
-  /**
-   * Allows setting of preferences or configuration (including extensions).
-   * @param {object} opts The preferences or configuration (including extensions)
-   * @param {object} [cfgCfg] Describes configuration which applies to the particular batch of supplied options
-   * @param {boolean} [cfgCfg.allowInitialUserOverride=false] Set to true if you wish
-   *	to allow initial overriding of settings by the user via the URL
-   *	(if permitted) or previously stored preferences (if permitted);
-   *	note that it will be too late if you make such calls in extension
-   *	code because the URL or preference storage settings will
-   *   have already taken place.
-   * @param {boolean} [cfgCfg.overwrite=true] Set to false if you wish to
-   *	prevent the overwriting of prior-set preferences or configuration
-   *	(URL settings will always follow this requirement for security
-   *	reasons, so config.js settings cannot be overridden unless it
-   *	explicitly permits via "allowInitialUserOverride" but extension config
-   *	can be overridden as they will run after URL settings). Should
-   *   not be needed in config.js.
-   */
-  editor.setConfig = function (opts, cfgCfg) {
-    cfgCfg = cfgCfg || {};
-
-    function extendOrAdd(cfgObj, key, val) {
-      if (cfgObj[key] && typeof cfgObj[key] === 'object') {
-        $.extend(true, cfgObj[key], val);
-      } else {
-        cfgObj[key] = val;
-      }
-
-      return;
-    }
-    $.each(opts, function (key: string, val) {
-      if (opts.hasOwnProperty(key)) {
-        if (['allowedOrigins', 'extensions'].includes(key)) {
-          if (
-            cfgCfg.overwrite === false &&
-            (curConfig.preventAllURLConfig ||
-              key === 'allowedOrigins' ||
-              (key === 'extensions' && curConfig.lockExtensions))
-          ) {
-            return;
-          }
-
-          curConfig[key] = curConfig[key].concat(val); // We will handle any dupes later
-        }
-        // Only allow other curConfig if defined in defaultConfig
-        else if (defaultConfig.hasOwnProperty(key)) {
-          if (cfgCfg.overwrite === false && (curConfig.preventAllURLConfig || curConfig.hasOwnProperty(key))) {
-            return;
-          }
-
-          // Potentially overwriting of previously set config
-          if (curConfig.hasOwnProperty(key)) {
-            if (cfgCfg.overwrite === false) {
-              return;
-            }
-
-            extendOrAdd(curConfig, key, val);
-          } else {
-            if (cfgCfg.allowInitialUserOverride === true) {
-              extendOrAdd(defaultConfig, key, val);
-            } else {
-              if (defaultConfig[key] && typeof defaultConfig[key] === 'object') {
-                curConfig[key] = {};
-                $.extend(true, curConfig[key], val); // Merge properties recursively, e.g., on initFill, initStroke objects
-              } else {
-                curConfig[key] = val;
-              }
-            }
-          }
-        }
-      }
-    });
-    editor.curConfig = curConfig; // Update exported value
+    initOpacity: 1,
+    initStroke: {
+      color: '000000',
+      opacity: 1,
+      width: 1,
+    },
   };
 
   editor.init = function () {
@@ -337,59 +193,14 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     function setupCurConfig() {
       curConfig = $.extend(true, {}, defaultConfig, curConfig); // Now safe to merge with priority for curConfig in the event any are already set
-
-      // Now deal with extensions and other array config
-      if (!curConfig.noDefaultExtensions) {
-        curConfig.extensions = curConfig.extensions.concat(defaultExtensions);
-      }
-
-      // ...and remove any dupes
-      $.each(['extensions', 'allowedOrigins'], function (i, cfg) {
-        curConfig[cfg] = $.grep(curConfig[cfg], function (n, i) {
-          return i === curConfig[cfg].indexOf(n);
-        });
-      });
       // Export updated config
       editor.curConfig = curConfig;
     }
     setupCurConfig();
 
-    var extFunc = function () {
-      $.each(curConfig.extensions, function () {
-        var extname = this;
-
-        if (!extname.match(/^ext-.*\.js/)) {
-          // Ensure URL cannot specify some other unintended file in the extPath
-          return;
-        }
-
-        $.getScript(curConfig.extPath + extname, function (d) {
-          // Fails locally in Chrome 5
-          if (!d) {
-            var s = document.createElement('script');
-
-            s.src = curConfig.extPath + extname;
-            document.querySelector('head').appendChild(s);
-          }
-        }).fail(function (jqxhr, settings, exception) {
-          console.log(exception);
-        });
-      });
-    };
-
-    // Load extensions
-    // Bit of a hack to run extensions in local Opera/IE9
-    if (document.location.protocol === 'file:') {
-      setTimeout(extFunc, 100);
-    } else {
-      extFunc();
-    }
-
     window['svgCanvas'] = editor.canvas = svgCanvas = new $.SvgCanvas(document.getElementById('svgcanvas'), curConfig);
 
-    var resize_timer,
-      Actions,
-      path = svgCanvas.pathActions,
+    var Actions,
       workarea = $('#workarea');
 
     // For external openers
@@ -411,18 +222,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     // used to make the flyouts stay on the screen longer the very first time
     // var flyoutspeed = 1250; // Currently unused
-    var selectedElement: any = null;
-    var multiselected = false;
-
-    var togglePathEditMode = function (editmode, elems) {
-      if (editmode) {
-        multiselected = false;
-
-        if (elems.length) {
-          selectedElement = elems[0];
-        }
-      }
-    };
 
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
       if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) return;
@@ -436,19 +235,16 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     // updates the context panel tools based on the selected element
     var updateContextPanel = function () {
-      var elem = selectedElement;
+      let elem: SVGElement | null = selectionManager.getSelectedElements()[0] ?? null;
 
       // If element has just been deleted, consider it null
-      if (elem != null && !elem.parentNode) {
+      if (elem && !elem.parentNode) {
         elem = null;
       }
 
-      var currentMode = getMouseMode();
-      var unit = curConfig.baseUnit !== 'px' ? curConfig.baseUnit : null;
+      const currentMode = getMouseMode();
 
-      var is_node = currentMode === 'pathedit'; //elem ? (elem.id && elem.id.indexOf('pathpointgrip') == 0) : false;
-
-      if (is_node) {
+      if (currentMode === 'pathedit') {
         canvasEvents.setPathEditing(true);
         canvasEvents.setSelectedElement(null);
         RightPanelController.updatePathEditPanel();
@@ -463,11 +259,12 @@ const svgEditor = (window['svgEditor'] = (function () {
 
         ObjectPanelController.updateDimensionValues({ rotation: angle });
 
-        if (!is_node && currentMode !== 'pathedit') {
+        if (currentMode !== 'pathedit') {
           // Elements in this array already have coord fields
           if (['circle', 'ellipse', 'line'].includes(tagName)) {
           } else {
-            let x, y;
+            let x = 0;
+            let y = 0;
 
             // Get BBox vals for g, polyline and path
             if (['g', 'path', 'polygon', 'polyline'].includes(tagName)) {
@@ -496,30 +293,15 @@ const svgEditor = (window['svgEditor'] = (function () {
                 width: bb.width,
               });
             } else {
-              x = elem.getAttribute('x');
-              y = elem.getAttribute('y');
+              x = Number(elem.getAttribute('x') || 0);
+              y = Number(elem.getAttribute('y') || 0);
             }
 
-            if (unit) {
-              x = svgedit.units.convertUnit(x);
-              y = svgedit.units.convertUnit(y);
-            }
+            ObjectPanelController.updateDimensionValues({ x, y });
 
-            ObjectPanelController.updateDimensionValues({
-              x: Number.parseFloat(x) || 0,
-              y: Number.parseFloat(y) || 0,
-            });
-
-            svgCanvas.selectorManager.requestSelector(elem)?.resize();
+            resizeSelector(elem);
           }
         } else {
-          const point = path.getNodePoint();
-
-          if (point && unit) {
-            point.x = svgedit.units.convertUnit(point.x);
-            point.y = svgedit.units.convertUnit(point.y);
-          }
-
           return;
         }
 
@@ -538,15 +320,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           const newDimensionValue: Record<string, string | number> = {};
 
           curPanels.forEach((item) => {
-            let attrVal = elem.getAttribute(item);
-
-            if (curConfig.baseUnit !== 'px' && elem[item]) {
-              const baseValue = elem[item].baseVal.value;
-
-              attrVal = svgedit.units.convertUnit(baseValue);
-            }
-
-            newDimensionValue[item] = attrVal;
+            newDimensionValue[item] = Number(elem.getAttribute(item) || 0);
           });
           ObjectPanelController.updateDimensionValues(newDimensionValue);
         }
@@ -563,6 +337,9 @@ const svgEditor = (window['svgEditor'] = (function () {
             x: bbox.x,
             y: bbox.y,
           });
+        } else if (tagName === 'polygon') {
+          const sides = parseInt(elem.getAttribute('sides') || '0', 10);
+          ObjectPanelController.updatePolygonSides(sides);
         }
 
         if (selectionManager.isMultiSelecting) {
@@ -572,7 +349,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
         } else {
           workareaEvents.emit('update-context-menu', {
-            group: multiselected && tagName !== 'g',
+            group: false,
             ungroup: tagName === 'g' && !elem?.getAttribute('data-pass-through'),
           });
         }
@@ -580,18 +357,13 @@ const svgEditor = (window['svgEditor'] = (function () {
         const isRatioFixed = elem.getAttribute('data-ratiofixed') === 'true';
 
         ObjectPanelController.updateDimensionValues({ isRatioFixed });
-      } else if (multiselected) {
-        workareaEvents.emit('update-context-menu', {
-          group: true,
-          ungroup: false,
-        });
       } else {
         workareaEvents.emit('update-context-menu', {
           select: false,
         });
       }
 
-      if ((elem && !is_node) || multiselected) {
+      if (elem && currentMode !== 'pathedit') {
         // Enable regular menu options
         workareaEvents.emit('update-context-menu', {
           select: true,
@@ -603,33 +375,9 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     editor.updateContextPanel = updateContextPanel;
 
-    // called when we've selected a different element
-    const selectedChanged = function (win, elems) {
-      const mode = getMouseMode();
-
-      // TODO: is this needed?
-      if (mode === 'select') setMouseMode('select');
-
-      // if elems[1] is present, then we have more than one element
-      selectedElement = elems.length === 1 || elems[1] == null ? elems[0] : null;
-      multiselected = elems.length >= 2 && elems[1] != null;
-      // Deal with pathedit mode
-      togglePathEditMode(mode === 'pathedit', elems);
-      updateContextPanel();
-
-      if (elems.length === 1 && elems[0]?.tagName === 'polygon') {
-        ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
-      }
-    };
-
-    // called when any element has changed
-    const elementChanged = function () {
-      updateContextPanel();
-    };
-
     // bind the selected event to our function that handles updates to the UI
-    svgCanvas.bind('selected', selectedChanged);
-    svgCanvas.bind('changed', elementChanged);
+    svgCanvas.bind('selected', updateContextPanel);
+    svgCanvas.bind('changed', updateContextPanel);
     textActions.setInputElem($('#text')[0]);
 
     // Lose focus for select elements when changed (Allows keyboard shortcuts to work better)
@@ -728,7 +476,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     // Delete is a contextual tool that only appears in the ribbon if
     // an element has been selected
     var deleteSelected = function () {
-      if (selectedElement != null || multiselected) {
+      if (selectionManager.getSelectedElements().length > 0) {
         textActions.clear();
         deleteSelectedElements();
       }
@@ -746,7 +494,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         return;
       }
 
-      if (!textActions.isEditing && (selectedElement != null || multiselected)) {
+      if (!textActions.isEditing && selectionManager.getSelectedElements().length > 0) {
         cutSelectedElements();
       }
     };
@@ -769,7 +517,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         return;
       }
 
-      if (!textActions.isEditing && (selectedElement != null || multiselected)) {
+      if (!textActions.isEditing && selectionManager.getSelectedElements().length > 0) {
         copySelectedElements();
       }
     };
@@ -893,7 +641,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       useLayerStore.getState().forceUpdate();
       updateContextPanel();
       svgedit.transformlist.resetListMap();
-      svgCanvas.runExtensions('onNewDocument');
     };
 
     editor.clearScene = clearScene;
@@ -935,73 +682,73 @@ const svgEditor = (window['svgEditor'] = (function () {
             svgCanvas.selectAll();
           });
           Shortcuts.on(['ArrowUp'], (e) => {
-            if (selectedElement) {
+            if (selectionManager.getSelectedElements().length > 0) {
               moveSelectedElements([0], [-moveUnit]);
             } else {
-              const workArea = document.getElementById('workarea');
+              const workArea = document.getElementById('workarea')!;
 
               workArea.scrollTop -= 5;
             }
           });
           Shortcuts.on(['Shift+ArrowUp'], (e) => {
-            if (selectedElement) {
+            if (selectionManager.getSelectedElements().length > 0) {
               moveSelectedElements([0], [-moveUnit * 10]);
             } else {
-              const workArea = document.getElementById('workarea');
+              const workArea = document.getElementById('workarea')!;
 
               workArea.scrollTop -= 50;
             }
           });
           Shortcuts.on(['ArrowDown'], (e) => {
-            if (selectedElement) {
+            if (selectionManager.getSelectedElements().length > 0) {
               moveSelectedElements([0], [moveUnit]);
             } else {
-              const workArea = document.getElementById('workarea');
+              const workArea = document.getElementById('workarea')!;
 
               workArea.scrollTop += 5;
             }
           });
           Shortcuts.on(['Shift+ArrowDown'], (e) => {
-            if (selectedElement) {
+            if (selectionManager.getSelectedElements().length > 0) {
               moveSelectedElements([0], [moveUnit * 10]);
             } else {
-              const workArea = document.getElementById('workarea');
+              const workArea = document.getElementById('workarea')!;
 
               workArea.scrollTop += 50;
             }
           });
           Shortcuts.on(['ArrowLeft'], (e) => {
-            if (selectedElement) {
+            if (selectionManager.getSelectedElements().length > 0) {
               moveSelectedElements([-moveUnit], [0]);
             } else {
-              const workArea = document.getElementById('workarea');
+              const workArea = document.getElementById('workarea')!;
 
               workArea.scrollLeft -= 5;
             }
           });
           Shortcuts.on(['Shift+ArrowLeft'], (e) => {
-            if (selectedElement) {
+            if (selectionManager.getSelectedElements().length > 0) {
               moveSelectedElements([-moveUnit * 10], [0]);
             } else {
-              const workArea = document.getElementById('workarea');
+              const workArea = document.getElementById('workarea')!;
 
               workArea.scrollLeft -= 50;
             }
           });
           Shortcuts.on(['ArrowRight'], (e) => {
-            if (selectedElement) {
+            if (selectionManager.getSelectedElements().length > 0) {
               moveSelectedElements([moveUnit], [0]);
             } else {
-              const workArea = document.getElementById('workarea');
+              const workArea = document.getElementById('workarea')!;
 
               workArea.scrollLeft += 5;
             }
           });
           Shortcuts.on(['Shift+ArrowRight'], (e) => {
-            if (selectedElement) {
+            if (selectionManager.getSelectedElements().length > 0) {
               moveSelectedElements([moveUnit * 10], [0]);
             } else {
-              const workArea = document.getElementById('workarea');
+              const workArea = document.getElementById('workarea')!;
 
               workArea.scrollLeft += 50;
             }
@@ -1009,14 +756,20 @@ const svgEditor = (window['svgEditor'] = (function () {
           Shortcuts.on(
             ['+', '='],
             () => {
-              window['polygonAddSides']?.();
-              ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
+              const selectedElement = selectionManager.getSelectedElements()[0];
+              if (selectedElement?.tagName === 'polygon') {
+                const newSides = addPolygonSides();
+                ObjectPanelController.updatePolygonSides(newSides);
+              }
             },
             { splitKey: '-' },
           );
           Shortcuts.on(['-'], () => {
-            window['polygonDecreaseSides']?.();
-            ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
+            const selectedElement = selectionManager.getSelectedElements()[0];
+            if (selectedElement?.tagName === 'polygon') {
+              const newSides = decreasePolygonSides();
+              ObjectPanelController.updatePolygonSides(newSides);
+            }
           });
           Shortcuts.on(['l'], () => {
             RightPanelController.setPanelType(PanelType.Layer);
@@ -1168,7 +921,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         $(this).attr('value', '');
       };
 
-      const handleFile = async (file) => {
+      const handleFile = async (file: File) => {
         const lang = i18n.lang.beambox;
         const path = fileSystem.getPathForFile(file as File);
         await Progress.openNonstopProgress({
@@ -1318,13 +1071,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       window['updateContextPanel'] = updateContextPanel;
     }
 
-    //			$(function() {
-    //			});
-
-    //	var revnums = "svg-editor.js ($Rev$) ";
-    //	revnums += svgCanvas.getVersion();
-    //	$('#copyright')[0].setAttribute('title', revnums);
-
     // For Compatibility with older extensions
     $(function () {
       window['svgCanvas'] = svgCanvas;
@@ -1355,19 +1101,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       //     filter: 'url(#greyscaleFilter)'
       // });
     })();
-  };
-
-  // TODO: only ext-polygon are used now, once we port ext-polygon to module, we can remove this
-  editor.addExtension = function () {
-    var args = arguments;
-
-    // Note that we don't want this on editor.ready since some extensions
-    // may want to run before then (like server_opensave).
-    $(function () {
-      if (svgCanvas) {
-        svgCanvas.addExtension.apply(this, args);
-      }
-    });
   };
 
   return editor;

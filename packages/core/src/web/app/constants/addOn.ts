@@ -60,6 +60,8 @@ export interface AddOnInfo {
     roller: boolean;
     split?: boolean;
   };
+  /** S curve acceleration, minimum supported version */
+  sCurve?: string;
 }
 
 const addOnData: Record<WorkAreaModel, AddOnInfo> = {
@@ -116,6 +118,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       mirror: true,
       roller: true,
     },
+    sCurve: '6.2.5',
   },
   fbm1: {
     autoFeeder: { maxHeight: 2000, rotaryRatio: -CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER },
@@ -166,6 +169,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fhx2rf: {
+    airAssist: true,
     autoFeeder: isDev()
       ? {
           maxHeight: 3000,
@@ -183,6 +187,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       mirror: true,
       roller: true,
     },
+    sCurve: '6.2.5',
   },
   flv1: {
     jobOrigin: true,

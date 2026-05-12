@@ -69,9 +69,14 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
   private setUpCamera = async (): Promise<boolean> => {
     try {
+      const workarea = getWorkarea(this.device.model, 'fbm2');
+
       if (!this.fisheyeParams) {
         try {
           this.fisheyeParams = (await deviceMaster.fetchFisheyeParams()) as FisheyeCameraParametersV4;
+          // Set total_width and total_height for region preview to use correct region
+          this.fisheyeParams.total_width = workarea.width;
+          this.fisheyeParams.total_height = workarea.height;
         } catch (err) {
           console.log('Fail to fetchFisheyeParams', err);
           throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
@@ -81,7 +86,6 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this.fisheyePreviewManager =
         this.fisheyePreviewManager ?? new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.fullAreaGrid);
 
-      const workarea = getWorkarea(this.device.model, 'fbm2');
       const { cameraCenter } = workarea;
 
       return await this.doorChecker.doorClosedWrapper(() =>
@@ -230,6 +234,14 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         console.error('Failed to get camera exposure auto', error);
       }
 
+      if (originalAutoExposure) {
+        try {
+          await deviceMaster.setCameraExposureAuto(false);
+        } catch (error) {
+          console.error('Failed to set camera exposure auto to false', error);
+        }
+      }
+
       try {
         const getExposureRes = await deviceMaster.getCameraExposure();
 
@@ -260,6 +272,16 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           darkImageUrl = await this.getPhotoFromMachine({ useLowResolution });
         }
 
+        await new Promise<void>((resolve) => previewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
+
+        if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
+      };
+
+      try {
+        await takePictures(true);
+        this.showMessage({ content: i18n.lang.message.preview.capturing_image });
+        await takePictures(false);
+      } finally {
         if (originalAutoExposure !== null) {
           try {
             await deviceMaster.setCameraExposureAuto(originalAutoExposure);
@@ -268,15 +290,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           }
         }
 
-        await new Promise<void>((resolve) => previewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
-
-        if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
-      };
-
-      await takePictures(true);
-      this.showMessage({ content: i18n.lang.message.preview.capturing_image });
-      await takePictures(false);
-      this.originalExposure = null;
+        this.originalExposure = null;
+      }
 
       this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });
 

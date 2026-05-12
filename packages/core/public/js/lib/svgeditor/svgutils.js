@@ -667,18 +667,15 @@ const path = require('path');
   // node - DOM element to apply new attribute values to
   // attrs - Object with attribute keys/values
   // suspendLength - Optional integer of milliseconds to suspend redraw
-  // unitCheck - Boolean to indicate the need to use svgedit.units.setUnitAttr
-  svgedit.utilities.assignAttributes = function (node, attrs, suspendLength, unitCheck) {
+  svgedit.utilities.assignAttributes = function (node, attrs, suspendLength) {
     var i;
     for (i in attrs) {
       var ns = i.substr(0, 4) === 'xml:' ? NS.XML : i.substr(0, 6) === 'xlink:' ? NS.XLINK : null;
 
       if (ns) {
         node.setAttributeNS(ns, i, attrs[i]);
-      } else if (!unitCheck) {
-        node.setAttribute(i, attrs[i]);
       } else {
-        svgedit.units.setUnitAttr(node, i, attrs[i]);
+        node.setAttribute(i, attrs[i]);
       }
     }
   };
@@ -724,19 +721,6 @@ const path = require('path');
         element.removeAttribute(attr);
       }
     }
-  };
-
-  // Function: snapToGrid
-  // round value to for snapping
-  // NOTE: This function did not move to svgutils.js since it depends on curConfig.
-  svgedit.utilities.snapToGrid = function (value) {
-    var stepSize = editorContext_.getSnappingStep();
-    var unit = editorContext_.getBaseUnit();
-    if (unit !== 'px') {
-      stepSize *= svgedit.units.getTypeMap()[unit];
-    }
-    value = Math.round(value / stepSize) * stepSize;
-    return value;
   };
 
   svgedit.utilities.preg_quote = function (str, delimiter) {

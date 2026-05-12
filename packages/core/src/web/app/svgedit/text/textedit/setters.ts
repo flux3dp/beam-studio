@@ -137,7 +137,7 @@ export const setLineSpacing = (val: number, textElems: SVGTextElement[]): void =
 export const setTextContent = (val: string): void => {
   const elem = selectionManager.getSelectedElements()[0];
 
-  if (!(elem instanceof SVGTextElement)) return;
+  if (!(elem instanceof SVGTextElement) && !elem.getAttribute('data-textpath-g')) return;
 
   renderText(elem as SVGTextElement, val, true);
   textActions.init();

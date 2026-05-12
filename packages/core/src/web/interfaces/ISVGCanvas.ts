@@ -26,7 +26,6 @@ export default interface ISVGCanvas {
   addAlignEdges: (edges: Array<{ x1: number; x2: number; y1: number; y2: number }>) => void;
   addAlignPoint: (x: number, y: number) => void;
   addCommandToHistory: (command: ICommand) => void;
-  addExtension: any;
   addSvgElementFromJson<T = SVGElement>(obj: { attr: any; curStyles?: boolean; element: string }): T;
   alignSelectedElements(
     type: 'b' | 'c' | 'l' | 'm' | 'r' | 't',
@@ -43,8 +42,6 @@ export default interface ISVGCanvas {
   clear: () => void;
   clearAlignLines: () => void;
   clearBoundingBox: () => void;
-  /** @deprecated use selectionManager.clearSelection instead, keep for ext-polygon.js */
-  clearSelection: (noCall?: boolean) => void;
   collectAlignPoints: () => void;
   convertGradients: (elem: Element) => void;
   convertToNum(attr: string, val: number): number;
@@ -84,8 +81,6 @@ export default interface ISVGCanvas {
   getRootScreenMatrix: () => SVGMatrix;
   getRubberBox: () => SVGRectElement;
   getSelectedElementsAlignPoints: () => IPoint[];
-  /** @deprecated use selectionManager.getSelectedElements instead, keep for ext-polygon.js */
-  getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
   getStarted: () => boolean;
   getStartTransform: () => any;
   getSvgString: (opts?: { fixTopExpansion?: boolean; unit?: Units }) => string;
@@ -113,10 +108,7 @@ export default interface ISVGCanvas {
   reorientGrads: (elem: SVGElement, matrix: SVGMatrix) => void;
   resetCurrentDrawing: (content?: Element) => void;
   resetOrientation: (elem: SVGElement) => void;
-  runExtensions: (eventName: string, args?: any, returnArray?: boolean) => any;
   selectAll: () => void;
-  /** @deprecated use selectionManager.selectOnly instead, keep for ext-polygon.js */
-  selectOnly: (elems: SVGElement[], showGrips?: boolean) => void;
   selectorManager: SelectorManager;
   sensorAreaInfo: { dx: number; dy: number; elem: SVGElement; x: number; y: number };
   setContentElem: (content: Element) => void;
