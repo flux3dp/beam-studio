@@ -86,7 +86,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
     }
 
     return (
-      <MenuItem className={node.className} disabled={node.disabled} key={key} onClick={() => handleItemClick(node)}>
+      <MenuItem disabled={node.disabled} key={key} onClick={() => handleItemClick(node)}>
         {getLabel(node)}
       </MenuItem>
     );

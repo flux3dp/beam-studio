@@ -67,9 +67,9 @@ describe('select tools', () => {
         });
     };
 
-    rotateAndVerify(175, 50, -45);
-    rotateAndVerify(225, 100, 135);
-    rotateAndVerify(225, 200, -180);
-    rotateAndVerify(200, 300, -180);
+    rotateAndVerify(390, 75, 45);
+    rotateAndVerify(400, 215, 90);
+    rotateAndVerify(390, 360, 135);
+    rotateAndVerify(250, 400, -180);
   });
 });
