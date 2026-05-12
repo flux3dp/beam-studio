@@ -31,11 +31,30 @@ function InfillPanel({ elem }: Props): null | React.JSX.Element {
     ) : null;
   }
 
+  const renderTextPathColorSections = (textElem: null | SVGTextElement, pathElem: null | SVGPathElement) => (
+    <>
+      {textElem ? (
+        <div className={styles.section}>
+          <div className={styles['section-label']}>{langOptionPanel.text_infill}</div>
+          <ColorPanel elem={textElem} fillOnly />
+        </div>
+      ) : null}
+      {pathElem ? (
+        <div className={styles.section}>
+          <div className={styles['section-label']}>{langOptionPanel.path_infill}</div>
+          <ColorPanel elem={pathElem} fillOnly />
+        </div>
+      ) : null}
+    </>
+  );
+
   const renderBlocks = (): React.ReactNode => {
     if (tagName === 'g') {
       if (elem.getAttribute('data-textpath-g')) {
         const textElem = elem.querySelector('text');
         const path = Array.from(elem.querySelectorAll('path'));
+
+        if (isFullColor) return renderTextPathColorSections(textElem, path[0] ?? null);
 
         return (
           <>
@@ -51,6 +70,8 @@ function InfillPanel({ elem }: Props): null | React.JSX.Element {
         if (includeTextPath) {
           const textElems = Array.from(elem.querySelectorAll('text'));
           const path = Array.from(elem.querySelectorAll('path'));
+
+          if (isFullColor) return renderTextPathColorSections(textElems[0] ?? null, path[0] ?? null);
 
           return (
             <>
