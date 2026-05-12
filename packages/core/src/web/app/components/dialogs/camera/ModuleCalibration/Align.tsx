@@ -5,6 +5,7 @@ import { Button, Checkbox, Col, ConfigProvider, Form, InputNumber, Modal, Row, T
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { supportCameraAutoExposureModels } from '@core/app/actions/beambox/constant';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import FisheyePreviewManagerV2 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV2';
 import FisheyePreviewManagerV4 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV4';
@@ -20,10 +21,15 @@ import {
 import type { OffsetTuple } from '@core/app/constants/layer-module/moduleOffsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getExposureSettings } from '@core/helpers/device/camera/cameraExposure';
 import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
+import versionChecker from '@core/helpers/version-checker';
 import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
+import type { IConfigSetting } from '@core/interfaces/IDevice';
+
+import ExposureSlider from '../common/ExposureSlider';
 
 import styles from './Align.module.scss';
 import getPerspectiveForAlign from './getPerspectiveForAlign';
@@ -63,6 +69,8 @@ const Align = ({
   const doorChecker = useRef<DoorChecker | null>(null);
   const hasInit = useRef(false);
   const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
+  const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
+  const [autoExposure, setAutoExposure] = useState<boolean | null>(null);
   const isBM2 = useMemo(() => deviceMaster.currentDevice!.info.model === 'fbm2', []);
 
   const initSetup = useCallback(async () => {
@@ -109,6 +117,30 @@ const Align = ({
         const { d, k } = fisheyeParam;
 
         await deviceMaster.setFisheyeMatrix({ d, k, points: perspectivePoints });
+      }
+
+      try {
+        const settings = await getExposureSettings();
+
+        setExposureSetting(settings);
+      } catch {
+        // Exposure control not available for this device — leave null
+      }
+
+      try {
+        const { model, version } = deviceMaster.currentDevice!.info;
+        const vc = versionChecker(version);
+
+        if (
+          supportCameraAutoExposureModels.includes(model) &&
+          !(model === 'fbb2' && !vc.meetRequirement('BB2_AUTO_EXPOSURE'))
+        ) {
+          const res = await deviceMaster.getCameraExposureAuto();
+
+          if (res?.success) setAutoExposure(res.data);
+        }
+      } catch (e) {
+        console.error('Failed to get auto exposure', e);
       }
 
       return true;
@@ -441,6 +473,17 @@ const Align = ({
           </div>
         </Col>
       </Row>
+      {exposureSetting && (
+        <Row>
+          <ExposureSlider
+            autoExposure={autoExposure}
+            exposureSetting={exposureSetting}
+            onChanged={() => handleTakePicture(0)}
+            setAutoExposure={setAutoExposure}
+            setExposureSetting={setExposureSetting}
+          />
+        </Row>
+      )}
     </Modal>
   );
 };
