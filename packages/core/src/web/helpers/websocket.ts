@@ -8,8 +8,11 @@ import isJson from '@core/helpers/is-json';
 import isWeb from '@core/helpers/is-web';
 import Logger from '@core/helpers/logger';
 import outputError from '@core/helpers/output-error';
+import { raceWebSockets, toSslIpHostname } from '@core/helpers/sslIpHelper';
 import storage from '@core/implementations/storage';
 import type { Option, WrappedWebSocket } from '@core/interfaces/WebSocket';
+
+import checkIPFormat from './check-ip-format';
 
 const WsLogger = Logger('websocket');
 const logLimit = 100;
@@ -112,41 +115,7 @@ export default (options: Option): WrappedWebSocket => {
     }
   };
 
-  const createWebSocket = (createWsOpts: Option) => {
-    if (ws) {
-      if (ws.readyState === WebSocket.CONNECTING) {
-        return ws;
-      }
-
-      if (ws.readyState !== WebSocket.CLOSED) {
-        ws.close();
-      }
-    }
-
-    const hostName = createWsOpts.hostname || defaultOptions.hostname;
-    const port = createWsOpts.port || defaultOptions.port;
-    const url = `ws://${hostName}:${port}/ws/${createWsOpts.method}`;
-
-    if (port === undefined) {
-      handleCreateWebSocketFailed();
-
-      return null;
-    }
-
-    const WebSocketClass =
-      isWeb() && window.location.protocol === 'https:' && checkFluxTunnel() ? InsecureWebsocket : WebSocket;
-    let nodeWs: InsecureWebsocket | WebSocket;
-
-    try {
-      nodeWs = new WebSocketClass(url);
-    } catch (error) {
-      console.error('Failed to create websocket', error);
-      handleCreateWebSocketFailed();
-
-      return null;
-    }
-    wsCreateFailedCount = 0;
-
+  const attachHandlers = (nodeWs: InsecureWebsocket | WebSocket, createWsOpts: Option) => {
     nodeWs.onerror = () => {
       wsErrorCount += 1;
 
@@ -281,8 +250,60 @@ export default (options: Option): WrappedWebSocket => {
         ws = null; // release
       }
     };
+  };
 
-    return nodeWs;
+  const createWebSocket = (createWsOpts: Option): InsecureWebsocket | null | WebSocket => {
+    if (ws) {
+      if (ws.readyState === WebSocket.CONNECTING) {
+        return ws;
+      }
+
+      if (ws.readyState !== WebSocket.CLOSED) {
+        ws.close();
+      }
+    }
+
+    const hostName = createWsOpts.hostname || defaultOptions.hostname;
+    const port = createWsOpts.port || defaultOptions.port;
+
+    if (port === undefined) {
+      handleCreateWebSocketFailed();
+
+      return null;
+    }
+
+    const wssUrl = checkIPFormat(hostName) ? `wss://${toSslIpHostname(hostName)}:8443/ws/${createWsOpts.method}` : null;
+    const wsUrl = `ws://${hostName}:${port}/ws/${createWsOpts.method}`;
+    const WebSocketClass =
+      isWeb() && window.location.protocol === 'https:' && checkFluxTunnel() ? InsecureWebsocket : WebSocket;
+
+    const result = raceWebSockets({
+      createFallback: () => new WebSocketClass(wsUrl),
+      createPreferred: () => (wssUrl ? new WebSocket(wssUrl) : null),
+      onAllFailed: () => {
+        ws = null;
+        handleCreateWebSocketFailed();
+
+        if (socketOptions.autoReconnect === true) {
+          setTimeout(() => {
+            createWebSocket(createWsOpts);
+          }, 300);
+        }
+      },
+      onSettled: (winner, isPreferred, openEvent) => {
+        console.log(`WebSocket ${createWsOpts.method} connected ${isPreferred ? 'WSS' : 'WS'}`);
+
+        ws = winner;
+        wsCreateFailedCount = 0;
+        wsErrorCount = 0;
+        alertCaller.popById('backend-error');
+        MessageCaller.closeMessage('backend-error-hint');
+        attachHandlers(winner, createWsOpts);
+        socketOptions.onOpen?.(openEvent);
+      },
+    });
+
+    return result.preferredSocket ?? result.fallbackSocket;
   };
 
   let timer: NodeJS.Timeout;
@@ -347,8 +368,11 @@ export default (options: Option): WrappedWebSocket => {
       }
 
       if (ws?.readyState === WebSocket.CONNECTING) {
+        const prevOnOpen = ws.onopen;
+
         ws.onopen = (e) => {
-          socketOptions.onOpen?.(e);
+          if (typeof prevOnOpen === 'function') prevOnOpen.call(ws as any, e);
+
           sender(data);
         };
       } else {

@@ -8,6 +8,7 @@ import checkIPFormat from '@core/helpers/check-ip-format';
 import i18n from '@core/helpers/i18n';
 import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
 import isJson from '@core/helpers/is-json';
+import { raceWebSockets, toSslIpHostname } from '@core/helpers/sslIpHelper';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const MESSAGE_KEY = 'qr-auto-connect';
@@ -57,25 +58,20 @@ function parseAndValidateIPs(param: string): string[] {
 
 /**
  * Probe a machine via WebSocket to verify it's a valid FLUX device.
+ * Races WSS and WS in parallel, preferring WSS within its probe window.
  * Returns device info if successful, null otherwise.
  */
 function probeDeviceDirectly(ip: string, port: string = DEFAULT_WEB_PORT): Promise<IDeviceInfo | null> {
   return new Promise((resolve) => {
-    const url = `ws://${ip}:${port}/ws/discover`;
-    let ws: InsecureWebsocket | null | WebSocket = null;
     let resolved = false;
+    let cleanupSockets: (() => void) | null = null;
 
     const cleanup = (result: IDeviceInfo | null) => {
       if (resolved) return;
 
       resolved = true;
       clearTimeout(timeoutId);
-
-      try {
-        ws?.close();
-      } catch {
-        // Ignore close errors
-      }
+      cleanupSockets?.();
 
       resolve(result);
     };
@@ -85,18 +81,13 @@ function probeDeviceDirectly(ip: string, port: string = DEFAULT_WEB_PORT): Promi
       cleanup(null);
     }, PROBE_TIMEOUT_MS);
 
-    try {
-      const useInsecure = window.location.protocol === 'https:' && checkFluxTunnel();
-      const WebSocketClass = useInsecure ? InsecureWebsocket : WebSocket;
+    const sendPoke = (socket: InsecureWebsocket | WebSocket) => {
+      console.log(`QR Auto-Connect: WebSocket opened to ${ip}`);
+      socket.send(JSON.stringify({ cmd: 'poke', ipaddr: ip }));
+    };
 
-      ws = new WebSocketClass(url);
-
-      ws.onopen = () => {
-        console.log(`QR Auto-Connect: WebSocket opened to ${ip}`);
-        ws?.send(JSON.stringify({ cmd: 'poke', ipaddr: ip }));
-      };
-
-      ws.onmessage = (event: MessageEvent) => {
+    const attachMessageHandler = (socket: InsecureWebsocket | WebSocket) => {
+      socket.onmessage = (event: MessageEvent) => {
         try {
           const data = isJson(event.data) ? JSON.parse(event.data) : event.data;
 
@@ -109,16 +100,35 @@ function probeDeviceDirectly(ip: string, port: string = DEFAULT_WEB_PORT): Promi
         }
       };
 
-      ws.onerror = () => {
+      socket.onerror = () => {
         console.log(`QR Auto-Connect: WebSocket error for ${ip}`);
         cleanup(null);
       };
 
-      ws.onclose = () => cleanup(null);
-    } catch (e) {
-      console.warn(`QR Auto-Connect: Failed to create WebSocket for ${ip}:`, e);
-      cleanup(null);
-    }
+      socket.onclose = () => cleanup(null);
+    };
+
+    // Race WSS and WS in parallel, preferring WSS within its probe window
+    const wssUrl = `wss://${toSslIpHostname(ip)}:${port}/ws/discover`;
+    const wsUrl = `ws://${ip}:${port}/ws/discover`;
+    const useInsecure = window.location.protocol === 'https:' && checkFluxTunnel();
+    const WebSocketClass = useInsecure ? InsecureWebsocket : WebSocket;
+
+    const result = raceWebSockets({
+      createFallback: () => new WebSocketClass(wsUrl),
+      createPreferred: () => new WebSocket(wssUrl),
+      onAllFailed: () => cleanup(null),
+      onSettled: (winner) => {
+        attachMessageHandler(winner);
+        sendPoke(winner);
+      },
+    });
+
+    cleanupSockets = () => {
+      result.cancel();
+      result.preferredSocket?.close();
+      result.fallbackSocket?.close();
+    };
   });
 }
 
