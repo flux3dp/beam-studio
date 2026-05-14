@@ -64,6 +64,7 @@ function probeDeviceDirectly(ip: string, port: string = DEFAULT_WEB_PORT): Promi
   return new Promise((resolve) => {
     let resolved = false;
     let cleanupSockets: (() => void) | null = null;
+    let ws: null | WebSocket = null;
 
     const cleanup = (result: IDeviceInfo | null) => {
       if (resolved) return;
@@ -113,6 +114,7 @@ function probeDeviceDirectly(ip: string, port: string = DEFAULT_WEB_PORT): Promi
       method: 'discover',
       onFailed: () => cleanup(null),
       onSettled: (socket) => {
+        ws = socket as WebSocket;
         attachMessageHandler(socket as WebSocket);
         sendPoke(socket as WebSocket);
       },
@@ -121,8 +123,7 @@ function probeDeviceDirectly(ip: string, port: string = DEFAULT_WEB_PORT): Promi
 
     cleanupSockets = () => {
       result.cancel();
-      result.wssSocket?.close();
-      result.wsSocket?.close();
+      ws?.close();
     };
   });
 }

@@ -5,7 +5,7 @@ import isWeb from '@core/helpers/is-web';
 export const toSslIpHostname = (ip: string): string => `${ip.replaceAll('.', '-')}.sslip.flux3dp.com`;
 
 const WSS_PORT = 8443;
-const DEFAULT_TIMEOUT_MS = 10000;
+const DEFAULT_TIMEOUT_MS = 5000;
 
 type Socket = InsecureWebsocket | WebSocket;
 
@@ -23,8 +23,6 @@ export interface ConnectWebSocketOptions {
 
 export interface ConnectWebSocketResult {
   cancel: () => void;
-  wsSocket: null | Socket;
-  wssSocket: null | Socket;
 }
 
 const noop = () => {};
@@ -79,7 +77,7 @@ export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSo
   if (!wssSocket && !wsSocket) {
     onFailed();
 
-    return { cancel: noop, wsSocket: null, wssSocket: null };
+    return { cancel: noop };
   }
 
   let settled = false;
@@ -182,5 +180,5 @@ export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSo
     };
   }
 
-  return { cancel, wsSocket, wssSocket };
+  return { cancel };
 };
