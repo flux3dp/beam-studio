@@ -1,28 +1,30 @@
-import type InsecureWebsocket from '@core/helpers/InsecureWebsocket';
+import checkIPFormat from '@core/helpers/check-ip-format';
+import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
+import isWeb from '@core/helpers/is-web';
 
 export const toSslIpHostname = (ip: string): string => `${ip.replaceAll('.', '-')}.sslip.flux3dp.com`;
 
+const WSS_PORT = 8443;
 const DEFAULT_TIMEOUT_MS = 10000;
 
 type Socket = InsecureWebsocket | WebSocket;
 
-export interface RaceWebSocketsOptions {
-  /** Factory for the fallback socket (e.g. WS). Null if construction fails. */
-  createFallback: () => null | Socket;
-  /** Factory for the preferred socket (e.g. WSS). Null if construction fails. */
-  createPreferred: () => null | Socket;
+export interface ConnectWebSocketOptions {
+  hostname: string;
+  method: string;
   /** Called when both sockets fail */
-  onAllFailed: () => void;
+  onFailed: () => void;
   /** Called when a winner connects */
-  onSettled: (winner: Socket, isPreferred: boolean, openEvent: Event | null) => void;
-  /** Timeout — preferred gets this window to connect; when expired, settle with fallback if ready, otherwise fail. Omit if caller manages timeout externally. */
+  onSettled: (winner: Socket, openEvent: Event | null) => void;
+  port: number | string;
+  /** Timeout — WSS gets this window to connect; when expired, settle with WS if ready, otherwise fail. */
   timeoutMs?: number;
 }
 
-export interface RaceWebSocketsResult {
+export interface ConnectWebSocketResult {
   cancel: () => void;
-  fallbackSocket: null | Socket;
-  preferredSocket: null | Socket;
+  wsSocket: null | Socket;
+  wssSocket: null | Socket;
 }
 
 const noop = () => {};
@@ -43,43 +45,55 @@ const cleanupSocket = (socket: null | Socket) => {
 };
 
 /**
- * Race two WebSocket connections (e.g. WS vs WSS), returning the winner and cleaning up the loser. Handles various edge cases around connection failures and timeouts.
+ * Connect via WebSocket, racing WSS (via sslip) against plain WS.
+ * WSS is preferred and gets a timeout window; if it doesn't connect in time,
+ * falls back to WS if already open, otherwise reports failure.
  */
-export const raceWebSockets = (options: RaceWebSocketsOptions): RaceWebSocketsResult => {
-  const { createFallback, createPreferred, onAllFailed, onSettled, timeoutMs = DEFAULT_TIMEOUT_MS } = options;
+export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSocketResult => {
+  const { hostname, method, onFailed, onSettled, port, timeoutMs = DEFAULT_TIMEOUT_MS } = options;
 
-  let preferredSocket: null | Socket = null;
-  let fallbackSocket: null | Socket = null;
+  const useWss = checkIPFormat(hostname);
+  const wsUrl = `ws://${hostname}:${port}/ws/${method}`;
+  const WebSocketClass =
+    isWeb() && window.location.protocol === 'https:' && checkFluxTunnel() ? InsecureWebsocket : WebSocket;
+
+  let wssSocket: null | Socket = null;
+  let wsSocket: null | Socket = null;
+
+  if (useWss) {
+    const wssUrl = `wss://${toSslIpHostname(hostname)}:${WSS_PORT}/ws/${method}`;
+
+    try {
+      wssSocket = new WebSocket(wssUrl);
+    } catch {
+      // Construction failed
+    }
+  }
 
   try {
-    preferredSocket = createPreferred();
+    wsSocket = new WebSocketClass(wsUrl);
   } catch {
     // Construction failed
   }
 
-  try {
-    fallbackSocket = createFallback();
-  } catch {
-    // Construction failed
-  }
+  if (!wssSocket && !wsSocket) {
+    onFailed();
 
-  if (!preferredSocket && !fallbackSocket) {
-    onAllFailed();
-
-    return { cancel: noop, fallbackSocket: null, preferredSocket: null };
+    return { cancel: noop, wsSocket: null, wssSocket: null };
   }
 
   let settled = false;
-  let fallbackOpenEvent: Event | null = null;
+  let wsOpenEvent: Event | null = null;
   let timeoutId: NodeJS.Timeout | undefined;
 
-  const settleWith = (winner: Socket, isPreferred: boolean, openEvent: Event | null) => {
+  const settleWith = (winner: Socket, isWss: boolean, openEvent: Event | null) => {
     if (settled) return;
 
     settled = true;
     clearTimeout(timeoutId);
-    cleanupSocket(isPreferred ? fallbackSocket : preferredSocket);
-    onSettled(winner, isPreferred, openEvent);
+    console.log(`WebSocket ${method} connected via ${isWss ? 'WSS' : 'WS'}`);
+    cleanupSocket(isWss ? wsSocket : wssSocket);
+    onSettled(winner, openEvent);
   };
 
   const handleAllFailed = () => {
@@ -87,9 +101,9 @@ export const raceWebSockets = (options: RaceWebSocketsOptions): RaceWebSocketsRe
 
     settled = true;
     clearTimeout(timeoutId);
-    cleanupSocket(preferredSocket);
-    cleanupSocket(fallbackSocket);
-    onAllFailed();
+    cleanupSocket(wssSocket);
+    cleanupSocket(wsSocket);
+    onFailed();
   };
 
   const cancel = () => {
@@ -97,80 +111,74 @@ export const raceWebSockets = (options: RaceWebSocketsOptions): RaceWebSocketsRe
 
     settled = true;
     clearTimeout(timeoutId);
-    cleanupSocket(preferredSocket);
-    cleanupSocket(fallbackSocket);
+    cleanupSocket(wssSocket);
+    cleanupSocket(wsSocket);
   };
 
-  // Single timeout — preferred gets this window; when expired, settle with fallback if ready, otherwise fail
+  // Single timeout — WSS gets this window; when expired, settle with WS if ready, otherwise fail
   if (timeoutMs != null) {
     timeoutId = setTimeout(() => {
-      if (fallbackOpenEvent && fallbackSocket) {
-        settleWith(fallbackSocket, false, fallbackOpenEvent);
+      if (wsOpenEvent && wsSocket) {
+        settleWith(wsSocket, false, wsOpenEvent);
       } else {
         handleAllFailed();
       }
     }, timeoutMs);
   }
 
-  // Preferred handlers — can win at any time before settlement
-  if (preferredSocket) {
-    preferredSocket.onopen = (e) => {
-      settleWith(preferredSocket!, true, e);
+  // WSS handlers — can win at any time before settlement
+  if (wssSocket) {
+    wssSocket.onopen = (e) => {
+      settleWith(wssSocket!, true, e);
     };
 
-    preferredSocket.onerror = () => {
-      preferredSocket = null;
+    wssSocket.onerror = () => {
+      wssSocket = null;
 
-      if (fallbackOpenEvent && fallbackSocket) {
-        // Early settle if preferred fails after fallback is already open
-        settleWith(fallbackSocket, false, fallbackOpenEvent);
-      } else if (!fallbackSocket) {
-        // Otherwise, if no fallback to wait for, fail immediately
+      if (wsOpenEvent && wsSocket) {
+        settleWith(wsSocket, false, wsOpenEvent);
+      } else if (!wsSocket) {
         handleAllFailed();
       }
     };
 
-    preferredSocket.onclose = () => {
-      if (!preferredSocket) return;
+    wssSocket.onclose = () => {
+      if (!wssSocket) return;
 
-      preferredSocket = null;
+      wssSocket = null;
 
-      if (fallbackOpenEvent && fallbackSocket) {
-        // Early settle if preferred fails after fallback is already open
-        settleWith(fallbackSocket, false, fallbackOpenEvent);
-      } else if (!fallbackSocket) {
-        // Otherwise, if no fallback to wait for, fail immediately
+      if (wsOpenEvent && wsSocket) {
+        settleWith(wsSocket, false, wsOpenEvent);
+      } else if (!wsSocket) {
         handleAllFailed();
       }
     };
   }
 
-  // Fallback handlers — can only settle after preferred fails (or timeout expires)
-  if (fallbackSocket) {
-    fallbackSocket.onopen = (e) => {
-      fallbackOpenEvent = e;
+  // WS handlers — can only settle after WSS fails (or timeout expires)
+  if (wsSocket) {
+    wsSocket.onopen = (e) => {
+      wsOpenEvent = e;
 
-      if (!preferredSocket) {
-        // Settle immediately if preferred already failed, otherwise wait for preferred to fail or timeout
-        settleWith(fallbackSocket!, false, e);
+      if (!wssSocket) {
+        settleWith(wsSocket!, false, e);
       }
-      // else: preferred still trying, wait for timeout or preferred result
     };
 
-    fallbackSocket.onerror = () => {
-      fallbackSocket = null;
+    wsSocket.onerror = () => {
+      wsSocket = null;
 
-      if (!preferredSocket) handleAllFailed();
+      if (!wssSocket) handleAllFailed();
     };
 
-    fallbackSocket.onclose = () => {
-      if (!fallbackSocket) return;
+    wsSocket.onclose = () => {
+      if (!wsSocket) return;
 
-      fallbackSocket = null;
+      wsSocket = null;
 
-      if (!preferredSocket) handleAllFailed();
+      if (!wssSocket) handleAllFailed();
     };
   }
 
-  return { cancel, fallbackSocket, preferredSocket };
+  return { cancel, wsSocket, wssSocket };
 };

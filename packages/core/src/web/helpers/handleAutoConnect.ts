@@ -6,9 +6,8 @@ import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBa
 import { finishWithDevice } from '@core/app/pages/InitializeMachine/ConnectMachineIp/utils/finishWithDevice';
 import checkIPFormat from '@core/helpers/check-ip-format';
 import i18n from '@core/helpers/i18n';
-import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
 import isJson from '@core/helpers/is-json';
-import { raceWebSockets, toSslIpHostname } from '@core/helpers/sslIpHelper';
+import { connectWebSocket } from '@core/helpers/sslIpHelper';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const MESSAGE_KEY = 'qr-auto-connect';
@@ -81,12 +80,12 @@ function probeDeviceDirectly(ip: string, port: string = DEFAULT_WEB_PORT): Promi
       cleanup(null);
     }, PROBE_TIMEOUT_MS);
 
-    const sendPoke = (socket: InsecureWebsocket | WebSocket) => {
+    const sendPoke = (socket: WebSocket) => {
       console.log(`QR Auto-Connect: WebSocket opened to ${ip}`);
       socket.send(JSON.stringify({ cmd: 'poke', ipaddr: ip }));
     };
 
-    const attachMessageHandler = (socket: InsecureWebsocket | WebSocket) => {
+    const attachMessageHandler = (socket: WebSocket) => {
       socket.onmessage = (event: MessageEvent) => {
         try {
           const data = isJson(event.data) ? JSON.parse(event.data) : event.data;
@@ -109,25 +108,21 @@ function probeDeviceDirectly(ip: string, port: string = DEFAULT_WEB_PORT): Promi
     };
 
     // Race WSS and WS in parallel, preferring WSS within its probe window
-    const wssUrl = `wss://${toSslIpHostname(ip)}:${port}/ws/discover`;
-    const wsUrl = `ws://${ip}:${port}/ws/discover`;
-    const useInsecure = window.location.protocol === 'https:' && checkFluxTunnel();
-    const WebSocketClass = useInsecure ? InsecureWebsocket : WebSocket;
-
-    const result = raceWebSockets({
-      createFallback: () => new WebSocketClass(wsUrl),
-      createPreferred: () => new WebSocket(wssUrl),
-      onAllFailed: () => cleanup(null),
-      onSettled: (winner) => {
-        attachMessageHandler(winner);
-        sendPoke(winner);
+    const result = connectWebSocket({
+      hostname: ip,
+      method: 'discover',
+      onFailed: () => cleanup(null),
+      onSettled: (socket) => {
+        attachMessageHandler(socket as WebSocket);
+        sendPoke(socket as WebSocket);
       },
+      port,
     });
 
     cleanupSockets = () => {
       result.cancel();
-      result.preferredSocket?.close();
-      result.fallbackSocket?.close();
+      result.wssSocket?.close();
+      result.wsSocket?.close();
     };
   });
 }

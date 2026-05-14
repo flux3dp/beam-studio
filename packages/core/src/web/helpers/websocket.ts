@@ -3,16 +3,14 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import blobSegments from '@core/helpers/blob-segments';
 import i18n from '@core/helpers/i18n';
-import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
+import type InsecureWebsocket from '@core/helpers/InsecureWebsocket';
 import isJson from '@core/helpers/is-json';
 import isWeb from '@core/helpers/is-web';
 import Logger from '@core/helpers/logger';
 import outputError from '@core/helpers/output-error';
-import { raceWebSockets, toSslIpHostname } from '@core/helpers/sslIpHelper';
+import { connectWebSocket } from '@core/helpers/sslIpHelper';
 import storage from '@core/implementations/storage';
 import type { Option, WrappedWebSocket } from '@core/interfaces/WebSocket';
-
-import checkIPFormat from './check-ip-format';
 
 const WsLogger = Logger('websocket');
 const logLimit = 100;
@@ -272,15 +270,10 @@ export default (options: Option): WrappedWebSocket => {
       return null;
     }
 
-    const wssUrl = checkIPFormat(hostName) ? `wss://${toSslIpHostname(hostName)}:8443/ws/${createWsOpts.method}` : null;
-    const wsUrl = `ws://${hostName}:${port}/ws/${createWsOpts.method}`;
-    const WebSocketClass =
-      isWeb() && window.location.protocol === 'https:' && checkFluxTunnel() ? InsecureWebsocket : WebSocket;
-
-    const result = raceWebSockets({
-      createFallback: () => new WebSocketClass(wsUrl),
-      createPreferred: () => (wssUrl ? new WebSocket(wssUrl) : null),
-      onAllFailed: () => {
+    const result = connectWebSocket({
+      hostname: hostName,
+      method: createWsOpts.method!,
+      onFailed: () => {
         ws = null;
         handleCreateWebSocketFailed();
 
@@ -290,20 +283,19 @@ export default (options: Option): WrappedWebSocket => {
           }, 300);
         }
       },
-      onSettled: (winner, isPreferred, openEvent) => {
-        console.log(`WebSocket ${createWsOpts.method} connected ${isPreferred ? 'WSS' : 'WS'}`);
-
-        ws = winner;
+      onSettled: (socket, openEvent) => {
+        ws = socket;
         wsCreateFailedCount = 0;
         wsErrorCount = 0;
         alertCaller.popById('backend-error');
         MessageCaller.closeMessage('backend-error-hint');
-        attachHandlers(winner, createWsOpts);
+        attachHandlers(socket, createWsOpts);
         socketOptions.onOpen?.(openEvent);
       },
+      port: port!,
     });
 
-    return result.preferredSocket ?? result.fallbackSocket;
+    return result.wssSocket ?? result.wsSocket;
   };
 
   let timer: NodeJS.Timeout;
