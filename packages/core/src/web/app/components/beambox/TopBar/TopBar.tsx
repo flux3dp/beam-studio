@@ -82,7 +82,6 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         })}
         onClick={() => ObjectPanelController.updateActiveKey(null)}
       >
-        {isWeb && isTablet && <DrawerMenu email={currentUser?.email} />}
         <div
           className={classNames(styles.controls, styles.left, {
             [styles.space]: (isDragRegion && !isFullScreen) || isWeb,
@@ -110,9 +109,9 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
       <TopBarHintsContextProvider>
         <TopBarHints />
       </TopBarHintsContextProvider>
-      {isWeb && !isTablet && (
+      {isWeb && (
         <div className={classNames(styles['top-bar-menu-container'], styles.menu)} data-testid="top-bar-menu">
-          <Menu email={currentUser?.email} />
+          {isTablet ? <DrawerMenu email={currentUser?.email} /> : <Menu email={currentUser?.email} />}
         </div>
       )}
     </>
