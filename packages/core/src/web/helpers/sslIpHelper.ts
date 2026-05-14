@@ -2,6 +2,8 @@ import checkIPFormat from '@core/helpers/check-ip-format';
 import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
 import isWeb from '@core/helpers/is-web';
 
+import isDev from './is-dev';
+
 export const toSslIpHostname = (ip: string): string => `${ip.replaceAll('.', '-')}.sslip.flux3dp.com`;
 
 const WSS_PORT = 8443;
@@ -50,7 +52,7 @@ const cleanupSocket = (socket: null | Socket) => {
 export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSocketResult => {
   const { hostname, method, onFailed, onSettled, port, timeoutMs = DEFAULT_TIMEOUT_MS } = options;
 
-  const useWss = checkIPFormat(hostname);
+  const useWss = (isWeb() || isDev()) && checkIPFormat(hostname);
   const wsUrl = `ws://${hostname}:${port}/ws/${method}`;
   const WebSocketClass =
     isWeb() && window.location.protocol === 'https:' && checkFluxTunnel() ? InsecureWebsocket : WebSocket;
