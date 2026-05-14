@@ -15,6 +15,7 @@ import communicator from '@core/implementations/communicator';
 import network from '@core/implementations/network';
 import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 import { swiftrayClient } from './swiftray-client';
 
@@ -41,7 +42,7 @@ export class DiscoverManager {
   protected swiftrayDevices: Record<string, IDeviceInfo> = {};
   protected initialized = false;
   private isMaster = false;
-  private ws: any;
+  private ws: null | WrappedWebSocket = null;
   private pokeIPs: string[] = [];
   private intervals: NodeJS.Timeout[] = [];
 
