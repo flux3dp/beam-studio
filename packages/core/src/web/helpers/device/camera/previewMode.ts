@@ -11,7 +11,9 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
+import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
+import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export const endPreviewMode = (): void => {
@@ -33,12 +35,35 @@ export const endPreviewMode = (): void => {
 
 let isSettingUpPreview = false;
 
-export const getSupportedPreviewModes = (device: IDeviceInfo, hasWideAngleCamera: boolean): PreviewMode[] => {
+export const checkCameraOblique = async (device: IDeviceInfo): Promise<boolean> => {
+  if (device.model === 'fhx2rf') return true;
+
+  if (device.model === 'fbb2') {
+    const vc = versionChecker(device.version);
+
+    if (vc.meetRequirement('BB2_CAMERA_INSTALLATION')) {
+      try {
+        const res = await deviceMaster.getDeviceSetting('camera_installation');
+
+        return res.status === 'ok' && res.value === '1';
+      } catch (err) {
+        console.warn('Failed to get camera installation setting', err);
+      }
+    }
+  }
+
+  return false;
+};
+
+export const getSupportedPreviewModes = (
+  device: IDeviceInfo,
+  { hasWideAngleCamera, isCameraOblique }: { hasWideAngleCamera: boolean; isCameraOblique: boolean },
+): PreviewMode[] => {
   const modes = [PreviewMode.REGION];
 
   if (hasWideAngleCamera || device.model === 'fbm2') modes.push(PreviewMode.FULL_AREA);
 
-  if (device.model === 'fhx2rf') modes.push(PreviewMode.PRECISE_REGION);
+  if (isCameraOblique) modes.push(PreviewMode.PRECISE_REGION);
 
   return modes;
 };
@@ -69,9 +94,10 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
   if (!isWorkareaMatched && !(await showResizeAlert(device!))) return false;
 
   const { canPreview, hasWideAngleCamera } = await getWideAngleCameraData(device);
+  const isCameraOblique = await checkCameraOblique(device);
 
   setCameraPreviewState({
-    supportedPreviewModes: getSupportedPreviewModes(device, hasWideAngleCamera),
+    supportedPreviewModes: getSupportedPreviewModes(device, { hasWideAngleCamera, isCameraOblique }),
   });
 
   if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && canPreview)) {

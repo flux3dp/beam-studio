@@ -7,12 +7,12 @@ import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import {
   bb2FullAreaPerspectiveGrid,
+  bb2PerspectiveGrid,
+  bb2PerspectiveGridWide,
   hx2FullAreaPerspectiveGrid,
-  hx2rfPerspectiveGrid,
-  hx2rfPrecisePerspectiveGrid,
 } from '@core/app/constants/fisheyeCameraConstants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { getSupportedPreviewModes } from '@core/helpers/device/camera/previewMode';
+import { checkCameraOblique, getSupportedPreviewModes } from '@core/helpers/device/camera/previewMode';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParameters, FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
@@ -27,6 +27,7 @@ import RegionPreviewMixin from './RegionPreviewMixin';
 
 // TODO: Add tests
 class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implements PreviewManager {
+  private isCameraOblique = false;
   private lineCheckEnabled: boolean = false;
   private wideAngleFisheyeManager?: FisheyePreviewManagerV4;
   private wideAngleFisheyeParams?: FisheyeCameraParametersV4;
@@ -41,6 +42,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     this.progressId = 'beam-preview-manager';
 
     if (device.model === 'fhx2rf') {
+      this.isCameraOblique = true;
       this.fullAreaGrid = hx2FullAreaPerspectiveGrid;
     }
   }
@@ -88,7 +90,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     try {
       this.showMessage({ content: lang.message.camera.switching_camera });
 
-      const grid = mode === PreviewMode.PRECISE_REGION ? hx2rfPrecisePerspectiveGrid : hx2rfPerspectiveGrid;
+      const grid = this.isCameraOblique && mode === PreviewMode.REGION ? bb2PerspectiveGridWide : bb2PerspectiveGrid;
 
       if (isLaserHeadMode(this._previewMode)) {
         if (isLaserHeadMode(mode)) {
@@ -215,6 +217,9 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     try {
       this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
 
+      const isCameraOblique = await checkCameraOblique(this.device);
+
+      this.isCameraOblique = isCameraOblique;
       await deviceMaster.connectCamera();
 
       const { canPreview, hasWideAngleCamera, parameters } = await getWideAngleCameraData(this.device);
@@ -222,8 +227,12 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this.hasWideAngleCamera = hasWideAngleCamera;
       this.wideAngleFisheyeParams = parameters as FisheyeCameraParametersV4 | undefined;
 
-      this._supportedPreviewModes = getSupportedPreviewModes(this.device, hasWideAngleCamera);
+      this._supportedPreviewModes = getSupportedPreviewModes(this.device, { hasWideAngleCamera, isCameraOblique });
       this._previewMode = canPreview && this.hasWideAngleCamera ? PreviewMode.FULL_AREA : PreviewMode.REGION;
+
+      if (this.isCameraOblique) {
+        this.setRegionPreviewGrid(bb2PerspectiveGridWide);
+      }
 
       const res = await match(this._previewMode)
         .with(PreviewMode.FULL_AREA, () => this.setupWideAngleCamera())
