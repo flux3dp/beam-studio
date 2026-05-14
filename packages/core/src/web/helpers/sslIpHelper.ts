@@ -86,8 +86,10 @@ export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSo
   let wsOpenEvent: Event | null = null;
   let timeoutId: NodeJS.Timeout | undefined;
 
-  const settleWith = (winner: Socket, isWss: boolean, openEvent: Event | null) => {
+  const settleWith = (winner: Socket, openEvent: Event | null) => {
     if (settled) return;
+
+    const isWss = winner === wssSocket;
 
     settled = true;
     clearTimeout(timeoutId);
@@ -119,7 +121,7 @@ export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSo
   if (timeoutMs != null) {
     timeoutId = setTimeout(() => {
       if (wsOpenEvent && wsSocket) {
-        settleWith(wsSocket, false, wsOpenEvent);
+        settleWith(wsSocket, wsOpenEvent);
       } else {
         handleAllFailed();
       }
@@ -129,14 +131,14 @@ export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSo
   // WSS handlers — can win at any time before settlement
   if (wssSocket) {
     wssSocket.onopen = (e) => {
-      settleWith(wssSocket!, true, e);
+      settleWith(wssSocket!, e);
     };
 
     wssSocket.onerror = () => {
       wssSocket = null;
 
       if (wsOpenEvent && wsSocket) {
-        settleWith(wsSocket, false, wsOpenEvent);
+        settleWith(wsSocket, wsOpenEvent);
       } else if (!wsSocket) {
         handleAllFailed();
       }
@@ -148,7 +150,7 @@ export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSo
       wssSocket = null;
 
       if (wsOpenEvent && wsSocket) {
-        settleWith(wsSocket, false, wsOpenEvent);
+        settleWith(wsSocket, wsOpenEvent);
       } else if (!wsSocket) {
         handleAllFailed();
       }
@@ -161,7 +163,7 @@ export const connectWebSocket = (options: ConnectWebSocketOptions): ConnectWebSo
       wsOpenEvent = e;
 
       if (!wssSocket) {
-        settleWith(wsSocket!, false, e);
+        settleWith(wsSocket!, e);
       }
     };
 
