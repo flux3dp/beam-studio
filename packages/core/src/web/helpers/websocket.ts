@@ -38,6 +38,7 @@ export const setCurrentVersion = (version: string): void => {
 //      onClose       - fired on connection closed
 //      onOpen        - fired on connection connecting
 export default (options: Option): WrappedWebSocket => {
+  const scheduledMessages: string[] = [];
   const defaultCallback = () => {};
   const defaultOptions = {
     autoReconnect: true,
@@ -139,13 +140,6 @@ export default (options: Option): WrappedWebSocket => {
           onClick: () => MessageCaller.closeMessage('backend-error-hint'),
         });
       }
-    };
-
-    nodeWs.onopen = (e) => {
-      socketOptions.onOpen?.(e);
-      wsErrorCount = 0;
-      alertCaller.popById('backend-error');
-      MessageCaller.closeMessage('backend-error-hint');
     };
 
     nodeWs.onmessage = (result: MessageEvent) => {
@@ -291,6 +285,8 @@ export default (options: Option): WrappedWebSocket => {
         MessageCaller.closeMessage('backend-error-hint');
         attachHandlers(socket, createWsOpts);
         socketOptions.onOpen?.(openEvent);
+        scheduledMessages.forEach((msg) => sender(msg));
+        scheduledMessages.length = 0;
       },
       port: port!,
     });
@@ -359,14 +355,8 @@ export default (options: Option): WrappedWebSocket => {
         ws = createWebSocket(socketOptions);
       }
 
-      if (ws?.readyState === WebSocket.CONNECTING) {
-        const prevOnOpen = ws.onopen;
-
-        ws.onopen = (e) => {
-          if (typeof prevOnOpen === 'function') prevOnOpen.call(ws as any, e);
-
-          sender(data);
-        };
+      if (!ws || ws?.readyState === WebSocket.CONNECTING) {
+        scheduledMessages.push(data);
       } else {
         sender(data);
       }
