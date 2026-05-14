@@ -4,8 +4,8 @@ import constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import {
   bb2PerspectiveGrid,
+  bb2PerspectiveGridWide,
   bm2PerspectiveGrid,
-  hx2rfPerspectiveGrid,
 } from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
@@ -24,7 +24,7 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
 
       this.regionPreviewGrid = match(this.device.model)
         .with('fbb2', () => bb2PerspectiveGrid)
-        .with('fhx2rf', () => hx2rfPerspectiveGrid)
+        .with('fhx2rf', () => bb2PerspectiveGridWide)
         .with('fbm2', () => bm2PerspectiveGrid)
         .otherwise(() => bb2PerspectiveGrid);
 
