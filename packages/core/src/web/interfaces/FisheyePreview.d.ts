@@ -110,6 +110,8 @@ export interface FisheyeCameraParametersV4<Region = WideAngleRegion> {
   ret?: number;
   rvec: number[][];
   rvec_polyfits: Record<Region, number[][]>;
+  total_height?: number;
+  total_width?: number;
   tvec: number[][];
   tvec_polyfits: Record<Region, number[][]>;
   v: 4;

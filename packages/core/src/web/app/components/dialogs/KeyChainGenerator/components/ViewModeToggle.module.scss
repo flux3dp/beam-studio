@@ -1,0 +1,42 @@
+@use '@core/styles/variables' as variables;
+
+.container {
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.button {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #d9d9d9;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  background: transparent;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: variables.$primary-blue-hover;
+  }
+
+  &.active {
+    border-color: variables.$primary-blue;
+  }
+
+  .thumb {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    > svg {
+      width: 100%;
+      height: 100%;
+    }
+  }
+}

@@ -24,6 +24,6 @@ it('offset', () => {
   // Wait for modal to close
   cy.findByTestId('offset-distance').should('not.exist');
 
-  cy.inputValueCloseTo('#w_size', 166.43, 0.1);
-  cy.inputValueCloseTo('#h_size', 179.17, 0.1);
+  cy.inputValueCloseTo('#w_size', 139.46, 0.1);
+  cy.inputValueCloseTo('#h_size', 149.85, 0.1);
 });

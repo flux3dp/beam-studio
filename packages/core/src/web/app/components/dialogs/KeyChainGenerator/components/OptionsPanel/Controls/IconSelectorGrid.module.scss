@@ -1,0 +1,74 @@
+@use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-height: 150px;
+  overflow-y: auto;
+  padding: 8px;
+
+  @include mixins.is-mobile {
+    max-height: unset;
+    overflow-y: unset;
+  }
+
+  &::-webkit-scrollbar {
+    width: 4px;
+    margin-right: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
+  }
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid #d9d9d9;
+  border-radius: 8px;
+  background: #fafafa;
+  cursor: pointer;
+  padding: 4px;
+
+  &:hover {
+    border-color: #999999;
+  }
+
+  &.selected {
+    border-color: variables.$primary-blue;
+    background: #e6f4ff;
+  }
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: black;
+  }
+
+  &.stroke {
+    svg {
+      fill: none;
+
+      path {
+        stroke-width: 1px;
+        vector-effect: non-scaling-stroke;
+      }
+    }
+  }
+}

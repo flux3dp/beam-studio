@@ -1,92 +1,17 @@
-import React, { useCallback, useState } from 'react';
+import React, { act, useCallback, useState } from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-jest.mock('@core/app/constants/element-panel-constants', () => ({
-  __esModule: true,
-  builtInElements: {
-    'mock-circle': {
-      attr: { cx: 250, cy: 250, 'data-ratiofixed': true, rx: 250, ry: 250 },
-      element: 'ellipse',
-    },
-  },
-  default: {
-    basic: {
-      shape: {
-        fileNames: ['mock-circle', 'mock-svg', 'mock-null'],
-      },
-    },
-  },
-  MainTypes: ['basic'],
-}));
-
-const mockCloseDrawer = jest.fn();
 const mockAddToHistory = jest.fn();
+const mockOnClose = jest.fn();
+const mockOnElementSelect = jest.fn();
 
 jest.mock('@core/app/contexts/ElementPanelContext', () => ({
-  ElementPanelContext: React.createContext({ addToHistory: mockAddToHistory, closeDrawer: mockCloseDrawer }),
-}));
-
-const mockBatchCommand = { addSubCommand: jest.fn() };
-const mockCreateBatchCommand = jest.fn().mockImplementation(() => mockBatchCommand);
-
-jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
-  createBatchCommand: mockCreateBatchCommand,
-}));
-
-const mockAddCommandToHistory = jest.fn();
-
-jest.mock('@core/app/svgedit/history/undoManager', () => ({
-  addCommandToHistory: mockAddCommandToHistory,
-}));
-
-const mockElement = document.createElement('use');
-const mockImportSvgString = jest.fn().mockResolvedValue([mockElement]);
-
-jest.mock('@core/app/svgedit/operations/import/importSvgString', () => mockImportSvgString);
-
-const mockPostImportElement = jest.fn();
-
-jest.mock('@core/app/svgedit/operations/import/postImportElement', () => mockPostImportElement);
-
-const mockUpdateElementColor = jest.fn();
-
-jest.mock('@core/helpers/color/updateElementColor', () => mockUpdateElementColor);
-
-const mockGetData = jest.fn();
-
-jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  getData: mockGetData,
-}));
-
-const mockGetLayerByName = jest.fn().mockReturnValue('mock-layer-elem');
-
-jest.mock('@core/helpers/layer/layer-helper', () => ({
-  getLayerByName: mockGetLayerByName,
-}));
-
-const mockGetCurrentLayerName = jest.fn();
-
-jest.mock('@core/app/svgedit/layer/layerManager', () => ({
-  getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
-}));
-
-const mockAddSvgElementFromJson = jest.fn().mockReturnValue(mockElement);
-
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) =>
-    callback({
-      Canvas: {
-        addSvgElementFromJson: mockAddSvgElementFromJson,
-        getNextId: jest.fn(),
-      },
-    }),
-}));
-
-const mockSelectOnly = jest.fn();
-
-jest.mock('@core/app/svgedit/selection', () => ({
-  selectOnly: mockSelectOnly,
+  ElementPanelContext: React.createContext({
+    addToHistory: mockAddToHistory,
+    onClose: mockOnClose,
+    onElementSelect: mockOnElementSelect,
+  }),
 }));
 
 const mockForceUpdate = jest.fn();
@@ -115,7 +40,6 @@ describe('test BuiltinElement', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockGetCurrentLayerName.mockReturnValue('mock-layer-name');
     mockImportIcon.mockResolvedValue(MockIconComponent);
   });
 
@@ -126,7 +50,7 @@ describe('test BuiltinElement', () => {
     await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
     expect(container).not.toBeEmptyDOMElement();
     expect(container).toMatchSnapshot();
-    expect(mockCloseDrawer).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should render correctly when mainType missing', async () => {
@@ -136,7 +60,7 @@ describe('test BuiltinElement', () => {
     await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
     expect(container).not.toBeEmptyDOMElement();
     expect(container).toMatchSnapshot();
-    expect(mockCloseDrawer).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should render null when icon not found', async () => {
@@ -152,43 +76,23 @@ describe('test BuiltinElement', () => {
       );
     });
     expect(container).toBeEmptyDOMElement();
-    expect(mockCloseDrawer).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
-  it('should import predefined object', async () => {
-    const { container } = render(<BuiltinElement mainType="basic" path="mock-circle" />);
-
-    await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
-    fireEvent.click(container.querySelector('.icon')!);
-    await waitFor(() => expect(mockCloseDrawer).toHaveBeenCalledTimes(1));
-    expect(mockAddSvgElementFromJson).toHaveBeenCalledTimes(1);
-    expect(mockGetCurrentLayerName).not.toHaveBeenCalled();
-    expect(mockGetLayerByName).not.toHaveBeenCalled();
-    expect(mockGetData).not.toHaveBeenCalled();
-    expect(mockImportSvgString).not.toHaveBeenCalled();
-    expect(mockSelectOnly).toHaveBeenCalledTimes(1);
-    expect(mockSelectOnly).toHaveBeenCalledWith([mockElement]);
-    expect(mockUpdateElementColor).toHaveBeenCalledTimes(1);
-    expect(mockUpdateElementColor).toHaveBeenCalledWith(mockElement);
-    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
-  });
-
-  it('should import svg object, update location and disassemble', async () => {
+  it('should call onElementSelect and onClose on click', async () => {
     const { container } = render(<BuiltinElement mainType="basic" path="mock-icon" />);
 
-    fireEvent.click(container.querySelector('.icon')!);
-    await waitFor(() => expect(mockCloseDrawer).toHaveBeenCalledTimes(1));
-    expect(mockAddSvgElementFromJson).not.toHaveBeenCalled();
-    expect(mockGetCurrentLayerName).toHaveBeenCalledTimes(1);
-    expect(mockGetLayerByName).toHaveBeenCalledTimes(1);
-    expect(mockGetData).toHaveBeenCalledTimes(1);
-    expect(mockGetData).toHaveBeenCalledWith('mock-layer-elem', 'module');
-    expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
-    expect(mockCreateBatchCommand).toHaveBeenCalledWith('Import Element SVG');
-    expect(mockImportSvgString).toHaveBeenCalledTimes(1);
-    expect(mockPostImportElement).toHaveBeenCalledTimes(1);
-    expect(mockPostImportElement).toHaveBeenCalledWith(mockElement, mockBatchCommand);
-    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
-    expect(mockAddCommandToHistory).toHaveBeenCalledWith(mockBatchCommand);
+    await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
+    await act(async () => {
+      fireEvent.click(container.querySelector('.icon')!);
+    });
+    expect(mockAddToHistory).toHaveBeenCalledTimes(1);
+    expect(mockAddToHistory).toHaveBeenCalledWith({
+      path: { fileName: 'mock-icon', folder: 'basic' },
+      type: 'builtin',
+    });
+    expect(mockOnElementSelect).toHaveBeenCalledTimes(1);
+    expect(mockOnElementSelect).toHaveBeenCalledWith('basic/mock-icon');
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 });

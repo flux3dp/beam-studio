@@ -67,7 +67,7 @@ describe('move element to another layer', () => {
       cy.get('.ant-drawer', { timeout: 10000 }).should('not.exist');
     });
 
-    cy.get('#svg_19').should('exist');
+    cy.get('#svg_3').should('exist');
     cy.get('svg#svgcontent')
       .trigger('mousedown', 100, 100, { force: true })
       .trigger('mousemove', 0, 0, { force: true })
@@ -76,7 +76,7 @@ describe('move element to another layer', () => {
     moveToLayer('#svg_1', 'Layer 2');
     verifyInputValues({ strength: '50', speed: '100', repeat: '5' });
 
-    ['#svg_1', '#svg_10', '#svg_19'].forEach((id) => {
+    ['#svg_1', '#svg_2', '#svg_3'].forEach((id) => {
       cy.get(id).should('exist').should('have.attr', 'fill', '#3F51B5');
     });
   });

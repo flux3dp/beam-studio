@@ -4,6 +4,7 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import { showCameraCalibration } from '@core/app/components/dialogs/camera/CameraCalibration/CameraCalibration';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import { checkCameraOblique } from '@core/helpers/device/camera/previewMode';
 import checkCamera from '@core/helpers/device/check-camera';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -18,8 +19,9 @@ import ModuleCalibration from './ModuleCalibration';
 import PromarkCalibration from './PromarkCalibration';
 import WideAngleCamera from './WideAngleCamera';
 
-export const showLaserHeadFisheyeCalibration = (isAdvanced = false): Promise<boolean> => {
+export const showLaserHeadFisheyeCalibration = async (device: IDeviceInfo, isAdvanced = false): Promise<boolean> => {
   const id = 'laser-head-fisheye-calibration';
+  const isOblique = await checkCameraOblique(device);
   const onClose = () => popDialogById(id);
 
   if (isIdExist(id)) {
@@ -31,6 +33,7 @@ export const showLaserHeadFisheyeCalibration = (isAdvanced = false): Promise<boo
       id,
       <LaserHeadFisheyeCalibration
         isAdvanced={isAdvanced}
+        isOblique={isOblique}
         onClose={(completed = false) => {
           onClose();
           resolve(completed);
@@ -176,7 +179,7 @@ export const calibrateCamera = async (
         return showAdorCalibrationV2(factoryMode);
       } else if (modelsWithWideAngleCamera.includes(device.model)) {
         if (isWideAngle) return showWideAngleCameraCalibration(device);
-        else return showLaserHeadFisheyeCalibration(isAdvanced);
+        else return showLaserHeadFisheyeCalibration(device, isAdvanced);
       } else if (promarkModels.has(device.model)) {
         return showPromarkCalibration(device);
       } else if (device.model === 'fbm2') {

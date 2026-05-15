@@ -1421,6 +1421,7 @@ export interface ILang {
   generators: {
     box_generator: string;
     code_generator: string;
+    keychain_generator: string;
     material_test_generator: string;
     puzzle_generator: string;
     title: string;
@@ -1601,6 +1602,62 @@ export interface ILang {
     extension_not_deteced: string;
     extension_not_deteced_description: string;
     unsecure_url_help_center_link: string;
+  };
+  keychain_generator: {
+    decoration: string;
+    design_preview: string;
+    element: string;
+    element_size: string;
+    emboss: string;
+    exploded_view: string;
+    export_failed: string;
+    hole: string;
+    hole_options: {
+      diameter: string;
+      hole_type: string;
+      offset: string;
+      position: string;
+      thickness: string;
+      type_punch: string;
+      type_ring: string;
+    };
+    import_to_canvas: string;
+    layers: {
+      keychain: string;
+      keychain_deco_emboss: string;
+      keychain_deco_emboss_guide: string;
+      keychain_deco_engraving: string;
+    };
+    more_shapes: string;
+    outline_offset: string;
+    reset_to_default: string;
+    shape: string;
+    size: string;
+    size_height: string;
+    size_tooltip: string;
+    size_width: string;
+    switch_type_warning: string;
+    text: string;
+    text_options: {
+      font_family: string;
+      font_settings: string;
+      font_size: string;
+      font_style: string;
+      letter_spacing: string;
+      line_spacing: string;
+      text_placeholder: string;
+    };
+    types: {
+      capsule: string;
+      oval: string;
+      polygonal: string;
+      quadrilateral: string;
+      round_arch: string;
+      rounded: string;
+      surfing_board: string;
+      tag: string;
+      text: string;
+    };
   };
   layer_module: {
     general_laser: string;

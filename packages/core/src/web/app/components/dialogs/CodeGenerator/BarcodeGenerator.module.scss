@@ -19,30 +19,6 @@ $icon-margin: 8px;
   }
 }
 
-.family-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 28px;
-  .img-container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    max-width: 190px;
-    > img {
-      max-height: 18px;
-      min-height: 16px;
-      object-fit: cover;
-      object-position: left;
-      overflow: visible;
-    }
-  }
-  > svg {
-    font-size: 24px;
-    min-width: 24px;
-  }
-}
-
 .barcode-container {
   margin-bottom: 20px;
   border-radius: 10px;
