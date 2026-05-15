@@ -52,6 +52,7 @@ jobs:
       - name: Set build environment for Apple Silicon
         if: matrix.os != 'macOS-15-intel'
         run: |
+          echo "DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH:+$DYLD_LIBRARY_PATH:}$(brew --prefix cairo)/lib" >> $GITHUB_ENV
           echo "LDFLAGS=-L$(brew --prefix zlib)/lib" >> $GITHUB_ENV
           echo "CPPFLAGS=-I$(brew --prefix zlib)/include" >> $GITHUB_ENV
           echo "PKG_CONFIG_PATH=$(brew --prefix zlib)/lib/pkgconfig" >> $GITHUB_ENV
