@@ -1,6 +1,10 @@
 import React, { useMemo } from 'react';
 
+import { ConfigProvider } from 'antd';
+
+import { selectTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -15,7 +19,10 @@ interface Props {
 }
 
 function InfillPanel({ elem }: Props): null | React.JSX.Element {
-  const langOptionPanel = useI18n().beambox.right_panel.object_panel.option_panel;
+  const lang = useI18n();
+  const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
+  const tTag = lang.topbar.tag_names;
+  const isMobile = useIsMobile();
   const tagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
   const isFullColor = elem ? Boolean(getData(getObjectLayer(elem)?.elem, 'fullcolor')) : false;
 
@@ -35,13 +42,13 @@ function InfillPanel({ elem }: Props): null | React.JSX.Element {
     <>
       {textElem ? (
         <div className={styles.section}>
-          <div className={styles['section-label']}>{langOptionPanel.text_infill}</div>
+          <div className={styles['section-label']}>{tTag.text}</div>
           <ColorPanel elem={textElem} fillOnly />
         </div>
       ) : null}
       {pathElem ? (
         <div className={styles.section}>
-          <div className={styles['section-label']}>{langOptionPanel.path_infill}</div>
+          <div className={styles['section-label']}>{tTag.path}</div>
           <ColorPanel elem={pathElem} fillOnly />
         </div>
       ) : null}
@@ -58,8 +65,8 @@ function InfillPanel({ elem }: Props): null | React.JSX.Element {
 
         return (
           <>
-            <InFillBlock elems={textElem ? [textElem] : []} label={langOptionPanel.text_infill} />
-            <InFillBlock elems={path} id="path_infill" label={langOptionPanel.path_infill} />
+            <InFillBlock elems={textElem ? [textElem] : []} label={tTag.text} />
+            <InFillBlock elems={path} id="path_infill" label={tTag.path} />
           </>
         );
       }
@@ -75,8 +82,8 @@ function InfillPanel({ elem }: Props): null | React.JSX.Element {
 
           return (
             <>
-              <InFillBlock elems={textElems} label={langOptionPanel.text_infill} />
-              <InFillBlock elems={path} id="path_infill" label={langOptionPanel.path_infill} />
+              <InFillBlock elems={textElems} label={tTag.text} />
+              <InFillBlock elems={path} id="path_infill" label={tTag.path} />
             </>
           );
         }
@@ -91,7 +98,9 @@ function InfillPanel({ elem }: Props): null | React.JSX.Element {
     return isFullColor ? <ColorPanel elem={elem} /> : <InFillBlock elems={[elem]} />;
   };
 
-  return <div className={styles.panel}>{renderBlocks()}</div>;
+  const content = <div className={styles.panel}>{renderBlocks()}</div>;
+
+  return isMobile ? content : <ConfigProvider theme={selectTheme}>{content}</ConfigProvider>;
 }
 
 export default InfillPanel;

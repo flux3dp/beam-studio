@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Sắc nét',
         },
         right_align: 'Căn phải',
+        sections: {
+          actions: 'Hành động',
+          align: 'Căn chỉnh',
+          operation_mode: 'Chế độ hoạt động (Tô)',
+          options: 'Tùy chọn',
+          transform: 'Biến đổi',
+        },
         subtract: 'Trừ',
         top_align: 'Căn trên',
         ungroup: 'Bỏ nhóm',

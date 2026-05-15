@@ -37,8 +37,8 @@ div.dockview {
   }
 
   :global(.dv-resize-container) {
-    border: 2px solid $panel-background;
-    border-radius: 4px;
+    border: none;
+    border-radius: 0;
   }
 
   :global(.dv-content-container) {

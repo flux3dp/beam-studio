@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Skarp',
         },
         right_align: 'Høyrejuster',
+        sections: {
+          actions: 'Handlinger',
+          align: 'Juster',
+          operation_mode: 'Driftsmodus (Fyll)',
+          options: 'Alternativer',
+          transform: 'Transformer',
+        },
         subtract: 'Subtraksjon',
         top_align: 'Toppjuster',
         ungroup: 'Del opp',

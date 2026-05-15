@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Αιχμηρό',
         },
         right_align: 'Ευθυγράμμιση δεξιά',
+        sections: {
+          actions: 'Ενέργειες',
+          align: 'Στοίχιση',
+          operation_mode: 'Λειτουργία (Γέμισμα)',
+          options: 'Επιλογές',
+          transform: 'Μετασχηματισμός',
+        },
         subtract: 'Αφαίρεση',
         top_align: 'Ευθυγράμμιση επάνω',
         ungroup: 'Κατάργηση ομαδοποίησης',

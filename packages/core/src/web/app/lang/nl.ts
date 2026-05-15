@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Scherp',
         },
         right_align: 'Rechts uitlijnen',
+        sections: {
+          actions: 'Acties',
+          align: 'Uitlijnen',
+          operation_mode: 'Bedrijfsmodus (Vulling)',
+          options: 'Opties',
+          transform: 'Transformeren',
+        },
         subtract: 'Aftrekken',
         top_align: 'Boven uitlijnen',
         ungroup: 'Degroepeer',

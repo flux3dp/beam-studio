@@ -931,6 +931,13 @@ export interface ILang {
           sharp: string;
         };
         right_align: string;
+        sections: {
+          actions: string;
+          align: string;
+          operation_mode: string;
+          options: string;
+          transform: string;
+        };
         subtract: string;
         top_align: string;
         ungroup: string;

@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Ostrý',
         },
         right_align: 'Zarovnání vpravo',
+        sections: {
+          actions: 'Akce',
+          align: 'Zarovnat',
+          operation_mode: 'Provozní režim (Výplň)',
+          options: 'Možnosti',
+          transform: 'Transformovat',
+        },
         subtract: 'Ubrat',
         top_align: 'Zarovnání nahoru',
         ungroup: 'Rozdělit skupinu',

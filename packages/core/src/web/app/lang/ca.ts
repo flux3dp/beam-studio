@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Angulós',
         },
         right_align: 'Alinear a la dreta',
+        sections: {
+          actions: 'Accions',
+          align: 'Alinea',
+          operation_mode: 'Mode d\'operació (Emplenament)',
+          options: 'Opcions',
+          transform: 'Transforma',
+        },
         subtract: 'Restar',
         top_align: 'Alinear a dalt',
         ungroup: 'Desagrupar',

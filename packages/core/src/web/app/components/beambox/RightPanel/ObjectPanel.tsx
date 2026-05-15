@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo } from 'react';
 
 import { Button, Collapse, ConfigProvider } from 'antd';
 import classNames from 'classnames';
@@ -316,8 +316,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
 
   const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem as SVGElement} />;
 
-  const optionsLabel = elem?.tagName.toLowerCase() === 'text' ? 'Fit Text' : 'Options';
-
+  const tSections = lang.beambox.right_panel.object_panel.sections;
   const tagName = elem?.tagName.toLowerCase();
   const isFullColor = elem ? Boolean(getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor')) : false;
   const showInfillSection = (() => {
@@ -349,38 +348,24 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     return false;
   })();
 
-  const [activeKeys, setActiveKeys] = useState<string[]>(['tools', 'transform', 'infill', 'options', 'actions']);
-
-  useEffect(() => {
-    setActiveKeys((prev) => {
-      const next = new Set(prev);
-
-      if (showInfillSection) next.add('infill');
-
-      if (showOptionsSection) next.add('options');
-
-      return next.size === prev.length ? prev : Array.from(next);
-    });
-  }, [showInfillSection, showOptionsSection]);
-
   const renderDesktopCollapse = (): React.JSX.Element => {
     const desktopItems = [
-      { children: renderToolBtns(), forceRender: true, key: 'tools', label: 'Tools' },
-      { children: renderDimensionPanel(), forceRender: true, key: 'transform', label: 'Transform' },
+      { children: renderToolBtns(), forceRender: true, key: 'tools', label: tSections.align },
+      { children: renderDimensionPanel(), forceRender: true, key: 'transform', label: tSections.transform },
       ...(showInfillSection
         ? [
             {
               children: <InfillPanel elem={elem as SVGElement} />,
               forceRender: true,
               key: 'infill',
-              label: 'Operation Mode (Infill)',
+              label: tSections.operation_mode,
             },
           ]
         : []),
       ...(showOptionsSection
-        ? [{ children: renderOptionPanel(), forceRender: true, key: 'options', label: optionsLabel }]
+        ? [{ children: renderOptionPanel(), forceRender: true, key: 'options', label: tSections.options }]
         : []),
-      { children: renderActionPanel(), forceRender: true, key: 'actions', label: 'Actions' },
+      { children: renderActionPanel(), forceRender: true, key: 'actions', label: tSections.actions },
     ];
 
     return (
@@ -397,12 +382,11 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
         }}
       >
         <Collapse
-          activeKey={activeKeys}
           bordered={false}
           className={styles.collapse}
+          defaultActiveKey={['tools', 'transform', 'infill', 'options', 'actions']}
           ghost
           items={desktopItems}
-          onChange={(keys) => setActiveKeys(Array.isArray(keys) ? keys : [keys])}
         />
       </ConfigProvider>
     );

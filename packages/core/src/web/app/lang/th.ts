@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'แหลม',
         },
         right_align: 'ชิดขวา',
+        sections: {
+          actions: 'การกระทำ',
+          align: 'จัดเรียง',
+          operation_mode: 'โหมดการทำงาน (เติม)',
+          options: 'ตัวเลือก',
+          transform: 'แปลง',
+        },
         subtract: 'ลบ',
         top_align: 'บนสุด',
         ungroup: 'แยกกลุ่ม',

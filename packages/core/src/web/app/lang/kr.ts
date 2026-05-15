@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: '날카로운',
         },
         right_align: '오른쪽 맞춤',
+        sections: {
+          actions: '작업',
+          align: '정렬',
+          operation_mode: '작업 모드(채우기)',
+          options: '옵션',
+          transform: '변환',
+        },
         subtract: '빼기',
         top_align: '상단 맞춤',
         ungroup: '그룹 해제',

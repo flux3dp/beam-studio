@@ -5,7 +5,7 @@
 }
 
 .panel {
-  padding: 0 12px;
+  padding: 0 12px 8px;
 
   .option-block {
     @include mixins.option-block();

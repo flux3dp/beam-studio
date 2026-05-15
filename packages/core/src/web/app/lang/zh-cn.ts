@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: '锐利',
         },
         right_align: '靠右对齐',
+        sections: {
+          actions: '动作',
+          align: '对齐',
+          operation_mode: '操作模式（填充）',
+          options: '选项',
+          transform: '变换',
+        },
         subtract: '去除前面形状',
         top_align: '顶端对齐',
         ungroup: '解散群组',

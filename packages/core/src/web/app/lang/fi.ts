@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Terävä',
         },
         right_align: 'Tasaa oikealle',
+        sections: {
+          actions: 'Toiminnot',
+          align: 'Tasaa',
+          operation_mode: 'Toimintatila (Täyttö)',
+          options: 'Asetukset',
+          transform: 'Muunna',
+        },
         subtract: 'Vähennä',
         top_align: 'Tasaa ylös',
         ungroup: 'Poista ryhmitys',

@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Scharf',
         },
         right_align: 'Rechts ausrichten',
+        sections: {
+          actions: 'Aktionen',
+          align: 'Ausrichten',
+          operation_mode: 'Betriebsmodus (Füllung)',
+          options: 'Optionen',
+          transform: 'Transformieren',
+        },
         subtract: 'Differenz',
         top_align: 'Oben ausrichten',
         ungroup: 'Gruppierung aufheben',

@@ -25,20 +25,32 @@
   }
 
   .collapse {
-    background-color: #ffffff;
-
     :global(.ant-collapse-item) {
       border-bottom: 1px solid #e0e0e0;
+      padding-block: 4px;
+    }
+
+    :global(.ant-collapse-item:last-child) {
+      border-bottom: none;
+    }
+
+    :global(.ant-collapse-header) {
+      padding-block: 8px !important;
+      align-items: center;
     }
 
     :global(.ant-collapse-header-text) {
       font-weight: 600;
+      line-height: 1.4;
+    }
+
+    :global(.ant-collapse-content-box) {
+      padding: 0 !important;
     }
   }
 
   .row {
     height: 41px;
-    background-color: #ffffff;
 
     .half {
       width: 50%;

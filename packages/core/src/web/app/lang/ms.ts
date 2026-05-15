@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Tajam',
         },
         right_align: 'Jajar Kanan',
+        sections: {
+          actions: 'Tindakan',
+          align: 'Jajarkan',
+          operation_mode: 'Mod Operasi (Isi)',
+          options: 'Pilihan',
+          transform: 'Transformasi',
+        },
         subtract: 'Tolak',
         top_align: 'Jajar Atas',
         ungroup: 'Nyahgabung',

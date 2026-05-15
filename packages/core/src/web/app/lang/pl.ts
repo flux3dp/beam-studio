@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Ostre',
         },
         right_align: 'Wyrównaj do prawej',
+        sections: {
+          actions: 'Akcje',
+          align: 'Wyrównaj',
+          operation_mode: 'Tryb pracy (Wypełnienie)',
+          options: 'Opcje',
+          transform: 'Przekształć',
+        },
         subtract: 'Odejmij wierzch',
         top_align: 'Wyrównaj do góry',
         ungroup: 'Rozgrupuj',

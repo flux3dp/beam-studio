@@ -570,6 +570,7 @@ const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
     return (
       <>
         <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
+        {!isMobile && <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />}
         <StartOffsetBlock
           hasMultiValue={startOffset.hasMultiValue}
           onValueChange={handleStartOffsetChange}
@@ -582,8 +583,8 @@ const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
         />
         {isMobile && (
           <>
-            <InFillBlock elems={textElements} label={langOptionPanel.text_infill} />
-            <InFillBlock elems={path} id="path_infill" label={langOptionPanel.path_infill} />
+            <InFillBlock elems={textElements} label={lang.topbar.tag_names.text} />
+            <InFillBlock elems={path} id="path_infill" label={lang.topbar.tag_names.path} />
           </>
         )}
       </>

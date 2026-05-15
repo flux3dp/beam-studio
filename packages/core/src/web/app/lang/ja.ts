@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: '鋭い',
         },
         right_align: '右に整列',
+        sections: {
+          actions: 'アクション',
+          align: '整列',
+          operation_mode: '操作モード（塗りつぶし）',
+          options: 'オプション',
+          transform: '変形',
+        },
         subtract: '引く',
         top_align: '上部に整列',
         ungroup: 'グループ化解除',

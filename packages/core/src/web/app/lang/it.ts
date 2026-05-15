@@ -931,6 +931,13 @@ const lang: ILang = {
           sharp: 'Affilato',
         },
         right_align: 'Allinea a destra',
+        sections: {
+          actions: 'Azioni',
+          align: 'Allinea',
+          operation_mode: 'Modalità operativa (Riempimento)',
+          options: 'Opzioni',
+          transform: 'Trasforma',
+        },
         subtract: 'Sottrazione',
         top_align: 'Allinea in alto',
         ungroup: 'Separa',
