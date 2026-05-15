@@ -934,7 +934,7 @@ const lang: ILang = {
         sections: {
           actions: 'Actions',
           align: 'Aligner',
-          operation_mode: 'Mode d\'opération (Remplissage)',
+          operation_mode: "Mode d'opération (Remplissage)",
           options: 'Options',
           transform: 'Transformer',
         },
