@@ -396,6 +396,33 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
         />
       </div>
     </div>
+    <div
+      class="container"
+      title="Size"
+    >
+      <div
+        class="input"
+      >
+        UnitInput: 
+        font_size
+        <p>
+          precision: 
+          0
+        </p>
+        <p>
+          underline
+        </p>
+        <p>
+          unit: 
+          px
+        </p>
+        <input
+          id="font_size"
+          min="1"
+          value="200"
+        />
+      </div>
+    </div>
     <div>
       mock-start-offset-block value:
       10
@@ -661,14 +688,14 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
     mock-infill-block elems:
     1
      label:
-    Text Infill
+    Text
      id:
   </div>
   <div>
     mock-infill-block elems:
     0
      label:
-    Path Infill
+    Path
      id:
     path_infill
   </div>

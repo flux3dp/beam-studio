@@ -19,9 +19,7 @@ interface Props {
 }
 
 function InfillPanel({ elem }: Props): null | React.JSX.Element {
-  const lang = useI18n();
-  const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
-  const tTag = lang.topbar.tag_names;
+  const tTag = useI18n().topbar.tag_names;
   const isMobile = useIsMobile();
   const tagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
   const isFullColor = elem ? Boolean(getData(getObjectLayer(elem)?.elem, 'fullcolor')) : false;

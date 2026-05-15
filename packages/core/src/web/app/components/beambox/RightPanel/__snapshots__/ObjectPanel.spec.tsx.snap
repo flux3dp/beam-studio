@@ -828,7 +828,7 @@ exports[`should render correctly one element is g element 1`] = `
           <span
             class="ant-collapse-header-text"
           >
-            Tools
+            Align
           </span>
         </div>
         <div
@@ -1302,7 +1302,7 @@ exports[`should render correctly one element not g element 1`] = `
           <span
             class="ant-collapse-header-text"
           >
-            Tools
+            Align
           </span>
         </div>
         <div
@@ -1776,7 +1776,7 @@ exports[`should render correctly two elements contains other types of elements 1
           <span
             class="ant-collapse-header-text"
           >
-            Tools
+            Align
           </span>
         </div>
         <div
@@ -2198,7 +2198,7 @@ exports[`should render correctly two elements contains rect, polygon or ellipse 
           <span
             class="ant-collapse-header-text"
           >
-            Tools
+            Align
           </span>
         </div>
         <div
