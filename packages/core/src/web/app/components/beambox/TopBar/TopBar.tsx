@@ -9,6 +9,7 @@ import { MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { getOS } from '@core/helpers/getOS';
@@ -19,6 +20,7 @@ import storage from '@core/implementations/storage';
 import AutoFocusButton from './AutoFocusButton';
 import CommonTools from './CommonTools';
 import DocumentButton from './DocumentButton';
+import DrawerMenu from './DrawerMenu';
 import FileName from './FileName';
 import FrameButton from './FrameButton';
 import GoButton from './GoButton';
@@ -35,6 +37,8 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: getOS() === 'MacOS' && !isWeb, isWeb })),
     [],
   );
+  const isTablet = useIsTabletOrMobile();
+
   const mode = useCanvasStore((state) => state.mode);
   const { currentUser, hasUnsavedChange, setSelectedDevice } = use(CanvasContext);
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
@@ -107,7 +111,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
       </TopBarHintsContextProvider>
       {isWeb && (
         <div className={classNames(styles['top-bar-menu-container'], styles.menu)} data-testid="top-bar-menu">
-          <Menu email={currentUser?.email} />
+          {isTablet ? <DrawerMenu email={currentUser?.email} /> : <Menu email={currentUser?.email} />}
         </div>
       )}
     </>

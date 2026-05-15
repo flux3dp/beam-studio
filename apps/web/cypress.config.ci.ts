@@ -8,4 +8,6 @@ export default {
     connectMachineIP: undefined,
   },
   experimentalMemoryManagement: true,
+  viewportWidth: 1280,
+  viewportHeight: 800,
 }

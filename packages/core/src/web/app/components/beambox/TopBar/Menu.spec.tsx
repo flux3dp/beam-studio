@@ -48,6 +48,14 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
   }),
 }));
 
+jest.mock('@core/helpers/system-helper', () => ({
+  isMac: () => true,
+}));
+
+jest.mock('@core/app/stores/screenStore', () => ({
+  useIsMobile: () => false,
+}));
+
 __setMockOS('MacOS');
 
 import Menu from './Menu';
