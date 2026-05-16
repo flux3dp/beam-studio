@@ -12,7 +12,7 @@ msgpack==1.0.8
 numpy==1.24.4
 opencv-python==4.9.0.80
 Pillow==10.2.0
-pyasn1==0.1.9
+pyasn1==0.6.3
 pycparser==2.20
 pycryptodome==3.20.0
 PyInstaller==6.8.0
