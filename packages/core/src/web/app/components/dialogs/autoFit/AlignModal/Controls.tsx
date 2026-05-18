@@ -25,7 +25,7 @@ interface Props {
 }
 
 const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }: Props): React.JSX.Element => {
-  const { auto_fit: t } = useI18n();
+  const { auto_fit: t, global: tGlobal } = useI18n();
   const { dpmm } = constant;
   const isInch = useStorageStore((state) => state.isInch);
   const initialCenter = useMemo(() => calculateDimensionCenter(initDimension), [initDimension]);
@@ -151,6 +151,54 @@ const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }:
             precision={0}
             size="small"
             value={dimension.rotation}
+          />
+        </Flex>
+        <Flex align="center" justify="space-between">
+          <div>{tGlobal.width}:</div>
+          <UnitInput
+            addonAfter={isInch ? 'in' : 'mm'}
+            className={styles.input}
+            isInch={isInch}
+            onChange={(val) => {
+              if (val === null) return;
+
+              const newWidth = val * dpmm;
+              const newX = centerX - (newWidth / 2) * Math.cos(rad) + (height / 2) * Math.sin(rad);
+              const newY = centerY - (newWidth / 2) * Math.sin(rad) - (height / 2) * Math.cos(rad);
+
+              imageRef.current?.width(newWidth);
+              imageRef.current?.x(newX);
+              imageRef.current?.y(newY);
+              setDimension((prev) => ({ ...prev, width: newWidth, x: newX, y: newY }));
+            }}
+            precision={isInch ? 4 : 2}
+            size="small"
+            step={step}
+            value={width / dpmm}
+          />
+        </Flex>
+        <Flex align="center" justify="space-between">
+          <div>{tGlobal.height}:</div>
+          <UnitInput
+            addonAfter={isInch ? 'in' : 'mm'}
+            className={styles.input}
+            isInch={isInch}
+            onChange={(val) => {
+              if (val === null) return;
+
+              const newHeight = val * dpmm;
+              const newX = centerX - (width / 2) * Math.cos(rad) + (newHeight / 2) * Math.sin(rad);
+              const newY = centerY - (width / 2) * Math.sin(rad) - (newHeight / 2) * Math.cos(rad);
+
+              imageRef.current?.height(newHeight);
+              imageRef.current?.x(newX);
+              imageRef.current?.y(newY);
+              setDimension((prev) => ({ ...prev, height: newHeight, x: newX, y: newY }));
+            }}
+            precision={isInch ? 4 : 2}
+            size="small"
+            step={step}
+            value={height / dpmm}
           />
         </Flex>
       </div>

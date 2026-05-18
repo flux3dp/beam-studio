@@ -57,7 +57,7 @@ function UnmemorizedSider({
                   value={mode === 'manual'}
                 />
               </Form.Item>
-              <Form.Item label={`${tabPanel.width}:`}>
+              <Form.Item label={`${global.width}:`}>
                 <UnitInput
                   addonAfter="mm"
                   changeOnWheel

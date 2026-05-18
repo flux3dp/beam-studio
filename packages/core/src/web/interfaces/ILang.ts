@@ -1013,7 +1013,6 @@ export interface ILang {
     edge: string;
     finger: string;
     finger_warning: string;
-    height: string;
     import: string;
     inner: string;
     joints: string;
@@ -1031,7 +1030,6 @@ export interface ILang {
     tSlot: string;
     tSlot_warning: string;
     volume: string;
-    width: string;
     workarea: string;
     zoom: string;
   };
@@ -1440,6 +1438,7 @@ export interface ILang {
     | 'back'
     | 'cancel'
     | 'enable'
+    | 'height'
     | 'mode_conflict'
     | 'ok'
     | 'preview'
@@ -1447,7 +1446,8 @@ export interface ILang {
     | 'save_and_exit'
     | 'saving'
     | 'select'
-    | 'stop',
+    | 'stop'
+    | 'width',
     string
   > & {
     editing: Record<'redo' | 'reset' | 'reset_view' | 'undo' | 'zoom_in' | 'zoom_out', string>;
@@ -1636,9 +1636,7 @@ export interface ILang {
     reset_to_default: string;
     shape: string;
     size: string;
-    size_height: string;
     size_tooltip: string;
-    size_width: string;
     switch_type_warning: string;
     text: string;
     text_options: {
@@ -2290,7 +2288,6 @@ export interface ILang {
     help_center: string;
     manual_mode: string;
     title: string;
-    width: string;
   };
   tips: {
     canvas_hold_space_to_pan: string;

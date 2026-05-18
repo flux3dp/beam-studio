@@ -10,7 +10,7 @@ import GroupCollapse from './Controls/GroupCollapse';
 import NumberControl from './Controls/NumberControl';
 
 const SizeGroup = (): ReactNode => {
-  const { keychain_generator: t } = useI18n();
+  const { global: tGlobal, keychain_generator: t } = useI18n();
   const calculatedSize = useKeychainShapeStore((s) => s.calculatedSize);
 
   const handleChange = useCallback(async (dimension: SizeDimension, value: number) => {
@@ -26,7 +26,7 @@ const SizeGroup = (): ReactNode => {
   return (
     <GroupCollapse title={t.size} tooltip={t.size_tooltip}>
       <NumberControl
-        label={t.size_width}
+        label={tGlobal.width}
         max={200}
         min={5}
         onChange={(val) => handleChange('width', val)}
@@ -35,7 +35,7 @@ const SizeGroup = (): ReactNode => {
         value={calculatedSize.width}
       />
       <NumberControl
-        label={t.size_height}
+        label={tGlobal.height}
         max={200}
         min={5}
         onChange={(val) => handleChange('height', val)}
