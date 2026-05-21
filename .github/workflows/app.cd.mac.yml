@@ -136,7 +136,7 @@ jobs:
           ./backend/flux_api/flux_api --test
 
           echo "Downloading Swiftray..."
-          if [ "${{ matrix.os }}" = "macOS-26" ]; then
+          if [ "${{ matrix.os }}" = "macos-26" ]; then
             export SWIFTRAY_PATH="mac-arm64"
           else
             export SWIFTRAY_PATH="mac"
@@ -168,7 +168,7 @@ jobs:
             export APPLE_TEAM_ID=""
           fi
 
-          if [ "${{ matrix.os }}" = "macOS-26" ]; then
+          if [ "${{ matrix.os }}" = "macos-26" ]; then
             echo "Building for arm64..."
             export PUBLISH_PATH="-arm64"
             pnpm nx run app:dist --arm64 --publish always
