@@ -89,6 +89,8 @@ const retakeContourPreview = async (
 
   progressCaller.openNonstopProgress({ id: 'auto-fit-retake', message: i18n.lang.general.processing });
 
+  const originalIsPreviewMode = previewModeController.isPreviewMode;
+
   try {
     if (!(await ensurePreviewMode())) return null;
 
@@ -96,7 +98,7 @@ const retakeContourPreview = async (
       await previewModeBackgroundDrawer.setCanvasUrl(dataCache.removedBgImageUrl, { loadToCanvas: true });
     }
 
-    const sorted = [...contours].sort((a, b) => a.center[0] - b.center[0]);
+    const sorted = [...contours].sort((a, b) => a.center[1] - b.center[1]);
 
     for (const contour of sorted) {
       const { bbox, center } = contour;
@@ -167,6 +169,10 @@ const retakeContourPreview = async (
 
     return { data, imageUrl: newUrl };
   } finally {
+    if (!originalIsPreviewMode && previewModeController.isPreviewMode) {
+      previewModeController.end();
+    }
+
     progressCaller.popById('auto-fit-retake');
   }
 };
