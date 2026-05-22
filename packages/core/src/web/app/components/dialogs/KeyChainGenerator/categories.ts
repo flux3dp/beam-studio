@@ -289,7 +289,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       holes: [{ defaults: DEFAULT_HOLE, id: '1', startPositionRef: 'topCenter' }],
       texts: [
         {
-          bounds: { height: 140, width: 520, x: 240, y: 430 },
+          bounds: { height: 280, width: 520, x: 240, y: 360 },
           defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
           id: '1',
         },
@@ -304,7 +304,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           options: {
             texts: [
               {
-                bounds: { height: 140, width: 520, x: 240, y: 525 },
+                bounds: { height: 240, width: 520, x: 240, y: 475 },
                 defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
                 id: '1',
               },
@@ -326,15 +326,6 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
         },
         {
           key: 'rounded_6',
-          options: {
-            texts: [
-              {
-                bounds: { height: 140, width: 520, x: 240, y: 405 },
-                defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
-                id: '1',
-              },
-            ],
-          },
           svgContent: ROUNDED_6,
         },
       ],
@@ -368,7 +359,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           options: {
             texts: [
               {
-                bounds: { height: 140, width: 520, x: 240, y: 460 },
+                bounds: { height: 260, width: 520, x: 240, y: 400 },
                 defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
                 id: '1',
               },
@@ -381,7 +372,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           options: {
             texts: [
               {
-                bounds: { height: 160, width: 580, x: 210, y: 420 },
+                bounds: { height: 280, width: 580, x: 210, y: 360 },
                 defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
                 id: '1',
               },
@@ -394,7 +385,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           options: {
             texts: [
               {
-                bounds: { height: 160, width: 580, x: 210, y: 420 },
+                bounds: { height: 280, width: 580, x: 210, y: 360 },
                 defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
                 id: '1',
               },
@@ -407,7 +398,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           options: {
             texts: [
               {
-                bounds: { height: 80, width: 300, x: 350, y: 485 },
+                bounds: { height: 160, width: 300, x: 350, y: 445 },
                 defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
                 id: '1',
               },
@@ -433,7 +424,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           options: {
             texts: [
               {
-                bounds: { height: 130, width: 500, x: 250, y: 435 },
+                bounds: { height: 250, width: 500, x: 250, y: 375 },
                 defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
                 id: '1',
               },
@@ -446,7 +437,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           options: {
             texts: [
               {
-                bounds: { height: 130, width: 500, x: 250, y: 435 },
+                bounds: { height: 240, width: 500, x: 250, y: 380 },
                 defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
                 id: '1',
               },
@@ -468,7 +459,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       holes: [{ defaults: DEFAULT_HOLE, id: '1', startPositionRef: 'topCenter' }],
       texts: [
         {
-          bounds: { height: 140, width: 520, x: 240, y: 430 },
+          bounds: { height: 280, width: 520, x: 240, y: 360 },
           defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
           id: '1',
         },
@@ -480,6 +471,15 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
         },
         {
           key: 'quad_2',
+          options: {
+            texts: [
+              {
+                bounds: { height: 280, width: 520, x: 240, y: 360 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
           svgContent: QUAD_2,
         },
         {
