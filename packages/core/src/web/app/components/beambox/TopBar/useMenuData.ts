@@ -239,8 +239,18 @@ const useMenuData = (email?: string): MenuNode[] => {
         ? [
             {
               children: [
-                { device, id: 'UPLOAD_CALIBRATION_DATA', label: menuCms.upload_data, type: 'item' as const },
-                { device, id: 'DOWNLOAD_CALIBRATION_DATA', label: menuCms.download_data, type: 'item' as const },
+                {
+                  device,
+                  id: 'IMPORT_CALIBRATION_DATA',
+                  label: menuCms.import_calibration_data,
+                  type: 'item' as const,
+                },
+                {
+                  device,
+                  id: 'EXPORT_CALIBRATION_DATA',
+                  label: menuCms.export_calibration_data,
+                  type: 'item' as const,
+                },
               ],
               label: menuCms.camera_calibration_data,
               type: 'submenu' as const,

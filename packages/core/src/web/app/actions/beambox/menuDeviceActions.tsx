@@ -19,7 +19,7 @@ import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constan
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { Mode } from '@core/app/constants/monitor-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
-import { downloadCameraData, uploadCameraData } from '@core/helpers/device/camera-data-backup';
+import { backUpCalibrationData } from '@core/helpers/device/camera/backUpCalibrationData';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import checkFirmware from '@core/helpers/device/updateFirmware/checkFirmware';
 import firmwareUpdater from '@core/helpers/device/updateFirmware/firmwareUpdater';
@@ -164,32 +164,6 @@ const getLog = async (device: IDeviceInfo, log: string) => {
           message: msg,
           type: AlertConstants.SHOW_POPUP_INFO,
         });
-      }
-    }
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-const backUpCalibrationData = async (device: IDeviceInfo, type: 'download' | 'upload') => {
-  const vc = VersionChecker(device.version);
-
-  if (!vc.meetRequirement('ADOR_STATIC_FILE_ENTRY')) {
-    Alert.popUpError({
-      message: 'tPlease update firmware.',
-    });
-
-    return;
-  }
-
-  try {
-    const res = await DeviceMaster.select(device);
-
-    if (res.success) {
-      if (type === 'download') {
-        downloadCameraData(device.name);
-      } else {
-        uploadCameraData();
       }
     }
   } catch (e) {
@@ -359,8 +333,11 @@ export default {
       );
     }
   },
-  DOWNLOAD_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
+  EXPORT_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
     backUpCalibrationData(device, 'download');
+  },
+  IMPORT_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
+    backUpCalibrationData(device, 'upload');
   },
   LOG_CAMERA: (device: IDeviceInfo): void => {
     getLog(device, 'fluxcamerad.log');
@@ -519,9 +496,6 @@ export default {
     if (await checkDeviceStatus(device)) {
       showUploadFirmwareDialog(device, 'headboard');
     }
-  },
-  UPLOAD_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
-    backUpCalibrationData(device, 'upload');
   },
   Z_AXIS_ADJUSTMENT: async (device: IDeviceInfo): Promise<void> => {
     showZAxisAdjustment(device);

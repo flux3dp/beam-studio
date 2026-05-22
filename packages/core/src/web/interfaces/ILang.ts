@@ -1775,6 +1775,8 @@ export interface ILang {
     };
     camera: {
       abort_preview: string;
+      calibration_data_missing: string;
+      calibration_data_missing_message: string;
       calibration_wide_angle_camera_first: string;
       camera_cable_unstable: string;
       continue_preview: string;
@@ -2385,7 +2387,6 @@ export interface ILang {
       disassemble_use: string;
       document_setting: string;
       document_setting_short: string;
-      download_data: string;
       download_log: string;
       download_log_canceled: string;
       download_log_error: string;
@@ -2393,6 +2394,7 @@ export interface ILang {
       edit: string;
       example_files: string;
       export_BVG: string;
+      export_calibration_data: string;
       export_flux_task: string;
       export_JPG: string;
       export_PNG: string;
@@ -2422,6 +2424,7 @@ export interface ILang {
       import_beambox_2_focus_probe: string;
       import_beamo_2_laser_example: string;
       import_beamo_2_printing_example: string;
+      import_calibration_data: string;
       import_hello_beambox: string;
       import_hello_beamo: string;
       import_hexa_example: string;
@@ -2517,7 +2520,6 @@ export interface ILang {
       update_machine: string;
       update_mainboard: string;
       update_printer_board: string;
-      upload_data: string;
       using_beam_studio_api: string;
       view: string;
       window: string;

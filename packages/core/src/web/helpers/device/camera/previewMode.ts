@@ -1,8 +1,8 @@
-import alertCaller from '@core/app/actions/alert-caller';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import { getWideAngleCameraData } from '@core/app/actions/camera/preview-helper/getWideAngleCameraData';
+import handlePreviewSetupError from '@core/app/actions/camera/preview-helper/handlePreviewSetupError';
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
@@ -12,7 +12,6 @@ import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
 import deviceMaster from '@core/helpers/device-master';
-import i18n from '@core/helpers/i18n';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -133,8 +132,6 @@ export const setupPreviewMode = async ({
     return;
   }
 
-  const t = i18n.lang.topbar;
-
   try {
     await previewModeController.start(device!);
 
@@ -163,18 +160,7 @@ export const setupPreviewMode = async ({
     callback?.();
   } catch (error) {
     console.error(error);
-
-    if (error instanceof Error) {
-      if (error.message && error.message.startsWith('Camera WS')) {
-        alertCaller.popUpError({
-          message: `${t.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
-        });
-      } else {
-        alertCaller.popUpError({
-          message: `${t.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
-        });
-      }
-    }
+    handlePreviewSetupError(device!, error);
 
     // eslint-disable-next-line hooks/rules-of-hooks
     FnWrapper.useSelectTool();
