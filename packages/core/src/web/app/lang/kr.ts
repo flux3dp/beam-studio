@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: '그래도 올바른 패턴을 찾지 못하면, 작업물이 명확히 인식 가능하고 작업 영역이 깨끗한지 확인하세요.',
     title: '자동 맞춤',
     use_original_image: '원본 이미지 사용',
+    warning_bg_removal: '이 작업은 "배경 제거" 기능을 실행하며, 0.02 Credit이 사용됩니다. 계속하시겠습니까?',
+    warning_retake_preview: '이 작업은 부분 재촬영입니다. 새로운 이미지와 배경이 추가됩니다. 계속하시겠습니까?',
   },
   autosave: {
     open_settings: '설정 열기',

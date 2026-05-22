@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Als het nog steeds niet lukt om het juiste patroon te vinden, zorg er dan voor dat uw werkstuk duidelijk herkenbaar is en dat de werkruimte vrij is van vuil.',
     title: 'Auto Aanpassen',
     use_original_image: 'Gebruik originele afbeelding',
+    warning_bg_removal: 'Deze bewerking voert de functie "Achtergrond verwijderen" uit, die 0,02 Credit verbruikt. Wilt u doorgaan?',
+    warning_retake_preview: 'Deze bewerking is een gedeeltelijke herneming. Nieuwe afbeeldingen en achtergrond worden toegevoegd. Wilt u doorgaan?',
   },
   autosave: {
     open_settings: 'Instellingen openen',

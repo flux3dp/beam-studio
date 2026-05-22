@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'それでも正しいパターンが見つからない場合は、作業対象物がはっきりと認識できる状態であること、および作業エリアがゴミや汚れがない状態であることを確認してください。',
     title: '自動フィット',
     use_original_image: '元の画像を使用',
+    warning_bg_removal: 'この操作は「背景を削除」機能を実行し、0.02 Creditを使用します。続行しますか？',
+    warning_retake_preview: 'この操作は部分的な再撮影です。新しい画像と背景が追加されます。続行しますか？',
   },
   autosave: {
     open_settings: '設定を開く',

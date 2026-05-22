@@ -1,17 +1,37 @@
+import { match } from 'ts-pattern';
+
+import alertCaller from '@core/app/actions/alert-caller';
+import Constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import progressCaller from '@core/app/actions/progress-caller';
+import alertConstants from '@core/app/constants/alert-constants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { bb2PerspectiveGrid, bm2PerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
 import { setCameraPreviewState, useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import alertConfig from '@core/helpers/api/alert-config';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import i18n from '@core/helpers/i18n';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
-import { setDataCache } from './dataCache';
+import { dataCache, setDataCache } from './dataCache';
 
-export const supportedModels: ReadonlySet<WorkAreaModel> = new Set(['fbb2', 'fhx2rf', 'fbm2'] as const);
+export const getRegionPreviewSizePx = (): null | { height: number; width: number } => {
+  const { workarea } = useDocumentStore.getState();
+  const grid = match(workarea)
+    .with('fbb2', 'fhx2rf', () => bb2PerspectiveGrid)
+    .with('fbm2', () => bm2PerspectiveGrid)
+    .otherwise(() => null);
+
+  if (!grid) return null;
+
+  return {
+    height: (grid.y[1] - grid.y[0]) * Constant.dpmm,
+    width: (grid.x[1] - grid.x[0]) * Constant.dpmm,
+  };
+};
 
 const regionModes = [PreviewMode.PRECISE_REGION, PreviewMode.REGION] as const;
 
@@ -42,11 +62,39 @@ const ensurePreviewMode = async (): Promise<boolean> => {
 
 const retakeContourPreview = async (
   contours: AutoFitContour[],
+  isBackgroundRemoved = false,
 ): Promise<null | { data: AutoFitContour[][]; imageUrl: string }> => {
+  if (!alertConfig.read('skip_auto_fit_retake_preview_warning')) {
+    const res = await new Promise<boolean>((resolve) => {
+      alertCaller.popUp({
+        buttonType: alertConstants.CONFIRM_CANCEL,
+        checkbox: {
+          callbacks: [
+            () => {
+              alertConfig.write('skip_auto_fit_retake_preview_warning', true);
+              resolve(true);
+            },
+            () => resolve(false),
+          ],
+          text: i18n.lang.alert.dont_show_again,
+        },
+        message: i18n.lang.auto_fit.warning_retake_preview,
+        onCancel: () => resolve(false),
+        onConfirm: () => resolve(true),
+      });
+    });
+
+    if (!res) return null;
+  }
+
   progressCaller.openNonstopProgress({ id: 'auto-fit-retake', message: i18n.lang.general.processing });
 
   try {
     if (!(await ensurePreviewMode())) return null;
+
+    if (isBackgroundRemoved && dataCache.removedBgImageUrl) {
+      await previewModeBackgroundDrawer.setCanvasUrl(dataCache.removedBgImageUrl, { loadToCanvas: true });
+    }
 
     const sorted = [...contours].sort((a, b) => a.center[0] - b.center[0]);
 

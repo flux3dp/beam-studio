@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Nếu vẫn không tìm được mẫu chính xác, hãy đảm bảo rằng vật liệu của bạn có thể nhận dạng rõ ràng và khu vực làm việc sạch sẽ, không có mảnh vụn.',
     title: 'Tự Động Vừa Khít',
     use_original_image: 'Sử dụng ảnh gốc',
+    warning_bg_removal: 'Thao tác này sẽ chạy tính năng "Xóa nền", sẽ sử dụng 0,02 Credit. Bạn có muốn tiếp tục không?',
+    warning_retake_preview: 'Thao tác này là chụp lại một phần. Hình ảnh và nền mới sẽ được thêm vào. Bạn có muốn tiếp tục không?',
   },
   autosave: {
     open_settings: 'Mở cài đặt',

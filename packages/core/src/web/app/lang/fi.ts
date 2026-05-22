@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Jos oikean kuvion löytäminen edelleen epäonnistuu, varmista, että työkappaleesi on selvästi tunnistettavissa ja että työalue on puhdas roskista.',
     title: 'Automaattinen Sovitus',
     use_original_image: 'Käytä alkuperäistä kuvaa',
+    warning_bg_removal: 'Tämä toiminto suorittaa "Poista tausta" -ominaisuuden, joka käyttää 0,02 Creditiä. Haluatko jatkaa?',
+    warning_retake_preview: 'Tämä toiminto on osittainen uudelleenkuvaus. Uudet kuvat ja tausta lisätään. Haluatko jatkaa?',
   },
   autosave: {
     open_settings: 'Avaa asetukset',

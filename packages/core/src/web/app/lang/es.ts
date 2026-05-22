@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Si sigue sin encontrar el patrón correcto, asegúrese de que el trabajo sea claramente reconocible y que el área de trabajo esté limpio de residuos.',
     title: 'Ajuste automático',
     use_original_image: 'Usar imagen original',
+    warning_bg_removal: 'Esta operación ejecutará la función "Eliminar fondo", que utilizará 0,02 Credit. ¿Desea continuar?',
+    warning_retake_preview: 'Esta operación es una recaptura parcial. Se añadirán nuevas imágenes y fondo. ¿Desea continuar?',
   },
   autosave: {
     open_settings: 'Abrir configuración',

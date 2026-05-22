@@ -287,7 +287,10 @@ const traceImage = async (img = getSelectedElem()): Promise<void> => {
  * Handles auth check, credit check, and warning dialog internally.
  * @returns The cleaned PNG blob on success, null on cancel/error.
  */
-export const removeImageBackground = async (imageBlob: Blob): Promise<Blob | null> => {
+export const removeImageBackground = async (
+  imageBlob: Blob,
+  { showAlert = true }: { showAlert?: boolean } = {},
+): Promise<Blob | null> => {
   const user = getCurrentUser();
 
   if (!user) {
@@ -305,7 +308,7 @@ export const removeImageBackground = async (imageBlob: Blob): Promise<Blob | nul
     return null;
   }
 
-  if (!alertConfig.read('skip_bg_removal_warning')) {
+  if (showAlert && !alertConfig.read('skip_bg_removal_warning')) {
     const res = await new Promise<boolean>((resolve) => {
       alertCaller.popUp({
         buttonType: alertConstants.CONFIRM_CANCEL,

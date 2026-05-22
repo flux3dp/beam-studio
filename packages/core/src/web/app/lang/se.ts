@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Om det fortfarande inte går att hitta rätt mönster, se till att ditt arbetsstycke är tydligt igenkännbart och att arbetsområdet är rent från skräp.',
     title: 'Auto Fit',
     use_original_image: 'Använd originalbild',
+    warning_bg_removal: 'Denna åtgärd kommer att köra funktionen "Ta bort bakgrund", som använder 0,02 Credit. Vill du fortsätta?',
+    warning_retake_preview: 'Denna åtgärd är en delvis omtagning. Nya bilder och bakgrund kommer att läggas till. Vill du fortsätta?',
   },
   autosave: {
     open_settings: 'Öppna inställningar',

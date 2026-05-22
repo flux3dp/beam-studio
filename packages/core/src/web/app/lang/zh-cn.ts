@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: '如果仍然无法找到正确的图案，请确保您的工件清晰可识别，并且工作区域干净无杂物。',
     title: '自动适配',
     use_original_image: '使用原始图片',
+    warning_bg_removal: '本次操作将运行「去背」功能，将使用 0.02 Credit，是否继续？',
+    warning_retake_preview: '本次操作为部分重新拍摄。将有新影像、背景加入，是否继续？',
   },
   autosave: {
     open_settings: '打开设置',

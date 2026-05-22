@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: '如果仍然無法找到正確的形狀，請確保您的工件清晰可辨，且工作區域乾淨無雜物。',
     title: '自動對位',
     use_original_image: '使用原始圖片',
+    warning_bg_removal: '本次操作將運行「去背」功能，將使用 0.02 Credit，是否繼續？',
+    warning_retake_preview: '本次操作為部分重新拍攝。將有新影像、背景加入，是否繼續？',
   },
   autosave: {
     open_settings: '開啟設定',

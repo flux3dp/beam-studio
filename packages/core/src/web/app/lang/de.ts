@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Wenn weiterhin kein korrektes Muster gefunden wird, stellen Sie sicher, dass Ihr Werkstück klar erkennbar ist und der Arbeitsbereich frei von Ablagerungen ist.',
     title: 'Automatische Anpassung',
     use_original_image: 'Originalbild verwenden',
+    warning_bg_removal: 'Dieser Vorgang führt die Funktion "Hintergrund entfernen" aus, die 0,02 Credit verbraucht. Möchten Sie fortfahren?',
+    warning_retake_preview: 'Dieser Vorgang ist eine teilweise Neuaufnahme. Neue Bilder und Hintergründe werden hinzugefügt. Möchten Sie fortfahren?',
   },
   autosave: {
     open_settings: 'Einstellungen öffnen',

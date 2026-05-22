@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Se ainda assim não encontrar o padrão correto, certifique-se de que sua peça de trabalho é claramente reconhecível e que a área de trabalho está livre de detritos.',
     title: 'Ajuste Automático',
     use_original_image: 'Usar imagem original',
+    warning_bg_removal: 'Esta operação executará a função "Remover fundo", que utilizará 0,02 Credit. Deseja continuar?',
+    warning_retake_preview: 'Esta operação é uma recaptura parcial. Novas imagens e fundo serão adicionados. Deseja continuar?',
   },
   autosave: {
     open_settings: 'Abrir configurações',

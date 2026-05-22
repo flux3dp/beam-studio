@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Hvis det fortsatt ikke lykkes å finne riktig mønster, sørg for at arbeidsstykket ditt er tydelig gjenkjennelig og at arbeidsområdet er fritt for rusk.',
     title: 'Automatisk Tilpasning',
     use_original_image: 'Bruk originalbilde',
+    warning_bg_removal: 'Denne operasjonen vil kjøre funksjonen "Fjern bakgrunn", som bruker 0,02 Credit. Vil du fortsette?',
+    warning_retake_preview: 'Denne operasjonen er en delvis ny opptak. Nye bilder og bakgrunn vil bli lagt til. Vil du fortsette?',
   },
   autosave: {
     open_settings: 'Åpne innstillinger',

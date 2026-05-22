@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Si cela ne parvient toujours pas à trouver le motif correct, assurez-vous que votre pièce est clairement reconnaissable et que la zone de travail est exempte de débris.',
     title: 'Ajustement Automatique',
     use_original_image: "Utiliser l'image originale",
+    warning_bg_removal: 'Cette opération exécutera la fonction « Supprimer l\'arrière-plan », qui utilisera 0,02 Credit. Voulez-vous continuer ?',
+    warning_retake_preview: 'Cette opération est une reprise partielle. De nouvelles images et un nouvel arrière-plan seront ajoutés. Voulez-vous continuer ?',
   },
   autosave: {
     open_settings: 'Ouvrir les paramètres',

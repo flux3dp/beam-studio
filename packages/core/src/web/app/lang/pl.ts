@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Jeśli nadal nie uda się znaleźć odpowiedniego wzoru, upewnij się, że twój przedmiot jest wyraźnie rozpoznawalny, a obszar roboczy jest czysty i wolny od zanieczyszczeń.',
     title: 'Dopasowanie Automatyczne',
     use_original_image: 'Użyj oryginalnego obrazu',
+    warning_bg_removal: 'Ta operacja uruchomi funkcję "Usuń tło", która zużyje 0,02 Credit. Czy chcesz kontynuować?',
+    warning_retake_preview: 'Ta operacja to częściowe ponowne przechwycenie. Zostaną dodane nowe obrazy i tło. Czy chcesz kontynuować?',
   },
   autosave: {
     open_settings: 'Otwórz ustawienia',

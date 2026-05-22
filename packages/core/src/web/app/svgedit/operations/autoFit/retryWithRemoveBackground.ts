@@ -1,5 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import alertConfig from '@core/helpers/api/alert-config';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import i18n from '@core/helpers/i18n';
 import { removeImageBackground } from '@core/helpers/image-edit';
@@ -16,11 +18,34 @@ const retryWithRemoveBackground = async (
   }
 
   try {
+    if (!alertConfig.read('skip_auto_fit_bg_removal_warning')) {
+      const res = await new Promise<boolean>((resolve) => {
+        alertCaller.popUp({
+          buttonType: alertConstants.CONFIRM_CANCEL,
+          checkbox: {
+            callbacks: [
+              () => {
+                alertConfig.write('skip_auto_fit_bg_removal_warning', true);
+                resolve(true);
+              },
+              () => resolve(false),
+            ],
+            text: i18n.lang.alert.dont_show_again,
+          },
+          message: i18n.lang.auto_fit.warning_bg_removal,
+          onCancel: () => resolve(false),
+          onConfirm: () => resolve(true),
+        });
+      });
+
+      if (!res) return null;
+    }
+
     progressCaller.openNonstopProgress({ id: 'auto-fit-retry', message: i18n.lang.general.processing });
 
     const previewResp = await fetch(previewBackgroundUrl);
     const previewBlob = await previewResp.blob();
-    const cleanedBlob = await removeImageBackground(previewBlob);
+    const cleanedBlob = await removeImageBackground(previewBlob, { showAlert: false });
 
     if (!cleanedBlob) return null;
 

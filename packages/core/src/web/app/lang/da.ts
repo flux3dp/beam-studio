@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Hvis det stadig ikke lykkes at finde det korrekte mønster, skal du sikre, at dit emne er tydeligt genkendeligt, og arbejdsområdet er rent for snavs.',
     title: 'Auto Fit',
     use_original_image: 'Brug originalt billede',
+    warning_bg_removal: 'Denne handling vil køre funktionen "Fjern baggrund", som bruger 0,02 Credit. Vil du fortsætte?',
+    warning_retake_preview: 'Denne handling er en delvis genoptagelse. Nye billeder og baggrund vil blive tilføjet. Vil du fortsætte?',
   },
   autosave: {
     open_settings: 'Åbn indstillinger',

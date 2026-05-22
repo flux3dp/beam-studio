@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: "Si encara no troba el patró correcte, assegura't que la teva peça de treball sigui clarament recognoscible i que l'àrea de treball estigui lliure de residus.",
     title: 'Ajust automàtic',
     use_original_image: 'Utilitza la imatge original',
+    warning_bg_removal: 'Aquesta operació executarà la funció "Eliminar fons", que utilitzarà 0,02 Credit. Voleu continuar?',
+    warning_retake_preview: "Aquesta operació és una recaptura parcial. S'afegiran noves imatges i fons. Voleu continuar?",
   },
   autosave: {
     open_settings: 'Obre la configuració',

@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Jika masih gagal menemui corak yang betul, pastikan bahan kerja anda dapat dikenali dengan jelas dan kawasan kerja bersih daripada serpihan.',
     title: 'Muat Auto',
     use_original_image: 'Gunakan imej asal',
+    warning_bg_removal: 'Operasi ini akan menjalankan ciri "Alih Keluar Latar Belakang", yang akan menggunakan 0.02 Credit. Adakah anda ingin meneruskan?',
+    warning_retake_preview: 'Operasi ini adalah pengambilan semula separa. Imej dan latar belakang baharu akan ditambah. Adakah anda ingin meneruskan?',
   },
   autosave: {
     open_settings: 'Buka Tetapan',

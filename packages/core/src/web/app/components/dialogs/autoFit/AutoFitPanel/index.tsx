@@ -1,10 +1,9 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import {
+  getRegionPreviewSizePx,
   retakeContourPreview,
-  retakeSupportedModels,
   retryWithRemoveBackground,
 } from '@core/app/svgedit/operations/autoFit';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
@@ -41,8 +40,6 @@ const AutoFitPanel = ({
 }: Props): React.JSX.Element => {
   useNewShortcutsScope();
 
-  const workarea = useDocumentStore((s) => s.workarea);
-  const supportsRetake = retakeSupportedModels.has(workarea);
   const [currentData, setCurrentData] = useState(initialData);
   const [currentImageUrl, setCurrentImageUrl] = useState(initialImageUrl);
   const [isBackgroundRemoved, setIsBackgroundRemoved] = useState(false);
@@ -105,12 +102,20 @@ const AutoFitPanel = ({
     }
   }, [isBackgroundRemoved, isSplicingImg]);
 
+  const canRetake = useMemo(() => {
+    const previewSize = getRegionPreviewSizePx();
+
+    if (!previewSize) return false;
+
+    return !currentData[focusedIndex].some(({ bbox }) => bbox[2] > previewSize.width || bbox[3] > previewSize.height);
+  }, [currentData, focusedIndex]);
+
   const handleRetake = useCallback(async () => {
     if (isRetrying.current) return;
 
     isRetrying.current = true;
     try {
-      const result = await retakeContourPreview(currentData[focusedIndex]);
+      const result = await retakeContourPreview(currentData[focusedIndex], isBackgroundRemoved);
 
       if (result) {
         baseData.current = result.data;
@@ -123,7 +128,7 @@ const AutoFitPanel = ({
     } finally {
       isRetrying.current = false;
     }
-  }, [currentData, focusedIndex]);
+  }, [currentData, focusedIndex, isBackgroundRemoved]);
 
   return (
     <FullWindowPanel
@@ -137,7 +142,7 @@ const AutoFitPanel = ({
             <Info
               element={element}
               isBackgroundRemoved={isBackgroundRemoved}
-              onRetake={supportsRetake ? handleRetake : undefined}
+              onRetake={canRetake ? handleRetake : undefined}
               onToggleRemoveBackground={handleToggleRemoveBackground}
             />
           </Sider>

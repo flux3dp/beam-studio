@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'If it still fails to find the correct pattern, please ensure your workpiece is clearly recognizable and the work area is clean of debris.',
     title: 'Auto Fit',
     use_original_image: 'Use Original Image',
+    warning_bg_removal: 'This operation will run the "Remove Background" feature, which will use 0.02 Credit. Do you want to continue?',
+    warning_retake_preview: 'This operation is a partial retake. New images and background will be added. Do you want to continue?',
   },
   autosave: {
     open_settings: 'Open Settings',

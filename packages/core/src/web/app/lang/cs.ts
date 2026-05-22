@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Pokud se stále nedaří najít správný vzor, ujistěte se, že váš předmět je jasně rozpoznatelný a pracovní plocha je čistá od nečistot.',
     title: 'Automatické přizpůsobení',
     use_original_image: 'Použít původní obrázek',
+    warning_bg_removal: 'Tato operace spustí funkci "Odstranit pozadí", která spotřebuje 0,02 Credit. Chcete pokračovat?',
+    warning_retake_preview: 'Tato operace je částečné opětovné snímání. Budou přidány nové obrázky a pozadí. Chcete pokračovat?',
   },
   autosave: {
     open_settings: 'Otevřít nastavení',

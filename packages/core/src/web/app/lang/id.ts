@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: 'Jika masih gagal menemukan pola yang benar, pastikan benda kerja Anda dapat dikenali dengan jelas dan area kerja bersih dari kotoran.',
     title: 'Pas Otomatis',
     use_original_image: 'Gunakan gambar asli',
+    warning_bg_removal: 'Operasi ini akan menjalankan fitur "Hapus Latar Belakang", yang akan menggunakan 0,02 Credit. Apakah Anda ingin melanjutkan?',
+    warning_retake_preview: 'Operasi ini adalah pengambilan ulang sebagian. Gambar dan latar belakang baru akan ditambahkan. Apakah Anda ingin melanjutkan?',
   },
   autosave: {
     open_settings: 'Buka Pengaturan',

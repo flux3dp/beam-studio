@@ -52,6 +52,8 @@ export interface ILang {
     step3: string;
     title: string;
     use_original_image: string;
+    warning_bg_removal: string;
+    warning_retake_preview: string;
   };
   autosave: {
     open_settings: string;

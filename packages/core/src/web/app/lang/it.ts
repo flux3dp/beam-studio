@@ -52,6 +52,8 @@ const lang: ILang = {
     step3: "Se non riesce ancora a trovare il modello corretto, assicurati che il tuo pezzo sia chiaramente riconoscibile e che l'area di lavoro sia pulita da detriti.",
     title: 'Adattamento Automatico',
     use_original_image: 'Usa immagine originale',
+    warning_bg_removal: 'Questa operazione eseguirà la funzione "Rimuovi sfondo", che utilizzerà 0,02 Credit. Vuoi continuare?',
+    warning_retake_preview: 'Questa operazione è una riacquisizione parziale. Verranno aggiunte nuove immagini e sfondi. Vuoi continuare?',
   },
   autosave: {
     open_settings: 'Apri impostazioni',
