@@ -73,7 +73,7 @@ jest.mock('paper', () => {
   return { __esModule: true, default: mod, ...mod };
 });
 
-import { applyHoles, collectPathItems, importBasePath } from './buildShape';
+import { applyHoles, collectPathItems, importBasePath, resolveHoleValues } from './buildShape';
 
 describe('collectPathItems', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -333,5 +333,129 @@ describe('applyHoles', () => {
 
     expect(mockMainPath.getNormalAt).toHaveBeenCalled();
     expect(mockMainPath.getPointAt).toHaveBeenCalled();
+  });
+
+  it('should apply positionOffset to shift the baseline position', () => {
+    const offsetPath = setupMockOffsetPath();
+
+    mockSubtract.mockReturnValueOnce(new MockPath());
+
+    const basePath = new MockPath() as any;
+    const holeDefs = [{ id: 'h1', positionOffset: 25, startPositionRef: 'topCenter' }] as any[];
+
+    applyHoles(basePath, createHoleState({ position: 0, type: 'punch' }), holeDefs);
+
+    // position=0, positionOffset=25 → normalizedPosition = (0/100 + 25/100) % 1 = 0.25
+    // startOffset=0, length=100 → pathOffset = (0 + 0.25 * 100) % 100 = 25
+    expect(offsetPath.getPointAt).toHaveBeenCalledWith(25);
+  });
+
+  it('should wrap positionOffset past 100%', () => {
+    const offsetPath = setupMockOffsetPath();
+
+    mockSubtract.mockReturnValueOnce(new MockPath());
+
+    const basePath = new MockPath() as any;
+    const holeDefs = [{ id: 'h1', positionOffset: 75, startPositionRef: 'topCenter' }] as any[];
+
+    applyHoles(basePath, createHoleState({ position: 50, type: 'punch' }), holeDefs);
+
+    // position=50, positionOffset=75 → normalizedPosition = (50/100 + 75/100) % 1 = 1.25 % 1 = 0.25
+    // startOffset=0, length=100 → pathOffset = (0 + 0.25 * 100) % 100 = 25
+    expect(offsetPath.getPointAt).toHaveBeenCalledWith(25);
+  });
+
+  it('should apply baseOffset to shift the hole distance from the path', () => {
+    setupMockOffsetPath();
+    mockSubtract.mockReturnValueOnce(new MockPath());
+
+    const basePath = new MockPath() as any;
+    const holeDefs = [{ baseOffset: 1, id: 'h1', startPositionRef: 'topCenter' }] as any[];
+
+    applyHoles(basePath, createHoleState({ offset: 2, type: 'punch' }), holeDefs);
+
+    // PUNCH_HOLE_OFFSET = -5, offset = 2, baseOffset = 1, sizeRatio = 1, PX_TO_MM_RATIO = 10
+    // holeOffsetDist = (2 + 1 + (-5)) * (10 / 1) = -20
+    expect(mockOffset).toHaveBeenCalledWith(basePath, -20, expect.objectContaining({ insert: false }));
+  });
+
+  it('should use default values for hidden fields via fieldVisibility', () => {
+    setupMockOffsetPath();
+    mockSubtract.mockReturnValueOnce(new MockPath());
+
+    const basePath = new MockPath() as any;
+    const holeDefs = [
+      {
+        defaults: { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'ring' },
+        fieldVisibility: { position: ['ring'] },
+        id: 'h1',
+        startPositionRef: 'topCenter',
+      },
+    ] as any[];
+
+    // User set position=50, but type=punch so position should resolve to default (0)
+    applyHoles(basePath, createHoleState({ position: 50, type: 'punch' }), holeDefs);
+
+    // position resolves to default 0, positionOffset undefined → normalizedPosition = 0
+    // startOffset=0, length=100 → pathOffset = 0
+    expect(mockOffset).toHaveBeenCalled();
+  });
+});
+
+describe('resolveHoleValues', () => {
+  const defaults = { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'ring' as const };
+
+  it('should return original values when no fieldVisibility is defined', () => {
+    const hole = { ...defaults, position: 50 };
+    const holeDef = { defaults, id: 'h1', startPositionRef: 'topCenter' } as any;
+
+    const result = resolveHoleValues(hole, holeDef);
+
+    expect(result).toBe(hole);
+  });
+
+  it('should substitute defaults for fields hidden by current type', () => {
+    const hole = { ...defaults, position: 50, type: 'punch' as const };
+    const holeDef = {
+      defaults,
+      fieldVisibility: { position: ['ring'] },
+      id: 'h1',
+      startPositionRef: 'topCenter',
+    } as any;
+
+    const result = resolveHoleValues(hole, holeDef);
+
+    expect(result.position).toBe(0); // default
+    expect(result.type).toBe('punch'); // unchanged
+  });
+
+  it('should keep field values when current type is in allowed types', () => {
+    const hole = { ...defaults, position: 50, type: 'ring' as const };
+    const holeDef = {
+      defaults,
+      fieldVisibility: { position: ['ring'] },
+      id: 'h1',
+      startPositionRef: 'topCenter',
+    } as any;
+
+    const result = resolveHoleValues(hole, holeDef);
+
+    expect(result.position).toBe(50);
+  });
+
+  it('should handle multiple fields in fieldVisibility', () => {
+    const hole = { ...defaults, offset: 5, position: 50, type: 'punch' as const };
+    const holeDef = {
+      defaults,
+      fieldVisibility: { offset: ['ring'], position: ['ring'] },
+      id: 'h1',
+      startPositionRef: 'topCenter',
+    } as any;
+
+    const result = resolveHoleValues(hole, holeDef);
+
+    expect(result.position).toBe(0); // default
+    expect(result.offset).toBe(0); // default
+    expect(result.diameter).toBe(3); // unchanged (not in fieldVisibility)
   });
 });

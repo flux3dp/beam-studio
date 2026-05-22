@@ -1665,6 +1665,8 @@ Machines > ‘Promark Name’ > Promark Settings`,
     },
     types: {
       capsule: 'Capsule Style',
+      cat: 'Cat Style',
+      dog: 'Dog Style',
       oval: 'Oval Style',
       polygonal: 'Polygonal Style',
       quadrilateral: 'Quadrilateral Style',

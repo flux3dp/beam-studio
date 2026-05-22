@@ -1665,6 +1665,8 @@ const lang: ILang = {
     },
     types: {
       capsule: '膠囊形',
+      cat: '貓咪造型',
+      dog: '狗狗造型',
       oval: '橢圓形造型',
       polygonal: '多邊形造型',
       quadrilateral: '四邊形造型',

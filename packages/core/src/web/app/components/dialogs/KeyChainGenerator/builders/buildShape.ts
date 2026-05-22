@@ -2,7 +2,7 @@ import paper from 'paper';
 import { PaperOffset } from 'paperjs-offset';
 
 import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from '../constants';
-import type { HoleOptionDef, KeyChainState } from '../types';
+import type { HoleOptionDef, HoleOptionValues, KeyChainState } from '../types';
 
 /**
  * Recursively collects all Paper.js Path/CompoundPath items from the imported SVG.
@@ -77,6 +77,25 @@ const getStartPoint = (path: paper.Path, startPositionRef: HoleOptionDef['startP
 };
 
 /**
+ * Resolves hole option values by substituting defaults for fields hidden by fieldVisibility.
+ */
+export const resolveHoleValues = (hole: HoleOptionValues, holeDef: HoleOptionDef): HoleOptionValues => {
+  const { fieldVisibility } = holeDef;
+
+  if (!fieldVisibility) return hole;
+
+  const resolved = { ...hole };
+
+  for (const [field, allowedTypes] of Object.entries(fieldVisibility)) {
+    if (!allowedTypes.includes(hole.type)) {
+      (resolved as any)[field as keyof HoleOptionValues] = holeDef.defaults[field as keyof HoleOptionValues];
+    }
+  }
+
+  return resolved;
+};
+
+/**
  * Applies all hole boolean operations to the base path in batch:
  * 1. Compute all hole positions on the original base path
  * 2. Unite all outer circles (hole + thickness) with base
@@ -97,12 +116,14 @@ export const applyHoles = (
 
     if (!hole?.enabled) continue;
 
-    const isPunch = hole.type === 'punch';
+    const resolved = resolveHoleValues(hole, holeDef);
+    const isPunch = resolved.type === 'punch';
     const mainPath =
       basePath instanceof paper.CompoundPath ? (basePath.children[0] as paper.Path) : (basePath as paper.Path);
-    const normalizedPosition = (hole.position % 100) / 100;
+    const positionOffset = (holeDef.positionOffset ?? 0) / 100;
+    const normalizedPosition = ((((resolved.position % 100) / 100 + positionOffset) % 1) + 1) % 1;
 
-    const holeOffsetDist = (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx;
+    const holeOffsetDist = (resolved.offset + (holeDef.baseOffset ?? 0) + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx;
     const offsetPath = PaperOffset.offset(mainPath, holeOffsetDist, { insert: false, join: 'round' });
     let center: paper.Point;
 
@@ -128,12 +149,12 @@ export const applyHoles = (
 
     if (!center) continue;
 
-    const innerRadius = (hole.diameter / 2) * mmToPx;
+    const innerRadius = (resolved.diameter / 2) * mmToPx;
 
     innerCircles.push(new paper.Path.Circle(center, innerRadius));
 
-    if (!isPunch && hole.thickness > 0) {
-      const outerRadius = (hole.diameter / 2 + hole.thickness) * mmToPx;
+    if (!isPunch && resolved.thickness > 0) {
+      const outerRadius = (resolved.diameter / 2 + resolved.thickness) * mmToPx;
 
       outerCircles.push(new paper.Path.Circle(center, outerRadius));
     }

@@ -1665,6 +1665,8 @@ const lang: ILang = {
     },
     types: {
       capsule: 'Kiểu viên nang',
+      cat: 'Kiểu mèo',
+      dog: 'Kiểu chó',
       oval: 'Kiểu hình bầu dục',
       polygonal: 'Kiểu đa giác',
       quadrilateral: 'Kiểu tứ giác',

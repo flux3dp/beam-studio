@@ -1665,6 +1665,8 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     },
     types: {
       capsule: 'Estil càpsula',
+      cat: 'Estil gat',
+      dog: 'Estil gos',
       oval: 'Estil oval',
       polygonal: 'Estil poligonal',
       quadrilateral: 'Estil quadrilàter',

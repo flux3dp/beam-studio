@@ -1665,6 +1665,8 @@ const lang: ILang = {
     },
     types: {
       capsule: 'Kapselityyli',
+      cat: 'Kissatyyli',
+      dog: 'Koiratyyli',
       oval: 'Soikea tyyli',
       polygonal: 'Monikulmio-tyyli',
       quadrilateral: 'Nelikulmio-tyyli',

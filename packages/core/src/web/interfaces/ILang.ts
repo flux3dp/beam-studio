@@ -1663,6 +1663,8 @@ export interface ILang {
     };
     types: {
       capsule: string;
+      cat: string;
+      dog: string;
       oval: string;
       polygonal: string;
       quadrilateral: string;

@@ -110,4 +110,57 @@ describe('HoleControl', () => {
     render(<HoleControl optionDef={defaultOptionDef} />);
     expect(mockUpdateState).not.toHaveBeenCalled();
   });
+
+  describe('fieldVisibility', () => {
+    it('should hide fields when fieldVisibility excludes current type', () => {
+      mockHoles['hole-top'] = { ...defaults, type: 'punch' };
+
+      const optionDef: HoleOptionDef = {
+        ...defaultOptionDef,
+        fieldVisibility: { offset: ['ring'], position: ['ring'] },
+      };
+
+      const { queryByTestId } = render(<HoleControl optionDef={optionDef} />);
+
+      expect(queryByTestId('slider-Position')).not.toBeInTheDocument();
+      expect(queryByTestId('slider-Offset')).not.toBeInTheDocument();
+      expect(queryByTestId('slider-Diameter')).toBeInTheDocument();
+    });
+
+    it('should show fields when fieldVisibility includes current type', () => {
+      mockHoles['hole-top'] = { ...defaults, type: 'ring' };
+
+      const optionDef: HoleOptionDef = {
+        ...defaultOptionDef,
+        fieldVisibility: { offset: ['ring'], position: ['ring'] },
+      };
+
+      const { getByTestId } = render(<HoleControl optionDef={optionDef} />);
+
+      expect(getByTestId('slider-Position')).toBeInTheDocument();
+      expect(getByTestId('slider-Offset')).toBeInTheDocument();
+    });
+
+    it('should show all fields when fieldVisibility is undefined', () => {
+      const { getByTestId } = render(<HoleControl optionDef={defaultOptionDef} />);
+
+      expect(getByTestId('slider-Diameter')).toBeInTheDocument();
+      expect(getByTestId('slider-Position')).toBeInTheDocument();
+      expect(getByTestId('slider-Offset')).toBeInTheDocument();
+      expect(getByTestId('slider-Thickness')).toBeInTheDocument();
+    });
+
+    it('should hide type select when fieldVisibility excludes current type', () => {
+      mockHoles['hole-top'] = { ...defaults, type: 'punch' };
+
+      const optionDef: HoleOptionDef = {
+        ...defaultOptionDef,
+        fieldVisibility: { type: ['ring'] },
+      };
+
+      const { queryByTestId } = render(<HoleControl optionDef={optionDef} />);
+
+      expect(queryByTestId('select')).not.toBeInTheDocument();
+    });
+  });
 });

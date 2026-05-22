@@ -1665,6 +1665,8 @@ const lang: ILang = {
     },
     types: {
       capsule: 'Style capsule',
+      cat: 'Style chat',
+      dog: 'Style chien',
       oval: 'Style ovale',
       polygonal: 'Style polygonal',
       quadrilateral: 'Style quadrilatère',

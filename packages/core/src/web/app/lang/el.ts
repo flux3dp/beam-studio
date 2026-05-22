@@ -1665,6 +1665,8 @@ const lang: ILang = {
     },
     types: {
       capsule: 'Στυλ κάψουλας',
+      cat: 'Στυλ γάτας',
+      dog: 'Στυλ σκύλου',
       oval: 'Οβάλ στυλ',
       polygonal: 'Πολυγωνικό στυλ',
       quadrilateral: 'Τετράπλευρο στυλ',

@@ -1665,6 +1665,8 @@ const lang: ILang = {
     },
     types: {
       capsule: 'Gaya Kapsul',
+      cat: 'Gaya Kucing',
+      dog: 'Gaya Anjing',
       oval: 'Gaya Bujur',
       polygonal: 'Gaya Poligon',
       quadrilateral: 'Gaya Segi Empat',
