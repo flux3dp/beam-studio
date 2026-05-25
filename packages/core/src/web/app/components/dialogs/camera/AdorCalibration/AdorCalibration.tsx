@@ -12,8 +12,10 @@ import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV2, FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
 
+import styles from '../Calibration.module.scss';
 import ChArUco from '../common/ChArUco';
 import CheckpointData from '../common/CheckpointData';
+import { downloadCalibrationFile } from '../common/downloadCalibrationFile';
 import Instruction from '../common/Instruction';
 import SolvePnP from '../common/SolvePnP';
 
@@ -26,13 +28,14 @@ import { getMaterialHeight, prepareToTakePicture, saveCheckPoint } from './utils
 const enum Step {
   CHECKPOINT_DATA = 0,
   CHECK_PICTURE = 1,
-  CALIBRATE = 2,
-  PUT_PAPER = 3,
-  SOLVE_PNP_INSTRUCTION_1 = 4,
-  SOLVE_PNP_1 = 5,
-  ELEVATED_CUT = 6,
-  SOLVE_PNP_2 = 7,
-  FINISH = 8,
+  PREPARE_CALIBRATION = 2,
+  CALIBRATE = 3,
+  PUT_PAPER = 4,
+  SOLVE_PNP_INSTRUCTION_1 = 5,
+  SOLVE_PNP_1 = 6,
+  ELEVATED_CUT = 7,
+  SOLVE_PNP_2 = 8,
+  FINISH = 9,
 }
 /* eslint-enable perfectionist/sort-enums */
 
@@ -48,7 +51,7 @@ const AdorCalibration = ({ factoryMode = false, isAdvanced = false, onClose }: P
   const calibratingParam = useRef<FisheyeCameraParametersV2Cali>({});
   const lang = useI18n();
   const tCali = lang.calibration;
-  const [step, setStep] = useState<Step>(isAdvanced ? Step.CALIBRATE : Step.CHECKPOINT_DATA);
+  const [step, setStep] = useState<Step>(isAdvanced ? Step.PREPARE_CALIBRATION : Step.CHECKPOINT_DATA);
   const onBack = useCallback(() => setStep((prev) => prev - 1), []);
   const onNext = useCallback(() => setStep((prev) => prev + 1), []);
   const updateParam = useCallback((param: FisheyeCameraParametersV2Cali) => {
@@ -83,19 +86,43 @@ const AdorCalibration = ({ factoryMode = false, isAdvanced = false, onClose }: P
         updateParam={updateParam}
       />
     ))
+    .with(Step.PREPARE_CALIBRATION, () => {
+      return (
+        // TODO: add animation
+        <Instruction
+          buttons={[
+            {
+              label: tCali.next,
+              onClick: onNext,
+              type: 'primary',
+            },
+          ]}
+          onClose={onClose}
+          steps={[tCali.put_charuco_bm2_1, tCali.put_charuco_bm2_2]}
+          title={tCali.put_charuco}
+        >
+          <div className={styles.link} onClick={() => downloadCalibrationFile('assets/charuco-15-10.pdf')}>
+            {tCali.download_calibration_pattern}
+          </div>
+        </Instruction>
+      );
+    })
     .with(Step.CALIBRATE, () => {
       if (isAdvanced) {
         return (
           <ChArUco
+            calibrationThresholds={{ average: 3, good: 2 }}
+            isVertical
             onClose={onClose}
             onNext={onNext}
             onPrev={onBack}
             steps={[
               { key: 'left', name: tCali.charuco_position_left },
+              { key: 'center', name: tCali.charuco_position_center },
               { key: 'right', name: tCali.charuco_position_right },
             ].map(({ key, name }) => ({
               // TODO: update images for ador calibration
-              imageUrl: `core-img/calibration/bm2-charuco-${key}.jpg`,
+              // imageUrl: `core-img/calibration/ador-charuco-${key}.jpg`,
               key,
               name,
             }))}

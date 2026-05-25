@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { fcodeV2Models, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { adorModels, fcodeV2Models, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { MenuItemKey } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -127,7 +127,7 @@ const useMenuData = (email?: string): MenuNode[] => {
     const isBb2 = model === 'fbb2';
     const isBeamo2 = model === 'fbm2';
     const isHexa2 = model === 'fhx2rf';
-
+    const isAdor = adorModels.has(model);
     const calibrationChildren: MenuNode[] = [
       {
         device,
@@ -136,7 +136,7 @@ const useMenuData = (email?: string): MenuNode[] => {
         label: `${menuCms.calibrate_beambox_camera}${isMobile ? ' (PC Only)' : ''}`,
         type: 'item',
       },
-      ...(isBb2 || isBeamo2 || isHexa2
+      ...(isBb2 || isBeamo2 || isHexa2 || isAdor
         ? [
             {
               device,
