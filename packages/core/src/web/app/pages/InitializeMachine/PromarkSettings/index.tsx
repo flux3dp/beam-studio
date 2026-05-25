@@ -16,6 +16,8 @@ import deviceMaster from '@core/helpers/device-master';
 import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 
+import TopBarPlaceHolder from '../Components/TopBarPlaceHolder';
+
 import styles from './index.module.scss';
 
 export default function PromarkSettings(): React.JSX.Element {
@@ -62,7 +64,7 @@ export default function PromarkSettings(): React.JSX.Element {
 
   return (
     <div className={styles.container}>
-      <div className={styles['top-bar']} />
+      <TopBarPlaceHolder />
 
       <Flex justify="space-between" style={{ width: 560 }}>
         <div>
