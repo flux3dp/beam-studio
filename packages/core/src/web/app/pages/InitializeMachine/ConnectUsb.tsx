@@ -7,6 +7,7 @@ import type { SupportUsbModels } from '@core/app/actions/beambox/constant';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import useI18n from '@core/helpers/useI18n';
 
+import TopBarPlaceHolder from './Components/TopBarPlaceHolder';
 import styles from './ConnectUsb.module.scss';
 
 type RenderInformation = {
@@ -66,7 +67,7 @@ export default function ConnectUsb(): React.JSX.Element {
 
   return (
     <div className={styles.container}>
-      <div className={styles['top-bar']} />
+      <TopBarPlaceHolder />
       <div className={styles.btns}>
         <div className={styles.btn} onClick={() => window.history.back()}>
           {t.back}

@@ -10,6 +10,8 @@ import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import useI18n from '@core/helpers/useI18n';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
+import TopBarPlaceHolder from '../Components/TopBarPlaceHolder';
+
 import styles from './index.module.scss';
 
 export default function ChoosePromarkLaserSource(): React.JSX.Element {
@@ -63,7 +65,7 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
 
   return (
     <div className={styles.container}>
-      <div className={styles['top-bar']} />
+      <TopBarPlaceHolder />
 
       <Flex gap={40} justify="space-between">
         <div className={styles.image}>

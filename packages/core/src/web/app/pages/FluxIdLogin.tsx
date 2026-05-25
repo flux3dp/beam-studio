@@ -4,6 +4,8 @@ import dialog from '@core/app/actions/dialog-caller';
 import { getHomePage, hashMap } from '@core/helpers/hashHelper';
 import storage from '@core/implementations/storage';
 
+import TopBarPlaceHolder from './InitializeMachine/Components/TopBarPlaceHolder';
+
 // Empty page to show login dialog
 function FluxIdLogin(): React.JSX.Element {
   useEffect(() => {
@@ -16,7 +18,7 @@ function FluxIdLogin(): React.JSX.Element {
     }, !isReady);
   }, []);
 
-  return <div className="top-bar" />;
+  return <TopBarPlaceHolder />;
 }
 
 export default FluxIdLogin;

@@ -3,11 +3,9 @@
   padding: 20px 20px 20px 20px;
   background: #f8f8f8;
   border: 2px;
-  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
-  .pull-right {
-    margin-right: 0px;
-    margin-left: 10px;
-  }
+  box-shadow:
+    0 7px 15px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.05);
 
   .icon {
     align-items: center;
@@ -97,7 +95,9 @@
   padding: 20px 20px 20px 20px;
   background: #f8f8f8;
   border: 2px;
-  box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
+  box-shadow:
+    0 7px 15px rgba(0, 0, 0, 0.1),
+    0 10px 20px rgba(0, 0, 0, 0.05);
 
   .icon {
     display: flex;

@@ -9,6 +9,8 @@ import { ConnectMachineFailedStates, TestState } from '@core/app/constants/conne
 import useI18n from '@core/helpers/useI18n';
 import os from '@core/implementations/os';
 
+import TopBarPlaceHolder from '../Components/TopBarPlaceHolder';
+
 import ConnectionImage from './components/ConnectionImage';
 import Hint from './components/Hint';
 import NextButton from './components/NextButton';
@@ -40,7 +42,7 @@ const ConnectMachineIp = (): React.JSX.Element => {
 
   return (
     <div className={styles.container}>
-      <div className={styles['top-bar']} />
+      <TopBarPlaceHolder />
       <div className={styles.btns}>
         <div className={styles.btn} onClick={() => window.history.back()}>
           {lang.initialize.back}

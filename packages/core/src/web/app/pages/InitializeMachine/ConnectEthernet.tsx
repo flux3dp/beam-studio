@@ -6,6 +6,7 @@ import { getOS } from '@core/helpers/getOS';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
+import TopBarPlaceHolder from './Components/TopBarPlaceHolder';
 import styles from './ConnectEthernet.module.scss';
 
 const ConnectEthernet = (): React.JSX.Element => {
@@ -30,7 +31,7 @@ const ConnectEthernet = (): React.JSX.Element => {
 
   return (
     <div className={styles.container}>
-      <div className={styles['top-bar']} />
+      <TopBarPlaceHolder />
       <div className={styles.btns}>
         <div className={styles.btn} onClick={() => window.history.back()}>
           {lang.back}

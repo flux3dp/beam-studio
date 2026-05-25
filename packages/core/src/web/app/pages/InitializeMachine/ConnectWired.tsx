@@ -7,6 +7,7 @@ import { useSearchParams } from 'react-router';
 import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import useI18n from '@core/helpers/useI18n';
 
+import TopBarPlaceHolder from './Components/TopBarPlaceHolder';
 import styles from './ConnectWired.module.scss';
 
 const ConnectWired = (): React.JSX.Element => {
@@ -39,7 +40,7 @@ const ConnectWired = (): React.JSX.Element => {
 
   return (
     <div className={styles.container}>
-      <div className={styles['top-bar']} />
+      <TopBarPlaceHolder />
       <div className={styles.btns}>
         <div className={styles.btn} onClick={() => window.history.back()}>
           {lang.back}

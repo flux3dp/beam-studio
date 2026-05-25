@@ -15,6 +15,7 @@ import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
+import TopBarPlaceHolder from './Components/TopBarPlaceHolder';
 import styles from './SelectMachineModel.module.scss';
 
 type ModelItem = {
@@ -199,7 +200,7 @@ const SelectMachineModel = (): React.JSX.Element => {
 
   return (
     <div className={styles.container}>
-      <div className={styles['top-bar']} />
+      <TopBarPlaceHolder />
       <div className={styles.btns}>
         <div className={styles.btn} onClick={handleBtnClick}>
           {isNewUser ? t.skip : t.back}

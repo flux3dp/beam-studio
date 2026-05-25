@@ -8,6 +8,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { hashMap } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 
+import TopBarPlaceHolder from './Components/TopBarPlaceHolder';
 import styles from './SelectConnectionType.module.scss';
 
 const TYPE_URL_MAP = {
@@ -54,7 +55,7 @@ const SelectConnectionType = (): React.JSX.Element => {
 
   return (
     <div className={styles.container}>
-      <div className={styles['top-bar']} />
+      <TopBarPlaceHolder />
       <div className={styles.btns}>
         <div className={classNames(styles.btn, styles.primary)} onClick={handleBack}>
           {lang.back}
