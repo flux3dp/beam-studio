@@ -12,19 +12,21 @@ import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV2, FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
 
-import CalibrateChessBoard from './AdorCalibrationV2/CalibrateChessBoard';
-import CheckPictures from './AdorCalibrationV2/CheckPictures';
-import StepElevate from './AdorCalibrationV2/StepElevate';
-import { getMaterialHeight, prepareToTakePicture, saveCheckPoint } from './AdorCalibrationV2/utils';
-import CheckpointData from './common/CheckpointData';
-import Instruction from './common/Instruction';
-import SolvePnP from './common/SolvePnP';
+import ChArUco from '../common/ChArUco';
+import CheckpointData from '../common/CheckpointData';
+import Instruction from '../common/Instruction';
+import SolvePnP from '../common/SolvePnP';
+
+import CalibrateChessBoard from './CalibrateChessBoard';
+import CheckPictures from './CheckPictures';
+import StepElevate from './StepElevate';
+import { getMaterialHeight, prepareToTakePicture, saveCheckPoint } from './utils';
 
 /* eslint-disable perfectionist/sort-enums */
 const enum Step {
   CHECKPOINT_DATA = 0,
   CHECK_PICTURE = 1,
-  CALIBRATE_CHESSBOARD = 2,
+  CALIBRATE = 2,
   PUT_PAPER = 3,
   SOLVE_PNP_INSTRUCTION_1 = 4,
   SOLVE_PNP_1 = 5,
@@ -38,14 +40,15 @@ const PROGRESS_ID = 'fisheye-calibration-v2';
 
 interface Props {
   factoryMode?: boolean;
+  isAdvanced?: boolean;
   onClose: (completed?: boolean) => void;
 }
 
-const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.Element => {
+const AdorCalibration = ({ factoryMode = false, isAdvanced = false, onClose }: Props): React.JSX.Element => {
   const calibratingParam = useRef<FisheyeCameraParametersV2Cali>({});
   const lang = useI18n();
   const tCali = lang.calibration;
-  const [step, setStep] = useState<Step>(Step.CHECKPOINT_DATA);
+  const [step, setStep] = useState<Step>(isAdvanced ? Step.CALIBRATE : Step.CHECKPOINT_DATA);
   const onBack = useCallback(() => setStep((prev) => prev - 1), []);
   const onNext = useCallback(() => setStep((prev) => prev + 1), []);
   const updateParam = useCallback((param: FisheyeCameraParametersV2Cali) => {
@@ -62,7 +65,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
             console.log('calibratingParam.current', calibratingParam.current);
             setStep(Step.PUT_PAPER);
           } else {
-            setStep(factoryMode ? Step.CALIBRATE_CHESSBOARD : Step.CHECK_PICTURE);
+            setStep(factoryMode ? Step.CALIBRATE : Step.CHECK_PICTURE);
           }
         }}
         updateParam={updateParam}
@@ -80,19 +83,41 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         updateParam={updateParam}
       />
     ))
-    .with(Step.CALIBRATE_CHESSBOARD, () => (
-      <CalibrateChessBoard
-        onBack={() => setStep(Step.CHECKPOINT_DATA)}
-        onClose={onClose}
-        onNext={async () => {
-          progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
-          await saveCheckPoint(calibratingParam.current);
-          progressCaller.popById(PROGRESS_ID);
-          setStep(Step.PUT_PAPER);
-        }}
-        updateParam={updateParam}
-      />
-    ))
+    .with(Step.CALIBRATE, () => {
+      if (isAdvanced) {
+        return (
+          <ChArUco
+            onClose={onClose}
+            onNext={onNext}
+            onPrev={onBack}
+            steps={[
+              { key: 'left', name: tCali.charuco_position_left },
+              { key: 'right', name: tCali.charuco_position_right },
+            ].map(({ key, name }) => ({
+              // TODO: update images for ador calibration
+              imageUrl: `core-img/calibration/bm2-charuco-${key}.jpg`,
+              key,
+              name,
+            }))}
+            updateParam={updateParam}
+          />
+        );
+      }
+
+      return (
+        <CalibrateChessBoard
+          onBack={() => setStep(Step.CHECKPOINT_DATA)}
+          onClose={onClose}
+          onNext={async () => {
+            progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
+            await saveCheckPoint(calibratingParam.current);
+            progressCaller.popById(PROGRESS_ID);
+            setStep(Step.PUT_PAPER);
+          }}
+          updateParam={updateParam}
+        />
+      );
+    })
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doCutting = true) => {
         const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
@@ -267,4 +292,4 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
     ));
 };
 
-export default AdorCalibrationV2;
+export default AdorCalibration;
