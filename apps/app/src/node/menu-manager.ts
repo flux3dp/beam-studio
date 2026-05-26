@@ -91,7 +91,6 @@ function getDeviceMenuId(uuid: string, data: { source: string }): string {
 function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data: IDeviceInfo, isDevMode = false) {
   const { model, name, serial, source, version } = data;
 
-  const menuLabel = source === 'lan' ? name : `${name} (USB)`;
   const machineName = name;
   const hasModules = modelsWithModules.has(model);
   const isAdor = adorModels.has(model);
@@ -281,7 +280,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
 
   return new MenuItem({
     id: getDeviceMenuId(uuid, data),
-    label: menuLabel,
+    label: name,
     submenu,
     visible: true,
   });
