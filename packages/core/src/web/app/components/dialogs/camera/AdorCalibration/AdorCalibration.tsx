@@ -88,8 +88,11 @@ const AdorCalibration = ({ factoryMode = false, isAdvanced = false, onClose }: P
     ))
     .with(Step.PREPARE_CALIBRATION, () => {
       return (
-        // TODO: add animation
         <Instruction
+          animationSrcs={[
+            { src: 'video/ador-calibration/calibrate.webm', type: 'video/webm' },
+            { src: 'video/ador-calibration/calibrate.mp4', type: 'video/mp4' },
+          ]}
           buttons={[
             {
               label: tCali.next,
@@ -121,8 +124,7 @@ const AdorCalibration = ({ factoryMode = false, isAdvanced = false, onClose }: P
               { key: 'center', name: tCali.charuco_position_center },
               { key: 'right', name: tCali.charuco_position_right },
             ].map(({ key, name }) => ({
-              // TODO: update images for ador calibration
-              // imageUrl: `core-img/calibration/ador-charuco-${key}.jpg`,
+              imageUrl: `core-img/calibration/ador-charuco-${key}.jpg`,
               key,
               name,
             }))}
@@ -183,8 +185,8 @@ const AdorCalibration = ({ factoryMode = false, isAdvanced = false, onClose }: P
       return (
         <Instruction
           animationSrcs={[
-            { src: 'video/ador-calibration-2/paper.webm', type: 'video/webm' },
-            { src: 'video/ador-calibration-2/paper.mp4', type: 'video/mp4' },
+            { src: 'video/ador-calibration/paper.webm', type: 'video/webm' },
+            { src: 'video/ador-calibration/paper.mp4', type: 'video/mp4' },
           ]}
           buttons={[
             { label: tCali.back, onClick: () => setStep(Step.CHECKPOINT_DATA) },
@@ -200,8 +202,8 @@ const AdorCalibration = ({ factoryMode = false, isAdvanced = false, onClose }: P
     .with(Step.SOLVE_PNP_INSTRUCTION_1, () => (
       <Instruction
         animationSrcs={[
-          { src: 'video/ador-calibration-2/align.webm', type: 'video/webm' },
-          { src: 'video/ador-calibration-2/align.mp4', type: 'video/mp4' },
+          { src: 'video/ador-calibration/align.webm', type: 'video/webm' },
+          { src: 'video/ador-calibration/align.mp4', type: 'video/mp4' },
         ]}
         buttons={[
           { label: tCali.back, onClick: () => setStep(Step.PUT_PAPER) },
