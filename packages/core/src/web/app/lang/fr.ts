@@ -55,7 +55,7 @@ const lang: ILang = {
     title: 'Ajustement Automatique',
     use_original_image: "Utiliser l'image originale",
     use_original_image_tooltip: "Restaurer l'image de prévisualisation originale sans suppression d'arrière-plan",
-    warning_bg_removal: 'Cette opération exécutera la fonction « Supprimer l\'arrière-plan », qui utilisera 0,02 Credit. Voulez-vous continuer ?',
+    warning_bg_removal: "Cette opération exécutera la fonction « Supprimer l'arrière-plan », qui utilisera 0,02 Credit. Voulez-vous continuer ?",
     warning_retake_preview: 'Cette opération est une reprise partielle. De nouvelles images et un nouvel arrière-plan seront ajoutés. Voulez-vous continuer ?',
   },
   autosave: {
