@@ -64,10 +64,7 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       return { x: newX, y: newY };
     };
 
-    preprocessImage = (imgUrl: string, opts?: { overlapFlag?: number; overlapRatio?: number }) =>
-      this.preprocessRegionPreviewImage(imgUrl, opts);
-
-    preprocessRegionPreviewImage = async (
+    preprocessImage = async (
       imgUrl: string,
       opts: { overlapFlag?: number; overlapRatio?: number } = {},
     ): Promise<HTMLCanvasElement> => {
@@ -136,7 +133,7 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       const { overlapFlag, overlapRatio = 0 } = opts;
       const cameraPosition = this.getPreviewPosition(x, y);
       const imgUrl = await this.getPhotoAfterMoveTo(cameraPosition.x, cameraPosition.y);
-      const imgCanvas = await this.preprocessRegionPreviewImage(imgUrl, { overlapFlag, overlapRatio });
+      const imgCanvas = await this.preprocessImage(imgUrl, { overlapFlag, overlapRatio });
 
       if (!imgCanvas) return false;
 
