@@ -15,7 +15,7 @@ import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
-import TopBarPlaceHolder from './Components/TopBarPlaceHolder';
+import SetupPageLayout from './Components/SetupPageLayout';
 import styles from './SelectMachineModel.module.scss';
 
 type ModelItem = {
@@ -199,14 +199,8 @@ const SelectMachineModel = (): React.JSX.Element => {
   }, [selectedModelType, beamboxModelList, beamoModelList, hexaModelList, promarkModelList, modelList, t]);
 
   return (
-    <div className={styles.container}>
-      <TopBarPlaceHolder />
-      <div className={styles.btns}>
-        <div className={styles.btn} onClick={handleBtnClick}>
-          {isNewUser ? t.skip : t.back}
-        </div>
-      </div>
-      <div className={styles.main}>
+    <SetupPageLayout buttons={[{ label: isNewUser ? t.skip : t.back, onClick: handleBtnClick }]}>
+      <div>
         <h1 className={styles.title}>{selectTitle}</h1>
         <div className={styles.btns}>
           {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model, type }) => (
@@ -222,7 +216,7 @@ const SelectMachineModel = (): React.JSX.Element => {
           ))}
         </div>
       </div>
-    </div>
+    </SetupPageLayout>
   );
 };
 

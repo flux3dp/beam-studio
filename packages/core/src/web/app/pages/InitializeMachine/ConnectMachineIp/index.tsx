@@ -9,13 +9,20 @@ import { ConnectMachineFailedStates, TestState } from '@core/app/constants/conne
 import useI18n from '@core/helpers/useI18n';
 import os from '@core/implementations/os';
 
-import TopBarPlaceHolder from '../Components/TopBarPlaceHolder';
+import PanelImage, {
+  adorIpHint,
+  adorIpWiredHint,
+  defaultIpHint,
+  defaultIpWiredHint,
+  nxIpHint,
+} from '../Components/PanelImage';
+import SetupPageLayout from '../Components/SetupPageLayout';
+import UsbConnectionImage from '../Components/UsbConnectionImage';
+import styles from '../ConnectionPage.module.scss';
 
-import ConnectionImage from './components/ConnectionImage';
 import Hint from './components/Hint';
-import NextButton from './components/NextButton';
+import useNextButtonConfig from './components/useNextButtonConfig';
 import { useConnectionTest } from './hooks/useConnectionTest';
-import styles from './index.module.scss';
 
 const ConnectMachineIp = (): React.JSX.Element => {
   const lang = useI18n();
@@ -35,50 +42,58 @@ const ConnectMachineIp = (): React.JSX.Element => {
   }, []);
   const { handleStartTest, isPromark, onFinish, state } = useConnectionTest(model, isUsb, ipValue, setIpValue);
   const { countDownDisplay, device, testState } = state;
+  const nextButton = useNextButtonConfig({ handleStartTest, isPromark, onFinish, testState });
+
+  const hint = useMemo(() => {
+    if (isAdor) return isWired ? adorIpWiredHint : adorIpHint;
+
+    if (isNx) return nxIpHint;
+
+    return isWired ? defaultIpWiredHint : defaultIpHint;
+  }, [isAdor, isNx, isWired]);
+
+  const imageSrc = useMemo(() => {
+    if (isAdor) return 'core-img/init-panel/ador-ip.jpg';
+
+    if (isNx) return `core-img/init-panel/beambox-2-ip-${isWired ? 'wired' : 'wireless'}.png`;
+
+    return `img/init-panel/network-panel-${isWired ? 'wired' : 'wireless'}.jpg`;
+  }, [isAdor, isNx, isWired]);
 
   const handleInputKeyDown: KeyboardEventHandler = ({ key }) => {
     if (key === 'Enter') handleStartTest();
   };
 
   return (
-    <div className={styles.container}>
-      <TopBarPlaceHolder />
-      <div className={styles.btns}>
-        <div className={styles.btn} onClick={() => window.history.back()}>
-          {lang.initialize.back}
+    <SetupPageLayout buttons={[{ label: lang.initialize.back, onClick: () => window.history.back() }, nextButton]}>
+      {isUsb ? <UsbConnectionImage /> : <PanelImage hint={hint} landscape={isAdor} src={imageSrc} />}
+      <div className={classNames(styles.text, { [styles.ador]: isAdor })}>
+        <div className={styles.title}>
+          {isUsb ? lang.initialize.connect_machine_ip.check_usb : lang.initialize.connect_machine_ip.enter_ip}
         </div>
-        <NextButton handleStartTest={handleStartTest} isPromark={isPromark} onFinish={onFinish} testState={testState} />
+        {!isUsb && (
+          <input
+            className={styles.input}
+            onChange={(e) => setIpValue(e.currentTarget.value)}
+            onKeyDown={(e) => {
+              e.stopPropagation();
+              handleInputKeyDown(e);
+            }}
+            placeholder="192.168.0.1"
+            type="text"
+            value={ipValue}
+          />
+        )}
+        <TestInfo connectionCountDown={countDownDisplay} firmwareVersion={device?.version} testState={testState} />
+        {isPromark && <Hint message={lang.initialize.connect_machine_ip.promark_hint} />}
+        {ConnectMachineFailedStates.includes(testState) && (
+          <Hint message={lang.initialize.connect_machine_ip.connection_failed_hint} />
+        )}
+        {testState === TestState.IP_UNREACHABLE && os.isMacOS15OrLater && (
+          <Hint message={lang.initialize.connect_machine_ip.unreachable_macos_15} />
+        )}
       </div>
-      <div className={classNames(styles.main, { [styles.ador]: isAdor, [styles.nx]: isNx })}>
-        <ConnectionImage isAdor={isAdor} isNx={isNx} isUsb={isUsb} isWired={isWired} />
-        <div className={styles.text}>
-          <div className={styles.title}>
-            {isUsb ? lang.initialize.connect_machine_ip.check_usb : lang.initialize.connect_machine_ip.enter_ip}
-          </div>
-          {!isUsb && (
-            <input
-              className={classNames(styles.input)}
-              onChange={(e) => setIpValue(e.currentTarget.value)}
-              onKeyDown={(e) => {
-                e.stopPropagation();
-                handleInputKeyDown(e);
-              }}
-              placeholder="192.168.0.1"
-              type="text"
-              value={ipValue}
-            />
-          )}
-          <TestInfo connectionCountDown={countDownDisplay} firmwareVersion={device?.version} testState={testState} />
-          {isPromark && <Hint message={lang.initialize.connect_machine_ip.promark_hint} />}
-          {ConnectMachineFailedStates.includes(testState) && (
-            <Hint message={lang.initialize.connect_machine_ip.connection_failed_hint} />
-          )}
-          {testState === TestState.IP_UNREACHABLE && os.isMacOS15OrLater && (
-            <Hint message={lang.initialize.connect_machine_ip.unreachable_macos_15} />
-          )}
-        </div>
-      </div>
-    </div>
+    </SetupPageLayout>
   );
 };
 

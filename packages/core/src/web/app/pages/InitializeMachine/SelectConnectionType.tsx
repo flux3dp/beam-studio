@@ -8,7 +8,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { hashMap } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 
-import TopBarPlaceHolder from './Components/TopBarPlaceHolder';
+import SetupPageLayout from './Components/SetupPageLayout';
 import styles from './SelectConnectionType.module.scss';
 
 const TYPE_URL_MAP = {
@@ -54,14 +54,8 @@ const SelectConnectionType = (): React.JSX.Element => {
   );
 
   return (
-    <div className={styles.container}>
-      <TopBarPlaceHolder />
-      <div className={styles.btns}>
-        <div className={classNames(styles.btn, styles.primary)} onClick={handleBack}>
-          {lang.back}
-        </div>
-      </div>
-      <div className={styles.main}>
+    <SetupPageLayout buttons={[{ label: lang.back, onClick: handleBack }]}>
+      <div>
         <h1 className={styles.title}>{lang.select_connection_type}</h1>
         <div className={styles.btns}>
           {renderConnectionTypeContainer('wifi')}
@@ -70,7 +64,7 @@ const SelectConnectionType = (): React.JSX.Element => {
           {supportUsbModels.has(model) && renderConnectionTypeContainer('usb')}
         </div>
       </div>
-    </div>
+    </SetupPageLayout>
   );
 };
 

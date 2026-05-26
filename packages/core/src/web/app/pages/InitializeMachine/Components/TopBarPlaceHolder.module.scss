@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .container {
   position: absolute;
   top: 0px;
@@ -7,7 +9,7 @@
   background-color: #333333;
   -webkit-app-region: drag;
 
-  @media screen and (max-width: 600px) {
+  @include mixins.is-mobile {
     display: none;
   }
 }

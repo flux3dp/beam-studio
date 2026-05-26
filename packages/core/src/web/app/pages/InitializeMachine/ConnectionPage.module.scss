@@ -1,0 +1,108 @@
+@use '@core/styles/mixins' as mixins;
+
+.text {
+  flex: 0 1 500px;
+
+  .title {
+    font-size: 30px;
+    line-height: 30px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    color: #333333;
+    padding-bottom: 25px;
+
+    .sub {
+      font-size: 18px;
+    }
+  }
+
+  .contents {
+    font-size: 12px;
+    line-height: 23px;
+    letter-spacing: 0.1px;
+    white-space: pre;
+    color: #999999;
+
+    a {
+      color: #999999;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      font-weight: 500;
+      color: #000000;
+    }
+
+    .link {
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    &.tutorial {
+      white-space: normal;
+      padding-bottom: 25px;
+    }
+
+    &.collapse {
+      white-space: unset;
+    }
+  }
+
+  @include mixins.is-mobile {
+    margin-left: 0;
+    width: 100%;
+    clear: right;
+
+    .title {
+      font-size: 22px;
+      line-height: 22px;
+      padding-bottom: 16px;
+    }
+
+    .tutorial {
+      line-height: 18px;
+      padding-bottom: 15px;
+      white-space: unset;
+    }
+  }
+
+  &.ador {
+    width: 350px;
+    margin-left: 60px;
+
+    @include mixins.is-mobile {
+      margin-left: 0;
+      width: 100%;
+      clear: right;
+    }
+  }
+}
+
+input[type='text'].input {
+  width: 100%;
+  background-color: unset;
+  color: #333333;
+  border-radius: 0px;
+  border-width: 0px;
+  border-bottom-width: 1px;
+  font-size: 30px;
+  padding: 10px 0;
+  height: 50px;
+  margin-bottom: 10px;
+
+  @include mixins.is-mobile {
+    font-size: 22px;
+    height: 42px;
+  }
+
+  &.disabled {
+    pointer-events: none;
+  }
+
+  &:focus {
+    border-radius: 0px;
+    border-width: 0px;
+    border-bottom-width: 1px;
+    outline: none;
+  }
+}

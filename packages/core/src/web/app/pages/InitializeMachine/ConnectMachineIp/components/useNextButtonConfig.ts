@@ -1,43 +1,33 @@
-import type { ReactNode } from 'react';
-import React from 'react';
-
-import classNames from 'classnames';
-
 import { isTesting, TestState } from '@core/app/constants/connection-test';
+import type { SetupPageButtonConfig } from '@core/app/pages/InitializeMachine/Components/SetupPageLayout';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from '../index.module.scss';
-
-interface Props {
+const useNextButtonConfig = ({
+  handleStartTest,
+  isPromark,
+  onFinish,
+  testState,
+}: {
   handleStartTest: () => void;
   isPromark: boolean;
   onFinish: () => void;
   testState: TestState;
-}
-
-const NextButton = ({ handleStartTest, isPromark, onFinish, testState }: Props): ReactNode => {
+}): SetupPageButtonConfig => {
   const lang = useI18n();
   let label = lang.initialize.next;
-  let handleClick = handleStartTest;
+  let onClick = handleStartTest;
 
   if ([TestState.CAMERA_TEST_FAILED, TestState.TEST_COMPLETED].includes(testState)) {
     if (!isPromark) {
       label = lang.initialize.connect_machine_ip.finish_setting;
     }
 
-    handleClick = onFinish;
+    onClick = onFinish;
   } else if (!isTesting(testState) && testState !== TestState.NONE) {
     label = lang.initialize.retry;
   }
 
-  return (
-    <div
-      className={classNames(styles.btn, styles.primary, { [styles.disabled]: isTesting(testState) })}
-      onClick={handleClick}
-    >
-      {label}
-    </div>
-  );
+  return { disabled: isTesting(testState), label, onClick, primary: true };
 };
 
-export default NextButton;
+export default useNextButtonConfig;

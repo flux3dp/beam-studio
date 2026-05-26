@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Flex } from 'antd';
-import classNames from 'classnames';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
 import FieldBlock from '@core/app/components/dialogs/promark/FieldBlock';
@@ -16,7 +15,7 @@ import deviceMaster from '@core/helpers/device-master';
 import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 
-import TopBarPlaceHolder from '../Components/TopBarPlaceHolder';
+import SetupPageLayout from '../Components/SetupPageLayout';
 
 import styles from './index.module.scss';
 
@@ -63,35 +62,26 @@ export default function PromarkSettings(): React.JSX.Element {
   };
 
   return (
-    <div className={styles.container}>
-      <TopBarPlaceHolder />
+    <SetupPageLayout
+      buttons={[
+        { label: t.back, onClick: () => window.history.back() },
+        { label: t.connect_machine_ip.finish_setting, onClick: handleNext, primary: true },
+      ]}
+    >
+      <Flex className={styles.container} gap={24} justify="space-between" vertical>
+        <div className={styles.title}>{t.promark.settings}</div>
+        <Flex gap={12} vertical>
+          <div className={styles.subtitle}>{t.promark.qc_instructions}</div>
+          <div className={styles.text}>{t.promark.configuration_confirmation}</div>
+          <div className={styles.text}>{t.promark.or_complete_later}</div>
+        </Flex>
 
-      <Flex justify="space-between" style={{ width: 560 }}>
-        <div>
-          <div className={styles.title}>{t.promark.settings}</div>
-
-          <Flex gap={12} vertical>
-            <div className={styles.subtitle}>{t.promark.qc_instructions}</div>
-            <div className={styles.text}>{t.promark.configuration_confirmation}</div>
-            <div className={styles.text}>{t.promark.or_complete_later}</div>
-          </Flex>
-
-          <div className={styles['table-container']}>
-            {width && <FieldBlock field={field} isInch={isInch} setField={setField} width={width} />}
-            <RedDotBlock isInch={isInch} redDot={redDot} setRedDot={setRedDot} />
-            <LensBlock data={galvoParameters} setData={setGalvoParameters} />
-          </div>
+        <div className={styles['table-container']}>
+          {width && <FieldBlock field={field} isInch={isInch} setField={setField} width={width} />}
+          <RedDotBlock isInch={isInch} redDot={redDot} setRedDot={setRedDot} />
+          <LensBlock data={galvoParameters} setData={setGalvoParameters} />
         </div>
       </Flex>
-
-      <div className={styles.btns}>
-        <div className={styles.btn} onClick={() => window.history.back()}>
-          {t.back}
-        </div>
-        <div className={classNames(styles.btn, styles.primary)} onClick={handleNext}>
-          {t.connect_machine_ip.finish_setting}
-        </div>
-      </div>
-    </div>
+    </SetupPageLayout>
   );
 }

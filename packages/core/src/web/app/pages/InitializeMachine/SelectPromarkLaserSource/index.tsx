@@ -10,7 +10,7 @@ import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import useI18n from '@core/helpers/useI18n';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
-import TopBarPlaceHolder from '../Components/TopBarPlaceHolder';
+import SetupPageLayout from '../Components/SetupPageLayout';
 
 import styles from './index.module.scss';
 
@@ -64,9 +64,12 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
   };
 
   return (
-    <div className={styles.container}>
-      <TopBarPlaceHolder />
-
+    <SetupPageLayout
+      buttons={[
+        { label: t.back, onClick: () => window.history.back() },
+        { disabled: !laserSource, label: t.next, onClick: handleNext, primary: true },
+      ]}
+    >
       <Flex gap={40} justify="space-between">
         <div className={styles.image}>
           <img
@@ -98,18 +101,6 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
           </div>
         </Flex>
       </Flex>
-
-      <div className={styles.btns}>
-        <div className={styles.btn} onClick={() => window.history.back()}>
-          {t.back}
-        </div>
-        <div
-          className={classNames(styles.btn, styles.primary, { [styles.disabled]: !laserSource })}
-          onClick={handleNext}
-        >
-          {t.next}
-        </div>
-      </div>
-    </div>
+    </SetupPageLayout>
   );
 }
