@@ -1,5 +1,4 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import progressCaller from '@core/app/actions/progress-caller';
 import { showAutoFitPanel } from '@core/app/components/dialogs/autoFit';
@@ -7,13 +6,11 @@ import getUtilWS from '@core/helpers/api/utils-ws';
 import i18n from '@core/helpers/i18n';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
-import workareaManager from '../workarea';
-
-const dataCache: { data?: AutoFitContour[][]; url: string } = { url: '' };
+import { dataCache, setDataCache } from './dataCache';
 
 // TODO: add unit test
 const autoFit = async (elem: SVGElement): Promise<void> => {
-  const previewBackgroundUrl = await previewModeBackgroundDrawer.getCameraCanvasUrl();
+  let previewBackgroundUrl = await previewModeBackgroundDrawer.getCameraCanvasUrl();
   const lang = i18n.lang.auto_fit;
 
   if (!previewBackgroundUrl) {
@@ -27,16 +24,14 @@ const autoFit = async (elem: SVGElement): Promise<void> => {
     const utilWS = getUtilWS();
     const resp = await fetch(previewBackgroundUrl);
     const blob = await resp.blob();
+    const isSplicingImg = !previewModeBackgroundDrawer.isFullWorkareaDrawn;
     let data: AutoFitContour[][];
 
     if (dataCache.url === previewBackgroundUrl && dataCache.data) {
       data = dataCache.data;
     } else {
-      data = await utilWS.getAllSimilarContours(blob, {
-        isSplcingImg: !constant.adorModels.includes(workareaManager.model),
-      });
-      dataCache.url = previewBackgroundUrl;
-      dataCache.data = data;
+      data = await utilWS.getAllSimilarContours(blob, { isSplicingImg });
+      setDataCache({ data, url: previewBackgroundUrl });
     }
 
     if (data.length === 0) {
@@ -45,7 +40,7 @@ const autoFit = async (elem: SVGElement): Promise<void> => {
       return;
     }
 
-    showAutoFitPanel(elem, previewBackgroundUrl, data);
+    showAutoFitPanel(elem, previewBackgroundUrl, data, isSplicingImg);
 
     return;
   } catch (error) {

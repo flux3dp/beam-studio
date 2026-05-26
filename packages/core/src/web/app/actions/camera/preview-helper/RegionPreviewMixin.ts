@@ -48,19 +48,23 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
      * @param y y in px
      * @returns preview camera position x, y in mm
      */
-    getPreviewPosition = (x: number, y: number): { x: number; y: number } => {
+    getPreviewPosition = (x: number, y: number, opts: { clipByWorkArea?: boolean } = {}): { x: number; y: number } => {
+      const { clipByWorkArea = true } = opts;
       let newX = x / constant.dpmm - this.regionPreviewOffset.x;
       let newY = y / constant.dpmm - this.regionPreviewOffset.y;
-      const { displayHeight, height: origH, width } = getWorkarea(this.workarea);
-      const height = displayHeight ?? origH;
 
-      newX = Math.min(Math.max(newX, -this.regionPreviewGrid.x[0]), width - this.regionPreviewGrid.x[1]);
-      newY = Math.min(Math.max(newY, -this.regionPreviewGrid.y[0]), height - this.regionPreviewGrid.y[1]);
+      if (clipByWorkArea) {
+        const { displayHeight, height: origH, width } = getWorkarea(this.workarea);
+        const height = displayHeight ?? origH;
+
+        newX = Math.min(Math.max(newX, -this.regionPreviewGrid.x[0]), width - this.regionPreviewGrid.x[1]);
+        newY = Math.min(Math.max(newY, -this.regionPreviewGrid.y[0]), height - this.regionPreviewGrid.y[1]);
+      }
 
       return { x: newX, y: newY };
     };
 
-    preprocessRegionPreviewImage = async (
+    preprocessImage = async (
       imgUrl: string,
       opts: { overlapFlag?: number; overlapRatio?: number } = {},
     ): Promise<HTMLCanvasElement> => {
@@ -129,7 +133,7 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       const { overlapFlag, overlapRatio = 0 } = opts;
       const cameraPosition = this.getPreviewPosition(x, y);
       const imgUrl = await this.getPhotoAfterMoveTo(cameraPosition.x, cameraPosition.y);
-      const imgCanvas = await this.preprocessRegionPreviewImage(imgUrl, { overlapFlag, overlapRatio });
+      const imgCanvas = await this.preprocessImage(imgUrl, { overlapFlag, overlapRatio });
 
       if (!imgCanvas) return false;
 

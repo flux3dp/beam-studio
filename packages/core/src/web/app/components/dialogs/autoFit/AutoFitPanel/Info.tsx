@@ -1,5 +1,7 @@
 import React, { memo, useEffect, useRef } from 'react';
 
+import { Button, Tooltip } from 'antd';
+
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import useI18n from '@core/helpers/useI18n';
@@ -9,9 +11,12 @@ import styles from './Info.module.scss';
 
 interface Props {
   element: SVGElement;
+  isBackgroundRemoved?: boolean;
+  onRetake?: () => void;
+  onToggleRemoveBackground?: () => void;
 }
 
-const Info = ({ element }: Props): React.JSX.Element => {
+const Info = ({ element, isBackgroundRemoved, onRetake, onToggleRemoveBackground }: Props): React.JSX.Element => {
   const { auto_fit: t } = useI18n();
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -47,6 +52,18 @@ const Info = ({ element }: Props): React.JSX.Element => {
         <button className={styles.link} onClick={() => browser.open(t.how_to_improve_accuracy_url)} type="button">
           {t.how_to_improve_accuracy}
         </button>
+        {onRetake && (
+          <Tooltip title={t.retake_tooltip}>
+            <Button onClick={onRetake}>{t.retake}</Button>
+          </Tooltip>
+        )}
+        {onToggleRemoveBackground && (
+          <Tooltip title={isBackgroundRemoved ? t.use_original_image_tooltip : t.retry_with_remove_bg_tooltip}>
+            <Button onClick={onToggleRemoveBackground}>
+              {isBackgroundRemoved ? t.use_original_image : t.retry_with_remove_bg}
+            </Button>
+          </Tooltip>
+        )}
       </div>
       <div className={styles.artwork}>
         <div className={styles.text}>{t.selected_artwork}:</div>

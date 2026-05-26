@@ -61,7 +61,7 @@ const LengthInputItem = ({
 };
 
 const Controller = (): React.JSX.Element => {
-  const lang = useI18n().boxgen;
+  const { boxgen: lang, global: tGlobal } = useI18n();
   const { boxData, setBoxData } = useBoxgenStore();
   const { lengthUnit, workarea } = useBoxgenWorkarea();
   const longSideLimit = Math.max(workarea.canvasWidth, workarea.canvasHeight);
@@ -215,7 +215,7 @@ const Controller = (): React.JSX.Element => {
         </Form.Item>
         <LengthInputItem
           className={styles['small-margin']}
-          label={lang.width}
+          label={tGlobal.width}
           lengthUnit={lengthUnit}
           max={longSideLimit}
           min={1}
@@ -223,7 +223,7 @@ const Controller = (): React.JSX.Element => {
         />
         <LengthInputItem
           className={styles['small-margin']}
-          label={lang.height}
+          label={tGlobal.height}
           lengthUnit={lengthUnit}
           max={shortSideLimit}
           min={1}

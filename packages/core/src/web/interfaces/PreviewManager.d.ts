@@ -11,6 +11,13 @@ export interface PreviewManager {
 
   getPhotoAfterMoveTo?: (x: number, y: number) => Promise<string>;
 
+  getPreviewPosition?: (x: number, y: number, opts?: { clipByWorkArea?: boolean }) => { x: number; y: number };
+
+  preprocessImage?: (
+    imgUrl: string,
+    opts?: { overlapFlag?: number; overlapRatio?: number },
+  ) => Promise<HTMLCanvasElement>;
+
   /**
    * preview point
    * @param x x in px

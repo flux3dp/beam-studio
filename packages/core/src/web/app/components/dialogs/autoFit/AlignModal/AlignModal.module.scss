@@ -32,6 +32,36 @@
       left: 10px;
       bottom: 20px;
     }
+
+    .opacity {
+      position: absolute;
+      right: 10px;
+      bottom: 20px;
+      display: flex;
+      width: 240px;
+      height: 40px;
+      padding: 0 16px;
+      align-items: center;
+      gap: 12px;
+      border-radius: 60px;
+      background-color: rgba(0, 0, 0, 0.6);
+      color: #ffffff;
+
+      .icon {
+        font-size: 22px;
+      }
+
+      .opacity-range {
+        width: 120px;
+      }
+
+      .opacity-value {
+        flex-grow: 1;
+        font-size: 14px;
+        font-weight: 700;
+        text-align: right;
+      }
+    }
   }
 }
 
