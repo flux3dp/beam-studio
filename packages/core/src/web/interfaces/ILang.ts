@@ -43,7 +43,9 @@ export interface ILang {
     preview_first: string;
     reset_position: string;
     retake: string;
+    retake_tooltip: string;
     retry_with_remove_bg: string;
+    retry_with_remove_bg_tooltip: string;
     rotation: string;
     select_a_pattern: string;
     selected_artwork: string;
@@ -52,6 +54,7 @@ export interface ILang {
     step3: string;
     title: string;
     use_original_image: string;
+    use_original_image_tooltip: string;
     warning_bg_removal: string;
     warning_retake_preview: string;
   };

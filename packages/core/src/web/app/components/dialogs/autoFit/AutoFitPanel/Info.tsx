@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useRef } from 'react';
 
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
@@ -52,11 +52,17 @@ const Info = ({ element, isBackgroundRemoved, onRetake, onToggleRemoveBackground
         <button className={styles.link} onClick={() => browser.open(t.how_to_improve_accuracy_url)} type="button">
           {t.how_to_improve_accuracy}
         </button>
-        {onRetake && <Button onClick={onRetake}>{t.retake}</Button>}
+        {onRetake && (
+          <Tooltip title={t.retake_tooltip}>
+            <Button onClick={onRetake}>{t.retake}</Button>
+          </Tooltip>
+        )}
         {onToggleRemoveBackground && (
-          <Button onClick={onToggleRemoveBackground}>
-            {isBackgroundRemoved ? t.use_original_image : t.retry_with_remove_bg}
-          </Button>
+          <Tooltip title={isBackgroundRemoved ? t.use_original_image_tooltip : t.retry_with_remove_bg_tooltip}>
+            <Button onClick={onToggleRemoveBackground}>
+              {isBackgroundRemoved ? t.use_original_image : t.retry_with_remove_bg}
+            </Button>
+          </Tooltip>
         )}
       </div>
       <div className={styles.artwork}>
