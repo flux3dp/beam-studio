@@ -3,6 +3,7 @@ import constant, { modelsWithWideAngleCamera, promarkModels } from '@core/app/ac
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { showCameraCalibration } from '@core/app/components/dialogs/camera/CameraCalibration/CameraCalibration';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { eventEmitter } from '@core/app/contexts/DialogContext';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkCameraOblique } from '@core/helpers/device/camera/previewMode';
 import checkCamera from '@core/helpers/device/check-camera';
@@ -174,3 +175,5 @@ export const calibrateCamera = async (
     throw error;
   }
 };
+
+eventEmitter.on('SHOW_CALIBRATE_CAMERA', calibrateCamera);

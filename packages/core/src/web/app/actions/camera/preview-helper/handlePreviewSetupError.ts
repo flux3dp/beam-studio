@@ -1,4 +1,5 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import { showCalibrateCamera } from '@core/app/actions/dialog-controller';
 import { backUpCalibrationData } from '@core/helpers/device/camera/backUpCalibrationData';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -18,6 +19,12 @@ const handlePreviewSetupError = (device: IDeviceInfo, error: unknown): void => {
         {
           label: lang.topbar.menu.import_calibration_data,
           onClick: () => backUpCalibrationData(device, 'upload'),
+          type: 'primary',
+        },
+        {
+          label: lang.topbar.menu.calibrate_beambox_camera,
+          onClick: () => showCalibrateCamera(device, { isAdvanced: true }),
+          type: 'primary',
         },
       ],
       caption: lang.message.camera.calibration_data_missing,
