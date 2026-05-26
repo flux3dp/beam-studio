@@ -4,7 +4,6 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { showAutoFitPanel } from '@core/app/components/dialogs/autoFit';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import { dataCache, setDataCache } from './dataCache';
@@ -13,19 +12,6 @@ import { dataCache, setDataCache } from './dataCache';
 const autoFit = async (elem: SVGElement): Promise<void> => {
   let previewBackgroundUrl = await previewModeBackgroundDrawer.getCameraCanvasUrl();
   const lang = i18n.lang.auto_fit;
-
-  if (!previewBackgroundUrl && isDev()) {
-    try {
-      const filePath = '/path/to/dev/debug/image.png';
-      const resp = await fetch(filePath);
-      const blob = await resp.blob();
-
-      previewBackgroundUrl = URL.createObjectURL(blob);
-      previewModeBackgroundDrawer.setCanvasUrl(previewBackgroundUrl);
-    } catch {
-      // noop
-    }
-  }
 
   if (!previewBackgroundUrl) {
     alertCaller.popUp({ message: lang.preview_first });
