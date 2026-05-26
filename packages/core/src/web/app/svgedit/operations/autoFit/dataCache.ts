@@ -1,12 +1,18 @@
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
-export let dataCache: {
+interface DataCache {
   data?: AutoFitContour[][];
   removedBgData?: AutoFitContour[][];
   removedBgImageUrl?: string;
   url: string;
-} = { url: '' };
+}
 
-export const setDataCache = (newCache: typeof dataCache): void => {
-  dataCache = newCache;
+export const dataCache: DataCache = { url: '' };
+
+export const setDataCache = (newCache: DataCache): void => {
+  if (dataCache.removedBgImageUrl && dataCache.removedBgImageUrl !== newCache.removedBgImageUrl) {
+    URL.revokeObjectURL(dataCache.removedBgImageUrl);
+  }
+
+  Object.assign(dataCache, { data: undefined, removedBgData: undefined, removedBgImageUrl: undefined, ...newCache });
 };

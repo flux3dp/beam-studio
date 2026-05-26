@@ -55,6 +55,7 @@ const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }:
     [dpmm, isInch],
   );
 
+  const aspectRatio = useMemo(() => initDimension.width / initDimension.height, [initDimension]);
   const step = useMemo(() => (isInch ? 2.54 : 1), [isInch]);
 
   useEffect(() => {
@@ -163,13 +164,15 @@ const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }:
               if (val === null) return;
 
               const newWidth = val * dpmm;
-              const newX = centerX - (newWidth / 2) * Math.cos(rad) + (height / 2) * Math.sin(rad);
-              const newY = centerY - (newWidth / 2) * Math.sin(rad) - (height / 2) * Math.cos(rad);
+              const newHeight = newWidth / aspectRatio;
+              const newX = centerX - (newWidth / 2) * Math.cos(rad) + (newHeight / 2) * Math.sin(rad);
+              const newY = centerY - (newWidth / 2) * Math.sin(rad) - (newHeight / 2) * Math.cos(rad);
 
               imageRef.current?.width(newWidth);
+              imageRef.current?.height(newHeight);
               imageRef.current?.x(newX);
               imageRef.current?.y(newY);
-              setDimension((prev) => ({ ...prev, width: newWidth, x: newX, y: newY }));
+              setDimension((prev) => ({ ...prev, height: newHeight, width: newWidth, x: newX, y: newY }));
             }}
             precision={isInch ? 4 : 2}
             size="small"
@@ -187,13 +190,15 @@ const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }:
               if (val === null) return;
 
               const newHeight = val * dpmm;
-              const newX = centerX - (width / 2) * Math.cos(rad) + (newHeight / 2) * Math.sin(rad);
-              const newY = centerY - (width / 2) * Math.sin(rad) - (newHeight / 2) * Math.cos(rad);
+              const newWidth = newHeight * aspectRatio;
+              const newX = centerX - (newWidth / 2) * Math.cos(rad) + (newHeight / 2) * Math.sin(rad);
+              const newY = centerY - (newWidth / 2) * Math.sin(rad) - (newHeight / 2) * Math.cos(rad);
 
+              imageRef.current?.width(newWidth);
               imageRef.current?.height(newHeight);
               imageRef.current?.x(newX);
               imageRef.current?.y(newY);
-              setDimension((prev) => ({ ...prev, height: newHeight, x: newX, y: newY }));
+              setDimension((prev) => ({ ...prev, height: newHeight, width: newWidth, x: newX, y: newY }));
             }}
             precision={isInch ? 4 : 2}
             size="small"

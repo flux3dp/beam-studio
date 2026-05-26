@@ -18,6 +18,12 @@ import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import { dataCache, setDataCache } from './dataCache';
 
+/**
+ * Returns the single-shot region preview size in canvas pixels for the current workarea.
+ * Only workareas with perspective grids (fbb2, fhx2rf, fbm2) support region preview;
+ * returns null for unsupported workareas, which disables the retake feature.
+ * When adding a new workarea with region preview, add its grid mapping here.
+ */
 export const getRegionPreviewSizePx = (): null | { height: number; width: number } => {
   const { workarea } = useDocumentStore.getState();
   const grid = match(workarea)
