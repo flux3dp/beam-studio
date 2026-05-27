@@ -177,7 +177,7 @@ export const uploadCameraData = async (): Promise<void> => {
       const splitedName = filteredFiles[i].name.split('/');
       const [dir, fileName] = splitedName;
 
-      const blob = await zip.file(filteredFiles[i].name).async('blob');
+      const blob = await zip.file(filteredFiles[i].name)!.async('blob');
 
       if (blob.size === 0) {
         continue;
