@@ -5,7 +5,7 @@ jest.doMock('jszip', () => ({
   default: mockJSZip,
 }));
 
-import { downloadCameraData, targetDirs, uploadCameraData } from './camera-data-backup';
+import { downloadCameraData, targetDirs, uploadCameraData } from './backUpCalibrationData';
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();

@@ -130,7 +130,7 @@ export const saveCheckPoint = async (param: FisheyeCameraParametersV2Cali): Prom
 };
 
 export const getMaterialHeight = async (position: 'A' | 'E' = 'E'): Promise<number> => {
-  const device = deviceMaster.currentDevice;
+  const device = deviceMaster.currentDevice!;
 
   await deviceMaster.enterRawMode();
   await deviceMaster.rawHome();
