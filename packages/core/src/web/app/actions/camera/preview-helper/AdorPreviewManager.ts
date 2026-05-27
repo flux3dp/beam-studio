@@ -1,4 +1,3 @@
-import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import deviceMaster from '@core/helpers/device-master';
@@ -8,8 +7,10 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
+import CalibrationDataMissingError from './CalibrationDataMissingError';
 import FisheyePreviewManagerV1 from './FisheyePreviewManagerV1';
 import FisheyePreviewManagerV2 from './FisheyePreviewManagerV2';
+import handlePreviewSetupError from './handlePreviewSetupError';
 
 // TODO: Add tests
 class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
@@ -40,7 +41,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
         params = await deviceMaster.fetchFisheyeParams();
       } catch (err) {
         console.log('Fail to fetchFisheyeParams', err instanceof Error ? err?.message : err);
-        throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
+        throw new CalibrationDataMissingError();
       }
 
       if (!('v' in params)) {
@@ -57,16 +58,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
       return res;
     } catch (error) {
       console.error(error);
-
-      if ((error as Error).message && (error as Error).message.startsWith('Camera WS')) {
-        alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${(error as Error).message || ''}`,
-        });
-      } else {
-        alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${(error as Error).message || ''}`,
-        });
-      }
+      handlePreviewSetupError(this.device, error);
 
       return false;
     } finally {

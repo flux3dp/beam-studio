@@ -3,6 +3,7 @@ import constant, { modelsWithWideAngleCamera, promarkModels } from '@core/app/ac
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { showCameraCalibration } from '@core/app/components/dialogs/camera/CameraCalibration/CameraCalibration';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { eventEmitter } from '@core/app/contexts/DialogContext';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkCameraOblique } from '@core/helpers/device/camera/previewMode';
 import checkCamera from '@core/helpers/device/check-camera';
@@ -12,7 +13,7 @@ import isDev from '@core/helpers/is-dev';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import AdorCalibrationV2 from './AdorCalibrationV2';
+import { showAdorCalibration } from './AdorCalibration';
 import { showBeamo2Calibration } from './beamo2Calibration';
 import LaserHeadFisheyeCalibration from './LaserHeadFisheyeCalibration';
 import ModuleCalibration from './ModuleCalibration';
@@ -135,27 +136,6 @@ export const showPromarkCalibration = async (device: IDeviceInfo): Promise<boole
   });
 };
 
-export const showAdorCalibrationV2 = async (factoryMode = false): Promise<boolean> => {
-  const DIALOG_ID = 'fisheye-calibration-v2';
-
-  if (isIdExist(DIALOG_ID)) {
-    return false;
-  }
-
-  return new Promise((resolve) => {
-    addDialogComponent(
-      DIALOG_ID,
-      <AdorCalibrationV2
-        factoryMode={factoryMode}
-        onClose={(completed = false) => {
-          popDialogById(DIALOG_ID);
-          resolve(completed);
-        }}
-      />,
-    );
-  });
-};
-
 export const calibrateCamera = async (
   device: IDeviceInfo,
   {
@@ -176,7 +156,7 @@ export const calibrateCamera = async (
 
     if (res.success) {
       if (constant.adorModels.includes(device.model)) {
-        return showAdorCalibrationV2(factoryMode);
+        return showAdorCalibration({ factoryMode, isAdvanced });
       } else if (modelsWithWideAngleCamera.includes(device.model)) {
         if (isWideAngle) return showWideAngleCameraCalibration(device);
         else return showLaserHeadFisheyeCalibration(device, isAdvanced);
@@ -195,3 +175,5 @@ export const calibrateCamera = async (
     throw error;
   }
 };
+
+eventEmitter.on('SHOW_CALIBRATE_CAMERA', calibrateCamera);

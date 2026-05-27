@@ -21,8 +21,10 @@ import { MessageLevel } from '@core/interfaces/IMessage';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
+import CalibrationDataMissingError from './CalibrationDataMissingError';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 import { getWideAngleCameraData } from './getWideAngleCameraData';
+import handlePreviewSetupError from './handlePreviewSetupError';
 import RegionPreviewMixin from './RegionPreviewMixin';
 
 // TODO: Add tests
@@ -58,20 +60,8 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   };
 
   private handleSetupError = async (error: unknown): Promise<void> => {
-    const { lang } = i18n;
-
     await this.end();
-    console.log('Error when setting up Bb2Hx2 Preview Manager', error);
-
-    if (error instanceof Error && error.message.startsWith('Camera WS')) {
-      alertCaller.popUpError({
-        message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
-      });
-    } else {
-      alertCaller.popUpError({
-        message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error instanceof Error ? error.message : ''}`,
-      });
-    }
+    handlePreviewSetupError(this.device, error);
   };
 
   switchPreviewMode = async (mode: PreviewMode): Promise<PreviewMode> => {
@@ -174,7 +164,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           this.fisheyeParams = await deviceMaster.fetchFisheyeParams();
         } catch (err) {
           console.log('Fail to fetchFisheyeParams', err);
-          throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
+          throw new CalibrationDataMissingError();
         }
       }
 

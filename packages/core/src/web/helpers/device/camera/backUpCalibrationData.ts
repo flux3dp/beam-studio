@@ -6,8 +6,10 @@ import deviceMaster from '@core/helpers/device-master';
 import formatDuration from '@core/helpers/duration-formatter';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
+import versionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import storage from '@core/implementations/storage';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export const targetDirs = ['camera_calib', 'auto_leveling', 'fisheye', 'laser_records', 'preference', 'red_laser'];
 
@@ -175,7 +177,7 @@ export const uploadCameraData = async (): Promise<void> => {
       const splitedName = filteredFiles[i].name.split('/');
       const [dir, fileName] = splitedName;
 
-      const blob = await zip.file(filteredFiles[i].name).async('blob');
+      const blob = await zip.file(filteredFiles[i].name)!.async('blob');
 
       if (blob.size === 0) {
         continue;
@@ -217,7 +219,28 @@ export const uploadCameraData = async (): Promise<void> => {
   }
 };
 
-export default {
-  downloadCameraData,
-  uploadCameraData,
+export const backUpCalibrationData = async (device: IDeviceInfo, type: 'download' | 'upload') => {
+  const vc = versionChecker(device.version);
+
+  if (!vc.meetRequirement('ADOR_STATIC_FILE_ENTRY')) {
+    alertCaller.popUpError({
+      message: 'tPlease update firmware.',
+    });
+
+    return;
+  }
+
+  try {
+    const res = await deviceMaster.select(device);
+
+    if (res.success) {
+      if (type === 'download') {
+        downloadCameraData(device.name);
+      } else {
+        uploadCameraData();
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
 };
