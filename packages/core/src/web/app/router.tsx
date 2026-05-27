@@ -43,10 +43,10 @@ import ConnectMachineIp from '@core/app/pages/InitializeMachine/ConnectMachineIp
 import ConnectUsb from '@core/app/pages/InitializeMachine/ConnectUsb';
 import ConnectWiFi from '@core/app/pages/InitializeMachine/ConnectWiFi';
 import ConnectWired from '@core/app/pages/InitializeMachine/ConnectWired';
-import PromarkSettings from '@core/app/pages/InitializeMachine/PromarkSettings';
+import PromarkSettings from '@core/app/pages/InitializeMachine/Promark/PromarkSettings';
+import SelectPromarkLaserSource from '@core/app/pages/InitializeMachine/Promark/SelectPromarkLaserSource';
 import SelectConnectionType from '@core/app/pages/InitializeMachine/SelectConnectionType';
 import SelectMachineModel from '@core/app/pages/InitializeMachine/SelectMachineModel';
-import SelectPromarkLaserSource from '@core/app/pages/InitializeMachine/SelectPromarkLaserSource';
 import Welcome from '@core/app/pages/Welcome';
 import { antdScreenTokens, initScreenStore } from '@core/app/stores/screenStore';
 import Logger from '@core/helpers/logger';

@@ -17,7 +17,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import SetupPageLayout from '../Components/SetupPageLayout';
 
-import styles from './index.module.scss';
+import styles from './PromarkSettings.module.scss';
 
 export default function PromarkSettings(): React.JSX.Element {
   const { initialize: t } = useI18n();
