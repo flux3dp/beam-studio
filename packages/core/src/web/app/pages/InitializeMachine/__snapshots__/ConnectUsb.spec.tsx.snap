@@ -6,24 +6,10 @@ exports[`test ConnectUsb should render correctly 1`] = `
     class="container"
   >
     <div
-      class="top-bar"
+      class="container"
     />
     <div
-      class="btns"
-    >
-      <div
-        class="btn"
-      >
-        Back
-      </div>
-      <div
-        class="btn primary"
-      >
-        Next
-      </div>
-    </div>
-    <div
-      class="main"
+      class="content"
     >
       <div
         class="image"
@@ -55,31 +41,41 @@ exports[`test ConnectUsb should render correctly 1`] = `
           >
             Ador
           </div>
-          <div
-            class="contents"
-          >
-            <div>
-              1
-              . 
-              Turn off the machine.
-            </div>
-            <div>
-              2
-              . 
-              Connect the machine to your computer with USB cable.
-            </div>
-            <div>
-              3
-              . 
-              Turn on the machine.
-            </div>
-            <div>
-              4
-              . 
-              Click 'Next' after the startup process is complete and you have entered the main screen.
-            </div>
+          <div>
+            1
+            . 
+            Turn off the machine.
+          </div>
+          <div>
+            2
+            . 
+            Connect the machine to your computer with USB cable.
+          </div>
+          <div>
+            3
+            . 
+            Turn on the machine.
+          </div>
+          <div>
+            4
+            . 
+            Click 'Next' after the startup process is complete and you have entered the main screen.
           </div>
         </div>
+      </div>
+    </div>
+    <div
+      class="btns"
+    >
+      <div
+        class="btn"
+      >
+        Back
+      </div>
+      <div
+        class="btn primary"
+      >
+        Next
       </div>
     </div>
   </div>

@@ -1,5 +1,5 @@
-@use "../abstracts/mixins";
-@use "../abstracts/variables";
+@use '../abstracts/mixins';
+@use '../abstracts/variables';
 
 .initialization {
   // local varibles
@@ -27,7 +27,7 @@
   }
 
   select {
-    background: url("#{variables.$s3}/images/arrow-down.png") #fff no-repeat;
+    background: url('#{variables.$s3}/images/arrow-down.png') #fff no-repeat;
     background-position: calc(100% - 5px) center;
     background-size: 16px 10px;
     border: none;
@@ -50,13 +50,6 @@
       margin-bottom: 50px;
       font-size: 30px;
       color: #333333;
-    }
-
-    .btn-h-group {
-      margin: 0 auto 0 auto;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
     }
 
     .btn-action {
@@ -87,10 +80,6 @@
 
       .main-title {
         text-align: center;
-      }
-
-      .btn-h-group {
-        width: 240px;
       }
 
       .btn-action {
@@ -157,7 +146,9 @@
 
         .touch-panel-icon {
           width: 200px;
-          box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+          box-shadow:
+            0 7px 15px rgba(0, 0, 0, 0.2),
+            0 10px 20px rgba(0, 0, 0, 0.1);
           border-radius: 5px;
         }
 
@@ -471,7 +462,9 @@
     }
 
     .modal-body {
-      box-shadow: 0 7px 15px rgba(0, 0, 0, 0.2), 0 10px 20px rgba(0, 0, 0, 0.1);
+      box-shadow:
+        0 7px 15px rgba(0, 0, 0, 0.2),
+        0 10px 20px rgba(0, 0, 0, 0.1);
     }
 
     .form-ap-mode {
@@ -560,16 +553,6 @@
         width: 5em;
       }
 
-      .row-fluid {
-        @include mixins.flexbox();
-        cursor: pointer;
-        height: 100%;
-        margin: 0;
-        padding: 0 10px;
-        flex: 2;
-        justify-content: space-between;
-      }
-
       .wifi-ssid {
         text-overflow: ellipsis;
         width: calc(100% - 50px);
@@ -590,10 +573,10 @@
         padding-left: 10px;
       }
 
-      input[type="radio"] {
+      input[type='radio'] {
         display: none;
 
-        &:checked+.row-fluid {
+        &:checked + .row-fluid {
           background: #b2b2b2;
           color: white;
         }
@@ -729,7 +712,7 @@
 
       &::before,
       &::after {
-        content: "";
+        content: '';
         border-radius: 50%;
         display: block;
         height: 100%;

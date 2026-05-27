@@ -7,7 +7,9 @@ import type { SupportUsbModels } from '@core/app/actions/beambox/constant';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './ConnectUsb.module.scss';
+import SetupPageLayout from './Components/SetupPageLayout';
+import UsbConnectionImage from './Components/UsbConnectionImage';
+import styles from './ConnectionPage.module.scss';
 
 type RenderInformation = {
   steps: string[];
@@ -50,11 +52,18 @@ export default function ConnectUsb(): React.JSX.Element {
     window.location.hash = `#/initialize/connect/connect-machine-ip?${queryString}`;
   };
 
-  const renderStep = (model: SupportUsbModels) =>
-    model ? (
-      <div className={classNames(styles.contents, styles.tutorial)}>
-        <div className={styles.subtitle}>{renderInfo.title}</div>
-        <div className={styles.contents}>
+  return (
+    <SetupPageLayout
+      buttons={[
+        { label: t.back, onClick: () => window.history.back() },
+        { label: t.next, onClick: handleNext, primary: true },
+      ]}
+    >
+      <UsbConnectionImage />
+      <div className={styles.text}>
+        <div className={styles.title}>{t.connect_usb.title}</div>
+        <div className={classNames(styles.contents, styles.tutorial)}>
+          <div className={styles.subtitle}>{renderInfo.title}</div>
           {renderInfo.steps.map((step, index) => (
             <div key={`usb-step-${index + 1}`}>
               {index + 1}. {step}
@@ -62,30 +71,6 @@ export default function ConnectUsb(): React.JSX.Element {
           ))}
         </div>
       </div>
-    ) : null;
-
-  return (
-    <div className={styles.container}>
-      <div className={styles['top-bar']} />
-      <div className={styles.btns}>
-        <div className={styles.btn} onClick={() => window.history.back()}>
-          {t.back}
-        </div>
-        <div className={classNames(styles.btn, styles.primary)} onClick={handleNext}>
-          {t.next}
-        </div>
-      </div>
-      <div className={styles.main}>
-        <div className={styles.image}>
-          <div className={classNames(styles.circle, styles.c1)} />
-          <img draggable="false" src="img/init-panel/icon-usb-cable.svg" />
-          <div className={classNames(styles.circle, styles.c2)} />
-        </div>
-        <div className={styles.text}>
-          <div className={styles.title}>{t.connect_usb.title}</div>
-          {renderStep(model)}
-        </div>
-      </div>
-    </div>
+    </SetupPageLayout>
   );
 }

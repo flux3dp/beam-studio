@@ -17,7 +17,7 @@ describe('landing', () => {
     cy.visit('#/initialize/connect/select-machine-model');
     cy.url({ timeout: 15000 }).should('contain', '#/initialize/connect/select-machine-model');
     cy.get(`div[class^="${prefix}"]`).should('exist');
-    cy.get(`div[class^="${prefix}-module__main"] div[class^="${prefix}-module__btn--"]`).should('have.length', 4);
+    cy.get(`div[class^="${prefix}-module__btn--"]`).should('have.length', 4);
     cy.contains('Skip').click();
     window.localStorage.setItem('new-user', 'true');
   });
