@@ -16,7 +16,7 @@
     "@sentry/tracing": "^7.119.1",
     "eventemitter3": "^5.0.1",
     "file-saver": "^2.0.5",
-    "js-cookie": "^3.0.5"
+    "js-cookie": "^3.0.7"
   },
   "devDependencies": {
     "@4tw/cypress-drag-drop": "^2.2.5",
