@@ -1142,7 +1142,7 @@ const lang: ILang = {
     moving_laser_head: 'Đang di chuyển đầu laser...',
     moving_platform: 'Đang di chuyển bệ...',
     next: 'Tiếp',
-    no_picture_found: '#846 Thiết bị của bạn không có ảnh nguyên bản nào để hiệu chỉnh. Vui lòng liên hệ hỗ trợ FLUX.',
+    no_picture_found: '#852 Thiết bị của bạn không có ảnh nguyên bản nào để hiệu chỉnh. Vui lòng thực hiện "Hiệu chỉnh máy ảnh (Nâng cao)".',
     perform_autofocus_bb2: 'Vui lòng đi tới bảng điều khiển máy và nhấn AF để thực hiện lấy nét tự động.',
     perform_autofocus_bm2: 'Di chuyển đầu laser bằng tay lên phía trên vật liệu, sau đó hạ đầu dò lấy nét xuống để kích hoạt chế độ lấy nét tự động.',
     please_do_camera_calibration_and_focus: {

@@ -1142,7 +1142,7 @@ const lang: ILang = {
     moving_laser_head: 'Memindahkan kepala laser...',
     moving_platform: 'Memindahkan platform...',
     next: 'Berikutnya',
-    no_picture_found: '#846 Perangkat Anda tidak memiliki foto mentah yang tersedia untuk kalibrasi. Silakan hubungi dukungan FLUX.',
+    no_picture_found: '#852 Perangkat Anda tidak memiliki foto mentah yang tersedia untuk kalibrasi. Silakan lakukan "Kalibrasi Kamera (Lanjutan)".',
     perform_autofocus_bb2: 'Silakan pergi ke panel kontrol mesin dan tekan AF untuk melakukan fokus otomatis.',
     perform_autofocus_bm2: 'Pindahkan kepala laser secara manual di atas bahan, lalu turunkan probe fokus untuk memicu fokus otomatis.',
     please_do_camera_calibration_and_focus: {

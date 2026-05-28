@@ -1142,7 +1142,7 @@ const lang: ILang = {
     moving_laser_head: 'Movendo a cabeça do laser...',
     moving_platform: 'Movendo a plataforma...',
     next: 'Próximo',
-    no_picture_found: '#846 Seu dispositivo não possui fotos brutas disponíveis para calibração. Entre em contato com o suporte da FLUX.',
+    no_picture_found: '#852 Seu dispositivo não possui fotos brutas disponíveis para calibração. Por favor, execute "Calibrar câmera (Avançado)".',
     perform_autofocus_bb2: 'Por favor, vá ao painel de controle da máquina e pressione AF para realizar o foco automático.',
     perform_autofocus_bm2: 'Mova manualmente a cabeça do laser sobre o material e depois abaixe a sonda de foco para ativar o foco automático.',
     please_do_camera_calibration_and_focus: {
