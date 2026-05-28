@@ -33,6 +33,7 @@ const LaserDelaySettingPanel = ({ initData, onClose }: LaserDelaySettingPanelPro
     progressCaller.openNonstopProgress({ id: 'save-laser-delay', message: 'Saving laser delay settings' });
 
     try {
+      // Parsing for shlex.split in python in ghost and firmware, ('\\\"' => '\"' (ghost) => '"' (firmware))
       await deviceMaster.setDeviceSetting('laser_delay', JSON.stringify(data).replaceAll('"', '\\\\\\"'));
       alertCaller.popUp({ message: 'Laser delay settings saved successfully', messageIcon: 'success' });
       onClose();
