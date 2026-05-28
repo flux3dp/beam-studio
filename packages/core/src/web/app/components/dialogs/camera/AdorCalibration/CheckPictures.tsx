@@ -4,6 +4,7 @@ import { Button } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import getLevelingData from '@core/app/actions/camera/preview-helper/getLevelingData';
+import { showCalibrateCamera } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
@@ -74,7 +75,20 @@ const CheckPictures = ({ onClose, onNext, updateParam }: Props): React.JSX.Eleme
     if (hasPictures) {
       calibrateDevicePictures();
     } else {
-      alertCaller.popUpError({ message: lang.calibration.no_picture_found });
+      alertCaller.popUpError({
+        buttons: [
+          {
+            isLeft: true,
+            label: lang.alert.cancel,
+          },
+          {
+            label: lang.topbar.menu.calibrate_camera_advanced,
+            onClick: () => showCalibrateCamera(deviceMaster.currentDevice!.info, { isAdvanced: true }),
+            type: 'primary',
+          },
+        ],
+        message: lang.calibration.no_picture_found,
+      });
       onClose?.(false);
     }
   }, [lang, progressId, onClose, calibrateDevicePictures]);

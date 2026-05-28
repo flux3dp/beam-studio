@@ -1142,7 +1142,7 @@ const lang: ILang = {
     moving_laser_head: '移動雷射頭中...',
     moving_platform: '移動平台中...',
     next: '下一步',
-    no_picture_found: '#846 您的機器中沒有可使用的照片以用於校正，請聯繫 FLUX 客服。',
+    no_picture_found: '#852 您的機器中沒有可使用的照片以用於校正，請執行「校正相機（進階）」。',
     perform_autofocus_bb2: '請前往機器控制面板並按下 AF 以執行自動對焦。',
     perform_autofocus_bm2: '請手動將雷射頭移至材料上方，然後放下對焦探針以觸發自動對焦。',
     please_do_camera_calibration_and_focus: {

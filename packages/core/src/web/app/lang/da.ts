@@ -1142,7 +1142,7 @@ const lang: ILang = {
     moving_laser_head: 'Flytter laserhovedet...',
     moving_platform: 'Flytter platformen...',
     next: 'Næste',
-    no_picture_found: '#846 Din enhed har ikke nogen tilgængelige rå fotos til kalibrering. Kontakt venligst FLUX support.',
+    no_picture_found: '#852 Din enhed har ikke nogen tilgængelige rå fotos til kalibrering. Udfør venligst "Kalibrér kamera (Avanceret)".',
     perform_autofocus_bb2: 'Gå venligst til maskinens kontrolpanel og tryk på AF for at udføre autofokus.',
     perform_autofocus_bm2: 'Flyt manuelt laserhovedet over materialet, og sænk derefter fokusproben for at starte autofokus.',
     please_do_camera_calibration_and_focus: {

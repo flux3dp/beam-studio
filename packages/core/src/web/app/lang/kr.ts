@@ -1142,7 +1142,7 @@ const lang: ILang = {
     moving_laser_head: '레이저 헤드를 이동 중...',
     moving_platform: '플랫폼을 이동 중...',
     next: '다음',
-    no_picture_found: '#846 귀하의 장치에는 보정용으로 사용 가능한 원시 사진이 없습니다. FLUX 지원에 문의하십시오.',
+    no_picture_found: '#852 귀하의 장치에는 보정용으로 사용 가능한 원시 사진이 없습니다. "카메라 보정 (고급)"을 수행하십시오.',
     perform_autofocus_bb2: '기계 제어 패널로 가서 AF를 눌러 자동 초점을 수행하십시오.',
     perform_autofocus_bm2: '레이저 헤드를 재료 위로 수동으로 이동한 다음, 포커스 프로브를 내려 자동 초점을 작동시키세요.',
     please_do_camera_calibration_and_focus: {

@@ -10,6 +10,7 @@ import ProgressCaller from '@core/app/actions/progress-caller';
 import { calibrateCamera, showModuleCalibration } from '@core/app/components/dialogs/camera';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showDiodeCalibration } from '@core/app/components/dialogs/DiodeCalibration';
+import { showLaserDelaySettingPanel } from '@core/app/components/dialogs/LaserDelay';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import { showUploadFirmwareDialog } from '@core/app/components/dialogs/updateFirmware';
@@ -338,6 +339,17 @@ export default {
   },
   IMPORT_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
     backUpCalibrationData(device, 'upload');
+  },
+  LASER_DELAY_SETTING: async (device: IDeviceInfo): Promise<void> => {
+    const res = await DeviceMaster.select(device);
+
+    if (!res.success) {
+      return;
+    }
+
+    if (!(await checkDeviceStatus(device))) return;
+
+    showLaserDelaySettingPanel();
   },
   LOG_CAMERA: (device: IDeviceInfo): void => {
     getLog(device, 'fluxcamerad.log');

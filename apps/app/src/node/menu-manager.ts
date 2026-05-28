@@ -225,6 +225,12 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
         },
       ].filter(Boolean),
     },
+    isHexa2 &&
+      isDevMode && {
+        click: handleClick,
+        id: 'LASER_DELAY_SETTING',
+        label: 'Laser Delay Setting',
+      },
     !isPromark && {
       id: 'DOWNLOAD_LOG',
       label: r.download_log,

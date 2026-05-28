@@ -1142,7 +1142,7 @@ const lang: ILang = {
     moving_laser_head: 'Przemieszczanie głowicy lasera...',
     moving_platform: 'Przesuwanie platformy...',
     next: 'Dalej',
-    no_picture_found: '#846 Twoje urządzenie nie ma dostępnych zdjęć w formacie raw do kalibracji. Skontaktuj się z obsługą FLUX.',
+    no_picture_found: '#852 Twoje urządzenie nie ma dostępnych zdjęć w formacie raw do kalibracji. Proszę wykonać „Kalibracja kamery (Zaawansowane)".',
     perform_autofocus_bb2: 'Proszę przejść do panelu sterowania maszyny i nacisnąć AF, aby wykonać autofokus.',
     perform_autofocus_bm2: 'Flytt laserkhodet manuelt over materialet, senk deretter fokusproben for å aktivere autofokus.',
     please_do_camera_calibration_and_focus: {
