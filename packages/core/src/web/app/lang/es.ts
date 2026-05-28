@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: 'Moviendo el cabezal láser…',
     moving_platform: 'Moviendo la plataforma...',
     next: 'Siguiente',
-    no_picture_found: '#846 Su dispositivo no dispone de ninguna foto sin procesar para la calibración. Contacte con el servicio de asistencia de FLUX.',
+    no_picture_found: '#852 Su dispositivo no dispone de ninguna foto sin procesar para la calibración. Por favor, realice "Calibrar la cámara (avanzado)".',
     perform_autofocus_bb2: 'Pulse AF en el panel de control de la máquina para realizar el enfoque automático.',
     perform_autofocus_bm2: 'Mueva manualmente el cabezal láser sobre el material y a continuación baje la sonda de enfoque para activar el enfoque automático.',
     please_do_camera_calibration_and_focus: {

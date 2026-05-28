@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: 'Bewege den Laserkopf...',
     moving_platform: 'Plattform wird bewegt...',
     next: 'Nächster',
-    no_picture_found: '#846 Dein Gerät hat keine verfügbaren Rohfotos für die Kalibrierung. Bitte kontaktiere den FLUX-Support.',
+    no_picture_found: '#852 Dein Gerät hat keine verfügbaren Rohfotos für die Kalibrierung. Bitte führe „Kamera kalibrieren (Erweitert)" durch.',
     perform_autofocus_bb2: 'Bitte gehen Sie zum Maschinensteuerpult und drücken Sie AF, um den Autofokus auszuführen.',
     perform_autofocus_bm2: 'Bewegen Sie den Laserkopf manuell über das Material und senken Sie dann die Fokussier-Sonde, um den Autofokus auszulösen.',
     please_do_camera_calibration_and_focus: {

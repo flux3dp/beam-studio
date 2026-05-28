@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: '正在移动激光头...',
     moving_platform: '正在移动平台...',
     next: '下一步',
-    no_picture_found: '#846 您的设备没有可用于校准的原始照片。请联系FLUX支持。',
+    no_picture_found: '#852 您的设备没有可用于校准的原始照片。请执行「校正相机（高级）」。',
     perform_autofocus_bb2: '请前往机器控制面板，按下AF以执行自动对焦。请前往机器控制面板，按下AF以执行自动对焦。',
     perform_autofocus_bm2: '手动将激光头移至材料上方，然后放下对焦探针以启动自动对焦。',
     please_do_camera_calibration_and_focus: {

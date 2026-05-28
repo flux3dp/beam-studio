@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: 'Siirtää laserpäätä...',
     moving_platform: 'Alustaa siirretään...',
     next: 'Seuraava',
-    no_picture_found: '#846 Laitteellasi ei ole saatavilla raakakuvia kalibrointia varten. Ota yhteyttä FLUX-tukeen.',
+    no_picture_found: '#852 Laitteellasi ei ole saatavilla raakakuvia kalibrointia varten. Suorita "Kalibroi kamera (Edistynyt)".',
     perform_autofocus_bb2: 'Mene laitteen ohjauspaneeliin ja paina AF suorittaaksesi automaattitarkennuksen.',
     perform_autofocus_bm2: 'Siirrä laserpää käsin materiaalin yläpuolelle ja laske sitten tarkennusanturi käynnistääksesi automaattitarkennuksen.',
     please_do_camera_calibration_and_focus: {

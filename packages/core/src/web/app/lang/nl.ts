@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: 'De laserhoofdkop verplaatsen...',
     moving_platform: 'Platform wordt verplaatst...',
     next: 'Volgende',
-    no_picture_found: "#846 Uw apparaat heeft geen beschikbare ruwe foto's voor kalibratie. Neem contact op met FLUX-ondersteuning.",
+    no_picture_found: '#852 Uw apparaat heeft geen beschikbare ruwe foto\'s voor kalibratie. Voer alstublieft "Camera kalibreren (Geavanceerd)" uit.',
     perform_autofocus_bb2: 'Ga naar het bedieningspaneel van de machine en druk op AF om de autofocus uit te voeren.',
     perform_autofocus_bm2: 'Verplaats de laserhandmatig boven het materiaal en laat vervolgens de focusprobe zakken om autofocus te activeren.',
     please_do_camera_calibration_and_focus: {

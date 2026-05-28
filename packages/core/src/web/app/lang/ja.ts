@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: 'レーザーヘッドを移動中...',
     moving_platform: 'プラットフォームを移動中...',
     next: '次へ',
-    no_picture_found: '#846 あなたのデバイスには、キャリブレーション用の利用可能な生の写真がありません。FLUXサポートにお問い合わせください。',
+    no_picture_found: '#852 あなたのデバイスには、キャリブレーション用の利用可能な生の写真がありません。「カメラを校正（高度な設定）」を実行してください。',
     perform_autofocus_bb2: '機械のコントロールパネルに移動し、AFを押してオートフォーカスを実行してください。',
     perform_autofocus_bm2: 'レーザーヘッドを手動で素材の上に移動させ、フォーカスプローブを下げてオートフォーカスを起動します。',
     please_do_camera_calibration_and_focus: {

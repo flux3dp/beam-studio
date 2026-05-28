@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: 'Movent el capçal làser...',
     moving_platform: 'Movent la plataforma...',
     next: 'Següent',
-    no_picture_found: '#846 El teu dispositiu no té cap foto RAW disponible per al calibratge. Si us plau, contacta amb el suport de FLUX.',
+    no_picture_found: '#852 El teu dispositiu no té cap foto RAW disponible per al calibratge. Si us plau, realitza "Calibrar càmera (Avançat)".',
     perform_autofocus_bb2: "Si us plau, ves al panell de control de la màquina i prem AF per realitzar l'enfocament automàtic.",
     perform_autofocus_bm2: "Mou manualment el capçal làser per sobre del material, després baixa la sonda d'enfocament per activar l'enfocament automàtic.",
     please_do_camera_calibration_and_focus: {

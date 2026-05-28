@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: 'Pohybuji laserovou hlavou...',
     moving_platform: 'Plošina se pohybuje...',
     next: 'Další',
-    no_picture_found: '#846 Vaše zařízení nemá dostupné žádné nezpracované fotky ke kalibraci. Kontaktujte prosím podporu FLUX.',
+    no_picture_found: '#852 Vaše zařízení nemá dostupné žádné nezpracované fotky ke kalibraci. Proveďte prosím „Kalibrace kamery (Pokročilé)".',
     perform_autofocus_bb2: 'Přejděte na ovládací panel zařízení a stiskněte tlačítko AF pro automatické zaostření.',
     perform_autofocus_bm2: 'Ručně posuňte laserovou hlavu nad materiál a poté spusťte zaostřovací sondu pro spuštění automatického zaostření.',
     please_do_camera_calibration_and_focus: {

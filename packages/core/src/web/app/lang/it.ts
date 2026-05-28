@@ -1141,7 +1141,7 @@ const lang: ILang = {
     moving_laser_head: 'Spostamento della testa laser...',
     moving_platform: 'Spostamento della piattaforma...',
     next: 'Avanti',
-    no_picture_found: '#846 Il tuo dispositivo non dispone di foto raw disponibili per la calibrazione. Si prega di contattare il supporto FLUX.',
+    no_picture_found: '#852 Il tuo dispositivo non dispone di foto raw disponibili per la calibrazione. Si prega di eseguire "Calibra la fotocamera (Avanzato)".',
     perform_autofocus_bb2: "Per favore, vai al pannello di controllo della macchina e premi AF per eseguire l'autofocus.",
     perform_autofocus_bm2: 'Sposta manualmente la testa laser sopra il materiale, quindi abbassa la sonda di messa a fuoco per attivare l’autofocus.',
     please_do_camera_calibration_and_focus: {
