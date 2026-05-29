@@ -12,7 +12,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './TextTransformBlock.module.scss';
 
-const MODES: Exclude<TextTransform, 'none'>[] = [
+const MODES: Array<Exclude<TextTransform, 'none'>> = [
   'sentence',
   'lowercase',
   'uppercase',
@@ -74,7 +74,7 @@ const TextTransformBlock = ({ onSizeChange, textElements }: Props): React.ReactN
 
   const options = useMemo(
     () => MODES.map((mode) => ({ label: labelOf(mode), value: mode })),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line hooks/exhaustive-deps
     [t],
   );
 

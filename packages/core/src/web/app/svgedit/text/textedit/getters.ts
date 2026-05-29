@@ -113,7 +113,7 @@ const toggleCase = (s: string): string =>
 
 // Fullwidth ASCII (U+FF01-U+FF5E) → halfwidth ASCII; fullwidth space → halfwidth space.
 const toHalfwidth = (s: string): string =>
-  s.replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/　/g, ' ');
+  s.replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\u3000/g, ' ');
 
 // Halfwidth ASCII (! through ~) → fullwidth; halfwidth space → fullwidth.
 const toFullwidth = (s: string): string =>
@@ -145,7 +145,7 @@ export const getTextContent = (elem: SVGTextElement): string => {
   // so the textarea shows what the user typed, not the transformed display.
   const raw = elem.getAttribute('data-raw-text');
 
-  if (raw !== null) return raw.replace(//g, '\n');
+  if (raw !== null) return raw.replace(/\u0085/g, '\n');
 
   if (elem.getAttribute('data-textpath')) {
     return elem.querySelector('textPath')?.textContent ?? '';
