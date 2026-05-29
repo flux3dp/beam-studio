@@ -81,6 +81,14 @@ jobs:
           runTests: false
           install-command: pnpm install --filter=web --filter=core
 
+      # Ensure the Cypress binary is fully downloaded. The pnpm filter install
+      # sometimes reports the postinstall as Done before the binary finishes
+      # extracting on Windows runners, causing `cypress verify` to fail. This
+      # step is a no-op when the binary is already present.
+      - name: Ensure Cypress binary
+        run: pnpm exec cypress install
+        working-directory: apps/web
+
       - name: Install serve
         run: npm install -g serve
 
