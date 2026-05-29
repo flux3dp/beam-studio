@@ -1,0 +1,107 @@
+@use '@core/styles/mixins' as mixins;
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+  color: #808080;
+  position: absolute;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+
+  @include mixins.is-mobile {
+    align-items: unset;
+    padding-top: 30px;
+  }
+}
+
+.btns {
+  position: absolute;
+  right: 60px;
+  bottom: 55px;
+  display: flex;
+
+  @include mixins.is-mobile {
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    justify-content: space-between;
+  }
+}
+
+.btn {
+  cursor: pointer;
+  height: 72px;
+  padding: 0px 20px;
+  margin-left: 35px;
+  font-size: 27px;
+  line-height: 72px;
+  font-weight: bold;
+  color: #333333;
+
+  &.primary {
+    border-radius: 8px;
+    background-color: #333333;
+    color: #f8f8f8;
+  }
+
+  &.disabled {
+    cursor: unset;
+    opacity: 0.3;
+  }
+
+  &:hover:not(.disabled) {
+    border-radius: 8px;
+    background-color: #333333;
+    color: #f8f8f8;
+
+    &.primary {
+      background-color: #000000;
+      color: #f8f8f8;
+    }
+  }
+
+  @include mixins.is-mobile {
+    height: 30px;
+    font-size: 14px;
+    line-height: 30px;
+    margin-left: 0;
+    border-radius: 15px;
+    background-color: #f0f0f0;
+
+    &.primary {
+      margin-left: auto;
+      border-radius: 15px;
+      background-color: #0091ff;
+    }
+
+    &:hover:not(.disabled) {
+      border-radius: 15px;
+
+      &.primary {
+        background-color: #0091ff;
+      }
+    }
+  }
+}
+
+.content {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  padding: 0 60px;
+  gap: 5%;
+  height: fit-content;
+
+  @include mixins.is-mobile {
+    flex-direction: column;
+    align-items: center;
+    margin-top: 0;
+    gap: 30px;
+    padding: 30px;
+    height: calc(100% - 60px);
+    overflow-y: scroll;
+  }
+}

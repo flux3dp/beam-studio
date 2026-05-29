@@ -1,4 +1,3 @@
-import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import { MessageLevel } from '@core/app/actions/message-caller';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
@@ -14,6 +13,8 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
+import CalibrationDataMissingError from './CalibrationDataMissingError';
+import handlePreviewSetupError from './handlePreviewSetupError';
 
 // TODO: Add tests
 class PromarkPreviewManager extends BasePreviewManager implements PreviewManager {
@@ -41,7 +42,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
       this.fisheyeParams = promarkDataStore.get(this.device.serial, 'cameraParameters');
 
       if (!this.fisheyeParams) {
-        throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
+        throw new CalibrationDataMissingError();
       }
 
       await this.setupAPI();
@@ -50,16 +51,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
       return !!this.webCamConnection;
     } catch (error) {
       console.error(error);
-
-      if ('message' in (error as Error) && (error as Error).message.startsWith('Camera WS')) {
-        alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${(error as Error).message || ''}`,
-        });
-      } else {
-        alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${(error as Error).message || ''}`,
-        });
-      }
+      handlePreviewSetupError(this.device, error);
 
       return false;
     } finally {

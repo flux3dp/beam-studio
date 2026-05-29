@@ -1,7 +1,6 @@
 import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
-import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
@@ -20,7 +19,9 @@ import { ProgressTypes } from '@core/interfaces/IProgress';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
+import CalibrationDataMissingError from './CalibrationDataMissingError';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
+import handlePreviewSetupError from './handlePreviewSetupError';
 import RegionPreviewMixin from './RegionPreviewMixin';
 
 class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implements PreviewManager {
@@ -51,20 +52,9 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   };
 
   private handleSetupError = async (error: unknown): Promise<void> => {
-    const { lang } = i18n;
-
     await this.end();
     console.log('Error when setting up beamo2 Preview Manager', error);
-
-    if (error instanceof Error && error.message.startsWith('Camera WS')) {
-      alertCaller.popUpError({
-        message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
-      });
-    } else {
-      alertCaller.popUpError({
-        message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error instanceof Error ? error.message : ''}`,
-      });
-    }
+    handlePreviewSetupError(this.device, error);
   };
 
   private setUpCamera = async (): Promise<boolean> => {
@@ -79,7 +69,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           this.fisheyeParams.total_height = workarea.height;
         } catch (err) {
           console.log('Fail to fetchFisheyeParams', err);
-          throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
+          throw new CalibrationDataMissingError();
         }
       }
 

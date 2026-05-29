@@ -3,7 +3,7 @@
 exports[`should render correctly 1`] = `
 <div>
   <div
-    class="top-bar"
+    class="container"
   />
 </div>
 `;

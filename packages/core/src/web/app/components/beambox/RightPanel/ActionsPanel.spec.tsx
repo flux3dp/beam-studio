@@ -168,12 +168,9 @@ function tick() {
 const tActionPanel = i18n.lang.beambox.right_panel.object_panel.actions_panel;
 const mockAutoFit = jest.fn();
 
-jest.mock(
-  '@core/app/svgedit/operations/autoFit',
-  () =>
-    (...args: any[]) =>
-      mockAutoFit(...args),
-);
+jest.mock('@core/app/svgedit/operations/autoFit', () => ({
+  autoFit: mockAutoFit,
+}));
 
 const mockShowArrayModal = jest.fn();
 

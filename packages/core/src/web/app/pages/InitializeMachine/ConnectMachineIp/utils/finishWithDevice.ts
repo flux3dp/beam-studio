@@ -41,11 +41,12 @@ export const finishWithDevice = async (device: IDeviceInfo): Promise<void> => {
       const { modelAnnotation } = useInitializeMachineStore.getState();
       const currentModelAnnotation = useGlobalPreferenceStore.getState()['model-annotation'];
       const currentWorkareaAnnotation = useDocumentStore.getState()['workarea-annotation'];
+      const annotationOverride = { [device.model]: modelAnnotation[device.model as keyof typeof modelAnnotation] };
 
-      useGlobalPreferenceStore.getState().set('model-annotation', { ...currentModelAnnotation, ...modelAnnotation });
+      useGlobalPreferenceStore.getState().set('model-annotation', { ...currentModelAnnotation, ...annotationOverride });
 
       const newDocumentState: Partial<DocumentStore> = {
-        'workarea-annotation': { ...currentWorkareaAnnotation, ...modelAnnotation },
+        'workarea-annotation': { ...currentWorkareaAnnotation, ...annotationOverride },
       };
 
       newDocumentState['promark-safety-door'] = !!modelAnnotation.fpm1?.safe;

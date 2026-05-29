@@ -33,6 +33,7 @@ class PreviewModeBackgroundDrawer {
   private rotaryPreviewBoundaryText?: SVGTextElement;
   private previewDescText?: SVGTextElement;
   private openBottomDescText?: SVGTextElement;
+  private _isFullWorkareaDrawn = false;
 
   protected canvas: HTMLCanvasElement;
   protected canvasRatio = 1;
@@ -113,6 +114,7 @@ class PreviewModeBackgroundDrawer {
   }
 
   async drawFullWorkarea(imgUrl: string, callBack = () => {}) {
+    this._isFullWorkareaDrawn = true;
     this.backgroundDrawerSubject.next(this.preprocessFullWorkareaImg(imgUrl, callBack));
   }
 
@@ -203,6 +205,7 @@ class PreviewModeBackgroundDrawer {
     });
 
     this.backgroundDrawerSubject.next(promise);
+    this._isFullWorkareaDrawn = false;
 
     await promise;
   };
@@ -346,6 +349,10 @@ class PreviewModeBackgroundDrawer {
     document.getElementById('previewBoundary')?.remove();
   }
 
+  get isFullWorkareaDrawn() {
+    return this._isFullWorkareaDrawn;
+  }
+
   isClean() {
     return this.cameraCanvasUrl === '';
   }
@@ -363,6 +370,7 @@ class PreviewModeBackgroundDrawer {
     URL.revokeObjectURL(this.cameraCanvasUrl);
 
     this.cameraCanvasUrl = '';
+    this._isFullWorkareaDrawn = false;
     setCameraPreviewState({ isClean: true });
   }
 
@@ -392,7 +400,7 @@ class PreviewModeBackgroundDrawer {
     setBackgroundImage(this.cameraCanvasUrl);
   };
 
-  setCanvasUrl = (url: string) => {
+  setCanvasUrl = async (url: string, opts?: { loadToCanvas?: boolean }): Promise<void> => {
     if (this.cameraCanvasUrl) {
       URL.revokeObjectURL(this.cameraCanvasUrl);
     }
@@ -400,6 +408,21 @@ class PreviewModeBackgroundDrawer {
     this.cameraCanvasUrl = url;
     setCameraPreviewState({ isClean: false });
     setBackgroundImage(this.cameraCanvasUrl);
+
+    if (opts?.loadToCanvas) {
+      await new Promise<void>((resolve) => {
+        const img = new Image();
+
+        img.onload = () => {
+          const ctx = this.canvas.getContext('2d')!;
+
+          ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+          ctx.drawImage(img, 0, 0, this.canvas.width, this.canvas.height);
+          resolve();
+        };
+        img.src = url;
+      });
+    }
   };
 
   preprocessFullWorkareaImg = async (imgUrl: string, callBack = () => {}) =>
