@@ -73,19 +73,13 @@ jobs:
         run: cp ../../pnpm-lock.yaml .
         working-directory: apps/web
 
-      # Install dependencies. We avoid cypress-io/github-action here because its
-      # automatic `cypress verify` runs before the binary extraction is fully
-      # complete on Windows runners (the pnpm postinstall reports Done early),
-      # which causes the action to fail. Doing the install ourselves and then
-      # forcing a clean Cypress install guarantees the binary is in place
-      # before the run step's verify check.
+      # Install dependencies (needed for Cypress)
       - name: Install dependencies
-        run: pnpm install --filter=web --filter=core
-        working-directory: apps/web
-
-      - name: Install Cypress binary
-        run: pnpm exec cypress install --force
-        working-directory: apps/web
+        uses: cypress-io/github-action@v6
+        with:
+          working-directory: apps/web
+          runTests: false
+          install-command: pnpm install --filter=web --filter=core
 
       - name: Install serve
         run: npm install -g serve
