@@ -7,24 +7,44 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getBBox } from '../../utils/getBBox';
 
 import {
+  applyTextTransform,
   getFitTextAlign,
   getFitTextSize,
   getFontSize,
   getIsVertical,
   getLetterSpacing,
   getLineSpacing,
+  getRawText,
+  getTextTransform,
   isFitText,
 } from './getters';
 
 const { svgedit } = window;
 
 const renderTextPath = (text: SVGTextElement, val?: string) => {
-  if (typeof val === 'string') {
-    const textPath = text.querySelector('textPath');
+  const transform = getTextTransform(text);
+  const textPath = text.querySelector('textPath');
 
-    if (textPath) {
-      textPath.textContent = val;
+  if (!textPath) return;
+
+  if (typeof val === 'string') {
+    // val is the raw editable text; canvas shows the transformed version.
+    if (transform !== 'none' || text.hasAttribute('data-raw-text')) {
+      text.setAttribute('data-raw-text', val);
     }
+
+    textPath.textContent = applyTextTransform(val, transform);
+
+    return;
+  }
+
+  const rawText = getRawText(text);
+
+  if (rawText) {
+    textPath.textContent = applyTextTransform(rawText, transform);
+  } else if (transform !== 'none') {
+    // No raw stored — read current and apply
+    textPath.textContent = applyTextTransform(textPath.textContent ?? '', transform);
   }
 };
 
@@ -32,7 +52,23 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
   const tspans = (Array.from(text.childNodes) as Element[]).filter(
     (child) => child.tagName === 'tspan',
   ) as SVGTextContentElement[];
-  const lines = typeof val === 'string' ? val.split('\u0085') : tspans.map((tspan) => tspan.textContent ?? '');
+  const transform = getTextTransform(text);
+
+  if (typeof val === 'string') {
+    // val is the raw editable text; tspan shows the transformed version.
+    if (transform !== 'none' || text.hasAttribute('data-raw-text')) {
+      text.setAttribute('data-raw-text', val);
+    }
+  }
+
+  const rawText = getRawText(text);
+  const sourceLines =
+    typeof val === 'string'
+      ? val.split('\u0085')
+      : rawText
+        ? rawText.split('\u0085')
+        : tspans.map((tspan) => tspan.textContent ?? '');
+  const lines = sourceLines.map((line) => applyTextTransform(line, transform));
   const isVertical = getIsVertical(text);
   const lineSpacing = getLineSpacing(text);
   const charHeight = getFontSize(text);
@@ -89,8 +125,14 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
  * When val is provided, split by \u0085 separator.
  * When val is not provided, read from DOM and group consecutive wrapped tspans.
  */
-const getManualLines = (val: string | undefined, tspans: SVGTextContentElement[]): string[] => {
+const getManualLines = (
+  val: string | undefined,
+  tspans: SVGTextContentElement[],
+  rawText?: null | string,
+): string[] => {
   if (typeof val === 'string') return val.split('\u0085');
+
+  if (rawText) return rawText.split('\u0085');
 
   if (tspans.length === 0) return [''];
 
@@ -122,7 +164,16 @@ const renderFitTextTspan = (text: SVGTextElement, val?: string) => {
   const existingTspans = (Array.from(text.childNodes) as Element[]).filter(
     (child) => child.tagName === 'tspan',
   ) as SVGTextContentElement[];
-  const lines = getManualLines(val, existingTspans);
+  const transform = getTextTransform(text);
+
+  if (typeof val === 'string') {
+    if (transform !== 'none' || text.hasAttribute('data-raw-text')) {
+      text.setAttribute('data-raw-text', val);
+    }
+  }
+
+  const sourceLines = getManualLines(val, existingTspans, getRawText(text));
+  const lines = transform === 'none' ? sourceLines : sourceLines.map((line) => applyTextTransform(line, transform));
   const isVertical = getIsVertical(text);
   const lineSpacing = getLineSpacing(text);
   const charHeight = getFontSize(text);

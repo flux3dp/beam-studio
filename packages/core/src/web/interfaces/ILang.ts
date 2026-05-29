@@ -913,6 +913,14 @@ export interface ILang {
           text_align_right: string;
           text_content_placeholder: string;
           text_infill: string;
+          text_transform: string;
+          text_transform_fullwidth: string;
+          text_transform_halfwidth: string;
+          text_transform_lowercase: string;
+          text_transform_sentence: string;
+          text_transform_title: string;
+          text_transform_toggle: string;
+          text_transform_uppercase: string;
           threshold: string;
           threshold_short: string;
           variable_text: string;

@@ -50,6 +50,7 @@ import LetterSpacingBlock from './components/LetterSpacingBlock';
 import LineSpacingBlock from './components/LineSpacingBlock';
 import StartOffsetBlock from './components/StartOffsetBlock';
 import TextContentBlock from './components/TextContentBlock';
+import TextTransformBlock from './components/TextTransformBlock';
 import VerticalAlignBlock from './components/VerticalAlignBlock';
 import { useFontHandlers } from './hooks/useFontHandlers';
 import styles from './index.module.scss';
@@ -572,6 +573,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     return (
       <>
         <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
+        <TextTransformBlock onSizeChange={handleSizeChange} textElements={textElements} />
         <StartOffsetBlock
           hasMultiValue={startOffset.hasMultiValue}
           onValueChange={handleStartOffsetChange}
@@ -596,6 +598,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           {renderFontFamilyBlock()}
           {renderFontStyleBlock()}
           <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
+          {!isTextPath && <TextTransformBlock onSizeChange={handleSizeChange} textElements={textElements} />}
           {isAllFitText && <FitTextAlignBlock textElements={textElements} />}
           {isTextPath ? renderTextPathOptions() : renderMultiLineTextOptions()}
         </>
@@ -608,6 +611,11 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
               <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
               {renderFontStyleBlock()}
             </div>
+            {!isTextPath && (
+              <div className={styles.row}>
+                <TextTransformBlock onSizeChange={handleSizeChange} textElements={textElements} />
+              </div>
+            )}
             {isAllFitText && <div className={styles.row}>{<FitTextAlignBlock textElements={textElements} />}</div>}
             {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
             {!isTextPath && showVariableText && (

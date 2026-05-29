@@ -74,6 +74,54 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
       class="row"
     >
       <div
+        class="select"
+      >
+        mock-select title:
+        Change Case
+         value:
+        <select>
+          <option
+            value="sentence"
+          >
+            Sentence Case
+          </option>
+          <option
+            value="lowercase"
+          >
+            Lowercase
+          </option>
+          <option
+            value="uppercase"
+          >
+            Uppercase
+          </option>
+          <option
+            value="title"
+          >
+            Capitalize Each Word
+          </option>
+          <option
+            value="toggle"
+          >
+            Toggle Case
+          </option>
+          <option
+            value="halfwidth"
+          >
+            Halfwidth
+          </option>
+          <option
+            value="fullwidth"
+          >
+            Fullwidth
+          </option>
+        </select>
+      </div>
+    </div>
+    <div
+      class="row"
+    >
+      <div
         class="container"
         title="Line spacing"
       >
@@ -216,6 +264,54 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
             value="Bold"
           >
             Bold
+          </option>
+        </select>
+      </div>
+    </div>
+    <div
+      class="row"
+    >
+      <div
+        class="select"
+      >
+        mock-select title:
+        Change Case
+         value:
+        <select>
+          <option
+            value="sentence"
+          >
+            Sentence Case
+          </option>
+          <option
+            value="lowercase"
+          >
+            Lowercase
+          </option>
+          <option
+            value="uppercase"
+          >
+            Uppercase
+          </option>
+          <option
+            value="title"
+          >
+            Capitalize Each Word
+          </option>
+          <option
+            value="toggle"
+          >
+            Toggle Case
+          </option>
+          <option
+            value="halfwidth"
+          >
+            Halfwidth
+          </option>
+          <option
+            value="fullwidth"
+          >
+            Fullwidth
           </option>
         </select>
       </div>
@@ -393,6 +489,50 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
         />
       </div>
     </div>
+    <div
+      class="select"
+    >
+      mock-select title:
+      Change Case
+       value:
+      <select>
+        <option
+          value="sentence"
+        >
+          Sentence Case
+        </option>
+        <option
+          value="lowercase"
+        >
+          Lowercase
+        </option>
+        <option
+          value="uppercase"
+        >
+          Uppercase
+        </option>
+        <option
+          value="title"
+        >
+          Capitalize Each Word
+        </option>
+        <option
+          value="toggle"
+        >
+          Toggle Case
+        </option>
+        <option
+          value="halfwidth"
+        >
+          Halfwidth
+        </option>
+        <option
+          value="fullwidth"
+        >
+          Fullwidth
+        </option>
+      </select>
+    </div>
     <div>
       mock-start-offset-block value:
       10
@@ -520,6 +660,49 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
      hasMultiValue:
     false
     <input />
+  </div>
+  <div>
+    mock-object-panel-select id:
+    text-transform
+     label:
+    Change Case
+    <select>
+      <option
+        value="sentence"
+      >
+        Sentence Case
+      </option>
+      <option
+        value="lowercase"
+      >
+        Lowercase
+      </option>
+      <option
+        value="uppercase"
+      >
+        Uppercase
+      </option>
+      <option
+        value="title"
+      >
+        Capitalize Each Word
+      </option>
+      <option
+        value="toggle"
+      >
+        Toggle Case
+      </option>
+      <option
+        value="halfwidth"
+      >
+        Halfwidth
+      </option>
+      <option
+        value="fullwidth"
+      >
+        Fullwidth
+      </option>
+    </select>
   </div>
   <div>
     mock-object-panel-number id:
@@ -654,6 +837,49 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
     <input />
   </div>
   <div>
+    mock-object-panel-select id:
+    text-transform
+     label:
+    Change Case
+    <select>
+      <option
+        value="sentence"
+      >
+        Sentence Case
+      </option>
+      <option
+        value="lowercase"
+      >
+        Lowercase
+      </option>
+      <option
+        value="uppercase"
+      >
+        Uppercase
+      </option>
+      <option
+        value="title"
+      >
+        Capitalize Each Word
+      </option>
+      <option
+        value="toggle"
+      >
+        Toggle Case
+      </option>
+      <option
+        value="halfwidth"
+      >
+        Halfwidth
+      </option>
+      <option
+        value="fullwidth"
+      >
+        Fullwidth
+      </option>
+    </select>
+  </div>
+  <div>
     mock-start-offset-block value:
     10
      hasMultiValue:
@@ -779,6 +1005,49 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
      hasMultiValue:
     false
     <input />
+  </div>
+  <div>
+    mock-object-panel-select id:
+    text-transform
+     label:
+    Change Case
+    <select>
+      <option
+        value="sentence"
+      >
+        Sentence Case
+      </option>
+      <option
+        value="lowercase"
+      >
+        Lowercase
+      </option>
+      <option
+        value="uppercase"
+      >
+        Uppercase
+      </option>
+      <option
+        value="title"
+      >
+        Capitalize Each Word
+      </option>
+      <option
+        value="toggle"
+      >
+        Toggle Case
+      </option>
+      <option
+        value="halfwidth"
+      >
+        Halfwidth
+      </option>
+      <option
+        value="fullwidth"
+      >
+        Fullwidth
+      </option>
+    </select>
   </div>
   <div>
     mock-object-panel-number id:

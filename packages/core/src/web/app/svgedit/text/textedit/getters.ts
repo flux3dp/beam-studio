@@ -77,7 +77,80 @@ export const getFitTextAlign = (elem: Element): FitTextAlign => {
   return 'start';
 };
 
+export type TextTransform =
+  | 'fullwidth'
+  | 'halfwidth'
+  | 'lowercase'
+  | 'none'
+  | 'sentence'
+  | 'title'
+  | 'toggle'
+  | 'uppercase';
+
+const TRANSFORM_VALUES: ReadonlySet<TextTransform> = new Set([
+  'uppercase',
+  'lowercase',
+  'sentence',
+  'title',
+  'toggle',
+  'halfwidth',
+  'fullwidth',
+]);
+
+export const getTextTransform = (elem: SVGTextElement): TextTransform => {
+  const val = elem.getAttribute('data-text-transform');
+
+  return val && TRANSFORM_VALUES.has(val as TextTransform) ? (val as TextTransform) : 'none';
+};
+
+const toSentenceCase = (s: string): string =>
+  s.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g, (_, sep, c) => sep + c.toUpperCase());
+
+const toTitleCase = (s: string): string => s.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase());
+
+const toggleCase = (s: string): string =>
+  s.replace(/[a-zA-Z]/g, (c) => (c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()));
+
+// Fullwidth ASCII (U+FF01-U+FF5E) → halfwidth ASCII; fullwidth space → halfwidth space.
+const toHalfwidth = (s: string): string =>
+  s.replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/　/g, ' ');
+
+// Halfwidth ASCII (! through ~) → fullwidth; halfwidth space → fullwidth.
+const toFullwidth = (s: string): string =>
+  s.replace(/[!-~]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0xfee0)).replace(/ /g, '　');
+
+export const applyTextTransform = (s: string, mode: TextTransform): string => {
+  switch (mode) {
+    case 'uppercase':
+      return s.toUpperCase();
+    case 'lowercase':
+      return s.toLowerCase();
+    case 'sentence':
+      return toSentenceCase(s);
+    case 'title':
+      return toTitleCase(s);
+    case 'toggle':
+      return toggleCase(s);
+    case 'halfwidth':
+      return toHalfwidth(s);
+    case 'fullwidth':
+      return toFullwidth(s);
+    default:
+      return s;
+  }
+};
+
 export const getTextContent = (elem: SVGTextElement): string => {
+  // Raw text (when transform is or has been active) is the editable source — return it
+  // so the textarea shows what the user typed, not the transformed display.
+  const raw = elem.getAttribute('data-raw-text');
+
+  if (raw !== null) return raw.replace(//g, '\n');
+
+  if (elem.getAttribute('data-textpath')) {
+    return elem.querySelector('textPath')?.textContent ?? '';
+  }
+
   const tspans = Array.from(elem.childNodes).filter((child): child is Element => child.nodeName === 'tspan');
 
   if (tspans.length === 0) return '';
@@ -100,3 +173,5 @@ export const getTextContent = (elem: SVGTextElement): string => {
 
   return manualLines.join('\n');
 };
+
+export const getRawText = (elem: SVGTextElement): null | string => elem.getAttribute('data-raw-text');
