@@ -672,8 +672,9 @@ exports[`should render correctly test checkbox menu item 2`] = `
           tabindex="-1"
         >
           <li
+            aria-checked="false"
             class="szh-menu__item szh-menu__item--type-checkbox"
-            role="menuitem"
+            role="menuitemcheckbox"
             tabindex="-1"
           >
             <span
@@ -688,8 +689,9 @@ exports[`should render correctly test checkbox menu item 2`] = `
             </span>
           </li>
           <li
+            aria-checked="false"
             class="szh-menu__item szh-menu__item--type-checkbox"
-            role="menuitem"
+            role="menuitemcheckbox"
             tabindex="-1"
           >
             <span
@@ -704,8 +706,9 @@ exports[`should render correctly test checkbox menu item 2`] = `
             </span>
           </li>
           <li
+            aria-checked="false"
             class="szh-menu__item szh-menu__item--type-checkbox"
-            role="menuitem"
+            role="menuitemcheckbox"
             tabindex="-1"
           >
             Fit to Window Size
@@ -921,8 +924,9 @@ exports[`should render correctly test checkbox menu item 3`] = `
           tabindex="-1"
         >
           <li
+            aria-checked="false"
             class="szh-menu__item szh-menu__item--type-checkbox"
-            role="menuitem"
+            role="menuitemcheckbox"
             tabindex="-1"
           >
             <span
@@ -937,8 +941,9 @@ exports[`should render correctly test checkbox menu item 3`] = `
             </span>
           </li>
           <li
+            aria-checked="false"
             class="szh-menu__item szh-menu__item--type-checkbox"
-            role="menuitem"
+            role="menuitemcheckbox"
             tabindex="-1"
           >
             <span
@@ -953,8 +958,9 @@ exports[`should render correctly test checkbox menu item 3`] = `
             </span>
           </li>
           <li
+            aria-checked="false"
             class="szh-menu__item szh-menu__item--type-checkbox"
-            role="menuitem"
+            role="menuitemcheckbox"
             tabindex="-1"
           >
             Fit to Window Size

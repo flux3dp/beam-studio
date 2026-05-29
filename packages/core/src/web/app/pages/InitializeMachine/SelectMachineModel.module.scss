@@ -1,128 +1,107 @@
+@use '@core/styles/mixins' as mixins;
 @use '@core/styles/variables' as variables;
-@use './connection_setting_page' as connectionSettingPage;
 
-.container {
-  @include connectionSettingPage.container;
+.title {
+  color: #2d2d2d;
+  text-align: center;
+}
 
-  @media screen and (max-width: 600px) {
-    > .btns > .btn.primary {
-      background-color: #333333;
+.btns {
+  margin: 40px 40px 0px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
 
-      &:hover:not(.disabled) {
-        background-color: #000000;
-      }
+  @include mixins.is-mobile {
+    height: calc(100vh - 220px);
+    margin: 0;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    justify-content: start;
+    gap: 8px 0;
+    align-items: center;
+    overflow: scroll;
+
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
 
-  .title {
+  .btn {
+    width: 152px;
+    height: 152px;
+    background-color: #ffffff;
+    border: 2px solid #ffffff;
+    border-radius: 12px;
+    font-size: 18px;
+    font-weight: 700;
     color: #2d2d2d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 20px 0;
     text-align: center;
-  }
+    cursor: pointer;
 
-  .main {
-    @media screen and (max-width: 600px) {
-      padding: 0;
-      margin: 0 8px;
+    &:hover {
+      border: 2px solid variables.$primary-blue;
     }
 
-    .btns {
-      margin: 40px 40px 0px;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
+    @include mixins.is-mobile {
+      width: calc(100vw - 40px);
+      height: 80px;
+      padding: 0 0 0 32px;
+      flex-direction: row;
+      gap: 28px;
+      font-size: 16px;
+      text-align: start;
+      min-width: 280px;
+      max-width: 320px;
+    }
 
-      @media screen and (max-width: 600px) {
-        height: calc(100vh - 220px);
-        margin: 0;
-        flex-direction: column;
-        flex-wrap: nowrap;
-        justify-content: start;
-        gap: 8px 0;
-        align-items: center;
-        overflow: scroll;
+    .label {
+      &.bb {
+        margin-top: -10px;
 
-        &::-webkit-scrollbar {
-          display: none;
+        @include mixins.is-mobile {
+          margin-top: 0px;
         }
       }
+    }
+  }
 
-      .btn {
-        width: 152px;
-        height: 152px;
-        background-color: #ffffff;
-        border: 2px solid #ffffff;
-        border-radius: 12px;
-        font-size: 18px;
-        font-weight: 700;
-        color: #2d2d2d;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        padding: 16px 20px 0;
-        text-align: center;
-        cursor: pointer;
+  .btn-real {
+    width: 320px;
+    height: 200px;
+    padding: 40px 20px 0;
 
-        &:hover {
-          border: 2px solid variables.$primary-blue;
-        }
+    @include mixins.is-mobile {
+      height: 156px;
+      padding: 24px 40px 0;
+      flex-direction: column;
+      gap: 0;
+      text-align: center;
+    }
 
-        @media screen and (max-width: 600px) {
-          width: calc(100vw - 40px);
-          height: 80px;
-          padding: 0 0 0 32px;
-          flex-direction: row;
-          gap: 28px;
-          font-size: 16px;
-          text-align: start;
-          min-width: 280px;
-          max-width: 320px;
-        }
-
-        .label {
-          &.bb {
-            margin-top: -10px;
-
-            @media screen and (max-width: 600px) {
-              margin-top: 0px;
-            }
-          }
-        }
-      }
-
-      .btn-real {
-        width: 320px;
-        height: 200px;
-        padding: 40px 20px 0;
-
-        @media screen and (max-width: 600px) {
-          height: 156px;
-          padding: 24px 40px 0;
-          flex-direction: column;
-          gap: 0;
-          text-align: center;
-        }
-
-        &.promark {
-          height: 300px;
-
-          .image {
-            height: 200px;
-          }
-        }
-      }
+    &.promark {
+      height: 300px;
 
       .image {
-        width: 250px;
-        height: 100px;
-        object-fit: cover;
-        margin-bottom: 12px;
-
-        @media screen and (max-width: 600px) {
-          width: 200px;
-          height: 80px;
-        }
+        height: 200px;
       }
+    }
+  }
+
+  .image {
+    width: 250px;
+    height: 100px;
+    object-fit: cover;
+    margin-bottom: 12px;
+
+    @include mixins.is-mobile {
+      width: 200px;
+      height: 80px;
     }
   }
 }

@@ -3,11 +3,12 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import blobSegments from '@core/helpers/blob-segments';
 import i18n from '@core/helpers/i18n';
-import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
+import type InsecureWebsocket from '@core/helpers/InsecureWebsocket';
 import isJson from '@core/helpers/is-json';
 import isWeb from '@core/helpers/is-web';
 import Logger from '@core/helpers/logger';
 import outputError from '@core/helpers/output-error';
+import { connectWebSocket } from '@core/helpers/sslIpHelper';
 import storage from '@core/implementations/storage';
 import type { Option, WrappedWebSocket } from '@core/interfaces/WebSocket';
 
@@ -37,6 +38,7 @@ export const setCurrentVersion = (version: string): void => {
 //      onClose       - fired on connection closed
 //      onOpen        - fired on connection connecting
 export default (options: Option): WrappedWebSocket => {
+  let pendingSends: string[] = [];
   const defaultCallback = () => {};
   const defaultOptions = {
     autoReconnect: true,
@@ -112,41 +114,7 @@ export default (options: Option): WrappedWebSocket => {
     }
   };
 
-  const createWebSocket = (createWsOpts: Option) => {
-    if (ws) {
-      if (ws.readyState === WebSocket.CONNECTING) {
-        return ws;
-      }
-
-      if (ws.readyState !== WebSocket.CLOSED) {
-        ws.close();
-      }
-    }
-
-    const hostName = createWsOpts.hostname || defaultOptions.hostname;
-    const port = createWsOpts.port || defaultOptions.port;
-    const url = `ws://${hostName}:${port}/ws/${createWsOpts.method}`;
-
-    if (port === undefined) {
-      handleCreateWebSocketFailed();
-
-      return null;
-    }
-
-    const WebSocketClass =
-      isWeb() && window.location.protocol === 'https:' && checkFluxTunnel() ? InsecureWebsocket : WebSocket;
-    let nodeWs: InsecureWebsocket | WebSocket;
-
-    try {
-      nodeWs = new WebSocketClass(url);
-    } catch (error) {
-      console.error('Failed to create websocket', error);
-      handleCreateWebSocketFailed();
-
-      return null;
-    }
-    wsCreateFailedCount = 0;
-
+  const attachHandlers = (nodeWs: InsecureWebsocket | WebSocket, createWsOpts: Option) => {
     nodeWs.onerror = () => {
       wsErrorCount += 1;
 
@@ -172,13 +140,6 @@ export default (options: Option): WrappedWebSocket => {
           onClick: () => MessageCaller.closeMessage('backend-error-hint'),
         });
       }
-    };
-
-    nodeWs.onopen = (e) => {
-      socketOptions.onOpen?.(e);
-      wsErrorCount = 0;
-      alertCaller.popById('backend-error');
-      MessageCaller.closeMessage('backend-error-hint');
     };
 
     nodeWs.onmessage = (result: MessageEvent) => {
@@ -243,7 +204,7 @@ export default (options: Option): WrappedWebSocket => {
           // if identify error, reconnect again
           if (errorStr === 'REMOTE_IDENTIFY_ERROR') {
             setTimeout(() => {
-              ws = createWebSocket(createWsOpts);
+              createWebSocket(createWsOpts);
             }, 1000);
 
             return;
@@ -276,13 +237,68 @@ export default (options: Option): WrappedWebSocket => {
       }
 
       if (socketOptions.autoReconnect === true) {
-        ws = createWebSocket(createWsOpts);
+        createWebSocket(createWsOpts);
       } else {
         ws = null; // release
       }
     };
+  };
 
-    return nodeWs;
+  let isCreatingWebsocket = false;
+
+  const createWebSocket = (createWsOpts: Option): void => {
+    if (isCreatingWebsocket) {
+      // A race is already in progress, don't start another
+      return;
+    }
+
+    if (ws) {
+      if (ws.readyState !== WebSocket.CLOSED) {
+        ws.close();
+      }
+
+      ws = null;
+    }
+
+    const hostName = createWsOpts.hostname || defaultOptions.hostname;
+    const port = createWsOpts.port || defaultOptions.port;
+
+    if (port === undefined) {
+      handleCreateWebSocketFailed();
+
+      return;
+    }
+
+    isCreatingWebsocket = true;
+    connectWebSocket({
+      hostname: hostName,
+      method: createWsOpts.method!,
+      onFailed: () => {
+        ws = null;
+        isCreatingWebsocket = false;
+        handleCreateWebSocketFailed();
+
+        if (socketOptions.autoReconnect === true) {
+          setTimeout(() => {
+            createWebSocket(createWsOpts);
+          }, 300);
+        }
+      },
+      onSettled: (socket, openEvent) => {
+        ws = socket;
+        isCreatingWebsocket = false;
+        wsCreateFailedCount = 0;
+        wsErrorCount = 0;
+        alertCaller.popById('backend-error');
+        MessageCaller.closeMessage('backend-error-hint');
+        attachHandlers(socket, createWsOpts);
+        socketOptions.onOpen?.(openEvent);
+
+        pendingSends.forEach((msg) => sender(msg));
+        pendingSends = [];
+      },
+      port: port!,
+    });
   };
 
   let timer: NodeJS.Timeout;
@@ -315,13 +331,7 @@ export default (options: Option): WrappedWebSocket => {
   };
 
   const initWebSocket = () => {
-    ws = createWebSocket(socketOptions);
-
-    if (!ws && socketOptions.autoReconnect) {
-      setTimeout(() => {
-        initWebSocket();
-      }, 300);
-    }
+    createWebSocket(socketOptions);
   };
 
   initWebSocket();
@@ -342,15 +352,8 @@ export default (options: Option): WrappedWebSocket => {
     log: wsLog.log,
     options: socketOptions,
     send(data: string) {
-      if (!ws || ws === null || ws?.readyState === WebSocket.CLOSING || ws?.readyState === WebSocket.CLOSED) {
-        ws = createWebSocket(socketOptions);
-      }
-
-      if (ws?.readyState === WebSocket.CONNECTING) {
-        ws.onopen = (e) => {
-          socketOptions.onOpen?.(e);
-          sender(data);
-        };
+      if (!ws || ws.readyState !== WebSocket.OPEN) {
+        pendingSends.push(data);
       } else {
         sender(data);
       }

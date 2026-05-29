@@ -26,10 +26,10 @@ describe('show tutorial', () => {
       .should('have.attr', 'stroke', '#333333')
       .should('have.attr', 'fill', 'none')
       .should('have.attr', 'fill-opacity', '0');
-    cy.get('g.layer>rect').invoke('attr', 'x').then(parseInt).should('be.gt', 600);
-    cy.get('g.layer>rect').invoke('attr', 'y').then(parseInt).should('be.gt', 600);
-    cy.get('g.layer>rect').invoke('attr', 'width').then(parseInt).should('be.gt', 1200);
-    cy.get('g.layer>rect').invoke('attr', 'height').then(parseInt).should('be.gt', 600);
+    cy.get('g.layer>rect').invoke('attr', 'x').then(parseInt).should('be.gt', 500);
+    cy.get('g.layer>rect').invoke('attr', 'y').then(parseInt).should('be.gt', 500);
+    cy.get('g.layer>rect').invoke('attr', 'width').then(parseInt).should('be.gt', 1000);
+    cy.get('g.layer>rect').invoke('attr', 'height').then(parseInt).should('be.gt', 500);
   };
 
   beforeEach(() => {

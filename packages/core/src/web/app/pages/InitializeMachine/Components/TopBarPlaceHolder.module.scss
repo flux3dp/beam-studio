@@ -1,0 +1,15 @@
+@use '@core/styles/mixins' as mixins;
+
+.container {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  height: 40px;
+  background-color: #333333;
+  -webkit-app-region: drag;
+
+  @include mixins.is-mobile {
+    display: none;
+  }
+}

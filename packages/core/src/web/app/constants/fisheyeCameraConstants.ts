@@ -27,19 +27,16 @@ export const bb2PnPPoints: Points = [
   [30, 70],
 ];
 
+// Share with hexa 2
 export const bb2PerspectiveGrid: PerspectiveGrid = {
   x: [-80, 80, 10],
   y: [0, 100, 10],
 } as const;
 
-export const hx2rfPerspectiveGrid: PerspectiveGrid = {
+// Share with hexa 2
+export const bb2PerspectiveGridWide: PerspectiveGrid = {
   x: [-130, 130, 10],
   y: [0, 145, 10],
-} as const;
-
-export const hx2rfPrecisePerspectiveGrid: PerspectiveGrid = {
-  x: [-80, 80, 10],
-  y: [0, 100, 10],
 } as const;
 
 export const bb2WideAngleCameraPnpPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = {

@@ -34,7 +34,7 @@ interface Props {
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
 const ChArUco = ({
-  calibrationThresholds: { average: averageThreshold = 1.5, good: goodThreshold = 2 } = {},
+  calibrationThresholds: { average: averageThreshold = 2, good: goodThreshold = 1.5 } = {},
   cameraIndex,
   isFisheye = true,
   isVertical,

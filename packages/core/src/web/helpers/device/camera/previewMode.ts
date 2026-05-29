@@ -1,8 +1,8 @@
-import alertCaller from '@core/app/actions/alert-caller';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import { getWideAngleCameraData } from '@core/app/actions/camera/preview-helper/getWideAngleCameraData';
+import handlePreviewSetupError from '@core/app/actions/camera/preview-helper/handlePreviewSetupError';
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
@@ -11,7 +11,8 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
-import i18n from '@core/helpers/i18n';
+import deviceMaster from '@core/helpers/device-master';
+import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export const endPreviewMode = (): void => {
@@ -33,12 +34,35 @@ export const endPreviewMode = (): void => {
 
 let isSettingUpPreview = false;
 
-export const getSupportedPreviewModes = (device: IDeviceInfo, hasWideAngleCamera: boolean): PreviewMode[] => {
+export const checkCameraOblique = async (device: IDeviceInfo): Promise<boolean> => {
+  if (device.model === 'fhx2rf') return true;
+
+  if (device.model === 'fbb2') {
+    const vc = versionChecker(device.version);
+
+    if (vc.meetRequirement('BB2_CAMERA_INSTALLATION')) {
+      try {
+        const res = await deviceMaster.getDeviceSetting('camera_installation');
+
+        return res.status === 'ok' && res.value === '1';
+      } catch (err) {
+        console.warn('Failed to get camera installation setting', err);
+      }
+    }
+  }
+
+  return false;
+};
+
+export const getSupportedPreviewModes = (
+  device: IDeviceInfo,
+  { hasWideAngleCamera, isCameraOblique }: { hasWideAngleCamera: boolean; isCameraOblique: boolean },
+): PreviewMode[] => {
   const modes = [PreviewMode.REGION];
 
   if (hasWideAngleCamera || device.model === 'fbm2') modes.push(PreviewMode.FULL_AREA);
 
-  if (device.model === 'fhx2rf') modes.push(PreviewMode.PRECISE_REGION);
+  if (isCameraOblique) modes.push(PreviewMode.PRECISE_REGION);
 
   return modes;
 };
@@ -69,9 +93,10 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
   if (!isWorkareaMatched && !(await showResizeAlert(device!))) return false;
 
   const { canPreview, hasWideAngleCamera } = await getWideAngleCameraData(device);
+  const isCameraOblique = await checkCameraOblique(device);
 
   setCameraPreviewState({
-    supportedPreviewModes: getSupportedPreviewModes(device, hasWideAngleCamera),
+    supportedPreviewModes: getSupportedPreviewModes(device, { hasWideAngleCamera, isCameraOblique }),
   });
 
   if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && canPreview)) {
@@ -107,8 +132,6 @@ export const setupPreviewMode = async ({
     return;
   }
 
-  const t = i18n.lang.topbar;
-
   try {
     await previewModeController.start(device!);
 
@@ -137,18 +160,7 @@ export const setupPreviewMode = async ({
     callback?.();
   } catch (error) {
     console.error(error);
-
-    if (error instanceof Error) {
-      if (error.message && error.message.startsWith('Camera WS')) {
-        alertCaller.popUpError({
-          message: `${t.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
-        });
-      } else {
-        alertCaller.popUpError({
-          message: `${t.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
-        });
-      }
-    }
+    handlePreviewSetupError(device!, error);
 
     // eslint-disable-next-line hooks/rules-of-hooks
     FnWrapper.useSelectTool();

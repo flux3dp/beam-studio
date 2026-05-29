@@ -126,7 +126,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       label: r.calibration,
       submenu: [
         { click: handleClick, id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera },
-        (isBb2 || isBeamo2 || isHexa2) && {
+        (isBb2 || isBeamo2 || isHexa2 || isAdor) && {
           click: handleClick,
           id: 'CALIBRATE_CAMERA_ADVANCED',
           label: r.calibrate_camera_advanced,
@@ -194,13 +194,13 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       submenu: [
         {
           click: handleClick,
-          id: 'UPLOAD_CALIBRATION_DATA',
-          label: r.upload_data,
+          id: 'IMPORT_CALIBRATION_DATA',
+          label: r.import_calibration_data,
         },
         {
           click: handleClick,
-          id: 'DOWNLOAD_CALIBRATION_DATA',
-          label: r.download_data,
+          id: 'EXPORT_CALIBRATION_DATA',
+          label: r.export_calibration_data,
         },
       ],
     },
@@ -225,6 +225,12 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
         },
       ].filter(Boolean),
     },
+    isHexa2 &&
+      isDevMode && {
+        click: handleClick,
+        id: 'LASER_DELAY_SETTING',
+        label: 'Laser Delay Setting',
+      },
     !isPromark && {
       id: 'DOWNLOAD_LOG',
       label: r.download_log,

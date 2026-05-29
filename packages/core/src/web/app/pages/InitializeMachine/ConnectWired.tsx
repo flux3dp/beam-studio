@@ -7,7 +7,9 @@ import { useSearchParams } from 'react-router';
 import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './ConnectWired.module.scss';
+import PanelImage, { adorNetworkHint, defaultNetworkHint, nxNetworkHint } from './Components/PanelImage';
+import SetupPageLayout from './Components/SetupPageLayout';
+import styles from './ConnectionPage.module.scss';
 
 const ConnectWired = (): React.JSX.Element => {
   const lang = useI18n().initialize;
@@ -30,6 +32,14 @@ const ConnectWired = (): React.JSX.Element => {
     return 'img/init-panel/touch-panel-en.jpg';
   }, [isAdor, isNx]);
 
+  const hint = useMemo(() => {
+    if (isAdor) return adorNetworkHint;
+
+    if (isNx) return nxNetworkHint;
+
+    return defaultNetworkHint;
+  }, [isAdor, isNx]);
+
   const handleNext = () => {
     const urlParams = new URLSearchParams({ model, wired: '1' });
     const queryString = urlParams.toString();
@@ -38,53 +48,44 @@ const ConnectWired = (): React.JSX.Element => {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles['top-bar']} />
-      <div className={styles.btns}>
-        <div className={styles.btn} onClick={() => window.history.back()}>
-          {lang.back}
+    <SetupPageLayout
+      buttons={[
+        { label: lang.back, onClick: () => window.history.back() },
+        { label: lang.next, onClick: handleNext, primary: true },
+      ]}
+    >
+      <PanelImage hint={hint} landscape={isAdor} src={imageSrc} />
+      <div className={classNames(styles.text, { [styles.ador]: isAdor })}>
+        <div className={styles.title}>{lang.connect_wired.title}</div>
+        <div className={classNames(styles.contents, styles.tutorial)}>
+          <div>{lang.connect_wired.tutorial1}</div>
+          <div>{isAdor ? lang.connect_wired.tutorial2_ador : lang.connect_wired.tutorial2}</div>
         </div>
-        <div className={classNames(styles.btn, styles.primary)} onClick={handleNext}>
-          {lang.next}
-        </div>
+        <Collapse
+          accordion
+          items={[
+            {
+              children: (
+                <div className={classNames(styles.contents, styles.collapse)}>
+                  {lang.connect_wired.what_if_1_content}
+                </div>
+              ),
+              key: '1',
+              label: lang.connect_wired.what_if_1,
+            },
+            {
+              children: (
+                <div className={classNames(styles.contents, styles.collapse)}>
+                  {lang.connect_wired.what_if_2_content}
+                </div>
+              ),
+              key: '2',
+              label: lang.connect_wired.what_if_2,
+            },
+          ]}
+        />
       </div>
-      <div className={classNames(styles.main, { [styles.ador]: isAdor, [styles.nx]: isNx })}>
-        <div className={styles.image}>
-          <div className={styles.hint} />
-          <img draggable="false" src={imageSrc} />
-        </div>
-        <div className={styles.text}>
-          <div className={styles.title}>{lang.connect_wired.title}</div>
-          <div className={classNames(styles.contents, styles.tutorial)}>
-            <div>{lang.connect_wired.tutorial1}</div>
-            <div>{isAdor ? lang.connect_wired.tutorial2_ador : lang.connect_wired.tutorial2}</div>
-          </div>
-          <Collapse
-            accordion
-            items={[
-              {
-                children: (
-                  <div className={classNames(styles.contents, styles.collapse)}>
-                    {lang.connect_wired.what_if_1_content}
-                  </div>
-                ),
-                key: '1',
-                label: lang.connect_wired.what_if_1,
-              },
-              {
-                children: (
-                  <div className={classNames(styles.contents, styles.collapse)}>
-                    {lang.connect_wired.what_if_2_content}
-                  </div>
-                ),
-                key: '2',
-                label: lang.connect_wired.what_if_2,
-              },
-            ]}
-          />
-        </div>
-      </div>
-    </div>
+    </SetupPageLayout>
   );
 };
 

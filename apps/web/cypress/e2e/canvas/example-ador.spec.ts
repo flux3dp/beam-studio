@@ -6,57 +6,57 @@ const exampleList = [
   {
     label: 'Example of Ador Laser',
     type: 'Example Files',
-    ador: 'a9b703b1728273974be394b71eb15aa7',
+    ador: 'abea345eb052c231e790c377c8c416a2',
   },
   {
     label: 'Example of Ador Printing - Single Color',
     type: 'Example Files',
-    ador: 'a5834194978f3243d201cc71917e476e',
+    ador: 'd16de4c9643bd7b2aaa6e574fc6d74a2',
   },
   {
     label: 'Example of Ador Printing - Full Color',
     type: 'Example Files',
-    ador: '73309298198f65d7ac1ecae0b351bd75',
+    ador: '3e1f16bde6c72b00b6e7ed8af6df98ac',
   },
   {
     label: 'Example of beamo',
     type: 'Example Files',
-    ador: 'a6c1e53047862f252ed7329db7485e15',
+    ador: '05ef6a0e37eaf8d63a639e8afc8b21cd',
   },
   {
     label: 'Example of Beambox',
     type: 'Example Files',
-    ador: 'bef90388836b530e7c2e12e63a0a47e5',
+    ador: 'c97773aacc57cf98ffdb6e75f373251e',
   },
   {
     label: 'Material Engraving Test',
     type: 'Material Test',
-    ador: '72872bf0a1afe9cba8fca9001acfa345',
+    ador: '7aaf335780f03f593e4df133d0677a64',
   },
   {
     label: 'Material Engraving Test - Classic',
     type: 'Material Test',
-    ador: '61134b1c28afeb68aec0ae4d8132edda',
+    ador: 'eac3e4578ed29b0527016d4b0c9b319d',
   },
   {
     label: 'Material Cutting Test',
     type: 'Material Test',
-    ador: '1be9b48cf103533ecce3f3d51efe1a59',
+    ador: '76fcfa9b72faac5ccdce667601d1c426',
   },
   {
     label: 'Material Cutting Test - Simple',
     type: 'Material Test',
-    ador: '6fc5f7d08b19aa4959e1909f2c0511a7',
+    ador: 'ad127a8e1bf9d5981861b0708efa5b6c',
   },
   {
     label: 'Material Printing Test',
     type: 'Material Test',
-    ador: 'b9a8cb12397f3202ba62cd0feab3c80c',
+    ador: '0765f261b4ef290b8b8bab6981112528',
   },
   {
     label: 'Acrylic Focus Probe - 3mm',
     type: undefined,
-    ador: 'efb8c8984cf8c487af478c1e8747d9db',
+    ador: '8309600357f531eaad1453167e91c1df',
   },
 ];
 

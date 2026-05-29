@@ -1,10 +1,11 @@
-@use '../connection_setting_page' as connectionSettingPage;
+@use '@core/styles/mixins' as mixins;
 
 .container {
-  @include connectionSettingPage.container;
-
-  & {
-    color: #1f1f1f;
+  @include mixins.is-not-mobile {
+    // Avoid overlap with the fixed position button
+    height: calc(100vh - 130px);
+    padding-bottom: 90px;
+    overflow: hidden;
   }
 }
 
@@ -14,7 +15,6 @@
   font-weight: bold;
   letter-spacing: 0.5px;
   color: #333333;
-  padding-bottom: 25px;
 }
 
 .subtitle {
@@ -29,9 +29,23 @@
 }
 
 .table-container {
-  width: 560px;
-  margin: 24px 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 28px 40px;
+
+  @include mixins.is-not-mobile {
+    overflow: auto;
+    padding: 0 4px 4px 0;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+      margin-right: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 2px;
+    }
+  }
 }
