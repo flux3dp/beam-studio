@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: 'Font Size',
     hide_text: 'Hide Text',
     invert_color: 'Invert Color',
+    text: 'Text',
     text_margin: 'Text Margin',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Barcode',
+    content: 'Content',
+    import: 'Import',
     qr_code: 'QR Code',
+    type: 'Type',
   },
   curve_engraving: {
     '921': 'Failed to auto focus.',
@@ -2025,7 +2029,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     error_tolerance: 'Error Tolerance',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Invert background color',
-    placeholder: 'Input a link or text',
+    placeholder: 'Input a text',
     title: 'QR Code Generator',
   },
   resolution: {

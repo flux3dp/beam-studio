@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: 'Μέγεθος γραμματοσειράς',
     hide_text: 'Απόκρυψη κειμένου',
     invert_color: 'Αντιστροφή χρώματος',
+    text: 'Κείμενο',
     text_margin: 'Περιθώριο κειμένου',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Γραμμωτός κώδικας',
+    content: 'Περιεχόμενο',
+    import: 'Εισαγωγή',
     qr_code: 'QR Κωδικός',
+    type: 'Τύπος',
   },
   curve_engraving: {
     '921': 'Αποτυχία αυτόματης εστίασης.',
@@ -2025,7 +2029,7 @@ const lang: ILang = {
     error_tolerance: 'Ανοχή σφάλματος',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Αντιστροφή χρωμάτων φόντου',
-    placeholder: 'Εισάγετε έναν σύνδεσμο ή κείμενο',
+    placeholder: 'Εισαγωγή κειμένου',
     title: 'Δημιουργός κωδικού QR',
   },
   resolution: {

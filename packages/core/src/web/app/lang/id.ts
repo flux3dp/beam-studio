@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: 'Ukuran Font',
     hide_text: 'Sembunyikan Teks',
     invert_color: 'Balik Warna',
+    text: 'Teks',
     text_margin: 'Margin Teks',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Kode Batang',
+    content: 'Konten',
+    import: 'Impor',
     qr_code: 'Kode QR',
+    type: 'Jenis',
   },
   curve_engraving: {
     '921': 'Gagal melakukan fokus otomatis.',
@@ -2025,7 +2029,7 @@ const lang: ILang = {
     error_tolerance: 'Toleransi Kesalahan',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Balik warna latar belakang',
-    placeholder: 'Masukkan tautan atau teks',
+    placeholder: 'Masukkan teks',
     title: 'Pembuat Kode QR',
   },
   resolution: {

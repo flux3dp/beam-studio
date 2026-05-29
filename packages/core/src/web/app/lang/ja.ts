@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: 'フォントサイズ',
     hide_text: 'テキストを隠す',
     invert_color: '色を反転',
+    text: 'テキスト',
     text_margin: 'テキスト余白',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'バーコード',
+    content: 'コンテンツ',
+    import: 'インポート',
     qr_code: 'QRコード',
+    type: 'タイプ',
   },
   curve_engraving: {
     '921': 'オートフォーカスに失敗しました。',
@@ -2025,7 +2029,7 @@ const lang: ILang = {
     error_tolerance: 'エラー許容度',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: '背景色を反転',
-    placeholder: 'リンクまたはテキストを入力してください',
+    placeholder: 'テキストを入力',
     title: 'QRコードジェネレーター',
   },
   resolution: {

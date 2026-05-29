@@ -1,81 +1,91 @@
-$border-width: 1px;
-$padding: 12px;
-
-.input {
-  margin-bottom: 20px;
-  resize: none;
-  height: 200px;
-
-  @media screen and (max-width: 600px) {
-    height: 120px;
-  }
-}
-
-.content {
-  display: flex;
-  align-content: center;
-  gap: 0 24px;
+.layout {
+  align-items: flex-start;
 
   @media screen and (max-width: 600px) {
     flex-direction: column;
-    align-items: center;
-    gap: 16px;
+    align-items: stretch;
+  }
+}
+
+.form {
+  flex: 1;
+  min-width: 0;
+  max-height: 380px;
+  overflow-y: auto;
+
+  @media screen and (max-width: 600px) {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.label {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+.accent-segmented {
+  :global(.ant-segmented-item-selected) {
+    box-shadow: 0 0 0 1px #1677ff;
   }
 
-  .qrcode-container {
+  :global(.ant-segmented-thumb) {
+    box-shadow: 0 0 0 1px #1677ff;
+  }
+}
+
+.input {
+  resize: none;
+  margin-bottom: 16px;
+}
+
+.qrcode-container {
+  position: relative;
+  display: flex;
+  flex: 0 0 380px;
+  align-items: center;
+  justify-content: center;
+  background-color: #f8f8f8;
+  border-radius: 8px;
+  border: 1px solid rgba(5, 5, 5, 0.06);
+  height: 380px;
+  overflow: hidden;
+
+  --code-size: 320px;
+
+  @media screen and (max-width: 600px) {
+    flex: 1 1 auto;
+    height: 200px;
+    --code-size: 160px;
+  }
+
+  .zoom-wrap {
     display: flex;
+    align-items: center;
     justify-content: center;
+    transition: transform 0.15s ease;
+  }
 
-    --code-size: 200px;
-    @media screen and (max-width: 600px) {
-      --code-size: 120px;
-    }
+  .qrcode {
+    width: var(--code-size) !important;
+    height: var(--code-size) !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
 
-    .qrcode {
-      width: var(--code-size) !important;
-      height: var(--code-size) !important;
-
-      canvas {
-        width: calc(
-          var(--code-size) - $padding * 2 - $border-width * 2
-        ) !important;
-        height: calc(
-          var(--code-size) - $padding * 2 - $border-width * 2
-        ) !important;
-      }
-    }
-
-    .placeholder {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      width: var(--code-size);
-      height: var(--code-size);
-      color: #acacac;
-      background-color: #f8f8f8;
-      border-radius: 8px;
-      border: $border-width solid rgba(5, 5, 5, 0.06);
+    canvas,
+    svg {
+      width: 100% !important;
+      height: 100% !important;
     }
   }
 
-  .settings {
-    margin: 58px auto;
-
-    @media screen and (max-width: 600px) {
-      margin: 0 auto;
-      width: 100%;
-    }
-
-    .label {
-      font-weight: 600;
-    }
-
-    .checkbox {
-      margin-top: 20px;
-
-      @media screen and (max-width: 600px) {
-        margin-top: 12px;
-      }
-    }
+  .placeholder {
+    color: #acacac;
   }
 }

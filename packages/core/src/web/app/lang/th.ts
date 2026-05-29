@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: 'ขนาดฟอนต์',
     hide_text: 'ซ่อนข้อความ',
     invert_color: 'กลับสี',
+    text: 'ข้อความ',
     text_margin: 'ระยะขอบข้อความ',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'บาร์โค้ด',
+    content: 'เนื้อหา',
+    import: 'นำเข้า',
     qr_code: 'คิวอาร์โค้ด',
+    type: 'ประเภท',
   },
   curve_engraving: {
     '921': 'โฟกัสอัตโนมัติล้มเหลว',
@@ -2025,7 +2029,7 @@ const lang: ILang = {
     error_tolerance: 'ระดับความคลาดเคลื่อนที่ยอมรับได้',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'สีพื้นหลังกลับกัน',
-    placeholder: 'กรอกลิงก์หรือข้อความ',
+    placeholder: 'ป้อนข้อความ',
     title: 'ตัวสร้างคิวอาร์โค้ด',
   },
   resolution: {

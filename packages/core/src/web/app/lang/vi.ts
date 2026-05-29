@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: 'Kích thước phông chữ',
     hide_text: 'Ẩn văn bản',
     invert_color: 'Đảo màu',
+    text: 'Văn bản',
     text_margin: 'Lề văn bản',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Mã vạch',
+    content: 'Nội dung',
+    import: 'Nhập',
     qr_code: 'Mã QR',
+    type: 'Loại',
   },
   curve_engraving: {
     '921': 'Không thể lấy nét tự động.',
@@ -2025,7 +2029,7 @@ const lang: ILang = {
     error_tolerance: 'Sai số dung sai',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Đảo ngược màu nền',
-    placeholder: 'Nhập liên kết hoặc văn bản',
+    placeholder: 'Nhập văn bản',
     title: 'Tạo mã QR',
   },
   resolution: {

@@ -8,6 +8,13 @@ import JsBarcode from 'jsbarcode';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './BarcodePreview.module.scss';
+import ZoomToolbar from './ZoomToolbar';
+
+const MIN_ZOOM = 10;
+const MAX_ZOOM = 400;
+const ZOOM_STEP = 25;
+
+const clampZoom = (value: number) => Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, value));
 
 export type Renderer = 'canvas' | 'image' | 'svg';
 
@@ -68,11 +75,19 @@ const BarcodePreview = (props: Readonly<BarcodeProps & { ref?: React.Ref<Barcode
   const { className, options = defaultOptions, ref, renderer = 'svg', value } = props;
   const {
     barcode_generator: { barcode: t },
+    global: tGlobal,
   } = useI18n();
   const containerRef = useRef(null);
   const [error, setError] = useState<null | string>(null);
+  const [zoom, setZoom] = useState(100);
 
   useEffect(() => {
+    if (!value) {
+      setError(null);
+
+      return;
+    }
+
     if (containerRef.current) {
       try {
         JsBarcode(containerRef.current, value, options);
@@ -105,8 +120,23 @@ const BarcodePreview = (props: Readonly<BarcodeProps & { ref?: React.Ref<Barcode
 
   return (
     <div className={classNames(styles.container, className)} id="barcode-container">
-      {renderBarcodeElement()}
-      <span className={errorClasses}>{error}</span>
+      <div className={styles['zoom-wrap']} style={{ transform: `scale(${zoom / 100})` }}>
+        {value ? (
+          <>
+            {renderBarcodeElement()}
+            <span className={errorClasses}>{error}</span>
+          </>
+        ) : (
+          <div className={styles.placeholder}>{tGlobal.preview}</div>
+        )}
+      </div>
+      <ZoomToolbar
+        onFit={() => setZoom(100)}
+        onSetZoom={(z) => setZoom(clampZoom(z))}
+        onZoomIn={() => setZoom((z) => clampZoom(z + ZOOM_STEP))}
+        onZoomOut={() => setZoom((z) => clampZoom(z - ZOOM_STEP))}
+        zoom={zoom}
+      />
     </div>
   );
 };

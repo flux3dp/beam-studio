@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: 'Mida de la lletra',
     hide_text: 'Amagar text',
     invert_color: 'Invertir color',
+    text: 'Text',
     text_margin: 'Marge de text',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Codi de barres',
+    content: 'Contingut',
+    import: 'Importa',
     qr_code: 'Codi QR',
+    type: 'Tipus',
   },
   curve_engraving: {
     '921': 'Error en enfocar automàticament.',
@@ -2025,7 +2029,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     error_tolerance: "Tolerància d'error",
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Invertir color de fons',
-    placeholder: 'Introdueix un enllaç o text',
+    placeholder: 'Introduïu un text',
     title: 'Generador de codi QR',
   },
   resolution: {

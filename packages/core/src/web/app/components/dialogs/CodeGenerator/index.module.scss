@@ -1,10 +1,10 @@
-.title-flex {
-  line-height: '24px';
-  margin-bottom: 20;
+.accent-segmented {
+  :global(.ant-segmented-item-selected) {
+    box-shadow: 0 0 0 1px #1677ff;
+  }
 
-  @media screen and (max-width: 600px) {
-    flex-wrap: wrap;
-    gap: 8px;
+  :global(.ant-segmented-thumb) {
+    box-shadow: 0 0 0 1px #1677ff;
   }
 }
 

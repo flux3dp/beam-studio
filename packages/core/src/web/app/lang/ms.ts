@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: 'Saiz Font',
     hide_text: 'Sembunyikan Teks',
     invert_color: 'Balik Warna',
+    text: 'Teks',
     text_margin: 'Margin Teks',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Kod Bar',
+    content: 'Kandungan',
+    import: 'Import',
     qr_code: 'Kod QR',
+    type: 'Jenis',
   },
   curve_engraving: {
     '921': 'Gagal untuk fokus secara automatik.',
@@ -2025,7 +2029,7 @@ const lang: ILang = {
     error_tolerance: 'Ralat Toleransi',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Songsangkan warna latar belakang',
-    placeholder: 'Masukkan pautan atau teks',
+    placeholder: 'Masukkan teks',
     title: 'Penjana Kod QR',
   },
   resolution: {

@@ -65,6 +65,7 @@ const lang: ILang = {
     font_size: '字体大小',
     hide_text: '隐藏文本',
     invert_color: '反转颜色',
+    text: '文字',
     text_margin: '文本边距',
   },
   beambox: {
@@ -1254,7 +1255,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: '条形码',
+    content: '内容',
+    import: '导入',
     qr_code: '二维码',
+    type: '类型',
   },
   curve_engraving: {
     '921': '自动对焦失败。',
@@ -2025,7 +2029,7 @@ const lang: ILang = {
     error_tolerance: '容错级别',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: '反转背景色',
-    placeholder: '输入链接或文本',
+    placeholder: '输入文字',
     title: '二维码生成器',
   },
   resolution: {
