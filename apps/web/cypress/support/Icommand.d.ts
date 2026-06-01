@@ -18,7 +18,7 @@ declare global {
       getMenuItem(
         path: string[],
         target: string,
-        options?: { interval?: number; stepTimeout?: number; timeout?: number },
+        options?: { interval?: number; timeout?: number },
       ): Chainable<JQuery<HTMLElement>>;
       go2Preference: () => Chainable<void>;
       /** Navigate to a specific settings category in the settings modal sidebar */
