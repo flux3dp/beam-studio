@@ -14,20 +14,20 @@ const EXPECTED_HASHES = {
       local: '8b750c751e18b00bc72dea8377826d9b',
     },
     enabled: {
-      github: '43975d85f0192f4a42c8b54a38645320',
+      github: 'b662e9f0b0bbab4fdc7859faea0d47ef',
       local: '1a1046ebad74514f0a1d94bc0482b83b',
     },
   },
   replaceImage: {
-    github: '518b33620586dcc009c974956b3de591',
+    github: '53c9d4f97685ea5903e3363f27611510',
     local: '71a7455be1cef9715b53ee88ccd65016',
   },
   brightness: {
-    github: 'be91b1388e6ad406bd6c250024a30be3',
+    github: 'd78e1a3526ebbb0696c197bea8a94238',
     local: 'd19294402d68750bf658ac486a8ecf48',
   },
   crop: {
-    github: '67cfcde3bcb99826faebee4b42526eed',
+    github: '951e0851e66b255a005aaa7fda15727a',
     local: '0eb78129890a453816fa574e5af92564',
   },
   invert: {
