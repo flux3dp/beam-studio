@@ -607,14 +607,12 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     );
     const actionButtons: React.JSX.Element[] = [renderOffsetButton(), renderArrayButton()];
 
-    const text = children.find((child) => child.nodeName === 'text') as SVGElement;
-    const pathLike = children.find((child) => CanvasElements.basicPaths.includes(child.nodeName)) as SVGElement;
-
-    const textCount = children.filter((child) => child.nodeName === 'text').length;
+    const texts = children.filter((child) => child.nodeName === 'text');
+    const textCount = texts.length;
     const pathLikeCount = children.filter((child) => CanvasElements.basicPaths.includes(child.nodeName)).length;
 
-    if (textCount >= 1 && pathLikeCount >= 1 && text && pathLike) {
-      const isVariableText = getVariableTextType(text) !== VariableTextType.NONE;
+    if (textCount >= 1 && pathLikeCount >= 1) {
+      const isVariableText = texts.some((text) => getVariableTextType(text) !== VariableTextType.NONE);
 
       actionButtons.push(
         renderButtons(
