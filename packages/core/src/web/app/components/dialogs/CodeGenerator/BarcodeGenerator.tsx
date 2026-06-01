@@ -26,25 +26,6 @@ interface Props {
   text: string;
 }
 
-// copied from src/web/app/views/beambox/Right-Panels/Options-Blocks/TextOptions.tsx
-const renderOption = (option) => {
-  const src = fontHelper.getWebFontPreviewUrl(option.value);
-
-  if (src) {
-    return (
-      <div className={styles['family-option']}>
-        <div className={styles['img-container']}>
-          <img alt={option.label} draggable="false" src={src} />
-        </div>
-        {src.includes('monotype') && <FluxIcons.FluxPlus />}
-      </div>
-    );
-  }
-
-  return <div style={{ fontFamily: `'${option.value}'`, maxHeight: 24 }}>{option.label}</div>;
-};
-// end of copied code
-
 const BarcodeGenerator = ({
   isInvert,
   ref,
@@ -55,10 +36,6 @@ const BarcodeGenerator = ({
 }: Props & { ref?: React.Ref<BarcodeRef> }) => {
   const { barcode_generator: t, code_generator: tCode, qr_code_generator: tQr } = useI18n();
   const [options, setOptions] = useState({ ...defaultOptions, displayValue: false });
-  const [validFontStyles, setValidFontStyles] = useState([]);
-const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props & { ref?: React.Ref<BarcodeRef> }) => {
-  const { barcode_generator: t } = useI18n();
-  const [options, setOptions] = useState(defaultOptions);
   const [validFontStyles, setValidFontStyles] = useState<string[]>([]);
   const formatOptions = formats.map((value) => ({ label: value, value }));
   const fontFamilies = fontFuncs.requestAvailableFontFamilies();
@@ -159,23 +136,7 @@ const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props &
               <Select
                 allowClear={false}
                 className={styles.control}
-                filterOption={(input: string, option?: { label: React.JSX.Element; value: string }) => {
-                  if (option?.value) {
-                    const searchKey = input.toLowerCase();
-
-                    if (option.value.toLowerCase().includes(searchKey)) {
-                      return true;
-                    }
-
-                    const fontName = fontFuncs.fontNameMap.get(option.value) || '';
-
-                    if (fontName.toLowerCase().includes(searchKey)) {
-                      return true;
-                    }
-                  }
-
-                  return false;
-                }}
+                filterOption={fontFamilySelectFilterOption}
                 onChange={(font) => setOptions({ ...options, font, fontOptions: '' })}
                 onKeyDown={(e) => e.stopPropagation()}
                 options={fontOptions}
@@ -215,26 +176,6 @@ const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props &
                   ]}
                   optionType="button"
                   value={options.textAlign}
-            <Flex vertical>
-              <Form.Item className={styles['flex-child']} label={t.font}>
-                <Select
-                  allowClear={false}
-                  filterOption={fontFamilySelectFilterOption}
-                  onChange={(font) => setOptions({ ...options, font, fontOptions: '' })}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  options={fontOptions}
-                  showSearch
-                  value={[options.font]}
-                />
-              </Form.Item>
-              <Form.Item className={styles['flex-child']} label={t.font_size}>
-                <InputNumber
-                  className={styles['w-100']}
-                  max={100}
-                  min={1}
-                  onChange={(fontSize) => setOptions({ ...options, fontSize })}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  value={options.fontSize}
                 />
               </ConfigProvider>
               <Divider type="vertical" />
@@ -247,7 +188,7 @@ const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props &
 
                   setOptions({
                     ...options,
-                    fontOptions: !isBold ? `${fontOptions} bold` : fontOptions.replace('bold', '').trim(),
+                    fontOptions: !isBold ? `${fontOptions} bold` : fontOptions!.replace('bold', '').trim(),
                   });
                 }}
               />
@@ -260,7 +201,7 @@ const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props &
 
                   setOptions({
                     ...options,
-                    fontOptions: !isItalic ? `${fontOptions} italic` : fontOptions.replace('italic', '').trim(),
+                    fontOptions: !isItalic ? `${fontOptions} italic` : fontOptions!.replace('italic', '').trim(),
                   });
                 }}
               />
