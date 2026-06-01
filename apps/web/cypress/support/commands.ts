@@ -231,6 +231,82 @@ Cypress.Commands.add('getMenuItem', (path: string[], target: string) => {
   });
   return cy.get('@menu').contains('.szh-menu__item', target).should('be.visible');
 });
+=======
+/**
+ * Open the top bar menu, walk the given submenu path, and yield the target item.
+ *
+ * Navigation is idempotent and self-healing: the root menu is only opened while closed,
+ * and a submenu is only clicked while not already open, so re-walking never toggles
+ * anything shut. Each step yields a tick (so szhsin can render) before the next is
+ * checked; a missing element is waited out and re-checked, and a menu that closed
+ * unexpectedly mid-walk is reopened and re-walked from the top — all bounded by
+ * `timeout`, retrying every `interval` until the target appears.
+ */
+Cypress.Commands.add(
+  'getMenuItem',
+  (path: string[], target: string, options: { interval?: number; timeout?: number } = {}) => {
+    const { interval = 200, timeout = 15000 } = options;
+    const $ = Cypress.$;
+    const BUTTON = 'div[data-testid="top-bar-menu"] [class*="menu-btn-container"]';
+    const OPEN_CLASS = 'szh-menu__item--open';
+    const deadline = Date.now() + timeout;
+
+    const $root = () => $('ul[aria-label="Menu"]:visible').first();
+    const $item = (selector: string, text: string) =>
+      $root()
+        .find(selector)
+        .filter((_, el) => $(el).text().includes(text))
+        .filter(':visible')
+        .first();
+
+    // Native click without Cypress actionability checks, so a vanished element is a
+    // harmless no-op rather than a thrown failure. Must target the element that owns
+    // the onClick (e.g. the szhsin button itself), since events only bubble upward.
+    const click = ($el: JQuery<HTMLElement>) => {
+      const el = $el[0];
+
+      if (!el?.isConnected) return;
+
+      ['mousedown', 'mouseup', 'click'].forEach((type) => {
+        el.dispatchEvent(new MouseEvent(type, { bubbles: true, cancelable: true, view: window }));
+      });
+    };
+
+    const wait = (next: () => Cypress.Chainable<JQuery<HTMLElement>>) => cy.wait(interval, { log: false }).then(next);
+
+    const nav = (i: number): Cypress.Chainable<JQuery<HTMLElement>> =>
+      cy.then(() => {
+        if (Date.now() > deadline) {
+          throw new Error(`getMenuItem(["${path.join('", "')}"], "${target}") timed out after ${timeout}ms`);
+        }
+
+        // 1. (Re)open the root menu if it is closed, then restart the walk from the top.
+        if ($root().length === 0) {
+          click($(BUTTON));
+
+          return wait(() => nav(0));
+        }
+
+        // 2. Whole path is open -> locate the target.
+        if (i === path.length) {
+          const $target = $item('.szh-menu__item', target);
+
+          return $target.length ? cy.wrap($target) : wait(() => nav(i));
+        }
+
+        // 3. Open submenu i if it is not already open, then advance after a render tick.
+        const $sub = $item('.szh-menu__item--submenu', path[i]);
+
+        if ($sub.length === 0) return wait(() => nav(i));
+
+        if (!$sub.hasClass(OPEN_CLASS)) click($sub);
+
+        return cy.then(() => nav(i + 1));
+      });
+
+    return nav(0);
+  },
+);
 
 Cypress.Commands.add('go2Preference', () => {
   cy.getMenuItem(['File'], 'Preferences').click();

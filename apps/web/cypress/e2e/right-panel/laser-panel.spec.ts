@@ -242,7 +242,16 @@ describe('manipulate laser panel', () => {
   it('import old format parameter file', () => {
     cy.get('button[title="Manage Parameters"]').click();
     cy.get('button[title="Import"]').click();
-    cy.get('#file-input').attachFile('testfile.json');
+    // cypress-file-upload re-stringifies *.json fixtures whose content is already a
+    // string, double-encoding the file. Load the fixture as a parsed object and pass it
+    // as fileContent so it is JSON.stringified exactly once, matching a real upload.
+    cy.fixture('testfile.json').then((content) => {
+      cy.get('#file-input').attachFile({
+        fileContent: content,
+        fileName: 'testfile.json',
+        mimeType: 'application/json',
+      });
+    });
     cy.contains('Confirm').click();
     cy.get('button[class^="ant-btn"]').contains('Save and Exit').click();
     cy.selectPreset('testFile');
