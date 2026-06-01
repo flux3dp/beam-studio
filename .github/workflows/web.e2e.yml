@@ -41,6 +41,8 @@ jobs:
   e2e-test:
     needs: build
     runs-on: windows-latest
+    env:
+      CYPRESS_CACHE_FOLDER: C:/Users/runneradmin/AppData/Local/Cypress/Cache
     strategy:
       fail-fast: false
       matrix:
