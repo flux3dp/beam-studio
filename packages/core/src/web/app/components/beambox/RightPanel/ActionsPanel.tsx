@@ -619,9 +619,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'create_textpath',
           lang.create_textpath,
           () => {
+            // Note: ungroupTempGroup returns elements in reverse order
             const elements = selectionManager.ungroupTempGroup(elem);
-            const textElements = elements.filter((el) => el.nodeName === 'text');
-            const pathLikeElements = elements.filter((el) => CanvasElements.basicPaths.includes(el.nodeName));
+            const textElements = elements.filter((el) => el.nodeName === 'text').reverse();
+            const pathLikeElements = elements.filter((el) => CanvasElements.basicPaths.includes(el.nodeName)).reverse();
             const pairCount = Math.min(textElements.length, pathLikeElements.length);
             const batchCommand = new BatchCommand('Create Text on Path');
             const resultGroups: SVGElement[] = [];
