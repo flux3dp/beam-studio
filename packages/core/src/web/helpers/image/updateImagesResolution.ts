@@ -23,7 +23,7 @@ const updateImagesResolution = async (): Promise<() => void> => {
     if (laserModules.has(layerModule!)) {
       const dpi = getData(layer, 'dpi') || 'medium';
 
-      if (!['detail', 'high', 'ultra'].includes(dpi)) return;
+      if (!['detailed', 'high', 'ultra'].includes(dpi)) return;
     }
 
     const images = Array.from(layer.querySelectorAll('image'));

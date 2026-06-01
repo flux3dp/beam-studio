@@ -4,42 +4,42 @@ const exampleList = [
   {
     label: 'Example of beamo',
     type: 'Example Files',
-    beam: '4fc7f9ac03bac24119f46ff69dcc9e9d',
+    beam: '53c06499b15f0b162170d929790e1d87',
   },
   {
     label: 'Example of Beambox',
     type: 'Example Files',
-    beam: 'f6b070aa2155eb32bc426a6bdd87ea6c',
+    beam: '0374f17a0bc6d270d98519449ab4dbb7',
   },
   {
     label: 'Material Engraving Test',
     type: 'Material Test',
-    beam: 'cb4f37849e575a18124cee706fb2d0e6',
+    beam: 'dc0059300c0d91ed75ba7dbbf31eb7c4',
   },
   {
     label: 'Material Engraving Test - Classic',
     type: 'Material Test',
-    beam: '62f575b3059bf2967ff8ca182605429f',
+    beam: '63f9def50943f0fe6cc7e6b30dc458a7',
   },
   {
     label: 'Material Cutting Test',
     type: 'Material Test',
-    beam: '69c51e0e37aeedec90413c1f7c7617ca',
+    beam: 'bb0e5fc669c771746c9866232ae9fdf6',
   },
   {
     label: 'Material Cutting Test - Simple',
     type: 'Material Test',
-    beam: '9170c84993be2fa25455ab148acba590',
+    beam: '45fa0879d8a11a9a62849dc7577303e6',
   },
   {
     label: 'Material Line Test',
     type: 'Material Test',
-    beam: 'efba377f0a2e9d51aa1f7caf2d66d9ba',
+    beam: '9e9b561a9a7bd09ccfc9b3d4693c47b5',
   },
   {
     label: 'Acrylic Focus Probe - 3mm',
     type: undefined,
-    beam: '40541b74a60ee5c1a37cbba3651de17a',
+    beam: '901ddbfb57d6c73b1ca3cac308254d37',
   },
 ];
 

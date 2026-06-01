@@ -14,6 +14,8 @@ export type AlertConfigKey =
   | 'skip-switch-to-laser-module'
   | 'skip-switch-to-printer-module'
   | 'skip-z-speed-test-info'
+  | 'skip_auto_fit_bg_removal_warning'
+  | 'skip_auto_fit_retake_preview_warning'
   | 'skip_auto_focus_warning'
   | 'skip_bg_removal_warning'
   | 'skip_camera_cable_alert'

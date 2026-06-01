@@ -97,7 +97,7 @@ const PreviewSlider = (): React.ReactNode => {
     return true;
   }, [autoExposure, previewMode]);
 
-  if (!exposureSetting || (Boolean(autoExposure) && !showAutoExposure)) {
+  if (!exposureSetting) {
     return <div className={styles.notSupported}>{lang.not_supported}</div>;
   }
 
@@ -107,7 +107,7 @@ const PreviewSlider = (): React.ReactNode => {
     >
       <Slider
         className={styles.slider}
-        disabled={(isRawMode && isDrawing) || Boolean(autoExposure)}
+        disabled={(isRawMode && isDrawing) || (Boolean(autoExposure) && showAutoExposure)}
         max={Math.min(exposureSetting.max, 2000)}
         min={Math.max(exposureSetting.min, 50)}
         onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}

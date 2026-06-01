@@ -1,31 +1,3 @@
-@use '../connection_setting_page' as connectionSettingPage;
-
-.container {
-  @include connectionSettingPage.container;
-
-  .main {
-    .image {
-      width: 300px;
-      margin-top: -60px;
-
-      img {
-        width: 300px;
-        margin: 0 0 0 26px;
-        position: relative;
-      }
-
-      @media screen and (max-width: 600px) {
-        width: 100%;
-        margin-top: 0;
-
-        img {
-          margin: 0;
-        }
-      }
-    }
-  }
-}
-
 .title {
   font-size: 30px;
   line-height: 30px;
@@ -44,11 +16,6 @@
 .space-divider {
   height: 80px;
   left: -4px;
-}
-
-.disabled {
-  opacity: 0.5;
-  pointer-events: none;
 }
 
 .mb-12px {

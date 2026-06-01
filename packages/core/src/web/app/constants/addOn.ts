@@ -169,6 +169,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fhx2rf: {
+    airAssist: true,
     autoFeeder: isDev()
       ? {
           maxHeight: 3000,
@@ -178,6 +179,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     curveEngraving: isDev() ? {} : undefined,
     jobOrigin: true,
     lowerFocus: true,
+    redLight: true,
     rotary: {
       chuck: true,
       chuckDiameter: CHUCK_ROTARY_DIAMETER / 2,

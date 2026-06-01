@@ -1,0 +1,52 @@
+import type { ReactNode } from 'react';
+import React, { memo, useCallback } from 'react';
+
+import useI18n from '@core/helpers/useI18n';
+
+import type { SizeDimension } from '../../types';
+import useKeychainShapeStore from '../../useKeychainShapeStore';
+
+import GroupCollapse from './Controls/GroupCollapse';
+import NumberControl from './Controls/NumberControl';
+
+const SizeGroup = (): ReactNode => {
+  const { global: tGlobal, keychain_generator: t } = useI18n();
+  const calculatedSize = useKeychainShapeStore((s) => s.calculatedSize);
+
+  const handleChange = useCallback(async (dimension: SizeDimension, value: number) => {
+    const { applyOptions, buildBaseShape, category, updateState } = useKeychainShapeStore.getState();
+
+    updateState({ size: { dimension, value } });
+
+    const isFresh = await buildBaseShape(category);
+
+    if (isFresh) applyOptions();
+  }, []);
+
+  return (
+    <GroupCollapse title={t.size} tooltip={t.size_tooltip}>
+      <NumberControl
+        label={tGlobal.width}
+        max={200}
+        min={5}
+        onChange={(val) => handleChange('width', val)}
+        step={1}
+        unit="mm"
+        value={calculatedSize.width}
+      />
+      <NumberControl
+        label={tGlobal.height}
+        max={200}
+        min={5}
+        onChange={(val) => handleChange('height', val)}
+        step={1}
+        unit="mm"
+        value={calculatedSize.height}
+      />
+    </GroupCollapse>
+  );
+};
+
+SizeGroup.displayName = 'SizeGroup';
+
+export default memo(SizeGroup);

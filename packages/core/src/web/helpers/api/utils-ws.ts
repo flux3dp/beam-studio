@@ -235,7 +235,7 @@ class UtilsWebSocket extends EventEmitter {
           } else if (status === 'uploaded') {
             console.log('Upload finished');
           } else if (status === 'ok') {
-            resolve(response.data);
+            resolve(response.data!);
           } else {
             console.log('strange message from /ws/utils', response);
             reject(new Error('strange message from /ws/utils'));
@@ -306,7 +306,7 @@ class UtilsWebSocket extends EventEmitter {
   getSimilarContours = async (
     imgBlob: Blob,
     opts?: {
-      isSplcingImg?: boolean;
+      isSplicingImg?: boolean;
       onProgress?: (progress: number) => void;
     },
   ) => {
@@ -317,7 +317,7 @@ class UtilsWebSocket extends EventEmitter {
       this.setDefaultErrorResponse(reject);
       this.setDefaultFatalResponse(reject);
 
-      const { isSplcingImg, onProgress } = opts || {};
+      const { isSplicingImg, onProgress } = opts || {};
       let sentLength = 0;
 
       this.on('message', (response: { data?: AutoFit[]; info?: string; progress?: number }) => {
@@ -340,9 +340,9 @@ class UtilsWebSocket extends EventEmitter {
             console.log('Upload finished');
           } else if (status === 'ok') {
             console.log(response.data);
-            resolve(response.data);
+            resolve(response.data!);
           } else if (status === 'progress') {
-            onProgress?.(response.progress);
+            onProgress?.(response.progress!);
           } else if (status === 'error') {
             reject(new Error(response.info));
           } else {
@@ -352,7 +352,7 @@ class UtilsWebSocket extends EventEmitter {
         }
       });
 
-      const args = ['get_similar_contours', data.byteLength, isSplcingImg ? 1 : 0];
+      const args = ['get_similar_contours', data.byteLength, isSplicingImg ? 1 : 0];
 
       this.ws.send(args.join(' '));
     });
@@ -361,7 +361,7 @@ class UtilsWebSocket extends EventEmitter {
   getAllSimilarContours = async (
     imgBlob: Blob,
     opts?: {
-      isSplcingImg?: boolean;
+      isSplicingImg?: boolean;
       onProgress?: (progress: number) => void;
     },
   ) => {
@@ -372,7 +372,7 @@ class UtilsWebSocket extends EventEmitter {
       this.setDefaultErrorResponse(reject);
       this.setDefaultFatalResponse(reject);
 
-      const { isSplcingImg, onProgress } = opts || {};
+      const { isSplicingImg, onProgress } = opts || {};
       let sentLength = 0;
 
       this.on('message', (response: { data?: AutoFitContour[][]; info?: string; progress?: number }) => {
@@ -395,9 +395,9 @@ class UtilsWebSocket extends EventEmitter {
             console.log('Upload finished');
           } else if (status === 'ok') {
             console.log(response.data);
-            resolve(response.data);
+            resolve(response.data!);
           } else if (status === 'progress') {
-            onProgress?.(response.progress);
+            onProgress?.(response.progress!);
           } else if (status === 'error') {
             reject(new Error(response.info));
           } else {
@@ -407,7 +407,7 @@ class UtilsWebSocket extends EventEmitter {
         }
       });
 
-      const args = ['get_all_similar_contours', data.byteLength, isSplcingImg ? 1 : 0];
+      const args = ['get_all_similar_contours', data.byteLength, isSplicingImg ? 1 : 0];
 
       this.ws.send(args.join(' '));
     });
@@ -442,7 +442,7 @@ class UtilsWebSocket extends EventEmitter {
           } else if (status === 'uploaded') {
             console.log('Upload finished');
           } else if (status === 'ok') {
-            resolve(response.data);
+            resolve(response.data!);
           } else if (status === 'error') {
             reject(new Error(response.info));
           } else {
@@ -459,7 +459,7 @@ class UtilsWebSocket extends EventEmitter {
   };
 }
 
-let singleton: UtilsWebSocket = null;
+let singleton: UtilsWebSocket;
 
 const getUtilWS = (): UtilsWebSocket => {
   singleton = singleton || new UtilsWebSocket();

@@ -1,0 +1,52 @@
+import React from 'react';
+
+import classNames from 'classnames';
+
+import useI18n from '@core/helpers/useI18n';
+
+import type { KeyChainCategory } from '../types';
+
+import styles from './CategorySelector.module.scss';
+
+interface CategorySelectorProps {
+  categories: KeyChainCategory[];
+  currentCategoryId: string;
+  onCategoryChange: (categoryId: string) => void;
+}
+
+const CategorySelector = ({
+  categories,
+  currentCategoryId,
+  onCategoryChange,
+}: CategorySelectorProps): React.JSX.Element => {
+  const { keychain_generator: t } = useI18n();
+
+  return (
+    <div className={styles['category-selector']}>
+      {categories.map((category) => {
+        const label = t.types[category.nameKey] ?? category.nameKey;
+
+        return (
+          <button
+            className={classNames(styles['category-item'], {
+              [styles.active]: category.id === currentCategoryId,
+            })}
+            key={category.id}
+            onClick={() => onCategoryChange(category.id)}
+            title={label}
+          >
+            {category.thumbnail ? (
+              <img alt={label} src={category.thumbnail} />
+            ) : (
+              <div className={styles.placeholder}>{label}</div>
+            )}
+          </button>
+        );
+      })}
+    </div>
+  );
+};
+
+CategorySelector.displayName = 'CategorySelector';
+
+export default CategorySelector;

@@ -42,6 +42,10 @@ export interface ILang {
     position_step2: string;
     preview_first: string;
     reset_position: string;
+    retake: string;
+    retake_tooltip: string;
+    retry_with_remove_bg: string;
+    retry_with_remove_bg_tooltip: string;
     rotation: string;
     select_a_pattern: string;
     selected_artwork: string;
@@ -49,6 +53,10 @@ export interface ILang {
     step2: string;
     step3: string;
     title: string;
+    use_original_image: string;
+    use_original_image_tooltip: string;
+    warning_bg_removal: string;
+    warning_retake_preview: string;
   };
   autosave: {
     open_settings: string;
@@ -1011,7 +1019,6 @@ export interface ILang {
     edge: string;
     finger: string;
     finger_warning: string;
-    height: string;
     import: string;
     inner: string;
     joints: string;
@@ -1029,7 +1036,6 @@ export interface ILang {
     tSlot: string;
     tSlot_warning: string;
     volume: string;
-    width: string;
     workarea: string;
     zoom: string;
   };
@@ -1425,6 +1431,7 @@ export interface ILang {
   generators: {
     box_generator: string;
     code_generator: string;
+    keychain_generator: string;
     material_test_generator: string;
     puzzle_generator: string;
     title: string;
@@ -1440,6 +1447,7 @@ export interface ILang {
     | 'back'
     | 'cancel'
     | 'enable'
+    | 'height'
     | 'mode_conflict'
     | 'ok'
     | 'preview'
@@ -1447,7 +1455,8 @@ export interface ILang {
     | 'save_and_exit'
     | 'saving'
     | 'select'
-    | 'stop',
+    | 'stop'
+    | 'width',
     string
   > & {
     editing: Record<'redo' | 'reset' | 'reset_view' | 'undo' | 'zoom_in' | 'zoom_out', string>;
@@ -1606,6 +1615,60 @@ export interface ILang {
     extension_not_deteced_description: string;
     unsecure_url_help_center_link: string;
   };
+  keychain_generator: {
+    decoration: string;
+    design_preview: string;
+    element: string;
+    element_size: string;
+    emboss: string;
+    exploded_view: string;
+    export_failed: string;
+    hole: string;
+    hole_options: {
+      diameter: string;
+      hole_type: string;
+      offset: string;
+      position: string;
+      thickness: string;
+      type_punch: string;
+      type_ring: string;
+    };
+    import_to_canvas: string;
+    layers: {
+      keychain: string;
+      keychain_deco_emboss: string;
+      keychain_deco_emboss_guide: string;
+      keychain_deco_engraving: string;
+    };
+    more_shapes: string;
+    outline_offset: string;
+    reset_to_default: string;
+    shape: string;
+    size: string;
+    size_tooltip: string;
+    switch_type_warning: string;
+    text: string;
+    text_options: {
+      font_family: string;
+      font_settings: string;
+      font_size: string;
+      font_style: string;
+      letter_spacing: string;
+      line_spacing: string;
+      text_placeholder: string;
+    };
+    types: {
+      capsule: string;
+      oval: string;
+      polygonal: string;
+      quadrilateral: string;
+      round_arch: string;
+      rounded: string;
+      surfing_board: string;
+      tag: string;
+      text: string;
+    };
+  };
   layer_module: {
     general_laser: string;
     laser_2w_infrared: string;
@@ -1716,6 +1779,8 @@ export interface ILang {
     };
     camera: {
       abort_preview: string;
+      calibration_data_missing: string;
+      calibration_data_missing_message: string;
       calibration_wide_angle_camera_first: string;
       camera_cable_unstable: string;
       continue_preview: string;
@@ -1815,6 +1880,8 @@ export interface ILang {
     go: string;
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: string;
     HARDWARE_ERROR_BOTTOM_OPENED: string;
+    HARDWARE_ERROR_CARTRIDGE_OVERHEAT: string;
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: string;
     HARDWARE_ERROR_COVER_NOT_CLOSED: string;
     HARDWARE_ERROR_COVER_NOT_OPENED: string;
     HARDWARE_ERROR_DOOR_OPENED: string;
@@ -1824,12 +1891,18 @@ export interface ILang {
     HARDWARE_ERROR_HEADTYPE_NONE: string;
     HARDWARE_ERROR_HEADTYPE_UNKNOWN: string;
     HARDWARE_ERROR_HOMING_PULLOFF_FAILED: string;
+    HARDWARE_ERROR_KEY_OFF: string;
+    HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: string;
+    HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: string;
     HARDWARE_ERROR_MAINBOARD_ERROR: string;
+    HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: string;
+    HARDWARE_ERROR_NO_INK_DETECTED: string;
     HARDWARE_ERROR_OVER_TEMPERATURE: string;
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: string;
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: string;
     HARDWARE_ERROR_PROBE_SHOWED: string;
     HARDWARE_ERROR_PUMP_ERROR: string;
+    HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: string;
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: string;
     HARDWARE_ERROR_SUBSYSTEM_ERROR: string;
     HARDWARE_FAILURE: string;
@@ -2226,7 +2299,6 @@ export interface ILang {
     help_center: string;
     manual_mode: string;
     title: string;
-    width: string;
   };
   tips: {
     canvas_hold_space_to_pan: string;
@@ -2319,7 +2391,6 @@ export interface ILang {
       disassemble_use: string;
       document_setting: string;
       document_setting_short: string;
-      download_data: string;
       download_log: string;
       download_log_canceled: string;
       download_log_error: string;
@@ -2327,6 +2398,7 @@ export interface ILang {
       edit: string;
       example_files: string;
       export_BVG: string;
+      export_calibration_data: string;
       export_flux_task: string;
       export_JPG: string;
       export_PNG: string;
@@ -2356,6 +2428,7 @@ export interface ILang {
       import_beambox_2_focus_probe: string;
       import_beamo_2_laser_example: string;
       import_beamo_2_printing_example: string;
+      import_calibration_data: string;
       import_hello_beambox: string;
       import_hello_beamo: string;
       import_hexa_example: string;
@@ -2451,7 +2524,6 @@ export interface ILang {
       update_machine: string;
       update_mainboard: string;
       update_printer_board: string;
-      upload_data: string;
       using_beam_studio_api: string;
       view: string;
       window: string;

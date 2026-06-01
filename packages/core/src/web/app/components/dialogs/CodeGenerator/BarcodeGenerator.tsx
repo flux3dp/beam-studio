@@ -10,9 +10,8 @@ import {
 import { Button, ConfigProvider, Divider, Flex, Input, InputNumber, Radio, Switch } from 'antd';
 
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
-import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import Select from '@core/app/widgets/AntdSelect';
-import fontHelper from '@core/helpers/fonts/fontHelper';
+import { fontFamilySelectFilterOption, renderTextOptions } from '@core/helpers/fonts/renderTextOptions';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './BarcodeGenerator.module.scss';
@@ -57,23 +56,18 @@ const BarcodeGenerator = ({
   const { barcode_generator: t, code_generator: tCode, qr_code_generator: tQr } = useI18n();
   const [options, setOptions] = useState({ ...defaultOptions, displayValue: false });
   const [validFontStyles, setValidFontStyles] = useState([]);
+const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props & { ref?: React.Ref<BarcodeRef> }) => {
+  const { barcode_generator: t } = useI18n();
+  const [options, setOptions] = useState(defaultOptions);
+  const [validFontStyles, setValidFontStyles] = useState<string[]>([]);
   const formatOptions = formats.map((value) => ({ label: value, value }));
   const fontFamilies = fontFuncs.requestAvailableFontFamilies();
   const fontOptions = useMemo(
-    () =>
-      fontFamilies.map((value: string) => {
-        const fontName = fontFuncs.fontNameMap.get(value);
-        const label = renderOption({
-          label: typeof fontName === 'string' ? fontName : value,
-          value,
-        });
-
-        return { label, value };
-      }),
+    () => fontFamilies.map((value: string) => renderTextOptions(value, false)),
     [fontFamilies],
   );
   const [isBold, isItalic] = useMemo(
-    () => [options.fontOptions.includes('bold'), options.fontOptions.includes('italic')],
+    () => [options.fontOptions!.includes('bold'), options.fontOptions!.includes('italic')],
     [options.fontOptions],
   );
   const showText = options.displayValue;
@@ -221,6 +215,26 @@ const BarcodeGenerator = ({
                   ]}
                   optionType="button"
                   value={options.textAlign}
+            <Flex vertical>
+              <Form.Item className={styles['flex-child']} label={t.font}>
+                <Select
+                  allowClear={false}
+                  filterOption={fontFamilySelectFilterOption}
+                  onChange={(font) => setOptions({ ...options, font, fontOptions: '' })}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  options={fontOptions}
+                  showSearch
+                  value={[options.font]}
+                />
+              </Form.Item>
+              <Form.Item className={styles['flex-child']} label={t.font_size}>
+                <InputNumber
+                  className={styles['w-100']}
+                  max={100}
+                  min={1}
+                  onChange={(fontSize) => setOptions({ ...options, fontSize })}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  value={options.fontSize}
                 />
               </ConfigProvider>
               <Divider type="vertical" />

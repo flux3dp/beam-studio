@@ -1,0 +1,47 @@
+@use '@core/styles/mixins' as mixins;
+
+.panel {
+  flex: 0 0 280px;
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+
+  @include mixins.is-mobile {
+    flex: 1 1 auto;
+    max-height: 300px;
+    overflow-y: auto;
+  }
+
+  @media (max-width: 850px) and (min-width: 601px) {
+    min-height: 0; // allow shrinking within grid row
+  }
+}
+
+.header {
+  font-size: 16px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #d9d9d9;
+}
+
+$content-gap: 24px;
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: $content-gap;
+  overflow-y: auto;
+  margin: 0 0 $content-gap;
+
+  @include mixins.is-mobile {
+    overflow-y: unset;
+  }
+
+  > *:not(:last-child)::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: #d9d9d9;
+    margin: $content-gap 0 0;
+  }
+}

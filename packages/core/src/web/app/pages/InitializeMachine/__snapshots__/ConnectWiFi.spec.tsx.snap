@@ -6,30 +6,17 @@ exports[`test ConnectWiFi should render correctly 1`] = `
     class="container"
   >
     <div
-      class="top-bar"
+      class="container"
     />
     <div
-      class="btns"
+      class="content"
     >
       <div
-        class="btn"
-      >
-        Back
-      </div>
-      <div
-        class="btn primary"
-      >
-        Next
-      </div>
-    </div>
-    <div
-      class="main ador"
-    >
-      <div
-        class="image"
+        class="image landscape"
       >
         <div
-          class="hint"
+          class="hint animated"
+          style="border-radius: 50%;"
         />
         <img
           draggable="false"
@@ -37,7 +24,7 @@ exports[`test ConnectWiFi should render correctly 1`] = `
         />
       </div>
       <div
-        class="text"
+        class="text ador"
       >
         <div
           class="title"
@@ -139,6 +126,20 @@ exports[`test ConnectWiFi should render correctly 1`] = `
             </div>
           </div>
         </div>
+      </div>
+    </div>
+    <div
+      class="btns"
+    >
+      <div
+        class="btn"
+      >
+        Back
+      </div>
+      <div
+        class="btn primary"
+      >
+        Next
       </div>
     </div>
   </div>

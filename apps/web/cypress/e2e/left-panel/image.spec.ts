@@ -12,16 +12,16 @@ const EXPECTED_HASHES = {
   },
   changeGradient: {
     withoutGradient: {
-      github: '8794655cf390c5f867ed5eff13f3bce4',
+      github: '2776ed70205b5131a8d425b8b813520d',
       local: '0a52a26dec2bac9490b838b039756347',
     },
     withGradient: {
-      github: '8b1b3ac285d65fae820c86dc5b728efd',
+      github: '70ca4e7aac06df5f44316f0f732fe4c4',
       local: '9ea1a67dbee688d7dd3efce5b1666387',
     },
   },
   replaceImage: {
-    github: '8b79e9a445262e8412a863d5ec06d16b',
+    github: 'c5e7ea7efb5277059bdf11dfff143515',
     local: 'bbbec80aa9c17bf1efd66bb07a8eacb8',
   },
   grading: {

@@ -1,4 +1,4 @@
-@use "../abstracts/mixins";
+@use '../abstracts/mixins';
 
 /**
  * buttons
@@ -19,17 +19,28 @@
   position: relative;
   text-align: center;
   text-decoration: none;
-  -webkit-transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease,
+  -webkit-transition:
+    opacity 0.1s ease,
+    background-color 0.1s ease,
+    color 0.1s ease,
+    box-shadow 0.1s ease,
     background 0.1s ease;
-  transition: opacity 0.1s ease, background-color 0.1s ease, color 0.1s ease, box-shadow 0.1s ease, background 0.1s ease;
+  transition:
+    opacity 0.1s ease,
+    background-color 0.1s ease,
+    color 0.1s ease,
+    box-shadow 0.1s ease,
+    background 0.1s ease;
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
 
   &:active {
     background-color: #ccc;
-    background-image: "";
-    box-shadow: 0 0 0 1px transparent inset, 0 1px 4px 0 rgba(39, 41, 43, 0.15);
+    background-image: '';
+    box-shadow:
+      0 0 0 1px transparent inset,
+      0 1px 4px 0 rgba(39, 41, 43, 0.15);
     color: rgba(0, 0, 0, 0.8);
   }
 }
@@ -59,15 +70,6 @@
   }
 }
 
-.btn-confirm {
-  background-color: #424242;
-  color: #fff;
-
-  &:hover {
-    background-color: #000000;
-  }
-}
-
 .btn-action {
   background: #424242;
   color: #fff;
@@ -77,92 +79,6 @@
   }
 }
 
-.btn-disabled {
-  pointer-events: none;
-  position: relative;
-  opacity: 0.5;
-  &::after {
-    background: rgba(255, 255, 255, 0);
-    content: "";
-    display: block;
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-  }
-}
-
-.btn-warning {
-  background: #f00;
-}
-
-.btn-link {
-  background: none;
-  color: #808080;
-  text-decoration: underline;
-
-  &:hover {
-    opacity: 0.7;
-  }
-}
-
-/* button size */
-.btn-full-width {
-  display: block;
-  min-width: initial;
-  width: 100%;
-}
-
 .btn-large {
   width: 250px;
-}
-
-/* special shape button */
-.btn-hexagon {
-  height: 100px;
-  -webkit-clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
-  -webkit-transition: none;
-  transition: none;
-  width: 87px;
-
-  &:active {
-    background-color: inherit;
-    background-image: none;
-    box-shadow: none;
-    color: inherit;
-  }
-
-  &.btn-go.mini-text {
-    font-size: 14px;
-  }
-}
-
-/* button helper */
-.btn-multiline-text {
-  line-height: initial;
-  padding: 14px 0;
-}
-
-/* button group */
-.btn-h-group {
-  @include mixins.flexbox();
-  align-items: center;
-  justify-content: center;
-
-  .btn {
-    margin: 0 0 0 24px;
-
-    &:first-child {
-      margin: 0;
-    }
-  }
-}
-
-.btn-v-group {
-  .btn {
-    display: block;
-    margin: 0 auto 10px auto;
-  }
 }

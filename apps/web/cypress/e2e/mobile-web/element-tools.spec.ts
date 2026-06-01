@@ -22,10 +22,10 @@ describe('mobile element tools', () => {
     cy.get('.adm-tab-bar-item').contains('Element').click();
     cy.get('.adm-capsule-tabs-tab-wrapper').contains('Decor').click();
     cy.get(`.anticon[id="decor/i_circular-1"]`).eq(0).click();
-    cy.get('#svg_9').should('exist').should('have.attr', 'fill', '#333333');
-    cy.get('#svg_9')
+    cy.get('#svg_1').should('exist').should('have.attr', 'fill', '#333333');
+    cy.get('#svg_1')
       .invoke('attr', 'd')
-      .then((html) => expect(md5(html)).equal('3224b6b40f3f204d1e60083ead786c5a'));
+      .then((html) => expect(md5(html!)).equal('f9465ee56b93b00a2154075d64522dce'));
     cy.get('#selectorGrip_rotate_bottom').should('be.visible');
     cy.get('#selectorGrip_dimension_info').should('be.visible').should('have.text', '50mm x 38.3mm');
   });

@@ -24,8 +24,7 @@ jobs:
       matrix:
         node-version: [24]
         python-version: [3.8]
-        os: [macOS-15-intel]
-        target: [arm64, intel]
+        os: [macOS-15-intel, macos-26]
       fail-fast: false
 
     steps:
@@ -33,7 +32,8 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set Xcode version
+      - name: Set Xcode version for Intel Chips
+        if: matrix.os == 'macOS-15-intel'
         run: sudo xcode-select -s /Applications/Xcode_26.1.app
 
       - name: Setup Python ${{ matrix.python-version }}
@@ -43,10 +43,22 @@ jobs:
 
       - name: Install Brew Packages
         run: |
-          brew install zlib
+          if [ "${{ matrix.os }}" = "macOS-15-intel" ]; then
+            brew install zlib
+          else
+            brew install zlib cairo freetype pixman fontconfig libpng webp
+          fi
+
+      - name: Set build environment for Apple Silicon
+        if: matrix.os != 'macOS-15-intel'
+        run: |
+          echo "DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH:+$DYLD_LIBRARY_PATH:}$(brew --prefix cairo)/lib" >> $GITHUB_ENV
+          echo "LDFLAGS=-L$(brew --prefix zlib)/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I$(brew --prefix zlib)/include" >> $GITHUB_ENV
+          echo "PKG_CONFIG_PATH=$(brew --prefix zlib)/lib/pkgconfig" >> $GITHUB_ENV
 
       - name: Setup Pnpm
-        uses: pnpm/action-setup@v4
+        uses: pnpm/action-setup@v6
         with:
           run_install: false
 
@@ -76,7 +88,7 @@ jobs:
 
 
       - name: Install Fluxsvg
-        uses: flux3dp/fluxsvg@2.7.7
+        uses: flux3dp/fluxsvg@2.7.8
 
       - name: Checkout FluxClient
         uses: actions/checkout@v5
@@ -98,7 +110,7 @@ jobs:
           LC_CTYPE: en_US.UTF-8
 
       - name: Create Apple Certs
-        uses: apple-actions/import-codesign-certs@v2
+        uses: apple-actions/import-codesign-certs@v7
         with:
           p12-file-base64: ${{ secrets.CERTIFICATES_P12 }}
           p12-password: ${{ secrets.CERTIFICATES_P12_PASSWORD }}
@@ -124,7 +136,7 @@ jobs:
           ./backend/flux_api/flux_api --test
 
           echo "Downloading Swiftray..."
-          if [ "${{ matrix.target }}" = "arm64" ]; then
+          if [ "${{ matrix.os }}" = "macos-26" ]; then
             export SWIFTRAY_PATH="mac-arm64"
           else
             export SWIFTRAY_PATH="mac"
@@ -156,7 +168,7 @@ jobs:
             export APPLE_TEAM_ID=""
           fi
 
-          if [ "${{ matrix.target }}" = "arm64" ]; then
+          if [ "${{ matrix.os }}" = "macos-26" ]; then
             echo "Building for arm64..."
             export PUBLISH_PATH="-arm64"
             pnpm nx run app:dist --arm64 --publish always

@@ -32,7 +32,7 @@ const apply = async (
   const batchCmd = new history.BatchCommand('AutoFit');
 
   // Scale and rotate element according to konva image dimension
-  // TODO: svgCanvas.setSvgElemSize use seletedElement now, though it works now, it may cause problem in the future
+  // TODO: svgCanvas.setSvgElemSize use selectedElement now, though it works now, it may cause problem in the future
   let cmd = svgCanvas.setSvgElemSize('width', width);
 
   if (cmd && !cmd.isEmpty()) {
@@ -69,6 +69,7 @@ const apply = async (
   moveElements([mx + offsetX - ex], [my + offsetY - ey], [element], false);
 
   const elemsToClone = selectionManager.getSelectedElements(true);
+  const newElements = [...elemsToClone];
 
   for (let i = 0; i < elemsToClone.length; i += 1) {
     const elemToClone = elemsToClone[i];
@@ -100,6 +101,9 @@ const apply = async (
       if (res) {
         const { elems } = res;
         const [newElem] = elems;
+
+        newElements.push(...(elems as SVGElement[]));
+
         let newAngle = elemRotationAngle + dAngle * (180 / Math.PI);
 
         newAngle %= 360;
@@ -112,6 +116,8 @@ const apply = async (
       }
     }
   }
+
+  selectionManager.multiSelect(newElements);
 
   if (!batchCmd.isEmpty()) {
     undoManager.addCommandToHistory(batchCmd);

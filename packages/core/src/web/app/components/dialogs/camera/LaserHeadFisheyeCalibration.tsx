@@ -2,7 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { bb2PerspectiveGrid, bb2PnPPoints, hx2rfPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
+import { bb2PerspectiveGrid, bb2PerspectiveGridWide, bb2PnPPoints } from '@core/app/constants/fisheyeCameraConstants';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
@@ -32,6 +32,7 @@ enum Steps {
 
 interface Props {
   isAdvanced: boolean;
+  isOblique?: boolean;
   onClose: (completed?: boolean) => void;
 }
 
@@ -40,7 +41,7 @@ const PROGRESS_ID = 'laser-head-fisheye-calibration';
  * LaserHeadFisheye
  * calibration the fisheye camera on the laser head (bb2, hexa rf)
  */
-const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
+const LaserHeadFisheyeCalibration = ({ isAdvanced, isOblique, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
@@ -232,7 +233,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
       <CheckPnP
         cameraOptions={{ index: 0 }}
         dh={0}
-        grid={isHexaRf ? hx2rfPerspectiveGrid : bb2PerspectiveGrid}
+        grid={isOblique ? bb2PerspectiveGridWide : bb2PerspectiveGrid}
         onBack={() => setStep(Steps.SOLVE_PNP)}
         onClose={onClose}
         onNext={async () => {

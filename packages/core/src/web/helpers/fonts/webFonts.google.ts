@@ -1157,6 +1157,10 @@ const applyStyle = (fontsInUse: WebFont[]): void => {
     .map((font) => font.queryString)
     .join('&');
 
+  if (!query) {
+    return;
+  }
+
   const queryString = `https://fonts.googleapis.com/css2?${query}&display=swap`;
   const link = document.createElement('link');
 

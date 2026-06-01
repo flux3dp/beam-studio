@@ -5,20 +5,20 @@ import { Slider, Tooltip } from 'antd';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import useI18n from '@core/helpers/useI18n';
 
-import type { AutoFitCanvasManager } from './CanvasManager';
 import styles from './OpacitySlider.module.scss';
 
 interface Props {
-  canvasManager: AutoFitCanvasManager;
+  setValue: (val: number) => void;
+  value: number;
 }
 
-const OpacitySlider = ({ canvasManager }: Props): React.JSX.Element => {
-  const [opacity, setOpacity] = useState(canvasManager.imageOpacity);
+const OpacitySlider = ({ setValue, value }: Props): React.JSX.Element => {
+  const [opacity, setOpacity] = useState(value);
   const lang = useI18n();
 
   useEffect(() => {
-    canvasManager.imageOpacity = opacity;
-  }, [canvasManager, opacity]);
+    setValue(opacity);
+  }, [opacity, setValue]);
 
   return (
     <div className={styles.container}>

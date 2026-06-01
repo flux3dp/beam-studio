@@ -1,5 +1,4 @@
 @use 'sass:meta';
-@use 'beambox/top-bar';
 
 .beambox-studio {
   @include meta.load-css('beambox/left-toolbar');
