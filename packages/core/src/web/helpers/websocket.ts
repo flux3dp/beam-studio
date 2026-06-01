@@ -270,6 +270,7 @@ export default (options: Option): WrappedWebSocket => {
     }
 
     isCreatingWebsocket = true;
+    console.log(`Connecting to websocket ws://${hostName}:${port}/ws/${createWsOpts.method}`);
     connectWebSocket({
       hostname: hostName,
       method: createWsOpts.method!,
@@ -331,6 +332,7 @@ export default (options: Option): WrappedWebSocket => {
   };
 
   const initWebSocket = () => {
+    console.log('Initializing websocket', socketOptions.method);
     createWebSocket(socketOptions);
   };
 
