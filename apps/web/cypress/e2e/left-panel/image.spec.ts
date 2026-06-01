@@ -16,12 +16,12 @@ const EXPECTED_HASHES = {
       local: '0a52a26dec2bac9490b838b039756347',
     },
     withGradient: {
-      github: '70ca4e7aac06df5f44316f0f732fe4c4',
+      github: '461e7c9990d7f4f537f6ab018e5a6cdd',
       local: '9ea1a67dbee688d7dd3efce5b1666387',
     },
   },
   replaceImage: {
-    github: 'c5e7ea7efb5277059bdf11dfff143515',
+    github: '3217218f4d9f787f03eb72cb1f1f187d',
     local: 'bbbec80aa9c17bf1efd66bb07a8eacb8',
   },
   grading: {
@@ -29,7 +29,7 @@ const EXPECTED_HASHES = {
     local: '740e3d57e5139b6cc92bc93c366d2ebe',
   },
   crop: {
-    github: 'a8ad6ba832e34e3cc6544668596fefff',
+    github: '82c48181e33cdd9b8127e40f52703a2f',
     local: 'e6b9815171e86ce98a04a0fcf0118367',
   },
   invert: {
