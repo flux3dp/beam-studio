@@ -15,7 +15,11 @@ declare global {
       disableImageDownSampling(): Chainable<void>;
       setUpBackend: (ip: string) => Chainable<void>;
       connectMachine: (ip: string) => Chainable<void>;
-      getMenuItem(path: string[], target: string): Chainable<JQuery<HTMLElement>>;
+      getMenuItem(
+        path: string[],
+        target: string,
+        options?: { interval?: number; stepTimeout?: number; timeout?: number },
+      ): Chainable<JQuery<HTMLElement>>;
       go2Preference: () => Chainable<void>;
       /** Navigate to a specific settings category in the settings modal sidebar */
       goToSettingsCategory: (category: string) => Chainable<void>;

@@ -223,14 +223,80 @@ Cypress.Commands.add('applySettings', () => {
   cy.get('.ant-modal-footer button.ant-btn-primary').contains('Apply').click();
 });
 
-Cypress.Commands.add('getMenuItem', (path: string[], target: string) => {
-  cy.get('div[data-testid="top-bar-menu"]').click();
-  cy.get('ul[aria-label="Menu"]').should('be.visible').as('menu');
-  path.forEach((text) => {
-    cy.get('@menu').contains('.szh-menu__item--submenu', text).should('be.visible').click();
-  });
-  return cy.get('@menu').contains('.szh-menu__item', target).should('be.visible');
-});
+/**
+ * Open the top bar menu, walk the given submenu path, and yield the target item.
+ *
+ * The whole open -> navigate -> locate flow is retried until `timeout` elapses, so a
+ * menu that closes unexpectedly mid-navigation simply restarts from a clean state
+ * instead of getting stuck waiting on a step whose menu has already disappeared.
+ *
+ * DOM is probed synchronously via Cypress.$ (which never fails the test); a real cy
+ * click is only issued once the element is confirmed visible.
+ */
+Cypress.Commands.add(
+  'getMenuItem',
+  (path: string[], target: string, options: { interval?: number; stepTimeout?: number; timeout?: number } = {}) => {
+    const { interval = 200, stepTimeout = 1000, timeout = 15000 } = options;
+    const $ = Cypress.$;
+    const MENU = 'ul[aria-label="Menu"]';
+    const deadline = Date.now() + timeout;
+
+    const $root = () => $(MENU).filter(':visible').first();
+    const $byText = (selector: string, text: string) =>
+      $root()
+        .find(selector)
+        .filter((_, el) => $(el).text().includes(text))
+        .filter(':visible')
+        .first();
+
+    const retry = (reason: string): Cypress.Chainable<JQuery<HTMLElement>> => {
+      if (Date.now() > deadline) {
+        throw new Error(`getMenuItem(["${path.join('", "')}"], "${target}") timed out after ${timeout}ms: ${reason}`);
+      }
+
+      // Reset to a clean closed state, then restart the whole flow.
+      return cy
+        .then(() => {
+          const $open = $root();
+
+          if ($open.length) cy.wrap($open, { log: false }).type('{esc}', { force: true, timeout: stepTimeout });
+        })
+        .wait(interval, { log: false })
+        .then(open);
+    };
+
+    const open = (): Cypress.Chainable<JQuery<HTMLElement>> => {
+      // 1. Open the top-level menu if it is not already open.
+      cy.then(() => {
+        if ($root().length === 0) {
+          cy.get('div[data-testid="top-bar-menu"]', { timeout: stepTimeout }).click({ timeout: stepTimeout });
+        }
+      });
+
+      // 2. Once it is open, walk the submenu path and locate the target.
+      return cy.then(() => ($root().length === 0 ? retry('top-level menu did not open') : walk(0)));
+    };
+
+    const walk = (i: number): Cypress.Chainable<JQuery<HTMLElement>> => {
+      if (i === path.length) {
+        const $target = $byText('.szh-menu__item', target);
+
+        return $target.length ? cy.wrap($target) : retry(`target "${target}" not visible`);
+      }
+
+      const $submenu = $byText('.szh-menu__item--submenu', path[i]);
+
+      if ($submenu.length === 0) return retry(`submenu "${path[i]}" not visible`);
+
+      return cy
+        .wrap($submenu)
+        .click({ timeout: stepTimeout })
+        .then(() => walk(i + 1));
+    };
+
+    return open();
+  },
+);
 
 Cypress.Commands.add('go2Preference', () => {
   cy.getMenuItem(['File'], 'Preferences').click();
