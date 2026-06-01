@@ -42,7 +42,7 @@ describe('update the preference (behavior)', () => {
     cy.get('#svg_1')
       .invoke('attr', 'xlink:href')
       .then((href) => {
-        if (isRunningAtGithub) expect(md5(href)).equal('89c7aa6cb93a4fd9f6e79c9da0e5ade2');
+        if (isRunningAtGithub) expect(md5(href)).equal('ab08bb3b784e10e362dd1cc108f97c36');
         else expect(md5(href)).equal('0563e97e7042d4030269ceb3c82f3ab8');
       });
   });

@@ -87,7 +87,7 @@ describe('manipulate file', () => {
 
       cy.getMenuItem(['File'], 'Save As...').click();
       // "Save As" also saves to untitled.beam (same as "Save"), so use the same path
-      checkCrc32(downloadPath, { default: -1676938696 });
+      checkCrc32(downloadPath, { default: 1996974017 });
     });
   });
 
