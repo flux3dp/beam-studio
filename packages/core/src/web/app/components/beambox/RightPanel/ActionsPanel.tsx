@@ -570,6 +570,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         (child.nodeName === 'g' && child.getAttribute('data-textpath-g')),
     );
     const actionButtons: React.JSX.Element[] = [renderOffsetButton(), renderArrayButton()];
+    const conversionButtons: React.JSX.Element[] = [];
+    const optimizationButtons: React.JSX.Element[] = [];
 
     const texts = children.filter((child) => child.nodeName === 'text');
     const textCount = texts.length;
@@ -626,13 +628,16 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     if (isAllConvertible) {
       const hasVariableText = children.some((child) => getVariableTextType(child) !== VariableTextType.NONE);
 
-      actionButtons.push(
+      conversionButtons.push(
         renderConvertToPathButton({
           isDisabled: hasVariableText,
-          isFullLine: true,
+          isFullLine: false,
           tooltipIfDisabled: lang.disabled_by_variable_text,
         }),
+        renderConvertToImageButton({ isFullLine: false }),
       );
+    } else {
+      conversionButtons.push(renderConvertToImageButton());
     }
 
     if (onlyTexts) {
@@ -647,7 +652,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           <ActionPanelIcons.WeldText />,
           {
             isDisabled: hasVariableText,
-            isFullLine: false,
+            isFullLine: true,
             tooltipIfDisabled: lang.disabled_by_variable_text,
           },
         ),
@@ -655,7 +660,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     }
 
     if (onlyPaths) {
-      actionButtons.push(
+      optimizationButtons.push(
         renderButtons(
           'simplify',
           lang.simplify,
@@ -669,8 +674,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     return [
       { buttons: actionButtons, title: 'ACTIONS' },
-      { buttons: [renderConvertToImageButton()], title: 'CONVERSIONS' },
-      { buttons: [renderSmartNestButton(), renderAutoFitButton()], title: 'OPTIMIZATIONS' },
+      { buttons: conversionButtons, title: 'CONVERSIONS' },
+      { buttons: [...optimizationButtons, renderSmartNestButton(), renderAutoFitButton()], title: 'OPTIMIZATIONS' },
     ];
   };
 
