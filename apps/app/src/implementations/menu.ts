@@ -54,12 +54,6 @@ class Menu extends AbstractMenu {
       },
     );
 
-    // layer panel related
-    layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable = false) => {
-      this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', isUvPrintable);
-      this.rerenderMenu();
-    });
-
     // dockview layout related
     useDockableStore.subscribe(
       (state) => state.panelLayerControls,
@@ -120,7 +114,6 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['ANTI_ALIASING'], 'checked', globalPreference['anti-aliasing']);
     this.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', globalPreference.auto_align);
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', globalPreference['enable-uv-print-file']);
-    this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', false);
     this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', dockableStore.panelLayerControls);
     this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', dockableStore.panelObjectProperties);
     this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', dockableStore.panelPathEdit);
