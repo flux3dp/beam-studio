@@ -79,6 +79,7 @@ Object.assign(defaultConfigs, {
 // Update expected value when initLayerConfig is called
 const trueConfigs = {
   biDirectional: { value: true },
+  scEnable: { value: true },
 };
 
 const defaultMultiValueConfigs = Object.keys(defaultConfigs).reduce((acc, key) => {

@@ -4,7 +4,6 @@ import * as React from 'react';
 
 import { StyleProvider } from '@ant-design/cssinjs';
 import { QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ConfigProvider, message, theme } from 'antd';
 import daDK from 'antd/locale/da_DK';
 import deDE from 'antd/locale/de_DE';
@@ -169,7 +168,8 @@ const App = (): React.JSX.Element => {
           </DialogContextProvider>
         </AlertProgressContextProvider>
       </ErrorBoundary>
-      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+      {/* Useful when debugging React Query */}
+      {/* {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />} */}
     </QueryClientProvider>
   );
 };
