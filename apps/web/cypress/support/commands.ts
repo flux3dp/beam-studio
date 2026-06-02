@@ -231,7 +231,6 @@ Cypress.Commands.add('getMenuItem', (path: string[], target: string) => {
   });
   return cy.get('@menu').contains('.szh-menu__item', target).should('be.visible');
 });
-=======
 /**
  * Open the top bar menu, walk the given submenu path, and yield the target item.
  *
@@ -400,9 +399,7 @@ Cypress.Commands.add('setInfill', (filled: boolean, id = 'infill') => {
   const targetLabel = filled ? INFILL_OPTION_LABELS.fill : INFILL_OPTION_LABELS.stroke;
 
   cy.get(`#${id}`).closest('.ant-select-selector').click();
-  cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option')
-    .contains(targetLabel)
-    .click();
+  cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option').contains(targetLabel).click();
 });
 
 Cypress.Commands.add('assertInfilled', (filled: boolean, id = 'infill') => {
