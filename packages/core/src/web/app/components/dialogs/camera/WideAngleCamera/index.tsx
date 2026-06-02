@@ -316,28 +316,28 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           .with(Step.SOLVE_PNP_TL_1, Step.SOLVE_PNP_TL_2, () => ({
             currentStep: 0,
             interestArea: isHexaRf
-              ? { height: 1224, width: 1632, x: 0, y: 0 }
+              ? { height: 1632, width: 1632, x: 0, y: 0 }
               : { height: 1300, width: 2300, x: 500, y: 900 },
             region: 'topLeft',
           }))
           .with(Step.SOLVE_PNP_TR_1, Step.SOLVE_PNP_TR_2, () => ({
             currentStep: 1,
             interestArea: isHexaRf
-              ? { height: 1224, width: 1632, x: 1632, y: 0 }
+              ? { height: 1632, width: 1632, x: 1632, y: 0 }
               : { height: 1300, width: 2300, x: 2800, y: 900 },
             region: 'topRight',
           }))
           .with(Step.SOLVE_PNP_BL_1, Step.SOLVE_PNP_BL_2, () => ({
             currentStep: 2,
             interestArea: isHexaRf
-              ? { height: 1224, width: 1632, x: 0, y: 1224 }
+              ? { height: 1632, width: 1632, x: 0, y: 816 }
               : { height: 800, width: 1600, x: 1200, y: 2200 },
             region: 'bottomLeft',
           }))
           .otherwise(() => ({
             currentStep: 3,
             interestArea: isHexaRf
-              ? { height: 1224, width: 1632, x: 1632, y: 1224 }
+              ? { height: 1632, width: 1632, x: 1632, y: 816 }
               : { height: 800, width: 1600, x: 2800, y: 2200 },
             region: 'bottomRight',
           }));
