@@ -110,7 +110,15 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       ) : (
         <Tooltip key={label} title={isDisabled ? tooltipIfDisabled : undefined}>
           <div className={classNames(styles['btn-container'], { [styles.half]: !isFullLine })}>
-            <Button block className={styles.btn} disabled={isDisabled} icon={icon} id={id} onClick={onClick}>
+            <Button
+              block
+              className={styles.btn}
+              disabled={isDisabled}
+              icon={icon}
+              id={id}
+              onClick={onClick}
+              title={label}
+            >
               <span className={styles.label}>{label}</span>
             </Button>
           </div>
