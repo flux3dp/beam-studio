@@ -112,6 +112,12 @@ export default (options: Option): WrappedWebSocket => {
         onClick: () => MessageCaller.closeMessage('backend-error-hint'),
       });
     }
+
+    if (socketOptions.autoReconnect === true) {
+      setTimeout(() => {
+        createWebSocket(socketOptions);
+      }, 300);
+    }
   };
 
   const attachHandlers = (nodeWs: InsecureWebsocket | WebSocket, createWsOpts: Option) => {
@@ -278,12 +284,6 @@ export default (options: Option): WrappedWebSocket => {
         ws = null;
         isCreatingWebsocket = false;
         handleCreateWebSocketFailed();
-
-        if (socketOptions.autoReconnect === true) {
-          setTimeout(() => {
-            createWebSocket(createWsOpts);
-          }, 300);
-        }
       },
       onSettled: (socket, openEvent) => {
         ws = socket;
