@@ -22,6 +22,7 @@ import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
 import Title from './common/Title';
+import type { RenderWrapper } from './common/types';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
@@ -36,11 +37,18 @@ enum Steps {
 
 interface Props {
   device: IDeviceInfo;
+  onBack?: () => void;
   onClose: (completed?: boolean) => void;
+  renderWrapper?: RenderWrapper;
 }
 
 const PROGRESS_ID = 'promark-calibration';
-const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): React.JSX.Element => {
+const PromarkCalibration = ({
+  device: { model, serial },
+  onBack,
+  onClose,
+  renderWrapper,
+}: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
   const workareaWidth = useMemo(() => getWorkarea(model).width, [model]);
@@ -67,6 +75,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
             setStep(Steps.PRE_CHESSBOARD);
           }
         }}
+        renderWrapper={renderWrapper}
         updateParam={updateParam}
       />
     );
@@ -95,10 +104,11 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
               ]
         }
         buttons={[
+          ...(onBack ? [{ label: tCali.back, onClick: onBack }] : []),
           {
             label: tCali.next,
             onClick: () => setStep(Steps.CALIBRATION),
-            type: 'primary',
+            type: 'primary' as const,
           },
         ]}
         contentBeforeSteps={
@@ -114,6 +124,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
           </div>
         }
         onClose={onClose}
+        renderWrapper={renderWrapper}
         steps={
           withSafe
             ? [tCali.put_charuco_promark_desc_1, tCali.put_charuco_promark_desc_2]
@@ -138,8 +149,10 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
           tCali.put_chessboard_promark_1,
           withSafe ? tCali.put_charuco_promark_2 : tCali.put_chessboard_promark_2,
         ]}
+        onBack={() => setStep(Steps.PRE_CHESSBOARD)}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
+        renderWrapper={renderWrapper}
         title={<Title link={tCali.promark_help_link} title={tCali.camera_calibration} />}
         updateParam={updateParam}
       />
@@ -202,6 +215,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
           { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
         ]}
         onClose={() => onClose(false)}
+        renderWrapper={renderWrapper}
         steps={[tCali.put_paper_promark_1, tCali.put_paper_promark_2]}
         title={<Title link={tCali.promark_help_link} title={tCali.put_paper} />}
       />
@@ -220,6 +234,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
           { label: tCali.next, onClick: () => setStep(Steps.SOLVE_PNP), type: 'primary' },
         ]}
         onClose={() => onClose(false)}
+        renderWrapper={renderWrapper}
         steps={[tCali.solve_pnp_step1, tCali.solve_pnp_step2]}
         title={tCali.solve_pnp_title}
       />
@@ -253,6 +268,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
         }}
         params={calibratingParam.current}
         refPoints={promarkPnPPoints[workareaWidth]}
+        renderWrapper={renderWrapper}
         titleLink={tCali.promark_help_link}
       />
     );

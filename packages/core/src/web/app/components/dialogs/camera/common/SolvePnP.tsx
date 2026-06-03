@@ -20,6 +20,7 @@ import PointIndicator from './PointIndicator';
 import styles from './SolvePnP.module.scss';
 import StepProgress from './StepProgress';
 import Title from './Title';
+import type { RenderWrapper } from './types';
 import useCamera from './useCamera';
 
 interface Props {
@@ -39,6 +40,7 @@ interface Props {
   onNext: (rvec: number[][], tvec: number[][], imgPoints: Array<[number, number]>) => void;
   params: FisheyeCaliParameters;
   refPoints?: Array<[number, number]>;
+  renderWrapper?: RenderWrapper;
   steps?: string[];
   title?: string;
   titleLink?: string;
@@ -65,6 +67,7 @@ const SolvePnP = ({
   onNext,
   params,
   refPoints = adorPnPPoints,
+  renderWrapper,
   steps,
   title,
   titleLink,
@@ -339,6 +342,161 @@ const SolvePnP = ({
     });
   }, []);
 
+  const titleNode = <Title link={titleLink} title={displayTitle} />;
+  const instructionNode = (
+    <>
+      <div>
+        <ol className={styles.steps}>
+          <li>{lang.calibration.solve_pnp_step1}</li>
+          {doorChecker && <li>{lang.calibration.solve_pnp_keep_door_closed}</li>}
+        </ol>
+        {steps && <StepProgress currentStep={currentStep ?? 0} steps={steps} />}
+      </div>
+      <div className={styles.animation}>
+        {animationSrcs && (
+          <video autoPlay loop muted ref={videoRef}>
+            {animationSrcs.map(({ src, type }) => (
+              <source key={src} src={src} type={type} />
+            ))}
+          </video>
+        )}
+      </div>
+    </>
+  );
+
+  const controlNode = (
+    <div>
+      {selectedPointIdx >= 0 && (
+        <Flex className={styles.info} gap={8} justify="space-between" vertical>
+          <div>
+            <Row align="middle" gutter={[0, 8]}>
+              {positionText && (
+                <Col className={styles.position} span={24}>
+                  {positionText}
+                </Col>
+              )}
+              <Col className={styles['point-id']} span={24}>
+                Point {selectedPointIdx}
+              </Col>
+              <Col span={3}>
+                <label className={styles.label} htmlFor="point-x-input">
+                  X
+                </label>
+              </Col>
+              <Col span={9}>
+                <InputNumber<number>
+                  className={styles.input}
+                  disabled={!points[selectedPointIdx]}
+                  id="point-x-input"
+                  onChange={(val) => {
+                    if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
+                  }}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  onKeyUp={(e) => e.stopPropagation()}
+                  precision={0}
+                  step={1}
+                  type="number"
+                  value={points[selectedPointIdx]?.[0] ?? 0}
+                />
+              </Col>
+              <Col span={3}>
+                <label className={styles.label} htmlFor="point-y-input">
+                  Y
+                </label>
+              </Col>
+              <Col span={9}>
+                <InputNumber<number>
+                  className={styles.input}
+                  disabled={!points[selectedPointIdx]}
+                  id="point-y-input"
+                  onChange={(val) => {
+                    if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
+                  }}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  onKeyUp={(e) => e.stopPropagation()}
+                  precision={0}
+                  step={1}
+                  type="number"
+                  value={points[selectedPointIdx]?.[1] ?? 0}
+                />
+              </Col>
+            </Row>
+          </div>
+          <PointIndicator
+            currentIndex={selectedPointIdx}
+            label={label}
+            onSelect={setSelectedPointIdx}
+            points={refPoints.length as 4 | 8}
+          />
+        </Flex>
+      )}
+    </div>
+  );
+  const imageDisplayNode = (
+    <ImageDisplay
+      className={styles.image}
+      displayArea={initInterestArea}
+      img={img}
+      onDragEnd={handleDragEnd}
+      onDragMove={handleDragMove}
+      onImgLoad={() => setZoomPoints(points)}
+      onScaleChange={onScaleChange}
+      ref={imgContainerRef}
+      renderContents={(scale) =>
+        points.map((p, idx) => (
+          <g
+            className={classNames(styles.group, { [styles.selected]: idx === selectedPointIdx })}
+            key={idx}
+            onMouseDown={(e) => handlePointDragStart(idx, e)}
+          >
+            <circle cx={p[0]} cy={p[1]} r={5 / scale} />
+            <circle className={classNames('center', styles.center)} cx={p[0]} cy={p[1]} r={1 / scale} />
+            <text className={styles.text} fontSize={12 / scale} x={p[0] + 10 / scale} y={p[1] + 10 / scale}>
+              {idx}
+            </text>
+          </g>
+        ))
+      }
+      zoomPoints={zoomPoints}
+    />
+  );
+  const exposureSlider = (
+    <ExposureSlider
+      autoExposure={autoExposure}
+      className={styles.exposure}
+      exposureSetting={exposureSetting}
+      onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
+      onRetakePicture={handleTakePicture}
+      setAutoExposure={setAutoExposure}
+      setExposureSetting={setExposureSetting}
+    />
+  );
+
+  if (renderWrapper) {
+    const wrapperButtons = [
+      ...(doorChecker
+        ? [{ label: lang.calibration.relocate_camera, onClick: () => handleTakePicture({ relocate: true }) }]
+        : []),
+      { label: lang.buttons.back, onClick: onBack },
+      {
+        disabled: !img?.success,
+        label: hasNext ? lang.buttons.next : lang.buttons.done,
+        onClick: handleDone,
+        primary: true,
+      },
+    ];
+
+    const content = (
+      <>
+        {instructionNode}
+        {controlNode}
+        {exposureSlider}
+      </>
+    );
+
+    return renderWrapper({ buttons: wrapperButtons, content, media: imageDisplayNode, title: titleNode });
+  }
+
   return (
     <DraggableModal
       closable
@@ -378,127 +536,14 @@ const SolvePnP = ({
       onCancel={() => onClose(false)}
       open
       scrollableContent
-      title={<Title link={titleLink} title={displayTitle} />}
+      title={titleNode}
       width="80vw"
     >
       <div className={styles.grid}>
-        <div>
-          <ol className={styles.steps}>
-            <li>{lang.calibration.solve_pnp_step1}</li>
-            {doorChecker && <li>{lang.calibration.solve_pnp_keep_door_closed}</li>}
-          </ol>
-          {steps && <StepProgress currentStep={currentStep ?? 0} steps={steps} />}
-        </div>
-        <div className={styles.animation}>
-          {animationSrcs && (
-            <video autoPlay loop muted ref={videoRef}>
-              {animationSrcs.map(({ src, type }) => (
-                <source key={src} src={src} type={type} />
-              ))}
-            </video>
-          )}
-        </div>
-        <ImageDisplay
-          className={styles.image}
-          displayArea={initInterestArea}
-          img={img}
-          onDragEnd={handleDragEnd}
-          onDragMove={handleDragMove}
-          onImgLoad={() => setZoomPoints(points)}
-          onScaleChange={onScaleChange}
-          ref={imgContainerRef}
-          renderContents={(scale) =>
-            points.map((p, idx) => (
-              <g
-                className={classNames(styles.group, { [styles.selected]: idx === selectedPointIdx })}
-                key={idx}
-                onMouseDown={(e) => handlePointDragStart(idx, e)}
-              >
-                <circle cx={p[0]} cy={p[1]} r={5 / scale} />
-                <circle className={classNames('center', styles.center)} cx={p[0]} cy={p[1]} r={1 / scale} />
-                <text className={styles.text} fontSize={12 / scale} x={p[0] + 10 / scale} y={p[1] + 10 / scale}>
-                  {idx}
-                </text>
-              </g>
-            ))
-          }
-          zoomPoints={zoomPoints}
-        />
-        <div>
-          {selectedPointIdx >= 0 && (
-            <Flex className={styles.info} gap={8} justify="space-between" vertical>
-              <div>
-                <Row align="middle" gutter={[0, 8]}>
-                  {positionText && (
-                    <Col className={styles.position} span={24}>
-                      {positionText}
-                    </Col>
-                  )}
-                  <Col className={styles['point-id']} span={24}>
-                    Point {selectedPointIdx}
-                  </Col>
-                  <Col span={3}>
-                    <label className={styles.label} htmlFor="point-x-input">
-                      X
-                    </label>
-                  </Col>
-                  <Col span={9}>
-                    <InputNumber<number>
-                      className={styles.input}
-                      disabled={!points[selectedPointIdx]}
-                      id="point-x-input"
-                      onChange={(val) => {
-                        if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
-                      }}
-                      onKeyDown={(e) => e.stopPropagation()}
-                      onKeyUp={(e) => e.stopPropagation()}
-                      precision={0}
-                      step={1}
-                      type="number"
-                      value={points[selectedPointIdx]?.[0] ?? 0}
-                    />
-                  </Col>
-                  <Col span={3}>
-                    <label className={styles.label} htmlFor="point-y-input">
-                      Y
-                    </label>
-                  </Col>
-                  <Col span={9}>
-                    <InputNumber<number>
-                      className={styles.input}
-                      disabled={!points[selectedPointIdx]}
-                      id="point-y-input"
-                      onChange={(val) => {
-                        if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
-                      }}
-                      onKeyDown={(e) => e.stopPropagation()}
-                      onKeyUp={(e) => e.stopPropagation()}
-                      precision={0}
-                      step={1}
-                      type="number"
-                      value={points[selectedPointIdx]?.[1] ?? 0}
-                    />
-                  </Col>
-                </Row>
-              </div>
-              <PointIndicator
-                currentIndex={selectedPointIdx}
-                label={label}
-                onSelect={setSelectedPointIdx}
-                points={refPoints.length as 4 | 8}
-              />
-            </Flex>
-          )}
-        </div>
-        <ExposureSlider
-          autoExposure={autoExposure}
-          className={styles.exposure}
-          exposureSetting={exposureSetting}
-          onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
-          onRetakePicture={handleTakePicture}
-          setAutoExposure={setAutoExposure}
-          setExposureSetting={setExposureSetting}
-        />
+        {instructionNode}
+        {imageDisplayNode}
+        {controlNode}
+        {exposureSlider}
       </div>
     </DraggableModal>
   );

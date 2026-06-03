@@ -97,6 +97,7 @@
 
   @include mixins.is-mobile {
     flex-direction: column;
+    justify-start: center;
     align-items: center;
     margin-top: 0;
     gap: 30px;

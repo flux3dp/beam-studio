@@ -18,6 +18,7 @@ import type {
 
 import styles from './CheckpointData.module.scss';
 import Title from './Title';
+import type { RenderWrapper } from './types';
 
 interface Props<T = FisheyeCaliParameters> {
   allowCheckPoint?: boolean;
@@ -25,6 +26,7 @@ interface Props<T = FisheyeCaliParameters> {
   getData?: () => Promise<T> | T;
   onClose: (complete: boolean) => void;
   onNext: (res: boolean) => void;
+  renderWrapper?: RenderWrapper;
   titleLink?: string;
   updateParam: (param: T) => void;
 }
@@ -35,6 +37,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   getData,
   onClose,
   onNext,
+  renderWrapper,
   titleLink,
   updateParam,
 }: Props<T>): React.JSX.Element => {
@@ -171,6 +174,12 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
   }, [currentData, askUser, handleOk]);
 
   if (!askUser) {
+    const loadingBody = <SpinLoading className={styles.spinner} color="primary" style={{ '--size': '48px' }} />;
+
+    if (renderWrapper) {
+      return renderWrapper({ buttons: [], content: loadingBody });
+    }
+
     return (
       <DraggableModal
         closable={!!onClose}
@@ -180,9 +189,28 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         open
         width={400}
       >
-        <SpinLoading className={styles.spinner} color="primary" style={{ '--size': '48px' }} />
+        {loadingBody}
       </DraggableModal>
     );
+  }
+
+  const askBody = (
+    <>
+      {!currentData && lang.calibration.checking_checkpoint}
+      {currentData?.data &&
+        (currentData.isCheckPointData ? lang.calibration.found_checkpoint : lang.calibration.use_old_camera_parameter)}
+    </>
+  );
+
+  const titleNode = <Title link={titleLink} title={lang.calibration.check_checkpoint_data} />;
+
+  if (renderWrapper) {
+    const wrapperButtons = [
+      { label: lang.alert.no, onClick: () => onNext(false) },
+      { label: lang.alert.yes, onClick: handleOk, primary: true },
+    ];
+
+    return renderWrapper({ buttons: wrapperButtons, content: askBody, title: titleNode });
   }
 
   return (
@@ -199,12 +227,10 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
       maskClosable={false}
       onCancel={() => onClose?.(false)}
       open
-      title={<Title link={titleLink} title={lang.calibration.check_checkpoint_data} />}
+      title={titleNode}
       width={400}
     >
-      {!currentData && lang.calibration.checking_checkpoint}
-      {currentData?.data &&
-        (currentData.isCheckPointData ? lang.calibration.found_checkpoint : lang.calibration.use_old_camera_parameter)}
+      {askBody}
     </DraggableModal>
   );
 };
