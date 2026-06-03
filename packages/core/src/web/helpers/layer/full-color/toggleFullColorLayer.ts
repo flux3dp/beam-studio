@@ -1,3 +1,4 @@
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import history from '@core/app/svgedit/history/history';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
@@ -21,8 +22,10 @@ const toggleFullColorLayer = (
   writeDataLayer(layer, 'fullcolor', targetVal, { batchCmd: cmd });
 
   updateLayerColor(layer as SVGGElement);
+  ObjectPanelController.updateFullColor();
   cmd.onAfter = () => {
     updateLayerColor(layer as SVGGElement);
+    ObjectPanelController.updateFullColor();
   };
 
   handleHistoryActionOptions(cmd, historyOptions);

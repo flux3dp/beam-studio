@@ -6,7 +6,6 @@ import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
@@ -19,8 +18,6 @@ const updateWindowsMenu = () => {
     window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
   }
 };
-
-const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
 
 class Menu extends AbstractMenu {
   private communicator;
@@ -53,12 +50,6 @@ class Menu extends AbstractMenu {
         this.rerenderMenu();
       },
     );
-
-    // layer panel related
-    layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable = false) => {
-      this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', isUvPrintable);
-      this.rerenderMenu();
-    });
 
     // dockview layout related
     useDockableStore.subscribe(
@@ -120,7 +111,6 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['ANTI_ALIASING'], 'checked', globalPreference['anti-aliasing']);
     this.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', globalPreference.auto_align);
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', globalPreference['enable-uv-print-file']);
-    this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', false);
     this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', dockableStore.panelLayerControls);
     this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', dockableStore.panelObjectProperties);
     this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', dockableStore.panelPathEdit);

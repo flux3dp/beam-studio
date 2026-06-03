@@ -1,6 +1,7 @@
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import selectionManager from '@core/app/svgedit/selection';
 import { isAtPage } from '@core/helpers/hashHelper';
 import menu from '@core/implementations/menu';
@@ -53,23 +54,11 @@ class BeamboxGlobalInteraction {
       menu.enable(['DECOMPOSE_PATH']);
     }
 
-    if (selectedElements.length > 0 && selectionManager.isMultiSelecting) {
-      selectedElements = Array.from(firstElement.childNodes) as Element[];
-    }
+    const { canGroup, canUngroupOrDisassemble } = useSelectedElementStore.getState();
 
-    if (selectedElements?.length > 1 || (selectedElements?.length === 1 && tagName !== 'g')) {
-      menu.enable(['GROUP']);
-    }
+    if (canGroup) menu.enable(['GROUP']);
 
-    if (
-      selectedElements &&
-      selectedElements.length === 1 &&
-      ['a', 'g', 'use'].includes(tagName) &&
-      !firstElement.getAttribute('data-textpath-g') &&
-      !firstElement.getAttribute('data-pass-through')
-    ) {
-      menu.enable(['UNGROUP']);
-    }
+    if (canUngroupOrDisassemble) menu.enable(['UNGROUP']);
   }
 
   onObjectBlur() {

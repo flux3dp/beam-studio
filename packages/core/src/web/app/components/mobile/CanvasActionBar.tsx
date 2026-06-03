@@ -4,7 +4,7 @@ import { TabBar } from 'antd-mobile';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { TrashIcon } from '@core/app/icons/icons';
-import useSelectedElementStore from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 
 const CanvasActionBar = (): React.JSX.Element => {
   const selectedElement = useSelectedElementStore((state) => state.selectedElement);

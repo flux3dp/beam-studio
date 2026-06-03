@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import useSelectedElementStore from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { ObjectPanelContext } from './contexts/ObjectPanelContext';
 import { useScreenStore } from '@core/app/stores/screenStore';
 
@@ -167,7 +167,7 @@ describe('should render correctly', () => {
 
     test('not g element', () => {
       document.body.innerHTML = '<rect id="svg_1" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(
         <ObjectPanelContext
@@ -206,7 +206,7 @@ describe('should render correctly', () => {
 
     test('is g element', () => {
       document.body.innerHTML = '<g id="svg_1" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(
         <ObjectPanelContext
@@ -240,7 +240,7 @@ describe('should render correctly', () => {
     test('contains rect, polygon or ellipse elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><rect id="svg_1"></rect><ellipse id="svg_2"></ellipse></g>';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_3'));
 
       const { container } = render(
         <ObjectPanelContext
@@ -293,7 +293,7 @@ describe('should render correctly', () => {
     test('contains other types of elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><path id="svg_1"></path><line id="svg_2"></line></g>';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_3'));
       calcPathClosed.mockReturnValue(true);
 
       const { container } = render(
@@ -357,7 +357,7 @@ describe('should render correctly in mobile', () => {
 
     test('not g element', () => {
       document.body.innerHTML = '<rect id="svg_1" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container, getByText } = render(
         <ObjectPanelContext
@@ -397,7 +397,7 @@ describe('should render correctly in mobile', () => {
 
     test('is g element', () => {
       document.body.innerHTML = '<g id="svg_1" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container, getByText } = render(
         <ObjectPanelContext
@@ -433,7 +433,7 @@ describe('should render correctly in mobile', () => {
     test('contains rect, polygon or ellipse elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><rect id="svg_1"></rect><ellipse id="svg_2"></ellipse></g>';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_3'));
 
       const { container, getByText } = render(
         <ObjectPanelContext
@@ -486,7 +486,7 @@ describe('should render correctly in mobile', () => {
     test('contains other types of elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><path id="svg_1"></path><line id="svg_2"></line></g>';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_3'));
       calcPathClosed.mockReturnValue(true);
 
       const { container } = render(
