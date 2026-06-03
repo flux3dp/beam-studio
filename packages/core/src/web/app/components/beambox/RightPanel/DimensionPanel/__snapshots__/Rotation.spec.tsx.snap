@@ -43,7 +43,7 @@ exports[`test Rotation should render correctly on mobile 1`] = `
   <div
     id="rotate"
   >
-    rotate
+    Rotate
     <div>
       0
     </div>
