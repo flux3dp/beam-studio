@@ -8,6 +8,7 @@ import type { DimensionKey, DimensionValues } from '@core/interfaces/ObjectPanel
 interface IObjectPanelContext {
   activeKey: null | string;
   dimensionValues: any;
+  dimensionValuesRef: React.RefObject<DimensionValues>;
   getDimensionValues: (
     response: {
       dimensionValues: any;
@@ -23,6 +24,7 @@ interface IObjectPanelContext {
 export const ObjectPanelContext = React.createContext<IObjectPanelContext>({
   activeKey: null,
   dimensionValues: {},
+  dimensionValuesRef: { current: {} },
   getDimensionValues: () => {},
   polygonSides: 5,
   updateActiveKey: () => {},
@@ -129,6 +131,7 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
       value={{
         activeKey,
         dimensionValues: dimensionValues.current,
+        dimensionValuesRef: dimensionValues,
         getDimensionValues,
         polygonSides,
         updateActiveKey: setActiveKey,

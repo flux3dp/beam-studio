@@ -68,7 +68,7 @@ const getTextBBox = (text: SVGTextElement): DOMRect => {
   return bbox;
 };
 
-const getUseBBoxByDataXform = (elem: SVGUseElement): { height: number; width: number; x: number; y: number } => {
+export const getUseBBoxByDataXform = (elem: SVGUseElement): { height: number; width: number; x: number; y: number } => {
   const xform = elem.getAttribute('data-xform');
 
   if (!xform) return elem.getBBox();
