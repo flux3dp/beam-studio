@@ -264,7 +264,7 @@ describe('test DimensionPanel', () => {
     expect(mockSetRotationAngle).not.toHaveBeenCalled();
     fireEvent.click(getByText('rotation'));
     expect(mockSetRotationAngle).toHaveBeenCalledTimes(1);
-    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, mockElement, -80);
+    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, mockElement, -80, { addToHistory: false });
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
       rotation: -80,
@@ -480,7 +480,7 @@ describe('test DimensionPanel in mobile', () => {
     expect(mockSetRotationAngle).not.toHaveBeenCalled();
     fireEvent.click(getByText('rotation'));
     expect(mockSetRotationAngle).toHaveBeenCalledTimes(1);
-    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, mockElement, -80);
+    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, mockElement, -80, { addToHistory: false });
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
       rotation: -80,
