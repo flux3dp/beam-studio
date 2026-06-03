@@ -11,10 +11,9 @@ import { getBBox } from '../utils/getBBox';
 
 import { getTransformList } from './transformlist';
 
-declare const svgedit: any;
-
 // Path segment type to command letter mapping
 const pathMap = [0, 'z', 'M', 'm', 'L', 'l', 'C', 'c', 'Q', 'q', 'A', 'a', 'H', 'h', 'V', 'v', 'S', 's', 'T', 't'];
+const { svgedit } = window;
 
 let svgCanvas: ISVGCanvas;
 

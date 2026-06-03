@@ -14,8 +14,7 @@ import { remapElement } from './coords';
 import { getRotationAngle } from './rotation';
 import { getTransformList } from './transformlist';
 
-declare const svgedit: any;
-
+const { svgedit } = window;
 const isNegligible = (n: number): boolean => Math.abs(n) < 1e-7;
 
 let startTransform: null | string = null;
@@ -291,7 +290,7 @@ export const recalculateDimensions = (selected: Element): InstanceType<typeof Ba
 
   // If we haven't created an initial array in polygon/polyline/path, make a copy
   if (initial == null) {
-    initial = JSON.parse(JSON.stringify(changes)) as any as Record<string, any>;
+    initial = { ...changes };
     for (const [attr, val] of Object.entries(initial)) {
       initial[attr] = svgedit.units.convertToNum(attr, val);
     }
@@ -432,7 +431,12 @@ export const recalculateDimensions = (selected: Element): InstanceType<typeof Ba
             childTlist.appendItem(translateOrigin);
           }
 
-          batchCmd.addSubCommand(recalculateDimensions(child)!);
+          const cmd = recalculateDimensions(child);
+
+          if (cmd && !cmd.isEmpty()) {
+            batchCmd.addSubCommand(cmd);
+          }
+
           startTransform = oldStartTransform;
         }
       }
@@ -487,7 +491,11 @@ export const recalculateDimensions = (selected: Element): InstanceType<typeof Ba
                 childTlist.appendItem(newxlate);
               }
 
-              batchCmd.addSubCommand(recalculateDimensions(child)!);
+              const cmd = recalculateDimensions(child);
+
+              if (cmd && !cmd.isEmpty()) {
+                batchCmd.addSubCommand(cmd);
+              }
 
               // Impose reverse translate on <use> elements referencing this child
               const uses = selected.getElementsByTagNameNS(NS.SVG, 'use');
@@ -502,7 +510,12 @@ export const recalculateDimensions = (selected: Element): InstanceType<typeof Ba
 
                   usexlate.setTranslate(-tx, -ty);
                   getTransformList(useElem as unknown as SVGGraphicsElement)!.insertItemBefore(usexlate, 0);
-                  batchCmd.addSubCommand(recalculateDimensions(useElem)!);
+
+                  const cmd = recalculateDimensions(useElem);
+
+                  if (cmd && !cmd.isEmpty()) {
+                    batchCmd.addSubCommand(cmd);
+                  }
                 }
               }
               startTransform = oldStartTransform;
@@ -537,7 +550,12 @@ export const recalculateDimensions = (selected: Element): InstanceType<typeof Ba
           childTlist.clear();
           childTlist.appendItem(e2m);
 
-          batchCmd.addSubCommand(recalculateDimensions(child)!);
+          const cmd = recalculateDimensions(child);
+
+          if (cmd && !cmd.isEmpty()) {
+            batchCmd.addSubCommand(cmd);
+          }
+
           startTransform = oldStartTransform;
 
           // Convert stroke width
