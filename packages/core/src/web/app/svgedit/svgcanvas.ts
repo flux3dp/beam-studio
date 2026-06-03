@@ -84,6 +84,8 @@ import selectionManager from './selection';
 import selector from './selector';
 import textActions from './text/textactions';
 import textEdit from './text/textedit';
+import { init as initCoords, remapElement } from './transform/coords';
+import { getStartTransform, recalculateDimensions, setStartTransform } from './transform/recalculate';
 import { getRotationAngle, setRotationAngle } from './transform/rotation';
 import { binarySearchLowerBoundIndex } from './utils/binarySearchIndex';
 import findDefs from './utils/findDef';
@@ -403,29 +405,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Map of deleted reference elements
   const removedElements = {};
 
-  // import from coords.js
-  svgedit.coords.init({
-    getDrawing: function () {
-      return getCurrentDrawing();
-    },
+  // import from coords.ts
+  initCoords({
+    getDrawing: () => getCurrentDrawing(),
   });
-  this.remapElement = svgedit.coords.remapElement;
-
-  let startTransform = null;
-
-  // import from recalculate.js
-  svgedit.recalculate.init({
-    getStartTransform: function () {
-      return startTransform;
-    },
-    getSVGRoot: function () {
-      return svgroot;
-    },
-    setStartTransform: function (transform) {
-      startTransform = transform;
-    },
-  });
-  this.recalculateDimensions = svgedit.recalculate.recalculateDimensions;
+  this.remapElement = remapElement;
 
   // import from sanitize.js
   var nsMap = svgedit.getReverseNS();
@@ -729,7 +713,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getRootScreenMatrix = () => root_sctm;
   this.getRubberBox = () => rubberBox;
   this.getStarted = () => started;
-  this.getStartTransform = () => startTransform;
   this.setRootScreenMatrix = (matrix: SVGMatrix) => {
     root_sctm = matrix;
   };
@@ -749,9 +732,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     },
     setStarted: (v: boolean) => {
       started = v;
-    },
-    setStartTransform: (transform) => {
-      startTransform = transform;
     },
   };
 
@@ -984,7 +964,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       path.setAttribute('d', pathActions.convertPath(path));
       pathActions.fixEnd(path);
-      svgedit.recalculate.recalculateDimensions(path);
+      recalculateDimensions(path);
     }
   };
 
@@ -1032,7 +1012,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     while (i--) {
       var elem = selectedElements[i];
       //			if (svgedit.utilities.getRotationAngle(elem) && !svgedit.math.hasMatrixTransform(getTransformList(elem))) {continue;}
-      const cmd = svgedit.recalculate.recalculateDimensions(elem);
+      const cmd = recalculateDimensions(elem);
 
       if (cmd && !cmd.isEmpty()) {
         batchCmd.addSubCommand(cmd);
@@ -2971,7 +2951,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Pushes all appropriate parent group properties down to its children, then
   // removes them from the group
   var pushGroupProperties = (this.pushGroupProperties = function (g, undoable) {
-    const origTransform = startTransform;
+    const origTransform = getStartTransform();
     var children = g.childNodes;
     var len = children.length;
     var xform = g.getAttribute('transform');
@@ -3019,7 +2999,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         changeSelectedAttribute('filter', 'url(#' + gfilter.id + ')', [elem]);
       }
 
-      startTransform = elem.getAttribute('transform');
+      setStartTransform(elem.getAttribute('transform'));
 
       var chtlist = svgedit.transformlist.getTransformList(elem);
 
@@ -3113,7 +3093,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           // more complicated than just a rotate
 
           // transfer the group's transform down to each child and then
-          // call svgedit.recalculate.recalculateDimensions()
+          // call recalculateDimensions()
           var oldxform = elem.getAttribute('transform');
 
           changes = {};
@@ -3131,14 +3111,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           chtlist.appendItem(newxform);
         }
 
-        var cmd = svgedit.recalculate.recalculateDimensions(elem);
+        var cmd = recalculateDimensions(elem);
 
         if (cmd && !cmd.isEmpty()) {
           batchCmd.addSubCommand(cmd);
         }
       }
     }
-    startTransform = origTransform;
+    setStartTransform(origTransform);
 
     // remove transform and make it undo-able
     if (xform) {
@@ -3483,7 +3463,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const centers = [center];
       const flipPara = { horizon, vertical };
 
-      startTransform = elem.getAttribute('transform'); // maybe not need
+      setStartTransform(elem.getAttribute('transform')); // maybe not need
 
       let cmd;
       const stack: Array<{ elem: SVGElement; originalAngle?: number }> = [{ elem }];
@@ -3547,7 +3527,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     canvas.undoMgr.beginUndoableChange('transform', [elem]);
     setRotationAngle(elem, 0, { addToHistory: false });
-    svgedit.recalculate.recalculateDimensions(elem);
+    recalculateDimensions(elem);
     setRotationAngle(elem, -angle, { addToHistory: false });
 
     let cmd = canvas.undoMgr.finishUndoableChange();
@@ -3564,7 +3544,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const tlist = svgedit.transformlist.getTransformList(elem);
 
     if (elem.tagName !== 'image') {
-      startTransform = elem.getAttribute('transform');
+      setStartTransform(elem.getAttribute('transform'));
 
       const translateOrigin = svgroot.createSVGTransform();
       const scale = svgroot.createSVGTransform();
@@ -3588,7 +3568,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         tlist.appendItem(translateOrigin);
       }
 
-      cmd = svgedit.recalculate.recalculateDimensions(elem);
+      cmd = recalculateDimensions(elem);
     } else {
       cmd = await this._flipImage(elem, flipPara.horizon, flipPara.vertical);
     }
@@ -3887,7 +3867,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         break;
     }
 
-    startTransform = selected.getAttribute('transform'); // ???maybe non need
+    setStartTransform(selected.getAttribute('transform')); // ???maybe non need
 
     const tlist = svgedit.transformlist.getTransformList(selected);
     const left = bbox.x;
@@ -3920,7 +3900,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     selectorManager.requestSelector(selected)?.show(true);
 
-    const cmd = svgedit.recalculate.recalculateDimensions(selected);
+    const cmd = recalculateDimensions(selected);
 
     svgEditor.updateContextPanel();
 

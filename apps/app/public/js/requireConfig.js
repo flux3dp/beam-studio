@@ -20,8 +20,6 @@ requirejs.config({
     units: '../lib/svgeditor/units',
     svgutils: '../lib/svgeditor/svgutils',
     sanitize: '../lib/svgeditor/sanitize',
-    coords: '../lib/svgeditor/coords',
-    recalculate: '../lib/svgeditor/recalculate',
     draw: '../lib/svgeditor/draw',
     path: '../lib/svgeditor/path',
     svgcanvas: '../lib/svgeditor/svgcanvas',
@@ -74,14 +72,8 @@ requirejs.config({
     sanitize: {
       deps: ['svgutils'],
     },
-    coords: {
-      deps: ['sanitize'],
-    },
-    recalculate: {
-      deps: ['coords'],
-    },
     draw: {
-      deps: ['recalculate'],
+      deps: ['sanitize'],
     },
     path: {
       deps: ['draw'],

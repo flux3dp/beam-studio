@@ -46,6 +46,7 @@ import {
 } from '../../text/fitText';
 import textEdit, { isFitText } from '../../text/textedit';
 import touchEvents from '../../touchEvents';
+import { recalculateDimensions, setStartTransform } from '../../transform/recalculate';
 import { setRotationAngle } from '../../transform/rotation';
 import { getBBox } from '../../utils/getBBox';
 import workareaManager from '../../workarea';
@@ -203,7 +204,7 @@ const mouseDown = async (evt: MouseEvent) => {
 
   if (rotaryAxis.checkMouseTarget(mouseTarget)) setMouseMode('drag-rotary-axis');
 
-  svgCanvas.unsafeAccess.setStartTransform(mouseTarget.getAttribute('transform'));
+  setStartTransform(mouseTarget.getAttribute('transform'));
   currentMode = getMouseMode();
 
   switch (currentMode) {
@@ -641,7 +642,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     if ((width < 0.01 && Math.abs(width * sx) >= 0.01) || (height < 0.01 && Math.abs(height * sy) >= 0.01)) {
       console.log('recalculate', width, height, width * sx, height * sy);
 
-      svgedit.recalculate.recalculateDimensions(selected);
+      recalculateDimensions(selected);
       initResizeTransform(selected);
 
       startX = x;
@@ -1444,7 +1445,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
   if (isContinuousDrawing && getMouseMode() !== 'textedit') selectionManager.clearSelection();
 
-  svgCanvas.unsafeAccess.setStartTransform(null);
+  setStartTransform(null);
 };
 
 const mouseEnter = (evt: MouseEvent) => {

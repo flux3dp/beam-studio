@@ -20,6 +20,7 @@ import type { BatchCommand } from '../history/history';
 import history from '../history/history';
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 import selectionManager from '../selection';
+import { recalculateDimensions } from '../transform/recalculate';
 import { getRotationAngle, setRotationAngle } from '../transform/rotation';
 import { getHref } from '../utils/href';
 
@@ -187,7 +188,7 @@ export const disassembleUse = async (
 
       child.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea as EventListener);
       child.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea as EventListener);
-      svgedit.recalculate.recalculateDimensions(child);
+      recalculateDimensions(child);
 
       if (showProgress) {
         const elementPercentage = Math.round((100 * j) / nodeNumbers);
@@ -226,7 +227,7 @@ export const disassembleUse = async (
 
     if (angle) setRotationAngle(g, 0, { addToHistory: false });
 
-    svgedit.recalculate.recalculateDimensions(g);
+    recalculateDimensions(g);
 
     if (angle) setRotationAngle(g, angle, { addToHistory: false });
 

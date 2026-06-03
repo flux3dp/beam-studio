@@ -16,6 +16,7 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import undoManager from '../history/undoManager';
 import { getEventPageXY } from '../interaction/mouse/utils/getEventPoint';
 import selectionManager from '../selection';
+import { recalculateDimensions } from '../transform/recalculate';
 import { getBBox } from '../utils/getBBox';
 
 import { isFitText } from './textedit';
@@ -1042,7 +1043,7 @@ class TextActions {
       selectionManager.addToSelection([curtext], true);
     }
 
-    svgedit.recalculate.recalculateDimensions(curtext);
+    recalculateDimensions(curtext);
 
     const batchCmd = new history.BatchCommand('Edit Text');
 

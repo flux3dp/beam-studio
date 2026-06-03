@@ -6,6 +6,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { changeDocumentStoreValue, useDocumentStore } from '@core/app/stores/documentStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
+import { recalculateDimensions } from '@core/app/svgedit/transform/recalculate';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import { deleteUseRef } from '@core/app/svgedit/operations/delete';
@@ -173,7 +174,7 @@ const sliceWorkarea = async (
           }
         }
       }
-      svgedit.recalculate.recalculateDimensions(container);
+      recalculateDimensions(container);
 
       const descendants = Array.from(container.querySelectorAll('*'));
       const refMap: Record<string, string> = {}; // id changes
