@@ -22,14 +22,6 @@ jest.mock('../ObjectPanelItem', () => ({
   ),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  topbar: {
-    menu: {
-      rotate: 'rotate',
-    },
-  },
-}));
-
 const mockOnChange = jest.fn();
 
 import Rotation from './Rotation';
@@ -62,12 +54,28 @@ describe('test Rotation', () => {
   test('onChange on desktop', () => {
     useScreenStore.setState({ isMobile: false });
 
-    const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
-    const input = container.querySelector('input');
+    const TestComponent = () => {
+      const [val, setVal] = React.useState(0);
+      const onChange = (newVal: number, isComplete?: boolean) => {
+        setVal(newVal);
+        mockOnChange(newVal, isComplete);
+      };
+
+      return <Rotation onChange={onChange} value={val} />;
+    };
+
+    const { container } = render(<TestComponent />);
+    const input = container.querySelector('input')!;
+
+    expect(input).toBeInTheDocument();
 
     fireEvent.change(input, { target: { value: 1 } });
     expect(mockOnChange).toHaveBeenCalledTimes(1);
-    expect(mockOnChange).toHaveBeenLastCalledWith(1);
+    expect(mockOnChange).toHaveBeenNthCalledWith(1, 1, false);
+    fireEvent.blur(input);
+    expect(mockOnChange).toHaveBeenCalledTimes(3);
+    expect(mockOnChange).toHaveBeenNthCalledWith(2, 0, false);
+    expect(mockOnChange).toHaveBeenNthCalledWith(3, 1, true);
   });
 
   test('UPDATE_DIMENSION_VALUES event on desktop', () => {
@@ -83,7 +91,7 @@ describe('test Rotation', () => {
     const handler = mockOn.mock.calls[0][1];
 
     handler({ rotation: 1 });
-    expect(container.querySelector('input').value).toBe('1.00');
+    expect(container.querySelector('input')!.value).toBe('1.00');
     unmount();
     expect(mockRemoveListener).toHaveBeenCalledTimes(1);
     expect(mockRemoveListener).toHaveBeenNthCalledWith(1, 'UPDATE_DIMENSION_VALUES', handler);
@@ -93,10 +101,11 @@ describe('test Rotation', () => {
     useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
-    const button = container.querySelector('button');
+    const button = container.querySelector('button')!;
 
+    expect(button).toBeInTheDocument();
     fireEvent.click(button);
     expect(mockOnChange).toHaveBeenCalledTimes(1);
-    expect(mockOnChange).toHaveBeenLastCalledWith(1);
+    expect(mockOnChange).toHaveBeenLastCalledWith(1, true);
   });
 });
