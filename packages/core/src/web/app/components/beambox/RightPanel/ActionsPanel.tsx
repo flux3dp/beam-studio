@@ -530,7 +530,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         title: 'ACTIONS',
       },
       {
-        buttons: [renderConvertToImageButton()],
+        buttons: [renderConvertToImageButton({ isDisabled: isVariableText, tooltipIfDisabled })],
         title: 'CONVERSIONS',
       },
       {
