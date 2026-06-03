@@ -6,7 +6,6 @@ import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
@@ -19,8 +18,6 @@ const updateWindowsMenu = () => {
     window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
   }
 };
-
-const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
 
 class Menu extends AbstractMenu {
   private communicator;
