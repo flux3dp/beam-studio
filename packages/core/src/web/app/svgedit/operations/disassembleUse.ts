@@ -30,8 +30,6 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-const { svgedit } = window;
-
 function hasValidClipPaths(root: SVGElement): boolean {
   const elementsWithClipPath = root.querySelectorAll('[clip-path]');
 
