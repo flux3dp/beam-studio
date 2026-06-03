@@ -4,6 +4,9 @@
  * Licensed under the MIT License
  */
 
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
 import { getBBox } from '../utils/getBBox';
 
 import { getTransformList } from './transformlist';
@@ -13,15 +16,11 @@ declare const svgedit: any;
 // Path segment type to command letter mapping
 const pathMap = [0, 'z', 'M', 'm', 'L', 'l', 'C', 'c', 'Q', 'q', 'A', 'a', 'H', 'h', 'V', 'v', 'S', 's', 'T', 't'];
 
-interface EditorContext {
-  getDrawing: () => { getNextId: () => string };
-}
+let svgCanvas: ISVGCanvas;
 
-let editorContext_: EditorContext | null = null;
-
-export const init = (editorContext: EditorContext): void => {
-  editorContext_ = editorContext;
-};
+getSVGAsync((globalSVG) => {
+  svgCanvas = globalSVG.Canvas;
+});
 
 /**
  * Applies coordinate changes to an element based on the given matrix
@@ -64,7 +63,7 @@ export const remapElement = (selected: Element, changes: Record<string, any>, m:
           newgrad.setAttribute('y2', String(-(Number(y2) - 1)));
         }
 
-        newgrad.id = editorContext_!.getDrawing().getNextId();
+        newgrad.id = svgCanvas.getNextId();
         svgedit.utilities.findDefs().appendChild(newgrad);
         selected.setAttribute(type, `url(#${newgrad.id})`);
       }

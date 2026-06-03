@@ -84,7 +84,6 @@ import selectionManager from './selection';
 import selector from './selector';
 import textActions from './text/textactions';
 import textEdit from './text/textedit';
-import { init as initCoords, remapElement } from './transform/coords';
 import { getStartTransform, recalculateDimensions, setStartTransform } from './transform/recalculate';
 import { getRotationAngle, setRotationAngle } from './transform/rotation';
 import { binarySearchLowerBoundIndex } from './utils/binarySearchIndex';
@@ -404,12 +403,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // Map of deleted reference elements
   const removedElements = {};
-
-  // import from coords.ts
-  initCoords({
-    getDrawing: () => getCurrentDrawing(),
-  });
-  this.remapElement = remapElement;
 
   // import from sanitize.js
   var nsMap = svgedit.getReverseNS();
