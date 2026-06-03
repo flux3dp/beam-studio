@@ -2191,21 +2191,6 @@ exports[`should render correctly in mobile use 2`] = `
     </div>
     <div
       class="object-panel-item"
-      id="to_image"
-    >
-      <div
-        class="main"
-      >
-        <svgr-url />
-      </div>
-      <div
-        class="label"
-      >
-        Outline
-      </div>
-    </div>
-    <div
-      class="object-panel-item"
       id="smart-nest"
     >
       <div
@@ -3797,6 +3782,7 @@ exports[`should render correctly use 2`] = `
         >
           <button
             class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+            disabled=""
             id="to_image"
             title="To Image"
             type="button"
