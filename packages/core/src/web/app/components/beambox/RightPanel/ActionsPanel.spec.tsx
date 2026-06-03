@@ -133,15 +133,13 @@ jest.mock('@core/app/svgedit/selection', () => ({
 }));
 
 const convertSvgToPath = jest.fn();
-const convertUseToPath = jest.fn();
 const convertTextToPath = jest.fn();
-const convertTextOnPathToPath = jest.fn();
+const dispatchConvertToPath = jest.fn();
 
 jest.mock('@core/helpers/convertToPath', () => ({
   convertSvgToPath,
-  convertTextOnPathToPath,
   convertTextToPath,
-  convertUseToPath,
+  dispatchConvertToPath,
 }));
 
 const convertSvgToImage = jest.fn();
@@ -271,16 +269,16 @@ describe('should render correctly', () => {
     convertTextToPathFontFunc.mockResolvedValueOnce({ path: null });
     fireEvent.click(getByText(tActionPanel.to_path));
     await tick();
-    expect(convertTextToPath).toHaveBeenCalledTimes(1);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
       isToSelect: true,
     });
 
     convertTextToPathFontFunc.mockResolvedValueOnce({ path: null });
     fireEvent.click(getByText(tActionPanel.weld_text));
     await tick();
-    expect(convertTextToPath).toHaveBeenCalledTimes(2);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
+    expect(convertTextToPath).toHaveBeenCalledTimes(1);
+    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
       isToSelect: true,
       weldingTexts: true,
     });
@@ -326,7 +324,7 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.to_path));
-    expect(convertSvgToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
@@ -345,7 +343,7 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.to_path));
-    expect(convertSvgToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
@@ -364,7 +362,7 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.to_path));
-    expect(convertSvgToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
@@ -383,7 +381,7 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText(tActionPanel.to_path));
-    expect(convertSvgToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
@@ -548,15 +546,15 @@ describe('should render correctly in mobile', () => {
     convertTextToPathFontFunc.mockResolvedValueOnce({ path: null });
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
     await tick();
-    expect(convertTextToPath).toHaveBeenCalledTimes(1);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
       isToSelect: true,
     });
 
     fireEvent.click(getByText(tActionPanel.weld_text));
     await tick();
-    expect(convertTextToPath).toHaveBeenCalledTimes(2);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
+    expect(convertTextToPath).toHaveBeenCalledTimes(1);
+    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
       isToSelect: true,
       weldingTexts: true,
     });
@@ -620,7 +618,7 @@ describe('should render correctly in mobile', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
-    expect(convertSvgToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
@@ -639,7 +637,7 @@ describe('should render correctly in mobile', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
-    expect(convertSvgToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
@@ -658,7 +656,7 @@ describe('should render correctly in mobile', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
-    expect(convertSvgToPath).toHaveBeenCalledTimes(1);
+    expect(dispatchConvertToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));

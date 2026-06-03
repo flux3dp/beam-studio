@@ -1,9 +1,11 @@
 import React, { memo, useCallback, useEffect } from 'react';
 
 import type { MenuProps } from 'antd';
+import { useShallow } from 'zustand/shallow';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { cloneSelectedElements, pasteElements } from '@core/app/svgedit/operations/clipboard';
 import selectionManager from '@core/app/svgedit/selection';
@@ -50,21 +52,20 @@ const getCurrentLayer = (selectedElement?: Element): null | string => {
 };
 
 interface State {
-  group: boolean;
   menuDisabled: boolean;
   paste: boolean;
   select: boolean;
-  ungroup: boolean;
 }
 
 const Workarea = memo(({ className }: { className: string }) => {
-  const [{ group, menuDisabled, paste, select, ungroup }, setState] = useSetState<State>({
-    group: false,
+  const [{ menuDisabled, paste, select }, setState] = useSetState<State>({
     menuDisabled: false,
     paste: false,
     select: false,
-    ungroup: false,
   });
+  const { group, ungroup } = useSelectedElementStore(
+    useShallow((state) => ({ group: state.canGroup, ungroup: state.canUngroup })),
+  );
   const lang = useI18n().beambox;
   const t = lang.context_menu;
 

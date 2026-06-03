@@ -29,14 +29,14 @@ describe('should render correctly', () => {
   test('on change should work', () => {
     const updateDimensionValues = jest.fn();
     const { container } = render(
-      <ObjectPanelContext.Provider value={{ dimensionValues: { rx: 0 }, updateDimensionValues } as any}>
-        <RectOptions elem={document.getElementById('flux')} />
+      <ObjectPanelContext.Provider value={{ dimensionValuesRef: { current: { rx: 0 } }, updateDimensionValues } as any}>
+        <RectOptions elem={document.getElementById('flux') as any} />
       </ObjectPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
-    fireEvent.change(container.querySelector('input'), { target: { value: 10 } });
-    fireEvent.blur(container.querySelector('input'));
+    fireEvent.change(container.querySelector('input')!, { target: { value: 10 } });
+    fireEvent.blur(container.querySelector('input')!);
 
     expect(changeSelectedAttribute).toHaveBeenCalledTimes(1);
     expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 100, [document.getElementById('flux')]);
@@ -55,13 +55,15 @@ describe('should render correctly in mobile', () => {
 
     const updateDimensionValues = jest.fn();
     const { container } = render(
-      <ObjectPanelContext.Provider value={{ dimensionValues: { rx: 10 }, updateDimensionValues } as any}>
-        <RectOptions elem={document.getElementById('flux')} />
+      <ObjectPanelContext.Provider
+        value={{ dimensionValuesRef: { current: { rx: 10 } }, updateDimensionValues } as any}
+      >
+        <RectOptions elem={document.getElementById('flux') as any} />
       </ObjectPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
-    fireEvent.change(container.querySelector('input'), { target: { value: 2 } });
+    fireEvent.change(container.querySelector('input')!, { target: { value: 2 } });
     expect(changeSelectedAttribute).toHaveBeenCalledTimes(1);
     expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 20, [document.getElementById('flux')]);
     expect(updateDimensionValues).toHaveBeenCalledTimes(1);

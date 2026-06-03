@@ -34,6 +34,7 @@
 
       .btn {
         @include mixins.text-button();
+        padding: 0px;
       }
     }
   }

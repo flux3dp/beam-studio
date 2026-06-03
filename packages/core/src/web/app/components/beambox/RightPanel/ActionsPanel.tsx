@@ -257,7 +257,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         showCurvePanel,
         <ActionPanelIcons.Grading />,
         <ActionPanelIcons.Brightness />,
-        { autoClose: false, mobileLabel: lang.brightness },
+        { autoClose: false, isFullLine: true, mobileLabel: lang.brightness },
       ),
       imageEditPanel: renderButtons(
         'imageEditPanel',
