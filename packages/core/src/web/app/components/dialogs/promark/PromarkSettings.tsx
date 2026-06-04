@@ -10,6 +10,7 @@ import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import icons from '@core/app/icons/icons';
 import { useStorageStore } from '@core/app/stores/storageStore';
+import { readCloudConfig, updateCloudConfig } from '@core/helpers/api/flux-id/cloudConfig';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import applyRedDot from '@core/helpers/device/promark/apply-red-dot';
@@ -36,7 +37,7 @@ interface Props {
 
 const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
-  const { model, serial } = device;
+  const { hashed_serial: hashedSerial, model, serial } = device;
   const isInch = useStorageStore((state) => state.isInch);
   const [field, setField] = useState<Field>(initData.field || defaultField);
   const [redDot, setRedDot] = useState<RedDot>(initData.redDot || defaultRedLight);
@@ -49,6 +50,14 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
   const [isPreviewing, setIsPreviewing] = useState(false);
   const previewTask = useRef<string>('');
   const markTask = useRef<string>('');
+
+  useEffect(() => {
+    readCloudConfig({ hash: hashedSerial, key: 'promarkLens', serialNumber: serial }, (config) => {
+      setField((prev) => ({ ...prev, ...config.field }));
+      setRedDot((prev) => ({ ...prev, ...config.redDot }));
+      setGalvoCorrection((prev) => ({ ...prev, ...config.galvoParameters }));
+    });
+  }, [hashedSerial, serial]);
 
   useEffect(() => {
     previewTask.current = '';
@@ -145,6 +154,15 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
     } catch (error) {
       console.error('Failed to apply promark settings state', error);
     }
+
+    await updateCloudConfig({
+      data: { field, galvoParameters, redDot },
+      hash: hashedSerial,
+      key: 'promarkLens',
+      model: device.model,
+      serialNumber: serial,
+    });
+
     onClose();
   };
 
