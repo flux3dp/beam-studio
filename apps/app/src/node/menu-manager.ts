@@ -10,7 +10,7 @@ import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import i18n from './helpers/i18n';
-import { getFocusedView } from './helpers/tabHelper';
+import { getFocusedView, getTabManager } from './helpers/tabHelper';
 import type { MenuData } from './interfaces/Menu';
 import { buildFileMenu, updateRecentMenu } from './menu/fileMenu';
 
@@ -89,6 +89,7 @@ function getDeviceMenuId(uuid: string, data: { source: string }): string {
 }
 
 function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data: IDeviceInfo, isDevMode = false) {
+  const isAtWelcomePage = getTabManager()?.isAtWelcomeTab;
   const { model, name, serial, source, version } = data;
 
   const machineName = name;
@@ -121,6 +122,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
     },
     { type: 'separator' },
     {
+      enabled: !isAtWelcomePage,
       id: 'CALIBRATION',
       label: r.calibration,
       submenu: [
