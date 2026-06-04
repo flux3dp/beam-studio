@@ -7,7 +7,6 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { getOS } from '@core/helpers/getOS';
-import { isAtPage } from '@core/helpers/hashHelper';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
 import communicator from '@core/implementations/communicator';
@@ -112,7 +111,6 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', dockableStore.panelPathEdit);
 
     this.updateMenuByWorkarea(useDocumentStore.getState().workarea);
-    this.changeMenuItemStatus(['CALIBRATION'], 'enabled', isAtPage('editor'), { flush: true });
   };
 
   attach(enabledItems?: string[]) {
