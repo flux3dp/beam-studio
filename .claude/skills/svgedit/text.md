@@ -104,7 +104,7 @@ Key exports:
 2. **FitText** → `renderFitTextTspan`: handles compression and alignment
 3. **Multi-line** → `renderTspan`: positions tspans based on line spacing
 
-After rendering, always calls `svgedit.recalculate.recalculateDimensions(elem)`.
+After rendering, always calls `recalculateDimensions(elem)`.
 
 #### renderTspan (multi-line)
 

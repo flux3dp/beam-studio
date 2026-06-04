@@ -5,6 +5,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { recalculateDimensions, setStartTransform } from '../transform/recalculate';
+
 // TODO: decouple with svgcanvas
 
 const { svgedit } = window;
@@ -39,7 +41,7 @@ export function moveElements(
     const selected = elems[i];
 
     if (selected) {
-      svgCanvas.unsafeAccess.setStartTransform(selected.getAttribute('transform'));
+      setStartTransform(selected.getAttribute('transform'));
 
       const svgroot = document.getElementById('svgroot') as unknown as SVGSVGElement;
       const xform = svgroot.createSVGTransform();
@@ -64,7 +66,7 @@ export function moveElements(
         tlist.appendItem(xform);
       }
 
-      const cmd = svgedit.recalculate.recalculateDimensions(selected);
+      const cmd = recalculateDimensions(selected);
 
       if (cmd && !cmd.isEmpty() && (x !== 0 || y !== 0)) {
         batchCmd.addSubCommand(cmd);

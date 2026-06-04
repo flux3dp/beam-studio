@@ -17,6 +17,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import undoManager from '../history/undoManager';
 import { getEventPageXY } from '../interaction/mouse/utils/getEventPoint';
+import { recalculateDimensions } from '../transform/recalculate';
 import { getBBox } from '../utils/getBBox';
 
 import { isFitText } from './textedit';
@@ -1049,7 +1050,7 @@ class TextActions {
       svgCanvas.addToSelection([curtext], true);
     }
 
-    svgedit.recalculate.recalculateDimensions(curtext);
+    recalculateDimensions(curtext);
 
     const batchCmd = new history.BatchCommand('Edit Text');
 

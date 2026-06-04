@@ -10,6 +10,7 @@ import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
+import { recalculateDimensions } from '@core/app/svgedit/transform/recalculate';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { discoverManager } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
@@ -780,7 +781,7 @@ const convertTextToPath = async (
         moveElements([moveElement.x], [moveElement.y], [newPathElement], false);
       }
 
-      svgedit.recalculate.recalculateDimensions(newPathElement!);
+      recalculateDimensions(newPathElement!);
     } else {
       Alert.popUp({
         caption: `#846 ${LANG.text_to_path.error_when_parsing_text}`,

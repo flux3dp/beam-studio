@@ -95,7 +95,6 @@ export default interface ISVGCanvas {
   getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
   getSelectedWithoutTempGroup: () => SVGElement[];
   getStarted: () => boolean;
-  getStartTransform: () => any;
   getSvgString: (opts?: { fixTopExpansion?: boolean; unit?: Units }) => string;
   getTempGroup: () => SVGGElement;
   getTitle: () => string;
@@ -166,11 +165,9 @@ export default interface ISVGCanvas {
   ungroupTempGroup(elem?: SVGElement): SVGElement[];
   uniquifyElems: (elem: SVGElement) => void;
   unsafeAccess: {
-    setCurrentMode: (v: string) => void;
     setRubberBox: (v: SVGRectElement) => void;
     setSelectedElements: (elems: SVGElement[]) => void;
     setStarted: (v: boolean) => void;
-    setStartTransform: (transform: any) => void;
   };
   updateElementColor: (elem: Element) => void;
   updateRecentFiles(path: string): void;

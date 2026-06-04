@@ -26,6 +26,7 @@ import type ISVGPathElement from '@core/interfaces/ISVGPathElement';
 
 import Path from '../path/Path';
 import Segment from '../path/Segment';
+import { remapElement } from '../transform/coords';
 import { getBBox } from '../utils/getBBox';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
@@ -401,7 +402,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
 
         if (subpath) {
           if (svgedit.path.path.matrix) {
-            svgedit.coords.remapElement(newpath, {}, svgedit.path.path.matrix.inverse());
+            remapElement(newpath, {}, svgedit.path.path.matrix.inverse());
           }
 
           const newD = newpath.getAttribute('d');

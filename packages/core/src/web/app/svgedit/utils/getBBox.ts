@@ -5,7 +5,35 @@ import NS from '@core/app/constants/namespaces';
 import { isFitText } from '../text/textedit';
 import { getTransformList } from '../transform/transformlist';
 
-const getTextBBox = (text: SVGTextElement): DOMRect => {
+/**
+ * When an element is not attached to the rendered DOM, native getBBox() returns zeros.
+ * This helper detects that case and temporarily inserts a clone into #svgroot to measure.
+ */
+const measureDetached = (
+  elem: SVGGraphicsElement,
+  bbox: { height: number; width: number; x: number; y: number },
+): { height: number; width: number; x: number; y: number } => {
+  if (bbox.width === 0 && bbox.height === 0 && !document.documentElement.contains(elem)) {
+    const svgRoot = document.getElementById('svgroot') as null | SVGSVGElement;
+
+    if (svgRoot) {
+      const clone = elem.cloneNode(true) as SVGGraphicsElement;
+
+      clone.setAttribute('visibility', 'hidden');
+      svgRoot.appendChild(clone);
+
+      const measured = clone.getBBox();
+
+      clone.remove();
+
+      return measured;
+    }
+  }
+
+  return bbox;
+};
+
+const getTextBBox = (text: SVGTextElement): { height: number; width: number; x: number; y: number } => {
   let emptyContextIndices = [];
 
   if (text.childElementCount > 0) {
@@ -20,7 +48,7 @@ const getTextBBox = (text: SVGTextElement): DOMRect => {
     text.textContent = 'a';
   }
 
-  const bbox = text.getBBox();
+  let bbox = measureDetached(text, text.getBBox());
 
   if (text.childElementCount > 0) {
     for (let i = 0; i < emptyContextIndices.length; i += 1) {
@@ -71,7 +99,7 @@ const getTextBBox = (text: SVGTextElement): DOMRect => {
 const getUseBBoxByDataXform = (elem: SVGUseElement): { height: number; width: number; x: number; y: number } => {
   const xform = elem.getAttribute('data-xform');
 
-  if (!xform) return elem.getBBox();
+  if (!xform) return measureDetached(elem, elem.getBBox());
 
   const x = Number.parseFloat(elem.getAttribute('x') || '0');
   const y = Number.parseFloat(elem.getAttribute('y') || '0');
@@ -150,7 +178,7 @@ export const getBBox = (
     bbox = match(tagName)
       .with('use', () => getUseBBoxByDataXform(elem as SVGUseElement))
       .with('text', () => getTextBBox(elem as SVGTextElement))
-      .otherwise(() => (elem as SVGGraphicsElement).getBBox());
+      .otherwise(() => measureDetached(elem as SVGGraphicsElement, (elem as SVGGraphicsElement).getBBox()));
   } catch (error) {
     console.error('Error in getBBox for element', elem, error);
     try {
