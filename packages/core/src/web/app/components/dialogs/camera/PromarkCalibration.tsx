@@ -17,6 +17,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import styles from './Calibration.module.scss';
 import Calibration from './common/Calibration';
+import CheckPnP from './common/CheckPnP';
 import CheckpointData from './common/CheckpointData';
 import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
@@ -32,6 +33,7 @@ enum Steps {
   PUT_PAPER = 3,
   SOLVE_PNP_INSTRUCTION = 4,
   SOLVE_PNP = 5,
+  CHECK_PNP = 6,
 }
 /* eslint-enable perfectionist/sort-enums */
 
@@ -51,7 +53,8 @@ const PromarkCalibration = ({
 }: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
-  const workareaWidth = useMemo(() => getWorkarea(model).width, [model]);
+  // should be the same though, just make it look better
+  const { height: workareaHeight, width: workareaWidth } = useMemo(() => getWorkarea(model), [model]);
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
   const useOldData = useRef(false);
   const [withSafe, setWithSafe] = useState(false);
@@ -254,11 +257,30 @@ const PromarkCalibration = ({
           console.log('calibratingParam.current', calibratingParam.current);
           progressCaller.popById(PROGRESS_ID);
 
+          setStep(Steps.CHECK_PNP);
+        }}
+        params={calibratingParam.current}
+        refPoints={promarkPnPPoints[workareaWidth]}
+        renderWrapper={renderWrapper}
+        titleLink={tCali.promark_help_link}
+      />
+    );
+  }
+
+  if (step === Steps.CHECK_PNP) {
+    return (
+      <CheckPnP
+        cameraOptions={{ source: 'usb' }}
+        dh={0}
+        grid={{ x: [0, workareaWidth, 10], y: [0, workareaHeight, 10] }}
+        onBack={() => setStep(Steps.SOLVE_PNP)}
+        onClose={onClose}
+        onNext={async () => {
           const param: FisheyeCameraParametersV3 = {
             d: calibratingParam.current.d!,
             k: calibratingParam.current.k!,
-            rvec,
-            tvec,
+            rvec: calibratingParam.current.rvec!,
+            tvec: calibratingParam.current.tvec!,
             v: 3,
           };
 
@@ -266,10 +288,14 @@ const PromarkCalibration = ({
           alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
           onClose(true);
         }}
-        params={calibratingParam.current}
-        refPoints={promarkPnPPoints[workareaWidth]}
+        params={{
+          d: calibratingParam.current.d!,
+          k: calibratingParam.current.k!,
+          rvec: calibratingParam.current.rvec!,
+          tvec: calibratingParam.current.tvec!,
+        }}
+        points={promarkPnPPoints[workareaWidth]}
         renderWrapper={renderWrapper}
-        titleLink={tCali.promark_help_link}
       />
     );
   }
