@@ -70,7 +70,7 @@ export const updateCloudConfigApi = async <T extends ConfigKey>(
   const response = (await axiosFluxId.post(
     '/machine/config/update',
     {
-      data,
+      data: data.data,
       hashed_serial_number: data.hash,
       key: data.key,
       model: data.model,
