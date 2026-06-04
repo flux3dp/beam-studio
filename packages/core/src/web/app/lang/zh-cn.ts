@@ -1258,6 +1258,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: '查看之前版本',
   },
+  cloud_sync: {
+    import_config: '已找到此设备的云端设置，是否要导入？',
+    import_failed: '读取云端设置失败。',
+    sync_config: '是否要将这些设置同步到云端？',
+    sync_failed: '同步设置到云端失败。',
+    sync_success: '设置已成功同步到云端。',
+  },
   code_generator: {
     barcode: '条形码',
     qr_code: '二维码',

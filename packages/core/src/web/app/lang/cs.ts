@@ -1258,6 +1258,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Prohlédnout starší verze',
   },
+  cloud_sync: {
+    import_config: 'Byla nalezena cloudová nastavení pro toto zařízení. Chcete je importovat?',
+    import_failed: 'Nepodařilo se přečíst cloudová nastavení.',
+    sync_config: 'Chcete synchronizovat tato nastavení do cloudu?',
+    sync_failed: 'Synchronizace nastavení do cloudu se nezdařila.',
+    sync_success: 'Nastavení byla úspěšně synchronizována do cloudu.',
+  },
   code_generator: {
     barcode: 'Čárový kód',
     qr_code: 'QR kód',
