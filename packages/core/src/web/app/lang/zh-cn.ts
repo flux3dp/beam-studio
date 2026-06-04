@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: '填写“QC Pass”卡背面的参数',
       select_laser_source: '选择您的 Promark',
       select_workarea: '选择工作区域',
+      setting_completed_ask_camera_calibration: '已成功完成 Promark 场镜设置！是否要进行相机校准？',
       settings: 'Promark 设置',
     },
     retry: '重试',

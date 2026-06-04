@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Füllen Sie die Parameter auf der Rückseite der „QC Pass“-Karte aus',
       select_laser_source: 'Wählen Sie Ihren Promark',
       select_workarea: 'Arbeitsbereich auswählen',
+      setting_completed_ask_camera_calibration: 'Die Promark-Feldobjektiv-Einrichtung wurde erfolgreich abgeschlossen! Möchten Sie mit der Kamerakalibrierung fortfahren?',
       settings: 'Promark-Einstellungen',
     },
     retry: 'Wiederholen',

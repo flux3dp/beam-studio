@@ -1561,7 +1561,6 @@ export interface ILang {
       what_if_2: string;
       what_if_2_content: string;
     };
-
     connecting: string;
     connection_types: {
       ether2ether: string;
@@ -1578,6 +1577,7 @@ export interface ILang {
       qc_instructions: string;
       select_laser_source: string;
       select_workarea: string;
+      setting_completed_ask_camera_calibration: string;
       settings: string;
     };
     retry: string;

@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: '「QC Pass」カードの裏に記載されたパラメータを入力してください',
       select_laser_source: 'Promarkを選択してください',
       select_workarea: '作業エリアを選択してください',
+      setting_completed_ask_camera_calibration: 'Promarkのフィールドレンズセットアップが正常に完了しました！カメラキャリブレーションを行いますか？',
       settings: 'Promarkの設定',
     },
     retry: '再試行する',

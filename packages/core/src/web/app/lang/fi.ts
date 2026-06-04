@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Täytä parametrit "QC Pass" -kortin takapuolella',
       select_laser_source: 'Valitse Promarkisi',
       select_workarea: 'Valitse työalue',
+      setting_completed_ask_camera_calibration: 'Promark-kenttälinssiasennus onnistui! Haluatko jatkaa kameran kalibrointiin?',
       settings: 'Promark-asetukset',
     },
     retry: 'Yritä uudelleen',

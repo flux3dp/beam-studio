@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'กรอกพารามิเตอร์ที่อยู่ด้านหลังของบัตร "QC Pass"',
       select_laser_source: 'เลือก Promark ของคุณ',
       select_workarea: 'เลือกพื้นที่ทำงาน',
+      setting_completed_ask_camera_calibration: 'การตั้งค่าเลนส์สนาม Promark เสร็จสมบูรณ์แล้ว! คุณต้องการดำเนินการปรับเทียบกล้องหรือไม่?',
       settings: 'การตั้งค่า Promark',
     },
     retry: 'ลองใหม่',

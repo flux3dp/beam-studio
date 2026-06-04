@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { Flex } from 'antd';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import FieldBlock from '@core/app/components/dialogs/promark/FieldBlock';
 import LensBlock from '@core/app/components/dialogs/promark/LensBlock';
@@ -42,30 +43,47 @@ export default function PromarkSettings(): React.JSX.Element {
   }, [serial]);
 
   const handleUpdateParameter = async () => {
-    await deviceMaster.setField(width, field);
-    await deviceMaster.setGalvoParameters(galvoParameters);
-  };
-
-  const handleNext = async () => {
     promarkDataStore.update(serial, { field, galvoParameters, redDot });
 
     try {
-      await handleUpdateParameter();
+      await deviceMaster.setField(width, field);
+      await deviceMaster.setGalvoParameters(galvoParameters);
     } catch (error) {
       console.error('Failed to apply promark settings state', error);
     }
+  };
 
-    dialogCaller.showLoadingWindow();
+  const handleNext = async () => {
+    await handleUpdateParameter();
 
-    window.location.hash = getHomePage();
-    window.location.reload();
+    alertCaller.popUp({
+      buttons: [
+        {
+          label: t.next,
+          onClick: () => {
+            window.location.hash = '#/initialize/connect/promark/camera-calibration';
+          },
+          type: 'primary',
+        },
+        {
+          isLeft: true,
+          label: t.skip,
+          onClick: () => {
+            dialogCaller.showLoadingWindow();
+            window.location.hash = getHomePage();
+            window.location.reload();
+          },
+        },
+      ],
+      message: t.promark.setting_completed_ask_camera_calibration,
+    });
   };
 
   return (
     <SetupPageLayout
       buttons={[
         { label: t.back, onClick: () => window.history.back() },
-        { label: t.connect_machine_ip.finish_setting, onClick: handleNext, primary: true },
+        { label: t.next, onClick: handleNext, primary: true },
       ]}
     >
       <Flex className={styles.container} gap={24} justify="space-between" vertical>

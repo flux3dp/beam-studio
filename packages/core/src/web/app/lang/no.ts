@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Fyll inn parametrene som finnes på baksiden av "QC Pass"-kortet',
       select_laser_source: 'Velg din Promark',
       select_workarea: 'Velg Arbeidsområde',
+      setting_completed_ask_camera_calibration: 'Promark-feltlinseoppsettet er fullført! Vil du fortsette med kamerakalibrering?',
       settings: 'Promark-innstillinger',
     },
     retry: 'Prøv igjen',

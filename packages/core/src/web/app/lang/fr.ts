@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Remplissez les paramètres au dos de la carte « QC Pass »',
       select_laser_source: 'Sélectionnez votre Promark',
       select_workarea: 'Sélectionnez la zone de travail',
+      setting_completed_ask_camera_calibration: 'La configuration de la lentille de champ du Promark a été effectuée avec succès ! Souhaitez-vous procéder au calibrage de la caméra ?',
       settings: 'Paramètres Promark',
     },
     retry: 'Réessayer',

@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Điền vào các thông số nằm ở mặt sau của thẻ "QC Pass"',
       select_laser_source: 'Chọn Promark của bạn',
       select_workarea: 'Chọn Khu vực Làm việc',
+      setting_completed_ask_camera_calibration: 'Thiết lập ống kính trường Promark đã hoàn tất thành công! Bạn có muốn tiến hành hiệu chỉnh camera không?',
       settings: 'Cài đặt Promark',
     },
     retry: 'Thử lại',

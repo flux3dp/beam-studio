@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Isi Parameter yang terletak di belakang kad "QC Pass"',
       select_laser_source: 'Pilih Promark Anda',
       select_workarea: 'Pilih Kawasan Kerja',
+      setting_completed_ask_camera_calibration: 'Persediaan kanta medan Promark telah berjaya diselesaikan! Adakah anda ingin meneruskan dengan penentukuran kamera?',
       settings: 'Tetapan Promark',
     },
     retry: 'Cuba Lagi',

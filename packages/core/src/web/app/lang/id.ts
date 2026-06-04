@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Isi parameter yang terletak di bagian belakang kartu "QC Pass"',
       select_laser_source: 'Pilih Promark Anda',
       select_workarea: 'Pilih Area Kerja',
+      setting_completed_ask_camera_calibration: 'Pengaturan lensa bidang Promark berhasil diselesaikan! Apakah Anda ingin melanjutkan dengan kalibrasi kamera?',
       settings: 'Pengaturan Promark',
     },
     retry: 'Coba lagi',

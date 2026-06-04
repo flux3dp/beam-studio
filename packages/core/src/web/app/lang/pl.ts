@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Wypełnij parametry znajdujące się na odwrocie karty „QC Pass”',
       select_laser_source: 'Wybierz swój Promark',
       select_workarea: 'Wybierz Obszar Roboczy',
+      setting_completed_ask_camera_calibration: 'Konfiguracja soczewki polowej Promark została pomyślnie zakończona! Czy chcesz przejść do kalibracji kamery?',
       settings: 'Ustawienia Promark',
     },
     retry: 'Spróbuj ponownie',

@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Vyplňte parametry uvedené na zadní straně karty „QC Pass“',
       select_laser_source: 'Vyberte svůj Promark',
       select_workarea: 'Vyberte pracovní oblast',
+      setting_completed_ask_camera_calibration: 'Nastavení objektivu s polem Promark bylo úspěšně dokončeno! Chcete pokračovat s kalibrací kamery?',
       settings: 'Nastavení Promark',
     },
     retry: 'Opakovat',

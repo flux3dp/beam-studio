@@ -1580,6 +1580,7 @@ const lang: ILang = {
       qc_instructions: 'Συμπληρώστε τις παραμέτρους που βρίσκονται στο πίσω μέρος της κάρτας "QC Pass"',
       select_laser_source: 'Επιλέξτε το Promark σας',
       select_workarea: 'Επιλέξτε Περιοχή Εργασίας',
+      setting_completed_ask_camera_calibration: 'Η ρύθμιση του φακού πεδίου του Promark ολοκληρώθηκε με επιτυχία! Θέλετε να προχωρήσετε με τη βαθμονόμηση της κάμερας;',
       settings: 'Ρυθμίσεις Promark',
     },
     retry: 'Επανάληψη',
