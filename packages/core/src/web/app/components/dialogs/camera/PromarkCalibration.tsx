@@ -58,10 +58,39 @@ const PromarkCalibration = ({
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
   const useOldData = useRef(false);
   const [withSafe, setWithSafe] = useState(false);
-  const [step, setStep] = useState<Steps>(Steps.CHECKPOINT_DATA);
+  const [steps, setSteps] = useState<Steps[]>([Steps.CHECKPOINT_DATA]);
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
+  const step = useMemo(() => steps[steps.length - 1], [steps]);
+  const setStep = useCallback((newStep: Steps) => setSteps((prev) => [...prev, newStep]), []);
+  const handleStepBack = useCallback(() => {
+    const newSteps = [...steps];
+
+    newSteps.pop();
+
+    if (newSteps.length === 0) {
+      (onBack ?? onClose)();
+
+      return;
+    }
+
+    if (newSteps[newSteps.length - 1] === Steps.CHECKPOINT_DATA) {
+      if (onBack) {
+        onBack();
+
+        return;
+      }
+
+      if (!useOldData.current) {
+        onClose();
+
+        return;
+      }
+    }
+
+    setSteps(newSteps);
+  }, [steps, onBack, onClose]);
 
   if (step === Steps.CHECKPOINT_DATA) {
     return (
@@ -107,7 +136,7 @@ const PromarkCalibration = ({
               ]
         }
         buttons={[
-          ...(onBack ? [{ label: tCali.back, onClick: onBack }] : []),
+          { label: tCali.back, onClick: handleStepBack },
           {
             label: tCali.next,
             onClick: () => setStep(Steps.CALIBRATION),
@@ -152,7 +181,7 @@ const PromarkCalibration = ({
           tCali.put_chessboard_promark_1,
           withSafe ? tCali.put_charuco_promark_2 : tCali.put_chessboard_promark_2,
         ]}
-        onBack={() => setStep(Steps.PRE_CHESSBOARD)}
+        onBack={handleStepBack}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
         renderWrapper={renderWrapper}
@@ -213,7 +242,7 @@ const PromarkCalibration = ({
         buttons={[
           {
             label: tCali.back,
-            onClick: () => setStep(useOldData.current ? Steps.CHECKPOINT_DATA : Steps.CALIBRATION),
+            onClick: handleStepBack,
           },
           { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
         ]}
@@ -233,7 +262,7 @@ const PromarkCalibration = ({
           { src: 'video/promark-calibration/3-align.mp4', type: 'video/mp4' },
         ]}
         buttons={[
-          { label: tCali.back, onClick: () => setStep(Steps.PUT_PAPER) },
+          { label: tCali.back, onClick: handleStepBack },
           { label: tCali.next, onClick: () => setStep(Steps.SOLVE_PNP), type: 'primary' },
         ]}
         onClose={() => onClose(false)}
@@ -248,8 +277,9 @@ const PromarkCalibration = ({
     return (
       <SolvePnP
         dh={0}
+        hasNext
         imgSource="usb"
-        onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}
+        onBack={handleStepBack}
         onClose={onClose}
         onNext={async (rvec, tvec) => {
           progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: lang.device.processing });
@@ -273,7 +303,7 @@ const PromarkCalibration = ({
         cameraOptions={{ source: 'usb' }}
         dh={0}
         grid={{ x: [0, workareaWidth, 10], y: [0, workareaHeight, 10] }}
-        onBack={() => setStep(Steps.SOLVE_PNP)}
+        onBack={handleStepBack}
         onClose={onClose}
         onNext={async () => {
           const param: FisheyeCameraParametersV3 = {

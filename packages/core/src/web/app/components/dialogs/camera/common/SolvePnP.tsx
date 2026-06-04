@@ -367,7 +367,7 @@ const SolvePnP = ({
   const controlNode = (
     <div>
       {selectedPointIdx >= 0 && (
-        <Flex className={styles.info} gap={8} justify="space-between" vertical>
+        <Flex align="center" className={styles.info} gap={8} justify="space-between" vertical>
           <div>
             <Row align="middle" gutter={[0, 8]}>
               {positionText && (
@@ -490,11 +490,17 @@ const SolvePnP = ({
       <>
         {instructionNode}
         {controlNode}
+      </>
+    );
+
+    const media = (
+      <>
+        {imageDisplayNode}
         {exposureSlider}
       </>
     );
 
-    return renderWrapper({ buttons: wrapperButtons, content, media: imageDisplayNode, title: titleNode });
+    return renderWrapper({ buttons: wrapperButtons, content, media, title: titleNode });
   }
 
   return (

@@ -103,8 +103,6 @@ const Calibration = ({
       if (!calibrationRes && charuco) {
         const charucoRes = await cameraCalibrationApi.detectChAruCo(imgBlob, charuco[0], charuco[1]);
 
-        console.log(charucoRes);
-
         if (charucoRes.success) {
           const { imgp, objp } = charucoRes;
           const { h, w } = videoRef.current
@@ -120,6 +118,8 @@ const Calibration = ({
           }
         }
       }
+
+      progressCaller.popById('calibrate-chessboard');
 
       if (calibrationRes) {
         const { d, k, ret, rvec, tvec } = calibrationRes;
@@ -159,18 +159,22 @@ const Calibration = ({
 
   const media = (
     <div className={styles.imgContainer}>
-      {isUsbCamera && <video ref={videoRef} />}
-      {!isUsbCamera && img && (
-        <>
-          <ContextMenu items={[{ key: 'download', label: t.monitor.download }]} onClick={handleDownload}>
-            <div>
-              <img alt="Chessboard" ref={imgRef} src={img?.url} />
-              {indicator && <div className={styles.indicator} style={indicator} />}
-            </div>
-          </ContextMenu>
-        </>
+      {img ? (
+        isUsbCamera ? (
+          <video ref={videoRef} />
+        ) : (
+          <>
+            <ContextMenu items={[{ key: 'download', label: t.monitor.download }]} onClick={handleDownload}>
+              <div>
+                <img alt="Chessboard" ref={imgRef} src={img?.url} />
+                {indicator && <div className={styles.indicator} style={indicator} />}
+              </div>
+            </ContextMenu>
+          </>
+        )
+      ) : (
+        <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />
       )}
-      {!img && <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />}
     </div>
   );
   const exposureSlider = (

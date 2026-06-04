@@ -1,8 +1,8 @@
 @use '@core/styles/variables' as variables;
 
 .container {
-  width: 100%;
-  padding-top: 56.25%;
+  width: min(100%, 25vw);
+  padding-top: min(56%, 14vw);
   border: 1px solid #d9d9d9;
   border-radius: 6px;
   position: relative;
