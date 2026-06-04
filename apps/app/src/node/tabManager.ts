@@ -288,6 +288,10 @@ class TabManager {
     }
   };
 
+  get isAtWelcomeTab(): boolean {
+    return this.focusedId === this.welcomeTabId;
+  }
+
   addNewTab = (): void => {
     if (this.preloadedTab) this.preloadedTab.view.webContents.send(TabEvents.ReloadSettings);
 
