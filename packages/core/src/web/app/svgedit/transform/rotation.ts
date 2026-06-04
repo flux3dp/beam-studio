@@ -6,7 +6,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 import { getBBox } from '../utils/getBBox';
 
-import transformlist from './transformlist';
+import { getTransformList } from './transformlist';
 
 let svgCanvas: ISVGCanvas;
 let svgedit: any;
@@ -31,7 +31,7 @@ const getRotationAngleFromTransformList = (tlist: null | SVGTransformList, toRad
 };
 
 export const getRotationAngle = (elem: SVGElement, toRad = false): number => {
-  const tlist = transformlist.getTransformList(elem as SVGGraphicsElement);
+  const tlist = getTransformList(elem as SVGGraphicsElement);
 
   return getRotationAngleFromTransformList(tlist, toRad);
 };
@@ -45,7 +45,9 @@ export const setRotationAngle = (
   const bbox = getBBox(elem, { ignoreTransform: true });
   const cx = bbox.x + bbox.width / 2;
   const cy = bbox.y + bbox.height / 2;
-  const tlist = svgedit.transformlist.getTransformList(elem);
+  const tlist = getTransformList(elem as SVGGraphicsElement);
+
+  if (!tlist) return;
 
   // only remove the real rotational transform if present (i.e. at index=0)
   if (tlist.numberOfItems > 0) {

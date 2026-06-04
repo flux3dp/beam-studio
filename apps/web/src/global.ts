@@ -23,10 +23,6 @@ declare global {
         supportsPathReplaceItem: () => () => boolean;
         supportsSvg: () => () => boolean;
       };
-      coords: {
-        init: any;
-        remapElement: any;
-      };
       draw: {
         Drawing: (svgElem: SVGSVGElement, opt_idPrefix: string) => any;
         Layer: (name: string, group: null | SVGGElement, svgElem: SVGGElement, color: string) => any;
@@ -171,11 +167,6 @@ declare global {
           | undefined;
         updateControlLines: () => void;
         updateDrawingPoints: () => void;
-      };
-      recalculate: {
-        init: any;
-        recalculateDimensions: any;
-        updateClipPath: any;
       };
       sanitize: {
         sanitizeSvg: (node: HTMLElement) => void;

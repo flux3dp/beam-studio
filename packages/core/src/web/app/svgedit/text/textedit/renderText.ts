@@ -4,6 +4,7 @@ import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 
+import { recalculateDimensions } from '../../transform/recalculate';
 import { getBBox } from '../../utils/getBBox';
 
 import {
@@ -15,8 +16,6 @@ import {
   getLineSpacing,
   isFitText,
 } from './getters';
-
-const { svgedit } = window;
 
 const renderTextPath = (text: SVGTextElement, val?: string) => {
   if (typeof val === 'string') {
@@ -352,7 +351,7 @@ export const renderText = (elem: SVGGElement | SVGTextElement, val?: string, sho
     renderTspan(elem as SVGTextElement, val);
   }
 
-  svgedit.recalculate.recalculateDimensions(textElem);
+  recalculateDimensions(textElem);
 
   const selectorManager = selector.getSelectorManager();
 
