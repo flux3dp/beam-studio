@@ -44,12 +44,21 @@ const checkCameraPromark = async (_device: IDeviceInfo): Promise<CheckCameraResu
 
     if (!webcam) return { success: false };
 
-    const pic = await webcam.getPicture();
+    let hasGoodPicture = false;
+
+    for (let i = 0; i < 3; i++) {
+      const pic = await webcam.getPicture();
+
+      // size bigger than PROMARK_GOOD_PICTURE_THRESHOLD is considered as a good picture
+      if (pic.size > PROMARK_GOOD_PICTURE_THRESHOLD) {
+        hasGoodPicture = true;
+        break;
+      }
+    }
 
     webcam.disconnectWebcam();
 
-    // size bigger than PROMARK_GOOD_PICTURE_THRESHOLD is considered as a good picture
-    if (pic.size <= PROMARK_GOOD_PICTURE_THRESHOLD) return { error: i18n.lang.web_cam.image_to_small, success: false };
+    if (!hasGoodPicture) return { error: i18n.lang.web_cam.image_to_small, success: false };
 
     return { success: true };
   } catch (e) {
