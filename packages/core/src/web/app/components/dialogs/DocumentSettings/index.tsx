@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
-import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
+import { Checkbox, ConfigProvider, InputNumber, Segmented, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
@@ -34,6 +34,7 @@ import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { uvModel } from '@core/helpers/is-dev';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
@@ -310,7 +311,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     newState['job-origin'] = jobOrigin;
 
     if (promarkModels.has(workarea)) {
-      setPromarkInfo(pmInfo);
+      setPromarkInfo(workarea === uvModel ? { laserType: LaserType.UV, watt: 5 } : pmInfo);
       newState['workarea-annotation'] = workareaAnnotation;
       newState['promark-start-button'] = enableStartButton;
       newState['frame-before-start'] = shouldFrame;
@@ -517,22 +518,41 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <label className={styles.title} htmlFor="customDimension">
                   {tDocument.workarea}
                 </label>
-                <Select
-                  className={styles.control}
-                  id="customDimension"
-                  onChange={(val) => {
-                    setCustomDimension((cur) => ({
-                      ...cur,
-                      [workarea]: { height: val, width: val },
-                    }));
-                  }}
-                  options={pmWorkareaOptions.map((value) => ({ label: `${value} x ${value} mm`, value }))}
-                  value={customDimension[workarea]?.width ?? workareaObj.width}
-                  variant="outlined"
-                />
+                {workarea === uvModel ? (
+                  <InputNumber
+                    className={styles.control}
+                    id="customDimension-free"
+                    max={pmWorkareaOptions.at(-1)}
+                    min={1}
+                    onChange={(val) => {
+                      if (val === null) return;
+
+                      setCustomDimension((cur) => ({
+                        ...cur,
+                        [workarea]: { height: val, width: val },
+                      }));
+                    }}
+                    precision={0}
+                    value={customDimension[workarea]?.width ?? workareaObj.width}
+                  />
+                ) : (
+                  <Select
+                    className={styles.control}
+                    id="customDimension"
+                    onChange={(val) => {
+                      setCustomDimension((cur) => ({
+                        ...cur,
+                        [workarea]: { height: val, width: val },
+                      }));
+                    }}
+                    options={pmWorkareaOptions.map((value) => ({ label: `${value} x ${value} mm`, value }))}
+                    value={customDimension[workarea]?.width ?? workareaObj.width}
+                    variant="outlined"
+                  />
+                )}
               </div>
             )}
-            {isPromark && (
+            {isPromark && workarea !== uvModel && (
               <div className={styles.row}>
                 <label className={styles.title} htmlFor="pm-laser-source">
                   {tDocument.laser_source}

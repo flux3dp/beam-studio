@@ -1,5 +1,5 @@
 import { checkBM2CurveEngraving } from '@core/helpers/checkFeature';
-import isDev from '@core/helpers/is-dev';
+import isDev, { uvModel } from '@core/helpers/is-dev';
 
 import type { WorkAreaModel } from './workarea-constants';
 
@@ -50,6 +50,7 @@ export interface AddOnInfo {
    * maxHeight: maximum height in mm for pass-through, make sure padding space is enough if with minY
    */
   passThrough?: { maxHeight: number; minY?: number; xRange?: [number, number] };
+  raiseFocus?: boolean;
   redLight?: boolean;
   rotary?: {
     chuck: boolean;
@@ -219,6 +220,16 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       extendWorkarea: true,
       mirror: true,
       roller: true,
+    },
+  },
+  [uvModel]: {
+    lowerFocus: true,
+    rotary: {
+      chuck: true,
+      extendWorkarea: true,
+      mirror: true,
+      roller: true,
+      split: true,
     },
   },
 };

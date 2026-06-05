@@ -111,6 +111,7 @@ type PromarkConfig = {
   fillInterval: number;
   frequency: number;
   pulseWidth: number; // Mopa only
+  qPulseWidth: number; // UV only
   wobbleDiameter: number;
   wobbleStep: number;
 };

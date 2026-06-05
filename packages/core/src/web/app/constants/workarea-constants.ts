@@ -2,8 +2,8 @@ import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { checkBM2, checkBM2UV, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
-import isDev from '@core/helpers/is-dev';
+import { checkBM2, checkBM2UV, checkFpm1, checkFpm1UV, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
+import isDev, { uvModel } from '@core/helpers/is-dev';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
 import { fullColorHeadModules, LayerModule, type LayerModuleType } from './layer-module/layer-modules';
@@ -20,7 +20,8 @@ export type WorkAreaLabel =
   | 'HEXA RF'
   | 'Lazervida'
   | 'Miro UV'
-  | 'Promark';
+  | 'Promark'
+  | 'Promark UV';
 
 export const workArea = [
   'fbm1',
@@ -31,6 +32,7 @@ export const workArea = [
   'fhx2rf',
   'ado1',
   'fpm1',
+  uvModel,
   'flv1',
   'fbb2',
   'fuv1',
@@ -268,6 +270,18 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     supportedModules: [LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH],
     width: 300,
   },
+  [uvModel]: {
+    dimensionCustomizable: true,
+    height: 70,
+    label: 'Promark UV',
+    maxRepeat: 100000,
+    maxSpeed: 10000,
+    minSpeed: 0.5,
+    pxHeight: 70 * dpmm,
+    pxWidth: 70 * dpmm,
+    supportedModules: [LayerModule.LASER_UNIVERSAL],
+    width: 70,
+  },
 };
 
 export const workareaOptions: Array<{ label: string; value: AnnotatedWorkareaModel }> = [
@@ -279,6 +293,7 @@ export const workareaOptions: Array<{ label: string; value: AnnotatedWorkareaMod
   { label: 'Ador', value: 'ado1' },
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   checkFpm1() && { label: 'Promark (Safe+)', value: 'fpm1_safe' },
+  checkFpm1UV() && { label: 'Promark UV', value: uvModel },
   { label: 'Beambox II', value: 'fbb2' },
   checkBM2() && { label: 'beamo II', value: 'fbm2' },
   checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
