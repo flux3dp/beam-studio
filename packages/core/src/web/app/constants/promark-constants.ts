@@ -1,14 +1,17 @@
+import { isUvDev } from '@core/helpers/is-dev';
 import type { Field, GalvoParameters, RedDot } from '@core/interfaces/Promark';
 
-export const workareaOptions = [110, 150, 220] as const;
+export const workareaOptions = isUvDev() ? ([70, 110, 150, 220] as const) : ([110, 150, 220] as const);
 export const promarkWatts = [20, 30, 50] as const;
 export const mopaWatts = [20, 60, 100] as const;
+export const uvWatts = [5] as const;
 
-export const laserSourceWattMap = { Desktop: promarkWatts, MOPA: mopaWatts } as const;
+export const laserSourceWattMap = { Desktop: promarkWatts, MOPA: mopaWatts, UV: uvWatts } as const;
 
 export enum LaserType {
   Desktop = 0,
   MOPA = 1,
+  UV = 2,
 }
 
 export const defaultField: Field = { angle: 0, offsetX: 0, offsetY: 0 };
@@ -29,5 +32,6 @@ export const controlConfig = {
 export default {
   mopaWatts,
   promarkWatts,
+  uvWatts,
   workareaOptions,
 };

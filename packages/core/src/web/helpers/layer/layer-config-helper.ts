@@ -62,6 +62,7 @@ const attributeMap: Record<ConfigKey, string> = {
   printingSpeed: 'data-printingSpeed',
   printingStrength: 'data-printingStrength',
   pulseWidth: 'data-pulseWidth',
+  qPulseWidth: 'data-qPulseWidth',
   ref: 'data-ref',
   refreshInterval: 'data-refreshInterval',
   refreshThreshold: 'data-refreshThreshold',
@@ -132,6 +133,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   printingSpeed: 60,
   printingStrength: 100,
   pulseWidth: 500,
+  qPulseWidth: 1,
   refreshInterval: 30,
   refreshThreshold: 0,
   repeat: 1,
@@ -283,6 +285,7 @@ export const promarkConfigKeys: ConfigKey[] = [
   'power',
   'repeat',
   'pulseWidth',
+  'qPulseWidth',
   'frequency',
   'fillInterval',
   'fillAngle',
@@ -673,9 +676,15 @@ export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
 export const getPromarkLimit = (): {
   frequency?: { max: number; min: number };
   pulseWidth?: { max: number; min: number };
+  qPulseWidth?: { max: number; min: number };
 } =>
   // pulseWidth for M100 V1: 10~500, M20 V1: 2~350
   match(getPromarkInfo())
+    .with({ laserType: LaserType.UV }, () => ({
+      frequency: { max: 3000, min: 1 },
+      pulseWidth: { max: 65535, min: 1 },
+      qPulseWidth: { max: 1365, min: 0.021 },
+    }))
     .with({ laserType: LaserType.MOPA, watt: 60 }, () => ({
       frequency: { max: 3000, min: 1 },
       pulseWidth: { max: 500, min: 2 },

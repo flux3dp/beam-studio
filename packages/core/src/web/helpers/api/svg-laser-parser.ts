@@ -25,7 +25,7 @@ import AlertConfig from '@core/helpers/api/alert-config';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
+import isDev, { isUvDev } from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
@@ -316,6 +316,27 @@ export const getExportOpt = async (
     } else if (model === 'fbm1' && supportAccOverrideV1) {
       updateAccOverride({ fill: { y: 100 }, path: { y: 100 } });
     }
+  }
+
+  if (isUvDev()) {
+    const devConfig = [
+      'laser_on_delay',
+      'laser_off_delay',
+      'marking_delay',
+      'corner_delay',
+      'jump_speed',
+      'jump_delay_min',
+      'jump_delay_max',
+    ];
+    let storageValue: null | string = null;
+
+    devConfig.forEach((key) => {
+      storageValue = localStorage.getItem(key);
+
+      if (storageValue && !Number.isNaN(Number(storageValue))) {
+        config[key] = Number(storageValue);
+      }
+    });
   }
 
   if (isDevMode) {

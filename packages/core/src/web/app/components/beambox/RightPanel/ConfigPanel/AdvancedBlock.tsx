@@ -4,6 +4,7 @@ import { Collapse, ConfigProvider } from 'antd';
 import { useShallow } from 'zustand/react/shallow';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import QPulseWidthBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/QPulseWidthBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
@@ -73,12 +74,23 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
   if (!printingModules.has(module.value)) {
     if (promarkInfo && promarkLimit) {
-      if (promarkInfo.laserType === LaserType.MOPA) {
+      if ([LaserType.MOPA, LaserType.UV].includes(promarkInfo.laserType)) {
         contents.push(
           <PulseWidthBlock
             key="pulse-width-block"
             max={promarkLimit.pulseWidth!.max}
             min={promarkLimit.pulseWidth!.min}
+            type={type}
+          />,
+        );
+      }
+
+      if (LaserType.UV === promarkInfo.laserType) {
+        contents.push(
+          <QPulseWidthBlock
+            key="q-pulse-width-block"
+            max={promarkLimit.qPulseWidth!.max}
+            min={promarkLimit.qPulseWidth!.min}
             type={type}
           />,
         );
