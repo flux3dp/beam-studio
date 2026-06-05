@@ -7,6 +7,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { promarkPnPPoints } from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
@@ -18,7 +19,6 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import styles from './Calibration.module.scss';
 import Calibration from './common/Calibration';
 import CheckPnP from './common/CheckPnP';
-import CheckpointData from './common/CheckpointData';
 import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
@@ -27,7 +27,6 @@ import type { RenderWrapper } from './common/types';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
-  CHECKPOINT_DATA = 0,
   PRE_CHESSBOARD = 1,
   CALIBRATION = 2,
   PUT_PAPER = 3,
@@ -38,6 +37,7 @@ enum Steps {
 /* eslint-enable perfectionist/sort-enums */
 
 interface Props {
+  currentData?: FisheyeCameraParametersV3;
   device: IDeviceInfo;
   onBack?: () => void;
   onClose: (completed?: boolean) => void;
@@ -46,6 +46,7 @@ interface Props {
 
 const PROGRESS_ID = 'promark-calibration';
 const PromarkCalibration = ({
+  currentData,
   device: { model, serial },
   onBack,
   onClose,
@@ -56,9 +57,8 @@ const PromarkCalibration = ({
   // should be the same though, just make it look better
   const { height: workareaHeight, width: workareaWidth } = useMemo(() => getWorkarea(model), [model]);
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
-  const useOldData = useRef(false);
   const [withSafe, setWithSafe] = useState(false);
-  const [steps, setSteps] = useState<Steps[]>([Steps.CHECKPOINT_DATA]);
+  const [steps, setSteps] = useState<Steps[]>([Steps.PRE_CHESSBOARD]);
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
@@ -75,43 +75,8 @@ const PromarkCalibration = ({
       return;
     }
 
-    if (newSteps[newSteps.length - 1] === Steps.CHECKPOINT_DATA) {
-      if (onBack) {
-        onBack();
-
-        return;
-      }
-
-      if (!useOldData.current) {
-        onClose();
-
-        return;
-      }
-    }
-
     setSteps(newSteps);
   }, [steps, onBack, onClose]);
-
-  if (step === Steps.CHECKPOINT_DATA) {
-    return (
-      <CheckpointData
-        allowCheckPoint={false}
-        askUser
-        getData={() => promarkDataStore.get(serial, 'cameraParameters') as FisheyeCameraParametersV3}
-        onClose={onClose}
-        onNext={(res: boolean) => {
-          if (res) {
-            useOldData.current = true;
-            setStep(Steps.PUT_PAPER);
-          } else {
-            setStep(Steps.PRE_CHESSBOARD);
-          }
-        }}
-        renderWrapper={renderWrapper}
-        updateParam={updateParam}
-      />
-    );
-  }
 
   if (step === Steps.PRE_CHESSBOARD) {
     const handleDownloadChessboard = () => {
@@ -137,12 +102,20 @@ const PromarkCalibration = ({
         }
         buttons={[
           { label: tCali.back, onClick: handleStepBack },
+          currentData && {
+            label: tCali.skip,
+            onClick: async () => {
+              await cameraCalibrationApi.updateData(currentData);
+              updateParam(currentData);
+              setStep(Steps.PUT_PAPER);
+            },
+          },
           {
             label: tCali.next,
             onClick: () => setStep(Steps.CALIBRATION),
             type: 'primary' as const,
           },
-        ]}
+        ].filter(Boolean)}
         contentBeforeSteps={
           <div className={styles.tab}>
             <Segmented

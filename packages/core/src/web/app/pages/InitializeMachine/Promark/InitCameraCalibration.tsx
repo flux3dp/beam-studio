@@ -2,6 +2,7 @@ import React, { useCallback, useMemo } from 'react';
 
 import type { RenderWrapper } from '@core/app/components/dialogs/camera/common/types';
 import PromarkCalibration from '@core/app/components/dialogs/camera/PromarkCalibration';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import { getSerial } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
 import { getHomePage } from '@core/helpers/hashHelper';
@@ -15,6 +16,7 @@ export default function InitCameraCalibration(): React.JSX.Element {
   const serial = useMemo(getSerial, []);
   const model = useMemo(() => deviceMaster.currentDevice?.info?.model ?? 'fpm1', []);
   const device = useMemo(() => ({ model, serial }) as IDeviceInfo, [model, serial]);
+  const currentData = useMemo(() => promarkDataStore.get(serial, 'cameraParameters'), [serial]);
 
   const onClose = useCallback((completed?: boolean) => {
     if (completed) {
@@ -40,6 +42,7 @@ export default function InitCameraCalibration(): React.JSX.Element {
 
   return (
     <PromarkCalibration
+      currentData={currentData}
       device={device}
       onBack={() => window.history.back()}
       onClose={onClose}
