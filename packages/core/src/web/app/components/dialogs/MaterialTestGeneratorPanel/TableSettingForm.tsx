@@ -48,7 +48,7 @@ export default function TableSettingForm({
     () => ({
       options: Object.keys(tableSetting)
         .filter((key) => blockOption === 'engrave' || key !== 'fillInterval')
-        .map((value) => ({ label: tLaserPanel[camelToSnake(value)], value })),
+        .map((value) => ({ label: tLaserPanel[camelToSnake(value)] ?? tLaserPanel[value], value })),
       settingEntries: Object.entries(tableSetting) as Array<[TableParams, Detail]>,
     }),
     [blockOption, tLaserPanel, tableSetting],
@@ -141,6 +141,8 @@ export default function TableSettingForm({
                 return `${lengthUnit}/s`;
               case 'fillInterval':
                 return 'mm';
+              case 'dottingTime':
+                return 'us';
               default:
                 return '';
             }

@@ -68,6 +68,7 @@ import MultipassBlock from './MultipassBlock';
 import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import PulseWidthBlock from './PulseWidthBlock';
+import QPulseWidthBlock from './QPulseWidthBlock';
 import RepeatBlock from './RepeatBlock';
 import { applyDpiOverrides, applyFullColor, clearMinPower } from './sideEffects';
 import SpeedBlock from './SpeedBlock';
@@ -292,6 +293,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
       {isPromark && <PulseWidthBlock type={UIType} />}
+      {isPromark && <QPulseWidthBlock type={UIType} />}
       {isPromark && <FrequencyBlock type={UIType} />}
       <RepeatBlock type={UIType} />
       {isPromark && <AdvancedSettingButton type={UIType} />}
