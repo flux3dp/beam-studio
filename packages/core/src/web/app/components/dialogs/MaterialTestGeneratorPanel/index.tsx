@@ -49,6 +49,7 @@ getSVGAsync(({ Canvas }) => {
 const { dpmm } = constant;
 
 const paramWidth = {
+  dottingTime: 104.02,
   fillInterval: 96.77,
   frequency: 97.31,
   pulseWidth: 97.79,
@@ -57,6 +58,7 @@ const paramWidth = {
   strength: 60.66,
 } as const;
 const paramString = {
+  dottingTime: 'Dotting Time (us)',
   fillInterval: 'Fill Interval (mm)',
   frequency: 'Frequency (kHz)',
   pulseWidth: 'Pulse Width (ns)',
@@ -201,47 +203,50 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
     const [right, bottom] = [row, column].map((block) => getEnd(startPadding, block) + 10);
     let [x, y] = [right, bottom].map((value) => value * dpmm);
 
-    [...svgInfos].reverse().forEach(({ fillInterval, frequency, name, pulseWidth, repeat, speed, strength }, index) => {
-      const { layer } = createLayer(name, { initConfig: true, parentCmd: batchCmd });
+    [...svgInfos]
+      .reverse()
+      .forEach(({ dottingTime, fillInterval, frequency, name, pulseWidth, repeat, speed, strength }, index) => {
+        const { layer } = createLayer(name, { initConfig: true, parentCmd: batchCmd });
 
-      writeDataLayer(layer, 'power', strength);
-      writeDataLayer(layer, 'speed', speed);
-      writeDataLayer(layer, 'repeat', repeat);
+        writeDataLayer(layer, 'power', strength);
+        writeDataLayer(layer, 'speed', speed);
+        writeDataLayer(layer, 'repeat', repeat);
 
-      if (isPromark) {
-        writeDataLayer(layer, 'fillInterval', fillInterval);
-        writeDataLayer(layer, 'frequency', frequency);
-      }
+        if (isPromark) {
+          writeDataLayer(layer, 'fillInterval', fillInterval);
+          writeDataLayer(layer, 'frequency', frequency);
+          writeDataLayer(layer, 'dottingTime', dottingTime);
+        }
 
-      if (isMopa) {
-        writeDataLayer(layer, 'pulseWidth', pulseWidth);
-      }
+        if (isMopa) {
+          writeDataLayer(layer, 'pulseWidth', pulseWidth);
+        }
 
-      const newRect = svgCanvas.addSvgElementFromJson({
-        attr: {
-          fill: blockOption === 'engrave' ? '#000' : 'none',
-          'fill-opacity': blockOption === 'engrave' ? 1 : 0,
-          height,
-          id: svgCanvas.getNextId(),
-          opacity: 1,
-          stroke: '#000',
-          width,
-          x,
-          y,
-        },
-        curStyles: false,
-        element: 'rect',
+        const newRect = svgCanvas.addSvgElementFromJson({
+          attr: {
+            fill: blockOption === 'engrave' ? '#000' : 'none',
+            'fill-opacity': blockOption === 'engrave' ? 1 : 0,
+            height,
+            id: svgCanvas.getNextId(),
+            opacity: 1,
+            stroke: '#000',
+            width,
+            x,
+            y,
+          },
+          curStyles: false,
+          element: 'rect',
+        });
+
+        if ((index + 1) % row.count.value === 0) {
+          x = right * dpmm;
+          y -= (column.size.value + column.spacing.value) * dpmm;
+        } else {
+          x -= (row.size.value + row.spacing.value) * dpmm;
+        }
+
+        updateElementColor(newRect);
       });
-
-      if ((index + 1) % row.count.value === 0) {
-        x = right * dpmm;
-        y -= (column.size.value + column.spacing.value) * dpmm;
-      } else {
-        x -= (row.size.value + row.spacing.value) * dpmm;
-      }
-
-      updateElementColor(newRect);
-    });
   };
 
   const handlePreview = () => {

@@ -1,4 +1,4 @@
-import type { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
+import type { LaserType, mopaWatts, promarkWatts, uvWatts } from '@core/app/constants/promark-constants';
 import type { FisheyeCameraParametersV3 } from '@core/interfaces/FisheyePreview';
 
 export type PromarkInfo =
@@ -9,6 +9,10 @@ export type PromarkInfo =
   | {
       laserType: LaserType.MOPA;
       watt: (typeof mopaWatts)[number];
+    }
+  | {
+      laserType: LaserType.UV;
+      watt: (typeof uvWatts)[number];
     };
 
 export interface Field {

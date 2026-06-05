@@ -219,6 +219,7 @@
       'data-fillInterval',
       'data-frequency',
       'data-pulseWidth',
+      'data-qPulseWidth',
       'data-fillAngle',
       'data-biDirectional',
       'data-crossHatch',

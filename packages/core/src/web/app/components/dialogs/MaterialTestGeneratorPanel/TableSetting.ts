@@ -25,7 +25,7 @@ type TableSettingConstruct<T extends ReadonlyArray<string>, IsRequired = true> =
   : { [K in T[number]]?: Detail };
 
 export const commonTableParams = ['strength', 'speed', 'repeat'] as const;
-export const promarkTableParams = ['fillInterval', 'frequency'] as const;
+export const promarkTableParams = ['fillInterval', 'frequency', 'dottingTime'] as const;
 export const mopaTableParams = ['pulseWidth'] as const;
 export const tableParams = [...commonTableParams, ...promarkTableParams, ...mopaTableParams] as const;
 
@@ -69,6 +69,14 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
   const limit = getPromarkLimit();
 
   return {
+    dottingTime: {
+      default: 100,
+      max: 10000,
+      maxValue: 500,
+      min: 1,
+      minValue: 50,
+      selected: 2,
+    },
     fillInterval: {
       default: 0.01,
       max: 100,
