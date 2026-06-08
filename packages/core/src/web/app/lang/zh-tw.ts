@@ -1259,6 +1259,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/zh-tw/sections/360000421876',
     see_older_version: '查看之前版本',
   },
+  cloud_sync: {
+    import_config: '已找到此裝置的雲端設定，是否要匯入？',
+    import_failed: '讀取雲端設定失敗。',
+    sync_config: '是否要將這些設定同步到雲端？',
+    sync_failed: '同步設定到雲端失敗。',
+    sync_success: '設定已成功同步到雲端。',
+  },
   code_generator: {
     barcode: '條碼',
     qr_code: 'QR碼',

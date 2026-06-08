@@ -1259,6 +1259,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Lihat Versi Lama',
   },
+  cloud_sync: {
+    import_config: 'Tetapan awan ditemui untuk peranti ini. Adakah anda ingin mengimportnya?',
+    import_failed: 'Gagal membaca tetapan awan.',
+    sync_config: 'Adakah anda ingin menyegerakkan tetapan ini ke awan?',
+    sync_failed: 'Gagal menyegerakkan tetapan ke awan.',
+    sync_success: 'Tetapan berjaya disegerakkan ke awan.',
+  },
   code_generator: {
     barcode: 'Kod Bar',
     qr_code: 'Kod QR',

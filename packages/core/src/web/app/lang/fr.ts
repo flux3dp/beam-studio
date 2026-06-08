@@ -1259,6 +1259,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Voir les versions précédentes',
   },
+  cloud_sync: {
+    import_config: 'Des paramètres cloud ont été trouvés pour cet appareil. Voulez-vous les importer ?',
+    import_failed: 'Échec de la lecture des paramètres cloud.',
+    sync_config: 'Voulez-vous synchroniser ces paramètres vers le cloud ?',
+    sync_failed: 'Échec de la synchronisation des paramètres vers le cloud.',
+    sync_success: 'Paramètres synchronisés vers le cloud avec succès.',
+  },
   code_generator: {
     barcode: 'Code-barres',
     qr_code: 'Code QR',

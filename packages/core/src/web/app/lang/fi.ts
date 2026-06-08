@@ -1259,6 +1259,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Katso vanhempia versioita',
   },
+  cloud_sync: {
+    import_config: 'Pilviasetukset löydetty tälle laitteelle. Haluatko tuoda ne?',
+    import_failed: 'Pilviasetusten lukeminen epäonnistui.',
+    sync_config: 'Haluatko synkronoida nämä asetukset pilveen?',
+    sync_failed: 'Asetusten synkronointi pilveen epäonnistui.',
+    sync_success: 'Asetukset synkronoitu pilveen onnistuneesti.',
+  },
   code_generator: {
     barcode: 'Viivakoodi',
     qr_code: 'QR-koodi',

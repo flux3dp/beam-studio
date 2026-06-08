@@ -1259,6 +1259,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Se äldre versioner',
   },
+  cloud_sync: {
+    import_config: 'Molninställningar hittades för denna enhet. Vill du importera dem?',
+    import_failed: 'Kunde inte läsa molninställningar.',
+    sync_config: 'Vill du synkronisera dessa inställningar till molnet?',
+    sync_failed: 'Synkronisering av inställningar till molnet misslyckades.',
+    sync_success: 'Inställningar synkroniserade till molnet.',
+  },
   code_generator: {
     barcode: 'Streckkod',
     qr_code: 'QR-kod',

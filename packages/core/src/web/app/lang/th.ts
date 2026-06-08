@@ -1259,6 +1259,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'ดูเวอร์ชันเก่า',
   },
+  cloud_sync: {
+    import_config: 'พบการตั้งค่าคลาวด์สำหรับอุปกรณ์นี้ คุณต้องการนำเข้าหรือไม่?',
+    import_failed: 'ไม่สามารถอ่านการตั้งค่าคลาวด์ได้',
+    sync_config: 'คุณต้องการซิงค์การตั้งค่าเหล่านี้ไปยังคลาวด์หรือไม่?',
+    sync_failed: 'ซิงค์การตั้งค่าไปยังคลาวด์ล้มเหลว',
+    sync_success: 'ซิงค์การตั้งค่าไปยังคลาวด์สำเร็จ',
+  },
   code_generator: {
     barcode: 'บาร์โค้ด',
     qr_code: 'คิวอาร์โค้ด',

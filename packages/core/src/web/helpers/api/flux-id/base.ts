@@ -5,7 +5,6 @@ import { funnel } from 'remeda';
 import alert from '@core/app/actions/alert-caller';
 import progress from '@core/app/actions/progress-caller';
 import { AuthEvents, TabEvents } from '@core/app/constants/ipcEvents';
-import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -15,7 +14,6 @@ import communicator from '@core/implementations/communicator';
 import cookies from '@core/implementations/cookies';
 import storage from '@core/implementations/storage';
 import type { Cookie } from '@core/interfaces/ICookies';
-import type { IData } from '@core/interfaces/INounProject';
 import type { IUser } from '@core/interfaces/IUser';
 
 export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D> {
@@ -61,20 +59,28 @@ axiosFluxId.interceptors.response.use(
 export const fluxIDChannel = new BroadcastChannel('flux-id');
 export const fluxIDEvents = eventEmitterFactory.createEventEmitter('flux-id');
 
-const handleErrorMessage = (error?: AxiosError) => {
+export const formatErrorMessage = (error?: AxiosError) => {
   if (!error) {
-    return;
+    return null;
   }
 
   const { response } = error;
 
   if (!response) {
-    alert.popUpError({ message: i18n.lang.flux_id_login.connection_fail });
+    return i18n.lang.flux_id_login.connection_fail;
   } else {
-    const message = `${response.status} ${response.statusText}`;
-
-    alert.popUpError({ message });
+    return `${response.status} ${response.statusText}`;
   }
+};
+
+export const handleErrorMessage = (error?: AxiosError) => {
+  const errorMsg = formatErrorMessage(error);
+
+  if (!errorMsg) {
+    return;
+  }
+
+  alert.popUpError({ message: errorMsg });
 };
 
 const updateAccountMenu = (user: IUser | null = null) => {
@@ -96,7 +102,7 @@ const broadcastUserChanges = funnel(
   { minQuietPeriodMs: 2000, triggerAt: 'both' },
 );
 
-const updateUser = (info?: IUser | null, { sendToOtherTabs = true }: { sendToOtherTabs?: boolean } = {}) => {
+export const updateUser = (info?: IUser | null, { sendToOtherTabs = true }: { sendToOtherTabs?: boolean } = {}) => {
   const emailChanged = currentUser?.email !== info?.email;
   const isSignIn = !currentUser && info?.email;
 
@@ -413,91 +419,6 @@ export const signIn = async (signInData: { email: string; expires_session?: bool
   return response;
 };
 
-export const submitRating = async (ratingData: { app: string; score: number; user?: string; version: string }) => {
-  const response = (await axiosFluxId.post('/user_rating/submit_rating', ratingData, {
-    withCredentials: true,
-  })) as ResponseWithError;
-
-  if (response.status === 200) {
-    const { data } = response;
-
-    if (data.status === 'ok') {
-      updateUser({ email: data.email });
-    }
-
-    return data;
-  }
-
-  handleErrorMessage(response.error);
-
-  return response;
-};
-
-export const getPreference = async (key = '', silent = false) => {
-  const response = (await axiosFluxId.get(`software-preference/bxpref/${key}`, {
-    withCredentials: true,
-  })) as ResponseWithError;
-
-  if (response.status === 200) {
-    const { data } = response;
-
-    return data;
-  }
-
-  if (!silent) {
-    handleErrorMessage(response.error);
-  }
-
-  return response;
-};
-
-export const setPreference = async (value: { [key: string]: any }): Promise<boolean> => {
-  const response = (await axiosFluxId.post('software-preference/bxpref', value, {
-    withCredentials: true,
-  })) as ResponseWithError;
-
-  if (response.status === 200) {
-    const { data } = response;
-
-    if (data.status === 'ok') {
-      return true;
-    }
-  }
-
-  return false;
-};
-
-export const getNPIconsByTerm = async (term: string, nextPage?: string): Promise<IData | null> => {
-  const response = (await axiosFluxId.get(`/api/np/icons/${term}`, {
-    params: {
-      next_page: nextPage,
-    },
-    withCredentials: true,
-  })) as ResponseWithError;
-
-  if (response.error) {
-    handleErrorMessage(response.error);
-
-    return null;
-  }
-
-  return response.data.data;
-};
-
-export const getNPIconByID = async (id: string): Promise<null | string> => {
-  const response = (await axiosFluxId.get(`/api/np/icon/${id}`, {
-    withCredentials: true,
-  })) as ResponseWithError;
-
-  if (response.error) {
-    handleErrorMessage(response.error);
-
-    return null;
-  }
-
-  return response.data.base64;
-};
-
 export const getDefaultHeader = () => {
   if (isWeb()) {
     const csrfToken = cookies.getBrowserCookie(CSRF_TOKEN_NAME);
@@ -508,49 +429,4 @@ export const getDefaultHeader = () => {
   }
 
   return undefined;
-};
-
-export const recordMachines = async (): Promise<void> => {
-  let shouldRecord = true;
-
-  try {
-    const devices = deviceMaster.getAvailableDevices();
-    const registeredMachines = storage.get('registered-devices', false) || [];
-    const newMachines = devices
-      .filter((device) => !registeredMachines.includes(device.serial) && device.model !== 'fpm1')
-      .map((device) => device.serial);
-
-    if (newMachines.length === 0) return;
-
-    const response = (await axiosFluxId.post(
-      '/machine/activity/beam-studio',
-      { serials: newMachines },
-      { withCredentials: true },
-    )) as ResponseWithError;
-
-    if (response.status === 200) {
-      const { data } = response;
-
-      if (data.status === 'ok') {
-        storage.set('registered-devices', [...registeredMachines, ...newMachines]);
-      } else if (data.info === 'IGNORED') {
-        shouldRecord = false;
-      }
-    } else {
-      shouldRecord = false;
-    }
-  } catch (error) {
-    console.error('Error recording machines:', error);
-    shouldRecord = false;
-  } finally {
-    if (shouldRecord) {
-      setTimeout(recordMachines, 60000);
-    }
-  }
-};
-
-export default {
-  getPreference,
-  init,
-  setPreference,
 };

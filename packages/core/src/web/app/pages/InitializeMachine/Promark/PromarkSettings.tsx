@@ -10,6 +10,7 @@ import RedDotBlock from '@core/app/components/dialogs/promark/RedDotBlock';
 import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useStorageStore } from '@core/app/stores/storageStore';
+import { readCloudConfig, updateCloudConfig } from '@core/helpers/api/flux-id/cloudConfig';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import { getSerial } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
@@ -28,7 +29,13 @@ export default function PromarkSettings(): React.JSX.Element {
   const [galvoParameters, setGalvoParameters] = useState(defaultGalvoParameters);
 
   const isInch = useStorageStore((state) => state.isInch);
-  const serial = useMemo(getSerial, []);
+  const [serial, hashedSerial] = useMemo(() => {
+    const _serial = getSerial();
+    const devices = deviceMaster.getAvailableDevices();
+    const device = devices.find((d) => d.serial === _serial);
+
+    return [_serial, device?.hashed_serial];
+  }, []);
   const { width } = useMemo(() => getWorkarea('fpm1'), []);
 
   useEffect(() => {
@@ -41,7 +48,12 @@ export default function PromarkSettings(): React.JSX.Element {
     setField(field);
     setRedDot(redDot);
     setGalvoParameters(galvoParameters);
-  }, [serial]);
+    readCloudConfig({ hash: hashedSerial, key: 'promarkLens', serialNumber: serial }, (config) => {
+      setField((prev) => ({ ...prev, ...config.field }));
+      setRedDot((prev) => ({ ...prev, ...config.redDot }));
+      setGalvoParameters((prev) => ({ ...prev, ...config.galvoParameters }));
+    });
+  }, [hashedSerial, serial]);
 
   const handleUpdateParameter = async () => {
     promarkDataStore.update(serial, { field, galvoParameters, redDot });
@@ -52,10 +64,19 @@ export default function PromarkSettings(): React.JSX.Element {
     } catch (error) {
       console.error('Failed to apply promark settings state', error);
     }
+
+    await updateCloudConfig({
+      data: { field, galvoParameters, redDot },
+      hash: hashedSerial,
+      key: 'promarkLens',
+      model: 'fpm1',
+      serialNumber: serial,
+    });
   };
 
   const handleNext = async () => {
     await handleUpdateParameter();
+    dialogCaller.showLoadingWindow();
 
     showSetupPageLayoutDialog({
       buttons: [

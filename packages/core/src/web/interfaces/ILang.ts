@@ -1261,6 +1261,13 @@ export interface ILang {
     help_center_url: string;
     see_older_version: string;
   };
+  cloud_sync: {
+    import_config: string;
+    import_failed: string;
+    sync_config: string;
+    sync_failed: string;
+    sync_success: string;
+  };
   code_generator: {
     barcode: string;
     qr_code: string;
