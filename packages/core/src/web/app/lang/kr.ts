@@ -1690,8 +1690,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: '중지',
-      calibration_data_missing: '카메라 보정 데이터를 가져올 수 없습니다.',
-      calibration_data_missing_message: '카메라 보정 데이터를 가져올 수 없습니다. 카메라 보정 데이터를 내보낸 경우 데이터를 장치에 가져오십시오. 그렇지 않으면 카메라 보정(고급)을 수행하여 카메라를 다시 보정하십시오.',
+      calibration_data_missing: '카메라 보정 설정',
+      calibration_data_missing_message: '카메라 보정 데이터가 없습니다.\n저장된 보정 데이터를 가져오거나 카메라 보정을 실행하세요.',
       calibration_wide_angle_camera_first: '먼저 광각 카메라를 보정해 주세요.',
       camera_cable_unstable: '카메라 전송이 불안정하게 이루어지는 것이 감지되었습니다. 미리보기는 정상적으로 수행될 수 있지만, 느린 미리보기 또는 시간 초과의 문제가 발생할 수 있습니다.',
       continue_preview: '계속하기',

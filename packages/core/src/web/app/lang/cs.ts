@@ -1690,8 +1690,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Zrušit',
-      calibration_data_missing: 'Nelze získat kalibrační data kamery.',
-      calibration_data_missing_message: 'Nelze získat kalibrační data kamery. Pokud jste exportovali kalibrační data kamery, importujte je do zařízení. V opačném případě proveďte kalibraci kamery (Pokročilé) pro opětovnou kalibraci kamery.',
+      calibration_data_missing: 'Nastavit kalibraci kamery',
+      calibration_data_missing_message: 'Kalibrační data kamery chybí.\nImportujte uložená kalibrační data nebo proveďte kalibraci kamery.',
       calibration_wide_angle_camera_first: 'Nejprve prosím zkalibrujte širokoúhlou kameru.',
       camera_cable_unstable: 'Bylo zjištěno, že kamera nestabilně přenáší fotografie. Stále můžete spustit náhled, ale může nastat problém s pomalým náhledem či vypršením časového limitu.',
       continue_preview: 'Pokračovat',

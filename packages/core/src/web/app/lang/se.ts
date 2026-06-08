@@ -1690,8 +1690,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Avbryt',
-      calibration_data_missing: 'Kan inte hämta kamerakalibreringsdatan.',
-      calibration_data_missing_message: 'Kan inte hämta kamerakalibreringsdatan. Om du har exporterat kamerakalibreringsdatan, importera datan till enheten. Annars utför kamerakalibrering (Avancerat) för att omkalibrera kameran.',
+      calibration_data_missing: 'Konfigurera kamerakalibrering',
+      calibration_data_missing_message: 'Kamerakalibreringsdatan saknas.\nImportera dina sparade kalibreringsdata eller utför kamerakalibrering.',
       calibration_wide_angle_camera_first: 'Kalibrera vidvinkelkameran först.',
       camera_cable_unstable: 'Det upptäcktes att kameran överför bilder ostabilt. Förhandsgranskning kan fortfarande utföras normalt, men det kan finnas problem med långsam förhandsgranskning eller timeout.',
       continue_preview: 'Fortsätt',

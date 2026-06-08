@@ -163,11 +163,12 @@ const Alert = ({
   const leftButtons: ReactNode[] = [];
   const rightButtons: ReactNode[] = [];
 
-  buttons?.forEach(({ className, isLeft, label, onClick, type }, idx) => {
+  buttons?.forEach(({ className, icon, isLeft, label, onClick, type }, idx) => {
     const buttonType = type ?? (className?.includes('primary') ? 'primary' : 'default');
 
     (isLeft ? leftButtons : rightButtons).push(
       <Button
+        icon={icon}
         key={label}
         onClick={() => {
           popFromStack();

@@ -1690,8 +1690,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Afbreken',
-      calibration_data_missing: 'Kan camerakalibratie gegevens niet ophalen.',
-      calibration_data_missing_message: 'Kan camerakalibratie gegevens niet ophalen. Als u camerakalibratie gegevens hebt geëxporteerd, importeer de gegevens dan in het apparaat. Anders voert u de camerakalibratie (Geavanceerd) uit om de camera opnieuw te kalibreren.',
+      calibration_data_missing: 'Camerakalibratie instellen',
+      calibration_data_missing_message: 'Er zijn geen camerakalibratiegegevens.\nImporteer uw opgeslagen kalibratiegegevens of voer de camerakalibratie uit.',
       calibration_wide_angle_camera_first: 'Kalibreer eerst de groothoeklens camera.',
       camera_cable_unstable: "Er is gedetecteerd dat de camera foto's instabiel overdraagt. Voorbeeldweergave kan nog steeds normaal worden uitgevoerd, maar er kan sprake zijn van trage voorbeeldweergave of time-out.",
       continue_preview: 'Doorgaan',
