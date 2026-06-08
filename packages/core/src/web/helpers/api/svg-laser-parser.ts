@@ -323,6 +323,7 @@ export const getExportOpt = async (
       'jump_speed',
       'jump_delay_min',
       'jump_delay_max',
+      'is_uv_light',
     ];
     let storageValue: null | string = null;
 
