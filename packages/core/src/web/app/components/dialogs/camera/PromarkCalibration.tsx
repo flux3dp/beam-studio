@@ -165,7 +165,7 @@ const PromarkCalibration = ({
   }
 
   if (step === Steps.PUT_PAPER) {
-    const handleNext = async () => {
+    const handleNext = async (skip = false) => {
       const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
       if (!deviceStatus) {
@@ -173,13 +173,15 @@ const PromarkCalibration = ({
       }
 
       try {
-        progressCaller.openNonstopProgress({
-          id: PROGRESS_ID,
-          message: tCali.drawing_calibration_image,
-        });
-        await loadCameraCalibrationTask(model, workareaWidth);
-        await deviceMaster.doPromarkCalibration();
-        progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
+        if (!skip) {
+          progressCaller.openNonstopProgress({
+            id: PROGRESS_ID,
+            message: tCali.drawing_calibration_image,
+          });
+          await loadCameraCalibrationTask(model, workareaWidth);
+          await deviceMaster.doPromarkCalibration();
+        }
+
         setStep(Steps.SOLVE_PNP_INSTRUCTION);
       } catch (err) {
         console.error(err);
@@ -217,12 +219,13 @@ const PromarkCalibration = ({
             label: tCali.back,
             onClick: handleStepBack,
           },
+          { label: tCali.skip, onClick: () => handleNext(true) },
           { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
         ]}
         onClose={() => onClose(false)}
         renderWrapper={renderWrapper}
         steps={[tCali.put_paper_promark_1, tCali.put_paper_promark_2]}
-        title={<Title link={tCali.promark_help_link} title={tCali.put_paper} />}
+        title={<Title link={tCali.promark_help_link} title={tCali.put_paper_promark} />}
       />
     );
   }

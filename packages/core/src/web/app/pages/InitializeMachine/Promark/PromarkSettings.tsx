@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+import { CheckCircleFilled } from '@ant-design/icons';
 import { Flex } from 'antd';
 
-import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import FieldBlock from '@core/app/components/dialogs/promark/FieldBlock';
 import LensBlock from '@core/app/components/dialogs/promark/LensBlock';
@@ -17,6 +17,7 @@ import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 
 import SetupPageLayout from '../Components/SetupPageLayout';
+import showSetupPageLayoutDialog from '../Components/showSetupPageLayoutDialog';
 
 import styles from './PromarkSettings.module.scss';
 
@@ -56,17 +57,9 @@ export default function PromarkSettings(): React.JSX.Element {
   const handleNext = async () => {
     await handleUpdateParameter();
 
-    alertCaller.popUp({
+    showSetupPageLayoutDialog({
       buttons: [
         {
-          label: t.next,
-          onClick: () => {
-            window.location.hash = '#/initialize/connect/promark/camera-calibration';
-          },
-          type: 'primary',
-        },
-        {
-          isLeft: true,
           label: t.skip,
           onClick: () => {
             dialogCaller.showLoadingWindow();
@@ -74,8 +67,21 @@ export default function PromarkSettings(): React.JSX.Element {
             window.location.reload();
           },
         },
+        {
+          label: t.next,
+          onClick: () => {
+            dialogCaller.showLoadingWindow();
+            window.location.hash = '#/initialize/connect/promark/camera-calibration';
+          },
+          primary: true,
+        },
       ],
-      message: t.promark.setting_completed_ask_camera_calibration,
+      children: (
+        <Flex align="center" gap={24} vertical>
+          <CheckCircleFilled className={styles['ask-icon']} />
+          <div className={styles['ask-message']}>{t.promark.setting_completed_ask_camera_calibration}</div>
+        </Flex>
+      ),
     });
   };
 

@@ -1,5 +1,6 @@
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo } from 'react';
 
+import { popDialogById } from '@core/app/actions/dialog-controller';
 import type { RenderWrapper } from '@core/app/components/dialogs/camera/common/types';
 import PromarkCalibration from '@core/app/components/dialogs/camera/PromarkCalibration';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
@@ -17,6 +18,11 @@ export default function InitCameraCalibration(): React.JSX.Element {
   const model = useMemo(() => deviceMaster.currentDevice?.info?.model ?? 'fpm1', []);
   const device = useMemo(() => ({ model, serial }) as IDeviceInfo, [model, serial]);
   const currentData = useMemo(() => promarkDataStore.get(serial, 'cameraParameters'), [serial]);
+
+  // Clear the loading window opened by PromarkSettings to bridge the async hash navigation.
+  useEffect(() => {
+    popDialogById('loading-window');
+  }, []);
 
   const onClose = useCallback((completed?: boolean) => {
     if (completed) {

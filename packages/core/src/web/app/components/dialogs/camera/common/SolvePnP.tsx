@@ -365,72 +365,74 @@ const SolvePnP = ({
   );
 
   const controlNode = (
-    <div>
-      {selectedPointIdx >= 0 && (
-        <Flex align="center" className={styles.info} gap={8} justify="space-between" vertical>
-          <div>
-            <Row align="middle" gutter={[0, 8]}>
-              {positionText && (
-                <Col className={styles.position} span={24}>
-                  {positionText}
-                </Col>
-              )}
-              <Col className={styles['point-id']} span={24}>
-                Point {selectedPointIdx}
-              </Col>
-              <Col span={3}>
-                <label className={styles.label} htmlFor="point-x-input">
-                  X
-                </label>
-              </Col>
-              <Col span={9}>
-                <InputNumber<number>
-                  className={styles.input}
-                  disabled={!points[selectedPointIdx]}
-                  id="point-x-input"
-                  onChange={(val) => {
-                    if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
-                  }}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  onKeyUp={(e) => e.stopPropagation()}
-                  precision={0}
-                  step={1}
-                  type="number"
-                  value={points[selectedPointIdx]?.[0] ?? 0}
-                />
-              </Col>
-              <Col span={3}>
-                <label className={styles.label} htmlFor="point-y-input">
-                  Y
-                </label>
-              </Col>
-              <Col span={9}>
-                <InputNumber<number>
-                  className={styles.input}
-                  disabled={!points[selectedPointIdx]}
-                  id="point-y-input"
-                  onChange={(val) => {
-                    if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
-                  }}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  onKeyUp={(e) => e.stopPropagation()}
-                  precision={0}
-                  step={1}
-                  type="number"
-                  value={points[selectedPointIdx]?.[1] ?? 0}
-                />
-              </Col>
-            </Row>
-          </div>
-          <PointIndicator
-            currentIndex={selectedPointIdx}
-            label={label}
-            onSelect={setSelectedPointIdx}
-            points={refPoints.length as 4 | 8}
-          />
-        </Flex>
-      )}
-    </div>
+    <Flex
+      align="center"
+      className={classNames(styles.info, { [styles['align-with-exposure']]: renderWrapper })}
+      gap={8}
+      justify="space-between"
+      vertical
+    >
+      <div>
+        <Row align="middle" gutter={[0, 8]}>
+          {positionText && (
+            <Col className={styles.position} span={24}>
+              {positionText}
+            </Col>
+          )}
+          <Col className={styles['point-id']} span={24}>
+            Point {selectedPointIdx}
+          </Col>
+          <Col span={3}>
+            <label className={styles.label} htmlFor="point-x-input">
+              X
+            </label>
+          </Col>
+          <Col span={9}>
+            <InputNumber<number>
+              className={styles.input}
+              disabled={!points[selectedPointIdx]}
+              id="point-x-input"
+              onChange={(val) => {
+                if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
+              }}
+              onKeyDown={(e) => e.stopPropagation()}
+              onKeyUp={(e) => e.stopPropagation()}
+              precision={0}
+              step={1}
+              type="number"
+              value={points[selectedPointIdx]?.[0] ?? 0}
+            />
+          </Col>
+          <Col span={3}>
+            <label className={styles.label} htmlFor="point-y-input">
+              Y
+            </label>
+          </Col>
+          <Col span={9}>
+            <InputNumber<number>
+              className={styles.input}
+              disabled={!points[selectedPointIdx]}
+              id="point-y-input"
+              onChange={(val) => {
+                if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
+              }}
+              onKeyDown={(e) => e.stopPropagation()}
+              onKeyUp={(e) => e.stopPropagation()}
+              precision={0}
+              step={1}
+              type="number"
+              value={points[selectedPointIdx]?.[1] ?? 0}
+            />
+          </Col>
+        </Row>
+      </div>
+      <PointIndicator
+        currentIndex={selectedPointIdx}
+        label={label}
+        onSelect={setSelectedPointIdx}
+        points={refPoints.length as 4 | 8}
+      />
+    </Flex>
   );
   const imageDisplayNode = (
     <ImageDisplay
