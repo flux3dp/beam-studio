@@ -274,6 +274,14 @@ const PromarkCalibration = ({
   }
 
   if (step === Steps.CHECK_PNP) {
+    const params: FisheyeCameraParametersV3 = {
+      d: calibratingParam.current.d!,
+      k: calibratingParam.current.k!,
+      rvec: calibratingParam.current.rvec!,
+      tvec: calibratingParam.current.tvec!,
+      v: 3,
+    };
+
     return (
       <CheckPnP
         cameraOptions={{ source: 'usb' }}
@@ -282,24 +290,11 @@ const PromarkCalibration = ({
         onBack={handleStepBack}
         onClose={onClose}
         onNext={async () => {
-          const param: FisheyeCameraParametersV3 = {
-            d: calibratingParam.current.d!,
-            k: calibratingParam.current.k!,
-            rvec: calibratingParam.current.rvec!,
-            tvec: calibratingParam.current.tvec!,
-            v: 3,
-          };
-
-          promarkDataStore.set(serial, 'cameraParameters', param);
+          promarkDataStore.set(serial, 'cameraParameters', params);
           alertCaller.popUp({ message: tCali.camera_parameter_saved_successfully });
           onClose(true);
         }}
-        params={{
-          d: calibratingParam.current.d!,
-          k: calibratingParam.current.k!,
-          rvec: calibratingParam.current.rvec!,
-          tvec: calibratingParam.current.tvec!,
-        }}
+        params={params}
         points={promarkPnPPoints[workareaWidth]}
         renderWrapper={renderWrapper}
       />
