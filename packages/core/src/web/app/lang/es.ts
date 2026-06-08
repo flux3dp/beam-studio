@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Abortar',
-      calibration_data_missing: 'No se pueden obtener los datos de calibración de la cámara.',
-      calibration_data_missing_message: 'No se pueden obtener los datos de calibración de la cámara. Si exportó los datos de calibración de la cámara, importe los datos al dispositivo. De lo contrario, realice la calibración de la cámara (Avanzado) para recalibrar la cámara.',
+      calibration_data_missing: 'Configurar la calibración de la cámara',
+      calibration_data_missing_message: 'Faltan los datos de calibración de la cámara.\nImporte sus datos de calibración guardados o realice la calibración de la cámara.',
       calibration_wide_angle_camera_first: 'Por favor, calibre primero la cámara gran angular.',
       camera_cable_unstable: 'Se ha detectado que la cámara está transfiriendo fotos de forma inestable. La vista previa se puede seguir realizando con normalidad, pero puede haber problemas de lentitud o tiempo de espera agotado.',
       continue_preview: 'Continuar',

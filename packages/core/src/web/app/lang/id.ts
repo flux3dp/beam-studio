@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Batalkan',
-      calibration_data_missing: 'Tidak dapat mendapatkan data kalibrasi kamera.',
-      calibration_data_missing_message: 'Tidak dapat mendapatkan data kalibrasi kamera. Jika Anda telah mengekspor data kalibrasi kamera, silakan impor data ke perangkat. Jika tidak, silakan lakukan kalibrasi kamera (Lanjutan) untuk mengkalibrasi ulang kamera.',
+      calibration_data_missing: 'Siapkan kalibrasi kamera',
+      calibration_data_missing_message: 'Data kalibrasi kamera tidak ada.\nImpor data kalibrasi tersimpan Anda atau lakukan kalibrasi kamera.',
       calibration_wide_angle_camera_first: 'Harap kalibrasi kamera sudut lebar terlebih dahulu.',
       camera_cable_unstable: 'Terdeteksi kamera mentransfer foto secara tidak stabil. Pratinjau masih dapat dilakukan, tetapi mungkin ada masalah lambat atau waktu habis.',
       continue_preview: 'Lanjutkan',

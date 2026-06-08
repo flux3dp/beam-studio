@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Przerwij',
-      calibration_data_missing: 'Nie można uzyskać danych kalibracji kamery.',
-      calibration_data_missing_message: 'Nie można uzyskać danych kalibracji kamery. Jeśli wyeksportowano dane kalibracji kamery, zaimportuj dane do urządzenia. W przeciwnym razie wykonaj kalibrację kamery (Zaawansowane), aby ponownie skalibrować kamerę.',
+      calibration_data_missing: 'Skonfiguruj kalibrację kamery',
+      calibration_data_missing_message: 'Brak danych kalibracji kamery.\nZaimportuj zapisane dane kalibracji lub wykonaj kalibrację kamery.',
       calibration_wide_angle_camera_first: 'Najpierw skalibruj kamerę szerokokątną.',
       camera_cable_unstable: 'Wykryto, że kamera niestabilnie przesyła zdjęcia. Podgląd można nadal wykonać, ale może wystąpić problem z powolnym podglądem lub przekroczeniem limitu czasu.',
       continue_preview: 'Kontynuuj',
