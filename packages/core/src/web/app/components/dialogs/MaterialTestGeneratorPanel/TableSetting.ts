@@ -5,6 +5,8 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 
 export interface Detail {
+  // A simple flag. TODO: change to precision config
+  allowDecimal?: boolean;
   // default value is used when the param is not set
   default: number;
   max: number;
@@ -27,11 +29,13 @@ type TableSettingConstruct<T extends ReadonlyArray<string>, IsRequired = true> =
 export const commonTableParams = ['strength', 'speed', 'repeat'] as const;
 export const promarkTableParams = ['fillInterval', 'frequency', 'dottingTime'] as const;
 export const mopaTableParams = ['pulseWidth'] as const;
-export const tableParams = [...commonTableParams, ...promarkTableParams, ...mopaTableParams] as const;
+export const uvTableParams = ['pulseWidth', 'qPulseWidth'] as const;
+export const tableParams = [...commonTableParams, ...promarkTableParams, ...mopaTableParams, ...uvTableParams] as const;
 
 export type TableSetting = TableSettingConstruct<typeof commonTableParams> &
   TableSettingConstruct<typeof mopaTableParams, false> &
-  TableSettingConstruct<typeof promarkTableParams, false>;
+  TableSettingConstruct<typeof promarkTableParams, false> &
+  TableSettingConstruct<typeof uvTableParams, false>;
 
 const getCommonTableSetting = (workarea: WorkAreaModel): TableSetting => {
   const { maxSpeed } = getWorkarea(workarea);
@@ -78,6 +82,7 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
       selected: 2,
     },
     fillInterval: {
+      allowDecimal: true,
       default: 0.01,
       max: 100,
       maxValue: 1,
@@ -86,11 +91,11 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
       selected: 2,
     },
     frequency: {
-      default: limit.frequency.min,
-      max: limit.frequency.max,
-      maxValue: limit.frequency.max,
-      min: limit.frequency.min,
-      minValue: limit.frequency.min,
+      default: limit.frequency!.min,
+      max: limit.frequency!.max,
+      maxValue: limit.frequency!.max,
+      min: limit.frequency!.min,
+      minValue: limit.frequency!.min,
       selected: 2,
     },
     repeat: {
@@ -117,13 +122,24 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
       minValue: 15,
       selected: 0,
     },
-    ...(laserType === LaserType.MOPA && {
+    ...(limit.pulseWidth && {
       pulseWidth: {
         default: 350,
         max: limit.pulseWidth.max,
         maxValue: limit.pulseWidth.max,
         min: limit.pulseWidth.min,
         minValue: limit.pulseWidth.min,
+        selected: 2,
+      },
+    }),
+    ...(limit.qPulseWidth && {
+      qPulseWidth: {
+        allowDecimal: true,
+        default: 1,
+        max: limit.qPulseWidth.max,
+        maxValue: limit.qPulseWidth.max,
+        min: limit.qPulseWidth.min,
+        minValue: limit.qPulseWidth.min,
         selected: 2,
       },
     }),

@@ -53,6 +53,7 @@ const paramWidth = {
   fillInterval: 96.77,
   frequency: 97.31,
   pulseWidth: 97.79,
+  qPulseWidth: 110.07,
   repeat: 42.63,
   speed: 81.61,
   strength: 60.66,
@@ -62,6 +63,7 @@ const paramString = {
   fillInterval: 'Fill Interval (mm)',
   frequency: 'Frequency (kHz)',
   pulseWidth: 'Pulse Width (ns)',
+  qPulseWidth: 'Q Pulse Width (us)',
   repeat: 'Passes',
   speed: 'Speed (mm/s)',
   strength: 'Power (%)',
@@ -205,48 +207,54 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
 
     [...svgInfos]
       .reverse()
-      .forEach(({ dottingTime, fillInterval, frequency, name, pulseWidth, repeat, speed, strength }, index) => {
-        const { layer } = createLayer(name, { initConfig: true, parentCmd: batchCmd });
+      .forEach(
+        ({ dottingTime, fillInterval, frequency, name, pulseWidth, qPulseWidth, repeat, speed, strength }, index) => {
+          const { layer } = createLayer(name, { initConfig: true, parentCmd: batchCmd });
 
-        writeDataLayer(layer, 'power', strength);
-        writeDataLayer(layer, 'speed', speed);
-        writeDataLayer(layer, 'repeat', repeat);
+          writeDataLayer(layer, 'power', strength);
+          writeDataLayer(layer, 'speed', speed);
+          writeDataLayer(layer, 'repeat', repeat);
 
-        if (isPromark) {
-          writeDataLayer(layer, 'fillInterval', fillInterval);
-          writeDataLayer(layer, 'frequency', frequency);
-          writeDataLayer(layer, 'dottingTime', dottingTime);
-        }
+          if (isPromark) {
+            writeDataLayer(layer, 'fillInterval', fillInterval);
+            writeDataLayer(layer, 'frequency', frequency);
+            writeDataLayer(layer, 'dottingTime', dottingTime);
+          }
 
-        if (isMopa) {
-          writeDataLayer(layer, 'pulseWidth', pulseWidth);
-        }
+          if (tableSetting.pulseWidth) {
+            writeDataLayer(layer, 'pulseWidth', pulseWidth);
+          }
 
-        const newRect = svgCanvas.addSvgElementFromJson({
-          attr: {
-            fill: blockOption === 'engrave' ? '#000' : 'none',
-            'fill-opacity': blockOption === 'engrave' ? 1 : 0,
-            height,
-            id: svgCanvas.getNextId(),
-            opacity: 1,
-            stroke: '#000',
-            width,
-            x,
-            y,
-          },
-          curStyles: false,
-          element: 'rect',
-        });
+          if (tableSetting.qPulseWidth) {
+            writeDataLayer(layer, 'qPulseWidth', qPulseWidth);
+          }
 
-        if ((index + 1) % row.count.value === 0) {
-          x = right * dpmm;
-          y -= (column.size.value + column.spacing.value) * dpmm;
-        } else {
-          x -= (row.size.value + row.spacing.value) * dpmm;
-        }
+          const newRect = svgCanvas.addSvgElementFromJson({
+            attr: {
+              fill: blockOption === 'engrave' ? '#000' : 'none',
+              'fill-opacity': blockOption === 'engrave' ? 1 : 0,
+              height,
+              id: svgCanvas.getNextId(),
+              opacity: 1,
+              stroke: '#000',
+              width,
+              x,
+              y,
+            },
+            curStyles: false,
+            element: 'rect',
+          });
 
-        updateElementColor(newRect);
-      });
+          if ((index + 1) % row.count.value === 0) {
+            x = right * dpmm;
+            y -= (column.size.value + column.spacing.value) * dpmm;
+          } else {
+            x -= (row.size.value + row.spacing.value) * dpmm;
+          }
+
+          updateElementColor(newRect);
+        },
+      );
   };
 
   const handlePreview = () => {
