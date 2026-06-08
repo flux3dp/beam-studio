@@ -12,6 +12,7 @@ export interface SvgInfo {
   frequency?: number;
   name: string;
   pulseWidth?: number;
+  qPulseWidth?: number;
   repeat: number;
   speed: number;
   strength: number;
@@ -22,6 +23,7 @@ const namingMap = {
   fillInterval: 'FI',
   frequency: 'F',
   pulseWidth: 'PW',
+  qPulseWidth: 'QW',
   repeat: 'C',
   speed: 'S',
   strength: 'P',
@@ -41,12 +43,12 @@ export default function generateSvgInfo({
   const [col, row, ...staticParams] = Object.entries(tableSetting).sort(
     ([, { selected: a }], [, { selected: b }]) => a - b,
   );
-  const generateRange = (length: number, [key, { maxValue, minValue }]: [string, Detail]) =>
+  const generateRange = (length: number, [key, { allowDecimal, maxValue, minValue }]: [string, Detail]) =>
     Array.from({ length }, (_, i) => {
       const value = minValue + (maxValue - minValue) * (i / (length !== 1 ? length - 1 : 1));
 
       // Round to 4 decimal places for fillInterval
-      if (key === 'fillInterval') {
+      if (allowDecimal) {
         return Math.round(value * 10000) / 10000;
       }
 
