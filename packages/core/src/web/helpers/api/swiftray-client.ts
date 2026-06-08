@@ -598,6 +598,8 @@ class SwiftrayClient extends EventEmitter {
 }
 
 const checkSwiftray = async (): Promise<boolean> => {
+  return true;
+
   const res = supportSwiftray();
 
   if (!res) {
