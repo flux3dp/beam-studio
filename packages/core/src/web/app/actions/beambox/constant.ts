@@ -49,10 +49,11 @@ export default {
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     fhx2rf: ['fhx2rf', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     flv1: ['flv1'],
-    fpm1: ['fpm1'],
+    fpm1: ['fpm1', uvModel],
     fuv1: ['fuv1', 'fbm2'],
     'laser-b1': ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     'laser-b2': ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
+    [uvModel]: ['fpm1', uvModel],
   },
   borderless: {
     safeDistance: {
