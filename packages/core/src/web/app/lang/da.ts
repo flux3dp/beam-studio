@@ -1258,6 +1258,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Se ældre versioner',
   },
+  cloud_sync: {
+    import_config: 'Skyindstillinger fundet for denne enhed. Vil du importere dem?',
+    import_failed: 'Kunne ikke læse skyindstillinger.',
+    sync_config: 'Vil du synkronisere disse indstillinger til skyen?',
+    sync_failed: 'Synkronisering af indstillinger til skyen mislykkedes.',
+    sync_success: 'Indstillinger synkroniseret til skyen.',
+  },
   code_generator: {
     barcode: 'Stregkode',
     qr_code: 'QR-kode',

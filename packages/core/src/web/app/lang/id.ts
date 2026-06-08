@@ -1258,6 +1258,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Lihat Versi Lama',
   },
+  cloud_sync: {
+    import_config: 'Pengaturan cloud ditemukan untuk perangkat ini. Apakah Anda ingin mengimpornya?',
+    import_failed: 'Gagal membaca pengaturan cloud.',
+    sync_config: 'Apakah Anda ingin menyinkronkan pengaturan ini ke cloud?',
+    sync_failed: 'Gagal menyinkronkan pengaturan ke cloud.',
+    sync_success: 'Pengaturan berhasil disinkronkan ke cloud.',
+  },
   code_generator: {
     barcode: 'Kode Batang',
     qr_code: 'Kode QR',

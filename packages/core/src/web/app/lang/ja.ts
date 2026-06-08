@@ -1258,6 +1258,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: '以前のバージョンを見る',
   },
+  cloud_sync: {
+    import_config: 'このデバイスのクラウド設定が見つかりました。インポートしますか？',
+    import_failed: 'クラウド設定の読み込みに失敗しました。',
+    sync_config: 'これらの設定をクラウドに同期しますか？',
+    sync_failed: 'クラウドへの設定同期に失敗しました。',
+    sync_success: '設定がクラウドに正常に同期されました。',
+  },
   code_generator: {
     barcode: 'バーコード',
     qr_code: 'QRコード',

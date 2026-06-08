@@ -1258,6 +1258,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: '이전 버전 보기',
   },
+  cloud_sync: {
+    import_config: '이 장치에 대한 클라우드 설정이 발견되었습니다. 가져오시겠습니까?',
+    import_failed: '클라우드 설정을 읽지 못했습니다.',
+    sync_config: '이 설정을 클라우드에 동기화하시겠습니까?',
+    sync_failed: '클라우드에 설정을 동기화하지 못했습니다.',
+    sync_success: '설정이 클라우드에 성공적으로 동기화되었습니다.',
+  },
   code_generator: {
     barcode: '바코드',
     qr_code: 'QR 코드',

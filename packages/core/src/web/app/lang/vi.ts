@@ -1258,6 +1258,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Xem phiên bản cũ',
   },
+  cloud_sync: {
+    import_config: 'Đã tìm thấy cài đặt đám mây cho thiết bị này. Bạn có muốn nhập không?',
+    import_failed: 'Không thể đọc cài đặt đám mây.',
+    sync_config: 'Bạn có muốn đồng bộ các cài đặt này lên đám mây không?',
+    sync_failed: 'Đồng bộ cài đặt lên đám mây thất bại.',
+    sync_success: 'Cài đặt đã được đồng bộ lên đám mây thành công.',
+  },
   code_generator: {
     barcode: 'Mã vạch',
     qr_code: 'Mã QR',

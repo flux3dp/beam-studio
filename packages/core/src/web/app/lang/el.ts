@@ -1258,6 +1258,13 @@ const lang: ILang = {
     help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
     see_older_version: 'Δείτε παλαιότερες εκδόσεις',
   },
+  cloud_sync: {
+    import_config: 'Βρέθηκαν ρυθμίσεις cloud για αυτήν τη συσκευή. Θέλετε να τις εισαγάγετε;',
+    import_failed: 'Αποτυχία ανάγνωσης ρυθμίσεων cloud.',
+    sync_config: 'Θέλετε να συγχρονίσετε αυτές τις ρυθμίσεις στο cloud;',
+    sync_failed: 'Αποτυχία συγχρονισμού ρυθμίσεων στο cloud.',
+    sync_success: 'Οι ρυθμίσεις συγχρονίστηκαν στο cloud με επιτυχία.',
+  },
   code_generator: {
     barcode: 'Γραμμωτός κώδικας',
     qr_code: 'QR Κωδικός',

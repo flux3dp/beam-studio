@@ -10,6 +10,7 @@ export interface IDeviceInfo {
   addr: string;
   alive: boolean;
   error_label: never;
+  hashed_serial?: string;
   ipaddr: string;
   lastAlive?: number;
   model: WorkAreaModel;
