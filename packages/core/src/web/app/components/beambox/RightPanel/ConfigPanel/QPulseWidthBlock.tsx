@@ -20,6 +20,7 @@ const QPulseWidthBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
       max={limit.max}
       min={limit.min}
       precision={4}
+      // Note: this i18n key should be handled properly in material test. Check TableSettingForm
       title={mockT(`Q ${t.pulse_width}`)}
       type={type}
       unit="us"

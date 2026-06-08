@@ -142,15 +142,20 @@ export default function TableSettingForm({
               case 'fillInterval':
                 return 'mm';
               case 'dottingTime':
+              case 'qPulseWidth':
                 return 'us';
+              case 'frequency':
+                return 'kHz';
+              case 'pulseWidth':
+                return 'ns';
               default:
                 return '';
             }
           };
 
-          const precision = useInch || key === 'fillInterval' ? 4 : 0;
+          const precision = useInch || detail?.allowDecimal ? 4 : 0;
           const step = () => {
-            if (key === 'fillInterval') {
+            if (detail?.allowDecimal) {
               return 0.0001;
             }
 

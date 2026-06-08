@@ -1,6 +1,7 @@
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { LaserType } from '@core/app/constants/promark-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import storage from '@core/implementations/storage';
 import type { PromarkInfo } from '@core/interfaces/Promark';
@@ -39,6 +40,12 @@ export const initPromarkInfo = (serial: string): void => {
 
 export const getPromarkInfo = (): PromarkInfo => {
   const serial = getSerial();
+  const workarea = useDocumentStore.getState().workarea;
+  const isPromarkUV = workarea === 'fuv1';
+
+  if (isPromarkUV) {
+    return { laserType: LaserType.UV, watt: 5 };
+  }
 
   return promarkDataStore.get(serial, 'info') || defaultValue;
 };
