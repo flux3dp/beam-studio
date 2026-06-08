@@ -99,7 +99,7 @@ export class WebCamConnection {
 
     this.device = device;
     this.stream = await navigator.mediaDevices.getUserMedia({
-      video: { deviceId: device.deviceId, height: this.height, width: this.width },
+      video: { deviceId: { exact: device.deviceId }, height: this.height, width: this.width },
     });
 
     if (!this.stream) {

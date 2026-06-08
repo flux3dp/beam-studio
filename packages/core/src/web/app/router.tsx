@@ -43,10 +43,11 @@ import ConnectMachineIp from '@core/app/pages/InitializeMachine/ConnectMachineIp
 import ConnectUsb from '@core/app/pages/InitializeMachine/ConnectUsb';
 import ConnectWiFi from '@core/app/pages/InitializeMachine/ConnectWiFi';
 import ConnectWired from '@core/app/pages/InitializeMachine/ConnectWired';
-import PromarkSettings from '@core/app/pages/InitializeMachine/PromarkSettings';
+import InitCameraCalibration from '@core/app/pages/InitializeMachine/Promark/InitCameraCalibration';
+import PromarkSettings from '@core/app/pages/InitializeMachine/Promark/PromarkSettings';
+import SelectPromarkLaserSource from '@core/app/pages/InitializeMachine/Promark/SelectPromarkLaserSource';
 import SelectConnectionType from '@core/app/pages/InitializeMachine/SelectConnectionType';
 import SelectMachineModel from '@core/app/pages/InitializeMachine/SelectMachineModel';
-import SelectPromarkLaserSource from '@core/app/pages/InitializeMachine/SelectPromarkLaserSource';
 import Welcome from '@core/app/pages/Welcome';
 import { antdScreenTokens, initScreenStore } from '@core/app/stores/screenStore';
 import Logger from '@core/helpers/logger';
@@ -157,9 +158,10 @@ const App = (): React.JSX.Element => {
                     <Route element={<FluxIdLogin />} path="/initialize/connect/flux-id-login" />
                     <Route
                       element={<SelectPromarkLaserSource />}
-                      path="/initialize/connect/select-promark-laser-source"
+                      path="/initialize/connect/promark/select-laser-source"
                     />
                     <Route element={<PromarkSettings />} path="/initialize/connect/promark-settings" />
+                    <Route element={<InitCameraCalibration />} path="/initialize/connect/promark/camera-calibration" />
                     <Route element={<Beambox />} path="/studio/beambox" />
                     <Route element={<Welcome />} path="/studio/welcome" />
                     <Route element={<Error />} path="/error/*" />

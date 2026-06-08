@@ -245,7 +245,7 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
     await finishWithDevice(device);
 
     if (isPromark) {
-      window.location.hash = '#/initialize/connect/select-promark-laser-source';
+      window.location.hash = '#/initialize/connect/promark/select-laser-source';
 
       return;
     }

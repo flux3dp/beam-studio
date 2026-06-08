@@ -14,7 +14,7 @@ import {
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
-import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
+import { uploadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type {
@@ -26,7 +26,7 @@ import type {
 import styles from '../Calibration.module.scss';
 import ChArUco from '../common/ChArUco';
 import CheckPnP from '../common/CheckPnP';
-import CheckpointData from '../common/CheckpointData';
+import { applyCheckpointData } from '../common/checkpointData';
 import downloadCalibrationFile from '../common/downloadCalibrationFile';
 import Instruction from '../common/Instruction';
 import { moveZRel } from '../common/moveZRel';
@@ -34,7 +34,6 @@ import ProcessingDialog from '../common/ProcessingDialog';
 import SolvePnP from '../common/SolvePnP';
 
 const enum Step {
-  CHECK_DATA,
   PREPARE_MATERIALS,
   CALIBRATE_CHARUCO,
   PUT_PAPER,
@@ -56,14 +55,14 @@ const enum Step {
 }
 
 interface Props {
+  currentData?: FisheyeCameraParametersV4Cali | null;
   onClose: (completed?: boolean) => void;
 }
 
-const WideAngleCamera = ({ onClose }: Props): ReactNode => {
+const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'wide-angle-camera-calibration';
   const { calibration: tCali, device: tDevice } = useI18n();
-  const [step, setStep] = useState(Step.CHECK_DATA);
-  const [skipChArUco, setSkipChArUco] = useState(false);
+  const [step, setStep] = useState(Step.PREPARE_MATERIALS);
   const next = useCallback(() => setStep((cur) => cur + 1), []);
   const prev = useCallback(() => setStep((cur) => cur - 1), []);
   const deviceModel = useMemo(() => deviceMaster.currentDevice!.info.model, []);
@@ -124,34 +123,11 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
     if (!res) return undefined;
 
     let { displayStep, text } = res;
-    const totalSteps = skipChArUco ? 5 : 7;
 
-    if (skipChArUco) displayStep -= 2;
-
-    return `${tCali.step} ${displayStep}/${totalSteps} - ${text}`;
-  }, [step, tCali, skipChArUco]);
+    return `${tCali.step} ${displayStep}/7 - ${text}`;
+  }, [step, tCali]);
 
   return match<Step, ReactNode>(step)
-    .with(Step.CHECK_DATA, () => {
-      return (
-        <CheckpointData
-          allowCheckPoint={false}
-          askUser
-          getData={async () => loadJson('fisheye', 'wide-angle.json') as FisheyeCameraParametersV4Cali}
-          onClose={handleClose}
-          onNext={(res: boolean) => {
-            if (res) {
-              setSkipChArUco(true);
-              setStep(Step.PUT_PAPER);
-            } else {
-              setSkipChArUco(false);
-              setStep(Step.PREPARE_MATERIALS);
-            }
-          }}
-          updateParam={updateParam}
-        />
-      );
-    })
     .with(Step.PREPARE_MATERIALS, () => {
       return (
         <Instruction
@@ -161,8 +137,18 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           ]}
           buttons={[
             { label: tCali.cancel, onClick: () => handleClose(false) },
+            // Reuse the existing camera parameters on the device instead of re-capturing the pattern.
+            currentData && {
+              label: tCali.skip,
+              onClick: async () => {
+                if (await applyCheckpointData(currentData)) {
+                  updateParam(currentData);
+                  setStep(Step.PUT_PAPER);
+                }
+              },
+            },
             { label: tCali.next, onClick: next, type: 'primary' },
-          ]}
+          ].filter(Boolean)}
           onClose={() => handleClose(false)}
           steps={[
             tCali.materials_required,

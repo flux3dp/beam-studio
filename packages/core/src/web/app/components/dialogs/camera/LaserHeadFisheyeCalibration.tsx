@@ -12,7 +12,6 @@ import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@
 import styles from './Calibration.module.scss';
 import ChArUco from './common/ChArUco';
 import CheckPnP from './common/CheckPnP';
-import CheckpointData from './common/CheckpointData';
 import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import moveLaserHead from './common/moveLaserHead';
@@ -20,7 +19,6 @@ import SolvePnP from './common/SolvePnP';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
-  CHECKPOINT_DATA = 0, // For non-advanced usages
   PRE_CHESSBOARD = 1, // For advanced usages
   CHESSBOARD = 2, // For advanced usages
   PUT_PAPER = 3,
@@ -31,6 +29,7 @@ enum Steps {
 /* eslint-enable perfectionist/sort-enums */
 
 interface Props {
+  currentData?: FisheyeCameraParametersV3Cali;
   isAdvanced: boolean;
   isOblique?: boolean;
   onClose: (completed?: boolean) => void;
@@ -41,37 +40,16 @@ const PROGRESS_ID = 'laser-head-fisheye-calibration';
  * LaserHeadFisheye
  * calibration the fisheye camera on the laser head (bb2, hexa rf)
  */
-const LaserHeadFisheyeCalibration = ({ isAdvanced, isOblique, onClose }: Props): React.JSX.Element => {
+const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
-  const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
-  const [step, setStep] = useState<Steps>(isAdvanced ? Steps.PRE_CHESSBOARD : Steps.CHECKPOINT_DATA);
+  const calibratingParam = useRef<FisheyeCameraParametersV3Cali>(currentData ?? {});
+  const [step, setStep] = useState<Steps>(isAdvanced ? Steps.PRE_CHESSBOARD : Steps.PUT_PAPER);
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
   const model = useMemo(() => deviceMaster.currentDevice?.info.model ?? 'fbb2', []);
   const isHexaRf = useMemo(() => model === 'fhx2rf', [model]);
-
-  if (step === Steps.CHECKPOINT_DATA) {
-    return (
-      <CheckpointData
-        allowCheckPoint={false}
-        askUser={false}
-        onClose={onClose}
-        onNext={(res: boolean) => {
-          if (res) {
-            setStep(Steps.PUT_PAPER);
-          } else {
-            alertCaller.popUpError({
-              message: tCali.unable_to_load_camera_parameters,
-            });
-            onClose(false);
-          }
-        }}
-        updateParam={updateParam}
-      />
-    );
-  }
 
   if (step === Steps.PRE_CHESSBOARD) {
     return (
