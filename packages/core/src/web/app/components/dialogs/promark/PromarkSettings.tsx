@@ -7,8 +7,10 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app/constants/promark-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import icons from '@core/app/icons/icons';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { readCloudConfig, updateCloudConfig } from '@core/helpers/api/flux-id/cloudConfig';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -17,6 +19,7 @@ import applyRedDot from '@core/helpers/device/promark/apply-red-dot';
 import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
+import { uvModel } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters, PromarkStore, RedDot } from '@core/interfaces/Promark';
@@ -31,13 +34,15 @@ import RedDotBlock from './RedDotBlock';
 
 interface Props {
   device: IDeviceInfo;
+  forceModel?: WorkAreaModel;
   initData: PromarkStore;
   onClose: () => void;
 }
 
-const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Element => {
+const PromarkSettings = ({ device, forceModel, initData, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
-  const { hashed_serial: hashedSerial, model, serial } = device;
+  const { hashed_serial: hashedSerial, serial } = device;
+  const model = forceModel || device.model;
   const isInch = useStorageStore((state) => state.isInch);
   const [field, setField] = useState<Field>(initData.field || defaultField);
   const [redDot, setRedDot] = useState<RedDot>(initData.redDot || defaultRedLight);
@@ -252,9 +257,18 @@ export const showPromarkSettings = async (device: IDeviceInfo): Promise<void> =>
   const { serial } = device;
   const data = promarkDataStore.get(serial);
   const id = 'promark-settings';
+  const workarea = useDocumentStore.getState().workarea;
 
   if (!isIdExist(id)) {
-    addDialogComponent(id, <PromarkSettings device={device} initData={data} onClose={() => popDialogById(id)} />);
+    addDialogComponent(
+      id,
+      <PromarkSettings
+        device={device}
+        forceModel={workarea === uvModel ? uvModel : undefined}
+        initData={data}
+        onClose={() => popDialogById(id)}
+      />,
+    );
   }
 };
 

@@ -555,7 +555,8 @@ class SwiftrayClient extends EventEmitter {
   }
 
   public async startFraming(opt?: TPromarkFramingOpt): Promise<void> {
-    const { width } = getWorkarea('fpm1');
+    const workarea = useDocumentStore.getState().workarea;
+    const { width } = getWorkarea(promarkModels.has(workarea) ? workarea : 'fpm1');
 
     return this.action(`/devices/${this.port}`, 'startFraming', { ...opt, width });
   }
