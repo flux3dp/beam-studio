@@ -76,7 +76,6 @@ export default function PromarkSettings(): React.JSX.Element {
 
   const handleNext = async () => {
     await handleUpdateParameter();
-    dialogCaller.showLoadingWindow();
 
     showSetupPageLayoutDialog({
       buttons: [

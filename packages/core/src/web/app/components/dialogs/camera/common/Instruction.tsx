@@ -40,7 +40,7 @@ const Instruction = ({
     videoRef.current?.load();
   }, [animationSrcs]);
 
-  const body = (
+  const content = (
     <>
       {contentBeforeSteps}
       {steps && (
@@ -61,6 +61,11 @@ const Instruction = ({
         </ol>
       )}
       {children}
+    </>
+  );
+
+  const media = (
+    <>
       {animationSrcs && (
         <video
           autoPlay
@@ -86,43 +91,6 @@ const Instruction = ({
       primary: type === 'primary',
     }));
 
-    const content = (
-      <>
-        {contentBeforeSteps}
-        {steps && (
-          <ol className={styles.steps}>
-            {steps.map((step, i) => {
-              if (Array.isArray(step)) {
-                return (
-                  <ol className={styles.sub} key={i}>
-                    {step.map((subStep, j) => (
-                      <li key={j}>{subStep}</li>
-                    ))}
-                  </ol>
-                );
-              }
-
-              return <li key={i}>{step}</li>;
-            })}
-          </ol>
-        )}
-        {children}
-      </>
-    );
-
-    const media = (
-      <>
-        {animationSrcs && (
-          <video autoPlay className={styles.video} loop muted ref={videoRef}>
-            {animationSrcs.map(({ src, type }) => (
-              <source key={src} src={src} type={type} />
-            ))}
-          </video>
-        )}
-        {contentAfterAnimation}
-      </>
-    );
-
     return renderWrapper({ buttons: wrapperButtons, content, media, title });
   }
 
@@ -142,7 +110,8 @@ const Instruction = ({
       title={title}
       width={400}
     >
-      {body}
+      {content}
+      {media}
     </DraggableModal>
   );
 };

@@ -209,13 +209,11 @@ const Calibration = ({
         <Button key="back" onClick={onBack ?? (() => onClose(false))}>
           {onBack ? tCali.back : tCali.cancel}
         </Button>,
-        <Button key="next" onClick={handleCalibrate} type="primary">
+        <Button disabled={!img} key="next" onClick={handleCalibrate} type="primary">
           {tCali.next}
         </Button>,
       ]}
       maskClosable={false}
-      okButtonProps={{ disabled: !img }}
-      okText={tCali.next}
       onCancel={() => onClose(false)}
       open
       title={titleNode}
