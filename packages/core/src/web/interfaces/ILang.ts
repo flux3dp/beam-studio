@@ -1181,6 +1181,7 @@ export interface ILang {
     put_paper_bm2_2: string;
     put_paper_bm2_3: string;
     put_paper_bm2_4: string;
+    put_paper_promark: string;
     put_paper_promark_1: string;
     put_paper_promark_2: string;
     put_paper_skip: string;
