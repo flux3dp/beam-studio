@@ -30,7 +30,7 @@ const toggleCase = (s: string): string =>
 
 // Fullwidth ASCII (U+FF01-U+FF5E) → halfwidth ASCII; fullwidth space → halfwidth space.
 const toHalfwidth = (s: string): string =>
-  s.replace(/[\uff01-\uff5e]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\u3000/g, ' ');
+  s.replace(/[\uFF01-\uFF5E]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\u3000/g, ' ');
 
 // Halfwidth ASCII (! through ~) → fullwidth; halfwidth space → fullwidth.
 const toFullwidth = (s: string): string =>

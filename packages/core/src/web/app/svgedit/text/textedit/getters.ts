@@ -87,7 +87,7 @@ export type TextTransform =
   | 'toggle'
   | 'uppercase';
 
-const TRANSFORM_VALUES: ReadonlySet<TextTransform> = new Set([
+const TRANSFORM_VALUES: ReadonlySet<TextTransform> = new Set<TextTransform>([
   'uppercase',
   'lowercase',
   'sentence',
@@ -102,7 +102,6 @@ export const getTextTransform = (elem: SVGTextElement): TextTransform => {
 
   return val && TRANSFORM_VALUES.has(val as TextTransform) ? (val as TextTransform) : 'none';
 };
-
 
 export const getTextContent = (elem: SVGTextElement): string => {
   // Raw text (when transform is or has been active) is the editable source — return it
