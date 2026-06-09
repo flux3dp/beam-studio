@@ -1662,10 +1662,13 @@ export interface ILang {
       text_placeholder: string;
     };
     types: {
+      animal: string;
       capsule: string;
-      cat: string;
-      dog: string;
+      dialog_box: string;
+      geometry: string;
       oval: string;
+      pet: string;
+      plant: string;
       polygonal: string;
       quadrilateral: string;
       round_arch: string;
