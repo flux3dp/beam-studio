@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: 'Căn phải',
         sections: {
           actions: 'Hành động',
-          align: 'Căn chỉnh',
+          colors: 'Màu sắc',
           operation_mode: 'Chế độ hoạt động (Tô)',
           options: 'Tùy chọn',
+          tools: 'Công cụ',
           transform: 'Biến đổi',
         },
         subtract: 'Trừ',

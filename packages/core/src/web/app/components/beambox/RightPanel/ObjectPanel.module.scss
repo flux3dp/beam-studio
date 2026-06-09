@@ -28,6 +28,11 @@
     :global(.ant-collapse-item) {
       border-bottom: 1px solid #e0e0e0;
       padding-block: 4px;
+
+      // Fallback: hide a section whose content renders empty (e.g. infill panel for a group of lines)
+      &:has(:global(.ant-collapse-content-box) > div:empty) {
+        display: none;
+      }
     }
 
     :global(.ant-collapse-item:last-child) {

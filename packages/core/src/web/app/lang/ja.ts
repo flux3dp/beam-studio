@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: '右に整列',
         sections: {
           actions: 'アクション',
-          align: '整列',
+          colors: '色',
           operation_mode: '操作モード（塗りつぶし）',
           options: 'オプション',
+          tools: 'ツール',
           transform: '変形',
         },
         subtract: '引く',

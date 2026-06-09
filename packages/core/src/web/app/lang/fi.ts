@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: 'Tasaa oikealle',
         sections: {
           actions: 'Toiminnot',
-          align: 'Tasaa',
+          colors: 'Värit',
           operation_mode: 'Toimintatila (Täyttö)',
           options: 'Asetukset',
+          tools: 'Työkalut',
           transform: 'Muunna',
         },
         subtract: 'Vähennä',

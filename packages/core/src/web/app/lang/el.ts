@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: 'Ευθυγράμμιση δεξιά',
         sections: {
           actions: 'Ενέργειες',
-          align: 'Στοίχιση',
+          colors: 'Χρώματα',
           operation_mode: 'Λειτουργία (Γέμισμα)',
           options: 'Επιλογές',
+          tools: 'Εργαλεία',
           transform: 'Μετασχηματισμός',
         },
         subtract: 'Αφαίρεση',

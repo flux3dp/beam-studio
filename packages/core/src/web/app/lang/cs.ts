@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: 'Zarovnání vpravo',
         sections: {
           actions: 'Akce',
-          align: 'Zarovnat',
+          colors: 'Barvy',
           operation_mode: 'Provozní režim (Výplň)',
           options: 'Možnosti',
+          tools: 'Nástroje',
           transform: 'Transformovat',
         },
         subtract: 'Ubrat',

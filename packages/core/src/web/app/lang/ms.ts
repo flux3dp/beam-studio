@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: 'Jajar Kanan',
         sections: {
           actions: 'Tindakan',
-          align: 'Jajarkan',
+          colors: 'Warna',
           operation_mode: 'Mod Operasi (Isi)',
           options: 'Pilihan',
+          tools: 'Alat',
           transform: 'Transformasi',
         },
         subtract: 'Tolak',

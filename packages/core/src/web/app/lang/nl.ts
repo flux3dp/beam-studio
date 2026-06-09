@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: 'Rechts uitlijnen',
         sections: {
           actions: 'Acties',
-          align: 'Uitlijnen',
+          colors: 'Kleuren',
           operation_mode: 'Bedrijfsmodus (Vulling)',
           options: 'Opties',
+          tools: 'Gereedschappen',
           transform: 'Transformeren',
         },
         subtract: 'Aftrekken',

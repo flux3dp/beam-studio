@@ -350,7 +350,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
 
   const renderDesktopCollapse = (): React.JSX.Element => {
     const desktopItems = [
-      { children: renderToolBtns(), forceRender: true, key: 'tools', label: tSections.align },
+      { children: renderToolBtns(), forceRender: true, key: 'tools', label: tSections.tools },
       { children: renderDimensionPanel(), forceRender: true, key: 'transform', label: tSections.transform },
       ...(showInfillSection
         ? [
@@ -358,7 +358,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
               children: <InfillPanel elem={elem as SVGElement} />,
               forceRender: true,
               key: 'infill',
-              label: tSections.operation_mode,
+              label: isFullColor ? tSections.colors : tSections.operation_mode,
             },
           ]
         : []),

@@ -941,9 +941,10 @@ export interface ILang {
         right_align: string;
         sections: {
           actions: string;
-          align: string;
+          colors: string;
           operation_mode: string;
           options: string;
+          tools: string;
           transform: string;
         };
         subtract: string;

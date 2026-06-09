@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: 'Högerjustera',
         sections: {
           actions: 'Åtgärder',
-          align: 'Justera',
+          colors: 'Färger',
           operation_mode: 'Driftsläge (Fyllning)',
           options: 'Alternativ',
+          tools: 'Verktyg',
           transform: 'Transformera',
         },
         subtract: 'Subtrahera',

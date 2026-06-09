@@ -941,9 +941,10 @@ const lang: ILang = {
         right_align: 'Alinear a la dreta',
         sections: {
           actions: 'Accions',
-          align: 'Alinea',
+          colors: 'Colors',
           operation_mode: "Mode d'operació (Emplenament)",
           options: 'Opcions',
+          tools: 'Eines',
           transform: 'Transforma',
         },
         subtract: 'Restar',
