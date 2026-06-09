@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: '中断预览',
-      calibration_data_missing: '无法获取相机校正数据。',
-      calibration_data_missing_message: '无法获取相机校正数据。如果您已导出相机校正数据，请将数据导入设备。否则，请执行相机校正（高级）以重新校正相机。',
+      calibration_data_missing: '设置相机校正',
+      calibration_data_missing_message: '缺少相机校正数据。\n请导入已保存的校正数据，或执行相机校正。',
       calibration_wide_angle_camera_first: '请先校正广角相机。',
       camera_cable_unstable: '侦测到相机传输照片时不稳定，仍能正常进行相机预览，但可能会有预览速度较慢或超时的问题。<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001791895">了解更多</a>',
       continue_preview: '继续预览',

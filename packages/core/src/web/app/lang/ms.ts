@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Batalkan',
-      calibration_data_missing: 'Tidak dapat mendapatkan data penentukuran kamera.',
-      calibration_data_missing_message: 'Tidak dapat mendapatkan data penentukuran kamera. Jika anda telah mengeksport data penentukuran kamera, sila import data ke peranti. Jika tidak, sila lakukan penentukuran kamera (Lanjutan) untuk menentukur semula kamera.',
+      calibration_data_missing: 'Sediakan penentukuran kamera',
+      calibration_data_missing_message: 'Data penentukuran kamera tiada.\nImport data penentukuran tersimpan anda atau lakukan penentukuran kamera.',
       calibration_wide_angle_camera_first: 'Sila kalibrasi kamera sudut lebar terlebih dahulu.',
       camera_cable_unstable: 'Kamera menghantar gambar secara tidak stabil dikesan. Pratonton masih boleh dilakukan dengan normal, tetapi mungkin ada masalah pratonton perlahan atau masa tamat.',
       continue_preview: 'Teruskan',

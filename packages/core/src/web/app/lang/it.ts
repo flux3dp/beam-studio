@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Interrompi',
-      calibration_data_missing: 'Impossibile ottenere i dati di calibrazione della fotocamera.',
-      calibration_data_missing_message: 'Impossibile ottenere i dati di calibrazione della fotocamera. Se hai esportato i dati di calibrazione della fotocamera, importa i dati nel dispositivo. Altrimenti, esegui la calibrazione della fotocamera (Avanzata) per ricalibrare la fotocamera.',
+      calibration_data_missing: 'Configura la calibrazione della fotocamera',
+      calibration_data_missing_message: 'I dati di calibrazione della fotocamera sono mancanti.\nImporta i tuoi dati di calibrazione salvati o esegui la calibrazione della fotocamera.',
       calibration_wide_angle_camera_first: 'Si prega di calibrare prima la fotocamera grandangolare.',
       camera_cable_unstable: "È stato rilevato che la fotocamera sta trasferendo le foto in modo instabile. L'anteprima può essere eseguita normalmente, ma potrebbero esserci problemi di lentezza o timeout.",
       continue_preview: 'Continua',

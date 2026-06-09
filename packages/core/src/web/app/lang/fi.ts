@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Keskeytä',
-      calibration_data_missing: 'Kameran kalibrointitietoja ei voitu hakea.',
-      calibration_data_missing_message: 'Kameran kalibrointitietoja ei voitu hakea. Jos olet vienyt kameran kalibrointitiedot, tuo tiedot laitteeseen. Muussa tapauksessa suorita kameran kalibrointi (Edistynyt) kameran uudelleenkalibroimiseksi.',
+      calibration_data_missing: 'Määritä kameran kalibrointi',
+      calibration_data_missing_message: 'Kameran kalibrointitiedot puuttuvat.\nTuo tallennetut kalibrointitiedot tai suorita kameran kalibrointi.',
       calibration_wide_angle_camera_first: 'Kalibroi ensin laajakulmakamera.',
       camera_cable_unstable: 'Kameran kuvan siirrossa havaittiin epävakautta. Esikatselu toimii edelleen normaalisti, mutta esikatselussa voi ilmetä hitautta tai aikakatkaisuja.',
       continue_preview: 'Jatka',

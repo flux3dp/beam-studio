@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Hủy bỏ',
-      calibration_data_missing: 'Không thể lấy dữ liệu hiệu chuẩn camera.',
-      calibration_data_missing_message: 'Không thể lấy dữ liệu hiệu chuẩn camera. Nếu bạn đã xuất dữ liệu hiệu chuẩn camera, vui lòng nhập dữ liệu vào thiết bị. Nếu không, vui lòng thực hiện hiệu chuẩn camera (Nâng cao) để hiệu chuẩn lại camera.',
+      calibration_data_missing: 'Thiết lập hiệu chuẩn camera',
+      calibration_data_missing_message: 'Thiếu dữ liệu hiệu chuẩn camera.\nHãy nhập dữ liệu hiệu chuẩn đã lưu của bạn hoặc thực hiện hiệu chuẩn camera.',
       calibration_wide_angle_camera_first: 'Vui lòng hiệu chuẩn camera góc rộng trước.',
       camera_cable_unstable: 'Phát hiện camera đang truyền ảnh không ổn định. Xem trước vẫn có thể thực hiện bình thường, nhưng có thể gặp vấn đề xem trước chậm hoặc hết thời gian chờ.',
       continue_preview: 'Tiếp tục',

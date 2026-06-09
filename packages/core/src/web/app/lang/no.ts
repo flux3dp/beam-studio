@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Avbryt',
-      calibration_data_missing: 'Kan ikke hente kamerakalibreringsdataene.',
-      calibration_data_missing_message: 'Kan ikke hente kamerakalibreringsdataene. Hvis du har eksportert kamerakalibreringsdataene, importer dataene til enheten. Ellers utfør kamerakalibrering (Avansert) for å rekalibrere kameraet.',
+      calibration_data_missing: 'Konfigurer kamerakalibrering',
+      calibration_data_missing_message: 'Kamerakalibreringsdataene mangler.\nImporter de lagrede kalibreringsdataene dine eller utfør kamerakalibrering.',
       calibration_wide_angle_camera_first: 'Vennligst kalibrer vidvinkelkameraet først.',
       camera_cable_unstable: 'Det er oppdaget at kameraet overfører bilder ustabilt. Forhåndsvisning kan fortsatt utføres normalt, men det kan være problemer med treg forhåndsvisning eller tidsavbrudd.',
       continue_preview: 'Fortsett',

@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: '中止する',
-      calibration_data_missing: 'カメラキャリブレーションデータを取得できません。',
-      calibration_data_missing_message: 'カメラキャリブレーションデータを取得できません。カメラキャリブレーションデータをエクスポートした場合は、データをデバイスにインポートしてください。それ以外の場合は、カメラキャリブレーション（アドバンスド）を実行してカメラを再キャリブレーションしてください。',
+      calibration_data_missing: 'カメラキャリブレーションの設定',
+      calibration_data_missing_message: 'カメラキャリブレーションデータがありません。\n保存したキャリブレーションデータをインポートするか、カメラキャリブレーションを実行してください。',
       calibration_wide_angle_camera_first: '先に広角カメラのキャリブレーションを行ってください。',
       camera_cable_unstable: 'カメラが写真を不安定に転送していることが検出されました。プレビューは引き続き正常に実行できますが、プレビューが遅い、またはタイムアウトになる問題がある可能性があります。',
       continue_preview: '継続する',

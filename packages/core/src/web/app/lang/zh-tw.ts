@@ -1782,8 +1782,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: '中斷預覽',
-      calibration_data_missing: '無法取得校正資料',
-      calibration_data_missing_message: '無法取得相機校正資料。如果您已匯出相機校正資料，請將資料匯入設備。否則，請執行相機校正（進階）以重新校正相機。',
+      calibration_data_missing: '設定相機校正',
+      calibration_data_missing_message: '缺少相機校正資料。\n請匯入已儲存的校正資料，或執行相機校正。',
       calibration_wide_angle_camera_first: '請先校正廣角相機。',
       camera_cable_unstable: '偵測到相機傳輸照片時不穩定，仍能正常進行相機預覽，但可能會有預覽速度較慢或超時的問題。<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001791895">了解更多</a>',
       continue_preview: '繼續預覽',
