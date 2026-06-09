@@ -1791,8 +1791,8 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Abbrechen',
-      calibration_data_missing: 'Kamera-Kalibrierungsdaten konnten nicht abgerufen werden.',
-      calibration_data_missing_message: 'Kamera-Kalibrierungsdaten konnten nicht abgerufen werden. Falls Sie Kamera-Kalibrierungsdaten exportiert haben, importieren Sie die Daten bitte in das Gerät. Andernfalls führen Sie bitte die Kamerakalibrierung (Erweitert) durch, um die Kamera neu zu kalibrieren.',
+      calibration_data_missing: 'Kamerakalibrierung einrichten',
+      calibration_data_missing_message: 'Es sind keine Kamerakalibrierungsdaten vorhanden.\nImportieren Sie Ihre gespeicherten Kalibrierungsdaten oder führen Sie die Kamerakalibrierung durch.',
       calibration_wide_angle_camera_first: 'Bitte kalibrieren Sie zuerst die Weitwinkelkamera.',
       camera_cable_unstable: 'Es wird festgestellt, dass die Kamera Fotos instabil überträgt. Die Vorschau kann weiterhin normal ausgeführt werden, es kann jedoch das Problem einer langsamen Vorschau oder eines Zeitlimits auftreten.',
       continue_preview: 'Fortsetzen',

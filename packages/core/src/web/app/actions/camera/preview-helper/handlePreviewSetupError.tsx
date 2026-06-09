@@ -1,3 +1,5 @@
+import { CameraOutlined, UploadOutlined } from '@ant-design/icons';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import { showCalibrateCamera } from '@core/app/actions/dialog-controller';
 import { backUpCalibrationData } from '@core/helpers/device/camera/backUpCalibrationData';
@@ -17,11 +19,13 @@ const handlePreviewSetupError = (device: IDeviceInfo, error: unknown): void => {
           label: lang.alert.cancel,
         },
         {
+          icon: <UploadOutlined />,
           label: lang.topbar.menu.import_calibration_data,
           onClick: () => backUpCalibrationData(device, 'upload'),
           type: 'primary',
         },
         {
+          icon: <CameraOutlined />,
           label: lang.topbar.menu.calibrate_beambox_camera,
           onClick: () => showCalibrateCamera(device, { isAdvanced: true }),
           type: 'primary',
