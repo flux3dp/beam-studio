@@ -43,7 +43,7 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       titleKey: 'puzzle_generator',
     } as const,
     {
-      icon: <GeneratorIcons.Puzzle />,
+      icon: <GeneratorIcons.Keychain />,
       id: 'keychain',
       onClick: () => showKeyChainGenerator(),
       titleKey: 'keychain_generator',

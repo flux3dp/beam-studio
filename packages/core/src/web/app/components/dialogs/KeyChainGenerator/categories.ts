@@ -133,7 +133,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
     },
     svgContent: SURFING_BOARD,
-    thumbnail: '',
+    thumbnail: 'core-img/keychain-generator/surfing-board.jpg',
   },
   {
     defaultSize: { dimension: 'height', value: 50 },
@@ -170,7 +170,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
     },
     svgContent: CAPSULE,
-    thumbnail: '',
+    thumbnail: 'core-img/keychain-generator/capsule.jpg',
   },
   {
     defaultSize: { dimension: 'width', value: 50 },
@@ -204,7 +204,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
     },
     svgContent: OVAL,
-    thumbnail: '',
+    thumbnail: 'core-img/keychain-generator/oval.jpg',
   },
   {
     defaultSize: { dimension: 'height', value: 50 },
@@ -241,7 +241,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
     },
     svgContent: ROUND_ARCH,
-    thumbnail: '',
+    thumbnail: 'core-img/keychain-generator/round-arch.jpg',
   },
   {
     defaultSize: { dimension: 'height', value: 50 },
@@ -278,7 +278,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
     },
     svgContent: TAG,
-    thumbnail: '',
+    thumbnail: 'core-img/keychain-generator/tag.jpg',
   },
   {
     defaultSize: { dimension: 'width', value: 50 },
@@ -498,8 +498,8 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
   {
     defaultSize: { dimension: 'width', value: 50 },
     defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
-    id: 'cat',
-    nameKey: 'cat',
+    id: 'pet',
+    nameKey: 'pet',
     options: {
       variants: [
         {
@@ -567,18 +567,6 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           },
           svgContent: CAT_3,
         },
-      ],
-    },
-    svgContent: CAT_1,
-    thumbnail: '',
-  },
-  {
-    defaultSize: { dimension: 'width', value: 50 },
-    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
-    id: 'dog',
-    nameKey: 'dog',
-    options: {
-      variants: [
         {
           key: 'dog_1',
           options: {
