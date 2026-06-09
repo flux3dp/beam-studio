@@ -1,5 +1,6 @@
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
+import { getUseBBoxByDataXform } from '@core/app/svgedit/utils/getBBox';
 
 import { createAndFinalizeImage } from './createAndFinalizeImage';
 import type { ConvertSvgToImageParams, ConvertToImageResult } from './types';
@@ -23,15 +24,7 @@ export const convertUseToImage = async ({
     return undefined;
   }
 
-  const dataXform = svgElement.getAttribute('data-xform');
-  const [formX = 0, formY = 0, width = 0, height = 0] =
-    dataXform?.split(' ').map((v) => Number.parseFloat(v.split('=')[1])) || [];
-  const dimensions = {
-    height,
-    width,
-    x: Number.parseFloat(svgElement.getAttribute('x') || '0') + formX,
-    y: Number.parseFloat(svgElement.getAttribute('y') || '0') + formY,
-  };
+  const dimensions = getUseBBoxByDataXform(svgElement as SVGUseElement);
 
   // Separate the rotation from all other transforms.
   let angle = 0;

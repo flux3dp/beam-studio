@@ -138,19 +138,24 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
     (val: number, addToHistory = false): void => {
       if (!elem) return;
 
+      const isTempGroup = elem.getAttribute('data-tempgroup') === 'true';
       let rotationDeg = val % 360;
 
       if (rotationDeg > 180) {
         rotationDeg -= 360;
       }
 
-      if (elem.getAttribute('data-tempgroup') === 'true' && !addToHistory) {
+      let finalRotation = rotationDeg;
+
+      if (isTempGroup && !addToHistory) {
         setRotationAngle(elem, rotationDeg, { addToHistory: false });
       } else {
-        setRotationAngle(elem, rotationDeg);
+        setRotationAngle(elem, rotationDeg, { addToHistory });
+
+        if (isTempGroup) finalRotation = 0;
       }
 
-      updateDimensionValues({ rotation: rotationDeg });
+      updateDimensionValues({ rotation: finalRotation });
       resizeSelector(elem);
 
       forceUpdate();

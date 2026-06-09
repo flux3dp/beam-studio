@@ -9,6 +9,7 @@ import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import { deleteUseRef } from '@core/app/svgedit/operations/delete';
+import { recalculateDimensions } from '@core/app/svgedit/transform/recalculate';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -24,11 +25,9 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { PassThroughCanvasManager } from './canvasManager';
 
 let svgCanvas: ISVGCanvas;
-let svgedit: any;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
-  svgedit = globalSVG.Edit;
 });
 
 const sliceWorkarea = async (
@@ -173,7 +172,7 @@ const sliceWorkarea = async (
           }
         }
       }
-      svgedit.recalculate.recalculateDimensions(container);
+      recalculateDimensions(container);
 
       const descendants = Array.from(container.querySelectorAll('*'));
       const refMap: Record<string, string> = {}; // id changes

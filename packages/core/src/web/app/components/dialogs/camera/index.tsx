@@ -7,14 +7,18 @@ import { eventEmitter } from '@core/app/contexts/DialogContext';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkCameraOblique } from '@core/helpers/device/camera/previewMode';
 import checkCamera from '@core/helpers/device/check-camera';
+import { loadJson } from '@core/helpers/device/jsonDataHelper';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
 import versionChecker from '@core/helpers/version-checker';
+import type { FisheyeCameraParametersV3Cali, FisheyeCameraParametersV4Cali } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import { showAdorCalibration } from './AdorCalibration';
 import { showBeamo2Calibration } from './beamo2Calibration';
+import { applyCheckpointData, getCheckpointData } from './common/checkpointData';
 import LaserHeadFisheyeCalibration from './LaserHeadFisheyeCalibration';
 import ModuleCalibration from './ModuleCalibration';
 import PromarkCalibration from './PromarkCalibration';
@@ -29,10 +33,35 @@ export const showLaserHeadFisheyeCalibration = async (device: IDeviceInfo, isAdv
     onClose();
   }
 
+  let currentData: FisheyeCameraParametersV3Cali | undefined;
+
+  if (!isAdvanced) {
+    const res = await getCheckpointData<FisheyeCameraParametersV3Cali>({ allowCheckPoint: false });
+
+    if (!res || !(await applyCheckpointData(res.data))) {
+      alertCaller.popUpError({
+        buttons: [
+          { isLeft: true, label: i18n.lang.alert.cancel },
+          {
+            label: i18n.lang.topbar.menu.calibrate_camera_advanced,
+            onClick: () => showLaserHeadFisheyeCalibration(device, true),
+            type: 'primary',
+          },
+        ],
+        message: i18n.lang.calibration.unable_to_load_camera_parameters,
+      });
+
+      return false;
+    }
+
+    currentData = res.data;
+  }
+
   return new Promise<boolean>((resolve) => {
     addDialogComponent(
       id,
       <LaserHeadFisheyeCalibration
+        currentData={currentData}
         isAdvanced={isAdvanced}
         isOblique={isOblique}
         onClose={(completed = false) => {
@@ -68,10 +97,16 @@ export const showWideAngleCameraCalibration = async (device: IDeviceInfo): Promi
     return false;
   }
 
+  const res = await getCheckpointData<FisheyeCameraParametersV4Cali>({
+    allowCheckPoint: false,
+    getData: async () => loadJson('fisheye', 'wide-angle.json') as Promise<FisheyeCameraParametersV4Cali>,
+  });
+
   return new Promise<boolean>((resolve) => {
     addDialogComponent(
       id,
       <WideAngleCamera
+        currentData={res?.data ?? null}
         onClose={(completed = false) => {
           onClose();
           resolve(completed);
@@ -122,10 +157,13 @@ export const showPromarkCalibration = async (device: IDeviceInfo): Promise<boole
     return false;
   }
 
+  const currentData = promarkDataStore.get(device.serial, 'cameraParameters');
+
   return new Promise<boolean>((resolve) => {
     addDialogComponent(
       id,
       <PromarkCalibration
+        currentData={currentData}
         device={device}
         onClose={(completed = false) => {
           onClose();

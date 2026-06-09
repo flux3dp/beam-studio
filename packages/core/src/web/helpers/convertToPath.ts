@@ -301,3 +301,35 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
     success: true,
   };
 };
+
+/** Warning: This is a dispatcher only. Each converter has its own options and return type. */
+export const dispatchConvertToPath = async (
+  element: SVGElement,
+  {
+    isToSelect,
+    weldingTexts,
+    ...historyOptions
+  }: HistoryActionOptions & {
+    isToSelect?: boolean;
+    weldingTexts?: boolean;
+  },
+) => {
+  const tagName = element.tagName.toLowerCase();
+
+  if (tagName === 'text') {
+    return convertTextToPath(element, { isToSelect, weldingTexts, ...historyOptions });
+  } else if (tagName === 'use') {
+    // Note: returns command without adding to history
+    return convertUseToPath({ element, isToSelect });
+  } else if (tagName === 'g') {
+    if (element.getAttribute('data-tempgroup') === 'true') {
+      // Note: adds command to history; returns void instead of ConvertToPathResult
+      return convertTempGroupToPath({ element, isToSelect, weldingTexts });
+    } else if (element.getAttribute('data-textpath-g') === 'true') {
+      // Note: selects resulting path with group
+      return convertTextOnPathToPath(element, { weldingTexts, ...historyOptions });
+    }
+  }
+
+  return convertSvgToPath(element, { isToSelect, ...historyOptions });
+};

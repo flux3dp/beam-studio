@@ -21,10 +21,11 @@ interface Props {
   onBack: () => void;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
+  onSkip?: () => void;
   updateParam: (param: FisheyeCameraParametersV2Cali) => void;
 }
 
-const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): React.JSX.Element => {
+const CalibrateChessBoard = ({ onBack, onClose, onNext, onSkip, updateParam }: Props): React.JSX.Element => {
   const lang = useI18n();
   const progressId = useMemo(() => 'ador-calibration-v2', []);
   const [res, setRes] = useState<
@@ -198,6 +199,11 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
       <Button key="back" onClick={onBack}>
         {lang.buttons.back}
       </Button>,
+      onSkip ? (
+        <Button key="skip" onClick={onSkip}>
+          {lang.calibration.skip}
+        </Button>
+      ) : null,
       <Button key="retry" onClick={() => handleCalibrate(0)}>
         Retry
       </Button>,

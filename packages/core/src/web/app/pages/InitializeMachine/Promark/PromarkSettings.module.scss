@@ -1,4 +1,5 @@
 @use '@core/styles/mixins' as mixins;
+@use '@core/styles/variables' as variables;
 
 .container {
   @include mixins.is-not-mobile {
@@ -14,6 +15,20 @@
   line-height: 30px;
   font-weight: bold;
   letter-spacing: 0.5px;
+  color: #333333;
+}
+
+.ask-icon {
+  font-size: 64px;
+  color: variables.$status-normal;
+}
+
+.ask-message {
+  max-width: 600px;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1.4;
+  text-align: center;
   color: #333333;
 }
 

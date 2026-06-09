@@ -1,16 +1,7 @@
-import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
-
-const setElement = (elem: Element | null): void => {
-  BeamboxGlobalInteraction.onObjectBlur();
-
-  if (elem) BeamboxGlobalInteraction.onObjectFocus([elem]);
-
-  topBarEventEmitter.emit('SET_ELEMENT', elem);
-};
 
 const updateTitle = (title: string, isCloudFile: boolean): void => {
   topBarEventEmitter.emit('UPDATE_TITLE', title, isCloudFile);
@@ -44,7 +35,6 @@ export default {
   getSelectedDevice,
   offTitleChange,
   onTitleChange,
-  setElement,
   setHasUnsavedChange,
   setSelectedDevice,
   updateTitle,

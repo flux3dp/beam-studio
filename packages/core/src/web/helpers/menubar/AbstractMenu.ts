@@ -68,6 +68,7 @@ const DOCKABLE_MENU_ITEMS = [
 ];
 
 const TOOLS_MENU_ITEMS = ['START_CURVE_ENGRAVING_MODE'];
+const EDITOR_REQUIRED_DEVICE_ITEMS = ['CALIBRATION'];
 
 /**
  * Special menu items that should be disabled in certain pages
@@ -82,6 +83,7 @@ const MENU_ITEMS = [
   ...VIEW_MENU_ITEMS,
   ...TOOLS_MENU_ITEMS,
   ...DOCKABLE_MENU_ITEMS,
+  ...EDITOR_REQUIRED_DEVICE_ITEMS,
   'NETWORK_TESTING',
   // _help
   'START_TUTORIAL',

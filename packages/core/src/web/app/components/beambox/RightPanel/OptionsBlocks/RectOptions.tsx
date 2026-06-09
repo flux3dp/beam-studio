@@ -28,8 +28,8 @@ interface Props {
 function RectOptions({ elem }: Props): React.JSX.Element {
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
-  const { dimensionValues, updateDimensionValues } = use(ObjectPanelContext);
-  const { rx: dimensionValuesRx } = dimensionValues;
+  const { dimensionValuesRef, updateDimensionValues } = use(ObjectPanelContext);
+  const { rx: dimensionValuesRx } = dimensionValuesRef.current;
   const isInch = useStorageStore((state) => state.isInch);
   const [rx, setRx] = useState(dimensionValuesRx || 0);
 

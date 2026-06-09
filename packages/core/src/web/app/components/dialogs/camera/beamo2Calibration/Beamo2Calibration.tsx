@@ -25,7 +25,6 @@ import type {
 import styles from '../Calibration.module.scss';
 import ChArUco from '../common/ChArUco';
 import CheckPnP from '../common/CheckPnP';
-import CheckpointData from '../common/CheckpointData';
 import downloadCalibrationFile from '../common/downloadCalibrationFile';
 import Instruction from '../common/Instruction';
 import moveLaserHead from '../common/moveLaserHead';
@@ -34,7 +33,6 @@ import SolvePnP from '../common/SolvePnP';
 
 /* eslint-disable perfectionist/sort-objects */
 const Steps = {
-  CHECK_DATA: 0,
   PRE_CHESSBOARD: 1,
   CHESSBOARD: 2,
   PUT_PAPER: 3,
@@ -51,18 +49,19 @@ const Steps = {
 export type StepsType = (typeof Steps)[keyof typeof Steps];
 
 interface Props {
+  currentData?: FisheyeCameraParametersV4Cali;
   isAdvanced: boolean;
   onClose: (completed?: boolean) => void;
 }
 
-const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
+const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'fbm2-calibration';
   const { calibration: tCalibration, device: tDevice } = useI18n();
-  const calibratingParam = useRef<FisheyeCameraParametersV4Cali>({});
+  const calibratingParam = useRef<FisheyeCameraParametersV4Cali>(currentData ?? {});
   const updateParam = useCallback((param: FisheyeCameraParametersV4Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
-  const [step, setStep] = useState<StepsType>(isAdvanced ? Steps.PRE_CHESSBOARD : Steps.CHECK_DATA);
+  const [step, setStep] = useState<StepsType>(isAdvanced ? Steps.PRE_CHESSBOARD : Steps.PUT_PAPER);
   const next = useCallback(() => setStep((step) => (step + 1) as StepsType), []);
   const prev = useCallback(() => setStep((step) => (step - 1) as StepsType), []);
   const doorChecker = useRef<DoorChecker | null>(null);
@@ -91,26 +90,6 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
   }, [releaseMachine]);
 
   return match(step)
-    .with(Steps.CHECK_DATA, () => {
-      return (
-        <CheckpointData
-          allowCheckPoint={false}
-          askUser={false}
-          onClose={onClose}
-          onNext={(res: boolean) => {
-            if (res) {
-              setStep(Steps.PUT_PAPER);
-            } else {
-              alertCaller.popUpError({
-                message: tCalibration.unable_to_load_camera_parameters,
-              });
-              onClose(false);
-            }
-          }}
-          updateParam={updateParam}
-        />
-      );
-    })
     .with(Steps.PRE_CHESSBOARD, () => {
       return (
         <Instruction

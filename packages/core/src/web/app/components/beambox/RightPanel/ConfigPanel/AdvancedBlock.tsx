@@ -24,7 +24,6 @@ import AmDensityBlock from './AmDensityBlock';
 import AutoFocus from './AutoFocus';
 import ColorAdvancedSettingButton from './ColorAdvancedSetting/ColorAdvancedSettingButton';
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
-import Delay from './Delay';
 import Diode from './Diode';
 import FocusBlock from './FocusBlock';
 import FrequencyBlock from './FrequencyBlock';
@@ -32,6 +31,7 @@ import NozzleBlock from './NozzleBlock';
 import PulseWidthBlock from './PulseWidthBlock';
 import RefreshIntervalBlock from './RefreshIntervalBlock';
 import RefreshThresholdBlock from './RefreshThresholdBlock';
+import SCurveBlock from './SCurveBlock';
 import SingleColorBlock from './SingleColorBlock';
 import WobbleBlock from './WobbleBlock';
 
@@ -46,7 +46,6 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     [workarea],
   );
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-  const isHexaRf = useMemo(() => workarea === 'fhx2rf', [workarea]);
   const promarkInfo = isPromark ? getPromarkInfo() : null;
   const promarkLimit = useMemo(
     () => (promarkInfo ? getPromarkLimit() : null),
@@ -112,8 +111,8 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       contents.push(<Diode key="diode" />);
     }
 
-    if (isDev() && isHexaRf) {
-      contents.push(<Delay key="delay" type={type} />);
+    if (isDev() && (workarea === 'fhx2rf' || workarea === 'fbb2')) {
+      contents.push(<SCurveBlock key="s-curve-block" type={type} />);
     }
   } else {
     if (module.value === LayerModule.PRINTER_4C) {

@@ -12,7 +12,7 @@ import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import SetupPageLayout from '../Components/SetupPageLayout';
 
-import styles from './index.module.scss';
+import styles from './SelectPromarkLaserSource.module.scss';
 
 export default function ChoosePromarkLaserSource(): React.JSX.Element {
   const { initialize: t } = useI18n();

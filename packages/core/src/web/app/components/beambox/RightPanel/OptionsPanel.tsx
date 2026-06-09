@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { match, P } from 'ts-pattern';
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
@@ -20,6 +21,11 @@ import TextOptions from './OptionsBlocks/TextOptions';
 import VariableTextBlock from './OptionsBlocks/VariableTextBlock';
 import styles from './OptionsPanel.module.scss';
 
+const objectPanelEventEmitter = eventEmitterFactory.createEventEmitter('object-panel');
+
+const getIsFullColor = (elem: null | SVGElement): boolean =>
+  elem ? (getData(getObjectLayer(elem)?.elem, 'fullcolor') ?? false) : false;
+
 interface Props {
   elem: null | SVGElement;
 }
@@ -32,7 +38,19 @@ function OptionsPanel({ elem }: Props): null | React.JSX.Element {
     () => !isMobile && supportVariableBlock && elem?.getAttribute('data-props'),
     [elem, supportVariableBlock, isMobile],
   );
-  const isFullColor = elem ? getData(getObjectLayer(elem)?.elem, 'fullcolor') : false;
+  const [isFullColor, setIsFullColor] = useState(() => getIsFullColor(elem));
+
+  useEffect(() => {
+    const handleUpdateFullColor = () => setIsFullColor(getIsFullColor(elem));
+
+    handleUpdateFullColor();
+    objectPanelEventEmitter.on('UPDATE_FULL_COLOR', handleUpdateFullColor);
+
+    return () => {
+      objectPanelEventEmitter.off('UPDATE_FULL_COLOR', handleUpdateFullColor);
+    };
+  }, [elem]);
+
   const elemTagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
   const showColorPanel = useMemo(() => {
     if (!elem || !CanvasElements.fillableWithContainers.includes(elemTagName!)) {

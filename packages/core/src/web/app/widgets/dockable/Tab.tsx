@@ -11,8 +11,7 @@ import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
-import useSelectedElementStore from '@core/app/stores/selectedElementStore';
-import { isFitText } from '@core/app/svgedit/text/textedit/getters';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import useI18n from '@core/helpers/useI18n';
 
 import { borderSize } from './constants';
@@ -21,13 +20,12 @@ import { addFloatingPanel, removePanel, setMovedPanel } from './utils';
 
 const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
   const lang = useI18n();
-  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
+  const nodeType = useSelectedElementStore((state) => state.nodeType);
   const tabRef = useRef<HTMLDivElement>(null);
   const tempElemRef = useRef<HTMLDivElement>(null);
 
   const [icon, title, tutorialKey] = useMemo(() => {
     const { menu: tMenu, tag_names: tTag } = lang.topbar;
-    let objectTitle = '';
 
     if (panelApi.component === 'rightPanelLayer') {
       return [TabBarIcons.Layers, `${tMenu.tab_layers} (L)`, tutorialConstants.TO_LAYER_PANEL];
@@ -37,30 +35,8 @@ const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
       return [ActionPanelIcons.EditPath, tMenu.tab_path_edit, null];
     }
 
-    if (selectedElement) {
-      if (selectedElement.getAttribute('data-tempgroup') === 'true') {
-        objectTitle = tTag.multi_select;
-      } else if (selectedElement.getAttribute('data-textpath-g')) {
-        objectTitle = tTag.text_path;
-      } else if (isFitText(selectedElement)) {
-        objectTitle = tTag.fit_text;
-      } else if (selectedElement.getAttribute('data-pass-through')) {
-        objectTitle = tTag.pass_through_object;
-      } else if (selectedElement.tagName.toLowerCase() !== 'use') {
-        objectTitle = tTag[selectedElement.tagName.toLowerCase() as keyof typeof tTag];
-      } else if (selectedElement.getAttribute('data-svg') === 'true') {
-        objectTitle = tTag.svg;
-      } else if (selectedElement.getAttribute('data-dxf') === 'true') {
-        objectTitle = tTag.dxf;
-      } else {
-        objectTitle = tTag.use;
-      }
-    } else {
-      objectTitle = tTag.no_selection;
-    }
-
-    return [ObjectPanelIcons.Parameter, `${objectTitle} (O)`, tutorialConstants.TO_OBJECT_PANEL];
-  }, [lang, panelApi.component, selectedElement]);
+    return [ObjectPanelIcons.Parameter, `${tTag[nodeType]} (O)`, tutorialConstants.TO_OBJECT_PANEL];
+  }, [lang, panelApi.component, nodeType]);
 
   const handleDragStart = useCallback(
     (e: DragEvent<HTMLDivElement>) => {

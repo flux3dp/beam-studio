@@ -25,9 +25,8 @@ import { convertSvgToImage } from '@core/helpers/convertToImage';
 import {
   convertSvgToPath,
   convertTempGroupToPath,
-  convertTextOnPathToPath,
   convertTextToPath,
-  convertUseToPath,
+  dispatchConvertToPath,
 } from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -59,23 +58,9 @@ interface ButtonOpts {
   autoClose?: boolean;
   isDisabled?: boolean;
   isFullLine?: boolean;
-  isText?: boolean;
   mobileLabel?: string;
   tooltipIfDisabled?: string;
 }
-
-interface ConvertButtonOptions extends ButtonOpts {
-  converter?: () => Promise<ConvertPathResult | void>;
-}
-
-interface TabButtonOptions extends ButtonOpts {
-  convertToPath: () => ConvertPathResult | Promise<ConvertPathResult>;
-}
-
-type ConvertPathResult = {
-  bbox: DOMRect;
-  command?: ICommand;
-};
 
 interface Section {
   buttons: React.JSX.Element[];
@@ -125,7 +110,15 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       ) : (
         <Tooltip key={label} title={isDisabled ? tooltipIfDisabled : undefined}>
           <div className={classNames(styles['btn-container'], { [styles.half]: !isFullLine })}>
-            <Button block className={styles.btn} disabled={isDisabled} icon={icon} id={id} onClick={onClick}>
+            <Button
+              block
+              className={styles.btn}
+              disabled={isDisabled}
+              icon={icon}
+              id={id}
+              onClick={onClick}
+              title={label}
+            >
               <span className={styles.label}>{label}</span>
             </Button>
           </div>
@@ -156,25 +149,17 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       ...opts,
     });
 
-  const renderConvertToPathButton = (
-    { converter, isText, ...opts }: ConvertButtonOptions = { converter: undefined, isText: false },
-  ): React.JSX.Element =>
+  const renderConvertToPathButton = (opts: ButtonOpts = {}): React.JSX.Element =>
     renderButtons(
       'to_path',
       lang.to_path,
-      () =>
-        match({ converter, isText })
-          .with({ converter: P.nonNullable }, async ({ converter }) => converter())
-          .with({ isText: true }, async () => convertTextToPath(elem, { isToSelect: true }))
-          .otherwise(() => convertSvgToPath(elem, { isToSelect: true })),
+      () => dispatchConvertToPath(elem, { isToSelect: true }),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
     );
 
-  const renderConvertToImageButton = (
-    { isText: _isText = false, ...opts }: ButtonOpts = { isText: false },
-  ): React.JSX.Element =>
+  const renderConvertToImageButton = (opts: ButtonOpts = {}): React.JSX.Element =>
     renderButtons(
       'to_image',
       lang.to_image,
@@ -194,11 +179,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       { isFullLine: true, ...opts },
     );
 
-  const renderTabButton = (
-    { convertToPath, ...options }: TabButtonOptions = {
-      convertToPath: () => convertSvgToPath(elem, { isToSelect: true }),
-    },
-  ): React.JSX.Element => {
+  const renderTabButton = (opts: ButtonOpts = {}): React.JSX.Element => {
     const isFilled = match(elem.getAttribute('fill'))
       // 'none' for SVG elements
       // 'nullish' for use elements
@@ -221,7 +202,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
         // Convert to path if it's not a path
         if (!(elem instanceof SVGPathElement)) {
-          const { bbox: newBbox, command: subCommand } = await convertToPath();
+          const { bbox: newBbox, command: subCommand } = (await dispatchConvertToPath(elem, {
+            addToHistory: false,
+            isToSelect: true,
+          }))!;
 
           bbox = newBbox;
           command = subCommand;
@@ -240,7 +224,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       {
         isDisabled: isFilled || isVariableText,
         isFullLine: true,
-        ...options,
+        ...opts,
         tooltipIfDisabled,
       },
     );
@@ -273,7 +257,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         showCurvePanel,
         <ActionPanelIcons.Grading />,
         <ActionPanelIcons.Brightness />,
-        { autoClose: false, mobileLabel: lang.brightness },
+        { autoClose: false, isFullLine: true, mobileLabel: lang.brightness },
       ),
       imageEditPanel: renderButtons(
         'imageEditPanel',
@@ -408,13 +392,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       },
       {
         buttons: [
-          renderConvertToPathButton({ isDisabled: isVariableText, isFullLine: false, isText: true, tooltipIfDisabled }),
-          renderConvertToImageButton({
-            isDisabled: isVariableText,
-            isFullLine: false,
-            isText: true,
-            tooltipIfDisabled,
-          }),
+          renderConvertToPathButton({ isDisabled: isVariableText, isFullLine: false, tooltipIfDisabled }),
+          renderConvertToImageButton({ isDisabled: isVariableText, isFullLine: false, tooltipIfDisabled }),
         ],
         title: 'CONVERSIONS',
       },
@@ -422,10 +401,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         buttons: [
           renderSmartNestButton(),
           renderAutoFitButton({ isFullLine: false }),
-          renderTabButton({
-            convertToPath: () => convertTextToPath(elem, { addToHistory: false, isToSelect: true }),
-            isFullLine: false,
-          }),
+          renderTabButton({ isFullLine: false }),
         ],
         title: 'OPTIMIZATIONS',
       },
@@ -461,10 +437,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       title: 'ACTIONS',
     },
     {
-      buttons: [
-        renderConvertToPathButton({ converter: () => convertTextOnPathToPath(elem), isFullLine: false }),
-        renderConvertToImageButton({ isFullLine: false, isText: true }),
-      ],
+      buttons: [renderConvertToPathButton({ isFullLine: false }), renderConvertToImageButton({ isFullLine: false })],
       title: 'CONVERSIONS',
     },
     {
@@ -511,10 +484,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         ),
         renderSmartNestButton(),
         renderAutoFitButton({ isFullLine: false }),
-        renderTabButton({
-          convertToPath: () => convertSvgToPath(elem, { isToSelect: true }),
-          isFullLine: false,
-        }),
+        renderTabButton({ isFullLine: false }),
       ],
       title: 'OPTIMIZATIONS',
     },
@@ -533,10 +503,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       buttons: [
         renderSmartNestButton(),
         renderAutoFitButton({ isFullLine: false }),
-        renderTabButton({
-          convertToPath: () => convertSvgToPath(elem, { isToSelect: true }),
-          isFullLine: false,
-        }),
+        renderTabButton({ isFullLine: false }),
       ],
       title: 'OPTIMIZATIONS',
     },
@@ -563,17 +530,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         title: 'ACTIONS',
       },
       {
-        buttons: [renderConvertToImageButton()],
+        buttons: [renderConvertToImageButton({ isDisabled: isVariableText, tooltipIfDisabled })],
         title: 'CONVERSIONS',
       },
       {
         buttons: [
           renderSmartNestButton(),
           renderAutoFitButton({ isFullLine: false }),
-          renderTabButton({
-            convertToPath: () => convertUseToPath({ element: elem, isToSelect: true }),
-            isFullLine: false,
-          }),
+          renderTabButton({ isFullLine: false }),
         ],
         title: 'OPTIMIZATIONS',
       },
@@ -606,24 +570,25 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         (child.nodeName === 'g' && child.getAttribute('data-textpath-g')),
     );
     const actionButtons: React.JSX.Element[] = [renderOffsetButton(), renderArrayButton()];
+    const conversionButtons: React.JSX.Element[] = [];
+    const optimizationButtons: React.JSX.Element[] = [];
 
-    const text = children.find((child) => child.nodeName === 'text') as SVGElement;
-    const pathLike = children.find((child) => CanvasElements.basicPaths.includes(child.nodeName)) as SVGElement;
-
-    const textCount = children.filter((child) => child.nodeName === 'text').length;
+    const texts = children.filter((child) => child.nodeName === 'text');
+    const textCount = texts.length;
     const pathLikeCount = children.filter((child) => CanvasElements.basicPaths.includes(child.nodeName)).length;
 
-    if (textCount >= 1 && pathLikeCount >= 1 && text && pathLike) {
-      const isVariableText = getVariableTextType(text) !== VariableTextType.NONE;
+    if (textCount >= 1 && pathLikeCount >= 1) {
+      const isVariableText = texts.some((text) => getVariableTextType(text) !== VariableTextType.NONE);
 
       actionButtons.push(
         renderButtons(
           'create_textpath',
           lang.create_textpath,
           () => {
+            // Note: ungroupTempGroup returns elements in reverse order
             const elements = selectionManager.ungroupTempGroup(elem);
-            const textElements = elements.filter((el) => el.nodeName === 'text');
-            const pathLikeElements = elements.filter((el) => CanvasElements.basicPaths.includes(el.nodeName));
+            const textElements = elements.filter((el) => el.nodeName === 'text').reverse();
+            const pathLikeElements = elements.filter((el) => CanvasElements.basicPaths.includes(el.nodeName)).reverse();
             const pairCount = Math.min(textElements.length, pathLikeElements.length);
             const batchCommand = new BatchCommand('Create Text on Path');
             const resultGroups: SVGElement[] = [];
@@ -663,14 +628,16 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     if (isAllConvertible) {
       const hasVariableText = children.some((child) => getVariableTextType(child) !== VariableTextType.NONE);
 
-      actionButtons.push(
+      conversionButtons.push(
         renderConvertToPathButton({
-          converter: () => convertTempGroupToPath({ element: elem, isToSelect: true }),
           isDisabled: hasVariableText,
-          isFullLine: true,
+          isFullLine: false,
           tooltipIfDisabled: lang.disabled_by_variable_text,
         }),
+        renderConvertToImageButton({ isFullLine: false }),
       );
+    } else {
+      conversionButtons.push(renderConvertToImageButton());
     }
 
     if (onlyTexts) {
@@ -685,7 +652,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           <ActionPanelIcons.WeldText />,
           {
             isDisabled: hasVariableText,
-            isFullLine: false,
+            isFullLine: true,
             tooltipIfDisabled: lang.disabled_by_variable_text,
           },
         ),
@@ -693,7 +660,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     }
 
     if (onlyPaths) {
-      actionButtons.push(
+      optimizationButtons.push(
         renderButtons(
           'simplify',
           lang.simplify,
@@ -707,8 +674,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     return [
       { buttons: actionButtons, title: 'ACTIONS' },
-      { buttons: [renderConvertToImageButton()], title: 'CONVERSIONS' },
-      { buttons: [renderSmartNestButton(), renderAutoFitButton()], title: 'OPTIMIZATIONS' },
+      { buttons: conversionButtons, title: 'CONVERSIONS' },
+      { buttons: [...optimizationButtons, renderSmartNestButton(), renderAutoFitButton()], title: 'OPTIMIZATIONS' },
     ];
   };
 
