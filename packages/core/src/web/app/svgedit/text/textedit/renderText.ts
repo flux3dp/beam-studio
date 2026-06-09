@@ -20,8 +20,6 @@ import {
   isFitText,
 } from './getters';
 
-const { svgedit } = window;
-
 const toSentenceCase = (s: string): string =>
   s.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g, (_, sep, c) => sep + c.toUpperCase());
 
@@ -32,11 +30,11 @@ const toggleCase = (s: string): string =>
 
 // Fullwidth ASCII (U+FF01-U+FF5E) → halfwidth ASCII; fullwidth space → halfwidth space.
 const toHalfwidth = (s: string): string =>
-  s.replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/　/g, ' ');
+  s.replace(/[\uff01-\uff5e]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\u3000/g, ' ');
 
 // Halfwidth ASCII (! through ~) → fullwidth; halfwidth space → fullwidth.
 const toFullwidth = (s: string): string =>
-  s.replace(/[!-~]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0xfee0)).replace(/ /g, '　');
+  s.replace(/[!-~]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0xfee0)).replace(/ /g, '\u3000');
 
 export const applyTextTransform = (s: string, mode: TextTransform): string => {
   switch (mode) {
@@ -56,16 +54,8 @@ export const applyTextTransform = (s: string, mode: TextTransform): string => {
       return toFullwidth(s);
     default:
       return s;
-const renderTextPath = (text: SVGTextElement, val?: string) => {
-  if (typeof val === 'string') {
-    const textPath = text.querySelector('textPath');
-
-    if (textPath) {
-      textPath.textContent = val;
-    }
   }
 };
-
 
 const renderTextPath = (text: SVGTextElement, val: string) => {
   const textPath = text.querySelector('textPath');
