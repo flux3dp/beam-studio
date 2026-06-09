@@ -6,69 +6,70 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 
 import { getBBox } from '../../utils/getBBox';
 
+import type { TextTransform } from './getters';
 import {
-  applyTextTransform,
   getFitTextAlign,
   getFitTextSize,
   getFontSize,
   getIsVertical,
   getLetterSpacing,
   getLineSpacing,
-  getRawText,
+  getTextContent,
   getTextTransform,
   isFitText,
 } from './getters';
 
 const { svgedit } = window;
 
-const renderTextPath = (text: SVGTextElement, val?: string) => {
-  const transform = getTextTransform(text);
-  const textPath = text.querySelector('textPath');
+const toSentenceCase = (s: string): string =>
+  s.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g, (_, sep, c) => sep + c.toUpperCase());
 
-  if (!textPath) return;
+const toTitleCase = (s: string): string => s.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase());
 
-  if (typeof val === 'string') {
-    // val is the raw editable text; canvas shows the transformed version.
-    if (transform !== 'none' || text.hasAttribute('data-raw-text')) {
-      text.setAttribute('data-raw-text', val);
-    }
+const toggleCase = (s: string): string =>
+  s.replace(/[a-zA-Z]/g, (c) => (c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()));
 
-    textPath.textContent = applyTextTransform(val, transform);
+// Fullwidth ASCII (U+FF01-U+FF5E) → halfwidth ASCII; fullwidth space → halfwidth space.
+const toHalfwidth = (s: string): string =>
+  s.replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/　/g, ' ');
 
-    return;
-  }
+// Halfwidth ASCII (! through ~) → fullwidth; halfwidth space → fullwidth.
+const toFullwidth = (s: string): string =>
+  s.replace(/[!-~]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0xfee0)).replace(/ /g, '　');
 
-  const rawText = getRawText(text);
-
-  if (rawText) {
-    textPath.textContent = applyTextTransform(rawText, transform);
-  } else if (transform !== 'none') {
-    // No raw stored — read current and apply
-    textPath.textContent = applyTextTransform(textPath.textContent ?? '', transform);
+export const applyTextTransform = (s: string, mode: TextTransform): string => {
+  switch (mode) {
+    case 'uppercase':
+      return s.toUpperCase();
+    case 'lowercase':
+      return s.toLowerCase();
+    case 'sentence':
+      return toSentenceCase(s);
+    case 'title':
+      return toTitleCase(s);
+    case 'toggle':
+      return toggleCase(s);
+    case 'halfwidth':
+      return toHalfwidth(s);
+    case 'fullwidth':
+      return toFullwidth(s);
+    default:
+      return s;
   }
 };
 
-const renderTspan = (text: SVGTextElement, val?: string) => {
+
+const renderTextPath = (text: SVGTextElement, val: string) => {
+  const textPath = text.querySelector('textPath');
+
+  if (textPath) textPath.textContent = val;
+};
+
+const renderTspan = (text: SVGTextElement, val: string) => {
   const tspans = (Array.from(text.childNodes) as Element[]).filter(
     (child) => child.tagName === 'tspan',
   ) as SVGTextContentElement[];
-  const transform = getTextTransform(text);
-
-  if (typeof val === 'string') {
-    // val is the raw editable text; tspan shows the transformed version.
-    if (transform !== 'none' || text.hasAttribute('data-raw-text')) {
-      text.setAttribute('data-raw-text', val);
-    }
-  }
-
-  const rawText = getRawText(text);
-  const sourceLines =
-    typeof val === 'string'
-      ? val.split('\u0085')
-      : rawText
-        ? rawText.split('\u0085')
-        : tspans.map((tspan) => tspan.textContent ?? '');
-  const lines = sourceLines.map((line) => applyTextTransform(line, transform));
+  const lines = val.split('\u0085');
   const isVertical = getIsVertical(text);
   const lineSpacing = getLineSpacing(text);
   const charHeight = getFontSize(text);
@@ -125,55 +126,18 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
  * When val is provided, split by \u0085 separator.
  * When val is not provided, read from DOM and group consecutive wrapped tspans.
  */
-const getManualLines = (
-  val: string | undefined,
-  tspans: SVGTextContentElement[],
-  rawText?: null | string,
-): string[] => {
-  if (typeof val === 'string') return val.split('\u0085');
-
-  if (rawText) return rawText.split('\u0085');
-
-  if (tspans.length === 0) return [''];
-
-  const lines: string[] = [];
-  let current = '';
-
-  for (const tspan of tspans) {
-    if (tspan.getAttribute('data-wrapped')) {
-      current += tspan.textContent ?? '';
-    } else {
-      if (lines.length > 0 || current) {
-        lines.push(current);
-      }
-
-      current = tspan.textContent ?? '';
-    }
-  }
-  lines.push(current);
-
-  return lines;
-};
+const getManualLines = (val: string): string[] => val.split('\u0085');
 
 /**
  * Render fitText tspan elements with character-boundary auto-wrap.
  * Font size stays fixed; text wraps when it exceeds the box width.
  * Continuation tspans are marked with data-wrapped="1".
  */
-const renderFitTextTspan = (text: SVGTextElement, val?: string) => {
+const renderFitTextTspan = (text: SVGTextElement, val: string) => {
   const existingTspans = (Array.from(text.childNodes) as Element[]).filter(
     (child) => child.tagName === 'tspan',
   ) as SVGTextContentElement[];
-  const transform = getTextTransform(text);
-
-  if (typeof val === 'string') {
-    if (transform !== 'none' || text.hasAttribute('data-raw-text')) {
-      text.setAttribute('data-raw-text', val);
-    }
-  }
-
-  const sourceLines = getManualLines(val, existingTspans, getRawText(text));
-  const lines = transform === 'none' ? sourceLines : sourceLines.map((line) => applyTextTransform(line, transform));
+  const lines = getManualLines(val);
   const isVertical = getIsVertical(text);
   const lineSpacing = getLineSpacing(text);
   const charHeight = getFontSize(text);
@@ -384,23 +348,29 @@ export const renderText = (elem: SVGGElement | SVGTextElement, val?: string, sho
     return;
   }
 
-  let textElem = elem;
+  let textElem: null | SVGTextElement = elem as SVGTextElement;
   const isFitTextElem = isFitText(elem);
 
   if (elem.getAttribute('data-textpath-g')) {
-    const text = elem.querySelector('text');
+    textElem = elem.querySelector('text');
+  }
 
-    if (text) {
-      renderTextPath(text, val);
-      textElem = text;
-    }
-  } else if (elem.getAttribute('data-textpath')) {
-    renderTextPath(elem as SVGTextElement, val);
+  if (!textElem) return;
+
+  // Resolve the raw source text once, then apply the active text-transform.
+  // Sub-renderers receive the final display string and only handle layout/positioning.
+  let rawVal = val ?? getTextContent(textElem).replace(/\n/g, '\u0085');
+
+  textElem.setAttribute('data-raw-text', rawVal);
+
+  const displayVal = applyTextTransform(rawVal, getTextTransform(textElem));
+
+  if (textElem.getAttribute('data-textpath')) {
+    renderTextPath(textElem, displayVal);
   } else if (isFitTextElem) {
-    renderFitTextTspan(elem as SVGTextElement, val);
+    renderFitTextTspan(textElem, displayVal);
   } else {
-    // render multiLine Text
-    renderTspan(elem as SVGTextElement, val);
+    renderTspan(textElem, displayVal);
   }
 
   svgedit.recalculate.recalculateDimensions(textElem);

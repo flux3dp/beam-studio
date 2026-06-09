@@ -922,6 +922,7 @@ const lang: ILang = {
           text_content_placeholder: '輸入文字',
           text_infill: '文字填充',
           text_transform: '大小寫',
+          text_transform_none: '原樣',
           text_transform_fullwidth: '全形',
           text_transform_halfwidth: '半形',
           text_transform_lowercase: '小寫',

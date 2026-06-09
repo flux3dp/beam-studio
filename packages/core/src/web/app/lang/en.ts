@@ -922,6 +922,7 @@ const lang: ILang = {
           text_content_placeholder: 'Input text',
           text_infill: 'Text Infill',
           text_transform: 'Change Case',
+          text_transform_none: 'Original',
           text_transform_fullwidth: 'Fullwidth',
           text_transform_halfwidth: 'Halfwidth',
           text_transform_lowercase: 'Lowercase',

@@ -182,6 +182,8 @@ jest.mock('@core/helpers/api/flux-id', () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
 
+jest.mock('./components/TextTransformBlock', () => () => <div data-testid="text-transform-block-mock" />);
+
 const mockProgressCaller = {
   openNonstopProgress: (...args: any[]) => mockOpenNonstopProgress(...args),
   popById: (...args: any[]) => mockPopById(...args),

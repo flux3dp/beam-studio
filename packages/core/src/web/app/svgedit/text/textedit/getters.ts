@@ -103,42 +103,6 @@ export const getTextTransform = (elem: SVGTextElement): TextTransform => {
   return val && TRANSFORM_VALUES.has(val as TextTransform) ? (val as TextTransform) : 'none';
 };
 
-const toSentenceCase = (s: string): string =>
-  s.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g, (_, sep, c) => sep + c.toUpperCase());
-
-const toTitleCase = (s: string): string => s.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase());
-
-const toggleCase = (s: string): string =>
-  s.replace(/[a-zA-Z]/g, (c) => (c === c.toUpperCase() ? c.toLowerCase() : c.toUpperCase()));
-
-// Fullwidth ASCII (U+FF01-U+FF5E) → halfwidth ASCII; fullwidth space → halfwidth space.
-const toHalfwidth = (s: string): string =>
-  s.replace(/[！-～]/g, (c) => String.fromCharCode(c.charCodeAt(0) - 0xfee0)).replace(/\u3000/g, ' ');
-
-// Halfwidth ASCII (! through ~) → fullwidth; halfwidth space → fullwidth.
-const toFullwidth = (s: string): string =>
-  s.replace(/[!-~]/g, (c) => String.fromCharCode(c.charCodeAt(0) + 0xfee0)).replace(/ /g, '　');
-
-export const applyTextTransform = (s: string, mode: TextTransform): string => {
-  switch (mode) {
-    case 'uppercase':
-      return s.toUpperCase();
-    case 'lowercase':
-      return s.toLowerCase();
-    case 'sentence':
-      return toSentenceCase(s);
-    case 'title':
-      return toTitleCase(s);
-    case 'toggle':
-      return toggleCase(s);
-    case 'halfwidth':
-      return toHalfwidth(s);
-    case 'fullwidth':
-      return toFullwidth(s);
-    default:
-      return s;
-  }
-};
 
 export const getTextContent = (elem: SVGTextElement): string => {
   // Raw text (when transform is or has been active) is the editable source — return it

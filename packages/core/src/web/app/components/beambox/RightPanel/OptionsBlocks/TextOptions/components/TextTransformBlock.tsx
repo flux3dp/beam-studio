@@ -12,7 +12,8 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './TextTransformBlock.module.scss';
 
-const MODES: Array<Exclude<TextTransform, 'none'>> = [
+const MODES: TextTransform[] = [
+  'none',
   'sentence',
   'lowercase',
   'uppercase',
@@ -65,7 +66,7 @@ const TextTransformBlock = ({ onSizeChange, textElements }: Props): React.ReactN
       fullwidth: t.text_transform_fullwidth,
       halfwidth: t.text_transform_halfwidth,
       lowercase: t.text_transform_lowercase,
-      none: '',
+      none: t.text_transform_none,
       sentence: t.text_transform_sentence,
       title: t.text_transform_title,
       toggle: t.text_transform_toggle,
@@ -99,7 +100,7 @@ const TextTransformBlock = ({ onSizeChange, textElements }: Props): React.ReactN
     );
   }
 
-  const displayValue = state.hasMultiValue ? '-' : state.value === 'none' ? undefined : state.value;
+  const displayValue = state.hasMultiValue ? '-' : state.value;
 
   return (
     <ConfigProvider theme={selectTheme}>

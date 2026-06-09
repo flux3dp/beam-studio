@@ -925,6 +925,7 @@ export interface ILang {
           text_transform_fullwidth: string;
           text_transform_halfwidth: string;
           text_transform_lowercase: string;
+          text_transform_none: string;
           text_transform_sentence: string;
           text_transform_title: string;
           text_transform_toggle: string;
