@@ -2,6 +2,7 @@ import React, { memo } from 'react';
 
 import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
+import { useShallow } from 'zustand/shallow';
 
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
@@ -10,7 +11,7 @@ import { iconButtonTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useIsMobile } from '@core/app/stores/screenStore';
-import useSelectedElementStore from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -41,6 +42,9 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const tObjectPanel = lang.beambox.right_panel.object_panel;
   const isMobile = useIsMobile();
   const elem = useSelectedElementStore((state) => state.selectedElement);
+  const groupAvailability = useSelectedElementStore(
+    useShallow((state) => ({ group: state.canGroup, ungroup: state.canUngroup })),
+  );
   const getAvailableFunctions = () => {
     if (!elem) {
       return {};
@@ -57,17 +61,14 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
 
       return true;
     };
-    const isSingleGroup = elems?.length === 1 && elems[0].tagName.toLowerCase() === 'g';
     const canDoBoolean = elems?.every(allowBooleanOperations);
 
     return {
       boolean: elems?.length > 1 && canDoBoolean,
       difference: elems?.length > 1 && canDoBoolean,
       dist: elems?.length > 2,
-      group: !isSingleGroup || elems?.length > 1,
       intersect: elems?.length > 1 && canDoBoolean,
       subtract: elems?.length === 2 && canDoBoolean,
-      ungroup: isSingleGroup && !elem.getAttribute('data-textpath-g') && !elem.getAttribute('data-pass-through'),
       union: elems?.length > 1 && canDoBoolean,
     };
   };
@@ -116,14 +117,14 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
         <ObjectPanelItem.Divider />
         <ObjectPanelItem.Item
           content={<ObjectPanelIcons.Group />}
-          disabled={!buttonAvailability.group}
+          disabled={!groupAvailability.group}
           id="group"
           label={tObjectPanel.group}
           onClick={() => svgCanvas.groupSelectedElements()}
         />
         <ObjectPanelItem.Item
           content={<ObjectPanelIcons.Ungroup />}
-          disabled={!buttonAvailability.ungroup}
+          disabled={!groupAvailability.ungroup}
           id="ungroup"
           label={tObjectPanel.ungroup}
           onClick={() => svgCanvas.ungroupSelectedElement()}
@@ -254,14 +255,14 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
               {renderToolBtn(
                 tObjectPanel.group,
                 <ObjectPanelIcons.Group />,
-                !buttonAvailability.group,
+                !groupAvailability.group,
                 () => svgCanvas.groupSelectedElements(),
                 'group',
               )}
               {renderToolBtn(
                 tObjectPanel.ungroup,
                 <ObjectPanelIcons.Ungroup />,
-                !buttonAvailability.ungroup,
+                !groupAvailability.ungroup,
                 () => svgCanvas.ungroupSelectedElement(),
                 'ungroup',
               )}

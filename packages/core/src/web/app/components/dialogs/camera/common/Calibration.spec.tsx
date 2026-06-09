@@ -142,7 +142,7 @@ describe('test Calibration', () => {
     expect(mockOnNext).toHaveBeenCalled();
     expect(mockHandleTakePicture).not.toHaveBeenCalled();
     expect(mockPopUpError).not.toHaveBeenCalled();
-    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(2);
     expect(mockPopById).toHaveBeenCalledWith('calibrate-chessboard');
   });
 
@@ -182,7 +182,7 @@ describe('test Calibration', () => {
     expect(mockOnNext).toHaveBeenCalled();
     expect(mockHandleTakePicture).not.toHaveBeenCalled();
     expect(mockPopUpError).not.toHaveBeenCalled();
-    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(2);
     expect(mockPopById).toHaveBeenCalledWith('calibrate-chessboard');
   });
 
@@ -213,7 +213,7 @@ describe('test Calibration', () => {
     expect(mockHandleCalibrationResult).toHaveBeenLastCalledWith(5);
     expect(mockUpdateParam).not.toHaveBeenCalled();
     expect(mockOnNext).not.toHaveBeenCalled();
-    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(2);
     expect(mockPopById).toHaveBeenCalledWith('calibrate-chessboard');
   });
 
@@ -250,7 +250,7 @@ describe('test Calibration', () => {
       id: 'calibrate-chessboard',
       message: tCali.calibrating,
     });
-    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(2);
     expect(mockPopById).toHaveBeenCalledWith('calibrate-chessboard');
     expect(mockUpdateParam).not.toHaveBeenCalled();
     expect(mockOnNext).not.toHaveBeenCalled();

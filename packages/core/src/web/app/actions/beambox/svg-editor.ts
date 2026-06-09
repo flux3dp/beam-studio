@@ -342,18 +342,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           ObjectPanelController.updatePolygonSides(sides);
         }
 
-        if (selectionManager.isMultiSelecting) {
-          workareaEvents.emit('update-context-menu', {
-            group: true,
-            ungroup: false,
-          });
-        } else {
-          workareaEvents.emit('update-context-menu', {
-            group: false,
-            ungroup: tagName === 'g' && !elem?.getAttribute('data-pass-through'),
-          });
-        }
-
         const isRatioFixed = elem.getAttribute('data-ratiofixed') === 'true';
 
         ObjectPanelController.updateDimensionValues({ isRatioFixed });

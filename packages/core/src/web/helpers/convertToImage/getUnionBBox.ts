@@ -1,3 +1,5 @@
+import { getUseBBoxByDataXform } from '@core/app/svgedit/utils/getBBox';
+
 import type { BBox } from './types';
 
 /**
@@ -66,13 +68,7 @@ export const getUnionBBox = (elements: SVGElement[]): BBox | null => {
       if (element.tagName === 'g') {
         untransformedBBox = getUnionBBox(Array.from(element.children) as SVGElement[]);
       } else if (element.tagName === 'use') {
-        const dataXform = element.getAttribute('data-xform');
-        const [formX = 0, formY = 0, width = 0, height = 0] =
-          dataXform?.split(' ').map((v) => Number.parseFloat(v.split('=')[1])) || [];
-        const x = Number.parseFloat(element.getAttribute('x') || '0') + formX;
-        const y = Number.parseFloat(element.getAttribute('y') || '0') + formY;
-
-        untransformedBBox = { height, width, x, y };
+        untransformedBBox = getUseBBoxByDataXform(element as SVGUseElement);
       } else if (element.tagName === 'image') {
         untransformedBBox = {
           height: Number.parseFloat(element.getAttribute('height') || '0'),

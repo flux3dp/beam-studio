@@ -11,6 +11,7 @@ export interface UnitInputProps extends InputNumberProps<number> {
   clipValue?: boolean;
   containerClassName?: string;
   displayMultiValue?: boolean;
+  /** Note: be careful with history cmd when fireOnChange is true */
   fireOnChange?: boolean;
   isInch?: boolean;
   theme?: ThemeConfig;

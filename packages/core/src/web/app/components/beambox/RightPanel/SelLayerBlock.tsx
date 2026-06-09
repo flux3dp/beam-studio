@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import React, { memo, useEffect, useState } from 'react';
 
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import useSelectedElementStore from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';

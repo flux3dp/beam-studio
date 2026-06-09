@@ -23,8 +23,6 @@ type LaserConfig = {
   accY: number;
   /** 0-100, percentage */
   airAssist: number;
-  /** μs ,delay to emit laser */
-  delay: number;
   diode: number;
   dpi: EngraveDpiOption;
   focus: number;
@@ -43,6 +41,13 @@ type LaserConfig = {
 
 type CurveEngravingConfig = {
   ceZHighSpeed: boolean;
+};
+
+type SCurveConfigs = {
+  scA0: number;
+  scAMax: number;
+  scEnable: boolean;
+  scJerk: number;
 };
 
 type PrintingConfig = {
@@ -114,6 +119,7 @@ export type ConfigKeyTypeMap = CommonConfig &
   MetaConfig &
   PrintingConfig &
   PromarkConfig &
+  SCurveConfigs &
   UVConfig;
 
 export type ConfigKey = keyof ConfigKeyTypeMap;

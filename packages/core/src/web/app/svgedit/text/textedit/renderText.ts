@@ -4,6 +4,7 @@ import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 
+import { recalculateDimensions } from '../../transform/recalculate';
 import { getBBox } from '../../utils/getBBox';
 
 import type { TextTransform } from './getters';
@@ -55,6 +56,13 @@ export const applyTextTransform = (s: string, mode: TextTransform): string => {
       return toFullwidth(s);
     default:
       return s;
+const renderTextPath = (text: SVGTextElement, val?: string) => {
+  if (typeof val === 'string') {
+    const textPath = text.querySelector('textPath');
+
+    if (textPath) {
+      textPath.textContent = val;
+    }
   }
 };
 
@@ -373,7 +381,7 @@ export const renderText = (elem: SVGGElement | SVGTextElement, val?: string, sho
     renderTspan(textElem, displayVal);
   }
 
-  svgedit.recalculate.recalculateDimensions(textElem);
+  recalculateDimensions(textElem);
 
   const selectorManager = selector.getSelectorManager();
 

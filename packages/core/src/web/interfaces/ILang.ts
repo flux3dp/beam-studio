@@ -1190,6 +1190,7 @@ export interface ILang {
     put_paper_bm2_2: string;
     put_paper_bm2_3: string;
     put_paper_bm2_4: string;
+    put_paper_promark: string;
     put_paper_promark_1: string;
     put_paper_promark_2: string;
     put_paper_skip: string;
@@ -1268,6 +1269,13 @@ export interface ILang {
     fixed: string;
     help_center_url: string;
     see_older_version: string;
+  };
+  cloud_sync: {
+    import_config: string;
+    import_failed: string;
+    sync_config: string;
+    sync_failed: string;
+    sync_success: string;
   };
   code_generator: {
     barcode: string;
@@ -1570,7 +1578,6 @@ export interface ILang {
       what_if_2: string;
       what_if_2_content: string;
     };
-
     connecting: string;
     connection_types: {
       ether2ether: string;
@@ -1587,6 +1594,7 @@ export interface ILang {
       qc_instructions: string;
       select_laser_source: string;
       select_workarea: string;
+      setting_completed_ask_camera_calibration: string;
       settings: string;
     };
     retry: string;

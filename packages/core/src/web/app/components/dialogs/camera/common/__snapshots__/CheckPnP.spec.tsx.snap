@@ -86,7 +86,9 @@ exports[`test CheckPnP should render correctly 1`] = `
                     <div
                       class="ant-col ant-col-24 desc css-dev-only-do-not-override-hash"
                     >
-                      Make sure the red markers align with the engraving spots; if not, click “Back” to adjust.
+                      Make sure the red markers align with the engraving spots
+If not, click “Back” to adjust.
+If everything is good, well done! 🎉
                     </div>
                     <div
                       class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
@@ -253,7 +255,9 @@ exports[`test CheckPnP should render correctly 2`] = `
                     <div
                       class="ant-col ant-col-24 desc css-dev-only-do-not-override-hash"
                     >
-                      Make sure the red markers align with the engraving spots; if not, click “Back” to adjust.
+                      Make sure the red markers align with the engraving spots
+If not, click “Back” to adjust.
+If everything is good, well done! 🎉
                     </div>
                     <div
                       class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
