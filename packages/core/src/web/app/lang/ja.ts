@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'バレンタインデー',
       weather: '天気',
       Xmas: 'クリスマス',
+      zodiac: '星座',
     },
     image_trace_panel: {
       back: '戻る',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'サーフボード型',
       tag: 'タグ型',
       text: 'テキスト',
+      zodiac: '星座',
     },
   },
   layer_module: {

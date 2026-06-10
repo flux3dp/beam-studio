@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Valentines',
       weather: 'Weather',
       Xmas: 'Christmas',
+      zodiac: 'Zodiac',
     },
     image_trace_panel: {
       back: 'Back',
@@ -1678,6 +1679,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
       surfing_board: 'Surfing Board Style',
       tag: 'Tag Style',
       text: 'Text',
+      zodiac: 'Zodiac',
     },
   },
   layer_module: {

@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Valentine',
       weather: 'Cuaca',
       Xmas: 'Natal',
+      zodiac: 'Zodiak',
     },
     image_trace_panel: {
       back: 'Kembali',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Gaya Papan Selancar',
       tag: 'Gaya Label',
       text: 'Teks',
+      zodiac: 'Zodiak',
     },
   },
   layer_module: {

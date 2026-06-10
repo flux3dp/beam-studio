@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Valentinsdag',
       weather: 'Vær',
       Xmas: 'Jul',
+      zodiac: 'Stjernetegn',
     },
     image_trace_panel: {
       back: 'Tilbake',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Surfebrettstil',
       tag: 'Merkelappstil',
       text: 'Tekst',
+      zodiac: 'Stjernetegn',
     },
   },
   layer_module: {

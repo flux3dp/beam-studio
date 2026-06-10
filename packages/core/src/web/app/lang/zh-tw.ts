@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: '情人節',
       weather: '天氣',
       Xmas: '聖誕節',
+      zodiac: '星座',
     },
     image_trace_panel: {
       back: '上一步',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: '衝浪板造型',
       tag: '標籤造型',
       text: '文字',
+      zodiac: '星座',
     },
   },
   layer_module: {

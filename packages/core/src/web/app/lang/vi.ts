@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Lễ Tình Nhân',
       weather: 'Thời tiết',
       Xmas: 'Giáng sinh',
+      zodiac: 'Cung hoàng đạo',
     },
     image_trace_panel: {
       back: 'Quay lại',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Kiểu ván lướt sóng',
       tag: 'Kiểu thẻ treo',
       text: 'Văn bản',
+      zodiac: 'Cung hoàng đạo',
     },
   },
   layer_module: {

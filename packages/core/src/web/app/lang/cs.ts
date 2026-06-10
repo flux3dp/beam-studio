@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Valentýn',
       weather: 'Počasí',
       Xmas: 'Vánoce',
+      zodiac: 'Zvěrokruh',
     },
     image_trace_panel: {
       back: 'Zpět',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Styl surfového prkna',
       tag: 'Styl štítku',
       text: 'Text',
+      zodiac: 'Zvěrokruh',
     },
   },
   layer_module: {

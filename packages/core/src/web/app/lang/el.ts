@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Αγίου Βαλεντίνου',
       weather: 'Καιρός',
       Xmas: 'Χριστούγεννα',
+      zodiac: 'Ζώδια',
     },
     image_trace_panel: {
       back: 'Πίσω',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Στυλ σανίδας σερφ',
       tag: 'Στυλ ετικέτας',
       text: 'Κείμενο',
+      zodiac: 'Ζώδια',
     },
   },
   layer_module: {

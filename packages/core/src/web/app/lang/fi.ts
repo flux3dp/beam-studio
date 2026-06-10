@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Ystävänpäivä',
       weather: 'Sää',
       Xmas: 'Joulu',
+      zodiac: 'Horoskooppi',
     },
     image_trace_panel: {
       back: 'Takaisin',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Surffalauta-tyyli',
       tag: 'Tunniste-tyyli',
       text: 'Teksti',
+      zodiac: 'Horoskooppi',
     },
   },
   layer_module: {

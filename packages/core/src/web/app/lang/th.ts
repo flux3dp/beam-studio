@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'วาเลนไทน์',
       weather: 'สภาพอากาศ',
       Xmas: 'คริสต์มาส',
+      zodiac: 'ราศี',
     },
     image_trace_panel: {
       back: 'กลับ',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'สไตล์กระดานโต้คลื่น',
       tag: 'สไตล์ป้ายแท็ก',
       text: 'ข้อความ',
+      zodiac: 'ราศี',
     },
   },
   layer_module: {

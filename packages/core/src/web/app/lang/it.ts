@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'San Valentino',
       weather: 'Meteo',
       Xmas: 'Natale',
+      zodiac: 'Zodiaco',
     },
     image_trace_panel: {
       back: 'Indietro',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Stile tavola da surf',
       tag: 'Stile etichetta',
       text: 'Testo',
+      zodiac: 'Zodiaco',
     },
   },
   layer_module: {

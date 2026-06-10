@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Sant Valentí',
       weather: 'Meteorologia',
       Xmas: 'Nadal',
+      zodiac: 'Zodíac',
     },
     image_trace_panel: {
       back: 'Enrere',
@@ -1678,6 +1679,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
       surfing_board: 'Estil taula de surf',
       tag: 'Estil etiqueta',
       text: 'Text',
+      zodiac: 'Zodíac',
     },
   },
   layer_module: {

@@ -1,7 +1,7 @@
 import type { KeyChainCategory } from '../../types';
 
 import { animal } from './animal';
-import { iconTextLeft, text } from './customShapes';
+import { iconTextLeft, text, zodiacText } from './customShapes';
 import { dialogBox } from './dialogBox';
 import { geometry } from './geometry';
 import { pet } from './pet';
@@ -24,6 +24,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
   geometry,
   plant,
   animal,
+  zodiacText,
   text,
   iconTextLeft,
 ];

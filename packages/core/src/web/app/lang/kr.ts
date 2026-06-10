@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: '발렌타인 데이',
       weather: '날씨',
       Xmas: '크리스마스',
+      zodiac: '별자리',
     },
     image_trace_panel: {
       back: '뒤로',
@@ -1678,6 +1679,7 @@ const lang: ILang = {
       surfing_board: '서핑보드 스타일',
       tag: '태그 스타일',
       text: '텍스트',
+      zodiac: '별자리',
     },
   },
   layer_module: {
