@@ -109,16 +109,16 @@ describe('verify undo/redo behaviors', () => {
 
   it('text with infill', () => {
     drawText();
-    cy.get('#infill').invoke('attr', 'class').should('contain', 'filled');
-    cy.get('#infill').click();
-    cy.get('#infill').invoke('attr', 'class').should('not.contain', 'filled');
+    cy.assertInfilled(true);
+    cy.setInfill(false);
+    cy.assertInfilled(false);
     undoBtn().click();
     cy.get('#svg_1').click({ force: true });
     cy.get('#svg_1').should('not.have.attr', 'fill', 'none');
-    cy.get('#infill').invoke('attr', 'class').should('contain', 'filled');
+    cy.assertInfilled(true);
     redoBtn().click();
     cy.get('#svg_1').click({ force: true });
     cy.get('#svg_1').should('have.attr', 'fill', 'none');
-    cy.get('#infill').invoke('attr', 'class').should('not.contain', 'filled');
+    cy.assertInfilled(false);
   });
 });

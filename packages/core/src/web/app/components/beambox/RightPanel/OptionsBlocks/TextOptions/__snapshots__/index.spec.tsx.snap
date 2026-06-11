@@ -6,49 +6,36 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
     class="panel"
   >
     <div
-      class="font-family"
+      class="labeled-row"
     >
-      mock-select title:
-      Font
-       value:
-      Arial
-      <select>
-        <option>
-          Recently Used
-        </option>
-        <option />
-      </select>
+      <span
+        class="prefix-label"
+      >
+        Aa
+      </span>
+      <div
+        class="font-family"
+      >
+        mock-select title:
+        Font
+         value:
+        Arial
+        <select>
+          <option>
+            Recently Used
+          </option>
+          <option />
+        </select>
+      </div>
     </div>
     <div
-      class="row"
+      class="labeled-row"
     >
-      <div
-        class="container"
-        title="Size"
+      <span
+        class="prefix-label bold"
       >
-        <div
-          class="input"
-        >
-          UnitInput: 
-          font_size
-          <p>
-            precision: 
-            0
-          </p>
-          <p>
-            underline
-          </p>
-          <p>
-            unit: 
-            px
-          </p>
-          <input
-            id="font_size"
-            min="1"
-            value="200"
-          />
-        </div>
-      </div>
+        B
+      </span>
       <div
         class="font-style"
       >
@@ -128,6 +115,33 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
           />
         </div>
       </div>
+      <div
+        class="container"
+        title="Size"
+      >
+        <div
+          class="input"
+        >
+          UnitInput: 
+          font_size
+          <p>
+            precision: 
+            0
+          </p>
+          <p>
+            underline
+          </p>
+          <p>
+            unit: 
+            px
+          </p>
+          <input
+            id="font_size"
+            min="1"
+            value="200"
+          />
+        </div>
+      </div>
       <button
         class="vertical-text"
         icon="[object Object]"
@@ -135,12 +149,6 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
         title="Vertical text"
         type="text"
       />
-      <div>
-        mock-infill-block elems:
-        1
-         label:
-         id:
-      </div>
     </div>
   </div>
 </div>
@@ -156,49 +164,36 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
       TEXT
     </div>
     <div
-      class="font-family"
+      class="labeled-row"
     >
-      mock-select title:
-      Font
-       value:
-      Arial
-      <select>
-        <option>
-          Recently Used
-        </option>
-        <option />
-      </select>
+      <span
+        class="prefix-label"
+      >
+        Aa
+      </span>
+      <div
+        class="font-family"
+      >
+        mock-select title:
+        Font
+         value:
+        Arial
+        <select>
+          <option>
+            Recently Used
+          </option>
+          <option />
+        </select>
+      </div>
     </div>
     <div
-      class="row"
+      class="labeled-row"
     >
-      <div
-        class="container"
-        title="Size"
+      <span
+        class="prefix-label bold"
       >
-        <div
-          class="input"
-        >
-          UnitInput: 
-          font_size
-          <p>
-            precision: 
-            0
-          </p>
-          <p>
-            underline
-          </p>
-          <p>
-            unit: 
-            px
-          </p>
-          <input
-            id="font_size"
-            min="1"
-            value="200"
-          />
-        </div>
-      </div>
+        B
+      </span>
       <div
         class="font-style"
       >
@@ -278,46 +273,6 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
           />
         </div>
       </div>
-      <button
-        class="vertical-text"
-        icon="[object Object]"
-        id="vertical-text"
-        title="Vertical text"
-        type="text"
-      />
-      <div>
-        mock-infill-block elems:
-        1
-         label:
-         id:
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`TextOptions Desktop view should render correctly for text path 1`] = `
-<div>
-  <div
-    class="panel"
-  >
-    <div
-      class="font-family"
-    >
-      mock-select title:
-      Font
-       value:
-      Arial
-      <select>
-        <option>
-          Recently Used
-        </option>
-        <option />
-      </select>
-    </div>
-    <div
-      class="row"
-    >
       <div
         class="container"
         title="Size"
@@ -345,6 +300,54 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
           />
         </div>
       </div>
+      <button
+        class="vertical-text"
+        icon="[object Object]"
+        id="vertical-text"
+        title="Vertical text"
+        type="text"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`TextOptions Desktop view should render correctly for text path 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="labeled-row"
+    >
+      <span
+        class="prefix-label"
+      >
+        Aa
+      </span>
+      <div
+        class="font-family"
+      >
+        mock-select title:
+        Font
+         value:
+        Arial
+        <select>
+          <option>
+            Recently Used
+          </option>
+          <option />
+        </select>
+      </div>
+    </div>
+    <div
+      class="labeled-row"
+    >
+      <span
+        class="prefix-label bold"
+      >
+        B
+      </span>
       <div
         class="font-style"
       >
@@ -393,6 +396,33 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
         />
       </div>
     </div>
+    <div
+      class="container"
+      title="Size"
+    >
+      <div
+        class="input"
+      >
+        UnitInput: 
+        font_size
+        <p>
+          precision: 
+          0
+        </p>
+        <p>
+          underline
+        </p>
+        <p>
+          unit: 
+          px
+        </p>
+        <input
+          id="font_size"
+          min="1"
+          value="200"
+        />
+      </div>
+    </div>
     <div>
       mock-start-offset-block value:
       10
@@ -408,21 +438,6 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
       <button>
         Top
       </button>
-    </div>
-    <div>
-      mock-infill-block elems:
-      1
-       label:
-      Text Infill
-       id:
-    </div>
-    <div>
-      mock-infill-block elems:
-      0
-       label:
-      Path Infill
-       id:
-      path_infill
     </div>
   </div>
 </div>
@@ -673,14 +688,14 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
     mock-infill-block elems:
     1
      label:
-    Text Infill
+    Text
      id:
   </div>
   <div>
     mock-infill-block elems:
     0
      label:
-    Path Infill
+    Path
      id:
     path_infill
   </div>

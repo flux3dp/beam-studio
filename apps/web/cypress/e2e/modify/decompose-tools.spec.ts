@@ -9,7 +9,7 @@ it('decompose', () => {
   cy.get('#svg_1').should('exist').should('have.attr', 'fill', '#333333');
   cy.get('#svg_1').click({ force: true });
   cy.showPanel('objects');
-  cy.get('button#infill').click();
+  cy.setInfill(false);
   cy.get('button#decompose_path').click();
   cy.get('#svg_2').should('exist').should('have.attr', 'stroke', '#333333').should('have.attr', 'fill-opacity', '0');
   cy.get('#svg_2')

@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 
-import { Button, ConfigProvider } from 'antd';
+import { Button, Collapse, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 import { useShallow } from 'zustand/shallow';
 
@@ -13,13 +13,17 @@ import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
+import { isVariableTextSupported } from '@core/helpers/variableText';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ActionsPanel from './ActionsPanel';
 import ConfigPanel from './ConfigPanel/ConfigPanel';
 import DimensionPanel from './DimensionPanel/DimensionPanel';
+import InfillPanel from './InfillPanel';
 import styles from './ObjectPanel.module.scss';
 import ObjectPanelItem from './ObjectPanelItem';
 import OptionsPanel from './OptionsPanel';
@@ -313,6 +317,82 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
 
   const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem as SVGElement} />;
 
+  const tSections = lang.beambox.right_panel.object_panel.sections;
+  const tagName = elem?.tagName.toLowerCase();
+  const isFullColor = elem ? Boolean(getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor')) : false;
+  const showInfillSection = (() => {
+    if (!elem || !tagName) return false;
+
+    if (!CanvasElements.fillableWithContainers.includes(tagName)) return false;
+
+    // 'use' shows only when fullcolor (MultiColorOptions); plain laser 'use' has no infill
+    if (tagName === 'use') return isFullColor;
+
+    return true;
+  })();
+  const showOptionsSection = (() => {
+    if (!elem || !tagName) return false;
+
+    if (['polygon', 'rect', 'text'].includes(tagName)) return true;
+
+    if (['image', 'img'].includes(tagName)) return elem.getAttribute('data-fullcolor') !== '1';
+
+    if (tagName === 'g') {
+      // textpath g or text-only g → renders TextOptions
+      if (elem.getAttribute('data-textpath-g') !== null) return true;
+
+      return !elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])');
+    }
+
+    if (tagName === 'use') return isVariableTextSupported() && elem.getAttribute('data-props') !== null;
+
+    return false;
+  })();
+
+  const renderDesktopCollapse = (): React.JSX.Element => {
+    const desktopItems = [
+      { children: renderToolBtns(), forceRender: true, key: 'tools', label: tSections.tools },
+      { children: renderDimensionPanel(), forceRender: true, key: 'transform', label: tSections.transform },
+      ...(showInfillSection
+        ? [
+            {
+              children: <InfillPanel elem={elem as SVGElement} />,
+              forceRender: true,
+              key: 'infill',
+              label: isFullColor ? tSections.colors : tSections.operation_mode,
+            },
+          ]
+        : []),
+      ...(showOptionsSection
+        ? [{ children: renderOptionPanel(), forceRender: true, key: 'options', label: tSections.options }]
+        : []),
+      { children: renderActionPanel(), forceRender: true, key: 'actions', label: tSections.actions },
+    ];
+
+    return (
+      <ConfigProvider
+        theme={{
+          components: {
+            Collapse: {
+              colorTextHeading: '#1f1f1f',
+              contentPadding: 0,
+              fontSize: 13,
+              headerPadding: '4px 12px',
+            },
+          },
+        }}
+      >
+        <Collapse
+          bordered={false}
+          className={styles.collapse}
+          defaultActiveKey={['tools', 'transform', 'infill', 'options', 'actions']}
+          ghost
+          items={desktopItems}
+        />
+      </ConfigProvider>
+    );
+  };
+
   const contents = isMobile ? (
     <>
       {renderCommonActionPanel()}
@@ -322,12 +402,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
       {renderActionPanel()}
     </>
   ) : (
-    <>
-      {renderToolBtns()}
-      {renderDimensionPanel()}
-      {renderOptionPanel()}
-      {renderActionPanel()}
-    </>
+    renderDesktopCollapse()
   );
 
   return (

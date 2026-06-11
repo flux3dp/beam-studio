@@ -54,6 +54,7 @@ const deriveElementState = (element: Element) => {
 
 interface Props {
   elem: Element;
+  fillOnly?: boolean;
 }
 
 interface State {
@@ -62,7 +63,7 @@ interface State {
   strokeWidth: number;
 }
 
-const ColorPanel = ({ elem }: Props): React.JSX.Element => {
+const ColorPanel = ({ elem, fillOnly = false }: Props): React.JSX.Element => {
   const isMobile = useIsMobile();
   const lang = useI18n();
   const t = lang.beambox.right_panel.object_panel.option_panel;
@@ -228,19 +229,21 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
           </div>
         </FloatingPanel>
       )}
-      <ObjectPanelItem.Item
-        content={<OptionPanelIcons.Stroke />}
-        id="stroke"
-        label={t.stroke}
-        onClick={() => {
-          setPreviewState({
-            currentStep: EditStep.Color,
-            type: EditType.Stroke,
-          });
-          previewRef.current = { newColor: '', origColor: '' };
-        }}
-      />
-      {previewState.type === EditType.Stroke && (
+      {!fillOnly && (
+        <ObjectPanelItem.Item
+          content={<OptionPanelIcons.Stroke />}
+          id="stroke"
+          label={t.stroke}
+          onClick={() => {
+            setPreviewState({
+              currentStep: EditStep.Color,
+              type: EditType.Stroke,
+            });
+            previewRef.current = { newColor: '', origColor: '' };
+          }}
+        />
+      )}
+      {!fillOnly && previewState.type === EditType.Stroke && (
         <FloatingPanel
           anchors={previewState.currentStep === EditStep.Color ? [0, 270] : [0, 320]}
           fixedContent={renderBackIcon()}
@@ -304,38 +307,40 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
         <div className={styles.label}>{t.fill}</div>
         <ColorPicker allowClear initColor={fill} onChange={handleFillColorChange} />
       </div>
-      <div className={styles.block}>
-        <div className={styles.label}>{t.stroke}</div>
-        <div className={styles.controls}>
-          <ColorPicker
-            initColor={strokeWidth === 0 ? 'none' : stroke}
-            onChange={handleStrokeColorChange}
-            triggerType="stroke"
-          />
-          <ConfigProvider
-            theme={{
-              components: {
-                InputNumber: {
-                  controlWidth: 60,
-                },
-              },
-            }}
-          >
-            <InputNumber
-              // addonAfter={isInch ? 'in' : 'mm'}
-              formatter={(v, { input, userTyping }) => (userTyping ? input : (v / ratio).toFixed(decimal))}
-              id="stroke-width"
-              min={0}
-              onChange={handleStrokeWidthChange}
-              parser={(value) => Number(value) * ratio}
-              precision={decimal}
-              size="small"
-              step={step}
-              value={strokeWidth}
+      {!fillOnly && (
+        <div className={styles.block}>
+          <div className={styles.label}>{t.stroke}</div>
+          <div className={styles.controls}>
+            <ColorPicker
+              initColor={strokeWidth === 0 ? 'none' : stroke}
+              onChange={handleStrokeColorChange}
+              triggerType="stroke"
             />
-          </ConfigProvider>
+            <ConfigProvider
+              theme={{
+                components: {
+                  InputNumber: {
+                    controlWidth: 60,
+                  },
+                },
+              }}
+            >
+              <InputNumber
+                // addonAfter={isInch ? 'in' : 'mm'}
+                formatter={(v, { input, userTyping }) => (userTyping ? input : (v / ratio).toFixed(decimal))}
+                id="stroke-width"
+                min={0}
+                onChange={handleStrokeWidthChange}
+                parser={(value) => Number(value) * ratio}
+                precision={decimal}
+                size="small"
+                step={step}
+                value={strokeWidth}
+              />
+            </ConfigProvider>
+          </div>
         </div>
-      </div>
+      )}
     </>
   );
 };

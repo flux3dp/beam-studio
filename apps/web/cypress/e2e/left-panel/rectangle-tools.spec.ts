@@ -16,7 +16,7 @@ describe('rectangle tools', () => {
 
   it('infill', () => {
     cy.get('#svg_1').should('have.attr', 'fill', 'none');
-    cy.get('#infill').click();
+    cy.setInfill(true);
     cy.get('#svg_1').should('have.attr', 'fill', '#333333');
   });
 });

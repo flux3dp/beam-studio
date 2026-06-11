@@ -31,6 +31,26 @@ jest.mock(
 );
 
 jest.mock(
+  './InfillPanel',
+  () =>
+    function DummyInfillPanel() {
+      return <div>This is dummy InfillPanel</div>;
+    },
+);
+
+jest.mock('@core/helpers/layer/layer-helper', () => ({
+  getObjectLayer: jest.fn(() => ({ elem: null })),
+}));
+
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
+  getData: jest.fn(() => false),
+}));
+
+jest.mock('@core/helpers/variableText', () => ({
+  isVariableTextSupported: jest.fn(() => false),
+}));
+
+jest.mock(
   './ConfigPanel/ConfigPanel',
   () =>
     function DummyConfigPanel() {

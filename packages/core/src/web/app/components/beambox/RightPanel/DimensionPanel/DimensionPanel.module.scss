@@ -6,28 +6,30 @@
 
 .panel {
   width: 100%;
-  padding: 8px 8px 8px 12px;
-  border: 1px solid #e0e0e0;
-  border-width: 0 0 1px 0;
+  padding-bottom: 8px;
 
   .row {
     display: flex;
-    justify-content: space-between;
+    gap: 8px;
     align-items: center;
     margin-bottom: 4px;
+    padding-left: 12px;
+    padding-right: 12px;
 
-    .dimensions {
-      display: flex;
-      flex-wrap: wrap;
-      width: 180px;
-      gap: 2px 8px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    > * {
+      flex: 1;
+      min-width: 0;
     }
 
     .dimension {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      width: 86px;
-      height: 26px;
+      min-width: 0;
+      height: 27px;
 
       .label {
         width: 20px;
@@ -40,10 +42,50 @@
       }
 
       .input {
+        flex: 1;
+        min-width: 0;
+
         :global(.ant-input-number-input) {
           padding: 1px 24px 1px 4px;
         }
       }
     }
+  }
+
+  .size-group {
+    padding-top: 5px;
+    padding-bottom: 5px;
+    position: relative;
+  }
+
+  .size-lock {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(calc(-50% - 30px), -50%);
+
+    :global(.ant-btn) {
+      width: 20px;
+      height: 20px;
+      min-width: 20px;
+      padding: 0;
+      font-size: 14px;
+      line-height: 1;
+    }
+  }
+
+  .rotate-btns {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    justify-content: flex-start;
+  }
+
+  .rotate-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 4px;
+    font-size: 12px;
   }
 }

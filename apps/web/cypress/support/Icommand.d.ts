@@ -40,6 +40,10 @@ declare global {
       /** Wait for heavy operations like image processing to complete */
       waitForImageProcessing: (timeout?: number) => Chainable<void>;
       showPanel: (panelName: 'layers' | 'objects') => Chainable<void>;
+      /** Open the InFillBlock select and choose Fill Engraving Mode (true) or Stroke Mode (false) */
+      setInfill: (filled: boolean, id?: string) => Chainable<void>;
+      /** Assert the InFillBlock select currently shows Fill Engraving Mode (true) or Stroke Mode (false) */
+      assertInfilled: (filled: boolean, id?: string) => Chainable<void>;
     }
   }
 }
