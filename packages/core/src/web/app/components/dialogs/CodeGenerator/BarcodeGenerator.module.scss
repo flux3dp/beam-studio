@@ -1,43 +1,29 @@
-.layout {
-  align-items: flex-start;
+@use './mixins' as mixins;
 
-  @media screen and (max-width: 600px) {
-    flex-direction: column;
-    align-items: stretch;
-  }
+.layout {
+  @include mixins.layout;
 }
 
 .form {
-  flex: 1;
-  min-width: 0;
-  max-height: 380px;
-  overflow-y: auto;
-
-  @media screen and (max-width: 600px) {
-    max-height: none;
-    overflow-y: visible;
-  }
+  @include mixins.form;
 }
 
 .field {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+  @include mixins.field;
 }
 
 .label {
-  color: rgba(0, 0, 0, 0.65);
+  @include mixins.label;
 }
 
 .input {
-  resize: none;
-  margin-bottom: 16px;
+  @include mixins.input;
 }
 
 .preview {
   position: relative;
   display: flex;
-  flex: 0 0 380px;
+  flex: 0 1 380px;
   align-items: center;
   justify-content: center;
   background-color: #f8f8f8;
@@ -62,31 +48,4 @@
 
 .check-text-option {
   border-color: #1890ff;
-}
-
-.family-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  height: 28px;
-
-  .img-container {
-    display: flex;
-    flex: 1;
-    overflow: hidden;
-    max-width: 190px;
-
-    > img {
-      max-height: 18px;
-      min-height: 16px;
-      object-fit: cover;
-      object-position: left;
-      overflow: visible;
-    }
-  }
-
-  > svg {
-    font-size: 24px;
-    min-width: 24px;
-  }
 }

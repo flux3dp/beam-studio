@@ -1,11 +1,7 @@
-.accent-segmented {
-  :global(.ant-segmented-item-selected) {
-    box-shadow: 0 0 0 1px #1677ff;
-  }
+@use './mixins' as mixins;
 
-  :global(.ant-segmented-thumb) {
-    box-shadow: 0 0 0 1px #1677ff;
-  }
+.accent-segmented {
+  @include mixins.accent-segmented;
 }
 
 .variable-block {

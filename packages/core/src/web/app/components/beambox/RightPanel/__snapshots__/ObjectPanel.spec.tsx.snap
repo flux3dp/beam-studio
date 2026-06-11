@@ -789,216 +789,416 @@ exports[`should render correctly one element is g element 1`] = `
     id="object-panel"
   >
     <div
-      class="tools"
+      class="ant-collapse ant-collapse-icon-position-start ant-collapse-borderless ant-collapse-ghost collapse css-dev-only-do-not-override-hash"
     >
       <div
-        class="row"
+        class="ant-collapse-item ant-collapse-item-active"
       >
         <div
-          class="half left sep"
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="hdist"
-            title="Horizontal Distribute"
-            type="button"
+          <div
+            class="ant-collapse-expand-icon"
           >
             <span
-              class="ant-btn-icon"
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
             >
-              <svgr-url />
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
             </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="top_align"
-            title="Top Align"
-            type="button"
+          </div>
+          <span
+            class="ant-collapse-header-text"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="middle_align"
-            title="Middle Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="bottom_align"
-            title="Bottom Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            Tools
+          </span>
         </div>
         <div
-          class="half right"
+          class="ant-collapse-content ant-collapse-content-active"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="vdist"
-            title="Vertical Distribute"
-            type="button"
+          <div
+            class="ant-collapse-content-box"
           >
-            <span
-              class="ant-btn-icon"
+            <div
+              class="tools"
             >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="left_align"
-            title="Left Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="center_align"
-            title="Center Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="right_align"
-            title="Right Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+              <div
+                class="row"
+              >
+                <div
+                  class="half left sep"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="hdist"
+                    title="Horizontal Distribute"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="top_align"
+                    title="Top Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="middle_align"
+                    title="Middle Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="bottom_align"
+                    title="Bottom Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="half right"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="vdist"
+                    title="Vertical Distribute"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="left_align"
+                    title="Left Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="center_align"
+                    title="Center Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="right_align"
+                    title="Right Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="row"
+              >
+                <div
+                  class="half left"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="group"
+                    title="Group"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="ungroup"
+                    title="Ungroup"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="half right"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="union"
+                    title="Union"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="subtract"
+                    title="Subtract"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="intersect"
+                    title="Intersect"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="difference"
+                    title="Difference"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        class="row"
+        class="ant-collapse-item ant-collapse-item-active"
       >
         <div
-          class="half left"
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="group"
-            title="Group"
-            type="button"
+          <div
+            class="ant-collapse-expand-icon"
           >
             <span
-              class="ant-btn-icon"
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
             >
-              <svgr-url />
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
             </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="ungroup"
-            title="Ungroup"
-            type="button"
+          </div>
+          <span
+            class="ant-collapse-header-text"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            Transform
+          </span>
         </div>
         <div
-          class="half right"
+          class="ant-collapse-content ant-collapse-content-active"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="union"
-            title="Union"
-            type="button"
+          <div
+            class="ant-collapse-content-box"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="subtract"
-            title="Subtract"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="intersect"
-            title="Intersect"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="difference"
-            title="Difference"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            <div>
+              This is dummy DimensionPanel
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div>
-      This is dummy DimensionPanel
-    </div>
-    <div>
-      This is dummy OptionsPanel
-    </div>
-    <div>
-      This is dummy ActionsPanel
+      <div
+        class="ant-collapse-item ant-collapse-item-active"
+      >
+        <div
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="ant-collapse-expand-icon"
+          >
+            <span
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
+            </span>
+          </div>
+          <span
+            class="ant-collapse-header-text"
+          >
+            Options
+          </span>
+        </div>
+        <div
+          class="ant-collapse-content ant-collapse-content-active"
+        >
+          <div
+            class="ant-collapse-content-box"
+          >
+            <div>
+              This is dummy OptionsPanel
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="ant-collapse-item ant-collapse-item-active"
+      >
+        <div
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="ant-collapse-expand-icon"
+          >
+            <span
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
+            </span>
+          </div>
+          <span
+            class="ant-collapse-header-text"
+          >
+            Actions
+          </span>
+        </div>
+        <div
+          class="ant-collapse-content ant-collapse-content-active"
+        >
+          <div
+            class="ant-collapse-content-box"
+          >
+            <div>
+              This is dummy ActionsPanel
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1011,216 +1211,416 @@ exports[`should render correctly one element not g element 1`] = `
     id="object-panel"
   >
     <div
-      class="tools"
+      class="ant-collapse ant-collapse-icon-position-start ant-collapse-borderless ant-collapse-ghost collapse css-dev-only-do-not-override-hash"
     >
       <div
-        class="row"
+        class="ant-collapse-item ant-collapse-item-active"
       >
         <div
-          class="half left sep"
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="hdist"
-            title="Horizontal Distribute"
-            type="button"
+          <div
+            class="ant-collapse-expand-icon"
           >
             <span
-              class="ant-btn-icon"
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
             >
-              <svgr-url />
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
             </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="top_align"
-            title="Top Align"
-            type="button"
+          </div>
+          <span
+            class="ant-collapse-header-text"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="middle_align"
-            title="Middle Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="bottom_align"
-            title="Bottom Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            Tools
+          </span>
         </div>
         <div
-          class="half right"
+          class="ant-collapse-content ant-collapse-content-active"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="vdist"
-            title="Vertical Distribute"
-            type="button"
+          <div
+            class="ant-collapse-content-box"
           >
-            <span
-              class="ant-btn-icon"
+            <div
+              class="tools"
             >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="left_align"
-            title="Left Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="center_align"
-            title="Center Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="right_align"
-            title="Right Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+              <div
+                class="row"
+              >
+                <div
+                  class="half left sep"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="hdist"
+                    title="Horizontal Distribute"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="top_align"
+                    title="Top Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="middle_align"
+                    title="Middle Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="bottom_align"
+                    title="Bottom Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="half right"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="vdist"
+                    title="Vertical Distribute"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="left_align"
+                    title="Left Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="center_align"
+                    title="Center Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="right_align"
+                    title="Right Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="row"
+              >
+                <div
+                  class="half left"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="group"
+                    title="Group"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="ungroup"
+                    title="Ungroup"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="half right"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="union"
+                    title="Union"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="subtract"
+                    title="Subtract"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="intersect"
+                    title="Intersect"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="difference"
+                    title="Difference"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        class="row"
+        class="ant-collapse-item ant-collapse-item-active"
       >
         <div
-          class="half left"
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="group"
-            title="Group"
-            type="button"
+          <div
+            class="ant-collapse-expand-icon"
           >
             <span
-              class="ant-btn-icon"
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
             >
-              <svgr-url />
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
             </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="ungroup"
-            title="Ungroup"
-            type="button"
+          </div>
+          <span
+            class="ant-collapse-header-text"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            Transform
+          </span>
         </div>
         <div
-          class="half right"
+          class="ant-collapse-content ant-collapse-content-active"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="union"
-            title="Union"
-            type="button"
+          <div
+            class="ant-collapse-content-box"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="subtract"
-            title="Subtract"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="intersect"
-            title="Intersect"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="difference"
-            title="Difference"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            <div>
+              This is dummy DimensionPanel
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div>
-      This is dummy DimensionPanel
-    </div>
-    <div>
-      This is dummy OptionsPanel
-    </div>
-    <div>
-      This is dummy ActionsPanel
+      <div
+        class="ant-collapse-item ant-collapse-item-active"
+      >
+        <div
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="ant-collapse-expand-icon"
+          >
+            <span
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
+            </span>
+          </div>
+          <span
+            class="ant-collapse-header-text"
+          >
+            Options
+          </span>
+        </div>
+        <div
+          class="ant-collapse-content ant-collapse-content-active"
+        >
+          <div
+            class="ant-collapse-content-box"
+          >
+            <div>
+              This is dummy OptionsPanel
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="ant-collapse-item ant-collapse-item-active"
+      >
+        <div
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="ant-collapse-expand-icon"
+          >
+            <span
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
+            </span>
+          </div>
+          <span
+            class="ant-collapse-header-text"
+          >
+            Actions
+          </span>
+        </div>
+        <div
+          class="ant-collapse-content ant-collapse-content-active"
+        >
+          <div
+            class="ant-collapse-content-box"
+          >
+            <div>
+              This is dummy ActionsPanel
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1233,216 +1633,416 @@ exports[`should render correctly two elements contains other types of elements 1
     id="object-panel"
   >
     <div
-      class="tools"
+      class="ant-collapse ant-collapse-icon-position-start ant-collapse-borderless ant-collapse-ghost collapse css-dev-only-do-not-override-hash"
     >
       <div
-        class="row"
+        class="ant-collapse-item ant-collapse-item-active"
       >
         <div
-          class="half left sep"
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="hdist"
-            title="Horizontal Distribute"
-            type="button"
+          <div
+            class="ant-collapse-expand-icon"
           >
             <span
-              class="ant-btn-icon"
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
             >
-              <svgr-url />
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
             </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="top_align"
-            title="Top Align"
-            type="button"
+          </div>
+          <span
+            class="ant-collapse-header-text"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="middle_align"
-            title="Middle Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="bottom_align"
-            title="Bottom Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            Tools
+          </span>
         </div>
         <div
-          class="half right"
+          class="ant-collapse-content ant-collapse-content-active"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="vdist"
-            title="Vertical Distribute"
-            type="button"
+          <div
+            class="ant-collapse-content-box"
           >
-            <span
-              class="ant-btn-icon"
+            <div
+              class="tools"
             >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="left_align"
-            title="Left Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="center_align"
-            title="Center Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="right_align"
-            title="Right Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+              <div
+                class="row"
+              >
+                <div
+                  class="half left sep"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="hdist"
+                    title="Horizontal Distribute"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="top_align"
+                    title="Top Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="middle_align"
+                    title="Middle Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="bottom_align"
+                    title="Bottom Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="half right"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="vdist"
+                    title="Vertical Distribute"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="left_align"
+                    title="Left Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="center_align"
+                    title="Center Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="right_align"
+                    title="Right Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="row"
+              >
+                <div
+                  class="half left"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="group"
+                    title="Group"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="ungroup"
+                    title="Ungroup"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="half right"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="union"
+                    title="Union"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="subtract"
+                    title="Subtract"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="intersect"
+                    title="Intersect"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="difference"
+                    title="Difference"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        class="row"
+        class="ant-collapse-item ant-collapse-item-active"
       >
         <div
-          class="half left"
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="group"
-            title="Group"
-            type="button"
+          <div
+            class="ant-collapse-expand-icon"
           >
             <span
-              class="ant-btn-icon"
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
             >
-              <svgr-url />
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
             </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="ungroup"
-            title="Ungroup"
-            type="button"
+          </div>
+          <span
+            class="ant-collapse-header-text"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            Transform
+          </span>
         </div>
         <div
-          class="half right"
+          class="ant-collapse-content ant-collapse-content-active"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="union"
-            title="Union"
-            type="button"
+          <div
+            class="ant-collapse-content-box"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="subtract"
-            title="Subtract"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="intersect"
-            title="Intersect"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="difference"
-            title="Difference"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            <div>
+              This is dummy DimensionPanel
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div>
-      This is dummy DimensionPanel
-    </div>
-    <div>
-      This is dummy OptionsPanel
-    </div>
-    <div>
-      This is dummy ActionsPanel
+      <div
+        class="ant-collapse-item ant-collapse-item-active"
+      >
+        <div
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="ant-collapse-expand-icon"
+          >
+            <span
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
+            </span>
+          </div>
+          <span
+            class="ant-collapse-header-text"
+          >
+            Options
+          </span>
+        </div>
+        <div
+          class="ant-collapse-content ant-collapse-content-active"
+        >
+          <div
+            class="ant-collapse-content-box"
+          >
+            <div>
+              This is dummy OptionsPanel
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="ant-collapse-item ant-collapse-item-active"
+      >
+        <div
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="ant-collapse-expand-icon"
+          >
+            <span
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
+            </span>
+          </div>
+          <span
+            class="ant-collapse-header-text"
+          >
+            Actions
+          </span>
+        </div>
+        <div
+          class="ant-collapse-content ant-collapse-content-active"
+        >
+          <div
+            class="ant-collapse-content-box"
+          >
+            <div>
+              This is dummy ActionsPanel
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1455,212 +2055,412 @@ exports[`should render correctly two elements contains rect, polygon or ellipse 
     id="object-panel"
   >
     <div
-      class="tools"
+      class="ant-collapse ant-collapse-icon-position-start ant-collapse-borderless ant-collapse-ghost collapse css-dev-only-do-not-override-hash"
     >
       <div
-        class="row"
+        class="ant-collapse-item ant-collapse-item-active"
       >
         <div
-          class="half left sep"
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="hdist"
-            title="Horizontal Distribute"
-            type="button"
+          <div
+            class="ant-collapse-expand-icon"
           >
             <span
-              class="ant-btn-icon"
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
             >
-              <svgr-url />
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
             </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="top_align"
-            title="Top Align"
-            type="button"
+          </div>
+          <span
+            class="ant-collapse-header-text"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="middle_align"
-            title="Middle Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="bottom_align"
-            title="Bottom Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            Tools
+          </span>
         </div>
         <div
-          class="half right"
+          class="ant-collapse-content ant-collapse-content-active"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="vdist"
-            title="Vertical Distribute"
-            type="button"
+          <div
+            class="ant-collapse-content-box"
           >
-            <span
-              class="ant-btn-icon"
+            <div
+              class="tools"
             >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="left_align"
-            title="Left Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="center_align"
-            title="Center Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="right_align"
-            title="Right Align"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+              <div
+                class="row"
+              >
+                <div
+                  class="half left sep"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="hdist"
+                    title="Horizontal Distribute"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="top_align"
+                    title="Top Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="middle_align"
+                    title="Middle Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="bottom_align"
+                    title="Bottom Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="half right"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="vdist"
+                    title="Vertical Distribute"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="left_align"
+                    title="Left Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="center_align"
+                    title="Center Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="right_align"
+                    title="Right Align"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="row"
+              >
+                <div
+                  class="half left"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="group"
+                    title="Group"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    disabled=""
+                    id="ungroup"
+                    title="Ungroup"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+                <div
+                  class="half right"
+                >
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="union"
+                    title="Union"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="subtract"
+                    title="Subtract"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="intersect"
+                    title="Intersect"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
+                    id="difference"
+                    title="Difference"
+                    type="button"
+                  >
+                    <span
+                      class="ant-btn-icon"
+                    >
+                      <svgr-url />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
       <div
-        class="row"
+        class="ant-collapse-item ant-collapse-item-active"
       >
         <div
-          class="half left"
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="group"
-            title="Group"
-            type="button"
+          <div
+            class="ant-collapse-expand-icon"
           >
             <span
-              class="ant-btn-icon"
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
             >
-              <svgr-url />
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
             </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            disabled=""
-            id="ungroup"
-            title="Ungroup"
-            type="button"
+          </div>
+          <span
+            class="ant-collapse-header-text"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            Transform
+          </span>
         </div>
         <div
-          class="half right"
+          class="ant-collapse-content ant-collapse-content-active"
         >
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="union"
-            title="Union"
-            type="button"
+          <div
+            class="ant-collapse-content-box"
           >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="subtract"
-            title="Subtract"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="intersect"
-            title="Intersect"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
-          <button
-            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-            id="difference"
-            title="Difference"
-            type="button"
-          >
-            <span
-              class="ant-btn-icon"
-            >
-              <svgr-url />
-            </span>
-          </button>
+            <div>
+              This is dummy DimensionPanel
+            </div>
+          </div>
         </div>
       </div>
-    </div>
-    <div>
-      This is dummy DimensionPanel
-    </div>
-    <div>
-      This is dummy OptionsPanel
-    </div>
-    <div>
-      This is dummy ActionsPanel
+      <div
+        class="ant-collapse-item ant-collapse-item-active"
+      >
+        <div
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="ant-collapse-expand-icon"
+          >
+            <span
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
+            </span>
+          </div>
+          <span
+            class="ant-collapse-header-text"
+          >
+            Options
+          </span>
+        </div>
+        <div
+          class="ant-collapse-content ant-collapse-content-active"
+        >
+          <div
+            class="ant-collapse-content-box"
+          >
+            <div>
+              This is dummy OptionsPanel
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="ant-collapse-item ant-collapse-item-active"
+      >
+        <div
+          aria-disabled="false"
+          aria-expanded="true"
+          class="ant-collapse-header"
+          role="button"
+          tabindex="0"
+        >
+          <div
+            class="ant-collapse-expand-icon"
+          >
+            <span
+              aria-label="expanded"
+              class="anticon anticon-right ant-collapse-arrow"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="right"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                style="transform: rotate(90deg);"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M765.7 486.8L314.9 134.7A7.97 7.97 0 00302 141v77.3c0 4.9 2.3 9.6 6.1 12.6l360 281.1-360 281.1c-3.9 3-6.1 7.7-6.1 12.6V883c0 6.7 7.7 10.4 12.9 6.3l450.8-352.1a31.96 31.96 0 000-50.4z"
+                />
+              </svg>
+            </span>
+          </div>
+          <span
+            class="ant-collapse-header-text"
+          >
+            Actions
+          </span>
+        </div>
+        <div
+          class="ant-collapse-content ant-collapse-content-active"
+        >
+          <div
+            class="ant-collapse-content-box"
+          >
+            <div>
+              This is dummy ActionsPanel
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>

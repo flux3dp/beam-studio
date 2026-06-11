@@ -44,7 +44,7 @@ export type Format = (typeof formats)[number];
 
 export const defaultOptions: Options = {
   background: '#ffffff',
-  displayValue: true,
+  displayValue: false,
   ean128: false,
   font: 'Noto Sans',
   fontOptions: '',

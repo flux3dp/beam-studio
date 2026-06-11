@@ -42,7 +42,7 @@ const QRCodeGenerator = ({
   return (
     <Flex className={styles.layout} gap={24}>
       <QRCodePreview errorLevel={errorLevel} isInvert={isInvert} ref={ref} value={text} />
-      <Flex className={styles.form} gap={16} vertical>
+      <Flex className={styles.form} gap={12} vertical>
         {tabSlot}
         <div className={styles.field}>
           <div className={styles.label}>{tCode.content}</div>

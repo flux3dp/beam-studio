@@ -156,7 +156,7 @@ exports[`test QRCodeGenerator should behave correctly 1`] = `
       </div>
       <div
         class="form ant-flex css-dev-only-do-not-override-hash ant-flex-align-stretch ant-flex-vertical"
-        style="gap: 16px;"
+        style="gap: 12px;"
       >
         <div
           class="field"

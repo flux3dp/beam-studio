@@ -35,7 +35,7 @@ const BarcodeGenerator = ({
   text,
 }: Props & { ref?: React.Ref<BarcodeRef> }) => {
   const { barcode_generator: t, code_generator: tCode, qr_code_generator: tQr } = useI18n();
-  const [options, setOptions] = useState({ ...defaultOptions, displayValue: false });
+  const [options, setOptions] = useState(defaultOptions);
   const [validFontStyles, setValidFontStyles] = useState<string[]>([]);
   const formatOptions = formats.map((value) => ({ label: value, value }));
   const fontFamilies = fontFuncs.requestAvailableFontFamilies();
