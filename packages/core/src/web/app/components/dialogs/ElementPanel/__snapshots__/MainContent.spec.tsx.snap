@@ -175,6 +175,14 @@ exports[`test MainContent should render search hint correctly 1`] = `
             Nature
           </span>
         </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Zodiac
+          </span>
+        </button>
       </div>
       <div
         class="icon-list"
@@ -258,6 +266,14 @@ exports[`test MainContent should render search hint correctly when no result 1`]
         >
           <span>
             Nature
+          </span>
+        </button>
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-link ant-btn-color-primary ant-btn-variant-link ant-btn-sm"
+          type="button"
+        >
+          <span>
+            Zodiac
           </span>
         </button>
       </div>
