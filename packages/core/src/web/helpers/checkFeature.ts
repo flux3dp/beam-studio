@@ -6,7 +6,7 @@ const enableAllMachines = window?.localStorage?.getItem('enableAllMachines') ===
 
 export const checkFpm1 = (): boolean => !isWeb();
 export const checkHxRf = (): boolean => enableAllMachines || isDev() || localeHelper.isTwOrHk;
-export const checkBM2 = (): boolean => enableAllMachines || isDev() || localeHelper.isTwOrHk;
+export const checkBM2 = (): boolean => enableAllMachines || isDev() || localeHelper.isTwOrHk || localeHelper.isJp;
 // TODO: Can be removed after we move all testing machine to fuv1
 export const checkBM2UV = (): boolean => isDev();
 export const checkBM2CurveEngraving = (): boolean => isDev();
