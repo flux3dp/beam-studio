@@ -66,6 +66,14 @@ const detectPs = detectLocale(
 );
 const isPs = detectPs();
 
+// Israel
+const detectIl = detectLocale(
+  (schema) => schema.region === 'IL' || schema.language === 'he',
+  // UTC+2 timezone
+  (timezoneOffset) => timezoneOffset === -120,
+);
+const isIl = detectIl();
+
 // Malaysia
 const detectMy = detectLocale(
   (schema) => schema.region === 'MY' || schema.language === 'ms',
@@ -107,6 +115,8 @@ const getRegion = () => {
     return { checkTimezone: true, region: 'AU' };
   } else if (isAr) {
     return { checkTimezone: true, region: 'AR' };
+  } else if (isIl) {
+    return { checkTimezone: true, region: 'IL' };
   }
 
   // @ts-expect-error: Support for older browsers with userLanguage
@@ -126,6 +136,7 @@ const getRegion = () => {
 export default {
   detectAr,
   detectAu,
+  detectIl,
   detectJp,
   detectKr,
   detectMy,
@@ -136,6 +147,7 @@ export default {
   getRegion,
   isAr,
   isAu,
+  isIl,
   isJp,
   isKr,
   isMy,
