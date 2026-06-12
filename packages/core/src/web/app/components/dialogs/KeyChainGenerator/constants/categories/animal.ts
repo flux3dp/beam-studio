@@ -289,8 +289,8 @@ export const animal: KeyChainCategory = {
               defaults: DEFAULT_HOLE,
               fieldVisibility: { offset: ['ring'], position: ['ring'] },
               id: '1',
-              positionOffset: 3,
-              startPositionRef: 'topLeft',
+              positionOffset: 6,
+              startPositionRef: 'leftCenter',
             },
           ],
           texts: [
