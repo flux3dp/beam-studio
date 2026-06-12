@@ -1179,7 +1179,7 @@ const lang: ILang = {
     put_paper_bm2_2: 'Lower the focus probe to auto focus on the paper.',
     put_paper_bm2_3: 'Close the door cover.',
     put_paper_bm2_4: 'Click "Start Engraving".',
-    put_paper_promark: 'Put Black Paperboard',
+    put_paper_promark: 'Place Black Paperboard',
     put_paper_promark_1: 'Place the black paperboard from the accessory box on the work platform.',
     put_paper_promark_2: "Adjust the focus properly, and then click 'Start Engraving' to proceed.",
     put_paper_skip: 'If the calibration drawing does not automatically proceed to taking picture, press "Skip" to take picture.',
