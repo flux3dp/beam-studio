@@ -424,7 +424,6 @@ exports[`test DimensionPanel no elements 1`] = `
           x
         </button>
       </div>
-      <div />
       <div>
         <div>
           Mock PositionInput
@@ -467,20 +466,6 @@ exports[`test DimensionPanel no elements 1`] = `
       </div>
       <div>
         <div>
-          Mock RatioLock
-        </div>
-        <p>
-          isLocked: 
-          false
-        </p>
-        <button
-          type="button"
-        >
-          lock
-        </button>
-      </div>
-      <div>
-        <div>
           Mock SizeInput
         </div>
         <div>
@@ -494,6 +479,24 @@ exports[`test DimensionPanel no elements 1`] = `
         <input
           id="size-h"
         />
+      </div>
+      <div
+        class="size-lock"
+      >
+        <div>
+          <div>
+            Mock RatioLock
+          </div>
+          <p>
+            isLocked: 
+            false
+          </p>
+          <button
+            type="button"
+          >
+            lock
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -513,7 +516,6 @@ exports[`test DimensionPanel no elements 1`] = `
           rotation
         </button>
       </div>
-      <div />
       <div
         class="rotate-btns"
       >
@@ -624,7 +626,6 @@ exports[`test DimensionPanel shoud render correctly on desktop 1`] = `
           x
         </button>
       </div>
-      <div />
       <div>
         <div>
           Mock PositionInput
@@ -667,20 +668,6 @@ exports[`test DimensionPanel shoud render correctly on desktop 1`] = `
       </div>
       <div>
         <div>
-          Mock RatioLock
-        </div>
-        <p>
-          isLocked: 
-          true
-        </p>
-        <button
-          type="button"
-        >
-          lock
-        </button>
-      </div>
-      <div>
-        <div>
           Mock SizeInput
         </div>
         <div>
@@ -694,6 +681,24 @@ exports[`test DimensionPanel shoud render correctly on desktop 1`] = `
         <input
           id="size-h"
         />
+      </div>
+      <div
+        class="size-lock"
+      >
+        <div>
+          <div>
+            Mock RatioLock
+          </div>
+          <p>
+            isLocked: 
+            true
+          </p>
+          <button
+            type="button"
+          >
+            lock
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -713,7 +718,6 @@ exports[`test DimensionPanel shoud render correctly on desktop 1`] = `
           rotation
         </button>
       </div>
-      <div />
       <div
         class="rotate-btns"
       >
@@ -824,7 +828,6 @@ exports[`test DimensionPanel shoud render correctly on mobile 1`] = `
           x
         </button>
       </div>
-      <div />
       <div>
         <div>
           Mock PositionInput
@@ -867,20 +870,6 @@ exports[`test DimensionPanel shoud render correctly on mobile 1`] = `
       </div>
       <div>
         <div>
-          Mock RatioLock
-        </div>
-        <p>
-          isLocked: 
-          true
-        </p>
-        <button
-          type="button"
-        >
-          lock
-        </button>
-      </div>
-      <div>
-        <div>
           Mock SizeInput
         </div>
         <div>
@@ -894,6 +883,24 @@ exports[`test DimensionPanel shoud render correctly on mobile 1`] = `
         <input
           id="size-h"
         />
+      </div>
+      <div
+        class="size-lock"
+      >
+        <div>
+          <div>
+            Mock RatioLock
+          </div>
+          <p>
+            isLocked: 
+            true
+          </p>
+          <button
+            type="button"
+          >
+            lock
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -913,7 +920,6 @@ exports[`test DimensionPanel shoud render correctly on mobile 1`] = `
           rotation
         </button>
       </div>
-      <div />
       <div
         class="rotate-btns"
       >
@@ -1024,7 +1030,6 @@ exports[`test DimensionPanel unsupported element 1`] = `
           x
         </button>
       </div>
-      <div />
       <div>
         <div>
           Mock PositionInput
@@ -1067,20 +1072,6 @@ exports[`test DimensionPanel unsupported element 1`] = `
       </div>
       <div>
         <div>
-          Mock RatioLock
-        </div>
-        <p>
-          isLocked: 
-          false
-        </p>
-        <button
-          type="button"
-        >
-          lock
-        </button>
-      </div>
-      <div>
-        <div>
           Mock SizeInput
         </div>
         <div>
@@ -1094,6 +1085,24 @@ exports[`test DimensionPanel unsupported element 1`] = `
         <input
           id="size-h"
         />
+      </div>
+      <div
+        class="size-lock"
+      >
+        <div>
+          <div>
+            Mock RatioLock
+          </div>
+          <p>
+            isLocked: 
+            false
+          </p>
+          <button
+            type="button"
+          >
+            lock
+          </button>
+        </div>
       </div>
     </div>
     <div
@@ -1113,7 +1122,6 @@ exports[`test DimensionPanel unsupported element 1`] = `
           rotation
         </button>
       </div>
-      <div />
       <div
         class="rotate-btns"
       >

@@ -313,12 +313,38 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem as SVGElement} />;
 
   const optionsLabel = elem?.tagName.toLowerCase() === 'text' ? 'Fit Text' : 'Options';
-  const desktopItems = [
-    { children: renderToolBtns(), key: 'tools', label: 'Tools' },
-    { children: renderDimensionPanel(), key: 'transform', label: 'Transform' },
-    { children: renderOptionPanel(), key: 'options', label: optionsLabel },
-    { children: renderActionPanel(), key: 'actions', label: 'Actions' },
-  ];
+
+  const renderDesktopCollapse = () => {
+    const desktopItems = [
+      { children: renderToolBtns(), key: 'tools', label: 'Tools' },
+      { children: renderDimensionPanel(), key: 'transform', label: 'Transform' },
+      { children: renderOptionPanel(), key: 'options', label: optionsLabel },
+      { children: renderActionPanel(), key: 'actions', label: 'Actions' },
+    ];
+
+    return (
+      <ConfigProvider
+        theme={{
+          components: {
+            Collapse: {
+              colorTextHeading: '#1f1f1f',
+              contentPadding: 0,
+              fontSize: 13,
+              headerPadding: '4px 12px',
+            },
+          },
+        }}
+      >
+        <Collapse
+          bordered={false}
+          className={styles.collapse}
+          defaultActiveKey={desktopItems.map((item) => item.key)}
+          ghost
+          items={desktopItems}
+        />
+      </ConfigProvider>
+    );
+  };
 
   const contents = isMobile ? (
     <>
@@ -329,26 +355,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
       {renderActionPanel()}
     </>
   ) : (
-    <ConfigProvider
-      theme={{
-        components: {
-          Collapse: {
-            colorTextHeading: '#1f1f1f',
-            contentPadding: 0,
-            fontSize: 13,
-            headerPadding: '4px 12px',
-          },
-        },
-      }}
-    >
-      <Collapse
-        bordered={false}
-        className={styles.collapse}
-        defaultActiveKey={desktopItems.map((item) => item.key)}
-        ghost
-        items={desktopItems}
-      />
-    </ConfigProvider>
+    renderDesktopCollapse()
   );
 
   return (
