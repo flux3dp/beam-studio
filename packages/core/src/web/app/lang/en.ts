@@ -1782,7 +1782,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     },
     camera: {
       abort_preview: 'Abort',
-      calibration_data_missing: 'Set up camera calibration',
+      calibration_data_missing: 'Set Up Camera Calibration',
       calibration_data_missing_message: 'Camera calibration data is missing.\nImport your saved calibration data or run camera calibration.',
       calibration_wide_angle_camera_first: 'Please calibration wide angle camera first.',
       camera_cable_unstable: 'It is detected that the camera is transferring photos unstably. Preview can still be performed normally, but there may be the problem of slow preview or timeout.',
