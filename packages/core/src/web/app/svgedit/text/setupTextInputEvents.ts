@@ -2,6 +2,8 @@ import { getOS } from '@core/helpers/getOS';
 import shortcuts from '@core/helpers/shortcuts';
 import { isMobile } from '@core/helpers/system-helper';
 
+import { redo, undo } from '../history/utils';
+
 import textActions from './textactions';
 import textedit from './textedit';
 
@@ -46,6 +48,18 @@ export const setupTextInputEvents = () => {
 
   const textInputInputKeyupHandler = (evt: Event) => {
     evt.stopPropagation();
+
+    // Windows may still trigger input event with inputType 'historyUndo' or 'historyRedo' when text input is not focused
+    // so we need to check if the text input is focused before handling undo/redo
+    if (evt.type === 'input' && document.activeElement !== textInput) {
+      if ((evt as InputEvent).inputType === 'historyRedo') {
+        redo();
+      } else if ((evt as InputEvent).inputType === 'historyUndo') {
+        undo();
+      }
+
+      return;
+    }
 
     if ((evt as KeyboardEvent).key === 'Enter' && !wasNewLineAdded) {
       textActions.toSelectMode(true);
