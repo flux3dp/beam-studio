@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'バレンタインデー',
       weather: '天気',
       Xmas: 'クリスマス',
+      zodiac: '星座',
     },
     image_trace_panel: {
       back: '戻る',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'テキストを入力...',
     },
     types: {
+      animal: '動物型',
       capsule: 'カプセル型',
+      dialog_box: '吹き出し型',
+      geometry: '幾何学型',
       oval: 'オーバル型',
+      pet: 'ペット型',
+      plant: '植物型',
       polygonal: '多角形スタイル',
       quadrilateral: '四角形スタイル',
       round_arch: 'ラウンドアーチ型',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'サーフボード型',
       tag: 'タグ型',
       text: 'テキスト',
+      zodiac: '星座',
     },
   },
   layer_module: {

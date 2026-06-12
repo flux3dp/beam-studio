@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'วาเลนไทน์',
       weather: 'สภาพอากาศ',
       Xmas: 'คริสต์มาส',
+      zodiac: 'ราศี',
     },
     image_trace_panel: {
       back: 'กลับ',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'ป้อนข้อความ...',
     },
     types: {
+      animal: 'สไตล์สัตว์',
       capsule: 'สไตล์แคปซูล',
+      dialog_box: 'สไตล์กล่องข้อความ',
+      geometry: 'สไตล์เรขาคณิต',
       oval: 'สไตล์วงรี',
+      pet: 'สไตล์สัตว์เลี้ยง',
+      plant: 'สไตล์พืช',
       polygonal: 'สไตล์หลายเหลี่ยม',
       quadrilateral: 'สไตล์สี่เหลี่ยม',
       round_arch: 'สไตล์ซุ้มโค้ง',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'สไตล์กระดานโต้คลื่น',
       tag: 'สไตล์ป้ายแท็ก',
       text: 'ข้อความ',
+      zodiac: 'ราศี',
     },
   },
   layer_module: {

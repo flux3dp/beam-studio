@@ -19,6 +19,15 @@ const HoleControl = ({ optionDef }: HoleControlProps): ReactNode => {
   const { keychain_generator: t } = useI18n();
   const isRing = useMemo(() => hole.type === 'ring', [hole.type]);
 
+  const isFieldVisible = useCallback(
+    (field: keyof HoleOptionValues): boolean => {
+      const allowedTypes = optionDef.fieldVisibility?.[field];
+
+      return !allowedTypes || allowedTypes.includes(hole.type);
+    },
+    [optionDef.fieldVisibility, hole.type],
+  );
+
   const maxOffset = useMemo(
     () => (isRing ? hole.diameter / 2 + hole.thickness - 0.5 : -(hole.diameter / 2 + 0.5) - PUNCH_HOLE_OFFSET),
     [isRing, hole.diameter, hole.thickness],
@@ -71,43 +80,51 @@ const HoleControl = ({ optionDef }: HoleControlProps): ReactNode => {
 
   return (
     <>
-      <SelectControl
-        label={t.hole_options.hole_type}
-        onChange={handleTypeChange}
-        options={typeOptions}
-        value={hole.type}
-      />
-      <NumberControl
-        defaultValue={defaults.diameter}
-        label={t.hole_options.diameter}
-        max={5}
-        min={1}
-        onChange={handleDiameterChange}
-        step={0.5}
-        unit="mm"
-        value={hole.diameter}
-      />
-      <NumberControl
-        defaultValue={defaults.position}
-        label={t.hole_options.position}
-        max={100}
-        min={0}
-        onChange={handlePositionChange}
-        step={1}
-        unit="%"
-        value={hole.position}
-      />
-      <NumberControl
-        defaultValue={defaults.offset}
-        label={t.hole_options.offset}
-        max={maxOffset}
-        min={minOffset}
-        onChange={handleOffsetChange}
-        step={0.5}
-        unit="mm"
-        value={hole.offset}
-      />
-      {isRing && (
+      {isFieldVisible('type') && (
+        <SelectControl
+          label={t.hole_options.hole_type}
+          onChange={handleTypeChange}
+          options={typeOptions}
+          value={hole.type}
+        />
+      )}
+      {isFieldVisible('diameter') && (
+        <NumberControl
+          defaultValue={defaults.diameter}
+          label={t.hole_options.diameter}
+          max={5}
+          min={1}
+          onChange={handleDiameterChange}
+          step={0.5}
+          unit="mm"
+          value={hole.diameter}
+        />
+      )}
+      {isFieldVisible('position') && (
+        <NumberControl
+          defaultValue={defaults.position}
+          label={t.hole_options.position}
+          max={100}
+          min={0}
+          onChange={handlePositionChange}
+          step={1}
+          unit="%"
+          value={hole.position}
+        />
+      )}
+      {isFieldVisible('offset') && (
+        <NumberControl
+          defaultValue={defaults.offset}
+          label={t.hole_options.offset}
+          max={maxOffset}
+          min={minOffset}
+          onChange={handleOffsetChange}
+          step={0.5}
+          unit="mm"
+          value={hole.offset}
+        />
+      )}
+      {isRing && isFieldVisible('thickness') && (
         <NumberControl
           defaultValue={defaults.thickness}
           label={t.hole_options.thickness}

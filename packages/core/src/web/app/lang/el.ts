@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Αγίου Βαλεντίνου',
       weather: 'Καιρός',
       Xmas: 'Χριστούγεννα',
+      zodiac: 'Ζώδια',
     },
     image_trace_panel: {
       back: 'Πίσω',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'Εισαγωγή κειμένου...',
     },
     types: {
+      animal: 'Στυλ ζώου',
       capsule: 'Στυλ κάψουλας',
+      dialog_box: 'Στυλ πλαισίου διαλόγου',
+      geometry: 'Γεωμετρικό στυλ',
       oval: 'Οβάλ στυλ',
+      pet: 'Στυλ κατοικιδίου',
+      plant: 'Στυλ φυτού',
       polygonal: 'Πολυγωνικό στυλ',
       quadrilateral: 'Τετράπλευρο στυλ',
       round_arch: 'Στυλ στρογγυλής αψίδας',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Στυλ σανίδας σερφ',
       tag: 'Στυλ ετικέτας',
       text: 'Κείμενο',
+      zodiac: 'Ζώδια',
     },
   },
   layer_module: {

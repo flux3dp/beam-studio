@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Ystävänpäivä',
       weather: 'Sää',
       Xmas: 'Joulu',
+      zodiac: 'Horoskooppi',
     },
     image_trace_panel: {
       back: 'Takaisin',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'Syötä teksti...',
     },
     types: {
+      animal: 'Eläintyyli',
       capsule: 'Kapselityyli',
+      dialog_box: 'Valintaikkuna-tyyli',
+      geometry: 'Geometrinen tyyli',
       oval: 'Soikea tyyli',
+      pet: 'Lemmikkityyli',
+      plant: 'Kasvityyli',
       polygonal: 'Monikulmio-tyyli',
       quadrilateral: 'Nelikulmio-tyyli',
       round_arch: 'Pyöreä kaari -tyyli',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Surffalauta-tyyli',
       tag: 'Tunniste-tyyli',
       text: 'Teksti',
+      zodiac: 'Horoskooppi',
     },
   },
   layer_module: {

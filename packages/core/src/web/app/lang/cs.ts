@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Valentýn',
       weather: 'Počasí',
       Xmas: 'Vánoce',
+      zodiac: 'Zvěrokruh',
     },
     image_trace_panel: {
       back: 'Zpět',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'Zadejte text...',
     },
     types: {
+      animal: 'Zvířecí styl',
       capsule: 'Styl kapsle',
+      dialog_box: 'Styl dialogového okna',
+      geometry: 'Geometrický styl',
       oval: 'Oválný styl',
+      pet: 'Styl mazlíčka',
+      plant: 'Styl rostliny',
       polygonal: 'Mnohoúhelníkový styl',
       quadrilateral: 'Čtyřúhelníkový styl',
       round_arch: 'Styl kulatého oblouku',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Styl surfového prkna',
       tag: 'Styl štítku',
       text: 'Text',
+      zodiac: 'Zvěrokruh',
     },
   },
   layer_module: {

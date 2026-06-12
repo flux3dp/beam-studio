@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: '발렌타인 데이',
       weather: '날씨',
       Xmas: '크리스마스',
+      zodiac: '별자리',
     },
     image_trace_panel: {
       back: '뒤로',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: '텍스트 입력...',
     },
     types: {
+      animal: '동물 스타일',
       capsule: '캡슐 스타일',
+      dialog_box: '말풍선 스타일',
+      geometry: '기하학 스타일',
       oval: '타원 스타일',
+      pet: '반려동물 스타일',
+      plant: '식물 스타일',
       polygonal: '다각형 스타일',
       quadrilateral: '사각형 스타일',
       round_arch: '라운드 아치 스타일',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: '서핑보드 스타일',
       tag: '태그 스타일',
       text: '텍스트',
+      zodiac: '별자리',
     },
   },
   layer_module: {

@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Valentijnsdag',
       weather: 'Weer',
       Xmas: 'Kerstmis',
+      zodiac: 'Sterrenbeeld',
     },
     image_trace_panel: {
       back: 'Terug',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'Tekst invoeren...',
     },
     types: {
+      animal: 'Dierenstijl',
       capsule: 'Capsulestijl',
+      dialog_box: 'Dialoogvensterstijl',
+      geometry: 'Geometrische stijl',
       oval: 'Ovale stijl',
+      pet: 'Huisdierstijl',
+      plant: 'Plantstijl',
       polygonal: 'Veelhoekige stijl',
       quadrilateral: 'Vierhoekige stijl',
       round_arch: 'Ronde boogstijl',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Surfplankstijl',
       tag: 'Labelstijl',
       text: 'Tekst',
+      zodiac: 'Sterrenbeeld',
     },
   },
   layer_module: {

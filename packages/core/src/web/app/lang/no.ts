@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Valentinsdag',
       weather: 'Vær',
       Xmas: 'Jul',
+      zodiac: 'Stjernetegn',
     },
     image_trace_panel: {
       back: 'Tilbake',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'Skriv inn tekst...',
     },
     types: {
+      animal: 'Dyrestil',
       capsule: 'Kapselstil',
+      dialog_box: 'Dialogboksstil',
+      geometry: 'Geometrisk stil',
       oval: 'Oval stil',
+      pet: 'Kjæledyrstil',
+      plant: 'Plantestil',
       polygonal: 'Polygonal stil',
       quadrilateral: 'Firkantede stil',
       round_arch: 'Rund bue-stil',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Surfebrettstil',
       tag: 'Merkelappstil',
       text: 'Tekst',
+      zodiac: 'Stjernetegn',
     },
   },
   layer_module: {

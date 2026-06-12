@@ -277,6 +277,7 @@ export interface ILang {
       valentines: string;
       weather: string;
       Xmas: string;
+      zodiac: string;
     };
     image_trace_panel: {
       back: string;
@@ -1662,8 +1663,13 @@ export interface ILang {
       text_placeholder: string;
     };
     types: {
+      animal: string;
       capsule: string;
+      dialog_box: string;
+      geometry: string;
       oval: string;
+      pet: string;
+      plant: string;
       polygonal: string;
       quadrilateral: string;
       round_arch: string;
@@ -1671,6 +1677,7 @@ export interface ILang {
       surfing_board: string;
       tag: string;
       text: string;
+      zodiac: string;
     };
   };
   layer_module: {

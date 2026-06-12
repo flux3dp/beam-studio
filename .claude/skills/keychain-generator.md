@@ -12,15 +12,25 @@ A dialog for generating laser-cuttable keychain designs. Users pick a category (
 KeyChainGenerator/
 ├── KeyChainGenerator.tsx           # Modal dialog entry point
 ├── types.ts                        # All type definitions
-├── categories.ts                   # Category definitions, defaults, resolveCategory()
+├── categories.ts                   # resolveCategory/getStateForCategory + re-exports KEYCHAIN_CATEGORIES & DEFAULT_*
 ├── useKeychainShapeStore.ts        # Zustand store (state + build actions)
 ├── exportToCanvas.ts               # Export final shape to SVG canvas
 ├── constants/
 │   ├── index.ts                    # PX_TO_MM_RATIO=10, PUNCH_HOLE_OFFSET=-5, colors
-│   ├── categoryShapes.ts           # SVG path data per shape (CAPSULE, OVAL, etc.)
 │   ├── decorations.ts              # Decoration path definitions
 │   ├── designTokens.ts             # Theme tokens
-│   └── elementOptions.ts           # Available element/icon options
+│   ├── elementOptions.ts           # Available element/icon options
+│   └── categories/                 # Category definitions (data), grouped by family
+│       ├── index.ts                # Assembles KEYCHAIN_CATEGORIES[] (order matters); re-exports defaults
+│       ├── basePaths.ts            # SVG base path data per shape (CAPSULE, OVAL, ANIMAL_1, etc.)
+│       ├── defaults.ts             # DEFAULT_HOLE/ELEMENT/TEXT/DECORATION/CUSTOM_SHAPE_*/OUTLINE_OFFSET
+│       ├── shapes.ts               # surfingBoard, capsule, oval, roundArch, tag, rounded, polygonal, quadrilateral
+│       ├── pet.ts                  # pet (cat/dog variants)
+│       ├── dialogBox.ts            # dialogBox variants
+│       ├── geometry.ts             # geometry variants
+│       ├── plant.ts                # plant variants
+│       ├── animal.ts               # animal variants
+│       └── customShapes.ts         # text, iconTextLeft (isCustomShape)
 ├── builders/
 │   ├── buildShape.ts               # importBasePath, applyHoles, getStartPoint (ray intersection)
 │   ├── buildDecorations.ts         # buildDecorations (text + elements + decoration paths)
@@ -77,7 +87,7 @@ Holes are positioned along the shape contour at a percentage offset from a start
 
 1. Get `refPoint` from `path.bounds[startPositionRef]` (e.g. `bounds.topCenter`)
 2. Cast a ray from `refPoint` → `path.bounds.center` via `new paper.Path.Line()`
-3. Find all `path.getIntersections(ray)` and pick the one closest to `refPoint`
+3. Find all `path.getIntersections(ray)` and pick the one closest to `refPoint` (i.e. farthest from center)
 4. Fallback: `path.getNearestPoint(refPoint)` if no intersections
 
 This ray intersection approach handles **concave shapes** (e.g. four-leaf clover) where `getNearestPoint` would snap to an inner concavity instead of the outer contour.

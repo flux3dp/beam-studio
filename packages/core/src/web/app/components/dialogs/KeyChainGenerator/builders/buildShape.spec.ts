@@ -13,6 +13,8 @@ const mockImportSVG = jest.fn();
 
 class MockPath {
   children: any[] = [];
+  curves: any[] = [];
+  segments: any[] = [];
   strokeScaling = true;
   strokeWidth = 0;
   remove = mockRemove;
@@ -73,7 +75,7 @@ jest.mock('paper', () => {
   return { __esModule: true, default: mod, ...mod };
 });
 
-import { applyHoles, collectPathItems, importBasePath } from './buildShape';
+import { applyHoles, collectPathItems, importBasePath, removeDegenerateCurves, resolveHoleValues } from './buildShape';
 
 describe('collectPathItems', () => {
   beforeEach(() => jest.clearAllMocks());
@@ -333,5 +335,211 @@ describe('applyHoles', () => {
 
     expect(mockMainPath.getNormalAt).toHaveBeenCalled();
     expect(mockMainPath.getPointAt).toHaveBeenCalled();
+  });
+
+  it('should apply positionOffset to shift the baseline position', () => {
+    const offsetPath = setupMockOffsetPath();
+
+    mockSubtract.mockReturnValueOnce(new MockPath());
+
+    const basePath = new MockPath() as any;
+    const holeDefs = [{ id: 'h1', positionOffset: 25, startPositionRef: 'topCenter' }] as any[];
+
+    applyHoles(basePath, createHoleState({ position: 0, type: 'punch' }), holeDefs);
+
+    // position=0, positionOffset=25 → normalizedPosition = (0/100 + 25/100) % 1 = 0.25
+    // startOffset=0, length=100 → pathOffset = (0 + 0.25 * 100) % 100 = 25
+    expect(offsetPath.getPointAt).toHaveBeenCalledWith(25);
+  });
+
+  it('should wrap positionOffset past 100%', () => {
+    const offsetPath = setupMockOffsetPath();
+
+    mockSubtract.mockReturnValueOnce(new MockPath());
+
+    const basePath = new MockPath() as any;
+    const holeDefs = [{ id: 'h1', positionOffset: 75, startPositionRef: 'topCenter' }] as any[];
+
+    applyHoles(basePath, createHoleState({ position: 50, type: 'punch' }), holeDefs);
+
+    // position=50, positionOffset=75 → normalizedPosition = (50/100 + 75/100) % 1 = 1.25 % 1 = 0.25
+    // startOffset=0, length=100 → pathOffset = (0 + 0.25 * 100) % 100 = 25
+    expect(offsetPath.getPointAt).toHaveBeenCalledWith(25);
+  });
+
+  it('should apply baseOffset to shift the hole distance from the path', () => {
+    setupMockOffsetPath();
+    mockSubtract.mockReturnValueOnce(new MockPath());
+
+    const basePath = new MockPath() as any;
+    const holeDefs = [{ baseOffset: 1, id: 'h1', startPositionRef: 'topCenter' }] as any[];
+
+    applyHoles(basePath, createHoleState({ offset: 2, type: 'punch' }), holeDefs);
+
+    // PUNCH_HOLE_OFFSET = -5, offset = 2, baseOffset = 1, sizeRatio = 1, PX_TO_MM_RATIO = 10
+    // holeOffsetDist = (2 + 1 + (-5)) * (10 / 1) = -20
+    expect(mockOffset).toHaveBeenCalledWith(basePath, -20, expect.objectContaining({ insert: false }));
+  });
+
+  it('should use default values for hidden fields via fieldVisibility', () => {
+    setupMockOffsetPath();
+    mockSubtract.mockReturnValueOnce(new MockPath());
+
+    const basePath = new MockPath() as any;
+    const holeDefs = [
+      {
+        defaults: { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'ring' },
+        fieldVisibility: { position: ['ring'] },
+        id: 'h1',
+        startPositionRef: 'topCenter',
+      },
+    ] as any[];
+
+    // User set position=50, but type=punch so position should resolve to default (0)
+    applyHoles(basePath, createHoleState({ position: 50, type: 'punch' }), holeDefs);
+
+    // position resolves to default 0, positionOffset undefined → normalizedPosition = 0
+    // startOffset=0, length=100 → pathOffset = 0
+    expect(mockOffset).toHaveBeenCalled();
+  });
+});
+
+describe('resolveHoleValues', () => {
+  const defaults = { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'ring' as const };
+
+  it('should return original values when no fieldVisibility is defined', () => {
+    const hole = { ...defaults, position: 50 };
+    const holeDef = { defaults, id: 'h1', startPositionRef: 'topCenter' } as any;
+
+    const result = resolveHoleValues(hole, holeDef);
+
+    expect(result).toBe(hole);
+  });
+
+  it('should substitute defaults for fields hidden by current type', () => {
+    const hole = { ...defaults, position: 50, type: 'punch' as const };
+    const holeDef = {
+      defaults,
+      fieldVisibility: { position: ['ring'] },
+      id: 'h1',
+      startPositionRef: 'topCenter',
+    } as any;
+
+    const result = resolveHoleValues(hole, holeDef);
+
+    expect(result.position).toBe(0); // default
+    expect(result.type).toBe('punch'); // unchanged
+  });
+
+  it('should keep field values when current type is in allowed types', () => {
+    const hole = { ...defaults, position: 50, type: 'ring' as const };
+    const holeDef = {
+      defaults,
+      fieldVisibility: { position: ['ring'] },
+      id: 'h1',
+      startPositionRef: 'topCenter',
+    } as any;
+
+    const result = resolveHoleValues(hole, holeDef);
+
+    expect(result.position).toBe(50);
+  });
+
+  it('should handle multiple fields in fieldVisibility', () => {
+    const hole = { ...defaults, offset: 5, position: 50, type: 'punch' as const };
+    const holeDef = {
+      defaults,
+      fieldVisibility: { offset: ['ring'], position: ['ring'] },
+      id: 'h1',
+      startPositionRef: 'topCenter',
+    } as any;
+
+    const result = resolveHoleValues(hole, holeDef);
+
+    expect(result.position).toBe(0); // default
+    expect(result.offset).toBe(0); // default
+    expect(result.diameter).toBe(3); // unchanged (not in fieldVisibility)
+  });
+});
+
+describe('removeDegenerateCurves', () => {
+  // Builds a mock path with `curveLengths.length + 1` segments and one curve per length.
+  // Each segment's `remove()` splices itself out of `segments` to mirror Paper.js mutation.
+  const createCurvyPath = (curveLengths: number[]) => {
+    const segments: any[] = [];
+
+    for (let i = 0; i <= curveLengths.length; i += 1) {
+      const seg: any = { handleOut: `h${i}` };
+
+      seg.remove = jest.fn(() => {
+        const idx = segments.indexOf(seg);
+
+        if (idx !== -1) segments.splice(idx, 1);
+      });
+      segments.push(seg);
+    }
+
+    const curves = curveLengths.map((length, i) => ({
+      length,
+      segment1: segments[i],
+      segment2: segments[i + 1],
+    }));
+
+    return { curves, segments };
+  };
+
+  it('should collapse curves shorter than minLength and transfer handleOut to the neighbor', () => {
+    const path = createCurvyPath([5, 0.005, 5]);
+    const [, seg1, seg2] = path.segments;
+
+    removeDegenerateCurves(path as any);
+
+    // The degenerate curve's segment2 is removed...
+    expect(seg2.remove).toHaveBeenCalled();
+    // ...and its handleOut is transferred onto segment1 before removal.
+    expect(seg1.handleOut).toBe('h2');
+    expect(path.segments).toHaveLength(3);
+  });
+
+  it('should preserve curves at or above minLength', () => {
+    const path = createCurvyPath([5, 5, 5]);
+
+    removeDegenerateCurves(path as any);
+
+    path.segments.forEach((seg) => expect(seg.remove).not.toHaveBeenCalled());
+    expect(path.segments).toHaveLength(4);
+  });
+
+  it('should keep at least two segments even when curves are degenerate', () => {
+    const path = createCurvyPath([0.001]); // 2 segments, 1 curve
+
+    removeDegenerateCurves(path as any);
+
+    path.segments.forEach((seg) => expect(seg.remove).not.toHaveBeenCalled());
+    expect(path.segments).toHaveLength(2);
+  });
+
+  it('should respect a custom minLength threshold', () => {
+    const path = createCurvyPath([5, 2, 5]);
+    const [, , seg2] = path.segments;
+
+    removeDegenerateCurves(path as any, 3);
+
+    expect(seg2.remove).toHaveBeenCalled();
+  });
+
+  it('should process each child of a CompoundPath', () => {
+    const child1 = createCurvyPath([5, 0.005, 5]);
+    const child2 = createCurvyPath([5, 0.005, 5]);
+    const child1Seg2 = child1.segments[2];
+    const child2Seg2 = child2.segments[2];
+    const compound = new MockCompoundPath();
+
+    compound.children = [child1, child2];
+
+    removeDegenerateCurves(compound as any);
+
+    expect(child1Seg2.remove).toHaveBeenCalled();
+    expect(child2Seg2.remove).toHaveBeenCalled();
   });
 });

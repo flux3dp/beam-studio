@@ -14,6 +14,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { removeDegenerateCurves } from './builders/buildShape';
 import { EXPLODED_GAP_PX, INNER_ALIGN_OFFSET_PX, KEYCHAIN_COLORS } from './constants';
 import type { KeyChainShape } from './types';
 import useKeychainShapeStore from './useKeychainShapeStore';
@@ -284,7 +285,12 @@ const exportEmbossLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand,
 
   useLayerStore.getState().setSelectedLayers([posName]);
 
-  const insetPath = PaperOffset.offset(combinedInnerPath.clone() as paper.Path, -INNER_ALIGN_OFFSET_PX / sizeRatio, {
+  const insetSource = combinedInnerPath.clone() as paper.Path;
+
+  // Strip degenerate curves before offsetting to avoid stack-overflow recursion in paperjs-offset.
+  removeDegenerateCurves(insetSource);
+
+  const insetPath = PaperOffset.offset(insetSource, -INNER_ALIGN_OFFSET_PX / sizeRatio, {
     insert: false,
   });
 

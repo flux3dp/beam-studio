@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Hari Valentine',
       weather: 'Cuaca',
       Xmas: 'Krismas',
+      zodiac: 'Zodiak',
     },
     image_trace_panel: {
       back: 'Kembali',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'Masukkan teks...',
     },
     types: {
+      animal: 'Gaya Haiwan',
       capsule: 'Gaya Kapsul',
+      dialog_box: 'Gaya Kotak Dialog',
+      geometry: 'Gaya Geometri',
       oval: 'Gaya Bujur',
+      pet: 'Gaya Haiwan Peliharaan',
+      plant: 'Gaya Tumbuhan',
       polygonal: 'Gaya Poligon',
       quadrilateral: 'Gaya Segi Empat',
       round_arch: 'Gaya Gerbang Bulat',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Gaya Papan Luncur',
       tag: 'Gaya Tanda',
       text: 'Teks',
+      zodiac: 'Zodiak',
     },
   },
   layer_module: {

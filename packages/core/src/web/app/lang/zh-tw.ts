@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: '情人節',
       weather: '天氣',
       Xmas: '聖誕節',
+      zodiac: '星座',
     },
     image_trace_panel: {
       back: '上一步',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: '輸入文字...',
     },
     types: {
+      animal: '動物造型',
       capsule: '膠囊形',
+      dialog_box: '對話框造型',
+      geometry: '幾何造型',
       oval: '橢圓形造型',
+      pet: '寵物造型',
+      plant: '植物造型',
       polygonal: '多邊形造型',
       quadrilateral: '四邊形造型',
       round_arch: '圓拱形',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: '衝浪板造型',
       tag: '標籤造型',
       text: '文字',
+      zodiac: '星座',
     },
   },
   layer_module: {

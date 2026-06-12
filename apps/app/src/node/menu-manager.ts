@@ -807,7 +807,7 @@ class MenuManager extends EventEmitter {
             const view = getFocusedView();
 
             if (view) {
-              view.webContents.openDevTools();
+              view.webContents.toggleDevTools();
             }
           },
           id: 'DEV_TOOL',

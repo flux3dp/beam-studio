@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'San Valentino',
       weather: 'Meteo',
       Xmas: 'Natale',
+      zodiac: 'Zodiaco',
     },
     image_trace_panel: {
       back: 'Indietro',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'Inserisci testo...',
     },
     types: {
+      animal: 'Stile animale',
       capsule: 'Stile capsula',
+      dialog_box: 'Stile fumetto',
+      geometry: 'Stile geometrico',
       oval: 'Stile ovale',
+      pet: 'Stile animale domestico',
+      plant: 'Stile pianta',
       polygonal: 'Stile poligonale',
       quadrilateral: 'Stile quadrilatero',
       round_arch: 'Stile arco tondo',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Stile tavola da surf',
       tag: 'Stile etichetta',
       text: 'Testo',
+      zodiac: 'Zodiaco',
     },
   },
   layer_module: {

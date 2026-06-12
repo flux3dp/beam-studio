@@ -277,6 +277,7 @@ const lang: ILang = {
       valentines: 'Lễ Tình Nhân',
       weather: 'Thời tiết',
       Xmas: 'Giáng sinh',
+      zodiac: 'Cung hoàng đạo',
     },
     image_trace_panel: {
       back: 'Quay lại',
@@ -1664,8 +1665,13 @@ const lang: ILang = {
       text_placeholder: 'Nhập văn bản...',
     },
     types: {
+      animal: 'Kiểu động vật',
       capsule: 'Kiểu viên nang',
+      dialog_box: 'Kiểu hộp thoại',
+      geometry: 'Kiểu hình học',
       oval: 'Kiểu hình bầu dục',
+      pet: 'Kiểu thú cưng',
+      plant: 'Kiểu thực vật',
       polygonal: 'Kiểu đa giác',
       quadrilateral: 'Kiểu tứ giác',
       round_arch: 'Kiểu vòm tròn',
@@ -1673,6 +1679,7 @@ const lang: ILang = {
       surfing_board: 'Kiểu ván lướt sóng',
       tag: 'Kiểu thẻ treo',
       text: 'Văn bản',
+      zodiac: 'Cung hoàng đạo',
     },
   },
   layer_module: {
