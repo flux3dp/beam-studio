@@ -407,5 +407,5 @@ export const animal: KeyChainCategory = {
     ],
   },
   svgContent: ANIMAL_1,
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/animal.jpg',
 };

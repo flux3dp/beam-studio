@@ -12,7 +12,7 @@ export const dialogBox: KeyChainCategory = {
     holes: [
       {
         defaults: DEFAULT_HOLE,
-        // fieldVisibility: { offset: ['ring'], position: ['ring'] },
+        fieldVisibility: { offset: ['ring'], position: ['ring'] },
         id: '1',
         startPositionRef: 'topLeft',
       },
@@ -95,5 +95,5 @@ export const dialogBox: KeyChainCategory = {
     ],
   },
   svgContent: DIALOG_BOX_1,
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/dialog_box.jpg',
 };

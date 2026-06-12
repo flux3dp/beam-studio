@@ -309,5 +309,5 @@ export const geometry: KeyChainCategory = {
     ],
   },
   svgContent: GEOMETRY_1,
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/geometry.jpg',
 };

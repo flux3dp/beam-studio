@@ -22,7 +22,7 @@ export const text: KeyChainCategory = {
     ],
   },
   svgContent: '',
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/text.jpg',
 };
 
 export const zodiacText: KeyChainCategory = {
@@ -49,7 +49,7 @@ export const zodiacText: KeyChainCategory = {
     ],
   },
   svgContent: '',
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/zodiac-text.jpg',
 };
 
 export const iconTextLeft: KeyChainCategory = {
@@ -76,5 +76,5 @@ export const iconTextLeft: KeyChainCategory = {
     ],
   },
   svgContent: '',
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/icon-text-left.jpg',
 };

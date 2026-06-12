@@ -145,5 +145,5 @@ export const pet: KeyChainCategory = {
     ],
   },
   svgContent: CAT_1,
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/pet.jpg',
 };

@@ -217,5 +217,5 @@ export const plant: KeyChainCategory = {
     ],
   },
   svgContent: PLANT_1,
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/plant.jpg',
 };

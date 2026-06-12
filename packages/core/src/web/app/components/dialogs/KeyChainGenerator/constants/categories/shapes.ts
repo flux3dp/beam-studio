@@ -274,7 +274,7 @@ export const rounded: KeyChainCategory = {
     ],
   },
   svgContent: ROUNDED_1,
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/rounded.jpg',
 };
 
 export const polygonal: KeyChainCategory = {
@@ -392,7 +392,7 @@ export const polygonal: KeyChainCategory = {
     ],
   },
   svgContent: POLYGONAL_1,
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/polygonal.jpg',
 };
 
 export const quadrilateral: KeyChainCategory = {
@@ -438,5 +438,5 @@ export const quadrilateral: KeyChainCategory = {
     ],
   },
   svgContent: QUAD_1,
-  thumbnail: '',
+  thumbnail: 'core-img/keychain-generator/quadrilateral.jpg',
 };
