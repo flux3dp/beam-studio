@@ -60,7 +60,7 @@ export const surfingBoard: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 125, width: 330, x: 335, y: 512 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 90, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 90 },
         id: '1',
       },
       {
@@ -98,7 +98,7 @@ export const capsule: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 100, width: 400, x: 300, y: 255 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 70, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 70 },
         id: '1',
       },
       {
@@ -128,7 +128,7 @@ export const oval: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 160, width: 620, x: 215, y: 420 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 120, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 120 },
         id: '1',
       },
       {
@@ -171,7 +171,7 @@ export const roundArch: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 100, width: 420, x: 290, y: 625 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 110 },
         id: '1',
       },
       {
@@ -209,7 +209,7 @@ export const tag: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 100, width: 374, x: 313, y: 668 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 110 },
         id: '1',
       },
       {
@@ -233,7 +233,7 @@ export const rounded: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 280, width: 520, x: 240, y: 360 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 140 },
         id: '1',
       },
     ],
@@ -248,7 +248,7 @@ export const rounded: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 240, width: 520, x: 240, y: 475 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -291,7 +291,7 @@ export const polygonal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 140, width: 520, x: 240, y: 635 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -304,7 +304,7 @@ export const polygonal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 260, width: 520, x: 240, y: 400 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -317,7 +317,7 @@ export const polygonal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 280, width: 580, x: 210, y: 360 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -330,7 +330,7 @@ export const polygonal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 280, width: 580, x: 210, y: 360 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -343,7 +343,7 @@ export const polygonal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 160, width: 300, x: 350, y: 445 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -356,7 +356,7 @@ export const polygonal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 440, x: 280, y: 440 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -369,7 +369,7 @@ export const polygonal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 250, width: 500, x: 250, y: 375 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -382,7 +382,7 @@ export const polygonal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 240, width: 500, x: 250, y: 380 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -405,7 +405,7 @@ export const quadrilateral: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 280, width: 520, x: 240, y: 360 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 140 },
         id: '1',
       },
     ],
@@ -420,7 +420,7 @@ export const quadrilateral: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 280, width: 520, x: 240, y: 360 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],

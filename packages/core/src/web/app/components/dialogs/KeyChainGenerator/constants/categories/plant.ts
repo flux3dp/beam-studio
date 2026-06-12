@@ -32,7 +32,7 @@ export const plant: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 120, width: 420, x: 290, y: 440 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 110 },
         id: '1',
       },
     ],
@@ -56,7 +56,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 400, x: 300, y: 430 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -69,7 +69,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 300, width: 420, x: 290, y: 350 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -82,7 +82,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 200, width: 420, x: 290, y: 400 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -95,7 +95,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 200, width: 600, x: 200, y: 400 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -117,7 +117,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 480, x: 290, y: 440 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -138,7 +138,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 300, width: 450, x: 275, y: 350 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -159,7 +159,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 180, width: 450, x: 275, y: 410 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -172,7 +172,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 200, width: 465, x: 250, y: 400 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -194,7 +194,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 372, x: 378, y: 375 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -207,7 +207,7 @@ export const plant: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 280, width: 370, x: 315, y: 400 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],

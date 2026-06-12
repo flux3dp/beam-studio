@@ -39,7 +39,7 @@ export const animal: KeyChainCategory = {
     texts: [
       {
         bounds: { height: 120, width: 400, x: 300, y: 480 },
-        defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+        defaults: { ...DEFAULT_TEXT, fontSize: 100 },
         id: '1',
       },
     ],
@@ -59,7 +59,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 430, x: 310, y: 390 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -72,7 +72,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 180, width: 490, x: 310, y: 335 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -95,7 +95,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 170, width: 600, x: 300, y: 340 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -117,7 +117,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 430, x: 234, y: 415 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -130,7 +130,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 140, width: 550, x: 200, y: 405 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -152,7 +152,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 160, width: 460, x: 400, y: 340 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -174,7 +174,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 100, width: 370, x: 400, y: 465 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -195,7 +195,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 90, width: 330, x: 335, y: 410 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -217,7 +217,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 180, width: 550, x: 300, y: 370 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -239,7 +239,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 130, width: 470, x: 270, y: 400 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -252,7 +252,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 110, width: 400, x: 260, y: 470 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -274,7 +274,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 110, width: 390, x: 340, y: 525 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -296,7 +296,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 150, width: 520, x: 310, y: 400 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -318,7 +318,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 170, width: 500, x: 300, y: 400 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -331,7 +331,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 470, x: 325, y: 405 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -353,7 +353,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 150, width: 370, x: 320, y: 425 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -375,7 +375,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 80, width: 270, x: 380, y: 460 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -397,7 +397,7 @@ export const animal: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 130, width: 325, x: 360, y: 485 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],

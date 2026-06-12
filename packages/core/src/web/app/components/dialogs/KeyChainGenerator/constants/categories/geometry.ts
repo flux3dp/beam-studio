@@ -33,7 +33,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 150, width: 440, x: 280, y: 390 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 130, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 130 },
               id: '1',
             },
           ],
@@ -46,7 +46,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 600, x: 200, y: 440 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -68,7 +68,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 600, x: 175, y: 465 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 120, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 120 },
               id: '1',
             },
           ],
@@ -90,7 +90,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 600, x: 200, y: 530 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 120, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 120 },
               id: '1',
             },
           ],
@@ -103,7 +103,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 666, x: 167, y: 530 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 120, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 120 },
               id: '1',
             },
           ],
@@ -124,7 +124,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 490, x: 240, y: 630 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -146,7 +146,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 90, width: 700, x: 150, y: 455 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -167,7 +167,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 200, width: 590, x: 250, y: 550 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 110 },
               id: '1',
             },
           ],
@@ -189,7 +189,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 250, width: 590, x: 230, y: 450 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 120, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 120 },
               id: '1',
             },
           ],
@@ -211,7 +211,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 480, x: 260, y: 650 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -232,7 +232,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 550, x: 200, y: 650 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 100 },
               id: '1',
             },
           ],
@@ -253,7 +253,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 533, x: 225, y: 450 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 120, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 120 },
               id: '1',
             },
           ],
@@ -276,7 +276,7 @@ export const geometry: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 90, width: 650, x: 200, y: 480 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 80, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 80 },
               id: '1',
             },
           ],
@@ -298,7 +298,7 @@ export const geometry: KeyChainCategory = {
           ],
           texts: [
             {
-              defaults: { ...DEFAULT_TEXT, fontSize: 80, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 80 },
               id: '1',
               path: GEOMETRY_14_TEXT_PATH,
             },

@@ -24,7 +24,7 @@ export const dialogBox: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 300, width: 600, x: 200, y: 310 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -37,7 +37,7 @@ export const dialogBox: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 300, width: 600, x: 225, y: 310 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -50,7 +50,7 @@ export const dialogBox: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 250, width: 600, x: 200, y: 335 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -72,7 +72,7 @@ export const dialogBox: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 280, width: 600, x: 200, y: 360 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -85,7 +85,7 @@ export const dialogBox: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 260, width: 600, x: 200, y: 350 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],

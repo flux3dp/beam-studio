@@ -29,7 +29,7 @@ export const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
   fontSize: 40,
   letterSpacing: 0,
   lineSpacing: 1.2,
-  text: 'Key Chain',
+  text: 'FLUX',
 };
 
 export const DEFAULT_DECORATION_PATH: DecorationOptionValues = {

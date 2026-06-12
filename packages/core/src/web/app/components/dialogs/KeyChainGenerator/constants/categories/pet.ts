@@ -23,7 +23,7 @@ export const pet: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 500, x: 250, y: 490 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -45,7 +45,7 @@ export const pet: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 500, x: 260, y: 550 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -68,7 +68,7 @@ export const pet: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 430, x: 333, y: 441 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -89,7 +89,7 @@ export const pet: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 500, x: 258, y: 504 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -112,7 +112,7 @@ export const pet: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 500, x: 290, y: 450 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
@@ -135,7 +135,7 @@ export const pet: KeyChainCategory = {
           texts: [
             {
               bounds: { height: 120, width: 440, x: 255, y: 440 },
-              defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+              defaults: { ...DEFAULT_TEXT, fontSize: 140 },
               id: '1',
             },
           ],
