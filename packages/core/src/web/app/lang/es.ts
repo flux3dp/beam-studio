@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: 'Origen',
       pass_through: 'Paso directo',
       pass_through_height_desc: 'Introduzca la longitud del objeto para ampliar el área de trabajo.',
+      prespray_times: 'Veces de purga',
       rotary_mode: 'Rotativo',
       scale: 'Escala',
       skip_prespray: 'Omitir purgado',

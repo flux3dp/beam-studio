@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: '原点',
       pass_through: 'パススルー',
       pass_through_height_desc: '作業エリアを拡張するためにオブジェクトの長さを入力してください。',
+      prespray_times: '予備噴射回数',
       rotary_mode: 'ロータリー',
       scale: 'スケール',
       skip_prespray: '予備噴射をスキップ',

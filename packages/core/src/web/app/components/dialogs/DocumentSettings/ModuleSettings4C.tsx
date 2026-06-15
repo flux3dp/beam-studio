@@ -4,6 +4,7 @@ import { Checkbox } from 'antd';
 
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
+import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ModuleSettings4C.module.scss';
@@ -20,12 +21,14 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
     layer_module: tModule,
   } = useI18n();
   const [skipPrespray, setSkipPrespray] = useState(useDocumentStore.getState().skip_prespray);
+  const [presprayTimes, setPresprayTimes] = useState(useDocumentStore.getState().prespray_times);
   const [enablePresprayArea, setEnablePresprayArea] = useState(
     Boolean(useDocumentStore.getState()['enable-4c-prespray-area']),
   );
   const handleSave = () => {
     useDocumentStore.getState().update({
       'enable-4c-prespray-area': enablePresprayArea,
+      prespray_times: presprayTimes,
       skip_prespray: skipPrespray,
     });
     onClose();
@@ -47,6 +50,21 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
           <Checkbox checked={skipPrespray} onChange={(e) => setSkipPrespray(e.target.checked)}>
             {tDocument.skip_prespray}
           </Checkbox>
+        </div>
+        <div className={styles.row}>
+          <span>{tDocument.prespray_times}</span>
+          <UnitInput
+            className={styles.input}
+            clipValue
+            disabled={skipPrespray}
+            max={10}
+            min={1}
+            onChange={(val) => {
+              if (val) setPresprayTimes(val);
+            }}
+            precision={0}
+            value={presprayTimes}
+          />
         </div>
         <div>
           <Checkbox checked={enablePresprayArea} onChange={(e) => setEnablePresprayArea(e.target.checked)}>

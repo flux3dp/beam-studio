@@ -53,6 +53,7 @@ const getInitDocumentStore = (): DocumentState => {
     'job-origin': preference['job-origin'],
     'pass-through': preference['pass-through'],
     'pass-through-height': preference['pass-through-height'],
+    prespray_times: Number(preference['prespray_times']) || 3,
     'promark-safety-door': preference['promark-safety-door'],
     'promark-start-button': preference['promark-start-button'],
     'rotary-chuck-obj-d': preference['rotary-chuck-obj-d'],

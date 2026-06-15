@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: 'Asal',
       pass_through: 'Laluan terus',
       pass_through_height_desc: 'Masukkan panjang objek untuk melanjutkan kawasan kerja.',
+      prespray_times: 'Bilangan pembersihan',
       rotary_mode: 'Rotari',
       scale: 'Skala',
       skip_prespray: 'Langkau pembersihan awal',

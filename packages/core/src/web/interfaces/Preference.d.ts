@@ -25,6 +25,7 @@ export type DocumentState = {
   'job-origin': number;
   'pass-through': boolean;
   'pass-through-height'?: number;
+  prespray_times: number;
   'promark-safety-door': boolean;
   'promark-start-button': boolean;
   'rotary-chuck-obj-d': number;

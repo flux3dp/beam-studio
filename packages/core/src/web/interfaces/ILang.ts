@@ -216,6 +216,7 @@ export interface ILang {
       origin: string;
       pass_through: string;
       pass_through_height_desc: string;
+      prespray_times: string;
       rotary_mode: string;
       scale: string;
       skip_prespray: string;

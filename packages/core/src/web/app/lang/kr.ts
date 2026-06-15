@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: '원점',
       pass_through: '패스스루',
       pass_through_height_desc: '작업 영역을 확장하기 위해 객체의 길이를 입력하십시오.',
+      prespray_times: '예비 분사 횟수',
       rotary_mode: '로터리',
       scale: '스케일',
       skip_prespray: '예비 분사 건너뛰기',

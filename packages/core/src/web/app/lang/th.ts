@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: 'ต้นกำเนิด',
       pass_through: 'ผ่าน',
       pass_through_height_desc: 'ป้อนความยาวของวัตถุเพื่อขยายพื้นที่การทำงาน',
+      prespray_times: 'จำนวนครั้งการไล่หมึก',
       rotary_mode: 'โหมดหมุน',
       scale: 'มาตราส่วน',
       skip_prespray: 'ข้ามการไล่หมึก',

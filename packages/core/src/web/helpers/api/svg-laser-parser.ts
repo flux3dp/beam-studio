@@ -154,6 +154,8 @@ export const getExportOpt = async (
     ) {
       if (documentState['skip_prespray']) {
         config.skip_prespray = true;
+      } else if (documentState['prespray_times']) {
+        config.prespray_times = documentState['prespray_times'];
       }
 
       if (device?.model === 'fbm2') {

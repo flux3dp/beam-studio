@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: '原点',
       pass_through: '广域雕刻',
       pass_through_height_desc: '输入物体长度以扩展工作区域。',
+      prespray_times: '预喷次数',
       rotary_mode: '旋转轴',
       scale: '倍率',
       skip_prespray: '跳过预喷',

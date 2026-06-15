@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: 'Vodítka',
       pass_through: 'Průchod',
       pass_through_height_desc: 'Zadat délku objektu k rozšíření pracovní oblasti.',
+      prespray_times: 'Počet pročištění',
       rotary_mode: 'Rotační',
       scale: 'Měřítko',
       skip_prespray: 'Přeskočit pročištění',
