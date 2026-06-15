@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: 'Opprinnelse',
       pass_through: 'Gjennomgang',
       pass_through_height_desc: 'Skriv inn lengden på objektet for å utvide arbeidsområdet.',
+      prespray_times: 'Antall rensinger',
       rotary_mode: 'Roterende',
       scale: 'Skala',
       skip_prespray: 'Hopp over rensing',

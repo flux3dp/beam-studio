@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: 'Αρχή',
       pass_through: 'Διέλευση',
       pass_through_height_desc: 'Εισαγάγετε το μήκος του αντικειμένου για να επεκτείνετε την περιοχή εργασίας.',
+      prespray_times: 'Φορές καθαρισμού',
       rotary_mode: 'Περιστροφική λειτουργία',
       scale: 'Skala',
       skip_prespray: 'Παράλειψη καθαρισμού',

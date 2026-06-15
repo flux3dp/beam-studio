@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: 'Alkuperä',
       pass_through: 'Läpivienti',
       pass_through_height_desc: 'Syötä objektin pituus työalueen laajentamiseksi.',
+      prespray_times: 'Puhdistuskerrat',
       rotary_mode: 'Pyörivä',
       scale: 'Mittakaava',
       skip_prespray: 'Ohita puhdistus',

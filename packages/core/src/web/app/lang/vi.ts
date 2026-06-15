@@ -216,6 +216,7 @@ const lang: ILang = {
       origin: 'Gốc',
       pass_through: 'Truyền qua',
       pass_through_height_desc: 'Nhập chiều dài của đối tượng để mở rộng khu vực làm việc.',
+      prespray_times: 'Số lần xả mực',
       rotary_mode: 'Chế độ xoay',
       scale: 'Tỷ lệ',
       skip_prespray: 'Bỏ qua xả mực',
