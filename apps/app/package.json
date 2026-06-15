@@ -34,7 +34,7 @@
     "sudo-prompt": "^9.2.1",
     "ts-pattern": "^5.6.2",
     "write-file-atomic": "^7.0.0",
-    "ws": "^7.5.10"
+    "ws": "^7.5.11"
   },
   "devDependencies": {
     "@babel/core": "^7.26.9",
