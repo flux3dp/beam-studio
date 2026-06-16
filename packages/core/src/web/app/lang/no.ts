@@ -809,7 +809,6 @@ const lang: ILang = {
           merge_down: 'Slå sammen nedover',
           merge_selected: 'Slå sammen valgte lag',
           move_down: 'Flytt lag ned',
-          move_elems_to: 'Flytt elementer til:',
           move_selected: 'Flytt valgte elementer til et annet lag',
           move_up: 'Flytt lag opp',
           new: 'Nytt lag',
@@ -2464,7 +2463,7 @@ const lang: ILang = {
       layer_setting: 'Lag',
       link: {
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
-        contact_us: 'https://flux3dp.zendesk.com/hc/en-us/requests/new',
+        contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
         downloads: 'https://flux3dp.com/downloads/',
         forum: 'https://www.facebook.com/groups/flux.laser/',
@@ -2612,7 +2611,7 @@ const lang: ILang = {
       zoom: 'Klyp med to fingre for å zoome inn/ut arbeidsområdet.',
     },
     links: {
-      adjust_focus: 'https://flux3dp.zendesk.com/hc/en-us/articles/360001684196',
+      adjust_focus: 'https://support.flux3dp.com/hc/en-us/articles/360001684196',
     },
     look_for_machine: 'Søker etter maskin for opplæring...',
     needNewInterfaceTutorial: 'Vil du starte en veiledning for Beam Studios nye grensesnitt?<br/>(Du kan hoppe over den nå og starte senere ved å klikke på "Hjelp" > "Vis Grensesnittintroduksjon".)',

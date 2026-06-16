@@ -809,7 +809,6 @@ export interface ILang {
           merge_down: string;
           merge_selected: string;
           move_down: string;
-          move_elems_to: string;
           move_selected: string;
           move_up: string;
           new: string;
