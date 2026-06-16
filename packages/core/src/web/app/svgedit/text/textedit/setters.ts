@@ -11,8 +11,8 @@ import undoManager from '../../history/undoManager';
 import selectionManager from '../../selection';
 
 import { getCurText } from './curText';
-import type { FitTextAlign } from './getters';
-import { getFitTextAlign, getIsVertical } from './getters';
+import type { FitTextAlign, TextTransform } from './getters';
+import { getFitTextAlign, getIsVertical, getTextContent, getTextTransform } from './getters';
 import { renderAll, renderText } from './renderText';
 
 export const textContentEvents = eventEmitterFactory.createEventEmitter('text-content');
@@ -143,6 +143,40 @@ export const setTextContent = (val: string): void => {
   textActions.init();
   textActions.setCursor();
   textContentEvents.emit('changed');
+};
+
+export const setTextTransform = (val: TextTransform, textElems: SVGTextElement[]): void => {
+  const command = new history.BatchCommand('Set Text Transform');
+
+  for (const text of textElems) {
+    if (getTextTransform(text) === val) continue;
+
+    const attrChanges: Record<string, string> = { 'data-text-transform': val === 'none' ? '' : val };
+
+    // Seed data-raw-text on first activation so renderText knows the original source.
+    if (val !== 'none' && !text.getAttribute('data-raw-text')) {
+      const isTextPath = !!text.getAttribute('data-textpath');
+
+      attrChanges['data-raw-text'] = isTextPath
+        ? (text.querySelector('textPath')?.textContent ?? '')
+        : getTextContent(text).replace(/\n/g, '\u0085');
+    }
+
+    const subCommand = changeAttribute(text, attrChanges);
+
+    if (subCommand) command.addSubCommand(subCommand);
+  }
+
+  if (!command.isEmpty()) {
+    const onAfter = () => {
+      renderAll(textElems);
+      textContentEvents.emit('changed');
+    };
+
+    command.onAfter = onAfter;
+    undoManager.addCommandToHistory(command);
+    onAfter();
+  }
 };
 
 export const setFitTextAlign = (text: SVGTextElement, align: FitTextAlign): void => {

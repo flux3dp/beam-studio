@@ -67,8 +67,8 @@ function TextContentBlock({ textElement }: Props): ReactNode {
         onChange={(e) => {
           const displayVal = e.target.value;
 
-          setTextContent(displayVal);
           renderText(textElement, displayVal.replace(/\n/g, '\u0085'), true);
+          setTextContent(getTextContent(textElement));
         }}
         onFocus={() => {
           valueBeforeEditRef.current = textContent.replace(/\n/g, '\u0085');

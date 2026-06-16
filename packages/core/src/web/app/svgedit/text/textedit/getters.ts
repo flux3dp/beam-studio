@@ -77,7 +77,43 @@ export const getFitTextAlign = (elem: Element): FitTextAlign => {
   return 'start';
 };
 
+export type TextTransform =
+  | 'fullwidth'
+  | 'halfwidth'
+  | 'lowercase'
+  | 'none'
+  | 'sentence'
+  | 'title'
+  | 'toggle'
+  | 'uppercase';
+
+const TRANSFORM_VALUES: ReadonlySet<TextTransform> = new Set<TextTransform>([
+  'uppercase',
+  'lowercase',
+  'sentence',
+  'title',
+  'toggle',
+  'halfwidth',
+  'fullwidth',
+]);
+
+export const getTextTransform = (elem: SVGTextElement): TextTransform => {
+  const val = elem.getAttribute('data-text-transform');
+
+  return val && TRANSFORM_VALUES.has(val as TextTransform) ? (val as TextTransform) : 'none';
+};
+
 export const getTextContent = (elem: SVGTextElement): string => {
+  // Raw text (when transform is or has been active) is the editable source — return it
+  // so the textarea shows what the user typed, not the transformed display.
+  const raw = elem.getAttribute('data-raw-text');
+
+  if (raw !== null) return raw.replace(/\u0085/g, '\n');
+
+  if (elem.getAttribute('data-textpath')) {
+    return elem.querySelector('textPath')?.textContent ?? '';
+  }
+
   const tspans = Array.from(elem.childNodes).filter((child): child is Element => child.nodeName === 'tspan');
 
   if (tspans.length === 0) return '';
@@ -100,3 +136,5 @@ export const getTextContent = (elem: SVGTextElement): string => {
 
   return manualLines.join('\n');
 };
+
+export const getRawText = (elem: SVGTextElement): null | string => elem.getAttribute('data-raw-text');

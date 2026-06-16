@@ -3,7 +3,10 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 const mockGetTextContent = jest.fn().mockReturnValue('Hello\nWorld');
-const mockRenderText = jest.fn();
+
+const mockRenderText = jest.fn((_elem: any, val: string) => {
+  mockGetTextContent.mockReturnValue(val.replace(/\u0085/g, '\n'));
+});
 const mockOn = jest.fn();
 const mockRemoveListener = jest.fn();
 const mockAddCommandToHistory = jest.fn();

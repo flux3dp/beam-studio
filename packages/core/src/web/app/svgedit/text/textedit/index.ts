@@ -3,7 +3,7 @@
  */
 
 export { getCurText, initCurText, updateCurText, useDefaultFont } from './curText';
-export type { FitTextAlign } from './getters';
+export type { FitTextAlign, TextTransform } from './getters';
 export {
   getFitTextAlign,
   getFitTextSize,
@@ -17,9 +17,10 @@ export {
   getLetterSpacing,
   getLineSpacing,
   getTextContent,
+  getTextTransform,
   isFitText,
 } from './getters';
-export { renderAll, renderText } from './renderText';
+export { applyTextTransform, renderAll, renderText } from './renderText';
 export {
   setFitTextAlign,
   setFontFamily,
@@ -31,6 +32,7 @@ export {
   setLetterSpacing,
   setLineSpacing,
   setTextContent,
+  setTextTransform,
   textContentEvents,
 } from './setters';
 
@@ -51,7 +53,8 @@ import {
   getTextContent,
   isFitText,
 } from './getters';
-import { renderText } from './renderText';
+import { getTextTransform } from './getters';
+import { applyTextTransform, renderText } from './renderText';
 import {
   setFitTextAlign,
   setFontFamily,
@@ -63,10 +66,12 @@ import {
   setLetterSpacing,
   setLineSpacing,
   setTextContent,
+  setTextTransform,
   textContentEvents,
 } from './setters';
 
 export default {
+  applyTextTransform,
   getCurText,
   getFitTextAlign,
   getFitTextSize,
@@ -80,6 +85,7 @@ export default {
   getLetterSpacing,
   getLineSpacing,
   getTextContent,
+  getTextTransform,
   isFitText,
   renderText,
   setFitTextAlign,
@@ -92,6 +98,7 @@ export default {
   setLetterSpacing,
   setLineSpacing,
   setTextContent,
+  setTextTransform,
   textContentEvents,
   updateCurText,
   useDefaultFont,
