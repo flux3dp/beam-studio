@@ -99,6 +99,7 @@
       {
         "provider": "s3",
         "bucket": "beamstudio",
+        "region": "ap-northeast-1",
         "path": "/${os}${env.PUBLISH_PATH}${env.PUBLISH_SUFFIX}"
       }
     ],
