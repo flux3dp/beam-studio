@@ -72,7 +72,7 @@ export const removeDefaultLayerIfEmpty = ({ parentCmd }: { parentCmd?: IBatchCom
 
       const cmd = deleteLayerByName(defaultLayerName, { parentCmd });
 
-      layerManager.identifyLayers();
+      layerManager.identifyLayers({ keepCurrentLayer: true });
       useLayerStore.getState().setSelectedLayers([]);
 
       return cmd;

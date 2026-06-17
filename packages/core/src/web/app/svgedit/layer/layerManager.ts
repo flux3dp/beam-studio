@@ -231,10 +231,11 @@ export class LayerManager {
   /**
    * Updates layer system and sets the current layer to the top-most layer
    */
-  public identifyLayers = (): void => {
+  public identifyLayers = ({ keepCurrentLayer = false }: { keepCurrentLayer?: boolean } = {}): void => {
     this.allLayers = [];
     this.layerMap.clear();
 
+    const currentLayerName = this.getCurrentLayerName();
     const numChildren = this.svgContent.childNodes.length;
     const orphans: SVGElement[] = [];
     const layerNames: string[] = [];
@@ -282,7 +283,7 @@ export class LayerManager {
       this.layerMap.set(newName, layer);
     }
 
-    this.currentLayer = layer;
+    this.currentLayer = (keepCurrentLayer ? this.layerMap.get(currentLayerName) : null) ?? layer;
   };
 
   /**
