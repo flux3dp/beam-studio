@@ -76,7 +76,9 @@ jobs:
       # Install dependencies (needed for Cypress)
       - name: Install dependencies
         working-directory: apps/web
-        run: pnpm install --filter=web --filter=core
+        run: |
+          pnpm install --filter=web --filter=core
+          pnpm exec cypress install
 
       - name: Debug Cypress install
         working-directory: apps/web
