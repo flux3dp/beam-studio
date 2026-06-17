@@ -19,7 +19,11 @@ on:
 
 jobs:
   build:
-    runs-on: windows-latest
+    # Pin to windows-2022: windows-latest now maps to windows-2025, which ships
+    # only Visual Studio 2026 (v18). node-gyp 11.5.0 cannot detect VS 18, and the
+    # toolchain below (msvs_version 2019, VS 2019 CL include path) is not present
+    # on that image, so native modules (font-scanner) fail to rebuild.
+    runs-on: windows-2022
     strategy:
       matrix:
         node-version: [24]
