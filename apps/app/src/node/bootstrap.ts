@@ -23,10 +23,10 @@ function setupWindowsFirewall() {
     const cmd = path.join(resourcesRoot, 'backend', 'elevate.cmd');
 
     execSync(
-      `${cmd} netsh advfirewall firewall add rule name="FLUX Discover Port 1901" dir=in action=allow protocol=UDP localport=1901`,
+      `"${cmd}" netsh advfirewall firewall add rule name="FLUX Discover Port 1901" dir=in action=allow protocol=UDP localport=1901`,
     );
   } catch (err) {
-    console.log('setup windows firewall error: %s', err);
+    console.log('setup windows firewall error:', err);
   }
 }
 
