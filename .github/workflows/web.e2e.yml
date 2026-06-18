@@ -82,19 +82,6 @@ jobs:
           pnpm install --filter=web --filter=core
           pnpm exec cypress install
 
-      - name: Debug Cypress install
-        working-directory: apps/web
-        shell: bash
-        run: |
-          echo "=== cypress cache path ==="
-          pnpm exec cypress cache path || true
-          echo "=== cypress cache list ==="
-          pnpm exec cypress cache list || true
-          echo "=== Search for Cypress.exe ==="
-          find "C:/Users/runneradmin" -name "Cypress.exe" -maxdepth 6 2>/dev/null || echo "Cypress.exe not found"
-          echo "=== CYPRESS_CACHE_FOLDER ==="
-          echo "$CYPRESS_CACHE_FOLDER"
-
       - name: Install serve
         run: npm install -g serve
 
