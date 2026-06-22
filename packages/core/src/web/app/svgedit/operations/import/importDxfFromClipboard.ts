@@ -1,3 +1,5 @@
+import progressCaller from '@core/app/actions/progress-caller';
+
 import importDxf from './importDxf';
 
 // Guard against importing the same paste twice when more than one paste entry
@@ -48,6 +50,9 @@ export const importDxfFromText = async (text: string): Promise<boolean> => {
     return false;
   } finally {
     importing = false;
+    // importDxf opens the "Loading image" progress but relies on its caller to
+    // close it (handleFile does). We call importDxf directly, so close it here.
+    progressCaller.popById('loading_image');
   }
 };
 
