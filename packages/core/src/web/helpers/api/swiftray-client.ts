@@ -14,7 +14,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import { alloweWebSwiftray, supportSwiftray } from '@core/helpers/is-dev';
+import { allowWebSwiftray, supportSwiftray } from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
 import Logger from '@core/helpers/logger';
@@ -607,7 +607,7 @@ const checkSwiftray = async (): Promise<boolean> => {
     return false;
   }
 
-  return isWeb() ? alloweWebSwiftray() : Boolean(await communicator.invoke(BackendEvents.CheckSwiftray));
+  return isWeb() ? allowWebSwiftray() : Boolean(await communicator.invoke(BackendEvents.CheckSwiftray));
 };
 let hasSwiftray = false;
 
