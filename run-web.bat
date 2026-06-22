@@ -1,10 +1,7 @@
 @echo off
-cd /d "%~dp0"
+set "ROOT=%~dp0"
 
-REM Beam Studio web launcher. Double-click to start; close window to stop.
-REM Make node + pnpm reachable regardless of the system PATH.
-
-set "PATH=%PATH%;%ProgramFiles%\nodejs;%APPDATA%\npm;%LOCALAPPDATA%\pnpm"
+REM Beam Studio web launcher - runs webpack directly via node (no pnpm/nx).
 
 set "NODE="
 for /f "delims=" %%i in ('where node 2^>nul') do if not defined NODE set "NODE=%%i"
@@ -13,19 +10,20 @@ if not defined NODE if exist "%LOCALAPPDATA%\Programs\nodejs\node.exe" set "NODE
 
 if not defined NODE (
   echo.
-  echo [ERROR] Node.js was not found.
-  echo   Install it with:  winget install OpenJS.NodeJS.LTS
-  echo   then reopen this window and try again.
+  echo [ERROR] Node.js was not found. Install with: winget install OpenJS.NodeJS.LTS
   echo.
   pause
   exit /b 1
 )
 
-set "NX=%~dp0node_modules\nx\bin\nx.js"
-if not exist "%NX%" (
+REM put node's own folder on PATH so the webpack shim can find node
+for %%D in ("%NODE%") do set "PATH=%%~dpD;%PATH%"
+
+cd /d "%ROOT%apps\web"
+
+if not exist "node_modules\.bin\webpack.cmd" (
   echo.
-  echo [ERROR] Dependencies are not installed - node_modules\nx is missing.
-  echo   Open a terminal in this folder and run:  pnpm install
+  echo [ERROR] Dependencies are not installed. Run  pnpm install  in the beam-studio folder.
   echo.
   pause
   exit /b 1
@@ -40,7 +38,7 @@ echo.
 
 start "" /min powershell -NoProfile -WindowStyle Hidden -Command "while($true){ try { (New-Object Net.Sockets.TcpClient).Connect('localhost',8080); break } catch { Start-Sleep -Seconds 2 } }; Start-Process 'http://localhost:8080'"
 
-"%NODE%" "%NX%" run web:start
+call "node_modules\.bin\webpack.cmd" serve --config webpack.dev.js
 
 echo.
 echo Server stopped.
