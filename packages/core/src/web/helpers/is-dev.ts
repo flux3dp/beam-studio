@@ -8,6 +8,7 @@ export default isDev;
 
 export const uvModel = 'fpm1uv' as const;
 export const isUvDev = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
+export const showDevMsg = (): boolean => window?.localStorage?.getItem('devMsg') === 'true';
 export const allowWebSwiftray = (): boolean => true;
 export const supportSwiftray = () => (allowWebSwiftray() || !isWeb() || isDev()) && getOS() !== 'Linux';
 export const mockT = (key: string) => key;

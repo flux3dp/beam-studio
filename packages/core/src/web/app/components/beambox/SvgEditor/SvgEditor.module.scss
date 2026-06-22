@@ -60,6 +60,14 @@
   top: -9999px;
 }
 
+.top-right {
+  position: absolute;
+  z-index: 0;
+  top: 20px;
+  right: 20px;
+  pointer-events: none;
+}
+
 .bottom-right {
   position: absolute;
   z-index: 1;
