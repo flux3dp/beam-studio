@@ -60,6 +60,7 @@ const promarkLaserOptions = [
   { label: 'MOPA - 20W', value: `${LaserType.MOPA}-20` },
   { label: 'MOPA - 60W', value: `${LaserType.MOPA}-60` },
   { label: 'MOPA - 100W', value: `${LaserType.MOPA}-100` },
+  { label: 'UV - 5W', value: `${LaserType.UV}-5` },
 ];
 
 interface Props {
@@ -169,16 +170,28 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     return hasCurveEngravingData || mode === CanvasMode.CurveEngraving;
   }, [addOnInfo.curveEngraving, hasCurveEngravingData, mode]);
 
-  const onWorkareaChange = useCallback((value: AnnotatedWorkareaModel) => {
-    const { annotation, workarea: newWorkarea } = decodeWorkareaAnnotation(value);
+  const onWorkareaChange = useCallback(
+    (value: AnnotatedWorkareaModel) => {
+      const { annotation, workarea: newWorkarea } = decodeWorkareaAnnotation(value);
 
-    setWorkareaAnnotation({ ...workareaAnnotation, [newWorkarea]: annotation[newWorkarea as keyof typeof annotation] });
-    setWorkarea(newWorkarea);
+      setWorkareaAnnotation((pre) => ({
+        ...pre,
+        [newWorkarea]: annotation[newWorkarea as keyof typeof annotation],
+      }));
+      setWorkarea(newWorkarea);
 
-    if (newWorkarea === 'fpm1') {
-      setCheckSafetyDoor(!!annotation.fpm1?.safe);
-    }
-  }, []);
+      if (newWorkarea === uvModel) {
+        setPmInfo({ laserType: LaserType.UV, watt: 5 });
+      } else if (newWorkarea === 'fpm1') {
+        setCheckSafetyDoor(!!annotation.fpm1?.safe);
+
+        if (workarea === uvModel) {
+          setPmInfo(getPromarkInfo());
+        }
+      }
+    },
+    [workarea],
+  );
 
   // pass-through, auto-feeder, rotary mode are exclusive, disable others when one is on
   useEffect(() => {
@@ -310,7 +323,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     newState['job-origin'] = jobOrigin;
 
     if (promarkModels.has(workarea)) {
-      setPromarkInfo(workarea === uvModel ? { laserType: LaserType.UV, watt: 5 } : pmInfo);
+      setPromarkInfo(pmInfo);
       newState['workarea-annotation'] = workareaAnnotation;
       newState['promark-start-button'] = enableStartButton;
       newState['frame-before-start'] = shouldFrame;
@@ -550,7 +563,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 )}
               </div>
             )}
-            {isPromark && workarea !== uvModel && (
+            {isPromark && (
               <div className={styles.row}>
                 <label className={styles.title} htmlFor="pm-laser-source">
                   {tDocument.laser_source}
