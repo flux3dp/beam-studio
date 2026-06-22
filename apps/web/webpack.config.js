@@ -244,6 +244,7 @@ module.exports = {
       buffer: false,
       events: false,
       fs: false,
+      path: false,
       stream: false,
       util: false,
     },
