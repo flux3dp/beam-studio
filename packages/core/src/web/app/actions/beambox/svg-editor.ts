@@ -542,6 +542,14 @@ const svgEditor = (window['svgEditor'] = (function () {
       let importedFromClipboard = false;
 
       if (clipboardData) {
+        // Detect DXF text placed on the clipboard by a CAD app (e.g. AutoCAD via clip.exe / BeamCopy.lsp).
+        const plainText = clipboardData.types.includes('text/plain') ? clipboardData.getData('text/plain') : '';
+        const dxfHead = plainText.slice(0, 1024);
+        const isDxfText =
+          plainText.length > 0 &&
+          (/(^|\r?\n)\s*0\r?\n\s*SECTION\r?\n/.test(dxfHead) ||
+            (dxfHead.includes('SECTION') && plainText.includes('ENTITIES') && plainText.includes('EOF')));
+
         if (clipboardData.types.includes('Files')) {
           console.log('handle clip board file');
           for (let i = 0; i < clipboardData.files.length; i++) {
@@ -550,6 +558,14 @@ const svgEditor = (window['svgEditor'] = (function () {
             svgEditor.handleFile(file);
             importedFromClipboard = true;
           }
+        } else if (isDxfText) {
+          // Reuse the normal file-import pipeline by wrapping the text in a .dxf File.
+          console.log('handle clip board dxf text');
+          importedFromClipboard = true;
+
+          const dxfFile = new File([plainText], 'clipboard.dxf', { type: 'application/dxf' });
+
+          svgEditor.handleFile(dxfFile);
         } else if (clipboardData.types.includes('text/html')) {
           const htmlData = clipboardData.getData('text/html');
           const matchImgs = htmlData.match(/<img[^>]+>/);

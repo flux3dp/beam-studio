@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Beam Studio — Direct AutoCAD Paste · Prompt History</title>
+<style>
+  :root {
+    --bg: #0f1115; --panel: #171a21; --panel2: #1e222b; --border: #2a2f3a;
+    --text: #e6e9ef; --muted: #9aa3b2; --accent: #4f9cff; --user: #2d6cdf;
+    --code-bg: #0b0d12; --green: #43c59e; --amber: #e0b341;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--text);
+    font: 16px/1.6 -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 40px 20px 80px; }
+  header h1 { font-size: 26px; margin: 0 0 6px; }
+  header p { color: var(--muted); margin: 0 0 28px; }
+  .meta { font-size: 13px; color: var(--muted); border-top: 1px solid var(--border);
+          border-bottom: 1px solid var(--border); padding: 10px 0; margin-bottom: 32px; }
+  .turn { margin: 0 0 26px; }
+  .role { display: inline-block; font-size: 12px; font-weight: 700; letter-spacing: .06em;
+          text-transform: uppercase; padding: 3px 10px; border-radius: 999px; margin-bottom: 8px; }
+  .role.user { background: var(--user); color: #fff; }
+  .role.assistant { background: var(--panel2); color: var(--accent); border: 1px solid var(--border); }
+  .bubble { background: var(--panel); border: 1px solid var(--border); border-radius: 12px;
+            padding: 16px 18px; }
+  .bubble.user { background: var(--panel2); }
+  .bubble h3 { margin: 14px 0 6px; font-size: 15px; color: var(--accent); }
+  .bubble ul { margin: 8px 0; padding-left: 20px; }
+  .bubble li { margin: 4px 0; }
+  code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 5px;
+         padding: 1px 6px; font: 13px/1.5 "SFMono-Regular", Consolas, monospace; }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px;
+        padding: 12px 14px; overflow-x: auto; }
+  pre code { border: 0; padding: 0; }
+  .tag { font-size: 12px; color: var(--green); font-weight: 600; }
+  .files { font-size: 13px; color: var(--muted); margin-top: 10px; }
+  .files code { color: var(--text); }
+  footer { color: var(--muted); font-size: 13px; margin-top: 40px; border-top: 1px solid var(--border); padding-top: 16px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Beam Studio — Direct Paste from AutoCAD</h1>
+    <p>Development prompt history &amp; decision log</p>
+  </header>
+  <div class="meta">
+    Project: fork of <code>flux3dp/beam-studio</code> &nbsp;·&nbsp;
+    Goal: copy in AutoCAD → paste vectors into Beam Studio (no DXF file save) &nbsp;·&nbsp;
+    Generated with Claude Code
+  </div>
+
+  <!-- Turn 1 -->
+  <div class="turn">
+    <div class="role user">User</div>
+    <div class="bubble user">
+      Shared <code>https://github.com/flux3dp/beam-studio</code> (laser cutter workspace).
+      Currently it requires saving DXF files from AutoCAD to import.
+      Asked: can the API be modified to let users <strong>directly copy a design from AutoCAD
+      and paste it into Beam Studio</strong> to print?
+    </div>
+  </div>
+
+  <!-- Turn 2 -->
+  <div class="turn">
+    <div class="role assistant">Assistant</div>
+    <div class="bubble">
+      Analyzed both sides of the problem.
+      <h3>How import works today</h3>
+      <ul>
+        <li><code>importDxf(file: Blob)</code> reads text → parses with <code>dxf2svg</code> → SVG → canvas.</li>
+        <li>A global <code>paste</code> handler already exists (handles clipboard Files and HTML <code>&lt;img&gt;</code>).</li>
+      </ul>
+      <h3>Why direct vector paste fails</h3>
+      <ul>
+        <li>AutoCAD Ctrl+C puts a binary <strong>DWG</strong> (temp file) + <strong>EMF metafile</strong> on the clipboard — not DXF text.</li>
+        <li>The browser/Electron paste event only exposes <code>text/plain</code>, <code>text/html</code>, <code>image/*</code>, <code>Files</code> — never <code>AutoCAD.r17</code> or <code>CF_ENHMETAFILE</code>.</li>
+        <li>Best case a naive paste recovers a <strong>raster image</strong> — useless for cutting.</li>
+      </ul>
+      <h3>Options proposed</h3>
+      <ul>
+        <li><strong>A (recommended):</strong> AutoCAD-side helper puts DXF <em>text</em> on the clipboard; small Beam Studio change to import it.</li>
+        <li><strong>B:</strong> Watched-folder / "Import latest" auto-import.</li>
+        <li><strong>C:</strong> Accept raster paste only (loses vectors).</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- Turn 3 -->
+  <div class="turn">
+    <div class="role user">User</div>
+    <div class="bubble user">option A</div>
+  </div>
+
+  <!-- Turn 4 -->
+  <div class="turn">
+    <div class="role assistant">Assistant <span class="tag">implemented</span></div>
+    <div class="bubble">
+      Built both halves of Option A.
+      <h3>1. Beam Studio paste handler</h3>
+      Added a DXF-text branch to the global <code>paste</code> handler: detects DXF in
+      <code>text/plain</code>, wraps it in a <code>clipboard.dxf</code> <code>File</code>, and reuses the
+      existing <code>handleFile → importDxf</code> pipeline (unit dialog, undo, layers all preserved).
+      Computed the DXF check up front so non-DXF text no longer pre-empts the image-paste branch.
+      <h3>2. AutoCAD <code>BEAMCOPY</code> command (AutoLISP)</h3>
+      Select objects → <code>DXFOUT</code> the selection to <code>%TEMP%\beam_clip.dxf</code> →
+      pipe to clipboard with <code>clip.exe</code>.
+      <div class="files">
+        Files touched:
+        <code>packages/core/src/web/app/actions/beambox/svg-editor.ts</code>,
+        <code>autocad/BeamCopy.lsp</code>, <code>autocad/README.md</code>.
+      </div>
+    </div>
+  </div>
+
+  <!-- Turn 5 -->
+  <div class="turn">
+    <div class="role user">User</div>
+    <div class="bubble user">
+      Write a README and prompt-history HTML. How do I execute this repository?
+      How do I upload my fork to my GitHub?
+    </div>
+  </div>
+
+  <!-- Turn 6 -->
+  <div class="turn">
+    <div class="role assistant">Assistant <span class="tag">docs + git</span></div>
+    <div class="bubble">
+      Added <code>DIRECT_PASTE_FROM_AUTOCAD.md</code> (feature + build/run guide) and this
+      <code>prompt-history.html</code>; moved the <code>autocad/</code> helper into the repo; staged a
+      commit on a feature branch and provided fork &amp; push instructions.
+      <h3>Run it</h3>
+<pre><code>pnpm install
+pnpm nx run web:start      # http://localhost:8080
+# or Electron:
+pnpm nx run app:dev &amp;&amp; pnpm nx run app:start</code></pre>
+    </div>
+  </div>
+
+  <footer>
+    See <code>DIRECT_PASTE_FROM_AUTOCAD.md</code> for full build instructions and
+    <code>autocad/README.md</code> for AutoCAD setup.
+  </footer>
+</div>
+</body>
+</html>
