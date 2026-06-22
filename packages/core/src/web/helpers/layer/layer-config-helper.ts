@@ -40,7 +40,9 @@ const attributeMap: Record<ConfigKey, string> = {
   fillAngle: 'data-fillAngle',
   fillInterval: 'data-fillInterval',
   focus: 'data-focus',
+  focusReverse: 'data-focusRev',
   focusStep: 'data-focusStep',
+  focusStepReverse: 'data-focusStepRev',
   frequency: 'data-frequency',
   fullcolor: 'data-fullcolor',
   halftone: 'data-halftone',
@@ -120,7 +122,9 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   fillAngle: 0,
   fillInterval: 0.01,
   focus: -2,
+  focusReverse: false,
   focusStep: -2,
+  focusStepReverse: false,
   frequency: 27,
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
@@ -227,6 +231,8 @@ export const booleanConfig: ConfigKey[] = [
   'oneWayEngraving',
   'oneWayEngravingReverse',
   'texture',
+  'focusReverse',
+  'focusStepReverse',
 ] as const;
 export const optionalNumberConfigs: ConfigKey[] = ['printingTopPadding', 'printingBotPadding'] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
