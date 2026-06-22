@@ -130,6 +130,8 @@ type PromarkConfig = {
   dottingTime: number;
   fillAngle: number;
   fillInterval: number;
+  focusReverse: boolean;
+  focusStepReverse: boolean;
   frequency: number;
   pulseWidth: number; // Mopa only
   qPulseWidth: number; // UV only
