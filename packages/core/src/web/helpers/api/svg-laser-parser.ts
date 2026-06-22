@@ -8,6 +8,7 @@ import Alert from '@core/app/actions/alert-caller';
 import constant, { dpmm, modelsWithModules, modelsWithPrinter4C } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
@@ -25,7 +26,7 @@ import AlertConfig from '@core/helpers/api/alert-config';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import isDev, { isUvDev } from '@core/helpers/is-dev';
+import isDev, { isUvDev, showDevMsg } from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
@@ -332,14 +333,26 @@ export const getExportOpt = async (
       'is_uv_light',
     ];
     let storageValue: null | string = null;
+    const overwrite = {};
 
     devConfig.forEach((key) => {
       storageValue = localStorage.getItem(key);
 
       if (storageValue && !Number.isNaN(Number(storageValue))) {
         config[key] = Number(storageValue);
+        overwrite[key] = Number(storageValue);
       }
     });
+    console.warn('Using UV dev config', overwrite);
+
+    if (showDevMsg() && Object.keys(overwrite).length > 0) {
+      MessageCaller.openMessage({
+        content: `Using UV dev config: ${JSON.stringify(overwrite)}`,
+        duration: 10,
+        key: 'uv-dev-config',
+        level: MessageLevel.INFO,
+      });
+    }
   }
 
   if (isDevMode) {
