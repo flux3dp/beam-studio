@@ -37,6 +37,7 @@ import { deleteSelectedElements } from '@core/app/svgedit/operations/delete';
 import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
+import { importDxfFromText } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
 import svgCanvasClass from '@core/app/svgedit/svgcanvas';
@@ -559,13 +560,9 @@ const svgEditor = (window['svgEditor'] = (function () {
             importedFromClipboard = true;
           }
         } else if (isDxfText) {
-          // Reuse the normal file-import pipeline by wrapping the text in a .dxf File.
           console.log('handle clip board dxf text');
           importedFromClipboard = true;
-
-          const dxfFile = new File([plainText], 'clipboard.dxf', { type: 'application/dxf' });
-
-          svgEditor.handleFile(dxfFile);
+          await importDxfFromText(plainText);
         } else if (clipboardData.types.includes('text/html')) {
           const htmlData = clipboardData.getData('text/html');
           const matchImgs = htmlData.match(/<img[^>]+>/);

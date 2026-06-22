@@ -9,6 +9,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { importDxfFromClipboard } from '../../../operations/import/importDxfFromClipboard';
 import undoManager from '../../../history/undoManager';
 import { handlePastedRef } from '../helpers/paste';
 import { clipboardCore } from '../singleton';
@@ -49,6 +50,9 @@ export const pasteElements = async ({
   const clipboard = useCache && dataCache ? dataCache : await clipboardCore.getData();
 
   if (!clipboard?.length) {
+    // No Beam Studio clipboard data - it may be external DXF text (e.g. AutoCAD via BEAMCOPY).
+    await importDxfFromClipboard();
+
     return null;
   }
 
