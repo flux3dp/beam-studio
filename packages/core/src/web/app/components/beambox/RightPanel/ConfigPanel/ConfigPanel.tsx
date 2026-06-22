@@ -62,6 +62,7 @@ import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
 import InkBlock from './InkBlock';
 import LaserDevOptions from './LaserDevOptions';
+import MinPadding from './MinPadding';
 import ModuleBlock from './ModuleBlock';
 import MultipassBlock from './MultipassBlock';
 import ParameterTitle from './ParameterTitle';
@@ -283,6 +284,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
       {isLaser && <LaserDevOptions />}
+      {isDevMode && <MinPadding type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
     </>

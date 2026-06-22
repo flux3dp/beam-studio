@@ -14,6 +14,8 @@ type MetaConfig = {
 
 type CommonConfig = {
   backlash: number;
+  /** layer level minimum engraving/printing padding, mm, 0 for not override */
+  minPadding: number;
   repeat: number;
 };
 
