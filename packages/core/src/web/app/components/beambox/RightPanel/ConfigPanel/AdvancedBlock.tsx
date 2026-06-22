@@ -113,7 +113,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       }
     } else {
       if (addOnInfo.lowerFocus) {
-        contents.push(<FocusBlock key="focus-block" type={type} />);
+        contents.push(<FocusBlock isPromark={isPromark} key="focus-block" type={type} />);
       } else if (addOnInfo.autoFocus && isAutoFocusEnabled) {
         contents.push(<AutoFocus key="auto-focus" />);
       }
