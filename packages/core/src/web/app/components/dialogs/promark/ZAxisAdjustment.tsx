@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ArrowDownOutlined, ArrowUpOutlined, LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Flex, Modal, Spin, Tooltip } from 'antd';
@@ -14,6 +14,7 @@ import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
 import deviceMaster from '@core/helpers/device-master';
+import { isUvDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -30,13 +31,27 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { model } = device;
   const isInch = useStorageStore((state) => state.isInch);
+  const uvDev = useMemo(() => isUvDev(), []);
   const [zAxis, setZAxis] = useState(1);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
   const [parameters, setParameters] = useState<MarkParameters>({ power: 50, speed: 1000 });
   const previewTask = useRef<string>('');
   const markTask = useRef<string>('');
-  const movingTimeout = useRef<NodeJS.Timeout>();
+  const movingTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const inputProps = useMemo(() => {
+    const _isInch = isInch && !uvDev;
+
+    return {
+      addonAfter: _isInch ? 'in' : 'mm',
+      isInch: _isInch,
+      max: 100,
+      min: uvDev ? 0 : 1,
+      precision: _isInch ? 6 : uvDev ? 6 : 2,
+      step: _isInch ? 25.4 : uvDev ? 0.000625 : 1,
+    };
+  }, [isInch, uvDev]);
 
   const waitTillNotRunning = async () => {
     await deviceMaster.waitTillStatusPredicate({
@@ -196,19 +211,16 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
       <div className={styles.container}>
         <div className={styles['mb-12']}>{t.z_axis_adjustment.section1}</div>
         <Flex className={styles['mb-28']} gap={8} justify="flex-start">
-          <Button disabled={isMoving} icon={<ArrowUpOutlined />} onClick={() => handleMove(zAxis)} />
+          <Button disabled={isMoving || !zAxis} icon={<ArrowUpOutlined />} onClick={() => handleMove(zAxis)} />
           <UnitInput
-            addonAfter={isInch ? 'in' : 'mm'}
+            {...inputProps}
             className={styles.input}
-            isInch={isInch}
-            max={100}
-            min={1}
-            onChange={(value) => setZAxis(Math.min(100, Math.max(1, value)))}
-            precision={isInch ? 6 : 2}
-            step={isInch ? 25.4 : 1}
+            onChange={(value) => {
+              if (value !== null) setZAxis(Math.min(inputProps.max, Math.max(inputProps.min, value)));
+            }}
             value={zAxis}
           />
-          <Button disabled={isMoving} icon={<ArrowDownOutlined />} onClick={() => handleMove(-zAxis)} />
+          <Button disabled={isMoving || !zAxis} icon={<ArrowDownOutlined />} onClick={() => handleMove(-zAxis)} />
           <Button className={styles.button} danger disabled={!isMoving} onClick={handleStop}>
             {tGlobal.stop}
           </Button>
