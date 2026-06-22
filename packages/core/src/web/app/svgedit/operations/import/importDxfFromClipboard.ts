@@ -28,24 +28,18 @@ export const looksLikeDxfText = (text: string): boolean => {
  * If the given text is DXF, import it. Returns true if an import was handled.
  */
 export const importDxfFromText = async (text: string): Promise<boolean> => {
-  const isDxf = looksLikeDxfText(text);
-
-  console.log('[DXF paste] looksLikeDxfText:', isDxf, '| already importing:', importing, '| length:', text?.length);
-
-  if (importing || !isDxf) {
+  if (importing || !looksLikeDxfText(text)) {
     return false;
   }
 
   importing = true;
 
   try {
-    console.log('[DXF paste] calling importDxf...');
     await importDxf(new Blob([text], { type: 'application/dxf' }));
-    console.log('[DXF paste] importDxf finished');
 
     return true;
-  } catch (e) {
-    console.error('[DXF paste] importDxf threw:', e);
+  } catch (error) {
+    console.error('Failed to import DXF from clipboard:', error);
 
     return false;
   } finally {
@@ -64,12 +58,9 @@ export const importDxfFromClipboard = async (): Promise<boolean> => {
   try {
     const text = await navigator.clipboard.readText();
 
-    console.log('[DXF paste] clipboard read ok | length:', text?.length, '| head:', JSON.stringify(text?.slice(0, 40)));
-
     return await importDxfFromText(text);
-  } catch (e) {
-    console.error('[DXF paste] clipboard read FAILED:', e);
-
+  } catch {
+    // Clipboard unreadable (permission / focus) - nothing to import.
     return false;
   }
 };

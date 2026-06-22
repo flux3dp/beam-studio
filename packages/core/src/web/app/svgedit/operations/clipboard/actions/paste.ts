@@ -51,7 +51,6 @@ export const pasteElements = async ({
 
   if (!clipboard?.length) {
     // No Beam Studio clipboard data - it may be external DXF text (e.g. AutoCAD via BEAMCOPY).
-    console.log('[DXF paste] pasteElements: no Beam Studio clipboard data, checking for DXF text');
     await importDxfFromClipboard();
 
     return null;
