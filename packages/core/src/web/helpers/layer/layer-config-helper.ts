@@ -689,12 +689,17 @@ export const applyPreset = (
   const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
-  const { module = LayerModule.LASER_UNIVERSAL } = preset;
+  // Resolve dpi-specific overrides against the target layer's current dpi, then strip the
+  // dpiOverrides map so it never leaks into a data-* attribute.
+  const dpi = getData(layer, 'dpi')!;
+  const { dpiOverrides, ...base } = preset;
+  const resolved: Preset = { ...base, ...dpiOverrides?.[dpi] };
+  const { module = LayerModule.LASER_UNIVERSAL } = resolved;
   const keys = getConfigKeys(module as LayerModuleType);
   const defaultConfig = getDefaultConfig();
 
   for (const key of keys) {
-    let value = preset[key];
+    let value = resolved[key];
 
     if (value === undefined) {
       if (!forcedKeys.includes(key)) continue;
