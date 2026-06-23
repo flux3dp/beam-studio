@@ -1,5 +1,6 @@
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import { importDxfFromClipboard } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
@@ -9,7 +10,6 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { importDxfFromClipboard } from '../../../operations/import/importDxfFromClipboard';
 import undoManager from '../../../history/undoManager';
 import { handlePastedRef } from '../helpers/paste';
 import { clipboardCore } from '../singleton';
