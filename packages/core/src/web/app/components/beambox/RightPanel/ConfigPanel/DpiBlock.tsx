@@ -61,9 +61,11 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
 
         writeDataLayer(layer, 'dpi', newDpi, { batchCmd });
 
-        const configName = getData(layer, 'configName') as string;
+        const configName = getData(layer, 'configName');
 
         if (configName) {
+          // Only rewrite keys whose value differs by dpi (per preset.dpiOverrides), so manual edits
+          // to other keys survive the dpi change. Mirrors the merge in applyPreset, but surgical.
           const layerModule = getData(layer, 'module');
           const preset = getDefaultPreset(configName, workarea, layerModule);
 
@@ -76,7 +78,9 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
             const keys = Object.keys({ ...oldOverrides, ...newOverrides }) as ConfigKey[];
 
             for (const key of keys) {
-              const newValue = newOverrides?.[key] ?? preset[key]!;
+              const newValue = newOverrides?.[key] ?? preset[key];
+
+              if (newValue === undefined) continue;
 
               writeDataLayer(layer, key, newValue, { batchCmd });
               shouldInitState = true;
