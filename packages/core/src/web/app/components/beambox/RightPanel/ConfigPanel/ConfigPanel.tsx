@@ -209,9 +209,12 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     payload.configName = value;
 
     const { maxSpeed, minSpeed } = getWorkarea(workarea);
+    const { dpiOverrides, ...base } = preset;
+    const dpi = state.dpi.value;
+    const resolvedPreset = { ...base, ...dpiOverrides?.[dpi] };
 
     for (const key of changedKeys) {
-      let val = preset[key];
+      let val = resolvedPreset[key];
 
       if (val === undefined) {
         if (!forcedKeys.includes(key)) continue;
