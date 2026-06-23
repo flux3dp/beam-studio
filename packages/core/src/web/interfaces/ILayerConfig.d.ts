@@ -138,6 +138,11 @@ export type ILayerConfig = {
 
 // Saved parameters, containing presets and user saved configs
 export type Preset = Partial<ConfigKeyTypeMap> & {
+  /**
+   * Per-dpi overrides merged on top of the base values at apply time (see applyPreset).
+   * Each entry is a partial delta; any dpi not listed falls back to the base values on this preset.
+   */
+  dpiOverrides?: Partial<Record<EngraveDpiOption, Partial<ConfigKeyTypeMap>>>;
   hide?: boolean;
   isDefault?: boolean;
   key?: string;
