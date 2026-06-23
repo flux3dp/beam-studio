@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Questo separerà il gruppo di file DXF o SVG importati. Poiché il file potrebbe contenere un gran numero di elementi, potrebbe volerci del tempo per separare il gruppo. Sei sicuro di voler procedere?',
       },
       dxf_bounding_box_size_over: "Le dimensioni del disegno superano l'area di lavoro. Sposta il tuo disegno più vicino all'origine nel tuo software CAD, o assicurati che l'unità sia impostata correttamente.",
+      dxf_paste_failed: 'Impossibile incollare il DXF dagli appunti. Assicurati che il contenuto copiato sia un DXF valido.',
       dxf_version_waring: 'La versione di questo file DXF non è 2013, potrebbero esserci potenziali problemi di incompatibilità.',
       facebook_group_invitation: {
         already_joined: 'Già iscritto',

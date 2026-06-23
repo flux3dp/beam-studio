@@ -447,6 +447,7 @@ export interface ILang {
         execute_time_warning: string;
       };
       dxf_bounding_box_size_over: string;
+      dxf_paste_failed: string;
       dxf_version_waring: string;
       facebook_group_invitation: {
         already_joined: string;

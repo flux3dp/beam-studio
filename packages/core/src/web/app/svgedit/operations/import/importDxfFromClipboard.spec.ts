@@ -8,7 +8,7 @@ jest.mock('@core/app/actions/progress-caller', () => ({
   popById: (id: string) => mockPopById(id),
 }));
 
-import { importDxfFromClipboard, importDxfFromText, looksLikeDxfText } from './importDxfFromClipboard';
+import { importDxfFromText, looksLikeDxfText } from './importDxfFromClipboard';
 
 // A minimal AutoCAD-style DXF: right-justified group codes, CRLF line endings.
 const DXF_TEXT = [
@@ -78,36 +78,5 @@ describe('importDxfFromText', () => {
 
     expect(result).toBe(false);
     expect(mockPopById).toHaveBeenCalledWith('loading_image');
-  });
-});
-
-describe('importDxfFromClipboard', () => {
-  const readText = jest.fn();
-
-  beforeAll(() => {
-    Object.assign(navigator, { clipboard: { readText: () => readText() } });
-  });
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    mockImportDxf.mockResolvedValue(undefined);
-  });
-
-  it('imports DXF text read from the clipboard', async () => {
-    readText.mockResolvedValue(DXF_TEXT);
-
-    const result = await importDxfFromClipboard();
-
-    expect(result).toBe(true);
-    expect(mockImportDxf).toHaveBeenCalledTimes(1);
-  });
-
-  it('returns false when the clipboard is unreadable', async () => {
-    readText.mockRejectedValue(new Error('permission denied'));
-
-    const result = await importDxfFromClipboard();
-
-    expect(result).toBe(false);
-    expect(mockImportDxf).not.toHaveBeenCalled();
   });
 });

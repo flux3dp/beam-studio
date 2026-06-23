@@ -20,6 +20,7 @@
 
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
@@ -555,8 +556,14 @@ const svgEditor = (window['svgEditor'] = (function () {
             importedFromClipboard = true;
           }
         } else if (looksLikeDxfText(plainText)) {
-          console.log('handle clip board dxf text');
           importedFromClipboard = await importDxfFromText(plainText);
+
+          if (!importedFromClipboard) {
+            MessageCaller.openMessage({
+              content: i18n.lang.beambox.popup.dxf_paste_failed,
+              level: MessageLevel.ERROR,
+            });
+          }
         } else if (clipboardData.types.includes('text/html')) {
           const htmlData = clipboardData.getData('text/html');
           const matchImgs = htmlData.match(/<img[^>]+>/);

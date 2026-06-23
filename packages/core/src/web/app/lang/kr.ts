@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: '이 작업은 가져온 DXF 또는 SVG를 언그룹화합니다. 파일이 많은 요소를 포함하고 있기 때문에 시간이 걸릴 수 있습니다. 계속 진행하시겠습니까?',
       },
       dxf_bounding_box_size_over: '도면 크기가 작업 영역을 벗어났습니다. CAD 소프트웨어에서 도면을 원점에 가깝게 이동하거나, 단위가 올바르게 설정되었는지 확인하세요.',
+      dxf_paste_failed: '클립보드에서 DXF를 붙여넣지 못했습니다. 복사한 내용이 유효한 DXF인지 확인하세요.',
       dxf_version_waring: '이 DXF 파일의 버전이 2013이 아닌 경우 호환성 문제가 있을 수 있습니다.',
       facebook_group_invitation: {
         already_joined: '이미 가입',

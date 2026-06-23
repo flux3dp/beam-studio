@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Điều này sẽ bỏ nhóm và có thể mất thời gian. Bạn có chắc tiếp tục?',
       },
       dxf_bounding_box_size_over: 'Kích thước bản vẽ vượt quá khu vực làm việc. Vui lòng di chuyển gần gốc tọa độ hơn hoặc đảm bảo đơn vị chính xác',
+      dxf_paste_failed: 'Không thể dán DXF từ bảng nhớ tạm. Vui lòng đảm bảo nội dung đã sao chép là DXF hợp lệ.',
       dxf_version_waring: 'Phiên bản DXF này có thể gặp vấn đề tương thích',
       facebook_group_invitation: {
         already_joined: 'Đã tham gia',

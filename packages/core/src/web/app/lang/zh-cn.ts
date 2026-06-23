@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: '正要解散外部汇入的 DXF 或是 SVG ，在含有物件较多的情况，可能会需要等一阵子，是否确定解散？',
       },
       dxf_bounding_box_size_over: '图像超出工作范围，请在 CAD 软体中将图像放置于原点附近，或确定图档单位是否正确设定。',
+      dxf_paste_failed: '无法从剪贴板粘贴 DXF，请确认复制的内容为有效的 DXF。',
       dxf_version_waring: '此 DXF 档版本非 2013 版，可能有潜在的不相容风险。',
       facebook_group_invitation: {
         already_joined: '已加入用户社群',

@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Detta kommer att separera importerad DXF eller SVG. Eftersom filen kan innehålla ett stort antal element kan det ta tid att separera. Är du säker på att du vill fortsätta?',
       },
       dxf_bounding_box_size_over: 'Ritningens storlek är utanför arbetsområdet. Flytta din ritning närmare origo i ditt CAD-program, eller se till att enheten är korrekt inställd.',
+      dxf_paste_failed: 'Det gick inte att klistra in DXF från urklipp. Kontrollera att det kopierade innehållet är giltig DXF.',
       dxf_version_waring: 'Versionen av denna DXF-fil är inte 2013, det kan finnas potentiella kompatibilitetsproblem.',
       facebook_group_invitation: {
         already_joined: 'Redan ansluten',

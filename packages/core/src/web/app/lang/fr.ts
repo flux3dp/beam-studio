@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: "Cela dégroupera le DXF ou le SVG importé. Comme le fichier pourrait contenir un grand nombre d'éléments, le dégroupage pourrait prendre du temps. Êtes-vous sûr de procéder ?",
       },
       dxf_bounding_box_size_over: "La taille du dessin dépasse la zone de travail. Veuillez déplacer votre dessin plus près de l'origine dans votre logiciel CAO, ou assurez-vous que l'unité est définie correctement.",
+      dxf_paste_failed: 'Échec du collage du DXF depuis le presse-papiers. Veuillez vous assurer que le contenu copié est un DXF valide.',
       dxf_version_waring: "La version de ce fichier DXF n'est pas 2013, il pourrait y avoir des problèmes de compatibilité potentiels.",
       facebook_group_invitation: {
         already_joined: 'Déjà rejoint',

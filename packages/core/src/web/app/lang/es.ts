@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Se desagrupará el archivo DXF o SVG importado. Dado que el archivo puede contener un gran número de elementos, es posible que el desagrupado tarde un tiempo.\n¿Seguro que desea continuar?',
       },
       dxf_bounding_box_size_over: 'El tamaño del dibujo está fuera del área de trabajo. Acerque el dibujo al origen en su programa CAD o asegúrese de que la unidad esté configurada correctamente.',
+      dxf_paste_failed: 'No se pudo pegar el DXF desde el portapapeles. Asegúrese de que el contenido copiado sea un DXF válido.',
       dxf_version_waring: 'La versión de este archivo DXF no es 2013, por lo que podrían surgir problemas de incompatibilidad.',
       facebook_group_invitation: {
         already_joined: 'Ya estoy registrado',

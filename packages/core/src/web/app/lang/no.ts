@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Dette vil oppheve grupperingen av importerte DXF eller SVG. Fordi filen kan inneholde et stort antall elementer, kan det ta tid å oppheve grupperingen. Er du sikker på at du vil fortsette?',
       },
       dxf_bounding_box_size_over: 'Tegnestørrelsen er utenfor arbeidsområdet. Flytt tegningen nærmere opprinnelsen i CAD-programvaren, eller kontroller at enheten er riktig satt.',
+      dxf_paste_failed: 'Kunne ikke lime inn DXF fra utklippstavlen. Kontroller at det kopierte innholdet er gyldig DXF.',
       dxf_version_waring: 'Versjonen av denne DXF-filen er ikke 2013, det kan være potensielle kompatibilitetsproblemer.',
       facebook_group_invitation: {
         already_joined: 'Allerede deltatt',

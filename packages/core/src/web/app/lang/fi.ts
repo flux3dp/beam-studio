@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Tämä purkaa tuodun tiedoston ryhmityksen. Koska tiedosto voi sisältää suuren määrän elementtejä, ryhmityksen purku voi viedä aikaa. Haluatko jatkaa?',
       },
       dxf_bounding_box_size_over: 'Piirroksen koko ylittää työalueen. Siirrä piirrosta lähemmäs origoa CAD-ohjelmassa tai tarkista mittayksiköt.',
+      dxf_paste_failed: 'DXF:n liittäminen leikepöydältä epäonnistui. Varmista, että kopioitu sisältö on kelvollinen DXF.',
       dxf_version_waring: 'Tämän DXF-tiedoston versio ei ole 2013, mikä voi aiheuttaa yhteensopivuusongelmia.',
       facebook_group_invitation: {
         already_joined: 'Jo liittynyt',

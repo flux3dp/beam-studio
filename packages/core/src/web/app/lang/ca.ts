@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: "Això desagruparà el DXF o SVG importat. Com que el fitxer pot contenir un gran nombre d'elements, pot trigar temps a desagrupar-se. Estàs segur de procedir?",
       },
       dxf_bounding_box_size_over: "La mida del dibuix està fora de l'àrea de treball. Si us plau, mou el teu dibuix més a prop de l'origen al teu programari CAD, o assegura't que la unitat estigui configurada correctament.",
+      dxf_paste_failed: "No s'ha pogut enganxar el DXF des del porta-retalls. Assegura't que el contingut copiat sigui un DXF vàlid.",
       dxf_version_waring: "La versió d'aquest fitxer DXF no és 2013, hi pot haver problemes d'incompatibilitat potencials.",
       facebook_group_invitation: {
         already_joined: 'Ja unit',

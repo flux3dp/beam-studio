@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Ini akan menyahkumpulkan DXF atau SVG yang diimport. Oleh kerana fail itu mungkin mengandungi sejumlah besar elemen, ia mungkin mengambil masa untuk menyahkumpulkan. Adakah anda pasti untuk meneruskan?',
       },
       dxf_bounding_box_size_over: 'Saiz lukisan melebihi kawasan kerja. Sila pindahkan lukisan anda lebih dekat kepada asal dalam perisian CAD anda, atau pastikan unit ditetapkan dengan betul.',
+      dxf_paste_failed: 'Gagal menampal DXF daripada papan keratan. Sila pastikan kandungan yang disalin ialah DXF yang sah.',
       dxf_version_waring: 'Versi fail DXF ini bukan 2013, mungkin terdapat masalah ketidakserasian.',
       facebook_group_invitation: {
         already_joined: 'Sudah Sertai',

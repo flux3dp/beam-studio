@@ -49,18 +49,3 @@ export const importDxfFromText = async (text: string): Promise<boolean> => {
     progressCaller.popById('loading_image');
   }
 };
-
-/**
- * Read the system clipboard and import it if it contains DXF text.
- * Returns true if an import was handled.
- */
-export const importDxfFromClipboard = async (): Promise<boolean> => {
-  try {
-    const text = await navigator.clipboard.readText();
-
-    return await importDxfFromText(text);
-  } catch {
-    // Clipboard unreadable (permission / focus) - nothing to import.
-    return false;
-  }
-};

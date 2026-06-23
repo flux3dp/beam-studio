@@ -1,6 +1,5 @@
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import { importDxfFromClipboard } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
@@ -50,9 +49,6 @@ export const pasteElements = async ({
   const clipboard = useCache && dataCache ? dataCache : await clipboardCore.getData();
 
   if (!clipboard?.length) {
-    // No Beam Studio clipboard data - it may be external DXF text (e.g. AutoCAD via BEAMCOPY).
-    await importDxfFromClipboard();
-
     return null;
   }
 

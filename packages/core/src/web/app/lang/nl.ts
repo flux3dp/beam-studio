@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Dit zal geïmporteerde DXF/SVG ontgroeperen. Omdat er veel elementen kunnen zijn, kan het even duren. Weet u zeker dat u wilt doorgaan?',
       },
       dxf_bounding_box_size_over: 'De tekeninggrootte is buiten het werkgebied. Verplaats uw tekening dichter bij de oorsprong in uw CAD-software, of zorg dat de eenheid correct is.',
+      dxf_paste_failed: 'Kan DXF niet vanaf het klembord plakken. Zorg ervoor dat de gekopieerde inhoud geldige DXF is.',
       dxf_version_waring: 'De DXF-versie is niet 2013, er kunnen compatibiliteitsproblemen zijn.',
       facebook_group_invitation: {
         already_joined: 'Al lid',
