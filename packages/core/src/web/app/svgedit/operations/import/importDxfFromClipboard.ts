@@ -35,9 +35,7 @@ export const importDxfFromText = async (text: string): Promise<boolean> => {
   importing = true;
 
   try {
-    await importDxf(new Blob([text], { type: 'application/dxf' }));
-
-    return true;
+    return await importDxf(new Blob([text], { type: 'application/dxf' }), { silent: true });
   } catch (error) {
     console.error('Failed to import DXF from clipboard:', error);
 
