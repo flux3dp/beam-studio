@@ -14,7 +14,9 @@ export class MemoryClipboard extends Clipboard implements ClipboardCore {
 
     try {
       // flush the clipboard to avoid svg-editor.ts 'paste' event keeping reading the system clipboard data
-      navigator.clipboard.writeText(`Beam Studio Elements: ${[...elems].map((elem) => elem.outerHTML).join('\n')} `);
+      await navigator.clipboard.writeText(
+        `Beam Studio Elements: ${[...elems].map((elem) => elem.outerHTML).join('\n')}`,
+      );
     } catch (err) {
       console.error('Failed to write to clipboard:', err);
     }

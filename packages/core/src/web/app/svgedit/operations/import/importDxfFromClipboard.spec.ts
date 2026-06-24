@@ -52,7 +52,7 @@ describe('looksLikeDxfText', () => {
 describe('importDxfFromText', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockImportDxf.mockResolvedValue(undefined);
+    mockImportDxf.mockResolvedValue(true);
   });
 
   it('imports valid DXF text and reports success', async () => {
