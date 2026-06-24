@@ -1,16 +1,14 @@
+import { getHref } from '@core/app/svgedit/utils/href';
 import type { ClipboardCore, ClipboardData } from '@core/interfaces/Clipboard';
-
-// TODO: decouple with svgcanvas
-const { svgedit } = window;
 
 export class Clipboard implements ClipboardCore {
   protected refClipboard: Record<string, Element> = {};
 
   addRefToClipboard = (useElement: SVGUseElement): void => {
-    const symbolId = svgedit.utilities.getHref(useElement);
+    const symbolId = getHref(useElement)!;
     const symbolElement = document.querySelector(symbolId);
     const originalSymbolElement =
-      document.getElementById(symbolElement?.getAttribute('data-origin-symbol')) || symbolElement;
+      document.getElementById(symbolElement?.getAttribute('data-origin-symbol')!) || symbolElement;
 
     if (originalSymbolElement) {
       this.refClipboard[symbolId] = originalSymbolElement;
