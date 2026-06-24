@@ -2459,6 +2459,7 @@ export interface ILang {
       layer_color_config: string;
       layer_setting: string;
       link: {
+        autocad: string;
         beam_studio_api: string;
         contact_us: string;
         design_market: string;
@@ -2494,6 +2495,7 @@ export interface ILang {
       paste_in_place: string;
       path: string;
       photo_edit: string;
+      plugin: string;
       preferences: string;
       promark_color_test: string;
       questionnaire: string;

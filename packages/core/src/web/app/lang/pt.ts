@@ -2463,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: 'Configurações de Cor',
       layer_setting: 'Camada',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2498,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: 'Colar no lugar',
       path: 'Caminho',
       photo_edit: 'Imagem',
+      plugin: 'Plugin',
       preferences: 'Preferências',
       promark_color_test: 'Teste de Cor Promark',
       questionnaire: 'Questionário de Feedback',

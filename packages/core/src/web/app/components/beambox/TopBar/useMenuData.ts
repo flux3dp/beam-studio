@@ -568,6 +568,11 @@ const useMenuData = (email?: string): MenuNode[] => {
       { id: 'HELP_CENTER', label: menuCms.help_center, type: 'item', url: menuCms.link.help_center },
       { id: 'KEYBOARD_SHORTCUTS', label: menuCms.keyboard_shortcuts, type: 'item', url: menuCms.link.shortcuts },
       { id: 'CONTACT_US', label: menuCms.contact, type: 'item', url: menuCms.link.contact_us },
+      {
+        children: [{ id: 'PLUGIN_AUTOCAD', label: 'AutoCAD', type: 'item', url: menuCms.link.autocad }],
+        label: menuCms.plugin,
+        type: 'submenu',
+      },
       divider,
       { id: 'FORUM', label: menuCms.forum, type: 'item', url: menuCms.link.forum },
       { id: 'FOLLOW_US', label: menuCms.follow_us, type: 'item' },

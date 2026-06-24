@@ -5,14 +5,28 @@ longer have to *Save As → pick a filename → import*. It puts the selected
 objects on the Windows clipboard as **DXF text**; Beam Studio's paste handler
 recognizes DXF text and imports it through the normal DXF pipeline.
 
-> This file is kept here as the version-controlled source of truth. It is **not**
-> bundled into the application build by default — it is distributed to users via
-> the FLUX help center. Edit here when the script needs a fix or revision.
+> These files are kept here as the version-controlled source of truth. They are
+> **not** bundled into the application build by default — they are distributed to
+> users via the FLUX help center. Edit here when the script needs a fix or
+> revision.
+
+## Files
+
+- **`BeamCopy.lsp`** — the source of truth for the AutoLISP command. Use this for
+  a manual `APPLOAD` install (see *Setup → Option B* below).
+- **`BeamCopy.bundle/`** — an Autodesk AutoLoader package (the **recommended**
+  distribution form). Users drop the whole folder into AutoCAD's
+  `ApplicationPlugins` directory and it auto-loads on every startup — no
+  `APPLOAD`, no Startup Suite. `BeamCopy.bundle/Contents/BeamCopy.lsp` is a copy
+  of the top-level `BeamCopy.lsp`; **keep the two in sync** when editing (the
+  top-level file is canonical). To ship it on the help center, zip the
+  `BeamCopy.bundle` folder.
 
 ## Attribution & license
 
-Authored by **Paul Hsieh-Fu Tsai (蔡協孚)**, Assistant Professor, Dept. of
-Biomedical Engineering, Chang Gung University, Taiwan. Contributed to FLUX in
+Authored by **Paul Hsieh-Fu Tsai (蔡協孚)** ([@hftsai](https://github.com/hftsai)),
+Assistant Professor, Dept. of Biomedical Engineering, Chang Gung University,
+Taiwan. Contributed to FLUX in
 [PR #904](https://github.com/flux3dp/beam-studio/pull/904) and distributed under
 the **MIT License** (see the header in `BeamCopy.lsp`).
 
@@ -27,6 +41,16 @@ text** to the clipboard, which Beam Studio can parse into real vectors.
 ## Setup (AutoCAD side)
 
 > Requires full AutoCAD. **AutoCAD LT does not support AutoLISP.**
+
+### Option A — Bundle (recommended, auto-loads)
+
+1. Copy the whole **`BeamCopy.bundle`** folder into either:
+   - `%APPDATA%\Autodesk\ApplicationPlugins\` (just you), or
+   - `%PROGRAMDATA%\Autodesk\ApplicationPlugins\` (all users).
+2. Restart AutoCAD. `BEAMCOPY` is now available — it loads automatically on every
+   startup.
+
+### Option B — Manual (APPLOAD)
 
 1. Copy `BeamCopy.lsp` somewhere permanent (e.g. `C:\BeamStudio\BeamCopy.lsp`).
 2. Load it for the current session: type `APPLOAD`, browse to the file, **Load**.

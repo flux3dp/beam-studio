@@ -2463,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: '顏色設定',
       layer_setting: '圖層',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/zh-tw/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2498,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: '原地貼上',
       path: '路徑',
       photo_edit: '影像',
+      plugin: '外掛',
       preferences: '偏好設定',
       promark_color_test: 'Promark 色彩測試',
       questionnaire: '問卷回饋',
