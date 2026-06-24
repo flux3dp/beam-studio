@@ -63,9 +63,6 @@ const importDxf = async (file: Blob, { silent = false }: { silent?: boolean } = 
       }
 
       const parsed = Dxf2Svg.parseString(evt.target?.result);
-
-      console.log('parsed', parsed);
-
       const unit = String(parsed.header?.insunits);
 
       const defaultDpiValue =
@@ -83,8 +80,6 @@ const importDxf = async (file: Blob, { silent = false }: { silent?: boolean } = 
   });
 
   progressCaller.popById('loading_image');
-
-  console.log('parsed', parsed);
 
   if (!parsed) {
     alertCaller.popById('skip_dxf_version_warning');
