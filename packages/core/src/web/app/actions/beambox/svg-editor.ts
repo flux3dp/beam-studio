@@ -564,6 +564,8 @@ const svgEditor = (window['svgEditor'] = (function () {
               level: MessageLevel.ERROR,
             });
           }
+
+          return;
         } else if (clipboardData.types.includes('text/html')) {
           const htmlData = clipboardData.getData('text/html');
           const matchImgs = htmlData.match(/<img[^>]+>/);
