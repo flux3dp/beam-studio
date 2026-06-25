@@ -19,6 +19,8 @@ const UnmemorizedChat = () => {
     .with('fhexa1', () => '18ssC0u14uPrRxHJ') // HEXA
     .with('fpm1', () => 'FtMMdyuoqCoKlnw1') // Promark
     .with('ado1', () => 'bG66TKuYtJ52GLGP') // Ador
+    .with('fhx2rf', () => '2yqEuvNfpGCz0RcH') // HEXA RF
+    .with('fbm2', () => 'zvqEXpnWDXEBR4wr') // Beamo II
     .otherwise(() => 'bNnVJgi3N9b7X4KV'); // Universal
   const inWelcomePage = useMemo(() => isAtPage('welcome'), []);
 
