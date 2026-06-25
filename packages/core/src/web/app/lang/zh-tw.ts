@@ -2137,7 +2137,7 @@ const lang: ILang = {
     overlap_size: '重疊大小',
     rotary_scale: '旋轉倍率',
     split_setting: '分割設定',
-    split_setting_url: 'https://support.flux3dp.com/hc/en-us/articles/12276094010767',
+    split_setting_url: 'https://support.flux3dp.com/hc/zh-tw/articles/12276094010767',
     split_size: '分割大小',
     type: '類型',
   },
@@ -2614,7 +2614,7 @@ const lang: ILang = {
       zoom: '雙指靠攏以縮小，或雙指分開來放大畫布。',
     },
     links: {
-      adjust_focus: 'https://support.flux3dp.com/hc/en-us/articles/360001684196',
+      adjust_focus: 'https://support.flux3dp.com/hc/zh-tw/articles/360001684196',
     },
     look_for_machine: '尋找機器中',
     needNewInterfaceTutorial: '請問是否需要為您介紹 Beam Studio 的新介面？<br/>（您也可以先跳過，並在之後從「說明」>「顯示介面介紹」開始介紹。）',

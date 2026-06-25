@@ -2234,7 +2234,6 @@ const lang: ILang = {
       image_downsampling: 'https://support.flux3dp.com/hc/en-us/articles/360004494995',
       loop_compensation: 'https://support.flux3dp.com/hc/en-us/articles/360004408856',
       mask: 'https://support.flux3dp.com/hc/en-us/articles/360004408876',
-      reverse_engraving: 'https://support.flux3dp.com/hc/en-us/articles/',
       segmented_engraving: 'https://support.flux3dp.com/hc/en-us/articles/12306366019215',
       simplify_clipper_path: 'https://support.flux3dp.com/hc/en-us/articles/360004407276',
       uv_print_export: 'https://support.flux3dp.com/hc/en-us/articles/12320887477135',

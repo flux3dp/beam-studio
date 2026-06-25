@@ -2230,7 +2230,6 @@ export interface ILang {
       image_downsampling: string;
       loop_compensation: string;
       mask: string;
-      reverse_engraving: string;
       segmented_engraving: string;
       simplify_clipper_path: string;
       uv_print_export: string;
