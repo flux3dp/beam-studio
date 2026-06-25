@@ -1,6 +1,6 @@
 import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
-import type { MenuProps } from 'antd';
+import { type MenuProps } from 'antd';
 import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
@@ -8,6 +8,7 @@ import macOSWindowSize from '@core/app/constants/macOS-Window-Size';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import ContextMenu from '@core/app/widgets/ContextMenu';
+import UnitInput from '@core/app/widgets/UnitInput';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import useI18n from '@core/helpers/useI18n';
@@ -242,6 +243,12 @@ const ZoomBlock = ({ className, getZoom, ratioClassName, resetView, setZoom }: P
       <ContextMenu items={zoomMenuItems} onClick={handleMenuClick} trigger={['contextMenu', 'click']}>
         <div className={classNames(styles.ratio, ratioClassName)}>{`${Math.round(displayRatio * 100)}%`}</div>
       </ContextMenu>
+      <UnitInput
+        max={6000}
+        min={1}
+        onChange={(value) => setRatio(value ?? 100)}
+        value={Math.round(displayRatio * 100)}
+      />
       <div className={styles.btn} onClick={() => zoomIn(displayRatio)}>
         <img src="img/icon-plus.svg" />
       </div>
