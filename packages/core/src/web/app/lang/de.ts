@@ -1911,7 +1911,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Zurücksetzen der Z-Achse',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Druckermodul ohne Antwort.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Bitte ziehen Sie die Sonde zurück.',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 Bitte erkundigen Sie sich bei Ihrem Wassertank.',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 Niedriger Kühlmitteldurchfluss. Bitte erkundigen Sie sich bei Ihrem Wassertank.',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Fernverriegelung ausgelöst\nBitte überprüfen Sie den Fernverriegelungsanschluss und stellen Sie sicher, dass er sicher verbunden ist, bevor Sie den Auftrag neu starten.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Kein Drehmodul erkannt',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritischer Fehler: Subsystem keine Antwort. Bitte wenden Sie sich an den FLUX Support', // Deprecated in FW 3.3.1

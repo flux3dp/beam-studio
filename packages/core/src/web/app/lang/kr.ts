@@ -1911,7 +1911,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z축 리셋 실패',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 프린터 모듈 응답 없음.',
     HARDWARE_ERROR_PROBE_SHOWED: '프로브를 철회해주세요.',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 워터탱크를 확인해주세요.',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 냉각수 유량 부족. 워터탱크를 확인해주세요.',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 원격 인터록 작동\n원격 인터록 커넥터를 확인하고 안전하게 연결되어 있는지 확인한 후 작업을 재시작하세요.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 로터리 모듈이 감지되지 않습니다.',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 치명적인 오류: 하위 시스템 응답 없음. FLUX 지원팀에 문의하세요.', // Deprecated in FW 3.3.1

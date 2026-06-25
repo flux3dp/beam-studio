@@ -1911,7 +1911,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-akselin nollaaminen epäonnistui',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tulostinmoduuli ei vastaa.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Vedä anturi takaisin.',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 Tarkista vesisäiliö.',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 Alhainen jäähdytysnesteen virtaus. Tarkista vesisäiliö.',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Etälukitus aktivoitu\nTarkista etälukituksen liitin ja varmista, että se on kunnolla kiinni ennen työn uudelleenkäynnistystä.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Pyörivää moduulia ei havaittu',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kriittinen virhe: Alijärjestelmä ei vastaa. Ota yhteyttä FLUX-tukeen.',

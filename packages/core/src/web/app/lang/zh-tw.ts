@@ -1911,7 +1911,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z 軸歸零失敗',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 列印頭無回應。',
     HARDWARE_ERROR_PROBE_SHOWED: '請收回探針。',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 水冷未開，請聯繫客服。',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 水流不足，請檢查水箱。',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 遠端連鎖保護觸發\n請檢查遠端連鎖保護連接器，確認已牢固連接後再重新啟動工作。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 未偵測到旋轉軸',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 子系統沒有回應。請聯繫 FLUX 客服。', // Deprecated in FW 3.3.1

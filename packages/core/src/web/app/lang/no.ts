@@ -1911,7 +1911,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-akse nullstilling mislyktes',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Ingen respons fra skrivermodul.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Vennligst trekk sonden tilbake.',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 Sjekk vannbeholderen.',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 Lav kjølevæskestrøm. Sjekk vannbeholderen.',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Fjerninterlock utløst\nSjekk fjerninterlock-kontakten og sørg for at den er sikkert tilkoblet før du starter jobben på nytt.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Ingen roterende modul oppdaget',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritisk feil: Undersystem svarer ikke. Kontakt FLUX-støtte.',
