@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: '正要解散外部匯入的 DXF 或是 SVG ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',
       },
       dxf_bounding_box_size_over: '圖像超出工作範圍，請在 CAD 軟體中將圖像放置於原點附近，或確定圖檔單位是否正確設定。',
+      dxf_paste_failed: '無法從剪貼簿貼上 DXF，請確認複製的內容為有效的 DXF。',
       dxf_version_waring: '此 DXF 檔版本非 2013 版，可能有潛在的不相容風險。',
       facebook_group_invitation: {
         already_joined: '已加入用戶社群',
@@ -2462,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: '顏色設定',
       layer_setting: '圖層',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/zh-tw/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2497,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: '原地貼上',
       path: '路徑',
       photo_edit: '影像',
+      plugin: '外掛',
       preferences: '偏好設定',
       promark_color_test: 'Promark 色彩測試',
       questionnaire: '問卷回饋',

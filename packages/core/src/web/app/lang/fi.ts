@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Tämä purkaa tuodun tiedoston ryhmityksen. Koska tiedosto voi sisältää suuren määrän elementtejä, ryhmityksen purku voi viedä aikaa. Haluatko jatkaa?',
       },
       dxf_bounding_box_size_over: 'Piirroksen koko ylittää työalueen. Siirrä piirrosta lähemmäs origoa CAD-ohjelmassa tai tarkista mittayksiköt.',
+      dxf_paste_failed: 'DXF:n liittäminen leikepöydältä epäonnistui. Varmista, että kopioitu sisältö on kelvollinen DXF.',
       dxf_version_waring: 'Tämän DXF-tiedoston versio ei ole 2013, mikä voi aiheuttaa yhteensopivuusongelmia.',
       facebook_group_invitation: {
         already_joined: 'Jo liittynyt',
@@ -2462,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: 'Väriasetukset',
       layer_setting: 'Taso',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2497,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: 'Liitä paikalleen',
       path: 'Polku',
       photo_edit: 'Kuva',
+      plugin: 'Laajennus',
       preferences: 'Asetukset',
       promark_color_test: 'Promark Väritesti',
       questionnaire: 'Palautekysely',

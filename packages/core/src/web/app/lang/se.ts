@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Detta kommer att separera importerad DXF eller SVG. Eftersom filen kan innehålla ett stort antal element kan det ta tid att separera. Är du säker på att du vill fortsätta?',
       },
       dxf_bounding_box_size_over: 'Ritningens storlek är utanför arbetsområdet. Flytta din ritning närmare origo i ditt CAD-program, eller se till att enheten är korrekt inställd.',
+      dxf_paste_failed: 'Det gick inte att klistra in DXF från urklipp. Kontrollera att det kopierade innehållet är giltig DXF.',
       dxf_version_waring: 'Versionen av denna DXF-fil är inte 2013, det kan finnas potentiella kompatibilitetsproblem.',
       facebook_group_invitation: {
         already_joined: 'Redan ansluten',
@@ -2462,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: 'Färginställningar',
       layer_setting: 'Lager',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2497,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: 'Klistra in på plats',
       path: 'Bana',
       photo_edit: 'Bild',
+      plugin: 'Tillägg',
       preferences: 'Inställningar',
       promark_color_test: 'Promark Färgtest',
       questionnaire: 'Feedbackenkät',

@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'การยกเลิกกลุ่มอาจใช้เวลาสักครู่ คุณแน่ใจหรือไม่ว่าต้องการดําเนินการต่อ',
       },
       dxf_bounding_box_size_over: 'ขนาดการวาดเกินพื้นที่ทํางาน โปรดย้ายการวาดให้อยู่ในบริเวณจุดกําเนิดในโปรแกรม CAD หรือตรวจสอบหน่วยให้ถูกต้อง',
+      dxf_paste_failed: 'ไม่สามารถวาง DXF จากคลิปบอร์ดได้ โปรดตรวจสอบว่าเนื้อหาที่คัดลอกเป็น DXF ที่ถูกต้อง',
       dxf_version_waring: 'เวอร์ชันของไฟล์ DXF นี้ไม่ใช่ 2013 อาจมีปัญหาด้านความเข้ากันได้ที่อาจเกิดขึ้น',
       facebook_group_invitation: {
         already_joined: 'เข้าร่วมแล้ว',
@@ -2462,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: 'ตั้งค่าสี',
       layer_setting: 'เลเยอร์',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2497,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: 'วางแทน',
       path: 'เส้นทาง',
       photo_edit: 'รูปภาพ',
+      plugin: 'ปลั๊กอิน',
       preferences: 'ตั้งค่า',
       promark_color_test: 'การทดสอบสี Promark',
       questionnaire: 'แบบสอบถามป้อนกลับ',

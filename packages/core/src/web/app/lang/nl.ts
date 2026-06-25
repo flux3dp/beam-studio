@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Dit zal geïmporteerde DXF/SVG ontgroeperen. Omdat er veel elementen kunnen zijn, kan het even duren. Weet u zeker dat u wilt doorgaan?',
       },
       dxf_bounding_box_size_over: 'De tekeninggrootte is buiten het werkgebied. Verplaats uw tekening dichter bij de oorsprong in uw CAD-software, of zorg dat de eenheid correct is.',
+      dxf_paste_failed: 'Kan DXF niet vanaf het klembord plakken. Zorg ervoor dat de gekopieerde inhoud geldige DXF is.',
       dxf_version_waring: 'De DXF-versie is niet 2013, er kunnen compatibiliteitsproblemen zijn.',
       facebook_group_invitation: {
         already_joined: 'Al lid',
@@ -2462,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: 'Kleurinstellingen',
       layer_setting: 'Laag',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2497,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: 'Plakken op plaats',
       path: 'Pad',
       photo_edit: 'Afbeelding',
+      plugin: 'Plug-in',
       preferences: 'Voorkeuren',
       promark_color_test: 'Promark Kleurtest',
       questionnaire: 'Vragenlijst feedback',

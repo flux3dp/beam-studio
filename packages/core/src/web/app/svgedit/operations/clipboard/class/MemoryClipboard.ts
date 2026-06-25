@@ -11,6 +11,15 @@ export class MemoryClipboard extends Clipboard implements ClipboardCore {
   protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
     this.id = v4();
     this.clipboardData = [...elems];
+
+    try {
+      // flush the clipboard to avoid svg-editor.ts 'paste' event keeping reading the system clipboard data
+      await navigator.clipboard.writeText(
+        `Beam Studio Elements: ${[...elems].map((elem) => elem.outerHTML).join('\n')}`,
+      );
+    } catch (err) {
+      console.error('Failed to write to clipboard:', err);
+    }
   };
 
   getRawData = async (): Promise<ClipboardData | null> =>

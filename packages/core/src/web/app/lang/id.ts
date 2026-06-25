@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Ini akan membatalkan pengelompokan DXF atau SVG yang diimpor. Karena file mungkin berisi sejumlah besar elemen, mungkin memerlukan waktu untuk membatalkan pengelompokan. Apakah Anda yakin untuk melanjutkan?',
       },
       dxf_bounding_box_size_over: 'Ukuran gambar melebihi area kerja. Harap pindahkan gambar Anda lebih dekat ke asal dalam perangkat lunak CAD Anda, atau pastikan bahwa unit diatur dengan benar.',
+      dxf_paste_failed: 'Gagal menempelkan DXF dari papan klip. Pastikan konten yang disalin adalah DXF yang valid.',
       dxf_version_waring: 'Versi file DXF ini bukan 2013, mungkin ada masalah kompatibilitas potensial.',
       facebook_group_invitation: {
         already_joined: 'Sudah Bergabung',
@@ -2462,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: 'Pengaturan Warna',
       layer_setting: 'Lapisan',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2497,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: 'Tempel di Tempat',
       path: 'Jalur',
       photo_edit: 'Gambar',
+      plugin: 'Plugin',
       preferences: 'Preferensi',
       promark_color_test: 'Tes Warna Promark',
       questionnaire: 'Kuesioner Umpan Balik',

@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Toto odstraní ze skupiny importované DXF nebo SVG. Protože může soubor obsahovat velký počet prvků, může rozdělování skupiny trvat. Opravdu si přejete pokračovat?',
       },
       dxf_bounding_box_size_over: 'Velikost kresby je mimo pracovní oblast. Přesuňte prosím svou kresbu blíž k vodítku ve vašem CAD softwaru, nebo se ujistěte, že je jednotka správně nastavena.',
+      dxf_paste_failed: 'Nepodařilo se vložit DXF ze schránky. Ujistěte se, že zkopírovaný obsah je platný DXF.',
       dxf_version_waring: 'Verze tohoto DFX souboru není 2013, může dojít k problémům s kompatibilitou.',
       facebook_group_invitation: {
         already_joined: 'Už jsem členem',
@@ -2462,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: 'Nastavení barev',
       layer_setting: 'Vrstva',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2497,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: 'Vložit na místo',
       path: 'Cesta',
       photo_edit: 'Obrázek',
+      plugin: 'Zásuvný modul',
       preferences: 'Vlastnosti',
       promark_color_test: 'Promark Test Barev',
       questionnaire: 'Dotazník se zpětnou vazbou',

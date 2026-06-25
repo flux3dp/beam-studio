@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'これにより、インポートされた DXF または SVG がグループ解除されます。ファイルには大量の要素が含まれている可能性があるため、グループ解除に時間がかかる場合があります。続行してもよろしいですか？',
       },
       dxf_bounding_box_size_over: '図面サイズがワークエリア外です。図面をCADソフトウェアの原点に近づけるか、単位が正しく設定されていることを確認してください。',
+      dxf_paste_failed: 'クリップボードからの DXF の貼り付けに失敗しました。コピーした内容が有効な DXF であることを確認してください。',
       dxf_version_waring: 'このDXFファイルのバージョンは2013ではありません。非互換性の問題が発生する可能性があります。',
       facebook_group_invitation: {
         already_joined: 'すでに参加済み',
@@ -2462,6 +2463,7 @@ const lang: ILang = {
       layer_color_config: 'カラー設定',
       layer_setting: 'レイヤー',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2497,6 +2499,7 @@ const lang: ILang = {
       paste_in_place: '所定の位置に貼り付け',
       path: 'パス',
       photo_edit: '画像',
+      plugin: 'プラグイン',
       preferences: '設定',
       promark_color_test: 'Promark カラーテスト',
       questionnaire: 'フィードバックアンケート',

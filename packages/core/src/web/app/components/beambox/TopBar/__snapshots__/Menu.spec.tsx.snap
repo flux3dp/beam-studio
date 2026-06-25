@@ -554,6 +554,21 @@ exports[`should render correctly open the browser and reach the correct page 3`]
             Contact Us
           </li>
           <li
+            class="szh-menu__submenu"
+            role="none"
+            style="position: relative;"
+          >
+            <div
+              aria-expanded="false"
+              aria-haspopup="true"
+              class="szh-menu__item szh-menu__item--submenu"
+              role="menuitem"
+              tabindex="-1"
+            >
+              Plugin
+            </div>
+          </li>
+          <li
             class="szh-menu__divider"
             role="separator"
           />

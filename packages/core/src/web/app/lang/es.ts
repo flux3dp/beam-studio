@@ -447,6 +447,7 @@ const lang: ILang = {
         execute_time_warning: 'Se desagrupará el archivo DXF o SVG importado. Dado que el archivo puede contener un gran número de elementos, es posible que el desagrupado tarde un tiempo.\n¿Seguro que desea continuar?',
       },
       dxf_bounding_box_size_over: 'El tamaño del dibujo está fuera del área de trabajo. Acerque el dibujo al origen en su programa CAD o asegúrese de que la unidad esté configurada correctamente.',
+      dxf_paste_failed: 'No se pudo pegar el DXF desde el portapapeles. Asegúrese de que el contenido copiado sea un DXF válido.',
       dxf_version_waring: 'La versión de este archivo DXF no es 2013, por lo que podrían surgir problemas de incompatibilidad.',
       facebook_group_invitation: {
         already_joined: 'Ya estoy registrado',
@@ -2461,6 +2462,7 @@ const lang: ILang = {
       layer_color_config: 'Ajustes de color',
       layer_setting: 'Capa',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://support.flux3dp.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2496,6 +2498,7 @@ const lang: ILang = {
       paste_in_place: 'Pegar en el lugar',
       path: 'Trazado',
       photo_edit: 'Imagen',
+      plugin: 'Complemento',
       preferences: 'Preferencias',
       promark_color_test: 'Prueba de Color Promark',
       questionnaire: 'Cuestionario de comentarios',

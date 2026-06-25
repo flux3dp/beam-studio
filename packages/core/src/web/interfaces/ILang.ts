@@ -447,6 +447,7 @@ export interface ILang {
         execute_time_warning: string;
       };
       dxf_bounding_box_size_over: string;
+      dxf_paste_failed: string;
       dxf_version_waring: string;
       facebook_group_invitation: {
         already_joined: string;
@@ -2458,6 +2459,7 @@ export interface ILang {
       layer_color_config: string;
       layer_setting: string;
       link: {
+        autocad: string;
         beam_studio_api: string;
         contact_us: string;
         design_market: string;
@@ -2493,6 +2495,7 @@ export interface ILang {
       paste_in_place: string;
       path: string;
       photo_edit: string;
+      plugin: string;
       preferences: string;
       promark_color_test: string;
       questionnaire: string;
