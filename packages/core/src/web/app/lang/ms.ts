@@ -437,6 +437,7 @@ const lang: ILang = {
         execute_time_warning: 'Ini akan menyahkumpulkan DXF atau SVG yang diimport. Oleh kerana fail itu mungkin mengandungi sejumlah besar elemen, ia mungkin mengambil masa untuk menyahkumpulkan. Adakah anda pasti untuk meneruskan?',
       },
       dxf_bounding_box_size_over: 'Saiz lukisan melebihi kawasan kerja. Sila pindahkan lukisan anda lebih dekat kepada asal dalam perisian CAD anda, atau pastikan unit ditetapkan dengan betul.',
+      dxf_paste_failed: 'Gagal menampal DXF daripada papan keratan. Sila pastikan kandungan yang disalin ialah DXF yang sah.',
       dxf_version_waring: 'Versi fail DXF ini bukan 2013, mungkin terdapat masalah ketidakserasian.',
       facebook_group_invitation: {
         already_joined: 'Sudah Sertai',
@@ -2353,6 +2354,7 @@ const lang: ILang = {
       layer_color_config: 'Tetapan warna',
       layer_setting: 'Lapisan',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://flux3dp.zendesk.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2388,6 +2390,7 @@ const lang: ILang = {
       paste_in_place: 'Tampal di tempat',
       path: 'Laluan',
       photo_edit: 'Imej',
+      plugin: 'Pemalam',
       preferences: 'Keutamaan',
       promark_color_test: 'Ujian Warna Promark',
       questionnaire: 'Soal Selidik Maklum Balas',

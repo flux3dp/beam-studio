@@ -437,6 +437,7 @@ const lang: ILang = {
         execute_time_warning: 'Αυτό θα καταργήσει την ομαδοποίηση των εισαγόμενων DXF ή SVG. Επειδή το αρχείο ενδέχεται να περιέχει μεγάλο αριθμό στοιχείων, ενδέχεται να χρειαστεί χρόνος για την κατάργηση της ομαδοποίησης. Είστε σίγουροι ότι θέλετε να προχωρήσετε;',
       },
       dxf_bounding_box_size_over: 'Το μέγεθος του σχεδίου είναι εκτός της περιοχής εργασίας. Μετακινήστε το σχέδιό σας πιο κοντά στην αρχή στο λογισμικό CAD σας ή βεβαιωθείτε ότι η μονάδα έχει οριστεί σωστά.',
+      dxf_paste_failed: 'Αποτυχία επικόλλησης DXF από το πρόχειρο. Βεβαιωθείτε ότι το αντιγραμμένο περιεχόμενο είναι έγκυρο DXF.',
       dxf_version_waring: 'Η έκδοση αυτού του αρχείου DXF δεν είναι 2013, ενδέχεται να υπάρχουν πιθανά προβλήματα ασυμβατότητας.',
       facebook_group_invitation: {
         already_joined: 'Ήδη μέλος',
@@ -2353,6 +2354,7 @@ const lang: ILang = {
       layer_color_config: 'Ρυθμίσεις χρωμάτων',
       layer_setting: 'Στρώμα',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://flux3dp.zendesk.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2388,6 +2390,7 @@ const lang: ILang = {
       paste_in_place: 'Επικόλληση στη θέση',
       path: 'Διαδρομή',
       photo_edit: 'Επεξεργασία εικόνας',
+      plugin: 'Πρόσθετο',
       preferences: 'Προτιμήσεις',
       promark_color_test: 'Δοκιμή Χρώματος Promark',
       questionnaire: 'Ερωτηματολόγιο ανατροφοδότησης',

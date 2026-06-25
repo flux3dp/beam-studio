@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Autodesk AutoLoader package for BeamCopy.
+  Drop the whole "BeamCopy.bundle" folder into one of:
+    %APPDATA%\Autodesk\ApplicationPlugins\        (per user)
+    %PROGRAMDATA%\Autodesk\ApplicationPlugins\    (all users)
+  AutoCAD then loads BeamCopy automatically on startup - no APPLOAD needed.
+-->
+<ApplicationPackage
+    SchemaVersion="1.0"
+    AutodeskProduct="AutoCAD"
+    ProductType="Application"
+    Name="BeamCopy"
+    AppVersion="1.0.0"
+    Author="Paul Hsieh-Fu Tsai"
+    Description="Copy selected objects to Beam Studio as DXF via the Windows clipboard.">
+  <CompanyDetails
+      Name="FLUX Inc."
+      Url="https://flux3dp.com"
+      Email="support@flux3dp.com" />
+  <Components Description="BeamCopy AutoLISP command">
+    <RuntimeRequirements OS="Win64" Platform="AutoCAD*" SeriesMin="R23.0" />
+    <ComponentEntry
+        AppName="BeamCopy"
+        ModuleName="./Contents/BeamCopy.lsp"
+        AppType="LISP"
+        LoadOnAutoCADStartup="True" />
+  </Components>
+</ApplicationPackage>

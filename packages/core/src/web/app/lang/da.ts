@@ -437,6 +437,7 @@ const lang: ILang = {
         execute_time_warning: 'Dette vil opdele importerede DXF eller SVG filer. Fordi filen kan indeholde et stort antal elementer, kan det tage tid at opdele. Er du sikker på at fortsætte?',
       },
       dxf_bounding_box_size_over: 'Tegningsstørrelsen er uden for arbejdsområdet. Flyt venligst din tegning tættere på oprindelsen i dit CAD-software, eller sørg for, at enheden er indstillet korrekt.',
+      dxf_paste_failed: 'Kunne ikke indsætte DXF fra udklipsholderen. Sørg for, at det kopierede indhold er gyldig DXF.',
       dxf_version_waring: 'Versionen af denne DXF-fil er ikke 2013, der kan være potentielle kompatibilitetsproblemer.',
       facebook_group_invitation: {
         already_joined: 'Allerede tilmeldt',
@@ -2353,6 +2354,7 @@ const lang: ILang = {
       layer_color_config: 'Farveindstillinger',
       layer_setting: 'Lag',
       link: {
+        autocad: 'https://support.flux3dp.com/hc/en-us/articles/16590795274895',
         beam_studio_api: 'https://github.com/flux3dp/beam-studio/wiki/Beam-Studio-Easy-API',
         contact_us: 'https://flux3dp.zendesk.com/hc/en-us/requests/new',
         design_market: 'https://dmkt.io',
@@ -2388,6 +2390,7 @@ const lang: ILang = {
       paste_in_place: 'Indsæt på plads',
       path: 'Sti',
       photo_edit: 'Billede',
+      plugin: 'Plugin',
       preferences: 'Indstillinger',
       promark_color_test: 'Promark Farvetest',
       questionnaire: 'Feedbackskema',

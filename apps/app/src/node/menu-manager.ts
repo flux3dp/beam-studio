@@ -765,6 +765,19 @@ class MenuManager extends EventEmitter {
           id: 'CONTACT_US',
           label: r.contact,
         },
+        {
+          id: 'PLUGIN',
+          label: r.plugin,
+          submenu: [
+            {
+              click() {
+                shell.openExternal(r.link.autocad);
+              },
+              id: 'PLUGIN_AUTOCAD',
+              label: 'AutoCAD',
+            },
+          ],
+        },
         { type: 'separator' },
         {
           click() {

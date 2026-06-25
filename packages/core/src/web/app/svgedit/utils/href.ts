@@ -18,7 +18,7 @@ export const getHref = (elem: SVGElement): null | string => {
  * @returns
  */
 export const setHref = (elem: SVGElement, val: string): void => {
-  elem.setAttributeNS(NS.XLINK, 'href', val);
+  elem.setAttributeNS(NS.XLINK, 'xlink:href', val);
 };
 
 export default {

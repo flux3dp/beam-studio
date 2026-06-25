@@ -35,6 +35,7 @@ import { deleteSelectedElements } from '@core/app/svgedit/operations/delete';
 import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
+import { importDxfFromText, looksLikeDxfText } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
 import svgCanvasClass from '@core/app/svgedit/svgcanvas';
@@ -924,6 +925,9 @@ const svgEditor = (window['svgEditor'] = (function () {
       let importedFromClipboard = false;
 
       if (clipboardData) {
+        // Detect DXF text placed on the clipboard by a CAD app (e.g. AutoCAD via clip.exe / BeamCopy.lsp).
+        const plainText = clipboardData.types.includes('text/plain') ? clipboardData.getData('text/plain') : '';
+
         if (clipboardData.types.includes('Files')) {
           console.log('handle clip board file');
           for (let i = 0; i < clipboardData.files.length; i++) {
@@ -932,6 +936,14 @@ const svgEditor = (window['svgEditor'] = (function () {
             svgEditor.handleFile(file);
             importedFromClipboard = true;
           }
+        } else if (looksLikeDxfText(plainText)) {
+          importedFromClipboard = await importDxfFromText(plainText);
+
+          if (!importedFromClipboard) {
+            Alert.popUpError({ message: i18n.lang.beambox.popup.dxf_paste_failed });
+          }
+
+          return;
         } else if (clipboardData.types.includes('text/html')) {
           const htmlData = clipboardData.getData('text/html');
           const matchImgs = htmlData.match(/<img[^>]+>/);
