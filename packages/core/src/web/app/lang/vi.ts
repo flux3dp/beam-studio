@@ -1912,7 +1912,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: 'Lỗi khởi động trục Z',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: 'Module máy in không phản hồi.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Vui lòng thu hồi đầu dò.',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 Vui lòng kiểm tra bể nước của bạn.',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 Lưu lượng nước làm mát thấp. Vui lòng kiểm tra bể nước của bạn.',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Khóa liên động từ xa đã kích hoạt\nVui lòng kiểm tra đầu nối khóa liên động từ xa và đảm bảo nó được kết nối chắc chắn trước khi khởi động lại công việc.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: 'Không phát hiện module quay',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Lỗi nghiêm trọng: Hệ thống phụ không phản hồi. Vui lòng liên hệ hỗ trợ FLUX.',

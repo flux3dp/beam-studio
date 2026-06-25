@@ -1912,7 +1912,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-akse nulstilling mislykkedes',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Ingen reaktion fra printermodulet.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Træk venligst sonden tilbage.',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 Kontroller venligst din vandtank.',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 Lav kølevæskestrøm. Kontroller venligst din vandtank.',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Ekstern sikkerhedsafbryder aktiveret\nKontroller venligst stikket til den eksterne sikkerhedsafbryder og sørg for, at det sidder korrekt, før du genstarter arbejdet.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Ingen roterende modul registreret',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritisk fejl: Intet svar fra subsystem. Kontakt venligst FLUX-support.',

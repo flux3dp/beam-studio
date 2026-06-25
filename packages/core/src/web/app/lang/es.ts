@@ -1911,7 +1911,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Fallo en el reinicio del eje Z',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 El módulo de impresión no responde.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Por favor, retraiga la sonda.',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 Compruebe su depósito de agua.',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 Flujo de refrigerante bajo. Compruebe su depósito de agua.',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Enclavamiento remoto activado\nCompruebe el conector de enclavamiento remoto y asegúrese de que esté conectado de forma segura antes de reiniciar el trabajo.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 No se detectó ningún módulo rotativo.',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Error crítico: El subsistema no responde. Contacte con el servicio de asistencia de FLUX.', // Deprecated in FW 3.3.1

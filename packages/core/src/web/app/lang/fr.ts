@@ -1912,7 +1912,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: "#910 Échec de la réinitialisation de l'axe Z",
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Aucune réponse du module imprimante.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Veuillez rétracter la sonde.',
-    HARDWARE_ERROR_PUMP_ERROR: "#900 Veuillez vérifier votre réservoir d'eau.",
+    HARDWARE_ERROR_PUMP_ERROR: "#900 Faible débit de liquide de refroidissement. Veuillez vérifier votre réservoir d'eau.",
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: "#927 Verrouillage à distance déclenché\nVeuillez vérifier le connecteur de verrouillage à distance et vous assurer qu'il est correctement connecté avant de redémarrer le travail.",
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Aucun module rotatif détecté',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Erreur critique : Sous-système sans réponse. Veuillez contacter le support FLUX.',

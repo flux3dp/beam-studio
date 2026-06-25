@@ -1912,7 +1912,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z軸リセットに失敗しました',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 プリンターモジュールが応答しません。',
     HARDWARE_ERROR_PROBE_SHOWED: 'プローブを格納してください。',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 水槽にご確認ください。',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 冷却水の流量不足。水槽にご確認ください。',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 リモートインターロック作動\nリモートインターロックコネクタを確認し、しっかり接続されていることを確認してからジョブを再開してください。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 ロータリーモジュールが検出されません',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1

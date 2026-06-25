@@ -1912,7 +1912,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-axel återställning misslyckades',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Inget svar från skrivarmodul.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Vänligen dra tillbaka sonden.',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 Kontrollera din vattentank.',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 Lågt kylvätskeflöde. Kontrollera din vattentank.',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Fjärrinterlock utlöst\nKontrollera fjärrinterlock-kontakten och se till att den är säkert ansluten innan du startar om jobbet.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Ingen roterande modul detekterad',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritiskt fel: Inget svar från delsystem. Kontakta FLUX support.',
