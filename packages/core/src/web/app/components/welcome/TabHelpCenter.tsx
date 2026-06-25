@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import GridGuide from '@core/app/components/welcome/GridGuide';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { checkBM2 } from '@core/helpers/checkFeature';
+import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
@@ -13,6 +13,11 @@ import styles from './TabHelpCenter.module.scss';
 import ThemedButton from './ThemedButton';
 
 const guides = [
+  checkHxRf() && {
+    category: 14101381797647,
+    name: 'HEXA RF',
+    src: 'core-img/init-panel/hexa-rf-real.webp',
+  },
   checkBM2() && {
     category: 13025863120655,
     name: 'beamo II',
