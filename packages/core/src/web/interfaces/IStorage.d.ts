@@ -60,6 +60,10 @@ export interface Storage {
   'selected-device'?: string;
   /** map with key: device uuid value: firmware version */
   'sentry-send-devices'?: Record<string, string>;
+  /** machine serial list that should not ask for linking */
+  skip_machine_linking?: string[];
+  /** Record if a Yongli device default delay table has been written */
+  'yongli-written-serials': string[];
 }
 
 export type StorageKey = keyof Storage;
