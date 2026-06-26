@@ -7,7 +7,11 @@ import type { ColumnsType } from 'antd/es/table';
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import DraggableModal from '@core/app/widgets/DraggableModal';
-import deviceMaster from '@core/helpers/device-master';
+import {
+  DELAY_TABLE_VERSION_KEY,
+  DELAY_TABLE_VERSION_VALUE,
+  setLaserDelayTable,
+} from '@core/helpers/device/laserDelayTable';
 
 interface LaserDelaySettingPanelProps {
   initData: Record<string, number>;
@@ -33,8 +37,9 @@ const LaserDelaySettingPanel = ({ initData, onClose }: LaserDelaySettingPanelPro
     progressCaller.openNonstopProgress({ id: 'save-laser-delay', message: 'Saving laser delay settings' });
 
     try {
-      // Parsing for shlex.split in python in ghost and firmware, ('\\\"' => '\"' (ghost) => '"' (firmware))
-      await deviceMaster.setDeviceSetting('laser_delay', JSON.stringify(data).replaceAll('"', '\\\\\\"'));
+      data[DELAY_TABLE_VERSION_KEY] = DELAY_TABLE_VERSION_VALUE;
+
+      await setLaserDelayTable(data);
       alertCaller.popUp({ message: 'Laser delay settings saved successfully', messageIcon: 'success' });
       onClose();
     } catch (error) {
