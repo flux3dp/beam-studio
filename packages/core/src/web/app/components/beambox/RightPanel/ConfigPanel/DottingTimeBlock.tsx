@@ -10,7 +10,8 @@ const DottingTimeBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
   const lang = useI18n();
   const hasGradient = useLayerStore((state) => state.hasGradient);
 
-  if (!hasGradient) return null;
+  // Always show for force dotting mode
+  // if (!hasGradient) return null;
 
   const t = lang.beambox.right_panel.laser_panel;
 
