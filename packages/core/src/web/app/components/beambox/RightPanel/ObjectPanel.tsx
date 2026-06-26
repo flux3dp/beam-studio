@@ -1,6 +1,6 @@
 import React, { memo } from 'react';
 
-import { Button, ConfigProvider } from 'antd';
+import { Button, Collapse, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 import { useShallow } from 'zustand/shallow';
 
@@ -313,6 +313,40 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
 
   const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem as SVGElement} />;
 
+  const optionsLabel = elem?.tagName.toLowerCase() === 'text' ? 'Fit Text' : 'Options';
+
+  const renderDesktopCollapse = () => {
+    const desktopItems = [
+      { children: renderToolBtns(), key: 'tools', label: 'Tools' },
+      { children: renderDimensionPanel(), key: 'transform', label: 'Transform' },
+      { children: renderOptionPanel(), key: 'options', label: optionsLabel },
+      { children: renderActionPanel(), key: 'actions', label: 'Actions' },
+    ];
+
+    return (
+      <ConfigProvider
+        theme={{
+          components: {
+            Collapse: {
+              colorTextHeading: '#1f1f1f',
+              contentPadding: 0,
+              fontSize: 13,
+              headerPadding: '4px 12px',
+            },
+          },
+        }}
+      >
+        <Collapse
+          bordered={false}
+          className={styles.collapse}
+          defaultActiveKey={desktopItems.map((item) => item.key)}
+          ghost
+          items={desktopItems}
+        />
+      </ConfigProvider>
+    );
+  };
+
   const contents = isMobile ? (
     <>
       {renderCommonActionPanel()}
@@ -322,12 +356,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
       {renderActionPanel()}
     </>
   ) : (
-    <>
-      {renderToolBtns()}
-      {renderDimensionPanel()}
-      {renderOptionPanel()}
-      {renderActionPanel()}
-    </>
+    renderDesktopCollapse()
   );
 
   return (

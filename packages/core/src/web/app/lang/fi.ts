@@ -73,6 +73,7 @@ const lang: ILang = {
     font_size: 'Fontin koko',
     hide_text: 'Piilota teksti',
     invert_color: 'Käännä värit',
+    text: 'Teksti',
     text_margin: 'Tekstin marginaali',
   },
   beambox: {
@@ -1270,7 +1271,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Viivakoodi',
+    content: 'Sisältö',
+    import: 'Tuo',
     qr_code: 'QR-koodi',
+    type: 'Tyyppi',
   },
   curve_engraving: {
     '921': 'Automaattitarkennus epäonnistui.',
@@ -2115,7 +2119,7 @@ const lang: ILang = {
     error_tolerance: 'Virhesieto',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Käännä värit',
-    placeholder: 'Anna linkki tai teksti',
+    placeholder: 'Kirjoita teksti',
     title: 'QR-koodigeneraattori',
   },
   resolution: {

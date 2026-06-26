@@ -73,6 +73,7 @@ const lang: ILang = {
     font_size: '字體大小',
     hide_text: '隱藏文字',
     invert_color: '反轉顏色',
+    text: '文字',
     text_margin: '文字邊距',
   },
   beambox: {
@@ -1270,7 +1271,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: '條碼',
+    content: '內容',
+    import: '匯入',
     qr_code: 'QR碼',
+    type: '類型',
   },
   curve_engraving: {
     '921': '自動對焦失敗。',
@@ -2115,7 +2119,7 @@ const lang: ILang = {
     error_tolerance: '容錯率',
     error_tolerance_link: 'https://support.flux3dp.com/hc/zh-tw/articles/9113705072143',
     invert: '反轉背景顏色',
-    placeholder: '輸入連結或文字',
+    placeholder: '輸入文字',
     title: 'QR 碼產生器',
   },
   resolution: {

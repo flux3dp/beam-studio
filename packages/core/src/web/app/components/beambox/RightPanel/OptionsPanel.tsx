@@ -30,7 +30,7 @@ interface Props {
   elem: null | SVGElement;
 }
 
-function OptionsPanel({ elem }: Props): React.JSX.Element {
+function OptionsPanel({ elem }: Props): null | React.JSX.Element {
   const isMobile = useIsMobile();
   const workarea = useWorkarea();
   const supportVariableBlock = useMemo(isVariableTextSupported, [workarea]);
@@ -120,16 +120,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
       <ObjectPanelItem.Divider />
       {contents?.reverse()}
     </div>
-  ) : (
-    <>
-      {contents.filter(Boolean).length ? (
-        <div className={styles.panel}>
-          <div className={styles.title}>OPTIONS</div>
-          {contents}
-        </div>
-      ) : null}
-    </>
-  );
+  ) : contents.filter(Boolean).length ? (
+    <div className={styles.panel}>{contents}</div>
+  ) : null;
 }
 
 export default OptionsPanel;
