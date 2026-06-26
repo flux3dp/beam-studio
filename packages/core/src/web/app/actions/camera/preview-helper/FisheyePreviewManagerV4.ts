@@ -81,7 +81,8 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
 
     params.grids = this.grids;
     updateMessage(lang.message.connectingCamera);
-    await deviceMaster.setFisheyeParam(params);
+    // non-await to send with next command together
+    deviceMaster.setFisheyeParam(params);
     await this.onObjectHeightChanged();
     closeMessage?.();
 
@@ -92,7 +93,8 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     this.grids = perspectiveGrid;
     this.params.grids = perspectiveGrid;
 
-    await deviceMaster.setFisheyeParam(this.params);
+    // non-await to send with next command together
+    deviceMaster.setFisheyeParam(this.params);
     await this.onObjectHeightChanged();
   }
 
