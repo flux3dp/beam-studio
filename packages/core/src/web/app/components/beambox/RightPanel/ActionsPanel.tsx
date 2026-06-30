@@ -88,7 +88,17 @@ const ActionsPanel = ({ elem }: Props): React.ReactNode => {
 
     const content = sections
       .filter((s) => s.buttons.length > 0)
-      .flatMap((s, index, arr) => [...s.buttons, ...(index === arr.length - 1 ? [] : [<Divider key={index} />])]);
+      .flatMap((s, index, arr) => [
+        ...(s.title
+          ? [
+              <div className={styles['section-title']} key={index}>
+                {s.title}
+              </div>,
+            ]
+          : []),
+        ...s.buttons,
+        ...(index === arr.length - 1 ? [] : [<Divider key={index} marginBottom={4} />]),
+      ]);
 
     return (
       <ObjectPanelItem

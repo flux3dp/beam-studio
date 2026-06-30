@@ -77,10 +77,10 @@ const InFillBlock = ({ type = 'infill' }: Props): React.ReactNode => {
 
   const isPartiallyFilled = elems[0].tagName === 'g' && isAnyFilled && !isAllFilled;
 
-  const mixedOption = { icon: <OptionPanelIcons.InfillRwdFilled />, label: mockT('混合') };
+  const mixedOption = { icon: <OptionPanelIcons.InfillPartial />, label: mockT('混合') };
   const fillOptions = [
-    { icon: <OptionPanelIcons.InfillRwdFilled />, label: lang.fill_engraving_mode, value: 'fill' },
-    { icon: <OptionPanelIcons.InfillRwd />, label: lang.stroke_mode, value: 'stroke' },
+    { icon: <OptionPanelIcons.Infill infill="blue" />, label: lang.fill_engraving_mode, value: 'fill' },
+    { icon: <OptionPanelIcons.Infill />, label: lang.stroke_mode, value: 'stroke' },
   ];
   const value = isPartiallyFilled ? undefined : isAnyFilled ? 'fill' : 'stroke';
   const handleChange = (next: string) => setFilled(next === 'fill');
@@ -109,7 +109,7 @@ const InFillBlock = ({ type = 'infill' }: Props): React.ReactNode => {
         id={id}
         itemChildren={
           <>
-            {selectedOption.label}
+            {label ?? mockT('雕刻模式')}
             <DownOutlined className={classNames(styles.downIcon, { [styles.active]: activeKey === id })} />
           </>
         }

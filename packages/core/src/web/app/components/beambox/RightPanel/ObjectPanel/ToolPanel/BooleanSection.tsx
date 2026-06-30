@@ -61,7 +61,7 @@ const BooleanSection = () => {
   return isTablet ? (
     canBoolean && (
       <ObjectPanelItem
-        icon={<ObjectPanelIcons.Union viewBox="4 4 16 16" />}
+        icon={<ObjectPanelIcons.Subtract viewBox="4 4 16 16" />}
         id="boolean"
         renderContent={() => (
           <ListButtonGroup

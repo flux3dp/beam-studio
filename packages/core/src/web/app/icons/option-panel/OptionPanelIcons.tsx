@@ -6,8 +6,6 @@ import AlignRight from './align-right.svg';
 import AlignTop from './align-top.svg';
 import Color from './color.svg';
 import InfillPartial from './infill-partial.svg';
-import InfillRwdFilled from './infill-rwd-filled.svg';
-import InfillRwd from './infill-rwd.svg';
 import Infill from './infill.svg';
 import Justify from './justify.svg';
 import Left from './left.svg';
@@ -29,8 +27,6 @@ export default {
   Color,
   Infill,
   InfillPartial,
-  InfillRwd,
-  InfillRwdFilled,
   Justify,
   Left,
   LetterSpacing,

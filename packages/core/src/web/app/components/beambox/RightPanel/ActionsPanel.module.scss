@@ -45,3 +45,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.section-title {
+  @include mixins.title();
+}

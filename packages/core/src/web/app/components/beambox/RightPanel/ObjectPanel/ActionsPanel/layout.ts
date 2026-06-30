@@ -74,11 +74,6 @@ const getDevAll = (): SectionConfig[] => {
     {
       keys: [
         'array',
-        'autoFit',
-        'bgRemoval',
-        'convertToImage',
-        'convertToPath',
-        'createTextpath',
         'crop',
         'decomposePath',
         'detachPath',
@@ -89,17 +84,18 @@ const getDevAll = (): SectionConfig[] => {
         'imageEditPanel',
         'invert',
         'offset',
-        'potrace',
         'replaceWith',
         'sharpen',
-        'simplify',
-        'smartNest',
-        'stampMakerPanel',
-        'tab',
-        'trace',
-        'trapezoid',
-        'weldText',
       ],
+      title: 'ACTIONS',
+    },
+    {
+      keys: ['convertToImage', 'convertToPath', 'createTextpath', 'potrace', 'trace'],
+      title: 'CONVERSIONS',
+    },
+    {
+      keys: ['autoFit', 'bgRemoval', 'simplify', 'smartNest', 'stampMakerPanel', 'tab', 'trapezoid', 'weldText'],
+      title: 'OPTIMIZATIONS',
     },
   ];
 };
