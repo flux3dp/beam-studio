@@ -9,6 +9,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import tabController from '@core/app/actions/tabController';
 import { TabConstants, TabEvents } from '@core/app/constants/ipcEvents';
 import cloudFile from '@core/helpers/api/cloudFile';
+import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -19,8 +20,6 @@ import communicator from '@core/implementations/communicator';
 import fileSystem from '@core/implementations/fileSystem';
 import recentMenuUpdater from '@core/implementations/recentMenuUpdater';
 import type { IFile } from '@core/interfaces/IMyCloud';
-
-import { updateRecentFiles } from './file/recentFiles';
 
 let svgEditor: ISVGEditor;
 

@@ -4,8 +4,6 @@ import storage from '@core/implementations/storage';
 const MAX_RECENT_FILES = 10;
 
 export const updateRecentFiles = (filePath: string): void => {
-  console.log('updateRecentFiles', filePath);
-
   const recentFiles = storage.get('recent_files') || [];
   const i = recentFiles.indexOf(filePath);
 

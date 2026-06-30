@@ -32,10 +32,12 @@ const openRecentFiles = async (
     });
     storage.set(
       'recent_files',
-      storage.get('recent_files').filter((path: string) => path !== filePath),
+      (storage.get('recent_files') || []).filter((path: string) => path !== filePath),
     );
 
     update();
+
+    return;
   }
 
   if (isAtPage('welcome')) {
