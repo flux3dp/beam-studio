@@ -20,6 +20,8 @@ import fileSystem from '@core/implementations/fileSystem';
 import recentMenuUpdater from '@core/implementations/recentMenuUpdater';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
+import { updateRecentFiles } from './file/recentFiles';
+
 let svgEditor: ISVGEditor;
 
 getSVGAsync((globalSVG) => {
@@ -86,6 +88,9 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
         },
         type: 'path',
       };
+    } else if (importingFile.type === 'recent') {
+      // Update recent files storage before new tab is opened, to make the menu more responsive
+      updateRecentFiles(importingFile.filePath);
     }
 
     const currentTabIds = tabController.getAllTabs().map((tab) => tab.id);
@@ -124,7 +129,8 @@ export const importFileInCurrentTab = async (importingFile: FileData): Promise<v
       await cloudFile.openFile(importingFile.file);
     })
     .with({ type: 'recent' }, async (importingFile) => {
-      await recentMenuUpdater.openRecentFiles(importingFile.filePath);
+      // Not updating recent files when trigger by home page
+      await recentMenuUpdater.openRecentFiles(importingFile.filePath, { shouldUpdate: false });
     })
     .with({ type: 'example' }, async (importingFile) => {
       await loadExampleFile(importingFile.key);
