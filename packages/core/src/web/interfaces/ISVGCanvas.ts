@@ -135,5 +135,4 @@ export default interface ISVGCanvas {
     setStarted: (v: boolean) => void;
   };
   updateElementColor: (elem: Element) => void;
-  updateRecentFiles(path: string): void;
 }

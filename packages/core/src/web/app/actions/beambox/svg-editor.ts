@@ -50,6 +50,7 @@ import { getNextStepRequirement } from '@core/app/components/tutorials/tutorialC
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
+import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
@@ -1032,7 +1033,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'beam':
             if (path) {
               currentFileManager.setLocalFile(path);
-              svgCanvas.updateRecentFiles(path);
+              updateRecentFiles(path);
             } else {
               currentFileManager.setFileName(file.name, { extractFromPath: true });
             }

@@ -9,6 +9,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import tabController from '@core/app/actions/tabController';
 import { TabConstants, TabEvents } from '@core/app/constants/ipcEvents';
 import cloudFile from '@core/helpers/api/cloudFile';
+import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -86,6 +87,9 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
         },
         type: 'path',
       };
+    } else if (importingFile.type === 'recent') {
+      // Update recent files storage before new tab is opened, to make the menu more responsive
+      updateRecentFiles(importingFile.filePath);
     }
 
     const currentTabIds = tabController.getAllTabs().map((tab) => tab.id);
@@ -107,7 +111,7 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
 
 export const importFileInCurrentTab = async (importingFile: FileData): Promise<void> => {
   // TODO: this function cannot handle svg file correctly, which `type` equals ''
-  match(importingFile)
+  await match(importingFile)
     .with({ type: 'normal' }, async (importingFile) => {
       await svgEditor.handleFile(importingFile.data);
     })
@@ -124,7 +128,8 @@ export const importFileInCurrentTab = async (importingFile: FileData): Promise<v
       await cloudFile.openFile(importingFile.file);
     })
     .with({ type: 'recent' }, async (importingFile) => {
-      await recentMenuUpdater.openRecentFiles(importingFile.filePath);
+      // Not updating recent files when trigger by home page
+      await recentMenuUpdater.openRecentFiles(importingFile.filePath, { shouldUpdate: false });
     })
     .with({ type: 'example' }, async (importingFile) => {
       await loadExampleFile(importingFile.key);
@@ -141,5 +146,6 @@ export const importFileInCurrentTab = async (importingFile: FileData): Promise<v
         (file as any).path = filePath;
         await svgEditor.handleFile(file);
       }
-    });
+    })
+    .otherwise(() => {});
 };
