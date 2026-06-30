@@ -20,6 +20,7 @@ export const exampleFileKeys = [
   'IMPORT_EXAMPLE_ADOR_PRINT_FULL',
   'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
   'IMPORT_EXAMPLE_BEAMBOX_2',
+  'EXAMPLE_FILE_BEAMO_2',
   'IMPORT_EXAMPLE_BEAMO_2_LASER',
   'IMPORT_EXAMPLE_BEAMO_2_PRINT',
   'IMPORT_EXAMPLE_HEXA',
@@ -58,6 +59,7 @@ const exampleCache: Partial<Record<WorkAreaModel, ExampleFileMap>> = {};
 // 2. use an empty string to always show the menu item in desktop but prevent to import the file
 // 3. hanlde example files of limited models in getExamples
 const basicExamples: ExampleFileMap = {
+  EXAMPLE_FILE_BEAMO_2: '',
   IMPORT_ACRYLIC_FOCUS_PROBE: 'examples/focus_probe.bvg',
   IMPORT_BEAMBOX_2_FOCUS_PROBE: 'examples/beambox_2_focus_probe.bvg',
   IMPORT_EXAMPLE: 'examples/badge.bvg',
@@ -102,6 +104,7 @@ export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
     if (workarea === 'fbm2') {
       examples = {
         ...examples,
+        EXAMPLE_FILE_BEAMO_2: '',
         IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
         IMPORT_EXAMPLE_BEAMO_2_PRINT: 'examples/beamo_2_example_printing_full.bvg',
         IMPORT_MATERIAL_TESTING_PRINT: 'examples/beamo_2_color_ring.bvg',
@@ -139,6 +142,7 @@ export const getExampleVisibility = (
   const examples = { ...getExamples(workarea) };
 
   if (!checkBM2()) {
+    delete examples.EXAMPLE_FILE_BEAMO_2;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_LASER;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT;
   }

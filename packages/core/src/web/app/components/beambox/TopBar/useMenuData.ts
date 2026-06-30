@@ -310,34 +310,65 @@ const useMenuData = (email?: string): MenuNode[] => {
         children: [
           {
             children: [
-              { id: 'IMPORT_EXAMPLE_ADOR_LASER', label: menuCms.import_ador_laser_example, type: 'item' },
-              {
-                id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
-                label: menuCms.import_ador_printing_example_single,
-                type: 'item',
-              },
-              { id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL', label: menuCms.import_ador_printing_example_full, type: 'item' },
               { id: 'IMPORT_EXAMPLE', label: menuCms.import_hello_beamo, type: 'item' },
+              { id: 'IMPORT_HELLO_BEAMBOX', label: menuCms.import_hello_beambox, type: 'item' },
+              ...(checkHxRf()
+                ? [
+                    {
+                      children: [
+                        { id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' as const },
+                        { id: 'IMPORT_EXAMPLE_HEXA_RF', label: menuCms.import_hexa_rf_example, type: 'item' as const },
+                      ],
+                      label: 'HEXA',
+                      type: 'submenu' as const,
+                    },
+                  ]
+                : [{ id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' as const }]),
+              {
+                children: [
+                  { id: 'IMPORT_EXAMPLE_ADOR_LASER', label: menuCms.import_ador_laser_example, type: 'item' },
+                  {
+                    id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
+                    label: menuCms.import_ador_printing_example_single,
+                    type: 'item',
+                  },
+                  {
+                    id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL',
+                    label: menuCms.import_ador_printing_example_full,
+                    type: 'item',
+                  },
+                ],
+                label: 'Ador',
+                type: 'submenu',
+              },
               ...(checkBM2()
                 ? [
                     {
-                      id: 'IMPORT_EXAMPLE_BEAMO_2_LASER',
-                      label: menuCms.import_beamo_2_laser_example,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT',
-                      label: menuCms.import_beamo_2_printing_example,
-                      type: 'item' as const,
+                      children: [
+                        {
+                          id: 'IMPORT_EXAMPLE_BEAMO_2_LASER',
+                          label: menuCms.import_beamo_2_laser_example,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT',
+                          label: menuCms.import_beamo_2_printing_example,
+                          type: 'item' as const,
+                        },
+                      ],
+                      label: 'beamo II',
+                      type: 'submenu' as const,
                     },
                   ]
                 : []),
-              { id: 'IMPORT_HELLO_BEAMBOX', label: menuCms.import_hello_beambox, type: 'item' },
-              { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: menuCms.import_beambox_2_example, type: 'item' },
-              { id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' },
-              ...(checkHxRf()
-                ? [{ id: 'IMPORT_EXAMPLE_HEXA_RF', label: menuCms.import_hexa_rf_example, type: 'item' as const }]
-                : []),
+              {
+                children: [
+                  { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: menuCms.import_beambox_2_example, type: 'item' },
+                  { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: menuCms.import_beambox_2_focus_probe, type: 'item' },
+                ],
+                label: 'Beambox II',
+                type: 'submenu',
+              },
               ...(!isWeb()
                 ? [{ id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const }]
                 : []),
@@ -397,7 +428,6 @@ const useMenuData = (email?: string): MenuNode[] => {
               ]
             : []),
           { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: menuCms.import_acrylic_focus_probe, type: 'item' },
-          { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: menuCms.import_beambox_2_focus_probe, type: 'item' },
         ],
         label: menuCms.samples,
         type: 'submenu',

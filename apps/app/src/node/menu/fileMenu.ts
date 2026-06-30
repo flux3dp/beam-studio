@@ -89,16 +89,45 @@ export function buildFileMenu(
           id: 'EXAMPLE_FILES',
           label: r.example_files || 'Example Files',
           submenu: [
-            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_LASER', label: r.import_ador_laser_example },
-            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE', label: r.import_ador_printing_example_single },
-            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL', label: r.import_ador_printing_example_full },
             { click: callback, id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo },
-            { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_LASER', label: r.import_beamo_2_laser_example },
-            { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT', label: r.import_beamo_2_printing_example },
             { click: callback, id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox },
-            { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },
-            { click: callback, id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example },
-            { click: callback, id: 'IMPORT_EXAMPLE_HEXA_RF', label: r.import_hexa_rf_example },
+            {
+              id: 'EXAMPLE_FILE_HEXA',
+              label: 'HEXA',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example },
+                { click: callback, id: 'IMPORT_EXAMPLE_HEXA_RF', label: r.import_hexa_rf_example },
+              ],
+            },
+            {
+              id: 'EXAMPLE_FILE_ADOR',
+              label: 'Ador',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_ADOR_LASER', label: r.import_ador_laser_example },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
+                  label: r.import_ador_printing_example_single,
+                },
+                { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL', label: r.import_ador_printing_example_full },
+              ],
+            },
+            {
+              id: 'EXAMPLE_FILE_BEAMO_2',
+              label: 'beamo II',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_LASER', label: r.import_beamo_2_laser_example },
+                { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT', label: r.import_beamo_2_printing_example },
+              ],
+            },
+            {
+              id: 'EXAMPLE_FILE_BEAMBOX_2',
+              label: 'Beambox II',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },
+                { click: callback, id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: r.import_beambox_2_focus_probe },
+              ],
+            },
             { click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example },
           ],
         },
@@ -135,11 +164,6 @@ export function buildFileMenu(
           type: 'submenu',
         },
         { click: callback, id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe },
-        {
-          click: callback,
-          id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE',
-          label: r.import_beambox_2_focus_probe,
-        },
       ],
     },
     { type: 'separator' },
