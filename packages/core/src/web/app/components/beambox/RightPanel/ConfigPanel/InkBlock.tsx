@@ -1,6 +1,5 @@
 import React, { memo, use, useCallback, useMemo, useState } from 'react';
 
-import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
@@ -9,7 +8,6 @@ import { getSaturationOptions, getWhiteSaturationOptions } from '@core/app/const
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
-import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
@@ -20,8 +18,6 @@ import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import ColorRationModal from './ColorRatioModal';
 import ConfigSlider from './ConfigSlider';
@@ -121,33 +117,7 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
 
   return (
     <>
-      {type === 'panel-item' ? (
-        <>
-          {fullcolor.value && <ObjectPanelItem.Divider />}
-          <Popover content={content} visible={visible}>
-            <ObjectPanelItem.Item
-              autoClose={false}
-              content={
-                <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
-                  <span style={{ whiteSpace: 'nowrap' }}>{displayValue}</span>
-                </Button>
-              }
-              id="power"
-              label={t.ink_saturation}
-            />
-          </Popover>
-          <ObjectPanelItem.Item
-            content={<ObjectPanelIcons.Parameter />}
-            disabled={!fullcolor.value}
-            id="color-adjustment"
-            label={t.color_adjustment_short}
-            onClick={openModal}
-          />
-          {fullcolor.value && <ObjectPanelItem.Divider />}
-        </>
-      ) : (
-        content
-      )}
+      {type === 'panel-item' ? <></> : content}
       {showModal && <ColorRationModal fullColor={fullcolor.value} onClose={closeModal} />}
     </>
   );

@@ -17,19 +17,11 @@ $layer-background: white;
   @include mixins.is-not-mobile {
     @include rightPanelMixins.panel();
   }
-}
 
-.floating-panel [class*='scroll-content'] {
-  // scrolling is handled by layerlist_container
-  overflow-y: auto;
-  margin-bottom: 120px;
-  padding-bottom: 0;
-}
-
-.layer-bottom-bar {
-  @include rightPanelMixins.bottom-bar();
-  position: relative;
-  z-index: 901;
+  @include mixins.is-tablet {
+    width: 300px;
+    max-height: calc(100vh - 200px);
+  }
 }
 
 .layer-panel {
@@ -41,7 +33,6 @@ $layer-background: white;
   position: relative;
   @include mixins.is-mobile {
     width: 100vw;
-    height: 100%;
     border: none;
   }
 

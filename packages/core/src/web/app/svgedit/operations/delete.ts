@@ -1,8 +1,10 @@
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
+import { removeElement } from '@core/app/svgedit/history/removeElement';
 import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
 import findDefs from '@core/app/svgedit/utils/findDef';
+import { getContentElements } from '@core/helpers/contentLibrary/manager';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -58,6 +60,12 @@ export const deleteUseRef = (use: SVGUseElement, opts?: HistoryActionOptions): {
   return { cmd: batchCmd };
 };
 
+export const deleteLibraryRef = (owner: Element, opts?: HistoryActionOptions) => {
+  getContentElements({ ownerId: owner.id }).forEach((elem) => {
+    handleHistoryActionOptions(removeElement(elem), opts);
+  });
+};
+
 export const deleteElements = (elems: Element[], isSub = false): IBatchCommand => {
   const selectorManager = selector.getSelectorManager();
   const batchCmd = new history.BatchCommand('Delete Elements');
@@ -95,6 +103,8 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     if (elem.tagName === 'use') {
       deleteUseRef(elem as SVGUseElement, { parentCmd: batchCmd });
     }
+
+    deleteLibraryRef(elem, { parentCmd: batchCmd });
   }
 
   if (!batchCmd.isEmpty() && !isSub) {

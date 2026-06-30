@@ -3,6 +3,7 @@ import { modelsWithPrinter4C } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import { resetThumbnails } from '@core/app/components/FileThumbnail/utils';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
@@ -38,10 +39,14 @@ getSVGAsync((globalSVG) => {
   svgedit = globalSVG.Edit;
 });
 
-export const importBvgString = async (str: string, opts: HistoryActionOptions = {}): Promise<void> => {
+export const importBvgString = async (
+  str: string,
+  { clearTemplateMode = true, ...opts }: HistoryActionOptions & { clearTemplateMode?: boolean } = {},
+): Promise<void> => {
   const batchCmd = new history.BatchCommand('Import Bvg');
 
   selectionManager.clearSelection();
+  resetThumbnails();
 
   const setContentCmd = setSvgContent(str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'));
 
@@ -171,6 +176,10 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
       }
     }
 
+    if (clearTemplateMode) {
+      currentFileManager.setTemplateFile(null);
+    }
+
     const cmd = changeMultipleDocumentStoreValues(newDocumentState, { parentCmd: batchCmd });
 
     rotaryAxis.toggleDisplay();
@@ -260,6 +269,7 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
       workareaManager.resetView();
     }
 
+    await symbolMaker.initAllLibraryImageSymbols();
     await symbolMaker.reRenderAllImageSymbols();
   };
 

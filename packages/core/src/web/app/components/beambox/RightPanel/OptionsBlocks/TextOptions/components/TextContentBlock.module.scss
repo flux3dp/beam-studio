@@ -1,9 +1,13 @@
-.container {
-  margin-top: 8px;
-  margin-bottom: 8px;
+@use '@core/styles/mixins' as mixins;
 
-  :global(.ant-input) {
-    border-radius: 6px;
-    padding: 6px 10px;
+@include mixins.is-desktop {
+  .container {
+    margin-top: 8px;
+    margin-bottom: 8px;
+
+    :global(.ant-input) {
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
   }
 }

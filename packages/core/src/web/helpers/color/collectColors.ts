@@ -1,6 +1,6 @@
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import rgbToHex from '@core/helpers/color/rgbToHex';
-import getRealSymbol from '@core/helpers/symbol-helper/getRealSymbol';
+import { getRealSymbol } from '@core/helpers/symbol-helper/getSymbol';
 
 const parseColorString = (color: string): string => {
   if (color.startsWith('rgb(')) {
@@ -28,7 +28,7 @@ const colloectColors = (
   const elements: Array<{ node: Element; useElement?: SVGUseElement }> = [{ node: element }];
 
   while (elements.length > 0) {
-    const { node, useElement } = elements.pop();
+    const { node, useElement } = elements.pop()!;
     const tagName = node?.tagName?.toLowerCase();
 
     if (node?.nodeType !== 1 || ['clippath', 'styles'].includes(tagName)) {

@@ -1,6 +1,27 @@
 import type { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
+export const enum ObjectPanelSection {
+  // Common Tool Actions
+  Arrange, // align + distribute
+  Group,
+  Boolean,
+  // Object Properties
+  Template,
+  Dimension, // position + size + rotation + flip
+  Infill,
+  Color, // single / multi
+  ObjectOption, // round corner etc that only applies to specific object types
+  ContentLibrary,
+  // Object Actions
+  MainAction, // all actions in Desktop, and frequently used actions in mobile
+  OverflowAction, // all actions in mobile
+  // Layer Parameter
+  LayerParameter,
+  //
+  Divider,
+}
+
 // Dimensions
 export type PositionKey = 'cx' | 'cy' | 'x1' | 'x2' | 'x' | 'y1' | 'y2' | 'y';
 export const positionKeys = new Set<PositionKey>(['x', 'y', 'x1', 'y1', 'x2', 'y2', 'cx', 'cy']);
@@ -25,7 +46,7 @@ export type DimensionValues = { [key in DimensionKeyBoolean]?: boolean } & { [ke
  * Object dimension attribute orders displayed in DimensionPanel
  */
 export type DimensionOrderMap = {
-  [key: string]: Array<'lock' | 'rot' | DimensionKeyShort>;
+  [key: string]: DimensionKeyShort[];
 };
 
 // Text Options
@@ -61,3 +82,15 @@ export interface VariableTextOption {
 export type VariableTextConfig = {
   [key in keyof VariableTextOption]: ConfigItem<VariableTextOption[key]>;
 };
+
+export type NumberOptionConfig = Partial<{
+  id: string;
+  max: number;
+  min: number;
+  precision: number;
+  sliderMax: number;
+  sliderMin: number;
+  sliderStep: number;
+  step: number;
+  unit: string;
+}>;

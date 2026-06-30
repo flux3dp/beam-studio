@@ -5,6 +5,7 @@ import { MenuEvents, MiscEvents, TabEvents } from '@core/app/constants/ipcEvents
 import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useInteractionModeStore } from '@core/app/stores/interactionModeStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { getOS } from '@core/helpers/getOS';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
@@ -70,6 +71,17 @@ class Menu extends AbstractMenu {
       },
     );
 
+    // editor mode related
+    useInteractionModeStore.subscribe(
+      (state) => state.interactionMode,
+      (interactionMode) => {
+        this.changeMenuItemStatus(['SAVE_AS_PROJECT'], 'visible', interactionMode === 'template');
+        this.changeMenuItemStatus(['SAVE_AS_TEMPLATE'], 'visible', interactionMode === 'project');
+        this.setDisabled(interactionMode === 'explore');
+        this.rerenderMenu();
+      },
+    );
+
     const isDev = localStorage.getItem('dev') === 'true';
 
     this.setDevMode(isDev);
@@ -97,6 +109,7 @@ class Menu extends AbstractMenu {
   initMenuItemStatus = (): void => {
     const globalPreference = useGlobalPreferenceStore.getState();
     const dockableStore = useDockableStore.getState();
+    const interactionMode = useInteractionModeStore.getState().interactionMode;
 
     // checkboxes
     this.changeMenuItemStatus(['ZOOM_WITH_WINDOW'], 'checked', globalPreference.zoom_with_window);
@@ -109,6 +122,8 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', dockableStore.panelLayerControls);
     this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', dockableStore.panelObjectProperties);
     this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', dockableStore.panelPathEdit);
+    this.changeMenuItemStatus(['SAVE_AS_PROJECT'], 'visible', interactionMode === 'template');
+    this.changeMenuItemStatus(['SAVE_AS_TEMPLATE'], 'visible', interactionMode === 'project');
 
     this.updateMenuByWorkarea(useDocumentStore.getState().workarea);
   };
@@ -136,6 +151,13 @@ class Menu extends AbstractMenu {
   setDevMode(isDevMode: boolean): void {
     if (this.communicator) {
       this.communicator.send(MiscEvents.SetDevMode, isDevMode);
+      updateWindowsMenu();
+    }
+  }
+
+  setDisabled(isDisabled: boolean): void {
+    if (this.communicator) {
+      this.communicator.send(MenuEvents.DisableMenu, isDisabled);
       updateWindowsMenu();
     }
   }

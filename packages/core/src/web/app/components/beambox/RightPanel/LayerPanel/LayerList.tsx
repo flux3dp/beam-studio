@@ -1,7 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 
-import { SwipeAction } from 'antd-mobile';
-import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
+import type { SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
 import classNames from 'classnames';
 import { pick } from 'remeda';
 import { match } from 'ts-pattern';
@@ -10,16 +9,14 @@ import { useShallow } from 'zustand/shallow';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
-import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import ColorPicker from '@core/app/widgets/ColorPicker';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import { setLayerLock } from '@core/helpers/layer/layer-helper';
 
 import styles from './LayerList.module.scss';
 
@@ -64,7 +61,7 @@ const LayerList = ({
 
   const items: React.ReactNode[] = [];
   const currentLayerName = layerManager.getCurrentLayerName();
-  const isMobile = useIsMobile();
+  const isMobile = useIsTabletOrMobile();
   const workarea = useWorkarea();
   const supportedModules = useSupportedModules(workarea);
   const ref = useRef<SwipeActionRef>(null);
@@ -108,6 +105,7 @@ const LayerList = ({
       let moduleIcon = null;
 
       moduleIcon = match(layerModule)
+        .with(LayerModule.GUIDE, () => <LeftPanelIcons.Photo />)
         .with(LayerModule.UV_PRINT, () => <LayerPanelIcons.UvPrint />)
         .when(
           () => getData(layer, 'ref'),
@@ -223,49 +221,7 @@ const LayerList = ({
         </div>
       );
 
-      if (!isMobile) {
-        items.push(layerItem);
-      } else {
-        const leftActions: Action[] | undefined = isMobile
-          ? [
-              {
-                color: 'warning',
-                key: 'lock',
-                onClick: () => {
-                  setLayerLock(layerName, !isLocked);
-                  // let SwipeAction close before force update
-                  setTimeout(forceUpdate);
-                },
-                text: isLocked ? <LayerPanelIcons.Unlock /> : <LayerPanelIcons.Lock />,
-              },
-            ]
-          : undefined;
-        const rightActions: Action[] | undefined = isMobile
-          ? [
-              {
-                color: 'danger',
-                key: 'delete',
-                onClick: () => {
-                  deleteLayerByName(layerName);
-                  setSelectedLayers([]);
-                },
-                text: <ObjectPanelIcons.Trash />,
-              },
-            ]
-          : undefined;
-
-        items.push(
-          <SwipeAction
-            key={layerName}
-            leftActions={leftActions}
-            onActionsReveal={() => setSelectedLayers([layerName])}
-            ref={isSelected && layerName === selectedLayers[0] ? ref : undefined}
-            rightActions={rightActions}
-          >
-            {layerItem}
-          </SwipeAction>,
-        );
-      }
+      items.push(layerItem);
 
       if (draggingDestIndex === i) {
         items.push(renderDragBar());

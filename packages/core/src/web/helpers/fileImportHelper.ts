@@ -35,7 +35,7 @@ type FileMeta = {
 export type FileData =
   | { data: File; type: 'normal' }
   | { data: FileMeta; type: 'path' }
-  | { file: IFile; type: 'cloud' }
+  | { file: IFile; isEditable?: boolean; type: 'cloud' }
   | { filePath: string; type: 'open' }
   | { filePath: string; type: 'recent' }
   // Add a new type for opening files from a path
@@ -121,7 +121,7 @@ export const importFileInCurrentTab = async (importingFile: FileData): Promise<v
       await svgEditor.handleFile(file);
     })
     .with({ type: 'cloud' }, async (importingFile) => {
-      await cloudFile.openFile(importingFile.file);
+      await cloudFile.openFile(importingFile.file, { isEditable: importingFile.isEditable });
     })
     .with({ type: 'recent' }, async (importingFile) => {
       await recentMenuUpdater.openRecentFiles(importingFile.filePath);

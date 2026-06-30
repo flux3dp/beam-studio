@@ -1,14 +1,25 @@
 @use './_mixins.scss' as rightPanelMixins;
 @use '@core/styles/mixins' as mixins;
 
+@include mixins.is-tablet {
+  .modal-wrap {
+    // Allow user to interact with path nodes in canvas
+    pointer-events: none;
+  }
+}
+
 .panel {
-  @include mixins.is-not-mobile {
+  @include mixins.is-desktop {
     @include rightPanelMixins.panel();
   }
 
   .node-type-panel {
     padding: 10px;
     transition: height 0.1s ease-in 0s;
+
+    @include mixins.is-tablet {
+      padding: 0;
+    }
 
     .title {
       @include rightPanelMixins.title();

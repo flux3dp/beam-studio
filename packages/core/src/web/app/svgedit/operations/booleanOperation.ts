@@ -1,7 +1,9 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { convertElementsToPathInTempGroup } from '@core/helpers/convertElementsToPathInTempGroup';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
@@ -100,4 +102,16 @@ export const doBooleanOperationOnSelected = (mode: BooleanOperationMode, opts?: 
   const selectedElements = selectionManager.getSelectedElements(true);
 
   doBooleanOperation(selectedElements, mode, opts);
+};
+
+export const convertAndBooleanOperationOnSelected = async (mode: BooleanOperationMode): Promise<void> => {
+  const parentCommand = new history.BatchCommand(`${mode.charAt(0).toUpperCase() + mode.slice(1)} Selected Elements`);
+
+  await convertElementsToPathInTempGroup({
+    element: selectionManager.getSelectedElements()[0] as SVGGElement,
+    parentCommand,
+  });
+
+  doBooleanOperationOnSelected(mode, { parentCmd: parentCommand });
+  undoManager.addCommandToHistory(parentCommand);
 };

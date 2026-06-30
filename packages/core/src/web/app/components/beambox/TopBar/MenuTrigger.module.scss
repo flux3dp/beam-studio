@@ -1,0 +1,54 @@
+// Dropdown
+.menu-btn-container {
+  height: 40px;
+  opacity: 0.7;
+  cursor: pointer;
+  &:not(.disabled):hover {
+    opacity: 1;
+  }
+}
+
+.icon {
+  height: 40px;
+}
+
+.icon-arrow {
+  height: 40px;
+  margin-left: -15px;
+}
+
+// Drawer
+.trigger {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+
+  &:not(.disabled):hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+}
+
+.trigger-logo {
+  height: 32px;
+}
+
+.trigger-hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: 8px;
+  span {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+  }
+}
+
+// Common
+.disabled {
+  cursor: default;
+}

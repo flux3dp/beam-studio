@@ -36,21 +36,22 @@ import grid from '@core/app/actions/canvas/grid';
 import { guideLineDrawer } from '@core/app/actions/canvas/guideLines';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import * as TutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { CanvasElements } from '@core/app/constants/canvasElements';
-import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { templateModes, withinInteractionModes } from '@core/app/stores/interactionModeStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getAttributes } from '@core/helpers/element/attribute';
+import { clearEditableInfo } from '@core/helpers/element/editable/setter';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
+import { checkSelectable } from '@core/helpers/layer/checkSelectable';
 import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import round from '@core/helpers/math/round';
@@ -283,6 +284,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     var shape = svgedit.utilities.getElem(data.attr.id);
+
+    if (withinInteractionModes(templateModes)) data.attr['data-editable'] = '*';
+
     // if shape is a path but we need to create a rect/ellipse, then remove the path
     const currentLayer = layerManager.getCurrentLayerElement()!;
 
@@ -1031,27 +1035,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // TODO: could use slice here to make this faster?
   // TODO: should the 'selected' handler
 
-  // Function: selectAllInCurrentLayer
-  // Clears the selection, then adds all elements in the current layer to the selection.
-  this.selectAllInCurrentLayer = function () {
-    const currentLayer = layerManager.getCurrentLayerElement();
-
-    if (currentLayer && currentLayer.getAttribute('data-lock') !== 'true') {
-      setMouseMode('select');
-
-      const elemsToAdd = (Array.from(currentLayer.childNodes) as SVGElement[]).filter(
-        (c: SVGElement) => !CanvasElements.defElems.includes(c.tagName),
-      );
-
-      if (elemsToAdd.length < 1) {
-        console.warn('Selecting empty layer in "selectAllInCurrentLayer"');
-      } else {
-        selectionManager.multiSelect(elemsToAdd);
-        svgEditor.updateContextPanel();
-      }
-    }
-  };
-
   /**
    * Select All element in canvas except locked layer
    * @returns {null}
@@ -1066,12 +1049,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     for (let i = allLayers.length - 1; i >= 0; i--) {
       const layerElement = allLayers[i].getGroup();
 
-      if (
-        layerElement &&
-        layerElement.parentNode &&
-        layerElement.getAttribute('data-lock') !== 'true' &&
-        layerElement.getAttribute('display') !== 'none'
-      ) {
+      if (layerElement && layerElement.parentNode && checkSelectable(layerElement)) {
         const elemsToAdd = (Array.from(layerElement.childNodes) as SVGElement[]).filter(
           (node: SVGElement) => !CanvasElements.defElems.includes(node.tagName),
         );
@@ -1143,7 +1121,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       if (layer && layer.elem) {
         const layerElement = layer.elem;
 
-        if (layerElement.getAttribute('display') === 'none' || layerElement.getAttribute('data-lock') === 'true') {
+        if (!checkSelectable(layerElement)) {
           continue;
         }
       }
@@ -1295,6 +1273,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     //	if (!defs.firstChild) {return;}
 
+    const libraryOwners = [];
     var defelem_uses = [];
     var numRemoved = 0;
     var attrs = ['fill', 'stroke', 'filter', 'marker-start', 'marker-mid', 'marker-end'];
@@ -1323,6 +1302,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       if (href && href.indexOf('#') === 0) {
         defelem_uses.push(href.substr(1));
       }
+
+      if (el.getAttribute('data-library-default')) {
+        libraryOwners.push(el.id);
+      }
     }
 
     const isDefUsed = (node) => {
@@ -1334,6 +1317,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       if (node.nodeType === 3 || !node.getAttribute) {
         return false;
+      }
+
+      const libraryOwner = node.getAttribute('data-library-owner');
+
+      if (libraryOwner && libraryOwners.includes(libraryOwner)) {
+        return true;
       }
 
       const originSymbol = node.getAttribute('data-origin-symbol');
@@ -2114,218 +2103,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
-  this.isElemFillable = (elem: Element) => {
-    if (elem.tagName === 'g') {
-      const childNodes = elem.childNodes;
-
-      for (let i = 0; i < childNodes.length; i++) {
-        if (!this.isElemFillable(childNodes[i])) {
-          return false;
-        }
-      }
-
-      return true;
-    }
-
-    if (!CanvasElements.fillableElems.includes(elem.tagName)) {
-      return false;
-    }
-
-    return elem.tagName === 'path' ? this.calcPathClosed(elem) : true;
-  };
-
-  this.calcPathClosed = (pathElem: SVGPathElement) => {
-    const segList = pathElem.pathSegList._list || pathElem.pathSegList;
-    let [startX, startY, currentX, currentY, isDrawing, isClosed] = [0, 0, 0, 0, false, true];
-
-    for (let i = 0; i < segList.length; i++) {
-      const seg = segList[i];
-
-      switch (seg.pathSegType) {
-        case 1:
-          [currentX, currentY] = [startX, startY];
-          isDrawing = false;
-          break;
-        case 2:
-        case 3:
-          if (isDrawing) {
-            if (seg.x !== currentX || seg.y !== currentY) {
-              isClosed = false;
-            } else {
-              [startX, startY, currentX, currentY] = [seg.x, seg.y, seg.x, seg.y];
-            }
-          } else {
-            [startX, startY, currentX, currentY] = [seg.x, seg.y, seg.x, seg.y];
-          }
-
-          break;
-        default:
-          isDrawing = true;
-          [currentX, currentY] = [seg.x, seg.y];
-          break;
-      }
-
-      if (!isClosed) {
-        break;
-      }
-    }
-
-    if (isDrawing && (startX !== currentX || startY !== currentY)) {
-      isClosed = false;
-    }
-
-    return isClosed;
-  };
-
-  this.calcElemFilledInfo = (elem: Element) => {
-    if (elem.tagName === 'g') {
-      const childNodes = elem.childNodes;
-      let isAnyFilled;
-      let isAllFilled = true;
-
-      for (let i = 0; i < childNodes.length; i++) {
-        const childFilledInfo = this.calcElemFilledInfo(childNodes[i]);
-
-        if (childFilledInfo.isAnyFilled) {
-          isAnyFilled = true;
-        }
-
-        if (!childFilledInfo.isAllFilled) {
-          isAllFilled = false;
-        }
-
-        if (isAnyFilled && isAllFilled === false) {
-          break;
-        }
-      }
-
-      return { isAllFilled, isAnyFilled };
-    }
-
-    if (!CanvasElements.fillableElems.includes(elem.tagName)) {
-      return {
-        isAllFilled: false,
-        isAnyFilled: false,
-      };
-    }
-
-    const fill = elem.getAttribute('fill') || '#000000';
-    const isFilled =
-      Number.parseFloat(elem.getAttribute('fill-opacity') ?? '1') !== 0 &&
-      !['#fff', '#ffffff', 'none'].includes(fill.toLowerCase());
-
-    return {
-      isAllFilled: isFilled,
-      isAnyFilled: isFilled,
-    };
-  };
-
-  this.setElemsFill = function (elems: Element[]) {
-    const batchCmd = new history.BatchCommand('set elems fill');
-
-    for (let i = 0; i < elems.length; ++i) {
-      const elem = elems[i];
-
-      if (elem == null) {
-        break;
-      }
-
-      if (CanvasElements.fillableElems.includes(elem.tagName)) {
-        if (this.calcElemFilledInfo(elem).isAllFilled) {
-          continue;
-        }
-
-        const color = $(elem).attr('stroke') || '#333';
-        const cmd = this.setElementFill(elem, color);
-
-        if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-      } else if (elem.tagName === 'g') {
-        this.setElemsFill(elem.childNodes);
-      } else {
-        console.log(`Not support type: ${elem.tagName}`);
-      }
-    }
-
-    if (TutorialController.getNextStepRequirement() === TutorialConstants.INFILL) {
-      TutorialController.handleNextStep();
-    }
-
-    if (!batchCmd.isEmpty()) addCommandToHistory(batchCmd);
-  };
-
-  this.setElementFill = function (elem: SVGElement, color: string) {
-    const batchCmd = new history.BatchCommand('set elem fill');
-    let cmd;
-
-    canvas.undoMgr.beginUndoableChange('fill', [elem]);
-    elem.setAttribute('fill', color);
-    cmd = canvas.undoMgr.finishUndoableChange();
-
-    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-    canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
-    elem.setAttribute('fill-opacity', '1');
-    cmd = canvas.undoMgr.finishUndoableChange();
-
-    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-    return batchCmd;
-  };
-
-  this.setElemsUnfill = function (elems: Element[]) {
-    const batchCmd = new history.BatchCommand('set elems unfill');
-
-    for (let i = 0; i < elems.length; ++i) {
-      const elem = elems[i];
-
-      if (elem == null) {
-        break;
-      }
-
-      if (CanvasElements.fillableElems.includes(elem.tagName)) {
-        if (!this.calcElemFilledInfo(elem).isAnyFilled) {
-          continue;
-        }
-
-        const color = $(elem).attr('fill') || '#333';
-        const cmd = this.setElementUnfill(elem, color);
-
-        if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-      } else if (elem.tagName === 'g') {
-        this.setElemsUnfill(elem.childNodes);
-      } else {
-        console.log(`Not support type: ${elem.tagName}`);
-      }
-    }
-
-    if (!batchCmd.isEmpty()) addCommandToHistory(batchCmd);
-  };
-
-  this.setElementUnfill = function (elem: SVGElement, color: string) {
-    const batchCmd = new history.BatchCommand('set elem unfill');
-    let cmd;
-
-    canvas.undoMgr.beginUndoableChange('stroke', [elem]);
-    elem.setAttribute('stroke', color);
-    cmd = canvas.undoMgr.finishUndoableChange();
-
-    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-    canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
-    elem.setAttribute('fill-opacity', '0');
-    cmd = canvas.undoMgr.finishUndoableChange();
-
-    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-    canvas.undoMgr.beginUndoableChange('fill', [elem]);
-    elem.setAttribute('fill', 'none');
-    cmd = canvas.undoMgr.finishUndoableChange();
-
-    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-    return batchCmd;
-  };
-
   /**
    * Function: convertToPath
    * Convert selected element to a path.
@@ -2926,6 +2703,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       const { nextSibling, parentNode } = elem;
 
+      clearEditableInfo(elem, { parentCmd: batchCmd });
       group.appendChild(elem);
       batchCmd.addSubCommand(new history.MoveElementCommand(elem, nextSibling, parentNode));
     }

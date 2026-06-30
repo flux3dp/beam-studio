@@ -1,6 +1,5 @@
 import { memo, use, useMemo } from 'react';
 
-import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/shallow';
@@ -17,8 +16,6 @@ import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import styles from './Block.module.scss';
 import ConfigSlider from './ConfigSlider';
@@ -76,28 +73,7 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     </div>
   );
 
-  return (
-    <>
-      {type === 'panel-item' ? (
-        <>
-          <Popover content={content} visible={visible}>
-            <ObjectPanelItem.Item
-              autoClose={false}
-              content={
-                <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
-                  <span style={{ whiteSpace: 'nowrap' }}>{`${dpiNumber} DPI`}</span>
-                </Button>
-              }
-              id="dpi"
-              label={lang.resolution.title}
-            />
-          </Popover>
-        </>
-      ) : (
-        content
-      )}
-    </>
-  );
+  return content;
 };
 
 export default memo(DpiBlock);

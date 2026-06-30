@@ -1,9 +1,16 @@
 import { match } from 'ts-pattern';
 
 import NS from '@core/app/constants/namespaces';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import { isFitText } from '../text/textedit';
 import { getTransformList } from '../transform/transformlist';
+
+let svgedit: any;
+
+getSVGAsync((globalSVG) => {
+  svgedit = globalSVG.Edit;
+});
 
 /**
  * When an element is not attached to the rendered DOM, native getBBox() returns zeros.
@@ -134,6 +141,42 @@ export const getUseBBoxByDataXform = (elem: SVGUseElement): { height: number; wi
   });
 
   return bbox as { height: number; width: number; x: number; y: number };
+};
+
+export const getSymbolBBox = (symbol: SVGSymbolElement) => {
+  const bbText = symbol.getAttribute('data-bbox');
+  let bb: { height: number; width: number; x: number; y: number };
+
+  if (!bbText) {
+    // Unable to getBBox if <use> not mounted
+    const useElemForBB = svgedit.utilities.findTempUse();
+
+    svgedit.utilities.setHref(useElemForBB, `#${symbol.id}`);
+    bb = useElemForBB.getBBox();
+    svgedit.utilities.setHref(useElemForBB, '');
+    bb.height = Math.max(0, bb.height);
+    bb.width = Math.max(0, bb.width);
+
+    const obj = {
+      height: Number.parseFloat(bb.height.toFixed(5)),
+      width: Number.parseFloat(bb.width.toFixed(5)),
+      x: Number.parseFloat(bb.x.toFixed(5)),
+      y: Number.parseFloat(bb.y.toFixed(5)),
+    };
+
+    symbol.setAttribute('data-bbox', JSON.stringify(obj));
+  } else {
+    bb = JSON.parse(bbText) as { height: number; width: number; x: number; y: number };
+  }
+
+  const bbObject = {
+    height: bb.height,
+    width: bb.width,
+    x: bb.x,
+    y: bb.y,
+  };
+
+  return bbObject;
 };
 
 // TODO: This is problematic with large stroke-width and, for example, a single horizontal line. The calculated BBox extends way beyond left and right sides.

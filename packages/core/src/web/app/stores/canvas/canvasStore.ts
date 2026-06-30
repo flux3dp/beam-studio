@@ -29,6 +29,7 @@ export type CanvasMouseIntermediateMode =
   | 'drag-prespray-area'
   | 'drag-rotary-axis'
   | 'multiselect'
+  | 'pick'
   | 'resize'
   | 'rotate';
 export type CanvasMouseMode = CanvasMouseIntermediateMode | CanvasMouseOperationMode;

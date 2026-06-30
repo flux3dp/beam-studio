@@ -1,0 +1,17 @@
+@use '@core/styles/mixins';
+@use '@core/styles/variables';
+
+.subtitle {
+  color: variables.$secondary-gray;
+}
+
+.buttons {
+  margin: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.button {
+  @include mixins.card-button;
+}

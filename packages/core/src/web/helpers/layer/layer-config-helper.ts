@@ -13,6 +13,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import { removeBackupOpacity, updateLayerOpacity } from '@core/helpers/layer/opacity';
 import { getDefaultModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
@@ -58,6 +59,7 @@ const attributeMap: Record<ConfigKey, string> = {
   nozzleOffsetY: 'data-nozzleOffsetY',
   oneWayEngraving: 'data-owe',
   oneWayEngravingReverse: 'data-oweRev',
+  opacity: 'data-opacity',
   power: 'data-strength',
   printingSpeed: 'data-printingSpeed',
   printingStrength: 'data-printingStrength',
@@ -128,6 +130,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   nozzleOffsetY: 0,
   oneWayEngraving: false,
   oneWayEngravingReverse: false,
+  opacity: 100,
   power: 15,
   printingSpeed: 60,
   printingStrength: 100,
@@ -438,6 +441,10 @@ export const writeDataLayer = <T extends ConfigKey>(
     value = (value ? JSON.stringify(value) : undefined) as ConfigKeyTypeMap[T];
   }
 
+  if (key === 'opacity') {
+    value = (getData(layer, 'module') === LayerModule.GUIDE ? (value ?? 100) : 100) as ConfigKeyTypeMap[T];
+  }
+
   if (value === undefined) {
     layer.removeAttribute(attr);
   } else {
@@ -452,6 +459,9 @@ export const writeDataLayer = <T extends ConfigKey>(
 
   if (key === 'module' && shouldApplyModuleBaseConfig) {
     applyModuleBaseConfig(layer, value as LayerModuleType, { parentCmd: batchCmd });
+  } else if (key === 'opacity') {
+    removeBackupOpacity(layer as SVGGElement, { addToHistory: false, parentCmd: batchCmd });
+    updateLayerOpacity(layer as SVGGElement, { addToHistory: false, parentCmd: batchCmd });
   }
 };
 
@@ -513,8 +523,10 @@ export const getMultiSelectData = <T extends ConfigKey>(
         value = true as ConfigKeyTypeMap[T];
         break;
       } else if (key === 'module') {
-        // Always use the UV module if there is any
-        if ([layerValue, value].includes(LayerModule.UV_PRINT as any)) {
+        // Always use the non-working module if there is any
+        if ([layerValue, value].includes(LayerModule.GUIDE as any)) {
+          value = LayerModule.GUIDE as ConfigKeyTypeMap[T];
+        } else if ([layerValue, value].includes(LayerModule.UV_PRINT as any)) {
           value = LayerModule.UV_PRINT as ConfigKeyTypeMap[T];
         }
 

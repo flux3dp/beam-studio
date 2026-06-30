@@ -1,0 +1,5 @@
+.modal {
+  :global(.ant-modal-wrap) {
+    pointer-events: none;
+  }
+}

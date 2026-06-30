@@ -1,29 +1,36 @@
-@use '../_mixins.scss' as mixins;
+@use '../_mixins.scss' as objectMixins;
+@use '@core/styles/mixins.scss' as mixins;
+
+// Change to global/external variables?
+$editable-block-margin: -2px;
+$editable-button-font-size: 20px;
+$editable-button-size: 24px;
+$editable-button-size-tablet: 32px;
+$editable-button-margin-left: 4px;
 
 .container {
-  @include mixins.item-group();
+  @include objectMixins.item-group();
+}
+
+.full-row {
+  flex: 1;
+  align-items: inherit;
+}
+
+.row:empty {
+  display: none;
 }
 
 .panel {
-  width: 100%;
+  width: fit-content;
   padding-bottom: 8px;
+  padding-left: 12px;
+  padding-right: 12px;
 
   .row {
     display: flex;
-    gap: 8px;
     align-items: center;
-    margin-bottom: 4px;
-    padding-left: 12px;
-    padding-right: 12px;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-
-    > * {
-      flex: 1;
-      min-width: 0;
-    }
+    height: 32px;
 
     .dimension {
       display: flex;
@@ -52,33 +59,24 @@
     }
   }
 
-  .size-group {
-    padding-top: 5px;
-    padding-bottom: 5px;
-    position: relative;
+  .dimension ~ .dimension {
+    margin-left: $editable-button-margin-left;
   }
-
-  .size-lock {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(calc(-50% - 30px), -50%);
-
-    :global(.ant-btn) {
-      width: 20px;
-      height: 20px;
-      min-width: 20px;
-      padding: 0;
-      font-size: 14px;
-      line-height: 1;
-    }
+  [class*='ControlBlock-module__block--'] ~ [class*='ControlBlock-module__block--'] {
+    margin-left: $editable-button-margin-left + $editable-block-margin;
+  }
+  .ratio-lock,
+  .placeholder {
+    margin-left: $editable-button-margin-left;
+    width: $editable-button-size;
+    font-size: $editable-button-size;
   }
 
   .rotate-btns {
     display: flex;
     align-items: center;
     gap: 4px;
-    justify-content: flex-start;
+    margin-left: auto;
   }
 
   .rotate-btn {
@@ -87,5 +85,38 @@
     gap: 2px;
     padding: 0 4px;
     font-size: 12px;
+  }
+}
+
+@include mixins.is-tablet-or-mobile {
+  .section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .dimension {
+    width: 120px;
+    flex: 1;
+
+    .input {
+      width: 100%;
+    }
+
+    [class*='UnitInput-module__unit--'] {
+      right: 4px;
+    }
+  }
+
+  .ratio-lock,
+  .placeholder {
+    width: $editable-button-size-tablet;
+    font-size: $editable-button-font-size;
+    margin-top: auto;
   }
 }

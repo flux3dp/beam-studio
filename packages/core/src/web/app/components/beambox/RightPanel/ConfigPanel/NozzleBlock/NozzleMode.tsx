@@ -11,7 +11,6 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import Select from '@core/app/widgets/AntdSelect';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 
-import ObjectPanelItem from '../../ObjectPanelItem';
 import styles from '../Block.module.scss';
 import initState from '../initState';
 
@@ -43,15 +42,7 @@ const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     { label: 'Both', value: 3 },
   ];
 
-  return type === 'panel-item' ? (
-    <ObjectPanelItem.Select
-      id="nozzle-mode"
-      label="Nozzle Mode"
-      onChange={handleChange}
-      options={options}
-      selected={hasMultiValue ? { label: '-', value: 0 } : options[value - 1]}
-    />
-  ) : (
+  return (
     <div className={classNames(styles.panel)}>
       <span className={styles.title}>Nozzle Mode</span>
       <Select

@@ -1,10 +1,58 @@
 @use 'sass:list';
+@use '@core/styles/variables';
 
 // Add antd default margin between buttons in modal footer
 // if buttons are wrapped in another element
 @mixin footer {
   button + button {
     margin-inline-start: 8px;
+  }
+}
+
+// Custom XL button with spotlighted icon + text + hint, left-aligned
+// Modified from antd Button type="default"
+// Styles slots: :root, .texts, .hint
+@mixin card-button {
+  min-height: 60px;
+  height: unset;
+  justify-content: flex-start;
+  gap: 16px;
+  text-align: left;
+  padding: 16px;
+
+  &:hover {
+    // hover effect for type="text"
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: #d9d9d9 !important;
+  }
+
+  :global(.ant-btn-icon) {
+    height: 48px;
+    width: 48px;
+    flex-shrink: 0;
+    font-size: 24px;
+    border-radius: 100%;
+    background: #1890ff1a;
+    color: #1890ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .texts {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: variables.$primary-gray;
+    white-space: break-spaces;
+  }
+
+  .hint {
+    font-size: 14px;
+    font-weight: 500;
+    color: variables.$secondary-gray;
   }
 }
 
@@ -25,8 +73,23 @@
     @content;
   }
 }
+@mixin is-tablet {
+  @media screen and (min-width: 601px) and (max-width: 1024px) {
+    @content;
+  }
+}
+@mixin is-tablet-or-mobile {
+  @media screen and (max-width: 1024px) {
+    @content;
+  }
+}
 @mixin is-not-mobile {
   @media screen and (min-width: 601px) {
+    @content;
+  }
+}
+@mixin is-desktop {
+  @media screen and (min-width: 1025px) {
     @content;
   }
 }
@@ -42,12 +105,7 @@
   }
 }
 
-$supported-os: (
-  linux,
-  macos,
-  windows,
-  others
-); // lowercase version of getOS result
+$supported-os: (linux, macos, windows, others); // lowercase version of getOS result
 @mixin is-os($os) {
   @if list.index($supported-os, $os) {
     :where(:global(body.#{$os})) & {

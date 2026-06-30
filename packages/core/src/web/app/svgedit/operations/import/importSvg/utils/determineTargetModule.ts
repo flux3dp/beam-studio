@@ -1,6 +1,8 @@
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { layerManager } from '@core/app/svgedit/layer/layerManager';
+import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getDefaultModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import type { ILang } from '@core/interfaces/ILang';
 
@@ -8,7 +10,14 @@ export async function determineTargetModule(
   currentModule: LayerModuleType | null,
   hasWorkareaModule: boolean,
   lang: ILang,
+  toCurrentLayer: boolean,
 ): Promise<LayerModuleType | null> {
+  if (toCurrentLayer) {
+    const groupData = getData(layerManager.getCurrentLayerElement(), 'module');
+
+    if (groupData) return groupData;
+  }
+
   if (currentModule) return currentModule;
 
   const defaultModule = getDefaultModule();

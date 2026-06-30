@@ -5,21 +5,19 @@ import { pipe } from 'remeda';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { useFalse } from '@core/helpers/is-dev';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import ObjectPanelItem from '../ObjectPanelItem';
-
 import styles from './ModuleBlock.module.scss';
 
 const ModuleBlock = (): React.ReactNode => {
-  const isMobile = useIsMobile();
+  const isTablet = useFalse();
   const {
     beambox: {
       right_panel: { laser_panel: t },
@@ -58,15 +56,7 @@ const ModuleBlock = (): React.ReactNode => {
     (options) => options.filter(Boolean),
   );
 
-  return isMobile ? (
-    <ObjectPanelItem.Select
-      id="module"
-      label={t.module}
-      onChange={handleChange as any}
-      options={options}
-      selected={options.find((option) => option.value === value) as { label: string; value: number }}
-    />
-  ) : (
+  return (
     <div className={styles.panel}>
       <div className={styles.title}>{t.module}</div>
       <Select className={styles.select} onChange={handleChange} options={options} value={value} />

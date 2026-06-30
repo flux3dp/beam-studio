@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useMemo, useState } from 'react';
 
-import { ConfigProvider, Modal } from 'antd';
+import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 import { piped } from 'remeda';
 import { sprintf } from 'sprintf-js';
@@ -8,12 +8,12 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import HighQualityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/HighQualityBlock';
+import OpacityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/OpacityBlock';
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
+import { laserModules, LayerModule, skippedModules, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -48,8 +48,6 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ColorBlock from '../ColorBlock';
 import ObjectPanelController from '../contexts/ObjectPanelController';
-import ObjectPanelItem from '../ObjectPanelItem';
-import WattBlock from '../WattBlock';
 
 import AdvancedBlock from './AdvancedBlock';
 import AirAssistBlock from './AirAssistBlock';
@@ -296,7 +294,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
             {sprintf(lang.preset_setting, displayName)}
           </div>
           <ModuleBlock />
-          {module.value !== LayerModule.UV_PRINT && (
+          {!skippedModules.has(module.value) && (
             <>
               <div className={styles.container} id="layer-parameters">
                 <div>
@@ -321,43 +319,19 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
               <AdvancedBlock type={UIType} />
             </>
           )}
+          {module.value === LayerModule.GUIDE && (
+            <div className={styles.container} id="layer-parameters">
+              <div>
+                <ParameterTitle noPreset />
+              </div>
+              <OpacityBlock type={UIType} />
+            </div>
+          )}
         </div>
       );
     }
 
-    if (UIType === 'panel-item') {
-      return (
-        <>
-          {supportedModules.length > 1 && (
-            <div className={styles['item-group']}>
-              <WattBlock />
-              <ModuleBlock />
-              <ObjectPanelItem.Divider />
-            </div>
-          )}
-          {module.value !== LayerModule.UV_PRINT && (
-            <div className={styles['item-group']}>
-              <ObjectPanelItem.Select
-                id="laser-config-dropdown"
-                label={lang.presets}
-                onChange={handleSelectPresets as any}
-                options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
-                selected={
-                  dropdownOptions.find((option) => option.value === dropdownValue) || {
-                    label: dropdownValue!,
-                    value: dropdownValue!,
-                  }
-                }
-              />
-              {commonContent}
-            </div>
-          )}
-        </>
-      );
-    }
-
     const onClose = () => {
-      dialogCaller.popDialogById('config-panel');
       ObjectPanelController.updateActiveKey(null);
     };
     const onSave = (): void => {
@@ -410,16 +384,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
     return (
       <ConfigProvider theme={{ components: { Button: { borderRadius: 100, controlHeight: 30 } } }}>
-        <Modal
-          cancelText={i18n.lang.beambox.tool_panels.cancel}
-          centered
-          className={styles.modal}
-          okText={i18n.lang.beambox.tool_panels.confirm}
-          onCancel={onClose}
-          onOk={onSave}
-          open
-          title={lang.preset_setting.slice(0, -4)}
-        >
+        <div className={styles.modal}>
           {modalMoveLayerDest && (
             <div className={styles['change-layer']}>
               <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.current_layer}:</span>
@@ -458,7 +423,13 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
               <AdvancedBlock type={UIType} />
             </>
           )}
-        </Modal>
+          <div className={styles.footer}>
+            <Button onClick={onClose}>{i18n.lang.beambox.tool_panels.cancel}</Button>
+            <Button onClick={onSave} type="primary">
+              {i18n.lang.beambox.tool_panels.confirm}
+            </Button>
+          </div>
+        </div>
       </ConfigProvider>
     );
   };

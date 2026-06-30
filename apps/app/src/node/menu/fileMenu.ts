@@ -3,6 +3,7 @@ import { ipcMain, Menu, MenuItem } from 'electron';
 import ElectronStore from 'electron-store';
 
 import { MenuEvents, TabEvents } from '@core/app/constants/ipcEvents';
+import { mockT } from '@core/helpers/is-dev';
 import type { ILang } from '@core/interfaces/ILang';
 
 import i18n from '../helpers/i18n';
@@ -57,6 +58,18 @@ export function buildFileMenu(
       enabled: false,
       id: 'SAVE_AS',
       label: r.save_as,
+    },
+    {
+      click: callback,
+      enabled: false,
+      id: 'SAVE_AS_PROJECT',
+      label: mockT('save_as_project'),
+    },
+    {
+      click: callback,
+      enabled: false,
+      id: 'SAVE_AS_TEMPLATE',
+      label: mockT('save_as_template'),
     },
     {
       click: callback,
@@ -188,7 +201,7 @@ export function buildFileMenu(
 export const updateRecentMenu = (updateWindowMenu = true): void => {
   const recentMenu = Menu.getApplicationMenu()
     ?.items.filter((i) => i.id === '_file')?.[0]
-    .submenu?.items.filter((i) => i.id === 'RECENT')?.[0].submenu;
+    ?.submenu?.items.filter((i) => i.id === 'RECENT')?.[0].submenu;
 
   if (recentMenu) {
     const lang = i18n.lang.topmenu.file;

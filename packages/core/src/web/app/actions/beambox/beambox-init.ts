@@ -8,7 +8,7 @@ import tabController from '@core/app/actions/tabController';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { isMobile } from '@core/app/stores/screenStore';
+import { isTabletOrMobile } from '@core/app/stores/screenStore';
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { initCurText } from '@core/app/svgedit/text/textedit';
 import alertHelper from '@core/helpers/alert-helper';
@@ -97,7 +97,7 @@ class BeamboxInit {
 
     await showFirstCalibrationDialog(isNewUser);
 
-    if (hasMachineConnection && !isMobile()) {
+    if (hasMachineConnection && !isTabletOrMobile()) {
       await this.showTutorial(isNewUser);
     }
 

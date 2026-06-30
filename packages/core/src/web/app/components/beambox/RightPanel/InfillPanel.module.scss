@@ -1,16 +1,20 @@
-.panel {
-  padding: 0 12px 8px;
-}
+@use '@core/styles/mixins' as mixins;
 
-.section + .section {
-  margin-top: 8px;
-  padding-top: 8px;
-  border-top: 1px solid #e0e0e0;
-}
+@include mixins.is-desktop {
+  .panel {
+    padding: 0 12px 8px;
+  }
 
-.section-label {
-  font-size: 12px;
-  font-weight: 600;
-  color: #333333;
-  line-height: 20px;
+  .section + .section {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  .section-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #333333;
+    line-height: 20px;
+  }
 }

@@ -1,12 +1,12 @@
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 export const setSelectedElement = (elem: Element | null): void => {
   BeamboxGlobalInteraction.onObjectBlur();
-  useSelectedElementStore.getState().setSelectedElement(elem);
+  useSelectedElementStore.getState().setSelectedElement(elem as null | SVGElement);
 
   // Note: onObjectFocus should be called after setSelectedElement to get correct store values
   if (elem) BeamboxGlobalInteraction.onObjectFocus([elem]);
@@ -24,10 +24,6 @@ export const addPath = (path?: SVGPathElement): void => {
   canvasEventEmitter.emit('addPath', path);
 };
 
-const setColorPreviewing = (val: boolean): void => {
-  canvasEventEmitter.emit('SET_COLOR_PREVIEWING', val);
-};
-
 const setPathEditing = (val: boolean): void => {
   canvasEventEmitter.emit('SET_PATH_EDITING', val);
 };
@@ -40,7 +36,6 @@ export default {
   addImage,
   addLine,
   addPath,
-  setColorPreviewing,
   setPathEditing,
   setSelectedElement,
   updateContext,

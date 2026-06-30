@@ -1,13 +1,24 @@
-@use './_mixins.scss' as mixins;
+@use './_mixins.scss' as optionMixins;
+@use '@core/styles/mixins' as mixins;
 
 .container {
-  @include mixins.item-group();
+  @include optionMixins.item-group();
 }
 
 .panel {
   padding: 0 12px 8px;
 
   .option-block {
-    @include mixins.option-block();
+    @include optionMixins.option-block();
+  }
+}
+
+@include mixins.is-tablet-or-mobile {
+  .input {
+    flex: 1;
+
+    > div {
+      width: 100%;
+    }
   }
 }

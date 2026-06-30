@@ -1,7 +1,6 @@
 import React, { memo, use, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -25,8 +24,6 @@ import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelController from '../contexts/ObjectPanelController';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import AdvancedPowerPanel from './AdvancedPowerPanel';
 import styles from './Block.module.scss';
@@ -140,22 +137,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   return (
     <>
-      {type === 'panel-item' ? (
-        <Popover content={content} visible={visible}>
-          <ObjectPanelItem.Item
-            autoClose={false}
-            content={
-              <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
-                {power.value}
-              </Button>
-            }
-            id="power"
-            label={t.strength}
-          />
-        </Popover>
-      ) : (
-        content
-      )}
+      {content}
       {showModal && hasPwmImages && <AdvancedPowerPanel onClose={closeModal} />}
     </>
   );

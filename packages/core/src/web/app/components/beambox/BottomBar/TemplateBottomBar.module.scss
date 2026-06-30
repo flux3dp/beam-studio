@@ -1,0 +1,94 @@
+@use '../RightPanel/mixins' as mixins;
+
+.container {
+  @include mixins.bottom-bar();
+
+  position: relative;
+  align-items: center;
+  gap: 8px;
+
+  &:empty {
+    display: none;
+  }
+}
+
+.divider {
+  height: 100%;
+}
+
+.elementList {
+  flex-shrink: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.button {
+  width: 60px;
+  height: 60px;
+  font-size: 32px;
+  border-radius: 10px;
+  border-width: 2px;
+  border-color: #ebe6e7;
+  border-style: solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  cursor: pointer;
+
+  &:hover {
+    border-color: #8ec5ff;
+  }
+}
+
+.addButton {
+  border-style: dashed;
+  font-size: 24px;
+  background: #fbf9fa;
+
+  &:hover {
+    background: #eff6ff;
+  }
+}
+
+.elementButton {
+  position: relative;
+
+  .more {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    border-radius: 20px;
+    background-color: #364153b3;
+    padding: 2px 6px;
+    color: #ffffff;
+    font-size: 16px;
+    line-height: 1;
+    display: none;
+    cursor: pointer;
+  }
+
+  &.selected {
+    border-color: #2b7fff;
+
+    .more {
+      display: block;
+    }
+  }
+}
+
+.deleteButton {
+  // position: absolute;
+  right: 12px;
+  margin-left: auto;
+  // backdrop-filter: blur(8px);
+  color: #fb2c36;
+  border: none;
+  background: #6a72821a;
+
+  &:hover {
+    background: #6a728233;
+  }
+}

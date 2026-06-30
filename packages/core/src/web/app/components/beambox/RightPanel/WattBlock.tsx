@@ -2,7 +2,7 @@ import React, { memo, use, useEffect } from 'react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import Select from '@core/app/widgets/AntdSelect';
 import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { fhx2rfWatts, getHexa2RfWatt, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
@@ -12,10 +12,9 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
 import initState from './ConfigPanel/initState';
-import ObjectPanelItem from './ObjectPanelItem';
 
 const WattBlock = memo(() => {
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const { selectedDevice } = use(CanvasContext);
   const workarea = useWorkarea();
   const value = useCanvasStore((state) => state.watt);
@@ -47,15 +46,7 @@ const WattBlock = memo(() => {
     }
   };
 
-  return isMobile ? (
-    <ObjectPanelItem.Select
-      id="watt-select-mobile"
-      label={t.laser_source}
-      onChange={handleChange as any}
-      options={options}
-      selected={options.find((option) => option.value === value)}
-    />
-  ) : (
+  return (
     <div className={styles.container}>
       <span className={styles.label}>{t.laser_source}</span>
       <Select className={styles.select} onChange={handleChange} options={options} value={value} />

@@ -63,6 +63,7 @@ const getInitStore = (): GlobalPreference => {
     show_guides: preference.show_guides,
     show_rulers: preference.show_rulers,
     simplify_clipper_path: preference.simplify_clipper_path,
+    template_creation_mode: preference.template_creation_mode,
     'use-auto-exposure': preference['use-auto-exposure'],
     'use-real-boundary': preference['use-real-boundary'],
     'use-union-boundary': preference['use-union-boundary'],

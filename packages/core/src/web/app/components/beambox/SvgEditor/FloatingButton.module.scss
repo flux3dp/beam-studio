@@ -1,0 +1,49 @@
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.8;
+  }
+
+  :global(.anticon) {
+    font-size: 22px;
+  }
+}
+
+$outlined-button-size: 40px;
+.outlined {
+  width: $outlined-button-size;
+  height: $outlined-button-size;
+  font-size: 30px;
+  background: #f0f0f0;
+  color: #7c7c7c;
+  border: #7c7c7c solid 1.5px;
+
+  &.active {
+    background: #1890ff;
+    color: #ffffff;
+    border-color: #1890ff;
+  }
+}
+
+$filled-button-size: 50px;
+.filled {
+  width: $filled-button-size;
+  height: $filled-button-size;
+  font-size: 30px;
+  background: #1890ff;
+  color: #ffffff;
+
+  &:hover {
+    scale: 1.05;
+  }
+
+  :global(.anticon) {
+    font-size: 30px;
+  }
+}

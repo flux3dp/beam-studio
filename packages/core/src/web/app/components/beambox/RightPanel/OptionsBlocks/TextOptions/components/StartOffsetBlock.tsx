@@ -1,8 +1,11 @@
 import React from 'react';
 
-import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
+import ControlBlock from '@core/app/components/beambox/RightPanel/common/ControlBlock';
+import InputNumberGroup from '@core/app/components/beambox/RightPanel/common/InputNumberGroup';
+import Slider from '@core/app/components/beambox/RightPanel/common/Slider';
 import styles from '@core/app/components/beambox/RightPanel/OptionsPanel.module.scss';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
+import { ControlType } from '@core/helpers/element/editable/base';
 import useI18n from '@core/helpers/useI18n';
 
 import OptionsInput from '../../OptionsInput';
@@ -13,22 +16,21 @@ interface Props {
   value: number;
 }
 
+const config = {
+  max: 100,
+  min: 0,
+  precision: 0,
+};
+
 export default function StartOffsetBlock({ hasMultiValue, onValueChange, value }: Props): React.JSX.Element {
   const LANG = useI18n().beambox.right_panel.object_panel.option_panel;
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
 
-  return isMobile ? (
-    <ObjectPanelItem.Number
-      decimal={0}
-      hasMultiValue={hasMultiValue}
-      id="start_offset"
-      label={LANG.start_offset}
-      max={100}
-      min={0}
-      unit=""
-      updateValue={onValueChange}
-      value={value}
-    />
+  return isTablet ? (
+    <ControlBlock label={LANG.start_offset} type={ControlType.TEXTPATH_OFFSET}>
+      <Slider config={config} onChange={onValueChange} value={value} />
+      <InputNumberGroup config={config} containerClassName={styles.input} onChange={onValueChange} value={value} />
+    </ControlBlock>
   ) : (
     <div className={styles['option-block']}>
       <div className={styles.label}>{LANG.start_offset}</div>

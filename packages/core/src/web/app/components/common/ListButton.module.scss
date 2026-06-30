@@ -1,0 +1,11 @@
+.button {
+  justify-content: flex-start;
+
+  :global(.ant-btn-icon) {
+    font-size: 32px;
+
+    :global(.anticon) {
+      font-size: 24px;
+    }
+  }
+}

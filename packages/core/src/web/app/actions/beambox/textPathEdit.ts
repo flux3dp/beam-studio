@@ -204,10 +204,14 @@ const getVerticalAlign = (elem: SVGTextPathElement): VerticalAlign => {
   return VerticalAlign.BOTTOM;
 };
 
-const setStartOffset = (val: number, elem: SVGGElement): void => {
+const setStartOffset = (val: number, elem: SVGGElement, addToHistory = true): void => {
   const textPaths = Array.from(elem.querySelectorAll('textPath'));
 
-  svgCanvas.changeSelectedAttribute('startOffset', `${val}%`, textPaths);
+  if (addToHistory) {
+    svgCanvas.changeSelectedAttribute('startOffset', `${val}%`, textPaths);
+  } else {
+    svgCanvas.changeSelectedAttributeNoUndo('startOffset', `${val}%`, textPaths);
+  }
 };
 
 const setVerticalAlign = (position: VerticalAlign, elem: SVGGElement): void => {

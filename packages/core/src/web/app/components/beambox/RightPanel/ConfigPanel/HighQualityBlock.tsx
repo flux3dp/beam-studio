@@ -4,7 +4,6 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
-import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
@@ -39,14 +38,7 @@ const HighQualityBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  return type === 'panel-item' ? (
-    <ObjectPanelItem.Item
-      content={<Switch checked={highQuality.value} />}
-      id="high_quality"
-      label={t.high_quality}
-      onClick={handleToggle}
-    />
-  ) : (
+  return type === 'panel-item' ? null : (
     <div className={classNames(styles.panel, styles.switch)}>
       <label className={styles.title} htmlFor="high_quality">
         {t.high_quality}

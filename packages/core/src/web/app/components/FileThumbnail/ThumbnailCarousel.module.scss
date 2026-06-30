@@ -1,0 +1,22 @@
+$control-color: black;
+
+.carousel {
+  padding-bottom: 20px;
+
+  :global(.slick-slider) {
+    width: 300px;
+    margin: auto;
+  }
+
+  :global(.slick-arrow) {
+    color: $control-color;
+  }
+
+  :global(.slick-dots) {
+    bottom: -10px;
+
+    li button {
+      background: $control-color !important;
+    }
+  }
+}

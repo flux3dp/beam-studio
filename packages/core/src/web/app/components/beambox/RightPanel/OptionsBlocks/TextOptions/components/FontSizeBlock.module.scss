@@ -1,5 +1,17 @@
+@use '@core/styles/mixins' as mixins;
+
 .container {
   width: 68px;
   margin-bottom: 1px;
   margin-right: auto;
+}
+
+@include mixins.is-tablet-or-mobile {
+  .input {
+    flex: 1;
+
+    > div {
+      width: 100%;
+    }
+  }
 }

@@ -54,6 +54,7 @@ export interface IDialog {
   getFileFromDialog(options: {
     defaultPath?: string;
     filters?: DialogFilter[];
+    method?: 'camera' | 'file' | 'gallery';
     properties?: OpenDialogProperties[];
   }): Promise<File>;
   showOpenDialog(options: {

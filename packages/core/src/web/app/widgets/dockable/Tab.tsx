@@ -11,7 +11,7 @@ import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import useI18n from '@core/helpers/useI18n';
 
 import { borderSize } from './constants';

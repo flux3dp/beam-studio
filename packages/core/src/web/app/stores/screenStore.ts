@@ -1,19 +1,25 @@
 import type { AliasToken } from 'antd/es/theme/internal';
 import { create } from 'zustand';
 
+export enum RwdKey {
+  Mobile,
+  Tablet,
+  Desktop,
+}
+
 const breakpoints = {
-  mobile: 600,
-  tablet: 1024,
+  [RwdKey.Mobile]: 600,
+  [RwdKey.Tablet]: 1024,
 };
 
 /* eslint-disable perfectionist/sort-objects */
 export const antdScreenTokens: Partial<AliasToken> = {
-  screenSMMax: breakpoints.mobile,
-  screenMD: breakpoints.mobile + 1,
-  screenMDMin: breakpoints.mobile + 1,
-  screenMDMax: breakpoints.tablet,
-  screenLG: breakpoints.tablet + 1,
-  screenLGMin: breakpoints.tablet + 1,
+  screenSMMax: breakpoints[RwdKey.Mobile],
+  screenMD: breakpoints[RwdKey.Mobile] + 1,
+  screenMDMin: breakpoints[RwdKey.Mobile] + 1,
+  screenMDMax: breakpoints[RwdKey.Tablet],
+  screenLG: breakpoints[RwdKey.Tablet] + 1,
+  screenLGMin: breakpoints[RwdKey.Tablet] + 1,
 };
 /* eslint-enable perfectionist/sort-objects */
 
@@ -35,9 +41,9 @@ export const initScreenStore = () => {
   initialized = true;
 
   if (window.matchMedia) {
-    const mobile = window.matchMedia(`(max-width: ${breakpoints.mobile}px)`);
+    const mobile = window.matchMedia(`(max-width: ${breakpoints[RwdKey.Mobile]}px)`);
     const tablet = window.matchMedia(
-      `(min-width: ${breakpoints.mobile + 1}px) and (max-width: ${breakpoints.tablet}px)`,
+      `(min-width: ${breakpoints[RwdKey.Mobile] + 1}px) and (max-width: ${breakpoints[RwdKey.Tablet]}px)`,
     );
     const update = () => {
       useScreenStore.setState({
@@ -59,8 +65,8 @@ export const initScreenStore = () => {
       const width = window.innerWidth;
 
       useScreenStore.setState({
-        isMobile: width <= breakpoints.mobile,
-        isTablet: width > breakpoints.mobile && width <= breakpoints.tablet,
+        isMobile: width <= breakpoints[RwdKey.Mobile],
+        isTablet: width > breakpoints[RwdKey.Mobile] && width <= breakpoints[RwdKey.Tablet],
       });
     };
     let ticking = false;
@@ -88,3 +94,6 @@ export const isTabletOrMobile = (): boolean => useScreenStore.getState().isMobil
 export const useIsMobile = (): boolean => useScreenStore((state) => state.isMobile);
 export const useIsTablet = (): boolean => useScreenStore((state) => state.isTablet);
 export const useIsTabletOrMobile = (): boolean => useScreenStore((state) => state.isMobile || state.isTablet);
+
+export const useRwdKey = (): RwdKey =>
+  useScreenStore((state) => (state.isMobile ? RwdKey.Mobile : state.isTablet ? RwdKey.Tablet : RwdKey.Desktop));

@@ -59,6 +59,8 @@ const TabRecentFiles = () => {
 
           fileInfos.push({
             created_at: '',
+            is_public: false,
+            is_template: false, // Don't know and don't care
             last_modified_at: mtime,
             name: currentFileManager.extractFileName(filePath),
             size,

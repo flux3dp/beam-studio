@@ -5,3 +5,11 @@
   margin-right: 8px;
   margin-bottom: 0;
 }
+
+.input {
+  flex: 1;
+
+  > div {
+    width: 100%;
+  }
+}

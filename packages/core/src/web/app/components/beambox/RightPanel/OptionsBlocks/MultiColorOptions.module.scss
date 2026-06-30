@@ -49,18 +49,6 @@
 
 .colors {
   display: flex;
-  padding: 0 16px 20px;
-  margin-bottom: -12px;
-  overflow-x: scroll;
-  > div {
-    &.color {
-      min-width: 40px;
-      &:not(:first-child) {
-        margin-left: 8px;
-      }
-    }
-    &:empty {
-      display: none;
-    }
-  }
+  gap: 8px;
+  max-width: 372px;
 }

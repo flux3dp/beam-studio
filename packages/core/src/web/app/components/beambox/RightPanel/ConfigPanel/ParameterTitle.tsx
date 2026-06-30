@@ -9,7 +9,11 @@ import initState from './initState';
 import styles from './ParameterTitle.module.scss';
 import SaveConfigButton from './SaveConfigButton';
 
-const ParameterTitle = (): React.JSX.Element => {
+interface Props {
+  noPreset?: boolean;
+}
+
+const ParameterTitle = ({ noPreset }: Props): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
   const { configName, module } = useConfigPanelStore();
 
@@ -24,12 +28,14 @@ const ParameterTitle = (): React.JSX.Element => {
   return (
     <div className={styles.container}>
       <div className={styles.title}>{t.parameters}</div>
-      <div>
-        <SaveConfigButton />
-        <button onClick={handleOpenManageModal} title={t.preset_management.title} type="button">
-          <ConfigPanelIcons.Settings />
-        </button>
-      </div>
+      {!noPreset && (
+        <div>
+          <SaveConfigButton />
+          <button onClick={handleOpenManageModal} title={t.preset_management.title} type="button">
+            <ConfigPanelIcons.Settings />
+          </button>
+        </div>
+      )}
     </div>
   );
 };

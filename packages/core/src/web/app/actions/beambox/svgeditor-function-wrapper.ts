@@ -65,7 +65,7 @@ const funcs = {
     await svgEditor.clearScene();
   },
   // main panel
-  importImage: async (): Promise<void> => {
+  importImage: async (method?: 'camera' | 'file' | 'gallery'): Promise<void> => {
     if (isAtPage('welcome')) {
       if (!checkTabCount()) return;
     } else if (!checkIsAtEditor()) {
@@ -100,6 +100,7 @@ const funcs = {
           name: 'Images',
         },
       ],
+      method,
     });
 
     if (file) {

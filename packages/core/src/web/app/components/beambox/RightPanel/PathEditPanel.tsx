@@ -3,10 +3,12 @@ import React, { useEffect } from 'react';
 import { Button, ConfigProvider, Divider, Space } from 'antd';
 import classNames from 'classnames';
 
+import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import { TrashIcon } from '@core/app/icons/icons';
 import PathEditIcons from '@core/app/icons/path-edit-panel/PathEditIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile, useIsTabletOrMobile } from '@core/app/stores/screenStore';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -17,8 +19,8 @@ import type { ISVGPath } from '@core/interfaces/ISVGPath';
 
 import styles from './PathEditPanel.module.scss';
 
-let svgedit;
-let svgEditor;
+let svgedit: any;
+let svgEditor: ISVGEditor;
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -36,7 +38,7 @@ const LINKTYPE_SYMMETRIC = 2; // same direction, same dist
 const PanelContent = ({ isMobile = false }: { isMobile?: boolean }): React.ReactNode => {
   const lang = useI18n().beambox.right_panel.object_panel.path_edit_panel;
   const forceUpdate = useForceUpdate();
-  const onNodeTypeChange = (newType) => {
+  const onNodeTypeChange = (newType: number) => {
     svgedit.path.path.setSelectedNodeType(newType);
   };
 
@@ -52,7 +54,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }): React.React
   let containsSharpNodes = false;
   let containsRoundNodes = false;
   const isDisabled = !currentPath || currentPath.selected_pts.length === 0;
-  let selectedNodeTypes = [];
+  let selectedNodeTypes: number[] = [];
   const selectedNodes = currentPath?.selected_pts
     .map((index) => currentPath.nodePoints[index])
     .filter((point) => point);
@@ -163,19 +165,33 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }): React.React
   );
 };
 
+const onClose = () => svgCanvas?.pathActions.toSelectMode(svgedit?.path.path.elem);
+
 function PathEditPanel(): React.ReactNode {
   const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const title = useI18n().topbar.menu.tab_path_edit;
 
   return isMobile ? (
-    <FloatingPanel
-      anchors={[0, 300]}
-      className={styles.panel}
-      onClose={() => svgCanvas?.pathActions.toSelectMode(svgedit?.path.path.elem)}
-      title={title}
-    >
+    <FloatingPanel anchors={[0, 300]} className={styles.panel} onClose={onClose} title={title}>
       <PanelContent isMobile />
     </FloatingPanel>
+  ) : isTablet ? (
+    <DraggableModal
+      defaultPosition={{ x: -60, y: 60 }}
+      mask={false}
+      onClose={onClose}
+      open
+      title={title}
+      width={400}
+      wrapClassName={styles['modal-wrap']}
+      xRef="right"
+      yRef="top"
+    >
+      <div className={styles.panel}>
+        <PanelContent />
+      </div>
+    </DraggableModal>
   ) : (
     <div className={styles.panel} id="pathedit-panel">
       <PanelContent />

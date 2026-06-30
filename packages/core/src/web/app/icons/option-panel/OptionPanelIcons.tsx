@@ -1,8 +1,13 @@
+import AlignBottom from './align-bottom.svg';
 import AlignCenter from './align-center.svg';
 import AlignLeft from './align-left.svg';
+import AlignMiddle from './align-middle.svg';
 import AlignRight from './align-right.svg';
+import AlignTop from './align-top.svg';
 import Color from './color.svg';
 import InfillPartial from './infill-partial.svg';
+import InfillRwdFilled from './infill-rwd-filled.svg';
+import InfillRwd from './infill-rwd.svg';
 import Infill from './infill.svg';
 import Justify from './justify.svg';
 import Left from './left.svg';
@@ -15,12 +20,17 @@ import Threshold from './threshold.svg';
 import VerticalText from './vertical-text.svg';
 
 export default {
+  AlignBottom,
   AlignCenter,
   AlignLeft,
+  AlignMiddle,
   AlignRight,
+  AlignTop,
   Color,
   Infill,
   InfillPartial,
+  InfillRwd,
+  InfillRwdFilled,
   Justify,
   Left,
   LetterSpacing,

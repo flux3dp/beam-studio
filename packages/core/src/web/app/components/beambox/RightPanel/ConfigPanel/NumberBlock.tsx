@@ -2,7 +2,6 @@ import React, { memo, use, useCallback, useEffect, useMemo } from 'react';
 
 import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -18,12 +17,9 @@ import {
   writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
-import units from '@core/helpers/units';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import styles from './Block.module.scss';
 import ConfigSlider from './ConfigSlider';
@@ -147,21 +143,6 @@ const NumberBlock = ({
     return null;
   }
 
-  if (isPanelType && panelType === 'button') {
-    return (
-      <ObjectPanelItem.Number
-        decimal={displayPrecision}
-        id={id ?? key}
-        label={title}
-        max={max}
-        min={min}
-        unit={unit}
-        updateValue={handleChange}
-        value={value}
-      />
-    );
-  }
-
   const content = (
     <div className={classNames(styles.panel, { [styles['without-drag']]: !hasSlider })}>
       <span className={classNames(styles.title, { [styles.light]: lightTitle })}>
@@ -206,22 +187,7 @@ const NumberBlock = ({
     </div>
   );
 
-  return isPanelType ? (
-    <Popover content={content} visible={activeKey === key}>
-      <ObjectPanelItem.Item
-        autoClose={false}
-        content={
-          <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
-            {isInch ? units.convertUnit(value, 'inch', 'mm').toFixed(precision) : value}
-          </Button>
-        }
-        id={key}
-        label={title}
-      />
-    </Popover>
-  ) : (
-    content
-  );
+  return content;
 };
 
 export default memo(NumberBlock);

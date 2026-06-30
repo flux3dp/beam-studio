@@ -1,4 +1,5 @@
 @use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
 
 .container {
   flex: 1 1 auto;
@@ -60,34 +61,51 @@
   top: -9999px;
 }
 
-.bottom-right {
+$margin: 20px;
+$margin-mobile: 10px;
+@mixin floating($vertical) {
   position: absolute;
   z-index: 1;
-  bottom: 0;
-  right: 0;
+  #{$vertical}: $margin;
+  left: $margin;
+  right: $margin;
   pointer-events: none;
+  display: flex;
+  justify-content: space-between;
 
-  .controls {
-    margin: 0 20px 20px 0;
-    display: inline-flex;
-    align-items: flex-start;
-    gap: 8px;
+  @include mixins.is-mobile {
+    right: $margin-mobile;
   }
 
-  > * {
-    pointer-events: all;
-  }
-
-  @media screen and (max-width: 600px) {
-    width: 100%;
+  .left,
+  .right {
     display: flex;
     flex-direction: column;
-    align-items: flex-end;
+    gap: 10px;
 
-    .controls {
-      margin: 0 10px 20px 0;
-      flex-direction: column;
-      align-items: flex-end;
+    > * {
+      pointer-events: all;
     }
   }
+
+  .left {
+    align-items: flex-start;
+  }
+
+  .right {
+    align-items: flex-end;
+  }
+}
+
+.top {
+  @include floating(top);
+
+  .buttons {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.bottom {
+  @include floating(bottom);
 }

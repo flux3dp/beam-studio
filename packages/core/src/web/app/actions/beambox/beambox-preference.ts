@@ -79,6 +79,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   show_rulers: false,
   simplify_clipper_path: false,
   skip_prespray: false,
+  template_creation_mode: false,
   'use-real-boundary': false,
   'use-union-boundary': true,
   use_ga_reorder: true,

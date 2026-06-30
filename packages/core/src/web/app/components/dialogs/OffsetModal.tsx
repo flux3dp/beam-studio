@@ -5,17 +5,19 @@ import { Button, Checkbox } from 'antd';
 import constant from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
+import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import UnitInput from '@core/app/widgets/UnitInput';
 import offsetElements from '@core/helpers/clipper/offset';
 import type { CornerType, OffsetMode } from '@core/helpers/clipper/offset/constants';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import usePreviewModal from '@core/helpers/hooks/usePreviewModal';
+import { useFalse } from '@core/helpers/is-dev';
 import type { DisplayUnit } from '@core/helpers/units';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
@@ -53,7 +55,8 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
   } = useI18n();
   const unit = useStorageStore((state) => (state.isInch ? 'inch' : 'mm'));
   const { precision } = useMemo(() => unitSettings[unit], [unit]);
-  const isMobile = useIsMobile();
+  const isMobile = useFalse();
+  const isTablet = useIsTabletOrMobile();
 
   useNewShortcutsScope();
 
@@ -89,12 +92,12 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [data.distances[data.mode], unit, previewEnabled]);
 
-  const close = () => {
+  const close = useCallback(() => {
     onClose();
     setMouseMode('select');
-  };
+  }, [onClose]);
 
-  const onOk = async () => {
+  const onOk = useCallback(async () => {
     const cmd = await commitPreview();
 
     if (cmd && !cmd.isEmpty()) {
@@ -103,83 +106,119 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     }
 
     close();
-  };
+  }, [close, commitPreview]);
 
-  const handleCancel = () => {
+  const handleCancel = useCallback(() => {
     cancelPreview();
     close();
-  };
+  }, [cancelPreview, close]);
 
-  return (
+  const content = useMemo(
+    () => (
+      <>
+        <div className={styles.field}>
+          <span className={styles.label}>{lang._offset.direction}</span>
+          <Select
+            className={styles.select}
+            onChange={(val: OffsetMode) => setData((prev) => ({ ...prev, mode: val }))}
+            options={[
+              { label: lang._offset.outward, value: 'outward' },
+              { label: lang._offset.inward, value: 'inward' },
+            ]}
+            popupMatchSelectWidth={false}
+            value={data.mode}
+          />
+        </div>
+        <div className={styles.field}>
+          <span className={styles.label}>{lang._offset.corner_type}</span>
+          <Select
+            className={styles.select}
+            data-testid="offset-corner"
+            onChange={(val) => setData((prev) => ({ ...prev, cornerType: val }))}
+            options={[
+              { label: lang._offset.round, value: 'round' },
+              { label: lang._offset.sharp, value: 'sharp' },
+            ]}
+            popupMatchSelectWidth={false}
+            value={data.cornerType}
+          />
+        </div>
+        <div className={styles.divider} />
+        <div className={styles.field}>
+          <span className={styles.label}>{lang._offset.dist}</span>
+          <UnitInput
+            addonAfter={unit}
+            className={styles.input}
+            data-testid="offset-distance"
+            min={0}
+            onChange={(dist) => {
+              if (dist != null) setData((prev) => ({ ...prev, distances: { ...prev.distances, [prev.mode]: dist } }));
+            }}
+            precision={precision}
+            type="number"
+            value={data.distances[data.mode]}
+          />
+        </div>
+      </>
+    ),
+    [data.cornerType, data.distances, data.mode, lang, precision, unit],
+  );
+
+  const footer = useMemo(
+    () => (
+      <div className={styles.footer}>
+        <Checkbox
+          checked={previewEnabled}
+          className={styles.checkbox}
+          onChange={(e) => setPreviewEnabled(e.target.checked)}
+        >
+          {tGlobal.preview}
+        </Checkbox>
+        <Button onClick={handleCancel}>{lang.cancel}</Button>
+        <Button onClick={onOk} type="primary">
+          {lang.confirm}
+        </Button>
+      </div>
+    ),
+    [handleCancel, lang.cancel, lang.confirm, onOk, previewEnabled, setPreviewEnabled, tGlobal.preview],
+  );
+
+  return isMobile ? (
+    <FloatingPanel
+      anchors={[0, 320]}
+      // fixedContent={renderBackIcon()}
+      // forceClose={previewState.currentStep === EditStep.Closed}
+      onClose={handleCancel}
+      title={lang.offset}
+    >
+      {content}
+      {footer}
+    </FloatingPanel>
+  ) : (
+    // ) : isTablet ? (
+    //   <Popover
+    //     content={
+    //       <>
+    //         {content}
+    //         {footer}
+    //       </>
+    //     }
+    //     title={lang.offset}
+    //   />
     <DraggableModal
       className={styles.modal}
-      defaultPosition={isMobile ? undefined : { x: 60, y: -60 }}
-      footer={
-        <div className={styles.footer}>
-          <Checkbox
-            checked={previewEnabled}
-            className={styles.checkbox}
-            onChange={(e) => setPreviewEnabled(e.target.checked)}
-          >
-            {tGlobal.preview}
-          </Checkbox>
-          <Button onClick={handleCancel}>{lang.cancel}</Button>
-          <Button onClick={onOk} type="primary">
-            {lang.confirm}
-          </Button>
-        </div>
-      }
+      defaultPosition={isTablet ? { x: 60, y: +60 } : { x: 60, y: -60 }}
+      footer={footer}
+      mask={!isTablet}
       maskClosable={false}
       onCancel={handleCancel}
       open
       title={lang.offset}
       width={350}
-      xRef={isMobile ? 'center' : 'left'}
-      yRef={isMobile ? 'center' : 'bottom'}
+      xRef={isTablet ? 'left' : 'left'}
+      yRef={isTablet ? 'top' : 'bottom'}
     >
-      <div className={styles.field}>
-        <span className={styles.label}>{lang._offset.direction}</span>
-        <Select
-          className={styles.select}
-          onChange={(val: OffsetMode) => setData((prev) => ({ ...prev, mode: val }))}
-          options={[
-            { label: lang._offset.outward, value: 'outward' },
-            { label: lang._offset.inward, value: 'inward' },
-          ]}
-          popupMatchSelectWidth={false}
-          value={data.mode}
-        />
-      </div>
-      <div className={styles.field}>
-        <span className={styles.label}>{lang._offset.corner_type}</span>
-        <Select
-          className={styles.select}
-          data-testid="offset-corner"
-          onChange={(val) => setData((prev) => ({ ...prev, cornerType: val }))}
-          options={[
-            { label: lang._offset.round, value: 'round' },
-            { label: lang._offset.sharp, value: 'sharp' },
-          ]}
-          popupMatchSelectWidth={false}
-          value={data.cornerType}
-        />
-      </div>
-      <div className={styles.divider} />
-      <div className={styles.field}>
-        <span className={styles.label}>{lang._offset.dist}</span>
-        <UnitInput
-          addonAfter={unit}
-          className={styles.input}
-          data-testid="offset-distance"
-          min={0}
-          onChange={(dist) => {
-            if (dist != null) setData((prev) => ({ ...prev, distances: { ...prev.distances, [prev.mode]: dist } }));
-          }}
-          precision={precision}
-          type="number"
-          value={data.distances[data.mode]}
-        />
-      </div>
+      {content}
     </DraggableModal>
   );
 };

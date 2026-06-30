@@ -136,6 +136,8 @@ export default {
   RESET_LAYOUT: () => loadLayout('default'),
   ROTARY_SETUP: () => showRotarySettings(),
   SAVE_AS: (): Promise<boolean> => saveAsFile(),
+  SAVE_AS_PROJECT: (): Promise<boolean> => saveAsFile({ templateMode: false }),
+  SAVE_AS_TEMPLATE: (): Promise<boolean> => saveAsFile({ templateMode: true }),
   SAVE_SCENE: (): Promise<boolean> => saveFile(),
   SAVE_TO_CLOUD: (): Promise<boolean> => saveToCloud(),
   SHOW_GRIDS: (): boolean => viewMenu.toggleGrid(),

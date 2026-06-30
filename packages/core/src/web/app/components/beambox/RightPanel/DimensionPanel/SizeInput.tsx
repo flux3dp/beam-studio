@@ -1,16 +1,24 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
+import Label from '@core/app/components/beambox/RightPanel/common/Label';
 import { objectPanelInputTheme } from '@core/app/constants/antd-config';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { templateModes, useWithinInteractionModes } from '@core/app/stores/interactionModeStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import type { DimensionValues, SizeKey, SizeKeyShort } from '@core/interfaces/ObjectPanel';
-
-import ObjectPanelItem from '../ObjectPanelItem';
+import { ControlType } from '@core/helpers/element/editable/base';
+import type { SizeKey, SizeKeyShort } from '@core/interfaces/ObjectPanel';
 
 import styles from './DimensionPanel.module.scss';
-import { getValue } from './utils';
+import { subscribeDimensionValues } from './utils';
+
+const typeMap: Record<SizeKeyShort, { key: SizeKey; label: React.ReactNode; ratio: number }> = {
+  h: { key: 'height', label: 'H', ratio: 1 },
+  rx: { key: 'rx', label: 'W', ratio: 0.5 },
+  ry: { key: 'ry', label: 'H', ratio: 0.5 },
+  w: { key: 'width', label: 'W', ratio: 1 },
+};
 
 interface Props {
   disabled?: boolean;
@@ -20,84 +28,38 @@ interface Props {
   value: number;
 }
 
-const typeKeyMap: { [key in SizeKeyShort]: SizeKey } = {
-  h: 'height',
-  rx: 'rx',
-  ry: 'ry',
-  w: 'width',
-};
-
-const SizeInput = ({ disabled = false, onBlur, onChange, type, value }: Props): React.JSX.Element => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
-  const isMobile = useIsMobile();
+const SizeInput = ({ disabled: propDisabled = false, onBlur, onChange, type, value }: Props): React.JSX.Element => {
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const isTablet = useIsTabletOrMobile();
+  const isWithinTemplateModes = useWithinInteractionModes(templateModes);
+  const editable = useSelectedElementStore((state) => state.editableInfo[ControlType._SIZE]?.value);
+  const disabled = useMemo(
+    () => propDisabled || (isWithinTemplateModes && !editable),
+    [propDisabled, isWithinTemplateModes, editable],
+  );
   const isInch = useStorageStore((state) => state.isInch);
   const { precision, unit } = useMemo<{ precision: number; unit: 'in' | 'mm' }>(
     () => (isInch ? { precision: 4, unit: 'in' } : { precision: 2, unit: 'mm' }),
     [isInch],
   );
 
-  useEffect(() => {
-    const handler = (newValues: DimensionValues) => {
-      if (inputRef.current) {
-        const newVal = getValue(newValues, type, { allowUndefined: true, unit });
+  useEffect(() => subscribeDimensionValues(inputRef, type, unit, precision), [type, unit, precision]);
 
-        if (newVal === undefined) {
-          return;
-        }
-
-        inputRef.current.value = newVal.toFixed(precision);
-      }
-    };
-
-    objectPanelEventEmitter.on('UPDATE_DIMENSION_VALUES', handler);
-
-    return () => {
-      objectPanelEventEmitter.removeListener('UPDATE_DIMENSION_VALUES', handler);
-    };
-  }, [type, unit, precision, objectPanelEventEmitter]);
-
-  const label = useMemo<React.ReactNode>(() => {
-    if (type === 'w') {
-      return 'W';
-    }
-
-    if (type === 'h') {
-      return 'H';
-    }
-
-    if (type === 'rx') {
-      return 'W';
-    }
-
-    if (type === 'ry') {
-      return 'H';
-    }
-
-    return null;
-  }, [type]);
+  const { key, label, ratio } = useMemo(() => typeMap[type], [type]);
   const handleChange = useCallback(
     (val: null | number) => {
-      if (val === null) return;
-
-      const changeKey = typeKeyMap[type];
-      const newVal = type === 'rx' || type === 'ry' ? val / 2 : val;
-
-      onChange(changeKey, newVal);
+      if (val !== null) onChange(key, val * ratio);
     },
-    [onChange, type],
+    [onChange, key, ratio],
   );
-
-  if (isMobile) {
-    return <ObjectPanelItem.Number id={`${type}_size`} label={label} updateValue={handleChange} value={value} />;
-  }
 
   return (
     <div className={styles.dimension}>
-      <div className={styles.label}>{label}</div>
+      {isTablet ? <Label>{label}</Label> : <div className={styles.label}>{label}</div>}
       <UnitInput
         className={styles.input}
         controls={false}
+        defaultValue={value}
         disabled={disabled}
         id={`${type}_size`}
         isInch={isInch}
@@ -107,10 +69,9 @@ const SizeInput = ({ disabled = false, onBlur, onChange, type, value }: Props): 
         precision={precision}
         ref={inputRef}
         step={isInch ? 2.54 : 1}
-        theme={objectPanelInputTheme}
-        underline
+        theme={isTablet ? undefined : objectPanelInputTheme}
+        underline={!isTablet}
         unit={unit}
-        value={value}
       />
     </div>
   );

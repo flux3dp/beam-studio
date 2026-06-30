@@ -6,6 +6,7 @@ import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import i18n from '@core/helpers/i18n';
+import { mockT } from '@core/helpers/is-dev';
 
 const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_20W_DIODE]);
 
@@ -39,6 +40,7 @@ export const getModulesTranslations = (shouldNote4C = false): Record<LayerModule
   const t = i18n.lang.layer_module;
 
   return {
+    [LayerModule.GUIDE]: mockT('Layer Guide'),
     [LayerModule.LASER_10W_DIODE]: t.laser_10w_diode,
     [LayerModule.LASER_20W_DIODE]: t.laser_20w_diode,
     [LayerModule.LASER_1064]: t.laser_2w_infrared,

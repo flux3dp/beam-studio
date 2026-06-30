@@ -17,6 +17,7 @@ import Modal from '@core/app/widgets/Modal';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
+import { checkSelectable } from '@core/helpers/layer/checkSelectable';
 import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -232,7 +233,7 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
           const layerObject = allLayers[i];
           const layer = layerObject.getGroup();
 
-          if (layer.getAttribute('display') === 'none' || layer.getAttribute('data-lock') === 'true') {
+          if (!checkSelectable(layer)) {
             continue;
           }
 

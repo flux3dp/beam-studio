@@ -101,7 +101,7 @@ interface OperationResult<T = null> extends CheckResponseResult {
   data: null | T;
 }
 
-export const openFile = async (file: IFile): Promise<OperationResult<Blob>> => {
+export const openFile = async (file: IFile, options?: { isEditable?: boolean }): Promise<OperationResult<Blob>> => {
   const id = 'open-cloud-file';
 
   await progressCaller.openNonstopProgress({ id });
@@ -115,7 +115,7 @@ export const openFile = async (file: IFile): Promise<OperationResult<Blob>> => {
 
     if (checkRespResult.res) {
       await beamFileHelper.readBeam(resp.data);
-      currentFileManager.setCloudFile(file);
+      currentFileManager.setCloudFile(file, options?.isEditable);
     }
 
     return { ...checkRespResult, data: resp.data, shouldCloseModal: checkRespResult.res };
@@ -129,8 +129,11 @@ export const openFile = async (file: IFile): Promise<OperationResult<Blob>> => {
   }
 };
 
-export const openFileInAnotherTab = async (file: IFile): Promise<OperationResult<null>> => {
-  setFileInAnotherTab({ file, type: 'cloud' });
+export const openFileInAnotherTab = async (
+  file: IFile,
+  options?: { isEditable?: boolean },
+): Promise<OperationResult<null>> => {
+  setFileInAnotherTab({ file, isEditable: options?.isEditable, type: 'cloud' });
 
   return { data: null, res: true };
 };
@@ -262,9 +265,15 @@ export const deleteFile = async (uuid: string): Promise<OperationResult> => {
   }
 };
 
-export const list = async (): Promise<OperationResult<IFile[]>> => {
+export const list = async (
+  params?: Partial<{
+    depth: number;
+    owner: string;
+    template: boolean;
+  }>,
+): Promise<OperationResult<IFile[]>> => {
   try {
-    const resp = await axiosFluxId.get('/api/beam-studio/cloud/list', { withCredentials: true });
+    const resp = await axiosFluxId.get('/api/beam-studio/cloud/list', { params, withCredentials: true });
     const checkRespResult = await checkResp(resp);
 
     if (checkRespResult.res) {
@@ -277,6 +286,10 @@ export const list = async (): Promise<OperationResult<IFile[]>> => {
 
     return { data: [], res: false };
   }
+};
+
+export const listFluxTemplateFiles = async (): Promise<OperationResult<IFile[]>> => {
+  return list({ owner: 'esther@flux3dp.com', template: true });
 };
 
 export default {

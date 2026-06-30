@@ -1,9 +1,13 @@
 import { pipe } from 'remeda';
 
+import type { ExportThumbnail } from '@core/app/components/FileThumbnail/getThumbnailsForExport';
+import { getThumbnailsForExport } from '@core/app/components/FileThumbnail/getThumbnailsForExport';
+import { isInteractionMode } from '@core/app/stores/interactionModeStore';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import beamFileHelper from '@core/helpers/beam-file-helper';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { askToEditTargetLayers } from '@core/helpers/layer/templateTargetLayer';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -64,12 +68,23 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
   return blob.arrayBuffer();
 };
 
-export const generateBeamBuffer = async (): Promise<Buffer> =>
-  pipe(
-    {
-      imageSource: await svgCanvas.getImageSource(),
-      svgString: svgCanvas.getSvgString(),
-      thumbnail: (await generateBeamThumbnail()) || undefined,
-    },
-    ({ imageSource, svgString, thumbnail }) => beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail),
-  );
+export const generateBeamBuffer = async ({
+  fromAutoSave = false,
+  templateMode,
+}: { fromAutoSave?: boolean; templateMode?: boolean } = {}): Promise<Buffer> => {
+  let thumbnailsList: ExportThumbnail[] = [];
+
+  if (!isInteractionMode('editor')) {
+    if (!fromAutoSave) {
+      await askToEditTargetLayers();
+    }
+
+    thumbnailsList = await getThumbnailsForExport(!fromAutoSave);
+  }
+
+  const imageSource = await svgCanvas.getImageSource();
+  const svgString = svgCanvas.getSvgString();
+  const thumbnail = (await generateBeamThumbnail()) || undefined;
+
+  return beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail, thumbnailsList, templateMode);
+};

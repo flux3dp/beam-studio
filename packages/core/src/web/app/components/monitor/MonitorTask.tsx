@@ -11,6 +11,7 @@ import { MonitorContext } from '@core/app/contexts/MonitorContext';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
 import type { TFramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, getFramingOptions } from '@core/helpers/device/framing';
+import deviceMaster from '@core/helpers/device-master';
 import FormatDuration from '@core/helpers/duration-formatter';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -26,10 +27,19 @@ interface Props {
 
 const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const { framing: tFraming, monitor: tMonitor } = useI18n();
-  const { fileInfo, mode, previewTask, report, taskImageURL, totalTaskTime, uploadProgress } = use(MonitorContext);
+  const {
+    fileInfo,
+    mode,
+    previewTask,
+    report,
+    setIsFraming: setIsFramingContext,
+    taskImageURL,
+    totalTaskTime,
+    uploadProgress,
+  } = use(MonitorContext);
   const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
   const [isOnPlaying, setIsOnPlaying] = useState(false);
-  /* for Promark framing */
+  /* for framing */
   const options = useMemo(() => getFramingOptions(device), [device]);
   const manager = useRef<FramingTaskManager | null>(null);
   const [isFraming, setIsFraming] = useState(false);
@@ -40,6 +50,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     () =>
       !isFramingTask &&
       [
+        // TODO: add preparing / working / ending status for non-Promark devices
         DeviceConstants.status.PAUSED_FROM_RUNNING,
         DeviceConstants.status.RECONNECTING,
         DeviceConstants.status.RUNNING,
@@ -50,7 +61,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     () => isStoppingFraming || isOnPlaying || isInWorkingState,
     [isInWorkingState, isOnPlaying, isStoppingFraming],
   );
-  /* for Promark framing */
+  /* for framing */
 
   const getJobTime = (): React.ReactNode => {
     const isWorking = mode === Mode.WORKING;
@@ -73,16 +84,22 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     ) : null;
   };
 
-  /* for Promark framing */
+  /* for framing */
   const handleFramingStop = useCallback(async () => {
     setIsStoppingFraming(true);
     await manager.current?.stopFraming();
     await manager.current?.resetPromarkParams();
-  }, []);
+    setIsFramingContext(false);
+  }, [setIsFramingContext]);
 
   const handleFramingStart = useCallback(
     async (forceType: TFramingType) => {
       setType(forceType);
+      setIsFramingContext(true);
+
+      if (!isPromark) {
+        await deviceMaster.quit();
+      }
 
       const res = await manager.current?.startFraming(forceType, { lowPower: 0 });
 
@@ -90,7 +107,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
         setType(type);
       }
     },
-    [type],
+    [type, setIsFramingContext, isPromark],
   );
 
   const renderIcon = useCallback(
@@ -104,9 +121,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     [isFraming, isFramingTask, type],
   );
 
-  const renderPromarkFramingButton = (): React.ReactNode => {
-    if (!isPromark) return null;
-
+  const renderFramingButton = (): React.ReactNode => {
     return (
       <div className={styles['framing-buttons']}>
         <div className={styles.label}>{tFraming.framing}:</div>
@@ -134,7 +149,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
       </div>
     );
   };
-  /* for Promark framing */
+  /* for framing */
 
   const renderProgress = (): React.ReactNode => {
     let percent: ProgressProps['percent'] = undefined;
@@ -186,11 +201,18 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
       if (status) {
         managerIsFraming = true;
         setIsFraming(true);
+        setIsFramingContext(true);
       } else {
         managerIsFraming = false;
-        setTimeout(() => {
+        setTimeout(async () => {
           setIsFraming(managerIsFraming);
           setIsStoppingFraming(false);
+
+          if (!managerIsFraming && !isPromark) {
+            await deviceMaster.endSubTask();
+          }
+
+          setIsFramingContext(managerIsFraming);
         }, 1500);
       }
     });
@@ -198,7 +220,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     return () => {
       manager.current?.destroy();
     };
-  }, [device, manager, setIsFraming]);
+  }, [device, manager, setIsFraming, setIsFramingContext, isPromark]);
 
   return (
     <div className={styles.task}>
@@ -217,7 +239,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
       </div>
       {taskImageURL || isInWorkingState ? (
         <>
-          {renderPromarkFramingButton()}
+          {renderFramingButton()}
           <Row>
             <Col md={12} span={24}>
               {renderProgress()}

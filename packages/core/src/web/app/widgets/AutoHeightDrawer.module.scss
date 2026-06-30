@@ -1,0 +1,73 @@
+// Following FloatingPanel's design
+$border-radius: 24px;
+
+.resizable-handle {
+  top: 0 !important;
+  height: 20px !important;
+  pointer-events: all;
+
+  &::after {
+    content: '';
+    display: block;
+    position: relative;
+    translate: -50% -50%;
+    top: 50%;
+    left: 50%;
+    height: 3px;
+    width: 20px;
+    border-radius: 10px;
+    background: var(--adm-color-light, #cccccc);
+  }
+}
+
+.drawer {
+  position: absolute;
+
+  :global(.ant-drawer-content-wrapper) {
+    max-height: 100%;
+    border-radius: $border-radius $border-radius 0 0;
+    // A special trick to limit children's height
+    display: flex;
+    flex-direction: column;
+
+    .resizable-container {
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 1 !important;
+    }
+  }
+
+  :global(.ant-drawer-content) {
+    border-radius: $border-radius $border-radius 0 0;
+  }
+
+  // Override default header layout in antd 5.23
+  // (close | title) | extra
+  // ->
+  // title | close
+  // extra
+  :global(.ant-drawer-header) {
+    flex-direction: column;
+    gap: 8px;
+
+    :global(.ant-drawer-header-title) {
+      flex-direction: row-reverse;
+      gap: 8px;
+      width: 100%;
+
+      :global(.ant-drawer-close) {
+        margin: 0;
+      }
+    }
+
+    :global(.ant-drawer-extra) {
+      width: 100%;
+    }
+  }
+
+  :global(.ant-drawer-header),
+  :global(.ant-drawer-body),
+  :global(.ant-drawer-footer) {
+    padding: 16px;
+  }
+}

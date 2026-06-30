@@ -50,6 +50,10 @@ const pasteRef = async (useElement: SVGUseElement, options?: HistoryActionOption
 };
 
 export const handlePastedRef = async (copy: SVGGElement, opts: { parentCmd?: IBatchCommand } = {}): Promise<void> => {
+  // Clear library data
+  copy.removeAttribute('data-library-default');
+  copy.removeAttribute('data-library-current');
+
   const promises = Array.of<Promise<void>>();
   const uses = Array.from(copy.querySelectorAll('use'));
 

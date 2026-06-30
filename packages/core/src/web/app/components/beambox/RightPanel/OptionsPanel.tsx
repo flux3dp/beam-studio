@@ -1,133 +1,36 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { memo, useMemo } from 'react';
 
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
 
-import { CanvasElements } from '@core/app/constants/canvasElements';
-import { useIsMobile } from '@core/app/stores/screenStore';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getData } from '@core/helpers/layer/layer-config-helper';
-import { getObjectLayer } from '@core/helpers/layer/layer-helper';
-import { isVariableTextSupported } from '@core/helpers/variableText';
+import VariableUseOptions from '@core/app/components/beambox/RightPanel/OptionsBlocks/VariableOptions/VariableUseOptions';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 
-import ColorPanel from './ColorPanel';
-import ObjectPanelItem from './ObjectPanelItem';
 import ImageOptions from './OptionsBlocks/ImageOptions';
-import InFillBlock from './OptionsBlocks/InFillBlock';
-import MultiColorOptions from './OptionsBlocks/MultiColorOptions';
 import PolygonOptions from './OptionsBlocks/PolygonOptions';
 import RectOptions from './OptionsBlocks/RectOptions';
 import TextOptions from './OptionsBlocks/TextOptions';
-import VariableTextBlock from './OptionsBlocks/VariableTextBlock';
 import styles from './OptionsPanel.module.scss';
-
-const objectPanelEventEmitter = eventEmitterFactory.createEventEmitter('object-panel');
-
-const getIsFullColor = (elem: null | SVGElement): boolean =>
-  elem ? (getData(getObjectLayer(elem)?.elem, 'fullcolor') ?? false) : false;
 
 interface Props {
   elem: null | SVGElement;
 }
 
 function OptionsPanel({ elem }: Props): null | React.JSX.Element {
-  const isMobile = useIsMobile();
-  const workarea = useWorkarea();
-  const supportVariableBlock = useMemo(isVariableTextSupported, [workarea]);
-  const showVariableBlock = useMemo(
-    () => !isMobile && supportVariableBlock && elem?.getAttribute('data-props'),
-    [elem, supportVariableBlock, isMobile],
-  );
-  const [isFullColor, setIsFullColor] = useState(() => getIsFullColor(elem));
+  const isTablet = useIsTabletOrMobile();
+  const optionPanel = useSelectedElementStore((state) => state.objectPanelData?.optionPanel);
 
-  useEffect(() => {
-    const handleUpdateFullColor = () => setIsFullColor(getIsFullColor(elem));
+  const content = useMemo(() => {
+    return match(optionPanel)
+      .with('rect', () => <RectOptions elem={elem as SVGElement} />)
+      .with('polygon', () => <PolygonOptions elem={elem as SVGElement} />)
+      .with('text', () => <TextOptions />)
+      .with('image', () => <ImageOptions elem={elem as SVGElement} />)
+      .with('variable_use', () => <VariableUseOptions elems={[elem as SVGElement]} id={elem!.id} />)
+      .otherwise(() => null);
+  }, [elem, optionPanel]);
 
-    handleUpdateFullColor();
-    objectPanelEventEmitter.on('UPDATE_FULL_COLOR', handleUpdateFullColor);
-
-    return () => {
-      objectPanelEventEmitter.off('UPDATE_FULL_COLOR', handleUpdateFullColor);
-    };
-  }, [elem]);
-
-  const elemTagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
-  const showColorPanel = useMemo(() => {
-    if (!elem || !CanvasElements.fillableWithContainers.includes(elemTagName!)) {
-      return false;
-    }
-
-    return isFullColor;
-  }, [elem, elemTagName, isFullColor]);
-
-  const contents = useMemo(() => {
-    if (!elem) return [];
-
-    const tagName = elem.tagName.toLowerCase();
-    const colorOrInfill = (key = 'infill') => {
-      if (!isMobile) return null;
-
-      if (showColorPanel) return <ColorPanel elem={elem} key="color" />;
-
-      return <InFillBlock elems={[elem]} key={key} />;
-    };
-
-    return match(tagName)
-      .with('rect', () => [<RectOptions elem={elem} key="rect" />, colorOrInfill('fill')])
-      .with('polygon', () => [<PolygonOptions elem={elem} key="polygon" />, colorOrInfill('fill')])
-      .with('text', () => [
-        <TextOptions elem={elem} key="text" textElements={[elem as SVGTextElement]} />,
-        isMobile ? (
-          showColorPanel ? (
-            <ColorPanel elem={elem} key="color" />
-          ) : (
-            <InFillBlock elems={[elem]} key="fill" />
-          )
-        ) : null,
-      ])
-      .with(P.union('image', 'img'), () =>
-        elem.getAttribute('data-fullcolor') === '1' ? [] : [<ImageOptions elem={elem} key="image" />],
-      )
-      .with('g', () => {
-        if (elem.getAttribute('data-textpath-g')) {
-          const textElem = elem.querySelector('text');
-
-          return [<TextOptions elem={elem} isTextPath key="textpath" textElements={[textElem!]} />];
-        }
-
-        if (!elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])')) {
-          const textElems = Array.from(elem.querySelectorAll('text'));
-          const includeTextPath = Boolean(elem.querySelector('g[data-textpath-g="1"]'));
-
-          return [
-            <TextOptions elem={elem} isTextPath={includeTextPath} key="textpath" textElements={textElems} />,
-            !includeTextPath && isMobile ? <InFillBlock elems={[elem]} key="fill" /> : null,
-          ];
-        }
-
-        if (!isMobile) return [];
-
-        if (showColorPanel) return [<MultiColorOptions elem={elem} key="multi-color" />];
-
-        return [<InFillBlock elems={[elem]} key="infill" />];
-      })
-      .with('use', () => [
-        isMobile && showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : null,
-        showVariableBlock ? (
-          <VariableTextBlock elems={[elem]} id={elem.id} key="variable" withDivider={isMobile && showColorPanel} />
-        ) : null,
-      ])
-      .otherwise(() => [colorOrInfill()]);
-  }, [elem, showColorPanel, showVariableBlock, isMobile]);
-
-  return isMobile ? (
-    <div className={styles.container}>
-      <ObjectPanelItem.Divider />
-      {contents?.reverse()}
-    </div>
-  ) : contents.filter(Boolean).length ? (
-    <div className={styles.panel}>{contents}</div>
-  ) : null;
+  return isTablet ? <>{content}</> : content ? <div className={styles.panel}>{content}</div> : null;
 }
 
-export default OptionsPanel;
+export default memo(OptionsPanel);

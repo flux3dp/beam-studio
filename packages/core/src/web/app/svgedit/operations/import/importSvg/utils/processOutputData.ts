@@ -52,11 +52,18 @@ function preprocessSvgString(rawSvgString: string, type: ImportType, filePath?: 
 const readSVG = (
   input: Blob | File,
   {
+    hidden,
     layerName,
     parentCmd = undefined,
     targetModule = getDefaultModule(),
     type,
-  }: { layerName?: string; parentCmd?: IBatchCommand; targetModule?: LayerModuleType; type: ImportType },
+  }: {
+    hidden?: boolean;
+    layerName?: string;
+    parentCmd?: IBatchCommand;
+    targetModule?: LayerModuleType;
+    type: ImportType;
+  },
 ) =>
   new Promise<SVGUseElement[]>((resolve) => {
     const parsedLayerName = layerName === 'nolayer' ? undefined : layerName;
@@ -68,6 +75,7 @@ const readSVG = (
       const modifiedSvgString = preprocessSvgString(rawSvgString, type, filePath);
 
       const newElements = await importSvgString(modifiedSvgString, {
+        hidden,
         layerName: parsedLayerName,
         parentCmd,
         targetModule,
@@ -86,7 +94,7 @@ const readSVG = (
 export async function processOutputData(
   outputData: Record<string, Blob> & { bitmapOffset?: [number, number] },
   blob: Blob,
-  elementOptions: { parentCmd: IBatchCommand; targetModule: LayerModuleType; type: ImportType },
+  elementOptions: { hidden?: boolean; parentCmd: IBatchCommand; targetModule: LayerModuleType; type: ImportType },
   importType: ImportType,
 ): Promise<SVGUseElement[]> {
   const newElements: SVGUseElement[] = [];

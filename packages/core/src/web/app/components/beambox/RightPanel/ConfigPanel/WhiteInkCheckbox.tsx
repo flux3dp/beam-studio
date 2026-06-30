@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import React, { useState } from 'react';
 
-import { Checkbox, Switch } from 'antd';
+import { Checkbox } from 'antd';
 
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -11,8 +11,6 @@ import { writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import ObjectPanelItem from '../ObjectPanelItem';
 
 import initState from './initState';
 import styles from './WhiteInkCheckbox.module.scss';
@@ -55,7 +53,7 @@ const WhiteInkCheckbox = ({ type = 'default' }: Props): ReactNode => {
 
   return (
     <>
-      {type === 'default' ? (
+      {
         <div className={styles.panel}>
           <Checkbox checked={value > 0} className="white-ink-checkbox" onChange={(e) => handleChange(e.target.checked)}>
             <div className={styles.title}>{t.white_ink}</div>
@@ -66,29 +64,7 @@ const WhiteInkCheckbox = ({ type = 'default' }: Props): ReactNode => {
             </div>
           )}
         </div>
-      ) : (
-        <>
-          <ObjectPanelItem.Divider />
-          <ObjectPanelItem.Item
-            content={<Switch checked={value > 0} />}
-            id="white_ink"
-            label={t.white_ink}
-            onClick={() => handleChange(value < 0)}
-          />
-          {value > 0 && (
-            <ObjectPanelItem.Item
-              content={
-                <div className={styles.icon}>
-                  <ConfigPanelIcons.Settings />
-                </div>
-              }
-              id="white_ink_setting"
-              label={lang.settings.caption}
-              onClick={() => setShowModal(true)}
-            />
-          )}
-        </>
-      )}
+      }
       {showModal && <WhiteInkSettingsModal onClose={() => setShowModal(false)} />}
     </>
   );

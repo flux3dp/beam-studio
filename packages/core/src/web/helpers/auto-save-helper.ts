@@ -148,7 +148,7 @@ const startAutoSave = (): void => {
         }
 
         const target = fs.join(directory, getFilename());
-        const buffer = await generateBeamBuffer();
+        const buffer = await generateBeamBuffer({ fromAutoSave: true });
 
         fs.writeStream(target, 'w', [buffer]);
       }

@@ -1,6 +1,5 @@
 import React, { memo, use, useMemo } from 'react';
 
-import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import configOptions from '@core/app/constants/config-options';
@@ -14,8 +13,6 @@ import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-con
 import useI18n from '@core/helpers/useI18n';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import styles from './Block.module.scss';
 import ConfigSlider from './ConfigSlider';
@@ -86,27 +83,7 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
     </div>
   );
 
-  return type === 'panel-item' ? (
-    <Popover content={content} visible={activeKey === 'multipass'}>
-      <ObjectPanelItem.Item
-        autoClose={false}
-        content={
-          <Button
-            className={classNames(objectPanelItemStyles['number-item'], styles['display-btn'])}
-            fill="outline"
-            shape="rounded"
-            size="mini"
-          >
-            {value}
-          </Button>
-        }
-        id="multipass"
-        label={t.print_multipass}
-      />
-    </Popover>
-  ) : (
-    content
-  );
+  return content;
 };
 
 export default memo(MultipassBlock);

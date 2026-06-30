@@ -14,13 +14,18 @@ import * as TutorialController from '@core/app/components/tutorials/tutorialCont
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { templateModes, withinInteractionModes } from '@core/app/stores/interactionModeStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { contentLibraryManager } from '@core/helpers/contentLibrary/manager';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
+import { ControlType } from '@core/helpers/element/editable/base';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
+import { checkSelectable } from '@core/helpers/layer/checkSelectable';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -208,6 +213,17 @@ const mouseDown = async (evt: MouseEvent) => {
   currentMode = getMouseMode();
 
   switch (currentMode) {
+    case 'pick': {
+      setMouseMode('select');
+
+      const pickTarget = svgCanvas.getMouseTarget(evt);
+
+      if (pickTarget && pickTarget !== svgRoot) {
+        await contentLibraryManager.addContentFromCanvas(pickTarget as SVGGraphicsElement);
+      }
+
+      return;
+    }
     case 'auto-focus':
       autoFocusEventEmitter.emit('pin', pt);
 
@@ -227,10 +243,7 @@ const mouseDown = async (evt: MouseEvent) => {
 
       const mouseTargetObjectLayer = LayerHelper.getObjectLayer(mouseTarget);
       const isElemTempGroup = mouseTarget.getAttribute('data-tempgroup') === 'true';
-      const layerSelectable =
-        mouseTargetObjectLayer?.elem &&
-        mouseTargetObjectLayer?.elem?.getAttribute('display') !== 'none' &&
-        !mouseTargetObjectLayer.elem.getAttribute('data-lock');
+      const layerSelectable = mouseTargetObjectLayer?.elem && checkSelectable(mouseTargetObjectLayer.elem);
 
       if (mouseTarget !== svgRoot && (isElemTempGroup || layerSelectable)) {
         // Mouse down on element
@@ -512,6 +525,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const isFreeResize = !fixedByFitText && ObjectPanelController.getDimensionValues('isRatioFixed') === evt.shiftKey;
   const angle = svgedit.utilities.getRotationAngle(selected);
   let { height, width, x: left, y: top } = box;
+  const editableInfo = useSelectedElementStore.getState().editableInfo;
 
   if (svgCanvas.isAutoAlign && isFreeResize && !angle) {
     let [inputX, inputY] = [x, y];
@@ -558,6 +572,19 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     tx = width;
   }
 
+  // When position is not editable on an axis, resize from center instead of from corner
+  if (withinInteractionModes(templateModes)) {
+    if (!editableInfo[ControlType.POSITION_X]?.value) {
+      tx = width / 2;
+      sx = width ? (resizeMode.includes('w') ? (width - 2 * dx) / width : (width + 2 * dx) / width) : 1;
+    }
+
+    if (!editableInfo[ControlType.POSITION_Y]?.value) {
+      ty = height / 2;
+      sy = height ? (resizeMode.includes('n') ? (height - 2 * dy) / height : (height + 2 * dy) / height) : 1;
+    }
+  }
+
   // update the transform list with translate,scale,translate
   const translateOrigin = svgRoot.createSVGTransform();
   const scale = svgRoot.createSVGTransform();
@@ -594,18 +621,24 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     let newLeft = left;
     let newTop = top;
 
-    if (sx > 0) {
-      if (resizeMode.includes('w')) newLeft = left + width - newWidth;
-    } else {
-      if (resizeMode.includes('w')) newLeft = left + width;
-      else newLeft = left - newWidth;
-    }
+    if (withinInteractionModes(templateModes)) {
+      if (!editableInfo[ControlType.POSITION_X]?.value) {
+        newLeft = left + (width - newWidth) / 2;
+      } else if (sx > 0) {
+        if (resizeMode.includes('w')) newLeft = left + width - newWidth;
+      } else {
+        if (resizeMode.includes('w')) newLeft = left + width;
+        else newLeft = left - newWidth;
+      }
 
-    if (sy > 0) {
-      if (resizeMode.includes('n')) newTop = top + height - newHeight;
-    } else {
-      if (resizeMode.includes('n')) newTop = top + height;
-      else newTop = top - newHeight;
+      if (!editableInfo[ControlType.POSITION_Y]?.value) {
+        newTop = top + (height - newHeight) / 2;
+      } else if (sy > 0) {
+        if (resizeMode.includes('n')) newTop = top + height - newHeight;
+      } else {
+        if (resizeMode.includes('n')) newTop = top + height;
+        else newTop = top - newHeight;
+      }
     }
 
     setFitTextBBox(
@@ -685,11 +718,25 @@ const mouseMove = (evt: MouseEvent) => {
   let x = realX;
   let y = realY;
 
+  if (withinInteractionModes(templateModes)) {
+    const editableInfo = useSelectedElementStore.getState().editableInfo;
+    const isLine = selectedElements[0]?.tagName === 'line';
+
+    if (!editableInfo[ControlType.POSITION_X]?.value || (isLine && !editableInfo[ControlType.POSITION_X2]?.value)) {
+      x = startX;
+      console.log('position x is not editable, ignore x change', realX, startX);
+    }
+
+    if (!editableInfo[ControlType.POSITION_Y]?.value || (isLine && !editableInfo[ControlType.POSITION_Y2]?.value)) {
+      y = startY;
+    }
+  }
+
   svgCanvas.clearAlignLines();
 
   if (!started) {
     if (svgCanvas.isAutoAlign && currentMode === 'path') {
-      findAndDrawAlignPoints(realX, realY);
+      findAndDrawAlignPoints(x, y);
     }
 
     //
@@ -755,7 +802,27 @@ const mouseMove = (evt: MouseEvent) => {
           dy = diff.y;
         }
 
+        if (withinInteractionModes(templateModes)) {
+          const editableInfo = useSelectedElementStore.getState().editableInfo;
+          const isLine = selectedElements[0]?.tagName === 'line';
+
+          if (
+            !editableInfo[ControlType.POSITION_X]?.value ||
+            (isLine && !editableInfo[ControlType.POSITION_X2]?.value)
+          ) {
+            dx = 0;
+          }
+
+          if (
+            !editableInfo[ControlType.POSITION_Y]?.value ||
+            (isLine && !editableInfo[ControlType.POSITION_Y2]?.value)
+          ) {
+            dy = 0;
+          }
+        }
+
         if (dx !== 0 || dy !== 0) {
+          workareaEvents.emit('objectDragStart');
           for (const selected of selectedElements) {
             if (!selected) break;
 
@@ -965,6 +1032,7 @@ const mouseMove = (evt: MouseEvent) => {
 
 const mouseUp = async (evt: MouseEvent, blocked = false) => {
   svgCanvas.clearAlignLines();
+  workareaEvents.emit('objectDragEnd');
 
   const rightClick = evt.button === MouseButtons.Right;
 
@@ -1087,7 +1155,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
             const layerElem = layer.elem;
 
-            return !(layerElem.getAttribute('data-lock') || layerElem.getAttribute('display') === 'none');
+            return checkSelectable(layerElem);
           });
 
           selectedElements = intersectedElements;
@@ -1483,8 +1551,6 @@ const dblClick = (evt: MouseEvent) => {
     ) {
       svgCanvas.textActions.dbClickSelectAll();
     }
-  } else if (currentMode === 'preview_color') {
-    canvasEvents.setColorPreviewing(false);
   }
 };
 

@@ -1,5 +1,6 @@
 import { pipe, prop } from 'remeda';
 
+import { askForFileTarget } from '@core/app/components/dialogs/FileTargetSelector';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import selectionManager from '@core/app/svgedit/selection';
 import { getOS } from '@core/helpers/getOS';
@@ -22,19 +23,31 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-export const saveAsFile = async (): Promise<boolean> => {
+export const saveAsFile = async (opts: { templateMode?: boolean } = {}): Promise<boolean> => {
   selectionManager.clearSelection();
   svgCanvas.removeUnusedDefs();
 
+  const target = await askForFileTarget(opts.templateMode);
+
+  if (!target) return false;
+
+  if (target === 'cloud') {
+    return await saveToCloud(undefined, opts);
+  }
+
   const defaultFileName = getDefaultFileName();
   const langFile = i18n.lang.topmenu.file;
-  const getContent = async () =>
-    pipe(
-      await generateBeamBuffer(),
+  let blob: Blob | null = null;
+  const getContent = async () => {
+    blob = pipe(
+      await generateBeamBuffer(opts),
       (buffer) => Uint8Array.from(buffer),
       prop('buffer'),
       (arrayBuffer) => new Blob([arrayBuffer]),
     );
+
+    return blob;
+  };
 
   const newFilePath = await dialog.writeFileDialog(
     getContent,
@@ -46,15 +59,17 @@ export const saveAsFile = async (): Promise<boolean> => {
     ],
   );
 
-  if (newFilePath) {
-    currentFileManager.setLocalFile(newFilePath);
-    svgCanvas.updateRecentFiles(newFilePath);
-    currentFileManager.setHasUnsavedChanges(false, false);
+  const isWeb_ = isWeb();
 
-    return true;
-  }
+  if (newFilePath || isWeb_) {
+    if (isWeb_) {
+      currentFileManager.setCloudUUID(null);
+    } else {
+      currentFileManager.setLocalFile(newFilePath!);
+      svgCanvas.updateRecentFiles(newFilePath!);
+    }
 
-  if (isWeb()) {
+    currentFileManager.setTemplateFile(blob, opts?.templateMode !== undefined);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;
@@ -66,7 +81,7 @@ export const saveAsFile = async (): Promise<boolean> => {
 export const saveFile = async (): Promise<boolean> => {
   const path = currentFileManager.getPath();
 
-  if (!path) {
+  if (!path || (currentFileManager.isCloudFile && !currentFileManager.isCloudFileEditable)) {
     return await saveAsFile();
   }
 
@@ -92,6 +107,15 @@ export const saveFile = async (): Promise<boolean> => {
     const buffer = await generateBeamBuffer();
 
     await fs.writeFile(path, buffer);
+
+    const blob = pipe(
+      buffer,
+      (buffer) => Uint8Array.from(buffer),
+      prop('buffer'),
+      (arrayBuffer) => new Blob([arrayBuffer]),
+    );
+
+    currentFileManager.setTemplateFile(blob);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;

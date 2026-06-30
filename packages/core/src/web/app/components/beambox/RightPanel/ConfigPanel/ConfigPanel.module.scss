@@ -1,4 +1,5 @@
 @use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
 @use '../mixins' as rightPanelMixins;
 
 .config-panel {
@@ -7,6 +8,10 @@
   margin-top: -1px;
   border: 1px variables.$panelBorderColor solid;
   border-width: 1px 0 0 0;
+
+  @include mixins.is-mobile {
+    height: unset;
+  }
 }
 
 .layername {
@@ -35,6 +40,10 @@
 }
 
 .modal {
+  @include mixins.is-tablet {
+    width: 360px;
+  }
+
   .change-layer {
     margin-bottom: 12px;
     .title {
@@ -69,6 +78,11 @@
   [class*='panel'] {
     padding-left: 0;
     padding-right: 0;
+  }
+
+  .footer {
+    @include mixins.footer;
+    text-align: end;
   }
 }
 

@@ -9,6 +9,7 @@ type MetaConfig = {
   color: string;
   configName: string;
   module: LayerModuleType;
+  opacity: number;
   ref: boolean;
 };
 

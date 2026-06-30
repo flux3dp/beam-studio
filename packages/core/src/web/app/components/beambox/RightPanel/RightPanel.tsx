@@ -9,16 +9,13 @@ import { PanelType } from '@core/app/constants/right-panel-types';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import { focusPanel, showPanel } from '@core/app/widgets/dockable/utils';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 
-import LayerPanel from './LayerPanel';
-import ObjectPanel from './ObjectPanel';
-import ObjectPanelItem from './ObjectPanelItem';
 import PathEditPanel from './PathEditPanel';
 import styles from './RightPanel.module.scss';
 
@@ -29,8 +26,8 @@ const RightPanel = (): ReactNode => {
   const mode = useCanvasStore((state) => state.mode);
   const { isPathEditing } = use(CanvasContext);
   const selectedElement = useSelectedElementStore((state) => state.selectedElement);
-  const isMobile = useIsMobile();
-  const [panelType, setPanelType] = useState(isMobile ? PanelType.None : PanelType.Layer);
+  const isTablet = useIsTabletOrMobile();
+  const [panelType, setPanelType] = useState(isTablet ? PanelType.None : PanelType.Layer);
   const isTabAutoSwitch = useGlobalPreferenceStore((state) => state['auto-switch-tab']);
 
   useEffect(() => {
@@ -43,7 +40,7 @@ const RightPanel = (): ReactNode => {
 
   useEffect(() => {
     const handler = (isDisplayLayer: boolean) => {
-      if (!isMobile) return;
+      if (!isTablet) return;
 
       setPanelType((prevType) => {
         if (isDisplayLayer) {
@@ -59,13 +56,13 @@ const RightPanel = (): ReactNode => {
     return () => {
       rightPanelEventEmitter.off('DISPLAY_LAYER', handler);
     };
-  }, [isMobile]);
+  }, [isTablet]);
 
   useEffect(() => {
     const hasElement = Boolean(selectedElement);
 
     if (!isPathEditing) {
-      if (isMobile) {
+      if (isTablet) {
         setPanelType((prevType) =>
           match({ hasElement, prevType })
             .with({ prevType: PanelType.Layer }, () => prevType)
@@ -89,7 +86,7 @@ const RightPanel = (): ReactNode => {
     } else {
       setPanelType(PanelType.PathEdit);
     }
-  }, [isPathEditing, selectedElement, isMobile, isTabAutoSwitch]);
+  }, [isPathEditing, selectedElement, isTablet, isTabAutoSwitch]);
 
   useEffect(() => {
     const panelIdMap: Partial<Record<PanelType, TDynamicPanelKey>> = {
@@ -108,23 +105,14 @@ const RightPanel = (): ReactNode => {
   if (mode === CanvasMode.PathPreview) return null;
 
   // Note: keep RightPanel for non-mobile to handle panel type changes without displaying it
-  if (!isMobile) return null;
+  if (!isTablet) return null;
 
   const osName = getOS();
   const sideClass = classNames(styles.sidepanels, {
     [styles.wide]: osName !== 'MacOS',
   });
 
-  return (
-    <div style={{ display: 'block' }}>
-      <div className={sideClass}>
-        <ObjectPanelItem.Mask />
-        {panelType === PanelType.PathEdit && <PathEditPanel />}
-        <ObjectPanel hide={panelType !== PanelType.Object} />
-        <LayerPanel hide={panelType !== PanelType.Layer} />
-      </div>
-    </div>
-  );
+  return panelType === PanelType.PathEdit && <PathEditPanel />;
 };
 
 export default memo(RightPanel);

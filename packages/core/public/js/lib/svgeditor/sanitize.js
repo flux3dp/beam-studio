@@ -120,6 +120,7 @@
       'style',
       'systemLanguage',
       'transform',
+      'data-editable',
     ],
     feGaussianBlur: ['class', 'color-interpolation-filters', 'id', 'requiredFeatures', 'stdDeviation'],
     filter: [
@@ -255,6 +256,8 @@
       'data-scAMax',
       'data-scEnable',
       'data-scJerk',
+      'data-editable',
+      'data-template-target',
     ],
     image: [
       'data-ratiofixed',
@@ -285,6 +288,9 @@
       'data-color',
       'data-pass',
       'data-zstep',
+      'data-editable',
+      'data-library-default',
+      'data-library-owner',
     ],
     line: [
       'data-original-layer',
@@ -319,6 +325,7 @@
       'x2',
       'y1',
       'y2',
+      'data-editable',
     ],
     linearGradient: [
       'class',
@@ -382,6 +389,7 @@
       'style',
       'systemLanguage',
       'transform',
+      'data-editable',
     ],
     pattern: [
       'class',
@@ -432,6 +440,7 @@
       'style',
       'systemLanguage',
       'transform',
+      'data-editable',
     ],
     polyline: [
       'data-original-layer',
@@ -512,6 +521,7 @@
       'width',
       'x',
       'y',
+      'data-editable',
     ],
     stop: ['class', 'id', 'offset', 'requiredFeatures', 'stop-color', 'stop-opacity', 'style', 'systemLanguage'],
     svg: [
@@ -567,6 +577,8 @@
       'data-image-symbol',
       'overflow',
       'data-bbox',
+      'data-library-owner',
+      'data-library-ref',
     ],
     text: [
       'data-ratiofixed',
@@ -614,6 +626,7 @@
       'data-fit-text',
       'data-fit-text-align',
       'data-fit-text-size',
+      'data-editable',
     ],
     textPath: [
       'alignment-baseline',
@@ -707,6 +720,8 @@
       'data-invert',
       'data-props',
       'data-code',
+      'data-editable',
+      'data-library-default',
     ],
 
     // MathML Elements

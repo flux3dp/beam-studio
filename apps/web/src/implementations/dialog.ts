@@ -26,6 +26,7 @@ let lastPromiseResolve: ((result: { canceled?: boolean }) => void) | null;
 const openFileDialog = (options: {
   defaultPath?: string;
   filters?: DialogFilter[];
+  method?: 'camera' | 'file' | 'gallery';
   properties?: OpenDialogProperties[];
 }): Promise<{ canceled?: boolean; filelist?: FileList | null; value?: string }> => {
   // TODO: defaultPath and contrain to file or directory
@@ -33,11 +34,18 @@ const openFileDialog = (options: {
     lastPromiseResolve({ canceled: true });
   }
 
-  const { filters } = options;
+  const { filters, method } = options;
 
   input.setAttribute('type', 'file');
+  input.removeAttribute('capture');
+  input.removeAttribute('accept');
 
-  if (filters) {
+  if (method === 'camera') {
+    input.setAttribute('capture', 'environment');
+    input.setAttribute('accept', 'image/*');
+  } else if (method === 'gallery') {
+    input.setAttribute('accept', 'image/*,application/*');
+  } else if (filters) {
     let acceptAll = false;
 
     // Accept all file for pads
@@ -56,6 +64,8 @@ const openFileDialog = (options: {
         if (extension === '*') {
           acceptAll = true;
           break;
+        } else if (extension.includes('/')) {
+          accept.push(extension);
         } else if (extension) {
           accept.push(`.${extension}`);
         }

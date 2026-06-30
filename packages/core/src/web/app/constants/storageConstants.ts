@@ -10,6 +10,7 @@ export const getStorageKeys: () => StorageKey[] = () => [
   'auto_connect',
   'beambox-preference',
   'black-list',
+  'custom_colors',
   'customizedLaserConfigs',
   'default-font',
   'default-units',

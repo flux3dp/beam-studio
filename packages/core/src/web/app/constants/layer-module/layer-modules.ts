@@ -6,6 +6,7 @@ import { invert } from 'remeda';
  * Layer Module ID when exporting task
  */
 export const LayerModule = {
+  GUIDE: -2,
   UV_PRINT: -1,
   LASER_10W_DIODE: 1, // or default CO2 laser for BeamSeries
   LASER_20W_DIODE: 2,
@@ -44,6 +45,7 @@ export const laserModules = new Set<LayerModuleType>([
   LayerModule.LASER_UNIVERSAL,
 ]);
 export const printingModules = new Set<LayerModuleType>([LayerModule.PRINTER, LayerModule.PRINTER_4C]);
+export const skippedModules = new Set<LayerModuleType>([LayerModule.GUIDE, LayerModule.UV_PRINT]);
 
 export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_PRINT] as const;
 export const fullColorModules = new Set<LayerModuleType>(fullColorModulesArray);

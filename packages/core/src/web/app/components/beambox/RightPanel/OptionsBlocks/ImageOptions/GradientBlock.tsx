@@ -1,10 +1,9 @@
 import React, { memo, useCallback } from 'react';
 
-import { Switch } from 'antd';
-
-import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
+import Label from '@core/app/components/beambox/RightPanel/common/Label';
+import Switch from '@core/app/components/beambox/RightPanel/common/Switch';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ImageOptions.module.scss';
@@ -17,7 +16,7 @@ interface Props {
 
 const GradientBlock = ({ changeAttribute, generateImageData, isGradient }: Props): React.JSX.Element => {
   const label = useI18n().beambox.right_panel.object_panel.option_panel.shading;
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
 
   const handleGradientClick = useCallback(
     async (newVal: boolean) => {
@@ -34,17 +33,12 @@ const GradientBlock = ({ changeAttribute, generateImageData, isGradient }: Props
     [changeAttribute, generateImageData],
   );
 
-  return isMobile ? (
-    <ObjectPanelItem.Item
-      content={<Switch checked={isGradient} />}
-      id="gradient"
-      label={label}
-      onClick={() => handleGradientClick(!isGradient)}
-    />
+  return isTablet ? (
+    <Label extra={<Switch checked={isGradient} onChange={handleGradientClick} />}>{label}</Label>
   ) : (
     <div className={styles['option-block']} key="gradient">
       <div className={styles.label}>{label}</div>
-      <Switch checked={isGradient} onChange={handleGradientClick} size="small" />
+      <Switch checked={isGradient} onChange={handleGradientClick} />
     </div>
   );
 };

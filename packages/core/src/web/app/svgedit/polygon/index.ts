@@ -105,13 +105,14 @@ export const polygonMouseUp = (isContinuousDrawing: boolean): { element: null | 
   return { element, keep };
 };
 
-export const updatePolygonSides = (polygon: Element, sideChange: number, opts: HistoryActionOptions = {}): number => {
+export const updatePolygonSides = (polygon: Element, newSides: number, opts: HistoryActionOptions = {}): number => {
   const cx = Number(polygon.getAttribute('cx'));
   const cy = Number(polygon.getAttribute('cy'));
   const edge = Number(polygon.getAttribute('edge'));
   const angleOffset = Number(polygon.getAttribute('angle_offset'));
   const currentSides = Number(polygon.getAttribute('sides'));
-  const newSides = Math.max(currentSides + sideChange, 3);
+
+  newSides = Math.max(newSides, 3);
 
   if (newSides === currentSides) return currentSides;
 
@@ -144,7 +145,9 @@ export const addPolygonSides = (val = 1): number => {
   const elems = selectionManager.getSelectedElements();
 
   if (elems.length === 1 && elems[0]?.tagName === 'polygon') {
-    return updatePolygonSides(elems[0], val);
+    const currentSides = Number(elems[0].getAttribute('sides'));
+
+    return updatePolygonSides(elems[0], currentSides + val);
   }
 
   return 0;
@@ -164,7 +167,9 @@ export const decreasePolygonSides = (val = 1): number => {
   const elems = selectionManager.getSelectedElements();
 
   if (elems.length === 1 && elems[0]?.tagName === 'polygon') {
-    return updatePolygonSides(elems[0], -val);
+    const currentSides = Number(elems[0].getAttribute('sides'));
+
+    return updatePolygonSides(elems[0], currentSides - val);
   }
 
   return 0;

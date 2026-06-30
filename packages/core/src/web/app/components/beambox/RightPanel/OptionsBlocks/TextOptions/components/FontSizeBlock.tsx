@@ -1,13 +1,23 @@
 import React, { memo, useEffect, useState } from 'react';
 
-import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import ControlBlock from '@core/app/components/beambox/RightPanel/common/ControlBlock';
+import InputNumberGroup from '@core/app/components/beambox/RightPanel/common/InputNumberGroup';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import { getFontSize, setFontSize } from '@core/app/svgedit/text/textedit';
+import { ControlType } from '@core/helpers/element/editable/base';
 import useI18n from '@core/helpers/useI18n';
+import type { NumberOptionConfig } from '@core/interfaces/ObjectPanel';
 
 import OptionsInput from '../../OptionsInput';
 
 import styles from './FontSizeBlock.module.scss';
+
+const config: NumberOptionConfig = {
+  id: 'font_size',
+  min: 1,
+  precision: 0,
+  unit: 'px',
+};
 
 const readValues = (textElements: SVGTextElement[]) => {
   if (textElements.length === 0) return { hasMultiValue: false, value: 0 };
@@ -30,7 +40,7 @@ interface Props {
 
 const FontSizeBlock = ({ onSizeChange, textElements }: Props): React.ReactNode => {
   const t = useI18n().beambox.right_panel.object_panel.option_panel;
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const [state, setState] = useState(() => readValues(textElements));
 
   useEffect(() => {
@@ -57,18 +67,16 @@ const FontSizeBlock = ({ onSizeChange, textElements }: Props): React.ReactNode =
     onSizeChange?.();
   };
 
-  if (isMobile) {
+  if (isTablet) {
     return (
-      <ObjectPanelItem.Number
-        decimal={0}
-        hasMultiValue={state.hasMultiValue}
-        id="font_size"
-        label={t.font_size}
-        min={1}
-        unit="px"
-        updateValue={handleChange}
-        value={state.value}
-      />
+      <ControlBlock label={t.font_size} type={ControlType.FONT_SIZE}>
+        <InputNumberGroup
+          config={config}
+          containerClassName={styles.input}
+          onChange={(e) => handleChange(Number(e))}
+          value={state.value}
+        />
+      </ControlBlock>
     );
   }
 
@@ -76,13 +84,10 @@ const FontSizeBlock = ({ onSizeChange, textElements }: Props): React.ReactNode =
     <div className={styles.container} title={t.font_size}>
       <OptionsInput
         displayMultiValue={state.hasMultiValue}
-        id="font_size"
-        min={1}
         onChange={handleChange}
-        precision={0}
-        unit="px"
         value={state.value}
         width={68}
+        {...config}
       />
     </div>
   );

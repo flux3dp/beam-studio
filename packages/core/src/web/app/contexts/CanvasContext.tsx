@@ -16,10 +16,8 @@ interface CanvasContextType {
   currentUser: IUser | null;
   hasPassthroughExtension: boolean;
   hasUnsavedChange: boolean;
-  isColorPreviewing: boolean;
   isPathEditing: boolean;
   selectedDevice: IDeviceInfo | null;
-  setIsColorPreviewing: (isColorPreviewing: boolean) => void;
   setIsPathEditing: (isPathEditing: boolean) => void;
   setSelectedDevice: Dispatch<SetStateAction<IDeviceInfo | null>>;
   updateCanvasContext: () => void;
@@ -29,10 +27,8 @@ const CanvasContext = createContext<CanvasContextType>({
   currentUser: null,
   hasPassthroughExtension: false,
   hasUnsavedChange: false,
-  isColorPreviewing: false,
   isPathEditing: false,
   selectedDevice: null,
-  setIsColorPreviewing: () => {},
   setIsPathEditing: () => {},
   setSelectedDevice: () => {},
   updateCanvasContext: () => {},
@@ -40,7 +36,6 @@ const CanvasContext = createContext<CanvasContextType>({
 
 const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const [isColorPreviewing, setIsColorPreviewing] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   const [hasUnsavedChange, setHasUnsavedChange] = useState<boolean>(false);
   const [selectedDevice, setSelectedDevice] = useState<IDeviceInfo | null>(null);
@@ -90,7 +85,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
   }, [updateCanvasContext]);
 
   useEffect(() => {
-    canvasEventEmitter.on('SET_COLOR_PREVIEWING', setIsColorPreviewing);
     canvasEventEmitter.on('SET_PATH_EDITING', setIsPathEditing);
 
     const canvasChangeHandler = () => setHasPassthroughExtension(getPassThrough());
@@ -99,7 +93,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     canvasEventEmitter.on('canvas-change', canvasChangeHandler);
 
     return () => {
-      canvasEventEmitter.removeListener('SET_COLOR_PREVIEWING', setIsColorPreviewing);
       canvasEventEmitter.removeListener('SET_PATH_EDITING', setIsPathEditing);
       canvasEventEmitter.removeListener('canvas-change', canvasChangeHandler);
     };
@@ -113,10 +106,8 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         currentUser,
         hasPassthroughExtension,
         hasUnsavedChange,
-        isColorPreviewing,
         isPathEditing,
         selectedDevice,
-        setIsColorPreviewing,
         setIsPathEditing,
         setSelectedDevice,
         updateCanvasContext,

@@ -1,6 +1,8 @@
 import React from 'react';
 
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import i18n from '@core/helpers/i18n';
+import { mockT } from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 
@@ -39,6 +41,15 @@ function General({ changeActiveLang, supportedLangs, wrapped = false }: Props): 
           label={lang.settings.language}
           onChange={changeActiveLang}
           options={langOptions}
+        />
+      </Wrapper>
+      <Wrapper>
+        <SettingSwitch
+          checked={getPreference('template_creation_mode')}
+          icon={<ObjectPanelIcons.Editable />}
+          id="template_creation_mode"
+          label={mockT('Template Creation Mode')}
+          onChange={(e) => setPreference('template_creation_mode', e)}
         />
       </Wrapper>
       {!isWeb() && (

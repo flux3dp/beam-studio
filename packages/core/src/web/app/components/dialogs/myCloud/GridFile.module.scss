@@ -23,6 +23,7 @@
     cursor: pointer;
     border: solid 1px transparent;
     border-radius: 12px;
+    position: relative;
 
     &:hover {
       border-color: #eeeeee;
@@ -43,28 +44,29 @@
         max-width: 100%;
         max-height: 100%;
       }
-      .overlay {
-        position: absolute;
-        inset: 8px 8px auto auto !important;
-        @media screen and (max-width: 600px) {
-          right: auto !important;
-        }
-      }
-      .trigger {
-        width: 32px;
-        height: 18px;
-        border-radius: 60px;
-        background: #fff;
-        box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.16);
-        display: none;
-        justify-content: center;
-        font-size: 20px;
-      }
+    }
 
-      @media screen and (min-width: 601px) {
-        &:hover .trigger {
-          display: flex;
-        }
+    .overlay {
+      position: absolute;
+      inset: 18px 18px auto auto !important;
+      @media screen and (max-width: 600px) {
+        right: auto !important;
+      }
+    }
+    .trigger {
+      width: 32px;
+      height: 18px;
+      border-radius: 60px;
+      background: #fff;
+      box-shadow: 0px 3px 16px 0px rgba(0, 0, 0, 0.16);
+      display: none;
+      justify-content: center;
+      font-size: 20px;
+    }
+
+    @media screen and (min-width: 601px) {
+      &:hover .trigger {
+        display: flex;
       }
     }
   }
@@ -108,4 +110,43 @@
 
 .delete {
   color: #faad14;
+}
+
+.carousel {
+  width: myCloudVariables.$grid-width - 20px;
+  height: 100%;
+
+  :global(.slick-slider),
+  :global(.slick-list),
+  :global(.slick-track),
+  :global(.slick-slide > div) {
+    height: 100%;
+  }
+
+  :global(.slick-slide) img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    margin: auto;
+  }
+
+  :global(.slick-arrow) {
+    color: black;
+    z-index: 1;
+  }
+
+  :global(.slick-dots) {
+    bottom: -8px;
+
+    li button {
+      background: black !important;
+    }
+  }
+
+  .carousel-img-container {
+    height: 100%;
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+  }
 }

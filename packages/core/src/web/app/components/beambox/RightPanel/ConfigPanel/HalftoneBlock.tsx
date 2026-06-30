@@ -12,8 +12,6 @@ import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
-import ObjectPanelItem from '../ObjectPanelItem';
-
 import styles from './HalftoneBlock.module.scss';
 import initState from './initState';
 
@@ -47,15 +45,7 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     { label: 'AM', value: 2 },
   ];
 
-  return type === 'panel-item' ? (
-    <ObjectPanelItem.Select
-      id="halftone-type"
-      label={lang.halftone}
-      onChange={handleChange}
-      options={options}
-      selected={hasMultiValue ? { label: '-', value: 0 } : options[value - 1]}
-    />
-  ) : (
+  return type === 'panel-item' ? null : (
     <div className={classNames(styles.panel)}>
       <span className={styles.title}>
         {lang.halftone}

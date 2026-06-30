@@ -6,6 +6,7 @@
  */
 
 import NS from '@core/app/constants/namespaces';
+import { getLayerOpacityRatio, setLayerOpacityRatio, updateLayerOpacity } from '@core/helpers/layer/opacity';
 import type { HistoryActionOptions, ICommand } from '@core/interfaces/IHistory';
 
 import { ChangeElementCommand, RemoveElementCommand } from '../history/history';
@@ -167,13 +168,7 @@ export class Layer {
   public getOpacity(): number {
     if (!this.group_) return 1;
 
-    const opacity = this.group_.getAttribute('opacity');
-
-    if (opacity === null || opacity === undefined) {
-      return 1;
-    }
-
-    return Number.parseFloat(opacity);
+    return getLayerOpacityRatio(this.group_);
   }
 
   /**
@@ -184,7 +179,8 @@ export class Layer {
     if (!this.group_) return;
 
     if (typeof opacity === 'number' && opacity >= 0.0 && opacity <= 1.0) {
-      this.group_.setAttribute('opacity', opacity.toString());
+      setLayerOpacityRatio(this.group_, opacity, { addToHistory: false });
+      updateLayerOpacity(this.group_, { addToHistory: false });
     }
   }
 

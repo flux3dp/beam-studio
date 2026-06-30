@@ -1,19 +1,23 @@
-import React, { use, useCallback, useMemo } from 'react';
+import React, { memo, use, useCallback, useMemo } from 'react';
 
-import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider } from 'antd';
+import { ConfigProvider } from 'antd';
 import { match } from 'ts-pattern';
 
 import Constant from '@core/app/actions/beambox/constant';
+import Content from '@core/app/components/beambox/RightPanel/common/Content';
+import ControlBlock from '@core/app/components/beambox/RightPanel/common/ControlBlock';
+import { ObjectPanelItem } from '@core/app/components/beambox/RightPanel/common/ObjectPanelItem';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import { useIsInteractionMode } from '@core/app/stores/interactionModeStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { resizeSelector } from '@core/app/svgedit/selector';
 import { setFitTextBBox } from '@core/app/svgedit/text/fitText';
 import { isFitText } from '@core/app/svgedit/text/textedit';
 import { getIsVertical } from '@core/app/svgedit/text/textedit/getters';
-import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { ControlType } from '@core/helpers/element/editable/base';
+import { mockT } from '@core/helpers/is-dev';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import useForceUpdate from '@core/helpers/use-force-update';
@@ -23,13 +27,12 @@ import type { DimensionOrderMap, DimensionValues, SizeKey } from '@core/interfac
 import { isPositionKey, isSizeKeyShort } from '@core/interfaces/ObjectPanel';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
 
 import styles from './DimensionPanel.module.scss';
 import FlipButtons from './FlipButtons';
 import PositionInput from './PositionInput';
 import RatioLock from './RatioLock';
-import Rotation from './Rotation';
+import RotationSection from './RotationSection';
 import SizeInput from './SizeInput';
 import { getValue } from './utils';
 
@@ -52,19 +55,6 @@ const panelMap: DimensionOrderMap = {
   use: ['x', 'y', 'w', 'h'],
 };
 
-const panelMapMobile: DimensionOrderMap = {
-  ellipse: ['rx', 'lock', 'ry', 'rot', 'cx', 'cy'],
-  g: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  image: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  img: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  line: ['x1', 'y1', 'lock', 'x2', 'y2', 'rot'],
-  path: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  polygon: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  rect: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  text: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-  use: ['w', 'lock', 'h', 'rot', 'x', 'y'],
-};
-
 const fixedSizeMapping: { [key in SizeKey]: SizeKey } = {
   height: 'width',
   rx: 'ry',
@@ -76,10 +66,9 @@ interface Props {
   elem: null | SVGElement;
 }
 
-const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
+export const DimensionPanelContent = memo(({ elem }: Props): React.JSX.Element => {
   const { getDimensionValues, updateDimensionValues } = use(ObjectPanelContext);
-
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
 
   const forceUpdate = useForceUpdate();
 
@@ -132,35 +121,6 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
       forceUpdate();
     },
     [elem, updateDimensionValues, forceUpdate],
-  );
-
-  const handleRotationChange = useCallback(
-    (val: number, addToHistory = false): void => {
-      if (!elem) return;
-
-      const isTempGroup = elem.getAttribute('data-tempgroup') === 'true';
-      let rotationDeg = val % 360;
-
-      if (rotationDeg > 180) {
-        rotationDeg -= 360;
-      }
-
-      let finalRotation = rotationDeg;
-
-      if (isTempGroup && !addToHistory) {
-        setRotationAngle(elem, rotationDeg, { addToHistory: false });
-      } else {
-        setRotationAngle(elem, rotationDeg, { addToHistory });
-
-        if (isTempGroup) finalRotation = 0;
-      }
-
-      updateDimensionValues({ rotation: finalRotation });
-      resizeSelector(elem);
-
-      forceUpdate();
-    },
-    [elem, forceUpdate, updateDimensionValues],
   );
 
   const changeSize = useCallback(
@@ -282,72 +242,121 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
       );
     }
 
-    if (type === 'rot') {
-      return <Rotation key="rot" onChange={handleRotationChange} value={dimensionValues.rotation || 0} />;
-    }
-
     if (type === 'lock' && !isFitTextElem) {
       return <RatioLock isLocked={dimensionValues.isRatioFixed || false} key="lock" onClick={handleFixRatio} />;
+    }
+
+    if (type === 'placeholder') {
+      return <div className={styles.placeholder} />;
     }
 
     return null;
   };
   const tagName = elem?.tagName.toLowerCase() ?? '';
-  const panels: string[] = (isMobile ? panelMapMobile : panelMap)[tagName] || ['x', 'y', 'w', 'h'];
-  const contents: React.ReactNode[] = [];
+  const isProjectMode = useIsInteractionMode('project');
+  const panels: string[][] = useMemo(() => {
+    const defaultPanels: string[] = panelMap[tagName] || ['x', 'y', 'w', 'h'];
 
-  panels.forEach((type) => {
-    contents.push(renderBlock(type));
-  });
+    if (isTablet) {
+      // For tablet, editable buttons won't effect width
+      // Add placeholder if with lock button
+      if (isFitTextElem) {
+        return [
+          [defaultPanels[0], defaultPanels[1]],
+          [defaultPanels[2], defaultPanels[3]],
+        ];
+      } else {
+        return [
+          [defaultPanels[0], 'placeholder', defaultPanels[1]],
+          [defaultPanels[2], 'lock', defaultPanels[3]],
+        ];
+      }
+    }
 
-  const rotateBy = (delta: number) => handleRotationChange((dimensionValues.rotation || 0) + delta, true);
+    if (isFitTextElem) {
+      if (isProjectMode) {
+        // For fit text in project mode, 0, 1, 2+3 have one editable button after input, without lock button
+        // Add placeholder to align with editable button of 0
+        return [
+          [defaultPanels[0], defaultPanels[1]],
+          [defaultPanels[2], 'placeholder', defaultPanels[3]],
+        ];
+      } else {
+        // For fit text in non-project mode, no editable button nor lock button
+        // Add placeholder for both rows to add proper space between inputs
+        return [
+          [defaultPanels[0], 'placeholder', defaultPanels[1]],
+          [defaultPanels[2], 'placeholder', defaultPanels[3]],
+        ];
+      }
+    } else if (!isProjectMode || tagName === 'line') {
+      // For non-project mode, 0~3 have no editable button
+      // For line, 0~3 have one editable button after input
+      // Add placeholder to align with lock
+      return [
+        [defaultPanels[0], 'placeholder', defaultPanels[1]],
+        [defaultPanels[2], 'lock', defaultPanels[3]],
+      ];
+    }
 
-  return isMobile ? (
-    <div className={styles.container}>
-      <ObjectPanelItem.Divider />
-      {contents}
-      <FlipButtons />
-    </div>
+    // Fallback case: assuming 0, 1, 2+3 have one editable button after input, with lock button
+    // No need to add placeholder
+    return [
+      [defaultPanels[0], defaultPanels[1]],
+      [defaultPanels[2], 'lock', defaultPanels[3]],
+    ];
+  }, [isProjectMode, tagName, isFitTextElem, isTablet]);
+
+  return (
+    <>
+      <div className={styles.section}>
+        {panels.map((row, index) => {
+          const contents = row.map((type) => <React.Fragment key={type}>{renderBlock(type)}</React.Fragment>);
+
+          return isSizeKeyShort(row[0]) ? (
+            <ControlBlock
+              className={styles.row}
+              forceVisible
+              position={isTablet ? 'top-right' : 'default'}
+              type={ControlType._SIZE}
+            >
+              {contents}
+            </ControlBlock>
+          ) : (
+            <div className={styles.row} key={index}>
+              {contents}
+            </div>
+          );
+        })}
+      </div>
+      <div className={styles.row}>
+        <RotationSection dimensionValues={dimensionValues} elem={elem!} forceUpdate={forceUpdate} />
+      </div>
+      <div className={styles.row}>
+        <FlipButtons />
+      </div>
+    </>
+  );
+});
+
+const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
+  const isTablet = useIsTabletOrMobile();
+
+  return isTablet ? (
+    <ObjectPanelItem
+      icon={<ObjectPanelIcons.Transform />}
+      id="dimension"
+      renderContent={() => (
+        <Content>
+          <DimensionPanelContent elem={elem} />
+        </Content>
+      )}
+      title={mockT('變形')}
+    />
   ) : (
     <div className={styles.panel}>
       <ConfigProvider theme={iconButtonTheme}>
-        <div className={styles.row}>
-          {renderBlock(panels[0])}
-          {renderBlock(panels[1])}
-        </div>
-        <div className={`${styles.row} ${styles['size-group']}`}>
-          {renderBlock(panels[2])}
-          {renderBlock(panels[3])}
-          <div className={styles['size-lock']}>{renderBlock('lock')}</div>
-        </div>
-        <div className={styles.row}>
-          {renderBlock('rot')}
-          <div className={styles['rotate-btns']}>
-            <Button
-              className={styles['rotate-btn']}
-              icon={<UndoOutlined />}
-              id="rotate_ccw_90"
-              onClick={() => rotateBy(-90)}
-              title="Rotate -90°"
-              type="text"
-            >
-              90°
-            </Button>
-            <Button
-              className={styles['rotate-btn']}
-              icon={<RedoOutlined />}
-              id="rotate_cw_90"
-              onClick={() => rotateBy(90)}
-              title="Rotate +90°"
-              type="text"
-            >
-              90°
-            </Button>
-          </div>
-        </div>
-        <div className={styles.row}>
-          <FlipButtons />
-        </div>
+        <DimensionPanelContent elem={elem} />
       </ConfigProvider>
     </div>
   );

@@ -157,32 +157,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 ```
 
-### 7. `ObjectPanelItem` mock (frequently needed)
-
-```ts
-jest.mock('@core/app/components/beambox/RightPanel/ObjectPanelItem', () => ({
-  Item: ({ content, id, label, onClick }: any) => (
-    <div onClick={onClick}>mock-item id:{id} label:{label}{content}</div>
-  ),
-  Number: ({ hasMultiValue, id, label, updateValue, value }: any) => (
-    <div>
-      mock-number id:{id} label:{label} value:{value} multi:{String(hasMultiValue)}
-      <input onChange={(e) => updateValue(+e.target.value)} />
-    </div>
-  ),
-  Select: ({ id, label, onChange, options }: any) => (
-    <div>
-      mock-select id:{id} label:{label}
-      <select onChange={(e) => onChange(e.target.value)}>
-        {options?.map((o: any) => o.value && (
-          <option key={o.value} value={o.value}>{o.label || o.value}</option>
-        ))}
-      </select>
-    </div>
-  ),
-}));
-```
-
 ---
 
 ## Test Structure Template

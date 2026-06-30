@@ -12,14 +12,16 @@ import browser from '@core/implementations/browser';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import styles from './Menu.module.scss';
+import MenuTrigger from './MenuTrigger';
 import type { MenuNode } from './useMenuData';
 import useMenuData from './useMenuData';
 
 interface Props {
+  disabled?: boolean;
   email?: string;
 }
 
-export default function Menu({ email }: Props): React.JSX.Element {
+export default function Menu({ disabled, email }: Props): React.JSX.Element {
   const eventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
   const menuData = useMenuData(email);
   const menuCms = useI18n().topbar.menu;
@@ -93,15 +95,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   };
 
   return (
-    <TopBarMenu
-      menuButton={
-        <div className={styles['menu-btn-container']}>
-          <img className={styles.icon} src="img/logo-line.svg" />
-          <img className={styles['icon-arrow']} src="img/icon-arrow-d.svg" />
-        </div>
-      }
-      transition
-    >
+    <TopBarMenu menuButton={<MenuTrigger disabled={disabled} type="dropdown" />} transition>
       {menuData.map((node, index) => renderNode(node, index))}
     </TopBarMenu>
   );

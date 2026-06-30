@@ -94,7 +94,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         icon: <LeftPanelIcons.Photo />,
         id: 'Photo',
         label: `${t.label.photo} (I)`,
-        onClick: FnWrapper.importImage,
+        onClick: () => FnWrapper.importImage(),
       })}
       <LeftPanelButtonGroup
         active={activeButton === 'Text' || activeButton === 'FitText'}

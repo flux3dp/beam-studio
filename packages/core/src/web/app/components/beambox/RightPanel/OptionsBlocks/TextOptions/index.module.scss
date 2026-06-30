@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .font-family-dropdown {
   :global(.ant-select-item) {
     padding-right: 4px;
@@ -80,5 +82,29 @@
 
   &:hover {
     background-color: #f5f5f5;
+  }
+}
+
+@include mixins.is-tablet-or-mobile {
+  .vert {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .family {
+    flex: 3;
+
+    :global(.ant-select) {
+      width: 100%;
+    }
+  }
+
+  .style {
+    flex: 2;
+
+    :global(.ant-select) {
+      width: 100%;
+    }
   }
 }

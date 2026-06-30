@@ -28,9 +28,15 @@
     }
 
     .layer {
-      &[data-lock='true'] {
+      &[data-lock='true'],
+      &[opacity='0'] {
         pointer-events: none !important;
       }
     }
   }
+}
+
+.dev .ant-btn .ant-btn-icon > svg {
+  background: lightblue;
+  color: blue;
 }

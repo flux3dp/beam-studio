@@ -22,6 +22,7 @@ import useI18n from '@core/helpers/useI18n';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
 import styles from './GridFile.module.scss';
+import Thumbnails from './Thumbnails';
 
 interface Props {
   file: IFile;
@@ -60,6 +61,12 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
   const isSelected = useMemo(() => selectedId === file.uuid, [selectedId, file]);
 
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement;
+
+    if (target.closest('.slick-dots') || target.closest('.slick-arrow')) {
+      return;
+    }
+
     e.stopPropagation();
     setSelectedId(file.uuid);
 
@@ -68,7 +75,13 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
     }
   };
 
-  const onDoubleClick = () => {
+  const onDoubleClick = (e: React.MouseEvent<HTMLElement>) => {
+    const target = e.target as HTMLElement;
+
+    if (target.closest('.slick-dots') || target.closest('.slick-arrow')) {
+      return;
+    }
+
     if (!isMobile) {
       fileOperation.open(file);
     }
@@ -142,22 +155,20 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
         }
       />
       <div className={styles['img-container']} onClick={onClick} onDoubleClick={onDoubleClick}>
-        <div className={styles['guide-lines']} style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}>
-          {file.thumbnail_url && <img src={`${file.thumbnail_url}?lastmod=${file.last_modified_at}`} />}
-          <Dropdown
-            getPopupContainer={(triggerNode) => triggerNode.parentElement!}
-            menu={{ items: actions, onClick: onAction }}
-            onOpenChange={setActionDropdownOpen}
-            open={actionDropdownOpen}
-            overlayClassName={styles.overlay}
-            placement="bottomRight"
-            trigger={['click']}
-          >
-            <div className={classNames(styles.overlay, styles.trigger)}>
-              <EllipsisOutlined />
-            </div>
-          </Dropdown>
-        </div>
+        <Thumbnails file={file} />
+        <Dropdown
+          getPopupContainer={(triggerNode) => triggerNode.parentElement!}
+          menu={{ items: actions, onClick: onAction }}
+          onOpenChange={setActionDropdownOpen}
+          open={actionDropdownOpen}
+          overlayClassName={styles.overlay}
+          placement="bottomRight"
+          trigger={['click']}
+        >
+          <div className={classNames(styles.overlay, styles.trigger)}>
+            <EllipsisOutlined />
+          </div>
+        </Dropdown>
       </div>
       <div className={styles.name}>
         {isEditing ? (

@@ -2,7 +2,6 @@ import React, { memo, use, useMemo } from 'react';
 
 import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { pick } from 'remeda';
 import { sprintf } from 'sprintf-js';
@@ -30,8 +29,6 @@ import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import styles from './Block.module.scss';
 import ConfigSlider from './ConfigSlider';
@@ -235,27 +232,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     return units.convertUnit(value, fakeUnit, 'mm', decimal);
   }, [decimal, sliderOptions, value, fakeUnit]);
 
-  return type === 'panel-item' ? (
-    <Popover content={content} visible={visible}>
-      <ObjectPanelItem.Item
-        autoClose={false}
-        content={
-          <Button
-            className={classNames(objectPanelItemStyles['number-item'], styles['display-btn'])}
-            fill="outline"
-            shape="rounded"
-            size="mini"
-          >
-            <span style={{ whiteSpace: 'nowrap' }}>{displayValue}</span>
-          </Button>
-        }
-        id="speed"
-        label={t.speed}
-      />
-    </Popover>
-  ) : (
-    content
-  );
+  return content;
 };
 
 export default memo(SpeedBlock);

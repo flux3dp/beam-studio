@@ -20,6 +20,8 @@ export interface Storage {
   auto_connect: boolean;
   'beambox-preference': BeamboxPreference;
   'black-list': string;
+  /** Array of hex color strings in uppercase */
+  custom_colors?: string[];
   /** @deprecated Customized laser configurations for version <= 2.3.9 */
   customizedLaserConfigs: any;
   'default-font': IDefaultFont;
