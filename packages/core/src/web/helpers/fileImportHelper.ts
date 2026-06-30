@@ -111,7 +111,7 @@ export const setFileInAnotherTab = async (importingFile: FileData): Promise<void
 
 export const importFileInCurrentTab = async (importingFile: FileData): Promise<void> => {
   // TODO: this function cannot handle svg file correctly, which `type` equals ''
-  match(importingFile)
+  await match(importingFile)
     .with({ type: 'normal' }, async (importingFile) => {
       await svgEditor.handleFile(importingFile.data);
     })
@@ -146,5 +146,6 @@ export const importFileInCurrentTab = async (importingFile: FileData): Promise<v
         (file as any).path = filePath;
         await svgEditor.handleFile(file);
       }
-    });
+    })
+    .otherwise(() => {});
 };
