@@ -32,7 +32,7 @@ const TabTemplateFiles = ({ user }: Props) => {
   const needUpdate = useRef(true);
 
   const getRecentFiles = useCallback(async () => {
-    if (!needUpdate.current || !isWeb()) return;
+    if (!needUpdate.current || isWeb()) return;
 
     needUpdate.current = false;
 

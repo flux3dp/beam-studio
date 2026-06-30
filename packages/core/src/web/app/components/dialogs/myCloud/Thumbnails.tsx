@@ -7,6 +7,9 @@ import type { IFile } from '@core/interfaces/IMyCloud';
 
 import styles from './GridFile.module.scss';
 
+const getVersionedUrl = (url: null | string, key: string) =>
+  (url?.startsWith('http') ? `${url}?lastmod=${key}` : url) ?? '';
+
 interface Props {
   file: IFile;
   showBasicThumbnail?: boolean;
@@ -33,7 +36,7 @@ const Thumbnails = ({ file, showBasicThumbnail }: Props): React.JSX.Element => {
   const previewThumbnail = useMemo(
     () => (
       <div className={styles['guide-lines']} style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}>
-        <img src={`${file.thumbnail_url}?lastmod=${file.last_modified_at}`} />
+        <img src={getVersionedUrl(file.thumbnail_url, file.last_modified_at)} />
       </div>
     ),
     [file.thumbnail_url, file.last_modified_at],
@@ -47,7 +50,7 @@ const Thumbnails = ({ file, showBasicThumbnail }: Props): React.JSX.Element => {
             {t.key === previewThumbnailKey ? (
               previewThumbnail
             ) : (
-              <img src={`${t.src}?lastmod=${file.last_modified_at}`} />
+              <img src={getVersionedUrl(t.src, file.last_modified_at)} />
             )}
           </div>
         ))}
