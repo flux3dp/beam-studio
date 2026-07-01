@@ -10,8 +10,13 @@ const CHANGES_TW = {
     '新增 Ador 進階相機校正。',
     '新增 支援貼上剪貼簿中的 DXF 文字。',
     '新增 自動對位功能中可以去背或重新拍照。',
+    '新增 機器綁定功能（需配合 beamo II 6.1.12、HEXA RF 6.2.7 以上韌體）。',
   ],
-  changed: ['調整 無法啟動相機預覽時對話窗。', '在首頁時停用上方校正選單。'],
+  changed: [
+    '調整 無法啟動相機預覽時對話窗。',
+    '在首頁時停用上方校正選單。',
+    '調整 Beambox II 以及 HEXA RF 的進階相機校正拍攝校正圖案步驟。',
+  ],
   fixed: [
     '修正 Promark 相機校正時，有時會選擇錯相機的問題。',
     '修正 beamo II 有時無法啟動預覽的問題。',
@@ -29,7 +34,11 @@ const CHANGES_EN = {
     'Added support for importing DXF text pasted from the clipboard.',
     'Added background remove and retake for Auto Fit.',
   ],
-  changed: ['Updated the camera preview setup error dialog.', 'Disabled the calibration menu on non-editor pages.'],
+  changed: [
+    'Updated the camera preview setup error dialog.',
+    'Disabled the calibration menu on non-editor pages.',
+    'Updated the calibration pattern capture steps for Beambox II.',
+  ],
   fixed: [
     'Fixed Promark camera calibration sometimes selecting the wrong camera.',
     'Fixed an issue where layer color config did not use the correct name.',
