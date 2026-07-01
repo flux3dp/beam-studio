@@ -70,7 +70,6 @@ const ChArUco = ({
 
     const res = await cameraCalibrationApi.detectChAruCo(img!.blob, 15, 10, { is_vertical: isVertical });
 
-    progressCaller.popById('detect-charuco');
     console.log(`Detect ChArUco at ${step}:`, res);
 
     if (!res.success || res.ratio < 0.5) {
@@ -83,6 +82,7 @@ const ChArUco = ({
     data.current[step] = { imgp: res.imgp, objp: res.objp };
 
     if (step !== steps.length - 1) {
+      progressCaller.popById('detect-charuco');
       setStep((s) => s + 1);
       restartLive();
     } else {
@@ -100,6 +100,8 @@ const ChArUco = ({
       }
 
       const calibrateRes = await cameraCalibrationApi.calibrateCamera(objPoints, imgPoints, [w, h], isFisheye);
+
+      progressCaller.popById('detect-charuco');
 
       if (!calibrateRes.success) {
         alertCaller.popUp({ message: `Failed to calibrate image ${calibrateRes.reason}` });

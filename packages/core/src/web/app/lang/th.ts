@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'ยึดกระดาษให้แน่นเพื่อให้เรียบ',
     relocate_camera: 'ย้ายตำแหน่งกล้อง',
     relocate_camera_desc: 'หากเปิดประตูหรือเลื่อนหัวเลเซอร์ ให้ย้ายตำแหน่งกล้องและจัดตำแหน่งจุดใหม่',
+    reset_points: 'รีเซ็ตจุด',
     res_average: 'ปานกลาง',
     res_excellent: 'ยอดเยี่ยม',
     res_poor: 'แย่',

@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Asegure las hojas para que queden planas.',
     relocate_camera: 'Reubicar cámara',
     relocate_camera_desc: 'Si se abre la puerta o se mueve el cabezal láser, reubique la cámara y realinee los puntos.',
+    reset_points: 'Restablecer puntos',
     res_average: 'Promedio',
     res_excellent: 'Excelente',
     res_poor: 'Deficiente',

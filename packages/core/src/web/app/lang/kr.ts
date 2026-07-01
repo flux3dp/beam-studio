@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: '용지가 평평하게 유지되도록 고정하세요.',
     relocate_camera: '카메라 재배치',
     relocate_camera_desc: '도어를 열거나 레이저 헤드를 이동한 경우 카메라를 재배치하고 점을 다시 정렬하세요.',
+    reset_points: '포인트 재설정',
     res_average: '보통',
     res_excellent: '우수',
     res_poor: '나쁨',

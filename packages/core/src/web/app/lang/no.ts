@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Fest arkene for å sikre at de ligger flatt.',
     relocate_camera: 'Flytt kamera',
     relocate_camera_desc: 'Hvis døren åpnes eller laserhodet flyttes, flytt kameraet og juster punktene på nytt.',
+    reset_points: 'Tilbakestill punkter',
     res_average: 'Gjennomsnittlig',
     res_excellent: 'Utmerket',
     res_poor: 'Dårlig',

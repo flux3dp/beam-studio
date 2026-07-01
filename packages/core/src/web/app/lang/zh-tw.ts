@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: ' 將紙張固定，確保紙張沒有浮起。',
     relocate_camera: '重新定位相機',
     relocate_camera_desc: '如果機器門蓋開啟了或雷射頭移動了，請重新定位相機並重新對齊點位。',
+    reset_points: '重置點位',
     res_average: '中等',
     res_excellent: '良好',
     res_poor: '較差',

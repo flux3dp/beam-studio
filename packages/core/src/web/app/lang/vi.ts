@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Cố định các tờ giấy để đảm bảo chúng nằm phẳng.',
     relocate_camera: 'Di chuyển máy ảnh',
     relocate_camera_desc: 'Nếu cửa được mở hoặc đầu laser được di chuyển, hãy di chuyển máy ảnh và căn chỉnh lại các điểm.',
+    reset_points: 'Đặt lại điểm',
     res_average: 'Trung bình',
     res_excellent: 'Xuất sắc',
     res_poor: 'Kém',

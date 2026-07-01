@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Upevněte papíry, aby ležely rovně.',
     relocate_camera: 'Přemístit kameru',
     relocate_camera_desc: 'Pokud jsou dveře otevřeny nebo je laserová hlava přesunuta, přemístěte kameru a znovu zarovnejte body.',
+    reset_points: 'Obnovit body',
     res_average: 'Průměrné',
     res_excellent: 'Výborné',
     res_poor: 'Špatné',

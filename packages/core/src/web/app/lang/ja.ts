@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: '用紙が平らになるように固定してください。',
     relocate_camera: 'カメラを再配置',
     relocate_camera_desc: 'ドアを開けたり、レーザーヘッドを動かしたりした場合は、カメラを再配置して点を再調整してください。',
+    reset_points: 'ポイントをリセット',
     res_average: '普通',
     res_excellent: '優秀',
     res_poor: '悪い',

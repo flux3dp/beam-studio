@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Befestigen Sie die Papiere, damit sie flach liegen.',
     relocate_camera: 'Kamera neu positionieren',
     relocate_camera_desc: 'Wenn die Tür geöffnet oder der Laserkopf bewegt wurde, positionieren Sie die Kamera neu und richten Sie die Punkte erneut aus.',
+    reset_points: 'Punkte zurücksetzen',
     res_average: 'Durchschnittlich',
     res_excellent: 'Hervorragend',
     res_poor: 'Schlecht',

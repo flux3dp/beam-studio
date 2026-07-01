@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Secure the papers to ensure they lie flat.',
     relocate_camera: 'Relocate Camera',
     relocate_camera_desc: 'If the door is opened or the laser head is moved, relocate the camera and re-align points.',
+    reset_points: 'Reset Points',
     res_average: 'Average',
     res_excellent: 'Excellent',
     res_poor: 'Poor',

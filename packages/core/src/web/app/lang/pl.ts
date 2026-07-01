@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Zabezpiecz kartki, aby leżały płasko.',
     relocate_camera: 'Przenieś kamerę',
     relocate_camera_desc: 'Jeśli drzwi zostały otwarte lub głowica lasera została przesunięta, przenieś kamerę i ponownie wyrównaj punkty.',
+    reset_points: 'Resetuj punkty',
     res_average: 'Średni',
     res_excellent: 'Doskonały',
     res_poor: 'Słaby',

@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Fixez les feuilles pour qu’elles restent bien à plat.',
     relocate_camera: 'Repositionner la caméra',
     relocate_camera_desc: 'Si la porte est ouverte ou si la tête laser est déplacée, repositionnez la caméra et réalignez les points.',
+    reset_points: 'Réinitialiser les points',
     res_average: 'Moyen',
     res_excellent: 'Excellent',
     res_poor: 'Médiocre',

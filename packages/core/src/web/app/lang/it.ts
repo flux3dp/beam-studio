@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Fissa i fogli per assicurarti che rimangano piatti.',
     relocate_camera: 'Riposiziona fotocamera',
     relocate_camera_desc: 'Se la porta viene aperta o la testa laser viene spostata, riposizionare la fotocamera e riallineare i punti.',
+    reset_points: 'Reimposta punti',
     res_average: 'Medio',
     res_excellent: 'Eccellente',
     res_poor: 'Scarso',

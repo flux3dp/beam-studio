@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Pastikan kertas-kertas tersebut dilekatkan agar kekal rata.',
     relocate_camera: 'Alihkan Kamera',
     relocate_camera_desc: 'Jika pintu dibuka atau kepala laser dialihkan, alihkan kamera dan sejajarkan semula titik.',
+    reset_points: 'Tetapkan semula titik',
     res_average: 'Purata',
     res_excellent: 'Cemerlang',
     res_poor: 'Lemah',

@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Kiinnitä paperit varmistaaksesi, että ne pysyvät tasaisina.',
     relocate_camera: 'Siirrä kamera',
     relocate_camera_desc: 'Jos ovi avataan tai laserpäätä siirretään, siirrä kamera ja kohdista pisteet uudelleen.',
+    reset_points: 'Nollaa pisteet',
     res_average: 'Keskitasoinen',
     res_excellent: 'Erinomainen',
     res_poor: 'Heikko',

@@ -1193,6 +1193,7 @@ const lang: ILang = {
     put_paper_wide_angle_2: 'Assegura els papers per garantir que quedin plans.',
     relocate_camera: 'Relocalitzar càmera',
     relocate_camera_desc: "Si s'obre la porta o es mou el capçal làser, relocalitza la càmera i torna a alinear els punts.",
+    reset_points: 'Restableix els punts',
     res_average: 'Mitjà',
     res_excellent: 'Excel·lent',
     res_poor: 'Pobre',
