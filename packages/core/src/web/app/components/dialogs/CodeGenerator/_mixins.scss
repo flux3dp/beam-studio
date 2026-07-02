@@ -1,0 +1,45 @@
+@mixin layout {
+  align-items: flex-start;
+
+  @media screen and (max-width: 600px) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+@mixin form {
+  flex: 1;
+  min-width: 0;
+  max-height: 380px;
+  overflow-y: auto;
+
+  @media screen and (max-width: 600px) {
+    max-height: none;
+    overflow-y: visible;
+  }
+}
+
+@mixin field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+@mixin label {
+  color: rgba(0, 0, 0, 0.65);
+}
+
+@mixin input {
+  resize: none;
+  margin-bottom: 16px;
+}
+
+@mixin accent-segmented {
+  :global(.ant-segmented-item-selected) {
+    box-shadow: 0 0 0 1px #1677ff;
+  }
+
+  :global(.ant-segmented-thumb) {
+    box-shadow: 0 0 0 1px #1677ff;
+  }
+}

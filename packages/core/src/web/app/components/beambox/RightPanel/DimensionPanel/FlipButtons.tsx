@@ -47,18 +47,18 @@ const FlipButtons = (): React.JSX.Element => {
   return (
     <div className={styles.container}>
       <Button
+        className={styles.btn}
         icon={<DimensionPanelIcons.HFlip />}
         id="horizontal_flip"
         onClick={() => svgCanvas.flipSelectedElements(-1, 1)}
         title={t.hflip}
-        type="text"
       />
       <Button
+        className={styles.btn}
         icon={<DimensionPanelIcons.VFlip />}
         id="vertical_flip"
         onClick={() => svgCanvas.flipSelectedElements(1, -1)}
         title={t.vflip}
-        type="text"
       />
     </div>
   );

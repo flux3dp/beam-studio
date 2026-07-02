@@ -73,6 +73,7 @@ const lang: ILang = {
     font_size: '글꼴 크기',
     hide_text: '텍스트 숨기기',
     invert_color: '색상 반전',
+    text: '텍스트',
     text_margin: '텍스트 여백',
   },
   beambox: {
@@ -1270,7 +1271,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: '바코드',
+    content: '내용',
+    import: '가져오기',
     qr_code: 'QR 코드',
+    type: '유형',
   },
   curve_engraving: {
     '921': '자동 초점 조정 실패.',
@@ -2115,7 +2119,7 @@ const lang: ILang = {
     error_tolerance: '오류 보정 레벨',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: '배경색 반전',
-    placeholder: '링크나 텍스트를 입력해 주세요',
+    placeholder: '텍스트 입력',
     title: 'QR 코드 생성기',
   },
   resolution: {

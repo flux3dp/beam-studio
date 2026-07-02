@@ -560,6 +560,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     <>
       <LineSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
       <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
+      {!isMobile && <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />}
       {renderVerticalTextSwitch()}
       {!showColorPanel && !isMobile && <InFillBlock elems={[elem]} />}
     </>
@@ -603,9 +604,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         <ConfigProvider theme={selectTheme}>
           <div className={styles.panel}>
             {renderTextContentBlock()}
-            {renderFontFamilyBlock()}
-            <div className={styles.row}>
-              <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
+            <div className={styles['labeled-row']}>
+              <span className={styles['prefix-label']}>Aa</span>
+              {renderFontFamilyBlock()}
+            </div>
+            <div className={styles['labeled-row']}>
+              <span className={classNames(styles['prefix-label'], styles.bold)}>B</span>
               {renderFontStyleBlock()}
             </div>
             {isAllFitText && <div className={styles.row}>{<FitTextAlignBlock textElements={textElements} />}</div>}

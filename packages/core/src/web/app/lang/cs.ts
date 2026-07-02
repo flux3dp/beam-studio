@@ -73,6 +73,7 @@ const lang: ILang = {
     font_size: 'Velikost písma',
     hide_text: 'Skrýt text',
     invert_color: 'Invertovat barvu',
+    text: 'Text',
     text_margin: 'Okraj textu',
   },
   beambox: {
@@ -1270,7 +1271,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Čárový kód',
+    content: 'Obsah',
+    import: 'Importovat',
     qr_code: 'QR kód',
+    type: 'Typ',
   },
   curve_engraving: {
     '921': 'Nepodařilo se automaticky zaostřit.',
@@ -2115,7 +2119,7 @@ const lang: ILang = {
     error_tolerance: 'Chyba v toleranci',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Obrátit barvu pozadí',
-    placeholder: 'Vložit odkaz nebo text',
+    placeholder: 'Zadejte text',
     title: 'Generátor QR kódu',
   },
   resolution: {
