@@ -434,7 +434,9 @@ export const writeDataLayer = <T extends ConfigKey>(
   const originalValue = layer.getAttribute(attr);
 
   if (booleanConfig.includes(key)) {
-    value = (value ? '1' : undefined) as ConfigKeyTypeMap[T];
+    const falseValue = baseConfig[key] === false ? undefined : '0';
+
+    value = (value ? '1' : falseValue) as ConfigKeyTypeMap[T];
   }
 
   if (objectConfig.includes(key)) {
