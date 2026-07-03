@@ -342,6 +342,7 @@ class DeviceMaster {
     const device: IDeviceConnection = this.getDeviceByUUID(uuid);
 
     console.log('Selecting', deviceInfo, device);
+    Progress.popById('select-device');
     Progress.openNonstopProgress({
       id: 'select-device',
       message: sprintf(i18n.lang.message.connectingMachine, device.info.name || deviceInfo.name),

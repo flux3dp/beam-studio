@@ -26,7 +26,13 @@ import type { State } from '../state';
 import { initialState } from '../state';
 import { finishWithDevice } from '../utils/finishWithDevice';
 
-export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string, setIpValue: (ip: string) => void) => {
+export const useConnectionTest = (
+  model: string,
+  isUsb: boolean,
+  ipValue: string,
+  setIpValue: (ip: string) => void,
+  { discoverId = 'connect-machine-ip' }: { discoverId?: string } = {},
+) => {
   const lang = useI18n();
   const [state, setState] = useState<State>(initialState);
   const countDown = useRef(0);
@@ -36,12 +42,12 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
   const testingIps = isUsb ? ['10.55.0.1', '10.55.0.17'] : [ipValue];
 
   useEffect(() => {
-    const unregister = discoverManager.register('connect-machine-ip', (devices) => {
+    const unregister = discoverManager.register(discoverId, (devices) => {
       discoveredDevicesRef.current = devices;
     });
 
     return unregister;
-  }, []);
+  }, [discoverId]);
 
   const updateTestState = (newState: Partial<State>) => setState((prev) => ({ ...prev, ...newState }));
 
@@ -206,6 +212,8 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
     if (isTesting(testState)) {
       return;
     }
+
+    setState((prev) => ({ ...prev, device: null }));
 
     if (!validateIpFormat()) {
       return;
