@@ -98,6 +98,42 @@ const detectAr = detectLocale(
 );
 const isAr = detectAr();
 
+// European Union (EU-27), region-only detection without timezone restriction
+const euRegions = new Set([
+  'AT',
+  'BE',
+  'BG',
+  'HR',
+  'CY',
+  'CZ',
+  'DK',
+  'EE',
+  'FI',
+  'FR',
+  'DE',
+  'GR',
+  'HU',
+  'IE',
+  'IT',
+  'LV',
+  'LT',
+  'LU',
+  'MT',
+  'NL',
+  'PL',
+  'PT',
+  'RO',
+  'SK',
+  'SI',
+  'ES',
+  'SE',
+]);
+const detectEu = detectLocale(
+  (schema) => Boolean(schema.region && euRegions.has(schema.region)),
+  () => true,
+);
+const isEu = detectEu();
+
 const getRegion = () => {
   if (isNorthAmerica) {
     return { checkTimezone: true, region: 'na' };
@@ -136,6 +172,7 @@ const getRegion = () => {
 export default {
   detectAr,
   detectAu,
+  detectEu,
   detectIl,
   detectJp,
   detectKr,
@@ -147,6 +184,7 @@ export default {
   getRegion,
   isAr,
   isAu,
+  isEu,
   isIl,
   isJp,
   isKr,
