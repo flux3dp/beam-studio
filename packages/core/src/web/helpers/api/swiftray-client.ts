@@ -189,6 +189,7 @@ class SwiftrayClient extends EventEmitter {
     this.version = resp?.info?.swiftrayVersion ?? '1.0.0';
 
     console.log(`Swiftray version ${this.version}`);
+    this.checkVersion('SWIFTRAY_HX2_DEV');
   }
 
   private handleClose() {
