@@ -9,7 +9,7 @@ on:
       publish_suffix:
         description: "Publish Suffix"
         required: false
-        default: ""
+        default: "-HX2"
         type: string
       skip_code_sign:
         description: "Skip Code Sign"
