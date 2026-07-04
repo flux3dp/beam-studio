@@ -66,7 +66,31 @@ describe('camera preview', () => {
 ```
 
 Env available: `backendIP`, `machineName`, `adorName`, `username`, `password`,
-`envType ('local' | 'github')`, `cypressDownload*Path` (per-filetype download dirs).
+`envType ('local' | 'github')`, `cypressDownload*Path` (per-filetype download dirs),
+`ghostPort` (local FLUXGhost port override — see below).
+
+### Local-rig batch runner (specs CI can't run)
+
+`apps/web/scripts/cy-local-rig.sh` runs the gated specs against local services
+(`pnpm run cy:fluxghost` / `cy:account` / `cy:machine` / `cy:local-rig` for all).
+Facts it encodes — follow them in new gated specs:
+
+- The compiled Beam Studio app bundles FLUXGhost (`flux_api` process) on a **dynamic
+  port**; the runner auto-detects it via `lsof` (override `GHOST_PORT=<port>`).
+- FLUXGhost's origin allowlist **rejects `http://localhost:8080`** but accepts
+  `http://127.0.0.1:8080` — the runner forces that baseUrl.
+- Specs read `Cypress.env('ghostPort')`: when set, land via
+  `cy.landingEditor({ onBeforeLoad: (win) => { win.localStorage.setItem('host', '127.0.0.1'); win.localStorage.setItem('port', String(ghostPort)); } })`
+  (onBeforeLoad is required — plain pre-visit localStorage writes are wiped by
+  `landingEditor`'s `cy.session`); otherwise fall back to
+  `cy.setUpBackend(Cypress.env('backendIP'))`. Never hardcode a port.
+  Reference implementation: `right-panel/svg-pdf-ai.spec.ts`.
+- **When you add a gated spec, append it to the matching list in
+  `cy-local-rig.sh`** (GHOST_SPECS / ACCOUNT_SPECS / MACHINE_SPECS) — grep-based
+  auto-discovery is unreliable because many CI-safe specs reference
+  `isRunningAtGithub` only for per-platform expected values.
+- Account specs use the `username`/`password` env (override per-run:
+  `CYPRESS_username=... CYPRESS_password=...`).
 
 ## Custom Commands (use these — do not reimplement)
 

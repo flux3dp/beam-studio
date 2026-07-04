@@ -1,0 +1,57 @@
+{
+  "kind": "webfonts#webfontList",
+  "items": [
+    {
+      "kind": "webfonts#webfont",
+      "family": "Alpha Sans",
+      "category": "sans-serif",
+      "subsets": ["latin", "latin-ext"],
+      "variants": ["regular", "700"],
+      "version": "v1",
+      "lastModified": "2024-01-01",
+      "files": {
+        "regular": "https://fonts.gstatic.com/s/alphasans/v1/regular.ttf",
+        "700": "https://fonts.gstatic.com/s/alphasans/v1/700.ttf"
+      }
+    },
+    {
+      "kind": "webfonts#webfont",
+      "family": "Beta Serif",
+      "category": "serif",
+      "subsets": ["latin"],
+      "variants": ["regular", "italic", "700"],
+      "version": "v1",
+      "lastModified": "2024-01-01",
+      "files": {
+        "regular": "https://fonts.gstatic.com/s/betaserif/v1/regular.ttf",
+        "italic": "https://fonts.gstatic.com/s/betaserif/v1/italic.ttf",
+        "700": "https://fonts.gstatic.com/s/betaserif/v1/700.ttf"
+      }
+    },
+    {
+      "kind": "webfonts#webfont",
+      "family": "Gamma Sans",
+      "category": "sans-serif",
+      "subsets": ["japanese", "latin"],
+      "variants": ["regular"],
+      "version": "v1",
+      "lastModified": "2024-01-01",
+      "files": {
+        "regular": "https://fonts.gstatic.com/s/gammasans/v1/regular.ttf"
+      }
+    },
+    {
+      "kind": "webfonts#webfont",
+      "family": "Delta Mono",
+      "category": "monospace",
+      "subsets": ["latin"],
+      "variants": ["regular", "700"],
+      "version": "v1",
+      "lastModified": "2024-01-01",
+      "files": {
+        "regular": "https://fonts.gstatic.com/s/deltamono/v1/regular.ttf",
+        "700": "https://fonts.gstatic.com/s/deltamono/v1/700.ttf"
+      }
+    }
+  ]
+}
