@@ -21,6 +21,7 @@ cd "$(dirname "$0")/.."
 
 GHOST_SPECS=(
   cypress/e2e/right-panel/svg-pdf-ai.spec.ts
+  cypress/e2e/top-bar/path-preview-ghost.spec.ts
   cypress/e2e/top-bar/path-preview-toggles.spec.ts
 )
 

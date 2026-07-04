@@ -173,11 +173,12 @@ describe('path preview (FLUXGhost)', () => {
 
   it('cut order: inner enclosed rects are cut before the outer enclosing rect', () => {
     wireBackendAndLand();
-    // ONE layer: a big enclosing rect plus three small closed rects drawn inside it.
-    drawRectAt(80, 80, 360, 300); // outer enclosure
-    drawRectAt(140, 130, 180, 170); // inner
-    drawRectAt(220, 130, 260, 170); // inner
-    drawRectAt(180, 210, 220, 250); // inner
+    // ONE layer: a big enclosing rect plus three small closed rects clustered near the true
+    // center, well clear of all four edges of the enclosure.
+    drawRectAt(80, 80, 420, 340); // outer enclosure
+    drawRectAt(220, 180, 250, 210); // inner
+    drawRectAt(270, 180, 300, 210); // inner
+    drawRectAt(245, 230, 275, 260); // inner
     cy.get('#svg_4').should('exist');
     enterPathPreview();
 
@@ -190,7 +191,7 @@ describe('path preview (FLUXGhost)', () => {
     // strictly inside. Walk the ordered samples, derive the bounding box from all sampled points,
     // then assert an early sample is strictly interior while a late sample lies on the perimeter —
     // i.e. inner objects are visited before the outer enclosure.
-    const fractions = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9];
+    const fractions = [0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 0.95];
     const points: Array<{ frac: number; x: number; y: number }> = [];
 
     cy.wrap(fractions).each((frac: number) => {
@@ -219,8 +220,8 @@ describe('path preview (FLUXGhost)', () => {
         Math.abs(p.y - minY) <= margin ||
         Math.abs(p.y - maxY) <= margin;
 
-      // Order samples by time and find the first fraction that reaches the outer perimeter and the
-      // last fraction that is still strictly interior.
+      // Order samples by time. The first strictly-interior sample (an inner rect) must come before
+      // the first sample that reaches the outer enclosure perimeter.
       const sorted = [...real].sort((a, b) => a.frac - b.frac);
       const firstPerimeter = sorted.find(onPerimeter);
       const interior = sorted.filter((p) => !onPerimeter(p));
@@ -229,8 +230,14 @@ describe('path preview (FLUXGhost)', () => {
       expect(firstPerimeter, 'the outer enclosure is reached at some point').to.not.be.undefined;
 
       const firstInteriorFrac = interior[0].frac;
+      // Every interior (inner-rect) sample should precede the outer enclosure being reached.
+      const interiorBeforePerimeter = interior.filter((p) => p.frac < firstPerimeter!.frac);
 
-      // Inner (interior) cuts must begin before the outer enclosure perimeter is first reached.
+      expect(
+        interiorBeforePerimeter.length,
+        'inner-rect samples occur before the outer enclosure is reached',
+      ).to.be.greaterThan(0);
+      // Inner (interior) cutting must begin before the outer enclosure perimeter is first reached.
       expect(
         firstInteriorFrac,
         'inner-rect cutting starts before the outer enclosure',
