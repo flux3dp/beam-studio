@@ -2,10 +2,11 @@
 # Local-rig Cypress batch runner — runs the specs that GitHub Actions CANNOT run.
 #
 # Groups:
-#   --ghost    (default) specs that need FLUXGhost but NO machine
-#   --account  specs that need a FLUX ID test account (CYPRESS_username/password)
-#   --machine  specs that need a machine on the bench (plus FLUXGhost)
-#   --all      everything above
+#   --ghost     (default) specs that need FLUXGhost but NO machine
+#   --account   specs that need a FLUX ID test account (CYPRESS_username/password)
+#   --machine   specs that need a machine on the bench (plus FLUXGhost)
+#   --swiftray  specs that speak the Swiftray wire protocol on ws://localhost:6611
+#   --all       everything above
 #
 # FLUXGhost wiring: the compiled Beam Studio app runs FLUXGhost (flux_api) on a
 # DYNAMIC port. This script auto-detects it via lsof; override with GHOST_PORT=<port>.
@@ -21,6 +22,7 @@ cd "$(dirname "$0")/.."
 
 GHOST_SPECS=(
   cypress/e2e/right-panel/svg-pdf-ai.spec.ts
+  cypress/e2e/right-panel/svg-laser-layering.spec.ts
   cypress/e2e/top-bar/path-preview-ghost.spec.ts
   cypress/e2e/top-bar/path-preview-toggles.spec.ts
 )
@@ -39,13 +41,21 @@ MACHINE_SPECS=(
   cypress/e2e/top-bar/device-disconnection.spec.ts
 )
 
+# Swiftray talks the wire protocol directly on ws://localhost:6611 (fixed port). It does NOT
+# need FLUXGhost port detection — only that Swiftray (bundled with the compiled Beam Studio
+# app) is listening on 6611.
+SWIFTRAY_SPECS=(
+  cypress/e2e/machine/swiftray-contract.spec.ts
+)
+
 group="ghost"
 case "${1:---ghost}" in
   --ghost) group="ghost" ;;
   --account) group="account" ;;
   --machine) group="machine" ;;
+  --swiftray) group="swiftray" ;;
   --all) group="all" ;;
-  *) echo "usage: $0 [--ghost|--account|--machine|--all]" >&2; exit 2 ;;
+  *) echo "usage: $0 [--ghost|--account|--machine|--swiftray|--all]" >&2; exit 2 ;;
 esac
 
 # Dev server must be up
@@ -71,11 +81,22 @@ if [[ "$group" == "ghost" || "$group" == "machine" || "$group" == "all" ]]; then
   env_args+=("ghostPort=$port")
 fi
 
+# Swiftray liveness: fixed port 6611 (no dynamic detection needed). Only the compiled Beam
+# Studio app runs Swiftray, so require it to be listening before running the contract specs.
+if [[ "$group" == "swiftray" || "$group" == "all" ]]; then
+  if ! lsof -nP -iTCP:6611 -sTCP:LISTEN >/dev/null 2>&1; then
+    echo "ERROR: Swiftray not listening on ws://localhost:6611 — launch the compiled Beam Studio app (it bundles Swiftray on the fixed port 6611)" >&2
+    exit 1
+  fi
+  echo "Swiftray: listening on ws://localhost:6611"
+fi
+
 case "$group" in
   ghost) specs=("${GHOST_SPECS[@]}") ;;
   account) specs=("${ACCOUNT_SPECS[@]}") ;;
   machine) specs=("${MACHINE_SPECS[@]}") ;;
-  all) specs=("${GHOST_SPECS[@]}" "${ACCOUNT_SPECS[@]}" "${MACHINE_SPECS[@]}") ;;
+  swiftray) specs=("${SWIFTRAY_SPECS[@]}") ;;
+  all) specs=("${GHOST_SPECS[@]}" "${ACCOUNT_SPECS[@]}" "${MACHINE_SPECS[@]}" "${SWIFTRAY_SPECS[@]}") ;;
 esac
 
 # Skip specs that don't exist yet (lists may lead implementation)

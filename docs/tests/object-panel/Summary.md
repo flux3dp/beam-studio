@@ -32,6 +32,9 @@
 | apply.spec.ts | Jest 單元測試 | 自動對位套用：主件縮放／旋轉／位移，及依輪廓複製定位 | Claude 自動產生 (2026-07) |
 | dimension.spec.ts | Jest 單元測試 | 自動對位底層幾何 helper（旋轉後中心點計算） | Claude 自動產生 (2026-07) |
 | dockableStore.spec.ts | Jest 單元測試 | 右側可停靠面板顯示狀態 store（預設值、獨立複本、選擇性通知） | Claude 自動產生 (2026-07) |
+| `apps/web/cypress/e2e/right-panel/text-to-path-web-font.spec.ts` | Cypress E2E | Web 字型（Noto Sans/Fira Sans）轉路徑 + 複製>原地貼上>轉路徑，bbox 容差驗證與顯示一致（發現顯示/轉換字型來源差異約 2.5%，見 bugs/） | Claude 自動產生 (2026-07) |
+| `packages/core/src/web/helpers/convertToPath.spec.ts` | Jest 單元測試 | 文字轉路徑邏輯：單一/批次轉換、revert 復原、取消短路、字型替換警告閘門（10 個測試） | Claude 自動產生 (2026-07) |
+| `apps/web/cypress/e2e/right-panel/image-edit-panel.spec.ts` | Cypress E2E | Edit Image 全視窗編輯器：橡皮擦/魔術棒/圓角、undo/redo、套用後影像變更、取消不變（6 個測試） | Claude 自動產生 (2026-07) |
 
 ### 特別說明
 
@@ -44,6 +47,6 @@
 | 測試表項目 | 狀態與原因（依 CSV） |
 | --- | --- |
 | 確認右側物件面板樣式是否正確 | 維持人工。樣式檢查 E2E 無法涵蓋（表內已註明）；不建議導入視覺回歸工具（成本高、涵蓋案例少）。 |
-| 文字轉路徑（Web 字型轉路徑、複製＞原地貼上＞轉路徑） | 尚未自動化。CSV 建議：Cypress 驗證 Web 字型轉路徑結果，另建議 Jest 單元測試 `convertToPath.ts`（目前無測試）。 |
-| 圖像編輯（確認圖像編輯各功能可正常使用） | 尚未自動化。CSV 建議：Cypress 逐一開啟圖像編輯功能驗證可正常使用。 |
+| ~~文字轉路徑（Web 字型轉路徑、複製＞原地貼上＞轉路徑）~~ | **已補齊（2026-07-04）**：`text-to-path-web-font.spec.ts`（E2E）+ `convertToPath.spec.ts`（Jest），見上方清單。 |
+| ~~圖像編輯（確認圖像編輯各功能可正常使用） ~~ | **已補齊（2026-07-04）**：`image-edit-panel.spec.ts`，見上方清單。 |
 | 自動對位（2.3.9 新增）是否正常 — 第一階段相機取像 | 需 FLUXGhost 與機器。維持本地執行（CI 無 FLUXGhost，勿在 GitHub Actions 執行），納入發版前本地測試批次。相機取像品質與工件形狀辨識準確度需機器與人工驗證；取像後的邏輯已由 autoFit／apply／dimension 單元測試覆蓋。 |

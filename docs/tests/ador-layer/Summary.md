@@ -12,6 +12,7 @@
 | Ador-layer.spec.ts | Cypress E2E | 列印↔雷射圖層／物件切換時的提醒 pop-up | 既有 |
 | upload.spec.ts | Cypress E2E | 跨圖層／跨機型匯入 Beam／BS 檔時的圖層與工作區域切換 | 既有 |
 | Svg-Pdf-ai.spec.ts | Cypress E2E | 測試表原列出的雷射圖層調色與列印頭分層檔名 | 既有（實際檔案為下方 right-panel/svg-pdf-ai.spec.ts） |
+| `apps/web/cypress/e2e/right-panel/svg-laser-layering.spec.ts` | Cypress E2E | 匯入 SVG 選雷射頭：pop-up 三選項（圖層/顏色/不分層）與三種變體的匯入結構與幾何驗證（需 FLUXGhost，本機批次執行） | Claude 自動產生 (2026-07) |
 | right-panel/svg-pdf-ai.spec.ts | Cypress E2E | 依圖層／依顏色分層、改物件色與改圖層色、列印頭彩色圖層、layering pop-up；需 FLUXGhost，CI 自我略過，以 `pnpm run cy:fluxghost` 於本地執行 | Claude 自動產生 (2026-07) |
 
 ## 尚未自動化項目
