@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -40,7 +40,10 @@ export const DialogContextProvider = ({ children }: DialogContextProviderProps):
     setDialogComponents([]);
   }, []);
 
-  useEffect(() => {
+  // Subscribe in a layout effect (not a passive effect): layout effects all run before any
+  // passive effect, so pages that show a dialog in their mount useEffect (e.g. FluxIdLogin)
+  // emit after the provider is already listening. Matches the pre-React-19 componentDidMount timing.
+  useLayoutEffect(() => {
     eventEmitter.on('ADD_DIALOG_COMPONENT', addDialogComponent);
     eventEmitter.on('CLEAR_ALL_DIALOG_COMPONENTS', clearAllDialogComponents);
     eventEmitter.on('CHECK_ID_EXIST', isIdExist);

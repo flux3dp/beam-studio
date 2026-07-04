@@ -114,23 +114,48 @@ Cypress.Commands.add('waitForImageProcessing', (timeout = 15000) => {
   });
 });
 
+/**
+ * Log in to FLUX ID (production auth service) and land the editor.
+ *
+ * Logs in the way a user does: land the editor, then Account menu -> "Log in or Sign Up"
+ * (Dialog.showLoginDialog). On success the FLUX Credit dialog pops up (there is no
+ * "Successfully logged in" alert); we close it and wait for the editor to be ready.
+ * If the shared session is already logged in (testIsolation: false suites), the command
+ * just closes the menu and returns.
+ *
+ * Requires CYPRESS_username / CYPRESS_password for a FLUX ID test account.
+ */
 Cypress.Commands.add('loginAndLandingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
-  setStorage();
-
-  window.localStorage.setItem('printer-is-ready', 'false');
-  cy.visit('/#/initialize/connect/flux-id-login', opts);
-  cy.on('window:load', (win) => {
-    win.onbeforeunload = null;
-  });
   const username = Cypress.env('username');
   const password = Cypress.env('password');
 
-  cy.get('input#email-input').type(username);
-  cy.get('input#password-input').type(password);
-  cy.get('button[class^="ant-btn"]').contains('Login').click({ force: true });
-  cy.get('.ant-modal-content').should('exist').and('have.text', 'Successfully logged in.OK');
-  cy.contains('button span', 'OK').click();
-  // Wait for svgCanvas to be available instead of arbitrary wait
+  cy.landingEditor(opts);
+
+  // Open the Account menu (anchored on an item present in both auth states).
+  cy.getMenuItem(['Account'], 'Design Market').should('exist');
+
+  cy.document().then((doc) => {
+    const menuItems = Array.from(doc.querySelectorAll('ul[aria-label="Menu"] .szh-menu__item'));
+    const loggedIn = menuItems.some((el) => (el.textContent || '').includes('Log out'));
+
+    if (loggedIn) {
+      // Already logged in (shared session): just close the menu.
+      cy.get('body').type('{esc}');
+
+      return;
+    }
+
+    cy.getMenuItem(['Account'], 'Log in or Sign Up').click();
+    cy.get('input#email-input', { timeout: 15000 }).should('be.visible').clear().type(username);
+    cy.get('input#password-input').should('be.visible').clear().type(password, { log: false });
+    cy.get('.ant-modal-content').contains('button', 'Log in').click({ force: true });
+
+    // On success the FLUX Credit dialog appears with the AI Credit value; close it.
+    cy.contains('.ant-modal-content', 'AI Credit', { timeout: 20000 }).should('exist');
+    cy.get('.ant-modal-close:visible').first().click({ force: true });
+    cy.get('.ant-modal-content').should('not.exist');
+  });
+
   cy.window().its('svgCanvas', { timeout: 5000 }).should('exist');
 });
 

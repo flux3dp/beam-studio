@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { createContext, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import type { MessageInstance } from 'antd/es/message/interface';
 
@@ -275,7 +275,9 @@ export const AlertProgressContextProvider = ({
     [pushToStack],
   );
 
-  useEffect(() => {
+  // Layout effect so alerts/progress emitted from a child's mount useEffect are not dropped
+  // (layout effects all run before any passive effect) — same reasoning as DialogContextProvider.
+  useLayoutEffect(() => {
     eventEmitter.on('OPEN_PROGRESS', openProgress);
     eventEmitter.on('OPEN_MESSAGE', openMessage);
     eventEmitter.on('CLOSE_MESSAGE', closeMessage);
