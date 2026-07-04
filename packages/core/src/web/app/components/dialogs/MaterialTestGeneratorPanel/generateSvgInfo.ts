@@ -59,7 +59,7 @@ export default function generateSvgInfo({
       [col[0]]: c,
       name: `${namingMap[col[0]]}${c}-${namingMap[row[0]]}${r}`,
       [row[0]]: r,
-      ...staticParams.map(([key, value]) => ({ [key]: value.default })),
+      ...Object.fromEntries(staticParams.map(([key, value]) => [key, value.default])),
     })),
   ) as unknown as SvgInfo[];
 }
