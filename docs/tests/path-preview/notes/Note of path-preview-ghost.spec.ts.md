@@ -30,5 +30,5 @@
 新增本 spec，覆蓋路徑預覽三個需要 FLUXGhost 的列（Start Here、時間估算一致、切割順序），並以 spec 註解誠實記錄 Swiftray 相關兩分支僅存在於 Electron、web E2E 無法覆蓋。
 
 ## 待確認問題（Open Questions）
-- Swiftray 引擎的切割順序是否需要建立 Electron 端的驗證管道？目前 web E2E 只能覆蓋 FLUXGhost/beamify 引擎。
+- ~~Swiftray 引擎的切割順序是否需要建立 Electron 端的驗證管道？~~ **已解（2026-07-04）**：新增 `machine/swiftray-contract.spec.ts`，直接以 wire protocol 對本機 Swiftray 轉檔並解析 gcode，於引擎層驗證「先內後外」的切割順序（`pnpm run cy:swiftray`）。UI 層的 Swiftray 切換仍僅存在於 Electron，但引擎行為已有覆蓋，詳見 path-preview/notes 的 swiftray-contract 筆記。
 - 「算圖加速」隱藏 Start Here 的分支是否值得建立 Electron 專屬測試？此分支在 web 版永遠無法觸及。

@@ -72,8 +72,14 @@ Env available: `backendIP`, `machineName`, `adorName`, `username`, `password`,
 ### Local-rig batch runner (specs CI can't run)
 
 `apps/web/scripts/cy-local-rig.sh` runs the gated specs against local services
-(`pnpm run cy:fluxghost` / `cy:account` / `cy:machine` / `cy:local-rig` for all).
-Facts it encodes — follow them in new gated specs:
+(`pnpm run cy:fluxghost` / `cy:account` / `cy:swiftray` / `cy:machine` /
+`cy:local-rig` for all). Facts it encodes — follow them in new gated specs:
+
+- Swiftray listens on the FIXED port 6611 (also bundled with the compiled app).
+  The web build hardwires `hasSwiftray = false`, so Swiftray is unreachable via the
+  UI — Swiftray-dependent behavior is tested at the wire-protocol level instead
+  (reference: `machine/swiftray-contract.spec.ts`, which mirrors
+  `SwiftrayClient.action()`'s message format from the page context).
 
 - The compiled Beam Studio app bundles FLUXGhost (`flux_api` process) on a **dynamic
   port**; the runner auto-detects it via `lsof` (override `GHOST_PORT=<port>`).

@@ -15,5 +15,6 @@
 
 | 項目 | 原因 |
 | --- | --- |
-| Start Here 的「算圖加速」隱藏分支（Swiftray 變體） | web 版 `hasSwiftray` 恆為 false，隱藏 Start Here 的算圖加速偏好與 Swiftray 引擎的切割順序變體僅存在於 Electron，web E2E 無法覆蓋。已於 `path-preview-ghost.spec.ts` 註解說明。 |
+| Start Here 的「算圖加速」隱藏分支 | web 版 `hasSwiftray` 恆為 false，隱藏 Start Here 的算圖加速偏好僅存在於 Electron，web E2E 無法覆蓋。已於 `path-preview-ghost.spec.ts` 註解說明。（Swiftray 引擎的切割順序變體已另以 `machine/swiftray-contract.spec.ts` 在協定層覆蓋，見下方清單） |
+| `apps/web/cypress/e2e/machine/swiftray-contract.spec.ts` | Cypress E2E（協定契約） | Swiftray 服務契約：系統資訊、裝置列表、SVG→gcode 轉檔、切割順序先內後外（引擎層）；`pnpm run cy:swiftray` | Claude 自動產生 (2026-07) |
 | WebGL 畫面像素（移動路徑線、反轉背景顏色） | 屬 shader 輸出，E2E 無法斷言，維持人工。 |
