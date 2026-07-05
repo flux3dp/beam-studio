@@ -11,6 +11,7 @@
 | 測試檔案 | 類型 | 涵蓋內容摘要 | 來源 |
 | --- | --- | --- | --- |
 | `cameraPreview.spec.ts`（cameraPreviewStore） | Jest 單元 | 相機預覽 store 的預設狀態、部分合併，以及 supportedPreviewModes 變更時 previewMode／pendingPreviewMode 的協調邏輯（含 else-if 與 shallow 短路兩個注入驗證不變量） | Claude 自動產生 (2026-07) |
+| `packages/core/src/web/app/components/beambox/SvgEditor/OpacitySlider.spec.tsx` | Jest 單元測試 | 相機預覽透明度五段（0/25/50/75/100%）滑桿：步進值、store 寫入、#previewSvg opacity 同步（15 個測試） | Claude 自動產生 (2026-07) |
 
 ## 尚未自動化項目
 

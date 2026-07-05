@@ -8,6 +8,13 @@
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/app/jest.config.ts",
+        "passWithNoTests": true
+      }
     }
   }
 }

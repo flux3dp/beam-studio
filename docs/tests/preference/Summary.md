@@ -12,6 +12,7 @@
 | `preference/advanced-params.spec.ts` | Cypress E2E | 列印進階模式與 UV 列印檔開關持久化、向量路徑限速開關、混合雷射預設關與偏移 70/7、FLUX ID 註冊外連 | Claude 自動產生 (2026-07) |
 | `right-panel/speed-limit-warning.spec.ts` | Cypress E2E | 向量路徑限速 20mm/s，含 BB2 上限 50mm/s 分支 | Claude 自動產生 (2026-07) |
 | `top-bar/workarea-modules.spec.ts` | Cypress E2E | 機型識別：Ador 切換雷射機型時跳出 work area 提醒 pop-up | Claude 自動產生 (2026-07) |
+| `packages/core/src/web/helpers/auto-save-helper.spec.ts` | Jest 單元測試 | 自動儲存邏輯：預設組態、計時觸發、啟停與間隔變更、檔案數修剪、目錄異常處理（16 個測試） | Claude 自動產生 (2026-07) |
 | `language.spec.ts` | Cypress E2E | 語言切換 | 既有 |
 | `machines-ip.spec.ts` | Cypress E2E | 新機器 IP 記錄、自動搜尋機器 IP | 既有 |
 | `preference-display.spec.ts` | Cypress E2E | 預設單位、預設字體、預設字型、自動替換字體 | 既有 |

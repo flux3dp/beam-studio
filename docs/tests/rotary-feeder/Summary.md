@@ -8,7 +8,12 @@
 
 ## 測試檔案清單
 
-目前無自動化測試 — 本分類項目多屬機器行為，需以實機驗證雕刻與送料結果，尚無專屬 spec 覆蓋。
+| 測試檔案 | 類型 | 涵蓋內容摘要 | 來源 |
+|---|---|---|---|
+| `packages/core/src/web/helpers/device/get-rotary-ratio.spec.ts`、`helpers/addOn/rotary.spec.ts` | Jest 單元測試 | 旋轉軸倍率換算邏輯 | 既有 |
+| `packages/core/src/web/app/actions/canvas/rotary-axis.spec.ts` | Jest 單元測試 | 旋轉軸線：mm↔px 座標轉換、工作範圍邊界 clamp、拖曳與 undo 歷史、rotary_mode/job-origin 顯示條件（22 個測試） | Claude 自動產生 (2026-07) |
+
+其餘項目（實機雕刻結果、Y 方向長度量測、送料）維持實機人工。
 
 ## 尚未自動化項目
 

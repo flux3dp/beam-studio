@@ -10,6 +10,8 @@
 | --- | --- | --- | --- |
 | `right-panel/google-fonts-panel.spec.ts` | Cypress E2E（stub 版） | 以固定 fixture 攔截全部網路，驗證搜尋、語言、類別過濾、空狀態，以及 Save 套用與 Cancel 不變動；CI 可跑、不會不穩定 | Claude 自動產生 (2026-07) |
 | `right-panel/google-fonts-live.spec.ts` | Cypress E2E（live 契約版） | 不 stub、直打真實網路，斷言 metadata API 回應的欄位形狀（Roboto 契約）、live 套用字體的端到端鏈路、live 清單的類別過濾；在 CI 以真實網路執行 | Claude 自動產生 (2026-07) |
+| `packages/core/src/web/helpers/fonts/googleFontService.spec.ts` | Jest 單元測試 | 服務編排：掃描畫布文字載入/註冊字型、去重、離線 fallback 替換（13 個測試） | Claude 自動產生 (2026-07) |
+| `packages/core/src/web/app/stores/googleFontStore/index.spec.ts` | Jest 單元測試 | 字型 store：載入 URL 推導、變體註冊、二進位快取、離線佇列與重連補載、歷史紀錄上限（26 個測試） | Claude 自動產生 (2026-07) |
 
 ## 尚未自動化項目
 

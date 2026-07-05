@@ -8,7 +8,12 @@
 
 ## 測試檔案清單
 
-目前無自動化測試 — 多分頁為 Electron-only，尚無專屬 spec 覆蓋；建議以 Jest 單元測試涵蓋分頁邏輯。
+| 測試檔案 | 類型 | 涵蓋內容摘要 | 來源 |
+|---|---|---|---|
+| `packages/core/src/web/app/actions/tabController.spec.ts` | Jest 單元測試 | 分頁控制器（core 側，mock communicator） | 既有 |
+| `apps/app/src/node/tabManager.spec.ts` | Jest 單元測試 | Electron 主行程分頁管理：建立/上限/逐分頁狀態隔離/焦點/廣播路由/關閉清理（32 個測試；**apps/app 首個測試**，隨附最小 Jest 設定 `nx run app:test`） | Claude 自動產生 (2026-07) |
+
+真實多視窗/原生選單行為維持發版前人工（依計畫 Tier D 決策不建置 Electron E2E）。
 
 ## 尚未自動化項目
 

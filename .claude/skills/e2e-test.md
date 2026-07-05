@@ -98,6 +98,33 @@ Env available: `backendIP`, `machineName`, `adorName`, `username`, `password`,
 - Account specs use the `username`/`password` env (override per-run:
   `CYPRESS_username=... CYPRESS_password=...`).
 
+### Path-based verification (以產生的路徑驗證)
+
+When a feature changes the **generated toolpath** rather than any UI state (engrave DPI, auto
+shrink, cut order, module offsets, speed limits …), assert on the FLUXGhost gcode, not the canvas.
+`cypress/support/taskPath.ts` is the shared surface: `installGcodeCaptureHook(win)` in
+`landingEditor({ onBeforeLoad })`, then `getTaskGcode()` drives Path Preview to run the real
+convert engine and resolves the raw gcode; `parseGcode` → structured moves (mm; `G1V0`=laser on,
+`G1S0`=off; sticky X/Y); `getBBox` / `getRasterLines` (line count + spacing stats) /
+`rasterizeCoverage` / `getCutOrderIndices`. FLUXGhost-gated: self-skip on CI, wire `ghostPort`,
+append the spec to `GHOST_SPECS` in `cy-local-rig.sh`. Reference: `top-bar/dpi-resolution.spec.ts`.
+
+Verify at **two tiers**:
+
+- **Tier 1 — metrics with tolerances.** Assert the semantic property that must hold, never raw
+  pixels: DPI → scan-line spacing `≈ 1/dpmm` and count scales with dpmm; coverage-grid ratio;
+  cut ordering (first/last on-perimeter index per shape). Use `closeTo`/ratios — engine rounding
+  drifts. This says *what stays true*.
+- **Tier 2 — golden gcode snapshot.** Exact normalized gcode **is the machine contract** (a byte
+  diff can stall a machine), so any change must surface. `compareGoldenGcode(name, text)`
+  normalizes volatile header lines (the tool banner + our version stamp — raw FLUXGhost gcode has
+  no timestamp) and compares byte-for-byte against `cypress/fixtures/golden-gcode/<name>.gc`
+  (engine-version-stamped on line 1). Workflow: a diff appears → if **expected**, regenerate with
+  `CYPRESS_updateGolden=1` and review the new golden in the PR; if **unexpected**, it's a
+  high-priority machine-contract regression. On an engine upgrade set `CYPRESS_ghostVersion=` so a
+  version bump fails with "regenerate goldens" instead of a confusing line diff. Goldens are
+  deterministic: the same scene at the same DPI produces byte-identical normalized gcode.
+
 ## Custom Commands (use these — do not reimplement)
 
 | Command | Purpose |

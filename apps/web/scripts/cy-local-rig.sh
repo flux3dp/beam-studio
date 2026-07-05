@@ -25,6 +25,8 @@ GHOST_SPECS=(
   cypress/e2e/right-panel/svg-laser-layering.spec.ts
   cypress/e2e/top-bar/path-preview-ghost.spec.ts
   cypress/e2e/top-bar/path-preview-toggles.spec.ts
+  cypress/e2e/top-bar/dpi-resolution.spec.ts
+  cypress/e2e/top-bar/auto-shrink.spec.ts
 )
 
 ACCOUNT_SPECS=(

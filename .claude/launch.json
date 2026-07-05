@@ -6,6 +6,12 @@
       "runtimeExecutable": "pnpm",
       "runtimeArgs": ["nx", "run", "web:start"],
       "port": 8080
+    },
+    {
+      "name": "pm-mockups",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4599", "--directory", "/Users/simon/Dev/beam-studio-pm/docs/mockups"],
+      "port": 4599
     }
   ]
 }

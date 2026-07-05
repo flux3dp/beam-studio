@@ -11,6 +11,8 @@
 | 測試檔案 | 類型 | 涵蓋內容摘要 | 來源 |
 | --- | --- | --- | --- |
 | `CurveEngraving/utils/createTriangularGeometry.spec.ts` | Jest 單元 | 純幾何數學：`setGeometryAngleAlertColor` 的 >45° 紅點上色與 `maxAngle`（含自訂門檻）、`interpolateTriangles` 的細分收斂與 z 剖面保留；即涵蓋測試表的「>45° 紅點」一列 | Claude 自動產生 (2026-07) |
+| `curve-measurer/{translateError,base,red-light}.spec.ts` | Jest 單元測試 | 錯誤碼翻譯（純函數 100%）、量測失敗 → 錯誤 popup 路徑（17 個測試） | Claude 自動產生 (2026-07) |
+| `dialogs/CurveEngraving/{CurveEngraving,MeasureArea}.spec.tsx` | Jest 元件測試 | 紅點點擊顯示錯誤原因、選點重新測量、量測完成 → 3D 預覽狀態流轉（8 個測試） | Claude 自動產生 (2026-07) |
 | `curveEngravingStore.spec.ts` | Jest 單元 | 曲面雕刻 store 的預設狀態、部分合併，以及 `maxAngle` selector 訂閱的精準通知（不被 `hasData` 誤觸） | Claude 自動產生 (2026-07) |
 
 ## 尚未自動化項目
