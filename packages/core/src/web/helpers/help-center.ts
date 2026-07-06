@@ -96,10 +96,10 @@ export const HELP_CENTER_ARTICLES: Record<number, Partial<Record<Category, numbe
     common: 360001814476,
   },
   826: {
-    common: 360001795275, // Fixme: for zh-tw version, articles for #826 and #827 are swapped
+    common: 360001814656,
   },
   827: {
-    common: 360001814656,
+    common: 360001795275,
   },
   828: {
     common: 360001814676,
@@ -217,7 +217,6 @@ export const HELP_CENTER_ARTICLES: Record<number, Partial<Record<Category, numbe
     fhx2rf: 14811427426703,
   },
   921: {
-    // common: 11793139410575, // Note: this is the article for old version beam studio, however it is not available
     fbb2: 11765374880399,
     fbm2: 13025888432015,
     fhx2rf: 14811426753551,
@@ -228,6 +227,7 @@ export const HELP_CENTER_ARTICLES: Record<number, Partial<Record<Category, numbe
     fhx2rf: 14811454916367,
   },
   923: {
+    fbb2: 11898806284815,
     fhx2rf: 14811453240591,
   },
   924: {
@@ -245,11 +245,32 @@ export const HELP_CENTER_ARTICLES: Record<number, Partial<Record<Category, numbe
   928: {
     fbm2: 14068122850703,
   },
+  929: {
+    fbm2: 14289792455823,
+  },
+  930: {
+    fbm2: 14289852209423,
+  },
+  931: {
+    fbm2: 14290352974735,
+  },
+};
+
+// Some articles are given article ids but not public yet, don't show them
+const MISSING_TRANSLATIONS = {
+  _test: new Set([-123]), // For testing
+  'en-us': new Set([
+    14811531232911, 14166906026127, 14108393763471, 14166890705295, 14811500990863, 14166909036687, 14811484479247,
+    14166938370447, 14811444964879, 14166898460303, 14811443232655, 14811473453327, 14169552019087, 14066666269839,
+    14811427426703, 13025888432015, 14811426753551, 14811454916367, 11898806284815, 14811453240591, 14066410187151,
+    13787396460815, 14066695305999, 14068134886543, 14068122850703, 14289792455823, 14289852209423, 14290352974735,
+  ]),
+  'zh-tw': new Set([11898806284815, 14289792455823]),
 };
 
 type CategoryRef = 'current_device' | 'selected_device' | 'workarea';
 
-const resolveCategory = (category?: Category, ref?: CategoryRef[]): Category => {
+export const resolveCategory = (category?: Category, ref?: CategoryRef[]): Category => {
   if (category) return category;
 
   if (!ref || ref.length === 0) return 'common';
@@ -278,6 +299,22 @@ const resolveCategory = (category?: Category, ref?: CategoryRef[]): Category => 
   return 'common';
 };
 
+export const resolveArticle = (
+  articles: Partial<Record<Category, number>> | undefined,
+  category: Category[],
+  langKey: 'en-us' | 'zh-tw',
+): number | undefined => {
+  if (!articles) return undefined;
+
+  for (const c of category) {
+    const articleId = articles[c];
+
+    if (articleId && !MISSING_TRANSLATIONS[langKey]?.has(articleId)) return articleId;
+  }
+
+  return undefined;
+};
+
 export const getHelpCenterURL = (
   errorCode: number,
   {
@@ -293,7 +330,7 @@ export const getHelpCenterURL = (
 ): string | undefined => {
   const langKey = (lang ?? i18n.getActiveLang()) === 'zh-tw' ? 'zh-tw' : 'en-us';
   const category = resolveCategory(opts.category, opts.categoryRef);
-  const articleId = HELP_CENTER_ARTICLES[errorCode]?.[category] ?? HELP_CENTER_ARTICLES[errorCode]?.common;
+  const articleId = resolveArticle(HELP_CENTER_ARTICLES[errorCode], [category, 'common'], langKey);
 
   if (articleId) return `https://support.flux3dp.com/hc/${langKey}/articles/${articleId}`;
   else if (allowHome) return `https://support.flux3dp.com/hc/${langKey}`;
