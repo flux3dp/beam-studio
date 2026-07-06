@@ -5,19 +5,27 @@ import classNames from 'classnames';
 
 import GridGuide from '@core/app/components/welcome/GridGuide';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { checkBM2 } from '@core/helpers/checkFeature';
+import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
 import styles from './TabHelpCenter.module.scss';
 import ThemedButton from './ThemedButton';
 
-const guides = [
+// TODO: Can be merged into guides after en version release
+const guidesForZhTwOnly = [
+  checkHxRf() && {
+    category: 14101381797647,
+    name: 'HEXA RF',
+    src: 'core-img/init-panel/hexa-rf-real.webp',
+  },
   checkBM2() && {
     category: 13025863120655,
     name: 'beamo II',
     src: 'core-img/init-panel/beamo2-real.webp',
   },
+];
+const guides = [
   {
     category: 10647778378639,
     name: 'Beambox II',
@@ -71,11 +79,11 @@ const TabHelpCenter = () => {
     welcome_page: { help_center: t },
   } = useI18n();
   const activeLang = useStorageStore((state) => state['active-lang']);
+  const isZhTw = useMemo(() => activeLang === 'zh-tw', [activeLang]);
+  const zhTwGuides = useMemo(() => (isZhTw ? guidesForZhTwOnly : []), [isZhTw]);
   const helpCenterUrl = useMemo(() => {
-    const isZhTw = activeLang === 'zh-tw';
-
     return isZhTw ? 'https://support.flux3dp.com/hc/zh-tw' : 'https://support.flux3dp.com/hc/en-us';
-  }, [activeLang]);
+  }, [isZhTw]);
 
   return (
     <div>
@@ -94,6 +102,7 @@ const TabHelpCenter = () => {
       <div className={styles.title}>{t.guides}</div>
       <div className={styles.subtitle}>{t.guides_subtitle}</div>
       <div className={classNames(styles.content, styles.guides)}>
+        {zhTwGuides.map((guide) => guide && <GridGuide baseUrl={helpCenterUrl} guide={guide} key={guide.category} />)}
         {guides.map((guide) => guide && <GridGuide baseUrl={helpCenterUrl} guide={guide} key={guide.category} />)}
       </div>
     </div>

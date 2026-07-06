@@ -1912,7 +1912,7 @@ const lang: ILang = {
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z轴归零失败',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 打印模块无响应。',
     HARDWARE_ERROR_PROBE_SHOWED: '请收回探针。',
-    HARDWARE_ERROR_PUMP_ERROR: '#900 水冷未开，请联系客服 (02) 2651-3171',
+    HARDWARE_ERROR_PUMP_ERROR: '#900 水流不足，请检查水箱。',
     HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 远程联锁装置已触发\n请检查远程联锁接头，确保连接牢固后再重新开始作业。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 未侦测到旋转轴',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 子系统没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
@@ -2234,7 +2234,6 @@ const lang: ILang = {
       image_downsampling: 'https://support.flux3dp.com/hc/en-us/articles/360004494995',
       loop_compensation: 'https://support.flux3dp.com/hc/en-us/articles/360004408856',
       mask: 'https://support.flux3dp.com/hc/en-us/articles/360004408876',
-      reverse_engraving: 'https://support.flux3dp.com/hc/en-us/articles/',
       segmented_engraving: 'https://support.flux3dp.com/hc/en-us/articles/12306366019215',
       simplify_clipper_path: 'https://support.flux3dp.com/hc/en-us/articles/360004407276',
       uv_print_export: 'https://support.flux3dp.com/hc/en-us/articles/12320887477135',
