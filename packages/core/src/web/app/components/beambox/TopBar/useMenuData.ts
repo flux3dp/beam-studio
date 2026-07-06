@@ -312,18 +312,10 @@ const useMenuData = (email?: string): MenuNode[] => {
             children: [
               { id: 'IMPORT_EXAMPLE', label: menuCms.import_hello_beamo, type: 'item' },
               { id: 'IMPORT_HELLO_BEAMBOX', label: menuCms.import_hello_beambox, type: 'item' },
+              { id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' as const },
               ...(checkHxRf()
-                ? [
-                    {
-                      children: [
-                        { id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' as const },
-                        { id: 'IMPORT_EXAMPLE_HEXA_RF', label: menuCms.import_hexa_rf_example, type: 'item' as const },
-                      ],
-                      label: 'HEXA',
-                      type: 'submenu' as const,
-                    },
-                  ]
-                : [{ id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' as const }]),
+                ? [{ id: 'IMPORT_EXAMPLE_HEXA_RF', label: menuCms.import_hexa_rf_example, type: 'item' as const }]
+                : []),
               {
                 children: [
                   { id: 'IMPORT_EXAMPLE_ADOR_LASER', label: menuCms.import_ador_laser_example, type: 'item' },

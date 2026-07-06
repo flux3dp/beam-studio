@@ -91,14 +91,8 @@ export function buildFileMenu(
           submenu: [
             { click: callback, id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo },
             { click: callback, id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox },
-            {
-              id: 'EXAMPLE_FILE_HEXA',
-              label: 'HEXA',
-              submenu: [
-                { click: callback, id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example },
-                { click: callback, id: 'IMPORT_EXAMPLE_HEXA_RF', label: r.import_hexa_rf_example },
-              ],
-            },
+            { click: callback, id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example },
+            { click: callback, id: 'IMPORT_EXAMPLE_HEXA_RF', label: r.import_hexa_rf_example },
             {
               id: 'EXAMPLE_FILE_ADOR',
               label: 'Ador',
@@ -128,7 +122,43 @@ export function buildFileMenu(
                 { click: callback, id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: r.import_beambox_2_focus_probe },
               ],
             },
-            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example },
+            {
+              id: 'EXAMPLE_FILE_PROMARK_DESKTOP',
+              label: 'Promark Desktop',
+              submenu: [{ click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example }],
+            },
+            {
+              id: 'EXAMPLE_FILE_PROMARK_MOPA',
+              label: 'Promark MOPA',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',
+                  label: r.import_promark_mopa_20w_color,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR',
+                  label: r.import_promark_mopa_60w_color,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
+                  label: `${r.import_promark_mopa_60w_color} - 2`,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR',
+                  label: r.import_promark_mopa_100w_color,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
+                  label: `${r.import_promark_mopa_100w_color} - 2`,
+                },
+              ],
+            },
           ],
         },
         {
@@ -142,26 +172,6 @@ export function buildFileMenu(
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_LINE', label: r.import_material_testing_line },
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_PRINT', label: r.import_material_printing_test },
           ],
-        },
-        {
-          id: 'PROMARK_COLOR_TEST',
-          label: r.promark_color_test,
-          submenu: [
-            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR', label: r.import_promark_mopa_20w_color },
-            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR', label: r.import_promark_mopa_60w_color },
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
-              label: `${r.import_promark_mopa_60w_color} - 2`,
-            },
-            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR', label: r.import_promark_mopa_100w_color },
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
-              label: `${r.import_promark_mopa_100w_color} - 2`,
-            },
-          ],
-          type: 'submenu',
         },
         { click: callback, id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe },
       ],
