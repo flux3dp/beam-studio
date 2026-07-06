@@ -11,6 +11,7 @@ export type Category = 'bap' | 'common' | WorkAreaModel;
 // Please check the codebase for the actual logic of showing help center links
 // 1. dialogs/Alert.tsx: i18n (and player report)
 // 2. translateError.ts: device cmd return message
+// Also, some articles are hardcoded in `lang/` folder and might be displayed twice if the error code is also mapped to an article id in HELP_CENTER_ARTICLES
 export const HELP_CENTER_ARTICLES: Record<number, Partial<Record<Category, number>>> = {
   401: {
     fbm1: 4402854376079,
