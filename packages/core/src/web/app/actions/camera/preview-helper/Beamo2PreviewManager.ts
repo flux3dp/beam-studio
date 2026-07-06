@@ -20,6 +20,7 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import CalibrationDataMissingError from './CalibrationDataMissingError';
+import callWithRetry from './callWithRetry';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 import handlePreviewSetupError from './handlePreviewSetupError';
 import RegionPreviewMixin from './RegionPreviewMixin';
@@ -63,7 +64,9 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
       if (!this.fisheyeParams) {
         try {
-          this.fisheyeParams = (await deviceMaster.fetchFisheyeParams()) as FisheyeCameraParametersV4;
+          this.fisheyeParams = (await callWithRetry(() =>
+            deviceMaster.fetchFisheyeParams(),
+          )) as FisheyeCameraParametersV4;
           // Set total_width and total_height for region preview to use correct region
           this.fisheyeParams.total_width = workarea.width;
           this.fisheyeParams.total_height = workarea.height;
@@ -103,7 +106,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     try {
       this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
 
-      await deviceMaster.connectCamera();
+      await callWithRetry(() => deviceMaster.connectCamera());
 
       const res = await this.setUpCamera();
 
