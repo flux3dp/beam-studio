@@ -7,7 +7,7 @@ const translateErrorMessage = (origMessage: null | string): { code: null | strin
   const errorCode = origMessage ? /error#([\d]+)/.exec(origMessage)?.[1] : null;
 
   if (errorCode) {
-    const link = getHelpCenterURL(Number(errorCode), { categoryRef: ['current_device'] });
+    const link = getHelpCenterURL(Number(errorCode), { keyRef: ['current_device'] });
 
     return { code: errorCode, link, message: `#${errorCode} ${t[errorCode as keyof typeof t]}` };
   } else if (origMessage?.includes('object over range')) {

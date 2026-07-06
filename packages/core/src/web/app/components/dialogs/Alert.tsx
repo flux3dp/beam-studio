@@ -121,7 +121,7 @@ const Alert = ({
       return null;
     }
 
-    const link = getHelpCenterURL(Number(errorCode[0].replace('#', '')), { categoryRef: ['current_device'] });
+    const link = getHelpCenterURL(Number(errorCode[0].replace('#', '')), { keyRef: ['current_device'] });
 
     if (!link) {
       return null;

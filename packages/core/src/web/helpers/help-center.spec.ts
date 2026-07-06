@@ -26,7 +26,7 @@ jest.mock('@core/app/stores/documentStore', () => ({
   },
 }));
 
-import { getHelpCenterURL, HELP_CENTER_ARTICLES, resolveArticle, resolveCategory } from './help-center';
+import { getHelpCenterURL, HELP_CENTER_ARTICLES, resolveArticle, resolveKey } from './help-center';
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -36,45 +36,45 @@ beforeEach(() => {
   mockGetState.mockReturnValue({ workarea: 'fbm1' });
 });
 
-describe('resolveCategory', () => {
-  test('uses explicit category when provided', () => {
-    expect(resolveCategory('ado1')).toBe('ado1');
+describe('resolveKey', () => {
+  test('uses explicit key when provided', () => {
+    expect(resolveKey('ado1')).toBe('ado1');
   });
 
-  test('falls back to common when no category and no ref', () => {
-    expect(resolveCategory()).toBe('common');
+  test('falls back to common when no key and no ref', () => {
+    expect(resolveKey()).toBe('common');
   });
 
-  test('resolves category from current_device model', () => {
+  test('resolves key from current_device model', () => {
     deviceMasterMock.currentDevice = { info: { model: 'fbb1b' } };
-    expect(resolveCategory(undefined, ['current_device'])).toBe('fbb1b');
+    expect(resolveKey(undefined, ['current_device'])).toBe('fbb1b');
   });
 
-  test('resolves category from selected_device model', () => {
+  test('resolves key from selected_device model', () => {
     mockGetSelectedDevice.mockReturnValue({ model: 'fhexa1' });
-    expect(resolveCategory(undefined, ['selected_device'])).toBe('fhexa1');
+    expect(resolveKey(undefined, ['selected_device'])).toBe('fhexa1');
   });
 
-  test('resolves category from workarea', () => {
+  test('resolves key from workarea', () => {
     mockGetState.mockReturnValue({ workarea: 'fbm2' });
-    expect(resolveCategory(undefined, ['workarea'])).toBe('fbm2');
+    expect(resolveKey(undefined, ['workarea'])).toBe('fbm2');
   });
 
   test('tries refs in order and skips ones without a model', () => {
     deviceMasterMock.currentDevice = null; // current_device has no model
     mockGetSelectedDevice.mockReturnValue({ model: 'fbm1' });
-    expect(resolveCategory(undefined, ['current_device', 'selected_device'])).toBe('fbm1');
+    expect(resolveKey(undefined, ['current_device', 'selected_device'])).toBe('fbm1');
   });
 
   test('falls back to common when refs yield no model', () => {
     deviceMasterMock.currentDevice = null;
     mockGetSelectedDevice.mockReturnValue(null);
-    expect(resolveCategory(undefined, ['current_device', 'selected_device'])).toBe('common');
+    expect(resolveKey(undefined, ['current_device', 'selected_device'])).toBe('common');
   });
 });
 
 describe('resolveArticle', () => {
-  test('tries categories in order and skips ones without an article', () => {
+  test('tries keys in order and skips ones without an article', () => {
     expect(resolveArticle(HELP_CENTER_ARTICLES[901], ['ado1', 'fbb1b'], 'en-us')).toBe(HELP_CENTER_ARTICLES[901].ado1);
     expect(resolveArticle(HELP_CENTER_ARTICLES[922], ['fbm2', 'common'], 'en-us')).toBe(
       HELP_CENTER_ARTICLES[922].common,

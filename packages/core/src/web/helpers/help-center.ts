@@ -5,14 +5,14 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import deviceMaster from './device-master';
 import i18n from './i18n';
 
-export type Category = 'bap' | 'common' | WorkAreaModel;
+export type Key = 'bap' | 'common' | WorkAreaModel;
 
 // Note: HELP_CENTER_ARTICLES is just a constant map for error code to article id, not guaranteed to be displayed in corresponding situations
 // Please check the codebase for the actual logic of showing help center links
 // 1. dialogs/Alert.tsx: i18n (and player report)
 // 2. translateError.ts: device cmd return message
 // Also, some articles are hardcoded in `lang/` folder and might be displayed twice if the error code is also mapped to an article id in HELP_CENTER_ARTICLES
-export const HELP_CENTER_ARTICLES: Record<number, Partial<Record<Category, number>>> = {
+export const HELP_CENTER_ARTICLES: Record<number, Partial<Record<Key, number>>> = {
   401: {
     fbm1: 4402854376079,
   },
@@ -270,10 +270,10 @@ const MISSING_TRANSLATIONS = {
   'zh-tw': new Set([11898806284815, 14289792455823]),
 };
 
-type CategoryRef = 'current_device' | 'selected_device' | 'workarea';
+type KeyRef = 'current_device' | 'selected_device' | 'workarea';
 
-export const resolveCategory = (category?: Category, ref?: CategoryRef[]): Category => {
-  if (category) return category;
+export const resolveKey = (key?: Key, ref?: KeyRef[]): Key => {
+  if (key) return key;
 
   if (!ref || ref.length === 0) return 'common';
 
@@ -302,14 +302,14 @@ export const resolveCategory = (category?: Category, ref?: CategoryRef[]): Categ
 };
 
 export const resolveArticle = (
-  articles: Partial<Record<Category, number>> | undefined,
-  category: Category[],
+  articles: Partial<Record<Key, number>> | undefined,
+  keys: Key[],
   langKey: 'en-us' | 'zh-tw',
 ): number | undefined => {
   if (!articles) return undefined;
 
-  for (const c of category) {
-    const articleId = articles[c];
+  for (const key of keys) {
+    const articleId = articles[key];
 
     if (articleId && !MISSING_TRANSLATIONS[langKey]?.has(articleId)) return articleId;
   }
@@ -325,14 +325,14 @@ export const getHelpCenterURL = (
     ...opts
   }: Partial<{
     allowHome: boolean;
-    category: Category;
-    categoryRef: CategoryRef[];
+    key: Key;
+    keyRef: KeyRef[];
     lang: string;
   }> = {},
 ): string | undefined => {
   const langKey = (lang ?? i18n.getActiveLang()) === 'zh-tw' ? 'zh-tw' : 'en-us';
-  const category = resolveCategory(opts.category, opts.categoryRef);
-  const articleId = resolveArticle(HELP_CENTER_ARTICLES[errorCode], [category, 'common'], langKey);
+  const key = resolveKey(opts.key, opts.keyRef);
+  const articleId = resolveArticle(HELP_CENTER_ARTICLES[errorCode], [key, 'common'], langKey);
 
   if (articleId) return `https://support.flux3dp.com/hc/${langKey}/articles/${articleId}`;
   else if (allowHome) return `https://support.flux3dp.com/hc/${langKey}`;
