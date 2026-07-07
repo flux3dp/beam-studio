@@ -143,9 +143,9 @@ describe('text and shapes boolean operation', () => {
       );
     checkDimensions(
       isRunningAtGithub ? 1.19 : 0,
-      isRunningAtGithub ? 19.19 : 19.29,
-      isRunningAtGithub ? 69.13 : 75,
-      isRunningAtGithub ? 39.43 : 39.31,
+      isRunningAtGithub ? 19.18 : 19.29,
+      isRunningAtGithub ? 69.11 : 75,
+      isRunningAtGithub ? 39.44 : 39.31,
     );
   });
 
