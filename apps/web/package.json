@@ -13,6 +13,7 @@
     "cy:fluxghost": "bash scripts/cy-local-rig.sh --ghost",
     "cy:account": "bash scripts/cy-local-rig.sh --account",
     "cy:machine": "bash scripts/cy-local-rig.sh --machine",
+    "cy:machine-readonly": "bash scripts/cy-local-rig.sh --machine-readonly",
     "cy:swiftray": "bash scripts/cy-local-rig.sh --swiftray",
     "cy:local-rig": "bash scripts/cy-local-rig.sh --all"
   },

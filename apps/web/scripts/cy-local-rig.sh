@@ -2,11 +2,21 @@
 # Local-rig Cypress batch runner — runs the specs that GitHub Actions CANNOT run.
 #
 # Groups:
-#   --ghost     (default) specs that need FLUXGhost but NO machine
-#   --account   specs that need a FLUX ID test account (CYPRESS_username/password)
-#   --machine   specs that need a machine on the bench (plus FLUXGhost)
-#   --swiftray  specs that speak the Swiftray wire protocol on ws://localhost:6611
-#   --all       everything above
+#   --ghost             (default) specs that need FLUXGhost but NO machine
+#   --account           specs that need a FLUX ID test account (CYPRESS_username/password)
+#   --machine           specs that need a machine on the bench (plus FLUXGhost)
+#   --machine-readonly  read-only machine specs — connect / Machine Info / idle Dashboard /
+#                       camera preview / network testing. NEVER upload or run a job; safe to run
+#                       against a machine you don't want firing. Set machine names via env (below).
+#   --swiftray          specs that speak the Swiftray wire protocol on ws://localhost:6611
+#   --all               everything above
+#
+# Machine names for --machine-readonly are ENV-DRIVEN so you can target your own bench:
+#   CYPRESS_machineName="beamo (Adam)"    # beam-series / CO2 (bed camera)
+#   CYPRESS_adorName="Ador (Cruz)"         # Ador (bed camera + module info)
+#   CYPRESS_beamo2Name="beamo II (...)"    # beamo II / newer beam-series (bed camera)
+# A slot with no name set is skipped. Defaults for machineName/adorName live in
+# cypress.config.ts — override them to match the machines actually on your network.
 #
 # FLUXGhost wiring: the compiled Beam Studio app runs FLUXGhost (flux_api) on a
 # DYNAMIC port. This script auto-detects it via lsof; override with GHOST_PORT=<port>.
@@ -43,6 +53,17 @@ MACHINE_SPECS=(
   cypress/e2e/top-bar/device-disconnection.spec.ts
 )
 
+# Read-only machine specs: connect to a real machine and query it (Machine Info, idle
+# Dashboard, camera preview) WITHOUT ever uploading or running a job. Kept as a separate
+# group so a machine can be validated without any risk of it starting work.
+MACHINE_READONLY_SPECS=(
+  cypress/e2e/machine/connection-timing.spec.ts
+  cypress/e2e/machine/machine-info-readonly.spec.ts
+  cypress/e2e/machine/dashboard-readonly.spec.ts
+  cypress/e2e/machine/camera-preview-readonly.spec.ts
+  cypress/e2e/machine/network-testing.spec.ts
+)
+
 # Swiftray talks the wire protocol directly on ws://localhost:6611 (fixed port). It does NOT
 # need FLUXGhost port detection — only that Swiftray (bundled with the compiled Beam Studio
 # app) is listening on 6611.
@@ -55,9 +76,10 @@ case "${1:---ghost}" in
   --ghost) group="ghost" ;;
   --account) group="account" ;;
   --machine) group="machine" ;;
+  --machine-readonly) group="machine-readonly" ;;
   --swiftray) group="swiftray" ;;
   --all) group="all" ;;
-  *) echo "usage: $0 [--ghost|--account|--machine|--swiftray|--all]" >&2; exit 2 ;;
+  *) echo "usage: $0 [--ghost|--account|--machine|--machine-readonly|--swiftray|--all]" >&2; exit 2 ;;
 esac
 
 # Dev server must be up
@@ -69,7 +91,7 @@ fi
 specs=()
 env_args=()
 
-if [[ "$group" == "ghost" || "$group" == "machine" || "$group" == "all" ]]; then
+if [[ "$group" == "ghost" || "$group" == "machine" || "$group" == "machine-readonly" || "$group" == "all" ]]; then
   port="${GHOST_PORT:-}"
   if [[ -z "$port" ]]; then
     # flux_api = FLUXGhost bundled with the compiled Beam Studio app
@@ -97,8 +119,9 @@ case "$group" in
   ghost) specs=("${GHOST_SPECS[@]}") ;;
   account) specs=("${ACCOUNT_SPECS[@]}") ;;
   machine) specs=("${MACHINE_SPECS[@]}") ;;
+  machine-readonly) specs=("${MACHINE_READONLY_SPECS[@]}") ;;
   swiftray) specs=("${SWIFTRAY_SPECS[@]}") ;;
-  all) specs=("${GHOST_SPECS[@]}" "${ACCOUNT_SPECS[@]}" "${MACHINE_SPECS[@]}" "${SWIFTRAY_SPECS[@]}") ;;
+  all) specs=("${GHOST_SPECS[@]}" "${ACCOUNT_SPECS[@]}" "${MACHINE_SPECS[@]}" "${MACHINE_READONLY_SPECS[@]}" "${SWIFTRAY_SPECS[@]}") ;;
 esac
 
 # Skip specs that don't exist yet (lists may lead implementation)

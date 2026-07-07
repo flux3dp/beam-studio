@@ -21,8 +21,14 @@ export const envVariables = {
   password: 'Flux42642569',
   envType: 'local',
   backendIP: '192.168.1.114',
+  // Machine display names for the local-rig specs. These are DEFAULTS for the reference
+  // bench — override per operator with CYPRESS_machineName / CYPRESS_adorName /
+  // CYPRESS_beamo2Name to point the rig at your own machines. `beamSeriesName` is an alias
+  // of `machineName` kept because several existing specs read the name by that key.
   machineName: 'beamo (Adam)',
+  beamSeriesName: 'beamo (Adam)',
   adorName: 'Ador (Cruz)',
+  // beamo2Name has no default — the read-only rig specs skip it unless CYPRESS_beamo2Name is set.
 };
 
 export default defineConfig({
