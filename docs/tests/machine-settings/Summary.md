@@ -12,7 +12,10 @@
 | --- | --- | --- | --- |
 | `top-bar/workarea-modules.spec.ts` | Cypress E2E | 切換 beamo／beambox／hexa／beamboxII 時，逐一斷言各機型的畫布 viewBox 尺寸（涵蓋本分類的畫布切換列）。註：此 spec 檔實際歸於 viewport 分類 | Claude 自動產生 (2026-07) |
 | `apps/web/cypress/e2e/machine/machine-setup-screens.spec.ts` | Cypress E2E | 機器設定精靈畫面：機型選擇、BB2 連線選項與面板圖、Ador 專屬圖像差異、返回編輯器（CI 可跑，與需實機的 `connection.spec.ts` 互補） | Claude 自動產生 (2026-07) |
+| `apps/web/cypress/e2e/machine/connection-timing.spec.ts` | Cypress E2E（實機唯讀） | 對實機連線並測量耗時 < 20 秒（測試表第 305 列連線時限）；逐一跑過已設定的 Beam 系列／Ador／beamo II。本地批次 `--machine-readonly` | Claude 自動產生 (2026-07) |
+| `apps/web/cypress/e2e/machine/machine-info-readonly.spec.ts` | Cypress E2E（實機唯讀） | Machines >〈機器〉> Machine Info：斷言 Model Name／IP／Serial／Firmware／UUID 欄位＋真實 IPv4 回傳；純讀取不送工作。本地批次 `--machine-readonly` | Claude 自動產生 (2026-07) |
 
 ## 尚未自動化項目
 
 - ~~從「機器」選單 >「新增或設定機器」進入 BB2、Ador 機器設定畫面是否正確~~ — **已補齊（2026-07-04）**：`machine/machine-setup-screens.spec.ts`，見上方清單。其他機型（beamo／HEXA／Promark）的設定畫面尚未納入（低風險，可用同模式擴充）。
+- **實機唯讀連機批次（2026-07 補）**：連線耗時、Machine Info、待機 Dashboard、相機預覽四支已補齊，皆為「不送工作」的唯讀操作，走 `pnpm --filter web cy:machine-readonly`（見 `apps/web/scripts/cy-local-rig.sh --machine-readonly`）。機器名稱以 `CYPRESS_machineName`／`adorName`／`beamo2Name` 環境變數指定，未設定者跳過。
