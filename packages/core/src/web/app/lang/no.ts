@@ -73,6 +73,7 @@ const lang: ILang = {
     font_size: 'Skriftstørrelse',
     hide_text: 'Skjul tekst',
     invert_color: 'Inverter farge',
+    text: 'Tekst',
     text_margin: 'Tekstmarg',
   },
   beambox: {
@@ -1270,7 +1271,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Strekkode',
+    content: 'Innhold',
+    import: 'Importer',
     qr_code: 'QR-kode',
+    type: 'Type',
   },
   curve_engraving: {
     '921': 'Automatisk fokusering mislyktes.',
@@ -2115,7 +2119,7 @@ const lang: ILang = {
     error_tolerance: 'Feiltoleranse',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Inverter bakgrunnsfarge',
-    placeholder: 'Skriv inn en lenke eller tekst',
+    placeholder: 'Skriv inn tekst',
     title: 'QR-kodegenerator',
   },
   resolution: {

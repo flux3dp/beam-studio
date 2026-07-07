@@ -3,33 +3,17 @@
 exports[`test QRCodeGenerator should behave correctly 1`] = `
 <body>
   <div>
-    <div>
-      <span
-        class="ant-input-affix-wrapper ant-input-textarea-affix-wrapper ant-input-textarea-show-count css-dev-only-do-not-override-hash ant-input-show-count ant-input-outlined input"
-        data-count="0 / 200"
-      >
-        <textarea
-          class="ant-input css-dev-only-do-not-override-hash"
-          maxlength="200"
-          placeholder="Input a link or text"
-          rows="5"
-        />
-        <span
-          class="ant-input-suffix"
-        >
-          <span
-            class="ant-input-data-count"
-          >
-            0 / 200
-          </span>
-        </span>
-      </span>
+    <div
+      class="layout ant-flex css-dev-only-do-not-override-hash"
+      style="gap: 24px;"
+    >
       <div
-        class="content"
+        class="qrcode-container"
+        id="qrcode-container"
       >
         <div
-          class="qrcode-container"
-          id="qrcode-container"
+          class="zoom-wrap"
+          style="transform: scale(1);"
         >
           <div
             class="placeholder"
@@ -38,7 +22,173 @@ exports[`test QRCodeGenerator should behave correctly 1`] = `
           </div>
         </div>
         <div
-          class="settings"
+          class="toolbar"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only button"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <span
+                aria-label="expand"
+                class="anticon anticon-expand"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="expand"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <defs>
+                    <style />
+                  </defs>
+                  <path
+                    d="M342 88H120c-17.7 0-32 14.3-32 32v224c0 8.8 7.2 16 16 16h48c8.8 0 16-7.2 16-16V168h174c8.8 0 16-7.2 16-16v-48c0-8.8-7.2-16-16-16zm578 576h-48c-8.8 0-16 7.2-16 16v176H682c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h222c17.7 0 32-14.3 32-32V680c0-8.8-7.2-16-16-16zM342 856H168V680c0-8.8-7.2-16-16-16h-48c-8.8 0-16 7.2-16 16v224c0 17.7 14.3 32 32 32h222c8.8 0 16-7.2 16-16v-48c0-8.8-7.2-16-16-16zM904 88H682c-8.8 0-16 7.2-16 16v48c0 8.8 7.2 16 16 16h174v176c0 8.8 7.2 16 16 16h48c8.8 0 16-7.2 16-16V120c0-17.7-14.3-32-32-32z"
+                  />
+                </svg>
+              </span>
+            </span>
+          </button>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only ant-dropdown-trigger button"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <span
+                aria-label="down"
+                class="anticon anticon-down"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="down"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+                  />
+                </svg>
+              </span>
+            </span>
+          </button>
+          <div
+            class="ant-divider css-dev-only-do-not-override-hash ant-divider-vertical divider"
+            role="separator"
+          />
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only button"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <span
+                aria-label="minus"
+                class="anticon anticon-minus"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="minus"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M872 474H152c-4.4 0-8 3.6-8 8v60c0 4.4 3.6 8 8 8h720c4.4 0 8-3.6 8-8v-60c0-4.4-3.6-8-8-8z"
+                  />
+                </svg>
+              </span>
+            </span>
+          </button>
+          <span
+            class="value"
+          >
+            100
+            %
+          </span>
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only button"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <span
+                aria-label="plus"
+                class="anticon anticon-plus"
+                role="img"
+              >
+                <svg
+                  aria-hidden="true"
+                  data-icon="plus"
+                  fill="currentColor"
+                  focusable="false"
+                  height="1em"
+                  viewBox="64 64 896 896"
+                  width="1em"
+                >
+                  <path
+                    d="M482 152h60q8 0 8 8v704q0 8-8 8h-60q-8 0-8-8V160q0-8 8-8z"
+                  />
+                  <path
+                    d="M192 474h672q8 0 8 8v60q0 8-8 8H160q-8 0-8-8v-60q0-8 8-8z"
+                  />
+                </svg>
+              </span>
+            </span>
+          </button>
+        </div>
+      </div>
+      <div
+        class="form ant-flex css-dev-only-do-not-override-hash ant-flex-align-stretch ant-flex-vertical"
+        style="gap: 12px;"
+      >
+        <div
+          class="field"
+        >
+          <div
+            class="label"
+          >
+            Content
+          </div>
+          <span
+            class="ant-input-affix-wrapper ant-input-textarea-affix-wrapper ant-input-textarea-show-count css-dev-only-do-not-override-hash ant-input-show-count ant-input-outlined input"
+            data-count="0 / 200"
+          >
+            <textarea
+              class="ant-input css-dev-only-do-not-override-hash"
+              maxlength="200"
+              placeholder="Input a text"
+              rows="4"
+            />
+            <span
+              class="ant-input-suffix"
+            >
+              <span
+                class="ant-input-data-count"
+              >
+                0 / 200
+              </span>
+            </span>
+          </span>
+        </div>
+        <div
+          class="field"
         >
           <div
             class="label"
@@ -69,112 +219,110 @@ exports[`test QRCodeGenerator should behave correctly 1`] = `
             </span>
           </div>
           <div
-            class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-stretch ant-flex-vertical"
+            aria-label="segmented control"
+            class="ant-segmented accent-segmented ant-segmented-block css-dev-only-do-not-override-hash"
+            role="radiogroup"
+            tabindex="0"
           >
             <div
-              class="ant-radio-group ant-radio-group-outline ant-radio-group-small css-dev-only-do-not-override-hash"
+              class="ant-segmented-group"
             >
               <label
-                class="ant-radio-wrapper ant-radio-wrapper-checked css-dev-only-do-not-override-hash"
-              >
-                <span
-                  class="ant-radio ant-wave-target ant-radio-checked"
-                >
-                  <input
-                    checked=""
-                    class="ant-radio-input"
-                    name="test-id"
-                    type="radio"
-                    value="L"
-                  />
-                  <span
-                    class="ant-radio-inner"
-                  />
-                </span>
-                <span>
-                  7%
-                </span>
-              </label>
-              <label
-                class="ant-radio-wrapper css-dev-only-do-not-override-hash"
-              >
-                <span
-                  class="ant-radio ant-wave-target"
-                >
-                  <input
-                    class="ant-radio-input"
-                    name="test-id"
-                    type="radio"
-                    value="M"
-                  />
-                  <span
-                    class="ant-radio-inner"
-                  />
-                </span>
-                <span>
-                  15%
-                </span>
-              </label>
-              <label
-                class="ant-radio-wrapper css-dev-only-do-not-override-hash"
-              >
-                <span
-                  class="ant-radio ant-wave-target"
-                >
-                  <input
-                    class="ant-radio-input"
-                    name="test-id"
-                    type="radio"
-                    value="Q"
-                  />
-                  <span
-                    class="ant-radio-inner"
-                  />
-                </span>
-                <span>
-                  20%
-                </span>
-              </label>
-              <label
-                class="ant-radio-wrapper css-dev-only-do-not-override-hash"
-              >
-                <span
-                  class="ant-radio ant-wave-target"
-                >
-                  <input
-                    class="ant-radio-input"
-                    name="test-id"
-                    type="radio"
-                    value="H"
-                  />
-                  <span
-                    class="ant-radio-inner"
-                  />
-                </span>
-                <span>
-                  30%
-                </span>
-              </label>
-            </div>
-            <label
-              class="ant-checkbox-wrapper checkbox css-dev-only-do-not-override-hash"
-            >
-              <span
-                class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash"
+                class="ant-segmented-item ant-segmented-item-selected"
               >
                 <input
-                  class="ant-checkbox-input"
-                  type="checkbox"
+                  checked=""
+                  class="ant-segmented-item-input"
+                  name="test-id"
+                  type="radio"
                 />
-                <span
-                  class="ant-checkbox-inner"
+                <div
+                  aria-selected="true"
+                  class="ant-segmented-item-label"
+                  title="7%"
+                >
+                  7%
+                </div>
+              </label>
+              <label
+                class="ant-segmented-item"
+              >
+                <input
+                  class="ant-segmented-item-input"
+                  name="test-id"
+                  type="radio"
                 />
-              </span>
-              <span>
-                Invert background color
-              </span>
-            </label>
+                <div
+                  aria-selected="false"
+                  class="ant-segmented-item-label"
+                  title="15%"
+                >
+                  15%
+                </div>
+              </label>
+              <label
+                class="ant-segmented-item"
+              >
+                <input
+                  class="ant-segmented-item-input"
+                  name="test-id"
+                  type="radio"
+                />
+                <div
+                  aria-selected="false"
+                  class="ant-segmented-item-label"
+                  title="20%"
+                >
+                  20%
+                </div>
+              </label>
+              <label
+                class="ant-segmented-item"
+              >
+                <input
+                  class="ant-segmented-item-input"
+                  name="test-id"
+                  type="radio"
+                />
+                <div
+                  aria-selected="false"
+                  class="ant-segmented-item-label"
+                  title="30%"
+                >
+                  30%
+                </div>
+              </label>
+            </div>
           </div>
+        </div>
+        <div
+          class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-center ant-flex-justify-space-between"
+        >
+          <span
+            class="label"
+          >
+            Invert background color
+          </span>
+          <button
+            aria-checked="false"
+            class="ant-switch css-dev-only-do-not-override-hash"
+            role="switch"
+            type="button"
+          >
+            <div
+              class="ant-switch-handle"
+            />
+            <span
+              class="ant-switch-inner"
+            >
+              <span
+                class="ant-switch-inner-checked"
+              />
+              <span
+                class="ant-switch-inner-unchecked"
+              />
+            </span>
+          </button>
         </div>
       </div>
     </div>
