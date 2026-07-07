@@ -13,8 +13,10 @@
 }
 
 .text {
+  height: 100%;
   display: flex;
   flex-direction: column;
+  justify-content: center;
   max-width: 480px;
   gap: 12px;
 

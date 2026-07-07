@@ -31,7 +31,7 @@ export const useConnectionTest = (
   isUsb: boolean,
   ipValue: string,
   setIpValue: (ip: string) => void,
-  { discoverId = 'connect-machine-ip' }: { discoverId?: string } = {},
+  { discoverId = 'connect-machine-ip', skipCameraTest = false }: { discoverId?: string; skipCameraTest?: boolean } = {},
 ) => {
   const lang = useI18n();
   const [state, setState] = useState<State>(initialState);
@@ -238,6 +238,12 @@ export const useConnectionTest = (
     if (!checkSoftwareForAdor(device)) {
       setIpValue('');
       setState((prev) => ({ ...prev, device: null, testState: TestState.NONE }));
+
+      return;
+    }
+
+    if (skipCameraTest) {
+      updateTestState({ testState: TestState.TEST_COMPLETED });
 
       return;
     }

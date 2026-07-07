@@ -36,13 +36,6 @@ const getMachineStatus = (testState: TestState): CheckStatus => {
 const getFirmwareStatus = (testState: TestState): CheckStatus =>
   testState >= TestState.CAMERA_TESTING ? 'success' : 'pending';
 
-const getCameraStatus = (testState: TestState): CheckStatus =>
-  match(testState)
-    .with(TestState.CAMERA_TEST_FAILED, (): CheckStatus => 'fail')
-    .with(TestState.CAMERA_TESTING, (): CheckStatus => 'testing')
-    .with(TestState.TEST_COMPLETED, (): CheckStatus => 'success')
-    .otherwise((): CheckStatus => 'pending');
-
 const renderStatusIcon = (status: CheckStatus): React.JSX.Element =>
   match(status)
     .with('pending', () => <MinusCircleOutlined className={styles.pending} />)
@@ -58,12 +51,11 @@ const StepVerify = ({ model }: StepVerifyProps): React.JSX.Element => {
   const [ipValue, setIpValue] = useState('');
   const { handleStartTest, state } = useConnectionTest(model, false, ipValue, setIpValue, {
     discoverId: 'connection-issue-guide',
+    skipCameraTest: true,
   });
   const { device, testState } = state;
   const testing = isTesting(testState);
-  const isFailed = [TestState.CAMERA_TEST_FAILED, TestState.CONNECTION_TEST_FAILED, TestState.IP_UNREACHABLE].includes(
-    testState,
-  );
+  const isFailed = [TestState.CONNECTION_TEST_FAILED, TestState.IP_UNREACHABLE].includes(testState);
   const imgSrc = useMemo(() => {
     const suffix = match<WorkAreaModel, string>(model)
       .with('fbm1', 'fbb1b', 'fbb1p', 'fhexa1', () => 'classic')
@@ -79,7 +71,7 @@ const StepVerify = ({ model }: StepVerifyProps): React.JSX.Element => {
   handleStartTestRef.current = handleStartTest;
 
   useEffect(() => {
-    if (testState === TestState.TEST_COMPLETED) {
+    if ([TestState.CAMERA_TEST_FAILED, TestState.TEST_COMPLETED].includes(testState)) {
       setPrimaryButton({ label: i18n.buttons.next, onClick: () => setResult('success'), primary: true });
     } else if (isFailed) {
       setPrimaryButton({ label: i18n.buttons.next, onClick: () => setResult('fail'), primary: true });
@@ -103,7 +95,6 @@ const StepVerify = ({ model }: StepVerifyProps): React.JSX.Element => {
       label: device?.version ? `${lang.check_firmware}: ${device.version}` : lang.check_firmware,
       status: getFirmwareStatus(testState),
     },
-    { key: 'camera', label: lang.check_camera, status: getCameraStatus(testState) },
   ];
 
   const handleInputKeyDown: KeyboardEventHandler = (e) => {
