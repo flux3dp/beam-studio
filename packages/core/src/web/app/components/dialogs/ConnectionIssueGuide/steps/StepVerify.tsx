@@ -1,5 +1,5 @@
 import type { KeyboardEventHandler } from 'react';
-import React, { use, useEffect, useMemo, useRef, useState } from 'react';
+import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { match } from 'ts-pattern';
@@ -97,11 +97,14 @@ const StepVerify = ({ model }: StepVerifyProps): React.JSX.Element => {
     },
   ];
 
-  const handleInputKeyDown: KeyboardEventHandler = (e) => {
-    e.stopPropagation();
+  const handleInputKeyDown: KeyboardEventHandler = useCallback(
+    (e) => {
+      e.stopPropagation();
 
-    if (e.key === 'Enter') handleStartTest();
-  };
+      if (e.key === 'Enter') handleStartTest();
+    },
+    [handleStartTest],
+  );
 
   return (
     <>
