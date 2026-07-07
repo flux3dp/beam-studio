@@ -20,7 +20,7 @@ interface ConnectionIssueGuideProps {
 const ConnectionIssueGuide = ({ model, onClose }: ConnectionIssueGuideProps): React.JSX.Element => {
   const lang = useI18n().buttons;
   const [index, setIndex] = useState(0);
-  const [primaryOverride, setPrimaryOverride] = useState<null | SetupPageButtonConfig>(null);
+  const [primaryButton, setPrimaryButton] = useState<null | SetupPageButtonConfig>(null);
   const [result, setResult] = useState<ConnectionIssueResult | null>(null);
   const steps = useMemo(() => getConnectionIssueSteps(model), [model]);
 
@@ -31,7 +31,7 @@ const ConnectionIssueGuide = ({ model, onClose }: ConnectionIssueGuideProps): Re
   const goNext = () => (isLast ? onClose() : setIndex((prev) => prev + 1));
 
   // Steps that override the primary button (e.g. StepVerify) reset it to null on unmount via context.
-  const defaultPrimary: SetupPageButtonConfig = {
+  const defaultPrimaryButton: SetupPageButtonConfig = {
     label: isLast ? lang.done : lang.next,
     onClick: goNext,
     primary: true,
@@ -51,11 +51,11 @@ const ConnectionIssueGuide = ({ model, onClose }: ConnectionIssueGuideProps): Re
     ];
   } else {
     content = steps[index].content;
-    buttons = [{ label: lang.back, onClick: goPrev }, primaryOverride ?? defaultPrimary];
+    buttons = [{ label: lang.back, onClick: goPrev }, primaryButton ?? defaultPrimaryButton];
   }
 
   return (
-    <ConnectionIssueGuideContext value={{ setPrimaryButton: setPrimaryOverride, setResult }}>
+    <ConnectionIssueGuideContext value={{ setPrimaryButton, setResult }}>
       <SetupPageLayout buttons={buttons} isDialog>
         {content}
       </SetupPageLayout>

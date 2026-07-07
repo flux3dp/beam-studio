@@ -3,7 +3,6 @@ import React, { useMemo } from 'react';
 import { Alert, Flex } from 'antd';
 import { match } from 'ts-pattern';
 
-import { nxModelsArray } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import useI18n from '@core/helpers/useI18n';
 
@@ -19,9 +18,9 @@ const StepIpAddress = ({ model }: StepIpAddressProps): React.JSX.Element => {
 
   const imageSrcs = useMemo(() => {
     const suffix = match<WorkAreaModel, string>(model)
+      .with('fbm1', 'fbb1b', 'fbb1p', 'fhexa1', () => 'classic')
       .with('ado1', () => 'ador')
-      .with(...nxModelsArray, () => 'nx')
-      .otherwise(() => 'classic');
+      .otherwise(() => 'nx');
 
     return [
       `core-img/connection-issue-guide/connect-1-${suffix}.png`,

@@ -4,7 +4,6 @@ import React, { use, useEffect, useMemo, useRef, useState } from 'react';
 import { CheckCircleFilled, CloseCircleFilled, LoadingOutlined, MinusCircleOutlined } from '@ant-design/icons';
 import { match } from 'ts-pattern';
 
-import { nxModelsArray } from '@core/app/actions/beambox/constant';
 import { isTesting, TestState } from '@core/app/constants/connection-test';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useConnectionTest } from '@core/app/pages/InitializeMachine/ConnectMachineIp/hooks/useConnectionTest';
@@ -67,9 +66,9 @@ const StepVerify = ({ model }: StepVerifyProps): React.JSX.Element => {
   );
   const imgSrc = useMemo(() => {
     const suffix = match<WorkAreaModel, string>(model)
+      .with('fbm1', 'fbb1b', 'fbb1p', 'fhexa1', () => 'classic')
       .with('ado1', () => 'ador')
-      .with(...nxModelsArray, () => 'nx')
-      .otherwise(() => 'classic');
+      .otherwise(() => 'nx');
 
     return `core-img/connection-issue-guide/ip-address-${suffix}.png`;
   }, [model]);
