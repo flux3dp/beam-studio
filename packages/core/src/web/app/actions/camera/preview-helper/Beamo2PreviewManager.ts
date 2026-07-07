@@ -64,9 +64,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
       if (!this.fisheyeParams) {
         try {
-          this.fisheyeParams = (await callWithRetry(() =>
-            deviceMaster.fetchFisheyeParams(),
-          )) as FisheyeCameraParametersV4;
+          this.fisheyeParams = (await deviceMaster.fetchFisheyeParams()) as FisheyeCameraParametersV4;
           // Set total_width and total_height for region preview to use correct region
           this.fisheyeParams.total_width = workarea.width;
           this.fisheyeParams.total_height = workarea.height;

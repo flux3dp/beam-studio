@@ -162,7 +162,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     try {
       if (!this.fisheyeParams) {
         try {
-          this.fisheyeParams = await callWithRetry(() => deviceMaster.fetchFisheyeParams());
+          this.fisheyeParams = await deviceMaster.fetchFisheyeParams();
         } catch (err) {
           console.log('Fail to fetchFisheyeParams', err);
           throw new CalibrationDataMissingError();

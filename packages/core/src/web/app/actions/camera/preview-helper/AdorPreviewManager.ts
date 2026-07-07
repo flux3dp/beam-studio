@@ -39,7 +39,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
       let params: FisheyeCameraParameters;
 
       try {
-        params = await callWithRetry(() => deviceMaster.fetchFisheyeParams());
+        params = await deviceMaster.fetchFisheyeParams();
       } catch (err) {
         console.log('Fail to fetchFisheyeParams', err instanceof Error ? err?.message : err);
         throw new CalibrationDataMissingError();
