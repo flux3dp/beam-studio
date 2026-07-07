@@ -37,7 +37,7 @@ describe('test check-camera', () => {
     expect(res).toEqual({ success: true });
   });
 
-  it('should retrun false when something went wrong', async () => {
+  it('should return false when something went wrong', async () => {
     mockSelect.mockResolvedValue({ success: true });
     mockConnectCamera.mockResolvedValue(null);
     mockTakeOnePicture.mockRejectedValue('error');

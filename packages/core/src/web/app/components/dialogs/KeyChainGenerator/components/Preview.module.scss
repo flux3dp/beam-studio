@@ -34,8 +34,8 @@
 
 .dimensions {
   position: absolute;
-  top: 24px;
-  left: 24px;
+  top: 12px;
+  left: 12px;
   background: white;
   border-radius: 8px;
   box-shadow:
@@ -44,4 +44,5 @@
   padding: 8px 16px;
   font-size: 12px;
   text-align: center;
+  z-index: 1;
 }

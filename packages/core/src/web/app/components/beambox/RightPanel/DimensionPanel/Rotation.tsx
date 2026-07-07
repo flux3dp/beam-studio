@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useRef } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import classNames from 'classnames';
 
@@ -23,6 +23,7 @@ const Rotation = ({ onChange, value }: Props): React.JSX.Element => {
   const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
   const isMobile = useIsMobile();
   const t = useI18n().topbar.menu;
+  const previewRef = useRef<{ isPreviewing: boolean; original: number }>({ isPreviewing: false, original: value });
 
   useEffect(() => {
     const handler = (newValues?: { rotation?: number }) => {
@@ -38,9 +39,41 @@ const Rotation = ({ onChange, value }: Props): React.JSX.Element => {
     };
   }, [objectPanelEventEmitter]);
 
+  const onPreview = useCallback(
+    (val: null | number) => {
+      if (val === null) return;
+
+      if (!previewRef.current.isPreviewing) {
+        previewRef.current = { isPreviewing: true, original: value };
+      }
+
+      onChange(val, false);
+    },
+    [onChange, value],
+  );
+  const onChangeComplete = useCallback(
+    (val: null | number) => {
+      if (val === null) return;
+
+      if (previewRef.current.isPreviewing) {
+        onChange(previewRef.current.original, false);
+        previewRef.current.isPreviewing = false;
+      }
+
+      onChange(val, true);
+    },
+    [onChange],
+  );
+
   if (isMobile) {
     return (
-      <ObjectPanelItem.Number id="rotate" label={t.rotate} unit="degree" updateValue={onChange} value={value || 0} />
+      <ObjectPanelItem.Number
+        id="rotate"
+        label={t.rotate}
+        unit="degree"
+        updateValue={onChangeComplete}
+        value={value || 0}
+      />
     );
   }
 
@@ -54,9 +87,9 @@ const Rotation = ({ onChange, value }: Props): React.JSX.Element => {
         controls={false}
         fireOnChange
         id="rotate"
-        onBlur={() => onChange(value, true)}
-        onChange={onChange}
-        onPressEnter={() => onChange(value, true)}
+        onBlur={() => onChangeComplete(value)}
+        onChange={onPreview}
+        onPressEnter={() => onChangeComplete(value)}
         precision={2}
         ref={inputRef}
         theme={objectPanelInputTheme}

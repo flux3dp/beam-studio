@@ -488,6 +488,9 @@ exports[`test AdvancedBlock should render correctly with curve engraving 1`] = `
             <div>
               Mock CurveEngravingZHighSpeed
             </div>
+            <div>
+              Mock SCurveBlock
+            </div>
           </div>
         </div>
       </div>

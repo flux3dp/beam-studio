@@ -359,9 +359,7 @@ export class SelectionManager {
       }
 
       const parent = g.parentNode;
-      const children = Array.from<SVGElement>({ length: g.childNodes.length });
-
-      let i = 0;
+      const children: SVGElement[] = [];
 
       while (g.lastChild) {
         const child = g.lastChild as Element;
@@ -400,7 +398,7 @@ export class SelectionManager {
 
         updateElementColor(child as SVGElement);
 
-        children[i++] = child as SVGElement;
+        children.push(child as SVGElement);
       }
 
       if (!batchCmd.isEmpty()) {

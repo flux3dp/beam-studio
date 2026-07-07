@@ -16,10 +16,11 @@ export interface SetupPageButtonConfig {
 interface SetupPageLayoutProps {
   buttons?: SetupPageButtonConfig[];
   children: ReactNode;
+  isDialog?: boolean;
 }
 
-const SetupPageLayout = ({ buttons, children }: SetupPageLayoutProps): React.JSX.Element => (
-  <div className={styles.container}>
+const SetupPageLayout = ({ buttons, children, isDialog }: SetupPageLayoutProps): React.JSX.Element => (
+  <div className={classNames(styles.container, { [styles.dialog]: isDialog })}>
     <TopBarPlaceHolder />
     <div className={styles.content}>{children}</div>
     {buttons && buttons.length > 0 && (

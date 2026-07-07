@@ -82,7 +82,6 @@ export default interface ISVGCanvas {
   getRubberBox: () => SVGRectElement;
   getSelectedElementsAlignPoints: () => IPoint[];
   getStarted: () => boolean;
-  getStartTransform: () => any;
   getSvgString: (opts?: { fixTopExpansion?: boolean; unit?: Units }) => string;
   getVisibleElementsAndBBoxes: (elems?: SVGElement[]) => Array<{ bbox: IRect; elem: Element }>;
   getZoom: () => number; // Old getter for current_zoom
@@ -132,11 +131,8 @@ export default interface ISVGCanvas {
   ungroupSelectedElement(): void;
   uniquifyElems: (elem: SVGElement) => void;
   unsafeAccess: {
-    setCurrentMode: (v: string) => void;
     setRubberBox: (v: SVGRectElement) => void;
     setStarted: (v: boolean) => void;
-    setStartTransform: (transform: any) => void;
   };
   updateElementColor: (elem: Element) => void;
-  updateRecentFiles(path: string): void;
 }

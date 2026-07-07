@@ -1,3 +1,21 @@
 packages:
   - "packages/*"
   - "apps/*"
+allowBuilds:
+  "@parcel/watcher": true
+  "@sentry/cli": true
+  "@swc/core": true
+  chromedriver: true
+  core-js: true
+  core-js-pure: true
+  cypress: true
+  edgedriver: true
+  electron: true
+  electron-chromedriver: true
+  electron-winstaller: true
+  esbuild: true
+  font-scanner: true
+  geckodriver: true
+  nx: true
+  spectron: true
+  unrs-resolver: true

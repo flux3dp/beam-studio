@@ -1,4 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import getLevelingData from '@core/app/actions/camera/preview-helper/getLevelingData';
+import { showCalibrateCamera } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -127,6 +129,68 @@ export const calibrateWithDevicePictures = async (): Promise<FisheyeCameraParame
 
 export const saveCheckPoint = async (param: FisheyeCameraParametersV2Cali): Promise<void> => {
   await uploadJson(param, 'fisheye', 'checkpoint.json');
+};
+
+/**
+ * Obtain camera parameters from the raw photos taken on the device at the factory (the old
+ * `CheckPictures` flow). When photos exist, calibrate from them, upload the result to the device,
+ * and persist it to `checkpoint.json` so the (time-consuming) computation is only done once. The
+ * returned param can then be used as `currentData` to open the dialog at the put-paper step.
+ * Returns `null` (and shows the appropriate alert) when there are no photos or calibration fails.
+ */
+export const calibrateFromDevicePictures = async (): Promise<FisheyeCameraParametersV2Cali | null> => {
+  const { lang } = i18n;
+  const progressId = 'camera-check-pictures';
+
+  progressCaller.openNonstopProgress({ id: progressId, message: lang.calibration.checking_pictures });
+
+  let hasPictures = false;
+
+  try {
+    const ls = await deviceMaster.ls('camera_calib');
+
+    hasPictures = ls.files.length > 0;
+  } catch {
+    /* do nothing */
+  } finally {
+    progressCaller.popById(progressId);
+  }
+
+  if (!hasPictures) {
+    alertCaller.popUpError({
+      buttons: [
+        { isLeft: true, label: lang.alert.cancel },
+        {
+          label: lang.topbar.menu.calibrate_camera_advanced,
+          onClick: () => showCalibrateCamera(deviceMaster.currentDevice!.info, { isAdvanced: true }),
+          type: 'primary',
+        },
+      ],
+      message: lang.calibration.no_picture_found,
+    });
+
+    return null;
+  }
+
+  const levelingData = await getLevelingData('hexa_platform');
+  const refHeight = levelingData.A;
+
+  Object.keys(levelingData).forEach((key) => {
+    levelingData[key] = refHeight - levelingData[key];
+  });
+
+  const res = await calibrateWithDevicePictures();
+
+  if (!res) {
+    // calibrateWithDevicePictures already alerted on failure / cancel.
+    return null;
+  }
+
+  const param: FisheyeCameraParametersV2Cali = { ...res, levelingData, refHeight: 0, source: 'device' };
+
+  await saveCheckPoint(param);
+
+  return param;
 };
 
 export const getMaterialHeight = async (position: 'A' | 'E' = 'E'): Promise<number> => {

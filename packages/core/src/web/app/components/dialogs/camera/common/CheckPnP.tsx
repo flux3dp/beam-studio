@@ -12,6 +12,7 @@ import styles from './CheckPnP.module.scss';
 import ExposureSlider from './ExposureSlider';
 import ImageDisplay from './ImageDisplay';
 import Title from './Title';
+import type { RenderWrapper } from './types';
 import type { Options } from './useCamera';
 import useCamera from './useCamera';
 
@@ -28,6 +29,7 @@ interface Props {
     | { rvecs: Record<string, number[][]>; tvecs: Record<string, number[][]> }
   );
   points?: Array<[number, number]>;
+  renderWrapper?: RenderWrapper;
   title?: string;
 }
 
@@ -41,6 +43,7 @@ const CheckPnP = ({
   onNext,
   params,
   points,
+  renderWrapper,
   title,
 }: Props): ReactNode => {
   const lang = useI18n();
@@ -86,6 +89,67 @@ const CheckPnP = ({
     });
   }, [points, grid]) as Array<[number, number]>;
 
+  const titleNode = <Title title={title ?? tCali.title_confirm_calibration_result} />;
+  const imageDisplayNode = (
+    <ImageDisplay
+      className={styles.image}
+      img={img}
+      onScaleChange={(scale) => {
+        const circles = groupRef.current?.querySelectorAll('circle');
+
+        circles?.forEach((circle) => {
+          const r = circle.classList.contains(styles.center) ? 1 : 5;
+
+          circle.setAttribute('r', `${r / scale}`);
+        });
+      }}
+      renderContents={(scale) => {
+        if (!displayPoints) return null;
+
+        return (
+          <g className={styles.group} ref={groupRef}>
+            {displayPoints.map(([x, y], index) => {
+              return (
+                <Fragment key={index}>
+                  <circle cx={x} cy={y} r={5 / scale} />
+                  <circle className={styles.center} cx={x} cy={y} r={1 / scale} />
+                </Fragment>
+              );
+            })}
+          </g>
+        );
+      }}
+      zoomPoints={displayPoints}
+    />
+  );
+  const exposureSlider = (
+    <ExposureSlider
+      autoExposure={autoExposure}
+      exposureSetting={exposureSetting}
+      onChanged={handleTakePicture}
+      onRetakePicture={handleTakePicture}
+      setAutoExposure={setAutoExposure}
+      setExposureSetting={setExposureSetting}
+    />
+  );
+
+  if (renderWrapper) {
+    const wrapperButtons = [
+      { label: lang.calibration.back, onClick: onBack },
+      { label: hasNext ? lang.buttons.next : lang.buttons.done, onClick: onNext, primary: true },
+    ];
+
+    const content = <div className={styles.desc}>{lang.calibration.check_pnp_desc}</div>;
+    const media = (
+      <>
+        {imageDisplayNode}
+        {exposureSlider}
+      </>
+    );
+
+    return renderWrapper({ buttons: wrapperButtons, content, media, title: titleNode });
+  }
+
   return (
     <DraggableModal
       closable
@@ -101,54 +165,15 @@ const CheckPnP = ({
       onCancel={() => onClose(false)}
       open
       scrollableContent
-      title={<Title title={title ?? tCali.title_confirm_calibration_result} />}
+      title={titleNode}
       width="80vw"
     >
       <Row gutter={[0, 12]}>
         <Col className={styles.desc} span={24}>
           {lang.calibration.check_pnp_desc}
         </Col>
-        <Col span={24}>
-          <ImageDisplay
-            img={img}
-            onScaleChange={(scale) => {
-              const circles = groupRef.current?.querySelectorAll('circle');
-
-              circles?.forEach((circle) => {
-                const r = circle.classList.contains(styles.center) ? 1 : 5;
-
-                circle.setAttribute('r', `${r / scale}`);
-              });
-            }}
-            renderContents={(scale) => {
-              if (!displayPoints) return null;
-
-              return (
-                <g className={styles.group} ref={groupRef}>
-                  {displayPoints.map(([x, y], index) => {
-                    return (
-                      <Fragment key={index}>
-                        <circle cx={x} cy={y} r={5 / scale} />
-                        <circle className={styles.center} cx={x} cy={y} r={1 / scale} />
-                      </Fragment>
-                    );
-                  })}
-                </g>
-              );
-            }}
-            zoomPoints={displayPoints}
-          />
-        </Col>
-        <Col span={24}>
-          <ExposureSlider
-            autoExposure={autoExposure}
-            exposureSetting={exposureSetting}
-            onChanged={handleTakePicture}
-            onRetakePicture={handleTakePicture}
-            setAutoExposure={setAutoExposure}
-            setExposureSetting={setExposureSetting}
-          />
-        </Col>
+        <Col span={24}>{imageDisplayNode}</Col>
+        <Col span={24}>{exposureSlider}</Col>
       </Row>
     </DraggableModal>
   );

@@ -38,6 +38,10 @@ export const updateObjectPanel = (): void => {
   }, minEventInterval);
 };
 
+const updateFullColor = (): void => {
+  objectPanelEventEmitter.emit('UPDATE_FULL_COLOR');
+};
+
 const updatePolygonSides = (polygonSides: number): void => {
   objectPanelEventEmitter.emit('UPDATE_POLYGON_SIDES', polygonSides);
 };
@@ -62,6 +66,7 @@ export default {
   getDimensionValues,
   updateActiveKey,
   updateDimensionValues,
+  updateFullColor,
   updateObjectPanel,
   updatePolygonSides,
 };

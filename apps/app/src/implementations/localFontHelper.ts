@@ -3,17 +3,17 @@ import { openSync } from 'fontkit';
 
 import { FontEvents } from '@core/app/constants/ipcEvents';
 import communicator from '@core/implementations/communicator';
-import type { FontDescriptor, LocalFontHelper } from '@core/interfaces/IFont';
+import type { FontDescriptor, FontDescriptorQuery, LocalFontHelper } from '@core/interfaces/IFont';
 
 interface Font extends FontkitFont {
   name?: { records: { fontFamily: Record<string, string> } };
 }
 
 export default {
-  findFont(fontDescriptor: FontDescriptor): FontDescriptor {
+  findFont(fontDescriptor: FontDescriptorQuery): FontDescriptor {
     return communicator.sendSync(FontEvents.FindFont, fontDescriptor);
   },
-  findFonts(fontDescriptor: FontDescriptor): FontDescriptor[] {
+  findFonts(fontDescriptor: FontDescriptorQuery): FontDescriptor[] {
     return communicator.sendSync(FontEvents.FindFonts, fontDescriptor);
   },
   getAvailableFonts(): FontDescriptor[] {
@@ -88,7 +88,7 @@ export default {
       return getFontFromPath;
     }
   },
-  substituteFont(postscriptName: string, text: string): FontDescriptor[] {
+  substituteFont(postscriptName: string, text: string): FontDescriptor {
     return communicator.sendSync(FontEvents.SubstituteFont, postscriptName, text);
   },
 } as LocalFontHelper;

@@ -3,7 +3,6 @@ import React from 'react';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
-import isDev from '@core/helpers/is-dev';
 import type { ILang } from '@core/interfaces/ILang';
 
 import { showKeyChainGenerator } from '../dialogs/KeyChainGenerator';
@@ -44,11 +43,10 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       titleKey: 'puzzle_generator',
     } as const,
     {
-      icon: <GeneratorIcons.Puzzle />,
+      icon: <GeneratorIcons.Keychain />,
       id: 'keychain',
       onClick: () => showKeyChainGenerator(),
       titleKey: 'keychain_generator',
-      visible: isDev(),
     } as const,
     {
       icon: <GeneratorIcons.Material />,

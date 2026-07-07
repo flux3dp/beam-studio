@@ -251,6 +251,11 @@
       'data-accX',
       'data-accY',
       'data-travelSpeed',
+      'data-scA0',
+      'data-scAMax',
+      'data-scEnable',
+      'data-scJerk',
+      'data-minPadding',
     ],
     image: [
       'data-ratiofixed',

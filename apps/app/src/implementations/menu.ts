@@ -6,7 +6,6 @@ import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
@@ -19,8 +18,6 @@ const updateWindowsMenu = () => {
     window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
   }
 };
-
-const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
 
 class Menu extends AbstractMenu {
   private communicator;
@@ -50,36 +47,26 @@ class Menu extends AbstractMenu {
       (state) => state['enable-uv-print-file'],
       (newValue) => {
         this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', newValue);
-        this.rerenderMenu();
       },
     );
-
-    // layer panel related
-    layerPanelEventEmitter.on('updateUvPrintStatus', (isUvPrintable = false) => {
-      this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', isUvPrintable);
-      this.rerenderMenu();
-    });
 
     // dockview layout related
     useDockableStore.subscribe(
       (state) => state.panelLayerControls,
       (isVisible) => {
         this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', isVisible);
-        this.rerenderMenu();
       },
     );
     useDockableStore.subscribe(
       (state) => state.panelObjectProperties,
       (isVisible) => {
         this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', isVisible);
-        this.rerenderMenu();
       },
     );
     useDockableStore.subscribe(
       (state) => state.panelPathEdit,
       (isVisible) => {
         this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', isVisible);
-        this.rerenderMenu();
       },
     );
 
@@ -104,8 +91,7 @@ class Menu extends AbstractMenu {
     const { disabledKeys, enabledKeys } = getExampleVisibility(workarea);
 
     this.changeMenuItemStatus(enabledKeys, 'visible', true);
-    this.changeMenuItemStatus(disabledKeys, 'visible', false);
-    this.rerenderMenu();
+    this.changeMenuItemStatus(disabledKeys, 'visible', false, { flush: true });
   };
 
   initMenuItemStatus = (): void => {
@@ -120,7 +106,6 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['ANTI_ALIASING'], 'checked', globalPreference['anti-aliasing']);
     this.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', globalPreference.auto_align);
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', globalPreference['enable-uv-print-file']);
-    this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', false);
     this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', dockableStore.panelLayerControls);
     this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', dockableStore.panelObjectProperties);
     this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', dockableStore.panelPathEdit);
@@ -155,13 +140,34 @@ class Menu extends AbstractMenu {
     }
   }
 
-  changeMenuItemStatus(ids: string[], key: 'checked' | 'enabled' | 'visible', value: boolean): void {
+  changeMenuItemStatus(
+    ids: string[],
+    key: 'checked' | 'enabled' | 'visible',
+    value: boolean,
+    { flush = false }: { flush?: boolean } = {},
+  ): void {
     ids.forEach((id) => {
       this.menuItemChanges[id] = { ...this.menuItemChanges[id], [key]: value };
     });
 
-    this.updateMenuItemChangesHandler.call();
+    if (flush) {
+      this.updateMenuItemChangesHandler.flush();
+    } else {
+      this.updateMenuItemChangesHandler.call();
+    }
   }
+
+  private findAllMenuItemsByIds = (menu: Electron.Menu, ids: Set<string>): Electron.MenuItem[] => {
+    const results: Electron.MenuItem[] = [];
+
+    for (const item of menu.items) {
+      if (ids.has(item.id)) results.push(item);
+
+      if (item.submenu) results.push(...this.findAllMenuItemsByIds(item.submenu, ids));
+    }
+
+    return results;
+  };
 
   updateMenuItemChangesHandler = funnel(
     (): void => {
@@ -170,24 +176,22 @@ class Menu extends AbstractMenu {
       if (!menu) return;
 
       const ids = Object.keys(this.menuItemChanges);
+      const idSet = new Set(ids);
+      const menuItems = this.findAllMenuItemsByIds(menu, idSet);
 
-      for (const id of ids) {
-        const menuItem = menu.getMenuItemById(id);
+      for (const menuItem of menuItems) {
+        const changes = this.menuItemChanges[menuItem.id];
 
-        if (menuItem) {
-          const changes = this.menuItemChanges[id];
+        if (changes.checked !== undefined) {
+          menuItem.checked = changes.checked;
+        }
 
-          if (changes.checked !== undefined) {
-            menuItem.checked = changes.checked;
-          }
+        if (changes.enabled !== undefined) {
+          menuItem.enabled = changes.enabled;
+        }
 
-          if (changes.enabled !== undefined) {
-            menuItem.enabled = changes.enabled;
-          }
-
-          if (changes.visible !== undefined) {
-            menuItem.visible = changes.visible;
-          }
+        if (changes.visible !== undefined) {
+          menuItem.visible = changes.visible;
         }
       }
       this.rerenderMenu();

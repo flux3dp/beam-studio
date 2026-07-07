@@ -34,7 +34,14 @@
 
       .btn {
         @include mixins.text-button();
+        padding: 0px;
       }
     }
   }
+}
+
+.label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

@@ -29,9 +29,15 @@ export interface HoleOptionValues {
 }
 
 export interface HoleOptionDef {
+  /** Fixed mm value added to the user's offset to shift the hole's baseline distance from the path. */
+  baseOffset?: number;
   defaults: HoleOptionValues;
+  /** Per-field visibility: maps field name → hole types that show it. Unlisted fields always visible. */
+  fieldVisibility?: Partial<Record<keyof HoleOptionValues, HoleType[]>>;
   id: string;
   label?: string;
+  /** Percentage (0–100) added to the user's position to shift the 0% baseline along the path. */
+  positionOffset?: number;
   startPositionRef: KeysWithType<paper.Rectangle, paper.Point>;
 }
 

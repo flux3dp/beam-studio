@@ -58,8 +58,9 @@ class FisheyePreviewManagerV2 extends FisheyePreviewManagerBase implements Fishe
     await deviceMaster.endSubTask();
     // V2 calibration use point E as reference
     console.log(params);
-    await deviceMaster.setFisheyeParam(params);
-    await this.updateLevelingData();
+    // non-await to send with the following commands together
+    deviceMaster.setFisheyeParam(params);
+    this.updateLevelingData();
     await this.onObjectHeightChanged();
     closeMessage?.();
 
@@ -78,7 +79,8 @@ class FisheyePreviewManagerV2 extends FisheyePreviewManagerBase implements Fishe
 
   async reloadLevelingOffset(): Promise<void> {
     this.levelingOffset = await getLevelingData('offset');
-    await this.updateLevelingData();
+    // non-await to send with the following commands together
+    this.updateLevelingData();
     await this.onObjectHeightChanged();
   }
 

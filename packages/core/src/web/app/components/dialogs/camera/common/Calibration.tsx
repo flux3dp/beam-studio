@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Spin } from 'antd';
+import { Button, Spin } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -16,6 +16,7 @@ import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePrev
 import styles from './Calibration.module.scss';
 import ExposureSlider from './ExposureSlider';
 import handleCalibrationResult from './handleCalibrationResult';
+import type { RenderWrapper } from './types';
 import type { Options } from './useCamera';
 import useLiveFeed from './useLiveFeed';
 
@@ -27,8 +28,10 @@ type Props = CalibrationData & {
   cameraOptions?: Options;
   description?: string[];
   indicator?: { height: number | string; left: number | string; top: number | string; width: number | string };
+  onBack?: () => void;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
+  renderWrapper?: RenderWrapper;
   title?: ReactNode;
   updateParam: (param: FisheyeCameraParametersV3Cali) => void;
 };
@@ -42,8 +45,10 @@ const Calibration = ({
   chessboard,
   description,
   indicator,
+  onBack,
   onClose,
   onNext,
+  renderWrapper,
   title,
   updateParam,
 }: Props): React.JSX.Element => {
@@ -96,7 +101,7 @@ const Calibration = ({
       }
 
       if (!calibrationRes && charuco) {
-        const charucoRes = await cameraCalibrationApi.detectChAruCo(img!.blob, charuco[0], charuco[1]);
+        const charucoRes = await cameraCalibrationApi.detectChAruCo(imgBlob, charuco[0], charuco[1]);
 
         if (charucoRes.success) {
           const { imgp, objp } = charucoRes;
@@ -113,6 +118,8 @@ const Calibration = ({
           }
         }
       }
+
+      progressCaller.popById('calibrate-chessboard');
 
       if (calibrationRes) {
         const { d, k, ret, rvec, tvec } = calibrationRes;
@@ -141,47 +148,81 @@ const Calibration = ({
     dialog.writeFileDialog(() => img!.blob, 'Save Chessboard Picture', 'chessboard.jpg');
   }, [img]);
 
+  const titleNode = title ?? tCali.camera_calibration;
+  const descriptionNode = description && (
+    <div className={styles.desc}>
+      {description.map((desc, index) => (
+        <div key={index}>{`${index + 1}. ${desc}`}</div>
+      ))}
+    </div>
+  );
+
+  const media = (
+    <div className={styles.imgContainer}>
+      {img ? (
+        isUsbCamera ? (
+          <video ref={videoRef} />
+        ) : (
+          <>
+            <ContextMenu items={[{ key: 'download', label: t.monitor.download }]} onClick={handleDownload}>
+              <div>
+                <img alt="Chessboard" ref={imgRef} src={img?.url} />
+                {indicator && <div className={styles.indicator} style={indicator} />}
+              </div>
+            </ContextMenu>
+          </>
+        )
+      ) : (
+        <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />
+      )}
+    </div>
+  );
+  const exposureSlider = (
+    <ExposureSlider
+      autoExposure={autoExposure}
+      className={styles.slider}
+      exposureSetting={exposureSetting}
+      setAutoExposure={setAutoExposure}
+      setExposureSetting={setExposureSetting}
+    />
+  );
+
+  if (renderWrapper) {
+    const wrapperButtons = [
+      onBack ? { label: tCali.back, onClick: onBack } : { label: tCali.cancel, onClick: () => onClose(false) },
+      { disabled: !img, label: tCali.next, onClick: handleCalibrate, primary: true },
+    ];
+
+    const content = (
+      <>
+        {descriptionNode}
+        {exposureSlider}
+      </>
+    );
+
+    return renderWrapper({ buttons: wrapperButtons, content, media, title: titleNode });
+  }
+
   return (
     <DraggableModal
-      cancelText={tCali.cancel}
+      footer={[
+        <Button key="back" onClick={onBack ?? (() => onClose(false))}>
+          {onBack ? tCali.back : tCali.cancel}
+        </Button>,
+        <Button disabled={!img} key="next" onClick={handleCalibrate} type="primary">
+          {tCali.next}
+        </Button>,
+      ]}
       maskClosable={false}
-      okButtonProps={{ disabled: !img }}
-      okText={tCali.next}
       onCancel={() => onClose(false)}
-      onOk={handleCalibrate}
       open
-      title={title ?? tCali.camera_calibration}
+      title={titleNode}
       width="80vw"
     >
       <div className={styles.container}>
-        {description && (
-          <div className={styles.desc}>
-            {description.map((desc, index) => (
-              <div key={index}>{`${index + 1}. ${desc}`}</div>
-            ))}
-          </div>
-        )}
-        <div className={styles.imgContainer}>
-          {isUsbCamera && <video ref={videoRef} />}
-          {!isUsbCamera && img && (
-            <>
-              <ContextMenu items={[{ key: 'download', label: t.monitor.download }]} onClick={handleDownload}>
-                <div>
-                  <img alt="Chessboard" ref={imgRef} src={img?.url} />
-                  {indicator && <div className={styles.indicator} style={indicator} />}
-                </div>
-              </ContextMenu>
-            </>
-          )}
-          {!img && <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />}
-        </div>
-        <ExposureSlider
-          autoExposure={autoExposure}
-          className={styles.slider}
-          exposureSetting={exposureSetting}
-          setAutoExposure={setAutoExposure}
-          setExposureSetting={setExposureSetting}
-        />
+        {descriptionNode}
+        {media}
+        {exposureSlider}
       </div>
     </DraggableModal>
   );

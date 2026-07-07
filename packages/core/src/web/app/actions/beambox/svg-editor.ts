@@ -37,6 +37,7 @@ import { deleteSelectedElements } from '@core/app/svgedit/operations/delete';
 import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
+import { importDxfFromText, looksLikeDxfText } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
 import svgCanvasClass from '@core/app/svgedit/svgcanvas';
@@ -49,6 +50,7 @@ import { getNextStepRequirement } from '@core/app/components/tutorials/tutorialC
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
+import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
@@ -342,18 +344,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           ObjectPanelController.updatePolygonSides(sides);
         }
 
-        if (selectionManager.isMultiSelecting) {
-          workareaEvents.emit('update-context-menu', {
-            group: true,
-            ungroup: false,
-          });
-        } else {
-          workareaEvents.emit('update-context-menu', {
-            group: false,
-            ungroup: tagName === 'g' && !elem?.getAttribute('data-pass-through'),
-          });
-        }
-
         const isRatioFixed = elem.getAttribute('data-ratiofixed') === 'true';
 
         ObjectPanelController.updateDimensionValues({ isRatioFixed });
@@ -554,6 +544,9 @@ const svgEditor = (window['svgEditor'] = (function () {
       let importedFromClipboard = false;
 
       if (clipboardData) {
+        // Detect DXF text placed on the clipboard by a CAD app (e.g. AutoCAD via clip.exe / BeamCopy.lsp).
+        const plainText = clipboardData.types.includes('text/plain') ? clipboardData.getData('text/plain') : '';
+
         if (clipboardData.types.includes('Files')) {
           console.log('handle clip board file');
           for (let i = 0; i < clipboardData.files.length; i++) {
@@ -562,6 +555,14 @@ const svgEditor = (window['svgEditor'] = (function () {
             svgEditor.handleFile(file);
             importedFromClipboard = true;
           }
+        } else if (looksLikeDxfText(plainText)) {
+          importedFromClipboard = await importDxfFromText(plainText);
+
+          if (!importedFromClipboard) {
+            Alert.popUpError({ message: i18n.lang.beambox.popup.dxf_paste_failed });
+          }
+
+          return;
         } else if (clipboardData.types.includes('text/html')) {
           const htmlData = clipboardData.getData('text/html');
           const matchImgs = htmlData.match(/<img[^>]+>/);
@@ -1032,7 +1033,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'beam':
             if (path) {
               currentFileManager.setLocalFile(path);
-              svgCanvas.updateRecentFiles(path);
+              updateRecentFiles(path);
             } else {
               currentFileManager.setFileName(file.name, { extractFromPath: true });
             }

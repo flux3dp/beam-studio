@@ -15,7 +15,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
-import { hasSwiftray } from '@core/helpers/api/swiftray-client';
+import { hasSwiftray, swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
 import { convertAllTextToPath } from '@core/helpers/convertToPath';
 import deviceMaster from '@core/helpers/device-master';
@@ -529,6 +529,7 @@ export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
 
   const useSwiftray =
     hasSwiftray &&
+    swiftrayClient.readyState === WebSocket.OPEN &&
     (isPromark ||
       useGlobalPreferenceStore.getState()['path-engine'] === 'swiftray' ||
       targetDevice?.source === 'swiftray');

@@ -14,6 +14,8 @@ type MetaConfig = {
 
 type CommonConfig = {
   backlash: number;
+  /** layer level minimum engraving/printing padding, mm, 0 for not override */
+  minPadding: number;
   repeat: number;
 };
 
@@ -23,8 +25,6 @@ type LaserConfig = {
   accY: number;
   /** 0-100, percentage */
   airAssist: number;
-  /** μs ,delay to emit laser */
-  delay: number;
   diode: number;
   dpi: EngraveDpiOption;
   focus: number;
@@ -43,6 +43,13 @@ type LaserConfig = {
 
 type CurveEngravingConfig = {
   ceZHighSpeed: boolean;
+};
+
+type SCurveConfigs = {
+  scA0: number;
+  scAMax: number;
+  scEnable: boolean;
+  scJerk: number;
 };
 
 type PrintingConfig = {
@@ -114,6 +121,7 @@ export type ConfigKeyTypeMap = CommonConfig &
   MetaConfig &
   PrintingConfig &
   PromarkConfig &
+  SCurveConfigs &
   UVConfig;
 
 export type ConfigKey = keyof ConfigKeyTypeMap;
@@ -130,6 +138,11 @@ export type ILayerConfig = {
 
 // Saved parameters, containing presets and user saved configs
 export type Preset = Partial<ConfigKeyTypeMap> & {
+  /**
+   * Per-dpi overrides merged on top of the base values at apply time (see applyPreset).
+   * Each entry is a partial delta; any dpi not listed falls back to the base values on this preset.
+   */
+  dpiOverrides?: Partial<Record<EngraveDpiOption, Partial<ConfigKeyTypeMap>>>;
   hide?: boolean;
   isDefault?: boolean;
   key?: string;

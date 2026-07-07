@@ -2,7 +2,7 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import useSelectedElementStore from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 
 const mockGetObjectLayer = jest.fn();
 
@@ -28,7 +28,7 @@ describe('should render correctly', () => {
 
   test('multiple selections', () => {
     document.body.innerHTML = '<g id="svg_1" data-tempgroup="true" />';
-    useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+    useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
     const { container } = render(<ElementTitle />);
 
@@ -46,7 +46,7 @@ describe('should render correctly', () => {
         title: 'Layer 1',
       });
       document.body.innerHTML = '<rect id="svg_1" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(<ElementTitle />);
 
@@ -60,7 +60,7 @@ describe('should render correctly', () => {
         title: 'Layer 1',
       });
       document.body.innerHTML = '<use id="svg_1" data-svg="true" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(<ElementTitle />);
 
@@ -74,7 +74,7 @@ describe('should render correctly', () => {
         title: 'Layer 1',
       });
       document.body.innerHTML = '<use id="svg_1" data-dxf="true" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(<ElementTitle />);
 
@@ -88,7 +88,7 @@ describe('should render correctly', () => {
         title: 'Layer 1',
       });
       document.body.innerHTML = '<use id="svg_1" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(<ElementTitle />);
 
@@ -100,7 +100,7 @@ describe('should render correctly', () => {
     test('no layer title given', () => {
       mockGetObjectLayer.mockReturnValue(document.getElementById('svg_1'));
       document.body.innerHTML = '<use id="svg_1" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(<ElementTitle />);
 
@@ -112,7 +112,7 @@ describe('should render correctly', () => {
     test('data-textpath-g', () => {
       mockGetObjectLayer.mockReturnValue({ title: 'Layer 1' });
       document.body.innerHTML = '<g id="svg_1" data-textpath-g="true" />';
-      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+      useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(<ElementTitle />);
 

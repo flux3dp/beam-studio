@@ -6,6 +6,11 @@ import shortcuts from '@core/helpers/shortcuts';
 const eventEmitter = eventEmitterFactory.createEventEmitter('top-bar-menu');
 
 for (const { action: id, shortcut, splitKey } of Object.values(menuItems)) {
+  if (id === 'PASTE') {
+    // Use document.addEventListener('paste', ...) in svg-editor.ts
+    continue;
+  }
+
   shortcuts.on(
     shortcut,
     () => {

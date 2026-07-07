@@ -66,6 +66,14 @@ const detectPs = detectLocale(
 );
 const isPs = detectPs();
 
+// Israel
+const detectIl = detectLocale(
+  (schema) => schema.region === 'IL' || schema.language === 'he',
+  // UTC+2 timezone
+  (timezoneOffset) => timezoneOffset === -120,
+);
+const isIl = detectIl();
+
 // Malaysia
 const detectMy = detectLocale(
   (schema) => schema.region === 'MY' || schema.language === 'ms',
@@ -90,6 +98,42 @@ const detectAr = detectLocale(
 );
 const isAr = detectAr();
 
+// European Union (EU-27), region-only detection without timezone restriction
+const euRegions = new Set([
+  'AT',
+  'BE',
+  'BG',
+  'HR',
+  'CY',
+  'CZ',
+  'DK',
+  'EE',
+  'FI',
+  'FR',
+  'DE',
+  'GR',
+  'HU',
+  'IE',
+  'IT',
+  'LV',
+  'LT',
+  'LU',
+  'MT',
+  'NL',
+  'PL',
+  'PT',
+  'RO',
+  'SK',
+  'SI',
+  'ES',
+  'SE',
+]);
+const detectEu = detectLocale(
+  (schema) => Boolean(schema.region && euRegions.has(schema.region)),
+  () => true,
+);
+const isEu = detectEu();
+
 const getRegion = () => {
   if (isNorthAmerica) {
     return { checkTimezone: true, region: 'na' };
@@ -107,6 +151,8 @@ const getRegion = () => {
     return { checkTimezone: true, region: 'AU' };
   } else if (isAr) {
     return { checkTimezone: true, region: 'AR' };
+  } else if (isIl) {
+    return { checkTimezone: true, region: 'IL' };
   }
 
   // @ts-expect-error: Support for older browsers with userLanguage
@@ -126,6 +172,8 @@ const getRegion = () => {
 export default {
   detectAr,
   detectAu,
+  detectEu,
+  detectIl,
   detectJp,
   detectKr,
   detectMy,
@@ -136,6 +184,8 @@ export default {
   getRegion,
   isAr,
   isAu,
+  isEu,
+  isIl,
   isJp,
   isKr,
   isMy,

@@ -4,15 +4,18 @@ import { fireEvent, render } from '@testing-library/react';
 
 import type { IAlert } from '@core/interfaces/IAlert';
 
-import Alert from './Alert';
-import { setStorage } from '@mocks/@core/app/stores/storageStore';
-
 const mockPopFromStack = jest.fn();
 
 jest.mock('@core/app/contexts/AlertProgressContext', () => ({
   AlertProgressContext: React.createContext({
     popFromStack: () => mockPopFromStack,
   }),
+}));
+
+const mockGetHelpCenterURL = jest.fn();
+
+jest.mock('@core/helpers/help-center', () => ({
+  getHelpCenterURL: mockGetHelpCenterURL,
 }));
 
 const mockOpen = jest.fn();
@@ -53,32 +56,31 @@ const mockData: IAlert = {
   message: 'Yes or No',
 };
 
+import Alert from './Alert';
+
 describe('test Alert', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetHelpCenterURL.mockReturnValue('https://support.flux3dp.com/hc/en-us/articles/360001809676');
   });
 
   it('should render correctly', () => {
     const { baseElement } = render(<Alert data={mockData} />);
 
     expect(baseElement).toMatchSnapshot();
+    expect(mockGetHelpCenterURL).not.toHaveBeenCalled();
   });
 
   it('should render correctly with help center link', () => {
-    const { baseElement, getByText, rerender } = render(
-      <Alert data={{ ...mockData, links: null, message: '#801 error' }} />,
+    const { baseElement, getByText } = render(
+      <Alert data={{ ...mockData, links: undefined, message: '#801 error' }} />,
     );
 
     expect(baseElement).toMatchSnapshot();
+    expect(mockGetHelpCenterURL).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText('Learn More'));
     expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockOpen).toHaveBeenNthCalledWith(1, 'https://support.flux3dp.com/hc/en-us/articles/360001809676');
-
-    setStorage('active-lang', 'zh-tw');
-    rerender(<Alert data={{ ...mockData, links: null, message: '#801 error' }} />);
-    fireEvent.click(getByText('Learn More'));
-    expect(mockOpen).toHaveBeenCalledTimes(2);
-    expect(mockOpen).toHaveBeenNthCalledWith(2, 'https://support.flux3dp.com/hc/zh-tw/articles/360001809676');
   });
 
   test('should call callback when click button', () => {

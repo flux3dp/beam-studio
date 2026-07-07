@@ -105,10 +105,6 @@ exports[`test TabHelpCenter should render correctly 1`] = `
         baseurl="https://support.flux3dp.com/hc/en-us"
         guide="[object Object]"
       />
-      <mock-grid-guide
-        baseurl="https://support.flux3dp.com/hc/en-us"
-        guide="[object Object]"
-      />
     </div>
   </div>
 </div>

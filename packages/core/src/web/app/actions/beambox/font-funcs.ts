@@ -10,6 +10,7 @@ import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
+import { recalculateDimensions } from '@core/app/svgedit/transform/recalculate';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { discoverManager } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
@@ -26,7 +27,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import weldPath from '@core/helpers/weldPath';
 import localFontHelper from '@core/implementations/localFontHelper';
 import storage from '@core/implementations/storage';
-import type { FontDescriptor, GeneralFont, GoogleFont, IFontQuery } from '@core/interfaces/IFont';
+import type { GeneralFont, GoogleFont, IFontQuery } from '@core/interfaces/IFont';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -497,7 +498,11 @@ const substitutedFont = async (font: GeneralFont, textElement: Element) => {
   if (!isWeb()) {
     unsupportedChar = [];
     textContent.forEach((char) => {
-      const sub = localFontHelper.substituteFont(originPostscriptName!, char) as FontDescriptor;
+      const sub = localFontHelper.substituteFont(originPostscriptName!, char);
+
+      if (!sub) {
+        return;
+      }
 
       if (sub.postscriptName !== originPostscriptName) {
         unsupportedChar.push(char);
@@ -520,7 +525,7 @@ const substitutedFont = async (font: GeneralFont, textElement: Element) => {
       for (const char of text ?? '') {
         const foundFont = localFontHelper.substituteFont(font.postscriptName!, char);
 
-        if (font.postscriptName !== foundFont!.postscriptName) {
+        if (!foundFont || font.postscriptName !== foundFont.postscriptName) {
           allFit = false;
           break;
         }
@@ -776,7 +781,7 @@ const convertTextToPath = async (
         moveElements([moveElement.x], [moveElement.y], [newPathElement], false);
       }
 
-      svgedit.recalculate.recalculateDimensions(newPathElement!);
+      recalculateDimensions(newPathElement!);
     } else {
       Alert.popUp({
         caption: `#846 ${LANG.text_to_path.error_when_parsing_text}`,
