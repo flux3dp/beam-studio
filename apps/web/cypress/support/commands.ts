@@ -217,17 +217,30 @@ Cypress.Commands.add('connectMachine', (machineName: string, options: { onSelect
   cy.then(() => options.onSelect?.());
   cy.findByText(machineName).click();
 
+  // The top-bar name is NOT a sufficient connected signal: TopBarController.setSelectedDevice
+  // runs at selection time, BEFORE DeviceMaster.select() (get-device.ts) — the name shows
+  // immediately while the "Connecting…" progress modal and (conditionally) the workarea confirm
+  // are still to come. Connected = name shown AND no modal remains, stable across two polls
+  // (which rides out the brief gap between the selector closing and the progress modal opening).
   const deadline = Date.now() + 150000;
+  let stablePolls = 0;
   const waitConnected = (): void => {
     cy.get('body').then(($body) => {
-      // Connected signal: the top-bar button shows the machine name.
-      if ($body.find('[data-testid="select-machine"]').text().includes(machineName)) return;
-
       const yes = $body
         .find('.ant-modal-footer .ant-btn-primary')
         .filter((_, el) => (el.textContent || '').includes('Yes'));
 
-      if (yes.length) cy.wrap(yes.first()).click({ force: true });
+      if (yes.length) {
+        stablePolls = 0;
+        cy.wrap(yes.first()).click({ force: true });
+      } else {
+        const nameShown = $body.find('[data-testid="select-machine"]').text().includes(machineName);
+        const noModalLeft = $body.find('.ant-modal-content').length === 0;
+
+        stablePolls = nameShown && noModalLeft ? stablePolls + 1 : 0;
+
+        if (stablePolls >= 2) return;
+      }
 
       if (Date.now() > deadline) {
         throw new Error(`connectMachine: "${machineName}" not connected within 150s`);
