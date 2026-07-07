@@ -10,6 +10,7 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import callWithRetry from './callWithRetry';
 import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 import rawAndHome from './rawAndHome';
 
@@ -50,7 +51,9 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     updateMessage(lang.message.preview.moving_to_preview_position);
 
     if (cameraPosition) {
-      await deviceMaster.rawMove({ f: movementFeedrate, x: cameraPosition[0], y: cameraPosition[1] });
+      await callWithRetry(() =>
+        deviceMaster.rawMove({ f: movementFeedrate, x: cameraPosition[0], y: cameraPosition[1] }),
+      );
 
       const dist = (cameraPosition[0] ** 2 + cameraPosition[1] ** 2) ** 0.5;
       const time = (dist / (movementFeedrate / 60)) * 2; // safety factor 2
