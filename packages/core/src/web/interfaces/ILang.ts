@@ -73,6 +73,7 @@ export interface ILang {
     font_size: string;
     hide_text: string;
     invert_color: string;
+    text: string;
     text_margin: string;
   };
   beambox: {
@@ -1272,7 +1273,10 @@ export interface ILang {
   };
   code_generator: {
     barcode: string;
+    content: string;
+    import: string;
     qr_code: string;
+    type: string;
   };
   curve_engraving: {
     '921': string;

@@ -73,6 +73,7 @@ const lang: ILang = {
     font_size: 'Taille de police',
     hide_text: 'Masquer le texte',
     invert_color: 'Inverser couleur',
+    text: 'Texte',
     text_margin: 'Marge de texte',
   },
   beambox: {
@@ -1270,7 +1271,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Code-barres',
+    content: 'Contenu',
+    import: 'Importer',
     qr_code: 'Code QR',
+    type: 'Type',
   },
   curve_engraving: {
     '921': 'Échec de la mise au point automatique.',
@@ -2115,7 +2119,7 @@ const lang: ILang = {
     error_tolerance: 'Tolérance aux erreurs',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Inverser la couleur de fond',
-    placeholder: 'Saisissez un lien ou du texte',
+    placeholder: 'Saisir un texte',
     title: 'Générateur de code QR',
   },
   resolution: {

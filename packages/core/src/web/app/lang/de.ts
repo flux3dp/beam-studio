@@ -73,6 +73,7 @@ const lang: ILang = {
     font_size: 'Schriftgröße',
     hide_text: 'Text ausblenden',
     invert_color: 'Farben umkehren',
+    text: 'Text',
     text_margin: 'Textabstand',
   },
   beambox: {
@@ -1270,7 +1271,10 @@ const lang: ILang = {
   },
   code_generator: {
     barcode: 'Barcode',
+    content: 'Inhalt',
+    import: 'Importieren',
     qr_code: 'QR-Code',
+    type: 'Typ',
   },
   curve_engraving: {
     '921': 'Automatische Fokussierung fehlgeschlagen.',
@@ -2115,7 +2119,7 @@ const lang: ILang = {
     error_tolerance: 'Fehlertoleranz',
     error_tolerance_link: 'https://support.flux3dp.com/hc/en-us/articles/9113705072143',
     invert: 'Hintergrundfarbe umkehren',
-    placeholder: 'Eingabe eines Links oder Textes',
+    placeholder: 'Text eingeben',
     title: 'QR-Code-Generator',
   },
   resolution: {
