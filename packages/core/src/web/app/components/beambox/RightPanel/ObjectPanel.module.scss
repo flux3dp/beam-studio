@@ -24,21 +24,11 @@
     }
   }
 
-  .collapse {
-    background-color: #ffffff;
-
-    :global(.ant-collapse-item) {
-      border-bottom: 1px solid #e0e0e0;
-    }
-
-    :global(.ant-collapse-header-text) {
-      font-weight: 600;
-    }
-  }
-
   .row {
     height: 41px;
     background-color: #ffffff;
+    border: solid #e0e0e0;
+    border-width: 0 0 1px 0;
 
     .half {
       width: 50%;
