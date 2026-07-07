@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
@@ -8,9 +8,10 @@ import alertCaller from '@core/app/actions/alert-caller';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
-import { discoverManager, SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
+import { SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { hashMap } from '@core/helpers/hashHelper';
+import { useDeviceList } from '@core/helpers/hooks/useDeviceList';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -27,15 +28,18 @@ interface Props {
 
 const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const [deviceList, setDeviceList] = useState(Array.of<IDeviceInfo>());
   const selectedDevice = TopBarController.getSelectedDevice();
   const selectedKey = selectedDevice?.serial;
+  const devices = useDeviceList('device-selector', {
+    // Re-render on live status/progress/connection changes, not just roster changes.
+    signature: (device) =>
+      `${device.serial}|${device.uuid}|${device.name}|${device.st_id}|${device.st_prog}|${device.ipaddr}`,
+  });
 
-  useEffect(() => {
-    const unregister = discoverManager.register('device-selector', (discoverdDevices) => {
-      const filteredDevices = discoverdDevices.filter((device) => device.serial !== 'XXXXXXXXXX');
-
-      filteredDevices.sort((deviceA, deviceB) => {
+  // Selected machine first, then alphabetical; recomputed only when devices or selection change.
+  const deviceList = useMemo(
+    () =>
+      [...devices].sort((deviceA, deviceB) => {
         if (deviceA.serial === selectedKey && deviceB.serial !== selectedKey) {
           return -1;
         }
@@ -45,12 +49,9 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
         }
 
         return deviceA.name.localeCompare(deviceB.name);
-      });
-      setDeviceList(filteredDevices);
-    });
-
-    return unregister;
-  }, [selectedKey]);
+      }),
+    [devices, selectedKey],
+  );
 
   const status = lang.machine_status;
   const timeout = useRef<NodeJS.Timeout | undefined>(undefined);
