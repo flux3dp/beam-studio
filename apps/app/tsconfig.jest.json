@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.spec.json",
+  "compilerOptions": {
+    // Jest-only override: ts-jest needs synthetic default imports to compile the
+    // node-side specs (e.g. `import path from 'path'`, `import TabManager from './tabManager'`).
+    // Kept out of tsconfig.spec.json so the project-referenced build config stays untouched.
+    "esModuleInterop": true
+  }
+}
