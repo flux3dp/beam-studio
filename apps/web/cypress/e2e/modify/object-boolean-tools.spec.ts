@@ -114,7 +114,7 @@ describe('text and shapes boolean operation', () => {
       .invoke('attr', 'd')
       .then((d) =>
         expect(md5(d)).equal(
-          isRunningAtGithub ? '11be5b56abbef33e2a9a258ae118c60b' : 'f6ee0a6ce2a58fe226cad3595f284741',
+          isRunningAtGithub ? '1a5a3b26ad4ee5c1ffcfd845895ba835' : 'f6ee0a6ce2a58fe226cad3595f284741',
         ),
       );
     checkDimensions(0, 0, isRunningAtGithub ? 106.97 : 104.77, 75);
@@ -126,7 +126,7 @@ describe('text and shapes boolean operation', () => {
       .invoke('attr', 'd')
       .then((d) =>
         expect(md5(d)).equal(
-          isRunningAtGithub ? '861763c3bf29d492d0cc66e7b5e0967d' : '2492a86b0eede32e405426dcbdc5ff0a',
+          isRunningAtGithub ? 'e2b6a2a1a8f68746ab6326995cbcf725' : '2492a86b0eede32e405426dcbdc5ff0a',
         ),
       );
     checkDimensions(0, 0, 75, 75);
@@ -138,14 +138,14 @@ describe('text and shapes boolean operation', () => {
       .invoke('attr', 'd')
       .then((d) =>
         expect(md5(d)).equal(
-          isRunningAtGithub ? 'd94e5db8c7ecf384e5bc9bfa7a7b5958' : 'f786bca9c5dba9f836aa0e65c7a9afc0',
+          isRunningAtGithub ? '52f5235d45e0965b076cf83b176063e6' : 'f786bca9c5dba9f836aa0e65c7a9afc0',
         ),
       );
     checkDimensions(
       isRunningAtGithub ? 1.19 : 0,
-      isRunningAtGithub ? 19.19 : 19.29,
-      isRunningAtGithub ? 69.13 : 75,
-      isRunningAtGithub ? 39.43 : 39.31,
+      isRunningAtGithub ? 19.18 : 19.29,
+      isRunningAtGithub ? 69.11 : 75,
+      isRunningAtGithub ? 39.44 : 39.31,
     );
   });
 
@@ -155,7 +155,7 @@ describe('text and shapes boolean operation', () => {
       .invoke('attr', 'd')
       .then((d) =>
         expect(md5(d)).equal(
-          isRunningAtGithub ? 'ef09dac4f9d47d8e6894a995c4db934a' : '03311828449bedcb35f3241198f8f24a',
+          isRunningAtGithub ? '08f43e06551e1bddaf2cbafaaf837d64' : '03311828449bedcb35f3241198f8f24a',
         ),
       );
     checkDimensions(0, 0, isRunningAtGithub ? 106.97 : 104.77, 75);
