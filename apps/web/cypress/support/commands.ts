@@ -199,12 +199,45 @@ Cypress.Commands.add('setUpBackend', (ip: string) => {
   window.localStorage.setItem('host', ip);
 });
 
-Cypress.Commands.add('connectMachine', (machineName: string) => {
+/**
+ * Select a machine in the device selector and wait until the top bar shows its name.
+ *
+ * The workarea-resize confirm ("Yes") only renders when the machine's model differs from the
+ * current document workarea AND the device is newly selected (get-device.ts) — so it is clicked
+ * WHEN PRESENT instead of being awaited unconditionally, which used to hang for 150s on a
+ * matched-model machine or a same-device reconnect.
+ *
+ * `options.onSelect` fires immediately before the device row is clicked — i.e. right before
+ * DeviceMaster.select() starts — so timing specs can measure the full connection window.
+ */
+Cypress.Commands.add('connectMachine', (machineName: string, options: { onSelect?: () => void } = {}) => {
   cy.findByTestId('select-machine').should('exist');
   cy.findByTestId('select-machine').click();
   cy.findByText(machineName).should('exist');
+  cy.then(() => options.onSelect?.());
   cy.findByText(machineName).click();
-  cy.get('.ant-modal-footer .ant-btn-primary', { timeout: 150000 }).contains('Yes').click();
+
+  const deadline = Date.now() + 150000;
+  const waitConnected = (): void => {
+    cy.get('body').then(($body) => {
+      // Connected signal: the top-bar button shows the machine name.
+      if ($body.find('[data-testid="select-machine"]').text().includes(machineName)) return;
+
+      const yes = $body
+        .find('.ant-modal-footer .ant-btn-primary')
+        .filter((_, el) => (el.textContent || '').includes('Yes'));
+
+      if (yes.length) cy.wrap(yes.first()).click({ force: true });
+
+      if (Date.now() > deadline) {
+        throw new Error(`connectMachine: "${machineName}" not connected within 150s`);
+      }
+
+      cy.wait(500).then(waitConnected);
+    });
+  };
+
+  waitConnected();
   cy.findByTestId('select-machine').contains(machineName).should('exist');
 });
 

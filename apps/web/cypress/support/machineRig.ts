@@ -100,3 +100,28 @@ export const enterEditorAndConnect = (machineName: string): void => {
   landEditorWiredToGhost();
   cy.connectMachine(machineName);
 };
+
+/**
+ * Read the machine's FLUXGhost-discovered IPv4 from its Machine Info dialog, then close it.
+ * The regex is anchored on the "IP:" label — the dialog's caption is the user-set machine
+ * NAME, which may itself contain a dotted quad (machines named after their address), so an
+ * unanchored match could extract the wrong host.
+ */
+export const readDiscoveredIp = (machineName: string): Cypress.Chainable<string> => {
+  cy.getMenuItem(['Machines', machineName], 'Machine Info').click({ force: true });
+  cy.get('.ant-modal-content', { timeout: 20000 }).should('contain', 'IP');
+
+  return cy
+    .get('.ant-modal-content')
+    .invoke('text')
+    .then((text) => {
+      const match = String(text).match(/IP:\s*(\d{1,3}(?:\.\d{1,3}){3})/);
+
+      expect(match, `a discovered IPv4 for ${machineName}`).to.not.eq(null);
+
+      cy.get('.ant-modal-footer .ant-btn').contains('OK').click();
+      cy.get('.ant-modal-content').should('not.exist');
+
+      return cy.wrap(match![1]);
+    });
+};

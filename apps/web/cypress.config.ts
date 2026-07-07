@@ -21,14 +21,13 @@ export const envVariables = {
   password: 'Flux42642569',
   envType: 'local',
   backendIP: '192.168.1.114',
-  // Machine display names for the local-rig specs. These are DEFAULTS for the reference
-  // bench — override per operator with CYPRESS_machineName / CYPRESS_adorName /
-  // CYPRESS_beamo2Name to point the rig at your own machines. `beamSeriesName` is an alias
-  // of `machineName` kept because several existing specs read the name by that key.
-  machineName: 'beamo (Adam)',
-  beamSeriesName: 'beamo (Adam)',
-  adorName: 'Ador (Cruz)',
-  // beamo2Name has no default — the read-only rig specs skip it unless CYPRESS_beamo2Name is set.
+  // Machine display names (machineName / adorName / beamo2Name) are ENV-DRIVEN and
+  // intentionally have NO defaults here: a slot without its CYPRESS_* name set is skipped by
+  // the read-only rig specs, and the job-capable machine specs fail fast instead of silently
+  // driving whichever LAN machine happens to match a baked-in name. Reference-bench names
+  // (office rig): machineName "beamo (Adam)", adorName "Ador (Cruz)".
+  // `beamSeriesName` (read by several older specs) is aliased to machineName at runtime in
+  // setupNodeEvents — an explicit CYPRESS_beamSeriesName still wins.
 };
 
 export default defineConfig({
@@ -37,8 +36,16 @@ export default defineConfig({
   e2e: {
     async setupNodeEvents(on, config) {
       await preset.setupNodeEvents(on, config);
+      require('./cypress/plugins/index.ts')(on, config);
 
-      return require('./cypress/plugins/index.ts')(on, config);
+      // `beamSeriesName` is a LIVE alias of `machineName` (older machine specs read the former):
+      // overriding CYPRESS_machineName moves both, so one run can never split across two
+      // physical machines. An explicit CYPRESS_beamSeriesName still wins.
+      if (!config.env.beamSeriesName && config.env.machineName) {
+        config.env.beamSeriesName = config.env.machineName;
+      }
+
+      return config;
     },
     baseUrl: 'http://localhost:8080',
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',

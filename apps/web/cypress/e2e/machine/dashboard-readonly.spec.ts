@@ -20,20 +20,38 @@ describe('idle dashboard (read-only)', () => {
         enterEditorAndConnect(name);
       });
 
-      it('opens the Monitor in idle mode showing status + File/Camera tabs, no job started', () => {
+      it('opens the Monitor in idle mode showing status + read-only tabs, no job started', () => {
         cy.getMenuItem(['Machines', name], 'Dashboard').click();
 
-        // Monitor is a DraggableModal titled `${device.name} - ${statusText}`.
-        cy.get('.ant-modal-content', { timeout: 20000 }).as('monitor');
+        // Monitor is a DraggableModal titled `${device.name} - ${statusText}` and is the only
+        // modal with a tab strip — gate on the tabs so the "Connecting <name>…" progress modal
+        // (same .ant-modal-content selector, also contains the name) can never satisfy this.
+        cy.get('.ant-modal-content:has(.ant-tabs)', { timeout: 20000 }).as('monitor');
         cy.get('@monitor').should('contain', name);
 
-        // Idle machine → File mode: the File and Camera tabs are the read-only surface.
-        // (Task tab only appears once a job image exists, i.e. after sending work — it
-        // must NOT be present here, which guards that we stayed read-only.)
+        // Idle machine → File mode: the File tab is the read-only surface. The Task tab only
+        // appears once a job image exists (i.e. after sending work) — asserting it is ABSENT
+        // guards that we stayed read-only. The Camera tab is nulled for North-America locales
+        // (Monitor.tsx localeHelper.isNorthAmerica gate), so it is asserted conditionally.
         cy.get('@monitor').within(() => {
           cy.get('.ant-tabs-tab').contains('File').should('exist');
-          cy.get('.ant-tabs-tab').contains('Camera').should('exist');
           cy.get('.ant-tabs-tab').contains('Task').should('not.exist');
+        });
+        cy.window().then((win) => {
+          // Mirror locale-helper.ts detectNorthAmerica exactly: a US/CA region in any browser
+          // locale AND a UTC-4..UTC-10 timezone offset.
+          const locales = win.navigator.languages || [win.navigator.language];
+          const hasNaRegion = Array.from(locales).some((locale) => /-(US|CA)\b/i.test(locale));
+          const tzOffset = new Date().getTimezoneOffset();
+          const isNorthAmerica = hasNaRegion && tzOffset <= 600 && tzOffset >= 240;
+
+          if (isNorthAmerica) {
+            cy.log('Camera tab assertion skipped: North-America locale hides it (patent gate)');
+          } else {
+            cy.get('@monitor').within(() => {
+              cy.get('.ant-tabs-tab').contains('Camera').should('exist');
+            });
+          }
         });
 
         // Close the dashboard (footer is null; use the modal close button).

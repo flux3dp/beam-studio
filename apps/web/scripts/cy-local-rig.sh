@@ -11,12 +11,14 @@
 #   --swiftray          specs that speak the Swiftray wire protocol on ws://localhost:6611
 #   --all               everything above
 #
-# Machine names for --machine-readonly are ENV-DRIVEN so you can target your own bench:
+# Machine names are ENV-DRIVEN with NO config defaults — set the ones on your bench:
 #   CYPRESS_machineName="beamo (Adam)"    # beam-series / CO2 (bed camera)
 #   CYPRESS_adorName="Ador (Cruz)"         # Ador (bed camera + module info)
 #   CYPRESS_beamo2Name="beamo II (...)"    # beamo II / newer beam-series (bed camera)
-# A slot with no name set is skipped. Defaults for machineName/adorName live in
-# cypress.config.ts — override them to match the machines actually on your network.
+# A slot with no name set is SKIPPED by the read-only specs; the job-capable --machine specs
+# fail fast without a name instead of silently driving a default-named machine.
+# (Reference office bench: machineName "beamo (Adam)", adorName "Ador (Cruz)".)
+# `beamSeriesName` (read by older specs) is aliased to machineName in cypress.config.ts.
 #
 # FLUXGhost wiring: the compiled Beam Studio app runs FLUXGhost (flux_api) on a
 # DYNAMIC port. This script auto-detects it via lsof; override with GHOST_PORT=<port>.

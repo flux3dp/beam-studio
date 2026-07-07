@@ -12,9 +12,9 @@
 //     focus accurately), so we take the manual path with height 0: "Enter Manually" sets the
 //     value to 0 internally (PreviewHeight.tsx) → the next step's "Apply" commits it.
 //   - Capture is triggered with the laser-head REGION camera (a canvas drag), which returns a bed
-//     shot on every model tested (Ador + BB2). The wide-angle full-area button is only a fallback
-//     for machines that don't offer the region camera (wide-angle needs fisheye calibration params
-//     and returns no frame without them).
+//     shot on every model tested (Ador + BB2). The wide-angle full-area button is a fallback taken
+//     only when the region camera never ENABLES within the settle window (wide-angle needs fisheye
+//     calibration params and returns no frame without them).
 //
 // One test per machine (single connect — avoids reconnect flakiness on shared bench machines).
 // Local rig only; self-skips on GitHub and when no machine name env var is set.
@@ -39,33 +39,63 @@ describe('camera preview (read-only)', () => {
         // Preview engaged when the floating bar renders OR camera setup surfaces a dialog.
         cy.get('#end-preview-mode, .ant-modal-content', { timeout: 20000 }).should('exist');
 
-        // Ador Auto Focus dialog: take the manual height-0 path (Enter Manually → Apply).
-        cy.wait(2500);
-        cy.get('body').then(($body) => {
-          if (/enter manually/i.test($body.text())) {
-            cy.contains('.ant-modal-content .ant-btn', 'Enter Manually').click();
-            cy.get('.ant-modal-content .ant-btn-primary', { timeout: 10000 }).contains('Apply').click();
-            cy.wait(1500);
-          }
-        });
+        // The floating-bar camera buttons are <div>s: their disabled state is a CSS-module
+        // class (styles.disabled) plus an onClick guard — never a `disabled` attribute — so
+        // enablement must be checked via the class list.
+        const isEnabled = ($el: JQuery): boolean => $el.length > 0 && !/disabled/i.test($el.attr('class') || '');
+        const dragRegionCapture = (): void => {
+          cy.get('svg#svgcontent')
+            .trigger('mousedown', 150, 150, { force: true })
+            .trigger('mousemove', 350, 350, { force: true })
+            .trigger('mouseup', { force: true });
+        };
 
-        // Trigger the capture with the region camera (drag), falling back to wide-angle.
-        cy.get('body').then(($body) => {
-          if ($body.find('#laser-head-camera:not([disabled])').length) {
-            cy.get('#laser-head-camera').click({ force: true });
-            cy.get('svg#svgcontent')
-              .trigger('mousedown', 150, 150, { force: true })
-              .trigger('mousemove', 350, 350, { force: true })
-              .trigger('mouseup', { force: true });
-          } else if ($body.find('#wide-angle-camera:not([disabled])').length) {
-            cy.get('#wide-angle-camera').click({ force: true });
-          } else {
-            cy.get('svg#svgcontent')
-              .trigger('mousedown', 150, 150, { force: true })
-              .trigger('mousemove', 350, 350, { force: true })
-              .trigger('mouseup', { force: true });
-          }
-        });
+        // Settle-poll instead of fixed sleeps: camera setup resolves into one of —
+        //  (a) Ador's Auto Focus dialog → take the manual height-0 path (Enter Manually sets
+        //      the value to 0 internally per PreviewHeight.tsx, Apply commits it), then keep
+        //      polling until the region camera enables;
+        //  (b) the region camera (#laser-head-camera) enables → arm it and drag a box;
+        //  (c) region never enables within the window → fall back to the wide-angle full-area
+        //      button if that one is enabled (needs fisheye calibration to return a frame).
+        let afHandled = false;
+        const SETTLE_BUDGET_MS = 20000;
+        const settleStart = { at: 0 };
+        const settleAndCapture = (): void => {
+          cy.get('body').then(($body) => {
+            if (!afHandled && /enter manually/i.test($body.text())) {
+              afHandled = true;
+              cy.contains('.ant-modal-content .ant-btn', 'Enter Manually').click();
+              cy.get('.ant-modal-content .ant-btn-primary', { timeout: 10000 }).contains('Apply').click();
+              cy.get('.ant-modal-content').should('not.exist');
+              cy.then(settleAndCapture);
+
+              return;
+            }
+
+            if (isEnabled($body.find('#laser-head-camera'))) {
+              cy.get('#laser-head-camera').click({ force: true });
+              dragRegionCapture();
+
+              return;
+            }
+
+            if (performance.now() - settleStart.at > SETTLE_BUDGET_MS) {
+              if (isEnabled($body.find('#wide-angle-camera'))) {
+                cy.get('#wide-angle-camera').click({ force: true });
+
+                return;
+              }
+
+              throw new Error('camera preview never became ready: no enabled capture control within budget');
+            }
+
+            cy.wait(500).then(settleAndCapture);
+          });
+        };
+
+        cy.then(() => {
+          settleStart.at = performance.now();
+        }).then(settleAndCapture);
 
         // HARD: a real camera frame lands in the preview overlay as a blob: image.
         cy.get('#previewSvg #backgroundImage', { timeout: CAPTURE_BUDGET_MS })

@@ -11,9 +11,8 @@
 // path, so a reachable machine yields the healthy result.
 //
 // Local rig only; self-skips on GitHub and when no machine name env var is set.
-import { connectedTargets, landEditorWiredToGhost, skipUnlessRig } from '../../support/machineRig';
+import { connectedTargets, landEditorWiredToGhost, readDiscoveredIp, skipUnlessRig } from '../../support/machineRig';
 
-const IPV4 = /(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})/;
 // networkTest runs a fixed 30s ping loop; leave headroom for the result alert.
 const TEST_RESULT_TIMEOUT = 45000;
 const targets = connectedTargets();
@@ -29,37 +28,27 @@ describe('network testing (read-only)', () => {
       });
 
       it('tests the discovered machine IP via Machines > Network Testing', () => {
-        // 1. Read the IP FLUXGhost discovered for this machine, from its Machine Info dialog.
-        cy.getMenuItem(['Machines', name], 'Machine Info').click({ force: true });
-        cy.get('.ant-modal-content', { timeout: 20000 }).should('contain', 'IP');
-        cy.get('.ant-modal-content')
-          .invoke('text')
-          .then((text) => {
-            const match = text.match(IPV4);
+        // 1. Read the IP FLUXGhost discovered for this machine (anchored on the "IP:" label —
+        //    see readDiscoveredIp; the dialog caption is the machine NAME, which may itself
+        //    contain a dotted quad).
+        readDiscoveredIp(name).then((ip) => {
+          cy.log(`discovered IP for "${name}": ${ip}`);
 
-            expect(match, `a discovered IPv4 for ${name}`).to.not.eq(null);
+          // 2. Open the Network Testing modal from the menu (not from Machine Info's button).
+          cy.getMenuItem(['Machines'], 'Test Network Settings').click({ force: true });
+          cy.contains('.ant-modal', 'Network Testing').should('be.visible');
 
-            const ip = match![1];
+          // 3. Enter the discovered IP and start the test.
+          cy.get('.ant-modal .ant-input').clear().type(ip);
+          cy.get('.ant-modal-footer .ant-btn-primary').contains('Start').click();
 
-            cy.log(`discovered IP for "${name}": ${ip}`);
-            cy.get('.ant-modal-footer .ant-btn').contains('OK').click();
-            cy.get('.ant-modal-content').should('not.exist');
-
-            // 2. Open the Network Testing modal from the menu (not from Machine Info's button).
-            cy.getMenuItem(['Machines'], 'Test Network Settings').click({ force: true });
-            cy.contains('.ant-modal', 'Network Testing').should('be.visible');
-
-            // 3. Enter the discovered IP and start the test.
-            cy.get('.ant-modal .ant-input').clear().type(ip);
-            cy.get('.ant-modal-footer .ant-btn-primary').contains('Start').click();
-
-            // 4. The test runs (progress) then pops a "Test Completed" result. Assert it landed and
-            //    reports either a connection quality (reachable) or the #840 cannot-connect message.
-            cy.contains('.ant-modal-content', 'Test Completed', { timeout: TEST_RESULT_TIMEOUT }).should('be.visible');
-            cy.get('.ant-modal-content')
-              .invoke('text')
-              .should('match', /Connection Quality|Fail to connect/);
-          });
+          // 4. The test runs (progress) then pops a "Test Completed" result. Assert it landed and
+          //    reports either a connection quality (reachable) or the #840 cannot-connect message.
+          cy.contains('.ant-modal-content', 'Test Completed', { timeout: TEST_RESULT_TIMEOUT }).should('be.visible');
+          cy.get('.ant-modal-content')
+            .invoke('text')
+            .should('match', /Connection Quality|Fail to connect/);
+        });
       });
     });
   });
