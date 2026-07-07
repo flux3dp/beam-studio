@@ -25,7 +25,7 @@ exports[`test FlipButtons should render correctly when not in mobile 1`] = `
     class="container"
   >
     <button
-      class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-icon-only btn"
+      class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
       id="horizontal_flip"
       title="hflip"
       type="button"
@@ -37,7 +37,7 @@ exports[`test FlipButtons should render correctly when not in mobile 1`] = `
       </span>
     </button>
     <button
-      class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-icon-only btn"
+      class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
       id="vertical_flip"
       title="vflip"
       type="button"

@@ -5,6 +5,11 @@ exports[`should render correctly image 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-image-options
       elem="[object HTMLImageElement]"
     />
@@ -121,6 +126,11 @@ exports[`should render correctly others 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-infill-block
       elems="[object HTMLUnknownElement]"
     />
@@ -133,6 +143,11 @@ exports[`should render correctly polygon desktop version 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-polygon-options
       elem="[object HTMLUnknownElement]"
     />
@@ -148,6 +163,11 @@ exports[`should render correctly polygon web version 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-polygon-options
       elem="[object HTMLUnknownElement]"
     />
@@ -163,6 +183,11 @@ exports[`should render correctly rect 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-rect-options
       elem="[object HTMLUnknownElement]"
     />
@@ -178,6 +203,11 @@ exports[`should render correctly rect in full color layer 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-rect-options
       elem="[object HTMLUnknownElement]"
     />
@@ -193,6 +223,11 @@ exports[`should render correctly text 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-text-options
       elem="[object HTMLUnknownElement]"
       showcolorpanel="configName"
@@ -210,6 +245,11 @@ exports[`should render correctly use with variable data 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-multi-color-options
       elem="[object HTMLUnknownElement]"
     />
@@ -227,6 +267,11 @@ exports[`should render correctly use without variable data 1`] = `
   <div
     class="panel"
   >
+    <div
+      class="title"
+    >
+      OPTIONS
+    </div>
     <dummy-multi-color-options
       elem="[object HTMLUnknownElement]"
     />

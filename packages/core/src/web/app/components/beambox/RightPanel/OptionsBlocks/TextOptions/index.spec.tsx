@@ -515,7 +515,8 @@ describe('TextOptions', () => {
     test('should handle font size change', () => {
       const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
 
-      const fontSizeInput = container.querySelector('#font_size');
+      const inputs = container.querySelectorAll('input');
+      const fontSizeInput = inputs[0];
 
       fireEvent.change(fontSizeInput!, { target: { value: '300' } });
 
@@ -525,7 +526,8 @@ describe('TextOptions', () => {
     test('should handle letter spacing change', () => {
       const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
 
-      const letterSpacingInput = container.querySelector('#letter_spacing');
+      const inputs = container.querySelectorAll('input');
+      const letterSpacingInput = inputs[2];
 
       fireEvent.change(letterSpacingInput!, { target: { value: '0.5' } });
 
@@ -535,7 +537,8 @@ describe('TextOptions', () => {
     test('should handle line spacing change', () => {
       const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
 
-      const lineSpacingInput = container.querySelector('#line_spacing');
+      const inputs = container.querySelectorAll('input');
+      const lineSpacingInput = inputs[1];
 
       fireEvent.change(lineSpacingInput!, { target: { value: '1.5' } });
 
