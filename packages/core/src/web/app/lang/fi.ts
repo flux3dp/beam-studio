@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Yhdistä laite puhelimen yhteyspisteeseen',
     },
     enter_ip: {
-      check_camera: 'Kameran tila',
       check_firmware: 'Laiteohjelmiston versio',
       check_ip_reachable: 'IP tavoitettavissa',
       check_machine_responds: 'Laite vastaa',

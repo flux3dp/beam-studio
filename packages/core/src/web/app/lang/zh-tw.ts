@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: '將機器連接至手機熱點',
     },
     enter_ip: {
-      check_camera: '相機狀態',
       check_firmware: '韌體版本',
       check_ip_reachable: 'IP 可連線',
       check_machine_responds: '機器回應',

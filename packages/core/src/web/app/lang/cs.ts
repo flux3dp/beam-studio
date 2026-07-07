@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Připojte zařízení k hotspotu telefonu',
     },
     enter_ip: {
-      check_camera: 'Stav kamery',
       check_firmware: 'Verze firmwaru',
       check_ip_reachable: 'IP je dostupná',
       check_machine_responds: 'Zařízení odpovídá',

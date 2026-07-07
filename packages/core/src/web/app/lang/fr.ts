@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Connectez la machine au partage de connexion du téléphone',
     },
     enter_ip: {
-      check_camera: 'État de la caméra',
       check_firmware: 'Version du firmware',
       check_ip_reachable: 'IP accessible',
       check_machine_responds: 'La machine répond',
@@ -1327,7 +1326,7 @@ const lang: ILang = {
     how_it_works_step2: "2. Connectez la machine au point d'accès.",
     how_it_works_step3: "3. Connectez votre ordinateur au même point d'accès.",
     how_it_works_step4: '4. Testez la connexion dans Beam Studio.',
-    intro: "Faisons un test rapide pour vérifier si votre machine fonctionne correctement. Nous connecterons votre machine et votre ordinateur via le partage de connexion de votre téléphone portable afin de déterminer si le problème vient de votre réseau ou de la machine elle-même.",
+    intro: 'Faisons un test rapide pour vérifier si votre machine fonctionne correctement. Nous connecterons votre machine et votre ordinateur via le partage de connexion de votre téléphone portable afin de déterminer si le problème vient de votre réseau ou de la machine elle-même.',
     ip_address: {
       step1: 'Sur l\'écran tactile de la machine, allez dans :\nRéseau → Cherchez "IP Address"',
       step2: "L'IP ressemble généralement à : 172.20.10.x ou 192.168.x.x\n(Cela dépend du partage de connexion de votre téléphone)",

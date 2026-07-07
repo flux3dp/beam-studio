@@ -1297,7 +1297,6 @@ export interface ILang {
       title: string;
     };
     enter_ip: {
-      check_camera: string;
       check_firmware: string;
       check_ip_reachable: string;
       check_machine_responds: string;

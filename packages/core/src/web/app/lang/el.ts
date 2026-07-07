@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Συνδέστε το μηχάνημα στο hotspot του τηλεφώνου',
     },
     enter_ip: {
-      check_camera: 'Κατάσταση κάμερας',
       check_firmware: 'Έκδοση υλικολογισμικού',
       check_ip_reachable: 'IP προσβάσιμη',
       check_machine_responds: 'Το μηχάνημα αποκρίνεται',

@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'เชื่อมต่อเครื่องกับฮอตสปอตโทรศัพท์',
     },
     enter_ip: {
-      check_camera: 'สถานะกล้อง',
       check_firmware: 'เวอร์ชันเฟิร์มแวร์',
       check_ip_reachable: 'เข้าถึง IP ได้',
       check_machine_responds: 'เครื่องตอบสนอง',

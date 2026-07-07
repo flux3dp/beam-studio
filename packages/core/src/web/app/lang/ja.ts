@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'マシンをスマートフォンのテザリングに接続する',
     },
     enter_ip: {
-      check_camera: 'カメラの状態',
       check_firmware: 'ファームウェアのバージョン',
       check_ip_reachable: 'IP に到達可能',
       check_machine_responds: 'マシンの応答',

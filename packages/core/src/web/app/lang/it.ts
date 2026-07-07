@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: "Connetti la macchina all'hotspot del telefono",
     },
     enter_ip: {
-      check_camera: 'Stato della fotocamera',
       check_firmware: 'Versione firmware',
       check_ip_reachable: 'IP raggiungibile',
       check_machine_responds: 'La macchina risponde',
@@ -1311,7 +1310,7 @@ const lang: ILang = {
       bullet2: "• L'indirizzo IP mostrato sul pannello touch",
       bullet3: "• Una descrizione dell'errore riscontrato",
       contact_title: "Quando contatti l'assistenza, è utile avere:",
-      intro: "Non preoccuparti: questo non significa necessariamente che ci sia un problema con la tua macchina. Potrebbero esserci fattori aggiuntivi che influenzano la connessione. Il nostro team di assistenza è qui per aiutarti a scoprirlo.",
+      intro: 'Non preoccuparti: questo non significa necessariamente che ci sia un problema con la tua macchina. Potrebbero esserci fattori aggiuntivi che influenzano la connessione. Il nostro team di assistenza è qui per aiutarti a scoprirlo.',
       title: 'Non siamo riusciti a completare il test',
     },
     hotspot: {

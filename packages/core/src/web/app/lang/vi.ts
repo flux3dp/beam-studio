@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Kết Nối Máy Với Điểm Phát Sóng Điện Thoại',
     },
     enter_ip: {
-      check_camera: 'Trạng thái camera',
       check_firmware: 'Phiên bản firmware',
       check_ip_reachable: 'IP có thể truy cập',
       check_machine_responds: 'Máy phản hồi',

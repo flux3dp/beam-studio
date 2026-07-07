@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Połącz urządzenie z hotspotem telefonu',
     },
     enter_ip: {
-      check_camera: 'Stan kamery',
       check_firmware: 'Wersja oprogramowania układowego',
       check_ip_reachable: 'IP osiągalne',
       check_machine_responds: 'Urządzenie odpowiada',

@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: '将机器连接至手机热点',
     },
     enter_ip: {
-      check_camera: '摄像头状态',
       check_firmware: '固件版本',
       check_ip_reachable: 'IP 可连接',
       check_machine_responds: '机器响应',

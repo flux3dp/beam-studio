@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: '기기를 휴대폰 핫스팟에 연결하기',
     },
     enter_ip: {
-      check_camera: '카메라 상태',
       check_firmware: '펌웨어 버전',
       check_ip_reachable: 'IP 연결 가능',
       check_machine_responds: '기기 응답',

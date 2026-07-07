@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Connect Machine to Phone Hotspot',
     },
     enter_ip: {
-      check_camera: 'Camera status',
       check_firmware: 'Firmware version',
       check_ip_reachable: 'IP reachable',
       check_machine_responds: 'Machine responds',

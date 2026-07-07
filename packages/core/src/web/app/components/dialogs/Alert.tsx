@@ -125,7 +125,7 @@ const Alert = ({
     }
 
     const code = Number(errorCode[0].replace('#', ''));
-    const link = getHelpCenterURL(Number(code), { keyRef: ['current_device'] });
+    const link = getHelpCenterURL(code, { keyRef: ['current_device'] });
     const isConnectionIssue = CONNECTION_ISSUE_ERROR_CODES.has(code);
 
     if (!link && !isConnectionIssue) {

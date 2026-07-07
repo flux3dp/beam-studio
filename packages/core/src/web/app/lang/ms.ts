@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Sambungkan Mesin ke Hotspot Telefon',
     },
     enter_ip: {
-      check_camera: 'Status kamera',
       check_firmware: 'Versi perisian tegar',
       check_ip_reachable: 'IP boleh dicapai',
       check_machine_responds: 'Mesin bertindak balas',

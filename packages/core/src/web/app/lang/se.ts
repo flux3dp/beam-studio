@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Anslut maskinen till telefonens hotspot',
     },
     enter_ip: {
-      check_camera: 'Kamerastatus',
       check_firmware: 'Firmware-version',
       check_ip_reachable: 'IP nåbar',
       check_machine_responds: 'Maskinen svarar',

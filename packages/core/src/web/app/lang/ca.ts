@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: "Connecta la màquina al punt d'accés del telèfon",
     },
     enter_ip: {
-      check_camera: 'Estat de la càmera',
       check_firmware: 'Versió del firmware',
       check_ip_reachable: 'IP accessible',
       check_machine_responds: 'La màquina respon',
@@ -1311,7 +1310,7 @@ const lang: ILang = {
       bullet2: "• L'adreça IP que es mostra al tauler tàctil",
       bullet3: "• Una descripció de l'error que has trobat",
       contact_title: 'Quan contactis amb el suport, és útil tenir a mà:',
-      intro: "No et preocupis: això no vol dir necessàriament que hi hagi cap problema amb la teva màquina. Pot haver-hi factors addicionals que afectin la connexió. El nostre equip de suport és aquí per ajudar-te a resoldre-ho.",
+      intro: 'No et preocupis: això no vol dir necessàriament que hi hagi cap problema amb la teva màquina. Pot haver-hi factors addicionals que afectin la connexió. El nostre equip de suport és aquí per ajudar-te a resoldre-ho.',
       title: 'No hem pogut completar la prova',
     },
     hotspot: {

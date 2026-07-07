@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Conecta la máquina al punto de acceso del teléfono',
     },
     enter_ip: {
-      check_camera: 'Estado de la cámara',
       check_firmware: 'Versión de firmware',
       check_ip_reachable: 'IP accesible',
       check_machine_responds: 'La máquina responde',

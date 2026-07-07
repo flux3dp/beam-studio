@@ -195,7 +195,13 @@ export const useConnectionTest = (
     // for correctly select promark device serial
     const res = await deviceMaster.select(device);
 
-    console.log('🚀 ~ useConnectionTest.ts:194 ~ handleStartTestForPromark ~ res:', res);
+    console.log('🚀 ~ useConnectionTest.ts ~ select promark ~ res:', res);
+
+    if (skipCameraTest) {
+      updateTestState({ testState: TestState.TEST_COMPLETED });
+
+      return;
+    }
 
     await testCamera(device);
   };

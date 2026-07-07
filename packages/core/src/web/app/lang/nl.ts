@@ -1295,7 +1295,6 @@ const lang: ILang = {
       title: 'Machine verbinden met telefoonhotspot',
     },
     enter_ip: {
-      check_camera: 'Camerastatus',
       check_firmware: 'Firmwareversie',
       check_ip_reachable: 'IP bereikbaar',
       check_machine_responds: 'Machine reageert',
