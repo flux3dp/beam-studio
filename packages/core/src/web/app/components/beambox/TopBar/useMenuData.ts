@@ -225,6 +225,7 @@ const useMenuData = (email?: string): MenuNode[] => {
     const children: MenuNode[] = [
       { device, id: 'DASHBOARD', label: menuCms.dashboard, type: 'item' },
       { device, id: 'MACHINE_INFO', label: menuCms.machine_info, type: 'item' },
+      { device, id: 'DEVICE_MAINTENANCE_CHECKLIST', label: menuCms.maintenance_checklist, type: 'item' },
       ...(isPromark
         ? [
             { device, id: 'PROMARK_SETTINGS', label: tPromarkSettings.title, type: 'item' as const },
@@ -564,6 +565,7 @@ const useMenuData = (email?: string): MenuNode[] => {
           ]
         : []),
       { id: 'START_GESTURE_INTRO', label: menuCms.show_gesture_tutorial, type: 'item' },
+      { id: 'MAINTENANCE_CHECKLIST', label: menuCms.maintenance_checklist, type: 'item' },
       { id: 'CHANGE_LOGS', label: menuCms.change_logs, type: 'item' },
       { id: 'HELP_CENTER', label: menuCms.help_center, type: 'item', url: menuCms.link.help_center },
       { id: 'KEYBOARD_SHORTCUTS', label: menuCms.keyboard_shortcuts, type: 'item', url: menuCms.link.shortcuts },

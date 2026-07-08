@@ -6,6 +6,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
+import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist';
 import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { showSettingsModal } from '@core/app/components/settings/modal/SettingsModal';
@@ -91,6 +92,7 @@ export default {
   IMAGE_STAMP: (): void => Dialog.showStampMakerPanel(),
   IMAGE_VECTORIZE: (): Promise<void> => imageEdit.traceImage(),
   LAYER_COLOR_CONFIG: (): void => Dialog.showLayerColorConfig(),
+  MAINTENANCE_CHECKLIST: (): void => showMaintenanceChecklist(),
   MANAGE_ACCOUNT: (): Promise<void> => externalLinkMemberDashboard(),
   NETWORK_TESTING: (): void => Dialog.showNetworkTestingPanel(),
   OFFSET: () => showOffsetModal(),

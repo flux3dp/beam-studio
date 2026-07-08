@@ -54,6 +54,7 @@ const state: StorageStoreState = {
   'layer-color-config': { array: [], dict: {} },
   'layer-panel-height': 100,
   loop_compensation: 0,
+  'maintenance-records': {},
   'new-user': false,
   notification: false,
   'poke-ip-addr': '127.0.0.1',

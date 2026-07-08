@@ -11,6 +11,7 @@ import { calibrateCamera, showModuleCalibration } from '@core/app/components/dia
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showDiodeCalibration } from '@core/app/components/dialogs/DiodeCalibration';
 import { showLaserDelaySettingPanel } from '@core/app/components/dialogs/LaserDelay';
+import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import { showUploadFirmwareDialog } from '@core/app/components/dialogs/updateFirmware';
@@ -29,6 +30,7 @@ import { getOS } from '@core/helpers/getOS';
 import { checkIsAtEditor } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import { getDetectedModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
+import { machineKeyOf } from '@core/helpers/maintenance/maintenanceRecords';
 import { extractVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
@@ -333,6 +335,9 @@ export default {
         vtElemHandler,
       );
     }
+  },
+  DEVICE_MAINTENANCE_CHECKLIST: (device: IDeviceInfo): void => {
+    showMaintenanceChecklist(machineKeyOf(device));
   },
   EXPORT_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
     backUpCalibrationData(device, 'download');
