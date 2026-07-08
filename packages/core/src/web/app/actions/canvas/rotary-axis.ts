@@ -1,12 +1,17 @@
+import { shallow } from 'zustand/shallow';
+
 import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import rotaryConstants from '@core/app/constants/rotary-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import type { DocumentState } from '@core/interfaces/Preference';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 let container: SVGSVGElement;
@@ -180,6 +185,24 @@ const mouseUp = (): void => {
     undoManager.addCommandToHistory(batchCmd);
   }
 };
+
+useDocumentStore.subscribe(
+  (state) =>
+    [state.workarea, state['customized-dimension'], state.rotary_mode] as [
+      WorkAreaModel,
+      DocumentState['customized-dimension'],
+      boolean,
+    ],
+  ([workarea, customizedDimension, rotaryMode]) => {
+    if (!rotaryMode) return;
+
+    const workareaObject = getWorkarea(workarea);
+    const height = customizedDimension[workarea]?.height ?? workareaObject.height;
+
+    setPosition((height * constant.dpmm) / 2, { write: true });
+  },
+  { equalityFn: shallow },
+);
 
 // TODO: add test
 export default {
