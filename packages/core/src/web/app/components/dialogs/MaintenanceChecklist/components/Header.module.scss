@@ -1,0 +1,106 @@
+@use '@core/styles/variables' as variables;
+
+.header {
+  padding: 4px 4px 0;
+  margin: 0 0 4px;
+}
+
+.top-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.machine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .label {
+    color: variables.$secondary-gray;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .select {
+    width: 260px;
+  }
+}
+
+.health {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .ring {
+    line-height: 0;
+  }
+
+  .ring-done {
+    animation: ring-pulse 1.4s ease;
+  }
+
+  .caption {
+    font-size: 12px;
+    color: variables.$secondary-gray;
+    line-height: 1.3;
+  }
+}
+
+.legend {
+  display: flex;
+  gap: 16px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: variables.$secondary-gray;
+  align-items: center;
+  flex-wrap: wrap;
+
+  .item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+}
+
+// Status colors for the legend dots (paired with the shared `.dot` shape).
+.dotUpToDate {
+  background: variables.$status-normal;
+}
+
+.dotDueSoon {
+  background: variables.$status-warning;
+}
+
+.dotOverdue {
+  background: variables.$status-critical;
+}
+
+.intro {
+  margin-top: 12px;
+  font-size: 13px;
+  color: variables.$secondary-gray;
+}
+
+@keyframes ring-pulse {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.12);
+  }
+  60% {
+    transform: scale(0.97);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-done {
+    animation: none;
+  }
+}
