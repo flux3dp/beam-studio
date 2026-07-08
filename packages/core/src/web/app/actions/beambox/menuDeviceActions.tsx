@@ -11,7 +11,7 @@ import { calibrateCamera, showModuleCalibration } from '@core/app/components/dia
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showDiodeCalibration } from '@core/app/components/dialogs/DiodeCalibration';
 import { showLaserDelaySettingPanel } from '@core/app/components/dialogs/LaserDelay';
-import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist';
+import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist/showMaintenanceChecklist';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import { showUploadFirmwareDialog } from '@core/app/components/dialogs/updateFirmware';

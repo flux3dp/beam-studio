@@ -6,7 +6,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
-import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist';
+import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist/showMaintenanceChecklist';
 import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { showSettingsModal } from '@core/app/components/settings/modal/SettingsModal';
