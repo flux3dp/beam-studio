@@ -7,7 +7,7 @@ import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import constant, { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -329,12 +329,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || autoFeederChanged) {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
-
-      if (workareaChanged || customDimensionChanged) {
-        const height = customDimension[workarea]?.height ?? workareaObj.height;
-
-        rotaryAxis.setPosition((height * constant.dpmm) / 2, { write: true });
-      }
 
       rotaryAxis.toggleDisplay();
     }
