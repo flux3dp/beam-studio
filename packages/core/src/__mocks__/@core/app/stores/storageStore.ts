@@ -38,6 +38,7 @@ const state: StorageStoreState = {
   'device-store': {},
   /** 1 for done */
   'did-gesture-tutorial': 1,
+  dockviewLayout: 'default',
   'elements-history': [],
   'enable-sentry': null,
   'flux-rsa-key': 'fluxRsaKey',
@@ -75,6 +76,7 @@ const state: StorageStoreState = {
   'selected-device': undefined,
   /** map with key: device uuid value: firmware version */
   'sentry-send-devices': {},
+  'yongli-written-serials': [],
 };
 
 const set = <K extends StorageKey>(key: K, value: StorageStoreState[K]) => {
