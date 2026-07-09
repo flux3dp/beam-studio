@@ -2,7 +2,7 @@ import type { RefObject } from 'react';
 import React, { useMemo, useRef, useState } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Flex, Radio, Switch } from 'antd';
+import { Button, ConfigProvider, Flex, Segmented, Switch } from 'antd';
 
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
@@ -24,6 +24,8 @@ interface Props {
   onClose: () => void;
 }
 
+type TabKey = 'barcode' | 'qrcode';
+
 export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
   const {
     alert: tAlert,
@@ -35,7 +37,7 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
     code_generator: tCodeGenerator,
     generators: tGenerators,
   } = useI18n();
-  const [tabKey, setTabKey] = useState('qrcode');
+  const [tabKey, setTabKey] = useState<TabKey>('qrcode');
   const [isInvert, setIsInvert] = useState(false);
   const [text, setText] = useState('');
   const [vtType, setVtType] = useState(VariableTextType.NONE);
@@ -69,12 +71,25 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
     onClose();
   };
 
-  const options = useMemo(
+  const tabOptions = useMemo(
     () => [
-      { label: tCodeGenerator.qr_code, value: 'qrcode' },
-      { label: tCodeGenerator.barcode, value: 'barcode' },
+      { label: tCodeGenerator.qr_code, value: 'qrcode' as const },
+      { label: tCodeGenerator.barcode, value: 'barcode' as const },
     ],
     [tCodeGenerator],
+  );
+
+  const tabSlot = (
+    <Segmented<TabKey>
+      block
+      className={styles['accent-segmented']}
+      onChange={(value) => {
+        setTabKey(value);
+        setIsInvert(false);
+      }}
+      options={tabOptions}
+      value={tabKey}
+    />
   );
 
   const onToggleVTType = () => {
@@ -97,6 +112,7 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
         ref={generatorRef as RefObject<QRcodeRef>}
         setIsInvert={setIsInvert}
         setText={setText}
+        tabSlot={tabSlot}
         text={text}
       />
     ) : (
@@ -105,38 +121,30 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
         ref={generatorRef as RefObject<BarcodeRef>}
         setIsInvert={setIsInvert}
         setText={setText}
+        tabSlot={tabSlot}
         text={text}
       />
     );
 
   return (
     <DraggableModal
-      cancelText={tAlert.cancel}
       disableMobileDrag
-      okButtonProps={{ disabled: !text }}
-      okText={tAlert.confirm}
-      onCancel={onClose}
-      onOk={handleOk}
-      open
-      title={
-        <Flex className={styles['title-flex']} gap={12}>
-          <div>{tGenerators.code_generator}</div>
-          <Radio.Group
-            className={styles['fw-n']}
-            defaultValue={tabKey}
-            onChange={(e) => {
-              setTabKey(e.target.value);
-              setIsInvert(false);
-            }}
-            options={options}
-            optionType="button"
-            size="small"
-          />
+      footer={
+        <Flex justify="space-between">
+          <Button onClick={onClose}>{tAlert.cancel}</Button>
+          <Button disabled={!text} onClick={handleOk} type="primary">
+            {tCodeGenerator.import}
+          </Button>
         </Flex>
       }
-      width={520}
+      onCancel={onClose}
+      open
+      title={tGenerators.code_generator}
+      width={840}
     >
-      {renderContent()}
+      <ConfigProvider theme={{ components: { Segmented: { itemSelectedColor: '#1677ff' } } }}>
+        {renderContent()}
+      </ConfigProvider>
       {showVariableBlock && (
         <div className={styles['variable-block']}>
           <div className={styles.row}>

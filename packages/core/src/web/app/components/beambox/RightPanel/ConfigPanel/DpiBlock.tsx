@@ -12,9 +12,12 @@ import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { writeData } from '@core/helpers/layer/layer-config-helper';
+import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelItem from '../ObjectPanelItem';
@@ -49,10 +52,47 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change layers dpi');
+      let shouldInitState = false;
 
       useLayerStore.getState().selectedLayers.forEach((layerName) => {
-        writeData(layerName, 'dpi', newDpi, { batchCmd });
+        const layer = layerManager.getLayerElementByName(layerName);
+
+        if (!layer) return;
+
+        writeDataLayer(layer, 'dpi', newDpi, { batchCmd });
+
+        const configName = getData(layer, 'configName');
+
+        if (configName) {
+          // Only rewrite keys whose value differs by dpi (per preset.dpiOverrides), so manual edits
+          // to other keys survive the dpi change. Mirrors the merge in applyPreset, but surgical.
+          const layerModule = getData(layer, 'module');
+          const preset = getDefaultPreset(configName, workarea, layerModule);
+
+          if (!preset?.dpiOverrides) return;
+
+          const oldOverrides = preset.dpiOverrides?.[dpi.value];
+          const newOverrides = preset.dpiOverrides?.[newDpi];
+
+          if (oldOverrides || newOverrides) {
+            const keys = Object.keys({ ...oldOverrides, ...newOverrides }) as ConfigKey[];
+
+            for (const key of keys) {
+              const newValue = newOverrides?.[key] ?? preset[key];
+
+              if (newValue === undefined) continue;
+
+              writeDataLayer(layer, key, newValue, { batchCmd });
+              shouldInitState = true;
+            }
+          }
+        }
       });
+
+      if (shouldInitState) {
+        initState();
+      }
+
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     }

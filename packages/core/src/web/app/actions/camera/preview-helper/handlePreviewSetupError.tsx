@@ -39,8 +39,20 @@ const handlePreviewSetupError = (device: IDeviceInfo, error: unknown): void => {
       message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
     });
   } else {
+    let errorMessage: string;
+
+    if (error instanceof Error) {
+      errorMessage = error.message;
+    } else {
+      try {
+        errorMessage = JSON.stringify(error);
+      } catch {
+        errorMessage = String(error);
+      }
+    }
+
     alertCaller.popUpError({
-      message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error instanceof Error ? error.message : ''}`,
+      message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${errorMessage}`,
     });
   }
 };

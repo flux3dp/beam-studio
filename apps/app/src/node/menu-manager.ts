@@ -772,6 +772,19 @@ class MenuManager extends EventEmitter {
           id: 'CONTACT_US',
           label: r.contact,
         },
+        {
+          id: 'PLUGIN',
+          label: r.plugin,
+          submenu: [
+            {
+              click() {
+                shell.openExternal(r.link.autocad);
+              },
+              id: 'PLUGIN_AUTOCAD',
+              label: 'AutoCAD',
+            },
+          ],
+        },
         { type: 'separator' },
         {
           click() {
@@ -807,7 +820,7 @@ class MenuManager extends EventEmitter {
             const view = getFocusedView();
 
             if (view) {
-              view.webContents.openDevTools();
+              view.webContents.toggleDevTools();
             }
           },
           id: 'DEV_TOOL',

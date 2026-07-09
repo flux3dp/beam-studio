@@ -255,6 +255,7 @@
       'data-scAMax',
       'data-scEnable',
       'data-scJerk',
+      'data-minPadding',
     ],
     image: [
       'data-ratiofixed',

@@ -1,4 +1,4 @@
 export interface IRecentMenuUpdater {
-  openRecentFiles: (filePath: string) => Promise<void>;
+  openRecentFiles: (filePath: string, options?: { shouldUpdate?: boolean }) => Promise<void>;
   update: () => void;
 }

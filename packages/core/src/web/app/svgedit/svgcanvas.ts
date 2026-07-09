@@ -61,8 +61,6 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { Units } from '@core/helpers/units';
 import units from '@core/helpers/units';
 import imageProcessor from '@core/implementations/imageProcessor';
-import recentMenuUpdater from '@core/implementations/recentMenuUpdater';
-import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
@@ -2545,25 +2543,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       addCommandToHistory(batchCmd);
     }
   });
-
-  this.updateRecentFiles = (filePath: string) => {
-    const recentFiles = storage.get('recent_files') || [];
-    const i = recentFiles.indexOf(filePath);
-
-    if (i > 0) {
-      recentFiles.splice(i, 1);
-      recentFiles.unshift(filePath);
-    } else if (i < 0) {
-      const l = recentFiles.unshift(filePath);
-
-      if (l > 10) {
-        recentFiles.pop();
-      }
-    }
-
-    storage.set('recent_files', recentFiles);
-    recentMenuUpdater.update();
-  };
 
   this.simplifyPath = (elems?: SVGElement[]) => {
     const batchCmd = new history.BatchCommand('Simplify Path');

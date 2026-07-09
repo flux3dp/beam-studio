@@ -169,7 +169,6 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fhx2rf: {
-    airAssist: true,
     autoFeeder: isDev()
       ? {
           maxHeight: 3000,

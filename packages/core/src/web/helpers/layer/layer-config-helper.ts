@@ -49,6 +49,7 @@ const attributeMap: Record<ConfigKey, string> = {
   ink: 'data-ink',
   interpolation: 'data-interpolation',
   kRatio: 'data-kRatio',
+  minPadding: 'data-minPadding',
   minPower: 'data-minPower',
   module: 'data-module',
   mRatio: 'data-mRatio',
@@ -118,6 +119,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   ink: useGlobalPreferenceStore.getState()['multipass-compensation'] ? 3 : 1,
   interpolation: 1,
   kRatio: 100,
+  minPadding: 0,
   minPower: 0,
   module: LayerModule.LASER_UNIVERSAL,
   mRatio: 100,
@@ -216,6 +218,7 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'highQuality',
   'oneWayEngraving',
   'oneWayEngravingReverse',
+  'minPadding',
   'accX',
   'accY',
   'travelSpeed',
@@ -431,7 +434,9 @@ export const writeDataLayer = <T extends ConfigKey>(
   const originalValue = layer.getAttribute(attr);
 
   if (booleanConfig.includes(key)) {
-    value = (value ? '1' : undefined) as ConfigKeyTypeMap[T];
+    const falseValue = baseConfig[key] === false ? undefined : '0';
+
+    value = (value ? '1' : falseValue) as ConfigKeyTypeMap[T];
   }
 
   if (objectConfig.includes(key)) {
@@ -696,12 +701,17 @@ export const applyPreset = (
   const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
-  const { module = LayerModule.LASER_UNIVERSAL } = preset;
+  // Resolve dpi-specific overrides against the target layer's current dpi, then strip the
+  // dpiOverrides map so it never leaks into a data-* attribute.
+  const dpi = getData(layer, 'dpi')!;
+  const { dpiOverrides, ...base } = preset;
+  const resolved: Preset = { ...base, ...dpiOverrides?.[dpi] };
+  const { module = LayerModule.LASER_UNIVERSAL } = resolved;
   const keys = getConfigKeys(module as LayerModuleType);
   const defaultConfig = getDefaultConfig();
 
   for (const key of keys) {
-    let value = preset[key];
+    let value = resolved[key];
 
     if (value === undefined) {
       if (!forcedKeys.includes(key)) continue;

@@ -14,7 +14,7 @@ import type {
 } from '../types';
 
 import { svgCache } from './buildElement';
-import { collectPathItems } from './buildShape';
+import { collectPathItems, removeDegenerateCurves } from './buildShape';
 import { createTextElement } from './buildText';
 
 export const generateShapeTextPathD = async (values: CustomShapeTextValues): Promise<null | string> => {
@@ -173,8 +173,6 @@ export const generateCustomBaseShape = async (
         })
         .exhaustive();
 
-      console.log('elementPath position', elementPath.bounds, basePath.bounds);
-
       basePath = basePath.unite(elementPath);
       innerPath = innerPath.unite(elementPath);
       elementPath.remove();
@@ -199,6 +197,10 @@ export const generateCustomBaseShape = async (
   const compensatedOffset = outlineOffset / sizeRatio;
 
   if (!innerPath || compensatedOffset <= 0) return { basePath, innerPath: null, project, sizeRatio };
+
+  // Strip degenerate curves (e.g. sub-pixel artifacts in icon SVGs like icon-sagittarius) that
+  // would otherwise make PaperOffset.offset recurse infinitely and overflow the stack.
+  removeDegenerateCurves(basePath);
 
   // Compensate outline so that after uniform scaling by sizeRatio, the final outline = outlineOffset mm
   basePath = PaperOffset.offset(basePath as paper.Path, compensatedOffset, {
