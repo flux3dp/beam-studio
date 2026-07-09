@@ -71,7 +71,7 @@ const StepVerify = ({ model }: StepVerifyProps): React.JSX.Element => {
   handleStartTestRef.current = handleStartTest;
 
   useEffect(() => {
-    if ([TestState.CAMERA_TEST_FAILED, TestState.TEST_COMPLETED].includes(testState)) {
+    if (testState === TestState.TEST_COMPLETED) {
       setPrimaryButton({ label: i18n.buttons.next, onClick: () => setResult('success'), primary: true });
     } else if (isFailed) {
       setPrimaryButton({ label: i18n.buttons.next, onClick: () => setResult('fail'), primary: true });
