@@ -608,7 +608,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
             <div className={styles.row}>
               <TextTransformBlock onSizeChange={handleSizeChange} textElements={textElements} />
             </div>
-            {renderFontFamilyBlock()}
+            <div className={styles.row}>{renderFontFamilyBlock()}</div>
             <div className={styles.row}>
               <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
               {renderFontStyleBlock()}

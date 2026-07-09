@@ -36,26 +36,6 @@ jest.mock('antd', () => ({
 
 jest.mock('@core/app/components/beambox/RightPanel/ObjectPanelItem', () => ({}));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      object_panel: {
-        option_panel: {
-          text_transform: 'Change Case',
-          text_transform_fullwidth: 'Fullwidth',
-          text_transform_halfwidth: 'Halfwidth',
-          text_transform_lowercase: 'Lowercase',
-          text_transform_none: 'Original',
-          text_transform_sentence: 'Sentence Case',
-          text_transform_title: 'Capitalize Each Word',
-          text_transform_toggle: 'Toggle Case',
-          text_transform_uppercase: 'Uppercase',
-        },
-      },
-    },
-  },
-}));
-
 import TextTransformBlock from './TextTransformBlock';
 
 describe('TextTransformBlock', () => {

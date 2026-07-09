@@ -21,7 +21,7 @@ import {
 } from './getters';
 
 const toSentenceCase = (s: string): string =>
-  s.toLowerCase().replace(/(^|[.!?]\s+)([a-z])/g, (_, sep, c) => sep + c.toUpperCase());
+  s.toLowerCase().replace(/(^|[.!?]\s+|\u0085)([a-z])/g, (_, sep, c) => sep + c.toUpperCase());
 
 const toTitleCase = (s: string): string => s.toLowerCase().replace(/\b[a-z]/g, (c) => c.toUpperCase());
 

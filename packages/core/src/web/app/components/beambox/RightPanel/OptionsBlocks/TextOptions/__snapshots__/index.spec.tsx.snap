@@ -13,18 +13,22 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
       />
     </div>
     <div
-      class="font-family"
+      class="row"
     >
-      mock-select title:
-      Font
-       value:
-      Arial
-      <select>
-        <option>
-          Recently Used
-        </option>
-        <option />
-      </select>
+      <div
+        class="font-family"
+      >
+        mock-select title:
+        Font
+         value:
+        Arial
+        <select>
+          <option>
+            Recently Used
+          </option>
+          <option />
+        </select>
+      </div>
     </div>
     <div
       class="row"
@@ -170,18 +174,22 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
       />
     </div>
     <div
-      class="font-family"
+      class="row"
     >
-      mock-select title:
-      Font
-       value:
-      Arial
-      <select>
-        <option>
-          Recently Used
-        </option>
-        <option />
-      </select>
+      <div
+        class="font-family"
+      >
+        mock-select title:
+        Font
+         value:
+        Arial
+        <select>
+          <option>
+            Recently Used
+          </option>
+          <option />
+        </select>
+      </div>
     </div>
     <div
       class="row"
@@ -323,18 +331,22 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
       />
     </div>
     <div
-      class="font-family"
+      class="row"
     >
-      mock-select title:
-      Font
-       value:
-      Arial
-      <select>
-        <option>
-          Recently Used
-        </option>
-        <option />
-      </select>
+      <div
+        class="font-family"
+      >
+        mock-select title:
+        Font
+         value:
+        Arial
+        <select>
+          <option>
+            Recently Used
+          </option>
+          <option />
+        </select>
+      </div>
     </div>
     <div
       class="row"
