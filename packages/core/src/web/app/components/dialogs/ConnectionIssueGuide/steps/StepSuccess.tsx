@@ -9,7 +9,6 @@ import styles from './ConnectionIssueStep.module.scss';
 const StepSuccess = (): React.JSX.Element => {
   const lang = useI18n().connection_issue_guide.success;
 
-  // TODO: update image
   return (
     <>
       <div className={styles.image}>

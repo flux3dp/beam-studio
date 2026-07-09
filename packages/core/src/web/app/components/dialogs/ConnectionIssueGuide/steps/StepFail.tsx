@@ -7,7 +7,6 @@ import styles from './ConnectionIssueStep.module.scss';
 const StepFail = (): React.JSX.Element => {
   const lang = useI18n().connection_issue_guide.fail;
 
-  // TODO: update image
   return (
     <>
       <div className={styles.image}>
