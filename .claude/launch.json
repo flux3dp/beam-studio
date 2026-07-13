@@ -10,7 +10,7 @@
     {
       "name": "pm-mockups",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-m", "http.server", "4599", "--directory", "/Users/simon/Dev/beam-studio-pm/docs/mockups"],
+      "runtimeArgs": ["-m", "http.server", "4599", "--directory", "../beam-studio-pm/docs/mockups"],
       "port": 4599
     }
   ]
