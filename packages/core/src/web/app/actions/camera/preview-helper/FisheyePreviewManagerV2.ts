@@ -4,6 +4,7 @@ import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParametersV2, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import callWithRetry from './callWithRetry';
 import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 import getAutoFocusPosition from './getAutoFocusPosition';
 import getHeight from './getHeight';
@@ -53,7 +54,7 @@ class FisheyePreviewManagerV2 extends FisheyePreviewManagerBase implements Fishe
     this.objectHeight = height;
     showMessage?.();
     updateMessage(lang.message.getProbePosition);
-    this.autoFocusRefKey = focusPosition ?? (await getAutoFocusPosition(device));
+    this.autoFocusRefKey = focusPosition ?? (await callWithRetry(() => getAutoFocusPosition(device)));
     updateMessage(lang.message.endingRawMode);
     await deviceMaster.endSubTask();
     // V2 calibration use point E as reference

@@ -511,13 +511,15 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         await DeviceMaster.reconnect();
       } catch (e) {
         console.error('Error when reconnect in monitor', e);
+
+        const { device, onClose } = this.props;
+
         Alert.popUp({
+          device,
           id: 'monitor-error',
           message: LANG.message.connectionTimeout,
           type: AlertConstants.SHOW_POPUP_ERROR,
         });
-
-        const { onClose } = this.props;
 
         onClose();
       }

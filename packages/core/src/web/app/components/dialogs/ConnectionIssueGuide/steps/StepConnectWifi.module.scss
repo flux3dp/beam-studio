@@ -1,0 +1,44 @@
+@use '@core/styles/mixins' as mixins;
+@use '@core/styles/variables' as variables;
+@use './ConnectionIssueStep.module' as *;
+
+.links {
+  flex-direction: column;
+  display: flex;
+  gap: 8px;
+
+  a {
+    font-size: 14px;
+    color: variables.$primary-blue;
+    text-decoration: underline;
+    width: fit-content;
+    cursor: pointer;
+  }
+
+  @include mixins.is-mobile {
+    flex-direction: column;
+    gap: 8px;
+  }
+}
+
+.imageRow {
+  flex: 1;
+  min-height: 200px;
+  display: flex;
+  gap: 12px;
+
+  img {
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    object-fit: contain;
+  }
+
+  @include mixins.is-mobile {
+    flex-wrap: wrap;
+
+    img {
+      width: 40vw;
+    }
+  }
+}

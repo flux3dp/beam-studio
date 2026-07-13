@@ -44,7 +44,7 @@ const fonts: WebFont[] = [
   //   style: 'Thin',
   //   weight: 100,
   //   queryString: 'family=Noto+Sans+TC:wght@100;300;400;500;700;900',
-  //   fileName: 'NotoSansTC-Thin.otf',
+  //   fileName: 'NotoSansTC-Thin.ttf',
   // },
   // {
   //   family: 'Noto Sans TC',
@@ -52,11 +52,11 @@ const fonts: WebFont[] = [
   //   postscriptName: 'NotoSansTC-Light',
   //   style: 'Light',
   //   weight: 300,
-  //   fileName: 'NotoSansTC-Light.otf',
+  //   fileName: 'NotoSansTC-Light.ttf',
   // },
   {
     family: 'Noto Sans TC',
-    fileName: 'NotoSansTC-Regular.otf',
+    fileName: 'NotoSansTC-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSansTC-Regular',
     queryString: 'family=Noto+Sans+TC:wght@400;700',
@@ -69,11 +69,11 @@ const fonts: WebFont[] = [
   //   postscriptName: 'NotoSansTC-Medium',
   //   style: 'Medium',
   //   weight: 500,
-  //   fileName: 'NotoSansTC-Medium.otf',
+  //   fileName: 'NotoSansTC-Medium.ttf',
   // },
   {
     family: 'Noto Sans TC',
-    fileName: 'NotoSansTC-Bold.otf',
+    fileName: 'NotoSansTC-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSansTC-Bold',
     style: 'Bold',
@@ -85,13 +85,13 @@ const fonts: WebFont[] = [
   //   postscriptName: 'NotoSansTC-Black',
   //   style: 'Black',
   //   weight: 900,
-  //   fileName: 'NotoSansTC-Black.otf',
+  //   fileName: 'NotoSansTC-Black.ttf',
   // },
 
   // Noto Sans HK
   {
     family: 'Noto Sans HK',
-    fileName: 'NotoSansHK-Regular.otf',
+    fileName: 'NotoSansHK-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSansHK-Regular',
     queryString: 'family=Noto+Sans+HK:wght@400;700',
@@ -100,7 +100,7 @@ const fonts: WebFont[] = [
   },
   {
     family: 'Noto Sans HK',
-    fileName: 'NotoSansHK-Bold.otf',
+    fileName: 'NotoSansHK-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSansHK-Bold',
     style: 'Bold',
@@ -110,7 +110,7 @@ const fonts: WebFont[] = [
   // Noto Sans SC
   {
     family: 'Noto Sans SC',
-    fileName: 'NotoSansSC-Regular.otf',
+    fileName: 'NotoSansSC-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSansSC-Regular',
     queryString: 'family=Noto+Sans+SC:wght@400;700',
@@ -119,7 +119,7 @@ const fonts: WebFont[] = [
   },
   {
     family: 'Noto Sans SC',
-    fileName: 'NotoSansSC-Bold.otf',
+    fileName: 'NotoSansSC-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSansSC-Bold',
     style: 'Bold',
@@ -129,7 +129,7 @@ const fonts: WebFont[] = [
   // Noto Sans JP
   {
     family: 'Noto Sans JP',
-    fileName: 'NotoSansJP-Regular.otf',
+    fileName: 'NotoSansJP-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSansJP-Regular',
     queryString: 'family=Noto+Sans+JP:wght@400;700',
@@ -138,7 +138,7 @@ const fonts: WebFont[] = [
   },
   {
     family: 'Noto Sans JP',
-    fileName: 'NotoSansJP-Bold.otf',
+    fileName: 'NotoSansJP-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSansJP-Bold',
     style: 'Bold',
@@ -148,7 +148,7 @@ const fonts: WebFont[] = [
   // Noto Sans KR
   {
     family: 'Noto Sans KR',
-    fileName: 'NotoSansKR-Regular.otf',
+    fileName: 'NotoSansKR-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSansKR-Regular',
     queryString: 'family=Noto+Sans+KR:wght@400;700',
@@ -157,7 +157,7 @@ const fonts: WebFont[] = [
   },
   {
     family: 'Noto Sans KR',
-    fileName: 'NotoSansKR-Bold.otf',
+    fileName: 'NotoSansKR-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSansKR-Bold',
     style: 'Bold',
@@ -198,7 +198,7 @@ const fonts: WebFont[] = [
   // Noto Serif TC
   {
     family: 'Noto Serif TC',
-    fileName: 'NotoSerifTC-Regular.otf',
+    fileName: 'NotoSerifTC-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSerifTC-Regular',
     queryString: 'family=Noto+Serif+TC:wght@400;700',
@@ -207,7 +207,7 @@ const fonts: WebFont[] = [
   },
   {
     family: 'Noto Serif TC',
-    fileName: 'NotoSerifTC-Bold.otf',
+    fileName: 'NotoSerifTC-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSerifTC-Bold',
     style: 'Bold',
@@ -217,7 +217,7 @@ const fonts: WebFont[] = [
   // Noto Serif SC
   {
     family: 'Noto Serif SC',
-    fileName: 'NotoSerifSC-Regular.otf',
+    fileName: 'NotoSerifSC-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSerifSC-Regular',
     queryString: 'family=Noto+Serif+SC:wght@400;700',
@@ -226,7 +226,7 @@ const fonts: WebFont[] = [
   },
   {
     family: 'Noto Serif SC',
-    fileName: 'NotoSerifSC-Bold.otf',
+    fileName: 'NotoSerifSC-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSerifSC-Bold',
     style: 'Bold',
@@ -236,7 +236,7 @@ const fonts: WebFont[] = [
   // Noto Serif JP
   {
     family: 'Noto Serif JP',
-    fileName: 'NotoSerifJP-Regular.otf',
+    fileName: 'NotoSerifJP-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSerifJP-Regular',
     queryString: 'family=Noto+Serif+JP:wght@400;700',
@@ -245,7 +245,7 @@ const fonts: WebFont[] = [
   },
   {
     family: 'Noto Serif JP',
-    fileName: 'NotoSerifJP-Bold.otf',
+    fileName: 'NotoSerifJP-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSerifJP-Bold',
     style: 'Bold',
@@ -255,7 +255,7 @@ const fonts: WebFont[] = [
   // Noto Serif KR
   {
     family: 'Noto Serif KR',
-    fileName: 'NotoSerifKR-Regular.otf',
+    fileName: 'NotoSerifKR-Regular.ttf',
     italic: false,
     postscriptName: 'NotoSerifKR-Regular',
     queryString: 'family=Noto+Serif+KR:wght@400;700',
@@ -264,7 +264,7 @@ const fonts: WebFont[] = [
   },
   {
     family: 'Noto Serif KR',
-    fileName: 'NotoSerifKR-Bold.otf',
+    fileName: 'NotoSerifKR-Bold.ttf',
     italic: false,
     postscriptName: 'NotoSerifKR-Bold',
     style: 'Bold',

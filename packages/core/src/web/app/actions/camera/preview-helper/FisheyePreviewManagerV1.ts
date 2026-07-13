@@ -12,6 +12,7 @@ import type {
 // TODO: move this 2 function to camera-preview-helpers
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import callWithRetry from './callWithRetry';
 import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 import getAutoFocusPosition from './getAutoFocusPosition';
 import getHeight from './getHeight';
@@ -79,7 +80,7 @@ class FisheyePreviewManagerV1 extends FisheyePreviewManagerBase implements Fishe
     updateMessage(lang.message.getProbePosition);
     this.objectHeight = height;
 
-    const autoFocusRefKey = await getAutoFocusPosition(device);
+    const autoFocusRefKey = await callWithRetry(() => getAutoFocusPosition(device));
     const refHeight = levelingData[autoFocusRefKey];
 
     keys.forEach((key) => {

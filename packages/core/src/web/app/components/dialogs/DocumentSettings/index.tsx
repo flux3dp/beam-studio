@@ -330,8 +330,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || autoFeederChanged) {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
 
-      if (workareaChanged) rotaryAxis.setPosition(workareaObj.pxHeight / 2, { write: true });
-
       rotaryAxis.toggleDisplay();
     }
 

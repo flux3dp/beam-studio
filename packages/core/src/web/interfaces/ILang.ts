@@ -73,6 +73,7 @@ export interface ILang {
     font_size: string;
     hide_text: string;
     invert_color: string;
+    text: string;
     text_margin: string;
   };
   beambox: {
@@ -1272,7 +1273,79 @@ export interface ILang {
   };
   code_generator: {
     barcode: string;
+    content: string;
+    import: string;
     qr_code: string;
+    type: string;
+  };
+  connection_issue_guide: {
+    alert_link: string;
+    connect_computer: {
+      content: string;
+      macos_steps: string;
+      macos_title: string;
+      title: string;
+      windows_steps: string;
+      windows_title: string;
+    };
+    connect_wifi: {
+      cant_find_hotspot: string;
+      dont_know_hotspot_name: string;
+      step1: string;
+      step2: string;
+      step3: string;
+      title: string;
+    };
+    enter_ip: {
+      check_firmware: string;
+      check_ip_reachable: string;
+      check_machine_responds: string;
+      placeholder: string;
+      step1: string;
+      step2: string;
+      step3: string;
+      title: string;
+      verify: string;
+    };
+    fail: {
+      bullet1: string;
+      bullet2: string;
+      bullet3: string;
+      contact_title: string;
+      intro: string;
+      title: string;
+    };
+    hotspot: {
+      android_steps: string;
+      android_title: string;
+      ios_steps: string;
+      ios_title: string;
+      tip: string;
+      warning_2_4ghz: string;
+    };
+    how_it_works: string;
+    how_it_works_step1: string;
+    how_it_works_step2: string;
+    how_it_works_step3: string;
+    how_it_works_step4: string;
+    intro: string;
+    ip_address: {
+      step1: string;
+      step2: string;
+      step3: string;
+      title: string;
+      warning: string;
+    };
+    success: {
+      cause: string;
+      intro: string;
+      recommend1: string;
+      recommend2: string;
+      recommend3: string;
+      recommend_title: string;
+      title: string;
+    };
+    title: string;
   };
   curve_engraving: {
     '921': string;
@@ -2230,7 +2303,6 @@ export interface ILang {
       image_downsampling: string;
       loop_compensation: string;
       mask: string;
-      reverse_engraving: string;
       segmented_engraving: string;
       simplify_clipper_path: string;
       uv_print_export: string;

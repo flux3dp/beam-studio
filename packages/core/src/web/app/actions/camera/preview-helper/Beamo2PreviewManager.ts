@@ -20,6 +20,7 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import CalibrationDataMissingError from './CalibrationDataMissingError';
+import callWithRetry from './callWithRetry';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 import handlePreviewSetupError from './handlePreviewSetupError';
 import RegionPreviewMixin from './RegionPreviewMixin';
@@ -103,7 +104,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     try {
       this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
 
-      await deviceMaster.connectCamera();
+      await callWithRetry(() => deviceMaster.connectCamera());
 
       const res = await this.setUpCamera();
 

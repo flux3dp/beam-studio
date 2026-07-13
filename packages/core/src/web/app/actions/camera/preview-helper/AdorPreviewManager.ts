@@ -8,6 +8,7 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import CalibrationDataMissingError from './CalibrationDataMissingError';
+import callWithRetry from './callWithRetry';
 import FisheyePreviewManagerV1 from './FisheyePreviewManagerV1';
 import FisheyePreviewManagerV2 from './FisheyePreviewManagerV2';
 import handlePreviewSetupError from './handlePreviewSetupError';
@@ -33,7 +34,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
 
     try {
       this.showMessage({ content: lang.message.connectingCamera });
-      await deviceMaster.connectCamera();
+      await callWithRetry(() => deviceMaster.connectCamera());
 
       let params: FisheyeCameraParameters;
 

@@ -14,6 +14,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
+import callWithRetry from './callWithRetry';
 
 // TODO: Add tests
 class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
@@ -50,28 +51,28 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
       }
 
       this.showMessage({ content: lang.message.enteringRawMode });
-      await deviceMaster.enterRawMode();
+      await callWithRetry(() => deviceMaster.enterRawMode());
       this.showMessage({ content: lang.message.exitingRotaryMode });
-      await deviceMaster.rawSetRotary(false);
+      await callWithRetry(() => deviceMaster.rawSetRotary(false));
       this.showMessage({ content: lang.message.homing });
-      await deviceMaster.rawHome();
+      await callWithRetry(() => deviceMaster.rawHome());
 
       const vc = versionChecker(this.device.version);
 
       if (vc.meetRequirement('MAINTAIN_WITH_LINECHECK')) {
-        await deviceMaster.rawStartLineCheckMode();
+        await callWithRetry(() => deviceMaster.rawStartLineCheckMode());
         this.lineCheckEnabled = true;
       } else {
         this.lineCheckEnabled = false;
       }
 
       this.showMessage({ content: lang.message.turningOffFan });
-      await deviceMaster.rawSetFan(false);
+      await callWithRetry(() => deviceMaster.rawSetFan(false));
       this.showMessage({ content: lang.message.turningOffAirPump });
-      await deviceMaster.rawSetAirPump(false);
-      await deviceMaster.rawSetWaterPump(false);
+      await callWithRetry(() => deviceMaster.rawSetAirPump(false));
+      await callWithRetry(() => deviceMaster.rawSetWaterPump(false));
       this.showMessage({ content: lang.message.connectingCamera });
-      await deviceMaster.connectCamera();
+      await callWithRetry(() => deviceMaster.connectCamera());
 
       return true;
     } catch (error) {
