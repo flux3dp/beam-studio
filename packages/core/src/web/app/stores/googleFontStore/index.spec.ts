@@ -14,6 +14,8 @@
  * (helpers/fonts/googleFontService.spec.ts), and real glyph rendering / the
  * fonts panel UI (Cypress).
  */
+import fetchMock from 'jest-fetch-mock';
+
 const mockFindFont = jest.fn();
 // Default resolves so the module-load pre-population IIFE (getCache().then) is safe.
 const mockGetCache = jest.fn().mockResolvedValue({ items: [], kind: 'webfonts#webfontList' });
@@ -139,9 +141,7 @@ describe('googleFontStore', () => {
       const link = document.head.querySelector('link[rel="stylesheet"]') as HTMLLinkElement;
 
       // italicOnly=true → ital,wght@1,<weight>. Best italic variant resolves to weight 400.
-      expect(link.href).toBe(
-        'https://fonts.googleapis.com/css2?family=OnlyItalic:ital,wght@1,400&display=swap',
-      );
+      expect(link.href).toBe('https://fonts.googleapis.com/css2?family=OnlyItalic:ital,wght@1,400&display=swap');
     });
 
     it('is a no-op (no fetch, no link) when the font is already in sessionLoadedFonts', async () => {
@@ -179,9 +179,7 @@ describe('googleFontStore', () => {
       const state = useGoogleFontStore.getState();
 
       expect(mockFindFont).not.toHaveBeenCalled();
-      expect(state.queuedFontLoads).toEqual([
-        { fontFamily: 'Roboto', priority: 'normal', purpose: 'text-editing' },
-      ]);
+      expect(state.queuedFontLoads).toEqual([{ fontFamily: 'Roboto', priority: 'normal', purpose: 'text-editing' }]);
       expect(state.sessionLoadedFonts.has('Roboto')).toBe(false);
     });
 
@@ -227,6 +225,7 @@ describe('googleFontStore', () => {
       mockFindFont.mockResolvedValue(ROBOTO_ITEM);
 
       await useGoogleFontStore.getState().registerGoogleFont('Roboto');
+
       const sizeAfterFirst = useGoogleFontStore.getState().registeredFonts.size;
 
       await useGoogleFontStore.getState().registerGoogleFont('Roboto');
@@ -390,9 +389,7 @@ describe('googleFontStore', () => {
 
   describe('fallback helpers', () => {
     it('getFallbackFont maps a serif-ish Google family to a serif web-safe stack', () => {
-      expect(useGoogleFontStore.getState().getFallbackFont('Playfair Display')).toBe(
-        'Times New Roman, serif',
-      );
+      expect(useGoogleFontStore.getState().getFallbackFont('Playfair Display')).toBe('Times New Roman, serif');
     });
 
     it('getFallbackPostScriptName maps a known fallback family, defaulting to ArialMT', () => {

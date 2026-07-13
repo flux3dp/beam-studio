@@ -67,8 +67,9 @@ jest.mock('@core/implementations/browser', () => ({ open: (...args: any[]) => mo
 
 jest.mock('@core/helpers/is-dev', () => () => false);
 
-// translateError is left REAL (its deps are the central i18n mock + alert-constants), so the
-// error-reason surfaced to the UI is the genuine mapping, matching the sheet row intent.
+const mockTranslateErrorMessage = jest.fn();
+
+jest.mock('@core/helpers/device/curve-measurer/translateError', () => mockTranslateErrorMessage);
 
 import CurveEngraving from './CurveEngraving';
 
@@ -142,7 +143,9 @@ describe('CurveEngraving dialog', () => {
   });
 
   // -- Row 2: clicking a failed (red) point surfaces its translated error reason --
-  test('Row 2: clicking a failed point shows the translated error reason', async () => {
+  test('Row 2: clicking a failed point looks up its raw error and renders the mapped reason', async () => {
+    mockTranslateErrorMessage.mockReturnValue({ code: '921', link: undefined, message: '#921 Failed to auto focus.' });
+
     // The Modal renders in a portal, so assert against baseElement (document.body), not container.
     const { baseElement, getByTestId } = render(<CurveEngraving onClose={jest.fn()} />);
 
@@ -150,14 +153,17 @@ describe('CurveEngraving dialog', () => {
       jest.advanceTimersByTime(500);
     });
 
-    // No error reason is shown until a single failed point is selected.
+    // No point selected yet: no reason shown and translateErrorMessage is not consulted.
+    expect(mockTranslateErrorMessage).not.toHaveBeenCalled();
     expect(baseElement.textContent).not.toContain('Failed to auto focus');
 
-    // Point index 1 is the failed one (errors.flat()[1] === 'error#921').
+    // Point index 1 is the failed one (data.errors.flat()[1] === 'error#921').
     fireEvent.click(getByTestId('sphere-1'));
 
-    // The real translateError maps error#921 => '#921 Failed to auto focus.'
+    // The component passes the selected point's raw error to translateErrorMessage and renders
+    // its .message (the error#921 -> text mapping is asserted in translateError.spec.ts).
     expect(getByTestId('plane-selected').textContent).toBe('1');
+    expect(mockTranslateErrorMessage).toHaveBeenCalledWith('error#921');
     expect(baseElement.textContent).toContain('#921 Failed to auto focus.');
   });
 
@@ -171,6 +177,8 @@ describe('CurveEngraving dialog', () => {
     fireEvent.click(getByTestId('sphere-0')); // index 0 has no error
 
     expect(getByTestId('plane-selected').textContent).toBe('0');
+    // A point with no error is never translated, so no reason surfaces.
+    expect(mockTranslateErrorMessage).not.toHaveBeenCalled();
     expect(baseElement.textContent).not.toContain('Failed to auto focus');
   });
 
