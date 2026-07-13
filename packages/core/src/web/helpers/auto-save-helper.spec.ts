@@ -14,10 +14,7 @@ jest.mock('@core/app/stores/storageStore', () => ({
 
 const mockIsWeb = jest.fn();
 
-jest.mock('@core/helpers/is-web', () => ({
-  __esModule: true,
-  default: () => mockIsWeb(),
-}));
+jest.mock('@core/helpers/is-web', () => () => mockIsWeb());
 
 const mockIsAtPage = jest.fn();
 
@@ -34,21 +31,14 @@ jest.mock('@core/helpers/file/export', () => ({
 const mockGetHasUnsavedChanges = jest.fn();
 
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
-  __esModule: true,
-  default: { getHasUnsavedChanges: (...args: any[]) => mockGetHasUnsavedChanges(...args) },
+  getHasUnsavedChanges: (...args: any[]) => mockGetHasUnsavedChanges(...args),
 }));
 
-jest.mock('@core/app/actions/tabController', () => ({
-  __esModule: true,
-  default: { currentId: 42 },
-}));
+jest.mock('@core/app/actions/tabController', () => ({ currentId: 42 }));
 
 const mockPopUp = jest.fn();
 
-jest.mock('@core/app/actions/alert-caller', () => ({
-  __esModule: true,
-  default: { popUp: (...args: any[]) => mockPopUp(...args) },
-}));
+jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args: any[]) => mockPopUp(...args) }));
 
 const mockShowSettingsModal = jest.fn();
 
@@ -66,16 +56,13 @@ const mockReaddirSync = jest.fn();
 const mockDelete = jest.fn();
 
 jest.mock('@core/implementations/fileSystem', () => ({
-  __esModule: true,
-  default: {
-    delete: (...args: any[]) => mockDelete(...args),
-    exists: (...args: any[]) => mockExists(...args),
-    getPath: (...args: any[]) => mockGetPath(...args),
-    join: (...args: any[]) => mockJoin(...args),
-    mkdir: (...args: any[]) => mockMkdir(...args),
-    readdirSync: (...args: any[]) => mockReaddirSync(...args),
-    writeStream: (...args: any[]) => mockWriteStream(...args),
-  },
+  delete: (...args: any[]) => mockDelete(...args),
+  exists: (...args: any[]) => mockExists(...args),
+  getPath: (...args: any[]) => mockGetPath(...args),
+  join: (...args: any[]) => mockJoin(...args),
+  mkdir: (...args: any[]) => mockMkdir(...args),
+  readdirSync: (...args: any[]) => mockReaddirSync(...args),
+  writeStream: (...args: any[]) => mockWriteStream(...args),
 }));
 
 // i18n is auto-resolved via central __mocks__ (real en.ts); do NOT re-mock.
@@ -289,6 +276,7 @@ describe('auto-save-helper', () => {
       await jest.advanceTimersByTimeAsync(10 * 60 * 1000);
 
       expect(mockDelete).toHaveBeenCalled();
+
       // The unrelated file is never a delete target.
       const deletedPaths = mockDelete.mock.calls.map((c) => c[0]);
 
@@ -302,9 +290,7 @@ describe('auto-save-helper', () => {
       autoSaveHelper.toggleAutoSave(true);
       await jest.advanceTimersByTimeAsync(10 * 60 * 1000);
 
-      expect(mockPopUp).toHaveBeenCalledWith(
-        expect.objectContaining({ id: 'auto-save-directory-not-exist' }),
-      );
+      expect(mockPopUp).toHaveBeenCalledWith(expect.objectContaining({ id: 'auto-save-directory-not-exist' }));
       expect(mockGenerateBeamBuffer).not.toHaveBeenCalled();
     });
   });

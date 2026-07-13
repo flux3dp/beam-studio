@@ -16,16 +16,12 @@ const mockController: {
   remeasurePoints: (...args: any[]) => mockRemeasurePoints(...args),
 };
 
-jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => ({
-  __esModule: true,
-  default: mockController,
-}));
+jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => mockController);
 
 // --- heavy three.js children: replace with light stand-ins so jsdom can render ---
-jest.mock('@core/app/widgets/three/Canvas', () => ({
-  __esModule: true,
-  default: ({ children }: any) => <div data-testid="three-canvas">{children}</div>,
-}));
+jest.mock('@core/app/widgets/three/Canvas', () => ({ children }: any) => (
+  <div data-testid="three-canvas">{children}</div>
+));
 
 jest.mock('@react-three/drei', () => ({
   Stage: ({ children }: any) => <div data-testid="three-stage">{children}</div>,
@@ -33,61 +29,43 @@ jest.mock('@react-three/drei', () => ({
 
 // Plane mock exposes the data it received and a clickable "sphere" per display point that
 // forwards to toggleSelectedIndex — this is how we exercise point selection from the UI.
-jest.mock('./Plane', () => ({
-  __esModule: true,
-  default: ({ data, displayData, selectedIndices, textureSource, toggleSelectedIndex }: any) => (
-    <div data-testid="plane">
-      <span data-testid="plane-lowest">{String(data.lowest)}</span>
-      <span data-testid="plane-points">{data.points.length}</span>
-      <span data-testid="plane-display-points">{displayData.displayPoints.length}</span>
-      <span data-testid="plane-texture">{String(textureSource)}</span>
-      <span data-testid="plane-selected">{Array.from(selectedIndices ?? []).join(',')}</span>
-      {displayData.displayPoints.map((_: unknown, i: number) => (
-        <button
-          data-testid={`sphere-${i}`}
-          key={i}
-          onClick={() => toggleSelectedIndex(i)}
-          type="button"
-        >
-          point-{i}
-        </button>
-      ))}
-    </div>
-  ),
-}));
+jest.mock('./Plane', () => ({ data, displayData, selectedIndices, textureSource, toggleSelectedIndex }: any) => (
+  <div data-testid="plane">
+    <span data-testid="plane-lowest">{String(data.lowest)}</span>
+    <span data-testid="plane-points">{data.points.length}</span>
+    <span data-testid="plane-display-points">{displayData.displayPoints.length}</span>
+    <span data-testid="plane-texture">{String(textureSource)}</span>
+    <span data-testid="plane-selected">{Array.from(selectedIndices ?? []).join(',')}</span>
+    {displayData.displayPoints.map((_: unknown, i: number) => (
+      <button data-testid={`sphere-${i}`} key={i} onClick={() => toggleSelectedIndex(i)} type="button">
+        point-{i}
+      </button>
+    ))}
+  </div>
+));
 
 const mockGetCanvasImage = jest.fn();
 
-jest.mock('./getCanvasImage', () => ({
-  __esModule: true,
-  default: (...args: any[]) => mockGetCanvasImage(...args),
-}));
+jest.mock(
+  './getCanvasImage',
+  () =>
+    (...args: any[]) =>
+      mockGetCanvasImage(...args),
+);
 
 const mockGetCameraCanvasUrl = jest.fn();
 
 jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
-  __esModule: true,
-  default: {
-    getCameraCanvasUrl: (...args: any[]) => mockGetCameraCanvasUrl(...args),
-  },
+  getCameraCanvasUrl: (...args: any[]) => mockGetCameraCanvasUrl(...args),
 }));
 
-jest.mock('@core/app/actions/beambox/constant', () => ({
-  __esModule: true,
-  default: { dpmm: 10 },
-}));
+jest.mock('@core/app/actions/beambox/constant', () => ({ dpmm: 10 }));
 
 const mockBrowserOpen = jest.fn();
 
-jest.mock('@core/implementations/browser', () => ({
-  __esModule: true,
-  default: { open: (...args: any[]) => mockBrowserOpen(...args) },
-}));
+jest.mock('@core/implementations/browser', () => ({ open: (...args: any[]) => mockBrowserOpen(...args) }));
 
-jest.mock('@core/helpers/is-dev', () => ({
-  __esModule: true,
-  default: () => false,
-}));
+jest.mock('@core/helpers/is-dev', () => () => false);
 
 // translateError is left REAL (its deps are the central i18n mock + alert-constants), so the
 // error-reason surfaced to the UI is the genuine mapping, matching the sheet row intent.
@@ -166,7 +144,7 @@ describe('CurveEngraving dialog', () => {
   // -- Row 2: clicking a failed (red) point surfaces its translated error reason --
   test('Row 2: clicking a failed point shows the translated error reason', async () => {
     // The Modal renders in a portal, so assert against baseElement (document.body), not container.
-    const { getByTestId, baseElement } = render(<CurveEngraving onClose={jest.fn()} />);
+    const { baseElement, getByTestId } = render(<CurveEngraving onClose={jest.fn()} />);
 
     await act(async () => {
       jest.advanceTimersByTime(500);
@@ -184,7 +162,7 @@ describe('CurveEngraving dialog', () => {
   });
 
   test('Row 2: selecting a successful point shows no error reason', async () => {
-    const { getByTestId, baseElement } = render(<CurveEngraving onClose={jest.fn()} />);
+    const { baseElement, getByTestId } = render(<CurveEngraving onClose={jest.fn()} />);
 
     await act(async () => {
       jest.advanceTimersByTime(500);
@@ -200,7 +178,7 @@ describe('CurveEngraving dialog', () => {
   test('Row 3: Re-measure button calls remeasurePoints with the selected indices', async () => {
     mockRemeasurePoints.mockResolvedValue(buildData());
 
-    const { getByText, getByTestId } = render(<CurveEngraving onClose={jest.fn()} />);
+    const { getByTestId, getByText } = render(<CurveEngraving onClose={jest.fn()} />);
 
     await act(async () => {
       jest.advanceTimersByTime(500);

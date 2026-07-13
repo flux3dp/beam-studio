@@ -2,10 +2,7 @@ import * as THREE from 'three';
 
 // delaunator is ESM-only (not transformed by ts-jest); it is imported at module top by
 // createTriangularGeometry.ts but not used by the functions under test, so stub it out.
-jest.mock('delaunator', () => ({
-  __esModule: true,
-  default: { from: jest.fn() },
-}));
+jest.mock('delaunator', () => ({ from: jest.fn() }));
 
 import { interpolateTriangles, setGeometryAngleAlertColor } from './createTriangularGeometry';
 

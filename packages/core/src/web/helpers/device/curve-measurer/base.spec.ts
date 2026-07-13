@@ -12,24 +12,18 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
 
 const mockCheckDeviceStatus = jest.fn();
 
-jest.mock('@core/helpers/check-device-status', () => ({
-  __esModule: true,
-  default: (...args: any[]) => mockCheckDeviceStatus(...args),
-}));
+jest.mock(
+  '@core/helpers/check-device-status',
+  () =>
+    (...args: any[]) =>
+      mockCheckDeviceStatus(...args),
+);
 
 const mockSelect = jest.fn();
 
-jest.mock('@core/helpers/device-master', () => ({
-  __esModule: true,
-  default: {
-    select: (...args: any[]) => mockSelect(...args),
-  },
-}));
+jest.mock('@core/helpers/device-master', () => ({ select: (...args: any[]) => mockSelect(...args) }));
 
-jest.mock('@core/helpers/duration-formatter', () => ({
-  __esModule: true,
-  default: () => 'formatted-duration',
-}));
+jest.mock('@core/helpers/duration-formatter', () => () => 'formatted-duration');
 
 import BaseCurveMeasurer from './base';
 
@@ -87,9 +81,7 @@ describe('BaseCurveMeasurer', () => {
     test('records a per-point failure as an error string without throwing', async () => {
       const measurer = new TestMeasurer(device);
 
-      measurer.measurePoint
-        .mockResolvedValueOnce({ height: 3 })
-        .mockRejectedValueOnce(new Error('error#921'));
+      measurer.measurePoint.mockResolvedValueOnce({ height: 3 }).mockRejectedValueOnce(new Error('error#921'));
 
       const res = await measurer.measurePoints(buildData(), [0, 1]);
 

@@ -8,10 +8,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 const mockAddCommandToHistory = jest.fn();
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
-  __esModule: true,
-  default: {
-    addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
-  },
+  addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
 }));
 
 const mockAddSubCommand = jest.fn();
@@ -19,20 +16,17 @@ const mockBatchCommand = jest.fn();
 const mockChangeElementCommand = jest.fn();
 
 jest.mock('@core/app/svgedit/history/history', () => ({
-  __esModule: true,
-  default: {
-    BatchCommand: class {
-      onAfter: (() => void) | undefined;
-      addSubCommand = (...args: any[]) => mockAddSubCommand(...args);
-      constructor(...args: any[]) {
-        mockBatchCommand(...args);
-      }
-    },
-    ChangeElementCommand: class {
-      constructor(...args: any[]) {
-        mockChangeElementCommand(...args);
-      }
-    },
+  BatchCommand: class {
+    onAfter: (() => void) | undefined;
+    addSubCommand = (...args: any[]) => mockAddSubCommand(...args);
+    constructor(...args: any[]) {
+      mockBatchCommand(...args);
+    }
+  },
+  ChangeElementCommand: class {
+    constructor(...args: any[]) {
+      mockChangeElementCommand(...args);
+    }
   },
 }));
 
@@ -55,8 +49,7 @@ const resetDocumentStore = () => {
 };
 
 const getLine = () => document.getElementById('rotaryLine') as unknown as SVGLineElement;
-const getTransparentLine = () =>
-  document.getElementById('transparentRotaryLine') as unknown as SVGLineElement;
+const getTransparentLine = () => document.getElementById('transparentRotaryLine') as unknown as SVGLineElement;
 
 describe('rotary-axis', () => {
   // The module caches the created lines at module scope, so #fixedSizeSvg must exist
@@ -166,7 +159,7 @@ describe('rotary-axis', () => {
     });
 
     test('shows lines when rotary_mode is on and job origin disabled', () => {
-      useDocumentStore.setState({ rotary_mode: true, 'enable-job-origin': false } as any);
+      useDocumentStore.setState({ 'enable-job-origin': false, rotary_mode: true } as any);
       rotaryAxis.toggleDisplay();
 
       expect(getLine().getAttribute('display')).toBe('visible');
@@ -189,7 +182,7 @@ describe('rotary-axis', () => {
 
   describe('boundary clamping (updateBoundary via canvas-change)', () => {
     test('clamps position within a workarea-specific boundary (ado1: 0–300 mm => 0–3000 px)', () => {
-      useDocumentStore.setState({ workarea: 'ado1', 'enable-job-origin': false } as any);
+      useDocumentStore.setState({ 'enable-job-origin': false, workarea: 'ado1' } as any);
 
       // above the max boundary (300 mm * 10 = 3000 px)
       rotaryAxis.setPosition(5000);
@@ -204,7 +197,7 @@ describe('rotary-axis', () => {
 
     test('falls back to [0, maxY] boundary when job origin is enabled', () => {
       (workareaManager as any).maxY = 2100;
-      useDocumentStore.setState({ workarea: 'ado1', 'enable-job-origin': true } as any);
+      useDocumentStore.setState({ 'enable-job-origin': true, workarea: 'ado1' } as any);
 
       rotaryAxis.setPosition(9999);
       canvasEmitter.emit('canvas-change');
@@ -213,7 +206,7 @@ describe('rotary-axis', () => {
     });
 
     test('document-settings-saved also recomputes the boundary and clamps', () => {
-      useDocumentStore.setState({ workarea: 'ado1', 'enable-job-origin': false } as any);
+      useDocumentStore.setState({ 'enable-job-origin': false, workarea: 'ado1' } as any);
 
       rotaryAxis.setPosition(4000);
       canvasEmitter.emit('document-settings-saved');
@@ -236,7 +229,7 @@ describe('rotary-axis', () => {
 
   describe('drag lifecycle (mouseDown / mouseMove / mouseUp)', () => {
     beforeEach(() => {
-      useDocumentStore.setState({ workarea: 'ado1', 'enable-job-origin': false } as any);
+      useDocumentStore.setState({ 'enable-job-origin': false, workarea: 'ado1' } as any);
       // establish the ado1 boundary (0–3000 px) that mouseMove clamps against
       canvasEmitter.emit('canvas-change');
     });

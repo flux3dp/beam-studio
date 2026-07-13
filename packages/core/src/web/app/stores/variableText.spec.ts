@@ -1,10 +1,7 @@
 const mockSetHasUnsavedChanges = jest.fn();
 
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
-  __esModule: true,
-  default: {
-    setHasUnsavedChanges: (...args: any[]) => mockSetHasUnsavedChanges(...args),
-  },
+  setHasUnsavedChanges: (...args: any[]) => mockSetHasUnsavedChanges(...args),
 }));
 
 import { setVariableTextState, useVariableTextState } from './variableText';

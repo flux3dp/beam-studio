@@ -7,10 +7,7 @@ import type { BBox, MeasureData } from '@core/interfaces/ICurveEngraving';
 
 const mockBrowserOpen = jest.fn();
 
-jest.mock('@core/implementations/browser', () => ({
-  __esModule: true,
-  default: { open: (...args: any[]) => mockBrowserOpen(...args) },
-}));
+jest.mock('@core/implementations/browser', () => ({ open: (...args: any[]) => mockBrowserOpen(...args) }));
 
 import MeasureArea from './MeasureArea';
 

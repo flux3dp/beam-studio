@@ -22,15 +22,10 @@ class MockBatchCommand {
   }
 }
 
-jest.mock('@core/app/svgedit/history/history', () => ({
-  __esModule: true,
-  BatchCommand: MockBatchCommand,
-  default: { BatchCommand: MockBatchCommand },
-}));
+jest.mock('@core/app/svgedit/history/history', () => ({ BatchCommand: MockBatchCommand }));
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
-  __esModule: true,
-  default: { addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args) },
+  addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
 }));
 
 jest.mock('@core/app/svgedit/operations/clipboard', () => ({
@@ -42,11 +37,8 @@ jest.mock('@core/app/svgedit/operations/move', () => ({
 }));
 
 jest.mock('@core/app/svgedit/selection', () => ({
-  __esModule: true,
-  default: {
-    getSelectedElements: (...args: any[]) => mockGetSelectedElements(...args),
-    multiSelect: (...args: any[]) => mockMultiSelect(...args),
-  },
+  getSelectedElements: (...args: any[]) => mockGetSelectedElements(...args),
+  multiSelect: (...args: any[]) => mockMultiSelect(...args),
 }));
 
 jest.mock('@core/app/svgedit/transform/rotation', () => ({

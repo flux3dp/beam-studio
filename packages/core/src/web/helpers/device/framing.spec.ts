@@ -54,25 +54,21 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 // workareaManager: width 3000px, minY 0, maxY 2100 (px). dpmm = 10.
-jest.mock('@core/app/svgedit/workarea', () => ({
-  __esModule: true,
-  default: { maxY: 2100, minY: 0, width: 3000 },
-}));
+jest.mock('@core/app/svgedit/workarea', () => ({ maxY: 2100, minY: 0, width: 3000 }));
 
-jest.mock('@core/helpers/check-device-status', () => ({
-  __esModule: true,
-  default: (...args: any[]) => mockCheckDeviceStatus(...args),
-}));
+jest.mock(
+  '@core/helpers/check-device-status',
+  () =>
+    (...args: any[]) =>
+      mockCheckDeviceStatus(...args),
+);
 
 jest.mock('@core/helpers/device-master', () => ({
-  __esModule: true,
-  default: {
-    startFraming: (...args: any[]) => mockStartFraming(...args),
-    stopFraming: (...args: any[]) => mockStopFraming(...args),
-    getReport: jest.fn().mockResolvedValue({ st_id: 0 }),
-    setField: jest.fn(),
-    setGalvoParameters: jest.fn(),
-  },
+  getReport: jest.fn().mockResolvedValue({ st_id: 0 }),
+  setField: jest.fn(),
+  setGalvoParameters: jest.fn(),
+  startFraming: (...args: any[]) => mockStartFraming(...args),
+  stopFraming: (...args: any[]) => mockStopFraming(...args),
 }));
 
 jest.mock('@core/helpers/addOn/rotary', () => ({
@@ -86,51 +82,36 @@ jest.mock('@core/app/constants/addOn', () => ({
 
 jest.mock('@core/helpers/api/swiftray-client', () => ({
   swiftrayClient: {
-    on: (...args: any[]) => mockSwiftrayOn(...args),
-    off: (...args: any[]) => mockSwiftrayOff(...args),
     checkVersion: () => true,
+    off: (...args: any[]) => mockSwiftrayOff(...args),
+    on: (...args: any[]) => mockSwiftrayOn(...args),
   },
 }));
 
-jest.mock('./promark/promark-data-store', () => ({
-  __esModule: true,
-  default: { get: (...args: any[]) => mockPromarkGet(...args) },
-}));
+jest.mock('./promark/promark-data-store', () => ({ get: (...args: any[]) => mockPromarkGet(...args) }));
 
-jest.mock('@core/app/svgedit/selection', () => ({
-  __esModule: true,
-  default: { clearSelection: (...args: any[]) => mockClearSelection(...args) },
-}));
+jest.mock('@core/app/svgedit/selection', () => ({ clearSelection: (...args: any[]) => mockClearSelection(...args) }));
 
 jest.mock('@core/app/actions/message-caller', () => ({
   __esModule: true,
   default: {
-    openMessage: (...args: any[]) => mockOpenMessage(...args),
     closeMessage: (...args: any[]) => mockCloseMessage(...args),
+    openMessage: (...args: any[]) => mockOpenMessage(...args),
   },
   MessageLevel: { INFO: 'info', LOADING: 'loading', WARNING: 'warning' },
 }));
 
 // version checker: meetRequirement always false → skip job-origin machinery
-jest.mock('@core/helpers/version-checker', () => ({
-  __esModule: true,
-  default: () => ({ meetRequirement: () => false }),
-}));
+jest.mock('@core/helpers/version-checker', () => () => ({ meetRequirement: () => false }));
 
 // --- heavy transitive imports of framing.ts, stubbed so the worker/canvas chains don't load ---
-jest.mock('@core/app/actions/beambox/export-funcs', () => ({
-  __esModule: true,
-  default: { getMetadata: jest.fn() },
-}));
+jest.mock('@core/app/actions/beambox/export-funcs', () => ({ getMetadata: jest.fn() }));
 jest.mock('@core/app/actions/beambox/export-funcs-swiftray', () => ({
   fetchFramingTaskCode: jest.fn(),
 }));
-jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
-  __esModule: true,
-  default: { switchImageSymbolForAll: jest.fn() },
-}));
-jest.mock('@core/helpers/image/svgStringToCanvas', () => ({ __esModule: true, default: jest.fn() }));
-jest.mock('@core/helpers/api/utils-ws', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({ switchImageSymbolForAll: jest.fn() }));
+jest.mock('@core/helpers/image/svgStringToCanvas', () => jest.fn());
+jest.mock('@core/helpers/api/utils-ws', () => jest.fn());
 
 // Import AFTER mocks.
 import FramingTaskManager from './framing';
@@ -202,7 +183,9 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
     // so we route by the layer that was passed in.
     mockGetVisibleElementsAndBBoxes.mockImplementation(([layer]: SVGGElement[]) => {
       if (layer === visibleA) return [bbox(100, 200, 50, 80)]; // right 150, bottom 280
+
       if (layer === visibleB) return [bbox(400, 100, 200, 60)]; // right 600, bottom 160
+
       if (layer === hiddenC) return [bbox(1000, 1000, 500, 500)]; // MUST NOT be counted
 
       return [];
@@ -230,7 +213,9 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
     mockGetAllLayers.mockReturnValue([visibleA, visibleB, nowVisibleC]);
     mockGetVisibleElementsAndBBoxes.mockImplementation(([layer]: SVGGElement[]) => {
       if (layer === visibleA) return [bbox(100, 200, 50, 80)];
+
       if (layer === visibleB) return [bbox(400, 100, 200, 60)];
+
       if (layer === nowVisibleC) return [bbox(1000, 1000, 500, 500)]; // right 1500, bottom 1500
 
       return [];
@@ -250,6 +235,7 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
     mockGetAllLayers.mockReturnValue([layerA, layerToggle]);
     mockGetVisibleElementsAndBBoxes.mockImplementation(([layer]: SVGGElement[]) => {
       if (layer === layerA) return [bbox(100, 100, 100, 100)]; // right/bottom 200
+
       if (layer === layerToggle) return [bbox(500, 500, 100, 100)]; // right/bottom 600
 
       return [];
@@ -300,6 +286,7 @@ describe('framing.ts — getCoords frame-preview coordinate logic (via Promark F
     mockGetData.mockImplementation((layer: SVGGElement) => (layer === disabled ? 0 : 1));
     mockGetVisibleElementsAndBBoxes.mockImplementation(([layer]: SVGGElement[]) => {
       if (layer === active) return [bbox(100, 100, 100, 100)]; // right/bottom 200
+
       if (layer === disabled) return [bbox(1000, 1000, 500, 500)];
 
       return [];

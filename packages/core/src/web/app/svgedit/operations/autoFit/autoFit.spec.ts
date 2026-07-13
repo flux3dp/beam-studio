@@ -30,10 +30,12 @@ jest.mock('@core/app/components/dialogs/autoFit', () => ({
   showAutoFitPanel: (...args: any[]) => mockShowAutoFitPanel(...args),
 }));
 
-jest.mock('@core/helpers/api/utils-ws', () => ({
-  __esModule: true,
-  default: (...args: any[]) => mockGetUtilWS(...args),
-}));
+jest.mock(
+  '@core/helpers/api/utils-ws',
+  () =>
+    (...args: any[]) =>
+      mockGetUtilWS(...args),
+);
 
 import i18n from '@core/helpers/i18n';
 

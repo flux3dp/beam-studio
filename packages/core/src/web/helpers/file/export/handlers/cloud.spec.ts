@@ -27,21 +27,15 @@ const mockSetFileName = jest.fn();
 const mockSetHasUnsavedChanges = jest.fn();
 
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
-  __esModule: true,
-  default: {
-    setCloudUUID: (...args: any[]) => mockSetCloudUUID(...args),
-    setFileName: (...args: any[]) => mockSetFileName(...args),
-    setHasUnsavedChanges: (...args: any[]) => mockSetHasUnsavedChanges(...args),
-  },
+  setCloudUUID: (...args: any[]) => mockSetCloudUUID(...args),
+  setFileName: (...args: any[]) => mockSetFileName(...args),
+  setHasUnsavedChanges: (...args: any[]) => mockSetHasUnsavedChanges(...args),
 }));
 
 const mockClearSelection = jest.fn();
 
 jest.mock('@core/app/svgedit/selection', () => ({
-  __esModule: true,
-  default: {
-    clearSelection: (...args: any[]) => mockClearSelection(...args),
-  },
+  clearSelection: (...args: any[]) => mockClearSelection(...args),
 }));
 
 const mockRemoveUnusedDefs = jest.fn();

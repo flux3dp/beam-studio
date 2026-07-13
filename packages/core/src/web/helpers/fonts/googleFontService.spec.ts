@@ -46,11 +46,8 @@ jest.mock('@core/app/stores/googleFontStore/utils/detection', () => ({
 }));
 
 jest.mock('./webFonts.google', () => ({
-  __esModule: true,
-  default: {
-    applyStyle: (...args: any[]) => mockApplyStyle(...args),
-    getAvailableFonts: (...args: any[]) => mockGetAvailableFonts(...args),
-  },
+  applyStyle: (...args: any[]) => mockApplyStyle(...args),
+  getAvailableFonts: (...args: any[]) => mockGetAvailableFonts(...args),
 }));
 
 // storageStore has a central __mocks__ file; rely on it (do NOT re-mock).
@@ -68,8 +65,7 @@ const makeTextElement = (attrs: Record<string, string>): SVGTextElement => {
 
 /** Build the DOM layout that loadContextGoogleFonts scans. */
 const mountSvgContext = (texts: SVGTextElement[]) => {
-  document.body.innerHTML =
-    '<div id="svgcontent"><g class="layer" id="layer1"></g></div><div id="svg_defs"></div>';
+  document.body.innerHTML = '<div id="svgcontent"><g class="layer" id="layer1"></g></div><div id="svg_defs"></div>';
 
   const layer = document.querySelector('#svgcontent g.layer')!;
 
@@ -148,10 +144,7 @@ describe('googleFontService', () => {
 
     it('ignores local / web-safe fonts (does not load or register them)', () => {
       mockIsLocalOrWebFont.mockImplementation((f: string) => f === 'Arial');
-      mountSvgContext([
-        makeTextElement({ 'font-family': 'Arial' }),
-        makeTextElement({ 'font-family': 'Roboto' }),
-      ]);
+      mountSvgContext([makeTextElement({ 'font-family': 'Arial' }), makeTextElement({ 'font-family': 'Roboto' })]);
 
       loadContextGoogleFonts();
 
@@ -161,8 +154,7 @@ describe('googleFontService', () => {
     });
 
     it('also scans text inside #svg_defs', () => {
-      document.body.innerHTML =
-        '<div id="svgcontent"><g class="layer"></g></div><div id="svg_defs"></div>';
+      document.body.innerHTML = '<div id="svgcontent"><g class="layer"></g></div><div id="svg_defs"></div>';
       document.querySelector('#svg_defs')!.appendChild(makeTextElement({ 'font-family': 'Roboto' }));
 
       loadContextGoogleFonts();

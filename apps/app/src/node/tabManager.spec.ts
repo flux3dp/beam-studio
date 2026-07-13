@@ -84,6 +84,7 @@ const WebContentsViewMock = jest.fn().mockImplementation(() => {
 // ipcMain fake: registers handlers into a map keyed by event so tests can
 // simulate a renderer sending an IPC message with a chosen `sender` (tab id).
 type IpcHandler = (event: any, ...args: any[]) => void;
+
 const ipcHandlers: Record<string, IpcHandler[]> = {};
 
 const ipcMainMock = {
@@ -117,11 +118,7 @@ jest.mock('electron', () => ({
 jest.mock('@electron/remote/main', () => ({ enable: jest.fn() }));
 
 // i18n / initStore pull in electron-store & the full lang tree — stub them out.
-jest.mock('./helpers/i18n', () => ({
-  __esModule: true,
-  default: { lang: { topbar: { untitled: 'Untitled' } } },
-}));
-jest.mock('./helpers/initStore', () => ({ __esModule: true, default: jest.fn() }));
+jest.mock('./helpers/initStore', () => jest.fn());
 
 import TabManager from './tabManager';
 
@@ -406,10 +403,7 @@ describe('TabManager', () => {
       emitIpc(TabEvents.UpdateUser, { id: a }, { email: 'x@flux3dp.com' });
 
       expect(views[b].view.webContents.send).toHaveBeenCalledWith(TabEvents.UpdateUser, { email: 'x@flux3dp.com' });
-      expect(views[a].view.webContents.send).not.toHaveBeenCalledWith(
-        TabEvents.UpdateUser,
-        expect.anything(),
-      );
+      expect(views[a].view.webContents.send).not.toHaveBeenCalledWith(TabEvents.UpdateUser, expect.anything());
     });
 
     test('StorageValueChanged / GlobalPreferenceChanged forward args to other tabs', () => {

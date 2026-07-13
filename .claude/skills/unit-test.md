@@ -121,27 +121,42 @@ jest.mock('@core/app/svgedit/text/textedit', () => ({
 
 ### 2. Default export — when to use `__esModule`
 
-Only use `__esModule: true` when the module has **both** a default export **and** named exports that you need:
+**Default-only is the common case — collapse it to ONE layer. Do NOT write `{ __esModule: true, default: X }`.**
+Because the spec tsconfig has `esModuleInterop: true`, a bare factory return `X` is delivered as the
+default import (`import foo from 'mod'` → `foo === X`). The `__esModule: true` / `default:` wrapper is
+pure noise for default-only modules — this applies whether the default is a **function** OR an **object**:
 
 ```ts
-// Module has: export default textEdit; AND export { getFontSize, ... }
-jest.mock('@core/app/svgedit/text/textedit', () => ({
+// Default is an OBJECT (module has: export default { open }) — return the object directly:
+jest.mock('@core/implementations/browser', () => ({ open: (...args: any[]) => mockOpen(...args) }));
+
+// Default is a FUNCTION (module has: export default () => ...):
+jest.mock('@core/helpers/is-web', () => () => mockIsWeb());
+jest.mock('@core/helpers/check-device-status', () => (...args: any[]) => mockStatus(...args));
+
+// Named-only module (no default):
+jest.mock('@core/some/module', () => ({ foo: mockFoo }));
+```
+
+The one-layer object form works because `import foo from 'mod'; foo.open()` resolves `foo` to the whole
+returned object under `esModuleInterop`. A default import reads identically to the two-layer form, so
+there is no reason to keep the wrapper.
+
+Only use `__esModule: true` when the module-under-test imports **both** the default **and** a named
+export from the same module (`import history, { BatchCommand } from '...'`) — then you genuinely need both
+keys on the mock:
+
+```ts
+// convertToPath.ts does: import history, { BatchCommand } from '.../history'
+jest.mock('@core/app/svgedit/history/history', () => ({
   __esModule: true,
-  default: { getFontSize: mockGetFontSize, setFontSize: mockSetFontSize },
-  getFontSize: (...args: any[]) => mockGetFontSize(...args),
-  setFontSize: (...args: any[]) => mockSetFontSize(...args),
+  BatchCommand: FakeBatchCommand,              // used via the NAMED import
+  default: { BatchCommand: FakeBatchCommand }, // used via `history.BatchCommand`
 }));
 ```
 
-If only default OR only named — skip `__esModule`:
-
-```ts
-// Default-only module
-jest.mock('@core/some/module', () => (...args) => mockFn(...args));
-
-// Named-only module
-jest.mock('@core/some/module', () => ({ foo: mockFoo }));
-```
+If the code only uses the default (`import history from '...'; history.BatchCommand`), drop the named key
+and the `__esModule` wrapper — collapse to `() => ({ BatchCommand: FakeBatchCommand })`.
 
 ### 3. Component mock (render minimal JSX)
 
@@ -411,6 +426,9 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
    real `en.ts` via the central i18n mock are fine.)
 5. **`await new Promise(r => setTimeout(r, 100))`** — use `waitFor` or fake timers.
 6. **Testing a component just to reach a pure function** — extract and test the function.
+7. **`{ __esModule: true, default: X }` for a default-only mock** — collapse to `() => X` (works for
+   object AND function defaults under `esModuleInterop`, see §Pattern 2). Keep `__esModule` only when the
+   code imports the default AND a named export from the same module.
 
 ---
 
@@ -454,6 +472,7 @@ Before declaring a test done:
 
 - [ ] `pnpm test <filename>` passes locally (all tests, not just the new one)
 - [ ] No module from the `__mocks__` table is re-mocked inline
+- [ ] No default-only mock wrapped in `{ __esModule: true, default: X }` — collapsed to `() => X` (§Pattern 2)
 - [ ] `jest.clearAllMocks()` in `beforeEach`; `jest.useRealTimers()` restored if faked
 - [ ] Interactions asserted via mock-call args or DOM state, not only snapshots
 - [ ] No index-based `querySelectorAll` selectors

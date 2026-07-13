@@ -35,26 +35,18 @@ const mockGetPath = jest.fn();
 const mockIsCloudFile = jest.fn(() => false);
 
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
-  __esModule: true,
-  default: {
-    getPath: (...args: any[]) => mockGetPath(...args),
-    get isCloudFile() {
-      return mockIsCloudFile();
-    },
-    setCloudFile: (...args: any[]) => mockSetCloudFile(...args),
-    setCloudUUID: (...args: any[]) => mockSetCloudUUID(...args),
-    setFileName: (...args: any[]) => mockSetFileName(...args),
+  getPath: (...args: any[]) => mockGetPath(...args),
+  get isCloudFile() {
+    return mockIsCloudFile();
   },
+  setCloudFile: (...args: any[]) => mockSetCloudFile(...args),
+  setCloudUUID: (...args: any[]) => mockSetCloudUUID(...args),
+  setFileName: (...args: any[]) => mockSetFileName(...args),
 }));
 
 const mockReadBeam = jest.fn();
 
-jest.mock('@core/helpers/beam-file-helper', () => ({
-  __esModule: true,
-  default: {
-    readBeam: (...args: any[]) => mockReadBeam(...args),
-  },
-}));
+jest.mock('@core/helpers/beam-file-helper', () => ({ readBeam: (...args: any[]) => mockReadBeam(...args) }));
 
 const mockSetFileInAnotherTab = jest.fn();
 
@@ -71,10 +63,7 @@ jest.mock('@core/helpers/getOS', () => ({
 const mockWriteFileDialog = jest.fn();
 
 jest.mock('@core/implementations/dialog', () => ({
-  __esModule: true,
-  default: {
-    writeFileDialog: (...args: any[]) => mockWriteFileDialog(...args),
-  },
+  writeFileDialog: (...args: any[]) => mockWriteFileDialog(...args),
 }));
 
 // Transport: inline-mock flux-id to avoid pulling in the heavy real module chain

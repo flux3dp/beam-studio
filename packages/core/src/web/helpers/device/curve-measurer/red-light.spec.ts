@@ -11,18 +11,12 @@ const mockPopById = jest.fn();
 const mockUpdate = jest.fn();
 
 jest.mock('@core/app/actions/progress-caller', () => ({
-  __esModule: true,
-  default: {
-    openNonstopProgress: (...args: any[]) => mockOpenNonstopProgress(...args),
-    popById: (...args: any[]) => mockPopById(...args),
-    update: (...args: any[]) => mockUpdate(...args),
-  },
+  openNonstopProgress: (...args: any[]) => mockOpenNonstopProgress(...args),
+  popById: (...args: any[]) => mockPopById(...args),
+  update: (...args: any[]) => mockUpdate(...args),
 }));
 
-jest.mock('@core/helpers/check-device-status', () => ({
-  __esModule: true,
-  default: jest.fn().mockResolvedValue(true),
-}));
+jest.mock('@core/helpers/check-device-status', () => jest.fn().mockResolvedValue(true));
 
 const mockCheckTaskAlive = jest.fn();
 const mockTakeReferenceZ = jest.fn();
@@ -32,17 +26,14 @@ const mockEndSubTask = jest.fn();
 let mockControlMode = 'red_laser_measure';
 
 jest.mock('@core/helpers/device-master', () => ({
-  __esModule: true,
-  default: {
-    checkTaskAlive: (...args: any[]) => mockCheckTaskAlive(...args),
-    get currentControlMode() {
-      return mockControlMode;
-    },
-    endSubTask: (...args: any[]) => mockEndSubTask(...args),
-    enterRedLaserMeasureMode: (...args: any[]) => mockEnterRedLaserMeasureMode(...args),
-    measureZ: (...args: any[]) => mockMeasureZ(...args),
-    takeReferenceZ: (...args: any[]) => mockTakeReferenceZ(...args),
+  checkTaskAlive: (...args: any[]) => mockCheckTaskAlive(...args),
+  get currentControlMode() {
+    return mockControlMode;
   },
+  endSubTask: (...args: any[]) => mockEndSubTask(...args),
+  enterRedLaserMeasureMode: (...args: any[]) => mockEnterRedLaserMeasureMode(...args),
+  measureZ: (...args: any[]) => mockMeasureZ(...args),
+  takeReferenceZ: (...args: any[]) => mockTakeReferenceZ(...args),
 }));
 
 // alertConstants is a constants module — imported directly (see unit-test skill core rule).
@@ -75,6 +66,7 @@ describe('RedLightCurveMeasurer.showTakeReferenceDialog', () => {
     const promise = measurer.showTakeReferenceDialog();
 
     await runConfirm();
+
     const res = await promise;
 
     expect(res).toBeNull();
@@ -92,6 +84,7 @@ describe('RedLightCurveMeasurer.showTakeReferenceDialog', () => {
     const promise = measurer.showTakeReferenceDialog();
 
     await runConfirm();
+
     const res = await promise;
 
     expect(res).toBeNull();
@@ -106,6 +99,7 @@ describe('RedLightCurveMeasurer.showTakeReferenceDialog', () => {
     const promise = measurer.showTakeReferenceDialog();
 
     await runConfirm();
+
     const res = await promise;
 
     expect(res).toBe(12.5);
@@ -120,6 +114,7 @@ describe('RedLightCurveMeasurer.showTakeReferenceDialog', () => {
     const promise = measurer.showTakeReferenceDialog();
 
     await runConfirm();
+
     const res = await promise;
 
     expect(res).toBeNull();

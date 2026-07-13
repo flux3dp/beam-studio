@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 // Mock fns declared before jest.mock (hoisting makes this work).
 const mockFontFuncsConvertTextToPath = jest.fn();
 
@@ -52,8 +51,7 @@ jest.mock('@core/app/svgedit/history/history', () => ({
 }));
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
-  __esModule: true,
-  default: { addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args) },
+  addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
 }));
 
 jest.mock('@core/app/svgedit/history/utils/handleHistoryActionOptions', () => ({
@@ -64,50 +62,32 @@ jest.mock('@core/app/svgedit/operations/delete', () => ({
   deleteElements: jest.fn(() => ({ type: 'delete-cmd' })),
 }));
 
-jest.mock('@core/app/svgedit/operations/disassembleUse', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
+jest.mock('@core/app/svgedit/operations/disassembleUse', () => jest.fn());
 
 jest.mock('@core/app/svgedit/selection', () => ({
-  __esModule: true,
-  default: {
-    clearSelection: jest.fn(),
-    getSelectedElements: jest.fn(() => []),
-    multiSelect: (...args: any[]) => mockMultiSelect(...args),
-    selectOnly: (...args: any[]) => mockSelectOnly(...args),
-    ungroupTempGroup: (...args: any[]) => mockUngroupTempGroup(...args),
-  },
+  clearSelection: jest.fn(),
+  getSelectedElements: jest.fn(() => []),
+  multiSelect: (...args: any[]) => mockMultiSelect(...args),
+  selectOnly: (...args: any[]) => mockSelectOnly(...args),
+  ungroupTempGroup: (...args: any[]) => mockUngroupTempGroup(...args),
 }));
 
 jest.mock('@core/app/svgedit/text/textactions', () => ({
-  __esModule: true,
-  default: {
-    get isEditing() {
-      return mockIsEditing.value;
-    },
-    toSelectMode: (...args: any[]) => mockToSelectMode(...args),
+  get isEditing() {
+    return mockIsEditing.value;
   },
+  toSelectMode: (...args: any[]) => mockToSelectMode(...args),
 }));
 
 const mockIsEditing = { value: false };
 
-jest.mock('@core/app/svgedit/text/textedit', () => ({
-  __esModule: true,
-  default: { renderText: (...args: any[]) => mockRenderText(...args) },
-}));
+jest.mock('@core/app/svgedit/text/textedit', () => ({ renderText: (...args: any[]) => mockRenderText(...args) }));
 
-jest.mock('@core/app/actions/alert-caller', () => ({
-  __esModule: true,
-  default: { popUp: (...args: any[]) => mockAlertPopUp(...args) },
-}));
+jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args: any[]) => mockAlertPopUp(...args) }));
 
 jest.mock('./api/alert-config', () => ({
-  __esModule: true,
-  default: {
-    read: (...args: any[]) => mockAlertConfigRead(...args),
-    write: (...args: any[]) => mockAlertConfigWrite(...args),
-  },
+  read: (...args: any[]) => mockAlertConfigRead(...args),
+  write: (...args: any[]) => mockAlertConfigWrite(...args),
 }));
 
 jest.mock('./svg-editor-helper', () => ({
@@ -287,6 +267,7 @@ describe('convertToPath', () => {
 
       expect(success).toBe(true);
       expect(mockFontFuncsConvertTextToPath).toHaveBeenCalledTimes(3);
+
       // All conversions recorded under a single parent batch command.
       const parentCmds = mockHandleHistoryActionOptions.mock.calls.map((c) => c[1].parentCmd);
 
@@ -317,6 +298,7 @@ describe('convertToPath', () => {
       revert();
 
       expect(parentCmd.unapply).toHaveBeenCalledTimes(1);
+
       const handler = parentCmd.unapply.mock.calls[0][0];
 
       expect(typeof handler.renderText).toBe('function');
