@@ -40,3 +40,6 @@ Thumbs.db
 
 .nx/cache
 .nx/workspace-data
+
+# Obsidian (per-user editor state; keep app/appearance/core-plugins tracked)
+**/.obsidian/workspace.json
