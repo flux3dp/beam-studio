@@ -1,0 +1,53 @@
+@use '@core/styles/mixins' as mixins;
+@use '@core/styles/variables' as variables;
+@use './ConnectionIssueStep.module' as *;
+
+input[type='text'].input {
+  width: 100%;
+  padding: 8px 0;
+  font-size: 24px;
+  color: #333333;
+  background-color: unset;
+  border: 0;
+  border-bottom: 1px solid #d9d9d9;
+  border-radius: 0;
+
+  &:focus {
+    outline: none;
+    border-bottom-color: variables.$primary-blue;
+  }
+
+  @include mixins.is-mobile {
+    font-size: 18px;
+  }
+}
+
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+  padding-left: 16px;
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pending {
+  color: #d9d9d9;
+}
+
+.testing {
+  color: variables.$primary-blue;
+}
+
+.success {
+  color: variables.$status-normal;
+}
+
+.fail {
+  color: variables.$status-critical;
+}

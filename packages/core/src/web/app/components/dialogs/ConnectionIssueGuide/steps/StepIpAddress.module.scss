@@ -1,0 +1,14 @@
+@use '@core/styles/mixins' as mixins;
+@use './ConnectionIssueStep.module' as *;
+
+.steps {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.step {
+  font-size: 14px;
+  line-height: 1.5;
+  white-space: pre-line;
+}

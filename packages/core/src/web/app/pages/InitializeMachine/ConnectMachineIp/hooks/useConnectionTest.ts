@@ -26,7 +26,13 @@ import type { State } from '../state';
 import { initialState } from '../state';
 import { finishWithDevice } from '../utils/finishWithDevice';
 
-export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string, setIpValue: (ip: string) => void) => {
+export const useConnectionTest = (
+  model: string,
+  isUsb: boolean,
+  ipValue: string,
+  setIpValue: (ip: string) => void,
+  { discoverId = 'connect-machine-ip', skipCameraTest = false }: { discoverId?: string; skipCameraTest?: boolean } = {},
+) => {
   const lang = useI18n();
   const [state, setState] = useState<State>(initialState);
   const countDown = useRef(0);
@@ -36,12 +42,12 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
   const testingIps = isUsb ? ['10.55.0.1', '10.55.0.17'] : [ipValue];
 
   useEffect(() => {
-    const unregister = discoverManager.register('connect-machine-ip', (devices) => {
+    const unregister = discoverManager.register(discoverId, (devices) => {
       discoveredDevicesRef.current = devices;
     });
 
     return unregister;
-  }, []);
+  }, [discoverId]);
 
   const updateTestState = (newState: Partial<State>) => setState((prev) => ({ ...prev, ...newState }));
 
@@ -189,7 +195,13 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
     // for correctly select promark device serial
     const res = await deviceMaster.select(device);
 
-    console.log('🚀 ~ useConnectionTest.ts:194 ~ handleStartTestForPromark ~ res:', res);
+    console.log('🚀 ~ useConnectionTest.ts ~ select promark ~ res:', res);
+
+    if (skipCameraTest) {
+      updateTestState({ testState: TestState.TEST_COMPLETED });
+
+      return;
+    }
 
     await testCamera(device);
   };
@@ -206,6 +218,8 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
     if (isTesting(testState)) {
       return;
     }
+
+    setState((prev) => ({ ...prev, device: null }));
 
     if (!validateIpFormat()) {
       return;
@@ -230,6 +244,12 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
     if (!checkSoftwareForAdor(device)) {
       setIpValue('');
       setState((prev) => ({ ...prev, device: null, testState: TestState.NONE }));
+
+      return;
+    }
+
+    if (skipCameraTest) {
+      updateTestState({ testState: TestState.TEST_COMPLETED });
 
       return;
     }

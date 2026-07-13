@@ -8,6 +8,9 @@ import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled, InfoCirc
 import { Button, Checkbox, Modal } from 'antd';
 import classNames from 'classnames';
 
+import { promarkModels } from '@core/app/actions/beambox/constant';
+import { showConnectionIssueGuide } from '@core/app/actions/dialog-controller';
+import { CONNECTION_ISSUE_ERROR_CODES } from '@core/app/constants/alert-constants';
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import { getHelpCenterURL } from '@core/helpers/help-center';
@@ -71,6 +74,7 @@ const Alert = ({
     buttons,
     caption,
     checkbox,
+    device,
     iconUrl,
     links,
     message,
@@ -79,7 +83,8 @@ const Alert = ({
     width = undefined,
   },
 }: Props): React.JSX.Element => {
-  const lang = useI18n().alert;
+  const i18n = useI18n();
+  const lang = i18n.alert;
   const { popFromStack } = use(AlertProgressContext);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
 
@@ -121,17 +126,35 @@ const Alert = ({
       return null;
     }
 
-    const link = getHelpCenterURL(Number(errorCode[0].replace('#', '')), { keyRef: ['current_device'] });
+    const code = Number(errorCode[0].replace('#', ''));
+    const link = getHelpCenterURL(code, { keyRef: ['current_device'] });
+    // Promark (fpm1) connects over USB, so the Wi-Fi/IP connection guide is irrelevant.
+    const isPromark = !!device && promarkModels.has(device.model);
+    const showConnectionGuide = CONNECTION_ISSUE_ERROR_CODES.has(code) && !isPromark;
 
-    if (!link) {
+    if (!link && !showConnectionGuide) {
       return null;
     }
 
     return (
       <div className={styles.links}>
-        <Button className={styles.link} onClick={() => browser.open(link)} type="link">
-          {lang.learn_more}
-        </Button>
+        {showConnectionGuide && (
+          <Button
+            className={styles.link}
+            onClick={() => {
+              showConnectionIssueGuide();
+              popFromStack();
+            }}
+            type="link"
+          >
+            {i18n.connection_issue_guide.alert_link}
+          </Button>
+        )}
+        {link && (
+          <Button className={styles.link} onClick={() => browser.open(link)} type="link">
+            {lang.learn_more}
+          </Button>
+        )}
       </div>
     );
   };
