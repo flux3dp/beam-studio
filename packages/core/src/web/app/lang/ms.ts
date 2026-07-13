@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensor aliran udara mengesan anomali',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Bahagian bawah Dibuka. Tutup bahagian bawah untuk teruskan.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Amaran Suhu Kartrij Dakwat\nSuhu kartrij dakwat melebihi julat normal.\nUntuk perlindungan, kerja telah dihentikan. Sila pasang semula kartrij dakwat dan mulakan semula kerja.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Ralat Kuasa Kartrij Dakwat\nSambungan kuasa yang tidak normal dikesan pada kartrij dakwat. Sila pasang semula kartrij dakwat dan cuba lagi.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Pasang semula kartrij dakwat\nSambungan yang lemah dikesan pada kartrij dakwat. Sila pasang semula kartrij dakwat dan cuba lagi.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Gagal memasang penutup kepala cetakan',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Gagal menanggalkan penutup kepala cetakan',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Tutup pintu untuk teruskan.',

@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 氣流偵測異常',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 底蓋開啟，將底蓋關上以繼續',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 墨匣高溫警示\n墨匣溫度已超出正常範圍。\n為了保護設備，已中斷本次工作。請重新安裝墨匣後再重新啟動工作。',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 墨匣電源錯誤\n偵測到墨匣電源連接異常。請重新安裝墨匣後再試一次。',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 請重新安裝墨匣\n偵測到墨匣連接不良，請重新安裝墨匣後再試一次。',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 列印頭保護蓋安裝失敗',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 列印頭保護蓋移除失敗',
     HARDWARE_ERROR_DOOR_OPENED: '#901 門蓋開啟，將門蓋關上以繼續',

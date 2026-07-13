@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Anomálie senzoru proudění vzduchu',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Spodní část otevřena. Pro pokračování prosím uzavřete spodní část.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Upozornění na teplotu inkoustové cartridge\nTeplota inkoustové cartridge překračuje normální rozsah.\nPro ochranu byl úkol přerušen. Prosím znovu nainstalujte inkoustovou cartridge a restartujte úkol.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Chyba napájení inkoustové cartridge\nByla zjištěna abnormální napájecí přípojka inkoustové cartridge. Prosím znovu nainstalujte inkoustovou cartridge a zkuste to znovu.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Znovu nainstalujte inkoustovou cartridge\nByla zjištěna špatná přípojka inkoustové cartridge. Prosím znovu nainstalujte inkoustovou cartridge a zkuste to znovu.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Instalace krytu tiskové hlavy se nezdařila',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Odebrání krytu tiskové hlavy se nezdařilo',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Pro pokračování prosím zavřete dvířka.',

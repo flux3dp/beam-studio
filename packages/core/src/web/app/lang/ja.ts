@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 エアフローセンサー異常',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 ボトムカバーオープン。ドアを閉めて続行します。',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 インクカートリッジ温度アラート\nインクカートリッジの温度が正常範囲を超えています。\n保護のため、作業が中断されました。インクカートリッジを再装着し、作業を再開してください。',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 インクカートリッジ電源エラー\nインクカートリッジに異常な電源接続が検出されました。インクカートリッジを再装着してからもう一度お試しください。',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 インクカートリッジを取り付け直してください\nインクカートリッジの接続不良が検出されました。インクカートリッジを取り付け直してからもう一度お試しください。',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 プリントヘッドカバーの装着に失敗しました',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 プリントヘッドカバーの取り外しに失敗しました',
     HARDWARE_ERROR_DOOR_OPENED: '#901 続行するにはドアを閉じてください。',

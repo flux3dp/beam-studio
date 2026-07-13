@@ -1964,7 +1964,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensor de caudal de aire anómalo',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Parte inferior abierta. Ciérrela para continuar.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Alerta de temperatura del cartucho de tinta\nLa temperatura del cartucho de tinta está por encima del rango normal.\nComo medida de protección, el trabajo ha sido interrumpido. Reinstale el cartucho de tinta y reinicie el trabajo.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Error de alimentación del cartucho de tinta\nSe ha detectado una conexión de alimentación anómala en el cartucho de tinta. Reinstale el cartucho de tinta e inténtelo de nuevo.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Vuelva a instalar el cartucho de tinta\nSe ha detectado una mala conexión del cartucho de tinta. Reinstale el cartucho de tinta e inténtelo de nuevo.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 No se ha podido instalar la cubierta del cabezal de impresión.',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 No se ha podido retirar la cubierta del cabezal de impresión.',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Cierra la puerta para continuar.',

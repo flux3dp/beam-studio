@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luftstrømsensor unormal',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Bunn åpnet. Lukk bunnen for å fortsette.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Temperaturvarsel for blekkpatron\nTemperaturen på blekkpatronen er over normalområdet.\nFor beskyttelse har arbeidet blitt avbrutt. Installer blekkpatronen på nytt og start arbeidet på nytt.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Strømfeil på blekkpatron\nEn unormal strømtilkobling ble oppdaget på blekkpatronen. Installer blekkpatronen på nytt og prøv igjen.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Installer blekkpatronen på nytt\nEn dårlig tilkobling ble oppdaget på blekkpatronen. Installer blekkpatronen på nytt og prøv igjen.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Kunne ikke installere dekselet til skrivehodet',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Kunne ikke fjerne dekselet til skrivehodet',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Lukk døren for å fortsette.',

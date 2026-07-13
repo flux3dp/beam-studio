@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 气流侦测异常',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 底盖开启，将底盖关上以继续',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 墨盒温度警报\n墨盒温度超出正常范围。\n为保护设备，作业已中断。请重新安装墨盒并重新开始作业。',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 墨盒电源错误\n墨盒检测到异常电源连接。请重新安装墨盒后再试一次。',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 请重新安装墨盒\n检测到墨盒连接不良，请重新安装墨盒后再试一次。',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 打印头保护盖安装失败',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 打印头保护盖移除失败',
     HARDWARE_ERROR_DOOR_OPENED: '#901 门盖开启，将门盖关上以继续',

@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensore flusso aria anomalo',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Fondo aperto. Chiudere fondo per continuare.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: "#931 Avviso temperatura cartuccia d'inchiostro\nLa temperatura della cartuccia d'inchiostro è superiore all'intervallo normale.\nPer protezione, il lavoro è stato interrotto. Reinstallare la cartuccia d'inchiostro e riavviare il lavoro.",
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: "#930 Errore alimentazione cartuccia d'inchiostro\nÈ stata rilevata una connessione di alimentazione anomala sulla cartuccia d'inchiostro. Reinstallare la cartuccia d'inchiostro e riprovare.",
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: "#930 Reinstallare la cartuccia d'inchiostro\nÈ stata rilevata una connessione difettosa sulla cartuccia d'inchiostro. Reinstallare la cartuccia d'inchiostro e riprovare.",
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Installazione del coperchio della testina di stampa non riuscita',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Rimozione del coperchio della testina di stampa non riuscita',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Chiudere porta per continuare.',

@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Ilmavirtausanturi poikkeava',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Alaosa auki. Sulje jatkaaksesi',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Mustekasetin lämpötilahälytys\nMustekasetin lämpötila ylittää normaalin alueen.\nSuojaukseksi työ on keskeytetty. Asenna mustekasetti uudelleen ja käynnistä työ uudelleen.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Mustekasetin virtavirhe\nMustekasetissa havaittiin epänormaali virtaliitäntä. Asenna mustekasetti uudelleen ja yritä uudelleen.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Asenna mustekasetti uudelleen\nMustekasetissa havaittiin huono liitäntä. Asenna mustekasetti uudelleen ja yritä uudelleen.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Tulostuspään suojuksen asennus epäonnistui',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Tulostuspään suojuksen poistaminen epäonnistui',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Sulje ovi jatkaaksesi',

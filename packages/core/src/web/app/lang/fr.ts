@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: "#913 Débit d'air anormal",
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Fond ouvert. Fermez le fond pour continuer.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Alerte de température de la cartouche d’encre\nLa température de la cartouche d’encre est supérieure à la plage normale.\nPar mesure de protection, le travail a été interrompu. Veuillez réinstaller la cartouche d’encre et redémarrer le travail.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Erreur d’alimentation de la cartouche d’encre\nUne connexion d’alimentation anormale a été détectée sur la cartouche d’encre. Veuillez réinstaller la cartouche d’encre et réessayer.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Réinstallez la cartouche d’encre\nMauvaise connexion de la cartouche d’encre détectée. Veuillez réinstaller la cartouche d’encre et réessayer.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Échec d’installation du capot tête d’impression',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Échec de retrait du capot tête d’impression',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Fermez la porte pour continuer.',
