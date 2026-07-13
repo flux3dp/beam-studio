@@ -1,11 +1,4 @@
-import {
-  antdScreenTokens,
-  initScreenStore,
-  isMobile,
-  isTablet,
-  isTabletOrMobile,
-  useScreenStore,
-} from './screenStore';
+import { antdScreenTokens, initScreenStore, isMobile, isTablet, isTabletOrMobile, useScreenStore } from './screenStore';
 
 describe('screenStore', () => {
   beforeEach(() => {
