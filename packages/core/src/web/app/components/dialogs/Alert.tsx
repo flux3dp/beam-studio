@@ -8,6 +8,7 @@ import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled, InfoCirc
 import { Button, Checkbox, Modal } from 'antd';
 import classNames from 'classnames';
 
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import { showConnectionIssueGuide } from '@core/app/actions/dialog-controller';
 import { CONNECTION_ISSUE_ERROR_CODES } from '@core/app/constants/alert-constants';
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
@@ -73,6 +74,7 @@ const Alert = ({
     buttons,
     caption,
     checkbox,
+    device,
     iconUrl,
     links,
     message,
@@ -126,15 +128,17 @@ const Alert = ({
 
     const code = Number(errorCode[0].replace('#', ''));
     const link = getHelpCenterURL(code, { keyRef: ['current_device'] });
-    const isConnectionIssue = CONNECTION_ISSUE_ERROR_CODES.has(code);
+    // Promark (fpm1) connects over USB, so the Wi-Fi/IP connection guide is irrelevant.
+    const isPromark = !!device && promarkModels.has(device.model);
+    const showConnectionGuide = CONNECTION_ISSUE_ERROR_CODES.has(code) && !isPromark;
 
-    if (!link && !isConnectionIssue) {
+    if (!link && !showConnectionGuide) {
       return null;
     }
 
     return (
       <div className={styles.links}>
-        {isConnectionIssue && (
+        {showConnectionGuide && (
           <Button
             className={styles.link}
             onClick={() => {

@@ -402,7 +402,7 @@ class DeviceMaster {
         return { ...(await this.runAuthProcess(uuid, device, deviceInfo)), isDeviceChanged };
       }
 
-      this.popConnectionError(uuid, errorCode as ConnectionError);
+      this.popConnectionError(uuid, errorCode as ConnectionError, deviceInfo);
 
       return {
         error: errorCode as ConnectionError,
@@ -522,7 +522,7 @@ class DeviceMaster {
         return { ...(await this.runAuthProcess(uuid, device, deviceInfo)), isDeviceChanged };
       }
 
-      this.popConnectionError(uuid, errorCode as ConnectionError);
+      this.popConnectionError(uuid, errorCode as ConnectionError, deviceInfo);
 
       return {
         error: errorCode as ConnectionError,
@@ -572,7 +572,7 @@ class DeviceMaster {
     return selectionResultAfterAuthed;
   }
 
-  popConnectionError(uuid: string, errorCode: ConnectionError): void {
+  popConnectionError(uuid: string, errorCode: ConnectionError, device?: IDeviceInfo): void {
     const errCaption = '';
     const t = i18n.lang.message;
     let errMessage = t.unknown_error;
@@ -601,6 +601,7 @@ class DeviceMaster {
     Alert.popById('connection-error');
     Alert.popUp({
       caption: errCaption,
+      device: device ?? this.discoveredDevices.find((d) => d.uuid === uuid),
       id: 'connection-error',
       message: errMessage,
       type: AlertConstants.SHOW_POPUP_ERROR,
