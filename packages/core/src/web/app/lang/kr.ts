@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 공기 흐름 센서 이상',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 바닥이 열려 있습니다. 계속하려면 바닥을 닫으세요.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 잉크 카트리지 온도 경고\n잉크 카트리지 온도가 정상 범위를 초과했습니다.\n보호를 위해 작업이 중단되었습니다. 잉크 카트리지를 다시 설치하고 작업을 재시작하세요.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 잉크 카트리지 전원 오류\n잉크 카트리지에서 비정상적인 전원 연결이 감지되었습니다. 잉크 카트리지를 다시 설치한 후 재시도하세요.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 잉크 카트리지를 다시 설치하세요\n잉크 카트리지의 접촉 불량이 감지되었습니다. 잉크 카트리지를 다시 설치한 후 재시도하세요.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 프린트헤드 커버 설치 실패',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 프린트헤드 커버 제거 실패',
     HARDWARE_ERROR_DOOR_OPENED: '#901 계속하려면 문을 닫으세요.',

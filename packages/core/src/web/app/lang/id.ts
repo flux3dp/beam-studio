@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensor aliran udara abnormal',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Bawah Terbuka. Tutup bagian bawah untuk melanjutkan.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Peringatan Suhu Kartrid Tinta\nSuhu kartrid tinta melebihi batas normal.\nUntuk perlindungan, pekerjaan telah dihentikan. Silakan pasang ulang kartrid tinta dan mulai ulang pekerjaan.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Kesalahan Daya Kartrid Tinta\nKoneksi daya abnormal terdeteksi pada kartrid tinta. Silakan pasang ulang kartrid tinta dan coba lagi.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Pasang ulang kartrid tinta\nKoneksi buruk terdeteksi pada kartrid tinta. Silakan pasang ulang kartrid tinta dan coba lagi.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Gagal memasang penutup kepala cetak',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Gagal melepas penutup kepala cetak',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Tutup pintu untuk melanjutkan.',

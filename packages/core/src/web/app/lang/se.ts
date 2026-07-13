@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luftflödessensor avvikande',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Botten öppen. Stäng botten för att fortsätta.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Temperaturvarning för bläckpatron\nBläckpatronens temperatur överstiger normalintervallet.\nFör skydd har arbetet avbrutits. Installera om bläckpatronen och starta om arbetet.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Strömfel på bläckpatron\nEn onormal strömanslutning upptäcktes på bläckpatronen. Installera om bläckpatronen och försök igen.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Installera om bläckpatronen\nEn dålig anslutning upptäcktes på bläckpatronen. Installera om bläckpatronen och försök igen.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Det gick inte att installera skrivarhuvudets skydd',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Det gick inte att ta bort skrivarhuvudets skydd',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Stäng dörren för att fortsätta.',
