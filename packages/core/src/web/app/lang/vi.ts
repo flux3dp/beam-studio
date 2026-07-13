@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: 'Cảm biến luồng khí bất thường',
     HARDWARE_ERROR_BOTTOM_OPENED: 'Vui lòng đóng đáy để tiếp tục.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Cảnh báo nhiệt độ hộp mực\nNhiệt độ hộp mực vượt quá phạm vi bình thường.\nĐể bảo vệ, công việc đã bị gián đoạn. Vui lòng lắp lại hộp mực và khởi động lại công việc.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Lỗi nguồn hộp mực\nPhát hiện kết nối nguồn bất thường trên hộp mực. Vui lòng lắp lại hộp mực và thử lại.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Lắp lại hộp mực\nPhát hiện kết nối kém trên hộp mực. Vui lòng lắp lại hộp mực và thử lại.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Không thể lắp nắp đầu in',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Không thể tháo nắp đầu in',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Đóng cửa để tiếp tục.',

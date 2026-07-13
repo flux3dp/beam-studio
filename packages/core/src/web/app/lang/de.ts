@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luftstromsensor anomal',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Boden offen. Close the door to continue.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Tintenpatronen-Temperaturwarnung\nDie Temperatur der Tintenpatrone liegt über dem Normalbereich.\nZum Schutz wurde die Arbeit unterbrochen. Bitte setzen Sie die Tintenpatrone erneut ein und starten Sie die Arbeit neu.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Tintenpatronen-Stromfehler\nEine abnormale Stromverbindung wurde an der Tintenpatrone erkannt. Bitte setzen Sie die Tintenpatrone erneut ein und versuchen Sie es erneut.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Tintenpatrone erneut einsetzen\nSchlechte Verbindung der Tintenpatrone erkannt. Bitte setzen Sie die Tintenpatrone erneut ein und versuchen Sie es erneut.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Druckkopfdeckel konnte nicht installiert werden',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Druckkopfdeckel konnte nicht entfernt werden',
     HARDWARE_ERROR_DOOR_OPENED: '#901 schliesse die Tür, um fortzufahren.',

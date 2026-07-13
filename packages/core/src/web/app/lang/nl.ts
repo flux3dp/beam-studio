@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luchtstroomsensor afwijkend',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Onderkant geopend. Sluit de onderkant om door te gaan.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Temperatuurwaarschuwing inktcartridge\nDe temperatuur van de inktcartridge ligt boven het normale bereik.\nTer bescherming is het werk onderbroken. Installeer de inktcartridge opnieuw en herstart het werk.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Stroomfout inktcartridge\nEr is een abnormale stroomaansluiting gedetecteerd op de inktcartridge. Installeer de inktcartridge opnieuw en probeer het opnieuw.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Installeer de inktcartridge opnieuw\nSlechte verbinding van de inktcartridge gedetecteerd. Installeer de inktcartridge opnieuw en probeer het opnieuw.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Installeren printkopkap mislukt',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Verwijderen printkopkap mislukt',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Sluit de deur om door te gaan.',

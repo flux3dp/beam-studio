@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Luftstrømsensor unormal',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Bund åbnet. Luk bunden for at fortsætte.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Blækpatrontemperaturadvarsel\nBlækpatronens temperatur er over det normale område.\nFor at beskytte enheden er arbejdet blevet afbrudt. Geninstaller blækpatronen og genstart arbejdet.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Blækpatron strømfejl\nDer blev registreret en unormal strømforbindelse på blækpatronen. Geninstaller blækpatronen og prøv igen.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Geninstaller blækpatronen\nDer blev registreret en dårlig forbindelse på blækpatronen. Geninstaller blækpatronen og prøv igen.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Kunne ikke installere printhoveddæksel',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Kunne ikke fjerne printhoveddækslet',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Luk døren for at fortsætte.',

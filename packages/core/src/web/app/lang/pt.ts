@@ -1965,7 +1965,7 @@ const lang: ILang = {
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensor de fluxo de ar anômalo',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Base aberta. Feche a base para continuar.',
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Alerta de temperatura do cartucho de tinta\nA temperatura do cartucho de tinta está acima da faixa normal.\nPor proteção, o trabalho foi interrompido. Reinstale o cartucho de tinta e reinicie o trabalho.',
-    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Erro de alimentação do cartucho de tinta\nFoi detectada uma conexão de alimentação anormal no cartucho de tinta. Reinstale o cartucho de tinta e tente novamente.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Reinstale o cartucho de tinta\nFoi detectada uma conexão incorreta do cartucho de tinta. Reinstale o cartucho de tinta e tente novamente.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Falha ao instalar a tampa da cabeça de impressão',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Falha ao remover a tampa da cabeça de impressão',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Feche a porta para continuar.',
