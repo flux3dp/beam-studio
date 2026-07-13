@@ -182,6 +182,7 @@ class PromarkButtonHandler {
         await closeFrame();
         dialogCaller.popDialogById(modalId.monitor);
         useCanvasStore.getState().setMode(CanvasMode.Draw);
+        await new Promise((resolve) => setTimeout(resolve, 50)); // Wait for dialog to close, not really needed here but just in case
         showFramingModal();
 
         return;
@@ -198,9 +199,10 @@ class PromarkButtonHandler {
       return;
     }
 
-    this.status = 'uploading';
+    this.status = 'preparing';
     await closeFrame();
     dialogCaller.popDialogById(modalId.monitor);
+    await new Promise((resolve) => setTimeout(resolve, 100)); // Wait for dialog to close
     await this.exportFn(true);
   };
 }
