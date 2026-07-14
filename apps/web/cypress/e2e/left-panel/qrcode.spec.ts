@@ -20,8 +20,18 @@ const typeValue = (selector: string, value: string) => {
   cy.get(selector).first().should('have.value', value);
 };
 
-// The antd <QRCode type="svg"> renders inside #qrcode-container. Grab the black
-// "code" path's `d` attribute so we can assert the generated output changes.
+// Switch the dialog between QR / Barcode mode via the <Segmented> at the top of the form.
+const selectMode = (label: 'Barcode' | 'QR Code') =>
+  cy.contains('.ant-segmented-item', label).click();
+
+// The "Invert background color" control is a <Switch> next to its label span; click the
+// switch scoped to that label so we don't hit the variable-text or barcode "Text" switches.
+const toggleInvert = () =>
+  cy.contains('.ant-modal-content span', 'Invert background color').siblings('button.ant-switch').click();
+
+// The antd <QRCode type="svg"> renders inside #qrcode-container as two <path>s: a
+// background rect-path (fill = bgColor) and the foreground module path (fill = fgColor).
+// In normal mode fgColor is "black", so grab that path's `d` to assert the output changes.
 const getQrPathData = () =>
   cy
     .get('#qrcode-container svg:not(:empty) path[fill="black"]', { timeout: 15000 })
@@ -49,15 +59,15 @@ describe('qrcode', () => {
   it('generates a QR code onto the canvas', () => {
     openCodeGenerator();
 
-    // Confirm is disabled until there is content.
-    cy.contains('.ant-modal-footer button', 'Confirm').should('be.disabled');
+    // Import is disabled until there is content.
+    cy.contains('.ant-modal-footer button', 'Import').should('be.disabled');
 
     typeValue('.ant-modal-content textarea', 'https://flux3dp.com');
 
     // Preview renders a non-empty svg with a black code path (content correctness).
     getQrPathData().should('have.length.greaterThan', 10);
 
-    cy.contains('.ant-modal-footer button', 'Confirm').should('not.be.disabled').click();
+    cy.contains('.ant-modal-footer button', 'Import').should('not.be.disabled').click();
 
     // handleOk awaits the import before closing, so once the modal is gone the element exists.
     cy.get('.ant-modal-content').should('not.exist');
@@ -73,20 +83,20 @@ describe('qrcode', () => {
     typeValue('.ant-modal-content textarea', 'https://flux3dp.com');
 
     // Baseline at default level L (7%).
-    cy.contains('.ant-radio-wrapper, .ant-radio-button-wrapper', '7%').should('exist');
+    cy.contains('.ant-segmented-item', '7%').should('exist');
 
     getQrPathData().then((low) => {
       expect(low.length).to.be.greaterThan(10);
 
       // Switch to the highest error-tolerance level H (30%).
-      cy.contains('.ant-radio-wrapper, .ant-radio-button-wrapper', '30%').click();
+      cy.contains('.ant-segmented-item', '30%').click();
       getQrPathData().should((high) => {
         expect(high).to.not.equal(low);
         expect(high.length).to.be.greaterThan(low.length);
       });
 
       // Switching back to L restores the original output (setting is applied both ways).
-      cy.contains('.ant-radio-wrapper, .ant-radio-button-wrapper', '7%').click();
+      cy.contains('.ant-segmented-item', '7%').click();
       getQrPathData().should('equal', low);
     });
   });
@@ -95,30 +105,39 @@ describe('qrcode', () => {
     openCodeGenerator();
     typeValue('.ant-modal-content textarea', 'invert-me');
 
-    getQrPathData().then((normal) => {
-      cy.contains('.ant-checkbox-wrapper', 'Invert background color').click();
-      // Inverting swaps fg/bg, producing different path geometry in the preview.
-      getQrPathData().should('not.equal', normal);
+    // Baseline: foreground modules drawn in black over a transparent background.
+    cy.get('#qrcode-container svg:not(:empty) path[fill="black"]').should('exist');
+    cy.get('#qrcode-container svg:not(:empty) path[fill="transparent"]').should('exist');
 
-      // Toggling back restores the original output.
-      cy.contains('.ant-checkbox-wrapper', 'Invert background color').click();
-      getQrPathData().should('equal', normal);
-    });
+    toggleInvert();
+
+    // Inverting swaps the fills: foreground modules become white on a black background.
+    // (The module geometry `d` is unchanged, so we assert on fill color, not on `d`.)
+    cy.get('#qrcode-container svg:not(:empty) path[fill="white"]').should('exist');
+    cy.get('#qrcode-container svg:not(:empty) path[fill="black"]').should('exist');
+    cy.get('#qrcode-container svg:not(:empty) path[fill="transparent"]').should('not.exist');
+
+    toggleInvert();
+
+    // Toggling back restores the original fg/bg fills.
+    cy.get('#qrcode-container svg:not(:empty) path[fill="black"]').should('exist');
+    cy.get('#qrcode-container svg:not(:empty) path[fill="transparent"]').should('exist');
+    cy.get('#qrcode-container svg:not(:empty) path[fill="white"]').should('not.exist');
   });
 
   it('generates a barcode onto the canvas', () => {
     openCodeGenerator();
 
-    // Switch the dialog to Barcode mode via the title radio group.
-    cy.contains('.ant-radio-button-wrapper', 'Barcode').click();
+    // Switch the dialog to Barcode mode via the mode <Segmented>.
+    selectMode('Barcode');
 
-    // In barcode mode the only text <input> is the value field (QR uses a textarea).
-    typeValue('.ant-modal-content input.ant-input', '123456');
+    // In barcode mode the value field is the shared content textarea (same as QR mode).
+    typeValue('.ant-modal-content textarea', '123456');
 
     // JsBarcode renders <rect> bars into #barcode (non-empty output).
     cy.get('#barcode rect', { timeout: 15000 }).should('have.length.greaterThan', 1);
 
-    cy.contains('.ant-modal-footer button', 'Confirm').should('not.be.disabled').click();
+    cy.contains('.ant-modal-footer button', 'Import').should('not.be.disabled').click();
 
     cy.get('.ant-modal-content').should('not.exist');
     cy.waitForProgress();
