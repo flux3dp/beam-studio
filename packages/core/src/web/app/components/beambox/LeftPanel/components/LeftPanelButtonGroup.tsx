@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Popover } from 'antd';
 import classNames from 'classnames';
@@ -23,12 +23,9 @@ interface Props {
   shortcut?: string;
 }
 
-const LONG_PRESS_DURATION = 500;
-
 function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props): React.JSX.Element {
   const [selectedOption, setSelectedOption] = useState(options[0]);
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const showPopoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!shortcut) return;
@@ -37,21 +34,6 @@ function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props):
       selectedOption.onClick();
     });
   }, [selectedOption, shortcut]);
-
-  const clearPopoverTimer = useCallback(() => {
-    if (showPopoverTimerRef.current) {
-      clearTimeout(showPopoverTimerRef.current);
-      showPopoverTimerRef.current = null;
-    }
-  }, []);
-
-  const handlePointerEnter = () => {
-    clearPopoverTimer();
-    showPopoverTimerRef.current = setTimeout(() => {
-      showPopoverTimerRef.current = null;
-      setPopoverOpen(true);
-    }, LONG_PRESS_DURATION);
-  };
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
@@ -62,6 +44,12 @@ function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props):
     },
     [selectedOption],
   );
+
+  const handleIndicatorClick = useCallback((e: React.MouseEvent) => {
+    // Open the popover only from the indicator, not the main button.
+    e.stopPropagation();
+    setPopoverOpen((open) => !open);
+  }, []);
 
   const handleOptionClick = useCallback((option: ToolOption) => {
     setSelectedOption(option);
@@ -113,14 +101,10 @@ function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props):
           className={classNames(buttonStyles.container, { [buttonStyles.active]: active })}
           id={id}
           onClick={handleClick}
-          onPointerCancel={clearPopoverTimer}
-          onPointerEnter={handlePointerEnter}
-          onPointerLeave={clearPopoverTimer}
-          onPointerUp={clearPopoverTimer}
           title={title}
         >
           {selectedOption?.icon}
-          <div className={styles.indicator} />
+          <div className={styles.indicator} onClick={handleIndicatorClick} />
         </div>
       </div>
     </Popover>
