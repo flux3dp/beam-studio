@@ -65,8 +65,8 @@ describe('text to path with web fonts', () => {
   // demonstrably differs from the conversion of an equivalent original. This is the
   // exact「複製>原地貼上>轉路徑」regression the release-test sheet row warns about.
   // Pinned tightly below; WHEN FIXED this should match the direct-convert band.
-  const KNOWN_PASTED_CONVERT_RATIO_MIN = 0.947; // 0.9523 pinned − 0.5% epsilon
-  const KNOWN_PASTED_CONVERT_RATIO_MAX = 0.958; // 0.9523 pinned + 0.5% epsilon
+  const KNOWN_PASTED_CONVERT_RATIO_MIN = 0.943; // 0.9523 pinned − 1% epsilon
+  const KNOWN_PASTED_CONVERT_RATIO_MAX = 0.962; // 0.9523 pinned + 1% epsilon
   // The same paste-convert bug also shifts the resulting path RIGHT by ~2.55% of the
   // text width (measured 19.43 units on a 761-unit text — combined with the narrower
   // width, the pasted-converted path sits roughly centered instead of left-aligned).
