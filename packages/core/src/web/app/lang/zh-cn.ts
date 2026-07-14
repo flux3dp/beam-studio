@@ -1872,6 +1872,8 @@ const lang: ILang = {
       door_opened_text: '请关上门盖后再重新启动相机预览。',
       fail_to_transmit_image: '#845 相机传输照片异常，请将机器重新开机。如果问题持续发生，請參考<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402756056079">此则引导</a>。',
       switching_camera: '切换相机中...',
+      wide_angle_open_door: '请打开门盖',
+      wide_angle_open_door_text: '切换至广角相机前，请先打开门盖。',
       ws_closed_unexpectedly: '#844 与机器相机的连线无预期的中断。如果问题持续发生，請參考<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">此则引导</a>。',
     },
     cancelling: '取消中...',

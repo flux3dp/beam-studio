@@ -1871,6 +1871,8 @@ const lang: ILang = {
       door_opened_text: 'Cierre la tapa antes de reiniciar la vista previa de la cámara.',
       fail_to_transmit_image: '#845 Se ha producido un error en la transmisión de imágenes. Reinicie la máquina o Beam Studio. Si el error persiste, siga <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402756056079">esta guía</a>.',
       switching_camera: 'Cambiando cámara...',
+      wide_angle_open_door: 'Abra la tapa',
+      wide_angle_open_door_text: 'Abra la tapa antes de cambiar a la cámara gran angular.',
       ws_closed_unexpectedly: '#844 La conexión a la cámara de la máquina se ha cerrado inesperadamente. Si este error persiste, por favor sigue <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">esta guía</a>.',
     },
     cancelling: 'Cancelando...',

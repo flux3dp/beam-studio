@@ -1872,6 +1872,8 @@ const lang: ILang = {
       door_opened_text: 'Zamknij drzwi przed ponownym uruchomieniem podglądu z kamery.',
       fail_to_transmit_image: '#845 Coś poszło nie tak z transmisją obrazu. Uruchom ponownie komputer i Beam Studio. Jeśli ten błąd będzie się powtarzał, postępuj zgodnie z <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402756056079">tym przewodnikiem</a>.',
       switching_camera: 'Przełączanie kamery...',
+      wide_angle_open_door: 'Otwórz pokrywę drzwi',
+      wide_angle_open_door_text: 'Otwórz pokrywę drzwi przed przełączeniem na kamerę szerokokątną.',
       ws_closed_unexpectedly: '#844 Połączenie z kamerą maszyny zostało niespodziewanie zamknięte. If this error persists, please follow <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">this guide</a>.',
     },
     cancelling: 'Anulowanie...',

@@ -1872,6 +1872,8 @@ const lang: ILang = {
       door_opened_text: 'Lukk døren før du starter kameraeksempelvisningen på nytt.',
       fail_to_transmit_image: '#845 Noe gikk galt med bildeoverføringen. Start maskinen eller Beam Studio på nytt. Hvis denne feilen vedvarer, følg denne veiledningen.',
       switching_camera: 'Bytter kamera...',
+      wide_angle_open_door: 'Åpne dørdekselet',
+      wide_angle_open_door_text: 'Åpne dørdekselet før du bytter til vidvinkelkameraet.',
       ws_closed_unexpectedly: '#844 Tilkoblingen til maskinkameraet ble uventet lukket. Hvis denne feilen vedvarer, følg denne veiledningen.',
     },
     cancelling: 'Avbryter...',

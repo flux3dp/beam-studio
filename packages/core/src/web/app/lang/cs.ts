@@ -1872,6 +1872,8 @@ const lang: ILang = {
       door_opened_text: 'Před opětovným spuštěním náhledu kamery prosím zavřete dveře.',
       fail_to_transmit_image: '#845 Něco se nepodařilo s přenosem obrázku.Restartujte prosím svůj přístroj nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402756056079">tento návod</a>.',
       switching_camera: 'Přepínání kamery...',
+      wide_angle_open_door: 'Otevřete dvířka',
+      wide_angle_open_door_text: 'Před přepnutím na širokoúhlou kameru otevřete dvířka.',
       ws_closed_unexpectedly: '#844 Nečekaně bylo ukončeno spojení s kamerou přístroje. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">tento návod</a>.',
     },
     cancelling: 'Ruším...',

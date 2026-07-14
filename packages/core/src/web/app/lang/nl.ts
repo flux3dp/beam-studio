@@ -1872,6 +1872,8 @@ const lang: ILang = {
       door_opened_text: 'Sluit de deur voordat u de cameravoorvertoning opnieuw start.',
       fail_to_transmit_image: '#845 Er ging iets mis met beeldoverdracht. Start uw machine of Beam Studio opnieuw op. Als deze fout aanhoudt, volg dan <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402756056079">deze handleiding</a>.',
       switching_camera: 'Camera wisselen...',
+      wide_angle_open_door: 'Open het deksel',
+      wide_angle_open_door_text: 'Open het deksel voordat u overschakelt naar de groothoekcamera.',
       ws_closed_unexpectedly: '#844 Verbinding met machinecamera onverwacht verbroken. Als deze fout aanhoudt, volg dan <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">deze handleiding</a>.',
     },
     cancelling: 'Annuleren...',
