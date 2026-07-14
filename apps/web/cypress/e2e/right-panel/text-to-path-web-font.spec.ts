@@ -36,7 +36,7 @@ describe('text to path with web fonts', () => {
   // Bundled web fonts. The <img alt> for a font is fontNameMap.get(family) ?? family
   // and the applied font-family attribute is `'${family}'` (see renderTextOptions.tsx).
   // Neither 'Noto Sans' nor 'fira sans' has a fontNameMap entry, so alt === family.
-  const NOTO_SANS = { alt: 'Noto Sans', family: 'Noto Sans', fontFamily: "'Noto Sans'" };
+  const NOTO_SANS = { alt: 'Noto Sans', family: 'Noto Sans', fontFamily: 'Noto Sans' };
   const FIRA_SANS = { alt: 'fira sans', family: 'fira sans', fontFamily: "'fira sans'" };
 
   // Proportional bbox tolerance (fraction of the expected dimension) plus a small
@@ -88,7 +88,7 @@ describe('text to path with web fonts', () => {
     cy.get(`.ant-select-item-option img[alt="${font.alt}"]`).should('exist').click();
     cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').should('not.exist');
     // font-family attribute reflects the selected web font.
-    cy.get('#svg_1').should('have.attr', 'font-family').and('eq', `\'${font.fontFamily}\'`);
+    cy.get('#svg_1').should('have.attr', 'font-family').and('eq', font.fontFamily);
     // The Font select display shows the selected font.
     fontSelect().find('.ant-select-selection-item img').should('have.attr', 'alt', font.alt);
   };
