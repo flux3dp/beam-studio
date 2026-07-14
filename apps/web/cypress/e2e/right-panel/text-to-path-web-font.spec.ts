@@ -88,7 +88,7 @@ describe('text to path with web fonts', () => {
     cy.get(`.ant-select-item-option img[alt="${font.alt}"]`).should('exist').click();
     cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').should('not.exist');
     // font-family attribute reflects the selected web font.
-    cy.get('#svg_1').should('have.attr', 'font-family').and('eq', font.fontFamily);
+    cy.get('#svg_1').should('have.attr', 'font-family').and('eq', `\'${font.fontFamily}\'`);
     // The Font select display shows the selected font.
     fontSelect().find('.ant-select-selection-item img').should('have.attr', 'alt', font.alt);
   };
@@ -152,19 +152,19 @@ describe('text to path with web fonts', () => {
     // tight bands and fail.
     const widthRatio = pathBBox.width / textBBox.width;
 
-    expect(
-      widthRatio,
-      `${label} path/text width ratio (pinned known-bug band; see docs/tests/bugs)`,
-    ).to.be.within(ratioBand[0], ratioBand[1]);
+    expect(widthRatio, `${label} path/text width ratio (pinned known-bug band; see docs/tests/bugs)`).to.be.within(
+      ratioBand[0],
+      ratioBand[1],
+    );
 
     if (xShiftBand) {
       // Pinned known-bug horizontal shift (fraction of text width).
       const xShiftRatio = (pathBBox.x - textBBox.x) / textBBox.width;
 
-      expect(
-        xShiftRatio,
-        `${label} left-edge shift ratio (pinned known-bug band; see docs/tests/bugs)`,
-      ).to.be.within(xShiftBand[0], xShiftBand[1]);
+      expect(xShiftRatio, `${label} left-edge shift ratio (pinned known-bug band; see docs/tests/bugs)`).to.be.within(
+        xShiftBand[0],
+        xShiftBand[1],
+      );
     } else {
       expect(pathBBox.x, `${label} left edge`).to.be.closeTo(textBBox.x, tol(textBBox.width));
     }
