@@ -33,11 +33,18 @@
 // overlay via cy.waitForProgress().
 
 describe('text to path with web fonts', () => {
-  // Bundled web fonts. The <img alt> for a font is fontNameMap.get(family) ?? family
-  // and the applied font-family attribute is `'${family}'` (see renderTextOptions.tsx).
+  // Bundled web fonts. The <img alt> for a font is fontNameMap.get(family) ?? family.
   // Neither 'Noto Sans' nor 'fira sans' has a fontNameMap entry, so alt === family.
-  const NOTO_SANS = { alt: 'Noto Sans', family: 'Noto Sans', fontFamily: 'Noto Sans' };
-  const FIRA_SANS = { alt: 'fira sans', family: 'fira sans', fontFamily: "'fira sans'" };
+  //
+  // font-family attribute quoting note: setFontFamily() wraps the value as `'${family}'`,
+  // but it only runs when the selection actually changes. Noto Sans is the web default
+  // font (getDefaultFont() returns it unquoted), so on a fresh text it is ALREADY the
+  // active font — selecting it in the dropdown is a no-op and the attribute stays the
+  // unquoted `Noto Sans` (this is what CI sees). A non-default font like Fira Sans is a
+  // real change and comes out quoted as `'fira sans'`. CSS treats both forms as the same
+  // family, so selectFont() compares the family with surrounding quotes normalized away.
+  const NOTO_SANS = { alt: 'Noto Sans', family: 'Noto Sans' };
+  const FIRA_SANS = { alt: 'fira sans', family: 'fira sans' };
 
   // Proportional bbox tolerance (fraction of the expected dimension) plus a small
   // absolute floor. Used for same-kind comparisons (paste-in-place overlap) and
@@ -87,8 +94,11 @@ describe('text to path with web fonts', () => {
     openFontDropdown();
     cy.get(`.ant-select-item-option img[alt="${font.alt}"]`).should('exist').click();
     cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').should('not.exist');
-    // font-family attribute reflects the selected web font.
-    cy.get('#svg_1').should('have.attr', 'font-family').and('eq', font.fontFamily);
+    // font-family attribute reflects the selected web font. Normalize surrounding quotes:
+    // the default font (Noto Sans) stays unquoted, a real selection is quoted (see note above).
+    cy.get('#svg_1')
+      .should('have.attr', 'font-family')
+      .then((value) => expect(String(value).replace(/^'|'$/g, '')).to.eq(font.family));
     // The Font select display shows the selected font.
     fontSelect().find('.ant-select-selection-item img').should('have.attr', 'alt', font.alt);
   };
