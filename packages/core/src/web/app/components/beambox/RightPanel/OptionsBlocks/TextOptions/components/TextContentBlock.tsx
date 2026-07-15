@@ -7,6 +7,8 @@ import type { TextAreaRef } from 'antd/lib/input/TextArea';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import { deleteElements } from '@core/app/svgedit/operations/delete';
+import textActions from '@core/app/svgedit/text/textactions';
 import { getTextContent, renderText, textContentEvents } from '@core/app/svgedit/text/textedit';
 import useI18n from '@core/helpers/useI18n';
 
@@ -56,12 +58,26 @@ function TextContentBlock({ textElement }: Props): ReactNode {
         autoSize={{ minRows: 4 }}
         id="text-content-textarea"
         onBlur={() => {
+          // If textActions.isEditing, use switch focus from text input to text content block
+          // Take them as same operation and use textActions.toSelectMode to record history
+          if (textActions.isEditing) {
+            textActions.toSelectMode();
+
+            return;
+          }
+
           const newVal = textContent.replace(/\n/g, '\u0085');
 
           if (valueBeforeEditRef.current !== newVal) {
-            const cmd = new history.ChangeTextCommand(textElement, valueBeforeEditRef.current, newVal);
+            const batchCmd = new history.BatchCommand('Change Text Content');
 
-            undoManager.addCommandToHistory(cmd);
+            batchCmd.addSubCommand(new history.ChangeTextCommand(textElement, valueBeforeEditRef.current, newVal));
+
+            if (!newVal) {
+              batchCmd.addSubCommand(deleteElements([textElement], true));
+            }
+
+            undoManager.addCommandToHistory(batchCmd);
           }
         }}
         onChange={(e) => {
