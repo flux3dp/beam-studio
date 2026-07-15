@@ -30,7 +30,7 @@ import { getOS } from '@core/helpers/getOS';
 import { checkIsAtEditor } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import { getDetectedModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
-import { machineKeyOf } from '@core/helpers/maintenance/maintenanceRecords';
+import { machineKeyOf } from '@core/helpers/maintenance/records';
 import { extractVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
