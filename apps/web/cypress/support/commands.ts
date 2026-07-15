@@ -363,8 +363,8 @@ Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
 
 Cypress.Commands.add('clickToolGroupBtn', (groupId: string, optionId: string, checkActive = true) => {
   cy.get(`div#left-${groupId}`).should('exist');
-  // Open the options popover by clicking the indicator (bottom-right corner of the group button)
-  cy.get(`div#left-${groupId} [class*='LeftPanelButtonGroup-module__indicator']`).click({ force: true });
+  // The options popover opens on right-click (or a long press) on the group button
+  cy.get(`div#left-${groupId}`).rightclick({ force: true });
   cy.get(`#tool-option-${optionId}`, { timeout: 5000 }).should('be.visible').click();
 
   if (checkActive) cy.checkToolBtnActive(groupId);
