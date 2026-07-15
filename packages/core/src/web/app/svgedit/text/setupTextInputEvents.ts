@@ -62,7 +62,7 @@ export const setupTextInputEvents = () => {
     }
 
     if ((evt as KeyboardEvent).key === 'Enter' && !wasNewLineAdded) {
-      textActions.toSelectMode(true);
+      textActions.toSelectMode({ shouldClearSelection: true });
     } else if (textActions.isEditing) {
       textedit.setTextContent(textInput.value);
     }

@@ -58,15 +58,15 @@ function TextContentBlock({ textElement }: Props): ReactNode {
         autoSize={{ minRows: 4 }}
         id="text-content-textarea"
         onBlur={() => {
-          // If textActions.isEditing, use switch focus from text input to text content block
+          const newVal = textContent.replace(/\n/g, '\u0085');
+
+          // If textActions.isEditing, user switch focus from text input to text content block
           // Take them as same operation and use textActions.toSelectMode to record history
           if (textActions.isEditing) {
-            textActions.toSelectMode();
+            textActions.toSelectMode({ newValue: newVal });
 
             return;
           }
-
-          const newVal = textContent.replace(/\n/g, '\u0085');
 
           if (valueBeforeEditRef.current !== newVal) {
             const batchCmd = new history.BatchCommand('Change Text Content');

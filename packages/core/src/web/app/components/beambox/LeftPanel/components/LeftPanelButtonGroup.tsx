@@ -8,7 +8,7 @@ import shortcuts from '@core/helpers/shortcuts';
 import buttonStyles from './LeftPanelButton.module.scss';
 import styles from './LeftPanelButtonGroup.module.scss';
 
-const LONG_PRESS_DELAY = 1000;
+const LONG_PRESS_DELAY = 500;
 
 interface ToolOption {
   icon: React.ReactNode;
