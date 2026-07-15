@@ -1589,9 +1589,17 @@ const smoothByFitPath = (elem: SVGPathElement) => {
       });
     });
 
-    return result.join('');
+    const simplified = result.join('');
+
+    // The loop above mutates `d` per-subpath to measure getTotalLength(), leaving the
+    // element as only the last subpath. Set it to the full simplified result so callers
+    // that read the element in place (e.g. image tracing) get the complete path.
+    elem.setAttribute('d', simplified);
+
+    return simplified;
   } catch (e) {
     console.log('Fit path error', e);
+    elem.setAttribute('d', d);
 
     return d;
   }

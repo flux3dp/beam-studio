@@ -1872,6 +1872,8 @@ const lang: ILang = {
       door_opened_text: 'Sulje ovi ennen kameran esikatselun uudelleenkäynnistystä.',
       fail_to_transmit_image: '#845 Kuvan siirrossa tapahtui virhe. Käynnistä kone tai Beam Studio uudelleen. Jos virhe ei poistu, noudata <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402756056079">tätä ohjetta</a>.',
       switching_camera: 'Vaihdetaan kameraa...',
+      wide_angle_open_door: 'Avaa ovensuojus',
+      wide_angle_open_door_text: 'Avaa ovensuojus ennen kuin vaihdat laajakulmakameraan.',
       ws_closed_unexpectedly: '#844 Yhteys kameran ja koneen välillä katkesi odottamatta. Jos virhe ei poistu, noudata <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">tätä ohjetta</a>.',
     },
     cancelling: 'Peruuttaminen...',

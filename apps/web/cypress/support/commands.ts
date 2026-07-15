@@ -363,8 +363,8 @@ Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
 
 Cypress.Commands.add('clickToolGroupBtn', (groupId: string, optionId: string, checkActive = true) => {
   cy.get(`div#left-${groupId}`).should('exist');
-  cy.get(`div#left-${groupId}`).realHover();
-  // Options will show in 0.5s, timeout set to 5s to be safe
+  // The options popover opens on right-click (or a long press) on the group button
+  cy.get(`div#left-${groupId}`).rightclick({ force: true });
   cy.get(`#tool-option-${optionId}`, { timeout: 5000 }).should('be.visible').click();
 
   if (checkActive) cy.checkToolBtnActive(groupId);

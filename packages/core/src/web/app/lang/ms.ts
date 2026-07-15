@@ -1872,6 +1872,8 @@ const lang: ILang = {
       door_opened_text: 'Sila tutup pintu sebelum memulakan semula pratonton kamera.',
       fail_to_transmit_image: '#845 Sesuatu telah berlaku dengan penghantaran imej. Sila mulakan semula mesin atau Beam Studio anda. Jika ralat ini berterusan, sila ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402756056079">panduan ini</a>.',
       switching_camera: 'Menukar kamera...',
+      wide_angle_open_door: 'Buka pintu',
+      wide_angle_open_door_text: 'Sila buka pintu sebelum menukar ke kamera sudut lebar.',
       ws_closed_unexpectedly: '#844 Sambungan ke kamera mesin telah ditutup secara mengejut. Jika ralat ini berterusan, sila ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">panduan ini</a>.',
     },
     cancelling: 'Membatalkan...',

@@ -35,6 +35,12 @@ interface BBox {
   y: number;
 }
 
+export interface ToSelectModeOptions {
+  /** Value to compare against the pre-edit value when recording history. Defaults to the text input value. */
+  newValue?: string;
+  shouldClearSelection?: boolean;
+}
+
 const { svgedit } = window;
 const { NS } = svgedit;
 
@@ -787,7 +793,7 @@ class TextActions {
       mouseY < lastY + 2 &&
       mouseY > lastY - 2
     ) {
-      this.toSelectMode(true);
+      this.toSelectMode({ shouldClearSelection: true });
     }
   }
 
@@ -1019,7 +1025,7 @@ class TextActions {
     }, 300);
   };
 
-  toSelectMode(shouldClearSelection = false) {
+  toSelectMode({ newValue = this.textinput.value, shouldClearSelection = false }: ToSelectModeOptions = {}) {
     const curtext = this.curtext!;
 
     this.textinput.disabled = true;
@@ -1048,8 +1054,8 @@ class TextActions {
     const batchCmd = new history.BatchCommand('Edit Text');
 
     if (curtext) {
-      if (this.valueBeforeEdit && this.valueBeforeEdit !== this.textinput.value) {
-        const cmd = new history.ChangeTextCommand(curtext, this.valueBeforeEdit, this.textinput.value);
+      if (this.valueBeforeEdit && this.valueBeforeEdit !== newValue) {
+        const cmd = new history.ChangeTextCommand(curtext, this.valueBeforeEdit, newValue);
 
         batchCmd.addSubCommand(cmd);
         currentFileManager.setHasUnsavedChanges(true);

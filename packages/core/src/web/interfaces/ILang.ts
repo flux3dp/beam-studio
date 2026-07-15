@@ -1873,6 +1873,8 @@ export interface ILang {
       door_opened_text: string;
       fail_to_transmit_image: string;
       switching_camera: string;
+      wide_angle_open_door: string;
+      wide_angle_open_door_text: string;
       ws_closed_unexpectedly: string;
     };
     cancelling: string;

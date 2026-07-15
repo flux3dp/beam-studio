@@ -99,6 +99,21 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         this.setRegionPreviewGrid(grid);
         await this.setupLaserHeadCamera();
       } else {
+        try {
+          const res = await deviceMaster.getDoorOpen();
+
+          if (res.value === '0') {
+            // Wide angle camera requires the door to be open.
+            alertCaller.popUpError({
+              caption: lang.message.camera.wide_angle_open_door,
+              message: lang.message.camera.wide_angle_open_door_text,
+            });
+
+            return this._previewMode;
+          }
+        } catch (err) {
+          console.error('Fail to getDoorOpen, assume door is opened', err);
+        }
         await this.setupWideAngleCamera();
       }
 

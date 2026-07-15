@@ -480,7 +480,8 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     const cutSelected = function () {
       // disabled when focusing input element
-      if (document.activeElement?.tagName.toLowerCase() === 'input') {
+      const activeElementTagName = document.activeElement?.tagName?.toLowerCase() ?? '';
+      if (['input', 'textarea'].includes(activeElementTagName)) {
         return;
       }
 

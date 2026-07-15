@@ -1872,6 +1872,8 @@ const lang: ILang = {
       door_opened_text: 'カメラプレビューを再起動する前にドアを閉めてください。',
       fail_to_transmit_image: '#845 画像の送信に不具合が発生しました。マシンを再起動してください。このエラーが続く場合は、この<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402756056079">ガイド</a>に従ってください。',
       switching_camera: 'カメラを切り替え中...',
+      wide_angle_open_door: 'ドアカバーを開けてください',
+      wide_angle_open_door_text: '広角カメラに切り替える前に、ドアカバーを開けてください。',
       ws_closed_unexpectedly: '#844 マシンカメラへの接続が予期せず閉じられました。このエラーが続く場合は、この<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">ガイド</a>に従ってください。',
     },
     cancelling: 'キャンセル中…',
