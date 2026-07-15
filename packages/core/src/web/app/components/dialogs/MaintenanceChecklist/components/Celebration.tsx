@@ -14,7 +14,7 @@ import styles from './Celebration.module.scss';
 
 const CELEBRATION_MS = 2300;
 
-/** Machine-health celebration: confetti + a congratulatory card, respecting reduced-motion. */
+/** Placement for Celebration card  */
 const Celebration = (): null | React.JSX.Element => {
   const t = useI18n().maintenance.celebration;
   const { machineName } = useMaintenanceData();
