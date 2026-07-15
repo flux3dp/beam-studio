@@ -9,7 +9,6 @@ import useI18n from '@core/helpers/useI18n';
 
 import { useMaintenanceData } from '../useMaintenanceData';
 import { useMaintenanceStore } from '../useMaintenanceStore';
-import { getTaskStrings } from '../utils';
 
 import styles from './HistoryModal.module.scss';
 
@@ -37,7 +36,7 @@ const HistoryModal = (): React.JSX.Element => {
             .filter((task) => record.tasks[task.id]?.history?.length)
             .map((task) => (
               <div className={styles.historyItem} key={task.id}>
-                <div className={styles.historyName}>{getTaskStrings(t, task).name}</div>
+                <div className={styles.historyName}>{t.tasks[task.langKey].name}</div>
                 {record.tasks[task.id]?.history?.map((entry, index) => (
                   <div className={styles.historyEntry} key={index}>
                     {dayjs(entry.at).format('YYYY-MM-DD HH:mm')} · {entry.result}
