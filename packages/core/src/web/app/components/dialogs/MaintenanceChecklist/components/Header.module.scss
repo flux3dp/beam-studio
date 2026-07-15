@@ -13,22 +13,6 @@
   flex-wrap: wrap;
 }
 
-.machine {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-
-  .label {
-    color: variables.$secondary-gray;
-    font-size: 13px;
-    white-space: nowrap;
-  }
-
-  .select {
-    width: 260px;
-  }
-}
-
 .health {
   display: flex;
   align-items: center;

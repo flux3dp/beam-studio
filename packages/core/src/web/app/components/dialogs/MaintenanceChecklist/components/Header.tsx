@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Progress, Select } from 'antd';
+import { Progress } from 'antd';
 import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
@@ -9,17 +9,16 @@ import useI18n from '@core/helpers/useI18n';
 import shared from '../styles.module.scss';
 import { useAllClearEdge } from '../useAllClearEdge';
 import { useMaintenanceData } from '../useMaintenanceData';
-import { useMaintenanceStore } from '../useMaintenanceStore';
 
 import styles from './Header.module.scss';
+import MachineSelect from './MachineSelect';
 
 const RING_PULSE_MS = 1400;
 
 /** Dialog header: machine picker, essential-health ring, status legend, and intro hint. */
 const Header = (): React.JSX.Element => {
   const t = useI18n().maintenance;
-  const { health, machineOptions, record, selection } = useMaintenanceData();
-  const selectMachine = useMaintenanceStore((state) => state.selectMachine);
+  const { health, record } = useMaintenanceData();
 
   // Pulse the health ring when the user completes the checklist (same-machine all-clear edge).
   const [pulse, setPulse] = useState(false);
@@ -35,17 +34,14 @@ const Header = (): React.JSX.Element => {
   return (
     <div className={styles.header}>
       <div className={styles['top-row']}>
-        <div className={styles.machine}>
-          <span className={styles.label}>{t.machine_label}</span>
-          <Select className={styles.select} onChange={selectMachine} options={machineOptions} value={selection?.key} />
-        </div>
+        <MachineSelect />
         <div className={styles.health}>
           <div className={classNames(styles.ring, { [styles['ring-done']]: pulse })}>
             <Progress
               format={() => `${health.ok}/${health.total}`}
               percent={health.total ? Math.round((health.ok / health.total) * 100) : 0}
               size={48}
-              strokeColor={health.allOk ? '#4fbb30' : '#16a1a1'}
+              strokeColor={health.allOk ? '#4fbb30' : '#1890ff'}
               type="circle"
             />
           </div>
