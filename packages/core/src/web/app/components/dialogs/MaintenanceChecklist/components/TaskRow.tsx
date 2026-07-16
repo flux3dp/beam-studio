@@ -15,6 +15,7 @@ import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
 import { useMaintenanceActions } from '../useMaintenanceActions';
+import { formatShortDate } from '../utils/formatShortDate';
 
 import styles from './TaskRow.module.scss';
 
@@ -88,13 +89,13 @@ const TaskRow = ({ material, record, status, task }: Props): ReactNode => {
     );
 
   const lastText = record?.lastDoneAt
-    ? `${t.status.last} ${dayjs(record.lastDoneAt).format('MMM D')}`
+    ? `${t.status.last} ${formatShortDate(dayjs(record.lastDoneAt))}`
     : t.status.not_logged;
 
   const nextDueText = (): string => {
     const due = nextDue(record, task, material);
 
-    return due ? due.format('MMM D') : '';
+    return due ? formatShortDate(due) : '';
   };
 
   let dueNode: React.JSX.Element;
@@ -131,11 +132,11 @@ const TaskRow = ({ material, record, status, task }: Props): ReactNode => {
 
   const action =
     task.actionType === 'passfail' ? (
-      <Space size={6}>
-        <Button ghost onClick={(e) => handleMark('pass', e)} size="small" type="primary">
+      <Space size={8}>
+        <Button ghost onClick={(e) => handleMark('pass', e)} type="primary">
           {t.actions.pass}
         </Button>
-        <Button danger onClick={(e) => handleMark('fail', e)} size="small">
+        <Button danger onClick={(e) => handleMark('fail', e)}>
           {t.actions.fail}
         </Button>
       </Space>

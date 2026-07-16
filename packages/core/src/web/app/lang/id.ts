@@ -1829,8 +1829,8 @@ const lang: ILang = {
     actions: {
       fail: 'Gagal',
       history: 'Riwayat',
-      mark_checked: 'Tandai diperiksa',
-      mark_done: 'Tandai selesai',
+      mark_checked: 'Diperiksa',
+      mark_done: 'Selesai',
       open_guide: 'Buka panduan',
       pass: 'Lulus',
       print: 'Cetak / PDF',
