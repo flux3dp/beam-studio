@@ -11,7 +11,7 @@ import Celebration from './components/Celebration';
 import Footer from './components/Footer';
 import Header from './components/Header';
 import HistoryModal from './components/HistoryModal';
-import styles from './styles.module.scss';
+import styles from './index.module.scss';
 
 interface Props {
   onClose: () => void;
