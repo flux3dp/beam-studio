@@ -20,9 +20,6 @@ const Body = (): React.JSX.Element => {
   const t = useI18n().maintenance;
   const { material, record, schedule, selection } = useMaintenanceData();
 
-  // One pass over `schedule.tasks`: group by area and resolve each status once. `areaOrder` only
-  // decides the order the groups come out in, and statuses ride along so neither the sort
-  // comparator nor the rows below have to call `statusOf` again.
   const areas = useMemo(() => {
     if (!schedule) return [];
 
