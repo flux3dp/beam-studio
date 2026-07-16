@@ -1,5 +1,10 @@
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 
+interface MaintenanceTaskStrings {
+  keyPoints: string;
+  name: string;
+}
+
 export interface ILang {
   alert: {
     abort: string;
@@ -1823,6 +1828,107 @@ export interface ILang {
     512: string;
     UNKNOWN: string;
   };
+  maintenance: {
+    actions: {
+      fail: string;
+      history: string;
+      mark_checked: string;
+      mark_done: string;
+      open_guide: string;
+      pass: string;
+      print: string;
+    };
+    areas: {
+      back_cover: string;
+      modules: string;
+      optics: string;
+      panel: string;
+      working_area: string;
+    };
+    cadence: {
+      by_material: string;
+      condition: string;
+      day: string;
+      days: string;
+      each_operation: string;
+      every: string;
+      every_1_2_weeks: string;
+      month: string;
+      months: string;
+      upon_unboxing: string;
+      week: string;
+      weeks: string;
+    };
+    celebration: {
+      subtitle: string;
+      title: string;
+    };
+    empty_no_machine: string;
+    empty_no_schedule: string;
+    essential: string;
+    essential_health: string;
+    essential_hint: string;
+    feedback: {
+      all_essential: string;
+      checked: string;
+      done: string;
+      done_no_date: string;
+      fail_warning: string;
+      passed: string;
+    };
+    footer_tip: string;
+    history_hint: string;
+    intro: string;
+    legend: {
+      due_soon: string;
+      overdue: string;
+      up_to_date: string;
+    };
+    machine_label: string;
+    materials: {
+      acrylic: string;
+      leather: string;
+      paper: string;
+      wood: string;
+    };
+    status: {
+      checked: string;
+      due: string;
+      healthy: string;
+      last: string;
+      never_done: string;
+      next: string;
+      not_checked: string;
+      not_logged: string;
+      overdue: string;
+      replace_tube: string;
+    };
+    tasks: Record<
+      | 'align'
+      | 'chassis'
+      | 'door'
+      | 'exhaust'
+      | 'fan'
+      | 'fieldlens'
+      | 'honeycomb_plate'
+      | 'honeycomb_table'
+      | 'lube'
+      | 'maintain_test'
+      | 'mirrors_combiner'
+      | 'mirrors_lens'
+      | 'mod_diode'
+      | 'mod_ir'
+      | 'optical_inspection'
+      | 'optical_unboxing'
+      | 'screen'
+      | 'tube'
+      | 'water'
+      | 'worktable'
+      | 'zaxis',
+      MaintenanceTaskStrings
+    >;
+    title: string;
+  };
   material_test_generator: Record<
     | 'block_settings'
     | 'columns'
@@ -2557,6 +2663,7 @@ export interface ILang {
       logout: string;
       machine_info: string;
       machines: string;
+      maintenance_checklist: string;
       manage_account: string;
       material_test: string;
       minimize: string;
