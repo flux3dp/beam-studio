@@ -9,6 +9,7 @@ import { markTaskDone, setPrimaryMaterial } from '@core/helpers/maintenance/reco
 import useI18n from '@core/helpers/useI18n';
 
 import { useMaintenanceData } from './useMaintenanceData';
+import { formatShortDate } from './utils/formatShortDate';
 
 interface MaintenanceActions {
   markTask: (task: MaintenanceTask, result: TaskResult) => void;
@@ -52,7 +53,7 @@ export const useMaintenanceActions = (): MaintenanceActions => {
     } else {
       const due = nextDue(newRecord.tasks[task.id], task, material);
 
-      content = due ? sprintf(t.feedback.done, name, due.format('MMM D')) : sprintf(t.feedback.done_no_date, name);
+      content = due ? sprintf(t.feedback.done, name, formatShortDate(due)) : sprintf(t.feedback.done_no_date, name);
     }
 
     MessageCaller.openMessage({ content, duration: 4, key: 'maintenance-task', level: MessageLevel.SUCCESS });
