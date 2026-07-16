@@ -1,4 +1,5 @@
 import dayjs from 'dayjs';
+import { sprintf } from 'sprintf-js';
 
 import type { Cadence, MaintenanceTask, MaterialKey } from '@core/app/constants/maintenance';
 import type { ILang } from '@core/interfaces/ILang';
@@ -93,9 +94,9 @@ export const formatCadence = (cadence: Cadence, cadenceLang: CadenceLang): strin
       return cadenceLang.each_operation;
     case 'time': {
       const plural = cadence.every > 1;
-      const unitLabel = cadenceLang[`${cadence.unit}${plural ? 's' : ''}` as keyof CadenceLang] ?? '';
+      const template = cadenceLang[`${cadence.unit}${plural ? 's' : ''}` as keyof CadenceLang] ?? '';
 
-      return `${cadenceLang.every} ${cadence.every} ${unitLabel}`.trim();
+      return sprintf(template, cadence.every).trim();
     }
     case 'time_by_material':
       return cadenceLang.by_material;

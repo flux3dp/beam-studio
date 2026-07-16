@@ -1,10 +1,5 @@
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 
-interface MaintenanceTaskStrings {
-  keyPoints: string;
-  name: string;
-}
-
 export interface ILang {
   alert: {
     abort: string;
@@ -1848,10 +1843,11 @@ export interface ILang {
     cadence: {
       by_material: string;
       condition: string;
+      // Interval templates: singular (every === 1) omits the count; plural interpolates the
+      // count via a `%s` placeholder, e.g. `'Every %s days'`. See `formatCadence`.
       day: string;
       days: string;
       each_operation: string;
-      every: string;
       every_1_2_weeks: string;
       month: string;
       months: string;
@@ -1925,7 +1921,7 @@ export interface ILang {
       | 'water'
       | 'worktable'
       | 'zaxis',
-      MaintenanceTaskStrings
+      { keyPoints: string; name: string }
     >;
     title: string;
   };

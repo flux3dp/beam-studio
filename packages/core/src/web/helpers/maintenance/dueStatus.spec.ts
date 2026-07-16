@@ -82,8 +82,8 @@ describe('statusOf', () => {
   it('derives passfail status from lastResult', () => {
     const task = makeTask({ kind: 'condition' }, { actionType: 'passfail' });
 
-    expect(statusOf({ lastResult: 'pass' }, task, 'acrylic')).toBe('ok');
-    expect(statusOf({ lastResult: 'fail' }, task, 'acrylic')).toBe('overdue');
+    expect(statusOf({ ...daysAgo(0), lastResult: 'pass' }, task, 'acrylic')).toBe('ok');
+    expect(statusOf({ ...daysAgo(0), lastResult: 'fail' }, task, 'acrylic')).toBe('overdue');
     expect(statusOf(undefined, task, 'acrylic')).toBe('never');
   });
 
