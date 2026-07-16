@@ -6,17 +6,26 @@ import type { MachineMaintenanceRecord } from './records';
 export interface EssentialCounts {
   allOk: boolean;
   ok: number;
+  /** Strictly `overdue` — a never-serviced essential is `never`, not overdue, so it isn't counted. */
+  overdue: number;
   total: number;
 }
 
-/** Essential-task health for a machine: how many essential tasks are currently OK. */
+/** Essential-task health for a machine: how many essential tasks are currently OK / overdue. */
 export const essentialCounts = (
   schedule: MaintenanceSchedule,
   record: MachineMaintenanceRecord | undefined,
   material: MaterialKey,
 ): EssentialCounts => {
-  const essentials = schedule.tasks.filter((task) => task.essential);
-  const ok = essentials.filter((task) => statusOf(record?.tasks[task.id], task, material) === 'ok').length;
+  const statuses = schedule.tasks
+    .filter((task) => task.essential)
+    .map((task) => statusOf(record?.tasks[task.id], task, material));
+  const ok = statuses.filter((status) => status === 'ok').length;
 
-  return { allOk: essentials.length > 0 && ok === essentials.length, ok, total: essentials.length };
+  return {
+    allOk: statuses.length > 0 && ok === statuses.length,
+    ok,
+    overdue: statuses.filter((status) => status === 'overdue').length,
+    total: statuses.length,
+  };
 };
