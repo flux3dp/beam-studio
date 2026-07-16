@@ -37,9 +37,8 @@ export const machineKeyOf = (device: IDeviceInfo): string => device.serial || de
 
 const readAll = (): Record<string, MachineMaintenanceRecord> => getStorage(STORAGE_KEY) || {};
 
-// Spread into a fresh map reference so storageStore subscribers (e.g. the dialog) re-render.
 const writeAll = (all: Record<string, MachineMaintenanceRecord>): void => {
-  setStorage(STORAGE_KEY, { ...all });
+  setStorage(STORAGE_KEY, all);
 };
 
 export const getRecord = (machineKey: string): MachineMaintenanceRecord | undefined => readAll()[machineKey];
@@ -54,8 +53,11 @@ export const ensureRecord = (machineKey: string, model: WorkAreaModel, nickname?
   if (currentRecord) {
     // Keep nickname fresh when the machine reports one.
     if (nickname && currentRecord.nickname !== nickname) {
-      currentRecord.nickname = nickname;
-      writeAll(all);
+      const renamed = { ...currentRecord, nickname };
+
+      writeAll({ ...all, [machineKey]: renamed });
+
+      return renamed;
     }
 
     return currentRecord;
@@ -69,17 +71,13 @@ export const ensureRecord = (machineKey: string, model: WorkAreaModel, nickname?
     tasks: {},
   };
 
-  all[machineKey] = record;
-  writeAll(all);
+  writeAll({ ...all, [machineKey]: record });
 
   return record;
 };
 
 export const saveRecord = (record: MachineMaintenanceRecord): void => {
-  const all = readAll();
-
-  all[record.machineKey] = record;
-  writeAll(all);
+  writeAll({ ...readAll(), [record.machineKey]: record });
 };
 
 /** Records a task action: stamps lastDoneAt/lastResult and appends a capped history entry. */
@@ -90,12 +88,15 @@ export const markTaskDone = (
   result: TaskResult,
   by?: string,
 ): MachineMaintenanceRecord => {
-  const record = ensureRecord(machineKey, model);
+  const current = ensureRecord(machineKey, model);
   const at = new Date().toISOString();
-  const prev = record.tasks[taskId] ?? {};
+  const prev = current.tasks[taskId] ?? {};
   const history = [{ at, by, result }, ...(prev.history ?? [])].slice(0, HISTORY_CAP);
+  const record: MachineMaintenanceRecord = {
+    ...current,
+    tasks: { ...current.tasks, [taskId]: { ...prev, history, lastDoneAt: at, lastResult: result } },
+  };
 
-  record.tasks[taskId] = { ...prev, history, lastDoneAt: at, lastResult: result };
   saveRecord(record);
 
   return record;
@@ -106,9 +107,8 @@ export const setPrimaryMaterial = (
   model: WorkAreaModel,
   material: MaterialKey,
 ): MachineMaintenanceRecord => {
-  const record = ensureRecord(machineKey, model);
+  const record: MachineMaintenanceRecord = { ...ensureRecord(machineKey, model), primaryMaterial: material };
 
-  record.primaryMaterial = material;
   saveRecord(record);
 
   return record;
