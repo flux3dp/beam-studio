@@ -1,4 +1,13 @@
 @use '@core/styles/variables' as variables;
+@use './mixins' as mixins;
+
+.dot {
+  @include mixins.dot;
+}
+
+.ess {
+  @include mixins.ess;
+}
 
 .header {
   padding: 4px 4px 0;
@@ -47,19 +56,6 @@
     align-items: center;
     gap: 5px;
   }
-}
-
-// Status colors for the legend dots (paired with the shared `.dot` shape).
-.dotUpToDate {
-  background: variables.$status-normal;
-}
-
-.dotDueSoon {
-  background: variables.$status-warning;
-}
-
-.dotOverdue {
-  background: variables.$status-critical;
 }
 
 .intro {

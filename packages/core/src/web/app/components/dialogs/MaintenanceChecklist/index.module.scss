@@ -1,0 +1,11 @@
+// Dialog shell chrome. Everything else is scoped to the component that renders it.
+
+.title {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.divider {
+  margin: 2px 0 0;
+}

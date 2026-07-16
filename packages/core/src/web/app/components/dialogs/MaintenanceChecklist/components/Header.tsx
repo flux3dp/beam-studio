@@ -5,8 +5,6 @@ import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
 
-// `shared` holds the `.dot`/`.ess` atoms, also used by TaskRow.
-import shared from '../styles.module.scss';
 import { useAllClearEdge } from '../useAllClearEdge';
 import { useMaintenanceData } from '../useMaintenanceData';
 
@@ -50,19 +48,19 @@ const Header = (): React.JSX.Element => {
       </div>
       <div className={styles.legend}>
         <span className={styles.item}>
-          <span className={classNames(shared.dot, styles.dotUpToDate)} />
+          <span className={classNames(styles.dot, styles.upToDate)} />
           {t.legend.up_to_date}
         </span>
         <span className={styles.item}>
-          <span className={classNames(shared.dot, styles.dotDueSoon)} />
+          <span className={classNames(styles.dot, styles.dueSoon)} />
           {t.legend.due_soon}
         </span>
         <span className={styles.item}>
-          <span className={classNames(shared.dot, styles.dotOverdue)} />
+          <span className={classNames(styles.dot, styles.overdue)} />
           {t.legend.overdue}
         </span>
         <span className={styles.item}>
-          <span className={shared.ess}>{t.essential}</span>
+          <span className={styles.ess}>{t.essential}</span>
           {t.essential_hint}
         </span>
       </div>

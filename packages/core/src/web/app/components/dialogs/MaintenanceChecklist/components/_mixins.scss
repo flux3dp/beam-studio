@@ -1,0 +1,41 @@
+@use '@core/styles/variables' as variables;
+
+// Atoms shared by Header (legend) and TaskRow (per-task row). Mixins rather than a shared module:
+// CSS modules hash class names per file, so a rule can only be reused by inlining it into each
+// module's own class.
+
+/// Status dot: shape plus its per-status color. Pair the class with a status modifier —
+/// `<span className={classNames(styles.dot, styles.overdue)} />`.
+@mixin dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex: none;
+
+  &.upToDate {
+    background: variables.$status-normal;
+  }
+
+  &.dueSoon {
+    background: variables.$status-warning;
+  }
+
+  &.overdue {
+    background: variables.$status-critical;
+  }
+
+  &.never {
+    background: #d9d9d9;
+  }
+}
+
+/// "Essential" tag next to a task name.
+@mixin ess {
+  font-size: 11px;
+  color: variables.$secondary-gray;
+  border: 1px solid variables.$panelBorderColor;
+  border-radius: 4px;
+  padding: 0 6px;
+  line-height: 1.6;
+  white-space: nowrap;
+}
