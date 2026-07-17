@@ -3,6 +3,7 @@ import { EventEmitter } from 'eventemitter3';
 const eventEmitters: Record<string, any> = {
   'alert-progress': null,
   canvas: null,
+  device: null,
   'flux-id': null,
   'layer-panel': null,
   monitor: null,

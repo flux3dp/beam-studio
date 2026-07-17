@@ -26,7 +26,10 @@ const Body = (): React.JSX.Element => {
     const tasksByArea = new Map<MaintenanceArea, TaskWithStatus[]>();
 
     schedule.tasks.forEach((task) => {
-      const entry: TaskWithStatus = { status: statusOf(record?.tasks[task.id], task, material), task };
+      const entry: TaskWithStatus = {
+        status: statusOf(record?.tasks[task.id], task, material, record?.lastUsedAt),
+        task,
+      };
       const areaTasks = tasksByArea.get(task.area);
 
       if (areaTasks) areaTasks.push(entry);
@@ -58,7 +61,14 @@ const Body = (): React.JSX.Element => {
         <Fragment key={area}>
           <div className={styles.area}>{t.areas[area]}</div>
           {tasks.map(({ status, task }) => (
-            <TaskRow key={task.id} material={material} record={record?.tasks[task.id]} status={status} task={task} />
+            <TaskRow
+              key={task.id}
+              lastUsedAt={record?.lastUsedAt}
+              material={material}
+              record={record?.tasks[task.id]}
+              status={status}
+              task={task}
+            />
           ))}
         </Fragment>
       ))}

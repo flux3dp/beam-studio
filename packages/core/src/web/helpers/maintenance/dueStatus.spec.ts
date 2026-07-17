@@ -3,7 +3,7 @@ import dayjs from 'dayjs';
 import type { Cadence, MaintenanceTask } from '@core/app/constants/maintenance';
 
 import type { TaskRecord } from './records';
-import { dueSoonWindow, intervalDays, statusOf } from './dueStatus';
+import { dueSoonWindow, intervalDays, nextDue, statusOf } from './dueStatus';
 
 const makeTask = (cadence: Cadence, overrides: Partial<MaintenanceTask> = {}): MaintenanceTask => ({
   actionType: 'done',
@@ -92,5 +92,26 @@ describe('statusOf', () => {
 
     expect(statusOf({ lastDoneAt: dayjs().toISOString() }, task, 'acrylic')).toBe('ok');
     expect(statusOf(undefined, task, 'acrylic')).toBe('never');
+  });
+});
+
+describe('per_operation usage gating', () => {
+  const perOperation = makeTask({ kind: 'per_operation' });
+  const daysAgoIso = (days: number): string => dayjs().subtract(days, 'day').toISOString();
+
+  it('stays ok when the machine has not run since it was last cleaned (no lastUsedAt)', () => {
+    // Cleaned 5 days ago, never used → not due, no daily red dot.
+    expect(nextDue(daysAgo(5), perOperation, 'acrylic')).toBeNull();
+    expect(statusOf(daysAgo(5), perOperation, 'acrylic')).toBe('ok');
+  });
+
+  it('stays ok when the last use predates the last cleaning', () => {
+    // Used 5 days ago, then cleaned 1 day ago → still not due until the next run.
+    expect(statusOf(daysAgo(1), perOperation, 'acrylic', daysAgoIso(5))).toBe('ok');
+  });
+
+  it('becomes overdue once used after cleaning and the proxy day has elapsed', () => {
+    // Cleaned 5 days ago, used 4 days ago → next-due (clean + 1 day) is in the past.
+    expect(statusOf(daysAgo(5), perOperation, 'acrylic', daysAgoIso(4))).toBe('overdue');
   });
 });

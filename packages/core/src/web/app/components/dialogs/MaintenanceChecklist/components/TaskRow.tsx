@@ -31,13 +31,14 @@ const DOT_CLASS: Record<MaintenanceStatus, string> = {
 const POP_MS = 600;
 
 interface Props {
+  lastUsedAt?: string;
   material: MaterialKey;
   record: TaskRecord | undefined;
   status: MaintenanceStatus;
   task: MaintenanceTask;
 }
 
-const TaskRow = ({ material, record, status, task }: Props): ReactNode => {
+const TaskRow = ({ lastUsedAt, material, record, status, task }: Props): ReactNode => {
   const t = useI18n().maintenance;
   const { markTask, setMaterial } = useMaintenanceActions();
   const { keyPoints, name } = t.tasks[task.langKey];
@@ -93,7 +94,7 @@ const TaskRow = ({ material, record, status, task }: Props): ReactNode => {
     : t.status.not_logged;
 
   const nextDueText = (): string => {
-    const due = nextDue(record, task, material);
+    const due = nextDue(record, task, material, lastUsedAt);
 
     return due ? formatShortDate(due) : '';
   };

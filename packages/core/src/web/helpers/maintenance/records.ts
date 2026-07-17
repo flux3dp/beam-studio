@@ -19,6 +19,8 @@ export interface TaskRecord {
 }
 
 export interface MachineMaintenanceRecord {
+  /** ISO timestamp of the machine's last real job sent from local computer; Currently only recorded on the local computer. */
+  lastUsedAt?: string;
   /** Serial (preferred) or UUID. */
   machineKey: string;
   model: WorkAreaModel;
@@ -100,6 +102,19 @@ export const markTaskDone = (
   saveRecord(record);
 
   return record;
+};
+
+/**
+ * Stamps the machine-level last-used time on a real job start. No-op if the machine has no
+ * record yet — gating is moot before the first cleaning (status is `never` with no `lastDoneAt`),
+ * and we don't want a bare run to conjure a maintenance record / dropdown entry.
+ */
+export const updateMachineLastUsedAt = (machineKey: string): void => {
+  const record = getRecord(machineKey);
+
+  if (!record) return;
+
+  saveRecord({ ...record, lastUsedAt: new Date().toISOString() });
 };
 
 export const setPrimaryMaterial = (

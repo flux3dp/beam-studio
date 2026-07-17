@@ -35,15 +35,27 @@ export const intervalDays = (cadence: Cadence, material: MaterialKey): number | 
 /** due-soon window = clamp(15% of interval, min 1 day, max 14 days). */
 export const dueSoonWindow = (interval: number): number => Math.min(Math.max(1, interval * 0.15), 14, interval * 0.5);
 
-/** Computes the next-due dayjs for a task, or null when the cadence has no clock. */
+/**
+ * Computes the next-due dayjs for a task, or null when the cadence has no clock (or, for
+ * `per_operation`, when the machine hasn't run since it was last cleaned).
+ *
+ * @param lastUsedAt machine-level last-used timestamp (from `MachineMaintenanceRecord`); gates
+ *   `per_operation` tasks so they only come due once the machine has run since `lastDoneAt`.
+ */
 export const nextDue = (
   record: TaskRecord | undefined,
   task: MaintenanceTask,
   material: MaterialKey,
+  lastUsedAt?: string,
 ): dayjs.Dayjs | null => {
   const interval = intervalDays(task.cadence, material);
 
   if (interval === undefined || !record?.lastDoneAt) return null;
+
+  // Usage gate: per_operation is not due until the machine has run since it was last cleaned.
+  if (task.cadence.kind === 'per_operation') {
+    if (!lastUsedAt || !dayjs(lastUsedAt).isAfter(dayjs(record.lastDoneAt))) return null;
+  }
 
   return dayjs(record.lastDoneAt).add(interval, 'day');
 };
@@ -53,6 +65,7 @@ export const statusOf = (
   record: TaskRecord | undefined,
   task: MaintenanceTask,
   material: MaterialKey,
+  lastUsedAt?: string,
 ): MaintenanceStatus => {
   // Nothing ever recorded → never, regardless of task type.
   if (!record || !record.lastDoneAt) return 'never';
@@ -64,7 +77,7 @@ export const statusOf = (
   // Condition tasks have no clock: any recorded action counts as ok.
   if (task.cadence.kind === 'condition') return 'ok';
 
-  const due = nextDue(record, task, material);
+  const due = nextDue(record, task, material, lastUsedAt);
 
   if (!due) return 'ok';
 

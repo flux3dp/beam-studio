@@ -4,7 +4,15 @@ jest.mock('@core/app/stores/storageStore');
 
 import { setStorage } from '@core/app/stores/storageStore';
 
-import { ensureRecord, getPrimaryMaterial, getRecord, machineKeyOf, markTaskDone, setPrimaryMaterial } from './records';
+import {
+  ensureRecord,
+  getPrimaryMaterial,
+  getRecord,
+  machineKeyOf,
+  markTaskDone,
+  setPrimaryMaterial,
+  updateMachineLastUsedAt,
+} from './records';
 
 const device = (serial: string, uuid: string): IDeviceInfo =>
   ({ model: 'fbb2', name: 'Studio-A', serial, uuid }) as IDeviceInfo;
@@ -52,6 +60,21 @@ describe('markTaskDone', () => {
     markTaskDone('SN123', 'fbb2', 'water', 'done');
 
     expect(getRecord('SN123')?.tasks.future_task).toBeDefined();
+  });
+});
+
+describe('updateMachineLastUsedAt', () => {
+  it('stamps lastUsedAt on an existing record', () => {
+    ensureRecord('SN123', 'fbb2');
+    updateMachineLastUsedAt('SN123');
+
+    expect(getRecord('SN123')?.lastUsedAt).toBeDefined();
+  });
+
+  it('is a no-op when the machine has no record yet', () => {
+    updateMachineLastUsedAt('SN999');
+
+    expect(getRecord('SN999')).toBeUndefined();
   });
 });
 

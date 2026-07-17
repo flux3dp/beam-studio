@@ -19,7 +19,7 @@ export const essentialCounts = (
 ): EssentialCounts => {
   const statuses = schedule.tasks
     .filter((task) => task.essential)
-    .map((task) => statusOf(record?.tasks[task.id], task, material));
+    .map((task) => statusOf(record?.tasks[task.id], task, material, record?.lastUsedAt));
   const ok = statuses.filter((status) => status === 'ok').length;
 
   return {

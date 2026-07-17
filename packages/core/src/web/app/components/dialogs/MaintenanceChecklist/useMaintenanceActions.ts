@@ -51,7 +51,7 @@ export const useMaintenanceActions = (): MaintenanceActions => {
     } else if (result === 'checked') {
       content = sprintf(t.feedback.checked, name);
     } else {
-      const due = nextDue(newRecord.tasks[task.id], task, material);
+      const due = nextDue(newRecord.tasks[task.id], task, material, newRecord.lastUsedAt);
 
       content = due ? sprintf(t.feedback.done, name, formatShortDate(due)) : sprintf(t.feedback.done_no_date, name);
     }
