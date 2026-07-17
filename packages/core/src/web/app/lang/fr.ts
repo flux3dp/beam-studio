@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Votre %s est en pleine forme — continuez ainsi.',
       title: 'Toute la maintenance essentielle est faite !',
     },
+    columns: {
+      cadence: 'Fréquence',
+      status: 'Statut',
+      task: 'Tâche',
+    },
     empty_no_machine: 'Connectez ou sélectionnez une machine pour voir son programme de maintenance.',
     empty_no_schedule: "Aucune liste de contrôle de maintenance n'est encore disponible pour ce modèle.",
     essential: 'Essentiel',

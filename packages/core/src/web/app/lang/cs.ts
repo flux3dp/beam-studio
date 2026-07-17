@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Váš přístroj %s je v perfektní kondici — jen tak dál.',
       title: 'Veškerá zásadní údržba je hotová!',
     },
+    columns: {
+      cadence: 'Frekvence',
+      status: 'Stav',
+      task: 'Úkol',
+    },
     empty_no_machine: 'Připojte nebo vyberte přístroj, abyste zobrazili jeho plán údržby.',
     empty_no_schedule: 'Pro tento model zatím není k dispozici žádný kontrolní seznam údržby.',
     essential: 'Zásadní',

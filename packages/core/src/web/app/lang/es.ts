@@ -1858,6 +1858,11 @@ const lang: ILang = {
       subtitle: 'Su %s está en perfecto estado. ¡Siga así!',
       title: '¡Mantenimiento esencial completado!',
     },
+    columns: {
+      cadence: 'Frecuencia',
+      status: 'Estado',
+      task: 'Tarea',
+    },
     empty_no_machine: 'Conecte o seleccione una máquina para ver su plan de mantenimiento.',
     empty_no_schedule: 'Todavía no hay una lista de mantenimiento disponible para este modelo.',
     essential: 'Esencial',

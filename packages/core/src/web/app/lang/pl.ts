@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Twoje urządzenie %s jest w doskonałej formie — tak trzymaj.',
       title: 'Wszystkie kluczowe czynności wykonane!',
     },
+    columns: {
+      cadence: 'Częstotliwość',
+      status: 'Status',
+      task: 'Zadanie',
+    },
     empty_no_machine: 'Podłącz lub wybierz maszynę, aby zobaczyć jej harmonogram konserwacji.',
     empty_no_schedule: 'Dla tego modelu nie ma jeszcze listy czynności konserwacyjnych.',
     essential: 'Kluczowe',

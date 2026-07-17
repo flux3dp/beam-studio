@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Din %s er i toppform — fortsett slik.',
       title: 'Alt nødvendig vedlikehold er utført!',
     },
+    columns: {
+      cadence: 'Frekvens',
+      status: 'Status',
+      task: 'Oppgave',
+    },
     empty_no_machine: 'Koble til eller velg en maskin for å se vedlikeholdsplanen.',
     empty_no_schedule: 'Ingen vedlikeholdssjekkliste er tilgjengelig for denne modellen ennå.',
     essential: 'Nødvendig',

@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Din %s er i topform — bliv ved med det.',
       title: 'Al essentiel vedligeholdelse er udført!',
     },
+    columns: {
+      cadence: 'Hyppighed',
+      status: 'Status',
+      task: 'Opgave',
+    },
     empty_no_machine: 'Tilslut eller vælg en maskine for at se dens vedligeholdelsesplan.',
     empty_no_schedule: 'Der findes endnu ingen vedligeholdelsestjekliste til denne model.',
     essential: 'Essentiel',

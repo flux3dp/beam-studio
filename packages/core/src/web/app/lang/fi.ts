@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: '%s on huippukunnossa — jatka samaan malliin.',
       title: 'Kaikki tärkeät huollot tehty!',
     },
+    columns: {
+      cadence: 'Tiheys',
+      status: 'Tila',
+      task: 'Tehtävä',
+    },
     empty_no_machine: 'Yhdistä tai valitse kone nähdäksesi sen huoltoaikataulun.',
     empty_no_schedule: 'Tälle mallille ei ole vielä saatavilla huoltolistaa.',
     essential: 'Tärkeä',

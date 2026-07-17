@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'お使いの %s は最高の状態です — この調子で。',
       title: '必須メンテナンスがすべて完了しました！',
     },
+    columns: {
+      cadence: '頻度',
+      status: 'ステータス',
+      task: '項目',
+    },
     empty_no_machine: 'マシンを接続または選択すると、メンテナンススケジュールが表示されます。',
     empty_no_schedule: 'この機種のメンテナンスチェックリストはまだ提供されていません。',
     essential: '必須',

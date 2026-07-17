@@ -1859,6 +1859,11 @@ export interface ILang {
       subtitle: string;
       title: string;
     };
+    columns: {
+      cadence: string;
+      status: string;
+      task: string;
+    };
     empty_no_machine: string;
     empty_no_schedule: string;
     essential: string;

@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Ihre %s ist in Bestform — weiter so.',
       title: 'Alle essenziellen Wartungsarbeiten erledigt!',
     },
+    columns: {
+      cadence: 'Häufigkeit',
+      status: 'Status',
+      task: 'Aufgabe',
+    },
     empty_no_machine: 'Verbinden oder wählen Sie eine Maschine, um deren Wartungsplan zu sehen.',
     empty_no_schedule: 'Für dieses Modell ist noch keine Wartungs-Checkliste verfügbar.',
     essential: 'Essenziell',

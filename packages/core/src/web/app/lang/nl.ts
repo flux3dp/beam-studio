@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Uw %s is in topconditie — ga zo door.',
       title: 'Al het essentiële onderhoud is voltooid!',
     },
+    columns: {
+      cadence: 'Frequentie',
+      status: 'Status',
+      task: 'Taak',
+    },
     empty_no_machine: 'Verbind of selecteer een machine om het onderhoudsschema te zien.',
     empty_no_schedule: 'Voor dit model is nog geen onderhoudschecklist beschikbaar.',
     essential: 'Essentieel',

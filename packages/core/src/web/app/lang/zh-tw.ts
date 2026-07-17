@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: '你的 %s 狀態極佳 — 繼續保持。',
       title: '所有必要維護都已完成！',
     },
+    columns: {
+      cadence: '頻率',
+      status: '狀態',
+      task: '項目',
+    },
     empty_no_machine: '請連接或選擇機器以查看其維護排程。',
     empty_no_schedule: '此型號尚未提供維護檢查表。',
     essential: '必要',

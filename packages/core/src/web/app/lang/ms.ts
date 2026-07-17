@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: '%s anda dalam keadaan terbaik — teruskan.',
       title: 'Semua penyelenggaraan penting selesai!',
     },
+    columns: {
+      cadence: 'Kekerapan',
+      status: 'Status',
+      task: 'Tugas',
+    },
     empty_no_machine: 'Sambung atau pilih mesin untuk melihat jadual penyelenggaraannya.',
     empty_no_schedule: 'Tiada senarai semak penyelenggaraan tersedia untuk model ini lagi.',
     essential: 'Penting',

@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Chiếc %s của bạn đang ở trạng thái tốt nhất — hãy duy trì nhé.',
       title: 'Đã hoàn tất mọi hạng mục bảo trì thiết yếu!',
     },
+    columns: {
+      cadence: 'Tần suất',
+      status: 'Trạng thái',
+      task: 'Nhiệm vụ',
+    },
     empty_no_machine: 'Kết nối hoặc chọn một máy để xem lịch bảo trì của máy đó.',
     empty_no_schedule: 'Chưa có danh sách bảo trì cho mẫu máy này.',
     essential: 'Thiết yếu',

@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: 'Din %s är i toppskick — fortsätt så.',
       title: 'Allt viktigt underhåll är klart!',
     },
+    columns: {
+      cadence: 'Frekvens',
+      status: 'Status',
+      task: 'Uppgift',
+    },
     empty_no_machine: 'Anslut eller välj en maskin för att se dess underhållsschema.',
     empty_no_schedule: 'Ingen underhållschecklista finns tillgänglig för den här modellen ännu.',
     essential: 'Viktigt',

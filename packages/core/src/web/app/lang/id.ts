@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: '%s Anda dalam kondisi prima — pertahankan.',
       title: 'Semua pemeliharaan penting selesai!',
     },
+    columns: {
+      cadence: 'Frekuensi',
+      status: 'Status',
+      task: 'Tugas',
+    },
     empty_no_machine: 'Hubungkan atau pilih mesin untuk melihat jadwal pemeliharaannya.',
     empty_no_schedule: 'Belum ada daftar periksa pemeliharaan untuk model ini.',
     essential: 'Penting',

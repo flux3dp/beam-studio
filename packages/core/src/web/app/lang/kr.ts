@@ -1859,6 +1859,11 @@ const lang: ILang = {
       subtitle: '%s의 상태가 최상입니다 — 계속 유지하세요.',
       title: '필수 유지보수를 모두 완료했습니다!',
     },
+    columns: {
+      cadence: '주기',
+      status: '상태',
+      task: '항목',
+    },
     empty_no_machine: '기계를 연결하거나 선택하면 유지보수 일정을 확인할 수 있습니다.',
     empty_no_schedule: '이 모델은 아직 유지보수 체크리스트를 제공하지 않습니다.',
     essential: '필수',
