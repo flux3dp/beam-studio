@@ -1,14 +1,20 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
+import { initState } from '@core/app/components/beambox/RightPanel/ConfigPanel/initState';
+import { promarkExampleParams } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
+import beamFileHelper from '@core/helpers/beam-file-helper';
 import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { checkIsAtEditor, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { getAllLayers } from '@core/helpers/layer/layer-helper';
 
 export const exampleFileKeys = [
   // FOCUS PROBE
@@ -26,6 +32,8 @@ export const exampleFileKeys = [
   'IMPORT_EXAMPLE_HEXA',
   'IMPORT_EXAMPLE_HEXA_RF',
   'IMPORT_EXAMPLE_PROMARK',
+  'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+  'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
   'IMPORT_HELLO_BEAMBOX',
 ] as const;
 
@@ -72,6 +80,8 @@ const basicExamples: ExampleFileMap = {
   IMPORT_EXAMPLE_HEXA: 'examples/hexa_example.bvg',
   IMPORT_EXAMPLE_HEXA_RF: 'examples/hexa_rf_example.bvg',
   IMPORT_EXAMPLE_PROMARK: 'examples/promark_example.bvg',
+  IMPORT_EXAMPLE_PROMARK_ENGRAVING_1: 'examples/promark_engraving_example_1.beam',
+  IMPORT_EXAMPLE_PROMARK_ENGRAVING_2: 'examples/promark_engraving_example_2.beam',
   IMPORT_HELLO_BEAMBOX: 'examples/hello-beambox.bvg',
   IMPORT_MATERIAL_TESTING_PRINT: '',
 };
@@ -172,6 +182,33 @@ export const getExampleFileName = (key: ExampleFileKey): string | undefined => {
   return getExamples(workarea)[key];
 };
 
+// Promark engraving examples ship with a single layer; their parameters are tuned per laser
+// source (Desktop / MOPA) and watt on import so the file matches the currently selected machine.
+const promarkEngravingExampleKeys: ExampleFileKey[] = [
+  'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+  'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+];
+
+const applyPromarkExampleParams = () => {
+  const { laserType, watt } = getPromarkInfo();
+  const params = promarkExampleParams[laserType]?.[watt];
+
+  if (!params) return;
+
+  getAllLayers().forEach((layer) => {
+    writeDataLayer(layer, 'power', params.power);
+    writeDataLayer(layer, 'speed', params.speed);
+    writeDataLayer(layer, 'frequency', params.frequency);
+
+    if (params.pulseWidth !== undefined) {
+      writeDataLayer(layer, 'pulseWidth', params.pulseWidth);
+    }
+  });
+
+  // Sync the config panel store with the freshly written layer attributes.
+  initState();
+};
+
 export const loadExampleFile = async (key: ExampleFileKey) => {
   if (isAtPage('welcome')) {
     setFileInAnotherTab({ key, type: 'example' });
@@ -202,16 +239,26 @@ export const loadExampleFile = async (key: ExampleFileKey) => {
 
   oReq.onload = async function onload() {
     const resp = oReq.response;
-    const buf = Buffer.from(await new Response(resp).arrayBuffer());
-    let string = buf.toString();
 
-    if (i18n.getActiveLang() !== 'en') {
-      const LANG = i18n.lang.beambox.right_panel.layer_panel;
+    if (path.endsWith('.beam')) {
+      // .beam is a binary scene bundle (used for examples that embed raster images).
+      await beamFileHelper.readBeam(new File([resp], path.split('/').pop()!));
+    } else {
+      const buf = Buffer.from(await new Response(resp).arrayBuffer());
+      let string = buf.toString();
 
-      string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
+      if (i18n.getActiveLang() !== 'en') {
+        const LANG = i18n.lang.beambox.right_panel.layer_panel;
+
+        string = string.replace(/Engraving/g, LANG.layer_engraving).replace(/Cutting/g, LANG.layer_cutting);
+      }
+
+      await importBvgString(string);
     }
 
-    await importBvgString(string);
+    if (promarkEngravingExampleKeys.includes(key)) {
+      applyPromarkExampleParams();
+    }
   };
 
   oReq.send();

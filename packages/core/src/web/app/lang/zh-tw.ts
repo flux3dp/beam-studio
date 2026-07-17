@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: '材質線段測試',
       import_material_testing_old: '材質雕刻測試 - 經典',
       import_material_testing_simple_cut: '材質切割測試 - 簡易',
+      import_promark_engraving_example_1: 'Promark 雕刻範例 I',
+      import_promark_engraving_example_2: 'Promark 雕刻範例 II',
       import_promark_example: 'Promark 範例',
       import_promark_mopa_20w_color: 'MOPA 20W 色彩測試',
       import_promark_mopa_60w_color: 'MOPA 60W 色彩測試',

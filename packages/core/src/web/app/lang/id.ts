@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: 'Uji Garis Bahan',
       import_material_testing_old: 'Uji Pahatan Bahan - Klasik',
       import_material_testing_simple_cut: 'Uji Pemotongan Bahan - Sederhana',
+      import_promark_engraving_example_1: 'Contoh Ukiran Promark I',
+      import_promark_engraving_example_2: 'Contoh Ukiran Promark II',
       import_promark_example: 'Contoh Promark',
       import_promark_mopa_20w_color: 'Tes Warna MOPA 20W',
       import_promark_mopa_60w_color: 'Tes Warna MOPA 60W',

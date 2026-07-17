@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: 'Δοκιμή γραμμής υλικού',
       import_material_testing_old: 'Δοκιμή χάραξης υλικού - Κλασική',
       import_material_testing_simple_cut: 'Δοκιμή κοπής υλικού - Απλή',
+      import_promark_engraving_example_1: 'Παράδειγμα χάραξης Promark I',
+      import_promark_engraving_example_2: 'Παράδειγμα χάραξης Promark II',
       import_promark_example: 'Παράδειγμα Promark',
       import_promark_mopa_20w_color: 'MOPA 20W Δοκιμή Χρώματος',
       import_promark_mopa_60w_color: 'MOPA 60W Δοκιμή Χρώματος',

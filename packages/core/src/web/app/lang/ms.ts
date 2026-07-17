@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: 'Ujian Garisan Bahan',
       import_material_testing_old: 'Ujian Ukiran Bahan - Klasik',
       import_material_testing_simple_cut: 'Ujian Pemotongan Bahan - Mudah',
+      import_promark_engraving_example_1: 'Contoh Ukiran Promark I',
+      import_promark_engraving_example_2: 'Contoh Ukiran Promark II',
       import_promark_example: 'Contoh Promark',
       import_promark_mopa_20w_color: 'Ujian Warna MOPA 20W',
       import_promark_mopa_60w_color: 'Ujian Warna MOPA 60W',

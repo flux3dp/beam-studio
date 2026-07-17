@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: 'Materiaaliviivatesti',
       import_material_testing_old: 'Materiaalitestaus - Klassinen',
       import_material_testing_simple_cut: 'Materiaalileikkaustesti - Yksinkertainen',
+      import_promark_engraving_example_1: 'Promark-kaiverrusesimerkki I',
+      import_promark_engraving_example_2: 'Promark-kaiverrusesimerkki II',
       import_promark_example: 'Promark-esimerkki',
       import_promark_mopa_20w_color: 'MOPA 20W Väritesti',
       import_promark_mopa_60w_color: 'MOPA 60W Väritesti',

@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: 'Kiểm tra đường vật liệu',
       import_material_testing_old: 'Kiểm tra vật liệu - Cổ điển',
       import_material_testing_simple_cut: 'Kiểm tra cắt vật liệu - Đơn giản',
+      import_promark_engraving_example_1: 'Ví dụ khắc Promark I',
+      import_promark_engraving_example_2: 'Ví dụ khắc Promark II',
       import_promark_example: 'Ví dụ về Promark',
       import_promark_mopa_20w_color: 'Kiểm Tra Màu MOPA 20W',
       import_promark_mopa_60w_color: 'Kiểm Tra Màu MOPA 60W',

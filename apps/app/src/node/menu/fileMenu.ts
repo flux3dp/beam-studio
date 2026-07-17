@@ -125,13 +125,35 @@ export function buildFileMenu(
             {
               id: 'EXAMPLE_FILE_PROMARK_DESKTOP',
               label: 'Promark Desktop',
-              submenu: [{ click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example }],
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                  label: r.import_promark_engraving_example_1,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                  label: r.import_promark_engraving_example_2,
+                },
+              ],
             },
             {
               id: 'EXAMPLE_FILE_PROMARK_MOPA',
               label: 'Promark MOPA',
               submenu: [
                 { click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                  label: r.import_promark_engraving_example_1,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                  label: r.import_promark_engraving_example_2,
+                },
                 {
                   click: callback,
                   id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',

@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: '材料ラインテスト',
       import_material_testing_old: '材料彫りテスト - クラシック',
       import_material_testing_simple_cut: '材料切りテスト - シンプル',
+      import_promark_engraving_example_1: 'Promark彫刻の例 I',
+      import_promark_engraving_example_2: 'Promark彫刻の例 II',
       import_promark_example: 'Promarkの例',
       import_promark_mopa_20w_color: 'MOPA 20W カラーテスト',
       import_promark_mopa_60w_color: 'MOPA 60W カラーテスト',

@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: 'Materiaal testlijn',
       import_material_testing_old: 'Materiaal graveertest - Klassiek',
       import_material_testing_simple_cut: 'Materiaal snijtest - Eenvoudig',
+      import_promark_engraving_example_1: 'Voorbeeld van Promark-gravure I',
+      import_promark_engraving_example_2: 'Voorbeeld van Promark-gravure II',
       import_promark_example: 'Voorbeeld van Promark',
       import_promark_mopa_20w_color: 'MOPA 20W Kleurtest',
       import_promark_mopa_60w_color: 'MOPA 60W Kleurtest',

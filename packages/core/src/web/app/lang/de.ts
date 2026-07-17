@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: 'Material Linientest',
       import_material_testing_old: 'Material Gravurtest - Klassisch',
       import_material_testing_simple_cut: 'Material Schneidetest - Einfach',
+      import_promark_engraving_example_1: 'Promark-Gravurbeispiel I',
+      import_promark_engraving_example_2: 'Promark-Gravurbeispiel II',
       import_promark_example: 'Beispiel für Promark',
       import_promark_mopa_20w_color: 'MOPA 20W Farbtest',
       import_promark_mopa_60w_color: 'MOPA 60W Farbtest',

@@ -362,7 +362,19 @@ const useMenuData = (email?: string): MenuNode[] => {
                 type: 'submenu',
               },
               ...(!isWeb()
-                ? [{ id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const }]
+                ? [
+                    { id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const },
+                    {
+                      id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                      label: menuCms.import_promark_engraving_example_1,
+                      type: 'item' as const,
+                    },
+                    {
+                      id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                      label: menuCms.import_promark_engraving_example_2,
+                      type: 'item' as const,
+                    },
+                  ]
                 : []),
             ],
             label: menuCms.example_files,

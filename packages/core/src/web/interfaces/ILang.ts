@@ -2635,6 +2635,8 @@ export interface ILang {
       import_material_testing_line: string;
       import_material_testing_old: string;
       import_material_testing_simple_cut: string;
+      import_promark_engraving_example_1: string;
+      import_promark_engraving_example_2: string;
       import_promark_example: string;
       import_promark_mopa_20w_color: string;
       import_promark_mopa_60w_color: string;

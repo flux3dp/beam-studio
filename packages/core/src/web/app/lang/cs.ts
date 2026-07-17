@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: 'Test linkování materiálu',
       import_material_testing_old: 'Test gravírování materiálu - Klasický',
       import_material_testing_simple_cut: 'Test řezání materiálu - Jednoduchý',
+      import_promark_engraving_example_1: 'Příklad gravírování Promark I',
+      import_promark_engraving_example_2: 'Příklad gravírování Promark II',
       import_promark_example: 'Příklad Promarku',
       import_promark_mopa_20w_color: 'MOPA 20W Test Barev',
       import_promark_mopa_60w_color: 'MOPA 60W Test Barev',

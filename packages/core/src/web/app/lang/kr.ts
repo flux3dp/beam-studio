@@ -2699,6 +2699,8 @@ const lang: ILang = {
       import_material_testing_line: '재료의 라인 테스트',
       import_material_testing_old: '재료의 각인 테스트 - 표준',
       import_material_testing_simple_cut: '재료의 커팅 테스트 - 간단',
+      import_promark_engraving_example_1: 'Promark 조각 예시 I',
+      import_promark_engraving_example_2: 'Promark 조각 예시 II',
       import_promark_example: 'Promark 예시',
       import_promark_mopa_20w_color: 'MOPA 20W 색상 테스트',
       import_promark_mopa_60w_color: 'MOPA 60W 색상 테스트',
