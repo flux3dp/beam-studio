@@ -9,7 +9,7 @@ import { markTaskDone, setPrimaryMaterial } from '@core/helpers/maintenance/reco
 import useI18n from '@core/helpers/useI18n';
 
 import { useMaintenanceData } from './useMaintenanceData';
-import { formatShortDate } from './utils/formatShortDate';
+import { formatShortDate } from './utils';
 
 interface MaintenanceActions {
   markTask: (task: MaintenanceTask, result: TaskResult) => void;
@@ -30,7 +30,7 @@ export const useMaintenanceActions = (): MaintenanceActions => {
     // Attribute the action to the logged-in FLUX account when available (PRD R17 "by" note).
     const user = getCurrentUser();
     const by = user?.info?.nickname ?? user?.email;
-    const newRecord = markTaskDone(selection.key, selection.model, task.id, result, by);
+    const newRecord = markTaskDone(selection.key, selection.model, task.id, result, by, selection.nickname);
     const { name } = t.tasks[task.langKey];
 
     if (result === 'fail') {
@@ -62,7 +62,7 @@ export const useMaintenanceActions = (): MaintenanceActions => {
   const setMaterial = (next: MaterialKey): void => {
     if (!selection) return;
 
-    setPrimaryMaterial(selection.key, selection.model, next);
+    setPrimaryMaterial(selection.key, selection.model, next, selection.nickname);
   };
 
   return { markTask, setMaterial };

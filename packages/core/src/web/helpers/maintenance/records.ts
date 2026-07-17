@@ -89,8 +89,9 @@ export const markTaskDone = (
   taskId: string,
   result: TaskResult,
   by?: string,
+  nickname?: string,
 ): MachineMaintenanceRecord => {
-  const current = ensureRecord(machineKey, model);
+  const current = ensureRecord(machineKey, model, nickname);
   const at = new Date().toISOString();
   const prev = current.tasks[taskId] ?? {};
   const history = [{ at, by, result }, ...(prev.history ?? [])].slice(0, HISTORY_CAP);
@@ -121,8 +122,12 @@ export const setPrimaryMaterial = (
   machineKey: string,
   model: WorkAreaModel,
   material: MaterialKey,
+  nickname?: string,
 ): MachineMaintenanceRecord => {
-  const record: MachineMaintenanceRecord = { ...ensureRecord(machineKey, model), primaryMaterial: material };
+  const record: MachineMaintenanceRecord = {
+    ...ensureRecord(machineKey, model, nickname),
+    primaryMaterial: material,
+  };
 
   saveRecord(record);
 

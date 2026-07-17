@@ -15,7 +15,7 @@ import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
 import { useMaintenanceActions } from '../useMaintenanceActions';
-import { formatShortDate } from '../utils/formatShortDate';
+import { formatShortDate } from '../utils';
 
 import styles from './TaskRow.module.scss';
 
