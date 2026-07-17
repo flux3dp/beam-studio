@@ -10,6 +10,7 @@ import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
+import { isTaskConfigDev } from '@core/helpers/is-dev';
 import { attributeMap, getConfigKeys, getData, objectConfig } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -195,6 +196,8 @@ const getLayerConfigs = (keys: TaskConfigKey[], layer?: SVGGElement, title?: str
 };
 
 export const renderLayerConfigText = (elem: SVGTextElement): void => {
+  if (!isTaskConfigDev()) return;
+
   // Find layer
   const layer = getObjectLayer(elem);
   // Generate layer config text
