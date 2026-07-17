@@ -2630,6 +2630,7 @@ const lang: ILang = {
       fit_text: 'Cuadro de texto',
       g: 'Grupo',
       image: 'Imagen',
+      layer_config: 'Layer Config',
       line: 'Línea',
       multi_select: 'Objetos múltiples',
       no_selection: 'Sin selección',

@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Textruta',
       g: 'Grupp',
       image: 'Bild',
+      layer_config: 'Layer Config',
       line: 'Linje',
       multi_select: 'Flera objekt',
       no_selection: 'Ingen val',

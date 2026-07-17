@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Kotak Teks',
       g: 'Grup',
       image: 'Gambar',
+      layer_config: 'Layer Config',
       line: 'Garis',
       multi_select: 'Beberapa Objek',
       no_selection: 'Tidak Ada Pilihan',

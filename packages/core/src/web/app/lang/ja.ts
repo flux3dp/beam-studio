@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'テキストボックス',
       g: 'グループ',
       image: 'イメージ',
+      layer_config: 'Layer Config',
       line: 'ライン',
       multi_select: '複数オブジェクト',
       no_selection: '選択なし',

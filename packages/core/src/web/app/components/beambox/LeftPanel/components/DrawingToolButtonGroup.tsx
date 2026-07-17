@@ -13,6 +13,7 @@ import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import selectionManager from '@core/app/svgedit/selection';
+import createNewText from '@core/app/svgedit/text/createNewText';
 import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useI18n from '@core/helpers/useI18n';
 
@@ -180,6 +181,15 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
           label: t.label.pass_through,
           onClick: () => showPassThrough(FnWrapper.useSelectTool),
         })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Text />,
+        id: 'TaskConfig',
+        label: 'Task Config',
+        onClick: () => {
+          selectionManager.clearSelection();
+          createNewText(100, 100, { addToHistory: true, isDefaultFont: true, isLayerConfig: true });
+        },
+      })}
 
       <div className={styles.separator} />
 

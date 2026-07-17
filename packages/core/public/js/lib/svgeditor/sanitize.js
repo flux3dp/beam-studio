@@ -570,6 +570,8 @@
       'data-bbox',
     ],
     text: [
+      'data-layer-config',
+      'data-config-keys',
       'data-ratiofixed',
       'data-np',
       'data-textpath',

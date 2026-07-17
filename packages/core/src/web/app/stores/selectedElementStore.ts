@@ -10,6 +10,7 @@ const categoryOverride = {
   dxf: 'use',
   ellipse: 'shape',
   fit_text: 'text',
+  layer_config: 'text',
   line: 'shape',
   pass_through_object: 'g',
   polygon: 'shape',
@@ -52,6 +53,8 @@ const getNodeType = (elem: Element | null): { nodeCategory: CanvasNodeCategory; 
     } else {
       if (elem.getAttribute('data-textpath-g')) {
         nodeType = 'text_path';
+      } else if (elem.getAttribute('data-layer-config')) {
+        nodeType = 'layer_config';
       } else if (isFitText(elem)) {
         nodeType = 'fit_text';
       } else if (elem.getAttribute('data-pass-through')) {

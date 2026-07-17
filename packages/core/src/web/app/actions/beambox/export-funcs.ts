@@ -113,6 +113,7 @@ const fetchTaskCode = async (
   device: IDeviceInfo | null = null,
   opts: { fgGcode?: boolean; output?: 'fcode' | 'gcode' } = {},
 ) => {
+  console.log('fetchTaskCode', device, opts);
   svgCanvas.removeUnusedDefs();
 
   let isCanceled = false;

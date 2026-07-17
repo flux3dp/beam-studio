@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Textfeld',
       g: 'Gruppe',
       image: 'Bild',
+      layer_config: 'Layer Config',
       line: 'Linie',
       multi_select: 'Mehrfachauswahl',
       no_selection: 'Keine Auswahl',

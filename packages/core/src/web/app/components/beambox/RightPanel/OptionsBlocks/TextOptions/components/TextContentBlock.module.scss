@@ -1,3 +1,9 @@
 .container {
   margin-bottom: 8px;
 }
+
+.buttons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}

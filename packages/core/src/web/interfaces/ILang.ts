@@ -2627,6 +2627,7 @@ export interface ILang {
       fit_text: string;
       g: string;
       image: string;
+      layer_config: string;
       line: string;
       multi_select: string;
       no_selection: string;

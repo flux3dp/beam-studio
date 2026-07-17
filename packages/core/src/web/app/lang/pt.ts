@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Caixa de texto',
       g: 'Grupo',
       image: 'Imagem',
+      layer_config: 'Layer Config',
       line: 'Linha',
       multi_select: 'Múltipla seleção',
       no_selection: 'Sem seleção',

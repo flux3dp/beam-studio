@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'กล่องข้อความ',
       g: 'กลุ่ม',
       image: 'รูปภาพ',
+      layer_config: 'Layer Config',
       line: 'เส้น',
       multi_select: 'วัตถุหลายอย่าง',
       no_selection: 'ไม่มีการเลือก',

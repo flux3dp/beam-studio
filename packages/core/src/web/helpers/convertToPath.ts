@@ -8,6 +8,7 @@ import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/hand
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import selectionManager from '@core/app/svgedit/selection';
+import { applyAllTaskConfigTexts } from '@core/app/svgedit/text/taskConfigText';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
 import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
@@ -249,6 +250,8 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
   revert: () => void;
   success: boolean;
 }> => {
+  applyAllTaskConfigTexts();
+
   // 1. Create a master command to record all changes.
   const batchCmd = new history.BatchCommand('Convert All Text to Path');
   const texts = [

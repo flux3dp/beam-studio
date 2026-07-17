@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: '텍스트 상자',
       g: '그룹',
       image: '이미지',
+      layer_config: 'Layer Config',
       line: '라인',
       multi_select: '여러 개체',
       no_selection: '선택 없음',

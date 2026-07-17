@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: '文字方块',
       g: '群组',
       image: '影像',
+      layer_config: 'Layer Config',
       line: '線段',
       multi_select: '多个物件',
       no_selection: '无选择',

@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Tekstikenttä',
       g: 'Ryhmä',
       image: 'Kuva',
+      layer_config: 'Layer Config',
       line: 'Viiva',
       multi_select: 'Useita kohteita',
       no_selection: 'Ei valintaa',

@@ -1,13 +1,15 @@
 import type { ReactNode } from 'react';
 import React, { memo, useEffect, useRef, useState } from 'react';
 
-import { Input } from 'antd';
+import { EyeFilled, SettingFilled } from '@ant-design/icons';
+import { Button, Input, Tooltip } from 'antd';
 import type { TextAreaRef } from 'antd/lib/input/TextArea';
 
 import { useIsMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
+import { renderLayerConfigText, showLayerConfigSettings } from '@core/app/svgedit/text/taskConfigText';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getTextContent, renderText, textContentEvents } from '@core/app/svgedit/text/textedit';
 import useI18n from '@core/helpers/useI18n';
@@ -24,6 +26,7 @@ function TextContentBlock({ textElement }: Props): ReactNode {
   const [textContent, setTextContent] = useState(() => getTextContent(textElement));
   const textAreaRef = useRef<TextAreaRef>(null);
   const valueBeforeEditRef = useRef('');
+  const isLayerConfigText = textElement.getAttribute('data-layer-config') === 'true';
 
   useEffect(() => {
     setTextContent(getTextContent(textElement));
@@ -51,6 +54,22 @@ function TextContentBlock({ textElement }: Props): ReactNode {
   }, [textElement]);
 
   if (isMobile) return null;
+
+  if (isLayerConfigText) {
+    return (
+      <div className={styles.buttons}>
+        <Button
+          icon={<EyeFilled />}
+          onClick={() => {
+            renderLayerConfigText(textElement);
+            textContentEvents.emit('changed', textElement);
+          }}
+        />
+        <Button icon={<SettingFilled />} onClick={() => showLayerConfigSettings(textElement)} />
+        <Tooltip title="Don't set rotation/vertical text on Layer Config Objects">⚠️</Tooltip>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>

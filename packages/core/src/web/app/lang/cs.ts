@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Textové pole',
       g: 'Skupina',
       image: 'Obrázek',
+      layer_config: 'Layer Config',
       line: 'Linka',
       multi_select: 'Několik objektů',
       no_selection: 'Žádný výběr',

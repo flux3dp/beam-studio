@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Tekstvak',
       g: 'Groep',
       image: 'Afbeelding',
+      layer_config: 'Layer Config',
       line: 'Lijn',
       multi_select: 'Meerdere objecten',
       no_selection: 'Geen selectie',

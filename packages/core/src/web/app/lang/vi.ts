@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Hộp văn bản',
       g: 'Nhóm',
       image: 'Hình ảnh',
+      layer_config: 'Layer Config',
       line: 'Đường thẳng',
       multi_select: 'Nhiều đối tượng',
       no_selection: 'Không có lựa chọn',

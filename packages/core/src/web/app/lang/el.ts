@@ -2631,6 +2631,7 @@ const lang: ILang = {
       fit_text: 'Πλαίσιο κειμένου',
       g: 'Ομάδα',
       image: 'Εικόνα',
+      layer_config: 'Layer Config',
       line: 'Γραμμή',
       multi_select: 'Πολλαπλά Αντικείμενα',
       no_selection: 'Καμία επιλογή',
