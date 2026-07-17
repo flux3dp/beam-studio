@@ -7,7 +7,7 @@
   align-items: flex-start;
   justify-content: center;
   padding-top: 120px;
-  // pointer-events: none;
+  pointer-events: none;
   // Above the antd Modal (z-index 1000) so the celebration is visible over the dialog.
   z-index: 10000;
 }

@@ -27,9 +27,7 @@ const Footer = (): React.JSX.Element => {
         <Button
           disabled={!schedule}
           icon={<PrinterOutlined />}
-          onClick={() =>
-            schedule && printChecklist({ machineLabel: machineName, material, record, schedule, tMaint: t })
-          }
+          onClick={() => schedule && printChecklist({ machineLabel: machineName, material, record, schedule })}
         >
           {t.actions.print}
         </Button>
