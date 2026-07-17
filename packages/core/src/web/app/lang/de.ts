@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: 'Essenzieller Zustand',
     essential_hint: 'zählt zum Zustand',
     feedback: {
-      all_essential: 'Alle essenziellen Wartungsarbeiten sind aktuell — Ihre %s ist in Bestform!',
       checked: '%s geprüft.',
       done: '%s ist frisch erledigt. Nächste Fälligkeit %s.',
       done_no_date: '%s ist erledigt.',

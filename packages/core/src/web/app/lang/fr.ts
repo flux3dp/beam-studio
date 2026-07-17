@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: 'Santé essentielle',
     essential_hint: 'compte pour la santé',
     feedback: {
-      all_essential: 'Toute la maintenance essentielle est à jour — votre %s est en pleine forme !',
       checked: '%s : vérifié.',
       done: '%s : à jour. Prochaine échéance %s.',
       done_no_date: '%s : terminé.',

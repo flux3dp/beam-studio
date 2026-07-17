@@ -1870,7 +1870,6 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     essential_health: 'Salut essencial',
     essential_hint: 'compta per a la salut',
     feedback: {
-      all_essential: 'Tot el manteniment essencial està al dia — la teva %s està en plena forma!',
       checked: '%s comprovat.',
       done: '%s està al dia. Proper venciment %s.',
       done_no_date: '%s està fet.',

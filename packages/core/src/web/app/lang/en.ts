@@ -1870,7 +1870,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
     essential_health: 'Essential health',
     essential_hint: 'counts toward health',
     feedback: {
-      all_essential: 'All essential maintenance is up to date — your %s is in top shape!',
       checked: '%s checked.',
       done: '%s is fresh. Next due %s.',
       done_no_date: '%s is done.',

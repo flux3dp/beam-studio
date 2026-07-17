@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: 'Tình trạng thiết yếu',
     essential_hint: 'được tính vào tình trạng máy',
     feedback: {
-      all_essential: 'Mọi hạng mục bảo trì thiết yếu đều đã cập nhật — chiếc %s của bạn đang ở trạng thái tốt nhất!',
       checked: 'Đã kiểm tra %s.',
       done: '%s vừa được thực hiện. Hạn tiếp theo %s.',
       done_no_date: 'Đã hoàn tất %s.',

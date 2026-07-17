@@ -1869,7 +1869,6 @@ const lang: ILang = {
     essential_health: 'Estado esencial',
     essential_hint: 'cuenta para el estado',
     feedback: {
-      all_essential: 'Todo el mantenimiento esencial está al día. ¡Su %s está en perfecto estado!',
       checked: 'Se ha revisado %s.',
       done: '%s está al día. Siguiente: %s.',
       done_no_date: 'Se ha completado %s.',

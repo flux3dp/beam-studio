@@ -1870,7 +1870,6 @@ export interface ILang {
     essential_health: string;
     essential_hint: string;
     feedback: {
-      all_essential: string;
       checked: string;
       done: string;
       done_no_date: string;

@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: 'Stav zásadní údržby',
     essential_hint: 'započítává se do stavu',
     feedback: {
-      all_essential: 'Veškerá zásadní údržba je aktuální — váš přístroj %s je v perfektní kondici!',
       checked: '%s zkontrolováno.',
       done: '%s je hotovo. Další termín %s.',
       done_no_date: '%s je hotovo.',

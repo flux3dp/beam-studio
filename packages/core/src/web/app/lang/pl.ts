@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: 'Kondycja kluczowych',
     essential_hint: 'wlicza się do kondycji',
     feedback: {
-      all_essential: 'Wszystkie kluczowe czynności są aktualne — Twoje urządzenie %s jest w doskonałej formie!',
       checked: 'Sprawdzono: %s.',
       done: '%s: wykonano. Następny termin: %s.',
       done_no_date: '%s: wykonano.',

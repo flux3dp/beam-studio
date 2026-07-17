@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: 'Tärkeiden kunto',
     essential_hint: 'vaikuttaa kuntoon',
     feedback: {
-      all_essential: 'Kaikki tärkeät huollot ovat ajan tasalla — %s on huippukunnossa!',
       checked: '%s tarkistettu.',
       done: '%s on ajan tasalla. Seuraava kerta %s.',
       done_no_date: '%s on tehty.',

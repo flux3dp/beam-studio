@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: 'Essentiële conditie',
     essential_hint: 'telt mee voor de conditie',
     feedback: {
-      all_essential: 'Al het essentiële onderhoud is up-to-date — uw %s is in topconditie!',
       checked: '%s gecontroleerd.',
       done: '%s is bijgewerkt. Volgende beurt %s.',
       done_no_date: '%s is voltooid.',

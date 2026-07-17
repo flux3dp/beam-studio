@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: '必須項目の健康度',
     essential_hint: '健康度に反映されます',
     feedback: {
-      all_essential: '必須メンテナンスはすべて最新です — お使いの %s は最高の状態です！',
       checked: '%s を確認しました。',
       done: '%s は完了しました。次回は %s。',
       done_no_date: '%s は完了しました。',

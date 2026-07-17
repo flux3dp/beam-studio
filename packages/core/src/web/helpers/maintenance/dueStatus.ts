@@ -32,7 +32,10 @@ export const intervalDays = (cadence: Cadence, material: MaterialKey): number | 
   }
 };
 
-/** due-soon window = clamp(15% of interval, min 1 day, max 14 days). */
+/**
+ * due-soon window = clamp(15% of interval, min 1 day, max 14 days), additionally capped at
+ * half the interval so the window never exceeds 50% of the cadence on very short intervals.
+ */
 export const dueSoonWindow = (interval: number): number => Math.min(Math.max(1, interval * 0.15), 14, interval * 0.5);
 
 /**
@@ -71,7 +74,7 @@ export const statusOf = (
   if (!record || !record.lastDoneAt) return 'never';
 
   if (task.actionType === 'passfail') {
-    return record.lastResult! === 'fail' ? 'overdue' : 'ok';
+    return record.lastResult === 'fail' ? 'overdue' : 'ok';
   }
 
   // Condition tasks have no clock: any recorded action counts as ok.

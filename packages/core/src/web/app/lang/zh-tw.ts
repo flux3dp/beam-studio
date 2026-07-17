@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: '必要項目健康度',
     essential_hint: '計入健康度',
     feedback: {
-      all_essential: '所有必要維護都是最新的 — 你的 %s 狀態極佳！',
       checked: '%s 已檢查。',
       done: '%s 已完成。下次到期 %s。',
       done_no_date: '%s 已完成。',

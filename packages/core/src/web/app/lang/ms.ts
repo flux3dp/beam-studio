@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: 'Kesihatan penting',
     essential_hint: 'dikira dalam kesihatan',
     feedback: {
-      all_essential: 'Semua penyelenggaraan penting terkini — %s anda dalam keadaan terbaik!',
       checked: '%s diperiksa.',
       done: '%s baru diselenggara. Seterusnya pada %s.',
       done_no_date: '%s selesai.',

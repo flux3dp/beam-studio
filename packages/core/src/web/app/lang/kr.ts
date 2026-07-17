@@ -1870,7 +1870,6 @@ const lang: ILang = {
     essential_health: '필수 항목 건강도',
     essential_hint: '건강도에 반영됨',
     feedback: {
-      all_essential: '필수 유지보수가 모두 최신 상태입니다 — %s의 상태가 최상입니다!',
       checked: '%s 점검 완료.',
       done: '%s 완료. 다음 예정일 %s.',
       done_no_date: '%s 완료.',
