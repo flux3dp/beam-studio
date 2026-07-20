@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: '기계',
     materials: {
-      acrylic: '아크릴 · 1주',
-      leather: '가죽 · 2주',
-      paper: '종이 · 매일',
-      wood: '목재 · 2주',
+      acrylic: '아크릴',
+      leather: '가죽',
+      paper: '종이',
+      wood: '목재',
     },
     status: {
       checked: '점검 완료',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: '허니컴 테이블 청소',
       },
       lube: {
-        keyPoints: '가이드 봉, 리니어 레일, 초점 조절 기구를 청소한 뒤 다시 윤활유를 바르세요.',
+        keyPoints: '가이드 봉, 리니어 레일, 초점 조절 기구를 청소한 뒤 다시 윤활유를 바르세요. 주기는 절단하는 재료에 따라 달라집니다.',
         name: '윤활',
       },
       maintain_test: {

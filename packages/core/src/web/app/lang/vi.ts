@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Máy',
     materials: {
-      acrylic: 'Acrylic · 1 tuần',
-      leather: 'Da · 2 tuần',
-      paper: 'Giấy · hằng ngày',
-      wood: 'Gỗ · 2 tuần',
+      acrylic: 'Acrylic',
+      leather: 'Da',
+      paper: 'Giấy',
+      wood: 'Gỗ',
     },
     status: {
       checked: 'Đã kiểm tra',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Vệ sinh bàn tổ ong',
       },
       lube: {
-        keyPoints: 'Vệ sinh thanh dẫn hướng, ray trượt và cơ cấu lấy nét, sau đó tra dầu bôi trơn lại.',
+        keyPoints: 'Vệ sinh thanh dẫn hướng, ray trượt và cơ cấu lấy nét, sau đó tra dầu bôi trơn lại. Tần suất thay đổi tùy theo vật liệu bạn cắt.',
         name: 'Tra dầu bôi trơn',
       },
       maintain_test: {

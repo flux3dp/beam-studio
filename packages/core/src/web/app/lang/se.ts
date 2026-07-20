@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Maskin',
     materials: {
-      acrylic: 'Akryl · 1 v',
-      leather: 'Läder · 2 v',
-      paper: 'Papper · dagligen',
-      wood: 'Trä · 2 v',
+      acrylic: 'Akryl',
+      leather: 'Läder',
+      paper: 'Papper',
+      wood: 'Trä',
     },
     status: {
       checked: 'Kontrollerad',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Rengöring av honungskakebord',
       },
       lube: {
-        keyPoints: 'Rengör styrstängerna, linjärskenan och fokuseringsmekanismen och smörj sedan om.',
+        keyPoints: 'Rengör styrstängerna, linjärskenan och fokuseringsmekanismen och smörj sedan om. Frekvensen varierar beroende på materialet du skär.',
         name: 'Smörjning',
       },
       maintain_test: {

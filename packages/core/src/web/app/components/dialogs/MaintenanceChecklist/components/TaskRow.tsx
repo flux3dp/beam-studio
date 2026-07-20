@@ -73,18 +73,22 @@ const TaskRow = ({ lastUsedAt, material, record, status, task }: Props): ReactNo
 
   const cadenceNode =
     cadence.kind === 'time_by_material' ? (
-      <Select
-        className={styles.materialSelect}
-        onChange={setMaterial}
-        options={[
-          { label: t.materials.wood, value: 'wood' },
-          { label: t.materials.acrylic, value: 'acrylic' },
-          { label: t.materials.leather, value: 'leather' },
-          { label: t.materials.paper, value: 'paper' },
-        ]}
-        size="small"
-        value={material}
-      />
+      <>
+        <Select
+          className={styles.materialSelect}
+          onChange={setMaterial}
+          options={[
+            { label: t.materials.wood, value: 'wood' },
+            { label: t.materials.acrylic, value: 'acrylic' },
+            { label: t.materials.leather, value: 'leather' },
+            { label: t.materials.paper, value: 'paper' },
+          ]}
+          size="small"
+          value={material}
+        />
+        <span className={styles.sep}>·</span>
+        <span>{formatCadence({ ...cadence.map[material], kind: 'time' }, t.cadence)}</span>
+      </>
     ) : (
       <span>{formatCadence(cadence, t.cadence)}</span>
     );

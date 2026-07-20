@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Maskin',
     materials: {
-      acrylic: 'Akryl · 1 uke',
-      leather: 'Lær · 2 uker',
-      paper: 'Papir · daglig',
-      wood: 'Tre · 2 uker',
+      acrylic: 'Akryl',
+      leather: 'Lær',
+      paper: 'Papir',
+      wood: 'Tre',
     },
     status: {
       checked: 'Sjekket',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Rengjøring av bikakebord',
       },
       lube: {
-        keyPoints: 'Rengjør styrestengene, lineærskinnen og fokuseringsmekanismen, og smør dem på nytt.',
+        keyPoints: 'Rengjør styrestengene, lineærskinnen og fokuseringsmekanismen, og smør dem på nytt. Hyppigheten varierer med materialet du skjærer.',
         name: 'Smøring',
       },
       maintain_test: {

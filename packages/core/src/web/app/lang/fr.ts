@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Machine',
     materials: {
-      acrylic: 'Acrylique · 1 sem.',
-      leather: 'Cuir · 2 sem.',
-      paper: 'Papier · quotidien',
-      wood: 'Bois · 2 sem.',
+      acrylic: 'Acrylique',
+      leather: 'Cuir',
+      paper: 'Papier',
+      wood: 'Bois',
     },
     status: {
       checked: 'Vérifié',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: "Nettoyage de la table en nid d'abeille",
       },
       lube: {
-        keyPoints: 'Nettoyez les tiges de guidage, le rail linéaire et le mécanisme de mise au point, puis relubrifiez.',
+        keyPoints: 'Nettoyez les tiges de guidage, le rail linéaire et le mécanisme de mise au point, puis relubrifiez. La fréquence varie selon le matériau que vous coupez.',
         name: 'Lubrification',
       },
       maintain_test: {

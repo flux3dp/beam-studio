@@ -1889,10 +1889,10 @@ const lang: ILang = {
     },
     machine_label: 'Máquina',
     materials: {
-      acrylic: 'Metacrilato · 1 sem',
-      leather: 'Cuero · 2 sem',
-      paper: 'Papel · a diario',
-      wood: 'Madera · 2 sem',
+      acrylic: 'Metacrilato',
+      leather: 'Cuero',
+      paper: 'Papel',
+      wood: 'Madera',
     },
     status: {
       checked: 'Revisado',
@@ -1940,7 +1940,7 @@ const lang: ILang = {
         name: 'Limpieza de la mesa de panal',
       },
       lube: {
-        keyPoints: 'Limpie las varillas guía, el raíl lineal y el mecanismo de enfoque, y vuelva a lubricarlos.',
+        keyPoints: 'Limpie las varillas guía, el raíl lineal y el mecanismo de enfoque, y vuelva a lubricarlos. La frecuencia varía según el material que cortes.',
         name: 'Lubricación',
       },
       maintain_test: {

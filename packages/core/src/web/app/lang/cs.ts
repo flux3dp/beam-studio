@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Přístroj',
     materials: {
-      acrylic: 'Akryl · 1 týd.',
-      leather: 'Kůže · 2 týd.',
-      paper: 'Papír · denně',
-      wood: 'Dřevo · 2 týd.',
+      acrylic: 'Akryl',
+      leather: 'Kůže',
+      paper: 'Papír',
+      wood: 'Dřevo',
     },
     status: {
       checked: 'Zkontrolováno',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Čištění voštinového stolu',
       },
       lube: {
-        keyPoints: 'Očistěte vodicí tyče, lineární kolejnici a zaostřovací mechanismus, poté je znovu namažte.',
+        keyPoints: 'Očistěte vodicí tyče, lineární kolejnici a zaostřovací mechanismus, poté je znovu namažte. Frekvence se liší podle řezaného materiálu.',
         name: 'Mazání',
       },
       maintain_test: {

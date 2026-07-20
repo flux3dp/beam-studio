@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Machine',
     materials: {
-      acrylic: 'Acryl · 1 wk',
-      leather: 'Leer · 2 wk',
-      paper: 'Papier · dagelijks',
-      wood: 'Hout · 2 wk',
+      acrylic: 'Acryl',
+      leather: 'Leer',
+      paper: 'Papier',
+      wood: 'Hout',
     },
     status: {
       checked: 'Gecontroleerd',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Honingraattafel reinigen',
       },
       lube: {
-        keyPoints: 'Reinig de geleidestangen, de lineaire rail en het focusmechanisme en smeer ze opnieuw.',
+        keyPoints: 'Reinig de geleidestangen, de lineaire rail en het focusmechanisme en smeer ze opnieuw. De frequentie varieert met het materiaal dat u snijdt.',
         name: 'Smeren',
       },
       maintain_test: {

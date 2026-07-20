@@ -1890,10 +1890,10 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     },
     machine_label: 'Màquina',
     materials: {
-      acrylic: 'Acrílic · 1 set.',
-      leather: 'Cuir · 2 set.',
-      paper: 'Paper · diari',
-      wood: 'Fusta · 2 set.',
+      acrylic: 'Acrílic',
+      leather: 'Cuir',
+      paper: 'Paper',
+      wood: 'Fusta',
     },
     status: {
       checked: 'Comprovat',
@@ -1941,7 +1941,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
         name: "Neteja de la taula de niu d'abella",
       },
       lube: {
-        keyPoints: "Neteja les barres guia, el rail lineal i el mecanisme d'enfocament, després torna a lubricar.",
+        keyPoints: "Neteja les barres guia, el rail lineal i el mecanisme d'enfocament, després torna a lubricar. La freqüència varia segons el material que talles.",
         name: 'Lubricació',
       },
       maintain_test: {

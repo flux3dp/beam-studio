@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Máquina',
     materials: {
-      acrylic: 'Acrílico · 1 sem',
-      leather: 'Couro · 2 sem',
-      paper: 'Papel · diário',
-      wood: 'Madeira · 2 sem',
+      acrylic: 'Acrílico',
+      leather: 'Couro',
+      paper: 'Papel',
+      wood: 'Madeira',
     },
     status: {
       checked: 'Verificado',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Limpeza da Mesa de Favo de Mel',
       },
       lube: {
-        keyPoints: 'Limpe as hastes-guia, o trilho linear e o mecanismo de foco, depois lubrifique novamente.',
+        keyPoints: 'Limpe as hastes-guia, o trilho linear e o mecanismo de foco, depois lubrifique novamente. A frequência varia conforme o material que você corta.',
         name: 'Lubrificação',
       },
       maintain_test: {

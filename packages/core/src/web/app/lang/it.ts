@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Macchina',
     materials: {
-      acrylic: 'Acrilico · 1 sett.',
-      leather: 'Pelle · 2 sett.',
-      paper: 'Carta · ogni giorno',
-      wood: 'Legno · 2 sett.',
+      acrylic: 'Acrilico',
+      leather: 'Pelle',
+      paper: 'Carta',
+      wood: 'Legno',
     },
     status: {
       checked: 'Verificato',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: "Pulizia del tavolo a nido d'ape",
       },
       lube: {
-        keyPoints: 'Pulisci le aste di guida, la guida lineare e il meccanismo di messa a fuoco, poi rilubrifica.',
+        keyPoints: 'Pulisci le aste di guida, la guida lineare e il meccanismo di messa a fuoco, poi rilubrifica. La frequenza varia in base al materiale che tagli.',
         name: 'Lubrificazione',
       },
       maintain_test: {

@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Kone',
     materials: {
-      acrylic: 'Akryyli · 1 vk',
-      leather: 'Nahka · 2 vk',
-      paper: 'Paperi · päivittäin',
-      wood: 'Puu · 2 vk',
+      acrylic: 'Akryyli',
+      leather: 'Nahka',
+      paper: 'Paperi',
+      wood: 'Puu',
     },
     status: {
       checked: 'Tarkistettu',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Hunajakennopöydän puhdistus',
       },
       lube: {
-        keyPoints: 'Puhdista ohjaustangot, lineaarikisko ja tarkennusmekanismi ja voitele ne uudelleen.',
+        keyPoints: 'Puhdista ohjaustangot, lineaarikisko ja tarkennusmekanismi ja voitele ne uudelleen. Väli vaihtelee leikattavan materiaalin mukaan.',
         name: 'Voitelu',
       },
       maintain_test: {

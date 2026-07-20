@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Maszyna',
     materials: {
-      acrylic: 'Akryl · 1 tydz.',
-      leather: 'Skóra · 2 tyg.',
-      paper: 'Papier · codziennie',
-      wood: 'Drewno · 2 tyg.',
+      acrylic: 'Akryl',
+      leather: 'Skóra',
+      paper: 'Papier',
+      wood: 'Drewno',
     },
     status: {
       checked: 'Sprawdzone',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Czyszczenie stołu o strukturze plastra miodu',
       },
       lube: {
-        keyPoints: 'Wyczyść prowadnice, szynę liniową i mechanizm ogniskowania, a następnie ponownie nasmaruj.',
+        keyPoints: 'Wyczyść prowadnice, szynę liniową i mechanizm ogniskowania, a następnie ponownie nasmaruj. Częstotliwość zależy od ciętego materiału.',
         name: 'Smarowanie',
       },
       maintain_test: {

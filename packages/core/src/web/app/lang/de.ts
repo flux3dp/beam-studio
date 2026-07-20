@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Maschine',
     materials: {
-      acrylic: 'Acryl · 1 Wo.',
-      leather: 'Leder · 2 Wo.',
-      paper: 'Papier · täglich',
-      wood: 'Holz · 2 Wo.',
+      acrylic: 'Acryl',
+      leather: 'Leder',
+      paper: 'Papier',
+      wood: 'Holz',
     },
     status: {
       checked: 'Geprüft',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Reinigung des Wabentisches',
       },
       lube: {
-        keyPoints: 'Reinigen Sie die Führungsstangen, die Linearschiene und den Fokussiermechanismus und schmieren Sie sie anschließend neu.',
+        keyPoints: 'Reinigen Sie die Führungsstangen, die Linearschiene und den Fokussiermechanismus und schmieren Sie sie anschließend neu. Die Häufigkeit hängt vom geschnittenen Material ab.',
         name: 'Schmierung',
       },
       maintain_test: {

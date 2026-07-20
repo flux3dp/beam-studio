@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'Mesin',
     materials: {
-      acrylic: 'Akrilik · 1 mgg',
-      leather: 'Kulit · 2 mgg',
-      paper: 'Kertas · harian',
-      wood: 'Kayu · 2 mgg',
+      acrylic: 'Akrilik',
+      leather: 'Kulit',
+      paper: 'Kertas',
+      wood: 'Kayu',
     },
     status: {
       checked: 'Diperiksa',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'Pembersihan Meja Sarang Lebah',
       },
       lube: {
-        keyPoints: 'Bersihkan batang pemandu, rel linier, dan mekanisme fokus, lalu lumasi kembali.',
+        keyPoints: 'Bersihkan batang pemandu, rel linier, dan mekanisme fokus, lalu lumasi kembali. Frekuensinya bervariasi tergantung bahan yang Anda potong.',
         name: 'Pelumasan',
       },
       maintain_test: {

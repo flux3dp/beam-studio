@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: '机器',
     materials: {
-      acrylic: '亚克力 · 1 周',
-      leather: '皮革 · 2 周',
-      paper: '纸张 · 每日',
-      wood: '木材 · 2 周',
+      acrylic: '亚克力',
+      leather: '皮革',
+      paper: '纸张',
+      wood: '木材',
     },
     status: {
       checked: '已检查',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: '蜂窝板清洁',
       },
       lube: {
-        keyPoints: '清洁导杆、线性滑轨与对焦机构，然后重新上润滑油。',
+        keyPoints: '清洁导杆、线性滑轨与对焦机构，然后重新上润滑油。润滑频率会因切割的材质而异。',
         name: '润滑',
       },
       maintain_test: {

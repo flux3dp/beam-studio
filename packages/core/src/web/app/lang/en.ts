@@ -1890,10 +1890,10 @@ Machines > ‘Promark Name’ > Promark Settings`,
     },
     machine_label: 'Machine',
     materials: {
-      acrylic: 'Acrylic · 1 wk',
-      leather: 'Leather · 2 wk',
-      paper: 'Paper · daily',
-      wood: 'Wood · 2 wk',
+      acrylic: 'Acrylic',
+      leather: 'Leather',
+      paper: 'Paper',
+      wood: 'Wood',
     },
     status: {
       checked: 'Checked',
@@ -1941,7 +1941,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
         name: 'Honeycomb Table Cleaning',
       },
       lube: {
-        keyPoints: 'Clean the guiding rods, linear rail and focusing mechanism, then relubricate.',
+        keyPoints: 'Clean the guiding rods, linear rail and focusing mechanism, then relubricate. The frequency varies with the material you cut.',
         name: 'Lubricating',
       },
       maintain_test: {

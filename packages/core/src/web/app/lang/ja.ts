@@ -1890,10 +1890,10 @@ const lang: ILang = {
     },
     machine_label: 'マシン',
     materials: {
-      acrylic: 'アクリル · 1週間',
-      leather: 'レザー · 2週間',
-      paper: '紙 · 毎日',
-      wood: '木材 · 2週間',
+      acrylic: 'アクリル',
+      leather: 'レザー',
+      paper: '紙',
+      wood: '木材',
     },
     status: {
       checked: '確認済み',
@@ -1941,7 +1941,7 @@ const lang: ILang = {
         name: 'ハニカムテーブルの清掃',
       },
       lube: {
-        keyPoints: 'ガイドロッド、リニアレール、フォーカス機構を清掃し、再度潤滑します。',
+        keyPoints: 'ガイドロッド、リニアレール、フォーカス機構を清掃し、再度潤滑します。頻度は加工する素材によって異なります。',
         name: '潤滑',
       },
       maintain_test: {
