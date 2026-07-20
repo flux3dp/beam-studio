@@ -1882,7 +1882,7 @@ const lang: ILang = {
     legend: {
       due_soon: '即將到期',
       overdue: '已逾期',
-      up_to_date: '最新',
+      up_to_date: '正常',
     },
     machine_label: '機器',
     materials: {

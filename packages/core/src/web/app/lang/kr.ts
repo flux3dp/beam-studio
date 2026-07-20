@@ -1882,7 +1882,7 @@ const lang: ILang = {
     legend: {
       due_soon: '기한 임박',
       overdue: '기한 초과',
-      up_to_date: '최신',
+      up_to_date: '정상',
     },
     machine_label: '기계',
     materials: {
