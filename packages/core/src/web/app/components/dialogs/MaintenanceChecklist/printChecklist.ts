@@ -52,8 +52,12 @@ const printChecklist = ({ machineLabel, material, record, schedule }: PrintParam
     })
     .join('');
 
+  const dateStr = dayjs().format('YYYY-MM-DD');
+  // The document title is what browsers suggest as the "Save as PDF" filename.
+  const documentTitle = `${t.title} - ${machineLabel} - ${dateStr}`;
+
   const html = `<!DOCTYPE html><html><head><meta charset="utf-8" />
-    <title>${escapeHtml(t.title)} — ${escapeHtml(machineLabel)}</title>
+    <title>${escapeHtml(documentTitle)}</title>
     <style>
       body { font-family: -apple-system, "Segoe UI", Roboto, sans-serif; color: #1f1f1f; padding: 24px; }
       h1 { font-size: 18px; margin: 0 0 4px; }
@@ -64,7 +68,7 @@ const printChecklist = ({ machineLabel, material, record, schedule }: PrintParam
       tr.area td { background: #fafafa; font-weight: 600; text-transform: uppercase; font-size: 11px; letter-spacing: 0.06em; }
     </style></head><body>
     <h1>${escapeHtml(t.title)}</h1>
-    <div class="sub">${escapeHtml(machineLabel)} · ${dayjs().format('YYYY-MM-DD')}</div>
+    <div class="sub">${escapeHtml(machineLabel)} · ${dateStr}</div>
     <table><thead><tr>
       <th>${escapeHtml(t.columns.task)}</th><th>${escapeHtml(t.columns.cadence)}</th>
       <th>${escapeHtml(t.status.last)}</th>
@@ -72,15 +76,53 @@ const printChecklist = ({ machineLabel, material, record, schedule }: PrintParam
     </tr></thead><tbody>${rowsByArea}</tbody></table>
     </body></html>`;
 
-  const printWindow = window.open('', '_blank');
+  // Print through an off-screen iframe so no separate tab can appear frozen.
+  // Kept off-screen (not hidden, which can print blank) and loaded via a Blob URL
+  // (more reliable than `srcdoc`); print() is deferred until the content is laid out.
+  const url = URL.createObjectURL(new Blob([html], { type: 'text/html' }));
+  const iframe = document.createElement('iframe');
 
-  if (!printWindow) return;
+  iframe.setAttribute('aria-hidden', 'true');
+  iframe.style.cssText = 'position:fixed;left:-9999px;top:0;width:210mm;height:0;border:0;';
 
-  printWindow.document.write(html);
-  printWindow.document.close();
-  printWindow.focus();
-  printWindow.onafterprint = () => printWindow.close();
-  printWindow.print();
+  // Some environments (e.g. Electron) use the top document's title as the "Save as
+  // PDF" filename, so override it during print and restore on cleanup.
+  const originalTitle = document.title;
+
+  let cleaned = false;
+  const cleanup = () => {
+    if (cleaned) return;
+
+    cleaned = true;
+    iframe.remove();
+    URL.revokeObjectURL(url);
+    // Defer a tick; a synchronous restore gets clobbered by the print teardown.
+    setTimeout(() => {
+      document.title = originalTitle;
+    });
+  };
+
+  iframe.onload = () => {
+    const frameWindow = iframe.contentWindow;
+
+    if (!frameWindow) {
+      cleanup();
+
+      return;
+    }
+
+    frameWindow.onafterprint = cleanup;
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => {
+        document.title = documentTitle;
+        frameWindow.focus();
+        frameWindow.print();
+      }),
+    );
+  };
+
+  document.body.appendChild(iframe);
+  iframe.src = url;
 };
 
 export default printChecklist;
