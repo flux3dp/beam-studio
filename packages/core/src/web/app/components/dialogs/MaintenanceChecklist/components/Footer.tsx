@@ -20,7 +20,7 @@ const Footer = (): React.JSX.Element => {
   return (
     <div className={styles.footer}>
       <span className={styles.tip}>{t.footer_tip}</span>
-      <Space>
+      <Space className={styles.buttons}>
         <Button icon={<HistoryOutlined />} onClick={openHistory} type="text">
           {t.actions.history}
         </Button>
