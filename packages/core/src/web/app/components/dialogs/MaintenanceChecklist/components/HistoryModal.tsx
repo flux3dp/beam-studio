@@ -39,7 +39,7 @@ const HistoryModal = (): React.JSX.Element => {
                 <div className={styles.historyName}>{t.tasks[task.langKey].name}</div>
                 {record.tasks[task.id]?.history?.map((entry, index) => (
                   <div className={styles.historyEntry} key={index}>
-                    {dayjs(entry.at).format('YYYY-MM-DD HH:mm')} · {entry.result}
+                    {dayjs(entry.at).format('YYYY-MM-DD HH:mm')} · {t.actions[entry.result]}
                     {entry.by ? ` · ${entry.by}` : ''}
                   </div>
                 ))}

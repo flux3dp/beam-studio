@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: '已检查',
+      done: '完成',
       fail: '失败',
       history: '历史记录',
-      mark_checked: '已检查',
-      mark_done: '完成',
       open_guide: '打开教程',
       pass: '通过',
       print: '打印 / PDF',

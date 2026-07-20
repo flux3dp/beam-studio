@@ -1827,10 +1827,10 @@ Machines > ‘Promark Name’ > Promark Settings`,
   },
   maintenance: {
     actions: {
+      checked: 'Checked',
+      done: 'Done',
       fail: 'Fail',
       history: 'History',
-      mark_checked: 'Checked',
-      mark_done: 'Done',
       open_guide: 'Open guide',
       pass: 'Pass',
       print: 'Print / PDF',

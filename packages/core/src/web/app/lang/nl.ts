@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'Gecontroleerd',
+      done: 'Voltooid',
       fail: 'Mislukt',
       history: 'Geschiedenis',
-      mark_checked: 'Gecontroleerd',
-      mark_done: 'Voltooid',
       open_guide: 'Handleiding openen',
       pass: 'Geslaagd',
       print: 'Printen / PDF',

@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'Ελέγχθηκε',
+      done: 'Ολοκληρώθηκε',
       fail: 'Απέτυχε',
       history: 'Ιστορικό',
-      mark_checked: 'Ελέγχθηκε',
-      mark_done: 'Ολοκληρώθηκε',
       open_guide: 'Άνοιγμα οδηγού',
       pass: 'Πέρασε',
       print: 'Εκτύπωση / PDF',

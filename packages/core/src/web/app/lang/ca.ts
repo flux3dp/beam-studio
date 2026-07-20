@@ -1827,10 +1827,10 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
   },
   maintenance: {
     actions: {
+      checked: 'Comprovat',
+      done: 'Fet',
       fail: 'No apte',
       history: 'Historial',
-      mark_checked: 'Comprovat',
-      mark_done: 'Fet',
       open_guide: 'Obrir guia',
       pass: 'Apte',
       print: 'Imprimir / PDF',

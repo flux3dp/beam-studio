@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'Kontrolleret',
+      done: 'Udført',
       fail: 'Fejlet',
       history: 'Historik',
-      mark_checked: 'Kontrolleret',
-      mark_done: 'Udført',
       open_guide: 'Åbn vejledning',
       pass: 'Bestået',
       print: 'Udskriv / PDF',

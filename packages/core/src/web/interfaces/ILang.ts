@@ -1825,10 +1825,10 @@ export interface ILang {
   };
   maintenance: {
     actions: {
+      checked: string;
+      done: string;
       fail: string;
       history: string;
-      mark_checked: string;
-      mark_done: string;
       open_guide: string;
       pass: string;
       print: string;

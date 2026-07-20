@@ -147,7 +147,7 @@ const TaskRow = ({ lastUsedAt, material, record, status, task }: Props): ReactNo
         onClick={(e) => handleMark(task.actionType === 'check' ? 'checked' : 'done', e)}
         type={status === 'overdue' ? 'primary' : 'default'}
       >
-        {task.actionType === 'check' ? t.actions.mark_checked : t.actions.mark_done}
+        {task.actionType === 'check' ? t.actions.checked : t.actions.done}
       </Button>
     );
 

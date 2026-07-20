@@ -1826,10 +1826,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'Revisado',
+      done: 'Hecho',
       fail: 'No apto',
       history: 'Historial',
-      mark_checked: 'Revisado',
-      mark_done: 'Hecho',
       open_guide: 'Ver guía',
       pass: 'Apto',
       print: 'Imprimir / PDF',

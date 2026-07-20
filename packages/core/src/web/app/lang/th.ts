@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'ตรวจแล้ว',
+      done: 'ทำแล้ว',
       fail: 'ไม่ผ่าน',
       history: 'ประวัติ',
-      mark_checked: 'ตรวจแล้ว',
-      mark_done: 'ทำแล้ว',
       open_guide: 'เปิดคู่มือ',
       pass: 'ผ่าน',
       print: 'พิมพ์ / PDF',

@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'Geprüft',
+      done: 'Erledigt',
       fail: 'Nicht bestanden',
       history: 'Verlauf',
-      mark_checked: 'Geprüft',
-      mark_done: 'Erledigt',
       open_guide: 'Anleitung öffnen',
       pass: 'Bestanden',
       print: 'Drucken / PDF',

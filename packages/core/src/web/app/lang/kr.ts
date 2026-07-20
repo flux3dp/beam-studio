@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: '점검',
+      done: '완료',
       fail: '실패',
       history: '기록',
-      mark_checked: '점검',
-      mark_done: '완료',
       open_guide: '가이드 열기',
       pass: '통과',
       print: '인쇄 / PDF',

@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'Diperiksa',
+      done: 'Selesai',
       fail: 'Gagal',
       history: 'Sejarah',
-      mark_checked: 'Diperiksa',
-      mark_done: 'Selesai',
       open_guide: 'Buka panduan',
       pass: 'Lulus',
       print: 'Cetak / PDF',

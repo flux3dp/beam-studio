@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'Zkontrolováno',
+      done: 'Hotovo',
       fail: 'Neprošlo',
       history: 'Historie',
-      mark_checked: 'Zkontrolováno',
-      mark_done: 'Hotovo',
       open_guide: 'Otevřít návod',
       pass: 'Prošlo',
       print: 'Tisk / PDF',

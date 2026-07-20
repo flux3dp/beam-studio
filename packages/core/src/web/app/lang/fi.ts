@@ -1827,10 +1827,10 @@ const lang: ILang = {
   },
   maintenance: {
     actions: {
+      checked: 'Tarkistettu',
+      done: 'Valmis',
       fail: 'Hylätty',
       history: 'Historia',
-      mark_checked: 'Tarkistettu',
-      mark_done: 'Valmis',
       open_guide: 'Avaa ohje',
       pass: 'Hyväksytty',
       print: 'Tulosta / PDF',
