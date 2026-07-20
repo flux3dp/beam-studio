@@ -2748,7 +2748,6 @@ const lang: ILang = {
       photo_edit: 'Imej',
       plugin: 'Pemalam',
       preferences: 'Keutamaan',
-      promark_color_test: 'Ujian Warna Promark',
       questionnaire: 'Soal Selidik Maklum Balas',
       quit: 'Tutup',
       recent: 'Buka Terkini',

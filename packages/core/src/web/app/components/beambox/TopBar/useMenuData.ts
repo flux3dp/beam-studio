@@ -363,16 +363,64 @@ const useMenuData = (email?: string): MenuNode[] => {
               },
               ...(!isWeb()
                 ? [
-                    { id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const },
                     {
-                      id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
-                      label: menuCms.import_promark_engraving_example_1,
-                      type: 'item' as const,
+                      children: [
+                        { id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                          label: menuCms.import_promark_engraving_example_1,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                          label: menuCms.import_promark_engraving_example_2,
+                          type: 'item' as const,
+                        },
+                      ],
+                      label: 'Promark Desktop',
+                      type: 'submenu' as const,
                     },
                     {
-                      id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
-                      label: menuCms.import_promark_engraving_example_2,
-                      type: 'item' as const,
+                      children: [
+                        { id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                          label: menuCms.import_promark_engraving_example_1,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                          label: menuCms.import_promark_engraving_example_2,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',
+                          label: menuCms.import_promark_mopa_20w_color,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR',
+                          label: menuCms.import_promark_mopa_60w_color,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
+                          label: `${menuCms.import_promark_mopa_60w_color} - 2`,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR',
+                          label: menuCms.import_promark_mopa_100w_color,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
+                          label: `${menuCms.import_promark_mopa_100w_color} - 2`,
+                          type: 'item' as const,
+                        },
+                      ],
+                      label: 'Promark MOPA',
+                      type: 'submenu' as const,
                     },
                   ]
                 : []),
@@ -396,41 +444,6 @@ const useMenuData = (email?: string): MenuNode[] => {
             label: menuCms.material_test,
             type: 'submenu',
           },
-          ...(!isWeb()
-            ? [
-                {
-                  children: [
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',
-                      label: menuCms.import_promark_mopa_20w_color,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR',
-                      label: menuCms.import_promark_mopa_60w_color,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
-                      label: `${menuCms.import_promark_mopa_60w_color} - 2`,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR',
-                      label: menuCms.import_promark_mopa_100w_color,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
-                      label: `${menuCms.import_promark_mopa_100w_color} - 2`,
-                      type: 'item' as const,
-                    },
-                  ],
-                  label: menuCms.promark_color_test,
-                  type: 'submenu' as const,
-                },
-              ]
-            : []),
           { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: menuCms.import_acrylic_focus_probe, type: 'item' },
         ],
         label: menuCms.samples,

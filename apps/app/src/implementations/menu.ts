@@ -85,7 +85,6 @@ class Menu extends AbstractMenu {
   }
 
   updateMenuByWorkarea = (workarea: any): void => {
-    this.changeMenuItemStatus(['PROMARK_COLOR_TEST'], 'visible', workarea === 'fpm1');
     this.changeMenuItemStatus(['MATERIAL_TEST'], 'visible', workarea !== 'fpm1');
 
     const { disabledKeys, enabledKeys } = getExampleVisibility(workarea);

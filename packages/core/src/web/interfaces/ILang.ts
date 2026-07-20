@@ -2684,7 +2684,6 @@ export interface ILang {
       photo_edit: string;
       plugin: string;
       preferences: string;
-      promark_color_test: string;
       questionnaire: string;
       quit: string;
       recent: string;

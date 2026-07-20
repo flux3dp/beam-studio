@@ -2748,7 +2748,6 @@ const lang: ILang = {
       photo_edit: 'Afbeelding',
       plugin: 'Plug-in',
       preferences: 'Voorkeuren',
-      promark_color_test: 'Promark Kleurtest',
       questionnaire: 'Vragenlijst feedback',
       quit: 'Afsluiten',
       recent: 'Open recente bestanden',

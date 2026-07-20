@@ -2748,7 +2748,6 @@ const lang: ILang = {
       photo_edit: 'Gambar',
       plugin: 'Plugin',
       preferences: 'Preferensi',
-      promark_color_test: 'Tes Warna Promark',
       questionnaire: 'Kuesioner Umpan Balik',
       quit: 'Keluar',
       recent: 'Buka Terbaru',

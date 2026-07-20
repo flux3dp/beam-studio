@@ -2748,7 +2748,6 @@ const lang: ILang = {
       photo_edit: 'Επεξεργασία εικόνας',
       plugin: 'Πρόσθετο',
       preferences: 'Προτιμήσεις',
-      promark_color_test: 'Δοκιμή Χρώματος Promark',
       questionnaire: 'Ερωτηματολόγιο ανατροφοδότησης',
       quit: 'Έξοδος',
       recent: 'Άνοιγμα Πρόσφατων',

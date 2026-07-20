@@ -2748,7 +2748,6 @@ const lang: ILang = {
       photo_edit: 'Obrázek',
       plugin: 'Zásuvný modul',
       preferences: 'Vlastnosti',
-      promark_color_test: 'Promark Test Barev',
       questionnaire: 'Dotazník se zpětnou vazbou',
       quit: 'Ukončit',
       recent: 'Otevřít poslední',

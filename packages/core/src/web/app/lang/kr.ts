@@ -2748,7 +2748,6 @@ const lang: ILang = {
       photo_edit: '이미지',
       plugin: '플러그인',
       preferences: '환경설정',
-      promark_color_test: 'Promark 색상 테스트',
       questionnaire: '피드백 설문조사',
       quit: '끝내기',
       recent: '최근 열기',

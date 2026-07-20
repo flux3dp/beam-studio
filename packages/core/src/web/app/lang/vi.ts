@@ -2748,7 +2748,6 @@ const lang: ILang = {
       photo_edit: 'Ảnh',
       plugin: 'Tiện ích mở rộng',
       preferences: 'Tùy chọn',
-      promark_color_test: 'Kiểm Tra Màu Promark',
       questionnaire: 'Bảng câu hỏi phản hồi',
       quit: 'Thoát',
       recent: 'Mở Gần Đây',

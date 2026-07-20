@@ -2748,7 +2748,6 @@ const lang: ILang = {
       photo_edit: 'Kuva',
       plugin: 'Laajennus',
       preferences: 'Asetukset',
-      promark_color_test: 'Promark Väritesti',
       questionnaire: 'Palautekysely',
       quit: 'Lopeta',
       recent: 'Avaa Viimeaikaiset',
