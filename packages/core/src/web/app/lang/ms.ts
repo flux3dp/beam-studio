@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: 'Tertunggak',
       up_to_date: 'Terkini',
     },
+    machine_groups: {
+      my_machines: 'Mesin saya',
+      other_models: 'Model lain',
+    },
     machine_label: 'Mesin',
     materials: {
       acrylic: 'Akrilik · 1 mgg',

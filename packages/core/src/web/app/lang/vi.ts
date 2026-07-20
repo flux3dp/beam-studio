@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: 'Quá hạn',
       up_to_date: 'Đã cập nhật',
     },
+    machine_groups: {
+      my_machines: 'Máy của tôi',
+      other_models: 'Các mẫu máy khác',
+    },
     machine_label: 'Máy',
     materials: {
       acrylic: 'Acrylic · 1 tuần',

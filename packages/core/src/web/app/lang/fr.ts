@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: 'En retard',
       up_to_date: 'À jour',
     },
+    machine_groups: {
+      my_machines: 'Mes machines',
+      other_models: 'Autres modèles',
+    },
     machine_label: 'Machine',
     materials: {
       acrylic: 'Acrylique · 1 sem.',

@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: 'Myöhässä',
       up_to_date: 'Ajan tasalla',
     },
+    machine_groups: {
+      my_machines: 'Omat koneet',
+      other_models: 'Muut mallit',
+    },
     machine_label: 'Kone',
     materials: {
       acrylic: 'Akryyli · 1 vk',

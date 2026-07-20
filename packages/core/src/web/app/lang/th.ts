@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: 'เกินกำหนด',
       up_to_date: 'เป็นปัจจุบัน',
     },
+    machine_groups: {
+      my_machines: 'เครื่องของฉัน',
+      other_models: 'รุ่นอื่น ๆ',
+    },
     machine_label: 'เครื่อง',
     materials: {
       acrylic: 'อะคริลิก · 1 สัปดาห์',

@@ -1,11 +1,10 @@
 import React, { useLayoutEffect, useMemo, useState } from 'react';
 
-import { Select } from 'antd';
-
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { modelsWithSchedule } from '@core/app/constants/maintenance';
 import { workareaOptions } from '@core/app/constants/workarea-constants';
 import { useStorageStore } from '@core/app/stores/storageStore';
+import Select from '@core/app/widgets/AntdSelect';
 import { useDeviceList } from '@core/helpers/hooks/useDeviceList';
 import { machineKeyOf } from '@core/helpers/maintenance/records';
 import useI18n from '@core/helpers/useI18n';
@@ -39,8 +38,7 @@ const MachineSelect = (): React.JSX.Element => {
   // A seed, not a subscription: after mount the user's pick is the only thing that moves this.
   const [currentKey, setCurrentKey] = useState(() => useMaintenanceStore.getState().initialMachineKey);
 
-  // Build the machine list: connected first, then previously-seen machines, then bare models.
-  const selections = useMemo<Selection[]>(() => {
+  const { mineDevices, otherModels } = useMemo<{ mineDevices: Selection[]; otherModels: Selection[] }>(() => {
     const connected: Selection[] = devices.map((device) => ({
       key: machineKeyOf(device),
       model: device.model,
@@ -50,15 +48,17 @@ const MachineSelect = (): React.JSX.Element => {
     const known: Selection[] = Object.values(records ?? {})
       .filter((record) => !record.machineKey.startsWith(MODEL_PREFIX) && !connectedKeys.has(record.machineKey))
       .map((record) => ({ key: record.machineKey, model: record.model, nickname: record.nickname }));
-    const coveredModels = new Set([...connected, ...known].map((selection) => selection.model));
+    const mineDevices = [...connected, ...known];
+    const coveredModels = new Set(mineDevices.map((selection) => selection.model));
     const models: Selection[] = modelsWithSchedule
       .filter((model) => !coveredModels.has(model) && availableModels.has(model))
       .map((model) => ({ key: `${MODEL_PREFIX}${model}`, model }));
 
-    return [...connected, ...known, ...models];
+    return { mineDevices, otherModels: models };
   }, [devices, records]);
 
   const selection = useMemo<Selection | undefined>(() => {
+    const selections = [...mineDevices, ...otherModels];
     const byKey = selections.find((item) => item.key === currentKey);
 
     if (byKey) return byKey;
@@ -68,7 +68,7 @@ const MachineSelect = (): React.JSX.Element => {
     const selectedKey = selected ? machineKeyOf(selected) : undefined;
 
     return selections.find((item) => item.key === selectedKey) ?? selections[0];
-  }, [currentKey, selections]);
+  }, [currentKey, mineDevices, otherModels]);
 
   // Layout effect, not effect: the roster is never empty, so publishing after paint would flash
   // `Body`'s empty state for a frame. Writing to the store during render isn't safe under
@@ -77,14 +77,17 @@ const MachineSelect = (): React.JSX.Element => {
     setSelection(selection);
   }, [selection, setSelection]);
 
-  const machineOptions = useMemo(
-    () =>
-      selections.map((item) => ({
-        label: item.nickname ? `${item.nickname} — ${modelLabel(item.model)}` : modelLabel(item.model),
-        value: item.key,
-      })),
-    [selections],
-  );
+  const machineOptions = useMemo(() => {
+    const toOption = (item: Selection) => ({
+      label: item.nickname ? `${item.nickname} — ${modelLabel(item.model)}` : modelLabel(item.model),
+      value: item.key,
+    });
+
+    return [
+      { label: t.machine_groups.my_machines, options: mineDevices.map(toOption) },
+      { label: t.machine_groups.other_models, options: otherModels.map(toOption) },
+    ].filter((group) => group.options.length > 0);
+  }, [mineDevices, otherModels, t]);
 
   return (
     <div className={styles.machine}>

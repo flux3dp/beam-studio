@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: 'Εκπρόθεσμο',
       up_to_date: 'Ενημερωμένο',
     },
+    machine_groups: {
+      my_machines: 'Τα μηχανήματά μου',
+      other_models: 'Άλλα μοντέλα',
+    },
     machine_label: 'Μηχάνημα',
     materials: {
       acrylic: 'Ακρυλικό · 1 εβδ.',

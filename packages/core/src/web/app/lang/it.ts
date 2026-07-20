@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: 'Scaduto',
       up_to_date: 'Aggiornato',
     },
+    machine_groups: {
+      my_machines: 'Le mie macchine',
+      other_models: 'Altri modelli',
+    },
     machine_label: 'Macchina',
     materials: {
       acrylic: 'Acrilico · 1 sett.',

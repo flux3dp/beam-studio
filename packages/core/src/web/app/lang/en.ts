@@ -1884,6 +1884,10 @@ Machines > ‘Promark Name’ > Promark Settings`,
       overdue: 'Overdue',
       up_to_date: 'Up to date',
     },
+    machine_groups: {
+      my_machines: 'My machines',
+      other_models: 'Other models',
+    },
     machine_label: 'Machine',
     materials: {
       acrylic: 'Acrylic · 1 wk',

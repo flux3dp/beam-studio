@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: '기한 초과',
       up_to_date: '정상',
     },
+    machine_groups: {
+      my_machines: '내 기계',
+      other_models: '기타 모델',
+    },
     machine_label: '기계',
     materials: {
       acrylic: '아크릴 · 1주',

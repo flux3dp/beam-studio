@@ -1884,6 +1884,10 @@ const lang: ILang = {
       overdue: 'Försenad',
       up_to_date: 'Uppdaterad',
     },
+    machine_groups: {
+      my_machines: 'Mina maskiner',
+      other_models: 'Andra modeller',
+    },
     machine_label: 'Maskin',
     materials: {
       acrylic: 'Akryl · 1 v',

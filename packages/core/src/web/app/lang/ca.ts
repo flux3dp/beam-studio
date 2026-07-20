@@ -1884,6 +1884,10 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
       overdue: 'Vençut',
       up_to_date: 'Al dia',
     },
+    machine_groups: {
+      my_machines: 'Les meves màquines',
+      other_models: 'Altres models',
+    },
     machine_label: 'Màquina',
     materials: {
       acrylic: 'Acrílic · 1 set.',

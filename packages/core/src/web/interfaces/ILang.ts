@@ -1884,6 +1884,10 @@ export interface ILang {
       overdue: string;
       up_to_date: string;
     };
+    machine_groups: {
+      my_machines: string;
+      other_models: string;
+    };
     machine_label: string;
     materials: {
       acrylic: string;
