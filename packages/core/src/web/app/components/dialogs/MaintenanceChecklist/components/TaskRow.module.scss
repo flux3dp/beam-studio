@@ -1,4 +1,5 @@
 @use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as media-mixin;
 @use './mixins' as mixins;
 
 .dot {
@@ -15,6 +16,12 @@
   gap: 12px;
   padding: 12px 2px;
   border-top: 1px solid variables.$panelBorderColor;
+
+  // Below the mobile breakpoint the action doesn't fit beside the info column; let it wrap
+  // onto a second row (see `.act`).
+  @include media-mixin.is-mobile {
+    flex-wrap: wrap;
+  }
 }
 
 .pop {
@@ -76,6 +83,28 @@
   align-items: center;
   justify-content: flex-end;
   min-width: 120px;
+
+  // `flex-basis: 100%` forces the action onto its own line under the info column, then its
+  // button(s) stretch to fill the row: a lone button spans the width; the pass/fail pair splits
+  // it into equal halves (the antd Space wrapper flexes, each item grows).
+  @include media-mixin.is-mobile {
+    flex-basis: 100%;
+    min-width: 0;
+    margin-top: 8px;
+
+    :global(.ant-btn) {
+      width: 100%;
+    }
+
+    :global(.ant-space) {
+      display: flex;
+      width: 100%;
+    }
+
+    :global(.ant-space-item) {
+      flex: 1;
+    }
+  }
 }
 
 .info {
