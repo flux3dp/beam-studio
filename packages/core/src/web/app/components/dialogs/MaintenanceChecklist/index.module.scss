@@ -8,4 +8,28 @@
 
 .divider {
   margin: 2px 0 0;
+  flex: 0 0 auto;
+}
+
+// Bound the whole modal to the viewport and split it into fixed chrome + a single scroll region,
+// so a taller wrapped header shrinks the task list rather than pushing the dialog off-screen.
+.content {
+  display: flex;
+  flex-direction: column;
+  max-height: 90vh;
+
+  :global(.ant-modal-header),
+  :global(.ant-modal-footer) {
+    flex: 0 0 auto;
+  }
+
+  // The modal body holds the maintenance Header, the divider, and the scrollable Body; it is
+  // itself a flex column so the Body can grow into whatever space the fixed rows leave.
+  :global(.ant-modal-body) {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+  }
 }

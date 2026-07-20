@@ -24,6 +24,7 @@ const MaintenanceChecklist = ({ onClose }: Props): React.JSX.Element => {
   return (
     <ConfigProvider theme={{ token: { borderRadius: 6, colorPrimary: '#1890ff' } }}>
       <DraggableModal
+        classNames={{ content: styles.content }}
         footer={<Footer />}
         onCancel={onClose}
         open
