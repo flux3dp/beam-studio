@@ -25,6 +25,7 @@ const HistoryModal = (): React.JSX.Element => {
 
   return (
     <Modal
+      centered
       footer={<Button onClick={closeHistory}>{lang.global.ok}</Button>}
       onCancel={closeHistory}
       open={open}
