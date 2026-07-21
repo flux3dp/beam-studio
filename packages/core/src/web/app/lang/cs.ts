@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'O Beam Studio',
       about_beam_studio: 'O Beam Studio',
+      accessories: 'Příslušenství',
       account: 'Účet',
       add_new_machine: 'Nastavení přístroje',
       align_center: 'Zarovnat na střed',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Zaostřit',
       image_stamp: 'Zkosit',
       image_vectorize: 'Obkreslit',
-      import_acrylic_focus_probe: 'Akrylový focus probe - 3mm',
+      import_acrylic_focus_probe: 'beamo & Beambox Fokusová sonda - 3 mm',
       import_ador_laser_example: 'Příklad Ador Laseru',
       import_ador_printing_example_full: 'Příklad Ador tisknutí - barevné',
       import_ador_printing_example_single: 'Příklad Ador tisknutí - jednobarevné',

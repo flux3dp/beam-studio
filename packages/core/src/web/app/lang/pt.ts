@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Sobre o Beam Studio',
       about_beam_studio: 'Sobre o Beam Studio',
+      accessories: 'Acessórios',
       account: 'Conta',
       add_new_machine: 'Configuração da máquina',
       align_center: 'Alinhar ao centro',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Nitidez',
       image_stamp: 'Bisel',
       image_vectorize: 'Vetorizar',
-      import_acrylic_focus_probe: 'Sonda de foco em acrílico - 3mm',
+      import_acrylic_focus_probe: 'Sonda de Foco beamo & Beambox - 3 mm',
       import_ador_laser_example: 'Exemplo de Ador Laser',
       import_ador_printing_example_full: 'Exemplo de impressão Ador - Cores completas',
       import_ador_printing_example_single: 'Exemplo de impressão Ador - Cor única',

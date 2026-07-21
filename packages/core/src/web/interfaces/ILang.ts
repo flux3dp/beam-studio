@@ -2550,6 +2550,7 @@ export interface ILang {
     menu: {
       about: string;
       about_beam_studio: string;
+      accessories: string;
       account: string;
       add_new_machine: string;
       align_center: string;

@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'O Beam Studio',
       about_beam_studio: 'O Beam Studio',
+      accessories: 'Akcesoria',
       account: 'Konto',
       add_new_machine: 'Konfiguracja maszyny',
       align_center: 'Wyrównaj do środka',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Wyostrzyj',
       image_stamp: 'Faza',
       image_vectorize: 'Obrysuj',
-      import_acrylic_focus_probe: 'Akrylowa sonda ostrości - 3mm',
+      import_acrylic_focus_probe: 'Sonda Ostrości beamo & Beambox - 3 mm',
       import_ador_laser_example: 'Przykład lasera Ador',
       import_ador_printing_example_full: 'Przykład druku Ador - cały kolor',
       import_ador_printing_example_single: 'Przykład druku Ador — pojedynczy kolor',

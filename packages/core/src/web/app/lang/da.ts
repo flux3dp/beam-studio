@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Om Beam Studio',
       about_beam_studio: 'Om Beam Studio',
+      accessories: 'Tilbehør',
       account: 'Konto',
       add_new_machine: 'Maskinopsætning',
       align_center: 'Centrér',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Skarp',
       image_stamp: 'Stempel',
       image_vectorize: 'Spor',
-      import_acrylic_focus_probe: 'Akryl fokusprobe - 3mm',
+      import_acrylic_focus_probe: 'beamo & Beambox Fokusprobe - 3 mm',
       import_ador_laser_example: 'Eksempel på Ador Laser',
       import_ador_printing_example_full: 'Eksempel på Ador Print - Fuld farve',
       import_ador_printing_example_single: 'Eksempel på Ador Print - Enkelt farve',

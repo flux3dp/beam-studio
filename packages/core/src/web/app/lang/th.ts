@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'เกี่ยวกับ Beam Studio',
       about_beam_studio: 'เกี่ยวกับ Beam Studio',
+      accessories: 'อุปกรณ์เสริม',
       account: 'บัญชี',
       add_new_machine: 'ตั้งค่าเครื่อง',
       align_center: 'จัดกึ่งกลาง',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'เพิ่มความคมชัด',
       image_stamp: 'ขอบเขต',
       image_vectorize: 'ติดตามเส้นทาง',
-      import_acrylic_focus_probe: 'โฟกัสโพรบอะคริลิค - 3 มม.',
+      import_acrylic_focus_probe: 'หัววัดโฟกัส beamo & Beambox - 3 มม.',
       import_ador_laser_example: 'ตัวอย่างของ Ador Laser',
       import_ador_printing_example_full: 'ตัวอย่างการพิมพ์ของ Ador - สีเต็มรูปแบบ',
       import_ador_printing_example_single: 'ตัวอย่างการพิมพ์ของ Ador - สีเดียว',

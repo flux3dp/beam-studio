@@ -353,14 +353,7 @@ const useMenuData = (email?: string): MenuNode[] => {
                     },
                   ]
                 : []),
-              {
-                children: [
-                  { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: menuCms.import_beambox_2_example, type: 'item' },
-                  { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: menuCms.import_beambox_2_focus_probe, type: 'item' },
-                ],
-                label: 'Beambox II',
-                type: 'submenu',
-              },
+              { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: menuCms.import_beambox_2_example, type: 'item' },
               ...(!isWeb()
                 ? [
                     {
@@ -444,7 +437,14 @@ const useMenuData = (email?: string): MenuNode[] => {
             label: menuCms.material_test,
             type: 'submenu',
           },
-          { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: menuCms.import_acrylic_focus_probe, type: 'item' },
+          {
+            children: [
+              { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: menuCms.import_acrylic_focus_probe, type: 'item' },
+              { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: menuCms.import_beambox_2_focus_probe, type: 'item' },
+            ],
+            label: menuCms.accessories,
+            type: 'submenu',
+          },
         ],
         label: menuCms.samples,
         type: 'submenu',

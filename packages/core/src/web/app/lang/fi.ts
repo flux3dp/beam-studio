@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Tietoja Beam Studiosta',
       about_beam_studio: 'Tietoja Beam Studiosta',
+      accessories: 'Lisävarusteet',
       account: 'Tili',
       add_new_machine: 'Koneen asetukset',
       align_center: 'Keskitä',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Terävöitä',
       image_stamp: 'Viistota',
       image_vectorize: 'Jäljitä',
-      import_acrylic_focus_probe: 'Akryylitarkkuustesti - 3 mm',
+      import_acrylic_focus_probe: 'beamo & Beambox Tarkennusanturi - 3 mm',
       import_ador_laser_example: 'Adorin laser -esimerkki',
       import_ador_printing_example_full: 'Adorin tulostuksen esimerkki - Täysvärinen',
       import_ador_printing_example_single: 'Adorin tulostuksen esimerkki - Yksivärinen',

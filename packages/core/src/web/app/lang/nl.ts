@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Over Beam Studio',
       about_beam_studio: 'Over Beam Studio',
+      accessories: 'Accessoires',
       account: 'Account',
       add_new_machine: 'Machine-instellingen',
       align_center: 'Centreren',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Scherpstellen',
       image_stamp: 'Facet',
       image_vectorize: 'Vectoriseren',
-      import_acrylic_focus_probe: 'Acryl focus probe - 3mm',
+      import_acrylic_focus_probe: 'beamo & Beambox Focusprobe - 3 mm',
       import_ador_laser_example: 'Voorbeeld van Ador Laser',
       import_ador_printing_example_full: 'Voorbeeld van Ador Printing - Volledige kleur',
       import_ador_printing_example_single: 'Voorbeeld van Ador Printing - Enkele kleur',

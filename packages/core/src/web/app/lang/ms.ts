@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Tentang Beam Studio',
       about_beam_studio: 'Mengenai Beam Studio',
+      accessories: 'Aksesori',
       account: 'Akaun',
       add_new_machine: 'Tambah Mesin Baru',
       align_center: 'Jajar tengah',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Tajamkan',
       image_stamp: 'Cungkil',
       image_vectorize: 'Jejak',
-      import_acrylic_focus_probe: 'Pemfokus Akrilik Probe - 3mm',
+      import_acrylic_focus_probe: 'Probe Fokus beamo & Beambox - 3mm',
       import_ador_laser_example: 'Contoh Ador Laser',
       import_ador_printing_example_full: 'Contoh Cetakan Ador - Warna Penuh',
       import_ador_printing_example_single: 'Contoh Cetakan Ador - Satu Warna',

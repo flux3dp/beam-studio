@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Về Beam Studio',
       about_beam_studio: 'Về Beam Studio',
+      accessories: 'Phụ kiện',
       account: 'Tài khoản',
       add_new_machine: 'Thiết lập máy in',
       align_center: 'Căn giữa',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Làm nét',
       image_stamp: 'Khắc dấu',
       image_vectorize: 'Vẽ vector',
-      import_acrylic_focus_probe: 'Đầu dò tiêu điểm acrylic - 3mm',
+      import_acrylic_focus_probe: 'Đầu dò Lấy Nét beamo & Beambox - 3mm',
       import_ador_laser_example: 'Ví dụ của Ador Laser',
       import_ador_printing_example_full: 'Ví dụ in của Ador - Đầy đủ màu',
       import_ador_printing_example_single: 'Ví dụ in của Ador - Một màu',

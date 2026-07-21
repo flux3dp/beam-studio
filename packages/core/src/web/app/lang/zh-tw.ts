@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: '關於 Beam Studio',
       about_beam_studio: '關於 Beam Studio',
+      accessories: '配件',
       account: '帳號',
       add_new_machine: '新增或設定機器',
       align_center: '置中',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: '鋭化',
       image_stamp: '生成印章斜角',
       image_vectorize: '向量化',
-      import_acrylic_focus_probe: '壓克力對焦尺 - 3mm',
+      import_acrylic_focus_probe: 'beamo & Beambox 對焦尺 - 3mm',
       import_ador_laser_example: 'Ador 雷射範例',
       import_ador_printing_example_full: 'Ador 列印範例 - 彩色',
       import_ador_printing_example_single: 'Ador 列印範例 - 單色',

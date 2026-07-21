@@ -114,14 +114,7 @@ export function buildFileMenu(
                 { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT', label: r.import_beamo_2_printing_example },
               ],
             },
-            {
-              id: 'EXAMPLE_FILE_BEAMBOX_2',
-              label: 'Beambox II',
-              submenu: [
-                { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },
-                { click: callback, id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: r.import_beambox_2_focus_probe },
-              ],
-            },
+            { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },
             {
               id: 'EXAMPLE_FILE_PROMARK_DESKTOP',
               label: 'Promark Desktop',
@@ -195,7 +188,14 @@ export function buildFileMenu(
             { click: callback, id: 'IMPORT_MATERIAL_TESTING_PRINT', label: r.import_material_printing_test },
           ],
         },
-        { click: callback, id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe },
+        {
+          id: 'ACCESSORIES',
+          label: r.accessories || 'Accessories',
+          submenu: [
+            { click: callback, id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe },
+            { click: callback, id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: r.import_beambox_2_focus_probe },
+          ],
+        },
       ],
     },
     { type: 'separator' },

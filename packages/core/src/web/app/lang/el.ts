@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Σχετικά με το Beam Studio',
       about_beam_studio: 'Σχετικά με το Beam Studio',
+      accessories: 'Αξεσουάρ',
       account: 'Λογαριασμός',
       add_new_machine: 'Ρύθμιση μηχανής',
       align_center: 'Στοίχιση στο κέντρο',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'Εστίαση',
       image_stamp: 'Υδατογραφήματα',
       image_vectorize: 'Ιχνηλάτηση',
-      import_acrylic_focus_probe: 'Δοκιμή εστίασης ακρυλικού - 3mm',
+      import_acrylic_focus_probe: 'beamo & Beambox Αισθητήρας Εστίασης - 3mm',
       import_ador_laser_example: 'Παράδειγμα Laser Ador',
       import_ador_printing_example_full: 'Παράδειγμα εκτύπωσης Ador - Πλήρες χρώμα',
       import_ador_printing_example_single: 'Παράδειγμα εκτύπωσης Ador - Ένα χρώμα',

@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Beam Studio 소개',
       about_beam_studio: '빔스튜디오에 대해',
+      accessories: '액세서리',
       account: '계정',
       add_new_machine: '기계 설정',
       align_center: '중앙 정렬',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: '선명하게',
       image_stamp: '베벨',
       image_vectorize: '추적하기',
-      import_acrylic_focus_probe: '아크릴 포커스 프로우브 - 3mm',
+      import_acrylic_focus_probe: 'beamo & Beambox 초점 탐침 - 3mm',
       import_ador_laser_example: 'Ador 레이저 예시',
       import_ador_printing_example_full: 'Ador 인쇄 예시 - 풀 컬러',
       import_ador_printing_example_single: 'Ador 인쇄 예시 - 단색',

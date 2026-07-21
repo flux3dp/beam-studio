@@ -2614,6 +2614,7 @@ const lang: ILang = {
     menu: {
       about: 'Beam Studioについて',
       about_beam_studio: 'Beam Studioについて',
+      accessories: 'アクセサリー',
       account: 'アカウント',
       add_new_machine: 'マシン設定',
       align_center: '中央揃え',
@@ -2680,7 +2681,7 @@ const lang: ILang = {
       image_sharpen: 'シャープ化',
       image_stamp: '面取りを生成',
       image_vectorize: 'ベクトル化',
-      import_acrylic_focus_probe: 'アクリルフォーカスプローブ - 3mm',
+      import_acrylic_focus_probe: 'beamo & Beambox フォーカスプローブ - 3mm',
       import_ador_laser_example: 'Ador レーザーの例',
       import_ador_printing_example_full: 'Ador プリントの例 - フルカラー',
       import_ador_printing_example_single: 'Ador プリントの例 - シングルカラー',
