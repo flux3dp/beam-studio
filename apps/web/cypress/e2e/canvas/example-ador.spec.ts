@@ -54,8 +54,8 @@ const exampleList = [
     ador: '0765f261b4ef290b8b8bab6981112528',
   },
   {
-    label: 'Acrylic Focus Probe - 3mm',
-    path: [],
+    label: 'beamo & Beambox Focus Probe - 3mm',
+    path: ['Accessories'],
     ador: '8309600357f531eaad1453167e91c1df',
   },
 ];
