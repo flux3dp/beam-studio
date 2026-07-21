@@ -1,3 +1,4 @@
+@use '@core/styles/mixins' as mixins;
 @use '@core/styles/variables' as variables;
 
 .machine {
@@ -13,5 +14,9 @@
 
   .select {
     width: 260px;
+
+    @include mixins.is-mobile {
+      width: 200px;
+    }
   }
 }

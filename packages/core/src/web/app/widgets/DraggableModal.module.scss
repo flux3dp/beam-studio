@@ -1,4 +1,9 @@
 @use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
+
+.container {
+  max-width: 100vw;
+}
 
 .scrollable {
   :global(.ant-modal-content) {
@@ -22,7 +27,7 @@
 }
 
 .mobileScrollable {
-  @media screen and (max-width: 600px) {
+  @include mixins.is-mobile {
     :global(.ant-modal-content) {
       display: flex;
       flex-direction: column;
