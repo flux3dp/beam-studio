@@ -80,8 +80,8 @@ const basicExamples: ExampleFileMap = {
   IMPORT_EXAMPLE_HEXA: 'examples/hexa_example.bvg',
   IMPORT_EXAMPLE_HEXA_RF: 'examples/hexa_rf_example.bvg',
   IMPORT_EXAMPLE_PROMARK: 'examples/promark_example.bvg',
-  IMPORT_EXAMPLE_PROMARK_ENGRAVING_1: 'examples/promark_engraving_example_1.beam',
-  IMPORT_EXAMPLE_PROMARK_ENGRAVING_2: 'examples/promark_engraving_example_2.beam',
+  IMPORT_EXAMPLE_PROMARK_ENGRAVING_1: '',
+  IMPORT_EXAMPLE_PROMARK_ENGRAVING_2: '',
   IMPORT_HELLO_BEAMBOX: 'examples/hello-beambox.bvg',
   IMPORT_MATERIAL_TESTING_PRINT: '',
 };
@@ -124,6 +124,8 @@ export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
   } else if (workarea === 'fpm1') {
     examples = {
       ...basicExamples,
+      IMPORT_EXAMPLE_PROMARK_ENGRAVING_1: 'examples/promark_engraving_example_1.beam',
+      IMPORT_EXAMPLE_PROMARK_ENGRAVING_2: 'examples/promark_engraving_example_2.beam',
       IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR: 'examples/promark_mopa_20w_color_example.bvg',
       IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR: 'examples/promark_mopa_60w_color_example.bvg',
       IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2: 'examples/promark_mopa_60w_color_example_2.bvg',
