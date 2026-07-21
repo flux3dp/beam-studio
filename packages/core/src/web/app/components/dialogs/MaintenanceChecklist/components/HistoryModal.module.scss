@@ -1,0 +1,26 @@
+@use '@core/styles/variables' as variables;
+
+.history {
+  // Match the main dialog's scroll region so a long history stays within ~90vh.
+  max-height: calc(90vh - 230px);
+  overflow-y: auto;
+}
+
+.historyItem {
+  margin-bottom: 8px;
+}
+
+.historyName {
+  font-weight: 500;
+}
+
+.historyEntry {
+  color: variables.$secondary-gray;
+  font-size: 12.5px;
+}
+
+.hint {
+  margin-top: 12px;
+  font-size: 12px;
+  color: variables.$secondary-gray;
+}

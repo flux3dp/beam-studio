@@ -1,0 +1,31 @@
+@use './_mixins.scss' as mixins;
+
+.button {
+  @include mixins.button-container();
+
+  & {
+    display: flex;
+    align-items: center;
+  }
+
+  // overrides antd's size and box-shadow
+  :global(.ant-badge-dot) {
+    width: 8px;
+    min-width: 8px;
+    height: 8px;
+    // Matches `.top-bar`'s background-color, a literal there too.
+    box-shadow: 0 0 0 1px #333333;
+  }
+
+  // Dim only the glyph, not the container — otherwise the overdue badge dot fades with it.
+  // Sized by font-size, not width/height: this is an antd icon glyph, unlike the 30px
+  // inline svgs the sibling buttons use.
+  .icon {
+    @include mixins.button-opacity();
+
+    & {
+      font-size: 20px;
+      color: #ffffff;
+    }
+  }
+}

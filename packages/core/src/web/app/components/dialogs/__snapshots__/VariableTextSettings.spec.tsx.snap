@@ -23,7 +23,7 @@ exports[`test VariableTextSettings form fields 1`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="container react-draggable"
               style="min-width: min(520px, 95vw); transform: translate(512px, -344px)translate(-28px,0px);"
             >
               <div
@@ -966,7 +966,7 @@ exports[`test VariableTextSettings form fields 2`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="container react-draggable"
               style="min-width: min(520px, 95vw); transform: translate(512px, -344px)translate(-28px,0px);"
             >
               <div

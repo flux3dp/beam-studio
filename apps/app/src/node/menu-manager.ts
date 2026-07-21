@@ -105,6 +105,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
   const submenu = [
     { click: handleClick, id: 'DASHBOARD', label: r.dashboard },
     { click: handleClick, id: 'MACHINE_INFO', label: r.machine_info },
+    { click: handleClick, id: 'DEVICE_MAINTENANCE_CHECKLIST', label: r.maintenance_checklist },
     isPromark && {
       click: handleClick,
       id: 'PROMARK_SETTINGS',
@@ -750,6 +751,7 @@ class MenuManager extends EventEmitter {
       ...[
         { click: callback, enabled: false, id: 'START_TUTORIAL', label: r.show_start_tutorial },
         { click: callback, enabled: false, id: 'START_UI_INTRO', label: r.show_ui_intro },
+        { click: callback, id: 'MAINTENANCE_CHECKLIST', label: r.maintenance_checklist },
         { click: callback, id: 'CHANGE_LOGS', label: r.change_logs },
         {
           click() {

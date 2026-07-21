@@ -1,0 +1,59 @@
+@use '@core/styles/variables' as variables;
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding-top: 120px;
+  pointer-events: none;
+  // Above the antd Modal (z-index 1000) so the celebration is visible over the dialog.
+  z-index: 10000;
+}
+
+.card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 10px 36px rgba(0, 0, 0, 0.22);
+  animation: card-in 0.45s cubic-bezier(0.18, 0.9, 0.32, 1.4);
+
+  .check {
+    color: variables.$status-normal;
+    font-size: 56px;
+  }
+
+  .title {
+    font-size: 16px;
+    font-weight: 500;
+    color: #1f1f1f;
+  }
+
+  .sub {
+    font-size: 13px;
+    color: variables.$secondary-gray;
+    text-align: center;
+  }
+}
+
+@keyframes card-in {
+  0% {
+    transform: scale(0.7);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card {
+    animation: none;
+  }
+}

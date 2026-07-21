@@ -126,7 +126,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           positionOffset={positionOffset}
         >
           <div
-            className={classNames({
+            className={classNames(styles.container, {
               [styles.mobileScrollable]: isDragDisabled,
               [styles.scrollable]: scrollableContent,
             })}

@@ -24,6 +24,7 @@ import DrawerMenu from './DrawerMenu';
 import FileName from './FileName';
 import FrameButton from './FrameButton';
 import GoButton from './GoButton';
+import MaintenanceButton from './MaintenanceButton';
 import Menu from './Menu';
 import PathPreviewButton from './PathPreviewButton';
 import SelectMachineButton from './SelectMachineButton';
@@ -98,6 +99,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         </div>
         <div className={classNames(styles.controls, styles.right)}>
           <SelectMachineButton />
+          <MaintenanceButton />
           <DocumentButton />
           <AutoFocusButton />
           <FrameButton />

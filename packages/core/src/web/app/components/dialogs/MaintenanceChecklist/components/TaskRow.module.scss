@@ -1,0 +1,146 @@
+@use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as media-mixin;
+@use './mixins' as mixins;
+
+.dot {
+  @include mixins.dot;
+}
+
+.ess {
+  @include mixins.ess;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 2px;
+  border-top: 1px solid variables.$panelBorderColor;
+
+  // Below the mobile breakpoint the action doesn't fit beside the info column; let it wrap
+  // onto a second row (see `.act`).
+  @include media-mixin.is-mobile {
+    flex-wrap: wrap;
+  }
+}
+
+.pop {
+  animation: dot-pop 0.55s ease;
+}
+
+.name {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f1f1f;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 4px;
+  font-size: 12.5px;
+  color: variables.$secondary-gray;
+  flex-wrap: wrap;
+
+  .sep {
+    color: #e0e0e0;
+  }
+
+  // Nested, not top-level: `.dueSoon`/`.overdue`/`.never` also modify `.dot` above, and these
+  // are text colors for the due label only.
+  .due {
+    font-weight: 500;
+
+    &.ok {
+      color: variables.$status-normal;
+    }
+
+    &.dueSoon {
+      color: variables.$status-warning;
+    }
+
+    &.overdue {
+      color: variables.$status-critical;
+    }
+
+    &.never {
+      color: #bfbfbf;
+    }
+
+    &.muted {
+      color: variables.$secondary-gray;
+    }
+  }
+}
+
+.act {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  min-width: 120px;
+
+  // `flex-basis: 100%` forces the action onto its own line under the info column, then its
+  // button(s) stretch to fill the row: a lone button spans the width; the pass/fail pair splits
+  // it into equal halves (the antd Space wrapper flexes, each item grows).
+  @include media-mixin.is-mobile {
+    flex-basis: 100%;
+    min-width: 0;
+    margin-top: 8px;
+
+    :global(.ant-btn) {
+      width: 100%;
+    }
+
+    :global(.ant-space) {
+      display: flex;
+      width: 100%;
+    }
+
+    :global(.ant-space-item) {
+      flex: 1;
+    }
+  }
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.infoIcon {
+  color: #c4c4c4;
+  font-size: 13px;
+}
+
+.guideLink {
+  cursor: pointer;
+  display: inline-block;
+  margin-top: 6px;
+}
+
+.materialSelect {
+  width: 128px;
+}
+
+@keyframes dot-pop {
+  0% {
+    transform: scale(1);
+  }
+  40% {
+    transform: scale(1.9);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pop {
+    animation: none;
+  }
+}

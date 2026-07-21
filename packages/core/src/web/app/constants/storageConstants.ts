@@ -28,6 +28,7 @@ export const getStorageKeys: () => StorageKey[] = () => [
   'layer-color-config',
   'layer-panel-height',
   'loop_compensation',
+  'maintenance-records',
   'new-user',
   'notification',
   'poke-ip-addr',

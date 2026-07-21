@@ -1,11 +1,19 @@
-@mixin button() {
+// Container-level concerns: sizing, cursor, drag region. Kept separate from opacity so callers with
+// an overlay (e.g. a badge) can dim the glyph alone and leave the overlay opaque.
+@mixin button-container() {
   height: 30px;
-  opacity: 0.7;
   cursor: pointer;
   -webkit-app-region: no-drag;
   &.disabled {
-    opacity: 0.2;
     pointer-events: none;
+  }
+}
+
+// Dimming behavior: idle 0.7, full on hover, faded when disabled.
+@mixin button-opacity() {
+  opacity: 0.7;
+  &.disabled {
+    opacity: 0.2;
   }
   &:hover:not(.disabled) {
     opacity: 1;
@@ -15,4 +23,9 @@
       opacity: 0.7;
     }
   }
+}
+
+@mixin button() {
+  @include button-container();
+  @include button-opacity();
 }

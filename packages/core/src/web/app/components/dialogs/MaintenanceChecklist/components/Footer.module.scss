@@ -1,0 +1,17 @@
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+
+  .tip {
+    text-align: left;
+    font-size: 12px;
+    color: #9b9b9b;
+  }
+
+  .buttons {
+    margin-left: auto;
+  }
+}

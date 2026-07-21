@@ -6,6 +6,7 @@ import exportFuncs, { getConvertEngine } from '@core/app/actions/beambox/export-
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
+import { DeviceOperationEvents } from '@core/app/constants/deviceEvents';
 import type { ItemType } from '@core/app/constants/monitor-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -31,6 +32,7 @@ import type { TaskMetaData } from '@core/interfaces/ITask';
 import { DEFAULT_CAMERA_OFFSET } from '../constants/cameraConstants';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('monitor');
+const deviceEventEmitter = eventEmitterFactory.createEventEmitter('device');
 
 let LANG = i18n.lang;
 const updateLang = () => {
@@ -1095,6 +1097,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     }
 
     eventEmitter.emit('PLAY');
+    deviceEventEmitter.emit(DeviceOperationEvents.JobStarted, device);
 
     return totalTaskTime;
   };
