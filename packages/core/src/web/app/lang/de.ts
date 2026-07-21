@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Laserspannung abnormal\nLaserspannungsfehler. Bitte starten Sie die Maschine neu. Wenn das Problem weiterhin besteht, wenden Sie sich an den Kundensupport.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritischer Fehler: Mainboard offline. Bitte wenden Sie sich an den FLUX Support.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Mainboard reagiert nicht\nDas Mainboard reagiert nicht. Bitte starten Sie den Auftrag neu.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Keine Tintenpatrone erkannt\n1. Entfernen Sie das Druckmodul.\n2. Setzen Sie eine Tintenpatrone in das Modul ein.\n3. Installieren Sie das Druckmodul erneut in der Maschine.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Überhitzt. Bitte warten Sie einige Minuten.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Zurücksetzen der Z-Achse',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Druckermodul ohne Antwort.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Temperatur',
     upload: 'Hochladen',
     USER_OPERATION: 'Befolgen Sie bitte die Anweisungen auf dem Gerätepanel, um fortzufahren.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Cartridge leer\nDas Cartridge ist leer. Bitte ersetzen, um den Druck fortzusetzen.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Niedriger Tintenstand\nDie Tinte im Cartridge wird knapp. Wir empfehlen, das Cartridge bald zu ersetzen.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Bitte setzen Sie die richtige Patrone ein, um fortzufahren.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Bitte setzen Sie die Patrone ein, um fortzufahren.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Bitte installieren Sie das richtige Modul, um fortzufahren.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Unbekanntes Modul erkannt. Bitte installieren Sie das richtige Modul, um fortzufahren.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Bitte entfernen Sie die Patrone, um fortzufahren.',
     USER_OPERATION_ROTARY_PAUSE: 'Bitte wechseln Sie zum Rotationsmotor',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Fokus-Erinnerung\nBitte vor Beginn eines neuen Auftrags neu fokussieren, um präzise Ergebnisse zu gewährleisten.',
   },
   my_cloud: {
     action: {

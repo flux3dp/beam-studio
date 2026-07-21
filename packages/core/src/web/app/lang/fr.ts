@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Tension du laser anormale\nErreur de tension du laser. Veuillez redémarrer la machine. Si le problème persiste, contactez le support client.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Erreur critique : Carte mère hors ligne. Veuillez contacter le support FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Carte mère sans réponse\nLa carte mère ne répond pas. Veuillez redémarrer le travail.',
-    HARDWARE_ERROR_NO_INK_DETECTED: "#926 Aucune cartouche d'encre détectée\n1. Retirez le module d'impression.\n2. Insérez une cartouche d'encre dans le module.\n3. Réinstallez le module d'impression dans la machine.",
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Surchauffe. Veuillez attendre quelques minutes.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: "#910 Échec de la réinitialisation de l'axe Z",
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Aucune réponse du module imprimante.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Température',
     upload: 'Téléverser',
     USER_OPERATION: "Veuillez suivre les instructions sur le panneau de l'appareil pour continuer.",
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Cartouche vide\nLa cartouche est vide. Remplacez-la pour continuer l’impression.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Niveau d’encre faible\nLe niveau d’encre du cartouche est faible. Nous recommandons de le remplacer bientôt.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Veuillez insérer la cartouche correcte pour continuer.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Veuillez insérer la cartouche pour continuer.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Veuillez installer le bon module pour continuer.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Module inconnu détecté. Veuillez installer le bon module pour continuer.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Veuillez retirer la cartouche pour continuer.',
     USER_OPERATION_ROTARY_PAUSE: 'Veuillez passer au moteur rotatif.',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Rappel de mise au point\nRefaites la mise au point avant de lancer un nouveau travail afin d’assurer des résultats précis.',
   },
   my_cloud: {
     action: {

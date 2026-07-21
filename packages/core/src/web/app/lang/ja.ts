@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 レーザー電圧異常\nレーザー電圧エラーです。機器を再起動してください。問題が解決しない場合は、カスタマーサポートにお問い合わせください。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 重大なエラー：メインボードがオフラインです。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 メインボード応答なし\nメインボードが応答していません。ジョブを再開してください。',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 インクカートリッジが検出されません\n1. プリントモジュールを取り外してください。\n2. インクカートリッジをモジュールに挿入してください。\n3. プリントモジュールを機器に再装着してください。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 過熱。数分お待ちください。',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z軸リセットに失敗しました',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 プリンターモジュールが応答しません。',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: '温度',
     upload: 'アップロード',
     USER_OPERATION: '続行するためには、デバイスパネルの指示に従ってください。',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'カートリッジ空\nカートリッジのインクがありません。続行するには交換してください。',
+    USER_OPERATION_CARTRIDGE_INK_LOW: '低インクレベル\nカートリッジのインクが少なくなっています。お早めの交換をおすすめします。',
     USER_OPERATION_CHANGE_CARTRIDGE: '続行するには正しいカートリッジを挿入してください。',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: '続行するにはカートリッジを挿入してください。',
     USER_OPERATION_CHANGE_TOOLHEAD: '続行するには正しいモジュールをインストールしてください。',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 未知のモジュールが検出されました。続行するには正しいモジュールをインストールしてください。',
     USER_OPERATION_REMOVE_CARTRIDGE: '続行するためにカートリッジを取り外してください。',
     USER_OPERATION_ROTARY_PAUSE: 'ロータリーモーターに切り替えてください',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'フォーカスリマインダー\n正確な結果のため、新しい作業を開始する前にピントを合わせ直してください。',
   },
   my_cloud: {
     action: {

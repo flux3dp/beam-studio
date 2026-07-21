@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Unormal laserspenning\nLaserspenningsfeil. Start maskinen på nytt. Hvis problemet vedvarer, kontakt kundestøtte.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritisk feil: Hovedkort frakoblet. Kontakt FLUX-støtte.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Hovedkort svarer ikke\nHovedkortet svarer ikke. Start jobben på nytt.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Ingen blekkpatron oppdaget\n1. Fjern utskriftsmodulen.\n2. Sett inn en blekkpatron i modulen.\n3. Installer utskriftsmodulen i maskinen på nytt.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Overopphetet. Vent noen minutter.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-akse nullstilling mislyktes',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Ingen respons fra skrivermodul.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Temperatur',
     upload: 'Last opp',
     USER_OPERATION: 'Følg instruksjonene på enhetspanelet for å fortsette.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Patron tom\nPatronen er tom for blekk. Bytt patronen for å fortsette utskriften.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Lavt blekknivå\nBlekket i patronen er i ferd med å gå tomt. Vi anbefaler å bytte patronen snart.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Vennligst sett inn riktig patron for å fortsette.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Vennligst sett inn patronen for å fortsette.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Installer riktig modul for å fortsette.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Ukjent modul oppdaget. Installer riktig modul for å fortsette.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Ta ut patronen for å fortsette.',
     USER_OPERATION_ROTARY_PAUSE: 'Vennligst bytt til roterende motor',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Fokuspåminnelse\nFokuser på nytt før du starter en ny jobb for å sikre nøyaktige resultater.',
   },
   my_cloud: {
     action: {

@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: "#932 Tensione laser anomala\nErrore di tensione del laser. Riavviare la macchina. Se il problema persiste, contattare l'assistenza clienti.",
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Errore critico: Scheda madre offline. Contattare assistenza FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Scheda madre non risponde\nLa scheda madre non risponde. Riavviare il lavoro.',
-    HARDWARE_ERROR_NO_INK_DETECTED: "#926 Nessuna cartuccia d'inchiostro rilevata\n1. Rimuovere il modulo di stampa.\n2. Inserire una cartuccia d'inchiostro nel modulo.\n3. Reinstallare il modulo di stampa nella macchina.",
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Surriscaldamento. Attendere qualche minuto.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Reset asse Z non riuscito',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Nessuna risposta dal modulo stampante.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Temperatura',
     upload: 'Carica',
     USER_OPERATION: 'Si prega di seguire le istruzioni sul pannello del dispositivo per continuare.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Cartuccia vuota\nLa cartuccia è esaurita. Sostituire la cartuccia per continuare la stampa.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: "Livello inchiostro basso\nL'inchiostro nella cartuccia sta per esaurirsi. Consigliamo di sostituire la cartuccia a breve.",
     USER_OPERATION_CHANGE_CARTRIDGE: 'Si prega di inserire la cartuccia corretta per continuare.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Si prega di inserire la cartuccia per continuare.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Installare il modulo corretto per continuare.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Modulo sconosciuto rilevato. Installare il modulo corretto per continuare.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Rimuovere la cartuccia per continuare.',
     USER_OPERATION_ROTARY_PAUSE: 'Passare a motore rotante',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Promemoria messa a fuoco\nEsegui di nuovo la messa a fuoco prima di iniziare un nuovo lavoro per garantire risultati precisi.',
   },
   my_cloud: {
     action: {

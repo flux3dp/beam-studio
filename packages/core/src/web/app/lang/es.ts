@@ -2151,7 +2151,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Voltaje del láser anormal\nError de voltaje del láser. Reinicie la máquina. Si el problema persiste, contacte con el servicio de atención al cliente.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Error crítico: placa base desconectada. Contacte con el servicio de asistencia de FLUX.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Placa base sin respuesta\nLa placa base no responde. Reinicie el trabajo.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 No se detectó cartucho de tinta\n1. Retire el módulo de impresión.\n2. Inserte un cartucho de tinta en el módulo.\n3. Reinstale el módulo de impresión en la máquina.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Sobrecalentamiento. Por favor, espere unos minutos.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Fallo en el reinicio del eje Z',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 El módulo de impresión no responde.',
@@ -2188,6 +2187,8 @@ const lang: ILang = {
     temperature: 'Temperatura',
     upload: 'Cargar',
     USER_OPERATION: 'Por favor, siga las instrucciones en el panel del dispositivo para continuar.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Cartucho vacío\nEl cartucho está sin tinta. Sustitúyalo para continuar imprimiendo.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Nivel de tinta bajo\nLa tinta del cartucho se está agotando. Recomendamos sustituirlo pronto.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Por favor, inserte el cartucho correcto para continuar.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Por favor, inserte el cartucho para continuar.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Por favor, instale el módulo correcto para continuar.',
@@ -2196,6 +2197,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Se ha detectado un módulo desconocido. Por favor, instale el módulo correcto para continuar.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Por favor, retire el cartucho para continuar.',
     USER_OPERATION_ROTARY_PAUSE: 'Por favor, cambie al motor rotativo.',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Recordatorio de enfoque\nVuelva a enfocar antes de iniciar un nuevo trabajo para garantizar resultados precisos.',
   },
   my_cloud: {
     action: {

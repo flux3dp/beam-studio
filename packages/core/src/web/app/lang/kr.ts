@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 레이저 전압 이상\n레이저 전압 오류입니다. 기계를 재시작하세요. 문제가 지속되면 고객 지원에 문의하세요.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 치명적인 오류: 메인보드 오프라인. FLUX 지원팀에 문의하세요.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 메인보드 응답 없음\n메인보드가 응답하지 않습니다. 작업을 다시 시작하세요.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 잉크 카트리지가 감지되지 않음\n1. 프린트 모듈을 제거하세요.\n2. 잉크 카트리지를 모듈에 삽입하세요.\n3. 프린트 모듈을 기계에 다시 설치하세요.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 과열되었습니다. 몇 분 기다려주세요.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z축 리셋 실패',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 프린터 모듈 응답 없음.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: '온도',
     upload: '업로드',
     USER_OPERATION: '계속하려면 장치 패널의 지시 사항을 따르세요.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: '카트리지 비어 있음\n카트리지 잉크가 없습니다. 교체 후 인쇄를 계속하세요.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: '잉크 부족\n카트리지의 잉크가 부족합니다. 빠른 교체를 권장합니다.',
     USER_OPERATION_CHANGE_CARTRIDGE: '계속하려면 올바른 카트리지를 삽입하세요.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: '계속하려면 카트리지를 삽입하세요.',
     USER_OPERATION_CHANGE_TOOLHEAD: '계속하려면 올바른 모듈을 설치하십시오.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 알 수 없는 모듈이 감지되었습니다. 계속하려면 올바른 모듈을 설치하십시오.',
     USER_OPERATION_REMOVE_CARTRIDGE: '계속하려면 카트리지를 제거하세요.',
     USER_OPERATION_ROTARY_PAUSE: '로터리 모터로 전환하세요',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: '초점 알림\n정확한 결과를 위해 새 작업을 시작하기 전에 초점을 다시 맞추세요.',
   },
   my_cloud: {
     action: {

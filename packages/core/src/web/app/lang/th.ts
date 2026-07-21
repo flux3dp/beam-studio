@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 แรงดันไฟฟ้าเลเซอร์ผิดปกติ\nข้อผิดพลาดแรงดันไฟฟ้าเลเซอร์ กรุณารีสตาร์ทเครื่อง หากปัญหายังคงอยู่ โปรดติดต่อฝ่ายบริการลูกค้า',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 ข้อผิดพลาดวิกฤติ: เมนบอร์ดออฟไลน์ โปรดติดต่อฝ่ายสนับสนุน',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 เมนบอร์ดไม่ตอบสนอง\nเมนบอร์ดไม่ตอบสนอง กรุณาเริ่มงานใหม่',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 ไม่พบตลับหมึก\n1. ถอดโมดูลพิมพ์ออก\n2. ใส่ตลับหมึกเข้าไปในโมดูล\n3. ติดตั้งโมดูลพิมพ์กลับเข้าเครื่อง',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 ร้อนเกินไป โปรดรอสักครู่',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 รีเซ็ตแกน Z ล้มเหลว',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 ไม่มีการตอบสนองจากโมดูลพิมพ์',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'อุณหภูมิ',
     upload: 'อัปโหลด',
     USER_OPERATION: 'กรุณาทำตามคำแนะนำในพาเนลของอุปกรณ์เพื่อดำเนินการต่อ',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'ตลับหมึกว่างเปล่า\nตลับหมึกหมด กรุณาเปลี่ยนตลับหมึกเพื่อพิมพ์ต่อ',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'ระดับหมึกต่ำ\nหมึกในตลับใกล้หมด เราแนะนำให้เปลี่ยนตลับหมึกเร็ว ๆ นี้',
     USER_OPERATION_CHANGE_CARTRIDGE: 'กรุณาใส่แผ่นหมึกที่ถูกต้องเพื่อดำเนินการต่อ',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'กรุณาใส่แผ่นหมึกเพื่อดำเนินการต่อ',
     USER_OPERATION_CHANGE_TOOLHEAD: 'โปรดติดตั้งโมดูลที่ถูกต้องเพื่อดําเนินการต่อ',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 ตรวจพบโมดูลที่ไม่รู้จัก โปรดติดตั้งโมดูลที่ถูกต้องเพื่อดําเนินการต่อ',
     USER_OPERATION_REMOVE_CARTRIDGE: 'โปรดนําตลับหมึกออกเพื่อดําเนินการต่อ',
     USER_OPERATION_ROTARY_PAUSE: 'โปรดสลับไปยังมอเตอร์หมุน',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'การเตือนโฟกัส\nโฟกัสใหม่ก่อนเริ่มงานใหม่เพื่อให้ได้ผลลัพธ์ที่แม่นยำ',
   },
   my_cloud: {
     action: {

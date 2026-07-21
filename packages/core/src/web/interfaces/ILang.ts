@@ -2093,7 +2093,6 @@ export interface ILang {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: string;
     HARDWARE_ERROR_MAINBOARD_ERROR: string;
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: string;
-    HARDWARE_ERROR_NO_INK_DETECTED: string;
     HARDWARE_ERROR_OVER_TEMPERATURE: string;
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: string;
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: string;
@@ -2130,6 +2129,8 @@ export interface ILang {
     temperature: string;
     upload: string;
     USER_OPERATION: string;
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: string; // machine.ink_empty_error and machine.ink_empty_text
+    USER_OPERATION_CARTRIDGE_INK_LOW: string; // machine.ink_low_error and machine.ink_low_text
     USER_OPERATION_CHANGE_CARTRIDGE: string;
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: string;
     USER_OPERATION_CHANGE_TOOLHEAD: string;
@@ -2138,6 +2139,7 @@ export interface ILang {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: string;
     USER_OPERATION_REMOVE_CARTRIDGE: string;
     USER_OPERATION_ROTARY_PAUSE: string;
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: string; // machine.focus_reminder and machine.focus_reminder_text
   };
   my_cloud: {
     action: {

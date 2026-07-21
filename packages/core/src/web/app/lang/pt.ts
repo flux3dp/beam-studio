@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Tensão do laser anormal\nErro de tensão do laser. Reinicie a máquina. Se o problema persistir, entre em contato com o suporte ao cliente.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Erro Crítico: Placa-mãe offline. Contate o Suporte FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Placa-mãe sem resposta\nA placa-mãe não está respondendo. Reinicie o trabalho.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Nenhum cartucho de tinta detectado\n1. Remova o módulo de impressão.\n2. Insira um cartucho de tinta no módulo.\n3. Reinstale o módulo de impressão na máquina.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Superaquecimento. Aguarde alguns minutos.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Falha ao redefinir eixo Z',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: 'Sem resposta do módulo da impressora.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Temperatura',
     upload: 'Enviar',
     USER_OPERATION: 'Por favor, siga as instruções no painel do dispositivo para continuar.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Cartucho vazio\nO cartucho está sem tinta. Substitua-o para continuar a imprimir.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Nível de tinta baixo\nA tinta do cartucho está a acabar. Recomendamos substituir o cartucho em breve.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Por favor, insira o cartucho correto para continuar.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Por favor, insira o cartucho para continuar.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Instale o módulo correto para continuar.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: 'Módulo desconhecido detectado. Instale o módulo correto para continuar.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Por favor, remova o cartucho para continuar.',
     USER_OPERATION_ROTARY_PAUSE: 'Por favor, mude para o motor rotativo.',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Lembrete de foco\nVolte a focar antes de iniciar um novo trabalho para garantir resultados precisos.',
   },
   my_cloud: {
     action: {

@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Tegangan Laser Abnormal\nKesalahan tegangan laser. Silakan mulai ulang mesin. Jika masalah berlanjut, hubungi dukungan pelanggan.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kesalahan Kritis: Papan utama offline. Silakan hubungi Dukungan FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Papan Utama Tidak Merespons\nPapan utama tidak merespons. Silakan mulai ulang pekerjaan.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Kartrid Tinta Tidak Terdeteksi\n1. Lepaskan modul cetak.\n2. Masukkan kartrid tinta ke dalam modul.\n3. Pasang kembali modul cetak ke mesin.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Terlalu panas. Mohon tunggu beberapa menit.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Reset sumbu Z gagal',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tidak ada respon dari modul printer.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Suhu',
     upload: 'Unggah',
     USER_OPERATION: 'Silakan ikuti petunjuk di panel perangkat untuk melanjutkan.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Kartrid Kosong\nKartrid kehabisan tinta. Ganti kartrid untuk melanjutkan pencetakan.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Tingkat Tinta Rendah\nTinta di kartrid hampir habis. Kami sarankan segera mengganti kartrid.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Silakan masukkan kartrid yang benar untuk melanjutkan.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Silakan masukkan kartrid untuk melanjutkan.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Pasang modul yang benar untuk melanjutkan.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Terdeteksi modul yang tidak diketahui. Pasang modul yang benar untuk melanjutkan.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Harap lepas kartrid untuk melanjutkan.',
     USER_OPERATION_ROTARY_PAUSE: 'Harap beralih ke motor putar.',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Pengingat Fokus\nFokuskan ulang sebelum memulai pekerjaan baru untuk memastikan hasil yang akurat.',
   },
   my_cloud: {
     action: {

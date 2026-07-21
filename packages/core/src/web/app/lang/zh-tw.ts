@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 雷射電壓異常\n雷射電壓錯誤。請重新啟動機器。若問題持續，請聯繫客服。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 主板沒有回應。請聯繫 FLUX 客服。', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 主板沒有回應\n主板沒有回應。請重新啟動工作。',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 未偵測到墨匣\n1. 移除列印模組。\n2. 將墨匣插入模組。\n3. 請將列印模組重新安裝至機器。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 水溫過高，請稍後再繼續',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z 軸歸零失敗',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 列印頭無回應。',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: '溫度',
     upload: '上傳',
     USER_OPERATION: '請查看機器面板上的指示以繼續。',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: '墨匣無墨\n墨匣已無墨水。請更換後繼續列印。',
+    USER_OPERATION_CARTRIDGE_INK_LOW: '墨量偏低\n墨匣墨水即將用盡。建議儘快更換。',
     USER_OPERATION_CHANGE_CARTRIDGE: '請安裝正確的墨匣以繼續。',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: '請安裝墨匣以繼續。',
     USER_OPERATION_CHANGE_TOOLHEAD: '請安裝正確的模組以繼續。',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 偵測到未知模組。請安裝正確的模組以繼續。',
     USER_OPERATION_REMOVE_CARTRIDGE: '請移除墨水匣以繼續操作。',
     USER_OPERATION_ROTARY_PAUSE: '請切換旋轉軸馬達開關',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: '對焦提醒\n為確保結果正確，開始新工作前請重新對焦。',
   },
   my_cloud: {
     action: {

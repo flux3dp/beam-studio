@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Laserin jännite poikkeava\nLaserin jännitevirhe. Käynnistä laite uudelleen. Jos ongelma jatkuu, ota yhteyttä asiakastukeen.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kriittinen virhe: Pääkortti offline. Ota yhteyttä FLUX-tukeen.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Pääkortti ei vastaa\nPääkortti ei vastaa. Käynnistä työ uudelleen.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Mustekasettia ei havaittu\n1. Poista tulostusmoduuli.\n2. Aseta mustekasetti moduuliin.\n3. Asenna tulostusmoduuli uudelleen laitteeseen.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Ylikuumeneminen. Odota muutama minuutti',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-akselin nollaaminen epäonnistui',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tulostinmoduuli ei vastaa.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Lämpötila',
     upload: 'Lataa',
     USER_OPERATION: 'Noudata laitteen paneelissa olevia ohjeita jatkaaksesi.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Kasetti tyhjä\nKasetin muste on loppunut. Vaihda kasetti jatkaaksesi tulostamista.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Alhainen mustetaso\nKasetin muste on vähissä. Suosittelemme vaihtamaan kasetin pian.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Lisää oikea patruuna jatkaaksesi.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Lisää patruuna jatkaaksesi.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Asenna oikea moduuli jatkaaksesi.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Tuntematon moduuli havaittu. Asenna oikea moduuli jatkaaksesi.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Poista kasetti jatkaaksesi.',
     USER_OPERATION_ROTARY_PAUSE: 'Vaihda pyörivään moottoriin',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Tarkennusmuistutus\nTarkenna uudelleen ennen uuden työn aloittamista tarkkojen tulosten varmistamiseksi.',
   },
   my_cloud: {
     action: {

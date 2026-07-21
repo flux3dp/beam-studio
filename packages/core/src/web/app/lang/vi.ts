@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Điện áp laser bất thường\nLỗi điện áp laser. Vui lòng khởi động lại máy. Nếu sự cố vẫn tiếp diễn, hãy liên hệ bộ phận hỗ trợ khách hàng.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Lỗi nghiêm trọng: Bo mạch chủ ngoại tuyến. Vui lòng liên hệ hỗ trợ FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Bo mạch chủ không phản hồi\nBo mạch chủ không phản hồi. Vui lòng khởi động lại công việc.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Không phát hiện hộp mực\n1. Tháo module in.\n2. Lắp hộp mực vào module.\n3. Lắp lại module in vào máy.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Quá nóng. Vui lòng đợi vài phút.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: 'Lỗi khởi động trục Z',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: 'Module máy in không phản hồi.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Nhiệt độ',
     upload: 'Tải lên',
     USER_OPERATION: 'Vui lòng tuân theo hướng dẫn trên bảng điều khiển của thiết bị để tiếp tục.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Hộp mực trống\nHộp mực đã hết mực. Vui lòng thay hộp mực để tiếp tục in.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Mức mực thấp\nMực trong hộp sắp hết. Chúng tôi khuyên bạn nên thay hộp mực sớm.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Vui lòng chèn hộp mực chính xác để tiếp tục.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Vui lòng chèn hộp mực để tiếp tục.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Vui lòng lắp đúng module để tiếp tục.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: 'Phát hiện module không xác định. Vui lòng lắp đúng module để tiếp tục.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Vui lòng tháo hộp mực để tiếp tục.',
     USER_OPERATION_ROTARY_PAUSE: 'Vui lòng chuyển sang module quay.',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Nhắc nhở lấy nét\nLấy nét lại trước khi bắt đầu công việc mới để đảm bảo kết quả chính xác.',
   },
   my_cloud: {
     action: {

@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Unormal laserspænding\nLaserspændingsfejl. Genstart maskinen. Hvis problemet fortsætter, kontakt kundeservice.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritisk fejl: Hovedkort offline. Kontakt venligst FLUX-support.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Hovedkort svarer ikke\nHovedkortet svarer ikke. Genstart venligst jobbet.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Ingen blækpatron registreret\n1. Fjern printmodulet.\n2. Indsæt en blækpatron i modulet.\n3. Geninstaller printmodulet i maskinen.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Overophedet. Vent venligst et par minutter.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-akse nulstilling mislykkedes',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Ingen reaktion fra printermodulet.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Temperatur',
     upload: 'Upload',
     USER_OPERATION: 'Følg venligst instruktionerne på enhedspanelet for at fortsætte.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Patron tom\nPatronen er løbet tør for blæk. Udskift patronen for at fortsætte udskrivningen.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Lavt blækniveau\nBlækket i patronen er ved at løbe tør. Vi anbefaler, at du udskifter patronen snart.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Indsæt venligst den korrekte patron for at fortsætte.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Indsæt venligst patronen for at fortsætte.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Installer det korrekte modul for at fortsætte.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Ukendt modul registreret. Installer det korrekte modul for at fortsætte.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Fjern venligst patronen for at fortsætte.',
     USER_OPERATION_ROTARY_PAUSE: 'Skift venligst til roterende motor',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Fokuspåmindelse\nFokusér igen, før du starter et nyt job, for at sikre nøjagtige resultater.',
   },
   my_cloud: {
     action: {
