@@ -10,6 +10,6 @@ it('infill', () => {
   cy.get('#svg_1').should('have.attr', 'fill', '#333333');
   cy.get('#svg_1').click();
   cy.showPanel('objects');
-  cy.get('#infill').click();
+  cy.setInfill(false);
   cy.get('#svg_1').should('have.attr', 'fill', 'none');
 });

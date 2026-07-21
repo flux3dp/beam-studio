@@ -30,7 +30,7 @@ interface Props {
   elem: null | SVGElement;
 }
 
-function OptionsPanel({ elem }: Props): React.JSX.Element {
+function OptionsPanel({ elem }: Props): null | React.JSX.Element {
   const isMobile = useIsMobile();
   const workarea = useWorkarea();
   const supportVariableBlock = useMemo(isVariableTextSupported, [workarea]);
@@ -64,18 +64,25 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
     if (!elem) return [];
 
     const tagName = elem.tagName.toLowerCase();
-    const colorOrInfill = (key = 'infill') =>
-      showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elems={[elem]} key={key} />;
+    const colorOrInfill = (key = 'infill') => {
+      if (!isMobile) return null;
+
+      if (showColorPanel) return <ColorPanel elem={elem} key="color" />;
+
+      return <InFillBlock elems={[elem]} key={key} />;
+    };
 
     return match(tagName)
       .with('rect', () => [<RectOptions elem={elem} key="rect" />, colorOrInfill('fill')])
       .with('polygon', () => [<PolygonOptions elem={elem} key="polygon" />, colorOrInfill('fill')])
       .with('text', () => [
-        <TextOptions elem={elem} key="text" showColorPanel={showColorPanel} textElements={[elem as SVGTextElement]} />,
-        showColorPanel ? (
-          <ColorPanel elem={elem} key="color" />
-        ) : isMobile ? (
-          <InFillBlock elems={[elem]} key="fill" />
+        <TextOptions elem={elem} key="text" textElements={[elem as SVGTextElement]} />,
+        isMobile ? (
+          showColorPanel ? (
+            <ColorPanel elem={elem} key="color" />
+          ) : (
+            <InFillBlock elems={[elem]} key="fill" />
+          )
         ) : null,
       ])
       .with(P.union('image', 'img'), () =>
@@ -98,18 +105,16 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
           ];
         }
 
-        return [
-          showColorPanel ? (
-            <MultiColorOptions elem={elem} key="multi-color" />
-          ) : (
-            <InFillBlock elems={[elem]} key="infill" />
-          ),
-        ];
+        if (!isMobile) return [];
+
+        if (showColorPanel) return [<MultiColorOptions elem={elem} key="multi-color" />];
+
+        return [<InFillBlock elems={[elem]} key="infill" />];
       })
       .with('use', () => [
-        showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : null,
+        isMobile && showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : null,
         showVariableBlock ? (
-          <VariableTextBlock elems={[elem]} id={elem.id} key="variable" withDivider={showColorPanel} />
+          <VariableTextBlock elems={[elem]} id={elem.id} key="variable" withDivider={isMobile && showColorPanel} />
         ) : null,
       ])
       .otherwise(() => [colorOrInfill()]);
@@ -120,16 +125,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
       <ObjectPanelItem.Divider />
       {contents?.reverse()}
     </div>
-  ) : (
-    <>
-      {contents.filter(Boolean).length ? (
-        <div className={styles.panel}>
-          <div className={styles.title}>OPTIONS</div>
-          {contents}
-        </div>
-      ) : null}
-    </>
-  );
+  ) : contents.filter(Boolean).length ? (
+    <div className={styles.panel}>{contents}</div>
+  ) : null;
 }
 
 export default OptionsPanel;

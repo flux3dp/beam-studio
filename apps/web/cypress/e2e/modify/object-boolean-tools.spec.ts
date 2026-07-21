@@ -10,7 +10,7 @@ const drawRectangle = () => {
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
   cy.get('#svg_1').should('exist');
   cy.showPanel('objects');
-  cy.get('#infill').click();
+  cy.setInfill(false);
   cy.get('#x_position').clear().type('0{enter}');
   cy.get('#y_position').clear().type('0{enter}');
   cy.get('#w_size').clear().type('75{enter}');
@@ -23,7 +23,7 @@ const drawEllipse = () => {
   cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
   cy.get('#svg_2').should('exist');
-  cy.get('#infill').click();
+  cy.setInfill(false);
   cy.get('#cx_position').clear().type('0{enter}');
   cy.get('#cy_position').clear().type('0{enter}');
   cy.get('#rx_size').clear().type('150{enter}');
@@ -37,7 +37,7 @@ const drawText = () => {
   cy.get('#svg_2').should('exist');
   cy.inputText('ABC');
   cy.showPanel('objects');
-  cy.get('#infill').click();
+  cy.setInfill(false);
   cy.get('#x_position').clear().type('0{enter}');
   cy.get('#y_position').clear().type('0{enter}');
   cy.get('#w_size').clear().type('75{enter}');

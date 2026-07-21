@@ -22,6 +22,23 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   },
 }));
 
+jest.mock('@core/app/widgets/AntdSelect', () => ({ className, id, onChange, options, placeholder, value }: any) => (
+  <select
+    className={className}
+    data-placeholder={placeholder}
+    id={id}
+    onChange={(e) => onChange(e.target.value)}
+    value={value ?? ''}
+  >
+    {value === undefined ? <option value="" /> : null}
+    {options.map((o: any) => (
+      <option key={o.value} value={o.value}>
+        {o.label}
+      </option>
+    ))}
+  </select>
+));
+
 import InFillBlock from './InFillBlock';
 
 describe('should render correctly', () => {
@@ -53,19 +70,19 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
 
-    const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} />);
+    const { container } = render(<InFillBlock elems={[document.getElementById('flux')!]} />);
 
     expect(container).toMatchSnapshot();
 
-    const switchBtn = container.querySelector('button');
+    const select = container.querySelector('select')!;
 
-    fireEvent.click(switchBtn);
+    fireEvent.change(select, { target: { value: 'fill' } });
     expect(container).toMatchSnapshot();
     expect(setElemsUnfill).not.toHaveBeenCalled();
     expect(setElemsFill).toHaveBeenCalledTimes(1);
     expect(setElemsFill).toHaveBeenNthCalledWith(1, [document.getElementById('flux')]);
 
-    fireEvent.click(switchBtn);
+    fireEvent.change(select, { target: { value: 'stroke' } });
     expect(container).toMatchSnapshot();
     expect(setElemsUnfill).toHaveBeenCalledTimes(1);
     expect(setElemsUnfill).toHaveBeenNthCalledWith(1, [document.getElementById('flux')]);
@@ -110,20 +127,20 @@ describe('should render correctly', () => {
     expect(calcElemFilledInfo).toHaveBeenNthCalledWith(1, elem1);
     expect(calcElemFilledInfo).toHaveBeenNthCalledWith(2, elem2);
 
-    const switchBtn = container.querySelector('button');
+    const select = container.querySelector('select')!;
 
-    expect(switchBtn).not.toHaveClass('filled');
+    expect(select.value).toBe('fill');
 
-    // partial -> unfill
-    fireEvent.click(switchBtn);
-    expect(switchBtn).not.toHaveClass('filled');
+    // any filled -> unfill
+    fireEvent.change(select, { target: { value: 'stroke' } });
+    expect(select.value).toBe('stroke');
     expect(setElemsUnfill).toHaveBeenCalledTimes(1);
     expect(setElemsUnfill).toHaveBeenNthCalledWith(1, [elem1, elem2]);
     expect(setElemsFill).not.toHaveBeenCalled();
 
     // unfill -> fill
-    fireEvent.click(switchBtn);
-    expect(switchBtn).toHaveClass('filled');
+    fireEvent.change(select, { target: { value: 'fill' } });
+    expect(select.value).toBe('fill');
     expect(setElemsUnfill).toHaveBeenCalledTimes(1);
     expect(setElemsFill).toHaveBeenCalledTimes(1);
     expect(setElemsFill).toHaveBeenNthCalledWith(1, [elem1, elem2]);
@@ -137,19 +154,19 @@ describe('should render correctly', () => {
     });
     document.body.innerHTML = '<div id="flux" />';
 
-    const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} label="Infill" />);
+    const { container } = render(<InFillBlock elems={[document.getElementById('flux')!]} label="Infill" />);
 
     expect(container).toMatchSnapshot();
 
-    const switchBtn = container.querySelector('button');
+    const select = container.querySelector('select')!;
 
-    fireEvent.click(switchBtn);
+    fireEvent.change(select, { target: { value: 'fill' } });
     expect(container).toMatchSnapshot();
     expect(setElemsUnfill).not.toHaveBeenCalled();
     expect(setElemsFill).toHaveBeenCalledTimes(1);
     expect(setElemsFill).toHaveBeenNthCalledWith(1, [document.getElementById('flux')]);
 
-    fireEvent.click(switchBtn);
+    fireEvent.change(select, { target: { value: 'stroke' } });
     expect(container).toMatchSnapshot();
     expect(setElemsUnfill).toHaveBeenCalledTimes(1);
     expect(setElemsUnfill).toHaveBeenNthCalledWith(1, [document.getElementById('flux')]);

@@ -269,6 +269,14 @@ Cypress.Commands.add('applySettings', () => {
   cy.get('.ant-modal-footer button.ant-btn-primary').contains('Apply').click();
 });
 
+Cypress.Commands.add('getMenuItem', (path: string[], target: string) => {
+  cy.get('div[data-testid="top-bar-menu"]').click();
+  cy.get('ul[aria-label="Menu"]').should('have.class', 'szh-menu--state-open').as('menu');
+  path.forEach((text) => {
+    cy.get('@menu').contains('.szh-menu__item--submenu', text).should('be.visible').click();
+  });
+  return cy.get('@menu').contains('.szh-menu__item', target).should('be.visible');
+});
 /**
  * Open the top bar menu, walk the given submenu path, and yield the target item.
  *
@@ -426,6 +434,27 @@ Cypress.Commands.add('moveElementToLayer', (targetLayer: string, needConfirm = t
 Cypress.Commands.add('showPanel', (panelName: 'layers' | 'objects') => {
   const componentName = panelName === 'layers' ? 'rightPanelLayer' : 'rightPanelObject';
   cy.get(`#${componentName}-tab`).click();
+});
+
+const INFILL_OPTION_LABELS = {
+  fill: 'Fill Engraving Mode',
+  stroke: 'Stroke Mode',
+} as const;
+
+Cypress.Commands.add('setInfill', (filled: boolean, id = 'infill') => {
+  const targetLabel = filled ? INFILL_OPTION_LABELS.fill : INFILL_OPTION_LABELS.stroke;
+
+  cy.get(`#${id}`).closest('.ant-select-selector').click();
+  cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option').contains(targetLabel).click();
+});
+
+Cypress.Commands.add('assertInfilled', (filled: boolean, id = 'infill') => {
+  const expectedTitle = filled ? INFILL_OPTION_LABELS.fill : INFILL_OPTION_LABELS.stroke;
+
+  cy.get(`#${id}`)
+    .closest('.ant-select')
+    .find('.ant-select-selection-item')
+    .should('have.attr', 'title', expectedTitle);
 });
 
 //

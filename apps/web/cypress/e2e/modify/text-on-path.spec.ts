@@ -87,7 +87,7 @@ describe('text on path', () => {
   });
 
   it('text infill', () => {
-    cy.contains('Text Infill').siblings('button').click();
+    cy.setInfill(false);
     cy.get('#svg_1')
       .should('exist')
       .should('have.attr', 'fill', 'none')
@@ -96,7 +96,7 @@ describe('text on path', () => {
   });
 
   it('path infill', () => {
-    cy.contains('Path Infill').siblings('button').click();
+    cy.setInfill(true, 'path_infill');
     cy.get('#svg_2')
       .should('exist')
       .should('have.attr', 'fill', '#333333')

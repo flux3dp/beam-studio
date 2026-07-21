@@ -85,7 +85,6 @@ const isGoogleFontLoaded = (
 interface Props {
   elem: SVGElement;
   isTextPath?: boolean;
-  showColorPanel?: boolean;
   textElements: SVGTextElement[];
 }
 
@@ -98,7 +97,7 @@ const defaultTextConfigs: TextConfig = {
   verticalAlign: { hasMultiValue: false, value: VerticalAlign.MIDDLE },
 };
 
-const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
+const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
   const lang = useI18n();
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
@@ -363,7 +362,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       fontLoadedPromise,
     });
   };
-
   const handleGoogleFontSelect = useCallback(
     async (fontFamily: string) => {
       const localFontMatch = FontFuncs.findFontFamilyCaseInsensitive(fontFamily);
@@ -561,8 +559,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     <>
       <LineSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
       <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
+      {!isMobile && <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />}
       {renderVerticalTextSwitch()}
-      {!showColorPanel && !isMobile && <InFillBlock elems={[elem]} />}
     </>
   );
 
@@ -573,6 +571,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     return (
       <>
         <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
+        {!isMobile && <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />}
         <StartOffsetBlock
           hasMultiValue={startOffset.hasMultiValue}
           onValueChange={handleStartOffsetChange}
@@ -583,8 +582,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           onValueChange={handleVerticalAlignChange}
           value={verticalAlign.value}
         />
-        <InFillBlock elems={textElements} label={langOptionPanel.text_infill} />
-        <InFillBlock elems={path} id="path_infill" label={langOptionPanel.path_infill} />
+        {isMobile && (
+          <>
+            <InFillBlock elems={textElements} label={lang.topbar.tag_names.text} />
+            <InFillBlock elems={path} id="path_infill" label={lang.topbar.tag_names.path} />
+          </>
+        )}
       </>
     );
   };
@@ -608,9 +611,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
             <div className={styles.row}>
               <TextTransformBlock onSizeChange={handleSizeChange} textElements={textElements} />
             </div>
-            <div className={styles.row}>{renderFontFamilyBlock()}</div>
-            <div className={styles.row}>
-              <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
+            <div className={styles['labeled-row']}>
+              <span className={styles['prefix-label']}>Aa</span>
+              {renderFontFamilyBlock()}
+            </div>
+            <div className={styles['labeled-row']}>
+              <span className={classNames(styles['prefix-label'], styles.bold)}>B</span>
               {renderFontStyleBlock()}
             </div>
             {isAllFitText && <div className={styles.row}>{<FitTextAlignBlock textElements={textElements} />}</div>}
