@@ -22,6 +22,7 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import CalibrationDataMissingError from './CalibrationDataMissingError';
+import callWithRetry from './callWithRetry';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 import { getWideAngleCameraData } from './getWideAngleCameraData';
 import handlePreviewSetupError from './handlePreviewSetupError';
@@ -98,6 +99,21 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         this.setRegionPreviewGrid(grid);
         await this.setupLaserHeadCamera();
       } else {
+        try {
+          const res = await deviceMaster.getDoorOpen();
+
+          if (res.value === '0') {
+            // Wide angle camera requires the door to be open.
+            alertCaller.popUpError({
+              caption: lang.message.camera.wide_angle_open_door,
+              message: lang.message.camera.wide_angle_open_door_text,
+            });
+
+            return this._previewMode;
+          }
+        } catch (err) {
+          console.error('Fail to getDoorOpen, assume door is opened', err);
+        }
         await this.setupWideAngleCamera();
       }
 
@@ -153,7 +169,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     const { lang } = i18n;
 
     try {
-      await deviceMaster.setCamera(0);
+      await callWithRetry(() => deviceMaster.setCamera(0));
     } catch (err) {
       console.error('Fail to setCamera to laser head', err);
     }
@@ -169,18 +185,18 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       }
 
       this.showMessage({ content: lang.message.enteringRawMode });
-      await deviceMaster.enterRawMode();
+      await callWithRetry(() => deviceMaster.enterRawMode());
       this.showMessage({ content: lang.message.exitingRotaryMode });
-      await deviceMaster.rawSetRotary(false);
+      await callWithRetry(() => deviceMaster.rawSetRotary(false));
       this.showMessage({ content: lang.message.homing });
-      await deviceMaster.rawHome();
-      await deviceMaster.rawStartLineCheckMode();
+      await callWithRetry(() => deviceMaster.rawHome());
+      await callWithRetry(() => deviceMaster.rawStartLineCheckMode());
       this.lineCheckEnabled = true;
       this.showMessage({ content: lang.message.turningOffFan });
-      await deviceMaster.rawSetFan(false);
+      await callWithRetry(() => deviceMaster.rawSetFan(false));
       this.showMessage({ content: lang.message.turningOffAirPump });
-      await deviceMaster.rawSetAirPump(false);
-      await deviceMaster.rawSetWaterPump(false);
+      await callWithRetry(() => deviceMaster.rawSetAirPump(false));
+      await callWithRetry(() => deviceMaster.rawSetWaterPump(false));
       this.showMessage({ content: lang.message.connectingCamera });
 
       if (!(await deviceMaster.setFisheyeParam(this.fisheyeParams!))) {
@@ -207,12 +223,14 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     try {
       this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
 
-      const isCameraOblique = await checkCameraOblique(this.device);
+      const isCameraOblique = await callWithRetry(() => checkCameraOblique(this.device));
 
       this.isCameraOblique = isCameraOblique;
-      await deviceMaster.connectCamera();
+      await callWithRetry(() => deviceMaster.connectCamera());
 
-      const { canPreview, hasWideAngleCamera, parameters } = await getWideAngleCameraData(this.device);
+      const { canPreview, hasWideAngleCamera, parameters } = await callWithRetry(() =>
+        getWideAngleCameraData(this.device),
+      );
 
       this.hasWideAngleCamera = hasWideAngleCamera;
       this.wideAngleFisheyeParams = parameters as FisheyeCameraParametersV4 | undefined;

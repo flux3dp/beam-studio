@@ -73,6 +73,7 @@ export interface ILang {
     font_size: string;
     hide_text: string;
     invert_color: string;
+    text: string;
     text_margin: string;
   };
   beambox: {
@@ -216,6 +217,7 @@ export interface ILang {
       origin: string;
       pass_through: string;
       pass_through_height_desc: string;
+      prespray_times: string;
       rotary_mode: string;
       scale: string;
       skip_prespray: string;
@@ -277,6 +279,7 @@ export interface ILang {
       valentines: string;
       weather: string;
       Xmas: string;
+      zodiac: string;
     };
     image_trace_panel: {
       back: string;
@@ -445,6 +448,7 @@ export interface ILang {
         execute_time_warning: string;
       };
       dxf_bounding_box_size_over: string;
+      dxf_paste_failed: string;
       dxf_version_waring: string;
       facebook_group_invitation: {
         already_joined: string;
@@ -807,7 +811,6 @@ export interface ILang {
           merge_down: string;
           merge_selected: string;
           move_down: string;
-          move_elems_to: string;
           move_selected: string;
           move_up: string;
           new: string;
@@ -1280,7 +1283,79 @@ export interface ILang {
   };
   code_generator: {
     barcode: string;
+    content: string;
+    import: string;
     qr_code: string;
+    type: string;
+  };
+  connection_issue_guide: {
+    alert_link: string;
+    connect_computer: {
+      content: string;
+      macos_steps: string;
+      macos_title: string;
+      title: string;
+      windows_steps: string;
+      windows_title: string;
+    };
+    connect_wifi: {
+      cant_find_hotspot: string;
+      dont_know_hotspot_name: string;
+      step1: string;
+      step2: string;
+      step3: string;
+      title: string;
+    };
+    enter_ip: {
+      check_firmware: string;
+      check_ip_reachable: string;
+      check_machine_responds: string;
+      placeholder: string;
+      step1: string;
+      step2: string;
+      step3: string;
+      title: string;
+      verify: string;
+    };
+    fail: {
+      bullet1: string;
+      bullet2: string;
+      bullet3: string;
+      contact_title: string;
+      intro: string;
+      title: string;
+    };
+    hotspot: {
+      android_steps: string;
+      android_title: string;
+      ios_steps: string;
+      ios_title: string;
+      tip: string;
+      warning_2_4ghz: string;
+    };
+    how_it_works: string;
+    how_it_works_step1: string;
+    how_it_works_step2: string;
+    how_it_works_step3: string;
+    how_it_works_step4: string;
+    intro: string;
+    ip_address: {
+      step1: string;
+      step2: string;
+      step3: string;
+      title: string;
+      warning: string;
+    };
+    success: {
+      cause: string;
+      intro: string;
+      recommend1: string;
+      recommend2: string;
+      recommend3: string;
+      recommend_title: string;
+      title: string;
+    };
+    title: string;
   };
   curve_engraving: {
     '921': string;
@@ -1672,8 +1747,13 @@ export interface ILang {
       text_placeholder: string;
     };
     types: {
+      animal: string;
       capsule: string;
+      dialog_box: string;
+      geometry: string;
       oval: string;
+      pet: string;
+      plant: string;
       polygonal: string;
       quadrilateral: string;
       round_arch: string;
@@ -1681,6 +1761,7 @@ export interface ILang {
       surfing_board: string;
       tag: string;
       text: string;
+      zodiac: string;
     };
   };
   layer_module: {
@@ -1802,6 +1883,8 @@ export interface ILang {
       door_opened_text: string;
       fail_to_transmit_image: string;
       switching_camera: string;
+      wide_angle_open_door: string;
+      wide_angle_open_door_text: string;
       ws_closed_unexpectedly: string;
     };
     cancelling: string;
@@ -2232,7 +2315,6 @@ export interface ILang {
       image_downsampling: string;
       loop_compensation: string;
       mask: string;
-      reverse_engraving: string;
       segmented_engraving: string;
       simplify_clipper_path: string;
       uv_print_export: string;
@@ -2461,6 +2543,7 @@ export interface ILang {
       layer_color_config: string;
       layer_setting: string;
       link: {
+        autocad: string;
         beam_studio_api: string;
         contact_us: string;
         design_market: string;
@@ -2496,6 +2579,7 @@ export interface ILang {
       paste_in_place: string;
       path: string;
       photo_edit: string;
+      plugin: string;
       preferences: string;
       promark_color_test: string;
       questionnaire: string;

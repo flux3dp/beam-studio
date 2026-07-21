@@ -20,17 +20,16 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import undoManager from '../../history/undoManager';
 import { getBBox } from '../../utils/getBBox';
+import { setHref } from '../../utils/href';
 
 let svgCanvas: ISVGCanvas;
-let svgedit;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
-  svgedit = globalSVG.Edit;
 });
 
 // TODO: add unit test
-const importDxf = async (file: Blob): Promise<void> => {
+const importDxf = async (file: Blob, { silent = false }: { silent?: boolean } = {}): Promise<boolean> => {
   const {
     alert: tAlert,
     beambox: { popup: t },
@@ -38,13 +37,13 @@ const importDxf = async (file: Blob): Promise<void> => {
   const Dxf2Svg = await requirejsHelper('dxf2svg');
   const { defaultDpiValue, parsed } = await new Promise<{
     defaultDpiValue: number;
-    parsed: string;
+    parsed: any;
   }>((resolve) => {
     const reader = new FileReader();
 
     reader.onloadend = (evt) => {
       if (!alertConfig.read('skip_dxf_version_warning')) {
-        const autoCadVersionMatch = (evt.target.result as string).match(/AC\d+/);
+        const autoCadVersionMatch = (evt.target?.result as string).match(/AC\d+/);
 
         if (autoCadVersionMatch) {
           const autoCadVersion = autoCadVersionMatch[0].substring(2, autoCadVersionMatch[0].length);
@@ -63,7 +62,7 @@ const importDxf = async (file: Blob): Promise<void> => {
         }
       }
 
-      const parsed = Dxf2Svg.parseString(evt.target.result);
+      const parsed = Dxf2Svg.parseString(evt.target?.result);
       const unit = String(parsed.header?.insunits);
 
       const defaultDpiValue =
@@ -83,15 +82,29 @@ const importDxf = async (file: Blob): Promise<void> => {
   progressCaller.popById('loading_image');
 
   if (!parsed) {
-    alertCaller.popUp({ message: 'DXF Parsing Error' });
+    alertCaller.popById('skip_dxf_version_warning');
 
-    return;
+    if (!silent) {
+      alertCaller.popUp({ message: 'DXF Parsing Error' });
+    }
+
+    return false;
+  }
+
+  if (!parsed.entities || !parsed.entities.length) {
+    alertCaller.popById('skip_dxf_version_warning');
+
+    if (!silent) {
+      alertCaller.popUp({ message: 'Empty DXF file' });
+    }
+
+    return false;
   }
 
   const unitLength = await dialogCaller.showDxfDpiSelector(defaultDpiValue);
 
   if (!unitLength) {
-    return;
+    return false;
   }
 
   progressCaller.openNonstopProgress({
@@ -118,7 +131,6 @@ const importDxf = async (file: Blob): Promise<void> => {
   }
 
   const batchCmd = HistoryCommandFactory.createBatchCommand('Import DXF');
-  const svgdoc = document.getElementById('svgcanvas').ownerDocument;
   const layerNames = Object.keys(outputLayers);
   const promises = [];
 
@@ -136,7 +148,7 @@ const importDxf = async (file: Blob): Promise<void> => {
     }
 
     const id = svgCanvas.getNextId();
-    const symbol = svgdoc.createElementNS(NS.SVG, 'symbol') as unknown as SVGSymbolElement;
+    const symbol = document.createElementNS(NS.SVG, 'symbol') as unknown as SVGSymbolElement;
 
     symbol.setAttribute('overflow', 'visible');
     symbol.id = id;
@@ -153,17 +165,17 @@ const importDxf = async (file: Blob): Promise<void> => {
       }
     }
 
-    const useElem = svgdoc.createElementNS(NS.SVG, 'use');
+    const useElem = document.createElementNS(NS.SVG, 'use');
 
     useElem.id = svgCanvas.getNextId();
-    svgedit.utilities.setHref(useElem, `#${symbol.id}`);
+    setHref(useElem, `#${symbol.id}`);
     layerManager.getCurrentLayer()!.appendChildren([useElem]);
     batchCmd.addSubCommand(new history.InsertElementCommand(useElem));
 
     const bb = getBBox(useElem, { ignoreTransform: true });
 
     const attrs = [];
-    const keys = Object.keys(bb);
+    const keys = Object.keys(bb) as Array<keyof typeof bb>;
 
     for (let j = 0; j < keys.length; j += 1) {
       const key = keys[j];
@@ -183,7 +195,7 @@ const importDxf = async (file: Blob): Promise<void> => {
         const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
 
         if (imageSymbol) {
-          svgedit.utilities.setHref(useElem, `#${imageSymbol.id}`);
+          setHref(useElem, `#${imageSymbol.id}`);
           svgCanvas.updateElementColor(useElem);
         }
 
@@ -196,6 +208,8 @@ const importDxf = async (file: Blob): Promise<void> => {
   removeDefaultLayerIfEmpty({ parentCmd: batchCmd });
   useLayerStore.getState().setSelectedLayers(layerNames);
   undoManager.addCommandToHistory(batchCmd);
+
+  return true;
 };
 
 export default importDxf;

@@ -3,15 +3,9 @@ import React from 'react';
 import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
-import deviceMaster from '@core/helpers/device-master';
+import { getLaserDelayTable } from '@core/helpers/device/laserDelayTable';
 
 import LaserDelaySettingPanel from './LaserDelaySettingPanel';
-
-const parseLaserDelay = (raw: string): Record<string, number> => {
-  const normalized = raw.replace(/'/g, '"');
-
-  return JSON.parse(normalized) as Record<string, number>;
-};
 
 const generateDefaultData = (): Record<string, number> => {
   const data: Record<string, number> = {};
@@ -35,14 +29,7 @@ export const showLaserDelaySettingPanel = async (): Promise<void> => {
   let initData: Record<string, number>;
 
   try {
-    const res = await deviceMaster.getDeviceSetting('laser_delay');
-
-    if (res.status === 'ok') {
-      initData = parseLaserDelay(res.value);
-    } else {
-      alertCaller.popUpError({ message: `Failed to get laser_delay: ${JSON.stringify(res)}` });
-      initData = generateDefaultData();
-    }
+    initData = await getLaserDelayTable();
   } catch (error) {
     let errorMessage: string;
 

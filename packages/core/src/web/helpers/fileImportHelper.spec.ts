@@ -210,7 +210,7 @@ describe('test fileImportHelper', () => {
 
     test('type is recent', async () => {
       await importFileInCurrentTab(mockFiles.recent);
-      expect(mockOpenRecentFiles).toHaveBeenCalledWith(mockFiles.recent.filePath);
+      expect(mockOpenRecentFiles).toHaveBeenCalledWith(mockFiles.recent.filePath, { shouldUpdate: false });
     });
 
     test('type is example', async () => {

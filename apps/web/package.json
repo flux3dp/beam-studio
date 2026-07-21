@@ -9,7 +9,13 @@
     "build:dev": "webpack --config webpack.dev.js",
     "cy:dev": "cypress open",
     "cy:run": "cypress run",
-    "start": "webpack serve --config webpack.dev.js"
+    "start": "webpack serve --config webpack.dev.js",
+    "cy:fluxghost": "bash scripts/cy-local-rig.sh --ghost",
+    "cy:account": "bash scripts/cy-local-rig.sh --account",
+    "cy:machine": "bash scripts/cy-local-rig.sh --machine",
+    "cy:machine-readonly": "bash scripts/cy-local-rig.sh --machine-readonly",
+    "cy:swiftray": "bash scripts/cy-local-rig.sh --swiftray",
+    "cy:local-rig": "bash scripts/cy-local-rig.sh --all"
   },
   "dependencies": {
     "@sentry/browser": "^7.119.1",
@@ -59,6 +65,5 @@
     "webpack-dev-server": "^5.2.4",
     "webpack-merge": "^5.10.0",
     "workbox-webpack-plugin": "^7.0.0"
-  },
-  "packageManager": "pnpm@10.28.2"
+  }
 }

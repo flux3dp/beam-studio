@@ -14,7 +14,12 @@ declare global {
       dragTo(targetEl: string): Chainable<JQuery<HTMLElement>>;
       disableImageDownSampling(): Chainable<void>;
       setUpBackend: (ip: string) => Chainable<void>;
-      connectMachine: (ip: string) => Chainable<void>;
+      /**
+       * Select a machine by display name and wait until the top bar shows it. The workarea
+       * confirm is clicked when present (it is conditional). `onSelect` fires right before the
+       * device row is clicked — the start of DeviceMaster.select() — for timing measurements.
+       */
+      connectMachine: (machineName: string, options?: { onSelect?: () => void }) => Chainable<void>;
       getMenuItem(
         path: string[],
         target: string,

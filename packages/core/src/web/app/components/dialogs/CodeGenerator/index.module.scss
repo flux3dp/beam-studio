@@ -1,11 +1,7 @@
-.title-flex {
-  line-height: '24px';
-  margin-bottom: 20;
+@use './mixins' as mixins;
 
-  @media screen and (max-width: 600px) {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
+.accent-segmented {
+  @include mixins.accent-segmented;
 }
 
 .variable-block {

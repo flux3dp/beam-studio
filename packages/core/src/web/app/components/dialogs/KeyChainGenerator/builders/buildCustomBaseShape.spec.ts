@@ -18,9 +18,11 @@ jest.mock('./buildText', () => ({
 }));
 
 const mockCollectPathItems = jest.fn();
+const mockRemoveDegenerateCurves = jest.fn();
 
 jest.mock('./buildShape', () => ({
   collectPathItems: mockCollectPathItems,
+  removeDegenerateCurves: mockRemoveDegenerateCurves,
 }));
 
 const mockSvgCache = new Map<string, string>();

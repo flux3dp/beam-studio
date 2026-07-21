@@ -9,6 +9,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import selectionManager from '@core/app/svgedit/selection';
 import workareaManager from '@core/app/svgedit/workarea';
 import { convertAllTextToPath } from '@core/helpers/convertToPath';
+import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -58,7 +59,7 @@ export const exportAsBVG = async (): Promise<boolean> => {
 
   if (newFilePath) {
     currentFileManager.setLocalFile(newFilePath);
-    svgCanvas.updateRecentFiles(newFilePath);
+    updateRecentFiles(newFilePath);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;

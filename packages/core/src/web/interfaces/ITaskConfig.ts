@@ -110,6 +110,8 @@ export type TFcodeOptionalConfig = Partial<{
    */
   pbp: number;
   prespray: [number, number, number, number];
+  /** prespray times for beamo2 4C module */
+  prespray_times: number;
   /**
    * printing slice height
    */

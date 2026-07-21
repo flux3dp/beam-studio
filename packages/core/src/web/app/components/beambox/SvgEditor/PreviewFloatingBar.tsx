@@ -1,6 +1,7 @@
 import { memo, type ReactNode, useMemo } from 'react';
 
 import { CloseOutlined } from '@ant-design/icons';
+import { Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import { adorModels } from '@core/app/actions/beambox/constant';
@@ -39,20 +40,21 @@ const Button = memo(
     onClick?: () => void;
     title: string;
   }): React.JSX.Element => (
-    <div
-      className={classNames(styles.button, {
-        [styles.active]: active,
-        [styles.blue]: blue,
-        [styles.disabled]: disabled,
-      })}
-      id={id}
-      onClick={() => {
-        if (!disabled) onClick?.();
-      }}
-      title={title}
-    >
-      {children}
-    </div>
+    <Tooltip placement="bottom" title={title}>
+      <div
+        className={classNames(styles.button, {
+          [styles.active]: active,
+          [styles.blue]: blue,
+          [styles.disabled]: disabled,
+        })}
+        id={id}
+        onClick={() => {
+          if (!disabled) onClick?.();
+        }}
+      >
+        {children}
+      </div>
+    </Tooltip>
   ),
 );
 
@@ -182,14 +184,11 @@ export const PreviewFloatingBar = memo((): ReactNode => {
           <LeftPanelIcons.Delete />
         </Button>
         <div className={styles.separator} />
-        <div
-          className={classNames(styles.button, styles.close)}
-          id="end-preview-mode"
-          onClick={endPreviewMode}
-          title={lang.label.end_preview}
-        >
-          <CloseOutlined />
-        </div>
+        <Tooltip placement="bottom" title={lang.label.end_preview}>
+          <div className={classNames(styles.button, styles.close)} id="end-preview-mode" onClick={endPreviewMode}>
+            <CloseOutlined />
+          </div>
+        </Tooltip>
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import DeviceMaster from '../device-master';
 
+import { setDefaultDelayTable } from './defaultDelayTable';
 import showResizeAlert from './fit-device-workarea-alert';
 
 const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | null; isWorkareaMatched?: boolean }> => {
@@ -87,6 +88,8 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
           const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
           canvasEvents.emit('document-settings-saved');
+        } else if (model === 'fhx2rf') {
+          await setDefaultDelayTable(device);
         }
 
         isWorkareaMatched = model === useDocumentStore.getState().workarea;

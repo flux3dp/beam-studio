@@ -55,11 +55,6 @@ jobs:
           # env for windows to install pycrypto; MSVC version may change
           CL: /FI"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Enterprise\\VC\\Tools\\MSVC\\14.24.28314\\INCLUDE\\stdint.h"
 
-      - name: Setup msvs_version config
-        run: |
-          npm config set msvs_version 2019
-          npm config get msvs_version
-
       - name: Checkout Beamify
         uses: actions/checkout@v5
         with:

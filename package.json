@@ -72,23 +72,5 @@
     "typescript-eslint": "8.54.0",
     "webpack-cli": "^5.1.4"
   },
-  "packageManager": "pnpm@10.28.2",
-  "pnpm": {
-    "onlyBuiltDependencies": [
-      "@parcel/watcher",
-      "@sentry/cli",
-      "@swc/core",
-      "chromedriver",
-      "core-js",
-      "core-js-pure",
-      "cypress",
-      "edgedriver",
-      "electron",
-      "electron-chromedriver",
-      "font-scanner",
-      "geckodriver",
-      "nx",
-      "spectron"
-    ]
-  }
+  "packageManager": "pnpm@11.7.0"
 }

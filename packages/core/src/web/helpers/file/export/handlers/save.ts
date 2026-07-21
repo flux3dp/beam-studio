@@ -2,6 +2,7 @@ import { pipe, prop } from 'remeda';
 
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import selectionManager from '@core/app/svgedit/selection';
+import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -48,7 +49,7 @@ export const saveAsFile = async (): Promise<boolean> => {
 
   if (newFilePath) {
     currentFileManager.setLocalFile(newFilePath);
-    svgCanvas.updateRecentFiles(newFilePath);
+    updateRecentFiles(newFilePath);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;

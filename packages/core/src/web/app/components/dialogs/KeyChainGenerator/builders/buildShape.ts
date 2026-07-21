@@ -2,7 +2,7 @@ import paper from 'paper';
 import { PaperOffset } from 'paperjs-offset';
 
 import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from '../constants';
-import type { HoleOptionDef, KeyChainState } from '../types';
+import type { HoleOptionDef, HoleOptionValues, KeyChainState } from '../types';
 
 /**
  * Recursively collects all Paper.js Path/CompoundPath items from the imported SVG.
@@ -17,6 +17,41 @@ export const collectPathItems = (item: paper.Item): paper.PathItem[] => {
   }
 
   return [];
+};
+
+/**
+ * Removes near-zero-length curves from a path (in place), handling CompoundPath children.
+ *
+ * paperjs-offset's `adaptiveOffsetCurve` recurses by subdividing each curve until the offset
+ * error falls below a threshold. Sub-pixel "degenerate" curves — a common artifact in
+ * hand-authored icon SVGs (e.g. icon-sagittarius, which has a `l0,0` and several sub-0.01
+ * unit beziers) — never converge, so the recursion overflows the stack with
+ * "RangeError: Maximum call stack size exceeded". Note that `paper.Path.reduce()` and `unite()`
+ * do NOT remove these. Collapsing them is geometrically negligible (verified: identical offset
+ * area/bounds) and makes the offset robust for any imported shape.
+ *
+ * When collapsing a degenerate curve we transfer the dropped anchor's `handleOut` onto its
+ * neighbor before removing it. The two anchors are within `minLength` of each other, so the
+ * relative handle still reconstructs the *following* curve's tangent. Simply removing the anchor
+ * (without this transfer) discards that tangent and visibly dents shapes whose degenerate point
+ * carries a real outgoing handle (e.g. GEOMETRY_1's `…199.246V199.247C474.949…`).
+ */
+export const removeDegenerateCurves = (item: paper.PathItem, minLength = 0.01): void => {
+  const paths = item instanceof paper.CompoundPath ? (item.children as paper.Path[]) : [item as paper.Path];
+
+  for (const path of paths) {
+    for (let i = path.curves.length - 1; i >= 0; i -= 1) {
+      // Keep at least two segments so the path stays valid.
+      if (path.segments.length <= 2) break;
+
+      const curve = path.curves[i];
+
+      if (curve.length < minLength) {
+        curve.segment1.handleOut = curve.segment2.handleOut;
+        curve.segment2.remove();
+      }
+    }
+  }
 };
 
 /**
@@ -77,6 +112,25 @@ const getStartPoint = (path: paper.Path, startPositionRef: HoleOptionDef['startP
 };
 
 /**
+ * Resolves hole option values by substituting defaults for fields hidden by fieldVisibility.
+ */
+export const resolveHoleValues = (hole: HoleOptionValues, holeDef: HoleOptionDef): HoleOptionValues => {
+  const { fieldVisibility } = holeDef;
+
+  if (!fieldVisibility) return hole;
+
+  const resolved = { ...hole };
+
+  for (const [field, allowedTypes] of Object.entries(fieldVisibility)) {
+    if (!allowedTypes.includes(hole.type)) {
+      (resolved as any)[field as keyof HoleOptionValues] = holeDef.defaults[field as keyof HoleOptionValues];
+    }
+  }
+
+  return resolved;
+};
+
+/**
  * Applies all hole boolean operations to the base path in batch:
  * 1. Compute all hole positions on the original base path
  * 2. Unite all outer circles (hole + thickness) with base
@@ -92,17 +146,22 @@ export const applyHoles = (
   const innerCircles: paper.Path[] = [];
   const mmToPx = PX_TO_MM_RATIO / sizeRatio;
 
+  // Strip degenerate curves before any PaperOffset.offset call to avoid stack-overflow recursion.
+  removeDegenerateCurves(basePath);
+
   for (const holeDef of holeDefs) {
     const hole = state.holes[holeDef.id];
 
     if (!hole?.enabled) continue;
 
-    const isPunch = hole.type === 'punch';
+    const resolved = resolveHoleValues(hole, holeDef);
+    const isPunch = resolved.type === 'punch';
     const mainPath =
       basePath instanceof paper.CompoundPath ? (basePath.children[0] as paper.Path) : (basePath as paper.Path);
-    const normalizedPosition = (hole.position % 100) / 100;
+    const positionOffset = (holeDef.positionOffset ?? 0) / 100;
+    const normalizedPosition = ((((resolved.position % 100) / 100 + positionOffset) % 1) + 1) % 1;
 
-    const holeOffsetDist = (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx;
+    const holeOffsetDist = (resolved.offset + (holeDef.baseOffset ?? 0) + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx;
     const offsetPath = PaperOffset.offset(mainPath, holeOffsetDist, { insert: false, join: 'round' });
     let center: paper.Point;
 
@@ -128,12 +187,12 @@ export const applyHoles = (
 
     if (!center) continue;
 
-    const innerRadius = (hole.diameter / 2) * mmToPx;
+    const innerRadius = (resolved.diameter / 2) * mmToPx;
 
     innerCircles.push(new paper.Path.Circle(center, innerRadius));
 
-    if (!isPunch && hole.thickness > 0) {
-      const outerRadius = (hole.diameter / 2 + hole.thickness) * mmToPx;
+    if (!isPunch && resolved.thickness > 0) {
+      const outerRadius = (resolved.diameter / 2 + resolved.thickness) * mmToPx;
 
       outerCircles.push(new paper.Path.Circle(center, outerRadius));
     }

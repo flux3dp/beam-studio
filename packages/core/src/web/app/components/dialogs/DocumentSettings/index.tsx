@@ -23,6 +23,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -323,12 +324,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         writeDataLayer(layer.getGroup(), 'dpi', dpiValue);
       });
       useConfigPanelStore.getState().change({ dpi: dpiValue });
+      useGlobalPreferenceStore.getState().set('engrave_dpi', dpiValue);
     }
 
     if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || autoFeederChanged) {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
-
-      if (workareaChanged) rotaryAxis.setPosition(workareaObj.pxHeight / 2, { write: true });
 
       rotaryAxis.toggleDisplay();
     }

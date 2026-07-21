@@ -1,3 +1,4 @@
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 // Trigger some dialog here to avoid dialog caller circular import
@@ -29,6 +30,10 @@ export const showCalibrateCamera = (
   options?: { factoryMode?: boolean; isAdvanced?: boolean; isBorderless?: boolean; isWideAngle?: boolean },
 ): void => {
   eventEmitter.emit('SHOW_CALIBRATE_CAMERA', device, options);
+};
+
+export const showConnectionIssueGuide = (model?: WorkAreaModel): void => {
+  eventEmitter.emit('SHOW_CONNECTION_ISSUE_GUIDE', model);
 };
 
 export const showFluxPlusWarning = (monotype?: boolean): void => {

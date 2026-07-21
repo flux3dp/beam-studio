@@ -224,7 +224,7 @@ These areas have been identified as needing standardization or documentation:
 
 The application relies on these external tools:
 
-- **FLUXGhost**: WebSocket API for machine communication (Python-based, built separately)
+- **FLUXGhost**: WebSocket API for machine communication (Python-based, built separately). Full protocol reference lives in that repo: `../fluxghost/docs/architecture.md` and `../fluxghost/docs/api/*.md` (one doc per endpoint). The command strings and `status` values sent from `packages/core/src/web/helpers/api/*` are string-matched against fluxghost's `cmd_mapping` — never rename them unilaterally, and after backend-affecting changes run `uv run python tools/ws_smoke.py` in the fluxghost repo (hardware-free, must end `ALL PASS`).
 - **Swiftray**: Backend service
 - **FluxSVG**: SVG processing library
 - **Beamify**: SVG to F-code converter

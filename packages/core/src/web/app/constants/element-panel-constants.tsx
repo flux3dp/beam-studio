@@ -1,7 +1,7 @@
 /* eslint-disable reactRefresh/only-export-components */
 import type { IIcon } from '@core/interfaces/INounProject';
 
-export type MainType = 'animals' | 'basic' | 'decor' | 'holidays' | 'nature' | 'people' | 'tools';
+export type MainType = 'animals' | 'basic' | 'decor' | 'holidays' | 'nature' | 'people' | 'tools' | 'zodiac';
 export type SubType =
   | 'arrow'
   | 'avatar'
@@ -36,7 +36,8 @@ export type SubType =
   | 'teacher'
   | 'valentines'
   | 'weather'
-  | 'Xmas';
+  | 'Xmas'
+  | 'zodiac';
 
 export const builtInElements: {
   [key: string]: {
@@ -366,6 +367,24 @@ const Elements: {
     plants: { setting: { end: 29 } },
     weather: { setting: { end: 14 } },
   },
+  zodiac: {
+    zodiac: {
+      fileNames: [
+        'icon-aries',
+        'icon-taurus',
+        'icon-gemini',
+        'icon-cancer',
+        'icon-leo',
+        'icon-virgo',
+        'icon-libra',
+        'icon-scorpio',
+        'icon-sagittarius',
+        'icon-capricorn',
+        'icon-aquarius',
+        'icon-pisces',
+      ],
+    },
+  },
   people: {
     avatar: {
       pinnedNP: [
@@ -535,7 +554,7 @@ const Elements: {
 
 export default Elements;
 
-export const MainTypes: MainType[] = ['basic', 'decor', 'animals', 'holidays', 'nature'];
+export const MainTypes: MainType[] = ['basic', 'decor', 'animals', 'holidays', 'nature', 'zodiac'];
 
 // Only contains Noun Project icons and requires login
 export const NPTypes: MainType[] = ['people', 'tools'];
@@ -554,7 +573,9 @@ export const SearchMap: {
 } = {
   animal: { types: [['animals']] },
   antelope: { path: ['animals/i_land-20'] },
+  aquarius: { path: ['zodiac/icon-aquarius'] },
   arch: { path: ['basic/icon-arch'] },
+  aries: { path: ['zodiac/icon-aries'] },
   arrow: {
     path: ['basic/icon-arrow1', 'basic/icon-arrow2', 'basic/icon-arrow3', 'basic/icon-doubleArrow'],
   },
@@ -594,6 +615,8 @@ export const SearchMap: {
   calculate: { path: ['basic/icon-divide', 'basic/icon-equal', 'basic/icon-minus', 'basic/icon-plus'] },
   camel: { path: ['animals/i_land-40'] },
   cancel: { path: ['basic/icon-multiply'] },
+  cancer: { path: ['zodiac/icon-cancer'] },
+  capricorn: { path: ['zodiac/icon-capricorn'] },
   capsule: { path: ['basic/icon-capsule'] },
   cat: { path: ['animals/i_land-1', 'animals/i_land-2', 'animals/i_land-11', 'animals/i_land-38'] },
   celebration: { types: [['holidays', ['celebration']]] },
@@ -718,6 +741,7 @@ export const SearchMap: {
   fox: { path: ['animals/i_land-9'] },
   frame: { types: [['decor', ['photo', 'corner']]] },
   frog: { path: ['animals/i_land-19'] },
+  gemini: { path: ['zodiac/icon-gemini'] },
   ghost: {
     path: ['holidays/i_halloween-1a', 'holidays/i_halloween-1b', 'holidays/i_halloween-2a', 'holidays/i_halloween-2b'],
   },
@@ -777,6 +801,7 @@ export const SearchMap: {
       'nature/i_plants-27',
     ],
   },
+  leo: { path: ['zodiac/icon-leo'] },
   letter: {
     path: [
       'holidays/i_valentines-1a',
@@ -785,6 +810,7 @@ export const SearchMap: {
       'holidays/i_valentines-5b',
     ],
   },
+  libra: { path: ['zodiac/icon-libra'] },
   lightning: { path: ['basic/icon-lightning', 'nature/i_weather-6', 'nature/i_weather-9'] },
   line: { types: [['decor', ['line']]] },
   lizard: { path: ['animals/i_land-33'] },
@@ -859,6 +885,7 @@ export const SearchMap: {
   petal: { path: ['nature/i_plants-6', 'nature/i_plants-14'] },
   photo: { types: [['decor', ['photo']]] },
   pig: { path: ['animals/i_land-10', 'animals/i_land-35', 'animals/i_land-42'] },
+  pisces: { path: ['zodiac/icon-pisces'] },
   plant: { types: [['nature', ['plants']]] },
   plus: { path: ['basic/icon-plus'] },
   polygon: { path: ['basic/icon-octagon', 'basic/icon-parallelogram', 'basic/icon-pentagon'] },
@@ -887,6 +914,7 @@ export const SearchMap: {
       'holidays/i_valentines-7b',
     ],
   },
+  sagittarius: { path: ['zodiac/icon-sagittarius'] },
   santa: {
     path: [
       'holidays/i_Xmas-1a',
@@ -898,6 +926,7 @@ export const SearchMap: {
     ],
   },
   'scallop circle': { path: ['basic/icon-scallopCircle1', 'basic/icon-scallopCircle2'] },
+  scorpio: { path: ['zodiac/icon-scorpio'] },
   sea: { path: ['nature/i_environment-3'] },
   sector: { path: ['basic/icon-sector'] },
   semicircle: { path: ['basic/icon-semicircle'] },
@@ -946,6 +975,7 @@ export const SearchMap: {
   sunny: { path: ['basic/icon-sun'] },
   swallow: { path: ['animals/i_birds-5'] },
   tablet: { path: ['basic/icon-tablet'] },
+  taurus: { path: ['zodiac/icon-taurus'] },
   ticket: { path: ['basic/icon-ticket'] },
   trapezoid: { path: ['basic/icon-trapezoid'] },
   tree: {
@@ -969,6 +999,7 @@ export const SearchMap: {
   },
   triangle: { path: ['basic/icon-triangle'] },
   valentines: { types: [['holidays', ['valentines']]] },
+  virgo: { path: ['zodiac/icon-virgo'] },
   volcano: { path: ['nature/i_environment-8'] },
   water: { path: ['basic/icon-drop', 'nature/i_weather-5', 'nature/i_weather-14'] },
   wave: { path: ['basic/icon-wave', 'nature/i_environment-11'] },
@@ -979,11 +1010,13 @@ export const SearchMap: {
   wither: { path: ['nature/i_plants-8'] },
   wolf: { path: ['animals/i_land-26'] },
   yak: { path: ['animals/i_land-34'] },
+  zodiac: { types: [['zodiac']] },
 };
 
 export const SearchKeyMap: { [key: string]: string } = {
   alcohol: 'beer',
   animals: 'animal',
+  astrology: 'zodiac',
   cattle: 'cow',
   chameleon: 'lizard',
   chat: 'speech',
@@ -995,6 +1028,7 @@ export const SearchKeyMap: { [key: string]: string } = {
   decrease: 'minus',
   delete: 'cancel',
   elements: 'element',
+  horoscope: 'zodiac',
   idea: 'speech',
   increase: 'plus',
   kitten: 'kitty',
@@ -1015,6 +1049,7 @@ export const SearchKeyMap: { [key: string]: string } = {
   sleep: 'koala',
   snail: 'shell',
   snake: 'serpent',
+  'star sign': 'zodiac',
   summer: 'hot',
   sunny: 'sun',
   tape: 'ribbon',
@@ -1041,4 +1076,5 @@ export const SubTypeSearchKeyMap: { [key in SubType]?: string } = {
   sea: 'sea animal',
   speech: 'speech bubble',
   Xmas: 'christmas',
+  zodiac: 'zodiac sign',
 };

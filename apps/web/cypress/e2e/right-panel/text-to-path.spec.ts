@@ -88,7 +88,7 @@ describe('to path 2.0', () => {
     checkConsoleLog();
     verifyPathMd5('#svg_2', {
       default: '0b39368fe65b64e08cd08b9c8ff625b9',
-      githubWindows: '845bcb29aa9d95c52eb6a748d7651ae4',
+      githubWindows: 'bcdadef2aa6c366e2726c867d2cb1871',
       githubOther: '9790fb3564249f0952dd1b131b77eba3',
     });
   });

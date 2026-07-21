@@ -2,12 +2,14 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 
+import callWithRetry from './callWithRetry';
+
 const rawAndHome = async (updateMessage?: (message: string) => void): Promise<void> => {
   const { lang } = i18n;
 
   if (deviceMaster.currentControlMode !== 'raw') {
     updateMessage?.(lang.message.enteringRawMode);
-    await deviceMaster.enterRawMode();
+    await callWithRetry(() => deviceMaster.enterRawMode());
   }
 
   const rotaryMode = useDocumentStore.getState()['rotary_mode'];
@@ -15,16 +17,16 @@ const rawAndHome = async (updateMessage?: (message: string) => void): Promise<vo
   updateMessage?.(lang.message.homing);
 
   if (rotaryMode) {
-    await deviceMaster.rawHomeZ();
+    await callWithRetry(() => deviceMaster.rawHomeZ());
   }
 
-  await deviceMaster.rawHomeCamera();
+  await callWithRetry(() => deviceMaster.rawHomeCamera());
 
   if (rotaryMode) {
-    await deviceMaster.rawMoveZRelToLastHome(0);
+    await callWithRetry(() => deviceMaster.rawMoveZRelToLastHome(0));
   }
 
-  await deviceMaster.rawLooseMotor();
+  await callWithRetry(() => deviceMaster.rawLooseMotor());
 };
 
 export default rawAndHome;
