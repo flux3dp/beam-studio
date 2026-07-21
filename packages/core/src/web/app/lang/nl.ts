@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Omtrek offset',
     reset_to_default: 'Standaardwaarden herstellen',
     shape: 'Vorm',
-    size: 'Lichaamsgrootte',
-    size_tooltip: 'De grootte van het lichaam van de sleutelhanger. De werkelijke grootte van de sleutelhanger zal groter zijn dan deze waarde afhankelijk van de instellingen van het ophanggat.',
+    size_scale: 'Grootteschaal',
     switch_type_warning: 'Uw huidige instellingen zijn nog niet geïmporteerd naar het canvas.\nHet wisselen van sleutelhangertype zal alle instellingen terugzetten naar de standaardwaarden.',
     text: 'Tekst',
     text_options: {

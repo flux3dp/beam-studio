@@ -1723,8 +1723,7 @@ export interface ILang {
     outline_offset: string;
     reset_to_default: string;
     shape: string;
-    size: string;
-    size_tooltip: string;
+    size_scale: string;
     switch_type_warning: string;
     text: string;
     text_options: {

@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: '윤곽선 오프셋',
     reset_to_default: '기본값으로 재설정',
     shape: '모양',
-    size: '본체 크기',
-    size_tooltip: '키체인 본체의 크기입니다. 걸이 구멍 설정에 따라 키체인의 실제 크기는 이 값보다 커집니다.',
+    size_scale: '크기 배율',
     switch_type_warning: '현재 설정이 아직 캔버스로 가져오기되지 않았습니다.\n키체인 유형을 변경하면 모든 설정이 기본값으로 재설정됩니다.',
     text: '텍스트',
     text_options: {

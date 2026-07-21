@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'アウトラインオフセット',
     reset_to_default: 'デフォルトにリセット',
     shape: '形状',
-    size: '本体サイズ',
-    size_tooltip: 'キーホルダー本体のサイズです。実際のキーホルダーのサイズは、吊り穴の設定によりこの値より大きくなります。',
+    size_scale: 'サイズ倍率',
     switch_type_warning: '現在の設定はまだキャンバスにインポートされていません。\nキーホルダーのタイプを切り替えると、すべての設定がデフォルト値にリセットされます。',
     text: 'テキスト',
     text_options: {

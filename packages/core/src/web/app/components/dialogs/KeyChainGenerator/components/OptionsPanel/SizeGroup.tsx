@@ -3,20 +3,20 @@ import React, { memo, useCallback } from 'react';
 
 import useI18n from '@core/helpers/useI18n';
 
-import type { SizeDimension } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupCollapse from './Controls/GroupCollapse';
 import NumberControl from './Controls/NumberControl';
 
 const SizeGroup = (): ReactNode => {
-  const { global: tGlobal, keychain_generator: t } = useI18n();
-  const calculatedSize = useKeychainShapeStore((s) => s.calculatedSize);
+  const { keychain_generator: t } = useI18n();
+  // Percentage of the category's default size (100 = default), shown directly as the scale value.
+  const ratio = useKeychainShapeStore((s) => s.state.ratio);
 
-  const handleChange = useCallback(async (dimension: SizeDimension, value: number) => {
+  const handleChange = useCallback(async (nextRatio: number) => {
     const { applyOptions, buildBaseShape, category, updateState } = useKeychainShapeStore.getState();
+    const { dimension, value: defaultValue } = category.defaultSize;
 
-    updateState({ size: { dimension, value } });
+    updateState({ ratio: nextRatio, size: { dimension, value: (defaultValue * nextRatio) / 100 } });
 
     const isFresh = await buildBaseShape(category);
 
@@ -24,26 +24,19 @@ const SizeGroup = (): ReactNode => {
   }, []);
 
   return (
-    <GroupCollapse title={t.size} tooltip={t.size_tooltip}>
-      <NumberControl
-        label={tGlobal.width}
-        max={200}
-        min={5}
-        onChange={(val) => handleChange('width', val)}
-        step={1}
-        unit="mm"
-        value={calculatedSize.width}
-      />
-      <NumberControl
-        label={tGlobal.height}
-        max={200}
-        min={5}
-        onChange={(val) => handleChange('height', val)}
-        step={1}
-        unit="mm"
-        value={calculatedSize.height}
-      />
-    </GroupCollapse>
+    <NumberControl
+      boldLabel
+      defaultValue={100}
+      label={t.size_scale}
+      max={1000}
+      min={1}
+      onChange={handleChange}
+      sliderMax={150}
+      sliderMin={50}
+      step={1}
+      unit="%"
+      value={ratio}
+    />
   );
 };
 

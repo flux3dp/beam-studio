@@ -1724,8 +1724,7 @@ const lang: ILang = {
     outline_offset: 'Desplazamiento del contorno',
     reset_to_default: 'Restablecer valores predeterminados',
     shape: 'Forma',
-    size: 'Tamaño del cuerpo',
-    size_tooltip: 'El tamaño del cuerpo del llavero. El tamaño real del llavero será mayor que este valor dependiendo de la configuración del orificio de colgar.',
+    size_scale: 'Escala de tamaño',
     switch_type_warning: 'Su configuración actual aún no se ha importado al lienzo.\nCambiar el tipo de llavero restablecerá toda la configuración a sus valores predeterminados.',
     text: 'Texto',
     text_options: {

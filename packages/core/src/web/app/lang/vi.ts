@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Độ lệch đường viền',
     reset_to_default: 'Đặt lại mặc định',
     shape: 'Hình dạng',
-    size: 'Kích thước thân',
-    size_tooltip: 'Kích thước thân móc khóa. Kích thước thực tế của móc khóa sẽ lớn hơn giá trị này tùy thuộc vào cài đặt lỗ treo.',
+    size_scale: 'Tỷ lệ kích thước',
     switch_type_warning: 'Cài đặt hiện tại của bạn chưa được nhập vào canvas.\nChuyển đổi loại móc khóa sẽ đặt lại tất cả cài đặt về giá trị mặc định.',
     text: 'Văn bản',
     text_options: {

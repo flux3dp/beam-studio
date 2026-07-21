@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Konturförskjutning',
     reset_to_default: 'Återställ till standard',
     shape: 'Form',
-    size: 'Kroppsstorlek',
-    size_tooltip: 'Storleken på nyckelringens kropp. Den faktiska storleken på nyckelringen kommer att vara större än detta värde beroende på inställningarna för upphängningshålet.',
+    size_scale: 'Storleksskala',
     switch_type_warning: 'Dina nuvarande inställningar har ännu inte importerats till arbetsytan.\nAtt byta nyckelringstyp återställer alla inställningar till standardvärden.',
     text: 'Text',
     text_options: {

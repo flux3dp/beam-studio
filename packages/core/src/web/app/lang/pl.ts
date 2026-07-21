@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Przesunięcie obrysu',
     reset_to_default: 'Przywróć domyślne',
     shape: 'Kształt',
-    size: 'Rozmiar korpusu',
-    size_tooltip: 'Rozmiar korpusu breloka. Rzeczywisty rozmiar breloka będzie większy niż ta wartość w zależności od ustawień otworu do zawieszenia.',
+    size_scale: 'Skala rozmiaru',
     switch_type_warning: 'Bieżące ustawienia nie zostały jeszcze zaimportowane na płótno.\nZmiana typu breloka spowoduje zresetowanie wszystkich ustawień do wartości domyślnych.',
     text: 'Tekst',
     text_options: {

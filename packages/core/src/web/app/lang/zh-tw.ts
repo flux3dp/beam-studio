@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: '外框偏移',
     reset_to_default: '重設為預設值',
     shape: '形狀',
-    size: '本體尺寸',
-    size_tooltip: '本體尺寸為鑰匙圈的整體尺寸，不包含掛孔部分，實際尺寸可能會依據掛孔設定而稍微變大。',
+    size_scale: '尺寸縮放',
     switch_type_warning: '您目前的設定尚未匯入至畫布。\n切換鑰匙圈類型將會重設所有設定為預設值。',
     text: '文字',
     text_options: {

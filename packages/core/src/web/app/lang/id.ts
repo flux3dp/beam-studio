@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Offset garis luar',
     reset_to_default: 'Atur ulang ke default',
     shape: 'Bentuk',
-    size: 'Ukuran badan',
-    size_tooltip: 'Ukuran badan gantungan kunci. Ukuran sebenarnya dari gantungan kunci akan lebih besar dari nilai ini tergantung pada pengaturan lubang gantung.',
+    size_scale: 'Skala Ukuran',
     switch_type_warning: 'Pengaturan Anda saat ini belum diimpor ke kanvas.\nMengubah jenis gantungan kunci akan mengatur ulang semua pengaturan ke nilai default.',
     text: 'Teks',
     text_options: {

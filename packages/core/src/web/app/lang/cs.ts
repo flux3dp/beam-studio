@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Odsazení obrysu',
     reset_to_default: 'Obnovit výchozí',
     shape: 'Tvar',
-    size: 'Velikost těla',
-    size_tooltip: 'Velikost těla přívěsku. Skutečná velikost přívěsku bude větší než tato hodnota v závislosti na nastavení závěsného otvoru.',
+    size_scale: 'Měřítko velikosti',
     switch_type_warning: 'Vaše aktuální nastavení ještě nebylo importováno na plátno.\nPřepnutí typu přívěsku obnoví všechna nastavení na výchozí hodnoty.',
     text: 'Text',
     text_options: {

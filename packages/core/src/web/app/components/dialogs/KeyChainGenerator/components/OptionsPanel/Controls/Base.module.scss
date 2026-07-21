@@ -18,6 +18,10 @@
   display: flex;
   align-items: center;
   margin-right: 8px;
+
+  &.bold {
+    font-weight: 500;
+  }
 }
 
 .input-group {

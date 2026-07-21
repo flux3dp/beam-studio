@@ -77,6 +77,7 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
     elements: {},
     holes: {},
     outlineOffset: DEFAULT_OUTLINE_OFFSET,
+    ratio: 100,
     size: { ...resolved.defaultSize },
     texts: {},
     variantKey,
