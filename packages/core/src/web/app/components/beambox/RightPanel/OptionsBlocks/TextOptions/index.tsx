@@ -50,6 +50,7 @@ import LetterSpacingBlock from './components/LetterSpacingBlock';
 import LineSpacingBlock from './components/LineSpacingBlock';
 import StartOffsetBlock from './components/StartOffsetBlock';
 import TextContentBlock from './components/TextContentBlock';
+import TextTransformBlock from './components/TextTransformBlock';
 import VerticalAlignBlock from './components/VerticalAlignBlock';
 import { useFontHandlers } from './hooks/useFontHandlers';
 import styles from './index.module.scss';
@@ -596,6 +597,7 @@ const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
       {isMobile ? (
         <>
           {renderTextContentBlock()}
+          <TextTransformBlock onSizeChange={handleSizeChange} textElements={textElements} />
           {renderFontFamilyBlock()}
           {renderFontStyleBlock()}
           <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
@@ -606,6 +608,9 @@ const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
         <ConfigProvider theme={selectTheme}>
           <div className={styles.panel}>
             {renderTextContentBlock()}
+            <div className={styles.row}>
+              <TextTransformBlock onSizeChange={handleSizeChange} textElements={textElements} />
+            </div>
             <div className={styles['labeled-row']}>
               <span className={styles['prefix-label']}>Aa</span>
               {renderFontFamilyBlock()}

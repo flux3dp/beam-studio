@@ -132,6 +132,7 @@ const mockTextEdit = {
   getLetterSpacing: (...args: any[]) => mockGetLetterSpacing(...args),
   getLineSpacing: (...args: any[]) => mockGetLineSpacing(...args),
   getTextContent: jest.fn().mockReturnValue(''),
+  getTextTransform: jest.fn().mockReturnValue('none'),
   isFitText: jest.fn().mockReturnValue(false),
   renderText: jest.fn(),
   setFitTextAlign: jest.fn(),
@@ -143,6 +144,7 @@ const mockTextEdit = {
   setItalic: (...args: any[]) => mockSetItalic(...args),
   setLetterSpacing: (...args: any[]) => mockSetLetterSpacing(...args),
   setLineSpacing: (...args: any[]) => mockSetLineSpacing(...args),
+  setTextTransform: jest.fn(),
   textContentEvents: { emit: jest.fn(), on: jest.fn(), removeListener: jest.fn() },
 };
 
@@ -179,6 +181,8 @@ jest.mock('@core/helpers/fonts/fontHelper', () => mockFontHelper);
 jest.mock('@core/helpers/api/flux-id', () => ({
   getCurrentUser: () => mockGetCurrentUser(),
 }));
+
+jest.mock('./components/TextTransformBlock', () => () => <div data-testid="text-transform-block-mock" />);
 
 const mockProgressCaller = {
   openNonstopProgress: (...args: any[]) => mockOpenNonstopProgress(...args),
