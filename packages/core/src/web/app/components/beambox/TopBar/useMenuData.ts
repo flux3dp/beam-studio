@@ -310,36 +310,112 @@ const useMenuData = (email?: string): MenuNode[] => {
         children: [
           {
             children: [
-              { id: 'IMPORT_EXAMPLE_ADOR_LASER', label: menuCms.import_ador_laser_example, type: 'item' },
-              {
-                id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
-                label: menuCms.import_ador_printing_example_single,
-                type: 'item',
-              },
-              { id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL', label: menuCms.import_ador_printing_example_full, type: 'item' },
               { id: 'IMPORT_EXAMPLE', label: menuCms.import_hello_beamo, type: 'item' },
-              ...(checkBM2()
-                ? [
-                    {
-                      id: 'IMPORT_EXAMPLE_BEAMO_2_LASER',
-                      label: menuCms.import_beamo_2_laser_example,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT',
-                      label: menuCms.import_beamo_2_printing_example,
-                      type: 'item' as const,
-                    },
-                  ]
-                : []),
               { id: 'IMPORT_HELLO_BEAMBOX', label: menuCms.import_hello_beambox, type: 'item' },
-              { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: menuCms.import_beambox_2_example, type: 'item' },
-              { id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' },
+              { id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' as const },
               ...(checkHxRf()
                 ? [{ id: 'IMPORT_EXAMPLE_HEXA_RF', label: menuCms.import_hexa_rf_example, type: 'item' as const }]
                 : []),
+              {
+                children: [
+                  { id: 'IMPORT_EXAMPLE_ADOR_LASER', label: menuCms.import_ador_laser_example, type: 'item' },
+                  {
+                    id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
+                    label: menuCms.import_ador_printing_example_single,
+                    type: 'item',
+                  },
+                  {
+                    id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL',
+                    label: menuCms.import_ador_printing_example_full,
+                    type: 'item',
+                  },
+                ],
+                label: 'Ador',
+                type: 'submenu',
+              },
+              ...(checkBM2()
+                ? [
+                    {
+                      children: [
+                        {
+                          id: 'IMPORT_EXAMPLE_BEAMO_2_LASER',
+                          label: menuCms.import_beamo_2_laser_example,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT',
+                          label: menuCms.import_beamo_2_printing_example,
+                          type: 'item' as const,
+                        },
+                      ],
+                      label: 'beamo II',
+                      type: 'submenu' as const,
+                    },
+                  ]
+                : []),
+              { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: menuCms.import_beambox_2_example, type: 'item' },
               ...(!isWeb()
-                ? [{ id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const }]
+                ? [
+                    {
+                      children: [
+                        { id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                          label: menuCms.import_promark_engraving_example_1,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                          label: menuCms.import_promark_engraving_example_2,
+                          type: 'item' as const,
+                        },
+                      ],
+                      label: 'Promark Desktop',
+                      type: 'submenu' as const,
+                    },
+                    {
+                      children: [
+                        { id: 'IMPORT_EXAMPLE_PROMARK', label: menuCms.import_promark_example, type: 'item' as const },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                          label: menuCms.import_promark_engraving_example_1,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                          label: menuCms.import_promark_engraving_example_2,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',
+                          label: menuCms.import_promark_mopa_20w_color,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR',
+                          label: menuCms.import_promark_mopa_60w_color,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
+                          label: `${menuCms.import_promark_mopa_60w_color} - 2`,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR',
+                          label: menuCms.import_promark_mopa_100w_color,
+                          type: 'item' as const,
+                        },
+                        {
+                          id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
+                          label: `${menuCms.import_promark_mopa_100w_color} - 2`,
+                          type: 'item' as const,
+                        },
+                      ],
+                      label: 'Promark MOPA',
+                      type: 'submenu' as const,
+                    },
+                  ]
                 : []),
             ],
             label: menuCms.example_files,
@@ -361,43 +437,14 @@ const useMenuData = (email?: string): MenuNode[] => {
             label: menuCms.material_test,
             type: 'submenu',
           },
-          ...(!isWeb()
-            ? [
-                {
-                  children: [
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',
-                      label: menuCms.import_promark_mopa_20w_color,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR',
-                      label: menuCms.import_promark_mopa_60w_color,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
-                      label: `${menuCms.import_promark_mopa_60w_color} - 2`,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR',
-                      label: menuCms.import_promark_mopa_100w_color,
-                      type: 'item' as const,
-                    },
-                    {
-                      id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
-                      label: `${menuCms.import_promark_mopa_100w_color} - 2`,
-                      type: 'item' as const,
-                    },
-                  ],
-                  label: menuCms.promark_color_test,
-                  type: 'submenu' as const,
-                },
-              ]
-            : []),
-          { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: menuCms.import_acrylic_focus_probe, type: 'item' },
-          { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: menuCms.import_beambox_2_focus_probe, type: 'item' },
+          {
+            children: [
+              { id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: menuCms.import_acrylic_focus_probe, type: 'item' },
+              { id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: menuCms.import_beambox_2_focus_probe, type: 'item' },
+            ],
+            label: menuCms.accessories,
+            type: 'submenu',
+          },
         ],
         label: menuCms.samples,
         type: 'submenu',

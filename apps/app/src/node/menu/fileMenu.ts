@@ -89,17 +89,91 @@ export function buildFileMenu(
           id: 'EXAMPLE_FILES',
           label: r.example_files || 'Example Files',
           submenu: [
-            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_LASER', label: r.import_ador_laser_example },
-            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE', label: r.import_ador_printing_example_single },
-            { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL', label: r.import_ador_printing_example_full },
             { click: callback, id: 'IMPORT_EXAMPLE', label: r.import_hello_beamo },
-            { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_LASER', label: r.import_beamo_2_laser_example },
-            { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT', label: r.import_beamo_2_printing_example },
             { click: callback, id: 'IMPORT_HELLO_BEAMBOX', label: r.import_hello_beambox },
-            { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },
             { click: callback, id: 'IMPORT_EXAMPLE_HEXA', label: r.import_hexa_example },
             { click: callback, id: 'IMPORT_EXAMPLE_HEXA_RF', label: r.import_hexa_rf_example },
-            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example },
+            {
+              id: 'EXAMPLE_FILE_ADOR',
+              label: 'Ador',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_ADOR_LASER', label: r.import_ador_laser_example },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
+                  label: r.import_ador_printing_example_single,
+                },
+                { click: callback, id: 'IMPORT_EXAMPLE_ADOR_PRINT_FULL', label: r.import_ador_printing_example_full },
+              ],
+            },
+            {
+              id: 'EXAMPLE_FILE_BEAMO_2',
+              label: 'beamo II',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_LASER', label: r.import_beamo_2_laser_example },
+                { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT', label: r.import_beamo_2_printing_example },
+              ],
+            },
+            { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },
+            {
+              id: 'EXAMPLE_FILE_PROMARK_DESKTOP',
+              label: 'Promark Desktop',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                  label: r.import_promark_engraving_example_1,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                  label: r.import_promark_engraving_example_2,
+                },
+              ],
+            },
+            {
+              id: 'EXAMPLE_FILE_PROMARK_MOPA',
+              label: 'Promark MOPA',
+              submenu: [
+                { click: callback, id: 'IMPORT_EXAMPLE_PROMARK', label: r.import_promark_example },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_1',
+                  label: r.import_promark_engraving_example_1,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_ENGRAVING_2',
+                  label: r.import_promark_engraving_example_2,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR',
+                  label: r.import_promark_mopa_20w_color,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR',
+                  label: r.import_promark_mopa_60w_color,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
+                  label: `${r.import_promark_mopa_60w_color} - 2`,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR',
+                  label: r.import_promark_mopa_100w_color,
+                },
+                {
+                  click: callback,
+                  id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
+                  label: `${r.import_promark_mopa_100w_color} - 2`,
+                },
+              ],
+            },
           ],
         },
         {
@@ -115,30 +189,12 @@ export function buildFileMenu(
           ],
         },
         {
-          id: 'PROMARK_COLOR_TEST',
-          label: r.promark_color_test,
+          id: 'ACCESSORIES',
+          label: r.accessories || 'Accessories',
           submenu: [
-            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR', label: r.import_promark_mopa_20w_color },
-            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR', label: r.import_promark_mopa_60w_color },
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2',
-              label: `${r.import_promark_mopa_60w_color} - 2`,
-            },
-            { click: callback, id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR', label: r.import_promark_mopa_100w_color },
-            {
-              click: callback,
-              id: 'IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2',
-              label: `${r.import_promark_mopa_100w_color} - 2`,
-            },
+            { click: callback, id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe },
+            { click: callback, id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE', label: r.import_beambox_2_focus_probe },
           ],
-          type: 'submenu',
-        },
-        { click: callback, id: 'IMPORT_ACRYLIC_FOCUS_PROBE', label: r.import_acrylic_focus_probe },
-        {
-          click: callback,
-          id: 'IMPORT_BEAMBOX_2_FOCUS_PROBE',
-          label: r.import_beambox_2_focus_probe,
         },
       ],
     },
