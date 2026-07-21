@@ -2,6 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import i18n from '@core/helpers/i18n';
 import type { IAlert } from '@core/interfaces/IAlert';
 
 const mockPopFromStack = jest.fn();
@@ -81,6 +82,37 @@ describe('test Alert', () => {
     fireEvent.click(getByText('Learn More'));
     expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockOpen).toHaveBeenNthCalledWith(1, 'https://support.flux3dp.com/hc/en-us/articles/360001809676');
+  });
+
+  describe('connection issue guide', () => {
+    const guideText = i18n.lang.connection_issue_guide.alert_link;
+
+    beforeEach(() => {
+      // No help center article for connection error codes
+      mockGetHelpCenterURL.mockReturnValue(undefined);
+    });
+
+    it('should show the guide for a connection issue code without device', () => {
+      const { queryByText } = render(<Alert data={{ ...mockData, links: undefined, message: '#805 timeout' }} />);
+
+      expect(queryByText(guideText)).toBeInTheDocument();
+    });
+
+    it('should show the guide for a non-Promark device', () => {
+      const { queryByText } = render(
+        <Alert data={{ ...mockData, device: { model: 'fbb2' } as any, links: undefined, message: '#805 timeout' }} />,
+      );
+
+      expect(queryByText(guideText)).toBeInTheDocument();
+    });
+
+    it('should hide the guide for a Promark (fpm1) device', () => {
+      const { queryByText } = render(
+        <Alert data={{ ...mockData, device: { model: 'fpm1' } as any, links: undefined, message: '#805 timeout' }} />,
+      );
+
+      expect(queryByText(guideText)).not.toBeInTheDocument();
+    });
   });
 
   test('should call callback when click button', () => {

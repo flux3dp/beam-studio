@@ -1,0 +1,17 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "web",
+      "runtimeExecutable": "pnpm",
+      "runtimeArgs": ["nx", "run", "web:start"],
+      "port": 8080
+    },
+    {
+      "name": "pm-mockups",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "4599", "--directory", "../beam-studio-pm/docs/mockups"],
+      "port": 4599
+    }
+  ]
+}

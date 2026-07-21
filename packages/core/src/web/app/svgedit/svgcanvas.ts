@@ -2448,7 +2448,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         // font-size can get reset to their old value, ultimately by svgEditor.updateContextPanel(),
         // after calling textActions.toSelectMode() below
         if (getMouseMode() === 'textedit' && attr !== '#text' && elem.textContent.length) {
-          textActions.toSelectMode(elem);
+          textActions.toSelectMode({ shouldClearSelection: true });
         }
 
         //			if (i==0)

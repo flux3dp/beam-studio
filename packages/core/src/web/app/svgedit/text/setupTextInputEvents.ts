@@ -62,7 +62,7 @@ export const setupTextInputEvents = () => {
     }
 
     if ((evt as KeyboardEvent).key === 'Enter' && !wasNewLineAdded) {
-      textActions.toSelectMode(true);
+      textActions.toSelectMode({ shouldClearSelection: true });
     } else if (textActions.isEditing) {
       textedit.setTextContent(textInput.value);
     }
@@ -124,8 +124,17 @@ export const setupTextInputEvents = () => {
   });
 
   textInput.addEventListener('blur', (e) => {
+    const relatedTarget = e.relatedTarget as HTMLElement | null;
+
     // if relatedTarget is null: click to not interactive area (or svg canvas), do nothing.
-    if (e.relatedTarget && textActions.isEditing) {
+    if (relatedTarget && textActions.isEditing) {
+      // Focus moving to the text content block: the user is switching to edit the
+      // content there, so keep editing instead of exiting (which would delete a
+      // newly-created empty text element via toSelectMode).
+      if (relatedTarget.id === 'text-content-textarea') {
+        return;
+      }
+
       textActions.toSelectMode();
       textInput.value = '';
     }

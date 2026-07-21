@@ -9,7 +9,16 @@ import {
   setLaserDelayTable,
 } from './laserDelayTable';
 
-const YONG_LI_SERIALS = ['FLYP131B3M', 'FLBZBJYJFG', 'FLPLUR8W8A', 'FLCP6T3UAS', 'FLEMC41A7J'];
+const YONG_LI_SERIALS = [
+  'FLYP131B3M',
+  'FLBZBJYJFG',
+  'FLPLUR8W8A',
+  'FLCP6T3UAS',
+  'FLEMC41A7J',
+  'FLN6XU3JXP',
+  'FL7SUPTSAW',
+  'FLKPM4L2RL',
+];
 
 export const setDefaultDelayTable = async (device: IDeviceInfo) => {
   if (!YONG_LI_SERIALS.includes(device.serial)) {

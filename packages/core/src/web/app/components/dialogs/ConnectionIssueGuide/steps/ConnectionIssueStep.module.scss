@@ -1,0 +1,131 @@
+@use '@core/styles/mixins' as mixins;
+@use '@core/styles/variables' as variables;
+
+.image {
+  display: flex;
+  align-items: center;
+
+  img {
+    max-width: 300px;
+    max-height: 50vh;
+    width: 100%;
+  }
+}
+
+.text {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 480px;
+  gap: 12px;
+
+  @include mixins.is-mobile {
+    max-width: unset;
+  }
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  color: #333333;
+
+  &.green {
+    color: variables.$status-normal;
+  }
+
+  @include mixins.is-mobile {
+    font-size: 20px;
+    margin-bottom: 12px;
+  }
+}
+
+.subtitle {
+  font-size: 22px;
+  font-weight: bold;
+  color: #333333;
+
+  @include mixins.is-mobile {
+    font-size: 16px;
+    margin-top: 16px;
+    margin-bottom: 8px;
+  }
+}
+
+.content {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.bullets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+// Constrain a scroll region to the dialog body and keep it clear of the fixed bottom buttons.
+// Width-agnostic so it can size a full-width column or a natural-width one (e.g. a side text panel).
+@mixin column-height {
+  @include mixins.is-not-mobile {
+    height: calc(100vh - 150px);
+    padding-bottom: 60px;
+  }
+}
+
+.column {
+  @include column-height;
+
+  width: 100%;
+}
+
+.textColumn {
+  @include column-height;
+}
+
+.scrollable {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  @include mixins.is-not-mobile {
+    overflow-y: auto;
+    padding: 0 4px 0 0;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+      margin-right: 4px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 2px;
+    }
+  }
+}
+
+.row {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, auto);
+  gap: 12px 40px;
+
+  @include mixins.is-mobile {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+}
+
+.platform {
+  display: grid;
+  grid-row: 1 / -1;
+  grid-template-rows: subgrid;
+  gap: 12px;
+
+  @include mixins.is-mobile {
+    display: flex;
+    flex-direction: column;
+  }
+}

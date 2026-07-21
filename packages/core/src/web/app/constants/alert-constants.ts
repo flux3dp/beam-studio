@@ -11,3 +11,5 @@ export default {
   WARNING: 'WARNING',
   YES_NO: 'YES_NO',
 };
+
+export const CONNECTION_ISSUE_ERROR_CODES = new Set([805, 812, 821, 827, 891, 892]);
