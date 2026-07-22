@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Voltan Laser Tidak Normal\nRalat voltan laser. Sila mulakan semula mesin. Jika masalah berterusan, hubungi sokongan pelanggan.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Ralat Kritikal: Papan utama luar talian. Sila hubungi Sokongan FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Papan Utama Tidak Bertindak Balas\nPapan utama tidak bertindak balas. Sila mulakan semula kerja.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Kartrij Dakwat Tidak Dikesan\n1. Keluarkan modul cetak.\n2. Masukkan kartrij dakwat ke dalam modul.\n3. Pasang semula modul cetak dalam mesin.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Terlalu panas. Sila tunggu beberapa minit.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Penetapan semula paksi-Z gagal',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tiada respons daripada modul pencetak.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Suhu',
     upload: 'Muat Naik',
     USER_OPERATION: 'Sila ikuti arahan di panel peranti untuk meneruskan.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Kartrij Kosong\nKartrij kehabisan dakwat. Sila gantikan kartrij untuk meneruskan percetakan.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Paras Dakwat Rendah\nDakwat dalam kartrij semakin berkurangan. Kami mengesyorkan agar kartrij digantikan tidak lama lagi.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Sila masukkan kartrij yang betul untuk meneruskan.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Sila masukkan kartrij untuk meneruskan.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Sila pasang modul yang betul untuk meneruskan.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Modul tidak diketahui dikesan. Sila pasang modul yang betul untuk meneruskan.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Sila keluarkan kartrij untuk meneruskan.',
     USER_OPERATION_ROTARY_PAUSE: 'Sila tukar kepada motor putar',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Peringatan Fokus\nFokus semula sebelum memulakan kerja baharu untuk memastikan hasil yang tepat.',
   },
   my_cloud: {
     action: {

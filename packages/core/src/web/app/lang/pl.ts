@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Nieprawidłowe napięcie lasera\nBłąd napięcia lasera. Uruchom ponownie maszynę. Jeśli problem będzie się powtarzał, skontaktuj się z obsługą klienta.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Błąd krytyczny: płyta główna odłączona. Skontaktuj się z pomocą techniczną FLUX.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Płyta główna nie odpowiada\nPłyta główna nie odpowiada. Uruchom ponownie zadanie.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Nie wykryto wkładu atramentowego\n1. Wyjmij moduł drukujący.\n2. Włóż wkład atramentowy do modułu.\n3. Zainstaluj ponownie moduł drukujący w maszynie.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Przegrzanie. Poczekaj kilka minut.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Resetowanie osi Z nie powiodło się',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Moduł drukarki brak reakcji.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Temperatura',
     upload: 'Wgraj',
     USER_OPERATION: 'Aby kontynuować, postępuj zgodnie z instrukcjami na panelu urządzenia.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Pusty wkład\nWe wkładzie skończył się atrament. Wymień wkład, aby kontynuować drukowanie.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Niski poziom atramentu\nAtrament we wkładzie się kończy. Zalecamy szybką wymianę wkładu.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Aby kontynuować, włóż właściwy kartridż.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Aby kontynuować, włóż kartridż.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Aby kontynuować, zainstaluj odpowiedni moduł.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Wykryto nieznany moduł. Aby kontynuować, zainstaluj odpowiedni moduł.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Aby kontynuować, wyjmij wkład.',
     USER_OPERATION_ROTARY_PAUSE: 'Proszę przełączyć się na silnik obrotowy.',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Przypomnienie o ostrości\nPrzed rozpoczęciem nowego zadania ustaw ostrość ponownie, aby zapewnić dokładne wyniki.',
   },
   my_cloud: {
     action: {

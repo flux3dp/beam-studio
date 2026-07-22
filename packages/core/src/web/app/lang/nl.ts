@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Abnormale laserspanning\nLaserspanningsfout. Herstart de machine. Als het probleem aanhoudt, neem contact op met de klantenservice.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritieke fout: Hoofdprintplaat offline. Neem contact op met FLUX-ondersteuning.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Hoofdprintplaat reageert niet\nDe hoofdprintplaat reageert niet. Herstart de taak.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Geen inktcartridge gedetecteerd\n1. Verwijder de printmodule.\n2. Plaats een inktcartridge in de module.\n3. Installeer de printmodule opnieuw in de machine.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Oververhit. Wacht een paar minuten.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-as reset mislukt',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: 'Geen reactie van printermodule.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Temperatuur',
     upload: 'Uploaden',
     USER_OPERATION: 'Volg de instructies op het apparaatpaneel om door te gaan.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Cartridge leeg\nDe cartridge is leeg. Vervang de cartridge om verder te printen.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Laag inktniveau\nDe inkt in de cartridge raakt bijna op. Vervang de cartridge binnenkort.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Plaats de juiste cartridge om door te gaan.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Plaats de cartridge om door te gaan.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Installeer de juiste module om door te gaan.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Onbekende module gedetecteerd. Installeer de juiste module om door te gaan.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Verwijder de cartridge om door te gaan.',
     USER_OPERATION_ROTARY_PAUSE: 'Schakel over naar de draaimotor.',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Focusherinnering\nStel vóór een nieuwe opdracht opnieuw scherp voor nauwkeurige resultaten.',
   },
   my_cloud: {
     action: {

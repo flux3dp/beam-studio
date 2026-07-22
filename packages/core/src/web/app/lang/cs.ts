@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Abnormální napětí laseru\nChyba napětí laseru. Prosím restartujte stroj. Pokud problém přetrvává, kontaktujte zákaznickou podporu.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritická chyba: Základní deska off-line. Kontaktujte prosím FLUX podporu.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Základní deska neodpovídá\nZákladní deska neodpovídá. Prosím restartujte úlohu.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Nebyla detekována inkoustová cartridge\n1. Vyjměte tiskový modul.\n2. Vložte inkoustovou cartridge do modulu.\n3. Znovu nainstalujte tiskový modul do stroje.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Přehřátí. Vyčkejte prosím několik minut.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Restart osy Z neúspěšný',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tiskový modul neodpovídá.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Teplota',
     upload: 'Nahrát',
     USER_OPERATION: 'Pro pokračování prosím následujte instrukce na panelu zařízení.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Prázdná kazeta\nV kazetě došel inkoust. Vyměňte kazetu, abyste mohli pokračovat v tisku.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Nízká hladina inkoustu\nInkoust v kazetě dochází. Doporučujeme kazetu brzy vyměnit.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Pro pokračování prosím vložte správnou kazetu.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Pro pokračování prosím vložte kazetu.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Pro pokračování prosím nainstalujte správný modul.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Neznámý modul detekován. Pro pokračování prosím nainstalujte správný modul.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Pro pokračování prosím odstraňte kazetu.',
     USER_OPERATION_ROTARY_PAUSE: 'Přepněte prosím na rotační motor.',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Připomenutí zaostření\nPřed zahájením nové úlohy znovu zaostřete, abyste zajistili přesné výsledky.',
   },
   my_cloud: {
     action: {

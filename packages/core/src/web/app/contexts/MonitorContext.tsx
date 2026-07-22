@@ -173,7 +173,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
   isGettingReport: boolean;
 
-  isClosed: boolean; // for swiftray handler
+  isClosed: boolean;
 
   isPromark: boolean;
 
@@ -376,6 +376,8 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     if (this.reporter) {
       clearInterval(this.reporter);
     }
+
+    if (this.isClosed) return;
 
     this.reporter = setInterval(async () => {
       try {

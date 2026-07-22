@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 激光电压异常\n激光电压错误。请重新启动机器。如问题持续，请联系客服。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 主板没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 主板无响应\n主板无响应。请重新开始作业。',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 未检测到墨盒\n1. 取下打印模块。\n2. 将墨盒装入模块中。\n3. 将打印模块重新安装回机器。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 水温过高，请稍后再继续',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z轴归零失败',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 打印模块无响应。',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: '温度',
     upload: '上传',
     USER_OPERATION: '请遵循设备面板上的指示以继续。',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: '墨盒已空\n墨盒无墨水。请更换后继续打印。',
+    USER_OPERATION_CARTRIDGE_INK_LOW: '墨量低\n墨盒墨水不足。建议尽快更换。',
     USER_OPERATION_CHANGE_CARTRIDGE: '请插入正确的墨盒以继续。',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: '请插入墨盒以继续。',
     USER_OPERATION_CHANGE_TOOLHEAD: '请安装正确的模块以继续。',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 检测到未知模块。请安装正确的模块以继续。',
     USER_OPERATION_REMOVE_CARTRIDGE: '请取出墨盒以继续。',
     USER_OPERATION_ROTARY_PAUSE: '请切换旋转轴马达开关',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: '对焦提醒\n为确保结果准确，开始新工作前请重新对焦。',
   },
   my_cloud: {
     action: {

@@ -2152,7 +2152,6 @@ const lang: ILang = {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Onormal laserspänning\nLaserspänningsfel. Starta om maskinen. Om problemet kvarstår, kontakta kundsupport.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritiskt fel: Huvudkort offline. Kontakta FLUX support.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Huvudkortet svarar inte\nHuvudkortet svarar inte. Starta om jobbet.',
-    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Ingen bläckpatron upptäckt\n1. Ta bort utskriftsmodulen.\n2. Sätt in en bläckpatron i modulen.\n3. Installera om utskriftsmodulen i maskinen.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Överhettad. Vänta några minuter.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z-axel återställning misslyckades',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Inget svar från skrivarmodul.',
@@ -2189,6 +2188,8 @@ const lang: ILang = {
     temperature: 'Temperatur',
     upload: 'Ladda upp',
     USER_OPERATION: 'Följ instruktionerna på enhetspanelen för att fortsätta.',
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Patron tom\nPatronen har slut på bläck. Byt patron för att fortsätta skriva ut.',
+    USER_OPERATION_CARTRIDGE_INK_LOW: 'Låg bläcknivå\nBläcket i patronen håller på att ta slut. Vi rekommenderar att du byter patron snart.',
     USER_OPERATION_CHANGE_CARTRIDGE: 'Sätt i rätt patron för att fortsätta.',
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: 'Sätt i patronen för att fortsätta.',
     USER_OPERATION_CHANGE_TOOLHEAD: 'Installera rätt modul för att fortsätta.',
@@ -2197,6 +2198,7 @@ const lang: ILang = {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: '#918 Okänd modul upptäckt. Installera rätt modul för att fortsätta.',
     USER_OPERATION_REMOVE_CARTRIDGE: 'Ta bort patronen för att fortsätta.',
     USER_OPERATION_ROTARY_PAUSE: 'Växla till den roterande motorn',
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: 'Fokuspåminnelse\nFokusera om innan du startar ett nytt jobb för att säkerställa exakta resultat.',
   },
   my_cloud: {
     action: {
