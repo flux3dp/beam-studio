@@ -8,6 +8,7 @@ const CHANGES_TW = {
     '修正 beamo II 局部預覽時預覽誤差問題。',
     '修正 beamo II 開啟自動曝光時的預覽問題。',
     '修正 圖層顏色設定未使用正確名稱的問題。',
+    '修正 Promark 相機校正時，有時會選擇錯相機的問題。',
   ],
 };
 
@@ -20,10 +21,7 @@ const CHANGES_EN = {
     'Disabled the calibration menu on non-editor pages.',
     'Updated the calibration pattern capture steps for Beambox II.',
   ],
-  fixed: [
-    'Fixed an issue where layer color config did not use the correct name.',
-    '修正 Promark 相機校正時，有時會選擇錯相機的問題。',
-  ],
+  fixed: ['Fixed an issue where layer color config did not use the correct name.'],
 };
 
 export default {
