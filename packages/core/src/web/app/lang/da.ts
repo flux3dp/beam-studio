@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Konturforskydning',
     reset_to_default: 'Nulstil til standard',
     shape: 'Form',
-    size: 'Kroppens størrelse',
-    size_tooltip: 'Størrelsen på nøgleringens krop. Den faktiske størrelse af nøgleringen vil være større end denne værdi afhængigt af indstillingerne for ophængshullet.',
+    size_scale: 'Størrelsesskala',
     switch_type_warning: 'Dine nuværende indstillinger er endnu ikke importeret til lærredet.\nSkift af nøgleringtype vil nulstille alle indstillinger til standardværdier.',
     text: 'Tekst',
     text_options: {

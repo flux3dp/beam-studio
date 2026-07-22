@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Offset contorno',
     reset_to_default: 'Ripristina predefiniti',
     shape: 'Forma',
-    size: 'Dimensione del corpo',
-    size_tooltip: 'La dimensione del corpo del portachiavi. La dimensione effettiva del portachiavi sarà maggiore di questo valore a seconda delle impostazioni del foro di sospensione.',
+    size_scale: 'Scala dimensione',
     switch_type_warning: 'Le impostazioni correnti non sono ancora state importate nel canvas.\nCambiare il tipo di portachiavi ripristinerà tutte le impostazioni ai valori predefiniti.',
     text: 'Testo',
     text_options: {

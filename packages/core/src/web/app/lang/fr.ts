@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Décalage du contour',
     reset_to_default: 'Réinitialiser par défaut',
     shape: 'Forme',
-    size: 'Taille du corps',
-    size_tooltip: 'La taille du corps du porte-clés. La taille réelle du porte-clés sera plus grande que cette valeur en fonction des paramètres du trou de suspension.',
+    size_scale: 'Échelle de taille',
     switch_type_warning: "Vos paramètres actuels n'ont pas encore été importés sur le canevas.\nChanger le type de porte-clés réinitialisera tous les paramètres à leurs valeurs par défaut.",
     text: 'Texte',
     text_options: {

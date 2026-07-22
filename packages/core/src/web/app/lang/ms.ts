@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Ofset garis luar',
     reset_to_default: 'Tetapkan semula ke lalai',
     shape: 'Bentuk',
-    size: 'Saiz badan',
-    size_tooltip: 'Saiz badan rantai kunci. Saiz sebenar rantai kunci akan lebih besar daripada nilai ini bergantung pada tetapan lubang gantung.',
+    size_scale: 'Skala Saiz',
     switch_type_warning: 'Tetapan semasa anda belum diimport ke kanvas lagi.\nMenukar jenis rantai kunci akan menetapkan semula semua tetapan kepada nilai lalai.',
     text: 'Teks',
     text_options: {

@@ -173,6 +173,8 @@ export interface KeyChainState {
   elements: Record<string, ElementOptionValues>;
   holes: Record<string, HoleOptionValues>;
   outlineOffset: number;
+  /** Size as a percentage of the category's default size. 100 = default. Drives `size.value`. */
+  ratio: number;
   size: { dimension: SizeDimension; value: number };
   texts: Record<string, TextOptionValues>;
   variantKey: string;

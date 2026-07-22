@@ -3,6 +3,7 @@ import React, { memo, useMemo } from 'react';
 
 import { UndoOutlined } from '@ant-design/icons';
 import { Slider } from 'antd';
+import classNames from 'classnames';
 
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -11,11 +12,17 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './Base.module.scss';
 
 interface NumberControlProps {
+  /** Renders the label with the group-title weight — used when the control stands alone (no group). */
+  boldLabel?: boolean;
   defaultValue?: number;
   label: string;
   max: number;
   min: number;
   onChange: (value: number) => void;
+  /** Upper bound for the slider only. Defaults to `max` (shared with the input). */
+  sliderMax?: number;
+  /** Lower bound for the slider only. Defaults to `min` (shared with the input). */
+  sliderMin?: number;
   step: number;
   unit: string;
   value: number;
@@ -23,11 +30,14 @@ interface NumberControlProps {
 }
 
 const NumberControl = ({
+  boldLabel = false,
   defaultValue,
   label,
   max,
   min,
   onChange,
+  sliderMax,
+  sliderMin,
   step: propStep,
   unit,
   value,
@@ -47,7 +57,7 @@ const NumberControl = ({
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <div className={styles.label}>{label}</div>
+        <div className={classNames(styles.label, { [styles.bold]: boldLabel })}>{label}</div>
         <div className={styles['input-group']}>
           {isModified && (
             <button
@@ -75,8 +85,8 @@ const NumberControl = ({
       {withSlider && (
         <Slider
           className={styles.slider}
-          max={max}
-          min={min}
+          max={sliderMax ?? max}
+          min={sliderMin ?? min}
           onChange={onChange}
           step={step}
           tooltip={{ open: false }}

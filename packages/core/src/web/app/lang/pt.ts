@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Deslocamento do contorno',
     reset_to_default: 'Restaurar padrão',
     shape: 'Forma',
-    size: 'Tamanho do corpo',
-    size_tooltip: 'O tamanho do corpo do chaveiro. O tamanho real do chaveiro será maior que este valor dependendo das configurações do furo de suspensão.',
+    size_scale: 'Escala de tamanho',
     switch_type_warning: 'Suas configurações atuais ainda não foram importadas para o canvas.\nMudar o tipo de chaveiro redefinirá todas as configurações para os valores padrão.',
     text: 'Texto',
     text_options: {

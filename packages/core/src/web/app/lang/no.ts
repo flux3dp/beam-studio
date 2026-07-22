@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Omrissforskyvning',
     reset_to_default: 'Tilbakestill til standard',
     shape: 'Form',
-    size: 'Kroppsstørrelse',
-    size_tooltip: 'Størrelsen på nøkkelringens kropp. Den faktiske størrelsen på nøkkelringen vil være større enn denne verdien avhengig av innstillingene for opphengshullet.',
+    size_scale: 'Størrelsesskala',
     switch_type_warning: 'Dine nåværende innstillinger har ennå ikke blitt importert til lerretet.\nBytte av nøkkelringtype vil tilbakestille alle innstillinger til standardverdier.',
     text: 'Tekst',
     text_options: {

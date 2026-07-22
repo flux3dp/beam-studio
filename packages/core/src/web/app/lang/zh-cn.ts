@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: '外框偏移',
     reset_to_default: '重置为默认值',
     shape: '形状',
-    size: '本体尺寸',
-    size_tooltip: '本体尺寸为钥匙扣的整体尺寸，不包含挂孔部分，实际尺寸可能会依据挂孔设置而稍微变大。',
+    size_scale: '尺寸缩放',
     switch_type_warning: '您当前的设置尚未导入至画布。\n切换钥匙扣类型将会重置所有设置为默认值。',
     text: '文字',
     text_options: {

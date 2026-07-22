@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Ääriviivan siirtymä',
     reset_to_default: 'Palauta oletusarvot',
     shape: 'Muoto',
-    size: 'Rungon koko',
-    size_tooltip: 'Avaimenperän rungon koko. Avaimenperän todellinen koko on tätä arvoa suurempi ripustusreiän asetusten mukaan.',
+    size_scale: 'Koon skaalaus',
     switch_type_warning: 'Nykyisiä asetuksiasi ei ole vielä tuotu kankaalle.\nAvaimenperätyypin vaihtaminen palauttaa kaikki asetukset oletusarvoihin.',
     text: 'Teksti',
     text_options: {

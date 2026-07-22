@@ -1725,8 +1725,7 @@ const lang: ILang = {
     outline_offset: 'Umrissversatz',
     reset_to_default: 'Auf Standard zurücksetzen',
     shape: 'Form',
-    size: 'Körpergröße',
-    size_tooltip: 'Die Größe des Schlüsselanhänger-Körpers. Die tatsächliche Größe des Schlüsselanhängers ist je nach Aufhängeloch-Einstellungen größer als dieser Wert.',
+    size_scale: 'Größenskalierung',
     switch_type_warning: 'Ihre aktuellen Einstellungen wurden noch nicht in die Leinwand importiert.\nDurch das Wechseln des Schlüsselanhänger-Typs werden alle Einstellungen auf ihre Standardwerte zurückgesetzt.',
     text: 'Text',
     text_options: {
