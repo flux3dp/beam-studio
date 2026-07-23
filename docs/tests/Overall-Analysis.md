@@ -48,7 +48,7 @@
 
 **已建立的資產**：
 - 測試表 CSV 的 Agent Status 欄（進度單一事實來源）＋ 22 個分類 `Summary.md`（人可讀索引）＋ 39 份逐 spec 審查筆記 ＋ 8 份 bug 報告。
-- 本地 rig 一鍵執行器與 `.claude/skills/e2e-test.md` 中的接線規範（未來新增受限 spec 只需在清單加一行）。
+- 本地 rig 一鍵執行器與 `.claude/skills/e2e-test/SKILL.md` 中的接線規範（未來新增受限 spec 只需在清單加一行）。
 - Google Fonts 的「攔截層＋真實 API 契約層」雙層模式——適合推廣到其他外部依賴（雲端 API 契約、FLUXGhost 版本升級煙霧測試）。
 
 **優先次序建議（成本效益由高至低）**：

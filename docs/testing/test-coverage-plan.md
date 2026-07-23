@@ -3,7 +3,7 @@
 Source: "Beam Studio Test 2026JUL.xlsx" (331 test cases) cross-referenced against the repo
 on branch 2.6.9, 2026-07-04. Row numbers below are the xlsx row numbers.
 
-Companion guides: `.claude/skills/unit-test.md` (Jest), `.claude/skills/e2e-test.md` (Cypress).
+Companion guides: `.claude/skills/unit-test/SKILL.md` (Jest), `.claude/skills/e2e-test/SKILL.md` (Cypress).
 
 ## 1. Current State
 

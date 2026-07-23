@@ -1,3 +1,8 @@
+---
+name: keychain-generator
+description: Keychain generator dialog — shape categories, Paper.js geometry operations, hole positioning by ray intersection, and the shape build pipeline. Use when working on components/dialogs/KeyChainGenerator/.
+---
+
 # Keychain Generator
 
 Location: `packages/core/src/web/app/components/dialogs/KeyChainGenerator/`
