@@ -5,6 +5,7 @@ import BackgroundRemovalMobile from './background-removal-mobile.svg';
 import BackgroundRemoval from './background-removal.svg';
 import BevelMobile from './bevel-mobile.svg';
 import Bevel from './bevel.svg';
+import BitmapOffset from './bitmap-offset.svg';
 import Brightness from './brightness.svg';
 import ConvertToImage from './convert-to-image.svg';
 import ConvertToPathMobile from './convert-to-path-mobile.svg';
@@ -45,6 +46,7 @@ export default {
   BackgroundRemovalMobile,
   Bevel,
   BevelMobile,
+  BitmapOffset,
   Brightness,
   ConvertToImage,
   ConvertToPath,

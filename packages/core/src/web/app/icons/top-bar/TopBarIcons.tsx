@@ -10,6 +10,7 @@ import Frame from './frame.svg';
 import Go from './go.svg';
 import PathPreview from './path-preview.svg';
 import Redo from './redo.svg';
+import Reset from './reset.svg';
 import SelectMachine from './select-machine.svg';
 import Trash from './trash.svg';
 import Undo from './undo.svg';
@@ -28,6 +29,7 @@ export default {
   Maintenance: ToolOutlined,
   PathPreview,
   Redo,
+  Reset,
   SelectMachine,
   Trash,
   Undo,

@@ -4,6 +4,7 @@ import Icon from '@ant-design/icons';
 import type { CustomIconComponentProps } from '@ant-design/icons/lib/components/Icon';
 
 import Play from './play.svg';
+import Template from './template.svg';
 
 const Trash = () => (
   <svg
@@ -94,4 +95,5 @@ export const DmktIcon = (props: Partial<CustomIconComponentProps>): React.JSX.El
 
 export default {
   Play,
+  Template,
 };
