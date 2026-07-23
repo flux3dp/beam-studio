@@ -730,6 +730,8 @@ export interface ILang {
         module: string;
         more: string;
         multi_layer: string;
+        opacity: string;
+        opacity_desc: string;
         para_in_use: string;
         parameters: string;
         preset_management: {
@@ -848,6 +850,7 @@ export interface ILang {
           array: string;
           auto_fit: string;
           bevel: string;
+          bitmap_offset: string;
           brightness: string;
           create_textpath: string;
           create_textpath_short: string;
@@ -865,6 +868,7 @@ export interface ILang {
           fetching_web_font: string;
           grading: string;
           invert: string;
+          more: string;
           offset: string;
           outline: string;
           replace_with: string;
@@ -886,12 +890,22 @@ export interface ILang {
         center_align: string;
         difference: string;
         distribute: string;
+        edit_object: string;
         flip: string;
         group: string;
         hdist: string;
         hflip: string;
+        horizontal_alignment: string;
         intersect: string;
         left_align: string;
+        library: {
+          allow_user_upload: string;
+          download_library_contents: string;
+          image_not_supported: string;
+          object_not_supported: string;
+          set_as_default: string;
+          svg_not_supported: string;
+        };
         lock_aspect: string;
         middle_align: string;
         option_panel: {
@@ -906,6 +920,7 @@ export interface ILang {
           layer_count: string;
           letter_spacing: string;
           line_spacing: string;
+          mixed_fill_mode: string;
           number: string;
           offset: string;
           path_infill: string;
@@ -920,6 +935,7 @@ export interface ILang {
           stroke_color: string;
           stroke_mode: string;
           stroke_width: string;
+          text_align: string;
           text_align_center: string;
           text_align_justify: string;
           text_align_left: string;
@@ -951,20 +967,31 @@ export interface ILang {
           sharp: string;
         };
         right_align: string;
+        rotation: string;
         sections: {
           actions: string;
           colors: string;
+          library: string;
           operation_mode: string;
           options: string;
+          template_config: string;
+          text_content: string;
+          text_style: string;
           tools: string;
           transform: string;
         };
         subtract: string;
+        template_config: {
+          allows_deleting: string;
+          allows_editing: string;
+          title: string;
+        };
         top_align: string;
         ungroup: string;
         union: string;
         unlock_aspect: string;
         vdist: string;
+        vertical_alignment: string;
         vflip: string;
         zoom: string;
       };
@@ -973,6 +1000,17 @@ export interface ILang {
       };
     };
     svg_editor: {
+      add_new_object: string;
+      drawing_tools: string;
+      import_image: {
+        camera: string;
+        camera_desc: string;
+        file: string;
+        file_desc: string;
+        gallery: string;
+        gallery_desc: string;
+        title: string;
+      };
       unable_to_fetch_clipboard_img: string;
       unnsupported_file_type: string;
     };
@@ -1777,6 +1815,7 @@ export interface ILang {
     laser_2w_infrared: string;
     laser_10w_diode: string;
     laser_20w_diode: string;
+    layer_guide: string;
     non_working_area: string;
     none: string;
     notification: {
@@ -2342,6 +2381,17 @@ export interface ILang {
     split_size: string;
     type: string;
   };
+  save_file: {
+    target_cloud_hint: string;
+    target_local: string;
+    target_local_hint: string;
+    type_project_message: string;
+    type_project_title: string;
+    type_template_message: string;
+    type_template_title: string;
+    type_unchanged_message: string;
+    type_unchanged_title: string;
+  };
   select_device: {
     auth_failure: string;
     select_device: string;
@@ -2477,6 +2527,7 @@ export interface ILang {
       device: string;
       general: string;
     };
+    template_creation_mode: string;
     text_path_calc_optimization: string;
     top_down: string;
     trace_output: string;
@@ -2515,6 +2566,26 @@ export interface ILang {
     help_center: string;
     manual_mode: string;
     title: string;
+  };
+  template_target_layer_setting: {
+    allow_import: string;
+    ask_to_edit: string;
+    ask_to_edit_title: string;
+    description: string;
+    display_name: string;
+    layer_name: string;
+    no_target_layer_found: string;
+    select_target_layer: string;
+  };
+  template_thumbnail: {
+    edit_thumbnails_confirm: string;
+    thumbnails: string;
+    upload: {
+      dimensions_too_large: string;
+      failed_to_load: string;
+      file_too_large: string;
+      wrong_file_type: string;
+    };
   };
   tips: {
     canvas_hold_space_to_pan: string;
@@ -2716,6 +2787,8 @@ export interface ILang {
       rotate: string;
       samples: string;
       save_as: string;
+      save_as_project: string;
+      save_as_template: string;
       save_scene: string;
       save_to_cloud: string;
       scale: string;
@@ -2950,6 +3023,7 @@ export interface ILang {
     no_permission: string;
   };
   welcome_page: {
+    create_your_template_file: string;
     follow_us: {
       subtitle: string;
       user_group: string;
@@ -2968,6 +3042,7 @@ export interface ILang {
     recent_files: string;
     shop: string;
     shop_products: string;
+    template_files: string;
   };
   z_speed_limit_test: {
     alert_before: string;
