@@ -38,6 +38,7 @@ const state: StorageStoreState = {
   'device-store': {},
   /** 1 for done */
   'did-gesture-tutorial': 1,
+  dockviewLayout: 'default',
   'elements-history': [],
   'enable-sentry': null,
   'flux-rsa-key': 'fluxRsaKey',
@@ -53,6 +54,7 @@ const state: StorageStoreState = {
   'layer-color-config': { array: [], dict: {} },
   'layer-panel-height': 100,
   loop_compensation: 0,
+  'maintenance-records': {},
   'new-user': false,
   notification: false,
   'poke-ip-addr': '127.0.0.1',
@@ -75,6 +77,7 @@ const state: StorageStoreState = {
   'selected-device': undefined,
   /** map with key: device uuid value: firmware version */
   'sentry-send-devices': {},
+  'yongli-written-serials': [],
 };
 
 const set = <K extends StorageKey>(key: K, value: StorageStoreState[K]) => {

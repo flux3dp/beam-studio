@@ -29,8 +29,6 @@ interface StoreState {
   // Counter incremented at the start of every async buildBaseShape call
   // — used to bail out of stale builds.
   buildVersion: number;
-  // Derived dimensions for display (main = size.value, other = computed from basePath bounds)
-  calculatedSize: { height: number; width: number };
   // Resolved category (with active variant's svgContent/options merged in)
   category: KeyChainCategory;
   // Paper.js cache for inner path, path for other layer decoration elements (e.g. text-body glyphs)
@@ -51,7 +49,6 @@ interface StoreState {
 const initialState: StoreState = {
   basePath: null,
   buildVersion: 0,
-  calculatedSize: { height: 0, width: 0 },
   category: getDefaultCategory(),
   innerPath: null,
   isModified: false,
@@ -108,11 +105,7 @@ const calculateSize = (targetSize: KeyChainState['size'], basePath: null | paper
 
   sizeRatio = sizeRatio ?? (value * PX_TO_MM_RATIO) / basePath.bounds[dimension];
 
-  const otherDim = dimension === 'width' ? 'height' : 'width';
-  const otherValue = Math.round(((basePath.bounds[otherDim] * sizeRatio) / PX_TO_MM_RATIO) * 10) / 10;
-  const calculatedSize = { [dimension]: value, [otherDim]: otherValue } as { height: number; width: number };
-
-  return { calculatedSize, sizeRatio };
+  return { sizeRatio };
 };
 
 const useKeychainShapeStore = create(
@@ -197,7 +190,7 @@ const useKeychainShapeStore = create(
       const { isCustomShape } = category;
       const { size } = state;
 
-      // Cache hit: same resolved category object with valid paper objects → recompute sizeRatio + calculatedSize only
+      // Cache hit: same resolved category object with valid paper objects → recompute sizeRatio only
       if (!isCustomShape && category === cachedCategory && cachedProject && cachedBasePath) {
         const sizeResult = calculateSize(size, cachedBasePath);
 
@@ -330,6 +323,11 @@ const useKeychainShapeStore = create(
       const { basePath, innerPath, project, shape, state } = get();
       const resolved = resolveCategory(getCategoryById(state.categoryId), key);
 
+      // Keep the ratio; recompute the concrete size against the new variant's default size,
+      // with the dimension pinned to the new variant's default dimension.
+      const { dimension, value: defaultValue } = resolved.defaultSize;
+      const size = { dimension, value: (defaultValue * state.ratio) / 100 };
+
       // Clear cached paper objects so buildBaseShape rebuilds for the new variant
       basePath?.remove();
       innerPath?.remove();
@@ -342,7 +340,7 @@ const useKeychainShapeStore = create(
         innerPath: null,
         project: null,
         shape: null,
-        state: { ...state, variantKey: key },
+        state: { ...state, size, variantKey: key },
       });
     },
 

@@ -1,4 +1,4 @@
-import { HomeFilled } from '@ant-design/icons';
+import { HomeFilled, ToolOutlined } from '@ant-design/icons';
 
 import Account from './account.svg';
 import AutoFocus from './auto-focus.svg';
@@ -24,6 +24,8 @@ export default {
   Frame,
   Go,
   Home: HomeFilled,
+  // Matches the Maintenance Checklist dialog's own title icon.
+  Maintenance: ToolOutlined,
   PathPreview,
   Redo,
   SelectMachine,

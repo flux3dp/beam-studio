@@ -1742,8 +1742,7 @@ export interface ILang {
     outline_offset: string;
     reset_to_default: string;
     shape: string;
-    size: string;
-    size_tooltip: string;
+    size_scale: string;
     switch_type_warning: string;
     text: string;
     text_options: {
@@ -1841,6 +1840,116 @@ export interface ILang {
     256: string;
     512: string;
     UNKNOWN: string;
+  };
+  maintenance: {
+    actions: {
+      checked: string;
+      done: string;
+      fail: string;
+      history: string;
+      open_guide: string;
+      pass: string;
+      print: string;
+    };
+    areas: {
+      back_cover: string;
+      modules: string;
+      optics: string;
+      panel: string;
+      working_area: string;
+    };
+    cadence: {
+      by_material: string;
+      condition: string;
+      // Interval templates: singular (every === 1) omits the count; plural interpolates the
+      // count via a `%s` placeholder, e.g. `'Every %s days'`. See `formatCadence`.
+      day: string;
+      days: string;
+      each_operation: string;
+      every_1_2_weeks: string;
+      month: string;
+      months: string;
+      upon_unboxing: string;
+      week: string;
+      weeks: string;
+    };
+    celebration: {
+      subtitle: string;
+      title: string;
+    };
+    columns: {
+      cadence: string;
+      status: string;
+      task: string;
+    };
+    empty_no_machine: string;
+    empty_no_schedule: string;
+    essential: string;
+    essential_health: string;
+    essential_hint: string;
+    feedback: {
+      checked: string;
+      done: string;
+      done_no_date: string;
+      fail_warning: string;
+      passed: string;
+    };
+    footer_tip: string;
+    history_hint: string;
+    intro: string;
+    legend: {
+      due_soon: string;
+      overdue: string;
+      up_to_date: string;
+    };
+    machine_groups: {
+      my_machines: string;
+      other_models: string;
+    };
+    machine_label: string;
+    materials: {
+      acrylic: string;
+      leather: string;
+      paper: string;
+      wood: string;
+    };
+    status: {
+      checked: string;
+      due: string;
+      healthy: string;
+      last: string;
+      never_done: string;
+      next: string;
+      not_checked: string;
+      not_logged: string;
+      overdue: string;
+      replace_tube: string;
+    };
+    tasks: Record<
+      | 'align'
+      | 'chassis'
+      | 'door'
+      | 'exhaust'
+      | 'fan'
+      | 'fieldlens'
+      | 'honeycomb_plate'
+      | 'honeycomb_table'
+      | 'lube'
+      | 'maintain_test'
+      | 'mirrors_combiner'
+      | 'mirrors_lens'
+      | 'mod_diode'
+      | 'mod_ir'
+      | 'optical_inspection'
+      | 'optical_unboxing'
+      | 'screen'
+      | 'tube'
+      | 'water'
+      | 'worktable'
+      | 'zaxis',
+      { keyPoints: string; name: string }
+    >;
+    title: string;
   };
   material_test_generator: Record<
     | 'block_settings'
@@ -2002,7 +2111,6 @@ export interface ILang {
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: string;
     HARDWARE_ERROR_MAINBOARD_ERROR: string;
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: string;
-    HARDWARE_ERROR_NO_INK_DETECTED: string;
     HARDWARE_ERROR_OVER_TEMPERATURE: string;
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: string;
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: string;
@@ -2039,6 +2147,8 @@ export interface ILang {
     temperature: string;
     upload: string;
     USER_OPERATION: string;
+    USER_OPERATION_CARTRIDGE_INK_EMPTY: string;
+    USER_OPERATION_CARTRIDGE_INK_LOW: string;
     USER_OPERATION_CHANGE_CARTRIDGE: string;
     USER_OPERATION_CHANGE_CARTRIDGE_CARTRIDGE_NOT_DETECTED: string;
     USER_OPERATION_CHANGE_TOOLHEAD: string;
@@ -2047,6 +2157,7 @@ export interface ILang {
     USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_UNKNOWN: string;
     USER_OPERATION_REMOVE_CARTRIDGE: string;
     USER_OPERATION_ROTARY_PAUSE: string;
+    USER_OPERATION_USER_Z_AXIS_CHECK_REQUIRED: string;
   };
   my_cloud: {
     action: {
@@ -2459,6 +2570,7 @@ export interface ILang {
     menu: {
       about: string;
       about_beam_studio: string;
+      accessories: string;
       account: string;
       add_new_machine: string;
       align_center: string;
@@ -2544,6 +2656,8 @@ export interface ILang {
       import_material_testing_line: string;
       import_material_testing_old: string;
       import_material_testing_simple_cut: string;
+      import_promark_engraving_example_1: string;
+      import_promark_engraving_example_2: string;
       import_promark_example: string;
       import_promark_mopa_20w_color: string;
       import_promark_mopa_60w_color: string;
@@ -2576,6 +2690,7 @@ export interface ILang {
       logout: string;
       machine_info: string;
       machines: string;
+      maintenance_checklist: string;
       manage_account: string;
       material_test: string;
       minimize: string;
@@ -2590,7 +2705,6 @@ export interface ILang {
       photo_edit: string;
       plugin: string;
       preferences: string;
-      promark_color_test: string;
       questionnaire: string;
       quit: string;
       recent: string;

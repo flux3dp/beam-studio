@@ -29,6 +29,7 @@ import {
   showUpdatePathEngineDialog,
 } from '@core/helpers/initialization';
 import isWeb from '@core/helpers/is-web';
+import { registerMaintenanceUsageTracker } from '@core/helpers/maintenance/usageTracker';
 import { prefetchAiConfig } from '@core/helpers/query';
 import registerImageSymbolEvents from '@core/helpers/symbol-helper/registerImageSymbolEvents';
 import menu from '@core/implementations/menu';
@@ -65,6 +66,7 @@ class BeamboxInit {
     boundaryDrawer.registerEvents();
     registerImageSymbolEvents();
     registerConnectionIssueGuide();
+    registerMaintenanceUsageTracker();
     initCurText();
 
     // WebSocket for Adobe Illustrator Plug-In

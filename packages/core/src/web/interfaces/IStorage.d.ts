@@ -2,6 +2,7 @@ import type { ColorConfig } from '@core/app/constants/color-constants';
 import type { History } from '@core/app/contexts/ElementPanelContext';
 import type { IRecord as AnnouncementRecord } from '@core/helpers/announcement-helper';
 import type { DeviceStore } from '@core/helpers/device/deviceStore';
+import type { MachineMaintenanceRecord } from '@core/helpers/maintenance/records';
 import type { IRecord as RatingRecord } from '@core/helpers/rating-helper';
 
 import type { AutoSaveConfig } from './AutoSaveConfig';
@@ -45,6 +46,8 @@ export interface Storage {
   'layer-color-config': { array: ColorConfig[]; dict: Record<string, number> };
   'layer-panel-height': number;
   loop_compensation: number;
+  /** Per-machine maintenance records, keyed by serial (fallback UUID). */
+  'maintenance-records': Record<string, MachineMaintenanceRecord>;
   'new-user': boolean;
   notification: boolean;
   'poke-ip-addr': string;

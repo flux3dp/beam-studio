@@ -46,7 +46,7 @@ KeyChainGenerator/
 │   └── OptionsPanel/
 │       ├── OptionsPanel.tsx        # Options container
 │       ├── ShapeVariantSelector.tsx # Variant picker (e.g. rounded_1–6)
-│       ├── SizeGroup.tsx           # Width/height controls
+│       ├── SizeGroup.tsx           # Size Scale control (single ratio %, no collapse group)
 │       ├── Text/                   # Text option controls
 │       ├── Hole/                   # Hole option controls
 │       ├── Element/                # Element/icon option controls
@@ -114,11 +114,13 @@ Zustand store with cached Paper.js objects:
 | `resultPath` | Base path after holes applied |
 | `innerPath` | Inner geometry for custom shapes (text glyphs) |
 | `shape` | Final output: `{ designSvg, explodedSvg, resultBasePath, decorations, ... }` |
-| `sizeRatio` | Scale factor: `(targetMM × PX_TO_MM_RATIO) / basePath.bounds[dimension]` |
+| `sizeRatio` | Paper-space scale factor: `(targetMM × PX_TO_MM_RATIO) / basePath.bounds[dimension]` (≠ `state.ratio`) |
 | `buildVersion` | Incremented per build call — stale async builds detected and discarded |
 | `state` | User-editable params: `KeyChainState` |
 
 Key actions: `buildBaseShape(category)`, `applyOptions()`, `setCategoryState()`, `setVariant()`, `updateState()`
+
+**Size control:** `state.ratio` is a percentage of the category's default size (100 = default), edited via `SizeGroup` — a single standalone `NumberControl` (no `GroupCollapse`; `boldLabel` gives it the group-title weight) labelled `size_scale` ("Size Scale"). The percentage is shown directly (100 = default; slider 50…150, input 1…1000, reset 100). `state.size` is derived (`{ dimension: defaultSize.dimension, value: defaultSize.value × ratio / 100 }`) and stays the source for geometry (`calculateSize`, `generateCustomBaseShape`). `setVariant` recomputes `size` from the retained ratio against the new variant's default.
 
 ### Custom Shapes (text/icon categories)
 

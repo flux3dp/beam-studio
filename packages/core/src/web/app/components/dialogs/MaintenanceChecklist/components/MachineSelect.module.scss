@@ -1,0 +1,22 @@
+@use '@core/styles/mixins' as mixins;
+@use '@core/styles/variables' as variables;
+
+.machine {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .label {
+    color: variables.$secondary-gray;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .select {
+    width: 260px;
+
+    @include mixins.is-mobile {
+      width: 200px;
+    }
+  }
+}

@@ -1,13 +1,17 @@
 import { EventEmitter } from 'eventemitter3';
 
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
+import { DeviceOperationEvents } from '@core/app/constants/deviceEvents';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import { discoverManager } from '@core/helpers/api/discover';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import DeviceMaster from '@core/helpers/device-master';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+const deviceEventEmitter = eventEmitterFactory.createEventEmitter('device');
 
 const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
 const MACHINE_STATUS = {
@@ -203,6 +207,7 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
       });
       isSuc = true;
       this.isWorking = true;
+      deviceEventEmitter.emit(DeviceOperationEvents.JobStarted, this.device);
     } catch (error) {
       this.emit('ERROR', { detail: { error } });
       isSuc = false;

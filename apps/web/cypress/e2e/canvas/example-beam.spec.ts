@@ -37,8 +37,8 @@ const exampleList = [
     beam: '9e9b561a9a7bd09ccfc9b3d4693c47b5',
   },
   {
-    label: 'Acrylic Focus Probe - 3mm',
-    type: undefined,
+    label: 'beamo & Beambox Focus Probe - 3mm',
+    type: 'Accessories',
     beam: '901ddbfb57d6c73b1ca3cac308254d37',
   },
 ];

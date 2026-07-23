@@ -9,7 +9,7 @@
   position: fixed;
   z-index: 0;
   width: 100vw;
-  height: 100vh;
+  height: 100%;
 
   &.dialog {
     // Need to larger than 998 in CanvasTabBar for connection issue guide not being blocked by the tab bar
