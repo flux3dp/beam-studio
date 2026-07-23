@@ -1,3 +1,8 @@
+---
+name: svgedit-recalculate
+description: SVG transform recalculation — how recalculateDimensions() absorbs translate, scale, and rotate into element attributes. Use when changing element transforms, implementing resize or rotate, or debugging transform and undo/redo bugs on the canvas.
+---
+
 # SVG Transform Recalculation System
 
 ## Purpose

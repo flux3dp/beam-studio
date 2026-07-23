@@ -2,7 +2,7 @@
  * Auto Shrink / 自動內縮 (release-test sheet 文件設定 row:
  *   「測試自動內縮功能是否有正確作用（用 HEXA 測試複合填充路徑）」)
  *
- * Path-based verification (see .claude/skills/e2e-test.md → "Path-based verification"): Auto Shrink
+ * Path-based verification (see .claude/skills/e2e-test/SKILL.md → "Path-based verification"): Auto Shrink
  * changes the GENERATED TOOLPATH, not any UI state, so we assert against the FLUXGhost gcode via
  * cypress/support/taskPath.ts rather than the canvas.
  *

@@ -1,3 +1,8 @@
+---
+name: svgedit-text
+description: SVG text editing system — multi-line text, tspans, fitText, and text-on-path. Use when creating or modifying text elements under app/svgedit/text/, textedit/, textactions.ts, or the TextContentBlock panel.
+---
+
 # SVG Text Editing System
 
 Location: `packages/core/src/web/app/svgedit/text/`

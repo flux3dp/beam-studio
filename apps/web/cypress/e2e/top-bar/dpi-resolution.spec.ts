@@ -2,7 +2,7 @@
  * Engrave DPI / resolution (release-test sheet 文件設定 row:
  *   「以不同 DPI 雕刻點陣圖確認解析度功能是否正常（點陣圖需開啟漸層）」)
  *
- * Path-based verification (see .claude/skills/e2e-test.md → "Path-based verification"): the DPI
+ * Path-based verification (see .claude/skills/e2e-test/SKILL.md → "Path-based verification"): the DPI
  * setting changes the GENERATED TOOLPATH, not any UI state, so we assert against the FLUXGhost
  * gcode via cypress/support/taskPath.ts rather than the canvas.
  *

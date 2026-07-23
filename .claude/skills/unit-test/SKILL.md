@@ -1,10 +1,15 @@
+---
+name: unit-test
+description: Jest unit-test conventions for Beam Studio — spec layout, mocking patterns, and the shared __mocks__ inventory. Use when writing, updating, or debugging any *.spec.ts or *.spec.tsx file.
+---
+
 # Unit Test Skill
 
 Guide for writing Jest unit tests in the Beam Studio codebase. Follow it literally — every
 rule here was derived from the 400+ existing spec files; do not invent alternative patterns.
 
 For Cypress E2E specs (release-test automation under `apps/web/cypress/`), see
-`.claude/skills/e2e-test.md`. For the coverage roadmap, see `docs/testing/test-coverage-plan.md`.
+`.claude/skills/e2e-test/SKILL.md`. For the coverage roadmap, see `docs/testing/test-coverage-plan.md`.
 
 ## Framework & Config
 
