@@ -13,7 +13,7 @@
 | `apps/web/cypress/e2e/top-bar/dpi-resolution.spec.ts` | Cypress E2E（路徑驗證） | DPI 解析度對產生 gcode 的作用：掃描線數隨 DPI 倍增、間距減半、bbox 不變 + golden gcode 快照（需 FLUXGhost，本機批次執行） | Claude 自動產生 (2026-07) |
 | `apps/web/cypress/e2e/top-bar/auto-shrink.spec.ts` | Cypress E2E（路徑驗證） | 自動內縮：HEXA 複合填充路徑外框內縮 0.05mm、內孔外擴、<250 DPI 引擎閘門驗證 + OFF/ON golden gcode（需 FLUXGhost） | Claude 自動產生 (2026-07) |
 
-共用基礎：`apps/web/cypress/support/taskPath.ts`（gcode 擷取／解析／度量／golden 快照模組）與 `.claude/skills/e2e-test.md` 的「Path-based verification」準則。其餘項目（當前位置雕刻、實機雕刻品質）維持實機人工。
+共用基礎：`apps/web/cypress/support/taskPath.ts`（gcode 擷取／解析／度量／golden 快照模組）與 `.claude/skills/e2e-test/SKILL.md` 的「Path-based verification」準則。其餘項目（當前位置雕刻、實機雕刻品質）維持實機人工。
 
 ## 尚未自動化項目
 

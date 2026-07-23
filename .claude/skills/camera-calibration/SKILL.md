@@ -1,3 +1,8 @@
+---
+name: camera-calibration
+description: Camera calibration flows and camera data structures — fisheye parameter versions (V2/V3/V4), storage files, per-model dialog steps, SolvePnP and CheckPnP. Use when working on calibration dialogs under components/dialogs/camera/ or on cameraCalibrationApi.
+---
+
 # Camera Calibration & Camera Data
 
 Location: `packages/core/src/web/app/components/dialogs/camera/`

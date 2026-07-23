@@ -1,9 +1,14 @@
+---
+name: e2e-test
+description: Cypress E2E conventions for Beam Studio release-test automation under apps/web/cypress/ — spec layout, custom commands, and path-based gcode verification. Use when adding, updating, or debugging an E2E spec.
+---
+
 # E2E Test Skill (Cypress)
 
 Guide for writing Cypress E2E specs in Beam Studio. The release-test spreadsheet
 ("Beam Studio Test") is automated almost entirely through these specs, so **every new
 release-test automation lands here** unless it is pure logic (then prefer a Jest unit test —
-see `.claude/skills/unit-test.md`). Coverage roadmap: `docs/testing/test-coverage-plan.md`.
+see `.claude/skills/unit-test/SKILL.md`). Coverage roadmap: `docs/testing/test-coverage-plan.md`.
 
 ## Layout & Commands
 
