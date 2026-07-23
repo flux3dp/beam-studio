@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Đi đến Bảng điều khiển cảm ứng > Nhấp vào "MÁY" > Nhấp vào "Mạng" > "Kết nối với WiFi".',
       tutorial2: '2. Chọn và kết nối Wi-Fi ưa thích của bạn.',
       what_if_1: 'Nếu tôi không thấy Wi-Fi của mình thì sao?',
-      what_if_1_content: '1. Chế độ mã hóa Wi-Fi nên là WPA2 hoặc không có mật khẩu.\n2. Chế độ mã hóa có thể được đặt trong giao diện quản trị bộ định tuyến Wi-Fi. Nếu bộ định tuyến không hỗ trợ WPA2 và bạn cần trợ giúp để chọn đúng bộ định tuyến, vui lòng liên hệ với bộ phận hỗ trợ FLUX.',
+      what_if_1_content: '1. Chế độ mã hóa Wi-Fi nên là WPA2 hoặc không có mật khẩu.\n2. Chế độ mã hóa có thể được đặt trong giao diện quản trị bộ định tuyến Wi-Fi. Nếu bộ định tuyến không hỗ trợ WPA2 và bạn cần trợ giúp để chọn đúng bộ định tuyến, vui lòng liên hệ với bộ phận hỗ trợ FLUX.\n3. Kênh Wi-Fi nên là 2.4Ghz (5Ghz không được hỗ trợ).',
       what_if_2: 'Nếu tôi không thấy bất kỳ Wi-Fi nào thì sao?',
-      what_if_2_content: '1. Đảm bảo rằng đầu nối Wi-Fi được cắm đầy đủ.\n2. Nếu không có Địa chỉ MAC của mạng không dây trên màn hình cảm ứng, vui lòng liên hệ với bộ phận hỗ trợ FLUX.\n3. Kênh Wi-Fi nên là 2.4Ghz (5Ghz không được hỗ trợ).',
+      what_if_2_content: '1. Đảm bảo rằng đầu nối Wi-Fi được cắm đầy đủ.\n2. Nếu không có Địa chỉ MAC của mạng không dây trên màn hình cảm ứng, vui lòng liên hệ với bộ phận hỗ trợ FLUX.',
     },
     connect_wired: {
       title: 'Kết nối với Mạng có dây',

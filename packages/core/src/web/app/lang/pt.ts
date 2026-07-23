@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Vá para o Painel de Toque > Clique em "MÁQUINA" > Clique em "Rede" > "Conectar ao Wi-Fi".',
       tutorial2: '2. Selecione e conecte-se à rede Wi-Fi de sua preferência.',
       what_if_1: 'O que fazer se não vir a minha rede Wi-Fi?',
-      what_if_1_content: '1. O modo de criptografia Wi-Fi deve ser WPA2 ou sem senha.\n2. O modo de criptografia pode ser definido na interface de administração do roteador Wi-Fi. Se o roteador não suportar WPA2 e você precisar de ajuda para escolher o roteador certo, entre em contato com o Suporte FLUX.',
+      what_if_1_content: '1. O modo de criptografia Wi-Fi deve ser WPA2 ou sem senha.\n2. O modo de criptografia pode ser definido na interface de administração do roteador Wi-Fi. Se o roteador não suportar WPA2 e você precisar de ajuda para escolher o roteador certo, entre em contato com o Suporte FLUX.\n3. O canal Wi-Fi deve ser 2.4Ghz (5Ghz não é suportado).',
       what_if_2: 'O que fazer se não vir nenhuma rede Wi-Fi?',
-      what_if_2_content: '1. Certifique-se de que o adaptador Wi-Fi esteja totalmente conectado.\n2. Se não houver endereço MAC da rede sem fio na tela de toque, entre em contato com o Suporte FLUX.\n3. O canal Wi-Fi deve ser 2.4Ghz (5Ghz não é suportado).',
+      what_if_2_content: '1. Certifique-se de que o adaptador Wi-Fi esteja totalmente conectado.\n2. Se não houver endereço MAC da rede sem fio na tela de toque, entre em contato com o Suporte FLUX.',
     },
     connect_wired: {
       title: 'Conectando à rede com fio',

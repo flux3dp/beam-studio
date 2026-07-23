@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Vaya al panel táctil > Pulse en "MÁQUINA" > Pulse "Red" > "Conectarse a WiFi".',
       tutorial2: '2. Selecciona y conecta tu WiFi preferido.',
       what_if_1: '¿Qué pasa si no veo mi WiFi?',
-      what_if_1_content: '1. El modo de cifrado de la WiFi ha de ser WPA2 o sin contraseña.\n2. El modo de cifrado se puede configurar en la interface de administrador del router WiFi. Si el router no es compatible con WPA2 y necesita ayuda para elegir el router adecuado, contacte con el servicio de asistencia de FLUX.',
+      what_if_1_content: '1. El modo de cifrado de la WiFi ha de ser WPA2 o sin contraseña.\n2. El modo de cifrado se puede configurar en la interface de administrador del router WiFi. Si el router no es compatible con WPA2 y necesita ayuda para elegir el router adecuado, contacte con el servicio de asistencia de FLUX.\n3. El canal WiFi ha de ser de 2,4 GHz (5 GHz no es compatible).',
       what_if_2: '¿Qué pasa si no veo ninguna red WiFi?',
-      what_if_2_content: '1. Asegúrese de que el adaptador WiFi esté completamente enchufado.\n2. Si no aparece la dirección MAC de la red inalámbrica en la pantalla táctil, contacte con el servicio de asistencia de FLUX.\n3. El canal WiFi ha de ser de 2,4 GHz (5 GHz no es compatible).',
+      what_if_2_content: '1. Asegúrese de que el adaptador WiFi esté completamente enchufado.\n2. Si no aparece la dirección MAC de la red inalámbrica en la pantalla táctil, contacte con el servicio de asistencia de FLUX.',
     },
     connect_wired: {
       title: 'Conectando a la red cableada',

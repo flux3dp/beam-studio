@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Ves al Panell tàctil > Fes clic a "MÀQUINA" > Fes clic a "Xarxa" > "Connectar a WiFi".',
       tutorial2: '2. Selecciona i connecta el teu Wi-Fi preferit.',
       what_if_1: 'Què passa si no veig el meu Wi-Fi?',
-      what_if_1_content: "1. El mode de xifratge Wi-Fi hauria de ser WPA2 o sense contrasenya.\n2. El mode de xifratge es pot establir a la interfície d'administració del router Wi-Fi. Si el router no admet WPA2 i necessites ajuda per triar el router adequat, si us plau contacta amb el suport de FLUX.",
+      what_if_1_content: "1. El mode de xifratge Wi-Fi hauria de ser WPA2 o sense contrasenya.\n2. El mode de xifratge es pot establir a la interfície d'administració del router Wi-Fi. Si el router no admet WPA2 i necessites ajuda per triar el router adequat, si us plau contacta amb el suport de FLUX.\n3. El canal Wi-Fi hauria de ser 2.4Ghz (5Ghz no és compatible).",
       what_if_2: 'Què passa si no veig cap Wi-Fi?',
-      what_if_2_content: "1. Assegura't que l'adaptador Wi-Fi estigui totalment endollat.\n2. Si no hi ha adreça MAC de la xarxa sense fils a la pantalla tàctil, si us plau contacta amb el suport de FLUX.\n3. El canal Wi-Fi hauria de ser 2.4Ghz (5Ghz no és compatible).",
+      what_if_2_content: "1. Assegura't que l'adaptador Wi-Fi estigui totalment endollat.\n2. Si no hi ha adreça MAC de la xarxa sense fils a la pantalla tàctil, si us plau contacta amb el suport de FLUX.",
     },
     connect_wired: {
       title: 'Connectant a xarxa per cable',

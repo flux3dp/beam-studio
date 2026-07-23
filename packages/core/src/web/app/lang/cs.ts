@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Na dotykovém panelu klikněte na "PŘÍSTROJ" > "Síť" > "Připojit k Wi-Fi".',
       tutorial2: '2. Zvolte svoji Wi-Fi a připojte se k ní.',
       what_if_1: 'Co když nevidím svou Wi-Fi?',
-      what_if_1_content: '1. Šifrovací mód Wi-Fi by měl být WPA2 či bez hesla.\n2. Šifrovací mód může být nastaven v administrační části Wi-Fi routeru. Pokud router nepodporuje WPA2 a potřebujete pomoc se zvolením správného routeru, kontaktujte prosím podporu FLUX.',
+      what_if_1_content: '1. Šifrovací mód Wi-Fi by měl být WPA2 či bez hesla.\n2. Šifrovací mód může být nastaven v administrační části Wi-Fi routeru. Pokud router nepodporuje WPA2 a potřebujete pomoc se zvolením správného routeru, kontaktujte prosím podporu FLUX.\n3. Kanál Wi-Fi by měl být 2,4 GHz (5Ghz není podporován).',
       what_if_2: 'Co když nevidím žádnou Wi-Fi?',
-      what_if_2_content: '1. Ujistěte se, že je Wi-Fi adaptér správně zapojený.\n2. Pokud se na dotykové obrazovce nenachází žádná MAC adresa bezdrátové sítě, kontaktujte prosím podporu FLUX.\n3. Kanál Wi-Fi by měl být 2,4 GHz (5Ghz není podporován).',
+      what_if_2_content: '1. Ujistěte se, že je Wi-Fi adaptér správně zapojený.\n2. Pokud se na dotykové obrazovce nenachází žádná MAC adresa bezdrátové sítě, kontaktujte prosím podporu FLUX.',
     },
     connect_wired: {
       title: 'Připojení pomocí síťového kabelu',

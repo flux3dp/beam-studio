@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Pergi ke Panel Sentuh > Klik "MESIN" > Klik "Rangkaian" > "Sambung ke WiFi".',
       tutorial2: '2. Pilih dan sambung Wi-Fi pilihan anda.',
       what_if_1: 'Apa yang perlu dilakukan jika saya tidak nampak Wi-Fi saya?',
-      what_if_1_content: '1. Mod penyulitan Wi-Fi perlu WPA2 atau tiada kata laluan.\n2. Mod penyulitan boleh ditetapkan dalam antara muka pentadbiran penghala Wi-Fi. Jika penghala tidak menyokong WPA2 dan anda memerlukan bantuan untuk memilih penghala yang betul, sila hubungi Sokongan FLUX.',
+      what_if_1_content: '1. Mod penyulitan Wi-Fi perlu WPA2 atau tiada kata laluan.\n2. Mod penyulitan boleh ditetapkan dalam antara muka pentadbiran penghala Wi-Fi. Jika penghala tidak menyokong WPA2 dan anda memerlukan bantuan untuk memilih penghala yang betul, sila hubungi Sokongan FLUX.\n3. Saluran Wi-Fi perlu 2.4Ghz (5Ghz tidak disokong).',
       what_if_2: 'Apa yang perlu dilakukan jika saya tidak dapat melihat sebarang Wi-Fi?',
-      what_if_2_content: '1. Pastikan dongle Wi-Fi dimasukkan sepenuhnya.\n2. Jika tiada Alamat MAC rangkaian wayarles pada skrin sentuh, sila hubungi Sokongan FLUX.\n3. Saluran Wi-Fi perlu 2.4Ghz (5Ghz tidak disokong).',
+      what_if_2_content: '1. Pastikan dongle Wi-Fi dimasukkan sepenuhnya.\n2. Jika tiada Alamat MAC rangkaian wayarles pada skrin sentuh, sila hubungi Sokongan FLUX.',
     },
     connect_wired: {
       title: 'Menyambung ke Rangkaian Berwayar',

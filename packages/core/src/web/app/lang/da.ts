@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Gå til berøringspanelet > Klik på "MASKINE" > Klik på "Netværk" > "Opret forbindelse til WiFi".',
       tutorial2: '2. Vælg og opret forbindelse til dit foretrukne Wi-Fi.',
       what_if_1: 'Hvad nu hvis jeg ikke kan se mit Wi-Fi?',
-      what_if_1_content: '1. Wi-Fi krypteringsmetoden bør være WPA2 eller ingen adgangskode.\n2. Krypteringsmetoden kan indstilles i Wi-Fi routeradministrationsgrænsefladen. Hvis routeren ikke understøtter WPA2, og du har brug for hjælp til at vælge den rigtige router, kontakt venligst FLUX Support.',
+      what_if_1_content: '1. Wi-Fi krypteringsmetoden bør være WPA2 eller ingen adgangskode.\n2. Krypteringsmetoden kan indstilles i Wi-Fi routeradministrationsgrænsefladen. Hvis routeren ikke understøtter WPA2, og du har brug for hjælp til at vælge den rigtige router, kontakt venligst FLUX Support.\n3. Wi-Fi-kanalen bør være 2.4Ghz (5Ghz understøttes ikke).',
       what_if_2: 'Hvad nu, hvis jeg ikke ser noget Wi-Fi?',
-      what_if_2_content: '1. Sørg for, at Wi-Fi-donglen er helt isat.\n2. Hvis der ikke er nogen MAC-adresse på det trådløse netværk på touchskærmen, kontakt venligst FLUX Support.\n3. Wi-Fi-kanalen bør være 2.4Ghz (5Ghz understøttes ikke).',
+      what_if_2_content: '1. Sørg for, at Wi-Fi-donglen er helt isat.\n2. Hvis der ikke er nogen MAC-adresse på det trådløse netværk på touchskærmen, kontakt venligst FLUX Support.',
     },
     connect_wired: {
       title: 'Forbindelse til kablet netværk',

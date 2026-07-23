@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Ga naar het aanraakscherm > Tik op "MACHINE" > Tik op "Netwerk" > "Verbind met WiFi".',
       tutorial2: '2. Selecteer en verbind met uw voorkeurs Wi-Fi.',
       what_if_1: 'Wat als ik mijn Wi-Fi niet zie?',
-      what_if_1_content: '1. De Wi-Fi-encryptiemodus moet WPA2 zijn of geen wachtwoord hebben.\n2. De encryptiemodus kan worden ingesteld in de Wi-Fi-routerbeheerinterface. Als de router WPA2 niet ondersteunt en u hulp nodig heeft bij het uitkiezen van de juiste router, neem dan contact op met FLUX-ondersteuning.',
+      what_if_1_content: '1. De Wi-Fi-encryptiemodus moet WPA2 zijn of geen wachtwoord hebben.\n2. De encryptiemodus kan worden ingesteld in de Wi-Fi-routerbeheerinterface. Als de router WPA2 niet ondersteunt en u hulp nodig heeft bij het uitkiezen van de juiste router, neem dan contact op met FLUX-ondersteuning.\n3. Het Wi-Fi-kanaal moet 2.4Ghz zijn (5Ghz wordt niet ondersteund).',
       what_if_2: 'Wat als ik helemaal geen Wi-Fi zie?',
-      what_if_2_content: '1. Zorg ervoor dat de Wi-Fi-dongle volledig is aangesloten.\n2. Als er geen MAC-adres van het draadloze netwerk op het aanraakscherm staat, neem dan contact op met FLUX-ondersteuning.\n3. Het Wi-Fi-kanaal moet 2.4Ghz zijn (5Ghz wordt niet ondersteund).',
+      what_if_2_content: '1. Zorg ervoor dat de Wi-Fi-dongle volledig is aangesloten.\n2. Als er geen MAC-adres van het draadloze netwerk op het aanraakscherm staat, neem dan contact op met FLUX-ondersteuning.',
     },
     connect_wired: {
       title: 'Verbinden met bekabeld netwerk',

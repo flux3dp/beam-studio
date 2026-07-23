@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Gehe zu Touch Panel > Klicke auf "MASCHINE" > Klicke auf "Netzwerk" > "Mit Wi-Fi verbinden".',
       tutorial2: '2. Wählen Sie Ihr bevorzugtes WLAN aus und verbinden Sie es.',
       what_if_1: 'Was ist, wenn ich mein WLAN nicht sehe?',
-      what_if_1_content: '1. Der Wi-Fi-Verschlüsselungsmodus sollte WPA2 oder kein Kennwort sein.\n 2. Der Verschlüsselungsmodus kann in der Administrationsoberfläche des WLAN-Routers eingestellt werden. Wenn der Router WPA2 nicht unterstützt und Sie Hilfe bei der Auswahl des richtigen Routers benötigen, wenden Sie sich an den FLUX-Support.',
+      what_if_1_content: '1. Der Wi-Fi-Verschlüsselungsmodus sollte WPA2 oder kein Kennwort sein.\n 2. Der Verschlüsselungsmodus kann in der Administrationsoberfläche des WLAN-Routers eingestellt werden. Wenn der Router WPA2 nicht unterstützt und Sie Hilfe bei der Auswahl des richtigen Routers benötigen, wenden Sie sich an den FLUX-Support.\n3. Der Wi-Fi-Kanal sollte 2.4 GHz betragen (5 GHz werden nicht unterstützt).',
       what_if_2: 'Was ist, wenn ich kein WLAN sehe??',
-      what_if_2_content: '1. Stellen Sie sicher, dass der Wi-Fi-Dongle vollständig angeschlossen ist.\n 2. Wenn auf dem Touchscreen keine MAC-Adresse des drahtlosen Netzwerks vorhanden ist, wenden Sie sich an den FLUX-Support.\n3. Der Wi-Fi-Kanal sollte 2.4 GHz betragen (5 GHz werden nicht unterstützt).',
+      what_if_2_content: '1. Stellen Sie sicher, dass der Wi-Fi-Dongle vollständig angeschlossen ist.\n 2. Wenn auf dem Touchscreen keine MAC-Adresse des drahtlosen Netzwerks vorhanden ist, wenden Sie sich an den FLUX-Support.',
     },
     connect_wired: {
       title: 'Verbindung zum kabelgebundenen Netzwerk herstellen',
