@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Gå till pekskärmen > Klicka på "MASKIN" > Klicka på "Nätverk" > "Anslut till WiFi".',
       tutorial2: '2. Välj och anslut till ditt föredragna Wi-Fi.',
       what_if_1: 'Vad gör jag om jag inte ser mitt Wi-Fi?',
-      what_if_1_content: '1. Wi-Fi-krypteringen bör vara WPA2 eller inget lösenord.\n2. Krypteringsläget kan ställas in i Wi-Fi-routerns administrationsgränssnitt. Om routern inte stöder WPA2 och du behöver hjälp med att välja rätt router, kontakta FLUX-supporten.',
+      what_if_1_content: '1. Wi-Fi-krypteringen bör vara WPA2 eller inget lösenord.\n2. Krypteringsläget kan ställas in i Wi-Fi-routerns administrationsgränssnitt. Om routern inte stöder WPA2 och du behöver hjälp med att välja rätt router, kontakta FLUX-supporten.\n3. Wi-Fi-kanalen bör vara 2,4 GHz (5 GHz stöds inte).',
       what_if_2: 'Vad händer om jag inte ser något Wi-Fi?',
-      what_if_2_content: '1. Se till att Wi-Fi-dongeln är ordentligt ansluten.\n2. Om det inte finns någon MAC-adress för det trådlösa nätverket på pekskärmen, kontakta FLUX-supporten.\n3. Wi-Fi-kanalen bör vara 2,4 GHz (5 GHz stöds inte).',
+      what_if_2_content: '1. Se till att Wi-Fi-dongeln är ordentligt ansluten.\n2. Om det inte finns någon MAC-adress för det trådlösa nätverket på pekskärmen, kontakta FLUX-supporten.',
     },
     connect_wired: {
       title: 'Ansluter till kabelanslutet nätverk',

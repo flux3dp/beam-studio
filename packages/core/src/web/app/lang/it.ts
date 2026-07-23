@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Vai a Pannello Touch > Fai clic su "MACCHINA" > Fai clic su "Rete" > "Connetti a Wi-Fi".',
       tutorial2: '2. Seleziona e connetti il Wi-Fi preferito.',
       what_if_1: 'Cosa fare se non vedo il mio Wi-Fi?',
-      what_if_1_content: "1. La modalità di crittografia Wi-Fi dovrebbe essere WPA2 o nessuna password.\n2. La modalità di crittografia può essere impostata nell'interfaccia di amministrazione del router Wi-Fi. Se il router non supporta WPA2 e hai bisogno di aiuto nella scelta del router giusto, contatta l'assistenza FLUX.",
+      what_if_1_content: "1. La modalità di crittografia Wi-Fi dovrebbe essere WPA2 o nessuna password.\n2. La modalità di crittografia può essere impostata nell'interfaccia di amministrazione del router Wi-Fi. Se il router non supporta WPA2 e hai bisogno di aiuto nella scelta del router giusto, contatta l'assistenza FLUX.\n3. Il canale Wi-Fi dovrebbe essere 2.4Ghz (5Ghz non è supportato).",
       what_if_2: 'Cosa succede se non vedo alcuna rete Wi-Fi?',
-      what_if_2_content: "1. Assicurati che il dongle Wi-Fi sia completamente inserito.\n2. Se non c'è alcun indirizzo MAC della rete wireless sul touchscreen, contatta l'assistenza FLUX.\n3. Il canale Wi-Fi dovrebbe essere 2.4Ghz (5Ghz non è supportato).",
+      what_if_2_content: "1. Assicurati che il dongle Wi-Fi sia completamente inserito.\n2. Se non c'è alcun indirizzo MAC della rete wireless sul touchscreen, contatta l'assistenza FLUX.",
     },
     connect_wired: {
       title: 'Connessione alla rete cablata',

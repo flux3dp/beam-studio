@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Przejdź do Panelu dotykowego > Kliknij „MASZYNA” > Kliknij „Sieć” > „Połącz się z Wi-Fi”.',
       tutorial2: '2. Wybierz i połącz z preferowaną siecią Wi-Fi.',
       what_if_1: 'Co zrobić, jeśli nie widzę mojego Wi-Fi?',
-      what_if_1_content: '1. Tryb szyfrowania Wi-Fi powinien być WPA2 lub bez hasła.Tryb szyfrowania można ustawić w panelu administracyjnym routera Wi-Fi.Jeśli router nie obsługuje standardu WPA2 i potrzebujesz pomocy w doborze odpowiedniego routera, skontaktuj się z pomocą techniczną FLUX.',
+      what_if_1_content: '1. Tryb szyfrowania Wi-Fi powinien być WPA2 lub bez hasła.Tryb szyfrowania można ustawić w panelu administracyjnym routera Wi-Fi.Jeśli router nie obsługuje standardu WPA2 i potrzebujesz pomocy w doborze odpowiedniego routera, skontaktuj się z pomocą techniczną FLUX. Kanał Wi-Fi powinien mieć częstotliwość 2,4 GHz (5 GHz nie jest obsługiwane).',
       what_if_2: 'Co jeśli nie widzę żadnego Wi-Fi?',
-      what_if_2_content: '1. Upewnij się że adapter Wi-Fi jest dobrze podłączony. Jeśli na ekranie dotykowym nie ma adresu MAC sieci bezprzewodowej, skontaktuj się z pomocą techniczną FLUX. Kanał Wi-Fi powinien mieć częstotliwość 2,4 GHz (5 GHz nie jest obsługiwane).',
+      what_if_2_content: '1. Upewnij się że adapter Wi-Fi jest dobrze podłączony. Jeśli na ekranie dotykowym nie ma adresu MAC sieci bezprzewodowej, skontaktuj się z pomocą techniczną FLUX.',
     },
     connect_wired: {
       title: 'Podłączenie do sieci przewodowej',

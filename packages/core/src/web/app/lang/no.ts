@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Gå til berøringspanelet > klikk på "MASKIN" > klikk på "Nettverk" > "Koble til WiFi".',
       tutorial2: '2. Velg og koble til foretrukket Wi-Fi.',
       what_if_1: 'Hva hvis jeg ikke ser mitt Wi-Fi?',
-      what_if_1_content: '1. Wi-Fi-krypteringen bør være WPA2 eller ingen passord.\n2. Krypteringen kan angis i Wi-Fi-ruteradministrasjon. Hvis ruteren ikke støtter WPA2 og du trenger hjelp med å velge riktig ruter, kontakt FLUX-støtte.',
+      what_if_1_content: '1. Wi-Fi-krypteringen bør være WPA2 eller ingen passord.\n2. Krypteringen kan angis i Wi-Fi-ruteradministrasjon. Hvis ruteren ikke støtter WPA2 og du trenger hjelp med å velge riktig ruter, kontakt FLUX-støtte.\n3. Wi-Fi-kanalen bør være 2.4Ghz (5Ghz støttes ikke).',
       what_if_2: 'Hva hvis jeg ikke ser noe Wi-Fi?',
-      what_if_2_content: '1. Sjekk at Wi-Fi-dongelen er ordentlig tilkoblet.\n2. Hvis det ikke er noen MAC-adresse for trådløst nettverk på berøringsskjermen, kontakt FLUX-støtte.\n3. Wi-Fi-kanalen bør være 2.4Ghz (5Ghz støttes ikke).',
+      what_if_2_content: '1. Sjekk at Wi-Fi-dongelen er ordentlig tilkoblet.\n2. Hvis det ikke er noen MAC-adresse for trådløst nettverk på berøringsskjermen, kontakt FLUX-støtte.',
     },
     connect_wired: {
       title: 'Koble til kablet nettverk',

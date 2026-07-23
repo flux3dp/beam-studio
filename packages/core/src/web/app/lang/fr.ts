@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Accédez au panneau tactile > Cliquez sur "MACHINE" > Cliquez sur "RÉSEAU" > "Se connecter au Wi-Fi".',
       tutorial2: '2. Sélectionnez et connectez-vous au Wi-Fi de votre choix.',
       what_if_1: 'Que faire si je ne vois pas mon Wi-Fi ?',
-      what_if_1_content: "1. Le chiffrement Wi-Fi doit être WPA2 ou sans mot de passe.\n2. Le chiffrement peut être défini dans l'interface d'administration du routeur Wi-Fi. Si le routeur ne prend pas en charge WPA2 et que vous avez besoin d'aide pour choisir le bon routeur, veuillez contacter le support FLUX.",
+      what_if_1_content: "1. Le chiffrement Wi-Fi doit être WPA2 ou sans mot de passe.\n2. Le chiffrement peut être défini dans l'interface d'administration du routeur Wi-Fi. Si le routeur ne prend pas en charge WPA2 et que vous avez besoin d'aide pour choisir le bon routeur, veuillez contacter le support FLUX.\n3. Le canal Wi-Fi doit être 2.4Ghz (5Ghz n'est pas pris en charge).",
       what_if_2: 'Que faire si je ne vois aucun Wi-Fi ?',
-      what_if_2_content: "1. Assurez-vous que la clé Wi-Fi est entièrement branchée.\n2. S'il n'y a pas d'adresse MAC du réseau sans fil sur l'écran tactile, veuillez contacter le support FLUX.\n3. Le canal Wi-Fi doit être 2.4Ghz (5Ghz n'est pas pris en charge).",
+      what_if_2_content: "1. Assurez-vous que la clé Wi-Fi est entièrement branchée.\n2. S'il n'y a pas d'adresse MAC du réseau sans fil sur l'écran tactile, veuillez contacter le support FLUX.",
     },
     connect_wired: {
       title: 'Connexion au réseau filaire',

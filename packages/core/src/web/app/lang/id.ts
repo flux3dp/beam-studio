@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Pergi ke Panel Sentuh > Klik "MESIN" > Klik "Jaringan" > "Sambung ke WiFi".',
       tutorial2: '2. Pilih dan sambung Wi-Fi pilihan Anda.',
       what_if_1: 'Bagaimana jika saya tidak melihat Wi-Fi saya?',
-      what_if_1_content: '1. Mode enkripsi Wi-Fi harus WPA2 atau tanpa kata sandi.\n2. Mode enkripsi dapat diatur di antarmuka administrasi router Wi-Fi. Jika router tidak mendukung WPA2 dan Anda membutuhkan bantuan memilih router yang tepat, silakan hubungi Dukungan FLUX.',
+      what_if_1_content: '1. Mode enkripsi Wi-Fi harus WPA2 atau tanpa kata sandi.\n2. Mode enkripsi dapat diatur di antarmuka administrasi router Wi-Fi. Jika router tidak mendukung WPA2 dan Anda membutuhkan bantuan memilih router yang tepat, silakan hubungi Dukungan FLUX.\n3. Saluran Wi-Fi harus 2,4Ghz (5Ghz tidak didukung).',
       what_if_2: 'Bagaimana jika saya tidak melihat Wi-Fi sama sekali?',
-      what_if_2_content: '1. Pastikan stik Wi-Fi terpasang dengan benar.\n2. Jika tidak ada Alamat MAC jaringan nirkabel di layar sentuh, silakan hubungi Dukungan FLUX.\n3. Saluran Wi-Fi harus 2,4Ghz (5Ghz tidak didukung).',
+      what_if_2_content: '1. Pastikan stik Wi-Fi terpasang dengan benar.\n2. Jika tidak ada Alamat MAC jaringan nirkabel di layar sentuh, silakan hubungi Dukungan FLUX.',
     },
     connect_wired: {
       title: 'Menyambung ke Jaringan Kabel',

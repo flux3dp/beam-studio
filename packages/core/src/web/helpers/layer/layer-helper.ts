@@ -38,7 +38,9 @@ export function getObjectLayer(elem: SVGElement): null | { elem: SVGGElement; ti
     const title = layer.querySelector('title');
 
     if (title) {
-      return { elem: layer as SVGGElement, title: title.innerHTML };
+      // textContent, not innerHTML: names containing '&' (e.g. 'Print & Cut')
+      // would be html-escaped and no longer match the layerManager name map
+      return { elem: layer as SVGGElement, title: title.textContent ?? '' };
     }
   }
 

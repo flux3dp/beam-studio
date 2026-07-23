@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. Siirry kosketusnäytölle > Paina "KONE" > Paina "Verkko" > "Yhdistä WiFiin".',
       tutorial2: '2. Valitse ja yhdistä haluamasi Wi-Fi.',
       what_if_1: 'Entä jos en näe Wi-Fiäni?',
-      what_if_1_content: '1. Wi-Fi-salauksen tilan tulisi olla WPA2 tai ei salasanaa.\n2. Salaustilan voi asettaa Wi-Fi-reitittimen hallintaliittymässä. Jos reititin ei tue WPA2:ta ja tarvitset apua oikean reitittimen valinnassa, ota yhteyttä FLUX-tukeen.',
+      what_if_1_content: '1. Wi-Fi-salauksen tilan tulisi olla WPA2 tai ei salasanaa.\n2. Salaustilan voi asettaa Wi-Fi-reitittimen hallintaliittymässä. Jos reititin ei tue WPA2:ta ja tarvitset apua oikean reitittimen valinnassa, ota yhteyttä FLUX-tukeen.\n3. Wi-Fi-kanavan tulisi olla 2,4 GHz (5 GHz ei ole tuettu).',
       what_if_2: 'Mitä teen, jos en näe yhtään Wi-Fi-verkkoa?',
-      what_if_2_content: '1. Varmista, että Wi-Fi-tikku on kytketty kunnolla.\n2. Jos kosketusnäytöllä ei näy langattoman verkon MAC-osoitetta, ota yhteyttä FLUX-tukeen.\n3. Wi-Fi-kanavan tulisi olla 2,4 GHz (5 GHz ei ole tuettu).',
+      what_if_2_content: '1. Varmista, että Wi-Fi-tikku on kytketty kunnolla.\n2. Jos kosketusnäytöllä ei näy langattoman verkon MAC-osoitetta, ota yhteyttä FLUX-tukeen.',
     },
     connect_wired: {
       title: 'Langallisen verkon yhdistäminen',

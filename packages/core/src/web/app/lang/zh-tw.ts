@@ -1633,9 +1633,9 @@ const lang: ILang = {
       tutorial1_ador: '1. 到機器控制面板 > 點擊「機器」 > 點擊「網路」 > 「設定 Wi-Fi」。',
       tutorial2: '2. 選擇並連接您想使用的 Wi-Fi 。',
       what_if_1: '機器找不到我想使用的 Wi-Fi',
-      what_if_1_content: '1. Wi-Fi 加密方式需為 WPA2 或無密碼。\n2. 加密方式可由 Wi-Fi 路由器設定，如果路由器不支援 WPA2，可聯繫客服購買，如果不確定路由器是否支援，可以將型號傳給客服詢問。',
+      what_if_1_content: '1. Wi-Fi 加密方式需為 WPA2 或無密碼。\n2. 加密方式可由 Wi-Fi 路由器設定，如果路由器不支援 WPA2，可聯繫客服購買，如果不確定路由器是否支援，可以將型號傳給客服詢問。\n3. Wi-Fi 頻道為 2.4Ghz (不支援 5Ghz)。',
       what_if_2: '機器找不到任何 Wi-Fi',
-      what_if_2_content: '1. 確認您的 Wi-Fi 接收器是否有著實插上。\n2. 如果面板上沒有出現無線網路硬體位置，請聯繫客服。\n3. Wi-Fi 頻道為 2.4Ghz (不支援 5Ghz)。',
+      what_if_2_content: '1. 確認您的 Wi-Fi 接收器是否有著實插上。\n2. 如果面板上沒有出現無線網路硬體位置，請聯繫客服。',
     },
     connect_wired: {
       title: '連接有線網路',
