@@ -8,7 +8,7 @@ import windowLocationReload from '@core/app/actions/windowLocation';
 import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
 import { useInitializeMachineStore } from '@core/app/pages/InitializeMachine/store';
-import { isMobile } from '@core/app/stores/screenStore';
+import { isMobile } from '@core/app/stores/layoutStore';
 import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { decodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import { getHomePage } from '@core/helpers/hashHelper';

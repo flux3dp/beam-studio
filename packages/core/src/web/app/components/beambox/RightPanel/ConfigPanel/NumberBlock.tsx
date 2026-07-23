@@ -1,8 +1,7 @@
-import React, { memo, use, useCallback, useEffect, useMemo } from 'react';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
 import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -18,19 +17,15 @@ import {
   writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
-import units from '@core/helpers/units';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
-
-import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import styles from './Block.module.scss';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
 
-interface Props {
+type Props = Pick<CommonProps, 'noApply'> & {
   configKey: ConfigKey;
   /** not detect inch or mm, always use props unit */
   forceUsePropsUnit?: boolean;
@@ -39,18 +34,15 @@ interface Props {
   lightTitle?: boolean;
   max?: number;
   min?: number;
-  /**  Number input or button for panel-item */
-  panelType?: 'button' | 'input';
   precision?: number;
   precisionInch?: number;
   sliderStep?: number;
   step?: number;
   title: string;
   tooltip?: string;
-  type?: 'default' | 'modal' | 'panel-item';
   unit?: string;
   warning?: string;
-}
+};
 
 const NumberBlock = ({
   configKey: key,
@@ -60,19 +52,16 @@ const NumberBlock = ({
   lightTitle,
   max = 100,
   min = 0,
-  panelType = 'input',
+  noApply,
   precision = 0,
   precisionInch = precision + 2,
   sliderStep,
   step = 1,
   title,
   tooltip,
-  type = 'default',
   unit,
   warning,
 }: Props): React.ReactNode => {
-  const isPanelType = useMemo(() => type === 'panel-item', [type]);
-  const { activeKey } = use(ObjectPanelContext);
   const {
     change,
     [key]: { hasMultiValue, value = 0 },
@@ -111,7 +100,7 @@ const NumberBlock = ({
 
       if (isTimeRelated) timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
-      if (type !== 'modal') {
+      if (!noApply) {
         const batchCmd = noHistory ? undefined : new history.BatchCommand(`Change ${key}`);
 
         useLayerStore.getState().selectedLayers.forEach((layerName) => {
@@ -130,7 +119,7 @@ const NumberBlock = ({
         }
       }
     },
-    [change, value, key, max, min, isPresetRelated, isTimeRelated, type, hasMultiValue],
+    [change, value, key, max, min, isPresetRelated, isTimeRelated, noApply, hasMultiValue],
   );
 
   useEffect(() => {
@@ -145,21 +134,6 @@ const NumberBlock = ({
     console.warn(`NumberBlock: Config ${key}: ${value} type is not number`);
 
     return null;
-  }
-
-  if (isPanelType && panelType === 'button') {
-    return (
-      <ObjectPanelItem.Number
-        decimal={displayPrecision}
-        id={id ?? key}
-        label={title}
-        max={max}
-        min={min}
-        unit={unit}
-        updateValue={handleChange}
-        value={value}
-      />
-    );
   }
 
   const content = (
@@ -181,7 +155,6 @@ const NumberBlock = ({
         min={min}
         onChange={handleChange}
         step={step * (isInch ? 1.27 : 1)}
-        type={type}
         unit={displayUnit}
         value={value}
       />
@@ -206,22 +179,7 @@ const NumberBlock = ({
     </div>
   );
 
-  return isPanelType ? (
-    <Popover content={content} visible={activeKey === key}>
-      <ObjectPanelItem.Item
-        autoClose={false}
-        content={
-          <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
-            {isInch ? units.convertUnit(value, 'inch', 'mm').toFixed(precision) : value}
-          </Button>
-        }
-        id={key}
-        label={title}
-      />
-    </Popover>
-  ) : (
-    content
-  );
+  return content;
 };
 
 export default memo(NumberBlock);

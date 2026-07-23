@@ -1,3 +1,5 @@
+@use '@core/styles/selectors' as selectors;
+
 .btn {
   position: absolute;
   cursor: pointer;
@@ -10,13 +12,10 @@
   border: none;
 }
 
-@media screen and (max-width: 600px) {
+@include selectors.tablet-or-mobile-layout {
   .btn {
-    top: 8px;
-    left: 8px;
-    z-index: 999;
-    width: 30px;
-    height: 30px;
+    position: unset;
     font-size: 28px;
+    line-height: 0;
   }
 }

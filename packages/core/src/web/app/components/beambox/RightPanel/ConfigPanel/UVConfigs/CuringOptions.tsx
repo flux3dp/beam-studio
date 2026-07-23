@@ -8,18 +8,21 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from '../Block.module.scss';
 import initState from '../initState';
 import NumberBlock from '../NumberBlock';
 
-const CuringOptions = memo(({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
+const CuringOptions = memo((props: CommonProps) => {
   const { change, uvCuringAfter } = useConfigPanelStore();
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const handleToggle = () => {
     const newVal = !uvCuringAfter.value;
 
     change({ uvCuringAfter: newVal });
+
+    if (props.noApply) return;
 
     const batchCmd = new history.BatchCommand('Change Curing After toggle');
 
@@ -50,7 +53,7 @@ const CuringOptions = memo(({ type = 'default' }: { type?: 'default' | 'modal' |
             max={100}
             min={0}
             title="UV Printing Repeat"
-            type={type}
+            {...props}
           />
           <NumberBlock
             configKey="uvCuringRepeat"
@@ -58,7 +61,7 @@ const CuringOptions = memo(({ type = 'default' }: { type?: 'default' | 'modal' |
             max={100}
             min={1}
             title="UV Curing Repeat"
-            type={type}
+            {...props}
           />
         </>
       )}

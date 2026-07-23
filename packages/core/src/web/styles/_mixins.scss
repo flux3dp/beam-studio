@@ -1,4 +1,6 @@
 @use 'sass:list';
+@use '@core/styles/variables';
+@import '@core/styles/selectors'; // Import for old usage, remove this after all selectors are migrated to use selectors file
 
 // Add antd default margin between buttons in modal footer
 // if buttons are wrapped in another element
@@ -8,61 +10,49 @@
   }
 }
 
-// Note: mixins with :global can be used in xxx.module.scss only
-@mixin when-tab-focused {
-  :where(body:global(.focused)) & {
-    @content;
-  }
-}
-@mixin when-tab-not-focused {
-  :where(body:not(:global(.focused))) & {
-    @content;
-  }
-}
+// Custom XL button with spotlighted icon + text + hint, left-aligned
+// Modified from antd Button type="default"
+// Styles slots: :root, .texts, .hint
+%card-button {
+  min-height: 60px;
+  height: unset;
+  justify-content: flex-start;
+  gap: 16px;
+  text-align: left;
+  padding: 16px;
 
-@mixin is-mobile {
-  @media screen and (max-width: 600px) {
-    @content;
+  &:hover {
+    // hover effect for type="text"
+    background: rgba(0, 0, 0, 0.04) !important;
+    border-color: #d9d9d9 !important;
   }
-}
-@mixin is-not-mobile {
-  @media screen and (min-width: 601px) {
-    @content;
-  }
-}
 
-@mixin is-web {
-  :where(:global(#root.web)) & {
-    @content;
+  :global(.ant-btn-icon) {
+    height: 48px;
+    width: 48px;
+    flex-shrink: 0;
+    font-size: 24px;
+    border-radius: 100%;
+    background: #1890ff1a;
+    color: #1890ff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
-}
-@mixin is-not-web {
-  :where(:global(#root:not(.web))) & {
-    @content;
-  }
-}
 
-$supported-os: (
-  linux,
-  macos,
-  windows,
-  others
-); // lowercase version of getOS result
-@mixin is-os($os) {
-  @if list.index($supported-os, $os) {
-    :where(:global(body.#{$os})) & {
-      @content;
-    }
-  } @else {
-    @error "Unsupported OS `#{$os}` in is-os mixin.";
+  .texts {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 16px;
+    font-weight: 600;
+    color: variables.$primary-gray;
+    white-space: break-spaces;
   }
-}
-@mixin is-not-os($os) {
-  @if list.index($supported-os, $os) {
-    :where(:global(body:not(.#{$os}))) & {
-      @content;
-    }
-  } @else {
-    @error "Unsupported OS `#{$os}` in is-not-os mixin.";
+
+  .hint {
+    font-size: 14px;
+    font-weight: 500;
+    color: variables.$secondary-gray;
   }
 }

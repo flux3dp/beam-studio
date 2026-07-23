@@ -1,4 +1,6 @@
-@use '../../_mixins.scss' as mixins;
+@use '../../_mixins.scss' as rightPanelMixins;
+@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .field {
   display: flex;
@@ -23,6 +25,12 @@
 
 .options {
   .option-block {
-    @include mixins.option-block();
+    @include rightPanelMixins.option-block();
+  }
+}
+
+.icon {
+  @include selectors.tablet-or-mobile-layout {
+    margin-left: 4px;
   }
 }

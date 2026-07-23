@@ -61,6 +61,18 @@ export function buildFileMenu(
     {
       click: callback,
       enabled: false,
+      id: 'SAVE_AS_PROJECT',
+      label: r.save_as_project,
+    },
+    {
+      click: callback,
+      enabled: false,
+      id: 'SAVE_AS_TEMPLATE',
+      label: r.save_as_template,
+    },
+    {
+      click: callback,
+      enabled: false,
       id: 'SAVE_TO_CLOUD',
       label: r.save_to_cloud,
     },
@@ -244,7 +256,7 @@ export function buildFileMenu(
 export const updateRecentMenu = (updateWindowMenu = true): void => {
   const recentMenu = Menu.getApplicationMenu()
     ?.items.filter((i) => i.id === '_file')?.[0]
-    .submenu?.items.filter((i) => i.id === 'RECENT')?.[0].submenu;
+    ?.submenu?.items.filter((i) => i.id === 'RECENT')?.[0].submenu;
 
   if (recentMenu) {
     const lang = i18n.lang.topmenu.file;

@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { InputNumber, Slider } from 'antd';
 
 import progressCaller from '@core/app/actions/progress-caller';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import CurveControl from '@core/app/widgets/Curve-Control';
 import imageEdit from '@core/helpers/image-edit';
 import jimpHelper from '@core/helpers/jimp-helper';

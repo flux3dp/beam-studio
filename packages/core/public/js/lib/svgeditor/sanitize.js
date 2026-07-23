@@ -90,6 +90,8 @@
     style: ['type'],
     desc: [],
     ellipse: [
+      'data-lock',
+      'data-name',
       'data-ratiofixed',
       'data-original-layer',
       'data-np',
@@ -120,6 +122,7 @@
       'style',
       'systemLanguage',
       'transform',
+      'data-editable',
     ],
     feGaussianBlur: ['class', 'color-interpolation-filters', 'id', 'requiredFeatures', 'stdDeviation'],
     filter: [
@@ -151,6 +154,7 @@
       'y',
     ],
     g: [
+      'data-name',
       'data-ratiofixed',
       'data-original-layer',
       'data-np',
@@ -256,8 +260,12 @@
       'data-scEnable',
       'data-scJerk',
       'data-minPadding',
+      'data-editable',
+      'data-template-target',
     ],
     image: [
+      'data-lock',
+      'data-name',
       'data-ratiofixed',
       'data-shading',
       'data-threshold',
@@ -286,8 +294,13 @@
       'data-color',
       'data-pass',
       'data-zstep',
+      'data-editable',
+      'data-library-default',
+      'data-library-owner',
     ],
     line: [
+      'data-lock',
+      'data-name',
       'data-original-layer',
       'vector-effect',
       'data-np',
@@ -320,6 +333,7 @@
       'x2',
       'y1',
       'y2',
+      'data-editable',
     ],
     linearGradient: [
       'class',
@@ -351,6 +365,8 @@
     mask: ['class', 'height', 'id', 'maskContentUnits', 'maskUnits', 'width', 'x', 'y'],
     metadata: ['class', 'id'],
     path: [
+      'data-lock',
+      'data-name',
       'data-ratiofixed',
       'data-nodeTypes',
       'data-segInfo',
@@ -383,6 +399,7 @@
       'style',
       'systemLanguage',
       'transform',
+      'data-editable',
     ],
     pattern: [
       'class',
@@ -401,6 +418,8 @@
       'y',
     ],
     polygon: [
+      'data-lock',
+      'data-name',
       'data-ratiofixed',
       'data-original-layer',
       'data-np',
@@ -433,6 +452,7 @@
       'style',
       'systemLanguage',
       'transform',
+      'data-editable',
     ],
     polyline: [
       'data-original-layer',
@@ -481,6 +501,8 @@
       'xlink:href',
     ],
     rect: [
+      'data-lock',
+      'data-name',
       'data-ratiofixed',
       'data-original-layer',
       'data-np',
@@ -513,6 +535,7 @@
       'width',
       'x',
       'y',
+      'data-editable',
     ],
     stop: ['class', 'id', 'offset', 'requiredFeatures', 'stop-color', 'stop-opacity', 'style', 'systemLanguage'],
     svg: [
@@ -568,8 +591,12 @@
       'data-image-symbol',
       'overflow',
       'data-bbox',
+      'data-library-owner',
+      'data-library-ref',
     ],
     text: [
+      'data-lock',
+      'data-name',
       'data-ratiofixed',
       'data-np',
       'data-textpath',
@@ -617,6 +644,7 @@
       'data-fit-text-size',
       'data-text-transform',
       'data-raw-text',
+      'data-editable',
     ],
     textPath: [
       'alignment-baseline',
@@ -675,6 +703,8 @@
       'lengthAdjust',
     ],
     use: [
+      'data-lock',
+      'data-name',
       'data-ratiofixed',
       'data-xform',
       'data-original-layer',
@@ -710,6 +740,8 @@
       'data-invert',
       'data-props',
       'data-code',
+      'data-editable',
+      'data-library-default',
     ],
 
     // MathML Elements

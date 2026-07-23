@@ -22,14 +22,15 @@ import TabFollowUs from '@core/app/components/welcome/TabFollowUs';
 import TabHelpCenter from '@core/app/components/welcome/TabHelpCenter';
 import TabMyCloud from '@core/app/components/welcome/TabMyCloud';
 import TabRecentFiles from '@core/app/components/welcome/TabRecentFiles';
+import TabTemplateFiles from '@core/app/components/welcome/TabTemplateFiles';
 import ThemedButton from '@core/app/components/welcome/ThemedButton';
 import UserInfo from '@core/app/components/welcome/UserInfo';
 import { MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import { DmktIcon } from '@core/app/icons/icons';
+import MiscIcons, { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { axiosFluxId, fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import { hashMap } from '@core/helpers/hashHelper';
@@ -43,7 +44,7 @@ import type { IUser } from '@core/interfaces/IUser';
 
 import styles from './Welcome.module.scss';
 
-type MenuKey = 'beamy' | 'dmkt' | 'follow' | 'help-center' | 'my-cloud' | 'recent-files';
+type MenuKey = 'beamy' | 'dmkt' | 'follow' | 'help-center' | 'my-cloud' | 'recent-files' | 'template-files';
 interface MenuItem {
   icon: ReactNode;
   key: MenuKey;
@@ -71,6 +72,7 @@ const Welcome = (): ReactNode => {
   } = useI18n();
   const activeLang = useStorageStore((state) => state['active-lang']) ?? 'en';
   const showBanners = useGlobalPreferenceStore((state) => state.show_banners);
+  const templateCreationMode = useGlobalPreferenceStore((state) => state.template_creation_mode);
   const isMobile = useIsMobile();
   const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
   const [banners, setBanners] = useState<IBanner[]>([]);
@@ -152,6 +154,11 @@ const Welcome = (): ReactNode => {
       key: 'recent-files',
       label: t.recent_files,
     },
+    templateCreationMode && {
+      icon: <MiscIcons.Template />,
+      key: 'template-files',
+      label: t.template_files,
+    },
     {
       icon: <CloudOutlined />,
       key: 'my-cloud',
@@ -196,6 +203,7 @@ const Welcome = (): ReactNode => {
     'help-center': <TabHelpCenter />,
     'my-cloud': <TabMyCloud user={currentUser} />,
     'recent-files': <TabRecentFiles />,
+    'template-files': <TabTemplateFiles user={currentUser} />,
   };
 
   const isFullTab = useMemo(() => activeKey === 'beamy', [activeKey]);
@@ -219,7 +227,7 @@ const Welcome = (): ReactNode => {
         <div className={styles.logo}>
           <FluxIcons.FluxLogo />
         </div>
-        <ThemedButton ghost icon={<FolderOpenOutlined />} onClick={funcs.importImage} theme="white">
+        <ThemedButton ghost icon={<FolderOpenOutlined />} onClick={() => funcs.importImage()} theme="white">
           {!isMobile && tMenu.open}
         </ThemedButton>
         <ThemedButton icon={<PlusOutlined />} onClick={funcs.clearScene} theme="yellow">

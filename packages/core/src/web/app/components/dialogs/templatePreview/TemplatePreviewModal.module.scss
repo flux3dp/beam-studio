@@ -1,0 +1,81 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  height: 100%;
+}
+
+.header {
+  align-items: center;
+  display: flex;
+  flex: 0 0 auto;
+  gap: 12px;
+}
+
+// Fills the remaining modal body; its measured size caps how large the preview can grow.
+.previewArea {
+  align-items: center;
+  display: flex;
+  flex: 1 1 auto;
+  justify-content: center;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+}
+
+.preview {
+  background: #f5f5f5;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+  box-sizing: border-box;
+  // Handles are pushed outside the border, so the box itself must not clip them.
+  overflow: visible;
+
+  // Reset react-resizable's default corner-grip look and reposition each handle outside the box.
+  :global(.react-resizable-handle) {
+    background: #bfbfbf;
+    background-image: none;
+    border-radius: 999px;
+    margin: 0;
+    padding: 0;
+    transform: none;
+    transition:
+      background 0.15s,
+      transform 0.15s;
+  }
+
+  :global(.react-resizable-handle):hover,
+  :global(.react-resizable-handle):active {
+    background: #1677ff;
+  }
+
+  // Right (width) – vertical bar centred on the right edge, just outside.
+  :global(.react-resizable-handle-e) {
+    cursor: ew-resize;
+    height: 44px;
+    margin-top: -22px;
+    right: -9px;
+    top: 50%;
+    width: 6px;
+  }
+
+  // Left (width) – vertical bar centred on the left edge, just outside.
+  :global(.react-resizable-handle-w) {
+    cursor: ew-resize;
+    height: 44px;
+    left: -9px;
+    margin-top: -22px;
+    top: 50%;
+    width: 6px;
+  }
+
+  // Bottom (height) – horizontal bar centred on the bottom edge, just outside.
+  :global(.react-resizable-handle-s) {
+    bottom: -9px;
+    cursor: ns-resize;
+    height: 6px;
+    left: 50%;
+    margin-left: -22px;
+    width: 44px;
+  }
+}

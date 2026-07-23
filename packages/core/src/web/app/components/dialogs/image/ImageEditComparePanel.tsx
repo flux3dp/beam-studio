@@ -5,7 +5,7 @@ import { Button, Col, ConfigProvider, Modal, Row } from 'antd';
 
 import layoutConstants from '@core/app/constants/layout-constants';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './index.module.scss';

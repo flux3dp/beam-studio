@@ -2,7 +2,7 @@
 
 .drawer-container {
   bottom: 0;
-  left: 51px; // default 50 + 1 for dockview border
+  left: 0;
   overflow: hidden; // hide left shadow of drawer
   pointer-events: none; // prevent blocking canvas interaction
   position: fixed;

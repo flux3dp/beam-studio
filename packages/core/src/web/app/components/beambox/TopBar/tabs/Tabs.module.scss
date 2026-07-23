@@ -134,3 +134,14 @@
     }
   }
 }
+
+.disabled {
+  .tab {
+    cursor: default;
+
+    &:not(.small) {
+      // Ignore events on non-welcome tab
+      pointer-events: none;
+    }
+  }
+}

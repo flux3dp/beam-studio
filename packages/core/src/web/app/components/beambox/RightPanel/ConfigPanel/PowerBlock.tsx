@@ -1,8 +1,6 @@
-import React, { memo, use, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { Button, Popover } from 'antd-mobile';
-import classNames from 'classnames';
 
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
@@ -21,12 +19,10 @@ import {
 } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
-import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelController from '../contexts/ObjectPanelController';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import AdvancedPowerPanel from './AdvancedPowerPanel';
 import styles from './Block.module.scss';
@@ -37,16 +33,14 @@ import initState from './initState';
 const MAX_VALUE = 100;
 const MIN_VALUE = 0;
 
-function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
+function PowerBlock({ noApply }: CommonProps): React.JSX.Element {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, power, update } = useConfigPanelStore();
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
-  const { activeKey } = use(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
   const openModal = useCallback(() => setShowModal(true), []);
   const closeModal = useCallback(() => setShowModal(false), []);
-  const visible = activeKey === 'power';
   const [hasPwmImages, setHasPwmImages] = useState(() => checkPwmImages(selectedLayers));
 
   useEffect(() => {
@@ -65,7 +59,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const handleChange = (value: number) => {
     change({ configName: CUSTOM_PRESET_CONSTANT, power: value });
 
-    if (type !== 'modal') {
+    if (!noApply) {
       const batchCmd = new history.BatchCommand('Change power');
       const layers = selectedLayers.map((layerName) => getLayerByName(layerName)!);
       let minPowerChanged = false;
@@ -98,10 +92,10 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
 
   const content = (
-    <div className={classNames(styles.panel, styles[type])}>
+    <div className={styles.panel}>
       <span className={styles.title}>
         {t.strength}
-        {type !== 'panel-item' && hasPwmImages && (
+        {hasPwmImages && (
           <span className={styles.icon} onClick={openModal} title={t.pwm_advanced_setting}>
             <ConfigPanelIcons.ColorAdjustment />
           </span>
@@ -114,7 +108,6 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         max={MAX_VALUE}
         min={MIN_VALUE}
         onChange={handleChange}
-        type={type}
         unit="%"
         value={power.value}
       />
@@ -140,22 +133,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   return (
     <>
-      {type === 'panel-item' ? (
-        <Popover content={content} visible={visible}>
-          <ObjectPanelItem.Item
-            autoClose={false}
-            content={
-              <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
-                {power.value}
-              </Button>
-            }
-            id="power"
-            label={t.strength}
-          />
-        </Popover>
-      ) : (
-        content
-      )}
+      {content}
       {showModal && hasPwmImages && <AdvancedPowerPanel onClose={closeModal} />}
     </>
   );

@@ -1,10 +1,12 @@
 import React, { memo } from 'react';
 
+import type { CommonProps } from '@core/interfaces/ConfigOption';
+
 import NumberBlock from './NumberBlock';
 
-const MinPadding = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const MinPadding = (props: CommonProps): React.JSX.Element => {
   return (
-    <NumberBlock configKey="minPadding" id="minPadding" max={500} min={0} title="Min Padding" type={type} unit="mm" />
+    <NumberBlock configKey="minPadding" id="minPadding" max={500} min={0} title="Min Padding" unit="mm" {...props} />
   );
 };
 

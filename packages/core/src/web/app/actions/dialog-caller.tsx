@@ -1,7 +1,6 @@
 import React from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import GoogleFontsPanel from '@core/app/components/beambox/RightPanel/OptionsBlocks/TextOptions/components/GoogleFontsPanel';
 import Boxgen from '@core/app/components/boxgen/Boxgen';
 import AboutBeamStudio from '@core/app/components/dialogs/AboutBeamStudio';
@@ -359,14 +358,7 @@ export default {
 
     addDialogComponent(
       'image-crop',
-      <CropPanel
-        image={element as SVGImageElement}
-        onClose={() => {
-          popDialogById('image-crop');
-          ObjectPanelController.updateActiveKey(null);
-        }}
-        src={src!}
-      />,
+      <CropPanel image={element as SVGImageElement} onClose={() => popDialogById('image-crop')} src={src!} />,
     );
   },
   showDialogBox: (id: string, style: IDialogBoxStyle, content: string): void => {
@@ -455,10 +447,14 @@ export default {
   },
   showImageEditPanel: (onClose: () => void = () => {}): void => {
     if (isIdExist('image-edit-panel')) {
+      console.warn('image-edit-panel already exists');
+
       return;
     }
 
     if (selectionManager.isMultiSelecting) {
+      console.warn('image-edit-panel isMultiSelecting');
+
       return;
     }
 
@@ -476,7 +472,6 @@ export default {
         image={element as SVGImageElement}
         onClose={() => {
           onClose();
-          ObjectPanelController.updateActiveKey(null);
           popDialogById('image-edit-panel');
         }}
         src={src!}
@@ -657,7 +652,6 @@ export default {
         image={element as SVGImageElement}
         onClose={() => {
           onClose();
-          ObjectPanelController.updateActiveKey(null);
           popDialogById('stamp-maker-panel');
         }}
         src={src!}
@@ -699,7 +693,6 @@ export default {
         element={element}
         onClose={() => {
           onClose();
-          ObjectPanelController.updateActiveKey(null);
           popDialogById('tab-panel');
         }}
       />,

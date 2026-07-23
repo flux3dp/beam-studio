@@ -21,7 +21,7 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-export const saveToCloud = async (uuid?: string): Promise<boolean> => {
+export const saveToCloud = async (uuid?: string, opts?: { templateMode?: boolean }): Promise<boolean> => {
   const { lang } = i18n;
   const id = 'upload-cloud-file';
   const user = getCurrentUser();
@@ -36,13 +36,16 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
   svgCanvas.removeUnusedDefs();
   await Progress.openNonstopProgress({ id });
 
+  let blob: Blob;
+
   try {
-    const blob = pipe(
-      await generateBeamBuffer(),
+    blob = pipe(
+      await generateBeamBuffer(opts),
       (val) => Uint8Array.from(val),
       prop('buffer'),
       (arrayBuffer) => new Blob([arrayBuffer]),
     );
+
     const form = new FormData();
 
     form.append('file', blob);
@@ -112,6 +115,7 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
         currentFileManager.setCloudUUID(newUuid);
       }
 
+      currentFileManager.setTemplateFile(blob, opts?.templateMode !== undefined);
       currentFileManager.setHasUnsavedChanges(false, false);
 
       return true;

@@ -4,7 +4,7 @@ import { Button, ConfigProvider, Modal } from 'antd';
 import Cropper from 'cropperjs';
 
 import progressCaller from '@core/app/actions/progress-caller';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import Select from '@core/app/widgets/AntdSelect';
 import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
 import handleFinish from '@core/helpers/image-edit-panel/handle-finish';

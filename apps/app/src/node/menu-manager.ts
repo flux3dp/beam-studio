@@ -294,6 +294,7 @@ class MenuManager extends EventEmitter {
   private deviceMenu?: MenuItem;
   private deviceList: { [uuid: string]: IDeviceInfo };
   private isDevMode: boolean;
+  private isDisabled = false;
   private reconstructMenu: () => void;
 
   constructor() {
@@ -328,6 +329,16 @@ class MenuManager extends EventEmitter {
     ipcMain.on(AuthEvents.UpdateAccount, (e, info) => {
       accountInfo = info;
       this.reconstructMenu();
+    });
+
+    ipcMain.on(MenuEvents.DisableMenu, (e, isDisabled) => {
+      const hasChanged = this.isDisabled !== isDisabled;
+
+      this.isDisabled = isDisabled;
+
+      if (hasChanged) {
+        this.reconstructMenu();
+      }
     });
   }
 
@@ -452,6 +463,15 @@ class MenuManager extends EventEmitter {
     const menuItems = [];
     const fnKey = process.platform === 'darwin' ? 'Cmd' : 'Ctrl';
     const deleteKey = 'Delete';
+
+    if (this.isDisabled) {
+      menuItems.push({
+        label: process.platform === 'darwin' ? 'Beam Studio' : r.help,
+        submenu: [{ click: callback, id: 'ABOUT_BEAM_STUDIO', label: r.about }],
+      });
+
+      return menuItems as MenuItemConstructorOptions[];
+    }
 
     if (process.platform === 'darwin') {
       menuItems.push(buildOSXAppMenu(callback));

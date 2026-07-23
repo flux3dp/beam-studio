@@ -1,9 +1,11 @@
 import * as paper from 'paper';
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
+import { calcElemFilledInfo } from '@core/app/svgedit/operations/infill';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -130,7 +132,7 @@ const convertClipPath = async (): Promise<() => void> => {
       });
       await Promise.all(promises);
     } else if (CanvasElements.basicPaths.includes(elem.tagName)) {
-      const { isAllFilled } = svgCanvas.calcElemFilledInfo(elem);
+      const { isAllFilled } = calcElemFilledInfo(elem);
 
       if (matrix) {
         const m = updateMatrix(elem, matrix);

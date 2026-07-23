@@ -1,0 +1,71 @@
+@use 'sass:color';
+@use '@core/styles/variables' as variables;
+@use './_variables' as libraryVariables;
+@use '@core/styles/selectors' as selectors;
+
+%highlight {
+  border-color: variables.$primary-blue;
+  // looks same as rgba($primary-blue, 0.05) but is solid to prevent overlap during dragging
+  background: color.mix(variables.$primary-blue, #ffffff, 5%);
+}
+
+.container {
+  position: relative;
+  cursor: move;
+  width: libraryVariables.$grid-size;
+  height: libraryVariables.$grid-size;
+  border-radius: 10px;
+  border: #ebe6e7 1px solid;
+  font-size: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+
+  &.selected {
+    @extend %highlight;
+    box-shadow: #1890ff4d 0px 0px 0px 0px libraryVariables.$shadow-spread;
+  }
+}
+
+.sortable {
+  &.sorting.dragging > .container {
+    // During sorting, highlight dragged item
+    @extend %highlight;
+  }
+  &:not(.sorting) > .container:hover {
+    // Normal hover
+    @extend %highlight;
+  }
+}
+
+.button {
+  border-style: dashed;
+  font-size: 24px;
+  color: #7c7c7c;
+  cursor: pointer;
+}
+
+$icon-size: 20px;
+
+.icon {
+  position: absolute;
+  font-size: $icon-size;
+  top: 2px;
+  right: 2px;
+  cursor: default;
+}
+
+.star {
+  color: #1890ff;
+}
+
+$padding: 4px;
+.remove {
+  background: #6a7282;
+  color: #ffffff;
+  border-radius: 100%;
+  font-size: calc($icon-size - $padding * 2);
+  padding: $padding;
+  cursor: pointer;
+}

@@ -5,7 +5,7 @@ import { Avatar, Flex } from 'antd';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ThemedButton from '@core/app/components/welcome/ThemedButton';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { IUser } from '@core/interfaces/IUser';

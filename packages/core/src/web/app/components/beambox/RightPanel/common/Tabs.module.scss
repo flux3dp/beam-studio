@@ -1,0 +1,15 @@
+.tabs {
+  :global(.ant-tabs-tabpane > .ant-tabs > .ant-tabs-nav) {
+    margin-top: -16px; // Cancel bottom margin of parent Tabs
+  }
+
+  :global(.ant-tabs-tab-btn) {
+    line-height: 1;
+
+    svg {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import alert from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import {
   externalLinkFBSignIn,
   externalLinkGoogleSignIn,

@@ -4,7 +4,7 @@ import { Button } from 'antd';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import AppSettings from '@core/app/app-settings';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import i18n from '@core/helpers/i18n';

@@ -1,0 +1,11 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: default;
+
+  .title {
+    flex: 1;
+    font-weight: 600;
+  }
+}

@@ -1,41 +1,110 @@
-import React, { memo } from 'react';
+import React, { Fragment, memo, useMemo } from 'react';
 
-import { Button, Collapse, ConfigProvider } from 'antd';
+import type { CollapseProps } from 'antd';
+import { Collapse, ConfigProvider } from 'antd';
 import classNames from 'classnames';
-import { useShallow } from 'zustand/shallow';
 
-import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
-import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import dialogCaller from '@core/app/actions/dialog-caller';
-import { iconButtonTheme } from '@core/app/constants/antd-config';
-import { CanvasElements } from '@core/app/constants/canvasElements';
+import { ButtonItem } from '@core/app/components/beambox/RightPanel/common/ObjectPanelItem';
+import { ConfigPanelPopup } from '@core/app/components/beambox/RightPanel/ConfigPanel/ConfigPanel';
+import ColorsPanel from '@core/app/components/beambox/RightPanel/ObjectPanel/ColorsPanel';
+import LibraryPanel, { LibraryPanelTitle } from '@core/app/components/beambox/RightPanel/ObjectPanel/LibraryPanel';
+import MainActionSection from '@core/app/components/beambox/RightPanel/ObjectPanel/MainActionSection';
+import TemplateConfig from '@core/app/components/beambox/RightPanel/ObjectPanel/TemplateConfig';
+import AlignDistSection from '@core/app/components/beambox/RightPanel/ObjectPanel/ToolPanel/AlignDistSection';
+import BooleanSection from '@core/app/components/beambox/RightPanel/ObjectPanel/ToolPanel/BooleanSection';
+import Divider from '@core/app/components/common/Divider';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
-import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
-import { getData } from '@core/helpers/layer/layer-config-helper';
-import { getObjectLayer } from '@core/helpers/layer/layer-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { useIsInteractionMode } from '@core/app/stores/interactionModeStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
+import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
-import { isVariableTextSupported } from '@core/helpers/variableText';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { ILang } from '@core/interfaces/ILang';
 
 import ActionsPanel from './ActionsPanel';
-import ConfigPanel from './ConfigPanel/ConfigPanel';
 import DimensionPanel from './DimensionPanel/DimensionPanel';
 import InfillPanel from './InfillPanel';
+import ToolPanel from './ObjectPanel/ToolPanel';
 import styles from './ObjectPanel.module.scss';
-import ObjectPanelItem from './ObjectPanelItem';
 import OptionsPanel from './OptionsPanel';
-import { convertAndBooleanOperate } from './utils/convertAndBooleanOperate';
 
-let svgCanvas: ISVGCanvas;
-let svgEditor: ISVGEditor;
+type PanelType =
+  | 'actions'
+  | 'arrange'
+  | 'boolean'
+  | 'colors'
+  | 'infill'
+  | 'library'
+  | 'mainActions'
+  | 'options'
+  | 'parameter'
+  | 'templateConfig'
+  | 'tools'
+  | 'transform';
 
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-  svgEditor = globalSVG.Editor;
-});
+const panels: Record<
+  PanelType,
+  {
+    labelKey?: keyof ILang['beambox']['right_panel']['object_panel']['sections'];
+    render: (key: string, elem: SVGElement) => React.JSX.Element;
+    title?: (key: string, elem: SVGElement) => React.ReactNode;
+  }
+> = {
+  actions: {
+    labelKey: 'actions',
+    render: (key, elem) => <ActionsPanel elem={elem} key={key} />,
+  },
+  arrange: {
+    render: (key) => <AlignDistSection key={key} />,
+  },
+  boolean: {
+    render: (key) => <BooleanSection key={key} />,
+  },
+  colors: {
+    labelKey: 'colors',
+    render: (key) => <ColorsPanel key={key} />,
+  },
+  infill: {
+    labelKey: 'operation_mode',
+    render: (key) => <InfillPanel key={key} />,
+  },
+  library: {
+    render: (key, elem) => <LibraryPanel elem={elem} key={key} />,
+    title: (key, elem) => <LibraryPanelTitle elem={elem} key={key} />,
+  },
+  mainActions: {
+    render: (key) => <MainActionSection key={key} />,
+  },
+  options: {
+    labelKey: 'options',
+    render: (key, elem) => <OptionsPanel elem={elem} key={key} />,
+  },
+  parameter: {
+    render: (key) => (
+      <Fragment key={key}>
+        <ButtonItem
+          icon={<ObjectPanelIcons.Parameter height="1em" viewBox="6 6 20 20" width="1em" />}
+          id="parameter"
+          objectPanelKey="parameter"
+          title={i18n.lang.beambox.right_panel.laser_panel.parameters}
+        />
+        <ConfigPanelPopup objectPanelKey="parameter" />
+      </Fragment>
+    ),
+  },
+  templateConfig: {
+    labelKey: 'template_config',
+    render: (key) => <TemplateConfig key={key} />,
+  },
+  tools: {
+    labelKey: 'tools',
+    render: (key) => <ToolPanel key={key} />,
+  },
+  transform: {
+    labelKey: 'transform',
+    render: (key, elem) => <DimensionPanel elem={elem} key={key} />,
+  },
+};
 
 interface Props {
   hide?: boolean;
@@ -43,331 +112,45 @@ interface Props {
 
 function ObjectPanel({ hide }: Props): React.JSX.Element {
   const lang = useI18n();
-  const tObjectPanel = lang.beambox.right_panel.object_panel;
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const elem = useSelectedElementStore((state) => state.selectedElement);
-  const groupAvailability = useSelectedElementStore(
-    useShallow((state) => ({ group: state.canGroup, ungroup: state.canUngroup })),
+  const nodeCategory = useSelectedElementStore((state) => state.nodeCategory);
+  const infillPanels = useSelectedElementStore((state) => state.objectPanelData?.infillPanels);
+  const colorPanels = useSelectedElementStore((state) => state.objectPanelData?.colorPanels);
+  const optionPanel = useSelectedElementStore((state) => state.objectPanelData?.optionPanel);
+  const isProjectMode = useIsInteractionMode('project');
+
+  const withLibrary = useMemo(
+    () => isProjectMode && ['image', 'use'].includes(nodeCategory),
+    [isProjectMode, nodeCategory],
   );
-  const getAvailableFunctions = () => {
-    if (!elem) {
-      return {};
-    }
-
-    const elems = elem.getAttribute('data-tempgroup') === 'true' ? (Array.from(elem.childNodes) as Element[]) : [elem];
-
-    const allowBooleanOperations = (e: Element) => {
-      const lowerCase = e.tagName.toLowerCase();
-
-      if (!CanvasElements.fillableElems.includes(lowerCase)) return false;
-
-      if (lowerCase === 'path' && !svgCanvas.calcPathClosed(e)) return false;
-
-      return true;
-    };
-    const canDoBoolean = elems?.every(allowBooleanOperations);
-
-    return {
-      boolean: elems?.length > 1 && canDoBoolean,
-      difference: elems?.length > 1 && canDoBoolean,
-      dist: elems?.length > 2,
-      intersect: elems?.length > 1 && canDoBoolean,
-      subtract: elems?.length === 2 && canDoBoolean,
-      union: elems?.length > 1 && canDoBoolean,
-    };
-  };
-
-  const renderToolBtn = (
-    label: string,
-    icon: React.JSX.Element,
-    disabled: boolean,
-    onClick: () => void,
-    id: string,
-  ): React.JSX.Element => (
-    <Button disabled={disabled} icon={icon} id={id} onClick={onClick} title={label} type="text" />
-  );
-
-  const renderCommonActionPanel = (): React.JSX.Element => (
-    <div className={styles.tools}>
-      <ObjectPanelItem.Item
-        content={<ObjectPanelIcons.Trash />}
-        id="delete"
-        label={lang.topbar.menu.delete}
-        onClick={() => svgEditor.deleteSelected()}
-      />
-      <ObjectPanelItem.Item
-        content={<ObjectPanelIcons.Duplicate />}
-        id="duplicate"
-        label={lang.topbar.menu.duplicate}
-        onClick={async () => cloneSelectedElements(20, 20)}
-      />
-      <ObjectPanelItem.Item
-        autoClose={false}
-        content={<ObjectPanelIcons.Parameter />}
-        id="parameter"
-        label={lang.beambox.right_panel.laser_panel.parameters}
-        onClick={() => {
-          dialogCaller.addDialogComponent('config-panel', <ConfigPanel UIType="modal" />);
-        }}
-      />
-    </div>
-  );
-
-  const renderToolBtns = (): React.JSX.Element => {
-    const buttonAvailability = getAvailableFunctions();
-
-    return isMobile ? (
-      <div className={styles.tools}>
-        <ObjectPanelItem.Divider />
-        <ObjectPanelItem.Item
-          content={<ObjectPanelIcons.Group />}
-          disabled={!groupAvailability.group}
-          id="group"
-          label={tObjectPanel.group}
-          onClick={() => svgCanvas.groupSelectedElements()}
-        />
-        <ObjectPanelItem.Item
-          content={<ObjectPanelIcons.Ungroup />}
-          disabled={!groupAvailability.ungroup}
-          id="ungroup"
-          label={tObjectPanel.ungroup}
-          onClick={() => svgCanvas.ungroupSelectedElement()}
-        />
-        <ObjectPanelItem.ActionList
-          actions={[
-            { icon: <ObjectPanelIcons.VAlignTop />, label: tObjectPanel.top_align, onClick: FnWrapper.alignTop },
-            { icon: <ObjectPanelIcons.VAlignMid />, label: tObjectPanel.middle_align, onClick: FnWrapper.alignMiddle },
-            { icon: <ObjectPanelIcons.VAlignBot />, label: tObjectPanel.bottom_align, onClick: FnWrapper.alignBottom },
-            { icon: <ObjectPanelIcons.HAlignLeft />, label: tObjectPanel.left_align, onClick: FnWrapper.alignLeft },
-            { icon: <ObjectPanelIcons.HAlignMid />, label: tObjectPanel.center_align, onClick: FnWrapper.alignCenter },
-            { icon: <ObjectPanelIcons.HAlignRight />, label: tObjectPanel.right_align, onClick: FnWrapper.alignRight },
-          ]}
-          content={<ObjectPanelIcons.VAlignMid />}
-          id="align"
-          label={tObjectPanel.align}
-        />
-        <ObjectPanelItem.ActionList
-          actions={[
-            { icon: <ObjectPanelIcons.HDist />, label: tObjectPanel.hdist, onClick: svgCanvas?.distHori },
-            { icon: <ObjectPanelIcons.VDist />, label: tObjectPanel.vdist, onClick: svgCanvas?.distVert },
-          ]}
-          content={<ObjectPanelIcons.VDist />}
-          disabled={!buttonAvailability.dist}
-          id="distribute"
-          label={tObjectPanel.distribute}
-        />
-        <ObjectPanelItem.ActionList
-          actions={[
-            {
-              disabled: !buttonAvailability.union,
-              icon: <ObjectPanelIcons.Union />,
-              label: tObjectPanel.union,
-              onClick: async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'union' }),
-            },
-            {
-              disabled: !buttonAvailability.subtract,
-              icon: <ObjectPanelIcons.Subtract />,
-              label: tObjectPanel.subtract,
-              onClick: async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'diff' }),
-            },
-            {
-              disabled: !buttonAvailability.intersect,
-              icon: <ObjectPanelIcons.Intersect />,
-              label: tObjectPanel.intersect,
-              onClick: async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'intersect' }),
-            },
-            {
-              disabled: !buttonAvailability.difference,
-              icon: <ObjectPanelIcons.Diff />,
-              label: tObjectPanel.difference,
-              onClick: async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'xor' }),
-            },
-          ]}
-          content={<ObjectPanelIcons.Union />}
-          disabled={!buttonAvailability.boolean}
-          id="boolean"
-          label={tObjectPanel.boolean}
-        />
-      </div>
-    ) : (
-      <div className={styles.tools}>
-        <ConfigProvider theme={iconButtonTheme}>
-          <div className={styles.row}>
-            <div className={classNames(styles.half, styles.left, styles.sep)}>
-              {renderToolBtn(
-                tObjectPanel.hdist,
-                <ObjectPanelIcons.HDist />,
-                !buttonAvailability.dist,
-                () => svgCanvas.distHori(),
-                'hdist',
-              )}
-              {renderToolBtn(
-                tObjectPanel.top_align,
-                <ObjectPanelIcons.VAlignTop />,
-                false,
-                FnWrapper.alignTop,
-                'top_align',
-              )}
-              {renderToolBtn(
-                tObjectPanel.middle_align,
-                <ObjectPanelIcons.VAlignMid />,
-                false,
-                FnWrapper.alignMiddle,
-                'middle_align',
-              )}
-              {renderToolBtn(
-                tObjectPanel.bottom_align,
-                <ObjectPanelIcons.VAlignBot />,
-                false,
-                FnWrapper.alignBottom,
-                'bottom_align',
-              )}
-            </div>
-            <div className={classNames(styles.half, styles.right)}>
-              {renderToolBtn(
-                tObjectPanel.vdist,
-                <ObjectPanelIcons.VDist />,
-                !buttonAvailability.dist,
-                () => svgCanvas.distVert(),
-                'vdist',
-              )}
-              {renderToolBtn(
-                tObjectPanel.left_align,
-                <ObjectPanelIcons.HAlignLeft />,
-                false,
-                FnWrapper.alignLeft,
-                'left_align',
-              )}
-              {renderToolBtn(
-                tObjectPanel.center_align,
-                <ObjectPanelIcons.HAlignMid />,
-                false,
-                FnWrapper.alignCenter,
-                'center_align',
-              )}
-              {renderToolBtn(
-                tObjectPanel.right_align,
-                <ObjectPanelIcons.HAlignRight />,
-                false,
-                FnWrapper.alignRight,
-                'right_align',
-              )}
-            </div>
-          </div>
-          <div className={styles.row}>
-            <div className={classNames(styles.half, styles.left)}>
-              {renderToolBtn(
-                tObjectPanel.group,
-                <ObjectPanelIcons.Group />,
-                !groupAvailability.group,
-                () => svgCanvas.groupSelectedElements(),
-                'group',
-              )}
-              {renderToolBtn(
-                tObjectPanel.ungroup,
-                <ObjectPanelIcons.Ungroup />,
-                !groupAvailability.ungroup,
-                () => svgCanvas.ungroupSelectedElement(),
-                'ungroup',
-              )}
-            </div>
-            <div className={classNames(styles.half, styles.right)}>
-              {renderToolBtn(
-                tObjectPanel.union,
-                <ObjectPanelIcons.Union />,
-                !buttonAvailability.union,
-                async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'union' }),
-                'union',
-              )}
-              {renderToolBtn(
-                tObjectPanel.subtract,
-                <ObjectPanelIcons.Subtract />,
-                !buttonAvailability.subtract,
-                async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'diff' }),
-                'subtract',
-              )}
-              {renderToolBtn(
-                tObjectPanel.intersect,
-                <ObjectPanelIcons.Intersect />,
-                !buttonAvailability.intersect,
-                async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'intersect' }),
-                'intersect',
-              )}
-              {renderToolBtn(
-                tObjectPanel.difference,
-                <ObjectPanelIcons.Diff />,
-                !buttonAvailability.difference,
-                async () => convertAndBooleanOperate({ element: elem as SVGGElement, operation: 'xor' }),
-                'difference',
-              )}
-            </div>
-          </div>
-        </ConfigProvider>
-      </div>
-    );
-  };
-
-  const renderDimensionPanel = (): React.JSX.Element => {
-    return <DimensionPanel elem={elem as SVGElement} />;
-  };
-
-  const renderOptionPanel = (): React.JSX.Element => {
-    return <OptionsPanel elem={elem as SVGElement} />;
-  };
-
-  const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem as SVGElement} />;
+  const isMultiSelect = useMemo(() => nodeCategory === 'multi_select', [nodeCategory]);
 
   const tSections = lang.beambox.right_panel.object_panel.sections;
-  const tagName = elem?.tagName.toLowerCase();
-  const isFullColor = elem ? Boolean(getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor')) : false;
-  const showInfillSection = (() => {
-    if (!elem || !tagName) return false;
-
-    if (!CanvasElements.fillableWithContainers.includes(tagName)) return false;
-
-    // 'use' shows only when fullcolor (MultiColorOptions); plain laser 'use' has no infill
-    if (tagName === 'use') return isFullColor;
-
-    return true;
-  })();
-  const showOptionsSection = (() => {
-    if (!elem || !tagName) return false;
-
-    if (['polygon', 'rect', 'text'].includes(tagName)) return true;
-
-    if (['image', 'img'].includes(tagName)) return elem.getAttribute('data-fullcolor') !== '1';
-
-    if (tagName === 'g') {
-      // textpath g or text-only g → renders TextOptions
-      if (elem.getAttribute('data-textpath-g') !== null) return true;
-
-      return !elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])');
-    }
-
-    if (tagName === 'use') return isVariableTextSupported() && elem.getAttribute('data-props') !== null;
-
-    return false;
-  })();
 
   const renderDesktopCollapse = (): React.JSX.Element => {
-    const desktopItems = [
-      { children: renderToolBtns(), forceRender: true, key: 'tools', label: tSections.tools },
-      { children: renderDimensionPanel(), forceRender: true, key: 'transform', label: tSections.transform },
-      ...(showInfillSection
-        ? [
-            {
-              children: <InfillPanel elem={elem as SVGElement} />,
-              forceRender: true,
-              key: 'infill',
-              label: isFullColor ? tSections.colors : tSections.operation_mode,
-            },
-          ]
-        : []),
-      ...(showOptionsSection
-        ? [{ children: renderOptionPanel(), forceRender: true, key: 'options', label: tSections.options }]
-        : []),
-      { children: renderActionPanel(), forceRender: true, key: 'actions', label: tSections.actions },
+    const desktopPanels: Array<null | PanelType> = [
+      'tools',
+      isProjectMode && !isMultiSelect ? 'templateConfig' : null,
+      'transform',
+      infillPanels?.length ? 'infill' : null,
+      colorPanels?.length ? 'colors' : null,
+      optionPanel ? 'options' : null,
+      withLibrary ? 'library' : null,
+      'actions',
     ];
+    const desktopItems: CollapseProps['items'] = desktopPanels
+      .filter((key): key is PanelType => Boolean(key))
+      .map((key) => {
+        const { labelKey, render, title } = panels[key];
+
+        return {
+          children: render(key, elem!),
+          forceRender: true,
+          key,
+          label: title ? title(key, elem!) : labelKey ? tSections[labelKey] : key,
+        };
+      });
 
     return (
       <ConfigProvider
@@ -385,7 +168,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
         <Collapse
           bordered={false}
           className={styles.collapse}
-          defaultActiveKey={['tools', 'transform', 'infill', 'options', 'actions']}
+          defaultActiveKey={Object.keys(panels)}
           ghost
           items={desktopItems}
         />
@@ -393,21 +176,38 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     );
   };
 
-  const contents = isMobile ? (
-    <>
-      {renderCommonActionPanel()}
-      {renderOptionPanel()}
-      {renderDimensionPanel()}
-      {renderToolBtns()}
-      {renderActionPanel()}
-    </>
-  ) : (
-    renderDesktopCollapse()
-  );
+  const renderTabletButtons = () => {
+    const tabletPanels: Array<'divider' | null | PanelType> = [
+      infillPanels?.length ? 'infill' : null,
+      'parameter',
+      'divider',
+      isProjectMode && !isMultiSelect ? 'templateConfig' : null,
+      colorPanels?.length ? 'colors' : null,
+      optionPanel ? 'options' : null,
+      'mainActions',
+      'arrange',
+      'boolean',
+      withLibrary ? 'library' : null,
+      'transform',
+      'divider',
+      'actions',
+    ];
+    const tabletItems = tabletPanels.map((key, index) => {
+      if (!key) return null;
+
+      if (key === 'divider') return <Divider key={index} type="vertical" />;
+
+      return panels[key].render(key, elem!);
+    });
+
+    return tabletItems;
+  };
+
+  const contents = elem ? (isTablet ? renderTabletButtons() : renderDesktopCollapse()) : null;
 
   return (
     <div className={classNames(styles.container, { [styles.hide]: hide })} id="object-panel">
-      {elem ? contents : null}
+      {contents}
     </div>
   );
 }

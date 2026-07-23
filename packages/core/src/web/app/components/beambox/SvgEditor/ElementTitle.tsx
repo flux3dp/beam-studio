@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 

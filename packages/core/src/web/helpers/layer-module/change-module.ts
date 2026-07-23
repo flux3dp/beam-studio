@@ -3,7 +3,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import initLayerConfigState from '@core/app/components/beambox/RightPanel/ConfigPanel/initState';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, printingModules, skippedModules } from '@core/app/constants/layer-module/layer-modules';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
@@ -97,11 +97,12 @@ export const changeLayersModule = async (
 
     writeDataLayer(layer, 'module', newValue, { batchCmd });
 
-    if (newValue === LayerModule.UV_PRINT) writeDataLayer(layer, 'repeat', 0, { batchCmd });
+    if (skippedModules.has(newValue)) writeDataLayer(layer, 'repeat', 0, { batchCmd });
     else if (repeat === 0) writeDataLayer(layer, 'repeat', 1, { batchCmd });
 
     if (!newPreset) {
       writeDataLayer(layer, 'configName', undefined, { batchCmd });
+      writeDataLayer(layer, 'opacity', 100, { batchCmd });
 
       if (isCurrentPrinting && !isChangingToPrinting) {
         writeDataLayer(layer, 'speed', baseConfig.speed, { batchCmd });
@@ -121,7 +122,9 @@ export const changeLayersModule = async (
       applyPreset(layer, newPreset, { batchCmd });
     }
 
-    const toggleFullColorCmd = toggleFullColorLayer(layer, { val: isChangingToPrinting });
+    const toggleFullColorCmd = toggleFullColorLayer(layer, {
+      val: isChangingToPrinting || newValue === LayerModule.GUIDE,
+    });
 
     if (toggleFullColorCmd && !toggleFullColorCmd.isEmpty()) batchCmd.addSubCommand(toggleFullColorCmd);
   });

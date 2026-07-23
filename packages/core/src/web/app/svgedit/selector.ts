@@ -8,7 +8,10 @@
  */
 import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import { getValue } from '@core/app/components/beambox/RightPanel/DimensionPanel/utils';
-import { isMobile } from '@core/app/stores/screenStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { templateModes, withinInteractionModes } from '@core/app/stores/interactionModeStore';
+import { isMobile } from '@core/app/stores/layoutStore';
+import { ControlType } from '@core/helpers/element/editable/base';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { getMouseMode } from '../stores/canvas/utils/mouseMode';
@@ -345,12 +348,6 @@ export class Selector {
 
     this.selectorRect.setAttribute('d', dStr);
 
-    if (getMouseMode() === 'preview_color') {
-      this.gripsGroup.setAttribute('display', 'none');
-
-      return;
-    }
-
     this.gripsGroup.removeAttribute('display');
 
     const xform = angle ? `rotate(${angle} ${cx} ${cy})` : '';
@@ -376,6 +373,7 @@ export class Selector {
     }
 
     this.updateFitTextGripVisibility();
+    this.updateNonEditableGripVisibility();
 
     if (isMobile()) {
       const rotX = cx - btnRadius - btnMargin;
@@ -427,6 +425,58 @@ export class Selector {
     if (hideNS) {
       this.resizeGrips.n?.setAttribute('display', 'none');
       this.resizeGrips.s?.setAttribute('display', 'none');
+    }
+  }
+
+  updateNonEditableGripVisibility() {
+    const { elem } = this;
+
+    if (!elem) return;
+
+    if (!withinInteractionModes(templateModes)) return;
+
+    const editableInfo = useSelectedElementStore.getState().editableInfo;
+    const disabledResizeGrips = [];
+    const grips = {
+      bottom: ['s', 'se', 'sw'],
+      left: ['w', 'nw', 'sw'],
+      right: ['e', 'ne', 'se'],
+      top: ['n', 'ne', 'nw'],
+    };
+
+    if (!editableInfo[ControlType._SIZE]?.value) {
+      disabledResizeGrips.push('e', 'w', 'n', 's', 'ne', 'nw', 'se', 'sw');
+    } else if (elem.tagName === 'line') {
+      const controlX =
+        +elem.getAttribute('x1')! > +elem.getAttribute('x2')!
+          ? { left: ControlType.POSITION_X2, right: ControlType.POSITION_X }
+          : { left: ControlType.POSITION_X, right: ControlType.POSITION_X2 };
+      const controlY =
+        +elem.getAttribute('y1')! > +elem.getAttribute('y2')!
+          ? { bottom: ControlType.POSITION_Y, top: ControlType.POSITION_Y2 }
+          : { bottom: ControlType.POSITION_Y2, top: ControlType.POSITION_Y };
+
+      if (!editableInfo[controlX.left]?.value) disabledResizeGrips.push(...grips.left);
+
+      if (!editableInfo[controlY.top]?.value) disabledResizeGrips.push(...grips.top);
+
+      if (!editableInfo[controlX.right]?.value) disabledResizeGrips.push(...grips.right);
+
+      if (!editableInfo[controlY.bottom]?.value) disabledResizeGrips.push(...grips.bottom);
+    }
+
+    disabledResizeGrips.forEach((dir) => {
+      this.resizeGrips[dir as keyof typeof this.resizeGrips]?.setAttribute('display', 'none');
+    });
+
+    if (!editableInfo[ControlType.ROTATION]?.value) {
+      this.rotateGripConnector.setAttribute('display', 'none');
+      this.rotateGripTop.setAttribute('display', 'none');
+      this.rotateGripBottom.setAttribute('display', 'none');
+    } else {
+      this.rotateGripConnector.removeAttribute('display');
+      this.rotateGripTop.removeAttribute('display');
+      this.rotateGripBottom.removeAttribute('display');
     }
   }
 

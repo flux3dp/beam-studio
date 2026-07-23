@@ -3,7 +3,10 @@ import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHist
 import { BatchCommand, ChangeElementCommand } from './history';
 import { handleHistoryActionOptions } from './utils/handleHistoryActionOptions';
 
-export const changeAttribute = (elem: Element, newAttributes: Record<string, string>): ChangeElementCommand | null => {
+export const changeAttribute = (
+  elem: Element,
+  newAttributes: Record<string, null | string>,
+): ChangeElementCommand | null => {
   const oldAttributes: Record<string, string> = {};
 
   for (const key in newAttributes) {
@@ -15,7 +18,12 @@ export const changeAttribute = (elem: Element, newAttributes: Record<string, str
     }
 
     oldAttributes[key] = oldValue;
-    elem.setAttribute(key, newAttributes[key]);
+
+    if (newAttributes[key] === null) {
+      elem.removeAttribute(key);
+    } else {
+      elem.setAttribute(key, newAttributes[key]);
+    }
   }
 
   if (Object.keys(newAttributes).length === 0) {

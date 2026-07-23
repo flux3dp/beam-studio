@@ -1,0 +1,19 @@
+@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
+
+@include selectors.tablet-or-mobile-layout {
+  .block {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+@include selectors.desktop-layout {
+  .block {
+    margin-left: auto;
+  }
+  .active {
+    color: #1890ff;
+  }
+}

@@ -1,0 +1,44 @@
+@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
+@use './_variables' as variables;
+
+$gap: 8px;
+$item-per-row: 6;
+
+.container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, variables.$grid-size);
+  gap: $gap;
+  width: variables.$grid-size * $item-per-row + $gap * ($item-per-row - 1) + variables.$shadow-spread * 2;
+  overflow-x: hidden;
+  max-height: 300px;
+  overflow-y: auto;
+  // Allow dragging items over control buttons
+  position: relative;
+  z-index: 1;
+  // Space for shadow
+  padding: variables.$shadow-spread;
+  margin: -1 * variables.$shadow-spread;
+
+  @include selectors.desktop-layout {
+    width: 100%;
+    padding: 8px;
+    border-radius: 12px;
+    border: #e0e0e0 1px solid;
+    background: #ffffff;
+  }
+  @include mixins.is-mobile {
+    width: 100%;
+  }
+}
+
+.controls {
+  margin-top: 16px;
+  @include selectors.desktop-layout {
+    margin-top: 8px;
+  }
+}
+
+.wide {
+  flex: 1;
+}

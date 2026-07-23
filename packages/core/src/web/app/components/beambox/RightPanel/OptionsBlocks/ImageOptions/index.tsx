@@ -1,16 +1,20 @@
 import React, { use, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import Content from '@core/app/components/beambox/RightPanel/common/Content';
+import { ObjectPanelItem } from '@core/app/components/beambox/RightPanel/common/ObjectPanelItem';
 import DepthBlock from '@core/app/components/beambox/RightPanel/OptionsBlocks/ImageOptions/DepthBlock';
 import GradientBlock from '@core/app/components/beambox/RightPanel/OptionsBlocks/ImageOptions/GradientBlock';
 import PwmBlock from '@core/app/components/beambox/RightPanel/OptionsBlocks/ImageOptions/PwmBlock';
 import ThresholdBlock from '@core/app/components/beambox/RightPanel/OptionsBlocks/ImageOptions/ThresholdBlock';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { useAsyncTask } from '@core/helpers/hooks/useAsyncTask';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import ImageData from '@core/helpers/image-data';
+import useI18n from '@core/helpers/useI18n';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { ObjectPanelContext } from '../../contexts/ObjectPanelContext';
@@ -25,7 +29,8 @@ interface Props {
 }
 
 const ImageOptions = ({ elem }: Props): React.ReactNode => {
-  const isMobile = useIsMobile();
+  const lang = useI18n();
+  const isTablet = useIsTabletOrMobile();
   const { updateObjectPanel } = use(ObjectPanelContext);
   // thresholdCache: index 0 means gradient, 1-255 means threshold value
   const thresholdCache = useRef(Array.from<null | string>({ length: 256 }).fill(null));
@@ -44,7 +49,7 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
   }, [elem]);
 
   const changeAttribute = useCallback(
-    (changes: { [key: string]: boolean | number | string }): void => {
+    (changes: { [key: string]: boolean | number | string }, addToHistory = true): void => {
       const batchCommand: IBatchCommand = new history.BatchCommand('Image Option Panel');
       const setAttribute = (key: string, value: boolean | number | string) => {
         undoManager.beginUndoableChange(key, [elem]);
@@ -63,6 +68,8 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
 
         setAttribute(key, changes[key]);
       }
+
+      if (!addToHistory) return;
 
       if (changes['data-pwm']) {
         ObjectPanelController.events.emit('pwm-changed');
@@ -125,9 +132,7 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
 
     if (isGradient) {
       if (isPromark) {
-        if (!isMobile) {
-          blocks.push(<DepthBlock changeAttribute={changeAttribute} elem={elem} key="depth" />);
-        }
+        blocks.push(<DepthBlock changeAttribute={changeAttribute} elem={elem} key="depth" />);
       } else {
         blocks.push(<PwmBlock changeAttribute={changeAttribute} elem={elem} key="pwm" />);
       }
@@ -143,9 +148,18 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
     }
 
     return blocks;
-  }, [changeAttribute, generateImageData, isGradient, isPromark, isMobile, elem, threshold]);
+  }, [changeAttribute, generateImageData, isGradient, isPromark, elem, threshold]);
 
-  return isMobile ? content : <div className={styles.options}>{content}</div>;
+  return isTablet ? (
+    <ObjectPanelItem
+      icon={<LeftPanelIcons.Photo viewBox="6 6 20 20" />}
+      id="image-option"
+      renderContent={() => <Content>{content}</Content>}
+      title={lang.beambox.right_panel.object_panel.sections.options}
+    />
+  ) : (
+    <div className={styles.options}>{content}</div>
+  );
 };
 
 export default ImageOptions;

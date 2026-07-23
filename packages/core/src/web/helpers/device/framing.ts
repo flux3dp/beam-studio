@@ -750,6 +750,10 @@ class FramingTaskManager extends EventEmitter {
     }
 
     this.shouldCheckDoor = this.isInDangerZone();
+
+    if (deviceMaster.currentControlMode !== 'raw') {
+      this.initialized = false;
+    }
   };
 
   private setLowPowerValue = async (settingValue: number) => {
@@ -1044,6 +1048,8 @@ class FramingTaskManager extends EventEmitter {
       if (this.interrupted) return;
 
       await this.performTask(loop);
+
+      return true;
     } catch (error) {
       console.error(error);
       alertCaller.popUp({ message: `Failed to start framing: ${error}` });

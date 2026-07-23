@@ -1,11 +1,13 @@
+import type { CommonProps } from '@core/interfaces/ConfigOption';
+
 import NozzleMode from './NozzleMode';
 import NozzleOffset from './NozzleOffset';
 
-const NozzleBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
+const NozzleBlock = (props: CommonProps) => {
   return (
     <>
-      <NozzleMode type={type} />
-      <NozzleOffset type={type} />
+      <NozzleMode {...props} />
+      <NozzleOffset {...props} />
     </>
   );
 };

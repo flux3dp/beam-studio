@@ -33,8 +33,6 @@ export default interface ISVGCanvas {
   ): void;
   assignAttributes(element: Element, args: any): void;
   bind: (eventName: string, callback: ((win: any, elem: any) => void) | boolean) => void;
-  calcElemFilledInfo: (elem: Element) => { isAllFilled: boolean; isAnyFilled: boolean };
-  calcPathClosed: (elem: Element) => boolean;
   call: (eventName: string, args?: any | SVGElement[]) => void;
   changeSelectedAttribute(attr: string, val: number | string, elems?: Element[]): void;
   changeSelectedAttributeNoUndo: (attr: string, val: number | string, elems?: Element[]) => void;
@@ -89,7 +87,6 @@ export default interface ISVGCanvas {
   groupSvgElem: (elem: SVGElement) => void;
   handleGenerateSensorArea: (evt: MouseEvent) => void;
   isAutoAlign: boolean;
-  isElemFillable: (elem: Element) => boolean;
   moveDownSelectedElement(): void;
   moveTopBottomSelected(direction: 'bottom' | 'top'): void;
   moveUpSelectedElement(): void;
@@ -113,8 +110,6 @@ export default interface ISVGCanvas {
   setContentElem: (content: Element) => void;
   setCurrentResizeMode: (mode: string) => void;
   setCurrentStyleProperties: (key: string, val: number | string) => void;
-  setElemsFill: (elems: Element[]) => void;
-  setElemsUnfill: (elems: Element[]) => void;
   setHref: (elem: SVGElement | SVGImageElement, href: string) => void;
   setLastClickPoint: (point: { x: number; y: number }) => void;
   setMode: (mode: string) => void;

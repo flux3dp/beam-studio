@@ -1,6 +1,5 @@
 import Hammer from 'hammerjs';
 
-import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import workareaManager from '@core/app/svgedit/workarea';
 
 const calculateTouchCenter = (touches: TouchList) => {
@@ -133,7 +132,6 @@ const setupCanvasTouchEvents = (
           clearTimeout(touchStartTimeout);
           onMouseDown(e);
           onMouseUp(e, isDoubleTap);
-          setTimeout(() => ObjectPanelController.updateActiveKey(null), 100);
         }
 
         isDoubleTap = false;

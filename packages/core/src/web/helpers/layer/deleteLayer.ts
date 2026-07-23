@@ -1,4 +1,5 @@
 import { CanvasElements } from '@core/app/constants/canvasElements';
+import { templateModes, withinInteractionModes } from '@core/app/stores/interactionModeStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import { BatchCommand, InsertElementCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -59,6 +60,8 @@ export const deleteLayers = (layerNames: string[]): void => {
 };
 
 export const removeDefaultLayerIfEmpty = ({ parentCmd }: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
+  if (withinInteractionModes(templateModes)) return null;
+
   const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
   const layer = layerManager.getLayerElementByName(defaultLayerName);
   const layerCount = layerManager.getNumLayers();

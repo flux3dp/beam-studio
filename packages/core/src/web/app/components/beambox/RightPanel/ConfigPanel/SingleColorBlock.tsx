@@ -14,12 +14,13 @@ import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColor
 import { getData, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import styles from './Block.module.scss';
 import initState from './initState';
 
-const SingleColorBlock = (): React.JSX.Element => {
+const SingleColorBlock = ({ noApply }: CommonProps): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
   const { change, fullcolor, split, update } = useConfigPanelStore();
 
@@ -28,6 +29,8 @@ const SingleColorBlock = (): React.JSX.Element => {
     const newVal = !fullcolor.value;
 
     change({ fullcolor: newVal });
+
+    if (noApply) return;
 
     let colorChanged = false;
     const selectedLayers = useLayerStore.getState().selectedLayers;

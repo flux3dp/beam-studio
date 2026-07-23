@@ -18,6 +18,7 @@ import isDev from '@core/helpers/is-dev';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './AdvancedBlock.module.scss';
 import AmDensityBlock from './AmDensityBlock';
@@ -35,7 +36,7 @@ import SCurveBlock from './SCurveBlock';
 import SingleColorBlock from './SingleColorBlock';
 import WobbleBlock from './WobbleBlock';
 
-const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.ReactNode => {
+const AdvancedBlock = (props: CommonProps): React.ReactNode => {
   const { module } = useConfigPanelStore();
   const forceUpdate = useForceUpdate();
   const lang = useI18n().beambox.right_panel.laser_panel;
@@ -79,7 +80,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
             key="pulse-width-block"
             max={promarkLimit.pulseWidth!.max}
             min={promarkLimit.pulseWidth!.min}
-            type={type}
+            {...props}
           />,
         );
       }
@@ -89,44 +90,44 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
           key="frequency-block"
           max={promarkLimit.frequency!.max}
           min={promarkLimit.frequency!.min}
-          type={type}
+          {...props}
         />,
-        <WobbleBlock key="wobble-block" />,
+        <WobbleBlock key="wobble-block" {...props} />,
       );
     }
 
     if (hasCurveEngraving) {
       if (workareaObject.curveSpeedLimit?.zRegular) {
-        contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" />);
+        contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" {...props} />);
       }
     } else {
       if (addOnInfo.lowerFocus) {
-        contents.push(<FocusBlock key="focus-block" type={type} />);
+        contents.push(<FocusBlock key="focus-block" {...props} />);
       } else if (addOnInfo.autoFocus && isAutoFocusEnabled) {
-        contents.push(<AutoFocus key="auto-focus" />);
+        contents.push(<AutoFocus key="auto-focus" {...props} />);
       }
     }
 
     if (addOnInfo.hybridLaser && isDiodeEnabled) {
-      contents.push(<Diode key="diode" />);
+      contents.push(<Diode key="diode" {...props} />);
     }
 
     if (isDev() && (workarea === 'fhx2rf' || workarea === 'fbb2')) {
-      contents.push(<SCurveBlock key="s-curve-block" type={type} />);
+      contents.push(<SCurveBlock key="s-curve-block" {...props} />);
     }
   } else {
     if (module.value === LayerModule.PRINTER_4C) {
-      contents.push(<AmDensityBlock key="am-density-block" type={type} />);
-      contents.push(<RefreshIntervalBlock key="refresh-interval-block" type={type} />);
+      contents.push(<AmDensityBlock key="am-density-block" {...props} />);
+      contents.push(<RefreshIntervalBlock key="refresh-interval-block" {...props} />);
 
       if (isDev()) {
-        contents.push(<ColorAdvancedSettingButton key="color-advanced-setting-button" />);
-        contents.push(<RefreshThresholdBlock key="refresh-threshold-block" type={type} />);
-        contents.push(<NozzleBlock key="nozzle-block" type={type} />);
+        contents.push(<ColorAdvancedSettingButton key="color-advanced-setting-button" {...props} />);
+        contents.push(<RefreshThresholdBlock key="refresh-threshold-block" {...props} />);
+        contents.push(<NozzleBlock key="nozzle-block" {...props} />);
       }
     }
 
-    contents.push(<SingleColorBlock key="single-color-block" />);
+    contents.push(<SingleColorBlock key="single-color-block" {...props} />);
   }
 
   if (contents.length === 0) return null;

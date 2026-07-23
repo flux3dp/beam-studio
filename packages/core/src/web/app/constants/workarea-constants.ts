@@ -2,6 +2,8 @@ import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import type { InteractionMode } from '@core/app/stores/interactionModeStore';
+import { useInteractionModeStore } from '@core/app/stores/interactionModeStore';
 import { checkBM2, checkBM2UV, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
@@ -110,6 +112,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       LayerModule.PRINTER,
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
+      LayerModule.GUIDE,
     ].filter(Boolean),
     vectorSpeedLimit: 20,
     width: 430,
@@ -195,6 +198,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       checkBM2UV() ? LayerModule.UV_VARNISH : null,
       LayerModule.LASER_1064,
       LayerModule.UV_PRINT,
+      LayerModule.GUIDE,
     ].filter(Boolean),
     topExpansion: 400,
     vectorSpeedLimit: 30,
@@ -255,7 +259,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     minSpeed: 0.5,
     pxHeight: 150 * dpmm,
     pxWidth: 150 * dpmm,
-    supportedModules: [LayerModule.LASER_UNIVERSAL],
+    supportedModules: [LayerModule.LASER_UNIVERSAL, LayerModule.GUIDE],
     width: 150,
   },
   fuv1: {
@@ -265,7 +269,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     minSpeed: 0.5,
     pxHeight: 215 * dpmm,
     pxWidth: 300 * dpmm,
-    supportedModules: [LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH],
+    supportedModules: [LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH, LayerModule.GUIDE],
     width: 300,
   },
 };
@@ -304,17 +308,20 @@ export const getSupportedModules = (
    * Used to provide a hint about hook dependencies.
    */
   storeValues?: {
+    interactionMode: InteractionMode;
     is4CEnabled: boolean;
     is1064Enabled: boolean;
     isUvPrintEnabled: boolean;
   },
 ): LayerModuleType[] => {
   const {
+    interactionMode = useInteractionModeStore.getState().interactionMode,
     is4CEnabled = useDocumentStore.getState()['enable-4c'],
     is1064Enabled = useDocumentStore.getState()['enable-1064'],
     isUvPrintEnabled = useGlobalPreferenceStore.getState()['enable-uv-print-file'],
   } = storeValues || {};
-  const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model] ?? {};
+  const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT, LayerModule.GUIDE] } =
+    workareaConstants[model] ?? {};
   const excludedModules: LayerModuleType[] = [];
 
   if (!isUvPrintEnabled) excludedModules.push(LayerModule.UV_PRINT);
@@ -323,6 +330,10 @@ export const getSupportedModules = (
     if (!is4CEnabled) excludedModules.push(...fullColorHeadModules);
 
     if (!is1064Enabled) excludedModules.push(LayerModule.LASER_1064);
+  }
+
+  if (interactionMode === 'editor') {
+    excludedModules.push(LayerModule.GUIDE);
   }
 
   return excludedModules.length

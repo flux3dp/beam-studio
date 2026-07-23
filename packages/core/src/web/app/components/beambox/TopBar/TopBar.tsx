@@ -3,16 +3,16 @@ import React, { memo, use, useEffect, useMemo, useRef, useState } from 'react';
 import classNames from 'classnames';
 import { pipe } from 'remeda';
 
-import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
+import { useInteractionModeStore } from '@core/app/stores/interactionModeStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { getOS } from '@core/helpers/getOS';
+import { isRetailDev } from '@core/helpers/is-dev';
 import getIsWeb from '@core/helpers/is-web';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
@@ -30,7 +30,6 @@ import PathPreviewButton from './PathPreviewButton';
 import SelectMachineButton from './SelectMachineButton';
 import Tabs from './tabs/Tabs';
 import styles from './TopBar.module.scss';
-import TopBarHints from './TopBarHints';
 import WelcomePageButton from './WelcomePageButton';
 
 const UnmemorizedTopBar = (): React.JSX.Element => {
@@ -41,6 +40,8 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   const isTablet = useIsTabletOrMobile();
 
   const mode = useCanvasStore((state) => state.mode);
+  const interactionMode = useInteractionModeStore((state) => state.interactionMode);
+  const isExploreMode = interactionMode === 'explore';
   const { currentUser, hasUnsavedChange, setSelectedDevice } = use(CanvasContext);
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
@@ -81,7 +82,6 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
           [styles.draggable]: isDragRegion,
           [styles.web]: isWeb,
         })}
-        onClick={() => ObjectPanelController.updateActiveKey(null)}
       >
         <div
           className={classNames(styles.controls, styles.left, {
@@ -90,30 +90,34 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         >
           {isWeb ? (
             <>
-              <WelcomePageButton />
+              {!isExploreMode && <WelcomePageButton />}
               <CommonTools hide={mode !== CanvasMode.Draw} />
             </>
           ) : (
             <Tabs />
           )}
+          {isRetailDev() && <div className={styles.info}>{interactionMode.toUpperCase()}</div>}
         </div>
-        <div className={classNames(styles.controls, styles.right)}>
-          <SelectMachineButton />
-          <MaintenanceButton />
-          <DocumentButton />
-          <AutoFocusButton />
-          <FrameButton />
-          <PathPreviewButton isDeviceConnected={hasDiscoveredMachine} />
-          <GoButton hasDiscoverdMachine={hasDiscoveredMachine} />
-        </div>
+        {!isExploreMode && (
+          <div className={classNames(styles.controls, styles.right)}>
+            <SelectMachineButton />
+            <MaintenanceButton />
+            <DocumentButton />
+            <AutoFocusButton />
+            <FrameButton />
+            <PathPreviewButton isDeviceConnected={hasDiscoveredMachine} />
+            <GoButton hasDiscoverdMachine={hasDiscoveredMachine} />
+          </div>
+        )}
         {isWeb && <FileName hasUnsavedChange={hasUnsavedChange} />}
       </div>
-      <TopBarHintsContextProvider>
-        <TopBarHints />
-      </TopBarHintsContextProvider>
       {isWeb && (
         <div className={classNames(styles['top-bar-menu-container'], styles.menu)} data-testid="top-bar-menu">
-          {isTablet ? <DrawerMenu email={currentUser?.email} /> : <Menu email={currentUser?.email} />}
+          {isTablet ? (
+            <DrawerMenu disabled={isExploreMode} email={currentUser?.email} />
+          ) : (
+            <Menu disabled={isExploreMode} email={currentUser?.email} />
+          )}
         </div>
       )}
     </>

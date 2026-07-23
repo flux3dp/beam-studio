@@ -1,4 +1,5 @@
 import constant from '@core/app/actions/beambox/constant';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import type { DimensionKeyShort, DimensionValues } from '@core/interfaces/ObjectPanel';
 
 export const getValue = (
@@ -45,4 +46,32 @@ export const getValue = (
   return val;
 };
 
-export default {};
+/**
+ * For intensive-changed inputs,
+ * directly update input values immediately
+ * and re-render by throttled updateObjectPanel
+ */
+export const subscribeDimensionValues = (
+  inputRef: React.RefObject<HTMLInputElement | null>,
+  type: DimensionKeyShort,
+  unit: 'in' | 'mm' | 'px',
+  precision: number,
+): (() => void) => {
+  const objectPanelEventEmitter = eventEmitterFactory.createEventEmitter('object-panel');
+
+  const handler = (newValues: DimensionValues) => {
+    if (inputRef.current) {
+      const newVal = getValue(newValues, type, { allowUndefined: true, unit });
+
+      if (newVal === undefined) return;
+
+      inputRef.current.value = newVal.toFixed(precision);
+    }
+  };
+
+  objectPanelEventEmitter.on('UPDATE_DIMENSION_VALUES', handler);
+
+  return () => {
+    objectPanelEventEmitter.off('UPDATE_DIMENSION_VALUES', handler);
+  };
+};

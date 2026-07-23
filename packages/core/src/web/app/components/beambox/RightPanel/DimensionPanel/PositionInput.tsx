@@ -1,16 +1,17 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
+import ControlBlock from '@core/app/components/beambox/RightPanel/common/ControlBlock';
 import { objectPanelInputTheme } from '@core/app/constants/antd-config';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { templateModes, useWithinInteractionModes } from '@core/app/stores/interactionModeStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import type { DimensionValues, PositionKey } from '@core/interfaces/ObjectPanel';
-
-import ObjectPanelItem from '../ObjectPanelItem';
+import { ControlType } from '@core/helpers/element/editable/base';
+import type { PositionKey } from '@core/interfaces/ObjectPanel';
 
 import styles from './DimensionPanel.module.scss';
-import { getValue } from './utils';
+import { subscribeDimensionValues } from './utils';
 
 interface Props {
   onChange: (type: PositionKey, value: number) => void;
@@ -18,95 +19,46 @@ interface Props {
   value: number;
 }
 
+const typeMap: Record<PositionKey, { controlType: ControlType; label: string; sub?: string }> = {
+  cx: { controlType: ControlType.POSITION_X, label: 'X', sub: 'C' },
+  cy: { controlType: ControlType.POSITION_Y, label: 'Y', sub: 'C' },
+  x: { controlType: ControlType.POSITION_X, label: 'X' },
+  x1: { controlType: ControlType.POSITION_X, label: 'X', sub: '1' },
+  x2: { controlType: ControlType.POSITION_X2, label: 'X', sub: '2' },
+  y: { controlType: ControlType.POSITION_Y, label: 'Y' },
+  y1: { controlType: ControlType.POSITION_Y, label: 'Y', sub: '1' },
+  y2: { controlType: ControlType.POSITION_Y2, label: 'Y', sub: '2' },
+};
+
 const PositionInput = ({ onChange, type, value }: Props): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
+  const isWithinTemplateModes = useWithinInteractionModes(templateModes);
   const isInch = useStorageStore((state) => state.isInch);
   const { precision, unit } = useMemo<{ precision: number; unit: 'in' | 'mm' }>(
     () => (isInch ? { precision: 4, unit: 'in' } : { precision: 2, unit: 'mm' }),
     [isInch],
   );
 
-  useEffect(() => {
-    const handler = (newValues: DimensionValues) => {
-      if (inputRef.current) {
-        const newVal = getValue(newValues, type, { allowUndefined: true, unit });
+  useEffect(() => subscribeDimensionValues(inputRef, type, unit, precision), [type, unit, precision]);
 
-        if (newVal === undefined) {
-          return;
-        }
+  const { controlType, label } = useMemo(() => {
+    const config = typeMap[type];
 
-        inputRef.current.value = newVal.toFixed(precision);
-      }
+    return {
+      controlType: config.controlType,
+      label: config.sub ? (
+        <>
+          {config.label}
+          <sub>{config.sub}</sub>
+        </>
+      ) : (
+        config.label
+      ),
     };
-
-    objectPanelEventEmitter.on('UPDATE_DIMENSION_VALUES', handler);
-
-    return () => {
-      objectPanelEventEmitter.removeListener('UPDATE_DIMENSION_VALUES', handler);
-    };
-  }, [type, unit, precision, objectPanelEventEmitter]);
-
-  const label = useMemo<React.ReactNode>(() => {
-    if (type === 'x') {
-      return 'X';
-    }
-
-    if (type === 'y') {
-      return 'Y';
-    }
-
-    if (type === 'x1') {
-      return (
-        <>
-          X<sub>1</sub>
-        </>
-      );
-    }
-
-    if (type === 'y1') {
-      return (
-        <>
-          Y<sub>1</sub>
-        </>
-      );
-    }
-
-    if (type === 'x2') {
-      return (
-        <>
-          X<sub>2</sub>
-        </>
-      );
-    }
-
-    if (type === 'y2') {
-      return (
-        <>
-          Y<sub>2</sub>
-        </>
-      );
-    }
-
-    if (type === 'cx') {
-      return (
-        <>
-          X<sub>C</sub>
-        </>
-      );
-    }
-
-    if (type === 'cy') {
-      return (
-        <>
-          Y<sub>C</sub>
-        </>
-      );
-    }
-
-    return null;
   }, [type]);
+  const editable = useSelectedElementStore((state) => state.editableInfo[controlType]?.value);
+  const disabled = useMemo(() => isWithinTemplateModes && !editable, [isWithinTemplateModes, editable]);
   const inputId = useMemo(() => `${type}_position`, [type]);
   const handleChange = useCallback(
     (val: null | number) => {
@@ -115,28 +67,25 @@ const PositionInput = ({ onChange, type, value }: Props): React.JSX.Element => {
     [type, onChange],
   );
 
-  if (isMobile) {
-    return <ObjectPanelItem.Number id={inputId} label={label} updateValue={handleChange} value={value} />;
-  }
-
   return (
-    <div className={styles.dimension}>
-      <div className={styles.label}>{label}</div>
+    <ControlBlock className={styles.dimension} forceVisible label={label} type={controlType}>
+      {!isTablet && <div className={styles.label}>{label}</div>}
       <UnitInput
         className={styles.input}
         controls={false}
+        disabled={disabled}
         id={inputId}
         isInch={isInch}
         onChange={handleChange}
         precision={isInch ? 4 : 2}
         ref={inputRef}
         step={isInch ? 2.54 : 1}
-        theme={objectPanelInputTheme}
-        underline
+        theme={isTablet ? undefined : objectPanelInputTheme}
+        underline={!isTablet}
         unit={unit}
         value={value}
       />
-    </div>
+    </ControlBlock>
   );
 };
 

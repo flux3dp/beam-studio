@@ -11,13 +11,14 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import isDev from '@core/helpers/is-dev';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './Block.module.scss';
 import initState from './initState';
 import NumberBlock from './NumberBlock';
 
 // TODO: add tests
-const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const FocusBlock = (props: CommonProps): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, focus, focusStep, repeat } = useConfigPanelStore();
@@ -38,6 +39,8 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     change({ focus: value });
 
+    if (props.noApply) return;
+
     const batchCmd = new history.BatchCommand('Toggle focus adjustment');
 
     useLayerStore.getState().selectedLayers.forEach((layerName) => writeData(layerName, 'focus', value, { batchCmd }));
@@ -49,6 +52,8 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     const value = -focusStep.value;
 
     change({ focusStep: value });
+
+    if (props.noApply) return;
 
     const batchCmd = new history.BatchCommand('Toggle focus step');
 
@@ -86,8 +91,8 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
             min={0.01}
             precision={2}
             title={t.by}
-            type={type}
             unit="mm"
+            {...props}
           />
         )}
       </div>
@@ -118,6 +123,7 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
               precision={2}
               title={t.z_step}
               unit="mm"
+              {...props}
             />
           )}
         </div>

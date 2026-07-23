@@ -30,3 +30,18 @@
     }
   }
 }
+
+.button {
+  :global(.ant-btn-icon) {
+    font-size: 24px;
+  }
+}
+
+.downIcon {
+  margin-left: 4px;
+  transition: transform 0.3s ease;
+
+  &.active {
+    transform: rotate(180deg);
+  }
+}

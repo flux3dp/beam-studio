@@ -57,7 +57,7 @@ import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';
 import { importPresets } from '@core/helpers/presets/preset-helper';
 import Shortcuts, { isFocusingOnInputs } from '@core/helpers/shortcuts';
-import { isMobile } from '@core/app/stores/screenStore';
+import { isTabletOrMobile } from '@core/app/stores/layoutStore';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
@@ -82,6 +82,8 @@ import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { showPanel } from '@core/app/widgets/dockable/utils';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import { resizeSelector } from '@core/app/svgedit/selector';
+import { resetThumbnails } from '@core/app/components/FileThumbnail/utils';
+import { templateModes, withinInteractionModes } from '@core/app/stores/interactionModeStore';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -639,10 +641,12 @@ const svgEditor = (window['svgEditor'] = (function () {
       setMouseMode('select');
       svgCanvas.clear();
       workareaManager.resetView();
-      RightPanelController.setPanelType(isMobile() ? PanelType.None : PanelType.Layer);
+      RightPanelController.setPanelType(isTabletOrMobile() ? PanelType.None : PanelType.Layer);
       useLayerStore.getState().forceUpdate();
       updateContextPanel();
       svgedit.transformlist.resetListMap();
+      resetThumbnails();
+      currentFileManager.setTemplateFile(null);
     };
 
     editor.clearScene = clearScene;
@@ -976,6 +980,8 @@ const svgEditor = (window['svgEditor'] = (function () {
 
         console.log('File type name:', fileType);
 
+        const isWithinTemplateModes = withinInteractionModes(templateModes);
+
         switch (fileType) {
           case 'bvg':
             await importBvg(file);
@@ -985,7 +991,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             break;
           case 'svg':
             await webNeedConnectionWrapper(async () => {
-              await importSvg(file);
+              await importSvg(file, { toCurrentLayer: isWithinTemplateModes });
             });
             // remove the loading toast if loaded or no machine connection
             Progress.popById('loading_image');
@@ -995,7 +1001,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             Progress.popById('loading_image');
             break;
           case 'dxf':
-            await importDxf(file);
+            await importDxf(file, { toCurrentLayer: isWithinTemplateModes });
             Progress.popById('loading_image');
             break;
           case 'pdf':
@@ -1004,7 +1010,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
             if (blob) {
               Object.assign(blob, { name: file.name });
-              await importSvg(blob as File, { skipByLayer: true });
+              await importSvg(blob as File, { skipByLayer: true, toCurrentLayer: isWithinTemplateModes });
               Progress.popById('loading_image');
             } else {
               Progress.popById('loading_image');

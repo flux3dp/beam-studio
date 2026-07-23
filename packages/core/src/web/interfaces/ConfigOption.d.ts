@@ -4,3 +4,7 @@ interface ConfigOption {
 }
 
 export default ConfigOption;
+
+export type CommonProps = {
+  noApply: boolean;
+};

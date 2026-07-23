@@ -71,6 +71,7 @@ export const FontEvents = {
 
 // Menu events
 export const MenuEvents = {
+  DisableMenu: 'disable-menu',
   MenuClick: 'menu-click',
   NewAppMenu: 'new-app-menu',
   OpenRecentFiles: 'open-recent-files',

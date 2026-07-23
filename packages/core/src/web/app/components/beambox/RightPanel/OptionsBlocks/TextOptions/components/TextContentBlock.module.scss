@@ -1,9 +1,12 @@
-.container {
-  margin-top: 8px;
-  margin-bottom: 8px;
+@use '@core/styles/selectors' as selectors;
 
-  :global(.ant-input) {
-    border-radius: 6px;
-    padding: 6px 10px;
+@include selectors.desktop-layout {
+  .container {
+    margin-bottom: 8px; // Larger margin compared to normal margin-bottom within TextOptions
+
+    :global(.ant-input) {
+      border-radius: 6px;
+      padding: 6px 10px;
+    }
   }
 }

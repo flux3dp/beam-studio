@@ -12,7 +12,10 @@ export async function determineImportType(
   targetModule: LayerModuleType,
   skipByLayer: boolean,
   lang: ILang,
+  toCurrentLayer: boolean,
 ): Promise<ImportType | undefined> {
+  if (toCurrentLayer) return 'nolayer';
+
   if (currentImportType) return currentImportType;
 
   const importTypeOptions = Array.of<{ label: string; value: ImportType }>();

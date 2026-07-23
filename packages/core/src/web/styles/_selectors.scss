@@ -1,0 +1,115 @@
+// Note: mixins with :global can be used in xxx.module.scss only
+// TODO: collapse mixins with arguments
+@use 'sass:list';
+
+@mixin select-with-optional-wrapper($globalSelector) {
+  @if & == null {
+    @at-root {
+      :global(#{$globalSelector}) {
+        @content;
+      }
+    }
+  } @else {
+    :global(#{$globalSelector}) & {
+      @content;
+    }
+  }
+}
+
+@mixin when-tab-focused {
+  :where(body:global(.focused)) & {
+    @content;
+  }
+}
+@mixin when-tab-not-focused {
+  :where(body:not(:global(.focused))) & {
+    @content;
+  }
+}
+
+@mixin is-mobile {
+  @media screen and (max-width: 600px) {
+    @content;
+  }
+}
+@mixin is-tablet {
+  @media screen and (min-width: 601px) and (max-width: 1024px) {
+    @content;
+  }
+}
+@mixin is-tablet-or-mobile {
+  @media screen and (max-width: 1024px) {
+    @content;
+  }
+}
+@mixin is-not-mobile {
+  @media screen and (min-width: 601px) {
+    @content;
+  }
+}
+@mixin is-desktop {
+  @media screen and (min-width: 1025px) {
+    @content;
+  }
+}
+
+@mixin is-web {
+  :where(:global(#root.web)) & {
+    @content;
+  }
+}
+@mixin is-not-web {
+  :where(:global(#root:not(.web))) & {
+    @content;
+  }
+}
+
+$supported-os: (linux, macos, windows, others); // lowercase version of getOS result
+@mixin is-os($os) {
+  @if list.index($supported-os, $os) {
+    :where(:global(body.#{$os})) & {
+      @content;
+    }
+  } @else {
+    @error "Unsupported OS `#{$os}` in is-os mixin.";
+  }
+}
+@mixin is-not-os($os) {
+  @if list.index($supported-os, $os) {
+    :where(:global(body:not(.#{$os}))) & {
+      @content;
+    }
+  } @else {
+    @error "Unsupported OS `#{$os}` in is-not-os mixin.";
+  }
+}
+
+// Real Layout, should consider screen size and template mode
+@mixin mobile-layout {
+  @include is-mobile {
+    @content;
+  }
+}
+@mixin tablet-layout {
+  @include is-tablet {
+    @content;
+  }
+  @include select-with-optional-wrapper('body.template') {
+    @content;
+  }
+}
+@mixin tablet-or-mobile-layout {
+  @include is-tablet-or-mobile {
+    @content;
+  }
+  @include select-with-optional-wrapper('body.template') {
+    @content;
+  }
+}
+@mixin desktop-layout {
+  @include is-desktop {
+    @include select-with-optional-wrapper('body:not(.template)') {
+      @content;
+    }
+  }
+}

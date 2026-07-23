@@ -4,8 +4,10 @@ import type { MenuProps } from 'antd';
 import { useShallow } from 'zustand/shallow';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { templateModes, useWithinInteractionModes } from '@core/app/stores/interactionModeStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { cloneSelectedElements, pasteElements } from '@core/app/svgedit/operations/clipboard';
 import selectionManager from '@core/app/svgedit/selection';
@@ -16,6 +18,8 @@ import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-help
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import WorkareaActionPopover from './WorkareaActionPopover';
 
 let svgCanvas: ISVGCanvas;
 
@@ -58,6 +62,8 @@ interface State {
 }
 
 const Workarea = memo(({ className }: { className: string }) => {
+  const isTablet = useIsTabletOrMobile();
+  const isWithinTemplateModes = useWithinInteractionModes(templateModes);
   const [{ menuDisabled, paste, select }, setState] = useSetState<State>({
     menuDisabled: false,
     paste: false,
@@ -140,8 +146,10 @@ const Workarea = memo(({ className }: { className: string }) => {
     ];
   }, [t, lang, select, paste, group, ungroup]);
 
+  const items = getMenuItems();
+
   return (
-    <ContextMenu disabled={menuDisabled} items={getMenuItems()}>
+    <ContextMenu disabled={isWithinTemplateModes || menuDisabled} items={items}>
       <div className={className} id="workarea">
         <div
           id="svgcanvas"
@@ -149,6 +157,7 @@ const Workarea = memo(({ className }: { className: string }) => {
             position: 'relative',
           }}
         />
+        {isTablet && !isWithinTemplateModes && <WorkareaActionPopover items={items} />}
       </div>
     </ContextMenu>
   );

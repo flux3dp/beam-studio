@@ -1,5 +1,5 @@
 import { modifierKeys } from '@core/app/constants/modifierKeys';
-import { isMobile } from '@core/app/stores/screenStore';
+import { isMobile } from '@core/app/stores/layoutStore';
 import { isMac } from '@core/helpers/system-helper';
 /**
  * setting up shortcut

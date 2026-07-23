@@ -8,11 +8,12 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from '../Block.module.scss';
 import { initState } from '../initState';
 
-const OneWayEngraving = () => {
+const OneWayEngraving = ({ noApply }: CommonProps) => {
   const { change, oneWayEngraving, oneWayEngravingReverse } = useConfigPanelStore();
 
   const handleToggle = useCallback(
@@ -21,13 +22,15 @@ const OneWayEngraving = () => {
 
       change({ [key]: val });
 
+      if (noApply) return;
+
       const batchCmd = new history.BatchCommand(`Change ${key} toggle`);
 
       selectedLayers.forEach((layerName) => writeData(layerName, key, val, { batchCmd }));
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     },
-    [change],
+    [change, noApply],
   );
 
   return (

@@ -1,14 +1,12 @@
 import React, { memo, useEffect, useMemo, useState } from 'react';
 
-import { ConfigProvider } from 'antd';
-
-import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
-import { selectTheme } from '@core/app/constants/antd-config';
-import { useIsMobile } from '@core/app/stores/screenStore';
 import type { TextTransform } from '@core/app/svgedit/text/textedit';
 import { getTextTransform, setTextTransform } from '@core/app/svgedit/text/textedit';
 import Select from '@core/app/widgets/AntdSelect';
+import { ControlType } from '@core/helpers/element/editable/base';
 import useI18n from '@core/helpers/useI18n';
+
+import ControlBlock from '../../../common/ControlBlock';
 
 import styles from './TextTransformBlock.module.scss';
 
@@ -44,7 +42,6 @@ interface Props {
 
 const TextTransformBlock = ({ onSizeChange, textElements }: Props): React.ReactNode => {
   const t = useI18n().beambox.right_panel.object_panel.option_panel;
-  const isMobile = useIsMobile();
   const [state, setState] = useState(() => readValue(textElements));
 
   useEffect(() => {
@@ -85,25 +82,10 @@ const TextTransformBlock = ({ onSizeChange, textElements }: Props): React.ReactN
     onSizeChange?.();
   };
 
-  if (isMobile) {
-    return (
-      <ObjectPanelItem.Select
-        id="text-transform"
-        label={t.text_transform}
-        onChange={(mode: string) => handleChange(mode as TextTransform)}
-        options={options}
-        selected={{
-          label: state.hasMultiValue ? '-' : labelOf(state.value),
-          value: state.hasMultiValue ? '' : state.value,
-        }}
-      />
-    );
-  }
-
   const displayValue = state.hasMultiValue ? '-' : state.value;
 
   return (
-    <ConfigProvider theme={selectTheme}>
+    <ControlBlock className={styles.container} label={t.text_transform} type={ControlType.TEXT_TRANSFORM}>
       <Select
         className={styles.select}
         onChange={(value) => handleChange(value as TextTransform)}
@@ -114,7 +96,7 @@ const TextTransformBlock = ({ onSizeChange, textElements }: Props): React.ReactN
         title={t.text_transform}
         value={displayValue}
       />
-    </ConfigProvider>
+    </ControlBlock>
   );
 };
 

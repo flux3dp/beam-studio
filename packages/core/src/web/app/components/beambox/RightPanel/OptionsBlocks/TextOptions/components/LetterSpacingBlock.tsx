@@ -1,14 +1,27 @@
 import React, { memo, useEffect, useState } from 'react';
 
-import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
+import ControlBlock from '@core/app/components/beambox/RightPanel/common/ControlBlock';
+import InputNumberGroup from '@core/app/components/beambox/RightPanel/common/InputNumberGroup';
+import Slider from '@core/app/components/beambox/RightPanel/common/Slider';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import { getLetterSpacing, setLetterSpacing } from '@core/app/svgedit/text/textedit';
+import { ControlType } from '@core/helpers/element/editable/base';
 import useI18n from '@core/helpers/useI18n';
+import type { NumberOptionConfig } from '@core/interfaces/ObjectPanel';
 
 import OptionsInput from '../../OptionsInput';
 
 import styles from './SpacingBlock.module.scss';
+
+const config: NumberOptionConfig = {
+  id: 'letter_spacing',
+  precision: 2,
+  sliderMax: 5,
+  sliderMin: -5,
+  sliderStep: 0.01,
+  step: 0.05,
+};
 
 const readValues = (textElements: SVGTextElement[]) => {
   if (textElements.length === 0) return { hasMultiValue: false, value: 0 };
@@ -31,7 +44,7 @@ interface Props {
 
 const LetterSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactNode => {
   const t = useI18n().beambox.right_panel.object_panel.option_panel;
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const [state, setState] = useState(() => readValues(textElements));
 
   useEffect(() => {
@@ -50,29 +63,28 @@ const LetterSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactN
     return () => observer.disconnect();
   }, [textElements]);
 
-  const handleChange = (value: null | number): void => {
+  const handleChange = (value: null | number, addToHistory = true): void => {
     if (value === null) return;
 
-    setLetterSpacing(value, textElements);
-    setState({ hasMultiValue: false, value });
-    onSizeChange?.();
+    setLetterSpacing(value, textElements, { addToHistory });
+
+    if (addToHistory) {
+      setState({ hasMultiValue: false, value });
+      onSizeChange?.();
+    }
   };
 
-  if (isMobile) {
+  if (isTablet) {
     return (
-      <ObjectPanelItem.Number
-        hasMultiValue={state.hasMultiValue}
-        id="letter_spacing"
-        label={t.letter_spacing}
-        unit="em"
-        updateValue={handleChange}
-        value={state.value}
-      />
+      <ControlBlock label={t.letter_spacing} type={ControlType.LETTER_SPACING}>
+        <Slider config={config} onChange={handleChange} value={state.value} />
+        <InputNumberGroup config={config} onChange={handleChange} value={state.value} />
+      </ControlBlock>
     );
   }
 
   return (
-    <div className={styles.container} title={t.letter_spacing}>
+    <ControlBlock className={styles.container} title={t.letter_spacing} type={ControlType.LETTER_SPACING}>
       <div className={styles.label}>
         <OptionPanelIcons.LetterSpacing />
       </div>
@@ -84,7 +96,7 @@ const LetterSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactN
         step={0.05}
         value={state.value}
       />
-    </div>
+    </ControlBlock>
   );
 };
 

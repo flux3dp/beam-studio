@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useMemo, useState } from 'react';
 
-import { ConfigProvider, Modal } from 'antd';
+import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 import { piped } from 'remeda';
 import { sprintf } from 'sprintf-js';
@@ -8,24 +8,25 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import HighQualityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/HighQualityBlock';
+import OpacityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/OpacityBlock';
+import Divider from '@core/app/components/common/Divider';
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
+import { laserModules, LayerModule, skippedModules, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
@@ -44,12 +45,11 @@ import { usePresetList } from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ColorBlock from '../ColorBlock';
-import ObjectPanelController from '../contexts/ObjectPanelController';
-import ObjectPanelItem from '../ObjectPanelItem';
-import WattBlock from '../WattBlock';
+import { PopupItem } from '../common/ObjectPanelItem';
 
 import AdvancedBlock from './AdvancedBlock';
 import AirAssistBlock from './AirAssistBlock';
@@ -84,11 +84,11 @@ getSVGAsync((globalSVG) => {
 const timeEstimationButtonEventEmitter = eventEmitterFactory.createEventEmitter('time-estimation-button');
 
 interface Props {
-  UIType?: 'default' | 'modal' | 'panel-item';
+  objectPanelKey?: string;
 }
 
 // TODO: add test
-const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
+const ConfigPanel = ({ objectPanelKey }: Props): React.JSX.Element => {
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
@@ -105,7 +105,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     [lang.dropdown.parameters, lang.custom_preset, lang.various_preset],
   );
   const { change, getState } = useConfigPanelStore();
-  const supportedModules = useSupportedModules(workarea);
   const state = getState();
   const { fullcolor, module } = state;
   const { isLaser, isPrinting, isUV } = useMemo(() => {
@@ -116,6 +115,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     };
   }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const { noApply, UIType } = useMemo(
+    () => ({ noApply: !!objectPanelKey, UIType: objectPanelKey ? 'modal' : 'default' }),
+    [objectPanelKey],
+  );
 
   useEffect(() => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
@@ -232,7 +235,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
     change(payload);
 
-    if (UIType !== 'modal') {
+    if (!noApply) {
       const batchCmd = new history.BatchCommand('Change layer preset');
 
       selectedLayers.forEach((layerName: string) => {
@@ -269,206 +272,197 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     value: e.key || e.name,
   })) as Array<{ key: string; label: string; value: string }>;
   const displayName = selectedLayers.length === 1 ? selectedLayers[0] : lang.multi_layer;
+  const commonProps: CommonProps = { noApply };
 
   const commonContent = (
     <>
-      {(isPrinting || isUV) && <HalftoneBlock type={UIType} />}
-      {isLaser && <PowerBlock type={UIType} />}
-      {(isPrinting || isUV) && <InkBlock type={UIType} />}
-      <SpeedBlock type={UIType} />
-      {isLaser && <DpiBlock type={UIType} />}
-      {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
-      {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
-      {isDevMode && isPrinting && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
-      {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
-      {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
-      <RepeatBlock type={UIType} />
-      {isDevMode && isPrinting && fullcolor.value && UIType === 'panel-item' && <WhiteInkCheckbox type={UIType} />}
-      {isPromark && <FillBlock type={UIType} />}
-      {isPromark && <DottingTimeBlock type={UIType} />}
-      {isLaser && <LaserDevOptions />}
-      {isDevMode && <MinPadding type={UIType} />}
-      {isUV && <UVPrintingConfigs type={UIType} />}
-      {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
+      {(isPrinting || isUV) && <HalftoneBlock {...commonProps} />}
+      {isLaser && <PowerBlock {...commonProps} />}
+      {(isPrinting || isUV) && <InkBlock {...commonProps} />}
+      <SpeedBlock {...commonProps} />
+      {isLaser && <DpiBlock {...commonProps} />}
+      {workarea === 'fhx2rf' && <HighQualityBlock {...commonProps} />}
+      {(isPrinting || isUV) && <MultipassBlock {...commonProps} />}
+      {isDevMode && isPrinting && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox {...commonProps} />}
+      {isDevMode && isCustomBacklashEnabled && <Backlash {...commonProps} />}
+      {addOnInfo.airAssist && isLaser && <AirAssistBlock {...commonProps} />}
+      <RepeatBlock {...commonProps} />
+      {isPromark && <FillBlock />}
+      {isPromark && <DottingTimeBlock {...commonProps} />}
+      {isLaser && <LaserDevOptions {...commonProps} />}
+      {isDevMode && <MinPadding {...commonProps} />}
+      {isUV && <UVPrintingConfigs {...commonProps} />}
+      {workarea === 'fuv1' && <UVLightConfigs {...commonProps} />}
     </>
   );
 
-  const getContent = () => {
-    if (UIType === 'default') {
-      return (
-        <div className={styles['config-panel']} id="laser-panel">
-          <div className={classNames(styles.layername, 'hidden-mobile')}>
-            {sprintf(lang.preset_setting, displayName)}
-          </div>
-          <ModuleBlock />
-          {module.value !== LayerModule.UV_PRINT && (
-            <>
-              <div className={styles.container} id="layer-parameters">
-                <div>
-                  <ParameterTitle />
-                  <div className={styles['preset-dropdown-container']}>
-                    <Select
-                      className={styles['preset-dropdown']}
-                      id="laser-config-dropdown"
-                      onChange={handleSelectPresets}
-                      options={[
-                        ...hiddenOptions.filter((option) => option.value === dropdownValue),
-                        ...dropdownOptions,
-                      ]}
-                      placement="bottomRight"
-                      popupMatchSelectWidth={false}
-                      value={dropdownValue}
-                    />
-                  </div>
-                </div>
-                {commonContent}
-              </div>
-              <AdvancedBlock type={UIType} />
-            </>
-          )}
-        </div>
-      );
-    }
-
-    if (UIType === 'panel-item') {
-      return (
-        <>
-          {supportedModules.length > 1 && (
-            <div className={styles['item-group']}>
-              <WattBlock />
-              <ModuleBlock />
-              <ObjectPanelItem.Divider />
-            </div>
-          )}
-          {module.value !== LayerModule.UV_PRINT && (
-            <div className={styles['item-group']}>
-              <ObjectPanelItem.Select
-                id="laser-config-dropdown"
-                label={lang.presets}
-                onChange={handleSelectPresets as any}
-                options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
-                selected={
-                  dropdownOptions.find((option) => option.value === dropdownValue) || {
-                    label: dropdownValue!,
-                    value: dropdownValue!,
-                  }
-                }
-              />
-              {commonContent}
-            </div>
-          )}
-        </>
-      );
-    }
-
-    const onClose = () => {
-      dialogCaller.popDialogById('config-panel');
-      ObjectPanelController.updateActiveKey(null);
-    };
-    const onSave = (): void => {
-      const saveDataAndClose = () => {
-        const batchCmd = new history.BatchCommand('Change layer parameter');
-
-        selectedLayers.forEach((layerName: string) => {
-          writeData(layerName, 'speed', state.speed.value, { applyPrinting: true, batchCmd });
-          writeData(layerName, 'power', state.power.value, { batchCmd });
-          writeData(layerName, 'repeat', state.repeat.value, { batchCmd });
-          writeData(layerName, 'zStep', state.zStep.value, { batchCmd });
-          writeData(layerName, 'configName', state.configName.value, { batchCmd });
-          writeData(layerName, 'ink', state.ink.value, { batchCmd });
-          writeData(layerName, 'multipass', state.multipass.value, { batchCmd });
-          writeData(layerName, 'halftone', state.halftone.value, { batchCmd });
-          writeData(layerName, 'highQuality', state.highQuality.value, { batchCmd });
-        });
-        batchCmd.onAfter = initState;
-        svgCanvas.addCommandToHistory(batchCmd);
-        onClose();
-      };
-
-      if (modalMoveLayerDest !== selectedLayers[0]) {
-        moveToOtherLayer(modalMoveLayerDest, saveDataAndClose);
-      } else {
-        saveDataAndClose();
-      }
-    };
-    const layerOptions = [];
-    const allLayers = layerManager.getAllLayers();
-
-    for (let i = allLayers.length - 1; i >= 0; i -= 1) {
-      const layer = allLayers[i];
-      const layerElement = layer.getGroup();
-      const layerName = layer.getName();
-      const layerModule = getData(layerElement, 'module') as LayerModuleType;
-      const isFullColor = getData(layerElement, 'fullcolor')!;
-      const color = getData(layerElement, 'color') ?? '#333333';
-
-      layerOptions.push(
-        <Select.Option key={layerName} label={layerName} value={layerName}>
-          <div className={styles.option}>
-            <ColorBlock color={isFullColor ? 'fullcolor' : color} size="mini" />
-            {printingModules.has(layerModule) ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />}
-            <span>{layerName}</span>
-          </div>
-        </Select.Option>,
-      );
-    }
-
+  if (UIType === 'default') {
     return (
-      <ConfigProvider theme={{ components: { Button: { borderRadius: 100, controlHeight: 30 } } }}>
-        <Modal
-          cancelText={i18n.lang.beambox.tool_panels.cancel}
-          centered
-          className={styles.modal}
-          okText={i18n.lang.beambox.tool_panels.confirm}
-          onCancel={onClose}
-          onOk={onSave}
-          open
-          title={lang.preset_setting.slice(0, -4)}
-        >
-          {modalMoveLayerDest && (
-            <div className={styles['change-layer']}>
-              <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.current_layer}:</span>
-              <Select className={styles.select} defaultValue={modalMoveLayerDest} disabled>
-                {layerOptions}
-              </Select>
-            </div>
-          )}
-          {allLayers.length > 1 && (
-            <div className={styles['change-layer']}>
-              <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.move_elems_to}</span>
-              <Select
-                className={styles.select}
-                onChange={(layerName) => setModalMoveLayerDest(layerName)}
-                popupMatchSelectWidth={false}
-                value={modalMoveLayerDest}
-              >
-                {layerOptions}
-              </Select>
-            </div>
-          )}
-          {module.value !== LayerModule.UV_PRINT && (
-            <>
-              <div className={styles.params}>
-                <ConfigProvider theme={{ components: { Select: { borderRadius: 100, controlHeight: 30 } } }}>
+      <div className={styles['config-panel']} id="laser-panel">
+        <div className={classNames(styles.layername, 'hidden-mobile')}>{sprintf(lang.preset_setting, displayName)}</div>
+        <ModuleBlock />
+        {!skippedModules.has(module.value) && (
+          <>
+            <div className={styles.container} id="layer-parameters">
+              <div>
+                <ParameterTitle />
+                <div className={styles['preset-dropdown-container']}>
                   <Select
-                    className={styles.select}
+                    className={styles['preset-dropdown']}
                     id="laser-config-dropdown"
                     onChange={handleSelectPresets}
-                    options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
+                    options={[...hiddenOptions.filter((option) => option.value === dropdownValue), ...dropdownOptions]}
+                    placement="bottomRight"
+                    popupMatchSelectWidth={false}
                     value={dropdownValue}
                   />
-                </ConfigProvider>
-                {commonContent}
+                </div>
               </div>
-              <AdvancedBlock type={UIType} />
-            </>
-          )}
-        </Modal>
-      </ConfigProvider>
+              {commonContent}
+            </div>
+            <AdvancedBlock {...commonProps} />
+          </>
+        )}
+        {module.value === LayerModule.GUIDE && (
+          <div className={styles.container} id="layer-parameters">
+            <div>
+              <ParameterTitle noPreset />
+            </div>
+            <OpacityBlock {...commonProps} />
+          </div>
+        )}
+      </div>
     );
-  };
+  }
 
-  return getContent();
+  const onClose = () => {
+    useSelectedElementStore.setState({ activeKey: null });
+  };
+  const onSave = (): void => {
+    // TODO: fix onSave and onChange with all configs!!!
+    const saveDataAndClose = () => {
+      const batchCmd = new history.BatchCommand('Change layer parameter');
+
+      selectedLayers.forEach((layerName: string) => {
+        writeData(layerName, 'speed', state.speed.value, { applyPrinting: true, batchCmd });
+        writeData(layerName, 'power', state.power.value, { batchCmd });
+        writeData(layerName, 'repeat', state.repeat.value, { batchCmd });
+        writeData(layerName, 'zStep', state.zStep.value, { batchCmd });
+        writeData(layerName, 'configName', state.configName.value, { batchCmd });
+        writeData(layerName, 'ink', state.ink.value, { batchCmd });
+        writeData(layerName, 'multipass', state.multipass.value, { batchCmd });
+        writeData(layerName, 'halftone', state.halftone.value, { batchCmd });
+        writeData(layerName, 'highQuality', state.highQuality.value, { batchCmd });
+      });
+      batchCmd.onAfter = initState;
+      svgCanvas.addCommandToHistory(batchCmd);
+      onClose();
+    };
+
+    if (modalMoveLayerDest !== selectedLayers[0]) {
+      moveToOtherLayer(modalMoveLayerDest, saveDataAndClose);
+    } else {
+      saveDataAndClose();
+    }
+  };
+  const layerOptions = [];
+  const allLayers = layerManager.getAllLayers();
+
+  for (let i = allLayers.length - 1; i >= 0; i -= 1) {
+    const layer = allLayers[i];
+    const layerElement = layer.getGroup();
+    const layerName = layer.getName();
+    const layerModule = getData(layerElement, 'module') as LayerModuleType;
+    const isFullColor = getData(layerElement, 'fullcolor')!;
+    const color = getData(layerElement, 'color') ?? '#333333';
+
+    layerOptions.push(
+      <Select.Option key={layerName} label={layerName} value={layerName}>
+        <div className={styles.option}>
+          <ColorBlock color={isFullColor ? 'fullcolor' : color} size="mini" />
+          {printingModules.has(layerModule) ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />}
+          <span>{layerName}</span>
+        </div>
+      </Select.Option>,
+    );
+  }
+
+  const content = (
+    <div className={styles.modal}>
+      {modalMoveLayerDest && (
+        <div className={styles['change-layer']}>
+          <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.current_layer}:</span>
+          <Select className={styles.select} defaultValue={modalMoveLayerDest} disabled>
+            {layerOptions}
+          </Select>
+        </div>
+      )}
+      {allLayers.length > 1 && (
+        <div className={styles['change-layer']}>
+          <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.move_elems_to}</span>
+          <Select
+            className={styles.select}
+            onChange={(layerName) => setModalMoveLayerDest(layerName)}
+            popupMatchSelectWidth={false}
+            value={modalMoveLayerDest}
+          >
+            {layerOptions}
+          </Select>
+        </div>
+      )}
+      {!skippedModules.has(module.value) && (
+        <>
+          <div className={styles.params}>
+            <Divider />
+            <div>
+              <span className={styles.title}>{i18n.lang.beambox.right_panel.laser_panel.parameters}:</span>
+              <ConfigProvider theme={{ components: { Select: { borderRadius: 100, controlHeight: 30 } } }}>
+                <Select
+                  className={styles.select}
+                  id="laser-config-dropdown"
+                  onChange={handleSelectPresets}
+                  options={[...dropdownOptions, ...hiddenOptions.filter((option) => option.value === dropdownValue)]}
+                  value={dropdownValue}
+                />
+              </ConfigProvider>
+            </div>
+            {commonContent}
+            <Divider />
+          </div>
+          <AdvancedBlock {...commonProps} />
+        </>
+      )}
+      {module.value === LayerModule.GUIDE && (
+        <div className={styles.params}>
+          <Divider />
+          <OpacityBlock {...commonProps} />
+        </div>
+      )}
+    </div>
+  );
+
+  return (
+    <PopupItem
+      footer={
+        <div className={styles.footer}>
+          <Button onClick={onClose}>{i18n.lang.beambox.tool_panels.cancel}</Button>
+          <Button onClick={onSave} type="primary">
+            {i18n.lang.beambox.tool_panels.confirm}
+          </Button>
+        </div>
+      }
+      id={objectPanelKey!}
+      renderContent={() => content}
+      title={i18n.lang.beambox.right_panel.laser_panel.parameters}
+    />
+  );
 };
 
 export default memo(ConfigPanel);
+
+export const ConfigPanelPopup = ({ objectPanelKey }: Required<Props>) => {
+  const activeKey = useSelectedElementStore((state) => state.activeKey);
+  const isActive = activeKey === objectPanelKey;
+
+  return isActive ? <ConfigPanel objectPanelKey={objectPanelKey} /> : null;
+};

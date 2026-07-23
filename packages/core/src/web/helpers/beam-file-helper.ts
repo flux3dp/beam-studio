@@ -13,13 +13,17 @@
    ---------------------------------------------------------------------------------
   |   Metadata Len |     VINT     | indicate size of metadata                       |
    ---------------------------------------------------------------------------------
-  |    Metadata    | ↖            |string                                           |
+  |    Metadata    | ↖            | string                                          |
    ---------------------------------------------------------------------------------
   | svg content Len |    VINT     | indicate size of svg content block              |
    ---------------------------------------------------------------------------------
   | image source Len |     VINT   | indicate size of image source block             |
    ---------------------------------------------------------------------------------
-  | Thumbnail Len |     VINT   | indicate size of Thumbnail block                   |
+  |  Thumbnail Len |      VINT    | indicate size of Thumbnail block                |
+    --------------------------------------------------------------------------------
+  |  Misc Data Len |      VINT    | indicate size of Misc Data block                |
+    ---------------------------------------------------------------------------------
+  | Custom Thumbnail Len |  VINT  | indicate size of Custom Thumbnail block         |
     --------------------------------------------------------------------------------
 
     Blocks:
@@ -28,7 +32,7 @@
   |   Svg Content  |  content len |         Block Containing Svg contents           |
    =================================================================================
    ---------------------------------------------------------------------------------
-  |   block type   |    1 Bytes   | 0x01 for svg content                            |
+  |   block type   |    1 Byte    | 0x01 for svg content                            |
    ---------------------------------------------------------------------------------
   |  string length |     VINT     | indicate size of svg string                     |
    ---------------------------------------------------------------------------------
@@ -39,7 +43,7 @@
   |  Image Source  |      ...     |         Block Containing Image Source           |
    =================================================================================
    ---------------------------------------------------------------------------------
-  |   block type   |    1 Bytes   | 0x02 for svg content                            |
+  |   block type   |    1 Byte    | 0x02 for svg content                            |
    ---------------------------------------------------------------------------------
   |     length     |     VINT     | indicate size of remaining block                |
    ---------------------------------------------------------------------------------
@@ -58,7 +62,7 @@
   |   Thumbnail    |  content len |         Block Containing Thumbnail              |
    =================================================================================
    ---------------------------------------------------------------------------------
-  |   block type   |    1 Bytes   | 0x03 for Thumbnail                              |
+  |   block type   |    1 Byte    | 0x03 for Thumbnail                              |
    ---------------------------------------------------------------------------------
   |      size      |     VINT     | indicate size of image                          |
    ---------------------------------------------------------------------------------
@@ -69,11 +73,34 @@
   | MISC DATA(JSON)|  content len |    Block Containing json string of Misc. Data   |
    =================================================================================
    ---------------------------------------------------------------------------------
-  |   block type   |    1 Bytes   | 0x04                                            |
+  |   block type   |    1 Byte    | 0x04                                            |
    ---------------------------------------------------------------------------------
   |      size      |     VINT     | indicate size of json string                    |
    ---------------------------------------------------------------------------------
   |    content     | ↖            | json string of misc data                        |
+   ---------------------------------------------------------------------------------
+
+   =================================================================================
+  |Thumbnail Source|  content len | Block Containing Custom Thumbnail Images Source |
+   =================================================================================
+   ---------------------------------------------------------------------------------
+  |   block type   |    1 Byte    | 0x05                                            |
+   ---------------------------------------------------------------------------------
+  |     length     |     VINT     | indicate size of remaining block                |
+   ---------------------------------------------------------------------------------
+  |      count     |     VINT     | indicate number of images in the block          |
+   ---------------------------------------------------------------------------------
+  | Image Key Len  |     VINT     | Len of image key                                |
+   ---------------------------------------------------------------------------------
+  |   Image Key    | ↖            | Image Key                                       |
+   ---------------------------------------------------------------------------------
+  |  visible flag  |    1 Byte    | indicate if the image is visible                |
+   ---------------------------------------------------------------------------------
+  |    Image Len   |     VINT     | Len of image                                    |
+   ---------------------------------------------------------------------------------
+  |      Image     | ↖            | Image Source                                    |
+   ---------------------------------------------------------------------------------
+  |        Repeat Image Key Len, Image Key, Visible Flag, Image Len, Image          |
    ---------------------------------------------------------------------------------
 
 */
@@ -81,16 +108,27 @@ import { Buffer } from 'buffer';
 
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
+import type { ExportThumbnail } from '@core/app/components/FileThumbnail/getThumbnailsForExport';
+import { addThumbnail } from '@core/app/components/FileThumbnail/utils';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
+import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import workareaManager from '@core/app/svgedit/workarea';
+import { bufferToBlob } from '@core/helpers/data-url-utils';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import { hasVariableText } from '@core/helpers/variableText';
 import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { IFileThumbnail } from '@core/interfaces/IMyCloud';
+
+interface MetaData {
+  contents: number[];
+  template: boolean;
+  version: string;
+}
 
 interface MiscData {
   ce?: CurveEngraving;
@@ -136,7 +174,9 @@ const readVInt = (buffer, offset = 0) => {
   };
 };
 
-const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'svgContent' | 'thumbnail'): Buffer => {
+const localHeaderTypeBuffer = (
+  type: 'imageSource' | 'miscData' | 'svgContent' | 'thumbnail' | 'thumbnailsList',
+): Buffer => {
   switch (type) {
     case 'svgContent':
       return Buffer.from([0x01]);
@@ -146,6 +186,8 @@ const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'svgContent' |
       return Buffer.from([0x03]);
     case 'miscData':
       return Buffer.from([0x04]);
+    case 'thumbnailsList':
+      return Buffer.from([0x05]);
     default:
       break;
   }
@@ -202,10 +244,33 @@ const generateMiscDataBlockBuffer = (data: MiscData): Buffer => {
   return Buffer.concat([headerBuf, lengthVintBuf, contentBuf]);
 };
 
+const generateThumbnailsListBlockBuffer = (thumbnails: ExportThumbnail[]): Buffer => {
+  const typeBuf = localHeaderTypeBuffer('thumbnailsList');
+  let contentBuf = Buffer.from(valueToVIntBuffer(thumbnails.length));
+
+  for (const { data, isVisible, key } of thumbnails) {
+    const keyBuf = Buffer.from(key);
+    const dataBuf = data ? Buffer.from(data) : Buffer.from([]);
+
+    contentBuf = Buffer.concat([
+      contentBuf,
+      valueToVIntBuffer(keyBuf.length),
+      keyBuf,
+      Buffer.from([isVisible ? 1 : 0]),
+      valueToVIntBuffer(dataBuf.length),
+      dataBuf,
+    ]);
+  }
+
+  return Buffer.concat([typeBuf, valueToVIntBuffer(contentBuf.length), contentBuf]);
+};
+
 const generateBeamBuffer = (
   svgString: string,
   imageSources: { [id: string]: ArrayBuffer },
   thumbnail?: ArrayBuffer,
+  thumbnailsList?: ExportThumbnail[],
+  isTemplateFile = !!currentFileManager.templateFileBlob,
 ): Buffer => {
   const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]); // Bvg{version in uint} max to 255
   const svgBlockBuf = generateSvgBlockBuffer(svgString);
@@ -222,8 +287,13 @@ const generateBeamBuffer = (
   }
 
   const miscDataBuffer = generateMiscDataBlockBuffer(miscData);
-  const metaData = { contents: [1, 2, 3, 4], version: window.FLUX?.version };
+  const thumbnailsListBuffer =
+    thumbnailsList && thumbnailsList.length > 0 ? generateThumbnailsListBlockBuffer(thumbnailsList) : null;
+  const contents = [1, 2, 3, 4];
 
+  if (thumbnailsListBuffer) contents.push(5);
+
+  const metaData: MetaData = { contents, template: isTemplateFile, version: window.FLUX?.version };
   const metaDataBuf = Buffer.from(JSON.stringify(metaData));
   const headerBuffer = Buffer.concat([
     valueToVIntBuffer(metaDataBuf.length),
@@ -232,6 +302,7 @@ const generateBeamBuffer = (
     valueToVIntBuffer(imageSourceBlockBuffer.length),
     valueToVIntBuffer(thumbnailBlockBuffer?.length || 0),
     valueToVIntBuffer(miscDataBuffer.length),
+    ...(thumbnailsListBuffer ? [valueToVIntBuffer(thumbnailsListBuffer.length)] : []),
   ]);
   const headerSizeBuf = valueToVIntBuffer(headerBuffer.length);
   const buffer = Buffer.concat([
@@ -242,13 +313,14 @@ const generateBeamBuffer = (
     imageSourceBlockBuffer,
     thumbnailBlockBuffer || Buffer.from([]),
     miscDataBuffer,
+    ...(thumbnailsListBuffer ? [thumbnailsListBuffer] : []),
     Buffer.from([0x00]),
   ]);
 
   return buffer;
 };
 
-const readHeader = (headerBuf: Buffer) => {
+const readHeader = (headerBuf: Buffer): Partial<MetaData> => {
   let vInt;
   let offset = 0;
 
@@ -272,6 +344,12 @@ const readHeader = (headerBuf: Buffer) => {
     vInt = readVInt(headerBuf, offset);
     offset = vInt.offset;
     // console.log('Thumbnail block Size', vInt.value);
+  }
+
+  try {
+    return JSON.parse(metaData) as Partial<MetaData>;
+  } catch (_) {
+    return {};
   }
 };
 
@@ -332,7 +410,7 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
 
     const svgString = buf.toString('utf-8', currentOffset, currentOffset + value);
 
-    await importBvgString(svgString, { parentCmd: command });
+    await importBvgString(svgString, { clearTemplateMode: false, parentCmd: command });
     currentOffset += value;
   } else if (blockType === 2) {
     // image source
@@ -378,6 +456,43 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
       console.error('Failed to parse misc data', e);
     }
     currentOffset = newOffset + value;
+  } else if (blockType === 5) {
+    // thumbnails list
+    console.log('Thumbnails List Block');
+
+    const { offset: sizeOffset, value: totalSize } = readVInt(buf, currentOffset);
+    const blockEnd = sizeOffset + totalSize;
+
+    currentOffset = sizeOffset;
+
+    const { offset: countOffset, value: count } = readVInt(buf, currentOffset);
+
+    currentOffset = countOffset;
+
+    for (let i = 0; i < count && currentOffset < blockEnd; i += 1) {
+      const { offset: keyLenOffset, value: keyLen } = readVInt(buf, currentOffset);
+
+      currentOffset = keyLenOffset;
+
+      const key = buf.toString('utf-8', currentOffset, currentOffset + keyLen);
+
+      currentOffset += keyLen;
+
+      const isVisible = buf.readUInt8(currentOffset) === 1;
+
+      currentOffset += 1;
+
+      const { offset: srcLenOffset, value: srcLen } = readVInt(buf, currentOffset);
+
+      currentOffset = srcLenOffset;
+
+      const blob = srcLen > 0 ? bufferToBlob(buf, currentOffset, srcLen) : null;
+
+      currentOffset += srcLen;
+      addThumbnail(blob, { isVisible, key });
+    }
+
+    currentOffset = blockEnd;
   } else {
     console.error(`Unknown Block Type: ${blockType}`);
     currentOffset = -1;
@@ -414,7 +529,10 @@ const readBeam = async (file: File): Promise<void> => {
 
   const headerBuf = buf.subarray(offset, offset + headerSize);
 
-  readHeader(headerBuf);
+  const metadata = readHeader(headerBuf);
+
+  currentFileManager.setTemplateFile(metadata.template ? file.slice() : null, true);
+
   offset += headerSize;
 
   const command = new history.BatchCommand('Load Beam File');
@@ -435,7 +553,10 @@ const readBeam = async (file: File): Promise<void> => {
   Progress.popById('loading_image');
 };
 
-const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workarea: null | string }> => {
+const readBeamFileInfo = async (
+  file: File,
+  { getThumbnails = false, templateOnly = false }: { getThumbnails?: boolean; templateOnly?: boolean } = {},
+): Promise<{ thumbnail: string; thumbnails: IFileThumbnail[]; workarea: null | string }> => {
   const data = await new Promise<ArrayBuffer>((resolve) => {
     const fr = new FileReader();
 
@@ -451,19 +572,71 @@ const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workar
   const workareaString = content.match(/data-workarea="([^"]+)"/);
   const workarea = workareaString ? workareaString[1] : null;
   let blockType = 0;
-  let { offset, value: size } = readVInt(buf, 5); // skip signature and metadata
+  let { offset, value: size } = readVInt(buf, 5);
+  let thumbnail = '';
+  const fileThumbnails: IFileThumbnail[] = [];
 
-  // Find thumbnail block
-  while (offset < buf.length && blockType !== 3) {
-    offset += size;
-    blockType = buf.readUInt8(offset);
-    ({ offset, value: size } = readVInt(buf, offset + 1));
+  if (templateOnly) {
+    const headerBuf = buf.subarray(offset, offset + size);
+    const metaData = readHeader(headerBuf);
+
+    if (!metaData.template) {
+      return { thumbnail: '', thumbnails: [], workarea };
+    }
   }
 
-  return {
-    thumbnail: blockType === 3 ? `data:image/png;base64,${buf.subarray(offset, offset + size).toString('base64')}` : '',
-    workarea,
-  };
+  // Scan all blocks for thumbnail (0x03) and thumbnails list (0x05)
+  while (offset < buf.length) {
+    offset += size;
+
+    if (offset >= buf.length) break;
+
+    blockType = buf.readUInt8(offset);
+
+    // Block type 0 is the terminator
+    if (blockType === 0) break;
+
+    ({ offset, value: size } = readVInt(buf, offset + 1));
+
+    if (blockType === 3 && !thumbnail) {
+      const blob = bufferToBlob(buf, offset, size);
+
+      thumbnail = URL.createObjectURL(blob);
+
+      if (!getThumbnails) break;
+    } else if (blockType === 5) {
+      const blockEnd = offset + size;
+      let currentOffset = offset;
+      const { offset: countOffset, value: count } = readVInt(buf, currentOffset);
+
+      currentOffset = countOffset;
+
+      for (let i = 0; i < count && currentOffset < blockEnd; i += 1) {
+        const { offset: keyLenOffset, value: keyLen } = readVInt(buf, currentOffset);
+
+        currentOffset = keyLenOffset;
+
+        const key = buf.toString('utf-8', currentOffset, currentOffset + keyLen);
+
+        currentOffset += keyLen;
+
+        const isVisible = buf.readUInt8(currentOffset) === 1;
+
+        currentOffset += 1;
+
+        const { offset: srcLenOffset, value: srcLen } = readVInt(buf, currentOffset);
+
+        currentOffset = srcLenOffset;
+
+        const src = srcLen > 0 ? URL.createObjectURL(bufferToBlob(buf, currentOffset, srcLen)) : '';
+
+        currentOffset += srcLen;
+        fileThumbnails.push({ isVisible, key, src });
+      }
+    }
+  }
+
+  return { thumbnail, thumbnails: fileThumbnails, workarea };
 };
 
 const readBvgFileInfo = async (file: File): Promise<{ thumbnail: string; workarea: null | string }> => {

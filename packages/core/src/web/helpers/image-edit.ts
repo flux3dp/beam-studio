@@ -471,7 +471,7 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
   }
 };
 
-const potrace = async (elem?: SVGImageElement): Promise<void> => {
+const potrace = async (elem?: SVGImageElement): Promise<boolean | void> => {
   const element = elem || getSelectedElem();
 
   if (!element) {
@@ -545,6 +545,8 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
 
   const { svg: final, sx, sy } = res.data;
 
+  console.log('potrace result', final, sx, sy);
+
   const svgStr = final.replace(/<\/?svg[^>]*>/g, '');
   const gId = svgCanvas.getNextId();
   const g = svgCanvas.addSvgElementFromJson<SVGGElement>({ attr: { id: gId }, element: 'g' });
@@ -611,6 +613,8 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
   batchCmd.addSubCommand(new history.InsertElementCommand(path));
   svgCanvas.addCommandToHistory(batchCmd);
   progress.popById('potrace');
+
+  return true;
 };
 
 /**

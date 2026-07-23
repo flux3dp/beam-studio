@@ -5,7 +5,7 @@ import { CapsuleTabs } from 'antd-mobile';
 
 import { ContentType, type MainType } from '@core/app/constants/element-panel-constants';
 import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
 

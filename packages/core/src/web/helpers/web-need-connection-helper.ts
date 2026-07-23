@@ -1,6 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import alertConstants from '@core/app/constants/alert-constants';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
@@ -14,7 +14,7 @@ const webNeedConnectionWrapper = <T>(callback: () => Promise<T> | T): Promise<T>
       buttonLabels: [i18n.lang.topbar.menu.add_new_machine],
       buttonType: alertConstants.CUSTOM_CANCEL,
       callbacks: async () => {
-        ObjectPanelController.updateActiveKey(null);
+        useSelectedElementStore.setState({ activeKey: null });
 
         if (await toggleUnsavedChangedDialog()) {
           window.location.hash = hashMap.machineSetup;

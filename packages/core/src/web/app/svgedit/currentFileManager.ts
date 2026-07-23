@@ -1,11 +1,15 @@
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
+import { setTemplateMode } from '@core/app/stores/interactionModeStore';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
+import { templateEventEmitter } from '@core/helpers/layer/templateTargetLayer';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
 class CurrentFileManager {
   isCloudFile = false;
+  isCloudFileEditable = true;
+  templateFileBlob: Blob | null = null;
   private name: null | string = null;
   private path: null | string = null;
   private hasUnsavedChanges = false;
@@ -60,10 +64,11 @@ class CurrentFileManager {
     this.updateTitle();
   };
 
-  setCloudFile = (file: IFile) => {
+  setCloudFile = (file: IFile, isEditable = true) => {
     this.name = file.name;
     this.path = file.uuid;
     this.isCloudFile = true;
+    this.isCloudFileEditable = isEditable;
     this.updateTitle();
   };
 
@@ -74,10 +79,19 @@ class CurrentFileManager {
     this.updateTitle();
   };
 
+  setTemplateFile = (fileBlob: Blob | null, isNewFile = false) => {
+    const isTemplateMode = !!fileBlob && (isNewFile || !!this.templateFileBlob);
+
+    this.templateFileBlob = isTemplateMode ? fileBlob : null;
+    setTemplateMode(isTemplateMode);
+    templateEventEmitter.emit('TEMPLATE_FILE_CHANGED');
+  };
+
   clear = () => {
     this.name = null;
     this.path = null;
     this.isCloudFile = false;
+    this.templateFileBlob = null;
     this.updateTitle();
     this.setHasUnsavedChanges(false);
   };

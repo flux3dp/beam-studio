@@ -154,6 +154,7 @@ interface Context extends State {
   onSelectFile: (fileName: string, fileInfo: any) => Promise<void>;
   onSelectFolder: (folderName: string, absolute?: boolean) => void;
   onStop: () => void;
+  setIsFraming: (isFraming: boolean) => void;
   setMonitorMode: (value: Mode) => void;
   setShouldUpdateFileList: (val: boolean) => void;
   showUploadDialog: () => Promise<void>;
@@ -173,6 +174,8 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
   isGettingReport: boolean;
 
+  isFraming: boolean;
+
   isClosed: boolean;
 
   isPromark: boolean;
@@ -187,6 +190,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
     updateLang();
     this.isGettingReport = false;
+    this.isFraming = false;
     this.lastErrorId = null;
     this.modeBeforeCamera = mode;
     this.modeBeforeRelocate = mode;
@@ -382,6 +386,10 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     this.reporter = setInterval(async () => {
       try {
         if (this.isGettingReport) {
+          return;
+        }
+
+        if (!this.isPromark && this.isFraming) {
           return;
         }
 
@@ -1133,6 +1141,10 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     });
   };
 
+  setIsFraming = (isFraming: boolean): void => {
+    this.isFraming = isFraming;
+  };
+
   render(): React.JSX.Element {
     const { children, onClose } = this.props;
     const {
@@ -1146,6 +1158,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       onSelectFile,
       onSelectFolder,
       onStop,
+      setIsFraming,
       setMonitorMode,
       setShouldUpdateFileList,
       showUploadDialog,
@@ -1167,6 +1180,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
           onSelectFile,
           onSelectFolder,
           onStop,
+          setIsFraming,
           setMonitorMode,
           setShouldUpdateFileList,
           showUploadDialog,

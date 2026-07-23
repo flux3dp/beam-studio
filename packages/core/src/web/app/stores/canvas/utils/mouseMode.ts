@@ -30,7 +30,7 @@ export const setMouseMode = (mode: CanvasMouseMode) => {
 export const setCursor = (cursor: string, objectsCursor?: string) => {
   const workarea = document.getElementById('workarea');
   const svgEditor = document.getElementById('svg_editor');
-  const layers = svgEditor?.getElementsByTagName('g');
+  const layers = svgEditor?.querySelectorAll<SVGGElement>('g.layer');
 
   if (workarea) workarea.style.cursor = cursor;
 
@@ -47,6 +47,7 @@ export const setCursorAccordingToMouseMode = (mode?: CanvasMouseMode) => {
 
   match(mouseMode)
     .with('select', () => setCursor('auto', 'move'))
+    .with('pick', () => setCursor('auto', 'copy'))
     .with('pre_preview', 'preview', () => setCursor('url(img/camera-cursor.svg) 9 12, cell'))
     .with('auto-focus', () => setCursor('url(img/auto-focus-cursor.svg) 16 12, cell'))
     .with('curve-engraving', () => setCursor(`url(${curveSelectUrl}) 25 7, cell`))

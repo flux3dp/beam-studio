@@ -1,7 +1,8 @@
 import React, { Fragment, memo, useCallback, useEffect } from 'react';
 
-import { Switch } from 'antd';
-
+import Label from '@core/app/components/beambox/RightPanel/common/Label';
+import Switch from '@core/app/components/beambox/RightPanel/common/Switch';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 
@@ -19,6 +20,7 @@ const DepthBlock = ({ changeAttribute, elem }: Props): React.JSX.Element => {
     laser_panel: tLaserPanel,
     object_panel: { option_panel: lang },
   } = useI18n().beambox.right_panel;
+  const isTablet = useIsTabletOrMobile();
   const forceUpdate = useForceUpdate();
 
   const depthPass = +(elem.getAttribute('data-pass') ?? '0');
@@ -40,44 +42,62 @@ const DepthBlock = ({ changeAttribute, elem }: Props): React.JSX.Element => {
     }
   }, [handleInputChange, depthPass, depthZStep]);
 
-  return (
+  const [toggle, stepInput, zStepInput] = [
+    <Switch
+      checked={depthPass > 0}
+      key="depth-toggle"
+      onChange={() => handleInputChange(depthPass === 0 ? 100 : -depthPass, 'data-pass')}
+    />,
+    <OptionsInput
+      className={styles.input}
+      height={20}
+      key="depth-pass"
+      max={1000}
+      min={1}
+      onChange={(val) => handleInputChange(val, 'data-pass')}
+      precision={0}
+      value={depthPass}
+    />,
+    <OptionsInput
+      className={styles.input}
+      height={20}
+      key="depth-zstep"
+      max={depthPass > 0 ? 10 / depthPass : 10}
+      min={0}
+      onChange={(val) => handleInputChange(val, 'data-zstep')}
+      precision={3}
+      step={0.01}
+      unit="mm"
+      value={depthZStep}
+      width={70}
+    />,
+  ];
+
+  return isTablet ? (
+    <>
+      <Label extra={toggle}>{lang.depth_engraving}</Label>
+      {depthPass > 0 && (
+        <>
+          <Label extra={stepInput}>{lang.layer_count}</Label>
+          <Label extra={zStepInput}>{tLaserPanel.z_step}</Label>
+        </>
+      )}
+    </>
+  ) : (
     <Fragment key="depth-engraving">
       <div className={styles['option-block']}>
         <div className={styles.label}>{lang.depth_engraving}</div>
-        <Switch
-          checked={depthPass > 0}
-          onChange={() => handleInputChange(depthPass === 0 ? 100 : -depthPass, 'data-pass')}
-          size="small"
-        />
+        {toggle}
       </div>
       {depthPass > 0 && (
         <>
           <div className={styles['option-block']}>
             <div className={styles.label}>{lang.layer_count}</div>
-            <OptionsInput
-              className={styles.input}
-              height={20}
-              max={1000}
-              min={1}
-              onChange={(val) => handleInputChange(val, 'data-pass')}
-              precision={0}
-              value={depthPass}
-            />
+            {stepInput}
           </div>
           <div className={styles['option-block']}>
             <div className={styles.label}>{tLaserPanel.z_step}</div>
-            <OptionsInput
-              className={styles.input}
-              height={20}
-              max={depthPass > 0 ? 10 / depthPass : 10}
-              min={0}
-              onChange={(val) => handleInputChange(val, 'data-zstep')}
-              precision={3}
-              step={0.01}
-              unit="mm"
-              value={depthZStep}
-              width={70}
-            />
+            {zStepInput}
           </div>
         </>
       )}

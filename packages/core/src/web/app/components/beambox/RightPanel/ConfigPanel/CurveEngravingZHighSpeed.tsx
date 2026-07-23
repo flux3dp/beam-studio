@@ -11,11 +11,12 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './Block.module.scss';
 import initState from './initState';
 
-const CurveEngravingZHighSpeed = () => {
+const CurveEngravingZHighSpeed = (props: CommonProps) => {
   const {
     beambox: {
       right_panel: { laser_panel: t },
@@ -29,6 +30,8 @@ const CurveEngravingZHighSpeed = () => {
 
   const handleToggle = () => {
     change({ ceZHighSpeed: !checked });
+
+    if (props.noApply) return;
 
     const batchCmd = new history.BatchCommand('Change curve engraving z speed limit');
 

@@ -1,4 +1,5 @@
 @use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
 
 .container {
   flex: 1 1 auto;
@@ -60,34 +61,66 @@
   top: -9999px;
 }
 
-.bottom-right {
+$margin: 20px;
+$margin-mobile: 10px;
+@mixin floating($vertical) {
   position: absolute;
-  z-index: 1;
-  bottom: 0;
-  right: 0;
-  pointer-events: none;
-
-  .controls {
-    margin: 0 20px 20px 0;
-    display: inline-flex;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  > * {
-    pointer-events: all;
-  }
-
-  @media screen and (max-width: 600px) {
-    width: 100%;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-
-    .controls {
-      margin: 0 10px 20px 0;
-      flex-direction: column;
-      align-items: flex-end;
+  @if $vertical == bottom {
+    z-index: 1;
+    bottom: $margin;
+  } @else {
+    // Larger z-index so SVG Nest buttons mask inside top section can cover bottom section (z>1)
+    // and dockable sash (z >= 5, not sure which setting cause this) in desktop mode
+    z-index: 5;
+    top: $margin;
+    div[class*='SvgEditor-Banner-module__container'] ~ & {
+      top: calc($margin + 34px);
     }
   }
+  left: $margin;
+  right: $margin;
+  pointer-events: none;
+  display: flex;
+  justify-content: space-between;
+
+  @include mixins.is-mobile {
+    right: $margin-mobile;
+  }
+
+  .left,
+  .right {
+    display: flex;
+    flex-direction: column;
+    @if $vertical == bottom {
+      justify-content: flex-end;
+    } @else {
+      justify-content: flex-start;
+    }
+    gap: 10px;
+
+    > * {
+      pointer-events: all;
+    }
+  }
+
+  .left {
+    align-items: flex-start;
+  }
+
+  .right {
+    align-items: flex-end;
+  }
+}
+
+.top {
+  @include floating(top);
+
+  .buttons {
+    display: flex;
+    gap: 8px;
+  }
+}
+
+.bottom {
+  @include floating(bottom);
 }

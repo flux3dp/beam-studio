@@ -3,7 +3,7 @@ import React, { use, useCallback, useMemo } from 'react';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import getDevice from '@core/helpers/device/get-device';
 import useI18n from '@core/helpers/useI18n';
 

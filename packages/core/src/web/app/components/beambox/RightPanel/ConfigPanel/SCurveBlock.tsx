@@ -8,18 +8,21 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './Block.module.scss';
 import initState from './initState';
 import NumberBlock from './NumberBlock';
 
-const SCurveBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const SCurveBlock = (props: CommonProps): React.JSX.Element => {
   const { change, scA0, scAMax, scEnable, scJerk } = useConfigPanelStore();
 
   const handleEnableToggle = () => {
     const newValue = !scEnable.value;
 
     change({ scEnable: newValue });
+
+    if (props.noApply) return;
 
     const batchCmd = new history.BatchCommand('Change S-Curve enable');
 
@@ -38,6 +41,8 @@ const SCurveBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel
     const jerk = Math.abs(scJerk.value || 100000) * newSign;
 
     change({ scA0: a0, scAMax: aMax, scJerk: jerk });
+
+    if (props.noApply) return;
 
     const batchCmd = new history.BatchCommand('Change S-Curve toggle');
 
@@ -89,8 +94,8 @@ const SCurveBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel
                 precision={0}
                 step={100}
                 title="Initial Acc"
-                type={type}
                 unit="mm/s²"
+                {...props}
               />
               <NumberBlock
                 configKey="scAMax"
@@ -101,8 +106,8 @@ const SCurveBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel
                 precision={0}
                 step={100}
                 title="Max Acc"
-                type={type}
                 unit="mm/s²"
+                {...props}
               />
               <NumberBlock
                 configKey="scJerk"
@@ -113,8 +118,8 @@ const SCurveBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel
                 precision={0}
                 step={1000}
                 title="Jerk"
-                type={type}
                 unit="mm/s³"
+                {...props}
               />
             </>
           )}

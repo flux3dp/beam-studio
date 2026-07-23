@@ -10,12 +10,12 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import Select from '@core/app/widgets/AntdSelect';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
-import ObjectPanelItem from '../../ObjectPanelItem';
 import styles from '../Block.module.scss';
 import initState from '../initState';
 
-const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
+const NozzleMode = ({ noApply }: CommonProps) => {
   const { change, nozzleMode } = useConfigPanelStore(useShallow((state) => pick(state, ['change', 'nozzleMode'])));
 
   const { hasMultiValue, value } = nozzleMode;
@@ -26,7 +26,7 @@ const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     change({ nozzleMode: newValue });
 
-    if (type !== 'modal') {
+    if (!noApply) {
       const batchCmd = new history.BatchCommand('Change Nozzle Mode');
 
       useLayerStore
@@ -37,21 +37,7 @@ const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     }
   };
 
-  const options = [
-    { label: 'Left', value: 1 },
-    { label: 'Right', value: 2 },
-    { label: 'Both', value: 3 },
-  ];
-
-  return type === 'panel-item' ? (
-    <ObjectPanelItem.Select
-      id="nozzle-mode"
-      label="Nozzle Mode"
-      onChange={handleChange}
-      options={options}
-      selected={hasMultiValue ? { label: '-', value: 0 } : options[value - 1]}
-    />
-  ) : (
+  return (
     <div className={classNames(styles.panel)}>
       <span className={styles.title}>Nozzle Mode</span>
       <Select

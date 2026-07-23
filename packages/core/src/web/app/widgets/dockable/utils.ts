@@ -50,8 +50,9 @@ export const getDrawerContainer = () => document.getElementById(drawerContainerI
 
 const updateDrawerPosition = () => {
   const refPosition = useDockableStore.getState().drawerRef?.style.left;
+  const container = getDrawerContainer();
 
-  getDrawerContainer().style.left = `calc(${refPosition ?? 0} + 51px)`;
+  if (container) container.style.left = refPosition === undefined ? '0' : `calc(${refPosition ?? 0} + 51px)`;
 };
 
 const observer = new MutationObserver(() => updateDrawerPosition());
@@ -60,9 +61,9 @@ useDockableStore.subscribe(
   (state) => state.drawerRef,
   (drawerRef) => {
     observer.disconnect();
+    updateDrawerPosition();
 
     if (drawerRef) {
-      updateDrawerPosition();
       observer.observe(drawerRef, { attributeFilter: ['style'] });
     }
   },
@@ -446,4 +447,5 @@ communicator.on(TabEvents.ReloadSettings, () => loadLayout('storage'));
 
 export const disableDockview = () => {
   api = null;
+  useDockableStore.setState({ drawerRef: null });
 };

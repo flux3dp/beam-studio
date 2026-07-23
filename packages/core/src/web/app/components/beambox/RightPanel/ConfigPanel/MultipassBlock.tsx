@@ -1,7 +1,4 @@
-import React, { memo, use, useMemo } from 'react';
-
-import { Button, Popover } from 'antd-mobile';
-import classNames from 'classnames';
+import React, { memo, useMemo } from 'react';
 
 import configOptions from '@core/app/constants/config-options';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -12,27 +9,18 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
-
-import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './Block.module.scss';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
 
-interface Props {
-  type?: 'default' | 'modal' | 'panel-item';
-}
-
-const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
+const MultipassBlock = ({ noApply }: CommonProps): React.JSX.Element => {
   const MIN_VALUE = 1;
   const MAX_VALUE = 10;
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-
-  const { activeKey } = use(ObjectPanelContext);
 
   const { change, multipass } = useConfigPanelStore();
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
@@ -46,7 +34,7 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
     change({ configName: CUSTOM_PRESET_CONSTANT, multipass: val });
     timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
-    if (type !== 'modal') {
+    if (!noApply) {
       const batchCmd = new history.BatchCommand('Change multipass');
 
       useLayerStore.getState().selectedLayers.forEach((layerName) => {
@@ -60,8 +48,8 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
 
   const sliderOptions = useMemo(() => (simpleMode ? configOptions.multipassOptions : undefined), [simpleMode]);
 
-  const content = (
-    <div className={classNames(styles.panel, styles[type])}>
+  return (
+    <div className={styles.panel}>
       <span className={styles.title}>{t.print_multipass}</span>
       <ConfigValueDisplay
         hasMultiValue={hasMultiValue}
@@ -70,7 +58,6 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
         min={MIN_VALUE}
         onChange={handleChange}
         options={sliderOptions}
-        type={type}
         unit={t.times}
         value={value}
       />
@@ -84,28 +71,6 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
         value={value}
       />
     </div>
-  );
-
-  return type === 'panel-item' ? (
-    <Popover content={content} visible={activeKey === 'multipass'}>
-      <ObjectPanelItem.Item
-        autoClose={false}
-        content={
-          <Button
-            className={classNames(objectPanelItemStyles['number-item'], styles['display-btn'])}
-            fill="outline"
-            shape="rounded"
-            size="mini"
-          >
-            {value}
-          </Button>
-        }
-        id="multipass"
-        label={t.print_multipass}
-      />
-    </Popover>
-  ) : (
-    content
   );
 };
 

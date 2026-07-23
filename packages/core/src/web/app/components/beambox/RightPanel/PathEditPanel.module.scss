@@ -1,14 +1,26 @@
 @use './_mixins.scss' as rightPanelMixins;
 @use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
+
+@include mixins.is-tablet {
+  .modal-wrap {
+    // Allow user to interact with path nodes in canvas
+    pointer-events: none;
+  }
+}
 
 .panel {
-  @include mixins.is-not-mobile {
+  @include selectors.desktop-layout {
     @include rightPanelMixins.panel();
   }
 
   .node-type-panel {
     padding: 10px;
     transition: height 0.1s ease-in 0s;
+
+    @include selectors.tablet-or-mobile-layout {
+      padding: 0;
+    }
 
     .title {
       @include rightPanelMixins.title();
@@ -45,12 +57,8 @@
         }
       }
     }
-  }
 
-  @include mixins.is-mobile {
-    .node-type-panel {
-      padding: 5px 30px 0 30px;
-
+    @include mixins.is-mobile {
       .divider {
         border: none;
         margin: 8px 0;

@@ -3,7 +3,7 @@ import { Button } from 'antd';
 import classNames from 'classnames';
 
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { isMobile } from '@core/app/stores/screenStore';
+import { isMobile } from '@core/app/stores/layoutStore';
 import useI18n from '@core/helpers/useI18n';
 
 import { handleDownload } from '../utils/handleDownload';

@@ -1,0 +1,5 @@
+@use '../../../_mixins.scss' as mixins;
+
+.container {
+  @include mixins.option-block(false);
+}

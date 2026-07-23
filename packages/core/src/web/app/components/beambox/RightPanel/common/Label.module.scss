@@ -1,0 +1,12 @@
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 24px; // Match the height of small buttons
+  margin-bottom: 2px;
+  gap: 8px;
+}
+
+.label {
+  font-weight: bold;
+}

@@ -1,8 +1,10 @@
 import React, { memo } from 'react';
 
+import type { CommonProps } from '@core/interfaces/ConfigOption';
+
 import NumberBlock from '../NumberBlock';
 
-const RightPadding = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const RightPadding = (props: CommonProps): React.JSX.Element => {
   return (
     <NumberBlock
       configKey="rightPadding"
@@ -10,8 +12,8 @@ const RightPadding = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pane
       max={200}
       min={0}
       title="Right Padding"
-      type={type}
       unit="mm"
+      {...props}
     />
   );
 };

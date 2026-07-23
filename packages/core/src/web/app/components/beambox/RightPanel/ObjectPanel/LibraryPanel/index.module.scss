@@ -1,0 +1,11 @@
+.block {
+  display: flex;
+  align-items: center;
+}
+
+.panel {
+  padding: 0 12px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}

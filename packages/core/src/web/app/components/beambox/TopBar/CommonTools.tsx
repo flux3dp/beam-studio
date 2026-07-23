@@ -2,7 +2,7 @@ import React from 'react';
 
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import historyUtils from '@core/app/svgedit/history/utils';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -21,9 +21,9 @@ interface Props {
 
 function CommonTools({ hide }: Props): React.ReactNode {
   const t = useI18n().topbar.menu;
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
 
-  if (hide) {
+  if (hide || isTablet) {
     return null;
   }
 
@@ -43,11 +43,9 @@ function CommonTools({ hide }: Props): React.ReactNode {
       >
         <TopBarIcons.Redo />
       </button>
-      {!isMobile && (
-        <button className={styles.button} onClick={() => svgEditor.deleteSelected()} title={t.delete}>
-          <TopBarIcons.Trash />
-        </button>
-      )}
+      <button className={styles.button} onClick={() => svgEditor.deleteSelected()} title={t.delete}>
+        <TopBarIcons.Trash />
+      </button>
     </div>
   );
 }

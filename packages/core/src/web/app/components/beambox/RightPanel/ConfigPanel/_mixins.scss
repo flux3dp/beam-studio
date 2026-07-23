@@ -36,14 +36,6 @@
     display: inline-flex;
     align-items: center;
 
-    &.panel-item {
-      margin-top: 0;
-      width: 80vw;
-      .title {
-        font-weight: bold;
-      }
-    }
-
     &.light {
       font-weight: 400;
     }

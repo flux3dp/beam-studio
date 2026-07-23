@@ -234,7 +234,7 @@ Commonly needed `Canvas` members across existing tests: `changeSelectedAttribute
 `finishUndoableChange`, `pathActions`, `setMode`, `clearSelection`, `addToSelection`.
 Assert history behavior via the `BatchCommand` mock (§5) plus `addCommandToHistory`.
 
-### 7. `ObjectPanelItem` mock (frequently needed)
+### 7. `ObjectPanelItem` mock (frequently needed), deprecated now
 
 ```ts
 jest.mock('@core/app/components/beambox/RightPanel/ObjectPanelItem', () => ({

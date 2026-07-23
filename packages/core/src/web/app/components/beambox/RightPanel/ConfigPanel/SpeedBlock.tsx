@@ -1,9 +1,7 @@
-import React, { memo, use, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
-import { Button, Popover } from 'antd-mobile';
-import classNames from 'classnames';
 import { pick } from 'remeda';
 import { sprintf } from 'sprintf-js';
 import { useShallow } from 'zustand/react/shallow';
@@ -28,10 +26,7 @@ import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
-
-import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './Block.module.scss';
 import ConfigSlider from './ConfigSlider';
@@ -40,15 +35,13 @@ import initState from './initState';
 
 const moduleSpeedLimit = 500; // for bm2
 
-const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const SpeedBlock = ({ noApply }: CommonProps): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, module, speed } = useConfigPanelStore();
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const hasVector = useLayerStore((state) => state.hasVector);
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
-  const { activeKey } = use(ObjectPanelContext);
-  const visible = activeKey === 'speed';
   const { hasData: hasCurveEngraving, maxAngle } = useCurveEngravingStore();
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
@@ -145,9 +138,10 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   const handleChange = (val: number) => {
     change({ configName: CUSTOM_PRESET_CONSTANT, speed: val });
-    timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
 
-    if (type !== 'modal') {
+    if (!noApply) {
+      timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', null);
+
       const batchCmd = new history.BatchCommand('Change speed');
 
       selectedLayers.forEach((layerName) => {
@@ -179,8 +173,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     return ((warningSpeed - minValue) / (maxValue - minValue)) * 100;
   }, [isPrinting, hasVector, vectorSpeedLimit, minValue, maxValue, hasCurveEngraving, workarea, maxAngle]);
 
-  const content = (
-    <div className={classNames(styles.panel, styles[type])}>
+  return (
+    <div className={styles.panel}>
       <span className={styles.title}>
         {t.speed}
         {isPromark && (
@@ -197,7 +191,6 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         min={minValue}
         onChange={handleChange}
         options={sliderOptions}
-        type={type}
         unit={displayUnit}
         value={Math.min(Math.max(value, minValue), maxValue)}
       />
@@ -223,38 +216,6 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         </div>
       ) : null}
     </div>
-  );
-
-  const displayValue = useMemo(() => {
-    const selectedOption = sliderOptions?.find((opt) => opt.value === value);
-
-    if (selectedOption) {
-      return selectedOption.label;
-    }
-
-    return units.convertUnit(value, fakeUnit, 'mm', decimal);
-  }, [decimal, sliderOptions, value, fakeUnit]);
-
-  return type === 'panel-item' ? (
-    <Popover content={content} visible={visible}>
-      <ObjectPanelItem.Item
-        autoClose={false}
-        content={
-          <Button
-            className={classNames(objectPanelItemStyles['number-item'], styles['display-btn'])}
-            fill="outline"
-            shape="rounded"
-            size="mini"
-          >
-            <span style={{ whiteSpace: 'nowrap' }}>{displayValue}</span>
-          </Button>
-        }
-        id="speed"
-        label={t.speed}
-      />
-    </Popover>
-  ) : (
-    content
   );
 };
 

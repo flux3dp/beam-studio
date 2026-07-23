@@ -2,10 +2,11 @@ import React, { memo, useMemo } from 'react';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import NumberBlock from './NumberBlock';
 
-const AirAssistBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const AirAssistBlock = (props: CommonProps): React.JSX.Element => {
   const { airAssist } = useConfigPanelStore();
   const {
     beambox: {
@@ -26,9 +27,9 @@ const AirAssistBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pa
       min={0}
       precision={0}
       title={t.air_assist}
-      type={type}
       unit="%"
       warning={warning}
+      {...props}
     />
   );
 };

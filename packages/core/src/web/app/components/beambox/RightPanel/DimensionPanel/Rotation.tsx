@@ -4,25 +4,21 @@ import classNames from 'classnames';
 
 import { objectPanelInputTheme } from '@core/app/constants/antd-config';
 import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import UnitInput from '@core/app/widgets/UnitInput';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import useI18n from '@core/helpers/useI18n';
-
-import ObjectPanelItem from '../ObjectPanelItem';
 
 import styles from './DimensionPanel.module.scss';
 
 interface Props {
-  onChange: (value: number, addToHistory?: boolean) => void;
+  onChange: (value: null | number, addToHistory?: boolean) => void;
   value: number;
 }
 
 const Rotation = ({ onChange, value }: Props): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
   const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
-  const isMobile = useIsMobile();
-  const t = useI18n().topbar.menu;
+  const isTablet = useIsTabletOrMobile();
   const previewRef = useRef<{ isPreviewing: boolean; original: number }>({ isPreviewing: false, original: value });
 
   useEffect(() => {
@@ -65,23 +61,13 @@ const Rotation = ({ onChange, value }: Props): React.JSX.Element => {
     [onChange],
   );
 
-  if (isMobile) {
-    return (
-      <ObjectPanelItem.Number
-        id="rotate"
-        label={t.rotate}
-        unit="degree"
-        updateValue={onChangeComplete}
-        value={value || 0}
-      />
-    );
-  }
-
   return (
     <div className={styles.dimension}>
-      <div className={classNames(styles.label, styles.img)}>
-        <DimensionPanelIcons.Rotate />
-      </div>
+      {!isTablet && (
+        <div className={classNames(styles.label, styles.img)}>
+          <DimensionPanelIcons.Rotate />
+        </div>
+      )}
       <UnitInput
         className={styles.input}
         controls={false}
@@ -92,8 +78,8 @@ const Rotation = ({ onChange, value }: Props): React.JSX.Element => {
         onPressEnter={() => onChangeComplete(value)}
         precision={2}
         ref={inputRef}
-        theme={objectPanelInputTheme}
-        underline
+        theme={isTablet ? undefined : objectPanelInputTheme}
+        underline={!isTablet}
         unit="deg"
         value={value || 0}
       />

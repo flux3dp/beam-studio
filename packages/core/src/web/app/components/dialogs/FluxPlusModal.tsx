@@ -4,7 +4,7 @@ import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';

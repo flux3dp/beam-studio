@@ -1,6 +1,7 @@
 /* eslint-disable reactRefresh/only-export-components */
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useForceUpdate from '@core/helpers/use-force-update';
 import type { DimensionKey, DimensionValues } from '@core/interfaces/ObjectPanel';
@@ -42,10 +43,15 @@ interface Props {
 export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
   const [polygonSides, setPolygonSides] = useState(5);
-  const [activeKey, setActiveKey] = useState<null | string>(null);
+  // TODO: migrate activeKey
+  const activeKey = useSelectedElementStore((state) => state.activeKey);
   const dimensionValues = useRef<DimensionValues>({});
   const lastUpdateTime = useRef(Date.now());
   const updateTimeout = useRef<NodeJS.Timeout | null>(null);
+
+  const setActiveKey = useCallback((key: null | string) => {
+    useSelectedElementStore.setState({ activeKey: key });
+  }, []);
 
   useEffect(() => {
     objectPanelEventEmitter.on('UPDATE_POLYGON_SIDES', setPolygonSides);
@@ -84,12 +90,9 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
     };
   }, [updateDimensionValues]);
 
-  const getActiveKey = useCallback(
-    (response: { activeKey: null | string }) => {
-      response.activeKey = activeKey;
-    },
-    [activeKey],
-  );
+  const getActiveKey = useCallback((response: { activeKey: null | string }) => {
+    response.activeKey = useSelectedElementStore.getState().activeKey;
+  }, []);
 
   useEffect(() => {
     objectPanelEventEmitter.on('GET_ACTIVE_KEY', getActiveKey);

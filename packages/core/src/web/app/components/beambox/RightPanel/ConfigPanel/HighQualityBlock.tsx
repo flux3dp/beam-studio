@@ -4,7 +4,6 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
-import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
@@ -12,11 +11,12 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './Block.module.scss';
 import initState from './initState';
 
-const HighQualityBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const HighQualityBlock = ({ noApply }: CommonProps): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, highQuality } = useConfigPanelStore();
@@ -26,7 +26,7 @@ const HighQualityBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
 
     change({ highQuality: newVal });
 
-    if (type === 'modal') return;
+    if (noApply) return;
 
     eventEmitterFactory.createEventEmitter('time-estimation-button').emit('SET_ESTIMATED_TIME', null);
 
@@ -39,14 +39,7 @@ const HighQualityBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  return type === 'panel-item' ? (
-    <ObjectPanelItem.Item
-      content={<Switch checked={highQuality.value} />}
-      id="high_quality"
-      label={t.high_quality}
-      onClick={handleToggle}
-    />
-  ) : (
+  return (
     <div className={classNames(styles.panel, styles.switch)}>
       <label className={styles.title} htmlFor="high_quality">
         {t.high_quality}

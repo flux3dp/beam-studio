@@ -2,10 +2,11 @@ import type { ReactNode } from 'react';
 import React, { memo } from 'react';
 
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import NumberBlock from './NumberBlock';
 
-const Backlash = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): ReactNode => {
+const Backlash = (props: CommonProps): ReactNode => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
 
@@ -19,8 +20,8 @@ const Backlash = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
       precision={2}
       step={0.1}
       title={t.backlash}
-      type={type}
       unit="mm"
+      {...props}
     />
   );
 };

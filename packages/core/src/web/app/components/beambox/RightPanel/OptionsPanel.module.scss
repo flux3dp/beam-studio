@@ -1,13 +1,20 @@
-@use './_mixins.scss' as mixins;
-
-.container {
-  @include mixins.item-group();
-}
+@use './_mixins.scss' as optionMixins;
+@use '@core/styles/selectors' as selectors;
 
 .panel {
   padding: 0 12px 8px;
 
   .option-block {
-    @include mixins.option-block();
+    @include optionMixins.option-block();
+  }
+}
+
+@include selectors.tablet-or-mobile-layout {
+  .input {
+    flex: 1;
+
+    > div {
+      width: 100%;
+    }
   }
 }

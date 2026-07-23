@@ -86,11 +86,12 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
   );
 
   const handleStartOffsetChange = useCallback(
-    (val: null | number): void => {
+    (val: null | number, addToHistory = true): void => {
       if (val === null) return;
 
-      textPathEdit.setStartOffset(val, elem as SVGGElement);
-      onConfigChange('startOffset', val);
+      textPathEdit.setStartOffset(val, elem as SVGGElement, addToHistory);
+
+      if (addToHistory) onConfigChange('startOffset', val);
     },
     [elem, onConfigChange],
   );

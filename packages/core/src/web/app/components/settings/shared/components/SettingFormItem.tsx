@@ -10,6 +10,7 @@ import styles from './SettingFormItem.module.scss';
 
 type Props = {
   children: React.ReactNode;
+  icon?: React.ReactNode;
   id?: string;
   label: string;
   tooltip?: string;
@@ -17,7 +18,7 @@ type Props = {
   warning?: string;
 };
 
-function SettingFormItem({ children, id, label, tooltip, url, warning }: Props): React.JSX.Element {
+function SettingFormItem({ children, icon, id, label, tooltip, url, warning }: Props): React.JSX.Element {
   const renderInfo = (): React.ReactNode => {
     if (url) {
       return <InfoCircleOutlined className={classNames(styles.icon, styles.link)} onClick={() => browser.open(url)} />;
@@ -37,6 +38,7 @@ function SettingFormItem({ children, id, label, tooltip, url, warning }: Props):
   return (
     <div className={styles['setting-row']} id={id}>
       <div className={styles['label-container']}>
+        {icon}
         <span className={styles.label}>{label}</span>
         {renderInfo()}
       </div>

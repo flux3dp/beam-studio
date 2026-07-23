@@ -6,7 +6,7 @@ import type Konva from 'konva';
 import { Group, Image, Layer, Stage } from 'react-konva';
 import useImage from 'use-image';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import useI18n from '@core/helpers/useI18n';
 

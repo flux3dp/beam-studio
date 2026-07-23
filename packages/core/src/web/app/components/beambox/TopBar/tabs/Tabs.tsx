@@ -10,6 +10,7 @@ import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabConstants } from '@core/app/constants/ipcEvents';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { tryExitingExploreMode, useIsInteractionMode } from '@core/app/stores/interactionModeStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import cloudFile from '@core/helpers/api/cloudFile';
 import useI18n from '@core/helpers/useI18n';
@@ -28,6 +29,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
   const currentId = useMemo(() => tabController.getCurrentId(), []);
   const [tabs, setTabs] = useState(tabController.getAllTabs());
   const [currentTabInfo, setCurrentTabInfo] = useState({ isCloud: false, title: '' });
+  const isExploreMode = useIsInteractionMode('explore');
 
   useEffect(() => {
     const handler = () => setTabs(tabController.getAllTabs());
@@ -122,9 +124,9 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
   };
 
   return (
-    <div className={classNames(styles.container, { [styles.inverse]: inverse })}>
+    <div className={classNames(styles.container, { [styles.disabled]: isExploreMode, [styles.inverse]: inverse })}>
       <DragDropContext onDragEnd={handleDragEnd}>
-        <Droppable direction="horizontal" droppableId="tabs">
+        <Droppable direction="horizontal" droppableId="tabs" isDropDisabled={isExploreMode}>
           {(droppableProvided) => (
             <div
               className={styles.tabs}
@@ -141,7 +143,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
                     <div
                       className={classNames(styles.tab, styles.small, { [styles.focused]: currentId === id })}
                       key={id}
-                      onClick={() => tabController.focusTab(id)}
+                      onClick={() => (isExploreMode ? tryExitingExploreMode() : tabController.focusTab(id))}
                     >
                       {renderIcon(tab)}
                     </div>
@@ -153,7 +155,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
                 }
 
                 return (
-                  <Draggable draggableId={id.toFixed(0)} index={idx} key={id}>
+                  <Draggable draggableId={id.toFixed(0)} index={idx} isDragDisabled={isExploreMode} key={id}>
                     {(draggableProvided) => (
                       <div
                         {...draggableProvided.draggableProps}
@@ -195,7 +197,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
           )}
         </Droppable>
       </DragDropContext>
-      {(!TabConstants.maxTab || tabs.length < TabConstants.maxTab) && (
+      {!isExploreMode && (!TabConstants.maxTab || tabs.length < TabConstants.maxTab) && (
         <div className={styles.add} onClick={tabController.addNewTab}>
           <PlusOutlined />
         </div>

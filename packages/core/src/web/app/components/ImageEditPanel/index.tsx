@@ -370,8 +370,6 @@ function ImageEditPanel({ image, onClose, src }: Props): React.JSX.Element {
           </Flex>
         </>
       )}
-      renderMobileContents={() => null}
-      renderMobileFixedContent={() => null}
     />
   );
 }

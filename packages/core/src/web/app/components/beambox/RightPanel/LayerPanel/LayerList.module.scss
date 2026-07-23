@@ -1,7 +1,7 @@
 $active-color: #0091ff;
 
 .list {
-  padding: 0;
+  padding: 12px;
   width: 100%;
   border-collapse: collapse;
   background-color: #ffffff;
@@ -11,7 +11,7 @@ $active-color: #0091ff;
     width: 24px;
     height: 24px;
     padding: 4px;
-    margin-left: 6px;
+    line-height: 0;
   }
 
   .item {
@@ -19,17 +19,50 @@ $active-color: #0091ff;
     flex-direction: column;
     align-items: center;
     min-height: 40px;
-    border: 1px solid #ffffff;
-    border-width: 0 0 0 5px;
+
+    :global(.ant-collapse) {
+      border-radius: 10px;
+      border: 2px solid #ebe6e7;
+    }
+
+    :global(.ant-collapse-header) {
+      align-items: center;
+    }
+
+    // Let the header's text wrapper shrink below its content so the layer name can ellipsis
+    :global(.ant-collapse-header-text) {
+      min-width: 0;
+    }
+
+    :global(.ant-collapse-content) {
+      background-color: #ffffff !important;
+      border-top: 1px solid #ebe6e7;
+    }
+
+    :global(.ant-collapse-content-box) {
+      padding: 4px !important;
+    }
 
     &:hover {
       color: black;
-      background-color: #dddddd;
-      border-color: #dddddd;
+    }
+
+    // .item uses align-items: center, so wrapper children shrink to content by
+    // default. Force full width so nested ellipsis (element names) has a bounded box.
+    .collapse,
+    .elements {
+      width: 100%;
+    }
+
+    .elements {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
     }
 
     .row {
       width: 100%;
+      min-width: 0;
       display: flex;
       align-items: center;
       min-height: 30px;
@@ -46,8 +79,8 @@ $active-color: #0091ff;
 
     .module {
       height: 24px;
-      padding-left: 16px;
       font-size: 24px;
+      line-height: 0;
 
       svg {
         stroke-width: 2px;
@@ -56,14 +89,15 @@ $active-color: #0091ff;
 
     .name {
       flex: 1;
-      padding: 3px 0px;
-      margin-left: 5px;
+      // min-width: 0 lets this flex item shrink below its content width so ellipsis can apply
+      min-width: 0;
       text-align: center;
       cursor: pointer;
-      line-break: anywhere;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
 
       @media screen and (max-width: 600px) {
-        margin-left: 10px;
         font-size: 15px;
         font-weight: bold;
         text-align: left;
@@ -78,35 +112,26 @@ $active-color: #0091ff;
       width: 24px;
       height: 25px;
       text-align: center;
-      margin: 0 0 0 5px;
       cursor: pointer;
-
-      .icon {
-        filter: brightness(0);
-      }
 
       @media screen and (max-width: 600px) {
         font-size: 32px;
         width: 32px;
-        margin: 0;
         justify-content: center;
       }
     }
 
     .lock {
       width: 24px;
-      margin: 0 5px 0 0;
       cursor: pointer;
       > img {
         display: none;
-        filter: brightness(0%);
       }
 
       @media screen and (max-width: 600px) {
         display: flex;
         justify-content: center;
         width: 32px;
-        margin: 0;
 
         > img {
           min-width: 40px;
@@ -116,43 +141,22 @@ $active-color: #0091ff;
       }
     }
 
+    .move {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
     &.selected {
-      color: white;
-      background-color: #444444;
-      border-color: #444444;
       font-weight: normal;
+      :global(.ant-collapse) {
+        border-color: $active-color;
+        background-color: #eff6ff;
+      }
 
       &:hover:not(.current) {
-        color: white;
-        background-color: #444;
-        border-color: #444444;
-      }
-
-      @media screen and (max-width: 600px) {
-        background-color: $active-color;
-        border-color: $active-color;
-
-        &:hover:not(.current) {
-          background-color: $active-color;
-          border-color: $active-color;
-        }
-      }
-
-      &.current {
-        border-color: $active-color;
-      }
-
-      .module {
-        filter: brightness(0) invert(1);
-      }
-
-      .vis {
-        filter: brightness(0) invert(1);
-      }
-
-      .lock {
-        > img {
-          filter: brightness(0%) invert(100%);
+        :global(.ant-collapse) {
+          background-color: #eff6ff20;
         }
       }
     }
@@ -180,13 +184,6 @@ $active-color: #0091ff;
         font-weight: bold;
         text-align: left;
         flex-grow: 2;
-      }
-
-      &:active,
-      &:hover {
-        .name {
-          color: white;
-        }
       }
 
       .color {

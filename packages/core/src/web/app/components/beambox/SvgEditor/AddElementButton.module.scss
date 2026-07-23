@@ -1,0 +1,5 @@
+@use '@core/styles/mixins';
+
+.button {
+  @extend %card-button;
+}

@@ -10,6 +10,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import ThumbnailCarousel from '@core/app/components/FileThumbnail/ThumbnailCarousel';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
@@ -34,6 +35,7 @@ import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { isRetailDev } from '@core/helpers/is-dev';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
@@ -496,6 +498,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         width={440}
       >
         <div className={styles.container}>
+          {isRetailDev() && <ThumbnailCarousel />}
           <div className={styles.block}>
             <div className={styles.row}>
               <label className={styles.title} htmlFor="workareaSelect">

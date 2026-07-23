@@ -45,7 +45,7 @@ const UnitInput = ({
   ...props
 }: UnitInputProps & { ref?: React.Ref<HTMLInputElement | null> }): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const valueRef = useRef<number | undefined>(); // for onChange
+  const valueRef = useRef<number | undefined>(undefined); // for onChange
 
   useImperativeHandle<HTMLInputElement | null, HTMLInputElement | null>(outerRef, () => {
     const input = inputRef.current;
@@ -134,16 +134,17 @@ const UnitInput = ({
     <div className={classNames(styles.input, { [styles.underline]: underline }, containerClassName)}>
       <ConfigProvider theme={theme}>
         <InputNumber
-          onPressEnter={handlePressEnter}
-          ref={inputRef}
-          {...props}
           formatter={formatter}
           max={max}
           min={min}
           onBlur={handleBlur}
           onChange={fireOnChange ? onChange : undefined}
+          onPressEnter={handlePressEnter}
           onStep={handleStep}
           parser={parser}
+          ref={inputRef}
+          type="number"
+          {...props}
         />
         {unit && <span className={classNames(styles.unit, unitClassName)}>{unit}</span>}
       </ConfigProvider>

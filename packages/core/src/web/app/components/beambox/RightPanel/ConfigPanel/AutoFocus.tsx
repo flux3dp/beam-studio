@@ -9,12 +9,13 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './Block.module.scss';
 import initState from './initState';
 import NumberBlock from './NumberBlock';
 
-const AutoFocus = (): React.JSX.Element => {
+const AutoFocus = (props: CommonProps): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, height, repeat } = useConfigPanelStore();
@@ -23,6 +24,8 @@ const AutoFocus = (): React.JSX.Element => {
     const value = -height.value;
 
     change({ height: value });
+
+    if (props.noApply) return;
 
     const batchCmd = new history.BatchCommand('Change auto focus toggle');
 
@@ -55,6 +58,7 @@ const AutoFocus = (): React.JSX.Element => {
           step={0.01}
           title={t.height}
           unit="mm"
+          {...props}
         />
       ) : null}
       {repeat.value > 1 && height.value > 0 ? (
@@ -67,6 +71,7 @@ const AutoFocus = (): React.JSX.Element => {
           step={0.01}
           title={t.z_step}
           unit="mm"
+          {...props}
         />
       ) : null}
     </>

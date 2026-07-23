@@ -3,7 +3,7 @@ import React, { use } from 'react';
 import { Button } from 'antd';
 
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import Footer from '@core/app/widgets/FullWindowPanel/Footer';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';

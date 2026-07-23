@@ -6,7 +6,8 @@ import type { MenuItemKey } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsInteractionMode } from '@core/app/stores/interactionModeStore';
+import { useIsMobile, useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -47,6 +48,9 @@ const useMenuData = (email?: string): MenuNode[] => {
   const isPanelLayerControlsShown = useDockableStore((state) => state.panelLayerControls);
   const isPanelObjectControlsShown = useDockableStore((state) => state.panelObjectProperties);
   const isPanelPathControlsShown = useDockableStore((state) => state.panelPathEdit);
+
+  const isProjectMode = useIsInteractionMode('project');
+  const isTemplateMode = useIsInteractionMode('template');
 
   const [duplicateDisabled, setDuplicateDisabled] = useState(true);
   const [svgEditDisabled, setSvgEditDisabled] = useState(true);
@@ -116,6 +120,7 @@ const useMenuData = (email?: string): MenuNode[] => {
   } = lang;
 
   const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const modulesTranslations = getModulesTranslations();
 
   const buildDeviceSubmenu = (device: IDeviceInfo): MenuNode => {
@@ -304,6 +309,8 @@ const useMenuData = (email?: string): MenuNode[] => {
       divider,
       { hotkey: 'save_scene', id: 'SAVE_SCENE', type: 'item' },
       { hotkey: 'save_as', id: 'SAVE_AS', type: 'item' },
+      ...(isTemplateMode ? [{ id: 'SAVE_AS_PROJECT', label: menuCms.save_as_project, type: 'item' } as const] : []),
+      ...(isProjectMode ? [{ id: 'SAVE_AS_TEMPLATE', label: menuCms.save_as_template, type: 'item' } as const] : []),
       { id: 'SAVE_TO_CLOUD', label: menuCms.save_to_cloud, type: 'item' },
       divider,
       {
@@ -599,13 +606,13 @@ const useMenuData = (email?: string): MenuNode[] => {
     ],
     label: menuCms.window,
     type: 'submenu',
-    visible: !isMobile,
+    visible: !isTablet,
   };
 
   const helpMenu: MenuNode = {
     children: [
       { id: 'ABOUT_BEAM_STUDIO', label: menuCms.about_beam_studio, type: 'item' },
-      ...(!isMobile
+      ...(!isTablet
         ? [
             { id: 'START_TUTORIAL', label: menuCms.show_start_tutorial, type: 'item' as const },
             { id: 'START_UI_INTRO', label: menuCms.show_ui_intro, type: 'item' as const },

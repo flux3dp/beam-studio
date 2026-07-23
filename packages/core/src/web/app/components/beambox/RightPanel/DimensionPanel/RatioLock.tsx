@@ -1,39 +1,33 @@
 import React, { memo } from 'react';
 
-import { Button } from 'antd';
-
+import IconButton from '@core/app/components/beambox/RightPanel/common/IconButton';
 import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { templateModes, useWithinInteractionModes } from '@core/app/stores/interactionModeStore';
+import { ControlType } from '@core/helpers/element/editable/base';
 import useI18n from '@core/helpers/useI18n';
 
-import ObjectPanelItem from '../ObjectPanelItem';
+import style from './DimensionPanel.module.scss';
 
 interface Props {
+  disabled?: boolean;
   isLocked: boolean;
   onClick: () => void;
 }
 
-const RatioLock = ({ isLocked, onClick }: Props): React.JSX.Element => {
+const RatioLock = ({ disabled, isLocked, onClick }: Props): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.object_panel;
-  const isMobile = useIsMobile();
-
-  if (isMobile) {
-    return (
-      <ObjectPanelItem.Item
-        content={isLocked ? <DimensionPanelIcons.Locked /> : <DimensionPanelIcons.Unlocked />}
-        id="lock"
-        onClick={onClick}
-      />
-    );
-  }
+  const isWithinTemplateModes = useWithinInteractionModes(templateModes);
+  const editable = useSelectedElementStore((state) => state.editableInfo[ControlType._SIZE]?.value);
 
   return (
-    <Button
+    <IconButton
+      className={style['ratio-lock']}
+      disabled={disabled || (isWithinTemplateModes && !editable)}
       icon={isLocked ? <DimensionPanelIcons.Locked /> : <DimensionPanelIcons.Unlocked />}
       id="lock"
       onClick={onClick}
       title={isLocked ? t.unlock_aspect : t.lock_aspect}
-      type="text"
     />
   );
 };

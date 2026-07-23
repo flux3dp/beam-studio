@@ -1,36 +1,21 @@
 @use '@core/styles/mixins' as mixins;
-
+@use '@core/styles/selectors' as selectors;
 .modal {
   .close-icon {
     font-size: 22px;
   }
+}
 
-  .field {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
+.field {
+  display: flex;
+  flex-direction: column;
 
-    .label {
-      min-width: 60px;
-    }
-
-    $input-width: 120px;
-
-    .select {
-      width: $input-width;
-    }
-
-    .input {
-      width: $input-width;
-    }
+  &:not(:last-child) {
+    margin-bottom: 16px;
   }
 
-  .divider {
-    height: 1px;
-    background-color: #e0e0e0;
-    margin: 12px 0;
+  .select,
+  .input {
     width: 100%;
   }
 }

@@ -1,24 +1,26 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 
 import classNames from 'classnames';
 import { ResizableBox } from 'react-resizable';
 
-import Alert from '@core/app/actions/alert-caller';
-import Dialog from '@core/app/actions/dialog-caller';
 import layoutConstants from '@core/app/constants/layout-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import { templateModes, withinInteractionModes } from '@core/app/stores/interactionModeStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import { isMobile } from '@core/app/stores/screenStore';
+import { isTabletOrMobile } from '@core/app/stores/layoutStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import selectionManager from '@core/app/svgedit/selection';
-import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
-import i18n from '@core/helpers/i18n';
 import changeLayersColor from '@core/helpers/layer/changeLayersColor';
-import { cloneLayerConfig } from '@core/helpers/layer/layer-config-helper';
-import { highlightLayer, moveLayersToPosition, setLayersLock } from '@core/helpers/layer/layer-helper';
+import {
+  highlightLayer,
+  moveLayersToPosition,
+  renameLayer,
+  selectOnlyLayer,
+  setLayersLock,
+} from '@core/helpers/layer/layer-helper';
 import { setLayerVisibility } from '@core/helpers/layer/setLayerVisibility';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import storage from '@core/implementations/storage';
@@ -26,12 +28,10 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import AddLayerButton from './AddLayerButton';
 import ConfigPanel from './ConfigPanel/ConfigPanel';
-import RightPanelController from './contexts/RightPanelController';
 import DragImage from './DragImage';
 import LayerContextMenu from './LayerPanel/LayerContextMenu';
 import LayerList from './LayerPanel/LayerList';
 import styles from './LayerPanel.module.scss';
-import ObjectPanelItem from './ObjectPanelItem';
 import SelLayerBlock from './SelLayerBlock';
 import WattBlock from './WattBlock';
 
@@ -130,39 +130,6 @@ class LayerPanel extends React.PureComponent<Props, State> {
       setLayersLock([layerName], false);
       setSelectedLayers([layerName]);
     }
-  };
-
-  renameLayer = (): void => {
-    const oldName = layerManager.getCurrentLayerName()!;
-    const lang = i18n.lang.beambox.right_panel.layer_panel;
-
-    Dialog.promptDialog({
-      caption: lang.notification.newName,
-      defaultValue: oldName,
-      onYes: (newName?: string) => {
-        if (!newName || oldName === newName) {
-          return;
-        }
-
-        if (layerManager.hasLayer(newName)) {
-          Alert.popUp({
-            id: 'dupli_layer_name',
-            message: lang.notification.enterUniqueLayerName,
-          });
-
-          return;
-        }
-
-        svgCanvas.renameCurrentLayer(newName);
-        cloneLayerConfig(oldName, newName);
-        useLayerStore.getState().setSelectedLayers([newName]);
-      },
-    });
-  };
-
-  selectOnlyLayer = (layerName: string): void => {
-    selectionManager.clearSelection();
-    useLayerStore.getState().setSelectedLayers([layerName]);
   };
 
   toggleLayerSelected = (layerName: string): void => {
@@ -300,6 +267,8 @@ class LayerPanel extends React.PureComponent<Props, State> {
     const { draggingDestIndex } = this.state;
     const { selectedLayers } = useLayerStore.getState();
 
+    console.log('onLayerDragEnd', draggingDestIndex, selectedLayers);
+
     if (draggingDestIndex !== null && draggingDestIndex !== undefined) {
       moveLayersToPosition(selectedLayers, draggingDestIndex);
       selectionManager.sortTempGroupByLayer();
@@ -388,6 +357,9 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   onLayerTouchEnd = (e: React.TouchEvent): void => {
+    console.log('onLayerTouchEnd', e.changedTouches, this.currentTouchID);
+
+    // FIXME: sometimes onLayerTouchEnd is not triggered
     const touch = Array.from(e.changedTouches).find((t) => t.identifier === this.currentTouchID);
 
     if (touch) {
@@ -413,10 +385,12 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   layerDoubleClick = (): void => {
-    this.renameLayer();
+    renameLayer();
   };
 
   handleLayerClick = (e: React.MouseEvent, layerName: string): void => {
+    e.stopPropagation();
+
     const isCtrlOrCmd = (getOS() === 'MacOS' && e.metaKey) || (getOS() !== 'MacOS' && e.ctrlKey);
 
     if (e.button === 0) {
@@ -425,23 +399,25 @@ class LayerPanel extends React.PureComponent<Props, State> {
       } else if (e.shiftKey) {
         this.toggleContiguousSelectedUntil(layerName);
       } else {
-        this.selectOnlyLayer(layerName);
+        selectOnlyLayer(layerName);
       }
     } else if (e.button === 2) {
       const { selectedLayers } = useLayerStore.getState();
 
       if (!selectedLayers.includes(layerName)) {
-        this.selectOnlyLayer(layerName);
+        selectOnlyLayer(layerName);
       }
     }
   };
 
   renderLayerPanel(): React.JSX.Element {
     const { draggingDestIndex, draggingLayer } = this.state;
+    const isTable = isTabletOrMobile() || withinInteractionModes(templateModes);
+    const Wrapper = isTable ? Fragment : LayerContextMenu;
 
     return (
       <div className={styles['layer-panel']} id="layerpanel" onBlur={() => {}} onMouseOut={() => highlightLayer()}>
-        <LayerContextMenu renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer}>
+        <Wrapper>
           <div className={styles['layerlist-container']} id="layerlist_container" ref={this.layerListContainerRef}>
             <LayerList
               draggingDestIndex={draggingDestIndex ?? null}
@@ -460,13 +436,9 @@ class LayerPanel extends React.PureComponent<Props, State> {
               unLockLayers={this.unLockLayers}
             />
           </div>
-        </LayerContextMenu>
-        {!isMobile() && (
-          <>
-            <DragImage draggingLayer={draggingLayer!} />
-            <AddLayerButton />
-          </>
-        )}
+        </Wrapper>
+        <DragImage draggingLayer={draggingLayer!} />
+        {!isTable && <AddLayerButton />}
       </div>
     );
   }
@@ -480,50 +452,26 @@ class LayerPanel extends React.PureComponent<Props, State> {
       return null;
     }
 
-    const lang = i18n.lang.beambox.right_panel.layer_panel;
-
     const { hide } = this.props;
 
     return (
       <div className={classNames(styles.container, { [styles.hide]: hide })} id="layer-and-laser-panel">
-        {isMobile() ? (
-          <>
-            <FloatingPanel
-              anchors={[0, 328, window.innerHeight * 0.6, window.innerHeight - layoutConstants.menubarHeight]}
-              className={styles['floating-panel']}
-              fixedContent={<AddLayerButton />}
-              forceClose={hide}
-              onClose={() => RightPanelController.setDisplayLayer(false)}
-              title={lang.layers.layer}
-            >
-              <ObjectPanelItem.Mask />
-              {this.renderLayerPanel()}
-            </FloatingPanel>
-            <div className={styles['layer-bottom-bar']}>
-              <ConfigPanel UIType="panel-item" />
-              <LayerContextMenu renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
-            </div>
-          </>
-        ) : (
-          <>
-            <ResizableBox
-              axis="y"
-              handle={<Handle />}
-              height={this.currentHeight}
-              minConstraints={[Number.NaN, minLayerHeight]}
-              onResize={(_, { size }) => {
-                if (!this.isDoingTutorial) {
-                  this.currentHeight = size.height;
-                }
-              }}
-            >
-              {this.renderLayerPanel()}
-            </ResizableBox>
-            <SelLayerBlock />
-            <WattBlock />
-            <ConfigPanel />
-          </>
-        )}
+        <ResizableBox
+          axis="y"
+          handle={<Handle />}
+          height={this.currentHeight}
+          minConstraints={[Number.NaN, minLayerHeight]}
+          onResize={(_, { size }) => {
+            if (!this.isDoingTutorial) {
+              this.currentHeight = size.height;
+            }
+          }}
+        >
+          {this.renderLayerPanel()}
+        </ResizableBox>
+        <SelLayerBlock />
+        <WattBlock />
+        <ConfigPanel />
       </div>
     );
   }

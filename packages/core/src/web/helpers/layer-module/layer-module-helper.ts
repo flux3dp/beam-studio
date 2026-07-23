@@ -39,6 +39,7 @@ export const getModulesTranslations = (shouldNote4C = false): Record<LayerModule
   const t = i18n.lang.layer_module;
 
   return {
+    [LayerModule.GUIDE]: t.layer_guide,
     [LayerModule.LASER_10W_DIODE]: t.laser_10w_diode,
     [LayerModule.LASER_20W_DIODE]: t.laser_20w_diode,
     [LayerModule.LASER_1064]: t.laser_2w_infrared,

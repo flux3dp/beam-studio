@@ -7,10 +7,12 @@ import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import findDefs from '@core/app/svgedit/utils/findDef';
-import { getBBox } from '@core/app/svgedit/utils/getBBox';
+import { getBBox, getSymbolBBox } from '@core/app/svgedit/utils/getBBox';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { getContentElements } from '@core/helpers/contentLibrary/manager';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
+import { getOriginSymbol, getSymbols } from '@core/helpers/symbol-helper/getSymbol';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -362,43 +364,7 @@ const makeImageSymbol = async (
       return { tempSvg, tempSymbol, tempUse };
     };
 
-    const calculateSvgBBox = () => {
-      const bbText = symbol.getAttribute('data-bbox');
-      let bb: { height: number; width: number; x: number; y: number };
-
-      if (!bbText) {
-        // Unable to getBBox if <use> not mounted
-        const useElemForBB = svgedit.utilities.findTempUse();
-
-        svgedit.utilities.setHref(useElemForBB, `#${symbol.id}`);
-        bb = useElemForBB.getBBox();
-        svgedit.utilities.setHref(useElemForBB, '');
-        bb.height = Math.max(0, bb.height);
-        bb.width = Math.max(0, bb.width);
-
-        const obj = {
-          height: Number.parseFloat(bb.height.toFixed(5)),
-          width: Number.parseFloat(bb.width.toFixed(5)),
-          x: Number.parseFloat(bb.x.toFixed(5)),
-          y: Number.parseFloat(bb.y.toFixed(5)),
-        };
-
-        symbol.setAttribute('data-bbox', JSON.stringify(obj));
-      } else {
-        bb = JSON.parse(bbText) as { height: number; width: number; x: number; y: number };
-      }
-
-      const bbObject = {
-        height: bb.height,
-        width: bb.width,
-        x: bb.x,
-        y: bb.y,
-      };
-
-      return bbObject;
-    };
-
-    const bb = calculateSvgBBox();
+    const bb = getSymbolBBox(symbol);
 
     if (bb.width < 1 || bb.height < 1) {
       resolve(null);
@@ -477,28 +443,10 @@ const reRenderImageSymbol = async (useElement: SVGUseElement, opts: { force?: bo
   const fullColor = getObjectLayer(useElement)?.elem?.getAttribute('data-fullcolor') === '1';
 
   const scale = Math.sqrt((width * height) / (origWidth * origHeight));
-  const href = svgCanvas.getHref(useElement);
-  const currentSymbol = document.querySelector(href) as SVGSymbolElement;
+  const symbols = getSymbols(useElement);
 
-  if (currentSymbol && currentSymbol.tagName === 'symbol') {
-    const origSymbolId = currentSymbol.getAttribute('data-origin-symbol');
-    const imageSymbolId = currentSymbol.getAttribute('data-image-symbol');
-
-    if (origSymbolId) {
-      const origSymbol = document.getElementById(origSymbolId) as unknown as SVGSymbolElement;
-
-      if (origSymbol && origSymbol.tagName === 'symbol') {
-        await makeImageSymbol(origSymbol, { force, fullColor, imageSymbol: currentSymbol, scale });
-      }
-    } else if (imageSymbolId) {
-      let imageSymbol = document.getElementById(imageSymbolId) as unknown as SVGSymbolElement;
-
-      if (imageSymbol && imageSymbol.tagName === 'symbol') {
-        await makeImageSymbol(currentSymbol, { force, fullColor, imageSymbol, scale });
-      } else {
-        await makeImageSymbol(currentSymbol, { force, fullColor, scale });
-      }
-    }
+  if (symbols.origin) {
+    await makeImageSymbol(symbols.origin, { force, fullColor, imageSymbol: symbols.image ?? undefined, scale });
   }
 };
 
@@ -512,15 +460,22 @@ const reRenderImageSymbolArray = async (
 };
 
 const reRenderAllImageSymbols = async (): Promise<void> => {
-  const useElements: SVGUseElement[] = [];
-  const layers = Array.from(document.querySelectorAll('#svgcontent > g.layer'));
+  const useElements: SVGUseElement[] = Array.from(document.querySelectorAll('#svgcontent > g.layer use'));
 
-  layers.forEach((layer) => {
-    const uses = Array.from(layer.querySelectorAll('use'));
-
-    useElements.push(...uses);
-  });
   await reRenderImageSymbolArray(useElements);
+};
+
+const initAllLibraryImageSymbols = async (): Promise<void> => {
+  const imageSymbols: SVGSymbolElement[] = getContentElements({ target: 'use_image' });
+  const promises = imageSymbols.map((imageSymbol) => {
+    const refSymbol = getOriginSymbol(imageSymbol);
+
+    if (!refSymbol) return Promise.resolve();
+
+    return symbolMaker.makeImageSymbol(refSymbol, { fullColor: false, imageSymbol: imageSymbol as SVGSymbolElement });
+  });
+
+  await Promise.all(promises);
 };
 
 const switchImageSymbol = (elem: SVGUseElement, shouldUseImage: boolean): IBatchCommand | null => {
@@ -591,6 +546,7 @@ const switchImageSymbolForAll = (shouldUseImage: boolean): void => {
 
 const symbolMaker = {
   createImageSymbol,
+  initAllLibraryImageSymbols,
   makeImageSymbol,
   makeSymbol,
   reRenderAllImageSymbols,

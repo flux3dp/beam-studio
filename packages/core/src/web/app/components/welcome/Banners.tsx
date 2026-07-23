@@ -3,7 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import browser from '@core/implementations/browser';
 
 import styles from './Banners.module.scss';

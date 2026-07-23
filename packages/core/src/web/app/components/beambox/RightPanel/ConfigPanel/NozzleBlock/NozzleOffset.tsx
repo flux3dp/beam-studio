@@ -1,8 +1,10 @@
 import { memo } from 'react';
 
+import type { CommonProps } from '@core/interfaces/ConfigOption';
+
 import NumberBlock from '../NumberBlock';
 
-const NozzleOffset = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
+const NozzleOffset = (props: CommonProps) => {
   return (
     <>
       <NumberBlock
@@ -12,8 +14,8 @@ const NozzleOffset = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pane
         min={-5}
         precision={5}
         title="Nozzle Offset X"
-        type={type}
         unit="mm"
+        {...props}
       />
       <NumberBlock
         configKey="nozzleOffsetY"
@@ -22,8 +24,8 @@ const NozzleOffset = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pane
         min={-5}
         precision={5}
         title="Nozzle Offset Y"
-        type={type}
         unit="mm"
+        {...props}
       />
     </>
   );

@@ -1,7 +1,7 @@
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import selectionManager from '@core/app/svgedit/selection';
 import { isAtPage } from '@core/helpers/hashHelper';
 import menu from '@core/implementations/menu';

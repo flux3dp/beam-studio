@@ -1,10 +1,13 @@
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import tutorialController from '@core/app/components/tutorials/tutorialController';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import tutorialConstants from '@core/app/constants/tutorial-constants';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
@@ -113,6 +116,24 @@ export const createLayer = (
   selectionManager.clearSelection();
 
   return { layer: layerElement, name: finalName };
+};
+
+export const addNewLayer = (): void => {
+  const baseName = i18n.lang.beambox.right_panel.layer_panel.layers.layer;
+  let i = 1;
+  let uniqName = `${baseName} ${i}`;
+
+  while (layerManager.hasLayer(uniqName)) {
+    i += 1;
+    uniqName = `${baseName} ${i}`;
+  }
+  createLayer(uniqName, { initConfig: true });
+
+  if (tutorialController.getNextStepRequirement() === tutorialConstants.ADD_NEW_LAYER) {
+    tutorialController.handleNextStep();
+  }
+
+  useLayerStore.getState().setSelectedLayers([uniqName]);
 };
 
 export const cloneLayer = (
@@ -522,4 +543,37 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
   } else {
     moveToLayer(true);
   }
+};
+
+export const renameLayer = (): void => {
+  const oldName = layerManager.getCurrentLayerName()!;
+  const lang = i18n.lang.beambox.right_panel.layer_panel;
+
+  dialogCaller.promptDialog({
+    caption: lang.notification.newName,
+    defaultValue: oldName,
+    onYes: (newName?: string) => {
+      if (!newName || oldName === newName) {
+        return;
+      }
+
+      if (layerManager.hasLayer(newName)) {
+        alertCaller.popUp({
+          id: 'dupli_layer_name',
+          message: lang.notification.enterUniqueLayerName,
+        });
+
+        return;
+      }
+
+      svgCanvas.renameCurrentLayer(newName);
+      cloneLayerConfig(oldName, newName);
+      useLayerStore.getState().setSelectedLayers([newName]);
+    },
+  });
+};
+
+export const selectOnlyLayer = (layerName: string): void => {
+  selectionManager.clearSelection();
+  useLayerStore.getState().setSelectedLayers([layerName]);
 };

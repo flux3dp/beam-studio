@@ -8,7 +8,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import ThemedButton from '@core/app/components/common/ThemedButton';
 import { ContentType, type MainType } from '@core/app/constants/element-panel-constants';
 import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
-import { isMobile } from '@core/app/stores/screenStore';
+import { isMobile } from '@core/app/stores/layoutStore';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Content.module.scss';

@@ -1,26 +1,28 @@
 @use './_mixins.scss' as rightPanelMixins;
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .container {
   &.hide {
     display: none;
   }
 
-  width: 100%;
-
-  @include mixins.is-not-mobile {
+  @include selectors.desktop-layout {
     @include rightPanelMixins.panel();
   }
-
-  @include mixins.is-mobile {
+  @include selectors.tablet-or-mobile-layout {
     @include rightPanelMixins.bottom-bar();
-    min-height: 0;
-    height: 62px;
-  }
+    width: 100vw;
+    align-items: center; // TODO: check height
+    gap: 8px;
 
-  .tools {
-    @include mixins.is-mobile {
-      @include rightPanelMixins.item-group();
+    > * {
+      flex-shrink: 0;
+    }
+    > button:first-of-type {
+      margin-left: auto;
+    }
+    > button:last-of-type {
+      margin-right: auto;
     }
   }
 
@@ -30,6 +32,7 @@
       padding-block: 4px;
 
       // Fallback: hide a section whose content renders empty (e.g. infill panel for a group of lines)
+      &:has(:global(.ant-collapse-content-box):empty),
       &:has(:global(.ant-collapse-content-box) > div:empty) {
         display: none;
       }
@@ -51,35 +54,6 @@
 
     :global(.ant-collapse-content-box) {
       padding: 0 !important;
-    }
-  }
-
-  .row {
-    height: 41px;
-
-    .half {
-      width: 50%;
-      height: 100%;
-      padding: 0 8px;
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      justify-items: center;
-      align-items: center;
-    }
-
-    .left {
-      float: left;
-      border: solid rgba(0, 0, 0, 0);
-      border-width: 0 1px 0 0;
-
-      &.sep {
-        border: solid #e0e0e0;
-        border-width: 0 1px 0 0;
-      }
-    }
-
-    .right {
-      float: right;
     }
   }
 }

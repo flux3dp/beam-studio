@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 
 import { PX_TO_MM_RATIO } from '../constants';
 import useContainerSize from '../hooks/useContainerSize';

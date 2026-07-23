@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { CaretRightOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
+import { createPortal } from 'react-dom';
 
 import Alert from '@core/app/actions/alert-caller';
 import { CanvasElements } from '@core/app/constants/canvasElements';
@@ -15,8 +16,10 @@ import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import workareaManager from '@core/app/svgedit/workarea';
 import Modal from '@core/app/widgets/Modal';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
+import { isElemLocked } from '@core/helpers/element/lock';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
+import { checkSelectable } from '@core/helpers/layer/checkSelectable';
 import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -232,14 +235,14 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
           const layerObject = allLayers[i];
           const layer = layerObject.getGroup();
 
-          if (layer.getAttribute('display') === 'none' || layer.getAttribute('data-lock') === 'true') {
+          if (!checkSelectable(layer)) {
             continue;
           }
 
           const { children } = layer;
 
           for (const child of children) {
-            if (!CanvasElements.defElems.includes(child.nodeName)) {
+            if (!CanvasElements.defElems.includes(child.nodeName) && !isElemLocked(child)) {
               elems.push(child as unknown as SVGElement);
             }
           }
@@ -276,7 +279,8 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
   };
 
   const isWindows = !isWeb() && getOS() === 'Windows';
-  const className = classNames(styles.container, { [styles.win]: isWindows });
+  const container = document.getElementById('svg-nest-buttons-container');
+  const className = classNames(styles.container, { [styles.relative]: container, [styles.win]: isWindows });
 
   const content = (
     <div className={className}>
@@ -287,6 +291,18 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
     </div>
   );
 
+  if (container) {
+    // Render with automatic positioning
+    return createPortal(
+      <>
+        {content}
+        {isWorking && <div className={styles.mask} />}
+      </>,
+      container,
+    );
+  }
+
+  // Fallback to modal
   return isWorking ? <Modal className={{ 'no-background': true }}>{content}</Modal> : content;
 };
 

@@ -7,7 +7,7 @@ import classNames from 'classnames';
 
 import { ContentType } from '@core/app/constants/element-panel-constants';
 import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ElementPanel.module.scss';

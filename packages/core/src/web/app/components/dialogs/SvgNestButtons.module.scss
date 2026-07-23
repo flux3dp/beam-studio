@@ -12,6 +12,12 @@
     top: 120px;
   }
 
+  &.relative {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+
   .svg-nest-button {
     background: #999;
     color: white;
@@ -43,4 +49,10 @@
       float: left;
     }
   }
+}
+
+.mask {
+  position: fixed;
+  inset: 0;
+  top: -100px; // Additional offset to cover the top bar in desktop with dockable position
 }

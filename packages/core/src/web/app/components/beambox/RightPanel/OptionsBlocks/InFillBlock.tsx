@@ -1,73 +1,67 @@
-import React, { useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 
-import { Switch } from 'antd';
+import { DownOutlined } from '@ant-design/icons';
+import type { ButtonProps } from 'antd';
 import classNames from 'classnames';
 
+import ControlBlock from '@core/app/components/beambox/RightPanel/common/ControlBlock';
+import { ObjectPanelItem } from '@core/app/components/beambox/RightPanel/common/ObjectPanelItem';
+import ListButtonGroup from '@core/app/components/common/ListButtonGroup';
+import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { templateModes, useWithinInteractionModes } from '@core/app/stores/interactionModeStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
+import { calcElemsFilledInfo, setElemsFill, setElemsUnfill } from '@core/app/svgedit/operations/infill';
 import Select from '@core/app/widgets/AntdSelect';
+import { ControlType } from '@core/helpers/element/editable/base';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import ObjectPanelItem from '../ObjectPanelItem';
 
 import styles from './InFillBlock.module.scss';
 
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
-
 interface Props {
-  elems: Element[];
-  id?: string;
-  label?: string;
+  type?: 'infill' | 'infillPath';
 }
 
-const InFillBlock = ({ elems, id = 'infill', label }: Props): React.ReactNode => {
-  const lang = useI18n().beambox.right_panel.object_panel.option_panel;
-  const isMobile = useIsMobile();
-  const calculateFillInfo = (elements: Element[]) => {
-    let isFillable = elements.length > 0;
-    let isAllFilled = true;
-    let isAnyFilled = false;
+const InFillBlock = ({ type = 'infill' }: Props): React.ReactNode => {
+  const activeKey = useSelectedElementStore((state) => state.activeKey);
+  const {
+    beambox: {
+      right_panel: { object_panel: tObjectPanel },
+    },
+    topbar: { tag_names: tTag },
+  } = useI18n();
+  const lang = tObjectPanel.option_panel;
+  const isTablet = useIsTabletOrMobile();
+  const isWithinTemplateModes = useWithinInteractionModes(templateModes);
+  const elems = useSelectedElementStore(
+    (state) => state.objectPanelData![type === 'infill' ? 'infillElems' : 'pathElems'],
+  );
+  const isTextPath = useSelectedElementStore((state) => state.objectPanelData!.isTextPath);
 
-    for (const element of elements) {
-      isFillable = svgCanvas.isElemFillable(element);
-
-      if (!isFillable) break;
-
-      const { isAllFilled: subIsAllFilled, isAnyFilled: subIsAnyFilled } = svgCanvas.calcElemFilledInfo(element);
-
-      isAllFilled = isAllFilled && subIsAllFilled;
-      isAnyFilled = isAnyFilled || subIsAnyFilled;
-    }
-
-    return {
-      isAllFilled,
-      isAnyFilled,
-      isFillable,
-    };
-  };
-  const [fillInfo, setFillInfo] = useState(calculateFillInfo(elems));
+  const [fillInfo, setFillInfo] = useState(() => calcElemsFilledInfo(elems));
   const { isAllFilled, isAnyFilled, isFillable } = fillInfo;
+  const { controlType, id, label } = useMemo(
+    () =>
+      type === 'infillPath'
+        ? { controlType: ControlType.PATH_INFILL, id: 'path_infill', label: tTag.path }
+        : { controlType: ControlType.INFILL, id: 'infill', label: isTextPath ? tTag.text : undefined },
+
+    [type, tTag, isTextPath],
+  );
 
   useDidUpdateEffect(() => {
-    setFillInfo(calculateFillInfo(elems));
+    setFillInfo(calcElemsFilledInfo(elems));
   }, [elems]);
 
-  if (!isFillable) {
-    return null;
-  }
+  if (!isFillable || elems.length === 0) return null;
 
   const setFilled = (filled: boolean) => {
     if (filled) {
-      svgCanvas.setElemsFill(elems);
+      setElemsFill(elems);
     } else {
-      svgCanvas.setElemsUnfill(elems);
+      setElemsUnfill(elems);
     }
 
     setFillInfo((prev) => ({
@@ -80,26 +74,54 @@ const InFillBlock = ({ elems, id = 'infill', label }: Props): React.ReactNode =>
 
   const isPartiallyFilled = elems[0].tagName === 'g' && isAnyFilled && !isAllFilled;
 
-  if (isMobile) {
-    return (
-      <ObjectPanelItem.Item
-        content={<Switch checked={isAnyFilled} />}
-        id={id}
-        label={label || lang.fill}
-        onClick={() => setFilled(!isAnyFilled)}
-      />
-    );
-  }
-
+  const mixedOption = { icon: <OptionPanelIcons.InfillPartial />, label: lang.mixed_fill_mode };
   const fillOptions = [
-    { label: lang.fill_engraving_mode, value: 'fill' },
-    { label: lang.stroke_mode, value: 'stroke' },
+    { icon: <OptionPanelIcons.Infill />, label: lang.fill_engraving_mode, value: 'fill' },
+    { icon: <OptionPanelIcons.InfillNone />, label: lang.stroke_mode, value: 'stroke' },
   ];
   const value = isPartiallyFilled ? undefined : isAnyFilled ? 'fill' : 'stroke';
   const handleChange = (next: string) => setFilled(next === 'fill');
 
+  if (isTablet) {
+    const selectedIndex = fillOptions.findIndex((option) => option.value === value);
+    const selectedOption = fillOptions[selectedIndex] ?? mixedOption;
+    const buttons: ButtonProps[] = fillOptions.map((option, index) => {
+      const isSelected = index === selectedIndex;
+
+      return {
+        children: option.label,
+        className: styles.button,
+        color: isSelected ? 'primary' : 'default',
+        icon: option.icon,
+        onClick: () => handleChange(option.value),
+        variant: isSelected ? 'filled' : 'text',
+      };
+    });
+
+    return isWithinTemplateModes ? (
+      <ListButtonGroup items={buttons} size="large" />
+    ) : (
+      <ObjectPanelItem
+        icon={selectedOption.icon}
+        id={id}
+        itemChildren={
+          <>
+            {label ?? tObjectPanel.sections.operation_mode}
+            <DownOutlined className={classNames(styles.downIcon, { [styles.active]: activeKey === id })} />
+          </>
+        }
+        renderContent={() => <ListButtonGroup items={buttons} size="large" />}
+        title={<ControlBlock type={controlType}>{label ?? tObjectPanel.sections.operation_mode}</ControlBlock>}
+      />
+    );
+  }
+
   return (
-    <div className={classNames(styles['option-block'], { [styles['no-label']]: !label })} key="infill">
+    <ControlBlock
+      className={classNames(styles['option-block'], { [styles['no-label']]: !label })}
+      key="infill"
+      type={controlType}
+    >
       {label ? <div className={styles.label}>{label}</div> : null}
       <Select
         className={styles.select}
@@ -109,8 +131,8 @@ const InFillBlock = ({ elems, id = 'infill', label }: Props): React.ReactNode =>
         placeholder={lang.fill}
         value={value}
       />
-    </div>
+    </ControlBlock>
   );
 };
 
-export default InFillBlock;
+export default memo(InFillBlock);

@@ -3,7 +3,7 @@ import textActions from '@core/app/svgedit/text/textactions';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { ICommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, ICommand } from '@core/interfaces/IHistory';
 
 import changeAttribute, { changeElementsAttribute } from '../../history/changeAttribute';
 import history from '../../history/history';
@@ -116,16 +116,16 @@ export const setItalic = (val: boolean, isSubCmd = false, textElems: SVGTextElem
   return command.isEmpty() ? null : command;
 };
 
-export const setLetterSpacing = (val: number, textElems: SVGTextElement[]): void => {
+export const setLetterSpacing = (val: number, textElems: SVGTextElement[], opts?: HistoryActionOptions): void => {
   const newValue = val ? `${val.toString()}em` : '0em';
 
-  changeElementsAttribute(textElems, { 'letter-spacing': newValue });
+  changeElementsAttribute(textElems, { 'letter-spacing': newValue }, opts);
   renderAll(textElems);
   initCursor(textElems);
 };
 
-export const setLineSpacing = (val: number, textElems: SVGTextElement[]): void => {
-  changeElementsAttribute(textElems, { 'data-line-spacing': val.toString() });
+export const setLineSpacing = (val: number, textElems: SVGTextElement[], opts?: HistoryActionOptions): void => {
+  changeElementsAttribute(textElems, { 'data-line-spacing': val.toString() }, opts);
   initCursor(textElems);
   updateRotation(textElems);
 };

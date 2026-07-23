@@ -3,7 +3,7 @@ import React, { createContext, useMemo } from 'react';
 import classNames from 'classnames';
 
 import layoutConstants from '@core/app/constants/layout-constants';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';

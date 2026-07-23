@@ -5,7 +5,7 @@ import { Button, Modal, Space } from 'antd';
 import layoutConstants from '@core/app/constants/layout-constants';
 import { MyCloudContext, MyCloudProvider } from '@core/app/contexts/MyCloudContext';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';

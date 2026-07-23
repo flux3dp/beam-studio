@@ -1,4 +1,4 @@
-import { isMobile } from '@core/app/stores/screenStore';
+import { isMobile } from '@core/app/stores/layoutStore';
 import { getOS } from '@core/helpers/getOS';
 import shortcuts from '@core/helpers/shortcuts';
 

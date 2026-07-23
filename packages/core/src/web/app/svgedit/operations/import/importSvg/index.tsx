@@ -225,17 +225,21 @@ function finalizeImport(
 const importSvg = async (
   blob: Blob,
   {
+    asLibraryContent = false,
     importType,
     isFromNounProject,
     parentCmd,
     skipByLayer = false,
     targetModule = null,
+    toCurrentLayer = false,
   }: Partial<{
+    asLibraryContent?: boolean;
     importType?: ImportType;
     isFromNounProject?: boolean;
     parentCmd?: IBatchCommand;
     skipByLayer: boolean;
     targetModule: LayerModuleType | null;
+    toCurrentLayer: boolean;
   }> = {},
 ): Promise<SVGUseElement[] | undefined> => {
   const { lang } = i18n;
@@ -248,11 +252,11 @@ const importSvg = async (
   const batchCmd = parentCmd ?? new history.BatchCommand('Import SVG');
   const hasModule = modelsWithModules.has(useDocumentStore.getState().workarea);
 
-  targetModule = await determineTargetModule(targetModule, hasModule, lang);
+  targetModule = await determineTargetModule(targetModule, hasModule, lang, toCurrentLayer);
 
   if (!targetModule) return; // Early exit if no module selected
 
-  importType = await determineImportType(importType, targetModule, skipByLayer, lang);
+  importType = await determineImportType(importType, targetModule, skipByLayer, lang, toCurrentLayer);
 
   if (!importType) return; // Early exit if no import type selected
 
@@ -262,13 +266,16 @@ const importSvg = async (
 
   if (!outputData) return; // Early exit if upload and divide failed
 
-  const elementOptions = { parentCmd: batchCmd, targetModule, type: importType };
+  const elementOptions = { hidden: asLibraryContent, parentCmd: batchCmd, targetModule, type: importType };
   const processedElements = await processOutputData(outputData, blob, elementOptions, importType);
-  const bitmap = await handleBitmapImport(outputData, targetModule, batchCmd, processedElements.length > 0, lang);
 
-  if (bitmap) processedElements.push(bitmap);
+  if (!asLibraryContent) {
+    const bitmap = await handleBitmapImport(outputData, targetModule, batchCmd, processedElements.length > 0, lang);
 
-  finalizeImport(processedElements, Boolean(isFromNounProject), batchCmd, parentCmd);
+    if (bitmap) processedElements.push(bitmap);
+
+    finalizeImport(processedElements, Boolean(isFromNounProject), batchCmd, parentCmd);
+  }
 
   return processedElements;
 };

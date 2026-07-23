@@ -25,7 +25,7 @@ export type DimensionValues = { [key in DimensionKeyBoolean]?: boolean } & { [ke
  * Object dimension attribute orders displayed in DimensionPanel
  */
 export type DimensionOrderMap = {
-  [key: string]: Array<'lock' | 'rot' | DimensionKeyShort>;
+  [key: string]: DimensionKeyShort[];
 };
 
 // Text Options
@@ -61,3 +61,15 @@ export interface VariableTextOption {
 export type VariableTextConfig = {
   [key in keyof VariableTextOption]: ConfigItem<VariableTextOption[key]>;
 };
+
+export type NumberOptionConfig = Partial<{
+  id: string;
+  max: number;
+  min: number;
+  precision: number;
+  sliderMax: number;
+  sliderMin: number;
+  sliderStep: number;
+  step: number;
+  unit: string;
+}>;

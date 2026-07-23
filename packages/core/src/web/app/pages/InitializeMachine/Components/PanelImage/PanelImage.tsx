@@ -3,7 +3,7 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 
 import type { HintConfig } from './hintConfigs';
 import styles from './PanelImage.module.scss';

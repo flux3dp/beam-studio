@@ -1,9 +1,5 @@
 @use './_mixins.scss' as mixins;
 
-.container {
-  @include mixins.item-group();
-}
-
 .panel {
   padding: 0 12px;
   transition: height 0.1s ease-in 0s;
@@ -44,4 +40,8 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.section-title {
+  @include mixins.title();
 }

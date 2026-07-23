@@ -93,6 +93,7 @@ export type GlobalPreference = {
   show_guides: boolean;
   show_rulers: boolean;
   simplify_clipper_path: boolean;
+  template_creation_mode: boolean;
   /**
    * Auto turn on auto-exposure if possible when previewing
    */

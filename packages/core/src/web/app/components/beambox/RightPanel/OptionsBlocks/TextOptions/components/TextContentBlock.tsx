@@ -4,12 +4,14 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { Input } from 'antd';
 import type { TextAreaRef } from 'antd/lib/input/TextArea';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
+import ControlBlock from '@core/app/components/beambox/RightPanel/common/ControlBlock';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getTextContent, renderText, textContentEvents } from '@core/app/svgedit/text/textedit';
+import { ControlType } from '@core/helpers/element/editable/base';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './TextContentBlock.module.scss';
@@ -20,7 +22,7 @@ interface Props {
 
 function TextContentBlock({ textElement }: Props): ReactNode {
   const t = useI18n().beambox.right_panel.object_panel.option_panel;
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const [textContent, setTextContent] = useState(() => getTextContent(textElement));
   const textAreaRef = useRef<TextAreaRef>(null);
   const valueBeforeEditRef = useRef('');
@@ -50,12 +52,10 @@ function TextContentBlock({ textElement }: Props): ReactNode {
     };
   }, [textElement]);
 
-  if (isMobile) return null;
-
   return (
-    <div className={styles.container}>
+    <ControlBlock className={styles.container} label={t.text_content_placeholder} type={ControlType.TEXT_CONTENT}>
       <Input.TextArea
-        autoSize={{ minRows: 4 }}
+        autoSize={isTablet ? { maxRows: 8, minRows: 2 } : { minRows: 4 }}
         id="text-content-textarea"
         onBlur={() => {
           const newVal = textContent.replace(/\n/g, '\u0085');
@@ -93,7 +93,7 @@ function TextContentBlock({ textElement }: Props): ReactNode {
         ref={textAreaRef}
         value={textContent}
       />
-    </div>
+    </ControlBlock>
   );
 }
 

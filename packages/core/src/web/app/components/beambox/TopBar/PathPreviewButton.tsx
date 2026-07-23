@@ -9,7 +9,7 @@ import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import selectionManager from '@core/app/svgedit/selection';
 import checkWebGL from '@core/helpers/check-webgl';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';

@@ -12,16 +12,18 @@ import communicator from '@core/implementations/communicator';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import styles from './DrawerMenu.module.scss';
+import MenuTrigger from './MenuTrigger';
 import type { MenuNode } from './useMenuData';
 import useMenuData from './useMenuData';
 
 interface Props {
+  disabled?: boolean;
   email?: string;
 }
 
 const ROOT_TITLE = 'Beam Studio';
 
-export default function DrawerMenu({ email }: Props): React.JSX.Element {
+export default function DrawerMenu({ disabled, email }: Props): React.JSX.Element {
   const [isOpen, setIsOpen] = useState(false);
   const menuData = useMenuData(email);
   const menuCms = useI18n().topbar.menu;
@@ -109,19 +111,12 @@ export default function DrawerMenu({ email }: Props): React.JSX.Element {
 
   return (
     <>
-      <button className={styles.trigger} data-testid="drawer-menu-trigger" onClick={open} type="button">
-        <img className={styles['trigger-logo']} src="core-img/beam-studio-logo.svg" />
-        <span className={styles['trigger-hamburger']}>
-          <span />
-          <span />
-          <span />
-        </span>
-      </button>
+      <MenuTrigger disabled={disabled} onClick={open} type="drawer" />
       <Drawer
         afterOpenChange={handleAfterOpenChange}
         closable={false}
         onClose={close}
-        open={isOpen}
+        open={!disabled && isOpen}
         placement="left"
         rootClassName={styles['drawer-menu']}
         title={

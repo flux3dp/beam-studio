@@ -1,7 +1,5 @@
 @use '../../../_mixins.scss' as mixins;
 
 .container {
-  @include mixins.icon-input();
-  margin-right: 8px;
-  margin-bottom: 0;
+  @include mixins.icon-input(false);
 }

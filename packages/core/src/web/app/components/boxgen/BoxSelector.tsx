@@ -2,7 +2,7 @@ import React from 'react';
 
 import { Menu } from 'antd';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
 

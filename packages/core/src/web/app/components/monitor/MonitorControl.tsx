@@ -7,7 +7,7 @@ import { Button, Space } from 'antd';
 import DeviceConstants from '@core/app/constants/device-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import MonitorStatus, { ButtonTypes } from '@core/helpers/monitor-status';
 import useI18n from '@core/helpers/useI18n';
 

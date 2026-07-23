@@ -28,7 +28,9 @@
     }
 
     .layer {
-      &[data-lock='true'] {
+      [data-lock='true'],
+      &[data-lock='true'],
+      &[opacity='0'] {
         pointer-events: none !important;
       }
     }

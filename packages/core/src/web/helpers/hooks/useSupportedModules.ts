@@ -5,14 +5,16 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useInteractionModeStore } from '@core/app/stores/interactionModeStore';
 
 export const useSupportedModules = (workarea: WorkAreaModel): LayerModuleType[] => {
   const isUvPrintEnabled = useGlobalPreferenceStore((state) => state['enable-uv-print-file']);
   const is4CEnabled = useDocumentStore((state) => state['enable-4c']);
   const is1064Enabled = useDocumentStore((state) => state['enable-1064']);
+  const interactionMode = useInteractionModeStore((state) => state.interactionMode);
 
   return useMemo(
-    () => getSupportedModules(workarea, { is4CEnabled, is1064Enabled, isUvPrintEnabled }),
-    [workarea, isUvPrintEnabled, is4CEnabled, is1064Enabled],
+    () => getSupportedModules(workarea, { interactionMode, is4CEnabled, is1064Enabled, isUvPrintEnabled }),
+    [workarea, isUvPrintEnabled, is4CEnabled, is1064Enabled, interactionMode],
   );
 };

@@ -1,3 +1,19 @@
-.select {
-  width: 100%;
+@use '@core/styles/selectors' as selectors;
+
+@include selectors.desktop-layout {
+  .container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .select {
+      flex: 1;
+    }
+  }
+}
+
+@include selectors.tablet-or-mobile-layout {
+  .select {
+    width: 100%;
+  }
 }

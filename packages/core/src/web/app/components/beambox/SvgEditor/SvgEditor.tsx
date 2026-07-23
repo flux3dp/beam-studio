@@ -2,31 +2,49 @@ import type { ReactNode } from 'react';
 import React, { memo, useMemo } from 'react';
 import { useEffect } from 'react';
 
+import { EyeOutlined, LockOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import AiGenerate from '@core/app/components/AiGenerate';
 import MobileAiGenerate from '@core/app/components/AiGenerate/mobile/MobileAiGenerate';
 import PathPreview from '@core/app/components/beambox/PathPreview';
+import AddElementButton from '@core/app/components/beambox/SvgEditor/AddElementButton';
+import FloatingButton from '@core/app/components/beambox/SvgEditor/FloatingButton';
+import LayerPanelButton from '@core/app/components/beambox/SvgEditor/LayerPanelButton';
 import Chat from '@core/app/components/Chat';
 import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
+import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
+import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import {
+  setTemplateMode,
+  templateModes,
+  useIsInteractionMode,
+  useWithinInteractionModes,
+} from '@core/app/stores/interactionModeStore';
+import { useIsMobile, useIsTabletOrMobile } from '@core/app/stores/layoutStore';
+import historyUtils from '@core/app/svgedit/history/utils';
+import { resetTemplate } from '@core/app/svgedit/resetTemplate';
 import setupTextInputEvents from '@core/app/svgedit/text/setupTextInputEvents';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
+import { isRetailDev } from '@core/helpers/is-dev';
 import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
 
+import { showTemplateModePreview } from '../../dialogs/templatePreview/previewTemplateMode';
 import Generators from '../../Generators';
 import MobileGenerators from '../../Generators/mobile/MobileGenerators';
+import TopBarHints from '../TopBar/TopBarHints';
 
 import Banner from './Banner';
 import CanvasControl from './CanvasControl';
 import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
+import PreviewController from './PreviewController';
 import PreviewFloatingBar from './PreviewFloatingBar';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
@@ -34,8 +52,12 @@ import Workarea from './Workarea';
 
 const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const { drawerMode, mode } = useCanvasStore();
   const osName = useMemo(() => getOS(), []);
+  const isProjectMode = useIsInteractionMode('project');
+  const isExploreMode = useIsInteractionMode('explore');
+  const isWithinTemplateModes = useWithinInteractionModes(templateModes);
 
   useEffect(() => {
     if (window.$) {
@@ -61,7 +83,6 @@ const SvgEditor = (): ReactNode => {
       >
         <Banner />
         <div className={styles['workarea-container']} id="workarea-container">
-          <ElementTitle />
           <Ruler />
           <Workarea
             className={classNames(styles.workarea, { mac: osName === 'MacOS', [styles.mac]: osName === 'MacOS' })}
@@ -74,15 +95,63 @@ const SvgEditor = (): ReactNode => {
 
         {mode !== CanvasMode.PathPreview && (
           <>
-            {!isMobile && <PreviewFloatingBar />}
-            <DpiInfo />
-            <div className={styles['bottom-right']}>
-              <div className={styles.controls}>
+            {!isTablet && !isExploreMode && <PreviewFloatingBar />}
+            <div className={styles.top}>
+              <div className={styles.left}>
+                {isTablet && !isExploreMode && <PreviewController />}
+                <div id="svg-nest-buttons-container">{/* SvgNestButtons and its mask will be rendered here */}</div>
+                <div>
+                  <ElementTitle />
+                  <TopBarHintsContextProvider>
+                    <TopBarHints />
+                  </TopBarHintsContextProvider>
+                </div>
+              </div>
+              <div className={styles.right}>
+                {isTablet && (
+                  <div className={styles.buttons}>
+                    <FloatingButton
+                      icon={<TopBarIcons.Undo />}
+                      onClick={() => historyUtils.undo({ checkShortCutsScope: false })}
+                    />
+                    <FloatingButton
+                      icon={<TopBarIcons.Redo />}
+                      onClick={() => historyUtils.redo({ checkShortCutsScope: false })}
+                    />
+                    {isWithinTemplateModes ? (
+                      <FloatingButton icon={<TopBarIcons.Reset />} onClick={resetTemplate} />
+                    ) : (
+                      <LayerPanelButton />
+                    )}
+                  </div>
+                )}
+                {isProjectMode && (
+                  <div>
+                    <FloatingButton icon={<EyeOutlined />} onClick={() => showTemplateModePreview()} />
+                  </div>
+                )}
+                {isRetailDev() && (
+                  <div>
+                    <FloatingButton
+                      active={isWithinTemplateModes}
+                      icon={<LockOutlined />}
+                      onClick={() => setTemplateMode(!isWithinTemplateModes)}
+                    />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className={styles.bottom}>
+              <div className={styles.left}>
+                <DpiInfo />
+              </div>
+              <div className={styles.right}>
+                {isTablet && !isWithinTemplateModes && <AddElementButton />}
                 <TimeEstimationButtonContextProvider>
                   <CanvasControl />
                 </TimeEstimationButtonContextProvider>
               </div>
-              {isMobile && <PreviewFloatingBar />}
             </div>
           </>
         )}

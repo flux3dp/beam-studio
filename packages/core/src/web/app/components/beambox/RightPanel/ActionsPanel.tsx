@@ -1,717 +1,144 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { Button, ConfigProvider, Tooltip } from 'antd';
 import classNames from 'classnames';
-import { match, P } from 'ts-pattern';
 
-import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
-import textPathEdit from '@core/app/actions/beambox/textPathEdit';
-import Dialog from '@core/app/actions/dialog-caller';
-import { showArrayModal } from '@core/app/components/dialogs/ArrayModal';
-import { showCurvePanel, showRotaryWarped, showSharpenPanel } from '@core/app/components/dialogs/image';
-import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
+import { ObjectPanelItem } from '@core/app/components/beambox/RightPanel/common/ObjectPanelItem';
+import Divider from '@core/app/components/common/Divider';
+import ListButton from '@core/app/components/common/ListButton';
+import ListButtonGroup from '@core/app/components/common/ListButtonGroup';
 import { textButtonTheme } from '@core/app/constants/antd-config';
-import { CanvasElements } from '@core/app/constants/canvasElements';
-import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
-import { isMobile } from '@core/app/stores/screenStore';
-import { BatchCommand } from '@core/app/svgedit/history/history';
-import undoManager from '@core/app/svgedit/history/undoManager';
-import { autoFit } from '@core/app/svgedit/operations/autoFit';
-import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
-import selectionManager from '@core/app/svgedit/selection';
-import textEdit from '@core/app/svgedit/text/textedit';
-import updateElementColor from '@core/helpers/color/updateElementColor';
-import { convertSvgToImage } from '@core/helpers/convertToImage';
-import {
-  convertSvgToPath,
-  convertTempGroupToPath,
-  convertTextToPath,
-  dispatchConvertToPath,
-} from '@core/helpers/convertToPath';
-import imageEdit from '@core/helpers/image-edit';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import useForceUpdate from '@core/helpers/use-force-update';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import { useLazyData, useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import useI18n from '@core/helpers/useI18n';
-import { getVariableTextType } from '@core/helpers/variableText';
-import dialog from '@core/implementations/dialog';
-import type { ICommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
 import styles from './ActionsPanel.module.scss';
-import ObjectPanelController from './contexts/ObjectPanelController';
-import ObjectPanelItem from './ObjectPanelItem';
-
-let svgCanvas: ISVGCanvas;
-let svgEditor: ISVGEditor;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-  svgEditor = globalSVG.Editor;
-});
+import type { ResolvedAction } from './ObjectPanel/ActionsPanel/resolve';
+import { resolveAction, useActionLayout } from './ObjectPanel/ActionsPanel/resolve';
 
 interface Props {
   elem: SVGElement;
 }
 
-interface ButtonOpts {
-  autoClose?: boolean;
-  isDisabled?: boolean;
-  isFullLine?: boolean;
-  mobileLabel?: string;
-  tooltipIfDisabled?: string;
-}
-
-interface Section {
-  buttons: React.JSX.Element[];
-  title?: string;
-}
-
-const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
+const ActionsPanel = ({ elem }: Props): React.ReactNode => {
   const i18n = useI18n();
-  const forceUpdate = useForceUpdate();
-  const tab = i18n.tab_panel.title;
-  const lang = i18n.beambox.right_panel.object_panel.actions_panel;
-  const replaceImage = async (): Promise<void> => {
-    setTimeout(() => ObjectPanelController.updateActiveKey(null), 300);
+  const isTablet = useIsTabletOrMobile();
+  const isVariableText = useLazyData('isVariableText');
+  const hasChildVariableText = useLazyData('hasChildVariableText');
+  const isFilled = useLazyData('isFilled');
+  const isShading = useLazyData('isShading');
+  const activeKey = useSelectedElementStore((state) => state.activeKey);
+  const [activeItem, setActiveItem] = useState<null | ResolvedAction>(null);
+  const ref = useRef<Element | null>(null);
 
-    const option = {
-      filters: [
-        {
-          extensions: ['png', 'jpg', 'jpeg', 'jpe', 'jif', 'jfif', 'jfi', 'bmp', 'jp2', 'j2k', 'jpf', 'jpx', 'jpm'],
-          name: 'Images',
-        },
-      ],
-    };
-    const fileBlob = await dialog.getFileFromDialog(option);
+  const layoutConfig = useActionLayout();
 
-    if (fileBlob) svgEditor.replaceBitmap(fileBlob, elem);
-  };
+  const renderButton = useCallback(
+    (action: ResolvedAction): React.ReactNode =>
+      isTablet ? (
+        <Tooltip key={action.id} title={action.tooltip}>
+          <ListButton
+            disabled={action.disabled}
+            icon={action.icon}
+            id={action.id}
+            key={action.id}
+            onClick={() => {
+              console.log('ref.current', ref.current);
 
-  const renderButtons = useCallback(
-    (
-      id: string,
-      label: string,
-      onClick: () => void,
-      icon: React.JSX.Element,
-      mobileIcon: React.JSX.Element,
-      { autoClose, isDisabled, isFullLine, mobileLabel, tooltipIfDisabled }: ButtonOpts = {},
-    ): React.JSX.Element =>
-      isMobile() ? (
-        <ObjectPanelItem.Item
-          autoClose={autoClose}
-          content={mobileIcon}
-          disabled={isDisabled}
-          id={id}
-          key={id}
-          label={mobileLabel || label}
-          onClick={onClick}
-        />
+              if (action.renderContent) {
+                const mainButton = ref.current?.parentElement?.querySelector(`#object-panel-item-action-${action.id}`);
+
+                if (mainButton) {
+                  console.warn('scrollIntoView', mainButton, action.id);
+                  mainButton.scrollIntoView({ behavior: 'smooth' });
+                  useSelectedElementStore.setState({ activeKey: `action-${action.id}` });
+                } else {
+                  console.warn('renderContent', action.id);
+                  useSelectedElementStore.setState({ activeKey: `action-${action.id}` });
+                  setActiveItem(action);
+                }
+              } else {
+                console.warn('onClick', action.id);
+                action.onClick(elem);
+                useSelectedElementStore.setState({ activeKey: null });
+              }
+            }}
+          >
+            {action.label}
+          </ListButton>
+        </Tooltip>
       ) : (
-        <Tooltip key={label} title={isDisabled ? tooltipIfDisabled : undefined}>
-          <div className={classNames(styles['btn-container'], { [styles.half]: !isFullLine })}>
+        <Tooltip key={action.id} title={action.tooltip}>
+          <div className={classNames(styles['btn-container'], { [styles.half]: !action.fullWidth })}>
             <Button
               block
               className={styles.btn}
-              disabled={isDisabled}
-              icon={icon}
-              id={id}
-              onClick={onClick}
-              title={label}
+              disabled={action.disabled}
+              icon={action.icon}
+              id={action.id}
+              onClick={() => action.onClick(elem)}
+              title={action.label}
             >
-              <span className={styles.label}>{label}</span>
+              <span className={styles.label}>{action.label}</span>
             </Button>
           </div>
         </Tooltip>
       ),
-    [],
+    [isTablet, elem],
   );
 
-  const renderAutoFitButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons(
-      'auto-fit',
-      lang.auto_fit,
-      () => autoFit(elem as SVGElement),
-      <ActionPanelIcons.AutoFit />,
-      <ActionPanelIcons.AutoFit />,
-      { autoClose: false, isFullLine: true, ...opts },
-    );
-
-  const renderArrayButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons('array', lang.array, showArrayModal, <ActionPanelIcons.Array />, <ActionPanelIcons.ArrayMobile />, {
-      autoClose: false,
-      ...opts,
-    });
-
-  const renderOffsetButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons('offset', lang.offset, showOffsetModal, <ActionPanelIcons.Offset />, <ActionPanelIcons.Offset />, {
-      autoClose: false,
-      ...opts,
-    });
-
-  const renderConvertToPathButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons(
-      'to_path',
-      lang.to_path,
-      () => dispatchConvertToPath(elem, { isToSelect: true }),
-      <ActionPanelIcons.ConvertToPath />,
-      <ActionPanelIcons.ConvertToPathMobile />,
-      { isFullLine: true, mobileLabel: lang.outline, ...opts },
-    );
-
-  const renderConvertToImageButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons(
-      'to_image',
-      lang.to_image,
-      () => convertSvgToImage({ svgElement: elem as SVGGElement }),
-      <ActionPanelIcons.ConvertToImage />,
-      <ActionPanelIcons.ConvertToImage />,
-      { isFullLine: true, mobileLabel: lang.outline, ...opts },
-    );
-
-  const renderSmartNestButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons(
-      'smart-nest',
-      lang.smart_nest,
-      () => Dialog.showSvgNestButtons(),
-      <ActionPanelIcons.SmartNest />,
-      <ActionPanelIcons.SmartNest />,
-      { isFullLine: true, ...opts },
-    );
-
-  const renderTabButton = (opts: ButtonOpts = {}): React.JSX.Element => {
-    const isFilled = match(elem.getAttribute('fill'))
-      // 'none' for SVG elements
-      // 'nullish' for use elements
-      .with(P.union('none', P.nullish), () => false)
-      .otherwise(() => true);
-    const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
-    const tooltipIfDisabled =
-      isFilled && isVariableText
-        ? lang.disabled_by_infilled_and_variable_text
-        : isFilled
-          ? lang.disabled_by_infilled
-          : lang.disabled_by_variable_text;
-
-    return renderButtons(
-      'tab',
-      tab,
-      async () => {
-        let bbox = (elem as SVGSVGElement).getBBox();
-        let command: ICommand | undefined;
-
-        // Convert to path if it's not a path
-        if (!(elem instanceof SVGPathElement)) {
-          const { bbox: newBbox, command: subCommand } = (await dispatchConvertToPath(elem, {
-            addToHistory: false,
-            isToSelect: true,
-          }))!;
-
-          bbox = newBbox;
-          command = subCommand;
-        }
-
-        Dialog.showTabPanel({
-          bbox,
-          command,
-          onClose: () => {
-            selectionManager.clearSelection();
-          },
-        });
-      },
-      <ActionPanelIcons.Tab />,
-      <ActionPanelIcons.Tab />,
-      {
-        isDisabled: isFilled || isVariableText,
-        isFullLine: true,
-        ...opts,
-        tooltipIfDisabled,
-      },
-    );
-  };
-
-  const renderImageActions = (): Section[] => {
-    const isShading = elem.getAttribute('data-shading') === 'true';
-    const content = {
-      array: renderArrayButton(),
-      autoFit: renderAutoFitButton(),
-      'bg-removal': renderButtons(
-        'bg-removal',
-        lang.ai_bg_removal,
-        () => imageEdit.removeBackground(elem as SVGImageElement),
-        <ActionPanelIcons.BackgroundRemoval />,
-        <ActionPanelIcons.BackgroundRemovalMobile />,
-        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short },
-      ),
-      crop: renderButtons(
-        'crop',
-        lang.crop,
-        () => Dialog.showCropPanel(),
-        <ActionPanelIcons.Crop />,
-        <ActionPanelIcons.Crop />,
-        { autoClose: false },
-      ),
-      grading: renderButtons(
-        'grading',
-        lang.grading,
-        showCurvePanel,
-        <ActionPanelIcons.Grading />,
-        <ActionPanelIcons.Brightness />,
-        { autoClose: false, isFullLine: true, mobileLabel: lang.brightness },
-      ),
-      imageEditPanel: renderButtons(
-        'imageEditPanel',
-        i18n.image_edit_panel.title,
-        () => Dialog.showImageEditPanel(),
-        <ActionPanelIcons.EditImage />,
-        <ActionPanelIcons.EditImage />,
-        { mobileLabel: lang.ai_bg_removal_short },
-      ),
-      invert: renderButtons(
-        'invert',
-        lang.invert,
-        () => imageEdit.colorInvert(elem as SVGImageElement),
-        <ActionPanelIcons.Invert />,
-        <ActionPanelIcons.Invert />,
-      ),
-      offset: renderOffsetButton(),
-      potrace: renderButtons(
-        'potrace',
-        lang.outline,
-        () => imageEdit.potrace(elem as SVGImageElement),
-        <ActionPanelIcons.Outline />,
-        <ActionPanelIcons.Outline />,
-      ),
-      replace_with: renderButtons(
-        'replace_with',
-        lang.replace_with,
-        replaceImage,
-        <ActionPanelIcons.Replace />,
-        <ActionPanelIcons.ReplaceMobile />,
-        { autoClose: false, isFullLine: true, mobileLabel: lang.replace_with_short },
-      ),
-      sharpen: renderButtons(
-        'sharpen',
-        lang.sharpen,
-        showSharpenPanel,
-        <ActionPanelIcons.Sharpen />,
-        <ActionPanelIcons.SharpenMobile />,
-        { autoClose: false },
-      ),
-      smartNest: renderSmartNestButton(),
-      stampMakerPanel: renderButtons(
-        'stampMakerPanel',
-        i18n.stamp_maker_panel.title,
-        () => Dialog.showStampMakerPanel(),
-        <ActionPanelIcons.Stamp />,
-        <ActionPanelIcons.Stamp />,
-        { isFullLine: true },
-      ),
-      trace: renderButtons(
-        'trace',
-        lang.trace,
-        () => imageEdit.traceImage(elem as SVGImageElement),
-        <ActionPanelIcons.Trace />,
-        <ActionPanelIcons.Trace />,
-        { isDisabled: isShading, tooltipIfDisabled: lang.disabled_by_gradient },
-      ),
-      trapezoid: renderButtons(
-        'trapezoid',
-        i18n.beambox.photo_edit_panel.rotary_warped,
-        () => showRotaryWarped(elem as SVGImageElement),
-        <ActionPanelIcons.RotaryWarped />,
-        <ActionPanelIcons.RotaryWarped />,
-        { isFullLine: true },
-      ),
-    };
-
-    if (isMobile()) {
-      const contentOrder: Array<keyof typeof content> = [
-        'autoFit',
-        'replace_with',
-        'potrace',
-        'grading',
-        'sharpen',
-        'crop',
-        'offset',
-        'invert',
-        'array',
-        'trace',
-        'bg-removal',
-        'smartNest',
-        'trapezoid',
-      ];
-
-      return [{ buttons: contentOrder.map((key) => content[key]) }];
-    }
-
-    return [
-      {
-        buttons: [
-          content.replace_with,
-          content.offset,
-          content.array,
-          content.imageEditPanel,
-          content.crop,
-          content.sharpen,
-          content.invert,
-          content.grading,
-        ],
-        title: 'ACTIONS',
-      },
-      {
-        buttons: [content.trace, content.potrace],
-        title: 'CONVERSIONS',
-      },
-      {
-        buttons: [content.stampMakerPanel, content['bg-removal'], content.trapezoid],
-        title: 'OPTIMIZATIONS',
-      },
-    ];
-  };
-
-  const renderTextActions = (): Section[] => {
-    const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
-    const tooltipIfDisabled = lang.disabled_by_variable_text;
-
-    return [
-      {
-        buttons: [
-          renderOffsetButton(),
-          renderArrayButton(),
-          renderButtons(
-            'weld',
-            lang.weld_text,
-            () => convertTextToPath(elem, { isToSelect: true, weldingTexts: true }),
-            <ActionPanelIcons.WeldText />,
-            <ActionPanelIcons.WeldText />,
-            { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
+  const sections = useMemo(
+    () =>
+      layoutConfig?.map(({ actionConfigs, title }) => ({
+        buttons: actionConfigs.map((config) =>
+          renderButton(
+            resolveAction(
+              config,
+              { i18n, tActionsPanel: i18n.beambox.right_panel.object_panel.actions_panel },
+              { hasChildVariableText, isFilled, isShading, isVariableText },
+            ),
           ),
-        ],
-        title: 'ACTIONS',
-      },
-      {
-        buttons: [
-          renderConvertToPathButton({ isDisabled: isVariableText, isFullLine: false, tooltipIfDisabled }),
-          renderConvertToImageButton({ isDisabled: isVariableText, isFullLine: false, tooltipIfDisabled }),
-        ],
-        title: 'CONVERSIONS',
-      },
-      {
-        buttons: [
-          renderSmartNestButton(),
-          renderAutoFitButton({ isFullLine: false }),
-          renderTabButton({ isFullLine: false }),
-        ],
-        title: 'OPTIMIZATIONS',
-      },
-    ];
-  };
-
-  const renderTextOnPathActions = (): Section[] => [
-    {
-      buttons: [
-        renderButtons(
-          'edit_path',
-          lang.edit_path,
-          () => textPathEdit.editPath(elem as SVGGElement),
-          <ActionPanelIcons.EditPath />,
-          <ActionPanelIcons.EditPathMobile />,
-          { isFullLine: true },
         ),
-        renderButtons(
-          'detach_path',
-          lang.detach_path,
-          () => {
-            const { path, text } = textPathEdit.detachText(elem as SVGGElement);
+        title,
+      })),
+    [layoutConfig, renderButton, i18n, hasChildVariableText, isFilled, isShading, isVariableText],
+  );
 
-            textEdit.renderText(text);
-            selectionManager.multiSelect([text, path]);
-          },
-          <ActionPanelIcons.DecomposeTextpath />,
-          <ActionPanelIcons.DecomposeTextpath />,
-          { isFullLine: true, mobileLabel: lang.detach_path_short },
-        ),
-        renderArrayButton({ isFullLine: true }),
-      ],
-      title: 'ACTIONS',
-    },
-    {
-      buttons: [renderConvertToPathButton({ isFullLine: false }), renderConvertToImageButton({ isFullLine: false })],
-      title: 'CONVERSIONS',
-    },
-    {
-      buttons: [renderSmartNestButton(), renderAutoFitButton()],
-      title: 'OPTIMIZATIONS',
-    },
-  ];
+  if (isTablet) {
+    if (!sections) return null;
 
-  const renderPathActions = (): Section[] => [
-    {
-      buttons: [
-        renderOffsetButton(),
-        renderArrayButton(),
-        renderButtons(
-          'edit_path',
-          lang.edit_path,
-          () => svgCanvas.pathActions.toEditMode(elem),
-          <ActionPanelIcons.EditPath />,
-          <ActionPanelIcons.EditPathMobile />,
-        ),
-        renderButtons(
-          'decompose_path',
-          lang.decompose_path,
-          () => svgCanvas.decomposePath(),
-          <ActionPanelIcons.Decompose />,
-          <ActionPanelIcons.DecomposeMobile />,
-        ),
-      ],
-      title: 'ACTIONS',
-    },
-    {
-      buttons: [renderConvertToImageButton()],
-      title: 'CONVERSIONS',
-    },
-    {
-      buttons: [
-        renderButtons(
-          'simplify',
-          lang.simplify,
-          () => svgCanvas.simplifyPath(),
-          <ActionPanelIcons.Simplify />,
-          <ActionPanelIcons.SimplifyMobile />,
-          { isFullLine: true },
-        ),
-        renderSmartNestButton(),
-        renderAutoFitButton({ isFullLine: false }),
-        renderTabButton({ isFullLine: false }),
-      ],
-      title: 'OPTIMIZATIONS',
-    },
-  ];
-
-  const renderCommonSvgActions = (): Section[] => [
-    {
-      buttons: [renderOffsetButton(), renderArrayButton()],
-      title: 'ACTIONS',
-    },
-    {
-      buttons: [renderConvertToPathButton({ isFullLine: false }), renderConvertToImageButton({ isFullLine: false })],
-      title: 'CONVERSIONS',
-    },
-    {
-      buttons: [
-        renderSmartNestButton(),
-        renderAutoFitButton({ isFullLine: false }),
-        renderTabButton({ isFullLine: false }),
-      ],
-      title: 'OPTIMIZATIONS',
-    },
-  ];
-
-  const renderUseActions = (): Section[] => {
-    const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
-    const tooltipIfDisabled = lang.disabled_by_variable_text;
-
-    return [
-      {
-        buttons: [
-          renderOffsetButton(),
-          renderArrayButton(),
-          renderButtons(
-            'disassemble_use',
-            lang.disassemble_use,
-            () => disassembleUse(),
-            <ActionPanelIcons.Disassemble />,
-            <ActionPanelIcons.DisassembleMobile />,
-            { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
-          ),
-        ],
-        title: 'ACTIONS',
-      },
-      {
-        buttons: [renderConvertToImageButton({ isDisabled: isVariableText, tooltipIfDisabled })],
-        title: 'CONVERSIONS',
-      },
-      {
-        buttons: [
-          renderSmartNestButton(),
-          renderAutoFitButton({ isFullLine: false }),
-          renderTabButton({ isFullLine: false }),
-        ],
-        title: 'OPTIMIZATIONS',
-      },
-    ];
-  };
-
-  const renderGroupActions = (): Section[] => [
-    {
-      buttons: [renderOffsetButton(), renderArrayButton()],
-      title: 'ACTIONS',
-    },
-    {
-      buttons: [renderConvertToImageButton()],
-      title: 'CONVERSIONS',
-    },
-    {
-      buttons: [renderSmartNestButton(), renderAutoFitButton()],
-      title: 'OPTIMIZATIONS',
-    },
-  ];
-
-  const renderMultiSelectActions = (): Section[] => {
-    const children = Array.from(elem.childNodes) as SVGElement[];
-    const onlyPaths = children.every((child) => child.nodeName === 'path');
-    const onlyTexts = children.every((child) => child.nodeName === 'text');
-    const isAllConvertible = children.every(
-      (child) =>
-        child.nodeName === 'text' ||
-        CanvasElements.basicPaths.includes(child.nodeName) ||
-        (child.nodeName === 'g' && child.getAttribute('data-textpath-g')),
-    );
-    const actionButtons: React.JSX.Element[] = [renderOffsetButton(), renderArrayButton()];
-    const conversionButtons: React.JSX.Element[] = [];
-    const optimizationButtons: React.JSX.Element[] = [];
-
-    const texts = children.filter((child) => child.nodeName === 'text');
-    const textCount = texts.length;
-    const pathLikeCount = children.filter((child) => CanvasElements.basicPaths.includes(child.nodeName)).length;
-
-    if (textCount >= 1 && pathLikeCount >= 1) {
-      const isVariableText = texts.some((text) => getVariableTextType(text) !== VariableTextType.NONE);
-
-      actionButtons.push(
-        renderButtons(
-          'create_textpath',
-          lang.create_textpath,
-          () => {
-            // Note: ungroupTempGroup returns elements in reverse order
-            const elements = selectionManager.ungroupTempGroup(elem);
-            const textElements = elements.filter((el) => el.nodeName === 'text').reverse();
-            const pathLikeElements = elements.filter((el) => CanvasElements.basicPaths.includes(el.nodeName)).reverse();
-            const pairCount = Math.min(textElements.length, pathLikeElements.length);
-            const batchCommand = new BatchCommand('Create Text on Path');
-            const resultGroups: SVGElement[] = [];
-
-            for (let i = 0; i < pairCount; i++) {
-              let path = pathLikeElements[i];
-
-              if (path.nodeName !== 'path') {
-                path = convertSvgToPath(path, { parentCmd: batchCommand }).path!;
-              }
-
-              textPathEdit.attachTextToPath(textElements[i], path, { parentCmd: batchCommand });
-              updateElementColor(textElements[i]);
-              resultGroups.push(selectionManager.getSelectedElements()[0]);
-            }
-
-            if (!batchCommand.isEmpty()) {
-              undoManager.addCommandToHistory(batchCommand);
-            }
-
-            if (resultGroups.length > 0) {
-              selectionManager.multiSelect(resultGroups);
-            }
-          },
-          <ActionPanelIcons.CreateTextpath />,
-          <ActionPanelIcons.CreateTextpath />,
-          {
-            isDisabled: isVariableText,
-            isFullLine: true,
-            mobileLabel: lang.create_textpath_short,
-            tooltipIfDisabled: lang.disabled_by_variable_text,
-          },
-        ),
-      );
-    }
-
-    if (isAllConvertible) {
-      const hasVariableText = children.some((child) => getVariableTextType(child) !== VariableTextType.NONE);
-
-      conversionButtons.push(
-        renderConvertToPathButton({
-          isDisabled: hasVariableText,
-          isFullLine: false,
-          tooltipIfDisabled: lang.disabled_by_variable_text,
-        }),
-        renderConvertToImageButton({ isFullLine: false }),
-      );
-    } else {
-      conversionButtons.push(renderConvertToImageButton());
-    }
-
-    if (onlyTexts) {
-      const hasVariableText = children.some((child) => getVariableTextType(child) !== VariableTextType.NONE);
-
-      actionButtons.push(
-        renderButtons(
-          'weld',
-          lang.weld_text,
-          () => convertTempGroupToPath({ element: elem, isToSelect: true, weldingTexts: true }),
-          <ActionPanelIcons.WeldText />,
-          <ActionPanelIcons.WeldText />,
-          {
-            isDisabled: hasVariableText,
-            isFullLine: true,
-            tooltipIfDisabled: lang.disabled_by_variable_text,
-          },
-        ),
-      );
-    }
-
-    if (onlyPaths) {
-      optimizationButtons.push(
-        renderButtons(
-          'simplify',
-          lang.simplify,
-          () => svgCanvas.simplifyPath(),
-          <ActionPanelIcons.Simplify />,
-          <ActionPanelIcons.SimplifyMobile />,
-          { isFullLine: true },
-        ),
-      );
-    }
-
-    return [
-      { buttons: actionButtons, title: 'ACTIONS' },
-      { buttons: conversionButtons, title: 'CONVERSIONS' },
-      { buttons: [...optimizationButtons, renderSmartNestButton(), renderAutoFitButton()], title: 'OPTIMIZATIONS' },
-    ];
-  };
-
-  const sections = match(elem?.tagName.toLowerCase())
-    .with(P.union('image', 'img'), renderImageActions)
-    .with('text', renderTextActions)
-    .with('path', renderPathActions)
-    .with(P.union('rect', 'ellipse', 'polygon', 'line'), renderCommonSvgActions)
-    .with('use', renderUseActions)
-    .with('g', () =>
-      match(elem)
-        .when((e) => e.getAttribute('data-tempgroup') === 'true', renderMultiSelectActions)
-        .when((e) => e.getAttribute('data-textpath-g'), renderTextOnPathActions)
-        .otherwise(renderGroupActions),
-    )
-    .otherwise(() => null);
-
-  // Watch for changes in the `fill` attribute for path and `data-shading` attribute for image
-  useEffect(() => {
-    const observer = new MutationObserver(() => {
-      forceUpdate();
-    });
-
-    if (elem) observer.observe(elem, { attributeFilter: ['fill', 'data-shading', 'data-vt-type'] });
-
-    return () => observer.disconnect(); // Cleanup
-  }, [elem, forceUpdate]);
-
-  if (isMobile()) {
-    const content = sections?.flatMap((s) => s.buttons) ?? null;
+    const content = sections
+      .filter((s) => s.buttons.length > 0)
+      .flatMap((s, index, arr) => [
+        ...(s.title
+          ? [
+              <div className={styles['section-title']} key={index}>
+                {s.title}
+              </div>,
+            ]
+          : []),
+        ...s.buttons,
+        ...(index === arr.length - 1 ? [] : [<Divider key={`divider-${index}`} marginBottom={4} />]),
+      ]);
 
     return (
-      <div className={styles.container}>
-        <ObjectPanelItem.Divider />
-        {content}
-      </div>
+      <>
+        <ObjectPanelItem
+          icon={<ObjectPanelIcons.More />}
+          id="action"
+          ref={ref}
+          renderContent={() => <ListButtonGroup>{content}</ListButtonGroup>}
+          title={i18n.beambox.right_panel.object_panel.actions_panel.more}
+        />
+        {activeItem?.renderContent &&
+          activeKey === `action-${activeItem.id}` &&
+          activeItem.renderContent({
+            objectPanelKey: `action-${activeItem.id}`,
+            onClose: () => setActiveItem(null),
+            reference: ref.current,
+          })}
+      </>
     );
   }
 

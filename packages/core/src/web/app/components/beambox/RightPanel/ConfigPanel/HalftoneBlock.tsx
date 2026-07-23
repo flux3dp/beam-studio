@@ -11,13 +11,12 @@ import Select from '@core/app/widgets/AntdSelect';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-
-import ObjectPanelItem from '../ObjectPanelItem';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './HalftoneBlock.module.scss';
 import initState from './initState';
 
-const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const HalftoneBlock = ({ noApply }: CommonProps): React.JSX.Element => {
   const lang = useI18n().beambox.right_panel.laser_panel;
 
   const { change, halftone } = useConfigPanelStore();
@@ -31,7 +30,7 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
     change({ halftone: newValue });
 
-    if (type !== 'modal') {
+    if (!noApply) {
       const batchCmd = new history.BatchCommand('Change Halftone');
 
       useLayerStore
@@ -47,15 +46,7 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     { label: 'AM', value: 2 },
   ];
 
-  return type === 'panel-item' ? (
-    <ObjectPanelItem.Select
-      id="halftone-type"
-      label={lang.halftone}
-      onChange={handleChange}
-      options={options}
-      selected={hasMultiValue ? { label: '-', value: 0 } : options[value - 1]}
-    />
-  ) : (
+  return (
     <div className={classNames(styles.panel)}>
       <span className={styles.title}>
         {lang.halftone}

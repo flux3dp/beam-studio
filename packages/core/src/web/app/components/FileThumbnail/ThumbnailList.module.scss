@@ -1,0 +1,15 @@
+@use '@core/styles/mixins' as mixins;
+
+.grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  align-content: start;
+  height: 80vh;
+  width: 480px;
+  overflow-y: auto;
+
+  @include mixins.is-mobile {
+    width: calc(100vw - 64px);
+  }
+}

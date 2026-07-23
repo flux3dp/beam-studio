@@ -1,0 +1,37 @@
+@use '../../_mixins.scss' as rightPanelMixins;
+@use '@core/styles/selectors' as selectors;
+
+.divider {
+  margin-top: 8px;
+  border-top: 1px solid #e0e0e0;
+  padding-top: 8px;
+}
+
+.option-block {
+  @include rightPanelMixins.option-block();
+
+  .select {
+    flex: 1;
+    margin-right: 4px;
+    padding: 5px 0 1px 0;
+
+    :global(.ant-select-selector) {
+      border-width: 0 0 1px 0 !important;
+    }
+  }
+
+  .input {
+    :global(.ant-input-number-input) {
+      padding: 1px 4px;
+    }
+  }
+}
+
+@include selectors.tablet-or-mobile-layout {
+  .icon {
+    margin-left: 4px;
+  }
+  .select {
+    flex: 1;
+  }
+}

@@ -7,7 +7,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 

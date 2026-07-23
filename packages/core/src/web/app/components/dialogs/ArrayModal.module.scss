@@ -1,47 +1,45 @@
 @use '@core/styles/mixins' as mixins;
-
+@use '@core/styles/selectors' as selectors;
 .modal {
   .close-icon {
     font-size: 22px;
   }
+}
 
-  .subtitle {
+.subtitle {
+  font-weight: 600;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+
+  &:not(:last-child) {
+    margin-bottom: 16px;
+  }
+
+  .input {
+    width: 100%;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  margin: 12px 0;
+
+  .section-title {
+    font-size: 14px;
     font-weight: 600;
+    color: #333;
+    margin-right: 12px;
+    white-space: nowrap;
   }
 
-  .field {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-
-    .label {
-      min-width: 60px;
-    }
-
-    .input {
-      width: 120px;
-    }
-  }
-
-  .section-header {
-    display: flex;
-    align-items: center;
-    margin: 12px 0;
-
-    .section-title {
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-      margin-right: 12px;
-      white-space: nowrap;
-    }
-
-    .line {
-      flex: 1;
-      height: 1px;
-      background-color: #e0e0e0;
-    }
+  .line {
+    flex: 1;
+    height: 1px;
+    background-color: #e0e0e0;
   }
 }
 

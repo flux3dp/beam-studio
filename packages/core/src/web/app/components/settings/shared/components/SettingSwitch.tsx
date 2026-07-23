@@ -7,6 +7,7 @@ import SettingFormItem from './SettingFormItem';
 interface SettingSwitchProps {
   checked: boolean;
   disabled?: boolean;
+  icon?: React.ReactNode;
   id: string;
   label: string;
   onChange: (checked: boolean) => void;
@@ -17,13 +18,14 @@ interface SettingSwitchProps {
 const SettingSwitch = ({
   checked,
   disabled = false,
+  icon,
   id,
   label,
   onChange,
   tooltip,
   url,
 }: SettingSwitchProps): React.JSX.Element => (
-  <SettingFormItem id={`${id}-label`} label={label} tooltip={tooltip} url={url}>
+  <SettingFormItem icon={icon} id={`${id}-label`} label={label} tooltip={tooltip} url={url}>
     <Switch checked={checked} disabled={disabled} id={id} onChange={onChange} />
   </SettingFormItem>
 );

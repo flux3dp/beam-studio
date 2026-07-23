@@ -10,12 +10,13 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import styles from './Block.module.scss';
 import initState from './initState';
 import NumberBlock from './NumberBlock';
 
-const WobbleBlock = (): React.JSX.Element => {
+const WobbleBlock = (props: CommonProps): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, wobbleDiameter, wobbleStep } = useConfigPanelStore();
@@ -27,6 +28,8 @@ const WobbleBlock = (): React.JSX.Element => {
     const diameter = Math.abs(wobbleDiameter.value) * newSign;
 
     change({ wobbleDiameter: diameter, wobbleStep: step });
+
+    if (props.noApply) return;
 
     const batchCmd = new history.BatchCommand('Change wobble toggle');
 
@@ -61,6 +64,7 @@ const WobbleBlock = (): React.JSX.Element => {
             step={0.01}
             title={t.wobble_step}
             unit="mm"
+            {...props}
           />
           <NumberBlock
             configKey="wobbleDiameter"
@@ -72,6 +76,7 @@ const WobbleBlock = (): React.JSX.Element => {
             step={0.1}
             title={t.wobble_diameter}
             unit="mm"
+            {...props}
           />
         </>
       )}

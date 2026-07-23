@@ -2,7 +2,7 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import useI18n from '@core/helpers/useI18n';
 
 import type { NestedStateKey, PuzzleState, PuzzleStateUpdate, PuzzleTypeConfig } from '../types';

@@ -1,8 +1,14 @@
-import { useCallback, useRef, useState } from 'react';
+import type { RefObject } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import type { BatchCommand } from '@core/app/svgedit/history/history';
 import { InsertElementCommand } from '@core/app/svgedit/history/history';
 import selectionManager from '@core/app/svgedit/selection';
+import type { DimensionValues } from '@core/interfaces/ObjectPanel';
+
+import eventEmitterFactory from '../eventEmitterFactory';
 
 // In-memory storage for preview state per modal (persists across open/close, resets on page reload)
 const previewStateStore: Record<string, boolean> = {};
@@ -13,6 +19,7 @@ type SelectionMode = 'all' | 'inserted' | 'none';
 interface UsePreviewModalOptions {
   /** Function that generates the preview and returns a batch command */
   generatePreview: () => Promise<BatchCommand | null>;
+  isClosing: RefObject<boolean>;
   /** Unique key to persist preview state across modal open/close (e.g., 'array', 'offset') */
   key: string;
   /**
@@ -49,17 +56,30 @@ interface UsePreviewModalReturn {
  */
 const usePreviewModal = ({
   generatePreview,
+  isClosing,
   key,
   selectionMode = 'none',
 }: UsePreviewModalOptions): UsePreviewModalReturn => {
   const batchCmd = useRef<BatchCommand | null>(null);
   const selectionRef = useRef<SVGElement[]>([...selectionManager.getSelectedElements(true)]);
+  const dimensionValuesRef = useRef(ObjectPanelController.getDimensionValues());
+  const elemChanged = useRef(false);
   const processing = useRef(false);
   const queueNext = useRef(false);
+  const committedRef = useRef(false); // Tracks if commitPreview has been called to prevent duplicate commits
   const focusedInputRef = useRef<HTMLElement | null>(null);
 
   // Get initial value from store, default to true if not set
   const [previewEnabled, setPreviewEnabledState] = useState(() => previewStateStore[key] ?? true);
+
+  // Keep the latest generator/state in refs so an in-flight preview regenerates with the
+  // newest data when it drains the queue. Without this, the queued run would re-run the
+  // stale generator captured when it started.
+  const generatePreviewRef = useRef(generatePreview);
+  const previewEnabledRef = useRef(previewEnabled);
+
+  generatePreviewRef.current = generatePreview;
+  previewEnabledRef.current = previewEnabled;
 
   // Sync state changes to the store
   const setPreviewEnabled = useCallback(
@@ -76,13 +96,36 @@ const usePreviewModal = ({
     }
   }, []);
 
+  const undoPreview = useCallback(() => {
+    if (batchCmd.current) {
+      batchCmd.current.unapply();
+      batchCmd.current = null;
+    }
+  }, []);
+
+  const handleSelectedElementChange = useCallback(async () => {
+    undoPreview();
+    selectionRef.current = [...selectionManager.getSelectedElements(true)];
+    dimensionValuesRef.current = ObjectPanelController.getDimensionValues();
+    elemChanged.current = false;
+    queueNext.current = false;
+  }, [undoPreview]);
+
+  const handleDimensionValuesChange = useCallback(async () => {
+    undoPreview();
+    dimensionValuesRef.current = ObjectPanelController.getDimensionValues();
+    elemChanged.current = false;
+    queueNext.current = false;
+  }, [undoPreview]);
+
   const handlePreview = useCallback(async () => {
+    if (committedRef.current || isClosing.current) return;
+
+    if (selectionRef.current.length === 0) return;
+
     // If preview is disabled, just unapply any existing preview
-    if (!previewEnabled) {
-      if (batchCmd.current) {
-        batchCmd.current.unapply();
-        batchCmd.current = null;
-      }
+    if (!previewEnabledRef.current) {
+      undoPreview();
 
       return;
     }
@@ -105,21 +148,25 @@ const usePreviewModal = ({
     processing.current = true;
 
     // Unapply previous preview if exists
-    if (batchCmd.current) {
-      batchCmd.current.unapply();
-      batchCmd.current = null;
-    }
+    undoPreview();
 
     // Restore original selection before generating new preview
     restoreSelection();
 
-    // Generate the preview
-    batchCmd.current = await generatePreview();
+    // Generate the preview using the latest generator (captures the newest data)
+    batchCmd.current = await generatePreviewRef.current();
 
     // Restore original selection after preview
     restoreSelection();
 
     processing.current = false;
+
+    if (elemChanged.current) {
+      handleSelectedElementChange();
+      handlePreview();
+
+      return;
+    }
 
     // Process queued update if one occurred during generation
     if (queueNext.current) {
@@ -141,18 +188,53 @@ const usePreviewModal = ({
         });
       });
     }
-  }, [previewEnabled, generatePreview, restoreSelection]);
+  }, [restoreSelection, undoPreview, handleSelectedElementChange]);
 
   const cancelPreview = useCallback(() => {
-    if (batchCmd.current) {
-      batchCmd.current.unapply();
-      batchCmd.current = null;
-    }
+    undoPreview();
 
     if (selectionRef.current.length > 0) {
       selectionManager.multiSelect(selectionRef.current);
     }
-  }, []);
+  }, [undoPreview]);
+
+  useEffect(() => {
+    const unsubscribe = useSelectedElementStore.subscribe(
+      (state) => state.ungroupedElems,
+      (newSelectedElems) => {
+        const isChanged =
+          selectionRef.current.length !== newSelectedElems.length ||
+          !selectionRef.current.every((elem) => newSelectedElems.includes(elem));
+
+        elemChanged.current = isChanged;
+
+        if (!processing.current) {
+          handleSelectedElementChange();
+          handlePreview();
+        }
+      },
+    );
+    const objectPanelEventEmitter = eventEmitterFactory.createEventEmitter('object-panel');
+    const onUpdateDimensionValues = (newValues: DimensionValues) => {
+      const isChanged = Object.keys(newValues).some(
+        (key) => dimensionValuesRef.current[key as keyof DimensionValues] !== newValues[key as keyof DimensionValues],
+      );
+
+      elemChanged.current = isChanged;
+
+      if (!processing.current) {
+        handleDimensionValuesChange();
+        handlePreview();
+      }
+    };
+
+    objectPanelEventEmitter.on('UPDATE_DIMENSION_VALUES', onUpdateDimensionValues);
+
+    return () => {
+      objectPanelEventEmitter.removeListener('UPDATE_DIMENSION_VALUES', onUpdateDimensionValues);
+      unsubscribe();
+    };
+  }, [handleSelectedElementChange, handleDimensionValuesChange, handlePreview]);
 
   /**
    * Commit the preview to history. If preview is disabled, generates the result first.
@@ -181,6 +263,8 @@ const usePreviewModal = ({
       // but generate fresh as fallback
       cmd = await generatePreview();
     }
+
+    committedRef.current = true; // Mark as committed to prevent duplicate commits
 
     // Select elements based on selectionMode
     if (cmd && selectionMode !== 'none') {

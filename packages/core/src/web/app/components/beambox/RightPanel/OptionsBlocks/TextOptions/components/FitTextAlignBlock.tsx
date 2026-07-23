@@ -3,16 +3,18 @@ import { memo, useEffect, useMemo, useState } from 'react';
 import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 
+import ControlBlock from '@core/app/components/beambox/RightPanel/common/ControlBlock';
+import FlexButton from '@core/app/components/beambox/RightPanel/common/FlexButton';
+import Row from '@core/app/components/beambox/RightPanel/common/Row';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import type { FitTextAlign } from '@core/app/svgedit/text/textedit';
 import { getFitTextAlign, setFitTextAlign } from '@core/app/svgedit/text/textedit';
+import { ControlType } from '@core/helpers/element/editable/base';
 import useI18n from '@core/helpers/useI18n';
 
-import ObjectPanelItem from '../../../ObjectPanelItem';
-
-import styles from './FitTextAlignBlock.module.scss';
+import styles from './AlignBlock.module.scss';
 
 interface Props {
   textElements: SVGTextElement[];
@@ -42,7 +44,7 @@ const FitTextAlignBlock = ({ textElements }: Props): React.ReactNode => {
     ],
     [t],
   );
-  const isMobile = useIsMobile();
+  const isTablet = useIsTabletOrMobile();
   const [currentAlign, setCurrentAlign] = useState(getValue(textElements));
   const handleClick = (align: FitTextAlign) => {
     textElements.forEach((textElement) => {
@@ -55,31 +57,34 @@ const FitTextAlignBlock = ({ textElements }: Props): React.ReactNode => {
     setCurrentAlign(getValue(textElements));
   }, [textElements]);
 
-  return (
+  return isTablet ? (
+    <ControlBlock label={t.text_align} type={ControlType.FIT_TEXT_ALIGN}>
+      <Row>
+        {alignOptions.map(({ Icon, title, value }) => (
+          <FlexButton
+            active={currentAlign === value}
+            icon={<Icon />}
+            key={value}
+            onClick={() => handleClick(value)}
+            title={title}
+          />
+        ))}
+      </Row>
+    </ControlBlock>
+  ) : (
     <ConfigProvider theme={iconButtonTheme}>
-      <div className={styles.container}>
-        {alignOptions.map(({ Icon, title, value }) =>
-          isMobile ? (
-            <ObjectPanelItem.Item
-              content={<Icon />}
-              id={`fit-text-align-${value}`}
-              isActive={currentAlign === value}
-              key={value}
-              label={title}
-              onClick={() => handleClick(value)}
-            />
-          ) : (
-            <Button
-              className={classNames(styles.btn, { [styles.active]: currentAlign === value })}
-              icon={<Icon />}
-              key={value}
-              onClick={() => handleClick(value)}
-              title={title}
-              type="text"
-            />
-          ),
-        )}
-      </div>
+      <ControlBlock className={styles.container} type={ControlType.FIT_TEXT_ALIGN}>
+        {alignOptions.map(({ Icon, title, value }) => (
+          <Button
+            className={classNames(styles.btn, { [styles.active]: currentAlign === value })}
+            icon={<Icon />}
+            key={value}
+            onClick={() => handleClick(value)}
+            title={title}
+            type="text"
+          />
+        ))}
+      </ControlBlock>
     </ConfigProvider>
   );
 };

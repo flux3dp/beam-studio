@@ -1,18 +1,11 @@
 import React, { memo } from 'react';
 
 import useI18n from '@core/helpers/useI18n';
+import type { CommonProps } from '@core/interfaces/ConfigOption';
 
 import NumberBlock from './NumberBlock';
 
-const FrequencyBlock = ({
-  max,
-  min,
-  type = 'default',
-}: {
-  max: number;
-  min: number;
-  type?: 'default' | 'modal' | 'panel-item';
-}): React.ReactNode => {
+const FrequencyBlock = ({ max, min, ...props }: CommonProps & { max: number; min: number }): React.ReactNode => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
 
@@ -24,8 +17,8 @@ const FrequencyBlock = ({
       min={min}
       precision={0}
       title={t.frequency}
-      type={type}
       unit="kHz"
+      {...props}
     />
   );
 };

@@ -8,7 +8,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { getWarningSpeed } from '@core/app/constants/curveEngraving';
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, skippedModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -40,7 +40,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     workarea === 'fbm2' &&
     hasModuleLayer(
       workareaObj.supportedModules!.filter(
-        (module) => ![LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT].includes(module),
+        (module) => ![LayerModule.LASER_UNIVERSAL, ...skippedModules].includes(module),
       ),
       { checkRepeat: true, checkVisible: true },
     )

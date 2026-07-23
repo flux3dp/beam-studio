@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Button } from 'antd';
 import classNames from 'classnames';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import useI18n from '@core/helpers/useI18n';

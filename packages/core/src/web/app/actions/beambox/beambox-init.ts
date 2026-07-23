@@ -9,7 +9,8 @@ import { registerConnectionIssueGuide } from '@core/app/components/dialogs/Conne
 import AlertConstants from '@core/app/constants/alert-constants';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { isMobile } from '@core/app/stores/screenStore';
+import { templateModes, withinInteractionModes } from '@core/app/stores/interactionModeStore';
+import { isTabletOrMobile } from '@core/app/stores/layoutStore';
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { initCurText } from '@core/app/svgedit/text/textedit';
 import alertHelper from '@core/helpers/alert-helper';
@@ -101,7 +102,7 @@ class BeamboxInit {
 
     await showFirstCalibrationDialog(isNewUser);
 
-    if (hasMachineConnection && !isMobile()) {
+    if (hasMachineConnection && !isTabletOrMobile() && !withinInteractionModes(templateModes)) {
       await this.showTutorial(isNewUser);
     }
 

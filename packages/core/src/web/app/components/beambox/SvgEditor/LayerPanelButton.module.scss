@@ -1,0 +1,21 @@
+.popover {
+  .header {
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.floating-panel [class*='scroll-content'] {
+  // scrolling is handled by layerlist_container
+  overflow-y: auto;
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.floating-panel {
+  :global(.ant-drawer-body) {
+    padding: 0;
+  }
+}

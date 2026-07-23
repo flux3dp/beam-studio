@@ -1,0 +1,11 @@
+.button {
+  flex: 1 0 80px;
+
+  :global(.ant-btn-icon) {
+    font-size: 24px;
+  }
+
+  &.active {
+    background: #e6f4ff;
+  }
+}

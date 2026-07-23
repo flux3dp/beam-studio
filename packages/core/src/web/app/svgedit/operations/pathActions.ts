@@ -6,7 +6,7 @@ import RightPanelController from '@core/app/components/beambox/RightPanel/contex
 import { type CanvasMouseMode } from '@core/app/stores/canvas/canvasStore';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { isMobile } from '@core/app/stores/screenStore';
+import { isMobile } from '@core/app/stores/layoutStore';
 import history from '@core/app/svgedit/history/history';
 import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
 import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';

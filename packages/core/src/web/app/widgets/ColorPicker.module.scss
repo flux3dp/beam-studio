@@ -1,3 +1,6 @@
+@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
+
 @mixin clear-box() {
   overflow: hidden;
 
@@ -59,8 +62,7 @@
   }
 
   &.with-clear {
-    :global(.ant-color-picker-panel)
-      :global(.ant-color-picker-slider-container) {
+    :global(.ant-color-picker-panel) :global(.ant-color-picker-slider-container) {
       margin-left: 40px;
       height: 30px;
       :global(.ant-color-picker-color-block) {
@@ -86,100 +88,117 @@
 .preset {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  margin-bottom: 6px;
+  @include selectors.desktop-layout {
+    gap: 6px;
+    margin-bottom: 6px;
 
-  :global(.ant-color-picker-color-block) {
-    width: 18px;
-    height: 18px;
-    background-image: none;
-    border-radius: 4px;
-    box-shadow: inset 0 0 1px 0 rgba(0, 0, 0, 0.25);
-    border: 1px solid rgba(0, 0, 0, 0.06);
-  }
-
-  // copied from antd for custom preset and clear row
-  .preset-block {
-    position: relative;
-    width: 18px;
-    height: 18px;
-    border-radius: 4px;
-    box-shadow: inset 0 0 1px 0 rgba(0, 0, 0, 0.25);
-    cursor: pointer;
-
-    &::before {
-      content: '';
-      pointer-events: none;
-      width: 22px;
-      height: 22px;
-      position: absolute;
-      top: -2px;
-      inset-inline-start: -2px;
-      border-radius: 6px;
-      border: 1px solid transparent;
-      transition: border-color 0.2s cubic-bezier(0.71, -0.46, 0.88, 0.6);
+    :global(.ant-color-picker-color-block) {
+      width: 18px;
+      height: 18px;
+      background-image: none;
+      border-radius: 4px;
+      box-shadow: inset 0 0 1px 0 rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(0, 0, 0, 0.06);
     }
 
-    &:hover {
+    // copied from antd for custom preset and clear row
+    .preset-block {
+      position: relative;
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      box-shadow: inset 0 0 1px 0 rgba(0, 0, 0, 0.25);
+      cursor: pointer;
+
       &::before {
-        border-color: rgba(0, 0, 0, 0.15);
-      }
-    }
-
-    &.color {
-      &::after {
-        box-sizing: border-box;
-        position: absolute;
-        top: 50%;
-        inset-inline-start: 21.5%;
-        display: table;
-        width: 6.923076923076923px;
-        height: 11.076923076923077px;
-        border: 2px solid #fff;
-        border-top: 0;
-        border-inline-start: 0;
-        transform: rotate(45deg) scale(0) translate(-50%, -50%);
-        opacity: 0;
         content: '';
-        transition:
-          all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),
-          opacity 0.1s;
+        pointer-events: none;
+        width: 22px;
+        height: 22px;
+        position: absolute;
+        top: -2px;
+        inset-inline-start: -2px;
+        border-radius: 6px;
+        border: 1px solid transparent;
+        transition: border-color 0.2s cubic-bezier(0.71, -0.46, 0.88, 0.6);
       }
 
-      &.checked {
-        &::after {
-          opacity: 1;
-          border-color: #fff;
-          transform: rotate(45deg) scale(1) translate(-50%, -50%);
-          transition: transform 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+      &:hover {
+        &::before {
+          border-color: rgba(0, 0, 0, 0.15);
         }
       }
 
-      .inner {
-        width: 100%;
-        height: 100%;
-        border: 1px solid rgba(0, 0, 0, 0.06);
-        border-radius: inherit;
+      &.color {
+        &::after {
+          box-sizing: border-box;
+          position: absolute;
+          top: 50%;
+          inset-inline-start: 21.5%;
+          display: table;
+          width: 6.923076923076923px;
+          height: 11.076923076923077px;
+          border: 2px solid #fff;
+          border-top: 0;
+          border-inline-start: 0;
+          transform: rotate(45deg) scale(0) translate(-50%, -50%);
+          opacity: 0;
+          content: '';
+          transition:
+            all 0.1s cubic-bezier(0.71, -0.46, 0.88, 0.6),
+            opacity 0.1s;
+        }
+
+        &.checked {
+          &::after {
+            opacity: 1;
+            border-color: #fff;
+            transform: rotate(45deg) scale(1) translate(-50%, -50%);
+            transition: transform 0.2s cubic-bezier(0.12, 0.4, 0.29, 1.46) 0.1s;
+          }
+        }
+
+        .inner {
+          width: 100%;
+          height: 100%;
+          border: 1px solid rgba(0, 0, 0, 0.06);
+          border-radius: inherit;
+        }
+      }
+
+      &.clear {
+        @include clear-box();
+      }
+
+      &.printing {
+        width: 24px;
+        height: 24px;
+
+        &::before {
+          width: 28px;
+          height: 28px;
+        }
+
+        &::after {
+          inset-inline-start: 28%;
+          width: 30%;
+          height: 48%;
+        }
       }
     }
+  }
 
-    &.clear {
-      @include clear-box();
-    }
+  @include mixins.is-tablet {
+    width: 372px; // = clear + objectsColorPresets = 10 items = 30*10 + 8*9
+  }
 
-    &.printing {
-      width: 24px;
-      height: 24px;
+  @include selectors.tablet-or-mobile-layout {
+    gap: 8px;
+    margin-bottom: 12px;
 
-      &::before {
-        width: 28px;
-        height: 28px;
-      }
-
-      &::after {
-        inset-inline-start: 28%;
-        width: 30%;
-        height: 48%;
+    .preset-block {
+      &:hover {
+        scale: 1.1;
       }
     }
   }
@@ -194,17 +213,6 @@
   .btn {
     &:not(:last-child) {
       margin-right: 8px;
-    }
-  }
-
-  .input {
-    width: 140px;
-    margin-right: auto;
-    .prefix {
-      color: #cecece;
-    }
-    input {
-      height: 28px;
     }
   }
 }
@@ -266,43 +274,26 @@
   }
 }
 
-.mobile-container {
-  position: absolute;
-  inset: 52px 0 auto !important;
-  padding: 0 10px;
-  background-color: #ffffff;
-  animation-duration: 0s;
-  :global(.ant-popover-inner) {
-    box-shadow: none;
-    padding: 0;
-  }
-  :global(.ant-color-picker-inner-content) {
-    width: 100%;
-  }
+// Full window mask for tablet/mobile when color picker is open (previewing mode)
+div:has(> div:global(.ant-popover):not(:global(.ant-popover-hidden)) .panel) {
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
 }
 
-.mask-container {
-  animation-duration: 0s;
-  :global(.ant-popover-inner) {
-    padding: 0;
+$color-block-size: 30px;
+.control-button {
+  width: $color-block-size !important;
+  height: $color-block-size;
+}
+
+.input {
+  flex: 1;
+  height: $color-block-size;
+  .prefix {
+    color: #cecece;
   }
-  .top-mask {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 40px;
-    width: 100vw;
-    background-color: rgba(0, 0, 0, 0.2);
-    &.white {
-      background-color: rgba(255, 255, 255, 0.6);
-    }
-  }
-  .bottom-mask {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    height: 60px;
-    width: 100vw;
-    background-color: rgba(255, 255, 255, 0.6);
+  input {
+    height: $color-block-size - 2px;
   }
 }

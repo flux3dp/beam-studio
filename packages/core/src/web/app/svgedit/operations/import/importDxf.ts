@@ -29,7 +29,10 @@ getSVGAsync((globalSVG) => {
 });
 
 // TODO: add unit test
-const importDxf = async (file: Blob, { silent = false }: { silent?: boolean } = {}): Promise<boolean> => {
+const importDxf = async (
+  file: Blob,
+  { silent = false, toCurrentLayer = false }: { silent?: boolean; toCurrentLayer?: boolean } = {},
+): Promise<boolean> => {
   const {
     alert: tAlert,
     beambox: { popup: t },
@@ -108,8 +111,7 @@ const importDxf = async (file: Blob, { silent = false }: { silent?: boolean } = 
   }
 
   progressCaller.openNonstopProgress({
-    // TODO: i18n
-    caption: 'Loading image, please wait...',
+    caption: t.loading_image,
     id: 'loading_image',
   });
 
@@ -137,14 +139,17 @@ const importDxf = async (file: Blob, { silent = false }: { silent?: boolean } = 
   for (let i = 0; i < layerNames.length; i += 1) {
     const layerName = layerNames[i];
     const layer = outputLayers[layerName];
-    const isLayerExist = layerManager.setCurrentLayer(layerName);
 
-    if (!isLayerExist) {
-      createLayer(layerName, {
-        hexCode: layer.rgbCode,
-        initConfig: true,
-        parentCmd: batchCmd,
-      });
+    if (!toCurrentLayer) {
+      const isLayerExist = layerManager.setCurrentLayer(layerName);
+
+      if (!isLayerExist) {
+        createLayer(layerName, {
+          hexCode: layer.rgbCode,
+          initConfig: true,
+          parentCmd: batchCmd,
+        });
+      }
     }
 
     const id = svgCanvas.getNextId();
@@ -206,7 +211,11 @@ const importDxf = async (file: Blob, { silent = false }: { silent?: boolean } = 
   await Promise.all(promises);
 
   removeDefaultLayerIfEmpty({ parentCmd: batchCmd });
-  useLayerStore.getState().setSelectedLayers(layerNames);
+
+  if (!toCurrentLayer) {
+    useLayerStore.getState().setSelectedLayers(layerNames);
+  }
+
   undoManager.addCommandToHistory(batchCmd);
 
   return true;

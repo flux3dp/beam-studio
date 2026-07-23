@@ -1,5 +1,6 @@
 import type { AliasToken } from 'antd/es/theme/internal';
 import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 const breakpoints = {
   mobile: 600,
@@ -22,10 +23,12 @@ type ScreenState = {
   isTablet: boolean;
 };
 
-export const useScreenStore = create<ScreenState>(() => ({
-  isMobile: false,
-  isTablet: false,
-}));
+export const useScreenStore = create(
+  subscribeWithSelector<ScreenState>(() => ({
+    isMobile: false,
+    isTablet: false,
+  })),
+);
 
 let initialized = false;
 
@@ -79,12 +82,3 @@ export const initScreenStore = () => {
     update();
   }
 };
-
-// Syntactic sugar
-export const isMobile = (): boolean => useScreenStore.getState().isMobile;
-export const isTablet = (): boolean => useScreenStore.getState().isTablet;
-export const isTabletOrMobile = (): boolean => useScreenStore.getState().isMobile || useScreenStore.getState().isTablet;
-
-export const useIsMobile = (): boolean => useScreenStore((state) => state.isMobile);
-export const useIsTablet = (): boolean => useScreenStore((state) => state.isTablet);
-export const useIsTabletOrMobile = (): boolean => useScreenStore((state) => state.isMobile || state.isTablet);

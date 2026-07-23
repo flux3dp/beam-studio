@@ -5,24 +5,12 @@
   padding: 8px 12px;
   color: #7c7c7c;
   background-color: #f8f8f8;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: hidden;
   border: none;
   margin-top: 5px;
   box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
   &::-webkit-scrollbar {
-    display: none;
-  }
-}
-
-@mixin item-group() {
-  display: flex;
-  width: auto;
-  height: auto;
-  column-gap: 10px;
-  flex-wrap: nowrap;
-  border: none;
-  padding: 0;
-  > div:only-child {
     display: none;
   }
 }
@@ -45,11 +33,13 @@
   }
 }
 
-@mixin icon-input() {
+@mixin icon-input($with-margin: true) {
   display: flex;
   align-items: center;
   height: 30px;
-  margin-bottom: 8px;
+  @if $with-margin {
+    margin-bottom: 8px;
+  }
 
   .label {
     display: flex;
@@ -61,8 +51,10 @@
   }
 }
 
-@mixin option-block() {
-  margin: 7px 0;
+@mixin option-block($with-margin: true) {
+  @if $with-margin {
+    margin: 7px 0;
+  }
   width: 100%;
   display: inline-flex;
   justify-content: space-between;

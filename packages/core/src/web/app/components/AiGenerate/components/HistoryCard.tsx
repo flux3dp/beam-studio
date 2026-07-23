@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { match } from 'ts-pattern';
 
-import { isMobile } from '@core/app/stores/screenStore';
+import { isMobile } from '@core/app/stores/layoutStore';
 import { importAiImage } from '@core/app/svgedit/operations/import/importAiImage';
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import useI18n from '@core/helpers/useI18n';

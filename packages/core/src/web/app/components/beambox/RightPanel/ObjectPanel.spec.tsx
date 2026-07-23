@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
 import { ObjectPanelContext } from './contexts/ObjectPanelContext';
 import { useScreenStore } from '@core/app/stores/screenStore';
 

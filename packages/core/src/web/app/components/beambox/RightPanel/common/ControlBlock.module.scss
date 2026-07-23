@@ -1,0 +1,40 @@
+@use '@core/styles/selectors' as selectors;
+
+$padding: 2px;
+
+.block {
+  position: relative;
+  border-radius: 8px;
+  padding: $padding;
+  margin: -$padding;
+
+  @include selectors.desktop-layout {
+    display: flex;
+  }
+}
+
+.button {
+  margin-left: 4px;
+  @include selectors.desktop-layout {
+    font-size: 20px;
+  }
+}
+
+.button-top-right {
+  position: absolute;
+  top: $padding;
+  right: $padding;
+}
+
+.editable {
+  color: #1890ff;
+}
+
+.partial {
+  color: #1890ff;
+  background-color: #dddddd;
+}
+
+.highlight {
+  background-color: rgba(0, 0, 0, 0.05);
+}
