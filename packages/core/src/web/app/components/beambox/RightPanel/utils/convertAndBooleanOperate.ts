@@ -1,7 +1,7 @@
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { doBooleanOperationOnSelected } from '@core/app/svgedit/operations/booleanOperation';
-import { convertElementsToPathInTempGroup } from '@core/helpers/convertElementsToPathInTempGroup';
+import { convertElementsToPathInTempGroup } from '@core/helpers/path/convertElementsToPathInTempGroup';
 
 export const convertAndBooleanOperate = async ({
   element,

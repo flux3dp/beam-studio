@@ -151,6 +151,73 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       return true;
     };
 
+    /** Serpentine capture points covering the region: rows top to bottom, odd rows reversed */
+    getRegionPreviewPoints = (
+      x1: number,
+      y1: number,
+      x2: number,
+      y2: number,
+      { overlapRatio = 0.05 }: { overlapRatio?: number } = {},
+    ): Array<{ overlapFlag: number; point: [number, number] }> => {
+      const imgW = (this.regionPreviewGrid.x[1] - this.regionPreviewGrid.x[0]) * constant.dpmm;
+      const imgH = (this.regionPreviewGrid.y[1] - this.regionPreviewGrid.y[0]) * constant.dpmm;
+      const { x: l, y: t } = this.constrainPreviewXY(Math.min(x1, x2), Math.min(y1, y2));
+      const { x: r, y: b } = this.constrainPreviewXY(Math.max(x1, x2), Math.max(y1, y2));
+
+      const res: Array<{ overlapFlag: number; point: [number, number] }> = [];
+      const xStep = imgW * (1 - overlapRatio);
+      const yStep = imgH * (1 - overlapRatio);
+      const xTotal = Math.max(1, Math.ceil((r - l) / xStep));
+      const yTotal = Math.max(1, Math.ceil((b - t) / yStep));
+
+      for (let j = 0; j < yTotal; j += 1) {
+        const y = t + imgH / 2 + j * yStep;
+        const row: Array<{ overlapFlag: number; point: [number, number] }> = [];
+
+        for (let i = 0; i < xTotal; i += 1) {
+          const x = l + imgW / 2 + i * xStep;
+          let overlapFlag = 0;
+
+          // 1: top, 2: right, 4: bottom, 8: left
+          if (j !== 0) overlapFlag += 1;
+
+          if (i !== xTotal - 1) overlapFlag += 2;
+
+          if (j !== yTotal - 1) overlapFlag += 4;
+
+          if (i !== 0) overlapFlag += 8;
+
+          row.push({ overlapFlag, point: [x, y] });
+        }
+
+        if (j % 2 !== 0) row.reverse();
+
+        res.push(...row);
+      }
+
+      return res;
+    };
+
+    /**
+     * The tile rect that a preview at the requested point would actually stamp
+     * on the background canvas (in canvas px): the camera position is clamped
+     * so the tile stays inside the workarea, so near edges the stamped tile is
+     * not centered on the requested point.
+     */
+    getRegionPreviewTile = (
+      x: number,
+      y: number,
+    ): { centerX: number; centerY: number; height: number; width: number } => {
+      const cameraPosition = this.getPreviewPosition(x, y);
+
+      return {
+        centerX: (cameraPosition.x + this.regionPreviewOffset.x) * constant.dpmm,
+        centerY: (cameraPosition.y + this.regionPreviewOffset.y) * constant.dpmm,
+        height: (this.regionPreviewGrid.y[1] - this.regionPreviewGrid.y[0]) * constant.dpmm,
+        width: (this.regionPreviewGrid.x[1] - this.regionPreviewGrid.x[0]) * constant.dpmm,
+      };
+    };
+
     regionPreviewArea = async (
       x1: number,
       y1: number,
@@ -158,47 +225,10 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       y2: number,
       { overlapRatio = 0.05 }: { overlapRatio?: number } = {},
     ): Promise<boolean> => {
-      const getPoints = () => {
-        const imgW = (this.regionPreviewGrid.x[1] - this.regionPreviewGrid.x[0]) * constant.dpmm;
-        const imgH = (this.regionPreviewGrid.y[1] - this.regionPreviewGrid.y[0]) * constant.dpmm;
-        const { x: l, y: t } = this.constrainPreviewXY(Math.min(x1, x2), Math.min(y1, y2));
-        const { x: r, y: b } = this.constrainPreviewXY(Math.max(x1, x2), Math.max(y1, y2));
-
-        const res: Array<{ overlapFlag: number; point: [number, number] }> = [];
-        const xStep = imgW * (1 - overlapRatio);
-        const yStep = imgH * (1 - overlapRatio);
-        const xTotal = Math.max(1, Math.ceil((r - l) / xStep));
-        const yTotal = Math.max(1, Math.ceil((b - t) / yStep));
-
-        for (let j = 0; j < yTotal; j += 1) {
-          const y = t + imgH / 2 + j * yStep;
-          const row: Array<{ overlapFlag: number; point: [number, number] }> = [];
-
-          for (let i = 0; i < xTotal; i += 1) {
-            const x = l + imgW / 2 + i * xStep;
-            let overlapFlag = 0;
-
-            // 1: top, 2: right, 4: bottom, 8: left
-            if (j !== 0) overlapFlag += 1;
-
-            if (i !== xTotal - 1) overlapFlag += 2;
-
-            if (j !== yTotal - 1) overlapFlag += 4;
-
-            if (i !== 0) overlapFlag += 8;
-
-            row.push({ overlapFlag, point: [x, y] });
-          }
-
-          if (j % 2 !== 0) row.reverse();
-
-          res.push(...row);
-        }
-
-        return res;
-      };
-
-      return this.previewRegionFromPoints(x1, y1, x2, y2, { getPoints, overlapRatio });
+      return this.previewRegionFromPoints(x1, y1, x2, y2, {
+        getPoints: () => this.getRegionPreviewPoints(x1, y1, x2, y2, { overlapRatio }),
+        overlapRatio,
+      });
     };
   };
 }

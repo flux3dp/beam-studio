@@ -26,7 +26,7 @@ import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import weldPath from '@core/helpers/weldPath';
+import weldPath from '@core/helpers/path/weldPath';
 import localFontHelper from '@core/implementations/localFontHelper';
 import storage from '@core/implementations/storage';
 import type { GeneralFont, GoogleFont, IFontQuery } from '@core/interfaces/IFont';

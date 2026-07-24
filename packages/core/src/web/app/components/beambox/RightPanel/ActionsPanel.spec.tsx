@@ -136,7 +136,7 @@ const convertSvgToPath = jest.fn();
 const convertTextToPath = jest.fn();
 const dispatchConvertToPath = jest.fn();
 
-jest.mock('@core/helpers/convertToPath', () => ({
+jest.mock('@core/helpers/path/convertToPath', () => ({
   convertSvgToPath,
   convertTextToPath,
   dispatchConvertToPath,

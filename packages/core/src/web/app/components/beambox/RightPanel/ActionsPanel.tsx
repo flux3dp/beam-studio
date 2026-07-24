@@ -27,7 +27,7 @@ import {
   convertTempGroupToPath,
   convertTextToPath,
   dispatchConvertToPath,
-} from '@core/helpers/convertToPath';
+} from '@core/helpers/path/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
