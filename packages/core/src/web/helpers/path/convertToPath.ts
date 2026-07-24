@@ -14,9 +14,9 @@ import textedit from '@core/app/svgedit/text/textedit';
 import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import alertConfig from './api/alert-config';
-import i18n from './i18n';
-import { getSVGAsync } from './svg-editor-helper';
+import alertConfig from '../api/alert-config';
+import i18n from '../i18n';
+import { getSVGAsync } from '../svg-editor-helper';
 
 type ConvertToPathResult = {
   bbox: DOMRect;

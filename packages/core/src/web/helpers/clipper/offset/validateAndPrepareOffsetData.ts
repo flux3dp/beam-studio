@@ -2,7 +2,7 @@ import { match, P } from 'ts-pattern';
 
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import selectionManager from '@core/app/svgedit/selection';
-import { convertSvgToPath, convertTextToPath, convertUseToPath, generateImageRect } from '@core/helpers/convertToPath';
+import { convertSvgToPath, convertTextToPath, convertUseToPath, generateImageRect } from '@core/helpers/path/convertToPath';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 interface ValidationResult {

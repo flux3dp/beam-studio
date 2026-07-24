@@ -398,6 +398,9 @@ class PreviewModeBackgroundDrawer {
     setCameraPreviewState({ isClean: false });
 
     setBackgroundImage(this.cameraCanvasUrl);
+    // notify progressive-preview listeners (e.g. the Print and Cut dialog)
+    // each time a capture is drawn; the url is revoked on the next draw
+    canvasEventEmitter.emit('preview-background-updated', this.cameraCanvasUrl);
   };
 
   setCanvasUrl = async (url: string, opts?: { loadToCanvas?: boolean }): Promise<void> => {

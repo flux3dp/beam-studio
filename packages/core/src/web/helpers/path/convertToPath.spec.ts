@@ -98,12 +98,12 @@ jest.mock('@core/app/svgedit/text/textedit', () => ({ renderText: (...args: any[
 
 jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args: any[]) => mockAlertPopUp(...args) }));
 
-jest.mock('./api/alert-config', () => ({
+jest.mock('../api/alert-config', () => ({
   read: (...args: any[]) => mockAlertConfigRead(...args),
   write: (...args: any[]) => mockAlertConfigWrite(...args),
 }));
 
-jest.mock('./svg-editor-helper', () => ({
+jest.mock('../svg-editor-helper', () => ({
   getSVGAsync: (cb: any) =>
     cb({
       Canvas: {

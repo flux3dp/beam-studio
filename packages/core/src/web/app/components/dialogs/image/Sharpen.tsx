@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { InputNumber, Slider } from 'antd';
 
 import progressCaller from '@core/app/actions/progress-caller';
-import OpenCVWebSocket from '@core/helpers/api/open-cv';
+import getOpenCV from '@core/helpers/api/open-cv';
 import imageEdit from '@core/helpers/image-edit';
 import useI18n from '@core/helpers/useI18n';
 
@@ -16,8 +16,6 @@ interface Props {
   onClose: () => void;
   src: string;
 }
-
-const opencvWS = new OpenCVWebSocket();
 
 export const Sharpen = ({ element, onClose, src }: Props) => {
   const t = useI18n().beambox.photo_edit_panel;
@@ -37,7 +35,7 @@ export const Sharpen = ({ element, onClose, src }: Props) => {
       let newImgUrl = imgBlobUrl;
 
       if (radius * sharpness > 0) {
-        const blob = await opencvWS.sharpen(imgBlobUrl, sharpness, radius);
+        const blob = await getOpenCV().sharpen(imgBlobUrl, sharpness, radius);
 
         newImgUrl = URL.createObjectURL(blob);
       }

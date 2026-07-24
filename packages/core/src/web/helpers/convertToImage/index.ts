@@ -10,7 +10,7 @@ import { deleteElements } from '@core/app/svgedit/operations/delete';
 import selectionManager from '@core/app/svgedit/selection';
 
 import updateElementColor from '../color/updateElementColor';
-import { convertTextOnPathToPath, convertTextToPath } from '../convertToPath';
+import { convertTextOnPathToPath, convertTextToPath } from '../path/convertToPath';
 import i18n from '../i18n';
 import { sortLayerNamesByPosition } from '../layer/layer-helper';
 import moveElementsToLayer from '../layer/moveToLayer';

@@ -13,11 +13,10 @@ import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
 import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
 import workareaManager from '@core/app/svgedit/workarea';
-import * as BezierFitCurve from '@core/helpers/bezier-fit-curve';
-import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import round from '@core/helpers/math/round';
+import { simplifyPathD } from '@core/helpers/path/simplifyPath';
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ICommand } from '@core/interfaces/IHistory';
@@ -1522,8 +1521,6 @@ const reverseDPath = (dPath: string) => {
   return svgPath.pathSegList;
 };
 
-type TSegmentedPath = Array<{ points: Array<{ x: number; y: number }>; type: string }>;
-
 /**
 Change precision to 2
 Merge consecutive L into C where possible
@@ -1531,69 +1528,18 @@ Remove L with 0 length
 TODO: Merge C, Change straight C into L
 */
 const smoothByFitPath = (elem: SVGPathElement) => {
-  const _round = (val: number) => round(val, 2);
   const d = elem.getAttribute('d')!;
-  const dPaths = d.split(/(?=M)/);
   const bbox = getBBox(elem, { ignoreTransform: true });
   const rotation = {
     angle: svgedit.utilities.getRotationAngle(elem),
     cx: bbox.x + bbox.width / 2,
     cy: bbox.y + bbox.height / 2,
   };
-  const result = Array.of<string>();
-  const ClipperLib = getClipperLib();
-  let lastPoint: undefined | { x: number; y: number } = undefined;
 
   try {
-    dPaths.forEach((dPath) => {
-      lastPoint = undefined;
-      elem.setAttribute('d', dPath);
+    const simplified = simplifyPathD(d, rotation);
 
-      const dLength = elem.getTotalLength();
-      const path: TSegmentedPath = ClipperLib.dPathToLineSegments(dPath, rotation);
-
-      path.forEach((subpath) => {
-        const { points, type } = subpath;
-
-        if (type === 'Z') {
-          result.push(type);
-          lastPoint = undefined;
-        } else if (type !== 'L') {
-          result.push(`${type}${points.map((p) => `${_round(p.x)},${_round(p.y)}`).join(' ')}`);
-          lastPoint = points.at(-1);
-        } else {
-          const segs = BezierFitCurve.fitPath(points, dLength);
-
-          for (let j = 0; j < segs.length; j += 1) {
-            // Note: points[0] is included in the last segment
-            const { points, type } = segs[j];
-
-            if (
-              lastPoint &&
-              type === 'L' &&
-              _round(points[1].x - lastPoint.x) === 0 &&
-              _round(points[1].y - lastPoint.y) === 0
-            ) {
-              continue;
-            }
-
-            const pointsString = points
-              .slice(1)
-              .map((p) => `${_round(p.x)},${_round(p.y)}`)
-              .join(' ');
-
-            lastPoint = points.at(-1);
-            result.push(`${type}${pointsString}`);
-          }
-        }
-      });
-    });
-
-    const simplified = result.join('');
-
-    // The loop above mutates `d` per-subpath to measure getTotalLength(), leaving the
-    // element as only the last subpath. Set it to the full simplified result so callers
-    // that read the element in place (e.g. image tracing) get the complete path.
+    // Update the element in place so callers that read it (e.g. image tracing) get the result.
     elem.setAttribute('d', simplified);
 
     return simplified;

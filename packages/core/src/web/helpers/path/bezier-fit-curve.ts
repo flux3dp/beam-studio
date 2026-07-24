@@ -1,6 +1,6 @@
 // refs: https://stackoverflow.com/questions/6299019/, https://stackoverflow.com/questions/5525665/
-import type { vector2D } from './vector-2d';
-import { v2Add, v2Angle, v2Distance, v2Dot, v2Length, v2Negate, v2Normalize, v2Scale, v2Sub, v2Sum } from './vector-2d';
+import type { vector2D } from '../vector-2d';
+import { v2Add, v2Angle, v2Distance, v2Dot, v2Length, v2Negate, v2Normalize, v2Scale, v2Sub, v2Sum } from '../vector-2d';
 
 const maxIterations = 4;
 // Tuned parameters
