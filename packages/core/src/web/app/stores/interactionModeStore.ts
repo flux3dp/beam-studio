@@ -1,3 +1,9 @@
+// 【TODO：add tests】high-risk state machine, currently untested. Cover:
+// - getInteractionMode across all four combinations of template_creation_mode / _templateMode / _exploreMode
+// - setTemplateMode(true) also enters explore mode; setExploreMode toggles within template modes
+// - preference subscription recomputes interactionMode
+// - tryExitingExploreMode: requires N calls within the window; counter reset after triggering exit
+// - initTemplatePreviewFromQuery: reads and strips the query param, enters template mode
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
@@ -71,7 +77,16 @@ export const tryExitingExploreMode = () => {
   timer = setTimeout(() => (count = 0), clearCountDuration);
   count += 1;
 
-  if (count >= requiredCount) setExploreMode(false);
+  if (count >= requiredCount) {
+    // Reset immediately on exit; otherwise the counter stays at the threshold and a single click
+    // within the next second would trigger another exit.
+    count = 0;
+
+    if (timer) clearTimeout(timer);
+
+    timer = null;
+    setExploreMode(false);
+  }
 };
 
 let _isTemplatePreview = false;
@@ -81,10 +96,13 @@ export const getIsTemplatePreview = () => _isTemplatePreview;
 
 /**
  * When loaded inside the template-preview iframe, the studio boots straight into template mode.
- * The flag travels in the hash query (e.g. `#/studio/beambox?templatePreview=true`). It is cleared
- * afterwards so reloads or later navigation don't re-trigger preview mode.
+ * The flag travels in the query string (e.g. `${origin}?templatePreview=true#/studio/beambox`). It is
+ * cleared afterwards so reloads or later navigation don't re-trigger preview mode.
+ *
+ * Called once from the Beambox page mount effect (not as a module side-effect) so importing this
+ * store never touches `window`.
  */
-const initTemplatePreviewFromQuery = () => {
+export const initTemplatePreviewFromQuery = () => {
   const { search } = window.location;
   const params = new URLSearchParams(search);
 
@@ -103,5 +121,3 @@ const initTemplatePreviewFromQuery = () => {
     `${window.location.pathname}${newSearch ? `?${newSearch}` : ''}${window.location.hash}`,
   );
 };
-
-initTemplatePreviewFromQuery();

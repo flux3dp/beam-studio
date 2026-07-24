@@ -69,12 +69,16 @@ export const refreshPreview = async () => {
 
   symbolMaker.switchImageSymbolForAll(false);
 
-  const { thumbnailBlobURL } = await generateThumbnail();
+  try {
+    const { thumbnailBlobURL } = await generateThumbnail();
 
-  symbolMaker.switchImageSymbolForAll(true);
-
-  previewThumbnail.src = thumbnailBlobURL;
-  emitThumbnailDataChange(previewThumbnailKey);
+    previewThumbnail.src = thumbnailBlobURL;
+    emitThumbnailDataChange(previewThumbnailKey);
+  } finally {
+    // Always switch symbols back to their rendered form; otherwise a failed thumbnail generation
+    // would leave the whole canvas stuck in un-rasterized (origin symbol) mode.
+    symbolMaker.switchImageSymbolForAll(true);
+  }
 };
 
 export const addThumbnail = (blob: Blob | null, options?: { isVisible?: boolean; key?: string; src?: string }) => {

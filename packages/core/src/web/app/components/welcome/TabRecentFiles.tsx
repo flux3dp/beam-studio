@@ -21,6 +21,10 @@ const TabRecentFiles = () => {
   const [recentFiles, setRecentFiles] = useState<IFile[]>([]);
   const [selectedId, setSelectedId] = useState<null | string>(null);
   const needUpdate = useRef(true);
+  // blob: thumbnail URLs currently referenced by the rendered cards. readBeamFileInfo mints a new
+  // object URL per file per scan; without this they leak on every re-fetch/unmount. They are
+  // display-only (opening a file uses its path), so they are safe to revoke once superseded.
+  const liveThumbnailUrls = useRef<string[]>([]);
 
   const getRecentFiles = async () => {
     if (!needUpdate.current) return;
@@ -72,6 +76,14 @@ const TabRecentFiles = () => {
       }
     }
     setRecentFiles(fileInfos);
+
+    // Release the previous batch's object URLs now that a fresh list has replaced their cards.
+    const nextUrls = fileInfos
+      .map((file) => file.thumbnail_url)
+      .filter((url): url is string => Boolean(url?.startsWith('blob:')));
+
+    liveThumbnailUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    liveThumbnailUrls.current = nextUrls;
   };
 
   useEffect(() => {
@@ -86,6 +98,8 @@ const TabRecentFiles = () => {
     return () => {
       communicator.off(TabEvents.UpdateRecentFiles, onRecentFilesUpdate);
       tabController.offFocused(getRecentFiles);
+      liveThumbnailUrls.current.forEach((url) => URL.revokeObjectURL(url));
+      liveThumbnailUrls.current = [];
     };
   }, []);
 

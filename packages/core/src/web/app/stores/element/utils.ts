@@ -1,3 +1,8 @@
+// 【TODO：add tests】high-risk, currently untested. Cover:
+// - getNodeType / nodeCategory mapping for tempgroup, textpath, fit_text, pass_through, svg/dxf/use, shapes
+// - getDerivedData: eager fields (canGroup/canUngroup/ungroupedElems/controllableTypes/editableInfo); null element
+// - lazy compute + cache: computeLazyData populates cache; invalidateLazyDataCache clears the right key
+// - computeLazyDataWithLock: cache hit returns 'cache'; miss computes once and returns 'computed'
 import { getObjectPanelContext } from '@core/app/components/beambox/RightPanel/OptionsBlocks/utils';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import { isElemFillable } from '@core/app/svgedit/operations/infill';
@@ -27,7 +32,7 @@ const defaultElementState: DerivedData = {
   isVariableText: undefined,
   nodeCategory: 'no_selection',
   nodeType: 'no_selection',
-  objectPanelData: null,
+  objectPanelData: getObjectPanelContext(null),
   ungroupedElems: [],
 };
 
@@ -59,7 +64,9 @@ const getNodeType = (elem: Element | null): { nodeCategory: CanvasNodeCategory; 
     }
   }
 
-  const nodeCategory: CanvasNodeCategory = (categoryOverride as any)[nodeType] || nodeType;
+  const nodeCategory: CanvasNodeCategory =
+    (categoryOverride as Partial<Record<CanvasNodeType, CanvasNodeCategory>>)[nodeType] ??
+    (nodeType as CanvasNodeCategory);
 
   return { nodeCategory, nodeType };
 };
@@ -156,22 +163,20 @@ const getCanChildrenConvertToPath = (elem: null | SVGElement, state: DerivedData
   );
 };
 
-const running = new Set<string>();
 const lazyDataMap: {
   [K in LazyDataKey]: {
     compute: (elem: null | SVGElement, state: DerivedData) => DerivedData[K];
-    fallback: DerivedData[K];
   };
 } = {
-  canChildrenConvertToPath: { compute: getCanChildrenConvertToPath, fallback: false },
-  hasChildPathsOnly: { compute: getHasChildPathsOnly, fallback: false },
-  hasChildTextAndPath: { compute: getHasChildTextAndPath, fallback: false },
-  hasChildTextsOnly: { compute: getHasChildTextsOnly, fallback: false },
-  hasChildVariableText: { compute: getHasChildVariableText, fallback: false },
-  isFillable: { compute: getIsFillable, fallback: false },
-  isFilled: { compute: getIsFilled, fallback: false },
-  isShading: { compute: getIsShading, fallback: false },
-  isVariableText: { compute: getIsVariableText, fallback: false },
+  canChildrenConvertToPath: { compute: getCanChildrenConvertToPath },
+  hasChildPathsOnly: { compute: getHasChildPathsOnly },
+  hasChildTextAndPath: { compute: getHasChildTextAndPath },
+  hasChildTextsOnly: { compute: getHasChildTextsOnly },
+  hasChildVariableText: { compute: getHasChildVariableText },
+  isFillable: { compute: getIsFillable },
+  isFilled: { compute: getIsFilled },
+  isShading: { compute: getIsShading },
+  isVariableText: { compute: getIsVariableText },
 };
 
 export const invalidateLazyDataCache = (key: LazyDataKey) => {
@@ -186,25 +191,20 @@ export const computeLazyData = <T extends LazyDataKey>(key: T, elem: null | SVGE
   return result;
 };
 
+/**
+ * Cache-aware read: returns the module-cached value if present, otherwise computes it once and
+ * caches it. This is the single-compute guard — the heavy `compute` runs at most once per key per
+ * selection (the cache is cleared by getDerivedData on selection change and by invalidateLazyDataCache).
+ * All consumers (render path + effects) must go through here, never computeLazyData directly.
+ */
 export const computeLazyDataWithLock = <T extends LazyDataKey>(
   key: T,
   elem: null | SVGElement,
   state: DerivedData,
-): { data: DerivedData[T]; type: 'cache' | 'computed' | 'fallback' } => {
+): { data: DerivedData[T]; type: 'cache' | 'computed' } => {
   if (lazyDataCache.has(key)) {
-    // Return local cache before asynchronous update with queueMicrotask
-    return { data: lazyDataCache.get(key), type: 'cache' };
+    return { data: lazyDataCache.get(key) as DerivedData[T], type: 'cache' };
   }
 
-  if (running.has(key)) {
-    return { data: lazyDataMap[key].fallback, type: 'fallback' };
-  }
-
-  running.add(key);
-
-  const result = computeLazyData(key, elem, state);
-
-  running.delete(key);
-
-  return { data: result, type: 'computed' };
+  return { data: computeLazyData(key, elem, state), type: 'computed' };
 };

@@ -1,4 +1,11 @@
+// 【TODO：add tests】high-risk, currently untested. Cover:
+// - setEditableInfo: serialized attribute is a JSON array of ControlType values; overwrite vs merge
+// - setEditableInfo on a temp group: all children updated; undo should collapse into one step
+// - setEditableInfo triggers updateNonEditableGripVisibility only when a DimensionControls key changes
+// - clearEditableInfo: temp-group handling should match setEditableInfo
+// - toggleEditableInfo: optimistic store update stays consistent with the written attribute
 import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import selectionManager from '@core/app/svgedit/selection';
@@ -6,7 +13,7 @@ import selector from '@core/app/svgedit/selector';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 
 import type { ControlType, EditableInfo } from './base';
-import { attributeName, ControlTypes, DimenstionControls } from './base';
+import { attributeName, ControlTypes, DimensionControls } from './base';
 import { parseEditableInfo } from './getter';
 
 export const setEditableInfo = (
@@ -17,6 +24,9 @@ export const setEditableInfo = (
   if (!elem) return;
 
   const elements = selectionManager.isTempGroup(elem) ? Array.from(elem.children) : [elem];
+  // Collapse all per-child attribute writes into one undo step so a multi-select edit reverts in a
+  // single undo instead of one per child.
+  const batchCmd = new history.BatchCommand('Set editable info');
 
   for (const element of elements) {
     const newEditableInfo = { ...(overwrite ? {} : parseEditableInfo(element)), ...editableInfo };
@@ -27,10 +37,12 @@ export const setEditableInfo = (
 
     const cmd = undoManager.finishUndoableChange();
 
-    handleHistoryActionOptions(cmd, options);
+    handleHistoryActionOptions(cmd, { parentCmd: batchCmd });
   }
 
-  if (DimenstionControls.some((control) => control in editableInfo)) {
+  handleHistoryActionOptions(batchCmd, options);
+
+  if (DimensionControls.some((control) => control in editableInfo)) {
     // If rotation or size editable state changes, need to update selector grips visibility
     selector.getSelectorManager().requestSelector(elem)?.updateNonEditableGripVisibility();
   }

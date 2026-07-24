@@ -173,8 +173,6 @@ export const setElemsFill = (elems: Element[] | HTMLCollection) => {
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
     } else if (elem.tagName === 'g') {
       setElemsFill(elem.children);
-    } else {
-      console.log(`Not support type: ${elem.tagName}`);
     }
   }
 
@@ -231,8 +229,6 @@ export const setElemsUnfill = (elems: Element[] | HTMLCollection) => {
       if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
     } else if (elem.tagName === 'g') {
       setElemsUnfill(elem.children);
-    } else {
-      console.log(`Not support type: ${elem.tagName}`);
     }
   }
 

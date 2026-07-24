@@ -44,22 +44,17 @@ const ActionsPanel = ({ elem }: Props): React.ReactNode => {
             id={action.id}
             key={action.id}
             onClick={() => {
-              console.log('ref.current', ref.current);
-
               if (action.renderContent) {
                 const mainButton = ref.current?.parentElement?.querySelector(`#object-panel-item-action-${action.id}`);
 
                 if (mainButton) {
-                  console.warn('scrollIntoView', mainButton, action.id);
                   mainButton.scrollIntoView({ behavior: 'smooth' });
                   useSelectedElementStore.setState({ activeKey: `action-${action.id}` });
                 } else {
-                  console.warn('renderContent', action.id);
                   useSelectedElementStore.setState({ activeKey: `action-${action.id}` });
                   setActiveItem(action);
                 }
               } else {
-                console.warn('onClick', action.id);
                 action.onClick(elem);
                 useSelectedElementStore.setState({ activeKey: null });
               }

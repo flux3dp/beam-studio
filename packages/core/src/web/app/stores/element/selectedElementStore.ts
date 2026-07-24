@@ -1,10 +1,17 @@
+// 【TODO：add tests】high-risk, currently untested. Cover:
+// - setSelectedElement: no-op when unchanged; recomputes derived data on change
+// - MutationObserver → invalidateLazyData for d/fill/data-shading/data-vt-type (attributeFilter is derived
+//   from relatedLazyDataKeyMap — a key missing there never fires; guards the data-fullcolor gap)
+// - getLazyData / useLazyData: returns cached value, computes+stores on miss
+// - layout change clears activeKey
+import { useEffect } from 'react';
+
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
 import { getObjectPanelContext } from '@core/app/components/beambox/RightPanel/OptionsBlocks/utils';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import {
-  computeLazyData,
   computeLazyDataWithLock,
   getDerivedData,
   invalidateLazyDataCache,
@@ -45,7 +52,10 @@ const relatedLazyDataKeyMap: Record<string, LazyDataKey> = {
   'data-vt-type': 'isVariableText',
   fill: 'isFilled',
 };
-const attributes = Object.keys(relatedLazyDataKeyMap);
+// `data-fullcolor` is not a lazy-data key (it refreshes objectPanelData, not a lazy field), so it is
+// appended here rather than in relatedLazyDataKeyMap; without it the observer never fires for it and
+// the data-fullcolor branch below is unreachable.
+const attributes = [...Object.keys(relatedLazyDataKeyMap), 'data-fullcolor'];
 const observer = new MutationObserver((mutations) => {
   for (const m of mutations) {
     if (m.type !== 'attributes') continue;
@@ -82,7 +92,7 @@ useDocumentStore.subscribe(
 useSelectedElementStore.subscribe(
   (state) => state.selectedElement,
   (elem) => {
-    (document.activeElement as HTMLElement).blur();
+    (document.activeElement as HTMLElement | null)?.blur();
     observer.disconnect();
 
     if (elem) {
@@ -104,37 +114,44 @@ export const invalidateLazyData = <T extends LazyDataKey>(key: T) => {
   useSelectedElementStore.setState({ [key]: undefined });
 };
 
-export const getLazyData = <T extends LazyDataKey>(
-  key: T,
-  elem = useSelectedElementStore.getState().selectedElement as null | SVGElement,
-): DerivedData[T] | undefined => {
+// Imperative read. Always operates on the current selected element: the lazy cache is scoped to the
+// selection (cleared by getDerivedData on change), so a foreign element must never be passed in — it
+// would pollute the shared cache/store. Goes through the cache-aware path so the compute stays single.
+export const getLazyData = <T extends LazyDataKey>(key: T): DerivedData[T] => {
   const state = useSelectedElementStore.getState();
 
   if (state[key] !== undefined) {
     return state[key] as DerivedData[T];
   }
 
-  const result = computeLazyData(key, elem, state);
+  const { data } = computeLazyDataWithLock(key, state.selectedElement, state);
 
-  useSelectedElementStore.setState({ [key]: result });
+  useSelectedElementStore.setState({ [key]: data });
 
-  return result;
+  return data;
 };
 
-export const useLazyData = <T extends LazyDataKey>(key: T): DerivedData[T] =>
-  useSelectedElementStore((state) => {
-    if (state[key] !== undefined) {
-      return state[key];
-    }
+export const useLazyData = <T extends LazyDataKey>(key: T): DerivedData[T] => {
+  // Pure subscription — no side effects in the selector.
+  const stored = useSelectedElementStore((state) => state[key]);
+  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
 
-    const { data, type } = computeLazyDataWithLock(key, state.selectedElement, state);
+  // Commit the computed value into the store from an effect (never during render). The compute goes
+  // through the cache-aware path, so the heavy `compute` runs at most once per key per selection
+  // across every consumer, regardless of how many components read the same key.
+  useEffect(() => {
+    if (useSelectedElementStore.getState()[key] !== undefined) return;
 
-    if (type !== 'computed') return data;
+    const state = useSelectedElementStore.getState();
+    const { data } = computeLazyDataWithLock(key, state.selectedElement, state);
 
-    // Prevent 'Cannot update a component while rendering a different component' Error
-    queueMicrotask(() => {
-      useSelectedElementStore.setState({ [key]: data });
-    });
+    useSelectedElementStore.setState({ [key]: data });
+  }, [key, selectedElement, stored]);
 
-    return data;
-  });
+  if (stored !== undefined) return stored as DerivedData[T];
+
+  // First render before the effect commits: return a cache-backed value without writing state.
+  const state = useSelectedElementStore.getState();
+
+  return computeLazyDataWithLock(key, selectedElement, state).data;
+};

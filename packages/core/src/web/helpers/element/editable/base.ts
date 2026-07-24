@@ -1,58 +1,45 @@
-export enum ControlType {
+/**
+ * IMPORTANT: these numeric values are serialized into the `data-editable` attribute and persisted
+ * inside `.beam` template files. DO NOT change or reorder any existing value — doing so silently
+ * remaps the editable flags of every template already saved in the field. New members must be
+ * appended with the next unused explicit value only.
+ */
+export const ControlType = {
   // Text options
-  TEXT_CONTENT,
-  TEXT_TRANSFORM,
-  TEXT_VERTICAL,
-  FONT_FAMILY,
-  FONT_STYLE,
-  FONT_SIZE,
-  FIT_TEXT_ALIGN,
-  TEXTPATH_ALIGN,
-  TEXTPATH_OFFSET,
-  LINE_SPACING,
-  LETTER_SPACING,
+  TEXT_CONTENT: 0,
+  TEXT_TRANSFORM: 1,
+  TEXT_VERTICAL: 2,
+  FONT_FAMILY: 3,
+  FONT_STYLE: 4,
+  FONT_SIZE: 5,
+  FIT_TEXT_ALIGN: 6,
+  TEXTPATH_ALIGN: 7,
+  TEXTPATH_OFFSET: 8,
+  LINE_SPACING: 9,
+  LETTER_SPACING: 10,
   // Dimensions
-  POSITION_X,
-  POSITION_Y,
-  POSITION_X2,
-  POSITION_Y2,
-  _SIZE,
-  ROTATION,
-  _FLIP,
+  POSITION_X: 11,
+  POSITION_Y: 12,
+  POSITION_X2: 13,
+  POSITION_Y2: 14,
+  _SIZE: 15,
+  ROTATION: 16,
+  _FLIP: 17,
   // Infill
-  INFILL,
-  PATH_INFILL, // For path of textpath
+  INFILL: 18,
+  PATH_INFILL: 19, // For path of textpath
   // Others
-  LIBRARY,
-  DELETE,
-}
+  LIBRARY: 20,
+  DELETE: 21,
+} as const;
 
-export const ControlTypes = [
-  ControlType.TEXT_CONTENT,
-  ControlType.TEXT_TRANSFORM,
-  ControlType.TEXT_VERTICAL,
-  ControlType.FONT_FAMILY,
-  ControlType.FONT_STYLE,
-  ControlType.FONT_SIZE,
-  ControlType.FIT_TEXT_ALIGN,
-  ControlType.TEXTPATH_ALIGN,
-  ControlType.TEXTPATH_OFFSET,
-  ControlType.LINE_SPACING,
-  ControlType.LETTER_SPACING,
-  ControlType.POSITION_X,
-  ControlType.POSITION_Y,
-  ControlType.POSITION_X2,
-  ControlType.POSITION_Y2,
-  ControlType._SIZE,
-  ControlType.ROTATION,
-  ControlType._FLIP,
-  ControlType.INFILL,
-  ControlType.PATH_INFILL,
-  ControlType.LIBRARY,
-  ControlType.DELETE,
-];
+export type ControlType = (typeof ControlType)[keyof typeof ControlType];
 
-export const DimenstionControls = [
+// Derived from ControlType so a new member can never be forgotten here (values are in declaration
+// order, i.e. 0..N).
+export const ControlTypes: ControlType[] = Object.values(ControlType);
+
+export const DimensionControls: ControlType[] = [
   ControlType.ROTATION,
   ControlType._SIZE,
   ControlType.POSITION_X,
@@ -71,10 +58,14 @@ export type MultiValue<T> = {
   [K in keyof T]: MultiValueField<T[K]>;
 };
 
-export const allEditableInfo = ControlTypes.reduce((acc, control) => {
-  acc[control] = true;
+// Frozen shared default: returned directly from getOverrideValue/parseEditableInfo, so it must never
+// be mutated by a caller. All current consumers only read or spread it (booleans → shallow freeze).
+export const allEditableInfo: EditableInfo = Object.freeze(
+  ControlTypes.reduce((acc, control) => {
+    acc[control] = true;
 
-  return acc;
-}, {} as EditableInfo);
+    return acc;
+  }, {} as EditableInfo),
+);
 
 export const attributeName = 'data-editable';

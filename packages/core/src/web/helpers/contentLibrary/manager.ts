@@ -1,3 +1,10 @@
+// 【TODO：add tests】high-risk feature module (604 lines), currently untested. Cover:
+// - getContentElements: each `target` selector returns the expected symbol set
+// - init/cleanup lifecycle: owner captured; async work does not read this.owner after unmount
+// - changeContent: image vs use owner; fit-to-owner-bbox transform; current/default id updates
+// - addContentFromCanvas: image/use/shape/text paths; failure restores selection and alerts
+// - reorderContents / removeContent: origin+image symbol pairs stay together; single BatchCommand
+// - changeContent: image owner reads `origImage` (the attribute addImageContent actually writes)
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -132,7 +139,9 @@ export const importContents = async (owner: SVGElement) => {
       const contents = getContentElements({ doc, target: 'image' });
 
       for (const content of contents) {
-        if (content.children[0].getAttribute('xlink:href')) {
+        // Guard against a malformed empty <symbol> in the imported file: skip it (the loop and the
+        // rest of the import continue) instead of throwing past the finally as an unhandled rejection.
+        if (content.children[0]?.getAttribute('xlink:href')) {
           const newId = svgCanvas.getNextId();
 
           content.id = newId;
@@ -241,7 +250,7 @@ const addImageContent = async (owner: SVGElement, src: string, options?: History
   return { image, symbol };
 };
 
-const initContentLibrary = async (owner: SVGElement) => {
+const initContentLibrary = async (owner: SVGElement, isCancelled: () => boolean = () => false) => {
   // Init default content in defs
   let defaultId: string | undefined = getDefaultContentId(owner) ?? undefined;
 
@@ -264,10 +273,16 @@ const initContentLibrary = async (owner: SVGElement) => {
       setContentOwner(symbols.image!, owner.id, { parentCmd: batchCmd });
     }
 
+    // The image branch above awaits; if the panel was torn down meanwhile, don't commit history or
+    // write default/current ids onto a now-detached owner.
+    if (isCancelled()) return;
+
     setDefaultContentId(owner, defaultId, { parentCmd: batchCmd });
     setCurrentContentId(owner, defaultId, { parentCmd: batchCmd });
     handleHistoryActionOptions(batchCmd);
   }
+
+  if (isCancelled()) return;
 
   eventEmitter.emit(CONTENT_UPDATED);
 };
@@ -378,7 +393,9 @@ export const changeContent = (owner: SVGElement, content: SVGSymbolElement, opti
 
   if (owner.tagName === 'image') {
     const imageElem = content.children[0];
-    const imageData = imageElem.getAttribute('data-origImage') ?? imageElem.getAttribute('xlink:href')!;
+    // Prefer the stored source resolution (`origImage`, set by addImageContent) and fall back to the
+    // rendered href. Note: the attribute is `origImage`, not `data-origImage`.
+    const imageData = imageElem.getAttribute('origImage') ?? imageElem.getAttribute('xlink:href')!;
     const cmd = changeAttribute(owner, { origImage: imageData });
 
     handleHistoryActionOptions(cmd, { parentCmd: batchCmd });
@@ -462,13 +479,19 @@ export class ContentLibraryManager {
   type = LibraryType.USE;
 
   init = (elem: SVGElement, onUpdate: () => void) => {
+    let cancelled = false;
+
     eventEmitter.on(CONTENT_UPDATED, onUpdate);
     this.owner = elem;
     this.type = elem.tagName === 'image' ? LibraryType.IMAGE : LibraryType.USE;
-    initContentLibrary(elem);
+
+    // init must return its cleanup synchronously (React effect contract), so the async setup runs
+    // detached and bails via `cancelled` if the panel unmounts before it settles.
+    void initContentLibrary(elem, () => cancelled);
 
     return () => {
       // Clear up for hooks
+      cancelled = true;
       eventEmitter.off(CONTENT_UPDATED, onUpdate);
       this.owner = null;
     };
@@ -493,13 +516,16 @@ export class ContentLibraryManager {
   addContentFromCanvas = async (pickedElem: SVGGraphicsElement) => {
     if (!this.owner) return;
 
-    let success = false;
+    // Capture owner/type once: this is a singleton whose `owner` can be cleared (on unmount) or
+    // switched (on reselection) while the awaits below run. Read the snapshot, never `this.*`.
     const owner = this.owner;
-    const batchCmd = new history.BatchCommand(`Add ${this.owner.tagName} library content from canvas`);
+    const type = this.type;
+    let success = false;
+    const batchCmd = new history.BatchCommand(`Add ${owner.tagName} library content from canvas`);
     const pickedObjectTag = pickedElem.tagName;
 
     try {
-      if (this.type === LibraryType.IMAGE) {
+      if (type === LibraryType.IMAGE) {
         let newImageSrc: null | string = null;
 
         if (pickedObjectTag !== 'image') {
@@ -519,7 +545,7 @@ export class ContentLibraryManager {
         }
 
         if (newImageSrc) {
-          await addImageContent(this.owner, newImageSrc, { parentCmd: batchCmd });
+          await addImageContent(owner, newImageSrc, { parentCmd: batchCmd });
           success = true;
         }
       } else {
@@ -575,8 +601,8 @@ export class ContentLibraryManager {
         const imageSymbol = await symbolMaker.makeImageSymbol(newOriginSymbol, { fullColor: false });
 
         if (imageSymbol) {
-          setContentOwner(newOriginSymbol, this.owner.id, { addToHistory: false });
-          setContentOwner(imageSymbol, this.owner.id, { addToHistory: false });
+          setContentOwner(newOriginSymbol, owner.id, { addToHistory: false });
+          setContentOwner(imageSymbol, owner.id, { addToHistory: false });
           batchCmd.addSubCommand(new history.InsertElementCommand(imageSymbol));
           batchCmd.addSubCommand(new history.InsertElementCommand(newOriginSymbol));
           success = true;

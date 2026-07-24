@@ -70,7 +70,7 @@ export const saveAsFile = async (opts: { templateMode?: boolean } = {}): Promise
       updateRecentFiles(newFilePath!);
     }
 
-    currentFileManager.setTemplateFile(blob, opts?.templateMode !== undefined);
+    currentFileManager.setTemplateFile(blob, opts.templateMode);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;

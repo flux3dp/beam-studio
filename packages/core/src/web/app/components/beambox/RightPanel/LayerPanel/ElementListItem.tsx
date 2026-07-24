@@ -39,10 +39,6 @@ const getEditableState = (element: SVGElement, isSelected: boolean, isProjectMod
     ? useSelectedElementStore.getState().editableInfo
     : getEditableInfo(element, controllableTypes);
 
-  if (isSelected) {
-    console.log('editableInfo', editableInfo, controllableTypes);
-  }
-
   const allEditable = controllableTypes.every((type) => Boolean(editableInfo[type]?.value));
 
   if (allEditable) return { editable: true, partiallyEditable: false };
@@ -84,10 +80,6 @@ const ElementListItem = ({ element, index, onSelect }: Props): React.JSX.Element
   useEffect(() => {
     setEditable(getEditableState(element, isSelected, isProjectMode));
   }, [element, isSelected, isProjectMode]);
-
-  if (isSelected) {
-    console.log('editable', editable);
-  }
 
   const handleRename = () => {
     dialogCaller.promptDialog({
@@ -207,8 +199,6 @@ export const ElementDropPlaceholder = ({ empty, id }: { empty: boolean; id: stri
  */
 export const ElementDragOverlay = ({ count, element }: { count: number; element: SVGElement }): React.JSX.Element => {
   const name = element.getAttribute('data-name') ?? element.id;
-
-  console.log('ElementDragOverlay', count, element, name);
 
   return (
     <div className={classNames(styles.container, styles.overlay, { [styles.stacked]: count > 1 })}>

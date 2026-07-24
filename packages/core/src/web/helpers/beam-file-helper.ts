@@ -1,3 +1,9 @@
+// 【TODO：add tests】high-risk binary (de)serializer, currently untested. Cover:
+// - round-trip block 0x05: generateThumbnailsListBlockBuffer → readBlocks restores key/isVisible/data
+// - metadata.template flag round-trips through generateBeamBuffer / readHeader / readBeam
+// - readBeamFileInfo: templateOnly bails on non-template; getThumbnails stops at first 0x03 vs scans 0x05
+// - graceful handling of a truncated / unknown-block-type buffer (should not throw uncaught)
+// - multibyte thumbnail keys survive the UTF-8 byte-length offsets
 /*  Beam Format
    =================================================================================
   |   Block Name   |    Length    |           Contents                              |
@@ -458,8 +464,6 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
     currentOffset = newOffset + value;
   } else if (blockType === 5) {
     // thumbnails list
-    console.log('Thumbnails List Block');
-
     const { offset: sizeOffset, value: totalSize } = readVInt(buf, currentOffset);
     const blockEnd = sizeOffset + totalSize;
 
@@ -502,55 +506,64 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
 };
 
 const readBeam = async (file: File): Promise<void> => {
-  const data = await new Promise<ArrayBuffer>((resolve) => {
+  const data = await new Promise<ArrayBuffer>((resolve, reject) => {
     const fr = new FileReader();
 
     fr.onloadend = (evt) => {
-      resolve(evt.target.result as ArrayBuffer);
+      resolve(evt.target?.result as ArrayBuffer);
     };
+    fr.onerror = () => reject(fr.error ?? new Error('Failed to read beam file'));
     fr.readAsArrayBuffer(file);
   });
-  const buf = Buffer.from(data);
 
-  let offset = 0;
-  const signatureBuffer = buf.subarray(offset, 5);
+  // Wrap the parsing in try/finally so a malformed / truncated buffer that throws while decoding
+  // blocks can never leave the 'loading_image' progress overlay stuck on screen. The error still
+  // propagates so callers (import flow, resetTemplate, template-preview receiver) can react.
+  try {
+    const buf = Buffer.from(data);
 
-  console.log('Signature:', signatureBuffer.toString());
-  offset += 5;
+    let offset = 0;
+    const signatureBuffer = buf.subarray(offset, 5);
 
-  const version = signatureBuffer.readUInt8(4);
+    console.log('Signature:', signatureBuffer.toString());
+    offset += 5;
 
-  console.log('Beam Version: ', version);
+    const version = signatureBuffer.readUInt8(4);
 
-  const vint = readVInt(buf, offset);
-  const headerSize = vint.value;
+    console.log('Beam Version: ', version);
 
-  offset = vint.offset;
+    const vint = readVInt(buf, offset);
+    const headerSize = vint.value;
 
-  const headerBuf = buf.subarray(offset, offset + headerSize);
+    offset = vint.offset;
 
-  const metadata = readHeader(headerBuf);
+    const headerBuf = buf.subarray(offset, offset + headerSize);
 
-  currentFileManager.setTemplateFile(metadata.template ? file.slice() : null, true);
+    const metadata = readHeader(headerBuf);
+    const isTemplate = !!metadata.template;
 
-  offset += headerSize;
+    currentFileManager.setTemplateFile(isTemplate ? file.slice() : null, isTemplate);
 
-  const command = new history.BatchCommand('Load Beam File');
+    offset += headerSize;
 
-  while (offset > 0) {
-    offset = await readBlocks(buf, offset, command);
+    const command = new history.BatchCommand('Load Beam File');
+
+    while (offset > 0) {
+      offset = await readBlocks(buf, offset, command);
+    }
+
+    const postReadBeam = (): void => {
+      workareaManager.setWorkarea(useDocumentStore.getState().workarea);
+      workareaManager.resetView();
+    };
+
+    command.onAfter = postReadBeam;
+    postReadBeam();
+
+    undoManager.addCommandToHistory(command);
+  } finally {
+    Progress.popById('loading_image');
   }
-
-  const postReadBeam = (): void => {
-    workareaManager.setWorkarea(useDocumentStore.getState().workarea);
-    workareaManager.resetView();
-  };
-
-  command.onAfter = postReadBeam;
-  postReadBeam();
-
-  undoManager.addCommandToHistory(command);
-  Progress.popById('loading_image');
 };
 
 const readBeamFileInfo = async (

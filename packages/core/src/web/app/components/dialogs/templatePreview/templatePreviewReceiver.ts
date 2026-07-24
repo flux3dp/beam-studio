@@ -30,7 +30,13 @@ export const initTemplatePreviewReceiver = (): (() => void) => {
     // readBeam restores the design and, since the buffer is flagged as a template, keeps template mode.
     const file = new File([data.beamBuffer], 'template-preview.beam', { type: 'application/octet-stream' });
 
-    await beamFileHelper.readBeam(file);
+    try {
+      await beamFileHelper.readBeam(file);
+    } catch (error) {
+      // This runs inside an async message listener: an unhandled rejection here would surface as a
+      // blank preview with an uncaught error. Swallow and log so the failure stays diagnosable.
+      console.error('Failed to load template preview design', error);
+    }
   };
 
   window.addEventListener('message', handleMessage);

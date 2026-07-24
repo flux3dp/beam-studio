@@ -1,5 +1,5 @@
 import type { Ref, RefObject } from 'react';
-import React, { useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import type { ButtonProps } from 'antd';
 import { Button } from 'antd';
@@ -101,22 +101,22 @@ export const ObjectPanelItem = ({
   const activeKey = useSelectedElementStore((state) => state.activeKey);
   const [ref, setRef] = useState<Element | null>(null);
   const isActive = propsIsActive ?? id === activeKey;
+  // Stable identity so React doesn't re-run the ref callback (null then node) on every render, which
+  // would fire two extra setRef renders per render. setRef still notifies PopupItem of the reference.
+  const setButtonRef = useCallback(
+    (node: Element | null) => {
+      setRef(node);
+
+      if (propsRef) propsRef.current = node;
+    },
+    [propsRef],
+  );
 
   if (disabled) return null;
 
   return (
     <>
-      <ButtonItem
-        active={isActive}
-        icon={icon}
-        id={id}
-        objectPanelKey={id}
-        ref={(node) => {
-          setRef(node);
-
-          if (propsRef) propsRef.current = node;
-        }}
-      >
+      <ButtonItem active={isActive} icon={icon} id={id} objectPanelKey={id} ref={setButtonRef}>
         {itemChildren}
       </ButtonItem>
       <PopupItem

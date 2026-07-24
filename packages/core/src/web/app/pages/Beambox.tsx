@@ -14,7 +14,12 @@ import ImageTracePanel from '@core/app/components/dialogs/ImageTracePanel/ImageT
 import { initTemplatePreviewReceiver } from '@core/app/components/dialogs/templatePreview/templatePreviewReceiver';
 import { MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasProvider } from '@core/app/contexts/CanvasContext';
-import { getIsTemplatePreview, templateModes, useWithinInteractionModes } from '@core/app/stores/interactionModeStore';
+import {
+  getIsTemplatePreview,
+  initTemplatePreviewFromQuery,
+  templateModes,
+  useWithinInteractionModes,
+} from '@core/app/stores/interactionModeStore';
 import { useIsTabletOrMobile } from '@core/app/stores/layoutStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import createNewText from '@core/app/svgedit/text/createNewText';
@@ -54,6 +59,11 @@ const Beambox = (): React.JSX.Element => {
   }, [isWithinTemplateModes]);
 
   useEffect(() => {
+    // Consume the ?templatePreview=true query flag on mount (sets getIsTemplatePreview / template mode)
+    // before it is read below. Kept here rather than as a module side-effect so importing the store
+    // never touches window.
+    initTemplatePreviewFromQuery();
+
     window.homePage = hashMap.editor;
     communicator.send(MiscEvents.FrontendReady);
     // Init view
@@ -68,8 +78,6 @@ const Beambox = (): React.JSX.Element => {
       setTimeout(async () => {
         try {
           const blob = await fetch('assets/elem-types.beam').then((res) => res.blob());
-
-          console.log('Loaded elem-types.beam:', blob);
 
           const file = new File([blob], 'elem-types.beam', { type: 'text/plain' });
 

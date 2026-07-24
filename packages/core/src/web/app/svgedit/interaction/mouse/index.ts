@@ -621,25 +621,26 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     const newHeight = Math.abs(height * sy);
     let newLeft = left;
     let newTop = top;
+    // In template modes a locked position axis anchors the bbox at its center; every other case
+    // (all editor/project resizing) uses the standard corner-anchored placement below.
+    const inTemplateModes = withinInteractionModes(templateModes);
 
-    if (withinInteractionModes(templateModes)) {
-      if (!editableInfo[ControlType.POSITION_X]?.value) {
-        newLeft = left + (width - newWidth) / 2;
-      } else if (sx > 0) {
-        if (resizeMode.includes('w')) newLeft = left + width - newWidth;
-      } else {
-        if (resizeMode.includes('w')) newLeft = left + width;
-        else newLeft = left - newWidth;
-      }
+    if (inTemplateModes && !editableInfo[ControlType.POSITION_X]?.value) {
+      newLeft = left + (width - newWidth) / 2;
+    } else if (sx > 0) {
+      if (resizeMode.includes('w')) newLeft = left + width - newWidth;
+    } else {
+      if (resizeMode.includes('w')) newLeft = left + width;
+      else newLeft = left - newWidth;
+    }
 
-      if (!editableInfo[ControlType.POSITION_Y]?.value) {
-        newTop = top + (height - newHeight) / 2;
-      } else if (sy > 0) {
-        if (resizeMode.includes('n')) newTop = top + height - newHeight;
-      } else {
-        if (resizeMode.includes('n')) newTop = top + height;
-        else newTop = top - newHeight;
-      }
+    if (inTemplateModes && !editableInfo[ControlType.POSITION_Y]?.value) {
+      newTop = top + (height - newHeight) / 2;
+    } else if (sy > 0) {
+      if (resizeMode.includes('n')) newTop = top + height - newHeight;
+    } else {
+      if (resizeMode.includes('n')) newTop = top + height;
+      else newTop = top - newHeight;
     }
 
     setFitTextBBox(
@@ -719,13 +720,15 @@ const mouseMove = (evt: MouseEvent) => {
   let x = realX;
   let y = realY;
 
-  if (withinInteractionModes(templateModes)) {
+  // Clamp movement on locked axes. Resize is intentionally excluded: onResizeMouseMove needs the
+  // raw coordinates so its "resize from center" handling can compute a non-zero delta. The drag
+  // ('select') path applies its own equivalent clamp below.
+  if (withinInteractionModes(templateModes) && currentMode !== 'resize') {
     const editableInfo = useSelectedElementStore.getState().editableInfo;
     const isLine = selectedElements[0]?.tagName === 'line';
 
     if (!editableInfo[ControlType.POSITION_X]?.value || (isLine && !editableInfo[ControlType.POSITION_X2]?.value)) {
       x = startX;
-      console.log('position x is not editable, ignore x change', realX, startX);
     }
 
     if (!editableInfo[ControlType.POSITION_Y]?.value || (isLine && !editableInfo[ControlType.POSITION_Y2]?.value)) {
@@ -823,7 +826,10 @@ const mouseMove = (evt: MouseEvent) => {
         }
 
         if (dx !== 0 || dy !== 0) {
-          workareaEvents.emit('objectDragStart');
+          // Emit once, only on the first actual movement of this gesture (`moved` flips to true
+          // below). A plain click without movement never emits objectDragStart.
+          if (!moved) workareaEvents.emit('objectDragStart');
+
           for (const selected of selectedElements) {
             if (!selected) break;
 
@@ -1033,7 +1039,10 @@ const mouseMove = (evt: MouseEvent) => {
 
 const mouseUp = async (evt: MouseEvent, blocked = false) => {
   svgCanvas.clearAlignLines();
-  workareaEvents.emit('objectDragEnd');
+
+  // Pair with objectDragStart: only emit end if this gesture actually dragged (`moved`). A plain
+  // click or a right-click that never moved emits neither.
+  if (moved) workareaEvents.emit('objectDragEnd');
 
   const rightClick = evt.button === MouseButtons.Right;
 

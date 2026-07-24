@@ -29,6 +29,10 @@ const TabTemplateFiles = ({ user }: Props) => {
   const [recentFiles, setRecentFiles] = useState<IFile[]>(() => []);
   const [selectedId, setSelectedId] = useState<null | string>(null);
   const needUpdate = useRef(true);
+  // blob: thumbnail URLs (main + custom-thumbnail list) currently referenced by the local template
+  // cards. readBeamFileInfo mints new object URLs per scan; without this they leak on every
+  // re-fetch/unmount. Display-only, so safe to revoke once their cards are superseded.
+  const liveThumbnailUrls = useRef<string[]>([]);
 
   const getRecentFiles = useCallback(async () => {
     if (!needUpdate.current || isWeb()) return;
@@ -77,6 +81,14 @@ const TabTemplateFiles = ({ user }: Props) => {
       }
     }
     setRecentFiles(fileInfos);
+
+    // Release the previous batch's object URLs now that a fresh list has replaced their cards.
+    const nextUrls = fileInfos
+      .flatMap((file) => [file.thumbnail_url, ...(file.thumbnails?.map((thumbnail) => thumbnail.src) ?? [])])
+      .filter((url): url is string => Boolean(url?.startsWith('blob:')));
+
+    liveThumbnailUrls.current.forEach((url) => URL.revokeObjectURL(url));
+    liveThumbnailUrls.current = nextUrls;
   }, []);
 
   const getFluxTemplateFiles = useCallback(async () => {
@@ -119,6 +131,8 @@ const TabTemplateFiles = ({ user }: Props) => {
     return () => {
       communicator.off(TabEvents.UpdateRecentFiles, onRecentFilesUpdate);
       tabController.offFocused(fetchAll);
+      liveThumbnailUrls.current.forEach((url) => URL.revokeObjectURL(url));
+      liveThumbnailUrls.current = [];
     };
   }, [fetchAll]);
 

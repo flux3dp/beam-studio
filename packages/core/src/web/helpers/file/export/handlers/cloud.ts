@@ -115,7 +115,7 @@ export const saveToCloud = async (uuid?: string, opts?: { templateMode?: boolean
         currentFileManager.setCloudUUID(newUuid);
       }
 
-      currentFileManager.setTemplateFile(blob, opts?.templateMode !== undefined);
+      currentFileManager.setTemplateFile(blob, opts?.templateMode);
       currentFileManager.setHasUnsavedChanges(false, false);
 
       return true;

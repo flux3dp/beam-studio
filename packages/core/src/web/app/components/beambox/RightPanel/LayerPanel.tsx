@@ -267,8 +267,6 @@ class LayerPanel extends React.PureComponent<Props, State> {
     const { draggingDestIndex } = this.state;
     const { selectedLayers } = useLayerStore.getState();
 
-    console.log('onLayerDragEnd', draggingDestIndex, selectedLayers);
-
     if (draggingDestIndex !== null && draggingDestIndex !== undefined) {
       moveLayersToPosition(selectedLayers, draggingDestIndex);
       selectionManager.sortTempGroupByLayer();
@@ -357,8 +355,6 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   onLayerTouchEnd = (e: React.TouchEvent): void => {
-    console.log('onLayerTouchEnd', e.changedTouches, this.currentTouchID);
-
     // FIXME: sometimes onLayerTouchEnd is not triggered
     const touch = Array.from(e.changedTouches).find((t) => t.identifier === this.currentTouchID);
 

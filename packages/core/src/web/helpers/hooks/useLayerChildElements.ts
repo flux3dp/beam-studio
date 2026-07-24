@@ -1,3 +1,8 @@
+// 【TODO：add tests】high-risk hook, currently untested. Cover:
+// - watchLayer / unwatchLayer are no-ops on duplicate / missing layers
+// - childElements recomputes when a watched layer's first-depth childList changes
+// - throttled refresh coalesces rapid mutations
+// - MutationObserver is not rebuilt on every refresh tick (version should not force observer teardown)
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { funnel } from 'remeda';
@@ -26,9 +31,26 @@ export const useLayerChildElements = ({
   const [watchedLayers, setWatchedLayers] = useState<SVGGElement[]>(() => [...initialLayers]);
   const [version, setVersion] = useState(0);
 
+  // Recompute is O(scene): each refresh rebuilds every watched layer's child list. Scale the debounce
+  // to the (roughly estimated) object count so busy scenes coalesce more mutations per recompute.
+  // Bucketed so the value — and thus the funnel below — only changes when crossing a threshold, not
+  // on every tick.
+  const quietPeriod = useMemo(() => {
+    const count = watchedLayers.reduce((sum, layer) => sum + (layer.isConnected ? layer.childElementCount : 0), 0);
+
+    if (count > 800) return 1200;
+
+    if (count > 300) return 800;
+
+    if (count > 100) return 600;
+
+    return 400;
+    // eslint-disable-next-line hooks/exhaustive-deps
+  }, [watchedLayers, version]);
+
   const throttledRefresh = useMemo(
-    () => funnel(() => setVersion((v) => v + 1), { minQuietPeriodMs: 500, triggerAt: 'both' }),
-    [],
+    () => funnel(() => setVersion((v) => v + 1), { minQuietPeriodMs: quietPeriod, triggerAt: 'both' }),
+    [quietPeriod],
   );
 
   const watchLayer = useCallback((layer: SVGGElement) => {

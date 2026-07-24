@@ -37,7 +37,7 @@ export interface DerivedData {
   isVariableText: boolean | undefined;
   nodeCategory: CanvasNodeCategory;
   nodeType: CanvasNodeType;
-  objectPanelData: null | ObjectPanelContext;
+  objectPanelData: ObjectPanelContext;
   ungroupedElems: Element[];
 }
 

@@ -1,3 +1,8 @@
+// 【TODO：add tests】pure DOM logic, currently untested. Cover:
+// - isRealChild: excludes def elements and data-imageborder helper rects
+// - disconnected layer returns []
+// - temp-group children are reintegrated at their data-next-sibling position (matches ungroupTempGroup)
+// - children bucketed back to their data-original-layer, falling back to current layer
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 

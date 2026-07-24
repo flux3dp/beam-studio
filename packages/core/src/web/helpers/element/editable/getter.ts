@@ -1,8 +1,15 @@
+// 【TODO：add tests】high-risk, currently untested. Cover:
+// - getOverrideValue: editor → allEditableInfo; temp group in project → all, in template/explore → {}
+// - parseEditableInfo: '*' → all; '[]'/missing → {}; malformed JSON path (should not mutate the DOM)
+// - getEditableInfo: only fills keys in controllableTypes; value/hasMultiValue correctness
+// - getControllableType: line adds POSITION_X2/Y2 not _SIZE; use/image add LIBRARY; text-option gating
 import type { ObjectPanelContext } from '@core/app/components/beambox/RightPanel/OptionsBlocks/utils';
 import { isInteractionMode } from '@core/app/stores/interactionModeStore';
 
 import type { EditableInfo, MultiValue } from './base';
 import { allEditableInfo, attributeName, ControlType, ControlTypes } from './base';
+
+const validControlTypes = new Set<number>(ControlTypes);
 
 const getOverrideValue = (elem: Element): EditableInfo | null => {
   if (isInteractionMode('editor')) return allEditableInfo;
@@ -33,14 +40,16 @@ export const parseEditableInfo = (elem: Element): EditableInfo => {
       const editableInfo: EditableInfo = {};
 
       keys.forEach((key) => {
-        editableInfo[key as ControlType] = true;
+        // Ignore stale/foreign values (e.g. from an older file) — only accept known ControlTypes.
+        if (typeof key === 'number' && validControlTypes.has(key)) editableInfo[key as ControlType] = true;
       });
 
       return editableInfo;
     }
-  } catch (e) {
-    console.error('Failed to parse editable attribute', e);
-    elem.removeAttribute(attributeName);
+  } catch {
+    // This runs on the render path (via getDerivedData), often repeatedly for the same element.
+    // Leave the author's attribute untouched (never mutate the DOM in a getter) and fail soft to {};
+    // don't log, or a single malformed value would spam the console on every render.
   }
 
   return {};

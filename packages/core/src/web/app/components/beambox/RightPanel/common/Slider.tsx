@@ -63,7 +63,6 @@ const Slider = ({
       {...props}
       className={classNames(styles.slider, className)}
       onChange={(val) => {
-        console.log('onChange', value, val);
         setPreviewState((prev) => ({
           isPreviewing: true,
           original: prev.original ?? value,

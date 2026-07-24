@@ -79,8 +79,20 @@ class CurrentFileManager {
     this.updateTitle();
   };
 
-  setTemplateFile = (fileBlob: Blob | null, isNewFile = false) => {
-    const isTemplateMode = !!fileBlob && (isNewFile || !!this.templateFileBlob);
+  /**
+   * Sync the retained template blob and template mode after a save/load.
+   *
+   * @param fileBlob the just-saved/loaded file, or null when there is none.
+   * @param isTemplate whether this file is a template:
+   *   - `true`  → template save/load: keep the blob and enter template mode
+   *   - `false` → normal save/load: drop the blob and leave template mode
+   *   - `undefined` → preserve the current template status (a plain re-save that isn't
+   *     changing whether the document is a template)
+   *
+   * A template always requires a blob, so a null blob forces the non-template result.
+   */
+  setTemplateFile = (fileBlob: Blob | null, isTemplate?: boolean) => {
+    const isTemplateMode = !!fileBlob && (isTemplate ?? !!this.templateFileBlob);
 
     this.templateFileBlob = isTemplateMode ? fileBlob : null;
     setTemplateMode(isTemplateMode);

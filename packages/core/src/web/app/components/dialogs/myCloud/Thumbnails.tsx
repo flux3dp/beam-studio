@@ -31,8 +31,6 @@ const Thumbnails = ({ file, showBasicThumbnail }: Props): React.JSX.Element => {
     }
   }, [showBasicThumbnail, file.thumbnails, file.thumbnails_data]);
 
-  console.log('Thumbnails', showBasicThumbnail, file, visibleThumbnails);
-
   const previewThumbnail = useMemo(
     () => (
       <div className={styles['guide-lines']} style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}>

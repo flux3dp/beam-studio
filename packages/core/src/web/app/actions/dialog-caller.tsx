@@ -447,14 +447,10 @@ export default {
   },
   showImageEditPanel: (onClose: () => void = () => {}): void => {
     if (isIdExist('image-edit-panel')) {
-      console.warn('image-edit-panel already exists');
-
       return;
     }
 
     if (selectionManager.isMultiSelecting) {
-      console.warn('image-edit-panel isMultiSelecting');
-
       return;
     }
 

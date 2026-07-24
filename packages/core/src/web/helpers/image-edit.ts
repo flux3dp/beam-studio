@@ -545,8 +545,6 @@ const potrace = async (elem?: SVGImageElement): Promise<boolean | void> => {
 
   const { svg: final, sx, sy } = res.data;
 
-  console.log('potrace result', final, sx, sy);
-
   const svgStr = final.replace(/<\/?svg[^>]*>/g, '');
   const gId = svgCanvas.getNextId();
   const g = svgCanvas.addSvgElementFromJson<SVGGElement>({ attr: { id: gId }, element: 'g' });
