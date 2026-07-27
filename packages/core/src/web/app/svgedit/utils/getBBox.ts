@@ -152,19 +152,19 @@ export const getSymbolBBox = (symbol: SVGSymbolElement) => {
     const useElemForBB = svgedit.utilities.findTempUse();
 
     svgedit.utilities.setHref(useElemForBB, `#${symbol.id}`);
-    bb = useElemForBB.getBBox();
+
+    const measured = useElemForBB.getBBox();
+
     svgedit.utilities.setHref(useElemForBB, '');
-    bb.height = Math.max(0, bb.height);
-    bb.width = Math.max(0, bb.width);
-
-    const obj = {
-      height: Number.parseFloat(bb.height.toFixed(5)),
-      width: Number.parseFloat(bb.width.toFixed(5)),
-      x: Number.parseFloat(bb.x.toFixed(5)),
-      y: Number.parseFloat(bb.y.toFixed(5)),
+    // Return the same rounded values that get cached, so the first call for a symbol cannot
+    // differ from every later (cache-hit) call by sub-1e-5 amounts.
+    bb = {
+      height: Number.parseFloat(Math.max(0, measured.height).toFixed(5)),
+      width: Number.parseFloat(Math.max(0, measured.width).toFixed(5)),
+      x: Number.parseFloat(measured.x.toFixed(5)),
+      y: Number.parseFloat(measured.y.toFixed(5)),
     };
-
-    symbol.setAttribute('data-bbox', JSON.stringify(obj));
+    symbol.setAttribute('data-bbox', JSON.stringify(bb));
   } else {
     bb = JSON.parse(bbText) as { height: number; width: number; x: number; y: number };
   }

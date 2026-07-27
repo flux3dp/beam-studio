@@ -2,7 +2,8 @@
 // - isRealChild: excludes def elements and data-imageborder helper rects
 // - disconnected layer returns []
 // - temp-group children are reintegrated at their data-next-sibling position (matches ungroupTempGroup)
-// - children bucketed back to their data-original-layer, falling back to current layer
+// - only temp children whose data-original-layer resolves to the queried layer are reintegrated
+//   (falling back to the current layer when the attribute is missing / unresolvable)
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 
@@ -41,12 +42,15 @@ const getOriginalLayerGroup = (child: Element): null | SVGGElement => {
 
 /**
  * When multi-selecting, elements are temporarily moved out of their layer into
- * a `<g data-tempgroup="true">` under svgcontent. Collect those elements bucketed
- * by the layer group they came from, preserving their order within each temp group.
+ * a `<g data-tempgroup="true">` under svgcontent. Collect the ones that came from
+ * `layer`, preserving their order within each temp group.
+ *
+ * Scoped to a single layer on purpose: callers ask per layer, so bucketing every
+ * temp child by layer would build (and throw away) the other layers' lists on each call.
  */
-const collectTempChildrenByLayer = (): Map<SVGGElement, SVGElement[]> => {
-  const map = new Map<SVGGElement, SVGElement[]>();
+const collectTempChildrenOfLayer = (layer: SVGGElement): SVGElement[] => {
   const tempGroups = document.querySelectorAll<SVGGElement>('[data-tempgroup="true"]');
+  const children: SVGElement[] = [];
 
   tempGroups.forEach((group) => {
     Array.from(group.children).forEach((child) => {
@@ -54,20 +58,13 @@ const collectTempChildrenByLayer = (): Map<SVGGElement, SVGElement[]> => {
         return;
       }
 
-      const targetLayer = getOriginalLayerGroup(child);
-
-      if (!targetLayer) {
-        return;
+      if (getOriginalLayerGroup(child) === layer) {
+        children.push(child);
       }
-
-      const list = map.get(targetLayer) ?? [];
-
-      list.push(child);
-      map.set(targetLayer, list);
     });
   });
 
-  return map;
+  return children;
 };
 
 /**
@@ -94,13 +91,6 @@ const reintegrateTempChildren = (base: SVGElement[], tempChildren: SVGElement[])
   return result;
 };
 
-const getChildElementsForLayer = (group: SVGGElement, tempByLayer: Map<SVGGElement, SVGElement[]>): SVGElement[] => {
-  const base = Array.from(group.children).filter(isRealChild);
-  const tempChildren = tempByLayer.get(group);
-
-  return tempChildren ? reintegrateTempChildren(base, tempChildren) : base;
-};
-
 /**
  * Get the first-depth (direct) child elements of a single layer group.
  * Nested descendants are not included. Elements that are currently in a temp
@@ -110,9 +100,10 @@ export function getLayerChildElements(layer: SVGGElement): SVGElement[] {
   // Return an empty list for disconnected layers, e.g. when the layer is deleted
   if (!layer.isConnected) return [];
 
-  const tempByLayer = collectTempChildrenByLayer();
+  const base = Array.from(layer.children).filter(isRealChild);
+  const tempChildren = collectTempChildrenOfLayer(layer);
 
-  return getChildElementsForLayer(layer, tempByLayer);
+  return tempChildren.length > 0 ? reintegrateTempChildren(base, tempChildren) : base;
 }
 
 export default getLayerChildElements;

@@ -7,7 +7,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './FileTargetSelector.module.scss';
 
-const modelId = 'file-target-modal';
+const modalId = 'file-target-modal';
 
 type Target = 'cloud' | 'local';
 
@@ -38,7 +38,7 @@ const FileTargetSelector = ({ resolve, template_mode }: Props) => {
   const onSelect = useCallback(
     (res: null | Target) => {
       resolve(res);
-      dialogCaller.popDialogById(modelId);
+      dialogCaller.popDialogById(modalId);
     },
     [resolve],
   );
@@ -71,6 +71,6 @@ export default FileTargetSelector;
 
 export const askForFileTarget = (template_mode?: boolean) => {
   return new Promise<null | Target>((resolve) => {
-    dialogCaller.addDialogComponent(modelId, <FileTargetSelector resolve={resolve} template_mode={template_mode} />);
+    dialogCaller.addDialogComponent(modalId, <FileTargetSelector resolve={resolve} template_mode={template_mode} />);
   });
 };

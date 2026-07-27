@@ -444,9 +444,7 @@ export class Selector {
       top: ['n', 'ne', 'nw'],
     };
 
-    if (!editableInfo[ControlType._SIZE]?.value) {
-      disabledResizeGrips.push('e', 'w', 'n', 's', 'ne', 'nw', 'se', 'sw');
-    } else if (elem.tagName === 'line') {
+    if (elem.tagName === 'line') {
       const controlX =
         +elem.getAttribute('x1')! > +elem.getAttribute('x2')!
           ? { left: ControlType.POSITION_X2, right: ControlType.POSITION_X }
@@ -463,6 +461,8 @@ export class Selector {
       if (!editableInfo[controlX.right]?.value) disabledResizeGrips.push(...grips.right);
 
       if (!editableInfo[controlY.bottom]?.value) disabledResizeGrips.push(...grips.bottom);
+    } else if (!editableInfo[ControlType._SIZE]?.value) {
+      disabledResizeGrips.push('e', 'w', 'n', 's', 'ne', 'nw', 'se', 'sw');
     }
 
     disabledResizeGrips.forEach((dir) => {

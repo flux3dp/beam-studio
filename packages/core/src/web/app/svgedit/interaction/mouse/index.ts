@@ -22,6 +22,7 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import { contentLibraryManager } from '@core/helpers/contentLibrary/manager';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import { ControlType } from '@core/helpers/element/editable/base';
+import { parseEditableInfo } from '@core/helpers/element/editable/getter';
 import { isElemLocked } from '@core/helpers/element/lock';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -88,6 +89,17 @@ let selectedBBox: IRect | null = null;
 let justSelected: null | SVGElement = null;
 let angleOffset = 90;
 let currentBoundingBox = Array.of<IPoint>();
+
+/**
+ * Whether `control` may still be exercised on `elem` through a canvas gesture.
+ *
+ * Only the template modes enforce the per-element locks here; 'editor' and 'project' keep their
+ * previous unrestricted canvas behaviour, matching the drag / resize / rotate guards in this file.
+ * Reads the element directly rather than `useSelectedElementStore`, because a double click can
+ * target an element that is not (yet) the current selection.
+ */
+const isControlEditable = (elem: Element, control: ControlType): boolean =>
+  !withinInteractionModes(templateModes) || parseEditableInfo(elem)[control] === true;
 
 const findAndDrawAlignPoints = (x: number, y: number) => {
   const {
@@ -219,7 +231,12 @@ const mouseDown = async (evt: MouseEvent) => {
       const pickTarget = svgCanvas.getMouseTarget(evt);
 
       if (pickTarget && pickTarget !== svgRoot) {
-        await contentLibraryManager.addContentFromCanvas(pickTarget as SVGGraphicsElement);
+        // Same gate as every other selection path: never reach into a locked or hidden layer.
+        const pickTargetLayer = LayerHelper.getObjectLayer(pickTarget as SVGElement);
+        const pickable =
+          pickTargetLayer?.elem && checkSelectable(pickTargetLayer.elem) && !isElemLocked(pickTarget as SVGElement);
+
+        if (pickable) await contentLibraryManager.addContentFromCanvas(pickTarget as SVGGraphicsElement);
       }
 
       return;
@@ -720,10 +737,15 @@ const mouseMove = (evt: MouseEvent) => {
   let x = realX;
   let y = realY;
 
-  // Clamp movement on locked axes. Resize is intentionally excluded: onResizeMouseMove needs the
-  // raw coordinates so its "resize from center" handling can compute a non-zero delta. The drag
-  // ('select') path applies its own equivalent clamp below.
-  if (withinInteractionModes(templateModes) && currentMode !== 'resize') {
+  // Clamp movement on locked axes, for the drag path only. 'select' is the sole mode that reads
+  // x/y as a translation of the selected element; every other mode must keep the raw coordinates:
+  // - 'rotate' derives the angle from atan2(cy - y, cx - x) — a clamped x/y yields a wrong angle.
+  // - 'resize' needs a non-zero delta for onResizeMouseMove's resize-from-center handling.
+  // - the creation modes ('line'/'rect'/'ellipse'/'path'/'polygon') and the prespray/rotary drags
+  //   build geometry unrelated to the selected element, so its lock flags must not apply.
+  // The drag itself is enforced by the dx/dy clamp in `case 'select'`; clamping here as well keeps
+  // shift-snap and auto-align from proposing movement along the locked axis in the first place.
+  if (withinInteractionModes(templateModes) && currentMode === 'select') {
     const editableInfo = useSelectedElementStore.getState().editableInfo;
     const isLine = selectedElements[0]?.tagName === 'line';
 
@@ -740,7 +762,10 @@ const mouseMove = (evt: MouseEvent) => {
 
   if (!started) {
     if (svgCanvas.isAutoAlign && currentMode === 'path') {
-      findAndDrawAlignPoints(x, y);
+      // Use the raw pointer position, not the clamped x/y: the clamp above only makes sense while
+      // dragging, and with `started === false` startX/startY still hold the previous mousedown's
+      // values, which would draw the align points at a stale location in template modes.
+      findAndDrawAlignPoints(realX, realY);
     }
 
     //
@@ -981,6 +1006,18 @@ const mouseMove = (evt: MouseEvent) => {
       svgCanvas.textActions.mouseMove(mouseX, mouseY);
       break;
     case 'rotate':
+      // Rotation is lockable per element in template modes. Selector.updateNonEditableGripVisibility
+      // already hides the rotate grips, but don't depend on grip visibility alone — mirror the
+      // position/size clamps and refuse to apply the angle here as well. Bailing out (rather than
+      // never entering 'rotate' mode in mouseDown) keeps the gesture from falling through to a drag,
+      // and mouseUp's empty batch command is discarded by its own isEmpty() check.
+      if (
+        withinInteractionModes(templateModes) &&
+        !useSelectedElementStore.getState().editableInfo[ControlType.ROTATION]?.value
+      ) {
+        break;
+      }
+
       box = getBBox(selected, { ignoreTransform: true });
 
       cx = box.x + box.width / 2;
@@ -1299,7 +1336,13 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           setMouseMode('select');
           t = evt.target;
 
-          if (selectedElements[0].nodeName === 'path' && selectedElements[1] == null) {
+          if (
+            selectedElements[0].nodeName === 'path' &&
+            selectedElements[1] == null &&
+            // Node editing reshapes the path, so it is gated on _SIZE. Without this, clicking a
+            // size-locked path twice drops into pathedit, where dragging nodes bypasses every lock.
+            isControlEditable(selectedElements[0], ControlType._SIZE)
+          ) {
             // if it was a path
             svgCanvas.pathActions.select(selectedElements[0]);
           } else if (evt.shiftKey) {
@@ -1537,16 +1580,26 @@ const dblClick = (evt: MouseEvent) => {
 
   if (!['preview_color', 'text', 'textedit'].includes(currentMode)) {
     if (tagName === 'text') {
+      // A locked TEXT_CONTENT disables the panel's text input; without this the same text is still
+      // freely editable by double clicking it on the canvas.
+      if (!isControlEditable(mouseTarget, ControlType.TEXT_CONTENT)) return;
+
       svgCanvas.textActions.select(mouseTarget as SVGTextElement);
     } else if (mouseTarget.getAttribute('data-textpath-g')) {
       const clickOnText = ['text', 'textPath'].includes((evt.target as SVGElement).tagName);
       const text = mouseTarget.querySelector('text');
       const path = mouseTarget.querySelector('path');
 
+      // The editable flags live on the textpath <g> (that is what gets selected), not on its
+      // inner <text>/<path>.
       if (text && clickOnText) {
+        if (!isControlEditable(mouseTarget, ControlType.TEXT_CONTENT)) return;
+
         svgCanvas.selectorManager.releaseSelector(mouseTarget);
         svgCanvas.textActions.select(text);
       } else if (path) {
+        if (!isControlEditable(mouseTarget, ControlType._SIZE)) return;
+
         svgCanvas.pathActions.toEditMode(path);
       }
     } else if (currentMode === 'pathedit' && mouseTarget.getAttribute('id') === 'svgroot') {

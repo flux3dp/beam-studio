@@ -2,7 +2,7 @@
 // - round-trip block 0x05: generateThumbnailsListBlockBuffer → readBlocks restores key/isVisible/data
 // - metadata.template flag round-trips through generateBeamBuffer / readHeader / readBeam
 // - readBeamFileInfo: templateOnly bails on non-template; getThumbnails stops at first 0x03 vs scans 0x05
-// - graceful handling of a truncated / unknown-block-type buffer (should not throw uncaught)
+// - truncated buffer throws BeamFileFormatError (readable) instead of RangeError, unknown block type stops the loop
 // - multibyte thumbnail keys survive the UTF-8 byte-length offsets
 /*  Beam Format
    =================================================================================
@@ -157,12 +157,40 @@ const valueToVIntBuffer = (value) => {
   return Buffer.from(a);
 };
 
-const readVInt = (buffer, offset = 0) => {
+/**
+ * Thrown when a .beam buffer is truncated / malformed. Beam files can come from anywhere
+ * (mail attachments, USB sticks, older or corrupted exports), so parsing must fail with a
+ * readable message instead of a bare `RangeError [ERR_OUT_OF_RANGE]` from Buffer.
+ */
+export class BeamFileFormatError extends Error {
+  constructor(message: string) {
+    super(`Corrupted .beam file: ${message}`);
+    this.name = 'BeamFileFormatError';
+  }
+}
+
+/** Assert `length` bytes are readable at `offset` without running past `end`. */
+const assertRange = (buf: Buffer, offset: number, length: number, what: string, end: number = buf.length): void => {
+  const limit = Math.min(end, buf.length);
+
+  if (offset < 0 || length < 0 || offset + length > limit) {
+    throw new BeamFileFormatError(
+      `${what} needs ${length} byte(s) at offset ${offset}, but only ${Math.max(0, limit - offset)} available`,
+    );
+  }
+};
+
+const readVInt = (buffer: Buffer, offset = 0, end: number = buffer.length, what = 'VINT') => {
   let v = 0;
   let currentByte = 0;
   let currentOffset = offset;
+  const limit = Math.min(end, buffer.length);
 
   while (true) {
+    if (currentOffset >= limit) {
+      throw new BeamFileFormatError(`${what} runs past the end of the buffer at offset ${currentOffset}`);
+    }
+
     const b = buffer.readUInt8(currentOffset);
 
     currentOffset += 1;
@@ -252,21 +280,24 @@ const generateMiscDataBlockBuffer = (data: MiscData): Buffer => {
 
 const generateThumbnailsListBlockBuffer = (thumbnails: ExportThumbnail[]): Buffer => {
   const typeBuf = localHeaderTypeBuffer('thumbnailsList');
-  let contentBuf = Buffer.from(valueToVIntBuffer(thumbnails.length));
+  // Collect every piece first and concat once: concatenating inside the loop copies the whole
+  // accumulated buffer per thumbnail (O(n²) over the image bytes, not just the entry count).
+  const parts: Buffer[] = [valueToVIntBuffer(thumbnails.length)];
 
   for (const { data, isVisible, key } of thumbnails) {
     const keyBuf = Buffer.from(key);
     const dataBuf = data ? Buffer.from(data) : Buffer.from([]);
 
-    contentBuf = Buffer.concat([
-      contentBuf,
+    parts.push(
       valueToVIntBuffer(keyBuf.length),
       keyBuf,
       Buffer.from([isVisible ? 1 : 0]),
       valueToVIntBuffer(dataBuf.length),
       dataBuf,
-    ]);
+    );
   }
+
+  const contentBuf = Buffer.concat(parts);
 
   return Buffer.concat([typeBuf, valueToVIntBuffer(contentBuf.length), contentBuf]);
 };
@@ -278,7 +309,18 @@ const generateBeamBuffer = (
   thumbnailsList?: ExportThumbnail[],
   isTemplateFile = !!currentFileManager.templateFileBlob,
 ): Buffer => {
-  const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]); // Bvg{version in uint} max to 255
+  // Bvg{version in uint} max to 255.
+  // Version stays 2 even though block 0x05 (thumbnails list) and the `template` metadata flag were
+  // added later, because both degrade gracefully on older Beam Studio builds:
+  // - 0x05 is always written LAST, right before the 0x00 terminator, so an old reader that hits the
+  //   unknown block type aborts the block loop after every block it understands has been consumed
+  //   (see the `Unknown Block Type` branch in readBlocks). The file still opens; only the custom
+  //   thumbnails are dropped.
+  // - its header length VINT is likewise appended after the four known ones, so old readers that
+  //   read a fixed number of VINTs are unaffected.
+  // - unknown metadata keys (`template`) are ignored by JSON.parse consumers.
+  // Bump the version only if a future change breaks one of those properties.
+  const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]);
   const svgBlockBuf = generateSvgBlockBuffer(svgString);
   const imageSourceBlockBuffer = generateImageSourceBlockBuffer(imageSources);
   const thumbnailBlockBuffer = thumbnail ? generateThumbnailBlockBuffer(thumbnail) : null;
@@ -390,6 +432,58 @@ const readImageSource = (buf: Buffer, offset: number, end: number) => {
   }
 };
 
+interface ThumbnailsListEntry {
+  blob: Blob | null;
+  isVisible: boolean;
+  key: string;
+}
+
+/**
+ * Read the body of a thumbnails list block (0x05), i.e. everything after its type byte and
+ * length VINT. `contentOffset` points at the entry count, `totalSize` is the declared body size.
+ *
+ * Shared by readBlocks and readBeamFileInfo so the bounds checks can't drift between the two.
+ * Every read is bounded by the declared block end: a truncated or lying length yields a
+ * BeamFileFormatError instead of a RangeError or a wildly out-of-range slice.
+ */
+const readThumbnailsListBlock = (
+  buf: Buffer,
+  contentOffset: number,
+  totalSize: number,
+): { blockEnd: number; entries: ThumbnailsListEntry[] } => {
+  assertRange(buf, contentOffset, totalSize, 'thumbnails list block');
+
+  const blockEnd = contentOffset + totalSize;
+  const entries: ThumbnailsListEntry[] = [];
+  const { offset: countOffset, value: count } = readVInt(buf, contentOffset, blockEnd, 'thumbnails list count');
+  let currentOffset = countOffset;
+
+  for (let i = 0; i < count && currentOffset < blockEnd; i += 1) {
+    const { offset: keyLenOffset, value: keyLen } = readVInt(buf, currentOffset, blockEnd, `thumbnail ${i} key size`);
+
+    currentOffset = keyLenOffset;
+    assertRange(buf, currentOffset, keyLen, `thumbnail ${i} key`, blockEnd);
+
+    const key = buf.toString('utf-8', currentOffset, currentOffset + keyLen);
+
+    currentOffset += keyLen;
+    assertRange(buf, currentOffset, 1, `thumbnail ${i} visible flag`, blockEnd);
+
+    const isVisible = buf.readUInt8(currentOffset) === 1;
+
+    currentOffset += 1;
+
+    const { offset: srcLenOffset, value: srcLen } = readVInt(buf, currentOffset, blockEnd, `thumbnail ${i} data size`);
+
+    currentOffset = srcLenOffset;
+    assertRange(buf, currentOffset, srcLen, `thumbnail ${i} data`, blockEnd);
+    entries.push({ blob: srcLen > 0 ? bufferToBlob(buf, currentOffset, srcLen) : null, isVisible, key });
+    currentOffset += srcLen;
+  }
+
+  return { blockEnd, entries };
+};
+
 const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) => {
   if (offset >= buf.length) {
     console.warn('offset exceed buffer length');
@@ -464,38 +558,10 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
     currentOffset = newOffset + value;
   } else if (blockType === 5) {
     // thumbnails list
-    const { offset: sizeOffset, value: totalSize } = readVInt(buf, currentOffset);
-    const blockEnd = sizeOffset + totalSize;
+    const { offset: sizeOffset, value: totalSize } = readVInt(buf, currentOffset, buf.length, 'thumbnails list size');
+    const { blockEnd, entries } = readThumbnailsListBlock(buf, sizeOffset, totalSize);
 
-    currentOffset = sizeOffset;
-
-    const { offset: countOffset, value: count } = readVInt(buf, currentOffset);
-
-    currentOffset = countOffset;
-
-    for (let i = 0; i < count && currentOffset < blockEnd; i += 1) {
-      const { offset: keyLenOffset, value: keyLen } = readVInt(buf, currentOffset);
-
-      currentOffset = keyLenOffset;
-
-      const key = buf.toString('utf-8', currentOffset, currentOffset + keyLen);
-
-      currentOffset += keyLen;
-
-      const isVisible = buf.readUInt8(currentOffset) === 1;
-
-      currentOffset += 1;
-
-      const { offset: srcLenOffset, value: srcLen } = readVInt(buf, currentOffset);
-
-      currentOffset = srcLenOffset;
-
-      const blob = srcLen > 0 ? bufferToBlob(buf, currentOffset, srcLen) : null;
-
-      currentOffset += srcLen;
-      addThumbnail(blob, { isVisible, key });
-    }
-
+    entries.forEach(({ blob, isVisible, key }) => addThumbnail(blob, { isVisible, key }));
     currentOffset = blockEnd;
   } else {
     console.error(`Unknown Block Type: ${blockType}`);
@@ -618,34 +684,11 @@ const readBeamFileInfo = async (
 
       if (!getThumbnails) break;
     } else if (blockType === 5) {
-      const blockEnd = offset + size;
-      let currentOffset = offset;
-      const { offset: countOffset, value: count } = readVInt(buf, currentOffset);
+      const { entries } = readThumbnailsListBlock(buf, offset, size);
 
-      currentOffset = countOffset;
-
-      for (let i = 0; i < count && currentOffset < blockEnd; i += 1) {
-        const { offset: keyLenOffset, value: keyLen } = readVInt(buf, currentOffset);
-
-        currentOffset = keyLenOffset;
-
-        const key = buf.toString('utf-8', currentOffset, currentOffset + keyLen);
-
-        currentOffset += keyLen;
-
-        const isVisible = buf.readUInt8(currentOffset) === 1;
-
-        currentOffset += 1;
-
-        const { offset: srcLenOffset, value: srcLen } = readVInt(buf, currentOffset);
-
-        currentOffset = srcLenOffset;
-
-        const src = srcLen > 0 ? URL.createObjectURL(bufferToBlob(buf, currentOffset, srcLen)) : '';
-
-        currentOffset += srcLen;
-        fileThumbnails.push({ isVisible, key, src });
-      }
+      entries.forEach(({ blob, isVisible, key }) =>
+        fileThumbnails.push({ isVisible, key, src: blob ? URL.createObjectURL(blob) : '' }),
+      );
     }
   }
 

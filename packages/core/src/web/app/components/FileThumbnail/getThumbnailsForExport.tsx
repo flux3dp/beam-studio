@@ -13,16 +13,16 @@ export type ExportThumbnail = {
 };
 
 export const askToEditThumbnails = () => {
-  const modelId = 'thumbnail-carousel-modal';
+  const modalId = 'thumbnail-carousel-modal';
 
   return new Promise<void>((resolve) => {
     const onClose = () => {
-      dialogCaller.popDialogById(modelId);
+      dialogCaller.popDialogById(modalId);
       resolve();
     };
 
     dialogCaller.addDialogComponent(
-      modelId,
+      modalId,
       <Modal
         centered
         footer={
@@ -30,7 +30,7 @@ export const askToEditThumbnails = () => {
             <Button onClick={onClose}>{i18n.lang.alert.no}</Button>
             <Button
               onClick={() => {
-                dialogCaller.popDialogById(modelId);
+                dialogCaller.popDialogById(modalId);
                 showThumbnailList(resolve);
               }}
               type="primary"
