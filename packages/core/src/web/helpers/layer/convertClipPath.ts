@@ -1,9 +1,12 @@
 import * as paper from 'paper';
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
+import { getTransformList } from '@core/app/svgedit/transform/transformlist';
+import { findDefs } from '@core/app/svgedit/utils/findDef';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -48,9 +51,9 @@ const updateMatrix = (elem: Element, matrix: null | SVGMatrix | undefined, inver
     return null;
   }
 
-  const tlist = svgCanvas.getTransformList(elem);
+  const tlist = getTransformList(elem as SVGGraphicsElement);
 
-  if (tlist.numberOfItems > 0) {
+  if (tlist && tlist.numberOfItems) {
     if (!inverse) {
       elem.removeAttribute('transform');
     }
@@ -73,6 +76,146 @@ const updateMatrix = (elem: Element, matrix: null | SVGMatrix | undefined, inver
 
 const matrix2String = (m: null | SVGMatrix) => (m ? `matrix(${m.a},${m.b},${m.c},${m.d},${m.e},${m.f})` : '');
 
+const getOwnMatrix = (elem: Element): null | SVGMatrix => {
+  const tlist = getTransformList(elem as SVGGraphicsElement);
+
+  return tlist && tlist.numberOfItems > 0 ? svgCanvas.transformListToTransform(tlist).matrix : null;
+};
+
+// clip-path is resolved in the coordinate system established by the element's own transform, so
+// whenever that transform ends up baked into the geometry the clip path has to follow it.
+const transformClipPath = (clipPath: paper.PathItem, matrix: null | SVGMatrix): paper.PathItem => {
+  if (!matrix) {
+    return clipPath;
+  }
+
+  const { a, b, c, d, e, f } = matrix;
+  const cloned = clipPath.clone({ insert: false });
+
+  cloned.transform(new paper.Matrix(a, b, c, d, e, f));
+
+  return cloned;
+};
+
+// Bounding box comparisons need some slack, otherwise geometry that sits exactly on the clip path
+// border (very common: the clip path is the artboard) is treated as being outside of it.
+const getEpsilon = (bounds: paper.Rectangle) => Math.max(bounds.width, bounds.height, 1) * 1e-6;
+
+// An axis aligned rectangle fills its own bounding box, which makes bounding box tests exact.
+// This is by far the most common clip path shape.
+const isRectLike = (clipPath: paper.PathItem) => {
+  const boundsArea = clipPath.bounds.width * clipPath.bounds.height;
+  const { area } = clipPath as paper.CompoundPath | paper.Path;
+
+  return boundsArea > 0 && Math.abs(Math.abs(area) - boundsArea) <= boundsArea * 1e-6;
+};
+
+// One point per subpath: a subpath that does not cross the clip outline is entirely inside or
+// entirely outside of it, so a single point per subpath decides.
+const getProbePoints = (obj: paper.PathItem): paper.Point[] => {
+  const paths = (obj instanceof paper.Path ? [obj] : obj.children) as Array<paper.Path | undefined>;
+
+  return paths
+    .filter((path) => path?.segments?.length)
+    .map((path) => (path!.length > 0 ? path!.getPointAt(path!.length / 2) : path!.firstSegment.point));
+};
+
+// Returns true when the object is entirely inside the clip path, ie. the boolean operation would be
+// a no-op. Skipping it keeps the original element (id, vector-effect, stroke settings, ...) intact
+// and avoids paper.js boolean artifacts on coincident borders.
+const isInsideClipPath = (obj: paper.PathItem, clipPath: paper.PathItem, epsilon: number) => {
+  if (!clipPath.bounds.expand(epsilon * 2).contains(obj.bounds)) {
+    return false;
+  }
+
+  if (isRectLike(clipPath)) {
+    return true;
+  }
+
+  // Bounding box containment is not enough for other shapes: make sure the object does not cross the
+  // clip outline and that it sits inside of it rather than in one of its holes. getCrossings (rather
+  // than intersects) ignores overlaps, so geometry running along the clip outline still counts as
+  // being inside.
+  if (obj.getCrossings(clipPath).length > 0) {
+    return false;
+  }
+
+  const probes = getProbePoints(obj);
+
+  return probes.length > 0 && probes.every((probe) => clipPath.contains(probe));
+};
+
+// Cuts an unfilled path down to the parts inside the clip path.
+// paper's own stroke clipping (intersect with trace: false -> splitBoolean) walks the crossings
+// backwards and splits through CurveLocation objects. When several crossings share a curve the
+// earlier locations go stale and their split is silently skipped, so pieces that stick out of the
+// clip path survive. Splitting by numeric offset from the end instead is stable: the offsets of the
+// remaining head never move.
+const clipOpenPath = (path: paper.Path, clipPath: paper.PathItem): paper.Path[] => {
+  // Opening a closed path re-roots its parametrization, so get that out of the way before measuring
+  if (path.closed) {
+    const [location] = path.getCrossings(clipPath);
+
+    if (location) {
+      path.splitAt(location);
+    }
+  }
+
+  const { length } = path;
+  const tolerance = Math.max(length, 1) * 1e-9;
+  const offsets = path
+    .getCrossings(clipPath)
+    .map(({ offset }) => offset)
+    .filter((offset) => offset > tolerance && offset < length - tolerance)
+    .sort((a, b) => b - a);
+  const pieces: paper.Path[] = [];
+  let head = path;
+  let previous = Number.POSITIVE_INFINITY;
+
+  offsets.forEach((offset) => {
+    if (previous - offset <= tolerance) {
+      return;
+    }
+
+    previous = offset;
+
+    const rest = head.splitAt(offset) as null | paper.Path;
+
+    // splitAt hands back the path itself when all it had to do was open it
+    if (rest && rest !== head) {
+      pieces.push(rest);
+    }
+  });
+  pieces.push(head);
+
+  // Every piece is now entirely inside or entirely outside, so one point per piece decides
+  return pieces.reverse().filter((piece) => {
+    const point = piece.length > 0 ? piece.getPointAt(piece.length / 2) : piece.firstSegment?.point;
+
+    return !!point && clipPath.contains(point);
+  });
+};
+
+const clipSubPath = (
+  subPath: paper.PathItem,
+  clipPath: paper.PathItem,
+  isAllFilled: boolean,
+  epsilon: number,
+): paper.PathItem[] => {
+  // Nothing to cut: keep the subpath as it is rather than running it through a boolean operation
+  if (isInsideClipPath(subPath, clipPath, epsilon)) {
+    return [subPath];
+  }
+
+  if (!isAllFilled) {
+    return clipOpenPath(subPath as paper.Path, clipPath);
+  }
+
+  const result = subPath.intersect(clipPath, { insert: false, trace: true });
+
+  return result.isEmpty() ? [] : [result];
+};
+
 const getBBoxByAttr = (elem: Element) => {
   const left = +(elem.getAttribute('x') ?? '');
   const top = +(elem.getAttribute('y') ?? '');
@@ -81,6 +224,15 @@ const getBBoxByAttr = (elem: Element) => {
 
   return { bottom: top + height, height, left, right: left + width, top, width };
 };
+
+interface ClipContext {
+  /** The <clipPath> element itself */
+  elem: Element;
+  /** The united clip path geometry, in the user space of the clipped element */
+  item: paper.PathItem;
+  /** Selector of the <clipPath> element, ie. `#some-id` */
+  selector: string;
+}
 
 // Note:
 // When importing svg files, fluxsvg only handles clip-path attributes with url and ignore those with basic shapes
@@ -98,33 +250,59 @@ const convertClipPath = async (): Promise<() => void> => {
 
   const newElems: Element[] = [];
   const oldElems: Array<{ elem: Element; nextSibling: ChildNode | null; parentElement: Element | null }> = [];
-  const clipPathMap: { [key: string]: paper.PathItem } = {};
+  // null marks a clip path we cannot resolve: the referencing elements are then left unclipped
+  const clipPathMap: { [key: string]: ClipContext | null } = {};
 
-  const getClipPathItem = (elem: Element) => {
+  const collectClipShapes = (item: null | paper.Item, out: paper.PathItem[]) => {
+    const insert = false;
+
+    if (!item) {
+      return;
+    }
+
+    if (item instanceof paper.Shape) {
+      out.push(item.toPath(insert));
+    } else if (item instanceof paper.PathItem) {
+      out.push(item.clone({ insert }));
+    } else {
+      // Clip path content may be wrapped in groups
+      item.children?.forEach((child) => collectClipShapes(child, out));
+    }
+  };
+
+  const getClipPathItem = (elem: Element): null | paper.PathItem => {
+    // objectBoundingBox coordinates are fractions of the clipped element bbox, treating them as user
+    // space would shrink the clip path to a 1x1 box next to the origin and wipe out the element
+    if (elem.getAttribute('clipPathUnits') === 'objectBoundingBox') {
+      return null;
+    }
+
     const insert = false;
     const proj = new paper.Project(document.createElement('canvas'));
     const transform = elem.getAttribute('transform') || '';
-    const items = proj.importSVG(`<svg transform="${transform}">${elem.innerHTML}</svg>`);
+    const content = Array.from(elem.children).map(getElemString).join('');
+    const items = proj.importSVG(`<svg transform="${transform}">${content}</svg>`);
+    const shapes: paper.PathItem[] = [];
+
+    collectClipShapes(items, shapes);
+
     let pathItem: paper.PathItem = paper.PathItem.create('');
 
-    for (let i = 0; i < items.children.length; i += 1) {
-      const obj = items.children[i] as paper.CompoundPath | paper.Path | paper.Shape;
-      const objPath = obj instanceof paper.Shape ? obj.toPath(insert) : obj.clone({ insert });
-
+    shapes.forEach((objPath) => {
       objPath.closePath();
       pathItem = pathItem.unite(objPath, { insert });
-    }
+    });
 
-    return pathItem;
+    return pathItem.isEmpty() ? null : pathItem;
   };
 
-  const clip = async (clipPathKey: string, elem: Element, matrix?: null | SVGMatrix) => {
+  const clip = async (clipCtx: ClipContext, elem: Element, matrix?: null | SVGMatrix) => {
     if (elem.tagName === 'g') {
       const m = updateMatrix(elem, matrix);
       const promises: Array<Promise<void>> = [];
 
       elem.childNodes.forEach((subElem) => {
-        const p = clip(clipPathKey, subElem as Element, m);
+        const p = clip(clipCtx, subElem as Element, m);
 
         promises.push(p);
       });
@@ -140,55 +318,71 @@ const convertClipPath = async (): Promise<() => void> => {
 
       const proj = new paper.Project(document.createElement('canvas'));
       const items = proj.importSVG(`<svg>${getElemString(elem)}</svg>`);
-      let obj = items.children[0] as paper.CompoundPath | paper.Path | paper.Shape;
+      let obj = items.children[0] as paper.CompoundPath | paper.Path | paper.Shape | undefined;
 
       if (obj instanceof paper.Shape) {
         obj = obj.toPath();
       }
 
-      let resPath: paper.PathItem;
-      const clipPath = clipPathMap[clipPathKey];
+      if (!obj) {
+        // paper could not import the element, leave it unclipped rather than dropping it
+        return;
+      }
 
-      if (obj instanceof paper.Path) {
+      // Top level elements (matrix === undefined) keep their own transform, and importSVG bakes it
+      // into the geometry above, so the clip path has to be moved to the same coordinate system
+      const clipPath = matrix === undefined ? transformClipPath(clipCtx.item, getOwnMatrix(elem)) : clipCtx.item;
+      const epsilon = getEpsilon(clipPath.bounds);
+
+      if (!obj.bounds.intersects(clipPath.bounds, epsilon)) {
+        elem.remove();
+
+        return;
+      }
+
+      if (isInsideClipPath(obj, clipPath, epsilon)) {
+        return;
+      }
+
+      // Detached clones: paper inserts boolean results next to their source path, and when the source
+      // is a child of a CompoundPath the parent absorbs the result children and hands back an empty
+      // item, ie. the whole subpath is lost. A parentless source has no owner to insert next to.
+      const subPaths = (obj instanceof paper.Path ? [obj] : (obj.children as paper.PathItem[])).map((child) =>
+        child.clone({ insert: false }),
+      );
+      const resPath = new paper.CompoundPath('');
+
+      // A fresh CompoundPath carries the paper defaults (no fill, no stroke) and would export as an
+      // invisible path, so the source style has to be carried over explicitly
+      resPath.copyAttributes(obj, true);
+      subPaths.forEach((subPath) => {
         if (isAllFilled) {
-          obj.closePath();
+          subPath.closePath();
         }
 
-        resPath = obj.intersect(clipPath, { trace: isAllFilled });
-      } else {
-        let l = obj.children.length;
+        clipSubPath(subPath, clipPath, isAllFilled, epsilon).forEach((piece) => resPath.addChild(piece));
+      });
 
-        resPath = new paper.CompoundPath('');
-        for (let i = 0; i < obj.children.length; i += 1) {
-          const subPath = obj.children[i] as paper.PathItem;
+      if (resPath.isEmpty()) {
+        elem.remove();
 
-          if (isAllFilled) {
-            subPath.closePath();
-          }
-
-          resPath.addChild(subPath.intersect(clipPath, { insert: false, trace: isAllFilled }));
-
-          if (obj.children.length > l) {
-            // Sometimes obj.children grows with insert: false, skip added items
-            i += obj.children.length - l;
-            l = obj.children.length;
-          }
-        }
+        return;
       }
 
       resPath.fillColor = items.fillColor;
       elem.replaceWith(resPath.exportSVG());
     } else if (elem.tagName === 'image') {
       const imgSrc = elem.getAttribute('xlink:href');
-      const clipPath = document.querySelector(clipPathKey.split('-')[1]);
+      const clipPath = clipCtx.elem;
 
-      if (!clipPath || !imgSrc) {
+      if (!imgSrc) {
         return;
       }
 
-      const clipRect = clipPath.firstChild as SVGRectElement;
+      // firstChild would be the whitespace text node for pretty printed svg
+      const clipRect = clipPath.firstElementChild as null | SVGRectElement;
 
-      if (clipRect.tagName !== 'rect') {
+      if (clipRect?.tagName !== 'rect') {
         return;
       }
 
@@ -285,7 +479,11 @@ const convertClipPath = async (): Promise<() => void> => {
       const clipTransform = clipPath.getAttribute('transform');
 
       if (clipTransform) {
-        elem.setAttribute('transform', clipTransform);
+        // A top level element still carries its own transform, the crop is expressed in the clip path
+        // space so both have to be kept
+        const ownMatrix = matrix === undefined ? getOwnMatrix(elem) : null;
+
+        elem.setAttribute('transform', ownMatrix ? `${matrix2String(ownMatrix)} ${clipTransform}` : clipTransform);
       }
 
       elem.removeAttribute('origImage');
@@ -308,7 +506,7 @@ const convertClipPath = async (): Promise<() => void> => {
           elem.setAttribute('transform', matrix2String(m));
         }
 
-        elem.setAttribute('data-clip-path', clipPathKey.split('-')[1]);
+        elem.setAttribute('data-clip-path', clipCtx.selector);
         clippedElems.unshift(elem);
 
         return;
@@ -330,11 +528,14 @@ const convertClipPath = async (): Promise<() => void> => {
 
       m = m ? m.multiply(offset) : offset;
 
+      // The symbol content gets baked into `m`, so for a top level use (whose own transform is part
+      // of `m`) the clip path has to be moved along with it
+      const subCtx = matrix === undefined ? { ...clipCtx, item: transformClipPath(clipCtx.item, m) } : clipCtx;
       const cloned = symbol.cloneNode(true) as Element;
       const promises: Array<Promise<void>> = [];
 
       cloned.childNodes.forEach((subElem) => {
-        const p = clip(clipPathKey, subElem as Element, m);
+        const p = clip(subCtx, subElem as Element, m);
 
         promises.push(p);
       });
@@ -385,18 +586,35 @@ const convertClipPath = async (): Promise<() => void> => {
         continue;
       }
 
-      clipPathMap[clipPathKey] = getClipPathItem(clipPathElem);
+      const item = getClipPathItem(clipPathElem);
+
+      clipPathMap[clipPathKey] = item ? { elem: clipPathElem, item, selector: clipPathSelector } : null;
     }
 
+    const clipCtx = clipPathMap[clipPathKey];
     const cloned = elem.cloneNode(true) as Element;
+    // clip() replaces and removes elements through their parent, so the clone needs one while it is
+    // being worked on. Without it a clipped top level path or image would silently stay unclipped.
+    const holder = document.createDocumentFragment();
 
-    await clip(clipPathKey, cloned);
-    cloned.removeAttribute('clip-path');
+    holder.appendChild(cloned);
+
+    // A clip path we cannot resolve (unsupported content, objectBoundingBox units, ...) leaves the
+    // element unclipped: dropping the clip-path attribute is far better than clipping everything away
+    if (clipCtx) {
+      await clip(clipCtx, cloned);
+    }
+
+    // Note: data-clip-path is intentionally kept, a <use> with inner clip paths re-queues itself and
+    // reads its selector back from it
+    const results = Array.from(holder.children);
+
+    results.forEach((result) => result.removeAttribute('clip-path'));
 
     const { nextSibling, parentElement } = elem;
 
-    newElems.push(cloned);
-    parentElement?.insertBefore(cloned, elem);
+    newElems.push(...results);
+    parentElement?.insertBefore(holder, elem);
     oldElems.unshift({ elem, nextSibling, parentElement });
     elem.remove();
   }
@@ -422,7 +640,7 @@ const convertClipPath = async (): Promise<() => void> => {
 
       // defs may be removed when generating thumbnail
       if (!p.isConnected && p.tagName === 'defs') {
-        p = svgCanvas.findDefs();
+        p = findDefs();
       }
 
       if (nextSibling) {
