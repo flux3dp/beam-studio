@@ -584,6 +584,7 @@ export interface ILang {
             copper: string;
             cork_printing: string;
             denim_1mm_cutting: string;
+            eva_foam_cutting: string;
             fabric_3mm_cutting: string;
             fabric_5mm_cutting: string;
             fabric_engraving: string;
@@ -658,6 +659,7 @@ export interface ILang {
             copper: string;
             cork_printing: string;
             denim_1mm_cutting: string;
+            eva_foam_cutting: string;
             fabric_3mm_cutting: string;
             fabric_5mm_cutting: string;
             fabric_engraving: string;
