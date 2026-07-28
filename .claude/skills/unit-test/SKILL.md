@@ -469,6 +469,36 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
     `getPointAtLength`, `createSVGMatrix` etc. don't exist. Stub them on the prototype or the
     element instance before exercising svgedit code that calls them.
 
+11. **Running against the real paper.js** — most specs fake `paper` (§Pattern 1), which is right
+    when you only care that the code calls it. When the behavior under test *is* the interaction
+    with paper's geometry (boolean ops, path splitting), fake results prove nothing — use the real
+    library, but two shims are needed. See `helpers/layer/convertClipPath.spec.ts` for a worked example.
+
+    ```ts
+    // 1. `import * as paper` goes through the ts-jest interop wrapper, which copies only own
+    //    enumerable props and so drops every class on PaperScope.prototype (Project, Path, ...).
+    //    Webpack hands the app the raw export, so re-expose them:
+    jest.mock('paper', () => {
+      const core = require('paper/dist/paper-core.js');
+
+      core.setup(new core.Size(1, 1));
+
+      return { CompoundPath: core.CompoundPath, Matrix: core.Matrix, Path: core.Path,
+               PathItem: core.PathItem, Project: core.Project, Shape: core.Shape /* ...as needed */ };
+    });
+
+    // 2. importSVG parses into a DOMParser document; browsers adopt those nodes into the main
+    //    document, jsdom leaves defaultView null and paper's getStyles() blows up:
+    const original = window.getComputedStyle.bind(window);
+
+    window.getComputedStyle = ((el: Element, pseudo?: null | string) => {
+      try { return original(el, pseudo || undefined) || ({ getPropertyValue: () => '' } as any); }
+      catch { return { getPropertyValue: () => '' } as any; }
+    }) as typeof window.getComputedStyle;
+    ```
+
+    `jest-canvas-mock` already covers `new paper.Project(document.createElement('canvas'))`.
+
 ---
 
 ## Finish Checklist
