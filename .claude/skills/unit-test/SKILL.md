@@ -469,6 +469,21 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
     `getPointAtLength`, `createSVGMatrix` etc. don't exist. Stub them on the prototype or the
     element instance before exercising svgedit code that calls them.
 
+    jsdom also builds every SVG node as a plain `SVGElement`, so there is no
+    `elem.transform.baseVal` and `getTransformList()` returns `null` for everything — code that
+    reads transforms silently behaves as if nothing were transformed. Mock the module rather than
+    trying to rebuild `SVGTransformList`:
+
+    ```ts
+    jest.mock('@core/app/svgedit/transform/transformlist', () => ({
+      getTransformList: (elem: Element) =>
+        elem ? { elem, numberOfItems: elem.getAttribute('transform') ? 1 : 0 } : null,
+    }));
+    ```
+
+    Pair it with a `transformListToTransform` mock that parses `tlist.elem`'s transform attribute
+    (see `helpers/layer/convertClipPath.spec.ts`).
+
 11. **Running against the real paper.js** — most specs fake `paper` (§Pattern 1), which is right
     when you only care that the code calls it. When the behavior under test *is* the interaction
     with paper's geometry (boolean ops, path splitting), fake results prove nothing — use the real

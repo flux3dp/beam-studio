@@ -38,6 +38,13 @@ jest.mock('paper', () => {
   };
 });
 
+// jsdom exposes SVG nodes as plain SVGElement, so the real getTransformList (elem.transform.baseVal)
+// returns null for every element. Hand back a descriptor the transformListToTransform mock below can
+// read the transform attribute off, live, the way baseVal would.
+jest.mock('@core/app/svgedit/transform/transformlist', () => ({
+  getTransformList: (elem: Element) => (elem ? { elem, numberOfItems: elem.getAttribute('transform') ? 1 : 0 } : null),
+}));
+
 jest.mock('@core/helpers/svg-editor-helper', () => {
   class MockMatrix {
     constructor(
@@ -103,8 +110,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => {
 
             return { isAllFilled: filled, isAnyFilled: filled };
           },
-          findDefs: () => document.querySelector('#svg_defs'),
-          getTransformList: (elem: Element) => ({ elem, numberOfItems: elem.getAttribute('transform') ? 1 : 0 }),
           getUrlFromAttr: (attr: null | string) => attr?.match(/url\((["']?)(.*?)\1\)/)?.[2] ?? null,
           transformListToTransform: (tlist: any) => ({
             matrix: tlist ? parse(tlist.elem.getAttribute('transform') || '') : new MockMatrix(),
