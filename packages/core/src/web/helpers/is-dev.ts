@@ -2,3 +2,5 @@
 const isDev = (): boolean => window?.localStorage?.getItem('dev') === 'true';
 
 export default isDev;
+
+export const isDevHX2 = (): boolean => window?.localStorage?.getItem('dev_hx2') === 'true';

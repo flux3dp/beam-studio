@@ -28,7 +28,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
+import isDev, { isDevHX2 } from '@core/helpers/is-dev';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,
@@ -116,6 +116,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     };
   }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const withPromark = useMemo(() => isDevHX2(), []);
 
   useEffect(() => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
@@ -284,8 +285,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
       <RepeatBlock type={UIType} />
       {isDevMode && isPrinting && fullcolor.value && UIType === 'panel-item' && <WhiteInkCheckbox type={UIType} />}
-      {isPromark && <FillBlock type={UIType} />}
-      {isPromark && <DottingTimeBlock type={UIType} />}
+      {withPromark && <FillBlock type={UIType} />}
+      {withPromark && <DottingTimeBlock type={UIType} />}
       {isLaser && <LaserDevOptions />}
       {isDevMode && <MinPadding type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}

@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import React, { memo } from 'react';
 
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { isDevHX2 } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import NumberBlock from './NumberBlock';
@@ -10,7 +11,7 @@ const DottingTimeBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
   const lang = useI18n();
   const hasGradient = useLayerStore((state) => state.hasGradient);
 
-  if (!hasGradient) return null;
+  if (!hasGradient && !isDevHX2()) return null;
 
   const t = lang.beambox.right_panel.laser_panel;
 

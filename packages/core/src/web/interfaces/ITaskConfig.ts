@@ -38,6 +38,10 @@ export type TFcodeOptionalConfig = Partial<{
    */
   ats: number;
   /**
+   * for HX2 promark split
+   */
+  block_size: [number, number];
+  /**
    * custom backlash
    */
   cbl: boolean;

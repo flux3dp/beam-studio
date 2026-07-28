@@ -25,7 +25,7 @@ import AlertConfig from '@core/helpers/api/alert-config';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
+import isDev, { isDevHX2 } from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
@@ -64,6 +64,71 @@ export const getExportOpt = async (
   const addOnInfo = getAddOnInfo(model);
 
   config.hardware_name = model;
+
+  // TODO: check model and version
+  if (isDevHX2()) {
+    config.block_size = [10, 99.9744];
+
+    if (localStorage.getItem('dev_hx2_block_size')) {
+      const blockSize = localStorage
+        .getItem('dev_hx2_block_size')
+        ?.split(',')
+        .map((v) => Number(v));
+
+      if (blockSize && blockSize.length === 2) {
+        config.block_size = blockSize as [number, number];
+      }
+    }
+
+    // Number
+    [
+      'laser_ramp_up_s',
+      'laser_ramp_down_s',
+      'jump_speed_mm_s',
+      'mark_speed_ctrl',
+      'jump_delay_min',
+      'jump_delay_max',
+      'jump_delay_limit',
+      'laser_on_delay_us',
+      'laser_off_delay_us',
+      'scanner_mark_delay_us',
+      'scanner_polygon_delay_us',
+      'z_pulse_per_mm',
+      'z_pulse_per_sec',
+      'a_pulse_per_mm',
+      'a_pulse_per_sec',
+      'edge_ext_mm',
+      'cross_pass',
+      'ramp_steps',
+    ].forEach((key) => {
+      const storageValue = localStorage.getItem(`dev_hx2_${key}`);
+
+      if (storageValue) {
+        const value = Number(storageValue);
+
+        config[key] = value;
+      }
+    });
+
+    // Boolean
+    ['adaptive', 'carryover', 'tail_comp', 'edge_ext', 'comp_down'].forEach((key) => {
+      const storageValue = localStorage.getItem(`dev_hx2_${key}`);
+
+      if (storageValue) {
+        const value = storageValue === 'true';
+
+        config[key] = value;
+      }
+    });
+    // String
+    ['strategy'].forEach((key) => {
+      const storageValue = localStorage.getItem(`dev_hx2_${key}`);
+
+      if (storageValue) {
+        config[key] = storageValue;
+      }
+    });
+  }
 
   if (model === 'fhexa1') {
     config.hardware_name = 'hexa';
