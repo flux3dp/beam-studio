@@ -175,12 +175,16 @@ const backendManager = new BackendManager({
   trace_pid: process.pid,
 });
 
-backendManager.start();
+// Only the primary instance owns the backend processes. A duplicate instance is on its way out and
+// must not touch them, or it would kill the backend of the instance that holds the lock.
+if (gotTheLock) {
+  backendManager.start();
+}
 
 // Run monitorexe api
 let monitorManager: MonitorManager | null = null;
 
-if (process.argv.includes('--monitor')) {
+if (gotTheLock && process.argv.includes('--monitor')) {
   console.log('Starting Monitor');
   monitorManager = new MonitorManager({ location: process.env.BACKEND || '' });
   // kill process first, in case last time shut down
@@ -509,4 +513,10 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('before-quit', () => {});
+// Last-chance cleanup: quitting does not always go through the main window close handler (auto
+// update restart, Cmd+Q, app.quit() from elsewhere), and an orphaned Swiftray keeps its port bound
+// so the next launch can never reach the daemon it spawns.
+app.on('before-quit', () => {
+  monitorManager?.killProc();
+  backendManager.stop();
+});
