@@ -21,6 +21,8 @@ import {
   usePrintAndCutStore,
 } from '../store';
 
+import { getDesignLayers } from './designLayers';
+
 interface RenderedContent {
   base64: string;
   heightMm: number;
@@ -55,11 +57,7 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
   // in layer mode, the selected cut layer is not printed: it is for the laser cutter
   const cutLayerElement =
     state.cutSource === 'layer' && state.cutLayerName ? layerManager.getLayerElementByName(state.cutLayerName) : null;
-  const layers = layerManager
-    .getAllLayers()
-    .map((layer) => layer.getGroup())
-    .filter((layerGroup) => layerGroup.getAttribute('display') !== 'none' && layerGroup !== cutLayerElement);
-  const layersHtml = layers
+  const layersHtml = getDesignLayers(cutLayerElement)
     .map((layer) => {
       const clone = layer.cloneNode(true) as SVGGElement;
 

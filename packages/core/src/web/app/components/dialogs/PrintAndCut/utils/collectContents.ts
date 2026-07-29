@@ -1,6 +1,6 @@
 import { getBBox, getBBoxFromElements } from '@core/app/svgedit/utils/getBBox';
 
-import { PRINT_AND_CUT_LAYER_ATTR } from '../constants';
+import { getDesignLayers } from './designLayers';
 
 const contentTags = new Set(['circle', 'ellipse', 'g', 'image', 'line', 'path', 'polygon', 'rect', 'text', 'use']);
 
@@ -14,11 +14,7 @@ export interface CanvasContents {
  * bounding box of the whole design.
  */
 export const collectCanvasContents = (): CanvasContents => {
-  // exclude a previously generated cutting layer so its cut lines are never
-  // treated as design content (e.g. when starting over after a finish)
-  const layers = document.querySelectorAll(
-    `#svgcontent > g.layer:not([display="none"]):not([${PRINT_AND_CUT_LAYER_ATTR}])`,
-  );
+  const layers = getDesignLayers();
   const elements: SVGElement[] = [];
 
   layers.forEach((layer) => {

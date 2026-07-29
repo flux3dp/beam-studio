@@ -81,6 +81,10 @@ import { Buffer } from 'buffer';
 
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
+import {
+  type PrintAndCutConfig,
+  usePrintAndCutConfigStore,
+} from '@core/app/components/dialogs/PrintAndCut/configStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
@@ -94,6 +98,7 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 interface MiscData {
   ce?: CurveEngraving;
+  pnc?: PrintAndCutConfig;
   vt?: VariableTextState;
 }
 
@@ -219,6 +224,12 @@ const generateBeamBuffer = (
 
   if (hasVariableText()) {
     miscData.vt = useVariableTextState.getState();
+  }
+
+  const printAndCutConfig = usePrintAndCutConfigStore.getState().config;
+
+  if (printAndCutConfig) {
+    miscData.pnc = printAndCutConfig;
   }
 
   const miscDataBuffer = generateMiscDataBlockBuffer(miscData);
@@ -374,6 +385,10 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
       if (data.vt) {
         useVariableTextState.setState(data.vt);
       }
+
+      // explicit ?? null so opening a file without a print-and-cut config clears
+      // any config left over from the previously open document
+      usePrintAndCutConfigStore.setState({ config: data.pnc ?? null });
     } catch (e) {
       console.error('Failed to parse misc data', e);
     }
