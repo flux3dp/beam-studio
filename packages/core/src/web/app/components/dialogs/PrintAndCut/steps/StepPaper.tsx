@@ -60,8 +60,6 @@ const StepPaper = (): React.JSX.Element => {
     if (!contentBBox) return false;
 
     const { heightMm, widthMm } = getPaperDimensionsMm({ designBBox, markPositions, orientation, paperKey });
-    // content must stay inside the printer's printable area so the pdf can be
-    // printed at 100% scale (the workflow relies on 1mm in pdf == 1mm on paper)
     const margin = 2 * PRINT_MARGIN_MM;
 
     return contentBBox.width / dpmm + margin > widthMm || contentBBox.height / dpmm + margin > heightMm;
