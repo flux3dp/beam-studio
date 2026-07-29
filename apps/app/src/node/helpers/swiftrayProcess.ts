@@ -2,8 +2,7 @@ import { execSync } from 'child_process';
 import os from 'os';
 import path from 'path';
 
-/** Port the Swiftray daemon listens on, must match the one used by @core/helpers/api/swiftray-client. */
-export const SWIFTRAY_PORT = 6611;
+import { SWIFTRAY_PORT } from '@core/app/constants/swiftray-constants';
 
 export const getSwiftrayPaths = (): null | { dir: string; exec: string } => {
   if (!process.env.BACKEND_ROOT) return null;

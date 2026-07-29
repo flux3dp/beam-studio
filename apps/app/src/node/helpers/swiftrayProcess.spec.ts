@@ -1,18 +1,22 @@
-import { parseNetstatPids, parseTasklistName, SWIFTRAY_PORT } from './swiftrayProcess';
+import { SWIFTRAY_PORT } from '@core/app/constants/swiftray-constants';
+
+import { parseNetstatPids, parseTasklistName } from './swiftrayProcess';
 
 // Windows-only parsing, so it can only be covered here rather than by running the real commands.
 describe('parseNetstatPids', () => {
+  // Built from SWIFTRAY_PORT so the fixture cannot drift from the port the sweep actually uses.
+  const port = SWIFTRAY_PORT;
   const output = [
     '',
     'Active Connections',
     '',
     '  Proto  Local Address          Foreign Address        State           PID',
     '  TCP    0.0.0.0:135            0.0.0.0:0              LISTENING       1080',
-    '  TCP    0.0.0.0:6611           0.0.0.0:0              LISTENING       9876',
-    '  TCP    [::]:6611              [::]:0                 LISTENING       9876',
-    '  TCP    127.0.0.1:6611         127.0.0.1:52341        ESTABLISHED     9876',
-    '  TCP    127.0.0.1:52341        127.0.0.1:6611         ESTABLISHED     4242',
-    '  TCP    0.0.0.0:16611          0.0.0.0:0              LISTENING       555',
+    `  TCP    0.0.0.0:${port}           0.0.0.0:0              LISTENING       9876`,
+    `  TCP    [::]:${port}              [::]:0                 LISTENING       9876`,
+    `  TCP    127.0.0.1:${port}         127.0.0.1:52341        ESTABLISHED     9876`,
+    `  TCP    127.0.0.1:52341        127.0.0.1:${port}         ESTABLISHED     4242`,
+    `  TCP    0.0.0.0:1${port}          0.0.0.0:0              LISTENING       555`,
     '',
   ].join('\r\n');
 
@@ -29,7 +33,7 @@ describe('parseNetstatPids', () => {
   });
 
   it('matches on the local address rather than the localized state word', () => {
-    const localized = '  TCP    0.0.0.0:6611           0.0.0.0:0              ABHOEREN        4321';
+    const localized = `  TCP    0.0.0.0:${port}           0.0.0.0:0              ABHOEREN        4321`;
 
     expect(parseNetstatPids(localized, SWIFTRAY_PORT)).toEqual([4321]);
   });

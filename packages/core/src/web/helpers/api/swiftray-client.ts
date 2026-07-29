@@ -8,6 +8,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import alertConstants from '@core/app/constants/alert-constants';
 import { BackendEvents } from '@core/app/constants/ipcEvents';
+import { SWIFTRAY_PORT } from '@core/app/constants/swiftray-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -618,12 +619,12 @@ checkSwiftray()
   });
 
 const swiftrayHost = localStorage.getItem('swiftrayHost') || 'localhost';
-const swiftrayClient = new SwiftrayClient(`ws://${swiftrayHost}:6611`);
+const swiftrayClient = new SwiftrayClient(`ws://${swiftrayHost}:${SWIFTRAY_PORT}`);
 
 const getDeviceClient = async (port: string): Promise<SwiftrayClient> => {
   console.log(`Connecting to device on port ${port}`);
   // TODO:SWIFTRAY - Open a new instance of Swiftray, and use different port number
-  // const sc = new SwiftrayClient(`ws://localhost:6611/`);
+  // const sc = new SwiftrayClient(`ws://localhost:${SWIFTRAY_PORT}/`);
   await swiftrayClient.connectDevice(port);
 
   return swiftrayClient;
