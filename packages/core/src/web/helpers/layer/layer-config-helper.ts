@@ -3,7 +3,7 @@ import { match } from 'ts-pattern';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { fullColorModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -636,8 +636,8 @@ export const toggleModuleAfterWorkareaChange = (): void => {
 
       writeDataLayer(layerElement, 'module', targetModule);
 
-      if (printingModules.has(targetModule) !== printingModules.has(originalModule)) {
-        toggleFullColorLayer(layerElement, { addToHistory: false, val: printingModules.has(targetModule) });
+      if (fullColorModules.has(targetModule) !== fullColorModules.has(originalModule)) {
+        toggleFullColorLayer(layerElement, { addToHistory: false, val: fullColorModules.has(targetModule) });
       }
     }
   });
