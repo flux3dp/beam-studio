@@ -374,20 +374,18 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
     const miscData = buf.toString('utf-8', newOffset, newOffset + value);
 
     try {
-      const data: MiscData = JSON.parse(miscData);
+      const data: MiscData = JSON.parse(miscData) as any;
 
       if (data.ce) {
         console.log(data.ce);
       }
 
-      curveEngravingModeController.loadData(data.ce, { parentCmd: command });
+      curveEngravingModeController.loadData(data.ce ?? null, { parentCmd: command });
 
       if (data.vt) {
         useVariableTextState.setState(data.vt);
       }
 
-      // explicit ?? null so opening a file without a print-and-cut config clears
-      // any config left over from the previously open document
       usePrintAndCutConfigStore.setState({ config: data.pnc ?? null });
     } catch (e) {
       console.error('Failed to parse misc data', e);
