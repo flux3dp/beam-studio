@@ -1,17 +1,16 @@
 import React from 'react';
 
-import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import selectionManager from '@core/app/svgedit/selection';
-import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { usePrintAndCutConfigStore } from './configStore';
 import { PRINT_AND_CUT_DIALOG_ID } from './constants';
 import PrintAndCut from './PrintAndCut';
 import { usePrintAndCutStore } from './store';
-import { collectCanvasContents } from './utils/collectContents';
-import { clearRasterCache } from './utils/computeCutPathD';
+import { matchPrintingContents } from './utils/printingContentsSnapshot';
+import { startFreshRun } from './utils/startFreshRun';
 
 let svgCanvas: ISVGCanvas;
 
@@ -28,16 +27,16 @@ export const showPrintAndCut = (): void => {
   selectionManager.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const contents = collectCanvasContents();
+  const savedConfig = usePrintAndCutConfigStore.getState().config;
 
-  if (contents.elements.length === 0) {
-    alertCaller.popUp({ message: i18n.lang.print_and_cut.no_content });
-
+  if (savedConfig) {
+    usePrintAndCutStore
+      .getState()
+      .initFromConfig(savedConfig, matchPrintingContents(savedConfig.printingContentsElements));
+  } else if (!startFreshRun()) {
     return;
   }
 
-  clearRasterCache();
-  usePrintAndCutStore.getState().init(contents);
   addDialogComponent(PRINT_AND_CUT_DIALOG_ID, <PrintAndCut onClose={() => popDialogById(PRINT_AND_CUT_DIALOG_ID)} />);
 };
 
