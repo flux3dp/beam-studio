@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Button } from 'antd';
 import { match } from 'ts-pattern';
@@ -17,6 +17,7 @@ import styles from './index.module.scss';
 import StepAlign from './steps/StepAlign';
 import StepExport from './steps/StepExport';
 import StepPaper from './steps/StepPaper';
+import StepResume from './steps/StepResume';
 import StepSetup from './steps/StepSetup';
 import { usePrintAndCutStore } from './store';
 import { generateAlignedCutLayer } from './utils/generateCutLayer';
@@ -29,8 +30,16 @@ const PrintAndCut = ({ onClose }: Props): React.JSX.Element => {
   useNewShortcutsScope();
 
   const { buttons: tButtons, print_and_cut: t } = useI18n();
-  const { nextStep, prevStep, reset, step } = usePrintAndCutStore(
-    useShallow(({ nextStep, prevStep, reset, step }) => ({ nextStep, prevStep, reset, step })),
+  const { isProcessing, isResume, nextStep, prevStep, reset, setStep, step } = usePrintAndCutStore(
+    useShallow(({ isProcessing, isResume, nextStep, prevStep, reset, setStep, step }) => ({
+      isProcessing,
+      isResume,
+      nextStep,
+      prevStep,
+      reset,
+      setStep,
+      step,
+    })),
   );
 
   useEffect(() => reset, [reset]);
@@ -42,6 +51,8 @@ const PrintAndCut = ({ onClose }: Props): React.JSX.Element => {
 
   const stepIndex = printAndCutSteps.indexOf(step);
   const stepTitles = [t.step_setup, t.step_paper, t.step_export, t.step_align];
+  // 'resume' is a virtual entry step; its own buttons live in StepResume
+  const isResumeStep = useMemo(() => step === 'resume', [step]);
 
   return (
     <FullWindowPanel
@@ -53,27 +64,39 @@ const PrintAndCut = ({ onClose }: Props): React.JSX.Element => {
             <BackButton onClose={onClose}>{tButtons.back_to_beam_studio}</BackButton>
             <Header title={t.title} />
             <div className={styles.step}>
-              <div className={styles.progress}>{`Step ${stepIndex + 1} / ${printAndCutSteps.length}`}</div>
-              <div className={styles.title}>{stepTitles[stepIndex]}</div>
+              {!isResume && (
+                <div className={styles.progress}>{`Step ${stepIndex + 1} / ${printAndCutSteps.length}`}</div>
+              )}
+              <div className={styles.title}>{isResumeStep ? t.resume_title : stepTitles[stepIndex]}</div>
             </div>
             {match(step)
+              .with('resume', () => <StepResume />)
               .with('setup', () => <StepSetup />)
               .with('paper', () => <StepPaper />)
               .with('export', () => <StepExport />)
               .with('align', () => <StepAlign />)
               .exhaustive()}
-            <div className={styles.footer}>
-              {stepIndex > 0 && <Button onClick={prevStep}>{tButtons.back}</Button>}
-              {step === 'align' ? (
-                <Button onClick={handleFinish} type="primary">
-                  {t.finish}
-                </Button>
-              ) : (
-                <Button onClick={nextStep} type="primary">
-                  {tButtons.next}
-                </Button>
-              )}
-            </div>
+            {!isResumeStep && (
+              <div className={styles.footer}>
+                {stepIndex > 0 && (
+                  // in resume mode the only linear step reached is align; its back
+                  // returns to the resume screen instead of the skipped export step
+                  <Button disabled={isProcessing} onClick={isResume ? () => setStep('resume') : prevStep}>
+                    {tButtons.back}
+                  </Button>
+                )}
+                {step === 'align' ? (
+                  // navigation is blocked while the capture + align flow runs
+                  <Button disabled={isProcessing} onClick={handleFinish} type="primary">
+                    {t.finish}
+                  </Button>
+                ) : (
+                  <Button onClick={nextStep} type="primary">
+                    {tButtons.next}
+                  </Button>
+                )}
+              </div>
+            )}
           </Sider>
           <Canvas />
         </>

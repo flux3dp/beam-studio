@@ -81,10 +81,7 @@ import { Buffer } from 'buffer';
 
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
-import {
-  type PrintAndCutConfig,
-  usePrintAndCutConfigStore,
-} from '@core/app/components/dialogs/PrintAndCut/configStore';
+import { type ResumeConfig, useResumeConfigStore } from '@core/app/components/dialogs/PrintAndCut/resumeConfigStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
@@ -98,7 +95,7 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 interface MiscData {
   ce?: CurveEngraving;
-  pnc?: PrintAndCutConfig;
+  pnc?: ResumeConfig;
   vt?: VariableTextState;
 }
 
@@ -226,10 +223,10 @@ const generateBeamBuffer = (
     miscData.vt = useVariableTextState.getState();
   }
 
-  const printAndCutConfig = usePrintAndCutConfigStore.getState().config;
+  const resumeConfig = useResumeConfigStore.getState().config;
 
-  if (printAndCutConfig) {
-    miscData.pnc = printAndCutConfig;
+  if (resumeConfig) {
+    miscData.pnc = resumeConfig;
   }
 
   const miscDataBuffer = generateMiscDataBlockBuffer(miscData);
@@ -386,7 +383,7 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
         useVariableTextState.setState(data.vt);
       }
 
-      usePrintAndCutConfigStore.setState({ config: data.pnc ?? null });
+      useResumeConfigStore.setState({ config: data.pnc ?? null });
     } catch (e) {
       console.error('Failed to parse misc data', e);
     }

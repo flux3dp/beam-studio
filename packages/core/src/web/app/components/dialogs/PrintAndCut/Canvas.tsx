@@ -7,8 +7,9 @@ import { dpmm } from '@core/app/actions/beambox/constant';
 import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
 
 import { PrintAndCutCanvasManager } from './CanvasManager';
-import { getContentBBoxFromState, getGridOffsets, getPaperRect, usePrintAndCutStore } from './store';
+import { usePrintAndCutStore } from './store';
 import { getContourPathElements } from './utils/contourElements';
+import { getContentBBoxFromState, getGridOffsets, getPaperRect } from './utils/layout';
 
 /** Background padding around the content (design + marks) during setup, in mm */
 const SETUP_BACKGROUND_PADDING_MM = 10;

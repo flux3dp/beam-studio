@@ -6,8 +6,8 @@ import { useShallow } from 'zustand/react/shallow';
 
 import useI18n from '@core/helpers/useI18n';
 
-import { clearPrintAndCutConfig } from '../configStore';
 import styles from '../index.module.scss';
+import { clearResumeConfig } from '../resumeConfigStore';
 import { usePrintAndCutStore } from '../store';
 import { startFreshRun } from '../utils/startFreshRun';
 
@@ -21,7 +21,7 @@ const StepResume = (): React.JSX.Element => {
     // the guard fails while the design layers are still hidden from the
     // previous run; there is nothing to reconfigure until the user restores
     // them (undo the finish), so the saved configuration is kept
-    if (startFreshRun()) clearPrintAndCutConfig();
+    if (startFreshRun()) clearResumeConfig();
   };
 
   return (

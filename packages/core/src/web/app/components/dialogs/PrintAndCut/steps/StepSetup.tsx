@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
-import { Alert, InputNumber, Radio } from 'antd';
+import { InputNumber, Radio, Tooltip } from 'antd';
 import { funnel } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -119,7 +119,17 @@ const StepSetup = (): React.JSX.Element => {
         onChange={(e) => setContourSource(e.target.value as ContourSource)}
         options={[
           { label: tPrintAndCut.generate_from_contour, value: 'outline' },
-          { disabled: pathLayers.length === 0, label: tPrintAndCut.use_layer_as_cut_path, value: 'layer' },
+          {
+            disabled: pathLayers.length === 0,
+            // the option is disabled because no layer qualifies; the tooltip says so
+            label:
+              pathLayers.length === 0 ? (
+                <Tooltip title={tPrintAndCut.no_layer_with_path}>{tPrintAndCut.use_layer_as_cut_path}</Tooltip>
+              ) : (
+                tPrintAndCut.use_layer_as_cut_path
+              ),
+            value: 'layer',
+          },
         ]}
         value={contourSource}
       />
@@ -155,8 +165,6 @@ const StepSetup = (): React.JSX.Element => {
           />
         </div>
       )}
-      {pathLayers.length === 0 && <Alert message={tPrintAndCut.no_layer_with_path} showIcon type="info" />}
-      <Alert message={tPrintAndCut.marks_info} showIcon type="info" />
     </div>
   );
 };

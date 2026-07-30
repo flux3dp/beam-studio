@@ -11,15 +11,16 @@ import useI18n from '@core/helpers/useI18n';
 import type { PaperSelection } from '../constants';
 import { paperSizes, PRINT_MARGIN_MM } from '../constants';
 import styles from '../index.module.scss';
-import { getContentBBoxFromState, getPaperDimensionsMm, usePrintAndCutStore } from '../store';
+import { usePrintAndCutStore } from '../store';
+import { getContentBBoxFromState, getPaperDimensionsMm } from '../utils/layout';
 
 const StepPaper = (): React.JSX.Element => {
   const lang = useI18n().print_and_cut;
   const {
+    fullBBox,
     gridColumns,
     gridGapMm,
     gridRows,
-    fullBBox,
     markPositions,
     orientation,
     paperKey,
@@ -29,10 +30,10 @@ const StepPaper = (): React.JSX.Element => {
   } = usePrintAndCutStore(
     useShallow(
       ({
+        fullBBox,
         gridColumns,
         gridGapMm,
         gridRows,
-        fullBBox,
         markPositions,
         orientation,
         paperKey,
@@ -40,10 +41,10 @@ const StepPaper = (): React.JSX.Element => {
         setOrientation,
         setPaperKey,
       }) => ({
+        fullBBox,
         gridColumns,
         gridGapMm,
         gridRows,
-        fullBBox,
         markPositions,
         orientation,
         paperKey,
