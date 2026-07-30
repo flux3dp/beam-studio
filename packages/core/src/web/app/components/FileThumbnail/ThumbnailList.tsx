@@ -7,10 +7,10 @@ import { CSS } from '@dnd-kit/utilities';
 import { Button, Modal } from 'antd';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
-import { restrictToParent } from '@core/app/components/beambox/RightPanel/ObjectPanel/LibraryPanel/ContentSection';
 import AddButton from '@core/app/components/FileThumbnail/AddButton';
 import Thumbnail from '@core/app/components/FileThumbnail/Thumbnail';
 import { onThumbnailOrderChange, reorderThumbnails, thumbnails } from '@core/app/components/FileThumbnail/utils';
+import { restrictToParent } from '@core/helpers/dnd/restrictToParent';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 

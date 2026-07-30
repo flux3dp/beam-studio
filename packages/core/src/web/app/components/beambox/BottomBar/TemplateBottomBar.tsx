@@ -78,8 +78,8 @@ const TemplateObjectPanel = () => {
         <EllipsisOutlined />
       </div>
       <RwdModal
-        getContainer={() => document.body}
         floatingPopoverProps={{ placement: 'top', reference: ref.current }}
+        getContainer={() => document.body}
         onClose={() => setOpen(false)}
         open={open}
         title={t.edit_object}

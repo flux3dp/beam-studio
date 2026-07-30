@@ -93,9 +93,9 @@ The buffer is transferred (not copied) and sent exactly **once**.
 Layout is derived from screen size **and** interaction mode:
 
 ```
-isMobile                              → LayoutKey.Mobile
-isTablet || withinInteractionModes(templateModes) → LayoutKey.Tablet
-otherwise                             → LayoutKey.Desktop
+isMobile                              → Layout.Mobile
+isTablet || withinInteractionModes(templateModes) → Layout.Tablet
+otherwise                             → Layout.Desktop
 ```
 
 The second line is the important one: **a desktop-width window in explore/template mode uses

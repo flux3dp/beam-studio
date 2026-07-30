@@ -18,13 +18,13 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './TemplateConfig.module.scss';
 
 const setEditable = (editable: boolean) => {
-  const { selectedElement } = useSelectedElementStore.getState();
+  const { controllableTypes, selectedElement } = useSelectedElementStore.getState();
   const newValue = editable ? allEditableInfo : {};
 
   setEditableInfo(selectedElement, newValue, { overwrite: true });
 
   useSelectedElementStore.setState({
-    editableInfo: getEditableInfo(selectedElement),
+    editableInfo: getEditableInfo(selectedElement, controllableTypes),
   });
 };
 
@@ -45,45 +45,8 @@ const TemplateConfig = (): React.ReactNode => {
 
   if (!isProjectMode) return null;
 
-  if (isTablet) {
-    return (
-      <ObjectPanelItem
-        icon={<SettingFilled />}
-        id="template-config"
-        renderContent={() => (
-          <Content>
-            <Row>
-              <Label
-                className={styles.option}
-                extra={
-                  <Switch
-                    checked={isAnyEditable}
-                    onClick={() => setEditable(!isAnyEditable)}
-                    partial={isAnyEditable !== isAllEditable}
-                  />
-                }
-              >
-                {t.allows_editing}
-              </Label>
-            </Row>
-            <Row>
-              <Label
-                className={styles.option}
-                extra={<Switch checked={isRemovable} onClick={() => toggleEditableInfo(ControlType.DELETE)} />}
-              >
-                {t.allows_deleting}
-              </Label>
-            </Row>
-          </Content>
-        )}
-        title={t.title}
-      />
-    );
-  }
-
-  // TODO: desktop UI
-  return (
-    <div className={styles.panel}>
+  const content = (
+    <>
       <Row>
         <Label
           className={styles.option}
@@ -106,8 +69,21 @@ const TemplateConfig = (): React.ReactNode => {
           {t.allows_deleting}
         </Label>
       </Row>
-    </div>
+    </>
   );
+
+  if (isTablet) {
+    return (
+      <ObjectPanelItem
+        icon={<SettingFilled />}
+        id="template-config"
+        renderContent={() => <Content>{content}</Content>}
+        title={t.title}
+      />
+    );
+  }
+
+  return <div className={styles.panel}>{content}</div>;
 };
 
 export default TemplateConfig;

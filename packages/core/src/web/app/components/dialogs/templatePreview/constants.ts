@@ -1,7 +1,13 @@
 // Contract shared between the modal that opens the preview iframe (TemplatePreview) and the studio
 // app running inside that iframe (interactionModeStore reads the query param on load).
 
-/** Query param (in the hash) that tells the studio to boot straight into template mode. */
+/**
+ * Query param that tells the studio to boot straight into template mode.
+ *
+ * It lives in the real query string, before the hash — `TemplatePreview` builds
+ * `${origin}?${TEMPLATE_PREVIEW_QUERY_KEY}=true${hashMap.editor}` — so the iframe side reads it
+ * from `window.location.search` (`initTemplatePreviewFromQuery`), not from the hash.
+ */
 export const TEMPLATE_PREVIEW_QUERY_KEY = 'templatePreview';
 /** Sent by the iframe once it is mounted and ready to receive the design. */
 export const TEMPLATE_PREVIEW_READY = 'template-preview-ready';

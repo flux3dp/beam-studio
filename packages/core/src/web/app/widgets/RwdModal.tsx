@@ -1,33 +1,33 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { match } from 'ts-pattern';
 
 import FloatingPopover from '@core/app/components/dialogs/popover/FloatingPopover';
 import type { Props as FloatingPopoverProps } from '@core/app/components/dialogs/popover/FloatingPopover';
 import Header from '@core/app/components/dialogs/popover/Header';
-import { LayoutKey, useLayoutStore } from '@core/app/stores/layoutStore';
+import { Layout, useLayoutStore } from '@core/app/stores/layoutStore';
 import DrawerV from '@core/app/widgets/AutoHeightDrawer';
 
 import styles from './RwdModal.module.scss';
 
-enum DisplayMode {
-  Null,
-  BottomDrawer,
-  FloatingPopover,
-}
+const DisplayMode = {
+  BottomDrawer: 1,
+  FloatingPopover: 2,
+  Null: -1,
+} as const;
 
 const defaultDisplayModes = {
-  [LayoutKey.Desktop]: DisplayMode.Null,
-  [LayoutKey.Mobile]: DisplayMode.BottomDrawer,
-  [LayoutKey.Tablet]: DisplayMode.FloatingPopover,
+  [Layout.Desktop]: DisplayMode.Null,
+  [Layout.Mobile]: DisplayMode.BottomDrawer,
+  [Layout.Tablet]: DisplayMode.FloatingPopover,
 };
 
 type CommonProps = {
   children: React.ReactNode;
   footer?: React.ReactNode;
   getContainer?: () => HTMLElement;
-  onClose?: () => void;
-  open?: boolean;
+  onClose: () => void;
+  open: boolean;
   title?: React.ReactNode;
 };
 
@@ -35,15 +35,9 @@ export type Props = CommonProps & {
   floatingPopoverProps: Pick<FloatingPopoverProps, 'placement' | 'reference' | 'zIndex'>;
 };
 
-const RwdModal = ({ floatingPopoverProps, onClose: propOnClose, open: propsOpen, ...props }: Props) => {
+const RwdModal = ({ floatingPopoverProps, onClose, open, ...props }: Props) => {
   const layout = useLayoutStore((state) => state.layout);
-  const [_open, _setOpen] = useState(false);
 
-  const open = propsOpen ?? _open;
-  const onClose = () => {
-    propOnClose?.();
-    _setOpen(false);
-  };
   const displayMode = useMemo(() => defaultDisplayModes[layout], [layout]);
 
   return match(displayMode)

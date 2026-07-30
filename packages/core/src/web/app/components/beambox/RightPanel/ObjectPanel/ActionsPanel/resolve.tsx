@@ -1,5 +1,3 @@
-// TODO: handle disabled reason check and tooltip
-
 import { useMemo } from 'react';
 
 import type { DerivedData } from '@core/app/stores/element/interface';

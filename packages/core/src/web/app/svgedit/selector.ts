@@ -445,12 +445,24 @@ export class Selector {
     };
 
     if (elem.tagName === 'line') {
+      // The grips sit on the un-rotated bbox (`applyDimensions` rotates the whole selector group
+      // afterwards), so decide which endpoint owns which side in that same frame: apply the
+      // element transform, then undo the rotation. Comparing the raw x1/x2 attributes mislabels
+      // the sides as soon as the transform rotates or mirrors the line.
+      const matrix = svgedit.math.getMatrix(elem);
+      const p1 = svgedit.math.transformPoint(+elem.getAttribute('x1')!, +elem.getAttribute('y1')!, matrix);
+      const p2 = svgedit.math.transformPoint(+elem.getAttribute('x2')!, +elem.getAttribute('y2')!, matrix);
+      const theta = (-getRotationAngle(elem as SVGElement) * Math.PI) / 180;
+      const [diffX, diffY] = [p2.x - p1.x, p2.y - p1.y];
+      // (diffX, diffY) rotated by -angle: the endpoint order along each axis of the un-rotated bbox
+      const localDiffX = diffX * Math.cos(theta) - diffY * Math.sin(theta);
+      const localDiffY = diffX * Math.sin(theta) + diffY * Math.cos(theta);
       const controlX =
-        +elem.getAttribute('x1')! > +elem.getAttribute('x2')!
+        localDiffX < 0
           ? { left: ControlType.POSITION_X2, right: ControlType.POSITION_X }
           : { left: ControlType.POSITION_X, right: ControlType.POSITION_X2 };
       const controlY =
-        +elem.getAttribute('y1')! > +elem.getAttribute('y2')!
+        localDiffY < 0
           ? { bottom: ControlType.POSITION_Y, top: ControlType.POSITION_Y2 }
           : { bottom: ControlType.POSITION_Y2, top: ControlType.POSITION_Y };
 

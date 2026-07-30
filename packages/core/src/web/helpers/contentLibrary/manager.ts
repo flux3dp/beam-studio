@@ -175,9 +175,8 @@ export const importContents = async (owner: SVGElement) => {
         }
       }
     }
-
-    handleHistoryActionOptions(batchCmd);
   } finally {
+    handleHistoryActionOptions(batchCmd);
     progressCaller.popById('loading_image');
     eventEmitter.emit(CONTENT_UPDATED);
 
@@ -469,21 +468,14 @@ export type TContent = {
   isDefault: boolean;
 };
 
-export const enum LibraryType {
-  USE,
-  IMAGE,
-}
-
 export class ContentLibraryManager {
   owner: null | SVGElement = null;
-  type = LibraryType.USE;
 
   init = (elem: SVGElement, onUpdate: () => void) => {
     let cancelled = false;
 
     eventEmitter.on(CONTENT_UPDATED, onUpdate);
     this.owner = elem;
-    this.type = elem.tagName === 'image' ? LibraryType.IMAGE : LibraryType.USE;
 
     // init must return its cleanup synchronously (React effect contract), so the async setup runs
     // detached and bails via `cancelled` if the panel unmounts before it settles.
@@ -516,16 +508,21 @@ export class ContentLibraryManager {
   addContentFromCanvas = async (pickedElem: SVGGraphicsElement) => {
     if (!this.owner) return;
 
-    // Capture owner/type once: this is a singleton whose `owner` can be cleared (on unmount) or
+    // Capture the owner once: this is a singleton whose `owner` can be cleared (on unmount) or
     // switched (on reselection) while the awaits below run. Read the snapshot, never `this.*`.
     const owner = this.owner;
-    const type = this.type;
+    // The library kind follows the owner: an <image> owner holds image contents, anything else
+    // (<use>) holds symbol contents.
+    const isImageLibrary = owner.tagName === 'image';
     let success = false;
     const batchCmd = new history.BatchCommand(`Add ${owner.tagName} library content from canvas`);
     const pickedObjectTag = pickedElem.tagName;
+    // Clone parked on the canvas for the text→path conversion below, tracked so a throw mid-way
+    // can't leave a hidden orphan behind (it would be serialized into the saved file).
+    let canvasClone: null | SVGGraphicsElement = null;
 
     try {
-      if (type === LibraryType.IMAGE) {
+      if (isImageLibrary) {
         let newImageSrc: null | string = null;
 
         if (pickedObjectTag !== 'image') {
@@ -566,6 +563,7 @@ export class ContentLibraryManager {
 
           cloned.style.visibility = 'hidden';
           pickedElem.parentElement?.appendChild(cloned);
+          canvasClone = cloned;
 
           if (cloned.tagName === 'text') {
             const result = await convertTextToPath(cloned, { addToHistory: false, isToSelect: false });
@@ -611,6 +609,13 @@ export class ContentLibraryManager {
         }
       }
     } finally {
+      // Only drop it while it is still parked on the canvas: on the success path it has already
+      // been moved into `wrapper` (and from there into whatever parseSvg built), so this leaves
+      // the parsed symbol untouched and removes only the leftover.
+      if (canvasClone?.parentElement && canvasClone.parentElement === pickedElem.parentElement) {
+        canvasClone.remove();
+      }
+
       handleHistoryActionOptions(batchCmd);
       eventEmitter.emit(CONTENT_UPDATED);
 

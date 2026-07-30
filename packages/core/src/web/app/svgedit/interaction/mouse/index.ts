@@ -101,6 +101,26 @@ let currentBoundingBox = Array.of<IPoint>();
 const isControlEditable = (elem: Element, control: ControlType): boolean =>
   !withinInteractionModes(templateModes) || parseEditableInfo(elem)[control] === true;
 
+/**
+ * Which axes the current selection may still be translated along.
+ *
+ * Mirrors the per-element position locks; outside the template modes nothing is locked. For a
+ * `line` both endpoints must be free on an axis, otherwise dragging would deform it.
+ */
+const getMovableAxes = (selected?: Element | null): { x: boolean; y: boolean } => {
+  if (!withinInteractionModes(templateModes)) return { x: true, y: true };
+
+  const editableInfo = useSelectedElementStore.getState().editableInfo;
+  const isLine = selected?.tagName === 'line';
+  const isFree = (start: ControlType, end: ControlType) =>
+    Boolean(editableInfo[start]?.value) && (!isLine || Boolean(editableInfo[end]?.value));
+
+  return {
+    x: isFree(ControlType.POSITION_X, ControlType.POSITION_X2),
+    y: isFree(ControlType.POSITION_Y, ControlType.POSITION_Y2),
+  };
+};
+
 const findAndDrawAlignPoints = (x: number, y: number) => {
   const {
     farthest: { x: fx, y: fy },
@@ -590,7 +610,16 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     tx = width;
   }
 
-  // When position is not editable on an axis, resize from center instead of from corner
+  // Three rules can apply to the same drag and all of them have to survive, so they are layered in
+  // a fixed order instead of any one of them overwriting the scale the others computed:
+  //   1. anchor (here): in template modes a position-locked axis grows from its center, so that
+  //      axis' delta counts double — both of its edges move. Free axes stay corner-anchored.
+  //   2. ratio (below, after this block): a locked ratio — shift / `isRatioFixed`, and always when
+  //      `fixedByFitText` — makes both axes share the scale of the axis the pointer is dragging.
+  //      Sharing the (possibly doubled) factor is what keeps the aspect ratio exact; each axis
+  //      still uses its own anchor.
+  //   3. fit text: a one-direction resize of a fit text never reaches the transform at all — it
+  //      goes to the setFitTextBBox branch, which applies the same center anchoring itself.
   if (withinInteractionModes(templateModes)) {
     if (!editableInfo[ControlType.POSITION_X]?.value) {
       tx = width / 2;
@@ -611,7 +640,10 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   translateOrigin.setTranslate(-(left + tx), -(top + ty));
 
   if (!isFreeResize) {
-    if (sx === 1) sx = sy;
+    // Rule 2: drive the shared scale from the axis the pointer is actually dragging. Deciding by
+    // the delta (and by a usable width) rather than by `sx === 1` keeps this right when rule 1
+    // already rewrote sx — a center-anchored axis can legitimately sit at scale 1 mid-drag.
+    if (dx === 0 || !width) sx = sy;
     else sy = sx;
   }
 
@@ -745,17 +777,12 @@ const mouseMove = (evt: MouseEvent) => {
   //   build geometry unrelated to the selected element, so its lock flags must not apply.
   // The drag itself is enforced by the dx/dy clamp in `case 'select'`; clamping here as well keeps
   // shift-snap and auto-align from proposing movement along the locked axis in the first place.
-  if (withinInteractionModes(templateModes) && currentMode === 'select') {
-    const editableInfo = useSelectedElementStore.getState().editableInfo;
-    const isLine = selectedElements[0]?.tagName === 'line';
+  const movableAxes = getMovableAxes(selectedElements[0]);
 
-    if (!editableInfo[ControlType.POSITION_X]?.value || (isLine && !editableInfo[ControlType.POSITION_X2]?.value)) {
-      x = startX;
-    }
+  if (currentMode === 'select') {
+    if (!movableAxes.x) x = startX;
 
-    if (!editableInfo[ControlType.POSITION_Y]?.value || (isLine && !editableInfo[ControlType.POSITION_Y2]?.value)) {
-      y = startY;
-    }
+    if (!movableAxes.y) y = startY;
   }
 
   svgCanvas.clearAlignLines();
@@ -824,31 +851,19 @@ const mouseMove = (evt: MouseEvent) => {
           dy = xya.y - startY;
         }
 
-        if (svgCanvas.isAutoAlign) {
-          const diff = getMatchedDiffFromBBox(currentBoundingBox, current, { x: startX, y: startY });
+        // Auto-align proposes a new position and draws the align lines as a side effect, so skip it
+        // outright once the element is locked on both axes — it can never follow the proposal and
+        // the lines would just be misleading noise.
+        if (svgCanvas.isAutoAlign && (movableAxes.x || movableAxes.y)) {
+          const diff = getMatchedDiffFromBBox(currentBoundingBox, current, { x: startX, y: startY }, movableAxes);
 
           dx = diff.x;
           dy = diff.y;
         }
 
-        if (withinInteractionModes(templateModes)) {
-          const editableInfo = useSelectedElementStore.getState().editableInfo;
-          const isLine = selectedElements[0]?.tagName === 'line';
+        if (!movableAxes.x) dx = 0;
 
-          if (
-            !editableInfo[ControlType.POSITION_X]?.value ||
-            (isLine && !editableInfo[ControlType.POSITION_X2]?.value)
-          ) {
-            dx = 0;
-          }
-
-          if (
-            !editableInfo[ControlType.POSITION_Y]?.value ||
-            (isLine && !editableInfo[ControlType.POSITION_Y2]?.value)
-          ) {
-            dy = 0;
-          }
-        }
+        if (!movableAxes.y) dy = 0;
 
         if (dx !== 0 || dy !== 0) {
           // Emit once, only on the first actual movement of this gesture (`moved` flips to true

@@ -17,12 +17,35 @@ getSVGAsync(({ Canvas }) => {
 type Matched = Record<'farthest' | 'nearest', Record<'x' | 'y', IPoint | null>>;
 type PointSet = Record<'x' | 'y', IPoint | null>;
 
-export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IPoint, start: IPoint): IPoint {
+export function getMatchedDiffFromBBox(
+  currentBoundingBox: IPoint[],
+  current: IPoint,
+  start: IPoint,
+  /** Axes the dragged element may actually move along; matches on a locked axis are discarded. */
+  movableAxes: { x: boolean; y: boolean } = { x: true, y: true },
+): IPoint {
   const [dx, dy] = [current.x - start.x, current.y - start.y];
 
   if (!currentBoundingBox.length) return { x: dx, y: dy };
 
   const matchPoints = currentBoundingBox.map(({ x, y }) => svgCanvas.findMatchedAlignPoints(x + dx, y + dy));
+
+  // An element locked on an axis can never follow an align proposal on that axis, so drop those
+  // matches here: no snapping, and — more visibly — no align line drawn for a move that can't happen.
+  if (!movableAxes.x || !movableAxes.y) {
+    for (const matched of matchPoints) {
+      if (!movableAxes.x) {
+        matched.nearest.x = null;
+        matched.farthest.x = null;
+      }
+
+      if (!movableAxes.y) {
+        matched.nearest.y = null;
+        matched.farthest.y = null;
+      }
+    }
+  }
+
   const center = { x: currentBoundingBox[1].x + dx, y: currentBoundingBox[3].y + dy };
   const target: IPoint = { x: current.x, y: current.y };
   // map string is the matched point and matched by(dimension)

@@ -368,6 +368,19 @@ const generateBeamBuffer = (
   return buffer;
 };
 
+/**
+ * Reads the header and returns its metadata JSON.
+ *
+ * The block sizes that follow the metadata are walked in the fixed order `generateBeamBuffer`
+ * writes them (svg, image source, thumbnail, ...) — `metaData.contents` is deliberately ignored
+ * here. That is safe today because the only conditional block (0x05, the thumbnail list) is
+ * appended last, and because the sizes read below are never returned: this function hands back
+ * the metadata alone, so a misread size cannot corrupt anything downstream. The offsets used for
+ * real parsing are recomputed by `readBlocks` / `readBeamFileInfo`.
+ *
+ * If a future format ever inserts a conditional block *before* an existing one, this walk (and
+ * those two readers) must switch to driving off `metaData.contents` instead of the fixed order.
+ */
 const readHeader = (headerBuf: Buffer): Partial<MetaData> => {
   let vInt;
   let offset = 0;

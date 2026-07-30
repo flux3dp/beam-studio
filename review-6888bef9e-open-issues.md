@@ -5,8 +5,8 @@
 
 ## 摘要
 
-- ✅ **已修正**：#1, #2, #3, #6, #7, #8, #9, #10, #11, #12, #13, #14, #15, #16, #17, #18, #21, #22, #23, #24, #25, #26, #34, #45, #47, #48, #49, #50, #53, #56, #57, #61, #63, #64, #65, #66, #67, #72, #74, #76, #80, #99（及 readBeam 進度遮罩保護、批次 4 的 editable 把關盤點）
-- 🛡️ **已標記安全 / 刻意設計**：#4, #5, #19, #20, #51, #54, #55, #58, #68, #70, #75, #77, #78, #81, #82, #83, #84；#27、#52（正常關閉路徑已由 modal 自行 resolve，僅剩「外部強制 popDialog」的殘留 edge）
+- ✅ **已修正**：#1, #2, #3, #6, #7, #8, #9, #10, #11, #12, #13, #14, #15, #16, #17, #18, #21, #22, #23, #24, #25, #26, #34, #40, #45, #46, #47, #48, #49, #50, #53, #56, #57, #61, #62, #63, #64, #65, #66, #67, #71, #72, #73, #74, #76, #80, #86, #87, #88, #89, #93, #94, #99（及 readBeam 進度遮罩保護、批次 4 的 editable 把關盤點、「不可移動時不畫對齊線」）
+- 🛡️ **已標記安全 / 刻意設計**：#4, #5, #19, #20, #51, #54, #55, #58, #68, #70, #75, #77, #78, #81, #82, #83, #84, #90, #91, #92, #96；#27、#52（正常關閉路徑已由 modal 自行 resolve，僅剩「外部強制 popDialog」的殘留 edge）
 - ⏸️ **暫緩 / 忽略**：#59, #60, #69, #79
 - 🩹 **部分處理**：#98, #100/#101, #110（見各條說明）
 - ⬜ 以下為**仍待處理**項目。
@@ -38,17 +38,17 @@
 - **#35** preview thumbnail 可被拖曳排序、沒有釘選（`ThumbnailList.tsx`）。使用者可把一般縮圖拖到 preview 前，破壞封面順序語意。
 
 ### 🟢 低 / 慣例
-- **#36** `export const enum LibraryType`（`manager.ts`）。`const enum` 在 isolatedModules/babel/SWC 行為不一致，違反 `as const` 慣例。
+- ~~**#36** `export const enum LibraryType`（`manager.ts`）。`const enum` 在 isolatedModules/babel/SWC 行為不一致，違反 `as const` 慣例。~~ → **已修正**（隨 #87 整個 enum 移除，改在使用點判斷 `owner.tagName`）
 - **#37** `thumbnailsData`/`thumbnails` 是 module 級可變全域 + 自製 emitter（檔案自註 `// Convert to a store?`），應改 Zustand。
 - **#38** `getContentElements` 屬性選擇器未加引號（`manager.ts`）。id 目前安全，含特殊字元時 `querySelectorAll` 會 throw。
 - **#39** `exportContents` 副檔名標籤與實際不符（`manager.ts`，Mac 顯示 `*.bvg` 實際 filter 是 svg）；序列化應用 `XMLSerializer` 而非 `outerHTML`。
-- **#40** `addContentFromCanvas` 把 clone 暫時掛到畫布（`manager.ts`），若 `convertTextToPath` 中途 throw，`finally` 未清 `cloned`，會殘留 `visibility:hidden` 孤兒節點並存進檔案。（正常路徑無殘留。）
+- ~~**#40** `addContentFromCanvas` 把 clone 暫時掛到畫布（`manager.ts`），若 `convertTextToPath` 中途 throw，`finally` 未清 `cloned`，會殘留 `visibility:hidden` 孤兒節點並存進檔案。（正常路徑無殘留。）~~ → **已修正**：以 `canvasClone` 追蹤那份暫掛的 clone，`finally` 先做清理。刪除條件是「它仍掛在 `pickedElem.parentElement` 底下」——成功路徑上 clone 早已被移進 `wrapper`（再進到 `parseSvg` 產生的 symbol），因此只會清掉真正的殘留，不會動到解析出來的 symbol。
 - **#41** 無障礙：`AddButton.tsx` 純 `div`+`onClick` 無 role/tabIndex/鍵盤；`ThumbnailList.tsx` 只註冊 Pointer/Touch sensor，排序無鍵盤替代。
-- **#42** `restrictToParent` 從 `ObjectPanel/LibraryPanel/ContentSection` 匯入（`ThumbnailList.tsx`），FileThumbnail 反向依賴 ObjectPanel 內部檔案，應抽共用 util。
+- ~~**#42** `restrictToParent` 從 `ObjectPanel/LibraryPanel/ContentSection` 匯入（`ThumbnailList.tsx`），FileThumbnail 反向依賴 ObjectPanel 內部檔案，應抽共用 util。~~ → **已修正**（隨 #93 抽到 `@core/helpers/dnd/restrictToParent`）
 - **#43** `SortableThumbnail` 把 `{...listeners}` 展開在整個容器（`ThumbnailList.tsx`），按鈕在拖曳區內易誤觸。
 - **#44** `getThumbnailsForExport` 對 preview 一律輸出 `data: null`（需與 `generateBeamBuffer` 對照，屬設計性、資訊性）。
 - ~~**#45** `modelId` 拼字錯誤（`getThumbnailsForExport.tsx`，應為 modalId）。~~ → **已修正**（與 #63 一起處理）
-- **#46** `constants.ts` 註解說 query param 在 hash 裡，實際是 query string（與 #17 同源）。
+- ~~**#46** `constants.ts` 註解說 query param 在 hash 裡，實際是 query string（與 #17 同源）。~~ → **已修正**：註解改寫為「參數在真正的 query string、位於 `#` 之前」，並寫出兩端的實際行為（`TemplatePreview` 組 `${origin}?${KEY}=true${hashMap.editor}`，iframe 端由 `initTemplatePreviewFromQuery` 讀 `window.location.search`）。
 
 ---
 
@@ -67,7 +67,7 @@
   另：`SymbolMaker.switchImageSymbol(useElement, false)` 只 `setAttribute` 在傳入的 clone `<use>` 上（僅從 document 查 symbol），**不會**動到實際文件。
 
 ### 🟢 低
-- **#62** `readHeader` 完全不使用 metadata 的 `contents` 欄位，仍以固定順序讀 VINT；未來新增條件性區塊會錯位。
+- ~~**#62** `readHeader` 完全不使用 metadata 的 `contents` 欄位，仍以固定順序讀 VINT；未來新增條件性區塊會錯位。~~ → **已處理（加註解）**：在 `readHeader` 上方寫明「固定順序、刻意不看 `contents`」為何現在安全（唯一的條件性區塊 0x05 排在最後；讀到的 size 只供除錯，回傳值只有 metadata，真正的 offset 由 `readBlocks` / `readBeamFileInfo` 重算），並註明「若未來把條件性區塊插到既有區塊之前，這裡與那兩個 reader 都必須改成依 `contents` 驅動」。
 
 ---
 
@@ -98,31 +98,30 @@
 > 忽略：**#60**（先不修）、**#69**、**#79**。
 >
 > **#72 的前提有誤，已查證**：`mouseDown` 是直接掛在 `container.addEventListener('mousedown', ...)` 的 async function，DOM 不會等它的 promise（touch 路徑的 `onMouseDown` 也宣告成 `(e: Event) => void`）。函式一碰到 `await` 就把控制權交回 event loop，**mousemove / mouseup 期間照常派送**，所以「拿掉 await」在行為上等價，不修正任何東西（兩種寫法在 `addContentFromCanvas` reject 時也同樣會變成 unhandled rejection，除非另外掛 `.catch`）。維持現狀。
-> 該條**剩下的另一半仍成立**：`case 'pick'` 沒有 `checkSelectable` / `isElemLocked` 檢查，可以從鎖定或隱藏圖層挑元素進內容庫（其他選取路徑都有擋）。**待決定**。
+> 該條**剩下的另一半已修正**（此段先前停在舊狀態）：`case 'pick'` 現在與其他選取路徑用完全相同的三項把關，且必須同時成立 —— 目標圖層存在 && `checkSelectable(layer)`（未隱藏 / 未鎖定 / opacity ≠ 0）&& `!isElemLocked(elem)`，鎖定或隱藏圖層上的元素無法被挑進內容庫。
 
-### 🟡 中
-- **#71** line 控制點左右/上下對應只看 `x1 > x2`，未考慮旋轉角（`selector.ts`）。帶 rotation 時會隱藏錯誤那一側控制點。
-- **#73** 從中心縮放時覆寫 `sx`/`sy`，繞過等比與 fit-text 約束（`mouse/index.ts`）。Shift 等比與 fit text 固定行為在該分支失效。
+> 本輪修正：**不可移動時不顯示對齊線**。新增 module 級 `getMovableAxes(elem)`（template modes 才鎖；`line` 需兩端點都自由才算該軸可動），取代 `mouseMove` 裡兩處重複的 editableInfo 判斷（位置 clamp 與 `case 'select'` 的 `dx/dy = 0`）。在此之上：兩軸皆鎖時整段跳過 `getMatchedDiffFromBBox`（它畫對齊線是副作用，元素根本無法跟隨提案）；只鎖單軸時把 `movableAxes` 傳進 `getMatchedDiffFromBBox`，在 `matchPoints` 算完後把該軸的 `nearest`/`farthest` 清成 `null` → 該軸不吸附也不畫線。
+>
+> **#71**（已修正）：grip 掛在**未旋轉**的 bbox 上（`applyDimensions` 之後才把整個 selector group 轉 `angle`），所以端點歸屬要在同一個座標系判斷。改為先用 `svgedit.math.getMatrix(elem)` 把 `(x1,y1)`/`(x2,y2)` 轉到使用者座標，再把兩點差向量旋轉 `-angle`，以旋轉後的 `localDiffX/localDiffY` 正負決定左右／上下。原本直接比 `x1 > x2`，在 transform 帶旋轉或鏡射時會標錯邊。
+
+> **#73**（已處理）：先查證原始描述——「等比與 fit-text 約束被繞過」對現況**不成立**：中心縮放的覆寫在前，`if (!isFreeResize) { sx/sy 對齊 }` 在後，fit text 的單方向縮放則根本不走這條 transform（走 `setFitTextBBox`，該分支自己有中心錨定處理）。三者實際上是**分層**的，只是順序隱晦、且驅動軸的判斷脆弱。
+> 因此改為：(1) 在中心錨定區塊上方寫清楚三條規則的套用順序與各自的成立條件；(2) 把等比的驅動軸判斷從 `sx === 1` 改成 `dx === 0 || !width`——中心錨定會重寫 `sx`，被錨定的軸在拖曳中途完全可能剛好落在 scale 1，用 `sx === 1` 猜「哪一軸沒在動」並不可靠。新條件在既有情境下與舊寫法等價（含 `width === 0` 時交給 y 驅動），但不再依賴浮點巧合。共用（可能加倍的）scale 係數正是維持等比的正確做法，各軸仍各自使用自己的錨點。
+
+（批次 4 已無待處理項目。）
 
 ---
 
 ## 批次 5：ObjectPanel 重寫 / ConfigPanel / LibraryPanel / TemplateConfig
 
+> 本輪修正：**#86**（已修正 — `setEditable` 改用帶 `controllableTypes` 的 `getEditableInfo`，鍵集合與 `getDerivedData` 一致）、**#87**（移除 `LibraryType` enum 與 `ContentLibraryManager.type` 成員，改在使用點直接由 owner 判斷：`manager.addContentFromCanvas` 用 `owner.tagName === 'image'` 的區域快照，`ContentSection` 用 `useMemo(() => owner.tagName === 'image', [owner])` → 不再有「render 時讀到前一個元素的 type」的時序問題）、**#88**（`over/active.data.current` 加 `?.` 並以 `?? 0` 收尾；缺值時方向前後無差別，已加註解）、**#89**（`ContentSection` unmount 時的 useEffect cleanup：若當下仍是 `'pick'` 就切回 `'select'`）、**#93**（中文註解改英文，且 `restrictToParent` 搬到共用的 `@core/helpers/dnd/restrictToParent`，`ContentSection` 與 `FileThumbnail/ThumbnailList` 皆改 import — 同時解掉 **#42** 的反向依賴）、**#94**（已修正 — `TemplateConfig.tsx` 桌面／平板 JSX 重複與 `// TODO: desktop UI` 已不存在）。
+>
+> 已標記安全：**#90**（`WhiteInkCheckbox` 屬 dev 模式功能，平板/彈窗 UI 移除為可接受）、**#91**、**#92**、**#96**（外部會在語言改變時整段重新 render，module 級 `i18n.lang` 目前安全）。
+
 ### 🟡 中
 - **#85** `PopupItem` 在 render 期間做 `document.querySelector`（`common/ObjectPanelItem.tsx`）。render 應 pure；首次 render 對應 ButtonItem 可能未進 DOM → reference 為 null → 浮動彈窗定位失準。（與 #80 的 state 設計相關，該 state 為刻意保留。）
-- **#86** `setEditable` 用不帶 `controllableTypes` 的 `getEditableInfo` 回寫 store（`TemplateConfig.tsx`）。鍵集合與正常 `getDerivedData` 路徑不一致，依賴鍵存在與否的邏輯可能誤判。
-- **#87** `contentLibraryManager.type` 在 render 期間讀取（`ContentSection.tsx`）。`type` 由 effect 的 `init()` 設定，首次 render 讀到前一個元素的值。（#24/#25 已改善 singleton 的 await 安全，但 render 時序讀取仍在。）
-- **#88** `handleDragEnd` 直接解構 `over.data.current`（`ContentSection.tsx`）。dnd-kit 某些狀態下可能 undefined，無防護即 TypeError。
-- **#89** `setMouseMode('pick')` 沒有取消路徑（`ContentSection.tsx`）。無視覺提示、無 Esc、無逾時，改變主意時模式一直停在 'pick'。
-- **#90** 移除 `panel-item` UIType 後，`WhiteInkCheckbox` 在平板/彈窗 UI 完全消失（`ConfigPanel.tsx`）。屬 dev 模式功能，無聲移除。
 
 ### 🟢 低
-- **#91** `defaultActiveKey={Object.keys(panels)}`（`ObjectPanel.tsx`）用所有 panel key 當預設展開集合，取巧且收合狀態不保存。
-- **#92** `renderTabletButtons` 用 `key={index}` 給 divider（`ObjectPanel.tsx`），清單條件組成，index 會變動。
-- **#93** `ContentSection.tsx` 使用中文註解（`// 左邊界`…），與 codebase 英文慣例不一致。
-- **#94** `TemplateConfig.tsx` 桌面版與平板版 JSX 完全重複，標註 `// TODO: desktop UI`。
-- **#95** `ContentSection` / `ThumbnailList` 只註冊 Pointer/Touch sensor，未加 `KeyboardSensor`。
-- **#96** `ObjectPanel.tsx` parameter panel 標題用 module 級 `i18n.lang` 而非 `useI18n()`，語言切換不重繪。
+- **#95** `ContentSection` / `ThumbnailList` 只註冊 Pointer/Touch sensor，未加 `KeyboardSensor`。（與 #41 同類的無障礙缺口，仍待處理。）
 
 ---
 

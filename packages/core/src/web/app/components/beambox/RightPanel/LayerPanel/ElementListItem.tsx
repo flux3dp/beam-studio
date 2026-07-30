@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -73,13 +73,10 @@ const ElementListItem = ({ element, index, onSelect }: Props): React.JSX.Element
     else if (element.parentElement === selectedElement) return { isMultiSelected: true, isSelected: false };
     else return { isMultiSelected: false, isSelected: false };
   }, [element, selectedElement]);
-  const [elemName, setElemName] = useState<string>(element.getAttribute('data-name') ?? element.id);
-  const [locked, setLocked] = useState<boolean>(element.getAttribute('data-lock') === 'true');
-  const [editable, setEditable] = useState(() => getEditableState(element, isSelected, isProjectMode));
 
-  useEffect(() => {
-    setEditable(getEditableState(element, isSelected, isProjectMode));
-  }, [element, isSelected, isProjectMode]);
+  const elemName = element.getAttribute('data-name') ?? element.id;
+  const locked = element.getAttribute('data-lock') === 'true';
+  const editable = getEditableState(element, isSelected, isProjectMode);
 
   const handleRename = () => {
     dialogCaller.promptDialog({
@@ -94,8 +91,6 @@ const ElementListItem = ({ element, index, onSelect }: Props): React.JSX.Element
         const cmd = undoManager.finishUndoableChange();
 
         if (!cmd.isEmpty()) undoManager.addCommandToHistory(cmd);
-
-        setElemName(newName);
       },
     });
   };
@@ -129,7 +124,7 @@ const ElementListItem = ({ element, index, onSelect }: Props): React.JSX.Element
               });
             }
 
-            setEditable(getEditableState(element, isSelected, isProjectMode));
+            // setEditable(getEditableState(element, isSelected, isProjectMode));
           }}
           partial={editable.partiallyEditable}
         />
@@ -155,7 +150,9 @@ const ElementListItem = ({ element, index, onSelect }: Props): React.JSX.Element
         className={styles.action}
         onClick={(e) => {
           e.stopPropagation();
-          setLocked(setElemLock(element));
+          // setLocked(
+          setElemLock(element);
+          // );
         }}
         title="Lock"
         type="button"

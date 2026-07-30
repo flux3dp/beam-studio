@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { PlusOutlined } from '@ant-design/icons';
 import { closestCenter, DndContext, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core';
-import type { DragEndEvent, Modifier } from '@dnd-kit/core';
+import type { DragEndEvent } from '@dnd-kit/core';
 import { rectSortingStrategy, SortableContext } from '@dnd-kit/sortable';
 import { Button } from 'antd';
 
@@ -12,7 +12,7 @@ import ContentGrid, {
   SortableContentGrid,
 } from '@core/app/components/beambox/RightPanel/ObjectPanel/LibraryPanel/ContentGrid';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
-import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { templateModes, useWithinInteractionModes } from '@core/app/stores/interactionModeStore';
 import type { TContent } from '@core/helpers/contentLibrary/manager';
 import {
@@ -21,48 +21,14 @@ import {
   contentLibraryManager,
   getCurrentContentId,
   getCustomerUploadAllowed,
-  LibraryType,
   removeContent,
   reorderContents,
   setDefaultContent,
 } from '@core/helpers/contentLibrary/manager';
+import { restrictToParent } from '@core/helpers/dnd/restrictToParent';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ContentSection.module.scss';
-
-export const restrictToParent: Modifier = ({ activeNodeRect, containerNodeRect, transform }) => {
-  if (!activeNodeRect || !containerNodeRect) {
-    return transform;
-  }
-
-  let { x, y } = transform;
-
-  // 左邊界
-  if (activeNodeRect.left + x < containerNodeRect.left) {
-    x = containerNodeRect.left - activeNodeRect.left;
-  }
-
-  // 右邊界
-  if (activeNodeRect.right + x > containerNodeRect.right) {
-    x = containerNodeRect.right - activeNodeRect.right;
-  }
-
-  // 上邊界
-  if (activeNodeRect.top + y < containerNodeRect.top) {
-    y = containerNodeRect.top - activeNodeRect.top;
-  }
-
-  // 下邊界
-  if (activeNodeRect.bottom + y > containerNodeRect.bottom) {
-    y = containerNodeRect.bottom - activeNodeRect.bottom;
-  }
-
-  return {
-    ...transform,
-    x,
-    y,
-  };
-};
 
 interface Props {
   elem: SVGElement;
@@ -75,7 +41,9 @@ const ContentSection = ({ elem: owner }: Props) => {
   const [current, setCurrent] = useState<null | SVGSymbolElement>(null);
   const [selected, setSelected] = useState<null | SVGSymbolElement>(null);
   const allowUpload = useMemo(() => getCustomerUploadAllowed(owner), [owner]);
-  const isImage = contentLibraryManager.type === LibraryType.IMAGE;
+  // The library kind follows the owner element, so derive it here instead of reading manager state
+  // that is only set once its async init has run.
+  const isImage = useMemo(() => owner.tagName === 'image', [owner]);
   const isTouch = window.matchMedia('(pointer: coarse)').matches;
   const sensors = useSensors(
     useSensor(isTouch ? TouchSensor : PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -89,6 +57,15 @@ const ContentSection = ({ elem: owner }: Props) => {
   useEffect(() => {
     return contentLibraryManager.init(owner, onUpdate);
   }, [owner, onUpdate]);
+
+  useEffect(
+    // 'pick' is only ever entered from this section's pick button, and it has no cancel affordance
+    // on the canvas. Leaving the panel must not strand the canvas waiting for a pick.
+    () => () => {
+      if (getMouseMode() === 'pick') setMouseMode('select');
+    },
+    [],
+  );
 
   if (isWithinTemplateModes) {
     return (
@@ -116,8 +93,11 @@ const ContentSection = ({ elem: owner }: Props) => {
 
     if (!over || active.id === over.id) return;
 
+    // dnd-kit may hand back an item without sortable data; the fallback direction is harmless
+    // because reordering to the same slot is a no-op either way.
     const isBackward =
-      (over.data.current as { index: number }).index > (active.data.current as { index: number }).index;
+      ((over.data.current as undefined | { index: number })?.index ?? 0) >
+      ((active.data.current as undefined | { index: number })?.index ?? 0);
 
     reorderContents(active.id as string, over.id as string, isBackward);
   };

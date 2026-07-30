@@ -1,5 +1,3 @@
-// Convert to a store?
-
 import generateThumbnail from '@core/app/actions/beambox/export/generate-thumbnail';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -54,6 +52,11 @@ export const resetThumbnails = () => {
     isVisibleDisabled: true,
     src: '',
   };
+
+  if (!thumbnails.includes(previewThumbnailKey)) {
+    thumbnails.push(previewThumbnailKey);
+  }
+
   emitThumbnailOrderChange();
 };
 resetThumbnails();

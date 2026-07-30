@@ -6,17 +6,19 @@ import { shallow } from 'zustand/shallow';
 import { templateModes, useInteractionModeStore, withinInteractionModes } from './interactionModeStore';
 import { useScreenStore } from './screenStore';
 
-export enum LayoutKey {
-  Desktop,
-  Mobile,
-  Tablet,
-}
+export const Layout = {
+  Desktop: 0,
+  Mobile: 1,
+  Tablet: 2,
+} as const;
+type LayoutKey = keyof typeof Layout;
+type LayoutValue = (typeof Layout)[LayoutKey];
 
 type LayoutState = {
   isDesktop: boolean;
   isMobile: boolean;
   isTablet: boolean;
-  layout: LayoutKey;
+  layout: LayoutValue;
 };
 
 const getLayout = ({
@@ -29,11 +31,11 @@ const getLayout = ({
   isWithinTemplateModes: boolean;
 }> = {}): LayoutState => {
   if (isMobile) {
-    return { isDesktop: false, isMobile: true, isTablet: false, layout: LayoutKey.Mobile };
+    return { isDesktop: false, isMobile: true, isTablet: false, layout: Layout.Mobile };
   } else if (isTablet || isWithinTemplateModes) {
-    return { isDesktop: false, isMobile: false, isTablet: true, layout: LayoutKey.Tablet };
+    return { isDesktop: false, isMobile: false, isTablet: true, layout: Layout.Tablet };
   } else {
-    return { isDesktop: true, isMobile: false, isTablet: false, layout: LayoutKey.Desktop };
+    return { isDesktop: true, isMobile: false, isTablet: false, layout: Layout.Desktop };
   }
 };
 
