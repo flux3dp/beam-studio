@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .container {
   display: flex;
@@ -16,7 +16,7 @@
     z-index: 1000;
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     align-items: unset;
     padding-top: 30px;
   }
@@ -28,7 +28,7 @@
   bottom: 55px;
   display: flex;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     left: 20px;
     right: 20px;
     bottom: 20px;
@@ -68,7 +68,7 @@
     }
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     height: 30px;
     font-size: 14px;
     line-height: 30px;
@@ -100,7 +100,7 @@
   gap: 5%;
   height: fit-content;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     flex-direction: column;
     justify-content: start;
     align-items: center;

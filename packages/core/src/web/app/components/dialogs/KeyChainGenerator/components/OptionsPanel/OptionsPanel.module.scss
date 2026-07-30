@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .panel {
   flex: 0 0 280px;
@@ -6,7 +6,7 @@
   gap: 12px;
   flex-direction: column;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     flex: 1 1 auto;
     max-height: 300px;
     overflow-y: auto;
@@ -33,7 +33,7 @@ $content-gap: 24px;
   overflow-y: auto;
   margin: 0 0 $content-gap;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     overflow-y: unset;
   }
 

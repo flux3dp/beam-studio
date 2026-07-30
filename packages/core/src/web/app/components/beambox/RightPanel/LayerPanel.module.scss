@@ -1,6 +1,6 @@
 @use '@core/app/components/beambox/RightPanel/_mixins' as rightPanelMixins;
 @use '@core/styles/variables' as variables;
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 $handle-height: 10px;
 $layer-background: white;
@@ -14,11 +14,11 @@ $layer-background: white;
   height: 100%;
   font-size: 10pt;
 
-  @include mixins.is-not-mobile {
+  @include selectors.is-not-mobile {
     @include rightPanelMixins.panel();
   }
 
-  @include mixins.is-tablet {
+  @include selectors.is-tablet {
     width: 300px;
     max-height: calc(100vh - 200px);
   }
@@ -31,7 +31,7 @@ $layer-background: white;
   height: calc(100% - $handle-height);
   width: 100%;
   position: relative;
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     width: 100vw;
     border: none;
   }
@@ -46,7 +46,7 @@ $layer-background: white;
     overflow-x: hidden;
     overflow-y: scroll;
     height: 100%;
-    @include mixins.is-mobile {
+    @include selectors.is-mobile {
       left: 0;
       width: 100vw;
     }

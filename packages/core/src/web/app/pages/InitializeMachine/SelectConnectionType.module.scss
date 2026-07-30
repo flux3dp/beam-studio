@@ -1,11 +1,11 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .title {
   margin-bottom: 50px;
   font-size: 30px;
   color: #333333;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     font-size: 22px;
   }
 }
@@ -49,7 +49,7 @@
       }
     }
 
-    @include mixins.is-mobile {
+    @include selectors.is-mobile {
       flex-direction: row-reverse;
       background-color: white;
       border-radius: 8px;

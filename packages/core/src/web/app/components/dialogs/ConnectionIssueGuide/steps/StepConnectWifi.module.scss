@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 @use '@core/styles/variables' as variables;
 @use './ConnectionIssueStep.module' as *;
 
@@ -15,7 +15,7 @@
     cursor: pointer;
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     flex-direction: column;
     gap: 8px;
   }
@@ -34,7 +34,7 @@
     object-fit: contain;
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     flex-wrap: wrap;
 
     img {

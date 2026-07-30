@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .title {
   font-size: 20px;
@@ -12,7 +12,7 @@
   flex-direction: column;
   flex: 1;
 
-  @include mixins.is-not-mobile {
+  @include selectors.is-not-mobile {
     max-width: 400px;
     height: calc(100vh - 200px);
     padding-bottom: 30px;
@@ -39,12 +39,12 @@
   flex: 1;
   min-width: 0;
 
-  @include mixins.is-not-mobile {
+  @include selectors.is-not-mobile {
     height: calc(100vh - 200px);
     padding-bottom: 30px;
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     width: 100%;
   }
 

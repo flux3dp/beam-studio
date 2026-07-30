@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .modal {
   overflow: hidden;
@@ -12,7 +12,7 @@
   max-height: 800px; // Cap for very tall screens
   gap: 16px;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     flex-direction: column;
     height: auto;
     max-height: 80svh;

@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 @keyframes pulse {
   0% {
@@ -40,7 +40,7 @@
     margin: -133px 0 0 177px;
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     flex: unset;
     position: relative;
     width: 100%;

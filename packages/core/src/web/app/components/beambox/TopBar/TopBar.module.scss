@@ -1,5 +1,5 @@
 @use '@core/styles/variables' as variables;
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .top-bar {
   flex: 0 0 auto;
@@ -13,15 +13,15 @@
   font-size: 30px;
   overflow: hidden;
 
-  @include mixins.is-mobile {
-    @include mixins.is-web {
+  @include selectors.is-mobile {
+    @include selectors.is-web {
       height: variables.$topBarHeightWebMobile;
       padding-bottom: variables.$topBarHeightWebMobile - variables.$topBarHeight;
     }
   }
 
   &.draggable {
-    @include mixins.when-tab-focused {
+    @include selectors.when-tab-focused {
       -webkit-app-region: drag;
     }
   }

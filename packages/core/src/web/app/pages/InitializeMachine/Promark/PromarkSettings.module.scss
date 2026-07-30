@@ -1,8 +1,8 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 @use '@core/styles/variables' as variables;
 
 .container {
-  @include mixins.is-not-mobile {
+  @include selectors.is-not-mobile {
     // Avoid overlap with the fixed position button
     height: calc(100vh - 130px);
     padding-bottom: 90px;
@@ -48,7 +48,7 @@
   grid-template-columns: 1fr 1fr;
   gap: 28px 40px;
 
-  @include mixins.is-not-mobile {
+  @include selectors.is-not-mobile {
     overflow: auto;
     padding: 0 4px 4px 0;
 

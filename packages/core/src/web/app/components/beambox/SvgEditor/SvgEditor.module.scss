@@ -1,5 +1,5 @@
 @use '@core/styles/variables' as variables;
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .container {
   flex: 1 1 auto;
@@ -83,7 +83,7 @@ $margin-mobile: 10px;
   display: flex;
   justify-content: space-between;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     right: $margin-mobile;
   }
 

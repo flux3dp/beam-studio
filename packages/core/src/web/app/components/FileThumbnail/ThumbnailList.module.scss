@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .grid {
   display: grid;
@@ -9,7 +9,7 @@
   width: 480px;
   overflow-y: auto;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     width: calc(100vw - 64px);
   }
 }

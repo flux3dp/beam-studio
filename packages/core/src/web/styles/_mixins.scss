@@ -1,6 +1,4 @@
-@use 'sass:list';
 @use '@core/styles/variables';
-@import '@core/styles/selectors'; // Import for old usage, remove this after all selectors are migrated to use selectors file
 
 // Add antd default margin between buttons in modal footer
 // if buttons are wrapped in another element

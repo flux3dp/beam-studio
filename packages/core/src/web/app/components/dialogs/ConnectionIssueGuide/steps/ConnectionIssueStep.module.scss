@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 @use '@core/styles/variables' as variables;
 
 .image {
@@ -20,7 +20,7 @@
   max-width: 480px;
   gap: 12px;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     max-width: unset;
   }
 }
@@ -34,7 +34,7 @@
     color: variables.$status-normal;
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     font-size: 20px;
     margin-bottom: 12px;
   }
@@ -45,7 +45,7 @@
   font-weight: bold;
   color: #333333;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     font-size: 16px;
     margin-top: 16px;
     margin-bottom: 8px;
@@ -66,7 +66,7 @@
 // Constrain a scroll region to the dialog body and keep it clear of the fixed bottom buttons.
 // Width-agnostic so it can size a full-width column or a natural-width one (e.g. a side text panel).
 @mixin column-height {
-  @include mixins.is-not-mobile {
+  @include selectors.is-not-mobile {
     height: calc(100vh - 150px);
     padding-bottom: 60px;
   }
@@ -88,7 +88,7 @@
   flex-direction: column;
   gap: 12px;
 
-  @include mixins.is-not-mobile {
+  @include selectors.is-not-mobile {
     overflow-y: auto;
     padding: 0 4px 0 0;
 
@@ -111,7 +111,7 @@
   grid-template-rows: repeat(3, auto);
   gap: 12px 40px;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -124,7 +124,7 @@
   grid-template-rows: subgrid;
   gap: 12px;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     display: flex;
     flex-direction: column;
   }

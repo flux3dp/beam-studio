@@ -1,5 +1,6 @@
 @use '@core/styles/variables' as variables;
 @use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 @use '../mixins' as rightPanelMixins;
 
 .config-panel {
@@ -9,7 +10,7 @@
   border: 1px variables.$panelBorderColor solid;
   border-width: 1px 0 0 0;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     height: unset;
   }
 }
@@ -35,7 +36,7 @@
 }
 
 .modal {
-  @include mixins.is-tablet {
+  @include selectors.is-tablet {
     width: 360px;
   }
 

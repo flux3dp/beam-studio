@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 @keyframes pulse {
   0% {
@@ -30,7 +30,7 @@
       animation: pulse 4s cubic-bezier(0.5, 0, 0.5, 1) alternate infinite;
     }
 
-    @include mixins.is-mobile {
+    @include selectors.is-mobile {
       border-width: 3px;
     }
   }
@@ -44,7 +44,7 @@
       box-shadow: none;
     }
 
-    @include mixins.is-mobile {
+    @include selectors.is-mobile {
       width: 100%;
       height: unset;
 
@@ -55,7 +55,7 @@
     }
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     flex: unset;
     position: relative;
     width: 100%;

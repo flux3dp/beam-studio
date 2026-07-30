@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 @use '@core/styles/variables' as variables;
 
 .title {
@@ -13,7 +13,7 @@
   gap: 20px;
   justify-content: center;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     height: calc(100vh - 220px);
     margin: 0;
     flex-direction: column;
@@ -48,7 +48,7 @@
       border: 2px solid variables.$primary-blue;
     }
 
-    @include mixins.is-mobile {
+    @include selectors.is-mobile {
       width: calc(100vw - 40px);
       height: 80px;
       padding: 0 0 0 32px;
@@ -64,7 +64,7 @@
       &.bb {
         margin-top: -10px;
 
-        @include mixins.is-mobile {
+        @include selectors.is-mobile {
           margin-top: 0px;
         }
       }
@@ -76,7 +76,7 @@
     height: 200px;
     padding: 40px 20px 0;
 
-    @include mixins.is-mobile {
+    @include selectors.is-mobile {
       height: 156px;
       padding: 24px 40px 0;
       flex-direction: column;
@@ -99,7 +99,7 @@
     object-fit: cover;
     margin-bottom: 12px;
 
-    @include mixins.is-mobile {
+    @include selectors.is-mobile {
       width: 200px;
       height: 80px;
     }

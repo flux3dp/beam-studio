@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 .text {
   flex: 0 1 500px;
@@ -48,7 +48,7 @@
     }
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     margin-left: 0;
     width: 100%;
     clear: right;
@@ -79,7 +79,7 @@ input[type='text'].input {
   height: 50px;
   margin-bottom: 10px;
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     font-size: 22px;
     height: 42px;
   }

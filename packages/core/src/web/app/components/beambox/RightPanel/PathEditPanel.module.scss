@@ -1,8 +1,7 @@
 @use './_mixins.scss' as rightPanelMixins;
-@use '@core/styles/mixins' as mixins;
 @use '@core/styles/selectors' as selectors;
 
-@include mixins.is-tablet {
+@include selectors.is-tablet {
   .modal-wrap {
     // Allow user to interact with path nodes in canvas
     pointer-events: none;
@@ -58,7 +57,7 @@
       }
     }
 
-    @include mixins.is-mobile {
+    @include selectors.is-mobile {
       .divider {
         border: none;
         margin: 8px 0;

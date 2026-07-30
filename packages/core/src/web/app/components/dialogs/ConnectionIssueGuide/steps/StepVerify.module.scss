@@ -1,4 +1,4 @@
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 @use '@core/styles/variables' as variables;
 @use './ConnectionIssueStep.module' as *;
 
@@ -17,7 +17,7 @@ input[type='text'].input {
     border-bottom-color: variables.$primary-blue;
   }
 
-  @include mixins.is-mobile {
+  @include selectors.is-mobile {
     font-size: 18px;
   }
 }

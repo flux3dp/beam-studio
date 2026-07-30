@@ -1,5 +1,5 @@
 @use '@core/styles/variables' as variables;
-@use '@core/styles/mixins' as mixins;
+@use '@core/styles/selectors' as selectors;
 
 $border-color: #cecece;
 $header-height: 60px;
@@ -27,7 +27,7 @@ $header-height: 60px;
     }
 
     &.draggable {
-      @include mixins.when-tab-focused {
+      @include selectors.when-tab-focused {
         -webkit-app-region: drag;
       }
     }
