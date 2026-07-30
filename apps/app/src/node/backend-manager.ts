@@ -235,8 +235,6 @@ class BackendManager extends EventEmitter {
     });
     this.swiftrayProc.on('exit', () => {
       console.error('Swiftray terminated unexpectedly!');
-      // The handle is gone, but the daemon behind the shell wrapper may well have survived. It is
-      // no longer killable by pid, so hand it over to the name/port sweep.
       this.swiftrayProc = undefined;
 
       if (this.isRunning) {
@@ -269,7 +267,6 @@ class BackendManager extends EventEmitter {
   }
 
   stop(): void {
-    // Never started: any running Swiftray belongs to another instance, leave it alone.
     if (!this.hasStarted) return;
 
     if (this.recoverTimerSwiftray) {
@@ -282,8 +279,6 @@ class BackendManager extends EventEmitter {
       this.recoverTimer = undefined;
     }
 
-    // Not guarded by isRunning: stop() is also the last-chance cleanup on quit, and it must sweep
-    // orphans even when the manager already considers itself stopped.
     this.isRunning = false;
     this.proc?.kill();
     this.proc = undefined;
