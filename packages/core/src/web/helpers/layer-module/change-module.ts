@@ -3,7 +3,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import initLayerConfigState from '@core/app/components/beambox/RightPanel/ConfigPanel/initState';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { fullColorModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
@@ -121,7 +121,7 @@ export const changeLayersModule = async (
       applyPreset(layer, newPreset, { batchCmd });
     }
 
-    const toggleFullColorCmd = toggleFullColorLayer(layer, { val: isChangingToPrinting });
+    const toggleFullColorCmd = toggleFullColorLayer(layer, { val: fullColorModules.has(newValue) });
 
     if (toggleFullColorCmd && !toggleFullColorCmd.isEmpty()) batchCmd.addSubCommand(toggleFullColorCmd);
   });
