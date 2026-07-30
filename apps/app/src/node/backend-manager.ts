@@ -38,8 +38,11 @@ class BackendManager extends EventEmitter {
 
   private isRunning: boolean;
 
-  /** Whether start() was ever called, i.e. whether any process is ours to clean up. */
+  /** Whether we have processes left to clean up, so stop() does not sweep twice. */
   private hasStarted = false;
+
+  /** Whether we spawned Swiftray, i.e. whether the daemon is ours to kill. */
+  private hasSpawnedSwiftray = false;
 
   private port?: number;
 
@@ -226,6 +229,7 @@ class BackendManager extends EventEmitter {
     const command = os.platform() === 'win32' ? `"${paths.exec}"` : `./"${paths.exec}"`;
 
     this.swiftrayProc = spawn(command, ['--daemon'], { cwd: paths.dir, shell: true });
+    this.hasSpawnedSwiftray = true;
 
     this.swiftrayProc.stdout?.on('data', (data) => {
       console.log(`Swiftray: ${data}`);
@@ -239,18 +243,22 @@ class BackendManager extends EventEmitter {
 
       if (this.isRunning) {
         this.setRecoverSwiftray();
-      } else {
-        killStaleSwiftray();
       }
     });
   }
 
   killSwiftray(): void {
-    const { pid } = this.swiftrayProc ?? {};
+    // Never spawned one: the running daemon belongs to another instance, so leave it alone.
+    if (!this.hasSpawnedSwiftray) return;
 
+    const proc = this.swiftrayProc;
+
+    this.hasSpawnedSwiftray = false;
     this.swiftrayProc = undefined;
+    // This exit is deliberate: skip the recover timer and the sweep the handler would add to ours.
+    proc?.removeAllListeners('exit');
 
-    if (pid) killSwiftrayPid(pid);
+    if (proc?.pid) killSwiftrayPid(proc.pid);
 
     // `pid` is the shell wrapper, and on Windows a tree kill can miss a re-parented daemon, so
     // always follow up with the name/port sweep.
@@ -262,12 +270,21 @@ class BackendManager extends EventEmitter {
       this.isRunning = true;
       this.hasStarted = true;
       this.spawn();
+    }
+  }
+
+  /** Separate from start() so the caller can keep the synchronous orphan sweep off the launch path. */
+  startSwiftray(): void {
+    if (this.isRunning && !this.swiftrayProc) {
       this.spawnSwiftray();
     }
   }
 
   stop(): void {
+    // Quitting can reach here twice (window close, then will-quit); one sweep is enough.
     if (!this.hasStarted) return;
+
+    this.hasStarted = false;
 
     if (this.recoverTimerSwiftray) {
       clearTimeout(this.recoverTimerSwiftray);

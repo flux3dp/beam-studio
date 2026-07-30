@@ -175,11 +175,7 @@ const backendManager = new BackendManager({
   trace_pid: process.pid,
 });
 
-// Only the primary instance owns the backend processes. A duplicate instance is on its way out and
-// must not touch them, or it would kill the backend of the instance that holds the lock.
-if (gotTheLock) {
-  backendManager.start();
-}
+backendManager.start();
 
 // Run monitorexe api
 let monitorManager: MonitorManager | null = null;
@@ -498,6 +494,11 @@ const init = () => {
 app.whenReady().then(() => {
   init();
 
+  // After the window: the orphan sweep before the spawn is synchronous.
+  if (gotTheLock) {
+    backendManager.startSwiftray();
+  }
+
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -513,10 +514,10 @@ app.on('window-all-closed', () => {
   }
 });
 
-// Last-chance cleanup: quitting does not always go through the main window close handler (auto
-// update restart, Cmd+Q, app.quit() from elsewhere), and an orphaned Swiftray keeps its port bound
-// so the next launch can never reach the daemon it spawns.
-app.on('before-quit', () => {
+// Last-chance cleanup for quit paths that skip the main window close handler (Cmd+Q, auto update
+// restart). 'will-quit' rather than 'before-quit': the latter fires before windows are asked to
+// close, so cancelling the unsaved-changes dialog would leave the app alive with a dead backend.
+app.on('will-quit', () => {
   monitorManager?.killProc();
   backendManager.stop();
 });

@@ -1,4 +1,4 @@
-import { execSync } from 'child_process';
+import { execFileSync, execSync } from 'child_process';
 import os from 'os';
 import path from 'path';
 
@@ -22,6 +22,15 @@ export const getSwiftrayPaths = (): null | { dir: string; exec: string } => {
 const tryExec = (command: string): null | string => {
   try {
     return execSync(command, { stdio: ['ignore', 'pipe', 'ignore'], timeout: 5000 }).toString();
+  } catch {
+    return null;
+  }
+};
+
+/** Same contract as {@link tryExec}, but argv-based so patterns need no shell quoting. */
+const tryExecFile = (file: string, args: string[]): null | string => {
+  try {
+    return execFileSync(file, args, { stdio: ['ignore', 'pipe', 'ignore'], timeout: 5000 }).toString();
   } catch {
     return null;
   }
@@ -95,8 +104,13 @@ export const killStaleSwiftray = (): void => {
 
   if (platform !== 'win32' && platform !== 'darwin') return;
 
-  // By image name: also catches an instance that never managed to bind the port.
-  const byName = platform === 'win32' ? tryExec('taskkill /F /T /IM Swiftray.exe') : tryExec('pkill -x Swiftray');
+  // By image name: also catches an instance that never managed to bind the port. macOS matches the
+  // `--daemon` argument so a Swiftray the user opened themselves survives; taskkill cannot filter on
+  // the command line, so on Windows the image name is all we have.
+  const byName =
+    platform === 'win32'
+      ? tryExec('taskkill /F /T /IM Swiftray.exe')
+      : tryExecFile('pkill', ['-f', 'Swiftray.*--daemon']);
 
   if (byName !== null) console.log('Killed stale Swiftray process by name');
 
