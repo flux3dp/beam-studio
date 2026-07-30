@@ -1,12 +1,28 @@
 import { getBBox, getBBoxFromElements } from '@core/app/svgedit/utils/getBBox';
 
 import { getDesignLayers } from './designLayers';
+import type { PrintingContentsElementSnapshot } from './printingContentsSnapshot';
+import { snapshotElement } from './printingContentsSnapshot';
 
-const contentTags = new Set(['circle', 'ellipse', 'g', 'image', 'line', 'path', 'polygon', 'rect', 'text', 'use']);
+/** Tags treated as design content; also what the resume preview filters on */
+export const contentTags = new Set([
+  'circle',
+  'ellipse',
+  'g',
+  'image',
+  'line',
+  'path',
+  'polygon',
+  'rect',
+  'text',
+  'use',
+]);
 
 export interface CanvasContents {
-  designBBox: { height: number; width: number; x: number; y: number };
   elements: SVGElement[];
+  printingContentsBBox: { height: number; width: number; x: number; y: number };
+  /** Identities of the collected elements, frozen into the saved config on finish */
+  printingContentsElements: PrintingContentsElementSnapshot[];
 }
 
 /**
@@ -16,6 +32,7 @@ export interface CanvasContents {
 export const collectCanvasContents = (): CanvasContents => {
   const layers = getDesignLayers();
   const elements: SVGElement[] = [];
+  const printingContentsElements: PrintingContentsElementSnapshot[] = [];
 
   layers.forEach((layer) => {
     [...layer.children].forEach((child) => {
@@ -26,8 +43,16 @@ export const collectCanvasContents = (): CanvasContents => {
       if (bbox.width === 0 && bbox.height === 0) return;
 
       elements.push(child as SVGElement);
+
+      // an element without an id cannot be recognized again on resume; it still
+      // counts as design content, it just takes no part in the change check
+      if (child.id) printingContentsElements.push(snapshotElement(child as SVGElement, bbox));
     });
   });
 
-  return { designBBox: getBBoxFromElements(elements as SVGGraphicsElement[]), elements };
+  return {
+    elements,
+    printingContentsBBox: getBBoxFromElements(elements as SVGGraphicsElement[]),
+    printingContentsElements,
+  };
 };
