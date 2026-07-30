@@ -14,9 +14,6 @@ import { markRadiusPx } from '../constants';
  */
 export const detectMarkBlobs = async (blob: Blob, ratio: number): Promise<Array<[number, number]>> => {
   const markRadiusOnImage = markRadiusPx * ratio;
-
-  console.log('ratio', ratio, 'markRadiusOnImage', markRadiusOnImage);
-
   const markArea = Math.PI * markRadiusOnImage ** 2;
   const { points } = await getOpenCV().detectBlobs(blob, {
     max_area: markArea * 1.3,

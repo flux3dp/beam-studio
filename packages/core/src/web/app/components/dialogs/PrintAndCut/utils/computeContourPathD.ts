@@ -73,9 +73,9 @@ export const clearRasterCache = (): void => {
  * Render all visible layers into one raster of the design bounding box on a
  * transparent background, at canvas resolution (1 raster px == 1 canvas unit).
  */
-const rasterizeDesign = async (designBBox: BBox): Promise<Blob | null> => {
-  const width = Math.max(1, Math.ceil(designBBox.width));
-  const height = Math.max(1, Math.ceil(designBBox.height));
+const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null> => {
+  const width = Math.max(1, Math.ceil(printingContentsBBox.width));
+  const height = Math.max(1, Math.ceil(printingContentsBBox.height));
   // serialization must happen inside switchSymbolWrapper: image symbols use blob
   // urls that cannot load in a standalone svg string, so uses are switched to the
   // original vector symbols while the string is built
@@ -93,7 +93,7 @@ const rasterizeDesign = async (designBBox: BBox): Promise<Blob | null> => {
     <svg
       width="${width}"
       height="${height}"
-      viewBox="${designBBox.x} ${designBBox.y} ${width} ${height}"
+      viewBox="${printingContentsBBox.x} ${printingContentsBBox.y} ${width} ${height}"
       xmlns:svg="http://www.w3.org/2000/svg"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -109,8 +109,8 @@ const rasterizeDesign = async (designBBox: BBox): Promise<Blob | null> => {
 };
 
 /** Rasterize the design and trace its silhouette; empty result signals a fallback */
-const traceDesignContours = async (designBBox: BBox): Promise<Array<Array<[number, number]>>> => {
-  const blob = await rasterizeDesign(designBBox);
+const traceDesignContours = async (printingContentsBBox: BBox): Promise<Array<Array<[number, number]>>> => {
+  const blob = await rasterizeDesign(printingContentsBBox);
 
   if (!blob) return [];
 
@@ -122,8 +122,8 @@ const traceDesignContours = async (designBBox: BBox): Promise<Array<Array<[numbe
 };
 
 /** Round-cornered rectangle around the design bbox, used when the backend is unavailable */
-const fallbackRectD = (designBBox: BBox, distancePx: number): string => {
-  const { height, width, x, y } = designBBox;
+const fallbackRectD = (printingContentsBBox: BBox, distancePx: number): string => {
+  const { height, width, x, y } = printingContentsBBox;
   const r = distancePx;
 
   return (
@@ -139,14 +139,14 @@ const fallbackRectD = (designBBox: BBox, distancePx: number): string => {
  * path `d` in canvas coordinates, falling back to a rounded rectangle when the
  * backend or the offset fails.
  */
-export const computeCutPathD = async (designBBox: BBox | null, distanceMm: number): Promise<null | string> => {
-  if (!designBBox || designBBox.width === 0 || designBBox.height === 0) return null;
+export const computeContourPathD = async (printingContentsBBox: BBox | null, distanceMm: number): Promise<null | string> => {
+  if (!printingContentsBBox || printingContentsBBox.width === 0 || printingContentsBBox.height === 0) return null;
 
   const distancePx = Math.max(1, Math.round(distanceMm * dpmm));
 
   try {
     if (!cachedContours) {
-      const promise = traceDesignContours(designBBox);
+      const promise = traceDesignContours(printingContentsBBox);
 
       cachedContours = { promise };
       // a failed request must not stick: the next call retries
@@ -157,22 +157,22 @@ export const computeCutPathD = async (designBBox: BBox | null, distanceMm: numbe
 
     const contours = await cachedContours.promise;
 
-    if (contours.length === 0) return fallbackRectD(designBBox, distancePx);
+    if (contours.length === 0) return fallbackRectD(printingContentsBBox, distancePx);
 
     const solutionPaths: Path[] = contours.map((contour) =>
       contour.map(([px, py]) => ({
-        X: Math.round((designBBox.x + px) * SCALE_FACTOR),
-        Y: Math.round((designBBox.y + py) * SCALE_FACTOR),
+        X: Math.round((printingContentsBBox.x + px) * SCALE_FACTOR),
+        Y: Math.round((printingContentsBBox.y + py) * SCALE_FACTOR),
       })),
     );
     const offsetPaths = await offsetContourPaths(solutionPaths, Math.round(distanceMm * dpmm * SCALE_FACTOR));
 
-    if (!offsetPaths) return fallbackRectD(designBBox, distancePx);
+    if (!offsetPaths) return fallbackRectD(printingContentsBBox, distancePx);
 
     return buildSvgPathD(offsetPaths, useGlobalPreferenceStore.getState()['simplify_clipper_path']) || null;
   } catch (error) {
     console.warn('Failed to compute design contour, falling back to bounding box', error);
 
-    return fallbackRectD(designBBox, distancePx);
+    return fallbackRectD(printingContentsBBox, distancePx);
   }
 };

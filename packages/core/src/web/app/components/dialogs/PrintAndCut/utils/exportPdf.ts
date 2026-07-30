@@ -55,9 +55,11 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
   const canvasWidth = Math.round((widthMm / 25.4) * PDF_DPI);
   const canvasHeight = Math.round((heightMm / 25.4) * PDF_DPI);
   // in layer mode, the selected cut layer is not printed: it is for the laser cutter
-  const cutLayerElement =
-    state.cutSource === 'layer' && state.cutLayerName ? layerManager.getLayerElementByName(state.cutLayerName) : null;
-  const layersHtml = getDesignLayers(cutLayerElement)
+  const contourLayerElement =
+    state.contourSource === 'layer' && state.contourLayerName
+      ? layerManager.getLayerElementByName(state.contourLayerName)
+      : null;
+  const layersHtml = getDesignLayers(contourLayerElement)
     .map((layer) => {
       const clone = layer.cloneNode(true) as SVGGElement;
 
@@ -131,8 +133,6 @@ export const exportPrintAndCutPdf = async (): Promise<boolean> => {
 
   const state = usePrintAndCutStore.getState();
   const { heightMm, widthMm } = getPaperDimensionsMm(state);
-
-  console.log('exportPrintAndCutPdf', { heightMm, widthMm });
 
   // jsPDF swaps the format dimensions when they disagree with the orientation,
   // so derive it from the computed dimensions ('fit' ignores state.orientation)

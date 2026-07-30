@@ -8,44 +8,44 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
 
-import { CUT_ELEMENT_SELECTOR } from '../constants';
+import { CONTOUR_ELEMENT_SELECTOR } from '../constants';
 import styles from '../index.module.scss';
-import type { CutSource } from '../store';
+import type { ContourSource } from '../store';
 import { usePrintAndCutStore } from '../store';
-import { computeCutPathD } from '../utils/computeCutPathD';
+import { computeContourPathD } from '../utils/computeContourPathD';
 
 const StepSetup = (): React.JSX.Element => {
   const lang = useI18n();
   const tPrintAndCut = lang.print_and_cut;
   const tOffset = lang.beambox.tool_panels._offset;
   const {
-    cutLayerName,
-    cutSource,
-    designBBox,
+    contourLayerName,
+    contourSource,
     offsetDistance,
-    setCutLayerName,
-    setCutPathD,
-    setCutSource,
+    printingContentsBBox,
+    setContourLayerName,
+    setContourPathD,
+    setContourSource,
     setOffsetDistance,
   } = usePrintAndCutStore(
     useShallow(
       ({
-        cutLayerName,
-        cutSource,
-        designBBox,
+        contourLayerName,
+        contourSource,
         offsetDistance,
-        setCutLayerName,
-        setCutPathD,
-        setCutSource,
+        printingContentsBBox,
+        setContourLayerName,
+        setContourPathD,
+        setContourSource,
         setOffsetDistance,
       }) => ({
-        cutLayerName,
-        cutSource,
-        designBBox,
+        contourLayerName,
+        contourSource,
         offsetDistance,
-        setCutLayerName,
-        setCutPathD,
-        setCutSource,
+        printingContentsBBox,
+        setContourLayerName,
+        setContourPathD,
+        setContourSource,
         setOffsetDistance,
       }),
     ),
@@ -56,7 +56,7 @@ const StepSetup = (): React.JSX.Element => {
     () =>
       layerManager
         .getAllLayers()
-        .filter((layer) => layer.getGroup().querySelector(CUT_ELEMENT_SELECTOR))
+        .filter((layer) => layer.getGroup().querySelector(CONTOUR_ELEMENT_SELECTOR))
         .map((layer) => ({ color: layer.getColor(), name: layer.getName() })),
     [],
   );
@@ -69,16 +69,16 @@ const StepSetup = (): React.JSX.Element => {
     () =>
       funnel(
         async () => {
-          const { designBBox, offsetDistance, setCutPathD } = usePrintAndCutStore.getState();
+          const { offsetDistance, printingContentsBBox, setContourPathD } = usePrintAndCutStore.getState();
 
           runIdRef.current += 1;
 
           const runId = runIdRef.current;
-          const cutPathD = await computeCutPathD(designBBox, offsetDistance);
+          const contourPathD = await computeContourPathD(printingContentsBBox, offsetDistance);
 
           // a superseded run can still resolve after a newer one; only the
           // latest may commit its result
-          if (runIdRef.current === runId) setCutPathD(cutPathD);
+          if (runIdRef.current === runId) setContourPathD(contourPathD);
         },
         { minQuietPeriodMs: 300, triggerAt: 'both' },
       ),
@@ -88,33 +88,42 @@ const StepSetup = (): React.JSX.Element => {
   useEffect(() => () => computeFunnel.cancel(), [computeFunnel]);
 
   useEffect(() => {
-    if (cutSource === 'layer') {
+    if (contourSource === 'layer') {
       computeFunnel.cancel();
       // invalidate any in-flight run so it cannot overwrite the cleared path
       runIdRef.current += 1;
-      setCutPathD(null);
+      setContourPathD(null);
 
-      if (!cutLayerName && pathLayers.length > 0) setCutLayerName(pathLayers[0].name);
+      if (!contourLayerName && pathLayers.length > 0) setContourLayerName(pathLayers[0].name);
 
       return;
     }
 
     computeFunnel.call();
-  }, [computeFunnel, cutLayerName, cutSource, designBBox, offsetDistance, pathLayers, setCutLayerName, setCutPathD]);
+  }, [
+    computeFunnel,
+    contourLayerName,
+    contourSource,
+    printingContentsBBox,
+    offsetDistance,
+    pathLayers,
+    setContourLayerName,
+    setContourPathD,
+  ]);
 
   return (
     <div className={styles.content}>
       <div className={styles.desc}>{tPrintAndCut.step_setup_desc}</div>
       <Radio.Group
         className={styles.radioGroup}
-        onChange={(e) => setCutSource(e.target.value as CutSource)}
+        onChange={(e) => setContourSource(e.target.value as ContourSource)}
         options={[
-          { label: tPrintAndCut.generate_from_contour, value: 'contour' },
+          { label: tPrintAndCut.generate_from_contour, value: 'outline' },
           { disabled: pathLayers.length === 0, label: tPrintAndCut.use_layer_as_cut_path, value: 'layer' },
         ]}
-        value={cutSource}
+        value={contourSource}
       />
-      {cutSource === 'contour' ? (
+      {contourSource === 'outline' ? (
         <div className={styles.row}>
           <span className={styles.label}>{tOffset.dist}</span>
           <InputNumber
@@ -132,7 +141,7 @@ const StepSetup = (): React.JSX.Element => {
         <div className={styles.row}>
           <span className={styles.label}>{tPrintAndCut.select_cut_layer}</span>
           <Select
-            onChange={(value: string) => setCutLayerName(value)}
+            onChange={(value: string) => setContourLayerName(value)}
             options={pathLayers.map(({ color, name }) => ({
               label: (
                 <span className={styles.optionLabel}>
@@ -142,7 +151,7 @@ const StepSetup = (): React.JSX.Element => {
               ),
               value: name,
             }))}
-            value={cutLayerName ?? undefined}
+            value={contourLayerName ?? undefined}
           />
         </div>
       )}

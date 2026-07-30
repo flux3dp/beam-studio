@@ -16,10 +16,10 @@ import { getContentBBoxFromState, getPaperDimensionsMm, usePrintAndCutStore } fr
 const StepPaper = (): React.JSX.Element => {
   const lang = useI18n().print_and_cut;
   const {
-    designBBox,
     gridColumns,
     gridGapMm,
     gridRows,
+    fullBBox,
     markPositions,
     orientation,
     paperKey,
@@ -29,10 +29,10 @@ const StepPaper = (): React.JSX.Element => {
   } = usePrintAndCutStore(
     useShallow(
       ({
-        designBBox,
         gridColumns,
         gridGapMm,
         gridRows,
+        fullBBox,
         markPositions,
         orientation,
         paperKey,
@@ -40,10 +40,10 @@ const StepPaper = (): React.JSX.Element => {
         setOrientation,
         setPaperKey,
       }) => ({
-        designBBox,
         gridColumns,
         gridGapMm,
         gridRows,
+        fullBBox,
         markPositions,
         orientation,
         paperKey,
@@ -55,19 +55,19 @@ const StepPaper = (): React.JSX.Element => {
   );
 
   const isPaperTooSmall = useMemo(() => {
-    const contentBBox = getContentBBoxFromState({ designBBox, markPositions });
+    const contentBBox = getContentBBoxFromState({ fullBBox, markPositions });
 
     if (!contentBBox) return false;
 
-    const { heightMm, widthMm } = getPaperDimensionsMm({ designBBox, markPositions, orientation, paperKey });
+    const { heightMm, widthMm } = getPaperDimensionsMm({ fullBBox, markPositions, orientation, paperKey });
     const margin = 2 * PRINT_MARGIN_MM;
 
     return contentBBox.width / dpmm + margin > widthMm || contentBBox.height / dpmm + margin > heightMm;
-  }, [designBBox, markPositions, orientation, paperKey]);
+  }, [fullBBox, markPositions, orientation, paperKey]);
 
   const fitDimensions = useMemo(
-    () => getPaperDimensionsMm({ designBBox, markPositions, orientation, paperKey: 'fit' }),
-    [designBBox, markPositions, orientation],
+    () => getPaperDimensionsMm({ fullBBox, markPositions, orientation, paperKey: 'fit' }),
+    [fullBBox, markPositions, orientation],
   );
 
   return (
