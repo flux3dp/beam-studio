@@ -1,7 +1,7 @@
 import NS from '@core/app/constants/namespaces';
-import * as BezierFitCurve from '@core/helpers/path/bezier-fit-curve';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import round from '@core/helpers/math/round';
+import * as BezierFitCurve from '@core/helpers/path/bezier-fit-curve';
 
 interface Point {
   x: number;
