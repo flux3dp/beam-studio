@@ -13,15 +13,10 @@ import { convertVariableText } from '@core/helpers/variableText';
 import dialog from '@core/implementations/dialog';
 
 import { markBaseRadiusPx, markRadiusPx, PDF_DPI } from '../constants';
-import {
-  getContentBBoxFromState,
-  getGridOffsets,
-  getPaperDimensionsMm,
-  getPaperRect,
-  usePrintAndCutStore,
-} from '../store';
+import { usePrintAndCutStore } from '../store';
 
-import { getDesignLayers } from './designLayers';
+import { getContentsLayers } from './contentsLayers';
+import { getContentBBoxFromState, getGridOffsets, getPaperDimensionsMm, getPaperRect } from './layout';
 
 interface RenderedContent {
   base64: string;
@@ -59,7 +54,7 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
     state.contourSource === 'layer' && state.contourLayerName
       ? layerManager.getLayerElementByName(state.contourLayerName)
       : null;
-  const layersHtml = getDesignLayers(contourLayerElement)
+  const layersHtml = getContentsLayers(contourLayerElement)
     .map((layer) => {
       const clone = layer.cloneNode(true) as SVGGElement;
 

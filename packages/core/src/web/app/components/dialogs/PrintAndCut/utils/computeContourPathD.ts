@@ -10,7 +10,7 @@ import { ARC_TOLERANCE, MITER_LIMIT, SCALE_FACTOR } from '@core/helpers/clipper/
 import { switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
 import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
 
-import { getDesignLayers } from './designLayers';
+import { getContentsLayers } from './contentsLayers';
 
 interface BBox {
   height: number;
@@ -80,7 +80,7 @@ const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null>
   // urls that cannot load in a standalone svg string, so uses are switched to the
   // original vector symbols while the string is built
   const canvas = await switchSymbolWrapper(() => {
-    const layersHtml = getDesignLayers()
+    const layersHtml = getContentsLayers()
       .map((layerGroup) => {
         const clone = layerGroup.cloneNode(true) as SVGGElement;
 
@@ -139,7 +139,10 @@ const fallbackRectD = (printingContentsBBox: BBox, distancePx: number): string =
  * path `d` in canvas coordinates, falling back to a rounded rectangle when the
  * backend or the offset fails.
  */
-export const computeContourPathD = async (printingContentsBBox: BBox | null, distanceMm: number): Promise<null | string> => {
+export const computeContourPathD = async (
+  printingContentsBBox: BBox | null,
+  distanceMm: number,
+): Promise<null | string> => {
   if (!printingContentsBBox || printingContentsBBox.width === 0 || printingContentsBBox.height === 0) return null;
 
   const distancePx = Math.max(1, Math.round(distanceMm * dpmm));

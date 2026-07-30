@@ -1,6 +1,6 @@
 import { getBBox, getBBoxFromElements } from '@core/app/svgedit/utils/getBBox';
 
-import { getDesignLayers } from './designLayers';
+import { getContentsLayers } from './contentsLayers';
 import type { PrintingContentsElementSnapshot } from './printingContentsSnapshot';
 import { snapshotElement } from './printingContentsSnapshot';
 
@@ -30,7 +30,7 @@ export interface CanvasContents {
  * bounding box of the whole design.
  */
 export const collectCanvasContents = (): CanvasContents => {
-  const layers = getDesignLayers();
+  const layers = getContentsLayers();
   const elements: SVGElement[] = [];
   const printingContentsElements: PrintingContentsElementSnapshot[] = [];
 

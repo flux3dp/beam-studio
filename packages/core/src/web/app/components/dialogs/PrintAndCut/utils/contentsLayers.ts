@@ -17,7 +17,7 @@ export const getGeneratedCutLayers = (root: Document | Element = document): SVGG
  * put cut lines on the sheet.
  * @param exclude - extra layer to leave out (the cut layer picked in layer mode)
  */
-export const getDesignLayers = (exclude?: null | SVGGElement): SVGGElement[] =>
+export const getContentsLayers = (exclude?: null | SVGGElement): SVGGElement[] =>
   layerManager
     .getAllLayers()
     .map((layer) => layer.getGroup())
