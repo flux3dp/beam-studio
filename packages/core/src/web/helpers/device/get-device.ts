@@ -7,12 +7,11 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import checkSoftwareForAdor from '@core/helpers/check-software';
+import DeviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-import DeviceMaster from '../device-master';
 
 import { setDefaultDelayTable } from './defaultDelayTable';
 import showResizeAlert from './fit-device-workarea-alert';

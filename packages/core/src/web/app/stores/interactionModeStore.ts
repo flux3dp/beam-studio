@@ -8,8 +8,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
 import { TEMPLATE_PREVIEW_QUERY_KEY } from '@core/app/components/dialogs/templatePreview/constants';
-
-import { useGlobalPreferenceStore } from './globalPreferenceStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 
 /** project > editor > template > explore */
 export type InteractionMode = 'editor' | 'explore' | 'project' | 'template';

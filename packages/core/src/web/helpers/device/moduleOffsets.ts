@@ -7,8 +7,7 @@ import defaultModuleOffsets, { modelsWithStores } from '@core/app/constants/laye
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-
-import deviceMaster from '../device-master';
+import deviceMaster from '@core/helpers/device-master';
 
 const devicesModuleOffsetsCache: Record<string, DeviceModuleOffsets> = {};
 

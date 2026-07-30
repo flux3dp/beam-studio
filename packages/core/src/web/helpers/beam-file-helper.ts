@@ -117,6 +117,7 @@ import Progress from '@core/app/actions/progress-caller';
 import type { ExportThumbnail } from '@core/app/components/FileThumbnail/getThumbnailsForExport';
 import { addThumbnail } from '@core/app/components/FileThumbnail/utils';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { getIsTemplatePreview } from '@core/app/stores/interactionModeStore';
 import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
@@ -619,7 +620,7 @@ const readBeam = async (file: File): Promise<void> => {
     const headerBuf = buf.subarray(offset, offset + headerSize);
 
     const metadata = readHeader(headerBuf);
-    const isTemplate = !!metadata.template;
+    const isTemplate = !!metadata.template || getIsTemplatePreview();
 
     currentFileManager.setTemplateFile(isTemplate ? file.slice() : null, isTemplate);
 

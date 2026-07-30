@@ -1,8 +1,8 @@
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import deviceMaster from '@core/helpers/device-master';
 
-import deviceMaster from './device-master';
 import i18n from './i18n';
 
 export type Key = 'bap' | 'common' | WorkAreaModel;

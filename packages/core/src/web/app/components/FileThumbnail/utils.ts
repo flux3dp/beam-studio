@@ -39,7 +39,7 @@ export const resetThumbnails = () => {
   for (const key of thumbnails) {
     const thumbnail = thumbnailsData[key];
 
-    if (thumbnail.src) URL.revokeObjectURL(thumbnail.src);
+    if (thumbnail?.src) URL.revokeObjectURL(thumbnail.src);
 
     delete thumbnailsData[key];
   }

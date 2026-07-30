@@ -2,9 +2,8 @@ import { match } from 'ts-pattern';
 
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
+import type ClipperBase from '@core/helpers/clipper/clipper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-
-import type ClipperBase from '../clipper';
 
 import type { CornerType, OffsetMode, Path } from './constants';
 import { SCALE_FACTOR } from './constants';

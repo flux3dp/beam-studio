@@ -1,6 +1,7 @@
 import { match, P } from 'ts-pattern';
 
-import ClipperBase from '../clipper';
+import ClipperBase from '@core/helpers/clipper/clipper';
+
 import getClipperLib from '../getClipperLib';
 
 import { calculateResultHierarchy } from './calculateResultHierarchy';

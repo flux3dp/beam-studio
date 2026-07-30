@@ -1,6 +1,7 @@
 /**
  * check device status and action
  */
+import DeviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -9,8 +10,6 @@ import previewModeController from '../app/actions/beambox/preview-mode-controlle
 import Progress from '../app/actions/progress-caller';
 import alertConstants from '../app/constants/alert-constants';
 import DeviceConstants from '../app/constants/device-constants';
-
-import DeviceMaster from './device-master';
 
 export default async function (device: IDeviceInfo, allowPause?: boolean, forceAbort?: boolean) {
   if (!device) return;

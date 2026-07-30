@@ -2,9 +2,8 @@ import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
 import { DEFAULT_CONTROLLER_INCH, DEFAULT_CONTROLLER_MM } from '@core/app/constants/boxgen-constants';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import type { IController } from '@core/interfaces/IBoxgen';
-
-import { useStorageStore } from './storageStore';
 
 function getInitialBoxData(): IController {
   const { isInch } = useStorageStore.getState();
