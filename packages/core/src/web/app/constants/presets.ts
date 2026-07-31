@@ -345,12 +345,6 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       },
     },
   },
-  eva_foam_cutting: {
-    ado1: {
-      [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 25, speed: 75 },
-      [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 25, speed: 75 },
-    },
-  },
   slate_engraving: {
     ado1: {
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 50, speed: 100 },
