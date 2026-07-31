@@ -13,6 +13,7 @@ import type { IFile } from '@core/interfaces/IMyCloud';
 
 import type { ResponseWithError } from './flux-id';
 import { axiosFluxId, getDefaultHeader } from './flux-id';
+import { isTestFluxId } from './flux-id/base';
 
 /**
  * @typedef {Object} CheckResponseResult
@@ -268,7 +269,7 @@ export const deleteFile = async (uuid: string): Promise<OperationResult> => {
 export const list = async (
   params?: Partial<{
     depth: number;
-    owner: string;
+    owner: number;
     template: boolean;
   }>,
 ): Promise<OperationResult<IFile[]>> => {
@@ -289,7 +290,7 @@ export const list = async (
 };
 
 export const listFluxTemplateFiles = async (): Promise<OperationResult<IFile[]>> => {
-  return list({ owner: 'esther@flux3dp.com', template: true });
+  return list({ owner: isTestFluxId ? 25808 : 27110, template: true });
 };
 
 export default {

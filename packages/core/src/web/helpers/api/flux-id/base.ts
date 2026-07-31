@@ -20,9 +20,10 @@ export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D>
   error?: AxiosError<T, D>;
 }
 
-export const FLUXID_HOST = 'https://id-test.flux3dp.com';
+export const isTestFluxId = true;
+export const FLUXID_HOST = isTestFluxId ? 'https://id-test.flux3dp.com' : 'https://id.flux3dp.com';
 
-const CSRF_TOKEN_NAME = 'csrftoken-test';
+const CSRF_TOKEN_NAME = isTestFluxId ? 'csrftoken-test' : 'csrftoken';
 const OAUTH_REDIRECT_URI = `${FLUXID_HOST}/api/beam-studio/auth`;
 const FB_OAUTH_URI = 'https://www.facebook.com/v10.0/dialog/oauth';
 const FB_APP_ID = '1071530792957137';
