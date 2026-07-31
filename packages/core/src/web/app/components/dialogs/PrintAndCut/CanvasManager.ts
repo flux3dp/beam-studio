@@ -137,8 +137,10 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
 
   /**
    * Show a camera preview image of the workarea under the design. The camera
-   * canvas maps the workarea with a uniform scale from its origin, so the
-   * image spans (0, 0)-(width, height) in content coordinates.
+   * canvas maps the machine bed with a uniform scale from the machine origin,
+   * so the image spans (0, 0)-(width, modelHeight) in content coordinates — a
+   * top expansion (e.g. fbm2) extends the canvas into negative y, which the
+   * camera never covers, and must not stretch the image.
    */
   setCameraImage = (url: null | string): void => {
     if (!url) {
@@ -155,12 +157,12 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
     if (!this.cameraImageElem) {
       const image = document.createElementNS(NS.SVG, 'image') as SVGImageElement;
 
-      // the camera canvas always maps the whole workarea, independent of the
-      // current viewport
+      // the camera canvas always maps the whole machine bed, independent of
+      // the current viewport
       image.setAttribute('x', '0');
       image.setAttribute('y', '0');
       image.setAttribute('width', workareaManager.width.toString());
-      image.setAttribute('height', workareaManager.height.toString());
+      image.setAttribute('height', workareaManager.modelHeight.toString());
       this.svgcontent.insertBefore(image, this.contentGroup);
       this.cameraImageElem = image;
     }

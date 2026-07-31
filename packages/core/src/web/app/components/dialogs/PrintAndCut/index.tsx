@@ -5,9 +5,9 @@ import selectionManager from '@core/app/svgedit/selection';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { usePrintAndCutConfigStore } from './configStore';
 import { PRINT_AND_CUT_DIALOG_ID } from './constants';
 import PrintAndCut from './PrintAndCut';
+import { useResumeConfigStore } from './resumeConfigStore';
 import { usePrintAndCutStore } from './store';
 import { matchPrintingContents } from './utils/printingContentsSnapshot';
 import { startFreshRun } from './utils/startFreshRun';
@@ -27,7 +27,7 @@ export const showPrintAndCut = (): void => {
   selectionManager.clearSelection();
   svgCanvas.removeUnusedDefs();
 
-  const savedConfig = usePrintAndCutConfigStore.getState().config;
+  const savedConfig = useResumeConfigStore.getState().config;
 
   if (savedConfig) {
     usePrintAndCutStore

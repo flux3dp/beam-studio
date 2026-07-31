@@ -20,6 +20,7 @@
 
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
+import { clearResumeConfig } from '@core/app/components/dialogs/PrintAndCut/resumeConfigStore';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
@@ -638,6 +639,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       setMouseMode('select');
       svgCanvas.clear();
+      clearResumeConfig();
       workareaManager.resetView();
       RightPanelController.setPanelType(isMobile() ? PanelType.None : PanelType.Layer);
       useLayerStore.getState().forceUpdate();

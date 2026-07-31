@@ -15,8 +15,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { setPrintAndCutConfig } from '../configStore';
 import { CUT_COLOR, PRINT_AND_CUT_LAYER_ATTR } from '../constants';
+import { setResumeConfig } from '../resumeConfigStore';
 import type { AlignmentTransform } from '../store';
 import { usePrintAndCutStore } from '../store';
 
@@ -190,7 +190,7 @@ export const generateAlignedCutLayer = (): void => {
   if (state.fullBBox) {
     const { gridColumns, gridGapMm, gridRows, markPositions, offsetDistance, orientation, paperKey } = state;
 
-    setPrintAndCutConfig({
+    setResumeConfig({
       contourElements: frozenContourElements,
       contourLayerName,
       contourPathD,
