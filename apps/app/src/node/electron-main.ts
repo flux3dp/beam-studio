@@ -180,7 +180,7 @@ backendManager.start();
 // Run monitorexe api
 let monitorManager: MonitorManager | null = null;
 
-if (process.argv.includes('--monitor')) {
+if (gotTheLock && process.argv.includes('--monitor')) {
   console.log('Starting Monitor');
   monitorManager = new MonitorManager({ location: process.env.BACKEND || '' });
   // kill process first, in case last time shut down
@@ -494,6 +494,11 @@ const init = () => {
 app.whenReady().then(() => {
   init();
 
+  // After the window: the orphan sweep before the spawn is synchronous.
+  if (gotTheLock) {
+    backendManager.startSwiftray();
+  }
+
   app.on('activate', () => {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -509,4 +514,10 @@ app.on('window-all-closed', () => {
   }
 });
 
-app.on('before-quit', () => {});
+// Last-chance cleanup for quit paths that skip the main window close handler (Cmd+Q, auto update
+// restart). 'will-quit' rather than 'before-quit': the latter fires before windows are asked to
+// close, so cancelling the unsaved-changes dialog would leave the app alive with a dead backend.
+app.on('will-quit', () => {
+  monitorManager?.killProc();
+  backendManager.stop();
+});

@@ -1,5 +1,5 @@
 import type { ChildProcess } from 'child_process';
-import { execSync, spawn } from 'child_process';
+import { spawn } from 'child_process';
 import { EventEmitter } from 'events';
 import fs from 'fs';
 import os from 'os';
@@ -8,6 +8,8 @@ import path from 'path';
 import { app, ipcMain } from 'electron';
 
 import { BackendEvents } from '@core/app/constants/ipcEvents';
+
+import { getSwiftrayPaths, killStaleSwiftray, killSwiftrayPid } from './helpers/swiftrayProcess';
 
 function uglyJsonParser(data: string): any {
   try {
@@ -35,6 +37,12 @@ class BackendManager extends EventEmitter {
   private ghostLocation: string;
 
   private isRunning: boolean;
+
+  /** Whether we have processes left to clean up, so stop() does not sweep twice. */
+  private hasStarted = false;
+
+  /** Whether we spawned Swiftray, i.e. whether the daemon is ours to kill. */
+  private hasSpawnedSwiftray = false;
 
   private port?: number;
 
@@ -194,101 +202,108 @@ class BackendManager extends EventEmitter {
   }
 
   checkSwiftrayExists = (): boolean => {
-    if (!process.env.BACKEND_ROOT) {
-      return false;
-    }
+    const paths = getSwiftrayPaths();
 
-    let swiftrayDir: string;
-    let swiftrayExec: string;
-
-    if (os.platform() === 'win32') {
-      swiftrayDir = path.join(process.env.BACKEND_ROOT, 'swiftray');
-      swiftrayExec = 'Swiftray.exe';
-    } else if (os.platform() === 'darwin') {
-      swiftrayDir = path.join(process.env.BACKEND_ROOT, 'Swiftray.app', 'Contents', 'MacOS');
-      swiftrayExec = 'Swiftray';
-    } else {
-      console.error('checkSwiftrayExists: Unsupported platform');
+    if (!paths) {
+      console.error('checkSwiftrayExists: BACKEND_ROOT not set or unsupported platform');
 
       return false;
     }
 
-    return fs.existsSync(path.join(swiftrayDir, swiftrayExec));
+    return fs.existsSync(path.join(paths.dir, paths.exec));
   };
 
   spawnSwiftray(): void {
-    if (!process.env.BACKEND_ROOT) {
-      console.error('spawnSwiftray: BACKEND_ROOT not set');
+    const paths = getSwiftrayPaths();
+
+    if (!paths) {
+      console.error('spawnSwiftray: BACKEND_ROOT not set or unsupported platform');
 
       return;
     }
 
-    let swiftrayDir: string;
-    let swiftrayExec: string;
+    // A daemon orphaned by a crash or a force quit still owns the port, which would make the
+    // instance we are about to spawn unreachable. Clear the way before every spawn.
+    killStaleSwiftray();
 
-    if (os.platform() === 'win32') {
-      swiftrayDir = path.join(process.env.BACKEND_ROOT, 'swiftray');
-      swiftrayExec = 'Swiftray.exe';
-      this.swiftrayProc = spawn(`"${swiftrayExec}"`, ['--daemon'], {
-        cwd: swiftrayDir,
-        shell: true,
-      });
-    } else if (os.platform() === 'darwin') {
-      swiftrayDir = path.join(process.env.BACKEND_ROOT, 'Swiftray.app', 'Contents', 'MacOS');
-      swiftrayExec = 'Swiftray';
-      this.swiftrayProc = spawn(`./"${swiftrayExec}"`, ['--daemon'], {
-        cwd: swiftrayDir,
-        shell: true,
-      });
-    } else {
-      console.error('spawnSwiftray: Unsupported platform');
-    }
+    const command = os.platform() === 'win32' ? `"${paths.exec}"` : `./"${paths.exec}"`;
 
-    if (this.swiftrayProc) {
-      this.swiftrayProc.stdout?.on('data', (data) => {
-        console.log(`Swiftray: ${data}`);
-      });
-      this.swiftrayProc.stderr?.on('data', (data) => {
-        console.error(`Swiftray: ${data}`);
-      });
-      this.swiftrayProc.on('exit', () => {
-        console.error('Swiftray terminated unexpectedly!');
-        this.swiftrayProc = undefined;
+    this.swiftrayProc = spawn(command, ['--daemon'], { cwd: paths.dir, shell: true });
+    this.hasSpawnedSwiftray = true;
 
-        if (this.isRunning) {
-          this.setRecoverSwiftray();
-        }
-      });
-    }
+    this.swiftrayProc.stdout?.on('data', (data) => {
+      console.log(`Swiftray: ${data}`);
+    });
+    this.swiftrayProc.stderr?.on('data', (data) => {
+      console.error(`Swiftray: ${data}`);
+    });
+    this.swiftrayProc.on('exit', () => {
+      console.error('Swiftray terminated unexpectedly!');
+      this.swiftrayProc = undefined;
+
+      if (this.isRunning) {
+        this.setRecoverSwiftray();
+      }
+    });
   }
 
   killSwiftray(): void {
-    if (this.swiftrayProc) {
-      if (os.platform() === 'win32' && this.swiftrayProc.pid) {
-        console.log(this.swiftrayProc.pid);
+    // Never spawned one: the running daemon belongs to another instance, so leave it alone.
+    if (!this.hasSpawnedSwiftray) return;
 
-        const res = execSync(`taskkill /PID ${this.swiftrayProc.pid} /T /F`);
+    const proc = this.swiftrayProc;
 
-        console.log(res.toString());
-      } else {
-        this.swiftrayProc.kill();
-      }
-    }
+    this.hasSpawnedSwiftray = false;
+    this.swiftrayProc = undefined;
+    // This exit is deliberate: skip the recover timer and the sweep the handler would add to ours.
+    proc?.removeAllListeners('exit');
+
+    if (proc?.pid) killSwiftrayPid(proc.pid);
+
+    // `pid` is the shell wrapper, and on Windows a tree kill can miss a re-parented daemon, so
+    // always follow up with the name/port sweep.
+    killStaleSwiftray();
   }
 
   start(): void {
     if (!this.isRunning) {
       this.isRunning = true;
+      this.hasStarted = true;
       this.spawn();
+    }
+  }
+
+  /** Separate from start() so the caller can keep the synchronous orphan sweep off the launch path. */
+  startSwiftray(): void {
+    if (this.isRunning && !this.swiftrayProc) {
       this.spawnSwiftray();
     }
   }
 
   stop(): void {
-    if (this.isRunning) {
-      this.isRunning = false;
-      this.proc?.kill();
+    // Quitting can reach here twice (window close, then will-quit); one sweep is enough.
+    if (!this.hasStarted) return;
+
+    this.hasStarted = false;
+
+    if (this.recoverTimerSwiftray) {
+      clearTimeout(this.recoverTimerSwiftray);
+      this.recoverTimerSwiftray = undefined;
+    }
+
+    if (this.recoverTimer) {
+      clearTimeout(this.recoverTimer);
+      this.recoverTimer = undefined;
+    }
+
+    this.isRunning = false;
+    this.proc?.kill();
+    this.proc = undefined;
+
+    try {
       this.killSwiftray();
+    } catch (error) {
+      console.error('Failed to kill Swiftray:', error);
     }
   }
 
