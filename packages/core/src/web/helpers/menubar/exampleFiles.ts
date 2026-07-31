@@ -1,7 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import { initState } from '@core/app/components/beambox/RightPanel/ConfigPanel/initState';
-import { promarkExampleParams } from '@core/app/constants/promark-constants';
+import { LaserType, promarkExampleParams } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
@@ -86,7 +86,7 @@ const basicExamples: ExampleFileMap = {
   IMPORT_MATERIAL_TESTING_PRINT: '',
 };
 
-export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
+const getStaticExamples = (workarea: WorkAreaModel): ExampleFileMap => {
   if (exampleCache[workarea]) {
     return exampleCache[workarea];
   }
@@ -144,6 +144,27 @@ export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
   }
 
   exampleCache[workarea] = examples;
+
+  return examples;
+};
+
+// MOPA color examples require a MOPA laser source; blank paths keep the menu items visible
+// but make loadExampleFile show the unsupported_example_file alert.
+const mopaColorUnsupportedOverrides: ExampleFileMap = {
+  IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR: '',
+  IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR: '',
+  IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2: '',
+  IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR: '',
+  IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2: '',
+};
+
+export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
+  const examples = getStaticExamples(workarea);
+
+  // getPromarkInfo depends on the currently selected device, so it must stay outside exampleCache.
+  if (workarea === 'fpm1' && getPromarkInfo().laserType !== LaserType.MOPA) {
+    return { ...examples, ...mopaColorUnsupportedOverrides };
+  }
 
   return examples;
 };
