@@ -9,6 +9,7 @@ import { OffsetPopup, showOffsetModal } from '@core/app/components/dialogs/Offse
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import { useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { isTabletOrMobile } from '@core/app/stores/layoutStore';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { autoFit } from '@core/app/svgedit/operations/autoFit';
@@ -266,9 +267,12 @@ export const actions: { [key in ActionKey]: PanelAction } = {
     onClick: async (elem) => {
       const res = await imageEdit.potrace(elem as SVGImageElement);
 
-      // TODO
       if (res) {
-        useSelectedElementStore.setState({ activeKey: 'action-offset' });
+        if (isTabletOrMobile()) {
+          useSelectedElementStore.setState({ activeKey: 'action-offset' });
+        } else {
+          showOffsetModal();
+        }
       }
     },
   },

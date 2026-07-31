@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import type { DerivedData } from '@core/app/stores/element/interface';
 import { useLazyData, useSelectedElementStore } from '@core/app/stores/element/selectedElementStore';
+import { useIsMobile } from '@core/app/stores/layoutStore';
 import type { ILang } from '@core/interfaces/ILang';
 
 import type { ActionKey, PanelAction } from './actions';
@@ -22,6 +23,10 @@ const ForceFullWidth: Set<ActionKey> = new Set([
   'disassembleUse',
   'createTextpath',
 ]);
+
+// FIXME: Those actions display a <FullWindowPanel> with renderMobileContents={() => null} and renderMobileFixedContent={() => null}
+// Fix the layout for mobile
+const HiddenOnMobile: Set<ActionKey> = new Set(['imageEditPanel', 'stampMakerPanel', 'tab']);
 
 type LayoutAction = {
   fullWidth?: boolean;
@@ -46,7 +51,7 @@ const resolveConditionalActions = (
   context: Pick<
     DerivedData,
     'canChildrenConvertToPath' | 'hasChildPathsOnly' | 'hasChildTextAndPath' | 'hasChildTextsOnly'
-  >,
+  > & { isMobile: boolean },
   { mainActionKeys }: { mainActionKeys?: Set<ActionKey> } = {},
 ): null | ResolvedSectionConfig[] => {
   if (!layoutConfig) return null;
@@ -62,6 +67,8 @@ const resolveConditionalActions = (
 
         key = key.key;
       }
+
+      if (context.isMobile && HiddenOnMobile.has(key)) return;
 
       if (mainActionKeys) {
         if (mainActionKeys.has(key)) actionConfigs.push({ key });
@@ -150,13 +157,14 @@ export const useActionLayout = (mainActionKeys?: Set<ActionKey>) => {
   const hasChildTextAndPath = useLazyData('hasChildTextAndPath');
   const hasChildPathsOnly = useLazyData('hasChildPathsOnly');
   const hasChildTextsOnly = useLazyData('hasChildTextsOnly');
+  const isMobile = useIsMobile();
 
   const basicLayoutConfig = useMemo(() => getBasicLayoutConfig(nodeCategory), [nodeCategory]);
   const layoutConfig = useMemo(
     () =>
       resolveConditionalActions(
         basicLayoutConfig,
-        { canChildrenConvertToPath, hasChildPathsOnly, hasChildTextAndPath, hasChildTextsOnly },
+        { canChildrenConvertToPath, hasChildPathsOnly, hasChildTextAndPath, hasChildTextsOnly, isMobile },
         { mainActionKeys },
       ),
     [
@@ -165,6 +173,7 @@ export const useActionLayout = (mainActionKeys?: Set<ActionKey>) => {
       hasChildPathsOnly,
       hasChildTextAndPath,
       hasChildTextsOnly,
+      isMobile,
       mainActionKeys,
     ],
   );
