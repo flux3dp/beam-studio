@@ -1198,6 +1198,7 @@ export interface ILang {
     res_average: string;
     res_excellent: string;
     res_poor: string;
+    reset_points: string;
     retake: string;
     rotation_angle: string;
     show_last_config: string;

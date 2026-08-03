@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: '一般',
     res_excellent: '优秀',
     res_poor: '差',
+    reset_points: '重置点位',
     retake: '重拍照片',
     rotation_angle: '旋转角度',
     show_last_config: '显示前次校正结果',

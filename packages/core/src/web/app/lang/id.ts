@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: 'Rata-rata',
     res_excellent: 'Luar biasa',
     res_poor: 'Buruk',
+    reset_points: 'Atur ulang titik',
     retake: 'Ambil Ulang Gambar',
     rotation_angle: 'Rotasi',
     show_last_config: 'Tampilkan Hasil Terakhir',

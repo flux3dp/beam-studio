@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: 'Μέτριο',
     res_excellent: 'Εξαιρετικό',
     res_poor: 'Κακό',
+    reset_points: 'Επαναφορά σημείων',
     retake: 'Επανάληψη λήψης',
     rotation_angle: 'Περιστροφή',
     show_last_config: 'Εμφάνιση Τελευταίας Ρύθμισης',

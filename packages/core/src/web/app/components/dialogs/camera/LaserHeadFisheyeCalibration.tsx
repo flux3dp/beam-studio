@@ -36,6 +36,29 @@ interface Props {
 }
 
 const PROGRESS_ID = 'laser-head-fisheye-calibration';
+// TODO: test on different devices
+const DEFAULT_POINTS: Array<[number, number]> = [
+  [2000, 1716],
+  [3283, 1720],
+  [2009, 2564],
+  [3272, 2563],
+  [2325, 1929],
+  [2965, 1933],
+  [2327, 2353],
+  [2962, 2351],
+];
+
+const DEFAULT_POINTS_OBLIQUE: Array<[number, number]> = [
+  [1625, 1078],
+  [3490, 945],
+  [2038, 2192],
+  [3385, 2096],
+  [2179, 1400],
+  [3030, 1339],
+  [2320, 1951],
+  [3041, 1900],
+];
+
 /**
  * LaserHeadFisheye
  * calibration the fisheye camera on the laser head (bb2, hexa rf)
@@ -189,6 +212,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
     return (
       <SolvePnP
         cameraIndex={0}
+        defaultPoints={isOblique ? DEFAULT_POINTS_OBLIQUE : DEFAULT_POINTS}
         dh={0}
         hasNext
         onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}

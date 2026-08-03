@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: '普通',
     res_excellent: '優秀',
     res_poor: '悪い',
+    reset_points: 'ポイントをリセット',
     retake: '写真を撮り直す',
     rotation_angle: '回転',
     show_last_config: '前回の結果を表示',

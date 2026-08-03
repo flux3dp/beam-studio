@@ -54,6 +54,34 @@ interface Props {
   onClose: (completed?: boolean) => void;
 }
 
+const DEFAULT_POINTS_TL: Array<[number, number]> = [
+  [884, 1490],
+  [1948, 1481],
+  [1171, 2099],
+  [2082, 2090],
+];
+
+const DEFAULT_POINTS_TR: Array<[number, number]> = [
+  [3005, 1467],
+  [4078, 1458],
+  [2986, 2081],
+  [3903, 2076],
+];
+
+const DEFAULT_POINTS_BL: Array<[number, number]> = [
+  [1384, 2558],
+  [2179, 2550],
+  [1545, 2920],
+  [2255, 2910],
+];
+
+const DEFAULT_POINTS_BR: Array<[number, number]> = [
+  [2971, 2543],
+  [3772, 2543],
+  [2961, 2905],
+  [3671, 2905],
+];
+
 const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'fbm2-calibration';
   const { calibration: tCalibration, device: tDevice } = useI18n();
@@ -221,9 +249,10 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
       );
     })
     .with(Steps.SOLVE_PNP_BL, Steps.SOLVE_PNP_BR, Steps.SOLVE_PNP_TL, Steps.SOLVE_PNP_TR, (step) => {
-      const { exposure, interestArea, region, solvePnPStep } = match<
+      const { defaultPoints, exposure, interestArea, region, solvePnPStep } = match<
         typeof step,
         {
+          defaultPoints?: Array<[number, number]>;
           exposure?: number;
           interestArea?: { height: number; width: number; x: number; y: number };
           region: keyof typeof bm2PnPPoints;
@@ -231,24 +260,28 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
         }
       >(step)
         .with(Steps.SOLVE_PNP_TL, () => ({
+          defaultPoints: DEFAULT_POINTS_TL,
           exposure: 350,
           interestArea: { height: 1300, width: 2900, x: 0, y: 1000 },
           region: 'topLeft',
           solvePnPStep: 0,
         }))
         .with(Steps.SOLVE_PNP_TR, () => ({
+          defaultPoints: DEFAULT_POINTS_TR,
           exposure: 350,
           interestArea: { height: 1300, width: 2800, x: 2700, y: 1000 },
           region: 'topRight',
           solvePnPStep: 1,
         }))
         .with(Steps.SOLVE_PNP_BL, () => ({
+          defaultPoints: DEFAULT_POINTS_BL,
           exposure: 100,
           interestArea: { height: 1000, width: 1600, x: 1200, y: 2100 },
           region: 'bottomLeft',
           solvePnPStep: 2,
         }))
         .otherwise(() => ({
+          defaultPoints: DEFAULT_POINTS_BR,
           exposure: 100,
           interestArea: { height: 1000, width: 1600, x: 2800, y: 2100 },
           region: 'bottomRight',
@@ -262,6 +295,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
             { src: 'video/bm2-calibration/4-drag-red-mark.mp4', type: 'video/mp4' },
           ]}
           currentStep={solvePnPStep}
+          defaultPoints={defaultPoints}
           dh={0}
           doorChecker={doorChecker.current}
           hasNext

@@ -11,6 +11,7 @@ import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
+import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
 
@@ -27,6 +28,7 @@ interface Props {
   animationSrcs?: Array<{ src: string; type: string }>;
   cameraIndex?: number;
   currentStep?: number;
+  defaultPoints?: Array<[number, number]>;
   dh: number;
   doorChecker?: DoorChecker | null;
   hasNext?: boolean;
@@ -54,6 +56,7 @@ const SolvePnP = ({
   animationSrcs,
   cameraIndex,
   currentStep,
+  defaultPoints,
   dh,
   doorChecker,
   hasNext = false,
@@ -297,6 +300,16 @@ const SolvePnP = ({
     dragStartPos.current = null;
   }, [initInterestArea]);
 
+  // dev only for now, until default points are verified on all devices
+  const showResetPoints = Boolean(defaultPoints) && isDev();
+  const handleResetPoints = useCallback(() => {
+    if (!defaultPoints) return;
+
+    setPoints(defaultPoints);
+    setZoomPoints(defaultPoints);
+    setSelectedPointIdx(0);
+  }, [defaultPoints]);
+
   const handleDone = async () => {
     const res = await cameraCalibrationApi.solvePnPCalculate(dh, points, refPoints);
 
@@ -476,9 +489,8 @@ const SolvePnP = ({
 
   if (renderWrapper) {
     const wrapperButtons = [
-      ...(doorChecker
-        ? [{ label: lang.calibration.relocate_camera, onClick: () => handleTakePicture({ relocate: true }) }]
-        : []),
+      doorChecker && { label: lang.calibration.relocate_camera, onClick: () => handleTakePicture({ relocate: true }) },
+      showResetPoints && { label: lang.calibration.reset_points, onClick: handleResetPoints },
       { label: lang.buttons.back, onClick: onBack },
       {
         disabled: !img?.success,
@@ -486,7 +498,7 @@ const SolvePnP = ({
         onClick: handleDone,
         primary: true,
       },
-    ];
+    ].filter(Boolean);
 
     const content = (
       <>
@@ -524,6 +536,11 @@ const SolvePnP = ({
             )}
           </div>
           <div>
+            {showResetPoints && (
+              <Button className={styles['footer-button']} key="reset" onClick={handleResetPoints}>
+                {lang.calibration.reset_points}
+              </Button>
+            )}
             <Button className={styles['footer-button']} key="back" onClick={onBack}>
               {lang.buttons.back}
             </Button>

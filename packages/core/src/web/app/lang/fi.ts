@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: 'Keskitasoinen',
     res_excellent: 'Erinomainen',
     res_poor: 'Heikko',
+    reset_points: 'Nollaa pisteet',
     retake: 'Ota kuva uudelleen',
     rotation_angle: 'Kierto',
     show_last_config: 'Näytä viimeisin tulos',

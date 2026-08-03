@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: 'Trung bình',
     res_excellent: 'Xuất sắc',
     res_poor: 'Kém',
+    reset_points: 'Đặt lại điểm',
     retake: 'Chụp lại',
     rotation_angle: 'Xoay',
     show_last_config: 'Hiển thị kết quả gần nhất',

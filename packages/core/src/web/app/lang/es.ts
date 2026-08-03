@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: 'Promedio',
     res_excellent: 'Excelente',
     res_poor: 'Deficiente',
+    reset_points: 'Restablecer puntos',
     retake: 'Volver a tomar foto',
     rotation_angle: 'Rotación',
     show_last_config: 'Mostrar el último resultado',

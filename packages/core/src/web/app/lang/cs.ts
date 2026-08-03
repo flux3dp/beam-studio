@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: 'Průměrné',
     res_excellent: 'Výborné',
     res_poor: 'Špatné',
+    reset_points: 'Obnovit body',
     retake: 'Znovu vyfotit',
     rotation_angle: 'Rotace',
     show_last_config: 'Ukázat poslední výsledek',

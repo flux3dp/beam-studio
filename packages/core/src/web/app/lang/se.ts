@@ -1196,6 +1196,7 @@ const lang: ILang = {
     res_average: 'Genomsnittlig',
     res_excellent: 'Utmärkt',
     res_poor: 'Dålig',
+    reset_points: 'Återställ punkter',
     retake: 'Ta om bild',
     rotation_angle: 'Rotation',
     show_last_config: 'Visa senaste resultat',
