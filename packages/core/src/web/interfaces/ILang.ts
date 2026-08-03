@@ -1195,10 +1195,10 @@ export interface ILang {
     put_paper_wide_angle_2: string;
     relocate_camera: string;
     relocate_camera_desc: string;
-    reset_points: string;
     res_average: string;
     res_excellent: string;
     res_poor: string;
+    reset_points: string;
     retake: string;
     rotation_angle: string;
     show_last_config: string;
