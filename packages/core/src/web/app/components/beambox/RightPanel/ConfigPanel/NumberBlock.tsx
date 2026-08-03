@@ -73,9 +73,10 @@ const NumberBlock = ({
 }: Props): React.ReactNode => {
   const isPanelType = useMemo(() => type === 'panel-item', [type]);
   const { activeKey } = use(ObjectPanelContext);
-  const { change, [key]: configItem } = useConfigPanelStore();
-  // configs without default value are absent from the store until initState populates them
-  const { hasMultiValue, value = 0 } = configItem ?? {};
+  const {
+    change,
+    [key]: { hasMultiValue, value = 0 },
+  } = useConfigPanelStore();
   const { isPresetRelated, isTimeRelated } = useMemo(
     () => ({
       isPresetRelated: presetRelatedConfigs.has(key),
