@@ -112,6 +112,7 @@ export function buildFileMenu(
               submenu: [
                 { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_LASER', label: r.import_beamo_2_laser_example },
                 { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT', label: r.import_beamo_2_printing_example },
+                { click: callback, id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST', label: r.import_beamo_2_printing_test },
               ],
             },
             { click: callback, id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: r.import_beambox_2_example },

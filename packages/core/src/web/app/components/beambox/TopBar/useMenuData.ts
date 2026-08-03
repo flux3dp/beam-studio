@@ -347,6 +347,11 @@ const useMenuData = (email?: string): MenuNode[] => {
                           label: menuCms.import_beamo_2_printing_example,
                           type: 'item' as const,
                         },
+                        {
+                          id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST',
+                          label: menuCms.import_beamo_2_printing_test,
+                          type: 'item' as const,
+                        },
                       ],
                       label: 'beamo II',
                       type: 'submenu' as const,

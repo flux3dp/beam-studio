@@ -29,6 +29,7 @@ export const exampleFileKeys = [
   'EXAMPLE_FILE_BEAMO_2',
   'IMPORT_EXAMPLE_BEAMO_2_LASER',
   'IMPORT_EXAMPLE_BEAMO_2_PRINT',
+  'IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST',
   'IMPORT_EXAMPLE_HEXA',
   'IMPORT_EXAMPLE_HEXA_RF',
   'IMPORT_EXAMPLE_PROMARK',
@@ -77,6 +78,7 @@ const basicExamples: ExampleFileMap = {
   IMPORT_EXAMPLE_BEAMBOX_2: 'examples/beambox_2_example.bvg',
   IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
   IMPORT_EXAMPLE_BEAMO_2_PRINT: '',
+  IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST: '',
   IMPORT_EXAMPLE_HEXA: 'examples/hexa_example.bvg',
   IMPORT_EXAMPLE_HEXA_RF: 'examples/hexa_rf_example.bvg',
   IMPORT_EXAMPLE_PROMARK: 'examples/promark_example.bvg',
@@ -118,6 +120,7 @@ const getStaticExamples = (workarea: WorkAreaModel): ExampleFileMap => {
         EXAMPLE_FILE_BEAMO_2: '',
         IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
         IMPORT_EXAMPLE_BEAMO_2_PRINT: 'examples/beamo_2_example_printing_full.bvg',
+        IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST: 'examples/beamo_2_printing_test.beam',
         IMPORT_MATERIAL_TESTING_PRINT: 'examples/beamo_2_color_ring.bvg',
       };
     }
@@ -178,6 +181,7 @@ export const getExampleVisibility = (
     delete examples.EXAMPLE_FILE_BEAMO_2;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_LASER;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT;
+    delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST;
   }
 
   if (!checkHxRf()) {

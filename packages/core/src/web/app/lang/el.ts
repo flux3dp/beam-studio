@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Beambox II Αισθητήρας Εστίασης - 3mm',
       import_beamo_2_laser_example: 'Παράδειγμα Laser beamo II',
       import_beamo_2_printing_example: 'Παράδειγμα εκτύπωσης beamo II',
+      import_beamo_2_printing_test: 'Δοκιμή εκτύπωσης beamo II',
       import_calibration_data: 'Εισαγωγή δεδομένων βαθμονόμησης',
       import_hello_beambox: 'Παράδειγμα Beambox',
       import_hello_beamo: 'Παράδειγμα του beamo',

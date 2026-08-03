@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Beambox II フォーカスプローブ - 3mm',
       import_beamo_2_laser_example: 'beamo II レーザーの例',
       import_beamo_2_printing_example: 'beamo II プリントの例',
+      import_beamo_2_printing_test: 'beamo II プリントテスト',
       import_calibration_data: 'キャリブレーションデータをインポート',
       import_hello_beambox: 'Beamboxの例',
       import_hello_beamo: 'beamoの例',
