@@ -59,28 +59,28 @@ const DEFAULT_POINTS_TL: Array<[number, number]> = [
   [1948, 1481],
   [1171, 2099],
   [2082, 2090],
-] as const;
+];
 
 const DEFAULT_POINTS_TR: Array<[number, number]> = [
   [3005, 1467],
   [4078, 1458],
   [2986, 2081],
   [3903, 2076],
-] as const;
+];
 
 const DEFAULT_POINTS_BL: Array<[number, number]> = [
   [1384, 2558],
   [2179, 2550],
   [1545, 2920],
   [2255, 2910],
-] as const;
+];
 
 const DEFAULT_POINTS_BR: Array<[number, number]> = [
   [2971, 2543],
   [3772, 2543],
   [2961, 2905],
   [3671, 2905],
-] as const;
+];
 
 const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'fbm2-calibration';

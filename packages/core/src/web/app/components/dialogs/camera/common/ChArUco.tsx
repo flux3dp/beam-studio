@@ -76,6 +76,8 @@ const ChArUco = ({
       alertCaller.popUp({ message: tCali.failed_to_detect_calibration_pattern });
       restartLive();
 
+      progressCaller.popById('detect-charuco');
+
       return;
     }
 
