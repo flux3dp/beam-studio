@@ -60,8 +60,10 @@ const attributeMap: Record<ConfigKey, string> = {
   oneWayEngraving: 'data-owe',
   oneWayEngravingReverse: 'data-oweRev',
   power: 'data-strength',
+  printingBotPadding: 'data-printingBotPadding',
   printingSpeed: 'data-printingSpeed',
   printingStrength: 'data-printingStrength',
+  printingTopPadding: 'data-printingTopPadding',
   pulseWidth: 'data-pulseWidth',
   ref: 'data-ref',
   refreshInterval: 'data-refreshInterval',
@@ -211,6 +213,7 @@ export const booleanConfig: ConfigKey[] = [
   'oneWayEngraving',
   'oneWayEngravingReverse',
 ] as const;
+export const optionalNumberConfigs: ConfigKey[] = ['printingTopPadding', 'printingBotPadding'] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
 export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'speed',
@@ -398,6 +401,12 @@ export const getData = <T extends ConfigKey>(
 
   if (key === 'module') {
     return Number(layer.getAttribute(attr) || LayerModule.LASER_UNIVERSAL) as ConfigKeyTypeMap[T];
+  }
+
+  if (optionalNumberConfigs.includes(key)) {
+    const value = layer.getAttribute(attr);
+
+    if (value === null || value === undefined) return undefined;
   }
 
   return Number(layer.getAttribute(attr) || defaultConfig[key]) as ConfigKeyTypeMap[T];

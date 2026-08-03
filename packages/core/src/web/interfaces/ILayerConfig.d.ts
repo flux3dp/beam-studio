@@ -78,8 +78,16 @@ type PrintingConfig = {
    * nozzle offset y of left relative to right, the real print y will be y - nozzleOffsetY
    */
   nozzleOffsetY: number;
+  /**
+   * Per-layer override (px slice rows) for the global printing bottom padding, no default value
+   */
+  printingBotPadding: number;
   printingSpeed: number;
   printingStrength: number;
+  /**
+   * Per-layer override (px slice rows) for the global printing top padding, no default value
+   */
+  printingTopPadding: number;
   refreshInterval: number;
   refreshThreshold: number;
   split: boolean;

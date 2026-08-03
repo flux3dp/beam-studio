@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Beambox II Focusprobe - 3 mm',
       import_beamo_2_laser_example: 'Voorbeeld van beamo II Laser',
       import_beamo_2_printing_example: 'Voorbeeld van beamo II Printing',
+      import_beamo_2_printing_test: 'beamo II Printtest',
       import_calibration_data: 'Kalibratiegegevens importeren',
       import_hello_beambox: 'Beambox voorbeeld',
       import_hello_beamo: 'beamo voorbeeld',

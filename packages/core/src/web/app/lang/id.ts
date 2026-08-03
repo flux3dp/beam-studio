@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Sonde Fokus Beambox II - 3 mm',
       import_beamo_2_laser_example: 'Contoh Laser beamo II',
       import_beamo_2_printing_example: 'Contoh Cetak beamo II',
+      import_beamo_2_printing_test: 'Uji Cetak beamo II',
       import_calibration_data: 'Impor Data Kalibrasi',
       import_hello_beambox: 'Contoh Beambox',
       import_hello_beamo: 'Contoh beamo',

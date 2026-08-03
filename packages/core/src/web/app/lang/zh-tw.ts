@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Beambox II 對焦尺 - 3mm',
       import_beamo_2_laser_example: 'beamo II 雷射範例',
       import_beamo_2_printing_example: 'beamo II 列印範例',
+      import_beamo_2_printing_test: 'beamo II 列印測試',
       import_calibration_data: '匯入校正資料',
       import_hello_beambox: 'Beambox 範例',
       import_hello_beamo: 'beamo 範例',

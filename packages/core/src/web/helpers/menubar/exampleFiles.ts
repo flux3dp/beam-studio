@@ -1,7 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import { initState } from '@core/app/components/beambox/RightPanel/ConfigPanel/initState';
-import { promarkExampleParams } from '@core/app/constants/promark-constants';
+import { LaserType, promarkExampleParams } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
@@ -29,6 +29,7 @@ export const exampleFileKeys = [
   'EXAMPLE_FILE_BEAMO_2',
   'IMPORT_EXAMPLE_BEAMO_2_LASER',
   'IMPORT_EXAMPLE_BEAMO_2_PRINT',
+  'IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST',
   'IMPORT_EXAMPLE_HEXA',
   'IMPORT_EXAMPLE_HEXA_RF',
   'IMPORT_EXAMPLE_PROMARK',
@@ -77,6 +78,7 @@ const basicExamples: ExampleFileMap = {
   IMPORT_EXAMPLE_BEAMBOX_2: 'examples/beambox_2_example.bvg',
   IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
   IMPORT_EXAMPLE_BEAMO_2_PRINT: '',
+  IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST: '',
   IMPORT_EXAMPLE_HEXA: 'examples/hexa_example.bvg',
   IMPORT_EXAMPLE_HEXA_RF: 'examples/hexa_rf_example.bvg',
   IMPORT_EXAMPLE_PROMARK: 'examples/promark_example.bvg',
@@ -86,7 +88,7 @@ const basicExamples: ExampleFileMap = {
   IMPORT_MATERIAL_TESTING_PRINT: '',
 };
 
-export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
+const getStaticExamples = (workarea: WorkAreaModel): ExampleFileMap => {
   if (exampleCache[workarea]) {
     return exampleCache[workarea];
   }
@@ -118,6 +120,7 @@ export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
         EXAMPLE_FILE_BEAMO_2: '',
         IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
         IMPORT_EXAMPLE_BEAMO_2_PRINT: 'examples/beamo_2_example_printing_full.bvg',
+        IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST: 'examples/beamo_2_printing_test.beam',
         IMPORT_MATERIAL_TESTING_PRINT: 'examples/beamo_2_color_ring.bvg',
       };
     }
@@ -148,6 +151,27 @@ export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
   return examples;
 };
 
+// MOPA color examples require a MOPA laser source; blank paths keep the menu items visible
+// but make loadExampleFile show the unsupported_example_file alert.
+const mopaColorUnsupportedOverrides: ExampleFileMap = {
+  IMPORT_EXAMPLE_PROMARK_MOPA_20W_COLOR: '',
+  IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR: '',
+  IMPORT_EXAMPLE_PROMARK_MOPA_60W_COLOR_2: '',
+  IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR: '',
+  IMPORT_EXAMPLE_PROMARK_MOPA_100W_COLOR_2: '',
+};
+
+export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
+  const examples = getStaticExamples(workarea);
+
+  // getPromarkInfo depends on the currently selected device, so it must stay outside exampleCache.
+  if (workarea === 'fpm1' && getPromarkInfo().laserType !== LaserType.MOPA) {
+    return { ...examples, ...mopaColorUnsupportedOverrides };
+  }
+
+  return examples;
+};
+
 export const getExampleVisibility = (
   workarea: WorkAreaModel,
 ): { disabledKeys: ExampleFileKey[]; enabledKeys: ExampleFileKey[] } => {
@@ -157,6 +181,7 @@ export const getExampleVisibility = (
     delete examples.EXAMPLE_FILE_BEAMO_2;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_LASER;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT;
+    delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST;
   }
 
   if (!checkHxRf()) {
