@@ -256,6 +256,8 @@
       'data-scEnable',
       'data-scJerk',
       'data-minPadding',
+      'data-printingTopPadding',
+      'data-printingBotPadding',
     ],
     image: [
       'data-ratiofixed',

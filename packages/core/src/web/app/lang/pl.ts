@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Sonda Ostrości Beambox II - 3 mm',
       import_beamo_2_laser_example: 'Przykład lasera beamo II',
       import_beamo_2_printing_example: 'Przykład druku beamo II',
+      import_beamo_2_printing_test: 'Test druku beamo II',
       import_calibration_data: 'Importuj dane kalibracji',
       import_hello_beambox: 'Przykład Beambox',
       import_hello_beamo: 'Przykład Bemo',

@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Beambox II Fokussonde - 3 mm',
       import_beamo_2_laser_example: 'Eksempel på beamo II Laser',
       import_beamo_2_printing_example: 'Eksempel på beamo II-utskrift',
+      import_beamo_2_printing_test: 'beamo II-utskriftstest',
       import_calibration_data: 'Importer kalibreringsdata',
       import_hello_beambox: 'Eksempel på Beambox',
       import_hello_beamo: 'Eksempel på beamo',

@@ -67,6 +67,7 @@ import ModuleBlock from './ModuleBlock';
 import MultipassBlock from './MultipassBlock';
 import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
+import PrintingPaddingBlock from './PrintingPaddingBlock';
 import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
 import UVLightConfigs from './UVConfigs/UVLightConfigs';
@@ -288,6 +289,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isPromark && <DottingTimeBlock type={UIType} />}
       {isLaser && <LaserDevOptions />}
       {isDevMode && <MinPadding type={UIType} />}
+      {isDevMode && isPrinting && <PrintingPaddingBlock type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
     </>

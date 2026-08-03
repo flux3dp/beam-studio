@@ -1,4 +1,5 @@
 import { CanvasElements } from '@core/app/constants/canvasElements';
+import updatePrintingColorFilter from '@core/helpers/color/printingColorFilter';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
@@ -67,7 +68,9 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
             await updateImageDisplay(elem as SVGImageElement);
           }
 
-          if (isFullColor || color === '#000') {
+          if (isFullColor) {
+            updatePrintingColorFilter(elem);
+          } else if (color === '#000') {
             elem.removeAttribute('filter');
           } else {
             elem.setAttribute('filter', `url(#filter${color})`);

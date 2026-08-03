@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Đầu dò Lấy Nét Beambox II - 3mm',
       import_beamo_2_laser_example: 'Ví dụ của beamo II Laser',
       import_beamo_2_printing_example: 'Ví dụ in của beamo II',
+      import_beamo_2_printing_test: 'Kiểm tra in beamo II',
       import_calibration_data: 'Nhập dữ liệu hiệu chuẩn',
       import_hello_beambox: 'Ví dụ của Beambox',
       import_hello_beamo: 'Ví dụ của beamo',

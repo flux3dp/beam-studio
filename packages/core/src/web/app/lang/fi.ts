@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Beambox II Tarkennusanturi - 3 mm',
       import_beamo_2_laser_example: 'beamo IIin laser -esimerkki',
       import_beamo_2_printing_example: 'beamo IIin tulostuksen esimerkki',
+      import_beamo_2_printing_test: 'beamo II tulostustesti',
       import_calibration_data: 'Tuo kalibrointitiedot',
       import_hello_beambox: 'Beambox-esimerkki',
       import_hello_beamo: 'beamo-esimerkki',

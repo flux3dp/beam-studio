@@ -2626,6 +2626,7 @@ export interface ILang {
       import_beambox_2_focus_probe: string;
       import_beamo_2_laser_example: string;
       import_beamo_2_printing_example: string;
+      import_beamo_2_printing_test: string;
       import_calibration_data: string;
       import_hello_beambox: string;
       import_hello_beamo: string;

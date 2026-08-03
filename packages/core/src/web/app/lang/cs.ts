@@ -2690,6 +2690,7 @@ const lang: ILang = {
       import_beambox_2_focus_probe: 'Beambox II Fokusová sonda - 3 mm',
       import_beamo_2_laser_example: 'Příklad beamo II Laseru',
       import_beamo_2_printing_example: 'Příklad beamo II tisknutí',
+      import_beamo_2_printing_test: 'Test tisknutí beamo II',
       import_calibration_data: 'Importovat kalibrační data',
       import_hello_beambox: 'Příklady Beambox',
       import_hello_beamo: 'Příklady beamo',

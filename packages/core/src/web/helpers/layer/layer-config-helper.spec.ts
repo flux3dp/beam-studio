@@ -60,7 +60,12 @@ const defaultConfigs = Object.keys(baseConfig).reduce((acc, key) => {
   return acc;
 }, {});
 
-const optionalConfigs: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
+const optionalConfigs: ConfigKey[] = [
+  'amAngleMap',
+  'colorCurvesMap',
+  'printingBotPadding',
+  'printingTopPadding',
+] as const;
 
 optionalConfigs.forEach((key) => {
   defaultConfigs[key] = { value: undefined };
