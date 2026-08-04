@@ -27,7 +27,9 @@ const StepResume = (): React.JSX.Element => {
   return (
     <div className={styles.content}>
       <div className={styles.desc}>{lang.resume_desc}</div>
-      {isPrintingContentsChanged && <Alert message={lang.design_changed} showIcon type="warning" />}
+      {isPrintingContentsChanged && (
+        <Alert className={styles.alert} message={lang.design_changed} showIcon type="warning" />
+      )}
       <Button block icon={<AimOutlined />} onClick={() => setStep('align')} type="primary">
         {lang.continue_to_alignment}
       </Button>

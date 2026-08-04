@@ -4,7 +4,6 @@ import { AimOutlined } from '@ant-design/icons';
 import { Button, Progress } from 'antd';
 import { useShallow } from 'zustand/react/shallow';
 
-import formatDuration from '@core/helpers/duration-formatter';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
@@ -12,6 +11,8 @@ import { usePrintAndCutStore } from '../store';
 import { detectAlignmentTransform } from '../utils/alignByCamera';
 import { clearAlignProgress } from '../utils/alignProgress';
 import { captureWorkareaImage } from '../utils/captureWorkareaImage';
+
+import RemainingTime from './RemainingTime';
 
 const StepAlign = (): React.JSX.Element => {
   const { message: messageLang, print_and_cut: lang } = useI18n();
@@ -83,11 +84,7 @@ const StepAlign = (): React.JSX.Element => {
         <div className={styles.alignProgress}>
           <Progress percent={alignProgress.percentage} showInfo={false} size="small" status="active" />
           <div className={styles.desc}>{alignProgress.message}</div>
-          {alignProgress.remainingSeconds !== null && (
-            <div className={styles.desc}>
-              {messageLang.time_remaining} ~{formatDuration(alignProgress.remainingSeconds)}
-            </div>
-          )}
+          <RemainingTime remainingSeconds={alignProgress.remainingSeconds} />
           {alignProgress.stoppable && <div className={styles.desc}>{messageLang.preview.press_esc_to_stop}</div>}
         </div>
       )}
