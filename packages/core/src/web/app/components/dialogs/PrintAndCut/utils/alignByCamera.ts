@@ -252,7 +252,8 @@ export const detectAlignmentTransform = async ({
     // again on the patched image; refineMarkPatches itself skips machines
     // whose camera cannot be driven over the marks
     if (markCenters && (await refineMarkPatches(markCenters))) {
-      reportAlignProgress('detect');
+      // reported after `refine` so the tail phases stay in ascending order
+      reportAlignProgress('completing');
 
       const refined = await detectFromBackground(expected);
 

@@ -50,7 +50,7 @@ PrintAndCut/
 ├── store.ts                 # Dialog zustand store (ephemeral; withFullBBox action helper)
 ├── resumeConfigStore.ts     # Persisted ResumeConfig store (survives dialog)
 ├── constants.ts             # Steps, paper sizes, mark sizes, tolerances, CUT_COLOR
-├── steps/                   # StepSetup / StepPaper / StepExport / StepAlign / StepResume
+├── steps/                   # StepSetup / StepPaper / StepExport / StepAlign / StepResume + RemainingTime
 └── utils/
     ├── startFreshRun.ts     # collect → no_content guard → clearRasterCache → init
     ├── collectContents.ts   # Visible design elements + bbox + element snapshots
@@ -155,9 +155,19 @@ StepSetup drives it through a remeda `funnel` (300 ms, leading+trailing) with a
    design+marks overlay over the fixed camera image.
 
 Progress: reporters call `reportAlignProgress(phase, {current, total, stoppable})`
-(`alignProgress.ts` phases: preparing/capture/locate/detect/refine → % ranges);
-store clamps the percentage **monotonically** (phases legally revisit). StepAlign
-renders an antd `Progress` in the sidebar; `clearAlignProgress` in `finally`.
+(`alignProgress.ts` phases: preparing/capture/locate/detect/refine/completing →
+% ranges; `completing` is the post-refine redetect, the flow's last step —
+reported inside the refinement branch so the tail phases stay in ascending order
+and `refine` keeps advancing the bar);
+store clamps the percentage **monotonically** (phases legally revisit).
+`AlignProgress` stays language-free — it carries `phase`/`current`/`total`, and
+the view builds the label (`buildMessage` in StepAlign, where `completing` reuses
+the `detecting` label so the message does not flip). StepAlign renders an antd
+`Progress` in the sidebar; `clearAlignProgress` in `finally`.
+`steps/RemainingTime.tsx` owns the countdown: it restarts from each new
+`remainingSeconds` estimate (average pace since phase start) and ticks down
+locally in between, showing `calculating` until an estimate exists and
+`completing` during the wrap-up phase instead of a time.
 `isProcessing` disables the shared footer (owned by PrintAndCut.tsx).
 
 ## Preview canvas
