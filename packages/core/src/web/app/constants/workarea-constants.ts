@@ -11,7 +11,7 @@ import {
   checkFUV1,
   checkHxRf,
 } from '@core/helpers/checkFeature';
-import isDev, { uvModel } from '@core/helpers/is-dev';
+import isDev, { todo, uvModel } from '@core/helpers/is-dev';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
 import { fullColorHeadModules, LayerModule, type LayerModuleType } from './layer-module/layer-modules';
@@ -83,6 +83,17 @@ export interface WorkArea {
   displayHeight?: number; // mm
   engraveDpiOptions?: EngraveDpiOption[];
   height: number; // mm
+  /**
+   * innerEngraving
+   * non-null value means the model supports inner engraving (FLUX crystal inner carving),
+   * which requires a UV laser source.
+   * maxMaterialHeight: maximum material height in mm
+   * zPrecision: minimum z step in mm
+   */
+  innerEngraving?: {
+    maxMaterialHeight: number; // mm
+    zPrecision: number; // mm
+  };
   label: WorkAreaLabel;
   maxRepeat?: number;
   maxSpeed: number; // mm/s
@@ -281,6 +292,10 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   [uvModel]: {
     dimensionCustomizable: true,
     height: 70,
+    // z travel is about 470mm, focusing takes up 100~200mm of it. 300mm is a conservative
+    // starting point, to be relaxed once verified on real hardware.
+    // Also, zPrecision is for frontend configuration, not the actual hardware limit. Check if need to be moved to components?
+    innerEngraving: { maxMaterialHeight: 300, zPrecision: 0.001 },
     label: 'Promark UV',
     maxRepeat: 100000,
     maxSpeed: 10000,
@@ -291,6 +306,8 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 70,
   },
 };
+todo('TBD: uvModel');
+todo('Check innerEngraving related config');
 
 export const workareaOptions: Array<{ label: string; value: AnnotatedWorkareaModel }> = [
   { label: 'beamo', value: 'fbm1' },
@@ -320,6 +337,13 @@ export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel =
 
   return { ...res };
 };
+
+/**
+ * Whether the model supports inner engraving. Inner engraving is the Promark UV's main feature,
+ * so it is gated by the same flag as the machine itself.
+ */
+export const supportInnerEngraving = (model: WorkAreaModel): boolean =>
+  checkFpm1UV() && Boolean(workareaConstants[model]?.innerEngraving);
 
 export const getSupportedModules = (
   model: WorkAreaModel,

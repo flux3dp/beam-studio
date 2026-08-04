@@ -12,3 +12,6 @@ export const showDevMsg = (): boolean => window?.localStorage?.getItem('devMsg')
 export const allowWebSwiftray = (): boolean => true;
 export const supportSwiftray = () => (allowWebSwiftray() || !isWeb() || isDev()) && getOS() !== 'Linux';
 export const mockT = (key: string) => key;
+export const todo = (msg: string) => console.warn(`TODO: ${msg}`);
+// esther ask/TODO: 這種形式的內容在 PR 前要處理掉
+// 另外，在 PR 前要移除 /TODO*/md

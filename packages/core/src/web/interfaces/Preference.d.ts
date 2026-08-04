@@ -21,6 +21,7 @@ export type DocumentState = {
   'enable-job-origin': boolean;
   'extend-rotary-workarea': boolean;
   'frame-before-start': boolean;
+  'inner-engraving': boolean;
   'job-origin': number;
   'pass-through': boolean;
   'pass-through-height'?: number;

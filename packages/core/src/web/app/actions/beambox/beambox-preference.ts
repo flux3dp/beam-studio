@@ -44,6 +44,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   guide_x0: 0,
   guide_y0: 0,
   image_downsampling: true,
+  'inner-engraving': false,
   'job-origin': 1,
   'keep-preview-result': false,
   low_power: 10,

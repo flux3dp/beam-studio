@@ -38,6 +38,7 @@ import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
 import { importDxfFromText, looksLikeDxfText } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
+import importStl from '@core/app/svgedit/operations/import/importStl';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
 import svgCanvasClass from '@core/app/svgedit/svgcanvas';
@@ -52,6 +53,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';
@@ -945,6 +947,10 @@ const svgEditor = (window['svgEditor'] = (function () {
             return 'dxf';
           }
 
+          if (file.name.toLowerCase().endsWith('.stl')) {
+            return 'stl';
+          }
+
           if (file.type.toLowerCase().includes('image')) {
             if (file.type.toLowerCase().includes('svg')) {
               return 'svg';
@@ -997,6 +1003,22 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'dxf':
             await importDxf(file);
             Progress.popById('loading_image');
+            break;
+          case 'stl':
+            // TODO: pre-checks (file size / triangle count), unit and up-axis options, and the
+            // "enable inner engraving mode?" prompt when the model supports it but the mode is off
+            Progress.popById('loading_image');
+
+            if (isInnerEngravingActive()) {
+              await importStl(file);
+            } else {
+              Alert.popUp({
+                id: 'import_stl_without_inner_engraving',
+                message: lang.svg_editor.unnsupported_file_type,
+                type: AlertConstants.SHOW_POPUP_WARNING,
+              });
+            }
+
             break;
           case 'pdf':
           case 'ai':

@@ -5,6 +5,7 @@ import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelp
 import { checkIsAtEditor, hashMap, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import ImageData from '@core/helpers/image-data';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import isWeb from '@core/helpers/is-web';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -96,6 +97,7 @@ const funcs = {
             'bvg',
             'beam',
             'webp',
+            ...(isInnerEngravingActive() ? ['stl'] : []),
           ],
           name: 'Images',
         },

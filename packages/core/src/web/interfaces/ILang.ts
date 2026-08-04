@@ -211,6 +211,7 @@ export interface ILang {
       extend_y_area: string;
       frame_before_start: string;
       frame_before_start_url: string;
+      inner_engraving: string;
       job_origin: string;
       laser_source: string;
       machine: string;
@@ -2761,6 +2762,7 @@ export interface ILang {
       path: string;
       polygon: string;
       rect: string;
+      stl: string;
       svg: string;
       text: string;
       text_path: string;

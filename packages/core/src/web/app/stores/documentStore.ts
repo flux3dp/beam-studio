@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { combine, subscribeWithSelector } from 'zustand/middleware';
 
 import { TabEvents } from '@core/app/constants/ipcEvents';
+import { todo } from '@core/helpers/is-dev';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
@@ -18,6 +19,8 @@ export type DocumentStore = DocumentState & {
   update: (payload: Partial<DocumentState>) => void;
 };
 
+todo('TBD：是否需要為了 isInnerEngravingEnabled 而解 circular dependency？');
+
 const getInitDocumentStore = (): DocumentState => {
   const preference = storage.get('beambox-preference', false) as BeamboxPreference;
   const defaultWorkarea = preference.model;
@@ -26,6 +29,9 @@ const getInitDocumentStore = (): DocumentState => {
   const isDiodeEnabled = Boolean(preference['default-diode'] && addOnInfo.hybridLaser);
   const isBorderlessEnabled = Boolean(preference['default-borderless'] && addOnInfo.openBottom);
   const isRotaryEnabled = Boolean(preference.rotary_mode && addOnInfo.rotary);
+  // Not normalized against the model here: workarea-constants already imports this store, so
+  // calling supportInnerEngraving() would create an import cycle. Callers combine the two.
+  const isInnerEngravingEnabled = Boolean(preference['inner-engraving']);
 
   // Write default values to BeamboxPreference, may not need because the value will always reset by getInitDocumentStore
   beamboxPreference.write('workarea', defaultWorkarea, false);
@@ -33,6 +39,7 @@ const getInitDocumentStore = (): DocumentState => {
   beamboxPreference.write('enable-diode', isDiodeEnabled, false);
   beamboxPreference.write('borderless', isBorderlessEnabled, false);
   beamboxPreference.write('rotary_mode', isRotaryEnabled, false);
+  beamboxPreference.write('inner-engraving', isInnerEngravingEnabled, false);
   beamboxPreference.write('workarea-annotation', preference['model-annotation'] ?? {}, false);
 
   return {
@@ -49,6 +56,7 @@ const getInitDocumentStore = (): DocumentState => {
     'enable-job-origin': preference['enable-job-origin'],
     'extend-rotary-workarea': preference['extend-rotary-workarea'],
     'frame-before-start': preference['frame-before-start'],
+    'inner-engraving': isInnerEngravingEnabled,
     'job-origin': preference['job-origin'],
     'pass-through': preference['pass-through'],
     'pass-through-height': preference['pass-through-height'],

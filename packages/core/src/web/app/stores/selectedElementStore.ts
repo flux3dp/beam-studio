@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
+import { isStlProjection } from '@core/app/svgedit/stl/getters';
 import { isFitText } from '@core/app/svgedit/text/textedit/getters';
 import type { ILang } from '@core/interfaces/ILang';
 
@@ -56,6 +57,8 @@ const getNodeType = (elem: Element | null): { nodeCategory: CanvasNodeCategory; 
         nodeType = 'fit_text';
       } else if (elem.getAttribute('data-pass-through')) {
         nodeType = 'pass_through_object';
+      } else if (isStlProjection(elem)) {
+        nodeType = 'stl';
       } else if (elem.tagName.toLowerCase() !== 'use') {
         nodeType = elem.tagName.toLowerCase() as CanvasNodeType;
       } else if (elem.getAttribute('data-svg') === 'true') {
@@ -83,7 +86,7 @@ export const getDerivedData = (selectedElement: Element | null): DerivedData => 
   state.nodeCategory = nodeCategory;
   state.nodeType = nodeType;
 
-  state.canGroup = !['g', 'pass_through_object', 'text_path'].includes(nodeType);
+  state.canGroup = !['g', 'pass_through_object', 'stl', 'text_path'].includes(nodeType);
   state.canUngroup = nodeType === 'g';
   state.canUngroupOrDisassemble = state.canUngroup || nodeCategory === 'use';
 
