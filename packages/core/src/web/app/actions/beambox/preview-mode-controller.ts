@@ -315,6 +315,7 @@ class PreviewModeController {
     opts: {
       callback?: () => void;
       last?: boolean;
+      overlapFlag?: number;
       overlapRatio?: number;
     } = {},
   ): Promise<boolean> {
@@ -324,10 +325,10 @@ class PreviewModeController {
       return false;
     }
 
-    const { callback } = opts;
+    const { callback, overlapFlag, overlapRatio } = opts;
 
     try {
-      const previewRes = await this.previewManager!.preview(x, y);
+      const previewRes = await this.previewManager!.preview(x, y, { overlapFlag, overlapRatio });
 
       if (previewRes) {
         this.onPreviewSuccess();
@@ -383,6 +384,23 @@ class PreviewModeController {
 
   getPreviewPosition(x: number, y: number, opts?: { clipByWorkArea?: boolean }): null | { x: number; y: number } {
     return this.previewManager?.getPreviewPosition?.(x, y, opts) ?? null;
+  }
+
+  getRegionPreviewPoints(
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    opts?: { overlapRatio?: number },
+  ): Array<{ overlapFlag: number; point: [number, number] }> | null {
+    return this.previewManager?.getRegionPreviewPoints?.(x1, y1, x2, y2, opts) ?? null;
+  }
+
+  getRegionPreviewTile(
+    x: number,
+    y: number,
+  ): null | { centerX: number; centerY: number; height: number; width: number } {
+    return this.previewManager?.getRegionPreviewTile?.(x, y) ?? null;
   }
 
   getCameraOffsetStandard(): CameraConfig | null {

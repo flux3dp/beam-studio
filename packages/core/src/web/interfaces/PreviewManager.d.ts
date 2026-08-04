@@ -19,6 +19,24 @@ export interface PreviewManager {
 
   getPreviewPosition?: (x: number, y: number, opts?: { clipByWorkArea?: boolean }) => { x: number; y: number };
 
+  /**
+   * Serpentine capture points covering the region (rows top to bottom, odd
+   * rows reversed) — the same points previewRegion would capture
+   */
+  getRegionPreviewPoints?: (
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    opts?: { overlapRatio?: number },
+  ) => Array<{ overlapFlag: number; point: [number, number] }>;
+
+  /**
+   * The tile rect (canvas px) a preview at the requested point would actually
+   * stamp on the background canvas; the point is clamped near edges
+   */
+  getRegionPreviewTile?: (x: number, y: number) => { centerX: number; centerY: number; height: number; width: number };
+
   preprocessImage?: (
     imgUrl: string,
     opts?: { overlapFlag?: number; overlapRatio?: number },

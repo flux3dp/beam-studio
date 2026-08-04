@@ -315,6 +315,98 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     return true;
   };
 
+  private getTileSizePx = (): number => {
+    const h = constant.camera.imgHeight;
+    const a = this.cameraOffset.angle;
+    const s = this.cameraOffset.scaleRatioY;
+    const c = h / (Math.cos(a) + Math.sin(a));
+
+    // overlap a little bit to fix empty area between pictures
+    // (some machine will have it, maybe due to cameraOffset.angle).
+    // it seems like something wrong handling image rotation.
+    return c * s;
+  };
+
+  /** Serpentine capture points covering the region: rows top to bottom, odd rows reversed */
+  getRegionPreviewPoints = (
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    { overlapRatio = 0.05 }: { overlapRatio?: number } = {},
+  ): Array<{ overlapFlag: number; point: [number, number] }> => {
+    const size = this.getTileSizePx();
+    const { bottom, left, right, top } = (() => {
+      const l = Math.min(x1, x2) + size / 2;
+      const r = Math.max(x1, x2) - size / 2;
+      const t = Math.min(y1, y2) + size / 2;
+      const b = Math.max(y1, y2) - size / 2;
+
+      return {
+        bottom: this.constrainPreviewXY(0, b).y,
+        left: this.constrainPreviewXY(l, 0).x,
+        right: this.constrainPreviewXY(r, 0).x,
+        top: this.constrainPreviewXY(0, t).y,
+      };
+    })();
+
+    let pointsArray: Array<{ overlapFlag: number; point: [number, number] }> = [];
+    let shouldRowReverse = false; // let camera 走Ｓ字型
+    const step = (1 - overlapRatio) * size;
+
+    for (let curY = top; curY < bottom + size; curY += step) {
+      const row: Array<{ overlapFlag: number; point: [number, number] }> = [];
+
+      for (let curX = left; curX < right + size; curX += step) {
+        let overlapFlag = 0;
+
+        // 1: top, 2: right, 4: bottom, 8: left
+        if (curY !== top) {
+          overlapFlag += 1;
+        }
+
+        if (curX + step < right + size) {
+          overlapFlag += 2;
+        }
+
+        if (curY + step < bottom + size) {
+          overlapFlag += 4;
+        }
+
+        if (curX !== left) {
+          overlapFlag += 8;
+        }
+
+        row.push({ overlapFlag, point: [curX, curY] });
+      }
+
+      if (shouldRowReverse) {
+        row.reverse();
+      }
+
+      pointsArray = pointsArray.concat(row);
+      shouldRowReverse = !shouldRowReverse;
+    }
+
+    return pointsArray;
+  };
+
+  /**
+   * The tile rect that a preview at the requested point would actually stamp
+   * on the background canvas (in canvas px): the point is clamped by the
+   * camera offset and safe distances, so near edges the stamped tile is not
+   * centered on the requested point.
+   */
+  getRegionPreviewTile = (
+    x: number,
+    y: number,
+  ): { centerX: number; centerY: number; height: number; width: number } => {
+    const { x: centerX, y: centerY } = this.constrainPreviewXY(x, y);
+    const size = this.getTileSizePx();
+
+    return { centerX, centerY, height: size, width: size };
+  };
+
   previewRegion = async (
     x1: number,
     y1: number,
@@ -322,74 +414,10 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     y2: number,
     { overlapRatio = 0.05 }: { overlapRatio?: number } = {},
   ): Promise<boolean> => {
-    const getPoints = () => {
-      const size = (() => {
-        const h = constant.camera.imgHeight;
-        const a = this.cameraOffset.angle;
-        const s = this.cameraOffset.scaleRatioY;
-        const c = h / (Math.cos(a) + Math.sin(a));
-
-        // overlap a little bit to fix empty area between pictures
-        // (some machine will have it, maybe due to cameraOffset.angle).
-        // it seems like something wrong handling image rotation.
-        return c * s;
-      })();
-      const { bottom, left, right, top } = (() => {
-        const l = Math.min(x1, x2) + size / 2;
-        const r = Math.max(x1, x2) - size / 2;
-        const t = Math.min(y1, y2) + size / 2;
-        const b = Math.max(y1, y2) - size / 2;
-
-        return {
-          bottom: this.constrainPreviewXY(0, b).y,
-          left: this.constrainPreviewXY(l, 0).x,
-          right: this.constrainPreviewXY(r, 0).x,
-          top: this.constrainPreviewXY(0, t).y,
-        };
-      })();
-
-      let pointsArray: Array<{ overlapFlag: number; point: [number, number] }> = [];
-      let shouldRowReverse = false; // let camera 走Ｓ字型
-      const step = (1 - overlapRatio) * size;
-
-      for (let curY = top; curY < bottom + size; curY += step) {
-        const row: Array<{ overlapFlag: number; point: [number, number] }> = [];
-
-        for (let curX = left; curX < right + size; curX += step) {
-          let overlapFlag = 0;
-
-          // 1: top, 2: right, 4: bottom, 8: left
-          if (curY !== top) {
-            overlapFlag += 1;
-          }
-
-          if (curX + step < right + size) {
-            overlapFlag += 2;
-          }
-
-          if (curY + step < bottom + size) {
-            overlapFlag += 4;
-          }
-
-          if (curX !== left) {
-            overlapFlag += 8;
-          }
-
-          row.push({ overlapFlag, point: [curX, curY] });
-        }
-
-        if (shouldRowReverse) {
-          row.reverse();
-        }
-
-        pointsArray = pointsArray.concat(row);
-        shouldRowReverse = !shouldRowReverse;
-      }
-
-      return pointsArray;
-    };
-
-    return this.previewRegionFromPoints(x1, y1, x2, y2, { getPoints, overlapRatio });
+    return this.previewRegionFromPoints(x1, y1, x2, y2, {
+      getPoints: () => this.getRegionPreviewPoints(x1, y1, x2, y2, { overlapRatio }),
+      overlapRatio,
+    });
   };
 }
 
