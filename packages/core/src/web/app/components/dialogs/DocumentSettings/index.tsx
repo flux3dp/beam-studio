@@ -18,7 +18,7 @@ import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/const
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { defaultEngraveDpiOptions, dpiValueMap } from '@core/app/constants/resolutions';
 import type { AnnotatedWorkareaModel, ModelAnnotation } from '@core/app/constants/workarea-constants';
-import { getWorkarea, workareaOptions } from '@core/app/constants/workarea-constants';
+import { getWorkarea, supportInnerEngraving, workareaOptions } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
@@ -34,7 +34,7 @@ import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { uvModel } from '@core/helpers/is-dev';
+import { todo, uvModel } from '@core/helpers/is-dev';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
@@ -50,9 +50,15 @@ import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './index.module.scss';
+import InnerEngravingBlock from './InnerEngravingBlock';
 import JobOriginBlock from './JobOriginBlock';
 import RotaryBlock from './RotaryBlock';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
+
+todo('useExclusiveBooleans');
+todo('Fix conflict mode, should handle inner engraving. Maybe change isCurveEngraving to isExclusiveMode?');
+todo('Fix 內雕不應該被歸類於【擴充模組】之下；TBD 入口是否應參考【曲面雕刻】，放在 menu tool？');
+todo('TBD：inner-engraving 改變時，需要清空畫布（2D/3D不兼容）？DEV 期間為了便於查看投影，先不處理這個');
 
 const promarkLaserOptions = [
   { label: 'Desktop - 20W', value: `${LaserType.Desktop}-20` },
@@ -95,6 +101,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [customDimension, setCustomDimension] = useState(useDocumentStore.getState()['customized-dimension']);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const [innerEngraving, setInnerEngraving] = useState(useDocumentStore.getState()['inner-engraving']);
+  const supportsInnerEngraving = useMemo(() => supportInnerEngraving(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState(useDocumentStore.getState().rotary_mode);
   const [rotaryType, setRotaryType] = useState(useDocumentStore.getState()['rotary-type']);
   const [enableStartButton, setEnableStartButton] = useState(useDocumentStore.getState()['promark-start-button']);
@@ -194,25 +202,36 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     [workarea],
   );
 
-  // pass-through, auto-feeder, rotary mode are exclusive, disable others when one is on
+  // esther TODO: add a useExclusiveBooleans hook on top of this file? and add note "handle store subscribe, too"
+  // pass-through, auto-feeder, rotary and inner engraving are exclusive, disable others when one is on
   useEffect(() => {
     if (rotaryMode) {
       setPassThrough(false);
       setAutoFeeder(false);
+      setInnerEngraving(false);
     }
   }, [rotaryMode]);
   useEffect(() => {
     if (passThrough) {
       setRotaryMode(false);
       setAutoFeeder(false);
+      setInnerEngraving(false);
     }
   }, [passThrough]);
   useEffect(() => {
     if (autoFeeder) {
       setRotaryMode(false);
       setPassThrough(false);
+      setInnerEngraving(false);
     }
   }, [autoFeeder]);
+  useEffect(() => {
+    if (innerEngraving) {
+      setRotaryMode(false);
+      setPassThrough(false);
+      setAutoFeeder(false);
+    }
+  }, [innerEngraving]);
 
   useEffect(() => setRotaryMode(storeRotaryMode), [storeRotaryMode]);
   useEffect(() => setRotaryType(storeRotaryType), [storeRotaryType]);
@@ -293,6 +312,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     newState.rotary_mode = rotaryMode;
+    newState['inner-engraving'] = Boolean(supportsInnerEngraving && innerEngraving);
 
     if (addOnInfo.rotary?.chuck) newState['rotary-type'] = rotaryType;
 
@@ -738,6 +758,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </>
           )}
+          <InnerEngravingBlock
+            innerEngraving={innerEngraving}
+            isCurveEngraving={isCurveEngraving}
+            renderWarningIcon={renderWarningIcon}
+            setInnerEngraving={setInnerEngraving}
+            show={supportsInnerEngraving}
+          />
           <RotaryBlock
             addOnInfo={addOnInfo}
             borderless={borderless}

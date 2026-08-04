@@ -15,6 +15,12 @@
     overflow: hidden;
   }
 
+  // inner engraving mode: keep the SVG canvas mounted (svgcontent holds the layers and the
+  // projection rects) but out of sight behind the 3D canvas
+  .hidden {
+    visibility: hidden;
+  }
+
   .workarea {
     overflow: overlay;
     position: absolute;

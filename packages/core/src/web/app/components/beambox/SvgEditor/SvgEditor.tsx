@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import AiGenerate from '@core/app/components/AiGenerate';
 import MobileAiGenerate from '@core/app/components/AiGenerate/mobile/MobileAiGenerate';
+import InnerEngravingCanvas from '@core/app/components/beambox/InnerEngraving/InnerEngravingCanvas';
 import PathPreview from '@core/app/components/beambox/PathPreview';
 import Chat from '@core/app/components/Chat';
 import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel';
@@ -18,6 +19,8 @@ import setupTextInputEvents from '@core/app/svgedit/text/setupTextInputEvents';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
+import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
+import { todo } from '@core/helpers/is-dev';
 import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
 
 import Generators from '../../Generators';
@@ -33,9 +36,12 @@ import styles from './SvgEditor.module.scss';
 import Workarea from './Workarea';
 import WorkareaInfo from './WorkareaInfo';
 
+todo('Fix Ruler with inner engraving');
+
 const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
   const { drawerMode, mode } = useCanvasStore();
+  const innerEngraving = useInnerEngravingActive();
   const osName = useMemo(() => getOS(), []);
 
   useEffect(() => {
@@ -63,10 +69,18 @@ const SvgEditor = (): ReactNode => {
         <Banner />
         <div className={styles['workarea-container']} id="workarea-container">
           <ElementTitle />
-          <Ruler />
+          {/* esther TODO: show related Ruler in InnerEngravingCanvas (this might need setup within InnerEngravingCanvas) */}
+          {!innerEngraving && <Ruler />}
+          {/* svgcontent still holds the layers and the projection rects, so the SVG canvas stays
+              mounted underneath the 3D canvas rather than being unmounted */}
           <Workarea
-            className={classNames(styles.workarea, { mac: osName === 'MacOS', [styles.mac]: osName === 'MacOS' })}
+            className={classNames(styles.workarea, {
+              mac: osName === 'MacOS',
+              [styles.hidden]: innerEngraving,
+              [styles.mac]: osName === 'MacOS',
+            })}
           />
+          {innerEngraving && <InnerEngravingCanvas />}
         </div>
         <div className={styles['invisible-tools']}>
           <div id="tool_import" style={{ display: 'none' }} />
