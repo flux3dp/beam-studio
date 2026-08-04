@@ -2215,6 +2215,54 @@ export interface ILang {
     title: string;
     workarea_height: string;
   };
+  print_and_cut: {
+    align_progress: {
+      calculating: string;
+      capturing: string;
+      completing: string;
+      detecting: string;
+      locating: string;
+      preparing: string;
+      refining: string;
+    };
+    alignment: {
+      detect_failed: string;
+      no_preview: string;
+      success: string;
+    };
+    continue_to_alignment: string;
+    cutting_layer_name: string;
+    design_changed: string;
+    export_pdf: string;
+    finish: string;
+    fit_content: string;
+    generate_from_contour: string;
+    grid_columns: string;
+    grid_rows: string;
+    grid_spacing: string;
+    no_content: string;
+    no_layer_with_path: string;
+    orientation: string;
+    orientation_landscape: string;
+    orientation_portrait: string;
+    paper_size: string;
+    paper_too_small: string;
+    preview_and_align: string;
+    resume_desc: string;
+    resume_title: string;
+    select_cut_layer: string;
+    start_over: string;
+    step_align: string;
+    step_align_desc: string;
+    step_export: string;
+    step_export_desc: string;
+    step_paper: string;
+    step_paper_desc: string;
+    step_setup: string;
+    step_setup_desc: string;
+    title: string;
+    use_layer_as_cut_path: string;
+  };
   promark_connection_test: {
     description: string;
     health: string;
