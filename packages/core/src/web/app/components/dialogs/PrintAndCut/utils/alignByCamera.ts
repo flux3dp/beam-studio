@@ -51,12 +51,11 @@ const combinations = (n: number, k: number): number[][] => {
 };
 
 /**
- * Correspondence-free registration: the printed sheet can be placed anywhere in
- * the workarea at any small rotation, so every assignment of detected blobs to
- * the expected marks is tried and scored by its best-fit rigid transform. The
- * mark rectangle is 180°-symmetric, so among well-fitting assignments the one
- * with the smallest rotation wins — the sheet is assumed to be placed roughly
- * in its printed orientation.
+ * Correspondence-free registration: the sheet can be placed anywhere at any
+ * small rotation, so every assignment of detected blobs to the expected marks
+ * is tried and scored by its best-fit rigid transform. The mark rectangle is
+ * 180°-symmetric, so among well-fitting assignments the smallest rotation wins
+ * — the sheet is assumed to be placed roughly in its printed orientation.
  */
 const findAlignment = (expected: Point[], detected: Point[]): null | RigidTransform => {
   if (detected.length < expected.length || detected.length > MAX_DETECTED_MARKS) return null;
@@ -117,24 +116,22 @@ const loadImage = (url: string): Promise<HTMLImageElement> =>
 /**
  * Retake each detected mark with the camera centered on it: region-preview
  * tiles are most accurate at their center, so marks that landed near a tile
- * corner in the sweep are re-captured at center precision. Only a
- * 2×-mark-size patch around each mark is kept from the retake — the rest of
- * the tile (whose corners are again imprecise) is rolled back, so refreshed
- * marks and the surrounding image are never degraded.
+ * corner in the sweep are re-captured at center precision. Only a 2×-mark-size
+ * patch around each mark is kept from the retake — the rest of the tile (whose
+ * corners are again imprecise) is rolled back.
  * @returns whether at least one mark patch was refreshed
  */
 const refineMarkPatches = async (markCenters: Point[]): Promise<boolean> => {
   try {
-    // a capture that can be refined leaves preview mode running; a manual
-    // align re-run re-enters it silently (the device is already selected). The
-    // caller ends the mode when the alignment finishes.
+    // a refinable capture leaves preview mode running; a manual align re-run
+    // re-enters it silently (the device is already selected)
     if (!previewModeController.isPreviewMode) await setupPreviewMode({ waitForFullAreaCapture: true });
 
     if (!previewModeController.isPreviewMode) return false;
 
-    // a one-shot full-area capture on a dual-mode machine (fbm2, wide-angle
-    // BB2/HEXA II) is still refinable: switch to region mode so the camera can
-    // be driven over each mark. Machines without region previews cannot refine.
+    // a one-shot capture on a dual-mode machine (fbm2, wide-angle BB2/HEXA II)
+    // is still refinable: switch to region mode so the camera can be driven
+    // over each mark. Machines without region previews cannot refine.
     if (previewModeController.isFullArea) {
       if (!supportsRegionPreview()) return false;
 
@@ -202,13 +199,12 @@ const logAlignmentResult = (expected: Point[], transform: RigidTransform): void 
 };
 
 /**
- * Detect where the printed alignment marks sit on the captured sheet, refine
- * each with a mark-centered retake, and fit the rigid transform mapping the
- * designed mark positions onto the detected ones. Handles arbitrary sheet
- * placement (shift + rotation); the sheet is assumed to be face up in roughly
- * its printed orientation (the mark rectangle cannot distinguish a 180° flip).
- * Ends preview mode (a refinable capture leaves it running for the refinement).
- * Nothing on the canvas is modified — the caller applies the transform.
+ * Detect where the printed marks sit on the captured sheet, refine each with a
+ * mark-centered retake, and fit the rigid transform mapping the designed mark
+ * positions onto the detected ones. Handles arbitrary placement (shift +
+ * rotation); the sheet is assumed to be face up in roughly its printed
+ * orientation (the mark rectangle cannot distinguish a 180° flip). Ends preview
+ * mode. Nothing on the canvas is modified — the caller applies the transform.
  * @returns the fitted transform, or null when the detection failed
  */
 export const detectAlignmentTransform = async ({
@@ -248,9 +244,8 @@ export const detectAlignmentTransform = async ({
       }
     }
 
-    // refinement pass: retake each mark at tile-center precision, then detect
-    // again on the patched image; refineMarkPatches itself skips machines
-    // whose camera cannot be driven over the marks
+    // refineMarkPatches itself skips machines whose camera cannot be driven
+    // over the marks; when it did retake them, redetect on the patched image
     if (markCenters && (await refineMarkPatches(markCenters))) {
       // reported after `refine` so the tail phases stay in ascending order
       reportAlignProgress('completing');
@@ -264,7 +259,7 @@ export const detectAlignmentTransform = async ({
     }
 
     // smart-sweep fallback: when the refinement could not run or redetect, fit
-    // the sweep's marks directly (on the happy path the refined fit replaced it)
+    // the sweep's marks directly
     if (!transform && markCenters) transform = fitRigidTransform(expected, markCenters);
 
     if (!transform) {
@@ -283,9 +278,9 @@ export const detectAlignmentTransform = async ({
 
     return null;
   } finally {
-    // a refinable capture leaves the camera running for the refinement pass;
-    // alignment is the end of the camera flow either way, so close it here
-    // (covers early failure returns too)
-    if (previewModeController.isPreviewMode) previewModeController.end();
+    // alignment is the end of the camera flow, so close the mode here (covers
+    // early failure returns too). Waited for so the caller only resumes device
+    // access (e.g. reading exposure settings) once teardown has fully finished
+    if (previewModeController.isPreviewMode) await previewModeController.end({ shouldWaitForEnd: true });
   }
 };

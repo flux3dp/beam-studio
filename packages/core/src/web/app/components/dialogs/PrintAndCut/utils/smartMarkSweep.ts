@@ -12,27 +12,22 @@ import type { Point } from './rigidTransform';
 import { applyRigidTransform, distance, fitRigidTransform } from './rigidTransform';
 
 /**
- * Search radius around a translation-only prediction (from a single anchor
- * mark): must tolerate the position error a small sheet rotation causes over
- * the mark-rectangle span
+ * Search radius around a translation-only prediction: must tolerate the error a
+ * small sheet rotation causes over the mark-rectangle span
  */
 const CONFIRM_RADIUS_PX = 15 * dpmm;
 /** Search radius around a rigid-fit prediction (two or more marks confirmed) */
 const REFINED_CONFIRM_RADIUS_PX = 5 * dpmm;
-/** Tolerance when matching a blob-pair distance against an expected mark-pair distance */
 const PAIR_DISTANCE_TOLERANCE_PX = 3 * dpmm;
-/** Re-detections of the same physical mark from overlapping tiles are merged within this radius */
 const BLOB_DEDUPE_RADIUS_PX = MARK_DIAMETER_MM * dpmm;
 /** Budget for targeted captures outside the serpentine (hypothesis confirmations) */
 const MAX_TARGETED_CAPTURES = 10;
-/** A tile yielding more blobs than this is too noisy to use */
 const MAX_BLOBS_PER_TILE = 10;
 const SWEEP_OVERLAP_RATIO = 0.05;
 
 /**
- * Expected-mark index pairs ranked by how likely a blob pair maps onto them:
- * the serpentine sweeps the top row first, so the sheet's top marks (TL=0,
- * TR=1) are normally found first; then diagonals, bottom edge, verticals
+ * Expected-mark index pairs, most likely first: the serpentine sweeps the top
+ * row first, so the top marks (TL=0, TR=1) are normally found first
  */
 const PAIR_PRIORITY: Array<[number, number]> = [
   [0, 1],
@@ -54,9 +49,9 @@ interface Hypothesis {
 
 export interface SmartSweepResult {
   /**
-   * Detected mark centers ordered like the expected marks [TL, TR, BL, BR], in
-   * canvas px; null when the smart flow degraded to a plain full sweep (the
-   * canvas is then fully swept and the caller's image-detection path applies)
+   * Mark centers ordered like the expected marks [TL, TR, BL, BR], in canvas px;
+   * null when the smart flow degraded to a plain full sweep (the canvas is then
+   * fully swept and the caller's image-detection path applies)
    */
   detectedMarks: null | Point[];
   /** A tile capture returned false (machine failure) — treat like a failed previewRegion */
@@ -80,14 +75,12 @@ const hypothesisKey = (base: Array<[number, number]>): string =>
     .join(',');
 
 /**
- * Sweep the workarea like previewRegion, but detect the printed alignment
- * marks on each captured tile: once found blobs allow inferring where the
- * sheet is (assuming near-0° rotation), the camera is driven straight to the
- * predicted positions of the remaining marks and the sweep stops — usually
- * after a handful of tiles instead of the whole bed. The returned centers are
- * at sweep precision: the align step refines each with a mark-centered retake
- * (refineMarkPatches) afterwards. On any dead end the flow degrades in place
- * to the plain full sweep.
+ * Sweep the workarea like previewRegion, but detect the printed alignment marks
+ * on each captured tile: once the found blobs pin down where the sheet is, the
+ * camera is driven straight to the predicted positions of the remaining marks
+ * and the sweep stops — usually after a handful of tiles instead of the whole
+ * bed. On any dead end the flow degrades in place to the plain full sweep. The
+ * returned centers are at sweep precision; refineMarkPatches sharpens them.
  */
 export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSweepResult> => {
   const { modelHeight: workareaHeight, width: workareaWidth } = workareaManager;
@@ -147,7 +140,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
     }
   };
 
-  /** Merge newly detected blobs into `found`, skipping re-detections of the same physical mark */
+  /** Merge into `found`, skipping re-detections of the same physical mark; returns the new ones */
   const mergeNewBlobs = (points: Point[]): Point[] => {
     const fresh: Point[] = [];
 
@@ -375,7 +368,6 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
     { isBlocking: true },
   );
 
-  // Main Processing Loop: sweep the workarea, detect blobs, and confirm hypotheses until all marks are found or a dead end is reached
   try {
     for (let i = 0; i < points.length; i += 1) {
       if (stopped) break;
@@ -398,7 +390,6 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
 
       if (!result || mergeNewBlobs(result).length === 0) continue;
 
-      // When new mark detected, try all possible hypotheses until one is confirmed or all are refuted.
       let hypothesis = selectHypothesis();
 
       while (hypothesis && hypothesisEnabled && !stopped) {

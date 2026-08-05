@@ -12,31 +12,29 @@ import { runSmartMarkSweep } from './smartMarkSweep';
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 /**
- * Whether the active preview manager can drive the camera over a point
- * (region previews) — true also for dual-mode machines (fbm2, wide-angle
- * BB2/HEXA II) whose default capture is a one-shot full-area photo
+ * Whether the camera can be driven over a point (region previews) — true also
+ * for dual-mode machines (fbm2, wide-angle BB2/HEXA II) whose default capture
+ * is a one-shot full-area photo
  */
 export const supportsRegionPreview = (): boolean =>
   previewModeController.previewManager?.supportedPreviewModes.includes(PreviewMode.REGION) ?? false;
 
 /**
  * Capture a camera image of the whole workarea: select a device, start preview
- * mode and take a full-workarea capture (machines without one-shot full-area
- * preview sweep the bed as a region preview). When the expected mark positions
- * are given, regional machines run the smart mark-seeking sweep instead of a
- * full sweep: it stops as soon as all marks are found and returns their
- * detected centers. After a capture on a machine with region previews
- * (including dual-mode machines whose capture was one-shot), preview mode is
- * kept running: the align step follows immediately and drives the camera to
- * each mark for its refinement retakes, then ends the mode. The captured image
- * stays in the background drawer, where the mark detection reads it from.
+ * mode and take a one-shot full-area photo, or sweep the bed as a region
+ * preview on machines without one. With the expected marks given, a regional
+ * machine runs the smart mark-seeking sweep, which stops as soon as all marks
+ * are found. Preview mode is left running whenever the machine has region
+ * previews — the align step follows immediately and drives the camera to each
+ * mark for its refinement retakes, then ends the mode. The captured image stays
+ * in the background drawer, where the mark detection reads it from.
  * @param expectedMarks designed mark positions [TL, TR, BL, BR] in canvas px
  * @param onProgress called with an intermediate image url each time a capture
- * is drawn, so a sweeping region preview can be shown while it is running;
- * the url is only valid until the next capture is drawn
- * @returns the captured workarea image url, whether it was a one-shot
- * full-area capture and the smart-sweep mark centers (null when the capture
- * came from a plain sweep or full-area shot), or null when the capture failed
+ * is drawn, so a sweep can be shown while it runs; the url is only valid until
+ * the next capture is drawn
+ * @returns the image url, whether it came from a one-shot full-area capture,
+ * and the smart-sweep mark centers (null unless the smart sweep found them);
+ * null when the capture failed
  */
 export const captureWorkareaImage = async ({
   expectedMarks,
@@ -54,9 +52,9 @@ export const captureWorkareaImage = async ({
   try {
     previewModeBackgroundDrawer.clear();
 
-    // device selection + preview setup; on full-area machines this already
-    // captures the whole bed — waited for, so the isClean() check below cannot
-    // race it into starting a second concurrent capture on the same camera
+    // on full-area machines this already captures the whole bed — waited for,
+    // so the isClean() check below cannot race it into starting a second
+    // concurrent capture on the same camera
     if (!previewModeController.isPreviewMode) {
       reportAlignProgress('preparing');
       await setupPreviewMode({ waitForFullAreaCapture: true });
@@ -70,10 +68,9 @@ export const captureWorkareaImage = async ({
     const { modelHeight, width } = workareaManager;
     let detectedMarks: null | Point[] = null;
 
-    // the plain sweep and the full-area shot cannot report their own tile
-    // counts (the preview manager drives them), so the phase is announced
-    // without a count; the smart sweep reports each tile below. Only a sweep
-    // registers the ESC shortcut — a one-shot full-area capture cannot be stopped.
+    // the plain sweep and the full-area shot cannot report their own tile counts
+    // (the preview manager drives them), so the phase is announced without one;
+    // the smart sweep reports each tile below. Only a sweep can be stopped.
     reportAlignProgress('capture', { stoppable: !isFullArea });
 
     if (!isFullArea) {
@@ -104,7 +101,7 @@ export const captureWorkareaImage = async ({
 
     if (!url) return null;
 
-    // keep preview mode if model support mark refinement retakes (region previews)
+    // left running for the align step's refinement retakes
     keepPreviewMode = !isFullArea || supportsRegionPreview();
 
     return { detectedMarks, isFullArea, url };
@@ -115,6 +112,10 @@ export const captureWorkareaImage = async ({
   } finally {
     canvasEventEmitter.removeListener('preview-background-updated', handleBackgroundUpdated);
 
-    if (!keepPreviewMode && !originalIsPreviewMode && previewModeController.isPreviewMode) previewModeController.end();
+    // waited for so callers can safely talk to the device (e.g. read exposure
+    // settings) right after a failed or non-refinable capture
+    if (!keepPreviewMode && !originalIsPreviewMode && previewModeController.isPreviewMode) {
+      await previewModeController.end({ shouldWaitForEnd: true });
+    }
   }
 };
