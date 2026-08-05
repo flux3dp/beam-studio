@@ -5,6 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { dpmm } from '@core/app/actions/beambox/constant';
 import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { PrintAndCutCanvasManager } from './CanvasManager';
 import { usePrintAndCutStore } from './store';
@@ -13,6 +14,7 @@ import { getContentBBoxFromState, getGridOffsets, getPaperRect } from './utils/l
 
 /** Background padding around the content (design + marks) during setup, in mm */
 const SETUP_BACKGROUND_PADDING_MM = 10;
+const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
 const Canvas = (): React.JSX.Element => {
   // both are fixed for the dialog's lifetime and must be known before the first
@@ -136,8 +138,18 @@ const Canvas = (): React.JSX.Element => {
 
     // the camera preview step always frames the whole workarea, so the
     // captured sheet is visible wherever it was placed
-    canvasManager.setBackgroundRect(null);
-    canvasManager.resetView();
+    const frameWorkarea = () => {
+      canvasManager.setBackgroundRect(null);
+      canvasManager.resetView();
+    };
+
+    frameWorkarea();
+
+    canvasEvents.on('canvas-change', frameWorkarea);
+
+    return () => {
+      canvasEvents.removeListener('canvas-change', frameWorkarea);
+    };
   }, [canvasManager, step]);
 
   return <EmbeddedCanvas canvasManager={canvasManager} />;

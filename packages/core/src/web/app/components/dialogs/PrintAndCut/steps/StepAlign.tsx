@@ -15,6 +15,7 @@ import type { AlignProgress } from '../utils/alignProgress';
 import { clearAlignProgress } from '../utils/alignProgress';
 import { captureWorkareaImage } from '../utils/captureWorkareaImage';
 
+import ExposureControl from './ExposureControl';
 import RemainingTime from './RemainingTime';
 
 const buildMessage = (
@@ -56,7 +57,6 @@ const StepAlign = (): React.JSX.Element => {
         }),
       ),
     );
-
   const handlePreviewAndAlign = async () => {
     // in the store so the dialog footer can block navigation while running
     setIsProcessing(true);
@@ -89,6 +89,7 @@ const StepAlign = (): React.JSX.Element => {
         setAlignmentTransform({ angle, tx, ty });
       }
     } finally {
+      // ExposureControl reloads the exposure settings when this flips back
       setIsProcessing(false);
       clearAlignProgress();
     }
@@ -100,6 +101,7 @@ const StepAlign = (): React.JSX.Element => {
       <Button block icon={<AimOutlined />} loading={isProcessing} onClick={handlePreviewAndAlign} type="primary">
         {lang.preview_and_align}
       </Button>
+      <ExposureControl />
       {alignProgress && (
         <div className={styles.alignProgress}>
           <Progress percent={alignProgress.percentage} showInfo={false} size="small" status="active" />
