@@ -40,6 +40,10 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
   public hasWideAngleCamera: boolean = false;
 
+  public get currentCameraIndex(): number {
+    return this._previewMode === PreviewMode.FULL_AREA ? 1 : 0;
+  }
+
   constructor(device: IDeviceInfo) {
     super(device);
     this.progressId = 'beam-preview-manager';
