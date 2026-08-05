@@ -236,7 +236,6 @@
       'data-nozzleMode',
       'data-nozzleOffsetX',
       'data-nozzleOffsetY',
-      'data-delay',
       'data-interpolation',
       'data-dpi',
       'data-rightPadding',
