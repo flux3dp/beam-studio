@@ -273,8 +273,6 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
       hypothesis.base.map(([expectedIndex, blobIndex]) => [expectedIndex, found[blobIndex]]),
     );
 
-    console.log('confirmHypothesis confirmed', hypothesis, confirmed);
-
     while (confirmed.size < expectedMarks.length) {
       if (stopped) return null;
 
