@@ -164,6 +164,7 @@ class PreviewModeController {
         this.setIsPreviewMode(true);
 
         setCameraPreviewState({
+          previewCameraIndex: this.previewManager.currentCameraIndex,
           previewMode: this.previewManager.previewMode,
           supportedPreviewModes: this.previewManager.supportedPreviewModes,
         });
@@ -392,7 +393,11 @@ class PreviewModeController {
     this.previewManager = null;
     this.currentDevice = null;
     this.setIsPreviewMode(false);
-    setCameraPreviewState({ pendingPreviewMode: undefined, previewMode: PreviewMode.REGION });
+    setCameraPreviewState({
+      pendingPreviewMode: undefined,
+      previewCameraIndex: undefined,
+      previewMode: PreviewMode.REGION,
+    });
     this.isPreviewBlocked = false;
     deviceMaster.disconnectCamera();
   }
@@ -413,7 +418,7 @@ class PreviewModeController {
 
     const newMode = await this.previewManager.switchPreviewMode(mode);
 
-    setCameraPreviewState({ previewMode: newMode });
+    setCameraPreviewState({ previewCameraIndex: this.previewManager.currentCameraIndex, previewMode: newMode });
   };
 }
 

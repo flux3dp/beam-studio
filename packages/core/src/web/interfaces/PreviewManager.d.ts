@@ -3,6 +3,12 @@ import type { PreviewMode } from '@core/app/constants/cameraConstants';
 import type { CameraConfig, CameraParameters } from './Camera';
 
 export interface PreviewManager {
+  /**
+   * Index of the physical camera used by the current preview mode; camera settings
+   * (e.g. exposure) are per-camera. Undefined when the manager only uses one camera.
+   */
+  currentCameraIndex?: number;
+
   end(): Promise<void>;
 
   getCameraOffset?: () => CameraParameters;

@@ -21,7 +21,7 @@ const PreviewSlider = (): React.ReactNode => {
   const [autoExposure, setAutoExposure] = useState<boolean | null>(null);
   const [isSettingAutoExposure, setIsSettingAutoExposure] = useState(false);
   const [isRawMode, setIsRawMode] = useState(false);
-  const { isDrawing, isPreviewMode, previewMode } = useCameraPreviewStore();
+  const { isDrawing, isPreviewMode, previewCameraIndex, previewMode } = useCameraPreviewStore();
 
   const toggleAutoExposure = async (value: boolean) => {
     if (isSettingAutoExposure) return;
@@ -82,12 +82,13 @@ const PreviewSlider = (): React.ReactNode => {
   };
 
   // this is also triggered by UPDATE_CONTEXT event in PreviewModeController.start
+  // exposure is per-camera, so refetch when switching preview mode changes the active camera
   useEffect(() => {
     setExposureSetting(null);
     setAutoExposure(null);
 
     if (isPreviewMode) getSetting();
-  }, [isPreviewMode]);
+  }, [isPreviewMode, previewCameraIndex]);
 
   const showAutoExposure = useMemo(() => {
     if (autoExposure === null) return false;

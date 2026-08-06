@@ -12,6 +12,8 @@ type CameraPreviewState = {
   isPreviewMode: boolean;
   isStarting: boolean;
   pendingPreviewMode?: PreviewMode;
+  /** physical camera used by the current preview mode; undefined for single-camera managers */
+  previewCameraIndex?: number;
   previewMode: PreviewMode;
   supportedPreviewModes: PreviewMode[];
 };
