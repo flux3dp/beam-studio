@@ -14,6 +14,7 @@ import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage } from '@core/app/stores/storageStore';
+import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -157,6 +158,15 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
         message: lang.beambox.popup.auto_feeder_origin,
       });
     });
+  }
+
+  // inner engraving: an old swiftray silently ignores stlObjects and would engrave nothing, so check
+  // before the (potentially tens of MB) mesh payload is even built. checkVersion shows its own alert
+  if (
+    document.querySelector(`#svgcontent [${STL_ATTR.marker}]`) &&
+    !swiftrayClient.checkVersion('SWIFTRAY_SUPPORT_STL')
+  ) {
+    return false;
   }
 
   if (isPromark) {

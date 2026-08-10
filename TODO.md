@@ -393,7 +393,7 @@ chaining 會串出開放 polyline。**不要為了這個引入 CGAL**（B-8）�
   - 需要可以在 three.js 畫布中對 stl 物件 和 畫布本身 做移動、旋轉、縮放的操作，並且需要可以顯示當前的值 & 重置。其中對於 stl 物件的控制需要搭配 packages/core/src/web/app/svgedit/history/undoManager.ts 使用
   - 需要可以顯示第三點中設定的材料形狀（半透明淺灰色）。暫定這個材料物件是不可以移動的
   - stl 物件的顏色照舊套用圖層顏色（updateElementColor）
-  - 畫布上需要有大小控制、視角控制（正投影 vs 透視圖，等角測試圖、前視圖、俯視圖、左側視圖、右側視圖等選項，選一個最長使用的作為預設值並提供重置按鈕）
+  - 畫布上需要有大小控制、視角控制（正投影 vs 透視圖，等角測試圖、前視圖、俯視圖、左側視圖、右側視圖等選項，選一個最常使用的作為預設值並提供重置按鈕）
   - 【V1】剖面預覽：用 three.js clipping plane 提供一個 Z 高度 slider，即時顯示模型在該高度的剖面
     - `renderer.localClippingEnabled = true` + `material.clippingPlanes = [new THREE.Plane(new Vector3(0, 0, -1), z)]`
     - 純 render 層功能，不做任何幾何運算，即時無延遲，不需要新增套件
@@ -413,10 +413,10 @@ chaining 會串出開放 polyline。**不要為了這個引入 CGAL**（B-8）�
 > ⚠️ 效能 / 記憶體：大 mesh 要注意 `geometry.dispose()`（切分頁、關閉內雕模式時），否則 renderer 記憶體會漏。
 
 6、STL 物件控制選項。以下內容若是不易與原本的 component 共用邏輯或內容過多，則新增一個 component 處理，名稱為同名 + 後綴 3D 或 STL。
-  - packages/core/src/web/app/components/beambox/RightPanel/ObjectPanel.tsx：renderToolBtns 增加【居中於材料】、【居中於加工區域】，其中居中於加工區域指的是加工區域的 xy + 材料的 z。
+  - packages/core/src/web/app/components/beambox/RightPanel/ObjectPanel.tsx：renderToolBtns 增加~~【居中於材料】、【居中於加工區域】，其中居中於加工區域指的是加工區域的 xy + 材料的 z。~~【居中於可加工位置】
   - packages/core/src/web/app/components/beambox/RightPanel/DimensionPanel/DimensionPanel.tsx：增加 Z 軸位置與尺寸、旋轉拆成 XYZ、flip 增加 Z 軸
   - packages/core/src/web/app/components/beambox/RightPanel/OptionsPanel.tsx：增加 STL 版本。控制項為【雕刻模式-填充（即現有的packages/core/src/web/app/components/beambox/RightPanel/OptionsBlocks/InFillBlock.tsx）】、【雕刻模式-打點/打線】、【層高】、【點間距（僅在選擇打點模式時顯示）】
-  - packages/core/src/web/app/components/beambox/RightPanel/ActionsPanel.tsx：先只提供 array 功能。
+  - packages/core/src/web/app/components/beambox/RightPanel/ActionsPanel.tsx：~~先只提供 array 功能。~~全部不支援
 
 > ✅ per-object 一定可以支援（per-object vs per-layer 的取捨移到 TBD 討論）。
 > 💡 DimensionPanel 3D 版注意：旋轉的歐拉角順序要固定並在 UI 說明（XYZ）、等比縮放鎖、Z flip 對非對稱模型的意義、以及「尺寸」是 bbox 尺寸還是縮放比。
@@ -485,8 +485,8 @@ TBD：
 - STL 物件要支援哪些 actions？
   > 💡 見第 6 點註解（Array / 複製 / 鏡射 / 重設 / 置中對齊）。
 
-- 不開放 smart fit 的話，需要強制結束？
-  > 💡 需要更多說明，我不確定這裡指的是曲面雕刻的 smart fit 還是別的。
+- 不開放 smart nest 的話，需要強制結束？
+  > 💡 需要更多說明，我不確定這裡指的是曲面雕刻的 smart nest 還是別的。
 
 - 【新增】層高 / 點距 / 打點打線是 per-object 還是 per-layer？
   > 現況：既有的雕刻參數（功率 / 速度 / 頻率 / 次數）全部是 **per layer**（ConfigPanel）；第 6 點把層高 / 點距放在 **per object** 的 OptionsPanel。
@@ -531,3 +531,73 @@ TBD：
 
 - 內雕模式 thumbnail 怎麼顯示？
   > 💡 見第 4 點註解：固定等角視角 + 正投影相機 fit 材料 bbox，離屏 render。
+
+
+
+
+
+08/06 with PM：
+# 3D 畫布相關
+1、Beam studio 2D 畫布是原點在左上：X 右、Y 下，畫布單位 0.1mm（雖然這個用戶應該看不出來），顯示單位 1mm / 1inch；
+CAD 畫布好像習慣原點在左前下：X 右、Y 後（遠離人）、Z 上，單位 1mm；
+Three.js 原點在左前下：X 右、Y 上、Z 前（靠近人），單位 1mm (旋轉後可以改成 CAD 的習慣，但默認控制器會是 Three.js 的習慣)；
+xTool 原點在左後下：X 右、Y 前（靠近人）、Z 上，單位 1mm；
+  > ~~盡量使用 Beam studio，可以和 CAD 不一致~~
+  > with simon: 使用 CAD 座標軸
+
+2、物件控制顯示在左下角 or 中心？
+  > 中心
+
+2、Beam studio 的匯入慣例是原大小 + 放置在畫布原點。3D 匯入時的【自適應縮放】要以彈窗+不再顯示的形式出現（需要判斷不再顯示時選擇了哪一種），還是以偏好設定的形式設定？
+  > 預設就放置在中間（水晶內雕適合在中心處理，為了讓用戶習慣，預設在中心）
+  > 【自適應縮放】的提示在物件超出材料時再顯示，小於時不用
+
+2、原本 Beam studio 支援的 2D 物件（路徑、文字、圖片 等），在 3D 畫布上也要支援嗎？
+  > 【Phase 1】2D 與 3D 互不兼容，切換時等於開新畫布，提示保存並清空。【Future】視情況擴展成 3D，可以設定成 2D 物件 + 固定高度 來轉換成 3D 物件。
+  > 側欄工具也要隱藏
+
+3、畫布顏色、選中效果
+  > 畫布顏色 先遵循 Beam studio 慣例
+  > 選中效果 藍框（顏色也照慣例）
+
+4、3D 畫布中，相機預覽的結果要放在哪邊？（最底層 or 材料頂部）
+  > 【Phase 1】禁用相機預覽。【Future】TBD
+
+5、雕刻的安全距離（自適應縮放需要預留的 padding），xTool 留了 4mm
+  > 4mm，DEV 允許自己設定（先放在文件設定裡）
+
+6、居中於材料 = 忽略工作範圍限制的材料中心，居中於可加工位置 = 考慮工作範圍限制 + 安全距離的材料中心
+  > 先只給【居中於可加工位置】
+
+# 雕刻相關
+
+1、Promark 目前沒有自動對焦功能，需要用戶在開始前手動對焦。算圖時假設用戶對焦在 z=0？也可以提供選項（例如工x料頂部=視材料設定改變，指定高度=給一個輸入框自己填）
+  > 預設總是對焦到工作平台，之後依實際使用時的反饋再調整
+
+2、重複雕刻可能會影響成果，要直接禁用 repeat 參數嗎？
+  > 禁用
+
+3、統一圖層內有多個 STL 物件時，以什麼順序處理？（畫布順序，物件最低位置，同一 Z 軸合併處理（這個的計算估計會複雜一點點））
+  > 同一 Z 軸合併處理
+
+4、層高與點間距要算做圖層參數還是物件參數？xTool 的所有參數都是放在物件裡的（包含我們的圖層參數）
+  > 依實際使用時的反饋再調整
+
+5、點間距 在處理無法整除的線段時，要怎麼取點？
+  > 數量四捨五入，微調間距平均取樣
+
+
+# 其他
+
+1、STL 物件要支援哪些 actions？若是不支援 smart nest，在進入 3D 模式時，結束 or 隱藏？
+  > 【Phase 1】全部不要；結束 smart nest。【Future】視情況擴展成 3D。
+
+2、內雕模式、旋轉軸/廣域雕刻/曲面雕刻 等，只能開一個
+  > Yes
+
+3、內雕模式工作縮圖/檔案所圖怎麼顯示？ Claude 建議使用特定視角（等角視角 + 正投影）
+  > Yes
+
+4、路徑預覽功能
+  > 【Phase 1】隱藏，DEV 開放。【Future】需要做成 3D 版本的預覽。
+

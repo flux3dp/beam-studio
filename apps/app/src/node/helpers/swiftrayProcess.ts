@@ -123,6 +123,13 @@ export const killStaleSwiftray = (): void => {
       continue;
     }
 
+    if (name.toLowerCase().includes('/swiftray/build/')) {
+      console.warn(
+        `Port ${SWIFTRAY_PORT} is held by "${name}" (pid ${pid}), probably a development build, not killing it`,
+      );
+      continue;
+    }
+
     console.log(`Killing stale Swiftray (pid ${pid}) holding port ${SWIFTRAY_PORT}`);
     killPid(pid);
   }

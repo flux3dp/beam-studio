@@ -39,6 +39,7 @@ import { getAdorPaddingAccel } from './export/ador-utils';
 import { annotateLayerBBox } from './export/annotateLayerBBox';
 import { annotateLayerDpmm } from './export/annotateLayerDpmm';
 import generateThumbnail from './export/generate-thumbnail';
+import getStlObjects from './export/getStlObjects';
 
 let svgCanvas: ISVGCanvas;
 
@@ -54,7 +55,11 @@ export const dpiTextMap: { [key in EngraveDpiOption]: number } = {
   ultra: 1016,
 };
 
-const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Promise<IWrappedSwiftrayTaskFile> => {
+const generateUploadFile = async (
+  thumbnail: string,
+  thumbnailUrl: string,
+  { withStlObjects = true }: { withStlObjects?: boolean } = {},
+): Promise<IWrappedSwiftrayTaskFile> => {
   Progress.openNonstopProgress({
     id: 'retrieve-image-data',
     message: i18n.lang.beambox.bottom_right_panel.retreive_image_data,
@@ -63,13 +68,23 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Prom
   Progress.popById('retrieve-image-data');
 
   const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
+  // inner engraving only: the meshes the `data-stl` placeholder rects in svgString refer to
+  const stlObjects = withStlObjects ? await getStlObjects() : undefined;
 
   console.log('File Size', svgString.length);
+
+  if (stlObjects) {
+    console.log(
+      'STL Objects',
+      Object.entries(stlObjects).map(([id, data]) => `${id}: ${data.length}`),
+    );
+  }
 
   return {
     data: svgString,
     extension: 'svg',
     name: 'svgeditor.svg',
+    stlObjects,
     thumbnail: thumbnail.toString(),
     uploadName: thumbnailUrl.split('/').pop() ?? '',
   };
@@ -440,7 +455,8 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
     message: 'Generating Upload File',
   });
 
-  const uploadFile = await generateUploadFile('', '');
+  // framing only needs the outline of the projection rects, never the meshes themselves
+  const uploadFile = await generateUploadFile('', '', { withStlObjects: false });
 
   await cleanUpTempModification();
 

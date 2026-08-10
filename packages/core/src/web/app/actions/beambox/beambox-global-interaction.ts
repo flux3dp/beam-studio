@@ -1,9 +1,15 @@
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import selectionManager from '@core/app/svgedit/selection';
 import { isAtPage } from '@core/helpers/hashHelper';
+import {
+  INNER_ENGRAVING_DISABLED_MENU_ITEMS,
+  isInnerEngravingActive,
+  resolveInnerEngravingActive,
+} from '@core/helpers/innerEngraving';
 import menu from '@core/implementations/menu';
 
 class BeamboxGlobalInteraction {
@@ -11,6 +17,20 @@ class BeamboxGlobalInteraction {
     tabController.onFocused(() => {
       this.attach();
     });
+    // the native menu is built once and toggled by id, so the mode has to push its changes rather
+    // than being read at build time like the web menu is
+    useDocumentStore.subscribe(
+      (state) => resolveInnerEngravingActive(state) && isAtPage('editor'),
+      () => this.onInnerEngravingChange(),
+    );
+  }
+
+  /**
+   * Switch off what inner engraving mode cannot do — see the list for why each item is there.
+   */
+  onInnerEngravingChange(active = isInnerEngravingActive()) {
+    if (active) menu.disable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
+    else menu.enable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
   }
 
   attach = () => {
@@ -23,6 +43,8 @@ class BeamboxGlobalInteraction {
       this.onObjectBlur();
       this.onObjectFocus();
       this.onCanvasModeChange();
+      // `menu.attach()` above has just enabled everything, so the mode has to be applied after it
+      this.onInnerEngravingChange();
     } else {
       // disable all
       menu.attach([]);

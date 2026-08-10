@@ -1,5 +1,6 @@
 import type { PreviewSpeedLevelType } from '@core/app/actions/beambox/constant';
 import type { RotaryType } from '@core/app/constants/addOn';
+import type { MaterialShape } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/moduleOffsets';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
@@ -22,6 +23,21 @@ export type DocumentState = {
   'extend-rotary-workarea': boolean;
   'frame-before-start': boolean;
   'inner-engraving': boolean;
+  /** Material depth (Y) in mm, box only. */
+  'inner-engraving-depth': number;
+  /** Material diameter in mm, cylinder and sphere only. */
+  'inner-engraving-diameter': number;
+  /** Material height (Z) in mm. For a sphere this is the liquid level, capped at the diameter. */
+  'inner-engraving-height': number;
+  'inner-engraving-refractive-index': number;
+  /** How far engraving keeps away from the material surfaces, in mm. */
+  'inner-engraving-safety-margin': number;
+  'inner-engraving-shape': MaterialShape;
+  /** Material width (X) in mm, box only. */
+  'inner-engraving-width': number;
+  /** Material **centre** in mm, from the work area origin (x/y increase right/down as in SVG). */
+  'inner-engraving-x': number;
+  'inner-engraving-y': number;
   'job-origin': number;
   'pass-through': boolean;
   'pass-through-height'?: number;

@@ -1,9 +1,11 @@
 import type { ReactNode } from 'react';
 import React, { memo } from 'react';
 
+import { SettingFilled } from '@ant-design/icons';
 import { Switch } from 'antd';
 
-import { todo } from '@core/helpers/is-dev';
+import { showInnerEngravingSettings } from '@core/app/components/dialogs/InnerEngravingSettings';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './index.module.scss';
@@ -14,12 +16,12 @@ interface Props {
   renderWarningIcon: (tooltipText: string) => ReactNode;
   setInnerEngraving: (on: boolean) => void;
   show: boolean;
+  /** The work area being edited here, which may not be saved yet. */
+  workarea: WorkAreaModel;
 }
 
-todo('gear icon opening InnerEngravingSettings (material shape / size / position / refractive index)');
-
 const InnerEngravingBlock = memo(
-  ({ innerEngraving, isCurveEngraving, renderWarningIcon, setInnerEngraving, show }: Props) => {
+  ({ innerEngraving, isCurveEngraving, renderWarningIcon, setInnerEngraving, show, workarea }: Props) => {
     const {
       beambox: { document_panel: tDocument },
       global: tGlobal,
@@ -35,6 +37,9 @@ const InnerEngravingBlock = memo(
               <strong>{tDocument.inner_engraving}</strong>
             </label>
             {renderWarningIcon(tGlobal.mode_conflict)}
+            {/* the material settings stand on their own: they are saved by their own dialog, so they
+                stay editable whether or not the mode is being turned on in this session */}
+            <SettingFilled className={styles.icon} onClick={() => showInnerEngravingSettings(workarea)} />
           </div>
           <div className={styles.control}>
             <Switch

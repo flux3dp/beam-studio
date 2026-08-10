@@ -8,8 +8,10 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { supportInnerEngraving } from '@core/app/constants/workarea-constants';
 import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useStlStore } from '@core/app/stores/stlStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -57,6 +59,11 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
 
   if (!setContentCmd.isEmpty()) batchCmd.addSubCommand(setContentCmd);
 
+  // svgcontent has just been replaced, so every projection rect of the previous document is gone.
+  // The meshes are not in the DOM and would otherwise sit in the store holding GPU buffers.
+  // ⚠️ Known limit: undoing a file load restores the previous rects but not their meshes.
+  useStlStore.getState().clear();
+
   const currentWorkarea: WorkAreaModel = workareaManager.model;
 
   // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
@@ -103,6 +110,12 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
         newDocumentState['rotary_mode'] = false;
       }
     }
+
+    // inner engraving mode, gated by the model: a file made on Promark UV opened elsewhere must not
+    // switch the app into a mode the machine cannot do
+    const innerEngraving = str.match(/data-inner-engraving="([a-z]+)"/)?.[1] === 'true';
+
+    newDocumentState['inner-engraving'] = innerEngraving && supportInnerEngraving(currentWorkarea);
 
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 

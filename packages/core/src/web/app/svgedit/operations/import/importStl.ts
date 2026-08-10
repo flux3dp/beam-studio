@@ -1,8 +1,16 @@
-import { Matrix4, Vector3 } from 'three';
+import type { BufferGeometry } from 'three';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 
-import { MM_TO_SCENE, svgToSceneY } from '@core/app/components/beambox/InnerEngraving/utils/coordinates';
+import { MM_TO_SCENE } from '@core/app/components/beambox/InnerEngraving/utils/coordinates';
+import { getEngravableBox } from '@core/app/components/beambox/InnerEngraving/utils/engravable';
 import { updateProjectionRect } from '@core/app/components/beambox/InnerEngraving/utils/projection';
+import { selectStlObject } from '@core/app/components/beambox/InnerEngraving/utils/selection';
+import {
+  getBaseSize,
+  getMatrix,
+  IDENTITY_TRANSFORM,
+} from '@core/app/components/beambox/InnerEngraving/utils/transform';
+import type { StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -14,7 +22,6 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 todo('建議使用 @core 路徑');
 import history from '../../history/history';
 import undoManager from '../../history/undoManager';
-import selectionManager from '../../selection';
 
 let svgCanvas: ISVGCanvas;
 
@@ -27,29 +34,44 @@ todo(
 );
 todo('TBD: resize + relocate 要視作 reset 參考的原始值嗎？這個行為要併入 import 還是另外有一個 history command？');
 
-// esther ask: boundingBox 是 mm？translate（SCENE unit） 和 scale （MM_TO_SCENE） 相乘不會導致兩倍嗎？
+todo('自動縮小要改成彈窗詢問（TODO.md 第 4 點的【自適應縮放】），目前是直接縮');
+
 /**
- * Initial placement for a freshly imported mesh: centred on the work area in XY, sitting on z = 0.
+ * Initial placement for a freshly imported mesh: centred on the engravable area, shrunk to fit it.
  *
- * The returned matrix maps mesh space (mm) to scene space (0.1mm).
+ * Centred rather than placed at the origin because inner engraving wants the work in the middle of
+ * the field (PM, 08/06), and shrunk because a model that pokes out of the engravable area would
+ * silently lose whatever sticks out. It **only ever shrinks** — importing at the model's real size
+ * is the convention, fitting is the exception. (The panel's fit action does enlarge; that one is
+ * asked for explicitly.)
+ *
+ * When there is no engravable area at all — a workpiece smaller than twice the safety margin — the
+ * fit has nothing to aim at, so the model keeps its size and is centred on the work area instead.
+ * That is a legitimate configuration, not an error: the user still has to fix the material setup.
  */
-const getInitialMatrix = (boundingBox: { max: Vector3; min: Vector3 }): Matrix4 => {
-  const center = new Vector3().addVectors(boundingBox.min, boundingBox.max).multiplyScalar(0.5);
-  const scale = new Matrix4().makeScale(MM_TO_SCENE, MM_TO_SCENE, MM_TO_SCENE);
-  const translate = new Matrix4().makeTranslation(
-    workareaManager.width / 2 - center.x * MM_TO_SCENE,
-    svgToSceneY(workareaManager.height / 2) - center.y * MM_TO_SCENE,
-    // rest the model on the focus origin rather than centring it on z = 0
-    -boundingBox.min.z * MM_TO_SCENE,
+const getInitialTransform = (geometry: BufferGeometry): StlTransform => {
+  const size = getBaseSize(geometry).multiplyScalar(MM_TO_SCENE);
+  const box = getEngravableBox();
+
+  if (!box.isValid) {
+    return {
+      ...IDENTITY_TRANSFORM,
+      // rest the model on the focus origin rather than centring it on z = 0
+      position: [workareaManager.width / 2, workareaManager.height / 2, size.z / 2],
+    };
+  }
+
+  const fit = Math.min(
+    1,
+    size.x > 0 ? box.width / size.x : Infinity,
+    size.y > 0 ? box.depth / size.y : Infinity,
+    size.z > 0 ? box.height / size.z : Infinity,
   );
 
-  return translate.multiply(scale);
+  return { ...IDENTITY_TRANSFORM, position: [...box.center], scale: [fit, fit, fit] };
 };
 
 todo('TBC: importStl 期間需要額外加一個 modal 嗎？寫在 TODO 裡，應該是後期階段再補');
-todo(
-  'FIXME: selectionManager.selectOnly([elem]); 要和 three js 的 select 同步，見 stlStore 註解的 TODO。注意 undo redo 後不需要重新選中',
-);
 
 /**
  * Import an STL file as an inner engraving object.
@@ -59,7 +81,8 @@ todo(
  * serialization all work through the existing svgedit machinery.
  */
 const importStl = async (file: File): Promise<void> => {
-  const geometry = new STLLoader().parse(await file.arrayBuffer());
+  const buffer = await file.arrayBuffer();
+  const geometry = new STLLoader().parse(buffer);
 
   geometry.computeBoundingBox();
 
@@ -67,7 +90,7 @@ const importStl = async (file: File): Promise<void> => {
     throw new Error(`Failed to read geometry from ${file.name}`);
   }
 
-  const matrix = getInitialMatrix(geometry.boundingBox);
+  const transform = getInitialTransform(geometry);
   const id = svgCanvas.getNextId();
   const elem = svgCanvas.addSvgElementFromJson<SVGRectElement>({
     attr: {
@@ -85,8 +108,10 @@ const importStl = async (file: File): Promise<void> => {
     element: 'rect',
   });
 
-  updateProjectionRect(elem, geometry, matrix);
-  useStlStore.getState().set({ geometry, id, matrix });
+  const object = { buffer, geometry, id, initialTransform: transform, transform };
+
+  updateProjectionRect(elem, geometry, getMatrix(object), { initialTransform: transform, transform });
+  useStlStore.getState().set(object);
   updateElementColor(elem);
 
   const batchCmd = new history.BatchCommand('Import STL');
@@ -94,13 +119,13 @@ const importStl = async (file: File): Promise<void> => {
   batchCmd.addSubCommand(new history.InsertElementCommand(elem));
   // the mesh lives outside the DOM, so undo/redo has to add and remove it alongside the rect
   batchCmd.onAfter = () => {
-    if (elem.parentNode) useStlStore.getState().set({ geometry, id, matrix });
+    if (elem.parentNode) useStlStore.getState().set(object);
     else useStlStore.getState().remove(id);
   };
   undoManager.addCommandToHistory(batchCmd);
 
-  selectionManager.selectOnly([elem]);
-  useStlStore.getState().setSelectedId(id);
+  // one call for both halves of the selection: the mesh in the store and the rect in svgedit
+  selectStlObject(id);
 };
 
 export default importStl;

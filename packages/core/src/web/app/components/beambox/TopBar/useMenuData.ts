@@ -32,15 +32,12 @@ export interface MenuNode {
 
 const divider: MenuNode = { type: 'divider' };
 
-/**
- * Resolve `disabled` from the shared menu item status, an explicit `disabled` on the node wins so
- * that static conditions (mobile only items, ...) can still be expressed in the tree.
- */
+/** Resolve `disabled` from every applicable condition. */
 const applyDisabledKeys = (nodes: MenuNode[], disabledKeys: Set<string>): MenuNode[] =>
   nodes.map((node) => ({
     ...node,
     children: node.children ? applyDisabledKeys(node.children, disabledKeys) : undefined,
-    disabled: node.disabled ?? (node.id !== undefined && disabledKeys.has(node.id)),
+    disabled: Boolean(node.disabled || (node.id !== undefined && disabledKeys.has(node.id))),
   }));
 
 const useMenuData = (email?: string): MenuNode[] => {

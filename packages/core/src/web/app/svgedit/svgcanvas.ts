@@ -1426,6 +1426,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     svgcontent.setAttribute('data-workarea', workarea);
+    // inner engraving mode travels with the file the same way rotary does, so reopening a .beam
+    // brings back the 3D canvas rather than showing the projection rects as flat rectangles
+    if (documentState['inner-engraving']) svgcontent.setAttribute('data-inner-engraving', 'true');
+    else svgcontent.removeAttribute('data-inner-engraving');
 
     const output = this.svgToString(svgcontent, 0, unit, fixTopExpansion);
 

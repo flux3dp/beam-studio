@@ -66,6 +66,27 @@
    ---------------------------------------------------------------------------------
 
    =================================================================================
+  |   STL Source   |      ...     |    Block Containing the meshes of STL objects   |
+   =================================================================================
+   ---------------------------------------------------------------------------------
+  |   block type   |    1 Bytes   | 0x06 (0x05 is taken by another feature)         |
+   ---------------------------------------------------------------------------------
+  |     length     |     VINT     | indicate size of remaining block                |
+   ---------------------------------------------------------------------------------
+  |    Id Length   |    1 Byte    | Len of the projection rect's id                 |
+   ---------------------------------------------------------------------------------
+  |       Id       | ↖            | Id, same key as the swiftray stlObjects payload |
+   ---------------------------------------------------------------------------------
+  |    Mesh Len    |     VINT     | Len of the STL file                             |
+   ---------------------------------------------------------------------------------
+  |      Mesh      | ↖            | The original STL file bytes                     |
+   ---------------------------------------------------------------------------------
+  |                    Repeat Id Length, Id, Mesh Len, Mesh                         |
+   ---------------------------------------------------------------------------------
+  ⚠️ Must stay after every other block: readBlocks stops at the first unknown block type, so an
+     older Beam Studio reading this file has to meet it last or it would drop the blocks behind it.
+
+   =================================================================================
   | MISC DATA(JSON)|  content len |    Block Containing json string of Misc. Data   |
    =================================================================================
    ---------------------------------------------------------------------------------
@@ -78,14 +99,20 @@
 
 */
 import { Buffer } from 'buffer';
+import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import type { StlObject } from '@core/app/stores/stlStore';
+import { useStlStore } from '@core/app/stores/stlStore';
 import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
+import { STL_ATTR } from '@core/app/svgedit/stl/constants';
+import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { parseStlTransform } from '@core/app/svgedit/stl/transformAttr';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import { hasVariableText } from '@core/helpers/variableText';
@@ -136,7 +163,9 @@ const readVInt = (buffer, offset = 0) => {
   };
 };
 
-const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'svgContent' | 'thumbnail'): Buffer => {
+const localHeaderTypeBuffer = (
+  type: 'imageSource' | 'miscData' | 'stlSource' | 'svgContent' | 'thumbnail',
+): Buffer => {
   switch (type) {
     case 'svgContent':
       return Buffer.from([0x01]);
@@ -146,6 +175,9 @@ const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'svgContent' |
       return Buffer.from([0x03]);
     case 'miscData':
       return Buffer.from([0x04]);
+    // 0x05 is taken by another feature under development
+    case 'stlSource':
+      return Buffer.from([0x06]);
     default:
       break;
   }
@@ -162,11 +194,13 @@ const generateSvgBlockBuffer = (svgString: string) => {
   return Buffer.concat([typeBuf, lengthVintBuf, svgStringBuf]);
 };
 
-// 1 Byte Type (0x02 for svg content) + ? bytes vint length + length bytes svg string
-const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffer }) => {
-  let imageSourceBlockBuffer = localHeaderTypeBuffer('imageSource');
+/**
+ * The repeating `id + binary` payload shared by the image source (0x02) and STL source (0x06)
+ * blocks: 1 byte id length, id, vint binary length, binary.
+ */
+const generateBinarySourceBlockBuffer = (type: 'imageSource' | 'stlSource', sources: { [id: string]: ArrayBuffer }) => {
   let tempbuffer = Buffer.alloc(0);
-  const ids = Object.keys(imageSources);
+  const ids = Object.keys(sources);
 
   for (let i = 0; i < ids.length; i += 1) {
     const id = ids[i];
@@ -175,14 +209,13 @@ const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffe
 
     idSizeBuf.writeUInt8(idBuf.length, 0);
 
-    const imageBuf = Buffer.from(imageSources[id]);
-    const imageSizeBuf = valueToVIntBuffer(imageBuf.length);
+    const dataBuf = Buffer.from(sources[id]);
+    const dataSizeBuf = valueToVIntBuffer(dataBuf.length);
 
-    tempbuffer = Buffer.concat([tempbuffer, idSizeBuf, idBuf, imageSizeBuf, imageBuf]);
+    tempbuffer = Buffer.concat([tempbuffer, idSizeBuf, idBuf, dataSizeBuf, dataBuf]);
   }
-  imageSourceBlockBuffer = Buffer.concat([imageSourceBlockBuffer, valueToVIntBuffer(tempbuffer.length), tempbuffer]);
 
-  return imageSourceBlockBuffer;
+  return Buffer.concat([localHeaderTypeBuffer(type), valueToVIntBuffer(tempbuffer.length), tempbuffer]);
 };
 
 const generateThumbnailBlockBuffer = (thumbnail: ArrayBuffer): Buffer => {
@@ -206,10 +239,14 @@ const generateBeamBuffer = (
   svgString: string,
   imageSources: { [id: string]: ArrayBuffer },
   thumbnail?: ArrayBuffer,
+  stlSources: { [id: string]: ArrayBuffer } = {},
 ): Buffer => {
   const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]); // Bvg{version in uint} max to 255
   const svgBlockBuf = generateSvgBlockBuffer(svgString);
-  const imageSourceBlockBuffer = generateImageSourceBlockBuffer(imageSources);
+  const imageSourceBlockBuffer = generateBinarySourceBlockBuffer('imageSource', imageSources);
+  const hasStl = Object.keys(stlSources).length > 0;
+  // written last, because readBlocks in older versions stops at the first unknown block type
+  const stlSourceBlockBuffer = hasStl ? generateBinarySourceBlockBuffer('stlSource', stlSources) : null;
   const thumbnailBlockBuffer = thumbnail ? generateThumbnailBlockBuffer(thumbnail) : null;
   const miscData: MiscData = {};
 
@@ -222,7 +259,14 @@ const generateBeamBuffer = (
   }
 
   const miscDataBuffer = generateMiscDataBlockBuffer(miscData);
-  const metaData = { contents: [1, 2, 3, 4], version: window.FLUX?.version };
+  const metaData = {
+    // the blocks this file actually has, rather than the hard-coded list it used to be: a reader
+    // can tell whether a block is missing from the one that follows it
+    contents: [1, 2, ...(thumbnailBlockBuffer ? [3] : []), 4, ...(stlSourceBlockBuffer ? [6] : [])],
+    // read by readBeamFileInfo without parsing any block, the same way workarea is
+    innerEngraving: hasStl || undefined,
+    version: window.FLUX?.version,
+  };
 
   const metaDataBuf = Buffer.from(JSON.stringify(metaData));
   const headerBuffer = Buffer.concat([
@@ -232,6 +276,10 @@ const generateBeamBuffer = (
     valueToVIntBuffer(imageSourceBlockBuffer.length),
     valueToVIntBuffer(thumbnailBlockBuffer?.length || 0),
     valueToVIntBuffer(miscDataBuffer.length),
+    // ⚠️ the header is a fixed sequence of lengths, so block 5 — taken by another feature under
+    // development — keeps its slot with a 0 even though nothing writes it here
+    valueToVIntBuffer(0),
+    valueToVIntBuffer(stlSourceBlockBuffer?.length || 0),
   ]);
   const headerSizeBuf = valueToVIntBuffer(headerBuffer.length);
   const buffer = Buffer.concat([
@@ -242,6 +290,7 @@ const generateBeamBuffer = (
     imageSourceBlockBuffer,
     thumbnailBlockBuffer || Buffer.from([]),
     miscDataBuffer,
+    stlSourceBlockBuffer || Buffer.from([]),
     Buffer.from([0x00]),
   ]);
 
@@ -306,7 +355,67 @@ const readImageSource = (buf: Buffer, offset: number, end: number) => {
   }
 };
 
-const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) => {
+/**
+ * Rebuild the STL objects of block 6.
+ *
+ * The mesh binary alone is not an object: the placement lives on the projection rect that block 1
+ * has already restored, so an id with no rect is a leftover and is skipped. `data-stl-transform`
+ * rather than `data-stl-matrix` is the source here — the matrix cannot be decomposed back into
+ * position / rotation / scale / flip once a mirror is involved.
+ */
+const readStlSource = (buf: Buffer, offset: number, end: number, loaded: StlObject[]) => {
+  let currentOffset = offset;
+
+  while (currentOffset < end) {
+    const idSize = buf.readUInt8(currentOffset);
+
+    currentOffset += 1;
+
+    const id = buf.toString('utf-8', currentOffset, currentOffset + idSize);
+
+    currentOffset += idSize;
+
+    const { offset: newOffset, value: meshSize } = readVInt(buf, currentOffset);
+
+    currentOffset = newOffset;
+
+    // a standalone copy: `subarray` is a view over the whole file, and this buffer outlives the read
+    // — it is what gets written back out and sent to swiftray
+    const meshBuffer = new Uint8Array(buf.subarray(currentOffset, currentOffset + meshSize)).buffer;
+
+    currentOffset += meshSize;
+
+    const elem = document.getElementById(id);
+
+    if (!elem || !isStlProjection(elem)) {
+      console.warn(`STL mesh ${id} has no projection rect, skipped`);
+      continue;
+    }
+
+    const transforms = parseStlTransform(elem);
+
+    if (!transforms) {
+      console.error(`STL object ${id} has no usable ${STL_ATTR.transform}, skipped`);
+      continue;
+    }
+
+    try {
+      const geometry = new STLLoader().parse(meshBuffer);
+
+      loaded.push({
+        buffer: meshBuffer,
+        geometry,
+        id,
+        initialTransform: transforms.initialTransform,
+        transform: transforms.transform,
+      });
+    } catch (error) {
+      console.error(`Failed to parse STL mesh ${id}`, error);
+    }
+  }
+};
+
+const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand, stlObjects: StlObject[] = []) => {
   if (offset >= buf.length) {
     console.warn('offset exceed buffer length');
 
@@ -378,6 +487,16 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
       console.error('Failed to parse misc data', e);
     }
     currentOffset = newOffset + value;
+  } else if (blockType === 6) {
+    // STL meshes for inner engraving
+    console.log('STL Source Block');
+
+    const { offset: newOffset, value } = readVInt(buf, currentOffset);
+
+    currentOffset = newOffset;
+    console.log('Size', value);
+    readStlSource(buf, currentOffset, currentOffset + value, stlObjects);
+    currentOffset += value;
   } else {
     console.error(`Unknown Block Type: ${blockType}`);
     currentOffset = -1;
@@ -418,14 +537,21 @@ const readBeam = async (file: File): Promise<void> => {
   offset += headerSize;
 
   const command = new history.BatchCommand('Load Beam File');
+  const stlObjects: StlObject[] = [];
 
   while (offset > 0) {
-    offset = await readBlocks(buf, offset, command);
+    offset = await readBlocks(buf, offset, command, stlObjects);
   }
 
   const postReadBeam = (): void => {
     workareaManager.setWorkarea(useDocumentStore.getState().workarea);
     workareaManager.resetView();
+    // the meshes live outside the DOM, so undo and redo of the load have to add and remove them
+    // alongside the rects, exactly like a single STL import does
+    stlObjects.forEach((object) => {
+      if (document.getElementById(object.id)) useStlStore.getState().set(object);
+      else useStlStore.getState().remove(object.id);
+    });
   };
 
   command.onAfter = postReadBeam;
@@ -435,7 +561,9 @@ const readBeam = async (file: File): Promise<void> => {
   Progress.popById('loading_image');
 };
 
-const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workarea: null | string }> => {
+const readBeamFileInfo = async (
+  file: File,
+): Promise<{ innerEngraving: boolean; thumbnail: string; workarea: null | string }> => {
   const data = await new Promise<ArrayBuffer>((resolve) => {
     const fr = new FileReader();
 
@@ -450,6 +578,9 @@ const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workar
   const content = buf.subarray(0, 1000).toString('utf-8');
   const workareaString = content.match(/data-workarea="([^"]+)"/);
   const workarea = workareaString ? workareaString[1] : null;
+  // from the header's metadata, so the mode is known without parsing a single block — the same role
+  // workarea plays in the 'ask-change-workarea' flow when opening a file
+  const innerEngraving = /"innerEngraving":true/.test(content);
   let blockType = 0;
   let { offset, value: size } = readVInt(buf, 5); // skip signature and metadata
 
@@ -461,6 +592,7 @@ const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workar
   }
 
   return {
+    innerEngraving,
     thumbnail: blockType === 3 ? `data:image/png;base64,${buf.subarray(offset, offset + size).toString('base64')}` : '',
     workarea,
   };

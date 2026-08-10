@@ -112,17 +112,21 @@ const SvgEditor = (): ReactNode => {
             <AiGenerate />
           </ToolBarDrawer>
         )}
-        {isMobile ? (
-          drawerMode === 'generator' && <MobileGenerators />
-        ) : (
-          <ToolBarDrawer enableResizable={false} mode="generator">
-            <Generators />
-          </ToolBarDrawer>
-        )}
+        {/* the generators all produce 2D artwork (boxgen, code, keychain, puzzle...), which an inner
+            engraving document has nowhere to put — V1 only holds STL objects */}
+        {!innerEngraving &&
+          (isMobile ? (
+            drawerMode === 'generator' && <MobileGenerators />
+          ) : (
+            <ToolBarDrawer enableResizable={false} mode="generator">
+              <Generators />
+            </ToolBarDrawer>
+          ))}
         <ToolBarDrawer enableResizable={{ right: true }} mode="ai-chat">
           <Chat />
         </ToolBarDrawer>
-        <ElementPanel />
+        {/* the shape library inserts 2D elements, same reason as the generators above */}
+        {!innerEngraving && <ElementPanel />}
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </div>

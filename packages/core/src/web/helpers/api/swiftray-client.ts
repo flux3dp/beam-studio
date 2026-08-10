@@ -131,6 +131,8 @@ class SwiftrayClient extends EventEmitter {
     this.socket.onclose = this.handleClose.bind(this);
     this.socket.onerror = this.handleError.bind(this);
     this.socket.onmessage = this.handleMessage.bind(this);
+
+    window.sw_ws = this.socket;
   }
 
   private async updateStatus(newStatus: TStatus): Promise<void> {
@@ -259,6 +261,10 @@ class SwiftrayClient extends EventEmitter {
         payload.params.file = '[file object]';
       }
 
+      if (payload.params?.stlObjects) {
+        payload.params.stlObjects = `[${Object.keys(payload.params.stlObjects).length} stl objects]`;
+      }
+
       this.logger.append(payload);
 
       if (this.socket?.readyState === WebSocket.OPEN) {
@@ -310,17 +316,38 @@ class SwiftrayClient extends EventEmitter {
       model: string;
       rotaryMode: boolean;
     },
-  ): Promise<{ error?: ErrorObject; success: boolean }> {
+  ): Promise<{
+    error?: ErrorObject;
+    /** Inner engraving: meshes swiftray could not parse */
+    failedStlObjects?: Array<{ error: string; id: string }>;
+    /** Inner engraving: number of meshes swiftray accepted */
+    loadedStlObjects?: number;
+    success: boolean;
+  }> {
     const defaultConfig: any = getDefaultConfig();
 
     booleanConfig.forEach((key) => delete defaultConfig[key]);
 
-    const uploadRes = await this.action<{ error?: ErrorObject; success: boolean }>('/parser', 'loadSVG', {
+    // swiftray reads stlObjects from the top level of params, not from inside file
+    // (the SWIFTRAY_SUPPORT_STL check happens up in handleExportAlerts, before the payload is built)
+    const { stlObjects, ...taskFile } = file;
+
+    const uploadRes = await this.action<{
+      error?: ErrorObject;
+      failedStlObjects?: Array<{ error: string; id: string }>;
+      loadedStlObjects?: number;
+      success: boolean;
+    }>('/parser', 'loadSVG', {
       defaultConfig,
-      file,
+      file: taskFile,
       model: loadOptions.model,
       rotaryMode: loadOptions.rotaryMode,
+      ...(stlObjects ? { stlObjects } : {}),
     });
+
+    if (uploadRes.failedStlObjects?.length) {
+      console.error('Failed to load STL objects', uploadRes.failedStlObjects);
+    }
 
     if (!uploadRes.success) {
       eventListeners.onError(uploadRes.error?.message ?? 'Unknown error');

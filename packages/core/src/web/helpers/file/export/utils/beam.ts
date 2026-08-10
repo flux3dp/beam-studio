@@ -1,5 +1,6 @@
 import { pipe } from 'remeda';
 
+import { getStlSources } from '@core/app/svgedit/stl/sources';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import beamFileHelper from '@core/helpers/beam-file-helper';
@@ -68,8 +69,11 @@ export const generateBeamBuffer = async (): Promise<Buffer> =>
   pipe(
     {
       imageSource: await svgCanvas.getImageSource(),
+      // inner engraving only: the meshes the `data-stl` placeholder rects in svgString stand for
+      stlSource: getStlSources(),
       svgString: svgCanvas.getSvgString(),
       thumbnail: (await generateBeamThumbnail()) || undefined,
     },
-    ({ imageSource, svgString, thumbnail }) => beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail),
+    ({ imageSource, stlSource, svgString, thumbnail }) =>
+      beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail, stlSource),
   );

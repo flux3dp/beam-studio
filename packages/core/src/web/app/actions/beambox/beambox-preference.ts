@@ -1,6 +1,7 @@
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
+import { DEFAULT_MATERIAL, DEFAULT_SAFETY_MARGIN } from '@core/app/constants/innerEngraving';
 import { TabEvents } from '@core/app/constants/ipcEvents';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/moduleOffsets';
@@ -45,6 +46,15 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   guide_y0: 0,
   image_downsampling: true,
   'inner-engraving': false,
+  'inner-engraving-depth': DEFAULT_MATERIAL.depth,
+  'inner-engraving-diameter': DEFAULT_MATERIAL.diameter,
+  'inner-engraving-height': DEFAULT_MATERIAL.height,
+  'inner-engraving-refractive-index': DEFAULT_MATERIAL.refractiveIndex,
+  'inner-engraving-safety-margin': DEFAULT_SAFETY_MARGIN,
+  'inner-engraving-shape': DEFAULT_MATERIAL.shape,
+  'inner-engraving-width': DEFAULT_MATERIAL.width,
+  'inner-engraving-x': DEFAULT_MATERIAL.x,
+  'inner-engraving-y': DEFAULT_MATERIAL.y,
   'job-origin': 1,
   'keep-preview-result': false,
   low_power: 10,
@@ -58,6 +68,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   padding_accel_diode: 4500,
   'pass-through': false,
   'path-engine': 'swiftray',
+  prespray_times: 3,
   preview_movement_speed_level: PreviewSpeedLevel.SLOW,
   'print-advanced-mode': false,
   'promark-safety-door': false,

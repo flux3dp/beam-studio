@@ -1,4 +1,4 @@
-import React, { memo, use, useMemo } from 'react';
+import React, { memo, use, useEffect, useMemo } from 'react';
 
 import { match } from 'ts-pattern';
 
@@ -13,7 +13,8 @@ import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import selectionManager from '@core/app/svgedit/selection';
-import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
+import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
+import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
@@ -27,6 +28,7 @@ type ToolButtonProps = {
   onClick: () => void;
   showBadge?: boolean;
   style?: React.CSSProperties;
+  supportedIn3D?: boolean;
 };
 
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
@@ -34,7 +36,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const t = lang.beambox.left_panel;
   const { hasPassthroughExtension } = use(CanvasContext);
   const { isDrawing, isStarting } = useCameraPreviewStore();
-  const { drawerMode, mouseMode, toggleDrawerMode } = useCanvasStore();
+  const { drawerMode, mouseMode, setDrawerMode, toggleDrawerMode } = useCanvasStore();
   const activeButton = useMemo(
     () =>
       match(mouseMode)
@@ -48,6 +50,18 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         .otherwise(() => 'Cursor'),
     [mouseMode],
   );
+  const isInnerEngravingMode = useInnerEngravingActive();
+
+  useEffect(() => {
+    if (!isInnerEngravingMode) return;
+
+    // the drawers all hold 2D tools (elements, generators, AI generate) and the buttons that open
+    // them are about to disappear, which would leave an open drawer with no way back to it
+    setDrawerMode('none');
+    // camera preview draws onto the 2D canvas, which is hidden behind the 3D one; leaving it running
+    // would keep the machine busy for something nobody can see
+    endPreviewMode();
+  }, [isInnerEngravingMode, setDrawerMode]);
 
   const renderToolButton = ({
     className = undefined,
@@ -58,22 +72,24 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     onClick,
     showBadge = false,
     style = undefined,
-  }: ToolButtonProps) => (
-    <LeftPanelButton
-      active={activeButton === id}
-      className={className}
-      disabled={disabled}
-      icon={icon}
-      id={`left-${id}`}
-      onClick={() => {
-        selectionManager.clearSelection();
-        onClick();
-      }}
-      showBadge={showBadge}
-      style={style}
-      title={label}
-    />
-  );
+    supportedIn3D = false,
+  }: ToolButtonProps) =>
+    isInnerEngravingMode && !supportedIn3D ? null : (
+      <LeftPanelButton
+        active={activeButton === id}
+        className={className}
+        disabled={disabled}
+        icon={icon}
+        id={`left-${id}`}
+        onClick={() => {
+          selectionManager.clearSelection();
+          onClick();
+        }}
+        showBadge={showBadge}
+        style={style}
+        title={label}
+      />
+    );
 
   return (
     <div className={className}>
@@ -89,39 +105,43 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Cursor',
         label: `${t.label.cursor} (V)`,
         onClick: FnWrapper.useSelectTool,
+        supportedIn3D: true,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Photo />,
         id: 'Photo',
         label: `${t.label.photo} (I)`,
         onClick: FnWrapper.importImage,
+        supportedIn3D: true,
       })}
-      <LeftPanelButtonGroup
-        active={activeButton === 'Text' || activeButton === 'FitText'}
-        id="left-Text"
-        options={[
-          {
-            icon: <LeftPanelIcons.Text />,
-            id: 'Text',
-            label: t.label.text,
-            onClick: () => {
-              selectionManager.clearSelection();
-              setMouseMode('text');
+      {!isInnerEngravingMode && (
+        <LeftPanelButtonGroup
+          active={activeButton === 'Text' || activeButton === 'FitText'}
+          id="left-Text"
+          options={[
+            {
+              icon: <LeftPanelIcons.Text />,
+              id: 'Text',
+              label: t.label.text,
+              onClick: () => {
+                selectionManager.clearSelection();
+                setMouseMode('text');
+              },
+              title: t.label.text,
             },
-            title: t.label.text,
-          },
-          {
-            icon: <LeftPanelIcons.TextBox />,
-            id: 'FitText',
-            label: t.label.fit_text,
-            onClick: () => {
-              selectionManager.clearSelection();
-              setMouseMode('fit-text');
+            {
+              icon: <LeftPanelIcons.TextBox />,
+              id: 'FitText',
+              label: t.label.fit_text,
+              onClick: () => {
+                selectionManager.clearSelection();
+                setMouseMode('fit-text');
+              },
             },
-          },
-        ]}
-        shortcut="T"
-      />
+          ]}
+          shortcut="T"
+        />
+      )}
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,
         id: 'Element',
@@ -189,6 +209,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Beamy',
         onClick: () => toggleDrawerMode('ai-chat'),
         style: { color: drawerMode === 'ai-chat' ? '#1890ff' : undefined },
+        supportedIn3D: true,
       })}
     </div>
   );

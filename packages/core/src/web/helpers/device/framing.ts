@@ -6,6 +6,7 @@ import constant, { dpmm, promarkModels } from '@core/app/actions/beambox/constan
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { fetchFramingTaskCode } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { sceneToSvgYMm } from '@core/app/components/beambox/InnerEngraving/utils/coordinates';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import deviceConstants from '@core/app/constants/device-constants';
@@ -26,6 +27,7 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import getJobOrigin from '@core/helpers/job-origin';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
@@ -47,6 +49,8 @@ export const FramingType = {
   Contour: 6,
   Framing: 2,
   Hull: 3,
+  /** Inner engraving: the outline of the workpiece rather than of the objects. */
+  Material: 7,
   RotateAxis: 4,
   RotateFraming: 5,
 } as const;
@@ -85,6 +89,10 @@ export const framingOptions = {
     description: 'hull_desc',
     title: 'hull',
   },
+  [FramingType.Material]: {
+    description: 'material_desc',
+    title: 'material',
+  },
   [FramingType.RotateAxis]: {
     description: 'rotateaxis_desc',
     title: 'rotate_axis',
@@ -101,10 +109,53 @@ export const getFramingOptions = (device: IDeviceInfo): TFramingType[] => {
 
     if (withRotary) return [FramingType.RotateAxis, FramingType.RotateFraming];
 
+    // hull and contour are raster / vector outlines of 2D artwork, which an inner engraving document
+    // has none of; what the user needs to line up is the workpiece and the objects' footprint
+    if (isInnerEngravingActive()) return [FramingType.Material, FramingType.Framing];
+
     return [FramingType.Framing, FramingType.Hull, FramingType.Contour];
   }
 
   return [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
+};
+
+/** How many segments a round workpiece's outline is drawn with. */
+const MATERIAL_CIRCLE_SEGMENTS = 48;
+
+/**
+ * The workpiece outline, in mm — a rectangle for a box, a circle for a cylinder or a sphere.
+ *
+ * The material is a document setting rather than something on the canvas, so this is the one framing
+ * type that does not look at the objects at all.
+ *
+ * ⚠️ Its position is stored in **scene** coordinates, like everything the 3D canvas edits, so the Y
+ * has to be turned into canvas Y here — these points end up as machine positions.
+ */
+const getMaterialOutline = (): Array<[number, number]> => {
+  const state = useDocumentStore.getState();
+  const shape = state['inner-engraving-shape'];
+  const [centerX, centerY] = [state['inner-engraving-x'], sceneToSvgYMm(state['inner-engraving-y'])];
+
+  if (shape === 'box') {
+    const [halfWidth, halfDepth] = [state['inner-engraving-width'] / 2, state['inner-engraving-depth'] / 2];
+    const corners: Array<[number, number]> = [
+      [centerX - halfWidth, centerY - halfDepth],
+      [centerX + halfWidth, centerY - halfDepth],
+      [centerX + halfWidth, centerY + halfDepth],
+      [centerX - halfWidth, centerY + halfDepth],
+    ];
+
+    return [...corners, corners[0]];
+  }
+
+  const radius = state['inner-engraving-diameter'] / 2;
+  const points: Array<[number, number]> = Array.from({ length: MATERIAL_CIRCLE_SEGMENTS }, (_, i) => {
+    const angle = (i / MATERIAL_CIRCLE_SEGMENTS) * Math.PI * 2;
+
+    return [centerX + radius * Math.cos(angle), centerY + radius * Math.sin(angle)];
+  });
+
+  return [...points, points[0]];
 };
 
 const getCoords = async (mm?: boolean): Promise<Coordinates> => {
@@ -589,6 +640,14 @@ class FramingTaskManager extends EventEmitter {
             ];
 
       this.taskCache[type] = { isOutOfBounds, points: res };
+
+      return res;
+    }
+
+    if (type === FramingType.Material) {
+      const res = getMaterialOutline();
+
+      if (res.length > 0) this.taskCache[type] = { points: res };
 
       return res;
     }
