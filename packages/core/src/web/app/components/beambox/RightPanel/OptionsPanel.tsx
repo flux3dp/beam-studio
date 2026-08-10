@@ -4,6 +4,7 @@ import { match, P } from 'ts-pattern';
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import { isStlProjection } from '@core/app/svgedit/stl/getters';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -17,6 +18,7 @@ import InFillBlock from './OptionsBlocks/InFillBlock';
 import MultiColorOptions from './OptionsBlocks/MultiColorOptions';
 import PolygonOptions from './OptionsBlocks/PolygonOptions';
 import RectOptions from './OptionsBlocks/RectOptions';
+import StlOptions from './OptionsBlocks/StlOptions';
 import TextOptions from './OptionsBlocks/TextOptions';
 import VariableTextBlock from './OptionsBlocks/VariableTextBlock';
 import styles from './OptionsPanel.module.scss';
@@ -62,6 +64,10 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
 
   const contents = useMemo(() => {
     if (!elem) return [];
+
+    // a projection rect is a `rect`, so without this it would fall into the RectOptions branch below
+    // (corner radius) and get an infill toggle that acts on the rect's own fill
+    if (isStlProjection(elem)) return [<StlOptions elem={elem} key="stl" />];
 
     const tagName = elem.tagName.toLowerCase();
     const colorOrInfill = (key = 'infill') =>

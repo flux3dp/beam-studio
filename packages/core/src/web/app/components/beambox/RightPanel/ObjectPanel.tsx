@@ -18,8 +18,10 @@ import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ActionsPanel from './ActionsPanel';
+import ActionsPanelStl from './ActionsPanelStl';
 import ConfigPanel from './ConfigPanel/ConfigPanel';
 import DimensionPanel from './DimensionPanel/DimensionPanel';
+import DimensionPanelStl from './DimensionPanel/DimensionPanelStl';
 import styles from './ObjectPanel.module.scss';
 import ObjectPanelItem from './ObjectPanelItem';
 import OptionsPanel from './OptionsPanel';
@@ -42,6 +44,9 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const tObjectPanel = lang.beambox.right_panel.object_panel;
   const isMobile = useIsMobile();
   const elem = useSelectedElementStore((state) => state.selectedElement);
+  // an STL object is a 3D mesh behind a projection rect: the rect's tagName says 'rect', so every
+  // dispatch here has to go through nodeType instead (TODO.md A-1)
+  const isStl = useSelectedElementStore((state) => state.nodeType) === 'stl';
   const groupAvailability = useSelectedElementStore(
     useShallow((state) => ({ group: state.canGroup, ungroup: state.canUngroup })),
   );
@@ -303,7 +308,11 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     );
   };
 
-  const renderDimensionPanel = (): React.JSX.Element => {
+  const renderDimensionPanel = (): React.ReactNode => {
+    // the 2D panel edits the projection rect's own x/y/w/h, which are derived values: the edit would
+    // be thrown away by the next re-projection. The STL version edits the 3D transform instead
+    if (isStl) return <DimensionPanelStl id={elem!.id} />;
+
     return <DimensionPanel elem={elem as SVGElement} />;
   };
 
@@ -311,19 +320,23 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     return <OptionsPanel elem={elem as SVGElement} />;
   };
 
-  const renderActionPanel = (): React.JSX.Element => <ActionsPanel elem={elem as SVGElement} />;
+  const renderActionPanel = (): React.JSX.Element =>
+    isStl ? <ActionsPanelStl id={elem!.id} /> : <ActionsPanel elem={elem as SVGElement} />;
 
+  // the tool row is entirely about arranging several objects relative to each other — align,
+  // distribute, group, boolean — and none of it applies to an STL object: group and boolean are
+  // 2D-only, and the 3D canvas has no multi-selection to align or distribute
   const contents = isMobile ? (
     <>
       {renderCommonActionPanel()}
       {renderOptionPanel()}
       {renderDimensionPanel()}
-      {renderToolBtns()}
+      {!isStl && renderToolBtns()}
       {renderActionPanel()}
     </>
   ) : (
     <>
-      {renderToolBtns()}
+      {!isStl && renderToolBtns()}
       {renderDimensionPanel()}
       {renderOptionPanel()}
       {renderActionPanel()}

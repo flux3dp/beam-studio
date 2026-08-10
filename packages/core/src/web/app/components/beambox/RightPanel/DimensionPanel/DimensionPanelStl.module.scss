@@ -1,0 +1,87 @@
+.panel {
+  padding: 10px 16px 16px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+  min-height: 24px;
+
+  .title {
+    font-size: 12px;
+    font-weight: bold;
+    color: #999;
+    text-transform: uppercase;
+    // the title yields first when the panel is narrow, the controls next to it must stay clickable
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    flex: 0 0 auto;
+  }
+}
+
+/**
+ * One axis per row rather than three inputs side by side: the panel can be dragged down to 260px,
+ * where three number inputs would each be under 70px and unusable. The row carries the axis label,
+ * the value, and the narrow "adjust from the current value" field.
+ */
+.axes {
+  display: grid;
+  // axis label, value, adjust-from-current.
+  grid-template-columns: 12px minmax(140px, 2fr) 1fr;
+  align-items: center;
+  column-gap: 6px;
+  row-gap: 4px;
+}
+
+/**
+ * antd gives InputNumber a fixed default width (90px), which ignores the grid column it sits in —
+ * at 260px the value field would overflow its cell and the adjust field would be wider than the
+ * 56px reserved for it. Both have to be told to fill their column instead.
+ */
+.field {
+  width: 100%;
+
+  :global(.ant-input-number-group-wrapper) {
+    width: 100%;
+  }
+
+  :global(.ant-input-number) {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+.axis {
+  font-size: 12px;
+  font-weight: bold;
+  // colour comes from AXIS_COLORS, matching three.js's axes
+}
+
+.flips {
+  display: flex;
+  gap: 4px;
+
+  button {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+}

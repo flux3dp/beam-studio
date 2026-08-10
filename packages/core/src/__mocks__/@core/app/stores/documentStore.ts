@@ -1,5 +1,6 @@
 import type { DocumentState } from '@core/interfaces/Preference';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
+import { DEFAULT_MATERIAL, DEFAULT_SAFETY_MARGIN } from '@core/app/constants/innerEngraving';
 
 const state: DocumentState = {
   'auto-feeder': false,
@@ -12,8 +13,19 @@ const state: DocumentState = {
   'enable-job-origin': false,
   'extend-rotary-workarea': false,
   'frame-before-start': false,
+  'inner-engraving': false,
+  'inner-engraving-depth': DEFAULT_MATERIAL.depth,
+  'inner-engraving-diameter': DEFAULT_MATERIAL.diameter,
+  'inner-engraving-height': DEFAULT_MATERIAL.height,
+  'inner-engraving-refractive-index': DEFAULT_MATERIAL.refractiveIndex,
+  'inner-engraving-safety-margin': DEFAULT_SAFETY_MARGIN,
+  'inner-engraving-shape': DEFAULT_MATERIAL.shape,
+  'inner-engraving-width': DEFAULT_MATERIAL.width,
+  'inner-engraving-x': DEFAULT_MATERIAL.x,
+  'inner-engraving-y': DEFAULT_MATERIAL.y,
   'job-origin': 1,
   'pass-through': false,
+  prespray_times: 3,
   'promark-safety-door': false,
   'promark-start-button': false,
   'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER,

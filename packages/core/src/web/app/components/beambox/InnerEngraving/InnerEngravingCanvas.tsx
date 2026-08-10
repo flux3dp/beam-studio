@@ -1,132 +1,138 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { OrbitControls, TransformControls } from '@react-three/drei';
-import { Canvas } from '@react-three/fiber';
-import type { Mesh } from 'three';
-import { DoubleSide } from 'three';
+import { OrbitControls } from '@react-three/drei';
+import { Canvas, useFrame } from '@react-three/fiber';
+import { DoubleSide, Vector3 } from 'three';
 
-import type { StlObject } from '@core/app/stores/stlStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { todo } from '@core/helpers/is-dev';
 
+import CanvasControls from './CanvasControls';
+import {
+  BACKGROUND_COLOR,
+  FLOOR_COLOR,
+  FLOOR_MARGIN,
+  FLOOR_Z,
+  GRID_COLOR,
+  GRID_STEPS,
+  TARGET_GRID_CELLS,
+} from './constants';
 import styles from './InnerEngravingCanvas.module.scss';
-import { svgToSceneY } from './utils/coordinates';
-import { updateProjectionRect } from './utils/projection';
+import MaterialShape from './MaterialShape';
+import SceneRuler from './SceneRuler';
+import StlMesh from './StlMesh';
+import { getMaterial, useMaterial } from './utils/material';
+import { getSelectedStlId, selectStlObject } from './utils/selection';
+import ViewController from './ViewController';
+import { DEFAULT_VIEW, getPresetPosition, useViewStore } from './viewStore';
 
 todo(
-  '標明這些顏色來自哪裡，基本上是 scss 或 JS，確認沿用舊的顏色的話，最好對齊原本的寫法（例如 rgba）；scss container background color 實際上可以直接套用整個 beam studioo 的底色，不用另外設定，除非決定給內雕改成暗色模式，但容易影響到很多其他的顏色顯示',
+  '標明這些顏色來自哪裡，基本上是 scss 或 JS，確認沿用舊的顏色的話，最好對齊原本的寫法（例如 rgba）；scss container background color 實際上可以直接套用整個 beam studio 的底色，不用另外設定，除非決定給內雕改成暗色模式，但容易影響到很多其他的顏色顯示',
 );
-todo('處理 layer color，見下方 TODO 註解');
-todo('TBD with PM: 如何 highlight selected？');
-todo('GRID_STEP 是否可以隨著縮放調整？');
-todo('FIXME: 目前的畫布，從上往下只看得到灰色，要從下往上才看的到網格');
-todo('three js 可以標記座標嗎？例如顯示 ruler、顯示立體網格');
 
-todo('Check me!!!! Not completely reviewed.');
+/**
+ * Grid/ruler spacing that follows the zoom level, so the spacing stays readable instead of turning
+ * into a solid block when zoomed out or a single cell when zoomed in.
+ */
+const useAdaptiveStep = (center: [number, number, number]): number => {
+  const [step, setStep] = useState(GRID_STEPS[2]);
+  const target = useMemo(() => new Vector3(...center), [center]);
 
-const FLOOR_COLOR = '#ffffff';
-const GRID_COLOR = '#dadada';
-const BACKGROUND_COLOR = '#f0f0f0';
-// TODO: apply the layer colour, matching updateElementColor on the projection rect
-const MESH_COLOR = '#333333';
-const SELECTED_MESH_COLOR = '#1890ff';
-const GRID_STEP = 100; // 10mm in scene units
+  useFrame(({ camera }) => {
+    const ideal = camera.position.distanceTo(target) / TARGET_GRID_CELLS;
+    const next = GRID_STEPS.find((candidate) => candidate >= ideal) ?? GRID_STEPS[GRID_STEPS.length - 1];
 
-interface StlMeshProps {
-  object: StlObject;
-  onSelect: (id: string) => void;
-  selected: boolean;
-}
+    // only crosses a threshold occasionally, so this does not re-render every frame
+    if (next !== step) setStep(next);
+  });
 
-const StlMesh = ({ object, onSelect, selected }: StlMeshProps) => {
-  // a callback ref rather than useRef: TransformControls needs the resolved Object3D, which is not
-  // available on the first render
-  const [mesh, setMesh] = useState<Mesh | null>(null);
-  const { geometry, id, matrix } = object;
-
-  // the store holds the transform as a matrix; three.js drives its object off position/quaternion/
-  // scale, so decompose on the way in and recompose on the way out
-  useEffect(() => {
-    if (!mesh) return;
-
-    mesh.matrix.copy(matrix);
-    mesh.matrix.decompose(mesh.position, mesh.quaternion, mesh.scale);
-  }, [matrix, mesh]);
-
-  // while dragging, write straight to the projection rect and leave the store alone: updating the
-  // store mid-drag would feed the matrix back through the effect above and fight the gizmo
-  const handleObjectChange = useCallback(() => {
-    const elem = document.getElementById(id) as null | SVGRectElement;
-
-    if (!mesh || !elem) return;
-
-    mesh.updateMatrix();
-    updateProjectionRect(elem, geometry, mesh.matrix);
-  }, [geometry, id, mesh]);
-
-  // TODO: record an undo command for the move, see undoManager
-  const handleDragEnd = useCallback(() => {
-    if (!mesh) return;
-
-    mesh.updateMatrix();
-    useStlStore.getState().setMatrix(id, mesh.matrix.clone());
-  }, [id, mesh]);
-
-  return (
-    <>
-      <mesh
-        geometry={geometry}
-        onClick={(e) => {
-          e.stopPropagation();
-          onSelect(id);
-        }}
-        ref={setMesh}
-      >
-        <meshStandardMaterial color={selected ? SELECTED_MESH_COLOR : MESH_COLOR} />
-      </mesh>
-      {selected && mesh && (
-        <TransformControls
-          mode="translate"
-          object={mesh}
-          onMouseUp={handleDragEnd}
-          onObjectChange={handleObjectChange}
-        />
-      )}
-    </>
-  );
+  return step;
 };
 
 const Scene = () => {
-  const { objects, selectedId, setSelectedId } = useStlStore();
+  const { objects, selectedId } = useStlStore();
+  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   const { height, width } = workareaManager;
-  // the work area spans x: 0..width and y: -height..0 in scene space, because scene Y grows towards
-  // the back while SVG Y grows downwards
-  const center = useMemo<[number, number, number]>(() => [width / 2, svgToSceneY(height / 2), 0], [height, width]);
+  const material = useMaterial();
+  // scene X/Y are the SVG coordinates, so the work area spans x: 0..width, y: 0..height
+  const center = useMemo<[number, number, number]>(() => [width / 2, height / 2, 0], [height, width]);
+  // the camera aims at the middle of the material rather than the floor: the material can be taller
+  // than the work area is wide, so orbiting the floor leaves it running off the top of the screen
+  const viewTarget = useMemo<[number, number, number]>(
+    () => [width / 2, height / 2, material.height / 2],
+    [height, material.height, width],
+  );
+  const viewExtent = useMemo(() => Math.max(width, height, material.height), [height, material.height, width]);
   const diagonal = useMemo(() => Math.hypot(width, height), [height, width]);
+  const step = useAdaptiveStep(center);
+
+  // the other direction of the sync in `selectStlObject`: selecting through the layer panel, undo,
+  // or anything else that moves svgedit's selection has to light up the mesh too
+  useEffect(() => {
+    useStlStore.getState().setSelectedId(getSelectedStlId(selectedElement));
+  }, [selectedElement]);
+
+  // true only between an OrbitControls pointer down and up, so a `change` can be attributed to the user
+  const interacting = useRef(false);
 
   return (
     <>
       <color args={[BACKGROUND_COLOR]} attach="background" />
       <ambientLight intensity={1.2} />
       <directionalLight intensity={2} position={[width, -height, diagonal]} />
+      {/* X red, Y green, Z blue. TODO: decide whether to keep this for users or make it a toggle */}
+      <axesHelper args={[Math.max(width, height) / 2]} />
 
-      <mesh position={center} receiveShadow>
-        <planeGeometry args={[width, height]} />
-        <meshStandardMaterial color={FLOOR_COLOR} side={DoubleSide} />
+      {/* reaches past the work area so its edge is not flush with the boundary */}
+      <mesh position={[center[0], center[1], FLOOR_Z]}>
+        <planeGeometry args={[width + FLOOR_MARGIN * 2, height + FLOOR_MARGIN * 2]} />
+        {/* unlit: the work area floor is a flat #fff backdrop like the 2D canvas, not a lit surface */}
+        <meshBasicMaterial color={FLOOR_COLOR} side={DoubleSide} />
       </mesh>
       <gridHelper
-        args={[Math.max(width, height), Math.round(Math.max(width, height) / GRID_STEP), GRID_COLOR, GRID_COLOR]}
+        args={[
+          Math.max(width, height),
+          Math.max(1, Math.round(Math.max(width, height) / step)),
+          GRID_COLOR,
+          GRID_COLOR,
+        ]}
         position={center}
         // gridHelper lies in the XZ plane by default, stand it up onto the XY floor
         rotation={[Math.PI / 2, 0, 0]}
       />
+      <SceneRuler depth={material.height} height={height} step={step} width={width} />
+
+      {/* the workpiece, positioned by InnerEngravingSettings and not movable on the canvas */}
+      <MaterialShape material={material} />
 
       {Object.values(objects).map((object) => (
-        <StlMesh key={object.id} object={object} onSelect={setSelectedId} selected={object.id === selectedId} />
+        <StlMesh key={object.id} object={object} onSelect={selectStlObject} selected={object.id === selectedId} />
       ))}
 
-      <OrbitControls makeDefault target={center} />
+      <ViewController extent={viewExtent} target={viewTarget} />
+      {/* clamped to the upper hemisphere: everything worth looking at is above the focus plane, and
+          orbiting under the floor only ever produces a confusing view of the material's underside.
+
+          Dropping out of a preset needs both signals: `start`/`end` say an interaction is in flight,
+          `change` says the camera actually moved. `start` alone fires on any pointer down, so
+          clicking an object or dragging its gizmo would clear the preset; `change` alone fires on
+          the programmatic `update()` the presets themselves do. */}
+      <OrbitControls
+        makeDefault
+        maxPolarAngle={Math.PI / 2}
+        onChange={() => {
+          if (interacting.current) useViewStore.getState().markViewCustom();
+        }}
+        onEnd={() => {
+          interacting.current = false;
+        }}
+        onStart={() => {
+          interacting.current = true;
+        }}
+        target={viewTarget}
+      />
     </>
   );
 };
@@ -139,27 +145,53 @@ const Scene = () => {
  */
 const InnerEngravingCanvas = (): React.JSX.Element => {
   const { height, width } = workareaManager;
-  // default view: looking down at the work area from the front-right, matching the 2D canvas
-  // orientation (X right, Y downwards on screen) with Z up
+  // read once rather than subscribed: this only seeds the first frame, after which the camera
+  // belongs to OrbitControls and re-seeding it would yank the view out from under the user
+  const materialHeight = useMemo(() => getMaterial().height, []);
+  // matches ViewController's isometric preset, so the first frame is already the default view
+  const viewTarget = useMemo<[number, number, number]>(
+    () => [width / 2, height / 2, materialHeight / 2],
+    [height, materialHeight, width],
+  );
+  // same helper ViewController uses, so the first frame already matches the default preset exactly
   const cameraPosition = useMemo<[number, number, number]>(
-    () => [width / 2, svgToSceneY(height) - height, Math.max(width, height)],
-    [height, width],
+    () => getPresetPosition(DEFAULT_VIEW, viewTarget, Math.max(width, height, materialHeight)),
+    [height, materialHeight, viewTarget, width],
   );
 
   return (
     <div className={styles.container}>
       <Canvas
         camera={{
-          far: Math.max(width, height) * 100,
-          near: 1,
+          // a tight near/far range keeps depth precision usable; with near = 1 (0.1mm) almost the
+          // whole depth buffer would be spent on the first few millimetres in front of the camera
+          far: Math.max(width, height) * 20,
+          near: 10,
           position: cameraPosition,
-          // Z is up: without this the orbit controls would spin around the wrong axis
-          up: [0, 0, 1],
         }}
-        onPointerMissed={() => useStlStore.getState().setSelectedId(null)}
+        // no tone mapping: r3f defaults to ACES filmic, which renders #fff as a washed-out grey and
+        // shifts every colour away from the value written here
+        flat
+        // per-material clipping planes, which is how MaterialShape separates the part of the
+        // workpiece the machine can reach from the part outside the work area
+        gl={{ localClippingEnabled: true }}
+        /**
+         * Z is up. This has to happen here rather than through the `camera` prop above: r3f applies
+         * those props and orients the camera before a late `up` would be picked up, leaving the
+         * camera's rotation built against the default Y-up vector. The result looks almost right but
+         * leaves the transform gizmo's axes off, which is exactly the bug this fixes. Setting `up`
+         * and re-running `lookAt` once the camera exists rebuilds the orientation from the right
+         * vector, and OrbitControls then reads the same `up` on every update.
+         */
+        onCreated={({ camera }) => {
+          camera.up.set(0, 0, 1);
+          camera.lookAt(...viewTarget);
+        }}
+        onPointerMissed={() => selectStlObject(null)}
       >
         <Scene />
       </Canvas>
+      <CanvasControls />
     </div>
   );
 };

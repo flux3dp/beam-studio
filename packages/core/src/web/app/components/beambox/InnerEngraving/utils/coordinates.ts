@@ -1,30 +1,28 @@
 import constant from '@core/app/actions/beambox/constant';
-import { todo } from '@core/helpers/is-dev';
-
-todo('TBC: 確認這個視角於座標正確');
+import workareaManager from '@core/app/svgedit/workarea';
 
 /**
  * Scene space for the inner engraving canvas.
  *
- * - **Unit**: 0.1mm, the same as SVG user units (`constant.dpmm` = 10), so the projection rect's
- *   attributes and the scene use one number system.
- * - **Axes**: X right, Y towards the back of the scene, Z up (height). Origin at (0, 0, 0), which is
- *   where the user manually focuses; the material's position does not move it.
- * - **Handedness**: the scene stays **right-handed**, the CAD/CNC convention, so STL files load
- *   without mirroring, face winding stays correct and rotation gizmos read the usual way. The
- *   "Y down" convention the rest of the app uses is a *viewing* convention: the default top view
- *   orients the camera so +Y appears downward on screen, matching the 2D canvas.
+ * - **Unit**: 0.1mm, the same as SVG user units (`constant.dpmm` = 10).
+ * - **Axes**: X right, **Y towards the back of the scene** (away from the default camera), Z up.
+ *   This is the CAD / CNC convention the PM asked for, and it is what the transform gizmo's arrows
+ *   and the panel's Y values agree on.
+ * - **Origin**: (0, 0, 0) — the work area's near-left corner, at the height the user manually
+ *   focuses to. The material's position does not move it.
  *
- * Everything outside the 3D canvas — the projection rect's attributes, DimensionPanel values, the
- * payload sent to swiftray — stays in SVG convention (Y down). The flip lives only here, so
- * reversing this decision is a one-file change.
+ * ⚠️ **Scene Y and canvas Y point in opposite directions.** SVG (and therefore the G-code position)
+ * has Y going down / towards the front, so the same point is `y_svg = workarea_height - y_scene`.
+ * The conversion happens **once**, where the 3D object is projected onto its rect
+ * (`utils/projection.ts`) — everything downstream of that, including the matrix sent to swiftray,
+ * is already in canvas coordinates and must not convert again.
  */
 
 /** mm -> scene units. STL vertex data is in mm; the scene is in 0.1mm. */
 export const MM_TO_SCENE = constant.dpmm;
 
-/** SVG user units (Y down) -> scene units (Y towards the back). */
-export const svgToSceneY = (y: number): number => -y;
+/** Scene Y -> SVG / canvas Y, in scene units. Its own inverse. */
+export const sceneToSvgY = (y: number): number => workareaManager.height - y;
 
-/** Scene units (Y towards the back) -> SVG user units (Y down). */
-export const sceneToSvgY = (y: number): number => -y;
+/** Scene Y -> SVG / canvas Y, in mm. */
+export const sceneToSvgYMm = (y: number): number => workareaManager.height / MM_TO_SCENE - y;

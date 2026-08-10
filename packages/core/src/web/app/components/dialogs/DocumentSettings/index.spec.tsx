@@ -258,6 +258,7 @@ describe('test DocumentSettings', () => {
       'enable-autofocus': true,
       'enable-diode': true,
       'enable-job-origin': true,
+      'inner-engraving': false,
       'job-origin': 1,
       'pass-through': false,
       'rotary-type': 0,

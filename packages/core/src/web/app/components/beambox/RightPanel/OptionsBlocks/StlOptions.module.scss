@@ -1,0 +1,39 @@
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  .label {
+    font-size: 12px;
+    // the label yields first when the panel is dragged to its 260px minimum
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .control {
+    flex: 0 0 auto;
+  }
+}
+
+/** antd's default InputNumber width ignores the row, so the field has to be sized here. */
+.input {
+  width: 96px;
+
+  :global(.ant-input-number) {
+    width: 100%;
+  }
+}
+
+.segmented {
+  // both options must stay readable at the panel's minimum width
+  font-size: 12px;
+}

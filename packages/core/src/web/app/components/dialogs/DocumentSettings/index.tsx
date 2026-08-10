@@ -764,6 +764,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             renderWarningIcon={renderWarningIcon}
             setInnerEngraving={setInnerEngraving}
             show={supportsInnerEngraving}
+            workarea={workarea}
           />
           <RotaryBlock
             addOnInfo={addOnInfo}

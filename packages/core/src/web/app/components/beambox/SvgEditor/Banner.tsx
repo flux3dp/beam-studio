@@ -12,6 +12,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Banner.module.scss';
@@ -52,13 +53,21 @@ const Banner = (): React.ReactNode => {
     [hasCurveEngravingData, mode],
   );
   const isAutoFocus = useMemo(() => mode === CanvasMode.AutoFocus, [mode]);
+  const isInnerEngraving = useInnerEngravingActive();
   const isNeedBanner =
-    isAutoFeeder || isBorderlessPreview || isCurveEngraving || isPassThrough || isRotary || isAutoFocus;
+    isAutoFeeder ||
+    isBorderlessPreview ||
+    isCurveEngraving ||
+    isInnerEngraving ||
+    isPassThrough ||
+    isRotary ||
+    isAutoFocus;
   const messageMap = {
     autoFeeder: lang.beambox.banner.auto_feeder,
     autofocus1: lang.beambox.banner.autofocus1,
     autofocus2: lang.beambox.banner.autofocus2,
     curveEngraving: lang.beambox.banner.curve_engraving,
+    innerEngraving: lang.beambox.banner.inner_engraving,
     openBottomPreview: `${lang.global.preview} ${lang.beambox.banner.camera_preview_borderless_mode}`,
     passThrough: lang.beambox.banner.pass_through,
     rotary: lang.beambox.banner.rotary,
@@ -69,8 +78,10 @@ const Banner = (): React.ReactNode => {
 
     if (isBorderlessPreview) list.push(messageMap.openBottomPreview);
 
-    // exclusive
-    if (isAutoFeeder) list.push(messageMap.autoFeeder);
+    // exclusive — inner engraving is first because the document settings already make it exclusive
+    // with all of these, so the others cannot be on at the same time
+    if (isInnerEngraving) list.push(messageMap.innerEngraving);
+    else if (isAutoFeeder) list.push(messageMap.autoFeeder);
     else if (isPassThrough) list.push(messageMap.passThrough);
     else if (isCurveEngraving) list.push(messageMap.curveEngraving);
     else if (isRotary) list.push(messageMap.rotary);
