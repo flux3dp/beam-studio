@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 
 import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { __setMockOS } from '@mocks/@core/helpers/getOS';
@@ -58,10 +58,14 @@ jest.mock('@core/app/stores/screenStore', () => ({
 
 __setMockOS('MacOS');
 
+import { useMenuItemStatusStore } from '@core/app/stores/menuItemStatusStore';
+import { INITIALLY_DISABLED_MENU_ITEMS } from '@core/helpers/menubar/menuItemStatus';
+
 import Menu from './Menu';
 
 describe('should render correctly', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
     Object.assign(mockGlobalPreference, defaultGlobalPreference);
     mockUseGlobalPreferenceStore.mockImplementation((selector) => selector(mockGlobalPreference));
     mockRegister.mockReturnValue(mockUnregister);
@@ -92,6 +96,9 @@ describe('should render correctly', () => {
       mockGlobalPreference[key] = false;
     }
 
+    // as if the editor page had attached the menu, otherwise the items are disabled
+    useMenuItemStatusStore.getState().enable(INITIALLY_DISABLED_MENU_ITEMS);
+
     const { container, getByText, rerender } = render(<Menu />);
 
     expect(container).toMatchSnapshot();
@@ -108,6 +115,42 @@ describe('should render correctly', () => {
     mockGlobalPreference.show_rulers = true;
     rerender(<Menu />);
     expect(container).toMatchSnapshot();
+  });
+
+  test('disabled status follows menu item status store', () => {
+    mockUseGlobalPreferenceStore.mockReturnValue(true);
+
+    const { container, getByText } = render(<Menu />);
+
+    fireEvent.click(container.querySelector('div.menu-btn-container'));
+    fireEvent.click(getByText('Edit'));
+
+    // DUPLICATE starts disabled, like `enabled: false` in the electron menu template
+    expect(getByText('Duplicate').closest('[role="menuitem"]')).toHaveAttribute('aria-disabled', 'true');
+
+    fireEvent.click(getByText('Duplicate'));
+    expect(emit).not.toHaveBeenCalled();
+
+    act(() => useMenuItemStatusStore.getState().enable(['DUPLICATE']));
+    expect(getByText('Duplicate').closest('[role="menuitem"]')).not.toHaveAttribute('aria-disabled');
+
+    fireEvent.click(getByText('Duplicate'));
+    expect(emit).toHaveBeenCalledTimes(1);
+    expect(emit).toHaveBeenNthCalledWith(1, MenuEvents.MenuClick, null, { id: 'DUPLICATE' });
+  });
+
+  test('submenu disabled status follows menu item status store', () => {
+    mockUseGlobalPreferenceStore.mockReturnValue(true);
+
+    const { container, getByText } = render(<Menu />);
+
+    fireEvent.click(container.querySelector('div.menu-btn-container'));
+    fireEvent.click(getByText('Edit'));
+
+    expect(getByText('Image').closest('[role="menuitem"]')).toHaveAttribute('aria-disabled', 'true');
+
+    act(() => useMenuItemStatusStore.getState().enable(['PHOTO_EDIT']));
+    expect(getByText('Image').closest('[role="menuitem"]')).not.toHaveAttribute('aria-disabled');
   });
 
   test('already signed in', () => {

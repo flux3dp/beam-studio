@@ -505,14 +505,16 @@ exports[`should render correctly open the browser and reach the correct page 3`]
             About Beam Studio
           </li>
           <li
-            class="szh-menu__item"
+            aria-disabled="true"
+            class="szh-menu__item szh-menu__item--disabled"
             role="menuitem"
             tabindex="-1"
           >
             Show Start Tutorial
           </li>
           <li
-            class="szh-menu__item"
+            aria-disabled="true"
+            class="szh-menu__item szh-menu__item--disabled"
             role="menuitem"
             tabindex="-1"
           >

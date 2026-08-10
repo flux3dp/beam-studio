@@ -1,25 +1,18 @@
 /* eslint-disable import/order */
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { useMenuItemStatusStore } from '@core/app/stores/menuItemStatusStore';
 
 class Menu extends AbstractMenu {
-  private eventEmitter;
-
-  constructor() {
-    super();
-    this.eventEmitter = eventEmitterFactory.createEventEmitter('top-bar-menu');
-  }
-
   init(): void {
     this.initMenuEvents();
   }
 
   enable(items: string[]): void {
-    this.eventEmitter.emit('ENABLE_MENU_ITEM', items);
+    useMenuItemStatusStore.getState().enable(items);
   }
 
   disable(items: string[]): void {
-    this.eventEmitter.emit('DISABLE_MENU_ITEM', items);
+    useMenuItemStatusStore.getState().disable(items);
   }
 
   updateLanguage(): void {}
