@@ -9,7 +9,7 @@ Guide for writing Jest unit tests in the Beam Studio codebase. Follow it literal
 rule here was derived from the 400+ existing spec files; do not invent alternative patterns.
 
 For Cypress E2E specs (release-test automation under `apps/web/cypress/`), see
-`.claude/skills/e2e-test/SKILL.md`. For the coverage roadmap, see `docs/testing/test-coverage-plan.md`.
+`.agents/skills/e2e-test/SKILL.md`. For the coverage roadmap, see `docs/testing/test-coverage-plan.md`.
 
 ## Framework & Config
 
@@ -82,6 +82,7 @@ Location: `packages/core/src/__mocks__/`
 | `@core/helpers/i18n` | Returns `{ lang: langEn, getActiveLang: () => 'en' }` using real `en.ts` |
 | `@core/helpers/checkFeature` | `jest.fn()` |
 | `@core/helpers/getOS` | `jest.fn()` |
+| `@core/helpers/locale-helper` | all `is*` region flags `false` (mutable — reset in `beforeEach`); real module imports ESM-only `bcp-47` that Jest can't parse |
 | `@core/helpers/is-dev` | `jest.fn()` returns `false` |
 | `@core/helpers/symbolMaker` | no-op |
 | `@core/helpers/api/flux-id` | stubs for auth functions |
