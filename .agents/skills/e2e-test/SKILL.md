@@ -8,7 +8,7 @@ description: Cypress E2E conventions for Beam Studio release-test automation und
 Guide for writing Cypress E2E specs in Beam Studio. The release-test spreadsheet
 ("Beam Studio Test") is automated almost entirely through these specs, so **every new
 release-test automation lands here** unless it is pure logic (then prefer a Jest unit test —
-see `.claude/skills/unit-test/SKILL.md`). Coverage roadmap: `docs/testing/test-coverage-plan.md`.
+see `.agents/skills/unit-test/SKILL.md`). Coverage roadmap: `docs/testing/test-coverage-plan.md`.
 
 ## Layout & Commands
 
