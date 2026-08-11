@@ -5,8 +5,8 @@ import { restoreOriginalColors } from '@core/helpers/image/originalColors';
 
 import { CUT_COLOR, markRadiusPx } from './constants';
 import { contentTags } from './utils/collectContents';
-import type { MarkPosition } from './utils/layout';
 import { getGeneratedCutLayers } from './utils/contentsLayers';
+import type { MarkPosition } from './utils/layout';
 
 interface BBox {
   height: number;
