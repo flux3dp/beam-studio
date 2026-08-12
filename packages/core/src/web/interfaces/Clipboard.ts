@@ -1,3 +1,5 @@
+import type { StlObject } from '@core/app/stores/stlStore';
+
 export interface ClipboardElement {
   attributes: Array<Record<'namespaceURI' | 'nodeName' | 'value', null | string>>;
   childNodes: ClipboardElement[];
@@ -24,6 +26,12 @@ export interface ClipboardCore {
   addRefToClipboard(useElement: SVGUseElement): void;
 
   /**
+   * Remember the STL 3D object behind a copied projection rect.
+   * @param elem The projection rect being copied.
+   */
+  addStlToClipboard(elem: Element): void;
+
+  /**
    * Copy the given elements to the clipboard.
    * @param elems The elements to copy.
    */
@@ -40,6 +48,13 @@ export interface ClipboardCore {
   getRawData(): Promise<ClipboardData | null>;
 
   getRefFromClipboard(id: string): Element | undefined;
+
+  /**
+   * The mesh for an element returned by {@link ClipboardCore.getData}, keyed by **that** element's
+   * id. Undefined when the clipboard has no mesh for it — data written by another tab, where only
+   * the rect could travel.
+   */
+  getStlFromClipboard(id: string): StlObject | undefined;
 
   hasData(): Promise<boolean>;
 }

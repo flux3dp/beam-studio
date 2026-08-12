@@ -13,6 +13,7 @@ import {
 import type { StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import { STL_ATTR } from '@core/app/svgedit/stl/constants';
+import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { todo } from '@core/helpers/is-dev';
@@ -118,10 +119,7 @@ const importStl = async (file: File): Promise<void> => {
 
   batchCmd.addSubCommand(new history.InsertElementCommand(elem));
   // the mesh lives outside the DOM, so undo/redo has to add and remove it alongside the rect
-  batchCmd.onAfter = () => {
-    if (elem.parentNode) useStlStore.getState().set(object);
-    else useStlStore.getState().remove(id);
-  };
+  batchCmd.onAfter = () => syncStlObjectsWithDom([object]);
   undoManager.addCommandToHistory(batchCmd);
 
   // one call for both halves of the selection: the mesh in the store and the rect in svgedit

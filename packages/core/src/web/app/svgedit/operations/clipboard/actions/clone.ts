@@ -2,6 +2,7 @@ import history from '@core/app/svgedit/history/history';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selectionManager from '@core/app/svgedit/selection';
+import { syncStlTransformsFromRects } from '@core/app/svgedit/stl/clipboard';
 import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
 
 import { copyElements } from './copy';
@@ -41,6 +42,9 @@ export const cloneElements = async (
   if (moveCommand && !moveCommand.isEmpty()) {
     batchCmd.addSubCommand(moveCommand);
   }
+
+  // the clone offset was applied to the projection rects only; the 3D objects have to follow
+  syncStlTransformsFromRects(elems, batchCmd);
 
   handleHistoryActionOptions(batchCmd, historyOpts);
 

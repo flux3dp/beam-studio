@@ -2,8 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { OrbitControls } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { DoubleSide, Vector3 } from 'three';
+import classNames from 'classnames';
+import { DoubleSide, MOUSE, Vector3 } from 'three';
 
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -32,6 +34,17 @@ todo(
   '標明這些顏色來自哪裡，基本上是 scss 或 JS，確認沿用舊的顏色的話，最好對齊原本的寫法（例如 rgba）；scss container background color 實際上可以直接套用整個 beam studio 的底色，不用另外設定，除非決定給內雕改成暗色模式，但容易影響到很多其他的顏色顯示',
 );
 
+/** Orbit on the left button, pan on the right — the three.js default, and the 3D convention. */
+const MOUSE_BUTTONS = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PAN };
+/**
+ * The two swapped, for as long as the space bar is held.
+ *
+ * Space + left drag pans the SVG canvas, and it has to mean the same thing here or the one gesture
+ * shared by both canvases would do opposite things depending on the mode. The right button picks up
+ * what the left gave away rather than being disabled, so orbiting is still reachable mid-pan.
+ */
+const SPACE_MOUSE_BUTTONS = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.ROTATE };
+
 /**
  * Grid/ruler spacing that follows the zoom level, so the spacing stays readable instead of turning
  * into a solid block when zoomed out or a single cell when zoomed in.
@@ -53,6 +66,7 @@ const useAdaptiveStep = (center: [number, number, number]): number => {
 
 const Scene = () => {
   const { objects, selectedId } = useStlStore();
+  const spaceKey = useCanvasStore((state) => state.spaceKey);
   const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   const { height, width } = workareaManager;
   const material = useMaterial();
@@ -108,7 +122,13 @@ const Scene = () => {
       <MaterialShape material={material} />
 
       {Object.values(objects).map((object) => (
-        <StlMesh key={object.id} object={object} onSelect={selectStlObject} selected={object.id === selectedId} />
+        <StlMesh
+          key={object.id}
+          object={object}
+          onSelect={selectStlObject}
+          panning={spaceKey}
+          selected={object.id === selectedId}
+        />
       ))}
 
       <ViewController extent={viewExtent} target={viewTarget} />
@@ -122,6 +142,7 @@ const Scene = () => {
       <OrbitControls
         makeDefault
         maxPolarAngle={Math.PI / 2}
+        mouseButtons={spaceKey ? SPACE_MOUSE_BUTTONS : MOUSE_BUTTONS}
         onChange={() => {
           if (interacting.current) useViewStore.getState().markViewCustom();
         }}
@@ -145,6 +166,7 @@ const Scene = () => {
  */
 const InnerEngravingCanvas = (): React.JSX.Element => {
   const { height, width } = workareaManager;
+  const spaceKey = useCanvasStore((state) => state.spaceKey);
   // read once rather than subscribed: this only seeds the first frame, after which the camera
   // belongs to OrbitControls and re-seeding it would yank the view out from under the user
   const materialHeight = useMemo(() => getMaterial().height, []);
@@ -160,7 +182,7 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
   );
 
   return (
-    <div className={styles.container}>
+    <div className={classNames(styles.container, { [styles.panning]: spaceKey })}>
       <Canvas
         camera={{
           // a tight near/far range keeps depth precision usable; with near = 1 (0.1mm) almost the
@@ -187,7 +209,10 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
           camera.up.set(0, 0, 1);
           camera.lookAt(...viewTarget);
         }}
-        onPointerMissed={() => selectStlObject(null)}
+        // a pan that starts on empty space is not a click on empty space: it must not deselect
+        onPointerMissed={() => {
+          if (!useCanvasStore.getState().spaceKey) selectStlObject(null);
+        }}
       >
         <Scene />
       </Canvas>
