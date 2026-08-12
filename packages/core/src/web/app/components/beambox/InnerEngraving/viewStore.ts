@@ -82,7 +82,18 @@ export const useViewStore = create<ViewStore>((set) => ({
   projection: 'perspective',
   ratioLocked: true,
   requestView: (preset) => set((state) => ({ view: { preset, version: state.view.version + 1 } })),
-  setProjection: (projection) => set({ projection }),
+  setProjection: (projection) =>
+    set((state) => ({
+      projection,
+      // toggling the projection replaces the camera object, and a pose carried across never framed
+      // the scene the way it did before — the two frustums are too different for that to look like
+      // the same view. Re-applying a named view instead is at least predictable; a camera the user
+      // had orbited to (`custom`) has no view to go back to, so it falls back to the default one
+      view: {
+        preset: state.view.preset === 'custom' ? DEFAULT_VIEW : state.view.preset,
+        version: state.view.version + 1,
+      },
+    })),
   setRatioLocked: (ratioLocked) => set({ ratioLocked }),
   setTransformMode: (transformMode) => set({ transformMode }),
   transformMode: 'translate',

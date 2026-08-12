@@ -9,7 +9,6 @@ import type { ProjectionMode, TransformMode, ViewPreset } from './viewStore';
 import { useViewStore } from './viewStore';
 
 todo('i18n for the inner engraving canvas controls, currently hard-coded English');
-todo('FIXME: ProjectionMode 切換時，視角會變');
 
 // 'custom' is deliberately absent: when the camera is there, nothing is highlighted
 const VIEW_OPTIONS: Array<{ label: string; value: Exclude<ViewPreset, 'custom'> }> = [
