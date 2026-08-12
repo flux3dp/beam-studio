@@ -44,6 +44,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useStlStore } from '@core/app/stores/stlStore';
 import elementIntersectsRect from '@core/app/svgedit/utils/elementIntersectsRect';
 import rectsIntersect from '@core/app/svgedit/utils/rectsIntersect';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -2002,6 +2003,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // clear the svgcontent node
     canvas.clearSvgContentElement();
+
+    // the meshes of any STL objects go with it: their projection rects have just been thrown away,
+    // and the rect is what the rest of the app treats as the object's existence. Left behind they
+    // would keep holding GPU buffers and still be drawn on the 3D canvas
+    useStlStore.getState().clear();
 
     // create new document
     canvas.resetCurrentDrawing();

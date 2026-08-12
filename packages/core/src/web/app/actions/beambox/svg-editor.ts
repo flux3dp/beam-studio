@@ -122,7 +122,8 @@ declare global {
 
 export interface ISVGEditor {
   canvas: any;
-  clearScene: () => Promise<void>;
+  /** @returns whether the scene was actually cleared — false when the user cancelled the save prompt */
+  clearScene: () => Promise<boolean>;
   clickSelect: (clearSelection?: boolean) => void;
   copySelected: () => void;
   curConfig: ISVGConfig;
@@ -140,7 +141,7 @@ const svgEditor = (window['svgEditor'] = (function () {
   // STATE MAINTENANCE PROPERTIES
   const editor: ISVGEditor = {
     canvas: null,
-    clearScene: async () => {},
+    clearScene: async () => false,
     clickSelect: () => {},
     copySelected: () => {},
     curConfig: null as any,
@@ -644,7 +645,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       const res = await toggleUnsavedChangedDialog();
 
       if (!res) {
-        return;
+        return false;
       }
 
       setMouseMode('select');
@@ -655,6 +656,8 @@ const svgEditor = (window['svgEditor'] = (function () {
       layerManager.resync();
       updateContextPanel();
       svgedit.transformlist.resetListMap();
+
+      return true;
     };
 
     editor.clearScene = clearScene;
