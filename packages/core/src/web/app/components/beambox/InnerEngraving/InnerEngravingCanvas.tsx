@@ -1,28 +1,22 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { OrbitControls } from '@react-three/drei';
+import { GizmoHelper, GizmoViewport, OrbitControls } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import classNames from 'classnames';
 import { DoubleSide, MOUSE, Vector3 } from 'three';
 
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { todo } from '@core/helpers/is-dev';
 
 import CanvasControls from './CanvasControls';
-import {
-  BACKGROUND_COLOR,
-  FLOOR_COLOR,
-  FLOOR_MARGIN,
-  FLOOR_Z,
-  GRID_COLOR,
-  GRID_STEPS,
-  TARGET_GRID_CELLS,
-} from './constants';
+import { AXIS_COLORS, BACKGROUND_COLOR, FLOOR_COLOR, FLOOR_MARGIN, FLOOR_Z, GRID_STEPS, TARGET_GRID_CELLS } from './constants';
 import styles from './InnerEngravingCanvas.module.scss';
 import MaterialShape from './MaterialShape';
+import SceneGrid from './SceneGrid';
 import SceneRuler from './SceneRuler';
 import StlMesh from './StlMesh';
 import { getMaterial, useMaterial } from './utils/material';
@@ -81,6 +75,11 @@ const Scene = () => {
   const viewExtent = useMemo(() => Math.max(width, height, material.height), [height, material.height, width]);
   const diagonal = useMemo(() => Math.hypot(width, height), [height, width]);
   const step = useAdaptiveStep(center);
+  // the same two View menu items the 2D canvas answers to, so one setting means one thing in both
+  const showGrids = useGlobalPreferenceStore((state) => state.show_grids);
+  const showRulers = useGlobalPreferenceStore((state) => state.show_rulers);
+  // walls tall enough for the workpiece, and never a degenerate zero-height box
+  const wallHeight = useMemo(() => Math.max(material.height, step), [material.height, step]);
 
   // the other direction of the sync in `selectStlObject`: selecting through the layer panel, undo,
   // or anything else that moves svgedit's selection has to light up the mesh too
@@ -96,27 +95,14 @@ const Scene = () => {
       <color args={[BACKGROUND_COLOR]} attach="background" />
       <ambientLight intensity={1.2} />
       <directionalLight intensity={2} position={[width, -height, diagonal]} />
-      {/* X red, Y green, Z blue. TODO: decide whether to keep this for users or make it a toggle */}
-      <axesHelper args={[Math.max(width, height) / 2]} />
-
       {/* reaches past the work area so its edge is not flush with the boundary */}
       <mesh position={[center[0], center[1], FLOOR_Z]}>
         <planeGeometry args={[width + FLOOR_MARGIN * 2, height + FLOOR_MARGIN * 2]} />
         {/* unlit: the work area floor is a flat #fff backdrop like the 2D canvas, not a lit surface */}
         <meshBasicMaterial color={FLOOR_COLOR} side={DoubleSide} />
       </mesh>
-      <gridHelper
-        args={[
-          Math.max(width, height),
-          Math.max(1, Math.round(Math.max(width, height) / step)),
-          GRID_COLOR,
-          GRID_COLOR,
-        ]}
-        position={center}
-        // gridHelper lies in the XZ plane by default, stand it up onto the XY floor
-        rotation={[Math.PI / 2, 0, 0]}
-      />
-      <SceneRuler depth={material.height} height={height} step={step} width={width} />
+      {showGrids && <SceneGrid depth={wallHeight} height={height} step={step} width={width} />}
+      {showRulers && <SceneRuler depth={wallHeight} height={height} step={step} width={width} />}
 
       {/* the workpiece, positioned by InnerEngravingSettings and not movable on the canvas */}
       <MaterialShape material={material} />
@@ -132,6 +118,14 @@ const Scene = () => {
       ))}
 
       <ViewController extent={viewExtent} target={viewTarget} />
+      {/* the axes indicator, grouped with the grids because it is the same kind of guide. Clicking
+          an axis flies the camera there, which is a view the presets know nothing about, so the
+          highlight has to be cleared the same way an orbit clears it */}
+      {showGrids && (
+        <GizmoHelper alignment="bottom-left" margin={[80, 80]} onUpdate={useViewStore.getState().markViewCustom}>
+          <GizmoViewport axisColors={AXIS_COLORS as unknown as [string, string, string]} labelColor="#fff" />
+        </GizmoHelper>
+      )}
       {/* clamped to the upper hemisphere: everything worth looking at is above the focus plane, and
           orbiting under the floor only ever produces a confusing view of the material's underside.
 

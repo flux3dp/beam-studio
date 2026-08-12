@@ -3,8 +3,15 @@ import { MM_TO_SCENE } from './utils/coordinates';
 /** Matches the 2D canvas: white inside the work area, grey outside. */
 export const FLOOR_COLOR = '#ffffff';
 export const BACKGROUND_COLOR = '#f0f0f0';
-export const GRID_COLOR = '#dadada';
-export const RULER_COLOR = '#999999';
+/**
+ * Grid lines. Darker than the 2D canvas's `#dadada`, which all but disappears in 3D: the floor is
+ * seen at a glancing angle from the default view, so its lines cover far fewer pixels than the same
+ * grid does flat on.
+ */
+export const GRID_COLOR = '#c0c0c0';
+/** The two walls, kept fainter than the floor so the backdrop does not compete with the model. */
+export const GRID_WALL_COLOR = '#e0e0e0';
+export const RULER_COLOR = '#666666';
 /** Semi-transparent light grey, as specified for the material preview. */
 export const MATERIAL_COLOR = '#1890ff';
 export const MATERIAL_OPACITY = 0.15;
