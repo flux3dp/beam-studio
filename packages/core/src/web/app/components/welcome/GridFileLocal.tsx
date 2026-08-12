@@ -9,6 +9,7 @@ import dayjs from 'dayjs';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
+import { isInnerEngravingFile } from '@core/helpers/innerEngraving';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
 import styles from './GridFile.module.scss';
@@ -39,6 +40,7 @@ const getFileSize = (bytes: number) => {
 const GridFileLocal = ({ file, selectedId, setSelectedId }: Props): React.JSX.Element => {
   const workarea = getWorkarea(file.workarea as WorkAreaModel);
   const isSelected = useMemo(() => selectedId === file.uuid, [selectedId, file]);
+  const is3d = isInnerEngravingFile(file);
 
   const onClick = () => {
     setSelectedId(file.uuid);
@@ -51,7 +53,11 @@ const GridFileLocal = ({ file, selectedId, setSelectedId }: Props): React.JSX.El
   return (
     <div className={classNames(styles.grid, { [styles.selected]: isSelected })}>
       <div className={styles['img-container']} onClick={onClick} onDoubleClick={onDoubleClick}>
-        <div className={styles['guide-lines']} style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}>
+        <div
+          className={classNames(styles['guide-lines'], { [styles.plain]: is3d })}
+          // the picture stays inline because its path is resolved at runtime, not by the bundler
+          style={is3d ? undefined : { background: "url('core-img/flux-plus/guide-lines.png')" }}
+        >
           <img src={file.thumbnail_url!} />
         </div>
       </div>

@@ -8,13 +8,13 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { supportInnerEngraving } from '@core/app/constants/workarea-constants';
 import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import { resolveInnerEngravingForFile } from '@core/app/svgedit/operations/import/innerEngravingGate';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
@@ -65,6 +65,8 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
   useStlStore.getState().clear();
 
   const currentWorkarea: WorkAreaModel = workareaManager.model;
+  // set while reading the document state below, and consumed by the work area decision further down
+  let innerEngravingWorkarea: null | WorkAreaModel = null;
 
   // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
   if (typeof str === 'string') {
@@ -112,10 +114,13 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
     }
 
     // inner engraving mode, gated by the model: a file made on Promark UV opened elsewhere must not
-    // switch the app into a mode the machine cannot do
+    // switch the app into a mode the machine cannot do. When the machine *is* available the user is
+    // asked, because saying yes changes the document's work area — see `innerEngravingGate`
     const innerEngraving = str.match(/data-inner-engraving="([a-z]+)"/)?.[1] === 'true';
+    const innerEngravingResult = await resolveInnerEngravingForFile(innerEngraving, currentWorkarea);
 
-    newDocumentState['inner-engraving'] = innerEngraving && supportInnerEngraving(currentWorkarea);
+    innerEngravingWorkarea = innerEngravingResult.workarea;
+    newDocumentState['inner-engraving'] = innerEngravingResult.innerEngraving;
 
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
@@ -196,7 +201,9 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
   }
 
   const { lang } = i18n;
-  let newWorkarea = currentWorkarea;
+  // an inner engraving document holds no 2D artwork at all, so it can never be one of the printing
+  // cases below — the two branches cannot both want a work area
+  let newWorkarea = innerEngravingWorkarea ?? currentWorkarea;
   const hasPrintingLayer = hasModuleLayer([LayerModule.PRINTER]);
   const shouldChangeToAdor = currentWorkarea !== 'ado1' && hasPrintingLayer;
   const has4CLayer = hasModuleLayer(fullColorHeadModules);

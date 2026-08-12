@@ -458,7 +458,9 @@ UI：
 
 ### Step 11 以後
 
-**A-3 剩下的部分（下一步）**：折射率 `getExportOpt`、`stl_z_reversed`、`SWIFTRAY_SUPPORT_STL` 正式版號。接著是開檔流程要不要用 `readBeamFileInfo().innerEngraving` 詢問使用者、第 4 點的匯入預檢 / 進度條 / thumbnail、以及剖面預覽（第 5 點 V1）→ 第 7 / 8 點選單與 Banner → A-3 剩下的部分（折射率 `getExportOpt`、`stl_z_reversed`、`SWIFTRAY_SUPPORT_STL` 正式版號）
+**A-3 剩下的部分（下一步）**：折射率 `getExportOpt`、`stl_z_reversed`、`SWIFTRAY_SUPPORT_STL` 正式版號。接著是剖面預覽（第 5 點 V1）。
+
+第 4 點的匯入預檢 / 自適應縮放詢問 / 進度條 / thumbnail 與模式切換詢問已於 Step 12 完成；`readBeamFileInfo().innerEngraving` 仍然沒有消費端（Step 12 是在 `importBvgString` 讀 svg 字串裡的 `data-inner-engraving`，開檔前的分頁 / 工作區域詢問流程是另一件事）。
 
 第 6 點的四個子項與依賴：
 
@@ -595,6 +597,65 @@ A-1 的右面板三處分派已補齊（Options 仍是「擋掉 2D 版」，等 
 
 ---
 
+### ✅ Step 12：檔案匯入 / 匯出（TODO.md 第 4 點）
+
+`importStl.ts` 拆成資料夾（比照 `importSvg/`）：`importStl/index.ts` + `importStl/preCheck.tsx`。
+
+#### 匯入預檢
+
+⚠️ **格式判斷不能用「開頭是不是 `solid `」** —— 大量匯出器會把這串字寫進 binary 檔的 80 bytes 檔頭（測試用的 `Mcqueen Car.STL` 就是），文字判斷會把 binary 誤判成 ASCII。改用 offset 80 的 uint32 面數比對 `84 + n × 50 === fileSize`。
+
+- 面數**不解析檔案就算得出來**，這正是預檢想要的：35MB 的怪物在讀進記憶體、建出 BufferGeometry 之前就被擋下
+- 門檻 20MB / 50MB，對應的面數門檻直接由同一個公式換算（40 萬 / 100 萬），所以兩條規則對同一個檔案只會有一條開火
+- **場景累計面數**也檢查：一份文件可以有多個 STL，切片要付的是文件的總成本，三個 15MB 跟一個 45MB 是同一件事
+- ASCII 檔沒有便宜的面數，但它比同模型的 binary 大 5~6 倍，size 門檻本來就蓋得住
+- 多個警告合併成一個 alert（跟 `performSvgPreChecks` 同一套），附「不再顯示」（`skip-stl-import-warning`）
+
+#### 【自適應縮放】改成詢問
+
+`getInitialTransform` 從「直接縮」改成「**只在放不下時詢問**」（PM 08/06：小於時不用問）。拒絕是合法答案 —— 之後還有 ActionsPanel 的【自適應】，而且那顆會放大，匯入這條路永遠不會。
+
+#### 匯入進度
+
+`openSteppingProgress`，兩段：讀檔 → 解析 mesh。兩段都沒有真實百分比，但把慢的地方**講出來**，30 秒的匯入才不會看起來像當掉。真進度要把 parse 搬進 Worker，之後不夠用再說。
+
+⚠️ **詢問視窗一律在進度條關掉之後才跳** —— antd Modal 疊起來雖然點得到，但「請稍候」後面壓一個問句讀起來像 bug。`handleFile` 也因此把 `fileType` 的判斷提到開進度條之前。
+
+#### 模式不符時提供切換（`import/innerEngravingGate.ts`）
+
+2D 與 3D 在 V1 互不相容，所以與其擋掉不如**順手提供切換**：
+
+| 目前 | 匯入 | 行為 |
+| --- | --- | --- |
+| 內雕 | svg / bitmap / dxf / pdf / ai | 提示不支援 + 詢問關閉內雕 |
+| 一般 | stl | 提示不支援 + `checkFpm1UV()` + 詢問開啟內雕（不在 UV 工作區域時**一併切換工作區域**） |
+| 任一 | .beam / .bvg | 走 `importBvgString`，**只有需要改工作區域時才問**，否則直接套用 |
+
+- `.beam` / `.bvg` 的模式寫在檔案裡，所以「檔案跟目前工作區域相符」與「檔案要關閉內雕」這兩種都沒有東西好問
+- 選單的匯入對話框改成 `checkFpm1UV()` 就列出 `.stl`（不再要求模式已開啟），否則「選了 STL 才問要不要開模式」這條路根本走不到
+- ⚠️ 關閉內雕時，畫布上既有的 STL 物件會留下投影 rect —— TODO.md 的 TBD（關閉模式是否移除 STL）做好之後要接上，程式碼已標 todo
+
+#### Thumbnail 走 3D（`InnerEngraving/utils/thumbnail.ts`）
+
+存檔（`generateBeamThumbnail`）與送工作（`fetchThumbnail`）原本都是從 `svgcontent` 畫，而內雕文件的 svgcontent 只有一堆扁平的投影 rect —— 畫出來是外框，不是作品。改成離屏 render 3D 場景。
+
+- **固定等角 + 正投影**：縮圖同時是識別用的，同一份文件每次都要產生同一張圖；機器面板顯示的尺寸下透視圖也讀不出來
+- **取景涵蓋工作範圍 ∪ 材料 ∪ 所有物件**：工作範圍讓「東西擺在角落」看得出來，材料則本來就允許大於工作範圍，裁掉會誤導
+- 材料**整塊畫**，不做畫布上的範圍內 / 範圍外分色 —— 那需要 clipping planes，在縮圖尺寸下只是雜訊
+- **背景透明**（不套畫布的 `#f0f0f0`）：同一張縮圖會出現在歡迎頁卡片、myCloud、機器面板，各自有自己的底色，烤一塊灰進去等於在每個地方都貼一個灰方塊。工作範圍地板仍然是白的，所以視場本身看得到
+- 連帶：`GridFileLocal` 與 myCloud `GridFile` 對 3D 檔案改用淺灰底（`#f7f7f7`），不套 guide-lines 圖 —— 那張圖代表的是 2D 畫布，內雕文件沒有。判斷走 `isInnerEngravingFile()`，只看 `IFile.innerEngraving` 這個旗標：本機檔案從 .beam header 讀得到，雲端檔案等 list API 補欄位（見下方【Flux-id】），在那之前一律當成 2D。**刻意不用工作區域推測** —— Promark UV 上的 2D 檔案會被誤判，而這裡只是底色，不值得用一個會錯的猜測換
+- 圖層顏色**一律套用**，不看 `use_layer_color` 偏好：那個偏好是編輯時的可讀性，縮圖是作品的照片，一整排黑剪影沒有資訊
+- ⚠️ mesh 的 geometry 與畫布**共用**（只套矩陣、不烤進頂點），所以 dispose 只能碰這裡自己建的材質與幾何
+- ⚠️ WebGLRenderer 用完一定 `dispose()` + `forceContextLoss()`：WebGL context 是每頁有限的資源，每次存檔漏一個最後會讓畫布自己的 context 被瀏覽器收掉
+
+#### 尚未處理
+
+- **匯入選項**：單位（mm / inch）、上方向（Z-up / Y-up，Blender 匯出常是 Y-up）—— 已在 `svg-editor.ts` 標 TODO
+- **其他檔案入口**：Electron `open-file` 關聯、最近開啟、myCloud、範例檔案仍不認得 `.stl`
+- ⚠️ 順手發現的**既有 bug**（未修，不在這次範圍）：`handleFile` 的 `case 'bvg'` 少一個 `break`，所以每次匯入 .bvg 都會再跑一次 `readBeam`
+
+---
+
 ---
 
 ## 目前 2D 有對應功能，3D 需要補
@@ -687,6 +748,19 @@ Step 1 的 `tag_names` 新增 key 已確認沒有 snapshot 引用到。
 ### 待刪除
 
 （目前無）
+
+---
+
+## 【Flux-id】需要 FLUX ID / myCloud API 配合的事項
+
+### 檔案清單要能分辨內雕檔案
+
+`/api/beam-studio/cloud/list` 回傳的 metadata 目前有 `workarea`，**沒有**「這是不是內雕檔案」。前端需要它來決定 myCloud 卡片的縮圖底色：內雕檔案的縮圖是**透明底的 3D render**，襯在代表 2D 畫布的 guide-lines 圖上是錯的，要換成淺灰底。
+
+- 前端已經預留 `IFile.innerEngraving?: boolean`，欄位一到就直接接上（`helpers/innerEngraving.ts` 的 `isInnerEngravingFile()` 是唯一的讀取點）
+- 值的來源：.beam 檔 header 的 metadata JSON 已經帶 `"innerEngraving": true`（`beam-file-helper.ts` 寫入，`readBeamFileInfo` 就是這樣讀的），伺服器解析 header 時可以一併取
+- ⚠️ **不要用工作區域推測**：只有 Promark UV 做得到內雕，但 Promark UV 上一樣可以存 2D 檔案，用機種當條件會誤判
+- 影響僅止於底色，所以欄位缺席時前端一律當成 2D，不會壞掉
 
 ---
 

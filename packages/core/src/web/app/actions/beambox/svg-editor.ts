@@ -39,6 +39,7 @@ import importDxf from '@core/app/svgedit/operations/import/importDxf';
 import { importDxfFromText, looksLikeDxfText } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
 import importStl from '@core/app/svgedit/operations/import/importStl';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
+import { ensureModeForImport } from '@core/app/svgedit/operations/import/innerEngravingGate';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
 import svgCanvasClass from '@core/app/svgedit/svgcanvas';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -52,7 +53,6 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';
@@ -933,14 +933,19 @@ const svgEditor = (window['svgEditor'] = (function () {
         $(this).attr('value', '');
       };
 
+      /** Whether each canvas-content file type requires inner engraving mode to be on. */
+      const MODE_GATED_TYPES: Record<string, boolean> = {
+        ai: false,
+        bitmap: false,
+        dxf: false,
+        pdf: false,
+        stl: true,
+        svg: false,
+      };
+
       const handleFile = async (file: File) => {
         const lang = i18n.lang.beambox;
         const path = fileSystem.getPathForFile(file as File);
-        await Progress.openNonstopProgress({
-          caption: lang.popup.loading_image,
-          id: 'loading_image',
-        });
-        selectionManager.clearSelection();
 
         const fileType = (() => {
           if (file.name.toLowerCase().endsWith('.beam')) {
@@ -990,6 +995,21 @@ const svgEditor = (window['svgEditor'] = (function () {
 
         console.log('File type name:', fileType);
 
+        // 2D artwork has nowhere to go in an inner engraving document, and an STL has nowhere to go
+        // in a 2D one, so both directions are gated — with an offer to switch mode rather than a
+        // dead end. .beam / .bvg carry the mode in the file itself and are resolved inside
+        // importBvgString; the rest (js / json) are not canvas content and are not gated at all.
+        // Asked before the spinner goes up: a question behind "loading, please wait" reads as a bug.
+        if (fileType in MODE_GATED_TYPES && !(await ensureModeForImport(MODE_GATED_TYPES[fileType]))) {
+          return;
+        }
+
+        await Progress.openNonstopProgress({
+          caption: lang.popup.loading_image,
+          id: 'loading_image',
+        });
+        selectionManager.clearSelection();
+
         switch (fileType) {
           case 'bvg':
             await importBvg(file);
@@ -1013,20 +1033,10 @@ const svgEditor = (window['svgEditor'] = (function () {
             Progress.popById('loading_image');
             break;
           case 'stl':
-            // TODO: pre-checks (file size / triangle count), unit and up-axis options, and the
-            // "enable inner engraving mode?" prompt when the model supports it but the mode is off
+            // TODO: unit and up-axis options (a Blender export is usually Y-up)
+            // importStl runs its own pre-checks and progress, so the generic spinner goes first
             Progress.popById('loading_image');
-
-            if (isInnerEngravingActive()) {
-              await importStl(file);
-            } else {
-              Alert.popUp({
-                id: 'import_stl_without_inner_engraving',
-                message: lang.svg_editor.unnsupported_file_type,
-                type: AlertConstants.SHOW_POPUP_WARNING,
-              });
-            }
-
+            await importStl(file);
             break;
           case 'pdf':
           case 'ai':
@@ -1100,7 +1110,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // Keep for e2e import image
       // enable beambox-global-interaction to click (data-file-input, trigger_file_input_click)
       var imgImport = $(
-        '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf" data-file-input="import_image">',
+        '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf,.stl" data-file-input="import_image">',
       ).change(importImage);
 
       $('#tool_import').show().prepend(imgImport);

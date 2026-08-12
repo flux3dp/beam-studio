@@ -1,5 +1,6 @@
 import { supportInnerEngraving } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { todo } from '@core/helpers/is-dev';
 import type { DocumentState } from '@core/interfaces/Preference';
 
 type InnerEngravingState = Pick<DocumentState, 'inner-engraving' | 'workarea'>;
@@ -22,6 +23,21 @@ export const isInnerEngravingActive = (): boolean => {
 
 /** Hook form of {@link isInnerEngravingActive}. */
 export const useInnerEngravingActive = (): boolean => useDocumentStore(resolveInnerEngravingActive);
+
+todo(
+  '【Flux-id】myCloud 的 list API 要在 metadata 補一個內雕旗標，回傳到 IFile.innerEngraving —— 在那之前雲端檔案一律當成 2D。刻意不用工作區域推測：Promark UV 上的 2D 檔案會被誤判，而這裡只是底色，不值得用一個會錯的猜測換',
+);
+/**
+ * Whether a file in a file browser should be presented as an inner engraving (3D) document.
+ *
+ * Its thumbnail is a 3D render on a transparent background, so the guide-lines picture behind the
+ * 2D thumbnails — which stands for the 2D canvas — is the wrong backdrop for it.
+ *
+ * Deliberately just the flag: the local browser reads it out of the .beam header, and the cloud
+ * listing will carry it once the field exists (see the todo above). Until then a cloud file falls
+ * back to the 2D presentation, which is the harmless direction to be wrong in.
+ */
+export const isInnerEngravingFile = (file: { innerEngraving?: boolean }): boolean => Boolean(file.innerEngraving);
 
 /**
  * Menu items switched off while inner engraving is on.

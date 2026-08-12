@@ -18,6 +18,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import { isInnerEngravingFile } from '@core/helpers/innerEngraving';
 import useI18n from '@core/helpers/useI18n';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
@@ -58,6 +59,7 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
   const [error, setError] = useState(false);
   const isEditing = useMemo(() => editingId === file.uuid, [editingId, file]);
   const isSelected = useMemo(() => selectedId === file.uuid, [selectedId, file]);
+  const is3d = isInnerEngravingFile(file);
 
   const onClick = (e: React.MouseEvent<HTMLElement>) => {
     e.stopPropagation();
@@ -142,7 +144,11 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
         }
       />
       <div className={styles['img-container']} onClick={onClick} onDoubleClick={onDoubleClick}>
-        <div className={styles['guide-lines']} style={{ background: "url('core-img/flux-plus/guide-lines.png')" }}>
+        <div
+          className={classNames(styles['guide-lines'], { [styles.plain]: is3d })}
+          // the picture stays inline because its path is resolved at runtime, not by the bundler
+          style={is3d ? undefined : { background: "url('core-img/flux-plus/guide-lines.png')" }}
+        >
           {file.thumbnail_url && <img src={`${file.thumbnail_url}?lastmod=${file.last_modified_at}`} />}
           <Dropdown
             getPopupContainer={(triggerNode) => triggerNode.parentElement!}

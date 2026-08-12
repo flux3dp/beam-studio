@@ -1,9 +1,29 @@
+import { renderInnerEngravingThumbnail } from '@core/app/components/beambox/InnerEngraving/utils/thumbnail';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getSvgContentActualBBox } from '@core/helpers/file/export/utils/getBBox';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
+
+/** The width the 2D path caps its thumbnail at; the 3D one matches it so both look the same size. */
+const MAX_THUMBNAIL_SIZE = 500;
+
+const toUrls = async (canvas: HTMLCanvasElement): Promise<string[]> =>
+  new Promise<string[]>((resolve) => {
+    canvas.toBlob((blob) => resolve([canvas.toDataURL(), URL.createObjectURL(blob!)]));
+  });
 
 const fetchThumbnail = async (): Promise<string[]> => {
+  // the job's own canvas is the 3D one: svgcontent holds only the flat projection rects, and a
+  // machine panel showing their outlines would tell the operator nothing about what is being cut
+  if (isInnerEngravingActive()) {
+    const canvas = renderInnerEngravingThumbnail(MAX_THUMBNAIL_SIZE);
+
+    // falls through to the 2D path when the 3D render is unavailable: a thumbnail of outlines is
+    // still better than sending a job with none
+    if (canvas) return toUrls(canvas);
+  }
+
   function cloneAndModifySvg(svg: SVGSVGElement) {
     const defs = findDefs();
     const clonedSvg = svg.cloneNode(true) as unknown as SVGSVGElement;
@@ -108,13 +128,7 @@ const fetchThumbnail = async (): Promise<string[]> => {
   const img = await DOM2Image(svg);
   const canvas = await cropAndDrawOnCanvas(img);
 
-  const urls = await new Promise<string[]>((resolve) => {
-    canvas.toBlob((blob) => {
-      resolve([canvas.toDataURL(), URL.createObjectURL(blob!)]);
-    });
-  });
-
-  return urls;
+  return toUrls(canvas);
 };
 
 const generateThumbnail = async (): Promise<{

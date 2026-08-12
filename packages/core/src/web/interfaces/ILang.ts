@@ -466,6 +466,16 @@ export interface ILang {
       failed_to_load_svg: string;
       import_file_contain_invalid_path: string;
       import_file_error_ask_for_upload: string;
+      import_stl: {
+        advice_message: string;
+        advice_message_strong: string;
+        confirmation_message: string;
+        face_count_warning: string;
+        file_size_warning: string;
+        intro_message: string;
+        scene_face_count_warning: string;
+        title: string;
+      };
       import_svg: {
         advice_message: string;
         advice_message_2: string;
@@ -1696,6 +1706,19 @@ export interface ILang {
     };
     skip: string;
     start: string;
+  };
+  inner_engraving: {
+    auto_fit_message: string;
+    auto_fit_title: string;
+    disable_mode: string;
+    enable_mode: string;
+    enable_mode_with_workarea: string;
+    file_needs_workarea: string;
+    mode_switch_title: string;
+    mode_unavailable: string;
+    parsing_mesh: string;
+    placing_object: string;
+    reading_file: string;
   };
   inner_engraving_settings: {
     adjust_hint: string;
