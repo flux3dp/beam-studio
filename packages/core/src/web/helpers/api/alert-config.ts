@@ -6,6 +6,7 @@ export type AlertConfigKey =
   | 'skip-auto-feeder-instruction'
   | 'skip-fb-group-invitation'
   | 'skip-high-power-confirm'
+  | 'skip-inner-engraving-focus-reminder'
   | 'skip-interface-tutorial'
   | 'skip-job-origin-warning'
   | 'skip-old-firmware-hint-2'
