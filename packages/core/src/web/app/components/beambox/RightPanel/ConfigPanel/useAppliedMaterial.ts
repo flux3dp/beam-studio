@@ -4,6 +4,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useMaterialStore } from '@core/app/stores/materialStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { resolveMaterialRef, resolveWithOverlay } from '@core/helpers/materials/material-apply';
 import { getPresetModel } from '@core/helpers/presets/preset-helper';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
@@ -34,6 +35,8 @@ export const useAppliedMaterial = (): AppliedMaterialState => {
   const presetOverrides = useMaterialStore((s) => s.presetOverrides);
   const userMaterials = useMaterialStore((s) => s.userMaterials);
   const userPresets = useMaterialStore((s) => s.userPresets);
+  // The bundled catalog's thickness unit follows default-units — re-resolve on switch
+  const isInch = useStorageStore((s) => s.isInch);
 
   return useMemo(() => {
     const { configName, diode, ink, multipass, power, presetId, repeat, speed, zStep } = state;
@@ -65,8 +68,8 @@ export const useAppliedMaterial = (): AppliedMaterialState => {
       applied: { isModified, material: ref.material, preset: ref.preset },
       isVarious: false,
     };
-    // presetOverrides / userMaterials / userPresets are read inside resolveMaterialRef
-    // and resolveWithOverlay via the store — kept as deps so edits re-derive the chip.
+    // presetOverrides / userMaterials / userPresets / isInch are read inside resolveMaterialRef
+    // and resolveWithOverlay via stores — kept as deps so edits re-derive the chip.
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [state, workarea, presetOverrides, userMaterials, userPresets]);
+  }, [state, workarea, presetOverrides, userMaterials, userPresets, isInch]);
 };

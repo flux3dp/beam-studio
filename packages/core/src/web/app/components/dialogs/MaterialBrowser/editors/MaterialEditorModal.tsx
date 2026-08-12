@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { PictureOutlined } from '@ant-design/icons';
-import { Col, ColorPicker, Form, Input, InputNumber, Modal, Row, Segmented, Upload } from 'antd';
+import { Col, ColorPicker, Form, Input, InputNumber, Modal, Row, Segmented, Space, Upload } from 'antd';
 
 import { CATEGORY_COLORS, MATERIAL_CATEGORIES, MY_MATERIALS_ID } from '@core/app/constants/material-catalog/constants';
 import { useMaterialStore } from '@core/app/stores/materialStore';
@@ -13,7 +13,7 @@ import type { Material, MaterialCategory, MaterialRegion } from '@core/interface
 
 import styles from '../MaterialBrowser.module.scss';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
-import { inchDisplay } from '../utils/inchDisplay';
+import { getThicknessLabel } from '../utils/inchDisplay';
 
 /**
  * Covers are stored as dataURLs in the `materials` storage key, so their size is charged
@@ -78,8 +78,8 @@ interface FormValues {
   name: string;
   parentId?: string;
   tags?: string[];
-  thicknessInch?: number;
-  thicknessMm?: number;
+  thicknessDen?: number;
+  thicknessNum?: number;
 }
 
 interface MaterialEditorModalProps {
@@ -94,10 +94,13 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
   const editing =
     materialEditor.mode === 'edit' ? userMaterials.find(({ id }) => id === materialEditor.materialId) : undefined;
 
+  const regionUnit = region === 'us' ? 'inch' : 'mm';
   const [appearance, setAppearance] = useState<'color' | 'image'>('color');
   const [color, setColor] = useState(CATEGORY_COLORS.wood);
   const [image, setImage] = useState<string | undefined>();
-  const [inch, setInch] = useState<number | undefined>();
+  const [unit, setUnit] = useState<'inch' | 'mm'>(regionUnit);
+  const thicknessNum = Form.useWatch('thicknessNum', form);
+  const thicknessDen = Form.useWatch('thicknessDen', form);
 
   useEffect(() => {
     if (!materialEditor.open) return;
@@ -108,19 +111,19 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
         name: getMaterialDisplayName(editing),
         parentId: editing.parentId,
         tags: editing.tags,
-        thicknessInch: editing.thicknessInch,
-        thicknessMm: editing.thicknessMm,
+        thicknessDen: editing.thicknessDen,
+        thicknessNum: editing.thicknessNum,
       });
       setAppearance(editing.image ? 'image' : 'color');
       setColor(editing.coverColor ?? CATEGORY_COLORS[editing.category]);
       setImage(editing.image);
-      setInch(editing.thicknessInch);
+      setUnit(editing.thicknessUnit ?? regionUnit);
     } else {
       form.resetFields();
       setAppearance('color');
       setColor(CATEGORY_COLORS.wood);
       setImage(undefined);
-      setInch(undefined);
+      setUnit(regionUnit);
     }
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [materialEditor.open]);
@@ -144,8 +147,10 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
       name: values.name,
       parentId: values.parentId,
       tags: values.tags,
-      thicknessInch: values.thicknessInch,
-      thicknessMm: values.thicknessMm,
+      // Thickness stores the fraction in the chosen authoritative unit; unset num = no thickness
+      thicknessDen: values.thicknessNum && unit === 'inch' ? values.thicknessDen : undefined,
+      thicknessNum: values.thicknessNum || undefined,
+      thicknessUnit: values.thicknessNum ? unit : undefined,
     };
 
     if (editing) {
@@ -188,26 +193,29 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
                 options={MATERIAL_CATEGORIES.map((category) => ({ label: t.categories[category], value: category }))}
               />
             </Form.Item>
-            <Row gutter={16}>
-              <Col span={11}>
-                <Form.Item label={t.editor.thickness_mm} name="thicknessMm">
-                  <InputNumber min={0} step={0.1} style={{ width: '100%' }} />
+            <Form.Item label={t.thickness}>
+              <Space align="center">
+                <Segmented
+                  onChange={(value) => setUnit(value as 'inch' | 'mm')}
+                  options={['mm', 'inch']}
+                  value={unit}
+                />
+                <Form.Item name="thicknessNum" noStyle>
+                  <InputNumber min={0} step={unit === 'inch' ? 1 : 0.1} style={{ width: 80 }} />
                 </Form.Item>
-              </Col>
-              <Col span={13}>
-                <Form.Item extra={t.editor.thickness_inch_hint} label={t.editor.thickness_inch} name="thicknessInch">
-                  <InputNumber
-                    min={0}
-                    onChange={(value) => setInch(value ?? undefined)}
-                    step={0.0625}
-                    style={{ width: 'calc(100% - 76px)' }}
-                  />
-                </Form.Item>
+                {unit === 'inch' && (
+                  <>
+                    ⁄
+                    <Form.Item name="thicknessDen" noStyle>
+                      <InputNumber min={1} placeholder="16" step={1} style={{ width: 70 }} />
+                    </Form.Item>
+                  </>
+                )}
                 <span className={styles['fraction-preview']}>
-                  {region === 'us' ? inchDisplay(inch) || '—' : inch !== undefined ? `${inch} in` : '—'}
+                  {getThicknessLabel({ thicknessDen, thicknessNum, thicknessUnit: unit }) ?? '—'}
                 </span>
-              </Col>
-            </Row>
+              </Space>
+            </Form.Item>
           </Col>
 
           <Col span={12} xs={24}>

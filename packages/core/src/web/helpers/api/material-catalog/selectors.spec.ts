@@ -45,16 +45,24 @@ describe('searchMaterials', () => {
 });
 
 describe('getVariants', () => {
-  test('children sorted by thickness', () => {
+  test('children grouped by unit (mm first), each sorted by resolved thickness', () => {
     const parent = material({ id: 'wood' });
     const all = [
       parent,
-      material({ id: 'wood-8mm', parentId: 'wood', thicknessMm: 8 }),
-      material({ id: 'wood-3mm', parentId: 'wood', thicknessMm: 3 }),
+      material({ id: 'wood-8mm', parentId: 'wood', thicknessNum: 8, thicknessUnit: 'mm' }),
+      // 1/4″ < 3/16″? no — fraction resolution puts 3/16 (0.1875) before 1/4 (0.25)
+      material({ id: 'wood-quarter', parentId: 'wood', thicknessDen: 4, thicknessNum: 1, thicknessUnit: 'inch' }),
+      material({ id: 'wood-3-16', parentId: 'wood', thicknessDen: 16, thicknessNum: 3, thicknessUnit: 'inch' }),
+      material({ id: 'wood-3mm', parentId: 'wood', thicknessNum: 3, thicknessUnit: 'mm' }),
       material({ id: 'other' }),
     ];
 
-    expect(getVariants(parent, all).map(({ id }) => id)).toEqual(['wood-3mm', 'wood-8mm']);
+    expect(getVariants(parent, all).map(({ id }) => id)).toEqual([
+      'wood-3mm',
+      'wood-8mm',
+      'wood-3-16',
+      'wood-quarter',
+    ]);
   });
 });
 
@@ -87,7 +95,8 @@ describe('getPresetsForContext', () => {
         settings: { '*': { '*': { power: 80, speed: 5 } } },
       },
     ],
-    thicknessMm: 3,
+    thicknessNum: 3,
+    thicknessUnit: 'mm',
   });
   const emptyUserData = { disabledPresetIds: [], presetOverrides: {}, userPresets: [] };
 

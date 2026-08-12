@@ -14,8 +14,13 @@ export interface BundledMaterialDef {
   /** Variant of another material: hidden from the grid, shown in the parent's thickness switcher */
   parentId?: string;
   tags?: string[];
-  /** Honest decimal conversion; display rounds to the nearest standard fraction */
-  thicknessInch?: number;
+  /**
+   * Curated marketing fraction [numerator, denominator] from the legacy inch dropdown
+   * labels (3mm → [1, 8] = ⅛″; 8mm corrected to [5, 16]), NOT a mm conversion.
+   * A generated material carries ONE authoritative unit — the builder emits either this
+   * fraction or thicknessMm, picked by the user's default-units.
+   */
+  thicknessInch?: [number, number];
   thicknessMm?: number;
 }
 
@@ -30,18 +35,18 @@ export interface PresetMapping {
 export const materialDefs: BundledMaterialDef[] = [
   // Wood
   { id: 'wood', nameKey: 'wood', category: 'wood' },
-  { id: 'wood-3mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 3, thicknessInch: 0.1181 },
-  { id: 'wood-5mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 5, thicknessInch: 0.1969 },
-  { id: 'wood-7mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 7, thicknessInch: 0.2756 },
-  { id: 'wood-8mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 8, thicknessInch: 0.315 },
-  { id: 'wood-10mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 10, thicknessInch: 0.3937 },
+  { id: 'wood-3mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 3, thicknessInch: [1, 8] },
+  { id: 'wood-5mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 5, thicknessInch: [3, 16] },
+  { id: 'wood-7mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 7, thicknessInch: [1, 4] },
+  { id: 'wood-8mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 8, thicknessInch: [5, 16] },
+  { id: 'wood-10mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 10, thicknessInch: [3, 8] },
   { id: 'mdf', nameKey: 'mdf', category: 'wood' },
-  { id: 'mdf-3mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 3, thicknessInch: 0.1181 },
-  { id: 'mdf-5mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 5, thicknessInch: 0.1969 },
-  { id: 'mdf-7mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 7, thicknessInch: 0.2756 },
+  { id: 'mdf-3mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 3, thicknessInch: [1, 8] },
+  { id: 'mdf-5mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 5, thicknessInch: [3, 16] },
+  { id: 'mdf-7mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 7, thicknessInch: [1, 4] },
   { id: 'bamboo', nameKey: 'bamboo', category: 'wood' },
-  { id: 'bamboo-2mm', nameKey: 'bamboo', category: 'wood', parentId: 'bamboo', thicknessMm: 2, thicknessInch: 0.0787 },
-  { id: 'bamboo-5mm', nameKey: 'bamboo', category: 'wood', parentId: 'bamboo', thicknessMm: 5, thicknessInch: 0.1969 },
+  { id: 'bamboo-2mm', nameKey: 'bamboo', category: 'wood', parentId: 'bamboo', thicknessMm: 2, thicknessInch: [5, 64] },
+  { id: 'bamboo-5mm', nameKey: 'bamboo', category: 'wood', parentId: 'bamboo', thicknessMm: 5, thicknessInch: [3, 16] },
   { id: 'cork', nameKey: 'cork', category: 'wood' },
   // Acrylic
   { id: 'acrylic', nameKey: 'acrylic', category: 'acrylic' },
@@ -51,7 +56,7 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'acrylic',
     parentId: 'acrylic',
     thicknessMm: 3,
-    thicknessInch: 0.1181,
+    thicknessInch: [1, 8],
   },
   {
     id: 'acrylic-5mm',
@@ -59,7 +64,7 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'acrylic',
     parentId: 'acrylic',
     thicknessMm: 5,
-    thicknessInch: 0.1969,
+    thicknessInch: [3, 16],
   },
   {
     id: 'acrylic-7mm',
@@ -67,7 +72,7 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'acrylic',
     parentId: 'acrylic',
     thicknessMm: 7,
-    thicknessInch: 0.2756,
+    thicknessInch: [1, 4],
   },
   {
     id: 'acrylic-8mm',
@@ -75,7 +80,7 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'acrylic',
     parentId: 'acrylic',
     thicknessMm: 8,
-    thicknessInch: 0.315,
+    thicknessInch: [5, 16],
   },
   {
     id: 'acrylic-10mm',
@@ -83,7 +88,7 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'acrylic',
     parentId: 'acrylic',
     thicknessMm: 10,
-    thicknessInch: 0.3937,
+    thicknessInch: [3, 8],
   },
   { id: 'black-acrylic', nameKey: 'black_acrylic', category: 'acrylic' },
   {
@@ -92,7 +97,7 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'acrylic',
     parentId: 'black-acrylic',
     thicknessMm: 3,
-    thicknessInch: 0.1181,
+    thicknessInch: [1, 8],
   },
   {
     id: 'black-acrylic-5mm',
@@ -100,7 +105,7 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'acrylic',
     parentId: 'black-acrylic',
     thicknessMm: 5,
-    thicknessInch: 0.1969,
+    thicknessInch: [3, 16],
   },
   { id: 'opaque-acrylic', nameKey: 'opaque_acrylic', category: 'acrylic' },
   // Leather
@@ -111,7 +116,7 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'leather',
     parentId: 'leather',
     thicknessMm: 3,
-    thicknessInch: 0.1181,
+    thicknessInch: [1, 8],
   },
   {
     id: 'leather-5mm',
@@ -119,14 +124,21 @@ export const materialDefs: BundledMaterialDef[] = [
     category: 'leather',
     parentId: 'leather',
     thicknessMm: 5,
-    thicknessInch: 0.1969,
+    thicknessInch: [3, 16],
   },
   { id: 'gloss-leather', nameKey: 'gloss_leather', category: 'leather' },
   // Fabric-like (no dedicated category; PRD fixed set → other)
   { id: 'fabric', nameKey: 'fabric', category: 'other' },
-  { id: 'fabric-3mm', nameKey: 'fabric', category: 'other', parentId: 'fabric', thicknessMm: 3, thicknessInch: 0.1181 },
-  { id: 'fabric-5mm', nameKey: 'fabric', category: 'other', parentId: 'fabric', thicknessMm: 5, thicknessInch: 0.1969 },
-  { id: 'denim', nameKey: 'denim', category: 'other', thicknessMm: 1, thicknessInch: 0.0394 },
+  { id: 'fabric-3mm', nameKey: 'fabric', category: 'other', parentId: 'fabric', thicknessMm: 3, thicknessInch: [1, 8] },
+  {
+    id: 'fabric-5mm',
+    nameKey: 'fabric',
+    category: 'other',
+    parentId: 'fabric',
+    thicknessMm: 5,
+    thicknessInch: [3, 16],
+  },
+  { id: 'denim', nameKey: 'denim', category: 'other', thicknessMm: 1, thicknessInch: [1, 32] },
   { id: 'canvas', nameKey: 'canvas', category: 'other' },
   { id: 'canvas-fabric', nameKey: 'canvas_fabric', category: 'other' },
   // Paper

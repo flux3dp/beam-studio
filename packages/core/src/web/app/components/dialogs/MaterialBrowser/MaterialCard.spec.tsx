@@ -12,8 +12,8 @@ const material: Material = {
   name: 'Glitter Acrylic',
   presets: [],
   tags: ['Premium', 'FLUX Shop'],
-  thicknessInch: 0.125,
-  thicknessMm: 3,
+  thicknessNum: 3,
+  thicknessUnit: 'mm',
 };
 
 describe('MaterialCard', () => {
@@ -29,7 +29,6 @@ describe('MaterialCard', () => {
         material={material}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        region="tw"
         variantCount={1}
       />,
     );
@@ -38,14 +37,13 @@ describe('MaterialCard', () => {
     expect(container).toMatchSnapshot();
   });
 
-  test('US region shows inch fraction; multiple variants add the count', () => {
+  test('inch material shows its fraction; multiple variants add the count', () => {
     const { getByText } = render(
       <MaterialCard
         isFavorite
-        material={material}
+        material={{ ...material, thicknessDen: 8, thicknessNum: 1, thicknessUnit: 'inch' }}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        region="us"
         variantCount={3}
       />,
     );
@@ -57,10 +55,9 @@ describe('MaterialCard', () => {
     const { queryByText } = render(
       <MaterialCard
         isFavorite={false}
-        material={{ ...material, thicknessInch: undefined, thicknessMm: undefined }}
+        material={{ ...material, thicknessNum: undefined, thicknessUnit: undefined }}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        region="tw"
         variantCount={1}
       />,
     );
@@ -75,7 +72,6 @@ describe('MaterialCard', () => {
         material={material}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        region="tw"
         variantCount={1}
       />,
     );

@@ -97,9 +97,15 @@ export interface Material {
   /** Absent in cloud/bundled payloads (implied 'default'); 'user' marks locally-owned editable content */
   source?: MaterialSource;
   tags?: string[];
-  /** Exact decimal inches; display rounds to the nearest standard fraction */
-  thicknessInch?: number;
-  thicknessMm?: number;
+  /**
+   * Thickness as a fraction in the material's ONE authoritative unit (metric catalog
+   * materials: mm; US shop materials: inch). `num`/`den` store the marketed fraction
+   * exactly — ⅛″ is num 1, den 8 — so display never rounds. `den` defaults to 1
+   * (metric values are effectively `num` mm). Unset unit = no meaningful thickness (D18).
+   */
+  thicknessDen?: number;
+  thicknessNum?: number;
+  thicknessUnit?: 'inch' | 'mm';
 }
 
 /**

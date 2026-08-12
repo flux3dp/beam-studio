@@ -410,8 +410,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1181,
-      "thicknessMm": 3
+      "thicknessNum": 3,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -499,8 +499,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1969,
-      "thicknessMm": 5
+      "thicknessNum": 5,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -547,8 +547,8 @@
           }
         }
       ],
-      "thicknessInch": 0.2756,
-      "thicknessMm": 7
+      "thicknessNum": 7,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -572,8 +572,8 @@
           }
         }
       ],
-      "thicknessInch": 0.315,
-      "thicknessMm": 8
+      "thicknessNum": 8,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -597,8 +597,8 @@
           }
         }
       ],
-      "thicknessInch": 0.3937,
-      "thicknessMm": 10
+      "thicknessNum": 10,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -943,8 +943,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1181,
-      "thicknessMm": 3
+      "thicknessNum": 3,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -1001,8 +1001,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1969,
-      "thicknessMm": 5
+      "thicknessNum": 5,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -1037,8 +1037,8 @@
           }
         }
       ],
-      "thicknessInch": 0.2756,
-      "thicknessMm": 7
+      "thicknessNum": 7,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -1089,8 +1089,8 @@
           }
         }
       ],
-      "thicknessInch": 0.0787,
-      "thicknessMm": 2
+      "thicknessNum": 2,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -1113,8 +1113,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1969,
-      "thicknessMm": 5
+      "thicknessNum": 5,
+      "thicknessUnit": "mm"
     },
     {
       "category": "wood",
@@ -1510,8 +1510,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1181,
-      "thicknessMm": 3
+      "thicknessNum": 3,
+      "thicknessUnit": "mm"
     },
     {
       "category": "acrylic",
@@ -1583,8 +1583,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1969,
-      "thicknessMm": 5
+      "thicknessNum": 5,
+      "thicknessUnit": "mm"
     },
     {
       "category": "acrylic",
@@ -1619,8 +1619,8 @@
           }
         }
       ],
-      "thicknessInch": 0.2756,
-      "thicknessMm": 7
+      "thicknessNum": 7,
+      "thicknessUnit": "mm"
     },
     {
       "category": "acrylic",
@@ -1650,8 +1650,8 @@
           }
         }
       ],
-      "thicknessInch": 0.315,
-      "thicknessMm": 8
+      "thicknessNum": 8,
+      "thicknessUnit": "mm"
     },
     {
       "category": "acrylic",
@@ -1675,8 +1675,8 @@
           }
         }
       ],
-      "thicknessInch": 0.3937,
-      "thicknessMm": 10
+      "thicknessNum": 10,
+      "thicknessUnit": "mm"
     },
     {
       "category": "acrylic",
@@ -1744,8 +1744,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1181,
-      "thicknessMm": 3
+      "thicknessNum": 3,
+      "thicknessUnit": "mm"
     },
     {
       "category": "acrylic",
@@ -1774,8 +1774,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1969,
-      "thicknessMm": 5
+      "thicknessNum": 5,
+      "thicknessUnit": "mm"
     },
     {
       "category": "acrylic",
@@ -2235,8 +2235,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1181,
-      "thicknessMm": 3
+      "thicknessNum": 3,
+      "thicknessUnit": "mm"
     },
     {
       "category": "leather",
@@ -2296,8 +2296,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1969,
-      "thicknessMm": 5
+      "thicknessNum": 5,
+      "thicknessUnit": "mm"
     },
     {
       "category": "leather",
@@ -2707,8 +2707,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1181,
-      "thicknessMm": 3
+      "thicknessNum": 3,
+      "thicknessUnit": "mm"
     },
     {
       "category": "other",
@@ -2783,8 +2783,8 @@
           }
         }
       ],
-      "thicknessInch": 0.1969,
-      "thicknessMm": 5
+      "thicknessNum": 5,
+      "thicknessUnit": "mm"
     },
     {
       "category": "other",
@@ -2810,8 +2810,8 @@
           }
         }
       ],
-      "thicknessInch": 0.0394,
-      "thicknessMm": 1
+      "thicknessNum": 1,
+      "thicknessUnit": "mm"
     },
     {
       "category": "other",

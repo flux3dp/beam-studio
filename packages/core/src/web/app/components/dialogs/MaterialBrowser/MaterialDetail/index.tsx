@@ -27,7 +27,7 @@ import type { Material, MaterialRegion } from '@core/interfaces/IMaterial';
 import styles from '../MaterialBrowser.module.scss';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 import { getCoverStyle } from '../utils/coverStyle';
-import { inchDisplay } from '../utils/inchDisplay';
+import { getThicknessLabel } from '../utils/inchDisplay';
 
 import PresetRow from './PresetRow';
 
@@ -84,8 +84,7 @@ const MaterialDetail = ({
   }, [displayMaterial, selectedVariant, material, model, module, disabledPresetIds, presetOverrides, userPresets]);
 
   const shopLink = region !== 'global' ? material.shopLinks?.[region] : undefined;
-  const variantLabel = (variant: Material) =>
-    region === 'us' ? inchDisplay(variant.thicknessInch) || `${variant.thicknessMm} mm` : `${variant.thicknessMm} mm`;
+  const variantLabel = (variant: Material) => getThicknessLabel(variant) ?? '—';
 
   const handleDeleteMaterial = () => {
     alertCaller.popUp({

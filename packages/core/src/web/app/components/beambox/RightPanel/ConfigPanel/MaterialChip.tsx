@@ -4,13 +4,11 @@ import { EllipsisOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 import { showMaterialBrowser } from '@core/app/components/dialogs/MaterialBrowser/showMaterialBrowser';
-import { inchDisplay } from '@core/app/components/dialogs/MaterialBrowser/utils/inchDisplay';
+import { getThicknessLabel } from '@core/app/components/dialogs/MaterialBrowser/utils/inchDisplay';
 import { CATEGORY_COLORS } from '@core/app/constants/material-catalog/constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import { useStorageStore } from '@core/app/stores/storageStore';
 import { getMaterialDisplayName, getPresetDisplayName } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
-import type { Material } from '@core/interfaces/IMaterial';
 
 import ObjectPanelItem from '../ObjectPanelItem';
 
@@ -26,24 +24,15 @@ interface MaterialChipProps {
  * swatch + material/preset label + "opens a window" affordance. Click opens the
  * Material Browser scoped to the current machine + layer module.
  */
-/** Thickness label in the user's working unit (default-units), falling back to the other unit when unset */
-const getThicknessLabel = (material: Material, isInch: boolean): null | string => {
-  const inch = material.thicknessInch ? inchDisplay(material.thicknessInch) : null;
-  const mm = material.thicknessMm ? `${material.thicknessMm} mm` : null;
-
-  return isInch ? (inch ?? mm) : (mm ?? inch);
-};
-
 const MaterialChip = ({ UIType }: MaterialChipProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const module = useConfigPanelStore((state) => state.module.value);
   const { applied, isVarious } = useAppliedMaterial();
-  const isInch = useStorageStore((state) => state.isInch);
   const lang = useI18n().beambox.right_panel.laser_panel;
 
   const name = isVarious ? lang.various_preset : applied ? getMaterialDisplayName(applied.material) : t.manual;
   const sub = applied
-    ? [getThicknessLabel(applied.material, isInch), getPresetDisplayName(applied.preset)].filter(Boolean).join(' · ')
+    ? [getThicknessLabel(applied.material), getPresetDisplayName(applied.preset)].filter(Boolean).join(' · ')
     : t.manual_settings;
 
   const openBrowser = () => showMaterialBrowser({ module, writeLayers: UIType !== 'modal' });

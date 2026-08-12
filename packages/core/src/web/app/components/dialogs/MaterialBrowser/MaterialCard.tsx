@@ -6,18 +6,17 @@ import { sprintf } from 'sprintf-js';
 
 import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
-import type { Material, MaterialRegion } from '@core/interfaces/IMaterial';
+import type { Material } from '@core/interfaces/IMaterial';
 
 import styles from './MaterialBrowser.module.scss';
 import { getCoverStyle } from './utils/coverStyle';
-import { inchDisplay } from './utils/inchDisplay';
+import { getThicknessLabel } from './utils/inchDisplay';
 
 interface MaterialCardProps {
   isFavorite: boolean;
   material: Material;
   onOpen: (materialId: string) => void;
   onToggleFavorite: (materialId: string) => void;
-  region: MaterialRegion;
   variantCount: number;
 }
 
@@ -26,19 +25,11 @@ const MaterialCard = ({
   material,
   onOpen,
   onToggleFavorite,
-  region,
   variantCount,
 }: MaterialCardProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
-  // D18: thickness badge hidden for 0/unset thickness
-  const thickness =
-    region === 'us'
-      ? material.thicknessInch
-        ? inchDisplay(material.thicknessInch)
-        : null
-      : material.thicknessMm
-        ? `${material.thicknessMm} mm`
-        : null;
+  // Shown in the material's own authoritative unit; hidden for 0/unset thickness (D18)
+  const thickness = getThicknessLabel(material);
   const badge =
     variantCount > 1
       ? thickness

@@ -74,8 +74,9 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 | `category` | string | ✓ | One of `wood` `acrylic` `leather` `metal` `plastic` `paper` `glass` `stone` `rubber` `other`. Fixed set — reject anything else in admin. |
 | `image` | string (URL) | – | Absolute HTTPS URL to the hero photo (§5). Omit if none. |
 | `coverColor` | string | – | `#rrggbb` hex; used as the card cover when there is no `image`. |
-| `thicknessMm` | number | – | Metric thickness. Omit (not 0) when the material has no meaningful thickness — the client hides the badge. |
-| `thicknessInch` | number | – | Exact decimal inches (e.g. `0.125`). Client renders typographic fractions; store the exact value. |
+| `thicknessUnit` | string | – | `mm` or `inch` — the material's ONE authoritative unit (metric materials: `mm`; US shop materials: `inch`). Omit (with `thicknessNum`/`thicknessDen`) when the material has no meaningful thickness — the client hides the badge. The client displays thickness in this unit verbatim; it never converts. |
+| `thicknessNum` | number | – | Thickness numerator in `thicknessUnit` (3 mm → `3`; ⅛″ → `1`). |
+| `thicknessDen` | number | – | Thickness denominator, mainly for inch fractions (⅛″ → `8`). Defaults to 1. Store the marketed fraction exactly (5/64″ → num 5, den 64) — the client renders it as typographic fractions without rounding. |
 | `tags` | string[] | – | Short display chips, searchable. Localization of tags is NOT supported in v1 — use language-neutral tags or English. |
 | `parentId` | string | – | Makes this material a **variant** of the parent: hidden from the category grid, shown in the parent's detail view (thickness switcher). Parent must exist in the same payload. One level only — a parent must not itself have `parentId`. |
 | `shopLinks` | object | – | Per-region map: `{ "us": url, "eu": url, "tw": url, "jp": url }` (any subset). The client shows "Buy on FLUX Shop" only when the viewer's active region has an entry. Never editable by end users. |

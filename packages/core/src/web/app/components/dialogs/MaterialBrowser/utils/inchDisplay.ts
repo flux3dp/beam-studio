@@ -1,3 +1,5 @@
+import type { Material } from '@core/interfaces/IMaterial';
+
 const FRACTION_GLYPHS: Record<string, string> = {
   '1/2': '½',
   '1/4': '¼',
@@ -19,25 +21,39 @@ const FRACTION_GLYPHS: Record<string, string> = {
 const gcd = (a: number, b: number): number => (b ? gcd(b, a % b) : a);
 
 /**
- * Decimal inches → typographic fraction with the inch mark (″), rounded to the
- * nearest 1/16 for display (PRD §6.4). The exact decimal stays in storage.
- * 0.125 → "⅛″", 1.5 → "1 ½″", 0.15625 → "⁵⁄₁₆″"
+ * Fractional inches → typographic fraction with the inch mark (″), rendered exactly
+ * as stored — thickness keeps its marketed fraction (PRD §6.4), no rounding.
+ * (1, 8) → "⅛″", (3, 2) → "1 ½″", (5, 64) → "5⁄64″"
  */
-export const inchDisplay = (decimal: number | undefined): string => {
-  if (decimal === undefined || Number.isNaN(decimal) || decimal < 0) return '';
+export const inchDisplay = (num: number, den: number = 1): string => {
+  if (!Number.isFinite(num) || !Number.isFinite(den) || num < 0 || den <= 0) return '';
 
-  const whole = Math.floor(decimal);
-  let numerator = Math.round((decimal - whole) * 16);
+  const whole = Math.floor(num / den);
+  const remainder = num - whole * den;
 
-  if (numerator === 16) return `${whole + 1}″`;
+  if (remainder === 0) return `${whole}″`;
 
-  if (numerator === 0) return `${whole}″`;
-
-  const divisor = gcd(numerator, 16);
-  const n = numerator / divisor;
-  const d = 16 / divisor;
+  const divisor = gcd(remainder, den);
+  const n = remainder / divisor;
+  const d = den / divisor;
   // U+2044 fraction slash for non-standard fractions
   const fraction = FRACTION_GLYPHS[`${n}/${d}`] ?? `${n}⁄${d}`;
 
   return whole > 0 ? `${whole} ${fraction}″` : `${fraction}″`;
+};
+
+/**
+ * Thickness label in the material's own authoritative unit: inch materials render
+ * typographic fractions, metric materials render mm. Null for unset/0 (D18).
+ */
+export const getThicknessLabel = ({
+  thicknessDen,
+  thicknessNum,
+  thicknessUnit,
+}: Pick<Material, 'thicknessDen' | 'thicknessNum' | 'thicknessUnit'>): null | string => {
+  if (!thicknessUnit || !thicknessNum) return null;
+
+  return thicknessUnit === 'inch'
+    ? inchDisplay(thicknessNum, thicknessDen)
+    : `${thicknessNum / (thicknessDen ?? 1)} mm`;
 };

@@ -53,11 +53,18 @@ export const searchMaterials = (materials: Material[], query: string): Material[
   );
 };
 
-/** Thickness variants of a material (its children), ordered by ascending thickness */
+/** Numeric thickness in the material's own unit (fraction resolved) */
+const thicknessValue = ({ thicknessDen, thicknessNum }: Material): number => (thicknessNum ?? 0) / (thicknessDen ?? 1);
+
+/** Thickness variants of a material (its children): mm variants first, then inch, each ascending */
 export const getVariants = (material: Material, allMaterials: Material[]): Material[] =>
   allMaterials
     .filter((candidate) => candidate.parentId === material.id)
-    .sort((a, b) => (a.thicknessMm ?? 0) - (b.thicknessMm ?? 0));
+    .sort(
+      (a, b) =>
+        Number(a.thicknessUnit === 'inch') - Number(b.thicknessUnit === 'inch') ||
+        thicknessValue(a) - thicknessValue(b),
+    );
 
 const resolveOverlay = (
   overrides: MaterialUserData['presetOverrides'],

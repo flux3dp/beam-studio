@@ -4,6 +4,7 @@ jest.unmock('@core/app/constants/presets');
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { presets as defaultPresets } from '@core/app/constants/presets';
+import { useStorageStore } from '@core/app/stores/storageStore';
 
 import { getBundledCatalog } from './index';
 import { materialDefs, presetMappings } from './mapping';
@@ -53,6 +54,35 @@ describe('getBundledCatalog', () => {
   });
 
   test('memoized', () => {
+    expect(getBundledCatalog()).toBe(catalog);
+  });
+
+  test('thickness carries ONE authoritative unit picked by default-units', () => {
+    // Central storage mock defaults to mm
+    const wood3 = catalog.materials.find(({ id }) => id === 'wood-3mm')!;
+
+    expect(wood3).toMatchObject({ thicknessNum: 3, thicknessUnit: 'mm' });
+    expect(wood3.thicknessDen).toBeUndefined();
+
+    useStorageStore.getState().set('default-units', 'inches');
+
+    const inchCatalog = getBundledCatalog();
+
+    expect(inchCatalog).not.toBe(catalog);
+    // Curated marketing fractions, not conversions (8mm corrected to 5/16″)
+    expect(inchCatalog.materials.find(({ id }) => id === 'wood-3mm')).toMatchObject({
+      thicknessDen: 8,
+      thicknessNum: 1,
+      thicknessUnit: 'inch',
+    });
+    expect(inchCatalog.materials.find(({ id }) => id === 'wood-8mm')).toMatchObject({
+      thicknessDen: 16,
+      thicknessNum: 5,
+      thicknessUnit: 'inch',
+    });
+
+    useStorageStore.getState().set('default-units', 'mm');
+    // Per-unit memoization: switching back returns the original build
     expect(getBundledCatalog()).toBe(catalog);
   });
 

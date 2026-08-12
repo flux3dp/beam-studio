@@ -416,9 +416,6 @@ export interface ILang {
         parent_material: string;
         photo: string;
         tags: string;
-        thickness_inch: string;
-        thickness_inch_hint: string;
-        thickness_mm: string;
         title_add: string;
         title_edit: string;
         upload_hint: string;

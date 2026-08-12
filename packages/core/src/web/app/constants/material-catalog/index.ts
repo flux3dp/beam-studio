@@ -1,5 +1,6 @@
 import { presets as defaultPresets } from '@core/app/constants/presets';
 import { dpiValueMap, type EngraveDpiOption } from '@core/app/constants/resolutions';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import type { Preset } from '@core/interfaces/ILayerConfig';
 import type { Material, MaterialCatalog, MaterialPreset, PresetValues } from '@core/interfaces/IMaterial';
 
@@ -88,31 +89,46 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
   return result;
 };
 
-let bundledCatalog: MaterialCatalog | undefined;
+const bundledCatalogs: Partial<Record<'inch' | 'mm', MaterialCatalog>> = {};
 
 /**
  * The bundled offline catalog, derived from presets.ts + the mapping table at first access.
  * Same schema as the FLUX Cloud response (docs/material-catalog-api.md); version 0 is
  * always superseded by any cloud version >= 1.
+ *
+ * A material carries exactly ONE authoritative thickness unit. For bundled content the
+ * user's default-units picks which curated value the defs generate (mirroring the legacy
+ * dropdown's mm/inches naming); material ids stay unit-independent, so layer refs and
+ * favorites survive a unit switch.
  */
 export const getBundledCatalog = (): MaterialCatalog => {
-  if (bundledCatalog) return bundledCatalog;
+  const { isInch } = useStorageStore.getState();
+  // `unit` doubles as the memo key and the emitted thicknessUnit value
+  const unit = isInch ? 'inch' : 'mm';
+  const cached = bundledCatalogs[unit];
+
+  if (cached) return cached;
 
   const materials: Material[] = materialDefs.map(
-    ({ category, id, nameKey, parentId, tags, thicknessInch, thicknessMm }) => ({
-      category,
-      id,
-      nameKey,
-      ...(parentId && { parentId }),
-      presets: buildPresetsForMaterial(id),
-      ...(tags && { tags }),
-      ...(thicknessInch !== undefined && { thicknessInch }),
-      ...(thicknessMm !== undefined && { thicknessMm }),
-      // `source` omitted: absent means catalog content (see Material.source)
-    }),
+    ({ category, id, nameKey, parentId, tags, thicknessInch, thicknessMm }) => {
+      const thickness = isInch
+        ? thicknessInch && { thicknessDen: thicknessInch[1], thicknessNum: thicknessInch[0], thicknessUnit: unit }
+        : thicknessMm !== undefined && { thicknessNum: thicknessMm, thicknessUnit: unit };
+
+      return {
+        category,
+        id,
+        nameKey,
+        ...(parentId && { parentId }),
+        presets: buildPresetsForMaterial(id),
+        ...(tags && { tags }),
+        ...thickness,
+        // `source` omitted: absent means catalog content (see Material.source)
+      };
+    },
   );
 
-  bundledCatalog = { materials, publishedAt: '2026-08-07T00:00:00Z', version: 0 };
+  bundledCatalogs[unit] = { materials, publishedAt: '2026-08-07T00:00:00Z', version: 0 };
 
-  return bundledCatalog;
+  return bundledCatalogs[unit];
 };

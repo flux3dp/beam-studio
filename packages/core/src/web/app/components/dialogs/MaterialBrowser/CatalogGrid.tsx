@@ -7,7 +7,7 @@ import { sprintf } from 'sprintf-js';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { getVariants } from '@core/helpers/api/material-catalog/selectors';
 import useI18n from '@core/helpers/useI18n';
-import type { Material, MaterialRegion } from '@core/interfaces/IMaterial';
+import type { Material } from '@core/interfaces/IMaterial';
 
 import styles from './MaterialBrowser.module.scss';
 import MaterialCard from './MaterialCard';
@@ -17,10 +17,9 @@ interface CatalogGridProps {
   allMaterials: Material[];
   machineLabel: string;
   materials: Material[];
-  region: MaterialRegion;
 }
 
-const CatalogGrid = ({ allMaterials, machineLabel, materials, region }: CatalogGridProps): React.JSX.Element => {
+const CatalogGrid = ({ allMaterials, machineLabel, materials }: CatalogGridProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const { activeTab, openDetail, openMaterialEditor, query } = useMaterialBrowserStore();
   const { favorites, toggleFavorite } = useMaterialStore();
@@ -53,7 +52,6 @@ const CatalogGrid = ({ allMaterials, machineLabel, materials, region }: CatalogG
           material={material}
           onOpen={openDetail}
           onToggleFavorite={toggleFavorite}
-          region={region}
           variantCount={getVariants(material, allMaterials).length}
         />
       ))}
