@@ -56,10 +56,10 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
   useCanvasStore((state) => state.watt);
 
   const { activeTab, detailMaterialId, module, presetEditor, query, reset, writeLayers } = useMaterialBrowserStore();
-  const { disabledPresetIds, favorites, presetAdditions, presetOverrides, recents, userMaterials } = useMaterialStore();
+  const { disabledPresetIds, favorites, presetOverrides, recents, userMaterials, userPresets } = useMaterialStore();
 
   const [catalog, setCatalog] = useState<MaterialCatalog>(() => materialCatalogCache.getCatalogSync());
-  const [movePresetRef, setMovePresetRef] = useState<null | { materialId: string; presetId: string }>(null);
+  const [movePresetId, setMovePresetId] = useState<null | string>(null);
 
   useEffect(() => {
     materialCatalogCache.getCatalog().then(setCatalog);
@@ -123,10 +123,10 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
 
     return getPresetsForContext(material, model, module, {
       disabledPresetIds,
-      presetAdditions,
       presetOverrides,
+      userPresets,
     }).find((row) => row.presetId === presetEditor.presetId);
-  }, [presetEditor, allMaterials, model, module, disabledPresetIds, presetAdditions, presetOverrides]);
+  }, [presetEditor, allMaterials, model, module, disabledPresetIds, presetOverrides, userPresets]);
 
   const handleApply = (row: ResolvedPresetRow, material: Material) => {
     if (writeLayers) {
@@ -177,7 +177,7 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
             model={model}
             module={module}
             onApply={handleApply}
-            onMovePreset={(row) => setMovePresetRef({ materialId: row.materialId, presetId: row.presetId })}
+            onMovePreset={(row) => setMovePresetId(row.presetId)}
             region={region}
           />
         </div>
@@ -205,13 +205,7 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
       {presetEditor.open && presetEditor.presetId === 'from-layer' && (
         <ShowAddFromLayerOnce materialId={presetEditor.materialId} />
       )}
-      {movePresetRef && (
-        <MovePresetModal
-          materialId={movePresetRef.materialId}
-          onClose={() => setMovePresetRef(null)}
-          presetId={movePresetRef.presetId}
-        />
-      )}
+      {movePresetId && <MovePresetModal onClose={() => setMovePresetId(null)} presetId={movePresetId} />}
     </div>
   );
 

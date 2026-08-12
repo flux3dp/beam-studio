@@ -70,6 +70,11 @@ export interface MaterialPreset {
   settings: Partial<Record<PresetScopeKey, Partial<Record<PresetModuleKey, PresetValues>>>>;
 }
 
+/** A user-created preset in the flat user-data list; materialId points at its catalog or user material */
+export interface UserPreset extends MaterialPreset {
+  materialId: string;
+}
+
 export interface Material {
   category: MaterialCategory;
   /** Cover color (hex) used when no image is set; default cover mode for user materials */
@@ -116,8 +121,6 @@ export interface MaterialUserData {
   disabledPresetIds: string[];
   /** One-way migration from the legacy 'presets' storage key has run */
   migratedFromPresets: boolean;
-  /** User-created (origin: 'user') presets attached to CATALOG materials, keyed by material id */
-  presetAdditions?: Record<string, MaterialPreset[]>;
   /**
    * Edits applied on top of `origin: 'default'` catalog presets ([Customized] state),
    * keyed by preset id. Restore = delete the entry. `name` override lives beside the values.
@@ -126,8 +129,10 @@ export interface MaterialUserData {
     string,
     Partial<Record<PresetScopeKey, Partial<Record<PresetModuleKey, PresetValues & { name?: string }>>>>
   >;
-  /** Materials created by the user (source: 'user'), including the "My Materials" bucket */
+  /** Materials created by the user (source: 'user'), including the "My Materials" bucket; presets always [] */
   userMaterials: Material[];
+  /** All user-created presets, flat; attached to their material (catalog or user) via materialId */
+  userPresets: UserPreset[];
   version: 1;
 }
 

@@ -114,7 +114,7 @@ describe('material-apply', () => {
     test('merges the [Customized] overlay into applied values', () => {
       const hit = materialCatalogCache.findPresetById('wood_3mm_cutting')!;
 
-      useMaterialStore.getState().updatePreset('wood-3mm', 'wood_3mm_cutting', 'fbb2', '15', { power: 61 });
+      useMaterialStore.getState().updatePreset('wood_3mm_cutting', 'fbb2', '15', { power: 61 });
 
       const target = layer({ module: LayerModule.LASER_UNIVERSAL });
 
@@ -155,13 +155,10 @@ describe('material-apply', () => {
       expect(byConfigName!.preset.legacyKey).toBe('wood_3mm_cutting');
       expect(byConfigName!.material.id).toBe('wood-3mm');
 
-      useMaterialStore.getState().addMaterial({
-        category: 'other',
-        id: 'm1',
-        name: 'M1',
-        presets: [{ id: 'user_p', name: 'My Cut', origin: 'user', settings: { '*': { '*': { power: 1 } } } }],
-        source: 'user',
-      });
+      useMaterialStore.getState().addMaterial({ category: 'other', id: 'm1', name: 'M1', presets: [], source: 'user' });
+      useMaterialStore
+        .getState()
+        .addPreset('m1', { id: 'user_p', name: 'My Cut', origin: 'user', settings: { '*': { '*': { power: 1 } } } });
       expect(resolveLayerMaterialRef(layer({ configName: 'My Cut' }) as never)!.preset.id).toBe('user_p');
 
       expect(resolveLayerMaterialRef(layer({ configName: ' ' }) as never)).toBeNull();

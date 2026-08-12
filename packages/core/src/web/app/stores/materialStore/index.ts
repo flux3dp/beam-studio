@@ -7,7 +7,7 @@ import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { getMaterialDisplayName, getPresetDisplayName } from '@core/helpers/api/material-catalog/utils';
 import i18n from '@core/helpers/i18n';
 import { isMaterialBrowserActive } from '@core/helpers/materials/isMaterialBrowserActive';
-import type { Material, MaterialPreset, PresetModuleKey, PresetScopeKey } from '@core/interfaces/IMaterial';
+import type { Material, PresetModuleKey, PresetScopeKey, UserPreset } from '@core/interfaces/IMaterial';
 
 import { convertLegacyPresets } from './migration';
 import type { MaterialLibraryExport, MaterialStore, MaterialStoreState } from './types';
@@ -20,10 +20,10 @@ const getInitialState = (): MaterialStoreState => {
     disabledPresetIds: userData?.disabledPresetIds ?? [],
     favorites: getStorage('material-favorites') ?? [],
     migratedFromPresets: userData?.migratedFromPresets ?? false,
-    presetAdditions: userData?.presetAdditions ?? {},
     presetOverrides: userData?.presetOverrides ?? {},
     recents: getStorage('material-recents') ?? [],
     userMaterials: userData?.userMaterials ?? [],
+    userPresets: userData?.userPresets ?? [],
   };
 };
 
@@ -53,107 +53,71 @@ export const useMaterialStore = create(
         set(patch as MaterialStoreState);
         persistUserData();
       };
-      /** Locates a user preset: embedded in a user material, or in a catalog material's additions */
-      const findUserPreset = (
-        materialId: string,
-        presetId: string,
-      ): null | { location: 'additions' | 'materials'; preset: MaterialPreset } => {
-        const { presetAdditions, userMaterials } = get();
-        const material = userMaterials.find(({ id }) => id === materialId);
-        const preset = (material ? material.presets : presetAdditions[materialId])?.find(({ id }) => id === presetId);
-
-        return preset ? { location: material ? 'materials' : 'additions', preset } : null;
-      };
-      /** State slices with the preset filtered out of its owning container */
-      const detachPreset = (materialId: string, presetId: string, location: 'additions' | 'materials') => {
-        const { presetAdditions, userMaterials } = get();
-
-        return location === 'materials'
-          ? {
-              presetAdditions,
-              userMaterials: userMaterials.map((material) =>
-                material.id === materialId
-                  ? { ...material, presets: material.presets.filter(({ id }) => id !== presetId) }
-                  : material,
-              ),
-            }
-          : {
-              presetAdditions: {
-                ...presetAdditions,
-                [materialId]: presetAdditions[materialId].filter(({ id }) => id !== presetId),
-              },
-              userMaterials,
-            };
-      };
-
       const actions: Omit<MaterialStore, keyof MaterialStoreState> = {
         addMaterial: (material) => {
           apply({ userMaterials: [...get().userMaterials, material] });
         },
         addPreset: (materialId, preset) => {
-          const { presetAdditions, userMaterials } = get();
-
-          if (userMaterials.some(({ id }) => id === materialId)) {
-            apply({
-              userMaterials: userMaterials.map((material) =>
-                material.id === materialId ? { ...material, presets: [...material.presets, preset] } : material,
-              ),
-            });
-          } else {
-            // Catalog material: user presets attach via the additions map
-            apply({
-              presetAdditions: {
-                ...presetAdditions,
-                [materialId]: [...(presetAdditions[materialId] ?? []), preset],
-              },
-            });
-          }
+          apply({ userPresets: [...get().userPresets, { ...preset, materialId }] });
         },
         deleteMaterial: (materialId) => {
-          const { favorites, recents, userMaterials } = get();
+          const { favorites, recents, userMaterials, userPresets } = get();
           const removedIds = new Set(withChildren(materialId, userMaterials).map(({ id }) => id));
 
           apply({
             favorites: favorites.filter((id) => !removedIds.has(id)),
             recents: recents.filter(({ materialId: id }) => !removedIds.has(id)),
             userMaterials: userMaterials.filter(({ id }) => !removedIds.has(id)),
+            userPresets: userPresets.filter(({ materialId: id }) => !removedIds.has(id)),
           });
           setStorage('material-favorites', get().favorites);
           setStorage('material-recents', get().recents);
         },
-        deletePreset: (materialId, presetId) => {
-          const found = findUserPreset(materialId, presetId);
-
-          if (!found) return;
-
+        deletePreset: (presetId) => {
           apply({
-            ...detachPreset(materialId, presetId, found.location),
             disabledPresetIds: get().disabledPresetIds.filter((id) => id !== presetId),
+            userPresets: get().userPresets.filter(({ id }) => id !== presetId),
           });
         },
         duplicateMaterial: (source, variants = []) => {
-          const cloneMaterial = (material: Material, parentId?: string): Material => ({
-            ...structuredClone(material),
-            id: generateUserId('user_mat'),
-            name: getMaterialDisplayName(material),
-            nameKey: undefined,
-            ...(parentId !== undefined && { parentId }),
-            presets: material.presets.map((preset) => ({
-              ...structuredClone(preset),
-              id: generateUserId(),
-              legacyKey: undefined,
-              name: getPresetDisplayName(preset),
+          const presetCopies: UserPreset[] = [];
+          const cloneMaterial = (material: Material, parentId?: string): Material => {
+            const copy: Material = {
+              ...structuredClone(material),
+              id: generateUserId('user_mat'),
+              name: getMaterialDisplayName(material),
               nameKey: undefined,
-              origin: 'user' as const,
-            })),
-            shopLinks: undefined,
-            source: 'user' as const,
-          });
+              ...(parentId !== undefined && { parentId }),
+              presets: [],
+              shopLinks: undefined,
+              source: 'user' as const,
+            };
+
+            // Copy both the source's embedded catalog presets and its user additions
+            presetCopies.push(
+              ...[...material.presets, ...get().userPresets.filter(({ materialId }) => materialId === material.id)].map(
+                (preset) => ({
+                  ...structuredClone(preset),
+                  id: generateUserId(),
+                  legacyKey: undefined,
+                  materialId: copy.id,
+                  name: getPresetDisplayName(preset),
+                  nameKey: undefined,
+                  origin: 'user' as const,
+                }),
+              ),
+            );
+
+            return copy;
+          };
 
           const parentCopy = cloneMaterial(source);
           const variantCopies = variants.map((variant) => cloneMaterial(variant, parentCopy.id));
 
-          apply({ userMaterials: [...get().userMaterials, parentCopy, ...variantCopies] });
+          apply({
+            userMaterials: [...get().userMaterials, parentCopy, ...variantCopies],
+            userPresets: [...get().userPresets, ...presetCopies],
+          });
 
           return parentCopy;
         },
@@ -169,14 +133,14 @@ export const useMaterialStore = create(
           return bucket;
         },
         getExportData: (): MaterialLibraryExport => {
-          const { disabledPresetIds, presetAdditions, presetOverrides, userMaterials } = get();
+          const { disabledPresetIds, presetOverrides, userMaterials, userPresets } = get();
 
           return {
             disabledPresetIds,
-            presetAdditions,
             presetOverrides,
             type: 'flux-material-library',
             userMaterials,
+            userPresets,
             version: 1,
           };
         },
@@ -198,81 +162,47 @@ export const useMaterialStore = create(
               ? { ...material, parentId: idRemap.get(material.parentId) }
               : material,
           );
-          // Merge the imported bucket into the existing one (skip name collisions)
-          const existingBucket = state.userMaterials.find(({ id }) => id === MY_MATERIALS_ID);
-          const importedBucket = remapped.find(({ id }) => id === MY_MATERIALS_ID);
-          let userMaterials = [...state.userMaterials];
+          const hasBucket = existingIds.has(MY_MATERIALS_ID);
+          const userMaterials = [
+            ...state.userMaterials,
+            ...remapped.filter(({ id }) => !(id === MY_MATERIALS_ID && hasBucket)),
+          ];
 
-          for (const material of remapped) {
-            if (material.id === MY_MATERIALS_ID && existingBucket) continue;
-
-            userMaterials.push(material);
-          }
-
-          if (existingBucket && importedBucket) {
-            const existingNames = new Set(existingBucket.presets.map((preset) => getPresetDisplayName(preset)));
-            const newPresets = importedBucket.presets.filter(
-              (preset) => !existingNames.has(getPresetDisplayName(preset)),
-            );
-
-            userMaterials = userMaterials.map((material) =>
-              material.id === MY_MATERIALS_ID
-                ? { ...material, presets: [...material.presets, ...newPresets] }
-                : material,
-            );
-          }
-
-          // Additions: concat per material, regenerating colliding preset ids
-          const existingPresetIds = new Set(
-            Object.values(state.presetAdditions).flatMap((presets) => presets.map(({ id }) => id)),
+          // Presets: re-point remapped owners, skip bucket name collisions, regenerate colliding ids
+          const existingPresetIds = new Set(state.userPresets.map(({ id }) => id));
+          const bucketNames = new Set(
+            state.userPresets
+              .filter(({ materialId }) => materialId === MY_MATERIALS_ID)
+              .map((preset) => getPresetDisplayName(preset)),
           );
-          const presetAdditions = { ...state.presetAdditions };
-
-          for (const [materialId, presets] of Object.entries(data.presetAdditions ?? {})) {
-            const deduped = presets.map((preset) =>
-              existingPresetIds.has(preset.id) ? { ...preset, id: generateUserId() } : preset,
-            );
-
-            presetAdditions[materialId] = [...(presetAdditions[materialId] ?? []), ...deduped];
-          }
+          const importedPresets = (data.userPresets ?? [])
+            .map((preset) => ({ ...preset, materialId: idRemap.get(preset.materialId) ?? preset.materialId }))
+            .filter(
+              (preset) => !(preset.materialId === MY_MATERIALS_ID && bucketNames.has(getPresetDisplayName(preset))),
+            )
+            .map((preset) => (existingPresetIds.has(preset.id) ? { ...preset, id: generateUserId() } : preset));
 
           apply({
             disabledPresetIds: [...new Set([...state.disabledPresetIds, ...(data.disabledPresetIds ?? [])])],
-            presetAdditions,
             presetOverrides: { ...state.presetOverrides, ...(data.presetOverrides ?? {}) },
             userMaterials,
+            userPresets: [...state.userPresets, ...importedPresets],
           });
         },
-        movePreset: (materialId, presetId, targetMaterialId) => {
-          if (materialId === targetMaterialId) return;
+        movePreset: (presetId, targetMaterialId) => {
+          const preset = get().userPresets.find(({ id }) => id === presetId);
 
-          const found = findUserPreset(materialId, presetId);
-
-          if (!found) return;
+          if (!preset || preset.materialId === targetMaterialId) return;
 
           if (targetMaterialId === MY_MATERIALS_ID) actions.ensureBucket();
 
-          // Detach from the source container, then attach to the target
-          const { presetAdditions, userMaterials } = detachPreset(materialId, presetId, found.location);
-
-          if (userMaterials.some(({ id }) => id === targetMaterialId)) {
-            apply({
-              presetAdditions,
-              userMaterials: userMaterials.map((material) =>
-                material.id === targetMaterialId
-                  ? { ...material, presets: [...material.presets, found.preset] }
-                  : material,
-              ),
-            });
-          } else {
-            apply({
-              presetAdditions: {
-                ...presetAdditions,
-                [targetMaterialId]: [...(presetAdditions[targetMaterialId] ?? []), found.preset],
-              },
-              userMaterials,
-            });
-          }
+          // Remove + append so the preset lands at the end of the target's list
+          apply({
+            userPresets: [
+              ...get().userPresets.filter(({ id }) => id !== presetId),
+              { ...preset, materialId: targetMaterialId },
+            ],
+          });
         },
         pushRecent: (materialId, presetId) => {
           const recents = [
@@ -313,14 +243,11 @@ export const useMaterialStore = create(
             ),
           });
         },
-        updatePreset: (materialId, presetId, scope, moduleKey, { name, ...values }) => {
-          const found = findUserPreset(materialId, presetId);
+        updatePreset: (presetId, scope, moduleKey, { name, ...values }) => {
+          const { userPresets } = get();
+          const preset = userPresets.find(({ id }) => id === presetId);
 
-          if (found) {
-            const { location, preset } = found;
-
-            if (name !== undefined) preset.name = name;
-
+          if (preset) {
             // Write back to the cell this context resolves from ([scope][module] → … → ['*']['*']);
             // any other cell would stay shadowed by a more specific one and the edit looks lost
             const cells: Array<[PresetScopeKey, PresetModuleKey]> = [
@@ -330,20 +257,13 @@ export const useMaterialStore = create(
               ['*', '*'],
             ];
             const [scopeKey, cellKey] = cells.find(([s, m]) => preset.settings[s]?.[m]) ?? [scope, moduleKey];
+            const updated: UserPreset = {
+              ...preset,
+              ...(name !== undefined && { name }),
+              settings: { ...preset.settings, [scopeKey]: { ...preset.settings[scopeKey], [cellKey]: values } },
+            };
 
-            preset.settings = { ...preset.settings, [scopeKey]: { ...preset.settings[scopeKey], [cellKey]: values } };
-
-            // Mutated in place; respread the owning material/map so memoized consumers
-            // (e.g. MaterialDetail's rows keyed on the material object) see a new reference
-            apply(
-              location === 'materials'
-                ? {
-                    userMaterials: get().userMaterials.map((material) =>
-                      material.id === materialId ? { ...material } : material,
-                    ),
-                  }
-                : { presetAdditions: { ...get().presetAdditions } },
-            );
+            apply({ userPresets: userPresets.map((p) => (p.id === presetId ? updated : p)) });
 
             return;
           }

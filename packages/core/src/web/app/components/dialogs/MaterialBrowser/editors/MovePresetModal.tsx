@@ -11,12 +11,11 @@ import useI18n from '@core/helpers/useI18n';
 import type { Material } from '@core/interfaces/IMaterial';
 
 interface MovePresetModalProps {
-  materialId: string;
   onClose: () => void;
   presetId: string;
 }
 
-const MovePresetModal = ({ materialId, onClose, presetId }: MovePresetModalProps): React.JSX.Element => {
+const MovePresetModal = ({ onClose, presetId }: MovePresetModalProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const { movePreset, userMaterials } = useMaterialStore();
   const [targetId, setTargetId] = useState(MY_MATERIALS_ID);
@@ -45,7 +44,7 @@ const MovePresetModal = ({ materialId, onClose, presetId }: MovePresetModalProps
       okText={t.move_to_material}
       onCancel={onClose}
       onOk={() => {
-        movePreset(materialId, presetId, targetId);
+        movePreset(presetId, targetId);
         onClose();
       }}
       open

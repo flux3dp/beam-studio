@@ -33,7 +33,7 @@ export const useAppliedMaterial = (): AppliedMaterialState => {
   // Subscribe so customized overlays / user edits re-derive the chip
   const presetOverrides = useMaterialStore((s) => s.presetOverrides);
   const userMaterials = useMaterialStore((s) => s.userMaterials);
-  const presetAdditions = useMaterialStore((s) => s.presetAdditions);
+  const userPresets = useMaterialStore((s) => s.userPresets);
 
   return useMemo(() => {
     const { configName, diode, ink, multipass, power, presetId, repeat, speed, zStep } = state;
@@ -65,8 +65,8 @@ export const useAppliedMaterial = (): AppliedMaterialState => {
       applied: { isModified, material: ref.material, preset: ref.preset },
       isVarious: false,
     };
-    // presetOverrides / userMaterials / presetAdditions are read inside resolveMaterialRef
+    // presetOverrides / userMaterials / userPresets are read inside resolveMaterialRef
     // and resolveWithOverlay via the store — kept as deps so edits re-derive the chip.
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [state, workarea, presetOverrides, userMaterials, presetAdditions]);
+  }, [state, workarea, presetOverrides, userMaterials, userPresets]);
 };

@@ -53,9 +53,9 @@ describe('materialStore actions', () => {
       origin: 'user',
       settings: { '*': { '*': { power: 50, speed: 10 } } },
     });
-    useMaterialStore.getState().updatePreset('m1', 'p1', '*', '*', { name: 'Deep Cut', power: 80, speed: 5 });
+    useMaterialStore.getState().updatePreset('p1', '*', '*', { name: 'Deep Cut', power: 80, speed: 5 });
 
-    const preset = useMaterialStore.getState().userMaterials[0].presets[0];
+    const preset = useMaterialStore.getState().userPresets[0];
 
     expect(preset.name).toBe('Deep Cut');
     expect(preset.settings['*']!['*']).toEqual({ power: 80, speed: 5 });
@@ -71,16 +71,16 @@ describe('materialStore actions', () => {
       origin: 'user',
       settings: { '*': { '15': { power: 50 } } },
     });
-    useMaterialStore.getState().updatePreset('m1', 'p1', 'fbb2', '15', { power: 70 });
+    useMaterialStore.getState().updatePreset('p1', 'fbb2', '15', { power: 70 });
 
-    const preset = useMaterialStore.getState().userMaterials[0].presets[0];
+    const preset = useMaterialStore.getState().userPresets[0];
 
     expect(preset.settings['*']!['15']).toEqual({ power: 70 });
     expect(preset.settings.fbb2).toBeUndefined();
   });
 
   test('updatePreset on a catalog preset writes an overlay; restorePreset removes it', () => {
-    useMaterialStore.getState().updatePreset('wood-3mm', 'wood_3mm_cutting', 'fbb2', '15', { power: 60 });
+    useMaterialStore.getState().updatePreset('wood_3mm_cutting', 'fbb2', '15', { power: 60 });
 
     expect(useMaterialStore.getState().presetOverrides.wood_3mm_cutting!.fbb2!['15']).toEqual({ power: 60 });
 
@@ -106,14 +106,17 @@ describe('materialStore actions', () => {
     const variant: Material = { ...source, id: 'glitter-3mm', parentId: 'glitter', presets: [] };
     const copy = useMaterialStore.getState().duplicateMaterial(source, [variant]);
 
-    const { userMaterials } = useMaterialStore.getState();
+    const { userMaterials, userPresets } = useMaterialStore.getState();
 
     expect(userMaterials).toHaveLength(2);
     expect(copy.source).toBe('user');
     expect(copy.shopLinks).toBeUndefined();
-    expect(copy.presets[0].origin).toBe('user');
-    expect(copy.presets[0].id).not.toBe('cat_p');
-    expect(copy.presets[0].legacyKey).toBeUndefined();
+
+    const copiedPreset = userPresets.find(({ materialId }) => materialId === copy.id)!;
+
+    expect(copiedPreset.origin).toBe('user');
+    expect(copiedPreset.id).not.toBe('cat_p');
+    expect(copiedPreset.legacyKey).toBeUndefined();
     expect(userMaterials[1].parentId).toBe(copy.id);
   });
 
@@ -121,27 +124,27 @@ describe('materialStore actions', () => {
     useMaterialStore.getState().addMaterial(userMaterial('m1'));
     useMaterialStore.getState().addMaterial(userMaterial('m2'));
     useMaterialStore.getState().addPreset('m1', { id: 'p1', name: 'Cut', origin: 'user', settings: {} });
-    useMaterialStore.getState().movePreset('m1', 'p1', 'm2');
+    useMaterialStore.getState().movePreset('p1', 'm2');
 
-    const { userMaterials } = useMaterialStore.getState();
+    const { userPresets } = useMaterialStore.getState();
 
-    expect(userMaterials.find(({ id }) => id === 'm1')!.presets).toHaveLength(0);
-    expect(userMaterials.find(({ id }) => id === 'm2')!.presets[0].id).toBe('p1');
+    expect(userPresets).toHaveLength(1);
+    expect(userPresets[0]).toMatchObject({ id: 'p1', materialId: 'm2' });
   });
 
   test('movePreset to the bucket lazily creates it', () => {
     useMaterialStore.getState().addMaterial(userMaterial('m1'));
     useMaterialStore.getState().addPreset('m1', { id: 'p1', name: 'Cut', origin: 'user', settings: {} });
-    useMaterialStore.getState().movePreset('m1', 'p1', MY_MATERIALS_ID);
+    useMaterialStore.getState().movePreset('p1', MY_MATERIALS_ID);
 
-    const bucket = useMaterialStore.getState().userMaterials.find(({ id }) => id === MY_MATERIALS_ID);
-
-    expect(bucket!.presets[0].id).toBe('p1');
+    expect(useMaterialStore.getState().userMaterials.some(({ id }) => id === MY_MATERIALS_ID)).toBe(true);
+    expect(useMaterialStore.getState().userPresets[0]).toMatchObject({ id: 'p1', materialId: MY_MATERIALS_ID });
   });
 
-  test('deleteMaterial cascades variants, favorites, and recents', () => {
+  test('deleteMaterial cascades variants, presets, favorites, and recents', () => {
     useMaterialStore.getState().addMaterial(userMaterial('m1'));
     useMaterialStore.getState().addMaterial(userMaterial('m1-3mm', { parentId: 'm1' }));
+    useMaterialStore.getState().addPreset('m1-3mm', { id: 'p1', name: 'Cut', origin: 'user', settings: {} });
     useMaterialStore.getState().toggleFavorite('m1');
     useMaterialStore.getState().pushRecent('m1-3mm', 'p1');
     useMaterialStore.getState().deleteMaterial('m1');
@@ -149,6 +152,7 @@ describe('materialStore actions', () => {
     const state = useMaterialStore.getState();
 
     expect(state.userMaterials).toHaveLength(0);
+    expect(state.userPresets).toHaveLength(0);
     expect(state.favorites).toHaveLength(0);
     expect(state.recents).toHaveLength(0);
   });
@@ -229,14 +233,15 @@ describe('legacy migration', () => {
     expect(state.migratedFromPresets).toBe(true);
     expect(state.disabledPresetIds).toContain('wood_engraving');
 
-    const bucket = state.userMaterials.find(({ id }) => id === MY_MATERIALS_ID)!;
+    const bucketPresets = state.userPresets.filter(({ materialId }) => materialId === MY_MATERIALS_ID);
 
-    expect(bucket.presets).toHaveLength(2);
+    expect(state.userMaterials.some(({ id }) => id === MY_MATERIALS_ID)).toBe(true);
+    expect(bucketPresets).toHaveLength(2);
 
     // idempotency: a second init (e.g. after fallback + re-enable) never duplicates
     resetMaterialStoreInit();
     initMaterialStore();
-    expect(useMaterialStore.getState().userMaterials.find(({ id }) => id === MY_MATERIALS_ID)!.presets).toHaveLength(2);
+    expect(useMaterialStore.getState().userPresets).toHaveLength(2);
 
     // the legacy key is read-only for the new system
     expect(setStorageSpy).not.toHaveBeenCalledWith('presets', expect.anything());

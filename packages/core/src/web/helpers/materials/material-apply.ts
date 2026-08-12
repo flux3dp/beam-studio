@@ -102,26 +102,18 @@ export const resolveMaterialRef = ({
   configName?: string;
   presetId?: string;
 }): null | { material: Material; preset: MaterialPreset } => {
-  const { presetAdditions, userMaterials } = useMaterialStore.getState();
+  const { userMaterials, userPresets } = useMaterialStore.getState();
   const findUser = (predicate: (preset: MaterialPreset) => boolean) => {
-    for (const material of userMaterials) {
-      const preset = material.presets.find(predicate);
+    const preset = userPresets.find(predicate);
 
-      if (preset) return { material, preset };
-    }
+    if (!preset) return null;
 
-    // User presets attached to catalog materials
-    for (const [materialId, presets] of Object.entries(presetAdditions)) {
-      const preset = presets.find(predicate);
+    // The owner is a user material or a catalog material (user preset attached to it)
+    const material =
+      userMaterials.find(({ id }) => id === preset.materialId) ??
+      materialCatalogCache.getCatalogSync().materials.find(({ id }) => id === preset.materialId);
 
-      if (preset) {
-        const material = materialCatalogCache.getCatalogSync().materials.find(({ id }) => id === materialId);
-
-        if (material) return { material, preset };
-      }
-    }
-
-    return null;
+    return material ? { material, preset } : null;
   };
 
   if (presetId) {

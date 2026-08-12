@@ -11,14 +11,14 @@ export const generateUserId = (prefix: 'user' | 'user_mat' = 'user'): string =>
 export const toUserData = (
   state: Pick<
     MaterialStoreState,
-    'disabledPresetIds' | 'migratedFromPresets' | 'presetAdditions' | 'presetOverrides' | 'userMaterials'
+    'disabledPresetIds' | 'migratedFromPresets' | 'presetOverrides' | 'userMaterials' | 'userPresets'
   >,
 ): MaterialUserData => ({
   disabledPresetIds: state.disabledPresetIds,
   migratedFromPresets: state.migratedFromPresets,
-  presetAdditions: state.presetAdditions,
   presetOverrides: state.presetOverrides,
   userMaterials: state.userMaterials,
+  userPresets: state.userPresets,
   version: 1,
 });
 

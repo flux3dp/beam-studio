@@ -91,7 +91,7 @@ const PresetEditorModal = ({ editingRow, model, module }: PresetEditorModalProps
     if (isEdit && editingRow) {
       // User presets write back to the cell this context resolves from; defaults
       // become [Customized] overlays at the context cell.
-      updatePreset(editingRow.materialId, editingRow.presetId, model, `${module}`, { ...values, name });
+      updatePreset(editingRow.presetId, model, `${module}`, { ...values, name });
     } else if (presetEditor.materialId) {
       addPreset(presetEditor.materialId, {
         id: generateUserId(),

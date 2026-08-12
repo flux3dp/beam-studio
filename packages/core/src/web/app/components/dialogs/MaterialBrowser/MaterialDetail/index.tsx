@@ -62,10 +62,10 @@ const MaterialDetail = ({
     deletePreset,
     disabledPresetIds,
     duplicateMaterial,
-    presetAdditions,
     presetOverrides,
     restorePreset,
     togglePresetDisabled,
+    userPresets,
   } = useMaterialStore();
 
   const variants = useMemo(() => getVariants(material, allMaterials), [material, allMaterials]);
@@ -74,14 +74,14 @@ const MaterialDetail = ({
   const isUserMaterial = material.source === 'user';
 
   const rows = useMemo(() => {
-    const userData = { disabledPresetIds, presetAdditions, presetOverrides };
+    const userData = { disabledPresetIds, presetOverrides, userPresets };
 
     // Variant-specific rows first, thickness-agnostic parent rows appended
     return [
       ...getPresetsForContext(displayMaterial, model, module, userData),
       ...(selectedVariant ? getPresetsForContext(material, model, module, userData) : []),
     ];
-  }, [displayMaterial, selectedVariant, material, model, module, disabledPresetIds, presetAdditions, presetOverrides]);
+  }, [displayMaterial, selectedVariant, material, model, module, disabledPresetIds, presetOverrides, userPresets]);
 
   const shopLink = region !== 'global' ? material.shopLinks?.[region] : undefined;
   const variantLabel = (variant: Material) =>
@@ -102,7 +102,7 @@ const MaterialDetail = ({
     alertCaller.popUp({
       buttonType: alertConstants.CONFIRM_CANCEL,
       message: t.sure_to_delete_preset,
-      onConfirm: () => deletePreset(row.materialId, row.presetId),
+      onConfirm: () => deletePreset(row.presetId),
     });
   };
 

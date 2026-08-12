@@ -89,7 +89,7 @@ describe('getPresetsForContext', () => {
     ],
     thicknessMm: 3,
   });
-  const emptyUserData = { disabledPresetIds: [], presetOverrides: {} };
+  const emptyUserData = { disabledPresetIds: [], presetOverrides: {}, userPresets: [] };
 
   test('resolves one material; unresolvable contexts dropped; rows carry the owner id', () => {
     const rows = getPresetsForContext(variant, 'fbb2', LayerModule.LASER_UNIVERSAL, emptyUserData);
@@ -112,20 +112,28 @@ describe('getPresetsForContext', () => {
     expect(adoRows.map(({ presetId }) => presetId)).toEqual(['user_1']);
   });
 
-  test('user additions on the material are appended after its own presets', () => {
+  test('user presets on the material are appended after its own presets', () => {
     const rows = getPresetsForContext(variant, 'fbb2', LayerModule.LASER_UNIVERSAL, {
       ...emptyUserData,
-      presetAdditions: {
-        'wood-3mm': [{ id: 'added_1', name: 'Added', origin: 'user', settings: { '*': { '*': { power: 9 } } } }],
-      },
+      userPresets: [
+        { id: 'other_1', materialId: 'wood', name: 'Other', origin: 'user', settings: { '*': { '*': { power: 1 } } } },
+        {
+          id: 'added_1',
+          materialId: 'wood-3mm',
+          name: 'Added',
+          origin: 'user',
+          settings: { '*': { '*': { power: 9 } } },
+        },
+      ],
     });
 
+    // Only this material's user presets; other owners filtered out
     expect(rows.map(({ presetId }) => presetId)).toEqual(['wood_3mm_cutting', 'user_1', 'added_1']);
   });
 
   test('customized overlay merges values and flips state', () => {
     const rows = getPresetsForContext(variant, 'fbb2', LayerModule.LASER_UNIVERSAL, {
-      disabledPresetIds: [],
+      ...emptyUserData,
       presetOverrides: { wood_3mm_cutting: { '*': { '*': { name: 'Tuned Cut', power: 60 } } } },
     });
     const cutting = rows.find(({ presetId }) => presetId === 'wood_3mm_cutting')!;
@@ -138,8 +146,8 @@ describe('getPresetsForContext', () => {
 
   test('disabled presets flagged but still listed', () => {
     const rows = getPresetsForContext(parent, 'fbb2', LayerModule.LASER_UNIVERSAL, {
+      ...emptyUserData,
       disabledPresetIds: ['wood_engraving'],
-      presetOverrides: {},
     });
 
     expect(rows.find(({ presetId }) => presetId === 'wood_engraving')!.isDisabled).toBe(true);

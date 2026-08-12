@@ -80,9 +80,9 @@ export const getPresetsForContext = (
   material: Material,
   model: PresetModel,
   module: LayerModuleType,
-  userData: Pick<MaterialUserData, 'disabledPresetIds' | 'presetAdditions' | 'presetOverrides'>,
+  userData: Pick<MaterialUserData, 'disabledPresetIds' | 'presetOverrides' | 'userPresets'>,
 ): ResolvedPresetRow[] => {
-  const presets = [...material.presets, ...(userData.presetAdditions?.[material.id] ?? [])];
+  const presets = [...material.presets, ...userData.userPresets.filter(({ materialId }) => materialId === material.id)];
   const disabled = new Set(userData.disabledPresetIds);
   const rows: ResolvedPresetRow[] = [];
 
