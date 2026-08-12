@@ -21,6 +21,7 @@ import {
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
 import {
   getPresetsForContext,
+  getVariants,
   getVisibleMaterials,
   searchMaterials,
 } from '@core/helpers/api/material-catalog/selectors';
@@ -112,6 +113,21 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
     return visibleMaterials.filter(({ category }) => category === activeTab);
   }, [searching, searchResults, activeTab, visibleMaterials, favorites, recents, allMaterials]);
 
+  // Materials with at least one preset (own, variant, or user-attached) resolvable in the
+  // current machine context; the rest stay visible but dimmed and sorted last (TODO #7c)
+  const supportedIds = useMemo(() => {
+    const userData = { disabledPresetIds, presetOverrides, userPresets };
+    const hasRows = (candidate: Material) => getPresetsForContext(candidate, model, module, userData).length > 0;
+
+    return new Set(
+      visibleMaterials.filter((top) => [top, ...getVariants(top, allMaterials)].some(hasRows)).map(({ id }) => id),
+    );
+  }, [visibleMaterials, allMaterials, model, module, disabledPresetIds, presetOverrides, userPresets]);
+  const sortedGridMaterials = useMemo(
+    () => [...gridMaterials].sort((a, b) => Number(supportedIds.has(b.id)) - Number(supportedIds.has(a.id))),
+    [gridMaterials, supportedIds],
+  );
+
   const detailMaterial = detailMaterialId ? allMaterials.find(({ id }) => id === detailMaterialId) : undefined;
   const editingRow = useMemo((): ResolvedPresetRow | undefined => {
     if (!presetEditor.open || presetEditor.mode !== 'edit' || !presetEditor.presetId) return undefined;
@@ -191,7 +207,12 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
             visibleMaterials={visibleMaterials}
           />
           <div className={styles['scroll-area']}>
-            <CatalogGrid allMaterials={allMaterials} machineLabel={machineLabel} materials={gridMaterials} />
+            <CatalogGrid
+              allMaterials={allMaterials}
+              machineLabel={machineLabel}
+              materials={sortedGridMaterials}
+              supportedIds={supportedIds}
+            />
           </div>
         </>
       )}

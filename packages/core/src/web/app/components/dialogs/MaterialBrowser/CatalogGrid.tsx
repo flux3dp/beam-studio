@@ -17,9 +17,10 @@ interface CatalogGridProps {
   allMaterials: Material[];
   machineLabel: string;
   materials: Material[];
+  supportedIds: Set<string>;
 }
 
-const CatalogGrid = ({ allMaterials, machineLabel, materials }: CatalogGridProps): React.JSX.Element => {
+const CatalogGrid = ({ allMaterials, machineLabel, materials, supportedIds }: CatalogGridProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const { activeTab, openDetail, openMaterialEditor, query } = useMaterialBrowserStore();
   const { favorites, toggleFavorite } = useMaterialStore();
@@ -47,6 +48,7 @@ const CatalogGrid = ({ allMaterials, machineLabel, materials }: CatalogGridProps
     <div className={styles.gallery}>
       {materials.map((material) => (
         <MaterialCard
+          dimmed={!supportedIds.has(material.id)}
           isFavorite={favorites.includes(material.id)}
           key={material.id}
           material={material}

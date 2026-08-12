@@ -51,6 +51,21 @@ describe('MaterialCard', () => {
     expect(getByText('⅛″ · 3 variants')).toBeInTheDocument();
   });
 
+  test('dimmed card carries the de-emphasis class', () => {
+    const { getByTestId } = render(
+      <MaterialCard
+        dimmed
+        isFavorite={false}
+        material={material}
+        onOpen={onOpen}
+        onToggleFavorite={onToggleFavorite}
+        variantCount={1}
+      />,
+    );
+
+    expect(getByTestId('material-card-glitter').className).toContain('dimmed');
+  });
+
   test('badge hidden for unset thickness (D18)', () => {
     const { queryByText } = render(
       <MaterialCard

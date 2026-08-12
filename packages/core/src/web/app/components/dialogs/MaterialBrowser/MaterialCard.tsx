@@ -2,6 +2,7 @@ import React from 'react';
 
 import { StarFilled, StarOutlined } from '@ant-design/icons';
 import { Space, Tag } from 'antd';
+import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 
 import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
@@ -13,6 +14,7 @@ import { getCoverStyle } from './utils/coverStyle';
 import { getThicknessLabel } from './utils/inchDisplay';
 
 interface MaterialCardProps {
+  dimmed?: boolean;
   isFavorite: boolean;
   material: Material;
   onOpen: (materialId: string) => void;
@@ -21,6 +23,7 @@ interface MaterialCardProps {
 }
 
 const MaterialCard = ({
+  dimmed,
   isFavorite,
   material,
   onOpen,
@@ -38,7 +41,11 @@ const MaterialCard = ({
       : thickness;
 
   return (
-    <div className={styles.card} data-testid={`material-card-${material.id}`} onClick={() => onOpen(material.id)}>
+    <div
+      className={classNames(styles.card, { [styles.dimmed]: dimmed })}
+      data-testid={`material-card-${material.id}`}
+      onClick={() => onOpen(material.id)}
+    >
       <div className={styles.cover} style={getCoverStyle(material)}>
         <span
           className={styles.fav}
