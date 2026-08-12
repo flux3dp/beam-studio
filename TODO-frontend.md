@@ -458,7 +458,7 @@ UI：
 
 ### Step 11 以後
 
-**A-3 剩下的部分（下一步）**：折射率 `getExportOpt`、`stl_z_reversed`、`SWIFTRAY_SUPPORT_STL` 正式版號。接著是剖面預覽（第 5 點 V1）。
+**A-3 剩下的部分（下一步）**：`stl_z_reversed`、`refraction_compensation` 開關、`SWIFTRAY_SUPPORT_STL` 正式版號、`focal_length` 的實機預設值。折射率 / 材料高度 / 對焦距離已於 Step 13 送出。接著是剖面預覽（第 5 點 V1）。
 
 第 4 點的匯入預檢 / 自適應縮放詢問 / 進度條 / thumbnail 與模式切換詢問已於 Step 12 完成；`readBeamFileInfo().innerEngraving` 仍然沒有消費端（Step 12 是在 `importBvgString` 讀 svg 字串裡的 `data-inner-engraving`，開檔前的分頁 / 工作區域詢問流程是另一件事）。
 
@@ -653,6 +653,53 @@ A-1 的右面板三處分派已補齊（Options 仍是「擋掉 2D 版」，等 
 - **匯入選項**：單位（mm / inch）、上方向（Z-up / Y-up，Blender 匯出常是 Y-up）—— 已在 `svg-editor.ts` 標 TODO
 - **其他檔案入口**：Electron `open-file` 關聯、最近開啟、myCloud、範例檔案仍不認得 `.stl`
 - ⚠️ 順手發現的**既有 bug**（未修，不在這次範圍）：`handleFile` 的 `case 'bvg'` 少一個 `break`，所以每次匯入 .bvg 都會再跑一次 `readBeam`
+
+---
+
+### ✅ Step 13：折射參數、模式切換、畫布周邊（10 個項目，一項一個 commit）
+
+#### A-3 的折射參數（`getExportOpt`）
+
+`refractive_index` / `material_height` / `focal_length` 三個都送出去了，條件是**內雕模式**而不是「有沒有 STL 物件」—— 它們描述的是材料與光學，不是畫布內容。
+
+- `material_height` 走 `getMaterialHeightMm()`，球體回報的是**液面高度**而不是可能超過球體的設定值
+- **`focal_length` 是新的文件設定**（`inner-engraving-focal-length`），UI 放在 InnerEngravingSettings 折射率下面。它是鏡頭的規格不是工作的參數，但 swiftray 的 machine settings 沒有這個欄位，只能跟著 convert params 走
+- ⚠️ **預設 100mm 是暫定值**，70×70 galvo 場一般是 F-theta 100mm 左右，要對實機確認
+- ⚠️ `refraction_compensation`（開關）**沒有送**，後端省略時預設開啟。之後若要讓使用者關掉補償，要一併加 UI
+
+材料位置參考點的文字改成「材料中心 / 材料左下角」，避免被讀成在改工作區域原點。
+
+#### 切換 2D / 3D = 開新檔案（`actions/canvas/innerEngravingMode.ts`）
+
+`switchInnerEngravingMode()`：詢問保存 → 清畫布 + STL mesh + undo stack → 換模式（必要時一併換工作區域）。
+
+- **取消保存詢問會取消呼叫端的整個動作**：匯入不匯入、DocumentSettings 不儲存也不關閉
+- undo stack 一定要一起清 —— 留著的話某一步 undo 會伸回一個已經不存在的文件，而它背後的 mesh 早就 dispose 了，本來就還原不了
+- `svgCanvas.clear()` 現在會清 stlStore，順帶修掉「檔案 → 開新檔案」漏 mesh 的既有問題
+
+#### 四種模式互斥
+
+`helpers/exclusiveModes.ts` 是唯一的判斷點，三個 gate 都讀它：原生選單、web 選單（原本**完全沒有** gate）、controller 自己。原本缺的是「內雕開著時仍然可以進曲面雕刻」這個方向。
+
+#### 其餘
+
+| 項目 | 做法 |
+| --- | --- |
+| 對焦提醒 | `handleExportAlerts`，確認式 + 不再顯示（`skip-inner-engraving-focus-reminder`）。放在送工作這一步，因為那是最後還來得及處理的時機 |
+| repeat | 面板隱藏 + `writeDataLayer` 夾成 1（預設集是另一條會寫入 repeat 的路） |
+| dottingTime | 內雕模式整段都顯示，不看目前有沒有打點物件 —— 打點/打線是**物件**開關，圖層參數不該跟著選取閃動。同時把先前「強制顯示」的測試 hack 還原成 2D 的 gradient 判斷 |
+| 正投影/透視 | 不再嘗試沿用姿態，改成**重新套用目前的視角預設**（camera 在 `custom` 時退回 ISO）。兩種 frustum 差太多，沿用姿態永遠不會落在使用者離開的地方 |
+| 格線 / 尺規 / 座標軸 | 跟 `SHOW_GRIDS` / `SHOW_RULERS` 同步。格線改成**立體的三面盒子**（地板 + 後牆 + 左牆），顏色也調深 —— 3D 是斜看地板，同一個灰蓋到的像素少很多。座標軸換成 drei 的 `GizmoHelper` + `GizmoViewport` |
+| AUTO_ALIGN | `svgCanvas.isAutoAlign` 改成推導值（偏好 && 非內雕），十幾個 call site 不用各自記得；選單一併停用 |
+| ANTI_ALIASING | 只停用選單。WebGL 的 antialias 在建 context 時就固定了，要切換等於重建整個 renderer |
+| `<CanvasControl />` | 內雕模式只留縮放。3D 的「縮放」定義成**在 orbit target 平面上每個場景單位佔幾個螢幕像素** —— 透視相機只有在那一個深度有單一答案，而那正好跟 2D 畫布的 zoom 是同一個量，所以同一個控制項能驅動兩邊 |
+
+#### 尚待確認 / 尚未處理
+
+- ⚠️ **以上全部尚未實機確認**：格線與尺規的顏色深淺、GizmoViewport 點擊後的視角、ZoomBlock 在 3D 顯示的百分比是否讀得出意義，都要看過
+- **AUTO_ALIGN / ANTI_ALIASING 的偏好值本身沒有被改動**（只是忽略 + 停用選單），所以離開內雕模式會回到使用者原本的設定 —— 這是刻意的，但如果 PM 要的是「強制關閉」就要改
+- ⚠️ 順手發現、**未修**的既有 bug：`handleFile` 的 `case 'bvg'` 少一個 `break`，每次匯入 .bvg 都會再跑一次 `readBeam`
+- 這一輪沒有跑 jest / eslint（依指示）。已知 `helpers/layer/layer-config-helper.spec.ts` 的 `getConfigKeys` 在改動前就是失敗的（見下方「待修改 / 待確認」的六支）
 
 ---
 
