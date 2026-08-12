@@ -20,6 +20,7 @@ import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -156,6 +157,28 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
           text: lang.alert.dont_show_again,
         },
         message: lang.beambox.popup.auto_feeder_origin,
+      });
+    });
+  }
+
+  // The machine cannot read its Z position, so the focus is entirely the user's to set and getting
+  // it wrong ruins the whole workpiece — the single largest operational risk in this feature. Shown
+  // here rather than only in the material settings because this is the last moment it can still be
+  // acted on. Confirm-only, with the usual opt-out: it is a reminder, not a decision.
+  if (isInnerEngravingActive() && !alertConfig.read('skip-inner-engraving-focus-reminder')) {
+    await new Promise<void>((resolve) => {
+      alertCaller.popUp({
+        callbacks: resolve,
+        caption: lang.beambox.document_panel.inner_engraving,
+        checkbox: {
+          callbacks: () => {
+            alertConfig.write('skip-inner-engraving-focus-reminder', true);
+            resolve();
+          },
+          text: lang.alert.dont_show_again,
+        },
+        message: lang.inner_engraving_settings.focus_reminder,
+        messageIcon: 'warning',
       });
     });
   }
