@@ -4,10 +4,10 @@ import { shallow } from 'zustand/shallow';
 import menuActions from '@core/app/actions/beambox/menuActions';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import { getAddOnInfo } from '@core/app/constants/addOn';
 import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import DeviceMaster from '@core/helpers/device-master';
+import { canStartCurveEngraving } from '@core/helpers/exclusiveModes';
 import { isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import type { ExampleFileKey } from '@core/helpers/menubar/exampleFiles';
@@ -96,7 +96,13 @@ export default abstract class AbstractMenu {
       registerMenuClickEvents();
 
       useDocumentStore.subscribe(
-        (state) => [state.workarea, state.rotary_mode, state['auto-feeder'], state['pass-through']],
+        (state) => [
+          state.workarea,
+          state.rotary_mode,
+          state['auto-feeder'],
+          state['pass-through'],
+          state['inner-engraving'],
+        ],
         this.checkCurveEngraving,
         { equalityFn: shallow },
       );
@@ -125,18 +131,9 @@ export default abstract class AbstractMenu {
   }
 
   checkCurveEngraving = () => {
-    const documentStore = useDocumentStore.getState();
-    const workarea = documentStore.workarea;
-    const addOnInfo = getAddOnInfo(workarea);
-    let supportCurveEngraving = Boolean(addOnInfo.curveEngraving) && isAtPage('editor');
-
-    if (supportCurveEngraving) {
-      const isRotary = documentStore.rotary_mode && Boolean(addOnInfo.rotary);
-      const isAutoFeeder = documentStore['auto-feeder'] && Boolean(addOnInfo.autoFeeder);
-      const isPassThrough = documentStore['pass-through'] && Boolean(addOnInfo.passThrough);
-
-      supportCurveEngraving = !(isAutoFeeder || isRotary || isPassThrough);
-    }
+    // the conflicting modes — rotary, pass-through, auto-feeder and inner engraving — live in
+    // `canStartCurveEngraving`, so this gate and the web menu's cannot drift apart
+    const supportCurveEngraving = isAtPage('editor') && canStartCurveEngraving();
 
     if (supportCurveEngraving) {
       this.enable(['START_CURVE_ENGRAVING_MODE']);

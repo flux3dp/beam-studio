@@ -23,6 +23,7 @@ import RawModeCurveMeasurer from '@core/helpers/device/curve-measurer/raw';
 import RedLightCurveMeasurer from '@core/helpers/device/curve-measurer/red-light';
 import getDevice from '@core/helpers/device/get-device';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { canStartCurveEngraving } from '@core/helpers/exclusiveModes';
 import i18n from '@core/helpers/i18n';
 import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
 import type { CurveEngraving, MeasureData, Point } from '@core/interfaces/ICurveEngraving';
@@ -56,11 +57,9 @@ class CurveEngravingModeController {
     );
   }
 
-  checkSupport = () => {
-    const workarea = workareaManager.model;
-
-    return getAddOnInfo(workarea).curveEngraving;
-  };
+  // the machine capability *and* the conflicting modes: a menu item enabled a moment ago, or a
+  // hotkey, must not be able to start curve engraving on top of rotary or inner engraving
+  checkSupport = () => canStartCurveEngraving();
 
   start = () => {
     if (!this.checkSupport()) {
