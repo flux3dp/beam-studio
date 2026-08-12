@@ -59,6 +59,8 @@ interface ViewStore {
   /** Called when the user drives the camera by hand, dropping out of whatever preset was active. */
   markViewCustom: () => void;
   projection: ProjectionMode;
+  /** A zoom asked for from outside the canvas. `version` so asking for the current value still applies. */
+  requestZoom: (zoomLevel: number) => void;
   /**
    * Uniform scaling. Lives here rather than on the object because it is a tool mode, not a property
    * of the model: it has to constrain the scale gizmo as well as the panel's size inputs.
@@ -68,12 +70,22 @@ interface ViewStore {
   setProjection: (projection: ProjectionMode) => void;
   setRatioLocked: (locked: boolean) => void;
   setTransformMode: (mode: TransformMode) => void;
+  /** Published by the canvas so the zoom control has something to display. */
+  setZoomLevel: (zoomLevel: number) => void;
   transformMode: TransformMode;
   /**
    * The requested camera preset. `version` increments on every request so that asking for the preset
    * you are already on still snaps the camera back, which is what the reset button needs.
    */
   view: { preset: ViewPreset; version: number };
+  /**
+   * Screen pixels per scene unit at the orbit target — the 3D equivalent of the SVG canvas's zoom.
+   *
+   * Measured at the target plane because that is the only depth at which a perspective camera has a
+   * single answer; the number is what the zoom control shows and what a typed-in percentage means.
+   */
+  zoomLevel: number;
+  zoomRequest: { version: number; zoomLevel: number };
 }
 
 export const useViewStore = create<ViewStore>((set) => ({
@@ -82,6 +94,8 @@ export const useViewStore = create<ViewStore>((set) => ({
   projection: 'perspective',
   ratioLocked: true,
   requestView: (preset) => set((state) => ({ view: { preset, version: state.view.version + 1 } })),
+  requestZoom: (zoomLevel) =>
+    set((state) => ({ zoomRequest: { version: state.zoomRequest.version + 1, zoomLevel } })),
   setProjection: (projection) =>
     set((state) => ({
       projection,
@@ -96,6 +110,9 @@ export const useViewStore = create<ViewStore>((set) => ({
     })),
   setRatioLocked: (ratioLocked) => set({ ratioLocked }),
   setTransformMode: (transformMode) => set({ transformMode }),
+  setZoomLevel: (zoomLevel) => set({ zoomLevel }),
   transformMode: 'translate',
   view: { preset: DEFAULT_VIEW, version: 0 },
+  zoomLevel: 1,
+  zoomRequest: { version: 0, zoomLevel: 1 },
 }));
