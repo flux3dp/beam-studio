@@ -12,6 +12,7 @@ import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getDefaultModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
@@ -460,6 +461,13 @@ export const writeDataLayer = <T extends ConfigKey>(
     printingModules.has(Number.parseInt(layer.getAttribute(attributeMap.module) ?? '', 10))
   ) {
     attr = attributeMap.printingSpeed;
+  }
+
+  // Inner engraving is fixed at one pass: a second one has to travel through the cracks the first
+  // left behind, which scatter it (PM 08/06). The panel hides the control, and this is what keeps a
+  // preset — the one other way a layer gets its repeat — from putting a different number in.
+  if (key === 'repeat' && isInnerEngravingActive()) {
+    value = 1 as ConfigKeyTypeMap[T];
   }
 
   const originalValue = layer.getAttribute(attr);
