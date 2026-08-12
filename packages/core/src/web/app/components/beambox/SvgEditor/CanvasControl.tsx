@@ -6,10 +6,12 @@ import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 
 import constant from '@core/app/actions/beambox/constant';
+import { DEFAULT_VIEW, useViewStore } from '@core/app/components/beambox/InnerEngraving/viewStore';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import workareaManager from '@core/app/svgedit/workarea';
+import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './CanvasControl.module.scss';
@@ -21,6 +23,7 @@ type CanvasControlMode = 'exposure' | 'opacity' | 'time' | 'zoom';
 
 const CanvasControl = (): ReactNode => {
   const [activeMode, setActiveMode] = useState<CanvasControlMode>('zoom');
+  const isInnerEngraving = useInnerEngravingActive();
   const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
   const isClean = useCameraPreviewStore((state) => state.isClean);
   const lang = useI18n().canvas_control;
@@ -99,6 +102,26 @@ const CanvasControl = (): ReactNode => {
 
     return <ArrowsAltOutlined className={styles.icon} />;
   };
+
+  // 3D gets the zoom and nothing else: exposure and opacity belong to the camera preview, which is
+  // switched off in this mode, and the time estimate would need the backend to slice first. With one
+  // mode left there is nothing for the dropdown to choose between, so it goes too.
+  if (isInnerEngraving) {
+    return (
+      <div>
+        <div className={styles.container}>
+          <ZoomBlock
+            className={styles.zoomContent}
+            // scene units are 0.1mm, and ZoomBlock speaks in screen pixels per mm
+            getZoom={() => useViewStore.getState().zoomLevel * constant.dpmm}
+            ratioClassName={styles.ratio}
+            resetView={() => useViewStore.getState().requestView(DEFAULT_VIEW)}
+            setZoom={(zoom) => useViewStore.getState().requestZoom(zoom / constant.dpmm)}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>

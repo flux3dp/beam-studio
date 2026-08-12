@@ -22,6 +22,7 @@ import StlMesh from './StlMesh';
 import { getMaterial, useMaterial } from './utils/material';
 import { getSelectedStlId, selectStlObject } from './utils/selection';
 import ViewController from './ViewController';
+import ZoomController from './ZoomController';
 import { DEFAULT_VIEW, getPresetPosition, useViewStore } from './viewStore';
 
 todo(
@@ -118,6 +119,7 @@ const Scene = () => {
       ))}
 
       <ViewController extent={viewExtent} target={viewTarget} />
+      <ZoomController target={viewTarget} />
       {/* the axes indicator, grouped with the grids because it is the same kind of guide. Clicking
           an axis flies the camera there, which is a view the presets know nothing about, so the
           highlight has to be cleared the same way an orbit clears it */}
