@@ -19,8 +19,7 @@ export const checkHxRf = (): boolean => {
 
   return false;
 };
-export const checkBM2 = (): boolean =>
-  enableAllMachines || isDev() || localeHelper.isTwOrHk || localeHelper.isJp || localeHelper.isPs || localeHelper.isIl;
+export const checkBM2 = (): boolean => true;
 export const checkBM24C = (): boolean => localeHelper.isTwOrHk;
 // TODO: Can be removed after we move all testing machine to fuv1
 export const checkBM2UV = (): boolean => isDev();
