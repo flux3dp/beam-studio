@@ -50,6 +50,7 @@ export const attributeMap: Record<ConfigKey, string> = {
   ink: 'data-ink',
   interpolation: 'data-interpolation',
   kRatio: 'data-kRatio',
+  materialId: 'data-materialId',
   minPadding: 'data-minPadding',
   minPower: 'data-minPower',
   module: 'data-module',
@@ -61,6 +62,7 @@ export const attributeMap: Record<ConfigKey, string> = {
   oneWayEngraving: 'data-owe',
   oneWayEngravingReverse: 'data-oweRev',
   power: 'data-strength',
+  presetId: 'data-presetId',
   printingBotPadding: 'data-printingBotPadding',
   printingSpeed: 'data-printingSpeed',
   printingStrength: 'data-printingStrength',
@@ -393,7 +395,7 @@ export const getData = <T extends ConfigKey>(
     attr = attributeMap.printingSpeed;
   }
 
-  if (['clipRect', 'color', 'configName', 'dpi'].includes(key)) {
+  if (['clipRect', 'color', 'configName', 'dpi', 'materialId', 'presetId'].includes(key)) {
     return (layer.getAttribute(attr) || defaultConfig[key]) as ConfigKeyTypeMap[T];
   }
 
@@ -760,14 +762,81 @@ export const applyPreset = (
 };
 
 /**
- * Update all layer configs values due to preset and custom config value change
+ * Material Browser (new mode) replaces the legacy re-resolution below with its own,
+ * injected here to avoid a circular import. The legacy body clears configName for
+ * unknown names and reverts customized values, which would destroy new-mode refs.
  */
-export const postPresetChange = (): void => {
-  // TODO: add test
+let postPresetChangeOverride: (() => void) | null = null;
+
+export const setPostPresetChangeOverride = (override: (() => void) | null): void => {
+  postPresetChangeOverride = override;
+};
+
+/**
+ * Clamp a layer's speed / printing speed / promark frequency & pulse width to the
+ * active workarea limits. Shared by the legacy postPresetChange and the Material
+ * Browser's replacement.
+ */
+export const clampLayerConfigLimits = (layerElement: Element): void => {
   const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const isPromark = promarkModels.has(workarea);
   const promarkLimit = isPromark ? getPromarkLimit() : null;
+  const speed = getData(layerElement, 'speed') as number;
+
+  if (speed > maxSpeed) {
+    writeDataLayer(layerElement, 'speed', maxSpeed);
+  }
+
+  if (speed < minSpeed) {
+    writeDataLayer(layerElement, 'speed', minSpeed);
+  }
+
+  const printingSpeed = getData(layerElement, 'printingSpeed') as number;
+
+  if (printingSpeed > maxSpeed) {
+    writeDataLayer(layerElement, 'printingSpeed', maxSpeed);
+  }
+
+  if (printingSpeed < minSpeed) {
+    writeDataLayer(layerElement, 'printingSpeed', minSpeed);
+  }
+
+  if (isPromark) {
+    if (promarkLimit?.frequency) {
+      const frequency = getData(layerElement, 'frequency') as number;
+
+      if (frequency < promarkLimit.frequency.min) {
+        writeDataLayer(layerElement, 'frequency', promarkLimit.frequency.min);
+      } else if (frequency > promarkLimit.frequency.max) {
+        writeDataLayer(layerElement, 'frequency', promarkLimit.frequency.max);
+      }
+    }
+
+    if (promarkLimit?.pulseWidth) {
+      const pulseWidth = getData(layerElement, 'pulseWidth') as number;
+
+      if (pulseWidth < promarkLimit.pulseWidth.min) {
+        writeDataLayer(layerElement, 'pulseWidth', promarkLimit.pulseWidth.min);
+      } else if (pulseWidth > promarkLimit.pulseWidth.max) {
+        writeDataLayer(layerElement, 'pulseWidth', promarkLimit.pulseWidth.max);
+      }
+    }
+  }
+};
+
+/**
+ * Update all layer configs values due to preset and custom config value change
+ */
+export const postPresetChange = (): void => {
+  // TODO: add test
+  if (postPresetChangeOverride) {
+    postPresetChangeOverride();
+
+    return;
+  }
+
+  const workarea = useDocumentStore.getState().workarea;
   const allPresets = getAllPresets();
 
   layerManager.getAllLayers().forEach((layer) => {
@@ -794,46 +863,6 @@ export const postPresetChange = (): void => {
       writeDataLayer(layerElement, 'configName', undefined);
     }
 
-    const speed = getData(layerElement, 'speed') as number;
-
-    if (speed > maxSpeed) {
-      writeDataLayer(layerElement, 'speed', maxSpeed);
-    }
-
-    if (speed < minSpeed) {
-      writeDataLayer(layerElement, 'speed', minSpeed);
-    }
-
-    const printingSpeed = getData(layerElement, 'printingSpeed') as number;
-
-    if (printingSpeed > maxSpeed) {
-      writeDataLayer(layerElement, 'printingSpeed', maxSpeed);
-    }
-
-    if (printingSpeed < minSpeed) {
-      writeDataLayer(layerElement, 'printingSpeed', minSpeed);
-    }
-
-    if (isPromark) {
-      if (promarkLimit?.frequency) {
-        const frequency = getData(layerElement, 'frequency') as number;
-
-        if (frequency < promarkLimit.frequency.min) {
-          writeDataLayer(layerElement, 'frequency', promarkLimit.frequency.min);
-        } else if (frequency > promarkLimit.frequency.max) {
-          writeDataLayer(layerElement, 'frequency', promarkLimit.frequency.max);
-        }
-      }
-
-      if (promarkLimit?.pulseWidth) {
-        const pulseWidth = getData(layerElement, 'pulseWidth') as number;
-
-        if (pulseWidth < promarkLimit.pulseWidth.min) {
-          writeDataLayer(layerElement, 'pulseWidth', promarkLimit.pulseWidth.min);
-        } else if (pulseWidth > promarkLimit.pulseWidth.max) {
-          writeDataLayer(layerElement, 'pulseWidth', promarkLimit.pulseWidth.max);
-        }
-      }
-    }
+    clampLayerConfigLimits(layerElement);
   });
 };

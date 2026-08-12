@@ -20,7 +20,9 @@ describe('test configPanel store', () => {
 
     expect(state).toEqual({
       configName: { value: '' },
+      materialId: { value: undefined },
       power: { value: 15 },
+      presetId: { value: undefined },
       repeat: { value: 1 },
       speed: { value: 20 },
       zStep: { value: 0 },
@@ -36,7 +38,9 @@ describe('test configPanel store', () => {
 
     expect(state).toEqual({
       configName: { value: '' },
+      materialId: { value: undefined },
       power: { value: 15 },
+      presetId: { value: undefined },
       repeat: { value: 1 },
       speed: { hasMultiValue: true, value: 2 },
       zStep: { value: 0 },
@@ -50,7 +54,9 @@ describe('test configPanel store', () => {
 
     expect(state).toEqual({
       configName: { value: '' },
+      materialId: { value: undefined },
       power: { value: 15 },
+      presetId: { value: undefined },
       repeat: { value: 2 },
       speed: { value: 20 },
       zStep: { value: 0 },
@@ -64,7 +70,9 @@ describe('test configPanel store', () => {
 
     expect(state).toEqual({
       configName: { value: 'newName' },
+      materialId: { value: undefined },
       power: { value: 15 },
+      presetId: { value: undefined },
       repeat: { value: 1 },
       speed: { value: 20 },
       zStep: { value: 0 },
