@@ -56,6 +56,9 @@ import i18n from '@core/helpers/i18n';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';
+import { initMaterialStore } from '@core/app/stores/materialStore';
+import { isMaterialBrowserActive } from '@core/helpers/materials/isMaterialBrowserActive';
+import { importMaterialLibrary } from '@core/helpers/materials/material-import-export';
 import { importPresets } from '@core/helpers/presets/preset-helper';
 import Shortcuts, { isFocusingOnInputs } from '@core/helpers/shortcuts';
 import { isMobile } from '@core/app/stores/screenStore';
@@ -1020,7 +1023,16 @@ const svgEditor = (window['svgEditor'] = (function () {
             break;
           case 'json':
             Progress.popById('loading_image');
-            await importPresets(file);
+
+            if (isMaterialBrowserActive()) {
+              // New mode: merge into the material library (accepts legacy preset files too);
+              // the legacy 'presets' storage key is never written.
+              initMaterialStore();
+              await importMaterialLibrary(file);
+            } else {
+              await importPresets(file);
+            }
+
             layerManager.resync();
             break;
           case 'unknown':
