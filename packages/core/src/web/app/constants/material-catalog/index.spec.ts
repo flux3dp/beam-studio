@@ -123,9 +123,10 @@ describe('getBundledCatalog', () => {
 
     expect(baseIds.sort()).toEqual(Object.keys(presetMappings).sort());
     expect(new Set(allPresets.map(({ id }) => id)).size).toBe(allPresets.length);
+    // Tiers reuse the base name (option d: the DPI Tag differentiates, not the name)
     allPresets
       .filter(({ legacyKey }) => !legacyKey)
-      .forEach((preset) => expect(preset.nameKey).toBe('engraving_quality'));
+      .forEach((preset) => expect(preset.nameKey).toBe('engraving'));
   });
 
   test('quality tiers per override above 250 DPI: same values, only dpi differs (D19)', () => {

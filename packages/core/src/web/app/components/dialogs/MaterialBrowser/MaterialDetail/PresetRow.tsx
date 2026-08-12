@@ -14,6 +14,7 @@ import { Button, Dropdown, Space, Tag } from 'antd';
 import classNames from 'classnames';
 
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { dpiValueMap } from '@core/app/constants/resolutions';
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
 import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
@@ -83,6 +84,11 @@ const PresetRow = ({
           <Tag color={stateTagColor[row.state]} style={{ marginLeft: 8 }}>
             {stateLabel}
           </Tag>
+          {row.values.dpi && (
+            <Tag color="blue" style={{ marginLeft: 4 }}>
+              {dpiValueMap[row.values.dpi]} DPI
+            </Tag>
+          )}
           {row.isDisabled && <Tag style={{ marginLeft: 4 }}>{t.state_disabled}</Tag>}
         </div>
         <Space className={styles.pills} size={[6, 6]} wrap>

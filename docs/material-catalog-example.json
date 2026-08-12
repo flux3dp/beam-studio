@@ -32,7 +32,7 @@
         },
         {
           "id": "wood_engraving_quality",
-          "name": { "default": "Engraving (Quality)", "zh-tw": "雕刻（精緻）" },
+          "name": { "default": "Engraving", "zh-tw": "雕刻" },
           "origin": "default",
           "settings": {
             "fhx2rf_30": { "15": { "power": 55, "speed": 300, "dpi": "high" } },

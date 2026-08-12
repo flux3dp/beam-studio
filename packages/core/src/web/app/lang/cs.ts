@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: 'Gravírování',
           engraving_diode: 'Gravírování (dioda)',
           engraving_fiber: 'Gravírování (vlákno)',
-          engraving_quality: 'Gravírování (kvalita)',
           engraving_spray: 'Gravírování (sprej)',
           kiss_cut: 'Naříznutí (Kiss Cut)',
           marking: 'Značení',

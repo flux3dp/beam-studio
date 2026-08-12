@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: '彫刻',
           engraving_diode: '彫刻（ダイオードレーザー）',
           engraving_fiber: '彫刻（ファイバーレーザー）',
-          engraving_quality: '彫刻（高品質）',
           engraving_spray: '彫刻（スプレー）',
           kiss_cut: 'ハーフカット',
           marking: 'マーキング',

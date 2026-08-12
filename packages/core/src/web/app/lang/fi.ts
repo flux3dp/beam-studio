@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: 'Kaiverrus',
           engraving_diode: 'Kaiverrus (diodi)',
           engraving_fiber: 'Kaiverrus (kuitu)',
-          engraving_quality: 'Kaiverrus (laatu)',
           engraving_spray: 'Kaiverrus (spray)',
           kiss_cut: 'Kiss cut',
           marking: 'Merkintä',

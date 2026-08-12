@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: 'Ukiran',
           engraving_diode: 'Ukiran (Diode)',
           engraving_fiber: 'Ukiran (Fiber)',
-          engraving_quality: 'Ukiran (Kualitas)',
           engraving_spray: 'Ukiran (Semprot)',
           kiss_cut: 'Kiss Cut',
           marking: 'Penandaan',

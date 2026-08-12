@@ -90,7 +90,7 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 |---|---|---|---|
 | `id` | string | ✓ | **Stable and immutable forever.** The client stores user edits ("Customized") and Restore targets keyed by this id — renaming/re-creating a preset with a new id orphans user customizations. Enforce immutability in admin (read-only after creation). |
 | `legacyKey` | string | – | For presets migrated from Beam Studio's built-in `presets.ts` (e.g. `wood_3mm_cutting`): the original key, verbatim. The client writes it into legacy files for backward compatibility and uses it for tutorial hooks. Preserve exactly; never rename. |
-| `name` | LocalizedString | ✓ (cloud) | e.g. "3 mm Cutting", "Engraving (Quality)". |
+| `name` | LocalizedString | ✓ (cloud) | e.g. "Cutting", "Engraving". Don't encode DPI in the name — presets whose `settings` declare a `dpi` get a DPI tag in the browser UI, so same-named entries (e.g. a base and a quality tier) are told apart by that tag. |
 | `origin` | string | ✓ | Always `default` from this API (`user` is client-side only). |
 | `settings` | object | ✓ | Nested parameter scopes — see §3.3. |
 

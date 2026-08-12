@@ -121,7 +121,7 @@
         },
         {
           "id": "wood_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -182,7 +182,7 @@
         },
         {
           "id": "wood_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -243,7 +243,7 @@
         },
         {
           "id": "wood_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -691,7 +691,7 @@
         },
         {
           "id": "mdf_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -752,7 +752,7 @@
         },
         {
           "id": "mdf_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -813,7 +813,7 @@
         },
         {
           "id": "mdf_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -1243,7 +1243,7 @@
         },
         {
           "id": "acrylic_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -1304,7 +1304,7 @@
         },
         {
           "id": "acrylic_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -1365,7 +1365,7 @@
         },
         {
           "id": "acrylic_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -1958,7 +1958,7 @@
         },
         {
           "id": "leather_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2019,7 +2019,7 @@
         },
         {
           "id": "leather_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2080,7 +2080,7 @@
         },
         {
           "id": "leather_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2436,7 +2436,7 @@
         },
         {
           "id": "fabric_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2497,7 +2497,7 @@
         },
         {
           "id": "fabric_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2558,7 +2558,7 @@
         },
         {
           "id": "fabric_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3055,7 +3055,7 @@
         },
         {
           "id": "glass_bw_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3116,7 +3116,7 @@
         },
         {
           "id": "glass_bw_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3177,7 +3177,7 @@
         },
         {
           "id": "glass_bw_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3362,7 +3362,7 @@
         },
         {
           "id": "slate_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3423,7 +3423,7 @@
         },
         {
           "id": "slate_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3484,7 +3484,7 @@
         },
         {
           "id": "slate_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3741,7 +3741,7 @@
         },
         {
           "id": "rubber_bw_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3802,7 +3802,7 @@
         },
         {
           "id": "rubber_bw_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3863,7 +3863,7 @@
         },
         {
           "id": "rubber_bw_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {

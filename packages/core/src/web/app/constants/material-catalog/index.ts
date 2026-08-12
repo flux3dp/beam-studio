@@ -79,7 +79,7 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
 
       result.push({
         id: `${key}_${option}`,
-        nameKey: 'engraving_quality',
+        nameKey: mapping.nameKey,
         origin: 'default',
         settings: qualitySettings,
       });

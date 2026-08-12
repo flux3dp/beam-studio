@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: 'Grabado',
           engraving_diode: 'Grabado (diodo)',
           engraving_fiber: 'Grabado (fibra)',
-          engraving_quality: 'Grabado (calidad)',
           engraving_spray: 'Grabado (spray)',
           kiss_cut: 'Corte superficial',
           marking: 'Marcado',

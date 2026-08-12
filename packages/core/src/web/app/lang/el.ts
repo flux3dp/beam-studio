@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: 'Χάραξη',
           engraving_diode: 'Χάραξη (δίοδος)',
           engraving_fiber: 'Χάραξη (ίνα)',
-          engraving_quality: 'Χάραξη (ποιότητα)',
           engraving_spray: 'Χάραξη (σπρέι)',
           kiss_cut: 'Επιφανειακή κοπή (Kiss Cut)',
           marking: 'Σήμανση',

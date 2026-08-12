@@ -124,7 +124,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "wood_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -185,7 +185,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "wood_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -246,7 +246,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "wood_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -694,7 +694,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "mdf_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -755,7 +755,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "mdf_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -816,7 +816,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "mdf_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -1246,7 +1246,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "acrylic_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -1307,7 +1307,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "acrylic_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -1368,7 +1368,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "acrylic_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -1961,7 +1961,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "leather_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2022,7 +2022,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "leather_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2083,7 +2083,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "leather_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2439,7 +2439,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "fabric_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2500,7 +2500,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "fabric_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -2561,7 +2561,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "fabric_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3058,7 +3058,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "glass_bw_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3119,7 +3119,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "glass_bw_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3180,7 +3180,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "glass_bw_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3365,7 +3365,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "slate_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3426,7 +3426,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "slate_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3487,7 +3487,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "slate_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3744,7 +3744,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "rubber_bw_engraving_high",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3805,7 +3805,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "rubber_bw_engraving_detailed",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {
@@ -3866,7 +3866,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         },
         {
           "id": "rubber_bw_engraving_ultra",
-          "nameKey": "engraving_quality",
+          "nameKey": "engraving",
           "origin": "default",
           "settings": {
             "fhx2rf_30": {

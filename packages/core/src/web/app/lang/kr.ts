@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: '조각',
           engraving_diode: '조각(다이오드 레이저)',
           engraving_fiber: '조각(파이버 레이저)',
-          engraving_quality: '조각 (고품질)',
           engraving_spray: '조각(스프레이)',
           kiss_cut: '키스 컷',
           marking: '마킹',

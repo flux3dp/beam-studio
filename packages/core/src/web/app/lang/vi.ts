@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: 'Khắc',
           engraving_diode: 'Khắc (Diode)',
           engraving_fiber: 'Khắc (Fiber)',
-          engraving_quality: 'Khắc (chất lượng)',
           engraving_spray: 'Khắc (Phun phủ)',
           kiss_cut: 'Cắt bán phần',
           marking: 'Đánh dấu',

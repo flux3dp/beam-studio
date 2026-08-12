@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: 'Grawerowanie',
           engraving_diode: 'Grawerowanie (dioda)',
           engraving_fiber: 'Grawerowanie (światłowód)',
-          engraving_quality: 'Grawerowanie (jakość)',
           engraving_spray: 'Grawerowanie (spray)',
           kiss_cut: 'Nacięcie (Kiss Cut)',
           marking: 'Znakowanie',

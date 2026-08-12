@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: 'การแกะสลัก',
           engraving_diode: 'การแกะสลัก (ไดโอด)',
           engraving_fiber: 'การแกะสลัก (ไฟเบอร์)',
-          engraving_quality: 'แกะสลัก (คุณภาพ)',
           engraving_spray: 'การแกะสลัก (สเปรย์)',
           kiss_cut: 'ตัดครึ่ง',
           marking: 'การทำเครื่องหมาย',

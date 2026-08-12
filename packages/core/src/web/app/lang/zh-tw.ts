@@ -425,7 +425,6 @@ const lang: ILang = {
           engraving: '雕刻',
           engraving_diode: '雕刻（二極體雷射）',
           engraving_fiber: '雕刻（光纖雷射）',
-          engraving_quality: '雕刻（精緻）',
           engraving_spray: '雕刻（噴劑）',
           kiss_cut: '半切',
           marking: '打標',

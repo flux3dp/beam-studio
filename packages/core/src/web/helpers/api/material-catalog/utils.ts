@@ -1,5 +1,4 @@
 import { type LayerModuleType, printingModules } from '@core/app/constants/layer-module/layer-modules';
-import { dpiValueMap, type EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import i18n from '@core/helpers/i18n';
@@ -96,31 +95,11 @@ export const getMaterialDisplayName = (material: Material): string => {
   return resolveLocalizedString(material.name) ?? material.id;
 };
 
-/** The dpi an entry declares (uniform across its scopes for generated quality entries) */
-const getEntryDpi = (preset: MaterialPreset): EngraveDpiOption | undefined => {
-  for (const modules of Object.values(preset.settings)) {
-    for (const values of Object.values(modules ?? {})) {
-      if (values?.dpi) return values.dpi;
-    }
-  }
-
-  return undefined;
-};
-
 export const getPresetDisplayName = (preset: MaterialPreset): string => {
   if (preset.nameKey) {
     const translated = i18n.lang.beambox.material_browser.catalog.presets[preset.nameKey];
 
-    if (translated) {
-      // Quality tiers only differ by DPI — disambiguate with the numeric value
-      if (preset.nameKey === 'engraving_quality') {
-        const dpi = getEntryDpi(preset);
-
-        if (dpi) return `${translated} (${dpiValueMap[dpi]} DPI)`;
-      }
-
-      return translated;
-    }
+    if (translated) return translated;
   }
 
   const direct = resolveLocalizedString(preset.name);

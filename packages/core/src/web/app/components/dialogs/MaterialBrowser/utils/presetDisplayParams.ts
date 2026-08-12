@@ -1,5 +1,4 @@
 import { type LayerModuleType, printingModules } from '@core/app/constants/layer-module/layer-modules';
-import { dpiValueMap } from '@core/app/constants/resolutions';
 import i18n from '@core/helpers/i18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { PresetValues } from '@core/interfaces/IMaterial';
@@ -56,7 +55,7 @@ export const getPresetDisplayParams = (
   push(lang.speed, values.speed, ' mm/s');
   push(lang.repeat, values.repeat);
 
-  if (values.dpi) push('DPI', dpiValueMap[values.dpi]);
+  // No DPI pill: the declared dpi is shown as a Tag beside the row name instead
 
   return pills;
 };
