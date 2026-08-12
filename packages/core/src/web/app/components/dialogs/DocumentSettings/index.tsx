@@ -57,7 +57,6 @@ import RotaryBlock from './RotaryBlock';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
 
 todo('useExclusiveBooleans');
-todo('Fix conflict mode, should handle inner engraving. Maybe change isCurveEngraving to isExclusiveMode?');
 todo('Fix 內雕不應該被歸類於【擴充模組】之下；TBD 入口是否應參考【曲面雕刻】，放在 menu tool？');
 
 const promarkLaserOptions = [

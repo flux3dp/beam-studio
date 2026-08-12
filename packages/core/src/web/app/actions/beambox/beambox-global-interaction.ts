@@ -29,8 +29,14 @@ class BeamboxGlobalInteraction {
    * Switch off what inner engraving mode cannot do — see the list for why each item is there.
    */
   onInnerEngravingChange(active = isInnerEngravingActive()) {
-    if (active) menu.disable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
-    else menu.enable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
+    if (active) {
+      menu.disable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
+    } else {
+      menu.enable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
+      // curve engraving has conditions of its own — rotary, pass-through, auto-feeder — which the
+      // blanket enable above would trample
+      menu.checkCurveEngraving();
+    }
   }
 
   attach = () => {

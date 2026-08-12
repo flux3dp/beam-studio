@@ -10,6 +10,7 @@ import { useMenuItemStatusStore } from '@core/app/stores/menuItemStatusStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
+import { canStartCurveEngraving } from '@core/helpers/exclusiveModes';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -527,7 +528,16 @@ const useMenuData = (email?: string): MenuNode[] => {
   };
 
   const toolsMenu: MenuNode = {
-    children: [{ id: 'START_CURVE_ENGRAVING_MODE', label: tCurveEngraving.title, type: 'item' }],
+    children: [
+      {
+        // the same gate the native menu uses, so rotary / pass-through / auto-feeder / inner
+        // engraving block curve engraving in both menus rather than only in the Electron one
+        disabled: !canStartCurveEngraving(),
+        id: 'START_CURVE_ENGRAVING_MODE',
+        label: tCurveEngraving.title,
+        type: 'item',
+      },
+    ],
     label: menuCms.tools.title,
     type: 'submenu',
   };
