@@ -1,4 +1,4 @@
-import React, { memo, use, useEffect, useMemo } from 'react';
+import React, { memo, use, useMemo, useRef } from 'react';
 
 import { match } from 'ts-pattern';
 
@@ -14,6 +14,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import selectionManager from '@core/app/svgedit/selection';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
+import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import useI18n from '@core/helpers/useI18n';
 
@@ -51,17 +52,18 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     [mouseMode],
   );
   const isInnerEngravingMode = useInnerEngravingActive();
+  const modeRef = useRef(isInnerEngravingMode);
 
-  useEffect(() => {
-    if (!isInnerEngravingMode) return;
+  useDidUpdateEffect(() => {
+    if (!isInnerEngravingMode || modeRef.current === isInnerEngravingMode) return;
 
-    // the drawers all hold 2D tools (elements, generators, AI generate) and the buttons that open
-    // them are about to disappear, which would leave an open drawer with no way back to it
+    modeRef.current = isInnerEngravingMode;
+
     setDrawerMode('none');
-    // camera preview draws onto the 2D canvas, which is hidden behind the 3D one; leaving it running
-    // would keep the machine busy for something nobody can see
     endPreviewMode();
-  }, [isInnerEngravingMode, setDrawerMode]);
+    // eslint-disable-next-line hooks/rules-of-hooks
+    FnWrapper.useSelectTool();
+  }, [isInnerEngravingMode]);
 
   const renderToolButton = ({
     className = undefined,

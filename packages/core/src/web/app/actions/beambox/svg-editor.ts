@@ -23,7 +23,6 @@ import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import { addPolygonSides, decreasePolygonSides } from '@core/app/svgedit/polygon';
@@ -71,7 +70,7 @@ import Progress from '../progress-caller';
 
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
-import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import {
   getMouseMode,
@@ -418,12 +417,20 @@ const svgEditor = (window['svgEditor'] = (function () {
         panning = false;
       });
 
+      // published to the store as well as to svgCanvas, because the inner engraving canvas is a
+      // React tree that cannot watch a plain property: it swaps its orbit / pan mouse buttons so
+      // that space + left drag pans there too
+      const setSpaceKey = (active: boolean) => {
+        svgCanvas.spaceKey = keypan = active;
+        useCanvasStore.getState().setSpaceKey(active);
+      };
+
       // FIXME: use document.addEventListener('keydown', (evt) => { ... })
       // because shortcuts only works with a strict key combinations match
       document.addEventListener('keydown', (evt) => {
         if (isFocusingOnInputs()) return;
         if (evt.key === ' ') {
-          svgCanvas.spaceKey = keypan = true;
+          setSpaceKey(true);
           setCursor('grab');
           evt.preventDefault(); // prevent page from scrolling
         }
@@ -434,13 +441,14 @@ const svgEditor = (window['svgEditor'] = (function () {
         if (isFocusingOnInputs()) return;
         if (evt.key === ' ') {
           setCursorAccordingToMouseMode();
-          svgCanvas.spaceKey = keypan = false;
+          setSpaceKey(false);
         }
       });
+      // the key is watched on `document`, but a blurred window never delivers the keyup — without
+      // this, tabbing away mid-pan leaves both canvases stuck in pan mode
+      window.addEventListener('blur', () => setSpaceKey(false));
 
-      editor.setPanning = function (active) {
-        svgCanvas.spaceKey = keypan = active;
-      };
+      editor.setPanning = setSpaceKey;
     })();
     // Unfocus text input when workarea is mousedowned.
     (function () {
@@ -1079,10 +1087,15 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       editor.handleFile = handleFile;
 
-      workarea[0].addEventListener('dragenter', onDragEnter, false);
-      workarea[0].addEventListener('dragover', onDragOver, false);
-      workarea[0].addEventListener('dragleave', onDragLeave, false);
-      workarea[0].addEventListener('drop', importImage, false);
+      // the container rather than #workarea itself: in inner engraving mode the 3D canvas is laid
+      // over the (hidden) SVG workarea as a sibling, so the container is the only ancestor both
+      // canvases have. Dropping a file has to import it wherever it lands.
+      const dropTarget = document.getElementById('workarea-container') ?? workarea[0];
+
+      dropTarget.addEventListener('dragenter', onDragEnter, false);
+      dropTarget.addEventListener('dragover', onDragOver, false);
+      dropTarget.addEventListener('dragleave', onDragLeave, false);
+      dropTarget.addEventListener('drop', importImage, false);
 
       // Keep for e2e import image
       // enable beambox-global-interaction to click (data-file-input, trigger_file_input_click)

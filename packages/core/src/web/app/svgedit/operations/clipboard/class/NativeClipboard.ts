@@ -167,6 +167,17 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
 
     const newElements = elements.map((element) => drawing.copyElemData(element));
 
+    // `copyElemData` gives every element a fresh id, so the meshes cached at copy time — keyed by
+    // the ids the rects had then — have to be re-keyed onto the elements actually being handed
+    // back. Nothing is re-keyed for data written by another tab: its meshes were never in this
+    // tab's cache, and paste drops those rects rather than pasting a rect with no mesh.
+    elements.forEach((element, index) => {
+      const originalId = element.attributes.find(({ nodeName }) => nodeName === 'id')?.value;
+      const object = originalId ? this.stlClipboard[originalId] : undefined;
+
+      if (object) this.stlClipboard[newElements[index].id] = object;
+    });
+
     // use clipboard image data if original image is not available
     await Promise.allSettled(
       newElements.map(async (element: Element) => {

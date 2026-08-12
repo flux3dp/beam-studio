@@ -3,4 +3,14 @@
   inset: 0;
   z-index: 1;
   background-color: #f0f0f0;
+
+  // space held: the same grab / grabbing pair the SVG canvas shows while panning. Set on the
+  // container rather than the canvas because `cursor` inherits, and the canvas is r3f's to render
+  &.panning {
+    cursor: grab;
+
+    &:active {
+      cursor: grabbing;
+    }
+  }
 }

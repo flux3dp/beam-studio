@@ -20,6 +20,8 @@ const MIN_SCALE = 1e-3;
 interface StlMeshProps {
   object: StlObject;
   onSelect: (id: string) => void;
+  /** Space is held: the drag belongs to the camera, so neither the gizmo nor selection may take it. */
+  panning: boolean;
   selected: boolean;
 }
 
@@ -33,7 +35,7 @@ interface StlMeshProps {
  *   group's origin, so rotation and scaling happen about the object's centre rather than about
  *   whatever origin the STL's author happened to leave behind
  */
-const StlMesh = ({ object, onSelect, selected }: StlMeshProps): React.JSX.Element => {
+const StlMesh = ({ object, onSelect, panning, selected }: StlMeshProps): React.JSX.Element => {
   // a callback ref rather than useRef: TransformControls needs the resolved Object3D, which is not
   // available on the first render
   const [anchor, setAnchor] = useState<Group | null>(null);
@@ -115,6 +117,8 @@ const StlMesh = ({ object, onSelect, selected }: StlMeshProps): React.JSX.Elemen
         <mesh
           geometry={geometry}
           onClick={(e) => {
+            if (panning) return;
+
             e.stopPropagation();
             onSelect(id);
           }}
@@ -131,6 +135,9 @@ const StlMesh = ({ object, onSelect, selected }: StlMeshProps): React.JSX.Elemen
       {selected && anchor && (
         <>
           <TransformControls
+            // the gizmo sits on top of everything, so leaving it live would swallow every pan that
+            // happened to start over it
+            enabled={!panning}
             mode={transformMode}
             object={anchor}
             onMouseDown={handleMouseDown}

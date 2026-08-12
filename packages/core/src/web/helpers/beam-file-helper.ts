@@ -99,19 +99,20 @@
 
 */
 import { Buffer } from 'buffer';
+
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader.js';
 
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import type { StlObject } from '@core/app/stores/stlStore';
-import { useStlStore } from '@core/app/stores/stlStore';
 import { useVariableTextState, type VariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import { parseStlTransform } from '@core/app/svgedit/stl/transformAttr';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
@@ -163,9 +164,7 @@ const readVInt = (buffer, offset = 0) => {
   };
 };
 
-const localHeaderTypeBuffer = (
-  type: 'imageSource' | 'miscData' | 'stlSource' | 'svgContent' | 'thumbnail',
-): Buffer => {
+const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'stlSource' | 'svgContent' | 'thumbnail'): Buffer => {
   switch (type) {
     case 'svgContent':
       return Buffer.from([0x01]);
@@ -548,10 +547,7 @@ const readBeam = async (file: File): Promise<void> => {
     workareaManager.resetView();
     // the meshes live outside the DOM, so undo and redo of the load have to add and remove them
     // alongside the rects, exactly like a single STL import does
-    stlObjects.forEach((object) => {
-      if (document.getElementById(object.id)) useStlStore.getState().set(object);
-      else useStlStore.getState().remove(object.id);
-    });
+    syncStlObjectsWithDom(stlObjects);
   };
 
   command.onAfter = postReadBeam;

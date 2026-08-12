@@ -2,6 +2,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
+import { collectStlObjects, syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
@@ -62,6 +63,9 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
   const selectorManager = selector.getSelectorManager();
   const batchCmd = new history.BatchCommand('Delete Elements');
   const deletedElems = [];
+  // collected before the rects leave the DOM, and kept for undo: the meshes live outside the DOM,
+  // so nothing else would take them off the 3D canvas or put them back
+  const stlObjects = collectStlObjects(elems);
 
   for (const elem of elems) {
     if (!elem || !elem?.tagName) {
@@ -95,6 +99,11 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
     if (elem.tagName === 'use') {
       deleteUseRef(elem as SVGUseElement, { parentCmd: batchCmd });
     }
+  }
+
+  if (stlObjects.length) {
+    syncStlObjectsWithDom(stlObjects);
+    batchCmd.onAfter = () => syncStlObjectsWithDom(stlObjects);
   }
 
   if (!batchCmd.isEmpty() && !isSub) {

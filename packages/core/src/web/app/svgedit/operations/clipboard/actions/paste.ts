@@ -1,8 +1,12 @@
+import type { StlObject } from '@core/app/stores/stlStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
+import { createPastedStlObject } from '@core/app/svgedit/stl/clipboard';
+import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import { getBBoxFromElements } from '@core/app/svgedit/utils/getBBox';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -55,11 +59,23 @@ export const pasteElements = async ({
   if (!useCache || !dataCache) dataCache = clipboard;
 
   const pasted = Array.of<SVGGElement>();
+  // the projection rects among `pasted`, paired with the object they were copied from: their mesh
+  // has to be rebuilt once the paste offset is known
+  const pastedStl = Array.of<{ copy: SVGRectElement; source: StlObject }>();
   const batchCmd = new history.BatchCommand('Paste elements');
   const drawing = svgCanvas.getCurrentDrawing();
 
   for (const elem of clipboard) {
     if (!elem) continue;
+
+    const stlSource = isStlProjection(elem) ? clipboardCore.getStlFromClipboard(elem.id) : undefined;
+
+    if (isStlProjection(elem) && !stlSource) {
+      // no mesh to attach — copied in another tab, which cannot carry one. A rect on its own is a
+      // broken STL object (invisible in 3D, and it would fail to export), so it is not pasted.
+      console.error(`No mesh available for STL projection rect ${elem.id}, it is not pasted`);
+      continue;
+    }
 
     const copy = drawing.copyElem(elem) as SVGGElement;
 
@@ -68,6 +84,8 @@ export const pasteElements = async ({
     }
 
     pasted.push(copy);
+
+    if (stlSource) pastedStl.push({ copy: copy as unknown as SVGRectElement, source: stlSource });
 
     let targetLayer = layerManager.getCurrentLayer()!;
 
@@ -125,6 +143,16 @@ export const pasteElements = async ({
     const cmd = moveElements(dxArr, dyArr, pasted, false, true);
 
     batchCmd.addSubCommand(cmd);
+  }
+
+  // after the move, so the offset the rects actually received is what gets routed into the 3D
+  // transforms. The mesh is not in the DOM and no element command can carry it, so undo and redo
+  // put it back through `onAfter` (see `stl/sync.ts`).
+  if (pastedStl.length) {
+    const objects = pastedStl.map(({ copy, source }) => createPastedStlObject(copy, source));
+
+    syncStlObjectsWithDom(objects);
+    batchCmd.onAfter = () => syncStlObjectsWithDom(objects);
   }
 
   if (!isSubCmd) {
