@@ -10,3 +10,11 @@ export const checkBM24C = (): boolean => isDev() || localeHelper.isTwOrHk;
 export const checkBM2UV = (): boolean => isDev();
 export const checkBM2CurveEngraving = (): boolean => isDev();
 export const checkFUV1 = (): boolean => enableAllMachines || isDev();
+
+export const checkMaterialBrowser = (): boolean => {
+  if (window?.localStorage?.getItem('enableMaterialBrowser') === 'true' || isDev()) return true;
+
+  // TODO(rollout): add per-region release dates (checkHxRf pattern) once regional
+  // catalog content (photography + shop links) is ready.
+  return false;
+};

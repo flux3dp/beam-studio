@@ -1,0 +1,4820 @@
+{
+  "materials": [
+    {
+      "category": "wood",
+      "id": "wood",
+      "nameKey": "wood",
+      "presets": [
+        {
+          "id": "wood_engraving",
+          "legacyKey": "wood_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 150
+              },
+              "2": {
+                "power": 70,
+                "speed": 150
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 20,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 20,
+                "speed": 500
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "flv1": {
+              "15": {
+                "power": 100,
+                "speed": 150
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 55,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 25
+                  },
+                  "detailed": {
+                    "power": 13
+                  },
+                  "ultra": {
+                    "power": 7
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 30,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 14
+                  },
+                  "detailed": {
+                    "power": 7
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 25,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 12
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "wood_engraving_high",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 55,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 25
+                  },
+                  "detailed": {
+                    "power": 13
+                  },
+                  "ultra": {
+                    "power": 7
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 30,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 14
+                  },
+                  "detailed": {
+                    "power": 7
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 25,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 12
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "wood_engraving_detailed",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 55,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 25
+                  },
+                  "detailed": {
+                    "power": 13
+                  },
+                  "ultra": {
+                    "power": 7
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 30,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 14
+                  },
+                  "detailed": {
+                    "power": 7
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 25,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 12
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "wood_engraving_ultra",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 55,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 25
+                  },
+                  "detailed": {
+                    "power": 13
+                  },
+                  "ultra": {
+                    "power": 7
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 30,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 14
+                  },
+                  "detailed": {
+                    "power": 7
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 25,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 12
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "wood_printing",
+          "legacyKey": "wood_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 2,
+                "multipass": 3,
+                "speed": 60
+              }
+            },
+            "fbm2": {
+              "7": {
+                "ink": 60,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "wood",
+      "id": "wood-3mm",
+      "nameKey": "wood",
+      "parentId": "wood",
+      "presets": [
+        {
+          "id": "wood_3mm_cutting",
+          "legacyKey": "wood_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 6
+              },
+              "2": {
+                "power": 100,
+                "speed": 8
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 6
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 15,
+                "speed": 15
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 45,
+                "speed": 5
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 12
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6
+              }
+            },
+            "flv1": {
+              "15": {
+                "power": 100,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 60,
+                "speed": 8
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 60,
+                "speed": 12
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 60,
+                "speed": 17
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1181,
+      "thicknessMm": 3
+    },
+    {
+      "category": "wood",
+      "id": "wood-5mm",
+      "nameKey": "wood",
+      "parentId": "wood",
+      "presets": [
+        {
+          "id": "wood_5mm_cutting",
+          "legacyKey": "wood_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 3
+              },
+              "2": {
+                "power": 100,
+                "speed": 4
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 3
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 45,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 4
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 65,
+                "speed": 3
+              }
+            },
+            "flv1": {
+              "15": {
+                "power": 100,
+                "speed": 3
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 60,
+                "speed": 5
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 60,
+                "speed": 8
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 60,
+                "speed": 10
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1969,
+      "thicknessMm": 5
+    },
+    {
+      "category": "wood",
+      "id": "wood-7mm",
+      "nameKey": "wood",
+      "parentId": "wood",
+      "presets": [
+        {
+          "id": "wood_7mm_cutting",
+          "legacyKey": "wood_7mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "2": {
+                "power": 100,
+                "speed": 2
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 45,
+                "speed": 5
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 65,
+                "speed": 4
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 65,
+                "speed": 6
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 65,
+                "speed": 8
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.2756,
+      "thicknessMm": 7
+    },
+    {
+      "category": "wood",
+      "id": "wood-8mm",
+      "nameKey": "wood",
+      "parentId": "wood",
+      "presets": [
+        {
+          "id": "wood_8mm_cutting",
+          "legacyKey": "wood_8mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhexa1": {
+              "15": {
+                "power": 65,
+                "repeat": 2,
+                "speed": 3
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.315,
+      "thicknessMm": 8
+    },
+    {
+      "category": "wood",
+      "id": "wood-10mm",
+      "nameKey": "wood",
+      "parentId": "wood",
+      "presets": [
+        {
+          "id": "wood_10mm_cutting",
+          "legacyKey": "wood_10mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhexa1": {
+              "15": {
+                "power": 65,
+                "repeat": 3,
+                "speed": 3
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.3937,
+      "thicknessMm": 10
+    },
+    {
+      "category": "wood",
+      "id": "mdf",
+      "nameKey": "mdf",
+      "presets": [
+        {
+          "id": "mdf_engraving",
+          "legacyKey": "mdf_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 30,
+                "speed": 100
+              },
+              "2": {
+                "power": 70,
+                "speed": 100
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 500
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 55,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 20
+                  },
+                  "detailed": {
+                    "power": 10
+                  },
+                  "ultra": {
+                    "power": 5
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 30,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 11
+                  },
+                  "detailed": {
+                    "power": 5
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 25,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 9
+                  },
+                  "detailed": {
+                    "power": 5
+                  },
+                  "ultra": {
+                    "power": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "mdf_engraving_high",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 55,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 20
+                  },
+                  "detailed": {
+                    "power": 10
+                  },
+                  "ultra": {
+                    "power": 5
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 30,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 11
+                  },
+                  "detailed": {
+                    "power": 5
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 25,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 9
+                  },
+                  "detailed": {
+                    "power": 5
+                  },
+                  "ultra": {
+                    "power": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "mdf_engraving_detailed",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 55,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 20
+                  },
+                  "detailed": {
+                    "power": 10
+                  },
+                  "ultra": {
+                    "power": 5
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 30,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 11
+                  },
+                  "detailed": {
+                    "power": 5
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 25,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 9
+                  },
+                  "detailed": {
+                    "power": 5
+                  },
+                  "ultra": {
+                    "power": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "mdf_engraving_ultra",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 55,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 20
+                  },
+                  "detailed": {
+                    "power": 10
+                  },
+                  "ultra": {
+                    "power": 5
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 30,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 11
+                  },
+                  "detailed": {
+                    "power": 5
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 25,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 9
+                  },
+                  "detailed": {
+                    "power": 5
+                  },
+                  "ultra": {
+                    "power": 2
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "mdf_printing",
+          "legacyKey": "mdf_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "7": {
+                "ink": 70,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "wood",
+      "id": "mdf-3mm",
+      "nameKey": "mdf",
+      "parentId": "mdf",
+      "presets": [
+        {
+          "id": "mdf_3mm_cutting",
+          "legacyKey": "mdf_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 4
+              },
+              "2": {
+                "power": 100,
+                "speed": 8
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 15
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 65,
+                "speed": 5
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 65,
+                "speed": 8
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 65,
+                "speed": 10
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1181,
+      "thicknessMm": 3
+    },
+    {
+      "category": "wood",
+      "id": "mdf-5mm",
+      "nameKey": "mdf",
+      "parentId": "mdf",
+      "presets": [
+        {
+          "id": "mdf_5mm_cutting",
+          "legacyKey": "mdf_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 2
+              },
+              "2": {
+                "power": 100,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 10
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 4
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 8
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1969,
+      "thicknessMm": 5
+    },
+    {
+      "category": "wood",
+      "id": "mdf-7mm",
+      "nameKey": "mdf",
+      "parentId": "mdf",
+      "presets": [
+        {
+          "id": "mdf_7mm_cutting",
+          "legacyKey": "mdf_7mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "power": 95,
+                "speed": 3
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 95,
+                "speed": 4
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 95,
+                "speed": 6
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.2756,
+      "thicknessMm": 7
+    },
+    {
+      "category": "wood",
+      "id": "bamboo",
+      "nameKey": "bamboo",
+      "presets": [
+        {
+          "id": "bamboo_printing",
+          "legacyKey": "bamboo_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 2,
+                "multipass": 3,
+                "speed": 60
+              }
+            },
+            "fbm2": {
+              "7": {
+                "ink": 70,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "wood",
+      "id": "bamboo-2mm",
+      "nameKey": "bamboo",
+      "parentId": "bamboo",
+      "presets": [
+        {
+          "id": "bamboo_2mm_cutting",
+          "legacyKey": "bamboo_2mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.0787,
+      "thicknessMm": 2
+    },
+    {
+      "category": "wood",
+      "id": "bamboo-5mm",
+      "nameKey": "bamboo",
+      "parentId": "bamboo",
+      "presets": [
+        {
+          "id": "bamboo_5mm_cutting",
+          "legacyKey": "bamboo_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1969,
+      "thicknessMm": 5
+    },
+    {
+      "category": "wood",
+      "id": "cork",
+      "nameKey": "cork",
+      "presets": [
+        {
+          "id": "cork_printing",
+          "legacyKey": "cork_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 2,
+                "multipass": 3,
+                "speed": 60
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "acrylic",
+      "id": "acrylic",
+      "nameKey": "acrylic",
+      "presets": [
+        {
+          "id": "acrylic_engraving",
+          "legacyKey": "acrylic_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 15,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 13,
+                "speed": 500
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 12
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 12
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 15,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 9
+                  },
+                  "detailed": {
+                    "power": 9
+                  },
+                  "ultra": {
+                    "power": 9
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 10,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 6
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "acrylic_engraving_high",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 20,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 12
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 12
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 15,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 9
+                  },
+                  "detailed": {
+                    "power": 9
+                  },
+                  "ultra": {
+                    "power": 9
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 10,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 6
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "acrylic_engraving_detailed",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 20,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 12
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 12
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 15,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 9
+                  },
+                  "detailed": {
+                    "power": 9
+                  },
+                  "ultra": {
+                    "power": 9
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 10,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 6
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "acrylic_engraving_ultra",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 20,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 12
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 12
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 15,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 9
+                  },
+                  "detailed": {
+                    "power": 9
+                  },
+                  "ultra": {
+                    "power": 9
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 10,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 6
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 6
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "acrylic_printing",
+          "legacyKey": "acrylic_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 2,
+                "multipass": 4,
+                "speed": 30
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "acrylic",
+      "id": "acrylic-3mm",
+      "nameKey": "acrylic",
+      "parentId": "acrylic",
+      "presets": [
+        {
+          "id": "acrylic_3mm_cutting",
+          "legacyKey": "acrylic_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 8
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 55,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 9
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 12
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1181,
+      "thicknessMm": 3
+    },
+    {
+      "category": "acrylic",
+      "id": "acrylic-5mm",
+      "nameKey": "acrylic",
+      "parentId": "acrylic",
+      "presets": [
+        {
+          "id": "acrylic_5mm_cutting",
+          "legacyKey": "acrylic_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 4
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 59,
+                "speed": 3
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 5
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 3
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 4
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1969,
+      "thicknessMm": 5
+    },
+    {
+      "category": "acrylic",
+      "id": "acrylic-7mm",
+      "nameKey": "acrylic",
+      "parentId": "acrylic",
+      "presets": [
+        {
+          "id": "acrylic_7mm_cutting",
+          "legacyKey": "acrylic_7mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 2
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 3
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 4
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.2756,
+      "thicknessMm": 7
+    },
+    {
+      "category": "acrylic",
+      "id": "acrylic-8mm",
+      "nameKey": "acrylic",
+      "parentId": "acrylic",
+      "presets": [
+        {
+          "id": "acrylic_8mm_cutting",
+          "legacyKey": "acrylic_8mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb2": {
+              "15": {
+                "power": 65,
+                "speed": 3
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 50,
+                "repeat": 2,
+                "speed": 3
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.315,
+      "thicknessMm": 8
+    },
+    {
+      "category": "acrylic",
+      "id": "acrylic-10mm",
+      "nameKey": "acrylic",
+      "parentId": "acrylic",
+      "presets": [
+        {
+          "id": "acrylic_10mm_cutting",
+          "legacyKey": "acrylic_10mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 3
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.3937,
+      "thicknessMm": 10
+    },
+    {
+      "category": "acrylic",
+      "id": "black-acrylic",
+      "nameKey": "black_acrylic",
+      "presets": [
+        {
+          "id": "black_acrylic_engraving",
+          "legacyKey": "black_acrylic_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 90,
+                "speed": 175
+              },
+              "2": {
+                "power": 65,
+                "speed": 175
+              },
+              "4": {
+                "power": 50,
+                "speed": 40
+              }
+            },
+            "fbm2": {
+              "4": {
+                "power": 50,
+                "speed": 40
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "acrylic",
+      "id": "black-acrylic-3mm",
+      "nameKey": "black_acrylic",
+      "parentId": "black-acrylic",
+      "presets": [
+        {
+          "id": "black_acrylic_3mm_cutting",
+          "legacyKey": "black_acrylic_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 2
+              },
+              "2": {
+                "power": 100,
+                "speed": 4
+              }
+            },
+            "flv1": {
+              "15": {
+                "power": 100,
+                "speed": 2
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1181,
+      "thicknessMm": 3
+    },
+    {
+      "category": "acrylic",
+      "id": "black-acrylic-5mm",
+      "nameKey": "black_acrylic",
+      "parentId": "black-acrylic",
+      "presets": [
+        {
+          "id": "black_acrylic_5mm_cutting",
+          "legacyKey": "black_acrylic_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "repeat": 2,
+                "speed": 2
+              },
+              "2": {
+                "power": 100,
+                "repeat": 1,
+                "speed": 2
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1969,
+      "thicknessMm": 5
+    },
+    {
+      "category": "acrylic",
+      "id": "opaque-acrylic",
+      "nameKey": "opaque_acrylic",
+      "presets": [
+        {
+          "id": "opaque_acrylic",
+          "legacyKey": "opaque_acrylic",
+          "nameKey": "marking",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 30,
+                "speed": 5000
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 24,
+                "speed": 5000
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 45,
+                "power": 15,
+                "speed": 1500
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 15,
+                "pulseWidth": 350,
+                "speed": 4000
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 40,
+                "power": 35,
+                "pulseWidth": 100,
+                "speed": 1000
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 55,
+                "power": 100,
+                "pulseWidth": 500,
+                "speed": 3500
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "leather",
+      "id": "leather",
+      "nameKey": "leather",
+      "presets": [
+        {
+          "id": "leather_engraving",
+          "legacyKey": "leather_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 30,
+                "speed": 100
+              },
+              "2": {
+                "power": 30,
+                "speed": 125
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 30,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 20,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 300
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 30,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 7,
+                "speed": 200
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 40,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 20
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 8
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "leather_engraving_high",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 40,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 20
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 8
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 20,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 20,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "leather_engraving_detailed",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 40,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 20
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 8
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 20,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 20,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "leather_engraving_ultra",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 40,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 20
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 8
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 20,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 20,
+                "speed": 300,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "leather_printing",
+          "legacyKey": "leather_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "7": {
+                "ink": 70,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "leather",
+      "id": "leather-3mm",
+      "nameKey": "leather",
+      "parentId": "leather",
+      "presets": [
+        {
+          "id": "leather_3mm_cutting",
+          "legacyKey": "leather_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 4
+              },
+              "2": {
+                "power": 100,
+                "speed": 8
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 65,
+                "speed": 3
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 35,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 60,
+                "speed": 3
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "repeat": 3,
+                "speed": 10
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 65,
+                "speed": 6
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 65,
+                "speed": 9
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 65,
+                "speed": 12
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1181,
+      "thicknessMm": 3
+    },
+    {
+      "category": "leather",
+      "id": "leather-5mm",
+      "nameKey": "leather",
+      "parentId": "leather",
+      "presets": [
+        {
+          "id": "leather_5mm_cutting",
+          "legacyKey": "leather_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "repeat": 2,
+                "speed": 3
+              },
+              "2": {
+                "power": 100,
+                "repeat": 2,
+                "speed": 6
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 65,
+                "speed": 1
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 2
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 40,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 60,
+                "repeat": 2,
+                "speed": 3
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1969,
+      "thicknessMm": 5
+    },
+    {
+      "category": "leather",
+      "id": "gloss-leather",
+      "nameKey": "gloss_leather",
+      "presets": [
+        {
+          "id": "gloss_leather_printing",
+          "legacyKey": "gloss_leather_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 3,
+                "multipass": 3,
+                "speed": 60
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "other",
+      "id": "fabric",
+      "nameKey": "fabric",
+      "presets": [
+        {
+          "id": "fabric_engraving",
+          "legacyKey": "fabric_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 30,
+                "speed": 125
+              },
+              "2": {
+                "power": 40,
+                "speed": 150
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 20,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 15,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 15,
+                "speed": 250
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 20,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 5,
+                "speed": 200
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 250
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 25,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 10
+                  },
+                  "ultra": {
+                    "power": 8
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 15,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 6
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 5
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 10,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 4
+                  },
+                  "detailed": {
+                    "power": 4
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "fabric_engraving_high",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 25,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 10
+                  },
+                  "ultra": {
+                    "power": 8
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 15,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 6
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 5
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 10,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 4
+                  },
+                  "detailed": {
+                    "power": 4
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "fabric_engraving_detailed",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 25,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 10
+                  },
+                  "ultra": {
+                    "power": 8
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 15,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 6
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 5
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 10,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 4
+                  },
+                  "detailed": {
+                    "power": 4
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "fabric_engraving_ultra",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 25,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 10
+                  },
+                  "detailed": {
+                    "power": 10
+                  },
+                  "ultra": {
+                    "power": 8
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 15,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 6
+                  },
+                  "detailed": {
+                    "power": 6
+                  },
+                  "ultra": {
+                    "power": 5
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 10,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 4
+                  },
+                  "detailed": {
+                    "power": 4
+                  },
+                  "ultra": {
+                    "power": 3
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "fabric_printing",
+          "legacyKey": "fabric_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 3,
+                "multipass": 3,
+                "speed": 60
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "other",
+      "id": "fabric-3mm",
+      "nameKey": "fabric",
+      "parentId": "fabric",
+      "presets": [
+        {
+          "id": "fabric_3mm_cutting",
+          "legacyKey": "fabric_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 6
+              },
+              "2": {
+                "power": 100,
+                "speed": 10
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 20
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 35,
+                "speed": 20
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 20
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 50,
+                "speed": 20
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 25
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 30,
+                "speed": 20
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 30,
+                "speed": 32
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 30,
+                "speed": 42
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1181,
+      "thicknessMm": 3
+    },
+    {
+      "category": "other",
+      "id": "fabric-5mm",
+      "nameKey": "fabric",
+      "parentId": "fabric",
+      "presets": [
+        {
+          "id": "fabric_5mm_cutting",
+          "legacyKey": "fabric_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 2
+              },
+              "2": {
+                "power": 100,
+                "speed": 4
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 20
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 35,
+                "speed": 20
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 40,
+                "speed": 20
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 50,
+                "speed": 20
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 20,
+                "speed": 20
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 50,
+                "speed": 16
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 50,
+                "speed": 25
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 50,
+                "speed": 34
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.1969,
+      "thicknessMm": 5
+    },
+    {
+      "category": "other",
+      "id": "denim",
+      "nameKey": "denim",
+      "presets": [
+        {
+          "id": "denim_1mm_cutting",
+          "legacyKey": "denim_1mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 14
+              },
+              "2": {
+                "power": 50,
+                "speed": 10
+              }
+            }
+          }
+        }
+      ],
+      "thicknessInch": 0.0394,
+      "thicknessMm": 1
+    },
+    {
+      "category": "other",
+      "id": "canvas",
+      "nameKey": "canvas",
+      "presets": [
+        {
+          "id": "canvas_printing",
+          "legacyKey": "canvas_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 3,
+                "multipass": 4,
+                "speed": 60
+              }
+            },
+            "fbm2": {
+              "7": {
+                "ink": 90,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "other",
+      "id": "canvas-fabric",
+      "nameKey": "canvas_fabric",
+      "presets": [
+        {
+          "id": "canvas_fabric_printing",
+          "legacyKey": "canvas_fabric_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "7": {
+                "ink": 90,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "paper",
+      "id": "sticker",
+      "nameKey": "sticker",
+      "presets": [
+        {
+          "id": "sticker_kiss_cut",
+          "legacyKey": "sticker_kiss_cut",
+          "nameKey": "kiss_cut",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "15": {
+                "power": 3,
+                "speed": 35
+              }
+            }
+          }
+        },
+        {
+          "id": "sticker_printing",
+          "legacyKey": "sticker_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "7": {
+                "ink": 75,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "paper",
+      "id": "cardstock",
+      "nameKey": "cardstock",
+      "presets": [
+        {
+          "id": "cardstock_printing",
+          "legacyKey": "cardstock_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 2,
+                "multipass": 3,
+                "speed": 60
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "paper",
+      "id": "cardboard",
+      "nameKey": "cardboard",
+      "presets": [
+        {
+          "id": "cardboard_printing",
+          "legacyKey": "cardboard_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "7": {
+                "ink": 70,
+                "speed": 15
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "glass",
+      "id": "glass",
+      "nameKey": "glass",
+      "presets": [
+        {
+          "id": "glass_bw_engraving",
+          "legacyKey": "glass_bw_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 40,
+                "speed": 20
+              },
+              "2": {
+                "power": 40,
+                "speed": 30
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 30,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 150
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 35,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 25,
+                "speed": 300
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 35,
+                "speed": 150
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 50,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 35
+                  },
+                  "detailed": {
+                    "power": 30
+                  },
+                  "ultra": {
+                    "power": 25
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 30,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 21
+                  },
+                  "detailed": {
+                    "power": 18
+                  },
+                  "ultra": {
+                    "power": 15
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 14
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "glass_bw_engraving_high",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 50,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 35
+                  },
+                  "detailed": {
+                    "power": 30
+                  },
+                  "ultra": {
+                    "power": 25
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 30,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 21
+                  },
+                  "detailed": {
+                    "power": 18
+                  },
+                  "ultra": {
+                    "power": 15
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 20,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 14
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "glass_bw_engraving_detailed",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 50,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 35
+                  },
+                  "detailed": {
+                    "power": 30
+                  },
+                  "ultra": {
+                    "power": 25
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 30,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 21
+                  },
+                  "detailed": {
+                    "power": 18
+                  },
+                  "ultra": {
+                    "power": 15
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 20,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 14
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "glass_bw_engraving_ultra",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 50,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 35
+                  },
+                  "detailed": {
+                    "power": 30
+                  },
+                  "ultra": {
+                    "power": 25
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 30,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 21
+                  },
+                  "detailed": {
+                    "power": 18
+                  },
+                  "ultra": {
+                    "power": 15
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 20,
+                "speed": 600,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 14
+                  },
+                  "detailed": {
+                    "power": 12
+                  },
+                  "ultra": {
+                    "power": 10
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "glass_printing",
+          "legacyKey": "glass_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 3,
+                "multipass": 4,
+                "speed": 30
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "stone",
+      "id": "slate",
+      "nameKey": "slate",
+      "presets": [
+        {
+          "id": "slate_engraving",
+          "legacyKey": "slate_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 50,
+                "speed": 100
+              },
+              "2": {
+                "power": 55,
+                "speed": 200
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 45,
+                "speed": 300
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 45,
+                "speed": 500
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 40,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 30,
+                "speed": 300
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 30,
+                "speed": 500
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 70,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 40
+                  },
+                  "detailed": {
+                    "power": 30
+                  },
+                  "ultra": {
+                    "power": 30
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 40,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 23
+                  },
+                  "detailed": {
+                    "power": 17
+                  },
+                  "ultra": {
+                    "power": 17
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 30,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 17
+                  },
+                  "detailed": {
+                    "power": 13
+                  },
+                  "ultra": {
+                    "power": 13
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "slate_engraving_high",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 70,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 40
+                  },
+                  "detailed": {
+                    "power": 30
+                  },
+                  "ultra": {
+                    "power": 30
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 40,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 23
+                  },
+                  "detailed": {
+                    "power": 17
+                  },
+                  "ultra": {
+                    "power": 17
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 30,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 17
+                  },
+                  "detailed": {
+                    "power": 13
+                  },
+                  "ultra": {
+                    "power": 13
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "slate_engraving_detailed",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 70,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 40
+                  },
+                  "detailed": {
+                    "power": 30
+                  },
+                  "ultra": {
+                    "power": 30
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 40,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 23
+                  },
+                  "detailed": {
+                    "power": 17
+                  },
+                  "ultra": {
+                    "power": 17
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 30,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 17
+                  },
+                  "detailed": {
+                    "power": 13
+                  },
+                  "ultra": {
+                    "power": 13
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "slate_engraving_ultra",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 70,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 40
+                  },
+                  "detailed": {
+                    "power": 30
+                  },
+                  "ultra": {
+                    "power": 30
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 40,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 23
+                  },
+                  "detailed": {
+                    "power": 17
+                  },
+                  "ultra": {
+                    "power": 17
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 30,
+                "speed": 500,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 17
+                  },
+                  "detailed": {
+                    "power": 13
+                  },
+                  "ultra": {
+                    "power": 13
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "stone",
+      "id": "stone",
+      "nameKey": "stone",
+      "presets": [
+        {
+          "id": "stone",
+          "legacyKey": "stone",
+          "nameKey": "marking",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 90,
+                "speed": 1000
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 72,
+                "speed": 1000
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 45,
+                "power": 30,
+                "speed": 250
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 25,
+                "power": 60,
+                "pulseWidth": 350,
+                "speed": 500
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 40,
+                "power": 40,
+                "pulseWidth": 400,
+                "speed": 850
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 330,
+                "power": 25,
+                "pulseWidth": 500,
+                "speed": 2500
+              }
+            }
+          }
+        },
+        {
+          "id": "flat_stone_printing",
+          "legacyKey": "flat_stone_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 3,
+                "multipass": 3,
+                "speed": 60
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "rubber",
+      "id": "rubber",
+      "nameKey": "rubber",
+      "presets": [
+        {
+          "id": "rubber_bw_engraving",
+          "legacyKey": "rubber_bw_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 15
+              },
+              "2": {
+                "power": 100,
+                "speed": 25
+              }
+            },
+            "fbb1b": {
+              "15": {
+                "power": 45,
+                "speed": 130
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 40,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 50,
+                "speed": 200
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 50,
+                "speed": 100
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 35,
+                "speed": 100
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 45,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 60,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 45
+                  },
+                  "detailed": {
+                    "power": 35
+                  },
+                  "ultra": {
+                    "power": 30
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 35,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 26
+                  },
+                  "detailed": {
+                    "power": 20
+                  },
+                  "ultra": {
+                    "power": 18
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 25,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 19
+                  },
+                  "detailed": {
+                    "power": 15
+                  },
+                  "ultra": {
+                    "power": 13
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "rubber_bw_engraving_high",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 60,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 45
+                  },
+                  "detailed": {
+                    "power": 35
+                  },
+                  "ultra": {
+                    "power": 30
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 35,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 26
+                  },
+                  "detailed": {
+                    "power": 20
+                  },
+                  "ultra": {
+                    "power": 18
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 25,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 19
+                  },
+                  "detailed": {
+                    "power": 15
+                  },
+                  "ultra": {
+                    "power": 13
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "rubber_bw_engraving_detailed",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 60,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 45
+                  },
+                  "detailed": {
+                    "power": 35
+                  },
+                  "ultra": {
+                    "power": 30
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 35,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 26
+                  },
+                  "detailed": {
+                    "power": 20
+                  },
+                  "ultra": {
+                    "power": 18
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 25,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 19
+                  },
+                  "detailed": {
+                    "power": 15
+                  },
+                  "ultra": {
+                    "power": 13
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "id": "rubber_bw_engraving_ultra",
+          "nameKey": "engraving_quality",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 60,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 45
+                  },
+                  "detailed": {
+                    "power": 35
+                  },
+                  "ultra": {
+                    "power": 30
+                  }
+                }
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 35,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 26
+                  },
+                  "detailed": {
+                    "power": 20
+                  },
+                  "ultra": {
+                    "power": 18
+                  }
+                }
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 25,
+                "speed": 100,
+                "dpiOverrides": {
+                  "high": {
+                    "power": 19
+                  },
+                  "detailed": {
+                    "power": 15
+                  },
+                  "ultra": {
+                    "power": 13
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "metal",
+      "nameKey": "metal",
+      "presets": [
+        {
+          "id": "metal_bw_engraving",
+          "legacyKey": "metal_bw_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 20
+              },
+              "2": {
+                "power": 90,
+                "speed": 20
+              }
+            }
+          }
+        },
+        {
+          "id": "steel_engraving_spray_engraving",
+          "legacyKey": "steel_engraving_spray_engraving",
+          "nameKey": "engraving_spray",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 50,
+                "speed": 120
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 50,
+                "speed": 140
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 50,
+                "speed": 80
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 20,
+                "speed": 150
+              }
+            }
+          }
+        },
+        {
+          "id": "metal_engraving",
+          "legacyKey": "metal_engraving",
+          "nameKey": "marking",
+          "origin": "default",
+          "settings": {
+            "fpm1": {
+              "15": {
+                "power": 100,
+                "speed": 1200
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "stainless-steel",
+      "nameKey": "stainless_steel",
+      "presets": [
+        {
+          "id": "stainless_steel_bw_engraving_diode",
+          "legacyKey": "stainless_steel_bw_engraving_diode",
+          "nameKey": "engraving_diode",
+          "origin": "default",
+          "settings": {
+            "fbm1": {
+              "15": {
+                "power": 100,
+                "speed": 10
+              }
+            }
+          }
+        },
+        {
+          "id": "stainless_steel_engraving",
+          "legacyKey": "stainless_steel_engraving",
+          "nameKey": "engraving_fiber",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "4": {
+                "power": 90,
+                "speed": 20
+              }
+            },
+            "fbm2": {
+              "4": {
+                "power": 90,
+                "speed": 20
+              }
+            }
+          }
+        },
+        {
+          "id": "stainless_steel_light",
+          "legacyKey": "stainless_steel_light",
+          "nameKey": "marking_light",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 50,
+                "speed": 4500
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 40,
+                "speed": 4500
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 45,
+                "power": 50,
+                "speed": 2000
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 20,
+                "pulseWidth": 350,
+                "speed": 2000
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 40,
+                "power": 30,
+                "pulseWidth": 500,
+                "speed": 2000
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 55,
+                "power": 30,
+                "pulseWidth": 500,
+                "speed": 4000
+              }
+            }
+          }
+        },
+        {
+          "id": "stainless_steel_dark",
+          "legacyKey": "stainless_steel_dark",
+          "nameKey": "marking_dark",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 10,
+                "speed": 300
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 8,
+                "speed": 300
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 45,
+                "power": 20,
+                "speed": 400
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 30,
+                "pulseWidth": 350,
+                "speed": 150
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 40,
+                "power": 50,
+                "pulseWidth": 500,
+                "speed": 500
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 55,
+                "power": 30,
+                "pulseWidth": 100,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "id": "stainless_steel_printing",
+          "legacyKey": "stainless_steel_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 3,
+                "multipass": 4,
+                "speed": 30
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "aluminum",
+      "nameKey": "aluminum",
+      "presets": [
+        {
+          "id": "aluminum_engraving",
+          "legacyKey": "aluminum_engraving",
+          "nameKey": "engraving_fiber",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "4": {
+                "power": 80,
+                "speed": 20
+              }
+            },
+            "fbm2": {
+              "4": {
+                "power": 80,
+                "speed": 20
+              }
+            }
+          }
+        },
+        {
+          "id": "aluminum_light",
+          "legacyKey": "aluminum_light",
+          "nameKey": "marking_light",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 90,
+                "speed": 3500
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 72,
+                "speed": 3500
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 45,
+                "power": 55,
+                "speed": 3500
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 55,
+                "pulseWidth": 350,
+                "speed": 3000
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 40,
+                "power": 50,
+                "pulseWidth": 500,
+                "speed": 5000
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 55,
+                "power": 55,
+                "pulseWidth": 500,
+                "speed": 4000
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "gold",
+      "nameKey": "gold",
+      "presets": [
+        {
+          "id": "gold_engraving",
+          "legacyKey": "gold_engraving",
+          "nameKey": "engraving_fiber",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "4": {
+                "power": 95,
+                "speed": 10
+              }
+            },
+            "fbm2": {
+              "4": {
+                "power": 95,
+                "speed": 10
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "brass",
+      "nameKey": "brass",
+      "presets": [
+        {
+          "id": "brass_engraving",
+          "legacyKey": "brass_engraving",
+          "nameKey": "engraving_fiber",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "4": {
+                "power": 85,
+                "speed": 30
+              }
+            },
+            "fbm2": {
+              "4": {
+                "power": 85,
+                "speed": 30
+              }
+            }
+          }
+        },
+        {
+          "id": "brass_light",
+          "legacyKey": "brass_light",
+          "nameKey": "marking_light",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 90,
+                "speed": 1500
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 72,
+                "speed": 1500
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 45,
+                "power": 55,
+                "speed": 3000
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 45,
+                "pulseWidth": 200,
+                "speed": 2000
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 40,
+                "power": 50,
+                "pulseWidth": 500,
+                "speed": 1000
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 55,
+                "power": 75,
+                "pulseWidth": 500,
+                "speed": 1500
+              }
+            }
+          }
+        },
+        {
+          "id": "brass_dark",
+          "legacyKey": "brass_dark",
+          "nameKey": "marking_dark",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 45,
+                "power": 90,
+                "speed": 700
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 80,
+                "pulseWidth": 350,
+                "speed": 500
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 40,
+                "power": 100,
+                "pulseWidth": 300,
+                "speed": 700
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 55,
+                "power": 100,
+                "pulseWidth": 300,
+                "speed": 900
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "titanium",
+      "nameKey": "titanium",
+      "presets": [
+        {
+          "id": "ti_engraving",
+          "legacyKey": "ti_engraving",
+          "nameKey": "engraving_fiber",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "4": {
+                "power": 75,
+                "speed": 30
+              }
+            },
+            "fbm2": {
+              "4": {
+                "power": 75,
+                "speed": 30
+              }
+            }
+          }
+        },
+        {
+          "id": "titanium_light",
+          "legacyKey": "titanium_light",
+          "nameKey": "marking_light",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 55,
+                "speed": 2500
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 44,
+                "speed": 2500
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 45,
+                "power": 30,
+                "speed": 2000
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 60,
+                "pulseWidth": 350,
+                "speed": 800
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.005,
+                "frequency": 40,
+                "power": 20,
+                "pulseWidth": 500,
+                "speed": 2000
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 55,
+                "power": 30,
+                "pulseWidth": 500,
+                "speed": 1000
+              }
+            }
+          }
+        },
+        {
+          "id": "titanium_dark",
+          "legacyKey": "titanium_dark",
+          "nameKey": "marking_dark",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 100,
+                "speed": 700
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 80,
+                "speed": 700
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.005,
+                "frequency": 45,
+                "power": 55,
+                "speed": 1500
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 80,
+                "pulseWidth": 350,
+                "speed": 1000
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.005,
+                "frequency": 40,
+                "power": 50,
+                "pulseWidth": 500,
+                "speed": 2000
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 55,
+                "power": 80,
+                "pulseWidth": 500,
+                "speed": 1000
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "silver",
+      "nameKey": "silver",
+      "presets": [
+        {
+          "id": "silver_engraving",
+          "legacyKey": "silver_engraving",
+          "nameKey": "engraving_fiber",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "4": {
+                "power": 95,
+                "speed": 20
+              }
+            },
+            "fbm2": {
+              "4": {
+                "power": 95,
+                "speed": 20
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "iron",
+      "nameKey": "iron",
+      "presets": [
+        {
+          "id": "iron_engraving",
+          "legacyKey": "iron_engraving",
+          "nameKey": "engraving_fiber",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "4": {
+                "power": 90,
+                "speed": 20
+              }
+            },
+            "fbm2": {
+              "4": {
+                "power": 90,
+                "speed": 20
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "metal",
+      "id": "copper",
+      "nameKey": "copper",
+      "presets": [
+        {
+          "id": "copper",
+          "legacyKey": "copper",
+          "nameKey": "marking",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 45,
+                "power": 90,
+                "speed": 3000
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 90,
+                "pulseWidth": 350,
+                "speed": 1000
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 40,
+                "power": 90,
+                "pulseWidth": 150,
+                "speed": 1000
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 55,
+                "power": 100,
+                "pulseWidth": 125,
+                "speed": 4000
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "plastic",
+      "id": "white-abs",
+      "nameKey": "white_abs",
+      "presets": [
+        {
+          "id": "white_abs",
+          "legacyKey": "white_abs",
+          "nameKey": "marking",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 27,
+                "power": 30,
+                "speed": 4000
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 30,
+                "power": 24,
+                "speed": 4000
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 45,
+                "power": 15,
+                "speed": 4000
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 25,
+                "power": 40,
+                "pulseWidth": 350,
+                "speed": 500
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 40,
+                "power": 30,
+                "pulseWidth": 500,
+                "speed": 1500
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 30,
+                "power": 100,
+                "pulseWidth": 500,
+                "speed": 3000
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "plastic",
+      "id": "black-abs",
+      "nameKey": "black_abs",
+      "presets": [
+        {
+          "id": "black_abs",
+          "legacyKey": "black_abs",
+          "nameKey": "marking",
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 27,
+                "power": 20,
+                "speed": 5000
+              }
+            },
+            "fpm1_0_30": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 30,
+                "power": 16,
+                "speed": 5000
+              }
+            },
+            "fpm1_0_50": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 45,
+                "power": 15,
+                "speed": 700
+              }
+            },
+            "fpm1_1_20": {
+              "15": {
+                "fillInterval": 0.01,
+                "frequency": 25,
+                "power": 25,
+                "pulseWidth": 350,
+                "speed": 4000
+              }
+            },
+            "fpm1_1_60": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 40,
+                "power": 20,
+                "pulseWidth": 500,
+                "speed": 2500
+              }
+            },
+            "fpm1_1_100": {
+              "15": {
+                "fillInterval": 0.05,
+                "frequency": 55,
+                "power": 20,
+                "pulseWidth": 500,
+                "speed": 2500
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "category": "plastic",
+      "id": "pc",
+      "nameKey": "pc",
+      "presets": [
+        {
+          "id": "pc_printing",
+          "legacyKey": "pc_printing",
+          "nameKey": "printing",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "5": {
+                "ink": 2,
+                "multipass": 4,
+                "speed": 30
+              }
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "publishedAt": "2026-08-07T00:00:00Z",
+  "version": 0
+}

@@ -85,6 +85,7 @@ test('test beambox-preference', () => {
     'job-origin': 1,
     'keep-preview-result': false,
     low_power: 10,
+    'material-region-override': 'auto',
     model: 'fbb1b',
     'model-annotation': {},
     'module-offsets': {
@@ -124,6 +125,7 @@ test('test beambox-preference', () => {
     show_rulers: false,
     simplify_clipper_path: false,
     skip_prespray: false,
+    'use-material-browser': true,
     'use-real-boundary': false,
     'use-union-boundary': true,
     use_ga_reorder: true,

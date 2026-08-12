@@ -4,6 +4,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import type { ModuleOffsets } from '@core/app/constants/layer-module/moduleOffsets';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import type { ModelAnnotation, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { MaterialRegion } from '@core/interfaces/IMaterial';
 
 import type { Prettify } from './utils';
 
@@ -73,6 +74,8 @@ export type GlobalPreference = {
   'import-module'?: LayerModuleType;
   'keep-preview-result': boolean;
   low_power: number;
+  /** Material Browser catalog region; 'auto' = detect from language + timezone (also drives mm vs inch display) */
+  'material-region-override': 'auto' | MaterialRegion;
   /** model: default workarea model */
   model: WorkAreaModel;
   'model-annotation'?: ModelAnnotation;
@@ -97,6 +100,8 @@ export type GlobalPreference = {
    * Auto turn on auto-exposure if possible when previewing
    */
   'use-auto-exposure'?: boolean;
+  /** Material Browser instead of the legacy preset dropdown (only where checkMaterialBrowser() allows) */
+  'use-material-browser': boolean;
   'use-real-boundary': boolean;
   'use-union-boundary': boolean;
   /** Use GA optimize cutting order in swiftray */
