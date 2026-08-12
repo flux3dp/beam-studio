@@ -8,6 +8,7 @@ import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { switchInnerEngravingMode } from '@core/app/actions/canvas/innerEngravingMode';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -58,7 +59,6 @@ import { showModuleSettings4C, showPassthroughSettings } from './utils';
 todo('useExclusiveBooleans');
 todo('Fix conflict mode, should handle inner engraving. Maybe change isCurveEngraving to isExclusiveMode?');
 todo('Fix 內雕不應該被歸類於【擴充模組】之下；TBD 入口是否應參考【曲面雕刻】，放在 menu tool？');
-todo('TBD：inner-engraving 改變時，需要清空畫布（2D/3D不兼容）？DEV 期間為了便於查看投影，先不處理這個');
 
 const promarkLaserOptions = [
   { label: 'Desktop - 20W', value: `${LaserType.Desktop}-20` },
@@ -263,12 +263,20 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
 
-  const handleSave = async () => {
+  /** @returns whether the settings were saved — false when a prompt along the way was cancelled */
+  const handleSave = async (): Promise<boolean> => {
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
     const { update, ...origState } = useDocumentStore.getState();
 
     const rotaryChanged = rotaryMode !== origState.rotary_mode;
+    const newInnerEngraving = Boolean(supportsInnerEngraving && innerEngraving);
+
+    // first, because it starts a new document: 2D and 3D hold different things, so the canvas, the
+    // meshes and the undo stack all go. Nothing else may be applied if the user backs out of that
+    if (newInnerEngraving !== Boolean(origState['inner-engraving'])) {
+      if (!(await switchInnerEngravingMode(newInnerEngraving))) return false;
+    }
 
     const newState: Partial<DocumentState> = {
       borderless: Boolean(addOnInfo.openBottom && borderless),
@@ -312,7 +320,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     newState.rotary_mode = rotaryMode;
-    newState['inner-engraving'] = Boolean(supportsInnerEngraving && innerEngraving);
+    newState['inner-engraving'] = newInnerEngraving;
 
     if (addOnInfo.rotary?.chuck) newState['rotary-type'] = rotaryType;
 
@@ -377,6 +385,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       useCanvasStore.setState({ watt });
       setHexa2RfWatt(undefined, watt);
     }
+
+    return true;
   };
 
   const renderWarningIcon = (title: string) => {
@@ -521,8 +531,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             if (!res) return;
           }
 
-          handleSave();
-          unmount();
+          // awaited: turning inner engraving on or off starts a new document, and cancelling that
+          // save prompt has to leave the dialog open with everything untouched
+          if (await handleSave()) unmount();
         }}
         open
         scrollableContent

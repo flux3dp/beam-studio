@@ -45,6 +45,7 @@ import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseM
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useStlStore } from '@core/app/stores/stlStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getAttributes } from '@core/helpers/element/attribute';
@@ -2014,6 +2015,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // clear the svgcontent node
     canvas.clearSvgContentElement();
+
+    // the meshes of any STL objects go with it: their projection rects have just been thrown away,
+    // and the rect is what the rest of the app treats as the object's existence. Left behind they
+    // would keep holding GPU buffers and still be drawn on the 3D canvas
+    useStlStore.getState().clear();
 
     // create new document
     canvas.resetCurrentDrawing();

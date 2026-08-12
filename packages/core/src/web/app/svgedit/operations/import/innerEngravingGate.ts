@@ -1,6 +1,7 @@
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { switchInnerEngravingMode } from '@core/app/actions/canvas/innerEngravingMode';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea, supportInnerEngraving } from '@core/app/constants/workarea-constants';
@@ -8,13 +9,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { checkFpm1UV } from '@core/helpers/checkFeature';
 import i18n from '@core/helpers/i18n';
 import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
-import { todo, uvModel } from '@core/helpers/is-dev';
-
-import changeWorkarea from '../changeWorkarea';
-
-todo(
-  '關閉內雕模式時，畫布上既有的 STL 物件會留下投影 rect（TODO.md 的 TBD：關閉內雕模式後，直接移除 stl 物件？）—— 那個流程做好之後，這裡的關閉分支要一併走它',
-);
+import { uvModel } from '@core/helpers/is-dev';
 
 const ask = (caption: string, message: string): Promise<boolean> =>
   new Promise<boolean>((resolve) => {
@@ -101,9 +96,8 @@ export const ensureModeForImport = async (needsInnerEngraving: boolean): Promise
   if (!needsInnerEngraving) {
     if (!(await ask(t.mode_switch_title, t.disable_mode))) return false;
 
-    useDocumentStore.getState().set('inner-engraving', false);
-
-    return true;
+    // the switch starts a new document, so cancelling its save prompt cancels the import too
+    return switchInnerEngravingMode(false);
   }
 
   if (!checkFpm1UV()) {
@@ -122,11 +116,5 @@ export const ensureModeForImport = async (needsInnerEngraving: boolean): Promise
 
   if (!(await ask(t.mode_switch_title, message))) return false;
 
-  // order matters: `inner-engraving` is only honoured on a work area that supports it, so the
-  // machine has to be in place before the flag is read back
-  if (target) changeWorkarea(target);
-
-  useDocumentStore.getState().set('inner-engraving', true);
-
-  return true;
+  return switchInnerEngravingMode(true, { workarea: target ?? undefined });
 };
