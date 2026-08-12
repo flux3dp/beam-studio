@@ -1,10 +1,12 @@
 import { pipe } from 'remeda';
 
+import { renderInnerEngravingThumbnail } from '@core/app/components/beambox/InnerEngraving/utils/thumbnail';
 import { getStlSources } from '@core/app/svgedit/stl/sources';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import beamFileHelper from '@core/helpers/beam-file-helper';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -18,6 +20,18 @@ getSVGAsync((globalSVG) => {
 });
 
 const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
+  // an inner engraving document's svgcontent holds nothing but flat projection rects, so the 2D
+  // path below would produce a picture of outlines rather than of the work
+  if (isInnerEngravingActive()) {
+    const canvas = renderInnerEngravingThumbnail();
+
+    if (!canvas) return null;
+
+    const blob = await new Promise<Blob>((resolve) => canvas.toBlob((b) => resolve(b!), 'image/png', 1.0));
+
+    return blob.arrayBuffer();
+  }
+
   const { maxY, minY, width } = workareaManager;
   const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const bbox = await getSvgContentActualBBox();

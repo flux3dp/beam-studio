@@ -1,11 +1,11 @@
 import tabController from '@core/app/actions/tabController';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import selectionManager from '@core/app/svgedit/selection';
+import { checkFpm1UV } from '@core/helpers/checkFeature';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { checkIsAtEditor, hashMap, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import ImageData from '@core/helpers/image-data';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import isWeb from '@core/helpers/is-web';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -97,7 +97,9 @@ const funcs = {
             'bvg',
             'beam',
             'webp',
-            ...(isInnerEngravingActive() ? ['stl'] : []),
+            // offered whenever the machine is available, not only while the mode is on: picking one
+            // outside inner engraving mode is what triggers the offer to switch into it
+            ...(checkFpm1UV() ? ['stl'] : []),
           ],
           name: 'Images',
         },
