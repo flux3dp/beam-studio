@@ -53,6 +53,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
 import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import round from '@core/helpers/math/round';
 import viewMenu from '@core/helpers/menubar/view';
@@ -680,7 +681,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Canvas point for the most recent right click
   let lastClickPoint = null;
 
-  this.isAutoAlign = useGlobalPreferenceStore.getState().auto_align;
+  // 3D has no 2D neighbours to align against, and the alignment lines are drawn into the hidden SVG
+  // canvas where nobody would see them. Derived rather than left to each of the dozen call sites to
+  // remember, so `svgCanvas.isAutoAlign` is simply false for the whole of inner engraving mode.
+  const resolveAutoAlign = () => useGlobalPreferenceStore.getState().auto_align && !isInnerEngravingActive();
+
+  this.isAutoAlign = resolveAutoAlign();
 
   let root_sctm = null;
 
@@ -2657,9 +2663,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   const onAutoAlignChanged = () => {
-    const { auto_align: value } = useGlobalPreferenceStore.getState();
-
-    this.isAutoAlign = value;
+    this.isAutoAlign = resolveAutoAlign();
 
     if (!this.isAutoAlign) {
       this.clearAlignLines();
@@ -2667,6 +2671,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   useGlobalPreferenceStore.subscribe((state) => state.auto_align, onAutoAlignChanged);
+  useDocumentStore.subscribe((state) => state['inner-engraving'], onAutoAlignChanged);
 
   this.toggleAutoAlign = () => {
     const { auto_align: value, set } = useGlobalPreferenceStore.getState();

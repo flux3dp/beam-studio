@@ -49,10 +49,13 @@ export const isInnerEngravingFile = (file: { innerEngraving?: boolean }): boolea
  *    for the binaries (only .beam does, block 6)
  * 3. **Scenes and modes that conflict** — the material-test imports drop 2D artwork into a document
  *    that only supports STL, and curve engraving is mutually exclusive with inner engraving
+ * 4. **View settings with nothing to act on** — auto align has no 2D neighbours to align against,
+ *    and draws its guide lines into the hidden SVG canvas
  *
  * Plus the two guided tours, which walk the user through the 2D canvas that is not on screen.
  */
 export const INNER_ENGRAVING_DISABLED_MENU_ITEMS = [
+  'AUTO_ALIGN',
   'OFFSET',
   'DECOMPOSE_PATH',
   'DISASSEMBLE_USE',
