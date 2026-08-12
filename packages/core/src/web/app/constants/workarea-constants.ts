@@ -2,7 +2,7 @@ import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { checkBM2, checkBM2UV, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkBM2UV, checkBM24C, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
@@ -190,7 +190,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     pxWidth: 360 * dpmm,
     supportedModules: [
       LayerModule.LASER_UNIVERSAL,
-      LayerModule.PRINTER_4C,
+      checkBM24C() ? LayerModule.PRINTER_4C : null,
       checkBM2UV() ? LayerModule.UV_WHITE_INK : null,
       checkBM2UV() ? LayerModule.UV_VARNISH : null,
       LayerModule.LASER_1064,
