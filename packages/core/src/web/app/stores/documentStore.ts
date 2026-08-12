@@ -60,6 +60,7 @@ const getInitDocumentStore = (): DocumentState => {
     // the material is a pure document setting: not sent to swiftray, not stored in the .beam file
     'inner-engraving-depth': preference['inner-engraving-depth'],
     'inner-engraving-diameter': preference['inner-engraving-diameter'],
+    'inner-engraving-focal-length': preference['inner-engraving-focal-length'],
     'inner-engraving-height': preference['inner-engraving-height'],
     'inner-engraving-refractive-index': preference['inner-engraving-refractive-index'],
     'inner-engraving-safety-margin': preference['inner-engraving-safety-margin'],

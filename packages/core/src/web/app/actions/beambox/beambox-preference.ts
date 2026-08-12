@@ -1,7 +1,7 @@
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
-import { DEFAULT_MATERIAL, DEFAULT_SAFETY_MARGIN } from '@core/app/constants/innerEngraving';
+import { DEFAULT_FOCAL_LENGTH, DEFAULT_MATERIAL, DEFAULT_SAFETY_MARGIN } from '@core/app/constants/innerEngraving';
 import { TabEvents } from '@core/app/constants/ipcEvents';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/moduleOffsets';
@@ -48,6 +48,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'inner-engraving': false,
   'inner-engraving-depth': DEFAULT_MATERIAL.depth,
   'inner-engraving-diameter': DEFAULT_MATERIAL.diameter,
+  'inner-engraving-focal-length': DEFAULT_FOCAL_LENGTH,
   'inner-engraving-height': DEFAULT_MATERIAL.height,
   'inner-engraving-refractive-index': DEFAULT_MATERIAL.refractiveIndex,
   'inner-engraving-safety-margin': DEFAULT_SAFETY_MARGIN,

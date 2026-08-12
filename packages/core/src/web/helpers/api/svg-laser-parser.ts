@@ -10,6 +10,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import Progress from '@core/app/actions/progress-caller';
+import { getMaterialHeightMm } from '@core/app/components/beambox/InnerEngraving/utils/material';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -26,6 +27,7 @@ import AlertConfig from '@core/helpers/api/alert-config';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import isDev, { isUvDev, showDevMsg } from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
@@ -271,6 +273,15 @@ export const getExportOpt = async (
 
   if (config.curve_engraving && workareaObj.curveSpeedLimit?.x) {
     config.csl = workareaObj.curveSpeedLimit.x * 60;
+  }
+
+  // inner engraving: everything the backend needs to compensate for refraction at the workpiece's
+  // surface. Gated on the mode rather than on the presence of STL objects, because these describe
+  // the material and the optics, not the artwork — a document in this mode has no other kind of job
+  if (isInnerEngravingActive()) {
+    config.refractive_index = documentState['inner-engraving-refractive-index'];
+    config.material_height = getMaterialHeightMm();
+    config.focal_length = documentState['inner-engraving-focal-length'];
   }
 
   if (globalPreference['vector_speed_constraint']) {

@@ -27,6 +27,8 @@ export type DocumentState = {
   'inner-engraving-depth': number;
   /** Material diameter in mm, cylinder and sphere only. */
   'inner-engraving-diameter': number;
+  /** Lens focal length in mm. A machine property, but swiftray has nowhere else to receive it. */
+  'inner-engraving-focal-length': number;
   /** Material height (Z) in mm. For a sphere this is the liquid level, capped at the diameter. */
   'inner-engraving-height': number;
   'inner-engraving-refractive-index': number;
