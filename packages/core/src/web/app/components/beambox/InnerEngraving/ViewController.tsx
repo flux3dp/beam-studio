@@ -2,11 +2,10 @@ import type React from 'react';
 import { useEffect, useRef } from 'react';
 
 import { OrthographicCamera } from '@react-three/drei';
-import { useFrame, useThree } from '@react-three/fiber';
+import { useThree } from '@react-three/fiber';
 import type { OrthographicCamera as OrthographicCameraImpl, Vector3 } from 'three';
-import { MathUtils, Quaternion, Vector3 as Vector3Impl } from 'three';
 
-import { DISTANCE_RATIO, getPresetPosition, useViewStore } from './viewStore';
+import { getPresetPosition, useViewStore } from './viewStore';
 
 /** Only the part of OrbitControls used here, to avoid depending on drei's transitive three-stdlib. */
 interface OrbitLike {
@@ -14,12 +13,14 @@ interface OrbitLike {
   update: () => void;
 }
 
-interface CameraPose {
-  /** Vertical field of view of the last perspective camera seen, for matching orthographic zoom. */
-  fov: number;
-  position: Vector3Impl;
-  quaternion: Quaternion;
-}
+/**
+ * How much of the scene the orthographic camera shows, as a multiple of `extent`.
+ *
+ * Chosen to match what the perspective camera frames from its preset distance — a 50° vertical fov
+ * at `extent * DISTANCE_RATIO` away covers about 1.5 times the extent — so switching projection
+ * changes the projection and nothing else.
+ */
+const ORTHO_VIEW_HEIGHT_RATIO = 1.5;
 
 interface ViewControllerProps {
   /** Roughly the size of what should stay in frame. */
@@ -28,37 +29,26 @@ interface ViewControllerProps {
   target: [number, number, number];
 }
 
-interface OrthographicViewProps {
-  extent: number;
-  pose: React.RefObject<CameraPose>;
-  target: [number, number, number];
-}
-
 /**
  * Orthographic camera that takes over as the default while it is mounted; drei restores the previous
  * default on unmount, so the perspective path — including the `up` fix in `onCreated` — is untouched.
  *
- * It adopts the pose the perspective camera was last at and picks a `zoom` reproducing the same
- * framing: a perspective camera at distance `d` shows `2 * d * tan(fov / 2)` of world height, an
- * orthographic one shows `canvasHeight / zoom`. Without this it lands at the origin with zoom 1,
- * which reads as being far too close to the model.
+ * Its `zoom` is set once, from the canvas height, because an orthographic camera's framing does not
+ * follow its distance the way a perspective one's does: mounted with the default zoom of 1 it reads
+ * as being far too close. After that the controls own it.
  */
-const OrthographicView = ({ extent, pose, target }: OrthographicViewProps) => {
+const OrthographicView = ({ extent }: { extent: number }) => {
   const cameraRef = useRef<OrthographicCameraImpl>(null);
-  const size = useThree((state) => state.size);
+  const height = useThree((state) => state.size.height);
 
   useEffect(() => {
     const camera = cameraRef.current;
 
     if (!camera) return;
 
-    const { fov, position, quaternion } = pose.current;
-    const distance = position.distanceTo(new Vector3Impl(...target)) || extent * DISTANCE_RATIO;
-
     camera.up.set(0, 0, 1);
-    camera.position.copy(position);
-    camera.quaternion.copy(quaternion);
-    camera.zoom = size.height / (2 * distance * Math.tan(MathUtils.degToRad(fov) / 2));
+    // drei's frustum is the canvas in pixels, so the visible world height is `height / zoom`
+    camera.zoom = height / (extent * ORTHO_VIEW_HEIGHT_RATIO);
     camera.updateProjectionMatrix();
     // deliberately mount-only: after this the controls own the camera, and re-running would fight them
     // eslint-disable-next-line hooks/exhaustive-deps
@@ -73,26 +63,23 @@ const OrthographicView = ({ extent, pose, target }: OrthographicViewProps) => {
  * Lives inside the canvas so it can reach the camera and the default controls. Note that `up` is set
  * before every `lookAt`: a `lookAt` run against the default Y-up vector produces an orientation that
  * looks almost right but leaves the transform gizmo's axes off.
+ *
+ * ⚠️ Switching projection **re-applies the current preset** rather than carrying the camera's pose
+ * across (`viewStore.setProjection` bumps the view for exactly that). Carrying it over is what the
+ * earlier version tried, and the result never landed where the user had left it — the two frustums
+ * frame a scene too differently for a matched pose to look matched. Snapping to a named view is at
+ * least somewhere the user asked to be.
  */
 const ViewController = ({ extent, target }: ViewControllerProps): null | React.JSX.Element => {
   const { camera, controls } = useThree();
   const projection = useViewStore((state) => state.projection);
   const view = useViewStore((state) => state.view);
-  // tracks whichever camera is currently the default, so switching projection carries the pose over
-  const pose = useRef<CameraPose>({ fov: 50, position: new Vector3Impl(), quaternion: new Quaternion() });
   const appliedVersion = useRef(-1);
-
-  useFrame(({ camera: active }) => {
-    pose.current.position.copy(active.position);
-    pose.current.quaternion.copy(active.quaternion);
-
-    if ('fov' in active) pose.current.fov = active.fov as number;
-  });
 
   useEffect(() => {
     // the camera object itself changes when the projection is toggled, which re-runs this effect.
-    // Applying each request at most once is what stops that toggle from throwing away whatever the
-    // user had orbited to; the new camera inherits the old one's pose instead.
+    // Applying each request at most once is what stops an unrelated re-render from throwing away
+    // whatever the user has orbited to
     if (view.preset === 'custom' || appliedVersion.current === view.version) return;
 
     const orbit = controls as null | OrbitLike;
@@ -116,19 +103,7 @@ const ViewController = ({ extent, target }: ViewControllerProps): null | React.J
     // asking for the view you are already on still snaps back
   }, [camera, controls, extent, target, view]);
 
-  // going back to perspective: drei hands the default back to the camera the canvas created, which
-  // still holds the pose it had when orthographic took over, so carry the current one across
-  useEffect(() => {
-    if (projection !== 'perspective') return;
-
-    camera.up.set(0, 0, 1);
-    camera.position.copy(pose.current.position);
-    camera.quaternion.copy(pose.current.quaternion);
-    camera.updateProjectionMatrix();
-    // eslint-disable-next-line hooks/exhaustive-deps
-  }, [projection]);
-
-  return projection === 'orthographic' ? <OrthographicView extent={extent} pose={pose} target={target} /> : null;
+  return projection === 'orthographic' ? <OrthographicView extent={extent} /> : null;
 };
 
 export default ViewController;
