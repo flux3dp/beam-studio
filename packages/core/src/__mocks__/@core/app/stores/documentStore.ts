@@ -1,6 +1,6 @@
 import type { DocumentState } from '@core/interfaces/Preference';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
-import { DEFAULT_MATERIAL, DEFAULT_SAFETY_MARGIN } from '@core/app/constants/innerEngraving';
+import { DEFAULT_FOCAL_LENGTH, DEFAULT_MATERIAL, DEFAULT_SAFETY_MARGIN } from '@core/app/constants/innerEngraving';
 
 const state: DocumentState = {
   'auto-feeder': false,
@@ -16,6 +16,7 @@ const state: DocumentState = {
   'inner-engraving': false,
   'inner-engraving-depth': DEFAULT_MATERIAL.depth,
   'inner-engraving-diameter': DEFAULT_MATERIAL.diameter,
+  'inner-engraving-focal-length': DEFAULT_FOCAL_LENGTH,
   'inner-engraving-height': DEFAULT_MATERIAL.height,
   'inner-engraving-refractive-index': DEFAULT_MATERIAL.refractiveIndex,
   'inner-engraving-safety-margin': DEFAULT_SAFETY_MARGIN,

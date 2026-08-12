@@ -40,6 +40,20 @@ export const MATERIAL_POSITION_LIMIT = { max: 1000, min: -1000 } as const;
 export const REFRACTIVE_INDEX_LIMIT = { max: 3, min: 1, precision: 3 } as const;
 
 /**
+ * Focal length of the machine's lens, in mm: optical centre to the designed focal plane.
+ *
+ * A property of the hardware rather than of the job, but swiftray's machine settings have no field
+ * for it, so it travels with the convert params instead (backend G). Without it the refraction
+ * compensation degrades to depth-only — the XY spread a refracted beam picks up off-axis cannot be
+ * corrected without knowing F.
+ *
+ * ⚠️ The default is provisional: a 70x70mm galvo field is typically an F-theta around 100mm, but the
+ * real lens has to be confirmed against the machine.
+ */
+export const DEFAULT_FOCAL_LENGTH = 100;
+export const FOCAL_LENGTH_LIMIT = { max: 1000, min: 10 } as const;
+
+/**
  * Safety margin, in mm: how far engraving stays away from the material's surfaces.
  *
  * Cracking too close to a surface breaks it out, so both the fit-on-import check and the

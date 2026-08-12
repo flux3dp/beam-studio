@@ -69,3 +69,13 @@ export const useMaterial = (): Material => toMaterial(useDocumentStore(useShallo
 
 /** Non-reactive read, for the places that only need the material once (initial camera placement). */
 export const getMaterial = (): Material => toMaterial(select(useDocumentStore.getState()));
+
+/**
+ * How high the material's top surface sits above the focus origin, in mm.
+ *
+ * What swiftray needs for the refraction compensation — the beam enters the workpiece there, so
+ * without it there is nothing to measure the optical path against. Read through here rather than
+ * off `inner-engraving-height` directly, so a sphere still reports its liquid level rather than a
+ * height that could exceed the ball.
+ */
+export const getMaterialHeightMm = (): number => getMaterial().height / MM_TO_SCENE;

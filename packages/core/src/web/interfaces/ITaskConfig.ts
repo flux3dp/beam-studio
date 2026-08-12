@@ -93,6 +93,21 @@ export type TFcodeOptionalConfig = Partial<{
    */
   mof: { [key: number]: [number, number] };
   /**
+   * Inner engraving: lens focal length in mm, optical centre to the designed focal plane.
+   *
+   * Omitting it degrades the backend's refraction compensation to depth-only — the XY spread an
+   * off-axis refracted beam picks up cannot be corrected without knowing F.
+   */
+  focal_length: number;
+  /**
+   * Inner engraving: how high the workpiece's top surface sits above the focus origin, in mm.
+   *
+   * Where the beam enters the material, so the refraction compensation is impossible without it.
+   * The only part of the material settings the backend sees — the shape and position stay on the
+   * frontend, since swiftray does no material clipping (B-10).
+   */
+  material_height: number;
+  /**
    * multipass compensation
    */
   mpc: boolean;
@@ -130,6 +145,13 @@ export type TFcodeOptionalConfig = Partial<{
    * path travel speed
    */
   pts: number; //
+  /**
+   * Inner engraving: the workpiece's refractive index n.
+   *
+   * The beam bends at the surface, so the geometric depth and the real focus depth differ. The
+   * compensation itself is the backend's (B-3); <= 1 means no compensation.
+   */
+  refractive_index: number;
   rev: boolean; // reverse engraving
   /**
    * rotary split overlap, mm
