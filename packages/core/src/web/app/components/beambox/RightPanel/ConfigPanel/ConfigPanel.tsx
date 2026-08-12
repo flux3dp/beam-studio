@@ -28,6 +28,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
+import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,
@@ -127,6 +128,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     };
   }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const isInnerEngraving = useInnerEngravingActive();
 
   useEffect(() => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
@@ -295,7 +297,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isPromark && <PulseWidthBlock type={UIType} />}
       {isPromark && <QPulseWidthBlock type={UIType} />}
       {isPromark && <FrequencyBlock type={UIType} />}
-      <RepeatBlock type={UIType} />
+      {!isInnerEngraving && <RepeatBlock type={UIType} />}
       {isPromark && <AdvancedSettingButton type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
