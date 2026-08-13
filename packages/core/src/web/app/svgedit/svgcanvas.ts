@@ -1433,8 +1433,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     const outputSanitized = sanitizeXmlString(output);
 
+    // the string itself is not logged: it runs to nine figures on a document with embedded images,
+    // and devtools holds on to whatever is printed
     console.log('Sanitized Result', output.length, outputSanitized.length);
-    console.log(outputSanitized);
 
     return outputSanitized;
   };
