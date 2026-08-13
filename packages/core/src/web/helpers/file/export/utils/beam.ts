@@ -4,6 +4,7 @@ import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import beamFileHelper from '@core/helpers/beam-file-helper';
 import { withMemoryLog, withMemoryLogSync } from '@core/helpers/debug/memoryLog';
+import downscaleImagesForThumbnail from '@core/helpers/image/downscaleImagesForThumbnail';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -39,11 +40,17 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
     // calculate image width and height
     (downRatio) => [Math.ceil(bbox.width * downRatio), Math.ceil(bbox.height * downRatio)],
   );
-  const svgDefs = findDefs();
+  // cloned rather than serialised in place: downscaleImagesForThumbnail rewrites the hrefs it is
+  // given, and these defs are the live ones the canvas is rendering from
+  const clonedSvgDefs = findDefs().cloneNode(true) as SVGDefsElement;
   const clonedSvgContent = svgContent.cloneNode(true) as SVGSVGElement;
   const useElements = clonedSvgContent.querySelectorAll('use');
 
   useElements.forEach((useElement) => SymbolMaker.switchImageSymbol(useElement, false));
+
+  // the picture below is 300px on its longest edge; without this the browser decodes every image
+  // at full size to draw it
+  await downscaleImagesForThumbnail(clonedSvgDefs, clonedSvgContent);
 
   const svgString = `
     <svg
@@ -54,7 +61,7 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
-      ${svgDefs.outerHTML}
+      ${clonedSvgDefs.outerHTML}
       ${clonedSvgContent.innerHTML}
     </svg>`;
   const canvas = await svgStringToCanvas(svgString, imageWidth, imageHeight);

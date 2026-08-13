@@ -3,6 +3,7 @@ import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { withMemoryLog } from '@core/helpers/debug/memoryLog';
 import { getSvgContentActualBBox } from '@core/helpers/file/export/utils/getBBox';
+import downscaleImagesForThumbnail from '@core/helpers/image/downscaleImagesForThumbnail';
 
 const fetchThumbnail = async (): Promise<string[]> => {
   function cloneAndModifySvg(svg: SVGSVGElement) {
@@ -29,8 +30,13 @@ const fetchThumbnail = async (): Promise<string[]> => {
     return clonedSvg;
   }
 
-  async function DOM2Image(svg: SVGSVGElement) {
-    const modifiedSvg = cloneAndModifySvg(svg);
+  // takes an already-cloned tree: it used to clone again, which duplicated a DOM full of base64
+  // hrefs and appended a second copy of defs on top of the one the first clone had added
+  async function DOM2Image(modifiedSvg: SVGSVGElement) {
+    // the thumbnail is capped at 500px below, so decoding these at their stored size — all at once,
+    // for a single paint — is the expensive part of this function, not the paint itself
+    await downscaleImagesForThumbnail(modifiedSvg);
+
     const svgString = modifiedSvg.outerHTML;
 
     const image = await new Promise<HTMLImageElement>((resolve) => {
