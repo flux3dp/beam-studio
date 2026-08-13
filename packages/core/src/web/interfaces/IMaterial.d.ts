@@ -53,6 +53,12 @@ export interface MaterialPreset {
    * (an edited default resolves back to its original by this id for Restore).
    * Migrated built-ins reuse their presets.ts key. Locally generated for user presets.
    */
+  /**
+   * Links the flat per-DPI presets of one family (base + quality options share the base's
+   * id as groupId). When the layer DPI changes, the client switches to the group member
+   * declaring the new dpi (see switchPresetDpiGroup). Absent on single-DPI presets.
+   */
+  groupId?: string;
   id: string;
   /** presets.ts key this preset derives from; kept for legacy configName compatibility + tutorial hooks */
   legacyKey?: string;

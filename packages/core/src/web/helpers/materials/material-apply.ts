@@ -1,5 +1,6 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useMaterialStore } from '@core/app/stores/materialStore';
@@ -157,6 +158,55 @@ export const getLayerMaterialPresetValues = (layer: Element): null | PresetValue
 };
 
 /**
+ * When the layer DPI changes and its applied preset belongs to a per-DPI group (groupId
+ * links the flat siblings, e.g. wood_engraving ↔ wood_engraving_high), switch to the group
+ * member declaring the new dpi: rewrite the refs and surgically apply only the parameter
+ * keys where the sibling differs from the current preset — manual tweaks on keys the
+ * family agrees on survive, mirroring the legacy dpiOverrides surgery. No-op without a
+ * group or when no member declares the new dpi (the params then simply stay).
+ */
+export const switchPresetDpiGroup = (
+  layer: Element,
+  newDpi: EngraveDpiOption,
+  opts: { batchCmd?: IBatchCommand } = {},
+): boolean => {
+  if (!isMaterialBrowserActive()) return false;
+
+  const ref = resolveLayerMaterialRef(layer);
+
+  if (!ref?.preset.groupId) return false;
+
+  const module = (getData(layer, 'module') as LayerModuleType) ?? LayerModule.LASER_UNIVERSAL;
+  const model = getPresetModel(useDocumentStore.getState().workarea);
+  const current = resolveWithOverlay(ref.preset, model, module);
+
+  if (!current || current.dpi === newDpi) return false;
+
+  const target = ref.material.presets.find(
+    (preset) =>
+      preset.groupId === ref.preset.groupId &&
+      preset.id !== ref.preset.id &&
+      resolveWithOverlay(preset, model, module)?.dpi === newDpi,
+  );
+
+  if (!target) return false;
+
+  const values = resolveWithOverlay(target, model, module)!;
+
+  for (const [key, value] of Object.entries(values)) {
+    if (key === 'dpi' || current[key as keyof PresetValues] === value) continue;
+
+    writeDataLayer(layer, key as Parameters<typeof writeDataLayer>[1], value as never, opts);
+  }
+
+  writeDataLayer(layer, 'presetId', target.id, opts);
+  // configName compat shadow, mirroring applyPreset's isDefault ? key : name
+  writeDataLayer(layer, 'configName', target.legacyKey ?? getPresetDisplayName(target), opts);
+
+  return true;
+};
+
+/**
  * New-mode replacement for postPresetChange: re-resolves every layer's material ref
  * after workarea/watt/module changes, re-applies merged values, and degrades
  * unresolvable refs to Manual while keeping the layer's raw parameters.
@@ -173,15 +223,34 @@ export const postMaterialPresetChange = (): void => {
 
     if (ref) {
       const module = (getData(layerElement, 'module') as LayerModuleType) ?? LayerModule.LASER_UNIVERSAL;
-      const values = resolveWithOverlay(ref.preset, presetModel, module);
+      let preset = ref.preset;
+      let values = resolveWithOverlay(preset, presetModel, module);
+
+      if (!values && preset.groupId) {
+        // The preset has no settings for this machine, but a per-DPI sibling might
+        // (e.g. wood_engraving_high scopes only to HEXA RF; fbb2 falls back to the
+        // base). Prefer the member declaring the layer's current DPI, else the first.
+        const layerDpi = getData(layerElement, 'dpi');
+        const candidates = ref.material.presets
+          .filter((candidate) => candidate.groupId === preset.groupId && candidate.id !== preset.id)
+          .map((candidate) => ({ candidate, resolved: resolveWithOverlay(candidate, presetModel, module) }))
+          .filter(({ resolved }) => resolved);
+        const pick = candidates.find(({ resolved }) => resolved!.dpi === layerDpi) ?? candidates[0];
+
+        if (pick) {
+          preset = pick.candidate;
+          values = pick.resolved;
+          writeDataLayer(layerElement, 'configName', preset.legacyKey ?? getPresetDisplayName(preset));
+        }
+      }
 
       if (values) {
         // Unlike an explicit Apply, a context change respects the layer's current DPI:
         // applyPreset resolves dpiOverrides against it, so no dpi write here.
-        applyPreset(layerElement, toLegacyPreset(ref.preset, values, module), { applyName: false });
+        applyPreset(layerElement, toLegacyPreset(preset, values, module), { applyName: false });
         // Refs may have resolved through the configName fallback — persist them
         writeDataLayer(layerElement, 'materialId', ref.material.id);
-        writeDataLayer(layerElement, 'presetId', ref.preset.id);
+        writeDataLayer(layerElement, 'presetId', preset.id);
       } else {
         // No settings for this machine/module: degrade to Manual, keep raw params
         writeDataLayer(layerElement, 'materialId', undefined);

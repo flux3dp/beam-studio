@@ -165,6 +165,14 @@ describe('getBundledCatalog', () => {
     expect(findPreset('wood_3mm_cutting_high')).toBeUndefined();
   });
 
+  test('per-DPI families share a groupId (the base key); single-DPI presets have none', () => {
+    expect(findPreset('wood_engraving')!.groupId).toBe('wood_engraving');
+    expect(findPreset('wood_engraving_high')!.groupId).toBe('wood_engraving');
+    expect(findPreset('wood_engraving_ultra')!.groupId).toBe('wood_engraving');
+    expect(findPreset('wood_3mm_cutting')!.groupId).toBeUndefined();
+    expect(findPreset('black_acrylic_engraving')!.groupId).toBeUndefined();
+  });
+
   test('promark scopes are preserved verbatim', () => {
     const dark = findPreset('stainless_steel_dark')!;
     const source = defaultPresets.stainless_steel_dark.fpm1_0_20![LayerModule.LASER_UNIVERSAL]!;

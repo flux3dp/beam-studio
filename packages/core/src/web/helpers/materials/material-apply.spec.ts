@@ -52,6 +52,7 @@ import {
   postMaterialPresetChange,
   resetMaterialApplyInit,
   resolveLayerMaterialRef,
+  switchPresetDpiGroup,
   toLegacyPreset,
 } from './material-apply';
 
@@ -175,6 +176,51 @@ describe('material-apply', () => {
     });
   });
 
+  describe('switchPresetDpiGroup', () => {
+    test('switches to the group member declaring the new dpi, writing only differing keys', () => {
+      useDocumentStore.setState({ workarea: 'fhx2rf_30' } as never);
+
+      const sourceRf = defaultPresets.wood_engraving.fhx2rf_30!['15']!;
+      const target = layer({
+        module: LayerModule.LASER_UNIVERSAL,
+        presetId: 'wood_engraving',
+        // Manual tweak on a key the family agrees on — must survive the switch
+        repeat: 5,
+        speed: sourceRf.speed,
+      });
+
+      expect(switchPresetDpiGroup(target as never, 'high')).toBe(true);
+      expect(target.attrs.presetId).toBe('wood_engraving_high');
+      // Per-DPI presets have no legacyKey — the configName shadow uses the display name
+      expect(target.attrs.configName).toBe('Engraving');
+      expect(target.attrs.power).toBe(sourceRf.dpiOverrides!.high!.power);
+      expect(target.attrs.repeat).toBe(5);
+
+      // And back to the base, whose legacyKey is the presets.ts key
+      expect(switchPresetDpiGroup(target as never, 'medium')).toBe(true);
+      expect(target.attrs.presetId).toBe('wood_engraving');
+      expect(target.attrs.configName).toBe('wood_engraving');
+      expect(target.attrs.power).toBe(sourceRf.power);
+    });
+
+    test('no-op without a group, without a member for the dpi, or when already there', () => {
+      useDocumentStore.setState({ workarea: 'fhx2rf_30' } as never);
+
+      // Cutting presets have no per-DPI group
+      const cutting = layer({ module: LayerModule.LASER_UNIVERSAL, presetId: 'wood_3mm_cutting' });
+
+      expect(switchPresetDpiGroup(cutting as never, 'high')).toBe(false);
+      expect(cutting.attrs.presetId).toBe('wood_3mm_cutting');
+
+      // No member declares 'low'; params and ref stay
+      const engraving = layer({ module: LayerModule.LASER_UNIVERSAL, presetId: 'wood_engraving' });
+
+      expect(switchPresetDpiGroup(engraving as never, 'low')).toBe(false);
+      expect(switchPresetDpiGroup(engraving as never, 'medium')).toBe(false);
+      expect(engraving.attrs.presetId).toBe('wood_engraving');
+    });
+  });
+
   describe('postMaterialPresetChange', () => {
     test('re-applies resolvable refs without renaming and persists refs', () => {
       const target = layer({ configName: 'wood_3mm_cutting', module: LayerModule.LASER_UNIVERSAL });
@@ -219,6 +265,20 @@ describe('material-apply', () => {
 
       expect(mockApplyPreset).toHaveBeenCalledTimes(1);
       expect(target.attrs.dpi).toBe('medium');
+    });
+
+    test('falls back to a groupId sibling when the preset has no settings for the machine', () => {
+      // wood_engraving_high scopes only to HEXA RF; on fbb2 the base member takes over.
+      // Layer dpi 'medium' matches the base's declared dpi → picked by dpi preference.
+      const target = layer({ dpi: 'medium', module: LayerModule.LASER_UNIVERSAL, presetId: 'wood_engraving_high' });
+
+      mockGetAllLayers.mockReturnValue([{ getGroup: () => target }]);
+      postMaterialPresetChange();
+
+      expect(mockApplyPreset).toHaveBeenCalledTimes(1);
+      expect(target.attrs.presetId).toBe('wood_engraving');
+      expect(target.attrs.configName).toBe('wood_engraving');
+      expect(target.attrs.materialId).toBe('wood');
     });
 
     test('degrades refs with no settings for the current module', () => {

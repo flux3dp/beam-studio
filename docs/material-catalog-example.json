@@ -24,6 +24,7 @@
         {
           "id": "wood_engraving",
           "legacyKey": "wood_engraving",
+          "groupId": "wood_engraving",
           "name": { "default": "Engraving", "zh-tw": "雕刻" },
           "origin": "default",
           "settings": {
@@ -37,6 +38,7 @@
         },
         {
           "id": "wood_engraving_high",
+          "groupId": "wood_engraving",
           "name": { "default": "Engraving", "zh-tw": "雕刻" },
           "origin": "default",
           "settings": {

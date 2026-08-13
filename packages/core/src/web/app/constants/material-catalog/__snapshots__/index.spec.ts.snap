@@ -239,6 +239,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "variantId": "wood-10mm",
         },
         {
+          "groupId": "wood_engraving",
           "id": "wood_engraving",
           "legacyKey": "wood_engraving",
           "nameKey": "engraving",
@@ -320,6 +321,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "wood_engraving",
           "id": "wood_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -348,6 +350,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "wood_engraving",
           "id": "wood_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -376,6 +379,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "wood_engraving",
           "id": "wood_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -584,6 +588,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "variantId": "mdf-7mm",
         },
         {
+          "groupId": "mdf_engraving",
           "id": "mdf_engraving",
           "legacyKey": "mdf_engraving",
           "nameKey": "engraving",
@@ -635,6 +640,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "mdf_engraving",
           "id": "mdf_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -663,6 +669,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "mdf_engraving",
           "id": "mdf_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -691,6 +698,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "mdf_engraving",
           "id": "mdf_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -1041,6 +1049,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "variantId": "acrylic-10mm",
         },
         {
+          "groupId": "acrylic_engraving",
           "id": "acrylic_engraving",
           "legacyKey": "acrylic_engraving",
           "nameKey": "engraving",
@@ -1106,6 +1115,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "acrylic_engraving",
           "id": "acrylic_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -1134,6 +1144,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "acrylic_engraving",
           "id": "acrylic_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -1162,6 +1173,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "acrylic_engraving",
           "id": "acrylic_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -1524,6 +1536,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "variantId": "leather-5mm",
         },
         {
+          "groupId": "leather_engraving",
           "id": "leather_engraving",
           "legacyKey": "leather_engraving",
           "nameKey": "engraving",
@@ -1599,6 +1612,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "leather_engraving",
           "id": "leather_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -1627,6 +1641,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "leather_engraving",
           "id": "leather_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -1655,6 +1670,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "leather_engraving",
           "id": "leather_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -1872,6 +1888,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "variantId": "fabric-5mm",
         },
         {
+          "groupId": "fabric_engraving",
           "id": "fabric_engraving",
           "legacyKey": "fabric_engraving",
           "nameKey": "engraving",
@@ -1947,6 +1964,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "fabric_engraving",
           "id": "fabric_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -1975,6 +1993,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "fabric_engraving",
           "id": "fabric_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -2003,6 +2022,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "fabric_engraving",
           "id": "fabric_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -2225,6 +2245,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       "nameKey": "glass",
       "presets": [
         {
+          "groupId": "glass_bw_engraving",
           "id": "glass_bw_engraving",
           "legacyKey": "glass_bw_engraving",
           "nameKey": "engraving",
@@ -2300,6 +2321,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "glass_bw_engraving",
           "id": "glass_bw_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -2328,6 +2350,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "glass_bw_engraving",
           "id": "glass_bw_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -2356,6 +2379,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "glass_bw_engraving",
           "id": "glass_bw_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -2406,6 +2430,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       "nameKey": "slate",
       "presets": [
         {
+          "groupId": "slate_engraving",
           "id": "slate_engraving",
           "legacyKey": "slate_engraving",
           "nameKey": "engraving",
@@ -2475,6 +2500,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "slate_engraving",
           "id": "slate_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -2503,6 +2529,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "slate_engraving",
           "id": "slate_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -2531,6 +2558,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "slate_engraving",
           "id": "slate_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -2647,6 +2675,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       "nameKey": "rubber",
       "presets": [
         {
+          "groupId": "rubber_bw_engraving",
           "id": "rubber_bw_engraving",
           "legacyKey": "rubber_bw_engraving",
           "nameKey": "engraving",
@@ -2722,6 +2751,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "rubber_bw_engraving",
           "id": "rubber_bw_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -2750,6 +2780,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "rubber_bw_engraving",
           "id": "rubber_bw_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -2778,6 +2809,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
         {
+          "groupId": "rubber_bw_engraving",
           "id": "rubber_bw_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",

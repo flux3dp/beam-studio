@@ -86,6 +86,7 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 | Field | Type | Required | Notes |
 |---|---|---|---|
 | `id` | string | ✓ | **Stable and immutable forever.** The client stores user edits ("Customized") and Restore targets keyed by this id — renaming/re-creating a preset with a new id orphans user customizations. Enforce immutability in admin (read-only after creation). |
+| `groupId` | string | – | Links the flat per-DPI presets of one family (convention: the base preset's `id`, set on the base and every option). When the user changes the layer DPI, the client switches to the group member declaring the new `dpi` and applies the parameter keys that differ. Omit on single-DPI presets. |
 | `legacyKey` | string | – | For presets migrated from Beam Studio's built-in `presets.ts` (e.g. `wood_3mm_cutting`): the original key, verbatim. The client writes it into legacy files for backward compatibility and uses it for tutorial hooks. Preserve exactly; never rename. |
 | `name` | LocalizedString | ✓ (cloud) | e.g. "Cutting", "Engraving". Don't encode DPI in the name — publish one FLAT preset per DPI option (values fully merged, no dpiOverrides), sharing the same name; the client suffixes catalog presets that declare a `dpi` with "- 500 DPI" etc. in the browser, while the layer chip shows the plain name. |
 | `origin` | string | ✓ | Always `default` from this API (`user` is client-side only). |

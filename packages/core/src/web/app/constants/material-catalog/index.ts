@@ -71,7 +71,12 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
       }
     }
 
+    const qualityOptions = getQualityOptions(source);
+    // Per-DPI families share a groupId so a layer DPI change can switch between them
+    const group = qualityOptions.length > 0 ? { groupId: key } : {};
+
     result.push({
+      ...group,
       id: key,
       legacyKey: key,
       nameKey: mapping.nameKey,
@@ -83,7 +88,7 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
     // Every override option above the base becomes its own FLAT preset (values merged at
     // that dpi, no dpiOverrides), scoped to the models that actually curate that option.
     // The browser suffixes their shared name with the declared DPI.
-    for (const option of getQualityOptions(source)) {
+    for (const option of qualityOptions) {
       const qualitySettings: MaterialPreset['settings'] = {};
 
       for (const [model, modules] of Object.entries(source)) {
@@ -98,6 +103,7 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
       }
 
       result.push({
+        ...group,
         id: `${key}_${option}`,
         nameKey: mapping.nameKey,
         origin: 'default',
