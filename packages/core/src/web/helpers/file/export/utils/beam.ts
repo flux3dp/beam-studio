@@ -74,6 +74,27 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
   return blob.arrayBuffer();
 };
 
+/**
+ * The image ids whose href can be left out of the saved svg.
+ *
+ * Every one of these has its original in the image source block, and readImageSource writes the
+ * href back from it on load — so the base64 in the svg block is never read, while being nearly all
+ * of its size.
+ *
+ * Restricted to ids that appear exactly once, because that restore is a lookup by id: a duplicate
+ * would leave the second element with no href and nothing to rebuild it from. Today the href is
+ * what covers that case up.
+ */
+const getRestorableImageIds = (imageSource: Record<string, ArrayBuffer>): Set<string> => {
+  const counts = new Map<string, number>();
+
+  document.querySelectorAll('#svgcontent image').forEach((image) => {
+    counts.set(image.id, (counts.get(image.id) ?? 0) + 1);
+  });
+
+  return new Set(Object.keys(imageSource).filter((id) => counts.get(id) === 1));
+};
+
 /** Sizes of what goes into the .beam file, so a crash can be tied to the document rather than guessed at. */
 const logInputSizes = (imageSource: Record<string, ArrayBuffer>, svgString: string): void => {
   const ids = Object.keys(imageSource);
@@ -103,7 +124,9 @@ export const toBlobPart = (buffer: Buffer) =>
 export const generateBeamChunks = async (): Promise<Buffer[]> =>
   withMemoryLog('generateBeamChunks', async () => {
     const imageSource = await withMemoryLog('generateBeamChunks: getImageSource', () => svgCanvas.getImageSource());
-    const svgString = withMemoryLogSync('generateBeamChunks: getSvgString', () => svgCanvas.getSvgString());
+    const svgString = withMemoryLogSync('generateBeamChunks: getSvgString', () =>
+      svgCanvas.getSvgString({ omitHrefIds: getRestorableImageIds(imageSource) }),
+    );
     const thumbnail = await withMemoryLog('generateBeamChunks: thumbnail', generateBeamThumbnail);
 
     logInputSizes(imageSource, svgString);
