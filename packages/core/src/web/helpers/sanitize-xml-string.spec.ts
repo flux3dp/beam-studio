@@ -1,11 +1,9 @@
 import sanitizeXmlString from './sanitize-xml-string';
 
 describe('sanitizeXmlString', () => {
-  test('returns the very same string when there is nothing to strip', () => {
+  test('leaves a string with nothing to strip unchanged', () => {
     const input = '<svg><image xlink:href="data:image/png;base64,AAAA"/></svg>';
 
-    // identity, not just equality: the no-op case must not copy, which is what makes it usable on
-    // a 100MB+ document
     expect(sanitizeXmlString(input)).toBe(input);
   });
 
