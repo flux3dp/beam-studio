@@ -8,12 +8,13 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import { resolveMaterialRef, resolveWithOverlay } from '@core/helpers/materials/material-apply';
 import { getPresetModel } from '@core/helpers/presets/preset-helper';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
-import type { Material, MaterialPreset } from '@core/interfaces/IMaterial';
+import type { Material, MaterialPreset, MaterialVariant } from '@core/interfaces/IMaterial';
 
 export interface AppliedMaterial {
   isModified: boolean;
   material: Material;
   preset: MaterialPreset;
+  variant?: MaterialVariant;
 }
 
 export interface AppliedMaterialState {
@@ -35,6 +36,7 @@ export const useAppliedMaterial = (): AppliedMaterialState => {
   const presetOverrides = useMaterialStore((s) => s.presetOverrides);
   const userMaterials = useMaterialStore((s) => s.userMaterials);
   const userPresets = useMaterialStore((s) => s.userPresets);
+  const userVariants = useMaterialStore((s) => s.userVariants);
   // The bundled catalog's thickness unit follows default-units — re-resolve on switch
   const isInch = useStorageStore((s) => s.isInch);
 
@@ -64,12 +66,18 @@ export const useAppliedMaterial = (): AppliedMaterialState => {
       return item !== undefined && item.value !== undefined && item.value !== value;
     });
 
+    // Variant-scoped presets carry their variant (catalog content or a user addition)
+    const variant = ref.preset.variantId
+      ? (ref.material.variants?.find(({ id }) => id === ref.preset.variantId) ??
+        userVariants.find(({ id }) => id === ref.preset.variantId))
+      : undefined;
+
     return {
-      applied: { isModified, material: ref.material, preset: ref.preset },
+      applied: { isModified, material: ref.material, preset: ref.preset, variant },
       isVarious: false,
     };
     // presetOverrides / userMaterials / userPresets / isInch are read inside resolveMaterialRef
     // and resolveWithOverlay via stores — kept as deps so edits re-derive the chip.
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [state, workarea, presetOverrides, userMaterials, userPresets, isInch]);
+  }, [state, workarea, presetOverrides, userMaterials, userPresets, userVariants, isInch]);
 };

@@ -6,139 +6,122 @@ import type { MaterialCategory } from '@core/interfaces/IMaterial';
  * from presets.ts at build time, so the two can never drift.
  */
 
-export interface BundledMaterialDef {
-  category: MaterialCategory;
+export interface BundledVariantDef {
   id: string;
-  /** i18n key under beambox.material_browser.catalog.materials.* */
-  nameKey: string;
-  /** Variant of another material: hidden from the grid, shown in the parent's thickness switcher */
-  parentId?: string;
-  tags?: string[];
   /**
    * Curated marketing fraction [numerator, denominator] from the legacy inch dropdown
    * labels (3mm → [1, 8] = ⅛″; 8mm corrected to [5, 16]), NOT a mm conversion.
-   * A generated material carries ONE authoritative unit — the builder emits either this
+   * A generated variant carries ONE authoritative unit — the builder emits either this
    * fraction or thicknessMm, picked by the user's default-units.
    */
   thicknessInch?: [number, number];
   thicknessMm?: number;
 }
 
+export interface BundledMaterialDef {
+  category: MaterialCategory;
+  id: string;
+  /** i18n key under beambox.material_browser.catalog.materials.* */
+  nameKey: string;
+  tags?: string[];
+  /** Thickness variants (one level only) — ALL thickness lives here, single-thickness materials get one variant */
+  variants?: BundledVariantDef[];
+}
+
 export interface PresetMapping {
-  /** Target material (or variant) id from materialDefs */
+  /** Target material id from materialDefs */
   materialId: string;
   /** i18n key under beambox.material_browser.catalog.presets.* */
   nameKey: string;
+  /** Scopes the preset to one variant; absent = applies to the whole material */
+  variantId?: string;
 }
 
 /* eslint-disable perfectionist/sort-objects */
 export const materialDefs: BundledMaterialDef[] = [
   // Wood
-  { id: 'wood', nameKey: 'wood', category: 'wood' },
-  { id: 'wood-3mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 3, thicknessInch: [1, 8] },
-  { id: 'wood-5mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 5, thicknessInch: [3, 16] },
-  { id: 'wood-7mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 7, thicknessInch: [1, 4] },
-  { id: 'wood-8mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 8, thicknessInch: [5, 16] },
-  { id: 'wood-10mm', nameKey: 'wood', category: 'wood', parentId: 'wood', thicknessMm: 10, thicknessInch: [3, 8] },
-  { id: 'mdf', nameKey: 'mdf', category: 'wood' },
-  { id: 'mdf-3mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 3, thicknessInch: [1, 8] },
-  { id: 'mdf-5mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 5, thicknessInch: [3, 16] },
-  { id: 'mdf-7mm', nameKey: 'mdf', category: 'wood', parentId: 'mdf', thicknessMm: 7, thicknessInch: [1, 4] },
-  { id: 'bamboo', nameKey: 'bamboo', category: 'wood' },
-  { id: 'bamboo-2mm', nameKey: 'bamboo', category: 'wood', parentId: 'bamboo', thicknessMm: 2, thicknessInch: [5, 64] },
-  { id: 'bamboo-5mm', nameKey: 'bamboo', category: 'wood', parentId: 'bamboo', thicknessMm: 5, thicknessInch: [3, 16] },
+  {
+    id: 'wood',
+    nameKey: 'wood',
+    category: 'wood',
+    variants: [
+      { id: 'wood-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
+      { id: 'wood-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
+      { id: 'wood-7mm', thicknessMm: 7, thicknessInch: [1, 4] },
+      { id: 'wood-8mm', thicknessMm: 8, thicknessInch: [5, 16] },
+      { id: 'wood-10mm', thicknessMm: 10, thicknessInch: [3, 8] },
+    ],
+  },
+  {
+    id: 'mdf',
+    nameKey: 'mdf',
+    category: 'wood',
+    variants: [
+      { id: 'mdf-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
+      { id: 'mdf-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
+      { id: 'mdf-7mm', thicknessMm: 7, thicknessInch: [1, 4] },
+    ],
+  },
+  {
+    id: 'bamboo',
+    nameKey: 'bamboo',
+    category: 'wood',
+    variants: [
+      { id: 'bamboo-2mm', thicknessMm: 2, thicknessInch: [5, 64] },
+      { id: 'bamboo-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
+    ],
+  },
   { id: 'cork', nameKey: 'cork', category: 'wood' },
   // Acrylic
-  { id: 'acrylic', nameKey: 'acrylic', category: 'acrylic' },
   {
-    id: 'acrylic-3mm',
+    id: 'acrylic',
     nameKey: 'acrylic',
     category: 'acrylic',
-    parentId: 'acrylic',
-    thicknessMm: 3,
-    thicknessInch: [1, 8],
+    variants: [
+      { id: 'acrylic-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
+      { id: 'acrylic-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
+      { id: 'acrylic-7mm', thicknessMm: 7, thicknessInch: [1, 4] },
+      { id: 'acrylic-8mm', thicknessMm: 8, thicknessInch: [5, 16] },
+      { id: 'acrylic-10mm', thicknessMm: 10, thicknessInch: [3, 8] },
+    ],
   },
   {
-    id: 'acrylic-5mm',
-    nameKey: 'acrylic',
-    category: 'acrylic',
-    parentId: 'acrylic',
-    thicknessMm: 5,
-    thicknessInch: [3, 16],
-  },
-  {
-    id: 'acrylic-7mm',
-    nameKey: 'acrylic',
-    category: 'acrylic',
-    parentId: 'acrylic',
-    thicknessMm: 7,
-    thicknessInch: [1, 4],
-  },
-  {
-    id: 'acrylic-8mm',
-    nameKey: 'acrylic',
-    category: 'acrylic',
-    parentId: 'acrylic',
-    thicknessMm: 8,
-    thicknessInch: [5, 16],
-  },
-  {
-    id: 'acrylic-10mm',
-    nameKey: 'acrylic',
-    category: 'acrylic',
-    parentId: 'acrylic',
-    thicknessMm: 10,
-    thicknessInch: [3, 8],
-  },
-  { id: 'black-acrylic', nameKey: 'black_acrylic', category: 'acrylic' },
-  {
-    id: 'black-acrylic-3mm',
+    id: 'black-acrylic',
     nameKey: 'black_acrylic',
     category: 'acrylic',
-    parentId: 'black-acrylic',
-    thicknessMm: 3,
-    thicknessInch: [1, 8],
-  },
-  {
-    id: 'black-acrylic-5mm',
-    nameKey: 'black_acrylic',
-    category: 'acrylic',
-    parentId: 'black-acrylic',
-    thicknessMm: 5,
-    thicknessInch: [3, 16],
+    variants: [
+      { id: 'black-acrylic-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
+      { id: 'black-acrylic-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
+    ],
   },
   { id: 'opaque-acrylic', nameKey: 'opaque_acrylic', category: 'acrylic' },
   // Leather
-  { id: 'leather', nameKey: 'leather', category: 'leather' },
   {
-    id: 'leather-3mm',
+    id: 'leather',
     nameKey: 'leather',
     category: 'leather',
-    parentId: 'leather',
-    thicknessMm: 3,
-    thicknessInch: [1, 8],
-  },
-  {
-    id: 'leather-5mm',
-    nameKey: 'leather',
-    category: 'leather',
-    parentId: 'leather',
-    thicknessMm: 5,
-    thicknessInch: [3, 16],
+    variants: [
+      { id: 'leather-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
+      { id: 'leather-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
+    ],
   },
   { id: 'gloss-leather', nameKey: 'gloss_leather', category: 'leather' },
   // Fabric-like (no dedicated category; PRD fixed set → other)
-  { id: 'fabric', nameKey: 'fabric', category: 'other' },
-  { id: 'fabric-3mm', nameKey: 'fabric', category: 'other', parentId: 'fabric', thicknessMm: 3, thicknessInch: [1, 8] },
   {
-    id: 'fabric-5mm',
+    id: 'fabric',
     nameKey: 'fabric',
     category: 'other',
-    parentId: 'fabric',
-    thicknessMm: 5,
-    thicknessInch: [3, 16],
+    variants: [
+      { id: 'fabric-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
+      { id: 'fabric-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
+    ],
   },
-  { id: 'denim', nameKey: 'denim', category: 'other', thicknessMm: 1, thicknessInch: [1, 32] },
+  {
+    id: 'denim',
+    nameKey: 'denim',
+    category: 'other',
+    variants: [{ id: 'denim-1mm', thicknessMm: 1, thicknessInch: [1, 32] }],
+  },
   { id: 'canvas', nameKey: 'canvas', category: 'other' },
   { id: 'canvas-fabric', nameKey: 'canvas_fabric', category: 'other' },
   // Paper
@@ -172,46 +155,46 @@ export const materialDefs: BundledMaterialDef[] = [
  */
 export const presetMappings: Record<string, PresetMapping> = {
   // Wood
-  wood_3mm_cutting: { materialId: 'wood-3mm', nameKey: 'cutting' },
-  wood_5mm_cutting: { materialId: 'wood-5mm', nameKey: 'cutting' },
-  wood_7mm_cutting: { materialId: 'wood-7mm', nameKey: 'cutting' },
-  wood_8mm_cutting: { materialId: 'wood-8mm', nameKey: 'cutting' },
-  wood_10mm_cutting: { materialId: 'wood-10mm', nameKey: 'cutting' },
+  wood_3mm_cutting: { materialId: 'wood', variantId: 'wood-3mm', nameKey: 'cutting' },
+  wood_5mm_cutting: { materialId: 'wood', variantId: 'wood-5mm', nameKey: 'cutting' },
+  wood_7mm_cutting: { materialId: 'wood', variantId: 'wood-7mm', nameKey: 'cutting' },
+  wood_8mm_cutting: { materialId: 'wood', variantId: 'wood-8mm', nameKey: 'cutting' },
+  wood_10mm_cutting: { materialId: 'wood', variantId: 'wood-10mm', nameKey: 'cutting' },
   wood_engraving: { materialId: 'wood', nameKey: 'engraving' },
   wood_printing: { materialId: 'wood', nameKey: 'printing' },
-  mdf_3mm_cutting: { materialId: 'mdf-3mm', nameKey: 'cutting' },
-  mdf_5mm_cutting: { materialId: 'mdf-5mm', nameKey: 'cutting' },
-  mdf_7mm_cutting: { materialId: 'mdf-7mm', nameKey: 'cutting' },
+  mdf_3mm_cutting: { materialId: 'mdf', variantId: 'mdf-3mm', nameKey: 'cutting' },
+  mdf_5mm_cutting: { materialId: 'mdf', variantId: 'mdf-5mm', nameKey: 'cutting' },
+  mdf_7mm_cutting: { materialId: 'mdf', variantId: 'mdf-7mm', nameKey: 'cutting' },
   mdf_engraving: { materialId: 'mdf', nameKey: 'engraving' },
   mdf_printing: { materialId: 'mdf', nameKey: 'printing' },
-  bamboo_2mm_cutting: { materialId: 'bamboo-2mm', nameKey: 'cutting' },
-  bamboo_5mm_cutting: { materialId: 'bamboo-5mm', nameKey: 'cutting' },
+  bamboo_2mm_cutting: { materialId: 'bamboo', variantId: 'bamboo-2mm', nameKey: 'cutting' },
+  bamboo_5mm_cutting: { materialId: 'bamboo', variantId: 'bamboo-5mm', nameKey: 'cutting' },
   bamboo_printing: { materialId: 'bamboo', nameKey: 'printing' },
   cork_printing: { materialId: 'cork', nameKey: 'printing' },
   // Acrylic
-  acrylic_3mm_cutting: { materialId: 'acrylic-3mm', nameKey: 'cutting' },
-  acrylic_5mm_cutting: { materialId: 'acrylic-5mm', nameKey: 'cutting' },
-  acrylic_7mm_cutting: { materialId: 'acrylic-7mm', nameKey: 'cutting' },
-  acrylic_8mm_cutting: { materialId: 'acrylic-8mm', nameKey: 'cutting' },
-  acrylic_10mm_cutting: { materialId: 'acrylic-10mm', nameKey: 'cutting' },
+  acrylic_3mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-3mm', nameKey: 'cutting' },
+  acrylic_5mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-5mm', nameKey: 'cutting' },
+  acrylic_7mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-7mm', nameKey: 'cutting' },
+  acrylic_8mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-8mm', nameKey: 'cutting' },
+  acrylic_10mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-10mm', nameKey: 'cutting' },
   acrylic_engraving: { materialId: 'acrylic', nameKey: 'engraving' },
   acrylic_printing: { materialId: 'acrylic', nameKey: 'printing' },
-  black_acrylic_3mm_cutting: { materialId: 'black-acrylic-3mm', nameKey: 'cutting' },
-  black_acrylic_5mm_cutting: { materialId: 'black-acrylic-5mm', nameKey: 'cutting' },
+  black_acrylic_3mm_cutting: { materialId: 'black-acrylic', variantId: 'black-acrylic-3mm', nameKey: 'cutting' },
+  black_acrylic_5mm_cutting: { materialId: 'black-acrylic', variantId: 'black-acrylic-5mm', nameKey: 'cutting' },
   black_acrylic_engraving: { materialId: 'black-acrylic', nameKey: 'engraving' },
   opaque_acrylic: { materialId: 'opaque-acrylic', nameKey: 'marking' },
   // Leather
-  leather_3mm_cutting: { materialId: 'leather-3mm', nameKey: 'cutting' },
-  leather_5mm_cutting: { materialId: 'leather-5mm', nameKey: 'cutting' },
+  leather_3mm_cutting: { materialId: 'leather', variantId: 'leather-3mm', nameKey: 'cutting' },
+  leather_5mm_cutting: { materialId: 'leather', variantId: 'leather-5mm', nameKey: 'cutting' },
   leather_engraving: { materialId: 'leather', nameKey: 'engraving' },
   leather_printing: { materialId: 'leather', nameKey: 'printing' },
   gloss_leather_printing: { materialId: 'gloss-leather', nameKey: 'printing' },
   // Fabric-like
-  fabric_3mm_cutting: { materialId: 'fabric-3mm', nameKey: 'cutting' },
-  fabric_5mm_cutting: { materialId: 'fabric-5mm', nameKey: 'cutting' },
+  fabric_3mm_cutting: { materialId: 'fabric', variantId: 'fabric-3mm', nameKey: 'cutting' },
+  fabric_5mm_cutting: { materialId: 'fabric', variantId: 'fabric-5mm', nameKey: 'cutting' },
   fabric_engraving: { materialId: 'fabric', nameKey: 'engraving' },
   fabric_printing: { materialId: 'fabric', nameKey: 'printing' },
-  denim_1mm_cutting: { materialId: 'denim', nameKey: 'cutting' },
+  denim_1mm_cutting: { materialId: 'denim', variantId: 'denim-1mm', nameKey: 'cutting' },
   canvas_printing: { materialId: 'canvas', nameKey: 'printing' },
   canvas_fabric_printing: { materialId: 'canvas-fabric', nameKey: 'printing' },
   // Paper

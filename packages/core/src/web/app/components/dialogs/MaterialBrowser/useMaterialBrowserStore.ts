@@ -17,6 +17,7 @@ export interface PresetEditorState {
   mode: 'add' | 'edit';
   open: boolean;
   presetId?: string;
+  variantId?: string;
 }
 
 const getDefaultState = () => ({

@@ -34,10 +34,9 @@ export const showMaterialBrowser = ({ module, writeLayers = true }: ShowMaterial
 
   useMaterialBrowserStore.getState().reset({
     activeTab: currentRef?.material.category ?? 'wood',
-    // Variants open through their parent's detail view with the variant pre-selected
-    detailMaterialId: currentRef ? (currentRef.material.parentId ?? currentRef.material.id) : null,
+    detailMaterialId: currentRef?.material.id ?? null,
     module,
-    selectedVariantId: currentRef?.material.parentId ? currentRef.material.id : null,
+    selectedVariantId: currentRef?.preset.variantId ?? null,
     writeLayers,
   });
 

@@ -35,7 +35,7 @@ describe('materialCatalogCache', () => {
     const hit = materialCatalogCache.findPresetById('wood_3mm_cutting');
 
     expect(hit).not.toBeNull();
-    expect(hit!.material.id).toBe('wood-3mm');
+    expect(hit!.material.id).toBe('wood');
     expect(hit!.preset.legacyKey).toBe('wood_3mm_cutting');
 
     expect(materialCatalogCache.findPresetById('nope')).toBeNull();

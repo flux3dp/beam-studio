@@ -1,7 +1,7 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { Material } from '@core/interfaces/IMaterial';
 
-import { getPresetsForContext, getVariants, getVisibleMaterials, searchMaterials } from './selectors';
+import { getPresetsForContext, getSortedVariants, getVisibleMaterials, searchMaterials } from './selectors';
 
 const material = (overrides: Partial<Material> & { id: string }): Material => ({
   category: 'wood',
@@ -10,15 +10,14 @@ const material = (overrides: Partial<Material> & { id: string }): Material => ({
 });
 
 describe('getVisibleMaterials', () => {
-  test('excludes variants and region-gated materials', () => {
+  test('excludes region-gated materials', () => {
     const materials = [
-      material({ id: 'parent' }),
-      material({ id: 'child', parentId: 'parent' }),
+      material({ id: 'global' }),
       material({ id: 'us-only', regions: ['us'] }),
       material({ id: 'tw-only', regions: ['tw'] }),
     ];
 
-    expect(getVisibleMaterials(materials, 'us').map(({ id }) => id)).toEqual(['parent', 'us-only']);
+    expect(getVisibleMaterials(materials, 'us').map(({ id }) => id)).toEqual(['global', 'us-only']);
   });
 });
 
@@ -44,104 +43,127 @@ describe('searchMaterials', () => {
   });
 });
 
-describe('getVariants', () => {
-  test('children grouped by unit (mm first), each sorted by resolved thickness', () => {
-    const parent = material({ id: 'wood' });
-    const all = [
-      parent,
-      material({ id: 'wood-8mm', parentId: 'wood', thicknessNum: 8, thicknessUnit: 'mm' }),
-      // 1/4″ < 3/16″? no — fraction resolution puts 3/16 (0.1875) before 1/4 (0.25)
-      material({ id: 'wood-quarter', parentId: 'wood', thicknessDen: 4, thicknessNum: 1, thicknessUnit: 'inch' }),
-      material({ id: 'wood-3-16', parentId: 'wood', thicknessDen: 16, thicknessNum: 3, thicknessUnit: 'inch' }),
-      material({ id: 'wood-3mm', parentId: 'wood', thicknessNum: 3, thicknessUnit: 'mm' }),
-      material({ id: 'other' }),
+describe('getSortedVariants', () => {
+  test('merges user additions, grouped by unit (mm first), each sorted by resolved thickness', () => {
+    const wood = material({
+      id: 'wood',
+      variants: [
+        { id: 'wood-8mm', thicknessNum: 8, thicknessUnit: 'mm' },
+        // Fraction resolution puts 3/16 (0.1875) before 1/4 (0.25)
+        { id: 'wood-quarter', thicknessDen: 4, thicknessNum: 1, thicknessUnit: 'inch' },
+        { id: 'wood-3-16', thicknessDen: 16, thicknessNum: 3, thicknessUnit: 'inch' },
+        { id: 'wood-3mm', thicknessNum: 3, thicknessUnit: 'mm' },
+      ],
+    });
+    // User variants attach to ANY material and sort into place; other owners filtered out
+    const userVariants = [
+      { id: 'user-6mm', materialId: 'wood', thicknessNum: 6, thicknessUnit: 'mm' as const },
+      { id: 'other-2mm', materialId: 'mdf', thicknessNum: 2, thicknessUnit: 'mm' as const },
     ];
 
-    expect(getVariants(parent, all).map(({ id }) => id)).toEqual([
+    expect(getSortedVariants(wood, userVariants).map(({ id }) => id)).toEqual([
       'wood-3mm',
+      'user-6mm',
       'wood-8mm',
       'wood-3-16',
       'wood-quarter',
     ]);
+    expect(getSortedVariants(material({ id: 'bare' }), [])).toEqual([]);
   });
 });
 
 describe('getPresetsForContext', () => {
-  const parent = material({
+  const wood = material({
     id: 'wood',
-    presets: [
-      {
-        id: 'wood_engraving',
-        legacyKey: 'wood_engraving',
-        origin: 'default',
-        settings: { fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } } },
-      },
-    ],
-  });
-  const variant = material({
-    id: 'wood-3mm',
-    parentId: 'wood',
     presets: [
       {
         id: 'wood_3mm_cutting',
         legacyKey: 'wood_3mm_cutting',
         origin: 'default',
         settings: { fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } } },
+        variantId: 'wood-3mm',
+      },
+      {
+        id: 'wood_5mm_cutting',
+        legacyKey: 'wood_5mm_cutting',
+        origin: 'default',
+        settings: { fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 4 } } },
+        variantId: 'wood-5mm',
+      },
+      {
+        id: 'wood_engraving',
+        legacyKey: 'wood_engraving',
+        origin: 'default',
+        settings: { fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } } },
       },
       {
         id: 'user_1',
         name: 'My Cut',
         origin: 'user',
         settings: { '*': { '*': { power: 80, speed: 5 } } },
+        variantId: 'wood-3mm',
       },
     ],
-    thicknessNum: 3,
-    thicknessUnit: 'mm',
+    variants: [
+      { id: 'wood-3mm', thicknessNum: 3, thicknessUnit: 'mm' },
+      { id: 'wood-5mm', thicknessNum: 5, thicknessUnit: 'mm' },
+    ],
   });
   const emptyUserData = { disabledPresetIds: [], presetOverrides: {}, userPresets: [] };
 
-  test('resolves one material; unresolvable contexts dropped; rows carry the owner id', () => {
-    const rows = getPresetsForContext(variant, 'fbb2', LayerModule.LASER_UNIVERSAL, emptyUserData);
+  test('variant filter: scoped presets match their variant, material-wide always shows', () => {
+    const rows3 = getPresetsForContext(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, emptyUserData, 'wood-3mm');
 
-    expect(rows.map(({ presetId }) => presetId)).toEqual(['wood_3mm_cutting', 'user_1']);
-    expect(rows[0].values.power).toBe(55);
-    expect(rows[0].state).toBe('default');
-    expect(rows[0].materialId).toBe('wood-3mm');
-    expect(rows[1].state).toBe('user');
+    expect(rows3.map(({ presetId }) => presetId)).toEqual(['wood_3mm_cutting', 'wood_engraving', 'user_1']);
+    expect(rows3[0].values.power).toBe(55);
+    expect(rows3[0].state).toBe('default');
+    expect(rows3[0].materialId).toBe('wood');
 
     expect(
-      getPresetsForContext(parent, 'fbb2', LayerModule.LASER_UNIVERSAL, emptyUserData).map(
-        ({ materialId }) => materialId,
+      getPresetsForContext(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, emptyUserData, 'wood-5mm').map(
+        ({ presetId }) => presetId,
       ),
-    ).toEqual(['wood']);
+    ).toEqual(['wood_5mm_cutting', 'wood_engraving']);
 
+    // No variant given → every preset of the material (support checks, row lookups)
+    expect(getPresetsForContext(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, emptyUserData)).toHaveLength(4);
+  });
+
+  test('unresolvable contexts dropped', () => {
     // ado1 has no scopes for the default presets; only the wildcard user preset survives
-    const adoRows = getPresetsForContext(variant, 'ado1', LayerModule.LASER_10W_DIODE, emptyUserData);
+    const adoRows = getPresetsForContext(wood, 'ado1', LayerModule.LASER_10W_DIODE, emptyUserData, 'wood-3mm');
 
     expect(adoRows.map(({ presetId }) => presetId)).toEqual(['user_1']);
   });
 
   test('user presets on the material are appended after its own presets', () => {
-    const rows = getPresetsForContext(variant, 'fbb2', LayerModule.LASER_UNIVERSAL, {
-      ...emptyUserData,
-      userPresets: [
-        { id: 'other_1', materialId: 'wood', name: 'Other', origin: 'user', settings: { '*': { '*': { power: 1 } } } },
-        {
-          id: 'added_1',
-          materialId: 'wood-3mm',
-          name: 'Added',
-          origin: 'user',
-          settings: { '*': { '*': { power: 9 } } },
-        },
-      ],
-    });
+    const rows = getPresetsForContext(
+      wood,
+      'fbb2',
+      LayerModule.LASER_UNIVERSAL,
+      {
+        ...emptyUserData,
+        userPresets: [
+          { id: 'other_1', materialId: 'mdf', name: 'Other', origin: 'user', settings: { '*': { '*': { power: 1 } } } },
+          {
+            id: 'added_1',
+            materialId: 'wood',
+            name: 'Added',
+            origin: 'user',
+            settings: { '*': { '*': { power: 9 } } },
+            variantId: 'wood-3mm',
+          },
+        ],
+      },
+      'wood-3mm',
+    );
 
     // Only this material's user presets; other owners filtered out
-    expect(rows.map(({ presetId }) => presetId)).toEqual(['wood_3mm_cutting', 'user_1', 'added_1']);
+    expect(rows.map(({ presetId }) => presetId)).toEqual(['wood_3mm_cutting', 'wood_engraving', 'user_1', 'added_1']);
   });
 
   test('customized overlay merges values and flips state', () => {
-    const rows = getPresetsForContext(variant, 'fbb2', LayerModule.LASER_UNIVERSAL, {
+    const rows = getPresetsForContext(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, {
       ...emptyUserData,
       presetOverrides: { wood_3mm_cutting: { '*': { '*': { name: 'Tuned Cut', power: 60 } } } },
     });
@@ -154,7 +176,7 @@ describe('getPresetsForContext', () => {
   });
 
   test('disabled presets flagged but still listed', () => {
-    const rows = getPresetsForContext(parent, 'fbb2', LayerModule.LASER_UNIVERSAL, {
+    const rows = getPresetsForContext(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, {
       ...emptyUserData,
       disabledPresetIds: ['wood_engraving'],
     });

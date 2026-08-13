@@ -5,7 +5,7 @@ import { Button, Empty } from 'antd';
 import { sprintf } from 'sprintf-js';
 
 import { useMaterialStore } from '@core/app/stores/materialStore';
-import { getVariants } from '@core/helpers/api/material-catalog/selectors';
+import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
 import useI18n from '@core/helpers/useI18n';
 import type { Material } from '@core/interfaces/IMaterial';
 
@@ -14,16 +14,16 @@ import MaterialCard from './MaterialCard';
 import { useMaterialBrowserStore } from './useMaterialBrowserStore';
 
 interface CatalogGridProps {
-  allMaterials: Material[];
   machineLabel: string;
   materials: Material[];
+  /** Materials with presets usable in the current machine context; others render dimmed */
   supportedIds: Set<string>;
 }
 
-const CatalogGrid = ({ allMaterials, machineLabel, materials, supportedIds }: CatalogGridProps): React.JSX.Element => {
+const CatalogGrid = ({ machineLabel, materials, supportedIds }: CatalogGridProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const { activeTab, openDetail, openMaterialEditor, query } = useMaterialBrowserStore();
-  const { favorites, toggleFavorite } = useMaterialStore();
+  const { favorites, toggleFavorite, userVariants } = useMaterialStore();
 
   if (materials.length === 0) {
     const description =
@@ -54,7 +54,7 @@ const CatalogGrid = ({ allMaterials, machineLabel, materials, supportedIds }: Ca
           material={material}
           onOpen={openDetail}
           onToggleFavorite={toggleFavorite}
-          variantCount={getVariants(material, allMaterials).length}
+          variants={getSortedVariants(material, userVariants)}
         />
       ))}
     </div>

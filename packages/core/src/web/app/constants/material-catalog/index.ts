@@ -2,7 +2,13 @@ import { presets as defaultPresets } from '@core/app/constants/presets';
 import { dpiValueMap, type EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import type { Preset } from '@core/interfaces/ILayerConfig';
-import type { Material, MaterialCatalog, MaterialPreset, PresetValues } from '@core/interfaces/IMaterial';
+import type {
+  Material,
+  MaterialCatalog,
+  MaterialPreset,
+  MaterialVariant,
+  PresetValues,
+} from '@core/interfaces/IMaterial';
 
 import { materialDefs, presetMappings } from './mapping';
 
@@ -57,7 +63,14 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
       }
     }
 
-    result.push({ id: key, legacyKey: key, nameKey: mapping.nameKey, origin: 'default', settings });
+    result.push({
+      id: key,
+      legacyKey: key,
+      nameKey: mapping.nameKey,
+      origin: 'default',
+      settings,
+      ...(mapping.variantId && { variantId: mapping.variantId }),
+    });
 
     // D19: each override tier above the base becomes its own "(Quality)" entry, scoped to
     // the models that actually curate that tier. Values (incl. dpiOverrides) stay identical
@@ -82,6 +95,7 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
         nameKey: mapping.nameKey,
         origin: 'default',
         settings: qualitySettings,
+        ...(mapping.variantId && { variantId: mapping.variantId }),
       });
     }
   }
@@ -109,24 +123,30 @@ export const getBundledCatalog = (): MaterialCatalog => {
 
   if (cached) return cached;
 
-  const materials: Material[] = materialDefs.map(
-    ({ category, id, nameKey, parentId, tags, thicknessInch, thicknessMm }) => {
-      const thickness = isInch
-        ? thicknessInch && { thicknessDen: thicknessInch[1], thicknessNum: thicknessInch[0], thicknessUnit: unit }
-        : thicknessMm !== undefined && { thicknessNum: thicknessMm, thicknessUnit: unit };
+  const toThickness = ({
+    thicknessInch,
+    thicknessMm,
+  }: {
+    thicknessInch?: [number, number];
+    thicknessMm?: number;
+  }): Pick<MaterialVariant, 'thicknessDen' | 'thicknessNum' | 'thicknessUnit'> | undefined =>
+    isInch
+      ? thicknessInch && { thicknessDen: thicknessInch[1], thicknessNum: thicknessInch[0], thicknessUnit: unit }
+      : thicknessMm !== undefined
+        ? { thicknessNum: thicknessMm, thicknessUnit: unit }
+        : undefined;
 
-      return {
-        category,
-        id,
-        nameKey,
-        ...(parentId && { parentId }),
-        presets: buildPresetsForMaterial(id),
-        ...(tags && { tags }),
-        ...thickness,
-        // `source` omitted: absent means catalog content (see Material.source)
-      };
-    },
-  );
+  const materials: Material[] = materialDefs.map(({ category, id, nameKey, tags, variants }) => ({
+    category,
+    id,
+    nameKey,
+    presets: buildPresetsForMaterial(id),
+    ...(tags && { tags }),
+    ...(variants && {
+      variants: variants.map(({ id: variantId, ...rest }) => ({ id: variantId, ...toThickness(rest) })),
+    }),
+    // `source` omitted: absent means catalog content (see Material.source)
+  }));
 
   bundledCatalogs[unit] = { materials, publishedAt: '2026-08-07T00:00:00Z', version: 0 };
 

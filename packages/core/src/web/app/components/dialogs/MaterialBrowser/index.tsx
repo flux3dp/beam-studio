@@ -21,7 +21,6 @@ import {
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
 import {
   getPresetsForContext,
-  getVariants,
   getVisibleMaterials,
   searchMaterials,
 } from '@core/helpers/api/material-catalog/selectors';
@@ -97,13 +96,11 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
       const ordered: Material[] = [];
 
       for (const { materialId } of recents) {
-        // Variants surface as their top-level parent in the recents grid
         const material = allMaterials.find(({ id }) => id === materialId);
-        const top = material?.parentId ? allMaterials.find(({ id }) => id === material.parentId) : material;
 
-        if (top && !seen.has(top.id) && visibleMaterials.includes(top)) {
-          seen.add(top.id);
-          ordered.push(top);
+        if (material && !seen.has(material.id) && visibleMaterials.includes(material)) {
+          seen.add(material.id);
+          ordered.push(material);
         }
       }
 
@@ -113,16 +110,17 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
     return visibleMaterials.filter(({ category }) => category === activeTab);
   }, [searching, searchResults, activeTab, visibleMaterials, favorites, recents, allMaterials]);
 
-  // Materials with at least one preset (own, variant, or user-attached) resolvable in the
-  // current machine context; the rest stay visible but dimmed and sorted last (TODO #7c)
+  // Materials with at least one preset (own or user-attached) resolvable in the current
+  // machine context; the rest stay visible but dimmed and sorted last (TODO #7c)
   const supportedIds = useMemo(() => {
     const userData = { disabledPresetIds, presetOverrides, userPresets };
-    const hasRows = (candidate: Material) => getPresetsForContext(candidate, model, module, userData).length > 0;
 
     return new Set(
-      visibleMaterials.filter((top) => [top, ...getVariants(top, allMaterials)].some(hasRows)).map(({ id }) => id),
+      visibleMaterials
+        .filter((material) => getPresetsForContext(material, model, module, userData).length > 0)
+        .map(({ id }) => id),
     );
-  }, [visibleMaterials, allMaterials, model, module, disabledPresetIds, presetOverrides, userPresets]);
+  }, [visibleMaterials, model, module, disabledPresetIds, presetOverrides, userPresets]);
   const sortedGridMaterials = useMemo(
     () => [...gridMaterials].sort((a, b) => Number(supportedIds.has(b.id)) - Number(supportedIds.has(a.id))),
     [gridMaterials, supportedIds],
@@ -187,7 +185,6 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
       {detailMaterial ? (
         <div className={styles['scroll-area']}>
           <MaterialDetail
-            allMaterials={allMaterials}
             machineLabel={machineLabel}
             material={detailMaterial}
             model={model}
@@ -207,17 +204,17 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
             visibleMaterials={visibleMaterials}
           />
           <div className={styles['scroll-area']}>
-            <CatalogGrid
-              allMaterials={allMaterials}
-              machineLabel={machineLabel}
-              materials={sortedGridMaterials}
-              supportedIds={supportedIds}
-            />
+            <CatalogGrid machineLabel={machineLabel} materials={sortedGridMaterials} supportedIds={supportedIds} />
           </div>
         </>
       )}
       <MaterialEditorModal region={region} />
-      <PresetEditorModal editingRow={editingRow} model={model} module={module} />
+      <PresetEditorModal
+        editingRow={editingRow}
+        material={allMaterials.find(({ id }) => id === presetEditor.materialId)}
+        model={model}
+        module={module}
+      />
       {presetEditor.open && presetEditor.presetId === 'from-layer' && (
         <ShowAddFromLayerOnce materialId={presetEditor.materialId} />
       )}

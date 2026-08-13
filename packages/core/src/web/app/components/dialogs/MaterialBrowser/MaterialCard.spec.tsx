@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import type { Material } from '@core/interfaces/IMaterial';
+import type { Material, MaterialVariant } from '@core/interfaces/IMaterial';
 
 import MaterialCard from './MaterialCard';
 
@@ -12,9 +12,9 @@ const material: Material = {
   name: 'Glitter Acrylic',
   presets: [],
   tags: ['Premium', 'FLUX Shop'],
-  thicknessNum: 3,
-  thicknessUnit: 'mm',
 };
+
+const mmVariant: MaterialVariant = { id: 'glitter-3mm', thicknessNum: 3, thicknessUnit: 'mm' };
 
 describe('MaterialCard', () => {
   const onOpen = jest.fn();
@@ -22,14 +22,14 @@ describe('MaterialCard', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  test('renders with metric thickness badge', () => {
+  test('single variant shows its thickness badge', () => {
     const { container, getByText } = render(
       <MaterialCard
         isFavorite={false}
         material={material}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        variantCount={1}
+        variants={[mmVariant]}
       />,
     );
 
@@ -37,18 +37,35 @@ describe('MaterialCard', () => {
     expect(container).toMatchSnapshot();
   });
 
-  test('inch material shows its fraction; multiple variants add the count', () => {
-    const { getByText } = render(
+  test('inch variant shows its fraction; several variants show the count instead', () => {
+    const { getByText, queryByText, rerender } = render(
       <MaterialCard
         isFavorite
-        material={{ ...material, thicknessDen: 8, thicknessNum: 1, thicknessUnit: 'inch' }}
+        material={material}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        variantCount={3}
+        variants={[{ id: 'v1', thicknessDen: 8, thicknessNum: 1, thicknessUnit: 'inch' }]}
       />,
     );
 
-    expect(getByText('⅛″ · 3 variants')).toBeInTheDocument();
+    expect(getByText('⅛″')).toBeInTheDocument();
+
+    rerender(
+      <MaterialCard
+        isFavorite
+        material={material}
+        onOpen={onOpen}
+        onToggleFavorite={onToggleFavorite}
+        variants={[
+          mmVariant,
+          { id: 'v2', thicknessNum: 5, thicknessUnit: 'mm' },
+          { id: 'v3', thicknessNum: 7, thicknessUnit: 'mm' },
+        ]}
+      />,
+    );
+
+    expect(getByText('3 variants')).toBeInTheDocument();
+    expect(queryByText('3 mm')).not.toBeInTheDocument();
   });
 
   test('dimmed card carries the de-emphasis class', () => {
@@ -59,21 +76,21 @@ describe('MaterialCard', () => {
         material={material}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        variantCount={1}
+        variants={[mmVariant]}
       />,
     );
 
     expect(getByTestId('material-card-glitter').className).toContain('dimmed');
   });
 
-  test('badge hidden for unset thickness (D18)', () => {
+  test('badge hidden without variants (D18)', () => {
     const { queryByText } = render(
       <MaterialCard
         isFavorite={false}
-        material={{ ...material, thicknessNum: undefined, thicknessUnit: undefined }}
+        material={material}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        variantCount={1}
+        variants={[]}
       />,
     );
 
@@ -87,7 +104,7 @@ describe('MaterialCard', () => {
         material={material}
         onOpen={onOpen}
         onToggleFavorite={onToggleFavorite}
-        variantCount={1}
+        variants={[mmVariant]}
       />,
     );
 

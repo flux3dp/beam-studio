@@ -1,9 +1,9 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { PictureOutlined } from '@ant-design/icons';
 import { Col, ColorPicker, Form, Input, InputNumber, Modal, Row, Segmented, Space, Upload } from 'antd';
 
-import { CATEGORY_COLORS, MATERIAL_CATEGORIES, MY_MATERIALS_ID } from '@core/app/constants/material-catalog/constants';
+import { CATEGORY_COLORS, MATERIAL_CATEGORIES } from '@core/app/constants/material-catalog/constants';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
 import Select from '@core/app/widgets/AntdSelect';
@@ -76,7 +76,6 @@ const fileToCoverDataUrl = async (file: File): Promise<string> =>
 interface FormValues {
   category: MaterialCategory;
   name: string;
-  parentId?: string;
   tags?: string[];
   thicknessDen?: number;
   thicknessNum?: number;
@@ -90,7 +89,7 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
   const t = useI18n().beambox.material_browser;
   const [form] = Form.useForm<FormValues>();
   const { closeEditors, materialEditor, setActiveTab } = useMaterialBrowserStore();
-  const { addMaterial, updateMaterial, userMaterials } = useMaterialStore();
+  const { addMaterial, addVariant, updateMaterial, userMaterials } = useMaterialStore();
   const editing =
     materialEditor.mode === 'edit' ? userMaterials.find(({ id }) => id === materialEditor.materialId) : undefined;
 
@@ -109,15 +108,11 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
       form.setFieldsValue({
         category: editing.category,
         name: getMaterialDisplayName(editing),
-        parentId: editing.parentId,
         tags: editing.tags,
-        thicknessDen: editing.thicknessDen,
-        thicknessNum: editing.thicknessNum,
       });
       setAppearance(editing.image ? 'image' : 'color');
       setColor(editing.coverColor ?? CATEGORY_COLORS[editing.category]);
       setImage(editing.image);
-      setUnit(editing.thicknessUnit ?? regionUnit);
     } else {
       form.resetFields();
       setAppearance('color');
@@ -128,40 +123,34 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [materialEditor.open]);
 
-  const parentOptions = useMemo(
-    () =>
-      userMaterials
-        .filter(({ id, parentId }) => !parentId && id !== MY_MATERIALS_ID && id !== editing?.id)
-        .map((material) => ({ label: getMaterialDisplayName(material), value: material.id })),
-    [userMaterials, editing],
-  );
-
   if (!materialEditor.open) return null;
 
   const handleOk = async () => {
     const values = await form.validateFields();
+    // Thickness stores the fraction in the chosen authoritative unit; unset num = no thickness
+    const thickness = {
+      thicknessDen: values.thicknessNum && unit === 'inch' ? values.thicknessDen : undefined,
+      thicknessNum: values.thicknessNum || undefined,
+      thicknessUnit: values.thicknessNum ? unit : undefined,
+    };
     const patch: Partial<Material> = {
       category: values.category,
       coverColor: appearance === 'color' ? color : undefined,
       image: appearance === 'image' ? image : undefined,
       name: values.name,
-      parentId: values.parentId,
       tags: values.tags,
-      // Thickness stores the fraction in the chosen authoritative unit; unset num = no thickness
-      thicknessDen: values.thicknessNum && unit === 'inch' ? values.thicknessDen : undefined,
-      thicknessNum: values.thicknessNum || undefined,
-      thicknessUnit: values.thicknessNum ? unit : undefined,
     };
 
     if (editing) {
       updateMaterial(editing.id, { ...patch, nameKey: undefined });
     } else {
-      addMaterial({
-        id: generateUserId('user_mat'),
-        presets: [],
-        source: 'user',
-        ...patch,
-      } as Material);
+      const id = generateUserId('user_mat');
+
+      addMaterial({ id, presets: [], source: 'user', ...patch } as Material);
+
+      // A creation thickness becomes the material's first variant right away
+      if (thickness.thicknessUnit) addVariant(id, { id: generateUserId('user_var'), ...thickness });
+
       // R14: creating keeps the browser open and jumps to the new material's category
       setActiveTab(values.category);
     }
@@ -193,29 +182,31 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
                 options={MATERIAL_CATEGORIES.map((category) => ({ label: t.categories[category], value: category }))}
               />
             </Form.Item>
-            <Form.Item label={t.thickness}>
-              <Space align="center">
-                <Segmented
-                  onChange={(value) => setUnit(value as 'inch' | 'mm')}
-                  options={['mm', 'inch']}
-                  value={unit}
-                />
-                <Form.Item name="thicknessNum" noStyle>
-                  <InputNumber min={0} step={unit === 'inch' ? 1 : 0.1} style={{ width: 80 }} />
-                </Form.Item>
-                {unit === 'inch' && (
-                  <>
-                    ⁄
-                    <Form.Item name="thicknessDen" noStyle>
-                      <InputNumber min={1} placeholder="16" step={1} style={{ width: 70 }} />
-                    </Form.Item>
-                  </>
-                )}
-                <span className={styles['fraction-preview']}>
-                  {getThicknessLabel({ thicknessDen, thicknessNum, thicknessUnit: unit }) ?? '—'}
-                </span>
-              </Space>
-            </Form.Item>
+            {!editing && (
+              <Form.Item label={t.thickness}>
+                <Space align="center">
+                  <Segmented
+                    onChange={(value) => setUnit(value as 'inch' | 'mm')}
+                    options={['mm', 'inch']}
+                    value={unit}
+                  />
+                  <Form.Item name="thicknessNum" noStyle>
+                    <InputNumber min={0} step={unit === 'inch' ? 1 : 0.1} style={{ width: 80 }} />
+                  </Form.Item>
+                  {unit === 'inch' && (
+                    <>
+                      ⁄
+                      <Form.Item name="thicknessDen" noStyle>
+                        <InputNumber min={1} placeholder="16" step={1} style={{ width: 70 }} />
+                      </Form.Item>
+                    </>
+                  )}
+                  <span className={styles['fraction-preview']}>
+                    {getThicknessLabel({ thicknessDen, thicknessNum, thicknessUnit: unit }) ?? '—'}
+                  </span>
+                </Space>
+              </Form.Item>
+            )}
           </Col>
 
           <Col span={12} xs={24}>
@@ -262,9 +253,6 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
             )}
             <Form.Item label={t.editor.tags} name="tags">
               <Select mode="tags" open={false} suffixIcon={null} tokenSeparators={[',']} />
-            </Form.Item>
-            <Form.Item extra={t.editor.parent_hint} label={t.editor.parent_material} name="parentId">
-              <Select allowClear options={parentOptions} />
             </Form.Item>
           </Col>
         </Row>

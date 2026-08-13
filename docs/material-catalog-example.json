@@ -8,7 +8,19 @@
       "category": "wood",
       "image": "https://cdn.example.flux3dp.com/materials/wood/cover.jpg",
       "tags": ["FLUX tested"],
+      "variants": [{ "id": "wood-3mm", "thicknessUnit": "mm", "thicknessNum": 3 }],
       "presets": [
+        {
+          "id": "wood_3mm_cutting",
+          "legacyKey": "wood_3mm_cutting",
+          "name": { "default": "Cutting", "zh-tw": "切割" },
+          "origin": "default",
+          "variantId": "wood-3mm",
+          "settings": {
+            "fbb2": { "15": { "power": 55, "speed": 7, "repeat": 1 } },
+            "ado1": { "2": { "power": 65, "speed": 5, "repeat": 1 } }
+          }
+        },
         {
           "id": "wood_engraving",
           "legacyKey": "wood_engraving",
@@ -52,26 +64,6 @@
       ]
     },
     {
-      "id": "wood-3mm",
-      "name": { "default": "Wood — 3 mm", "zh-tw": "木板 — 3 mm" },
-      "category": "wood",
-      "parentId": "wood",
-      "thicknessUnit": "mm",
-      "thicknessNum": 3,
-      "presets": [
-        {
-          "id": "wood_3mm_cutting",
-          "legacyKey": "wood_3mm_cutting",
-          "name": { "default": "Cutting", "zh-tw": "切割" },
-          "origin": "default",
-          "settings": {
-            "fbb2": { "15": { "power": 55, "speed": 7, "repeat": 1 } },
-            "ado1": { "2": { "power": 65, "speed": 5, "repeat": 1 } }
-          }
-        }
-      ]
-    },
-    {
       "id": "glitter-acrylic",
       "name": { "default": "Glitter Acrylic", "zh-tw": "亮片壓克力" },
       "description": {
@@ -80,9 +72,7 @@
       },
       "category": "acrylic",
       "image": "https://cdn.example.flux3dp.com/materials/glitter-acrylic/cover.jpg",
-      "thicknessUnit": "inch",
-      "thicknessNum": 1,
-      "thicknessDen": 8,
+      "variants": [{ "id": "glitter-acrylic-1-8", "thicknessUnit": "inch", "thicknessNum": 1, "thicknessDen": 8 }],
       "tags": ["Premium", "FLUX Shop"],
       "regions": ["us"],
       "shopLinks": { "us": "https://shop.flux3dp.us/products/glitter-acrylic" },
@@ -91,6 +81,7 @@
           "id": "glitter_acrylic_cutting",
           "name": { "default": "Cutting" },
           "origin": "default",
+          "variantId": "glitter-acrylic-1-8",
           "settings": { "fbb2": { "15": { "power": 60, "speed": 6, "repeat": 1 } } }
         }
       ]
@@ -124,8 +115,7 @@
       "id": "tw-bamboo",
       "name": { "default": "Taiwan Bamboo Ply", "zh-tw": "台灣竹合板" },
       "category": "wood",
-      "thicknessUnit": "mm",
-      "thicknessNum": 3,
+      "variants": [{ "id": "tw-bamboo-3mm", "thicknessUnit": "mm", "thicknessNum": 3 }],
       "tags": ["TW Pack"],
       "regions": ["tw"],
       "shopLinks": { "tw": "https://tw-shop.flux3dp.com/products/bamboo-ply" },
@@ -134,6 +124,7 @@
           "id": "tw_bamboo_cutting",
           "name": { "default": "Cutting", "zh-tw": "切割" },
           "origin": "default",
+          "variantId": "tw-bamboo-3mm",
           "settings": { "*": { "15": { "power": 55, "speed": 7, "repeat": 1 } } }
         }
       ]

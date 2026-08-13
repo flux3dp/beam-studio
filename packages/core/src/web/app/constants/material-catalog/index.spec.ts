@@ -17,29 +17,24 @@ describe('material-catalog mapping', () => {
     expect(mappedKeys).toEqual(presetKeys);
   });
 
-  test('every mapping targets an existing material', () => {
-    const materialIds = new Set(materialDefs.map(({ id }) => id));
+  test('every mapping targets an existing material, and variant refs its variants', () => {
+    const byId = new Map(materialDefs.map((def) => [def.id, def]));
 
     Object.values(presetMappings).forEach((mapping) => {
-      expect(materialIds.has(mapping.materialId)).toBe(true);
+      const material = byId.get(mapping.materialId);
+
+      expect(material).toBeDefined();
+
+      if (mapping.variantId) {
+        expect(material!.variants?.some(({ id }) => id === mapping.variantId)).toBe(true);
+      }
     });
   });
 
-  test('material ids are unique and parent refs are valid one-level', () => {
-    const ids = materialDefs.map(({ id }) => id);
+  test('material and variant ids are all unique', () => {
+    const ids = materialDefs.flatMap((def) => [def.id, ...(def.variants ?? []).map(({ id }) => id)]);
 
     expect(new Set(ids).size).toBe(ids.length);
-
-    const byId = new Map(materialDefs.map((def) => [def.id, def]));
-
-    materialDefs.forEach(({ parentId }) => {
-      if (!parentId) return;
-
-      const parent = byId.get(parentId);
-
-      expect(parent).toBeDefined();
-      expect(parent!.parentId).toBeUndefined();
-    });
   });
 });
 
@@ -59,23 +54,30 @@ describe('getBundledCatalog', () => {
 
   test('thickness carries ONE authoritative unit picked by default-units', () => {
     // Central storage mock defaults to mm
-    const wood3 = catalog.materials.find(({ id }) => id === 'wood-3mm')!;
+    const woodVariants = catalog.materials.find(({ id }) => id === 'wood')!.variants!;
 
-    expect(wood3).toMatchObject({ thicknessNum: 3, thicknessUnit: 'mm' });
-    expect(wood3.thicknessDen).toBeUndefined();
+    expect(woodVariants[0]).toMatchObject({ id: 'wood-3mm', thicknessNum: 3, thicknessUnit: 'mm' });
+    expect(woodVariants[0].thicknessDen).toBeUndefined();
+    // Single-thickness materials get exactly one variant — thickness never lives on the material
+    expect(catalog.materials.find(({ id }) => id === 'denim')!.variants).toEqual([
+      { id: 'denim-1mm', thicknessNum: 1, thicknessUnit: 'mm' },
+    ]);
 
     useStorageStore.getState().set('default-units', 'inches');
 
     const inchCatalog = getBundledCatalog();
 
     expect(inchCatalog).not.toBe(catalog);
+
     // Curated marketing fractions, not conversions (8mm corrected to 5/16″)
-    expect(inchCatalog.materials.find(({ id }) => id === 'wood-3mm')).toMatchObject({
+    const inchVariants = inchCatalog.materials.find(({ id }) => id === 'wood')!.variants!;
+
+    expect(inchVariants.find(({ id }) => id === 'wood-3mm')).toMatchObject({
       thicknessDen: 8,
       thicknessNum: 1,
       thicknessUnit: 'inch',
     });
-    expect(inchCatalog.materials.find(({ id }) => id === 'wood-8mm')).toMatchObject({
+    expect(inchVariants.find(({ id }) => id === 'wood-8mm')).toMatchObject({
       thicknessDen: 16,
       thicknessNum: 5,
       thicknessUnit: 'inch',

@@ -68,10 +68,35 @@ export interface MaterialPreset {
    * module (mirrors the legacy getPresetsList guard).
    */
   settings: Partial<Record<PresetScopeKey, Partial<Record<PresetModuleKey, PresetValues>>>>;
+  /** Scopes the preset to one variant of its material; absent = applies to the whole material */
+  variantId?: string;
+}
+
+/**
+ * A thickness variant of a material (its own presets scope in via MaterialPreset.variantId).
+ * Deliberately NOT a Material: variants never appear in the grid, never nest further, and
+ * share the material's name/category/tags.
+ *
+ * Thickness is a fraction in the variant's ONE authoritative unit (metric catalog: mm;
+ * US shop: inch). `num`/`den` store the marketed fraction exactly — ⅛″ is num 1, den 8 —
+ * so display never rounds. `den` defaults to 1 (metric values are effectively `num` mm).
+ */
+export interface MaterialVariant {
+  id: string;
+  /** Variant-specific hero photo; falls back to the material's */
+  image?: string;
+  thicknessDen?: number;
+  thicknessNum?: number;
+  thicknessUnit?: 'inch' | 'mm';
 }
 
 /** A user-created preset in the flat user-data list; materialId points at its catalog or user material */
 export interface UserPreset extends MaterialPreset {
+  materialId: string;
+}
+
+/** A user-added thickness variant in the flat user-data list; materialId points at its catalog or user material */
+export interface UserVariant extends MaterialVariant {
   materialId: string;
 }
 
@@ -87,8 +112,6 @@ export interface Material {
   name?: LocalizedString;
   /** Bundled materials resolve the name through i18n (beambox.material_browser.catalog.materials.*) */
   nameKey?: string;
-  /** When set, this material is a variant of the parent: hidden from the top-level grid, shown in the parent's detail view */
-  parentId?: string;
   presets: MaterialPreset[];
   /** Regions where this material is visible; default ['global'] (visible everywhere) */
   regions?: MaterialRegion[];
@@ -98,14 +121,13 @@ export interface Material {
   source?: MaterialSource;
   tags?: string[];
   /**
-   * Thickness as a fraction in the material's ONE authoritative unit (metric catalog
-   * materials: mm; US shop materials: inch). `num`/`den` store the marketed fraction
-   * exactly — ⅛″ is num 1, den 8 — so display never rounds. `den` defaults to 1
-   * (metric values are effectively `num` mm). Unset unit = no meaningful thickness (D18).
+   * CATALOG thickness variants shown in the detail view's switcher; one level, never
+   * standalone. Thickness lives ONLY on variants — a single-thickness material (e.g.
+   * 1mm denim) has one. User-added variants live in the flat userVariants list (a
+   * material's effective variants = this ∪ userVariants by materialId), so stored
+   * user materials keep this empty, like presets.
    */
-  thicknessDen?: number;
-  thicknessNum?: number;
-  thicknessUnit?: 'inch' | 'mm';
+  variants?: MaterialVariant[];
 }
 
 /**
@@ -135,10 +157,12 @@ export interface MaterialUserData {
     string,
     Partial<Record<PresetScopeKey, Partial<Record<PresetModuleKey, PresetValues & { name?: string }>>>>
   >;
-  /** Materials created by the user (source: 'user'), including the "My Materials" bucket; presets always [] */
+  /** Materials created by the user (source: 'user'), including the "My Materials" bucket; presets/variants always empty */
   userMaterials: Material[];
   /** All user-created presets, flat; attached to their material (catalog or user) via materialId */
   userPresets: UserPreset[];
+  /** All user-added thickness variants, flat; attached to their material (catalog or user) via materialId */
+  userVariants: UserVariant[];
   version: 1;
 }
 

@@ -22,20 +22,12 @@ const MovePresetModal = ({ onClose, presetId }: MovePresetModalProps): React.JSX
 
   const options = useMemo(() => {
     const catalogMaterials = materialCatalogCache.getCatalogSync().materials;
-    const label = (material: Material, all: Material[]) => {
-      const parent = material.parentId ? all.find(({ id }) => id === material.parentId) : undefined;
-
-      return parent
-        ? `${getMaterialDisplayName(parent)} — ${getMaterialDisplayName(material)}`
-        : getMaterialDisplayName(material);
-    };
+    const toOption = (material: Material) => ({ label: getMaterialDisplayName(material), value: material.id });
 
     return [
       { label: t.catalog.materials.my_materials, value: MY_MATERIALS_ID },
-      ...userMaterials
-        .filter(({ id }) => id !== MY_MATERIALS_ID)
-        .map((material) => ({ label: label(material, userMaterials), value: material.id })),
-      ...catalogMaterials.map((material) => ({ label: label(material, catalogMaterials), value: material.id })),
+      ...userMaterials.filter(({ id }) => id !== MY_MATERIALS_ID).map(toOption),
+      ...catalogMaterials.map(toOption),
     ];
   }, [userMaterials, t]);
 

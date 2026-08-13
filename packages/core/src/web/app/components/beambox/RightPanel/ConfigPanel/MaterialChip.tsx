@@ -32,7 +32,9 @@ const MaterialChip = ({ UIType }: MaterialChipProps): React.JSX.Element => {
 
   const name = isVarious ? lang.various_preset : applied ? getMaterialDisplayName(applied.material) : t.manual;
   const sub = applied
-    ? [getThicknessLabel(applied.material), getPresetDisplayName(applied.preset)].filter(Boolean).join(' · ')
+    ? [applied.variant && getThicknessLabel(applied.variant), getPresetDisplayName(applied.preset)]
+        .filter(Boolean)
+        .join(' · ')
     : t.manual_settings;
 
   const openBrowser = () => showMaterialBrowser({ module, writeLayers: UIType !== 'modal' });

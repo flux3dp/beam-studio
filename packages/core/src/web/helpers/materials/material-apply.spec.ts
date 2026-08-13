@@ -73,7 +73,7 @@ describe('material-apply', () => {
 
       // wood_3mm_cutting declares no dpi — the layer's DPI stays whatever the user set
       expect(target.attrs.dpi).toBeUndefined();
-      expect(target.attrs.materialId).toBe('wood-3mm');
+      expect(target.attrs.materialId).toBe('wood');
       expect(target.attrs.presetId).toBe('wood_3mm_cutting');
 
       expect(mockApplyPreset).toHaveBeenCalledTimes(1);
@@ -88,7 +88,7 @@ describe('material-apply', () => {
       expect(legacy.power).toBeDefined();
 
       expect(useMaterialStore.getState().recents[0]).toMatchObject({
-        materialId: 'wood-3mm',
+        materialId: 'wood',
         presetId: 'wood_3mm_cutting',
       });
       expect(mockCheckTutorial).toHaveBeenCalledWith({ isDefault: true, key: 'wood_3mm_cutting' });
@@ -153,7 +153,7 @@ describe('material-apply', () => {
       const byConfigName = resolveLayerMaterialRef(layer({ configName: 'wood_3mm_cutting' }) as never);
 
       expect(byConfigName!.preset.legacyKey).toBe('wood_3mm_cutting');
-      expect(byConfigName!.material.id).toBe('wood-3mm');
+      expect(byConfigName!.material.id).toBe('wood');
 
       useMaterialStore.getState().addMaterial({ category: 'other', id: 'm1', name: 'M1', presets: [], source: 'user' });
       useMaterialStore
@@ -176,7 +176,7 @@ describe('material-apply', () => {
       expect(mockApplyPreset).toHaveBeenCalledTimes(1);
       expect(mockApplyPreset.mock.calls[0][2]).toMatchObject({ applyName: false });
       expect(target.attrs.presetId).toBe('wood_3mm_cutting');
-      expect(target.attrs.materialId).toBe('wood-3mm');
+      expect(target.attrs.materialId).toBe('wood');
       expect(mockClamp).toHaveBeenCalledWith(target);
     });
 

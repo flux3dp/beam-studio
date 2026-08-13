@@ -7,19 +7,21 @@ import { sprintf } from 'sprintf-js';
 
 import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
-import type { Material } from '@core/interfaces/IMaterial';
+import type { Material, MaterialVariant } from '@core/interfaces/IMaterial';
 
 import styles from './MaterialBrowser.module.scss';
 import { getCoverStyle } from './utils/coverStyle';
 import { getThicknessLabel } from './utils/inchDisplay';
 
 interface MaterialCardProps {
+  /** No presets for the current machine context — rendered de-emphasized */
   dimmed?: boolean;
   isFavorite: boolean;
   material: Material;
   onOpen: (materialId: string) => void;
   onToggleFavorite: (materialId: string) => void;
-  variantCount: number;
+  /** Effective variants (catalog ∪ user-added) */
+  variants: MaterialVariant[];
 }
 
 const MaterialCard = ({
@@ -28,17 +30,12 @@ const MaterialCard = ({
   material,
   onOpen,
   onToggleFavorite,
-  variantCount,
+  variants,
 }: MaterialCardProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
-  // Shown in the material's own authoritative unit; hidden for 0/unset thickness (D18)
-  const thickness = getThicknessLabel(material);
+  // Single thickness shows its label; several show the count; none hides the badge (D18)
   const badge =
-    variantCount > 1
-      ? thickness
-        ? `${thickness} · ${sprintf(t.variants, variantCount)}`
-        : sprintf(t.variants, variantCount)
-      : thickness;
+    variants.length > 1 ? sprintf(t.variants, variants.length) : variants[0] ? getThicknessLabel(variants[0]) : null;
 
   return (
     <div

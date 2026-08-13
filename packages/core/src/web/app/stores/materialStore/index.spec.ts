@@ -95,41 +95,55 @@ describe('materialStore actions', () => {
     expect(useMaterialStore.getState().disabledPresetIds).not.toContain('wood_engraving');
   });
 
-  test('duplicateMaterial deep-copies parent and variants as user content', () => {
+  test('duplicateMaterial deep-copies as user content, remapping variant scopes', () => {
     const source: Material = {
       category: 'acrylic',
       id: 'glitter',
       name: 'Glitter Acrylic',
-      presets: [{ id: 'cat_p', legacyKey: 'x', name: 'Cutting', origin: 'default', settings: {} }],
+      presets: [
+        { id: 'cat_p', legacyKey: 'x', name: 'Cutting', origin: 'default', settings: {}, variantId: 'glitter-3mm' },
+        { id: 'cat_e', legacyKey: 'y', name: 'Engraving', origin: 'default', settings: {} },
+      ],
       shopLinks: { us: 'https://shop' },
+      variants: [{ id: 'glitter-3mm', thicknessNum: 3, thicknessUnit: 'mm' }],
     };
-    const variant: Material = { ...source, id: 'glitter-3mm', parentId: 'glitter', presets: [] };
-    const copy = useMaterialStore.getState().duplicateMaterial(source, [variant]);
+    const copy = useMaterialStore.getState().duplicateMaterial(source);
 
-    const { userMaterials, userPresets } = useMaterialStore.getState();
+    const { userMaterials, userPresets, userVariants } = useMaterialStore.getState();
 
-    expect(userMaterials).toHaveLength(2);
+    expect(userMaterials).toHaveLength(1);
     expect(copy.source).toBe('user');
     expect(copy.shopLinks).toBeUndefined();
+    // Cloned variants land in the flat user list with fresh ids
+    expect(copy.variants).toBeUndefined();
 
-    const copiedPreset = userPresets.find(({ materialId }) => materialId === copy.id)!;
+    const copiedVariants = userVariants.filter(({ materialId }) => materialId === copy.id);
 
-    expect(copiedPreset.origin).toBe('user');
-    expect(copiedPreset.id).not.toBe('cat_p');
-    expect(copiedPreset.legacyKey).toBeUndefined();
-    expect(userMaterials[1].parentId).toBe(copy.id);
+    expect(copiedVariants).toHaveLength(1);
+    expect(copiedVariants[0].id).not.toBe('glitter-3mm');
+
+    const copiedPresets = userPresets.filter(({ materialId }) => materialId === copy.id);
+
+    expect(copiedPresets).toHaveLength(2);
+    expect(copiedPresets[0]).toMatchObject({ origin: 'user', variantId: copiedVariants[0].id });
+    expect(copiedPresets[0].id).not.toBe('cat_p');
+    expect(copiedPresets[0].legacyKey).toBeUndefined();
+    expect(copiedPresets[1].variantId).toBeUndefined();
   });
 
-  test('movePreset re-files a user preset with id unchanged', () => {
+  test('movePreset re-files a user preset with id unchanged, dropping its variant scope', () => {
     useMaterialStore.getState().addMaterial(userMaterial('m1'));
     useMaterialStore.getState().addMaterial(userMaterial('m2'));
-    useMaterialStore.getState().addPreset('m1', { id: 'p1', name: 'Cut', origin: 'user', settings: {} });
+    useMaterialStore
+      .getState()
+      .addPreset('m1', { id: 'p1', name: 'Cut', origin: 'user', settings: {}, variantId: 'm1-var' });
     useMaterialStore.getState().movePreset('p1', 'm2');
 
     const { userPresets } = useMaterialStore.getState();
 
     expect(userPresets).toHaveLength(1);
     expect(userPresets[0]).toMatchObject({ id: 'p1', materialId: 'm2' });
+    expect(userPresets[0].variantId).toBeUndefined();
   });
 
   test('movePreset to the bucket lazily creates it', () => {
@@ -141,12 +155,15 @@ describe('materialStore actions', () => {
     expect(useMaterialStore.getState().userPresets[0]).toMatchObject({ id: 'p1', materialId: MY_MATERIALS_ID });
   });
 
-  test('deleteMaterial cascades variants, presets, favorites, and recents', () => {
-    useMaterialStore.getState().addMaterial(userMaterial('m1'));
-    useMaterialStore.getState().addMaterial(userMaterial('m1-3mm', { parentId: 'm1' }));
-    useMaterialStore.getState().addPreset('m1-3mm', { id: 'p1', name: 'Cut', origin: 'user', settings: {} });
+  test('deleteMaterial cascades presets, favorites, and recents', () => {
+    useMaterialStore
+      .getState()
+      .addMaterial(userMaterial('m1', { variants: [{ id: 'm1-3mm', thicknessNum: 3, thicknessUnit: 'mm' }] }));
+    useMaterialStore
+      .getState()
+      .addPreset('m1', { id: 'p1', name: 'Cut', origin: 'user', settings: {}, variantId: 'm1-3mm' });
     useMaterialStore.getState().toggleFavorite('m1');
-    useMaterialStore.getState().pushRecent('m1-3mm', 'p1');
+    useMaterialStore.getState().pushRecent('m1', 'p1');
     useMaterialStore.getState().deleteMaterial('m1');
 
     const state = useMaterialStore.getState();
@@ -155,6 +172,25 @@ describe('materialStore actions', () => {
     expect(state.userPresets).toHaveLength(0);
     expect(state.favorites).toHaveLength(0);
     expect(state.recents).toHaveLength(0);
+  });
+
+  test('addVariant attaches to any material; deleteVariant cascades the presets scoped to it', () => {
+    // 'wood-3mm' is a catalog material id — user variants attach without touching the catalog
+    useMaterialStore.getState().addVariant('wood', { id: 'v1', thicknessNum: 6, thicknessUnit: 'mm' });
+    useMaterialStore
+      .getState()
+      .addPreset('wood', { id: 'p1', name: 'Cut', origin: 'user', settings: {}, variantId: 'v1' });
+    useMaterialStore.getState().addPreset('wood', { id: 'p2', name: 'Engrave', origin: 'user', settings: {} });
+
+    expect(useMaterialStore.getState().userVariants[0]).toMatchObject({ id: 'v1', materialId: 'wood' });
+
+    useMaterialStore.getState().deleteVariant('v1');
+
+    const state = useMaterialStore.getState();
+
+    expect(state.userVariants).toHaveLength(0);
+    // Material-wide presets survive; only the variant-scoped one goes
+    expect(state.userPresets.map(({ id }) => id)).toEqual(['p2']);
   });
 
   test('pushRecent dedupes and caps', () => {
@@ -171,24 +207,26 @@ describe('materialStore actions', () => {
     expect(recents.filter(({ materialId }) => materialId === 'm0')).toHaveLength(1);
   });
 
-  test('importData remaps colliding ids and unions overrides/disabled', () => {
+  test('importData remaps colliding ids (variants ride along) and unions overrides/disabled', () => {
     useMaterialStore.getState().addMaterial(userMaterial('m1'));
     useMaterialStore.getState().togglePresetDisabled('a');
     useMaterialStore.getState().importData({
       disabledPresetIds: ['a', 'b'],
       presetOverrides: { wood_engraving: { '*': { '*': { power: 10 } } } },
-      userMaterials: [userMaterial('m1'), userMaterial('child', { parentId: 'm1' })],
+      userMaterials: [userMaterial('m1', { variants: [{ id: 'm1-3mm', thicknessNum: 3, thicknessUnit: 'mm' }] })],
+      userPresets: [{ id: 'imp_p', materialId: 'm1', name: 'Cut', origin: 'user', settings: {}, variantId: 'm1-3mm' }],
     });
 
     const state = useMaterialStore.getState();
 
-    expect(state.userMaterials).toHaveLength(3);
+    expect(state.userMaterials).toHaveLength(2);
 
-    const importedParent = state.userMaterials[1];
-    const importedChild = state.userMaterials[2];
+    const imported = state.userMaterials[1];
 
-    expect(importedParent.id).not.toBe('m1');
-    expect(importedChild.parentId).toBe(importedParent.id);
+    expect(imported.id).not.toBe('m1');
+    // Variant ids scope within their material, so they survive the material remap intact
+    expect(imported.variants![0].id).toBe('m1-3mm');
+    expect(state.userPresets[0]).toMatchObject({ id: 'imp_p', materialId: imported.id, variantId: 'm1-3mm' });
     expect(state.disabledPresetIds.sort()).toEqual(['a', 'b']);
     expect(state.presetOverrides.wood_engraving).toBeDefined();
   });

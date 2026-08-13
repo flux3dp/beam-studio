@@ -1,4 +1,4 @@
-import type { Material } from '@core/interfaces/IMaterial';
+import type { MaterialVariant } from '@core/interfaces/IMaterial';
 
 const FRACTION_GLYPHS: Record<string, string> = {
   '1/2': '½',
@@ -43,14 +43,14 @@ export const inchDisplay = (num: number, den: number = 1): string => {
 };
 
 /**
- * Thickness label in the material's own authoritative unit: inch materials render
- * typographic fractions, metric materials render mm. Null for unset/0 (D18).
+ * Thickness label in the variant's own authoritative unit: inch variants render
+ * typographic fractions, metric variants render mm. Null for unset/0 (D18).
  */
 export const getThicknessLabel = ({
   thicknessDen,
   thicknessNum,
   thicknessUnit,
-}: Pick<Material, 'thicknessDen' | 'thicknessNum' | 'thicknessUnit'>): null | string => {
+}: Pick<MaterialVariant, 'thicknessDen' | 'thicknessNum' | 'thicknessUnit'>): null | string => {
   if (!thicknessUnit || !thicknessNum) return null;
 
   return thicknessUnit === 'inch'

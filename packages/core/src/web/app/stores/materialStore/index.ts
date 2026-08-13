@@ -7,11 +7,11 @@ import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { getMaterialDisplayName, getPresetDisplayName } from '@core/helpers/api/material-catalog/utils';
 import i18n from '@core/helpers/i18n';
 import { isMaterialBrowserActive } from '@core/helpers/materials/isMaterialBrowserActive';
-import type { Material, PresetModuleKey, PresetScopeKey, UserPreset } from '@core/interfaces/IMaterial';
+import type { Material, PresetModuleKey, PresetScopeKey, UserPreset, UserVariant } from '@core/interfaces/IMaterial';
 
 import { convertLegacyPresets } from './migration';
 import type { MaterialLibraryExport, MaterialStore, MaterialStoreState } from './types';
-import { generateUserId, toUserData, withChildren } from './utils';
+import { generateUserId, toUserData } from './utils';
 
 const getInitialState = (): MaterialStoreState => {
   const userData = getStorage('materials');
@@ -24,6 +24,7 @@ const getInitialState = (): MaterialStoreState => {
     recents: getStorage('material-recents') ?? [],
     userMaterials: userData?.userMaterials ?? [],
     userPresets: userData?.userPresets ?? [],
+    userVariants: userData?.userVariants ?? [],
   };
 };
 
@@ -60,15 +61,18 @@ export const useMaterialStore = create(
         addPreset: (materialId, preset) => {
           apply({ userPresets: [...get().userPresets, { ...preset, materialId }] });
         },
+        addVariant: (materialId, variant) => {
+          apply({ userVariants: [...get().userVariants, { ...variant, materialId }] });
+        },
         deleteMaterial: (materialId) => {
-          const { favorites, recents, userMaterials, userPresets } = get();
-          const removedIds = new Set(withChildren(materialId, userMaterials).map(({ id }) => id));
+          const { favorites, recents, userMaterials, userPresets, userVariants } = get();
 
           apply({
-            favorites: favorites.filter((id) => !removedIds.has(id)),
-            recents: recents.filter(({ materialId: id }) => !removedIds.has(id)),
-            userMaterials: userMaterials.filter(({ id }) => !removedIds.has(id)),
-            userPresets: userPresets.filter(({ materialId: id }) => !removedIds.has(id)),
+            favorites: favorites.filter((id) => id !== materialId),
+            recents: recents.filter(({ materialId: id }) => id !== materialId),
+            userMaterials: userMaterials.filter(({ id }) => id !== materialId),
+            userPresets: userPresets.filter(({ materialId: id }) => id !== materialId),
+            userVariants: userVariants.filter(({ materialId: id }) => id !== materialId),
           });
           setStorage('material-favorites', get().favorites);
           setStorage('material-recents', get().recents);
@@ -79,47 +83,57 @@ export const useMaterialStore = create(
             userPresets: get().userPresets.filter(({ id }) => id !== presetId),
           });
         },
-        duplicateMaterial: (source, variants = []) => {
-          const presetCopies: UserPreset[] = [];
-          const cloneMaterial = (material: Material, parentId?: string): Material => {
-            const copy: Material = {
-              ...structuredClone(material),
-              id: generateUserId('user_mat'),
-              name: getMaterialDisplayName(material),
-              nameKey: undefined,
-              ...(parentId !== undefined && { parentId }),
-              presets: [],
-              shopLinks: undefined,
-              source: 'user' as const,
-            };
-
-            // Copy both the source's embedded catalog presets and its user additions
-            presetCopies.push(
-              ...[...material.presets, ...get().userPresets.filter(({ materialId }) => materialId === material.id)].map(
-                (preset) => ({
-                  ...structuredClone(preset),
-                  id: generateUserId(),
-                  legacyKey: undefined,
-                  materialId: copy.id,
-                  name: getPresetDisplayName(preset),
-                  nameKey: undefined,
-                  origin: 'user' as const,
-                }),
-              ),
-            );
-
-            return copy;
+        deleteVariant: (variantId) => {
+          apply({
+            userPresets: get().userPresets.filter((preset) => preset.variantId !== variantId),
+            userVariants: get().userVariants.filter(({ id }) => id !== variantId),
+          });
+        },
+        duplicateMaterial: (source) => {
+          const copyId = generateUserId('user_mat');
+          const copy: Material = {
+            ...structuredClone(source),
+            id: copyId,
+            name: getMaterialDisplayName(source),
+            nameKey: undefined,
+            presets: [],
+            shopLinks: undefined,
+            source: 'user' as const,
+            variants: undefined,
           };
-
-          const parentCopy = cloneMaterial(source);
-          const variantCopies = variants.map((variant) => cloneMaterial(variant, parentCopy.id));
+          // Both catalog content and user additions ride along, with fresh ids;
+          // preset variant scopes are remapped onto the cloned variants
+          const sourceVariants = [
+            ...(source.variants ?? []),
+            ...get().userVariants.filter(({ materialId }) => materialId === source.id),
+          ];
+          const variantIdMap = new Map(sourceVariants.map(({ id }) => [id, generateUserId('user_var')]));
+          const variantCopies: UserVariant[] = sourceVariants.map((variant) => ({
+            ...structuredClone(variant),
+            id: variantIdMap.get(variant.id)!,
+            materialId: copyId,
+          }));
+          const presetCopies: UserPreset[] = [
+            ...source.presets,
+            ...get().userPresets.filter(({ materialId }) => materialId === source.id),
+          ].map((preset) => ({
+            ...structuredClone(preset),
+            id: generateUserId(),
+            legacyKey: undefined,
+            materialId: copyId,
+            name: getPresetDisplayName(preset),
+            nameKey: undefined,
+            origin: 'user' as const,
+            variantId: preset.variantId ? variantIdMap.get(preset.variantId) : undefined,
+          }));
 
           apply({
-            userMaterials: [...get().userMaterials, parentCopy, ...variantCopies],
+            userMaterials: [...get().userMaterials, copy],
             userPresets: [...get().userPresets, ...presetCopies],
+            userVariants: [...get().userVariants, ...variantCopies],
           });
 
-          return parentCopy;
+          return copy;
         },
         ensureBucket: () => {
           const existing = get().userMaterials.find(({ id }) => id === MY_MATERIALS_ID);
@@ -133,7 +147,7 @@ export const useMaterialStore = create(
           return bucket;
         },
         getExportData: (): MaterialLibraryExport => {
-          const { disabledPresetIds, presetOverrides, userMaterials, userPresets } = get();
+          const { disabledPresetIds, presetOverrides, userMaterials, userPresets, userVariants } = get();
 
           return {
             disabledPresetIds,
@@ -141,6 +155,7 @@ export const useMaterialStore = create(
             type: 'flux-material-library',
             userMaterials,
             userPresets,
+            userVariants,
             version: 1,
           };
         },
@@ -148,6 +163,8 @@ export const useMaterialStore = create(
           const state = get();
           const existingIds = new Set(state.userMaterials.map(({ id }) => id));
           const idRemap = new Map<string, string>();
+          // Variants ride along inside their material — variant ids only scope within it,
+          // so remapping the material id keeps preset.variantId references intact
           const imported = (data.userMaterials ?? []).map((material) => {
             if (!existingIds.has(material.id) || material.id === MY_MATERIALS_ID) return material;
 
@@ -157,16 +174,26 @@ export const useMaterialStore = create(
 
             return { ...material, id: newId };
           });
-          const remapped = imported.map((material) =>
-            material.parentId && idRemap.has(material.parentId)
-              ? { ...material, parentId: idRemap.get(material.parentId) }
-              : material,
-          );
           const hasBucket = existingIds.has(MY_MATERIALS_ID);
           const userMaterials = [
             ...state.userMaterials,
-            ...remapped.filter(({ id }) => !(id === MY_MATERIALS_ID && hasBucket)),
+            ...imported.filter(({ id }) => !(id === MY_MATERIALS_ID && hasBucket)),
           ];
+
+          // Variants: re-point remapped owners, regenerate colliding ids (presets follow via variantIdRemap)
+          const existingVariantIds = new Set(state.userVariants.map(({ id }) => id));
+          const variantIdRemap = new Map<string, string>();
+          const importedVariants = (data.userVariants ?? []).map((variant) => {
+            const materialId = idRemap.get(variant.materialId) ?? variant.materialId;
+
+            if (!existingVariantIds.has(variant.id)) return { ...variant, materialId };
+
+            const newId = generateUserId('user_var');
+
+            variantIdRemap.set(variant.id, newId);
+
+            return { ...variant, id: newId, materialId };
+          });
 
           // Presets: re-point remapped owners, skip bucket name collisions, regenerate colliding ids
           const existingPresetIds = new Set(state.userPresets.map(({ id }) => id));
@@ -176,7 +203,12 @@ export const useMaterialStore = create(
               .map((preset) => getPresetDisplayName(preset)),
           );
           const importedPresets = (data.userPresets ?? [])
-            .map((preset) => ({ ...preset, materialId: idRemap.get(preset.materialId) ?? preset.materialId }))
+            .map((preset) => ({
+              ...preset,
+              materialId: idRemap.get(preset.materialId) ?? preset.materialId,
+              ...(preset.variantId &&
+                variantIdRemap.has(preset.variantId) && { variantId: variantIdRemap.get(preset.variantId) }),
+            }))
             .filter(
               (preset) => !(preset.materialId === MY_MATERIALS_ID && bucketNames.has(getPresetDisplayName(preset))),
             )
@@ -187,6 +219,7 @@ export const useMaterialStore = create(
             presetOverrides: { ...state.presetOverrides, ...(data.presetOverrides ?? {}) },
             userMaterials,
             userPresets: [...state.userPresets, ...importedPresets],
+            userVariants: [...state.userVariants, ...importedVariants],
           });
         },
         movePreset: (presetId, targetMaterialId) => {
@@ -196,11 +229,12 @@ export const useMaterialStore = create(
 
           if (targetMaterialId === MY_MATERIALS_ID) actions.ensureBucket();
 
-          // Remove + append so the preset lands at the end of the target's list
+          // Remove + append so the preset lands at the end of the target's list.
+          // Variant scope is dropped — it referenced a variant of the source material.
           apply({
             userPresets: [
               ...get().userPresets.filter(({ id }) => id !== presetId),
-              { ...preset, materialId: targetMaterialId },
+              { ...preset, materialId: targetMaterialId, variantId: undefined },
             ],
           });
         },

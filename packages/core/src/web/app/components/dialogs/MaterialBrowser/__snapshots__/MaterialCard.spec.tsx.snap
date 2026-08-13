@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`MaterialCard renders with metric thickness badge 1`] = `
+exports[`MaterialCard single variant shows its thickness badge 1`] = `
 <div>
   <div
     class="card"

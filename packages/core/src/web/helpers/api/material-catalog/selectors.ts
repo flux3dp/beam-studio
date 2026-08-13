@@ -7,7 +7,9 @@ import type {
   MaterialPreset,
   MaterialRegion,
   MaterialUserData,
+  MaterialVariant,
   PresetValues,
+  UserVariant,
 } from '@core/interfaces/IMaterial';
 
 import {
@@ -31,9 +33,9 @@ export interface ResolvedPresetRow {
   values: PresetValues;
 }
 
-/** Top-level grid entries: parents/standalones only, region-gated */
+/** Region-gated grid entries (variants live inside their material, never top-level) */
 export const getVisibleMaterials = (materials: Material[], region: MaterialRegion): Material[] =>
-  materials.filter((material) => !material.parentId && isMaterialVisibleInRegion(material, region));
+  materials.filter((material) => isMaterialVisibleInRegion(material, region));
 
 export const getMaterialsByCategory = (materials: Material[], category: MaterialCategory): Material[] =>
   materials.filter((material) => material.category === category);
@@ -53,18 +55,19 @@ export const searchMaterials = (materials: Material[], query: string): Material[
   );
 };
 
-/** Numeric thickness in the material's own unit (fraction resolved) */
-const thicknessValue = ({ thicknessDen, thicknessNum }: Material): number => (thicknessNum ?? 0) / (thicknessDen ?? 1);
+/** Numeric thickness in its own unit (fraction resolved) */
+const thicknessValue = ({ thicknessDen, thicknessNum }: MaterialVariant): number =>
+  (thicknessNum ?? 0) / (thicknessDen ?? 1);
 
-/** Thickness variants of a material (its children): mm variants first, then inch, each ascending */
-export const getVariants = (material: Material, allMaterials: Material[]): Material[] =>
-  allMaterials
-    .filter((candidate) => candidate.parentId === material.id)
-    .sort(
-      (a, b) =>
-        Number(a.thicknessUnit === 'inch') - Number(b.thicknessUnit === 'inch') ||
-        thicknessValue(a) - thicknessValue(b),
-    );
+/**
+ * A material's effective variants for display: catalog variants ∪ user-added ones,
+ * mm variants first, then inch, each ascending.
+ */
+export const getSortedVariants = (material: Material, userVariants: UserVariant[]): MaterialVariant[] =>
+  [...(material.variants ?? []), ...userVariants.filter(({ materialId }) => materialId === material.id)].sort(
+    (a, b) =>
+      Number(a.thicknessUnit === 'inch') - Number(b.thicknessUnit === 'inch') || thicknessValue(a) - thicknessValue(b),
+  );
 
 const resolveOverlay = (
   overrides: MaterialUserData['presetOverrides'],
@@ -81,15 +84,21 @@ const resolveOverlay = (
 
 /**
  * One material's preset rows for the active machine context (own presets + user additions).
- * Composition across materials (e.g. variant rows followed by parent rows) is the caller's call.
+ * With `variantId`, variant-scoped presets are filtered to that variant; material-wide
+ * presets (no variantId) always show. Without it, every preset of the material is listed
+ * (support checks, row lookups).
  */
 export const getPresetsForContext = (
   material: Material,
   model: PresetModel,
   module: LayerModuleType,
   userData: Pick<MaterialUserData, 'disabledPresetIds' | 'presetOverrides' | 'userPresets'>,
+  variantId?: string,
 ): ResolvedPresetRow[] => {
-  const presets = [...material.presets, ...userData.userPresets.filter(({ materialId }) => materialId === material.id)];
+  const presets = [
+    ...material.presets,
+    ...userData.userPresets.filter(({ materialId }) => materialId === material.id),
+  ].filter((preset) => !variantId || !preset.variantId || preset.variantId === variantId);
   const disabled = new Set(userData.disabledPresetIds);
   const rows: ResolvedPresetRow[] = [];
 

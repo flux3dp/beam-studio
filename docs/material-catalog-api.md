@@ -74,11 +74,8 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 | `category` | string | ✓ | One of `wood` `acrylic` `leather` `metal` `plastic` `paper` `glass` `stone` `rubber` `other`. Fixed set — reject anything else in admin. |
 | `image` | string (URL) | – | Absolute HTTPS URL to the hero photo (§5). Omit if none. |
 | `coverColor` | string | – | `#rrggbb` hex; used as the card cover when there is no `image`. |
-| `thicknessUnit` | string | – | `mm` or `inch` — the material's ONE authoritative unit (metric materials: `mm`; US shop materials: `inch`). Omit (with `thicknessNum`/`thicknessDen`) when the material has no meaningful thickness — the client hides the badge. The client displays thickness in this unit verbatim; it never converts. |
-| `thicknessNum` | number | – | Thickness numerator in `thicknessUnit` (3 mm → `3`; ⅛″ → `1`). |
-| `thicknessDen` | number | – | Thickness denominator, mainly for inch fractions (⅛″ → `8`). Defaults to 1. Store the marketed fraction exactly (5/64″ → num 5, den 64) — the client renders it as typographic fractions without rounding. |
 | `tags` | string[] | – | Short display chips, searchable. Localization of tags is NOT supported in v1 — use language-neutral tags or English. |
-| `parentId` | string | – | Makes this material a **variant** of the parent: hidden from the category grid, shown in the parent's detail view (thickness switcher). Parent must exist in the same payload. One level only — a parent must not itself have `parentId`. |
+| `variants` | MaterialVariant[] | – | Thickness variants shown in the detail view's switcher. A variant is NOT a material — it only carries `{ id, thicknessUnit, thicknessNum, thicknessDen?, image? }` (identity/category/tags come from the material). One level only; variant `id`s are stable and referenced by `MaterialPreset.variantId`. **ALL thickness lives on variants** — a single-thickness material (e.g. 1 mm denim) has exactly one variant; a material without variants has no meaningful thickness (the client hides the badge). `thicknessUnit` is `mm` or `inch`, the variant's ONE authoritative unit — the client displays it verbatim, never converting. `thicknessNum`/`thicknessDen` store the marketed fraction exactly (⅛″ → num 1, den 8; 5/64″ → num 5, den 64; den defaults to 1) and render as typographic fractions without rounding. |
 | `shopLinks` | object | – | Per-region map: `{ "us": url, "eu": url, "tw": url, "jp": url }` (any subset). The client shows "Buy on FLUX Shop" only when the viewer's active region has an entry. Never editable by end users. |
 | `regions` | string[] | – | Visibility gate: subset of `global` `us` `eu` `tw` `jp`. Absent ⇒ `["global"]` (visible everywhere). A material listing `global` is visible everywhere regardless of other entries. |
 | `description` | LocalizedString | – | Detail-view paragraph. |
@@ -93,6 +90,7 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 | `name` | LocalizedString | ✓ (cloud) | e.g. "Cutting", "Engraving". Don't encode DPI in the name — presets whose `settings` declare a `dpi` get a DPI tag in the browser UI, so same-named entries (e.g. a base and a quality tier) are told apart by that tag. |
 | `origin` | string | ✓ | Always `default` from this API (`user` is client-side only). |
 | `settings` | object | ✓ | Nested parameter scopes — see §3.3. |
+| `variantId` | string | – | Scopes the preset to one of the material's `variants` (e.g. a 3 mm cutting preset). Absent = applies to the whole material (thickness-agnostic engraving/printing). Must reference an id in the same material's `variants`. |
 
 ### 3.3 `settings` — machine/module scoping
 
@@ -200,7 +198,7 @@ releases; sync it from `attributeMap` when adding parameters.
 
 ## 8. Shared fixture
 
-`docs/material-catalog-example.json` is a small but complete example payload exercising every schema feature (localized strings, parent/variant, per-region shop links, wildcard scopes, Promark/printing modules, dpiOverrides, up-to-date short-circuit shape documented inline as a sibling file if needed).
+`docs/material-catalog-example.json` is a small but complete example payload exercising every schema feature (localized strings, material/variant, per-region shop links, wildcard scopes, Promark/printing modules, dpiOverrides, up-to-date short-circuit shape documented inline as a sibling file if needed).
 
 - **Beam Studio (Jest)**: asserts the fixture parses/validates against `IMaterial.d.ts` shapes and resolves through `resolvePresetSettings` / the selectors.
 - **flux-id (Django)**: asserts serializer output for equivalently-seeded models deep-equals the fixture.

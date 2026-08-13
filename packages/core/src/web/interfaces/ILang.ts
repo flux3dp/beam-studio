@@ -412,8 +412,6 @@ export interface ILang {
         color: string;
         name: string;
         name_required: string;
-        parent_hint: string;
-        parent_material: string;
         photo: string;
         tags: string;
         title_add: string;
@@ -464,9 +462,11 @@ export interface ILang {
       storage_full: string;
       sure_to_delete_material: string;
       sure_to_delete_preset: string;
+      sure_to_delete_variant: string;
       sure_to_import: string;
       thickness: string;
       title: string;
+      variant_exists: string;
       variants: string;
     };
     network_testing_panel: {

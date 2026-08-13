@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Col, Form, Input, InputNumber, Modal, Row } from 'antd';
 
@@ -9,11 +9,14 @@ import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
 import Select from '@core/app/widgets/AntdSelect';
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
+import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
+import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
-import type { PresetValues } from '@core/interfaces/IMaterial';
+import type { Material, PresetValues } from '@core/interfaces/IMaterial';
 
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
+import { getThicknessLabel } from '../utils/inchDisplay';
 
 interface FormValues {
   dottingTime?: number;
@@ -32,16 +35,25 @@ interface FormValues {
 interface PresetEditorModalProps {
   /** The row being edited (edit mode); undefined for a new manual preset */
   editingRow?: ResolvedPresetRow;
+  /** The material the preset is created under (add mode); provides the variant options */
+  material?: Material;
   model: PresetModel;
   module: LayerModuleType;
 }
 
-const PresetEditorModal = ({ editingRow, model, module }: PresetEditorModalProps): null | React.JSX.Element => {
+const PresetEditorModal = ({
+  editingRow,
+  material,
+  model,
+  module,
+}: PresetEditorModalProps): null | React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const laserPanelLang = useI18n().beambox.right_panel.laser_panel;
   const [form] = Form.useForm<FormValues>();
   const { closeEditors, presetEditor } = useMaterialBrowserStore();
-  const { addPreset, updatePreset } = useMaterialStore();
+  const { addPreset, updatePreset, userVariants } = useMaterialStore();
+  // '' = whole material; otherwise a variant id
+  const [variantTarget, setVariantTarget] = useState('');
 
   const isPrinting = printingModules.has(module);
   const isPromark = model.startsWith('fpm1_');
@@ -50,6 +62,8 @@ const PresetEditorModal = ({ editingRow, model, module }: PresetEditorModalProps
 
   useEffect(() => {
     if (!presetEditor.open) return;
+
+    setVariantTarget(presetEditor.variantId ?? '');
 
     if (isEdit && editingRow) {
       const { values } = editingRow;
@@ -98,6 +112,7 @@ const PresetEditorModal = ({ editingRow, model, module }: PresetEditorModalProps
         name,
         origin: 'user',
         settings: { '*': { [`${module}`]: values } },
+        ...(variantTarget && { variantId: variantTarget }),
       });
     }
 
@@ -121,6 +136,22 @@ const PresetEditorModal = ({ editingRow, model, module }: PresetEditorModalProps
         >
           <Input />
         </Form.Item>
+        {!isEdit && material && getSortedVariants(material, userVariants).length > 0 && (
+          // Target scope: the whole material (labeled by its name) or one thickness variant
+          <Form.Item label={t.add_from_layer.attach_to}>
+            <Select
+              onChange={setVariantTarget}
+              options={[
+                { label: getMaterialDisplayName(material), value: '' },
+                ...getSortedVariants(material, userVariants).map((variant) => ({
+                  label: getThicknessLabel(variant) ?? variant.id,
+                  value: variant.id,
+                })),
+              ]}
+              value={variantTarget}
+            />
+          </Form.Item>
+        )}
         <Row gutter={12}>
           {isPrinting ? (
             <>

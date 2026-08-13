@@ -9,6 +9,236 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       "nameKey": "wood",
       "presets": [
         {
+          "id": "wood_3mm_cutting",
+          "legacyKey": "wood_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 6,
+              },
+              "2": {
+                "power": 100,
+                "speed": 8,
+              },
+            },
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 6,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 15,
+                "speed": 15,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 45,
+                "speed": 5,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 12,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 60,
+                "speed": 8,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 60,
+                "speed": 12,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 60,
+                "speed": 17,
+              },
+            },
+            "flv1": {
+              "15": {
+                "power": 100,
+                "speed": 6,
+              },
+            },
+          },
+          "variantId": "wood-3mm",
+        },
+        {
+          "id": "wood_5mm_cutting",
+          "legacyKey": "wood_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 3,
+              },
+              "2": {
+                "power": 100,
+                "speed": 4,
+              },
+            },
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 3,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 45,
+                "speed": 10,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 4,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 65,
+                "speed": 3,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 60,
+                "speed": 5,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 60,
+                "speed": 8,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 60,
+                "speed": 10,
+              },
+            },
+            "flv1": {
+              "15": {
+                "power": 100,
+                "speed": 3,
+              },
+            },
+          },
+          "variantId": "wood-5mm",
+        },
+        {
+          "id": "wood_7mm_cutting",
+          "legacyKey": "wood_7mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "2": {
+                "power": 100,
+                "speed": 2,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 45,
+                "speed": 5,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 65,
+                "speed": 4,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 65,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 65,
+                "speed": 8,
+              },
+            },
+          },
+          "variantId": "wood-7mm",
+        },
+        {
+          "id": "wood_8mm_cutting",
+          "legacyKey": "wood_8mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhexa1": {
+              "15": {
+                "power": 65,
+                "repeat": 2,
+                "speed": 3,
+              },
+            },
+          },
+          "variantId": "wood-8mm",
+        },
+        {
+          "id": "wood_10mm_cutting",
+          "legacyKey": "wood_10mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhexa1": {
+              "15": {
+                "power": 65,
+                "repeat": 3,
+                "speed": 3,
+              },
+            },
+          },
+          "variantId": "wood-10mm",
+        },
+        {
           "id": "wood_engraving",
           "legacyKey": "wood_engraving",
           "nameKey": "engraving",
@@ -327,287 +557,164 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
       ],
-    },
-    {
-      "category": "wood",
-      "id": "wood-3mm",
-      "nameKey": "wood",
-      "parentId": "wood",
-      "presets": [
+      "variants": [
         {
-          "id": "wood_3mm_cutting",
-          "legacyKey": "wood_3mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "speed": 6,
-              },
-              "2": {
-                "power": 100,
-                "speed": 8,
-              },
-            },
-            "fbb1b": {
-              "15": {
-                "power": 60,
-                "speed": 6,
-              },
-            },
-            "fbb1p": {
-              "15": {
-                "power": 55,
-                "speed": 7,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 15,
-                "speed": 15,
-              },
-            },
-            "fbm1": {
-              "15": {
-                "power": 45,
-                "speed": 5,
-              },
-            },
-            "fbm2": {
-              "15": {
-                "power": 45,
-                "speed": 12,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 40,
-                "speed": 6,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 60,
-                "speed": 8,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 60,
-                "speed": 12,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 60,
-                "speed": 17,
-              },
-            },
-            "flv1": {
-              "15": {
-                "power": 100,
-                "speed": 6,
-              },
-            },
-          },
+          "id": "wood-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "wood-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "wood-7mm",
+          "thicknessNum": 7,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "wood-8mm",
+          "thicknessNum": 8,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "wood-10mm",
+          "thicknessNum": 10,
+          "thicknessUnit": "mm",
         },
       ],
-      "thicknessNum": 3,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "wood",
-      "id": "wood-5mm",
-      "nameKey": "wood",
-      "parentId": "wood",
-      "presets": [
-        {
-          "id": "wood_5mm_cutting",
-          "legacyKey": "wood_5mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "speed": 3,
-              },
-              "2": {
-                "power": 100,
-                "speed": 4,
-              },
-            },
-            "fbb1b": {
-              "15": {
-                "power": 60,
-                "speed": 3,
-              },
-            },
-            "fbb1p": {
-              "15": {
-                "power": 55,
-                "speed": 4,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 45,
-                "speed": 10,
-              },
-            },
-            "fbm1": {
-              "15": {
-                "power": 55,
-                "repeat": 2,
-                "speed": 4,
-              },
-            },
-            "fbm2": {
-              "15": {
-                "power": 55,
-                "speed": 4,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 65,
-                "speed": 3,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 60,
-                "speed": 5,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 60,
-                "speed": 8,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 60,
-                "speed": 10,
-              },
-            },
-            "flv1": {
-              "15": {
-                "power": 100,
-                "speed": 3,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 5,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "wood",
-      "id": "wood-7mm",
-      "nameKey": "wood",
-      "parentId": "wood",
-      "presets": [
-        {
-          "id": "wood_7mm_cutting",
-          "legacyKey": "wood_7mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "2": {
-                "power": 100,
-                "speed": 2,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 45,
-                "speed": 5,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 65,
-                "speed": 4,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 65,
-                "speed": 6,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 65,
-                "speed": 8,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 7,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "wood",
-      "id": "wood-8mm",
-      "nameKey": "wood",
-      "parentId": "wood",
-      "presets": [
-        {
-          "id": "wood_8mm_cutting",
-          "legacyKey": "wood_8mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fhexa1": {
-              "15": {
-                "power": 65,
-                "repeat": 2,
-                "speed": 3,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 8,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "wood",
-      "id": "wood-10mm",
-      "nameKey": "wood",
-      "parentId": "wood",
-      "presets": [
-        {
-          "id": "wood_10mm_cutting",
-          "legacyKey": "wood_10mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fhexa1": {
-              "15": {
-                "power": 65,
-                "repeat": 3,
-                "speed": 3,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 10,
-      "thicknessUnit": "mm",
     },
     {
       "category": "wood",
       "id": "mdf",
       "nameKey": "mdf",
       "presets": [
+        {
+          "id": "mdf_3mm_cutting",
+          "legacyKey": "mdf_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 4,
+              },
+              "2": {
+                "power": 100,
+                "speed": 8,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 15,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 65,
+                "speed": 5,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 65,
+                "speed": 8,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 65,
+                "speed": 10,
+              },
+            },
+          },
+          "variantId": "mdf-3mm",
+        },
+        {
+          "id": "mdf_5mm_cutting",
+          "legacyKey": "mdf_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 2,
+              },
+              "2": {
+                "power": 100,
+                "speed": 4,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 10,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 4,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 8,
+              },
+            },
+          },
+          "variantId": "mdf-5mm",
+        },
+        {
+          "id": "mdf_7mm_cutting",
+          "legacyKey": "mdf_7mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "power": 95,
+                "speed": 3,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 95,
+                "speed": 4,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 95,
+                "speed": 6,
+              },
+            },
+          },
+          "variantId": "mdf-7mm",
+        },
         {
           "id": "mdf_engraving",
           "legacyKey": "mdf_engraving",
@@ -890,164 +997,59 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
       ],
-    },
-    {
-      "category": "wood",
-      "id": "mdf-3mm",
-      "nameKey": "mdf",
-      "parentId": "mdf",
-      "presets": [
+      "variants": [
         {
-          "id": "mdf_3mm_cutting",
-          "legacyKey": "mdf_3mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "speed": 4,
-              },
-              "2": {
-                "power": 100,
-                "speed": 8,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 30,
-                "speed": 15,
-              },
-            },
-            "fbm2": {
-              "15": {
-                "power": 45,
-                "speed": 7,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 65,
-                "speed": 5,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 65,
-                "speed": 8,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 65,
-                "speed": 10,
-              },
-            },
-          },
+          "id": "mdf-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "mdf-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "mdf-7mm",
+          "thicknessNum": 7,
+          "thicknessUnit": "mm",
         },
       ],
-      "thicknessNum": 3,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "wood",
-      "id": "mdf-5mm",
-      "nameKey": "mdf",
-      "parentId": "mdf",
-      "presets": [
-        {
-          "id": "mdf_5mm_cutting",
-          "legacyKey": "mdf_5mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "speed": 2,
-              },
-              "2": {
-                "power": 100,
-                "speed": 4,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 30,
-                "speed": 10,
-              },
-            },
-            "fbm2": {
-              "15": {
-                "power": 55,
-                "speed": 6,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 70,
-                "speed": 4,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 70,
-                "speed": 6,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 70,
-                "speed": 8,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 5,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "wood",
-      "id": "mdf-7mm",
-      "nameKey": "mdf",
-      "parentId": "mdf",
-      "presets": [
-        {
-          "id": "mdf_7mm_cutting",
-          "legacyKey": "mdf_7mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fhx2rf_30": {
-              "15": {
-                "power": 95,
-                "speed": 3,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 95,
-                "speed": 4,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 95,
-                "speed": 6,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 7,
-      "thicknessUnit": "mm",
     },
     {
       "category": "wood",
       "id": "bamboo",
       "nameKey": "bamboo",
       "presets": [
+        {
+          "id": "bamboo_2mm_cutting",
+          "legacyKey": "bamboo_2mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 15,
+              },
+            },
+          },
+          "variantId": "bamboo-2mm",
+        },
+        {
+          "id": "bamboo_5mm_cutting",
+          "legacyKey": "bamboo_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+          },
+          "variantId": "bamboo-5mm",
+        },
         {
           "id": "bamboo_printing",
           "legacyKey": "bamboo_printing",
@@ -1070,54 +1072,18 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
       ],
-    },
-    {
-      "category": "wood",
-      "id": "bamboo-2mm",
-      "nameKey": "bamboo",
-      "parentId": "bamboo",
-      "presets": [
+      "variants": [
         {
-          "id": "bamboo_2mm_cutting",
-          "legacyKey": "bamboo_2mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fbm2": {
-              "15": {
-                "power": 55,
-                "speed": 15,
-              },
-            },
-          },
+          "id": "bamboo-2mm",
+          "thicknessNum": 2,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "bamboo-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm",
         },
       ],
-      "thicknessNum": 2,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "wood",
-      "id": "bamboo-5mm",
-      "nameKey": "bamboo",
-      "parentId": "bamboo",
-      "presets": [
-        {
-          "id": "bamboo_5mm_cutting",
-          "legacyKey": "bamboo_5mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fbm2": {
-              "15": {
-                "power": 55,
-                "speed": 4,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 5,
-      "thicknessUnit": "mm",
     },
     {
       "category": "wood",
@@ -1146,6 +1112,198 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       "id": "acrylic",
       "nameKey": "acrylic",
       "presets": [
+        {
+          "id": "acrylic_3mm_cutting",
+          "legacyKey": "acrylic_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 8,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 55,
+                "speed": 10,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 9,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 12,
+              },
+            },
+          },
+          "variantId": "acrylic-3mm",
+        },
+        {
+          "id": "acrylic_5mm_cutting",
+          "legacyKey": "acrylic_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 4,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 59,
+                "speed": 3,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 5,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 3,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 3,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 4,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 6,
+              },
+            },
+          },
+          "variantId": "acrylic-5mm",
+        },
+        {
+          "id": "acrylic_7mm_cutting",
+          "legacyKey": "acrylic_7mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 2,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 3,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 4,
+              },
+            },
+          },
+          "variantId": "acrylic-7mm",
+        },
+        {
+          "id": "acrylic_8mm_cutting",
+          "legacyKey": "acrylic_8mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb2": {
+              "15": {
+                "power": 65,
+                "speed": 3,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 50,
+                "repeat": 2,
+                "speed": 3,
+              },
+            },
+          },
+          "variantId": "acrylic-8mm",
+        },
+        {
+          "id": "acrylic_10mm_cutting",
+          "legacyKey": "acrylic_10mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 3,
+              },
+            },
+          },
+          "variantId": "acrylic-10mm",
+        },
         {
           "id": "acrylic_engraving",
           "legacyKey": "acrylic_engraving",
@@ -1443,249 +1601,85 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
       ],
-    },
-    {
-      "category": "acrylic",
-      "id": "acrylic-3mm",
-      "nameKey": "acrylic",
-      "parentId": "acrylic",
-      "presets": [
+      "variants": [
         {
-          "id": "acrylic_3mm_cutting",
-          "legacyKey": "acrylic_3mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fbb1b": {
-              "15": {
-                "power": 60,
-                "speed": 8,
-              },
-            },
-            "fbb1p": {
-              "15": {
-                "power": 55,
-                "speed": 7,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 55,
-                "speed": 10,
-              },
-            },
-            "fbm1": {
-              "15": {
-                "power": 55,
-                "speed": 4,
-              },
-            },
-            "fbm2": {
-              "15": {
-                "power": 45,
-                "speed": 7,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 40,
-                "speed": 6,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 70,
-                "speed": 6,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 70,
-                "speed": 9,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 70,
-                "speed": 12,
-              },
-            },
-          },
+          "id": "acrylic-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "acrylic-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "acrylic-7mm",
+          "thicknessNum": 7,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "acrylic-8mm",
+          "thicknessNum": 8,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "acrylic-10mm",
+          "thicknessNum": 10,
+          "thicknessUnit": "mm",
         },
       ],
-      "thicknessNum": 3,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "acrylic",
-      "id": "acrylic-5mm",
-      "nameKey": "acrylic",
-      "parentId": "acrylic",
-      "presets": [
-        {
-          "id": "acrylic_5mm_cutting",
-          "legacyKey": "acrylic_5mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fbb1b": {
-              "15": {
-                "power": 60,
-                "speed": 4,
-              },
-            },
-            "fbb1p": {
-              "15": {
-                "power": 55,
-                "speed": 4,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 59,
-                "speed": 3,
-              },
-            },
-            "fbm1": {
-              "15": {
-                "power": 55,
-                "repeat": 2,
-                "speed": 5,
-              },
-            },
-            "fbm2": {
-              "15": {
-                "power": 55,
-                "speed": 3,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 55,
-                "speed": 3,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 70,
-                "speed": 3,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 70,
-                "speed": 4,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 70,
-                "speed": 6,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 5,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "acrylic",
-      "id": "acrylic-7mm",
-      "nameKey": "acrylic",
-      "parentId": "acrylic",
-      "presets": [
-        {
-          "id": "acrylic_7mm_cutting",
-          "legacyKey": "acrylic_7mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fhx2rf_30": {
-              "15": {
-                "power": 70,
-                "speed": 2,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 70,
-                "speed": 3,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 70,
-                "speed": 4,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 7,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "acrylic",
-      "id": "acrylic-8mm",
-      "nameKey": "acrylic",
-      "parentId": "acrylic",
-      "presets": [
-        {
-          "id": "acrylic_8mm_cutting",
-          "legacyKey": "acrylic_8mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fbb2": {
-              "15": {
-                "power": 65,
-                "speed": 3,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 50,
-                "repeat": 2,
-                "speed": 3,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 8,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "acrylic",
-      "id": "acrylic-10mm",
-      "nameKey": "acrylic",
-      "parentId": "acrylic",
-      "presets": [
-        {
-          "id": "acrylic_10mm_cutting",
-          "legacyKey": "acrylic_10mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "fhexa1": {
-              "15": {
-                "power": 55,
-                "repeat": 2,
-                "speed": 3,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 10,
-      "thicknessUnit": "mm",
     },
     {
       "category": "acrylic",
       "id": "black-acrylic",
       "nameKey": "black_acrylic",
       "presets": [
+        {
+          "id": "black_acrylic_3mm_cutting",
+          "legacyKey": "black_acrylic_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 2,
+              },
+              "2": {
+                "power": 100,
+                "speed": 4,
+              },
+            },
+            "flv1": {
+              "15": {
+                "power": 100,
+                "speed": 2,
+              },
+            },
+          },
+          "variantId": "black-acrylic-3mm",
+        },
+        {
+          "id": "black_acrylic_5mm_cutting",
+          "legacyKey": "black_acrylic_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "repeat": 2,
+                "speed": 2,
+              },
+              "2": {
+                "power": 100,
+                "repeat": 1,
+                "speed": 2,
+              },
+            },
+          },
+          "variantId": "black-acrylic-5mm",
+        },
         {
           "id": "black_acrylic_engraving",
           "legacyKey": "black_acrylic_engraving",
@@ -1715,70 +1709,18 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
       ],
-    },
-    {
-      "category": "acrylic",
-      "id": "black-acrylic-3mm",
-      "nameKey": "black_acrylic",
-      "parentId": "black-acrylic",
-      "presets": [
+      "variants": [
         {
-          "id": "black_acrylic_3mm_cutting",
-          "legacyKey": "black_acrylic_3mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "speed": 2,
-              },
-              "2": {
-                "power": 100,
-                "speed": 4,
-              },
-            },
-            "flv1": {
-              "15": {
-                "power": 100,
-                "speed": 2,
-              },
-            },
-          },
+          "id": "black-acrylic-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "black-acrylic-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm",
         },
       ],
-      "thicknessNum": 3,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "acrylic",
-      "id": "black-acrylic-5mm",
-      "nameKey": "black_acrylic",
-      "parentId": "black-acrylic",
-      "presets": [
-        {
-          "id": "black_acrylic_5mm_cutting",
-          "legacyKey": "black_acrylic_5mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "repeat": 2,
-                "speed": 2,
-              },
-              "2": {
-                "power": 100,
-                "repeat": 1,
-                "speed": 2,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 5,
-      "thicknessUnit": "mm",
     },
     {
       "category": "acrylic",
@@ -1851,6 +1793,132 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       "id": "leather",
       "nameKey": "leather",
       "presets": [
+        {
+          "id": "leather_3mm_cutting",
+          "legacyKey": "leather_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 4,
+              },
+              "2": {
+                "power": 100,
+                "speed": 8,
+              },
+            },
+            "fbb1b": {
+              "15": {
+                "power": 65,
+                "speed": 3,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 35,
+                "speed": 10,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 60,
+                "speed": 3,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "repeat": 3,
+                "speed": 10,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 65,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 65,
+                "speed": 9,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 65,
+                "speed": 12,
+              },
+            },
+          },
+          "variantId": "leather-3mm",
+        },
+        {
+          "id": "leather_5mm_cutting",
+          "legacyKey": "leather_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "repeat": 2,
+                "speed": 3,
+              },
+              "2": {
+                "power": 100,
+                "repeat": 2,
+                "speed": 6,
+              },
+            },
+            "fbb1b": {
+              "15": {
+                "power": 65,
+                "speed": 1,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 2,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 40,
+                "speed": 10,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 60,
+                "repeat": 2,
+                "speed": 3,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3,
+              },
+            },
+          },
+          "variantId": "leather-5mm",
+        },
         {
           "id": "leather_engraving",
           "legacyKey": "leather_engraving",
@@ -2157,150 +2225,18 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
       ],
-    },
-    {
-      "category": "leather",
-      "id": "leather-3mm",
-      "nameKey": "leather",
-      "parentId": "leather",
-      "presets": [
+      "variants": [
         {
-          "id": "leather_3mm_cutting",
-          "legacyKey": "leather_3mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "speed": 4,
-              },
-              "2": {
-                "power": 100,
-                "speed": 8,
-              },
-            },
-            "fbb1b": {
-              "15": {
-                "power": 65,
-                "speed": 3,
-              },
-            },
-            "fbb1p": {
-              "15": {
-                "power": 55,
-                "speed": 4,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 35,
-                "speed": 10,
-              },
-            },
-            "fbm1": {
-              "15": {
-                "power": 60,
-                "speed": 3,
-              },
-            },
-            "fbm2": {
-              "15": {
-                "power": 55,
-                "repeat": 3,
-                "speed": 10,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 40,
-                "speed": 6,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 65,
-                "speed": 6,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 65,
-                "speed": 9,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 65,
-                "speed": 12,
-              },
-            },
-          },
+          "id": "leather-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "leather-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm",
         },
       ],
-      "thicknessNum": 3,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "leather",
-      "id": "leather-5mm",
-      "nameKey": "leather",
-      "parentId": "leather",
-      "presets": [
-        {
-          "id": "leather_5mm_cutting",
-          "legacyKey": "leather_5mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "repeat": 2,
-                "speed": 3,
-              },
-              "2": {
-                "power": 100,
-                "repeat": 2,
-                "speed": 6,
-              },
-            },
-            "fbb1b": {
-              "15": {
-                "power": 65,
-                "speed": 1,
-              },
-            },
-            "fbb1p": {
-              "15": {
-                "power": 55,
-                "speed": 2,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 40,
-                "speed": 10,
-              },
-            },
-            "fbm1": {
-              "15": {
-                "power": 60,
-                "repeat": 2,
-                "speed": 3,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 55,
-                "speed": 3,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 5,
-      "thicknessUnit": "mm",
     },
     {
       "category": "leather",
@@ -2329,6 +2265,140 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       "id": "fabric",
       "nameKey": "fabric",
       "presets": [
+        {
+          "id": "fabric_3mm_cutting",
+          "legacyKey": "fabric_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 6,
+              },
+              "2": {
+                "power": 100,
+                "speed": 10,
+              },
+            },
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 20,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 35,
+                "speed": 20,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 20,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 50,
+                "speed": 20,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 25,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 30,
+                "speed": 20,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 30,
+                "speed": 32,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 30,
+                "speed": 42,
+              },
+            },
+          },
+          "variantId": "fabric-3mm",
+        },
+        {
+          "id": "fabric_5mm_cutting",
+          "legacyKey": "fabric_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 2,
+              },
+              "2": {
+                "power": 100,
+                "speed": 4,
+              },
+            },
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 20,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 35,
+                "speed": 20,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 40,
+                "speed": 20,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 50,
+                "speed": 20,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 20,
+                "speed": 20,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 50,
+                "speed": 16,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 50,
+                "speed": 25,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 50,
+                "speed": 34,
+              },
+            },
+          },
+          "variantId": "fabric-5mm",
+        },
         {
           "id": "fabric_engraving",
           "legacyKey": "fabric_engraving",
@@ -2636,158 +2706,18 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           },
         },
       ],
-    },
-    {
-      "category": "other",
-      "id": "fabric-3mm",
-      "nameKey": "fabric",
-      "parentId": "fabric",
-      "presets": [
+      "variants": [
         {
-          "id": "fabric_3mm_cutting",
-          "legacyKey": "fabric_3mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "speed": 6,
-              },
-              "2": {
-                "power": 100,
-                "speed": 10,
-              },
-            },
-            "fbb1b": {
-              "15": {
-                "power": 60,
-                "speed": 20,
-              },
-            },
-            "fbb1p": {
-              "15": {
-                "power": 35,
-                "speed": 20,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 30,
-                "speed": 20,
-              },
-            },
-            "fbm1": {
-              "15": {
-                "power": 50,
-                "speed": 20,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 15,
-                "speed": 25,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 30,
-                "speed": 20,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 30,
-                "speed": 32,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 30,
-                "speed": 42,
-              },
-            },
-          },
+          "id": "fabric-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "fabric-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm",
         },
       ],
-      "thicknessNum": 3,
-      "thicknessUnit": "mm",
-    },
-    {
-      "category": "other",
-      "id": "fabric-5mm",
-      "nameKey": "fabric",
-      "parentId": "fabric",
-      "presets": [
-        {
-          "id": "fabric_5mm_cutting",
-          "legacyKey": "fabric_5mm_cutting",
-          "nameKey": "cutting",
-          "origin": "default",
-          "settings": {
-            "ado1": {
-              "1": {
-                "power": 100,
-                "speed": 2,
-              },
-              "2": {
-                "power": 100,
-                "speed": 4,
-              },
-            },
-            "fbb1b": {
-              "15": {
-                "power": 60,
-                "speed": 20,
-              },
-            },
-            "fbb1p": {
-              "15": {
-                "power": 35,
-                "speed": 20,
-              },
-            },
-            "fbb2": {
-              "15": {
-                "power": 40,
-                "speed": 20,
-              },
-            },
-            "fbm1": {
-              "15": {
-                "power": 50,
-                "speed": 20,
-              },
-            },
-            "fhexa1": {
-              "15": {
-                "power": 20,
-                "speed": 20,
-              },
-            },
-            "fhx2rf_30": {
-              "15": {
-                "power": 50,
-                "speed": 16,
-              },
-            },
-            "fhx2rf_60": {
-              "15": {
-                "power": 50,
-                "speed": 25,
-              },
-            },
-            "fhx2rf_80": {
-              "15": {
-                "power": 50,
-                "speed": 34,
-              },
-            },
-          },
-        },
-      ],
-      "thicknessNum": 5,
-      "thicknessUnit": "mm",
     },
     {
       "category": "other",
@@ -2811,10 +2741,16 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
               },
             },
           },
+          "variantId": "denim-1mm",
         },
       ],
-      "thicknessNum": 1,
-      "thicknessUnit": "mm",
+      "variants": [
+        {
+          "id": "denim-1mm",
+          "thicknessNum": 1,
+          "thicknessUnit": "mm",
+        },
+      ],
     },
     {
       "category": "other",

@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import {
   ArrowLeftOutlined,
@@ -18,12 +18,13 @@ import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
-import { getPresetsForContext, getVariants } from '@core/helpers/api/material-catalog/selectors';
+import { getPresetsForContext, getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
 import { getMaterialDisplayName, resolveLocalizedString } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
-import type { Material, MaterialRegion } from '@core/interfaces/IMaterial';
+import type { Material, MaterialRegion, MaterialVariant } from '@core/interfaces/IMaterial';
 
+import AddVariantModal from '../editors/AddVariantModal';
 import styles from '../MaterialBrowser.module.scss';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 import { getCoverStyle } from '../utils/coverStyle';
@@ -34,7 +35,6 @@ import PresetRow from './PresetRow';
 const { Paragraph, Text, Title } = Typography;
 
 interface MaterialDetailProps {
-  allMaterials: Material[];
   machineLabel: string;
   material: Material;
   model: PresetModel;
@@ -45,7 +45,6 @@ interface MaterialDetailProps {
 }
 
 const MaterialDetail = ({
-  allMaterials,
   machineLabel,
   material,
   model,
@@ -60,31 +59,32 @@ const MaterialDetail = ({
   const {
     deleteMaterial,
     deletePreset,
+    deleteVariant,
     disabledPresetIds,
     duplicateMaterial,
     presetOverrides,
     restorePreset,
     togglePresetDisabled,
     userPresets,
+    userVariants,
   } = useMaterialStore();
 
-  const variants = useMemo(() => getVariants(material, allMaterials), [material, allMaterials]);
+  const variants = useMemo(() => getSortedVariants(material, userVariants), [material, userVariants]);
   const selectedVariant = variants.find(({ id }) => id === selectedVariantId) ?? variants[0];
-  const displayMaterial = selectedVariant ?? material;
   const isUserMaterial = material.source === 'user';
+  // Only user-added variants are deletable (catalog ones aren't user content)
+  const isUserVariant = !!selectedVariant && userVariants.some(({ id }) => id === selectedVariant.id);
+  const [addingVariant, setAddingVariant] = useState(false);
 
-  const rows = useMemo(() => {
-    const userData = { disabledPresetIds, presetOverrides, userPresets };
-
-    // Variant-specific rows first, thickness-agnostic parent rows appended
-    return [
-      ...getPresetsForContext(displayMaterial, model, module, userData),
-      ...(selectedVariant ? getPresetsForContext(material, model, module, userData) : []),
-    ];
-  }, [displayMaterial, selectedVariant, material, model, module, disabledPresetIds, presetOverrides, userPresets]);
+  // Variant-scoped presets filtered to the selected variant; material-wide presets always show
+  const rows = useMemo(
+    () =>
+      getPresetsForContext(material, model, module, { disabledPresetIds, presetOverrides, userPresets }, selectedVariant?.id),
+    [material, model, module, disabledPresetIds, presetOverrides, userPresets, selectedVariant],
+  );
 
   const shopLink = region !== 'global' ? material.shopLinks?.[region] : undefined;
-  const variantLabel = (variant: Material) => getThicknessLabel(variant) ?? '—';
+  const variantLabel = (variant: MaterialVariant) => getThicknessLabel(variant) ?? '—';
 
   const handleDeleteMaterial = () => {
     alertCaller.popUp({
@@ -93,6 +93,19 @@ const MaterialDetail = ({
       onConfirm: () => {
         deleteMaterial(material.id);
         openDetail(null);
+      },
+    });
+  };
+
+  const handleDeleteVariant = () => {
+    if (!selectedVariant) return;
+
+    alertCaller.popUp({
+      buttonType: alertConstants.CONFIRM_CANCEL,
+      message: t.sure_to_delete_variant,
+      onConfirm: () => {
+        deleteVariant(selectedVariant.id);
+        setSelectedVariantId(null);
       },
     });
   };
@@ -117,7 +130,10 @@ const MaterialDetail = ({
       </Button>
       <div className={styles.detail}>
         <div className={styles.hero}>
-          <div className={styles.cover} style={getCoverStyle(displayMaterial.image ? displayMaterial : material)} />
+          <div
+            className={styles.cover}
+            style={getCoverStyle(selectedVariant?.image ? { ...material, image: selectedVariant.image } : material)}
+          />
           {material.tags && material.tags.length > 0 && (
             <div style={{ marginTop: 12 }}>
               <Space size={[6, 6]} wrap>
@@ -161,7 +177,7 @@ const MaterialDetail = ({
               <Button
                 icon={<CopyOutlined />}
                 onClick={() => {
-                  const copy = duplicateMaterial(material, variants);
+                  const copy = duplicateMaterial(material);
 
                   openDetail(copy.id);
                 }}
@@ -183,18 +199,36 @@ const MaterialDetail = ({
             <Paragraph style={{ marginTop: 10 }}>{resolveLocalizedString(material.description)}</Paragraph>
           )}
 
-          {variants.length > 0 && (
-            <div style={{ margin: '14px 0' }}>
-              <div className={styles['section-title']}>{t.thickness}</div>
-              <div style={{ marginTop: 6 }}>
+          <div style={{ margin: '14px 0' }}>
+            <div className={styles['section-title']}>{t.thickness}</div>
+            <div style={{ alignItems: 'center', display: 'flex', gap: 8, marginTop: 6 }}>
+              {variants.length > 0 && (
                 <Segmented
                   onChange={(value) => setSelectedVariantId(value as string)}
                   options={variants.map((variant) => ({ label: variantLabel(variant), value: variant.id }))}
-                  value={displayMaterial.id}
+                  value={selectedVariant?.id}
                 />
-              </div>
+              )}
+              {/* User variants attach to ANY material (catalog included); only they are deletable */}
+              <Button
+                icon={<PlusOutlined />}
+                onClick={() => setAddingVariant(true)}
+                size="small"
+                title={t.thickness}
+                type="text"
+              />
+              {isUserVariant && (
+                <Button
+                  danger
+                  icon={<DeleteOutlined />}
+                  onClick={handleDeleteVariant}
+                  size="small"
+                  title={t.delete}
+                  type="text"
+                />
+              )}
             </div>
-          )}
+          </div>
 
           <div className={styles['preset-header']}>
             <div className={styles['section-title']}>{`${t.presets} — ${machineLabel}`}</div>
@@ -205,10 +239,13 @@ const MaterialDetail = ({
                   { icon: <ThunderboltOutlined />, key: 'layer', label: t.from_current_layer },
                 ],
                 onClick: ({ key }) =>
+                  // Defaults to the selected variant; the editor lets the user retarget
+                  // (a specific variant or the whole material)
                   openPresetEditor({
-                    materialId: displayMaterial.id,
+                    materialId: material.id,
                     mode: 'add',
                     presetId: key === 'layer' ? 'from-layer' : undefined,
+                    variantId: selectedVariant?.id,
                   }),
               }}
               trigger={['click']}
@@ -224,7 +261,7 @@ const MaterialDetail = ({
                 <PresetRow
                   context={{ model, module }}
                   key={row.presetId}
-                  onApply={(applied) => onApply(applied, displayMaterial)}
+                  onApply={(applied) => onApply(applied, material)}
                   onDelete={handleDeletePreset}
                   onEdit={(edited) =>
                     openPresetEditor({ materialId: edited.materialId, mode: 'edit', presetId: edited.presetId })
@@ -241,6 +278,7 @@ const MaterialDetail = ({
           )}
         </div>
       </div>
+      {addingVariant && <AddVariantModal material={material} onClose={() => setAddingVariant(false)} region={region} />}
     </div>
   );
 };

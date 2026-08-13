@@ -3,8 +3,10 @@ import type {
   MaterialPreset,
   MaterialRecentEntry,
   MaterialUserData,
+  MaterialVariant,
   PresetValues,
   UserPreset,
+  UserVariant,
 } from '@core/interfaces/IMaterial';
 import type { PresetModuleKey, PresetScopeKey } from '@core/interfaces/IMaterial';
 
@@ -14,6 +16,7 @@ export interface MaterialLibraryExport {
   type: 'flux-material-library';
   userMaterials: Material[];
   userPresets: UserPreset[];
+  userVariants: UserVariant[];
   version: 1;
 }
 
@@ -23,19 +26,23 @@ export interface MaterialStoreState {
   migratedFromPresets: boolean;
   presetOverrides: MaterialUserData['presetOverrides'];
   recents: MaterialRecentEntry[];
-  /** User materials never embed presets (presets: []); their presets live in userPresets */
+  /** User materials never embed presets or variants; those live in the flat lists below */
   userMaterials: Material[];
   /** All user presets, flat; owner = materialId (catalog or user material) */
   userPresets: UserPreset[];
+  /** All user-added thickness variants, flat; owner = materialId (catalog or user material) */
+  userVariants: UserVariant[];
 }
 
 export interface MaterialStoreActions {
   addMaterial: (material: Material) => void;
   addPreset: (materialId: string, preset: MaterialPreset) => void;
+  addVariant: (materialId: string, variant: MaterialVariant) => void;
   deleteMaterial: (materialId: string) => void;
   deletePreset: (presetId: string) => void;
-  /** Deep-copies a catalog material (with its variants) into an editable user material */
-  duplicateMaterial: (source: Material, variants?: Material[]) => Material;
+  deleteVariant: (variantId: string) => void;
+  /** Deep-copies a catalog material (variants included) into an editable user material */
+  duplicateMaterial: (source: Material) => Material;
   /** Lazily creates and returns the "My Materials" bucket */
   ensureBucket: () => Material;
   getExportData: () => MaterialLibraryExport;
