@@ -87,6 +87,7 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import workareaManager from '@core/app/svgedit/workarea';
+import { withMemoryLogSync } from '@core/helpers/debug/memoryLog';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import { hasVariableText } from '@core/helpers/variableText';
 import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
@@ -163,27 +164,28 @@ const generateSvgBlockBuffer = (svgString: string) => {
 };
 
 // 1 Byte Type (0x02 for svg content) + ? bytes vint length + length bytes svg string
-const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffer }) => {
-  let imageSourceBlockBuffer = localHeaderTypeBuffer('imageSource');
-  let tempbuffer = Buffer.alloc(0);
-  const ids = Object.keys(imageSources);
+const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffer }) =>
+  withMemoryLogSync('generateImageSourceBlockBuffer', () => {
+    let imageSourceBlockBuffer = localHeaderTypeBuffer('imageSource');
+    let tempbuffer = Buffer.alloc(0);
+    const ids = Object.keys(imageSources);
 
-  for (let i = 0; i < ids.length; i += 1) {
-    const id = ids[i];
-    const idSizeBuf = Buffer.alloc(1);
-    const idBuf = Buffer.from(id);
+    for (let i = 0; i < ids.length; i += 1) {
+      const id = ids[i];
+      const idSizeBuf = Buffer.alloc(1);
+      const idBuf = Buffer.from(id);
 
-    idSizeBuf.writeUInt8(idBuf.length, 0);
+      idSizeBuf.writeUInt8(idBuf.length, 0);
 
-    const imageBuf = Buffer.from(imageSources[id]);
-    const imageSizeBuf = valueToVIntBuffer(imageBuf.length);
+      const imageBuf = Buffer.from(imageSources[id]);
+      const imageSizeBuf = valueToVIntBuffer(imageBuf.length);
 
-    tempbuffer = Buffer.concat([tempbuffer, idSizeBuf, idBuf, imageSizeBuf, imageBuf]);
-  }
-  imageSourceBlockBuffer = Buffer.concat([imageSourceBlockBuffer, valueToVIntBuffer(tempbuffer.length), tempbuffer]);
+      tempbuffer = Buffer.concat([tempbuffer, idSizeBuf, idBuf, imageSizeBuf, imageBuf]);
+    }
+    imageSourceBlockBuffer = Buffer.concat([imageSourceBlockBuffer, valueToVIntBuffer(tempbuffer.length), tempbuffer]);
 
-  return imageSourceBlockBuffer;
-};
+    return imageSourceBlockBuffer;
+  });
 
 const generateThumbnailBlockBuffer = (thumbnail: ArrayBuffer): Buffer => {
   let blocBuffer = localHeaderTypeBuffer('thumbnail');
@@ -234,16 +236,18 @@ const generateBeamBuffer = (
     valueToVIntBuffer(miscDataBuffer.length),
   ]);
   const headerSizeBuf = valueToVIntBuffer(headerBuffer.length);
-  const buffer = Buffer.concat([
-    signatureBuffer,
-    headerSizeBuf,
-    headerBuffer,
-    svgBlockBuf,
-    imageSourceBlockBuffer,
-    thumbnailBlockBuffer || Buffer.from([]),
-    miscDataBuffer,
-    Buffer.from([0x00]),
-  ]);
+  const buffer = withMemoryLogSync('generateBeamBuffer: final concat', () =>
+    Buffer.concat([
+      signatureBuffer,
+      headerSizeBuf,
+      headerBuffer,
+      svgBlockBuf,
+      imageSourceBlockBuffer,
+      thumbnailBlockBuffer || Buffer.from([]),
+      miscDataBuffer,
+      Buffer.from([0x00]),
+    ]),
+  );
 
   return buffer;
 };

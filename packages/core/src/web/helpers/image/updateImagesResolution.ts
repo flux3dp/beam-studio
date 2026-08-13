@@ -1,6 +1,7 @@
 import { laserModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { withMemoryLog } from '@core/helpers/debug/memoryLog';
 import imageData from '@core/helpers/image-data';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
@@ -60,13 +61,13 @@ const updateImagesResolution = async (): Promise<() => void> => {
     });
   });
 
-  await Promise.all(promises);
+  // decodes every image at full resolution — the single largest allocation of the export path
+  await withMemoryLog(`updateImagesResolution (${promises.length} images)`, () => Promise.all(promises));
 
-  return () => {
-    changedImages.forEach((image) => {
-      updateImageDisplay(image);
-    });
-  };
+  return () =>
+    withMemoryLog('updateImagesResolution: revert', () =>
+      Promise.all(changedImages.map((image) => updateImageDisplay(image))),
+    );
 };
 
 const updateAllImageResolution = () => {

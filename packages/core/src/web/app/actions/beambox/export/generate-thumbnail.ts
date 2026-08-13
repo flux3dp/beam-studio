@@ -1,6 +1,7 @@
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { withMemoryLog } from '@core/helpers/debug/memoryLog';
 import { getSvgContentActualBBox } from '@core/helpers/file/export/utils/getBBox';
 
 const fetchThumbnail = async (): Promise<string[]> => {
@@ -121,7 +122,8 @@ const generateThumbnail = async (): Promise<{
   thumbnail: string;
   thumbnailBlobURL: string;
 }> => {
-  const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
+  // rasterizes the whole scene, which forces every embedded base64 image to be decoded at once
+  const [thumbnail, thumbnailBlobURL] = await withMemoryLog('generateThumbnail', fetchThumbnail);
 
   return { thumbnail, thumbnailBlobURL };
 };

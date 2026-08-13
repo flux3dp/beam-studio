@@ -3,6 +3,7 @@ import { pipe } from 'remeda';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import beamFileHelper from '@core/helpers/beam-file-helper';
+import { withMemoryLog, withMemoryLogSync } from '@core/helpers/debug/memoryLog';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -64,12 +65,26 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
   return blob.arrayBuffer();
 };
 
-export const generateBeamBuffer = async (): Promise<Buffer> =>
-  pipe(
-    {
-      imageSource: await svgCanvas.getImageSource(),
-      svgString: svgCanvas.getSvgString(),
-      thumbnail: (await generateBeamThumbnail()) || undefined,
-    },
-    ({ imageSource, svgString, thumbnail }) => beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail),
+/** Sizes of what goes into the .beam file, so a crash can be tied to the document rather than guessed at. */
+const logInputSizes = (imageSource: Record<string, ArrayBuffer>, svgString: string): void => {
+  const ids = Object.keys(imageSource);
+  const imageBytes = ids.reduce((sum, id) => sum + imageSource[id].byteLength, 0);
+
+  console.log(
+    `[mem] generateBeamBuffer inputs | ${ids.length} images ${(imageBytes / 1024 / 1024).toFixed(0)}MB` +
+      ` | svgString ${(svgString.length / 1024 / 1024).toFixed(0)}MB`,
   );
+};
+
+export const generateBeamBuffer = async (): Promise<Buffer> =>
+  withMemoryLog('generateBeamBuffer', async () => {
+    const imageSource = await withMemoryLog('generateBeamBuffer: getImageSource', () => svgCanvas.getImageSource());
+    const svgString = withMemoryLogSync('generateBeamBuffer: getSvgString', () => svgCanvas.getSvgString());
+    const thumbnail = await withMemoryLog('generateBeamBuffer: thumbnail', generateBeamThumbnail);
+
+    logInputSizes(imageSource, svgString);
+
+    return withMemoryLogSync('generateBeamBuffer: assemble', () =>
+      beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail || undefined),
+    );
+  });

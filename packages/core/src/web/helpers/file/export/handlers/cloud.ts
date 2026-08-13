@@ -9,6 +9,7 @@ import currentFileManager from '@core/app/svgedit/currentFileManager';
 import selectionManager from '@core/app/svgedit/selection';
 import type { ResponseWithError } from '@core/helpers/api/flux-id';
 import { axiosFluxId, getCurrentUser, getDefaultHeader } from '@core/helpers/api/flux-id';
+import { withMemoryLog } from '@core/helpers/debug/memoryLog';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -37,11 +38,13 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
   await Progress.openNonstopProgress({ id });
 
   try {
-    const blob = pipe(
-      await generateBeamBuffer(),
-      (val) => Uint8Array.from(val),
-      prop('buffer'),
-      (arrayBuffer) => new Blob([arrayBuffer]),
+    const blob = await withMemoryLog('saveToCloud: generate blob', async () =>
+      pipe(
+        await generateBeamBuffer(),
+        (val) => Uint8Array.from(val),
+        prop('buffer'),
+        (arrayBuffer) => new Blob([arrayBuffer]),
+      ),
     );
     const form = new FormData();
 

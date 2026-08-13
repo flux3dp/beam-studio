@@ -18,6 +18,7 @@ import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray, swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
 import { convertAllTextToPath } from '@core/helpers/convertToPath';
+import { logMemory, withMemoryLog, withMemoryLogSync } from '@core/helpers/debug/memoryLog';
 import deviceMaster from '@core/helpers/device-master';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
@@ -79,12 +80,19 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   });
   Progress.popById('retrieve-image-data');
 
-  const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
+  // by this point every image carries a full-resolution base64 href, so this string — and each of
+  // the two copies that follow it — is on the order of the whole document
+  const svgString = withMemoryLogSync('generateUploadFile: getSvgString', () =>
+    svgCanvas.getSvgString({ fixTopExpansion: true }),
+  );
 
   console.log('File Size', svgString.length);
 
   const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
   const reader = new FileReader();
+
+  logMemory(`generateUploadFile: blob built (${(blob.size / 1024 / 1024).toFixed(0)}MB)`);
+
   const uploadFile = await new Promise<IWrappedTaskFile>((resolve) => {
     reader.onload = () => {
       // not sure whether all para is needed
@@ -170,7 +178,7 @@ const fetchTaskCode = async (
     message: 'Generating Upload File',
   });
 
-  const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
+  const uploadFile = await withMemoryLog('generateUploadFile', () => generateUploadFile(thumbnail, thumbnailBlobURL));
 
   cleanUp();
   Progress.popById('fetch-task-code');

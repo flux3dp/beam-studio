@@ -2,6 +2,7 @@ import { pipe, prop } from 'remeda';
 
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import selectionManager from '@core/app/svgedit/selection';
+import { withMemoryLog } from '@core/helpers/debug/memoryLog';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
@@ -30,11 +31,13 @@ export const saveAsFile = async (): Promise<boolean> => {
   const defaultFileName = getDefaultFileName();
   const langFile = i18n.lang.topmenu.file;
   const getContent = async () =>
-    pipe(
-      await generateBeamBuffer(),
-      (buffer) => Uint8Array.from(buffer),
-      prop('buffer'),
-      (arrayBuffer) => new Blob([arrayBuffer]),
+    withMemoryLog('saveAsFile: getContent', async () =>
+      pipe(
+        await generateBeamBuffer(),
+        (buffer) => Uint8Array.from(buffer),
+        prop('buffer'),
+        (arrayBuffer) => new Blob([arrayBuffer]),
+      ),
     );
 
   const newFilePath = await dialog.writeFileDialog(
@@ -90,12 +93,14 @@ export const saveFile = async (): Promise<boolean> => {
   }
 
   if (path.endsWith('.beam')) {
-    const buffer = await generateBeamBuffer();
+    return await withMemoryLog('saveFile (.beam)', async () => {
+      const buffer = await generateBeamBuffer();
 
-    await fs.writeFile(path, buffer);
-    currentFileManager.setHasUnsavedChanges(false, false);
+      await withMemoryLog('saveFile: writeFile', () => fs.writeFile(path, buffer));
+      currentFileManager.setHasUnsavedChanges(false, false);
 
-    return true;
+      return true;
+    });
   }
 
   return false;

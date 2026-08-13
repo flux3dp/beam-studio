@@ -6,6 +6,7 @@ import tabController from '@core/app/actions/tabController';
 import { SettingCategory, showSettingsModal } from '@core/app/components/settings';
 import { getStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import { withMemoryLog } from '@core/helpers/debug/memoryLog';
 import { generateBeamBuffer } from '@core/helpers/file/export';
 import { isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -147,10 +148,14 @@ const startAutoSave = (): void => {
           }
         }
 
-        const target = fs.join(directory, getFilename());
-        const buffer = await generateBeamBuffer();
+        // runs unattended every few minutes, so it is a plausible source of a crash the user
+        // cannot tie to anything they did
+        await withMemoryLog('autoSave', async () => {
+          const target = fs.join(directory, getFilename());
+          const buffer = await generateBeamBuffer();
 
-        fs.writeStream(target, 'w', [buffer]);
+          fs.writeStream(target, 'w', [buffer]);
+        });
       }
     },
     timeInterval * 60 * 1000,
