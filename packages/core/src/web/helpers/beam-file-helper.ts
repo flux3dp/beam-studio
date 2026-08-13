@@ -79,6 +79,8 @@
 */
 import { Buffer } from 'buffer';
 
+import PQueue from 'p-queue';
+
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Progress from '@core/app/actions/progress-caller';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -92,6 +94,9 @@ import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import { hasVariableText } from '@core/helpers/variableText';
 import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
+
+/** Matches the ceiling the export path uses for the same full-resolution decode work. */
+const IMAGE_DECODE_CONCURRENCY = 4;
 
 interface MiscData {
   ce?: CurveEngraving;
@@ -307,8 +312,18 @@ const readHeader = (headerBuf: Buffer) => {
   }
 };
 
-const readImageSource = (buf: Buffer, offset: number, end: number) => {
+/**
+ * Restores each image's original bytes and redraws it.
+ *
+ * The redraws are queued rather than all started at once. Each one decodes its image at full
+ * resolution, so a document with dozens of photo-sized images would otherwise have all of them
+ * decoding simultaneously and take the renderer down. That this loop kicked off unawaited work for
+ * every image was harmless only while saved files carried a display href, which made every one of
+ * these calls return immediately without doing anything.
+ */
+const readImageSource = async (buf: Buffer, offset: number, end: number): Promise<void> => {
   let currentOffset = offset;
+  const redraws: Array<() => Promise<void>> = [];
 
   while (currentOffset < end) {
     const idSize = buf.readUInt8(currentOffset);
@@ -333,9 +348,18 @@ const readImageSource = (buf: Buffer, offset: number, end: number) => {
     if (image) {
       image.setAttribute('origImage', src);
       image.setAttribute('preserveAspectRatio', 'none');
-      updateImageDisplay(image as SVGImageElement, { useNativeSize: true });
+      redraws.push(async () => {
+        try {
+          await updateImageDisplay(image as SVGImageElement, { useNativeSize: true });
+        } catch (error) {
+          // one unreadable image should not abort the load of everything else
+          console.error(`Failed to display image ${id}`, error);
+        }
+      });
     }
   }
+
+  await new PQueue({ concurrency: IMAGE_DECODE_CONCURRENCY }).addAll(redraws);
 };
 
 const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) => {
@@ -374,7 +398,7 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
 
     currentOffset = newOffset;
     console.log('Size', value);
-    readImageSource(buf, currentOffset, currentOffset + value);
+    await readImageSource(buf, currentOffset, currentOffset + value);
     currentOffset += value;
   } else if (blockType === 3) {
     // thumbnail
