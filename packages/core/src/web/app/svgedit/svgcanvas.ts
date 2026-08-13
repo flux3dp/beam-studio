@@ -1393,11 +1393,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Returns:
   // String containing the SVG image for output
-  this.svgCanvasToString = function (
-    opts: { fixTopExpansion?: boolean; omitHrefIds?: Set<string>; unit?: Units } = {},
-  ) {
+  this.svgCanvasToString = function (opts: { fixTopExpansion?: boolean; unit?: Units } = {}) {
     // keep calling it until there are none to remove
-    const { fixTopExpansion, omitHrefIds, unit } = opts;
+    const { fixTopExpansion, unit } = opts;
 
     svgedit.utilities.moveDefsIntoSvgContent();
     pathActions.clear();
@@ -1429,7 +1427,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     svgcontent.setAttribute('data-workarea', workarea);
 
-    const output = this.svgToString(svgcontent, 0, unit, fixTopExpansion, omitHrefIds);
+    const output = this.svgToString(svgcontent, 0, unit, fixTopExpansion);
 
     svgedit.utilities.moveDefsOutfromSvgContent();
 
@@ -1465,7 +1463,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     indent: number,
     unit: Units = 'pt',
     fixTopExpansion = false,
-    omitHrefIds?: Set<string>,
   ): void => {
     const toXml = svgedit.utilities.toXml;
     const unitRe = new RegExp('^-?[\\d\\.]+' + unit + '$');
@@ -1568,13 +1565,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         for (let i = attrs.length - 1; i >= 0; i--) {
           attr = attrs.item(i);
 
-          // Left out for callers that also write the image source block: readImageSource rebuilds
-          // this href from the original on load, so it is never read back. Skipping happens before
-          // attr.value is touched, because reading it is itself a copy of the whole base64 string.
-          if (omitHrefIds && attr.localName === 'href' && elem.nodeName === 'image' && omitHrefIds.has(elem.id)) {
-            continue;
-          }
-
           let attrVal = toXml(attr.value);
 
           // remove bogus attributes added by Gecko
@@ -1658,7 +1648,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               }
 
               out.push('\n');
-              appendSvgString(out, childs.item(i), indent, undefined, fixTopExpansion, omitHrefIds);
+              appendSvgString(out, childs.item(i), indent, undefined, fixTopExpansion);
               break;
             case 3: // text node
               // to keep the spaces before a line
@@ -1711,10 +1701,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
-  this.svgToString = function (elem, indent, unit: Units = 'pt', fixTopExpansion = false, omitHrefIds?: Set<string>) {
+  this.svgToString = function (elem, indent, unit: Units = 'pt', fixTopExpansion = false) {
     const out: string[] = [];
 
-    appendSvgString(out, elem, indent, unit, fixTopExpansion, omitHrefIds);
+    appendSvgString(out, elem, indent, unit, fixTopExpansion);
 
     return out.join('');
   }; // end svgToString()
@@ -1792,7 +1782,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Returns:
   // The current drawing as raw SVG XML text.
-  this.getSvgString = function (opts: { omitHrefIds?: Set<string>; unit?: Units } = {}) {
+  this.getSvgString = function (opts: { unit?: Units } = {}) {
     if (selectionManager.isMultiSelecting) {
       selectionManager.ungroupTempGroup();
     }

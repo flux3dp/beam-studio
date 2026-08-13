@@ -82,7 +82,7 @@ export default interface ISVGCanvas {
   getRubberBox: () => SVGRectElement;
   getSelectedElementsAlignPoints: () => IPoint[];
   getStarted: () => boolean;
-  getSvgString: (opts?: { fixTopExpansion?: boolean; omitHrefIds?: Set<string>; unit?: Units }) => string;
+  getSvgString: (opts?: { fixTopExpansion?: boolean; unit?: Units }) => string;
   getVisibleElementsAndBBoxes: (elems?: SVGElement[]) => Array<{ bbox: IRect; elem: Element }>;
   getZoom: () => number; // Old getter for current_zoom
   groupSelectedElements: (isSubCmd?: boolean) => void | { command: BaseHistoryCommand; group: SVGGElement };
