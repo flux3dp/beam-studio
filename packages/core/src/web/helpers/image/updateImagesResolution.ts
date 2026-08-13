@@ -1,3 +1,5 @@
+import PQueue from 'p-queue';
+
 import { laserModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -10,12 +12,25 @@ import type { IImageDataResult } from '@core/interfaces/IImage';
 import updateImageDisplay from './updateImageDisplay';
 
 /**
+ * Full-resolution decoding is the heaviest step of the export path. One 8Mpx image costs ~32MB per
+ * copy and imageData holds several at a time — the decode target, the ImageData, the grayscale
+ * output, the PNG encode buffer and the base64 string. Running every image at once multiplied that
+ * by the image count with no ceiling, since isFullResolution also bypasses the MAX_IMAGE_PIXEL cap.
+ *
+ * A few in flight still overlaps decode with encode without letting the peak scale with the
+ * document.
+ */
+const CONCURRENCY = 4;
+
+/**
  * updateImagesResolution update all images resolution for exporting
  * @returns a function to revert the changes
  */
 const updateImagesResolution = async (): Promise<() => void> => {
   const allLayers = getAllLayers();
-  const promises: Array<Promise<void>> = [];
+  // deferred rather than started here: building the promise eagerly is what made the concurrency
+  // limit impossible, because imageData was already running by the time it was collected
+  const tasks: Array<() => Promise<void>> = [];
   const changedImages: SVGImageElement[] = [];
 
   allLayers.forEach((layer) => {
@@ -39,30 +54,32 @@ const updateImagesResolution = async (): Promise<() => void> => {
       const threshold = Number.parseInt(image.getAttribute('data-threshold') || '128', 10);
 
       changedImages.push(image as SVGImageElement);
-      promises.push(
-        new Promise<void>((resolve) => {
-          imageData(origImage, {
-            grayscale: isFullColor
-              ? undefined
-              : {
-                  is_rgba: true,
-                  is_shading: isShading,
-                  is_svg: false,
-                  threshold,
-                },
-            isFullResolution: true,
-            onComplete: (result: IImageDataResult) => {
-              image.setAttributeNS(NS.XLINK, 'xlink:href', result.pngBase64);
-              resolve();
-            },
-          });
-        }),
+      tasks.push(
+        () =>
+          new Promise<void>((resolve) => {
+            imageData(origImage, {
+              grayscale: isFullColor
+                ? undefined
+                : {
+                    is_rgba: true,
+                    is_shading: isShading,
+                    is_svg: false,
+                    threshold,
+                  },
+              isFullResolution: true,
+              onComplete: (result: IImageDataResult) => {
+                image.setAttributeNS(NS.XLINK, 'xlink:href', result.pngBase64);
+                resolve();
+              },
+            });
+          }),
       );
     });
   });
 
-  // decodes every image at full resolution — the single largest allocation of the export path
-  await withMemoryLog(`updateImagesResolution (${promises.length} images)`, () => Promise.all(promises));
+  await withMemoryLog(`updateImagesResolution (${tasks.length} images)`, () =>
+    new PQueue({ concurrency: CONCURRENCY }).addAll(tasks),
+  );
 
   // force: the href these images carry is the full-resolution one written above, which
   // updateImageDisplay's own guard cannot distinguish from an up-to-date display href — without it
@@ -70,7 +87,9 @@ const updateImagesResolution = async (): Promise<() => void> => {
   // the session
   return () =>
     withMemoryLog('updateImagesResolution: revert', () =>
-      Promise.all(changedImages.map((image) => updateImageDisplay(image, { force: true }))),
+      new PQueue({ concurrency: CONCURRENCY }).addAll(
+        changedImages.map((image) => () => updateImageDisplay(image, { force: true })),
+      ),
     );
 };
 
@@ -79,9 +98,9 @@ const updateImagesResolution = async (): Promise<() => void> => {
 const updateAllImageResolution = () => {
   const images = Array.from(document.getElementById('svgcontent')?.querySelectorAll('image') ?? []);
 
-  images.forEach((image) => {
-    updateImageDisplay(image as SVGImageElement, { force: true, useNativeSize: true });
-  });
+  new PQueue({ concurrency: CONCURRENCY }).addAll(
+    images.map((image) => () => updateImageDisplay(image as SVGImageElement, { force: true, useNativeSize: true })),
+  );
 };
 
 useGlobalPreferenceStore.subscribe((state) => state.image_downsampling, updateAllImageResolution);
