@@ -65,13 +65,10 @@
 
   .cover {
     position: relative;
-    height: 148px;
+    // Covers are authored 4:3 (contract §5) — display them uncropped at any column width
+    aspect-ratio: 4 / 3;
     background-size: cover;
     background-position: center;
-
-    @media screen and (max-width: 600px) {
-      height: 110px;
-    }
 
     .fav {
       position: absolute;
@@ -119,7 +116,7 @@
     max-width: 100%;
 
     .cover {
-      height: 230px;
+      aspect-ratio: 4 / 3;
       border-radius: 10px;
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
       background-size: cover;
