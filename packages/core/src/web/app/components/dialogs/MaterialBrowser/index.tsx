@@ -110,14 +110,17 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
     return visibleMaterials.filter(({ category }) => category === activeTab);
   }, [searching, searchResults, activeTab, visibleMaterials, favorites, recents, allMaterials]);
 
-  // Materials with at least one preset (own or user-attached) resolvable in the current
-  // machine context; the rest stay visible but dimmed and sorted last (TODO #7c)
+  // Catalog materials with no preset resolvable in the current machine context get dimmed
+  // and sorted last (TODO #7c); the user's own materials are never de-emphasized
   const supportedIds = useMemo(() => {
     const userData = { disabledPresetIds, presetOverrides, userPresets };
 
     return new Set(
       visibleMaterials
-        .filter((material) => getPresetsForContext(material, model, module, userData).length > 0)
+        .filter(
+          (material) =>
+            material.source === 'user' || getPresetsForContext(material, model, module, userData).length > 0,
+        )
         .map(({ id }) => id),
     );
   }, [visibleMaterials, model, module, disabledPresetIds, presetOverrides, userPresets]);
