@@ -18,5 +18,8 @@ export interface IFileSystem {
   readFile(filePath: string, encoding?: BufferEncoding): Buffer | string;
   statSync(filePath: string): { mtime: string; size: number };
   writeFile(filePath: string, data: Buffer | string): Promise<void>;
-  writeStream(path: string, flags: string, data?: Buffer[]): void;
+  /** Atomic like writeFile, but without needing the content joined into one buffer first. */
+  writeFileChunks(filePath: string, chunks: Buffer[]): Promise<void>;
+  /** Resolves once the data is on disk, so a caller can tell a finished write from a truncated one. */
+  writeStream(path: string, flags: string, data?: Buffer[]): Promise<void>;
 }

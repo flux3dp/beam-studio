@@ -22,10 +22,10 @@ jest.mock('@core/helpers/hashHelper', () => ({
   isAtPage: (...args: any[]) => mockIsAtPage(...args),
 }));
 
-const mockGenerateBeamBuffer = jest.fn();
+const mockGenerateBeamChunks = jest.fn();
 
 jest.mock('@core/helpers/file/export', () => ({
-  generateBeamBuffer: (...args: any[]) => mockGenerateBeamBuffer(...args),
+  generateBeamChunks: (...args: any[]) => mockGenerateBeamChunks(...args),
 }));
 
 const mockGetHasUnsavedChanges = jest.fn();
@@ -87,7 +87,7 @@ describe('auto-save-helper', () => {
     mockGetPath.mockReturnValue('/docs');
     mockExists.mockReturnValue(true);
     mockReaddirSync.mockReturnValue([]);
-    mockGenerateBeamBuffer.mockResolvedValue(Buffer.from('beam'));
+    mockGenerateBeamChunks.mockResolvedValue([Buffer.from('beam')]);
   });
 
   afterEach(() => {
@@ -180,7 +180,7 @@ describe('auto-save-helper', () => {
       autoSaveHelper.toggleAutoSave(true);
       jest.advanceTimersByTime(10 * 60 * 1000);
 
-      expect(mockGenerateBeamBuffer).not.toHaveBeenCalled();
+      expect(mockGenerateBeamChunks).not.toHaveBeenCalled();
     });
 
     test('enabled config: saves after the configured interval elapses', async () => {
@@ -188,11 +188,11 @@ describe('auto-save-helper', () => {
 
       autoSaveHelper.toggleAutoSave(true);
 
-      expect(mockGenerateBeamBuffer).not.toHaveBeenCalled();
+      expect(mockGenerateBeamChunks).not.toHaveBeenCalled();
 
       await jest.advanceTimersByTimeAsync(10 * 60 * 1000);
 
-      expect(mockGenerateBeamBuffer).toHaveBeenCalledTimes(1);
+      expect(mockGenerateBeamChunks).toHaveBeenCalledTimes(1);
       // Writes the generated buffer to a .beam file in the configured directory.
       expect(mockWriteStream).toHaveBeenCalledWith(
         expect.stringContaining('/docs/Beam Studio/auto-save/beam-studio autosave-'),
@@ -209,7 +209,7 @@ describe('auto-save-helper', () => {
       autoSaveHelper.toggleAutoSave(true);
       jest.advanceTimersByTime(10 * 60 * 1000);
 
-      expect(mockGenerateBeamBuffer).not.toHaveBeenCalled();
+      expect(mockGenerateBeamChunks).not.toHaveBeenCalled();
     });
 
     test('does not save when not on the editor page', async () => {
@@ -219,7 +219,7 @@ describe('auto-save-helper', () => {
       autoSaveHelper.toggleAutoSave(true);
       await jest.advanceTimersByTimeAsync(10 * 60 * 1000);
 
-      expect(mockGenerateBeamBuffer).not.toHaveBeenCalled();
+      expect(mockGenerateBeamChunks).not.toHaveBeenCalled();
     });
 
     test('starting twice does not create a second interval (no double-fire)', async () => {
@@ -230,7 +230,7 @@ describe('auto-save-helper', () => {
 
       await jest.advanceTimersByTimeAsync(10 * 60 * 1000);
 
-      expect(mockGenerateBeamBuffer).toHaveBeenCalledTimes(1);
+      expect(mockGenerateBeamChunks).toHaveBeenCalledTimes(1);
     });
 
     test('stop clears the timer: no further saves after stopping', async () => {
@@ -238,12 +238,12 @@ describe('auto-save-helper', () => {
 
       autoSaveHelper.toggleAutoSave(true);
       await jest.advanceTimersByTimeAsync(10 * 60 * 1000);
-      expect(mockGenerateBeamBuffer).toHaveBeenCalledTimes(1);
+      expect(mockGenerateBeamChunks).toHaveBeenCalledTimes(1);
 
       autoSaveHelper.toggleAutoSave(false);
       await jest.advanceTimersByTimeAsync(3 * 10 * 60 * 1000);
 
-      expect(mockGenerateBeamBuffer).toHaveBeenCalledTimes(1);
+      expect(mockGenerateBeamChunks).toHaveBeenCalledTimes(1);
     });
 
     test('new interval value takes effect after stop + restart', async () => {
@@ -258,7 +258,7 @@ describe('auto-save-helper', () => {
       // After 2 minutes the new (shorter) cadence fires; the old 10-min timer was cleared.
       await jest.advanceTimersByTimeAsync(2 * 60 * 1000);
 
-      expect(mockGenerateBeamBuffer).toHaveBeenCalledTimes(1);
+      expect(mockGenerateBeamChunks).toHaveBeenCalledTimes(1);
     });
 
     test('prunes oldest files down to fileNumber limit before writing', async () => {
@@ -291,7 +291,7 @@ describe('auto-save-helper', () => {
       await jest.advanceTimersByTimeAsync(10 * 60 * 1000);
 
       expect(mockPopUp).toHaveBeenCalledWith(expect.objectContaining({ id: 'auto-save-directory-not-exist' }));
-      expect(mockGenerateBeamBuffer).not.toHaveBeenCalled();
+      expect(mockGenerateBeamChunks).not.toHaveBeenCalled();
     });
   });
 });

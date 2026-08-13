@@ -34,7 +34,8 @@ const fileSystem: IFileSystem = {
     return { mtime: '', size: 0 };
   },
   async writeFile(filePath: string, data: Buffer | string): Promise<void> {},
-  writeStream(path: string, flags: string, data?: Buffer[]): void {},
+  async writeFileChunks(filePath: string, chunks: Buffer[]): Promise<void> {},
+  async writeStream(path: string, flags: string, data?: Buffer[]): Promise<void> {},
 } as IFileSystem;
 
 export default fileSystem;

@@ -11,7 +11,7 @@ import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { generateBeamBuffer, toBlobPart } from '../utils/beam';
+import { generateBeamChunks, toBlobPart } from '../utils/beam';
 import { getDefaultFileName } from '../utils/common';
 
 import { saveToCloud } from './cloud';
@@ -28,10 +28,10 @@ export const saveAsFile = async (): Promise<boolean> => {
 
   const defaultFileName = getDefaultFileName();
   const langFile = i18n.lang.topmenu.file;
-  // Buffer is already a Uint8Array, and Blob takes one directly — copying through
-  // Uint8Array.from just to reach .buffer cost about a gigabyte on a large file
+  // Blob takes the pieces as they are, so the file is never joined into one allocation; the parts
+  // are views over the buffers rather than copies of them
   const getContent = async () =>
-    withMemoryLog('saveAsFile: getContent', async () => new Blob([toBlobPart(await generateBeamBuffer())]));
+    withMemoryLog('saveAsFile: getContent', async () => new Blob((await generateBeamChunks()).map(toBlobPart)));
 
   const newFilePath = await dialog.writeFileDialog(
     getContent,
@@ -87,9 +87,9 @@ export const saveFile = async (): Promise<boolean> => {
 
   if (path.endsWith('.beam')) {
     return await withMemoryLog('saveFile (.beam)', async () => {
-      const buffer = await generateBeamBuffer();
+      const chunks = await generateBeamChunks();
 
-      await withMemoryLog('saveFile: writeFile', () => fs.writeFile(path, buffer));
+      await withMemoryLog('saveFile: writeFileChunks', () => fs.writeFileChunks(path, chunks));
       currentFileManager.setHasUnsavedChanges(false, false);
 
       return true;

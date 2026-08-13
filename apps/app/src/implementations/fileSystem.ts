@@ -49,13 +49,55 @@ const fileSystem: IFileSystem = {
   async writeFile(filePath: string, data: Buffer | string): Promise<void> {
     await writeFileAtomic(filePath, data);
   },
-  writeStream(path: string, flags: string, data?: Buffer[]): void {
-    const stream = fs.createWriteStream(path, {
-      flags,
-    });
+  async writeFileChunks(filePath: string, chunks: Buffer[]): Promise<void> {
+    // write-file-atomic only takes a single buffer, and joining a few hundred MB to hand it over
+    // is the copy this exists to avoid — so the same write-beside-then-rename dance by hand, which
+    // is what keeps an interrupted save from truncating the user's file
+    const tempPath = `${filePath}.${process.pid}.tmp`;
+    const existing = await fs.promises.stat(filePath).catch(() => null);
 
-    data?.forEach((datum) => stream.write(datum));
-    stream.close();
+    try {
+      await fileSystem.writeStream(tempPath, 'w', chunks);
+
+      // a fresh file would otherwise land with default permissions rather than the ones it had
+      if (existing) await fs.promises.chmod(tempPath, existing.mode);
+
+      await fs.promises.rename(tempPath, filePath);
+    } catch (error) {
+      await fs.promises.unlink(tempPath).catch(() => {});
+      throw error;
+    }
+  },
+  async writeStream(path: string, flags: string, data?: Buffer[]): Promise<void> {
+    const stream = fs.createWriteStream(path, { flags });
+
+    return new Promise<void>((resolve, reject) => {
+      let index = 0;
+
+      const writeNext = (): void => {
+        while (index < (data?.length ?? 0)) {
+          const chunk = data![index];
+
+          index += 1;
+
+          // false means the internal buffer is full; writing on regardless would queue the whole
+          // payload in memory, which is exactly what handing it over in pieces is meant to avoid
+          if (!stream.write(chunk)) {
+            stream.once('drain', writeNext);
+
+            return;
+          }
+        }
+
+        stream.end();
+      };
+
+      stream.on('error', reject);
+      // 'close' rather than 'finish': it fires once the fd is released, so the caller knows the
+      // bytes are on disk and not still in flight
+      stream.on('close', () => resolve());
+      writeNext();
+    });
   },
 };
 

@@ -12,7 +12,7 @@ import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { generateBeamBuffer, toBlobPart } from '../utils/beam';
+import { generateBeamChunks, toBlobPart } from '../utils/beam';
 
 let svgCanvas: ISVGCanvas;
 
@@ -36,11 +36,11 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
   await Progress.openNonstopProgress({ id });
 
   try {
-    // a view over the buffer rather than a copy of it; the trip through Uint8Array.from
-    // duplicated the whole file for nothing
+    // Blob takes the pieces as they are, so the file never has to exist as one allocation; the
+    // parts are views over the buffers rather than copies of them
     const blob = await withMemoryLog(
       'saveToCloud: generate blob',
-      async () => new Blob([toBlobPart(await generateBeamBuffer())]),
+      async () => new Blob((await generateBeamChunks()).map(toBlobPart)),
     );
     const form = new FormData();
 

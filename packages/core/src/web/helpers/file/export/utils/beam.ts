@@ -1,3 +1,5 @@
+import { Buffer } from 'buffer';
+
 import { pipe } from 'remeda';
 
 import findDefs from '@core/app/svgedit/utils/findDef';
@@ -92,15 +94,24 @@ const logInputSizes = (imageSource: Record<string, ArrayBuffer>, svgString: stri
 export const toBlobPart = (buffer: Buffer) =>
   new Uint8Array(buffer.buffer as ArrayBuffer, buffer.byteOffset, buffer.byteLength);
 
-export const generateBeamBuffer = async (): Promise<Buffer> =>
-  withMemoryLog('generateBeamBuffer', async () => {
-    const imageSource = await withMemoryLog('generateBeamBuffer: getImageSource', () => svgCanvas.getImageSource());
-    const svgString = withMemoryLogSync('generateBeamBuffer: getSvgString', () => svgCanvas.getSvgString());
-    const thumbnail = await withMemoryLog('generateBeamBuffer: thumbnail', generateBeamThumbnail);
+/**
+ * The .beam file as a list of pieces.
+ *
+ * Preferred over generateBeamBuffer: nothing downstream needs the file contiguous, and joining it
+ * costs a full extra copy — 352MB on the document this was traced on.
+ */
+export const generateBeamChunks = async (): Promise<Buffer[]> =>
+  withMemoryLog('generateBeamChunks', async () => {
+    const imageSource = await withMemoryLog('generateBeamChunks: getImageSource', () => svgCanvas.getImageSource());
+    const svgString = withMemoryLogSync('generateBeamChunks: getSvgString', () => svgCanvas.getSvgString());
+    const thumbnail = await withMemoryLog('generateBeamChunks: thumbnail', generateBeamThumbnail);
 
     logInputSizes(imageSource, svgString);
 
-    return withMemoryLogSync('generateBeamBuffer: assemble', () =>
-      beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail || undefined),
+    return withMemoryLogSync('generateBeamChunks: assemble', () =>
+      beamFileHelper.generateBeamChunks(svgString, imageSource, thumbnail || undefined),
     );
   });
+
+/** The whole file as one buffer. Costs a full copy — use generateBeamChunks where possible. */
+export const generateBeamBuffer = async (): Promise<Buffer> => Buffer.concat(await generateBeamChunks());

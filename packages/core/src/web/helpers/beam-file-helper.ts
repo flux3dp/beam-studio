@@ -163,9 +163,15 @@ const generateSvgBlockBuffer = (svgString: string) => {
   return Buffer.concat([typeBuf, lengthVintBuf, svgStringBuf]);
 };
 
-// 1 Byte Type (0x02 for svg content) + ? bytes vint length + length bytes svg string
-const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffer }) =>
-  withMemoryLogSync('generateImageSourceBlockBuffer', () => {
+/**
+ * 1 Byte Type (0x02) + ? bytes vint length + length bytes of repeated id/image payload.
+ *
+ * Left as separate chunks rather than one buffer: this block is nearly the whole file on an
+ * image-heavy document, and joining it here would allocate a second copy of every image just to
+ * have something to hand to the writer.
+ */
+const generateImageSourceBlockChunks = (imageSources: { [id: string]: ArrayBuffer }) =>
+  withMemoryLogSync('generateImageSourceBlockChunks', () => {
     // collected rather than concatenated per image: growing one buffer copies everything written so
     // far on every iteration, which on a document with a few hundred MB of images allocates GBs of
     // garbage that the synchronous loop never gives the GC a chance to reclaim
@@ -185,7 +191,14 @@ const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffe
       contentLength += idSizeBuf.length + idBuf.length + imageSizeBuf.length + imageBuf.length;
     }
 
-    return Buffer.concat([localHeaderTypeBuffer('imageSource'), valueToVIntBuffer(contentLength), ...parts]);
+    const typeBuf = localHeaderTypeBuffer('imageSource');
+    const lengthBuf = valueToVIntBuffer(contentLength);
+
+    return {
+      chunks: [typeBuf, lengthBuf, ...parts],
+      // what the header records for this block: the type byte and its own length prefix included
+      length: typeBuf.length + lengthBuf.length + contentLength,
+    };
   });
 
 const generateThumbnailBlockBuffer = (thumbnail: ArrayBuffer): Buffer => {
@@ -205,14 +218,21 @@ const generateMiscDataBlockBuffer = (data: MiscData): Buffer => {
   return Buffer.concat([headerBuf, lengthVintBuf, contentBuf]);
 };
 
-const generateBeamBuffer = (
+/**
+ * The .beam file as an ordered list of pieces, ready to be written or wrapped in a Blob without
+ * ever existing as one contiguous allocation.
+ *
+ * Prefer this over generateBeamBuffer: joining a few hundred MB into a single buffer costs a full
+ * extra copy of the file, and every consumer here — write streams, Blob — takes a list instead.
+ */
+const generateBeamChunks = (
   svgString: string,
   imageSources: { [id: string]: ArrayBuffer },
   thumbnail?: ArrayBuffer,
-): Buffer => {
+): Buffer[] => {
   const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]); // Bvg{version in uint} max to 255
   const svgBlockBuf = generateSvgBlockBuffer(svgString);
-  const imageSourceBlockBuffer = generateImageSourceBlockBuffer(imageSources);
+  const imageSourceBlock = generateImageSourceBlockChunks(imageSources);
   const thumbnailBlockBuffer = thumbnail ? generateThumbnailBlockBuffer(thumbnail) : null;
   const miscData: MiscData = {};
 
@@ -232,26 +252,33 @@ const generateBeamBuffer = (
     valueToVIntBuffer(metaDataBuf.length),
     metaDataBuf,
     valueToVIntBuffer(svgBlockBuf.length),
-    valueToVIntBuffer(imageSourceBlockBuffer.length),
+    valueToVIntBuffer(imageSourceBlock.length),
     valueToVIntBuffer(thumbnailBlockBuffer?.length || 0),
     valueToVIntBuffer(miscDataBuffer.length),
   ]);
   const headerSizeBuf = valueToVIntBuffer(headerBuffer.length);
-  const buffer = withMemoryLogSync('generateBeamBuffer: final concat', () =>
-    Buffer.concat([
-      signatureBuffer,
-      headerSizeBuf,
-      headerBuffer,
-      svgBlockBuf,
-      imageSourceBlockBuffer,
-      thumbnailBlockBuffer || Buffer.from([]),
-      miscDataBuffer,
-      Buffer.from([0x00]),
-    ]),
-  );
 
-  return buffer;
+  return [
+    signatureBuffer,
+    headerSizeBuf,
+    headerBuffer,
+    svgBlockBuf,
+    ...imageSourceBlock.chunks,
+    ...(thumbnailBlockBuffer ? [thumbnailBlockBuffer] : []),
+    miscDataBuffer,
+    Buffer.from([0x00]),
+  ];
 };
+
+/** The whole file as one buffer. Costs a full copy of it — use generateBeamChunks where possible. */
+const generateBeamBuffer = (
+  svgString: string,
+  imageSources: { [id: string]: ArrayBuffer },
+  thumbnail?: ArrayBuffer,
+): Buffer =>
+  withMemoryLogSync('generateBeamBuffer: final concat', () =>
+    Buffer.concat(generateBeamChunks(svgString, imageSources, thumbnail)),
+  );
 
 const readHeader = (headerBuf: Buffer) => {
   let vInt;
@@ -495,6 +522,7 @@ const readBvgFileInfo = async (file: File): Promise<{ thumbnail: string; workare
 
 export default {
   generateBeamBuffer,
+  generateBeamChunks,
   readBeam,
   readBeamFileInfo,
   readBvgFileInfo,

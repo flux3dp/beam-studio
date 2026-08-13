@@ -49,11 +49,11 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     }),
 }));
 
-const mockGenerateBeamBuffer = jest.fn();
+const mockGenerateBeamChunks = jest.fn();
 
 jest.mock('../utils/beam', () => ({
-  generateBeamBuffer: (...args: any[]) => mockGenerateBeamBuffer(...args),
-  // kept faithful to the real one: a view over the buffer, so a mock returning a Buffer behaves
+  generateBeamChunks: (...args: any[]) => mockGenerateBeamChunks(...args),
+  // kept faithful to the real one: a view over the buffer, so a mock returning Buffers behaves
   // the way the production path does
   toBlobPart: (buffer: Buffer) => new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength),
 }));
@@ -84,7 +84,7 @@ describe('saveToCloud', () => {
     mockGetCurrentUser.mockReturnValue({ email: 'test@flux3dp.com' });
     mockGetDefaultHeader.mockReturnValue({ 'X-CSRFToken': 'token' });
     mockOpenNonstopProgress.mockResolvedValue(undefined);
-    mockGenerateBeamBuffer.mockResolvedValue(Buffer.from([1, 2, 3]));
+    mockGenerateBeamChunks.mockResolvedValue([Buffer.from([1, 2]), Buffer.from([3])]);
     useDocumentStore.setState({ workarea: 'ado1' });
   });
 
@@ -245,7 +245,7 @@ describe('saveToCloud', () => {
 
   test('thrown error surfaces save_to_cloud alert and closes progress', async () => {
     jest.spyOn(console, 'error').mockImplementation(() => {});
-    mockGenerateBeamBuffer.mockRejectedValueOnce(new Error('buffer fail'));
+    mockGenerateBeamChunks.mockRejectedValueOnce(new Error('buffer fail'));
 
     const result = await saveToCloud('uuid-1');
 
