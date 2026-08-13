@@ -149,7 +149,9 @@ const setSvgContent = (svgcontentStr: string): IBatchCommand | null => {
     const batchCmd = new history.BatchCommand('Set Svg Content');
 
     svgcontentStr = sanitizeXmlString(svgcontentStr);
-    console.log(svgcontentStr);
+    // only the size: this string runs to hundreds of MB on a document with embedded images, and
+    // printing it costs the transfer to devtools plus whatever devtools then holds on to
+    console.log('Setting svg content, length', svgcontentStr.length);
 
     const newDoc = svgedit.utilities.text2xml(svgcontentStr);
 

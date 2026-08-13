@@ -843,7 +843,9 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       const { height, width, x, y } = bbox;
       const svgString = `<svg viewBox="${x} ${y} ${width} ${height}"><defs>${defs}</defs>${textString}</svg>`;
 
-      console.log(svgString);
+      // length only: defs above pulls in referenced elements verbatim, so this carries any base64
+      // image data along with the text
+      console.log('Uploading text svg, length', svgString.length);
 
       const file = new Blob([svgString], {
         type: 'text/plain',
