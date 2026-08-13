@@ -41,7 +41,7 @@ const requirement = {
   SWIFTRAY_CONVERT_PREVIEW: '1.3.7',
   SWIFTRAY_SUPPORT_BINARY: '1.3.7',
   // TODO: placeholder, replace with the first swiftray release that ships STL slicing
-  SWIFTRAY_SUPPORT_STL: '2.4.8',
+  SWIFTRAY_SUPPORT_STL: '2.4.9',
   TEMP_I2C_CMD: '3.0.1',
   UPDATE_BY_SOFTWARE: '3.2.6',
   USABLE_VERSION: '1.4.9',
