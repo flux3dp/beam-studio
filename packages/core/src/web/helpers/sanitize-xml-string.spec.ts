@@ -49,7 +49,7 @@ describe('sanitizeXmlString', () => {
     expect(sanitizeXmlString('')).toBe('');
   });
 
-  test('is stateless across calls, despite the shared global regex', () => {
+  test('is stateless across calls', () => {
     const dirty = 'a\u0000b';
 
     expect(sanitizeXmlString(dirty)).toBe('ab');
