@@ -6,7 +6,7 @@ import type { IImageDataResult } from '@core/interfaces/IImage';
 // TODO: add test
 const updateImageDisplay = (
   elem: SVGImageElement,
-  { useNativeSize = false }: { useNativeSize?: boolean } = {},
+  { force = false, useNativeSize = false }: { force?: boolean; useNativeSize?: boolean } = {},
 ): Promise<void> => {
   const imgUrl = elem.getAttribute('origImage');
 
@@ -31,7 +31,11 @@ const updateImageDisplay = (
 
   const displayingFullColor = elem.getAttribute('display-fullcolor') === '1';
 
+  // The guard only knows about the full-colour flag, so it cannot tell that the href was swapped
+  // for something else — an export replaces it with a full-resolution one without touching the
+  // flag, and the caller putting that back has to say so explicitly.
   if (
+    !force &&
     elem.getAttributeNS(NS.XLINK, 'xlink:href') &&
     ((isFullColor && displayingFullColor) || (!isFullColor && !displayingFullColor))
   ) {

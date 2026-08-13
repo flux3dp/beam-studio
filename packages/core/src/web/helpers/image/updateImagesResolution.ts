@@ -64,17 +64,23 @@ const updateImagesResolution = async (): Promise<() => void> => {
   // decodes every image at full resolution — the single largest allocation of the export path
   await withMemoryLog(`updateImagesResolution (${promises.length} images)`, () => Promise.all(promises));
 
+  // force: the href these images carry is the full-resolution one written above, which
+  // updateImageDisplay's own guard cannot distinguish from an up-to-date display href — without it
+  // the revert silently does nothing and every image keeps its export-sized base64 for the rest of
+  // the session
   return () =>
     withMemoryLog('updateImagesResolution: revert', () =>
-      Promise.all(changedImages.map((image) => updateImageDisplay(image))),
+      Promise.all(changedImages.map((image) => updateImageDisplay(image, { force: true }))),
     );
 };
 
+// Runs when the downsampling preference changes, i.e. exactly when every image needs redrawing at
+// a different resolution — force, or the guard sees an href already in place and skips them all.
 const updateAllImageResolution = () => {
   const images = Array.from(document.getElementById('svgcontent')?.querySelectorAll('image') ?? []);
 
   images.forEach((image) => {
-    updateImageDisplay(image as SVGImageElement, { useNativeSize: true });
+    updateImageDisplay(image as SVGImageElement, { force: true, useNativeSize: true });
   });
 };
 
