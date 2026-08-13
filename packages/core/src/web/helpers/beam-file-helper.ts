@@ -166,12 +166,13 @@ const generateSvgBlockBuffer = (svgString: string) => {
 // 1 Byte Type (0x02 for svg content) + ? bytes vint length + length bytes svg string
 const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffer }) =>
   withMemoryLogSync('generateImageSourceBlockBuffer', () => {
-    let imageSourceBlockBuffer = localHeaderTypeBuffer('imageSource');
-    let tempbuffer = Buffer.alloc(0);
-    const ids = Object.keys(imageSources);
+    // collected rather than concatenated per image: growing one buffer copies everything written so
+    // far on every iteration, which on a document with a few hundred MB of images allocates GBs of
+    // garbage that the synchronous loop never gives the GC a chance to reclaim
+    const parts: Buffer[] = [];
+    let contentLength = 0;
 
-    for (let i = 0; i < ids.length; i += 1) {
-      const id = ids[i];
+    for (const id of Object.keys(imageSources)) {
       const idSizeBuf = Buffer.alloc(1);
       const idBuf = Buffer.from(id);
 
@@ -180,11 +181,11 @@ const generateImageSourceBlockBuffer = (imageSources: { [id: string]: ArrayBuffe
       const imageBuf = Buffer.from(imageSources[id]);
       const imageSizeBuf = valueToVIntBuffer(imageBuf.length);
 
-      tempbuffer = Buffer.concat([tempbuffer, idSizeBuf, idBuf, imageSizeBuf, imageBuf]);
+      parts.push(idSizeBuf, idBuf, imageSizeBuf, imageBuf);
+      contentLength += idSizeBuf.length + idBuf.length + imageSizeBuf.length + imageBuf.length;
     }
-    imageSourceBlockBuffer = Buffer.concat([imageSourceBlockBuffer, valueToVIntBuffer(tempbuffer.length), tempbuffer]);
 
-    return imageSourceBlockBuffer;
+    return Buffer.concat([localHeaderTypeBuffer('imageSource'), valueToVIntBuffer(contentLength), ...parts]);
   });
 
 const generateThumbnailBlockBuffer = (thumbnail: ArrayBuffer): Buffer => {
