@@ -222,7 +222,7 @@ const fetchTaskCodeSwiftray = async (
     showTips: true,
   });
 
-  const revertFunctions: Array<() => void> = [];
+  const revertFunctions: Array<() => Promise<unknown> | void> = [];
   // Convert text to path
   const { revert, success } = await convertAllTextToPath();
 
@@ -261,8 +261,12 @@ const fetchTaskCodeSwiftray = async (
     annotateLayerBBox(),
   );
 
+  // each revert is awaited: updateImagesResolution's redraws every image in the document, and
+  // until it finishes the DOM still holds the full-resolution hrefs this export swapped in
   const cleanUpTempModification = async () => {
-    revertFunctions.toReversed().forEach((revert) => revert());
+    for (const revert of revertFunctions.toReversed()) {
+      await revert();
+    }
     SymbolMaker.switchImageSymbolForAll(true);
   };
 

@@ -133,7 +133,7 @@ const fetchTaskCode = async (
     showTips: true,
   });
 
-  const revertFunctions: Array<() => void> = [];
+  const revertFunctions: Array<() => Promise<unknown> | void> = [];
   const { revert: revertConvertTextToPath, success } = await convertAllTextToPath();
 
   revertFunctions.push(revertConvertTextToPath);
@@ -168,8 +168,13 @@ const fetchTaskCode = async (
     annotateLayerBBox(),
   );
 
-  const cleanUp = () => {
-    revertFunctions.toReversed().forEach((revert) => revert());
+  // awaited: updateImagesResolution's revert redraws every image, and until it finishes the DOM
+  // still holds the full-resolution hrefs the export swapped in. A save in that window writes them
+  // into the .beam file, which is how a 39MB svg block becomes a 137MB one.
+  const cleanUp = async () => {
+    for (const revert of revertFunctions.toReversed()) {
+      await revert();
+    }
     SymbolMaker.switchImageSymbolForAll(true);
   };
 
@@ -180,7 +185,7 @@ const fetchTaskCode = async (
 
   const uploadFile = await withMemoryLog('generateUploadFile', () => generateUploadFile(thumbnail, thumbnailBlobURL));
 
-  cleanUp();
+  await cleanUp();
   Progress.popById('fetch-task-code');
   Progress.openSteppingProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
