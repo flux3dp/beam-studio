@@ -76,6 +76,15 @@ const logInputSizes = (imageSource: Record<string, ArrayBuffer>, svgString: stri
   );
 };
 
+/**
+ * A Blob-safe view over a Buffer. This is a view, not a copy — the bytes are not touched.
+ *
+ * Buffer's backing store is typed ArrayBufferLike, which admits SharedArrayBuffer, so BlobPart
+ * rejects it outright.
+ */
+export const toBlobPart = (buffer: Buffer) =>
+  new Uint8Array(buffer.buffer as ArrayBuffer, buffer.byteOffset, buffer.byteLength);
+
 export const generateBeamBuffer = async (): Promise<Buffer> =>
   withMemoryLog('generateBeamBuffer', async () => {
     const imageSource = await withMemoryLog('generateBeamBuffer: getImageSource', () => svgCanvas.getImageSource());

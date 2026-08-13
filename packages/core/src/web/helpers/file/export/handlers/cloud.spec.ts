@@ -53,6 +53,9 @@ const mockGenerateBeamBuffer = jest.fn();
 
 jest.mock('../utils/beam', () => ({
   generateBeamBuffer: (...args: any[]) => mockGenerateBeamBuffer(...args),
+  // kept faithful to the real one: a view over the buffer, so a mock returning a Buffer behaves
+  // the way the production path does
+  toBlobPart: (buffer: Buffer) => new Uint8Array(buffer.buffer, buffer.byteOffset, buffer.byteLength),
 }));
 
 // flux-id resolves to the central __mocks__ file (all members are jest.fn()s).
@@ -81,7 +84,7 @@ describe('saveToCloud', () => {
     mockGetCurrentUser.mockReturnValue({ email: 'test@flux3dp.com' });
     mockGetDefaultHeader.mockReturnValue({ 'X-CSRFToken': 'token' });
     mockOpenNonstopProgress.mockResolvedValue(undefined);
-    mockGenerateBeamBuffer.mockResolvedValue([1, 2, 3]);
+    mockGenerateBeamBuffer.mockResolvedValue(Buffer.from([1, 2, 3]));
     useDocumentStore.setState({ workarea: 'ado1' });
   });
 

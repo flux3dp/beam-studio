@@ -1,5 +1,3 @@
-import { pipe, prop } from 'remeda';
-
 import Alert from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
@@ -14,7 +12,7 @@ import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { generateBeamBuffer } from '../utils/beam';
+import { generateBeamBuffer, toBlobPart } from '../utils/beam';
 
 let svgCanvas: ISVGCanvas;
 
@@ -38,13 +36,11 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
   await Progress.openNonstopProgress({ id });
 
   try {
-    const blob = await withMemoryLog('saveToCloud: generate blob', async () =>
-      pipe(
-        await generateBeamBuffer(),
-        (val) => Uint8Array.from(val),
-        prop('buffer'),
-        (arrayBuffer) => new Blob([arrayBuffer]),
-      ),
+    // a view over the buffer rather than a copy of it; the trip through Uint8Array.from
+    // duplicated the whole file for nothing
+    const blob = await withMemoryLog(
+      'saveToCloud: generate blob',
+      async () => new Blob([toBlobPart(await generateBeamBuffer())]),
     );
     const form = new FormData();
 
