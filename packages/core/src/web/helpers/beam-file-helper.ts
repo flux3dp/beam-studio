@@ -315,13 +315,16 @@ const readHeader = (headerBuf: Buffer) => {
 /**
  * Restores each image's original bytes and redraws it.
  *
- * The redraws are queued rather than all started at once. Each one decodes its image at full
- * resolution, so a document with dozens of photo-sized images would otherwise have all of them
- * decoding simultaneously and take the renderer down. That this loop kicked off unawaited work for
- * every image was harmless only while saved files carried a display href, which made every one of
- * these calls return immediately without doing anything.
+ * The redraws are queued so that a document with dozens of photo-sized images does not have all of
+ * them decoding at full resolution simultaneously.
+ *
+ * ⚠️ The queue is deliberately not awaited, and this function stays synchronous. Awaiting here
+ * yields, and setSvgContent has just set an off-DOM Image's src to every image in the document
+ * (via embedImage), each of which the browser is decoding. Handing control back mid-load lets that
+ * work land on top of these redraws instead of after them, and the renderer does not survive it.
+ * Import only ever worked because nothing on this path yielded.
  */
-const readImageSource = async (buf: Buffer, offset: number, end: number): Promise<void> => {
+const readImageSource = (buf: Buffer, offset: number, end: number): void => {
   let currentOffset = offset;
   const redraws: Array<() => Promise<void>> = [];
 
@@ -359,7 +362,7 @@ const readImageSource = async (buf: Buffer, offset: number, end: number): Promis
     }
   }
 
-  await new PQueue({ concurrency: IMAGE_DECODE_CONCURRENCY }).addAll(redraws);
+  new PQueue({ concurrency: IMAGE_DECODE_CONCURRENCY }).addAll(redraws);
 };
 
 const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) => {
@@ -398,7 +401,7 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand) 
 
     currentOffset = newOffset;
     console.log('Size', value);
-    await readImageSource(buf, currentOffset, currentOffset + value);
+    readImageSource(buf, currentOffset, currentOffset + value);
     currentOffset += value;
   } else if (blockType === 3) {
     // thumbnail
