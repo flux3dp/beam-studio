@@ -7,6 +7,8 @@ import writeFileAtomic from 'write-file-atomic';
 
 import type { CustomFile, IFileSystem, Path } from '@core/interfaces/IFileSystem';
 
+import writeFileChunksAtomic from './writeFileChunksAtomic';
+
 const fileSystem: IFileSystem = {
   delete(path: string): void {
     fs.unlinkSync(path);
@@ -50,23 +52,7 @@ const fileSystem: IFileSystem = {
     await writeFileAtomic(filePath, data);
   },
   async writeFileChunks(filePath: string, chunks: Buffer[]): Promise<void> {
-    // write-file-atomic only takes a single buffer, and joining a few hundred MB to hand it over
-    // is the copy this exists to avoid — so the same write-beside-then-rename dance by hand, which
-    // is what keeps an interrupted save from truncating the user's file
-    const tempPath = `${filePath}.${process.pid}.tmp`;
-    const existing = await fs.promises.stat(filePath).catch(() => null);
-
-    try {
-      await fileSystem.writeStream(tempPath, 'w', chunks);
-
-      // a fresh file would otherwise land with default permissions rather than the ones it had
-      if (existing) await fs.promises.chmod(tempPath, existing.mode);
-
-      await fs.promises.rename(tempPath, filePath);
-    } catch (error) {
-      await fs.promises.unlink(tempPath).catch(() => {});
-      throw error;
-    }
+    await writeFileChunksAtomic(filePath, chunks);
   },
   async writeStream(path: string, flags: string, data?: Buffer[]): Promise<void> {
     const stream = fs.createWriteStream(path, { flags });
