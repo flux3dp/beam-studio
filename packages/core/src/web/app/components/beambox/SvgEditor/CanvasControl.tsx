@@ -107,6 +107,9 @@ const CanvasControl = (): ReactNode => {
   // switched off in this mode, and the time estimate would need the backend to slice first. With one
   // mode left there is nothing for the dropdown to choose between, so it goes too.
   if (isInnerEngraving) {
+    // FIXME: the zoom is not ok now
+    return null;
+
     return (
       <div>
         <div className={styles.container}>
