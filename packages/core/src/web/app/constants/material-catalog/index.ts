@@ -18,19 +18,27 @@ export { materialDefs, presetMappings } from './mapping';
 /**
  * Strip legacy Preset metadata so only parameter values remain in a settings scope.
  *
- * `dpi` is only declared for scopes that carry dpiOverrides: their curated base values
- * are tuned for 250 DPI, and the browser surfaces the override tiers as separate
- * "(Quality)" entries (D19), so DPI becomes part of the choice. Scopes without
- * overrides declare nothing — applying them leaves the layer's DPI untouched,
- * exactly like the legacy dropdown.
+ * The catalog is FLAT: dpiOverrides never leave the builder. A scope that carries them in
+ * presets.ts becomes one value set per DPI option — the base declares its curated dpi
+ * (250) with the overrides stripped, and each option above it becomes a separate preset
+ * (see buildPresetsForMaterial). Scopes without overrides declare no dpi — applying them
+ * leaves the layer's DPI untouched, exactly like the legacy dropdown.
  */
 const toPresetValues = (preset: Preset, dpi?: EngraveDpiOption): PresetValues => {
-  const { hide: _hide, isDefault: _isDefault, key: _key, module: _module, name: _name, ...values } = preset;
+  const {
+    dpiOverrides,
+    hide: _hide,
+    isDefault: _isDefault,
+    key: _key,
+    module: _module,
+    name: _name,
+    ...values
+  } = preset;
 
-  return preset.dpiOverrides && dpi ? { dpi, ...values } : values;
+  return dpiOverrides && dpi ? { dpi, ...values, ...dpiOverrides[dpi] } : values;
 };
 
-/** Override tiers above the curated 250 DPI base, ascending (e.g. high → detailed → ultra) */
+/** Override options above the curated 250 DPI base, ascending (e.g. high → detailed → ultra) */
 const getQualityOptions = (source: NonNullable<(typeof defaultPresets)[string]>): EngraveDpiOption[] => {
   const options = new Set<EngraveDpiOption>();
 
@@ -72,10 +80,9 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
       ...(mapping.variantId && { variantId: mapping.variantId }),
     });
 
-    // D19: each override tier above the base becomes its own "(Quality)" entry, scoped to
-    // the models that actually curate that tier. Values (incl. dpiOverrides) stay identical
-    // to the base — only `dpi` differs, so applying still resolves through the same override
-    // mechanism and later DPI changes keep their compensation.
+    // Every override option above the base becomes its own FLAT preset (values merged at
+    // that dpi, no dpiOverrides), scoped to the models that actually curate that option.
+    // The browser suffixes their shared name with the declared DPI.
     for (const option of getQualityOptions(source)) {
       const qualitySettings: MaterialPreset['settings'] = {};
 

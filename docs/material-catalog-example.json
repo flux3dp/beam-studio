@@ -32,23 +32,15 @@
               "1": { "power": 40, "speed": 100, "dpi": "medium" },
               "2": { "power": 25, "speed": 100, "dpi": "medium" }
             },
-            "fhx2rf_30": {
-              "15": {
-                "power": 55,
-                "speed": 600,
-                "dpi": "medium",
-                "dpiOverrides": { "high": { "power": 25 }, "detailed": { "power": 13 } }
-              }
-            }
+            "fhx2rf_30": { "15": { "power": 55, "speed": 600, "dpi": "medium" } }
           }
         },
         {
-          "id": "wood_engraving_quality",
+          "id": "wood_engraving_high",
           "name": { "default": "Engraving", "zh-tw": "雕刻" },
           "origin": "default",
           "settings": {
-            "fhx2rf_30": { "15": { "power": 55, "speed": 300, "dpi": "high" } },
-            "fhx2rf_60": { "15": { "power": 40, "speed": 300, "dpi": "high" } }
+            "fhx2rf_30": { "15": { "power": 25, "speed": 600, "dpi": "high" } }
           }
         },
         {

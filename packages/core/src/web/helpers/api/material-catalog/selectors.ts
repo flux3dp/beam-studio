@@ -1,4 +1,5 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { dpiValueMap } from '@core/app/constants/resolutions';
 import i18n from '@core/helpers/i18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type {
@@ -110,16 +111,24 @@ export const getPresetsForContext = (
     const overlay =
       preset.origin === 'default' ? resolveOverlay(userData.presetOverrides, preset.id, model, module) : null;
     const { name: overlayName, ...overlayValues } = overlay ?? {};
+    const values = { ...base, ...overlayValues };
+    // Catalog dpi entries disambiguate by suffix IN THE BROWSER ONLY — the layer chip uses
+    // getPresetDisplayName directly, so it keeps the plain name and never claims a DPI
+    const displayName =
+      overlayName ??
+      (preset.origin === 'default' && values.dpi
+        ? `${getPresetDisplayName(preset)} - ${dpiValueMap[values.dpi]} DPI`
+        : getPresetDisplayName(preset));
 
     rows.push({
-      displayName: overlayName ?? getPresetDisplayName(preset),
+      displayName,
       isDisabled: disabled.has(preset.id),
       legacyKey: preset.legacyKey,
       materialId: material.id,
       preset,
       presetId: preset.id,
       state: preset.origin === 'user' ? 'user' : overlay ? 'customized' : 'default',
-      values: { ...base, ...overlayValues },
+      values,
     });
   }
 

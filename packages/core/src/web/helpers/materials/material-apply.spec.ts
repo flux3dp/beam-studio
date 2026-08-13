@@ -41,6 +41,7 @@ jest.mock('@core/helpers/materials/isMaterialBrowserActive', () => ({
 }));
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { presets as defaultPresets } from '@core/app/constants/presets';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
@@ -94,7 +95,7 @@ describe('material-apply', () => {
       expect(mockCheckTutorial).toHaveBeenCalledWith({ isDefault: true, key: 'wood_3mm_cutting' });
     });
 
-    test('dpi-declaring entries write dpi before the parameter pass (quality tiers)', () => {
+    test('dpi-declaring entries write their dpi; flat per-DPI presets carry merged values', () => {
       useDocumentStore.setState({ workarea: 'fhx2rf_30' } as never);
 
       const hit = materialCatalogCache.findPresetById('wood_engraving_high')!;
@@ -102,13 +103,21 @@ describe('material-apply', () => {
 
       applyMaterialPreset(hit.material, hit.preset, { layers: [target as never] });
 
-      const writes = mockWriteDataLayer.mock.calls.map(([, key]) => key);
-
-      // dpi lands first so applyPreset resolves dpiOverrides against the new value
-      expect(writes.indexOf('dpi')).toBeLessThan(writes.indexOf('materialId'));
       expect(target.attrs.dpi).toBe('high');
-      // dpiOverrides ride along verbatim for applyPreset to resolve
-      expect(mockApplyPreset.mock.calls[0][1].dpiOverrides).toBeDefined();
+      expect(target.attrs.presetId).toBe('wood_engraving_high');
+
+      // The catalog is flat: values already merged at this dpi, no dpiOverrides ride along
+      const applied = mockApplyPreset.mock.calls[0][1];
+
+      expect(applied.dpiOverrides).toBeUndefined();
+      expect(applied.power).toBe(defaultPresets.wood_engraving.fhx2rf_30!['15']!.dpiOverrides!.high!.power);
+
+      // The base entry applies its declared 250 DPI
+      const base = layer({ module: LayerModule.LASER_UNIVERSAL });
+      const baseHit = materialCatalogCache.findPresetById('wood_engraving')!;
+
+      applyMaterialPreset(baseHit.material, baseHit.preset, { layers: [base as never] });
+      expect(base.attrs.dpi).toBe('medium');
     });
 
     test('merges the [Customized] overlay into applied values', () => {
@@ -202,7 +211,7 @@ describe('material-apply', () => {
     test('respects the layer DPI on context changes (no dpi write, even for dpi-declaring refs)', () => {
       useDocumentStore.setState({ workarea: 'fhx2rf_30' } as never);
 
-      // User applied the 500 DPI tier, then tuned the layer down to medium via DpiBlock
+      // User applied the 500 DPI preset, then tuned the layer down to medium via DpiBlock
       const target = layer({ dpi: 'medium', module: LayerModule.LASER_UNIVERSAL, presetId: 'wood_engraving_high' });
 
       mockGetAllLayers.mockReturnValue([{ getGroup: () => target }]);

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`PresetRow default preset renders pills, state tag, and DPI tag 1`] = `
+exports[`PresetRow default preset renders pills and state tag 1`] = `
 <div>
   <div
     class="preset-row"
@@ -18,13 +18,6 @@ exports[`PresetRow default preset renders pills, state tag, and DPI tag 1`] = `
           style="margin-left: 8px;"
         >
           Default
-        </span>
-        <span
-          class="ant-tag ant-tag-blue css-dev-only-do-not-override-hash"
-          style="margin-left: 4px;"
-        >
-          250
-           DPI
         </span>
       </div>
       <div
@@ -65,6 +58,18 @@ exports[`PresetRow default preset renders pills, state tag, and DPI tag 1`] = `
               Pass Count
             </b>
             1
+          </span>
+        </div>
+        <div
+          class="ant-space-item"
+        >
+          <span
+            class="pill"
+          >
+            <b>
+              DPI
+            </b>
+            250
           </span>
         </div>
       </div>

@@ -120,39 +120,47 @@ describe('getBundledCatalog', () => {
     expect(woodCutting.origin).toBe('default');
   });
 
-  test('base entries map 1:1 to presets.ts keys; extras are only quality tiers', () => {
+  test('base entries map 1:1 to presets.ts keys; extras are flat per-DPI presets', () => {
     const baseIds = allPresets.filter(({ legacyKey }) => legacyKey).map(({ id }) => id);
 
     expect(baseIds.sort()).toEqual(Object.keys(presetMappings).sort());
     expect(new Set(allPresets.map(({ id }) => id)).size).toBe(allPresets.length);
-    // Tiers reuse the base name (option d: the DPI Tag differentiates, not the name)
+    // Per-DPI presets reuse the base name — the browser suffixes it with the declared DPI
     allPresets
       .filter(({ legacyKey }) => !legacyKey)
       .forEach((preset) => expect(preset.nameKey).toBe('engraving'));
   });
 
-  test('quality tiers per override above 250 DPI: same values, only dpi differs (D19)', () => {
-    // wood_engraving fhx2rf curates high/detailed/ultra → three tiers
-    const base = findPreset('wood_engraving')!;
+  test('the catalog is FLAT: per-DPI presets carry merged values, dpiOverrides never leave the builder', () => {
+    allPresets.forEach((preset) =>
+      Object.values(preset.settings).forEach((modules) =>
+        Object.values(modules!).forEach((values) => expect(values!.dpiOverrides).toBeUndefined()),
+      ),
+    );
+
+    // wood_engraving fhx2rf curates high/detailed/ultra → three extra flat presets
+    const sourceRf = defaultPresets.wood_engraving.fhx2rf_30![LayerModule.LASER_UNIVERSAL]!;
+    const base = findPreset('wood_engraving')!.settings.fhx2rf_30![LayerModule.LASER_UNIVERSAL]!;
     const high = findPreset('wood_engraving_high')!;
 
     expect(findPreset('wood_engraving_detailed')).toBeDefined();
     expect(findPreset('wood_engraving_ultra')).toBeDefined();
 
-    // Tiers scope only to models that actually curate that override (no fbb2/ado1)
+    // Base = source values at its curated 250 DPI
+    expect(base.dpi).toBe('medium');
+    expect(base.power).toBe(sourceRf.power);
+
+    // Per-DPI presets scope only to models that actually curate that override (no fbb2/ado1)
     expect(Object.keys(high.settings).sort()).toEqual(['fhx2rf_30', 'fhx2rf_60', 'fhx2rf_80']);
 
-    // Values identical to the base — including dpiOverrides, so DpiBlock compensation
-    // keeps working after applying a tier — with only the declared dpi differing.
-    const baseRf = base.settings.fhx2rf_30![LayerModule.LASER_UNIVERSAL]!;
+    // Their values = base merged with that option's deltas
     const highRf = high.settings.fhx2rf_30![LayerModule.LASER_UNIVERSAL]!;
 
-    expect(highRf).toEqual({ ...baseRf, dpi: 'high' });
-    expect(highRf.dpiOverrides).toEqual(
-      defaultPresets.wood_engraving.fhx2rf_30![LayerModule.LASER_UNIVERSAL]!.dpiOverrides,
-    );
+    expect(highRf.dpi).toBe('high');
+    expect(highRf.power).toBe(sourceRf.dpiOverrides!.high!.power);
+    expect(highRf.speed).toBe(sourceRf.speed);
 
-    // No overrides in the source → no tiers (black_acrylic_engraving has none)
+    // No overrides in the source → no per-DPI presets
     expect(findPreset('black_acrylic_engraving_high')).toBeUndefined();
     expect(findPreset('wood_3mm_cutting_high')).toBeUndefined();
   });

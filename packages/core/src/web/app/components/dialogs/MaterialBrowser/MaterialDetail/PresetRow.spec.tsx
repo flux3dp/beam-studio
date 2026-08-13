@@ -32,23 +32,13 @@ describe('PresetRow', () => {
 
   beforeEach(() => jest.clearAllMocks());
 
-  test('default preset renders pills, state tag, and DPI tag', () => {
-    const { container, getByText, queryByText } = render(<PresetRow context={context} row={baseRow} {...handlers} />);
+  test('default preset renders pills and state tag', () => {
+    const { container, getByText } = render(<PresetRow context={context} row={baseRow} {...handlers} />);
 
     expect(getByText('Default')).toBeInTheDocument();
     expect(getByText('55%')).toBeInTheDocument();
-    // Declared dpi shows as a Tag beside the name; there is no DPI pill
-    expect(getByText('250 DPI')).toBeInTheDocument();
-    expect(queryByText('250')).not.toBeInTheDocument();
+    expect(getByText('250')).toBeInTheDocument(); // DPI pill shows the numeric value
     expect(container).toMatchSnapshot();
-  });
-
-  test('no DPI tag without a declared dpi', () => {
-    const { queryByText } = render(
-      <PresetRow context={context} row={{ ...baseRow, values: { power: 55, speed: 7 } }} {...handlers} />,
-    );
-
-    expect(queryByText(/DPI/)).not.toBeInTheDocument();
   });
 
   test('customized and disabled states', () => {

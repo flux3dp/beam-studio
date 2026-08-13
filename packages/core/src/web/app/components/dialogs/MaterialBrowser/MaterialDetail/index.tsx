@@ -79,7 +79,13 @@ const MaterialDetail = ({
   // Variant-scoped presets filtered to the selected variant; material-wide presets always show
   const rows = useMemo(
     () =>
-      getPresetsForContext(material, model, module, { disabledPresetIds, presetOverrides, userPresets }, selectedVariant?.id),
+      getPresetsForContext(
+        material,
+        model,
+        module,
+        { disabledPresetIds, presetOverrides, userPresets },
+        selectedVariant?.id,
+      ),
     [material, model, module, disabledPresetIds, presetOverrides, userPresets, selectedVariant],
   );
 

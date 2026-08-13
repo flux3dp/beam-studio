@@ -1,4 +1,5 @@
 import { type LayerModuleType, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { dpiValueMap } from '@core/app/constants/resolutions';
 import i18n from '@core/helpers/i18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { PresetValues } from '@core/interfaces/IMaterial';
@@ -13,12 +14,9 @@ export interface PresetParamPill {
  * (PRD §6.2): laser / Promark Q-Switch / Promark MOPA / printing.
  */
 export const getPresetDisplayParams = (
-  rawValues: PresetValues,
+  values: PresetValues,
   { model, module }: { model: PresetModel; module: LayerModuleType },
 ): PresetParamPill[] => {
-  // Entries that declare a dpi are applied at that dpi, so show the values the apply
-  // pipeline will actually resolve (base merged with that tier's override deltas).
-  const values = rawValues.dpi ? { ...rawValues, ...rawValues.dpiOverrides?.[rawValues.dpi] } : rawValues;
   const lang = i18n.lang.beambox.right_panel.laser_panel;
   const pills: PresetParamPill[] = [];
   const push = (label: string, value: number | string | undefined, unit = '') => {
@@ -55,7 +53,7 @@ export const getPresetDisplayParams = (
   push(lang.speed, values.speed, ' mm/s');
   push(lang.repeat, values.repeat);
 
-  // No DPI pill: the declared dpi is shown as a Tag beside the row name instead
+  if (values.dpi) push('DPI', dpiValueMap[values.dpi]);
 
   return pills;
 };

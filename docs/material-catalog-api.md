@@ -87,7 +87,7 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 |---|---|---|---|
 | `id` | string | ✓ | **Stable and immutable forever.** The client stores user edits ("Customized") and Restore targets keyed by this id — renaming/re-creating a preset with a new id orphans user customizations. Enforce immutability in admin (read-only after creation). |
 | `legacyKey` | string | – | For presets migrated from Beam Studio's built-in `presets.ts` (e.g. `wood_3mm_cutting`): the original key, verbatim. The client writes it into legacy files for backward compatibility and uses it for tutorial hooks. Preserve exactly; never rename. |
-| `name` | LocalizedString | ✓ (cloud) | e.g. "Cutting", "Engraving". Don't encode DPI in the name — presets whose `settings` declare a `dpi` get a DPI tag in the browser UI, so same-named entries (e.g. a base and a quality tier) are told apart by that tag. |
+| `name` | LocalizedString | ✓ (cloud) | e.g. "Cutting", "Engraving". Don't encode DPI in the name — publish one FLAT preset per DPI option (values fully merged, no dpiOverrides), sharing the same name; the client suffixes catalog presets that declare a `dpi` with "- 500 DPI" etc. in the browser, while the layer chip shows the plain name. |
 | `origin` | string | ✓ | Always `default` from this API (`user` is client-side only). |
 | `settings` | object | ✓ | Nested parameter scopes — see §3.3. |
 | `variantId` | string | – | Scopes the preset to one of the material's `variants` (e.g. a 3 mm cutting preset). Absent = applies to the whole material (thickness-agnostic engraving/printing). Must reference an id in the same material's `variants`. |
@@ -98,8 +98,7 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 "settings": {
   "<machineModel>": {          // PresetModel key, or "*" = any model
     "<layerModule>": {         // LayerModule numeric id as a STRING key, or "*" = any module
-      "power": 55, "speed": 600, "repeat": 1, "dpi": "medium",
-      "dpiOverrides": { "high": { "power": 25 }, "detailed": { "power": 13 } }
+      "power": 55, "speed": 600, "repeat": 1, "dpi": "medium"
     }
   }
 }
@@ -133,8 +132,7 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 
 **Parameter fields** (all optional; which ones are meaningful depends on module — same keys as Beam Studio's `ConfigKeyTypeMap`):
 - Common laser: `power` (0–100 %), `speed` (mm/s), `repeat` (pass count), `zStep`, `focus`, `focusStep`, `airAssist`, `minPower`, `diode`
-- `dpi`: **option string**, one of `"low"`(125) `"medium"`(250) `"high"`(500) `"detailed"`(1000) `"ultra"`(2000). Not a number. All migrated legacy presets are `"medium"`.
-- `dpiOverrides`: per-dpi-option deltas merged over the base values at apply time.
+- `dpi`: **option string**, one of `"low"`(125) `"medium"`(250) `"high"`(500) `"detailed"`(1000) `"ultra"`(2000). Not a number. Applying the preset writes it to the layer. Publish separate flat presets per DPI option — the catalog carries no `dpiOverrides`.
 - Promark Q-Switch: `dottingTime` (pulse time), `fillInterval` (line width), `frequency`
 - Promark MOPA / UV: `pulseWidth`, `frequency`
 - Printing: `ink` (saturation), `multipass`, `halftone`, plus channel fields
@@ -144,11 +142,11 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 
 Admin MAY strictly validate `settings` value keys against the client's `ConfigKeyTypeMap`
 (everything in `layer-config-helper.ts`'s `attributeMap` minus the meta keys
-`configName`/`module`/`color`/`clipRect`/`ref`/`materialId`/`presetId`), plus `dpiOverrides`:
+`configName`/`module`/`color`/`clipRect`/`ref`/`materialId`/`presetId`):
 
 ```
 accX accY airAssist amAngleMap amDensity backlash biDirectional ceZHighSpeed colorCurvesMap
-cRatio crossHatch diode dottingTime dpi dpiOverrides fillAngle fillInterval focus focusStep
+cRatio crossHatch diode dottingTime dpi fillAngle fillInterval focus focusStep
 frequency fullcolor halftone height highQuality ink interpolation kRatio minPadding minPower
 mRatio multipass nozzleMode nozzleOffsetX nozzleOffsetY oneWayEngraving oneWayEngravingReverse
 power printingBotPadding printingSpeed printingStrength printingTopPadding pulseWidth
@@ -198,7 +196,7 @@ releases; sync it from `attributeMap` when adding parameters.
 
 ## 8. Shared fixture
 
-`docs/material-catalog-example.json` is a small but complete example payload exercising every schema feature (localized strings, material/variant, per-region shop links, wildcard scopes, Promark/printing modules, dpiOverrides, up-to-date short-circuit shape documented inline as a sibling file if needed).
+`docs/material-catalog-example.json` is a small but complete example payload exercising every schema feature (localized strings, material/variant, per-region shop links, wildcard scopes, Promark/printing modules, per-DPI presets, up-to-date short-circuit shape documented inline as a sibling file if needed).
 
 - **Beam Studio (Jest)**: asserts the fixture parses/validates against `IMaterial.d.ts` shapes and resolves through `resolvePresetSettings` / the selectors.
 - **flux-id (Django)**: asserts serializer output for equivalently-seeded models deep-equals the fixture.

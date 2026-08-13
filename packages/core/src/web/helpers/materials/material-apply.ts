@@ -75,8 +75,8 @@ export const applyMaterialPreset = (
 
     if (!values) continue;
 
-    // dpi is a first-class preset parameter (D19) but not part of the legacy config-key
-    // loops; write it first so applyPreset resolves dpiOverrides against the new value.
+    // dpi is a first-class preset parameter (each DPI option is its own flat preset) but
+    // not part of the legacy config-key loops — write it separately
     if (values.dpi) {
       writeDataLayer(layer, 'dpi', values.dpi, { batchCmd });
     }

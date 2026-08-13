@@ -162,6 +162,31 @@ describe('getPresetsForContext', () => {
     expect(rows.map(({ presetId }) => presetId)).toEqual(['wood_3mm_cutting', 'wood_engraving', 'user_1', 'added_1']);
   });
 
+  test('catalog presets declaring a dpi get a DPI name suffix (browser rows only)', () => {
+    const ply = material({
+      id: 'ply',
+      presets: [
+        {
+          id: 'e',
+          name: 'Engraving',
+          origin: 'default',
+          settings: { fbb2: { [LayerModule.LASER_UNIVERSAL]: { dpi: 'high', power: 20 } } },
+        },
+        {
+          id: 'u',
+          name: 'Mine',
+          origin: 'user',
+          settings: { '*': { '*': { dpi: 'high', power: 1 } } },
+        },
+      ],
+    });
+    const rows = getPresetsForContext(ply, 'fbb2', LayerModule.LASER_UNIVERSAL, emptyUserData);
+
+    expect(rows[0].displayName).toBe('Engraving - 500 DPI');
+    // User presets keep their own name untouched
+    expect(rows[1].displayName).toBe('Mine');
+  });
+
   test('customized overlay merges values and flips state', () => {
     const rows = getPresetsForContext(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, {
       ...emptyUserData,

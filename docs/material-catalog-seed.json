@@ -297,54 +297,21 @@
               "15": {
                 "dpi": "medium",
                 "power": 55,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 25
-                  },
-                  "detailed": {
-                    "power": 13
-                  },
-                  "ultra": {
-                    "power": 7
-                  }
-                }
+                "speed": 600
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "medium",
                 "power": 30,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 14
-                  },
-                  "detailed": {
-                    "power": 7
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "speed": 600
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
                 "power": 25,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 12
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "speed": 600
               }
             }
           }
@@ -357,55 +324,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "high",
-                "power": 55,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 25
-                  },
-                  "detailed": {
-                    "power": 13
-                  },
-                  "ultra": {
-                    "power": 7
-                  }
-                }
+                "power": 25,
+                "speed": 600
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "high",
-                "power": 30,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 14
-                  },
-                  "detailed": {
-                    "power": 7
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 14,
+                "speed": 600
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "high",
-                "power": 25,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 12
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 12,
+                "speed": 600
               }
             }
           }
@@ -418,55 +352,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "detailed",
-                "power": 55,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 25
-                  },
-                  "detailed": {
-                    "power": 13
-                  },
-                  "ultra": {
-                    "power": 7
-                  }
-                }
+                "power": 13,
+                "speed": 600
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "detailed",
-                "power": 30,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 14
-                  },
-                  "detailed": {
-                    "power": 7
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 7,
+                "speed": 600
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "detailed",
-                "power": 25,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 12
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 6,
+                "speed": 600
               }
             }
           }
@@ -479,55 +380,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "ultra",
-                "power": 55,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 25
-                  },
-                  "detailed": {
-                    "power": 13
-                  },
-                  "ultra": {
-                    "power": 7
-                  }
-                }
+                "power": 7,
+                "speed": 600
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "ultra",
-                "power": 30,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 14
-                  },
-                  "detailed": {
-                    "power": 7
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 4,
+                "speed": 600
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "ultra",
-                "power": 25,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 12
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 3,
+                "speed": 600
               }
             }
           }
@@ -744,54 +612,21 @@
               "15": {
                 "dpi": "medium",
                 "power": 55,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 20
-                  },
-                  "detailed": {
-                    "power": 10
-                  },
-                  "ultra": {
-                    "power": 5
-                  }
-                }
+                "speed": 300
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "medium",
                 "power": 30,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 11
-                  },
-                  "detailed": {
-                    "power": 5
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "speed": 300
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
                 "power": 25,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 9
-                  },
-                  "detailed": {
-                    "power": 5
-                  },
-                  "ultra": {
-                    "power": 2
-                  }
-                }
+                "speed": 300
               }
             }
           }
@@ -804,55 +639,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "high",
-                "power": 55,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 20
-                  },
-                  "detailed": {
-                    "power": 10
-                  },
-                  "ultra": {
-                    "power": 5
-                  }
-                }
+                "power": 20,
+                "speed": 300
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "high",
-                "power": 30,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 11
-                  },
-                  "detailed": {
-                    "power": 5
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 11,
+                "speed": 300
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "high",
-                "power": 25,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 9
-                  },
-                  "detailed": {
-                    "power": 5
-                  },
-                  "ultra": {
-                    "power": 2
-                  }
-                }
+                "power": 9,
+                "speed": 300
               }
             }
           }
@@ -865,55 +667,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "detailed",
-                "power": 55,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 20
-                  },
-                  "detailed": {
-                    "power": 10
-                  },
-                  "ultra": {
-                    "power": 5
-                  }
-                }
+                "power": 10,
+                "speed": 300
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "detailed",
-                "power": 30,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 11
-                  },
-                  "detailed": {
-                    "power": 5
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 5,
+                "speed": 300
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "detailed",
-                "power": 25,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 9
-                  },
-                  "detailed": {
-                    "power": 5
-                  },
-                  "ultra": {
-                    "power": 2
-                  }
-                }
+                "power": 5,
+                "speed": 300
               }
             }
           }
@@ -926,55 +695,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "ultra",
-                "power": 55,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 20
-                  },
-                  "detailed": {
-                    "power": 10
-                  },
-                  "ultra": {
-                    "power": 5
-                  }
-                }
+                "power": 5,
+                "speed": 300
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "ultra",
-                "power": 30,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 11
-                  },
-                  "detailed": {
-                    "power": 5
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 3,
+                "speed": 300
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "ultra",
-                "power": 25,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 9
-                  },
-                  "detailed": {
-                    "power": 5
-                  },
-                  "ultra": {
-                    "power": 2
-                  }
-                }
+                "power": 2,
+                "speed": 300
               }
             }
           }
@@ -1347,54 +1083,21 @@
               "15": {
                 "dpi": "medium",
                 "power": 20,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 12
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 12
-                  }
-                }
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "medium",
                 "power": 15,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 9
-                  },
-                  "detailed": {
-                    "power": 9
-                  },
-                  "ultra": {
-                    "power": 9
-                  }
-                }
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
                 "power": 10,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 6
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 6
-                  }
-                }
+                "speed": 500
               }
             }
           }
@@ -1407,55 +1110,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "high",
-                "power": 20,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 12
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 12
-                  }
-                }
+                "power": 12,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "high",
-                "power": 15,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 9
-                  },
-                  "detailed": {
-                    "power": 9
-                  },
-                  "ultra": {
-                    "power": 9
-                  }
-                }
+                "power": 9,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "high",
-                "power": 10,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 6
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 6
-                  }
-                }
+                "power": 6,
+                "speed": 500
               }
             }
           }
@@ -1468,55 +1138,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "detailed",
-                "power": 20,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 12
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 12
-                  }
-                }
+                "power": 12,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "detailed",
-                "power": 15,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 9
-                  },
-                  "detailed": {
-                    "power": 9
-                  },
-                  "ultra": {
-                    "power": 9
-                  }
-                }
+                "power": 9,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "detailed",
-                "power": 10,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 6
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 6
-                  }
-                }
+                "power": 6,
+                "speed": 500
               }
             }
           }
@@ -1529,55 +1166,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "ultra",
-                "power": 20,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 12
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 12
-                  }
-                }
+                "power": 12,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "ultra",
-                "power": 15,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 9
-                  },
-                  "detailed": {
-                    "power": 9
-                  },
-                  "ultra": {
-                    "power": 9
-                  }
-                }
+                "power": 9,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "ultra",
-                "power": 10,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 6
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 6
-                  }
-                }
+                "power": 6,
+                "speed": 500
               }
             }
           }
@@ -1972,54 +1576,21 @@
               "15": {
                 "dpi": "medium",
                 "power": 40,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 20
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 8
-                  }
-                }
+                "speed": 300
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "medium",
                 "power": 20,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "speed": 300
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
                 "power": 20,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "speed": 300
               }
             }
           }
@@ -2032,55 +1603,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "high",
-                "power": 40,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 20
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 8
-                  }
-                }
+                "power": 20,
+                "speed": 300
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "high",
-                "power": 20,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 10,
+                "speed": 300
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "high",
-                "power": 20,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 10,
+                "speed": 300
               }
             }
           }
@@ -2093,55 +1631,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "detailed",
-                "power": 40,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 20
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 8
-                  }
-                }
+                "power": 12,
+                "speed": 300
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "detailed",
-                "power": 20,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 6,
+                "speed": 300
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "detailed",
-                "power": 20,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 6,
+                "speed": 300
               }
             }
           }
@@ -2154,55 +1659,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "ultra",
-                "power": 40,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 20
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 8
-                  }
-                }
+                "power": 8,
+                "speed": 300
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "ultra",
-                "power": 20,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 4,
+                "speed": 300
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "ultra",
-                "power": 20,
-                "speed": 300,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 4
-                  }
-                }
+                "power": 4,
+                "speed": 300
               }
             }
           }
@@ -2452,54 +1924,21 @@
               "15": {
                 "dpi": "medium",
                 "power": 25,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 10
-                  },
-                  "ultra": {
-                    "power": 8
-                  }
-                }
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "medium",
                 "power": 15,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 6
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 5
-                  }
-                }
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
                 "power": 10,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 4
-                  },
-                  "detailed": {
-                    "power": 4
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "speed": 500
               }
             }
           }
@@ -2512,55 +1951,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "high",
-                "power": 25,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 10
-                  },
-                  "ultra": {
-                    "power": 8
-                  }
-                }
+                "power": 10,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "high",
-                "power": 15,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 6
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 5
-                  }
-                }
+                "power": 6,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "high",
-                "power": 10,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 4
-                  },
-                  "detailed": {
-                    "power": 4
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 4,
+                "speed": 500
               }
             }
           }
@@ -2573,55 +1979,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "detailed",
-                "power": 25,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 10
-                  },
-                  "ultra": {
-                    "power": 8
-                  }
-                }
+                "power": 10,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "detailed",
-                "power": 15,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 6
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 5
-                  }
-                }
+                "power": 6,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "detailed",
-                "power": 10,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 4
-                  },
-                  "detailed": {
-                    "power": 4
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 4,
+                "speed": 500
               }
             }
           }
@@ -2634,55 +2007,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "ultra",
-                "power": 25,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 10
-                  },
-                  "detailed": {
-                    "power": 10
-                  },
-                  "ultra": {
-                    "power": 8
-                  }
-                }
+                "power": 8,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "ultra",
-                "power": 15,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 6
-                  },
-                  "detailed": {
-                    "power": 6
-                  },
-                  "ultra": {
-                    "power": 5
-                  }
-                }
+                "power": 5,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "ultra",
-                "power": 10,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 4
-                  },
-                  "detailed": {
-                    "power": 4
-                  },
-                  "ultra": {
-                    "power": 3
-                  }
-                }
+                "power": 3,
+                "speed": 500
               }
             }
           }
@@ -2937,54 +2277,21 @@
               "15": {
                 "dpi": "medium",
                 "power": 50,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 35
-                  },
-                  "detailed": {
-                    "power": 30
-                  },
-                  "ultra": {
-                    "power": 25
-                  }
-                }
+                "speed": 600
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "medium",
                 "power": 30,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 21
-                  },
-                  "detailed": {
-                    "power": 18
-                  },
-                  "ultra": {
-                    "power": 15
-                  }
-                }
+                "speed": 600
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
                 "power": 20,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 14
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 10
-                  }
-                }
+                "speed": 600
               }
             }
           }
@@ -2997,55 +2304,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "high",
-                "power": 50,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 35
-                  },
-                  "detailed": {
-                    "power": 30
-                  },
-                  "ultra": {
-                    "power": 25
-                  }
-                }
+                "power": 35,
+                "speed": 600
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "high",
-                "power": 30,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 21
-                  },
-                  "detailed": {
-                    "power": 18
-                  },
-                  "ultra": {
-                    "power": 15
-                  }
-                }
+                "power": 21,
+                "speed": 600
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "high",
-                "power": 20,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 14
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 10
-                  }
-                }
+                "power": 14,
+                "speed": 600
               }
             }
           }
@@ -3058,55 +2332,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "detailed",
-                "power": 50,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 35
-                  },
-                  "detailed": {
-                    "power": 30
-                  },
-                  "ultra": {
-                    "power": 25
-                  }
-                }
+                "power": 30,
+                "speed": 600
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "detailed",
-                "power": 30,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 21
-                  },
-                  "detailed": {
-                    "power": 18
-                  },
-                  "ultra": {
-                    "power": 15
-                  }
-                }
+                "power": 18,
+                "speed": 600
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "detailed",
-                "power": 20,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 14
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 10
-                  }
-                }
+                "power": 12,
+                "speed": 600
               }
             }
           }
@@ -3119,55 +2360,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "ultra",
-                "power": 50,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 35
-                  },
-                  "detailed": {
-                    "power": 30
-                  },
-                  "ultra": {
-                    "power": 25
-                  }
-                }
+                "power": 25,
+                "speed": 600
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "ultra",
-                "power": 30,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 21
-                  },
-                  "detailed": {
-                    "power": 18
-                  },
-                  "ultra": {
-                    "power": 15
-                  }
-                }
+                "power": 15,
+                "speed": 600
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "ultra",
-                "power": 20,
-                "speed": 600,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 14
-                  },
-                  "detailed": {
-                    "power": 12
-                  },
-                  "ultra": {
-                    "power": 10
-                  }
-                }
+                "power": 10,
+                "speed": 600
               }
             }
           }
@@ -3244,54 +2452,21 @@
               "15": {
                 "dpi": "medium",
                 "power": 70,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 40
-                  },
-                  "detailed": {
-                    "power": 30
-                  },
-                  "ultra": {
-                    "power": 30
-                  }
-                }
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "medium",
                 "power": 40,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 23
-                  },
-                  "detailed": {
-                    "power": 17
-                  },
-                  "ultra": {
-                    "power": 17
-                  }
-                }
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
                 "power": 30,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 17
-                  },
-                  "detailed": {
-                    "power": 13
-                  },
-                  "ultra": {
-                    "power": 13
-                  }
-                }
+                "speed": 500
               }
             }
           }
@@ -3304,55 +2479,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "high",
-                "power": 70,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 40
-                  },
-                  "detailed": {
-                    "power": 30
-                  },
-                  "ultra": {
-                    "power": 30
-                  }
-                }
+                "power": 40,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "high",
-                "power": 40,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 23
-                  },
-                  "detailed": {
-                    "power": 17
-                  },
-                  "ultra": {
-                    "power": 17
-                  }
-                }
+                "power": 23,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "high",
-                "power": 30,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 17
-                  },
-                  "detailed": {
-                    "power": 13
-                  },
-                  "ultra": {
-                    "power": 13
-                  }
-                }
+                "power": 17,
+                "speed": 500
               }
             }
           }
@@ -3365,55 +2507,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "detailed",
-                "power": 70,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 40
-                  },
-                  "detailed": {
-                    "power": 30
-                  },
-                  "ultra": {
-                    "power": 30
-                  }
-                }
+                "power": 30,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "detailed",
-                "power": 40,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 23
-                  },
-                  "detailed": {
-                    "power": 17
-                  },
-                  "ultra": {
-                    "power": 17
-                  }
-                }
+                "power": 17,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "detailed",
-                "power": 30,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 17
-                  },
-                  "detailed": {
-                    "power": 13
-                  },
-                  "ultra": {
-                    "power": 13
-                  }
-                }
+                "power": 13,
+                "speed": 500
               }
             }
           }
@@ -3426,55 +2535,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "ultra",
-                "power": 70,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 40
-                  },
-                  "detailed": {
-                    "power": 30
-                  },
-                  "ultra": {
-                    "power": 30
-                  }
-                }
+                "power": 30,
+                "speed": 500
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "ultra",
-                "power": 40,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 23
-                  },
-                  "detailed": {
-                    "power": 17
-                  },
-                  "ultra": {
-                    "power": 17
-                  }
-                }
+                "power": 17,
+                "speed": 500
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "ultra",
-                "power": 30,
-                "speed": 500,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 17
-                  },
-                  "detailed": {
-                    "power": 13
-                  },
-                  "ultra": {
-                    "power": 13
-                  }
-                }
+                "power": 13,
+                "speed": 500
               }
             }
           }
@@ -3623,54 +2699,21 @@
               "15": {
                 "dpi": "medium",
                 "power": 60,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 45
-                  },
-                  "detailed": {
-                    "power": 35
-                  },
-                  "ultra": {
-                    "power": 30
-                  }
-                }
+                "speed": 100
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "medium",
                 "power": 35,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 26
-                  },
-                  "detailed": {
-                    "power": 20
-                  },
-                  "ultra": {
-                    "power": 18
-                  }
-                }
+                "speed": 100
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
                 "power": 25,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 19
-                  },
-                  "detailed": {
-                    "power": 15
-                  },
-                  "ultra": {
-                    "power": 13
-                  }
-                }
+                "speed": 100
               }
             }
           }
@@ -3683,55 +2726,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "high",
-                "power": 60,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 45
-                  },
-                  "detailed": {
-                    "power": 35
-                  },
-                  "ultra": {
-                    "power": 30
-                  }
-                }
+                "power": 45,
+                "speed": 100
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "high",
-                "power": 35,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 26
-                  },
-                  "detailed": {
-                    "power": 20
-                  },
-                  "ultra": {
-                    "power": 18
-                  }
-                }
+                "power": 26,
+                "speed": 100
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "high",
-                "power": 25,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 19
-                  },
-                  "detailed": {
-                    "power": 15
-                  },
-                  "ultra": {
-                    "power": 13
-                  }
-                }
+                "power": 19,
+                "speed": 100
               }
             }
           }
@@ -3744,55 +2754,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "detailed",
-                "power": 60,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 45
-                  },
-                  "detailed": {
-                    "power": 35
-                  },
-                  "ultra": {
-                    "power": 30
-                  }
-                }
+                "power": 35,
+                "speed": 100
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "detailed",
-                "power": 35,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 26
-                  },
-                  "detailed": {
-                    "power": 20
-                  },
-                  "ultra": {
-                    "power": 18
-                  }
-                }
+                "power": 20,
+                "speed": 100
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "detailed",
-                "power": 25,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 19
-                  },
-                  "detailed": {
-                    "power": 15
-                  },
-                  "ultra": {
-                    "power": 13
-                  }
-                }
+                "power": 15,
+                "speed": 100
               }
             }
           }
@@ -3805,55 +2782,22 @@
             "fhx2rf_30": {
               "15": {
                 "dpi": "ultra",
-                "power": 60,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 45
-                  },
-                  "detailed": {
-                    "power": 35
-                  },
-                  "ultra": {
-                    "power": 30
-                  }
-                }
+                "power": 30,
+                "speed": 100
               }
             },
             "fhx2rf_60": {
               "15": {
                 "dpi": "ultra",
-                "power": 35,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 26
-                  },
-                  "detailed": {
-                    "power": 20
-                  },
-                  "ultra": {
-                    "power": 18
-                  }
-                }
+                "power": 18,
+                "speed": 100
               }
             },
             "fhx2rf_80": {
               "15": {
                 "dpi": "ultra",
-                "power": 25,
-                "speed": 100,
-                "dpiOverrides": {
-                  "high": {
-                    "power": 19
-                  },
-                  "detailed": {
-                    "power": 15
-                  },
-                  "ultra": {
-                    "power": 13
-                  }
-                }
+                "power": 13,
+                "speed": 100
               }
             }
           }

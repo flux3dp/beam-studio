@@ -72,6 +72,36 @@ describe('useAppliedMaterial', () => {
     expect(result.current.applied?.isModified).toBe(true);
   });
 
+  test('the declared dpi never flags modified — only parameter deviations do', () => {
+    mockResolveMaterialRef.mockReturnValue({ material, preset });
+    // Flat per-DPI preset: values already merged at its declared 500 DPI
+    mockResolveWithOverlay.mockReturnValue({ dpi: 'high', power: 25, speed: 7 });
+
+    const { rerender, result } = renderHook(() => useAppliedMaterial());
+
+    act(() =>
+      useConfigPanelStore.getState().change({
+        configName: 'Engraving',
+        dpi: 'high',
+        power: 25,
+        presetId: 'wood_engraving_high',
+        speed: 7,
+      } as never),
+    );
+    rerender();
+
+    expect(result.current.applied?.isModified).toBe(false);
+
+    // Tuning the layer DPI away from the declared one is a layer property, not a deviation
+    act(() => useConfigPanelStore.getState().change({ dpi: 'medium' } as never));
+    rerender();
+    expect(result.current.applied?.isModified).toBe(false);
+
+    act(() => useConfigPanelStore.getState().change({ power: 30 } as never));
+    rerender();
+    expect(result.current.applied?.isModified).toBe(true);
+  });
+
   test('mixed multi-selection reports Various without resolving', () => {
     act(() => useConfigPanelStore.getState().update({ power: { hasMultiValue: true, value: 20 } } as never));
 
