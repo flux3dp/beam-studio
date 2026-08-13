@@ -1448,13 +1448,30 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Returns:
   // String with the given element as an SVG tag
-  this.svgToString = function (elem, indent, unit: Units = 'pt', fixTopExpansion = false) {
-    const out = [];
+  /**
+   * Appends elem's serialisation to `out` instead of returning it.
+   *
+   * One array is threaded through the whole recursion and joined exactly once, by the caller. The
+   * previous shape — every level building its own array and joining it for its parent to push —
+   * copied each subtree's text once per ancestor. On a document whose image hrefs are base64 that
+   * is the difference between holding the string once and holding it once per level of nesting.
+   */
+  const appendSvgString = (
+    out: string[],
+    elem: any,
+    indent: number,
+    unit: Units = 'pt',
+    fixTopExpansion = false,
+  ): void => {
     const toXml = svgedit.utilities.toXml;
     const unitRe = new RegExp('^-?[\\d\\.]+' + unit + '$');
     const { minY } = workareaManager;
 
     if (elem) {
+      // the empty-defs case bails out after the opening tag is already written, so it needs to be
+      // able to rewind to where this element started
+      const startLength = out.length;
+
       cleanupElement(elem);
 
       const attrs = elem.attributes;
@@ -1537,7 +1554,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       } else {
         // Skip empty defs
         if (elem.nodeName === 'defs' && !elem.firstChild) {
-          return '';
+          out.length = startLength;
+
+          return;
         }
 
         const mozAttrs = ['-moz-math-font-style', '_moz-math-font-style'];
@@ -1628,7 +1647,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               }
 
               out.push('\n');
-              out.push(this.svgToString(childs.item(i), indent, undefined, fixTopExpansion));
+              appendSvgString(out, childs.item(i), indent, undefined, fixTopExpansion);
               break;
             case 3: // text node
               // to keep the spaces before a line
@@ -1679,6 +1698,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         out.push('/>');
       }
     }
+  };
+
+  this.svgToString = function (elem, indent, unit: Units = 'pt', fixTopExpansion = false) {
+    const out: string[] = [];
+
+    appendSvgString(out, elem, indent, unit, fixTopExpansion);
 
     return out.join('');
   }; // end svgToString()
