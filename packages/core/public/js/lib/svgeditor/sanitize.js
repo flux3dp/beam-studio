@@ -523,6 +523,12 @@
       'width',
       'x',
       'y',
+      'data-stl',
+      'data-stl-matrix',
+      'data-stl-transform',
+      'data-stl-layer-height',
+      'data-stl-mode',
+      'data-stl-point-spacing',
     ],
     stop: ['class', 'id', 'offset', 'requiredFeatures', 'stop-color', 'stop-opacity', 'style', 'systemLanguage'],
     svg: [
