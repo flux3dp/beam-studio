@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Nie wykryto klucza bezpieczeństwa\nKlucz bezpieczeństwa nie został wykryty lub został dezaktywowany. Dla Twojego bezpieczeństwa maszyna nie może działać, dopóki klucz nie zostanie prawidłowo włączony.\nWłóż klucz bezpieczeństwa i włącz go przed ponownym uruchomieniem pracy.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Nieprawidłowa temperatura lasera\nTemperatura lasera jest zbyt wysoka. Zatrzymaj pracę i pozwól laserowi ostygnąć przed ponownym uruchomieniem.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Nieprawidłowe napięcie lasera\nBłąd napięcia lasera. Uruchom ponownie maszynę. Jeśli problem będzie się powtarzał, skontaktuj się z obsługą klienta.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Maszyna zatrzymana — głowica lasera osiągnęła granicę obszaru roboczego.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Błąd krytyczny: płyta główna odłączona. Skontaktuj się z pomocą techniczną FLUX.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Płyta główna nie odpowiada\nPłyta główna nie odpowiada. Uruchom ponownie zadanie.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Przegrzanie. Poczekaj kilka minut.',

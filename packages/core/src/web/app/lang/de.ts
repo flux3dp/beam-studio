@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Sicherheitsschlüssel nicht erkannt\nDer Sicherheitsschlüssel wurde nicht erkannt oder ist deaktiviert. Zu Ihrer Sicherheit kann die Maschine nicht betrieben werden, bis der Schlüssel ordnungsgemäß eingeschaltet ist.\nBitte stecken Sie den Sicherheitsschlüssel ein und schalten Sie ihn ein, bevor Sie die Arbeit neu starten.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Lasertemperatur abnormal\nDie Lasertemperatur ist zu hoch. Bitte stoppen Sie den Betrieb und lassen Sie den Laser abkühlen, bevor Sie neu starten.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Laserspannung abnormal\nLaserspannungsfehler. Bitte starten Sie die Maschine neu. Wenn das Problem weiterhin besteht, wenden Sie sich an den Kundensupport.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Maschine gestoppt — Laserkopf hat die Arbeitsbereichsgrenze erreicht.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritischer Fehler: Mainboard offline. Bitte wenden Sie sich an den FLUX Support.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Mainboard reagiert nicht\nDas Mainboard reagiert nicht. Bitte starten Sie den Auftrag neu.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Überhitzt. Bitte warten Sie einige Minuten.',

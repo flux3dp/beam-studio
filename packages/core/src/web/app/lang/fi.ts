@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Turva-avainta ei havaittu\nTurva-avainta ei havaita tai se on poistettu käytöstä. Turvallisuutesi vuoksi laite ei voi toimia, ennen kuin avain on oikein kytkettynä.\nAseta turva-avain paikalleen ja kytke se päälle ennen työn uudelleenkäynnistystä.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Laserin lämpötila poikkeava\nLaserin lämpötila on liian korkea. Pysäytä toiminto ja anna laserin jäähtyä ennen uudelleenkäynnistystä.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Laserin jännite poikkeava\nLaserin jännitevirhe. Käynnistä laite uudelleen. Jos ongelma jatkuu, ota yhteyttä asiakastukeen.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Kone pysäytetty — laserpää saavutti työalueen rajan.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kriittinen virhe: Pääkortti offline. Ota yhteyttä FLUX-tukeen.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Pääkortti ei vastaa\nPääkortti ei vastaa. Käynnistä työ uudelleen.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Ylikuumeneminen. Odota muutama minuutti',

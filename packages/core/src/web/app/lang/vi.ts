@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Không phát hiện chìa khóa an toàn\nChìa khóa an toàn không được phát hiện hoặc đã bị vô hiệu hóa. Vì sự an toàn của bạn, máy không thể hoạt động cho đến khi chìa khóa được bật đúng cách.\nVui lòng cắm chìa khóa an toàn và bật nó trước khi khởi động lại công việc.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Nhiệt độ laser bất thường\nNhiệt độ laser quá cao. Vui lòng dừng hoạt động và để laser nguội trước khi khởi động lại.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Điện áp laser bất thường\nLỗi điện áp laser. Vui lòng khởi động lại máy. Nếu sự cố vẫn tiếp diễn, hãy liên hệ bộ phận hỗ trợ khách hàng.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Máy đã dừng — đầu laser đã chạm giới hạn vùng làm việc.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Lỗi nghiêm trọng: Bo mạch chủ ngoại tuyến. Vui lòng liên hệ hỗ trợ FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Bo mạch chủ không phản hồi\nBo mạch chủ không phản hồi. Vui lòng khởi động lại công việc.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Quá nóng. Vui lòng đợi vài phút.',
