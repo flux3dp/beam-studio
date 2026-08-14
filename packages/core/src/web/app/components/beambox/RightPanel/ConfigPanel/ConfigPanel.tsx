@@ -18,6 +18,7 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
@@ -49,7 +50,6 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import ColorBlock from '../ColorBlock';
 import ObjectPanelController from '../contexts/ObjectPanelController';
 import ObjectPanelItem from '../ObjectPanelItem';
-import WattBlock from '../WattBlock';
 
 import AdvancedBlock from './AdvancedBlock';
 import AirAssistBlock from './AirAssistBlock';
@@ -108,6 +108,16 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const { change, getState } = useConfigPanelStore();
   const supportedModules = useSupportedModules(workarea);
   const state = getState();
+  const watt = useCanvasStore((s) => s.watt);
+
+  // fhx2rf presets depend on the machine watt, which is set in Document Settings
+  useEffect(() => {
+    if (workarea !== 'fhx2rf') return;
+
+    postPresetChange();
+    initState();
+  }, [workarea, watt]);
+
   const { fullcolor, module } = state;
   const { isLaser, isPrinting, isUV } = useMemo(() => {
     return {
@@ -337,7 +347,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         <>
           {supportedModules.length > 1 && (
             <div className={styles['item-group']}>
-              <WattBlock />
               <ModuleBlock />
               <ObjectPanelItem.Divider />
             </div>
