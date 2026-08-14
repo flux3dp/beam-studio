@@ -18,7 +18,10 @@ import styles from './ZoomBlock.module.scss';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('zoom-block');
 
-let dpmmCache: number;
+/** Assumes the CSS reference resolution, for use until the real screen has been measured. */
+const DEFAULT_DPMM = 96 / 25.4;
+
+let dpmmCache: number | undefined;
 const calculateDpmm = async (): Promise<number> => {
   if (dpmmCache) {
     return dpmmCache;
@@ -115,7 +118,7 @@ const calculateDpmm = async (): Promise<number> => {
     console.error(e);
   }
 
-  return 96 / 25.4;
+  return DEFAULT_DPMM;
 };
 
 const getDpmm = async (): Promise<number> => {
@@ -128,6 +131,21 @@ const getDpmm = async (): Promise<number> => {
   return dpmmCache;
 };
 
+/**
+ * On-screen size over real size, or `null` while the canvas cannot say what its zoom is yet.
+ *
+ * `getZoom` reports screen pixels per millimetre; dividing by the screen's own pixels per millimetre
+ * leaves the ratio the label shows. A zoom of zero is the canvases' way of saying "not measured
+ * yet" — the 3D one only learns its zoom once r3f has sized the canvas element.
+ */
+const calculateRatio = (getZoom: (() => number) | undefined, dpmm: number): null | number => {
+  if (!dpmm) return null;
+
+  const zoom = getZoom ? getZoom() : workareaManager.zoomRatio * constant.dpmm;
+
+  return zoom > 0 ? zoom / dpmm : null;
+};
+
 interface Props {
   className?: string;
   getZoom?: () => number;
@@ -138,40 +156,28 @@ interface Props {
 
 const ZoomBlock = ({ className, getZoom, ratioClassName, resetView, setZoom }: Props): ReactNode => {
   const lang = useI18n().beambox.zoom_block;
-  const [dpmm, setDpmm] = useState(96 / 25.4);
-  const [displayRatio, setDisplayRatio] = useState(1);
+  const [dpmm, setDpmm] = useState(() => dpmmCache ?? DEFAULT_DPMM);
+  // seeded from the canvas rather than from a flat 100%, so the first paint already shows the zoom
+  // the canvas is actually at instead of a placeholder that corrects itself a frame later
+  const [displayRatio, setDisplayRatio] = useState(() => calculateRatio(getZoom, dpmmCache ?? DEFAULT_DPMM) ?? 1);
   const isMobile = useIsMobile();
 
   useEffect(() => {
     getDpmm().then((res) => setDpmm(res));
   }, []);
 
-  const calculateCurrentRatio = useCallback(() => {
-    if (!dpmm) {
-      return null;
-    }
-
-    const zoom = getZoom ? getZoom() : workareaManager.zoomRatio * constant.dpmm;
-    const ratio = zoom / dpmm;
-
-    return ratio;
-  }, [dpmm, getZoom]);
+  const calculateCurrentRatio = useCallback(() => calculateRatio(getZoom, dpmm), [dpmm, getZoom]);
 
   useEffect(() => {
-    const getRatio = () => {
+    const update = () => {
       const ratio = calculateCurrentRatio();
 
-      if (ratio) {
-        setDisplayRatio(ratio);
-      }
+      // null means the canvas has not measured itself yet — keep showing the last known zoom rather
+      // than a percentage nothing stands behind
+      if (ratio !== null) setDisplayRatio(ratio);
     };
 
-    getRatio();
-  }, [calculateCurrentRatio]);
-
-  useEffect(() => {
-    const update = () => setDisplayRatio(calculateCurrentRatio() ?? 1);
-
+    update();
     eventEmitter.on('UPDATE_ZOOM_BLOCK', update);
 
     return () => {

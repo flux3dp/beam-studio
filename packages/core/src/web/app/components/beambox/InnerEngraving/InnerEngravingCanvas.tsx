@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { GizmoHelper, GizmoViewport, OrbitControls } from '@react-three/drei';
 import { Canvas, useFrame } from '@react-three/fiber';
 import classNames from 'classnames';
-import { DoubleSide, MOUSE, Vector3 } from 'three';
+import { FrontSide, MOUSE, Vector3 } from 'three';
 
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -13,7 +13,15 @@ import workareaManager from '@core/app/svgedit/workarea';
 import { todo } from '@core/helpers/is-dev';
 
 import CanvasControls from './CanvasControls';
-import { AXIS_COLORS, BACKGROUND_COLOR, FLOOR_COLOR, FLOOR_MARGIN, FLOOR_Z, GRID_STEPS, TARGET_GRID_CELLS } from './constants';
+import {
+  AXIS_COLORS,
+  BACKGROUND_COLOR,
+  FLOOR_COLOR,
+  FLOOR_MARGIN,
+  FLOOR_Z,
+  GRID_STEPS,
+  TARGET_GRID_CELLS,
+} from './constants';
 import styles from './InnerEngravingCanvas.module.scss';
 import MaterialShape from './MaterialShape';
 import SceneGrid from './SceneGrid';
@@ -22,8 +30,8 @@ import StlMesh from './StlMesh';
 import { getMaterial, useMaterial } from './utils/material';
 import { getSelectedStlId, selectStlObject } from './utils/selection';
 import ViewController from './ViewController';
+import { CAMERA_FOV, DEFAULT_VIEW, getPresetPosition, useViewStore } from './viewStore';
 import ZoomController from './ZoomController';
-import { DEFAULT_VIEW, getPresetPosition, useViewStore } from './viewStore';
 
 todo(
   '標明這些顏色來自哪裡，基本上是 scss 或 JS，確認沿用舊的顏色的話，最好對齊原本的寫法（例如 rgba）；scss container background color 實際上可以直接套用整個 beam studio 的底色，不用另外設定，除非決定給內雕改成暗色模式，但容易影響到很多其他的顏色顯示',
@@ -99,8 +107,11 @@ const Scene = () => {
       {/* reaches past the work area so its edge is not flush with the boundary */}
       <mesh position={[center[0], center[1], FLOOR_Z]}>
         <planeGeometry args={[width + FLOOR_MARGIN * 2, height + FLOOR_MARGIN * 2]} />
-        {/* unlit: the work area floor is a flat #fff backdrop like the 2D canvas, not a lit surface */}
-        <meshBasicMaterial color={FLOOR_COLOR} side={DoubleSide} />
+        {/* Unlit: the work area floor is a flat #fff backdrop like the 2D canvas, not a lit surface.
+            Single-sided so that it simply is not there when the camera goes below it — seen from
+            underneath it is not a backdrop at all, just an opaque sheet between the user and the
+            work area. Back-face culling costs nothing and needs no per-frame test to decide. */}
+        <meshBasicMaterial color={FLOOR_COLOR} side={FrontSide} />
       </mesh>
       {showGrids && <SceneGrid depth={wallHeight} height={height} step={step} width={width} />}
       {showRulers && <SceneRuler depth={wallHeight} height={height} step={step} width={width} />}
@@ -128,8 +139,9 @@ const Scene = () => {
           <GizmoViewport axisColors={AXIS_COLORS as unknown as [string, string, string]} labelColor="#fff" />
         </GizmoHelper>
       )}
-      {/* clamped to the upper hemisphere: everything worth looking at is above the focus plane, and
-          orbiting under the floor only ever produces a confusing view of the material's underside.
+      {/* Free to orbit right under the work area: an inner engraving lives inside the workpiece, and
+          the underside is a face like any other. The floor is single-sided so it does not stand in
+          the way once the camera is below it.
 
           Dropping out of a preset needs both signals: `start`/`end` say an interaction is in flight,
           `change` says the camera actually moved. `start` alone fires on any pointer down, so
@@ -137,7 +149,6 @@ const Scene = () => {
           the programmatic `update()` the presets themselves do. */}
       <OrbitControls
         makeDefault
-        maxPolarAngle={Math.PI / 2}
         mouseButtons={spaceKey ? SPACE_MOUSE_BUTTONS : MOUSE_BUTTONS}
         onChange={() => {
           if (interacting.current) useViewStore.getState().markViewCustom();
@@ -184,6 +195,9 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
           // a tight near/far range keeps depth precision usable; with near = 1 (0.1mm) almost the
           // whole depth buffer would be spent on the first few millimetres in front of the camera
           far: Math.max(width, height) * 20,
+          // written down rather than left to r3f's default: the zoom control works the framing out
+          // from it before this canvas exists, so the two have to be reading the same number
+          fov: CAMERA_FOV,
           near: 10,
           position: cameraPosition,
         }}
