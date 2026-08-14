@@ -22,13 +22,7 @@ import { useStlStore } from '@core/app/stores/stlStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 
-import {
-  FLOOR_COLOR,
-  FLOOR_MARGIN,
-  FLOOR_Z,
-  MATERIAL_COLOR,
-  MATERIAL_OPACITY,
-} from '../constants';
+import { FLOOR_COLOR, FLOOR_MARGIN, FLOOR_Z, MATERIAL_COLOR, MATERIAL_OPACITY } from '../constants';
 import { VIEW_DIRECTIONS } from '../viewStore';
 
 import type { Material } from './material';

@@ -14,6 +14,9 @@ todo('i18n for the inner engraving canvas controls, currently hard-coded English
 const VIEW_OPTIONS: Array<{ label: string; value: Exclude<ViewPreset, 'custom'> }> = [
   { label: 'Iso', value: 'isometric' },
   { label: 'Top', value: 'top' },
+  // reachable now that the orbit is no longer clamped to the upper hemisphere: an inner engraving
+  // lives inside the workpiece, so its underside is a face like any other
+  { label: 'Bottom', value: 'bottom' },
   { label: 'Front', value: 'front' },
   { label: 'Back', value: 'back' },
   { label: 'Left', value: 'left' },

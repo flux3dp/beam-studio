@@ -6,7 +6,7 @@ import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 
 import constant from '@core/app/actions/beambox/constant';
-import { DEFAULT_VIEW, useViewStore } from '@core/app/components/beambox/InnerEngraving/viewStore';
+import { DEFAULT_VIEW, getDefaultZoomLevel, useViewStore } from '@core/app/components/beambox/InnerEngraving/viewStore';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
@@ -107,16 +107,15 @@ const CanvasControl = (): ReactNode => {
   // switched off in this mode, and the time estimate would need the backend to slice first. With one
   // mode left there is nothing for the dropdown to choose between, so it goes too.
   if (isInnerEngraving) {
-    // FIXME: the zoom is not ok now
-    return null;
-
     return (
       <div>
         <div className={styles.container}>
           <ZoomBlock
             className={styles.zoomContent}
-            // scene units are 0.1mm, and ZoomBlock speaks in screen pixels per mm
-            getZoom={() => useViewStore.getState().zoomLevel * constant.dpmm}
+            // scene units are 0.1mm, and ZoomBlock speaks in screen pixels per mm. Until the canvas
+            // has measured itself it has published nothing, so the framing it is about to open at
+            // stands in — the same number, one paint earlier
+            getZoom={() => (useViewStore.getState().zoomLevel || getDefaultZoomLevel()) * constant.dpmm}
             ratioClassName={styles.ratio}
             resetView={() => useViewStore.getState().requestView(DEFAULT_VIEW)}
             setZoom={(zoom) => useViewStore.getState().requestZoom(zoom / constant.dpmm)}
