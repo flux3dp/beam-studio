@@ -33,6 +33,7 @@ import RefreshIntervalBlock from './RefreshIntervalBlock';
 import RefreshThresholdBlock from './RefreshThresholdBlock';
 import SCurveBlock from './SCurveBlock';
 import SingleColorBlock from './SingleColorBlock';
+import TextureBlock from './TextureBlock';
 import WobbleBlock from './WobbleBlock';
 
 const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.ReactNode => {
@@ -109,6 +110,11 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
     if (addOnInfo.hybridLaser && isDiodeEnabled) {
       contents.push(<Diode key="diode" />);
+    }
+
+    // Swiftray (Promark) path does not read the texture layer attributes
+    if (!isPromark) {
+      contents.push(<TextureBlock key="texture-block" type={type} />);
     }
 
     if (isDev() && (workarea === 'fhx2rf' || workarea === 'fbb2')) {
