@@ -15,6 +15,10 @@
     .input {
       @include mixins.input;
     }
+
+    label .hint {
+      margin-left: 7px;
+    }
   }
 }
 

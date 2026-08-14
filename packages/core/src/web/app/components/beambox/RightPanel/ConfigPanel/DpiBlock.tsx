@@ -13,6 +13,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import Select from '@core/app/widgets/AntdSelect';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getDefaultPreset } from '@core/helpers/presets/preset-helper';
@@ -23,9 +24,7 @@ import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelItem from '../ObjectPanelItem';
 import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
-import styles from './Block.module.scss';
-import ConfigSlider from './ConfigSlider';
-import ConfigValueDisplay from './ConfigValueDisplay';
+import styles from './DpiBlock.module.scss';
 import initState from './initState';
 
 const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
@@ -104,15 +103,14 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
   const content = (
     <div className={classNames(styles.panel, styles[type])}>
       <span className={styles.title}>{lang.resolution.title}</span>
-      <ConfigValueDisplay
-        hasMultiValue={dpi.hasMultiValue}
-        inputId="dpi-input"
+      <Select
+        className={styles.select}
+        id="dpi-select"
         onChange={handleChange}
         options={options}
-        type={type}
-        value={dpiNumber}
+        placeholder="-"
+        value={dpi.hasMultiValue ? undefined : dpiNumber}
       />
-      <ConfigSlider id="dpi" onChange={handleChange} options={options} value={dpiNumber} />
     </div>
   );
 

@@ -711,7 +711,6 @@ const lang: ILang = {
         existing_name: 'Toto jméno je již používáno.',
         fill_angle: 'Úhel Vyplnění',
         fill_interval: 'Interval vyplnění',
-        fill_setting: 'Nastavení Výplně',
         filled_path_only: 'Pouze pro vyplněné cesty',
         focus_adjustment: 'Přizpůsobení fokusu',
         frequency: 'Frekvence',

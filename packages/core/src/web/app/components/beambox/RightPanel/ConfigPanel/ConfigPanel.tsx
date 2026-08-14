@@ -20,7 +20,6 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -29,7 +28,6 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,
@@ -37,6 +35,7 @@ import {
   getConfigKeys,
   getData,
   getDefaultConfig,
+  getPromarkLimit,
   postPresetChange,
   writeData,
 } from '@core/helpers/layer/layer-config-helper';
@@ -52,27 +51,26 @@ import ObjectPanelController from '../contexts/ObjectPanelController';
 import ObjectPanelItem from '../ObjectPanelItem';
 
 import AdvancedBlock from './AdvancedBlock';
+import AdvancedSettingButton from './AdvancedSettingButton';
 import AirAssistBlock from './AirAssistBlock';
-import Backlash from './Backlash';
 import styles from './ConfigPanel.module.scss';
+import DevBlock from './DevBlock';
 import DottingTimeBlock from './DottingTimeBlock';
 import DpiBlock from './DpiBlock';
-import FillBlock from './FillBlock';
+import FrequencyBlock from './FrequencyBlock';
 import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
 import InkBlock from './InkBlock';
-import LaserDevOptions from './LaserDevOptions';
-import MinPadding from './MinPadding';
 import ModuleBlock from './ModuleBlock';
 import MultipassBlock from './MultipassBlock';
+import NumberBlock from './NumberBlock';
 import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
-import PrintingPaddingBlock from './PrintingPaddingBlock';
+import PulseWidthBlock from './PulseWidthBlock';
 import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
 import UVLightConfigs from './UVConfigs/UVLightConfigs';
 import UVPrintingConfigs from './UVConfigs/UVPrintingConfigs';
-import WhiteInkCheckbox from './WhiteInkCheckbox';
 
 const PARAMETERS_CONSTANT = 'parameters';
 
@@ -95,7 +93,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const workarea = useWorkarea();
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const forceUpdate = useForceUpdate();
-  const isDevMode = isDev();
   const [modalMoveLayerDest, setModalMoveLayerDest] = useState(selectedLayers[0]);
   const hiddenOptions = useMemo(
     () => [
@@ -118,7 +115,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     initState();
   }, [workarea, watt]);
 
-  const { fullcolor, module } = state;
+  const { module } = state;
   const { isLaser, isPrinting, isUV } = useMemo(() => {
     return {
       isLaser: laserModules.has(module.value),
@@ -127,6 +124,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     };
   }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  // not memoized: limits depend on promark info, which can change on document-settings-saved
+  const promarkLimit = isPromark ? getPromarkLimit() : null;
 
   useEffect(() => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
@@ -273,7 +272,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
   };
 
-  const isCustomBacklashEnabled = useGlobalPreferenceStore((state) => state['enable-custom-backlash']);
   const dropdownOptions = presetList.map((e) => ({
     key: e.key || e.name,
     label: e.name,
@@ -288,18 +286,33 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {(isPrinting || isUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
       {isLaser && <DpiBlock type={UIType} />}
+      {isPromark && <DottingTimeBlock type={UIType} />}
+      {isPromark && (
+        <NumberBlock
+          configKey="fillInterval"
+          forceUsePropsUnit
+          id="fillInterval"
+          max={100}
+          min={0.0001}
+          precision={4}
+          step={0.0001}
+          title={lang.fill_interval}
+          tooltip={lang.filled_path_only}
+          type={UIType}
+          unit="mm"
+        />
+      )}
       {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
-      {isDevMode && isPrinting && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
-      {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
+      {promarkLimit?.pulseWidth && (
+        <PulseWidthBlock max={promarkLimit.pulseWidth.max} min={promarkLimit.pulseWidth.min} type={UIType} />
+      )}
+      {promarkLimit?.frequency && (
+        <FrequencyBlock max={promarkLimit.frequency.max} min={promarkLimit.frequency.min} type={UIType} />
+      )}
       <RepeatBlock type={UIType} />
-      {isDevMode && isPrinting && fullcolor.value && UIType === 'panel-item' && <WhiteInkCheckbox type={UIType} />}
-      {isPromark && <FillBlock type={UIType} />}
-      {isPromark && <DottingTimeBlock type={UIType} />}
-      {isLaser && <LaserDevOptions />}
-      {isDevMode && <MinPadding type={UIType} />}
-      {isDevMode && isPrinting && <PrintingPaddingBlock type={UIType} />}
+      {isPromark && <AdvancedSettingButton type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
     </>
@@ -336,6 +349,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
                 {commonContent}
               </div>
               <AdvancedBlock type={UIType} />
+              <DevBlock type={UIType} />
             </>
           )}
         </div>
@@ -472,6 +486,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
                 {commonContent}
               </div>
               <AdvancedBlock type={UIType} />
+              <DevBlock type={UIType} />
             </>
           )}
         </Modal>

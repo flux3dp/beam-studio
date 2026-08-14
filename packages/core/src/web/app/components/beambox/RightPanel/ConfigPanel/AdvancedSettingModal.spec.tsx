@@ -11,10 +11,6 @@ jest.mock('@core/implementations/storage', () => ({
 const mockWriteDataLayer = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  getPromarkLimit: () => ({
-    frequency: { max: 4000, min: 1 },
-    pulseWidth: { max: 350, min: 2 },
-  }),
   writeDataLayer: (...args) => mockWriteDataLayer(...args),
 }));
 
@@ -35,11 +31,6 @@ const mockEmit = jest.fn();
 const mockOnClose = jest.fn();
 
 const changeValue = (baseElement: HTMLElement) => {
-  const fillIntervalInput = baseElement.querySelector('#fillInterval');
-
-  fireEvent.change(fillIntervalInput, { target: { value: '0.2' } });
-  expect(fillIntervalInput).toHaveValue('0.2');
-
   const fillAngleInput = baseElement.querySelector('#fillAngle');
 
   fireEvent.change(fillAngleInput, { target: { value: '22.5' } });
@@ -54,6 +45,11 @@ const changeValue = (baseElement: HTMLElement) => {
 
   fireEvent.click(crossHatchSwitch);
   expect(crossHatchSwitch).toHaveAttribute('aria-checked', 'true');
+
+  const wobbleSwitch = baseElement.querySelector('#wobble');
+
+  fireEvent.click(wobbleSwitch);
+  expect(wobbleSwitch).toHaveAttribute('aria-checked', 'true');
 };
 
 const mockInitState = jest.fn();
@@ -68,10 +64,10 @@ jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: mockUseConfigPanelStore,
 }));
 
-import FillSettingModal from './FillSettingModal';
+import AdvancedSettingModal from './AdvancedSettingModal';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 
-describe('test FillSettingModal', () => {
+describe('test AdvancedSettingModal', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGet.mockReturnValue('mm');
@@ -85,19 +81,20 @@ describe('test FillSettingModal', () => {
       biDirectional: { hasMultiValue: false, value: true },
       crossHatch: { hasMultiValue: false, value: false },
       fillAngle: { hasMultiValue: false, value: 0 },
-      fillInterval: { hasMultiValue: false, value: 0.1 },
+      wobbleDiameter: { hasMultiValue: false, value: -0.2 },
+      wobbleStep: { hasMultiValue: false, value: -0.05 },
     });
     useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
   });
 
   it('should render correctly', () => {
-    const { baseElement } = render(<FillSettingModal onClose={mockOnClose} />);
+    const { baseElement } = render(<AdvancedSettingModal onClose={mockOnClose} />);
 
     expect(baseElement).toMatchSnapshot();
   });
 
   test('save should work', () => {
-    const { baseElement, getByText } = render(<FillSettingModal onClose={mockOnClose} />);
+    const { baseElement, getByText } = render(<AdvancedSettingModal onClose={mockOnClose} />);
 
     changeValue(baseElement);
     expect(mockUpdate).not.toHaveBeenCalled();
@@ -106,21 +103,24 @@ describe('test FillSettingModal', () => {
     const saveButton = getByText('Save');
 
     fireEvent.click(saveButton);
-    expect(mockWriteDataLayer).toHaveBeenCalledTimes(8);
-    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, 'layer1', 'fillInterval', 0.2);
-    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(2, 'layer1', 'fillAngle', 22.5);
-    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(3, 'layer1', 'biDirectional', false);
-    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(4, 'layer1', 'crossHatch', true);
-    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(5, 'layer2', 'fillInterval', 0.2);
+    expect(mockWriteDataLayer).toHaveBeenCalledTimes(10);
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, 'layer1', 'fillAngle', 22.5);
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(2, 'layer1', 'biDirectional', false);
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(3, 'layer1', 'crossHatch', true);
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(4, 'layer1', 'wobbleStep', 0.05);
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(5, 'layer1', 'wobbleDiameter', 0.2);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(6, 'layer2', 'fillAngle', 22.5);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(7, 'layer2', 'biDirectional', false);
     expect(mockWriteDataLayer).toHaveBeenNthCalledWith(8, 'layer2', 'crossHatch', true);
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(9, 'layer2', 'wobbleStep', 0.05);
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(10, 'layer2', 'wobbleDiameter', 0.2);
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith({
       biDirectional: { hasMultiValue: false, value: false },
       crossHatch: { hasMultiValue: false, value: true },
       fillAngle: { hasMultiValue: false, value: 22.5 },
-      fillInterval: { hasMultiValue: false, value: 0.2 },
+      wobbleDiameter: { hasMultiValue: false, value: 0.2 },
+      wobbleStep: { hasMultiValue: false, value: 0.05 },
     });
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
@@ -130,7 +130,7 @@ describe('test FillSettingModal', () => {
   });
 
   test('cancel should work', () => {
-    const { baseElement, getByText } = render(<FillSettingModal onClose={mockOnClose} />);
+    const { baseElement, getByText } = render(<AdvancedSettingModal onClose={mockOnClose} />);
 
     changeValue(baseElement);
     expect(mockUpdate).not.toHaveBeenCalled();

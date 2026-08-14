@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
-import { Modal, Switch } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Modal, Switch, Tooltip } from 'antd';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
@@ -10,14 +11,14 @@ import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig';
 
-import styles from './FillSettingModal.module.scss';
+import styles from './AdvancedSettingModal.module.scss';
 import Input from './Input';
 
 interface Props {
   onClose: () => void;
 }
 
-const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
+const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
   const {
     beambox: {
       right_panel: { laser_panel: t },
@@ -30,11 +31,12 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
     biDirectional: state.biDirectional,
     crossHatch: state.crossHatch,
     fillAngle: state.fillAngle,
-    fillInterval: state.fillInterval,
+    wobbleDiameter: state.wobbleDiameter,
+    wobbleStep: state.wobbleStep,
   });
 
   const handleSave = () => {
-    const keys = ['fillInterval', 'fillAngle', 'biDirectional', 'crossHatch'] as const;
+    const keys = ['fillAngle', 'biDirectional', 'crossHatch', 'wobbleStep', 'wobbleDiameter'] as const;
 
     useLayerStore.getState().selectedLayers.forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
@@ -54,6 +56,18 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
     setDraftValue((cur) => ({ ...cur, [key]: { hasMultiValue: false, value } }));
   };
 
+  // wobble on/off is encoded by the sign of wobbleStep/wobbleDiameter
+  const wobbleOn = draftValue.wobbleStep.value > 0 && draftValue.wobbleDiameter.value > 0;
+  const setWobble = (on: boolean) => {
+    const sign = on ? 1 : -1;
+
+    setDraftValue({
+      ...draftValue,
+      wobbleDiameter: { hasMultiValue: false, value: Math.abs(draftValue.wobbleDiameter.value) * sign },
+      wobbleStep: { hasMultiValue: false, value: Math.abs(draftValue.wobbleStep.value) * sign },
+    });
+  };
+
   return (
     <Modal
       cancelText={tGlobal.cancel}
@@ -63,26 +77,11 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
       onCancel={onClose}
       onOk={handleSave}
       open
-      title={t.fill_setting}
+      title={t.advanced}
       width={350}
     >
       <div className={styles.hint}>{t.filled_path_only}</div>
       <div className={styles.container}>
-        <div>
-          <span>{t.fill_interval}</span>
-          <Input
-            hasMultiValue={draftValue.fillInterval.hasMultiValue}
-            id="fillInterval"
-            isInch={false}
-            max={100}
-            min={0.0001}
-            onChange={(value) => handleValueChange('fillInterval', value)}
-            precision={4}
-            step={0.0001}
-            unit="mm"
-            value={draftValue.fillInterval.value}
-          />
-        </div>
         <div>
           <span>{t.fill_angle}</span>
           <Input
@@ -113,9 +112,52 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
             onChange={(value) => handleValueChange('crossHatch', value)}
           />
         </div>
+        <div onClick={() => setWobble(!wobbleOn)}>
+          <label htmlFor="wobble">
+            {t.wobble}
+            <Tooltip title={t.wobble_desc}>
+              <QuestionCircleOutlined className={styles.hint} />
+            </Tooltip>
+          </label>
+          <Switch checked={wobbleOn} id="wobble" onChange={setWobble} />
+        </div>
+        {wobbleOn && (
+          <>
+            <div>
+              <span>{t.wobble_step}</span>
+              <Input
+                hasMultiValue={draftValue.wobbleStep.hasMultiValue}
+                id="wobbleStep"
+                isInch={false}
+                max={1}
+                min={0.01}
+                onChange={(value) => handleValueChange('wobbleStep', value)}
+                precision={2}
+                step={0.01}
+                unit="mm"
+                value={draftValue.wobbleStep.value}
+              />
+            </div>
+            <div>
+              <span>{t.wobble_diameter}</span>
+              <Input
+                hasMultiValue={draftValue.wobbleDiameter.hasMultiValue}
+                id="wobbleDiameter"
+                isInch={false}
+                max={1}
+                min={0.1}
+                onChange={(value) => handleValueChange('wobbleDiameter', value)}
+                precision={1}
+                step={0.1}
+                unit="mm"
+                value={draftValue.wobbleDiameter.value}
+              />
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   );
 };
 
-export default FillSettingModal;
+export default AdvancedSettingModal;

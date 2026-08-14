@@ -711,7 +711,6 @@ const lang: ILang = {
         existing_name: '已存在此名稱的自訂參數。',
         fill_angle: '填充角度',
         fill_interval: '填充間隔',
-        fill_setting: '填充設定',
         filled_path_only: '僅適用於填充路徑',
         focus_adjustment: '對焦調整',
         frequency: '頻率',

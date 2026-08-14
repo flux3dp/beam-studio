@@ -711,7 +711,6 @@ const lang: ILang = {
         existing_name: 'Tämä nimi on jo käytössä.',
         fill_angle: 'Täyttökulma',
         fill_interval: 'Täyttöväli',
-        fill_setting: 'Täyttöasetukset',
         filled_path_only: 'Vain täyttöpoluille',
         focus_adjustment: 'Tarkennuksen säätö',
         frequency: 'Taajuus',

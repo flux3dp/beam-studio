@@ -711,7 +711,6 @@ const lang: ILang = {
         existing_name: 'Nama ini sudah digunakan.',
         fill_angle: 'Sudut Isian',
         fill_interval: 'Jarak Isian',
-        fill_setting: 'Pengaturan Isi',
         filled_path_only: 'Hanya untuk jalur isian',
         focus_adjustment: 'Penyesuaian Fokus',
         frequency: 'Frekuensi',

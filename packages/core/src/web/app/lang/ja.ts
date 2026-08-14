@@ -711,7 +711,6 @@ const lang: ILang = {
         existing_name: 'このパラメーター名は使用されています。',
         fill_angle: '填充角度',
         fill_interval: '填充間隔',
-        fill_setting: 'フィル設定',
         filled_path_only: '塗りつぶしパスのみ対応',
         focus_adjustment: 'フォーカスを調整する',
         frequency: '周波数',

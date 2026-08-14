@@ -711,7 +711,6 @@ const lang: ILang = {
         existing_name: 'Dette navnet er allerede i bruk.',
         fill_angle: 'Fyll Vinkel',
         fill_interval: 'Fyll Interval',
-        fill_setting: 'Fyllingsinnstillinger',
         filled_path_only: 'Kun for fyllingsbaner',
         focus_adjustment: 'Fokuseringsjustering',
         frequency: 'Frekvens',

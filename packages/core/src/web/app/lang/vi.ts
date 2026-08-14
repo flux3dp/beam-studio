@@ -711,7 +711,6 @@ const lang: ILang = {
         existing_name: 'Tên này đã được sử dụng.',
         fill_angle: 'Góc Lấp Đầy',
         fill_interval: 'Khoảng Cách Lấp Đầy',
-        fill_setting: 'Cài đặt Đổ đầy',
         filled_path_only: 'Chỉ dành cho đường dẫn tô màu',
         focus_adjustment: 'Điều chỉnh tiêu điểm',
         frequency: 'Tần Số',
