@@ -31,6 +31,7 @@ jest.mock('./CurveEngravingZHighSpeed', () => () => <div>Mock CurveEngravingZHig
 jest.mock('./Diode', () => () => <div>Mock Diode</div>);
 jest.mock('./FocusBlock', () => ({ type }: { type: string }) => <div>Mock FocusBlock: {type}</div>);
 jest.mock('./SingleColorBlock', () => () => <div>Mock SingleColorBlock</div>);
+jest.mock('./TextureBlock', () => () => <div>Mock TextureBlock</div>);
 jest.mock('./RefreshIntervalBlock', () => () => <div>Mock RefreshIntervalBlock</div>);
 
 const mockUseConfigPanelStore = jest.fn();

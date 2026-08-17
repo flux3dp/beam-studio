@@ -4,18 +4,21 @@ describe('Set layer resolution config', () => {
   });
 
   it('resolution', () => {
-    cy.get('#dpi div.ant-slider-handle').as('handle');
-    cy.get('@handle').trigger('mousedown');
-    cy.get('@handle').trigger('mousemove', 50, 0, { force: true });
-    cy.get('@handle').trigger('mouseup');
-    cy.findByText('Resolution: 500 DPI').should('exist');
-    cy.get('@handle').trigger('mousedown');
-    cy.get('@handle').trigger('mousemove', 50, 0, { force: true });
-    cy.get('@handle').trigger('mouseup');
-    cy.findByText('Resolution: 1000 DPI').should('exist');
-    cy.get('@handle').trigger('mousedown');
-    cy.get('@handle').trigger('mousemove', -200, 0, { force: true });
-    cy.get('@handle').trigger('mouseup');
-    cy.findByText('Resolution: 125 DPI').should('exist');
+    // DPI is a Select (DpiBlock.tsx); the option label is `${value} DPI`,
+    // while the layer <g> stores the option name (data-dpi="low" | "medium" | ...).
+    cy.get('#dpi-select').closest('.ant-select').click();
+    cy.get('.ant-select-item-option-content').contains('500 DPI').click();
+    cy.get('#dpi-select').closest('.ant-select').find('.ant-select-selection-item').should('have.text', '500 DPI');
+    cy.get('g.layer').should('have.attr', 'data-dpi', 'high');
+
+    cy.get('#dpi-select').closest('.ant-select').click();
+    cy.get('.ant-select-item-option-content').contains('1000 DPI').click();
+    cy.get('#dpi-select').closest('.ant-select').find('.ant-select-selection-item').should('have.text', '1000 DPI');
+    cy.get('g.layer').should('have.attr', 'data-dpi', 'detailed');
+
+    cy.get('#dpi-select').closest('.ant-select').click();
+    cy.get('.ant-select-item-option-content').contains('125 DPI').click();
+    cy.get('#dpi-select').closest('.ant-select').find('.ant-select-selection-item').should('have.text', '125 DPI');
+    cy.get('g.layer').should('have.attr', 'data-dpi', 'low');
   });
 });
