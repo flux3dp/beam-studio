@@ -17,7 +17,11 @@ import styles from './Block.module.scss';
 import initState from './initState';
 import NumberBlock from './NumberBlock';
 
-const TextureBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+interface Props {
+  type?: 'default' | 'modal' | 'panel-item';
+}
+
+const TextureBlock = ({ type = 'default' }: Props): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
   const { change, texture, textureMode } = useConfigPanelStore(useShallow(pick(['change', 'texture', 'textureMode'])));
 

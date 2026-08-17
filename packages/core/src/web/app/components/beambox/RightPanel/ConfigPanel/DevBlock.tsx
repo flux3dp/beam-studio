@@ -21,8 +21,12 @@ import RefreshThresholdBlock from './RefreshThresholdBlock';
 import SCurveBlock from './SCurveBlock';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
 
+interface Props {
+  type?: 'default' | 'modal' | 'panel-item';
+}
+
 // Dev-only settings, so the label is not translated
-const DevBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.ReactNode => {
+const DevBlock = ({ type = 'default' }: Props): React.ReactNode => {
   const { fullcolor, module } = useConfigPanelStore(useShallow(pick(['fullcolor', 'module'])));
   const workarea = useWorkarea();
   const isCustomBacklashEnabled = useGlobalPreferenceStore((state) => state['enable-custom-backlash']);

@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import AdvancedSettingButton from './AdvancedSettingButton';
 
-jest.mock('./AdvancedSettingModal', () => ({ onClose }: any) => (
+jest.mock('./AdvancedSettingModal', () => ({ onClose }: { onClose: () => void }) => (
   <div>
     AdvancedSettingModal
     <button onClick={onClose} type="button">
