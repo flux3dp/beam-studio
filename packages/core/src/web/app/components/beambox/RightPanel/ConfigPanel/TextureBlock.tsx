@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 
-import { Segmented, Switch } from 'antd';
+import type { RadioChangeEvent } from 'antd';
+import { Radio, Switch } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -34,7 +35,9 @@ const TextureBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pane
     undoManager.addCommandToHistory(batchCmd);
   };
 
-  const handleModeChange = (newValue: number) => {
+  const handleModeChange = (e: RadioChangeEvent) => {
+    const newValue = e.target.value as number;
+
     if (newValue === textureMode.value && !textureMode.hasMultiValue) return;
 
     change({ textureMode: newValue });
@@ -67,7 +70,7 @@ const TextureBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pane
       {texture.value && (
         <>
           <div className={styles.panel}>
-            <Segmented
+            <Radio.Group
               block
               id="texture-mode"
               onChange={handleModeChange}
@@ -75,6 +78,7 @@ const TextureBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pane
                 { label: t.texture_random, value: 1 },
                 { label: t.texture_stripe, value: 2 },
               ]}
+              optionType="button"
               value={textureMode.value}
             />
           </div>
