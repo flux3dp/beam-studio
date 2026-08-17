@@ -1,17 +1,21 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Modal, Switch, Tooltip } from 'antd';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import isDev from '@core/helpers/is-dev';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig';
 
 import styles from './AdvancedSettingModal.module.scss';
+import initState from './initState';
 import Input from './Input';
 
 interface Props {
@@ -31,22 +35,42 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
     biDirectional: state.biDirectional,
     crossHatch: state.crossHatch,
     fillAngle: state.fillAngle,
+    focus: state.focus,
+    focusStep: state.focusStep,
     wobbleDiameter: state.wobbleDiameter,
     wobbleStep: state.wobbleStep,
   });
+  const isDevMode = useMemo(() => isDev(), []);
+  const repeat = state.repeat.value;
 
   const handleSave = () => {
-    const keys = ['fillAngle', 'biDirectional', 'crossHatch', 'wobbleStep', 'wobbleDiameter'] as const;
+    const keys = [
+      'fillAngle',
+      'biDirectional',
+      'crossHatch',
+      'wobbleStep',
+      'wobbleDiameter',
+      'focus',
+      'focusStep',
+    ] as const;
+
+    const batchCmd = new history.BatchCommand('Change advanced setting');
 
     useLayerStore.getState().selectedLayers.forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
 
       keys.forEach((key) => {
         if (state[key].value !== draftValue[key].value || state[key].hasMultiValue !== draftValue[key].hasMultiValue) {
-          writeDataLayer(layer, key, draftValue[key].value);
+          writeDataLayer(layer, key, draftValue[key].value, { batchCmd });
         }
       });
     });
+
+    if (!batchCmd.isEmpty()) {
+      batchCmd.onAfter = initState;
+      undoManager.addCommandToHistory(batchCmd);
+    }
+
     update(draftValue);
     eventEmitterFactory.createEventEmitter('time-estimation-button').emit('SET_ESTIMATED_TIME', null);
     onClose();
@@ -54,6 +78,16 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
 
   const handleValueChange = <T extends ConfigKey>(key: T, value: ConfigKeyTypeMap[T]) => {
     setDraftValue((cur) => ({ ...cur, [key]: { hasMultiValue: false, value } }));
+  };
+
+  // lower focus / stepwise focusing on/off are encoded by the sign of focus/focusStep
+  const focusOn = draftValue.focus.value > 0;
+  const focusStepOn = draftValue.focusStep.value > 0;
+  const setLowerFocus = (on: boolean) => {
+    handleValueChange('focus', Math.abs(draftValue.focus.value) * (on ? 1 : -1));
+  };
+  const setFocusStep = (on: boolean) => {
+    handleValueChange('focusStep', Math.abs(draftValue.focusStep.value) * (on ? 1 : -1));
   };
 
   // wobble on/off is encoded by the sign of wobbleStep/wobbleDiameter
@@ -80,6 +114,62 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       title={t.advanced}
       width={350}
     >
+      <div className={styles.container}>
+        <div>
+          <span>
+            <label htmlFor="lower-focus">{t.lower_focus}</label>
+            <Tooltip title={t.lower_focus_desc}>
+              <QuestionCircleOutlined className={styles.hint} />
+            </Tooltip>
+          </span>
+          <Switch checked={focusOn} id="lower-focus" onChange={setLowerFocus} />
+        </div>
+        {focusOn && (
+          <div>
+            <span>{t.by}</span>
+            <Input
+              hasMultiValue={draftValue.focus.hasMultiValue}
+              id="focus-adjustment"
+              isInch={false}
+              max={isDevMode ? 40 : 10}
+              min={0.01}
+              onChange={(value) => handleValueChange('focus', value)}
+              precision={2}
+              unit="mm"
+              value={draftValue.focus.value}
+            />
+          </div>
+        )}
+        {repeat > 1 && (
+          <>
+            <div>
+              <span>
+                <label htmlFor="focus-step-toggle">{t.stepwise_focusing}</label>
+                <Tooltip title={t.stepwise_focusing_desc}>
+                  <QuestionCircleOutlined className={styles.hint} />
+                </Tooltip>
+              </span>
+              <Switch checked={focusStepOn} id="focus-step-toggle" onChange={setFocusStep} />
+            </div>
+            {focusStepOn && (
+              <div>
+                <span>{t.z_step}</span>
+                <Input
+                  hasMultiValue={draftValue.focusStep.hasMultiValue}
+                  id="focus-step"
+                  isInch={false}
+                  max={isDevMode ? 40 : 10 / (repeat - 1)}
+                  min={0.01}
+                  onChange={(value) => handleValueChange('focusStep', value)}
+                  precision={2}
+                  unit="mm"
+                  value={draftValue.focusStep.value}
+                />
+              </div>
+            )}
+          </>
+        )}
+      </div>
       <div className={styles.hint}>{t.filled_path_only}</div>
       <div className={styles.container}>
         <div>
@@ -96,7 +186,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
             value={draftValue.fillAngle.value}
           />
         </div>
-        <div onClick={() => handleValueChange('biDirectional', !draftValue.biDirectional.value)}>
+        <div>
           <label htmlFor="biDirectional">{t.bi_directional}</label>
           <Switch
             checked={draftValue.biDirectional.value}
@@ -104,7 +194,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
             onChange={(value) => handleValueChange('biDirectional', value)}
           />
         </div>
-        <div onClick={() => handleValueChange('crossHatch', !draftValue.crossHatch.value)}>
+        <div>
           <label htmlFor="crossHatch">{t.cross_hatch}</label>
           <Switch
             checked={draftValue.crossHatch.value}
@@ -112,13 +202,13 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
             onChange={(value) => handleValueChange('crossHatch', value)}
           />
         </div>
-        <div onClick={() => setWobble(!wobbleOn)}>
-          <label htmlFor="wobble">
-            {t.wobble}
+        <div>
+          <span>
+            <label htmlFor="wobble">{t.wobble}</label>
             <Tooltip title={t.wobble_desc}>
               <QuestionCircleOutlined className={styles.hint} />
             </Tooltip>
-          </label>
+          </span>
           <Switch checked={wobbleOn} id="wobble" onChange={setWobble} />
         </div>
         {wobbleOn && (

@@ -36,6 +36,7 @@ import {
   getData,
   getDefaultConfig,
   getPromarkLimit,
+  objectConfig,
   postPresetChange,
   writeData,
 } from '@core/helpers/layer/layer-config-helper';
@@ -44,6 +45,7 @@ import { usePresetList } from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
+import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ColorBlock from '../ColorBlock';
@@ -57,13 +59,13 @@ import styles from './ConfigPanel.module.scss';
 import DevBlock from './DevBlock';
 import DottingTimeBlock from './DottingTimeBlock';
 import DpiBlock from './DpiBlock';
+import FillIntervalBlock from './FillIntervalBlock';
 import FrequencyBlock from './FrequencyBlock';
 import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
 import InkBlock from './InkBlock';
 import ModuleBlock from './ModuleBlock';
 import MultipassBlock from './MultipassBlock';
-import NumberBlock from './NumberBlock';
 import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import PulseWidthBlock from './PulseWidthBlock';
@@ -287,21 +289,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       <SpeedBlock type={UIType} />
       {isLaser && <DpiBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
-      {isPromark && (
-        <NumberBlock
-          configKey="fillInterval"
-          forceUsePropsUnit
-          id="fillInterval"
-          max={100}
-          min={0.0001}
-          precision={4}
-          step={0.0001}
-          title={lang.fill_interval}
-          tooltip={lang.filled_path_only}
-          type={UIType}
-          unit="mm"
-        />
-      )}
+      {isPromark && <FillIntervalBlock type={UIType} />}
       {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
@@ -393,17 +381,23 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     const onSave = (): void => {
       const saveDataAndClose = () => {
         const batchCmd = new history.BatchCommand('Change layer parameter');
+        const current = getState();
+        // blocks defer layer writes when type is 'modal', so persist every key that differs from the layer
+        const keys = (Object.keys(current) as ConfigKey[]).filter((key) => !objectConfig.includes(key));
 
         selectedLayers.forEach((layerName: string) => {
-          writeData(layerName, 'speed', state.speed.value, { applyPrinting: true, batchCmd });
-          writeData(layerName, 'power', state.power.value, { batchCmd });
-          writeData(layerName, 'repeat', state.repeat.value, { batchCmd });
-          writeData(layerName, 'zStep', state.zStep.value, { batchCmd });
-          writeData(layerName, 'configName', state.configName.value, { batchCmd });
-          writeData(layerName, 'ink', state.ink.value, { batchCmd });
-          writeData(layerName, 'multipass', state.multipass.value, { batchCmd });
-          writeData(layerName, 'halftone', state.halftone.value, { batchCmd });
-          writeData(layerName, 'highQuality', state.highQuality.value, { batchCmd });
+          const layer = layerManager.getLayerElementByName(layerName);
+
+          keys.forEach((key) => {
+            const { hasMultiValue, value } = current[key];
+
+            // untouched keys with differing per-layer values keep them; any edit clears hasMultiValue
+            if (hasMultiValue) return;
+
+            if (getData(layer, key, key === 'speed') !== value) {
+              writeData(layerName, key, value, { applyPrinting: key === 'speed', batchCmd });
+            }
+          });
         });
         batchCmd.onAfter = initState;
         svgCanvas.addCommandToHistory(batchCmd);

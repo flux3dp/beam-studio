@@ -62,7 +62,9 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       contents.push(<Diode key="diode" />);
     }
 
-    contents.push(<TextureBlock key="texture-block" type={type} />);
+    if (workarea !== 'fuv1') {
+      contents.push(<TextureBlock key="texture-block" type={type} />);
+    }
   } else {
     if (module.value === LayerModule.PRINTER_4C) {
       contents.push(<AmDensityBlock key="am-density-block" type={type} />);
