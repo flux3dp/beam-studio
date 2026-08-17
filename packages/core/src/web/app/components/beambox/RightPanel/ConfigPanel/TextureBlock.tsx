@@ -3,6 +3,8 @@ import React, { memo } from 'react';
 import type { RadioChangeEvent } from 'antd';
 import { Radio, Switch } from 'antd';
 import classNames from 'classnames';
+import { pick } from 'remeda';
+import { useShallow } from 'zustand/shallow';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
@@ -17,7 +19,7 @@ import NumberBlock from './NumberBlock';
 
 const TextureBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
-  const { change, texture, textureMode } = useConfigPanelStore();
+  const { change, texture, textureMode } = useConfigPanelStore(useShallow(pick(['change', 'texture', 'textureMode'])));
 
   const handleToggle = () => {
     const newVal = !texture.value;

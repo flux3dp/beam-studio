@@ -1,6 +1,8 @@
 import React, { memo } from 'react';
 
 import { Collapse, ConfigProvider } from 'antd';
+import { pick } from 'remeda';
+import { useShallow } from 'zustand/shallow';
 
 import { laserModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -21,7 +23,7 @@ import WhiteInkCheckbox from './WhiteInkCheckbox';
 
 // Dev-only settings, so the label is not translated
 const DevBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.ReactNode => {
-  const { fullcolor, module } = useConfigPanelStore();
+  const { fullcolor, module } = useConfigPanelStore(useShallow(pick(['fullcolor', 'module'])));
   const workarea = useWorkarea();
   const isCustomBacklashEnabled = useGlobalPreferenceStore((state) => state['enable-custom-backlash']);
 
