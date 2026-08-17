@@ -35,7 +35,6 @@ import {
   getConfigKeys,
   getData,
   getDefaultConfig,
-  getPromarkLimit,
   objectConfig,
   postPresetChange,
   writeData,
@@ -126,8 +125,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     };
   }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-  // not memoized: limits depend on promark info, which can change on document-settings-saved
-  const promarkLimit = isPromark ? getPromarkLimit() : null;
 
   useEffect(() => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
@@ -293,12 +290,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
-      {promarkLimit?.pulseWidth && (
-        <PulseWidthBlock max={promarkLimit.pulseWidth.max} min={promarkLimit.pulseWidth.min} type={UIType} />
-      )}
-      {promarkLimit?.frequency && (
-        <FrequencyBlock max={promarkLimit.frequency.max} min={promarkLimit.frequency.min} type={UIType} />
-      )}
+      {isPromark && <PulseWidthBlock type={UIType} />}
+      {isPromark && <FrequencyBlock type={UIType} />}
       <RepeatBlock type={UIType} />
       {isPromark && <AdvancedSettingButton type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
