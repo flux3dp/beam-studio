@@ -37,7 +37,7 @@ import {
   getDefaultConfig,
   objectConfig,
   postPresetChange,
-  writeData,
+  writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
 import { moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import { usePresetList } from '@core/helpers/presets/preset-helper';
@@ -379,7 +379,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         const keys = (Object.keys(current) as ConfigKey[]).filter((key) => !objectConfig.includes(key));
 
         selectedLayers.forEach((layerName: string) => {
-          const layer = layerManager.getLayerElementByName(layerName);
+          const layer = layerManager.getLayerElementByName(layerName)!;
 
           keys.forEach((key) => {
             const { hasMultiValue, value } = current[key];
@@ -387,8 +387,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
             // untouched keys with differing per-layer values keep them; any edit clears hasMultiValue
             if (hasMultiValue) return;
 
-            if (getData(layer, key, key === 'speed') !== value) {
-              writeData(layerName, key, value, { applyPrinting: key === 'speed', batchCmd });
+            if (getData(layer, key, true) !== value) {
+              writeDataLayer(layer, value as any, { applyPrinting: true, batchCmd });
             }
           });
         });
