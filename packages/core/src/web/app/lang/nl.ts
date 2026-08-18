@@ -711,6 +711,7 @@ const lang: ILang = {
         existing_name: 'Deze naam is al in gebruik.',
         fill_angle: 'Vulhoek',
         fill_interval: 'Vulinterval',
+        fill_setting: 'Vulinstellingen',
         filled_path_only: 'Alleen voor vulpaden',
         focus_adjustment: 'Focusaanpassing',
         frequency: 'Frequentie',

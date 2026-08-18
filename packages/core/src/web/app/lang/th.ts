@@ -711,6 +711,7 @@ const lang: ILang = {
         existing_name: 'มีชื่อนี้อยู่แล้ว',
         fill_angle: 'มุมเติมเต็ม',
         fill_interval: 'ช่วงเติมเต็ม',
+        fill_setting: 'การตั้งค่าการเติม',
         filled_path_only: 'ใช้ได้เฉพาะเส้นทางเติมสี',
         focus_adjustment: 'การปรับโฟกัส',
         frequency: 'ความถี่',

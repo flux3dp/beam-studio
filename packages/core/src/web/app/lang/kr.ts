@@ -711,6 +711,7 @@ const lang: ILang = {
         existing_name: '이름이 이미 사용되었습니다.',
         fill_angle: '채우기 각도',
         fill_interval: '채우기 간격',
+        fill_setting: '채우기 설정',
         filled_path_only: '채우기 경로에만 해당',
         focus_adjustment: '초점 조절',
         frequency: '주파수',

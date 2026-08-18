@@ -711,6 +711,7 @@ const lang: ILang = {
         existing_name: 'This name has been used.',
         fill_angle: 'Fill Angle',
         fill_interval: 'Fill Interval',
+        fill_setting: 'Fill Setting',
         filled_path_only: 'For fill paths only',
         focus_adjustment: 'Focus Adjustment',
         frequency: 'Frequency',

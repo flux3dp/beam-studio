@@ -711,6 +711,7 @@ const lang: ILang = {
         existing_name: 'Dieser Parametername wurde verwendet.',
         fill_angle: 'Füllwinkel',
         fill_interval: 'Füllintervall',
+        fill_setting: 'Fülleinstellungen',
         filled_path_only: 'Nur für Füllpfade',
         focus_adjustment: 'Fokuseinstellung',
         frequency: 'Frequenz',

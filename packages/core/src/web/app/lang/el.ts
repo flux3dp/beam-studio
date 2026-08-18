@@ -711,6 +711,7 @@ const lang: ILang = {
         existing_name: 'Αυτό το όνομα έχει ήδη χρησιμοποιηθεί.',
         fill_angle: 'Γωνία Γεμίσματος',
         fill_interval: 'Διάστημα Γεμίσματος',
+        fill_setting: 'Ρυθμίσεις Γέμισης',
         filled_path_only: 'Μόνο για διαδρομές πλήρωσης',
         focus_adjustment: 'Ρύθμιση εστίασης',
         frequency: 'Συχνότητα',

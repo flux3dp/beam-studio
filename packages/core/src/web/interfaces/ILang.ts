@@ -711,6 +711,7 @@ export interface ILang {
         existing_name: string;
         fill_angle: string;
         fill_interval: string;
+        fill_setting: string;
         filled_path_only: string;
         focus_adjustment: string;
         frequency: string;

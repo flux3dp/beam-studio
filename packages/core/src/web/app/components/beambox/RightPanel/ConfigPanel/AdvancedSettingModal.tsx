@@ -169,39 +169,6 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
             )}
           </>
         )}
-      </div>
-      <div className={styles.hint}>{t.filled_path_only}</div>
-      <div className={styles.container}>
-        <div>
-          <span>{t.fill_angle}</span>
-          <Input
-            hasMultiValue={draftValue.fillAngle.hasMultiValue}
-            id="fillAngle"
-            isInch={false}
-            max={360}
-            min={-360}
-            onChange={(value) => handleValueChange('fillAngle', value)}
-            precision={1}
-            unit="deg"
-            value={draftValue.fillAngle.value}
-          />
-        </div>
-        <div>
-          <label htmlFor="biDirectional">{t.bi_directional}</label>
-          <Switch
-            checked={draftValue.biDirectional.value}
-            id="biDirectional"
-            onChange={(value) => handleValueChange('biDirectional', value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="crossHatch">{t.cross_hatch}</label>
-          <Switch
-            checked={draftValue.crossHatch.value}
-            id="crossHatch"
-            onChange={(value) => handleValueChange('crossHatch', value)}
-          />
-        </div>
         <div>
           <span>
             <label htmlFor="wobble">{t.wobble}</label>
@@ -245,6 +212,38 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
             </div>
           </>
         )}
+        <div className={styles.subtitle}>{t.fill_setting}</div>
+        <div className={styles.hint}>{t.filled_path_only}</div>
+        <div>
+          <span>{t.fill_angle}</span>
+          <Input
+            hasMultiValue={draftValue.fillAngle.hasMultiValue}
+            id="fillAngle"
+            isInch={false}
+            max={360}
+            min={-360}
+            onChange={(value) => handleValueChange('fillAngle', value)}
+            precision={1}
+            unit="deg"
+            value={draftValue.fillAngle.value}
+          />
+        </div>
+        <div>
+          <label htmlFor="biDirectional">{t.bi_directional}</label>
+          <Switch
+            checked={draftValue.biDirectional.value}
+            id="biDirectional"
+            onChange={(value) => handleValueChange('biDirectional', value)}
+          />
+        </div>
+        <div>
+          <label htmlFor="crossHatch">{t.cross_hatch}</label>
+          <Switch
+            checked={draftValue.crossHatch.value}
+            id="crossHatch"
+            onChange={(value) => handleValueChange('crossHatch', value)}
+          />
+        </div>
       </div>
     </Modal>
   );

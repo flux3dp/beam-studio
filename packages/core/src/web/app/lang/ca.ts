@@ -711,6 +711,7 @@ const lang: ILang = {
         existing_name: "Aquest nom ja s'ha utilitzat.",
         fill_angle: 'Angle de farciment',
         fill_interval: 'Interval de farciment',
+        fill_setting: 'Configuració de farciment',
         filled_path_only: 'Només per a camins de farciment',
         focus_adjustment: "Ajust d'enfocament",
         frequency: 'Freqüència',

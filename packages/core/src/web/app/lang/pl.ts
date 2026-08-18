@@ -711,6 +711,7 @@ const lang: ILang = {
         existing_name: 'Ta nazwa została już użyta.',
         fill_angle: 'Kąt Wypełnienia',
         fill_interval: 'Odstęp Wypełnienia',
+        fill_setting: 'Ustawienia Wypełnienia',
         filled_path_only: 'Tylko dla ścieżek wypełnienia',
         focus_adjustment: 'Regulacja focusa',
         frequency: 'Częstotliwość',
