@@ -6,8 +6,8 @@ import type { DocumentStore } from '@core/app/stores/documentStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import alertConfig from '@core/helpers/api/alert-config';
-import deviceMaster from '@core/helpers/device-master';
 import { initPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import deviceMaster from '@core/helpers/device-master';
 import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
