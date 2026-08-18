@@ -387,6 +387,14 @@ export const loadLayout = (type: 'cached' | 'default' | 'storage' | 'tutorial') 
     disableSaveLayout = true;
     api.fromJSON(layout ?? defaultLayout);
     api.layout(window.innerWidth, window.innerHeight - layoutConstants.topBarHeight);
+
+    if (type === 'tutorial') {
+      // Grid sizes in the serialized layout are scaled proportionally to window width,
+      // so pin the controls group; tutorial hints are positioned with a fixed rightPanelWidth.
+      const controlsGroup = api.getGroup('groupControls');
+
+      if (controlsGroup) forceSize(controlsGroup.api, { width: rightPanelWidth });
+    }
   } catch (e) {
     console.error('Failed to load layout', e);
   } finally {
