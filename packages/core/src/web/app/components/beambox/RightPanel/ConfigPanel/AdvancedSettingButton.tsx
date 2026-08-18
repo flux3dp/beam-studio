@@ -1,16 +1,17 @@
 import React, { memo, useCallback, useState } from 'react';
 
 import { SettingFilled, SettingOutlined } from '@ant-design/icons';
+import { Button } from 'antd';
 import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
 
 import ObjectPanelItem from '../ObjectPanelItem';
 
-import styles from './FillBlock.module.scss';
-import FillSettingModal from './FillSettingModal';
+import styles from './AdvancedSettingButton.module.scss';
+import AdvancedSettingModal from './AdvancedSettingModal';
 
-function FillBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
+function AdvancedSettingButton({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const [showModal, setShowModal] = useState(false);
@@ -22,23 +23,20 @@ function FillBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-i
       {type === 'panel-item' ? (
         <ObjectPanelItem.Item
           content={<SettingFilled className={styles['panel-icon']} />}
-          id="fill-setting"
-          label={t.fill_setting}
+          id="advanced-setting"
+          label={t.advanced}
           onClick={openModal}
         />
       ) : (
         <div className={classNames(styles.panel, styles[type])}>
-          <span className={styles.title}>
-            {t.fill_setting}
-            <span className={styles.icon} onClick={openModal} title={t.fill_setting}>
-              <SettingOutlined className={styles.icon} />
-            </span>
-          </span>
+          <Button block icon={<SettingOutlined />} id="advanced-setting" onClick={openModal}>
+            {t.advanced}
+          </Button>
         </div>
       )}
-      {showModal && <FillSettingModal onClose={closeModal} />}
+      {showModal && <AdvancedSettingModal onClose={closeModal} />}
     </>
   );
 }
 
-export default memo(FillBlock);
+export default memo(AdvancedSettingButton);

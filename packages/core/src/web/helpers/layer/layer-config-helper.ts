@@ -76,6 +76,12 @@ const attributeMap: Record<ConfigKey, string> = {
   scJerk: 'data-scJerk',
   speed: 'data-speed',
   split: 'data-split',
+  texture: 'data-texture',
+  textureMode: 'data-textureMode',
+  textureRandomIntensity: 'data-textureRandomIntensity',
+  textureStripeAngle: 'data-textureStripeAngle',
+  textureStripeIntensity: 'data-textureStripeIntensity',
+  textureStripeInterval: 'data-textureStripeInterval',
   travelSpeed: 'data-travelSpeed',
   uvCuringAfter: 'data-uvCuringAfter',
   uvCuringRepeat: 'data-uvCuringRepeat',
@@ -145,6 +151,12 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   scEnable: true,
   scJerk: 0,
   speed: 20,
+  texture: false,
+  textureMode: 1, // 1 for random, 2 for stripe
+  textureRandomIntensity: 30,
+  textureStripeAngle: 45,
+  textureStripeIntensity: 50,
+  textureStripeInterval: 0.5,
   travelSpeed: 0,
   uvCuringAfter: false,
   uvCuringRepeat: 1,
@@ -212,6 +224,7 @@ export const booleanConfig: ConfigKey[] = [
   'highQuality',
   'oneWayEngraving',
   'oneWayEngravingReverse',
+  'texture',
 ] as const;
 export const optionalNumberConfigs: ConfigKey[] = ['printingTopPadding', 'printingBotPadding'] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;

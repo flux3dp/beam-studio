@@ -14,7 +14,7 @@ import styles from './Block.module.scss';
 import initState from './initState';
 import NumberBlock from './NumberBlock';
 
-const AutoFocus = (): React.JSX.Element => {
+const AutoFocus = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, height, repeat } = useConfigPanelStore();
@@ -23,6 +23,9 @@ const AutoFocus = (): React.JSX.Element => {
     const value = -height.value;
 
     change({ height: value });
+
+    // ConfigPanel writes the layers on save, so cancelling the modal leaves them untouched
+    if (type === 'modal') return;
 
     const batchCmd = new history.BatchCommand('Change auto focus toggle');
 
@@ -54,6 +57,7 @@ const AutoFocus = (): React.JSX.Element => {
           precision={2}
           step={0.01}
           title={t.height}
+          type={type}
           unit="mm"
         />
       ) : null}
@@ -66,6 +70,7 @@ const AutoFocus = (): React.JSX.Element => {
           precision={2}
           step={0.01}
           title={t.z_step}
+          type={type}
           unit="mm"
         />
       ) : null}

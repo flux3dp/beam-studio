@@ -11,8 +11,6 @@ import type { IButton } from '@core/interfaces/IButton';
 import type { IMessage } from '@core/interfaces/IMessage';
 import { type IProgressDialog, ProgressTypes } from '@core/interfaces/IProgress';
 
-const LANG = i18n.lang.alert;
-
 interface IAlertProgressContext {
   alertProgressStack: Array<IAlert | IProgressDialog>;
   popById: (id: string) => void;
@@ -36,6 +34,7 @@ const buttonsGenerator = (args: IAlert): IButton[] => {
     return buttons;
   }
 
+  const t = i18n.lang.alert;
   const { buttonType, id } = args;
   let { buttonLabels, callbacks, onCancel, onConfirm, onNo, onRetry, onYes, primaryButtonIndex } = args;
 
@@ -43,33 +42,33 @@ const buttonsGenerator = (args: IAlert): IButton[] => {
     case AlertConstants.YES_NO:
       onYes = onYes || (() => {});
       onNo = onNo || (() => {});
-      buttonLabels = [LANG.yes, LANG.no];
+      buttonLabels = [t.yes, t.no];
       callbacks = [onYes, onNo];
       primaryButtonIndex = primaryButtonIndex || 0;
       break;
     case AlertConstants.CONFIRM_CANCEL:
       onConfirm = onConfirm || (() => {});
       onCancel = onCancel || (() => {});
-      buttonLabels = [LANG.confirm, LANG.cancel];
+      buttonLabels = [t.confirm, t.cancel];
       primaryButtonIndex = primaryButtonIndex || 0;
       callbacks = [onConfirm, onCancel];
       break;
     case AlertConstants.RETRY_CANCEL:
       onRetry = onRetry || (() => {});
       onCancel = onCancel || (() => {});
-      buttonLabels = [LANG.retry, LANG.cancel];
+      buttonLabels = [t.retry, t.cancel];
       primaryButtonIndex = primaryButtonIndex || 0;
       callbacks = [onRetry, onCancel];
       break;
     case AlertConstants.CUSTOM_CANCEL:
       onCancel = onCancel || (() => {});
       primaryButtonIndex = primaryButtonIndex || 0;
-      buttonLabels = [...(buttonLabels ?? []), LANG.cancel];
+      buttonLabels = [...(buttonLabels ?? []), t.cancel];
       callbacks = [callbacks as () => void, onCancel];
       break;
     default:
       if (!buttonLabels) {
-        buttonLabels = [LANG.ok];
+        buttonLabels = [t.ok];
         callbacks = callbacks || (() => {});
       }
 
@@ -250,19 +249,20 @@ export const AlertProgressContextProvider = ({
     (args: IAlert, callback = () => {}) => {
       const { message, type } = args;
       let { caption } = args;
+      const t = i18n.lang.alert;
 
       switch (type) {
         case AlertConstants.SHOW_POPUP_INFO:
-          caption = caption || LANG.info;
+          caption = caption || t.info;
           break;
         case AlertConstants.SHOW_POPUP_WARNING:
-          caption = LANG.warning;
+          caption = t.warning;
           break;
         case AlertConstants.SHOW_POPUP_ERROR:
-          caption = caption || LANG.error;
+          caption = caption || t.error;
           break;
         case AlertConstants.SHOW_POPUP_INSTRUCTION:
-          caption = caption || LANG.instruction;
+          caption = caption || t.instruction;
           break;
         default:
           break;

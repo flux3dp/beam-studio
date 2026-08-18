@@ -2,8 +2,9 @@
 //
 // Reality of the web build (verified against packages/core/src/web on 2026-07):
 //   * "White Base" (白底) is implemented as the White Ink toggle (`wInk` layer config,
-//     `.white-ink-checkbox`). It only renders in dev mode on a full-color printing layer
-//     (ConfigPanel.tsx: `isDevMode && isPrinting && fullcolor.value`). This spec covers it.
+//     `.white-ink-checkbox`). It only renders in dev mode on a full-color printing layer,
+//     inside the "Developer Settings" accordion (DevBlock.tsx: `isPrinting && fullcolor.value`).
+//     This spec covers it.
 //   * "UV Ink" is NOT an ink-type selector on Ador. UV printing is a separate dev-gated
 //     module (`UV_PRINT`) / a different machine (Miro UV / fuv1). There is no UV-driven
 //     30 mm/s speed cap in the config panel. The only module speed cap in SpeedBlock is
@@ -38,6 +39,9 @@ describe('printing toggles', () => {
     // Select the printing layer so the toggle writes to its config.
     cy.showPanel('layers');
     cy.get('#layerdoubleclick-0').click();
+
+    // The White Ink checkbox lives inside the collapsed "Developer Settings" accordion.
+    cy.get('.ant-collapse-header').contains('Developer Settings').click();
 
     // Default: disabled (wInk stored negative), checkbox unchecked, no settings icon.
     // NB: config attributes live on the SVG layer <g>, whose attribute names are

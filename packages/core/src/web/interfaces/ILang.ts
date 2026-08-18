@@ -783,6 +783,12 @@ export interface ILang {
         stepwise_focusing: string;
         stepwise_focusing_desc: string;
         strength: string;
+        texture: string;
+        texture_angle: string;
+        texture_intensity: string;
+        texture_interval: string;
+        texture_random: string;
+        texture_stripe: string;
         times: string;
         various_preset: string;
         white_ink: string;

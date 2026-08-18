@@ -33,7 +33,6 @@ import LayerList from './LayerPanel/LayerList';
 import styles from './LayerPanel.module.scss';
 import ObjectPanelItem from './ObjectPanelItem';
 import SelLayerBlock from './SelLayerBlock';
-import WattBlock from './WattBlock';
 
 let svgCanvas: ISVGCanvas;
 
@@ -520,7 +519,6 @@ class LayerPanel extends React.PureComponent<Props, State> {
               {this.renderLayerPanel()}
             </ResizableBox>
             <SelLayerBlock />
-            <WattBlock />
             <ConfigPanel />
           </>
         )}

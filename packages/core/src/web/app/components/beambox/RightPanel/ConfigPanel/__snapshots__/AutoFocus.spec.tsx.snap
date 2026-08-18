@@ -100,6 +100,10 @@ exports[`test AutoFocus should render correctly when repeat is larger than 1 1`]
       Object Height
     </p>
     <p>
+      type: 
+      default
+    </p>
+    <p>
       unit: 
       mm
     </p>
@@ -133,6 +137,10 @@ exports[`test AutoFocus should render correctly when repeat is larger than 1 1`]
     <p>
       title: 
       Z Step
+    </p>
+    <p>
+      type: 
+      default
     </p>
     <p>
       unit: 
@@ -204,6 +212,10 @@ exports[`test AutoFocus should render correctly when repeat is less than 1 1`] =
     <p>
       title: 
       Object Height
+    </p>
+    <p>
+      type: 
+      default
     </p>
     <p>
       unit: 
