@@ -59,9 +59,7 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
 
         writeDataLayer(layer, 'dpi', newDpi, { batchCmd });
 
-        if (applyDpiOverrides(layer, dpi.value, newDpi, workarea, batchCmd)) {
-          shouldInitState = true;
-        }
+        shouldInitState ||= applyDpiOverrides(layer, dpi.value, newDpi, workarea, batchCmd);
       });
 
       if (shouldInitState) {

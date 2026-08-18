@@ -70,7 +70,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         writeDataLayer(layer, 'power', value, { batchCmd });
         writeDataLayer(layer, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
 
-        if (clearMinPower(layer, value, batchCmd)) minPowerChanged = true;
+        minPowerChanged ||= clearMinPower(layer, value, batchCmd);
       });
 
       if (minPowerChanged) {
