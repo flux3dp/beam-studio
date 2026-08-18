@@ -7,6 +7,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
+import { initPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -52,6 +53,7 @@ export const finishWithDevice = async (device: IDeviceInfo): Promise<void> => {
       newDocumentState['promark-safety-door'] = !!modelAnnotation.fpm1?.safe;
 
       useDocumentStore.getState().update(newDocumentState);
+      initPromarkInfo(device.serial);
       storage.set('last-promark-serial', device.serial);
       await deviceMaster.select(device);
     }

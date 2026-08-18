@@ -1,6 +1,6 @@
 import { LaserType } from '@core/app/constants/promark-constants';
 
-import { getPromarkInfo, setPromarkInfo } from './promark-info';
+import { getPromarkInfo, initPromarkInfo, setPromarkInfo } from './promark-info';
 
 const mockStorageGet = jest.fn();
 
@@ -59,6 +59,28 @@ describe('test promark-info', () => {
     expect(mockStorageGet).toHaveBeenCalledWith('last-promark-serial');
     expect(mockGet).toHaveBeenCalledTimes(1);
     expect(mockGet).toHaveBeenCalledWith('no-serial', 'info');
+  });
+
+  test('init data inherits info of last-promark-serial', () => {
+    mockStorageGet.mockReturnValue('456');
+    mockGet.mockImplementation((serial) => (serial === '456' ? { laserType: LaserType.MOPA, watt: 30 } : undefined));
+    initPromarkInfo('123');
+    expect(mockSet).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenCalledWith('123', 'info', { laserType: LaserType.MOPA, watt: 30 });
+  });
+
+  test('init data does nothing when serial already has info', () => {
+    mockGet.mockReturnValue({ laserType: LaserType.MOPA, watt: 30 });
+    initPromarkInfo('123');
+    expect(mockSet).not.toHaveBeenCalled();
+  });
+
+  test('init data falls back to default value', () => {
+    mockStorageGet.mockReturnValue(null);
+    mockGet.mockReturnValue(undefined);
+    initPromarkInfo('123');
+    expect(mockGet).toHaveBeenCalledWith('no-serial', 'info');
+    expect(mockSet).toHaveBeenCalledWith('123', 'info', { laserType: LaserType.Desktop, watt: 20 });
   });
 
   test('set data', () => {

@@ -150,10 +150,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
     const updatePromarkInfo = piped(postPresetChange, () => initState());
 
-    canvasEvents.on('document-settings-saved', updatePromarkInfo);
+    canvasEvents.on('promark-info-changed', updatePromarkInfo);
 
     return () => {
-      canvasEvents.off('document-settings-saved', updatePromarkInfo);
+      canvasEvents.off('promark-info-changed', updatePromarkInfo);
     };
   }, [isPromark]);
 

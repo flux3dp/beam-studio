@@ -16,10 +16,10 @@ const usePromarkLimit = (): ReturnType<typeof getPromarkLimit> => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
     const bumpInfoVersion = () => setInfoVersion((cur) => cur + 1);
 
-    canvasEvents.on('document-settings-saved', bumpInfoVersion);
+    canvasEvents.on('promark-info-changed', bumpInfoVersion);
 
     return () => {
-      canvasEvents.off('document-settings-saved', bumpInfoVersion);
+      canvasEvents.off('promark-info-changed', bumpInfoVersion);
     };
   }, []);
 
