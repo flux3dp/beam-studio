@@ -36,7 +36,7 @@ const SingleColorBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
     const layers = selectedLayers.map((layerName) => getLayerByName(layerName)!);
 
     layers.forEach((layer) => {
-      colorChanged ||= applyFullColor(layer, newVal, batchCmd);
+      colorChanged = applyFullColor(layer, newVal, batchCmd) || colorChanged;
     });
 
     if (colorChanged) {
