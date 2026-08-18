@@ -1,6 +1,5 @@
-import { memo, use, useMemo } from 'react';
+import { memo, useMemo } from 'react';
 
-import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/shallow';
@@ -18,9 +17,7 @@ import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelItem from '../ObjectPanelItem';
-import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import styles from './DpiBlock.module.scss';
 import initState from './initState';
@@ -71,9 +68,6 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     }
   };
 
-  const { activeKey } = use(ObjectPanelContext);
-  const visible = activeKey === 'dpi';
-
   const content = (
     <div className={classNames(styles.panel, styles[type])}>
       <span className={styles.title}>{lang.resolution.title}</span>
@@ -88,27 +82,16 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     </div>
   );
 
-  return (
-    <>
-      {type === 'panel-item' ? (
-        <>
-          <Popover content={content} visible={visible}>
-            <ObjectPanelItem.Item
-              autoClose={false}
-              content={
-                <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
-                  <span style={{ whiteSpace: 'nowrap' }}>{`${dpiNumber} DPI`}</span>
-                </Button>
-              }
-              id="dpi"
-              label={lang.resolution.title}
-            />
-          </Popover>
-        </>
-      ) : (
-        content
-      )}
-    </>
+  return type === 'panel-item' ? (
+    <ObjectPanelItem.Select
+      id="dpi"
+      label={lang.resolution.title}
+      onChange={handleChange}
+      options={options}
+      selected={dpi.hasMultiValue ? undefined : { label: `${dpiNumber} DPI`, value: dpiNumber }}
+    />
+  ) : (
+    content
   );
 };
 
