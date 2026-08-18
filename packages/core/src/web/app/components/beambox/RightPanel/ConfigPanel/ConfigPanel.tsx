@@ -18,8 +18,8 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -28,7 +28,6 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,
@@ -36,43 +35,44 @@ import {
   getConfigKeys,
   getData,
   getDefaultConfig,
+  objectConfig,
   postPresetChange,
-  writeData,
+  writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
 import { moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import { usePresetList } from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
+import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ColorBlock from '../ColorBlock';
 import ObjectPanelController from '../contexts/ObjectPanelController';
 import ObjectPanelItem from '../ObjectPanelItem';
-import WattBlock from '../WattBlock';
 
 import AdvancedBlock from './AdvancedBlock';
+import AdvancedSettingButton from './AdvancedSettingButton';
 import AirAssistBlock from './AirAssistBlock';
-import Backlash from './Backlash';
 import styles from './ConfigPanel.module.scss';
+import DevBlock from './DevBlock';
 import DottingTimeBlock from './DottingTimeBlock';
 import DpiBlock from './DpiBlock';
-import FillBlock from './FillBlock';
+import FillIntervalBlock from './FillIntervalBlock';
+import FrequencyBlock from './FrequencyBlock';
 import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
 import InkBlock from './InkBlock';
-import LaserDevOptions from './LaserDevOptions';
-import MinPadding from './MinPadding';
 import ModuleBlock from './ModuleBlock';
 import MultipassBlock from './MultipassBlock';
 import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
-import PrintingPaddingBlock from './PrintingPaddingBlock';
+import PulseWidthBlock from './PulseWidthBlock';
 import RepeatBlock from './RepeatBlock';
+import { applyDpiOverrides, applyFullColor, clearMinPower } from './sideEffects';
 import SpeedBlock from './SpeedBlock';
 import UVLightConfigs from './UVConfigs/UVLightConfigs';
 import UVPrintingConfigs from './UVConfigs/UVPrintingConfigs';
-import WhiteInkCheckbox from './WhiteInkCheckbox';
 
 const PARAMETERS_CONSTANT = 'parameters';
 
@@ -95,7 +95,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const workarea = useWorkarea();
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const forceUpdate = useForceUpdate();
-  const isDevMode = isDev();
   const [modalMoveLayerDest, setModalMoveLayerDest] = useState(selectedLayers[0]);
   const hiddenOptions = useMemo(
     () => [
@@ -108,7 +107,17 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const { change, getState } = useConfigPanelStore();
   const supportedModules = useSupportedModules(workarea);
   const state = getState();
-  const { fullcolor, module } = state;
+  const watt = useCanvasStore((s) => s.watt);
+
+  // fhx2rf presets depend on the machine watt, which is set in Document Settings
+  useEffect(() => {
+    if (workarea !== 'fhx2rf') return;
+
+    postPresetChange();
+    initState();
+  }, [workarea, watt]);
+
+  const { module } = state;
   const { isLaser, isPrinting, isUV } = useMemo(() => {
     return {
       isLaser: laserModules.has(module.value),
@@ -142,10 +151,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
     const updatePromarkInfo = piped(postPresetChange, () => initState());
 
-    canvasEvents.on('document-settings-saved', updatePromarkInfo);
+    canvasEvents.on('promark-info-changed', updatePromarkInfo);
 
     return () => {
-      canvasEvents.off('document-settings-saved', updatePromarkInfo);
+      canvasEvents.off('promark-info-changed', updatePromarkInfo);
     };
   }, [isPromark]);
 
@@ -263,7 +272,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
   };
 
-  const isCustomBacklashEnabled = useGlobalPreferenceStore((state) => state['enable-custom-backlash']);
   const dropdownOptions = presetList.map((e) => ({
     key: e.key || e.name,
     label: e.name,
@@ -278,18 +286,15 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {(isPrinting || isUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
       {isLaser && <DpiBlock type={UIType} />}
+      {isPromark && <DottingTimeBlock type={UIType} />}
+      {isPromark && <FillIntervalBlock type={UIType} />}
       {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
-      {isDevMode && isPrinting && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
-      {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
+      {isPromark && <PulseWidthBlock type={UIType} />}
+      {isPromark && <FrequencyBlock type={UIType} />}
       <RepeatBlock type={UIType} />
-      {isDevMode && isPrinting && fullcolor.value && UIType === 'panel-item' && <WhiteInkCheckbox type={UIType} />}
-      {isPromark && <FillBlock type={UIType} />}
-      {isPromark && <DottingTimeBlock type={UIType} />}
-      {isLaser && <LaserDevOptions />}
-      {isDevMode && <MinPadding type={UIType} />}
-      {isDevMode && isPrinting && <PrintingPaddingBlock type={UIType} />}
+      {isPromark && <AdvancedSettingButton type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
     </>
@@ -326,6 +331,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
                 {commonContent}
               </div>
               <AdvancedBlock type={UIType} />
+              <DevBlock type={UIType} />
             </>
           )}
         </div>
@@ -337,7 +343,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         <>
           {supportedModules.length > 1 && (
             <div className={styles['item-group']}>
-              <WattBlock />
               <ModuleBlock />
               <ObjectPanelItem.Divider />
             </div>
@@ -370,18 +375,41 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     const onSave = (): void => {
       const saveDataAndClose = () => {
         const batchCmd = new history.BatchCommand('Change layer parameter');
+        const current = getState();
+        // blocks defer layer writes when type is 'modal', so persist every key that differs from the layer
+        const keys = (Object.keys(current) as ConfigKey[]).filter((key) => !objectConfig.includes(key));
+        let fullColorToggled = false;
 
         selectedLayers.forEach((layerName: string) => {
-          writeData(layerName, 'speed', state.speed.value, { applyPrinting: true, batchCmd });
-          writeData(layerName, 'power', state.power.value, { batchCmd });
-          writeData(layerName, 'repeat', state.repeat.value, { batchCmd });
-          writeData(layerName, 'zStep', state.zStep.value, { batchCmd });
-          writeData(layerName, 'configName', state.configName.value, { batchCmd });
-          writeData(layerName, 'ink', state.ink.value, { batchCmd });
-          writeData(layerName, 'multipass', state.multipass.value, { batchCmd });
-          writeData(layerName, 'halftone', state.halftone.value, { batchCmd });
-          writeData(layerName, 'highQuality', state.highQuality.value, { batchCmd });
+          const layer = layerManager.getLayerElementByName(layerName)!;
+          // untouched keys with differing per-layer values keep them; any edit clears hasMultiValue
+          const changedKeys = keys.filter(
+            (key) => !current[key].hasMultiValue && getData(layer, key, true) !== current[key].value,
+          );
+
+          // side effects the blocks apply while editing, replayed here for the deferred writes:
+          // dpi & fullcolor first, so the writes below (the user's own edits) win over them
+          if (changedKeys.includes('dpi')) {
+            applyDpiOverrides(layer, getData(layer, 'dpi')!, current.dpi.value, workarea, batchCmd);
+          }
+
+          if (changedKeys.includes('fullcolor')) {
+            applyFullColor(layer, current.fullcolor.value, batchCmd);
+            fullColorToggled = true;
+          }
+
+          changedKeys.forEach((key) => {
+            // fullcolor is written by applyFullColor, writing it again only adds a no-op undo step
+            if (key === 'fullcolor') return;
+
+            writeDataLayer(layer, key, current[key].value as any, { applyPrinting: true, batchCmd });
+          });
+
+          if (changedKeys.includes('power')) clearMinPower(layer, current.power.value, batchCmd);
         });
+
+        if (fullColorToggled) useLayerStore.getState().forceUpdate();
+
         batchCmd.onAfter = initState;
         svgCanvas.addCommandToHistory(batchCmd);
         onClose();
@@ -463,6 +491,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
                 {commonContent}
               </div>
               <AdvancedBlock type={UIType} />
+              <DevBlock type={UIType} />
             </>
           )}
         </Modal>

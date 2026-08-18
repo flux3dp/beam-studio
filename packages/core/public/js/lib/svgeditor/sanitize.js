@@ -257,6 +257,12 @@
       'data-minPadding',
       'data-printingTopPadding',
       'data-printingBotPadding',
+      'data-texture',
+      'data-textureMode',
+      'data-textureRandomIntensity',
+      'data-textureStripeAngle',
+      'data-textureStripeIntensity',
+      'data-textureStripeInterval',
     ],
     image: [
       'data-ratiofixed',

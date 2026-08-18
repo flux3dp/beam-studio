@@ -13,7 +13,7 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './Block.module.scss';
 import initState from './initState';
 
-const Diode = (): React.JSX.Element => {
+const Diode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, diode } = useConfigPanelStore();
@@ -22,6 +22,9 @@ const Diode = (): React.JSX.Element => {
     const newValue = diode.value === 1 ? 0 : 1;
 
     change({ diode: newValue });
+
+    // ConfigPanel writes the layers on save, so cancelling the modal leaves them untouched
+    if (type === 'modal') return;
 
     const batchCmd = new history.BatchCommand('Change diode toggle');
 

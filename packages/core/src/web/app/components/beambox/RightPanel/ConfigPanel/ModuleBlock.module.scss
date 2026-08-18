@@ -6,15 +6,18 @@
   margin: 0;
   border: 1px solid #e0e0e0;
   border-width: 0 0 1px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: center;
 
   .title {
     color: #aaaaaa;
     font-size: 13px;
-    line-height: 13px;
-    margin-bottom: 20px;
   }
 
   .select {
-    width: 100%;
+    min-width: 0;
+    flex: 1 1 auto;
   }
 }

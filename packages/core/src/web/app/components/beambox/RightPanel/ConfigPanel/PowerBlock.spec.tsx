@@ -61,6 +61,9 @@ jest.mock(
 
 const mockGetLayerByName = jest.fn();
 
+// pulled in by ./sideEffects, its import chain reaches a worker jest cannot parse
+jest.mock('@core/helpers/layer/full-color/toggleFullColorLayer', () => jest.fn());
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: (...args) => mockGetLayerByName(...args),
 }));

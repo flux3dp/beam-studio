@@ -1,8 +1,10 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getPassThrough } from '@core/helpers/addOn';
 import { discoverManager } from '@core/helpers/api/discover';
+import { getHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useForceUpdate from '@core/helpers/use-force-update';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -75,6 +77,11 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     return () => {
       topBarEventEmitter.removeListener('GET_SELECTED_DEVICE', handler);
     };
+  }, [selectedDevice]);
+  useEffect(() => {
+    if (selectedDevice?.model !== 'fhx2rf') return;
+
+    useCanvasStore.setState({ watt: getHexa2RfWatt(selectedDevice.uuid) });
   }, [selectedDevice]);
 
   const updateCanvasContext = useCallback(() => {
