@@ -159,6 +159,8 @@ export const getExportOpt = async (
       }
 
       if (device?.model === 'fbm2') {
+        if (vc.meetRequirement('BM2_BURST_REFRESH')) config.burst_refresh = true;
+
         try {
           await deviceMaster.select(device);
 
@@ -171,9 +173,7 @@ export const getExportOpt = async (
         }
       }
 
-      if (documentState['enable-4c-prespray-area']) {
-        config.prespray = [x, y - minY, w, h];
-      }
+      config.prespray = [x, y - minY, w, h];
     } else if (model === 'ado1') {
       config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y - minY, w, h];
     }

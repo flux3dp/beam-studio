@@ -203,7 +203,6 @@ const lang: ILang = {
       door_protect_desc: 'Disponible solo con Promark Safe+.',
       enable_autofocus: 'Enfoque automático',
       enable_diode: 'Diodo láser',
-      enable_nozzle_refresh_area: 'Habilitar área de renovación de la boquilla',
       extend_y_area: 'Ampliar el área Y',
       frame_before_start: 'Enmarcar antes de ejecutar',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',

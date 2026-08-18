@@ -203,7 +203,6 @@ const lang: ILang = {
       door_protect_desc: '仅适用于 Promark Safe+。',
       enable_autofocus: '自动对焦',
       enable_diode: '二极管激光',
-      enable_nozzle_refresh_area: '启用喷嘴刷新区域',
       extend_y_area: '扩展 Y 轴区域',
       frame_before_start: '先预览后执行',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',

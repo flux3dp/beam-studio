@@ -203,7 +203,6 @@ const lang: ILang = {
       door_protect_desc: 'Dostupné pouze s Promark Safe+.',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodový laser',
-      enable_nozzle_refresh_area: 'Povolit oblast obnovení trysky',
       extend_y_area: 'Rozšířit oblast Y',
       frame_before_start: 'Nejprve rámec, pak provést',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
