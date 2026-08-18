@@ -15,10 +15,8 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import { getDefaultPreset } from '@core/helpers/presets/preset-helper';
+import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
-import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelItem from '../ObjectPanelItem';
@@ -26,6 +24,7 @@ import objectPanelItemStyles from '../ObjectPanelItem.module.scss';
 
 import styles from './DpiBlock.module.scss';
 import initState from './initState';
+import { applyDpiOverrides } from './sideEffects';
 
 const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
   const lang = useI18n();
@@ -60,31 +59,8 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
 
         writeDataLayer(layer, 'dpi', newDpi, { batchCmd });
 
-        const configName = getData(layer, 'configName');
-
-        if (configName) {
-          // Only rewrite keys whose value differs by dpi (per preset.dpiOverrides), so manual edits
-          // to other keys survive the dpi change. Mirrors the merge in applyPreset, but surgical.
-          const layerModule = getData(layer, 'module');
-          const preset = getDefaultPreset(configName, workarea, layerModule);
-
-          if (!preset?.dpiOverrides) return;
-
-          const oldOverrides = preset.dpiOverrides?.[dpi.value];
-          const newOverrides = preset.dpiOverrides?.[newDpi];
-
-          if (oldOverrides || newOverrides) {
-            const keys = Object.keys({ ...oldOverrides, ...newOverrides }) as ConfigKey[];
-
-            for (const key of keys) {
-              const newValue = newOverrides?.[key] ?? preset[key];
-
-              if (newValue === undefined) continue;
-
-              writeDataLayer(layer, key, newValue, { batchCmd });
-              shouldInitState = true;
-            }
-          }
+        if (applyDpiOverrides(layer, dpi.value, newDpi, workarea, batchCmd)) {
+          shouldInitState = true;
         }
       });
 

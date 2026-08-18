@@ -230,20 +230,16 @@ exports[`test AdvancedSettingModal should render correctly 1`] = `
                       </span>
                     </button>
                   </div>
-                </div>
-                <div
-                  class="subtitle"
-                >
-                  Fill Setting
-                </div>
-                <div
-                  class="hint"
-                >
-                  For fill paths only
-                </div>
-                <div
-                  class="container"
-                >
+                  <div
+                    class="subtitle"
+                  >
+                    Fill Setting
+                  </div>
+                  <div
+                    class="hint"
+                  >
+                    For fill paths only
+                  </div>
                   <div>
                     <span>
                       Fill Angle

@@ -13,12 +13,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import checkPwmImages from '@core/helpers/layer/check-pwm-images';
-import {
-  CUSTOM_PRESET_CONSTANT,
-  getData,
-  getMultiSelectData,
-  writeDataLayer,
-} from '@core/helpers/layer/layer-config-helper';
+import { CUSTOM_PRESET_CONSTANT, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
@@ -33,6 +28,7 @@ import styles from './Block.module.scss';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
+import { clearMinPower } from './sideEffects';
 
 const MAX_VALUE = 100;
 const MIN_VALUE = 0;
@@ -74,12 +70,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         writeDataLayer(layer, 'power', value, { batchCmd });
         writeDataLayer(layer, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
 
-        const minPower = getData(layer, 'minPower');
-
-        if (minPower && value <= minPower) {
-          writeDataLayer(layer, 'minPower', 0, { batchCmd });
-          minPowerChanged = true;
-        }
+        if (clearMinPower(layer, value, batchCmd)) minPowerChanged = true;
       });
 
       if (minPowerChanged) {

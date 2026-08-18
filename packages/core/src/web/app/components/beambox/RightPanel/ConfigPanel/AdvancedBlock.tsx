@@ -48,18 +48,18 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   if (!printingModules.has(module.value)) {
     if (hasCurveEngraving) {
       if (workareaObject.curveSpeedLimit?.zRegular) {
-        contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" />);
+        contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" type={type} />);
       }
     } else {
       if (addOnInfo.lowerFocus) {
         contents.push(<FocusBlock key="focus-block" type={type} />);
       } else if (addOnInfo.autoFocus && isAutoFocusEnabled) {
-        contents.push(<AutoFocus key="auto-focus" />);
+        contents.push(<AutoFocus key="auto-focus" type={type} />);
       }
     }
 
     if (addOnInfo.hybridLaser && isDiodeEnabled) {
-      contents.push(<Diode key="diode" />);
+      contents.push(<Diode key="diode" type={type} />);
     }
 
     if (workarea !== 'fuv1') {
@@ -71,7 +71,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       contents.push(<RefreshIntervalBlock key="refresh-interval-block" type={type} />);
     }
 
-    contents.push(<SingleColorBlock key="single-color-block" />);
+    contents.push(<SingleColorBlock key="single-color-block" type={type} />);
   }
 
   if (contents.length === 0) return null;

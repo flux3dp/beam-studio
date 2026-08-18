@@ -69,6 +69,7 @@ import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import PulseWidthBlock from './PulseWidthBlock';
 import RepeatBlock from './RepeatBlock';
+import { applyDpiOverrides, applyFullColor, clearMinPower } from './sideEffects';
 import SpeedBlock from './SpeedBlock';
 import UVLightConfigs from './UVConfigs/UVLightConfigs';
 import UVPrintingConfigs from './UVConfigs/UVPrintingConfigs';
@@ -377,21 +378,38 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         const current = getState();
         // blocks defer layer writes when type is 'modal', so persist every key that differs from the layer
         const keys = (Object.keys(current) as ConfigKey[]).filter((key) => !objectConfig.includes(key));
+        let fullColorToggled = false;
 
         selectedLayers.forEach((layerName: string) => {
           const layer = layerManager.getLayerElementByName(layerName)!;
+          // untouched keys with differing per-layer values keep them; any edit clears hasMultiValue
+          const changedKeys = keys.filter(
+            (key) => !current[key].hasMultiValue && getData(layer, key, true) !== current[key].value,
+          );
 
-          keys.forEach((key) => {
-            const { hasMultiValue, value } = current[key];
+          // side effects the blocks apply while editing, replayed here for the deferred writes:
+          // dpi & fullcolor first, so the writes below (the user's own edits) win over them
+          if (changedKeys.includes('dpi')) {
+            applyDpiOverrides(layer, getData(layer, 'dpi')!, current.dpi.value, workarea, batchCmd);
+          }
 
-            // untouched keys with differing per-layer values keep them; any edit clears hasMultiValue
-            if (hasMultiValue) return;
+          if (changedKeys.includes('fullcolor')) {
+            applyFullColor(layer, current.fullcolor.value, batchCmd);
+            fullColorToggled = true;
+          }
 
-            if (getData(layer, key, true) !== value) {
-              writeDataLayer(layer, value as any, { applyPrinting: true, batchCmd });
-            }
+          changedKeys.forEach((key) => {
+            // fullcolor is written by applyFullColor, writing it again only adds a no-op undo step
+            if (key === 'fullcolor') return;
+
+            writeDataLayer(layer, key, current[key].value as any, { applyPrinting: true, batchCmd });
           });
+
+          if (changedKeys.includes('power')) clearMinPower(layer, current.power.value, batchCmd);
         });
+
+        if (fullColorToggled) useLayerStore.getState().forceUpdate();
+
         batchCmd.onAfter = initState;
         svgCanvas.addCommandToHistory(batchCmd);
         onClose();
