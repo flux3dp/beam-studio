@@ -203,7 +203,6 @@ const lang: ILang = {
       door_protect_desc: 'Alleen beschikbaar met Promark Safe+.',
       enable_autofocus: 'Autofocus',
       enable_diode: 'Diode laser',
-      enable_nozzle_refresh_area: 'Nozzle verversingsgebied inschakelen',
       extend_y_area: 'Y-gebied uitbreiden',
       frame_before_start: 'Frame voordat uitgevoerd wordt',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',

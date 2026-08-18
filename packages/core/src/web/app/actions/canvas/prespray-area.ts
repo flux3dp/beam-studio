@@ -24,12 +24,7 @@ const areaHeight = 300;
 const areaWidth4C = 103;
 
 const getPresprayMode = (): LayerModuleType | null => {
-  if (
-    hasModuleLayer([LayerModule.PRINTER_4C], { checkVisible: true }) &&
-    useDocumentStore.getState()['enable-4c-prespray-area']
-  ) {
-    return LayerModule.PRINTER_4C;
-  }
+  if (hasModuleLayer([LayerModule.PRINTER_4C], { checkVisible: true })) return LayerModule.PRINTER_4C;
 
   if (hasModuleLayer([LayerModule.PRINTER], { checkVisible: true })) return LayerModule.PRINTER;
 
@@ -87,7 +82,7 @@ const togglePresprayArea = (): void => {
 };
 
 useDocumentStore.subscribe(
-  (state) => [state['enable-4c-prespray-area'], state['enable-job-origin'], state.rotary_mode],
+  (state) => [state['enable-job-origin'], state.rotary_mode],
   () => togglePresprayArea(),
 );
 
@@ -149,7 +144,7 @@ const generatePresprayArea = (): void => {
 
     // Create rectangle
     const rect = document.createElementNS(NS.SVG, 'rect');
-    const x = workareaManager.width - areaWidth4C;
+    const x = 0; // Start at the left edge of the work area
 
     rect.setAttribute('x', x.toString());
     rect.setAttribute('y', workareaManager.minY.toString());
