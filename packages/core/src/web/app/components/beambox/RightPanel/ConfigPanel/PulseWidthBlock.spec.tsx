@@ -6,18 +6,9 @@ import MockNumberBlock from '@mocks/@core/app/components/beambox/RightPanel/Conf
 
 jest.mock('./NumberBlock', () => MockNumberBlock);
 
-const mockGetPromarkLimit = jest.fn();
+const mockUsePromarkLimit = jest.fn();
 
-jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  getPromarkLimit: () => mockGetPromarkLimit(),
-}));
-
-const mockOn = jest.fn();
-const mockOff = jest.fn();
-
-jest.mock('@core/helpers/eventEmitterFactory', () => ({
-  createEventEmitter: () => ({ off: mockOff, on: mockOn }),
-}));
+jest.mock('./usePromarkLimit', () => mockUsePromarkLimit);
 
 import PulseWidthBlock from './PulseWidthBlock';
 
@@ -27,7 +18,7 @@ describe('test PulseWidthBlock', () => {
   });
 
   it('should render correctly', () => {
-    mockGetPromarkLimit.mockReturnValue({ frequency: { max: 4000, min: 1 }, pulseWidth: { max: 350, min: 2 } });
+    mockUsePromarkLimit.mockReturnValue({ frequency: { max: 4000, min: 1 }, pulseWidth: { max: 350, min: 2 } });
 
     const { container } = render(<PulseWidthBlock />);
 
@@ -35,7 +26,7 @@ describe('test PulseWidthBlock', () => {
   });
 
   it('should render nothing when there is no pulseWidth limit', () => {
-    mockGetPromarkLimit.mockReturnValue({ frequency: { max: 60, min: 27 } });
+    mockUsePromarkLimit.mockReturnValue({ frequency: { max: 60, min: 27 } });
 
     const { container } = render(<PulseWidthBlock />);
 

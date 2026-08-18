@@ -6,18 +6,9 @@ import MockNumberBlock from '@mocks/@core/app/components/beambox/RightPanel/Conf
 
 jest.mock('./NumberBlock', () => MockNumberBlock);
 
-const mockGetPromarkLimit = jest.fn();
+const mockUsePromarkLimit = jest.fn();
 
-jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  getPromarkLimit: () => mockGetPromarkLimit(),
-}));
-
-const mockOn = jest.fn();
-const mockOff = jest.fn();
-
-jest.mock('@core/helpers/eventEmitterFactory', () => ({
-  createEventEmitter: () => ({ off: mockOff, on: mockOn }),
-}));
+jest.mock('./usePromarkLimit', () => mockUsePromarkLimit);
 
 import FrequencyBlock from './FrequencyBlock';
 
@@ -27,7 +18,7 @@ describe('test FrequencyBlock', () => {
   });
 
   it('should render correctly', () => {
-    mockGetPromarkLimit.mockReturnValue({ frequency: { max: 60, min: 27 } });
+    mockUsePromarkLimit.mockReturnValue({ frequency: { max: 60, min: 27 } });
 
     const { container } = render(<FrequencyBlock />);
 
