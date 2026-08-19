@@ -42,7 +42,7 @@ export interface MaterialStoreActions {
   deletePreset: (presetId: string) => void;
   deleteVariant: (variantId: string) => void;
   /** Deep-copies a catalog material (variants included) into an editable user material */
-  duplicateMaterial: (source: Material) => Material;
+  duplicateMaterial: (source: Material, name?: string) => Material;
   /** Lazily creates and returns the "My Materials" bucket */
   ensureBucket: () => Material;
   getExportData: () => MaterialLibraryExport;

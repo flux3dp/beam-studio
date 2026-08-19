@@ -2,17 +2,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import type { ConfigKeyTypeMap, PresetModel } from '@core/interfaces/ILayerConfig';
 
-export type MaterialCategory =
-  | 'acrylic'
-  | 'glass'
-  | 'leather'
-  | 'metal'
-  | 'other'
-  | 'paper'
-  | 'plastic'
-  | 'rubber'
-  | 'stone'
-  | 'wood';
+export type MaterialCategory = 'acrylic' | 'leather' | 'metal' | 'other' | 'paper' | 'plastic' | 'wood';
 
 export type MaterialRegion = 'eu' | 'global' | 'jp' | 'tw' | 'us';
 

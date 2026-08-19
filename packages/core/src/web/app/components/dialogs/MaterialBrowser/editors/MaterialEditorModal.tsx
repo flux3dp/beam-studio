@@ -1,138 +1,60 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 
 import { PictureOutlined } from '@ant-design/icons';
-import { Col, ColorPicker, Form, Input, InputNumber, Modal, Row, Segmented, Space, Upload } from 'antd';
+import { ColorPicker, Form, Input, Segmented, Upload } from 'antd';
 
 import { CATEGORY_COLORS, MATERIAL_CATEGORIES } from '@core/app/constants/material-catalog/constants';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
 import Select from '@core/app/widgets/AntdSelect';
-import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
+import DraggableModal from '@core/app/widgets/DraggableModal';
+import { getMaterialDisplayName, getMaterialRegion } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
-import type { Material, MaterialCategory, MaterialRegion } from '@core/interfaces/IMaterial';
+import type { Material, MaterialCategory } from '@core/interfaces/IMaterial';
 
-import styles from '../MaterialBrowser.module.scss';
-import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
-import { getThicknessLabel } from '../utils/inchDisplay';
+import { fileToCoverDataUrl } from '../utils/coverImage';
 
-/**
- * Covers are stored as dataURLs in the `materials` storage key, so their size is charged
- * against a budget shared with every other preference (~5 MB on web). 480px covers the
- * largest render (the 320x230 detail hero, and 220x148 cards at 2x) without overshooting.
- */
-const MAX_COVER_SIZE = 480;
-const COVER_QUALITY = 0.75;
-/** Hard ceiling per cover, so a high-detail photo can't blow the budget on its own */
-const MAX_COVER_BYTES = 120 * 1024;
-/** Progressively harsher fallbacks, applied only when a photo exceeds the ceiling */
-const COVER_FALLBACKS: Array<{ quality: number; size: number }> = [
-  { quality: 0.6, size: 480 },
-  { quality: 0.6, size: 360 },
-  { quality: 0.5, size: 280 },
-];
-
-const drawToDataUrl = (image: HTMLImageElement, size: number, quality: number): string => {
-  const scale = Math.min(1, size / Math.max(image.width, image.height));
-  const canvas = document.createElement('canvas');
-
-  canvas.width = Math.round(image.width * scale);
-  canvas.height = Math.round(image.height * scale);
-  canvas.getContext('2d')!.drawImage(image, 0, 0, canvas.width, canvas.height);
-
-  return canvas.toDataURL('image/jpeg', quality);
-};
-
-/** Downscale + re-encode a user photo until it fits the per-cover ceiling */
-const encodeCover = (image: HTMLImageElement): string => {
-  let dataUrl = drawToDataUrl(image, MAX_COVER_SIZE, COVER_QUALITY);
-
-  for (const { quality, size } of COVER_FALLBACKS) {
-    if (dataUrl.length <= MAX_COVER_BYTES) break;
-
-    dataUrl = drawToDataUrl(image, size, quality);
-  }
-
-  return dataUrl;
-};
-
-const fileToCoverDataUrl = async (file: File): Promise<string> =>
-  new Promise((resolve, reject) => {
-    const image = new Image();
-    const url = URL.createObjectURL(file);
-
-    image.onload = () => {
-      const dataUrl = encodeCover(image);
-
-      URL.revokeObjectURL(url);
-      resolve(dataUrl);
-    };
-    image.onerror = () => {
-      URL.revokeObjectURL(url);
-      reject(new Error('Failed to load image'));
-    };
-    image.src = url;
-  });
+import styles from './MaterialEditorModal.module.scss';
+import type { ThicknessValue } from './ThicknessInput';
+import ThicknessInput, { toVariantThickness } from './ThicknessInput';
 
 interface FormValues {
   category: MaterialCategory;
   name: string;
   tags?: string[];
-  thicknessDen?: number;
-  thicknessNum?: number;
 }
 
 interface MaterialEditorModalProps {
-  region: MaterialRegion;
+  /** Pre-selected category when creating (e.g. the browser's current tab) */
+  defaultCategory?: MaterialCategory;
+  /** Edits this user material; omitted = create a new one */
+  materialId?: string;
+  onClose: () => void;
+  /** Called with the new material after creation (e.g. to jump the browser tab, R14) */
+  onCreated?: (material: Material) => void;
 }
 
-const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React.JSX.Element => {
+const MaterialEditorModal = ({
+  defaultCategory,
+  materialId,
+  onClose,
+  onCreated,
+}: MaterialEditorModalProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const [form] = Form.useForm<FormValues>();
-  const { closeEditors, materialEditor, setActiveTab } = useMaterialBrowserStore();
   const { addMaterial, addVariant, updateMaterial, userMaterials } = useMaterialStore();
-  const editing =
-    materialEditor.mode === 'edit' ? userMaterials.find(({ id }) => id === materialEditor.materialId) : undefined;
-
-  const regionUnit = region === 'us' ? 'inch' : 'mm';
-  const [appearance, setAppearance] = useState<'color' | 'image'>('color');
-  const [color, setColor] = useState(CATEGORY_COLORS.wood);
-  const [image, setImage] = useState<string | undefined>();
-  const [unit, setUnit] = useState<'inch' | 'mm'>(regionUnit);
-  const thicknessNum = Form.useWatch('thicknessNum', form);
-  const thicknessDen = Form.useWatch('thicknessDen', form);
-
-  useEffect(() => {
-    if (!materialEditor.open) return;
-
-    if (editing) {
-      form.setFieldsValue({
-        category: editing.category,
-        name: getMaterialDisplayName(editing),
-        tags: editing.tags,
-      });
-      setAppearance(editing.image ? 'image' : 'color');
-      setColor(editing.coverColor ?? CATEGORY_COLORS[editing.category]);
-      setImage(editing.image);
-    } else {
-      form.resetFields();
-      setAppearance('color');
-      setColor(CATEGORY_COLORS.wood);
-      setImage(undefined);
-      setUnit(regionUnit);
-    }
-    // eslint-disable-next-line hooks/exhaustive-deps
-  }, [materialEditor.open]);
-
-  if (!materialEditor.open) return null;
+  const editing = materialId ? userMaterials.find(({ id }) => id === materialId) : undefined;
+  const [appearance, setAppearance] = useState<'color' | 'image'>(editing?.image ? 'image' : 'color');
+  const [color, setColor] = useState(
+    editing?.coverColor ?? CATEGORY_COLORS[editing?.category ?? defaultCategory ?? 'wood'],
+  );
+  const [image, setImage] = useState<string | undefined>(editing?.image);
+  const [thickness, setThickness] = useState<ThicknessValue>({
+    thicknessUnit: getMaterialRegion() === 'us' ? 'inch' : 'mm',
+  });
 
   const handleOk = async () => {
     const values = await form.validateFields();
-    // Thickness stores the fraction in the chosen authoritative unit; unset num = no thickness
-    const thickness = {
-      thicknessDen: values.thicknessNum && unit === 'inch' ? values.thicknessDen : undefined,
-      thicknessNum: values.thicknessNum || undefined,
-      thicknessUnit: values.thicknessNum ? unit : undefined,
-    };
     const patch: Partial<Material> = {
       category: values.category,
       coverColor: appearance === 'color' ? color : undefined,
@@ -144,32 +66,42 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
     if (editing) {
       updateMaterial(editing.id, { ...patch, nameKey: undefined });
     } else {
-      const id = generateUserId('user_mat');
+      const material = { id: generateUserId('user_mat'), presets: [], source: 'user', ...patch } as Material;
 
-      addMaterial({ id, presets: [], source: 'user', ...patch } as Material);
+      addMaterial(material);
 
       // A creation thickness becomes the material's first variant right away
-      if (thickness.thicknessUnit) addVariant(id, { id: generateUserId('user_var'), ...thickness });
+      const variantThickness = toVariantThickness(thickness);
 
-      // R14: creating keeps the browser open and jumps to the new material's category
-      setActiveTab(values.category);
+      if (variantThickness) addVariant(material.id, { id: generateUserId('user_var'), ...variantThickness });
+
+      onCreated?.(material);
     }
 
-    closeEditors();
+    onClose();
   };
 
   return (
-    <Modal
+    <DraggableModal
       okText={editing ? t.editor.title_edit : t.editor.title_add}
-      onCancel={closeEditors}
+      onCancel={onClose}
       onOk={handleOk}
       open
+      scrollableContent
       title={editing ? t.editor.title_edit : t.editor.title_add}
-      width={760}
     >
-      <Form form={form} layout="vertical" requiredMark="optional">
-        <Row gutter={28}>
-          <Col span={12} xs={24}>
+      <Form
+        form={form}
+        initialValues={
+          editing
+            ? { category: editing.category, name: getMaterialDisplayName(editing), tags: editing.tags }
+            : { category: defaultCategory }
+        }
+        layout="vertical"
+        requiredMark="optional"
+      >
+        <div className={styles.columns}>
+          <div>
             <Form.Item label={t.editor.name} name="name" rules={[{ message: t.editor.name_required, required: true }]}>
               <Input />
             </Form.Item>
@@ -184,32 +116,15 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
             </Form.Item>
             {!editing && (
               <Form.Item label={t.thickness}>
-                <Space align="center">
-                  <Segmented
-                    onChange={(value) => setUnit(value as 'inch' | 'mm')}
-                    options={['mm', 'inch']}
-                    value={unit}
-                  />
-                  <Form.Item name="thicknessNum" noStyle>
-                    <InputNumber min={0} step={unit === 'inch' ? 1 : 0.1} style={{ width: 80 }} />
-                  </Form.Item>
-                  {unit === 'inch' && (
-                    <>
-                      ⁄
-                      <Form.Item name="thicknessDen" noStyle>
-                        <InputNumber min={1} placeholder="16" step={1} style={{ width: 70 }} />
-                      </Form.Item>
-                    </>
-                  )}
-                  <span className={styles['fraction-preview']}>
-                    {getThicknessLabel({ thicknessDen, thicknessNum, thicknessUnit: unit }) ?? '—'}
-                  </span>
-                </Space>
+                <ThicknessInput onChange={setThickness} value={thickness} />
               </Form.Item>
             )}
-          </Col>
+            <Form.Item label={t.editor.tags} name="tags">
+              <Select mode="tags" open={false} suffixIcon={null} tokenSeparators={[',']} />
+            </Form.Item>
+          </div>
 
-          <Col span={12} xs={24}>
+          <div className={styles.appearance}>
             <Form.Item extra={t.editor.appearance_hint} label={t.editor.appearance}>
               <Segmented
                 block
@@ -248,16 +163,13 @@ const MaterialEditorModal = ({ region }: MaterialEditorModalProps): null | React
             ) : (
               <Form.Item>
                 <ColorPicker onChange={(_, hex) => setColor(hex)} showText size="large" value={color} />
-                <div className={styles['color-preview']} style={{ background: color, marginTop: 8 }} />
+                <div className={styles['color-preview']} style={{ background: color }} />
               </Form.Item>
             )}
-            <Form.Item label={t.editor.tags} name="tags">
-              <Select mode="tags" open={false} suffixIcon={null} tokenSeparators={[',']} />
-            </Form.Item>
-          </Col>
-        </Row>
+          </div>
+        </div>
       </Form>
-    </Modal>
+    </DraggableModal>
   );
 };
 

@@ -5,6 +5,7 @@ import { Button, Input, Tooltip } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
+import { showMaterialEditorModal } from './editors';
 import styles from './MaterialBrowser.module.scss';
 import { useMaterialBrowserStore } from './useMaterialBrowserStore';
 
@@ -15,7 +16,7 @@ interface ControlBarProps {
 
 const ControlBar = ({ onExport, onImport }: ControlBarProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
-  const { openMaterialEditor, query, setQuery } = useMaterialBrowserStore();
+  const { query, setQuery } = useMaterialBrowserStore();
 
   return (
     <div className={styles.controls}>
@@ -28,7 +29,7 @@ const ControlBar = ({ onExport, onImport }: ControlBarProps): React.JSX.Element 
         value={query}
       />
       <div className={styles.spacer} />
-      <Button icon={<PlusOutlined />} onClick={() => openMaterialEditor({ mode: 'add' })} type="primary">
+      <Button icon={<PlusOutlined />} onClick={() => showMaterialEditorModal()} type="primary">
         {t.add_material}
       </Button>
       <Tooltip title={t.import}>

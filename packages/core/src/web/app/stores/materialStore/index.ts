@@ -89,12 +89,12 @@ export const useMaterialStore = create(
             userVariants: get().userVariants.filter(({ id }) => id !== variantId),
           });
         },
-        duplicateMaterial: (source) => {
+        duplicateMaterial: (source, name) => {
           const copyId = generateUserId('user_mat');
           const copy: Material = {
             ...structuredClone(source),
             id: copyId,
-            name: getMaterialDisplayName(source),
+            name: name || getMaterialDisplayName(source),
             nameKey: undefined,
             presets: [],
             shopLinks: undefined,

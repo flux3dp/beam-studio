@@ -2237,7 +2237,7 @@
       ]
     },
     {
-      "category": "glass",
+      "category": "other",
       "id": "glass",
       "nameKey": "glass",
       "presets": [
@@ -2422,7 +2422,7 @@
       ]
     },
     {
-      "category": "stone",
+      "category": "other",
       "id": "slate",
       "nameKey": "slate",
       "presets": [
@@ -2586,7 +2586,7 @@
       ]
     },
     {
-      "category": "stone",
+      "category": "other",
       "id": "stone",
       "nameKey": "stone",
       "presets": [
@@ -2667,7 +2667,7 @@
       ]
     },
     {
-      "category": "rubber",
+      "category": "other",
       "id": "rubber",
       "nameKey": "rubber",
       "presets": [

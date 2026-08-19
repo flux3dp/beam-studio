@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 
 import { PlusOutlined } from '@ant-design/icons';
 
-import { showAddPresetFromLayer } from '@core/app/components/dialogs/MaterialBrowser/editors/showAddPresetFromLayer';
+import { showAddPresetFromLayer } from '@core/app/components/dialogs/MaterialBrowser/editors';
 import { showPresetsManagementPanel } from '@core/app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';

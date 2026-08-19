@@ -1,0 +1,26 @@
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 28px;
+
+  .appearance {
+    min-width: 240px;
+  }
+
+  // Mirrors the old xs={24} stacking on phones
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+
+    .appearance {
+      min-width: 0;
+    }
+  }
+}
+
+.color-preview {
+  width: 120px;
+  height: 60px;
+  margin-top: 8px;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1);
+}

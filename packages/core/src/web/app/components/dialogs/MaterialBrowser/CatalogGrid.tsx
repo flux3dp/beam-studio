@@ -9,6 +9,7 @@ import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors'
 import useI18n from '@core/helpers/useI18n';
 import type { Material } from '@core/interfaces/IMaterial';
 
+import { showMaterialEditorModal } from './editors';
 import styles from './MaterialBrowser.module.scss';
 import MaterialCard from './MaterialCard';
 import { useMaterialBrowserStore } from './useMaterialBrowserStore';
@@ -16,13 +17,11 @@ import { useMaterialBrowserStore } from './useMaterialBrowserStore';
 interface CatalogGridProps {
   machineLabel: string;
   materials: Material[];
-  /** Materials with presets usable in the current machine context; others render dimmed */
-  supportedIds: Set<string>;
 }
 
-const CatalogGrid = ({ machineLabel, materials, supportedIds }: CatalogGridProps): React.JSX.Element => {
+const CatalogGrid = ({ machineLabel, materials }: CatalogGridProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
-  const { activeTab, openDetail, openMaterialEditor, query } = useMaterialBrowserStore();
+  const { activeTab, openDetail, query } = useMaterialBrowserStore();
   const { favorites, toggleFavorite, userVariants } = useMaterialStore();
 
   if (materials.length === 0) {
@@ -36,7 +35,7 @@ const CatalogGrid = ({ machineLabel, materials, supportedIds }: CatalogGridProps
     return (
       <Empty description={description} style={{ padding: '40px 0' }}>
         {activeTab !== 'recents' && query.trim() === '' && (
-          <Button icon={<PlusOutlined />} onClick={() => openMaterialEditor({ mode: 'add' })} type="primary">
+          <Button icon={<PlusOutlined />} onClick={() => showMaterialEditorModal()} type="primary">
             {t.add_material}
           </Button>
         )}
@@ -48,7 +47,6 @@ const CatalogGrid = ({ machineLabel, materials, supportedIds }: CatalogGridProps
     <div className={styles.gallery}>
       {materials.map((material) => (
         <MaterialCard
-          dimmed={!supportedIds.has(material.id)}
           isFavorite={favorites.includes(material.id)}
           key={material.id}
           material={material}

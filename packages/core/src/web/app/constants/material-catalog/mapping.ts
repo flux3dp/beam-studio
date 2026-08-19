@@ -129,10 +129,10 @@ export const materialDefs: BundledMaterialDef[] = [
   { id: 'cardstock', nameKey: 'cardstock', category: 'paper' },
   { id: 'cardboard', nameKey: 'cardboard', category: 'paper' },
   // Glass / stone / rubber
-  { id: 'glass', nameKey: 'glass', category: 'glass' },
-  { id: 'slate', nameKey: 'slate', category: 'stone' },
-  { id: 'stone', nameKey: 'stone', category: 'stone' },
-  { id: 'rubber', nameKey: 'rubber', category: 'rubber' },
+  { id: 'glass', nameKey: 'glass', category: 'other' },
+  { id: 'slate', nameKey: 'slate', category: 'other' },
+  { id: 'stone', nameKey: 'stone', category: 'other' },
+  { id: 'rubber', nameKey: 'rubber', category: 'other' },
   // Metal
   { id: 'metal', nameKey: 'metal', category: 'metal' },
   { id: 'stainless-steel', nameKey: 'stainless_steel', category: 'metal' },

@@ -35,10 +35,9 @@ import type { Material, MaterialCatalog } from '@core/interfaces/IMaterial';
 import CatalogGrid from './CatalogGrid';
 import CategoryTabs from './CategoryTabs';
 import ControlBar from './ControlBar';
-import MaterialEditorModal from './editors/MaterialEditorModal';
+import { showAddPresetFromLayer } from './editors';
 import MovePresetModal from './editors/MovePresetModal';
 import PresetEditorModal from './editors/PresetEditorModal';
-import { showAddPresetFromLayer } from './editors/showAddPresetFromLayer';
 import styles from './MaterialBrowser.module.scss';
 import MaterialDetail from './MaterialDetail';
 import { useMaterialBrowserStore } from './useMaterialBrowserStore';
@@ -79,7 +78,15 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
 
   // Display order: catalog first, user content appended (contract §2.1)
   const allMaterials = useMemo(() => [...catalog.materials, ...userMaterials], [catalog, userMaterials]);
-  const visibleMaterials = useMemo(() => getVisibleMaterials(allMaterials, region), [allMaterials, region]);
+  // Catalog materials with no preset resolvable in the current machine context are hidden;
+  // the user's own materials always show
+  const visibleMaterials = useMemo(() => {
+    const userData = { disabledPresetIds, presetOverrides, userPresets };
+
+    return getVisibleMaterials(allMaterials, region).filter(
+      (material) => material.source === 'user' || getPresetsForContext(material, model, module, userData).length > 0,
+    );
+  }, [allMaterials, region, model, module, disabledPresetIds, presetOverrides, userPresets]);
   const searching = query.trim() !== '';
   const searchResults = useMemo(
     () => (searching ? searchMaterials(visibleMaterials, query) : []),
@@ -109,25 +116,6 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
 
     return visibleMaterials.filter(({ category }) => category === activeTab);
   }, [searching, searchResults, activeTab, visibleMaterials, favorites, recents, allMaterials]);
-
-  // Catalog materials with no preset resolvable in the current machine context get dimmed
-  // and sorted last (TODO #7c); the user's own materials are never de-emphasized
-  const supportedIds = useMemo(() => {
-    const userData = { disabledPresetIds, presetOverrides, userPresets };
-
-    return new Set(
-      visibleMaterials
-        .filter(
-          (material) =>
-            material.source === 'user' || getPresetsForContext(material, model, module, userData).length > 0,
-        )
-        .map(({ id }) => id),
-    );
-  }, [visibleMaterials, model, module, disabledPresetIds, presetOverrides, userPresets]);
-  const sortedGridMaterials = useMemo(
-    () => [...gridMaterials].sort((a, b) => Number(supportedIds.has(b.id)) - Number(supportedIds.has(a.id))),
-    [gridMaterials, supportedIds],
-  );
 
   const detailMaterial = detailMaterialId ? allMaterials.find(({ id }) => id === detailMaterialId) : undefined;
   const editingRow = useMemo((): ResolvedPresetRow | undefined => {
@@ -207,11 +195,10 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
             visibleMaterials={visibleMaterials}
           />
           <div className={styles['scroll-area']}>
-            <CatalogGrid machineLabel={machineLabel} materials={sortedGridMaterials} supportedIds={supportedIds} />
+            <CatalogGrid machineLabel={machineLabel} materials={gridMaterials} />
           </div>
         </>
       )}
-      <MaterialEditorModal region={region} />
       <PresetEditorModal
         editingRow={editingRow}
         material={allMaterials.find(({ id }) => id === presetEditor.materialId)}

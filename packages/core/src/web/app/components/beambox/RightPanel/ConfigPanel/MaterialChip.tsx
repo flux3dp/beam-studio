@@ -3,7 +3,7 @@ import React from 'react';
 import { EllipsisOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
-import { showMaterialBrowser } from '@core/app/components/dialogs/MaterialBrowser/showMaterialBrowser';
+import { showMaterialBrowser } from '@core/app/components/dialogs/MaterialBrowser/editors';
 import { getThicknessLabel } from '@core/app/components/dialogs/MaterialBrowser/utils/inchDisplay';
 import { CATEGORY_COLORS } from '@core/app/constants/material-catalog/constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';

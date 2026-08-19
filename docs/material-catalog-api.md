@@ -71,7 +71,7 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 |---|---|---|---|
 | `id` | string | ✓ | Stable, unique, immutable once published. Slug-like (`glitter-acrylic-us`). |
 | `name` | LocalizedString | ✓ (cloud) | §4. (Client-bundled materials use `nameKey` instead; the server always sends `name`.) |
-| `category` | string | ✓ | One of `wood` `acrylic` `leather` `metal` `plastic` `paper` `glass` `stone` `rubber` `other`. Fixed set — reject anything else in admin. |
+| `category` | string | ✓ | One of `wood` `acrylic` `leather` `metal` `plastic` `paper` `other`. Fixed set — reject anything else in admin. (2026-08-17: `glass` `stone` `rubber` removed — those materials now live under `other`.) |
 | `image` | string (URL) | – | Absolute HTTPS URL to the hero photo (§5). Omit if none. |
 | `coverColor` | string | – | `#rrggbb` hex; used as the card cover when there is no `image`. |
 | `tags` | string[] | – | Short display chips, searchable. Localization of tags is NOT supported in v1 — use language-neutral tags or English. |

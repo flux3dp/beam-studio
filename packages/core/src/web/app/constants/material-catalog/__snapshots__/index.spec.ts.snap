@@ -2240,7 +2240,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       ],
     },
     {
-      "category": "glass",
+      "category": "other",
       "id": "glass",
       "nameKey": "glass",
       "presets": [
@@ -2425,7 +2425,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       ],
     },
     {
-      "category": "stone",
+      "category": "other",
       "id": "slate",
       "nameKey": "slate",
       "presets": [
@@ -2589,7 +2589,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       ],
     },
     {
-      "category": "stone",
+      "category": "other",
       "id": "stone",
       "nameKey": "stone",
       "presets": [
@@ -2670,7 +2670,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       ],
     },
     {
-      "category": "rubber",
+      "category": "other",
       "id": "rubber",
       "nameKey": "rubber",
       "presets": [

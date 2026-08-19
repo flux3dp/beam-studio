@@ -14,6 +14,7 @@ import { Button, Dropdown, Empty, Segmented, Space, Tag, Typography } from 'antd
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import dialogCaller from '@core/app/actions/dialog-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useMaterialStore } from '@core/app/stores/materialStore';
@@ -26,6 +27,7 @@ import type { Material, MaterialRegion, MaterialVariant } from '@core/interfaces
 
 import AddVariantModal from '../editors/AddVariantModal';
 import styles from '../MaterialBrowser.module.scss';
+import { showMaterialEditorModal } from '../editors';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 import { getCoverStyle } from '../utils/coverStyle';
 import { getThicknessLabel } from '../utils/inchDisplay';
@@ -54,8 +56,7 @@ const MaterialDetail = ({
   region,
 }: MaterialDetailProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
-  const { openDetail, openMaterialEditor, openPresetEditor, selectedVariantId, setSelectedVariantId } =
-    useMaterialBrowserStore();
+  const { openDetail, openPresetEditor, selectedVariantId, setSelectedVariantId } = useMaterialBrowserStore();
   const {
     deleteMaterial,
     deletePreset,
@@ -91,6 +92,20 @@ const MaterialDetail = ({
 
   const shopLink = region !== 'global' ? material.shopLinks?.[region] : undefined;
   const variantLabel = (variant: MaterialVariant) => getThicknessLabel(variant) ?? '—';
+
+  const handleDuplicate = async () => {
+    const name = await dialogCaller.getPromptValue({
+      caption: t.editor.name,
+      defaultValue: getMaterialDisplayName(material),
+    });
+
+    // null = cancelled; empty input falls back to the source display name
+    if (name === null) return;
+
+    const copy = duplicateMaterial(material, name.trim());
+
+    openDetail(copy.id);
+  };
 
   const handleDeleteMaterial = () => {
     alertCaller.popUp({
@@ -165,33 +180,21 @@ const MaterialDetail = ({
               {t.buy_on_shop}
             </Button>
           )}
-          {isUserMaterial && (
-            <Space style={{ marginTop: 14 }}>
-              <Button
-                icon={<EditOutlined />}
-                onClick={() => openMaterialEditor({ materialId: material.id, mode: 'edit' })}
-              >
+          <Space style={{ marginTop: 14 }}>
+            {isUserMaterial && (
+              <Button icon={<EditOutlined />} onClick={() => showMaterialEditorModal({ materialId: material.id })}>
                 {t.edit}
               </Button>
+            )}
+            <Button icon={<CopyOutlined />} onClick={handleDuplicate}>
+              {t.duplicate}
+            </Button>
+            {isUserMaterial && (
               <Button danger icon={<DeleteOutlined />} onClick={handleDeleteMaterial}>
                 {t.delete}
               </Button>
-            </Space>
-          )}
-          {!isUserMaterial && (
-            <Space style={{ marginTop: 14 }}>
-              <Button
-                icon={<CopyOutlined />}
-                onClick={() => {
-                  const copy = duplicateMaterial(material);
-
-                  openDetail(copy.id);
-                }}
-              >
-                {t.duplicate}
-              </Button>
-            </Space>
-          )}
+            )}
+          </Space>
         </div>
 
         <div className={styles.content}>

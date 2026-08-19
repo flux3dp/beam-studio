@@ -390,14 +390,11 @@ export interface ILang {
       };
       categories: {
         acrylic: string;
-        glass: string;
         leather: string;
         metal: string;
         other: string;
         paper: string;
         plastic: string;
-        rubber: string;
-        stone: string;
         wood: string;
       };
       delete: string;
