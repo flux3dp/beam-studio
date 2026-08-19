@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { HistoryOutlined, SearchOutlined, StarFilled } from '@ant-design/icons';
 import { Tabs } from 'antd';
@@ -28,6 +28,11 @@ const CategoryTabs = ({
 }: CategoryTabsProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const { activeTab, setActiveTab } = useMaterialBrowserStore();
+
+  // The Favorites tab is removed when its last material is unfavorited; fall back to Recents
+  useEffect(() => {
+    if (activeTab === 'favorites' && favoritesCount === 0) setActiveTab('recents');
+  }, [activeTab, favoritesCount, setActiveTab]);
 
   const items = useMemo(() => {
     const countOf = (category: string) => visibleMaterials.filter((material) => material.category === category).length;
