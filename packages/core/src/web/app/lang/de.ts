@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Klicken Sie auf eine beliebige Stelle, um den Autofokus durchzuführen.',
       camera_preview_borderless_mode: '(Offener Boden)',
       curve_engraving: 'Kurven-Graviermodus',
+      firmware_warning: {
+        message: 'Auf Ihrem %s wird Firmware v%s ausgeführt, was die Systemstabilität beeinträchtigen kann. Wir empfehlen ein Update auf die neueste Version.',
+        remindLater: 'Später erinnern',
+        updateNow: 'Jetzt aktualisieren',
+      },
       pass_through: 'Durchlaufmodus',
       rotary: 'Drehmodus',
     },

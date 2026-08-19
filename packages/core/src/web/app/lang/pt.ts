@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Clique em qualquer lugar para executar o foco automático.',
       camera_preview_borderless_mode: '(Fundo Aberto)',
       curve_engraving: 'Modo de Gravação Curva',
+      firmware_warning: {
+        message: 'A sua %s está executando o firmware v%s, o que pode afetar a estabilidade do sistema. Recomendamos atualizar para a versão mais recente.',
+        remindLater: 'Lembrar mais tarde',
+        updateNow: 'Atualizar agora',
+      },
       pass_through: 'Modo Passagem Direta',
       rotary: 'Modo Rotativo',
     },

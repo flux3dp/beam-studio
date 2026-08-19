@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Klik di mana saja untuk melakukan autofokus.',
       camera_preview_borderless_mode: '(Bawah Terbuka)',
       curve_engraving: 'Mode Ukiran Lengkung',
+      firmware_warning: {
+        message: '%s Anda menjalankan firmware v%s, yang dapat memengaruhi stabilitas sistem. Sebaiknya perbarui ke versi terbaru.',
+        remindLater: 'Ingatkan Nanti',
+        updateNow: 'Perbarui Sekarang',
+      },
       pass_through: 'Mode Lintasan',
       rotary: 'Mode Putar',
     },
