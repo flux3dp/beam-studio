@@ -2160,6 +2160,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Kunci Keamanan Tidak Terdeteksi\nKunci keamanan tidak terdeteksi atau telah dinonaktifkan. Demi keselamatan Anda, mesin tidak dapat beroperasi sampai kunci diaktifkan dengan benar.\nSilakan masukkan kunci keamanan dan nyalakan sebelum memulai ulang pekerjaan.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Suhu Laser Abnormal\nSuhu laser terlalu tinggi. Silakan hentikan operasi dan biarkan laser mendingin sebelum memulai ulang.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Tegangan Laser Abnormal\nKesalahan tegangan laser. Silakan mulai ulang mesin. Jika masalah berlanjut, hubungi dukungan pelanggan.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Mesin berhenti — kepala laser mencapai batas area kerja.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kesalahan Kritis: Papan utama offline. Silakan hubungi Dukungan FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Papan Utama Tidak Merespons\nPapan utama tidak merespons. Silakan mulai ulang pekerjaan.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Terlalu panas. Mohon tunggu beberapa menit.',

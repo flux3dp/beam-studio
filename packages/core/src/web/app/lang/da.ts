@@ -2160,6 +2160,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Sikkerhedsnøgle ikke registreret\nSikkerhedsnøglen er ikke registreret eller er blevet deaktiveret. For din sikkerhed kan maskinen ikke køre, før nøglen er korrekt tændt.\nIndsæt sikkerhedsnøglen og tænd den, før du genstarter arbejdet.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Unormal lasertemperatur\nLasertemperaturen er for høj. Stop operationen og lad laseren køle ned, før du genstarter.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Unormal laserspænding\nLaserspændingsfejl. Genstart maskinen. Hvis problemet fortsætter, kontakt kundeservice.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Maskinen er stoppet — laserhovedet nåede arbejdsområdets grænse.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritisk fejl: Hovedkort offline. Kontakt venligst FLUX-support.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Hovedkort svarer ikke\nHovedkortet svarer ikke. Genstart venligst jobbet.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Overophedet. Vent venligst et par minutter.',

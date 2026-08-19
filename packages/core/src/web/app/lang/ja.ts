@@ -2160,6 +2160,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 セーフティキーが検出されません\nセーフティキーが検出されないか、無効になっています。安全のため、キーが正しくオンになるまで機器は動作できません。\n作業を再開する前に、セーフティキーを挿入してオンにしてください。',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 レーザー温度異常\nレーザー温度が高すぎます。操作を停止し、レーザーが冷却されてから再開してください。',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 レーザー電圧異常\nレーザー電圧エラーです。機器を再起動してください。問題が解決しない場合は、カスタマーサポートにお問い合わせください。',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 マシン停止 — レーザーヘッドが作業エリアの限界に達しました。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 重大なエラー：メインボードがオフラインです。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 メインボード応答なし\nメインボードが応答していません。ジョブを再開してください。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 過熱。数分お待ちください。',

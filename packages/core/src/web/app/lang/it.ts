@@ -2160,6 +2160,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Chiave di sicurezza non rilevata\nLa chiave di sicurezza non è stata rilevata o è stata disattivata. Per la vostra sicurezza, la macchina non può funzionare finché la chiave non viene correttamente attivata.\nInserire la chiave di sicurezza e attivarla prima di riavviare il lavoro.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: "#933 Temperatura laser anomala\nLa temperatura del laser è troppo alta. Interrompere l'operazione e lasciare raffreddare il laser prima di riavviare.",
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: "#932 Tensione laser anomala\nErrore di tensione del laser. Riavviare la macchina. Se il problema persiste, contattare l'assistenza clienti.",
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: "#934 Macchina ferma — la testa laser ha raggiunto il limite dell'area di lavoro.",
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Errore critico: Scheda madre offline. Contattare assistenza FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Scheda madre non risponde\nLa scheda madre non risponde. Riavviare il lavoro.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Surriscaldamento. Attendere qualche minuto.',

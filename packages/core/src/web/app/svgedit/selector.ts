@@ -544,13 +544,26 @@ svgedit.select.Selector = Selector;
 export class SelectorManager {
   public selectorParentGroup!: SVGGElement;
 
+  private isZoomUpdatePending = false;
+
   private rubberBandBox: null | SVGRectElement = null;
 
   private selectorMap: { [id: string]: Selector } = {};
 
   constructor() {
     this.initGroup();
+    canvasEventEmitter.on('zoom-changed', this.handleZoomChanged);
   }
+
+  private handleZoomChanged = (): void => {
+    if (this.isZoomUpdatePending) return;
+
+    this.isZoomUpdatePending = true;
+    queueMicrotask(() => {
+      this.isZoomUpdatePending = false;
+      this.handleZoomChange();
+    });
+  };
 
   initGroup(): void {
     if (this.selectorParentGroup) {
@@ -565,10 +578,6 @@ export class SelectorManager {
     this.selectorMap = {};
     this.rubberBandBox?.remove();
     this.rubberBandBox = null;
-
-    canvasEventEmitter.on('zoom-changed', () => {
-      requestAnimationFrame(() => this.handleZoomChange());
-    });
   }
 
   handleZoomChange(): void {

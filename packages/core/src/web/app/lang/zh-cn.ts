@@ -2160,6 +2160,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 未检测到安全钥匙\n未检测到安全钥匙或安全钥匙已停用。为了您的安全，机器在钥匙正确开启前无法运行。\n请插入安全钥匙并开启后再重新开始作业。',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 激光温度异常\n激光温度过高。请停止操作并等待激光冷却后再重新启动。',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 激光电压异常\n激光电压错误。请重新启动机器。如问题持续，请联系客服。',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 机器已停止——激光头触及工作区域极限。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 主板没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 主板无响应\n主板无响应。请重新开始作业。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 水温过高，请稍后再继续',

@@ -2159,6 +2159,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Llave de seguridad no detectada\nLa llave de seguridad no se detecta o ha sido desactivada. Por su seguridad, la máquina no puede funcionar hasta que la llave esté correctamente encendida.\nInserte la llave de seguridad y enciéndala antes de reiniciar el trabajo.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Temperatura del láser anormal\nLa temperatura del láser es demasiado alta. Detenga la operación y permita que el láser se enfríe antes de reiniciar.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Voltaje del láser anormal\nError de voltaje del láser. Reinicie la máquina. Si el problema persiste, contacte con el servicio de atención al cliente.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Máquina detenida — el cabezal láser alcanzó el límite del área de trabajo.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Error crítico: placa base desconectada. Contacte con el servicio de asistencia de FLUX.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Placa base sin respuesta\nLa placa base no responde. Reinicie el trabajo.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Sobrecalentamiento. Por favor, espere unos minutos.',

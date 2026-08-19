@@ -2160,6 +2160,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     HARDWARE_ERROR_KEY_OFF: '#929 Safety Key Not Detected\nThe safety key is not detected or has been deactivated. For your safety, the machine cannot operate until the key is properly switched on.\nPlease insert the safety key and turn it on before restarting work.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Laser Temperature Abnormal\nLaser temperature is too high. Please stop operation and allow the laser to cool down before restarting.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Laser Voltage Abnormal\nLaser voltage error. Please restart the machine. If the issue persists, contact customer support.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Machine stopped — laser head reached work area limit.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Critical Error: Mainboard offline. Please contact FLUX Support.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Mainboard No Response\nThe mainboard is not responding. Please restart the job.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Overheated. Please wait for a few minutes.',

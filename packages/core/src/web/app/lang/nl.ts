@@ -2160,6 +2160,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Veiligheidssleutel niet gedetecteerd\nDe veiligheidssleutel wordt niet gedetecteerd of is gedeactiveerd. Voor uw veiligheid kan de machine niet werken totdat de sleutel correct is ingeschakeld.\nPlaats de veiligheidssleutel en schakel deze in voordat u het werk herstart.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Abnormale lasertemperatuur\nDe lasertemperatuur is te hoog. Stop de bewerking en laat de laser afkoelen voordat u herstart.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Abnormale laserspanning\nLaserspanningsfout. Herstart de machine. Als het probleem aanhoudt, neem contact op met de klantenservice.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Machine gestopt — laserkop heeft de grens van het werkgebied bereikt.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritieke fout: Hoofdprintplaat offline. Neem contact op met FLUX-ondersteuning.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Hoofdprintplaat reageert niet\nDe hoofdprintplaat reageert niet. Herstart de taak.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Oververhit. Wacht een paar minuten.',
