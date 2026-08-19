@@ -40,14 +40,10 @@ jobs:
           cache: "pnpm"
 
       - name: Install system dependencies
+        timeout-minutes: 5
         run: |
-          sudo apt-get update
-          sudo apt-get install -y python3-setuptools libfontconfig1-dev
-
-      - name: Install Python dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r ./apps/app/requirements.txt
+          sudo apt-get update -o Acquire::Retries=2 -o Acquire::http::Timeout=15
+          sudo apt-get install -y --no-install-recommends libfontconfig1-dev
 
       - run: pnpm -r install
 
