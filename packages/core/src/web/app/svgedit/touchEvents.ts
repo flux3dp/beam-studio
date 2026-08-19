@@ -3,13 +3,16 @@ import Hammer from 'hammerjs';
 import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import workareaManager from '@core/app/svgedit/workarea';
 
-const calculateTouchCenter = (touches: TouchList) => {
+type Point = { x: number; y: number };
+type TouchEventWithScale = TouchEvent & { scale?: number };
+
+const calculateTouchCenter = (touches: TouchList): Point => {
   const center = { x: 0, y: 0 };
 
   if (touches.length > 0) {
     for (let i = 0; i < touches.length; i += 1) {
-      center.x += touches[i].pageX;
-      center.y += touches[i].pageY;
+      center.x += touches[i].clientX;
+      center.y += touches[i].clientY;
     }
     center.x /= touches.length;
     center.y /= touches.length;
@@ -19,6 +22,7 @@ const calculateTouchCenter = (touches: TouchList) => {
 };
 
 const TOUCH_START_DELAY = 100; // ms
+const SCALE_CHANGE_THRESHOLD = 1.05;
 const multi = 3;
 
 const setupCanvasTouchEvents = (
@@ -30,19 +34,23 @@ const setupCanvasTouchEvents = (
   onDoubleClick: (e: Event) => void,
   setZoom: (zoom: number, staticPoint: { x: number; y: number }) => void,
 ): void => {
-  let touchStartTimeout: NodeJS.Timeout;
+  let touchStartTimeout: ReturnType<typeof setTimeout>;
   let touchStartTimestamp: number;
-  let firstTouchID = null;
-  let panStartPosition = null;
+  let firstTouchID: null | number = null;
+  let panStartPosition: null | Point = null;
   let panStartScroll = { left: 0, top: 0 };
-  let startZoom = null;
+  let workareaOffset = { left: 0, top: 0 };
+  let startZoom: null | number = null;
   let currentScale = 1;
   let startDist = 0;
-  let lastMoveEventTimestamp = 0;
+  let pendingTouchMove: null | { center: Point; scale: number } = null;
+  let touchMoveAnimationFrame: null | number = null;
   let isDoubleTap = false;
   const mc = new Hammer.Manager(container as HTMLElement);
 
-  container.addEventListener('touchstart', (e: TouchEvent) => {
+  container.addEventListener('touchstart', (event) => {
+    const e = event as TouchEvent;
+
     clearTimeout(touchStartTimeout);
 
     if (e.touches.length === 1) {
@@ -56,23 +64,29 @@ const setupCanvasTouchEvents = (
         top: workarea.scrollTop,
       };
 
-      // @ts-expect-error scale is defined in chrome & safari
-      if (e.scale === undefined) {
+      const { left, top } = workarea.getBoundingClientRect();
+
+      workareaOffset = { left, top };
+
+      const { scale } = e as TouchEventWithScale;
+
+      if (scale === undefined) {
         startZoom = workareaManager.zoomRatio;
         startDist = Math.hypot(
-          e.touches[0].screenX - e.touches[1].screenX,
-          e.touches[0].screenY - e.touches[1].screenY,
+          e.touches[0].clientX - e.touches[1].clientX,
+          e.touches[0].clientY - e.touches[1].clientY,
         );
         currentScale = 1;
-        // @ts-expect-error scale is defined in chrome & safari
-      } else if (e.scale === 1) {
+      } else if (scale === 1) {
         startZoom = workareaManager.zoomRatio;
         currentScale = 1;
       }
     }
   });
 
-  container.addEventListener('touchmove', (e: TouchEvent) => {
+  container.addEventListener('touchmove', (event) => {
+    const e = event as TouchEvent;
+
     e.preventDefault();
 
     if (e.touches.length === 1) {
@@ -80,49 +94,59 @@ const setupCanvasTouchEvents = (
         onMouseMove(e);
       }
     } else if (e.touches.length >= 2) {
-      const center = calculateTouchCenter(e.touches);
+      pendingTouchMove = {
+        center: calculateTouchCenter(e.touches),
+        scale:
+          (e as TouchEventWithScale).scale ??
+          Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY) /
+            startDist,
+      };
 
-      requestAnimationFrame(() => {
-        const { timeStamp } = e;
+      if (touchMoveAnimationFrame !== null) return;
 
-        if (timeStamp < lastMoveEventTimestamp) return;
+      touchMoveAnimationFrame = requestAnimationFrame(() => {
+        touchMoveAnimationFrame = null;
 
-        const scale =
-          // @ts-expect-error scale is defined in chrome & safari
-          e.scale ??
-          Math.hypot(e.touches[0].screenX - e.touches[1].screenX, e.touches[0].screenY - e.touches[1].screenY) /
-            startDist;
-        let newZoom = workareaManager.zoomRatio;
+        const touchMove = pendingTouchMove;
 
-        if (startZoom && Math.abs(Math.log(currentScale / scale)) >= Math.log(1.05)) {
-          newZoom = startZoom * scale ** 0.5;
-          setZoom(newZoom, center);
-          panStartPosition = center;
-          panStartScroll = {
-            left: workarea.scrollLeft,
-            top: workarea.scrollTop,
-          };
+        pendingTouchMove = null;
+
+        if (!touchMove) return;
+
+        const { center, scale } = touchMove;
+        const shouldZoom =
+          startZoom !== null && Math.abs(Math.log(currentScale / scale)) >= Math.log(SCALE_CHANGE_THRESHOLD);
+        const newZoom = shouldZoom && startZoom !== null ? startZoom * scale ** 0.5 : workareaManager.zoomRatio;
+        const wOrig = workarea.clientWidth;
+        const hOrig = workarea.clientHeight;
+        const canPan =
+          wOrig < workareaManager.width * newZoom * multi && hOrig < workareaManager.height * newZoom * multi;
+
+        if (canPan && panStartPosition) {
+          workarea.scrollLeft = panStartScroll.left + panStartPosition.x - center.x;
+          workarea.scrollTop = panStartScroll.top + panStartPosition.y - center.y;
+        }
+
+        if (shouldZoom) {
+          setZoom(newZoom, {
+            x: center.x - workareaOffset.left,
+            y: center.y - workareaOffset.top,
+          });
           currentScale = scale;
         }
 
-        const wOrig = workarea.clientWidth;
-        const hOrig = workarea.clientHeight;
-
-        if (wOrig >= workareaManager.width * newZoom * multi || hOrig >= workareaManager.height * newZoom * multi) {
-          lastMoveEventTimestamp = timeStamp;
-
-          return;
-        }
-
-        workarea.scrollLeft = panStartScroll.left + panStartPosition.x - center.x;
-
-        workarea.scrollTop = panStartScroll.top + panStartPosition.y - center.y;
-        lastMoveEventTimestamp = timeStamp;
+        panStartPosition = center;
+        panStartScroll = {
+          left: workarea.scrollLeft,
+          top: workarea.scrollTop,
+        };
       });
     }
   });
 
-  container.addEventListener('touchend', (e: TouchEvent) => {
+  container.addEventListener('touchend', (event) => {
+    const e = event as TouchEvent;
+
     for (let i = 0; i < e.changedTouches.length; i += 1) {
       if (e.changedTouches[i].identifier === firstTouchID) {
         firstTouchID = null;

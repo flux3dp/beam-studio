@@ -47,7 +47,7 @@ describe('test touchEvents', () => {
     container = baseElement.querySelector('#main>div');
     canvas = document.getElementById('svgcanvas');
 
-    const workarea = document.getElementById('workarea');
+    const workarea = document.getElementById('workarea')!;
 
     touchEvents.setupCanvasTouchEvents(canvas, workarea, mouseDown, mouseMove, mouseUp, doubleClick, setZoom);
   });
@@ -66,9 +66,9 @@ describe('test touchEvents', () => {
     const onePointTouchStart = new TouchEvent('touchstart', {
       touches: [
         {
+          clientX: 10,
+          clientY: 10,
           identifier: 0,
-          pageX: 10,
-          pageY: 10,
         } as Touch,
       ],
     });
@@ -77,26 +77,27 @@ describe('test touchEvents', () => {
     expect(mouseDown).not.toHaveBeenCalled();
     jest.runOnlyPendingTimers();
     expect(mouseDown).toHaveBeenNthCalledWith(1, onePointTouchStart);
+    jest.advanceTimersByTime(1);
 
     const onePointTouchMove = new TouchEvent('touchmove', {
       touches: [
         {
+          clientX: 20,
+          clientY: 20,
           identifier: 0,
-          pageX: 20,
-          pageY: 20,
         } as Touch,
       ],
     });
 
     canvas.dispatchEvent(onePointTouchMove);
-    expect(mouseDown).toHaveBeenNthCalledWith(1, onePointTouchMove);
+    expect(mouseMove).toHaveBeenNthCalledWith(1, onePointTouchMove);
 
     const onePointTouchEnd = new TouchEvent('touchend', {
       changedTouches: [
         {
+          clientX: 20,
+          clientY: 20,
           identifier: 0,
-          pageX: 20,
-          pageY: 20,
         } as Touch,
       ],
     });
@@ -113,9 +114,9 @@ describe('test touchEvents', () => {
       scale: 1,
       touches: [
         {
+          clientX: 10,
+          clientY: 10,
           identifier: 0,
-          pageX: 10,
-          pageY: 10,
         } as Touch,
       ],
     });
@@ -128,14 +129,14 @@ describe('test touchEvents', () => {
       scale: 1,
       touches: [
         {
+          clientX: 10,
+          clientY: 10,
           identifier: 0,
-          pageX: 10,
-          pageY: 10,
         } as Touch,
         {
+          clientX: 20,
+          clientY: 20,
           identifier: 1,
-          pageX: 20,
-          pageY: 20,
         } as Touch,
       ],
     });
@@ -145,14 +146,14 @@ describe('test touchEvents', () => {
     const twoPointTouchMovePan = new TouchEvent('touchmove', {
       touches: [
         {
+          clientX: 20,
+          clientY: 20,
           identifier: 0,
-          pageX: 20,
-          pageY: 20,
         } as Touch,
         {
+          clientX: 30,
+          clientY: 30,
           identifier: 1,
-          pageX: 30,
-          pageY: 30,
         } as Touch,
       ],
     });
@@ -164,14 +165,14 @@ describe('test touchEvents', () => {
     const twoPointTouchEnd = new TouchEvent('touchend', {
       touches: [
         {
+          clientX: 20,
+          clientY: 20,
           identifier: 0,
-          pageX: 20,
-          pageY: 20,
         } as Touch,
         {
+          clientX: 30,
+          clientY: 30,
           identifier: 1,
-          pageX: 30,
-          pageY: 30,
         } as Touch,
       ],
     });
@@ -179,5 +180,80 @@ describe('test touchEvents', () => {
     canvas.dispatchEvent(twoPointTouchEnd);
     expect(mouseUp).toHaveBeenCalledTimes(0);
     expect(container).toMatchSnapshot();
+  });
+
+  test('uses the latest workarea-relative touch center once per animation frame', () => {
+    const animationFrames: Array<(timestamp: number) => void> = [];
+    const requestAnimationFrameSpy = jest
+      .spyOn(window, 'requestAnimationFrame')
+      .mockImplementation((callback: (timestamp: number) => void) => {
+        animationFrames.push(callback);
+
+        return animationFrames.length;
+      });
+    const testWorkarea = document.createElement('div');
+    const testCanvas = document.createElement('div');
+    const scrollAtZoom: Array<{ left: number; top: number }> = [];
+    const testSetZoom = jest.fn(() => {
+      scrollAtZoom.push({ left: testWorkarea.scrollLeft, top: testWorkarea.scrollTop });
+    });
+
+    testWorkarea.appendChild(testCanvas);
+    document.body.appendChild(testWorkarea);
+    testWorkarea.scrollLeft = 300;
+    testWorkarea.scrollTop = 200;
+
+    const getBoundingClientRect = jest
+      .spyOn(testWorkarea, 'getBoundingClientRect')
+      .mockReturnValue({ left: 100, top: 40 } as DOMRect);
+
+    mockGetHeight.mockReturnValue(1000);
+    mockGetWidth.mockReturnValue(1000);
+    mockGetZoomRatio.mockReturnValue(1);
+    touchEvents.setupCanvasTouchEvents(
+      testCanvas,
+      testWorkarea,
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      jest.fn(),
+      testSetZoom,
+    );
+
+    testCanvas.dispatchEvent(
+      new TouchEvent('touchstart', {
+        touches: [{ clientX: 120, clientY: 80 } as Touch, { clientX: 220, clientY: 80 } as Touch],
+      }),
+    );
+    testCanvas.dispatchEvent(
+      new TouchEvent('touchmove', {
+        touches: [{ clientX: 120, clientY: 90 } as Touch, { clientX: 241, clientY: 90 } as Touch],
+      }),
+    );
+    testCanvas.dispatchEvent(
+      new TouchEvent('touchmove', {
+        touches: [{ clientX: 130, clientY: 90 } as Touch, { clientX: 274, clientY: 90 } as Touch],
+      }),
+    );
+
+    expect(animationFrames).toHaveLength(1);
+    expect(getBoundingClientRect).toHaveBeenCalledTimes(1);
+    animationFrames[0](0);
+    expect(testSetZoom).toHaveBeenCalledTimes(1);
+    // pinchScale = last distance / start distance = (274 - 130) / (220 - 120) = 1.44
+    // newZoom = startZoom * sqrt(pinchScale) = 1 * sqrt(1.44) = 1.2
+    // center = latest midpoint - workarea offset = {
+    //   x: (130 + 274) / 2 - 100 = 102,
+    //   y: (90 + 90) / 2 - 40 = 50,
+    // }
+    expect(testSetZoom).toHaveBeenCalledWith(1.2, { x: 102, y: 50 });
+    // scroll before zoom = initial scroll + start center - latest center = {
+    //   left: 300 + 170 - 202 = 268,
+    //   top: 200 + 80 - 90 = 190,
+    // }
+    expect(scrollAtZoom).toEqual([{ left: 268, top: 190 }]);
+
+    requestAnimationFrameSpy.mockRestore();
+    testWorkarea.remove();
   });
 });
