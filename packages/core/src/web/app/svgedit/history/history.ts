@@ -220,6 +220,25 @@ export class ChangeElementCommand extends BaseHistoryCommand implements ICommand
 
   type = ChangeElementCommand.type;
 
+  // Re-center a pure rotational transform after attribute changes move the bbox center.
+  // Only safe when the rotation is the whole transform: text/use elements keep scale as
+  // an extra matrix, which overwriting with a bare rotate() would destroy.
+  private relocateRotationalTransform = (): void => {
+    const tlist = svgedit.transformlist.getTransformList(this.elem);
+    const angle = svgedit.utilities.getRotationAngleFromTransformList(tlist);
+
+    if (!angle || tlist.numberOfItems !== 1) return;
+
+    const bbox = this.elem.getBBox();
+    const cx = bbox.x + bbox.width / 2;
+    const cy = bbox.y + bbox.height / 2;
+    const rotate = `rotate(${angle} ${cx}, ${cy})`;
+
+    if (rotate !== this.elem.getAttribute('transform')) {
+      this.elem.setAttribute('transform', rotate);
+    }
+  };
+
   doApply = (): void => {
     let bChangedTransform = false;
     const keys = Object.keys(this.newValues);
@@ -249,20 +268,7 @@ export class ChangeElementCommand extends BaseHistoryCommand implements ICommand
 
     // relocate rotational transform, if necessary
     if (!bChangedTransform) {
-      const angle = svgedit.utilities.getRotationAngle(this.elem);
-
-      if (angle) {
-        // TODO: These instances of elem either need to be declared as global
-        // (which would not be good for conflicts) or declare/use this.elem
-        const bbox = this.elem.getBBox();
-        const cx = bbox.x + bbox.width / 2;
-        const cy = bbox.y + bbox.height / 2;
-        const rotate = `rotate(${angle} ${cx}, ${cy})`;
-
-        if (rotate !== this.elem.getAttribute('transform')) {
-          this.elem.setAttribute('transform', rotate);
-        }
-      }
+      this.relocateRotationalTransform();
     }
   };
 
@@ -294,18 +300,7 @@ export class ChangeElementCommand extends BaseHistoryCommand implements ICommand
 
     // relocate rotational transform, if necessary
     if (!bChangedTransform) {
-      const angle = svgedit.utilities.getRotationAngle(this.elem);
-
-      if (angle) {
-        const bbox = this.elem.getBBox();
-        const cx = bbox.x + bbox.width / 2;
-        const cy = bbox.y + bbox.height / 2;
-        const rotate = `rotate(${angle} ${cx}, ${cy})`;
-
-        if (rotate !== this.elem.getAttribute('transform')) {
-          this.elem.setAttribute('transform', rotate);
-        }
-      }
+      this.relocateRotationalTransform();
     }
 
     // Remove transformlist to prevent confusion that causes bugs like 575.

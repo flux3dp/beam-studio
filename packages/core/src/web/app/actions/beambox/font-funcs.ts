@@ -7,7 +7,9 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
+import changeAttribute from '@core/app/svgedit/history/changeAttribute';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
 import { recalculateDimensions } from '@core/app/svgedit/transform/recalculate';
@@ -690,12 +692,13 @@ const convertTextToPath = async (
         const doSub = await showSubstitutedFamilyPopup(newFont.family!);
 
         if (doSub === SubstituteResult.DO_SUB) {
-          svgCanvas.undoMgr.beginUndoableChange('font-family', [textElement]);
-          textElement.setAttribute('font-family', newFont.family!);
-          batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
-          svgCanvas.undoMgr.beginUndoableChange('font-postscript', [textElement]);
-          textElement.setAttribute('font-postscript', newFont.postscriptName!);
-          batchCmd.addSubCommand(svgCanvas.undoMgr.finishUndoableChange());
+          const changeCmd = changeAttribute(textElement, {
+            'font-family': newFont.family!,
+            'font-postscript': newFont.postscriptName!,
+          });
+
+          if (changeCmd) batchCmd.addSubCommand(changeCmd);
+
           fontObj = await getFontObj(newFont);
           font = newFont;
         } else if (doSub === SubstituteResult.CANCEL_OPERATION) {
@@ -807,7 +810,7 @@ const convertTextToPath = async (
     batchCmd.addSubCommand(new history.RemoveElementCommand(elem, nextSibling!, parent));
 
     if (!batchCmd.isEmpty() && !isSubCommand) {
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
     }
 
     const finalStatus = hasUnsupportedFont ? ConvertResult.UNSUPPORT : ConvertResult.CONTINUE;

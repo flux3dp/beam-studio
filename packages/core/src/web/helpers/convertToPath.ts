@@ -144,7 +144,6 @@ export const convertTextOnPathToPath = async (
 ): Promise<ConvertToPathResult & { group: SVGGElement }> => {
   const cmd = new BatchCommand('Convert Text on Path to Path');
 
-  const pathElement = element.querySelector('path');
   const textElement = element.querySelector('text');
 
   if (textActions.isEditing) textActions.toSelectMode();
@@ -152,22 +151,29 @@ export const convertTextOnPathToPath = async (
   selectionManager.clearSelection();
 
   const { command, path } = await fontFuncs.convertTextToPath(textElement!, { isSubCommand: true, weldingTexts });
+  const group = element as SVGGElement;
 
-  selectionManager.selectOnly([pathElement!, path!]);
-
-  const { command: groupCmd, group } = svgCanvas.groupSelectedElements(true)!;
+  if (!path) {
+    return { bbox: group.getBBox(), command: undefined, group };
+  }
 
   if (command) cmd.addSubCommand(command);
 
-  if (groupCmd) cmd.addSubCommand(groupCmd);
+  // Keep the original group so its transform (e.g. rotation) is preserved;
+  // the converted path is inserted in place of the text, so no regrouping is needed.
+  group.removeAttribute('data-textpath-g');
+  group.setAttribute('data-ratiofixed', 'true');
+  cmd.addSubCommand(new history.ChangeElementCommand(group, { 'data-ratiofixed': null, 'data-textpath-g': '1' }));
+
+  selectionManager.selectOnly([group]);
 
   handleHistoryActionOptions(cmd, historyOptions);
 
   return {
-    bbox: path!.getBBox(),
+    bbox: path.getBBox(),
     command: historyOptions.parentCmd ?? cmd,
     group,
-    path: path || undefined,
+    path,
   };
 };
 
@@ -325,7 +331,7 @@ export const dispatchConvertToPath = async (
     if (element.getAttribute('data-tempgroup') === 'true') {
       // Note: adds command to history; returns void instead of ConvertToPathResult
       return convertTempGroupToPath({ element, isToSelect, weldingTexts });
-    } else if (element.getAttribute('data-textpath-g') === 'true') {
+    } else if (element.getAttribute('data-textpath-g')) {
       // Note: selects resulting path with group
       return convertTextOnPathToPath(element, { weldingTexts, ...historyOptions });
     }

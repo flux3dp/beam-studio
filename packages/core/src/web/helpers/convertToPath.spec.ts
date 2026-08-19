@@ -44,10 +44,21 @@ jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   },
 }));
 
+class FakeChangeElementCommand {
+  constructor(
+    public elem: Element,
+    public oldValues: Record<string, null | string>,
+  ) {}
+}
+
 jest.mock('@core/app/svgedit/history/history', () => ({
   __esModule: true,
   BatchCommand: FakeBatchCommand,
-  default: { BatchCommand: FakeBatchCommand, InsertElementCommand: class {} },
+  default: {
+    BatchCommand: FakeBatchCommand,
+    ChangeElementCommand: FakeChangeElementCommand,
+    InsertElementCommand: class {},
+  },
 }));
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
@@ -102,7 +113,7 @@ jest.mock('./svg-editor-helper', () => ({
 
 import { ConvertResult } from '@core/app/actions/beambox/font-funcs';
 
-import { convertAllTextToPath, convertSvgToPath, convertTextToPath } from './convertToPath';
+import { convertAllTextToPath, convertSvgToPath, convertTextOnPathToPath, convertTextToPath } from './convertToPath';
 
 // jsdom lacks SVG geometry APIs (Gotcha 10): stub getBBox on the prototype.
 const fakeBBox = { height: 10, width: 20, x: 1, y: 2 } as DOMRect;
@@ -232,6 +243,42 @@ describe('convertToPath', () => {
       expect(result.path).toBeUndefined();
       expect(result.command).toBeUndefined();
       expect(result.status).toBe(ConvertResult.UNSUPPORT);
+    });
+  });
+
+  describe('convertTextOnPathToPath', () => {
+    test('converts text in place and keeps the original group with its transform', async () => {
+      const group = document.createElementNS('http://www.w3.org/2000/svg', 'g') as SVGGElement;
+
+      group.setAttribute('data-textpath-g', '1');
+      group.setAttribute('transform', 'rotate(45)');
+
+      const pathElement = makePath();
+      const text = makeText();
+
+      group.append(pathElement, text);
+      document.body.appendChild(group);
+
+      const newPath = makePath();
+
+      mockFontFuncsConvertTextToPath.mockImplementation(() => {
+        text.replaceWith(newPath);
+
+        return Promise.resolve({
+          command: new FakeBatchCommand('font'),
+          path: newPath,
+          status: ConvertResult.CONTINUE,
+        });
+      });
+
+      const result = await convertTextOnPathToPath(group);
+
+      expect(result.group).toBe(group);
+      expect(result.path).toBe(newPath);
+      expect(group.getAttribute('transform')).toBe('rotate(45)');
+      expect(group.getAttribute('data-textpath-g')).toBeNull();
+      expect(Array.from(group.children)).toEqual([pathElement, newPath]);
+      expect(mockSelectOnly).toHaveBeenCalledWith([group]);
     });
   });
 
