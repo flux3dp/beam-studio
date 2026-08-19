@@ -1,7 +1,9 @@
+@use '@core/styles/mixins' as mixins;
+
 .container {
   position: relative;
   border: 1px solid #000000;
-  height: 50vh;
+  @include mixins.viewport-size(50);
 
   .img-container {
     background: #eeeeee;

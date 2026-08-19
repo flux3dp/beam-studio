@@ -4,7 +4,7 @@
 .container {
   @include mixins.is-not-mobile {
     // Avoid overlap with the fixed position button
-    height: calc(100vh - 130px);
+    @include mixins.viewport-size($offset: 130px);
     padding-bottom: 90px;
     overflow: hidden;
   }
