@@ -173,6 +173,10 @@ Location: `packages/core/src/web/app/lang/`
 3. Keys use nested object structure matching `ILang` interface
 4. Use descriptive, hierarchical key names (e.g., `alert.confirm`, `beambox.ai_generate.form.generate`)
 
+### Formatted Strings
+
+- Prefer `sprintf-js` for strings with interpolated values, including translated strings.
+
 ## Electron App Multi-Tab
 
 ### Multi-Tab Architecture

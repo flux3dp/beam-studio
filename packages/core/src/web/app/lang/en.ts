@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Click anywhere to perform autofocus.',
       camera_preview_borderless_mode: '(Open Bottom)',
       curve_engraving: 'Curve Engraving Mode',
+      firmware_warning: {
+        message: 'Your %s is running firmware v%s, which may affect system stability. We recommend updating to the latest version.',
+        remindLater: 'Remind Me Later',
+        updateNow: 'Update Now',
+      },
       pass_through: 'Passthrough Mode',
       rotary: 'Rotary Mode',
     },

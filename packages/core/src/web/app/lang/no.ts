@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Klikk hvor som helst for å utføre autofokus.',
       camera_preview_borderless_mode: '(Åpen Bunn)',
       curve_engraving: 'Kurvegravering Modus',
+      firmware_warning: {
+        message: 'Din %s kjører fastvare v%s, noe som kan påvirke systemstabiliteten. Vi anbefaler å oppdatere til den nyeste versjonen.',
+        remindLater: 'Påminn meg senere',
+        updateNow: 'Oppdater nå',
+      },
       pass_through: 'Gjennomgangsmodus',
       rotary: 'Rotasjonsmodus',
     },

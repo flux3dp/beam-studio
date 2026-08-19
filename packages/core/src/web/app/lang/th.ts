@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'คลิกที่ใดก็ได้เพื่อดำเนินการออโต้โฟกัส',
       camera_preview_borderless_mode: '(เปิดด้านล่าง)',
       curve_engraving: 'โหมดแกะสลักเส้นโค้ง',
+      firmware_warning: {
+        message: '%s ของคุณกำลังใช้เฟิร์มแวร์ v%s ซึ่งอาจส่งผลต่อความเสถียรของระบบ เราขอแนะนำให้อัปเดตเป็นเวอร์ชันล่าสุด',
+        remindLater: 'เตือนฉันภายหลัง',
+        updateNow: 'อัปเดตตอนนี้',
+      },
       pass_through: 'โหมดส่งผ่าน',
       rotary: 'โหมดหมุน',
     },

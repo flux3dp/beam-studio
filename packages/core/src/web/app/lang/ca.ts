@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: "Fes clic a qualsevol lloc per realitzar l'enfocament automàtic.",
       camera_preview_borderless_mode: '(Fons obert)',
       curve_engraving: 'Mode gravat corbat',
+      firmware_warning: {
+        message: "El vostre %s utilitza el firmware v%s, cosa que pot afectar l'estabilitat del sistema. Us recomanem actualitzar-lo a la versió més recent.",
+        remindLater: "Recorda-m'ho més tard",
+        updateNow: 'Actualitza ara',
+      },
       pass_through: 'Mode pas a través',
       rotary: 'Mode rotatori',
     },

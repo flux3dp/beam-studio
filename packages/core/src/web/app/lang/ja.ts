@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'どこでもクリックして自動フォーカスを実行してください。',
       camera_preview_borderless_mode: '(オープンボトム)',
       curve_engraving: 'カーブ彫刻モード',
+      firmware_warning: {
+        message: 'お使いの%sはファームウェアv%sを実行しており、システムの安定性に影響する可能性があります。最新バージョンへの更新を推奨します。',
+        remindLater: '後で通知',
+        updateNow: '今すぐ更新',
+      },
       pass_through: 'パススルーモード',
       rotary: 'ロータリーモード',
     },

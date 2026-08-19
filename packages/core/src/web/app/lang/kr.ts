@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: '자동 초점을 수행하려면 아무 곳이나 클릭하십시오.',
       camera_preview_borderless_mode: '(하단 개방)',
       curve_engraving: '곡선 조각 모드',
+      firmware_warning: {
+        message: '%s의 펌웨어 버전은 v%s이며 시스템 안정성에 영향을 줄 수 있습니다. 최신 버전으로 업데이트하는 것이 좋습니다.',
+        remindLater: '나중에 알림',
+        updateNow: '지금 업데이트',
+      },
       pass_through: '패스스루 모드',
       rotary: '회전 모드',
     },

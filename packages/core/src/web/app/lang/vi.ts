@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Nhấp vào bất kỳ đâu để thực hiện lấy nét tự động.',
       camera_preview_borderless_mode: '(Mở Dưới)',
       curve_engraving: 'Chế Độ Khắc Đường Cong',
+      firmware_warning: {
+        message: '%s của bạn đang chạy firmware v%s, điều này có thể ảnh hưởng đến độ ổn định của hệ thống. Chúng tôi khuyên bạn nên cập nhật lên phiên bản mới nhất.',
+        remindLater: 'Nhắc tôi sau',
+        updateNow: 'Cập nhật ngay',
+      },
       pass_through: 'Chế Độ Xuyên Qua',
       rotary: 'Chế Độ Quay',
     },

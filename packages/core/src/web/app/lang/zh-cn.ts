@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: '点击任意位置执行自动对焦。',
       camera_preview_borderless_mode: '(打开底部)',
       curve_engraving: '曲面雕刻模式',
+      firmware_warning: {
+        message: '您的 %s 目前固件版本 v%s 可能影响系统稳定性，建议更新至最新版本。',
+        remindLater: '稍后提醒',
+        updateNow: '立即更新',
+      },
       pass_through: '广域雕刻模式',
       rotary: '旋转轴模式',
     },

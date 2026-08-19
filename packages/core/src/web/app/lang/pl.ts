@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Kliknij gdziekolwiek, aby wykonać autofocus.',
       camera_preview_borderless_mode: '(Otwarty Spód)',
       curve_engraving: 'Tryb Grawerowania Krzywizn',
+      firmware_warning: {
+        message: 'Urządzenie %s korzysta z oprogramowania sprzętowego v%s, co może wpływać na stabilność systemu. Zalecamy aktualizację do najnowszej wersji.',
+        remindLater: 'Przypomnij później',
+        updateNow: 'Aktualizuj teraz',
+      },
       pass_through: 'Tryb Przelotowy',
       rotary: 'Tryb Obrotowy',
     },

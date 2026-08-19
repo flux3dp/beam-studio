@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Napsauta mitä tahansa kohtaa suorittaaksesi automaattitarkennuksen.',
       camera_preview_borderless_mode: '(Avoin Pohja)',
       curve_engraving: 'Kaiverruksen Käyrätila',
+      firmware_warning: {
+        message: 'Laitteessa %s on laiteohjelmisto v%s, mikä voi vaikuttaa järjestelmän vakauteen. Suosittelemme päivittämään uusimpaan versioon.',
+        remindLater: 'Muistuta myöhemmin',
+        updateNow: 'Päivitä nyt',
+      },
       pass_through: 'Läpikulku Tila',
       rotary: 'Pyörivä Tila',
     },

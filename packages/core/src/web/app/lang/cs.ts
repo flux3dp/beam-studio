@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Klikněte kamkoli pro automatické zaostření.',
       camera_preview_borderless_mode: '(Otevřené Dno)',
       curve_engraving: 'Režim Gravírování na Křivkách',
+      firmware_warning: {
+        message: 'Zařízení %s používá firmware v%s, což může ovlivnit stabilitu systému. Doporučujeme aktualizovat na nejnovější verzi.',
+        remindLater: 'Připomenout později',
+        updateNow: 'Aktualizovat nyní',
+      },
       pass_through: 'Režim Průchodu',
       rotary: 'Režim Otočný',
     },
