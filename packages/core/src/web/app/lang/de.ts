@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Wählen Sie, wie der Schneidpfad erstellt wird: eine Umrisskontur um das gesamte Design erzeugen oder eine vorhandene Ebene als Schneidpfad verwenden.',
     title: 'Drucken und Schneiden',
     use_layer_as_cut_path: 'Ebene verwenden',
+    white_mark_base: 'Weißer Hintergrund unter den Markierungen',
   },
   promark_connection_test: {
     description: 'Das System führt etwa zwei Minuten lang einen Rotlichtbetrieb durch, um zu überprüfen, ob die Verbindung stabil ist.',

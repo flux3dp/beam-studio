@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Wybierz sposób tworzenia ścieżki cięcia: wygeneruj kontur wokół całego projektu lub użyj istniejącej warstwy jako ścieżki cięcia.',
     title: 'Drukuj i tnij',
     use_layer_as_cut_path: 'Użyj warstwy',
+    white_mark_base: 'Białe tło pod znacznikami',
   },
   promark_connection_test: {
     description: 'System przeprowadzi operację czerwonego światła przez około dwie minuty, aby sprawdzić stabilność połączenia.',

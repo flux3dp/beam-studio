@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Välj hur skärbanan ska skapas: generera en konturlinje runt hela designen, eller använd ett befintligt lager som skärbana.',
     title: 'Skriv ut och skär',
     use_layer_as_cut_path: 'Använd lager',
+    white_mark_base: 'Vit bakgrund under markeringarna',
   },
   promark_connection_test: {
     description: 'Systemet kör en rödljusoperation i cirka två minuter för att kontrollera om anslutningen är stabil.',

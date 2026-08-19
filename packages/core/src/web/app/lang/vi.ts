@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Chọn cách tạo đường cắt: tạo đường viền bao quanh toàn bộ thiết kế, hoặc dùng một lớp sẵn có làm đường cắt.',
     title: 'In và cắt',
     use_layer_as_cut_path: 'Dùng lớp',
+    white_mark_base: 'Nền trắng dưới các dấu',
   },
   promark_connection_test: {
     description: 'Hệ thống sẽ chạy ánh sáng đỏ trong khoảng hai phút để kiểm tra xem kết nối có ổn định hay không.',

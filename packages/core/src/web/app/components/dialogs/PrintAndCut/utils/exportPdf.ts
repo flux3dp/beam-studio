@@ -74,7 +74,7 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
   const marksHtml = state.markPositions
     .map(
       ({ cx, cy }) =>
-        `<circle cx="${cx}" cy="${cy}" r="${markBaseRadiusPx}" fill="#fff"/>` +
+        (state.whiteMarkBase ? `<circle cx="${cx}" cy="${cy}" r="${markBaseRadiusPx}" fill="#fff"/>` : '') +
         `<circle cx="${cx}" cy="${cy}" r="${markRadiusPx}" fill="#000"/>`,
     )
     .join('');

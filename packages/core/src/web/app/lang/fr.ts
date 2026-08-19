@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Choisissez comment créer le tracé de découpe : générer un contour autour de l’ensemble du design, ou utiliser un calque existant comme tracé de découpe.',
     title: 'Impression et découpe',
     use_layer_as_cut_path: 'Utiliser le calque',
+    white_mark_base: 'Fond blanc sous les repères',
   },
   promark_connection_test: {
     description: 'Le système effectuera une opération de lumière rouge pendant environ deux minutes pour vérifier si la connexion est stable.',

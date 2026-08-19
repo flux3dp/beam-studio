@@ -2321,6 +2321,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     step_setup_desc: 'Tria com crear el camí de tall: generar un contorn al voltant de tot el disseny, o utilitzar una capa existent com a camí de tall.',
     title: 'Imprimir i tallar',
     use_layer_as_cut_path: 'Utilitza la capa',
+    white_mark_base: 'Fons blanc sota les marques',
   },
   promark_connection_test: {
     description: 'El sistema executarà una operació de llum vermella durant uns dos minuts per comprovar si la connexió és estable.',

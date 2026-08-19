@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: '选择切割路径的生成方式：自动生成整体设计的外框轮廓，或使用现有图层作为切割路径。',
     title: '精准对位',
     use_layer_as_cut_path: '使用图层',
+    white_mark_base: '定位标记白色底色',
   },
   promark_connection_test: {
     description: '系统将运行约两分钟的红光操作，以检查连接是否稳定。',

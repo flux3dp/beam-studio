@@ -2320,6 +2320,7 @@ const lang: ILang = {
     step_setup_desc: 'Elige cómo crear la trayectoria de corte: generar un contorno alrededor de todo el diseño o usar una capa existente como trayectoria de corte.',
     title: 'Imprimir y cortar',
     use_layer_as_cut_path: 'Usar capa',
+    white_mark_base: 'Fondo blanco bajo las marcas',
   },
   promark_connection_test: {
     description: 'El sistema ejecutará una operación de luz roja durante unos 2 min para comprobar si la conexión es estable.',

@@ -2321,6 +2321,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     step_setup_desc: 'Choose how to create the cut path: generate an outline contour around the whole design, or use an existing layer as the cut path.',
     title: 'Print and Cut',
     use_layer_as_cut_path: 'Use Layer',
+    white_mark_base: 'White Background Under Marks',
   },
   promark_connection_test: {
     description: 'The system will run a red light operation for about two minutes to check if the connection is stable.',

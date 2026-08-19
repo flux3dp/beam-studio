@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Escolha como criar o caminho de corte: gerar um contorno em torno de todo o design ou usar uma camada existente como caminho de corte.',
     title: 'Imprimir e cortar',
     use_layer_as_cut_path: 'Usar camada',
+    white_mark_base: 'Fundo branco sob as marcas',
   },
   promark_connection_test: {
     description: 'O sistema executará uma operação de luz vermelha por cerca de dois minutos para verificar se a conexão é estável.',

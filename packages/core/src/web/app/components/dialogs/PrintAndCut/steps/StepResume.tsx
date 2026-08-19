@@ -2,6 +2,7 @@ import React from 'react';
 
 import { AimOutlined, RedoOutlined } from '@ant-design/icons';
 import { Alert, Button } from 'antd';
+import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
 import useI18n from '@core/helpers/useI18n';
@@ -14,7 +15,7 @@ import { startFreshRun } from '../utils/startFreshRun';
 const StepResume = (): React.JSX.Element => {
   const lang = useI18n().print_and_cut;
   const { isPrintingContentsChanged, setStep } = usePrintAndCutStore(
-    useShallow(({ isPrintingContentsChanged, setStep }) => ({ isPrintingContentsChanged, setStep })),
+    useShallow(pick(['isPrintingContentsChanged', 'setStep'])),
   );
 
   const handleStartOver = () => {

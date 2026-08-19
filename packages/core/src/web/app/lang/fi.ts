@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Valitse, miten leikkausreitti luodaan: luo ääriviiva koko suunnitelman ympärille tai käytä olemassa olevaa tasoa leikkausreittinä.',
     title: 'Tulosta ja leikkaa',
     use_layer_as_cut_path: 'Käytä tasoa',
+    white_mark_base: 'Valkoinen tausta merkkien alla',
   },
   promark_connection_test: {
     description: 'Järjestelmä suorittaa punavalotoiminnon noin kahden minuutin ajan tarkistaakseen, onko yhteys vakaa.',

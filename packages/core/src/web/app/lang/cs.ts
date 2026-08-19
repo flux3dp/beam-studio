@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Zvolte, jak vytvořit řezací dráhu: vygenerovat obrys kolem celého návrhu, nebo použít stávající vrstvu jako řezací dráhu.',
     title: 'Tisk a řez',
     use_layer_as_cut_path: 'Použít vrstvu',
+    white_mark_base: 'Bílé pozadí pod značkami',
   },
   promark_connection_test: {
     description: 'Systém provede přibližně dvouminutový provoz červeného světla, aby zkontroloval stabilitu připojení.',

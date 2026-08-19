@@ -107,6 +107,8 @@ interface CanvasState extends SheetSetupState {
   printingContentsElementIds: null | string[];
   /** 'resume' is a virtual entry step outside the linear printAndCutSteps flow */
   step: 'resume' | PrintAndCutStep;
+  /** Whether the exported PDF prints a white base disc under each alignment mark */
+  whiteMarkBase: boolean;
 }
 
 type State = AlignState & CanvasState;
@@ -134,6 +136,7 @@ const initialState: State = {
   printingContentsElementIds: null,
   printingContentsElements: null,
   step: 'setup',
+  whiteMarkBase: true,
 };
 
 export const usePrintAndCutStore = create(
@@ -203,6 +206,7 @@ export const usePrintAndCutStore = create(
     setOrientation: (orientation: 'landscape' | 'portrait'): void => set({ orientation }),
     setPaperKey: (paperKey: PaperSelection): void => set({ paperKey }),
     setStep: (step: 'resume' | PrintAndCutStep): void => set({ step }),
+    setWhiteMarkBase: (whiteMarkBase: boolean): void => set({ whiteMarkBase }),
   })),
 );
 

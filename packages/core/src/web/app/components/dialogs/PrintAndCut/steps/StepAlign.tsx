@@ -2,6 +2,7 @@ import React from 'react';
 
 import { AimOutlined } from '@ant-design/icons';
 import { Button, Progress } from 'antd';
+import { pick } from 'remeda';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -40,21 +41,14 @@ const StepAlign = (): React.JSX.Element => {
   const { alignProgress, isProcessing, markPositions, setAlignmentTransform, setCameraImageUrl, setIsProcessing } =
     usePrintAndCutStore(
       useShallow(
-        ({
-          alignProgress,
-          isProcessing,
-          markPositions,
-          setAlignmentTransform,
-          setCameraImageUrl,
-          setIsProcessing,
-        }) => ({
-          alignProgress,
-          isProcessing,
-          markPositions,
-          setAlignmentTransform,
-          setCameraImageUrl,
-          setIsProcessing,
-        }),
+        pick([
+          'alignProgress',
+          'isProcessing',
+          'markPositions',
+          'setAlignmentTransform',
+          'setCameraImageUrl',
+          'setIsProcessing',
+        ]),
       ),
     );
   const handlePreviewAndAlign = async () => {

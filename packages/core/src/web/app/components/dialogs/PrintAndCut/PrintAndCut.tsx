@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 
 import { Button } from 'antd';
+import { pick } from 'remeda';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -31,15 +32,7 @@ const PrintAndCut = ({ onClose }: Props): React.JSX.Element => {
 
   const { buttons: tButtons, print_and_cut: t } = useI18n();
   const { isProcessing, isResume, nextStep, prevStep, reset, setStep, step } = usePrintAndCutStore(
-    useShallow(({ isProcessing, isResume, nextStep, prevStep, reset, setStep, step }) => ({
-      isProcessing,
-      isResume,
-      nextStep,
-      prevStep,
-      reset,
-      setStep,
-      step,
-    })),
+    useShallow(pick(['isProcessing', 'isResume', 'nextStep', 'prevStep', 'reset', 'setStep', 'step'])),
   );
 
   useEffect(() => reset, [reset]);

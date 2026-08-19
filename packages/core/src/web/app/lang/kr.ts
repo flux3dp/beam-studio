@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: '커팅 경로를 만드는 방법을 선택하세요: 디자인 전체를 둘러싸는 윤곽선을 생성하거나 기존 레이어를 커팅 경로로 사용합니다.',
     title: '인쇄 후 커팅',
     use_layer_as_cut_path: '레이어 사용',
+    white_mark_base: '마크 아래 흰색 배경',
   },
   promark_connection_test: {
     description: '시스템이 약 2분 동안 적색광 작동을 실행하여 연결 안정성을 확인합니다.',

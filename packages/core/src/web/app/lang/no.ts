@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Velg hvordan skjærebanen skal opprettes: generer en omrisskontur rundt hele designet, eller bruk et eksisterende lag som skjærebane.',
     title: 'Skriv ut og skjær',
     use_layer_as_cut_path: 'Bruk lag',
+    white_mark_base: 'Hvit bakgrunn under merkene',
   },
   promark_connection_test: {
     description: 'Systemet vil kjøre en rødlysoperasjon i omtrent to minutter for å sjekke om tilkoblingen er stabil.',

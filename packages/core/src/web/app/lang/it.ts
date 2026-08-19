@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Scegli come creare il percorso di taglio: generare un contorno attorno all’intero design oppure usare un livello esistente come percorso di taglio.',
     title: 'Stampa e taglia',
     use_layer_as_cut_path: 'Usa livello',
+    white_mark_base: 'Sfondo bianco sotto i segni',
   },
   promark_connection_test: {
     description: 'Il sistema eseguirà un’operazione con luce rossa per circa due minuti per verificare se la connessione è stabile.',

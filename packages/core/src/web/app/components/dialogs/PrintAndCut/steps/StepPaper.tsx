@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { Alert, InputNumber, Radio } from 'antd';
+import { pick } from 'remeda';
 import { sprintf } from 'sprintf-js';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -29,29 +30,18 @@ const StepPaper = (): React.JSX.Element => {
     setPaperKey,
   } = usePrintAndCutStore(
     useShallow(
-      ({
-        fullBBox,
-        gridColumns,
-        gridGapMm,
-        gridRows,
-        markPositions,
-        orientation,
-        paperKey,
-        setGrid,
-        setOrientation,
-        setPaperKey,
-      }) => ({
-        fullBBox,
-        gridColumns,
-        gridGapMm,
-        gridRows,
-        markPositions,
-        orientation,
-        paperKey,
-        setGrid,
-        setOrientation,
-        setPaperKey,
-      }),
+      pick([
+        'fullBBox',
+        'gridColumns',
+        'gridGapMm',
+        'gridRows',
+        'markPositions',
+        'orientation',
+        'paperKey',
+        'setGrid',
+        'setOrientation',
+        'setPaperKey',
+      ]),
     ),
   );
 

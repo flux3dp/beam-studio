@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Pilih cara membuat jalur potong: buat kontur garis luar di sekeliling seluruh desain, atau gunakan lapisan yang sudah ada sebagai jalur potong.',
     title: 'Cetak dan Potong',
     use_layer_as_cut_path: 'Gunakan lapisan',
+    white_mark_base: 'Latar belakang putih di bawah tanda',
   },
   promark_connection_test: {
     description: 'Sistem akan menjalankan operasi lampu merah selama sekitar dua menit untuk memeriksa apakah koneksi stabil.',

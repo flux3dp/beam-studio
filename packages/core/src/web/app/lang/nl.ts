@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Kies hoe het snijpad wordt gemaakt: een omtrekcontour rond het hele ontwerp genereren, of een bestaande laag als snijpad gebruiken.',
     title: 'Printen en snijden',
     use_layer_as_cut_path: 'Laag gebruiken',
+    white_mark_base: 'Witte achtergrond onder de markeringen',
   },
   promark_connection_test: {
     description: 'Het systeem voert ongeveer twee minuten een roodlichtbewerking uit om te controleren of de verbinding stabiel is.',

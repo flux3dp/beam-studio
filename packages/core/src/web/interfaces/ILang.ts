@@ -2262,6 +2262,7 @@ export interface ILang {
     step_setup_desc: string;
     title: string;
     use_layer_as_cut_path: string;
+    white_mark_base: string;
   };
   promark_connection_test: {
     description: string;

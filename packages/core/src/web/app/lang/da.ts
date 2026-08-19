@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'Vælg, hvordan skærestien skal oprettes: generér en omridskontur omkring hele designet, eller brug et eksisterende lag som skæresti.',
     title: 'Print og skær',
     use_layer_as_cut_path: 'Brug lag',
+    white_mark_base: 'Hvid baggrund under mærkerne',
   },
   promark_connection_test: {
     description: 'Systemet vil køre en rødlysoperation i cirka to minutter for at kontrollere, om forbindelsen er stabil.',

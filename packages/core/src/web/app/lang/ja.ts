@@ -2321,6 +2321,7 @@ const lang: ILang = {
     step_setup_desc: 'カットパスの作成方法を選択してください：デザイン全体を囲む輪郭を生成するか、既存のレイヤをカットパスとして使用します。',
     title: 'プリント＆カット',
     use_layer_as_cut_path: 'レイヤを使用',
+    white_mark_base: 'マーク下の白い下地',
   },
   promark_connection_test: {
     description: 'システムは約2分間の赤色光操作を実行し、接続の安定性を確認します。',

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
 import { InputNumber, Radio, Tooltip } from 'antd';
-import { funnel } from 'remeda';
+import { funnel, pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -29,25 +29,16 @@ const StepSetup = (): React.JSX.Element => {
     setOffsetDistance,
   } = usePrintAndCutStore(
     useShallow(
-      ({
-        contourLayerName,
-        contourSource,
-        offsetDistance,
-        printingContentsBBox,
-        setContourLayerName,
-        setContourPathD,
-        setContourSource,
-        setOffsetDistance,
-      }) => ({
-        contourLayerName,
-        contourSource,
-        offsetDistance,
-        printingContentsBBox,
-        setContourLayerName,
-        setContourPathD,
-        setContourSource,
-        setOffsetDistance,
-      }),
+      pick([
+        'contourLayerName',
+        'contourSource',
+        'offsetDistance',
+        'printingContentsBBox',
+        'setContourLayerName',
+        'setContourPathD',
+        'setContourSource',
+        'setOffsetDistance',
+      ]),
     ),
   );
 

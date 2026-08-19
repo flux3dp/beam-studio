@@ -1,5 +1,6 @@
 import React, { memo, useEffect, useMemo } from 'react';
 
+import { pick } from 'remeda';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -41,37 +42,22 @@ const Canvas = (): React.JSX.Element => {
     step,
   } = usePrintAndCutStore(
     useShallow(
-      ({
-        alignmentTransform,
-        cameraImageUrl,
-        contourElements,
-        contourLayerName,
-        contourPathD,
-        contourSource,
-        fullBBox,
-        gridColumns,
-        gridGapMm,
-        gridRows,
-        markPositions,
-        orientation,
-        paperKey,
-        step,
-      }) => ({
-        alignmentTransform,
-        cameraImageUrl,
-        contourElements,
-        contourLayerName,
-        contourPathD,
-        contourSource,
-        fullBBox,
-        gridColumns,
-        gridGapMm,
-        gridRows,
-        markPositions,
-        orientation,
-        paperKey,
-        step,
-      }),
+      pick([
+        'alignmentTransform',
+        'cameraImageUrl',
+        'contourElements',
+        'contourLayerName',
+        'contourPathD',
+        'contourSource',
+        'fullBBox',
+        'gridColumns',
+        'gridGapMm',
+        'gridRows',
+        'markPositions',
+        'orientation',
+        'paperKey',
+        'step',
+      ]),
     ),
   );
 
