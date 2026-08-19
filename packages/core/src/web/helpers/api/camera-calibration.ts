@@ -294,6 +294,7 @@ class CameraCalibrationApi {
         if (response.status === 'fail') {
           success = false;
           console.log('fail', response);
+          resolve({ data, success });
         } else if (response.status === 'ok') {
           const { status, ...rest } = response;
 
@@ -416,6 +417,7 @@ class CameraCalibrationApi {
         if (response.status === 'fail') {
           success = false;
           console.log('fail', response);
+          resolve({ data, success });
         } else if (response.status === 'ok') {
           const { status, ...rest } = response;
 
