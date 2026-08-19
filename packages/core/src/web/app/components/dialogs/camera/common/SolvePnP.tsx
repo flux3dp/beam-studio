@@ -148,7 +148,7 @@ const SolvePnP = ({
           return true;
         }
 
-        if (initPoseWithDefaultPoints && defaultPoints && (currentStep ?? 0) === 0) {
+        if (initPoseWithDefaultPoints && defaultPoints) {
           await cameraCalibrationApi.solvePnPCalculate(dh, defaultPoints, refPoints);
         }
 
@@ -190,7 +190,7 @@ const SolvePnP = ({
     },
     // omit initInterestArea on purpose
     // eslint-disable-next-line hooks/exhaustive-deps
-    [currentStep, defaultPoints, dh, initPoseWithDefaultPoints, params, refPoints],
+    [defaultPoints, dh, initPoseWithDefaultPoints, params, refPoints],
   );
 
   const {
