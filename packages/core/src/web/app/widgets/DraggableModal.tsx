@@ -36,13 +36,12 @@ const DraggableModal = (props: Props): React.JSX.Element => {
     ...restProps
   } = props;
   const isMobile = useIsMobile();
-  const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ bottom: 0, left: 0, right: 0, top: 0 });
   const [draggableHeight, setDraggableHeight] = useState(0);
   const [draggableWidth, setDraggableWidth] = useState(0);
   const draggableRef = useRef<HTMLDivElement>(null);
   const currentPosition = useRef<ControlPosition>(defaultPosition);
-  const isDragDisabled = disableMobileDrag && isMobile;
+  const isDragDisabled = Boolean(disableMobileDrag && isMobile);
 
   // eslint-disable-next-line hooks/exhaustive-deps
   useEffect(() => {
@@ -119,7 +118,8 @@ const DraggableModal = (props: Props): React.JSX.Element => {
         <Draggable
           bounds={bounds}
           defaultPosition={defaultPosition}
-          disabled={disabled || isDragDisabled}
+          disabled={isDragDisabled}
+          handle="[data-draggable-modal-handle]"
           nodeRef={draggableRef as React.RefObject<HTMLDivElement>}
           onStart={onStart}
           onStop={onStop}
@@ -139,12 +139,8 @@ const DraggableModal = (props: Props): React.JSX.Element => {
       )}
       title={
         <div
-          onMouseOut={() => setDisabled(true)}
-          onMouseOver={() => {
-            if (disabled && !isDragDisabled) setDisabled(false);
-          }}
-          style={{ cursor: isDragDisabled ? 'default' : 'move', width: '100%' }}
-          // end
+          className={classNames(styles.dragHandle, { [styles.disabled]: isDragDisabled })}
+          data-draggable-modal-handle
         >
           {title}
         </div>

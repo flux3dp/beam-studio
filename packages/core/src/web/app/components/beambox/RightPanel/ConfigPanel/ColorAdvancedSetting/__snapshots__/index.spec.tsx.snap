@@ -70,7 +70,8 @@ exports[`test ColorAdvancedSetting should handle color curve initialization 1`] 
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Color Advanced Settings
                     </div>
@@ -409,7 +410,8 @@ exports[`test ColorAdvancedSetting should render correctly with default values 1
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Color Advanced Settings
                     </div>
@@ -669,7 +671,8 @@ exports[`test ColorAdvancedSetting should render correctly with set values 1`] =
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Color Advanced Settings
                     </div>

@@ -5,6 +5,17 @@
   max-width: 100vw;
 }
 
+.dragHandle {
+  width: 100%;
+  cursor: move;
+  touch-action: none;
+
+  &.disabled {
+    cursor: default;
+    touch-action: auto;
+  }
+}
+
 .scrollable {
   :global(.ant-modal-content) {
     -webkit-app-region: no-drag;
