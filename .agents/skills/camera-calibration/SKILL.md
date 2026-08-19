@@ -101,7 +101,11 @@ and supports an embedded `renderWrapper` (used by `InitializeMachine/Promark/Ini
 
 - **`ChArUco`** — capture ChArUco board at N positions → `updateParam({ d, k, rvec, tvec, ret, is_fisheye })`.
 - **`Calibration`** — chessboard/charuco capture wrapper (Promark).
-- **`SolvePnP`** — drag marker points → `onNext(rvec, tvec, point)`.
+- **`SolvePnP`** — drag marker points → `onNext(rvec, tvec, point)`. `defaultPoints` (per model/region,
+  hard-coded image points for a typical placement) feeds the dev-only Reset Points button and, with
+  `initPoseWithDefaultPoints` (callers pass `isAdvanced`), seeds `rvec`/`tvec` via `solve_pnp_calculate`
+  before the **first** step's find-corners — after ChArUco the stored pose is the hand-held board's, so
+  corner detection would otherwise project from a random pose. Later steps reuse the previous step's solve.
 - **`CheckPnP`** — overlay a grid using the params to verify alignment.
 - **`Instruction`** — video + steps + `buttons: Array<{label,onClick,type?}>` (+ optional `renderWrapper`).
 - **`ProcessingDialog`** — runs a `process()` with progress, then `onNext`.
