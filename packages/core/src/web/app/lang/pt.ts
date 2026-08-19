@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Chave de segurança não detectada\nA chave de segurança não foi detectada ou foi desativada. Para sua segurança, a máquina não pode operar até que a chave esteja corretamente ligada.\nInsira a chave de segurança e ligue-a antes de reiniciar o trabalho.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Temperatura do laser anormal\nA temperatura do laser está muito alta. Interrompa a operação e permita que o laser esfrie antes de reiniciar.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Tensão do laser anormal\nErro de tensão do laser. Reinicie a máquina. Se o problema persistir, entre em contato com o suporte ao cliente.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Máquina parada — o cabeçote laser atingiu o limite da área de trabalho.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Erro Crítico: Placa-mãe offline. Contate o Suporte FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Placa-mãe sem resposta\nA placa-mãe não está respondendo. Reinicie o trabalho.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Superaquecimento. Aguarde alguns minutos.',

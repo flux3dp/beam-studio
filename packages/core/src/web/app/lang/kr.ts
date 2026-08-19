@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 안전 키가 감지되지 않음\n안전 키가 감지되지 않거나 비활성화되었습니다. 안전을 위해 키가 올바르게 켜질 때까지 기계가 작동하지 않습니다.\n작업을 재시작하기 전에 안전 키를 삽입하고 켜 주세요.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 레이저 온도 이상\n레이저 온도가 너무 높습니다. 작동을 중지하고 레이저가 냉각된 후 재시작하세요.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 레이저 전압 이상\n레이저 전압 오류입니다. 기계를 재시작하세요. 문제가 지속되면 고객 지원에 문의하세요.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 기기 정지 — 레이저 헤드가 작업 영역 한계에 도달했습니다.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 치명적인 오류: 메인보드 오프라인. FLUX 지원팀에 문의하세요.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 메인보드 응답 없음\n메인보드가 응답하지 않습니다. 작업을 다시 시작하세요.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 과열되었습니다. 몇 분 기다려주세요.',

@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: "#929 Clé de sécurité non détectée\nLa clé de sécurité n'est pas détectée ou a été désactivée. Pour votre sécurité, la machine ne peut pas fonctionner tant que la clé n'est pas correctement activée.\nVeuillez insérer la clé de sécurité et l'activer avant de redémarrer le travail.",
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: "#933 Température du laser anormale\nLa température du laser est trop élevée. Veuillez arrêter l'opération et laisser le laser refroidir avant de redémarrer.",
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Tension du laser anormale\nErreur de tension du laser. Veuillez redémarrer la machine. Si le problème persiste, contactez le support client.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Machine arrêtée — la tête laser a atteint la limite de la zone de travail.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Erreur critique : Carte mère hors ligne. Veuillez contacter le support FLUX.',
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Carte mère sans réponse\nLa carte mère ne répond pas. Veuillez redémarrer le travail.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Surchauffe. Veuillez attendre quelques minutes.',

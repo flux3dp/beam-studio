@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 Bezpečnostní klíč nebyl rozpoznán\nBezpečnostní klíč nebyl rozpoznán nebo byl deaktivován. Pro vaši bezpečnost nemůže stroj pracovat, dokud nebude klíč správně zapnut.\nProsím vložte bezpečnostní klíč a zapněte ho před obnovením práce.',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Abnormální teplota laseru\nTeplota laseru je příliš vysoká. Prosím zastavte provoz a nechte laser vychladnout před opětovným spuštěním.',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Abnormální napětí laseru\nChyba napětí laseru. Prosím restartujte stroj. Pokud problém přetrvává, kontaktujte zákaznickou podporu.',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 Stroj zastaven — laserová hlava dosáhla limitu pracovní oblasti.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritická chyba: Základní deska off-line. Kontaktujte prosím FLUX podporu.', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Základní deska neodpovídá\nZákladní deska neodpovídá. Prosím restartujte úlohu.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Přehřátí. Vyčkejte prosím několik minut.',

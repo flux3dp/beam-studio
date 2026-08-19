@@ -2155,6 +2155,7 @@ const lang: ILang = {
     HARDWARE_ERROR_KEY_OFF: '#929 未偵測到安全鑰\n未偵測到安全鑰或安全鑰已被停用。為了您的安全，安全鑰正確開啟前，機器無法運作。\n請插入安全鑰並轉到開啟位置後，再重新啟動工作。',
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 雷射溫度異常\n雷射溫度過高。請停止操作，待雷射降溫後再重新開始。',
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 雷射電壓異常\n雷射電壓錯誤。請重新啟動機器。若問題持續，請聯繫客服。',
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: '#934 機器已停止——雷射頭觸及工作區域極限。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 主板沒有回應。請聯繫 FLUX 客服。', // Deprecated in FW 3.3.1
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 主板沒有回應\n主板沒有回應。請重新啟動工作。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 水溫過高，請稍後再繼續',
