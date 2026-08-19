@@ -166,6 +166,11 @@ export interface ILang {
       autofocus2: string;
       camera_preview_borderless_mode: string;
       curve_engraving: string;
+      firmware_warning: {
+        message: string;
+        remindLater: string;
+        updateNow: string;
+      };
       pass_through: string;
       rotary: string;
     };

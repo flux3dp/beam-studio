@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: "Cliquez n'importe où pour effectuer la mise au point automatique.",
       camera_preview_borderless_mode: '(Fond Ouvert)',
       curve_engraving: 'Mode Gravure Courbe',
+      firmware_warning: {
+        message: 'Votre %s utilise le firmware v%s, ce qui peut affecter la stabilité du système. Nous vous recommandons de passer à la dernière version.',
+        remindLater: 'Me le rappeler plus tard',
+        updateNow: 'Mettre à jour',
+      },
       pass_through: 'Mode Traversant',
       rotary: 'Mode Rotatif',
     },

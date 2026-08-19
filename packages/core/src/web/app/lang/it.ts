@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Fai clic ovunque per eseguire la messa a fuoco automatica.',
       camera_preview_borderless_mode: '(Parte Inferiore Aperta)',
       curve_engraving: 'Modalità Incisione Curva',
+      firmware_warning: {
+        message: 'Il dispositivo %s utilizza il firmware v%s, che potrebbe influire sulla stabilità del sistema. Consigliamo di aggiornare alla versione più recente.',
+        remindLater: 'Ricordamelo più tardi',
+        updateNow: 'Aggiorna ora',
+      },
       pass_through: 'Modalità Passante',
       rotary: 'Modalità Rotativa',
     },

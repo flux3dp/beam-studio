@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Klik ergens om autofocus uit te voeren.',
       camera_preview_borderless_mode: '(Open Onderkant)',
       curve_engraving: 'Kromme Graveermodus',
+      firmware_warning: {
+        message: 'Uw %s gebruikt firmware v%s, wat de stabiliteit van het systeem kan beïnvloeden. We raden aan om bij te werken naar de nieuwste versie.',
+        remindLater: 'Herinner me later',
+        updateNow: 'Nu bijwerken',
+      },
       pass_through: 'Doorvoer Modus',
       rotary: 'Rotatiemodus',
     },

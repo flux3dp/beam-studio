@@ -166,6 +166,11 @@ const lang: ILang = {
       autofocus2: 'Klik hvor som helst for at udføre autofokus.',
       camera_preview_borderless_mode: '(Åben Bund)',
       curve_engraving: 'Kurvegraveringstilstand',
+      firmware_warning: {
+        message: 'Din %s kører firmware v%s, hvilket kan påvirke systemets stabilitet. Vi anbefaler, at du opdaterer til den nyeste version.',
+        remindLater: 'Påmind mig senere',
+        updateNow: 'Opdater nu',
+      },
       pass_through: 'Gennemgangstilstand',
       rotary: 'Rotationsfunktion',
     },
