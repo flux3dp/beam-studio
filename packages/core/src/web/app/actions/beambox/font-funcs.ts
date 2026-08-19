@@ -31,7 +31,7 @@ import type { GeneralFont, GoogleFont, IFontQuery } from '@core/interfaces/IFont
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { loadGoogleFont, loadWebFont } from './font-funcs.util';
+import { getGlyphCharRanges, loadGoogleFont, loadWebFont } from './font-funcs.util';
 
 let svgCanvas: ISVGCanvas;
 let svgedit: any;
@@ -247,7 +247,6 @@ export const convertTextToPathByFontkit = (
       );
     }
 
-    const maxChar = 0xffff;
     const fontSize = textedit.getFontSize(textElem as SVGTextElement);
     const sizeRatio = fontSize / fontObj.unitsPerEm;
     let d: string[] = [];
@@ -290,26 +289,27 @@ export const convertTextToPathByFontkit = (
         positions.reverse();
       }
 
-      let i = 0;
+      const charRanges = getGlyphCharRanges(glyphs);
 
       d.push(
         ...glyphs.map((char, idx) => {
-          if (i >= charCount) return '';
+          const [firstChar, lastChar] = charRanges[idx];
+
+          if (lastChar >= charCount) return '';
 
           const pos = positions[idx];
-          const start = textPath.getStartPositionOfChar(i);
-          const end = textPath.getEndPositionOfChar(i);
+          const start = textPath.getStartPositionOfChar(firstChar);
+          const end = textPath.getEndPositionOfChar(lastChar);
 
           if ([start.x, start.y, end.x, end.y].every((v) => v === 0)) {
             return '';
           }
 
-          const rot = (textPath.getRotationOfChar(i) / 180) * Math.PI;
-          const { x, y } = isRtl ? end : start;
-
-          char.codePoints.forEach((codePoint) => {
-            i = codePoint > maxChar ? i + 2 : i + 1;
-          });
+          const rot = (textPath.getRotationOfChar(firstChar) / 180) * Math.PI;
+          // The glyph is drawn from its leading edge: `start` in ltr, `end` in rtl. Decide per
+          // character, since bidi can flip direction mid-run; on a path the advance is rotated.
+          const advance = (end.x - start.x) * Math.cos(rot) + (end.y - start.y) * Math.sin(rot);
+          const { x, y } = advance < 0 ? end : start;
 
           return char.path
             .translate(pos.xOffset, pos.yOffset)
@@ -327,34 +327,42 @@ export const convertTextToPathByFontkit = (
     tSpans.forEach((tspan) => {
       const text = tspan.textContent;
       const charCount = tspan.getNumberOfChars();
-      const run = fontObj.layout(text!);
-      const { direction, glyphs, positions } = run;
-      const isRtl = direction === 'rtl';
+      // Vertical text positions every character absolutely, making each its own text chunk; the
+      // browser shapes chunks in isolation, so nothing ligates and arabic loses its cursive joining.
+      const isPerCharPositioned = Math.max(tspan.x.baseVal.numberOfItems, tspan.y.baseVal.numberOfItems) > 1;
+      const runs = isPerCharPositioned
+        ? Array.from(text!).map((char) => fontObj.layout(char))
+        : [fontObj.layout(text!)];
+      const glyphs: fontkit.Glyph[] = [];
+      const positions: fontkit.GlyphPosition[] = [];
+
+      // fontkit emits rtl runs in visual order; flip back to logical so glyphs track char indices.
+      runs.forEach(({ direction, glyphs: runGlyphs, positions: runPositions }) => {
+        const isRtl = direction === 'rtl';
+
+        glyphs.push(...(isRtl ? [...runGlyphs].reverse() : runGlyphs));
+        positions.push(...(isRtl ? [...runPositions].reverse() : runPositions));
+      });
 
       // Debug: Check if layout produced glyphs
       if (glyphs.length === 0 && text && text.length > 0) {
-        console.error(`No glyphs produced for textPath: "${text}" with font ${fontObj.postscriptName}`);
+        console.error(`No glyphs produced for tspan: "${text}" with font ${fontObj.postscriptName}`);
       }
 
-      if (isRtl) {
-        glyphs.reverse();
-        positions.reverse();
-      }
-
-      let i = 0;
+      const charRanges = getGlyphCharRanges(glyphs);
 
       d.push(
         ...glyphs.map((char, idx) => {
-          if (i >= charCount) return '';
+          const [firstChar, lastChar] = charRanges[idx];
+
+          if (lastChar >= charCount) return '';
 
           const pos = positions[idx];
-          const start = tspan.getStartPositionOfChar(i);
-          const end = tspan.getEndPositionOfChar(i);
-          const { x, y } = isRtl ? end : start;
-
-          char.codePoints.forEach((codePoint) => {
-            i = codePoint > maxChar ? i + 2 : i + 1;
-          });
+          const start = tspan.getStartPositionOfChar(firstChar);
+          const end = tspan.getEndPositionOfChar(lastChar);
+          // The glyph is drawn from its left edge. Decide per character rather than per run: the
+          // browser has resolved bidi, so a latin word or digit run inside rtl text runs the other way.
+          const { x, y } = start.x > end.x ? end : start;
 
           return char.path.translate(pos.xOffset, pos.yOffset).scale(sizeRatio, -sizeRatio).translate(x, y).toSVG();
         }),
