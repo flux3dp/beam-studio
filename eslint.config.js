@@ -15,9 +15,14 @@ const unicorn = require('eslint-plugin-unicorn'); // strict style
 const unusedImport = require('eslint-plugin-unused-imports');
 const globals = require('globals');
 
+const { overrides: prettierOverrides, ...prettierOptions } = require('./.prettierrc.json');
 const { RULES: perfectionistRules } = require('./eslint/config/perfectionist');
 const { RULES: unicornRules } = require('./eslint/config/unicorn');
 const { addPrefix, GLOB_STYLE, GLOB_TESTS, GLOB_TS, GLOB_TSX, IGNORES } = require('./eslint/globs');
+
+const langPrettierOptions = prettierOverrides.find(
+  ({ files }) => files === 'packages/core/src/web/app/lang/*.ts',
+).options;
 
 const SRC_GLOB_TS = addPrefix('**/src', GLOB_TS);
 const SRC_GLOB_TSX = addPrefix('**/src', GLOB_TSX);
@@ -84,11 +89,8 @@ module.exports = [
       'format/prettier': [
         'error',
         {
+          ...prettierOptions,
           parser: 'typescript',
-          printWidth: 120,
-          semi: true,
-          singleQuote: true,
-          tabWidth: 2,
         },
       ],
       'hooks/exhaustive-deps': ['warn', { additionalHooks: '(useDrag|useDrop)' }],
@@ -154,16 +156,13 @@ module.exports = [
   {
     files: ['**/lang/*.ts'],
     rules: {
-      'format/prettier': [
-        'error',
-        { parser: 'typescript', printWidth: 10000, semi: true, singleQuote: true, tabWidth: 2 },
-      ],
+      'format/prettier': ['error', { ...prettierOptions, ...langPrettierOptions, parser: 'typescript' }],
     },
   },
   {
     files: [SRC_GLOB_STYLE],
     languageOptions: { parser: format.parserPlain },
-    rules: { 'format/prettier': ['error', { parser: 'scss', semi: true, singleQuote: true, singleQuote: true }] },
+    rules: { 'format/prettier': ['error', { ...prettierOptions, parser: 'scss' }] },
   },
   {
     files: SRC_GLOB_TESTS,
@@ -176,11 +175,8 @@ module.exports = [
       'format/prettier': [
         'error',
         {
+          ...prettierOptions,
           parser: 'babel-flow',
-          printWidth: 120,
-          semi: true,
-          singleQuote: true,
-          tabWidth: 2,
         },
       ],
       'import/order': [
