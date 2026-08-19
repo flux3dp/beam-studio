@@ -5,7 +5,7 @@ $border-color: #cecece;
 $header-height: 60px;
 
 .container {
-  height: 100vh;
+  @include mixins.viewport-size;
   width: 100vw;
 
   .top-bar {

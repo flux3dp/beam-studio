@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .modal {
   .ant-modal-content {
     padding: 0;
@@ -57,9 +59,8 @@
 .mainContent {
   display: flex;
   min-height: 400px;
-  max-height: calc(
-    100vh - 240px
-  ); // Account for header (68px) + footer (68px) + topbar (40px) + margins (64px)
+  // Account for header (68px) + footer (68px) + topbar (40px) + margins (64px)
+  @include mixins.viewport-size(100, 240px, max-height);
   height: 500px; // Preferred height
 }
 
@@ -390,7 +391,7 @@
 @media (max-width: 1024px) and (min-width: 769px) {
   .mainContent {
     min-height: 400px;
-    max-height: calc(100vh - 240px);
+    @include mixins.viewport-size(100, 240px, max-height);
     height: 500px;
   }
 
@@ -427,7 +428,7 @@
   .mainContent {
     flex-direction: column;
     min-height: 300px;
-    max-height: calc(100vh - 200px);
+    @include mixins.viewport-size(100, 200px, max-height);
     height: auto;
   }
 

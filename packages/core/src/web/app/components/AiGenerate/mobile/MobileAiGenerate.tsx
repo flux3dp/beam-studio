@@ -244,7 +244,6 @@ const MobileAiGenerate = memo(() => {
       {/* Popups */}
       <Popup
         bodyClassName={styles['popup-body']}
-        bodyStyle={{ height: '80vh' }}
         className={styles.popup}
         onMaskClick={closeSelector}
         position="bottom"
