@@ -78,7 +78,7 @@ describe('selectedElementStore', () => {
     });
 
     it('should treat data-textpath-g as text_path (not groupable)', () => {
-      const data = getDerivedData(makeElem('g', { 'data-textpath-g': 'true' }));
+      const data = getDerivedData(makeElem('g', { 'data-textpath-g': '1' }));
 
       expect(data.nodeType).toBe('text_path');
       expect(data.canGroup).toBe(false);

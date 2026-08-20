@@ -1,4 +1,4 @@
-import { create, type Font } from 'fontkit';
+import { create, type Font, type Glyph } from 'fontkit';
 
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import isWeb from '@core/helpers/is-web';
@@ -108,4 +108,25 @@ export const loadWebFont = async (font: WebFont): Promise<Font | undefined> => {
 
   // It's a single font
   return fontCollection;
+};
+
+/**
+ * Map every shaped glyph to the character range it covers, since glyph positions are read back from
+ * the browser per character: a ligature spans several, while a mark or dot carries no codePoints at
+ * all and stays on the cluster it decorates.
+ */
+export const getGlyphCharRanges = (glyphs: Array<Pick<Glyph, 'codePoints'>>): Array<[number, number]> => {
+  let cursor = 0;
+  let previous: [number, number] = [0, 0];
+
+  return glyphs.map(({ codePoints }) => {
+    const length = codePoints.reduce((sum, codePoint) => sum + (codePoint > 0xffff ? 2 : 1), 0);
+
+    if (length === 0) return previous;
+
+    previous = [cursor, cursor + length - 1];
+    cursor += length;
+
+    return previous;
+  });
 };

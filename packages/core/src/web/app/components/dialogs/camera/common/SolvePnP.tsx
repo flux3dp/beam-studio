@@ -36,6 +36,7 @@ interface Props {
   initExposure?: number;
   initialPoints?: Array<[number, number]>;
   initInterestArea?: { height: number; width: number; x: number; y: number };
+  initPoseWithDefaultPoints?: boolean;
   label?: string;
   onBack: () => void;
   onClose: (complete: boolean) => void;
@@ -64,6 +65,7 @@ const SolvePnP = ({
   initExposure,
   initialPoints,
   initInterestArea,
+  initPoseWithDefaultPoints,
   label,
   onBack,
   onClose,
@@ -146,6 +148,10 @@ const SolvePnP = ({
           return true;
         }
 
+        if (initPoseWithDefaultPoints && defaultPoints) {
+          await cameraCalibrationApi.solvePnPCalculate(dh, defaultPoints, refPoints);
+        }
+
         const res = await cameraCalibrationApi.solvePnPFindCorners(
           imgBlob,
           dh,
@@ -184,7 +190,7 @@ const SolvePnP = ({
     },
     // omit initInterestArea on purpose
     // eslint-disable-next-line hooks/exhaustive-deps
-    [dh, params, refPoints],
+    [defaultPoints, dh, initPoseWithDefaultPoints, params, refPoints],
   );
 
   const {

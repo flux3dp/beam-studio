@@ -2,7 +2,8 @@ import alertCaller from '@core/app/actions/alert-caller';
 import type { ConvertResultType } from '@core/app/actions/beambox/font-funcs';
 import fontFuncs, { ConvertResult } from '@core/app/actions/beambox/font-funcs';
 import alertConstants from '@core/app/constants/alert-constants';
-import history, { BatchCommand } from '@core/app/svgedit/history/history';
+import { changeAttribute } from '@core/app/svgedit/history/changeAttribute';
+import { BatchCommand, InsertElementCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
@@ -144,7 +145,6 @@ export const convertTextOnPathToPath = async (
 ): Promise<ConvertToPathResult & { group: SVGGElement }> => {
   const cmd = new BatchCommand('Convert Text on Path to Path');
 
-  const pathElement = element.querySelector('path');
   const textElement = element.querySelector('text');
 
   if (textActions.isEditing) textActions.toSelectMode();
@@ -152,22 +152,30 @@ export const convertTextOnPathToPath = async (
   selectionManager.clearSelection();
 
   const { command, path } = await fontFuncs.convertTextToPath(textElement!, { isSubCommand: true, weldingTexts });
+  const group = element as SVGGElement;
 
-  selectionManager.selectOnly([pathElement!, path!]);
-
-  const { command: groupCmd, group } = svgCanvas.groupSelectedElements(true)!;
+  if (!path) {
+    return { bbox: group.getBBox(), command: undefined, group };
+  }
 
   if (command) cmd.addSubCommand(command);
 
-  if (groupCmd) cmd.addSubCommand(groupCmd);
+  // Keep the original group so its transform (e.g. rotation) is preserved;
+  // the converted path is inserted in place of the text, so no regrouping is needed.
+
+  const changeAttrCmd = changeAttribute(group, { 'data-ratiofixed': 'true', 'data-textpath-g': undefined });
+
+  if (changeAttrCmd) cmd.addSubCommand(changeAttrCmd);
+
+  selectionManager.selectOnly([group]);
 
   handleHistoryActionOptions(cmd, historyOptions);
 
   return {
-    bbox: path!.getBBox(),
+    bbox: path.getBBox(),
     command: historyOptions.parentCmd ?? cmd,
     group,
-    path: path || undefined,
+    path,
   };
 };
 
@@ -217,7 +225,7 @@ export const generateImageRect = (element?: SVGImageElement): { command?: IBatch
     return { command: undefined, rect: undefined };
   }
 
-  const batchCommand = new history.BatchCommand('Generate Image Rect');
+  const batchCommand = new BatchCommand('Generate Image Rect');
   const bbox = element.getBBox();
   const rotation = svgedit.utilities.getRotationAngle(element);
   const rect = svgCanvas.addSvgElementFromJson({
@@ -236,7 +244,7 @@ export const generateImageRect = (element?: SVGImageElement): { command?: IBatch
     element: 'rect',
   });
 
-  batchCommand.addSubCommand(new history.InsertElementCommand(rect));
+  batchCommand.addSubCommand(new InsertElementCommand(rect));
 
   return { command: batchCommand, rect };
 };
@@ -250,7 +258,7 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
   success: boolean;
 }> => {
   // 1. Create a master command to record all changes.
-  const batchCmd = new history.BatchCommand('Convert All Text to Path');
+  const batchCmd = new BatchCommand('Convert All Text to Path');
   const texts = [
     ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
     ...document.querySelectorAll('#svg_defs text'),
@@ -325,7 +333,7 @@ export const dispatchConvertToPath = async (
     if (element.getAttribute('data-tempgroup') === 'true') {
       // Note: adds command to history; returns void instead of ConvertToPathResult
       return convertTempGroupToPath({ element, isToSelect, weldingTexts });
-    } else if (element.getAttribute('data-textpath-g') === 'true') {
+    } else if (element.getAttribute('data-textpath-g')) {
       // Note: selects resulting path with group
       return convertTextOnPathToPath(element, { weldingTexts, ...historyOptions });
     }
