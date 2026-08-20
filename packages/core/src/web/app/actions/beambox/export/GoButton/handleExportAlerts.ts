@@ -18,15 +18,17 @@ import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import VersionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
+
+import { checkInnerEngravingObjects, hasInnerEngravingObjectWarnings } from './checkInnerEngravingObjects';
 
 export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Promise<boolean> => {
   const workarea = device.model;
@@ -159,6 +161,34 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
         message: lang.beambox.popup.auto_feeder_origin,
       });
     });
+  }
+
+  if (isInnerEngravingActive()) {
+    const warnings = checkInnerEngravingObjects();
+
+    if (hasInnerEngravingObjectWarnings(warnings)) {
+      const details = [
+        warnings.hasInvalidEngravableArea ? lang.inner_engraving.invalid_engraving_area : '',
+        warnings.outOfRange ? sprintf(lang.inner_engraving.objects_out_of_range, { count: warnings.outOfRange }) : '',
+        warnings.overlaps ? sprintf(lang.inner_engraving.objects_overlap, { count: warnings.overlaps }) : '',
+        warnings.wrongLayerOrder
+          ? sprintf(lang.inner_engraving.objects_below_previous_layer, { count: warnings.wrongLayerOrder })
+          : '',
+      ].filter(Boolean);
+      const confirmed = await new Promise<boolean>((resolve) => {
+        alertCaller.popUp({
+          buttonType: alertConstants.CONFIRM_CANCEL,
+          caption: lang.inner_engraving.export_warning_title,
+          id: 'inner-engraving-export-warning',
+          message: `${details.join('\n')}\n\n${lang.inner_engraving.continue_export}`,
+          messageIcon: 'warning',
+          onCancel: () => resolve(false),
+          onConfirm: () => resolve(true),
+        });
+      });
+
+      if (!confirmed) return false;
+    }
   }
 
   // The machine cannot read its Z position, so the focus is entirely the user's to set and getting

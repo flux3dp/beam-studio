@@ -1712,12 +1712,18 @@ export interface ILang {
     auto_fit_title: string;
     disable_mode: string;
     enable_mode: string;
+    continue_export: string;
     enable_mode_with_workarea: string;
     file_needs_workarea: string;
     mode_switch_title: string;
+    export_warning_title: string;
     mode_unavailable: string;
+    invalid_engraving_area: string;
     parsing_mesh: string;
     placing_object: string;
+    objects_below_previous_layer: string;
+    objects_out_of_range: string;
+    objects_overlap: string;
     reading_file: string;
   };
   inner_engraving_settings: {
