@@ -1273,6 +1273,8 @@ export interface ILang {
     calculate: string;
     canvas_zoom: string;
     exposure: string;
+    inner_engraving_object_control: string;
+    inner_engraving_view_control: string;
     not_supported: string;
     opacity: string;
   };
@@ -1710,20 +1712,20 @@ export interface ILang {
   inner_engraving: {
     auto_fit_message: string;
     auto_fit_title: string;
+    continue_export: string;
     disable_mode: string;
     enable_mode: string;
-    continue_export: string;
     enable_mode_with_workarea: string;
-    file_needs_workarea: string;
-    mode_switch_title: string;
     export_warning_title: string;
-    mode_unavailable: string;
+    file_needs_workarea: string;
     invalid_engraving_area: string;
-    parsing_mesh: string;
-    placing_object: string;
+    mode_switch_title: string;
+    mode_unavailable: string;
     objects_below_previous_layer: string;
     objects_out_of_range: string;
     objects_overlap: string;
+    parsing_mesh: string;
+    placing_object: string;
     reading_file: string;
   };
   inner_engraving_settings: {
