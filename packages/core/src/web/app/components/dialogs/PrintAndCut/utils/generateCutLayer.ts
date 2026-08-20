@@ -1,3 +1,4 @@
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -9,7 +10,7 @@ import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
-import { cloneLayerConfig } from '@core/helpers/layer/layer-config-helper';
+import { cloneLayerConfig, getData } from '@core/helpers/layer/layer-config-helper';
 import { createLayer, getLayerName } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -173,8 +174,11 @@ export const generateAlignedCutLayer = (): void => {
   if (alignmentTransform) applyTransformToElements(alignmentTransform, insertedElements, batchCmd);
 
   // hide the originals so a normal export only executes the cutting layer;
+  // UV Print layers stay visible since they never yield a machine task;
   // setVisible is a no-op for layers that are already hidden
   originalLayers.forEach((layer) => {
+    if (getData(layer.getGroup(), 'module') === LayerModule.UV_PRINT) return;
+
     layer.setVisible(false, { parentCmd: batchCmd });
   });
 

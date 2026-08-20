@@ -32,7 +32,18 @@ virtual `'resume'` entry step (outside the array, shown when a saved config exis
    shows the design landing on the photographed sheet.
 5. **Finish** (footer) — `generateAlignedCutLayer()`: one undoable BatchCommand
    (replace previous tagged cut layer, insert aligned contour geometry, hide all
-   original layers), then save the reusable config.
+   original layers — except UV Print layers, which never yield a machine task),
+   then save the reusable config.
+
+**Design content = visible UV Print layers only** (`data-module` =
+`LayerModule.UV_PRINT`, filtered in `getContentsLayers`): that is what gets
+rasterized, exported to PDF and snapshotted. Entering a fresh run requires the
+`enable-uv-print-file` preference: `startFreshRun` alerts with an
+Open-Preferences button (settings modal → Editor tab, scrolls to
+`#set-enable-uv-print-file`) when it is off, alerts `no_uv_layer` when no layer
+has the UV Print module, and `no_content` when the UV layers are empty/hidden.
+The resume path opens regardless (frozen config); a failed Start Over shows the
+matching alert and closes the dialog (config kept).
 
 **Resume**: reopening with a saved config lands on the resume screen (canvas shows
 the printed sheet: paper + marks + contour + snapshot-verified artwork).
@@ -52,9 +63,9 @@ PrintAndCut/
 ├── constants.ts             # Steps, paper sizes, mark sizes, tolerances, CUT_COLOR
 ├── steps/                   # StepSetup / StepPaper / StepExport / StepAlign / StepResume + RemainingTime
 └── utils/
-    ├── startFreshRun.ts     # collect → no_content guard → clearRasterCache → init
+    ├── startFreshRun.ts     # preference + UV-layer guards → collect → clearRasterCache → init
     ├── collectContents.ts   # Visible design elements + bbox + element snapshots
-    ├── contentsLayers.ts    # getContentsLayers (excludes data-pnc-cut + hidden), getGeneratedCutLayers
+    ├── contentsLayers.ts    # getContentsLayers (UV Print layers only; excludes data-pnc-cut + hidden), getGeneratedCutLayers
     ├── printingContentsSnapshot.ts  # Snapshot capture + matchPrintingContents (resume check)
     ├── contourElements.ts   # Layer-mode contour readers (frozen markup or live layer)
     ├── computeContourPathD.ts  # Raster → fluxghost image_contour → ClipperOffset → d
@@ -196,8 +207,9 @@ paper rect, `align` whole workarea).
   runs inside `measureWithLayersShown` (getBBox is zero inside `display:none`).
 - Repeat Finish **replaces** the previous `data-pnc-cut` layer inside the same
   BatchCommand (`deleteLayerByName` + `identifyLayers` resync before createLayer).
-- The resume entry bypasses the no-content guard (design layers are hidden after
-  a finish); Start Over does not (alert + keep config).
+- The resume entry bypasses the startFreshRun guards (preference may have been
+  turned off, or content hidden, since the finish); Start Over does not — on
+  failure the alert shows, the dialog closes, and the config is kept.
 
 ## Gotchas
 

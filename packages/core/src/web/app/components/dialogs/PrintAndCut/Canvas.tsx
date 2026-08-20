@@ -17,14 +17,21 @@ import { getContentBBoxFromState, getGridOffsets, getPaperRect } from './utils/l
 const SETUP_BACKGROUND_PADDING_MM = 10;
 const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
-const Canvas = (): React.JSX.Element => {
-  // both are fixed for the dialog's lifetime and must be known before the first
-  // clone, so read them once from the store instead of via a hook
-  const canvasManager = useMemo(() => {
-    const { isResume, printingContentsElementIds } = usePrintAndCutStore.getState();
+// bumped per manager so EmbeddedCanvas remounts (dropping the old canvas root)
+// whenever a new manager is created
+let managerCount = 0;
 
-    return new PrintAndCutCanvasManager({ isResume, printingContentsElementIds });
-  }, []);
+const Canvas = (): React.JSX.Element => {
+  // both shape the content clone, so a change (Start Over resets them from
+  // their resume values) needs a fresh manager and a re-clone
+  const { isResume, printingContentsElementIds } = usePrintAndCutStore(
+    useShallow(pick(['isResume', 'printingContentsElementIds'])),
+  );
+  const [canvasManager, managerKey] = useMemo(() => {
+    managerCount += 1;
+
+    return [new PrintAndCutCanvasManager({ isResume, printingContentsElementIds }), managerCount] as const;
+  }, [isResume, printingContentsElementIds]);
   const {
     alignmentTransform,
     cameraImageUrl,
@@ -138,7 +145,7 @@ const Canvas = (): React.JSX.Element => {
     };
   }, [canvasManager, step]);
 
-  return <EmbeddedCanvas canvasManager={canvasManager} />;
+  return <EmbeddedCanvas canvasManager={canvasManager} key={managerKey} />;
 };
 
 export default memo(Canvas);

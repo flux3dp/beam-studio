@@ -5,8 +5,10 @@ import { Alert, Button } from 'antd';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
+import { popDialogById } from '@core/app/actions/dialog-controller';
 import useI18n from '@core/helpers/useI18n';
 
+import { PRINT_AND_CUT_DIALOG_ID } from '../constants';
 import styles from '../index.module.scss';
 import { clearResumeConfig } from '../resumeConfigStore';
 import { usePrintAndCutStore } from '../store';
@@ -19,10 +21,11 @@ const StepResume = (): React.JSX.Element => {
   );
 
   const handleStartOver = () => {
-    // the guard fails while the design layers are still hidden from the
-    // previous run; there is nothing to reconfigure until the user restores
-    // them (undo the finish), so the saved configuration is kept
+    // when the guard fails (preference off, no UV Print layer, or no content)
+    // an alert explaining the fix is already shown; the fix happens in the
+    // editor, so close the dialog but keep the saved configuration for resume
     if (startFreshRun()) clearResumeConfig();
+    else popDialogById(PRINT_AND_CUT_DIALOG_ID);
   };
 
   return (

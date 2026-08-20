@@ -2242,6 +2242,8 @@ export interface ILang {
     grid_spacing: string;
     no_content: string;
     no_layer_with_path: string;
+    no_uv_layer: string;
+    open_preferences: string;
     orientation: string;
     orientation_landscape: string;
     orientation_portrait: string;
@@ -2262,6 +2264,7 @@ export interface ILang {
     step_setup_desc: string;
     title: string;
     use_layer_as_cut_path: string;
+    uv_print_file_disabled: string;
     white_mark_base: string;
   };
   promark_connection_test: {

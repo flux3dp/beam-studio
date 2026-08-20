@@ -1,7 +1,9 @@
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import workareaManager from '@core/app/svgedit/workarea';
 import EmbeddedCanvasManager from '@core/app/widgets/FullWindowPanel/EmbeddedCanvasManager';
 import { restoreOriginalColors } from '@core/helpers/image/originalColors';
+import { getData } from '@core/helpers/layer/layer-config-helper';
 
 import { CUT_COLOR, markRadiusPx } from './constants';
 import { contentTags } from './utils/collectContents';
@@ -63,6 +65,12 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
     // content: never show it as part of the design preview. Must run before the
     // resume branch below, which force-shows every remaining layer.
     getGeneratedCutLayers(this.svgcontent).forEach((layer) => layer.remove());
+
+    // only UV Print layers are printed (see getContentsLayers): anything else
+    // is not part of the sheet and never shows in the preview
+    this.svgcontent.querySelectorAll<SVGGElement>('g.layer').forEach((layer) => {
+      if (getData(layer, 'module') !== LayerModule.UV_PRINT) layer.remove();
+    });
 
     // On resume the preview must show the sheet as it was printed, not the
     // current canvas: drop everything the printed design did not contain. When
