@@ -672,6 +672,7 @@ class MenuManager extends EventEmitter {
         },
         {
           click: callback,
+          enabled: false,
           id: 'PRINT_AND_CUT',
           label: i18n.lang.print_and_cut.title,
         },
