@@ -982,6 +982,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'bvg':
             await importBvg(file);
             Progress.popById('loading_image');
+            break;
           case 'beam':
             BeamFileHelper.readBeam(file);
             break;
