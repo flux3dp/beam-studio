@@ -150,6 +150,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         label: `${t.label.elements} (E)`,
         onClick: () => toggleDrawerMode('element-panel'),
         style: { color: drawerMode === 'element-panel' ? '#000000' : undefined },
+        supportedIn3D: true,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Rect />,

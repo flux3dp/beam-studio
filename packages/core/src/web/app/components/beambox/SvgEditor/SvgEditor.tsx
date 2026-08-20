@@ -125,8 +125,7 @@ const SvgEditor = (): ReactNode => {
         <ToolBarDrawer enableResizable={{ right: true }} mode="ai-chat">
           <Chat />
         </ToolBarDrawer>
-        {/* the shape library inserts 2D elements, same reason as the generators above */}
-        {!innerEngraving && <ElementPanel />}
+        <ElementPanel />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </div>
