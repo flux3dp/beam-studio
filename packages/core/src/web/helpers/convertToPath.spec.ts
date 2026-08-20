@@ -44,21 +44,23 @@ jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   },
 }));
 
-class FakeChangeElementCommand {
-  constructor(
-    public elem: Element,
-    public oldValues: Record<string, null | string>,
-  ) {}
-}
+// Applies the attributes like the real helper so DOM assertions hold.
+const mockChangeAttribute = jest.fn((elem: Element, attrs: Record<string, null | string | undefined>) => {
+  Object.entries(attrs).forEach(([key, value]) => {
+    if (value === undefined || value === null) elem.removeAttribute(key);
+    else elem.setAttribute(key, value);
+  });
+
+  return { attrs, elem, type: 'change-attr-cmd' };
+});
+
+jest.mock('@core/app/svgedit/history/changeAttribute', () => ({
+  changeAttribute: (...args: any[]) => mockChangeAttribute(...(args as [Element, Record<string, string>])),
+}));
 
 jest.mock('@core/app/svgedit/history/history', () => ({
-  __esModule: true,
   BatchCommand: FakeBatchCommand,
-  default: {
-    BatchCommand: FakeBatchCommand,
-    ChangeElementCommand: FakeChangeElementCommand,
-    InsertElementCommand: class {},
-  },
+  InsertElementCommand: class {},
 }));
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
@@ -277,6 +279,10 @@ describe('convertToPath', () => {
       expect(result.path).toBe(newPath);
       expect(group.getAttribute('transform')).toBe('rotate(45)');
       expect(group.getAttribute('data-textpath-g')).toBeNull();
+      expect(mockChangeAttribute).toHaveBeenCalledWith(group, {
+        'data-ratiofixed': 'true',
+        'data-textpath-g': undefined,
+      });
       expect(Array.from(group.children)).toEqual([pathElement, newPath]);
       expect(mockSelectOnly).toHaveBeenCalledWith([group]);
     });

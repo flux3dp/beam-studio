@@ -2,7 +2,8 @@ import alertCaller from '@core/app/actions/alert-caller';
 import type { ConvertResultType } from '@core/app/actions/beambox/font-funcs';
 import fontFuncs, { ConvertResult } from '@core/app/actions/beambox/font-funcs';
 import alertConstants from '@core/app/constants/alert-constants';
-import history, { BatchCommand } from '@core/app/svgedit/history/history';
+import { changeAttribute } from '@core/app/svgedit/history/changeAttribute';
+import { BatchCommand, InsertElementCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
@@ -161,9 +162,10 @@ export const convertTextOnPathToPath = async (
 
   // Keep the original group so its transform (e.g. rotation) is preserved;
   // the converted path is inserted in place of the text, so no regrouping is needed.
-  group.removeAttribute('data-textpath-g');
-  group.setAttribute('data-ratiofixed', 'true');
-  cmd.addSubCommand(new history.ChangeElementCommand(group, { 'data-ratiofixed': null, 'data-textpath-g': '1' }));
+
+  const changeAttrCmd = changeAttribute(group, { 'data-ratiofixed': 'true', 'data-textpath-g': undefined });
+
+  if (changeAttrCmd) cmd.addSubCommand(changeAttrCmd);
 
   selectionManager.selectOnly([group]);
 
@@ -223,7 +225,7 @@ export const generateImageRect = (element?: SVGImageElement): { command?: IBatch
     return { command: undefined, rect: undefined };
   }
 
-  const batchCommand = new history.BatchCommand('Generate Image Rect');
+  const batchCommand = new BatchCommand('Generate Image Rect');
   const bbox = element.getBBox();
   const rotation = svgedit.utilities.getRotationAngle(element);
   const rect = svgCanvas.addSvgElementFromJson({
@@ -242,7 +244,7 @@ export const generateImageRect = (element?: SVGImageElement): { command?: IBatch
     element: 'rect',
   });
 
-  batchCommand.addSubCommand(new history.InsertElementCommand(rect));
+  batchCommand.addSubCommand(new InsertElementCommand(rect));
 
   return { command: batchCommand, rect };
 };
@@ -256,7 +258,7 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
   success: boolean;
 }> => {
   // 1. Create a master command to record all changes.
-  const batchCmd = new history.BatchCommand('Convert All Text to Path');
+  const batchCmd = new BatchCommand('Convert All Text to Path');
   const texts = [
     ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
     ...document.querySelectorAll('#svg_defs text'),

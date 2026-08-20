@@ -239,25 +239,24 @@ export class ChangeElementCommand extends BaseHistoryCommand implements ICommand
     }
   };
 
-  doApply = (): void => {
+  private applyValues = (values: { [key: string]: any }): void => {
     let bChangedTransform = false;
-    const keys = Object.keys(this.newValues);
+    const keys = Object.keys(values);
 
     for (let i = 0; i < keys.length; i += 1) {
       const attr = keys[i];
 
-      if (this.newValues[attr]) {
+      if (values[attr]) {
         if (attr === '#text') {
-          this.elem.textContent = this.newValues[attr];
+          this.elem.textContent = values[attr];
         } else if (attr === '#href') {
-          svgedit.utilities.setHref(this.elem, this.newValues[attr]);
+          svgedit.utilities.setHref(this.elem, values[attr]);
         } else {
-          this.elem.setAttribute(attr, this.newValues[attr]);
+          this.elem.setAttribute(attr, values[attr]);
         }
       } else if (attr === '#text') {
         this.elem.textContent = '';
       } else {
-        this.elem.setAttribute(attr, '');
         this.elem.removeAttribute(attr);
       }
 
@@ -272,36 +271,12 @@ export class ChangeElementCommand extends BaseHistoryCommand implements ICommand
     }
   };
 
+  doApply = (): void => {
+    this.applyValues(this.newValues);
+  };
+
   doUnapply = (): void => {
-    let bChangedTransform = false;
-    const keys = Object.keys(this.oldValues);
-
-    for (let i = 0; i < keys.length; i += 1) {
-      const attr = keys[i];
-
-      if (this.oldValues[attr]) {
-        if (attr === '#text') {
-          this.elem.textContent = this.oldValues[attr];
-        } else if (attr === '#href') {
-          svgedit.utilities.setHref(this.elem, this.oldValues[attr]);
-        } else {
-          this.elem.setAttribute(attr, this.oldValues[attr]);
-        }
-      } else if (attr === '#text') {
-        this.elem.textContent = '';
-      } else {
-        this.elem.removeAttribute(attr);
-      }
-
-      if (!bChangedTransform && attr === 'transform') {
-        bChangedTransform = true;
-      }
-    }
-
-    // relocate rotational transform, if necessary
-    if (!bChangedTransform) {
-      this.relocateRotationalTransform();
-    }
+    this.applyValues(this.oldValues);
 
     // Remove transformlist to prevent confusion that causes bugs like 575.
     svgedit.transformlist.removeElementFromListMap(this.elem);
