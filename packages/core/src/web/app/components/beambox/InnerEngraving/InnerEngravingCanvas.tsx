@@ -1,15 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { GizmoHelper, GizmoViewport, OrbitControls } from '@react-three/drei';
+import type { ThreeEvent } from '@react-three/fiber';
 import { Canvas, useFrame } from '@react-three/fiber';
 import classNames from 'classnames';
-import { FrontSide, MOUSE, Vector3 } from 'three';
+import type { Texture } from 'three';
+import { FrontSide, MOUSE, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
 
+import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { setCursorAccordingToMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import workareaManager from '@core/app/svgedit/workarea';
+import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import { todo } from '@core/helpers/is-dev';
 
 import {
@@ -26,6 +32,7 @@ import MaterialShape from './MaterialShape';
 import SceneGrid from './SceneGrid';
 import SceneRuler from './SceneRuler';
 import StlMesh from './StlMesh';
+import { toCameraPreviewPoint } from './utils/cameraPreview';
 import { getMaterial, useMaterial } from './utils/material';
 import { getSelectedStlId, selectStlObject } from './utils/selection';
 import ViewController from './ViewController';
@@ -46,6 +53,107 @@ const MOUSE_BUTTONS = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PA
  * what the left gave away rather than being disabled, so orbiting is still reachable mid-pan.
  */
 const SPACE_MOUSE_BUTTONS = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.ROTATE };
+
+const CameraPreviewFloor = ({ height, width }: { height: number; width: number }): null | React.JSX.Element => {
+  const backgroundUrl = useCameraPreviewStore((state) => state.backgroundUrl);
+  const opacity = useCameraPreviewStore((state) => state.bgOpacity);
+  const [texture, setTexture] = useState<null | Texture>(null);
+
+  useEffect(() => {
+    if (!backgroundUrl) {
+      setTexture(null);
+
+      return;
+    }
+
+    let active = true;
+    let loadedTexture: null | Texture = null;
+
+    new TextureLoader().load(backgroundUrl, (nextTexture) => {
+      loadedTexture = nextTexture;
+      nextTexture.colorSpace = SRGBColorSpace;
+
+      if (active) setTexture(nextTexture);
+      else nextTexture.dispose();
+    });
+
+    return () => {
+      active = false;
+      loadedTexture?.dispose();
+    };
+  }, [backgroundUrl]);
+
+  if (!texture) return null;
+
+  return (
+    <mesh position={[width / 2, height / 2, 0]} renderOrder={-1}>
+      <planeGeometry args={[width, height]} />
+      <meshBasicMaterial
+        map={texture}
+        opacity={opacity}
+        polygonOffset
+        polygonOffsetFactor={1}
+        side={FrontSide}
+        // Keep blending enabled even at 100%. Toggling `transparent` at runtime changes the
+        // material program; keeping it stable lets bgOpacity updates apply immediately.
+        transparent
+      />
+    </mesh>
+  );
+};
+
+const PreviewInteractionPlane = ({ height, width }: { height: number; width: number }): null | React.JSX.Element => {
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
+  const start = useRef<[number, number] | null>(null);
+  const active = mouseMode === 'pre_preview' || mouseMode === 'preview';
+
+  if (!active) return null;
+
+  const getCameraPoint = (event: ThreeEvent<PointerEvent>): [number, number] =>
+    toCameraPreviewPoint(event.point, { height, width });
+
+  const runPreview = (from: [number, number], to: [number, number]) => {
+    if (!previewModeController.isPreviewMode) return;
+
+    if (from[0] === to[0] && from[1] === to[1]) {
+      previewModeController.preview(to[0], to[1], { last: true });
+    } else {
+      previewModeController.previewRegion(from[0], from[1], to[0], to[1]);
+    }
+  };
+
+  return (
+    <mesh
+      onPointerDown={(event) => {
+        event.stopPropagation();
+        start.current = getCameraPoint(event);
+        event.target.setPointerCapture(event.pointerId);
+      }}
+      onPointerUp={(event) => {
+        event.stopPropagation();
+
+        const from = start.current;
+
+        start.current = null;
+        event.target.releasePointerCapture(event.pointerId);
+
+        if (!from) return;
+
+        const to = getCameraPoint(event);
+        const currentMode = useCanvasStore.getState().mouseMode;
+
+        setMouseMode('select');
+
+        if (currentMode === 'pre_preview') setupPreviewMode({ callback: () => runPreview(from, to) });
+        else runPreview(from, to);
+      }}
+      position={[width / 2, height / 2, 0]}
+    >
+      <planeGeometry args={[width, height]} />
+      <meshBasicMaterial depthWrite={false} opacity={0} transparent />
+    </mesh>
+  );
+};
 
 /**
  * Grid/ruler spacing that follows the zoom level, so the spacing stays readable instead of turning
@@ -69,10 +177,12 @@ const useAdaptiveStep = (center: [number, number, number]): number => {
 const Scene = () => {
   const { objects, selectedId } = useStlStore();
   const spaceKey = useCanvasStore((state) => state.spaceKey);
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
   const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   const { height, width } = workareaManager;
   const material = useMaterial();
-  // scene X/Y are the SVG coordinates, so the work area spans x: 0..width, y: 0..height
+  // The numeric extents match SVG, but physical Y is reversed: scene y=max and SVG y=0 are both
+  // the far side of the machine. Imported geometry and camera interaction convert at the boundary.
   const center = useMemo<[number, number, number]>(() => [width / 2, height / 2, 0], [height, width]);
   // the camera aims at the middle of the material rather than the floor: the material can be taller
   // than the work area is wide, so orbiting the floor leaves it running off the top of the screen
@@ -88,6 +198,7 @@ const Scene = () => {
   const showRulers = useGlobalPreferenceStore((state) => state.show_rulers);
   // walls tall enough for the workpiece, and never a degenerate zero-height box
   const wallHeight = useMemo(() => Math.max(material.height, step), [material.height, step]);
+  const previewInteraction = mouseMode === 'pre_preview' || mouseMode === 'preview';
 
   // the other direction of the sync in `selectStlObject`: selecting through the layer panel, undo,
   // or anything else that moves svgedit's selection has to light up the mesh too
@@ -104,14 +215,19 @@ const Scene = () => {
       <ambientLight intensity={1.2} />
       <directionalLight intensity={2} position={[width, -height, diagonal]} />
       {/* reaches past the work area so its edge is not flush with the boundary */}
-      <mesh position={[center[0], center[1], FLOOR_Z]}>
+      {/* Render the white foundation before the camera image without writing it into the depth
+          buffer. At a grazing camera angle the two almost-parallel planes otherwise quantize to
+          the same depth, making the distant image alternate with white as the camera moves. */}
+      <mesh position={[center[0], center[1], FLOOR_Z]} renderOrder={-2}>
         <planeGeometry args={[width + FLOOR_MARGIN * 2, height + FLOOR_MARGIN * 2]} />
         {/* Unlit: the work area floor is a flat #fff backdrop like the 2D canvas, not a lit surface.
             Single-sided so that it simply is not there when the camera goes below it — seen from
             underneath it is not a backdrop at all, just an opaque sheet between the user and the
             work area. Back-face culling costs nothing and needs no per-frame test to decide. */}
-        <meshBasicMaterial color={FLOOR_COLOR} side={FrontSide} />
+        <meshBasicMaterial color={FLOOR_COLOR} depthWrite={false} side={FrontSide} />
       </mesh>
+      <CameraPreviewFloor height={height} width={width} />
+      <PreviewInteractionPlane height={height} width={width} />
       {showGrids && <SceneGrid depth={wallHeight} height={height} step={step} width={width} />}
       {showRulers && <SceneRuler depth={wallHeight} height={height} step={step} width={width} />}
 
@@ -147,6 +263,7 @@ const Scene = () => {
           clicking an object or dragging its gizmo would clear the preset; `change` alone fires on
           the programmatic `update()` the presets themselves do. */}
       <OrbitControls
+        enabled={!previewInteraction || spaceKey}
         makeDefault
         mouseButtons={spaceKey ? SPACE_MOUSE_BUTTONS : MOUSE_BUTTONS}
         onChange={() => {
@@ -173,6 +290,7 @@ const Scene = () => {
 const InnerEngravingCanvas = (): React.JSX.Element => {
   const { height, width } = workareaManager;
   const spaceKey = useCanvasStore((state) => state.spaceKey);
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
   // read once rather than subscribed: this only seeds the first frame, after which the camera
   // belongs to OrbitControls and re-seeding it would yank the view out from under the user
   const materialHeight = useMemo(() => getMaterial().height, []);
@@ -187,8 +305,12 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
     [height, materialHeight, viewTarget, width],
   );
 
+  // The global mouse-mode subscription may have run before the 3D canvas was mounted. Apply the
+  // same centralized cursor rule once here and on subsequent mode changes.
+  useEffect(() => setCursorAccordingToMouseMode(mouseMode), [mouseMode]);
+
   return (
-    <div className={classNames(styles.container, { [styles.panning]: spaceKey })}>
+    <div className={classNames(styles.container, { [styles.panning]: spaceKey })} id="inner-engraving-canvas">
       <Canvas
         camera={{
           // a tight near/far range keeps depth precision usable; with near = 1 (0.1mm) almost the
@@ -220,7 +342,9 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
         }}
         // a pan that starts on empty space is not a click on empty space: it must not deselect
         onPointerMissed={() => {
-          if (!useCanvasStore.getState().spaceKey) selectStlObject(null);
+          const { mouseMode, spaceKey } = useCanvasStore.getState();
+
+          if (!spaceKey && mouseMode !== 'pre_preview' && mouseMode !== 'preview') selectStlObject(null);
         }}
       >
         <Scene />

@@ -371,7 +371,7 @@ class PreviewModeBackgroundDrawer {
 
     this.cameraCanvasUrl = '';
     this._isFullWorkareaDrawn = false;
-    setCameraPreviewState({ isClean: true });
+    setCameraPreviewState({ backgroundUrl: '', isClean: true });
   }
 
   getCameraCanvasUrl({ useCache = true }: { useCache?: boolean } = {}): Promise<string> {
@@ -430,7 +430,7 @@ class PreviewModeBackgroundDrawer {
     }
 
     this.cameraCanvasUrl = URL.createObjectURL(blob);
-    setCameraPreviewState({ isClean: false });
+    setCameraPreviewState({ backgroundUrl: this.cameraCanvasUrl, isClean: false });
 
     setBackgroundImage(this.cameraCanvasUrl);
     // notify progressive-preview listeners (e.g. the Print and Cut dialog)
@@ -444,7 +444,7 @@ class PreviewModeBackgroundDrawer {
     }
 
     this.cameraCanvasUrl = url;
-    setCameraPreviewState({ isClean: false });
+    setCameraPreviewState({ backgroundUrl: this.cameraCanvasUrl, isClean: false });
     setBackgroundImage(this.cameraCanvasUrl);
 
     if (opts?.loadToCanvas) {
