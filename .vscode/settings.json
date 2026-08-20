@@ -1,5 +1,6 @@
 {
   "eslint.workingDirectories": [{ "directory": ".", "changeProcessCWD": true }],
+  "prettier.requireConfig": true,
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
     "source.fixAll.markdownlint": "explicit"

@@ -1,8 +1,9 @@
+@use '@core/styles/mixins' as mixins;
 @use '@core/styles/variables' as variables;
 
 .history {
-  // Match the main dialog's scroll region so a long history stays within ~90vh.
-  max-height: calc(90vh - 230px);
+  // Match the main dialog's scroll region so a long history stays within ~90% of the viewport.
+  @include mixins.viewport-size(90, 230px, max-height);
   overflow-y: auto;
 }
 

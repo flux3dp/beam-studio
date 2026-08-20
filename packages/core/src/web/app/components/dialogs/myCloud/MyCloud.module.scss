@@ -1,6 +1,6 @@
+@use '@core/styles/mixins' as mixins;
 @use './variables' as variables;
-
-$content-height: 60vh;
+$content-height: 60;
 
 .title-container {
   margin-bottom: 20px;
@@ -43,11 +43,11 @@ $content-height: 60vh;
   grid-template-columns: repeat(auto-fill, minmax(variables.$grid-width, 1fr));
   overflow-y: auto;
   gap: 20px 10px;
-  height: $content-height;
+  @include mixins.viewport-size($content-height);
 }
 
 .placeholder {
-  height: $content-height;
+  @include mixins.viewport-size($content-height);
   display: flex;
   flex-direction: column;
   align-items: center;

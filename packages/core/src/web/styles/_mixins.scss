@@ -1,10 +1,28 @@
 @use 'sass:list';
+@use 'sass:meta';
 
 // Add antd default margin between buttons in modal footer
 // if buttons are wrapped in another element
 @mixin footer {
   button + button {
     margin-inline-start: 8px;
+  }
+}
+
+// Fix height of address bar in mobile devices,
+// especially for full page UI that need the very bottom of the screen to be visible.
+// Fallback to vh if dvh is not supported by the browser.
+@mixin viewport-size($percentage: 100, $offset: null, $property: height, $unit: dvh) {
+  @if $unit != vh and $unit != svh and $unit != lvh and $unit != dvh {
+    @error "Unsupported viewport unit: #{$unit}";
+  }
+
+  @if $offset == null {
+    #{$property}: #{$percentage}vh;
+    #{$property}: #{$percentage}#{$unit};
+  } @else {
+    #{$property}: calc(#{$percentage}vh - #{$offset});
+    #{$property}: calc(#{$percentage}#{$unit} - #{$offset});
   }
 }
 
@@ -42,12 +60,7 @@
   }
 }
 
-$supported-os: (
-  linux,
-  macos,
-  windows,
-  others
-); // lowercase version of getOS result
+$supported-os: (linux, macos, windows, others); // lowercase version of getOS result
 @mixin is-os($os) {
   @if list.index($supported-os, $os) {
     :where(:global(body.#{$os})) & {

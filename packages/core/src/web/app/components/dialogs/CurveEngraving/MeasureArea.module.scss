@@ -1,8 +1,9 @@
+@use '@core/styles/mixins' as mixins;
 @use '@core/styles/variables' as variables;
 
 .points {
   margin: 32px 8px;
-  height: 35vh;
+  @include mixins.viewport-size(35);
   display: flex;
   flex-direction: column;
   justify-content: space-between;

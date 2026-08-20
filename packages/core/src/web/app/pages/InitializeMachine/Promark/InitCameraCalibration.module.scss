@@ -14,7 +14,7 @@
 
   @include mixins.is-not-mobile {
     max-width: 400px;
-    height: calc(100vh - 200px);
+    @include mixins.viewport-size($offset: 200px);
     padding-bottom: 30px;
     overflow-y: auto;
 
@@ -40,7 +40,7 @@
   min-width: 0;
 
   @include mixins.is-not-mobile {
-    height: calc(100vh - 200px);
+    @include mixins.viewport-size($offset: 200px);
     padding-bottom: 30px;
   }
 

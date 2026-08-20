@@ -70,7 +70,8 @@ exports[`test ChangeLog should render correctly 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       <div
                         class="app"

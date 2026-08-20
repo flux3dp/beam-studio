@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 // Dialog shell chrome. Everything else is scoped to the component that renders it.
 
 .title {
@@ -16,7 +18,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  max-height: 90vh;
+  @include mixins.viewport-size(90, $property: max-height);
 
   :global(.ant-modal-header),
   :global(.ant-modal-footer) {

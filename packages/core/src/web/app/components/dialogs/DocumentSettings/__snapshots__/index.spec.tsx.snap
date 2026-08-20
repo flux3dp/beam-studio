@@ -70,7 +70,8 @@ exports[`test DocumentSettings should render correctly 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Document Settings
                     </div>
@@ -569,7 +570,8 @@ exports[`test DocumentSettings should render correctly 2`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Document Settings
                     </div>
@@ -1664,7 +1666,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Document Settings
                     </div>
@@ -2419,7 +2422,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Document Settings
                     </div>
@@ -3251,7 +3255,8 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Document Settings
                     </div>
@@ -4111,7 +4116,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Document Settings
                     </div>

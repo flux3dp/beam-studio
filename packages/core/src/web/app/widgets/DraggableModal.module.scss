@@ -5,12 +5,23 @@
   max-width: 100vw;
 }
 
+.dragHandle {
+  width: 100%;
+  cursor: move;
+  touch-action: none;
+
+  &.disabled {
+    cursor: default;
+    touch-action: auto;
+  }
+}
+
 .scrollable {
   :global(.ant-modal-content) {
     -webkit-app-region: no-drag;
     display: flex;
     flex-direction: column;
-    max-height: calc(100vh - variables.$topBarHeight);
+    @include mixins.viewport-size($offset: variables.$topBarHeight, $property: max-height);
   }
 
   :global(.ant-modal-header) {
@@ -31,7 +42,7 @@
     :global(.ant-modal-content) {
       display: flex;
       flex-direction: column;
-      max-height: 80dvh;
+      @include mixins.viewport-size(80, $property: max-height);
     }
 
     :global(.ant-modal-header) {
@@ -39,7 +50,7 @@
     }
 
     :global(.ant-modal-body) {
-      max-height: 60dvh;
+      @include mixins.viewport-size(60, $property: max-height);
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
     }
