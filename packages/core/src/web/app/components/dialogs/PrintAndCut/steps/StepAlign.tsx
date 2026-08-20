@@ -2,9 +2,7 @@ import React from 'react';
 
 import { AimOutlined } from '@ant-design/icons';
 import { Button, Progress } from 'antd';
-import { pick } from 'remeda';
 import { match } from 'ts-pattern';
-import { useShallow } from 'zustand/react/shallow';
 
 import useI18n from '@core/helpers/useI18n';
 import type { ILang } from '@core/interfaces/ILang';
@@ -21,36 +19,29 @@ import RemainingTime from './RemainingTime';
 
 const buildMessage = (
   { current, phase, total }: AlignProgress,
-  lang: ILang['print_and_cut']['align_progress'],
+  t: ILang['print_and_cut']['align_progress'],
 ): string => {
   // the wrap-up redetect keeps the detecting label; only the time slot marks it
   // as nearly done, so the message does not flip back and forth
   const label = match(phase)
-    .with('capture', () => lang.capturing)
-    .with('completing', 'detect', () => lang.detecting)
-    .with('locate', () => lang.locating)
-    .with('preparing', () => lang.preparing)
-    .with('refine', () => lang.refining)
+    .with('capture', () => t.capturing)
+    .with('completing', 'detect', () => t.detecting)
+    .with('locate', () => t.locating)
+    .with('preparing', () => t.preparing)
+    .with('refine', () => t.refining)
     .exhaustive();
 
   return total ? `${label} ${current ?? 0}/${total}` : label;
 };
 
 const StepAlign = (): React.JSX.Element => {
-  const { message: messageLang, print_and_cut: lang } = useI18n();
-  const { alignProgress, isProcessing, markPositions, setAlignmentTransform, setCameraImageUrl, setIsProcessing } =
-    usePrintAndCutStore(
-      useShallow(
-        pick([
-          'alignProgress',
-          'isProcessing',
-          'markPositions',
-          'setAlignmentTransform',
-          'setCameraImageUrl',
-          'setIsProcessing',
-        ]),
-      ),
-    );
+  const { message: tMessage, print_and_cut: t } = useI18n();
+  const alignProgress = usePrintAndCutStore((state) => state.alignProgress);
+  const isProcessing = usePrintAndCutStore((state) => state.isProcessing);
+  const markPositions = usePrintAndCutStore((state) => state.markPositions);
+  const setAlignmentTransform = usePrintAndCutStore((state) => state.setAlignmentTransform);
+  const setCameraImageUrl = usePrintAndCutStore((state) => state.setCameraImageUrl);
+  const setIsProcessing = usePrintAndCutStore((state) => state.setIsProcessing);
   const handlePreviewAndAlign = async () => {
     // in the store so the dialog footer can block navigation while running
     setIsProcessing(true);
@@ -91,17 +82,17 @@ const StepAlign = (): React.JSX.Element => {
 
   return (
     <div className={styles.content}>
-      <div className={styles.desc}>{lang.step_align_desc}</div>
+      <div className={styles.desc}>{t.step_align_desc}</div>
       <Button block icon={<AimOutlined />} loading={isProcessing} onClick={handlePreviewAndAlign} type="primary">
-        {lang.preview_and_align}
+        {t.preview_and_align}
       </Button>
       <ExposureControl />
       {alignProgress && (
         <div className={styles.alignProgress}>
           <Progress percent={alignProgress.percentage} showInfo={false} size="small" status="active" />
-          <div className={styles.desc}>{buildMessage(alignProgress, lang.align_progress)}</div>
+          <div className={styles.desc}>{buildMessage(alignProgress, t.align_progress)}</div>
           <RemainingTime phase={alignProgress.phase} remainingSeconds={alignProgress.remainingSeconds} />
-          {alignProgress.stoppable && <div className={styles.desc}>{messageLang.preview.press_esc_to_stop}</div>}
+          {alignProgress.stoppable && <div className={styles.desc}>{tMessage.preview.press_esc_to_stop}</div>}
         </div>
       )}
     </div>

@@ -10,7 +10,7 @@ import { usePrintAndCutStore } from '../store';
 import { exportPrintAndCutPdf } from '../utils/exportPdf';
 
 const StepExport = (): React.JSX.Element => {
-  const lang = useI18n().print_and_cut;
+  const { print_and_cut: t } = useI18n();
   const [isExporting, setIsExporting] = useState(false);
   const whiteMarkBase = usePrintAndCutStore((state) => state.whiteMarkBase);
   const setWhiteMarkBase = usePrintAndCutStore((state) => state.setWhiteMarkBase);
@@ -26,13 +26,13 @@ const StepExport = (): React.JSX.Element => {
 
   return (
     <div className={styles.content}>
-      <div className={styles.desc}>{lang.step_export_desc}</div>
+      <div className={styles.desc}>{t.step_export_desc}</div>
       <div className={styles.row}>
-        <span className={styles.label}>{lang.white_mark_base}</span>
+        <span className={styles.label}>{t.white_mark_base}</span>
         <Switch checked={whiteMarkBase} onChange={setWhiteMarkBase} />
       </div>
       <Button block icon={<ExportOutlined />} loading={isExporting} onClick={handleExport} type="primary">
-        {lang.export_pdf}
+        {t.export_pdf}
       </Button>
     </div>
   );

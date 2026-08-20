@@ -215,14 +215,14 @@ export const detectAlignmentTransform = async ({
   detectedMarks?: null | Point[];
   onPreviewUpdate?: (url: string) => void;
 }): Promise<null | RigidTransform> => {
-  const lang = i18n.lang.print_and_cut.alignment;
+  const t = i18n.lang.print_and_cut.alignment;
   const { markPositions } = usePrintAndCutStore.getState();
   const expected: Point[] = markPositions.map(({ cx, cy }) => ({ x: cx, y: cy }));
 
   if (expected.length === 0) return null;
 
   if (previewModeBackgroundDrawer.isClean()) {
-    alertCaller.popUpError({ message: lang.no_preview });
+    alertCaller.popUpError({ message: t.no_preview });
 
     return null;
   }
@@ -263,18 +263,18 @@ export const detectAlignmentTransform = async ({
     if (!transform && markCenters) transform = fitRigidTransform(expected, markCenters);
 
     if (!transform) {
-      alertCaller.popUpError({ message: lang.detect_failed });
+      alertCaller.popUpError({ message: t.detect_failed });
 
       return null;
     }
 
     logAlignmentResult(expected, transform);
-    MessageCaller.openMessage({ content: lang.success, duration: 3, level: MessageLevel.SUCCESS });
+    MessageCaller.openMessage({ content: t.success, duration: 3, level: MessageLevel.SUCCESS });
 
     return transform;
   } catch (error) {
     console.error('Failed to detect print and cut alignment', error);
-    alertCaller.popUpError({ message: lang.detect_failed });
+    alertCaller.popUpError({ message: t.detect_failed });
 
     return null;
   } finally {

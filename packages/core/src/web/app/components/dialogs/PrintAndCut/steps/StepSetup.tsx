@@ -1,8 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
 import { InputNumber, Radio, Tooltip } from 'antd';
-import { funnel, pick } from 'remeda';
-import { useShallow } from 'zustand/react/shallow';
+import { funnel } from 'remeda';
 
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
@@ -15,32 +14,16 @@ import { usePrintAndCutStore } from '../store';
 import { computeContourPathD } from '../utils/computeContourPathD';
 
 const StepSetup = (): React.JSX.Element => {
-  const lang = useI18n();
-  const tPrintAndCut = lang.print_and_cut;
-  const tOffset = lang.beambox.tool_panels._offset;
-  const {
-    contourLayerName,
-    contourSource,
-    offsetDistance,
-    printingContentsBBox,
-    setContourLayerName,
-    setContourPathD,
-    setContourSource,
-    setOffsetDistance,
-  } = usePrintAndCutStore(
-    useShallow(
-      pick([
-        'contourLayerName',
-        'contourSource',
-        'offsetDistance',
-        'printingContentsBBox',
-        'setContourLayerName',
-        'setContourPathD',
-        'setContourSource',
-        'setOffsetDistance',
-      ]),
-    ),
-  );
+  const { beambox, print_and_cut: t } = useI18n();
+  const tOffset = beambox.tool_panels._offset;
+  const contourLayerName = usePrintAndCutStore((state) => state.contourLayerName);
+  const contourSource = usePrintAndCutStore((state) => state.contourSource);
+  const offsetDistance = usePrintAndCutStore((state) => state.offsetDistance);
+  const printingContentsBBox = usePrintAndCutStore((state) => state.printingContentsBBox);
+  const setContourLayerName = usePrintAndCutStore((state) => state.setContourLayerName);
+  const setContourPathD = usePrintAndCutStore((state) => state.setContourPathD);
+  const setContourSource = usePrintAndCutStore((state) => state.setContourSource);
+  const setOffsetDistance = usePrintAndCutStore((state) => state.setOffsetDistance);
 
   // layers usable as a cut path: they must contain at least one cuttable vector element
   const pathLayers = useMemo(
@@ -104,20 +87,20 @@ const StepSetup = (): React.JSX.Element => {
 
   return (
     <div className={styles.content}>
-      <div className={styles.desc}>{tPrintAndCut.step_setup_desc}</div>
+      <div className={styles.desc}>{t.step_setup_desc}</div>
       <Radio.Group
         className={styles.radioGroup}
         onChange={(e) => setContourSource(e.target.value as ContourSource)}
         options={[
-          { label: tPrintAndCut.generate_from_contour, value: 'outline' },
+          { label: t.generate_from_contour, value: 'outline' },
           {
             disabled: pathLayers.length === 0,
             // the option is disabled because no layer qualifies; the tooltip says so
             label:
               pathLayers.length === 0 ? (
-                <Tooltip title={tPrintAndCut.no_layer_with_path}>{tPrintAndCut.use_layer_as_cut_path}</Tooltip>
+                <Tooltip title={t.no_layer_with_path}>{t.use_layer_as_cut_path}</Tooltip>
               ) : (
-                tPrintAndCut.use_layer_as_cut_path
+                t.use_layer_as_cut_path
               ),
             value: 'layer',
           },
@@ -140,7 +123,7 @@ const StepSetup = (): React.JSX.Element => {
         </div>
       ) : (
         <div className={styles.row}>
-          <span className={styles.label}>{tPrintAndCut.select_cut_layer}</span>
+          <span className={styles.label}>{t.select_cut_layer}</span>
           <Select
             onChange={(value: string) => setContourLayerName(value)}
             options={pathLayers.map(({ color, name }) => ({

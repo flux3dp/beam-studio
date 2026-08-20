@@ -21,13 +21,13 @@ import { clearRasterCache } from './computeContourPathD';
  * layer, or the UV Print layers have no visible content
  */
 export const startFreshRun = (): boolean => {
-  const lang = i18n.lang.print_and_cut;
+  const t = i18n.lang.print_and_cut;
 
   if (!useGlobalPreferenceStore.getState()['enable-uv-print-file']) {
     alertCaller.popUp({
-      buttonLabels: [i18n.lang.alert.cancel, lang.open_preferences],
+      buttonLabels: [i18n.lang.alert.cancel, t.open_preferences],
       callbacks: [() => {}, () => showSettingsModal(SettingCategory.EDITOR, 'set-enable-uv-print-file')],
-      message: lang.uv_print_file_disabled,
+      message: t.uv_print_file_disabled,
       primaryButtonIndex: 1,
     });
 
@@ -41,7 +41,7 @@ export const startFreshRun = (): boolean => {
       .getAllLayers()
       .some((layer) => getData(layer.getGroup(), 'module') === LayerModule.UV_PRINT);
 
-    alertCaller.popUp({ message: hasUvPrintLayer ? lang.no_content : lang.no_uv_layer });
+    alertCaller.popUp({ message: hasUvPrintLayer ? t.no_content : t.no_uv_layer });
 
     return false;
   }

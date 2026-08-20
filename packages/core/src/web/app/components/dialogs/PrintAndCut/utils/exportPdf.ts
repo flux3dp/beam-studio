@@ -117,9 +117,7 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
  * @returns whether the pdf was saved
  */
 export const exportPrintAndCutPdf = async (): Promise<boolean> => {
-  const {
-    topmenu: { file: langFile },
-  } = i18n.lang;
+  const t = i18n.lang.topmenu.file;
 
   const imageHrefs = await getOriginalImageHrefs();
   // text is not converted to paths: the render inlines the webfont bytes (see buildWebFontFaceCss) and
@@ -142,9 +140,9 @@ export const exportPrintAndCutPdf = async (): Promise<boolean> => {
   pdf.addImage(content.base64, 'PNG', content.xMm, content.yMm, content.widthMm, content.heightMm);
 
   const getContent = () => new Blob([pdf.output('blob')], { type: 'application/pdf' });
-  const filePath = await dialog.writeFileDialog(getContent, langFile.save_pdf, getDefaultFileName(), [
+  const filePath = await dialog.writeFileDialog(getContent, t.save_pdf, getDefaultFileName(), [
     { extensions: ['pdf'], name: isMac() ? 'PDF (*.pdf)' : 'PDF' },
-    { extensions: ['*'], name: langFile.all_files },
+    { extensions: ['*'], name: t.all_files },
   ]);
 
   return Boolean(filePath);

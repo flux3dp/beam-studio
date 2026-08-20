@@ -1,9 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 
 import { Button } from 'antd';
-import { pick } from 'remeda';
 import { match } from 'ts-pattern';
-import { useShallow } from 'zustand/react/shallow';
 
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
@@ -31,9 +29,13 @@ const PrintAndCut = ({ onClose }: Props): React.JSX.Element => {
   useNewShortcutsScope();
 
   const { buttons: tButtons, print_and_cut: t } = useI18n();
-  const { isProcessing, isResume, nextStep, prevStep, reset, setStep, step } = usePrintAndCutStore(
-    useShallow(pick(['isProcessing', 'isResume', 'nextStep', 'prevStep', 'reset', 'setStep', 'step'])),
-  );
+  const isProcessing = usePrintAndCutStore((state) => state.isProcessing);
+  const isResume = usePrintAndCutStore((state) => state.isResume);
+  const nextStep = usePrintAndCutStore((state) => state.nextStep);
+  const prevStep = usePrintAndCutStore((state) => state.prevStep);
+  const reset = usePrintAndCutStore((state) => state.reset);
+  const setStep = usePrintAndCutStore((state) => state.setStep);
+  const step = usePrintAndCutStore((state) => state.step);
 
   useEffect(() => reset, [reset]);
 

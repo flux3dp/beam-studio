@@ -89,7 +89,7 @@ const applyTransformToElements = (
  * restores the document exactly.
  */
 export const generateAlignedCutLayer = (): void => {
-  const lang = i18n.lang.print_and_cut;
+  const t = i18n.lang.print_and_cut;
   const state = usePrintAndCutStore.getState();
   const { alignmentTransform, contourElements, contourLayerName, contourPathD, contourSource } = state;
   const gridOffsets = getGridOffsets(state);
@@ -116,7 +116,7 @@ export const generateAlignedCutLayer = (): void => {
   let frozenContourElements: null | string[] = null;
   const offsetDxList: number[] = [];
   const offsetDyList: number[] = [];
-  const { layer: newLayer, name: newLayerName } = createLayer(lang.cutting_layer_name, {
+  const { layer: newLayer, name: newLayerName } = createLayer(t.cutting_layer_name, {
     hexCode: CUT_COLOR,
     initConfig: true,
     parentCmd: batchCmd,

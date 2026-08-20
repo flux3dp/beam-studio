@@ -15,7 +15,7 @@ interface RemainingTimeProps {
 }
 
 const RemainingTime = ({ phase, remainingSeconds }: RemainingTimeProps): React.JSX.Element => {
-  const { message: messageLang, print_and_cut: lang } = useI18n();
+  const { message: tMessage, print_and_cut: t } = useI18n();
   // countdown shown between progress reports: restarts from every new estimate,
   // ticks down locally once per second in between (floored at 1 — the estimate
   // is rough and formatDuration(0) renders empty)
@@ -36,13 +36,13 @@ const RemainingTime = ({ phase, remainingSeconds }: RemainingTimeProps): React.J
 
   // the wrap-up phase has nothing left to count, so it states that instead of a time
   const value = match({ countdownSeconds, phase })
-    .with({ phase: 'completing' }, () => lang.align_progress.completing)
+    .with({ phase: 'completing' }, () => t.align_progress.completing)
     .with({ countdownSeconds: P.number }, ({ countdownSeconds }) => formatDuration(countdownSeconds))
-    .otherwise(() => lang.align_progress.calculating);
+    .otherwise(() => t.align_progress.calculating);
 
   return (
     <div className={`${styles.desc} ${styles.timeRemaining}`}>
-      <span>{messageLang.time_remaining}</span>
+      <span>{tMessage.time_remaining}</span>
       <span>{value}</span>
     </div>
   );

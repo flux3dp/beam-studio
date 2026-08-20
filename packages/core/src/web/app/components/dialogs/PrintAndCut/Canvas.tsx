@@ -1,8 +1,6 @@
 import React, { memo, useEffect, useMemo } from 'react';
 
-import { pick } from 'remeda';
 import { match } from 'ts-pattern';
-import { useShallow } from 'zustand/react/shallow';
 
 import { dpmm } from '@core/app/actions/beambox/constant';
 import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
@@ -24,49 +22,27 @@ let managerCount = 0;
 const Canvas = (): React.JSX.Element => {
   // both shape the content clone, so a change (Start Over resets them from
   // their resume values) needs a fresh manager and a re-clone
-  const { isResume, printingContentsElementIds } = usePrintAndCutStore(
-    useShallow(pick(['isResume', 'printingContentsElementIds'])),
-  );
+  const isResume = usePrintAndCutStore((state) => state.isResume);
+  const printingContentsElementIds = usePrintAndCutStore((state) => state.printingContentsElementIds);
   const [canvasManager, managerKey] = useMemo(() => {
     managerCount += 1;
 
     return [new PrintAndCutCanvasManager({ isResume, printingContentsElementIds }), managerCount] as const;
   }, [isResume, printingContentsElementIds]);
-  const {
-    alignmentTransform,
-    cameraImageUrl,
-    contourElements,
-    contourLayerName,
-    contourPathD,
-    contourSource,
-    fullBBox,
-    gridColumns,
-    gridGapMm,
-    gridRows,
-    markPositions,
-    orientation,
-    paperKey,
-    step,
-  } = usePrintAndCutStore(
-    useShallow(
-      pick([
-        'alignmentTransform',
-        'cameraImageUrl',
-        'contourElements',
-        'contourLayerName',
-        'contourPathD',
-        'contourSource',
-        'fullBBox',
-        'gridColumns',
-        'gridGapMm',
-        'gridRows',
-        'markPositions',
-        'orientation',
-        'paperKey',
-        'step',
-      ]),
-    ),
-  );
+  const alignmentTransform = usePrintAndCutStore((state) => state.alignmentTransform);
+  const cameraImageUrl = usePrintAndCutStore((state) => state.cameraImageUrl);
+  const contourElements = usePrintAndCutStore((state) => state.contourElements);
+  const contourLayerName = usePrintAndCutStore((state) => state.contourLayerName);
+  const contourPathD = usePrintAndCutStore((state) => state.contourPathD);
+  const contourSource = usePrintAndCutStore((state) => state.contourSource);
+  const fullBBox = usePrintAndCutStore((state) => state.fullBBox);
+  const gridColumns = usePrintAndCutStore((state) => state.gridColumns);
+  const gridGapMm = usePrintAndCutStore((state) => state.gridGapMm);
+  const gridRows = usePrintAndCutStore((state) => state.gridRows);
+  const markPositions = usePrintAndCutStore((state) => state.markPositions);
+  const orientation = usePrintAndCutStore((state) => state.orientation);
+  const paperKey = usePrintAndCutStore((state) => state.paperKey);
+  const step = usePrintAndCutStore((state) => state.step);
 
   useEffect(() => {
     canvasManager.setGridOffsets(getGridOffsets({ fullBBox, gridColumns, gridGapMm, gridRows }));
