@@ -12,7 +12,6 @@ import { useStlStore } from '@core/app/stores/stlStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { todo } from '@core/helpers/is-dev';
 
-import CanvasControls from './CanvasControls';
 import {
   AXIS_COLORS,
   BACKGROUND_COLOR,
@@ -226,7 +225,6 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
       >
         <Scene />
       </Canvas>
-      <CanvasControls />
     </div>
   );
 };
