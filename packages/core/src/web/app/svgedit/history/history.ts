@@ -220,66 +220,39 @@ export class ChangeElementCommand extends BaseHistoryCommand implements ICommand
 
   type = ChangeElementCommand.type;
 
-  doApply = (): void => {
-    let bChangedTransform = false;
-    const keys = Object.keys(this.newValues);
+  // Re-center a pure rotational transform after attribute changes move the bbox center.
+  // Only safe when the rotation is the whole transform: text/use elements keep scale as
+  // an extra matrix, which overwriting with a bare rotate() would destroy.
+  private relocateRotationalTransform = (): void => {
+    const tlist = svgedit.transformlist.getTransformList(this.elem);
+    const angle = svgedit.utilities.getRotationAngleFromTransformList(tlist);
 
-    for (let i = 0; i < keys.length; i += 1) {
-      const attr = keys[i];
+    if (!angle || tlist.numberOfItems !== 1) return;
 
-      if (this.newValues[attr]) {
-        if (attr === '#text') {
-          this.elem.textContent = this.newValues[attr];
-        } else if (attr === '#href') {
-          svgedit.utilities.setHref(this.elem, this.newValues[attr]);
-        } else {
-          this.elem.setAttribute(attr, this.newValues[attr]);
-        }
-      } else if (attr === '#text') {
-        this.elem.textContent = '';
-      } else {
-        this.elem.setAttribute(attr, '');
-        this.elem.removeAttribute(attr);
-      }
+    const bbox = this.elem.getBBox();
+    const cx = bbox.x + bbox.width / 2;
+    const cy = bbox.y + bbox.height / 2;
+    const rotate = `rotate(${angle} ${cx}, ${cy})`;
 
-      if (!bChangedTransform && attr === 'transform') {
-        bChangedTransform = true;
-      }
-    }
-
-    // relocate rotational transform, if necessary
-    if (!bChangedTransform) {
-      const angle = svgedit.utilities.getRotationAngle(this.elem);
-
-      if (angle) {
-        // TODO: These instances of elem either need to be declared as global
-        // (which would not be good for conflicts) or declare/use this.elem
-        const bbox = this.elem.getBBox();
-        const cx = bbox.x + bbox.width / 2;
-        const cy = bbox.y + bbox.height / 2;
-        const rotate = `rotate(${angle} ${cx}, ${cy})`;
-
-        if (rotate !== this.elem.getAttribute('transform')) {
-          this.elem.setAttribute('transform', rotate);
-        }
-      }
+    if (rotate !== this.elem.getAttribute('transform')) {
+      this.elem.setAttribute('transform', rotate);
     }
   };
 
-  doUnapply = (): void => {
+  private applyValues = (values: { [key: string]: any }): void => {
     let bChangedTransform = false;
-    const keys = Object.keys(this.oldValues);
+    const keys = Object.keys(values);
 
     for (let i = 0; i < keys.length; i += 1) {
       const attr = keys[i];
 
-      if (this.oldValues[attr]) {
+      if (values[attr]) {
         if (attr === '#text') {
-          this.elem.textContent = this.oldValues[attr];
+          this.elem.textContent = values[attr];
         } else if (attr === '#href') {
-          svgedit.utilities.setHref(this.elem, this.oldValues[attr]);
+          svgedit.utilities.setHref(this.elem, values[attr]);
         } else {
-          this.elem.setAttribute(attr, this.oldValues[attr]);
+          this.elem.setAttribute(attr, values[attr]);
         }
       } else if (attr === '#text') {
         this.elem.textContent = '';
@@ -294,19 +267,16 @@ export class ChangeElementCommand extends BaseHistoryCommand implements ICommand
 
     // relocate rotational transform, if necessary
     if (!bChangedTransform) {
-      const angle = svgedit.utilities.getRotationAngle(this.elem);
-
-      if (angle) {
-        const bbox = this.elem.getBBox();
-        const cx = bbox.x + bbox.width / 2;
-        const cy = bbox.y + bbox.height / 2;
-        const rotate = `rotate(${angle} ${cx}, ${cy})`;
-
-        if (rotate !== this.elem.getAttribute('transform')) {
-          this.elem.setAttribute('transform', rotate);
-        }
-      }
+      this.relocateRotationalTransform();
     }
+  };
+
+  doApply = (): void => {
+    this.applyValues(this.newValues);
+  };
+
+  doUnapply = (): void => {
+    this.applyValues(this.oldValues);
 
     // Remove transformlist to prevent confusion that causes bugs like 575.
     svgedit.transformlist.removeElementFromListMap(this.elem);
