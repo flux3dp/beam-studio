@@ -69,7 +69,7 @@ const askToScaleDown = (): Promise<boolean> =>
  * fit has nothing to aim at, so the model keeps its size and is centred on the work area instead.
  * That is a legitimate configuration, not an error: the user still has to fix the material setup.
  */
-const getInitialTransform = async (geometry: BufferGeometry): Promise<StlTransform> => {
+export const getInitialTransform = async (geometry: BufferGeometry): Promise<StlTransform> => {
   const size = getBaseSize(geometry).multiplyScalar(MM_TO_SCENE);
   const box = getEngravableBox();
 
@@ -99,6 +99,40 @@ const getInitialTransform = async (geometry: BufferGeometry): Promise<StlTransfo
 const yieldToUi = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const PROGRESS_ID = 'import-stl';
+
+export const insertStlGeometry = async (buffer: ArrayBuffer, geometry: BufferGeometry): Promise<void> => {
+  geometry.computeBoundingBox();
+
+  if (!geometry.boundingBox) throw new Error('Failed to read STL geometry');
+
+  const transform = await getInitialTransform(geometry);
+  const id = svgCanvas.getNextId();
+  const elem = svgCanvas.addSvgElementFromJson<SVGRectElement>({
+    attr: {
+      fill: 'none',
+      height: 0,
+      id,
+      [STL_ATTR.marker]: '1',
+      stroke: '#000',
+      width: 0,
+      x: 0,
+      y: 0,
+    },
+    element: 'rect',
+  });
+  const object = { buffer, geometry, id, initialTransform: transform, transform };
+
+  updateProjectionRect(elem, geometry, getMatrix(object), { initialTransform: transform, transform });
+  useStlStore.getState().set(object);
+  updateElementColor(elem);
+
+  const batchCmd = new history.BatchCommand('Import STL');
+
+  batchCmd.addSubCommand(new history.InsertElementCommand(elem));
+  batchCmd.onAfter = () => syncStlObjectsWithDom([object]);
+  undoManager.addCommandToHistory(batchCmd);
+  selectStlObject(id);
+};
 
 /**
  * Import an STL file as an inner engraving object.
@@ -140,39 +174,7 @@ const importStl = async (file: File): Promise<void> => {
     progressCaller.popById(PROGRESS_ID);
   }
 
-  const transform = await getInitialTransform(geometry);
-  const id = svgCanvas.getNextId();
-  const elem = svgCanvas.addSvgElementFromJson<SVGRectElement>({
-    attr: {
-      'data-stl-name': file.name,
-      fill: 'none',
-      // geometry is filled in by updateProjectionRect below
-      height: 0,
-      id,
-      [STL_ATTR.marker]: '1',
-      stroke: '#000',
-      width: 0,
-      x: 0,
-      y: 0,
-    },
-    element: 'rect',
-  });
-
-  const object = { buffer, geometry, id, initialTransform: transform, transform };
-
-  updateProjectionRect(elem, geometry, getMatrix(object), { initialTransform: transform, transform });
-  useStlStore.getState().set(object);
-  updateElementColor(elem);
-
-  const batchCmd = new history.BatchCommand('Import STL');
-
-  batchCmd.addSubCommand(new history.InsertElementCommand(elem));
-  // the mesh lives outside the DOM, so undo/redo has to add and remove it alongside the rect
-  batchCmd.onAfter = () => syncStlObjectsWithDom([object]);
-  undoManager.addCommandToHistory(batchCmd);
-
-  // one call for both halves of the selection: the mesh in the store and the rect in svgedit
-  selectStlObject(id);
+  await insertStlGeometry(buffer, geometry);
 };
 
 export default importStl;
