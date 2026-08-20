@@ -101,6 +101,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Preview',
         label: t.label.preview,
         onClick: async () => handlePreviewClick(),
+        supportedIn3D: true,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Cursor />,

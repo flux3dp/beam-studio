@@ -371,7 +371,7 @@ class PreviewModeBackgroundDrawer {
 
     this.cameraCanvasUrl = '';
     this._isFullWorkareaDrawn = false;
-    setCameraPreviewState({ isClean: true });
+    setCameraPreviewState({ backgroundUrl: '', isClean: true });
   }
 
   getCameraCanvasUrl({ useCache = true }: { useCache?: boolean } = {}): Promise<string> {
@@ -395,7 +395,7 @@ class PreviewModeBackgroundDrawer {
     }
 
     this.cameraCanvasUrl = URL.createObjectURL(blob);
-    setCameraPreviewState({ isClean: false });
+    setCameraPreviewState({ backgroundUrl: this.cameraCanvasUrl, isClean: false });
 
     setBackgroundImage(this.cameraCanvasUrl);
   };
@@ -406,7 +406,7 @@ class PreviewModeBackgroundDrawer {
     }
 
     this.cameraCanvasUrl = url;
-    setCameraPreviewState({ isClean: false });
+    setCameraPreviewState({ backgroundUrl: this.cameraCanvasUrl, isClean: false });
     setBackgroundImage(this.cameraCanvasUrl);
 
     if (opts?.loadToCanvas) {

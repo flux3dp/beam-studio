@@ -28,9 +28,12 @@ export const setMouseMode = (mode: CanvasMouseMode) => {
 };
 
 export const setCursor = (cursor: string, objectsCursor?: string) => {
+  const innerEngravingCanvas = document.getElementById('inner-engraving-canvas');
   const workarea = document.getElementById('workarea');
   const svgEditor = document.getElementById('svg_editor');
   const layers = svgEditor?.getElementsByTagName('g');
+
+  if (innerEngravingCanvas) innerEngravingCanvas.style.cursor = cursor;
 
   if (workarea) workarea.style.cursor = cursor;
 
