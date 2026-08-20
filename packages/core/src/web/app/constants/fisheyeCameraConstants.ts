@@ -156,6 +156,16 @@ export const getRegionalPoints = (
 };
 
 export const promarkPnPPoints: { [size: number]: Points } = {
+  70: [
+    [5, 5],
+    [65, 5],
+    [5, 65],
+    [65, 65],
+    [25, 25],
+    [45, 25],
+    [25, 45],
+    [45, 45],
+  ],
   110: [
     [5, 5],
     [105, 5],

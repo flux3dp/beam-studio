@@ -67,7 +67,9 @@ export const loadCameraCalibrationTask = async (model: WorkAreaModel, width: num
   };
   const { laserType, watt } = getPromarkInfo();
 
-  if (laserType === LaserType.MOPA) {
+  if (laserType === LaserType.UV) {
+    params.power = 10;
+  } else if (laserType === LaserType.MOPA) {
     if (watt === 100) {
       params.power = 20;
     }
