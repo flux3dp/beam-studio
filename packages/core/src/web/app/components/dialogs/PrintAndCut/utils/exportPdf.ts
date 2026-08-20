@@ -7,7 +7,7 @@ import { getDefaultFileName, switchSymbolWrapper } from '@core/helpers/file/expo
 import i18n from '@core/helpers/i18n';
 import { getOriginalImageHrefs, restoreOriginalColors } from '@core/helpers/image/originalColors';
 import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
-import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
+import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 import { isMac } from '@core/helpers/system-helper';
 import { convertVariableText } from '@core/helpers/variableText';
 import dialog from '@core/implementations/dialog';
@@ -54,7 +54,8 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
     state.contourSource === 'layer' && state.contourLayerName
       ? layerManager.getLayerElementByName(state.contourLayerName)
       : null;
-  const layersHtml = getContentsLayers(contourLayerElement)
+  const contentsLayers = getContentsLayers(contourLayerElement);
+  const layersHtml = contentsLayers
     .map((layer) => {
       const clone = layer.cloneNode(true) as SVGGElement;
 
@@ -65,6 +66,7 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
       return clone.outerHTML;
     })
     .join('');
+  const fontFaceCss = await buildWebFontFaceCss(contentsLayers);
   const defsClone = findDefs().cloneNode(true) as SVGDefsElement;
 
   restoreOriginalColors(defsClone, imageHrefs);
@@ -92,6 +94,7 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+      ${fontFaceCss}
       ${defsClone.outerHTML}
       <g id="print-and-cut-pdf-design">${layersHtml}</g>
       ${copiesHtml}
@@ -119,10 +122,12 @@ export const exportPrintAndCutPdf = async (): Promise<boolean> => {
   } = i18n.lang;
 
   const imageHrefs = await getOriginalImageHrefs();
-  const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
+  // text is not converted to paths: the render inlines the webfont bytes (see buildWebFontFaceCss) and
+  // resolves local fonts exactly like the canvas does, so what prints matches the contour to be cut
+  const variableTextRevert = await convertVariableText();
   const content = await switchSymbolWrapper(() => renderContentBase64(imageHrefs));
 
-  reverts.toReversed().forEach((revert) => revert?.());
+  variableTextRevert?.();
 
   if (!content) return false;
 

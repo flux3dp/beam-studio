@@ -263,17 +263,8 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
     ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
     ...document.querySelectorAll('#svg_defs text'),
   ] as SVGElement[];
+
   let isAnyFontUnsupported = false;
-
-  for (const element of texts) {
-    const { status } = await convertTextToPath(element, { parentCmd: batchCmd, pathPerChar });
-
-    if (status === ConvertResult.CANCEL_OPERATION) {
-      return { revert: () => {}, success: false };
-    }
-
-    if (status === ConvertResult.UNSUPPORT) isAnyFontUnsupported = true;
-  }
 
   /**
    * Reverts the conversion from text to paths.
@@ -286,6 +277,17 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
       renderText: textedit.renderText,
     });
   };
+
+  for (const element of texts) {
+    const { status } = await convertTextToPath(element, { parentCmd: batchCmd, pathPerChar });
+
+    // cancelling midway leaves the already-converted elements behind, so revert what batchCmd holds
+    if (status === ConvertResult.CANCEL_OPERATION) {
+      return { revert, success: false };
+    }
+
+    if (status === ConvertResult.UNSUPPORT) isAnyFontUnsupported = true;
+  }
 
   if (isAnyFontUnsupported && !alertConfig.read('skip_check_thumbnail_warning')) {
     await new Promise<void>((resolve) => {

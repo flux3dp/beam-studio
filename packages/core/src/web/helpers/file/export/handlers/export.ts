@@ -11,6 +11,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
 import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
@@ -105,10 +106,16 @@ export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
   svgCanvas.removeUnusedDefs();
 
   const getContent = async () => {
-    const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
-    const output = switchSymbolWrapper(() => svgCanvas.getSvgString());
+    const revert = await convertVariableText();
+    // the isolated <img> render cannot see the app document's webfonts, so inline their bytes
+    // instead of converting text to paths
+    const fontFaceCss = await buildWebFontFaceCss([document.getElementById('svgcontent')!]);
+    const output = switchSymbolWrapper(() => svgCanvas.getSvgString()).replace(
+      /<svg[^>]*>/,
+      (svgTag) => svgTag + fontFaceCss,
+    );
 
-    reverts.toReversed().forEach((revert) => revert?.());
+    revert?.();
     Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
 
     const { height, width } = workareaManager;
@@ -150,7 +157,7 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   const {
     topmenu: { file: lang },
   } = i18n.lang;
-  const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
+  const revert = await convertVariableText();
   const layers = layerManager
     .getAllLayers()
     .map((layer) => layer.getGroup())
@@ -158,7 +165,7 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
   const defaultFileName = getDefaultFileName();
 
-  reverts.toReversed().forEach((revert) => revert?.());
+  revert?.();
 
   const pdf = new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297);
   const getContent = () => new Blob([pdf.output('blob')], { type: 'application/pdf' });

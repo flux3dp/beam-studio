@@ -4,6 +4,14 @@ import fontHelper from '@core/helpers/fonts/fontHelper';
 import isWeb from '@core/helpers/is-web';
 import type { GoogleFont, WebFont } from '@core/interfaces/IFont';
 
+/**
+ * Raw bytes of every web font loaded so far, kept so exports can inline them as data-uri @font-face.
+ * Populated by the loaders below; call `getFontObj()` first to make sure the font went through one.
+ */
+const webFontBuffers = new Map<string, Buffer>();
+
+export const getWebFontBuffer = (postscriptName: string): Buffer | undefined => webFontBuffers.get(postscriptName);
+
 export const loadGoogleFont = async (font: GoogleFont): Promise<Font | undefined> => {
   if (!font.binaryLoader) {
     throw new Error('Google Font binary loader is not available.');
@@ -23,6 +31,8 @@ export const loadGoogleFont = async (font: GoogleFont): Promise<Font | undefined
   if (buffer.length === 0) {
     throw new Error(`Buffer is empty for font ${font.family}`);
   }
+
+  webFontBuffers.set(font.postscriptName, buffer);
 
   // Check font signature for debugging
   const signature = buffer.subarray(0, 4).toString('hex');
@@ -99,6 +109,9 @@ export const loadWebFont = async (font: WebFont): Promise<Font | undefined> => {
 
   const response = await fetch(url, { mode: 'cors' });
   const buffer = Buffer.from(await response.arrayBuffer());
+
+  webFontBuffers.set(postscriptName!, buffer);
+
   const fontCollection = create(buffer);
 
   // Handle both single fonts and font collections (.ttc)

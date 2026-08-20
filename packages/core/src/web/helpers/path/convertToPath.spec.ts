@@ -380,8 +380,12 @@ describe('convertToPath', () => {
       expect(success).toBe(false);
       // Stops at the cancelled element; the third text is never processed.
       expect(mockFontFuncsConvertTextToPath).toHaveBeenCalledTimes(2);
-      // Revert is a no-op on the cancel path (nothing to undo).
-      expect(() => revert()).not.toThrow();
+
+      // Revert undoes the elements converted before the cancel, so nothing is left half-converted.
+      const { parentCmd } = mockHandleHistoryActionOptions.mock.calls[0][1];
+
+      revert();
+      expect(parentCmd.unapply).toHaveBeenCalledTimes(1);
     });
 
     test('shows the font-substitution thumbnail warning when a font is unsupported and not skipped', async () => {

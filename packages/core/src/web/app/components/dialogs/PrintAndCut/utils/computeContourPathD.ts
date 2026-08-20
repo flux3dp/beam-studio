@@ -9,6 +9,7 @@ import type { Path } from '@core/helpers/clipper/offset/constants';
 import { ARC_TOLERANCE, MITER_LIMIT, SCALE_FACTOR } from '@core/helpers/clipper/offset/constants';
 import { switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
 import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
+import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 
 import { getContentsLayers } from './contentsLayers';
 
@@ -79,8 +80,12 @@ const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null>
   // serialization must happen inside switchSymbolWrapper: image symbols use blob
   // urls that cannot load in a standalone svg string, so uses are switched to the
   // original vector symbols while the string is built
+  const contentsLayers = getContentsLayers();
+  // the traced silhouette becomes the cut path, so the raster has to use the same faces the
+  // canvas does: the isolated <img> render cannot see the app document's webfonts
+  const fontFaceCss = await buildWebFontFaceCss(contentsLayers);
   const canvas = await switchSymbolWrapper(() => {
-    const layersHtml = getContentsLayers()
+    const layersHtml = contentsLayers
       .map((layerGroup) => {
         const clone = layerGroup.cloneNode(true) as SVGGElement;
 
@@ -98,6 +103,7 @@ const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null>
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+      ${fontFaceCss}
       ${findDefs().outerHTML}
       ${layersHtml}
     </svg>`;
