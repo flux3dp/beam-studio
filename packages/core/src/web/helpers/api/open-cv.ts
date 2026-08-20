@@ -84,7 +84,8 @@ class OpenCVWebSocket extends EventEmitter {
       this.once('open', onOpen);
     });
 
-  async uploadUrl(url: string): Promise<{ [key: string]: string }> {
+  /** Only used by `sharpen`, from inside its queue slot: enqueueing this too would deadlock. */
+  private async uploadUrl(url: string): Promise<{ [key: string]: string }> {
     const resp = await fetch(url);
     const blob = await resp.blob();
     const data = await blob.arrayBuffer();
@@ -93,7 +94,7 @@ class OpenCVWebSocket extends EventEmitter {
     return res;
   }
 
-  upload(data: ArrayBuffer, url: string): Promise<{ [key: string]: string }> {
+  private upload(data: ArrayBuffer, url: string): Promise<{ [key: string]: string }> {
     return new Promise((resolve, reject) => {
       this.removeCommandListeners();
       this.setDefaultErrorResponse(reject);
@@ -189,35 +190,41 @@ class OpenCVWebSocket extends EventEmitter {
     });
   }
 
-  sharpen(imgUrl: string, sharpness: number, radius: number): Promise<Blob> {
-    return new Promise((resolve, reject) => {
-      this.removeCommandListeners();
+  async sharpen(imgUrl: string, sharpness: number, radius: number): Promise<Blob> {
+    // shares the socket with the other commands, so it has to take its turn: `removeCommandListeners`
+    // is global, and running alongside an in-flight command would strand that command's listeners
+    return this.enqueue(async () => {
+      await this.waitForOpen();
 
-      const setMessageHandler = () => {
-        this.setDefaultErrorResponse(reject);
-        this.setDefaultFatalResponse(reject);
-        this.on('message', async (response) => {
-          if (response.status === 'continue') {
-            this.emit('message', response);
-          } else if (response.status === 'need_upload') {
-            try {
-              await this.uploadUrl(imgUrl);
-            } catch (error) {
-              reject(error);
+      return new Promise<Blob>((resolve, reject) => {
+        this.removeCommandListeners();
+
+        const setMessageHandler = () => {
+          this.setDefaultErrorResponse(reject);
+          this.setDefaultFatalResponse(reject);
+          this.on('message', async (response) => {
+            if (response.status === 'continue') {
+              this.emit('message', response);
+            } else if (response.status === 'need_upload') {
+              try {
+                await this.uploadUrl(imgUrl);
+              } catch (error) {
+                reject(error);
+              }
+              setMessageHandler();
+              this.ws.send(`sharpen ${imgUrl} ${sharpness} ${radius}`);
             }
-            setMessageHandler();
-            this.ws.send(`sharpen ${imgUrl} ${sharpness} ${radius}`);
-          }
 
-          if (response instanceof Blob) {
-            this.removeCommandListeners();
-            resolve(response);
-          }
-        });
-      };
+            if (response instanceof Blob) {
+              this.removeCommandListeners();
+              resolve(response);
+            }
+          });
+        };
 
-      setMessageHandler();
-      this.ws.send(`sharpen ${imgUrl} ${sharpness} ${radius}`);
+        setMessageHandler();
+        this.ws.send(`sharpen ${imgUrl} ${sharpness} ${radius}`);
+      });
     });
   }
 }
