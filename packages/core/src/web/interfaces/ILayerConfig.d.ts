@@ -67,7 +67,6 @@ type SCurveConfigs = {
 type PrintingConfig = {
   amAngleMap: Record<'c' | 'k' | 'm' | 'y', number> | undefined;
   amDensity: number;
-  /** print the black channel with cyan, magenta and yellow instead of black ink */
   blendKWithCmy: boolean;
   colorCurvesMap: Record<'c' | 'k' | 'm' | 'y', number[]> | undefined;
   cRatio: number;
