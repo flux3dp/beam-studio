@@ -91,10 +91,9 @@ const handleRgb = async (rgbBlob: Blob, colorType: 'cmy' | 'rgb'): Promise<Parti
 };
 
 /**
- * Fold the black channel into cyan, magenta and yellow so nothing is left for the black nozzle.
- * fluxghost >= 2.5.6 already separates without black when asked for 'cmy', this covers older
- * backends and the cmyk blobs. Channels are inverted, 255 means no ink, so folding black into a
- * channel is subtracting its ink. Mutates channelDatas and empty.
+ * Fold K into CMY so nothing is left for the black nozzle. Channels are inverted, 255 means no ink,
+ * so folding is subtracting K's ink from each channel. Mutates channelDatas and empty.
+ * Only needed for fluxghost < 2.5.6, which has no cmy color type.
  */
 export const foldBlackIntoCmy = (channelDatas: Uint8ClampedArray[], empty: boolean[]): void => {
   const [kData, ...cmyData] = channelDatas;
@@ -115,6 +114,7 @@ export const foldBlackIntoCmy = (channelDatas: Uint8ClampedArray[], empty: boole
     }
   }
 
+  // the folded channels may have been blank, an empty one would be dropped as null
   if (folded) empty.fill(false, 1);
 
   empty[0] = true;
@@ -134,6 +134,7 @@ const splitColor = async (
 ): Promise<Array<{ color: PrintingColors; data: Blob | null }>> => {
   const { blendKWithCmy = false, includeWhite = false } = opts;
   const rgbRes = await handleRgb(rgbBlob, blendKWithCmy ? 'cmy' : 'rgb');
+
   const channelDatas: Uint8ClampedArray[] = [null, null, null, null] as any; // null as placeholder
   let width: number = 0;
   let height: number = 0;

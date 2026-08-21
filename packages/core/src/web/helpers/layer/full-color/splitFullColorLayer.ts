@@ -62,11 +62,13 @@ const splitFullColorLayer = async (
   });
 
   const is4c = layerModule === LayerModule.PRINTER_4C;
+  const blendKWithCmy = getData(layer, 'blendKWithCmy');
   const uses = [...layer.querySelectorAll('use')];
 
   uses.forEach((use) => symbolMaker.switchImageSymbol(use as SVGUseElement, false));
 
   const { bbox, cmykBlob, rgbBlob } = await layerToImage(layer as SVGGElement, {
+    blendKWithCmy,
     dpmm: is4c ? 600 / 25.4 : 300 / 25.4,
     isFullColor: true,
   });
@@ -81,7 +83,6 @@ const splitFullColorLayer = async (
 
   const whiteInkSaturation = getData(layer, 'wInk')!;
   const includeWhite = isDev() && whiteInkSaturation > 0;
-  const blendKWithCmy = getData(layer, 'blendKWithCmy');
   const colorData = await splitColor(rgbBlob, cmykBlob, { blendKWithCmy, includeWhite });
 
   const createImage = (blob: Blob) => {
