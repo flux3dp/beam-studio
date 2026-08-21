@@ -6,16 +6,18 @@ const initBackendEvents = (): void => {
     window.FLUX.ghostPort = status.port;
     window.FLUX.logFile = status.logFile;
     window.FLUX.backendAlive = status.alive;
+    window.FLUX.backendFailed = false;
     console.log(`Backend start at ${status.port}`);
   });
 
   communicator.on(
     BackendEvents.NotifyBackendStatus,
-    (_: any, status: { backend: { alive: boolean; logFile: any; port: number } }) => {
+    (_: any, status: { backend: { alive: boolean; failedToStart?: boolean; logFile: any; port: number } }) => {
       console.log(status);
       window.FLUX.ghostPort = status.backend.port;
       window.FLUX.logFile = status.backend.logFile;
       window.FLUX.backendAlive = status.backend.alive;
+      window.FLUX.backendFailed = Boolean(status.backend.failedToStart);
 
       if (status.backend.alive) {
         console.log(`Backend ready at ${status.backend.port}`);

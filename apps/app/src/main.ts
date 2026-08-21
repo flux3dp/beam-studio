@@ -27,6 +27,8 @@ declare global {
     FLUX: {
       allowTracking: boolean;
       backendAlive: boolean;
+      /** Backend exited without ever coming up: waiting longer will not help. */
+      backendFailed?: boolean;
       debug: boolean;
       dev: boolean;
       ghostPort: number;
