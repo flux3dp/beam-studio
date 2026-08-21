@@ -21,6 +21,7 @@ declare global {
     FLUX: {
       allowTracking: boolean;
       backendAlive: boolean;
+      backendFailed?: boolean;
       debug: boolean;
       dev: boolean;
       ghostPort: number;
