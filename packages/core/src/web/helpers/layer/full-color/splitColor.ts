@@ -1,11 +1,11 @@
 import { PrintingColors } from '@core/app/constants/color-constants';
 import getUtilWS from '@core/helpers/api/utils-ws';
 
-const handleRgb = async (rgbBlob: Blob): Promise<Partial<Record<PrintingColors, string>>> => {
+const handleRgb = async (rgbBlob: Blob, colorType: 'cmy' | 'rgb'): Promise<Partial<Record<PrintingColors, string>>> => {
   const utilWS = getUtilWS();
 
   try {
-    const { c, k, m, y } = await utilWS.splitColor(rgbBlob, { colorType: 'rgb' });
+    const { c, k, m, y } = await utilWS.splitColor(rgbBlob, { colorType });
 
     return {
       [PrintingColors.BLACK]: k,
@@ -91,6 +91,36 @@ const handleRgb = async (rgbBlob: Blob): Promise<Partial<Record<PrintingColors, 
 };
 
 /**
+ * Fold the black channel into cyan, magenta and yellow so nothing is left for the black nozzle.
+ * fluxghost >= 2.5.6 already separates without black when asked for 'cmy', this covers older
+ * backends and the cmyk blobs. Channels are inverted, 255 means no ink, so folding black into a
+ * channel is subtracting its ink. Mutates channelDatas and empty.
+ */
+export const foldBlackIntoCmy = (channelDatas: Uint8ClampedArray[], empty: boolean[]): void => {
+  const [kData, ...cmyData] = channelDatas;
+  let folded = false;
+
+  for (let i = 0; i < kData.length; i += 4) {
+    const kInk = kData[i + 3] === 0 ? 0 : 255 - kData[i];
+
+    if (!kInk) continue;
+
+    folded = true;
+
+    for (const channel of cmyData) {
+      channel[i] = Math.max(0, (channel[i + 3] === 0 ? 255 : channel[i]) - kInk);
+      channel[i + 1] = channel[i];
+      channel[i + 2] = channel[i];
+      channel[i + 3] = 255;
+    }
+  }
+
+  if (folded) empty.fill(false, 1);
+
+  empty[0] = true;
+};
+
+/**
  * split img into desired color channels, return null if empty
  */
 // TODO: add unit test
@@ -98,11 +128,12 @@ const splitColor = async (
   rgbBlob: Blob,
   cmykBlob?: { c: Blob; k: Blob; m: Blob; y: Blob },
   opts: {
+    blendKWithCmy?: boolean;
     includeWhite?: boolean;
   } = {},
 ): Promise<Array<{ color: PrintingColors; data: Blob | null }>> => {
-  const { includeWhite = false } = opts;
-  const rgbRes = await handleRgb(rgbBlob);
+  const { blendKWithCmy = false, includeWhite = false } = opts;
+  const rgbRes = await handleRgb(rgbBlob, blendKWithCmy ? 'cmy' : 'rgb');
   const channelDatas: Uint8ClampedArray[] = [null, null, null, null] as any; // null as placeholder
   let width: number = 0;
   let height: number = 0;
@@ -221,6 +252,8 @@ const splitColor = async (
       }
     }
   }
+
+  if (blendKWithCmy) foldBlackIntoCmy(channelDatas, empty);
 
   const canvas = document.createElement('canvas');
 

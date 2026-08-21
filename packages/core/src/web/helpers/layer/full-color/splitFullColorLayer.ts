@@ -81,7 +81,8 @@ const splitFullColorLayer = async (
 
   const whiteInkSaturation = getData(layer, 'wInk')!;
   const includeWhite = isDev() && whiteInkSaturation > 0;
-  const colorData = await splitColor(rgbBlob, cmykBlob, { includeWhite });
+  const blendKWithCmy = getData(layer, 'blendKWithCmy');
+  const colorData = await splitColor(rgbBlob, cmykBlob, { blendKWithCmy, includeWhite });
 
   const createImage = (blob: Blob) => {
     const imgUrl = URL.createObjectURL(blob);
