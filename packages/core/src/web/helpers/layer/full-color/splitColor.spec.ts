@@ -18,14 +18,14 @@ describe('foldBlackIntoCmy', () => {
     expect(empty).toEqual([true, false, false, false]);
   });
 
-  it('adds to the ink already there and clamps at full ink', () => {
+  it('combines with the ink already there the way two inks overlap', () => {
     const channels = [channel(55, 255), channel(200, 255), channel(0, 255), channel(255, 0)];
     const empty = [false, false, false, true];
 
     foldBlackIntoCmy(channels, empty);
 
-    expect([...channels[1]]).toEqual([0, 0, 0, 255]); // 55 of ink + 200 clamps to full
-    expect([...channels[2]]).toEqual([0, 0, 0, 255]); // already full
+    expect([...channels[1]]).toEqual([43, 43, 43, 255]); // 55 and 200 of ink cover 212 together
+    expect([...channels[2]]).toEqual([0, 0, 0, 255]); // already full ink
     expect([...channels[3]]).toEqual([55, 55, 55, 255]);
   });
 

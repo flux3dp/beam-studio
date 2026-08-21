@@ -92,7 +92,8 @@ const handleRgb = async (rgbBlob: Blob, colorType: 'cmy' | 'rgb'): Promise<Parti
 
 /**
  * Fold K into CMY so nothing is left for the black nozzle. Channels are inverted, 255 means no ink,
- * so folding is subtracting K's ink from each channel. Mutates channelDatas and empty.
+ * so folding adds K's ink to each channel, the way two inks overlap on paper rather than stacking.
+ * Mutates channelDatas and empty.
  * Only needed for fluxghost < 2.5.6, which has no cmy color type.
  */
 export const foldBlackIntoCmy = (channelDatas: Uint8ClampedArray[], empty: boolean[]): void => {
@@ -107,7 +108,10 @@ export const foldBlackIntoCmy = (channelDatas: Uint8ClampedArray[], empty: boole
     folded = true;
 
     for (const channel of cmyData) {
-      channel[i] = Math.max(0, (channel[i + 3] === 0 ? 255 : channel[i]) - kInk);
+      const ink = channel[i + 3] === 0 ? 0 : 255 - channel[i];
+      const combined = ink + kInk - (ink * kInk) / 255;
+
+      channel[i] = 255 - combined;
       channel[i + 1] = channel[i];
       channel[i + 2] = channel[i];
       channel[i + 3] = 255;
