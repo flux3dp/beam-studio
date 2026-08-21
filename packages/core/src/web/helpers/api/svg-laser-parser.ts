@@ -173,7 +173,9 @@ export const getExportOpt = async (
         }
       }
 
-      config.prespray = [x, y - minY, w, h];
+      if (documentState['enable-4c-prespray-area']) {
+        config.prespray = [x, y - minY, w, h];
+      }
     } else if (model === 'ado1') {
       config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y - minY, w, h];
     }

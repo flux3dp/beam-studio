@@ -73,6 +73,7 @@ describe('test canvas/prespray-area', () => {
     mockGetExpansion.mockReturnValue([0, 0]);
     mockRequestAnimationFrame.mockImplementation((cb) => cb());
     mockGetState.mockReturnValue({
+      'enable-4c-prespray-area': true,
       'enable-job-origin': false,
       rotary_mode: false,
     });
@@ -95,6 +96,7 @@ describe('test canvas/prespray-area', () => {
     mockGetModel.mockReturnValue('fbm2');
     setHasModuleLayer(LayerModule.PRINTER_4C);
     mockGetState.mockReturnValue({
+      'enable-4c-prespray-area': true,
       'enable-job-origin': false,
       rotary_mode: false,
     });
@@ -107,6 +109,7 @@ describe('test canvas/prespray-area', () => {
 
   test('hide prespray area when rotary mode is on', () => {
     mockGetState.mockReturnValue({
+      'enable-4c-prespray-area': true,
       'enable-job-origin': false,
       rotary_mode: true,
     });
@@ -162,6 +165,7 @@ describe('test canvas/prespray-area', () => {
     setHasModuleLayer(LayerModule.PRINTER_4C);
     mockGetModel.mockReturnValue('fbm2');
     mockGetState.mockReturnValue({
+      'enable-4c-prespray-area': true,
       'enable-job-origin': false,
       rotary_mode: false,
     });
