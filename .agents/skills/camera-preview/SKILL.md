@@ -12,6 +12,7 @@ Store: `packages/core/src/web/app/stores/cameraPreview.ts`
 Entry/mode helpers: `packages/core/src/web/helpers/device/camera/previewMode.ts`
 Exposure: `packages/core/src/web/helpers/device/camera/cameraExposure.ts`
 UI: `components/beambox/SvgEditor/PreviewFloatingBar.tsx` (mode buttons), `PreviewSlider.tsx` (exposure)
+Region indicator: `packages/core/src/web/app/actions/canvas/preview-region-indicator.ts`
 
 ## Overview
 
@@ -72,6 +73,49 @@ Zustand + `subscribeWithSelector`. Fields: `isPreviewMode`, `isStarting`, `isDra
 - `previewCameraIndex` — physical camera used by the current mode, mirrored from the
   manager's optional `currentCameraIndex` (see Exposure below). `undefined` for
   single-camera managers.
+
+## Capture messages
+
+`previewRegionFromPoints` (batch) shows a `capturing_image i/n` counter and passes
+`silent: true` down to each per-point `preview()` call. Single-shot region captures
+(`RegionPreviewMixin.regionPreviewAtPoint`, `BeamPreviewManager.preview`) show
+`capturing_image` + `succeeded` themselves unless `silent` is set. All messages share the
+manager's `progressId` as Ant Design message key, so they replace each other — a
+non-silent per-point message would stomp the batch counter.
+
+## Preview region indicator
+
+`preview-region-indicator.ts` draws a dashed rect (`#previewRegionIndicator` in
+`#fixedSizeSvg`, canvas px) showing the single-shot capture footprint while hovering in
+`preview`/`pre_preview` mouse modes with mode REGION/PRECISE_REGION. Called from
+`mouse/index.ts` mouseMove (`!started` block); hidden on drag start and, via the
+`mouseMode.ts` store subscription, when the mouse mode leaves preview.
+
+- Cached `config` = footprint size + clamp bounds for the capture **center**.
+  Recomputed only by subscriptions: cameraPreview store
+  `[previewMode, pendingPreviewMode, isPreviewMode, supportedPreviewModes]`
+  (`supportedPreviewModes` is what fires on pre-preview entry; `isPreviewMode` swaps
+  ideal → live calibration) and canvas `canvas-change` (workarea/model switch).
+  Mouse move only clamps and moves the rect.
+- Grid models (`fbb2`/`fhx2rf`/`fbm2`): size from `getRegionPreviewGrid`
+  (`fisheyeCameraConstants.ts` — **mirrors** `RegionPreviewMixin`'s constructor and
+  `Bb2Hx2PreviewManager.switchPreviewMode` grid choice; keep in sync); footprint clamped
+  inside workarea ⇔ center ≥ half-footprint from edges.
+- Legacy Beam: square of side `imgHeight × scaleRatioY / (cos θ + sin θ)`; center clamped
+  like `constrainPreviewXY` (footprint may overhang edges). Live `getCameraOffset()` when
+  previewing, ideal camera constants in pre-preview.
+- Model source: `previewModeController.currentDevice` when `isPreviewMode`, else
+  `workareaManager.model`. `ado1`/promark (full-area only) show no indicator.
+
+## Stale supportedPreviewModes
+
+`supportedPreviewModes` is a snapshot of async device checks taken in
+`handlePreviewClick` (via `updateSupportedPreviewModes(device)` in `previewMode.ts`).
+A `SET_SELECTED_DEVICE` (top-bar emitter) listener re-runs it when the user switches
+device **while in `pre_preview`** — it must `deviceMaster.select(device)` first so the
+camera/setting queries hit the new machine, and it uses the event payload (not
+`getDevice()`, whose backing React state updates asynchronously). Active preview is
+excluded: a running session keeps its manager's modes.
 
 ## Mode switching
 
