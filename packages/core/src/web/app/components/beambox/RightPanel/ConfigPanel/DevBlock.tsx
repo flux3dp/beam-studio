@@ -39,7 +39,7 @@ const DevBlock = ({ type = 'default' }: Props): React.ReactNode => {
   const contents = [];
 
   if (isPrinting && fullcolor.value) {
-    contents.push(<WhiteInkCheckbox key="white-ink-checkbox" type={type} />, <BlendKWithCmyBlock key="blend-k" />);
+    contents.push(<WhiteInkCheckbox key="white-ink-checkbox" type={type} />, <BlendKWithCmyBlock key="blend-k" type={type} />);
   }
 
   if (isCustomBacklashEnabled) contents.push(<Backlash key="backlash" type={type} />);

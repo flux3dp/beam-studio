@@ -12,13 +12,15 @@ import { writeData } from '@core/helpers/layer/layer-config-helper';
 import styles from './Block.module.scss';
 import initState from './initState';
 
-const BlendKWithCmyBlock = (): React.JSX.Element => {
+const BlendKWithCmyBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const { blendKWithCmy, change } = useConfigPanelStore();
 
   const handleToggle = () => {
     const newValue = !blendKWithCmy.value;
 
     change({ blendKWithCmy: newValue });
+
+    if (type === 'modal') return;
 
     const batchCmd = new history.BatchCommand('Change blend K with CMY');
 
