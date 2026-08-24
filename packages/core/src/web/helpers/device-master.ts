@@ -37,6 +37,7 @@ import { discoverManager } from './api/discover';
 import { swiftrayClient } from './api/swiftray-client';
 import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';
+import { showBb2FirmwareWarning } from './device/bb2FirmwareWarning';
 import promarkDataStore from './device/promark/promark-data-store';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
@@ -319,6 +320,10 @@ class DeviceMaster {
     // Check not in any sub-mode
     if (res.success && res.isDeviceChanged && !this.currentDevice?.control?.getMode()) {
       await tryMachineLinking(deviceInfo);
+
+      if (deviceInfo.model === 'fbb2') {
+        await showBb2FirmwareWarning(deviceInfo);
+      }
     }
 
     return res;

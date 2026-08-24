@@ -70,7 +70,8 @@ exports[`test OffsetSettings should render correctly with printer module 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Printer Module Offset Settings
                     </div>

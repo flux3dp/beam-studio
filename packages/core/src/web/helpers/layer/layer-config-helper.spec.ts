@@ -1,3 +1,6 @@
+import fs from 'fs';
+import path from 'path';
+
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -326,4 +329,16 @@ describe('test layer-config-helper', () => {
     expect(baseConfig.ink).toEqual(1);
     expect(baseConfig.wInk).toEqual(-4);
   });
+});
+
+// sanitizeSvg strips any attribute on <g> that is not whitelisted, so a layer config
+// attribute missing from that list is silently lost when the file is reopened.
+test('every layer config attribute is whitelisted in sanitize.js', () => {
+  const read = (p: string) => fs.readFileSync(path.join(__dirname, p), 'utf8');
+  const dataAttrs = (source: string) => [...source.matchAll(/'(data-[A-Za-z0-9-]+)'/g)].map(([, attr]) => attr);
+  const sanitize = read('../../../../public/js/lib/svgeditor/sanitize.js');
+  const gWhiteList = sanitize.slice(sanitize.indexOf('    g: ['), sanitize.indexOf('    image: ['));
+  const whitelisted = new Set(dataAttrs(gWhiteList));
+
+  expect(dataAttrs(read('./layer-config-helper.ts')).filter((attr) => !whitelisted.has(attr))).toEqual([]);
 });

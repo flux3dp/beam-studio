@@ -166,6 +166,11 @@ export interface ILang {
       autofocus2: string;
       camera_preview_borderless_mode: string;
       curve_engraving: string;
+      firmware_warning: {
+        message: string;
+        remindLater: string;
+        updateNow: string;
+      };
       pass_through: string;
       rotary: string;
     };
@@ -784,6 +789,12 @@ export interface ILang {
         stepwise_focusing: string;
         stepwise_focusing_desc: string;
         strength: string;
+        texture: string;
+        texture_angle: string;
+        texture_intensity: string;
+        texture_interval: string;
+        texture_random: string;
+        texture_stripe: string;
         times: string;
         various_preset: string;
         white_ink: string;
@@ -2091,6 +2102,7 @@ export interface ILang {
     HARDWARE_ERROR_KEY_OFF: string;
     HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: string;
     HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: string;
+    HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: string;
     HARDWARE_ERROR_MAINBOARD_ERROR: string;
     HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: string;
     HARDWARE_ERROR_OVER_TEMPERATURE: string;

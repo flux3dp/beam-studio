@@ -302,6 +302,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
           initExposure={exposure}
           initialPoints={calibratingParam.current.imgPoints1?.[region]}
           initInterestArea={interestArea}
+          initPoseWithDefaultPoints={isAdvanced && solvePnPStep === 0}
           label={['A', 'B', 'C', 'D'][solvePnPStep]}
           onBack={prev}
           onClose={onClose}

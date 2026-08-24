@@ -73,7 +73,7 @@ describe('test canvas/prespray-area', () => {
     mockGetExpansion.mockReturnValue([0, 0]);
     mockRequestAnimationFrame.mockImplementation((cb) => cb());
     mockGetState.mockReturnValue({
-      'enable-4c-prespray-area': false,
+      'enable-4c-prespray-area': true,
       'enable-job-origin': false,
       rotary_mode: false,
     });
@@ -109,6 +109,7 @@ describe('test canvas/prespray-area', () => {
 
   test('hide prespray area when rotary mode is on', () => {
     mockGetState.mockReturnValue({
+      'enable-4c-prespray-area': true,
       'enable-job-origin': false,
       rotary_mode: true,
     });
@@ -170,17 +171,17 @@ describe('test canvas/prespray-area', () => {
     });
     document.body.innerHTML = '<svg id="fixedSizeSvg"></svg>';
     presprayArea.generatePresprayArea();
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 4197, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 0, y: 0 });
     presprayArea.startDrag();
     presprayArea.drag(-1000, -1000);
     // Y should remain at 0 for PRINTER_4C
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 3197, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 0, y: 0 });
     presprayArea.drag(-3000, -3000);
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 1197, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 0, y: 0 });
     presprayArea.startDrag();
     presprayArea.drag(100, 100);
     // Y should still remain at 0
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 1297, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 100, y: 0 });
     presprayArea.drag(10000, 10000);
     expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 4197, y: 0 });
     presprayArea.endDrag();

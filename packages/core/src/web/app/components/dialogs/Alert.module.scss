@@ -21,9 +21,8 @@ $icon-margin: 8px;
 
   .message {
     font-family:
-      'Helvetica Neue', 'HelveticaNeue-Light', 'Helvetica Neue Light',
-      Helvetica, Arial, 'Lucida Grande', sans-serif, 'Microsoft JhengHei',
-      '微軟正黑體';
+      'Helvetica Neue', 'HelveticaNeue-Light', 'Helvetica Neue Light', Helvetica, Arial, 'Lucida Grande', sans-serif,
+      'Microsoft JhengHei', '微軟正黑體';
     margin: 0;
     padding: 0;
     position: relative;
@@ -69,7 +68,7 @@ $icon-margin: 8px;
     margin-top: 10px;
     width: 100%;
     padding: 0 5%;
-    max-height: 50vh;
+    @include mixins.viewport-size(50, $property: max-height);
   }
 }
 

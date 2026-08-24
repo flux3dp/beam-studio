@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .container {
   display: flex;
   flex-direction: column;
@@ -16,7 +18,7 @@
 
   .content {
     width: 100%;
-    min-height: 40vh;
+    @include mixins.viewport-size(40, $property: min-height);
   }
 
   .left {
@@ -31,13 +33,13 @@
 
   .imgContainer {
     position: relative;
-    height: calc(100vh - 350px);
+    @include mixins.viewport-size($offset: 350px);
     display: flex;
     justify-content: center;
     align-items: center;
 
     img {
-      height: calc(100vh - 350px);
+      @include mixins.viewport-size($offset: 350px);
     }
 
     .spinner {

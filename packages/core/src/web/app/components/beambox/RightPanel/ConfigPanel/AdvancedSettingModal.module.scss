@@ -15,7 +15,16 @@
     .input {
       @include mixins.input;
     }
+
+    span .hint {
+      margin-left: 7px;
+    }
   }
+}
+
+.subtitle {
+  margin-top: 20px;
+  font-weight: 600;
 }
 
 .hint {

@@ -16,6 +16,7 @@ import DeviceMaster from '../device-master';
 
 import { setDefaultDelayTable } from './defaultDelayTable';
 import showResizeAlert from './fit-device-workarea-alert';
+import { initPromarkInfo } from './promark/promark-info';
 
 const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | null; isWorkareaMatched?: boolean }> => {
   const currentDevice = TopBarController.getSelectedDevice();
@@ -83,11 +84,9 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
 
       if (res.success) {
         if (promarkModels.has(model)) {
+          initPromarkInfo(device.serial);
           storage.set('last-promark-serial', device.serial);
-
-          const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
-
-          canvasEvents.emit('document-settings-saved');
+          eventEmitterFactory.createEventEmitter('canvas').emit('promark-info-changed');
         } else if (model === 'fhx2rf') {
           await setDefaultDelayTable(device);
         }

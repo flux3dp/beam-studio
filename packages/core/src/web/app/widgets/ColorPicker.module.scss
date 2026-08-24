@@ -59,8 +59,7 @@
   }
 
   &.with-clear {
-    :global(.ant-color-picker-panel)
-      :global(.ant-color-picker-slider-container) {
+    :global(.ant-color-picker-panel) :global(.ant-color-picker-slider-container) {
       margin-left: 40px;
       height: 30px;
       :global(.ant-color-picker-color-block) {

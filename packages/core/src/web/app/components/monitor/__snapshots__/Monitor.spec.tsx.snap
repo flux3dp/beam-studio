@@ -70,7 +70,8 @@ exports[`test Monitor should display uploading when has upload progress 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       device - uploading
                     </div>
@@ -355,7 +356,8 @@ exports[`test Monitor should render correctly 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       device - undefined
                     </div>
@@ -640,7 +642,8 @@ exports[`test Monitor should render correctly when isNorthAmerica 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       device - undefined
                     </div>

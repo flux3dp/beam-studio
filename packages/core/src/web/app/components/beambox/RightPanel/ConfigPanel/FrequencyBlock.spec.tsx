@@ -6,11 +6,21 @@ import MockNumberBlock from '@mocks/@core/app/components/beambox/RightPanel/Conf
 
 jest.mock('./NumberBlock', () => MockNumberBlock);
 
+const mockUsePromarkLimit = jest.fn();
+
+jest.mock('./usePromarkLimit', () => mockUsePromarkLimit);
+
 import FrequencyBlock from './FrequencyBlock';
 
 describe('test FrequencyBlock', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   it('should render correctly', () => {
-    const { container } = render(<FrequencyBlock max={60} min={27} />);
+    mockUsePromarkLimit.mockReturnValue({ frequency: { max: 60, min: 27 } });
+
+    const { container } = render(<FrequencyBlock />);
 
     expect(container).toMatchSnapshot();
   });

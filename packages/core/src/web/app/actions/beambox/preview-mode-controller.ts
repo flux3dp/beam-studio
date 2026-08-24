@@ -125,7 +125,7 @@ class PreviewModeController {
 
   async start(device: IDeviceInfo) {
     this.startPromise = (async () => {
-      this.reset();
+      this.reset({ keepPendingPreviewMode: true });
       this.setIsStarting(true);
 
       const res = await deviceMaster.select(device);
@@ -164,6 +164,7 @@ class PreviewModeController {
         this.setIsPreviewMode(true);
 
         setCameraPreviewState({
+          previewCameraIndex: this.previewManager.currentCameraIndex,
           previewMode: this.previewManager.previewMode,
           supportedPreviewModes: this.previewManager.supportedPreviewModes,
         });
@@ -388,11 +389,15 @@ class PreviewModeController {
     return this.previewManager?.getCameraOffsetStandard?.() || null;
   }
 
-  async reset() {
+  async reset({ keepPendingPreviewMode = false }: { keepPendingPreviewMode?: boolean } = {}) {
     this.previewManager = null;
     this.currentDevice = null;
     this.setIsPreviewMode(false);
-    setCameraPreviewState({ pendingPreviewMode: undefined, previewMode: PreviewMode.REGION });
+    setCameraPreviewState({
+      previewCameraIndex: undefined,
+      previewMode: PreviewMode.REGION,
+      ...(keepPendingPreviewMode ? {} : { pendingPreviewMode: undefined }),
+    });
     this.isPreviewBlocked = false;
     deviceMaster.disconnectCamera();
   }
@@ -413,7 +418,7 @@ class PreviewModeController {
 
     const newMode = await this.previewManager.switchPreviewMode(mode);
 
-    setCameraPreviewState({ previewMode: newMode });
+    setCameraPreviewState({ previewCameraIndex: this.previewManager.currentCameraIndex, previewMode: newMode });
   };
 }
 

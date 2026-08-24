@@ -1,3 +1,4 @@
+@use '@core/styles/mixins' as mixins;
 @use '../shared/styles/variables' as *;
 
 .modal-wrap {
@@ -17,7 +18,7 @@
     padding: 0;
     display: flex;
     height: 520px;
-    max-height: calc(80vh - 120px);
+    @include mixins.viewport-size(80, 120px, max-height);
     overflow: hidden !important; // Override scrollableContent's overflow:auto - we want scroll in .content only
   }
 

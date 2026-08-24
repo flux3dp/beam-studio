@@ -70,7 +70,8 @@ exports[`test RotarySettings promark rotary settings 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Rotary Setup
                     </div>
@@ -569,7 +570,8 @@ exports[`test RotarySettings should render correctly 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Rotary Setup
                     </div>

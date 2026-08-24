@@ -12,83 +12,12 @@ import { isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import type { ExampleFileKey } from '@core/helpers/menubar/exampleFiles';
 import { loadExampleFile } from '@core/helpers/menubar/exampleFiles';
+import { MENU_ITEMS } from '@core/helpers/menubar/menuItemStatus';
 import customMenuActionProvider from '@core/implementations/customMenuActionProvider';
 import menuEventListenerFactory from '@core/implementations/menuEventListenerFactory';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 type MenuActions = { [key: string]: (device?: IDeviceInfo) => void };
-
-const FILE_MENU_ITEMS = [
-  'CLEAR_SCENE',
-  'OPEN',
-  'RECENT',
-  'SHOW_MY_CLOUD',
-  'SAVE_AS',
-  'SAVE_SCENE',
-  'SAVE_TO_CLOUD',
-  'SAMPLES',
-  'EXPORT_TO',
-];
-const EDIT_MENU_ITEMS = [
-  'UNDO',
-  'REDO',
-  // 'CUT',
-  // 'COPY',
-  // 'PASTE',
-  'PASTE_IN_PLACE',
-  'DUPLICATE',
-  'DELETE',
-  'GROUP',
-  'UNGROUP',
-  'PATH',
-  'PHOTO_EDIT',
-  'SVG_EDIT',
-  'LAYER',
-  'DOCUMENT_SETTING',
-  'ROTARY_SETUP',
-];
-const VIEW_MENU_ITEMS = [
-  'ZOOM_IN',
-  'ZOOM_OUT',
-  'FITS_TO_WINDOW',
-  'ZOOM_WITH_WINDOW',
-  'SHOW_GRIDS',
-  'SHOW_RULERS',
-  'SHOW_LAYER_COLOR',
-  'AUTO_ALIGN',
-  'ANTI_ALIASING',
-];
-
-const DOCKABLE_MENU_ITEMS = [
-  // window
-  'SHOW_LAYER_CONTROLS_PANEL',
-  'SHOW_OBJECT_CONTROLS_PANEL',
-  'SHOW_PATH_CONTROLS_PANEL',
-  'RESET_LAYOUT',
-];
-
-const TOOLS_MENU_ITEMS = ['START_CURVE_ENGRAVING_MODE'];
-const EDITOR_REQUIRED_DEVICE_ITEMS = ['CALIBRATION'];
-
-/**
- * Special menu items that should be disabled in certain pages
- *
- * Set `enabled: false` in electron menu and update them by attach/detach
- *
- * `enabled` in first-layer submenu won't take effect in Windows; list all items in the submenu
- */
-const MENU_ITEMS = [
-  ...FILE_MENU_ITEMS,
-  ...EDIT_MENU_ITEMS,
-  ...VIEW_MENU_ITEMS,
-  ...TOOLS_MENU_ITEMS,
-  ...DOCKABLE_MENU_ITEMS,
-  ...EDITOR_REQUIRED_DEVICE_ITEMS,
-  'NETWORK_TESTING',
-  // _help
-  'START_TUTORIAL',
-  'START_UI_INTRO',
-];
 
 export default abstract class AbstractMenu {
   abstract init(): void;
@@ -175,27 +104,24 @@ export default abstract class AbstractMenu {
   }
 
   attach(enabledItems?: string[]): void {
-    let disabledItems: string[] = [];
+    let itemsToEnable: string[] = [];
+    let itemsToDisable: string[] = [];
 
     if (!enabledItems) {
-      enabledItems = MENU_ITEMS;
+      itemsToEnable = [...MENU_ITEMS];
     } else if (enabledItems.length === 0) {
-      enabledItems = [];
-      disabledItems = MENU_ITEMS;
+      itemsToDisable = [...MENU_ITEMS];
     } else {
-      for (const item of MENU_ITEMS) {
-        if (!enabledItems.includes(item)) {
-          disabledItems.push(item);
-        }
-      }
+      itemsToEnable = enabledItems;
+      itemsToDisable = MENU_ITEMS.filter((item) => !enabledItems.includes(item));
     }
 
-    this.enable(enabledItems);
-    this.disable(disabledItems);
+    this.enable(itemsToEnable);
+    this.disable(itemsToDisable);
   }
 
   detach(): void {
-    this.disable(MENU_ITEMS);
+    this.disable([...MENU_ITEMS]);
   }
 
   checkCurveEngraving = () => {

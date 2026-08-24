@@ -19,6 +19,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import DockViewLayout from '@core/app/widgets/dockable/DockViewLayout';
 import ToolBarDrawerContainer from '@core/app/widgets/dockable/ToolBarDrawerContainer';
 import { hashMap } from '@core/helpers/hashHelper';
+import isWeb from '@core/helpers/is-web';
 import sentryHelper from '@core/helpers/sentry-helper';
 import BeamboxInit from '@core/implementations/beamboxInit';
 import communicator from '@core/implementations/communicator';
@@ -41,7 +42,12 @@ const Beambox = (): React.JSX.Element => {
     workareaManager.resetView();
     beamboxInit.showStartUpDialogs();
 
-    communicator.on(MenuEvents.NewAppMenu, BeamboxGlobalInteraction.attach);
+    if (isWeb()) {
+      // web never receives NewAppMenu / TabFocused, attach on mount instead
+      BeamboxGlobalInteraction.attach();
+    } else {
+      communicator.on(MenuEvents.NewAppMenu, BeamboxGlobalInteraction.attach);
+    }
 
     return () => {
       BeamboxGlobalInteraction.detach();

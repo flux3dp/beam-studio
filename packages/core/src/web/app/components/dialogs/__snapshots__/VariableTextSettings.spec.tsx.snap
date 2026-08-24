@@ -67,7 +67,8 @@ exports[`test VariableTextSettings form fields 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Variable Texts Settings
                     </div>
@@ -1010,7 +1011,8 @@ exports[`test VariableTextSettings form fields 2`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Variable Texts Settings
                     </div>

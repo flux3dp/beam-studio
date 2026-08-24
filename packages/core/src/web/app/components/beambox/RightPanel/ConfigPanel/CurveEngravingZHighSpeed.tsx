@@ -15,7 +15,7 @@ import browser from '@core/implementations/browser';
 import styles from './Block.module.scss';
 import initState from './initState';
 
-const CurveEngravingZHighSpeed = () => {
+const CurveEngravingZHighSpeed = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
   const {
     beambox: {
       right_panel: { laser_panel: t },
@@ -29,6 +29,9 @@ const CurveEngravingZHighSpeed = () => {
 
   const handleToggle = () => {
     change({ ceZHighSpeed: !checked });
+
+    // ConfigPanel writes the layers on save, so cancelling the modal leaves them untouched
+    if (type === 'modal') return;
 
     const batchCmd = new history.BatchCommand('Change curve engraving z speed limit');
 

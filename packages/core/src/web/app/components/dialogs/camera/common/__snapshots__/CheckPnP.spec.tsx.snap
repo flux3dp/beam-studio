@@ -70,7 +70,8 @@ exports[`test CheckPnP should render correctly 1`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Confirm Calibration Result
                     </div>
@@ -239,7 +240,8 @@ exports[`test CheckPnP should render correctly 2`] = `
                     id="test-id"
                   >
                     <div
-                      style="cursor: move; width: 100%;"
+                      class="dragHandle"
+                      data-draggable-modal-handle="true"
                     >
                       Confirm Calibration Result
                     </div>

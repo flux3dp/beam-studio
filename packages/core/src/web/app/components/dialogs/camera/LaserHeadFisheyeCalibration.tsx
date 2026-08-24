@@ -215,6 +215,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
         defaultPoints={isOblique ? DEFAULT_POINTS_OBLIQUE : DEFAULT_POINTS}
         dh={0}
         hasNext
+        initPoseWithDefaultPoints={isAdvanced}
         onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}
         onClose={onClose}
         onNext={async (rvec, tvec) => {

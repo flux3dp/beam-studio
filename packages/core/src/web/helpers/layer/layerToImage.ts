@@ -8,13 +8,13 @@ import updateImageForSplitting from './full-color/updateImageForSplitting';
 
 const layerToImage = async (
   layer: SVGGElement,
-  opt?: { dpmm?: number; isFullColor?: boolean; shapesOnly?: boolean },
+  opt?: { blendKWithCmy?: boolean; dpmm?: number; isFullColor?: boolean; shapesOnly?: boolean },
 ): Promise<{
   bbox: { height: number; width: number; x: number; y: number };
   cmykBlob?: { c: Blob; k: Blob; m: Blob; y: Blob };
   rgbBlob: Blob | null;
 }> => {
-  const { dpmm = 300 / 25.4, isFullColor = false, shapesOnly = false } = opt || {};
+  const { blendKWithCmy = false, dpmm = 300 / 25.4, isFullColor = false, shapesOnly = false } = opt || {};
   const layerClone = layer.cloneNode(true) as SVGGElement;
 
   if (shapesOnly) {
@@ -75,7 +75,7 @@ const layerToImage = async (
 
       const blob = await (await fetch(base64)).blob();
 
-      const { c, k, m, y } = await utilWS.splitColor(blob, { colorType: 'cmyk' });
+      const { c, k, m, y } = await utilWS.splitColor(blob, { colorType: blendKWithCmy ? 'cmy' : 'cmyk' });
 
       cLayer.querySelectorAll('image[cmyk="1"]')[i].setAttribute('xlink:href', `data:image/jpeg;base64,${c}`);
       mLayer.querySelectorAll('image[cmyk="1"]')[i].setAttribute('xlink:href', `data:image/jpeg;base64,${m}`);

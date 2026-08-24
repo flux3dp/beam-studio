@@ -36,6 +36,18 @@ type LaserConfig = {
   oneWayEngravingReverse: boolean;
   power: number;
   speed: number;
+  /** engraving texture on/off */
+  texture: boolean;
+  /** 1 for random, 2 for stripe */
+  textureMode: number;
+  /** random noise intensity, percentage of full gray scale */
+  textureRandomIntensity: number;
+  /** stripe angle in degrees, CCW from +x axis */
+  textureStripeAngle: number;
+  /** stripe intensity, 0-100 percentage */
+  textureStripeIntensity: number;
+  /** stripe interval in mm, perpendicular spacing */
+  textureStripeInterval: number;
   /** layer level travel speed, mm/s, 0 for not override, not for promark */
   travelSpeed: number;
   zStep: number;
@@ -55,6 +67,7 @@ type SCurveConfigs = {
 type PrintingConfig = {
   amAngleMap: Record<'c' | 'k' | 'm' | 'y', number> | undefined;
   amDensity: number;
+  blendKWithCmy: boolean;
   colorCurvesMap: Record<'c' | 'k' | 'm' | 'y', number[]> | undefined;
   cRatio: number;
   fullcolor: boolean;

@@ -69,7 +69,13 @@ const ModuleBlock = (): React.ReactNode => {
   ) : (
     <div className={styles.panel}>
       <div className={styles.title}>{t.module}</div>
-      <Select className={styles.select} onChange={handleChange} options={options} value={value} />
+      <Select
+        className={styles.select}
+        onChange={handleChange}
+        options={options}
+        placement="bottomRight"
+        value={value}
+      />
     </div>
   );
 };

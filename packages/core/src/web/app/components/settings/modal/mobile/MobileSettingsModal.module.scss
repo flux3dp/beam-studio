@@ -1,4 +1,5 @@
 // Mobile Settings Modal Styles
+@use '@core/styles/mixins' as mixins;
 @use '../../shared/styles/variables' as *;
 
 .mobile-modal-wrap {
@@ -16,7 +17,7 @@
   :global(.ant-modal-content) {
     padding: 0;
     overflow: hidden;
-    max-height: calc(100vh - 64px);
+    @include mixins.viewport-size($offset: 64px, $property: max-height);
   }
 
   :global(.ant-modal-header) {
@@ -30,8 +31,8 @@
     padding: 0;
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 120px); // Account for header + footer
-    max-height: calc(60vh);
+    @include mixins.viewport-size($offset: 120px); // Account for header + footer
+    @include mixins.viewport-size(60, $property: max-height);
     overflow: hidden !important;
   }
 

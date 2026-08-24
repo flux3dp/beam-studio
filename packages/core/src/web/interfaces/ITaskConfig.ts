@@ -37,6 +37,8 @@ export type TFcodeOptionalConfig = Partial<{
    * a travel speed
    */
   ats: number;
+  /** whether to use firmware burst refresh for 4C printing */
+  burst_refresh: boolean;
   /**
    * custom backlash
    */

@@ -1,21 +1,21 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`test FillBlock should render correctly 1`] = `
+exports[`test AdvancedSettingButton should render correctly 1`] = `
 <div>
   <div
     class="panel default"
   >
-    <span
-      class="title"
+    <button
+      class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block"
+      id="advanced-setting"
+      type="button"
     >
-      Fill Setting
       <span
-        class="icon"
-        title="Fill Setting"
+        class="ant-btn-icon"
       >
         <span
           aria-label="setting"
-          class="anticon anticon-setting icon"
+          class="anticon anticon-setting"
           role="img"
         >
           <svg
@@ -33,16 +33,19 @@ exports[`test FillBlock should render correctly 1`] = `
           </svg>
         </span>
       </span>
-    </span>
+      <span>
+        Advanced
+      </span>
+    </button>
   </div>
 </div>
 `;
 
-exports[`test FillBlock should render correctly when type is panel-item 1`] = `
+exports[`test AdvancedSettingButton should render correctly when type is panel-item 1`] = `
 <div>
   <div
     class="object-panel-item"
-    id="fill-setting"
+    id="advanced-setting"
   >
     <div
       class="main"
@@ -70,7 +73,7 @@ exports[`test FillBlock should render correctly when type is panel-item 1`] = `
     <div
       class="label"
     >
-      Fill Setting
+      Advanced
     </div>
   </div>
 </div>

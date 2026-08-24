@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { adorModels, fcodeV2Models, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
@@ -6,10 +6,10 @@ import type { MenuItemKey } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useMenuItemStatusStore } from '@core/app/stores/menuItemStatusStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -32,9 +32,20 @@ export interface MenuNode {
 
 const divider: MenuNode = { type: 'divider' };
 
+/**
+ * Resolve `disabled` from the shared menu item status, an explicit `disabled` on the node wins so
+ * that static conditions (mobile only items, ...) can still be expressed in the tree.
+ */
+const applyDisabledKeys = (nodes: MenuNode[], disabledKeys: Set<string>): MenuNode[] =>
+  nodes.map((node) => ({
+    ...node,
+    children: node.children ? applyDisabledKeys(node.children, disabledKeys) : undefined,
+    disabled: node.disabled ?? (node.id !== undefined && disabledKeys.has(node.id)),
+  }));
+
 const useMenuData = (email?: string): MenuNode[] => {
-  const eventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
   const [devices, setDevices] = useState<IDeviceInfo[]>([]);
+  const disabledKeys = useMenuItemStatusStore((state) => state.disabledKeys);
 
   const shouldShowRulers = useGlobalPreferenceStore((state) => state.show_rulers);
   const shouldShowGrids = useGlobalPreferenceStore((state) => state.show_grids);
@@ -47,49 +58,6 @@ const useMenuData = (email?: string): MenuNode[] => {
   const isPanelLayerControlsShown = useDockableStore((state) => state.panelLayerControls);
   const isPanelObjectControlsShown = useDockableStore((state) => state.panelObjectProperties);
   const isPanelPathControlsShown = useDockableStore((state) => state.panelPathEdit);
-
-  const [duplicateDisabled, setDuplicateDisabled] = useState(true);
-  const [svgEditDisabled, setSvgEditDisabled] = useState(true);
-  const [decomposePathDisabled, setDecomposePathDisabled] = useState(true);
-  const [groupDisabled, setGroupDisabled] = useState(true);
-  const [ungroupDisabled, setUngroupDisabled] = useState(true);
-  const [pathDisabled, setPathDisabled] = useState(true);
-  const [imageEditDisabled, setImageEditDisabled] = useState(true);
-  const [dockableDisabled, setDockableDisabled] = useState(false);
-
-  const menuItemUpdater = {
-    DECOMPOSE_PATH: setDecomposePathDisabled,
-    DUPLICATE: setDuplicateDisabled,
-    GROUP: setGroupDisabled,
-    PATH: setPathDisabled,
-    PHOTO_EDIT: setImageEditDisabled,
-    RESET_LAYOUT: setDockableDisabled,
-    SVG_EDIT: setSvgEditDisabled,
-    UNGROUP: setUngroupDisabled,
-  };
-
-  useEffect(() => {
-    eventEmitter.on('ENABLE_MENU_ITEM', (items: string[]) => {
-      for (let i = 0; i < items.length; i += 1) {
-        const item = items[i] as keyof typeof menuItemUpdater;
-
-        menuItemUpdater[item]?.(false);
-      }
-    });
-
-    eventEmitter.on('DISABLE_MENU_ITEM', (items: string[]) => {
-      for (let i = 0; i < items.length; i += 1) {
-        const item = items[i] as keyof typeof menuItemUpdater;
-
-        menuItemUpdater[item]?.(true);
-      }
-    });
-
-    return () => {
-      eventEmitter.removeListener('ENABLE_MENU_ITEM');
-      eventEmitter.removeListener('DISABLE_MENU_ITEM');
-    };
-  });
 
   useEffect(() => {
     const unregister = discoverManager.register('top-bar-menu', (newDevices: IDeviceInfo[]) => {
@@ -234,7 +202,7 @@ const useMenuData = (email?: string): MenuNode[] => {
           ]
         : []),
       divider,
-      { children: calibrationChildren, label: menuCms.calibration, type: 'submenu' },
+      { children: calibrationChildren, id: 'CALIBRATION', label: menuCms.calibration, type: 'submenu' },
       ...(!isPromark ? [divider] : []),
       ...(fcodeV2Models.has(model)
         ? [
@@ -451,6 +419,7 @@ const useMenuData = (email?: string): MenuNode[] => {
             type: 'submenu',
           },
         ],
+        id: 'SAMPLES',
         label: menuCms.samples,
         type: 'submenu',
       },
@@ -466,6 +435,7 @@ const useMenuData = (email?: string): MenuNode[] => {
             ? [{ id: 'EXPORT_UV_PRINT', label: menuCms.export_UV_print, type: 'item' as const }]
             : []),
         ],
+        id: 'EXPORT_TO',
         label: menuCms.export_to,
         type: 'submenu',
       },
@@ -485,17 +455,17 @@ const useMenuData = (email?: string): MenuNode[] => {
       { hotkey: 'copy', id: 'COPY', type: 'item' },
       { hotkey: 'paste', id: 'PASTE', type: 'item' },
       { hotkey: 'paste_in_place', id: 'PASTE_IN_PLACE', type: 'item' },
-      { disabled: duplicateDisabled, hotkey: 'duplicate', id: 'DUPLICATE', type: 'item' },
+      { hotkey: 'duplicate', id: 'DUPLICATE', type: 'item' },
       divider,
-      { disabled: groupDisabled, hotkey: 'group', id: 'GROUP', type: 'item' },
-      { disabled: ungroupDisabled, hotkey: 'ungroup', id: 'UNGROUP', type: 'item' },
+      { hotkey: 'group', id: 'GROUP', type: 'item' },
+      { hotkey: 'ungroup', id: 'UNGROUP', type: 'item' },
       divider,
       {
         children: [
           { id: 'OFFSET', label: menuCms.offset, type: 'item' },
-          { disabled: decomposePathDisabled, id: 'DECOMPOSE_PATH', label: menuCms.decompose_path, type: 'item' },
+          { id: 'DECOMPOSE_PATH', label: menuCms.decompose_path, type: 'item' },
         ],
-        disabled: pathDisabled,
+        id: 'PATH',
         label: menuCms.path,
         type: 'submenu',
       },
@@ -508,18 +478,19 @@ const useMenuData = (email?: string): MenuNode[] => {
           { id: 'IMAGE_VECTORIZE', label: menuCms.image_vectorize, type: 'item' },
           { id: 'IMAGE_CURVE', label: menuCms.image_curve, type: 'item' },
         ],
-        disabled: imageEditDisabled,
+        id: 'PHOTO_EDIT',
         label: menuCms.photo_edit,
         type: 'submenu',
       },
       {
         children: [{ id: 'DISASSEMBLE_USE', label: menuCms.disassemble_use, type: 'item' }],
-        disabled: svgEditDisabled,
+        id: 'SVG_EDIT',
         label: menuCms.svg_edit,
         type: 'submenu',
       },
       {
         children: [{ id: 'LAYER_COLOR_CONFIG', label: menuCms.layer_color_config, type: 'item' }],
+        id: 'LAYER',
         label: menuCms.layer_setting,
         type: 'submenu',
       },
@@ -578,25 +549,22 @@ const useMenuData = (email?: string): MenuNode[] => {
 
   const windowMenu: MenuNode = {
     children: [
-      { disabled: dockableDisabled, id: 'RESET_LAYOUT', label: menuCms.reset_layout, type: 'item' },
+      { id: 'RESET_LAYOUT', label: menuCms.reset_layout, type: 'item' },
       divider,
       {
         checked: isPanelLayerControlsShown,
-        disabled: dockableDisabled,
         id: 'SHOW_LAYER_CONTROLS_PANEL',
         label: menuCms.tab_layers,
         type: 'checkbox',
       },
       {
         checked: isPanelObjectControlsShown,
-        disabled: dockableDisabled,
         id: 'SHOW_OBJECT_CONTROLS_PANEL',
         label: menuCms.tab_objects,
         type: 'checkbox',
       },
       {
         checked: isPanelPathControlsShown,
-        disabled: dockableDisabled,
         id: 'SHOW_PATH_CONTROLS_PANEL',
         label: menuCms.tab_path_edit,
         type: 'checkbox',
@@ -635,7 +603,10 @@ const useMenuData = (email?: string): MenuNode[] => {
     type: 'submenu',
   };
 
-  return [fileMenu, editMenu, viewMenu, machinesMenu, toolsMenu, accountMenu, windowMenu, helpMenu];
+  return applyDisabledKeys(
+    [fileMenu, editMenu, viewMenu, machinesMenu, toolsMenu, accountMenu, windowMenu, helpMenu],
+    disabledKeys,
+  );
 };
 
 export default useMenuData;

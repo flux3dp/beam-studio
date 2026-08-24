@@ -49,7 +49,7 @@ let DEBUG = false;
 let fileToOpenOnLaunch: null | string = null;
 
 const globalData: {
-  backend: { alive: boolean; logFile?: string; port?: number };
+  backend: { alive: boolean; failedToStart?: boolean; logFile?: string; port?: number };
   devices: { [key: string]: IDeviceInfo };
 } = { backend: { alive: false }, devices: {} };
 let logger: { write: (data: string) => void };
@@ -122,13 +122,21 @@ if (process.platform === 'linux') {
 
 function onGhostUp(data: { port: number }) {
   globalData.backend.alive = true;
+  globalData.backend.failedToStart = false;
   globalData.backend.port = data.port;
   tabManager?.sendToAllViews(BackendEvents.BackendUp, globalData.backend);
 }
 
-function onGhostDown() {
+function onGhostDown(info?: { failedToStart: boolean }) {
   globalData.backend.alive = false;
+  globalData.backend.failedToStart = Boolean(info?.failedToStart);
   globalData.backend.port = undefined;
+  // The renderer waits silently for a port, since a first launch can be slow. Tell it when the
+  // backend exited without ever coming up, so waiting longer is pointless.
+  tabManager?.sendToAllViews(BackendEvents.NotifyBackendStatus, {
+    backend: globalData.backend,
+    devices: globalData.devices,
+  });
 }
 
 function onDeviceUpdated(deviceInfo: IDeviceInfo) {

@@ -149,7 +149,7 @@ const generatePresprayArea = (): void => {
 
     // Create rectangle
     const rect = document.createElementNS(NS.SVG, 'rect');
-    const x = workareaManager.width - areaWidth4C;
+    const x = 0; // Start at the left edge of the work area
 
     rect.setAttribute('x', x.toString());
     rect.setAttribute('y', workareaManager.minY.toString());

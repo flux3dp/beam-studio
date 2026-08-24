@@ -18,6 +18,38 @@ let wsErrorCount = 0;
 let wsCreateFailedCount = 0;
 let WS_ERROR_ALERT_THRESHOLD = 50;
 let CREATE_FAILED_ALERT_THRESHOLD = 200;
+/**
+ * Retry interval used while the backend has not reported its port yet. A first launch on macOS can
+ * sit in Gatekeeper's binary verification for minutes, so poll gently instead of hammering.
+ */
+const NO_PORT_RETRY_INTERVAL = 1500;
+let hasAlerted = false;
+
+const popBackendErrorAlert = () => {
+  if (hasAlerted || isWeb()) return;
+
+  hasAlerted = true;
+
+  const LANG = i18n.lang.beambox.popup;
+
+  alertCaller.popById('backend-error');
+  alertCaller.popUp({
+    buttonType: alertConstants.YES_NO,
+    id: 'backend-error',
+    message: LANG.backend_connect_failed_ask_to_upload,
+    onYes: () => {
+      outputError.uploadBackendErrorLog();
+    },
+    type: alertConstants.SHOW_POPUP_ERROR,
+  });
+  MessageCaller.openMessage({
+    content: LANG.backend_error_hint,
+    duration: 0,
+    key: 'backend-error-hint',
+    level: MessageLevel.ERROR,
+    onClick: () => MessageCaller.closeMessage('backend-error-hint'),
+  });
+};
 
 export const setCurrentVersion = (version: string): void => {
   // Make sure this is called before beambox init write last-installed-version'
@@ -92,25 +124,7 @@ export default (options: Option): WrappedWebSocket => {
     wsCreateFailedCount += 1;
 
     if (wsCreateFailedCount === CREATE_FAILED_ALERT_THRESHOLD && !isWeb()) {
-      const LANG = i18n.lang.beambox.popup;
-
-      alertCaller.popById('backend-error');
-      alertCaller.popUp({
-        buttonType: alertConstants.YES_NO,
-        id: 'backend-error',
-        message: LANG.backend_connect_failed_ask_to_upload,
-        onYes: () => {
-          outputError.uploadBackendErrorLog();
-        },
-        type: alertConstants.SHOW_POPUP_ERROR,
-      });
-      MessageCaller.openMessage({
-        content: LANG.backend_error_hint,
-        duration: 0,
-        key: 'backend-error-hint',
-        level: MessageLevel.ERROR,
-        onClick: () => MessageCaller.closeMessage('backend-error-hint'),
-      });
+      popBackendErrorAlert();
     }
 
     if (socketOptions.autoReconnect === true) {
@@ -126,25 +140,7 @@ export default (options: Option): WrappedWebSocket => {
 
       // If ws error count exceed certain number Alert user there may be problems with backend
       if (wsErrorCount === WS_ERROR_ALERT_THRESHOLD && !isWeb()) {
-        const LANG = i18n.lang.beambox.popup;
-
-        alertCaller.popById('backend-error');
-        alertCaller.popUp({
-          buttonType: alertConstants.YES_NO,
-          id: 'backend-error',
-          message: LANG.backend_connect_failed_ask_to_upload,
-          onYes: () => {
-            outputError.uploadBackendErrorLog();
-          },
-          type: alertConstants.SHOW_POPUP_ERROR,
-        });
-        MessageCaller.openMessage({
-          content: LANG.backend_error_hint,
-          duration: 0,
-          key: 'backend-error-hint',
-          level: MessageLevel.ERROR,
-          onClick: () => MessageCaller.closeMessage('backend-error-hint'),
-        });
+        popBackendErrorAlert();
       }
     };
 
@@ -270,7 +266,14 @@ export default (options: Option): WrappedWebSocket => {
     const port = createWsOpts.port || defaultOptions.port;
 
     if (port === undefined) {
-      handleCreateWebSocketFailed();
+      // No port yet is not a connection failure: the backend may still be starting, and on a first
+      // launch that can take minutes. Only the main process can tell a slow start from a broken one
+      // (missing binary, crash loop), so wait quietly and alert only on its verdict.
+      if (window.FLUX.backendFailed) popBackendErrorAlert();
+
+      if (socketOptions.autoReconnect === true) {
+        setTimeout(() => createWebSocket(socketOptions), NO_PORT_RETRY_INTERVAL);
+      }
 
       return;
     }
@@ -290,6 +293,7 @@ export default (options: Option): WrappedWebSocket => {
         isCreatingWebsocket = false;
         wsCreateFailedCount = 0;
         wsErrorCount = 0;
+        hasAlerted = false;
         alertCaller.popById('backend-error');
         MessageCaller.closeMessage('backend-error-hint');
         attachHandlers(socket, createWsOpts);

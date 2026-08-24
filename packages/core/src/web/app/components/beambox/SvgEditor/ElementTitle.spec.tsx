@@ -111,7 +111,7 @@ describe('should render correctly', () => {
 
     test('data-textpath-g', () => {
       mockGetObjectLayer.mockReturnValue({ title: 'Layer 1' });
-      document.body.innerHTML = '<g id="svg_1" data-textpath-g="true" />';
+      document.body.innerHTML = '<g id="svg_1" data-textpath-g="1" />';
       useSelectedElementStore.getState().setSelectedElement(document.getElementById('svg_1'));
 
       const { container } = render(<ElementTitle />);

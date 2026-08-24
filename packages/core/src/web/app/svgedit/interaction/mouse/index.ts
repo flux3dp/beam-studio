@@ -1548,20 +1548,6 @@ const registerEvents = () => {
     window.addEventListener('gesturestart', (e) => e.preventDefault());
     window.addEventListener('gesturechange', (e) => e.preventDefault());
     window.addEventListener('gestureend', (e) => e.preventDefault());
-
-    let startZoom: number;
-    let currentScale = 1;
-
-    container.addEventListener('gesturestart', (e: any) => {
-      startZoom = workareaManager.zoomRatio;
-      currentScale = e.scale;
-    });
-    container.addEventListener('gesturechange', ({ clientX, clientY, scale }: any) => {
-      if (startZoom && Math.abs(Math.log(currentScale / scale)) >= Math.log(1.05)) {
-        workareaManager.zoom(startZoom * scale ** 0.5, { x: clientX, y: clientY });
-        currentScale = scale;
-      }
-    });
   }
 
   const wheelEventHandler = wheelEventHandlerGenerator(

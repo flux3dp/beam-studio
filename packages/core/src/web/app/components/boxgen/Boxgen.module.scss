@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .modal-wrap {
   overflow: unset;
 }
@@ -8,7 +10,7 @@
 
   &.mobile {
     flex-direction: column;
-    max-height: 80svh;
+    @include mixins.viewport-size(80, $property: max-height, $unit: svh);
   }
 }
 

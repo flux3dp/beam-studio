@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .task {
   height: 100%;
 
@@ -7,7 +9,7 @@
 
     > img {
       width: 100%;
-      max-height: 60vh;
+      @include mixins.viewport-size(60, $property: max-height);
       object-fit: contain;
       outline: 1px solid #bbb;
       outline-offset: -1px;

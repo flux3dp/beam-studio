@@ -8,14 +8,14 @@
   display: flex;
   flex-direction: row;
   width: calc(90vw - 48px); // 48px: padding of antd modal
-  height: calc(100vh - 180px); // Full viewport minus modal header/footer
+  @include mixins.viewport-size($offset: 180px); // Full viewport minus modal header/footer
   max-height: 800px; // Cap for very tall screens
   gap: 16px;
 
   @include mixins.is-mobile {
     flex-direction: column;
     height: auto;
-    max-height: 80svh;
+    @include mixins.viewport-size(80, $property: max-height, $unit: svh);
     overflow-y: hidden;
   }
 

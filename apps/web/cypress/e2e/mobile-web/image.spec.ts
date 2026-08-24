@@ -7,7 +7,7 @@ const EXPECTED_HASHES = {
   gradient: {
     tracePath: {
       github: 'de99510ff9f5ecf06d6743c5a802b835',
-      local: '9325b37ca33aec740b5f87c18abcccde',
+      local: 'de99510ff9f5ecf06d6743c5a802b835',
     },
     disabled: {
       github: '7a59512b45de002b41b3c4ebdcc3760a',
@@ -15,24 +15,24 @@ const EXPECTED_HASHES = {
     },
     enabled: {
       github: 'b662e9f0b0bbab4fdc7859faea0d47ef',
-      local: '1a1046ebad74514f0a1d94bc0482b83b',
+      local: '05cb8b5b90ad0ecaca3b42ffc4a90509',
     },
   },
   replaceImage: {
     github: '53c9d4f97685ea5903e3363f27611510',
-    local: '71a7455be1cef9715b53ee88ccd65016',
+    local: 'b7f6d2d8f242b7918ceaa712a30032dd',
   },
   brightness: {
     github: 'd78e1a3526ebbb0696c197bea8a94238',
-    local: 'd19294402d68750bf658ac486a8ecf48',
+    local: 'd78e1a3526ebbb0696c197bea8a94238',
   },
   crop: {
     github: '951e0851e66b255a005aaa7fda15727a',
-    local: '0eb78129890a453816fa574e5af92564',
+    local: '951e0851e66b255a005aaa7fda15727a',
   },
   invert: {
     github: 'de1073c40f0c095297d9d87af6b74dc3',
-    local: '58f46e5736c0b4d8244aa15f9a9dece3',
+    local: 'de1073c40f0c095297d9d87af6b74dc3',
   },
 };
 
@@ -112,17 +112,21 @@ describe('Mobile Image Tools', () => {
     it('should toggle gradient settings on image', () => {
       helpers.uploadTestImage();
 
+      cy.get('#gradient button').should('have.attr', 'aria-checked', 'true');
+
       // Disable gradient
       cy.get('#gradient').click({ force: true });
       helpers.assertElementAttribute('#svg_1', 'data-threshold', '128');
       helpers.assertElementAttribute('#svg_1', 'data-shading', 'false');
       helpers.assertImageHash('#svg_1', 'gradient.disabled');
+      cy.get('#gradient button').should('have.attr', 'aria-checked', 'false');
 
       // Re-enable gradient
       cy.get('#gradient').click({ force: true });
       helpers.assertElementAttribute('#svg_1', 'data-threshold', '254');
       helpers.assertElementAttribute('#svg_1', 'data-shading', 'true');
       helpers.assertImageHash('#svg_1', 'gradient.enabled');
+      cy.get('#gradient button').should('have.attr', 'aria-checked', 'true');
     });
   });
 

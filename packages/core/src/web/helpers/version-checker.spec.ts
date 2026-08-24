@@ -7,4 +7,7 @@ test('test version-checker', () => {
   expect(VersionChecker('3.2.7').meetRequirement('MAINTAIN_WITH_LINECHECK')).toBeTruthy();
   expect(VersionChecker('3.3.0').meetRequirement('MAINTAIN_WITH_LINECHECK')).toBeTruthy();
   expect(VersionChecker('3.3').meetRequirement('MAINTAIN_WITH_LINECHECK')).toBeTruthy();
+
+  expect(VersionChecker('6.1.13').meetRequirement('BM2_BURST_REFRESH')).toBeFalsy();
+  expect(VersionChecker('6.1.14').meetRequirement('BM2_BURST_REFRESH')).toBeTruthy();
 });

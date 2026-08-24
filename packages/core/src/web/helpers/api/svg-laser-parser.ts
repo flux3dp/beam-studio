@@ -159,6 +159,8 @@ export const getExportOpt = async (
       }
 
       if (device?.model === 'fbm2') {
+        if (vc.meetRequirement('BM2_BURST_REFRESH')) config.burst_refresh = true;
+
         try {
           await deviceMaster.select(device);
 

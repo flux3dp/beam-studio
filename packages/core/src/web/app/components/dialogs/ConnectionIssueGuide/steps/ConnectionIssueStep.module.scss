@@ -7,7 +7,7 @@
 
   img {
     max-width: 300px;
-    max-height: 50vh;
+    @include mixins.viewport-size(50, $property: max-height);
     width: 100%;
   }
 }
@@ -67,7 +67,7 @@
 // Width-agnostic so it can size a full-width column or a natural-width one (e.g. a side text panel).
 @mixin column-height {
   @include mixins.is-not-mobile {
-    height: calc(100vh - 150px);
+    @include mixins.viewport-size($offset: 150px);
     padding-bottom: 60px;
   }
 }
