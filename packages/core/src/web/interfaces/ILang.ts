@@ -208,6 +208,7 @@ export interface ILang {
       door_protect_desc: string;
       enable_autofocus: string;
       enable_diode: string;
+      enable_nozzle_refresh_area: string;
       extend_y_area: string;
       frame_before_start: string;
       frame_before_start_url: string;

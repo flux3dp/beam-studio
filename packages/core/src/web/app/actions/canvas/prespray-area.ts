@@ -24,7 +24,12 @@ const areaHeight = 300;
 const areaWidth4C = 103;
 
 const getPresprayMode = (): LayerModuleType | null => {
-  if (hasModuleLayer([LayerModule.PRINTER_4C], { checkVisible: true })) return LayerModule.PRINTER_4C;
+  if (
+    hasModuleLayer([LayerModule.PRINTER_4C], { checkVisible: true }) &&
+    useDocumentStore.getState()['enable-4c-prespray-area']
+  ) {
+    return LayerModule.PRINTER_4C;
+  }
 
   if (hasModuleLayer([LayerModule.PRINTER], { checkVisible: true })) return LayerModule.PRINTER;
 
@@ -82,7 +87,7 @@ const togglePresprayArea = (): void => {
 };
 
 useDocumentStore.subscribe(
-  (state) => [state['enable-job-origin'], state.rotary_mode],
+  (state) => [state['enable-4c-prespray-area'], state['enable-job-origin'], state.rotary_mode],
   () => togglePresprayArea(),
 );
 

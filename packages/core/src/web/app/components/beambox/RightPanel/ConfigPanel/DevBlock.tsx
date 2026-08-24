@@ -12,6 +12,7 @@ import isDev from '@core/helpers/is-dev';
 
 import styles from './AdvancedBlock.module.scss';
 import Backlash from './Backlash';
+import BlendKWithCmyBlock from './BlendKWithCmyBlock';
 import ColorAdvancedSettingButton from './ColorAdvancedSetting/ColorAdvancedSettingButton';
 import LaserDevOptions from './LaserDevOptions';
 import MinPadding from './MinPadding';
@@ -37,7 +38,12 @@ const DevBlock = ({ type = 'default' }: Props): React.ReactNode => {
   const isPrinting = printingModules.has(module.value);
   const contents = [];
 
-  if (isPrinting && fullcolor.value) contents.push(<WhiteInkCheckbox key="white-ink-checkbox" type={type} />);
+  if (isPrinting && fullcolor.value) {
+    contents.push(
+      <WhiteInkCheckbox key="white-ink-checkbox" type={type} />,
+      <BlendKWithCmyBlock key="blend-k" type={type} />,
+    );
+  }
 
   if (isCustomBacklashEnabled) contents.push(<Backlash key="backlash" type={type} />);
 

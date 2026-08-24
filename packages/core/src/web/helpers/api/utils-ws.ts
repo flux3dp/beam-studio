@@ -251,7 +251,7 @@ class UtilsWebSocket extends EventEmitter {
 
   splitColor = async (
     blob: Blob,
-    opts: { colorType: 'cmyk' | 'rgb'; onProgress?: (progress: number) => void } = {
+    opts: { colorType: 'cmy' | 'cmyk' | 'rgb'; onProgress?: (progress: number) => void } = {
       colorType: 'rgb',
     },
   ) => {
