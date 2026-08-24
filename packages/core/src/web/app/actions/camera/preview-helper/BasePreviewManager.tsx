@@ -92,7 +92,7 @@ class BasePreviewManager implements PreviewManager {
   public preview = async (
     x: number,
     y: number,
-    opts?: { overlapFlag?: number; overlapRatio?: number },
+    opts?: { overlapFlag?: number; overlapRatio?: number; silent?: boolean },
   ): Promise<boolean> => {
     throw new Error('Method not implemented.');
   };
@@ -101,7 +101,7 @@ class BasePreviewManager implements PreviewManager {
     throw new Error('Method not implemented.');
   };
 
-  // for Beam Series, BB2
+  // for Beam Series, RegionPreviewMixin
   previewRegionFromPoints = async (
     x1: number,
     y1: number,
@@ -142,7 +142,7 @@ class BasePreviewManager implements PreviewManager {
 
         const { overlapFlag, point } = points[i];
 
-        const result = await this.preview(point[0], point[1], { overlapFlag, overlapRatio });
+        const result = await this.preview(point[0], point[1], { overlapFlag, overlapRatio, silent: true });
 
         if (!result) {
           return false;

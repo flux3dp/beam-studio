@@ -273,7 +273,11 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     }
   };
 
-  public preview = (x: number, y: number, opts?: { overlapFlag?: number; overlapRatio?: number }): Promise<boolean> => {
+  public preview = (
+    x: number,
+    y: number,
+    opts?: { overlapFlag?: number; overlapRatio?: number; silent?: boolean },
+  ): Promise<boolean> => {
     return match(this._previewMode)
       .with(PreviewMode.FULL_AREA, () => this.previewWithWideAngleCamera())
       .otherwise(() => this.regionPreviewAtPoint(x, y, opts));

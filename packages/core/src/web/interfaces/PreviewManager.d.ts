@@ -46,9 +46,13 @@ export interface PreviewManager {
    * preview point
    * @param x x in px
    * @param y y in px
-   * @param opts
+   * @param opts silent: suppress progress messages (e.g. when the caller shows its own)
    */
-  preview(x: number, y: number, opts?: { overlapFlag?: number; overlapRatio?: number }): Promise<boolean>;
+  preview(
+    x: number,
+    y: number,
+    opts?: { overlapFlag?: number; overlapRatio?: number; silent?: boolean },
+  ): Promise<boolean>;
 
   previewFullWorkarea?: () => Promise<boolean>;
 

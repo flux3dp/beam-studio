@@ -11,6 +11,7 @@ import i18n from '@core/helpers/i18n';
 import versionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import { MessageLevel } from '@core/interfaces/IMessage';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
@@ -295,24 +296,38 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
   preview = async (
     x: number,
     y: number,
-    opts: { overlapFlag?: number; overlapRatio?: number } = {},
+    opts: { overlapFlag?: number; overlapRatio?: number; silent?: boolean } = {},
   ): Promise<boolean> => {
     if (this.ended) {
       return false;
     }
 
-    const { overlapFlag, overlapRatio = 0 } = opts;
-    const constrainedXY = this.constrainPreviewXY(x, y);
-    const { x: newX, y: newY } = constrainedXY;
-    const imgUrl = await this.getPhotoAfterMove(newX, newY);
-    const imgCanvas = await this.preprocessImage(imgUrl, { overlapFlag, overlapRatio });
+    // batch region preview passes silent because it shows its own i/n progress message
+    const { overlapFlag, overlapRatio = 0, silent = false } = opts;
 
-    // await this if you want wait for the image to be drawn
-    await PreviewModeBackgroundDrawer.drawImageToCanvas(imgCanvas, newX, newY, {
-      opacityMerge: overlapRatio > 0,
-    });
+    try {
+      if (!silent) this.showMessage({ content: i18n.lang.message.preview.capturing_image });
 
-    return true;
+      const constrainedXY = this.constrainPreviewXY(x, y);
+      const { x: newX, y: newY } = constrainedXY;
+      const imgUrl = await this.getPhotoAfterMove(newX, newY);
+      const imgCanvas = await this.preprocessImage(imgUrl, { overlapFlag, overlapRatio });
+
+      // await this if you want wait for the image to be drawn
+      await PreviewModeBackgroundDrawer.drawImageToCanvas(imgCanvas, newX, newY, {
+        opacityMerge: overlapRatio > 0,
+      });
+
+      if (!silent) {
+        this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });
+      }
+
+      return true;
+    } catch (error) {
+      if (!silent) this.closeMessage();
+
+      throw error;
+    }
   };
 
   private getTileSizePx = (): number => {

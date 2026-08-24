@@ -8,7 +8,9 @@ import {
   bm2PerspectiveGrid,
 } from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import i18n from '@core/helpers/i18n';
 import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
+import { MessageLevel } from '@core/interfaces/IMessage';
 
 import type BasePreviewManager from './BasePreviewManager';
 
@@ -126,29 +128,43 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
     regionPreviewAtPoint = async (
       x: number,
       y: number,
-      opts: { overlapFlag?: number; overlapRatio?: number } = {},
+      opts: { overlapFlag?: number; overlapRatio?: number; silent?: boolean } = {},
     ): Promise<boolean> => {
       if (this.ended) return false;
 
-      const { overlapFlag, overlapRatio = 0 } = opts;
-      const cameraPosition = this.getPreviewPosition(x, y);
-      const imgUrl = await this.getPhotoAfterMoveTo(cameraPosition.x, cameraPosition.y);
-      const imgCanvas = await this.preprocessImage(imgUrl, { overlapFlag, overlapRatio });
+      // batch region preview passes silent because it shows its own i/n progress message
+      const { overlapFlag, overlapRatio = 0, silent = false } = opts;
 
-      if (!imgCanvas) return false;
+      try {
+        if (!silent) this.showMessage({ content: i18n.lang.message.preview.capturing_image });
 
-      URL.revokeObjectURL(imgUrl);
+        const cameraPosition = this.getPreviewPosition(x, y);
+        const imgUrl = await this.getPhotoAfterMoveTo(cameraPosition.x, cameraPosition.y);
+        const imgCanvas = await this.preprocessImage(imgUrl, { overlapFlag, overlapRatio });
 
-      const drawCenter = {
-        x: (cameraPosition.x + this.regionPreviewOffset.x) * constant.dpmm,
-        y: (cameraPosition.y + this.regionPreviewOffset.y) * constant.dpmm,
-      };
+        if (!imgCanvas) return false;
 
-      await previewModeBackgroundDrawer.drawImageToCanvas(imgCanvas, drawCenter.x, drawCenter.y, {
-        opacityMerge: overlapRatio > 0,
-      });
+        URL.revokeObjectURL(imgUrl);
 
-      return true;
+        const drawCenter = {
+          x: (cameraPosition.x + this.regionPreviewOffset.x) * constant.dpmm,
+          y: (cameraPosition.y + this.regionPreviewOffset.y) * constant.dpmm,
+        };
+
+        await previewModeBackgroundDrawer.drawImageToCanvas(imgCanvas, drawCenter.x, drawCenter.y, {
+          opacityMerge: overlapRatio > 0,
+        });
+
+        if (!silent) {
+          this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });
+        }
+
+        return true;
+      } catch (error) {
+        if (!silent) this.closeMessage();
+
+        throw error;
+      }
     };
 
     /** Serpentine capture points covering the region: rows top to bottom, odd rows reversed */
