@@ -8,6 +8,7 @@ import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
+import previewRegionIndicator from '@core/app/actions/canvas/preview-region-indicator';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/components/tutorials/tutorialController';
@@ -216,6 +217,7 @@ const mouseDown = async (evt: MouseEvent) => {
     case 'pre_preview':
       svgCanvas.unsafeAccess.setStarted(true);
       setRubberBoxStart(startMouseX, startMouseY);
+      previewRegionIndicator.hide();
 
       return;
     case 'select':
@@ -690,6 +692,10 @@ const mouseMove = (evt: MouseEvent) => {
   if (!started) {
     if (svgCanvas.isAutoAlign && currentMode === 'path') {
       findAndDrawAlignPoints(realX, realY);
+    }
+
+    if (currentMode === 'preview' || currentMode === 'pre_preview') {
+      previewRegionIndicator.update(realX, realY);
     }
 
     //

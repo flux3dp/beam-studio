@@ -1,5 +1,6 @@
 import { match } from 'ts-pattern';
 
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import type { PerspectiveGrid, WideAngleRegion } from '@core/interfaces/FisheyePreview';
 
 type Points = Array<[number, number]>;
@@ -139,6 +140,19 @@ export const bm2FullAreaPerspectiveGrid: PerspectiveGrid = {
   x: [0, 360, 10],
   y: [0, 240, 10],
 } as const;
+
+/**
+ * Perspective grid (= single-shot capture footprint) used by region preview,
+ * mirroring RegionPreviewMixin's constructor and Bb2Hx2PreviewManager.switchPreviewMode.
+ */
+export const getRegionPreviewGrid = (
+  model: string,
+  { isCameraOblique = false, mode = PreviewMode.REGION }: { isCameraOblique?: boolean; mode?: PreviewMode } = {},
+): PerspectiveGrid => {
+  if (model === 'fbm2') return bm2PerspectiveGrid;
+
+  return isCameraOblique && mode === PreviewMode.REGION ? bb2PerspectiveGridWide : bb2PerspectiveGrid;
+};
 
 export const getRegionalPoints = (
   region: WideAngleRegion,
