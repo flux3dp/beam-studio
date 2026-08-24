@@ -45,10 +45,6 @@ const hide = (): void => {
   indicatorRect?.setAttribute('display', 'none');
 };
 
-/**
- * Footprint size and clamp bounds for the capture *center*, in canvas px. Static per
- * preview state; recomputed by the store subscription below, not on mouse move.
- */
 interface IndicatorConfig {
   height: number;
   maxCenterX: number;
@@ -141,9 +137,6 @@ const updateConfig = (): void => {
     : getBeamConfig(model);
 };
 
-// supportedPreviewModes is watched because entering pre-preview updates it without
-// touching the other fields; isPreviewMode because live calibration replaces the
-// ideal fallback in getBeamConfig once preview starts.
 useCameraPreviewStore.subscribe(
   (state) => [state.previewMode, state.pendingPreviewMode, state.isPreviewMode, state.supportedPreviewModes],
   updateConfig,
