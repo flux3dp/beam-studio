@@ -208,6 +208,7 @@ const lang: ILang = {
       door_protect_desc: 'สามารถใช้งานได้เฉพาะกับ Promark Safe+ เท่านั้น',
       enable_autofocus: 'โฟกัสอัตโนมัติ',
       enable_diode: 'เลเซอร์ไดโอด',
+      enable_nozzle_refresh_area: 'เปิดใช้งานพื้นที่รีเฟรชหัวฉีด',
       extend_y_area: 'ขยายพื้นที่แกน Y',
       frame_before_start: 'กรอบก่อนดำเนินการ',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',

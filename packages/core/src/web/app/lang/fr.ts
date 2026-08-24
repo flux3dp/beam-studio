@@ -208,6 +208,7 @@ const lang: ILang = {
       door_protect_desc: 'Disponible uniquement avec Promark Safe+.',
       enable_autofocus: 'Mise au point automatique',
       enable_diode: 'Laser à diode',
+      enable_nozzle_refresh_area: "Activer la zone d'actualisation de la buse",
       extend_y_area: 'Étendre la zone Y',
       frame_before_start: "Cadre avant d'exécuter",
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',

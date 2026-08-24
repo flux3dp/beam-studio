@@ -11,6 +11,9 @@ import { BackendEvents } from '@core/app/constants/ipcEvents';
 
 import { getSwiftrayPaths, killStaleSwiftray, killSwiftrayPid } from './helpers/swiftrayProcess';
 
+/** Consecutive failed starts before we tell the renderer the backend is broken, not just slow. */
+const MAX_FAILED_STARTS = 3;
+
 function uglyJsonParser(data: string): any {
   try {
     return JSON.parse(data);
@@ -44,6 +47,9 @@ class BackendManager extends EventEmitter {
   /** Whether we spawned Swiftray, i.e. whether the daemon is ours to kill. */
   private hasSpawnedSwiftray = false;
 
+  /** Consecutive backend exits since it last reported ready. */
+  private failedStarts = 0;
+
   private port?: number;
 
   private recoverTimer?: NodeJS.Timeout;
@@ -65,7 +71,7 @@ class BackendManager extends EventEmitter {
     location?: string;
     on_ready?: (sender: any) => void;
     on_stderr?: (sender: any, data: any) => void;
-    on_stopped?: (sender: any) => void;
+    on_stopped?: (info: { failedToStart: boolean }) => void;
     server?: boolean;
     trace_pid?: number;
   }) {
@@ -165,6 +171,18 @@ class BackendManager extends EventEmitter {
     const ghostDirectoy = path.dirname(this.ghostLocation);
     const ghostExec = path.basename(this.ghostLocation);
 
+    // Nothing to run: anti-virus removed the binary, or the install is broken. Report it at once
+    // rather than leaving the renderer waiting for a port that will never arrive. Recovery still
+    // retries, so restoring the file heals without a restart.
+    if (!fs.existsSync(this.ghostLocation)) {
+      console.error(`Backend not found at ${this.ghostLocation}`);
+      this.emit('stopped', { failedToStart: true });
+
+      if (this.isRunning) this.setRecover();
+
+      return;
+    }
+
     if (os.platform() === 'win32') {
       this.proc = spawn(`"${ghostExec}"`, this.args, { cwd: ghostDirectoy, shell: true });
     } else {
@@ -179,6 +197,7 @@ class BackendManager extends EventEmitter {
           this.emit('ready', result);
         } finally {
           this.port = result.port;
+          this.failedStarts = 0;
         }
       }
     });
@@ -188,8 +207,13 @@ class BackendManager extends EventEmitter {
     });
 
     this.proc.on('exit', () => {
+      // A deliberate stop() is not a failure.
+      if (this.isRunning) this.failedStarts += 1;
+
       try {
-        this.emit('stopped');
+        // Repeated exits mean the backend cannot stay up: blocked by the OS, or crashing on start.
+        // One exit can be a hiccup, and a slow launch does not exit at all, so both keep waiting.
+        this.emit('stopped', { failedToStart: this.failedStarts >= MAX_FAILED_STARTS });
       } finally {
         this.proc = undefined;
 

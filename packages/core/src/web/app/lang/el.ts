@@ -208,6 +208,7 @@ const lang: ILang = {
       door_protect_desc: 'Διαθέσιμο μόνο με το Promark Safe+.',
       enable_autofocus: 'Αυτόματη εστίαση',
       enable_diode: 'Λέιζερ διόδου',
+      enable_nozzle_refresh_area: 'Ενεργοποίηση περιοχής ανανέωσης ακροφυσίου',
       extend_y_area: 'Επέκταση περιοχής Y',
       frame_before_start: 'Πλαίσιο πριν από την εκτέλεση',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',

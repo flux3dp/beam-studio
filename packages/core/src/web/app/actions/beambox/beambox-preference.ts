@@ -30,6 +30,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   diode_offset_x: constant.diode.defaultOffsetX,
   diode_offset_y: constant.diode.defaultOffsetY,
   'enable-4c': false,
+  'enable-4c-prespray-area': true,
   'enable-1064': false,
   'enable-custom-backlash': false,
   'enable-custom-preview-height': false,

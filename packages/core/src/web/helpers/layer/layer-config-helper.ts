@@ -27,6 +27,7 @@ const attributeMap: Record<ConfigKey, string> = {
   amDensity: 'data-amDensity',
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
+  blendKWithCmy: 'data-blendKWithCmy',
   ceZHighSpeed: 'data-ceZHighSpeed',
   clipRect: 'data-clipRect',
   color: 'data-color',
@@ -107,6 +108,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   amDensity: 2,
   backlash: 0,
   biDirectional: true,
+  blendKWithCmy: false,
   ceZHighSpeed: false,
   configName: '',
   cRatio: 100,
@@ -213,6 +215,7 @@ export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<Conf
 };
 
 export const booleanConfig: ConfigKey[] = [
+  'blendKWithCmy',
   'fullcolor',
   'ref',
   'split',

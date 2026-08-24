@@ -208,6 +208,7 @@ const lang: ILang = {
       door_protect_desc: 'Chỉ có sẵn với Promark Safe+.',
       enable_autofocus: 'Tự động lấy nét',
       enable_diode: 'Laser điốt',
+      enable_nozzle_refresh_area: 'Bật vùng làm mới vòi phun',
       extend_y_area: 'Mở rộng vùng Y',
       frame_before_start: 'Khung trước khi thực thi',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',

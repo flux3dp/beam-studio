@@ -22,8 +22,12 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
   } = useI18n();
   const [skipPrespray, setSkipPrespray] = useState(useDocumentStore.getState().skip_prespray);
   const [presprayTimes, setPresprayTimes] = useState(useDocumentStore.getState().prespray_times);
+  const [enablePresprayArea, setEnablePresprayArea] = useState(
+    Boolean(useDocumentStore.getState()['enable-4c-prespray-area']),
+  );
   const handleSave = () => {
     useDocumentStore.getState().update({
+      'enable-4c-prespray-area': enablePresprayArea,
       prespray_times: presprayTimes,
       skip_prespray: skipPrespray,
     });
@@ -61,6 +65,11 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
             precision={0}
             value={presprayTimes}
           />
+        </div>
+        <div>
+          <Checkbox checked={enablePresprayArea} onChange={(e) => setEnablePresprayArea(e.target.checked)}>
+            {tDocument.enable_nozzle_refresh_area}
+          </Checkbox>
         </div>
       </div>
     </DraggableModal>

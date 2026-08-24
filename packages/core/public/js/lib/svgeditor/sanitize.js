@@ -221,6 +221,7 @@
       'data-pulseWidth',
       'data-fillAngle',
       'data-biDirectional',
+      'data-blendKWithCmy',
       'data-crossHatch',
       'data-dottingTime',
       'data-wobbleDiameter',

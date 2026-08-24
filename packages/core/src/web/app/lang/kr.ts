@@ -208,6 +208,7 @@ const lang: ILang = {
       door_protect_desc: 'Promark Safe+에서만 사용 가능합니다.',
       enable_autofocus: '오토포커스',
       enable_diode: '다이오드 레이저',
+      enable_nozzle_refresh_area: '노즐 새로 고침 영역 활성화',
       extend_y_area: 'Y축 영역 확장',
       frame_before_start: '실행 전에 프레임',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',

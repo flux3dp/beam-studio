@@ -67,6 +67,7 @@ test('test beambox-preference', () => {
     diode_offset_x: 70,
     diode_offset_y: 7,
     'enable-4c': false,
+    'enable-4c-prespray-area': true,
     'enable-1064': false,
     'enable-custom-backlash': false,
     'enable-custom-preview-height': false,
