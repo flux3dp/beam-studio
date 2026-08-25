@@ -8,7 +8,7 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import isDev from '@core/helpers/is-dev';
+import isDev, { mockT } from '@core/helpers/is-dev';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -36,7 +36,9 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
     crossHatch: state.crossHatch,
     fillAngle: state.fillAngle,
     focus: state.focus,
+    focusReverse: state.focusReverse,
     focusStep: state.focusStep,
+    focusStepReverse: state.focusStepReverse,
     wobbleDiameter: state.wobbleDiameter,
     wobbleStep: state.wobbleStep,
   });
@@ -51,7 +53,9 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       'wobbleStep',
       'wobbleDiameter',
       'focus',
+      'focusReverse',
       'focusStep',
+      'focusStepReverse',
     ] as const;
 
     const batchCmd = new history.BatchCommand('Change advanced setting');
@@ -126,6 +130,18 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
         </div>
         {focusOn && (
           <div>
+            <label htmlFor="lower-focus-rev">{mockT('反向')}</label>
+            <Switch
+              checked={draftValue.focusReverse.value}
+              className={styles.switch}
+              id="lower-focus-rev"
+              onChange={() => handleValueChange('focusReverse', !draftValue.focusReverse.value)}
+              size="small"
+            />
+          </div>
+        )}
+        {focusOn && (
+          <div>
             <span>{t.by}</span>
             <Input
               hasMultiValue={draftValue.focus.hasMultiValue}
@@ -151,6 +167,18 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
               </span>
               <Switch checked={focusStepOn} id="focus-step-toggle" onChange={setFocusStep} />
             </div>
+            {focusStepOn && (
+              <div>
+                <label htmlFor="focus-step-rev">{mockT('反向')}</label>
+                <Switch
+                  checked={draftValue.focusStepReverse.value}
+                  className={styles.switch}
+                  id="focus-step-rev"
+                  onChange={() => handleValueChange('focusStepReverse', !draftValue.focusStepReverse.value)}
+                  size="small"
+                />
+              </div>
+            )}
             {focusStepOn && (
               <div>
                 <span>{t.z_step}</span>
