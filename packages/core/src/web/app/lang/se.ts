@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Ingen bild från kameraförhandsgranskningen hittades. Kör först kameraförhandsgranskningen för att fotografera det utskrivna materialet.',
       success: 'Justeringen är klar!',
     },
+    backend_outdated: 'Maskinens nuvarande firmware stöder ännu inte Print & Cut.',
     continue_to_alignment: 'Fortsätt till justering',
     cutting_layer_name: 'Skriv ut och skär - Skärning',
     design_changed: 'Designen har ändrats sedan den skrevs ut, så endast skärbanan visas.\nFortsätt för att justera ett tidigare utskrivet material, eller börja om för att förbereda den aktuella designen.',

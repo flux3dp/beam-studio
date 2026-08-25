@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Geen cameravoorvertoning gevonden. Voer eerst de cameravoorvertoning uit om het bedrukte materiaal vast te leggen.',
       success: 'Uitlijning voltooid!',
     },
+    backend_outdated: 'De huidige firmware van de machine ondersteunt Print & Cut nog niet.',
     continue_to_alignment: 'Doorgaan naar uitlijning',
     cutting_layer_name: 'Printen en snijden - Snijden',
     design_changed: 'Het ontwerp is gewijzigd sinds het is geprint, daarom wordt alleen het snijpad getoond.\nGa door om eerder bedrukt materiaal uit te lijnen, of begin opnieuw om het huidige ontwerp voor te bereiden.',

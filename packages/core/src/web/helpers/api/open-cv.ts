@@ -136,7 +136,8 @@ class OpenCVWebSocket extends EventEmitter {
           } else if (status === 'ok') {
             this.removeCommandListeners();
             resolve({ points: response.points ?? [] });
-          } else if (['fail', 'none'].includes(status)) {
+            // 'Error' (capital) is fluxghost's undefined-command reply (BAD_PARAM_TYPE)
+          } else if (['Error', 'fail', 'none'].includes(status)) {
             this.removeCommandListeners();
             reject(response);
           } else {
@@ -178,7 +179,8 @@ class OpenCVWebSocket extends EventEmitter {
           } else if (status === 'ok') {
             this.removeCommandListeners();
             resolve({ contours: response.contours ?? [] });
-          } else if (['fail', 'none'].includes(status)) {
+            // 'Error' (capital) is fluxghost's undefined-command reply (BAD_PARAM_TYPE)
+          } else if (['Error', 'fail', 'none'].includes(status)) {
             this.removeCommandListeners();
             reject(response);
           } else {
@@ -236,6 +238,48 @@ const getOpenCV = (): OpenCVWebSocket => {
   singleton = singleton || new OpenCVWebSocket();
 
   return singleton;
+};
+
+type ProbeableCommand = 'detectBlobs' | 'imageContour';
+
+const supportChecks = new Map<ProbeableCommand, Promise<boolean>>();
+
+/**
+ * Whether the connected fluxghost supports the given opencv command (added in
+ * 1.9.4): probes with a 1×1 image — an older backend answers `Error
+ * BAD_PARAM_TYPE`. Success is cached per command; a failed probe is not, so a
+ * transient backend outage does not stick for the session.
+ */
+export const checkOpenCvSupport = (command: ProbeableCommand): Promise<boolean> => {
+  let check = supportChecks.get(command);
+
+  if (!check) {
+    check = (async () => {
+      try {
+        const canvas = document.createElement('canvas');
+
+        canvas.width = 1;
+        canvas.height = 1;
+
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve));
+
+        if (!blob) throw new Error('Failed to create probe image');
+
+        if (command === 'detectBlobs') await getOpenCV().detectBlobs(blob);
+        else await getOpenCV().imageContour(blob, { min_area: 1 });
+
+        return true;
+      } catch (error) {
+        console.warn(`opencv ${command} support check failed`, error);
+        supportChecks.delete(command);
+
+        return false;
+      }
+    })();
+    supportChecks.set(command, check);
+  }
+
+  return check;
 };
 
 export default getOpenCV;

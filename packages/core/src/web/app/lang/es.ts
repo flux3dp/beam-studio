@@ -2289,6 +2289,7 @@ const lang: ILang = {
       no_preview: 'No se encontró ninguna imagen de vista previa de la cámara. Ejecuta primero la vista previa de la cámara para capturar el material impreso.',
       success: '¡Alineación completada!',
     },
+    backend_outdated: 'El firmware actual de la máquina aún no es compatible con Print & Cut.',
     continue_to_alignment: 'Continuar a la alineación',
     cutting_layer_name: 'Imprimir y cortar - Corte',
     design_changed: 'El diseño ha cambiado desde que se imprimió, por lo que solo se muestra la trayectoria de corte.\nContinúa para alinear un material impreso anteriormente, o empieza de nuevo para preparar el diseño actual.',

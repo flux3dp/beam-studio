@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Gambar pratinjau kamera tidak ditemukan. Jalankan pratinjau kamera terlebih dahulu untuk mengambil gambar material yang sudah dicetak.',
       success: 'Penyelarasan selesai!',
     },
+    backend_outdated: 'Firmware mesin saat ini belum mendukung Print & Cut.',
     continue_to_alignment: 'Lanjut ke penyelarasan',
     cutting_layer_name: 'Cetak dan Potong - Pemotongan',
     design_changed: 'Desain telah berubah sejak dicetak, sehingga hanya jalur potong yang ditampilkan.\nLanjutkan untuk menyelaraskan material yang dicetak sebelumnya, atau mulai ulang untuk menyiapkan desain saat ini.',

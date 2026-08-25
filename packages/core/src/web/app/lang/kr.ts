@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: '카메라 미리보기 이미지를 찾을 수 없습니다. 먼저 카메라 미리보기를 실행하여 인쇄된 소재를 촬영해 주세요.',
       success: '정렬이 완료되었습니다!',
     },
+    backend_outdated: '현재 기기 펌웨어는 아직 프린트 앤 컷 기능을 지원하지 않습니다.',
     continue_to_alignment: '정렬로 계속',
     cutting_layer_name: '인쇄 후 커팅 - 커팅',
     design_changed: '인쇄 후 디자인이 변경되어 커팅 경로만 표시됩니다.\n이전에 인쇄한 소재를 정렬하려면 계속하고, 현재 디자인으로 준비하려면 처음부터 다시 시작하세요.',

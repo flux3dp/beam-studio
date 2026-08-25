@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: '找不到相机预览图像，请先执行相机预览拍摄打印好的材料。',
       success: '对位完成！',
     },
+    backend_outdated: '当前的机器固件尚不支持精准对位功能。',
     continue_to_alignment: '继续进行对位',
     cutting_layer_name: '精准对位 - 切割',
     design_changed: '设计在打印之后已经变更，因此只显示切割路径。\n若要对位先前打印的材料请继续，或选择重新开始以使用当前的设计重新准备。',

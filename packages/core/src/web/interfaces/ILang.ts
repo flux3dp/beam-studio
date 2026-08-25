@@ -2231,6 +2231,7 @@ export interface ILang {
       no_preview: string;
       success: string;
     };
+    backend_outdated: string;
     continue_to_alignment: string;
     cutting_layer_name: string;
     design_changed: string;

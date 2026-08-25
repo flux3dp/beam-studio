@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Tiada imej pratonton kamera ditemui. Jalankan pratonton kamera terlebih dahulu untuk menangkap bahan yang telah dicetak.',
       success: 'Penjajaran selesai!',
     },
+    backend_outdated: 'Perisian tegar mesin semasa belum menyokong Print & Cut.',
     continue_to_alignment: 'Teruskan ke penjajaran',
     cutting_layer_name: 'Cetak dan Potong - Pemotongan',
     design_changed: 'Reka bentuk telah berubah sejak ia dicetak, jadi hanya laluan potong ditunjukkan.\nTeruskan untuk menjajarkan bahan yang dicetak sebelum ini, atau mula semula untuk menyediakan reka bentuk semasa.',

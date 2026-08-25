@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Nie znaleziono obrazu z podglądu kamery. Najpierw uruchom podgląd kamery, aby zarejestrować zadrukowany materiał.',
       success: 'Wyrównanie zakończone!',
     },
+    backend_outdated: 'Obecne oprogramowanie układowe maszyny nie obsługuje jeszcze funkcji Print & Cut.',
     continue_to_alignment: 'Przejdź do wyrównania',
     cutting_layer_name: 'Drukuj i tnij - Cięcie',
     design_changed: 'Projekt zmienił się od czasu wydruku, dlatego wyświetlana jest tylko ścieżka cięcia.\nKontynuuj, aby wyrównać wcześniej zadrukowany materiał, lub zacznij od nowa, aby przygotować bieżący projekt.',

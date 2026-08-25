@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Nebyl nalezen žádný snímek z náhledu kamery. Nejprve prosím spusťte náhled kamery a nasnímejte potištěný materiál.',
       success: 'Zarovnání dokončeno!',
     },
+    backend_outdated: 'Aktuální firmware zařízení zatím nepodporuje funkci Print & Cut.',
     continue_to_alignment: 'Pokračovat k zarovnání',
     cutting_layer_name: 'Tisk a řez - Řezání',
     design_changed: 'Návrh byl od tisku změněn, proto se zobrazuje pouze řezací dráha.\nPokračujte pro zarovnání dříve potištěného materiálu, nebo začněte znovu a připravte aktuální návrh.',

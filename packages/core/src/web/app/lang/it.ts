@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Nessuna immagine di anteprima fotocamera trovata. Esegui prima l’anteprima fotocamera per acquisire il materiale stampato.',
       success: 'Allineamento completato!',
     },
+    backend_outdated: 'Il firmware attuale della macchina non supporta ancora Print & Cut.',
     continue_to_alignment: 'Continua con l’allineamento',
     cutting_layer_name: 'Stampa e taglia - Taglio',
     design_changed: 'Il design è stato modificato dopo la stampa, quindi viene mostrato solo il percorso di taglio.\nContinua per allineare un materiale stampato in precedenza, oppure ricomincia per preparare il design attuale.',

@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Fant ingen kameraforhåndsvisning. Kjør først kameraforhåndsvisningen for å ta bilde av det utskrevne materialet.',
       success: 'Justering fullført!',
     },
+    backend_outdated: 'Maskinens nåværende fastvare støtter ennå ikke Print & Cut.',
     continue_to_alignment: 'Fortsett til justering',
     cutting_layer_name: 'Skriv ut og skjær - Skjæring',
     design_changed: 'Designet er endret siden det ble skrevet ut, så bare skjærebanen vises.\nFortsett for å justere et tidligere utskrevet materiale, eller start på nytt for å forberede det gjeldende designet.',

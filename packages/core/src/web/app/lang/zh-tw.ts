@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: '找不到相機預覽影像，請先執行相機預覽拍攝列印好的材料。',
       success: '對位完成！',
     },
+    backend_outdated: '目前的機器韌體尚不支援精準對位功能。',
     continue_to_alignment: '繼續進行對位',
     cutting_layer_name: '精準對位 - 切割',
     design_changed: '設計在列印之後已經變更，因此只顯示切割路徑。\n若要對位先前列印的材料請繼續，或選擇重新開始以使用目前的設計重新準備。',

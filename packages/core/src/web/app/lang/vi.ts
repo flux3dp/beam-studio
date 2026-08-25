@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Không tìm thấy ảnh xem trước camera. Vui lòng chạy xem trước camera để chụp vật liệu đã in trước.',
       success: 'Căn chỉnh hoàn tất!',
     },
+    backend_outdated: 'Firmware hiện tại của máy chưa hỗ trợ Print & Cut.',
     continue_to_alignment: 'Tiếp tục đến căn chỉnh',
     cutting_layer_name: 'In và cắt - Cắt',
     design_changed: 'Thiết kế đã thay đổi kể từ khi in, nên chỉ hiển thị đường cắt.\nTiếp tục để căn chỉnh vật liệu đã in trước đó, hoặc bắt đầu lại để chuẩn bị thiết kế hiện tại.',

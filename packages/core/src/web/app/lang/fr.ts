@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Aucune image d’aperçu de la caméra n’a été trouvée. Veuillez d’abord lancer l’aperçu de la caméra pour capturer le matériau imprimé.',
       success: 'Alignement terminé !',
     },
+    backend_outdated: 'Le micrologiciel actuel de la machine ne prend pas encore en charge Print & Cut.',
     continue_to_alignment: 'Continuer vers l’alignement',
     cutting_layer_name: 'Impression et découpe - Découpe',
     design_changed: 'Le design a été modifié depuis son impression, seul le tracé de découpe est donc affiché.\nContinuez pour aligner un matériau imprimé précédemment, ou recommencez pour préparer le design actuel.',

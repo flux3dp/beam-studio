@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Kameran esikatselukuvaa ei löytynyt. Suorita ensin kameran esikatselu ja kuvaa tulostettu materiaali.',
       success: 'Kohdistus valmis!',
     },
+    backend_outdated: 'Laitteen nykyinen laiteohjelmisto ei vielä tue Print & Cut -toimintoa.',
     continue_to_alignment: 'Jatka kohdistukseen',
     cutting_layer_name: 'Tulosta ja leikkaa - Leikkaus',
     design_changed: 'Suunnitelmaa on muutettu tulostuksen jälkeen, joten vain leikkausreitti näytetään.\nJatka kohdistaaksesi aiemmin tulostetun materiaalin, tai aloita alusta valmistellaksesi nykyisen suunnitelman.',

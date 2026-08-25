@@ -1,7 +1,11 @@
 import React from 'react';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import selectionManager from '@core/app/svgedit/selection';
+import { checkOpenCvSupport } from '@core/helpers/api/open-cv';
+import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -18,8 +22,17 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-export const showPrintAndCut = (): void => {
+export const showPrintAndCut = async (): Promise<void> => {
   if (isIdExist(PRINT_AND_CUT_DIALOG_ID)) return;
+
+  // the desktop app bundles its own fluxghost; the web version talks to the
+  // machine's, which may predate the opencv commands the whole flow relies on
+  // (image_contour and detect_blobs ship together, so one probe covers both)
+  if (isWeb() && !(await checkOpenCvSupport('imageContour'))) {
+    alertCaller.popUpError({ message: i18n.lang.print_and_cut.backend_outdated });
+
+    return;
+  }
 
   // deselect so multi-selected elements leave the temp group and are collected
   // from their layers; drop unused defs once so the preview clone, the contour

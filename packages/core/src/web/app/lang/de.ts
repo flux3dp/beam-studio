@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Kein Kameravorschaubild gefunden. Bitte führen Sie zuerst die Kameravorschau aus, um das bedruckte Material aufzunehmen.',
       success: 'Ausrichtung abgeschlossen!',
     },
+    backend_outdated: 'Die aktuelle Firmware der Maschine unterstützt Print & Cut noch nicht.',
     continue_to_alignment: 'Weiter zur Ausrichtung',
     cutting_layer_name: 'Drucken & Schneiden - Schnitt',
     design_changed: 'Das Design wurde seit dem Druck geändert, daher wird nur der Schneidpfad angezeigt.\nFahren Sie fort, um ein zuvor bedrucktes Material auszurichten, oder beginnen Sie neu, um das aktuelle Design vorzubereiten.',

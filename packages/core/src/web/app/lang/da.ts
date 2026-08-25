@@ -2290,6 +2290,7 @@ const lang: ILang = {
       no_preview: 'Der blev ikke fundet noget kameraforhåndsvisningsbillede. Kør først kameraforhåndsvisningen for at tage et billede af det printede materiale.',
       success: 'Justering fuldført!',
     },
+    backend_outdated: 'Maskinens nuværende firmware understøtter endnu ikke Print & Cut.',
     continue_to_alignment: 'Fortsæt til justering',
     cutting_layer_name: 'Print og skær - Skæring',
     design_changed: 'Designet er ændret, siden det blev printet, så kun skærestien vises.\nFortsæt for at justere et tidligere printet materiale, eller start forfra for at forberede det aktuelle design.',
