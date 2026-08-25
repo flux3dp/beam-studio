@@ -1,18 +1,13 @@
 import React, { memo, useEffect, useMemo } from 'react';
 
-import { match } from 'ts-pattern';
-
-import { dpmm } from '@core/app/actions/beambox/constant';
 import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { PrintAndCutCanvasManager } from './CanvasManager';
 import { usePrintAndCutStore } from './store';
 import { getContourPathElements } from './utils/contourElements';
-import { getContentBBoxFromState, getGridOffsets, getPaperRect } from './utils/layout';
+import { getGridOffsets, getPaperRect } from './utils/layout';
 
-/** Background padding around the content (design + marks) during setup, in mm */
-const SETUP_BACKGROUND_PADDING_MM = 10;
 const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
 // bumped per manager so EmbeddedCanvas remounts (dropping the old canvas root)
@@ -79,23 +74,11 @@ const Canvas = (): React.JSX.Element => {
     // the align step sets its own background below
     if (step === 'align') return;
 
-    const backgroundRect = match(step)
-      .with('setup', () => {
-        const contentBBox = getContentBBoxFromState({ fullBBox, markPositions });
-
-        if (!contentBBox) return null;
-
-        const pad = SETUP_BACKGROUND_PADDING_MM * dpmm;
-
-        return {
-          height: contentBBox.height + 2 * pad,
-          width: contentBBox.width + 2 * pad,
-          x: contentBBox.x - pad,
-          y: contentBBox.y - pad,
-        };
-      })
-      .with('paper', 'export', 'resume', () => getPaperRect({ fullBBox, markPositions, orientation, paperKey }))
-      .exhaustive();
+    // setup previews the 'fit' paper (content + marks + print margin)
+    const backgroundRect =
+      step === 'setup'
+        ? getPaperRect({ fullBBox, markPositions, orientation: 'portrait', paperKey: 'fit' })
+        : getPaperRect({ fullBBox, markPositions, orientation, paperKey });
 
     canvasManager.setBackgroundRect(backgroundRect);
     // zoom to the selected paper, or to the padded content during setup
