@@ -98,8 +98,11 @@ export const generateAlignedCutLayer = (): void => {
   selectionManager.clearSelection();
 
   // a repeat run re-aligns a new sheet: drop the previously generated cutting
-  // layer(s) so exactly one remains, rather than stacking mis-aligned copies
+  // layer(s) so exactly one remains, rather than stacking mis-aligned copies.
+  // The detached group keeps its config attributes, so parameters the user
+  // tuned on it can be cloned onto the replacement below
   const previousCutLayers = getGeneratedCutLayers();
+  const previousCutLayer = previousCutLayers[0] ?? null;
 
   previousCutLayers.forEach((layer) => {
     deleteLayerByName(getLayerName(layer), { parentCmd: batchCmd });
@@ -124,6 +127,11 @@ export const generateAlignedCutLayer = (): void => {
 
   // tag it so the next run can find and replace it, and the resume preview can exclude it
   newLayer.setAttribute(PRINT_AND_CUT_LAYER_ATTR, '1');
+
+  // Inherit the previous cut layer's config if it exists,
+  // or if the user chose to cut from a layer, inherit that layer's config.
+  if (previousCutLayer) cloneLayerConfig(newLayerName, previousCutLayer);
+  else if (contourSource === 'layer' && contourLayerName) cloneLayerConfig(newLayerName, contourLayerName);
 
   const registerElement = (element: SVGGraphicsElement, dx: number, dy: number) => {
     batchCmd.addSubCommand(new history.InsertElementCommand(element));
@@ -160,8 +168,6 @@ export const generateAlignedCutLayer = (): void => {
         registerElement(clone, dx, dy);
       });
     });
-    // the cut runs with the source layer's parameters, not the defaults
-    cloneLayerConfig(newLayerName, contourLayerName);
   }
 
   // move each copy to its grid position, then apply the sheet alignment

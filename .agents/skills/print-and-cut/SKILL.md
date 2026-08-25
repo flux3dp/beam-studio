@@ -216,7 +216,9 @@ paper rect, `align` whole workarea).
 - `getBBox()` returns zeros inside a `display:none` subtree — wrap DOM
   measurement of possibly-hidden layers in `measureWithLayersShown` (measure.ts).
 - Layer-mode caveats (accepted): serialized `<use>` needs its symbol alive in
-  live defs; `cloneLayerConfig` reads the LIVE source layer's machine params.
+  live defs; `cloneLayerConfig` reads the LIVE source layer's machine params on
+  the first Finish only — a repeat Finish clones the config from the replaced
+  cut layer's detached group instead, preserving the user's tuning.
 - The generated cut layer is excluded everywhere design content is gathered
   (`getContentsLayers`, raster, PDF, preview clone) — always via
   `PRINT_AND_CUT_LAYER_ATTR`, never by name.

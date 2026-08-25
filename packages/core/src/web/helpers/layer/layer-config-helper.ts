@@ -588,12 +588,13 @@ export const initLayerConfig = (layer: Element): void => {
   }
 };
 
-export const cloneLayerConfig = (targetLayerName: string, baseLayerName: string): void => {
+/** @param base the base layer's name, or its group element — which may be a detached (e.g. just-deleted) node */
+export const cloneLayerConfig = (targetLayerName: string, base: Element | string): void => {
   const targetLayer = getLayerElementByName(targetLayerName);
 
   if (!targetLayer) return;
 
-  const baseLayer = getLayerElementByName(baseLayerName);
+  const baseLayer = typeof base === 'string' ? getLayerElementByName(base) : base;
 
   if (!baseLayer) {
     initLayerConfig(targetLayer);
