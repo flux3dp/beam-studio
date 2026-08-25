@@ -161,6 +161,21 @@ describe('test layer-config-helper', () => {
     });
   });
 
+  test('cloneLayerConfig from a detached element', () => {
+    writeData('layer 1', 'speed', 30);
+
+    const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
+
+    // the base layer may already be deleted from the document (e.g. the
+    // replaced Print and Cut layer); its element still carries the config
+    layer1.remove();
+    cloneLayerConfig('layer 3', layer1);
+    expect(getLayerConfig('layer 3')).toEqual({
+      ...defaultConfigs,
+      speed: { value: 30 },
+    });
+  });
+
   test('getLayersConfig', () => {
     expect(getLayersConfig(['layer 0', 'layer 1', 'layer 2', 'layer 3'])).toEqual(defaultMultiValueConfigs);
     writeData('layer 1', 'speed', 30);

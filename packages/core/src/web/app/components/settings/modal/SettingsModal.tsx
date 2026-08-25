@@ -154,12 +154,19 @@ const SettingsModal = ({
   );
 };
 
-export const showSettingsModal = (initialCategory?: SettingCategory): void => {
+export const showSettingsModal = (initialCategory?: SettingCategory, scrollToId?: string): void => {
   if (!isIdExist('settings-modal')) {
     addDialogComponent(
       'settings-modal',
       <SettingsModal initialCategory={initialCategory} onClose={() => popDialogById('settings-modal')} />,
     );
+
+    if (scrollToId) {
+      // let the modal mount before scrolling the option into view
+      setTimeout(() => {
+        document.getElementById(scrollToId)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }, 300);
+    }
   }
 };
 

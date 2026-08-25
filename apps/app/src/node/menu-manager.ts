@@ -670,6 +670,12 @@ class MenuManager extends EventEmitter {
           id: 'START_CURVE_ENGRAVING_MODE',
           label: i18n.lang.beambox.left_panel.label.curve_engraving.title,
         },
+        {
+          click: callback,
+          enabled: false,
+          id: 'PRINT_AND_CUT',
+          label: i18n.lang.print_and_cut.title,
+        },
       ],
     });
 

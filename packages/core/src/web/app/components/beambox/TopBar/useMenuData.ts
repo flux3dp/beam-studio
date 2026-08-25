@@ -530,7 +530,10 @@ const useMenuData = (email?: string): MenuNode[] => {
   };
 
   const toolsMenu: MenuNode = {
-    children: [{ id: 'START_CURVE_ENGRAVING_MODE', label: tCurveEngraving.title, type: 'item' }],
+    children: [
+      { id: 'START_CURVE_ENGRAVING_MODE', label: tCurveEngraving.title, type: 'item' },
+      { id: 'PRINT_AND_CUT', label: lang.print_and_cut.title, type: 'item' },
+    ],
     label: menuCms.tools.title,
     type: 'submenu',
   };

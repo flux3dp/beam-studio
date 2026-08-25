@@ -1,0 +1,102 @@
+@use '@core/styles/variables' as variables;
+
+.sider {
+  display: flex;
+  flex-direction: column;
+  min-width: 300px;
+  max-width: 300px;
+}
+
+.step {
+  padding: 0 20px;
+  margin: 12px 0;
+
+  .progress {
+    color: #b3b3b3;
+    font-size: 14px;
+    font-weight: bold;
+  }
+
+  .title {
+    color: #000000;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 8px;
+  }
+}
+
+.content {
+  flex: 1;
+  padding: 0 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.desc {
+  color: variables.$secondary-gray;
+  white-space: pre-line;
+}
+
+.alert {
+  white-space: pre-line;
+}
+
+.alignProgress {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.timeRemaining {
+  display: flex;
+  justify-content: space-between;
+}
+
+.radioGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.optionLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.swatch {
+  flex: none;
+  width: 12px;
+  height: 12px;
+  border: 1px solid #d9d9d9;
+  border-radius: 2px;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  row-gap: 4px;
+  margin-bottom: 12px;
+
+  .label {
+    margin-right: 8px;
+  }
+
+  // when the control wraps onto its own line, keep it aligned to the end
+  // (a lone flex line gets no space-between distribution)
+  > :last-child {
+    margin-left: auto;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 16px 20px;
+  border-top: 1px solid #e0e0e0;
+}

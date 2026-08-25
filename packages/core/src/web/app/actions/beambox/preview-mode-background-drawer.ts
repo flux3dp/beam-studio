@@ -378,6 +378,41 @@ class PreviewModeBackgroundDrawer {
     return getBackgroundUrl(this.canvas.width, this.canvas.height, { useCache });
   }
 
+  /**
+   * Crop of the accumulated preview canvas; the rect is in workarea canvas px
+   * and clamped to the canvas bounds. Reads the canvas directly, so the crop
+   * reflects a just-drawn capture even before the background url updates.
+   * @returns the crop as a png blob, the clamped crop origin `x`/`y` in
+   * workarea px, and `ratio` = blob px per workarea px (the canvasRatio,
+   * below 1 only when the canvas is downscaled on iOS)
+   */
+  getCanvasCrop = (
+    x: number,
+    y: number,
+    width: number,
+    height: number,
+  ): Promise<null | { blob: Blob; ratio: number; x: number; y: number }> => {
+    const ratio = this.canvasRatio;
+    const left = Math.max(0, Math.round(x * ratio));
+    const top = Math.max(0, Math.round(y * ratio));
+    const right = Math.min(this.canvas.width, Math.round((x + width) * ratio));
+    const bottom = Math.min(this.canvas.height, Math.round((y + height) * ratio));
+
+    if (right - left < 1 || bottom - top < 1) return Promise.resolve(null);
+
+    const cropCanvas = document.createElement('canvas');
+
+    cropCanvas.width = right - left;
+    cropCanvas.height = bottom - top;
+    cropCanvas
+      .getContext('2d')!
+      .drawImage(this.canvas, left, top, right - left, bottom - top, 0, 0, right - left, bottom - top);
+
+    return new Promise((resolve) => {
+      cropCanvas.toBlob((blob) => resolve(blob ? { blob, ratio, x: left / ratio, y: top / ratio } : null), 'image/png');
+    });
+  };
+
   getCoordinates() {
     return this.coordinates;
   }
@@ -398,6 +433,9 @@ class PreviewModeBackgroundDrawer {
     setCameraPreviewState({ isClean: false });
 
     setBackgroundImage(this.cameraCanvasUrl);
+    // notify progressive-preview listeners (e.g. the Print and Cut dialog)
+    // each time a capture is drawn; the url is revoked on the next draw
+    canvasEventEmitter.emit('preview-background-updated', this.cameraCanvasUrl);
   };
 
   setCanvasUrl = async (url: string, opts?: { loadToCanvas?: boolean }): Promise<void> => {

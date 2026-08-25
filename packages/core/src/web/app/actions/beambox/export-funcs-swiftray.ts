@@ -15,7 +15,6 @@ import workareaManager from '@core/app/svgedit/workarea';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
-import { convertAllTextToPath } from '@core/helpers/convertToPath';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
@@ -23,6 +22,7 @@ import convertBitmapToInfilledRect from '@core/helpers/layer/convertBitmapToInfi
 import convertClipPath from '@core/helpers/layer/convertClipPath';
 import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
 import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
+import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import { convertVariableText } from '@core/helpers/variableText';

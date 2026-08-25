@@ -98,12 +98,12 @@ jest.mock('@core/app/svgedit/text/textedit', () => ({ renderText: (...args: any[
 
 jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args: any[]) => mockAlertPopUp(...args) }));
 
-jest.mock('./api/alert-config', () => ({
+jest.mock('../api/alert-config', () => ({
   read: (...args: any[]) => mockAlertConfigRead(...args),
   write: (...args: any[]) => mockAlertConfigWrite(...args),
 }));
 
-jest.mock('./svg-editor-helper', () => ({
+jest.mock('../svg-editor-helper', () => ({
   getSVGAsync: (cb: any) =>
     cb({
       Canvas: {
@@ -380,8 +380,12 @@ describe('convertToPath', () => {
       expect(success).toBe(false);
       // Stops at the cancelled element; the third text is never processed.
       expect(mockFontFuncsConvertTextToPath).toHaveBeenCalledTimes(2);
-      // Revert is a no-op on the cancel path (nothing to undo).
-      expect(() => revert()).not.toThrow();
+
+      // Revert undoes the elements converted before the cancel, so nothing is left half-converted.
+      const { parentCmd } = mockHandleHistoryActionOptions.mock.calls[0][1];
+
+      revert();
+      expect(parentCmd.unapply).toHaveBeenCalledTimes(1);
     });
 
     test('shows the font-substitution thumbnail warning when a font is unsupported and not skipped', async () => {

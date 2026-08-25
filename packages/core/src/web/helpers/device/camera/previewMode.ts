@@ -113,7 +113,8 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
 export const setupPreviewMode = async ({
   callback,
   showModal,
-}: { callback?: () => void; showModal?: boolean } = {}) => {
+  waitForFullAreaCapture = false,
+}: { callback?: () => void; showModal?: boolean; waitForFullAreaCapture?: boolean } = {}) => {
   if (isSettingUpPreview) return;
 
   isSettingUpPreview = true;
@@ -150,11 +151,13 @@ export const setupPreviewMode = async ({
     setCameraPreviewState({ pendingPreviewMode: undefined });
 
     if (previewModeController.isFullArea) {
-      previewModeController.previewFullWorkarea().then(() => {
+      const capture = previewModeController.previewFullWorkarea().then(() => {
         if (tutorialController.getNextStepRequirement() === tutorialConstants.PREVIEW_PLATFORM) {
           tutorialController.handleNextStep();
         }
       });
+
+      if (waitForFullAreaCapture) await capture;
     }
 
     callback?.();

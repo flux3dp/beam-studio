@@ -401,7 +401,7 @@ class CurveEngravingModeController {
     this.areaPath.setAttribute('d', `${d1} ${d2}`);
   };
 
-  loadData = (data: CurveEngraving, opts: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
+  loadData = (data: CurveEngraving | null, opts: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
     if (!this.checkSupport() || !data) {
       return null;
     }

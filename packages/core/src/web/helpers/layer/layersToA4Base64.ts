@@ -4,6 +4,7 @@ import { match } from 'ts-pattern';
 import { dpmm } from '@core/app/actions/beambox/constant';
 import { findDefs } from '@core/app/svgedit/utils/findDef';
 import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
+import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 
 type Options = {
   dpi?: number;
@@ -17,6 +18,8 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
   const canvasWidth = Math.round(width * ratio);
   const canvasHeight = Math.round(height * ratio);
   const svgDefs = findDefs();
+  // the isolated <img> render cannot see the app document's webfonts, so inline their bytes
+  const fontFaceCss = await buildWebFontFaceCss(layers);
   const getCanvas = async (elements: SVGElement[]) => {
     const outerHTML = pipe(
       //
@@ -36,6 +39,7 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
     xmlns="http://www.w3.org/2000/svg"
     xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+    ${fontFaceCss}
     ${svgDefs.outerHTML}
     ${outerHTML}
     </svg>`;

@@ -264,6 +264,7 @@
       'data-textureStripeAngle',
       'data-textureStripeIntensity',
       'data-textureStripeInterval',
+      'data-pnc-cut',
     ],
     image: [
       'data-ratiofixed',

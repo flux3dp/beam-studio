@@ -22,13 +22,13 @@ import selectionManager from '@core/app/svgedit/selection';
 import textEdit from '@core/app/svgedit/text/textedit';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
+import imageEdit from '@core/helpers/image-edit';
 import {
   convertSvgToPath,
   convertTempGroupToPath,
   convertTextToPath,
   dispatchConvertToPath,
-} from '@core/helpers/convertToPath';
-import imageEdit from '@core/helpers/image-edit';
+} from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
