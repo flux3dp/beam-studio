@@ -26,4 +26,8 @@ export const setResumeConfig = (config: ResumeConfig): void => {
   currentFileManager.setHasUnsavedChanges(true);
 };
 
-export const clearResumeConfig = (): void => useResumeConfigStore.setState({ config: null });
+export const clearResumeConfig = ({ isChange = true }: { isChange?: boolean } = {}): void => {
+  useResumeConfigStore.setState({ config: null });
+
+  if (isChange) currentFileManager.setHasUnsavedChanges(true);
+};

@@ -639,7 +639,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       setMouseMode('select');
       svgCanvas.clear();
-      clearResumeConfig();
+      clearResumeConfig({ isChange: false });
       workareaManager.resetView();
       RightPanelController.setPanelType(isMobile() ? PanelType.None : PanelType.Layer);
       useLayerStore.getState().forceUpdate();
