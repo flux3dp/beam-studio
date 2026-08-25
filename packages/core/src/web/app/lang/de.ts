@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Neu beginnen',
     step_align: 'Kameraausrichtung',
     step_align_desc: 'Legen Sie das bedruckte Material in die Maschine und führen Sie eine Kameravorschau aus.\nDie Marken werden erkannt und die Schneidlinien automatisch am Druck ausgerichtet.\nKlicken Sie auf „Fertigstellen“, um die ausgerichtete Schneidebene zur Leinwand hinzuzufügen; die ursprünglichen Design-Ebenen werden ausgeblendet.\nSenden Sie die Aufgabe anschließend aus dem Editor.',
-    step_export: 'PDF exportieren',
+    step_export: 'PDF exportieren und drucken',
     step_export_desc: 'Exportieren Sie ein PDF mit Ihrem Design und den Passermarken und drucken Sie es mit Ihrem Drucker in 100 % Größe (Originalgröße).\nVerwenden Sie nicht „An Seite anpassen“, sonst stimmt der Schneidpfad nicht mit dem Druck überein.\nDie versetzten Schneidpfade sind nicht enthalten, da sie nur vom Lasercutter verwendet werden.',
     step_paper: 'Ausgabegröße',
     step_paper_desc: 'Wählen Sie die Ausgabegröße für das exportierte PDF.\nLegen Sie Zeilen und Spalten fest, um mehrere Kopien Ihres Designs auf einem Materialstück zu drucken und zu schneiden.\nDie Vorschau zeigt den Ausgabebereich um den Inhalt.',

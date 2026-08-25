@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Aloita alusta',
     step_align: 'Kamerakohdistus',
     step_align_desc: 'Aseta tulostettu materiaali koneeseen ja suorita kameran esikatselu.\nMerkit tunnistetaan ja leikkauslinjat kohdistetaan automaattisesti tulosteeseen.\nNapsauta ”Valmis” lisätäksesi kohdistetun leikkaustason kankaalle; alkuperäiset suunnittelutasot piilotetaan.\nLähetä työ tämän jälkeen editorista.',
-    step_export: 'Vie PDF',
+    step_export: 'Vie ja tulosta PDF',
     step_export_desc: 'Vie PDF, joka sisältää suunnitelmasi ja kohdistusmerkit, ja tulosta se tulostimellasi 100 %:n mittakaavassa (todellinen koko).\nÄlä käytä ”Sovita sivulle”, muuten leikkausreitti ei vastaa tulostetta.\nSiirrettyjä leikkausreittejä ei sisällytetä, koska niitä käyttää vain laserleikkuri.',
     step_paper: 'Tulosteen koko',
     step_paper_desc: 'Valitse viedyn PDF:n tulosteen koko.\nMääritä rivit ja sarakkeet tulostaaksesi ja leikataksesi useita kopioita suunnitelmastasi yhdelle materiaalille.\nEsikatselu näyttää tulostusalueen rajan sisällön ympärillä.',

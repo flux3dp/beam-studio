@@ -2315,7 +2315,7 @@ const lang: ILang = {
     start_over: 'Empezar de nuevo',
     step_align: 'Alineación por cámara',
     step_align_desc: 'Coloca el material impreso en la máquina y ejecuta una vista previa de la cámara.\nLas marcas se detectan y las líneas de corte se alinean automáticamente con la impresión.\nHaz clic en «Finalizar» para añadir la capa de corte alineada al lienzo; las capas de diseño originales se ocultarán.\nDespués envía la tarea desde el editor.',
-    step_export: 'Exportar PDF',
+    step_export: 'Exportar e imprimir PDF',
     step_export_desc: 'Exporta un PDF con tu diseño y las marcas de alineación, e imprímelo con tu impresora al 100 % de escala (tamaño real).\nNo uses «Ajustar a la página», o la trayectoria de corte no coincidirá con la impresión.\nLas trayectorias de corte desplazadas no se incluyen, ya que solo las usa la cortadora láser.',
     step_paper: 'Tamaño de salida',
     step_paper_desc: 'Elige el tamaño de salida del PDF exportado.\nDefine filas y columnas para imprimir y cortar varias copias de tu diseño en una sola pieza de material.\nLa vista previa muestra el límite de salida alrededor del contenido.',

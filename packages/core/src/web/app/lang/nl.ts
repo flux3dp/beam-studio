@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Opnieuw beginnen',
     step_align: 'Camera-uitlijning',
     step_align_desc: 'Plaats het bedrukte materiaal in de machine en voer een cameravoorvertoning uit.\nDe markeringen worden gedetecteerd en de snijlijnen automatisch uitgelijnd op de afdruk.\nKlik op ‘Voltooien’ om de uitgelijnde snijlaag aan het canvas toe te voegen; de oorspronkelijke ontwerplagen worden verborgen.\nVerstuur de taak daarna vanuit de editor.',
-    step_export: 'PDF exporteren',
+    step_export: 'PDF exporteren en afdrukken',
     step_export_desc: 'Exporteer een PDF met je ontwerp en de uitlijnmarkeringen en print deze met je printer op 100% schaal (werkelijke grootte).\nGebruik niet ‘Passend maken’, anders komt het snijpad niet overeen met de afdruk.\nDe verschoven snijpaden zijn niet opgenomen, omdat ze alleen door de lasersnijder worden gebruikt.',
     step_paper: 'Uitvoergrootte',
     step_paper_desc: 'Kies de uitvoergrootte voor de geëxporteerde PDF.\nStel rijen en kolommen in om meerdere exemplaren van je ontwerp op één stuk materiaal te printen en te snijden.\nDe voorvertoning toont de uitvoergrens rondom de inhoud.',

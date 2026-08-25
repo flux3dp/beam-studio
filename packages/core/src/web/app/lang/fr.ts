@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Recommencer',
     step_align: 'Alignement par caméra',
     step_align_desc: 'Placez le matériau imprimé dans la machine et lancez un aperçu de la caméra.\nLes repères sont détectés et les lignes de découpe alignées automatiquement sur l’impression.\nCliquez sur « Terminer » pour ajouter le calque de découpe aligné au canevas ; les calques du design d’origine seront masqués.\nEnvoyez ensuite la tâche depuis l’éditeur.',
-    step_export: 'Exporter le PDF',
+    step_export: 'Exporter et imprimer le PDF',
     step_export_desc: 'Exportez un PDF contenant votre design et les repères d’alignement, puis imprimez-le avec votre imprimante à l’échelle 100 % (taille réelle).\nN’utilisez pas « Ajuster à la page », sinon le tracé de découpe ne correspondra pas à l’impression.\nLes tracés de découpe décalés ne sont pas inclus, car ils servent uniquement à la découpeuse laser.',
     step_paper: 'Taille de sortie',
     step_paper_desc: 'Choisissez la taille de sortie du PDF exporté.\nDéfinissez les lignes et les colonnes pour imprimer et découper plusieurs exemplaires de votre design sur un même matériau.\nL’aperçu affiche la limite de sortie autour du contenu.',

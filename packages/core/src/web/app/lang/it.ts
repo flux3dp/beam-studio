@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Ricomincia',
     step_align: 'Allineamento fotocamera',
     step_align_desc: 'Inserisci il materiale stampato nella macchina ed esegui un’anteprima fotocamera.\nI marcatori vengono rilevati e le linee di taglio allineate automaticamente alla stampa.\nFai clic su «Termina» per aggiungere al canvas il livello di taglio allineato; i livelli del design originale verranno nascosti.\nQuindi invia il lavoro dall’editor.',
-    step_export: 'Esporta PDF',
+    step_export: 'Esporta e stampa PDF',
     step_export_desc: 'Esporta un PDF contenente il tuo design e i marcatori di allineamento, quindi stampalo con la tua stampante in scala 100% (dimensioni reali).\nNon usare «Adatta alla pagina», altrimenti il percorso di taglio non corrisponderà alla stampa.\nI percorsi di taglio con offset non sono inclusi, perché vengono usati solo dalla macchina laser.',
     step_paper: 'Dimensione di output',
     step_paper_desc: 'Scegli la dimensione di output del PDF esportato.\nImposta righe e colonne per stampare e tagliare più copie del tuo design su un unico pezzo di materiale.\nL’anteprima mostra il limite di output attorno al contenuto.',

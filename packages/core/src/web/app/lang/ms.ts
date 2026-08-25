@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Mula semula',
     step_align: 'Penjajaran kamera',
     step_align_desc: 'Letakkan bahan bercetak di dalam mesin dan jalankan pratonton kamera.\nTanda akan dikesan dan garis potong dijajarkan dengan cetakan secara automatik.\nKlik “Selesai” untuk menambah lapisan potong yang dijajarkan pada kanvas; lapisan reka bentuk asal akan disembunyikan.\nKemudian hantar tugas dari editor.',
-    step_export: 'Eksport PDF',
+    step_export: 'Eksport dan Cetak PDF',
     step_export_desc: 'Eksport PDF yang mengandungi reka bentuk anda dan tanda penjajaran, kemudian cetak dengan pencetak anda pada skala 100% (saiz sebenar).\nJangan gunakan “Muatkan ke Halaman”, kerana laluan potong tidak akan sepadan dengan cetakan.\nLaluan potong yang diofset tidak disertakan, kerana ia hanya digunakan oleh pemotong laser.',
     step_paper: 'Saiz output',
     step_paper_desc: 'Pilih saiz output untuk PDF yang dieksport.\nTetapkan baris dan lajur untuk mencetak dan memotong beberapa salinan reka bentuk anda pada satu keping bahan.\nPratonton menunjukkan sempadan output di sekeliling kandungan.',

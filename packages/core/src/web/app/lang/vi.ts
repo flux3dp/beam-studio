@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Bắt đầu lại',
     step_align: 'Căn chỉnh bằng camera',
     step_align_desc: 'Đặt vật liệu đã in vào máy và chạy xem trước camera.\nCác dấu sẽ được phát hiện và đường cắt tự động căn khớp với bản in.\nNhấp “Hoàn tất” để thêm lớp cắt đã căn chỉnh vào canvas; các lớp thiết kế gốc sẽ được ẩn đi.\nSau đó gửi tác vụ từ trình chỉnh sửa.',
-    step_export: 'Xuất PDF',
+    step_export: 'Xuất và in PDF',
     step_export_desc: 'Xuất tệp PDF chứa thiết kế và các dấu căn chỉnh, sau đó in bằng máy in của bạn ở tỷ lệ 100% (kích thước thật).\nKhông dùng “Vừa với trang”, nếu không đường cắt sẽ không khớp với bản in.\nCác đường cắt lệch không được đưa vào, vì chúng chỉ dùng cho máy cắt laser.',
     step_paper: 'Kích thước đầu ra',
     step_paper_desc: 'Chọn kích thước đầu ra cho tệp PDF xuất ra.\nĐặt số hàng và cột để in và cắt nhiều bản sao thiết kế của bạn trên một tấm vật liệu.\nBản xem trước hiển thị ranh giới đầu ra quanh nội dung.',

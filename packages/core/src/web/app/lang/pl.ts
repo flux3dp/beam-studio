@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Zacznij od nowa',
     step_align: 'Wyrównanie kamerą',
     step_align_desc: 'Umieść zadrukowany materiał w maszynie i uruchom podgląd kamery.\nZnaczniki zostaną wykryte, a linie cięcia automatycznie wyrównane z wydrukiem.\nKliknij „Zakończ”, aby dodać wyrównaną warstwę cięcia na płótnie; oryginalne warstwy projektu zostaną ukryte.\nNastępnie wyślij zadanie z edytora.',
-    step_export: 'Eksportuj PDF',
+    step_export: 'Eksportuj i wydrukuj PDF',
     step_export_desc: 'Wyeksportuj plik PDF zawierający projekt i znaczniki wyrównania, a następnie wydrukuj go na drukarce w skali 100% (rozmiar rzeczywisty).\nNie używaj opcji „Dopasuj do strony”, ponieważ ścieżka cięcia nie będzie pasować do wydruku.\nOdsunięte ścieżki cięcia nie są dołączane, ponieważ używa ich wyłącznie wycinarka laserowa.',
     step_paper: 'Rozmiar wydruku',
     step_paper_desc: 'Wybierz rozmiar wydruku dla eksportowanego pliku PDF.\nUstaw rzędy i kolumny, aby wydrukować i wyciąć wiele kopii projektu na jednym kawałku materiału.\nPodgląd pokazuje granicę wydruku wokół zawartości.',

@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Start på nytt',
     step_align: 'Kamerajustering',
     step_align_desc: 'Legg det utskrevne materialet i maskinen og kjør en kameraforhåndsvisning.\nMerkene oppdages, og skjærelinjene justeres automatisk etter utskriften.\nKlikk på «Fullfør» for å legge det justerte skjærelaget til lerretet; de opprinnelige designlagene skjules.\nSend deretter oppgaven fra redigeringsprogrammet.',
-    step_export: 'Eksporter PDF',
+    step_export: 'Eksporter og skriv ut PDF',
     step_export_desc: 'Eksporter en PDF med designet ditt og justeringsmerkene, og skriv den ut på skriveren i 100 % skala (faktisk størrelse).\nIkke bruk «Tilpass til side», ellers vil ikke skjærebanen samsvare med utskriften.\nDe forskjøvne skjærebanene er ikke inkludert, siden de bare brukes av laserkutteren.',
     step_paper: 'Utdatastørrelse',
     step_paper_desc: 'Velg utdatastørrelsen for den eksporterte PDF-en.\nAngi rader og kolonner for å skrive ut og skjære flere kopier av designet ditt på ett stykke materiale.\nForhåndsvisningen viser utdatagrensen rundt innholdet.',

@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Börja om',
     step_align: 'Kamerajustering',
     step_align_desc: 'Lägg det utskrivna materialet i maskinen och kör en kameraförhandsgranskning.\nMarkeringarna identifieras och skärlinjerna justeras automatiskt efter utskriften.\nKlicka på ”Slutför” för att lägga till det justerade skärlagret på arbetsytan; de ursprungliga designlagren döljs.\nSkicka sedan uppgiften från redigeraren.',
-    step_export: 'Exportera PDF',
+    step_export: 'Exportera och skriv ut PDF',
     step_export_desc: 'Exportera en PDF med din design och justeringsmarkeringarna och skriv ut den på din skrivare i 100 % skala (verklig storlek).\nAnvänd inte ”Anpassa till sida”, då stämmer skärbanan inte med utskriften.\nDe förskjutna skärbanorna ingår inte, eftersom de endast används av laserskäraren.',
     step_paper: 'Utdatastorlek',
     step_paper_desc: 'Välj utdatastorlek för den exporterade PDF-filen.\nAnge rader och kolumner för att skriva ut och skära flera kopior av din design på ett och samma materialstycke.\nFörhandsgranskningen visar utdatagränsen runt innehållet.',

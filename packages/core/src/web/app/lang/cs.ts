@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Začít znovu',
     step_align: 'Zarovnání kamerou',
     step_align_desc: 'Vložte potištěný materiál do stroje a spusťte náhled kamery.\nZnačky se rozpoznají a řezací linie se automaticky zarovnají s tiskem.\nKliknutím na „Dokončit“ přidáte zarovnanou řezací vrstvu na plátno; původní vrstvy návrhu budou skryty.\nPoté odešlete úlohu z editoru.',
-    step_export: 'Exportovat PDF',
+    step_export: 'Exportovat a vytisknout PDF',
     step_export_desc: 'Exportujte PDF obsahující váš návrh a zarovnávací značky a vytiskněte jej na tiskárně ve 100% měřítku (skutečná velikost).\nNepoužívejte „Přizpůsobit stránce“, jinak řezací dráha nebude odpovídat tisku.\nOdsazené řezací dráhy nejsou zahrnuty, protože je používá pouze laserová řezačka.',
     step_paper: 'Velikost výstupu',
     step_paper_desc: 'Zvolte velikost výstupu pro exportované PDF.\nNastavte řádky a sloupce pro tisk a řezání více kopií vašeho návrhu na jednom kusu materiálu.\nNáhled zobrazuje hranici výstupu kolem obsahu.',

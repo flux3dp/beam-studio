@@ -2316,7 +2316,7 @@ const lang: ILang = {
     start_over: 'Mulai ulang',
     step_align: 'Penyelarasan kamera',
     step_align_desc: 'Letakkan material tercetak di mesin dan jalankan pratinjau kamera.\nTanda akan terdeteksi dan garis potong diselaraskan dengan hasil cetak secara otomatis.\nKlik “Selesai” untuk menambahkan lapisan potong yang telah diselaraskan ke kanvas; lapisan desain asli akan disembunyikan.\nSetelah itu kirim tugas dari editor.',
-    step_export: 'Ekspor PDF',
+    step_export: 'Ekspor dan Cetak PDF',
     step_export_desc: 'Ekspor PDF yang berisi desain Anda dan tanda penyelarasan, lalu cetak dengan printer Anda pada skala 100% (ukuran sebenarnya).\nJangan gunakan “Sesuaikan dengan Halaman”, karena jalur potong tidak akan cocok dengan hasil cetak.\nJalur potong yang diberi offset tidak disertakan, karena hanya digunakan oleh pemotong laser.',
     step_paper: 'Ukuran keluaran',
     step_paper_desc: 'Pilih ukuran keluaran untuk PDF yang diekspor.\nAtur baris dan kolom untuk mencetak dan memotong beberapa salinan desain Anda pada satu lembar material.\nPratinjau menampilkan batas keluaran di sekitar konten.',
