@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { AimOutlined } from '@ant-design/icons';
+import { AimOutlined, CloseCircleFilled } from '@ant-design/icons';
 import { Button, Progress } from 'antd';
 import { match } from 'ts-pattern';
 
@@ -13,6 +13,7 @@ import { detectAlignmentTransform } from '../utils/alignByCamera';
 import type { AlignProgress } from '../utils/alignProgress';
 import { clearAlignProgress } from '../utils/alignProgress';
 import { captureWorkareaImage } from '../utils/captureWorkareaImage';
+import { stopSmartMarkSweep } from '../utils/smartMarkSweep';
 
 import ExposureControl from './ExposureControl';
 import RemainingTime from './RemainingTime';
@@ -35,7 +36,7 @@ const buildMessage = (
 };
 
 const StepAlign = (): React.JSX.Element => {
-  const { message: tMessage, print_and_cut: t } = useI18n();
+  const { alert: tAlert, print_and_cut: t } = useI18n();
   const alignProgress = usePrintAndCutStore((state) => state.alignProgress);
   const isProcessing = usePrintAndCutStore((state) => state.isProcessing);
   const markPositions = usePrintAndCutStore((state) => state.markPositions);
@@ -60,6 +61,8 @@ const StepAlign = (): React.JSX.Element => {
       if (!capture) return;
 
       setCameraImageUrl(capture.url);
+
+      if (capture.stopped) return;
 
       // 2. detect the marks, refine each with a centered retake, redetect
       const transform = await detectAlignmentTransform({
@@ -92,7 +95,11 @@ const StepAlign = (): React.JSX.Element => {
           <Progress percent={alignProgress.percentage} showInfo={false} size="small" status="active" />
           <div className={styles.desc}>{buildMessage(alignProgress, t.align_progress)}</div>
           <RemainingTime phase={alignProgress.phase} remainingSeconds={alignProgress.remainingSeconds} />
-          {alignProgress.stoppable && <div className={styles.desc}>{tMessage.preview.press_esc_to_stop}</div>}
+          {alignProgress.stoppable && (
+            <Button block danger icon={<CloseCircleFilled />} onClick={stopSmartMarkSweep}>
+              {tAlert.stop}
+            </Button>
+          )}
         </div>
       )}
     </div>

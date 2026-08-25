@@ -82,6 +82,16 @@ const hypothesisKey = (base: Array<[number, number]>): string =>
  * bed. On any dead end the flow degrades in place to the plain full sweep. The
  * returned centers are at sweep precision; refineMarkPatches sharpens them.
  */
+/** Set by the running sweep so stopSmartMarkSweep can reach its local flag */
+let requestStop: () => void = () => {};
+
+/**
+ * Stop the sweep runSmartMarkSweep is currently running, after its in-flight
+ * tile; no-op when none is running. The align step's Stop button and the ESC
+ * shortcut both stop the sweep through this.
+ */
+export const stopSmartMarkSweep = (): void => requestStop();
+
 export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSweepResult> => {
   const { modelHeight: workareaHeight, width: workareaWidth } = workareaManager;
   const points = previewModeController.getRegionPreviewPoints(0, 0, workareaWidth, workareaHeight, {
@@ -360,13 +370,11 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
     });
   };
 
-  const unregisterEsc = shortcuts.on(
-    ['Escape'],
-    () => {
-      stopped = true;
-    },
-    { isBlocking: true },
-  );
+  requestStop = () => {
+    stopped = true;
+  };
+
+  const unregisterEsc = shortcuts.on(['Escape'], stopSmartMarkSweep, { isBlocking: true });
 
   try {
     for (let i = 0; i < points.length; i += 1) {
@@ -407,6 +415,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
 
     throw error;
   } finally {
+    requestStop = () => {};
     unregisterEsc();
   }
 };

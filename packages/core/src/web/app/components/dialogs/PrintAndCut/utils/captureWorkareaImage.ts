@@ -33,7 +33,8 @@ export const supportsRegionPreview = (): boolean =>
  * is drawn, so a sweep can be shown while it runs; the url is only valid until
  * the next capture is drawn
  * @returns the image url, whether it came from a one-shot full-area capture,
- * and the smart-sweep mark centers (null unless the smart sweep found them);
+ * the smart-sweep mark centers (null unless the smart sweep found them), and
+ * whether the user stopped the sweep (partial image, not a failure);
  * null when the capture failed
  */
 export const captureWorkareaImage = async ({
@@ -42,7 +43,7 @@ export const captureWorkareaImage = async ({
 }: {
   expectedMarks?: Point[];
   onProgress?: (url: string) => void;
-} = {}): Promise<null | { detectedMarks: null | Point[]; isFullArea: boolean; url: string }> => {
+} = {}): Promise<null | { detectedMarks: null | Point[]; isFullArea: boolean; stopped: boolean; url: string }> => {
   const originalIsPreviewMode = previewModeController.isPreviewMode;
   let keepPreviewMode = false;
   const handleBackgroundUpdated = (url: string) => onProgress?.(url);
@@ -67,16 +68,18 @@ export const captureWorkareaImage = async ({
     // expansion is canvas-only territory the camera cannot cover
     const { modelHeight, width } = workareaManager;
     let detectedMarks: null | Point[] = null;
+    let stopped = false;
 
-    // the plain sweep and the full-area shot cannot report their own tile counts
-    // (the preview manager drives them), so the phase is announced without one;
-    // the smart sweep reports each tile below. Only a sweep can be stopped.
-    reportAlignProgress('capture', { stoppable: !isFullArea });
+    // stoppable ⇔ the Stop button works: it only reaches stopSmartMarkSweep;
+    // the manager-driven sweeps keep their own ESC stop and report no tiles
+    const canSmartSweep =
+      !isFullArea &&
+      expectedMarks?.length === 4 &&
+      previewModeController.getRegionPreviewPoints(0, 0, width, modelHeight) !== null;
+
+    reportAlignProgress('capture', { stoppable: canSmartSweep });
 
     if (!isFullArea) {
-      const canSmartSweep =
-        expectedMarks?.length === 4 && previewModeController.getRegionPreviewPoints(0, 0, width, modelHeight) !== null;
-
       if (canSmartSweep) {
         try {
           const result = await runSmartMarkSweep(expectedMarks!);
@@ -84,8 +87,12 @@ export const captureWorkareaImage = async ({
           if (result.failed) return null;
 
           detectedMarks = result.detectedMarks;
+          stopped = result.stopped;
         } catch (error) {
           console.warn('Smart mark sweep failed, falling back to a full region preview', error);
+
+          // the fallback sweep is out of the Stop button's reach — hide it
+          reportAlignProgress('capture', { stoppable: false });
 
           if (!(await previewModeController.previewRegion(0, 0, width, modelHeight))) return null;
         }
@@ -101,10 +108,11 @@ export const captureWorkareaImage = async ({
 
     if (!url) return null;
 
-    // left running for the align step's refinement retakes
-    keepPreviewMode = !isFullArea || supportsRegionPreview();
+    // left running for the align step's refinement retakes; a stopped capture
+    // skips detection entirely, so nothing follows that needs the camera
+    keepPreviewMode = !stopped && (!isFullArea || supportsRegionPreview());
 
-    return { detectedMarks, isFullArea, url };
+    return { detectedMarks, isFullArea, stopped, url };
   } catch (error) {
     console.error('Failed to capture camera preview for print and cut', error);
 
