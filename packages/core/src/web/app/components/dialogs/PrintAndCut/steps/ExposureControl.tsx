@@ -95,6 +95,8 @@ const ExposureControl = (): React.ReactNode => {
           (info.model !== 'fbb2' || vc.meetRequirement('BB2_AUTO_EXPOSURE'))
         ) {
           try {
+            await deviceMaster.connectCamera();
+
             const res = await deviceMaster.getCameraExposureAuto();
 
             setAutoExposure(res?.success ? res.data : null);
