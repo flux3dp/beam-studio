@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Rækker',
     grid_spacing: 'Afstand (mm)',
     no_content: 'Der er intet indhold i UV-printlagene. Tilføj dit design til et UV-printlag, før du bruger Print og skær.',
-    no_layer_with_path: 'Intet lag indeholder en vektorsti. Forbered et lag med skærestien for at bruge det som kontur.',
+    no_layer_with_path: 'Intet laserlag indeholder en vektorsti. Forbered et laserlag med skærestien for at bruge det som kontur.',
     no_uv_layer: 'Der blev ikke fundet noget UV-printlag. Skift designlagets modul til "UV Print" for at bruge Print og skær.',
     open_preferences: 'Åbn indstillinger',
     orientation: 'Retning',

@@ -3,8 +3,10 @@ import React, { useEffect, useMemo, useRef } from 'react';
 import { InputNumber, Radio, Tooltip } from 'antd';
 import { funnel } from 'remeda';
 
+import { laserModules } from '@core/app/constants/layer-module/layer-modules';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
+import { getData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import { CONTOUR_ELEMENT_SELECTOR } from '../constants';
@@ -25,12 +27,17 @@ const StepSetup = (): React.JSX.Element => {
   const setContourSource = usePrintAndCutStore((state) => state.setContourSource);
   const setOffsetDistance = usePrintAndCutStore((state) => state.setOffsetDistance);
 
-  // layers usable as a cut path: they must contain at least one cuttable vector element
+  // layers usable as a cut path: laser-module layers (the cut layer inherits
+  // the source layer's config) containing at least one cuttable vector element
   const pathLayers = useMemo(
     () =>
       layerManager
         .getAllLayers()
-        .filter((layer) => layer.getGroup().querySelector(CONTOUR_ELEMENT_SELECTOR))
+        .filter((layer) => {
+          const group = layer.getGroup();
+
+          return laserModules.has(getData(group, 'module')!) && group.querySelector(CONTOUR_ELEMENT_SELECTOR);
+        })
         .map((layer) => ({ color: layer.getColor(), name: layer.getName() })),
     [],
   );

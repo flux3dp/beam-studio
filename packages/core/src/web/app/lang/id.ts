@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Baris',
     grid_spacing: 'Spasi (mm)',
     no_content: 'Tidak ada konten di lapisan Cetak UV. Tambahkan desain Anda ke lapisan Cetak UV sebelum menggunakan Cetak dan Potong.',
-    no_layer_with_path: 'Tidak ada lapisan yang berisi jalur vektor. Siapkan lapisan dengan jalur potong untuk digunakan sebagai kontur.',
+    no_layer_with_path: 'Tidak ada lapisan laser yang berisi jalur vektor. Siapkan lapisan laser dengan jalur potong untuk digunakan sebagai kontur.',
     no_uv_layer: 'Lapisan Cetak UV tidak ditemukan. Ubah modul lapisan desain Anda menjadi "Cetak UV" untuk menggunakan Cetak dan Potong.',
     open_preferences: 'Buka Preferensi',
     orientation: 'Orientasi',

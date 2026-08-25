@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Rijen',
     grid_spacing: 'Tussenruimte (mm)',
     no_content: 'Er staat geen inhoud in de UV-printlagen. Voeg je ontwerp toe aan een UV-printlaag voordat je Printen en snijden gebruikt.',
-    no_layer_with_path: 'Geen enkele laag bevat een vectorpad. Bereid een laag met het snijpad voor om deze als contour te gebruiken.',
+    no_layer_with_path: 'Geen enkele laserlaag bevat een vectorpad. Bereid een laserlaag met het snijpad voor om deze als contour te gebruiken.',
     no_uv_layer: 'Geen UV-printlaag gevonden. Wijzig de module van je ontwerplaag naar "UV-print" om Printen en snijden te gebruiken.',
     open_preferences: 'Voorkeuren openen',
     orientation: 'Oriëntatie',

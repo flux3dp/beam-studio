@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Hàng',
     grid_spacing: 'Khoảng cách (mm)',
     no_content: 'Không có nội dung trong các lớp In UV. Vui lòng thêm thiết kế của bạn vào lớp In UV trước khi dùng In và cắt.',
-    no_layer_with_path: 'Không có lớp nào chứa đường vector. Hãy chuẩn bị một lớp có đường cắt để dùng làm đường viền.',
+    no_layer_with_path: 'Không có lớp laser nào chứa đường vector. Hãy chuẩn bị một lớp laser có đường cắt để dùng làm đường viền.',
     no_uv_layer: 'Không tìm thấy lớp In UV. Vui lòng đổi mô-đun của lớp thiết kế thành "In UV" để dùng In và cắt.',
     open_preferences: 'Mở tùy chọn',
     orientation: 'Hướng',

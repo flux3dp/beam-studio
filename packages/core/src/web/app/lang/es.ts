@@ -2300,7 +2300,7 @@ const lang: ILang = {
     grid_rows: 'Filas',
     grid_spacing: 'Espaciado (mm)',
     no_content: 'No hay contenido en las capas de impresión UV. Añade tu diseño a una capa de impresión UV antes de usar Imprimir y cortar.',
-    no_layer_with_path: 'Ninguna capa contiene una trayectoria vectorial. Prepara una capa con la trayectoria de corte para usarla como contorno.',
+    no_layer_with_path: 'Ninguna capa láser contiene una trayectoria vectorial. Prepara una capa láser con la trayectoria de corte para usarla como contorno.',
     no_uv_layer: 'No se encontró ninguna capa de impresión UV. Cambia el módulo de tu capa de diseño a «Impresión UV» para usar Imprimir y cortar.',
     open_preferences: 'Abrir preferencias',
     orientation: 'Orientación',

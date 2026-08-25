@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: '행',
     grid_spacing: '간격 (mm)',
     no_content: 'UV 인쇄 레이어에 내용이 없습니다. 인쇄 후 커팅을 사용하기 전에 디자인을 UV 인쇄 레이어에 추가해 주세요.',
-    no_layer_with_path: '벡터 경로가 포함된 레이어가 없습니다. 윤곽선으로 사용하려면 커팅 경로가 있는 레이어를 준비하세요.',
+    no_layer_with_path: '벡터 경로가 포함된 레이저 레이어가 없습니다. 윤곽선으로 사용하려면 커팅 경로가 있는 레이저 레이어를 준비하세요.',
     no_uv_layer: 'UV 인쇄 레이어를 찾을 수 없습니다. 인쇄 후 커팅을 사용하려면 디자인 레이어의 모듈을 "UV 인쇄"로 변경해 주세요.',
     open_preferences: '환경설정 열기',
     orientation: '방향',

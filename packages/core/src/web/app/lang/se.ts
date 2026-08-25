@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Rader',
     grid_spacing: 'Mellanrum (mm)',
     no_content: 'Det finns inget innehåll i UV-utskriftslagren. Lägg till din design i ett UV-utskriftslager innan du använder Skriv ut och skär.',
-    no_layer_with_path: 'Inget lager innehåller en vektorbana. Förbered ett lager med skärbanan för att använda det som kontur.',
+    no_layer_with_path: 'Inget laserlager innehåller en vektorbana. Förbered ett laserlager med skärbanan för att använda det som kontur.',
     no_uv_layer: 'Inget UV-utskriftslager hittades. Ändra designlagrets modul till "UV-utskrift" för att använda Skriv ut och skär.',
     open_preferences: 'Öppna inställningar',
     orientation: 'Orientering',

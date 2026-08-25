@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Linhas',
     grid_spacing: 'Espaçamento (mm)',
     no_content: 'Não há conteúdo nas camadas de impressão UV. Adicione seu design a uma camada de impressão UV antes de usar Imprimir e cortar.',
-    no_layer_with_path: 'Nenhuma camada contém um caminho vetorial. Prepare uma camada com o caminho de corte para usá-la como contorno.',
+    no_layer_with_path: 'Nenhuma camada a laser contém um caminho vetorial. Prepare uma camada a laser com o caminho de corte para usá-la como contorno.',
     no_uv_layer: 'Nenhuma camada de impressão UV encontrada. Altere o módulo da sua camada de design para "Impressão UV" para usar Imprimir e cortar.',
     open_preferences: 'Abrir preferências',
     orientation: 'Orientação',

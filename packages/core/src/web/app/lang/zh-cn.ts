@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: '行数',
     grid_spacing: '间距 (mm)',
     no_content: 'UV 打印图层中没有内容，请先将设计加入 UV 打印图层再使用精准对位。',
-    no_layer_with_path: '没有包含路径的图层，请先准备切割路径图层才能作为切割路径使用。',
+    no_layer_with_path: '没有包含路径的激光图层，请先准备含切割路径的激光图层才能作为切割路径使用。',
     no_uv_layer: '找不到 UV 打印图层，请先将设计图层的模块切换为“UV打印”再使用精准对位。',
     open_preferences: '打开偏好设定',
     orientation: '方向',

@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Righe',
     grid_spacing: 'Spaziatura (mm)',
     no_content: 'Non c’è alcun contenuto nei livelli di stampa UV. Aggiungi il tuo design a un livello di stampa UV prima di usare Stampa e taglia.',
-    no_layer_with_path: 'Nessun livello contiene un percorso vettoriale. Prepara un livello con il percorso di taglio per usarlo come contorno.',
+    no_layer_with_path: 'Nessun livello laser contiene un percorso vettoriale. Prepara un livello laser con il percorso di taglio per usarlo come contorno.',
     no_uv_layer: 'Nessun livello di stampa UV trovato. Cambia il modulo del livello del design in «Stampa UV» per usare Stampa e taglia.',
     open_preferences: 'Apri le preferenze',
     orientation: 'Orientamento',

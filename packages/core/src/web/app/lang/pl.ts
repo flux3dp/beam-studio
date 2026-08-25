@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Rzędy',
     grid_spacing: 'Odległość (mm)',
     no_content: 'Warstwy druku UV nie zawierają żadnej zawartości. Dodaj swój projekt do warstwy druku UV przed użyciem funkcji Drukuj i tnij.',
-    no_layer_with_path: 'Żadna warstwa nie zawiera ścieżki wektorowej. Przygotuj warstwę ze ścieżką cięcia, aby użyć jej jako konturu.',
+    no_layer_with_path: 'Żadna warstwa laserowa nie zawiera ścieżki wektorowej. Przygotuj warstwę laserową ze ścieżką cięcia, aby użyć jej jako konturu.',
     no_uv_layer: 'Nie znaleziono warstwy druku UV. Zmień moduł warstwy projektu na „Druk UV”, aby użyć funkcji Drukuj i tnij.',
     open_preferences: 'Otwórz preferencje',
     orientation: 'Orientacja',

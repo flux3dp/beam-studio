@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Lignes',
     grid_spacing: 'Espacement (mm)',
     no_content: 'Les calques d’impression UV ne contiennent aucun contenu. Veuillez ajouter votre design à un calque d’impression UV avant d’utiliser Impression et découpe.',
-    no_layer_with_path: 'Aucun calque ne contient de tracé vectoriel. Préparez un calque avec le tracé de découpe pour l’utiliser comme contour.',
+    no_layer_with_path: 'Aucun calque laser ne contient de tracé vectoriel. Préparez un calque laser avec le tracé de découpe pour l’utiliser comme contour.',
     no_uv_layer: 'Aucun calque d’impression UV trouvé. Veuillez changer le module de votre calque de design en « Impression UV » pour utiliser Impression et découpe.',
     open_preferences: 'Ouvrir les préférences',
     orientation: 'Orientation',

@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: 'Rivit',
     grid_spacing: 'Väli (mm)',
     no_content: 'UV-tulostustasoilla ei ole sisältöä. Lisää suunnitelmasi UV-tulostustasolle ennen Tulosta ja leikkaa -toiminnon käyttöä.',
-    no_layer_with_path: 'Missään tasossa ei ole vektoripolkua. Valmistele taso, jossa on leikkausreitti, jotta voit käyttää sitä ääriviivana.',
+    no_layer_with_path: 'Missään lasertasossa ei ole vektoripolkua. Valmistele lasertaso, jossa on leikkausreitti, jotta voit käyttää sitä ääriviivana.',
     no_uv_layer: 'UV-tulostustasoa ei löytynyt. Vaihda suunnittelutason moduuliksi "UV-tulostus" käyttääksesi Tulosta ja leikkaa -toimintoa.',
     open_preferences: 'Avaa asetukset',
     orientation: 'Suunta',

@@ -2301,7 +2301,7 @@ const lang: ILang = {
     grid_rows: '列數',
     grid_spacing: '間距 (mm)',
     no_content: 'UV 印刷圖層中沒有內容，請先將設計加入 UV 印刷圖層再使用精準對位。',
-    no_layer_with_path: '沒有包含路徑的圖層，請先準備切割路徑圖層才能作為切割路徑使用。',
+    no_layer_with_path: '沒有包含路徑的雷射圖層，請先準備含切割路徑的雷射圖層才能作為切割路徑使用。',
     no_uv_layer: '找不到 UV 印刷圖層，請先將設計圖層的模組切換為「UV 印刷」再使用精準對位。',
     open_preferences: '開啟偏好設定',
     orientation: '方向',
