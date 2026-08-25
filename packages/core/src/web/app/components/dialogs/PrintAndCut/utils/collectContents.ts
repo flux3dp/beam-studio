@@ -1,3 +1,4 @@
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import { getBBox, getBBoxFromElements } from '@core/app/svgedit/utils/getBBox';
 
 import { getContentsLayers } from './contentsLayers';
@@ -5,18 +6,7 @@ import type { PrintingContentsElementSnapshot } from './printingContentsSnapshot
 import { snapshotElement } from './printingContentsSnapshot';
 
 /** Tags treated as design content; also what the resume preview filters on */
-export const contentTags = new Set([
-  'circle',
-  'ellipse',
-  'g',
-  'image',
-  'line',
-  'path',
-  'polygon',
-  'rect',
-  'text',
-  'use',
-]);
+export const contentTags = new Set([...CanvasElements.visibleElems, 'circle']);
 
 export interface CanvasContents {
   elements: SVGElement[];
