@@ -10,7 +10,7 @@ import { contentTags } from './utils/collectContents';
 import { getGeneratedCutLayers } from './utils/contentsLayers';
 import type { MarkPosition } from './utils/layout';
 
-interface BBox {
+export interface BBox {
   height: number;
   width: number;
   x: number;
@@ -197,6 +197,28 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
     const sin = Math.sin(angle);
 
     this.contentGroup.setAttribute('transform', `matrix(${cos}, ${sin}, ${-sin}, ${cos}, ${tx}, ${ty})`);
+  };
+
+  /**
+   * Zoom and scroll so the given rect (in content coordinates) is centered,
+   * filling `ratio` of the constraining container side (usually the height)
+   */
+  zoomToBBox = (bbox: BBox, ratio = 0.8): void => {
+    if (!this.svgcontent || bbox.width <= 0 || bbox.height <= 0) return;
+
+    const { clientHeight, clientWidth } = this.container;
+
+    this.zoom(ratio * Math.min(clientWidth / bbox.width, clientHeight / bbox.height));
+
+    // content px → scroll px: svgcontent sits at its x/y attributes and its
+    // viewBox dimensions equal this.width/this.height (setBackgroundRect keeps
+    // them in sync), so the scale is exactly zoomRatio
+    const [viewX, viewY] = (this.svgcontent.getAttribute('viewBox') ?? '0 0').split(' ').map(Number);
+    const contentX = Number.parseFloat(this.svgcontent.getAttribute('x') ?? '0');
+    const contentY = Number.parseFloat(this.svgcontent.getAttribute('y') ?? '0');
+
+    this.container.scrollLeft = contentX + (bbox.x + bbox.width / 2 - viewX) * this.zoomRatio - clientWidth / 2;
+    this.container.scrollTop = contentY + (bbox.y + bbox.height / 2 - viewY) * this.zoomRatio - clientHeight / 2;
   };
 
   setMarks = (marks: MarkPosition[]): void => {

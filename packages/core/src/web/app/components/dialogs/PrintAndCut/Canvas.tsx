@@ -4,6 +4,7 @@ import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { PrintAndCutCanvasManager } from './CanvasManager';
+import { markRadiusPx } from './constants';
 import { usePrintAndCutStore } from './store';
 import { getContourPathElements } from './utils/contourElements';
 import { getGridOffsets, getPaperRect } from './utils/layout';
@@ -65,10 +66,35 @@ const Canvas = (): React.JSX.Element => {
     canvasManager.setCameraImage(step === 'align' ? cameraImageUrl : null);
   }, [cameraImageUrl, canvasManager, step]);
 
-  // likewise, applying the detected transform must not reset a manual zoom
   useEffect(() => {
     canvasManager.setContentTransform(step === 'align' ? alignmentTransform : null);
-  }, [alignmentTransform, canvasManager, step]);
+
+    if (step !== 'align') return;
+
+    // a cleared transform is a new capture starting: re-frame the whole bed so
+    // the sweep is visible wherever the sheet was placed
+    if (!alignmentTransform || markPositions.length === 0) {
+      canvasManager.resetView();
+
+      return;
+    }
+
+    // zoom to where the detected marks landed so the fit can be inspected
+    const { angle, tx, ty } = alignmentTransform;
+    const cos = Math.cos(angle);
+    const sin = Math.sin(angle);
+    const xs = markPositions.map(({ cx, cy }) => cos * cx - sin * cy + tx);
+    const ys = markPositions.map(({ cx, cy }) => sin * cx + cos * cy + ty);
+    const x = Math.min(...xs) - markRadiusPx;
+    const y = Math.min(...ys) - markRadiusPx;
+
+    canvasManager.zoomToBBox({
+      height: Math.max(...ys) + markRadiusPx - y,
+      width: Math.max(...xs) + markRadiusPx - x,
+      x,
+      y,
+    });
+  }, [alignmentTransform, canvasManager, markPositions, step]);
 
   useEffect(() => {
     // the align step sets its own background below
