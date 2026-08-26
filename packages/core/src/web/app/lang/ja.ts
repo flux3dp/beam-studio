@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: '半径',
       rotary_warped: '回転ゆがみ',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: '倍率',
       sharpen: 'シャープにする',
       sharpness: 'シャープネス',
       start: '開始',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'AI 背景リムーバー',
-          ai_bg_removal_reminder: 'ボタンを押すと、すぐに 0.02 クレジットが使用されます。続行しますか?',
           ai_bg_removal_short: '背景削除',
+          ai_credit_reminder: 'ボタンを押すと、すぐに %s クレジットが使用されます。続行しますか?',
+          ai_upscale: 'AI アップスケール',
+          ai_upscale_short: 'アップスケール',
+          ai_upscale_too_large: 'この画像はAIアップスケールには大きすぎます。サポートされる最大サイズは %d × %d px です。',
           array: '配列',
           auto_fit: '自動フィット',
           bevel: 'テーパー',

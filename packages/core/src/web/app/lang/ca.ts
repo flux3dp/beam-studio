@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Radi',
       rotary_warped: 'Rotatori deformat',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Escala',
       sharpen: 'Afilar',
       sharpness: 'Nitidesa',
       start: 'Inici',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Eliminació de fons',
-          ai_bg_removal_reminder: 'Prémer el botó utilitzarà immediatament 0.02 Crèdits, vols continuar?',
           ai_bg_removal_short: 'Eliminació de fons',
+          ai_credit_reminder: 'Prémer el botó utilitzarà immediatament %s Crèdits, vols continuar?',
+          ai_upscale: 'Ampliació IA',
+          ai_upscale_short: 'Ampliació',
+          ai_upscale_too_large: "Aquesta imatge és massa gran per a l'ampliació amb IA. La mida màxima admesa és de %d × %d px.",
           array: 'Matriu',
           auto_fit: 'Ajust automàtic',
           bevel: 'Bisel',

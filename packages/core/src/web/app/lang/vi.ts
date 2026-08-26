@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Bán kính',
       rotary_warped: 'Biến Dạng Xoay',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Tỷ lệ',
       sharpen: 'Làm nét',
       sharpness: 'Độ sắc nét',
       start: 'Bắt đầu',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Xóa nền',
-          ai_bg_removal_reminder: 'Nhấn nút sẽ sử dụng ngay 0.02 Tín dụng, bạn có muốn tiếp tục không?',
           ai_bg_removal_short: 'Xóa nền',
+          ai_credit_reminder: 'Nhấn nút sẽ sử dụng ngay %s Tín dụng, bạn có muốn tiếp tục không?',
+          ai_upscale: 'Nâng cấp ảnh AI',
+          ai_upscale_short: 'Nâng cấp',
+          ai_upscale_too_large: 'Hình ảnh này quá lớn để phóng to bằng AI. Kích thước tối đa được hỗ trợ là %d × %d px.',
           array: 'Mảng',
           auto_fit: 'Tự Động Vừa Khít',
           bevel: 'Bo góc',

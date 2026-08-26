@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Raggio',
       rotary_warped: 'Deformato Rotativo',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Scala',
       sharpen: 'Nitidezza',
       sharpness: 'Nitidezza',
       start: 'Inizio',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Rimozione sfondo',
-          ai_bg_removal_reminder: 'Premendo il pulsante verranno immediatamente utilizzati 0,02 crediti, vuoi continuare?',
           ai_bg_removal_short: 'Rimozione sfondo',
+          ai_credit_reminder: 'Premendo il pulsante verranno immediatamente utilizzati %s crediti, vuoi continuare?',
+          ai_upscale: 'Upscaling IA',
+          ai_upscale_short: 'Upscaling',
+          ai_upscale_too_large: "Questa immagine è troppo grande per l'upscaling con IA. La dimensione massima supportata è %d × %d px.",
           array: 'Array',
           auto_fit: 'Adattamento Automatico',
           bevel: 'Smusso',

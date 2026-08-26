@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Ακτίνα',
       rotary_warped: 'Περιστροφική Παραμόρφωση',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Κλίμακα',
       sharpen: 'Εστίαση',
       sharpness: 'Ευκρίνεια',
       start: 'Έναρξη',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Αφαίρεση φόντου',
-          ai_bg_removal_reminder: 'Πατώντας το κουμπί θα χρησιμοποιηθούν αμέσως 0,02 πιστώσεις, θέλετε να συνεχίσετε;',
           ai_bg_removal_short: 'Αφαίρεση φόντου',
+          ai_credit_reminder: 'Πατώντας το κουμπί θα χρησιμοποιηθούν αμέσως %s πιστώσεις, θέλετε να συνεχίσετε;',
+          ai_upscale: 'Μεγέθυνση AI',
+          ai_upscale_short: 'Μεγέθυνση',
+          ai_upscale_too_large: 'Αυτή η εικόνα είναι πολύ μεγάλη για μεγέθυνση με AI. Το μέγιστο υποστηριζόμενο μέγεθος είναι %d × %d px.',
           array: 'Πίνακας',
           auto_fit: 'Αυτόματη Προσαρμογή',
           bevel: 'Λοξοτομία',

@@ -1,9 +1,11 @@
 // @ts-expect-error don't has type definition
 import ImageTracer from 'imagetracerjs';
+import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progress from '@core/app/actions/progress-caller';
+import { showUpscaleModal } from '@core/app/components/dialogs/image';
 import alertConstants from '@core/app/constants/alert-constants';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -13,6 +15,7 @@ import { simplifyPath } from '@core/app/svgedit/operations/pathActions';
 import selectionManager from '@core/app/svgedit/selection';
 import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import alertConfig from '@core/helpers/api/alert-config';
+import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import { axiosFluxId, getCurrentUser, getDefaultHeader } from '@core/helpers/api/flux-id';
 import type { ResponseWithError } from '@core/helpers/api/flux-id';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -32,6 +35,7 @@ getSVGAsync((globalSVG) => {
 });
 
 const REMOVE_BACKGROUND_COST = 0.02;
+const UPSCALE_COST = 0.01;
 
 const getSelectedElem = (): null | SVGImageElement => {
   const selectedElements = selectionManager.getSelectedElements();
@@ -283,13 +287,23 @@ const traceImage = async (img = getSelectedElem()): Promise<void> => {
 };
 
 /**
- * Sends an image blob to the remove-background API.
+ * Sends an image blob to a flux-id AI image API (remove-background, upscale).
  * Handles auth check, credit check, and warning dialog internally.
- * @returns The cleaned PNG blob on success, null on cancel/error.
+ * @returns The result PNG blob on success, null on cancel/error.
  */
-export const removeImageBackground = async (
+const processImageWithAi = async (
   imageBlob: Blob,
-  { showAlert = true }: { showAlert?: boolean } = {},
+  {
+    cost,
+    endpoint,
+    formData = {},
+    warning,
+  }: {
+    cost: number;
+    endpoint: string;
+    formData?: Record<string, string>;
+    warning?: { configKey: AlertConfigKey };
+  },
 ): Promise<Blob | null> => {
   const user = getCurrentUser();
 
@@ -299,30 +313,29 @@ export const removeImageBackground = async (
     return null;
   }
 
-  const showBalanceAlert = () =>
-    alertCaller.popUpCreditAlert({ available: user.info.credit, required: String(REMOVE_BACKGROUND_COST) });
+  const showBalanceAlert = () => alertCaller.popUpCreditAlert({ available: user.info.credit, required: String(cost) });
 
-  if ((user.info?.subscription && user.info.subscription.credit) + user.info.credit < 0.02) {
+  if ((user.info?.subscription && user.info.subscription.credit) + user.info.credit < cost) {
     showBalanceAlert();
 
     return null;
   }
 
-  if (showAlert && !alertConfig.read('skip_bg_removal_warning')) {
+  if (warning && !alertConfig.read(warning.configKey)) {
     const res = await new Promise<boolean>((resolve) => {
       alertCaller.popUp({
         buttonType: alertConstants.CONFIRM_CANCEL,
         checkbox: {
           callbacks: [
             () => {
-              alertConfig.write('skip_bg_removal_warning', true);
+              alertConfig.write(warning.configKey, true);
               resolve(true);
             },
             () => resolve(false),
           ],
           text: i18n.lang.alert.dont_show_again,
         },
-        message: i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_bg_removal_reminder,
+        message: sprintf(i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_credit_reminder, cost),
         onCancel: () => resolve(false),
         onConfirm: () => resolve(true),
       });
@@ -336,17 +349,18 @@ export const removeImageBackground = async (
   const form = new FormData();
 
   form.append('image', imageBlob);
+  Object.entries(formData).forEach(([key, value]) => form.append(key, value));
 
   try {
-    const removeResult = (await axiosFluxId.post('/api/remove-background', form, {
+    const result = (await axiosFluxId.post(endpoint, form, {
       headers: getDefaultHeader(),
       responseType: 'blob',
       timeout: 1000 * 60 * 3, // 3 min
       withCredentials: true,
     })) as ResponseWithError;
 
-    if (removeResult.error) {
-      const { message, response: { data, status } = {} } = removeResult.error;
+    if (result.error) {
+      const { message, response: { data, status } = {} } = result.error;
       let errorDetail = '';
 
       if (data instanceof Blob && data.type === 'application/json') {
@@ -380,7 +394,7 @@ export const removeImageBackground = async (
       return null;
     }
 
-    const contentType = removeResult.headers['content-type'];
+    const contentType = result.headers['content-type'];
 
     if (contentType === 'application/json') {
       const { info, message, status } = await new Promise<{
@@ -396,7 +410,7 @@ export const removeImageBackground = async (
 
           resolve(d);
         };
-        reader.readAsText(removeResult.data);
+        reader.readAsText(result.data);
       });
 
       if (status === 'error') {
@@ -421,9 +435,97 @@ export const removeImageBackground = async (
       return null;
     }
 
-    return removeResult.data as Blob;
+    return result.data as Blob;
   } catch {
     return null;
+  }
+};
+
+/**
+ * Sends an image blob to the remove-background API.
+ * @returns The cleaned PNG blob on success, null on cancel/error.
+ */
+export const removeImageBackground = async (
+  imageBlob: Blob,
+  { showAlert = true }: { showAlert?: boolean } = {},
+): Promise<Blob | null> =>
+  processImageWithAi(imageBlob, {
+    cost: REMOVE_BACKGROUND_COST,
+    endpoint: '/api/remove-background',
+    warning: showAlert ? { configKey: 'skip_bg_removal_warning' } : undefined,
+  });
+
+// The upscale API accepts input images up to about this total pixel count (1440 × 1440); 4x is verified safe at that size.
+const MAX_UPSCALE_INPUT_SIZE = 1440;
+
+const upscaleImage = async (elem?: SVGImageElement): Promise<void> => {
+  const element = elem || getSelectedElem();
+
+  if (!element) {
+    return;
+  }
+
+  const { imgUrl, isFullColor, shading, threshold } = getImageAttributes(element);
+
+  if (!imgUrl) {
+    return;
+  }
+
+  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = imgUrl;
+  });
+
+  if (image.naturalWidth * image.naturalHeight > MAX_UPSCALE_INPUT_SIZE ** 2) {
+    alertCaller.popUp({
+      message: sprintf(
+        i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_upscale_too_large,
+        MAX_UPSCALE_INPUT_SIZE,
+        MAX_UPSCALE_INPUT_SIZE,
+      ),
+    });
+
+    return;
+  }
+
+  const scale = await showUpscaleModal();
+
+  if (!scale) {
+    return;
+  }
+
+  progress.openNonstopProgress({
+    id: 'photo-edit-processing',
+    message: i18n.lang.beambox.photo_edit_panel.processing,
+  });
+
+  try {
+    const imgGet = await fetch(imgUrl);
+    const imgData = await imgGet.blob();
+    const blob = await processImageWithAi(imgData, {
+      cost: UPSCALE_COST,
+      endpoint: '/api/upscale',
+      formData: { scale: String(scale) },
+      warning: { configKey: 'skip_upscale_warning' },
+    });
+
+    if (!blob) {
+      return;
+    }
+
+    const blobUrl = URL.createObjectURL(blob);
+    const base64Img = await generateBase64Image(blobUrl, shading, threshold, isFullColor);
+
+    addBatchCommand('Image Edit: Upscale', element, {
+      origImage: blobUrl,
+      'xlink:href': base64Img,
+    });
+    selectionManager.selectOnly([element], true);
+  } finally {
+    progress.popById('photo-edit-processing');
   }
 };
 
@@ -707,4 +809,5 @@ export default {
   removeImageBackground,
   traceImage,
   trapezoid,
+  upscaleImage,
 };

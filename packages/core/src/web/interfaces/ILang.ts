@@ -425,6 +425,7 @@ export interface ILang {
       radius: string;
       rotary_warped: string;
       rotary_warped_link: string;
+      scale: string;
       sharpen: string;
       sharpness: string;
       start: string;
@@ -854,8 +855,11 @@ export interface ILang {
       object_panel: {
         actions_panel: {
           ai_bg_removal: string;
-          ai_bg_removal_reminder: string;
           ai_bg_removal_short: string;
+          ai_credit_reminder: string;
+          ai_upscale: string;
+          ai_upscale_short: string;
+          ai_upscale_too_large: string;
           array: string;
           auto_fit: string;
           bevel: string;

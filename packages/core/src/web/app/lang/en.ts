@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Radius',
       rotary_warped: 'Rotary Warped',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Scale',
       sharpen: 'Sharpen',
       sharpness: 'Sharpness',
       start: 'Start',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Background Removal',
-          ai_bg_removal_reminder: 'Pressing the button will immediately use 0.02 Credit, do you want to continue?',
           ai_bg_removal_short: 'BG Removal',
+          ai_credit_reminder: 'Pressing the button will immediately use %s Credit, do you want to continue?',
+          ai_upscale: 'AI Upscale',
+          ai_upscale_short: 'Upscale',
+          ai_upscale_too_large: 'This image is too large for AI upscaling. The maximum supported size is %d × %d px.',
           array: 'Array',
           auto_fit: 'Auto Fit',
           bevel: 'Bevel',

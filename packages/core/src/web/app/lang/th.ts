@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'รัศมี',
       rotary_warped: 'บิดเบี้ยวแบบหมุน',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'อัตราขยาย',
       sharpen: 'คมชัด',
       sharpness: 'ระดับความคมชัด',
       start: 'เริ่ม',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'ลบพื้นหลัง',
-          ai_bg_removal_reminder: 'กดปุ่มจะใช้เครดิต 0.02 เลย ต้องการดําเนินการต่อหรือไม่',
           ai_bg_removal_short: 'ลบพื้นหลัง',
+          ai_credit_reminder: 'กดปุ่มจะใช้เครดิต %s เลย ต้องการดําเนินการต่อหรือไม่',
+          ai_upscale: 'ขยายภาพ AI',
+          ai_upscale_short: 'ขยายภาพ',
+          ai_upscale_too_large: 'รูปภาพนี้ใหญ่เกินไปสำหรับการขยายด้วย AI ขนาดสูงสุดที่รองรับคือ %d × %d px',
           array: 'แถวลําดับ',
           auto_fit: 'ปรับให้พอดีอัตโนมัติ',
           bevel: 'ขอบเขต',

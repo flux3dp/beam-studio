@@ -5,6 +5,7 @@ import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import Curve from './Curve';
 import RotaryWarped from './RotaryWarped';
 import Sharpen from './Sharpen';
+import UpscaleModal from './UpscaleModal';
 
 const getProps = () => {
   const element = selectionManager.getSelectedElements()[0];
@@ -47,6 +48,35 @@ export const showCurvePanel = () => {
 
   addDialogComponent('curve-panel', <Curve element={element} onClose={onClose} src={src} />);
 };
+
+/**
+ * Shows the upscale scale-picker dialog (2x / 4x).
+ * @returns The chosen scale, or null if cancelled.
+ */
+export const showUpscaleModal = (): Promise<null | number> =>
+  new Promise((resolve) => {
+    const id = 'upscale-modal';
+
+    if (isIdExist(id)) {
+      resolve(null);
+
+      return;
+    }
+
+    addDialogComponent(
+      id,
+      <UpscaleModal
+        onCancel={() => {
+          popDialogById(id);
+          resolve(null);
+        }}
+        onOk={(scale) => {
+          popDialogById(id);
+          resolve(scale);
+        }}
+      />,
+    );
+  });
 
 export const showRotaryWarped = (elem?: SVGImageElement): void => {
   if (isIdExist('rotary-warped')) return;

@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Rayon',
       rotary_warped: 'Déformé Rotatif',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Échelle',
       sharpen: 'Netteté',
       sharpness: 'Netteté',
       start: 'Démarrer',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: "Suppression de l'arrière-plan",
-          ai_bg_removal_reminder: "L'appui sur le bouton utilisera immédiatement 0,02 crédit, voulez-vous continuer ?",
           ai_bg_removal_short: 'Suppr. arrière-plan',
+          ai_credit_reminder: "L'appui sur le bouton utilisera immédiatement %s crédit, voulez-vous continuer ?",
+          ai_upscale: 'Agrandissement IA',
+          ai_upscale_short: 'Agrandissement',
+          ai_upscale_too_large: "Cette image est trop grande pour l'agrandissement par IA. La taille maximale prise en charge est de %d × %d px.",
           array: 'Tableau',
           auto_fit: 'Ajustement Automatique',
           bevel: 'Chanfrein',

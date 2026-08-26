@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Radius',
       rotary_warped: 'Roterende Forvrengt',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Skala',
       sharpen: 'Skarphet',
       sharpness: 'Skarphet',
       start: 'Start',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Bakgrunnsfjerning',
-          ai_bg_removal_reminder: 'Ved å trykke på knappen bruker du umiddelbart 0,02 kreditt. Vil du fortsette?',
           ai_bg_removal_short: 'BG-fjerning',
+          ai_credit_reminder: 'Ved å trykke på knappen bruker du umiddelbart %s kreditt. Vil du fortsette?',
+          ai_upscale: 'AI-oppskalering',
+          ai_upscale_short: 'Oppskalering',
+          ai_upscale_too_large: 'Dette bildet er for stort for AI-oppskalering. Maksimal støttet størrelse er %d × %d px.',
           array: 'Matrise',
           auto_fit: 'Automatisk Tilpasning',
           bevel: 'Fas',

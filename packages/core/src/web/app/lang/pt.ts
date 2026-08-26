@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Raio',
       rotary_warped: 'Distorcido Rotativo',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Escala',
       sharpen: 'Nitidez',
       sharpness: 'Nitidez',
       start: 'Iniciar',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Remoção de fundo',
-          ai_bg_removal_reminder: 'Pressionar o botão usará imediatamente 0,02 créditos de, deseja continuar?',
           ai_bg_removal_short: 'Remoção de fundo',
+          ai_credit_reminder: 'Pressionar o botão usará imediatamente %s créditos de, deseja continuar?',
+          ai_upscale: 'Ampliação IA',
+          ai_upscale_short: 'Ampliação',
+          ai_upscale_too_large: 'Esta imagem é muito grande para a ampliação com IA. O tamanho máximo suportado é %d × %d px.',
           array: 'Matriz',
           auto_fit: 'Ajuste Automático',
           bevel: 'Bisel',

@@ -323,6 +323,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         <ActionPanelIcons.RotaryWarped />,
         { isFullLine: true },
       ),
+      upscale: renderButtons(
+        'upscale',
+        lang.ai_upscale,
+        () => imageEdit.upscaleImage(elem as SVGImageElement),
+        <ActionPanelIcons.Upscale />,
+        <ActionPanelIcons.Upscale />,
+        { isFullLine: true, mobileLabel: lang.ai_upscale_short },
+      ),
     };
 
     if (isMobile()) {
@@ -338,6 +346,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         'array',
         'trace',
         'bg-removal',
+        'upscale',
         'smartNest',
         'trapezoid',
       ];
@@ -364,7 +373,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         title: 'CONVERSIONS',
       },
       {
-        buttons: [content.stampMakerPanel, content['bg-removal'], content.trapezoid],
+        buttons: [content.stampMakerPanel, content['bg-removal'], content.upscale, content.trapezoid],
         title: 'OPTIMIZATIONS',
       },
     ];

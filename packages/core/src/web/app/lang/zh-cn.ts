@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: '鋭化半径',
       rotary_warped: '旋转扭曲',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: '倍率',
       sharpen: '锐化',
       sharpness: '鋭化强度',
       start: '开始',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: '智能去背',
-          ai_bg_removal_reminder: '按下按钮将立即使用 0.02 Credit，是否继续？',
           ai_bg_removal_short: 'AI抠图',
+          ai_credit_reminder: '按下按钮将立即使用 %s Credit，是否继续？',
+          ai_upscale: '智能放大',
+          ai_upscale_short: 'AI放大',
+          ai_upscale_too_large: '图片尺寸过大，无法使用 AI 放大，最大支持尺寸为 %d × %d px。',
           array: '阵列',
           auto_fit: '自动适配',
           bevel: '生成斜角',

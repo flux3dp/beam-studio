@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Säde',
       rotary_warped: 'Kiertyvä Vääristymä',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Skaalaus',
       sharpen: 'Terävöitä',
       sharpness: 'Terävyys',
       start: 'Aloita',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Taustan poisto',
-          ai_bg_removal_reminder: 'Painamalla nappia käytetään välittömästi 0,02 hyvitystä, haluatko jatkaa?',
           ai_bg_removal_short: 'TP',
+          ai_credit_reminder: 'Painamalla nappia käytetään välittömästi %s hyvitystä, haluatko jatkaa?',
+          ai_upscale: 'AI-skaalaus',
+          ai_upscale_short: 'Skaalaus',
+          ai_upscale_too_large: 'Tämä kuva on liian suuri AI-suurennukseen. Suurin tuettu koko on %d × %d px.',
           array: 'Taulukko',
           auto_fit: 'Automaattinen Sovitus',
           bevel: 'Viiste',

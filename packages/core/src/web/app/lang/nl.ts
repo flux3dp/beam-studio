@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Straal',
       rotary_warped: 'Roterend Vervormd',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Schaal',
       sharpen: 'Scherpte',
       sharpness: 'Scherpte',
       start: 'Starten',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Achtergrond verwijderen',
-          ai_bg_removal_reminder: 'Druk op de knop gebruikt direct 0,02 tegoed, wilt u doorgaan?',
           ai_bg_removal_short: 'Achtergrondverw.',
+          ai_credit_reminder: 'Druk op de knop gebruikt direct %s tegoed, wilt u doorgaan?',
+          ai_upscale: 'AI-opschaling',
+          ai_upscale_short: 'Opschaling',
+          ai_upscale_too_large: 'Deze afbeelding is te groot voor AI-opschaling. De maximaal ondersteunde grootte is %d × %d px.',
           array: 'Array',
           auto_fit: 'Auto Aanpassen',
           bevel: 'Afronden',

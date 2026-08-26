@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Jari-jari',
       rotary_warped: 'Berputar Melengkung',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Skala',
       sharpen: 'Tajamkan',
       sharpness: 'Ketajaman',
       start: 'Mulai',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Hapus Latar Belakang',
-          ai_bg_removal_reminder: 'Menekan tombol akan segera menggunakan 0,02 Kredit, apakah Anda ingin melanjutkan?',
           ai_bg_removal_short: 'Hps Latar Blkg',
+          ai_credit_reminder: 'Menekan tombol akan segera menggunakan %s Kredit, apakah Anda ingin melanjutkan?',
+          ai_upscale: 'Peningkatan Resolusi',
+          ai_upscale_short: 'Resolusi',
+          ai_upscale_too_large: 'Gambar ini terlalu besar untuk AI upscale. Ukuran maksimum yang didukung adalah %d × %d px.',
           array: 'Array',
           auto_fit: 'Pas Otomatis',
           bevel: 'Bevel',

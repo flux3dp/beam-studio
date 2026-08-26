@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: '반경',
       rotary_warped: '회전 왜곡',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: '배율',
       sharpen: '선명하게',
       sharpness: '선명도',
       start: '시작',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: '인공 지능 배경 제거',
-          ai_bg_removal_reminder: '버튼을 누르면 즉시 0.02 크레딧이 사용됩니다. 계속하시겠습니까?',
           ai_bg_removal_short: '배경 제거',
+          ai_credit_reminder: '버튼을 누르면 즉시 %s 크레딧이 사용됩니다. 계속하시겠습니까?',
+          ai_upscale: 'AI 업스케일',
+          ai_upscale_short: '업스케일',
+          ai_upscale_too_large: '이 이미지는 AI 업스케일에 너무 큽니다. 지원되는 최대 크기는 %d × %d px입니다.',
           array: '어레이',
           auto_fit: '자동 맞춤',
           bevel: '경계선 처리',

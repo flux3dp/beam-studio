@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Radius',
       rotary_warped: 'Drehverzerrt',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Skalierung',
       sharpen: 'Schärfen',
       sharpness: 'Schärfe',
       start: 'Start',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'AI-Hintergrundentfernung',
-          ai_bg_removal_reminder: 'Durch Drücken der Taste werden sofort 0,02 Credits verbraucht. Möchten Sie fortfahren?',
           ai_bg_removal_short: 'BG Entfernung',
+          ai_credit_reminder: 'Durch Drücken der Taste werden sofort %s Credits verbraucht. Möchten Sie fortfahren?',
+          ai_upscale: 'AI-Hochskalierung',
+          ai_upscale_short: 'Hochskalierung',
+          ai_upscale_too_large: 'Dieses Bild ist zu groß für die KI-Hochskalierung. Die maximal unterstützte Größe beträgt %d × %d px.',
           array: 'Anordnung',
           auto_fit: 'Automatische Anpassung',
           bevel: 'Fase',

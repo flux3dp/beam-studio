@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Jejari',
       rotary_warped: 'Berputar Terherot',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Skala',
       sharpen: 'Tajamkan',
       sharpness: 'Ketajaman',
       start: 'Mula',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Buang Latar Belakang',
-          ai_bg_removal_reminder: 'Menekan butang akan menggunakan 0.02 Kredit dengan serta-merta, anda mahu meneruskan?',
           ai_bg_removal_short: 'Buang LB',
+          ai_credit_reminder: 'Menekan butang akan menggunakan %s Kredit dengan serta-merta, anda mahu meneruskan?',
+          ai_upscale: 'Peningkatan Resolusi',
+          ai_upscale_short: 'Resolusi',
+          ai_upscale_too_large: 'Imej ini terlalu besar untuk penskalaan AI. Saiz maksimum yang disokong ialah %d × %d px.',
           array: 'Susunan',
           auto_fit: 'Muat Auto',
           bevel: 'Bevel',

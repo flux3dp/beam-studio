@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Promień',
       rotary_warped: 'Zniekształcony Obrotowo',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Skala',
       sharpen: 'Wyostrzyć',
       sharpness: 'Ostrość',
       start: 'Rozpocznij',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Usunąć tła',
-          ai_bg_removal_reminder: 'Naciśnięcie przycisku spowoduje natychmiastowe wykorzystanie 0,02 kredytu. Czy chcesz kontynuować?',
           ai_bg_removal_short: 'BG Usunąć',
+          ai_credit_reminder: 'Naciśnięcie przycisku spowoduje natychmiastowe wykorzystanie %s kredytu. Czy chcesz kontynuować?',
+          ai_upscale: 'Powiększanie AI',
+          ai_upscale_short: 'Powiększanie',
+          ai_upscale_too_large: 'Ten obraz jest zbyt duży do powiększania AI. Maksymalny obsługiwany rozmiar to %d × %d px.',
           array: 'Szyk',
           auto_fit: 'Dopasowanie Automatyczne',
           bevel: 'Fazuj',

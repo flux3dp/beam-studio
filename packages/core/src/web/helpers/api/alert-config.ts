@@ -28,6 +28,7 @@ export type AlertConfigKey =
   | 'skip_path_speed_constraint_warning'
   | 'skip_path_speed_warning'
   | 'skip_svg_version_warning'
+  | 'skip_upscale_warning'
   | 'skip_variable_text_warning';
 
 const alertConfig = {

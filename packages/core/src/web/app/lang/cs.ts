@@ -425,6 +425,7 @@ const lang: ILang = {
       radius: 'Poloměr',
       rotary_warped: 'Otočně Zkřivené',
       rotary_warped_link: 'https://support.flux3dp.com/hc/en-us/articles/10828006201103',
+      scale: 'Měřítko',
       sharpen: 'Zostřit',
       sharpness: 'Zaostření',
       start: 'Začít',
@@ -854,8 +855,11 @@ const lang: ILang = {
       object_panel: {
         actions_panel: {
           ai_bg_removal: 'Odstranění pozadí',
-          ai_bg_removal_reminder: 'Stisknutím tlačítka okamžitě zaplatíte 0,02 kreditu. Přejete si pokračovat?',
           ai_bg_removal_short: 'Odstranění pozadí',
+          ai_credit_reminder: 'Stisknutím tlačítka okamžitě zaplatíte %s kreditu. Přejete si pokračovat?',
+          ai_upscale: 'AI zvětšení',
+          ai_upscale_short: 'Zvětšení',
+          ai_upscale_too_large: 'Tento obrázek je pro AI zvětšení příliš velký. Maximální podporovaná velikost je %d × %d px.',
           array: 'Pole',
           auto_fit: 'Automaticky přizpůsobit',
           bevel: 'Zkosit',
