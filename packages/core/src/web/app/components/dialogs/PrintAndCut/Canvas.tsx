@@ -71,15 +71,14 @@ const Canvas = (): React.JSX.Element => {
 
     if (step !== 'align') return;
 
-    // a cleared transform is a new capture starting: re-frame the whole bed so
-    // the sweep is visible wherever the sheet was placed
+    // a cleared transform is a new capture starting: re-frame the whole bed
     if (!alignmentTransform || markPositions.length === 0) {
       canvasManager.resetView();
 
       return;
     }
 
-    // zoom to where the detected marks landed so the fit can be inspected
+    // zoom to where the detected marks landed
     const { angle, tx, ty } = alignmentTransform;
     const cos = Math.cos(angle);
     const sin = Math.sin(angle);

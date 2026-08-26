@@ -210,9 +210,8 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
 
     this.zoom(ratio * Math.min(clientWidth / bbox.width, clientHeight / bbox.height));
 
-    // content px → scroll px: svgcontent sits at its x/y attributes and its
-    // viewBox dimensions equal this.width/this.height (setBackgroundRect keeps
-    // them in sync), so the scale is exactly zoomRatio
+    // content px → scroll px: viewBox dimensions equal this.width/this.height,
+    // so the scale is exactly zoomRatio
     const [viewX, viewY] = (this.svgcontent.getAttribute('viewBox') ?? '0 0').split(' ').map(Number);
     const contentX = Number.parseFloat(this.svgcontent.getAttribute('x') ?? '0');
     const contentY = Number.parseFloat(this.svgcontent.getAttribute('y') ?? '0');

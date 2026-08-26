@@ -119,8 +119,7 @@ const loadImage = (url: string): Promise<HTMLImageElement> =>
  * corner in the sweep are re-captured at center precision. Only a 2×-mark-size
  * patch around each mark is kept from the retake — the rest of the tile (whose
  * corners are again imprecise) is rolled back.
- * @param onPatchDrawn called with the background url after each mark's patch is
- * pasted — never with the intermediate whole-tile stamp
+ * @param onPatchDrawn called with the background url after each mark's patch
  * @returns whether at least one mark patch was refreshed
  */
 const refineMarkPatches = async (markCenters: Point[], onPatchDrawn?: (url: string) => void): Promise<boolean> => {

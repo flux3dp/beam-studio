@@ -31,9 +31,18 @@ virtual `'resume'` entry step (outside the array, shown when a saved config exis
 4. **align** — one button: camera capture → mark detection → rigid fit; preview
    shows the design landing on the photographed sheet.
 5. **Finish** (footer) — `generateAlignedCutLayer()`: one undoable BatchCommand
-   (replace previous tagged cut layer, insert aligned contour geometry, hide all
-   original layers — except UV Print layers, which never yield a machine task),
-   then save the reusable config.
+   (replace previous tagged cut layer, insert aligned contour geometry, hide
+   ALL original layers — UV Print layers included: they yield no machine task
+   but sit at the design position, misaligned next to the aligned cut layer),
+   then save the reusable config. UV layers that were visible when Finish hid
+   them are tagged `data-pnc-hidden` (`PRINT_AND_CUT_HIDDEN_ATTR`, set outside
+   undo history — harmless when stale); `startFreshRun` shows tagged layers
+   again (+ `forceUpdate` the layer store) and strips the tag before
+   collecting, so Start Over still finds the design, while a layer the user
+   hid carries no tag and stays excluded. (An aligned-instead-of-hidden
+   variant via a display-only `transform` on the UV layer groups was built and
+   reverted 2026-08-26: editing content inside a transformed layer group
+   misbehaves.)
 
 **Design content = visible UV Print layers only** (`data-module` =
 `LayerModule.UV_PRINT`, filtered in `getContentsLayers`): that is what gets
@@ -210,6 +219,9 @@ paper rect, `align` whole workarea).
 - The resume entry bypasses the startFreshRun guards (preference may have been
   turned off, or content hidden, since the finish); Start Over does not — on
   failure the alert shows, the dialog closes, and the config is kept.
+- Resume previews and snapshot matching tolerate the fully hidden design:
+  `renderContent` force-shows cloned layers when `isResume`, and the match
+  runs inside `measureWithLayersShown`.
 
 ## Gotchas
 
@@ -239,6 +251,7 @@ paper rect, `align` whole workarea).
 - **Safe to change**: step sidebar UI, progress presentation, canvas styling,
   paper size list, mark sweep heuristics/budgets, contour cache strategy.
 - **Load-bearing (coordinate before changing)**: `ResumeConfig` shape
-  (persisted in .beam), `data-pnc-cut` attr, `ContourState` semantics, the
-  frozen-at-Finish rules above, fluxghost command names/params, the
-  single-BatchCommand undo contract of `generateAlignedCutLayer`.
+  (persisted in .beam), `data-pnc-cut` and `data-pnc-hidden` attrs,
+  `ContourState` semantics, the frozen-at-Finish rules above, fluxghost
+  command names/params, the single-BatchCommand undo contract of
+  `generateAlignedCutLayer`.

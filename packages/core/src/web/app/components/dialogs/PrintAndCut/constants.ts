@@ -76,6 +76,12 @@ export const CUT_COLOR = '#f5222d';
 export const PRINT_AND_CUT_LAYER_ATTR = 'data-pnc-cut';
 
 /**
+ * Marker on UV Print layer groups hidden by Finish, so startFreshRun can show
+ * them again; a layer the user hid carries no marker and stays excluded.
+ */
+export const PRINT_AND_CUT_HIDDEN_ATTR = 'data-pnc-hidden';
+
+/**
  * Elements a cutting layer can cut along: anything with vector geometry
  * (text is converted to path at export time; use references vector symbols)
  */
