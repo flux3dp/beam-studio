@@ -3,6 +3,7 @@ import React, { use, useCallback, useMemo } from 'react';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import getDevice from '@core/helpers/device/get-device';
 import useI18n from '@core/helpers/useI18n';
@@ -28,8 +29,14 @@ function SelectMachineButton(): React.JSX.Element {
   const handleClick = useCallback(async () => {
     const { device } = await getDevice(true);
 
-    if (previewModeController.isPreviewMode && device && device.uuid !== selectedDevice?.uuid) {
-      previewModeController.end();
+    if (device && device.uuid !== selectedDevice?.uuid) {
+      if (previewModeController.isPreviewMode) {
+        previewModeController.end();
+      } else if (getMouseMode() === 'pre_preview') {
+        // supportedPreviewModes were computed for the previous device; drop back to
+        // select so the next preview click recomputes them.
+        setMouseMode('select');
+      }
     }
   }, [selectedDevice]);
 

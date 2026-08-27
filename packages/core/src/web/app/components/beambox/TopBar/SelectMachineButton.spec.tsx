@@ -23,6 +23,14 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
   }),
 }));
 
+const mockGetMouseMode = jest.fn();
+const mockSetMouseMode = jest.fn();
+
+jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
+  getMouseMode: () => mockGetMouseMode(),
+  setMouseMode: (mode: string) => mockSetMouseMode(mode),
+}));
+
 const mockGetDevice = jest.fn();
 
 jest.mock(
@@ -86,6 +94,20 @@ describe('test SelectMachineButton', () => {
     fireEvent.click(container.querySelector('div[class*="button"]'));
     expect(mockGetDevice).toHaveBeenCalledTimes(1);
     expect(mockEndPreviewMode).toHaveBeenCalledTimes(0);
+  });
+
+  test('when in pre preview mode', async () => {
+    mockGetMouseMode.mockReturnValue('pre_preview');
+
+    const { container } = render(
+      <CanvasContext value={{ selectedDevice: null } as any}>
+        <SelectMachineButton />
+      </CanvasContext>,
+    );
+
+    await act(() => fireEvent.click(container.querySelector('div[class*="button"]')));
+    expect(mockEndPreviewMode).toHaveBeenCalledTimes(0);
+    expect(mockSetMouseMode).toHaveBeenCalledWith('select');
   });
 
   test('when is preview mode', async () => {

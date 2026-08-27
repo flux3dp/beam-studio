@@ -12,7 +12,6 @@ import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
 import deviceMaster from '@core/helpers/device-master';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -68,38 +67,6 @@ export const getSupportedPreviewModes = (
   return modes;
 };
 
-/**
- * Query the device for its camera capabilities and refresh supportedPreviewModes in the
- * store. The device must be the currently selected one in deviceMaster, since the camera
- * and setting queries target the current connection.
- */
-export const updateSupportedPreviewModes = async (
-  device: IDeviceInfo,
-): Promise<{ canPreview?: boolean; hasWideAngleCamera: boolean }> => {
-  const { canPreview, hasWideAngleCamera } = await getWideAngleCameraData(device);
-  const isCameraOblique = await checkCameraOblique(device);
-
-  setCameraPreviewState({
-    supportedPreviewModes: getSupportedPreviewModes(device, { hasWideAngleCamera, isCameraOblique }),
-  });
-
-  return { canPreview, hasWideAngleCamera };
-};
-
-// While waiting in pre-preview, the supported modes were computed for the previously
-// selected device; re-evaluate them when the user switches to another device.
-eventEmitterFactory.createEventEmitter('top-bar').on('SET_SELECTED_DEVICE', async (device: IDeviceInfo | null) => {
-  if (!device || useCanvasStore.getState().mouseMode !== 'pre_preview') return;
-
-  try {
-    const res = await deviceMaster.select(device);
-
-    if (res.success) await updateSupportedPreviewModes(device);
-  } catch (err) {
-    console.warn('Failed to update supported preview modes after device switch', err);
-  }
-});
-
 export const handlePreviewClick = async ({ showModal = false }: { showModal?: boolean } = {}): Promise<boolean> => {
   if (tutorialController.getNextStepRequirement() === tutorialConstants.TO_PREVIEW_MODE) {
     tutorialController.handleNextStep();
@@ -125,7 +92,12 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
 
   if (!isWorkareaMatched && !(await showResizeAlert(device!))) return false;
 
-  const { canPreview, hasWideAngleCamera } = await updateSupportedPreviewModes(device);
+  const { canPreview, hasWideAngleCamera } = await getWideAngleCameraData(device);
+  const isCameraOblique = await checkCameraOblique(device);
+
+  setCameraPreviewState({
+    supportedPreviewModes: getSupportedPreviewModes(device, { hasWideAngleCamera, isCameraOblique }),
+  });
 
   if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && canPreview)) {
     setupPreviewMode();

@@ -110,12 +110,11 @@ non-silent per-point message would stomp the batch counter.
 ## Stale supportedPreviewModes
 
 `supportedPreviewModes` is a snapshot of async device checks taken in
-`handlePreviewClick` (via `updateSupportedPreviewModes(device)` in `previewMode.ts`).
-A `SET_SELECTED_DEVICE` (top-bar emitter) listener re-runs it when the user switches
-device **while in `pre_preview`** — it must `deviceMaster.select(device)` first so the
-camera/setting queries hit the new machine, and it uses the event payload (not
-`getDevice()`, whose backing React state updates asynchronously). Active preview is
-excluded: a running session keeps its manager's modes.
+`handlePreviewClick` (`previewMode.ts`), so it can go stale if the selected device
+changes while waiting in `pre_preview`. `SelectMachineButton.handleClick` handles
+device changes (uuid compared against the previous selection): during active preview
+it ends the session; during `pre_preview` it drops the mouse mode back to `select`,
+closing the floating bar so the next preview click recomputes everything fresh.
 
 ## Mode switching
 
