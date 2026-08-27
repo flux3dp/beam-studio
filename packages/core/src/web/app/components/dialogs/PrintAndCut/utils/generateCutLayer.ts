@@ -107,10 +107,6 @@ export const generateAlignedCutLayer = (): void => {
     deleteLayerByName(getLayerName(layer), { parentCmd: batchCmd });
   });
 
-  // removeGroup only detaches the dom node, so layerManager still maps the old
-  // name; without this resync createLayer sees it as taken and appends " (1)"
-  if (previousCutLayers.length > 0) layerManager.identifyLayers();
-
   const originalLayers = layerManager.getAllLayers();
   const insertedElements: SVGGraphicsElement[] = [];
   // layer-mode cut geometry serialized into the saved config, so a resumed run

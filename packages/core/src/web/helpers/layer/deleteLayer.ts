@@ -15,13 +15,7 @@ export const deleteLayerByName = (
   layerName: string,
   opts: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
 ): ICommand | null => {
-  const layer = layerManager.getLayerByName(layerName);
-
-  if (!layer) return null;
-
-  const cmd = layer.removeGroup(opts);
-
-  return cmd;
+  return layerManager.removeLayerByName(layerName, opts);
 };
 
 export const deleteLayers = (layerNames: string[]): void => {

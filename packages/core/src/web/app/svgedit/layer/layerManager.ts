@@ -13,7 +13,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
-import type { HistoryActionOptions } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, ICommand } from '@core/interfaces/IHistory';
 
 import { BatchCommand, InsertElementCommand, MoveElementCommand, RemoveElementCommand } from '../history/history';
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
@@ -221,6 +221,29 @@ export class LayerManager {
     }
 
     handleHistoryActionOptions(batchCmd, options);
+  };
+
+  /**
+   * Remove a layer: detach its group from the DOM (emitting a history command per options) and
+   * unregister it from the store, so its name is immediately free for reuse. If it was the current
+   * layer, the top-most remaining layer becomes current.
+   */
+  public removeLayerByName = (name: string, options?: HistoryActionOptions): ICommand | null => {
+    const layer = this.getLayerByName(name);
+
+    if (!layer) return null;
+
+    const cmd = layer.removeGroup(options);
+    const layers = this.getState().layers.filter((l) => l !== layer);
+
+    useLayerStore.setState({
+      layers,
+      ...(this.getState().currentLayerName === name && {
+        currentLayerName: layers.at(-1)?.getName() ?? null,
+      }),
+    });
+
+    return cmd;
   };
 
   /**

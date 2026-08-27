@@ -242,6 +242,35 @@ describe('LayerManager', () => {
     });
   });
 
+  describe('layer removal', () => {
+    it('should free the name for reuse after removal', () => {
+      layerManager.createLayer('Layer 1');
+      layerManager.removeLayerByName('Layer 1');
+
+      expect(layerManager.getNumLayers()).toBe(0);
+      expect(layerManager.hasLayer('Layer 1')).toBe(false);
+
+      const layer = layerManager.createLayer('Layer 1');
+
+      expect(layer?.getName()).toBe('Layer 1');
+    });
+
+    it('should move current to the top remaining layer when the current layer is removed', () => {
+      layerManager.createLayer('Layer 1');
+      layerManager.createLayer('Layer 2');
+
+      expect(layerManager.getCurrentLayerName()).toBe('Layer 2');
+
+      layerManager.removeLayerByName('Layer 2');
+
+      expect(layerManager.getCurrentLayerName()).toBe('Layer 1');
+    });
+
+    it('should return null for a non-existent layer', () => {
+      expect(layerManager.removeLayerByName('nope')).toBeNull();
+    });
+  });
+
   describe('layer management', () => {
     beforeEach(() => {
       layerManager.createLayer('Layer 1');
