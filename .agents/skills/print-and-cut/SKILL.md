@@ -36,17 +36,23 @@ virtual `'resume'` entry step (outside the array, shown when a saved config exis
    but sit at the design position, misaligned next to the aligned cut layer),
    then save the reusable config. UV layers that were visible when Finish hid
    them are tagged `data-pnc-hidden` (`PRINT_AND_CUT_HIDDEN_ATTR`, set outside
-   undo history — harmless when stale); `startFreshRun` shows tagged layers
-   again (+ `forceUpdate` the layer store) and strips the tag before
-   collecting, so Start Over still finds the design, while a layer the user
-   hid carries no tag and stays excluded. (An aligned-instead-of-hidden
-   variant via a display-only `transform` on the UV layer groups was built and
-   reverted 2026-08-26: editing content inside a transformed layer group
-   misbehaves.)
+   undo history). The tag means "hidden by Finish, still design content" and
+   the flow reads tagged layers IN PLACE — `getContentsLayers` counts
+   visible-or-tagged layers, the renderers (contour raster, PDF export,
+   preview clone) strip `display` from their clones, and collection measures
+   inside `measureWithLayersShown` — so Start Over never mutates the document
+   and adds nothing to undo history. A layer the user hid carries no tag and
+   stays excluded; a manual visibility toggle (`setLayerVisibility`) strips
+   the tag as an undoable subcommand, so re-hiding a layer by hand excludes it
+   from the next run. (An aligned-instead-of-hidden variant via a display-only
+   `transform` on the UV layer groups was built and reverted 2026-08-26:
+   editing content inside a transformed layer group misbehaves. An
+   unhide-at-Start-Over variant — plain, then as an undoable BatchCommand —
+   was replaced by read-in-place 2026-08-27.)
 
-**Design content = visible UV Print layers only** (`data-module` =
-`LayerModule.UV_PRINT`, filtered in `getContentsLayers`): that is what gets
-rasterized, exported to PDF and snapshotted. Entering a fresh run requires the
+**Design content = UV Print layers that are visible or `data-pnc-hidden`-tagged**
+(`data-module` = `LayerModule.UV_PRINT`, filtered in `getContentsLayers`): that
+is what gets rasterized, exported to PDF and snapshotted. Entering a fresh run requires the
 `enable-uv-print-file` preference: `startFreshRun` alerts with an
 Open-Preferences button (settings modal → Editor tab, scrolls to
 `#set-enable-uv-print-file`) when it is off, alerts `no_uv_layer` when no layer

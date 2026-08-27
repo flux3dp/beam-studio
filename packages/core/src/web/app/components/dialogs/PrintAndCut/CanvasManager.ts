@@ -5,7 +5,7 @@ import EmbeddedCanvasManager from '@core/app/widgets/FullWindowPanel/EmbeddedCan
 import { restoreOriginalColors } from '@core/helpers/image/originalColors';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 
-import { CUT_COLOR, markRadiusPx } from './constants';
+import { CUT_COLOR, markRadiusPx, PRINT_AND_CUT_HIDDEN_ATTR } from './constants';
 import { contentTags } from './utils/collectContents';
 import { getGeneratedCutLayers } from './utils/contentsLayers';
 import type { MarkPosition } from './utils/layout';
@@ -85,11 +85,10 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
       });
     }
 
-    // On resume the previous run hid the design layers. Show the printed
-    // design as it was on the PDF: force them visible again (preview only).
-    if (this.isResume) {
-      this.svgcontent.querySelectorAll('g.layer').forEach((layer) => layer.removeAttribute('display'));
-    }
+    // force-show: all layers on resume, Finish-tagged ones on fresh runs
+    this.svgcontent.querySelectorAll('g.layer').forEach((layer) => {
+      if (this.isResume || layer.hasAttribute(PRINT_AND_CUT_HIDDEN_ATTR)) layer.removeAttribute('display');
+    });
 
     // show the artwork as it will be printed, not with the layer color applied
     restoreOriginalColors(this.svgcontent);

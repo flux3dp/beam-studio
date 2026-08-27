@@ -90,6 +90,8 @@ const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null>
         const clone = layerGroup.cloneNode(true) as SVGGElement;
 
         clone.removeAttribute('clip-path');
+        // content layers can be hidden (tagged by Finish)
+        clone.removeAttribute('display');
 
         return clone.outerHTML;
       })

@@ -2,12 +2,10 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { SettingCategory, showSettingsModal } from '@core/app/components/settings';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import i18n from '@core/helpers/i18n';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 
-import { PRINT_AND_CUT_HIDDEN_ATTR } from '../constants';
 import { usePrintAndCutStore } from '../store';
 
 import { collectCanvasContents } from './collectContents';
@@ -35,21 +33,6 @@ export const startFreshRun = (): boolean => {
 
     return false;
   }
-
-  // show the UV Print layers a previous Finish hid and tagged
-  let unhidAny = false;
-
-  layerManager.getAllLayers().forEach((layer) => {
-    const group = layer.getGroup();
-
-    if (!group.hasAttribute(PRINT_AND_CUT_HIDDEN_ATTR)) return;
-
-    group.removeAttribute(PRINT_AND_CUT_HIDDEN_ATTR);
-    layer.setVisible(true);
-    unhidAny = true;
-  });
-
-  if (unhidAny) useLayerStore.getState().forceUpdate();
 
   const contents = collectCanvasContents();
 
