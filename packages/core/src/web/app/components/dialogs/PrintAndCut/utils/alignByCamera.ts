@@ -153,7 +153,7 @@ const refineMarkPatches = async (markCenters: Point[], onPatchDrawn?: (url: stri
       // patches) before the retake stamps a whole tile onto it
       const baseImage = await loadImage(await previewModeBackgroundDrawer.getCameraCanvasUrl({ useCache: false }));
 
-      if (!(await previewModeController.preview(x, y))) continue;
+      if (!(await previewModeController.preview(x, y, { silent: true }))) continue;
 
       // restore the snapshot everywhere except the patch around this mark:
       // transparent pixels leave the fresh tile visible only inside the hole
