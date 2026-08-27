@@ -178,7 +178,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   public preview = async (
     x: number,
     y: number,
-    opts?: { overlapFlag?: number; overlapRatio?: number },
+    opts?: { overlapFlag?: number; overlapRatio?: number; silent?: boolean },
   ): Promise<boolean> => {
     await this.checkCameraModeAndReHome();
 

@@ -1,5 +1,6 @@
 import { match } from 'ts-pattern';
 
+import previewRegionIndicator from '@core/app/actions/canvas/preview-region-indicator';
 import curveSelectUrl from '@core/app/icons/left-panel/curve-select.svg?url';
 import { clear as clearPathActions, finishPath } from '@core/app/svgedit/operations/pathActions';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -61,5 +62,7 @@ useCanvasStore.subscribe(
   (state) => state.mouseMode,
   (mouseMode) => {
     setCursorAccordingToMouseMode(mouseMode);
+
+    if (mouseMode !== 'preview' && mouseMode !== 'pre_preview') previewRegionIndicator.hide();
   },
 );
