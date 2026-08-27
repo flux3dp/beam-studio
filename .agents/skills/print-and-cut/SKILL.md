@@ -202,7 +202,12 @@ so `setContentTransform` moves design+marks as one unit while the camera `<image
 stays fixed. `setBackgroundRect` sets the viewport (white rect = paper);
 `setGridOffsets` renders `<use>` copies. Canvas.tsx binds store → manager with
 effects; background is per-step (`setup` padded content, `paper/export/resume`
-paper rect, `align` whole workarea).
+paper rect, `align` whole workarea). The align flow feeds the canvas through
+store state (`cameraImageUrl`, `detectedMarkCenters` — the latter zooms via
+`zoomToMarks` while the marks are refined). (A manager-in-the-store variant
+with direct imperative calls was tried and rolled back 2026-08-27: grid/mark
+syncing needed a second mount-time path because `initFromConfig` runs before
+the canvas exists.)
 
 ## Resume correctness rules
 

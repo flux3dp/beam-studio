@@ -42,6 +42,7 @@ const StepAlign = (): React.JSX.Element => {
   const markPositions = usePrintAndCutStore((state) => state.markPositions);
   const setAlignmentTransform = usePrintAndCutStore((state) => state.setAlignmentTransform);
   const setCameraImageUrl = usePrintAndCutStore((state) => state.setCameraImageUrl);
+  const setDetectedMarkCenters = usePrintAndCutStore((state) => state.setDetectedMarkCenters);
   const setIsProcessing = usePrintAndCutStore((state) => state.setIsProcessing);
   const handlePreviewAndAlign = async () => {
     // in the store so the dialog footer can block navigation while running
@@ -50,6 +51,7 @@ const StepAlign = (): React.JSX.Element => {
     // the stale background (revoking its url), so drop our reference too
     setAlignmentTransform(null);
     setCameraImageUrl(null);
+    setDetectedMarkCenters(null);
     try {
       // 1. capture: show the sweep progressively while the machine is still
       // capturing; the smart sweep stops early once it has found all the marks

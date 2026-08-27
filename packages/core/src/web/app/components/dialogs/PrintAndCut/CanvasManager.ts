@@ -9,6 +9,7 @@ import { CUT_COLOR, markRadiusPx } from './constants';
 import { contentTags } from './utils/collectContents';
 import { getGeneratedCutLayers } from './utils/contentsLayers';
 import type { MarkPosition } from './utils/layout';
+import type { Point } from './utils/rigidTransform';
 
 export interface BBox {
   height: number;
@@ -218,6 +219,18 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
 
     this.container.scrollLeft = contentX + (bbox.x + bbox.width / 2 - viewX) * this.zoomRatio - clientWidth / 2;
     this.container.scrollTop = contentY + (bbox.y + bbox.height / 2 - viewY) * this.zoomRatio - clientHeight / 2;
+  };
+
+  /** Zoom to the detected mark centers (in content coordinates), padded by the mark radius */
+  zoomToMarks = (centers: Point[]): void => {
+    if (centers.length === 0) return;
+
+    const xs = centers.map(({ x }) => x);
+    const ys = centers.map(({ y }) => y);
+    const x = Math.min(...xs) - markRadiusPx;
+    const y = Math.min(...ys) - markRadiusPx;
+
+    this.zoomToBBox({ height: Math.max(...ys) + markRadiusPx - y, width: Math.max(...xs) + markRadiusPx - x, x, y });
   };
 
   setMarks = (marks: MarkPosition[]): void => {

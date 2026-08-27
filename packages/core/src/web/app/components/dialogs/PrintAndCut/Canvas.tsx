@@ -4,7 +4,6 @@ import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { PrintAndCutCanvasManager } from './CanvasManager';
-import { markRadiusPx } from './constants';
 import { usePrintAndCutStore } from './store';
 import { getContourPathElements } from './utils/contourElements';
 import { getGridOffsets, getPaperRect } from './utils/layout';
@@ -31,6 +30,7 @@ const Canvas = (): React.JSX.Element => {
   const contourLayerName = usePrintAndCutStore((state) => state.contourLayerName);
   const contourPathD = usePrintAndCutStore((state) => state.contourPathD);
   const contourSource = usePrintAndCutStore((state) => state.contourSource);
+  const detectedMarkCenters = usePrintAndCutStore((state) => state.detectedMarkCenters);
   const fullBBox = usePrintAndCutStore((state) => state.fullBBox);
   const gridColumns = usePrintAndCutStore((state) => state.gridColumns);
   const gridGapMm = usePrintAndCutStore((state) => state.gridGapMm);
@@ -66,34 +66,19 @@ const Canvas = (): React.JSX.Element => {
     canvasManager.setCameraImage(step === 'align' ? cameraImageUrl : null);
   }, [cameraImageUrl, canvasManager, step]);
 
+  // applying the detected transform must not reset the zoom
   useEffect(() => {
     canvasManager.setContentTransform(step === 'align' ? alignmentTransform : null);
+  }, [alignmentTransform, canvasManager, step]);
 
+  // zoom to the marks as soon as they are located, so the refinement retakes
+  // are watched up close; a cleared value is a new capture: re-frame the bed
+  useEffect(() => {
     if (step !== 'align') return;
 
-    // a cleared transform is a new capture starting: re-frame the whole bed
-    if (!alignmentTransform || markPositions.length === 0) {
-      canvasManager.resetView();
-
-      return;
-    }
-
-    // zoom to where the detected marks landed
-    const { angle, tx, ty } = alignmentTransform;
-    const cos = Math.cos(angle);
-    const sin = Math.sin(angle);
-    const xs = markPositions.map(({ cx, cy }) => cos * cx - sin * cy + tx);
-    const ys = markPositions.map(({ cx, cy }) => sin * cx + cos * cy + ty);
-    const x = Math.min(...xs) - markRadiusPx;
-    const y = Math.min(...ys) - markRadiusPx;
-
-    canvasManager.zoomToBBox({
-      height: Math.max(...ys) + markRadiusPx - y,
-      width: Math.max(...xs) + markRadiusPx - x,
-      x,
-      y,
-    });
-  }, [alignmentTransform, canvasManager, markPositions, step]);
+    if (detectedMarkCenters?.length) canvasManager.zoomToMarks(detectedMarkCenters);
+    else canvasManager.resetView();
+  }, [canvasManager, detectedMarkCenters, step]);
 
   useEffect(() => {
     // the align step sets its own background below

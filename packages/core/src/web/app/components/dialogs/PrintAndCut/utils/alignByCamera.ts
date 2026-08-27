@@ -246,6 +246,10 @@ export const detectAlignmentTransform = async ({
       }
     }
 
+    // published as soon as the marks are located, so the dialog canvas zooms
+    // to them while they are refined
+    if (markCenters) usePrintAndCutStore.getState().setDetectedMarkCenters(markCenters);
+
     // refineMarkPatches itself skips machines whose camera cannot be driven
     // over the marks; when it did retake them, redetect on the patched image.
     if (markCenters && (await refineMarkPatches(markCenters, onPreviewUpdate))) {
