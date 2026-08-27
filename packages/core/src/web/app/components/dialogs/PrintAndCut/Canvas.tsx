@@ -71,8 +71,7 @@ const Canvas = (): React.JSX.Element => {
     canvasManager.setContentTransform(step === 'align' ? alignmentTransform : null);
   }, [alignmentTransform, canvasManager, step]);
 
-  // zoom to the marks as soon as they are located, so the refinement retakes
-  // are watched up close; a cleared value is a new capture: re-frame the bed
+  // zoom to the marks as soon as they are located
   useEffect(() => {
     if (step !== 'align') return;
 

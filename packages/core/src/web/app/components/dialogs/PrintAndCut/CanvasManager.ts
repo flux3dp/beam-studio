@@ -211,8 +211,6 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
 
     this.zoom(ratio * Math.min(clientWidth / bbox.width, clientHeight / bbox.height));
 
-    // content px → scroll px: viewBox dimensions equal this.width/this.height,
-    // so the scale is exactly zoomRatio
     const [viewX, viewY] = (this.svgcontent.getAttribute('viewBox') ?? '0 0').split(' ').map(Number);
     const contentX = Number.parseFloat(this.svgcontent.getAttribute('x') ?? '0');
     const contentY = Number.parseFloat(this.svgcontent.getAttribute('y') ?? '0');
@@ -225,12 +223,24 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
   zoomToMarks = (centers: Point[]): void => {
     if (centers.length === 0) return;
 
-    const xs = centers.map(({ x }) => x);
-    const ys = centers.map(({ y }) => y);
-    const x = Math.min(...xs) - markRadiusPx;
-    const y = Math.min(...ys) - markRadiusPx;
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
 
-    this.zoomToBBox({ height: Math.max(...ys) + markRadiusPx - y, width: Math.max(...xs) + markRadiusPx - x, x, y });
+    centers.forEach(({ x, y }) => {
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    });
+
+    this.zoomToBBox({
+      height: maxY + markRadiusPx - minY,
+      width: maxX + markRadiusPx - minX,
+      x: minX - markRadiusPx,
+      y: minY - markRadiusPx,
+    });
   };
 
   setMarks = (marks: MarkPosition[]): void => {

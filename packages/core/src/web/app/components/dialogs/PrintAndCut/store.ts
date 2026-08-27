@@ -34,10 +34,7 @@ interface AlignState {
   alignProgress: AlignProgress | null;
   /** Camera preview image of the workarea captured in the align step */
   cameraImageUrl: null | string;
-  /**
-   * Detected mark centers in canvas coordinates, set as soon as the marks are
-   * located (before refinement) so the canvas can zoom to them; null until then
-   */
+  /** For Canvas Zoom upon mark detection */
   detectedMarkCenters: null | Point[];
   /** Whether the align step's capture + align flow is running; blocks navigation */
   isProcessing: boolean;
