@@ -77,8 +77,13 @@ jest.mock('@core/helpers/presets/preset-helper', () => ({
   getPresetsList: mockGetPresetsList,
 }));
 
+const mockForceUpdate = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  resync: () => mockForceUpdate(),
+}));
+
 import { changeLayersModule } from './change-module';
-import { mockForceUpdate } from '@mocks/@core/app/stores/layer/layerStore';
 
 const mockLayer = {} as unknown as Element;
 
@@ -124,7 +129,7 @@ describe('test changeLayersModule', () => {
 
     batchCmd.onAfter();
     expect(mockInitState).toHaveBeenCalledTimes(2);
-    expect(mockForceUpdate).toHaveBeenCalledTimes(2);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
   });
 
@@ -157,7 +162,7 @@ describe('test changeLayersModule', () => {
 
     batchCmd.onAfter();
     expect(mockInitState).toHaveBeenCalledTimes(2);
-    expect(mockForceUpdate).toHaveBeenCalledTimes(2);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
   });
 
@@ -191,7 +196,7 @@ describe('test changeLayersModule', () => {
 
     batchCmd.onAfter();
     expect(mockInitState).toHaveBeenCalledTimes(2);
-    expect(mockForceUpdate).toHaveBeenCalledTimes(2);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
   });
 
@@ -224,7 +229,7 @@ describe('test changeLayersModule', () => {
 
     batchCmd.onAfter();
     expect(mockInitState).toHaveBeenCalledTimes(2);
-    expect(mockForceUpdate).toHaveBeenCalledTimes(2);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
   });
 });

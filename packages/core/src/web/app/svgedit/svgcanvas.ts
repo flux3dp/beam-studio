@@ -44,7 +44,6 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getAttributes } from '@core/helpers/element/attribute';
@@ -329,9 +328,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     $(shape).mouseover(canvas.handleGenerateSensorArea).mouseleave(canvas.handleGenerateSensorArea);
 
     if (shape.tagName === 'image') {
-      useLayerStore.getState().checkGradient();
+      layerManager.checkGradient();
     } else {
-      useLayerStore.getState().checkVector();
+      layerManager.checkVector();
     }
 
     return shape;
@@ -471,7 +470,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             });
 
             if (shouldUpdateLayerStore) {
-              useLayerStore.getState().forceUpdate();
+              layerManager.resync();
             }
           } else if (cmdType === InsertElementCommand.type() || cmdType === RemoveElementCommand.type()) {
             if (cmdType === InsertElementCommand.type()) {
@@ -529,7 +528,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               ].includes(cmd.text)
             ) {
               layerManager.identifyLayers();
-              useLayerStore.getState().setSelectedLayers([]);
+              layerManager.setSelectedLayers([]);
               presprayArea.togglePresprayArea();
             }
 
@@ -2028,7 +2027,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     initLayerConfig(defaultLayer);
 
     // force update selected layers
-    useLayerStore.getState().setSelectedLayers([defaultLayerName]);
+    layerManager.setSelectedLayers([defaultLayerName]);
     presprayArea.togglePresprayArea();
 
     // clear the undo stack

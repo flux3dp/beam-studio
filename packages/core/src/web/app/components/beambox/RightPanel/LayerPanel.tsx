@@ -7,7 +7,6 @@ import Alert from '@core/app/actions/alert-caller';
 import Dialog from '@core/app/actions/dialog-caller';
 import layoutConstants from '@core/app/constants/layout-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { isMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -120,14 +119,14 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   unLockLayers = (layerName: string): void => {
-    const { selectedLayers, setSelectedLayers } = useLayerStore.getState();
+    const selectedLayers = layerManager.getSelectedLayers();
 
     if (selectedLayers.includes(layerName)) {
       setLayersLock(selectedLayers, false);
       this.forceUpdate();
     } else {
       setLayersLock([layerName], false);
-      setSelectedLayers([layerName]);
+      layerManager.setSelectedLayers([layerName]);
     }
   };
 
@@ -154,30 +153,29 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
         svgCanvas.renameCurrentLayer(newName);
         cloneLayerConfig(oldName, newName);
-        useLayerStore.getState().setSelectedLayers([newName]);
+        layerManager.setSelectedLayers([newName]);
       },
     });
   };
 
   selectOnlyLayer = (layerName: string): void => {
     selectionManager.clearSelection();
-    useLayerStore.getState().setSelectedLayers([layerName]);
+    layerManager.setSelectedLayers([layerName]);
   };
 
   toggleLayerSelected = (layerName: string): void => {
-    const { selectedLayers, setSelectedLayers } = useLayerStore.getState();
+    const selectedLayers = layerManager.getSelectedLayers();
     const newSelectedLayers = [...selectedLayers];
     const index = newSelectedLayers.findIndex((name: string) => name === layerName);
 
     if (index >= 0) {
       if (newSelectedLayers.length > 1) {
         newSelectedLayers.splice(index, 1);
-        setSelectedLayers(newSelectedLayers);
+        layerManager.setSelectedLayers(newSelectedLayers);
       }
     } else {
       newSelectedLayers.push(layerName);
-      layerManager.setCurrentLayer(layerName);
-      setSelectedLayers(newSelectedLayers, layerName);
+      layerManager.setSelectedLayers(newSelectedLayers, layerName);
     }
   };
 
@@ -205,7 +203,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
       return;
     }
 
-    const { selectedLayers, setSelectedLayers } = useLayerStore.getState();
+    const selectedLayers = layerManager.getSelectedLayers();
     const newSelectedLayers = [...selectedLayers];
     const isLayerSelected = newSelectedLayers.includes(layerName);
 
@@ -223,11 +221,11 @@ class LayerPanel extends React.PureComponent<Props, State> {
       newSelectedLayers.push(layerName);
     }
 
-    setSelectedLayers(newSelectedLayers, layerName);
+    layerManager.setSelectedLayers(newSelectedLayers, layerName);
   };
 
   setLayerColor = (layerName: string, newColor: string): void => {
-    const { forceUpdate, selectedLayers } = useLayerStore.getState();
+    const selectedLayers = layerManager.getSelectedLayers();
     const targets = selectedLayers.includes(layerName) ? selectedLayers : [layerName];
     const cmd = changeLayersColor(targets, newColor);
 
@@ -235,7 +233,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
       svgCanvas.addCommandToHistory(cmd);
     }
 
-    forceUpdate();
+    layerManager.resync();
   };
 
   setLayerVisibility = (layerName: string): void => {
@@ -244,7 +242,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
     if (!layerObject) return;
 
     const isVis = layerObject.isVisible();
-    const { selectedLayers } = useLayerStore.getState();
+    const selectedLayers = layerManager.getSelectedLayers();
     const batchCmd = HistoryCommandFactory.createBatchCommand('Set Layers Visibility');
 
     if (selectedLayers.includes(layerName)) {
@@ -267,10 +265,10 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
     e?.dataTransfer?.setDragImage(dragImage, 0, 0);
 
-    const { selectedLayers, setSelectedLayers } = useLayerStore.getState();
+    const selectedLayers = layerManager.getSelectedLayers();
 
     if (!selectedLayers.includes(layerName)) {
-      setSelectedLayers([layerName]);
+      layerManager.setSelectedLayers([layerName]);
     }
 
     this.setState({
@@ -280,7 +278,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   onLayerCenterDragEnter = (layerName?: string): void => {
-    const { selectedLayers } = useLayerStore.getState();
+    const selectedLayers = layerManager.getSelectedLayers();
 
     if (layerName && selectedLayers.includes(layerName)) {
       this.setState({ draggingDestIndex: undefined });
@@ -297,7 +295,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
   onLayerDragEnd = (): void => {
     const { draggingDestIndex } = this.state;
-    const { selectedLayers } = useLayerStore.getState();
+    const selectedLayers = layerManager.getSelectedLayers();
 
     if (draggingDestIndex !== null && draggingDestIndex !== undefined) {
       moveLayersToPosition(selectedLayers, draggingDestIndex);
@@ -427,7 +425,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
         this.selectOnlyLayer(layerName);
       }
     } else if (e.button === 2) {
-      const { selectedLayers } = useLayerStore.getState();
+      const selectedLayers = layerManager.getSelectedLayers();
 
       if (!selectedLayers.includes(layerName)) {
         this.selectOnlyLayer(layerName);

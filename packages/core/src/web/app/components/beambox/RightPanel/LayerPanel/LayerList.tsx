@@ -3,9 +3,7 @@ import React, { useEffect, useRef } from 'react';
 import { SwipeAction } from 'antd-mobile';
 import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
 import classNames from 'classnames';
-import { pick } from 'remeda';
 import { match } from 'ts-pattern';
-import { useShallow } from 'zustand/shallow';
 
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
@@ -58,9 +56,7 @@ const LayerList = ({
   setLayerVisibility,
   unLockLayers,
 }: Props): React.JSX.Element => {
-  const { forceUpdate, selectedLayers, setSelectedLayers } = useLayerStore(
-    useShallow(pick(['forceUpdate', 'selectedLayers', 'setSelectedLayers'])),
-  );
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
 
   const items: React.ReactNode[] = [];
   const currentLayerName = layerManager.getCurrentLayerName();
@@ -74,12 +70,6 @@ const LayerList = ({
       ref.current.close();
     }
   }, [ref, draggingDestIndex, selectedLayers]);
-
-  const isAnyLayerMissing = layerManager.getAllLayers().some((layer) => !layer.getGroup().parentNode);
-
-  if (isAnyLayerMissing) {
-    layerManager.identifyLayers();
-  }
 
   const allLayerNames = layerManager.getAllLayerNames();
 
@@ -234,7 +224,7 @@ const LayerList = ({
                 onClick: () => {
                   setLayerLock(layerName, !isLocked);
                   // let SwipeAction close before force update
-                  setTimeout(forceUpdate);
+                  setTimeout(layerManager.resync);
                 },
                 text: isLocked ? <LayerPanelIcons.Unlock /> : <LayerPanelIcons.Lock />,
               },
@@ -247,7 +237,7 @@ const LayerList = ({
                 key: 'delete',
                 onClick: () => {
                   deleteLayerByName(layerName);
-                  setSelectedLayers([]);
+                  layerManager.setSelectedLayers([]);
                 },
                 text: <ObjectPanelIcons.Trash />,
               },
@@ -258,7 +248,7 @@ const LayerList = ({
           <SwipeAction
             key={layerName}
             leftActions={leftActions}
-            onActionsReveal={() => setSelectedLayers([layerName])}
+            onActionsReveal={() => layerManager.setSelectedLayers([layerName])}
             ref={isSelected && layerName === selectedLayers[0] ? ref : undefined}
             rightActions={rightActions}
           >

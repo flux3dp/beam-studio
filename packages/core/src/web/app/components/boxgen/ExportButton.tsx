@@ -5,7 +5,6 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
 
 import { useBoxgenStore } from '@core/app/stores/boxgenStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -108,7 +107,7 @@ const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): Reac
 
       layerObject?.setVisible(false, { addToHistory: false });
     });
-    useLayerStore.getState().forceUpdate();
+    layerManager.resync();
     undoManager.addCommandToHistory(batchCmd);
     setConfirmLoading(false);
     setVisible(false);

@@ -4,7 +4,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import NS from '@core/app/constants/namespaces';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { useLayerStore } from '@core/app/stores/layer/layerStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -123,7 +123,7 @@ export const disassembleUse = async (
 
     const { elem: layer, title: layerTitle } = getObjectLayer(elem)!;
 
-    useLayerStore.getState().setSelectedLayers([layerTitle]);
+    layerManager.setSelectedLayers([layerTitle]);
 
     const color = (useGlobalPreferenceStore.getState().use_layer_color ? getData(layer, 'color') : '#000') ?? '#000';
     const drawing = svgCanvas.getCurrentDrawing();

@@ -1,6 +1,5 @@
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import NS from '@core/app/constants/namespaces';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -261,11 +260,10 @@ export class SelectionManager {
       )
       .filter(Boolean) as string[];
 
-    // set the newest added layer as currentLayer
-    layerManager.setCurrentLayer(layers[0]);
+    // the newest added layer (layers[0]) becomes the current layer;
     // the uniq process is performed `here` to avoid duplicate layer in layer panel,
     // and remain the selected layers contains information if there are multiple elements in same layer
-    useLayerStore.getState().setSelectedLayers([...new Set(layers)]);
+    layerManager.setSelectedLayers([...new Set(layers)]);
 
     this.selectedLayers = layers;
 
@@ -293,8 +291,7 @@ export class SelectionManager {
     }
 
     // set the current layer from the remaining layers
-    layerManager.setCurrentLayer(this.selectedLayers[0]);
-    useLayerStore.getState().setSelectedLayers([...new Set(this.selectedLayers)]);
+    layerManager.setSelectedLayers([...new Set(this.selectedLayers)]);
 
     if (elem.nextSibling && (elem.nextSibling as Element).getAttribute('data-imageborder') === 'true') {
       elem.nextSibling.remove();

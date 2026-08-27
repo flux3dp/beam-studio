@@ -1,5 +1,5 @@
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import shortcuts, { isFocusingOnInputs } from '@core/helpers/shortcuts';
 
 import undoManager from '../undoManager';
@@ -26,7 +26,7 @@ export const undo = ({ checkFocus = true, checkShortCutsScope = true }: Options 
   const res = undoManager.undo();
 
   if (res) {
-    useLayerStore.getState().forceUpdate();
+    layerManager.resync();
     currentFileManager.setHasUnsavedChanges(true);
   }
 };
@@ -48,7 +48,7 @@ export const redo = ({ checkFocus = true, checkShortCutsScope = true }: Options 
   const res = undoManager.redo();
 
   if (res) {
-    useLayerStore.getState().forceUpdate();
+    layerManager.resync();
     currentFileManager.setHasUnsavedChanges(true);
   }
 };

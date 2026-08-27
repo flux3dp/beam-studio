@@ -47,7 +47,7 @@ const SingleColorBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
       update({ color: config });
     }
 
-    useLayerStore.getState().forceUpdate();
+    layerManager.resync();
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

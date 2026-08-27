@@ -1,5 +1,4 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -192,8 +191,7 @@ export const generateAlignedCutLayer = (): void => {
     layer.setVisible(false, { parentCmd: batchCmd });
   });
 
-  layerManager.identifyLayers();
-  useLayerStore.getState().forceUpdate();
+  layerManager.resync();
   selectionManager.clearSelection();
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);

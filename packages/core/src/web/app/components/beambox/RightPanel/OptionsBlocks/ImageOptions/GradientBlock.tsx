@@ -3,8 +3,8 @@ import React, { memo, useCallback } from 'react';
 import { Switch } from 'antd';
 
 import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ImageOptions.module.scss';
@@ -29,7 +29,7 @@ const GradientBlock = ({ changeAttribute, generateImageData, isGradient }: Props
         'data-threshold': threshold,
         'xlink:href': pngBase64,
       });
-      useLayerStore.getState().checkGradient();
+      layerManager.checkGradient();
     },
     [changeAttribute, generateImageData],
   );

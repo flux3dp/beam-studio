@@ -131,7 +131,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
       const currentLayerName = layerManager.getCurrentLayerName();
 
-      useLayerStore.getState().setSelectedLayers([currentLayerName]);
+      layerManager.setSelectedLayers([currentLayerName]);
     }
   }, [selectedLayers, UIType]);
 
@@ -408,7 +408,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
           if (changedKeys.includes('power')) clearMinPower(layer, current.power.value, batchCmd);
         });
 
-        if (fullColorToggled) useLayerStore.getState().forceUpdate();
+        if (fullColorToggled) layerManager.resync();
 
         batchCmd.onAfter = initState;
         svgCanvas.addCommandToHistory(batchCmd);

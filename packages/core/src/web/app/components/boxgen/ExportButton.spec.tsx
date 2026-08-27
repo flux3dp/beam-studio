@@ -40,9 +40,12 @@ jest.mock(
 const mockGetAllLayers = jest.fn();
 const mockGetLayerByName = jest.fn();
 
+const mockResync = jest.fn();
+
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getAllLayers: (...args: unknown[]) => mockGetAllLayers(...args),
   getLayerByName: (...args: unknown[]) => mockGetLayerByName(...args),
+  resync: () => mockResync(),
 }));
 
 const mockDisassembleUse = jest.fn();
@@ -65,14 +68,6 @@ const mockCreateBatchCommand = jest.fn().mockImplementation(() => mockBatchComma
 
 jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args: unknown[]) => mockCreateBatchCommand(...args),
-}));
-
-const mockForceUpdateLayerStore = jest.fn();
-
-jest.mock('@core/app/stores/layer/layerStore', () => ({
-  getState: () => ({
-    forceUpdate: () => mockForceUpdateLayerStore(),
-  }),
 }));
 
 const mockGetObjectLayer = jest.fn();

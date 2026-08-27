@@ -5,9 +5,9 @@ import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { fullColorModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
@@ -127,13 +127,12 @@ export const changeLayersModule = async (
   });
 
   initLayerConfigState();
-  useLayerStore.getState().forceUpdate();
+  layerManager.resync();
   presprayArea.togglePresprayArea();
 
   if (addToHistory) {
     batchCmd.onAfter = () => {
       initLayerConfigState();
-      useLayerStore.getState().forceUpdate();
       presprayArea.togglePresprayArea();
     };
     undoManager.addCommandToHistory(batchCmd);

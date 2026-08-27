@@ -6,7 +6,6 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -261,7 +260,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
     undoManager.addCommandToHistory(batchCmd.current);
 
     svgEditor.updateContextPanel();
-    useLayerStore.getState().forceUpdate();
+    layerManager.resync();
 
     onClose();
   };

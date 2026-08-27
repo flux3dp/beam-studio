@@ -2,9 +2,16 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import useLayerStore, { mockForceUpdate } from '@mocks/@core/app/stores/layer/layerStore';
+import useLayerStore from '@mocks/@core/app/stores/layer/layerStore';
 
 import SingleColorBlock from './SingleColorBlock';
+
+const mockForceUpdate = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getCurrentLayerName: () => '',
+  resync: () => mockForceUpdate(),
+}));
 
 const mockBatchCommand = jest.fn();
 
