@@ -33,8 +33,6 @@ function SelectMachineButton(): React.JSX.Element {
       if (previewModeController.isPreviewMode) {
         previewModeController.end();
       } else if (getMouseMode() === 'pre_preview') {
-        // supportedPreviewModes were computed for the previous device; drop back to
-        // select so the next preview click recomputes them.
         setMouseMode('select');
       }
     }
