@@ -189,7 +189,6 @@ export const usePrintAndCutStore = create(
     },
     reset: (): void => set(initialState),
     setAlignmentTransform: (alignmentTransform: AlignmentTransform | null): void => set({ alignmentTransform }),
-    setCameraImageUrl: (cameraImageUrl: null | string): void => set({ cameraImageUrl }),
     setAlignProgress: (alignProgress: AlignProgress | null): void =>
       set((state) => ({
         // the flow can revisit an earlier phase (a refuted mark hypothesis
@@ -200,6 +199,7 @@ export const usePrintAndCutStore = create(
           percentage: Math.max(state.alignProgress?.percentage ?? 0, alignProgress.percentage),
         },
       })),
+    setCameraImageUrl: (cameraImageUrl: null | string): void => set({ cameraImageUrl }),
     setContourLayerName: (contourLayerName: null | string): void =>
       set((state) => withFullBBox(state, { contourLayerName })),
     setContourPathD: (contourPathD: null | string): void => set((state) => withFullBBox(state, { contourPathD })),
