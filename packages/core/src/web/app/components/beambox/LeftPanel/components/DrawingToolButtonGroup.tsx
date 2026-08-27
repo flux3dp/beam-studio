@@ -12,6 +12,7 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import insertDefaultTextAsStl from '@core/app/svgedit/operations/import/importStl/insertDefaultText';
 import selectionManager from '@core/app/svgedit/selection';
 import { createParamsLabel } from '@core/app/svgedit/text/paramsLabel';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
@@ -58,6 +59,10 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   );
   const isInnerEngravingMode = useInnerEngravingActive();
   const modeRef = useRef(isInnerEngravingMode);
+  const insertDefault3dText = (type: 'fit-text' | 'text') => {
+    selectionManager.clearSelection();
+    void insertDefaultTextAsStl(type);
+  };
 
   useDidUpdateEffect(() => {
     if (!isInnerEngravingMode || modeRef.current === isInnerEngravingMode) return;
@@ -122,34 +127,40 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         onClick: FnWrapper.importImage,
         supportedIn3D: true,
       })}
-      {!isInnerEngravingMode && (
-        <LeftPanelButtonGroup
-          active={activeButton === 'Text' || activeButton === 'FitText'}
-          id="left-Text"
-          options={[
-            {
-              icon: <LeftPanelIcons.Text />,
-              id: 'Text',
-              label: t.label.text,
-              onClick: () => {
+      <LeftPanelButtonGroup
+        active={activeButton === 'Text' || activeButton === 'FitText'}
+        id="left-Text"
+        options={[
+          {
+            icon: <LeftPanelIcons.Text />,
+            id: 'Text',
+            label: t.label.text,
+            onClick: () => {
+              if (isInnerEngravingMode) {
+                insertDefault3dText('text');
+              } else {
                 selectionManager.clearSelection();
                 setMouseMode('text');
-              },
-              title: t.label.text,
+              }
             },
-            {
-              icon: <LeftPanelIcons.TextBox />,
-              id: 'FitText',
-              label: t.label.fit_text,
-              onClick: () => {
+            title: t.label.text,
+          },
+          {
+            icon: <LeftPanelIcons.TextBox />,
+            id: 'FitText',
+            label: t.label.fit_text,
+            onClick: () => {
+              if (isInnerEngravingMode) {
+                insertDefault3dText('fit-text');
+              } else {
                 selectionManager.clearSelection();
                 setMouseMode('fit-text');
-              },
+              }
             },
-          ]}
-          shortcut="T"
-        />
-      )}
+          },
+        ]}
+        shortcut="T"
+      />
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,
         id: 'Element',

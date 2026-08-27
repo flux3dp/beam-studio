@@ -111,8 +111,9 @@ import { useVariableTextState, type VariableTextState } from '@core/app/stores/v
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
-import { STL_ATTR } from '@core/app/svgedit/stl/constants';
+import { PHOTO_3D_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { readPhotoPlaneObjects } from '@core/app/svgedit/stl/photoPlane';
 import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import { parseStlTransform } from '@core/app/svgedit/stl/transformAttr';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -246,6 +247,7 @@ const generateBeamBuffer = (
   const svgBlockBuf = generateSvgBlockBuffer(svgString);
   const imageSourceBlockBuffer = generateBinarySourceBlockBuffer('imageSource', imageSources);
   const hasStl = Object.keys(stlSources).length > 0;
+  const hasPhotoPlane = Boolean(document.querySelector(`#svgcontent [${PHOTO_3D_ATTR.marker}]`));
   // written last, because readBlocks in older versions stops at the first unknown block type
   const stlSourceBlockBuffer = hasStl ? generateBinarySourceBlockBuffer('stlSource', stlSources) : null;
   const thumbnailBlockBuffer = thumbnail ? generateThumbnailBlockBuffer(thumbnail) : null;
@@ -271,7 +273,7 @@ const generateBeamBuffer = (
     // can tell whether a block is missing from the one that follows it
     contents: [1, 2, ...(thumbnailBlockBuffer ? [3] : []), 4, ...(stlSourceBlockBuffer ? [6] : [])],
     // read by readBeamFileInfo without parsing any block, the same way workarea is
-    innerEngraving: hasStl || undefined,
+    innerEngraving: hasStl || hasPhotoPlane || undefined,
     version: window.FLUX?.version,
   };
 
@@ -552,12 +554,14 @@ const readBeam = async (file: File): Promise<void> => {
     offset = await readBlocks(buf, offset, command, stlObjects);
   }
 
+  const photoObjects = readPhotoPlaneObjects();
+
   const postReadBeam = (): void => {
     workareaManager.setWorkarea(useDocumentStore.getState().workarea);
     workareaManager.resetView();
     // the meshes live outside the DOM, so undo and redo of the load have to add and remove them
     // alongside the rects, exactly like a single STL import does
-    syncStlObjectsWithDom(stlObjects);
+    syncStlObjectsWithDom([...stlObjects, ...photoObjects]);
   };
 
   command.onAfter = postReadBeam;

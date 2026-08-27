@@ -59,3 +59,13 @@ export const STL_ATTR = {
    */
   transform: 'data-stl-transform',
 } as const;
+
+/** Frontend-only metadata for a zero-thickness textured plane. */
+export const PHOTO_3D_ATTR = {
+  /** Original plane height in millimetres, before the object's transform is applied. */
+  height: 'data-stl-photo-height',
+  /** Marks an SVG image as a 3D photo plane. It is not sent to the STL backend. */
+  marker: 'data-stl-photo',
+  /** Original plane width in millimetres, before the object's transform is applied. */
+  width: 'data-stl-photo-width',
+} as const;

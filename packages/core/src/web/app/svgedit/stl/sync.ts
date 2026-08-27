@@ -1,7 +1,7 @@
 import type { StlObject } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 
-import { isStlProjection } from './getters';
+import { is3dProjection } from './getters';
 
 /**
  * The STL objects behind `elems` — the elements themselves plus any projection rects inside them.
@@ -14,7 +14,7 @@ export const collectStlObjects = (elems: Array<Element | null | undefined>): Stl
   const ids = new Set<string>();
 
   elems.forEach((elem) => {
-    if (elem && isStlProjection(elem)) ids.add(elem.id);
+    if (elem && is3dProjection(elem)) ids.add(elem.id);
   });
 
   return [...ids].map((id) => objects[id]).filter(Boolean);

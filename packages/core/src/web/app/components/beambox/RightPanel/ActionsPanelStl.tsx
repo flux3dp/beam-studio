@@ -26,9 +26,9 @@ interface Props {
 /**
  * The actions panel for an STL object.
  *
- * Deliberately shares nothing with the 2D `ActionsPanel`: every action there (trace, offset, weld,
- * convert to path, ...) is a vector operation with no 3D meaning, so this is a separate component
- * rather than another branch in that file's dispatch.
+ * This is stacked after the retained source type's regular `ActionsPanel`. That panel keeps the
+ * familiar 2D actions visible and disables operations that cannot update a 3D object; this panel
+ * adds placement actions that only make sense in the 3D scene.
  *
  * What is left is placement — moving the object into the part of the workpiece the machine can
  * actually reach. That is why these live here rather than in ObjectPanel's tool row: the tool row

@@ -32,6 +32,7 @@ interface AxisInputOpts {
   adjustPlaceholder: string;
   /** Defaults to the value field's precision; a percentage does not want inch precision. */
   adjustPrecision?: number;
+  disabledAxes?: ReadonlyArray<number>;
   /** Only for lengths. Angles and percentages are unitless and must not be converted. */
   isInch?: boolean;
   precision: number;
@@ -143,7 +144,15 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
     idPrefix: string,
     values: number[],
     onChange: (axis: number, value: number) => void,
-    { addonAfter, adjust, adjustPlaceholder, adjustPrecision, isInch: useInch, precision }: AxisInputOpts,
+    {
+      addonAfter,
+      adjust,
+      adjustPlaceholder,
+      adjustPrecision,
+      disabledAxes = [],
+      isInch: useInch,
+      precision,
+    }: AxisInputOpts,
   ) => (
     <div className={styles.axes}>
       {AXES.map((axis) => {
@@ -158,6 +167,7 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
             <UnitInput
               addonAfter={addonAfter}
               containerClassName={styles.field}
+              disabled={disabledAxes.includes(axis)}
               id={inputId}
               isInch={useInch}
               onChange={(value) => {
@@ -169,6 +179,7 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
             />
             <StlAdjustInput
               className={styles.field}
+              disabled={disabledAxes.includes(axis)}
               id={`${inputId}-adjust`}
               onCommit={(value) => adjust(axis, value)}
               placeholder={adjustPlaceholder}
@@ -225,6 +236,7 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
               // a percentage, not a length: it is never converted to inches
               adjustPlaceholder: '%',
               adjustPrecision: 2,
+              disabledAxes: object.kind === 'photo' ? [2] : [],
               isInch,
               precision: lengthPrecision,
             },

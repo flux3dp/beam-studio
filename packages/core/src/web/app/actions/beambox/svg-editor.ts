@@ -969,7 +969,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       /** Whether each canvas-content file type requires inner engraving mode to be on. */
       const MODE_GATED_TYPES: Record<string, boolean> = {
         ai: false,
-        bitmap: false,
         dxf: false,
         pdf: false,
         stl: true,
@@ -1028,10 +1027,12 @@ const svgEditor = (window['svgEditor'] = (function () {
 
         console.log('File type name:', fileType);
 
-        // 2D artwork has nowhere to go in an inner engraving document, and an STL has nowhere to go
-        // in a 2D one, so both directions are gated — with an offer to switch mode rather than a
-        // dead end. .beam / .bvg carry the mode in the file itself and are resolved inside
-        // importBvgString; the rest (js / json) are not canvas content and are not gated at all.
+        // Vector 2D artwork has nowhere to go in an inner engraving document, and an STL has
+        // nowhere to go in a 2D one, so both directions are gated — with an offer to switch mode
+        // rather than a dead end. Bitmap is intentionally not gated: its 3D importer creates a
+        // zero-thickness photo plane. .beam / .bvg carry the mode in the file itself and are
+        // resolved inside importBvgString; the rest (js / json) are not canvas content and are not
+        // gated at all.
         // Asked before the spinner goes up: a question behind "loading, please wait" reads as a bug.
         if (fileType in MODE_GATED_TYPES && !(await ensureModeForImport(MODE_GATED_TYPES[fileType]))) {
           return;

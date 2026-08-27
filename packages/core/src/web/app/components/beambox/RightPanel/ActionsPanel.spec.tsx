@@ -334,6 +334,32 @@ describe('should render correctly', () => {
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
 
+  test('disables path-only actions for a retained 3D path source', () => {
+    document.body.innerHTML = '<rect id="svg_1" data-stl="1" />';
+
+    const { container } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} is3d typeOverride="path" />,
+    );
+
+    expect(container.querySelector('button#edit_path')).toBeDisabled();
+    expect(container.querySelector('button#decompose_path')).toBeDisabled();
+    expect(container.querySelector('button#offset')).toBeDisabled();
+  });
+
+  test('keeps pixel-only photo actions available in 3D', () => {
+    document.body.innerHTML = '<image id="svg_1" data-stl-photo="1" />';
+
+    const { container } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} is3d typeOverride="image" />,
+    );
+
+    expect(container.querySelector('button#imageEditPanel')).toBeEnabled();
+    expect(container.querySelector('button#sharpen')).toBeEnabled();
+    expect(container.querySelector('button#invert')).toBeEnabled();
+    expect(container.querySelector('button#crop')).toBeDisabled();
+    expect(container.querySelector('button#potrace')).toBeDisabled();
+  });
+
   test('rect', () => {
     document.body.innerHTML = '<rect id="svg_1" />';
 

@@ -58,6 +58,8 @@ getSVGAsync((globalSVG) => {
 
 interface Props {
   elem: SVGElement;
+  is3d?: boolean;
+  typeOverride?: string;
 }
 
 interface ButtonOpts {
@@ -65,6 +67,7 @@ interface ButtonOpts {
   isDisabled?: boolean;
   isFullLine?: boolean;
   mobileLabel?: string;
+  supportedIn3D?: boolean;
   tooltipIfDisabled?: string;
 }
 
@@ -73,7 +76,7 @@ interface Section {
   title?: string;
 }
 
-const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
+const ActionsPanel = ({ elem, is3d, typeOverride }: Props): React.JSX.Element => {
   const i18n = useI18n();
   const forceUpdate = useForceUpdate();
   const tab = i18n.tab_panel.title;
@@ -101,25 +104,27 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       onClick: () => void,
       icon: React.JSX.Element,
       mobileIcon: React.JSX.Element,
-      { autoClose, isDisabled, isFullLine, mobileLabel, tooltipIfDisabled }: ButtonOpts = {},
-    ): React.JSX.Element =>
-      isMobile() ? (
+      { autoClose, isDisabled, isFullLine, mobileLabel, supportedIn3D = false, tooltipIfDisabled }: ButtonOpts = {},
+    ): React.JSX.Element => {
+      const disabled = isDisabled || (is3d && !supportedIn3D);
+
+      return isMobile() ? (
         <ObjectPanelItem.Item
           autoClose={autoClose}
           content={mobileIcon}
-          disabled={isDisabled}
+          disabled={disabled}
           id={id}
           key={id}
           label={mobileLabel || label}
           onClick={onClick}
         />
       ) : (
-        <Tooltip key={label} title={isDisabled ? tooltipIfDisabled : undefined}>
+        <Tooltip key={label} title={disabled ? tooltipIfDisabled : undefined}>
           <div className={classNames(styles['btn-container'], { [styles.half]: !isFullLine })}>
             <Button
               block
               className={styles.btn}
-              disabled={isDisabled}
+              disabled={disabled}
               icon={icon}
               id={id}
               onClick={onClick}
@@ -129,8 +134,9 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
             </Button>
           </div>
         </Tooltip>
-      ),
-    [],
+      );
+    },
+    [is3d],
   );
 
   const renderAutoFitButton = (opts: ButtonOpts = {}): React.JSX.Element =>
@@ -247,7 +253,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         () => imageEdit.removeBackground(elem as SVGImageElement),
         <ActionPanelIcons.BackgroundRemoval />,
         <ActionPanelIcons.BackgroundRemovalMobile />,
-        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short },
+        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short, supportedIn3D: true },
       ),
       crop: renderButtons(
         'crop',
@@ -263,7 +269,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         showCurvePanel,
         <ActionPanelIcons.Grading />,
         <ActionPanelIcons.Brightness />,
-        { autoClose: false, isFullLine: true, mobileLabel: lang.brightness },
+        { autoClose: false, isFullLine: true, mobileLabel: lang.brightness, supportedIn3D: true },
       ),
       imageEditPanel: renderButtons(
         'imageEditPanel',
@@ -271,7 +277,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         () => Dialog.showImageEditPanel(),
         <ActionPanelIcons.EditImage />,
         <ActionPanelIcons.EditImage />,
-        { mobileLabel: lang.ai_bg_removal_short },
+        { mobileLabel: lang.ai_bg_removal_short, supportedIn3D: true },
       ),
       invert: renderButtons(
         'invert',
@@ -279,6 +285,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         () => imageEdit.colorInvert(elem as SVGImageElement),
         <ActionPanelIcons.Invert />,
         <ActionPanelIcons.Invert />,
+        { supportedIn3D: true },
       ),
       offset: renderOffsetButton(),
       potrace: renderButtons(
@@ -302,7 +309,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         showSharpenPanel,
         <ActionPanelIcons.Sharpen />,
         <ActionPanelIcons.SharpenMobile />,
-        { autoClose: false },
+        { autoClose: false, supportedIn3D: true },
       ),
       smartNest: renderSmartNestButton(),
       stampMakerPanel: renderButtons(
@@ -698,7 +705,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     ];
   };
 
-  const sections = match(elem?.tagName.toLowerCase())
+  const sections = match(typeOverride ?? elem?.tagName.toLowerCase())
     .with(P.union('image', 'img'), renderImageActions)
     .with('text', renderTextActions)
     .with('path', renderPathActions)

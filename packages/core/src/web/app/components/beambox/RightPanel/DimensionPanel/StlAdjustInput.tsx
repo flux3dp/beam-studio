@@ -4,6 +4,7 @@ import { InputNumber } from 'antd';
 
 interface Props {
   className?: string;
+  disabled?: boolean;
   id: string;
   /** Called with the typed number on Enter. The field clears itself afterwards. */
   onCommit: (value: number) => void;
@@ -24,13 +25,22 @@ interface Props {
  * conversion belongs to the caller, which knows whether it is holding a length, an angle or a
  * percentage.
  */
-const StlAdjustInput = ({ className, id, onCommit, placeholder, precision, title }: Props): React.JSX.Element => {
+const StlAdjustInput = ({
+  className,
+  disabled,
+  id,
+  onCommit,
+  placeholder,
+  precision,
+  title,
+}: Props): React.JSX.Element => {
   const [value, setValue] = useState<null | number>(null);
 
   return (
     <InputNumber
       className={className}
       controls={false}
+      disabled={disabled}
       id={id}
       onChange={setValue}
       onPressEnter={() => {

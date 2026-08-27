@@ -41,7 +41,7 @@ const getMovedTransform = (object: StlObject, elem: Element): null | StlTransfor
  * The paste offset is folded in here rather than recorded as its own history step, so that the
  * object handed back is already the finished one — which is what undo and redo put in and take out.
  */
-export const createPastedStlObject = (elem: SVGRectElement, source: StlObject): StlObject => {
+export const createPastedStlObject = (elem: SVGElement, source: StlObject): StlObject => {
   // the pasted rect carries its own copy of the attribute; the source is the fallback for a rect
   // that lost it (an older file, or a hand-edited svg)
   const { initialTransform, transform } = parseStlTransform(elem) ?? {
@@ -53,6 +53,8 @@ export const createPastedStlObject = (elem: SVGRectElement, source: StlObject): 
     geometry: source.geometry,
     id: elem.id,
     initialTransform,
+    kind: source.kind,
+    textureUrl: source.textureUrl,
     transform,
   };
   const pasted = { ...object, transform: getMovedTransform(object, elem) ?? transform };

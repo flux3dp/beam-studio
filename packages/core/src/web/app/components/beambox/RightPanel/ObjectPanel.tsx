@@ -13,6 +13,8 @@ import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
+import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
+import { getExtrusionSourceTagName } from '@core/app/svgedit/stl/sourceType';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -47,6 +49,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   // an STL object is a 3D mesh behind a projection rect: the rect's tagName says 'rect', so every
   // dispatch here has to go through nodeType instead (TODO.md A-1)
   const isStl = useSelectedElementStore((state) => state.nodeType) === 'stl';
+  const sourceType = isPhotoPlaneProjection(elem) ? 'image' : elem ? getExtrusionSourceTagName(elem) : null;
   const groupAvailability = useSelectedElementStore(
     useShallow((state) => ({ group: state.canGroup, ungroup: state.canUngroup })),
   );
@@ -321,7 +324,14 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   };
 
   const renderActionPanel = (): React.JSX.Element =>
-    isStl ? <ActionsPanelStl id={elem!.id} /> : <ActionsPanel elem={elem as SVGElement} />;
+    isStl ? (
+      <>
+        {sourceType && <ActionsPanel elem={elem as SVGElement} is3d typeOverride={sourceType} />}
+        <ActionsPanelStl id={elem!.id} />
+      </>
+    ) : (
+      <ActionsPanel elem={elem as SVGElement} />
+    );
 
   // the tool row is entirely about arranging several objects relative to each other — align,
   // distribute, group, boolean — and none of it applies to an STL object: group and boolean are

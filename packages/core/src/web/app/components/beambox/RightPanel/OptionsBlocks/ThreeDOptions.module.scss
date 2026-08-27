@@ -1,3 +1,5 @@
+@use '../_mixins.scss' as mixins;
+
 .block {
   display: flex;
   flex-direction: column;
@@ -12,7 +14,7 @@
   gap: 8px;
 
   .label {
-    font-size: 12px;
+    @include mixins.option-label();
     // the label yields first when the panel is dragged to its 260px minimum
     overflow: hidden;
     text-overflow: ellipsis;

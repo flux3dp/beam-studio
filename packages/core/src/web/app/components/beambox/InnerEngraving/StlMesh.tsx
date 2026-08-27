@@ -1,10 +1,11 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { TransformControls } from '@react-three/drei';
-import type { Group, Mesh } from 'three';
-import { DoubleSide, Euler, Vector3 } from 'three';
+import type { Group, Mesh, Texture } from 'three';
+import { DoubleSide, Euler, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
 
 import type { StlObject } from '@core/app/stores/stlStore';
+import { getPhotoTextureUrl, photoPlaneEvents } from '@core/app/svgedit/stl/photoPlane';
 
 import BoundingBox from './BoundingBox';
 import { SELECTION_COLOR } from './constants';
@@ -47,11 +48,60 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   const { flip, position, rotation, scale } = transform;
   const { ratioLocked, transformMode } = useViewStore();
   const color = useLayerColor(id);
+  const [textureSource, setTextureSource] = useState(object.textureUrl);
+  const [texture, setTexture] = useState<null | Texture>(null);
   const center = useMemo(() => getMeshCenter(geometry), [geometry]);
   const baseSize = useMemo(() => getBaseSize(geometry), [geometry]);
   const mirrored = flip.some(Boolean);
   // the scale at the start of a drag, so a locked ratio can be enforced against it
   const dragStartScale = useRef(new Vector3(1, 1, 1));
+
+  useEffect(() => {
+    if (object.kind !== 'photo') return;
+
+    const elem = document.getElementById(id) as unknown as null | SVGImageElement;
+
+    if (!elem) return;
+
+    const update = () => setTextureSource(getPhotoTextureUrl(elem) ?? object.textureUrl);
+    const handleTextureChanged = (changedId: string, nextSource: string) => {
+      if (changedId === id) setTextureSource(nextSource);
+    };
+    const observer = new MutationObserver(update);
+
+    update();
+    photoPlaneEvents.on('texture-changed', handleTextureChanged);
+    observer.observe(elem, { attributeFilter: ['href', 'origImage', 'xlink:href'], attributes: true });
+
+    return () => {
+      photoPlaneEvents.off('texture-changed', handleTextureChanged);
+      observer.disconnect();
+    };
+  }, [id, object.kind, object.textureUrl]);
+
+  useEffect(() => {
+    if (object.kind !== 'photo' || !textureSource) {
+      setTexture(null);
+
+      return;
+    }
+
+    let active = true;
+    let loaded: null | Texture = null;
+
+    new TextureLoader().load(textureSource, (next) => {
+      loaded = next;
+      next.colorSpace = SRGBColorSpace;
+
+      if (active) setTexture(next);
+      else next.dispose();
+    });
+
+    return () => {
+      active = false;
+      loaded?.dispose();
+    };
+  }, [object.kind, textureSource]);
 
   const meshScale = useMemo<[number, number, number]>(
     () => [flip[0] ? -1 : 1, flip[1] ? -1 : 1, flip[2] ? -1 : 1],
@@ -70,7 +120,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   // while dragging, write straight to the projection rect and leave the store alone: updating the
   // store mid-drag would feed the transform back through the props below and fight the gizmo
   const handleObjectChange = useCallback(() => {
-    const elem = document.getElementById(id) as null | SVGRectElement;
+    const elem = document.getElementById(id) as unknown as null | SVGElement;
 
     if (!anchor || !meshRef.current) return;
 
@@ -144,7 +194,11 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
           {/* selection is shown with an outline rather than a colour change, so the layer colour
               stays readable while the object is being edited. DoubleSide because a mirrored mesh
               has its winding reversed, and back-face culling would hollow it out */}
-          <meshStandardMaterial color={color} side={mirrored ? DoubleSide : undefined} />
+          {object.kind === 'photo' ? (
+            <meshBasicMaterial map={texture} side={DoubleSide} toneMapped={false} transparent />
+          ) : (
+            <meshStandardMaterial color={color} side={mirrored ? DoubleSide : undefined} />
+          )}
         </mesh>
       </group>
       {selected && anchor && (
@@ -159,6 +213,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
             onMouseUp={handleDragEnd}
             onObjectChange={handleObjectChange}
             rotationSnap={snapActive ? ROTATION_SNAP_RAD : null}
+            showZ={object.kind !== 'photo' || transformMode !== 'scale'}
             // arrows along the work area's axes, which is what "move in X / Y / Z" means here
             space="world"
             translationSnap={snapActive ? TRANSLATION_SNAP : null}

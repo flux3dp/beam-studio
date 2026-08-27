@@ -6,10 +6,21 @@ import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { isParamsLabelDev } from '@core/helpers/is-dev';
 
 const mockSetMouseMode = jest.fn();
+const mockInsertDefaultTextAsStl = jest.fn();
+let mockInnerEngraving = false;
 
 jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
   setMouseMode: mockSetMouseMode,
 }));
+jest.mock('@core/helpers/innerEngraving', () => ({
+  useInnerEngravingActive: () => mockInnerEngraving,
+}));
+jest.mock(
+  '@core/app/svgedit/operations/import/importStl/insertDefaultText',
+  () =>
+    (...args: unknown[]) =>
+      mockInsertDefaultTextAsStl(...args),
+);
 
 const mockUseSelectTool = jest.fn();
 const mockImportImage = jest.fn();
@@ -76,6 +87,7 @@ describe('test DrawingToolButtonGroup', () => {
     jest.clearAllMocks();
     jest.useRealTimers();
     jest.mocked(isParamsLabelDev).mockReturnValue(false);
+    mockInnerEngraving = false;
   });
 
   test('should render correctly', () => {
@@ -131,6 +143,26 @@ describe('test DrawingToolButtonGroup', () => {
 
     fireEvent.click(container.querySelector('#left-Preview')!);
     expect(mockHandlePreviewClick).toHaveBeenCalledTimes(1);
+  });
+
+  test('inserts standard Text and FitText directly in 3D mode', async () => {
+    mockInnerEngraving = true;
+
+    const { container } = render(<DrawingToolButtonGroup className="flux" />);
+
+    expect(container.querySelector('[data-testid="button-group"]')).toBeInTheDocument();
+    expect(container.querySelector('button[title="Text"]')).toBeInTheDocument();
+    expect(container.querySelector('button[title="Text Box"]')).toBeInTheDocument();
+
+    fireEvent.click(container.querySelector('button[title="Text"]')!);
+    await Promise.resolve();
+    expect(mockInsertDefaultTextAsStl).toHaveBeenCalledWith('text');
+
+    fireEvent.click(container.querySelector('button[title="Text Box"]')!);
+    await Promise.resolve();
+    expect(mockInsertDefaultTextAsStl).toHaveBeenCalledWith('fit-text');
+    expect(mockSetMouseMode).not.toHaveBeenCalledWith('text');
+    expect(mockSetMouseMode).not.toHaveBeenCalledWith('fit-text');
   });
 
   test('should render correctly when in pass through mode', () => {

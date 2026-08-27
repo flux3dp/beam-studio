@@ -5,7 +5,7 @@ import { moveElements } from '@core/app/svgedit/operations/move';
 import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
 import { createPastedStlObject } from '@core/app/svgedit/stl/clipboard';
-import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { is3dProjection } from '@core/app/svgedit/stl/getters';
 import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import { getBBoxFromElements } from '@core/app/svgedit/utils/getBBox';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -61,16 +61,16 @@ export const pasteElements = async ({
   const pasted = Array.of<SVGGElement>();
   // the projection rects among `pasted`, paired with the object they were copied from: their mesh
   // has to be rebuilt once the paste offset is known
-  const pastedStl = Array.of<{ copy: SVGRectElement; source: StlObject }>();
+  const pastedStl = Array.of<{ copy: SVGElement; source: StlObject }>();
   const batchCmd = new history.BatchCommand('Paste elements');
   const drawing = svgCanvas.getCurrentDrawing();
 
   for (const elem of clipboard) {
     if (!elem) continue;
 
-    const stlSource = isStlProjection(elem) ? clipboardCore.getStlFromClipboard(elem.id) : undefined;
+    const stlSource = is3dProjection(elem) ? clipboardCore.getStlFromClipboard(elem.id) : undefined;
 
-    if (isStlProjection(elem) && !stlSource) {
+    if (is3dProjection(elem) && !stlSource) {
       // no mesh to attach — copied in another tab, which cannot carry one. A rect on its own is a
       // broken STL object (invisible in 3D, and it would fail to export), so it is not pasted.
       console.error(`No mesh available for STL projection rect ${elem.id}, it is not pasted`);
@@ -85,7 +85,7 @@ export const pasteElements = async ({
 
     pasted.push(copy);
 
-    if (stlSource) pastedStl.push({ copy: copy as unknown as SVGRectElement, source: stlSource });
+    if (stlSource) pastedStl.push({ copy: copy as unknown as SVGElement, source: stlSource });
 
     let targetLayer = layerManager.getCurrentLayer()!;
 

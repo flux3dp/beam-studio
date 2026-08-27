@@ -107,13 +107,18 @@ export const insertStlGeometry = async (
   buffer: ArrayBuffer,
   geometry: BufferGeometry,
   attributes: Record<string, number | string> = {},
-  options: { skipFitPrompt?: boolean } = {},
+  options: {
+    initialTransform?: StlTransform;
+    mergeWithPreviousHistory?: boolean;
+    replaceElement?: SVGElement;
+    skipFitPrompt?: boolean;
+  } = {},
 ): Promise<void> => {
   geometry.computeBoundingBox();
 
   if (!geometry.boundingBox) throw new Error('Failed to read STL geometry');
 
-  const transform = await getInitialTransform(geometry, options);
+  const transform = options.initialTransform ?? (await getInitialTransform(geometry, options));
   const id = svgCanvas.getNextId();
   const elem = svgCanvas.addSvgElementFromJson<SVGRectElement>({
     attr: {
@@ -137,9 +142,23 @@ export const insertStlGeometry = async (
 
   const batchCmd = new history.BatchCommand('Import STL');
 
+  if (options.replaceElement?.parentNode) {
+    const source = options.replaceElement;
+    const parent = source.parentNode;
+
+    batchCmd.addSubCommand(new history.RemoveElementCommand(source, source.nextSibling, parent));
+    source.remove();
+  }
+
   batchCmd.addSubCommand(new history.InsertElementCommand(elem));
   batchCmd.onAfter = () => syncStlObjectsWithDom([object]);
-  undoManager.addCommandToHistory(batchCmd);
+
+  if (options.mergeWithPreviousHistory) {
+    undoManager.appendCommandToLast(batchCmd, 'Create 3D Text', options.replaceElement);
+  } else {
+    undoManager.addCommandToHistory(batchCmd);
+  }
+
   selectStlObject(id);
 };
 

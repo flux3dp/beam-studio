@@ -11,6 +11,7 @@ import { controlConfig } from '@core/app/constants/promark-constants';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { detachPhotoPlaneElements } from '@core/app/svgedit/stl/photoPlane';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -258,6 +259,10 @@ const fetchTaskCodeSwiftray = async (
   // Generate Thumbnail
   const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
 
+  // A photo plane is an editor reference only until the relief API replaces it with point-cloud
+  // data. Keep it in .beam, but do not let the current 2D bitmap pipeline engrave it as a flat job.
+  revertFunctions.push(detachPhotoPlaneElements());
+
   Progress.update('fetch-task-code', {
     caption: i18n.lang.beambox.popup.progress.calculating,
     message: 'Splitting Full color layer',
@@ -433,6 +438,7 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
     message: 'Simplifying bitmap',
   });
 
+  const restorePhotoPlanes = detachPhotoPlaneElements();
   const revertBitmap = convertBitmapToInfilledRect();
 
   Progress.update('fetch-task-code', {
@@ -445,6 +451,7 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
   const cleanUpTempModification = async () => {
     revertClipPath();
     revertBitmap();
+    restorePhotoPlanes();
     revert();
     SymbolMaker.switchImageSymbolForAll(true);
     revertVariableText?.();

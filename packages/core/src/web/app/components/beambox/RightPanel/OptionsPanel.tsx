@@ -4,7 +4,7 @@ import { match, P } from 'ts-pattern';
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import { useIsMobile } from '@core/app/stores/screenStore';
-import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { is3dProjection, isPhotoPlaneProjection, isStlProjection } from '@core/app/svgedit/stl/getters';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -18,9 +18,9 @@ import InFillBlock from './OptionsBlocks/InFillBlock';
 import MultiColorOptions from './OptionsBlocks/MultiColorOptions';
 import PolygonOptions from './OptionsBlocks/PolygonOptions';
 import RectOptions from './OptionsBlocks/RectOptions';
-import StlOptions from './OptionsBlocks/StlOptions';
-import StlSourceOptions from './OptionsBlocks/StlSourceOptions';
 import TextOptions from './OptionsBlocks/TextOptions';
+import ThreeDOptions from './OptionsBlocks/ThreeDOptions';
+import useThreeDSourceOptions from './OptionsBlocks/useThreeDSourceOptions';
 import VariableTextBlock from './OptionsBlocks/VariableTextBlock';
 import styles from './OptionsPanel.module.scss';
 
@@ -42,6 +42,10 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
     [elem, supportVariableBlock, isMobile],
   );
   const [isFullColor, setIsFullColor] = useState(() => getIsFullColor(elem));
+  const threeDSourceOptions = useThreeDSourceOptions(
+    elem && isStlProjection(elem) && !isPhotoPlaneProjection(elem) ? elem : null,
+  );
+  const optionElem = threeDSourceOptions.sourceElem ?? elem;
 
   useEffect(() => {
     const handleUpdateFullColor = () => setIsFullColor(getIsFullColor(elem));
@@ -54,9 +58,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
     };
   }, [elem]);
 
-  const elemTagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
+  const elemTagName = useMemo(() => optionElem?.tagName.toLowerCase(), [optionElem]);
   const showColorPanel = useMemo(() => {
-    if (!elem || !CanvasElements.fillableWithContainers.includes(elemTagName!)) {
+    if (!elem || is3dProjection(elem) || !CanvasElements.fillableWithContainers.includes(elemTagName!)) {
       return false;
     }
 
@@ -68,19 +72,37 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
 
     // a projection rect is a `rect`, so without this it would fall into the RectOptions branch below
     // (corner radius) and get an infill toggle that acts on the rect's own fill
-    if (isStlProjection(elem)) {
-      return [<StlSourceOptions elem={elem} key="stl-source" />, <StlOptions elem={elem} key="stl" />];
+    if (isPhotoPlaneProjection(elem)) {
+      return [<ImageOptions elem={elem} key="image" />, <ThreeDOptions elem={elem} hideEngravingMode key="3d" />];
     }
 
-    const tagName = elem.tagName.toLowerCase();
+    if (isStlProjection(elem) && !threeDSourceOptions.sourceElem) {
+      return [<InFillBlock elems={[elem]} key="3d-infill" />, <ThreeDOptions elem={elem} key="3d" />];
+    }
+
+    const sourceElem = threeDSourceOptions.sourceElem;
+    const matchedElem = sourceElem ?? elem;
+    const tagName = matchedElem.tagName.toLowerCase();
     const colorOrInfill = (key = 'infill') =>
       showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elems={[elem]} key={key} />;
 
-    return match(tagName)
-      .with('rect', () => [<RectOptions elem={elem} key="rect" />, colorOrInfill('fill')])
-      .with('polygon', () => [<PolygonOptions elem={elem} key="polygon" />, colorOrInfill('fill')])
+    const matchedOptions = match(tagName)
+      .with('rect', () => [
+        <RectOptions elem={elem} key="rect" roundedCorner={threeDSourceOptions.roundedCorner} />,
+        colorOrInfill('fill'),
+      ])
+      .with('polygon', () => [
+        <PolygonOptions elem={elem} key="polygon" sideControl={threeDSourceOptions.sideControl} />,
+        colorOrInfill('fill'),
+      ])
       .with('text', () => [
-        <TextOptions elem={elem} key="text" showColorPanel={showColorPanel} textElements={[elem as SVGTextElement]} />,
+        <TextOptions
+          elem={elem}
+          key="text"
+          onSourceChange={threeDSourceOptions.onTextChange}
+          showColorPanel={showColorPanel}
+          textElements={[matchedElem as SVGTextElement]}
+        />,
         showColorPanel ? (
           <ColorPanel elem={elem} key="color" />
         ) : isMobile ? (
@@ -91,15 +113,15 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
         elem.getAttribute('data-fullcolor') === '1' ? [] : [<ImageOptions elem={elem} key="image" />],
       )
       .with('g', () => {
-        if (elem.getAttribute('data-textpath-g')) {
-          const textElem = elem.querySelector('text');
+        if (matchedElem.getAttribute('data-textpath-g')) {
+          const textElem = matchedElem.querySelector('text');
 
           return [<TextOptions elem={elem} isTextPath key="textpath" textElements={[textElem!]} />];
         }
 
-        if (!elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])')) {
-          const textElems = Array.from(elem.querySelectorAll('text'));
-          const includeTextPath = Boolean(elem.querySelector('g[data-textpath-g="1"]'));
+        if (!matchedElem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])')) {
+          const textElems = Array.from(matchedElem.querySelectorAll('text'));
+          const includeTextPath = Boolean(matchedElem.querySelector('g[data-textpath-g="1"]'));
 
           return [
             <TextOptions elem={elem} isTextPath={includeTextPath} key="textpath" textElements={textElems} />,
@@ -122,7 +144,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
         ) : null,
       ])
       .otherwise(() => [colorOrInfill()]);
-  }, [elem, showColorPanel, showVariableBlock, isMobile]);
+
+    return is3dProjection(elem) ? [...matchedOptions, <ThreeDOptions elem={elem} key="3d" />] : matchedOptions;
+  }, [elem, showColorPanel, showVariableBlock, isMobile, threeDSourceOptions]);
 
   return isMobile ? (
     <div className={styles.container}>

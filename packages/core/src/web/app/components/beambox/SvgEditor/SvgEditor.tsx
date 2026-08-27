@@ -93,7 +93,7 @@ const SvgEditor = (): ReactNode => {
               <WorkareaInfo />
             </div>
             {!isMobile && <PreviewFloatingBar />}
-            <DpiInfo />
+            {!innerEngraving && <DpiInfo />}
             <div className={styles['bottom-right']}>
               <div className={styles.controls}>
                 <TimeEstimationButtonContextProvider>

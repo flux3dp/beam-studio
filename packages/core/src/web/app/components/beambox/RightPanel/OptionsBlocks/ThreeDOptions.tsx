@@ -7,40 +7,61 @@ import { LAYER_HEIGHT_LIMIT, POINT_SPACING_LIMIT } from '@core/app/constants/inn
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { getStlEngravingParams, setStlEngravingParam } from '@core/app/svgedit/stl/engravingParams';
+import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { todo } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
-import InFillBlock from './InFillBlock';
-import styles from './StlOptions.module.scss';
+import styles from './ThreeDOptions.module.scss';
 
 todo('mobile 版還沒處理，其他 OptionsBlocks 都有 ObjectPanelItem 的分支');
 
 interface Props {
   elem: Element;
+  hideEngravingMode?: boolean;
 }
 
 /**
- * Engraving options for an STL object: what the slicer does with the layers it produces.
+ * Shared processing options for a 3D projection, including imported STL, extruded SVG and photo planes.
  *
- * The values live on the projection rect as attributes, not in the STL store, because they are read
+ * The values live on the projection element as attributes, not in the STL store, because they are read
  * by the **backend** from the svg string (see `svgedit/stl/engravingParams.ts`). This component only
  * mirrors them into local state so the inputs stay responsive.
  */
-const StlOptions = ({ elem }: Props): React.JSX.Element => {
+const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.Element => {
   const { inner_engraving_settings: t } = useI18n();
   const isInch = useStorageStore((state) => state.isInch);
-  const [params, setParams] = useState(() => getStlEngravingParams(elem));
+  const readParams = () => {
+    const next = getStlEngravingParams(elem);
+
+    if (isPhotoPlaneProjection(elem)) {
+      next.mode = elem.getAttribute('data-shading') === 'true' ? 'dot' : 'line';
+    }
+
+    return next;
+  };
+  const [params, setParams] = useState(readParams);
 
   // the selection can change without this component unmounting, and undo can change the attributes
   // underneath us
   useEffect(() => {
-    setParams(getStlEngravingParams(elem));
+    const refresh = () => setParams(readParams());
+    const observer = new MutationObserver(refresh);
+
+    refresh();
+    observer.observe(elem, {
+      attributeFilter: ['data-shading', STL_ATTR.layerHeight, STL_ATTR.mode, STL_ATTR.pointSpacing],
+      attributes: true,
+    });
+
+    return () => observer.disconnect();
+    // readParams always reads the current attributes from elem; changing elem replaces the observer.
+    // eslint-disable-next-line hooks/exhaustive-deps
   }, [elem]);
 
   const update = (attr: string, value: number | string) => {
     setStlEngravingParam(elem, attr, value);
-    setParams(getStlEngravingParams(elem));
+    setParams(readParams());
   };
 
   const renderRow = (label: string, control: React.ReactNode, key: string) => (
@@ -71,23 +92,21 @@ const StlOptions = ({ elem }: Props): React.JSX.Element => {
 
   return (
     <div className={styles.block}>
-      {renderRow(
-        t.engraving_mode,
-        <Segmented
-          className={styles.segmented}
-          onChange={(value: EngravingMode) => update(STL_ATTR.mode, value)}
-          options={[
-            { label: t.mode_line, value: 'line' },
-            { label: t.mode_dot, value: 'dot' },
-          ]}
-          size="small"
-          value={params.mode}
-        />,
-        'mode',
-      )}
-      {/* infill is the projection rect's own fill, so it reuses the block every 2D shape uses
-          rather than inventing a second fill concept for STL objects */}
-      <InFillBlock elems={[elem]} id="stl-fill" key="fill" label={t.fill} />
+      {!hideEngravingMode &&
+        renderRow(
+          t.engraving_mode,
+          <Segmented
+            className={styles.segmented}
+            onChange={(value: EngravingMode) => update(STL_ATTR.mode, value)}
+            options={[
+              { label: t.mode_line, value: 'line' },
+              { label: t.mode_dot, value: 'dot' },
+            ]}
+            size="small"
+            value={params.mode}
+          />,
+          'mode',
+        )}
       {renderRow(
         t.layer_height,
         renderLengthInput('stl-layer-height', params.layerHeight, STL_ATTR.layerHeight, LAYER_HEIGHT_LIMIT),
@@ -104,4 +123,4 @@ const StlOptions = ({ elem }: Props): React.JSX.Element => {
   );
 };
 
-export default StlOptions;
+export default ThreeDOptions;

@@ -67,7 +67,7 @@ export const getProjection = (
  * object's matrix first and then call this, never write the rect's geometry directly.
  */
 export const updateProjectionRect = (
-  elem: SVGRectElement,
+  elem: SVGElement,
   geometry: BufferGeometry,
   matrix: Matrix4,
   /**

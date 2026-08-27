@@ -15,6 +15,8 @@ import { STL_ATTR } from './constants';
 export interface ExtrusionSource {
   /** Fixed physical depth; source X/Y units are converted with `scale`. */
   depth: number;
+  /** Optional outline used for geometry when the editable source itself is not a path (text). */
+  geometryMarkup?: string;
   markup: string;
   scale: number;
   type: 'svg';
@@ -34,6 +36,7 @@ export const parseExtrusionSourceValue = (value: null | string): ExtrusionSource
       source.type !== 'svg' ||
       typeof source.markup !== 'string' ||
       !source.markup ||
+      (source.geometryMarkup !== undefined && (typeof source.geometryMarkup !== 'string' || !source.geometryMarkup)) ||
       typeof source.scale !== 'number' ||
       !Number.isFinite(source.scale) ||
       source.scale <= 0 ||
@@ -69,7 +72,7 @@ export const buildExtrusion = (
   buffer: ArrayBuffer;
   geometry: ExtrudeGeometry;
 } => {
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg">${source.markup}</svg>`;
+  const svg = `<svg xmlns="http://www.w3.org/2000/svg">${source.geometryMarkup ?? source.markup}</svg>`;
   const shapes = new SVGLoader().parse(svg).paths.flatMap((shapePath) => SVGLoader.createShapes(shapePath));
 
   if (!shapes.length) return null;
@@ -142,13 +145,24 @@ class ExtrusionSourceCommand extends BaseHistoryCommand implements ICommand {
   doUnapply = (): void => applySource(this.id, this.oldSource);
 }
 
-export const setExtrusionSource = (elem: Element, source: ExtrusionSource): void => {
+export const setExtrusionSource = (
+  elem: Element,
+  source: ExtrusionSource,
+  { mergeWithPreviousHistory, sourceElement }: { mergeWithPreviousHistory?: boolean; sourceElement?: Element } = {},
+): void => {
   const oldSource = parseExtrusionSource(elem);
 
   if (!oldSource || serializeExtrusionSource(oldSource) === serializeExtrusionSource(source)) return;
 
   applySource(elem.id, source);
-  undoManager.addCommandToHistory(new ExtrusionSourceCommand(elem.id, oldSource, source));
+
+  const command = new ExtrusionSourceCommand(elem.id, oldSource, source);
+
+  if (mergeWithPreviousHistory) {
+    undoManager.appendCommandToLast(command, 'Change 3D Source', sourceElement);
+  } else {
+    undoManager.addCommandToHistory(command);
+  }
 };
 
 export const getExtrusionSize = (source: ExtrusionSource): null | Vector3 => {

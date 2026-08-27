@@ -288,7 +288,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isLaser && <PowerBlock type={UIType} />}
       {(isPrinting || isUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
-      {isLaser && <DpiBlock type={UIType} />}
+      {isLaser && !isInnerEngraving && <DpiBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
       {isPromark && <FillIntervalBlock type={UIType} />}
       {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}

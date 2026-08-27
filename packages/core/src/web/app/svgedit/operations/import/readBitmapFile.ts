@@ -90,25 +90,25 @@ const readBitmapFile = async (
       height,
       onComplete: (result: any) => {
         svgCanvas.setHref(newImage, result.pngBase64);
+        resolve();
       },
       rotationFlag,
       width,
     });
-    updateElementColor(newImage);
-    selectionManager.selectOnly([newImage]);
-
-    const cmd = new history.InsertElementCommand(newImage);
-
-    if (!parentCmd) undoManager.addCommandToHistory(cmd);
-    else parentCmd.addSubCommand(cmd);
-
-    if (!offset) {
-      svgCanvas.alignSelectedElements('l', 'page');
-      svgCanvas.alignSelectedElements('t', 'page');
-    }
-
-    resolve();
   });
+
+  updateElementColor(newImage);
+  selectionManager.selectOnly([newImage]);
+
+  const cmd = new history.InsertElementCommand(newImage);
+
+  if (!parentCmd) undoManager.addCommandToHistory(cmd);
+  else parentCmd.addSubCommand(cmd);
+
+  if (!offset) {
+    svgCanvas.alignSelectedElements('l', 'page');
+    svgCanvas.alignSelectedElements('t', 'page');
+  }
 
   return newImage as SVGImageElement;
 };

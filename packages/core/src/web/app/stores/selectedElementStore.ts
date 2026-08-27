@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
-import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { is3dProjection } from '@core/app/svgedit/stl/getters';
 import { isFitText, isParamsLabel } from '@core/app/svgedit/text/textedit/getters';
 import type { ILang } from '@core/interfaces/ILang';
 
@@ -60,7 +60,7 @@ const getNodeType = (elem: Element | null): { nodeCategory: CanvasNodeCategory; 
         nodeType = 'fit_text';
       } else if (elem.getAttribute('data-pass-through')) {
         nodeType = 'pass_through_object';
-      } else if (isStlProjection(elem)) {
+      } else if (is3dProjection(elem)) {
         nodeType = 'stl';
       } else if (elem.tagName.toLowerCase() !== 'use') {
         nodeType = elem.tagName.toLowerCase() as CanvasNodeType;

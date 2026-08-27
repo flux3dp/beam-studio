@@ -1,6 +1,6 @@
 import type { StlObject } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
-import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { is3dProjection } from '@core/app/svgedit/stl/getters';
 import { getHref } from '@core/app/svgedit/utils/href';
 import type { ClipboardCore, ClipboardData } from '@core/interfaces/Clipboard';
 
@@ -59,7 +59,7 @@ export class Clipboard implements ClipboardCore {
       if (elem.tagName === 'use') this.addRefToClipboard(elem as SVGUseElement);
       else Array.from(elem.querySelectorAll('use')).forEach((use: SVGUseElement) => this.addRefToClipboard(use));
 
-      if (isStlProjection(elem)) this.addStlToClipboard(elem);
+      if (is3dProjection(elem)) this.addStlToClipboard(elem);
 
       if (layerName && !layerNames.has(layerName)) {
         layerNames.add(layerName);

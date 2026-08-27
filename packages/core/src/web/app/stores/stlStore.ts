@@ -41,7 +41,7 @@ export interface StlObject {
    * .beam block 6 (A-2). Round-tripping through three.js would lose nothing geometrically but would
    * mean two different meshes for the same object, so the raw buffer stays the single source.
    */
-  buffer: ArrayBuffer;
+  buffer?: ArrayBuffer;
   /** Parsed mesh, in the STL file's own units (mm). Never mutated after import. */
   geometry: BufferGeometry;
   /** Element id of the projection rect. Also the key for the mesh binary in .beam block 6. */
@@ -56,6 +56,10 @@ export interface StlObject {
    * millimetres would blow the object straight back out of the workpiece.
    */
   initialTransform: StlTransform;
+  /** Omitted on legacy/runtime objects and therefore treated as a normal mesh. */
+  kind?: 'mesh' | 'photo';
+  /** Blob/data URL used by a zero-thickness photo plane. Persisted through the SVG image source. */
+  textureUrl?: string;
   transform: StlTransform;
 }
 

@@ -1,6 +1,6 @@
 import { useStlStore } from '@core/app/stores/stlStore';
 import selectionManager from '@core/app/svgedit/selection';
-import { isStlProjection } from '@core/app/svgedit/stl/getters';
+import { is3dProjection } from '@core/app/svgedit/stl/getters';
 
 /**
  * Select an STL object on both sides at once.
@@ -24,4 +24,4 @@ export const selectStlObject = (id: null | string): void => {
 
 /** The id of the currently selected STL object, or null when the selection is something else. */
 export const getSelectedStlId = (elem: Element | null): null | string =>
-  elem && isStlProjection(elem) ? elem.id : null;
+  elem && is3dProjection(elem) ? elem.id : null;
