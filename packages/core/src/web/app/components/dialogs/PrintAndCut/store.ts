@@ -9,6 +9,7 @@ import type { CanvasContents } from './utils/collectContents';
 import type { MarkPosition } from './utils/layout';
 import { computeFullBBox, computeMarks } from './utils/layout';
 import type { PrintingContentsElementSnapshot, PrintingContentsMatch } from './utils/printingContentsSnapshot';
+import type { Point } from './utils/rigidTransform';
 
 export interface BBox {
   height: number;
@@ -33,6 +34,8 @@ interface AlignState {
   alignProgress: AlignProgress | null;
   /** Camera preview image of the workarea captured in the align step */
   cameraImageUrl: null | string;
+  /** For Canvas Zoom upon mark detection */
+  detectedMarkCenters: null | Point[];
   /** Whether the align step's capture + align flow is running; blocks navigation */
   isProcessing: boolean;
 }
@@ -121,6 +124,7 @@ const initialState: State = {
   contourLayerName: null,
   contourPathD: null,
   contourSource: 'outline',
+  detectedMarkCenters: null,
   fullBBox: null,
   gridColumns: 1,
   gridGapMm: 10,
@@ -197,6 +201,7 @@ export const usePrintAndCutStore = create(
       set((state) => withFullBBox(state, { contourLayerName })),
     setContourPathD: (contourPathD: null | string): void => set((state) => withFullBBox(state, { contourPathD })),
     setContourSource: (contourSource: ContourSource): void => set((state) => withFullBBox(state, { contourSource })),
+    setDetectedMarkCenters: (detectedMarkCenters: null | Point[]): void => set({ detectedMarkCenters }),
     setGrid: (grid: Partial<Pick<State, 'gridColumns' | 'gridGapMm' | 'gridRows'>>): void =>
       set((state) => withFullBBox(state, grid)),
     setIsProcessing: (isProcessing: boolean): void => set({ isProcessing }),

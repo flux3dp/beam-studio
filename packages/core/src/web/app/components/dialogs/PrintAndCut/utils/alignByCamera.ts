@@ -119,9 +119,10 @@ const loadImage = (url: string): Promise<HTMLImageElement> =>
  * corner in the sweep are re-captured at center precision. Only a 2×-mark-size
  * patch around each mark is kept from the retake — the rest of the tile (whose
  * corners are again imprecise) is rolled back.
+ * @param onPatchDrawn called with the background url after each mark's patch
  * @returns whether at least one mark patch was refreshed
  */
-const refineMarkPatches = async (markCenters: Point[]): Promise<boolean> => {
+const refineMarkPatches = async (markCenters: Point[], onPatchDrawn?: (url: string) => void): Promise<boolean> => {
   try {
     // a refinable capture leaves preview mode running; a manual align re-run
     // re-enters it silently (the device is already selected)
@@ -152,7 +153,7 @@ const refineMarkPatches = async (markCenters: Point[]): Promise<boolean> => {
       // patches) before the retake stamps a whole tile onto it
       const baseImage = await loadImage(await previewModeBackgroundDrawer.getCameraCanvasUrl({ useCache: false }));
 
-      if (!(await previewModeController.preview(x, y))) continue;
+      if (!(await previewModeController.preview(x, y, { silent: true }))) continue;
 
       // restore the snapshot everywhere except the patch around this mark:
       // transparent pixels leave the fresh tile visible only inside the hole
@@ -172,6 +173,7 @@ const refineMarkPatches = async (markCenters: Point[]): Promise<boolean> => {
       );
       await previewModeBackgroundDrawer.drawImageToCanvas(mask, width / 2, modelHeight / 2);
       refinedAny = true;
+      onPatchDrawn?.(await previewModeBackgroundDrawer.getCameraCanvasUrl({ useCache: false }));
     }
 
     return refinedAny;
@@ -244,9 +246,13 @@ export const detectAlignmentTransform = async ({
       }
     }
 
+    // published as soon as the marks are located, so the dialog canvas zooms
+    // to them while they are refined
+    if (markCenters) usePrintAndCutStore.getState().setDetectedMarkCenters(markCenters);
+
     // refineMarkPatches itself skips machines whose camera cannot be driven
-    // over the marks; when it did retake them, redetect on the patched image
-    if (markCenters && (await refineMarkPatches(markCenters))) {
+    // over the marks; when it did retake them, redetect on the patched image.
+    if (markCenters && (await refineMarkPatches(markCenters, onPreviewUpdate))) {
       // reported after `refine` so the tail phases stay in ascending order
       reportAlignProgress('completing');
 

@@ -31,13 +31,28 @@ virtual `'resume'` entry step (outside the array, shown when a saved config exis
 4. **align** — one button: camera capture → mark detection → rigid fit; preview
    shows the design landing on the photographed sheet.
 5. **Finish** (footer) — `generateAlignedCutLayer()`: one undoable BatchCommand
-   (replace previous tagged cut layer, insert aligned contour geometry, hide all
-   original layers — except UV Print layers, which never yield a machine task),
-   then save the reusable config.
+   (replace previous tagged cut layer, insert aligned contour geometry, hide
+   ALL original layers — UV Print layers included: they yield no machine task
+   but sit at the design position, misaligned next to the aligned cut layer),
+   then save the reusable config. UV layers that were visible when Finish hid
+   them are tagged `data-pnc-hidden` (`PRINT_AND_CUT_HIDDEN_ATTR`, set outside
+   undo history). The tag means "hidden by Finish, still design content" and
+   the flow reads tagged layers IN PLACE — `getContentsLayers` counts
+   visible-or-tagged layers, the renderers (contour raster, PDF export,
+   preview clone) strip `display` from their clones, and collection measures
+   inside `measureWithLayersShown` — so Start Over never mutates the document
+   and adds nothing to undo history. A layer the user hid carries no tag and
+   stays excluded; a manual visibility toggle (`setLayerVisibility`) strips
+   the tag as an undoable subcommand, so re-hiding a layer by hand excludes it
+   from the next run. (An aligned-instead-of-hidden variant via a display-only
+   `transform` on the UV layer groups was built and reverted 2026-08-26:
+   editing content inside a transformed layer group misbehaves. An
+   unhide-at-Start-Over variant — plain, then as an undoable BatchCommand —
+   was replaced by read-in-place 2026-08-27.)
 
-**Design content = visible UV Print layers only** (`data-module` =
-`LayerModule.UV_PRINT`, filtered in `getContentsLayers`): that is what gets
-rasterized, exported to PDF and snapshotted. Entering a fresh run requires the
+**Design content = UV Print layers that are visible or `data-pnc-hidden`-tagged**
+(`data-module` = `LayerModule.UV_PRINT`, filtered in `getContentsLayers`): that
+is what gets rasterized, exported to PDF and snapshotted. Entering a fresh run requires the
 `enable-uv-print-file` preference: `startFreshRun` alerts with an
 Open-Preferences button (settings modal → Editor tab, scrolls to
 `#set-enable-uv-print-file`) when it is off, alerts `no_uv_layer` when no layer
@@ -193,7 +208,12 @@ so `setContentTransform` moves design+marks as one unit while the camera `<image
 stays fixed. `setBackgroundRect` sets the viewport (white rect = paper);
 `setGridOffsets` renders `<use>` copies. Canvas.tsx binds store → manager with
 effects; background is per-step (`setup` padded content, `paper/export/resume`
-paper rect, `align` whole workarea).
+paper rect, `align` whole workarea). The align flow feeds the canvas through
+store state (`cameraImageUrl`, `detectedMarkCenters` — the latter zooms via
+`zoomToMarks` while the marks are refined). (A manager-in-the-store variant
+with direct imperative calls was tried and rolled back 2026-08-27: grid/mark
+syncing needed a second mount-time path because `initFromConfig` runs before
+the canvas exists.)
 
 ## Resume correctness rules
 
@@ -210,6 +230,9 @@ paper rect, `align` whole workarea).
 - The resume entry bypasses the startFreshRun guards (preference may have been
   turned off, or content hidden, since the finish); Start Over does not — on
   failure the alert shows, the dialog closes, and the config is kept.
+- Resume previews and snapshot matching tolerate the fully hidden design:
+  `renderContent` force-shows cloned layers when `isResume`, and the match
+  runs inside `measureWithLayersShown`.
 
 ## Gotchas
 
@@ -239,6 +262,7 @@ paper rect, `align` whole workarea).
 - **Safe to change**: step sidebar UI, progress presentation, canvas styling,
   paper size list, mark sweep heuristics/budgets, contour cache strategy.
 - **Load-bearing (coordinate before changing)**: `ResumeConfig` shape
-  (persisted in .beam), `data-pnc-cut` attr, `ContourState` semantics, the
-  frozen-at-Finish rules above, fluxghost command names/params, the
-  single-BatchCommand undo contract of `generateAlignedCutLayer`.
+  (persisted in .beam), `data-pnc-cut` and `data-pnc-hidden` attrs,
+  `ContourState` semantics, the frozen-at-Finish rules above, fluxghost
+  command names/params, the single-BatchCommand undo contract of
+  `generateAlignedCutLayer`.

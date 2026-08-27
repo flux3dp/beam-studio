@@ -60,6 +60,8 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
       const clone = layer.cloneNode(true) as SVGGElement;
 
       clone.removeAttribute('clip-path');
+      // content layers can be hidden (tagged by Finish)
+      clone.removeAttribute('display');
       // print the artwork with its original colors, not the layer color
       restoreOriginalColors(clone, imageHrefs);
 

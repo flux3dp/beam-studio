@@ -317,6 +317,7 @@ class PreviewModeController {
       last?: boolean;
       overlapFlag?: number;
       overlapRatio?: number;
+      silent?: boolean;
     } = {},
   ): Promise<boolean> {
     const res = this.prePreview();
@@ -325,10 +326,10 @@ class PreviewModeController {
       return false;
     }
 
-    const { callback, overlapFlag, overlapRatio } = opts;
+    const { callback, overlapFlag, overlapRatio, silent } = opts;
 
     try {
-      const previewRes = await this.previewManager!.preview(x, y, { overlapFlag, overlapRatio });
+      const previewRes = await this.previewManager!.preview(x, y, { overlapFlag, overlapRatio, silent });
 
       if (previewRes) {
         this.onPreviewSuccess();

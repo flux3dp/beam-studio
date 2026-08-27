@@ -258,7 +258,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
   };
 
   const targetedCapture = async (target: Point): Promise<void> => {
-    const ok = await previewModeController.preview(target.x, target.y, { overlapRatio: 0 });
+    const ok = await previewModeController.preview(target.x, target.y, { overlapRatio: 0, silent: true });
 
     if (!ok) throw new CaptureFailedError();
 
@@ -386,6 +386,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
       const ok = await previewModeController.preview(point[0], point[1], {
         overlapFlag,
         overlapRatio: SWEEP_OVERLAP_RATIO,
+        silent: true,
       });
 
       if (!ok) return { detectedMarks: null, failed: true, stopped };

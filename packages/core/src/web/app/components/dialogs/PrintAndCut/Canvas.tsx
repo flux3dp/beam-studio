@@ -30,6 +30,7 @@ const Canvas = (): React.JSX.Element => {
   const contourLayerName = usePrintAndCutStore((state) => state.contourLayerName);
   const contourPathD = usePrintAndCutStore((state) => state.contourPathD);
   const contourSource = usePrintAndCutStore((state) => state.contourSource);
+  const detectedMarkCenters = usePrintAndCutStore((state) => state.detectedMarkCenters);
   const fullBBox = usePrintAndCutStore((state) => state.fullBBox);
   const gridColumns = usePrintAndCutStore((state) => state.gridColumns);
   const gridGapMm = usePrintAndCutStore((state) => state.gridGapMm);
@@ -65,10 +66,18 @@ const Canvas = (): React.JSX.Element => {
     canvasManager.setCameraImage(step === 'align' ? cameraImageUrl : null);
   }, [cameraImageUrl, canvasManager, step]);
 
-  // likewise, applying the detected transform must not reset a manual zoom
+  // applying the detected transform must not reset the zoom
   useEffect(() => {
     canvasManager.setContentTransform(step === 'align' ? alignmentTransform : null);
   }, [alignmentTransform, canvasManager, step]);
+
+  // zoom to the marks as soon as they are located
+  useEffect(() => {
+    if (step !== 'align') return;
+
+    if (detectedMarkCenters?.length) canvasManager.zoomToMarks(detectedMarkCenters);
+    else canvasManager.resetView();
+  }, [canvasManager, detectedMarkCenters, step]);
 
   useEffect(() => {
     // the align step sets its own background below

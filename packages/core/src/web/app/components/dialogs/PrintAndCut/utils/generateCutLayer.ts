@@ -16,7 +16,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { CUT_COLOR, PRINT_AND_CUT_LAYER_ATTR } from '../constants';
+import { CUT_COLOR, PRINT_AND_CUT_HIDDEN_ATTR, PRINT_AND_CUT_LAYER_ATTR } from '../constants';
 import { setResumeConfig } from '../resumeConfigStore';
 import type { AlignmentTransform } from '../store';
 import { usePrintAndCutStore } from '../store';
@@ -180,10 +180,14 @@ export const generateAlignedCutLayer = (): void => {
   if (alignmentTransform) applyTransformToElements(alignmentTransform, insertedElements, batchCmd);
 
   // hide the originals so a normal export only executes the cutting layer;
-  // UV Print layers stay visible since they never yield a machine task;
-  // setVisible is a no-op for layers that are already hidden
+  // UV Print layers hidden here are tagged so startFreshRun can show them
+  // again (a layer the user hid gets no tag and stays excluded)
   originalLayers.forEach((layer) => {
-    if (getData(layer.getGroup(), 'module') === LayerModule.UV_PRINT) return;
+    const group = layer.getGroup();
+
+    if (getData(group, 'module') === LayerModule.UV_PRINT && group.getAttribute('display') !== 'none') {
+      group.setAttribute(PRINT_AND_CUT_HIDDEN_ATTR, '1');
+    }
 
     layer.setVisible(false, { parentCmd: batchCmd });
   });

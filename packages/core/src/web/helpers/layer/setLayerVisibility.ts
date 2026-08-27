@@ -1,4 +1,6 @@
 import presprayArea from '@core/app/actions/canvas/prespray-area';
+import { PRINT_AND_CUT_HIDDEN_ATTR } from '@core/app/components/dialogs/PrintAndCut/constants';
+import changeAttribute from '@core/app/svgedit/history/changeAttribute';
 import history from '@core/app/svgedit/history/history';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -24,6 +26,11 @@ export const setLayerVisibility = (layerName: string, value: boolean, opts?: His
 
   // Value not changed
   if (!res) return;
+
+  // a manual toggle strips print-and-cut's still-content marker (undo restores it)
+  const stripTagCmd = changeAttribute(layerObject.getGroup(), { [PRINT_AND_CUT_HIDDEN_ATTR]: null });
+
+  if (stripTagCmd) batchCmd.addSubCommand(stripTagCmd);
 
   presprayArea.togglePresprayArea();
 

@@ -5,12 +5,13 @@ import EmbeddedCanvasManager from '@core/app/widgets/FullWindowPanel/EmbeddedCan
 import { restoreOriginalColors } from '@core/helpers/image/originalColors';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 
-import { CUT_COLOR, markRadiusPx } from './constants';
+import { CUT_COLOR, markRadiusPx, PRINT_AND_CUT_HIDDEN_ATTR } from './constants';
 import { contentTags } from './utils/collectContents';
 import { getGeneratedCutLayers } from './utils/contentsLayers';
 import type { MarkPosition } from './utils/layout';
+import type { Point } from './utils/rigidTransform';
 
-interface BBox {
+export interface BBox {
   height: number;
   width: number;
   x: number;
@@ -84,11 +85,10 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
       });
     }
 
-    // On resume the previous run hid the design layers. Show the printed
-    // design as it was on the PDF: force them visible again (preview only).
-    if (this.isResume) {
-      this.svgcontent.querySelectorAll('g.layer').forEach((layer) => layer.removeAttribute('display'));
-    }
+    // force-show: all layers on resume, Finish-tagged ones on fresh runs
+    this.svgcontent.querySelectorAll('g.layer').forEach((layer) => {
+      if (this.isResume || layer.hasAttribute(PRINT_AND_CUT_HIDDEN_ATTR)) layer.removeAttribute('display');
+    });
 
     // show the artwork as it will be printed, not with the layer color applied
     restoreOriginalColors(this.svgcontent);
@@ -197,6 +197,49 @@ export class PrintAndCutCanvasManager extends EmbeddedCanvasManager {
     const sin = Math.sin(angle);
 
     this.contentGroup.setAttribute('transform', `matrix(${cos}, ${sin}, ${-sin}, ${cos}, ${tx}, ${ty})`);
+  };
+
+  /**
+   * Zoom and scroll so the given rect (in content coordinates) is centered,
+   * filling `ratio` of the constraining container side (usually the height)
+   */
+  zoomToBBox = (bbox: BBox, ratio = 0.8): void => {
+    if (!this.svgcontent || bbox.width <= 0 || bbox.height <= 0) return;
+
+    const { clientHeight, clientWidth } = this.container;
+
+    this.zoom(ratio * Math.min(clientWidth / bbox.width, clientHeight / bbox.height));
+
+    const [viewX, viewY] = (this.svgcontent.getAttribute('viewBox') ?? '0 0').split(' ').map(Number);
+    const contentX = Number.parseFloat(this.svgcontent.getAttribute('x') ?? '0');
+    const contentY = Number.parseFloat(this.svgcontent.getAttribute('y') ?? '0');
+
+    this.container.scrollLeft = contentX + (bbox.x + bbox.width / 2 - viewX) * this.zoomRatio - clientWidth / 2;
+    this.container.scrollTop = contentY + (bbox.y + bbox.height / 2 - viewY) * this.zoomRatio - clientHeight / 2;
+  };
+
+  /** Zoom to the detected mark centers (in content coordinates), padded by the mark radius */
+  zoomToMarks = (centers: Point[]): void => {
+    if (centers.length === 0) return;
+
+    let minX = Infinity;
+    let minY = Infinity;
+    let maxX = -Infinity;
+    let maxY = -Infinity;
+
+    centers.forEach(({ x, y }) => {
+      minX = Math.min(minX, x);
+      minY = Math.min(minY, y);
+      maxX = Math.max(maxX, x);
+      maxY = Math.max(maxY, y);
+    });
+
+    this.zoomToBBox({
+      height: maxY + markRadiusPx - minY,
+      width: maxX + markRadiusPx - minX,
+      x: minX - markRadiusPx,
+      y: minY - markRadiusPx,
+    });
   };
 
   setMarks = (marks: MarkPosition[]): void => {
