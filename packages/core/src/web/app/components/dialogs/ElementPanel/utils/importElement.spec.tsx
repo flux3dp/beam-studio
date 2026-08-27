@@ -4,6 +4,18 @@ import NS from '@core/app/constants/namespaces';
 
 const mockImportSVG = jest.fn();
 const mockProjectRemove = jest.fn();
+const mockImportPathAsStl = jest.fn();
+const mockImportSvgElementAsStl = jest.fn();
+const mockIsInnerEngravingActive = jest.fn();
+
+jest.mock('@core/app/svgedit/operations/import/importStl/importPath', () => ({
+  importPathAsStl: (...args: unknown[]) => mockImportPathAsStl(...args),
+  importSvgElementAsStl: (...args: unknown[]) => mockImportSvgElementAsStl(...args),
+}));
+
+jest.mock('@core/helpers/innerEngraving', () => ({
+  isInnerEngravingActive: () => mockIsInnerEngravingActive(),
+}));
 
 class MockPath {}
 class MockCompoundPath {}
@@ -122,6 +134,7 @@ describe('importElementToCanvas', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPathEl.removeAttribute('data-np');
+    mockIsInnerEngravingActive.mockReturnValue(false);
   });
 
   describe('JSON element import (builtInElements)', () => {
@@ -136,6 +149,16 @@ describe('importElementToCanvas', () => {
       expect(mockUpdateElementColor).toHaveBeenCalledTimes(1);
       expect(mockSelectOnly).toHaveBeenCalledTimes(1);
       expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    });
+
+    it('keeps the editable source when importing a predefined element in 3D', async () => {
+      mockIsInnerEngravingActive.mockReturnValue(true);
+
+      await importElementToCanvas('basic/icon-circle');
+
+      expect(mockImportSvgElementAsStl).toHaveBeenCalledTimes(1);
+      expect(mockImportSvgElementAsStl).toHaveBeenCalledWith(expect.objectContaining({ tagName: 'ellipse' }), true);
+      expect(mockAddSvgElementFromJson).not.toHaveBeenCalled();
     });
   });
 

@@ -19,6 +19,7 @@ import MultiColorOptions from './OptionsBlocks/MultiColorOptions';
 import PolygonOptions from './OptionsBlocks/PolygonOptions';
 import RectOptions from './OptionsBlocks/RectOptions';
 import StlOptions from './OptionsBlocks/StlOptions';
+import StlSourceOptions from './OptionsBlocks/StlSourceOptions';
 import TextOptions from './OptionsBlocks/TextOptions';
 import VariableTextBlock from './OptionsBlocks/VariableTextBlock';
 import styles from './OptionsPanel.module.scss';
@@ -67,7 +68,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
 
     // a projection rect is a `rect`, so without this it would fall into the RectOptions branch below
     // (corner radius) and get an infill toggle that acts on the rect's own fill
-    if (isStlProjection(elem)) return [<StlOptions elem={elem} key="stl" />];
+    if (isStlProjection(elem)) {
+      return [<StlSourceOptions elem={elem} key="stl-source" />, <StlOptions elem={elem} key="stl" />];
+    }
 
     const tagName = elem.tagName.toLowerCase();
     const colorOrInfill = (key = 'infill') =>

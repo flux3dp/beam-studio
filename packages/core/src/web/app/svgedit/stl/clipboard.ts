@@ -1,6 +1,8 @@
 import { getProjection, updateProjectionRect } from '@core/app/components/beambox/InnerEngraving/utils/projection';
 import { getMatrix, setTransform } from '@core/app/components/beambox/InnerEngraving/utils/transform';
 import type { StlObject, StlTransform } from '@core/app/stores/stlStore';
+import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { collectStlObjects } from './sync';
@@ -82,4 +84,24 @@ export const syncStlTransformsFromRects = (elems: Element[], parentCmd?: IBatchC
 
     if (transform) setTransform(object, transform, { parentCmd });
   });
+};
+
+/** Move projection-selected 3D objects by a canvas-space keyboard delta. */
+export const moveStlObjectsByCanvasDelta = (elems: Element[], dx: number, dy: number): boolean => {
+  const objects = collectStlObjects(elems);
+
+  if (!objects.length) return false;
+
+  const batchCmd = new history.BatchCommand('Move STL Objects');
+
+  objects.forEach((object) => {
+    const [x, y, z] = object.transform.position;
+
+    // Canvas Y grows down; scene Y grows towards the back.
+    setTransform(object, { ...object.transform, position: [x + dx, y - dy, z] }, { parentCmd: batchCmd });
+  });
+
+  if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
+
+  return true;
 };

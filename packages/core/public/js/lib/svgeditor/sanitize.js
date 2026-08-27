@@ -532,6 +532,7 @@
       'data-stl-layer-height',
       'data-stl-mode',
       'data-stl-point-spacing',
+      'data-stl-source',
     ],
     stop: ['class', 'id', 'offset', 'requiredFeatures', 'stop-color', 'stop-opacity', 'style', 'systemLanguage'],
     svg: [

@@ -1,8 +1,11 @@
-import { ExtrudeGeometry, Mesh, Vector3 } from 'three';
-import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js';
-import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
-
 import { getEngravableBox } from '@core/app/components/beambox/InnerEngraving/utils/engravable';
+import { STL_ATTR } from '@core/app/svgedit/stl/constants';
+import {
+  buildExtrusion,
+  createExtrusionSource,
+  getExtrusionSize,
+  serializeExtrusionSource,
+} from '@core/app/svgedit/stl/extrusionSource';
 
 import { getPathScale } from './getPathScale';
 
@@ -12,38 +15,32 @@ const DEFAULT_HEIGHT_MM = 1;
 
 /** Convert a normalized Element-panel path into a closed 1mm mesh understood by swiftray. */
 export const importPathAsStl = async (pathData: string): Promise<void> => {
-  const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
   const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
 
   path.setAttribute('d', pathData);
-  svg.appendChild(path);
+  await importSvgElementAsStl(path);
+};
 
-  const shapes = new SVGLoader()
-    .parse(new XMLSerializer().serializeToString(svg))
-    .paths.flatMap((shapePath) => SVGLoader.createShapes(shapePath));
+/** Extrude an SVG element, optionally retaining its editable source on the projection rect. */
+export const importSvgElementAsStl = async (elem: SVGElement, preserveSource = false): Promise<void> => {
+  const source = createExtrusionSource(elem, DEFAULT_HEIGHT_MM);
+  const size = getExtrusionSize(source);
 
-  if (shapes.length === 0) return;
+  if (!size) return;
 
-  const geometry = new ExtrudeGeometry(shapes, {
-    bevelEnabled: false,
-    depth: DEFAULT_HEIGHT_MM,
-  });
+  source.scale = getPathScale(size.x, size.y, getEngravableBox());
 
-  geometry.computeBoundingBox();
+  const built = buildExtrusion(source);
 
-  if (!geometry.boundingBox) return;
+  if (!built) return;
 
-  const size = geometry.boundingBox.getSize(new Vector3());
-  const scale = getPathScale(size.x, size.y, getEngravableBox());
-
-  // SVG is Y-down while the STL model space is Y-up. Z is deliberately not scaled: the safe XY
-  // size is decided first, then every built-in element receives the same 1mm thickness.
-  geometry.scale(scale, -scale, 1);
-  geometry.computeVertexNormals();
-  geometry.computeBoundingBox();
-
-  const exported = new STLExporter().parse(new Mesh(geometry), { binary: true }) as DataView;
-  const buffer = exported.buffer.slice(exported.byteOffset, exported.byteOffset + exported.byteLength) as ArrayBuffer;
-
-  await insertStlGeometry(buffer, geometry);
+  // Z is deliberately not scaled: every generated element receives the same 1mm thickness.
+  await insertStlGeometry(
+    built.buffer,
+    built.geometry,
+    preserveSource ? { [STL_ATTR.source]: serializeExtrusionSource(source) } : {},
+    // Generated geometry has already been sized directly from the safe engravable box. Do not run
+    // it through the imported-STL confirmation flow (and do not uniformly rescale its fixed 1mm Z).
+    { skipFitPrompt: true },
+  );
 };

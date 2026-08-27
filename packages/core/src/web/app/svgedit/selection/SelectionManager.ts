@@ -1,6 +1,7 @@
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import NS from '@core/app/constants/namespaces';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -41,7 +42,7 @@ export class SelectionManager {
   }
 
   setSelectedElements(elems: SVGElement[]): void {
-    this.selectedElements = elems;
+    this.selectedElements = isInnerEngravingActive() ? elems.slice(-1) : elems;
   }
 
   // --- Selection operations ---
@@ -70,6 +71,19 @@ export class SelectionManager {
     elemsToAdd = elemsToAdd.filter(Boolean);
 
     if (elemsToAdd.length === 0) return;
+
+    if (isInnerEngravingActive()) {
+      // 3D transforms and the STL store have a single selected object. Replace the current
+      // selection here so Shift-click, marquee selection and layer-panel selection cannot create
+      // a hidden svgedit multi-selection behind the 3D canvas.
+      const elem = elemsToAdd.at(-1)!;
+
+      elemsToAdd = [elem];
+
+      if (this.selectedElements.length !== 1 || this.selectedElements[0] !== elem) {
+        this.clearSelection(true);
+      }
+    }
 
     // now add each element consecutively
     for (let i = elemsToAdd.length - 1; i >= 0; i -= 1) {
@@ -122,7 +136,7 @@ export class SelectionManager {
     this.clearSelection(true);
     this.addToSelection(elems, true);
 
-    if (elems.length > 1) {
+    if (this.selectedElements.length > 1) {
       this.tempGroupSelectedElements();
     }
   };
@@ -157,6 +171,12 @@ export class SelectionManager {
   // --- TempGroup operations ---
 
   tempGroupSelectedElements = (): SVGElement[] => {
+    if (isInnerEngravingActive() && this.selectedElements.length > 1) {
+      this.selectOnly(this.selectedElements.slice(-1), true);
+
+      return this.selectedElements;
+    }
+
     if (this.selectedElements.length <= 1) {
       return this.selectedElements;
     }

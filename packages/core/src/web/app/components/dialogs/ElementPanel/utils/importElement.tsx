@@ -8,7 +8,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { builtInElements } from '@core/app/constants/element-panel-constants';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { importPathAsStl } from '@core/app/svgedit/operations/import/importStl/importPath';
+import { importPathAsStl, importSvgElementAsStl } from '@core/app/svgedit/operations/import/importStl/importPath';
 import { fixEnd } from '@core/app/svgedit/operations/pathActions';
 import selectionManager from '@core/app/svgedit/selection';
 import { getNPIconByID } from '@core/helpers/api/flux-id';
@@ -178,7 +178,7 @@ export const importElementToCanvas = async (key: string): Promise<void> => {
       const elem = document.createElementNS('http://www.w3.org/2000/svg', source.element);
 
       Object.entries(source.attr).forEach(([key, value]) => elem.setAttribute(key, String(value)));
-      await importSvgPaths(`<svg xmlns="http://www.w3.org/2000/svg">${elem.outerHTML}</svg>`);
+      await importSvgElementAsStl(elem, true);
 
       return;
     }

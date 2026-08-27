@@ -69,7 +69,10 @@ const askToScaleDown = (): Promise<boolean> =>
  * fit has nothing to aim at, so the model keeps its size and is centred on the work area instead.
  * That is a legitimate configuration, not an error: the user still has to fix the material setup.
  */
-export const getInitialTransform = async (geometry: BufferGeometry): Promise<StlTransform> => {
+export const getInitialTransform = async (
+  geometry: BufferGeometry,
+  { skipFitPrompt = false }: { skipFitPrompt?: boolean } = {},
+): Promise<StlTransform> => {
   const size = getBaseSize(geometry).multiplyScalar(MM_TO_SCENE);
   const box = getEngravableBox();
 
@@ -90,7 +93,7 @@ export const getInitialTransform = async (geometry: BufferGeometry): Promise<Stl
     size.z > 0 ? box.height / size.z : Infinity,
   );
 
-  if (fit >= 1) return centred;
+  if (fit >= 1 || skipFitPrompt) return centred;
 
   return (await askToScaleDown()) ? { ...centred, scale: [fit, fit, fit] } : centred;
 };
@@ -100,12 +103,17 @@ const yieldToUi = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const PROGRESS_ID = 'import-stl';
 
-export const insertStlGeometry = async (buffer: ArrayBuffer, geometry: BufferGeometry): Promise<void> => {
+export const insertStlGeometry = async (
+  buffer: ArrayBuffer,
+  geometry: BufferGeometry,
+  attributes: Record<string, number | string> = {},
+  options: { skipFitPrompt?: boolean } = {},
+): Promise<void> => {
   geometry.computeBoundingBox();
 
   if (!geometry.boundingBox) throw new Error('Failed to read STL geometry');
 
-  const transform = await getInitialTransform(geometry);
+  const transform = await getInitialTransform(geometry, options);
   const id = svgCanvas.getNextId();
   const elem = svgCanvas.addSvgElementFromJson<SVGRectElement>({
     attr: {
@@ -117,6 +125,7 @@ export const insertStlGeometry = async (buffer: ArrayBuffer, geometry: BufferGeo
       width: 0,
       x: 0,
       y: 0,
+      ...attributes,
     },
     element: 'rect',
   });

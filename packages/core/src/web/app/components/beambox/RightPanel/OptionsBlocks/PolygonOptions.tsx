@@ -15,22 +15,31 @@ import styles from './PolygonOptions.module.scss';
 
 interface Props {
   elem: Element;
+  sideControl?: { onChange: (sides: number) => void; value: number };
 }
 
-function PolygonOptions({ elem }: Props): React.JSX.Element {
+function PolygonOptions({ elem, sideControl }: Props): React.JSX.Element {
   const { polygonSides } = use(ObjectPanelContext);
-  const [sides, setSides] = React.useState(polygonSides || 5);
+  const [sides, setSides] = React.useState(sideControl?.value ?? (polygonSides || 5));
   const isMobile = useIsMobile();
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
 
   useEffect(() => {
-    if (polygonSides) {
-      setSides(polygonSides);
-    }
-  }, [polygonSides]);
+    if (sideControl) setSides(sideControl.value);
+    else if (polygonSides) setSides(polygonSides);
+  }, [polygonSides, sideControl]);
 
   const handleSideChange = (val: null | number) => {
     if (val === null || val === sides) {
+      return;
+    }
+
+    if (sideControl) {
+      const next = Math.max(Math.round(val), 3);
+
+      sideControl.onChange(next);
+      setSides(next);
+
       return;
     }
 

@@ -42,6 +42,8 @@ import importStl from '@core/app/svgedit/operations/import/importStl';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import { ensureModeForImport } from '@core/app/svgedit/operations/import/innerEngravingGate';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
+import { moveStlObjectsByCanvasDelta } from '@core/app/svgedit/stl/clipboard';
+import { changeExtrusionPolygonSides } from '@core/app/svgedit/stl/extrusionSource';
 import svgCanvasClass from '@core/app/svgedit/svgcanvas';
 import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
@@ -54,6 +56,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
+import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';
@@ -692,15 +695,24 @@ const svgEditor = (window['svgEditor'] = (function () {
       return {
         setAll: function () {
           const moveUnit = getStorage('isInch') ? 25.4 : 10; // 0.1 in : 1 mm
+          const moveSelection = (dx: number, dy: number) => {
+            const selected = selectionManager.getSelectedElements();
+
+            if (isInnerEngravingActive() && moveStlObjectsByCanvasDelta(selected, dx, dy)) return;
+
+            moveSelectedElements([dx], [dy]);
+          };
 
           Shortcuts.on(['Delete', 'Backspace'], () => deleteSelected());
           Shortcuts.on(['Fnkey+a'], (e) => {
             e.stopPropagation();
+            if (isInnerEngravingActive()) return;
+
             svgCanvas.selectAll();
           });
           Shortcuts.on(['ArrowUp'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([0], [-moveUnit]);
+              moveSelection(0, -moveUnit);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -709,7 +721,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowUp'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([0], [-moveUnit * 10]);
+              moveSelection(0, -moveUnit * 10);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -718,7 +730,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowDown'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([0], [moveUnit]);
+              moveSelection(0, moveUnit);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -727,7 +739,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowDown'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([0], [moveUnit * 10]);
+              moveSelection(0, moveUnit * 10);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -736,7 +748,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowLeft'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([-moveUnit], [0]);
+              moveSelection(-moveUnit, 0);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -745,7 +757,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowLeft'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([-moveUnit * 10], [0]);
+              moveSelection(-moveUnit * 10, 0);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -754,7 +766,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowRight'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([moveUnit], [0]);
+              moveSelection(moveUnit, 0);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -763,7 +775,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowRight'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([moveUnit * 10], [0]);
+              moveSelection(moveUnit * 10, 0);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -774,6 +786,14 @@ const svgEditor = (window['svgEditor'] = (function () {
             ['+', '='],
             () => {
               const selectedElement = selectionManager.getSelectedElements()[0];
+              const extrusionSides = selectedElement ? changeExtrusionPolygonSides(selectedElement, 1) : 0;
+
+              if (extrusionSides) {
+                ObjectPanelController.updatePolygonSides(extrusionSides);
+
+                return;
+              }
+
               if (selectedElement?.tagName === 'polygon') {
                 const newSides = addPolygonSides();
                 ObjectPanelController.updatePolygonSides(newSides);
@@ -783,6 +803,14 @@ const svgEditor = (window['svgEditor'] = (function () {
           );
           Shortcuts.on(['-'], () => {
             const selectedElement = selectionManager.getSelectedElements()[0];
+            const extrusionSides = selectedElement ? changeExtrusionPolygonSides(selectedElement, -1) : 0;
+
+            if (extrusionSides) {
+              ObjectPanelController.updatePolygonSides(extrusionSides);
+
+              return;
+            }
+
             if (selectedElement?.tagName === 'polygon') {
               const newSides = decreasePolygonSides();
               ObjectPanelController.updatePolygonSides(newSides);

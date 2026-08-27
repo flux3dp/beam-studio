@@ -14,6 +14,7 @@ import { setCursorAccordingToMouseMode, setMouseMode } from '@core/app/stores/ca
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { useStlStore } from '@core/app/stores/stlStore';
+import selectionManager from '@core/app/svgedit/selection';
 import workareaManager from '@core/app/svgedit/workarea';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import { todo } from '@core/helpers/is-dev';
@@ -33,6 +34,7 @@ import SceneGrid from './SceneGrid';
 import SceneRuler from './SceneRuler';
 import StlMesh from './StlMesh';
 import { toCameraPreviewPoint } from './utils/cameraPreview';
+import { useEngravableBox } from './utils/engravable';
 import { getMaterial, useMaterial } from './utils/material';
 import { getSelectedStlId, selectStlObject } from './utils/selection';
 import ViewController from './ViewController';
@@ -181,6 +183,8 @@ const Scene = () => {
   const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   const { height, width } = workareaManager;
   const material = useMaterial();
+  const engravable = useEngravableBox();
+  const [snapActive, setSnapActive] = useState(false);
   // The numeric extents match SVG, but physical Y is reversed: scene y=max and SVG y=0 are both
   // the far side of the machine. Imported geometry and camera interaction convert at the boundary.
   const center = useMemo<[number, number, number]>(() => [width / 2, height / 2, 0], [height, width]);
@@ -199,6 +203,30 @@ const Scene = () => {
   // walls tall enough for the workpiece, and never a degenerate zero-height box
   const wallHeight = useMemo(() => Math.max(material.height, step), [material.height, step]);
   const previewInteraction = mouseMode === 'pre_preview' || mouseMode === 'preview';
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => setSnapActive(event.shiftKey);
+    const clear = () => setSnapActive(false);
+
+    document.addEventListener('keydown', handleKey);
+    document.addEventListener('keyup', handleKey);
+    window.addEventListener('blur', clear);
+
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.removeEventListener('keyup', handleKey);
+      window.removeEventListener('blur', clear);
+    };
+  }, []);
+
+  // A document can enter 3D mode while a 2D multi-selection (including its temporary group) is
+  // still active. Tear that group down on mount and keep only its last object; all subsequent
+  // selection paths are constrained centrally by SelectionManager.
+  useEffect(() => {
+    const selected = selectionManager.getSelectedElements(true);
+
+    if (selected.length > 1) selectionManager.selectOnly(selected.slice(-1));
+  }, []);
 
   // the other direction of the sync in `selectStlObject`: selecting through the layer panel, undo,
   // or anything else that moves svgedit's selection has to light up the mesh too
@@ -241,6 +269,8 @@ const Scene = () => {
           onSelect={selectStlObject}
           panning={spaceKey}
           selected={object.id === selectedId}
+          snapActive={snapActive}
+          snapCenter={engravable.center}
         />
       ))}
 

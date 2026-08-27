@@ -63,6 +63,7 @@ interface StlStore {
   clear: () => void;
   objects: Record<string, StlObject>;
   remove: (id: string) => void;
+  replaceGeometry: (id: string, buffer: ArrayBuffer, geometry: BufferGeometry) => void;
   /** Selection inside the 3D canvas. Kept in step with svgedit's selection by
    *  `InnerEngraving/utils/selection.ts` — never set it directly from a click handler. */
   selectedId: null | string;
@@ -87,6 +88,16 @@ export const useStlStore = create<StlStore>((set) => ({
       removed?.geometry.dispose();
 
       return { objects: rest, selectedId: state.selectedId === id ? null : state.selectedId };
+    }),
+  replaceGeometry: (id, buffer, geometry) =>
+    set((state) => {
+      const target = state.objects[id];
+
+      if (!target) return state;
+
+      target.geometry.dispose();
+
+      return { objects: { ...state.objects, [id]: { ...target, buffer, geometry } } };
     }),
   selectedId: null,
   set: (object) => set((state) => ({ objects: { ...state.objects, [object.id]: object } })),

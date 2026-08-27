@@ -10,7 +10,8 @@ import BoundingBox from './BoundingBox';
 import { SELECTION_COLOR } from './constants';
 import { MM_TO_SCENE } from './utils/coordinates';
 import { updateProjectionRect } from './utils/projection';
-import { getMeshCenter, setTransform } from './utils/transform';
+import { ROTATION_SNAP_RAD, snapPosition, snapScale, TRANSLATION_SNAP } from './utils/snapping';
+import { getBaseSize, getMeshCenter, setTransform } from './utils/transform';
 import { useLayerColor } from './utils/useLayerColor';
 import { useViewStore } from './viewStore';
 
@@ -23,6 +24,8 @@ interface StlMeshProps {
   /** Space is held: the drag belongs to the camera, so neither the gizmo nor selection may take it. */
   panning: boolean;
   selected: boolean;
+  snapActive: boolean;
+  snapCenter: [number, number, number];
 }
 
 /**
@@ -35,7 +38,7 @@ interface StlMeshProps {
  *   group's origin, so rotation and scaling happen about the object's centre rather than about
  *   whatever origin the STL's author happened to leave behind
  */
-const StlMesh = ({ object, onSelect, panning, selected }: StlMeshProps): React.JSX.Element => {
+const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }: StlMeshProps): React.JSX.Element => {
   // a callback ref rather than useRef: TransformControls needs the resolved Object3D, which is not
   // available on the first render
   const [anchor, setAnchor] = useState<Group | null>(null);
@@ -45,6 +48,7 @@ const StlMesh = ({ object, onSelect, panning, selected }: StlMeshProps): React.J
   const { ratioLocked, transformMode } = useViewStore();
   const color = useLayerColor(id);
   const center = useMemo(() => getMeshCenter(geometry), [geometry]);
+  const baseSize = useMemo(() => getBaseSize(geometry), [geometry]);
   const mirrored = flip.some(Boolean);
   // the scale at the start of a drag, so a locked ratio can be enforced against it
   const dragStartScale = useRef(new Vector3(1, 1, 1));
@@ -86,10 +90,21 @@ const StlMesh = ({ object, onSelect, panning, selected }: StlMeshProps): React.J
       Math.max(anchor.scale.z, MIN_SCALE),
     );
 
+    if (snapActive) {
+      if (transformMode === 'translate') {
+        snapPosition(anchor.position, snapCenter);
+      } else if (transformMode === 'scale') {
+        const objectScale = anchor.scale.clone().divideScalar(MM_TO_SCENE);
+
+        snapScale(objectScale, baseSize, ratioLocked);
+        anchor.scale.copy(objectScale.multiplyScalar(MM_TO_SCENE));
+      }
+    }
+
     anchor.updateMatrixWorld(true);
 
     if (elem) updateProjectionRect(elem, geometry, meshRef.current.matrixWorld);
-  }, [anchor, geometry, id, ratioLocked, transformMode]);
+  }, [anchor, baseSize, geometry, id, ratioLocked, snapActive, snapCenter, transformMode]);
 
   const handleDragEnd = useCallback(() => {
     if (!anchor) return;
@@ -143,8 +158,10 @@ const StlMesh = ({ object, onSelect, panning, selected }: StlMeshProps): React.J
             onMouseDown={handleMouseDown}
             onMouseUp={handleDragEnd}
             onObjectChange={handleObjectChange}
+            rotationSnap={snapActive ? ROTATION_SNAP_RAD : null}
             // arrows along the work area's axes, which is what "move in X / Y / Z" means here
             space="world"
+            translationSnap={snapActive ? TRANSLATION_SNAP : null}
           />
           <BoundingBox color={SELECTION_COLOR} target={anchor} />
         </>

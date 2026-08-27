@@ -15,8 +15,9 @@ const engravable = (width: number, depth: number): EngravableBox => ({
 describe('getPathScale', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('caps the longest dimension at 50mm', () => {
-    expect(getPathScale(500, 250, engravable(700, 700))).toBe(0.1);
+  it('fits the source to the full engravable area instead of capping it at 50mm', () => {
+    // 700 scene units = 70mm, so the 500-unit source width is scaled to 70mm.
+    expect(getPathScale(500, 250, engravable(700, 700))).toBe(0.14);
   });
 
   it('fits both axes inside a smaller engravable area', () => {
@@ -24,7 +25,7 @@ describe('getPathScale', () => {
     expect(getPathScale(500, 250, engravable(300, 100))).toBe(0.04);
   });
 
-  it('uses the 50mm cap when the engravable area is invalid', () => {
-    expect(getPathScale(250, 500, { ...engravable(0, 0), isValid: false })).toBe(0.1);
+  it('keeps the source scale when the engravable area is invalid', () => {
+    expect(getPathScale(250, 500, { ...engravable(0, 0), isValid: false })).toBe(1);
   });
 });

@@ -707,6 +707,14 @@ A-1 的右面板三處分派已補齊（Options 仍是「擋掉 2D 版」，等 
 
 ## 目前 2D 有對應功能，3D 需要補
 
+### 2D source 的 3D 類型（2026-08-27 定案）
+
+- **擠出型**：rect / regular polygon / Text 等保留可編輯的 SVG source；修改 2D 參數後重建 mesh。生成的 mesh 仍走既有 `data-stl`、`stlObjects` 與 `.beam` block 6。
+- **平面型**：Photo 初始是固定在材料高度中央的零厚度貼圖平面，可旋轉；厚度顯示 0 且 disabled。不可假裝成封閉 STL，需獨立的 runtime object / payload 表示。
+- **點雲型（後續）**：Photo 經 API 轉浮雕後，前端需顯示並保存點雲，後端需新增點雲加工流程。檔案 block 與 payload 尚待前後端介面定案。
+
+第一階段先讓內建 rect / regular polygon 的投影 rect 保存 `data-stl-source`；它屬於 SVG block 的輕量 metadata，mesh binary 格式不變。Text 延續同一模型，但只對 source 的副本做 text-to-path，不能丟掉原始 `<text>`。
+
 換成 three.js 之後，這些綁在 SVG 畫布上的既有行為都沒有 3D 版本。列在這裡是為了不要在 PR 前才發現「2D 做得到、3D 做不到」。
 
 | 功能 | 2D 現況 | 3D 需要 |
