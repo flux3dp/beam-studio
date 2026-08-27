@@ -118,6 +118,11 @@ pnpm nx affected:lint    # Lint only affected projects
    - Pass `ref` as a regular prop instead of using `React.forwardRef`
    - Use `useSearchParams()` hook from `react-router` for query parameters
 
+5. **SVG data attributes**: Every new persisted `data-*` attribute on canvas elements must be
+   whitelisted in `packages/core/public/js/lib/svgeditor/sanitize.js` (per element tag —
+   layer-group attributes go in the `g` list). `sanitizeSvg` runs on file load, so an unlisted
+   attribute works during the session but is silently stripped when a saved file is reopened.
+
 ### TypeScript
 
 - Minimize use of `any`. Use `unknown` or proper generics for type-safe code.
