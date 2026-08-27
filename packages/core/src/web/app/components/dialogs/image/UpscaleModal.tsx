@@ -30,7 +30,9 @@ const UpscaleModal = ({ onCancel, onOk }: Props) => {
       open
       title={
         <div className={styles['dialog-title']}>
-          <ActionPanelIcons.Upscale />
+          <span className={styles.icon}>
+            <ActionPanelIcons.Upscale />
+          </span>
           {lang.beambox.right_panel.object_panel.actions_panel.ai_upscale_short}
         </div>
       }
