@@ -5,7 +5,6 @@ import { Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -32,7 +31,7 @@ const SingleColorBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | '
 
     const batchCmd = new history.BatchCommand('Toggle full color');
     let colorChanged = false;
-    const selectedLayers = useLayerStore.getState().selectedLayers;
+    const selectedLayers = layerManager.getSelectedLayers();
     const layers = selectedLayers.map((layerName) => getLayerByName(layerName)!);
 
     layers.forEach((layer) => {

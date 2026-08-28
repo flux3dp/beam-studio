@@ -10,6 +10,10 @@ jest.mock('./utils', () => ({
   showColorAdvancedSetting: (...args) => mockShowColorAdvancedSetting(...args),
 }));
 
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+}));
+
 import ColorAdvancedSettingButton from './ColorAdvancedSettingButton';
 
 describe('ColorAdvancedSettingButton', () => {

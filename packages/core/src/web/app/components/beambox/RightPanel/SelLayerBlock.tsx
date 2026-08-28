@@ -17,7 +17,7 @@ function SelLayerBlock(): ReactNode {
   const [promptMoveLayerOnce, setPromptMoveLayerOnce] = useState(false);
   const [displayValue, setDisplayValue] = useState(defaultOption);
   const selectedElement = useSelectedElementStore((state) => state.selectedElement);
-  const selectedLayers = useLayerStore.getState().selectedLayers;
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
   // TODO: should put allLayerNames in a store to register change listener
   const layerNames = layerManager.getAllLayerNames();
 

@@ -40,6 +40,10 @@ jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
 }));
 
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+}));
+
 import AutoFocus from './AutoFocus';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 

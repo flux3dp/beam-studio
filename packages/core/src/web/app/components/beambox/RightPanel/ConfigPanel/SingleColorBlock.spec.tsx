@@ -10,6 +10,7 @@ const mockForceUpdate = jest.fn();
 
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getCurrentLayerName: () => '',
+  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
   resync: () => mockForceUpdate(),
 }));
 

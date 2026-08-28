@@ -8,6 +8,7 @@ import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import isDev from '@core/helpers/is-dev';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -40,7 +41,7 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     const batchCmd = new history.BatchCommand('Toggle focus adjustment');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => writeData(layerName, 'focus', value, { batchCmd }));
+    layerManager.getSelectedLayers().forEach((layerName) => writeData(layerName, 'focus', value, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

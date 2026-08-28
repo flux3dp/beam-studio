@@ -93,6 +93,10 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
 
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+}));
+
 import InkBlock from './InkBlock';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 

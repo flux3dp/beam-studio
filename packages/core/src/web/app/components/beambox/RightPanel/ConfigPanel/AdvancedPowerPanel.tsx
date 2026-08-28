@@ -4,9 +4,9 @@ import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
 
 import { ConfigModalBlock } from '@core/app/constants/antd-config';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -43,7 +43,7 @@ const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
     const newState = { ...state };
     const batchCmd = new history.BatchCommand('Change power advanced setting');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => {
+    layerManager.getSelectedLayers().forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
 
       if (

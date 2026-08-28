@@ -38,12 +38,13 @@ so React can subscribe. One rule keeps the two consistent:
 
 - **React component, reactive**: `useLayerStore((s) => s.selectedLayers)` — subscription only.
 - **Imperative read** (event handler, class method, helper): a `layerManager` getter
-  (`getSelectedLayers()`, `getCurrentLayerName()`, …). Prefer this in new code; a number of older
-  call sites (mostly ConfigPanel blocks) still read `useLayerStore.getState().selectedLayers`
-  directly, which is tolerated but not the pattern to copy — converting them is deferred only
-  because each converted component's specs then need `getSelectedLayers` in their inline
-  layerManager mock factory.
+  (`getSelectedLayers()`, `getCurrentLayerName()`, …). `useLayerStore.getState()` is not used
+  outside `svgedit/layer/` (specs excepted, where `setState` seeds the mock).
 - **Any write**: a `layerManager` method. No exceptions (ESLint-enforced).
+
+In specs, a component's inline layerManager mock can keep `getSelectedLayers` consistent with
+store-mock seeding by delegating:
+`getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers`.
 
 Rule of thumb: the hook exists to make React re-render; layerManager is the API. A component that
 never subscribes (e.g. a class component like LayerPanel) should not import the store at all.

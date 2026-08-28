@@ -19,6 +19,7 @@ const mockGetCurrentLayerName = jest.fn();
 
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
+  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
 }));
 
 import useLayerStore from '@mocks/@core/app/stores/layer/layerStore';

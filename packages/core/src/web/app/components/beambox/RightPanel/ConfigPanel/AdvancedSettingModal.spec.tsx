@@ -83,6 +83,10 @@ jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: mockUseConfigPanelStore,
 }));
 
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+}));
+
 import AdvancedSettingModal from './AdvancedSettingModal';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 

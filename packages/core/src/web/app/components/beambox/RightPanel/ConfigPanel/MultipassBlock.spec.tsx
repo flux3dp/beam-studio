@@ -101,6 +101,10 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
 
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+}));
+
 import MultipassBlock from './MultipassBlock';
 
 const mockUseConfigPanelStore = jest.fn();
