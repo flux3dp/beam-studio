@@ -18,6 +18,8 @@ const updateImagesResolution = async (): Promise<() => void> => {
   const changedImages: SVGImageElement[] = [];
 
   allLayers.forEach((layer) => {
+    if (layer.getAttribute('display') === 'none') return;
+
     const layerModule = getData(layer, 'module');
 
     if (laserModules.has(layerModule!)) {

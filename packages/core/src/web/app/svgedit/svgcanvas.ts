@@ -1434,7 +1434,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const outputSanitized = sanitizeXmlString(output);
 
     console.log('Sanitized Result', output.length, outputSanitized.length);
-    console.log(outputSanitized);
 
     return outputSanitized;
   };
