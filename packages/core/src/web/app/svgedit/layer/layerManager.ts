@@ -226,7 +226,8 @@ export class LayerManager {
   /**
    * Remove a layer: detach its group from the DOM (emitting a history command per options) and
    * unregister it from the store, so its name is immediately free for reuse. If it was the current
-   * layer, the top-most remaining layer becomes current.
+   * layer, the top-most remaining layer becomes current; the removed name is also dropped from
+   * the selection (falling back to the current layer), so callers need no selection cleanup.
    */
   public removeLayerByName = (name: string, options?: HistoryActionOptions): ICommand | null => {
     const layer = this.getLayerByName(name);
@@ -234,14 +235,16 @@ export class LayerManager {
     if (!layer) return null;
 
     const cmd = layer.removeGroup(options);
-    const layers = this.getState().layers.filter((l) => l !== layer);
+    const state = this.getState();
+    const layers = state.layers.filter((l) => l !== layer);
 
     useLayerStore.setState({
       layers,
-      ...(this.getState().currentLayerName === name && {
+      ...(state.currentLayerName === name && {
         currentLayerName: layers.at(-1)?.getName() ?? null,
       }),
     });
+    this.setSelectedLayers(state.selectedLayers.filter((selectedName) => selectedName !== name));
 
     return cmd;
   };
@@ -263,7 +266,7 @@ export class LayerManager {
    */
   public setSelectedLayers = (selectedLayers: string[], currentLayer?: string): void => {
     const state = this.getState();
-    const newLayers = selectedLayers.length === 0 ? [this.getCurrentLayerName()] : selectedLayers;
+    const newLayers = selectedLayers.length === 0 && state.currentLayerName ? [state.currentLayerName] : selectedLayers;
     const newCurrentLayer = currentLayer || newLayers[0];
 
     if (newCurrentLayer && newCurrentLayer !== state.currentLayerName) {

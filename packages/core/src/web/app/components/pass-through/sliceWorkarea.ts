@@ -254,12 +254,8 @@ const sliceWorkarea = async (
   generateGuideMark();
   changeDocumentStoreValue('pass-through', false, { parentCmd: batchCmd });
 
-  const onAfter = () => {
-    layerManager.identifyLayers();
-    layerManager.setSelectedLayers([]);
-  };
-
-  onAfter();
+  layerManager.identifyLayers();
+  layerManager.setSelectedLayers([]);
 
   if (parentCmd) {
     parentCmd.addSubCommand(batchCmd);
@@ -267,7 +263,6 @@ const sliceWorkarea = async (
     svgCanvas.undoMgr.addCommandToHistory(batchCmd);
   }
 
-  batchCmd.onAfter = onAfter;
   progressCaller.popById(progressId);
 };
 

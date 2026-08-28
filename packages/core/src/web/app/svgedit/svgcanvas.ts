@@ -453,25 +453,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           var isApply = eventType === EventTypes.AFTER_APPLY;
 
           if (cmdType === MoveElementCommand.type()) {
-            var parent = isApply ? cmd.newParent : cmd.oldParent;
-
-            if (parent === svgcontent) {
-              layerManager.identifyLayers();
-            }
-
-            let shouldUpdateLayerStore = false;
-
+            // Layer state rebuild is handled by the central layerManager.resync() after undo/redo
             elems.forEach((elem) => {
-              if (elem.classList.contains('layer')) {
-                shouldUpdateLayerStore = true;
-              } else {
+              if (!elem.classList.contains('layer')) {
                 updateElementColor(elem);
               }
             });
-
-            if (shouldUpdateLayerStore) {
-              layerManager.resync();
-            }
           } else if (cmdType === InsertElementCommand.type() || cmdType === RemoveElementCommand.type()) {
             if (cmdType === InsertElementCommand.type()) {
               if (isApply) {
@@ -489,11 +476,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               }
             }
           } else if (cmdType === ChangeElementCommand.type()) {
-            // if we are changing layer names, re-identify all layers
-            if (cmd.elem.tagName === 'title' && cmd.elem.parentNode?.parentNode === svgcontent) {
-              layerManager.identifyLayers();
-            }
-
             var values = isApply ? cmd.newValues : cmd.oldValues;
             const changedValues = Object.keys(values);
 
@@ -527,8 +509,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
                 'Split Full Color Layer',
               ].includes(cmd.text)
             ) {
-              layerManager.identifyLayers();
-              layerManager.setSelectedLayers([]);
               presprayArea.togglePresprayArea();
             }
 

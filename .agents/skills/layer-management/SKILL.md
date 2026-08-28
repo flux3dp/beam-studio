@@ -31,7 +31,7 @@ so React can subscribe. One rule keeps the two consistent:
 |---|---|
 | `layers: Layer[]` | all layers, bottom → top, mirrors DOM order |
 | `currentLayerName: null \| string` | layer receiving new elements |
-| `selectedLayers: string[]` | panel selection (never left empty by `setSelectedLayers`) |
+| `selectedLayers: string[]` | panel selection (`setSelectedLayers` leaves it empty only when no layer exists) |
 | `hasVector`, `hasGradient` | derived flags for the selected layers (gradient = Promark only) |
 
 ## How to Access Layer State
@@ -68,8 +68,11 @@ never subscribes (e.g. a class component like LayerPanel) should not import the 
   current. Prefer `layer-helper`'s `createLayer` wrapper when you need color/config/fullcolor init.
 - `removeLayerByName(name, historyOptions?)` — detaches the group AND unregisters it from the store,
   so the name is immediately free for reuse (a stale registration once caused delete-then-recreate
-  to yield "Layer 1 1"). If it was current, the top remaining layer becomes current. The
-  `deleteLayerByName` helper in `helpers/layer/deleteLayer.ts` is a thin delegate to this.
+  to yield "Layer 1 1"). If it was current, the top remaining layer becomes current, and the name
+  is dropped from the selection (falling back to current) — callers need no selection cleanup. It
+  does NOT recreate a default layer when the last layer is removed; delete flows should go through
+  `deleteLayers` in `helpers/layer/deleteLayer.ts`, which does (the `deleteLayerByName` helper
+  there is a thin delegate without that guard).
 - `reset(svgContent, identifyLayers?)` — repoint at a new `#svgcontent` (document swap).
 
 `Layer` objects expose `getGroup()`, `setVisible`, `setName`, `setColor`, `setOpacity`,

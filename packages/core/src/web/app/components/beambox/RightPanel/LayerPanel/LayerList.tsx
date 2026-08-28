@@ -15,7 +15,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import ColorPicker from '@core/app/widgets/ColorPicker';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
+import { deleteLayers } from '@core/helpers/layer/deleteLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { setLayerLock } from '@core/helpers/layer/layer-helper';
 
@@ -235,10 +235,7 @@ const LayerList = ({
               {
                 color: 'danger',
                 key: 'delete',
-                onClick: () => {
-                  deleteLayerByName(layerName);
-                  layerManager.setSelectedLayers([]);
-                },
+                onClick: () => deleteLayers([layerName]),
                 text: <ObjectPanelIcons.Trash />,
               },
             ]
