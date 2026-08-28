@@ -11,7 +11,7 @@ import { getHref } from '@core/app/svgedit/utils/href';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
-import { PHOTO_3D_ATTR } from './constants';
+import { PHOTO_3D_ATTR, POINT_CLOUD_ATTR } from './constants';
 import { parseStlTransform } from './transformAttr';
 
 export const photoPlaneEvents = eventEmitterFactory.createEventEmitter();
@@ -47,10 +47,16 @@ export const createPhotoPlaneObject = (elem: SVGImageElement): null | StlObject 
 /** Rebuild photo planes after SVG block 1 and image-source block 2 have both been read. */
 export const readPhotoPlaneObjects = (): StlObject[] =>
   Array.from(document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_3D_ATTR.marker}]`))
+    .filter((elem) => !elem.hasAttribute(POINT_CLOUD_ATTR.marker))
     .map(createPhotoPlaneObject)
     .filter((object): object is StlObject => Boolean(object));
 
-/** Temporarily remove display-only photos from a machine export; relief data will replace them later. */
+/**
+ * Temporarily remove photo sources from the flat bitmap export path.
+ *
+ * A fallback plane is display-only; a converted photo's point cloud travels in its own payload and
+ * must eventually be handled by the relief backend, never engraved again as a 2D bitmap.
+ */
 export const detachPhotoPlaneElements = (): (() => void) => {
   const detached = Array.from(
     document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_3D_ATTR.marker}]`),

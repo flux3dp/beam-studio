@@ -26,12 +26,13 @@ jest.mock('@core/app/svgedit/workarea', () => ({ height: 1000, width: 1000 }));
 
 import { useStlStore } from '@core/app/stores/stlStore';
 
-import { PHOTO_3D_ATTR } from './constants';
+import { PHOTO_3D_ATTR, POINT_CLOUD_ATTR } from './constants';
 import {
   createPhotoPlaneObject,
   detachPhotoPlaneElements,
   getPhotoTextureUrl,
   initializePhotoPlane,
+  readPhotoPlaneObjects,
 } from './photoPlane';
 
 describe('photoPlane', () => {
@@ -99,6 +100,14 @@ describe('photoPlane', () => {
     elem.setAttribute('xlink:href', 'data:image/png;base64,PROCESSED==');
 
     expect(getPhotoTextureUrl(elem)).toBe('data:image/png;base64,PROCESSED==');
+  });
+
+  test('does not rebuild a point-cloud photo as its fallback plane', () => {
+    const svg = document.getElementById('svgcontent')!;
+
+    svg.innerHTML = `<image id="relief" ${PHOTO_3D_ATTR.marker}="1" ${POINT_CLOUD_ATTR.marker}="1" />`;
+
+    expect(readPhotoPlaneObjects()).toEqual([]);
   });
 
   test('temporarily removes multiple photos and restores their DOM order', () => {

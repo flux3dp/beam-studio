@@ -1772,6 +1772,7 @@ export interface ILang {
     focal_length: string;
     focal_length_hint: string;
     focus_reminder: string;
+    generate_test_point_cloud?: string;
     height: string;
     layer_height: string;
     material_position: string;

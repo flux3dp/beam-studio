@@ -54,6 +54,7 @@ export const createPastedStlObject = (elem: SVGElement, source: StlObject): StlO
     id: elem.id,
     initialTransform,
     kind: source.kind,
+    pointCloudBuffer: source.pointCloudBuffer,
     textureUrl: source.textureUrl,
     transform,
   };

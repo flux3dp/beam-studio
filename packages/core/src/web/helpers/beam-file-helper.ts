@@ -83,8 +83,22 @@
    ---------------------------------------------------------------------------------
   |                    Repeat Id Length, Id, Mesh Len, Mesh                         |
    ---------------------------------------------------------------------------------
-  ⚠️ Must stay after every other block: readBlocks stops at the first unknown block type, so an
-     older Beam Studio reading this file has to meet it last or it would drop the blocks behind it.
+  ⚠️ Must stay after all standard blocks. Newer extension blocks may follow it, ordered by block
+     version, so an older Beam Studio reads everything it understands before meeting an unknown.
+
+   =================================================================================
+  | Point Cloud Src|      ...     | Versioned photo-relief point clouds             |
+   =================================================================================
+   ---------------------------------------------------------------------------------
+  |   block type   |    1 Bytes   | 0x07                                            |
+   ---------------------------------------------------------------------------------
+  |     length     |     VINT     | indicate size of remaining block                |
+   ---------------------------------------------------------------------------------
+  |      entries   |      ...     | Same repeated id + binary layout as block 6     |
+   ---------------------------------------------------------------------------------
+  |     binary     |      ...     | BSPC v1: XYZ Float32 LE, local millimetres      |
+   ---------------------------------------------------------------------------------
+  ⚠️ Must stay last for the same forward-compatibility reason as block 6 before it.
 
    =================================================================================
   | MISC DATA(JSON)|  content len |    Block Containing json string of Misc. Data   |
@@ -111,9 +125,10 @@ import { useVariableTextState, type VariableTextState } from '@core/app/stores/v
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
-import { PHOTO_3D_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
+import { PHOTO_3D_ATTR, POINT_CLOUD_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { isStlProjection } from '@core/app/svgedit/stl/getters';
 import { readPhotoPlaneObjects } from '@core/app/svgedit/stl/photoPlane';
+import { createPointCloudGeometry, decodePointCloud } from '@core/app/svgedit/stl/pointCloud';
 import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import { parseStlTransform } from '@core/app/svgedit/stl/transformAttr';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -167,7 +182,9 @@ const readVInt = (buffer, offset = 0) => {
   };
 };
 
-const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'stlSource' | 'svgContent' | 'thumbnail'): Buffer => {
+const localHeaderTypeBuffer = (
+  type: 'imageSource' | 'miscData' | 'pointCloudSource' | 'stlSource' | 'svgContent' | 'thumbnail',
+): Buffer => {
   switch (type) {
     case 'svgContent':
       return Buffer.from([0x01]);
@@ -180,6 +197,8 @@ const localHeaderTypeBuffer = (type: 'imageSource' | 'miscData' | 'stlSource' | 
     // 0x05 is taken by another feature under development
     case 'stlSource':
       return Buffer.from([0x06]);
+    case 'pointCloudSource':
+      return Buffer.from([0x07]);
     default:
       break;
   }
@@ -200,7 +219,10 @@ const generateSvgBlockBuffer = (svgString: string) => {
  * The repeating `id + binary` payload shared by the image source (0x02) and STL source (0x06)
  * blocks: 1 byte id length, id, vint binary length, binary.
  */
-const generateBinarySourceBlockBuffer = (type: 'imageSource' | 'stlSource', sources: { [id: string]: ArrayBuffer }) => {
+const generateBinarySourceBlockBuffer = (
+  type: 'imageSource' | 'pointCloudSource' | 'stlSource',
+  sources: { [id: string]: ArrayBuffer },
+) => {
   let tempbuffer = Buffer.alloc(0);
   const ids = Object.keys(sources);
 
@@ -242,14 +264,19 @@ const generateBeamBuffer = (
   imageSources: { [id: string]: ArrayBuffer },
   thumbnail?: ArrayBuffer,
   stlSources: { [id: string]: ArrayBuffer } = {},
+  pointCloudSources: { [id: string]: ArrayBuffer } = {},
 ): Buffer => {
   const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]); // Bvg{version in uint} max to 255
   const svgBlockBuf = generateSvgBlockBuffer(svgString);
   const imageSourceBlockBuffer = generateBinarySourceBlockBuffer('imageSource', imageSources);
   const hasStl = Object.keys(stlSources).length > 0;
+  const hasPointCloud = Object.keys(pointCloudSources).length > 0;
   const hasPhotoPlane = Boolean(document.querySelector(`#svgcontent [${PHOTO_3D_ATTR.marker}]`));
-  // written last, because readBlocks in older versions stops at the first unknown block type
+  // Extension block 6 follows every standard block; newer extension blocks are appended after it.
   const stlSourceBlockBuffer = hasStl ? generateBinarySourceBlockBuffer('stlSource', stlSources) : null;
+  const pointCloudSourceBlockBuffer = hasPointCloud
+    ? generateBinarySourceBlockBuffer('pointCloudSource', pointCloudSources)
+    : null;
   const thumbnailBlockBuffer = thumbnail ? generateThumbnailBlockBuffer(thumbnail) : null;
   const miscData: MiscData = {};
 
@@ -271,9 +298,16 @@ const generateBeamBuffer = (
   const metaData = {
     // the blocks this file actually has, rather than the hard-coded list it used to be: a reader
     // can tell whether a block is missing from the one that follows it
-    contents: [1, 2, ...(thumbnailBlockBuffer ? [3] : []), 4, ...(stlSourceBlockBuffer ? [6] : [])],
+    contents: [
+      1,
+      2,
+      ...(thumbnailBlockBuffer ? [3] : []),
+      4,
+      ...(stlSourceBlockBuffer ? [6] : []),
+      ...(pointCloudSourceBlockBuffer ? [7] : []),
+    ],
     // read by readBeamFileInfo without parsing any block, the same way workarea is
-    innerEngraving: hasStl || hasPhotoPlane || undefined,
+    innerEngraving: hasStl || hasPhotoPlane || hasPointCloud || undefined,
     version: window.FLUX?.version,
   };
 
@@ -286,9 +320,11 @@ const generateBeamBuffer = (
     valueToVIntBuffer(thumbnailBlockBuffer?.length || 0),
     valueToVIntBuffer(miscDataBuffer.length),
     // ⚠️ the header is a fixed sequence of lengths, so block 5 — taken by another feature under
-    // development — keeps its slot with a 0 even though nothing writes it here
+    // development — keeps its slot with a 0 even though nothing writes it here. Block 7 appends a
+    // new slot rather than shifting either reserved block.
     valueToVIntBuffer(0),
     valueToVIntBuffer(stlSourceBlockBuffer?.length || 0),
+    valueToVIntBuffer(pointCloudSourceBlockBuffer?.length || 0),
   ]);
   const headerSizeBuf = valueToVIntBuffer(headerBuffer.length);
   const buffer = Buffer.concat([
@@ -300,6 +336,8 @@ const generateBeamBuffer = (
     thumbnailBlockBuffer || Buffer.from([]),
     miscDataBuffer,
     stlSourceBlockBuffer || Buffer.from([]),
+    // Always last: old readers stop safely here after preserving every block they understand.
+    pointCloudSourceBlockBuffer || Buffer.from([]),
     Buffer.from([0x00]),
   ]);
 
@@ -424,7 +462,70 @@ const readStlSource = (buf: Buffer, offset: number, end: number, loaded: StlObje
   }
 };
 
-const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand, stlObjects: StlObject[] = []) => {
+/** Rebuild photo-relief point clouds from block 7 after their SVG image has been restored. */
+const readPointCloudSource = (buf: Buffer, offset: number, end: number, loaded: StlObject[]) => {
+  let currentOffset = offset;
+
+  while (currentOffset < end) {
+    const idSize = buf.readUInt8(currentOffset);
+
+    currentOffset += 1;
+
+    const id = buf.toString('utf-8', currentOffset, currentOffset + idSize);
+
+    currentOffset += idSize;
+
+    const { offset: newOffset, value: pointCloudSize } = readVInt(buf, currentOffset);
+
+    currentOffset = newOffset;
+
+    const pointCloudBuffer = new Uint8Array(buf.subarray(currentOffset, currentOffset + pointCloudSize)).buffer;
+
+    currentOffset += pointCloudSize;
+
+    const elem = document.getElementById(id);
+
+    if (!elem?.getAttribute(PHOTO_3D_ATTR.marker) || !elem.getAttribute(POINT_CLOUD_ATTR.marker)) {
+      console.warn(`Point cloud ${id} has no marked photo source, skipped`);
+      continue;
+    }
+
+    const transforms = parseStlTransform(elem);
+
+    if (!transforms) {
+      console.error(`Point cloud ${id} has no usable ${STL_ATTR.transform}, skipped`);
+      continue;
+    }
+
+    try {
+      const { version } = decodePointCloud(pointCloudBuffer);
+
+      if (elem.getAttribute(POINT_CLOUD_ATTR.marker) !== String(version)) {
+        console.error(`Point cloud ${id} marker does not match binary version ${version}, skipped`);
+        continue;
+      }
+
+      loaded.push({
+        geometry: createPointCloudGeometry(pointCloudBuffer),
+        id,
+        initialTransform: transforms.initialTransform,
+        kind: 'point-cloud',
+        pointCloudBuffer,
+        transform: transforms.transform,
+      });
+    } catch (error) {
+      console.error(`Failed to parse point cloud ${id}`, error);
+    }
+  }
+};
+
+const readBlocks = async (
+  buf: Buffer,
+  offset: number,
+  command?: IBatchCommand,
+  stlObjects: StlObject[] = [],
+  pointCloudObjects: StlObject[] = [],
+) => {
   if (offset >= buf.length) {
     console.warn('offset exceed buffer length');
 
@@ -508,6 +609,15 @@ const readBlocks = async (buf: Buffer, offset: number, command?: IBatchCommand, 
     console.log('Size', value);
     readStlSource(buf, currentOffset, currentOffset + value, stlObjects);
     currentOffset += value;
+  } else if (blockType === 7) {
+    console.log('Point Cloud Source Block');
+
+    const { offset: newOffset, value } = readVInt(buf, currentOffset);
+
+    currentOffset = newOffset;
+    console.log('Size', value);
+    readPointCloudSource(buf, currentOffset, currentOffset + value, pointCloudObjects);
+    currentOffset += value;
   } else {
     console.error(`Unknown Block Type: ${blockType}`);
     currentOffset = -1;
@@ -549,9 +659,10 @@ const readBeam = async (file: File): Promise<void> => {
 
   const command = new history.BatchCommand('Load Beam File');
   const stlObjects: StlObject[] = [];
+  const pointCloudObjects: StlObject[] = [];
 
   while (offset > 0) {
-    offset = await readBlocks(buf, offset, command, stlObjects);
+    offset = await readBlocks(buf, offset, command, stlObjects, pointCloudObjects);
   }
 
   const photoObjects = readPhotoPlaneObjects();
@@ -561,7 +672,7 @@ const readBeam = async (file: File): Promise<void> => {
     workareaManager.resetView();
     // the meshes live outside the DOM, so undo and redo of the load have to add and remove them
     // alongside the rects, exactly like a single STL import does
-    syncStlObjectsWithDom([...stlObjects, ...photoObjects]);
+    syncStlObjectsWithDom([...stlObjects, ...photoObjects, ...pointCloudObjects]);
   };
 
   command.onAfter = postReadBeam;

@@ -4,6 +4,8 @@ import { match, P } from 'ts-pattern';
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import { useStlStore } from '@core/app/stores/stlStore';
+import { POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
 import { is3dProjection, isPhotoPlaneProjection, isStlProjection } from '@core/app/svgedit/stl/getters';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
@@ -35,6 +37,7 @@ interface Props {
 
 function OptionsPanel({ elem }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
+  const stlObjectKind = useStlStore((state) => (elem ? state.objects[elem.id]?.kind : undefined));
   const workarea = useWorkarea();
   const supportVariableBlock = useMemo(isVariableTextSupported, [workarea]);
   const showVariableBlock = useMemo(
@@ -69,6 +72,10 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
 
   const contents = useMemo(() => {
     if (!elem) return [];
+
+    // A generated point cloud is the final representation. The source bitmap remains in the SVG
+    // for save/rebuild purposes, but none of its bitmap or 3D generation controls apply anymore.
+    if (stlObjectKind === 'point-cloud' || elem.hasAttribute(POINT_CLOUD_ATTR.marker)) return [];
 
     // a projection rect is a `rect`, so without this it would fall into the RectOptions branch below
     // (corner radius) and get an infill toggle that acts on the rect's own fill
@@ -146,7 +153,7 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
       .otherwise(() => [colorOrInfill()]);
 
     return is3dProjection(elem) ? [...matchedOptions, <ThreeDOptions elem={elem} key="3d" />] : matchedOptions;
-  }, [elem, showColorPanel, showVariableBlock, isMobile, threeDSourceOptions]);
+  }, [elem, showColorPanel, showVariableBlock, isMobile, threeDSourceOptions, stlObjectKind]);
 
   return isMobile ? (
     <div className={styles.container}>

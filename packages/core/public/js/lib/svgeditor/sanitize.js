@@ -305,6 +305,7 @@
       'data-stl-photo',
       'data-stl-photo-height',
       'data-stl-photo-width',
+      'data-stl-point-cloud',
       'data-stl-point-spacing',
       'data-stl-transform',
     ],

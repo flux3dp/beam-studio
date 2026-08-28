@@ -259,8 +259,8 @@ const fetchTaskCodeSwiftray = async (
   // Generate Thumbnail
   const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
 
-  // A photo plane is an editor reference only until the relief API replaces it with point-cloud
-  // data. Keep it in .beam, but do not let the current 2D bitmap pipeline engrave it as a flat job.
+  // A photo image is the editable source for either a fallback plane or relief point-cloud data.
+  // Keep it in .beam, but never let the 2D bitmap pipeline engrave it again as a flat job.
   revertFunctions.push(detachPhotoPlaneElements());
 
   Progress.update('fetch-task-code', {

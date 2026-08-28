@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Segmented } from 'antd';
+import { Button, Segmented } from 'antd';
 
 import type { EngravingMode } from '@core/app/constants/innerEngraving';
 import { LAYER_HEIGHT_LIMIT, POINT_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
@@ -8,6 +8,8 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { getStlEngravingParams, setStlEngravingParam } from '@core/app/svgedit/stl/engravingParams';
 import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
+import { applyPhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloud';
+import { generatePhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloudGenerator';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { todo } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
@@ -31,6 +33,7 @@ interface Props {
 const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.Element => {
   const { inner_engraving_settings: t } = useI18n();
   const isInch = useStorageStore((state) => state.isInch);
+  const isPhoto = isPhotoPlaneProjection(elem);
   const readParams = () => {
     const next = getStlEngravingParams(elem);
 
@@ -41,6 +44,8 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
     return next;
   };
   const [params, setParams] = useState(readParams);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<null | string>(null);
 
   // the selection can change without this component unmounting, and undo can change the attributes
   // underneath us
@@ -62,6 +67,21 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
   const update = (attr: string, value: number | string) => {
     setStlEngravingParam(elem, attr, value);
     setParams(readParams());
+  };
+
+  const generateTestPointCloud = async () => {
+    setGenerationError(null);
+    setIsGenerating(true);
+
+    try {
+      const buffer = await generatePhotoPointCloud(elem as SVGImageElement, readParams());
+
+      applyPhotoPointCloud(elem.id, buffer);
+    } catch (error) {
+      setGenerationError(error instanceof Error ? error.message : 'Unable to generate point cloud');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const renderRow = (label: string, control: React.ReactNode, key: string) => (
@@ -119,6 +139,12 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
           renderLengthInput('stl-point-spacing', params.pointSpacing, STL_ATTR.pointSpacing, POINT_SPACING_LIMIT),
           'point-spacing',
         )}
+      {isPhoto ? (
+        <Button block loading={isGenerating} onClick={generateTestPointCloud} size="small">
+          {t.generate_test_point_cloud ?? 'Generate Test Point Cloud'}
+        </Button>
+      ) : null}
+      {generationError ? <div className={styles.error}>{generationError}</div> : null}
     </div>
   );
 };

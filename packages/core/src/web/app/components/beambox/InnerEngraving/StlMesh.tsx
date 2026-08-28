@@ -1,7 +1,8 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { TransformControls } from '@react-three/drei';
-import type { Group, Mesh, Texture } from 'three';
+import type { ThreeEvent } from '@react-three/fiber';
+import type { Group, Mesh, Points, Texture } from 'three';
 import { DoubleSide, Euler, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
 
 import type { StlObject } from '@core/app/stores/stlStore';
@@ -43,7 +44,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   // a callback ref rather than useRef: TransformControls needs the resolved Object3D, which is not
   // available on the first render
   const [anchor, setAnchor] = useState<Group | null>(null);
-  const meshRef = useRef<Mesh>(null);
+  const objectRef = useRef<Mesh | Points>(null);
   const { geometry, id, transform } = object;
   const { flip, position, rotation, scale } = transform;
   const { ratioLocked, transformMode } = useViewStore();
@@ -55,6 +56,16 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   const mirrored = flip.some(Boolean);
   // the scale at the start of a drag, so a locked ratio can be enforced against it
   const dragStartScale = useRef(new Vector3(1, 1, 1));
+
+  const handleSelect = useCallback(
+    (event: ThreeEvent<MouseEvent>) => {
+      if (panning) return;
+
+      event.stopPropagation();
+      onSelect(id);
+    },
+    [id, onSelect, panning],
+  );
 
   useEffect(() => {
     if (object.kind !== 'photo') return;
@@ -122,7 +133,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   const handleObjectChange = useCallback(() => {
     const elem = document.getElementById(id) as unknown as null | SVGElement;
 
-    if (!anchor || !meshRef.current) return;
+    if (!anchor || !objectRef.current) return;
 
     if (transformMode === 'scale' && ratioLocked) {
       // the gizmo scales one axis at a time; with the ratio locked, the axis that moved sets the
@@ -153,7 +164,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
 
     anchor.updateMatrixWorld(true);
 
-    if (elem) updateProjectionRect(elem, geometry, meshRef.current.matrixWorld);
+    if (elem) updateProjectionRect(elem, geometry, objectRef.current.matrixWorld);
   }, [anchor, baseSize, geometry, id, ratioLocked, snapActive, snapCenter, transformMode]);
 
   const handleDragEnd = useCallback(() => {
@@ -179,27 +190,39 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
         rotation={rotation}
         scale={[scale[0] * MM_TO_SCENE, scale[1] * MM_TO_SCENE, scale[2] * MM_TO_SCENE]}
       >
-        <mesh
-          geometry={geometry}
-          onClick={(e) => {
-            if (panning) return;
-
-            e.stopPropagation();
-            onSelect(id);
-          }}
-          position={meshPosition}
-          ref={meshRef}
-          scale={meshScale}
-        >
-          {/* selection is shown with an outline rather than a colour change, so the layer colour
-              stays readable while the object is being edited. DoubleSide because a mirrored mesh
-              has its winding reversed, and back-face culling would hollow it out */}
-          {object.kind === 'photo' ? (
-            <meshBasicMaterial map={texture} side={DoubleSide} toneMapped={false} transparent />
-          ) : (
-            <meshStandardMaterial color={color} side={mirrored ? DoubleSide : undefined} />
-          )}
-        </mesh>
+        {object.kind === 'point-cloud' ? (
+          <points geometry={geometry} onClick={handleSelect} position={meshPosition} ref={objectRef} scale={meshScale}>
+            {/* Screen-space size keeps a relief readable without turning its points into large
+                world-space spheres when the camera zooms in. Colour comes from the layer only. */}
+            <pointsMaterial color={color} size={2} sizeAttenuation={false} />
+          </points>
+        ) : (
+          <mesh
+            geometry={geometry}
+            onClick={handleSelect}
+            position={meshPosition}
+            ref={objectRef as React.RefObject<Mesh | null>}
+            scale={meshScale}
+          >
+            {/* selection is shown with an outline rather than a colour change, so the layer colour
+                stays readable while the object is being edited. DoubleSide because a mirrored mesh
+                has its winding reversed, and back-face culling would hollow it out */}
+            {object.kind === 'photo' ? (
+              <meshBasicMaterial map={texture} side={DoubleSide} toneMapped={false} transparent />
+            ) : (
+              <meshStandardMaterial color={color} side={mirrored ? DoubleSide : undefined} />
+            )}
+          </mesh>
+        )}
+        {object.kind === 'point-cloud' && (
+          /* A ray against individual points has a sub-millimetre threshold and makes a sparse
+             relief almost impossible to select. An invisible bounds mesh gives it the same click
+             target as a solid object without changing what is drawn. */
+          <mesh onClick={handleSelect}>
+            <boxGeometry args={[baseSize.x, baseSize.y, Math.max(baseSize.z, 0.1)]} />
+            <meshBasicMaterial colorWrite={false} depthWrite={false} transparent />
+          </mesh>
+        )}
       </group>
       {selected && anchor && (
         <>

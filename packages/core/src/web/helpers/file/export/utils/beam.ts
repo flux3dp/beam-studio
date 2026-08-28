@@ -1,7 +1,7 @@
 import { pipe } from 'remeda';
 
 import { renderInnerEngravingThumbnail } from '@core/app/components/beambox/InnerEngraving/utils/thumbnail';
-import { getStlSources } from '@core/app/svgedit/stl/sources';
+import { getPointCloudSources, getStlSources } from '@core/app/svgedit/stl/sources';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import beamFileHelper from '@core/helpers/beam-file-helper';
@@ -88,11 +88,12 @@ export const generateBeamBuffer = async (): Promise<Buffer> =>
   pipe(
     {
       imageSource: await svgCanvas.getImageSource(),
+      pointCloudSource: getPointCloudSources(),
       // inner engraving only: the meshes the `data-stl` placeholder rects in svgString stand for
       stlSource: getStlSources(),
       svgString: svgCanvas.getSvgString(),
       thumbnail: (await generateBeamThumbnail()) || undefined,
     },
-    ({ imageSource, stlSource, svgString, thumbnail }) =>
-      beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail, stlSource),
+    ({ imageSource, pointCloudSource, stlSource, svgString, thumbnail }) =>
+      beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail, stlSource, pointCloudSource),
   );

@@ -11,6 +11,8 @@ import {
   MeshStandardMaterial,
   OrthographicCamera,
   PlaneGeometry,
+  Points,
+  PointsMaterial,
   Scene,
   SphereGeometry,
   Vector3,
@@ -136,15 +138,22 @@ export const renderInnerEngravingThumbnail = (size: number = DEFAULT_SIZE): HTML
     const content = new Group();
 
     Object.values(objects).forEach((object) => {
-      const meshMaterial = new MeshStandardMaterial({ color: getObjectColor(object.id), side: DoubleSide });
-      const mesh = new Mesh(object.geometry, meshMaterial);
+      const color = getObjectColor(object.id);
+      const objectMaterial =
+        object.kind === 'point-cloud'
+          ? new PointsMaterial({ color, size: 2, sizeAttenuation: false })
+          : new MeshStandardMaterial({ color, side: DoubleSide });
+      const renderedObject =
+        object.kind === 'point-cloud'
+          ? new Points(object.geometry, objectMaterial as PointsMaterial)
+          : new Mesh(object.geometry, objectMaterial as MeshStandardMaterial);
 
       // the geometry is shared with the live canvas and must not be disposed of here, so only the
       // matrix is applied — never baked into the vertices
-      mesh.matrixAutoUpdate = false;
-      mesh.matrix.copy(getMatrix(object));
-      content.add(mesh);
-      disposables.push(meshMaterial);
+      renderedObject.matrixAutoUpdate = false;
+      renderedObject.matrix.copy(getMatrix(object));
+      content.add(renderedObject);
+      disposables.push(objectMaterial);
     });
     scene.add(content);
 

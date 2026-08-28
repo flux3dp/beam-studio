@@ -1,6 +1,6 @@
 import { useStlStore } from '@core/app/stores/stlStore';
 
-import { STL_ATTR } from './constants';
+import { POINT_CLOUD_ATTR, STL_ATTR } from './constants';
 
 /**
  * The mesh binary of every STL object that still has a projection rect in `svgcontent`, keyed by id.
@@ -20,6 +20,21 @@ export const getStlSources = (): Record<string, ArrayBuffer> => {
     if (object?.buffer) result[id] = object.buffer;
     // the mesh lives outside the DOM, so this means the two halves went out of sync
     else console.error(`STL projection rect ${id} has no mesh in the store, the object is not exported`);
+  });
+
+  return result;
+};
+
+/** Point-cloud block 7 sources, keyed by their retained SVG image id. */
+export const getPointCloudSources = (): Record<string, ArrayBuffer> => {
+  const { objects } = useStlStore.getState();
+  const result: Record<string, ArrayBuffer> = {};
+
+  document.querySelectorAll(`#svgcontent [${POINT_CLOUD_ATTR.marker}]`).forEach(({ id }) => {
+    const object = objects[id];
+
+    if (object?.kind === 'point-cloud' && object.pointCloudBuffer) result[id] = object.pointCloudBuffer;
+    else console.error(`Point-cloud photo ${id} has no point data in the store, the object is not exported`);
   });
 
   return result;

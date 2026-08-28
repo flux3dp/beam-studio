@@ -57,7 +57,15 @@ export interface StlObject {
    */
   initialTransform: StlTransform;
   /** Omitted on legacy/runtime objects and therefore treated as a normal mesh. */
-  kind?: 'mesh' | 'photo';
+  kind?: 'mesh' | 'photo' | 'point-cloud';
+  /**
+   * Versioned XYZ Float32 LE binary returned by the photo-relief API.
+   *
+   * Separate from `buffer`: that field is always an STL file and is sent to swiftray's STL
+   * slicer. A point cloud has its own .beam block and backend path and must never be mistaken for
+   * an STL mesh merely because both happen to be ArrayBuffers.
+   */
+  pointCloudBuffer?: ArrayBuffer;
   /** Blob/data URL used by a zero-thickness photo plane. Persisted through the SVG image source. */
   textureUrl?: string;
   transform: StlTransform;

@@ -39,3 +39,9 @@
   // both options must stay readable at the panel's minimum width
   font-size: 12px;
 }
+
+.error {
+  color: var(--color-error, #ff4d4f);
+  font-size: 12px;
+  line-height: 16px;
+}
