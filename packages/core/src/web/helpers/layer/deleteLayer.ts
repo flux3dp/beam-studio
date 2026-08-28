@@ -42,7 +42,8 @@ export const deleteLayers = (layerNames: string[]): void => {
     undoManager.addCommandToHistory(batchCmd);
   }
 
-  layerManager.resync();
+  // Collapse selection to the current layer (covers the recreated default layer)
+  layerManager.setSelectedLayers([]);
 };
 
 export const removeDefaultLayerIfEmpty = ({ parentCmd }: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
@@ -55,14 +56,7 @@ export const removeDefaultLayerIfEmpty = ({ parentCmd }: { parentCmd?: IBatchCom
     const isEmpty = childNodes.every((node) => CanvasElements.defElems.includes((node as Element).tagName));
 
     if (isEmpty) {
-      console.log('default layer is empty. delete it!');
-
-      const cmd = deleteLayerByName(defaultLayerName, { parentCmd });
-
-      layerManager.resync();
-      layerManager.setSelectedLayers([]);
-
-      return cmd;
+      return deleteLayerByName(defaultLayerName, { parentCmd });
     }
   }
 

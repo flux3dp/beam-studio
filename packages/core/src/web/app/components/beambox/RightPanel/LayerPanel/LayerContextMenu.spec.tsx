@@ -5,7 +5,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { useScreenStore } from '@core/app/stores/screenStore';
 import i18n from '@core/helpers/i18n';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 const mockClearSelection = jest.fn();
 
@@ -262,7 +262,7 @@ describe('test LayerContextMenu', () => {
     expect(mockTogglePresprayArea).not.toHaveBeenCalled();
     fireEvent.click(screen.getByText(t.del));
     expect(mockDeleteLayers).toHaveBeenCalledWith(['layer1', 'layer2']);
-    expect(mockSetSelectedLayers).toHaveBeenCalledWith([]);
+    expect(mockSetSelectedLayers).not.toHaveBeenCalled();
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
   });
 

@@ -13,8 +13,10 @@ layer *content*; an in-memory cache of `Layer` objects plus selection state live
 so React can subscribe. One rule keeps the two consistent:
 
 **layerManager is the ONLY writer of layer state. Never call `useLayerStore.setState` outside
-`svgedit/layer/` — an ESLint `no-restricted-syntax` rule in eslint.config.js enforces this**
-(specs and `__mocks__` are exempt; specs seed state with `useLayerStore.setState`).
+`svgedit/layer/` — ESLint `no-restricted-syntax` rules in eslint.config.js enforce this**
+(specs and `__mocks__` are exempt; specs seed state with `useLayerStore.setState`). To keep the
+rule un-bypassable, `layerStore.ts` has no default export and importing `useLayerStore` under an
+alias is also lint-banned — always `import { useLayerStore } from '@core/app/stores/layer/layerStore'`.
 
 ## File Locations
 
@@ -42,9 +44,12 @@ so React can subscribe. One rule keeps the two consistent:
   outside `svgedit/layer/` (specs excepted, where `setState` seeds the mock).
 - **Any write**: a `layerManager` method. No exceptions (ESLint-enforced).
 
-In specs, a component's inline layerManager mock can keep `getSelectedLayers` consistent with
-store-mock seeding by delegating:
-`getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers`.
+In specs, seed each read path where it lives: a component that only reads imperatively gets an
+inline layerManager mock seeded directly (`const mockGetSelectedLayers = jest.fn();` →
+`getSelectedLayers: () => mockGetSelectedLayers()` → `mockGetSelectedLayers.mockReturnValue([...])`),
+with no `useLayerStore` seeding at all; seed the store mock only when the component subscribes via
+the hook. Only a component that genuinely uses both paths needs the layerManager mock to delegate
+to the store mock's `getState()` so one seed feeds both.
 
 Rule of thumb: the hook exists to make React re-render; layerManager is the API. A component that
 never subscribes (e.g. a class component like LayerPanel) should not import the store at all.

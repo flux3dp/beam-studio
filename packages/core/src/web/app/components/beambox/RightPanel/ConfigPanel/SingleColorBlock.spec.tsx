@@ -2,15 +2,15 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import useLayerStore from '@mocks/@core/app/stores/layer/layerStore';
-
 import SingleColorBlock from './SingleColorBlock';
 
 const mockForceUpdate = jest.fn();
 
+const mockGetSelectedLayers = jest.fn();
+
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getCurrentLayerName: () => '',
-  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+  getSelectedLayers: () => mockGetSelectedLayers(),
   resync: () => mockForceUpdate(),
 }));
 
@@ -68,7 +68,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 describe('test SingleColorBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
+    mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       fullcolor: { hasMultiValue: false, value: true },

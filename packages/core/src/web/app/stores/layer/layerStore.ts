@@ -29,5 +29,3 @@ export const useLayerStore = create(
     selectedLayers: [],
   })),
 );
-
-export default useLayerStore;

@@ -20,7 +20,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';

@@ -4,7 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { setStorage } from '@mocks/@core/app/stores/storageStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 const mockIsDev = jest.fn();
 

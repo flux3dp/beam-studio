@@ -17,5 +17,3 @@ useLayerStore.setState = (newState: Partial<LayerStoreState>) => {
   Object.assign(state, newState);
 };
 useLayerStore.subscribe = jest.fn();
-
-export default useLayerStore;

@@ -181,6 +181,10 @@ module.exports = [
             'Layer state is written only by layerManager (@core/app/svgedit/layer/layerManager) — call its methods instead of useLayerStore.setState.',
           selector: "CallExpression[callee.object.name='useLayerStore'][callee.property.name='setState']",
         },
+        {
+          message: 'Import useLayerStore by its own name — aliasing it hides writes from the layer state boundary.',
+          selector: "ImportSpecifier[imported.name='useLayerStore'][local.name!='useLayerStore']",
+        },
       ],
     },
   },

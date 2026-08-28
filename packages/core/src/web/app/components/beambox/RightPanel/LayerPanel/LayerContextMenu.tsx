@@ -15,7 +15,7 @@ import type { PrintingColors } from '@core/app/constants/color-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -76,7 +76,6 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
 
   const handleDeleteLayers = () => {
     deleteLayers(selectedLayers);
-    layerManager.setSelectedLayers([]);
     presprayArea.togglePresprayArea();
   };
 

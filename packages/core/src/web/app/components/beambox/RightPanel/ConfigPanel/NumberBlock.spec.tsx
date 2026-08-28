@@ -1,7 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { setStorage } from '@mocks/@core/app/stores/storageStore';
 
 const mockGetData = jest.fn();
@@ -55,8 +54,10 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
 
+const mockGetSelectedLayers = jest.fn();
+
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
-  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+  getSelectedLayers: () => mockGetSelectedLayers(),
 }));
 
 import NumberBlock from './NumberBlock';
@@ -71,7 +72,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 describe('test NumberBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
+    mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });

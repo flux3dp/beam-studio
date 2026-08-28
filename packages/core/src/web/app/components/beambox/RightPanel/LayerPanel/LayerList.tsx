@@ -9,7 +9,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import ColorPicker from '@core/app/widgets/ColorPicker';

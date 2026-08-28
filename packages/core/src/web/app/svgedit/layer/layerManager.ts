@@ -7,7 +7,6 @@
  */
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import { CanvasElements } from '@core/app/constants/canvasElements';
 import NS from '@core/app/constants/namespaces';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -15,7 +14,7 @@ import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
 import type { HistoryActionOptions, ICommand } from '@core/interfaces/IHistory';
 
-import { BatchCommand, InsertElementCommand, MoveElementCommand, RemoveElementCommand } from '../history/history';
+import { InsertElementCommand } from '../history/history';
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 
 import { Layer } from './layer';
@@ -171,59 +170,6 @@ export class LayerManager {
   };
 
   /**
-   * Merge current layer with the previous layer
-   */
-  public mergeLayer = (options: HistoryActionOptions): void => {
-    const currentLayer = this.getCurrentLayer();
-
-    if (!currentLayer) return;
-
-    const currentGroup = currentLayer.getGroup();
-
-    if (!currentGroup) return;
-
-    const prevGroup = currentGroup.previousElementSibling as SVGGElement;
-
-    if (!prevGroup) return;
-
-    const batchCmd = new BatchCommand('Merge Layer');
-
-    const layerNextSibling = currentGroup.nextSibling;
-
-    // Move all children from current layer to previous layer
-    const children = Array.from(currentGroup.childNodes);
-
-    for (const child of children) {
-      if (child instanceof Element && CanvasElements.defElems.includes(child.localName)) {
-        continue;
-      }
-
-      const oldNextSibling = child.nextSibling;
-
-      prevGroup.appendChild(child);
-      batchCmd.addSubCommand(new MoveElementCommand(child as SVGElement, oldNextSibling, currentGroup));
-    }
-
-    batchCmd.addSubCommand(new RemoveElementCommand(currentGroup, layerNextSibling, this.svgContent));
-
-    // Remove current layer's group
-    currentLayer.removeGroup();
-
-    // Remove the current layer and set the previous layer as the new current layer
-    const { layers } = this.getState();
-    const index = layers.indexOf(currentLayer);
-
-    if (index > 0) {
-      useLayerStore.setState({
-        currentLayerName: layers[index - 1].getName(),
-        layers: layers.filter((layer) => layer !== currentLayer),
-      });
-    }
-
-    handleHistoryActionOptions(batchCmd, options);
-  };
-
-  /**
    * Remove a layer: detach its group from the DOM (emitting a history command per options) and
    * unregister it from the store, so its name is immediately free for reuse. If it was the current
    * layer, the top-most remaining layer becomes current; the removed name is also dropped from
@@ -365,8 +311,13 @@ export class LayerManager {
           }
 
           if (name) {
-            layerNames.push(name);
-            layers.push(new Layer(name, element as SVGGElement, null, color || undefined));
+            // Duplicate names would make by-name lookups ambiguous; rename later occurrences
+            const finalName = layerNames.includes(name) ? this.getNewLayerName(layerNames, name) : name;
+
+            if (finalName !== name) element.querySelector('title')!.textContent = finalName;
+
+            layerNames.push(finalName);
+            layers.push(new Layer(finalName, element as SVGGElement, null, color || undefined));
           } else {
             // Group without name is an orphan
             orphans.push(element);

@@ -40,12 +40,13 @@ jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
 }));
 
+const mockGetSelectedLayers = jest.fn();
+
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
-  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+  getSelectedLayers: () => mockGetSelectedLayers(),
 }));
 
 import AutoFocus from './AutoFocus';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 
 describe('test AutoFocus', () => {
   beforeEach(() => {
@@ -56,7 +57,7 @@ describe('test AutoFocus', () => {
       repeat: { hasMultiValue: false, value: 1 },
       zStep: { hasMultiValue: false, value: 0 },
     });
-    useLayerStore.setState({ selectedLayers: mockSelectedLayers });
+    mockGetSelectedLayers.mockReturnValue(mockSelectedLayers);
   });
 
   it('should render correctly when height is less than 0', () => {

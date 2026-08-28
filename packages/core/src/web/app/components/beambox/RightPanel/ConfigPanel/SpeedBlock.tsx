@@ -18,7 +18,7 @@ import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';

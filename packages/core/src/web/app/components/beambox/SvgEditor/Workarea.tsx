@@ -4,7 +4,7 @@ import type { MenuProps } from 'antd';
 import { useShallow } from 'zustand/shallow';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { cloneSelectedElements, pasteElements } from '@core/app/svgedit/operations/clipboard';

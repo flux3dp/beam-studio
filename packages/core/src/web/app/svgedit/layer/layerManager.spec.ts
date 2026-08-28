@@ -4,6 +4,8 @@ jest.mock('../history/undoManager', () => ({
   addCommandToHistory: mockAddCommandToHistory,
 }));
 
+jest.mock('@core/helpers/layer/check-vector', () => () => false);
+
 // Mock history functionality
 jest.mock('../history/history', () => ({
   BatchCommand: jest.fn().mockImplementation((text: string) => ({
@@ -269,6 +271,21 @@ describe('LayerManager', () => {
     it('should return null for a non-existent layer', () => {
       expect(layerManager.removeLayerByName('nope')).toBeNull();
     });
+
+    it('should drop the removed layer from the selection', () => {
+      layerManager.createLayer('Layer 1');
+      layerManager.createLayer('Layer 2');
+      layerManager.setSelectedLayers(['Layer 1', 'Layer 2']);
+
+      layerManager.removeLayerByName('Layer 2');
+
+      expect(layerManager.getSelectedLayers()).toEqual(['Layer 1']);
+      expect(layerManager.getCurrentLayerName()).toBe('Layer 1');
+
+      layerManager.removeLayerByName('Layer 1');
+
+      expect(layerManager.getSelectedLayers()).toEqual([]);
+    });
   });
 
   describe('layer management', () => {
@@ -401,6 +418,27 @@ describe('LayerManager', () => {
       // Since the mock groups aren't properly recognized, they won't be in the layer map
       expect(layerManager.hasLayer('Existing Layer 1')).toBe(false);
       expect(layerManager.hasLayer('Existing Layer 2')).toBe(false);
+    });
+
+    it('should rename duplicate layer names', () => {
+      // Real DOM elements: MockSVGElement groups are not recognized by the layer walk
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+
+      ['Layer 1', 'Layer 1'].forEach((name) => {
+        const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        const title = document.createElementNS('http://www.w3.org/2000/svg', 'title');
+
+        title.textContent = name;
+        group.appendChild(title);
+        svg.appendChild(group);
+      });
+
+      const manager = new LayerManager(svg as SVGSVGElement);
+
+      manager.identifyLayers();
+
+      expect(manager.getAllLayerNames()).toEqual(['Layer 1', 'Layer 1 1']);
+      expect(svg.children[1].querySelector('title')?.textContent).toBe('Layer 1 1');
     });
 
     it('should create default layer for orphaned elements', () => {

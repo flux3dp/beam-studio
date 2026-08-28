@@ -3,7 +3,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { PrintingColors } from '@core/app/constants/color-constants';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 
 jest.mock('./ConfigSlider', () => ({ id, max, min, onChange, value }: any) => (
   <input
@@ -93,8 +92,10 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
 
+const mockGetSelectedLayers = jest.fn();
+
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
-  getSelectedLayers: () => require('@core/app/stores/layer/layerStore').default.getState().selectedLayers,
+  getSelectedLayers: () => mockGetSelectedLayers(),
 }));
 
 import InkBlock from './InkBlock';
@@ -116,7 +117,7 @@ jest.mock('@core/app/stores/globalPreferenceStore', () => ({
 describe('test InkBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
+    mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
     batchCmd = { count: 0, onAfter: undefined };
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,

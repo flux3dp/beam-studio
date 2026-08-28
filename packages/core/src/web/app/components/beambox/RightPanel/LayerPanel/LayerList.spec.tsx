@@ -3,7 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { useScreenStore } from '@core/app/stores/screenStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 const mockGetSupportedModules = jest.fn();
 
@@ -44,10 +44,10 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   setLayerLock: jest.fn(),
 }));
 
-const mockDeleteLayerByName = jest.fn();
+const mockDeleteLayers = jest.fn();
 
 jest.mock('@core/helpers/layer/deleteLayer', () => ({
-  deleteLayerByName: (...args) => mockDeleteLayerByName(...args),
+  deleteLayers: (...args) => mockDeleteLayers(...args),
 }));
 
 jest.mock(
