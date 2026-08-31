@@ -149,7 +149,6 @@ const setSvgContent = (svgcontentStr: string): IBatchCommand | null => {
     const batchCmd = new history.BatchCommand('Set Svg Content');
 
     svgcontentStr = sanitizeXmlString(svgcontentStr);
-    console.log(svgcontentStr);
 
     const newDoc = svgedit.utilities.text2xml(svgcontentStr);
 

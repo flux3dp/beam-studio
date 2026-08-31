@@ -24,6 +24,7 @@ import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
 import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
 import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
+import logMemory from '@core/helpers/log-memory';
 import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -82,6 +83,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
 
   console.log('File Size', svgString.length);
+  logMemory('export: getSvgString done', svgString.length);
 
   const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
   const reader = new FileReader();
