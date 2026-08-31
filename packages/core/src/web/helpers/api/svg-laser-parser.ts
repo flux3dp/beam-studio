@@ -28,6 +28,7 @@ import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
+import logMemory from '@core/helpers/log-memory';
 import round from '@core/helpers/math/round';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import Websocket from '@core/helpers/websocket';
@@ -676,6 +677,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
           blob = new Blob(blobs);
 
           if (totalLength === blob.size) {
+            logMemory('taskcode: fcode received', blob.size);
             opts.onFinished(blob, duration, metadata);
           }
         } else if (data.status === 'Error') {
@@ -896,6 +898,8 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
                 onProgressing?.(data);
                 break;
               case 'continue':
+                logMemory('upload: sending chunks', file.size);
+
                 for (let i = 0; i < chunkCounts; i += 1) {
                   const start = i * CHUNK_SIZE;
                   const end = Math.min(file.size, start + CHUNK_SIZE);
@@ -903,6 +907,8 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
                   ws.send(chunk);
                 }
+                // all chunks are queued synchronously, so the websocket buffer briefly holds the whole file
+                logMemory('upload: chunks queued');
                 break;
               case 'ok':
                 resolve({ res: true });

@@ -24,6 +24,7 @@ import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
 import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
 import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
+import logMemory from '@core/helpers/log-memory';
 import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -82,11 +83,17 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
 
   console.log('File Size', svgString.length);
+  logMemory('export: getSvgString done', svgString.length);
 
   const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
+
+  logMemory('export: upload blob created', blob.size);
+
   const reader = new FileReader();
   const uploadFile = await new Promise<IWrappedTaskFile>((resolve) => {
     reader.onload = () => {
+      logMemory('export: blob read into ArrayBuffer');
+
       // not sure whether all para is needed
       const file = {
         data: reader.result!,
@@ -151,14 +158,16 @@ const fetchTaskCode = async (
   annotateLayerDpmm(device);
   annotateCurveEngravingZSpeed(device);
 
-  revertFunctions.push(
-    removeCurveEngravingZSpeedAnnotation,
-    await updateImagesResolution(),
-    await convertShapeToBitmap(),
-    annotatePrintingColor(),
-    await tempSplitFullColorLayers(),
-    annotateLayerBBox(),
-  );
+  logMemory('export: start preprocessing');
+  revertFunctions.push(removeCurveEngravingZSpeedAnnotation);
+  revertFunctions.push(await updateImagesResolution());
+  logMemory('export: updateImagesResolution done');
+  revertFunctions.push(await convertShapeToBitmap());
+  logMemory('export: convertShapeToBitmap done');
+  revertFunctions.push(annotatePrintingColor());
+  revertFunctions.push(await tempSplitFullColorLayers());
+  logMemory('export: tempSplitFullColorLayers done');
+  revertFunctions.push(annotateLayerBBox());
 
   const cleanUp = () => {
     revertFunctions.toReversed().forEach((revert) => revert());
