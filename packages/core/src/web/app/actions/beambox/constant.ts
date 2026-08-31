@@ -30,6 +30,9 @@ export const fcodeV2Models = new Set(fcodeV2ModelsArray);
 export const supportAutoFocusModelsArray = ['fhexa1', ...adorModelsArray, 'fbb2', 'fhx2rf'] as const;
 export const supportAutoFocusModels = new Set(supportAutoFocusModelsArray);
 
+export const fisheyeModelsArray = [...adorModelsArray, 'fbb2', 'fhx2rf'] as const;
+export const fisheyeModels = new Set<string>(fisheyeModelsArray);
+
 export const supportCameraAutoExposureModels = ['fhx2rf', 'fbb2', 'fbm2'] as const;
 export const modelsWithWideAngleCamera: WorkAreaModel[] = ['fbb2', 'fhx2rf'] as const;
 

@@ -7,7 +7,7 @@ import type { Observable } from 'rxjs';
 import { EmptyError, from, lastValueFrom, partition, Subject } from 'rxjs';
 import { concatMap, filter, map, take, timeout } from 'rxjs/operators';
 
-import constant from '@core/app/actions/beambox/constant';
+import constant, { fisheyeModels } from '@core/app/actions/beambox/constant';
 import Progress from '@core/app/actions/progress-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -24,6 +24,8 @@ import type {
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const TIMEOUT = 120000;
+// fisheye models transmit larger images; 2 min is not enough for IMAGE_TRANSMISSION_FAIL_THRESHOLD retries
+const FISHEYE_TIMEOUT = 300000;
 const IMAGE_TRANSMISSION_FAIL_THRESHOLD = 20;
 const CAMERA_CABLE_ALERT_THRESHOLD = 10;
 
@@ -79,6 +81,10 @@ class Camera {
   private lastRequireCommand = '';
   private commandQueue: PQueue;
 
+  private get imageTimeout(): number {
+    return fisheyeModels.has(this.device.model ?? '') ? FISHEYE_TIMEOUT : TIMEOUT;
+  }
+
   constructor(shouldCrop = true, cameraNeedFlip: boolean | null = null) {
     this.commandQueue = new PQueue({ concurrency: 1 });
     this.shouldCrop = shouldCrop;
@@ -110,7 +116,7 @@ class Camera {
               Progress.openNonstopProgress({
                 id: 'connect-camera',
                 message: t.connectingCamera,
-                timeout: TIMEOUT,
+                timeout: this.imageTimeout,
               });
             }
 
@@ -407,7 +413,7 @@ class Camera {
       this.lastRequireCommand = useLowResolution ? 'require_frame l' : 'require_frame';
       this.ws.send(this.lastRequireCommand);
 
-      const data = await lastValueFrom(this.source.pipe(take(1)).pipe(timeout(TIMEOUT)));
+      const data = await lastValueFrom(this.source.pipe(take(1)).pipe(timeout(this.imageTimeout)));
 
       return data;
     } catch (error) {
@@ -419,7 +425,7 @@ class Camera {
         error.message = `${t.camera.fail_to_transmit_image} ${error.message}`;
         throw error;
       } else {
-        throw new TypeError(`${t.camera.ws_closed_unexpectedly} ${(error as any).message}`);
+        throw new TypeError(`${t.camera.ws_closed_unexpectedly}\n${(error as any).message}`);
       }
     }
   }
@@ -431,7 +437,7 @@ class Camera {
   getLiveStreamSource() {
     this.ws.send('enable_streaming');
 
-    return this.source.pipe(timeout(TIMEOUT));
+    return this.source.pipe(timeout(this.imageTimeout));
   }
 
   closeWs(): void {
