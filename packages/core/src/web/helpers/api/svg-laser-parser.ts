@@ -845,8 +845,6 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       const { height, width, x, y } = bbox;
       const svgString = `<svg viewBox="${x} ${y} ${width} ${height}"><defs>${defs}</defs>${textString}</svg>`;
 
-      console.log(svgString);
-
       const file = new Blob([svgString], {
         type: 'text/plain',
       });
