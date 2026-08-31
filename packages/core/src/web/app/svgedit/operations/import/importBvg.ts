@@ -9,7 +9,6 @@ import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-mod
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -179,7 +178,7 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
       rotaryAxis.toggleDisplay();
     };
 
-    useLayerStore.getState().forceUpdate();
+    layerManager.resync();
   }
 
   const { lang } = i18n;
@@ -253,7 +252,7 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
     // Change modules not supported to default module of the new workarea
     toggleModuleAfterWorkareaChange();
     presprayArea.togglePresprayArea();
-    useLayerStore.getState().setSelectedLayers([]);
+    layerManager.setSelectedLayers([]);
 
     if (!parentCmd) {
       workareaManager.setWorkarea(workarea);

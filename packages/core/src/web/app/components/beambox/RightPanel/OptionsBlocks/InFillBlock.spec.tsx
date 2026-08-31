@@ -22,6 +22,12 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   },
 }));
 
+const mockCheckVector = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  checkVector: () => mockCheckVector(),
+}));
+
 import InFillBlock from './InFillBlock';
 
 describe('should render correctly', () => {

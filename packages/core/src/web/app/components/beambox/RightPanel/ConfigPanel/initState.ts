@@ -1,11 +1,10 @@
 import { pipe } from 'remeda';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { getLayerConfig, getLayersConfig } from '@core/helpers/layer/layer-config-helper';
 
-export const initState = (layers: string[] = useLayerStore.getState().selectedLayers) => {
+export const initState = (layers: string[] = layerManager.getSelectedLayers()) => {
   if (layers.length === 0) layers = [layerManager.getCurrentLayerName()!];
 
   const { update } = useConfigPanelStore.getState();

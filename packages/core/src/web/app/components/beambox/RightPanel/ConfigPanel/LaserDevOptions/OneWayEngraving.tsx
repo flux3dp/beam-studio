@@ -4,9 +4,9 @@ import { Switch } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import styles from '../Block.module.scss';
@@ -17,7 +17,7 @@ const OneWayEngraving = () => {
 
   const handleToggle = useCallback(
     (key: 'oneWayEngraving' | 'oneWayEngravingReverse', val: boolean) => {
-      const selectedLayers = useLayerStore.getState().selectedLayers;
+      const selectedLayers = layerManager.getSelectedLayers();
 
       change({ [key]: val });
 

@@ -3,10 +3,9 @@ import React from 'react';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import { mockForceUpdate, mockSetSelectedLayers } from '@mocks/@core/app/stores/layer/layerStore';
 import { useScreenStore } from '@core/app/stores/screenStore';
 import i18n from '@core/helpers/i18n';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 const mockClearSelection = jest.fn();
 
@@ -63,11 +62,16 @@ jest.mock(
       mockToggleFullColorLayer(...args),
 );
 
+const mockForceUpdate = jest.fn();
+const mockSetSelectedLayers = jest.fn();
+
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getAllLayerNames: () => mockGetAllLayerNames(),
   getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
   getLayerName: (...args) => mockGetLayerName(...args),
+  resync: () => mockForceUpdate(),
+  setSelectedLayers: (...args) => mockSetSelectedLayers(...args),
 }));
 
 jest.mock('@core/helpers/system-helper', () => ({
@@ -258,7 +262,7 @@ describe('test LayerContextMenu', () => {
     expect(mockTogglePresprayArea).not.toHaveBeenCalled();
     fireEvent.click(screen.getByText(t.del));
     expect(mockDeleteLayers).toHaveBeenCalledWith(['layer1', 'layer2']);
-    expect(mockSetSelectedLayers).toHaveBeenCalledWith([]);
+    expect(mockSetSelectedLayers).not.toHaveBeenCalled();
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
   });
 
@@ -347,7 +351,7 @@ describe('test LayerContextMenu', () => {
     mockGetLayerName.mockReturnValue('layer1');
     mockGetLayerElementByName.mockReturnValue(mockElem);
     mockGetData.mockReturnValueOnce(LayerModule.PRINTER).mockReturnValueOnce(false);
-    useLayerStore.getState().setSelectedLayers(['layer1']);
+    useLayerStore.setState({ selectedLayers: ['layer1'] });
 
     const { baseElement } = renderDesktop();
 

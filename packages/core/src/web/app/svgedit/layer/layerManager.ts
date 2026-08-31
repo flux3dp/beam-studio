@@ -1,15 +1,20 @@
 /**
  * SVG Layer Manager for Beam Studio
  *
- * This class manages multiple layers in an SVG drawing, extracted from the original
- * draw.js functionality. It handles layer creation, deletion, ordering, and properties.
+ * The single mutation API for layer state. All layer reads/writes from imperative code go
+ * through this class; the backing state lives in useLayerStore (a passive Zustand store) so
+ * React components can subscribe to it with selectors. Never write to useLayerStore directly.
  */
 
-import { CanvasElements } from '@core/app/constants/canvasElements';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import NS from '@core/app/constants/namespaces';
-import type { HistoryActionOptions } from '@core/interfaces/IHistory';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
+import doLayersContainsVector from '@core/helpers/layer/check-vector';
+import type { HistoryActionOptions, ICommand } from '@core/interfaces/IHistory';
 
-import { BatchCommand, InsertElementCommand, MoveElementCommand, RemoveElementCommand } from '../history/history';
+import { InsertElementCommand } from '../history/history';
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 
 import { Layer } from './layer';
@@ -36,12 +41,34 @@ const VISIBLE_ELEMENTS = [
 ];
 
 /**
+ * Decide what the current layer and selection become after the layer list is rebuilt from the
+ * DOM (undo/redo, external DOM mutation). Unlike identifyLayers, a resync happens on a document
+ * the user is still working in, so selection should survive when it can.
+ *
+ * @param prevCurrentLayerName - current layer before the resync (may no longer exist)
+ * @param prevSelectedLayers - selected layer names before the resync (may contain dead names)
+ * @param layerNames - the rebuilt layer names, ordered bottom to top; never empty
+ */
+const resolveSelectionAfterResync = (
+  prevCurrentLayerName: null | string,
+  prevSelectedLayers: string[],
+  layerNames: string[],
+): { currentLayerName: null | string; selectedLayers: string[] } => {
+  const selectedLayers = prevSelectedLayers.filter((name) => layerNames.includes(name));
+  const currentLayerName =
+    prevCurrentLayerName && layerNames.includes(prevCurrentLayerName)
+      ? prevCurrentLayerName
+      : (selectedLayers[0] ?? layerNames.at(-1)!);
+
+  if (selectedLayers.length === 0) selectedLayers.push(currentLayerName);
+
+  return { currentLayerName, selectedLayers };
+};
+
+/**
  * LayerManager class for managing SVG layers in the drawing canvas
  */
 export class LayerManager {
-  private allLayers: Layer[] = [];
-  private layerMap: Map<string, Layer> = new Map();
-  private currentLayer: Layer | null = null;
   private svgContent: SVGSVGElement;
 
   /**
@@ -50,54 +77,59 @@ export class LayerManager {
    */
   constructor(svgContent: SVGSVGElement) {
     this.svgContent = svgContent;
+    this.clear();
   }
+
+  private getState = () => useLayerStore.getState();
 
   /**
    * Returns the number of layers in the current drawing
    */
   public getNumLayers = (): number => {
-    return this.allLayers.length;
+    return this.getState().layers.length;
   };
 
   /**
    * Check if layer with given name already exists
    */
   public hasLayer = (name: string): boolean => {
-    return this.layerMap.has(name);
+    return this.getState().layers.some((layer) => layer.getName() === name);
   };
 
   /**
    * Returns the name of the ith layer. If the index is out of range, an empty string is returned.
    */
   public getLayerName = (i: number): string => {
-    return i >= 0 && i < this.getNumLayers() ? this.allLayers[i].getName() : '';
+    return this.getState().layers[i]?.getName() ?? '';
   };
 
   /**
    * Get all layer names
    */
   public getAllLayerNames = (): string[] => {
-    return this.allLayers.map((layer) => layer.getName());
+    return this.getState().layers.map((layer) => layer.getName());
   };
 
   /**
-   * Returns the SVGGElement representing the current layer
+   * Returns the currently selected layer
    */
   public getCurrentLayer = (): Layer | null => {
-    return this.currentLayer ?? null;
+    const { currentLayerName, layers } = this.getState();
+
+    if (!currentLayerName) return null;
+
+    return layers.find((layer) => layer.getName() === currentLayerName) ?? null;
   };
 
   /**
    * Get a layer by name
    */
   public getLayerByName = (name: string): Layer | null => {
-    const layer = this.layerMap.get(name);
-
-    return layer ?? null;
+    return this.getState().layers.find((layer) => layer.getName() === name) ?? null;
   };
 
   public getLayerElementByName = (name: string): null | SVGGElement => {
-    const layer = this.layerMap.get(name);
+    const layer = this.getLayerByName(name);
 
     return layer ? layer.getGroup() : null;
   };
@@ -106,97 +138,121 @@ export class LayerManager {
    * Returns the name of the currently selected layer
    */
   public getCurrentLayerName = (): string => {
-    return this.currentLayer ? this.currentLayer.getName() : '';
+    return this.getState().currentLayerName ?? '';
   };
 
   public getCurrentLayerElement = (): null | SVGGElement => {
-    return this.currentLayer ? this.currentLayer.getGroup() : null;
+    return this.getCurrentLayer()?.getGroup() ?? null;
+  };
+
+  /**
+   * Get the selected layer names. React components should subscribe via useLayerStore instead.
+   */
+  public getSelectedLayers = (): string[] => {
+    return this.getState().selectedLayers;
   };
 
   /**
    * Set the current layer's name
    */
   public setCurrentLayerName = (name: string): null | string => {
-    let finalName: null | string = null;
+    const currentLayer = this.getCurrentLayer();
 
-    if (this.currentLayer) {
-      const oldName = this.currentLayer.getName();
+    if (!currentLayer) return null;
 
-      finalName = this.currentLayer.setName(name);
+    const finalName = currentLayer.setName(name);
 
-      if (finalName) {
-        this.layerMap.delete(oldName);
-        this.layerMap.set(finalName, this.currentLayer);
-      }
+    if (finalName) {
+      useLayerStore.setState({ currentLayerName: finalName, layers: [...this.getState().layers] });
     }
 
     return finalName;
   };
 
   /**
-   * Merge current layer with the previous layer
+   * Remove a layer: detach its group from the DOM (emitting a history command per options) and
+   * unregister it from the store, so its name is immediately free for reuse. If it was the current
+   * layer, the top-most remaining layer becomes current; the removed name is also dropped from
+   * the selection (falling back to the current layer), so callers need no selection cleanup.
    */
-  public mergeLayer = (options: HistoryActionOptions): void => {
-    if (!this.currentLayer) return;
+  public removeLayerByName = (name: string, options?: HistoryActionOptions): ICommand | null => {
+    const layer = this.getLayerByName(name);
 
-    const currentGroup = this.currentLayer.getGroup();
+    if (!layer) return null;
 
-    if (!currentGroup) return;
+    const cmd = layer.removeGroup(options);
+    const state = this.getState();
+    const layers = state.layers.filter((l) => l !== layer);
 
-    const prevGroup = currentGroup.previousElementSibling as SVGGElement;
+    useLayerStore.setState({
+      layers,
+      ...(state.currentLayerName === name && {
+        currentLayerName: layers.at(-1)?.getName() ?? null,
+      }),
+    });
+    this.setSelectedLayers(state.selectedLayers.filter((selectedName) => selectedName !== name));
 
-    if (!prevGroup) return;
-
-    const batchCmd = new BatchCommand('Merge Layer');
-
-    const layerNextSibling = currentGroup.nextSibling;
-
-    // Move all children from current layer to previous layer
-    const children = Array.from(currentGroup.childNodes);
-
-    for (const child of children) {
-      if (child instanceof Element && CanvasElements.defElems.includes(child.localName)) {
-        continue;
-      }
-
-      const oldNextSibling = child.nextSibling;
-
-      prevGroup.appendChild(child);
-      batchCmd.addSubCommand(new MoveElementCommand(child as SVGElement, oldNextSibling, currentGroup));
-    }
-
-    batchCmd.addSubCommand(new RemoveElementCommand(currentGroup, layerNextSibling, this.svgContent));
-
-    // Remove current layer's group
-    this.currentLayer.removeGroup();
-
-    // Remove the current layer and set the previous layer as the new current layer
-    const index = this.allLayers.indexOf(this.currentLayer);
-
-    if (index > 0) {
-      const name = this.currentLayer.getName();
-
-      this.currentLayer = this.allLayers[index - 1];
-      this.allLayers.splice(index, 1);
-      this.layerMap.delete(name);
-    }
-
-    handleHistoryActionOptions(batchCmd, options);
+    return cmd;
   };
 
   /**
    * Sets the current layer. Returns true if successful, false otherwise.
    */
   public setCurrentLayer = (name: string): boolean => {
-    const layer = this.layerMap.get(name);
+    if (!this.hasLayer(name)) return false;
 
-    if (layer) {
-      this.currentLayer = layer;
+    useLayerStore.setState({ currentLayerName: name });
 
-      return true;
+    return true;
+  };
+
+  /**
+   * Set the selected layers (and the current layer, which defaults to the first selected one).
+   * Recomputes the hasVector / hasGradient flags when the selection actually changes.
+   */
+  public setSelectedLayers = (selectedLayers: string[], currentLayer?: string): void => {
+    const state = this.getState();
+    const newLayers = selectedLayers.length === 0 && state.currentLayerName ? [state.currentLayerName] : selectedLayers;
+    const newCurrentLayer = currentLayer || newLayers[0];
+
+    if (newCurrentLayer && newCurrentLayer !== state.currentLayerName) {
+      this.setCurrentLayer(newCurrentLayer);
     }
 
-    return false;
+    // Lazy update - only update if actually different
+    if (
+      newLayers.length === state.selectedLayers.length &&
+      newLayers.every((name, i) => name === state.selectedLayers[i])
+    ) {
+      return;
+    }
+
+    useLayerStore.setState({ selectedLayers: newLayers });
+    this.checkVector();
+    this.checkGradient();
+  };
+
+  /**
+   * Recompute whether the selected layers contain vector elements. Expensive; called
+   * automatically when the selection changes.
+   */
+  public checkVector = (): void => {
+    const layers = this.getState().selectedLayers.map(this.getLayerElementByName);
+
+    useLayerStore.setState({ hasVector: doLayersContainsVector(layers) });
+  };
+
+  /**
+   * Recompute whether the selected layers contain gradient images (Promark models only).
+   */
+  public checkGradient = (workarea: WorkAreaModel = useDocumentStore.getState().workarea): void => {
+    if (!promarkModels.has(workarea)) return;
+
+    const hasGradient = this.getState().selectedLayers.some((layerName) =>
+      Boolean(this.getLayerElementByName(layerName)?.querySelector('image[data-shading="true"]')),
+    );
+
+    useLayerStore.setState({ hasGradient });
   };
 
   /**
@@ -229,16 +285,14 @@ export class LayerManager {
   }
 
   /**
-   * Updates layer system and sets the current layer to the top-most layer
+   * Rebuild the Layer list from the DOM, adopting orphan elements into a new layer.
+   * Always returns at least one layer.
    */
-  public identifyLayers = (): void => {
-    this.allLayers = [];
-    this.layerMap.clear();
-
+  private buildLayersFromDom(): Layer[] {
+    const layers: Layer[] = [];
     const numChildren = this.svgContent.childNodes.length;
     const orphans: SVGElement[] = [];
     const layerNames: string[] = [];
-    let layer: Layer | null = null;
 
     // Loop through all children of SVG element
     for (let i = 0; i < numChildren; i++) {
@@ -257,10 +311,13 @@ export class LayerManager {
           }
 
           if (name) {
-            layerNames.push(name);
-            layer = new Layer(name, element as SVGGElement, null, color || undefined);
-            this.allLayers.push(layer);
-            this.layerMap.set(name, layer);
+            // Duplicate names would make by-name lookups ambiguous; rename later occurrences
+            const finalName = layerNames.includes(name) ? this.getNewLayerName(layerNames, name) : name;
+
+            if (finalName !== name) element.querySelector('title')!.textContent = finalName;
+
+            layerNames.push(finalName);
+            layers.push(new Layer(finalName, element as SVGGElement, null, color || undefined));
           } else {
             // Group without name is an orphan
             orphans.push(element);
@@ -273,16 +330,39 @@ export class LayerManager {
     }
 
     // If orphans or no layers found, create a new layer and add all orphans to it
-    if (orphans.length > 0 || this.allLayers.length === 0) {
+    if (orphans.length > 0 || layers.length === 0) {
       const newName = this.getNewLayerName(layerNames);
+      const layer = new Layer(newName, null, this.svgContent);
 
-      layer = new Layer(newName, null, this.svgContent);
       layer.appendChildren(orphans);
-      this.allLayers.push(layer);
-      this.layerMap.set(newName, layer);
+      layers.push(layer);
     }
 
-    this.currentLayer = layer;
+    return layers;
+  }
+
+  /**
+   * Updates layer system and sets the current layer to the top-most layer
+   */
+  public identifyLayers = (): void => {
+    const layers = this.buildLayersFromDom();
+
+    useLayerStore.setState({ currentLayerName: layers.at(-1)?.getName() ?? null, layers });
+  };
+
+  /**
+   * Rebuild the layer list from the DOM while keeping the current layer and selection alive
+   * where possible. Use after undo/redo or any operation that mutated layer groups behind the
+   * manager's back; identifyLayers is for freshly loaded documents instead.
+   */
+  public resync = (): void => {
+    const { currentLayerName, selectedLayers } = this.getState();
+    const layers = this.buildLayersFromDom();
+    const layerNames = layers.map((layer) => layer.getName());
+
+    useLayerStore.setState({ layers, ...resolveSelectionAfterResync(currentLayerName, selectedLayers, layerNames) });
+    this.checkVector();
+    this.checkGradient();
   };
 
   /**
@@ -290,8 +370,8 @@ export class LayerManager {
    */
   public createLayer = (name?: string, options?: HistoryActionOptions): Layer | null => {
     // Check for duplicate name or generate new one
-    if (!name || name === '' || this.layerMap.has(name)) {
-      name = this.getNewLayerName(Array.from(this.layerMap.keys()), name || 'Layer');
+    if (!name || name === '' || this.hasLayer(name)) {
+      name = this.getNewLayerName(this.getAllLayerNames(), name || 'Layer');
     }
 
     // Create new layer and add to DOM as last layer
@@ -305,9 +385,7 @@ export class LayerManager {
     // Add to history
     handleHistoryActionOptions(cmd, options);
 
-    this.allLayers.push(layer);
-    this.layerMap.set(name, layer);
-    this.currentLayer = layer;
+    useLayerStore.setState({ currentLayerName: name, layers: [...this.getState().layers, layer] });
 
     return layer;
   };
@@ -316,7 +394,7 @@ export class LayerManager {
    * Returns the layer color
    */
   public getLayerColor(layerName: string): false | string {
-    const layer = this.layerMap.get(layerName);
+    const layer = this.getLayerByName(layerName);
 
     if (!layer) return false;
 
@@ -335,7 +413,7 @@ export class LayerManager {
    * Returns the opacity of the given layer
    */
   public getLayerOpacity = (layerName: string): null | number => {
-    const layer = this.layerMap.get(layerName);
+    const layer = this.getLayerByName(layerName);
 
     if (!layer) return null;
 
@@ -348,59 +426,62 @@ export class LayerManager {
   public setLayerOpacity = (layerName: string, opacity: number): void => {
     if (opacity < 0.0 || opacity > 1.0) return;
 
-    const layer = this.layerMap.get(layerName);
-
-    if (layer) layer.setOpacity(opacity);
+    this.getLayerByName(layerName)?.setOpacity(opacity);
   };
 
   /**
    * Get all layers
    */
   public getAllLayers = (): Layer[] => {
-    return [...this.allLayers];
+    return [...this.getState().layers];
   };
 
   /**
    * Get layer by index
    */
   public getLayerByIndex = (index: number): Layer | null => {
-    return this.allLayers[index] || null;
+    return this.getState().layers[index] || null;
   };
 
   /**
    * Move layer to new position
    */
   public moveLayer = (fromIndex: number, toIndex: number): boolean => {
+    const { layers } = this.getState();
+
     if (
       fromIndex < 0 ||
-      fromIndex >= this.allLayers.length ||
+      fromIndex >= layers.length ||
       toIndex < 0 ||
-      toIndex >= this.allLayers.length ||
+      toIndex >= layers.length ||
       fromIndex === toIndex
     ) {
       return false;
     }
 
-    const layer = this.allLayers[fromIndex];
+    const layer = layers[fromIndex];
     const group = layer.getGroup();
 
     if (!group) return false;
 
+    const newLayers = [...layers];
+
     // Remove from array
-    this.allLayers.splice(fromIndex, 1);
+    newLayers.splice(fromIndex, 1);
 
     // Insert at new position
-    this.allLayers.splice(toIndex, 0, layer);
+    newLayers.splice(toIndex, 0, layer);
 
     // Update DOM order
-    const targetLayer = this.allLayers[toIndex + 1];
-    const targetGroup = targetLayer?.getGroup();
+    const targetGroup = newLayers[toIndex + 1]?.getGroup();
 
     if (targetGroup) {
       this.svgContent.insertBefore(group, targetGroup);
     } else {
       this.svgContent.appendChild(group);
     }
+
+    useLayerStore.setState({ layers: newLayers });
 
     return true;
   };
@@ -409,9 +490,7 @@ export class LayerManager {
    * Clear all layers
    */
   public clear = (): void => {
-    this.allLayers = [];
-    this.layerMap.clear();
-    this.currentLayer = null;
+    useLayerStore.setState({ currentLayerName: null, layers: [] });
   };
 
   public reset = (svgContent: SVGSVGElement, identifyLayers = false): void => {
@@ -423,5 +502,11 @@ export class LayerManager {
 }
 
 export const layerManager = new LayerManager(document.createElementNS(NS.SVG, 'svg'));
+
+// Recompute the Promark gradient flag when the workarea changes
+useDocumentStore.subscribe(
+  (state) => state.workarea,
+  (workarea) => layerManager.checkGradient(workarea),
+);
 
 export default layerManager;

@@ -6,10 +6,10 @@ import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import {
   CUSTOM_PRESET_CONSTANT,
@@ -114,7 +114,7 @@ const NumberBlock = ({
       if (type !== 'modal') {
         const batchCmd = noHistory ? undefined : new history.BatchCommand(`Change ${key}`);
 
-        useLayerStore.getState().selectedLayers.forEach((layerName) => {
+        layerManager.getSelectedLayers().forEach((layerName) => {
           const layer = getLayerByName(layerName)!;
 
           writeDataLayer(layer, key, newVal, { batchCmd });

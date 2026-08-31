@@ -1,5 +1,3 @@
-import layerManager from '@core/app/svgedit/layer/layerManager';
-
 const doElementContainVector = (elem: Element) => {
   const vectors = elem.querySelectorAll('path, rect, ellipse, polygon, line, text');
   let res = false;
@@ -19,8 +17,7 @@ const doElementContainVector = (elem: Element) => {
 };
 
 // TODO: add unit test
-const doLayersContainsVector = (layerNames: string[]): boolean => {
-  const layers = layerNames.map((layerName: string) => layerManager.getLayerElementByName(layerName));
+const doLayersContainsVector = (layers: Array<Element | null>): boolean => {
   let res = false;
 
   for (let i = 0; i < layers.length; i += 1) {

@@ -2,8 +2,6 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import useLayerStore from '@core/app/stores/layer/layerStore';
-
 const mockChange = jest.fn();
 let mockData = { hasMultiValue: false, value: false };
 
@@ -47,6 +45,12 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
 
+const mockGetSelectedLayers = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getSelectedLayers: () => mockGetSelectedLayers(),
+}));
+
 import HighQualityBlock from './HighQualityBlock';
 
 describe('test HighQualityBlock', () => {
@@ -54,7 +58,7 @@ describe('test HighQualityBlock', () => {
     jest.clearAllMocks();
     batchCmd = { count: 0, onAfter: undefined };
     mockData = { hasMultiValue: false, value: false };
-    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
+    mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
   });
 
   it('should render correctly', () => {

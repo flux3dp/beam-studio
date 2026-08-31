@@ -9,7 +9,6 @@ import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -200,7 +199,7 @@ function finalizeImport(
     elements.forEach((elem) => elem.setAttribute('data-np', '1'));
   }
 
-  useLayerStore.getState().setSelectedLayers([layerManager.getCurrentLayerName()!]);
+  layerManager.setSelectedLayers([layerManager.getCurrentLayerName()!]);
 
   let minX = Infinity;
   let minY = Infinity;

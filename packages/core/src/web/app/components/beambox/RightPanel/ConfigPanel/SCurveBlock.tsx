@@ -4,9 +4,9 @@ import { Switch } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import styles from './Block.module.scss';
@@ -23,7 +23,7 @@ const SCurveBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel
 
     const batchCmd = new history.BatchCommand('Change S-Curve enable');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => {
+    layerManager.getSelectedLayers().forEach((layerName) => {
       writeData(layerName, 'scEnable', newValue, { batchCmd });
     });
     batchCmd.onAfter = initState;
@@ -41,7 +41,7 @@ const SCurveBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel
 
     const batchCmd = new history.BatchCommand('Change S-Curve toggle');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => {
+    layerManager.getSelectedLayers().forEach((layerName) => {
       writeData(layerName, 'scA0', a0, { batchCmd });
       writeData(layerName, 'scAMax', aMax, { batchCmd });
       writeData(layerName, 'scJerk', jerk, { batchCmd });

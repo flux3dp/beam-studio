@@ -3,7 +3,6 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import NS from '@core/app/constants/namespaces';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -206,7 +205,7 @@ const importDxf = async (file: Blob, { silent = false }: { silent?: boolean } = 
   await Promise.all(promises);
 
   removeDefaultLayerIfEmpty({ parentCmd: batchCmd });
-  useLayerStore.getState().setSelectedLayers(layerNames);
+  layerManager.setSelectedLayers(layerNames);
   undoManager.addCommandToHistory(batchCmd);
 
   return true;

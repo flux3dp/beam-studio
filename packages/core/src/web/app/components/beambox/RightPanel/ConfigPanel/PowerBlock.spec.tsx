@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 jest.mock('./AdvancedPowerPanel', () => ({ onClose }: any) => (
   <div id="AdvancedPowerPanel">

@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import React, { memo } from 'react';
 
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import useI18n from '@core/helpers/useI18n';
 
 import NumberBlock from './NumberBlock';

@@ -4,7 +4,6 @@ import type { AddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { changeDocumentStoreValue, useDocumentStore } from '@core/app/stores/documentStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
@@ -255,12 +254,8 @@ const sliceWorkarea = async (
   generateGuideMark();
   changeDocumentStoreValue('pass-through', false, { parentCmd: batchCmd });
 
-  const onAfter = () => {
-    layerManager.identifyLayers();
-    useLayerStore.getState().setSelectedLayers([]);
-  };
-
-  onAfter();
+  layerManager.identifyLayers();
+  layerManager.setSelectedLayers([]);
 
   if (parentCmd) {
     parentCmd.addSubCommand(batchCmd);
@@ -268,7 +263,6 @@ const sliceWorkarea = async (
     svgCanvas.undoMgr.addCommandToHistory(batchCmd);
   }
 
-  batchCmd.onAfter = onAfter;
   progressCaller.popById(progressId);
 };
 

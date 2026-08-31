@@ -4,9 +4,9 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Modal, Switch, Tooltip } from 'antd';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
@@ -56,7 +56,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
 
     const batchCmd = new history.BatchCommand('Change advanced setting');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => {
+    layerManager.getSelectedLayers().forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
 
       keys.forEach((key) => {

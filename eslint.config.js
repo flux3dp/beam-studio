@@ -170,6 +170,25 @@ module.exports = [
     rules: { 'import/order': 'off' },
   },
   {
+    // layer state boundary: only layerManager (svgedit/layer/) may write to useLayerStore
+    files: [SRC_GLOB_TS, SRC_GLOB_TSX],
+    ignores: ['**/svgedit/layer/**', '**/__mocks__/**', ...SRC_GLOB_TESTS],
+    rules: {
+      'no-restricted-syntax': [
+        'error',
+        {
+          message:
+            'Layer state is written only by layerManager (@core/app/svgedit/layer/layerManager) — call its methods instead of useLayerStore.setState.',
+          selector: "CallExpression[callee.object.name='useLayerStore'][callee.property.name='setState']",
+        },
+        {
+          message: 'Import useLayerStore by its own name — aliasing it hides writes from the layer state boundary.',
+          selector: "ImportSpecifier[imported.name='useLayerStore'][local.name!='useLayerStore']",
+        },
+      ],
+    },
+  },
+  {
     files: ['**/webpack.*.js', 'eslint.config.js', './eslint/**/*.js'],
     rules: {
       'format/prettier': [

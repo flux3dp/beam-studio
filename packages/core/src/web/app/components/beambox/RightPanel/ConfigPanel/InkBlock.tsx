@@ -12,8 +12,8 @@ import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -51,7 +51,7 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change ink');
 
-      useLayerStore.getState().selectedLayers.forEach((layerName) => {
+      layerManager.getSelectedLayers().forEach((layerName) => {
         writeData(layerName, 'ink', value, { batchCmd });
         writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
       });

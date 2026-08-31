@@ -29,7 +29,7 @@ const mockInitState = jest.fn();
 jest.mock('./initState', () => mockInitState);
 
 import Diode from './Diode';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockUseConfigPanelStore = jest.fn();

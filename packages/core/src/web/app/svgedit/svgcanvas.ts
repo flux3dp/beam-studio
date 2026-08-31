@@ -44,7 +44,6 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getAttributes } from '@core/helpers/element/attribute';
@@ -330,9 +329,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     $(shape).mouseover(canvas.handleGenerateSensorArea).mouseleave(canvas.handleGenerateSensorArea);
 
     if (shape.tagName === 'image') {
-      useLayerStore.getState().checkGradient();
+      layerManager.checkGradient();
     } else {
-      useLayerStore.getState().checkVector();
+      layerManager.checkVector();
     }
 
     return shape;
@@ -455,25 +454,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           var isApply = eventType === EventTypes.AFTER_APPLY;
 
           if (cmdType === MoveElementCommand.type()) {
-            var parent = isApply ? cmd.newParent : cmd.oldParent;
-
-            if (parent === svgcontent) {
-              layerManager.identifyLayers();
-            }
-
-            let shouldUpdateLayerStore = false;
-
+            // Layer state rebuild is handled by the central layerManager.resync() after undo/redo
             elems.forEach((elem) => {
-              if (elem.classList.contains('layer')) {
-                shouldUpdateLayerStore = true;
-              } else {
+              if (!elem.classList.contains('layer')) {
                 updateElementColor(elem);
               }
             });
-
-            if (shouldUpdateLayerStore) {
-              useLayerStore.getState().forceUpdate();
-            }
           } else if (cmdType === InsertElementCommand.type() || cmdType === RemoveElementCommand.type()) {
             if (cmdType === InsertElementCommand.type()) {
               if (isApply) {
@@ -491,11 +477,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               }
             }
           } else if (cmdType === ChangeElementCommand.type()) {
-            // if we are changing layer names, re-identify all layers
-            if (cmd.elem.tagName === 'title' && cmd.elem.parentNode?.parentNode === svgcontent) {
-              layerManager.identifyLayers();
-            }
-
             var values = isApply ? cmd.newValues : cmd.oldValues;
             const changedValues = Object.keys(values);
 
@@ -529,8 +510,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
                 'Split Full Color Layer',
               ].includes(cmd.text)
             ) {
-              layerManager.identifyLayers();
-              useLayerStore.getState().setSelectedLayers([]);
               presprayArea.togglePresprayArea();
             }
 
@@ -2030,7 +2009,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     initLayerConfig(defaultLayer);
 
     // force update selected layers
-    useLayerStore.getState().setSelectedLayers([defaultLayerName]);
+    layerManager.setSelectedLayers([defaultLayerName]);
     presprayArea.togglePresprayArea();
 
     // clear the undo stack

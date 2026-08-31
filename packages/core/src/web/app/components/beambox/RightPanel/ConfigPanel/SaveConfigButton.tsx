@@ -8,7 +8,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { getConfigKeys, writeData } from '@core/helpers/layer/layer-config-helper';
 import { getAllPresets, savePreset } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';

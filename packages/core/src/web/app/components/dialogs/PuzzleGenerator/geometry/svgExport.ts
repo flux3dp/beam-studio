@@ -1,7 +1,6 @@
 import { dpmm } from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -441,7 +440,7 @@ export const exportToCanvas = async (
 
   // Refresh layer panel to show new layers
   svgEditor.updateContextPanel();
-  useLayerStore.getState().forceUpdate();
+  layerManager.resync();
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 };

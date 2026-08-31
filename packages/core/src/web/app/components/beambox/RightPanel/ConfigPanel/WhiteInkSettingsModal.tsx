@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { Modal } from 'antd';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -37,7 +37,7 @@ const WhiteInkSettingsModal = ({ onClose }: Props): React.JSX.Element => {
   const handleSave = () => {
     const newState = { ...state };
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => {
+    layerManager.getSelectedLayers().forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
 
       if (wInk.value !== ink.value || wInk.hasMultiValue !== ink.hasMultiValue) {

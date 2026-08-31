@@ -83,8 +83,13 @@ jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: mockUseConfigPanelStore,
 }));
 
+const mockGetSelectedLayers = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getSelectedLayers: () => mockGetSelectedLayers(),
+}));
+
 import AdvancedSettingModal from './AdvancedSettingModal';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 
 describe('test AdvancedSettingModal', () => {
   beforeEach(() => {
@@ -107,7 +112,7 @@ describe('test AdvancedSettingModal', () => {
       wobbleDiameter: { hasMultiValue: false, value: -0.2 },
       wobbleStep: { hasMultiValue: false, value: -0.05 },
     });
-    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
+    mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
   });
 
   it('should render correctly', () => {

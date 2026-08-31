@@ -5,8 +5,8 @@ import { Checkbox, Switch } from 'antd';
 
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -48,7 +48,7 @@ const WhiteInkCheckbox = ({ type = 'default' }: Props): ReactNode => {
 
     const batchCmd = new history.BatchCommand('Change white ink toggle');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => writeData(layerName, 'wInk', newVal, { batchCmd }));
+    layerManager.getSelectedLayers().forEach((layerName) => writeData(layerName, 'wInk', newVal, { batchCmd }));
     batchCmd.onAfter = initState;
     svgCanvas.addCommandToHistory(batchCmd);
   };

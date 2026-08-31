@@ -78,7 +78,7 @@ import {
   setCursorAccordingToMouseMode,
   setMouseMode,
 } from '@core/app/stores/canvas/utils/mouseMode';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { showPanel } from '@core/app/widgets/dockable/utils';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
@@ -642,7 +642,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       clearResumeConfig({ isChange: false });
       workareaManager.resetView();
       RightPanelController.setPanelType(isMobile() ? PanelType.None : PanelType.Layer);
-      useLayerStore.getState().forceUpdate();
+      layerManager.resync();
       updateContextPanel();
       svgedit.transformlist.resetListMap();
     };
@@ -662,7 +662,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       });
     })();
 
-    useLayerStore.getState().forceUpdate();
+    layerManager.resync();
 
     var centerCanvas = function () {
       // this centers the canvas vertically in the workarea (horizontal handled in CSS)
@@ -1021,7 +1021,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'json':
             Progress.popById('loading_image');
             await importPresets(file);
-            useLayerStore.getState().forceUpdate();
+            layerManager.resync();
             break;
           case 'unknown':
             Progress.popById('loading_image');

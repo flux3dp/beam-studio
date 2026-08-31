@@ -1,5 +1,4 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -108,10 +107,6 @@ export const generateAlignedCutLayer = (): void => {
     deleteLayerByName(getLayerName(layer), { parentCmd: batchCmd });
   });
 
-  // removeGroup only detaches the dom node, so layerManager still maps the old
-  // name; without this resync createLayer sees it as taken and appends " (1)"
-  if (previousCutLayers.length > 0) layerManager.identifyLayers();
-
   const originalLayers = layerManager.getAllLayers();
   const insertedElements: SVGGraphicsElement[] = [];
   // layer-mode cut geometry serialized into the saved config, so a resumed run
@@ -192,8 +187,7 @@ export const generateAlignedCutLayer = (): void => {
     layer.setVisible(false, { parentCmd: batchCmd });
   });
 
-  layerManager.identifyLayers();
-  useLayerStore.getState().forceUpdate();
+  layerManager.resync();
   selectionManager.clearSelection();
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);

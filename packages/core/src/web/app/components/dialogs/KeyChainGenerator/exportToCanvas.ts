@@ -3,9 +3,9 @@ import { PaperOffset } from 'paperjs-offset';
 
 import fontFuncs, { convertTextToPathByFontkit, getFontObj } from '@core/app/actions/beambox/font-funcs';
 import NS from '@core/app/constants/namespaces';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
@@ -187,7 +187,7 @@ const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand, si
   const { layers: tLayers } = i18n.lang.keychain_generator;
   const { name } = createLayer(tLayers.keychain, { hexCode: KEYCHAIN_COLORS.exploded.base, parentCmd: batchCmd });
 
-  useLayerStore.getState().setSelectedLayers([name]);
+  layerManager.setSelectedLayers([name]);
 
   const paths = [pathItemToSvgPath(shape.resultBasePath)];
 
@@ -251,7 +251,7 @@ const exportEngravingLayer = async (
     parentCmd: batchCmd,
   });
 
-  useLayerStore.getState().setSelectedLayers([name]);
+  layerManager.setSelectedLayers([name]);
 
   const paths = await convertSvgElementsToPath(shape.decorations.engraving, shape.decorations.refPaths);
 
@@ -283,7 +283,7 @@ const exportEmbossLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand,
     parentCmd: batchCmd,
   });
 
-  useLayerStore.getState().setSelectedLayers([posName]);
+  layerManager.setSelectedLayers([posName]);
 
   const insetSource = combinedInnerPath.clone() as paper.Path;
 
@@ -302,7 +302,7 @@ const exportEmbossLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand,
     parentCmd: batchCmd,
   });
 
-  useLayerStore.getState().setSelectedLayers([aloneName]);
+  layerManager.setSelectedLayers([aloneName]);
 
   const shiftedBounds = new paper.Rectangle(
     shape.bounds.x,
