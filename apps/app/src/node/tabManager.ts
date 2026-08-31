@@ -249,6 +249,10 @@ class TabManager {
     webContents.on('devtools-closed', () => {
       this.updateTabBounds([tab]);
     });
+    // Log why a renderer died (oom / crashed / killed ...) — invaluable when diagnosing white-screen crashes
+    webContents.on('render-process-gone', (_event, details) => {
+      console.error(`Tab ${webContents.id} render process gone:`, JSON.stringify(details));
+    });
     webContents.on('destroyed', () => {
       const { id } = webContents;
 

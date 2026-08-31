@@ -53,6 +53,7 @@ import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
 import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
+import logMemory from '@core/helpers/log-memory';
 import round from '@core/helpers/math/round';
 import viewMenu from '@core/helpers/menubar/view';
 import randomColor from '@core/helpers/randomColor';
@@ -1429,12 +1430,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     const output = this.svgToString(svgcontent, 0, unit, fixTopExpansion);
 
+    logMemory('svgCanvasToString: serialized', output.length);
+
     svgedit.utilities.moveDefsOutfromSvgContent();
 
     const outputSanitized = sanitizeXmlString(output);
 
     console.log('Sanitized Result', output.length, outputSanitized.length);
-    console.log(outputSanitized);
 
     return outputSanitized;
   };
