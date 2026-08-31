@@ -116,6 +116,9 @@ jobs:
           mv ./swiftray ./backend
           rm ./swiftray.zip
 
+          # VC++ 2015-2022 runtime required by Swiftray, installed by win-install.nsh
+          curl.exe -L https://aka.ms/vs/17/release/vc_redist.x64.exe --output ./backend/VC_redist.x64.exe
+
           cp -R ./util/win64 ./utils
 
           bash ./build/clearup-develop-files.sh
