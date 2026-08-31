@@ -2,7 +2,6 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 
 jest.mock('./ConfigSlider', () => ({ id, max, min, onChange, value }: any) => (
@@ -101,6 +100,12 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
 
+const mockGetSelectedLayers = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getSelectedLayers: () => mockGetSelectedLayers(),
+}));
+
 import MultipassBlock from './MultipassBlock';
 
 const mockUseConfigPanelStore = jest.fn();
@@ -119,7 +124,7 @@ jest.mock('@core/app/stores/globalPreferenceStore', () => ({
 describe('test MultipassBlock when type is not panel-item', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
+    mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });

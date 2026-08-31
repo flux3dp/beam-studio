@@ -5,7 +5,6 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -230,7 +229,6 @@ export const setLayerLock = (
   if (parentCmd) {
     parentCmd.addSubCommand(cmd);
   } else {
-    cmd.onAfter = () => useLayerStore.getState().forceUpdate();
     undoManager.addCommandToHistory(cmd);
   }
 
@@ -245,7 +243,6 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
   }
 
   if (!batchCmd.isEmpty()) {
-    batchCmd.onAfter = () => useLayerStore.getState().forceUpdate();
     undoManager.addCommandToHistory(batchCmd);
   }
 
@@ -430,7 +427,6 @@ const insertLayerBefore = (layerName: string, anchorLayerName: string) => {
 
 export const moveLayersToPosition = (layerNames: string[], newPosition: number): void => {
   const batchCmd = new history.BatchCommand('Move Layer(s)');
-  const currentLayerName = layerManager.getCurrentLayerName()!;
 
   layerNames = sortLayerNamesByPosition(layerNames);
 
@@ -455,8 +451,8 @@ export const moveLayersToPosition = (layerNames: string[], newPosition: number):
   }
 
   if (!batchCmd.isEmpty()) {
-    layerManager.identifyLayers();
-    layerManager.setCurrentLayer(currentLayerName);
+    // resync preserves the current layer and selection across the reorder
+    layerManager.resync();
     undoManager.addCommandToHistory(batchCmd);
   }
 };
@@ -486,8 +482,7 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
     }
 
     moveSelectedToLayer(destLayer);
-    layerManager.setCurrentLayer(destLayer);
-    useLayerStore.getState().setSelectedLayers([destLayer]);
+    layerManager.setSelectedLayers([destLayer]);
     callback?.();
   };
   const selectedElements = selectionManager.getSelectedElements();

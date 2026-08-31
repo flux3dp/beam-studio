@@ -5,8 +5,6 @@ import { Button, Switch } from 'antd';
 import type { MenuProps } from 'antd';
 import { Popover } from 'antd-mobile';
 import classNames from 'classnames';
-import { pick } from 'remeda';
-import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
@@ -17,7 +15,7 @@ import type { PrintingColors } from '@core/app/constants/color-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -49,9 +47,7 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
   const LANG = lang.beambox.right_panel.layer_panel;
   const LANG2 = lang.alert;
   const workarea = useWorkarea();
-  const { forceUpdate, selectedLayers, setSelectedLayers } = useLayerStore(
-    useShallow(pick(['forceUpdate', 'selectedLayers', 'setSelectedLayers'])),
-  );
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const isMobile = useIsMobile();
   const { activeKey, updateActiveKey } = use(ObjectPanelContext);
   const [color, setColor] = useState(colorConstants.printingLayerColor[0]);
@@ -75,19 +71,18 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
   const handleCloneLayers = () => {
     const newLayers = cloneLayers(selectedLayers);
 
-    setSelectedLayers(newLayers);
+    layerManager.setSelectedLayers(newLayers);
   };
 
   const handleDeleteLayers = () => {
     deleteLayers(selectedLayers);
-    setSelectedLayers([]);
     presprayArea.togglePresprayArea();
   };
 
   const toggleLayerLocked = () => {
     selectionManager.clearSelection();
     setLayersLock(selectedLayers, !isLocked);
-    forceUpdate();
+    layerManager.resync();
   };
 
   const handleMergeDown = async () => {
@@ -131,7 +126,7 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
     const elem = layerManager.getLayerElementByName(baseLayer!);
 
     updateLayerColor(elem as SVGGElement);
-    setSelectedLayers([baseLayer]);
+    layerManager.setSelectedLayers([baseLayer]);
   };
 
   const isSelectingPrinterLayer =
@@ -166,7 +161,7 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
     const layer = selectedLayers[0];
 
     await splitFullColorLayer(layer);
-    setSelectedLayers([]);
+    layerManager.setSelectedLayers([]);
   };
 
   const handleLayerFullColor = (newColor?: string) => {
@@ -189,7 +184,7 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
       undoManager.addCommandToHistory(cmd);
     }
 
-    forceUpdate();
+    layerManager.resync();
   };
 
   const isMultiSelecting = selectedLayers.length > 1;

@@ -4,9 +4,9 @@ import { Switch } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -29,7 +29,7 @@ const AutoFocus = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-i
 
     const batchCmd = new history.BatchCommand('Change auto focus toggle');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => writeData(layerName, 'height', value, { batchCmd }));
+    layerManager.getSelectedLayers().forEach((layerName) => writeData(layerName, 'height', value, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

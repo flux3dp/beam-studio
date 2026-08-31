@@ -8,7 +8,6 @@ import type { EngraveDpiValue } from '@core/app/constants/resolutions';
 import { defaultEngraveDpiOptions, dpiValueMap, valueDpiMap } from '@core/app/constants/resolutions';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -49,7 +48,7 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
       const batchCmd = new history.BatchCommand('Change layers dpi');
       let shouldInitState = false;
 
-      useLayerStore.getState().selectedLayers.forEach((layerName) => {
+      layerManager.getSelectedLayers().forEach((layerName) => {
         const layer = layerManager.getLayerElementByName(layerName);
 
         if (!layer) return;

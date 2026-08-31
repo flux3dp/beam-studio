@@ -20,7 +20,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
@@ -131,7 +131,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
       const currentLayerName = layerManager.getCurrentLayerName();
 
-      useLayerStore.getState().setSelectedLayers([currentLayerName]);
+      layerManager.setSelectedLayers([currentLayerName]);
     }
   }, [selectedLayers, UIType]);
 
@@ -408,7 +408,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
           if (changedKeys.includes('power')) clearMinPower(layer, current.power.value, batchCmd);
         });
 
-        if (fullColorToggled) useLayerStore.getState().forceUpdate();
+        if (fullColorToggled) layerManager.resync();
 
         batchCmd.onAfter = initState;
         svgCanvas.addCommandToHistory(batchCmd);

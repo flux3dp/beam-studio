@@ -17,7 +17,7 @@ const mockInitState = jest.fn();
 jest.mock('./initState', () => mockInitState);
 
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 const mockWriteData = jest.fn();
 

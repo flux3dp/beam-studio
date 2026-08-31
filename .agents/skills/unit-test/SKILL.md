@@ -93,7 +93,7 @@ Location: `packages/core/src/__mocks__/`
 | `@core/app/stores/storageStore` | full in-memory store with `useStorageStore`, `getStorage`, `setStorage` |
 | `@core/app/stores/documentStore` | full in-memory store |
 | `@core/app/stores/globalPreferenceStore` | full in-memory store |
-| `@core/app/stores/layer/layerStore` | full in-memory store |
+| `@core/app/stores/layer/layerStore` | state-only in-memory store (no actions; seed with `useLayerStore.setState({...})` — layer mutations live on `layerManager`, mock that inline per spec) |
 | `@core/app/pages/Settings/useSettingStore` | in-memory settings store |
 | `@core/app/contexts/CanvasContext` | stub context provider |
 | `@core/app/widgets/UnitInput` | renders real `<input>` with `onChange` wired to `Number(e.target.value)` |

@@ -6,9 +6,9 @@ import classNames from 'classnames';
 import configOptions from '@core/app/constants/config-options';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -49,7 +49,7 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change multipass');
 
-      useLayerStore.getState().selectedLayers.forEach((layerName) => {
+      layerManager.getSelectedLayers().forEach((layerName) => {
         writeData(layerName, 'multipass', val, { batchCmd });
         writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
       });

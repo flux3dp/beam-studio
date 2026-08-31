@@ -16,7 +16,6 @@ import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -296,8 +295,7 @@ const mouseDown = async (evt: MouseEvent) => {
             const currentLayer = layerManager.getCurrentLayerElement();
 
             if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
-              layerManager.setCurrentLayer(targetLayer.title);
-              useLayerStore.getState().setSelectedLayers([targetLayer.title]);
+              layerManager.setSelectedLayers([targetLayer.title]);
             }
           }
         }
@@ -1111,7 +1109,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           selectionManager.tempGroupSelectedElements();
           svgEditor.updateContextPanel();
         } else if (tempLayer) {
-          useLayerStore.getState().setSelectedLayers([tempLayer]);
+          layerManager.setSelectedLayers([tempLayer]);
         }
       }
 
@@ -1122,8 +1120,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
         const currentLayer = layerManager.getCurrentLayerElement();
 
         if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
-          layerManager.setCurrentLayer(targetLayer.title);
-          useLayerStore.getState().setSelectedLayers([targetLayer.title]);
+          layerManager.setSelectedLayers([targetLayer.title]);
         }
       }
     // eslint-disable-next-line no-fallthrough

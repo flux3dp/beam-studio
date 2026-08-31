@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';

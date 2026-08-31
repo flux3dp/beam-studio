@@ -3,12 +3,13 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import AddLayerButton from './AddLayerButton';
-import { mockSetSelectedLayers } from '@mocks/@core/app/stores/layer/layerStore';
 
 const mockHasLayer = jest.fn();
+const mockSetSelectedLayers = jest.fn();
 
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   hasLayer: (...args) => mockHasLayer(...args),
+  setSelectedLayers: (...args) => mockSetSelectedLayers(...args),
 }));
 
 const mockCreateLayer = jest.fn();

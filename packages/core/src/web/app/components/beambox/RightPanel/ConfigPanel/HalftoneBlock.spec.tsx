@@ -20,7 +20,7 @@ const mockInitState = jest.fn();
 jest.mock('./initState', () => mockInitState);
 
 import HalftoneBlock from './HalftoneBlock';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 const mockAddCommandToHistory = jest.fn();
 

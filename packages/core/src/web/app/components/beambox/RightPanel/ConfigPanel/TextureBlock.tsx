@@ -7,9 +7,9 @@ import { pick } from 'remeda';
 import { useShallow } from 'zustand/shallow';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -34,7 +34,7 @@ const TextureBlock = ({ type = 'default' }: Props): React.JSX.Element => {
 
     const batchCmd = new history.BatchCommand('Toggle texture');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => {
+    layerManager.getSelectedLayers().forEach((layerName) => {
       writeData(layerName, 'texture', newVal, { batchCmd });
     });
     batchCmd.onAfter = initState;
@@ -52,7 +52,7 @@ const TextureBlock = ({ type = 'default' }: Props): React.JSX.Element => {
 
     const batchCmd = new history.BatchCommand('Change texture mode');
 
-    useLayerStore.getState().selectedLayers.forEach((layerName) => {
+    layerManager.getSelectedLayers().forEach((layerName) => {
       writeData(layerName, 'textureMode', newValue, { batchCmd });
     });
     batchCmd.onAfter = initState;

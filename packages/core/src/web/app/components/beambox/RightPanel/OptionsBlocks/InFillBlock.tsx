@@ -5,8 +5,8 @@ import classNames from 'classnames';
 
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
-import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -76,7 +76,7 @@ const InFillBlock = ({ elems, id = 'infill', label }: Props): React.ReactNode =>
       isAllFilled: !isAnyFilled,
       isAnyFilled: !isAnyFilled,
     }));
-    useLayerStore.getState().checkVector();
+    layerManager.checkVector();
   };
 
   const isPartiallyFilled = elems[0].tagName === 'g' && isAnyFilled && !isAllFilled;

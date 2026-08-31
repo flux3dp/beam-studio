@@ -3,7 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 
 const mockUseConfigPanelStore = jest.fn();
 
