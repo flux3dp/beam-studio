@@ -35,9 +35,12 @@ const drawEllipse = (x1: number, y1: number, x2: number, y2: number) => {
   cy.getElementTitle().should('have.text', 'Layer 1 > Oval');
   // Switching to Cursor drops the selection; rubber-band re-select (unfilled oval has no
   // clickable interior) so the dimension panel shows.
+  const rx = x2 - x1;
+  const ry = y2 - y1;
+  const margin = 10; // rubber-band select safe margin
   cy.clickToolBtn('Cursor');
-  cy.get('svg#svgcontent').trigger('mousedown', x1 - 20, y1 - 20, { force: true });
-  cy.get('svg#svgcontent').trigger('mousemove', x2 + 20, y2 + 20, { force: true });
+  cy.get('svg#svgcontent').trigger('mousedown', x1 - rx - margin, y1 - ry - margin, { force: true });
+  cy.get('svg#svgcontent').trigger('mousemove', x2 + margin, y2 + margin, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
   cy.getElementTitle().should('have.text', 'Layer 1 > Oval');
 };
