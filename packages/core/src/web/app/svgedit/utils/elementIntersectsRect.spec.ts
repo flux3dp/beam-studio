@@ -1,3 +1,22 @@
+// ts-jest interop drops the classes on PaperScope.prototype; re-expose the
+// ones the module uses on the real paper-core (see unit-test skill)
+jest.mock('paper', () => {
+  const core = require('paper/dist/paper-core.js');
+
+  core.setup(new core.Size(1, 1));
+
+  return {
+    CompoundPath: core.CompoundPath,
+    Matrix: core.Matrix,
+    Path: core.Path,
+    get project() {
+      return core.project;
+    },
+    setup: (...args: unknown[]) => core.setup(...args),
+    Size: core.Size,
+  };
+});
+
 import elementIntersectsRect from './elementIntersectsRect';
 
 const SVG_NS = 'http://www.w3.org/2000/svg';
@@ -107,6 +126,53 @@ describe('elementIntersectsRect', () => {
 
     test('rect over one child intersects', () => {
       expect(elementIntersectsRect(group, { height: 10, width: 10, x: 5, y: 5 }, contentCtmInverse)).toBe(true);
+    });
+  });
+
+  test('long path far from the band is pruned instead of densely sampled', () => {
+    // dense zig-zag column on the left plus one far segment: total length ~5500,
+    // bbox (0,0)-(500,998), hollow everywhere right of x=10
+    const verts: Array<[number, number]> = [];
+
+    for (let i = 0; i < 500; i++) verts.push([(i % 2) * 10, i * 2]);
+    verts.push([500, 998]);
+
+    const longPath = makePath(verts);
+    const spy = jest.spyOn(longPath, 'getPointAtLength' as never);
+
+    // band inside the bbox but ~290 units away from any outline point
+    expect(elementIntersectsRect(longPath, { height: 20, width: 20, x: 300, y: 400 }, contentCtmInverse)).toBe(false);
+    expect(spy.mock.calls.length).toBeLessThan(128);
+  });
+
+  describe('path with a d attribute goes through paper.js', () => {
+    const makeDPath = (d: string): SVGElement => {
+      const elem = makeBoxElem('path', { height: 100, width: 100, x: 0, y: 0 });
+
+      elem.setAttribute('d', d);
+      // present so elementIntersectsRect routes into the outline branch;
+      // paper answers from the d attribute before this is ever called
+      Object.assign(elem, { getTotalLength: () => 0 });
+
+      return elem;
+    };
+
+    const cPath = makeDPath('M100 0 L0 0 L0 100 L100 100');
+
+    test('band inside the cavity does not intersect', () => {
+      expect(elementIntersectsRect(cPath, { height: 20, width: 20, x: 40, y: 40 }, contentCtmInverse)).toBe(false);
+    });
+
+    test('band crossing the outline intersects', () => {
+      expect(elementIntersectsRect(cPath, { height: 20, width: 10, x: -5, y: 40 }, contentCtmInverse)).toBe(true);
+    });
+
+    test('subpath fully inside the band intersects', () => {
+      // two square subpaths at opposite corners, like two glyphs
+      const glyphs = makeDPath('M0 0 h10 v10 h-10 z M90 90 h10 v10 h-10 z');
+
+      expect(elementIntersectsRect(glyphs, { height: 20, width: 20, x: -5, y: -5 }, contentCtmInverse)).toBe(true);
+      expect(elementIntersectsRect(glyphs, { height: 20, width: 20, x: 40, y: 40 }, contentCtmInverse)).toBe(false);
     });
   });
 

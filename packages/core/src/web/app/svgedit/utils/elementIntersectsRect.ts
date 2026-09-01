@@ -1,9 +1,8 @@
+import paper from 'paper';
+
 import type { IRect } from '@core/interfaces/ISVGCanvas';
 
 import rectsIntersect from './rectsIntersect';
-
-const pointInRect = (rect: IRect, x: number, y: number): boolean =>
-  x >= rect.x && x <= rect.x + rect.width && y >= rect.y && y <= rect.y + rect.height;
 
 const applyMatrix = (m: DOMMatrix, x: number, y: number) => ({
   x: m.a * x + m.c * y + m.e,
@@ -48,7 +47,56 @@ const textIntersectsRect = (elem: SVGTextContentElement, rect: IRect, matrix: DO
   return false;
 };
 
+// getPointAtLength re-walks the path's segment list on every call (~ms per
+// call on a glyph-outline path), so for <path> elements parse the d attribute
+// once with paper.js and run a proper curve-vs-rect intersection instead.
+// Returns null when paper cannot handle the data, to fall back to probing.
+const pathDIntersectsRect = (d: string, rect: IRect, matrix: DOMMatrix): boolean | null => {
+  try {
+    if (!paper.project) paper.setup(new paper.Size(1, 1));
+
+    const compound = new paper.CompoundPath({ insert: false, pathData: d });
+
+    compound.transform(new paper.Matrix(matrix.a, matrix.b, matrix.c, matrix.d, matrix.e, matrix.f));
+
+    const rectPath = new paper.Path.Rectangle({
+      insert: false,
+      point: [rect.x, rect.y],
+      size: [rect.width, rect.height],
+    });
+
+    if (compound.intersects(rectPath)) return true;
+
+    // a subpath (e.g. one glyph) can lie entirely inside the band without
+    // its outline ever crossing the band edge
+    const subpaths = compound.children.length
+      ? (compound.children as paper.Path[])
+      : [compound as unknown as paper.Path];
+
+    return subpaths.some((subpath) => {
+      const point = subpath.firstSegment?.point;
+
+      return Boolean(point) && rectPath.contains(point);
+    });
+  } catch {
+    return null;
+  }
+};
+
+// Fallback for shapes without a d attribute (ellipse, rect, line...), where
+// getPointAtLength is cheap. Subdivide arc-length spans and prune: a point at
+// most `span` local units along the path from a probed point cannot be farther
+// than `span * scale` content units away from it, so a span whose probed
+// endpoint is farther from the band than it can travel is skipped whole.
 const outlineIntersectsRect = (elem: SVGGeometryElement, rect: IRect, matrix: DOMMatrix): boolean => {
+  const d = elem.getAttribute('d');
+
+  if (d) {
+    const paperResult = pathDIntersectsRect(d, rect, matrix);
+
+    if (paperResult !== null) return paperResult;
+  }
+
   let total: number;
 
   try {
@@ -61,18 +109,48 @@ const outlineIntersectsRect = (elem: SVGGeometryElement, rect: IRect, matrix: DO
 
   // scale factor from element-local units to content user units
   const scale = Math.hypot(matrix.a, matrix.b) || 1;
-  // half the band's smaller dimension (in local units): a segment crossing the
-  // band cannot be stepped over at this spacing
-  // ponytail: capped at 512 samples; an extremely long path may step past a tiny
-  // band — raise the cap or subdivide per-segment if users hit it
-  const sampleLength = Math.max(Math.min(rect.width, rect.height) / 2 / scale, total / 512);
+  // half the band's smaller dimension (in local units): a span shorter than
+  // this cannot cross the band unnoticed; floored so a degenerate band cannot
+  // subdivide forever
+  const resolution = Math.max(Math.min(rect.width, rect.height) / 2 / scale, total / 4096);
 
-  for (let i = 0; i <= total + sampleLength; i += sampleLength) {
-    const dist = Math.min(i, total); // clamp so the endpoint is sampled exactly
-    const point = elem.getPointAtLength(dist);
-    const { x, y } = applyMatrix(matrix, point.x, point.y);
+  // distance from a content-space point to the band, 0 if inside
+  const distToRect = ({ x, y }: { x: number; y: number }) =>
+    Math.hypot(Math.max(rect.x - x, x - rect.x - rect.width, 0), Math.max(rect.y - y, y - rect.y - rect.height, 0));
+  const probe = (dist: number) => {
+    const p = elem.getPointAtLength(dist);
 
-    if (pointInRect(rect, x, y)) return true;
+    return distToRect(applyMatrix(matrix, p.x, p.y));
+  };
+
+  // ponytail: 2048-probe cap; an over-budget path reports no hit, which can
+  // miss a selection on absurdly complex geometry near the band
+  let budget = 2048;
+  const dStart = probe(0);
+
+  if (dStart === 0) return true;
+
+  // spans as [lo, hi, distance from point at lo to the band]
+  const stack: Array<[number, number, number]> = [[0, total, dStart]];
+
+  while (stack.length && budget > 0) {
+    const [lo, hi, dLo] = stack.pop()!;
+    const span = hi - lo;
+
+    // no point within this span can reach the band
+    if (dLo > span * scale) continue;
+
+    if (span <= resolution) continue;
+
+    const mid = (lo + hi) / 2;
+
+    budget -= 1;
+
+    const dMid = probe(mid);
+
+    if (dMid === 0) return true;
+
+    stack.push([lo, mid, dLo], [mid, hi, dMid]);
   }
 
   return false;
@@ -82,8 +160,8 @@ const outlineIntersectsRect = (elem: SVGGeometryElement, rect: IRect, matrix: DO
  * Precise (narrow-phase) intersection test between an element and a rect in
  * content user space. Bbox overlap alone selects hollow shapes (a C shape, a
  * sparse group) when the rect lies entirely in their empty interior, so
- * geometry leaves are re-tested by sampling their outline and groups recurse
- * into their children.
+ * geometry leaves are re-tested along their outline and groups recurse into
+ * their children.
  * @param contentCtmInverse inverse of the content element's screen CTM
  */
 export const elementIntersectsRect = (element: Element, rect: IRect, contentCtmInverse: DOMMatrix): boolean => {
