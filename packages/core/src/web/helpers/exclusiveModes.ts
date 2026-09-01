@@ -3,7 +3,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 
 /**
  * Document modes that reshape the work area or the canvas itself, and therefore cannot be combined.

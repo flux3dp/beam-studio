@@ -10,7 +10,7 @@ const mockBatchAddSubCommand = jest.fn();
 const mockFinishUndoableChange = jest.fn(() => ({ isEmpty: () => false }));
 
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => 'fpm1');
-jest.mock('@core/helpers/innerEngraving', () => ({
+jest.mock('@core/helpers/addOn/innerEngraving', () => ({
   useInnerEngravingActive: () => mockUseInnerEngravingActive(),
 }));
 jest.mock('@core/app/svgedit/history/history', () => ({

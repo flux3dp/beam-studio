@@ -18,6 +18,8 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import selectionManager from '@core/app/svgedit/selection';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getAutoFeeder } from '@core/helpers/addOn';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -26,7 +28,6 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import getJobOrigin from '@core/helpers/job-origin';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';

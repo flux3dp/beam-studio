@@ -24,11 +24,11 @@ import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
-import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,

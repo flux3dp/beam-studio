@@ -1,5 +1,4 @@
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { uvModel } from '@core/helpers/is-dev';
 
 const removeReadonly = <T extends string>(arr: ReadonlyArray<T[number]> | T[]) => arr as string[];
 
@@ -11,7 +10,7 @@ export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));
 export const adorModelsArray = ['ado1', 'fad1'] as const;
 export const adorModels = new Set(adorModelsArray);
 
-export const promarkModelsArray = ['fpm1', uvModel] as const;
+export const promarkModelsArray = ['fpm1'] as const;
 export const promarkModels = new Set(promarkModelsArray);
 
 export const modelsWithPrinter4C = ['fbm2', 'fuv1'] as const;
@@ -51,11 +50,10 @@ export default {
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     fhx2rf: ['fhx2rf', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     flv1: ['flv1'],
-    fpm1: ['fpm1', uvModel],
+    fpm1: ['fpm1'],
     fuv1: ['fuv1', 'fbm2'],
     'laser-b1': ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     'laser-b2': ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
-    [uvModel]: ['fpm1', uvModel],
   },
   borderless: {
     safeDistance: {

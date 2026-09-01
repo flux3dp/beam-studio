@@ -12,7 +12,7 @@ let mockInnerEngraving = false;
 jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
   setMouseMode: mockSetMouseMode,
 }));
-jest.mock('@core/helpers/innerEngraving', () => ({
+jest.mock('@core/helpers/addOn/innerEngraving', () => ({
   useInnerEngravingActive: () => mockInnerEngraving,
 }));
 jest.mock(

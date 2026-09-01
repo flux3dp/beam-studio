@@ -29,8 +29,8 @@ const getInitDocumentStore = (): DocumentState => {
   const isDiodeEnabled = Boolean(preference['default-diode'] && addOnInfo.hybridLaser);
   const isBorderlessEnabled = Boolean(preference['default-borderless'] && addOnInfo.openBottom);
   const isRotaryEnabled = Boolean(preference.rotary_mode && addOnInfo.rotary);
-  // Not normalized against the model here: workarea-constants already imports this store, so
-  // calling supportInnerEngraving() would create an import cycle. Callers combine the two.
+  // Not normalized here: the helper reads this store and PromarkInfo, so callers combine the
+  // document toggle with the current machine capability.
   const isInnerEngravingEnabled = Boolean(preference['inner-engraving']);
 
   // Write default values to BeamboxPreference, may not need because the value will always reset by getInitDocumentStore

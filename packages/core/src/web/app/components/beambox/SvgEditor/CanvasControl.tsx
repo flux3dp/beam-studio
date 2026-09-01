@@ -12,7 +12,7 @@ import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import workareaManager from '@core/app/svgedit/workarea';
-import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './CanvasControl.module.scss';

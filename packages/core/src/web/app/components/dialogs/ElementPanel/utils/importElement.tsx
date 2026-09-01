@@ -11,9 +11,9 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { importPathAsStl, importSvgElementAsStl } from '@core/app/svgedit/operations/import/importStl/importPath';
 import { fixEnd } from '@core/app/svgedit/operations/pathActions';
 import selectionManager from '@core/app/svgedit/selection';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getNPIconByID } from '@core/helpers/api/flux-id';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

@@ -11,10 +11,10 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
 import { photoPlaneEvents } from '@core/app/svgedit/stl/photoPlane';
 import { setHref } from '@core/app/svgedit/utils/href';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { useAsyncTask } from '@core/helpers/hooks/useAsyncTask';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import ImageData from '@core/helpers/image-data';
-import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { ObjectPanelContext } from '../../contexts/ObjectPanelContext';

@@ -14,6 +14,7 @@ import { getMaterialHeightMm } from '@core/app/components/beambox/InnerEngraving
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { LaserType } from '@core/app/constants/promark-constants';
 import { type EngraveDpiOption, getEngraveDpmm } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -22,13 +23,14 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
-import isDev, { isUvDev, showDevMsg } from '@core/helpers/is-dev';
+import isDev, { showDevMsg } from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
@@ -326,7 +328,7 @@ export const getExportOpt = async (
     }
   }
 
-  if (isUvDev()) {
+  if (model === 'fpm1' && getPromarkInfo().laserType === LaserType.UV) {
     const devConfig = [
       'laser_on_delay',
       'laser_off_delay',

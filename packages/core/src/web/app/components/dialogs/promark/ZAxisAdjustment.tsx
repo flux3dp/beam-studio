@@ -7,14 +7,15 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
 import deviceConstants from '@core/app/constants/device-constants';
+import { LaserType } from '@core/app/constants/promark-constants';
 import Icons from '@core/app/icons/icons';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
-import { isUvDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -31,7 +32,7 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { model } = device;
   const isInch = useStorageStore((state) => state.isInch);
-  const uvDev = useMemo(() => isUvDev(), []);
+  const isUV = useMemo(() => getPromarkInfo().laserType === LaserType.UV, []);
   const [zAxis, setZAxis] = useState(1);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);
@@ -41,17 +42,17 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
   const movingTimeout = useRef<NodeJS.Timeout | null>(null);
 
   const inputProps = useMemo(() => {
-    const _isInch = isInch && !uvDev;
+    const _isInch = isInch && !isUV;
 
     return {
       addonAfter: _isInch ? 'in' : 'mm',
       isInch: _isInch,
       max: 100,
-      min: uvDev ? 0 : 1,
-      precision: _isInch ? 6 : uvDev ? 6 : 2,
-      step: _isInch ? 25.4 : uvDev ? 0.000625 : 1,
+      min: isUV ? 0 : 1,
+      precision: _isInch ? 6 : isUV ? 6 : 2,
+      step: _isInch ? 25.4 : isUV ? 0.000625 : 1,
     };
-  }, [isInch, uvDev]);
+  }, [isInch, isUV]);
 
   const waitTillNotRunning = async () => {
     await deviceMaster.waitTillStatusPredicate({

@@ -4,12 +4,12 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import selectionManager from '@core/app/svgedit/selection';
-import { isAtPage } from '@core/helpers/hashHelper';
 import {
   INNER_ENGRAVING_DISABLED_MENU_ITEMS,
   isInnerEngravingActive,
   resolveInnerEngravingActive,
-} from '@core/helpers/innerEngraving';
+} from '@core/helpers/addOn/innerEngraving';
+import { isAtPage } from '@core/helpers/hashHelper';
 import menu from '@core/implementations/menu';
 
 class BeamboxGlobalInteraction {

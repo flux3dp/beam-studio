@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
-import { Checkbox, ConfigProvider, InputNumber, Segmented, Switch, Tooltip } from 'antd';
+import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
@@ -15,11 +15,16 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
-import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
+import {
+  laserSourceWattMap,
+  LaserType,
+  laserTypes,
+  workareaOptions as pmWorkareaOptions,
+} from '@core/app/constants/promark-constants';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { defaultEngraveDpiOptions, dpiValueMap } from '@core/app/constants/resolutions';
 import type { AnnotatedWorkareaModel, ModelAnnotation } from '@core/app/constants/workarea-constants';
-import { getWorkarea, supportInnerEngraving, workareaOptions } from '@core/app/constants/workarea-constants';
+import { getWorkarea, workareaOptions } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
@@ -31,11 +36,12 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { supportInnerEngraving } from '@core/helpers/addOn/innerEngraving';
 import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { todo, uvModel } from '@core/helpers/is-dev';
+import { todo } from '@core/helpers/is-dev';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
@@ -59,15 +65,11 @@ import { showModuleSettings4C, showPassthroughSettings } from './utils';
 todo('useExclusiveBooleans');
 todo('Fix 內雕不應該被歸類於【擴充模組】之下；TBD 入口是否應參考【曲面雕刻】，放在 menu tool？');
 
-const promarkLaserOptions = [
-  { label: 'Desktop - 20W', value: `${LaserType.Desktop}-20` },
-  { label: 'Desktop - 30W', value: `${LaserType.Desktop}-30` },
-  { label: 'Desktop - 50W', value: `${LaserType.Desktop}-50` },
-  { label: 'MOPA - 20W', value: `${LaserType.MOPA}-20` },
-  { label: 'MOPA - 60W', value: `${LaserType.MOPA}-60` },
-  { label: 'MOPA - 100W', value: `${LaserType.MOPA}-100` },
-  { label: 'UV - 5W', value: `${LaserType.UV}-5` },
-];
+const promarkLaserOptions = laserTypes
+  .map((type) =>
+    laserSourceWattMap[type].map((watt) => ({ label: `${type} - ${watt}W`, value: `${LaserType[type]}-${watt}` })),
+  )
+  .flat();
 
 interface Props {
   unmount: () => void;
@@ -101,7 +103,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [innerEngraving, setInnerEngraving] = useState(useDocumentStore.getState()['inner-engraving']);
-  const supportsInnerEngraving = useMemo(() => supportInnerEngraving(workarea), [workarea]);
+  const supportsInnerEngraving = useMemo(() => supportInnerEngraving(workarea, pmInfo), [workarea, pmInfo]);
   const [rotaryMode, setRotaryMode] = useState(useDocumentStore.getState().rotary_mode);
   const [rotaryType, setRotaryType] = useState(useDocumentStore.getState()['rotary-type']);
   const [enableStartButton, setEnableStartButton] = useState(useDocumentStore.getState()['promark-start-button']);
@@ -178,28 +180,19 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     return hasCurveEngravingData || mode === CanvasMode.CurveEngraving;
   }, [addOnInfo.curveEngraving, hasCurveEngravingData, mode]);
 
-  const onWorkareaChange = useCallback(
-    (value: AnnotatedWorkareaModel) => {
-      const { annotation, workarea: newWorkarea } = decodeWorkareaAnnotation(value);
+  const onWorkareaChange = useCallback((value: AnnotatedWorkareaModel) => {
+    const { annotation, workarea: newWorkarea } = decodeWorkareaAnnotation(value);
 
-      setWorkareaAnnotation((pre) => ({
-        ...pre,
-        [newWorkarea]: annotation[newWorkarea as keyof typeof annotation],
-      }));
-      setWorkarea(newWorkarea);
+    setWorkareaAnnotation((pre) => ({
+      ...pre,
+      [newWorkarea]: annotation[newWorkarea as keyof typeof annotation],
+    }));
+    setWorkarea(newWorkarea);
 
-      if (newWorkarea === uvModel) {
-        setPmInfo({ laserType: LaserType.UV, watt: 5 });
-      } else if (newWorkarea === 'fpm1') {
-        setCheckSafetyDoor(!!annotation.fpm1?.safe);
-
-        if (workarea === uvModel) {
-          setPmInfo(getPromarkInfo());
-        }
-      }
-    },
-    [workarea],
-  );
+    if (newWorkarea === 'fpm1') {
+      setCheckSafetyDoor(!!annotation.fpm1?.safe);
+    }
+  }, []);
 
   // esther TODO: add a useExclusiveBooleans hook on top of this file? and add note "handle store subscribe, too"
   // pass-through, auto-feeder, rotary and inner engraving are exclusive, disable others when one is on
@@ -559,38 +552,19 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <label className={styles.title} htmlFor="customDimension">
                   {tDocument.workarea}
                 </label>
-                {workarea === uvModel ? (
-                  <InputNumber
-                    className={styles.control}
-                    id="customDimension-free"
-                    max={pmWorkareaOptions.at(-1)}
-                    min={1}
-                    onChange={(val) => {
-                      if (val === null) return;
-
-                      setCustomDimension((cur) => ({
-                        ...cur,
-                        [workarea]: { height: val, width: val },
-                      }));
-                    }}
-                    precision={0}
-                    value={customDimension[workarea]?.width ?? workareaObj.width}
-                  />
-                ) : (
-                  <Select
-                    className={styles.control}
-                    id="customDimension"
-                    onChange={(val) => {
-                      setCustomDimension((cur) => ({
-                        ...cur,
-                        [workarea]: { height: val, width: val },
-                      }));
-                    }}
-                    options={pmWorkareaOptions.map((value) => ({ label: `${value} x ${value} mm`, value }))}
-                    value={customDimension[workarea]?.width ?? workareaObj.width}
-                    variant="outlined"
-                  />
-                )}
+                <Select
+                  className={styles.control}
+                  id="customDimension"
+                  onChange={(val) => {
+                    setCustomDimension((cur) => ({
+                      ...cur,
+                      [workarea]: { height: val, width: val },
+                    }));
+                  }}
+                  options={pmWorkareaOptions.map((value) => ({ label: `${value} x ${value} mm`, value }))}
+                  value={customDimension[workarea]?.width ?? workareaObj.width}
+                  variant="outlined"
+                />
               </div>
             )}
             {isPromark && (
@@ -768,14 +742,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </>
           )}
-          <InnerEngravingBlock
-            innerEngraving={innerEngraving}
-            isCurveEngraving={isCurveEngraving}
-            renderWarningIcon={renderWarningIcon}
-            setInnerEngraving={setInnerEngraving}
-            show={supportsInnerEngraving}
-            workarea={workarea}
-          />
           <RotaryBlock
             addOnInfo={addOnInfo}
             borderless={borderless}
@@ -812,6 +778,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           ) : (
             (showPassThrough || showAutoFeeder) && <div className={styles.block}>{renderPassThroughBlock(true)}</div>
           )}
+          <InnerEngravingBlock
+            innerEngraving={innerEngraving}
+            isCurveEngraving={isCurveEngraving}
+            renderWarningIcon={renderWarningIcon}
+            setInnerEngraving={setInnerEngraving}
+            show={supportsInnerEngraving}
+            workarea={workarea}
+          />
         </div>
       </DraggableModal>
     </ConfigProvider>

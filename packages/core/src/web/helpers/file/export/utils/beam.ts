@@ -4,9 +4,9 @@ import { renderInnerEngravingThumbnail } from '@core/app/components/beambox/Inne
 import { getPointCloudSources, getStlSources } from '@core/app/svgedit/stl/sources';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import beamFileHelper from '@core/helpers/beam-file-helper';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';

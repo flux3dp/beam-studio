@@ -9,6 +9,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
+import { LaserType } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
@@ -40,8 +41,8 @@ import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';
 import { showBb2FirmwareWarning } from './device/bb2FirmwareWarning';
 import promarkDataStore from './device/promark/promark-data-store';
+import { getPromarkInfo } from './device/promark/promark-info';
 import i18n from './i18n';
-import { uvModel } from './is-dev';
 import VersionChecker from './version-checker';
 
 export type TakePictureOptions = { timeout?: number; useLowResolution?: boolean };
@@ -1482,10 +1483,10 @@ class DeviceMaster {
   }
 
   async setField(worksize: number, fieldData: Field = { angle: 0, offsetX: 0, offsetY: 0 }) {
-    const workarea = useDocumentStore.getState().workarea;
     const controlSocket = await this.getControl();
+    const isPromarkUV = useDocumentStore.getState().workarea === 'fpm1' && getPromarkInfo().laserType === LaserType.UV;
 
-    return controlSocket.addTask(controlSocket.setField, workarea === uvModel ? 75 : worksize, fieldData);
+    return controlSocket.addTask(controlSocket.setField, isPromarkUV ? 75 : worksize, fieldData);
   }
 
   async setGalvoParameters(data: GalvoParameters) {

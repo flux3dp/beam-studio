@@ -1,21 +1,31 @@
-import { supportInnerEngraving } from '@core/app/constants/workarea-constants';
+import { getAddOnInfo } from '@core/app/constants/addOn';
+import { LaserType } from '@core/app/constants/promark-constants';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { checkFpm1UV } from '@core/helpers/checkFeature';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { todo } from '@core/helpers/is-dev';
 import type { DocumentState } from '@core/interfaces/Preference';
+import type { PromarkInfo } from '@core/interfaces/Promark';
 
 type InnerEngravingState = Pick<DocumentState, 'inner-engraving' | 'workarea'>;
 
+/** Whether a work area and laser source can run inner engraving. */
+export const supportInnerEngraving = (model: WorkAreaModel, promarkInfo: PromarkInfo = getPromarkInfo()): boolean =>
+  checkFpm1UV() && Boolean(getAddOnInfo(model).innerEngraving) && promarkInfo.laserType === LaserType.UV;
+
 /** Resolve the effective mode from both the document toggle and machine capability. */
-export const resolveInnerEngravingActive = (state: InnerEngravingState): boolean =>
-  state['inner-engraving'] && supportInnerEngraving(state.workarea);
+export const resolveInnerEngravingActive = (
+  state: InnerEngravingState,
+  promarkInfo: PromarkInfo = getPromarkInfo(),
+): boolean => state['inner-engraving'] && supportInnerEngraving(state.workarea, promarkInfo);
 
 /**
  * Whether inner engraving mode is currently active.
  *
  * The document store only holds the user's toggle: it cannot combine it with the model capability
- * itself, because `workarea-constants` already imports the store. Callers use these helpers instead
- * of reading `inner-engraving` directly, so a document saved on a Promark UV does not put another
- * machine into inner engraving mode.
+ * itself. Callers use these helpers instead of reading `inner-engraving` directly, so a document
+ * saved with a Promark UV source does not put another machine into inner engraving mode.
  */
 export const isInnerEngravingActive = (): boolean => {
   return resolveInnerEngravingActive(useDocumentStore.getState());

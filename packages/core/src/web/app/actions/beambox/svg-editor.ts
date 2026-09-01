@@ -56,7 +56,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';

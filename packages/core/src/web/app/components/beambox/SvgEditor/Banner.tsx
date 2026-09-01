@@ -12,7 +12,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
-import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Banner.module.scss';

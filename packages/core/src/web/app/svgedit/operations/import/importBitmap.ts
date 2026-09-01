@@ -1,7 +1,7 @@
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import workareaManager from '@core/app/svgedit/workarea';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 
 import layerManager from '../../layer/layerManager';

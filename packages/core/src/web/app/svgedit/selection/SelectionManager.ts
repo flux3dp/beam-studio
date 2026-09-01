@@ -1,7 +1,7 @@
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import NS from '@core/app/constants/namespaces';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';

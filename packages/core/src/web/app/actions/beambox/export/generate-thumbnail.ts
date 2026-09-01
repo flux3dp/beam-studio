@@ -2,8 +2,8 @@ import { renderInnerEngravingThumbnail } from '@core/app/components/beambox/Inne
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getSvgContentActualBBox } from '@core/helpers/file/export/utils/getBBox';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 
 /** The width the 2D path caps its thumbnail at; the 3D one matches it so both look the same size. */
 const MAX_THUMBNAIL_SIZE = 500;

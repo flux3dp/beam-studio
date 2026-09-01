@@ -1,5 +1,5 @@
 import { checkBM2CurveEngraving } from '@core/helpers/checkFeature';
-import isDev, { uvModel } from '@core/helpers/is-dev';
+import isDev from '@core/helpers/is-dev';
 
 import type { WorkAreaModel } from './workarea-constants';
 
@@ -39,6 +39,16 @@ export interface AddOnInfo {
   curveEngraving?: { acceleration?: number };
   framingLowLaser?: boolean;
   hybridLaser?: boolean;
+  /**
+   * innerEngraving
+   * non-null value means the model supports inner engraving (FLUX crystal inner carving)
+   * maxMaterialHeight: maximum material height in mm
+   * zPrecision: minimum z step in mm
+   */
+  innerEngraving?: {
+    maxMaterialHeight: number;
+    zPrecision: number;
+  };
   jobOrigin?: boolean;
   lowerFocus?: boolean;
   multiModules?: boolean;
@@ -200,6 +210,10 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fpm1: {
+    // z travel is about 470mm, focusing takes up 100~200mm of it. 300mm is a conservative
+    // starting point, to be relaxed once verified on real hardware.
+    // zPrecision is for frontend configuration, not the actual hardware limit.
+    innerEngraving: { maxMaterialHeight: 300, zPrecision: 0.001 },
     lowerFocus: true,
     rotary: {
       chuck: true,
@@ -219,16 +233,6 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       extendWorkarea: true,
       mirror: true,
       roller: true,
-    },
-  },
-  [uvModel]: {
-    lowerFocus: true,
-    rotary: {
-      chuck: true,
-      extendWorkarea: true,
-      mirror: true,
-      roller: true,
-      split: true,
     },
   },
 };

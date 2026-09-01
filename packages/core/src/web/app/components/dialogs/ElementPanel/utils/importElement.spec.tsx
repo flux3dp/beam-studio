@@ -13,7 +13,7 @@ jest.mock('@core/app/svgedit/operations/import/importStl/importPath', () => ({
   importSvgElementAsStl: (...args: unknown[]) => mockImportSvgElementAsStl(...args),
 }));
 
-jest.mock('@core/helpers/innerEngraving', () => ({
+jest.mock('@core/helpers/addOn/innerEngraving', () => ({
   isInnerEngravingActive: () => mockIsInnerEngravingActive(),
 }));
 

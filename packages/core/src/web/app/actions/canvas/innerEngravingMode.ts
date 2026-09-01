@@ -1,9 +1,11 @@
+import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
+import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
+import type { PromarkInfo } from '@core/interfaces/Promark';
 
 let svgEditor: ISVGEditor;
 
@@ -24,20 +26,24 @@ getSVGAsync(({ Editor }) => {
  *    let one undo step reach back into a document that no longer exists — the meshes behind it are
  *    already disposed of, so it could not be restored anyway
  *
+ * @param promarkInfo a Promark laser source to apply after the current document is cleared
  * @param workarea a work area to move to at the same time, for turning the mode on from a machine
- *   that cannot do it. Applied after the clear, so the save prompt still offers the old document
+ *   that cannot do it. Both options are applied after the clear, so the save prompt still offers
+ *   the old document.
  * @returns whether the switch happened
  */
 export const switchInnerEngravingMode = async (
   enabled: boolean,
-  { workarea }: { workarea?: WorkAreaModel } = {},
+  { promarkInfo, workarea }: { promarkInfo?: PromarkInfo; workarea?: WorkAreaModel } = {},
 ): Promise<boolean> => {
-  if (isInnerEngravingActive() === enabled && !workarea) return true;
+  if (isInnerEngravingActive() === enabled && !promarkInfo && !workarea) return true;
 
   // clearScene owns the save prompt and resets the undo stack; svgCanvas.clear() drops the meshes
   if (!(await svgEditor.clearScene())) return false;
 
   if (workarea) changeWorkarea(workarea);
+
+  if (promarkInfo) setPromarkInfo(promarkInfo);
 
   useDocumentStore.getState().set('inner-engraving', enabled);
 

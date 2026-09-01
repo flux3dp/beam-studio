@@ -1,6 +1,6 @@
 const mockIsInnerEngravingActive = jest.fn();
 
-jest.mock('@core/helpers/innerEngraving', () => ({
+jest.mock('@core/helpers/addOn/innerEngraving', () => ({
   isInnerEngravingActive: () => mockIsInnerEngravingActive(),
 }));
 

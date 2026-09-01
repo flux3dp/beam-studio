@@ -16,9 +16,9 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import { getStorage } from '@core/app/stores/storageStore';
 import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { getAutoFeeder } from '@core/helpers/addOn';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';

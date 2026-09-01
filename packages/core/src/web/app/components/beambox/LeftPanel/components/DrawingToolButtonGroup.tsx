@@ -15,9 +15,9 @@ import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import insertDefaultTextAsStl from '@core/app/svgedit/operations/import/importStl/insertDefaultText';
 import selectionManager from '@core/app/svgedit/selection';
 import { createParamsLabel } from '@core/app/svgedit/text/paramsLabel';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
-import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { isParamsLabelDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 

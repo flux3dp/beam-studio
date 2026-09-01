@@ -8,8 +8,8 @@ import dayjs from 'dayjs';
 
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { isInnerEngravingFile } from '@core/helpers/addOn/innerEngraving';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
-import { isInnerEngravingFile } from '@core/helpers/innerEngraving';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
 import styles from './GridFile.module.scss';

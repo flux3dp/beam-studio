@@ -2,9 +2,8 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { LaserType } from '@core/app/constants/promark-constants';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { showDevMsg, uvModel } from '@core/helpers/is-dev';
+import { showDevMsg } from '@core/helpers/is-dev';
 import storage from '@core/implementations/storage';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
@@ -22,7 +21,6 @@ let messageCache = {
   laserType: null as LaserType | null,
   serial: null as null | string,
   watt: null as null | number,
-  workarea: null as null | string,
 };
 
 const _getSerial = (): string => {
@@ -64,32 +62,16 @@ export const initPromarkInfo = (serial: string): void => {
   promarkDataStore.set(serial, 'info', promarkDataStore.get(getFallbackSerial(), 'info') || defaultValue);
 };
 
-const _getPromarkInfo = (): PromarkInfo => {
-  const serial = getSerial();
-  const workarea = useDocumentStore.getState().workarea;
-  const isPromarkUV = workarea === uvModel;
-
-  if (isPromarkUV) {
-    return { laserType: LaserType.UV, watt: 5 };
-  }
-
-  return promarkDataStore.get(serial, 'info') || defaultValue;
-};
-
 export const getPromarkInfo = (): PromarkInfo => {
-  const workarea = useDocumentStore.getState().workarea;
-  const data = _getPromarkInfo();
+  const serial = getSerial();
+  const data = promarkDataStore.get(serial, 'info') || defaultValue;
 
-  if (
-    showDevMsg() &&
-    (messageCache.laserType !== data.laserType || messageCache.watt !== data.watt || messageCache.workarea !== workarea)
-  ) {
+  if (showDevMsg() && (messageCache.laserType !== data.laserType || messageCache.watt !== data.watt)) {
     messageCache.laserType = data.laserType;
     messageCache.watt = data.watt;
-    messageCache.workarea = workarea;
 
     MessageCaller.openMessage({
-      content: `Current Promark Info: Laser Type - ${LaserType[data.laserType]}, Watt - ${data.watt}, Workarea - ${workarea}`,
+      content: `Current Promark Info: Laser Type - ${LaserType[data.laserType]}, Watt - ${data.watt}`,
       level: MessageLevel.INFO,
     });
   }

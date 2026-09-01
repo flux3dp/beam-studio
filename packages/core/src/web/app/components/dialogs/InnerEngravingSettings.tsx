@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react';
 import { Alert, Button, Segmented } from 'antd';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { MaterialShape } from '@core/app/constants/innerEngraving';
 import {
   FOCAL_LENGTH_LIMIT,
@@ -44,7 +45,7 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
   const isInch = useStorageStore((state) => state.isInch);
   const model = useMemo(() => workarea ?? useDocumentStore.getState().workarea, [workarea]);
   // the machine's Z travel bounds the material, so the limit follows the model rather than the input
-  const maxHeight = useMemo(() => getWorkarea(model).innerEngraving?.maxMaterialHeight ?? 300, [model]);
+  const maxHeight = useMemo(() => getAddOnInfo(model).innerEngraving?.maxMaterialHeight ?? 300, [model]);
   const workareaSize = useMemo(() => {
     const { height: modelHeight, width: modelWidth } = getWorkarea(model);
     const customized = useDocumentStore.getState()['customized-dimension'][model];

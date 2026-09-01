@@ -17,9 +17,9 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import setupTextInputEvents from '@core/app/svgedit/text/setupTextInputEvents';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
-import { useInnerEngravingActive } from '@core/helpers/innerEngraving';
 import { todo } from '@core/helpers/is-dev';
 import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
 

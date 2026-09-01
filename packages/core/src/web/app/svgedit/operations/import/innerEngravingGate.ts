@@ -3,13 +3,17 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import { switchInnerEngravingMode } from '@core/app/actions/canvas/innerEngravingMode';
 import alertConstants from '@core/app/constants/alert-constants';
+import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getWorkarea, supportInnerEngraving } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { isInnerEngravingActive, supportInnerEngraving } from '@core/helpers/addOn/innerEngraving';
 import { checkFpm1UV } from '@core/helpers/checkFeature';
+import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import i18n from '@core/helpers/i18n';
-import { isInnerEngravingActive } from '@core/helpers/innerEngraving';
-import { uvModel } from '@core/helpers/is-dev';
+import type { PromarkInfo } from '@core/interfaces/Promark';
+
+const PROMARK_UV_INFO = { laserType: LaserType.UV, watt: 5 } satisfies PromarkInfo;
 
 const ask = (caption: string, message: string): Promise<boolean> =>
   new Promise<boolean>((resolve) => {
@@ -33,7 +37,7 @@ const ask = (caption: string, message: string): Promise<boolean> =>
  * to, because it changes the whole document, not just the canvas.
  */
 export const getInnerEngravingWorkarea = (current: WorkAreaModel): null | WorkAreaModel =>
-  supportInnerEngraving(current) ? null : uvModel;
+  supportInnerEngraving(current) ? null : 'fpm1';
 
 /**
  * Decide what a file's inner engraving flag means for the current document, asking when it costs a
@@ -71,7 +75,11 @@ export const resolveInnerEngravingForFile = async (
   const t = i18n.lang.inner_engraving;
   const accepted = await ask(t.mode_switch_title, sprintf(t.file_needs_workarea, getWorkarea(target).label));
 
-  return accepted ? { innerEngraving: true, workarea: target } : { innerEngraving: false, workarea: null };
+  if (!accepted) return { innerEngraving: false, workarea: null };
+
+  setPromarkInfo(PROMARK_UV_INFO);
+
+  return { innerEngraving: true, workarea: target };
 };
 
 /**
@@ -116,5 +124,5 @@ export const ensureModeForImport = async (needsInnerEngraving: boolean): Promise
 
   if (!(await ask(t.mode_switch_title, message))) return false;
 
-  return switchInnerEngravingMode(true, { workarea: target ?? undefined });
+  return switchInnerEngravingMode(true, { promarkInfo: PROMARK_UV_INFO, workarea: target ?? undefined });
 };

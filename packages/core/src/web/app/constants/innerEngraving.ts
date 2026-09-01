@@ -16,7 +16,7 @@ export type MaterialShape = (typeof MATERIAL_SHAPES)[number];
  *
  * ⚠️ XY is deliberately **not** capped by the work area: a workpiece may be larger than the 70x70mm
  * work area, only the part inside it can be engraved. The cap here is a sanity bound for the input,
- * not a hardware limit. Height is capped per model by `workareaConstants[model].innerEngraving`.
+ * not a hardware limit. Height is capped per model by `getAddOnInfo(model).innerEngraving`.
  */
 export const MATERIAL_SIZE_LIMIT = { max: 1000, min: 1 } as const;
 

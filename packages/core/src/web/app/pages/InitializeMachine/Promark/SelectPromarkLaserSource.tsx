@@ -4,7 +4,7 @@ import type { RadioChangeEvent } from 'antd';
 import { Divider, Flex, Radio, Space } from 'antd';
 import classNames from 'classnames';
 
-import { laserSourceWattMap, LaserType, workareaOptions } from '@core/app/constants/promark-constants';
+import { laserSourceWattMap, LaserType, laserTypes, workareaOptions } from '@core/app/constants/promark-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import useI18n from '@core/helpers/useI18n';
@@ -27,9 +27,9 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
     }));
   const generateWorkareaOptions = () => workareaOptions.map((area) => ({ label: `${area}x${area}`, value: area }));
 
-  const renderLaserSourceRadio = (options: ReturnType<typeof generateLaserSourceOptions>) => (
-    <Space direction="vertical">
-      {options.map(({ label, value }) => (
+  const renderLaserSourceRadio = (source: keyof typeof laserSourceWattMap) => (
+    <Space direction="vertical" key={source}>
+      {generateLaserSourceOptions(source).map(({ label, value }) => (
         <Radio key={value} value={value}>
           {label}
         </Radio>
@@ -40,9 +40,11 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
   const onLaserSourceChange = ({ target: { value } }: RadioChangeEvent) => {
     setLaserSource(value);
 
-    // setup 110mm for Promark MOPA 20W by default, otherwise 220mm
+    // setup 110mm for Promark MOPA 20W, 70mm for UV 5W by default, otherwise 220mm
     if (value === 'MOPA-20') {
       setWorkarea(110);
+    } else if (value === 'UV-5') {
+      setWorkarea(70);
     } else {
       setWorkarea(220);
     }
@@ -51,7 +53,7 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
 
   const handleNext = () => {
     const { 'customized-dimension': customizedDimension, set } = useDocumentStore.getState();
-    const [source, watt] = laserSource.split('-') as ['Desktop' | 'MOPA', string];
+    const [source, watt] = laserSource.split('-') as [keyof typeof laserSourceWattMap, string];
 
     set('customized-dimension', {
       ...customizedDimension,
@@ -86,8 +88,7 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
             <Flex>
               <Radio.Group onChange={onLaserSourceChange} value={laserSource}>
                 <Space split={<Divider className={styles['space-divider']} type="vertical" />}>
-                  {renderLaserSourceRadio(generateLaserSourceOptions('Desktop'))}
-                  {renderLaserSourceRadio(generateLaserSourceOptions('MOPA'))}
+                  {laserTypes.map((type) => renderLaserSourceRadio(type))}
                 </Space>
               </Radio.Group>
             </Flex>
