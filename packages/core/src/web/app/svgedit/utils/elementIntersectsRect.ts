@@ -10,6 +10,44 @@ const applyMatrix = (m: DOMMatrix, x: number, y: number) => ({
   y: m.b * x + m.d * y + m.f,
 });
 
+// axis-aligned hull of a local-space rect mapped to content user space
+const mapRectHull = (bbox: IRect, matrix: DOMMatrix): IRect => {
+  const corners = [
+    applyMatrix(matrix, bbox.x, bbox.y),
+    applyMatrix(matrix, bbox.x + bbox.width, bbox.y),
+    applyMatrix(matrix, bbox.x + bbox.width, bbox.y + bbox.height),
+    applyMatrix(matrix, bbox.x, bbox.y + bbox.height),
+  ];
+  const xs = corners.map((p) => p.x);
+  const ys = corners.map((p) => p.y);
+
+  return {
+    height: Math.max(...ys) - Math.min(...ys),
+    width: Math.max(...xs) - Math.min(...xs),
+    x: Math.min(...xs),
+    y: Math.min(...ys),
+  };
+};
+
+const textIntersectsRect = (elem: SVGTextContentElement, rect: IRect, matrix: DOMMatrix): boolean => {
+  let count: number;
+
+  try {
+    count = elem.getNumberOfChars();
+  } catch {
+    return true;
+  }
+
+  // no chars (or absurdly many) -> keep the bbox answer
+  if (!count || count > 512) return true;
+
+  for (let i = 0; i < count; i++) {
+    if (rectsIntersect(rect, mapRectHull(elem.getExtentOfChar(i), matrix))) return true;
+  }
+
+  return false;
+};
+
 const outlineIntersectsRect = (elem: SVGGeometryElement, rect: IRect, matrix: DOMMatrix): boolean => {
   let total: number;
 
@@ -69,22 +107,7 @@ export const elementIntersectsRect = (element: Element, rect: IRect, contentCtmI
     return false;
   }
 
-  const corners = [
-    applyMatrix(matrix, bbox.x, bbox.y),
-    applyMatrix(matrix, bbox.x + bbox.width, bbox.y),
-    applyMatrix(matrix, bbox.x + bbox.width, bbox.y + bbox.height),
-    applyMatrix(matrix, bbox.x, bbox.y + bbox.height),
-  ];
-  const xs = corners.map((p) => p.x);
-  const ys = corners.map((p) => p.y);
-  const hull = {
-    height: Math.max(...ys) - Math.min(...ys),
-    width: Math.max(...xs) - Math.min(...xs),
-    x: Math.min(...xs),
-    y: Math.min(...ys),
-  };
-
-  if (!rectsIntersect(rect, hull)) return false;
+  if (!rectsIntersect(rect, mapRectHull(bbox, matrix))) return false;
 
   if (elem.tagName === 'g') {
     return Array.from(elem.childNodes).some(
@@ -92,10 +115,18 @@ export const elementIntersectsRect = (element: Element, rect: IRect, contentCtmI
     );
   }
 
-  // text / image / use have no outline to sample; their bbox is close enough
-  if (typeof (elem as SVGGeometryElement).getTotalLength !== 'function') return true;
+  if (typeof (elem as SVGGeometryElement).getTotalLength === 'function') {
+    return outlineIntersectsRect(elem as SVGGeometryElement, rect, matrix);
+  }
 
-  return outlineIntersectsRect(elem as SVGGeometryElement, rect, matrix);
+  // text is hollow like a C shape when laid along a path, so test per-character
+  // extents, which hug the actual glyphs
+  if (typeof (elem as SVGTextContentElement).getNumberOfChars === 'function') {
+    return textIntersectsRect(elem as SVGTextContentElement, rect, matrix);
+  }
+
+  // image / use have no outline to sample; their bbox is close enough
+  return true;
 };
 
 export default elementIntersectsRect;

@@ -110,6 +110,41 @@ describe('elementIntersectsRect', () => {
     });
   });
 
+  describe('text with per-character extents', () => {
+    // four glyphs at the corners of a ring, bbox (0,0)-(100,100) — like text on a circle path
+    const makeText = (extents: Array<{ height: number; width: number; x: number; y: number }>): SVGElement => {
+      const elem = makeBoxElem('text', { height: 100, width: 100, x: 0, y: 0 });
+
+      Object.assign(elem, {
+        getExtentOfChar: (i: number) => extents[i],
+        getNumberOfChars: () => extents.length,
+      });
+
+      return elem;
+    };
+
+    const ringText = makeText([
+      { height: 10, width: 10, x: 45, y: 0 },
+      { height: 10, width: 10, x: 90, y: 45 },
+      { height: 10, width: 10, x: 45, y: 90 },
+      { height: 10, width: 10, x: 0, y: 45 },
+    ]);
+
+    test('rect inside the ring does not intersect', () => {
+      expect(elementIntersectsRect(ringText, { height: 20, width: 20, x: 40, y: 40 }, contentCtmInverse)).toBe(false);
+    });
+
+    test('rect over a glyph intersects', () => {
+      expect(elementIntersectsRect(ringText, { height: 10, width: 10, x: 48, y: 5 }, contentCtmInverse)).toBe(true);
+    });
+
+    test('empty text falls back to bbox overlap', () => {
+      expect(elementIntersectsRect(makeText([]), { height: 20, width: 20, x: 40, y: 40 }, contentCtmInverse)).toBe(
+        true,
+      );
+    });
+  });
+
   test('non-geometry leaf falls back to bbox overlap', () => {
     const image = makeBoxElem('image', { height: 50, width: 50, x: 0, y: 0 });
 
