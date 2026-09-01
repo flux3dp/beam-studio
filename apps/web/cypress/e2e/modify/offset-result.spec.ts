@@ -53,10 +53,7 @@ const runOffset = (direction: 'inward' | 'outward', distance: number) => {
   // Direction Select has no testid — locate it by the field whose label is "Offset Direction".
   const label = direction === 'outward' ? 'Outward' : 'Inward';
 
-  cy.contains('span', 'Offset Direction')
-    .parent()
-    .find('.ant-select')
-    .click();
+  cy.contains('span', 'Offset Direction').parent().find('.ant-select').click();
   cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
     .find('.ant-select-item-option')
     .contains(label)
@@ -202,7 +199,7 @@ describe('offset result correctness', () => {
 
   it('compound (concentric rects): outward offset follows only the outer outline', () => {
     // Outer rect (larger)
-    drawRect(80, 80, 320, 320);
+    drawRect(80, 80, 500, 500);
     cy.showPanel('objects');
 
     let outerW = 0;
