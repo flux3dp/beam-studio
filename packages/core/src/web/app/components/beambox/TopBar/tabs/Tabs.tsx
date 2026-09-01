@@ -12,7 +12,6 @@ import { TabConstants } from '@core/app/constants/ipcEvents';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import cloudFile from '@core/helpers/api/cloudFile';
-import { isMac } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type Tab from '@core/interfaces/Tab';
 
@@ -140,10 +139,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
                 if (isWelcomeTab) {
                   return (
                     <div
-                      className={classNames(styles.tab, styles.small, {
-                        [styles.focused]: currentId === id,
-                        [styles.wide]: !isMac(),
-                      })}
+                      className={classNames(styles.tab, styles.small, { [styles.focused]: currentId === id })}
                       key={id}
                       onClick={() => tabController.focusTab(id)}
                     >

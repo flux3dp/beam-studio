@@ -11,7 +11,7 @@ exports[`test Tabs should render correctly 1`] = `
       data-rfd-droppable-id="tabs"
     >
       <div
-        class="tab small wide"
+        class="tab small"
       >
         <span
           aria-label="home"
