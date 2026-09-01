@@ -12,6 +12,7 @@
 // -- This is a parent command --
 
 const setStorage = () => {
+  window.localStorage.setItem('active-lang', '"en"');
   window.localStorage.setItem('printer-is-ready', 'true');
   window.localStorage.setItem('keep-flux-id-login', 'true');
   window.localStorage.setItem('enable-sentry', 'false');
