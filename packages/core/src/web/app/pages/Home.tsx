@@ -1,6 +1,6 @@
 import * as React from 'react';
 
-import appSettings from '@core/app/app-settings';
+import { supportedLangs } from '@core/app/lang';
 import Modal from '@core/app/widgets/Modal';
 import SelectView from '@core/app/widgets/Select';
 import i18n from '@core/helpers/i18n';
@@ -9,15 +9,13 @@ function Home(): React.JSX.Element {
   const [lang, changeLang] = React.useState(i18n.lang);
   const getLanguageOptions = () => {
     const options = [];
-    const langCodes = Object.keys(appSettings.i18n.supported_langs) as Array<
-      keyof typeof appSettings.i18n.supported_langs
-    >;
+    const langCodes = Object.keys(supportedLangs) as Array<keyof typeof supportedLangs>;
 
     for (let i = 0; i < langCodes.length; i += 1) {
       const langCode = langCodes[i];
 
       options.push({
-        label: appSettings.i18n.supported_langs[langCode],
+        label: supportedLangs[langCode],
         selected: langCode === i18n.getActiveLang(),
         value: langCode,
       });

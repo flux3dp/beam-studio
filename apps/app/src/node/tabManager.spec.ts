@@ -107,6 +107,9 @@ const emitIpc = (event: string, sender: FakeWebContents | { id: number }, ...arg
 };
 
 jest.mock('electron', () => ({
+  get app() {
+    return { getLocale: () => 'en' };
+  },
   get ipcMain() {
     return ipcMainMock;
   },
@@ -119,6 +122,7 @@ jest.mock('@electron/remote/main', () => ({ enable: jest.fn() }));
 
 // i18n / initStore pull in electron-store & the full lang tree — stub them out.
 jest.mock('./helpers/initStore', () => jest.fn());
+jest.mock('electron-store', () => jest.fn(() => ({ get: jest.fn() })));
 
 import TabManager from './tabManager';
 

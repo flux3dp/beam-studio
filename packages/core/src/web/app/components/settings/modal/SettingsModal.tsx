@@ -3,7 +3,7 @@ import React, { useCallback, useMemo, useState } from 'react';
 import { Button } from 'antd';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import AppSettings from '@core/app/app-settings';
+import { supportedLangs } from '@core/app/lang';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
@@ -94,7 +94,7 @@ const SettingsModal = ({
       editingAutosaveConfig,
       setEditingAutosaveConfig,
       setWarnings,
-      supportedLangs: AppSettings.i18n.supported_langs,
+      supportedLangs,
       unitInputProps,
       warnings,
     }),
