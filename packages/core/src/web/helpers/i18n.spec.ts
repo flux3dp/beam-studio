@@ -50,3 +50,29 @@ describe('test i18n', () => {
     expect(i18n.lang.topbar.untitled).toBe('Untitled');
   });
 });
+
+describe('native language fallback (no stored active-lang)', () => {
+  const setNavigatorLanguage = (value: string) =>
+    Object.defineProperty(window.navigator, 'language', { configurable: true, value });
+
+  afterAll(() => setNavigatorLanguage('en-US'));
+
+  test.each([
+    ['en-US', 'en'],
+    ['ja-JP', 'ja'],
+    ['ko', 'kr'],
+    ['ko-KR', 'kr'],
+    ['sv-SE', 'se'],
+    ['nb-NO', 'no'],
+    ['zh-TW', 'zh-tw'],
+    ['zh-Hant-TW', 'zh-tw'],
+    ['zh-HK', 'zh-tw'],
+    ['zh', 'zh-cn'],
+    ['zh-Hans-CN', 'zh-cn'],
+    ['ar-EG', 'en'],
+  ])('%s → %s', (navLang, expected) => {
+    setNavigatorLanguage(navLang);
+    resetI18n();
+    expect(i18n.getActiveLang()).toBe(expected);
+  });
+});
