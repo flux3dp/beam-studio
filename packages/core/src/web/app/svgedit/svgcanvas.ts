@@ -44,6 +44,8 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import elementIntersectsRect from '@core/app/svgedit/utils/elementIntersectsRect';
+import rectsIntersect from '@core/app/svgedit/utils/rectsIntersect';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getAttributes } from '@core/helpers/element/attribute';
@@ -758,13 +760,20 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
 
       var i = curBBoxes.length;
+      // precise check only for rubber-band selection; getMouseTarget's sensor
+      // region relies on plain bbox candidates
+      const contentCtmInverse = rect ? null : svgcontent.getScreenCTM()?.inverse();
 
       while (i--) {
         if (!rubberBBox.width) {
           continue;
         }
 
-        if (svgedit.math.rectsIntersect(rubberBBox, curBBoxes[i].bbox)) {
+        if (rectsIntersect(rubberBBox, curBBoxes[i].bbox)) {
+          if (contentCtmInverse && !elementIntersectsRect(curBBoxes[i].elem, rubberBBox, contentCtmInverse)) {
+            continue;
+          }
+
           resultList.push(curBBoxes[i].elem);
         }
       }

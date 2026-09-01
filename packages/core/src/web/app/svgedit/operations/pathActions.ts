@@ -28,6 +28,7 @@ import Path from '../path/Path';
 import Segment from '../path/Segment';
 import { remapElement } from '../transform/coords';
 import { getBBox } from '../utils/getBBox';
+import rectsIntersect from '../utils/rectsIntersect';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -716,7 +717,7 @@ const mouseMove = (mouseX: number, mouseY: number) => {
         y: pt.y,
       };
 
-      const intersected = svgedit.math.rectsIntersect(rbb, ptBb);
+      const intersected = rectsIntersect(rbb, ptBb);
 
       seg.select(intersected);
 
