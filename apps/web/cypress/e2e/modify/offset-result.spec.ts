@@ -216,8 +216,8 @@ describe('offset result correctness', () => {
 
     // Multi-select both rects
     cy.clickToolBtn('Cursor');
-    cy.get('svg#svgcontent').trigger('mousedown', 40, 40, { force: true });
-    cy.get('svg#svgcontent').trigger('mousemove', 360, 360, { force: true });
+    cy.get('svg#svgcontent').trigger('mousedown', 75, 75, { force: true });
+    cy.get('svg#svgcontent').trigger('mousemove', 505, 505, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.findAllByText('Multiple Objects').should('exist');
     cy.showPanel('objects');
