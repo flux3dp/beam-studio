@@ -5,6 +5,12 @@ import { fireEvent, render } from '@testing-library/react';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import type { Tab } from '@core/interfaces/Tab';
 
+const mockIsMac = jest.fn();
+
+jest.mock('@core/helpers/system-helper', () => ({
+  isMac: mockIsMac,
+}));
+
 import Tabs from './Tabs';
 
 jest.mock('@core/app/contexts/CanvasContext', () => ({
@@ -147,7 +153,7 @@ describe('test Tabs', () => {
     fireEvent.click(tab2);
     expect(mockFocusTab).toHaveBeenCalledTimes(1);
 
-    const closeBtn = tab2.querySelector('.close');
+    const closeBtn = tab2.querySelector('.close')!;
 
     expect(mockCloseTab).not.toHaveBeenCalled();
     fireEvent.click(closeBtn);
@@ -183,7 +189,7 @@ describe('test Tabs', () => {
 
     expect(mockOnTitleChange).toHaveBeenCalledTimes(1);
     act(() => mockOnTitleChange.mock.calls[0][0]('new title', false));
-    expect(container.querySelector('.name').textContent).toBe('new title');
+    expect(container.querySelector('.name')!.textContent).toBe('new title');
 
     mockGetAllTabs.mockReturnValue([
       {
@@ -200,7 +206,7 @@ describe('test Tabs', () => {
       mockOnTabsUpdated.mock.calls[0][0]();
     });
 
-    expect(container.querySelector('.name').textContent).toBe('new title*');
+    expect(container.querySelector('.name')!.textContent).toBe('new title*');
   });
 
   test('rename local tab', async () => {
