@@ -36,7 +36,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   const workareaObj = getWorkarea(workarea);
   const layers = [...document.querySelectorAll('#svgcontent > g.layer:not([display="none"])')];
   const addOnInfo = getAddOnInfo(workarea);
-  const isAutoFeederTask = getAutoFeeder(addOnInfo);
+  const isAutoFeederTask = getAutoFeeder({ addOnInfo });
   const isCurveEngravingTask = curveEngravingModeController.hasArea() && addOnInfo.curveEngraving;
 
   if (

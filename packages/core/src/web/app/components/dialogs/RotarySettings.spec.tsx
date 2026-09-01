@@ -110,6 +110,7 @@ describe('test RotarySettings', () => {
     expect(mockUpdate).toHaveBeenCalledWith({
       'auto-feeder': false,
       'extend-rotary-workarea': true,
+      'inner-engraving': false,
       'pass-through': false,
       'rotary-chuck-obj-d': 10,
       'rotary-mirror': false,
@@ -160,6 +161,7 @@ describe('test RotarySettings', () => {
     expect(mockUpdate).toHaveBeenLastCalledWith({
       'auto-feeder': false,
       'extend-rotary-workarea': true,
+      'inner-engraving': false,
       'pass-through': false,
       'rotary-chuck-obj-d': 10,
       'rotary-mirror': true,

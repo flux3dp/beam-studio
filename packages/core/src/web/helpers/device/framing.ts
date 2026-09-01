@@ -18,7 +18,6 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import selectionManager from '@core/app/svgedit/selection';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import { getAutoFeeder } from '@core/helpers/addOn';
 import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';

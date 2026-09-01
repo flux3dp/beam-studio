@@ -112,7 +112,7 @@ export const getExportOpt = async (
     forceY: config.job_origin ? config.job_origin[1] * constant.dpmm : undefined,
   });
   const rotaryMode = Boolean(rotaryInfo);
-  const autoFeeder = getAutoFeeder(addOnInfo);
+  const autoFeeder = getAutoFeeder({ addOnInfo });
   const spinningAxis = getSpinningAxis(model, { jobOriginY: config.job_origin?.[1], reverse: config.rev });
 
   if (spinningAxis) {
@@ -313,7 +313,7 @@ export const getExportOpt = async (
 
   const isPassThroughTask =
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
-    getPassThrough(addOnInfo);
+    getPassThrough({ addOnInfo });
 
   if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) {
     config.mep = 30;

@@ -14,16 +14,16 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { setCurveEngravingState } from '@core/app/stores/curveEngravingStore';
-import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import workareaManager from '@core/app/svgedit/workarea';
+import { checkCurveEngraving, registerCurveEngravingRuntimeCleanup } from '@core/helpers/addOn/curveEngraving';
 import { getAbsRect, getRelRect } from '@core/helpers/boundary-helper';
 import RawModeCurveMeasurer from '@core/helpers/device/curve-measurer/raw';
 import RedLightCurveMeasurer from '@core/helpers/device/curve-measurer/red-light';
 import getDevice from '@core/helpers/device/get-device';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { canStartCurveEngraving } from '@core/helpers/exclusiveModes';
+import { canStartCurveEngraving, setExclusiveMode } from '@core/helpers/exclusiveModes';
 import i18n from '@core/helpers/i18n';
 import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
 import type { CurveEngraving, MeasureData, Point } from '@core/interfaces/ICurveEngraving';
@@ -55,6 +55,11 @@ class CurveEngravingModeController {
         }
       },
     );
+    registerCurveEngravingRuntimeCleanup(() => {
+      void this.clearArea(false);
+
+      if (useCanvasStore.getState().mode === CanvasMode.CurveEngraving) this.back();
+    });
   }
 
   // the machine capability *and* the conflicting modes: a menu item enabled a moment ago, or a
@@ -401,7 +406,7 @@ class CurveEngravingModeController {
   };
 
   loadData = (data: CurveEngraving | null, opts: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
-    if (!this.checkSupport() || !data) {
+    if (!checkCurveEngraving() || !data) {
       return null;
     }
 
@@ -423,10 +428,7 @@ class CurveEngravingModeController {
     };
 
     customCmd.onAfter = postLoadData;
-    changeMultipleDocumentStoreValues(
-      { 'auto-feeder': false, 'pass-through': false, rotary_mode: false },
-      { parentCmd: cmd },
-    );
+    setExclusiveMode('curve-engraving', true, { parentCmd: cmd });
     cmd.addSubCommand(customCmd);
 
     cmd.apply();

@@ -3,17 +3,13 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import { switchInnerEngravingMode } from '@core/app/actions/canvas/innerEngravingMode';
 import alertConstants from '@core/app/constants/alert-constants';
-import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { isInnerEngravingActive, supportInnerEngraving } from '@core/helpers/addOn/innerEngraving';
+import { isInnerEngravingActive, PROMARK_UV_INFO, supportInnerEngraving } from '@core/helpers/addOn/innerEngraving';
 import { checkFpm1UV } from '@core/helpers/checkFeature';
 import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import i18n from '@core/helpers/i18n';
-import type { PromarkInfo } from '@core/interfaces/Promark';
-
-const PROMARK_UV_INFO = { laserType: LaserType.UV, watt: 5 } satisfies PromarkInfo;
 
 const ask = (caption: string, message: string): Promise<boolean> =>
   new Promise<boolean>((resolve) => {

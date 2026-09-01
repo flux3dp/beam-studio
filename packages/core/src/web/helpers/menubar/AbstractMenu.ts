@@ -1,13 +1,11 @@
 import { sprintf } from 'sprintf-js';
-import { shallow } from 'zustand/shallow';
 
 import menuActions from '@core/app/actions/beambox/menuActions';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { MenuEvents } from '@core/app/constants/ipcEvents';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import DeviceMaster from '@core/helpers/device-master';
-import { canStartCurveEngraving } from '@core/helpers/exclusiveModes';
+import { canStartCurveEngraving, subscribeExclusiveModeGate } from '@core/helpers/exclusiveModes';
 import { isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import type { ExampleFileKey } from '@core/helpers/menubar/exampleFiles';
@@ -95,17 +93,7 @@ export default abstract class AbstractMenu {
     if (!this.menuEventRegistered) {
       registerMenuClickEvents();
 
-      useDocumentStore.subscribe(
-        (state) => [
-          state.workarea,
-          state.rotary_mode,
-          state['auto-feeder'],
-          state['pass-through'],
-          state['inner-engraving'],
-        ],
-        this.checkCurveEngraving,
-        { equalityFn: shallow },
-      );
+      subscribeExclusiveModeGate('curve-engraving', this.checkCurveEngraving);
     }
   }
 
@@ -130,10 +118,8 @@ export default abstract class AbstractMenu {
     this.disable([...MENU_ITEMS]);
   }
 
-  checkCurveEngraving = () => {
-    // the conflicting modes — rotary, pass-through, auto-feeder and inner engraving — live in
-    // `canStartCurveEngraving`, so this gate and the web menu's cannot drift apart
-    const supportCurveEngraving = isAtPage('editor') && canStartCurveEngraving();
+  checkCurveEngraving = (canStart = canStartCurveEngraving()) => {
+    const supportCurveEngraving = isAtPage('editor') && canStart;
 
     if (supportCurveEngraving) {
       this.enable(['START_CURVE_ENGRAVING_MODE']);

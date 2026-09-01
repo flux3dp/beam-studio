@@ -37,11 +37,11 @@ const Banner = (): React.ReactNode => {
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isRotary = rotaryMode && addOnInfo.rotary;
   const isAutoFeeder = useMemo(
-    () => getAutoFeeder(addOnInfo, { autoFeeder, borderless: isBorderless }),
+    () => getAutoFeeder({ addOnInfo, values: { autoFeeder, borderless: isBorderless } }),
     [addOnInfo, autoFeeder, isBorderless],
   );
   const isPassThrough = useMemo(
-    () => getPassThrough(addOnInfo, { borderless: isBorderless, passThrough }),
+    () => getPassThrough({ addOnInfo, values: { borderless: isBorderless, passThrough } }),
     [addOnInfo, passThrough, isBorderless],
   );
   const isBorderlessPreview = useMemo(

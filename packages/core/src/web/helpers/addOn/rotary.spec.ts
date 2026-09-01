@@ -1,3 +1,5 @@
+import type { AddOnInfo } from '@core/app/constants/addOn';
+
 const mockGetState = jest.fn();
 
 jest.mock('@core/app/stores/documentStore', () => ({
@@ -24,7 +26,7 @@ jest.mock('@core/helpers/device/get-rotary-ratio', () => mockGetRotaryRatio);
 
 const mockGetAutoFeeder = jest.fn();
 
-jest.mock('@core/helpers/addOn', () => ({
+jest.mock('./autoFeeder', () => ({
   getAutoFeeder: mockGetAutoFeeder,
 }));
 
@@ -32,9 +34,9 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
   getWorkarea: () => ({ pxHeight: 3000 }),
 }));
 
-import { getRotaryInfo, getSpinningAxis } from './rotary';
+import { checkRotary, disableRotary, enableRotary, getRotary, getRotaryInfo, getSpinningAxis } from './rotary';
 
-describe('test getAutoFeeder', () => {
+describe('rotary add-on', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockGetPosition.mockReturnValue(10);
@@ -47,6 +49,26 @@ describe('test getAutoFeeder', () => {
 
     expect(getRotaryInfo('ado1')).toBe(null);
     expect(mockGetAddOnInfo).toHaveBeenCalledWith('ado1');
+  });
+
+  it('checks support and the effective enabled state', () => {
+    const addOnInfo = { rotary: { roller: true } } as unknown as AddOnInfo;
+
+    mockGetState.mockReturnValue({ rotary_mode: false });
+
+    expect(checkRotary({ addOnInfo })).toBe(true);
+    expect(getRotary({ addOnInfo })).toBe(false);
+    expect(getRotary({ addOnInfo, values: { rotaryMode: true } })).toBe(true);
+  });
+
+  it('enables and disables through the supplied updater', () => {
+    const update = jest.fn();
+
+    enableRotary({ update });
+    disableRotary({ update });
+
+    expect(update).toHaveBeenNthCalledWith(1, { rotary_mode: true });
+    expect(update).toHaveBeenNthCalledWith(2, { rotary_mode: false });
   });
 
   it('should return null when model supports but preference is false', () => {

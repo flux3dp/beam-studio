@@ -1,24 +1,52 @@
-import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { checkFpm1UV } from '@core/helpers/checkFeature';
-import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { todo } from '@core/helpers/is-dev';
 import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
+import {
+  type AddOnModeContext,
+  type AddOnModeMutationOptions,
+  resolveAddOnInfo,
+  resolveDocumentValue,
+  updateDocumentMode,
+} from './types';
+
 type InnerEngravingState = Pick<DocumentState, 'inner-engraving' | 'workarea'>;
+
+export const PROMARK_UV_INFO = { laserType: LaserType.UV, watt: 5 } satisfies PromarkInfo;
+
+export const checkInnerEngraving = (context: AddOnModeContext = {}): boolean => {
+  const promarkInfo = context.promarkInfo === undefined ? getPromarkInfo() : context.promarkInfo;
+
+  return checkFpm1UV() && Boolean(resolveAddOnInfo(context)?.innerEngraving) && promarkInfo?.laserType === LaserType.UV;
+};
+
+/** Whether inner engraving is supported and currently enabled. */
+export const getInnerEngraving = (context: AddOnModeContext = {}): boolean =>
+  checkInnerEngraving(context) && Boolean(resolveDocumentValue('inner-engraving', context));
+
+export const enableInnerEngraving = (options: AddOnModeMutationOptions = {}): void => {
+  updateDocumentMode({ 'inner-engraving': true }, options);
+
+  if (options.applyRuntime !== false) setPromarkInfo(options.promarkInfo ?? PROMARK_UV_INFO);
+};
+
+export const disableInnerEngraving = (options: AddOnModeMutationOptions = {}): void =>
+  updateDocumentMode({ 'inner-engraving': false }, options);
 
 /** Whether a work area and laser source can run inner engraving. */
 export const supportInnerEngraving = (model: WorkAreaModel, promarkInfo: PromarkInfo = getPromarkInfo()): boolean =>
-  checkFpm1UV() && Boolean(getAddOnInfo(model).innerEngraving) && promarkInfo.laserType === LaserType.UV;
+  checkInnerEngraving({ promarkInfo, workarea: model });
 
 /** Resolve the effective mode from both the document toggle and machine capability. */
 export const resolveInnerEngravingActive = (
   state: InnerEngravingState,
   promarkInfo: PromarkInfo = getPromarkInfo(),
-): boolean => state['inner-engraving'] && supportInnerEngraving(state.workarea, promarkInfo);
+): boolean => getInnerEngraving({ promarkInfo, values: state, workarea: state.workarea });
 
 /**
  * Whether inner engraving mode is currently active.
@@ -28,7 +56,7 @@ export const resolveInnerEngravingActive = (
  * saved with a Promark UV source does not put another machine into inner engraving mode.
  */
 export const isInnerEngravingActive = (): boolean => {
-  return resolveInnerEngravingActive(useDocumentStore.getState());
+  return getInnerEngraving();
 };
 
 /** Hook form of {@link isInnerEngravingActive}. */

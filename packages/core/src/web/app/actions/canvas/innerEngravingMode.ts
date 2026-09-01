@@ -1,9 +1,11 @@
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
-import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
-import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import {
+  disableInnerEngraving,
+  enableInnerEngraving,
+  isInnerEngravingActive,
+} from '@core/helpers/addOn/innerEngraving';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
@@ -43,9 +45,8 @@ export const switchInnerEngravingMode = async (
 
   if (workarea) changeWorkarea(workarea);
 
-  if (promarkInfo) setPromarkInfo(promarkInfo);
-
-  useDocumentStore.getState().set('inner-engraving', enabled);
+  if (enabled) enableInnerEngraving({ promarkInfo });
+  else disableInnerEngraving();
 
   return true;
 };

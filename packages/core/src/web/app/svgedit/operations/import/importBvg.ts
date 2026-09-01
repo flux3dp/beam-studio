@@ -1,6 +1,5 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithPrinter4C } from '@core/app/actions/beambox/constant';
-import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -16,6 +15,7 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import { resolveInnerEngravingForFile } from '@core/app/svgedit/operations/import/innerEngravingGate';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { applyExclusiveModePatch } from '@core/helpers/exclusiveModes';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
 import { toggleModuleAfterWorkareaChange, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
@@ -100,15 +100,15 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
       }
 
       if (addOnInfo.rotary) {
-        newDocumentState['rotary_mode'] = rotaryMode === 'true';
+        const enabled = rotaryMode === 'true';
 
-        if (rotaryMode === 'true') {
-          newDocumentState['auto-feeder'] = false;
-          newDocumentState['pass-through'] = false;
-          curveEngravingModeController.clearArea(false);
-        }
+        applyExclusiveModePatch(newDocumentState, 'rotary', enabled, {
+          addOnInfo,
+          applyRuntime: enabled,
+          workarea: currentWorkarea,
+        });
       } else {
-        newDocumentState['rotary_mode'] = false;
+        applyExclusiveModePatch(newDocumentState, 'rotary', false);
       }
     }
 
@@ -119,7 +119,10 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
     const innerEngravingResult = await resolveInnerEngravingForFile(innerEngraving, currentWorkarea);
 
     innerEngravingWorkarea = innerEngravingResult.workarea;
-    newDocumentState['inner-engraving'] = innerEngravingResult.innerEngraving;
+    applyExclusiveModePatch(newDocumentState, 'inner-engraving', innerEngravingResult.innerEngraving, {
+      applyRuntime: innerEngravingResult.innerEngraving,
+      workarea: innerEngravingResult.workarea ?? currentWorkarea,
+    });
 
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
@@ -163,11 +166,12 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          newDocumentState['pass-through'] = true;
+          applyExclusiveModePatch(newDocumentState, 'pass-through', true, {
+            addOnInfo,
+            applyRuntime: true,
+            workarea: currentWorkarea,
+          });
           newDocumentState['pass-through-height'] = height;
-          newDocumentState['auto-feeder'] = false;
-          newDocumentState['rotary_mode'] = false;
-          curveEngravingModeController.clearArea(false);
         }
       }
     }
@@ -179,11 +183,12 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          newDocumentState['auto-feeder'] = true;
+          applyExclusiveModePatch(newDocumentState, 'auto-feeder', true, {
+            addOnInfo,
+            applyRuntime: true,
+            workarea: currentWorkarea,
+          });
           newDocumentState['auto-feeder-height'] = height;
-          newDocumentState['pass-through'] = false;
-          newDocumentState['rotary_mode'] = false;
-          curveEngravingModeController.clearArea(false);
         }
       }
     }

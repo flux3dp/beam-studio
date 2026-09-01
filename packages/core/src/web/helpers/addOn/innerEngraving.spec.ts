@@ -2,9 +2,13 @@ import { renderHook } from '@testing-library/react';
 
 import { LaserType } from '@core/app/constants/promark-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 
 import {
+  checkInnerEngraving,
+  disableInnerEngraving,
+  enableInnerEngraving,
+  getInnerEngraving,
   isInnerEngravingActive,
   resolveInnerEngravingActive,
   supportInnerEngraving,
@@ -29,6 +33,38 @@ describe('inner engraving add-on', () => {
     expect(supportInnerEngraving('fpm1', uvInfo)).toBe(true);
     expect(supportInnerEngraving('fpm1', desktopInfo)).toBe(false);
     expect(supportInnerEngraving('fbb1b', uvInfo)).toBe(false);
+  });
+
+  test('exposes capability and effective-state helpers', () => {
+    expect(checkInnerEngraving({ promarkInfo: uvInfo, workarea: 'fpm1' })).toBe(true);
+    expect(
+      getInnerEngraving({
+        promarkInfo: uvInfo,
+        values: { 'inner-engraving': true, workarea: 'fpm1' },
+      }),
+    ).toBe(true);
+    expect(
+      getInnerEngraving({
+        promarkInfo: uvInfo,
+        values: { 'inner-engraving': false, workarea: 'fpm1' },
+      }),
+    ).toBe(false);
+  });
+
+  test('enables the document flag and PromarkInfo, and can build a draft without runtime changes', () => {
+    const update = jest.fn();
+
+    enableInnerEngraving({ promarkInfo: uvInfo, update });
+
+    expect(update).toHaveBeenCalledWith({ 'inner-engraving': true });
+    expect(getPromarkInfo()).toEqual(uvInfo);
+
+    setPromarkInfo(desktopInfo);
+    enableInnerEngraving({ applyRuntime: false, update });
+    expect(getPromarkInfo()).toEqual(desktopInfo);
+
+    disableInnerEngraving({ update });
+    expect(update).toHaveBeenLastCalledWith({ 'inner-engraving': false });
   });
 
   test('resolves the document toggle together with the add-on and PromarkInfo', () => {

@@ -41,6 +41,7 @@ import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { applyExclusiveModePatch, type ExclusiveMode } from '@core/helpers/exclusiveModes';
 import { todo } from '@core/helpers/is-dev';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
@@ -89,8 +90,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   } = useMemo(() => {
     const workarea = useDocumentStore.getState().workarea;
     const addOnInfo = getAddOnInfo(workarea);
-    const autoFeeder = getAutoFeeder(addOnInfo);
-    const passThrough = getPassThrough(addOnInfo);
+    const autoFeeder = getAutoFeeder({ addOnInfo });
+    const passThrough = getPassThrough({ addOnInfo });
 
     return { autoFeeder, passThrough, workarea };
   }, []);
@@ -194,36 +195,35 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
   }, []);
 
-  // esther TODO: add a useExclusiveBooleans hook on top of this file? and add note "handle store subscribe, too"
-  // pass-through, auto-feeder, rotary and inner engraving are exclusive, disable others when one is on
+  const applyExclusiveDraft = useCallback(
+    (mode: ExclusiveMode) => {
+      const patch: Partial<DocumentState> = {};
+
+      if (!applyExclusiveModePatch(patch, mode, true, { addOnInfo, promarkInfo: pmInfo, workarea })) return;
+
+      if (patch.rotary_mode !== undefined) setRotaryMode(patch.rotary_mode);
+
+      if (patch['pass-through'] !== undefined) setPassThrough(patch['pass-through']);
+
+      if (patch['auto-feeder'] !== undefined) setAutoFeeder(patch['auto-feeder']);
+
+      if (patch['inner-engraving'] !== undefined) setInnerEngraving(patch['inner-engraving']);
+    },
+    [addOnInfo, pmInfo, workarea],
+  );
+
   useEffect(() => {
-    if (rotaryMode) {
-      setPassThrough(false);
-      setAutoFeeder(false);
-      setInnerEngraving(false);
-    }
-  }, [rotaryMode]);
+    if (rotaryMode) applyExclusiveDraft('rotary');
+  }, [applyExclusiveDraft, rotaryMode]);
   useEffect(() => {
-    if (passThrough) {
-      setRotaryMode(false);
-      setAutoFeeder(false);
-      setInnerEngraving(false);
-    }
-  }, [passThrough]);
+    if (passThrough) applyExclusiveDraft('pass-through');
+  }, [applyExclusiveDraft, passThrough]);
   useEffect(() => {
-    if (autoFeeder) {
-      setRotaryMode(false);
-      setPassThrough(false);
-      setInnerEngraving(false);
-    }
-  }, [autoFeeder]);
+    if (autoFeeder) applyExclusiveDraft('auto-feeder');
+  }, [applyExclusiveDraft, autoFeeder]);
   useEffect(() => {
-    if (innerEngraving) {
-      setRotaryMode(false);
-      setPassThrough(false);
-      setAutoFeeder(false);
-    }
-  }, [innerEngraving]);
+    if (innerEngraving) applyExclusiveDraft('inner-engraving');
+  }, [applyExclusiveDraft, innerEngraving]);
 
   useEffect(() => setRotaryMode(storeRotaryMode), [storeRotaryMode]);
   useEffect(() => setRotaryType(storeRotaryType), [storeRotaryType]);

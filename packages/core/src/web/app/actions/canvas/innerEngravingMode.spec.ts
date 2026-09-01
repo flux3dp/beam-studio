@@ -14,6 +14,7 @@ jest.mock(
       mockChangeWorkarea(...args),
 );
 jest.mock('@core/helpers/addOn/innerEngraving', () => ({
+  ...jest.requireActual('@core/helpers/addOn/innerEngraving'),
   isInnerEngravingActive: () => mockIsInnerEngravingActive(),
 }));
 jest.mock('@core/helpers/device/promark/promark-info');

@@ -14,6 +14,7 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
+import { setExclusiveMode } from '@core/helpers/exclusiveModes';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { DocumentState } from '@core/interfaces/Preference';
@@ -68,13 +69,14 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
     const newState: Partial<DocumentState> = {
       'rotary-scale': scale,
       'rotary-type': rotaryType,
-      rotary_mode: rotaryMode,
     };
 
-    if (rotaryChanged && rotaryMode) {
-      newState['pass-through'] = false;
-      newState['auto-feeder'] = false;
-    }
+    setExclusiveMode('rotary', rotaryMode, {
+      addOnInfo,
+      update: (values) => Object.assign(newState, values),
+      values: origState,
+      workarea,
+    });
 
     if (rotaryType === RotaryType.Chuck) {
       newState['rotary-chuck-obj-d'] = diameter;

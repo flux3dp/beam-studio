@@ -1411,15 +1411,16 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
-    if (getAutoFeeder(addOnInfo)) {
+    if (getAutoFeeder({ addOnInfo })) {
       svgcontent.setAttribute('data-auto-feeder-height', documentState['auto-feeder-height']!.toFixed(2));
     }
 
-    if (getPassThrough(addOnInfo)) {
+    if (getPassThrough({ addOnInfo })) {
       svgcontent.setAttribute('data-pass_through', documentState['pass-through-height']!.toFixed(2));
     }
 
     svgcontent.setAttribute('data-workarea', workarea);
+
     // inner engraving mode travels with the file the same way rotary does, so reopening a .beam
     // brings back the 3D canvas rather than showing the projection rects as flat rectangles
     if (documentState['inner-engraving']) svgcontent.setAttribute('data-inner-engraving', 'true');

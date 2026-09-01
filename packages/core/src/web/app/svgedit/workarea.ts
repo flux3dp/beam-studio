@@ -87,8 +87,8 @@ class WorkareaManager {
     const isRotaryMode = documentStore.rotary_mode;
     const rotaryExtended = isRotaryMode && documentStore['extend-rotary-workarea'];
     const addOnInfo = getAddOnInfo(model);
-    const passThroughMode = getPassThrough(addOnInfo);
-    const autoFeeder = getAutoFeeder(addOnInfo);
+    const passThroughMode = getPassThrough({ addOnInfo });
+    const autoFeeder = getAutoFeeder({ addOnInfo });
     const workarea = getWorkarea(model);
     const modelChanged = this.model !== model;
 
