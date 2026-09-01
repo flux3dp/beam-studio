@@ -1786,6 +1786,7 @@ const lang: ILang = {
     position: '位置',
     range: '范围',
     refractive_index: '折射率',
+    refractive_index_hint: '折射率会随波长而异，请填写材料在 355 nm 波长下的折射率。',
     reset: '重置',
     rotation: '旋转',
     safety_margin: '安全距离',

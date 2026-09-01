@@ -1785,6 +1785,7 @@ export interface ILang {
     position: string;
     range: string;
     refractive_index: string;
+    refractive_index_hint: string;
     reset: string;
     rotation: string;
     safety_margin: string;

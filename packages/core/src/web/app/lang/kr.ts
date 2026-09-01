@@ -1786,6 +1786,7 @@ const lang: ILang = {
     position: 'Position',
     range: 'Range',
     refractive_index: 'Refractive Index',
+    refractive_index_hint: "Refractive index varies with wavelength. Enter the material's refractive index at 355 nm.",
     reset: 'Reset',
     rotation: 'Rotation',
     safety_margin: 'Safety Margin',

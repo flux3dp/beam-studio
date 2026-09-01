@@ -286,6 +286,9 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
               value={refractiveIndex}
             />
           </div>
+          <div className={styles.row}>
+            <div className={styles.hint}>{t.refractive_index_hint}</div>
+          </div>
 
           {/* the lens, not the job — but swiftray's machine settings have no field for it, so it
               rides along with the material settings that feed the same refraction compensation */}
