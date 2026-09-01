@@ -145,6 +145,20 @@ describe('elementIntersectsRect', () => {
     expect(spy.mock.calls.length).toBeLessThan(128);
   });
 
+  test('band much larger than the shape still detects a clipped edge', () => {
+    // small square outline (perimeter 400) vs a huge band overlapping its right
+    // half: in-band arc is far shorter than any band-derived step size
+    const square = makePath([
+      [0, 0],
+      [100, 0],
+      [100, 100],
+      [0, 100],
+      [0, 0],
+    ]);
+
+    expect(elementIntersectsRect(square, { height: 4000, width: 4000, x: 50, y: -2000 }, contentCtmInverse)).toBe(true);
+  });
+
   describe('path with a d attribute goes through paper.js', () => {
     const makeDPath = (d: string): SVGElement => {
       const elem = makeBoxElem('path', { height: 100, width: 100, x: 0, y: 0 });

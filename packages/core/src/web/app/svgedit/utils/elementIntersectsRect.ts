@@ -109,10 +109,11 @@ const outlineIntersectsRect = (elem: SVGGeometryElement, rect: IRect, matrix: DO
 
   // scale factor from element-local units to content user units
   const scale = Math.hypot(matrix.a, matrix.b) || 1;
-  // half the band's smaller dimension (in local units): a span shorter than
-  // this cannot cross the band unnoticed; floored so a degenerate band cannot
-  // subdivide forever
-  const resolution = Math.max(Math.min(rect.width, rect.height) / 2 / scale, total / 4096);
+  // subdivision stops via the distance prune below; this tiny floor only bounds
+  // the depth. It must NOT be derived from the band size: a path can clip a
+  // large band's corner with an arbitrarily short arc, so band-sized spans
+  // cannot be skipped unprobed
+  const resolution = total / 4096;
 
   // distance from a content-space point to the band, 0 if inside
   const distToRect = ({ x, y }: { x: number; y: number }) =>
