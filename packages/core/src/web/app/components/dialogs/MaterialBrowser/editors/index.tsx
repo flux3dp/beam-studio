@@ -3,16 +3,16 @@ import React from 'react';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { MATERIAL_CATEGORIES } from '@core/app/constants/material-catalog/constants';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { initMaterialStore } from '@core/app/stores/materialStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
 import { initMaterialApply, resolveLayerMaterialRef } from '@core/helpers/materials/material-apply';
 import type { MaterialCategory } from '@core/interfaces/IMaterial';
 
+import MaterialBrowser from '../index';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 
-import MaterialBrowser from '../index';
 import AddPresetFromLayerModal from './AddPresetFromLayerModal';
 import MaterialEditorModal from './MaterialEditorModal';
 

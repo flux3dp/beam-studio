@@ -7,7 +7,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';

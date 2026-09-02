@@ -6,7 +6,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { MY_MATERIALS_ID } from '@core/app/constants/material-catalog/constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
 import layerManager from '@core/app/svgedit/layer/layerManager';
