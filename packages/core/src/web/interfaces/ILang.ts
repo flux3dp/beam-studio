@@ -700,7 +700,6 @@ export interface ILang {
             brass_dark: string;
             brass_engraving: string;
             brass_light: string;
-            canvas_fabric_printing: string;
             canvas_printing: string;
             cardboard_printing: string;
             cardstock_printing: string;
@@ -774,7 +773,6 @@ export interface ILang {
             brass_dark: string;
             brass_engraving: string;
             brass_light: string;
-            canvas_fabric_printing: string;
             canvas_printing: string;
             cardboard_printing: string;
             cardstock_printing: string;

@@ -69,7 +69,7 @@ Field-by-field. Optional = key may be absent (never `null` — omit instead).
 
 | Field | Type | Required | Notes |
 |---|---|---|---|
-| `id` | string | ✓ | Stable, unique, immutable once published. Slug-like (`glitter-acrylic-us`). |
+| `id` | string | ✓ | Stable, unique, immutable once published. Slug-like (`sparkle-acrylic-us`). |
 | `name` | LocalizedString | ✓ (cloud) | §4. (Client-bundled materials use `nameKey` instead; the server always sends `name`.) |
 | `category` | string | ✓ | One of `wood` `acrylic` `leather` `metal` `plastic` `paper` `other`. Fixed set — reject anything else in admin. (2026-08-17: `glass` `stone` `rubber` removed — those materials now live under `other`.) |
 | `image` | string (URL) | – | Absolute HTTPS URL to the hero photo (§5). Omit if none. |
@@ -174,7 +174,7 @@ releases; sync it from `attributeMap` when adding parameters.
 ## 5. Images
 
 - `image` = absolute HTTPS URL. Convention: `<CDN>/materials/<materialId>/cover.jpg` (hero) and `<CDN>/materials/<materialId>/cover_thumb.jpg` (grid thumbnail).
-- **Thumbnail ≤ 60 KB, ~480×360; hero ≤ 500 KB, ~1600×1200. Aspect ratio 4:3** for both — the browser displays covers at 4:3 uncropped. Compose center-weighted: the layer chip shows a small center-cropped 1:1 swatch of the same image.
+- **Thumbnail ≤ 60 KB, ~480×480; hero ≤ 500 KB, ~1200×1200. Aspect ratio 1:1** for both — the browser displays covers at 1:1 uncropped, and the layer chip shows a small center-cropped swatch of the same image. Compose center-weighted.
 - The client requests `cover_thumb.jpg` in the grid by suffix substitution and falls back to `image` as-is on 404 — so publishing only a `cover.jpg` still works.
 - URLs should be immutable per upload (content-hash or versioned path preferred) so browser HTTP caching works; the client does no app-level image caching in v1.
 - ⚠ Infra prerequisites flagged during backend assessment: no CDN currently fronts the beam-studio S3 buckets, and flux-id has no thumbnail pipeline — both need resolving before regional launch (CloudFront distribution or reuse of `cdn.dmkt.io`, plus a Pillow resize-on-upload step).

@@ -79,6 +79,45 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       },
     },
   },
+  wood_solid_3mm_cutting: {
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 15 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 5 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 8 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 10 } },
+  },
+  wood_solid_5mm_cutting: {
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 10 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 6 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 8 } },
+  },
+  wood_solid_engraving: {
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 500 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
+    fhx2rf_30: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 55,
+        speed: 300,
+        dpiOverrides: { high: { power: 20 }, detailed: { power: 10 }, ultra: { power: 5 } },
+      },
+    },
+    fhx2rf_60: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 30,
+        speed: 300,
+        dpiOverrides: { high: { power: 11 }, detailed: { power: 5 }, ultra: { power: 3 } },
+      },
+    },
+    fhx2rf_80: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 25,
+        speed: 300,
+        dpiOverrides: { high: { power: 9 }, detailed: { power: 5 }, ultra: { power: 2 } },
+      },
+    },
+  },
   acrylic_3mm_cutting: {
     fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
@@ -161,6 +200,210 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     },
     fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 50, speed: 40 } },
   },
+  acrylic_fluorescent_3mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 10 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 9 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 12 } },
+  },
+  acrylic_fluorescent_5mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 4 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 59, speed: 3 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 5 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 3 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+  },
+  acrylic_fluorescent_engraving: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 150 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 13, speed: 500 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fhx2rf_30: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 20,
+        speed: 500,
+        dpiOverrides: { high: { power: 12 }, detailed: { power: 12 }, ultra: { power: 12 } },
+      },
+    },
+    fhx2rf_60: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 15,
+        speed: 500,
+        dpiOverrides: { high: { power: 9 }, detailed: { power: 9 }, ultra: { power: 9 } },
+      },
+    },
+    fhx2rf_80: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 10,
+        speed: 500,
+        dpiOverrides: { high: { power: 6 }, detailed: { power: 6 }, ultra: { power: 6 } },
+      },
+    },
+  },
+  acrylic_glitter_3mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 10 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 9 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 12 } },
+  },
+  acrylic_glitter_5mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 4 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 59, speed: 3 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 5 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 3 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+  },
+  acrylic_glitter_engraving: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 150 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 13, speed: 500 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fhx2rf_30: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 20,
+        speed: 500,
+        dpiOverrides: { high: { power: 12 }, detailed: { power: 12 }, ultra: { power: 12 } },
+      },
+    },
+    fhx2rf_60: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 15,
+        speed: 500,
+        dpiOverrides: { high: { power: 9 }, detailed: { power: 9 }, ultra: { power: 9 } },
+      },
+    },
+    fhx2rf_80: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 10,
+        speed: 500,
+        dpiOverrides: { high: { power: 6 }, detailed: { power: 6 }, ultra: { power: 6 } },
+      },
+    },
+  },
+  acrylic_sublimation_3mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 10 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 9 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 12 } },
+  },
+  acrylic_sublimation_5mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 4 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 59, speed: 3 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 5 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 3 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+  },
+  acrylic_sublimation_engraving: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 150 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 13, speed: 500 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fhx2rf_30: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 20,
+        speed: 500,
+        dpiOverrides: { high: { power: 12 }, detailed: { power: 12 }, ultra: { power: 12 } },
+      },
+    },
+    fhx2rf_60: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 15,
+        speed: 500,
+        dpiOverrides: { high: { power: 9 }, detailed: { power: 9 }, ultra: { power: 9 } },
+      },
+    },
+    fhx2rf_80: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 10,
+        speed: 500,
+        dpiOverrides: { high: { power: 6 }, detailed: { power: 6 }, ultra: { power: 6 } },
+      },
+    },
+  },
+  acrylic_mixed_3mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 10 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 9 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 12 } },
+  },
+  acrylic_mixed_5mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 4 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 59, speed: 3 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 5 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 3 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
+  },
+  acrylic_mixed_engraving: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 150 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 13, speed: 500 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fhx2rf_30: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 20,
+        speed: 500,
+        dpiOverrides: { high: { power: 12 }, detailed: { power: 12 }, ultra: { power: 12 } },
+      },
+    },
+    fhx2rf_60: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 15,
+        speed: 500,
+        dpiOverrides: { high: { power: 9 }, detailed: { power: 9 }, ultra: { power: 9 } },
+      },
+    },
+    fhx2rf_80: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 10,
+        speed: 500,
+        dpiOverrides: { high: { power: 6 }, detailed: { power: 6 }, ultra: { power: 6 } },
+      },
+    },
+  },
   mdf_3mm_cutting: {
     ado1: {
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 4 },
@@ -168,6 +411,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 15 } },
     fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 7 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 5 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 8 } },
     fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 10 } },
@@ -179,6 +423,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 10 } },
     fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 6 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 50, speed: 4 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
     fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 8 } },
@@ -278,11 +523,52 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       },
     },
   },
+  leather_faux_3mm_cutting: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 3 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 35, speed: 10 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 3 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 3, speed: 10 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
+    fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 6 } },
+    fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 9 } },
+    fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 12 } },
+  },
+  leather_faux_engraving: {
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 150 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 150 } },
+    fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 300 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 150 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 7, speed: 200 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
+    fhx2rf_30: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 40,
+        speed: 300,
+        dpiOverrides: { high: { power: 20 }, detailed: { power: 12 }, ultra: { power: 8 } },
+      },
+    },
+    fhx2rf_60: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 20,
+        speed: 300,
+        dpiOverrides: { high: { power: 10 }, detailed: { power: 6 }, ultra: { power: 4 } },
+      },
+    },
+    fhx2rf_80: {
+      [LayerModule.LASER_UNIVERSAL]: {
+        power: 20,
+        speed: 300,
+        dpiOverrides: { high: { power: 10 }, detailed: { power: 6 }, ultra: { power: 4 } },
+      },
+    },
+  },
   denim_1mm_cutting: {
     ado1: {
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 14 },
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 50, speed: 10 },
     },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 15 } },
   },
   fabric_3mm_cutting: {
     ado1: {
@@ -673,7 +959,6 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     ado1: { [LayerModule.PRINTER]: { ink: 2, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
     fbm2: { [LayerModule.PRINTER_4C]: { ink: 70, speed: 15 } },
   },
-  canvas_fabric_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 90, speed: 15 } } },
   canvas_printing: {
     ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 4, speed: 60 } },
     fbm2: { [LayerModule.PRINTER_4C]: { ink: 90, speed: 15 } },

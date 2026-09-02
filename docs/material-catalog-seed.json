@@ -236,6 +236,7 @@
           "variantId": "wood-10mm"
         },
         {
+          "groupId": "wood_engraving",
           "id": "wood_engraving",
           "legacyKey": "wood_engraving",
           "nameKey": "engraving",
@@ -314,10 +315,10 @@
                 "speed": 600
               }
             }
-          },
-          "groupId": "wood_engraving"
+          }
         },
         {
+          "groupId": "wood_engraving",
           "id": "wood_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -343,10 +344,10 @@
                 "speed": 600
               }
             }
-          },
-          "groupId": "wood_engraving"
+          }
         },
         {
+          "groupId": "wood_engraving",
           "id": "wood_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -372,10 +373,10 @@
                 "speed": 600
               }
             }
-          },
-          "groupId": "wood_engraving"
+          }
         },
         {
+          "groupId": "wood_engraving",
           "id": "wood_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -401,8 +402,7 @@
                 "speed": 600
               }
             }
-          },
-          "groupId": "wood_engraving"
+          }
         },
         {
           "id": "wood_printing",
@@ -487,6 +487,12 @@
                 "speed": 7
               }
             },
+            "fhexa1": {
+              "15": {
+                "power": 30,
+                "speed": 7
+              }
+            },
             "fhx2rf_30": {
               "15": {
                 "power": 65,
@@ -534,6 +540,12 @@
               "15": {
                 "power": 55,
                 "speed": 6
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 50,
+                "speed": 4
               }
             },
             "fhx2rf_30": {
@@ -585,6 +597,7 @@
           "variantId": "mdf-7mm"
         },
         {
+          "groupId": "mdf_engraving",
           "id": "mdf_engraving",
           "legacyKey": "mdf_engraving",
           "nameKey": "engraving",
@@ -633,10 +646,10 @@
                 "speed": 300
               }
             }
-          },
-          "groupId": "mdf_engraving"
+          }
         },
         {
+          "groupId": "mdf_engraving",
           "id": "mdf_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -662,10 +675,10 @@
                 "speed": 300
               }
             }
-          },
-          "groupId": "mdf_engraving"
+          }
         },
         {
+          "groupId": "mdf_engraving",
           "id": "mdf_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -691,10 +704,10 @@
                 "speed": 300
               }
             }
-          },
-          "groupId": "mdf_engraving"
+          }
         },
         {
+          "groupId": "mdf_engraving",
           "id": "mdf_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -720,8 +733,7 @@
                 "speed": 300
               }
             }
-          },
-          "groupId": "mdf_engraving"
+          }
         },
         {
           "id": "mdf_printing",
@@ -754,6 +766,250 @@
           "thicknessNum": 7,
           "thicknessUnit": "mm"
         }
+      ]
+    },
+    {
+      "category": "wood",
+      "id": "solid-wood",
+      "nameKey": "solid_wood",
+      "presets": [
+        {
+          "id": "wood_solid_3mm_cutting",
+          "legacyKey": "wood_solid_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 15
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 65,
+                "speed": 5
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 65,
+                "speed": 8
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 65,
+                "speed": 10
+              }
+            }
+          },
+          "variantId": "solid-wood-3mm"
+        },
+        {
+          "id": "wood_solid_5mm_cutting",
+          "legacyKey": "wood_solid_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 10
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 4
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 8
+              }
+            }
+          },
+          "variantId": "solid-wood-5mm"
+        },
+        {
+          "groupId": "wood_solid_engraving",
+          "id": "wood_solid_engraving",
+          "legacyKey": "wood_solid_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 500
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 55,
+                "speed": 300
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 30,
+                "speed": 300
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 25,
+                "speed": 300
+              }
+            }
+          }
+        },
+        {
+          "groupId": "wood_solid_engraving",
+          "id": "wood_solid_engraving_high",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 11,
+                "speed": 300
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 9,
+                "speed": 300
+              }
+            }
+          }
+        },
+        {
+          "groupId": "wood_solid_engraving",
+          "id": "wood_solid_engraving_detailed",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 10,
+                "speed": 300
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 5,
+                "speed": 300
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 5,
+                "speed": 300
+              }
+            }
+          }
+        },
+        {
+          "groupId": "wood_solid_engraving",
+          "id": "wood_solid_engraving_ultra",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 5,
+                "speed": 300
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 3,
+                "speed": 300
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 2,
+                "speed": 300
+              }
+            }
+          }
+        }
+      ],
+      "variants": [
+        {
+          "id": "solid-wood-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm"
+        },
+        {
+          "id": "solid-wood-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm"
+        }
+      ]
+    },
+    {
+      "category": "wood",
+      "id": "walnut-veneer",
+      "nameKey": "walnut_veneer",
+      "presets": [],
+      "regions": [
+        "tw"
+      ]
+    },
+    {
+      "category": "wood",
+      "id": "basswood-sheet",
+      "nameKey": "basswood_sheet",
+      "presets": [],
+      "regions": [
+        "tw"
       ]
     },
     {
@@ -1046,6 +1302,7 @@
           "variantId": "acrylic-10mm"
         },
         {
+          "groupId": "acrylic_engraving",
           "id": "acrylic_engraving",
           "legacyKey": "acrylic_engraving",
           "nameKey": "engraving",
@@ -1108,10 +1365,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "acrylic_engraving"
+          }
         },
         {
+          "groupId": "acrylic_engraving",
           "id": "acrylic_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -1137,10 +1394,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "acrylic_engraving"
+          }
         },
         {
+          "groupId": "acrylic_engraving",
           "id": "acrylic_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -1166,10 +1423,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "acrylic_engraving"
+          }
         },
         {
+          "groupId": "acrylic_engraving",
           "id": "acrylic_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -1195,8 +1452,7 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "acrylic_engraving"
+          }
         },
         {
           "id": "acrylic_printing",
@@ -1402,6 +1658,1217 @@
       ]
     },
     {
+      "category": "acrylic",
+      "id": "fluorescent-acrylic",
+      "nameKey": "fluorescent_acrylic",
+      "presets": [
+        {
+          "id": "acrylic_fluorescent_3mm_cutting",
+          "legacyKey": "acrylic_fluorescent_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 8
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 55,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 9
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 12
+              }
+            }
+          },
+          "variantId": "fluorescent-acrylic-3mm"
+        },
+        {
+          "id": "acrylic_fluorescent_5mm_cutting",
+          "legacyKey": "acrylic_fluorescent_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 4
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 59,
+                "speed": 3
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 5
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 3
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 4
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            }
+          },
+          "variantId": "fluorescent-acrylic-5mm"
+        },
+        {
+          "groupId": "acrylic_fluorescent_engraving",
+          "id": "acrylic_fluorescent_engraving",
+          "legacyKey": "acrylic_fluorescent_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 15,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 13,
+                "speed": 500
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 15,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 10,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_fluorescent_engraving",
+          "id": "acrylic_fluorescent_engraving_high",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_fluorescent_engraving",
+          "id": "acrylic_fluorescent_engraving_detailed",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_fluorescent_engraving",
+          "id": "acrylic_fluorescent_engraving_ultra",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        }
+      ],
+      "regions": [
+        "us"
+      ],
+      "variants": [
+        {
+          "id": "fluorescent-acrylic-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm"
+        },
+        {
+          "id": "fluorescent-acrylic-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm"
+        }
+      ]
+    },
+    {
+      "category": "acrylic",
+      "id": "glitter-acrylic",
+      "nameKey": "glitter_acrylic",
+      "presets": [
+        {
+          "id": "acrylic_glitter_3mm_cutting",
+          "legacyKey": "acrylic_glitter_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 8
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 55,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 9
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 12
+              }
+            }
+          },
+          "variantId": "glitter-acrylic-3mm"
+        },
+        {
+          "id": "acrylic_glitter_5mm_cutting",
+          "legacyKey": "acrylic_glitter_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 4
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 59,
+                "speed": 3
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 5
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 3
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 4
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            }
+          },
+          "variantId": "glitter-acrylic-5mm"
+        },
+        {
+          "groupId": "acrylic_glitter_engraving",
+          "id": "acrylic_glitter_engraving",
+          "legacyKey": "acrylic_glitter_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 15,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 13,
+                "speed": 500
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 15,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 10,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_glitter_engraving",
+          "id": "acrylic_glitter_engraving_high",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_glitter_engraving",
+          "id": "acrylic_glitter_engraving_detailed",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_glitter_engraving",
+          "id": "acrylic_glitter_engraving_ultra",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        }
+      ],
+      "regions": [
+        "us"
+      ],
+      "variants": [
+        {
+          "id": "glitter-acrylic-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm"
+        },
+        {
+          "id": "glitter-acrylic-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm"
+        }
+      ]
+    },
+    {
+      "category": "acrylic",
+      "id": "sublimation-acrylic",
+      "nameKey": "sublimation_acrylic",
+      "presets": [
+        {
+          "id": "acrylic_sublimation_3mm_cutting",
+          "legacyKey": "acrylic_sublimation_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 8
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 55,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 9
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 12
+              }
+            }
+          },
+          "variantId": "sublimation-acrylic-3mm"
+        },
+        {
+          "id": "acrylic_sublimation_5mm_cutting",
+          "legacyKey": "acrylic_sublimation_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 4
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 59,
+                "speed": 3
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 5
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 3
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 4
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            }
+          },
+          "variantId": "sublimation-acrylic-5mm"
+        },
+        {
+          "groupId": "acrylic_sublimation_engraving",
+          "id": "acrylic_sublimation_engraving",
+          "legacyKey": "acrylic_sublimation_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 15,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 13,
+                "speed": 500
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 15,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 10,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_sublimation_engraving",
+          "id": "acrylic_sublimation_engraving_high",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_sublimation_engraving",
+          "id": "acrylic_sublimation_engraving_detailed",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_sublimation_engraving",
+          "id": "acrylic_sublimation_engraving_ultra",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        }
+      ],
+      "variants": [
+        {
+          "id": "sublimation-acrylic-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm"
+        },
+        {
+          "id": "sublimation-acrylic-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm"
+        }
+      ]
+    },
+    {
+      "category": "acrylic",
+      "id": "mixed-acrylic",
+      "nameKey": "mixed_acrylic",
+      "presets": [
+        {
+          "id": "acrylic_mixed_3mm_cutting",
+          "legacyKey": "acrylic_mixed_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 8
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 55,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 45,
+                "speed": 7
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 9
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 12
+              }
+            }
+          },
+          "variantId": "mixed-acrylic-3mm"
+        },
+        {
+          "id": "acrylic_mixed_5mm_cutting",
+          "legacyKey": "acrylic_mixed_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 4
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 59,
+                "speed": 3
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 5
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 3
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 4
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 6
+              }
+            }
+          },
+          "variantId": "mixed-acrylic-5mm"
+        },
+        {
+          "groupId": "acrylic_mixed_engraving",
+          "id": "acrylic_mixed_engraving",
+          "legacyKey": "acrylic_mixed_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 15,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 13,
+                "speed": 500
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 25,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 15,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 10,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_mixed_engraving",
+          "id": "acrylic_mixed_engraving_high",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_mixed_engraving",
+          "id": "acrylic_mixed_engraving_detailed",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        },
+        {
+          "groupId": "acrylic_mixed_engraving",
+          "id": "acrylic_mixed_engraving_ultra",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 12,
+                "speed": 500
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 9,
+                "speed": 500
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 6,
+                "speed": 500
+              }
+            }
+          }
+        }
+      ],
+      "variants": [
+        {
+          "id": "mixed-acrylic-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm"
+        },
+        {
+          "id": "mixed-acrylic-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm"
+        }
+      ]
+    },
+    {
+      "category": "acrylic",
+      "id": "mirror-acrylic",
+      "nameKey": "mirror_acrylic",
+      "presets": [],
+      "regions": [
+        "us"
+      ]
+    },
+    {
       "category": "leather",
       "id": "leather",
       "nameKey": "leather",
@@ -1533,6 +3000,7 @@
           "variantId": "leather-5mm"
         },
         {
+          "groupId": "leather_engraving",
           "id": "leather_engraving",
           "legacyKey": "leather_engraving",
           "nameKey": "engraving",
@@ -1605,10 +3073,10 @@
                 "speed": 300
               }
             }
-          },
-          "groupId": "leather_engraving"
+          }
         },
         {
+          "groupId": "leather_engraving",
           "id": "leather_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -1634,10 +3102,10 @@
                 "speed": 300
               }
             }
-          },
-          "groupId": "leather_engraving"
+          }
         },
         {
+          "groupId": "leather_engraving",
           "id": "leather_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -1663,10 +3131,10 @@
                 "speed": 300
               }
             }
-          },
-          "groupId": "leather_engraving"
+          }
         },
         {
+          "groupId": "leather_engraving",
           "id": "leather_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -1692,8 +3160,7 @@
                 "speed": 300
               }
             }
-          },
-          "groupId": "leather_engraving"
+          }
         },
         {
           "id": "leather_printing",
@@ -1742,6 +3209,237 @@
               }
             }
           }
+        }
+      ]
+    },
+    {
+      "category": "leather",
+      "id": "faux-leather",
+      "nameKey": "faux_leather",
+      "presets": [
+        {
+          "id": "leather_faux_3mm_cutting",
+          "legacyKey": "leather_faux_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 65,
+                "speed": 3
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 35,
+                "speed": 10
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 60,
+                "speed": 3
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 55,
+                "repeat": 3,
+                "speed": 10
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 65,
+                "speed": 6
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 65,
+                "speed": 9
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 65,
+                "speed": 12
+              }
+            }
+          },
+          "variantId": "faux-leather-3mm"
+        },
+        {
+          "groupId": "leather_faux_engraving",
+          "id": "leather_faux_engraving",
+          "legacyKey": "leather_faux_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 30,
+                "speed": 150
+              }
+            },
+            "fbb1p": {
+              "15": {
+                "power": 20,
+                "speed": 150
+              }
+            },
+            "fbb2": {
+              "15": {
+                "power": 30,
+                "speed": 300
+              }
+            },
+            "fbm1": {
+              "15": {
+                "power": 30,
+                "speed": 150
+              }
+            },
+            "fbm2": {
+              "15": {
+                "power": 7,
+                "speed": 200
+              }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 40,
+                "speed": 300
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 20,
+                "speed": 300
+              }
+            }
+          }
+        },
+        {
+          "groupId": "leather_faux_engraving",
+          "id": "leather_faux_engraving_high",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 20,
+                "speed": 300
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 10,
+                "speed": 300
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 10,
+                "speed": 300
+              }
+            }
+          }
+        },
+        {
+          "groupId": "leather_faux_engraving",
+          "id": "leather_faux_engraving_detailed",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 12,
+                "speed": 300
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 6,
+                "speed": 300
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 6,
+                "speed": 300
+              }
+            }
+          }
+        },
+        {
+          "groupId": "leather_faux_engraving",
+          "id": "leather_faux_engraving_ultra",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 8,
+                "speed": 300
+              }
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 4,
+                "speed": 300
+              }
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 4,
+                "speed": 300
+              }
+            }
+          }
+        }
+      ],
+      "variants": [
+        {
+          "id": "faux-leather-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm"
         }
       ]
     },
@@ -1885,6 +3583,7 @@
           "variantId": "fabric-5mm"
         },
         {
+          "groupId": "fabric_engraving",
           "id": "fabric_engraving",
           "legacyKey": "fabric_engraving",
           "nameKey": "engraving",
@@ -1957,10 +3656,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "fabric_engraving"
+          }
         },
         {
+          "groupId": "fabric_engraving",
           "id": "fabric_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -1986,10 +3685,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "fabric_engraving"
+          }
         },
         {
+          "groupId": "fabric_engraving",
           "id": "fabric_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -2015,10 +3714,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "fabric_engraving"
+          }
         },
         {
+          "groupId": "fabric_engraving",
           "id": "fabric_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -2044,8 +3743,7 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "fabric_engraving"
+          }
         },
         {
           "id": "fabric_printing",
@@ -2096,6 +3794,12 @@
                 "power": 50,
                 "speed": 10
               }
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 15
+              }
             }
           },
           "variantId": "denim-1mm"
@@ -2139,24 +3843,15 @@
     },
     {
       "category": "other",
-      "id": "canvas-fabric",
-      "nameKey": "canvas_fabric",
-      "presets": [
-        {
-          "id": "canvas_fabric_printing",
-          "legacyKey": "canvas_fabric_printing",
-          "nameKey": "printing",
-          "origin": "default",
-          "settings": {
-            "fbm2": {
-              "7": {
-                "ink": 90,
-                "speed": 15
-              }
-            }
-          }
-        }
-      ]
+      "id": "felt",
+      "nameKey": "felt",
+      "presets": []
+    },
+    {
+      "category": "other",
+      "id": "eva-foam",
+      "nameKey": "eva_foam",
+      "presets": []
     },
     {
       "category": "paper",
@@ -2237,11 +3932,18 @@
       ]
     },
     {
+      "category": "paper",
+      "id": "kraft-paper",
+      "nameKey": "kraft_paper",
+      "presets": []
+    },
+    {
       "category": "other",
       "id": "glass",
       "nameKey": "glass",
       "presets": [
         {
+          "groupId": "glass_bw_engraving",
           "id": "glass_bw_engraving",
           "legacyKey": "glass_bw_engraving",
           "nameKey": "engraving",
@@ -2314,10 +4016,10 @@
                 "speed": 600
               }
             }
-          },
-          "groupId": "glass_bw_engraving"
+          }
         },
         {
+          "groupId": "glass_bw_engraving",
           "id": "glass_bw_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -2343,10 +4045,10 @@
                 "speed": 600
               }
             }
-          },
-          "groupId": "glass_bw_engraving"
+          }
         },
         {
+          "groupId": "glass_bw_engraving",
           "id": "glass_bw_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -2372,10 +4074,10 @@
                 "speed": 600
               }
             }
-          },
-          "groupId": "glass_bw_engraving"
+          }
         },
         {
+          "groupId": "glass_bw_engraving",
           "id": "glass_bw_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -2401,8 +4103,7 @@
                 "speed": 600
               }
             }
-          },
-          "groupId": "glass_bw_engraving"
+          }
         },
         {
           "id": "glass_printing",
@@ -2427,6 +4128,7 @@
       "nameKey": "slate",
       "presets": [
         {
+          "groupId": "slate_engraving",
           "id": "slate_engraving",
           "legacyKey": "slate_engraving",
           "nameKey": "engraving",
@@ -2493,10 +4195,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "slate_engraving"
+          }
         },
         {
+          "groupId": "slate_engraving",
           "id": "slate_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -2522,10 +4224,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "slate_engraving"
+          }
         },
         {
+          "groupId": "slate_engraving",
           "id": "slate_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -2551,10 +4253,10 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "slate_engraving"
+          }
         },
         {
+          "groupId": "slate_engraving",
           "id": "slate_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -2580,8 +4282,7 @@
                 "speed": 500
               }
             }
-          },
-          "groupId": "slate_engraving"
+          }
         }
       ]
     },
@@ -2672,6 +4373,7 @@
       "nameKey": "rubber",
       "presets": [
         {
+          "groupId": "rubber_bw_engraving",
           "id": "rubber_bw_engraving",
           "legacyKey": "rubber_bw_engraving",
           "nameKey": "engraving",
@@ -2744,10 +4446,10 @@
                 "speed": 100
               }
             }
-          },
-          "groupId": "rubber_bw_engraving"
+          }
         },
         {
+          "groupId": "rubber_bw_engraving",
           "id": "rubber_bw_engraving_high",
           "nameKey": "engraving",
           "origin": "default",
@@ -2773,10 +4475,10 @@
                 "speed": 100
               }
             }
-          },
-          "groupId": "rubber_bw_engraving"
+          }
         },
         {
+          "groupId": "rubber_bw_engraving",
           "id": "rubber_bw_engraving_detailed",
           "nameKey": "engraving",
           "origin": "default",
@@ -2802,10 +4504,10 @@
                 "speed": 100
               }
             }
-          },
-          "groupId": "rubber_bw_engraving"
+          }
         },
         {
+          "groupId": "rubber_bw_engraving",
           "id": "rubber_bw_engraving_ultra",
           "nameKey": "engraving",
           "origin": "default",
@@ -2831,9 +4533,17 @@
                 "speed": 100
               }
             }
-          },
-          "groupId": "rubber_bw_engraving"
+          }
         }
+      ]
+    },
+    {
+      "category": "other",
+      "id": "ceramic-tile",
+      "nameKey": "ceramic_tile",
+      "presets": [],
+      "regions": [
+        "tw"
       ]
     },
     {

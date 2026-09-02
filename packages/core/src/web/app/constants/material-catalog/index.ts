@@ -149,11 +149,13 @@ export const getBundledCatalog = (): MaterialCatalog => {
         ? { thicknessNum: thicknessMm, thicknessUnit: unit }
         : undefined;
 
-  const materials: Material[] = materialDefs.map(({ category, id, nameKey, tags, variants }) => ({
+  const materials: Material[] = materialDefs.map(({ category, id, image, nameKey, regions, tags, variants }) => ({
     category,
     id,
     nameKey,
     presets: buildPresetsForMaterial(id),
+    ...(image && { image: `core-img/material-catalog/${image}.jpg` }),
+    ...(regions && { regions }),
     ...(tags && { tags }),
     ...(variants && {
       variants: variants.map(({ id: variantId, ...rest }) => ({ id: variantId, ...toThickness(rest) })),

@@ -58,24 +58,24 @@
       ]
     },
     {
-      "id": "glitter-acrylic",
-      "name": { "default": "Glitter Acrylic", "zh-tw": "亮片壓克力" },
+      "id": "sparkle-acrylic",
+      "name": { "default": "Sparkle Acrylic", "zh-tw": "星光壓克力" },
       "description": {
-        "default": "FLUX Shop premium cast acrylic with embedded glitter.",
+        "default": "FLUX Shop premium cast acrylic with embedded sparkle flakes.",
         "zh-tw": "FLUX 商店高級亮片鑄造壓克力。"
       },
       "category": "acrylic",
-      "image": "https://cdn.example.flux3dp.com/materials/glitter-acrylic/cover.jpg",
-      "variants": [{ "id": "glitter-acrylic-1-8", "thicknessUnit": "inch", "thicknessNum": 1, "thicknessDen": 8 }],
+      "image": "https://cdn.example.flux3dp.com/materials/sparkle-acrylic/cover.jpg",
+      "variants": [{ "id": "sparkle-acrylic-1-8", "thicknessUnit": "inch", "thicknessNum": 1, "thicknessDen": 8 }],
       "tags": ["Premium", "FLUX Shop"],
       "regions": ["us"],
-      "shopLinks": { "us": "https://shop.flux3dp.us/products/glitter-acrylic" },
+      "shopLinks": { "us": "https://shop.flux3dp.us/products/sparkle-acrylic" },
       "presets": [
         {
-          "id": "glitter_acrylic_cutting",
+          "id": "sparkle_acrylic_cutting",
           "name": { "default": "Cutting" },
           "origin": "default",
-          "variantId": "glitter-acrylic-1-8",
+          "variantId": "sparkle-acrylic-1-8",
           "settings": { "fbb2": { "15": { "power": 60, "speed": 6, "repeat": 1 } } }
         }
       ]

@@ -61,8 +61,8 @@
 
   .cover {
     position: relative;
-    // Covers are authored 4:3 (contract §5) — display them uncropped at any column width
-    aspect-ratio: 4 / 3;
+    // Covers are authored 1:1 (contract §5) — display them uncropped at any column width
+    aspect-ratio: 1 / 1;
     background-size: cover;
     background-position: center;
 
@@ -112,7 +112,7 @@
     max-width: 100%;
 
     .cover {
-      aspect-ratio: 4 / 3;
+      aspect-ratio: 1 / 1;
       border-radius: 10px;
       box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
       background-size: cover;

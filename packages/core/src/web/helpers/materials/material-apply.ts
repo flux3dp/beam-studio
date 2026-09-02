@@ -125,9 +125,13 @@ export const resolveMaterialRef = ({
 
   if (!configName || configName.trim() === '') return null;
 
+  // Presets.ts keys removed by material merges; files saved before the merge still carry them
+  const legacyKeyAliases: Record<string, string> = { canvas_fabric_printing: 'canvas_printing' };
+  const legacyName = legacyKeyAliases[configName] ?? configName;
+
   // Catalog presets by legacy key
   for (const material of materialCatalogCache.getCatalogSync().materials) {
-    const preset = material.presets.find(({ legacyKey }) => legacyKey === configName);
+    const preset = material.presets.find(({ legacyKey }) => legacyKey === legacyName);
 
     if (preset) return { material, preset };
   }
