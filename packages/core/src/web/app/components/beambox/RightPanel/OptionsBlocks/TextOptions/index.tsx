@@ -32,7 +32,11 @@ import {
 } from '@core/helpers/fonts/fontUtils';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import type { FontOption } from '@core/helpers/fonts/renderTextOptions';
-import { fontFamilySelectFilterOption, renderTextOptions } from '@core/helpers/fonts/renderTextOptions';
+import {
+  fontFamilySelectFilterOption,
+  getFontFamilyOptions,
+  renderTextOptions,
+} from '@core/helpers/fonts/renderTextOptions';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
@@ -102,7 +106,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const fontHistory = useStorageStore((state) => state['font-history']);
-  const [fontFamilies, setFontFamilies] = useState<string[]>(FontFuncs.requestAvailableFontFamilies());
+  const [fontFamilies, setFontFamilies] = useState<string[]>(() => FontFuncs.requestAvailableFontFamilies());
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
   const workarea = useWorkarea();
@@ -435,7 +439,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   };
 
   const renderFontFamilyBlock = (): ReactNode => {
-    const options = fontFamilies.map((family) => renderTextOptions(family));
+    const options = getFontFamilyOptions(fontFamilies);
 
     if (isMobile) {
       return (
