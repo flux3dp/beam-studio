@@ -61,7 +61,6 @@ export default interface ISVGCanvas {
   embedImage(url: string, callback?: (dataURI: string) => void): void;
   events: EventEmitter;
   findMatchedAlignPoints: (x: number, y: number) => Record<'farthest' | 'nearest', Record<'x' | 'y', IPoint | null>>;
-  flipSelectedElements: (horizon?: number, vertical?: number) => Promise<void>;
   getContainer: () => SVGElement;
   getContentElem: () => SVGGElement;
   getCurrentConfig: () => ISVGConfig;

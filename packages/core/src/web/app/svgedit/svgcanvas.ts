@@ -51,7 +51,6 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getAttributes } from '@core/helpers/element/attribute';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import jimpHelper from '@core/helpers/jimp-helper';
 import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import logMemory from '@core/helpers/log-memory';
@@ -62,7 +61,6 @@ import sanitizeXmlString from '@core/helpers/sanitize-xml-string';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { Units } from '@core/helpers/units';
 import units from '@core/helpers/units';
-import imageProcessor from '@core/implementations/imageProcessor';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
@@ -3412,185 +3410,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       j += 1;
     }
-  };
-
-  this.flipSelectedElements = async function (horizon = 1, vertical = 1) {
-    const selectedElements = selectionManager.getSelectedElements();
-    const batchCmd = new history.BatchCommand('Flip Elements');
-
-    for (let i = 0; i < selectedElements.length; ++i) {
-      const elem = selectedElements[i];
-      const bbox = getBBox(elem);
-      const center = { x: bbox.x + bbox.width / 2, y: bbox.y + bbox.height / 2 };
-      const centers = [center];
-      const flipPara = { horizon, vertical };
-
-      setStartTransform(elem.getAttribute('transform')); // maybe not need
-
-      let cmd;
-      const stack: Array<{ elem: SVGElement; originalAngle?: number }> = [{ elem }];
-
-      while (stack.length > 0) {
-        const { elem: topElem, originalAngle } = stack.pop()!;
-
-        if (topElem!.tagName !== 'g') {
-          cmd = await this.flipElementWithRespectToCenter(topElem, centers[centers.length - 1], flipPara);
-
-          if (cmd && !cmd.isEmpty()) {
-            batchCmd.addSubCommand(cmd);
-          }
-        } else if (originalAngle == null) {
-          const angle = getRotationAngle(topElem);
-
-          if (angle !== 0) {
-            setRotationAngle(topElem, 0, { parentCmd: batchCmd });
-
-            stack.push({ elem: topElem, originalAngle: angle });
-          }
-
-          // if g has tlist, inverse to flip element inside
-          const tlist = svgedit.transformlist.getTransformList(topElem);
-          let { x, y } = centers[centers.length - 1];
-
-          for (let j = 0; j < tlist.numberOfItems; j++) {
-            const t = tlist.getItem(j);
-
-            // type 4 does not matter
-            if (t.type === 4) {
-              continue;
-            }
-
-            const { a, b, c, d, e, f } = t.matrix;
-            const delta = a * d - b * c;
-
-            x = (d * x - c * y + c * f - d * e) / delta;
-            y = (-b * x + a * y - a * f + b * e) / delta;
-          }
-          centers.push({ x, y });
-          topElem.childNodes.forEach((elem) => {
-            stack.push({ elem: elem as SVGElement });
-          });
-        } else {
-          centers.pop();
-          setRotationAngle(topElem, -originalAngle, { addToHistory: false });
-        }
-      }
-      selectorManager.requestSelector(elem)?.resize();
-      selectorManager.requestSelector(elem)?.show(selectedElements.length === 1);
-      svgEditor.updateContextPanel();
-    }
-    addCommandToHistory(batchCmd);
-  };
-
-  this.flipElementWithRespectToCenter = async function (elem, center, flipPara) {
-    const batchCmd = new history.BatchCommand('Flip Single Element');
-
-    const angle = svgedit.utilities.getRotationAngle(elem);
-
-    canvas.undoMgr.beginUndoableChange('transform', [elem]);
-    setRotationAngle(elem, 0, { addToHistory: false });
-    recalculateDimensions(elem);
-    setRotationAngle(elem, -angle, { addToHistory: false });
-
-    let cmd = canvas.undoMgr.finishUndoableChange();
-
-    if (cmd && !cmd.isEmpty()) {
-      batchCmd.addSubCommand(cmd);
-    }
-
-    const bbox = getBBox(elem);
-    const cx = bbox.x + bbox.width / 2;
-    const cy = bbox.y + bbox.height / 2;
-    const dx = flipPara.horizon < 0 ? 2 * (center.x - cx) : 0;
-    const dy = flipPara.vertical < 0 ? 2 * (center.y - cy) : 0;
-    const tlist = svgedit.transformlist.getTransformList(elem);
-
-    if (elem.tagName !== 'image') {
-      setStartTransform(elem.getAttribute('transform'));
-
-      const translateOrigin = svgroot.createSVGTransform();
-      const scale = svgroot.createSVGTransform();
-      const translateBack = svgroot.createSVGTransform();
-
-      translateOrigin.setTranslate(-cx, -cy);
-      scale.setScale(flipPara.horizon, flipPara.vertical);
-      translateBack.setTranslate(cx, cy);
-
-      const hasMatrix = svgedit.math.hasMatrixTransform(tlist);
-
-      if (hasMatrix) {
-        const pos = angle ? 1 : 0;
-
-        tlist.insertItemBefore(translateOrigin, pos);
-        tlist.insertItemBefore(scale, pos);
-        tlist.insertItemBefore(translateBack, pos);
-      } else {
-        tlist.appendItem(translateBack);
-        tlist.appendItem(scale);
-        tlist.appendItem(translateOrigin);
-      }
-
-      cmd = recalculateDimensions(elem);
-    } else {
-      cmd = await this._flipImage(elem, flipPara.horizon, flipPara.vertical);
-    }
-
-    if (cmd && !cmd.isEmpty()) {
-      batchCmd.addSubCommand(cmd);
-    }
-
-    cmd = moveElements([dx], [dy], [elem], false);
-    batchCmd.addSubCommand(cmd);
-
-    return batchCmd;
-  };
-
-  this._flipImage = async function (image, horizon = 1, vertical = 1) {
-    const batchCmd = new history.BatchCommand('Flip image');
-
-    if (horizon === 1 && vertical === 1) {
-      return;
-    }
-
-    let cmd;
-    const origImage = $(image).attr('origImage');
-
-    if (origImage) {
-      let data: any = await jimpHelper.urlToImage(origImage);
-
-      data.flip(horizon === -1, vertical === -1);
-      data = await data.getBufferAsync(imageProcessor.MIME_PNG);
-      data = new Blob([data]);
-
-      const src = URL.createObjectURL(data);
-
-      canvas.undoMgr.beginUndoableChange('origImage', [image]);
-      image.setAttribute('origImage', src);
-      cmd = canvas.undoMgr.finishUndoableChange();
-
-      if (cmd && !cmd.isEmpty()) {
-        batchCmd.addSubCommand(cmd);
-      }
-    }
-
-    const flipCanvas = document.createElement('canvas');
-    const flipContext = flipCanvas.getContext('2d');
-
-    flipCanvas.width = Number(image.getAttribute('width'));
-    flipCanvas.height = Number(image.getAttribute('height'));
-    flipContext.translate(horizon < 0 ? flipCanvas.width : 0, vertical < 0 ? flipCanvas.height : 0);
-    flipContext.scale(horizon, vertical);
-    flipContext.drawImage(image, 0, 0, flipCanvas.width, flipCanvas.height);
-
-    canvas.undoMgr.beginUndoableChange('xlink:href', [image]);
-    image.setAttribute('xlink:href', flipCanvas.toDataURL());
-    cmd = canvas.undoMgr.finishUndoableChange();
-
-    if (cmd && !cmd.isEmpty()) {
-      batchCmd.addSubCommand(cmd);
-    }
-
-    return batchCmd;
   };
 
   // Function: alignSelectedElements

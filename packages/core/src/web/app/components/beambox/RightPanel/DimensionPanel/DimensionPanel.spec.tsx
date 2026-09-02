@@ -39,7 +39,6 @@ const mockChangeSelectedAttribute = jest.fn();
 const mockSetSvgElemPosition = jest.fn();
 const mockChangeSelectedAttributeNoUndo = jest.fn();
 const setSvgElemSize = jest.fn();
-const flipSelectedElements = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => {
@@ -47,7 +46,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
       Canvas: {
         changeSelectedAttribute: (...args) => mockChangeSelectedAttribute(...args),
         changeSelectedAttributeNoUndo: (...args) => mockChangeSelectedAttributeNoUndo(...args),
-        flipSelectedElements: (...args) => flipSelectedElements(...args),
         setSvgElemPosition: (...args) => mockSetSvgElemPosition(...args),
         setSvgElemSize: (...args) => setSvgElemSize(...args),
       },
