@@ -35,9 +35,12 @@ const drawEllipse = (x1: number, y1: number, x2: number, y2: number) => {
   cy.getElementTitle().should('have.text', 'Layer 1 > Oval');
   // Switching to Cursor drops the selection; rubber-band re-select (unfilled oval has no
   // clickable interior) so the dimension panel shows.
+  const rx = x2 - x1;
+  const ry = y2 - y1;
+  const margin = 10; // rubber-band select safe margin
   cy.clickToolBtn('Cursor');
-  cy.get('svg#svgcontent').trigger('mousedown', x1 - 20, y1 - 20, { force: true });
-  cy.get('svg#svgcontent').trigger('mousemove', x2 + 20, y2 + 20, { force: true });
+  cy.get('svg#svgcontent').trigger('mousedown', x1 - rx - margin, y1 - ry - margin, { force: true });
+  cy.get('svg#svgcontent').trigger('mousemove', x2 + margin, y2 + margin, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
   cy.getElementTitle().should('have.text', 'Layer 1 > Oval');
 };
@@ -53,10 +56,7 @@ const runOffset = (direction: 'inward' | 'outward', distance: number) => {
   // Direction Select has no testid — locate it by the field whose label is "Offset Direction".
   const label = direction === 'outward' ? 'Outward' : 'Inward';
 
-  cy.contains('span', 'Offset Direction')
-    .parent()
-    .find('.ant-select')
-    .click();
+  cy.contains('span', 'Offset Direction').parent().find('.ant-select').click();
   cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
     .find('.ant-select-item-option')
     .contains(label)
@@ -202,7 +202,7 @@ describe('offset result correctness', () => {
 
   it('compound (concentric rects): outward offset follows only the outer outline', () => {
     // Outer rect (larger)
-    drawRect(80, 80, 320, 320);
+    drawRect(80, 80, 500, 500);
     cy.showPanel('objects');
 
     let outerW = 0;
@@ -216,8 +216,8 @@ describe('offset result correctness', () => {
 
     // Multi-select both rects
     cy.clickToolBtn('Cursor');
-    cy.get('svg#svgcontent').trigger('mousedown', 40, 40, { force: true });
-    cy.get('svg#svgcontent').trigger('mousemove', 360, 360, { force: true });
+    cy.get('svg#svgcontent').trigger('mousedown', 75, 75, { force: true });
+    cy.get('svg#svgcontent').trigger('mousemove', 505, 505, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.findAllByText('Multiple Objects').should('exist');
     cy.showPanel('objects');

@@ -44,7 +44,6 @@ declare global {
         hasMatrixTransform: (tlist: any) => boolean;
         isIdentity: (m: SVGMatrix) => boolean;
         matrixMultiply: (...matr: SVGMatrix[]) => SVGMatrix;
-        rectsIntersect: (r1: SVGRect, r2: SVGRect) => boolean;
         roundToDefault: (val: number) => number;
         roundToDigit: (val: number, digit?: number) => number;
         snapToAngle: (
