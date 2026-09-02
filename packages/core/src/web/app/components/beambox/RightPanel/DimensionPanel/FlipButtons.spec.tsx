@@ -6,14 +6,8 @@ import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockFlipSelectedElements = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) => {
-    callback({
-      Canvas: {
-        flipSelectedElements: (...args) => mockFlipSelectedElements(...args),
-      },
-    });
-  },
+jest.mock('@core/app/svgedit/operations/flip', () => ({
+  flipSelectedElements: (...args) => mockFlipSelectedElements(...args),
 }));
 
 jest.mock('@core/helpers/useI18n', () => () => ({
