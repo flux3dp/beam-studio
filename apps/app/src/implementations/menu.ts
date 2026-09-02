@@ -19,9 +19,15 @@ const updateWindowsMenu = () => {
   }
 };
 
+type MenuItemStatus = { checked?: boolean; enabled?: boolean; visible?: boolean };
+
 class Menu extends AbstractMenu {
   private communicator;
-  private menuItemChanges: { [key: string]: { checked?: boolean; enabled?: boolean; visible?: boolean } } = {};
+  private menuItemChanges: { [id: string]: MenuItemStatus } = {};
+  // Status last applied to the native menu; lets no-op flushes skip the sync-IPC @electron/remote calls
+  private appliedMenuItemStatus: { [id: string]: MenuItemStatus } = {};
+  // Menu tree walked once per menu build; each item access via @electron/remote is a sync IPC round-trip
+  private menuItemsById: Map<string, Electron.MenuItem[]> | null = null;
 
   constructor(aCommunicator: any) {
     super();
@@ -94,6 +100,10 @@ class Menu extends AbstractMenu {
   };
 
   initMenuItemStatus = (): void => {
+    // the native menu was rebuilt, so the applied mirror and cached item references are stale
+    this.appliedMenuItemStatus = {};
+    this.menuItemsById = null;
+
     const globalPreference = useGlobalPreferenceStore.getState();
     const dockableStore = useDockableStore.getState();
 
@@ -156,44 +166,57 @@ class Menu extends AbstractMenu {
     }
   }
 
-  private findAllMenuItemsByIds = (menu: Electron.Menu, ids: Set<string>): Electron.MenuItem[] => {
-    const results: Electron.MenuItem[] = [];
+  private getMenuItemsByIds = (menu: Electron.Menu, ids: string[]): Electron.MenuItem[] => {
+    if (!this.menuItemsById) {
+      const map = new Map<string, Electron.MenuItem[]>();
+      const collect = (current: Electron.Menu): void => {
+        for (const item of current.items) {
+          if (item.id) map.set(item.id, [...(map.get(item.id) ?? []), item]);
 
-    for (const item of menu.items) {
-      if (ids.has(item.id)) results.push(item);
+          if (item.submenu) collect(item.submenu);
+        }
+      };
 
-      if (item.submenu) results.push(...this.findAllMenuItemsByIds(item.submenu, ids));
+      collect(menu);
+      this.menuItemsById = map;
     }
 
-    return results;
+    return ids.flatMap((id) => this.menuItemsById!.get(id) ?? []);
+  };
+
+  // drop pending changes that match what is already applied to the native menu
+  private pruneNoopChanges = (): void => {
+    for (const [id, changes] of Object.entries(this.menuItemChanges)) {
+      const applied = this.appliedMenuItemStatus[id];
+
+      if (applied && Object.entries(changes).every(([key, value]) => applied[key as keyof MenuItemStatus] === value)) {
+        delete this.menuItemChanges[id];
+      }
+    }
   };
 
   updateMenuItemChangesHandler = funnel(
     (): void => {
+      this.pruneNoopChanges();
+
+      const ids = Object.keys(this.menuItemChanges);
+
+      if (ids.length === 0) return;
+
       const menu = ElectronMenu.getApplicationMenu();
 
       if (!menu) return;
 
-      const ids = Object.keys(this.menuItemChanges);
-      const idSet = new Set(ids);
-      const menuItems = this.findAllMenuItemsByIds(menu, idSet);
-
-      for (const menuItem of menuItems) {
-        const changes = this.menuItemChanges[menuItem.id];
-
-        if (changes.checked !== undefined) {
-          menuItem.checked = changes.checked;
-        }
-
-        if (changes.enabled !== undefined) {
-          menuItem.enabled = changes.enabled;
-        }
-
-        if (changes.visible !== undefined) {
-          menuItem.visible = changes.visible;
-        }
+      for (const menuItem of this.getMenuItemsByIds(menu, ids)) {
+        Object.assign(menuItem, this.menuItemChanges[menuItem.id]);
       }
+
       this.rerenderMenu();
+
+      for (const id of ids) {
+        this.appliedMenuItemStatus[id] = { ...this.appliedMenuItemStatus[id], ...this.menuItemChanges[id] };
+      }
+
       this.menuItemChanges = {};
     },
     { minQuietPeriodMs: 100, triggerAt: 'end' },
