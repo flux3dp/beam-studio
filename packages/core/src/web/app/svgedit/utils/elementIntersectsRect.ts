@@ -47,11 +47,16 @@ const textIntersectsRect = (elem: SVGTextContentElement, rect: IRect, matrix: DO
   return false;
 };
 
+// missing fill means filled (the SVG default is black); outline shapes carry
+// an explicit fill="none"
+const isFilled = (elem: Element): boolean =>
+  elem.getAttribute('fill') !== 'none' && elem.getAttribute('fill-opacity') !== '0';
+
 // getPointAtLength re-walks the path's segment list on every call (~ms per
 // call on a glyph-outline path), so for <path> elements parse the d attribute
 // once with paper.js and run a proper curve-vs-rect intersection instead.
 // Returns null when paper cannot handle the data, to fall back to probing.
-const pathDIntersectsRect = (d: string, rect: IRect, matrix: DOMMatrix): boolean | null => {
+const pathDIntersectsRect = (d: string, rect: IRect, matrix: DOMMatrix, checkFill: boolean): boolean | null => {
   try {
     if (!paper.project) paper.setup(new paper.Size(1, 1));
 
@@ -73,11 +78,21 @@ const pathDIntersectsRect = (d: string, rect: IRect, matrix: DOMMatrix): boolean
       ? (compound.children as paper.Path[])
       : [compound as unknown as paper.Path];
 
-    return subpaths.some((subpath) => {
-      const point = subpath.firstSegment?.point;
+    if (
+      subpaths.some((subpath) => {
+        const point = subpath.firstSegment?.point;
 
-      return Boolean(point) && rectPath.contains(point);
-    });
+        return Boolean(point) && rectPath.contains(point);
+      })
+    ) {
+      return true;
+    }
+
+    // a band fully inside a filled shape touches no outline; its center decides
+    // (partial overlaps always cross the outline). contains() respects holes.
+    if (checkFill) return compound.contains(new paper.Point(rect.x + rect.width / 2, rect.y + rect.height / 2));
+
+    return false;
   } catch {
     return null;
   }
@@ -89,10 +104,11 @@ const pathDIntersectsRect = (d: string, rect: IRect, matrix: DOMMatrix): boolean
 // than `span * scale` content units away from it, so a span whose probed
 // endpoint is farther from the band than it can travel is skipped whole.
 const outlineIntersectsRect = (elem: SVGGeometryElement, rect: IRect, matrix: DOMMatrix): boolean => {
+  const filled = isFilled(elem);
   const d = elem.getAttribute('d');
 
   if (d) {
-    const paperResult = pathDIntersectsRect(d, rect, matrix);
+    const paperResult = pathDIntersectsRect(d, rect, matrix, filled);
 
     if (paperResult !== null) return paperResult;
   }
@@ -154,7 +170,17 @@ const outlineIntersectsRect = (elem: SVGGeometryElement, rect: IRect, matrix: DO
     stack.push([lo, mid, dLo], [mid, hi, dMid]);
   }
 
-  return false;
+  // no outline hit: a band fully inside a filled shape still selects it
+  if (!filled || typeof elem.isPointInFill !== 'function') return false;
+
+  try {
+    const inverse = matrix.inverse();
+    const center = applyMatrix(inverse, rect.x + rect.width / 2, rect.y + rect.height / 2);
+
+    return elem.isPointInFill({ x: center.x, y: center.y } as DOMPoint);
+  } catch {
+    return false;
+  }
 };
 
 /**

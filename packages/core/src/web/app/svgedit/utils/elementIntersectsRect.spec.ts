@@ -9,6 +9,7 @@ jest.mock('paper', () => {
     CompoundPath: core.CompoundPath,
     Matrix: core.Matrix,
     Path: core.Path,
+    Point: core.Point,
     get project() {
       return core.project;
     },
@@ -22,12 +23,19 @@ import elementIntersectsRect from './elementIntersectsRect';
 const SVG_NS = 'http://www.w3.org/2000/svg';
 
 const identityCtm = { a: 1, b: 0, c: 0, d: 1, e: 0, f: 0 } as DOMMatrix;
+
+(identityCtm as { inverse: () => DOMMatrix }).inverse = () => identityCtm;
+
 // content CTM inverse stub: combining with an element's screen CTM just returns it
 const contentCtmInverse = { multiply: (m: DOMMatrix) => m } as DOMMatrix;
 
 // path stub whose outline is the polyline through verts, with linear getPointAtLength
 const makePath = (verts: Array<[number, number]>, ctm: DOMMatrix = identityCtm): SVGPathElement => {
   const elem = document.createElementNS(SVG_NS, 'path');
+
+  // model beam studio outline shapes; filled variants set their own fill
+  elem.setAttribute('fill', 'none');
+
   const segments: Array<{ from: [number, number]; len: number; to: [number, number] }> = [];
   let total = 0;
 
@@ -145,6 +153,23 @@ describe('elementIntersectsRect', () => {
     expect(spy.mock.calls.length).toBeLessThan(128);
   });
 
+  test('band inside a filled d-less shape selects via isPointInFill', () => {
+    const square = makePath([
+      [0, 0],
+      [100, 0],
+      [100, 100],
+      [0, 100],
+      [0, 0],
+    ]);
+
+    square.setAttribute('fill', '#333333');
+    Object.assign(square, {
+      isPointInFill: ({ x, y }: DOMPoint) => x >= 0 && x <= 100 && y >= 0 && y <= 100,
+    });
+
+    expect(elementIntersectsRect(square, { height: 20, width: 20, x: 40, y: 40 }, contentCtmInverse)).toBe(true);
+  });
+
   test('band much larger than the shape still detects a clipped edge', () => {
     // small square outline (perimeter 400) vs a huge band overlapping its right
     // half: in-band arc is far shorter than any band-derived step size
@@ -160,9 +185,10 @@ describe('elementIntersectsRect', () => {
   });
 
   describe('path with a d attribute goes through paper.js', () => {
-    const makeDPath = (d: string): SVGElement => {
+    const makeDPath = (d: string, fill = 'none'): SVGElement => {
       const elem = makeBoxElem('path', { height: 100, width: 100, x: 0, y: 0 });
 
+      elem.setAttribute('fill', fill);
       elem.setAttribute('d', d);
       // present so elementIntersectsRect routes into the outline branch;
       // paper answers from the d attribute before this is ever called
@@ -179,6 +205,26 @@ describe('elementIntersectsRect', () => {
 
     test('band crossing the outline intersects', () => {
       expect(elementIntersectsRect(cPath, { height: 20, width: 10, x: -5, y: 40 }, contentCtmInverse)).toBe(true);
+    });
+
+    test('band fully inside a filled shape selects it, but not inside an unfilled outline', () => {
+      const square = 'M0 0 h100 v100 h-100 z';
+
+      expect(
+        elementIntersectsRect(makeDPath(square, '#333333'), { height: 20, width: 20, x: 40, y: 40 }, contentCtmInverse),
+      ).toBe(true);
+      expect(
+        elementIntersectsRect(makeDPath(square, 'none'), { height: 20, width: 20, x: 40, y: 40 }, contentCtmInverse),
+      ).toBe(false);
+    });
+
+    test('band inside the hole of a filled donut does not intersect', () => {
+      // outer clockwise, inner counter-clockwise -> the inner square is a hole
+      const donut = makeDPath('M0 0 h100 v100 h-100 z M40 40 v20 h20 v-20 z', '#333333');
+
+      expect(elementIntersectsRect(donut, { height: 10, width: 10, x: 45, y: 45 }, contentCtmInverse)).toBe(false);
+      // band over the solid ring between outline and hole still selects
+      expect(elementIntersectsRect(donut, { height: 10, width: 8, x: 10, y: 45 }, contentCtmInverse)).toBe(true);
     });
 
     test('subpath fully inside the band intersects', () => {
