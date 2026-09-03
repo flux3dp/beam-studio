@@ -604,6 +604,12 @@ export default {
 
     return res.taskCodeBlob;
   },
+  getFcode: async (): Promise<{ fcodeBlob?: Blob; fileTimeCost: number }> => {
+    const { convertEngine } = getConvertEngine();
+    const res = await convertEngine(null);
+
+    return { fcodeBlob: res?.taskCodeBlob, fileTimeCost: res?.fileTimeCost || 0 };
+  },
   getGcode: async (): Promise<{
     fileTimeCost: number;
     gcodeBlob?: Blob;

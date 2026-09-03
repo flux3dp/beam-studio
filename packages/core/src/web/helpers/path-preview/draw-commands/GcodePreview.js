@@ -19,7 +19,7 @@
 import { controlConfig } from '@core/app/constants/promark-constants';
 
 const parsedStride = 9;
-const drawStride = 8;
+const drawStride = 9;
 const accX = 4000 * 3600; // mm/min^2
 const accY = 2000 * 3600; // mm/min^2
 
@@ -37,6 +37,7 @@ export function gcode(drawCommands) {
       attribute float t;
       attribute float g0Time;
       attribute float g1Time;
+      attribute float s;
       varying vec4 color;
       varying float vg0Time;
       varying float vg1Time;
@@ -54,6 +55,11 @@ export function gcode(drawCommands) {
           color = vec4(0.0, 0.0, 0.0, 1.0);
         else if(t == 5.0)
           color = vec4(0.0, 0.5, 0.7, 1.0);
+        else if(t == 6.0) {
+          // raster pixel run: s is 0-255 power, full power = black (white when inverting)
+          float k = s / 255.0;
+          color = isInverting ? vec4(k, k, k, 1.0) : vec4(1.0 - k, 1.0 - k, 1.0 - k, 1.0);
+        }
         else if(isInverting)
           color = vec4(1.0, 1.0, 1.0, 1.0);
         else
@@ -82,6 +88,7 @@ export function gcode(drawCommands) {
       t: { offset: 20 },
       g0Time: { offset: 24 },
       g1Time: { offset: 28 },
+      s: { offset: 32 },
     },
   });
   return ({
@@ -181,7 +188,8 @@ export class GcodePreview {
         const f = parsed.getItem(i * parsedStride + 14);
         const a2 = parsed.getItem(i * parsedStride + 15);
 
-        // s
+        // segment power: next record's s (raster pixel power, see RASTER_T in parseFcode)
+        const s = parsed.getItem(i * parsedStride + 16);
         const t = parsed.getItem(i * parsedStride + 8);
 
         if (g) {
@@ -201,6 +209,7 @@ export class GcodePreview {
         array[i * drawStride * 2 + 5] = t;
         array[i * drawStride * 2 + 6] = g0Time;
         array[i * drawStride * 2 + 7] = g1Time;
+        array[i * drawStride * 2 + 8] = s;
         const dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (isPromark ? 0 : z2 - z1) ** 2);
         let tc = 0;
         if (isPromark) {
@@ -258,14 +267,15 @@ export class GcodePreview {
 
         this.timeInterval.push(g1Time + g0Time);
 
-        array[i * drawStride * 2 + 8] = g;
-        array[i * drawStride * 2 + 9] = x2;
-        array[i * drawStride * 2 + 10] = isPromark ? y2 - a2 / rotaryRatio : y2;
-        array[i * drawStride * 2 + 11] = z2;
-        array[i * drawStride * 2 + 12] = isPromark ? 0 : a2;
-        array[i * drawStride * 2 + 13] = t;
-        array[i * drawStride * 2 + 14] = g0Time;
-        array[i * drawStride * 2 + 15] = g1Time;
+        array[i * drawStride * 2 + 9] = g;
+        array[i * drawStride * 2 + 10] = x2;
+        array[i * drawStride * 2 + 11] = isPromark ? y2 - a2 / rotaryRatio : y2;
+        array[i * drawStride * 2 + 12] = z2;
+        array[i * drawStride * 2 + 13] = isPromark ? 0 : a2;
+        array[i * drawStride * 2 + 14] = t;
+        array[i * drawStride * 2 + 15] = g0Time;
+        array[i * drawStride * 2 + 16] = g1Time;
+        array[i * drawStride * 2 + 17] = s;
       }
 
       this.array = array;
@@ -297,10 +307,11 @@ export class GcodePreview {
           (simTime - this.timeInterval[guess]) /
           (this.timeInterval[index] - this.timeInterval[guess]);
         const ref = index * drawStride * 2;
-        const x = this.array[ref + 1] + (this.array[ref + 9] - this.array[ref + 1]) * ratio;
-        const y = this.array[ref + 2] + (this.array[ref + 10] - this.array[ref + 2]) * ratio;
+        const ref2 = ref + drawStride; // second vertex of the segment
+        const x = this.array[ref + 1] + (this.array[ref2 + 1] - this.array[ref + 1]) * ratio;
+        const y = this.array[ref + 2] + (this.array[ref2 + 2] - this.array[ref + 2]) * ratio;
         position = [x, -y];
-        next = [this.array[ref + 9], this.array[ref + 10]];
+        next = [this.array[ref2 + 1], this.array[ref2 + 2]];
         break;
       } else if (this.timeInterval[guess] < simTime) {
         min = guess + 1;
