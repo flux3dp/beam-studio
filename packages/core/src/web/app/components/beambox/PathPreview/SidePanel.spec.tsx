@@ -4,10 +4,12 @@ import { fireEvent, render } from '@testing-library/react';
 
 import SidePanel from './SidePanel';
 
-const mockGetConvertEngine = jest.fn();
+let mockModel = 'fbb2';
 
-jest.mock('@core/app/actions/beambox/export-funcs', () => ({
-  getConvertEngine: () => mockGetConvertEngine(),
+jest.mock('@core/app/svgedit/workarea', () => ({
+  get model() {
+    return mockModel;
+  },
 }));
 
 const mockTogglePathPreview = jest.fn();
@@ -23,7 +25,7 @@ jest.mock('@core/app/stores/canvas/canvasStore', () => ({
 describe('side panel test', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetConvertEngine.mockReturnValue({ useSwiftray: false });
+    mockModel = 'fbb2';
   });
 
   it('should render correctly when enabled', () => {
@@ -80,8 +82,8 @@ describe('side panel test', () => {
     expect(mockTogglePathPreview).toHaveBeenCalledTimes(1);
   });
 
-  it('should render correctly with Swiftray engine', () => {
-    mockGetConvertEngine.mockReturnValue({ useSwiftray: true });
+  it('should hide start here for Promark', () => {
+    mockModel = 'fpm1';
 
     const handleStartHere = jest.fn();
     const { container } = render(
