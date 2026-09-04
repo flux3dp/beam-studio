@@ -80,7 +80,8 @@ One command byte, dispatched by exact value except moveto:
 | 24 / 16* | heater temp (printers) | float |
 | 16* | fast-gradient sub-commands (lasers) | see below |
 | 18 | grbl sync: sub 0 → u32; sub 1 (M137 type1) → u32 + flags u8 + floats per flag; sub 2 → u32 + flags u8 + float if flags&128 (Q) | u8 sub + varies |
-| 18 (P-cmds) | sub 1 P150 = acceleration override (per axis); sub 2 P154/P155/P157 Q = s-curve jerk/a_max/a0 (set_s_curve_params); sub 0 val 156 = s-curve off; sub 2 P179/P184/P185 = z-motion syncs | see above |
+| 18 (P-cmds) | sub 1 P150 = acceleration override (per axis); sub 2 P154/P155/P157 Q = s-curve jerk/a_max/a0 (set_s_curve_params); sub 0 val 156 = s-curve off, val 1/2 = enter/exit printer mode; sub 2 P179/P184/P185 = z-motion syncs | see above |
+| 17 | printer (inkjet) packets, single-color subs / 4C subs (fcode_printer.cpp): 0/11 = packet length u32, 1/12 = payload marker followed by that many RAW unframed bytes, 2/13 = crc u16, 3/10 = start packet u8 type, 4/14 = end packet, 5 = px count u32, 15 = burst refresh u16. Ink firing is marked by the sweep moveto's S axis (s=1 print, s=0 travel), not by the packets | u8 sub + varies |
 | 19 | flux custom cmd | u8 + u32 |
 | 20 / 21 / 22 | user-selection / miscellaneous / grbl system (`$H`=0, `$HZ`=1) | u8 |
 | 8 | calibrate | u32 |

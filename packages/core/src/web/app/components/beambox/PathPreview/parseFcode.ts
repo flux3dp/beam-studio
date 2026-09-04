@@ -37,6 +37,14 @@ export class Reader {
     return v;
   };
 
+  u16 = (): number => {
+    const v = this.view.getUint16(this.pos, true);
+
+    this.pos += 2;
+
+    return v;
+  };
+
   u32 = (): number => {
     const v = this.view.getUint32(this.pos, true);
 
@@ -146,8 +154,12 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   const reader = new Reader(buffer);
 
   // Machine coords, y kept in preview space (negated, matching parseGcode)
-  const state = { a: 0, f: 7500, pwm: 0, x: 0, y: 0, z: 0 };
+  // printS: the moveto S axis — printer swath sweeps carry s=1, travels s=0
+  const state = { a: 0, f: 7500, printS: 0, pwm: 0, x: 0, y: 0, z: 0 };
   let raster: null | RasterState = null;
+  // Payload length announced by the printer packet-length sub-command; the
+  // payload marker is followed by that many raw unframed bytes.
+  let printerPayloadLength = 0;
 
   const push = (g: number, s = state.pwm, t = 0) => {
     parsedGcode.push(g);
@@ -200,13 +212,13 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
 
     if (cmd & 2) reader.f32();
 
-    if (cmd & 1) reader.f32();
+    if (cmd & 1) state.printS = reader.f32();
 
     if (raster?.armed && targetX !== state.x) {
       emitRasterSweep(targetX);
     } else {
       state.x = targetX;
-      push(state.pwm > 0 ? 1 : 0);
+      push(state.pwm > 0 || state.printS > 0 ? 1 : 0);
     }
   };
 
@@ -287,6 +299,43 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
       case 16: // fast gradient sub-commands
         handleRasterCmd();
         break;
+      case 17: {
+        // printer (inkjet) packets, single-color subs 0-5 / 4C subs 10-15 (fcode_printer.cpp)
+        const sub = reader.u8();
+
+        switch (sub) {
+          case 0: // packet length
+          case 11:
+            printerPayloadLength = reader.u32();
+            break;
+          case 1: // payload marker, followed by raw unframed bytes
+          case 12:
+            reader.pos += printerPayloadLength;
+            printerPayloadLength = 0;
+            break;
+          case 2: // packet crc16
+          case 13:
+            reader.u16();
+            break;
+          case 3: // start packet (u8 type)
+          case 10:
+            reader.u8();
+            break;
+          case 4: // end packet
+          case 14:
+            break;
+          case 5: // pixel count
+            reader.u32();
+            break;
+          case 15: // burst refresh
+            reader.u16();
+            break;
+          default:
+            throw new Error(`Unknown fcode printer sub-command ${sub}`);
+        }
+
+        break;
+      }
       case 18: {
         // grbl sync / M137 sync motion
         const sub = reader.u8();
