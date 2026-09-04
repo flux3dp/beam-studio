@@ -1,5 +1,5 @@
 import type { ParsedFcode } from './parseFcode';
-import { RASTER_T, Reader } from './parseFcode';
+import { RASTER_T, Reader, walkContentEntries } from './parseFcode';
 
 // Builds a "start from here" fcode by byte-splicing the original task at the
 // simulation-time cut point, so no gcode regeneration or fluxghost round-trip
@@ -114,49 +114,6 @@ const buildRestoreCommands = (opts: {
   }
 
   return w.toArray();
-};
-
-interface ContentEntry {
-  bodyStart: number;
-  end: number;
-  isBlock: boolean;
-  start: number;
-  tag: string;
-}
-
-/** Structure-only walk of CONT entries (no command parsing). */
-const walkContentEntries = (reader: Reader, end: number): ContentEntry[] => {
-  const entries: ContentEntry[] = [];
-
-  while (reader.pos < end) {
-    const start = reader.pos;
-    const tag = reader.tag();
-
-    if (tag === 'TASK') {
-      entries.push({ bodyStart: reader.pos, end: reader.pos, isBlock: false, start, tag });
-      continue;
-    }
-
-    if (tag === 'INFO' || tag === 'PREV') {
-      const length = reader.u32();
-
-      entries.push({ bodyStart: reader.pos, end: reader.pos + length, isBlock: false, start, tag });
-      reader.pos += length;
-      continue;
-    }
-
-    // task script block; optional all-digit proc id (see parseFcode)
-    const peek = reader.bytes.subarray(reader.pos, reader.pos + 4);
-
-    if (peek.every((b) => b >= 0x30 && b <= 0x39)) reader.pos += 4;
-
-    const length = reader.u32();
-
-    entries.push({ bodyStart: reader.pos, end: reader.pos + length, isBlock: true, start, tag });
-    reader.pos += length;
-  }
-
-  return entries;
 };
 
 const lastEventAt = <T>(events: Array<[number, T]>, recordIndex: number): null | T => {
@@ -363,7 +320,7 @@ export const sliceFcode = (
 
         if (cutOffset <= contentStart || cutOffset >= contentEnd) return null;
 
-        const entries = walkContentEntries(new Reader(buffer, contentStart), contentEnd);
+        const entries = walkContentEntries(buffer, contentStart, contentEnd);
         const containing = entries.find((e) => e.isBlock && e.bodyStart <= cutOffset && cutOffset < e.end);
 
         if (!containing) return null;

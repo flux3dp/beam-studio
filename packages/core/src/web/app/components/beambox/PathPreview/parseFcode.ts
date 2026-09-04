@@ -16,6 +16,24 @@ const PWM_MODE_CHARS = new Set(['P', 'Q', 'R', 'C', 'S', 'T'].map((c) => c.charC
  */
 export const RASTER_T = 6;
 
+/**
+ * Record `t` base value for 4C printer channel runs: t = PRINTER_CHANNEL_T + channel
+ * (0=C, 1=M, 2=Y, 3=K, 4=white). Also used for single-color layers whose ink comes
+ * from the layer INFO metadata. The preview shader draws these runs in a dedicated
+ * pass with subtractive ink blending, using `s`/255 as coverage.
+ */
+export const PRINTER_CHANNEL_T = 7;
+
+// bm2 4C physical nozzle-column x offsets in pixels at the task's fixed dot pitch
+// (fluxclient DEFAULT_COLOR_OFFSETS), indexed C, M, Y, K. Payload channels are
+// aligned with each other (verified by cross-correlation on a real export), so the
+// printed position of channel c is payload x + offset * dot pitch (machine +x).
+const CHANNEL_X_OFFSETS_4C = [0, 42, 84, 126];
+
+// x gap between the 4C left and right nozzle columns in mm (printer_4c
+// pixel_to_actual_position); right-nozzle swaths bake it into the motion.
+const RIGHT_NOZZLE_X_GAP = 0.55035;
+
 export class Reader {
   view: DataView;
 
@@ -30,7 +48,7 @@ export class Reader {
   }
 
   u8 = (): number => {
-    const v = this.view.getUint8(this.pos);
+    const v = this.bytes[this.pos];
 
     this.pos += 1;
 
@@ -111,6 +129,114 @@ export function decodePixelRuns(pixels: ArrayLike<number>): Array<[number, numbe
   return runs;
 }
 
+export interface PrinterSwath {
+  /** 1 for single-color, 4 for 4C (C, M, Y, K) */
+  channels: 1 | 4;
+  /**
+   * Ink bitmask of pixel (column, row): 0|1 for single-color, a CMYK nibble
+   * (bit 3 = C .. bit 0 = K) for 4C; channels are aligned in payload space
+   */
+  pixelAt: (col: number, row: number) => number;
+  rows: number;
+  w: number;
+}
+
+/**
+ * Decodes a printer image packet payload (printer.py create_image_packet_data /
+ * printer_4c generate_payload) into a 2D swath accessor.
+ *
+ * Layout: u32 w | u32 h | u32 x | u32 y | [4 reserved bytes, single-color only]
+ * then w columns of pixel bits in sweep order, MSB first: single-color packs
+ * 1 bit per pixel, 4C packs 4 bits per pixel (one per CMYK channel; channels are
+ * aligned with each other in payload space — verified against a real fbm2 export —
+ * while the physical print applies CHANNEL_X_OFFSETS_4C per channel). The header
+ * length comes from the packet sub-command family (subs 0-5 single, 10-15 4C).
+ * Payloads failing the size checks (nozzle-settings packets) return null.
+ */
+export function decodePrinterSwath(payload: Uint8Array, headerLength: 16 | 20): null | PrinterSwath {
+  if (payload.length <= headerLength) return null;
+
+  const view = new DataView(payload.buffer, payload.byteOffset, payload.byteLength);
+  const w = view.getUint32(0, true);
+  const h = view.getUint32(4, true);
+  const dataLength = payload.length - headerLength;
+
+  if (w < 1 || w > 100000 || h < 1 || h > 8192 || dataLength % w !== 0) return null;
+
+  const bytesPerColumn = dataLength / w;
+
+  if (bytesPerColumn < 1 || bytesPerColumn > 2048) return null;
+
+  const channels = headerLength === 16 ? 4 : 1;
+  const rows = Math.floor((bytesPerColumn * 8) / channels);
+  const pixelAt =
+    channels === 1
+      ? (col: number, row: number): number => {
+          // single-color packets store rows bottom-up (create_image_packet_data
+          // reverse_y=True; 4C passes False), so flip to match 4C's top-down order
+          const r = rows - 1 - row;
+
+          return (payload[headerLength + col * bytesPerColumn + (r >> 3)] >> (7 - (r & 7))) & 1;
+        }
+      : (col: number, row: number): number => {
+          // 4 bits per pixel, nibble bit 3 = C .. bit 0 = K
+          const byte = payload[headerLength + col * bytesPerColumn + (row >> 1)];
+
+          return (row & 1) === 0 ? byte >> 4 : byte & 0x0f;
+        };
+
+  return { channels, pixelAt, rows, w };
+}
+
+export interface ContentEntry {
+  bodyStart: number;
+  end: number;
+  isBlock: boolean;
+  start: number;
+  tag: string;
+}
+
+/**
+ * Structure-only walk of a v2 CONT chunk's entries — task script blocks
+ * (4-char tag [+ 4-char all-digit proc id] + u32 length), bare TASK markers,
+ * and length-prefixed INFO/PREV items. Shared by parsing and start-here slicing.
+ */
+export function walkContentEntries(buffer: ArrayBuffer, start: number, end: number): ContentEntry[] {
+  const r = new Reader(buffer, start);
+  const entries: ContentEntry[] = [];
+
+  while (r.pos < end) {
+    const entryStart = r.pos;
+    const tag = r.tag();
+
+    if (tag === 'TASK') {
+      entries.push({ bodyStart: r.pos, end: r.pos, isBlock: false, start: entryStart, tag });
+      continue;
+    }
+
+    if (tag === 'INFO' || tag === 'PREV') {
+      const length = r.u32();
+
+      entries.push({ bodyStart: r.pos, end: r.pos + length, isBlock: false, start: entryStart, tag });
+      r.pos += length;
+      continue;
+    }
+
+    // task script block; the proc id is omitted when empty (TRAN/MAIN), and present
+    // ones are ASCII digits ('0001'..'0008') — never a valid length (would be >800MB)
+    const peek = r.bytes.subarray(r.pos, r.pos + 4);
+
+    if (peek.every((b) => b >= 0x30 && b <= 0x39)) r.pos += 4;
+
+    const length = r.u32();
+
+    entries.push({ bodyStart: r.pos, end: r.pos + length, isBlock: true, start: entryStart, tag });
+    r.pos += length;
+  }
+
+  return entries;
+}
+
 export interface ParsedFcode {
   /**
    * [recordIndex, [startOffset, endOffset]]: M137 type-1 acceleration-override commands
@@ -160,6 +286,13 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   // Payload length announced by the printer packet-length sub-command; the
   // payload marker is followed by that many raw unframed bytes.
   let printerPayloadLength = 0;
+  // Payload byte spans (+ header length by packet family) buffered since the last
+  // positioning move; decoded into per-column ink runs when the swath sweep
+  // (moveto with s > 0) arrives.
+  let printerPayloads: Array<[number, number, 16 | 20, number]> = [];
+  // Packet type from start_printer_packet: NozzleMode LEFT=1 / RIGHT=2 / BOTH=3 for
+  // image packets (17 = nozzle settings, 5 = white ink, 6 = varnish)
+  let printerPacketType = 0;
 
   const push = (g: number, s = state.pwm, t = 0) => {
     parsedGcode.push(g);
@@ -197,6 +330,131 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     raster!.pixels = [];
   };
 
+  // Emits a printer swath as 2D content: the real sweep as a travel record (it
+  // carries the motion time), then the packet's pixel rows as zero-sim-time run
+  // records (f = NaN adds no time in GcodePreview), downsampled to ~0.2mm cells.
+  const emitPrinterSweep = (targetX: number): boolean => {
+    let swath: null | PrinterSwath = null;
+    let packetType = 0;
+
+    for (const [start, end, headerLength, type] of printerPayloads) {
+      swath = decodePrinterSwath(reader.bytes.subarray(start, end), headerLength);
+
+      if (swath) {
+        packetType = type;
+        break;
+      }
+    }
+
+    printerPayloads = [];
+
+    if (!swath) return false;
+
+    const x1 = state.x;
+    const sweepY = state.y;
+    const savedF = state.f;
+    const pixelWidth = (targetX - x1) / swath.w;
+    // dot interval is a fixed pixel-per-mm in both axes, so row pitch = column pitch
+    const rowPitch = Math.abs(pixelWidth);
+    // 4C right-nozzle swaths compensate the nozzle x gap in the MOTION
+    // (printer_4c pixel_to_actual_position adds +-0.55035mm to the movetos, sign by
+    // task direction); undo it so content draws at the true deposit position
+    const nozzleAdjust =
+      swath.channels === 4 && packetType === 2 ? (targetX > x1 ? -RIGHT_NOZZLE_X_GAP : RIGHT_NOZZLE_X_GAP) : 0;
+
+    state.x = targetX;
+    push(0);
+
+    state.f = Number.NaN;
+
+    // A NaN-position record makes the segments touching it non-rasterizable,
+    // hiding the synthetic jumps between runs/rows from the traversal display
+    // (they are not actual head motion; the real sweep travel above remains).
+    const pushBreak = () => {
+      const { x: sx, y: sy } = state;
+
+      state.x = Number.NaN;
+      state.y = Number.NaN;
+      push(0, 0);
+      state.x = sx;
+      state.y = sy;
+    };
+    const colStep = Math.max(1, Math.round(0.2 / rowPitch));
+    const rowStep = Math.max(1, Math.round(0.2 / rowPitch));
+    const cellCount = Math.ceil(swath.w / colStep);
+    const cells = new Uint8Array(cellCount);
+
+    // single-color layers carry their ink in the layer INFO metadata (Ador)
+    const taskInk = taskInkChannels[taskIndex] ?? null;
+    const { channels } = swath;
+    // per-cell ink sums for every channel, filled in one pass per row block so
+    // each pixel is decoded once (a 4C nibble carries all four channel bits)
+    const sums = new Uint16Array(cellCount * channels);
+
+    for (let row = 0; row < swath.rows; row += rowStep) {
+      const rowEnd = Math.min(row + rowStep, swath.rows);
+
+      sums.fill(0);
+
+      for (let col = 0; col < swath.w; col += 1) {
+        const base = Math.floor(col / colStep) * channels;
+
+        for (let r = row; r < rowEnd; r += 1) {
+          const mask = swath.pixelAt(col, r);
+
+          if (!mask) continue;
+
+          if (channels === 4) {
+            sums[base] += (mask >> 3) & 1;
+            sums[base + 1] += (mask >> 2) & 1;
+            sums[base + 2] += (mask >> 1) & 1;
+            sums[base + 3] += mask & 1;
+          } else {
+            sums[base] += 1;
+          }
+        }
+      }
+
+      // swath rows extend from the sweep line toward larger machine y (preview -y);
+      // verified against a real fbm2 export
+      state.y = sweepY - (row + (rowEnd - row) / 2) * rowPitch;
+
+      for (let channel = 0; channel < channels; channel += 1) {
+        // physical nozzle-column offset, always machine +x regardless of sweep direction
+        const channelOffset = channels === 4 ? CHANNEL_X_OFFSETS_4C[channel] * rowPitch : 0;
+        const runT =
+          channels === 4 ? PRINTER_CHANNEL_T + channel : taskInk === null ? RASTER_T : PRINTER_CHANNEL_T + taskInk;
+
+        for (let ci = 0; ci < cellCount; ci += 1) {
+          const colEnd = Math.min((ci + 1) * colStep, swath.w);
+          const area = (colEnd - ci * colStep) * (rowEnd - row);
+
+          // quantize to 16 levels so smooth regions merge into long runs
+          cells[ci] = Math.round((sums[ci * channels + channel] / area) * 15) * 17;
+        }
+
+        const runs = decodePixelRuns(cells);
+
+        for (const [start, end, power] of runs) {
+          pushBreak();
+          state.x = x1 + start * colStep * pixelWidth + channelOffset + nozzleAdjust;
+          push(0, 0, runT);
+          state.x = x1 + Math.min(end * colStep, swath.w) * pixelWidth + channelOffset + nozzleAdjust;
+          push(1, power, runT);
+        }
+      }
+    }
+
+    // zero-time return to the sweep end so subsequent motion connects correctly
+    pushBreak();
+    state.x = targetX;
+    state.y = sweepY;
+    push(0);
+    state.f = savedF;
+
+    return true;
+  };
+
   const handleMoveto = (cmd: number) => {
     let targetX = state.x;
 
@@ -212,10 +470,17 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
 
     if (cmd & 2) reader.f32();
 
-    if (cmd & 1) state.printS = reader.f32();
+    if (cmd & 1) {
+      state.printS = reader.f32();
+
+      // a positioning move (s=0) discards buffered non-image packets (nozzle settings)
+      if (state.printS === 0) printerPayloads = [];
+    }
 
     if (raster?.armed && targetX !== state.x) {
       emitRasterSweep(targetX);
+    } else if (state.printS > 0 && printerPayloads.length > 0 && targetX !== state.x && emitPrinterSweep(targetX)) {
+      // handled as per-column ink runs
     } else {
       state.x = targetX;
       push(state.pwm > 0 || state.printS > 0 ? 1 : 0);
@@ -310,6 +575,12 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
             break;
           case 1: // payload marker, followed by raw unframed bytes
           case 12:
+            printerPayloads.push([
+              reader.pos,
+              reader.pos + printerPayloadLength,
+              sub === 12 ? 16 : 20,
+              printerPacketType,
+            ]);
             reader.pos += printerPayloadLength;
             printerPayloadLength = 0;
             break;
@@ -317,9 +588,9 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
           case 13:
             reader.u16();
             break;
-          case 3: // start packet (u8 type)
+          case 3: // start packet (u8 type = NozzleMode for image packets)
           case 10:
-            reader.u8();
+            printerPacketType = reader.u8();
             break;
           case 4: // end packet
           case 14:
@@ -401,31 +672,42 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     }
   };
 
-  const parseV2Blocks = (end: number) => {
-    while (reader.pos < end) {
-      const blockTag = reader.tag();
+  // Ink channel per ink name (single-color layers, Ador): C=0, M=1, Y=2, K=3
+  // map to PRINTER_CHANNEL_T + channel; white gets its own t (11).
+  const INK_CHANNELS: Record<string, number> = { black: 3, cyan: 0, magenta: 1, white: 4, yellow: 2 };
+  // Per-task ink channel from the INFO jsons (submodule.color), in TASK order;
+  // INFO trails its layer's MAIN block, so a structure-only pre-scan collects them.
+  let taskInkChannels: Array<null | number> = [];
+  let taskIndex = -1;
 
-      if (blockTag === 'TASK') continue; // bare marker, no payload
+  const parseV2Content = (start: number, end: number) => {
+    const entries = walkContentEntries(buffer, start, end);
 
-      if (blockTag === 'INFO' || blockTag === 'PREV') {
-        // length-prefixed per-task info json / preview image
-        const length = reader.u32();
+    // INFO trails its layer's MAIN block, so collect the per-task ink first
+    for (const entry of entries) {
+      if (entry.tag !== 'INFO') continue;
 
-        reader.pos += length;
+      try {
+        const json = new TextDecoder().decode(reader.bytes.subarray(entry.bodyStart, entry.end));
+        const info = JSON.parse(json) as { submodule?: { color?: string } };
+
+        taskInkChannels.push(INK_CHANNELS[info.submodule?.color ?? ''] ?? null);
+      } catch {
+        taskInkChannels.push(null);
+      }
+    }
+
+    for (const entry of entries) {
+      if (entry.tag === 'TASK') {
+        taskIndex += 1;
         continue;
       }
 
-      // Task script block: 4-char header [+ 4-char proc id] + uint32 length + commands.
-      // The proc id is omitted when empty (TRAN/MAIN); present ones are ASCII digits
-      // ('0001'..'0008'), which can never be a real length (would be >800MB).
-      const peek = reader.bytes.subarray(reader.pos, reader.pos + 4);
+      if (!entry.isBlock) continue;
 
-      if (peek.every((b) => b >= 0x30 && b <= 0x39)) reader.pos += 4;
-
-      const length = reader.u32();
-
-      pendingBlock = { bodyStart: reader.pos, recordCount: recordOffsets.length };
-      parseCommands(reader.pos + length);
+      reader.pos = entry.bodyStart;
+      pendingBlock = { bodyStart: entry.bodyStart, recordCount: recordOffsets.length };
+      parseCommands(entry.end);
       pendingBlock = null;
     }
   };
@@ -474,7 +756,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         } else if (chunkTag === 'CONT') {
           const length = reader.u32();
 
-          parseV2Blocks(reader.pos + length);
+          parseV2Content(reader.pos, reader.pos + length);
           break; // ignore trailing crc32 / POST chunk
         } else {
           throw new Error(`Unknown fcode chunk: ${chunkTag}`);

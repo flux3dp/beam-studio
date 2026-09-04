@@ -1,6 +1,6 @@
 ---
 name: fcode
-description: FCode binary task format — v1/v2 container layouts, command opcodes, the moveto flag byte, and the fast-gradient raster line protocol. Use when working on parseFcode.ts, Path Preview's fcode path, or anything that reads or inspects .fc task files.
+description: FCode binary task format — v1/v2 container layouts, command opcodes, the moveto flag byte, the fast-gradient raster line protocol, and printer (inkjet) packets. Use when working on parseFcode.ts, sliceFcode.ts, Path Preview's fcode path, or anything that reads or inspects .fc task files.
 ---
 
 # FCode Format
@@ -81,7 +81,7 @@ One command byte, dispatched by exact value except moveto:
 | 16* | fast-gradient sub-commands (lasers) | see below |
 | 18 | grbl sync: sub 0 → u32; sub 1 (M137 type1) → u32 + flags u8 + floats per flag; sub 2 → u32 + flags u8 + float if flags&128 (Q) | u8 sub + varies |
 | 18 (P-cmds) | sub 1 P150 = acceleration override (per axis); sub 2 P154/P155/P157 Q = s-curve jerk/a_max/a0 (set_s_curve_params); sub 0 val 156 = s-curve off, val 1/2 = enter/exit printer mode; sub 2 P179/P184/P185 = z-motion syncs | see above |
-| 17 | printer (inkjet) packets, single-color subs / 4C subs (fcode_printer.cpp): 0/11 = packet length u32, 1/12 = payload marker followed by that many RAW unframed bytes, 2/13 = crc u16, 3/10 = start packet u8 type, 4/14 = end packet, 5 = px count u32, 15 = burst refresh u16. Ink firing is marked by the sweep moveto's S axis (s=1 print, s=0 travel), not by the packets | u8 sub + varies |
+| 17 | printer (inkjet) packets — see "Printer packets" below | u8 sub + varies |
 | 19 | flux custom cmd | u8 + u32 |
 | 20 / 21 / 22 | user-selection / miscellaneous / grbl system (`$H`=0, `$HZ`=1) | u8 |
 | 8 | calibrate | u32 |
@@ -114,6 +114,48 @@ Traps:
 - Pixel width needs no DPI lookup: `(endX − startX) / pixelCount`.
 - Each line is padded with blank pixels (~10–20mm) on both sides; the sweep extends
   past the engraved content, so metadata min/max x exceed the fired-pixel bounds.
+
+## Printer packets (cmd 17)
+
+Sub-commands come in two families — single-color (Ador `PRINTER`) 0-5, 4C (fbm2
+`PRINTER_4C`) 10-15 (`fcode_printer.cpp`): 0/11 = packet length u32, 1/12 = payload
+marker followed by that many RAW unframed bytes, 2/13 = crc u16, 3/10 = start packet
+u8 type, 4/14 = end packet, 5 = px count u32, 15 = burst refresh u16. Printer mode
+enter/sync/exit ride cmd 18 sub 0 with values 1/0/2.
+
+Per swath: positioning moveto (s=0) → image packet → px count →
+**sweep moveto with s=1** (the print stroke; S axis is the ink marker, PWM stays 0)
+→ moveto(s=0).
+
+Image payload: `u32 w | u32 h | u32 x | u32 y` (+4 reserved bytes, single-color
+only — header size follows the sub family), then w columns of pixel bits in sweep
+order, MSB first. Single-color: 1 bit/pixel. 4C: 4 bits/pixel, one per CMYK channel
+(nibble bit 3 = C .. bit 0 = K). Dot pitch is the same in both axes, so row pitch =
+sweep length / w. Traps (all verified against a real fbm2 export):
+
+- Channels are ALIGNED with each other in payload space (verified by cross-correlation
+  on a real export); the physical print applies the fixed per-channel x offsets
+  (`DEFAULT_COLOR_OFFSETS`: C 0, M 42, Y 84, K 126 px, machine +x), so the preview adds
+  offset x dot pitch per channel at draw time.
+- Swath rows extend downward in machine y from the sweep line. Row bit order differs
+  by family: 4C packs rows top-down, single-color bottom-up (`create_image_packet_data`
+  `reverse_y` — hardware install direction, per-machine; verified on fbm2 and Ador);
+  the decoder flips single-color rows so both read top-down.
+- parseFcode renders swath content per channel as zero-sim-time records (f = NaN adds
+  no time in GcodePreview) after the real sweep travel record, with NaN-position break
+  records hiding the synthetic jumps from the traversal display. 4C runs carry
+  `t = PRINTER_CHANNEL_T (7) + channel` and `s` = coverage; GcodePreview draws them in
+  a second pass with subtractive blending `blendFuncSeparate(ZERO, ONE_MINUS_SRC_COLOR,
+  ONE, ONE)` — rgb multiplies like ink on the white-cleared task framebuffer, alpha
+  accumulates coverage so the composite shows it (a plain ZERO/ONE_MINUS_SRC_COLOR pass
+  is invisible: the framebuffer clears to alpha 0). Single-color runs stay grayscale
+  `RASTER_T`. Coverage-to-density exponent (0.5) lives in the shader's print branch.
+- The start-packet type byte is the NozzleMode (LEFT=1/RIGHT=2/BOTH=3) for image
+  packets. 4C right-nozzle swaths bake the 0.55035mm left/right nozzle x gap into the
+  MOTION (printer_4c pixel_to_actual_position, sign by task direction); the preview
+  subtracts it from drawn content so it sits at the true deposit position.
+- Nozzle-settings packets (type 17, single-color only) share the framing; they fail
+  the image-payload size checks and are skipped.
 
 ## parseFcode.ts specifics
 

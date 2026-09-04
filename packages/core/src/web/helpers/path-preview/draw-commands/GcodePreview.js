@@ -32,6 +32,7 @@ export function gcode(drawCommands) {
       uniform float rotaryScale;
       uniform bool isInverting;
       uniform bool showTraversal;
+      uniform bool isPrintPass;
       attribute vec4 position;
       attribute float g;
       attribute float t;
@@ -60,10 +61,30 @@ export function gcode(drawCommands) {
           float k = s / 255.0;
           color = isInverting ? vec4(k, k, k, 1.0) : vec4(1.0 - k, 1.0 - k, 1.0 - k, 1.0);
         }
+        else if(t >= 7.0 && t <= 11.0) {
+          // 4C printer channel run (see PRINTER_CHANNEL_T in parseFcode), drawn only in
+          // the print pass with subtractive blending gl.blendFunc(ZERO, ONE_MINUS_SRC_COLOR):
+          // dst *= 1 - k * absorb, so overlapping inks mix like ink (C+M = blue, C+Y = green).
+          // s is coverage; the exponent boosts halftone tones to perceived density.
+          float k = pow(s / 255.0, 0.5);
+          vec3 absorb;
+          if(t == 7.0) absorb = vec3(1.0, 0.32, 0.06);       // cyan ink absorbs red
+          else if(t == 8.0) absorb = vec3(0.07, 1.0, 0.45);  // magenta absorbs green
+          else if(t == 9.0) absorb = vec3(0.0, 0.15, 1.0);   // yellow absorbs blue
+          else if(t == 10.0) absorb = vec3(1.0, 1.0, 1.0);   // black absorbs all
+          else absorb = vec3(0.10, 0.09, 0.05);              // white ink: faint warm gray hint
+          // alpha carries coverage: the print pass blends alpha additively so the
+          // framebuffer (cleared to white with alpha 0) becomes visible when composited
+          color = vec4(absorb * k, k);
+        }
         else if(isInverting)
           color = vec4(1.0, 1.0, 1.0, 1.0);
         else
           color = vec4(0.0, 0.0, 0.0, 1.0);
+        // print-channel segments render only in the print pass, everything else only
+        // in the normal pass; a zero color is invisible under either blend mode
+        bool isPrintSegment = g != 0.0 && t >= 7.0 && t <= 11.0;
+        if(isPrintSegment != isPrintPass) color = vec4(0.0, 0.0, 0.0, 0.0);
         vg0Time = g0Time;
         vg1Time = g1Time;
       }`,
@@ -103,26 +124,41 @@ export function gcode(drawCommands) {
     data,
     count,
   }) => {
+    const { gl } = drawCommands;
+    const uniforms = {
+      perspective,
+      view,
+      g0Rate,
+      simTime,
+      rotaryScale: rotaryDiameter * (Math.PI / 360),
+      isInverting,
+      showTraversal,
+      showRemaining,
+    };
+    const buffer = {
+      data,
+      stride: drawStride * 4,
+      offset: 0,
+      count,
+    };
+
     drawCommands.execute({
       program,
-      primitive: drawCommands.gl.LINES,
-      uniforms: {
-        perspective,
-        view,
-        g0Rate,
-        simTime,
-        rotaryScale: rotaryDiameter * (Math.PI / 360),
-        isInverting,
-        showTraversal,
-        showRemaining,
-      },
-      buffer: {
-        data,
-        stride: drawStride * 4,
-        offset: 0,
-        count,
-      },
+      primitive: gl.LINES,
+      uniforms: { ...uniforms, isPrintPass: false },
+      buffer,
     });
+    // 4C printer channel runs: subtractive ink blending on rgb (dst *= 1 - src, the
+    // task framebuffer is cleared to white), additive coverage on alpha so the
+    // framebuffer's zero-alpha clear becomes opaque where ink lands
+    gl.blendFuncSeparate(gl.ZERO, gl.ONE_MINUS_SRC_COLOR, gl.ONE, gl.ONE);
+    drawCommands.execute({
+      program,
+      primitive: gl.LINES,
+      uniforms: { ...uniforms, isPrintPass: true },
+      buffer,
+    });
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   };
 } // gcode
 
@@ -248,12 +284,14 @@ export class GcodePreview {
           lastDirection = direction;
         }
 
-        if (g) {
+        // f = NaN marks synthetic zero-time records (printer swath content, see
+        // parseFcode) - not head motion, so they add no distance or time
+        if (g && !Number.isNaN(f)) {
           g1Time += tc;
           g1Dist += dist;
           g1TimeReal += tc;
           g1DistReal += dist;
-        } else if (!Number.isNaN(f)) {
+        } else if (!g && !Number.isNaN(f)) {
           if (f === 7500) {
             g0Time += tc;
             g0Dist += dist;
