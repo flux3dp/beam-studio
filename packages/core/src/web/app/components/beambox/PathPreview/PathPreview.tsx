@@ -21,6 +21,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getSpinningAxis } from '@core/helpers/addOn/rotary';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';
@@ -281,7 +282,10 @@ const settings = {
 const defaultWorkspace = {
   cursorPos: [0, 0, 0],
   g0Rate: 7500,
-  rotaryDiameter: 10,
+  // mm of preview y per a-slot unit: for fcode the a slot already holds the display offset
+  // that maps rotary-space y back to the design y (GcodePreview.setParsedGcode), so 1
+  // (the LaserWeb degrees->arc model does not apply)
+  rotaryScale: 1,
   showCursor: true,
   showGcode: true,
   showRotary: false,
@@ -391,7 +395,7 @@ function cacheDrawing(
     height?: any;
     isInverting?: boolean;
     perspective?: any;
-    rotaryDiameter?: any;
+    rotaryScale?: any;
     showRemaining?: boolean;
     showTraversal?: boolean;
     simTime?: any;
@@ -438,7 +442,7 @@ const drawTaskPreview = (
   workspace: {
     cursorPos?: number[];
     g0Rate: any;
-    rotaryDiameter: any;
+    rotaryScale: any;
     showCursor?: boolean;
     showGcode?: boolean;
     showRotary?: boolean;
@@ -456,7 +460,7 @@ const drawTaskPreview = (
       camera.view,
       workspace.g0Rate,
       workspace.simTime,
-      workspace.rotaryDiameter,
+      workspace.rotaryScale,
       isInverting,
       showTraversal,
       showRemaining,
@@ -470,7 +474,7 @@ const drawTaskPreview = (
     height: canvas.height,
     isInverting,
     perspective: camera.perspective,
-    rotaryDiameter: workspace.rotaryDiameter,
+    rotaryScale: workspace.rotaryScale,
     showRemaining,
     showTraversal,
     simTime: workspace.simTime,
@@ -578,7 +582,7 @@ interface State {
   workspace: {
     cursorPos: number[];
     g0Rate: number;
-    rotaryDiameter: number;
+    rotaryScale: number;
     showCursor: boolean;
     showGcode: boolean;
     showRotary: boolean;
@@ -595,6 +599,8 @@ class PathPreview extends React.Component<Props, State> {
   private fingers: any;
   private pointers: any;
   private position: any;
+
+  private positionA: number = 0;
   private moveStarted: boolean;
   private adjustingCamera: boolean;
   private gcodePreview: GcodePreview;
@@ -616,6 +622,7 @@ class PathPreview extends React.Component<Props, State> {
     // TODO: make config interface
     this.canvas = null;
     this.position = [0, 0];
+    this.positionA = 0;
     this.grid = new Grid();
 
     let { width } = workareaManager;
@@ -885,10 +892,29 @@ class PathPreview extends React.Component<Props, State> {
     this.fcodeTask = parsedGcode.length > 0 ? { buffer: arrayBuffer, parsedGcode, ...sliceExtras } : null;
 
     if (parsedGcode.length > 0) {
+      const model = workareaManager.model;
+      const globalPreference = useGlobalPreferenceStore.getState();
+      const spinningAxis = getSpinningAxis(model, {
+        jobOriginY: this.jobOrigin?.y,
+        reverse: globalPreference['reverse-engraving'],
+      });
+      // Rotary/auto-feeder tasks carry y in rotary space; map it back to the design y so the
+      // preview matches the canvas (fcode coords are job-origin relative, like the grid).
+      const rotary = spinningAxis && {
+        axisY: spinningAxis.spin / constant.dpmm - (this.jobOrigin?.y ?? 0),
+        ratio: spinningAxis.ratio,
+        // v1 firmware scales y itself from rotary-mode-on (cmd 6); v2 moves content on the A axis
+        scaledYFrom: constant.fcodeV2Models.has(model)
+          ? Number.POSITIVE_INFINITY
+          : (sliceExtras.pauseEvents.find(([, cmd]) => cmd === 6)?.[0] ?? Number.POSITIVE_INFINITY),
+      };
+
       this.gcodePreview.setParsedGcode(
         parsedGcode,
         false,
-        (dpiTextMap[useGlobalPreferenceStore.getState().engrave_dpi] || 254) / 25.4,
+        (dpiTextMap[globalPreference.engrave_dpi] || 254) / 25.4,
+        1,
+        rotary,
       );
       this.simTimeMax =
         Math.ceil((this.gcodePreview.g1Time + this.gcodePreview.g0Time) / SIM_TIME_MINUTE) * SIM_TIME_MINUTE +
@@ -937,23 +963,12 @@ class PathPreview extends React.Component<Props, State> {
     if (this.position[0] !== 0 && this.position[1] !== 0) {
       const crossPoints = [];
       const crossValue = 10 / this.camera.scale;
+      // rotary tasks draw content at y + a * rotaryScale (see the gcode shader);
+      // place the cross with the same offset so it tracks the displayed path
+      const displayY = -this.position[1] + this.positionA * workspace.rotaryScale;
 
-      crossPoints.push(
-        this.position[0] - crossValue,
-        -this.position[1],
-        0,
-        this.position[0] + crossValue,
-        -this.position[1],
-        0,
-      );
-      crossPoints.push(
-        this.position[0],
-        -this.position[1] - crossValue,
-        0,
-        this.position[0],
-        -this.position[1] + crossValue,
-        0,
-      );
+      crossPoints.push(this.position[0] - crossValue, displayY, 0, this.position[0] + crossValue, displayY, 0);
+      crossPoints.push(this.position[0], displayY - crossValue, 0, this.position[0], displayY + crossValue, 0);
 
       const crossPosition = new Float32Array(crossPoints);
 
@@ -1355,8 +1370,10 @@ class PathPreview extends React.Component<Props, State> {
 
   private handleSimTimeChange = (value: number) => {
     const { workspace } = this.state;
+    const simTimeInfo = this.gcodePreview.getSimTimeInfo(Number(value));
 
-    this.position = this.gcodePreview.getSimTimeInfo(Number(value)).position;
+    this.position = simTimeInfo.position;
+    this.positionA = simTimeInfo.a ?? 0;
     this.setState({
       workspace: {
         ...workspace,

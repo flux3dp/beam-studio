@@ -23,6 +23,7 @@ export interface FcodeTask extends Omit<ParsedFcode, 'metadata'> {
 }
 
 const TRAVEL_FEEDRATE = 7500; // mm/min, matches the gcode start-here preparation
+const A_TRAVEL_FEEDRATE = 2400; // mm/min, rotary a-axis travel speed
 
 const CRC_TABLE = new Uint32Array(256).map((_, n) => {
   let c = n;
@@ -66,11 +67,14 @@ class ByteWriter {
 
 /** Commands re-establishing modal machine state at the cut point. */
 const buildRestoreCommands = (opts: {
+  a: number;
+  boostOn: boolean;
   feedrate: number;
   gradientChar: null | number;
   isV1: boolean;
   laserModule: null | number;
   pwm: number;
+  rotaryOn: boolean;
   x: number;
   y: number;
   z: number;
@@ -96,6 +100,19 @@ const buildRestoreCommands = (opts: {
   if (opts.z > 0) {
     w.u8(128 | 8);
     w.f32(opts.z);
+  }
+
+  // rotary mode / gcode boost (pause cmds 6 / 5 on laser firmware) can trail the
+  // first movetos in the original stream, so re-arm them after the position is set
+  if (opts.rotaryOn) w.u8(6);
+
+  if (opts.boostOn) w.u8(5);
+
+  // rotary tasks: pre-position the a axis (workpiece rotation) at travel speed
+  if (!Number.isNaN(opts.a)) {
+    w.u8(128 | 64 | 4);
+    w.f32(A_TRAVEL_FEEDRATE);
+    w.f32(opts.a);
   }
 
   // restore modal feedrate for remainder movetos that omit F
@@ -188,6 +205,7 @@ export const sliceFcode = (
       gradientEvents,
       moduleEvents,
       parsedGcode,
+      pauseEvents,
       recordOffsets,
       sCurveEvents,
     } = task;
@@ -228,13 +246,18 @@ export const sliceFcode = (
     }
 
     const sCurveBytes = concatBytes([...sCurveSpans.values()].map(([start, end]) => bytes.subarray(start, end)));
+    const rotaryOn = pauseEvents.some(([index, cmd]) => index <= arrival && cmd === 6);
+    const boostOn = pauseEvents.some(([index, cmd]) => index <= arrival && cmd === 5);
     const buildRestore = (hasPrologue: boolean) =>
       buildRestoreCommands({
+        a: record(6),
+        boostOn,
         feedrate: record(5),
         gradientChar: lastEventAt(gradientEvents, arrival),
         isV1: version === 1 && !hasPrologue,
         laserModule: lastEventAt(moduleEvents, arrival),
         pwm: isRaster ? 0 : record(7),
+        rotaryOn,
         x: simTimeInfo.position[0],
         y: simTimeInfo.position[1],
         z: record(3),

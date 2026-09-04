@@ -256,6 +256,13 @@ export interface ParsedFcode {
   /** [recordIndex, laserModule]: cmd-7 laser module changes, sparse */
   moduleEvents: Array<[number, number]>;
   parsedGcode: ParsedGcode;
+  /**
+   * [recordIndex, cmd]: pause commands, sparse. On laser firmware cmd 6 (pause in
+   * place) doubles as rotary-mode-on and cmd 5 (pause to standby) as gcode boost;
+   * both can trail the first movetos (v1 rotary preamble, v2 rotary_wait_move), so
+   * start-here slicing re-emits them after restoring the y/axis position.
+   */
+  pauseEvents: Array<[number, number]>;
   /** Per record: byte offset of the END of the command that produced it (for start-here slicing) */
   recordOffsets: number[];
   /**
@@ -276,12 +283,14 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   const blockPrologues: Array<[number, number]> = [];
   const accelEvents: Array<[number, [number, number]]> = [];
   const sCurveEvents: Array<[number, number, [number, number] | null]> = [];
+  const pauseEvents: Array<[number, number]> = [];
   let pendingBlock: null | { bodyStart: number; recordCount: number } = null;
   const reader = new Reader(buffer);
 
   // Machine coords, y kept in preview space (negated, matching parseGcode)
+  // a: NaN until the task moves the A axis (fcode v2 rotary), like fluxclient's NAN=absent
   // printS: the moveto S axis — printer swath sweeps carry s=1, travels s=0
-  const state = { a: 0, f: 7500, printS: 0, pwm: 0, x: 0, y: 0, z: 0 };
+  const state = { a: Number.NaN, f: 7500, printS: 0, pwm: 0, x: 0, y: 0, z: 0 };
   let raster: null | RasterState = null;
   // Payload length announced by the printer packet-length sub-command; the
   // payload marker is followed by that many raw unframed bytes.
@@ -658,8 +667,9 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
       case 4: // sleep (uint32 ms)
         reader.u32();
         break;
-      case 5: // pause to standby
-      case 6: // pause in place
+      case 5: // pause to standby (doubles as gcode-boost-on for laser firmware)
+      case 6: // pause in place (doubles as rotary-mode-on for laser firmware)
+        pauseEvents.push([recordOffsets.length, cmd]);
         break;
       case 1: // home
         state.x = 0;
@@ -777,6 +787,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     metadata,
     moduleEvents,
     parsedGcode,
+    pauseEvents,
     recordOffsets,
     sCurveEvents,
   };

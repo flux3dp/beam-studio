@@ -117,7 +117,7 @@ export function gcode(drawCommands) {
     view,
     g0Rate,
     simTime,
-    rotaryDiameter,
+    rotaryScale,
     isInverting,
     showTraversal,
     showRemaining,
@@ -130,7 +130,7 @@ export function gcode(drawCommands) {
       view,
       g0Rate,
       simTime,
-      rotaryScale: rotaryDiameter * (Math.PI / 360),
+      rotaryScale,
       isInverting,
       showTraversal,
       showRemaining,
@@ -168,7 +168,24 @@ export class GcodePreview {
     this.timeInterval = [];
   }
 
-  setParsedGcode(parsed, isPromark = false, dpmm = 10, rotaryRatio = 1) {
+  /**
+   * @param rotary fcode rotary/auto-feeder tasks: { axisY, ratio, scaledYFrom }. fluxclient
+   *   writes rotary-space y' = axisY + (y - axisY) * ratio — on the A axis (fcode v2) or on Y
+   *   itself from record index scaledYFrom (v1). The a slot of the draw array then holds the
+   *   offset from the stored y to the design y, so the shader's y + a lands on the canvas
+   *   position while the stored y stays machine y for start-here slicing.
+   */
+  setParsedGcode(parsed, isPromark = false, dpmm = 10, rotaryRatio = 1, rotary = null) {
+    // display offset (a slot) for record i with preview-space y and parsed a (NaN = A unset)
+    const rotaryOffset = (i, y, a) => {
+      if (!rotary) return Number.isNaN(a) ? 0 : a;
+
+      const rotarySpaceY = Number.isNaN(a) ? (i >= rotary.scaledYFrom ? -y : null) : a;
+      if (rotarySpaceY === null) return 0;
+      const designY = rotary.axisY + (rotarySpaceY - rotary.axisY) / rotary.ratio;
+      return -designY - y;
+    };
+
     this.arrayChanged = true;
     this.timeInterval = [];
     this.arrayVersion += 1;
@@ -183,9 +200,7 @@ export class GcodePreview {
       this.g1Dist = 0;
       this.g1Time = 0;
     } else {
-      const array = new Float32Array(
-        ((parsed.length - parsedStride) / parsedStride) * drawStride * 2,
-      );
+      const array = new Float32Array(((parsed.length - parsedStride) / parsedStride) * drawStride * 2);
       this.minX = Number.MAX_VALUE;
       this.maxX = -Number.MAX_VALUE;
       this.minY = Number.MAX_VALUE;
@@ -241,7 +256,7 @@ export class GcodePreview {
         array[i * drawStride * 2 + 1] = x1;
         array[i * drawStride * 2 + 2] = isPromark ? y1 - a1 / rotaryRatio : y1;
         array[i * drawStride * 2 + 3] = z1;
-        array[i * drawStride * 2 + 4] = isPromark ? 0 : a1;
+        array[i * drawStride * 2 + 4] = isPromark ? 0 : rotaryOffset(i, y1, a1);
         array[i * drawStride * 2 + 5] = t;
         array[i * drawStride * 2 + 6] = g0Time;
         array[i * drawStride * 2 + 7] = g1Time;
@@ -276,9 +291,7 @@ export class GcodePreview {
           const direction = Math.atan2(y2 - y1, x2 - x1);
           const lastVel = lastFeedrate * Math.cos(direction - lastDirection);
           const estimateVel =
-            lastVel <= 0
-              ? Math.min(f, (2 * acc * dist) ** 0.5)
-              : Math.min(f, (lastVel ** 2 + 2 * acc * dist) ** 0.5);
+            lastVel <= 0 ? Math.min(f, (2 * acc * dist) ** 0.5) : Math.min(f, (lastVel ** 2 + 2 * acc * dist) ** 0.5);
           tc = Math.abs(estimateVel - lastVel) / acc + dist / estimateVel;
           lastFeedrate = estimateVel;
           lastDirection = direction;
@@ -309,7 +322,7 @@ export class GcodePreview {
         array[i * drawStride * 2 + 10] = x2;
         array[i * drawStride * 2 + 11] = isPromark ? y2 - a2 / rotaryRatio : y2;
         array[i * drawStride * 2 + 12] = z2;
-        array[i * drawStride * 2 + 13] = isPromark ? 0 : a2;
+        array[i * drawStride * 2 + 13] = isPromark ? 0 : rotaryOffset(i + 1, y2, a2);
         array[i * drawStride * 2 + 14] = t;
         array[i * drawStride * 2 + 15] = g0Time;
         array[i * drawStride * 2 + 16] = g1Time;
@@ -335,19 +348,20 @@ export class GcodePreview {
     let index = -1;
     let position = [0, 0];
     let next = [-1, -1];
+    let a = 0;
 
     while (min <= max) {
       guess = Math.floor((max + min) / 2);
 
       if (this.timeInterval[guess] < simTime && this.timeInterval[guess + 1] > simTime) {
         index = guess + 1;
-        const ratio =
-          (simTime - this.timeInterval[guess]) /
-          (this.timeInterval[index] - this.timeInterval[guess]);
+        const ratio = (simTime - this.timeInterval[guess]) / (this.timeInterval[index] - this.timeInterval[guess]);
         const ref = index * drawStride * 2;
         const ref2 = ref + drawStride; // second vertex of the segment
         const x = this.array[ref + 1] + (this.array[ref2 + 1] - this.array[ref + 1]) * ratio;
         const y = this.array[ref + 2] + (this.array[ref2 + 2] - this.array[ref + 2]) * ratio;
+        // a slot: rotary display offset (0 unless the task spins; promark folds a into y upstream)
+        a = this.array[ref + 4] + (this.array[ref2 + 4] - this.array[ref + 4]) * ratio;
         position = [x, -y];
         next = [this.array[ref2 + 1], this.array[ref2 + 2]];
         break;
@@ -359,23 +373,14 @@ export class GcodePreview {
     }
 
     return {
+      a,
       index,
       position,
       next,
     };
   }
 
-  draw(
-    drawCommands,
-    perspective,
-    view,
-    g0Rate,
-    simTime,
-    rotaryDiameter,
-    isInverting,
-    showTraversal,
-    showRemaining,
-  ) {
+  draw(drawCommands, perspective, view, g0Rate, simTime, rotaryScale, isInverting, showTraversal, showRemaining) {
     if (this.drawCommands !== drawCommands) {
       this.drawCommands = drawCommands;
       if (this.buffer) this.buffer.destroy();
@@ -393,7 +398,7 @@ export class GcodePreview {
       view,
       g0Rate,
       simTime,
-      rotaryDiameter,
+      rotaryScale,
       isInverting,
       showTraversal,
       showRemaining,

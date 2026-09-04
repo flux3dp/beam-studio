@@ -28,6 +28,14 @@ Record contract (`ParsedGcode`, a chunked array dodging V8 length limits):
   from record i+1** — the arrival record. Emitting "cut to P" means: travel record,
   then record at P with g=1.
 - `y` is negated into preview space by both parsers (machine +y down → preview -y).
+- `a`: parseFcode leaves it NaN until the task moves the A axis (fluxclient NAN=absent);
+  parseGcode leaves it 0. Rotary/auto-feeder tasks carry y in rotary space
+  (`y' = axisY + (y - axisY) * ratio`, on A for fcode v2, on Y itself after the cmd-6
+  pause on v1). `setParsedGcode` takes `rotary = { axisY, ratio, scaledYFrom }` (built in
+  `updateFcode` from `getSpinningAxis`, job-origin relative) and stores in the draw array's
+  a slot the offset from the machine y to the design y, so the shader's `y + a` matches the
+  canvas while slot 2 keeps machine y for start-here slicing. Promark keeps its own
+  `y - a / rotaryRatio` fold.
 - `f` is mm/min; feeds the sim-time estimate per segment.
 - `s`/`t`: Promark uses `t` as dotting time. FCode raster runs set `t = RASTER_T` (6)
   with `s` = pixel power 0-255 so PWM engraving previews as grayscale; vector records

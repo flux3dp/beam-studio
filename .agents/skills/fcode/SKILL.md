@@ -86,7 +86,7 @@ One command byte, dispatched by exact value except moveto:
 | 20 / 21 / 22 | user-selection / miscellaneous / grbl system (`$H`=0, `$HZ`=1) | u8 |
 | 8 | calibrate | u32 |
 | 7 | set laser module | u32 |
-| 6 / 5 | pause in place / to standby | — |
+| 6 / 5 | pause in place / to standby; on laser firmware 6 = rotary-mode-on, 5 = gcode boost. Rotary tasks: v1 preamble movetos y to the axis then emits 6 and 5; v2 A-mode machines park y at the axis and move content on the A flag, non-A v2 uses rotary_wait_move (moveto y, 6, offset moveto, P185/P179 syncs). **A is in mm with the document rotary ratio already applied** (fluxclient `rotary_y + (y - rotary_y) * ratio`; the FILE min_y/max_y bounds are the A range) — parseFcode keeps `a` NaN until the first A move; the preview inverts the ratio back to design y (path-preview skill, `getSpinningAxis`), NOT LaserWeb's degrees model (a x diameter x pi/360). Start-here slicing re-emits 6/5 and pre-positions A (when set) after the position restore | — |
 | 4 | sleep | u32 ms |
 | 1 | home | — |
 
