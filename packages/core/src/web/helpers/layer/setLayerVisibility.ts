@@ -32,11 +32,15 @@ export const setLayerVisibility = (layerName: string, value: boolean, opts?: His
 
   if (stripTagCmd) batchCmd.addSubCommand(stripTagCmd);
 
-  presprayArea.togglePresprayArea();
-
-  batchCmd.onAfter = () => {
+  const updateDisplay = () => {
     presprayArea.togglePresprayArea();
+    // The 3D canvas resolves visibility through the projection's owning layer. Publish the DOM
+    // attribute change so its meshes update both now and after undo/redo.
+    layerManager.resync();
   };
+
+  updateDisplay();
+  batchCmd.onAfter = updateDisplay;
 
   handleHistoryActionOptions(batchCmd, opts);
 

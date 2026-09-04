@@ -5,6 +5,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import type { StlObject } from '@core/app/stores/stlStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -12,6 +13,7 @@ import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/hand
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import selectionManager from '@core/app/svgedit/selection';
+import { createClonedStlObjects, syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import i18n from '@core/helpers/i18n';
@@ -146,6 +148,7 @@ export const cloneLayer = (
   const batchCmd = HistoryCommandFactory.createBatchCommand('Clone Layer');
   const newLayer = layerManager.createLayer(newName, { parentCmd: batchCmd })!;
   const newLayerElem = newLayer.getGroup();
+  const clonedStlObjects: StlObject[] = [];
 
   newLayer.setColor(color);
 
@@ -159,12 +162,18 @@ export const cloneLayer = (
         const copiedElem = drawing.copyElem(child);
 
         newLayerElem.appendChild(copiedElem);
+        clonedStlObjects.push(...createClonedStlObjects(child, copiedElem));
       }
     }
     handlePastedRef(newLayerElem, { parentCmd: batchCmd });
   }
 
   cloneLayerConfig(newName, layerName);
+
+  if (clonedStlObjects.length) {
+    syncStlObjectsWithDom(clonedStlObjects);
+    batchCmd.onAfter = () => syncStlObjectsWithDom(clonedStlObjects);
+  }
 
   if (parentCmd) {
     parentCmd.addSubCommand(batchCmd);
@@ -354,10 +363,13 @@ export const mergeLayers = async (layerNames: string[], baseLayerName?: string):
   }
 
   if (!batchCmd.isEmpty()) {
+    // Merging moves projection rects to a layer with potentially different color and visibility.
+    // The 3D meshes resolve those properties from the DOM, including after undo/redo.
+    batchCmd.onAfter = () => layerManager.resync();
     undoManager.addCommandToHistory(batchCmd);
   }
 
-  layerManager.identifyLayers();
+  layerManager.resync();
 
   return mergeBase;
 };

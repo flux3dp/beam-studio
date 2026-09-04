@@ -14,7 +14,7 @@ import { MM_TO_SCENE } from './utils/coordinates';
 import { updateProjectionRect } from './utils/projection';
 import { ROTATION_SNAP_RAD, snapPosition, snapScale, TRANSLATION_SNAP } from './utils/snapping';
 import { getBaseSize, getMeshCenter, setTransform } from './utils/transform';
-import { useLayerColor } from './utils/useLayerColor';
+import { useObjectLayerState } from './utils/useLayerColor';
 import { useViewStore } from './viewStore';
 
 /** Below this the object is invisible and the transform is not invertible; scaling stops here. */
@@ -48,7 +48,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   const { geometry, id, transform } = object;
   const { flip, position, rotation, scale } = transform;
   const { ratioLocked, transformMode } = useViewStore();
-  const color = useLayerColor(id);
+  const { color, isLocked, isVisible } = useObjectLayerState(id);
   const [textureSource, setTextureSource] = useState(object.textureUrl);
   const [texture, setTexture] = useState<null | Texture>(null);
   const center = useMemo(() => getMeshCenter(geometry), [geometry]);
@@ -59,12 +59,12 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
 
   const handleSelect = useCallback(
     (event: ThreeEvent<MouseEvent>) => {
-      if (panning) return;
+      if (isLocked || !isVisible || panning) return;
 
       event.stopPropagation();
       onSelect(id);
     },
-    [id, onSelect, panning],
+    [id, isLocked, isVisible, onSelect, panning],
   );
 
   useEffect(() => {
@@ -189,9 +189,16 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
         ref={setAnchor}
         rotation={rotation}
         scale={[scale[0] * MM_TO_SCENE, scale[1] * MM_TO_SCENE, scale[2] * MM_TO_SCENE]}
+        visible={isVisible}
       >
         {object.kind === 'point-cloud' ? (
-          <points geometry={geometry} onClick={handleSelect} position={meshPosition} ref={objectRef} scale={meshScale}>
+          <points
+            geometry={geometry}
+            onClick={isLocked || !isVisible ? undefined : handleSelect}
+            position={meshPosition}
+            ref={objectRef}
+            scale={meshScale}
+          >
             {/* Screen-space size keeps a relief readable without turning its points into large
                 world-space spheres when the camera zooms in. Colour comes from the layer only. */}
             <pointsMaterial color={color} size={0.5} sizeAttenuation={false} />
@@ -199,7 +206,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
         ) : (
           <mesh
             geometry={geometry}
-            onClick={handleSelect}
+            onClick={isLocked || !isVisible ? undefined : handleSelect}
             position={meshPosition}
             ref={objectRef as React.RefObject<Mesh | null>}
             scale={meshScale}
@@ -218,13 +225,13 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
           /* A ray against individual points has a sub-millimetre threshold and makes a sparse
              relief almost impossible to select. An invisible bounds mesh gives it the same click
              target as a solid object without changing what is drawn. */
-          <mesh onClick={handleSelect}>
+          <mesh onClick={isLocked || !isVisible ? undefined : handleSelect}>
             <boxGeometry args={[baseSize.x, baseSize.y, Math.max(baseSize.z, 0.1)]} />
             <meshBasicMaterial colorWrite={false} depthWrite={false} transparent />
           </mesh>
         )}
       </group>
-      {selected && anchor && (
+      {selected && anchor && isVisible && !isLocked && (
         <>
           <TransformControls
             // the gizmo sits on top of everything, so leaving it live would swallow every pan that

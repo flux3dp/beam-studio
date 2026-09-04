@@ -4,6 +4,28 @@ import { useStlStore } from '@core/app/stores/stlStore';
 import { is3dProjection } from './getters';
 
 /**
+ * Projection elements at or below `elems`, in DOM order and without duplicates.
+ *
+ * Most element operations receive a projection rect directly. Layer operations receive the
+ * containing `<g class="layer">` instead, so looking only at the roots leaves every object in a
+ * deleted or duplicated layer behind on the 3D canvas.
+ */
+export const collectStlProjectionElements = (elems: Array<Element | null | undefined>): Element[] => {
+  const projections = new Set<Element>();
+
+  elems.forEach((elem) => {
+    if (!elem) return;
+
+    if (is3dProjection(elem)) projections.add(elem);
+    elem.querySelectorAll('*').forEach((child) => {
+      if (is3dProjection(child)) projections.add(child);
+    });
+  });
+
+  return [...projections];
+};
+
+/**
  * The STL objects behind `elems` — the elements themselves plus any projection rects inside them.
  *
  * Reads the store rather than the DOM, so an element whose mesh has already gone (a rect left over
@@ -11,13 +33,35 @@ import { is3dProjection } from './getters';
  */
 export const collectStlObjects = (elems: Array<Element | null | undefined>): StlObject[] => {
   const { objects } = useStlStore.getState();
-  const ids = new Set<string>();
 
-  elems.forEach((elem) => {
-    if (elem && is3dProjection(elem)) ids.add(elem.id);
+  return collectStlProjectionElements(elems)
+    .map(({ id }) => objects[id])
+    .filter(Boolean);
+};
+
+/**
+ * Re-key the runtime objects belonging to an in-place DOM copy.
+ *
+ * `drawing.copyElem` preserves descendant order and gives every copied element a fresh id. The
+ * immutable geometry and source buffers can be shared; only the projection id identifies the new
+ * object. This is intentionally for in-place copies such as layer duplication — clipboard paste
+ * additionally has to fold its placement offset into the transform.
+ */
+export const createClonedStlObjects = (source: Element, copy: Element): StlObject[] => {
+  const { objects } = useStlStore.getState();
+  const sourceProjections = collectStlProjectionElements([source]);
+  const copiedProjections = collectStlProjectionElements([copy]);
+
+  if (sourceProjections.length !== copiedProjections.length) {
+    console.error('The copied layer does not contain the same number of 3D projections as its source');
+  }
+
+  return sourceProjections.flatMap((sourceProjection, index) => {
+    const object = objects[sourceProjection.id];
+    const copiedProjection = copiedProjections[index];
+
+    return object && copiedProjection ? [{ ...object, id: copiedProjection.id }] : [];
   });
-
-  return [...ids].map((id) => objects[id]).filter(Boolean);
 };
 
 /**
