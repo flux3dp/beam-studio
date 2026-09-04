@@ -1,7 +1,8 @@
-import React, { memo, use, useMemo, useRef } from 'react';
+import React, { memo, use, useMemo, useRef, useState } from 'react';
 
 import { match } from 'ts-pattern';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import LeftPanelButtonGroup from '@core/app/components/beambox/LeftPanel/components/LeftPanelButtonGroup';
@@ -12,16 +13,20 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import importReplicatePointCloudSample from '@core/app/svgedit/operations/import/importReplicatePointCloudSample';
 import insertDefaultTextAsStl from '@core/app/svgedit/operations/import/importStl/insertDefaultText';
 import selectionManager from '@core/app/svgedit/selection';
 import { createParamsLabel } from '@core/app/svgedit/text/paramsLabel';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
+import { type ReplicatePointCloudSampleId, type ReplicateSampleDisplay } from '@core/helpers/image/replicatePointCloud';
 import { isParamsLabelDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
+
+import Replicate3DSampleModal from './Replicate3DSampleModal';
 
 type ToolButtonProps = {
   className?: string;
@@ -58,16 +63,31 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     [mouseMode],
   );
   const isInnerEngravingMode = useInnerEngravingActive();
+  const [replicateModalOpen, setReplicateModalOpen] = useState(false);
   const modeRef = useRef(isInnerEngravingMode);
   const insertDefault3dText = (type: 'fit-text' | 'text') => {
     selectionManager.clearSelection();
     void insertDefaultTextAsStl(type);
   };
+  const insertReplicateSample = (id: ReplicatePointCloudSampleId, display: ReplicateSampleDisplay) => {
+    setReplicateModalOpen(false);
+    void importReplicatePointCloudSample(id, display).catch((error: unknown) => {
+      alertCaller.popUpError({
+        message: error instanceof Error ? error.message : 'Unable to import 3D sample',
+      });
+    });
+  };
 
   useDidUpdateEffect(() => {
-    if (!isInnerEngravingMode || modeRef.current === isInnerEngravingMode) return;
+    if (modeRef.current === isInnerEngravingMode) return;
 
     modeRef.current = isInnerEngravingMode;
+
+    if (!isInnerEngravingMode) {
+      setReplicateModalOpen(false);
+
+      return;
+    }
 
     setDrawerMode('none');
     endPreviewMode();
@@ -127,6 +147,18 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         onClick: FnWrapper.importImage,
         supportedIn3D: true,
       })}
+      {isInnerEngravingMode
+        ? renderToolButton({
+            icon: <span style={{ fontSize: 20 }}>3D</span>,
+            id: 'Replicate3DSamples',
+            label: 'Captured 2D to 3D results',
+            onClick: () => setReplicateModalOpen(true),
+            supportedIn3D: true,
+          })
+        : null}
+      {isInnerEngravingMode && replicateModalOpen ? (
+        <Replicate3DSampleModal onClose={() => setReplicateModalOpen(false)} onSelect={insertReplicateSample} />
+      ) : null}
       <LeftPanelButtonGroup
         active={activeButton === 'Text' || activeButton === 'FitText'}
         id="left-Text"

@@ -1,0 +1,101 @@
+.intro {
+  margin-bottom: 12px;
+  color: #666;
+  font-size: 13px;
+}
+
+.list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 12px;
+  max-height: min(680px, 68vh);
+  padding-right: 4px;
+  overflow-y: auto;
+}
+
+.card {
+  display: grid;
+  grid-template-columns: 144px minmax(0, 1fr);
+  min-height: 150px;
+  overflow: hidden;
+  border: 1px solid #dedede;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.preview {
+  min-height: 150px;
+  overflow: hidden;
+  background: #e8e8e8;
+
+  img,
+  video {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: 12px;
+}
+
+.heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+.model {
+  margin-top: 2px;
+  overflow: hidden;
+  color: #777;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.metadata {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 10px;
+  margin-top: 8px;
+  color: #666;
+  font-size: 11px;
+}
+
+.disabledReason {
+  margin-top: 8px;
+  color: #a15c00;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+@media screen and (max-width: 700px) {
+  .list {
+    grid-template-columns: 1fr;
+  }
+
+  .card {
+    grid-template-columns: 112px minmax(0, 1fr);
+  }
+}

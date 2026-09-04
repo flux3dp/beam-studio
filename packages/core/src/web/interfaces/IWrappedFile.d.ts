@@ -14,6 +14,8 @@ interface IWrappedSwiftrayTaskFile {
   data: string;
   extension: string; // currently unused
   name: string; // currently unused
+  /** Inner engraving BSPC binaries, keyed by `data-stl-kind="point-cloud"` placeholder id. */
+  pointCloudObjects?: Record<string, string>;
   /**
    * Inner engraving meshes, keyed by the id of their `data-stl` projection rect in `data`.
    *

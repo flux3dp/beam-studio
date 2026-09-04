@@ -194,7 +194,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
           <points geometry={geometry} onClick={handleSelect} position={meshPosition} ref={objectRef} scale={meshScale}>
             {/* Screen-space size keeps a relief readable without turning its points into large
                 world-space spheres when the camera zooms in. Colour comes from the layer only. */}
-            <pointsMaterial color={color} size={2} sizeAttenuation={false} />
+            <pointsMaterial color={color} size={0.5} sizeAttenuation={false} />
           </points>
         ) : (
           <mesh

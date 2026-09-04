@@ -1,39 +1,42 @@
 import { todo } from '@core/helpers/is-dev';
 
 /**
- * An STL object is represented by two separate things, and they must not be conflated:
+ * A 3D canvas object is represented by its geometry plus an SVG projection, and they must not be
+ * conflated:
  *
- * 1. the **STL 3D object** — the mesh plus its 3D transform and engraving parameters. This is the
- *    source of truth. It lives outside the SVG DOM and is what the three.js canvas renders.
- * 2. the **projection rect** — a plain `<rect data-stl="1">` inside `svgcontent`, whose geometry is
- *    the XY projection of the 3D object's bounding box. It exists so that selection, layer
+ * 1. the **3D object** — a mesh, photo plane, or point cloud plus its 3D transform and engraving
+ *    parameters. This is the source of truth and is what the three.js canvas renders.
+ * 2. the **SVG projection** — a `<rect>` for meshes/point clouds or the editable `<image>` for a
+ *    photo. Its geometry is the XY projection of the 3D object's bounding box. It exists so that selection, layer
  *    membership, undo/redo, clipboard and .beam serialization all reuse the existing svgedit
  *    plumbing, and so that anything reading a 2D bbox (alignment, framing,
  *    `getVisibleElementsAndBBoxes`) keeps working unchanged.
  *
- * The rect is **derived**: every change to the 3D transform recomputes its x/y/width/height. It is
+ * The projection is **derived**: every change to the 3D transform recomputes its x/y/width/height. It is
  * never editable geometry on its own — a 2D edit (e.g. the XY inputs in DimensionPanel) has to be
  * routed back to the 3D object, which then re-projects.
  *
- * The two are linked by the element id: the rect's `id` is the key used for the mesh binary in the
- * .beam file (block 6) and in the `stlObjects` payload sent to swiftray.
+ * The two are linked by element id. For binary geometry, the id is also the key used by the .beam
+ * file and the `stlObjects`/`pointCloudObjects` payload sent to Swiftray. A photo keeps its pixels
+ * directly in the SVG image.
  */
 todo(
   'TBC：註解裡，a 2D edit (e.g. the XY inputs in DimensionPanel) has to be routed back to the 3D object, which then re-projects. 實際上，在內雕模式裡，rect 不應該被接觸到，DimensionPanel 裡的值應該直接影響到 3D object，然後投影',
 );
 /**
- * Attributes on the projection rect. Everything swiftray needs about an STL object other than the
- * mesh itself travels on these, because the rect is what ends up in the svg string sent to the
- * backend (A-3) and in the .beam file.
+ * Attributes on a 3D object's SVG projection. Everything Swiftray needs to place the geometry
+ * travels on these because the projection ends up in both the exported SVG and the .beam file.
  */
 export const STL_ATTR = {
   /**
    * Note: infill has no attribute of its own. It is the projection rect's **own `fill`**, set by the
    * same `InFillBlock` every 2D shape uses — a filled rect means "engrave the interior too".
    */
+  /** Backend geometry: absent means STL mesh; `photo` uses image pixels; `point-cloud` selects BSPC. */
+  kind: 'data-stl-kind',
   /** Slice thickness in mm. Absent or <= 0 falls back to the backend's default. */
   layerHeight: 'data-stl-layer-height',
-  /** Marks a rect as the projection of an STL 3D object. Value is always '1'. */
+  /** Marks an SVG element as the projection of a backend-handled 3D object. Value is always '1'. */
   marker: 'data-stl',
   /**
    * The 3D object's transform: a column-major 4x4 matrix, 16 numbers separated by spaces.
@@ -60,11 +63,11 @@ export const STL_ATTR = {
   transform: 'data-stl-transform',
 } as const;
 
-/** Frontend-only metadata for a zero-thickness textured plane. */
+/** Metadata for a zero-thickness textured plane. */
 export const PHOTO_3D_ATTR = {
   /** Original plane height in millimetres, before the object's transform is applied. */
   height: 'data-stl-photo-height',
-  /** Marks an SVG image as a 3D photo plane. It is not sent to the STL backend. */
+  /** Marks an SVG image as a 3D photo plane. Export adds `data-stl-kind="photo"` temporarily. */
   marker: 'data-stl-photo',
   /** Original plane width in millimetres, before the object's transform is applied. */
   width: 'data-stl-photo-width',

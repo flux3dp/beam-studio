@@ -11,11 +11,11 @@ import { getStlSources } from '@core/app/svgedit/stl/sources';
  * Uses `FileReader` rather than `btoa(String.fromCharCode(...))`: the latter blows the argument
  * limit on large meshes, and chunking it would block the main thread for tens of MB.
  */
-const toBase64 = (buffer: ArrayBuffer): Promise<string> =>
+export const toBase64 = (buffer: ArrayBuffer): Promise<string> =>
   new Promise((resolve, reject) => {
     const reader = new FileReader();
 
-    reader.onerror = () => reject(reader.error ?? new Error('Failed to encode STL mesh'));
+    reader.onerror = () => reject(reader.error ?? new Error('Failed to encode 3D object binary'));
     reader.onload = () => {
       const result = reader.result as string;
 

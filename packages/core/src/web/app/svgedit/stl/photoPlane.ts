@@ -11,7 +11,7 @@ import { getHref } from '@core/app/svgedit/utils/href';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
-import { PHOTO_3D_ATTR, POINT_CLOUD_ATTR } from './constants';
+import { PHOTO_3D_ATTR, POINT_CLOUD_ATTR, STL_ATTR } from './constants';
 import { parseStlTransform } from './transformAttr';
 
 export const photoPlaneEvents = eventEmitterFactory.createEventEmitter();
@@ -51,12 +51,7 @@ export const readPhotoPlaneObjects = (): StlObject[] =>
     .map(createPhotoPlaneObject)
     .filter((object): object is StlObject => Boolean(object));
 
-/**
- * Temporarily remove photo sources from the flat bitmap export path.
- *
- * A fallback plane is display-only; a converted photo's point cloud travels in its own payload and
- * must eventually be handled by the relief backend, never engraved again as a 2D bitmap.
- */
+/** Legacy helper for exports that cannot send typed photo projections to the backend. */
 export const detachPhotoPlaneElements = (): (() => void) => {
   const detached = Array.from(
     document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_3D_ATTR.marker}]`),
@@ -65,6 +60,65 @@ export const detachPhotoPlaneElements = (): (() => void) => {
   detached.forEach(({ elem }) => elem.remove());
 
   return () => detached.reverse().forEach(({ elem, next, parent }) => parent.insertBefore(elem, next));
+};
+
+/**
+ * Prepare photo-backed 3D objects for one Swiftray export.
+ *
+ * Plain photos keep their image data and all projection metadata, receiving only a temporary
+ * `photo` kind so Swiftray can dither and place them in 3D. Generated point clouds replace that
+ * same editable source image with a lightweight placeholder and resolve their BSPC binary from
+ * `pointCloudObjects`.
+ */
+export const preparePhotoPlaneElementsForExport = (): (() => void) => {
+  const photos = Array.from(document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_3D_ATTR.marker}]`));
+  const temporaryAttributes = [STL_ATTR.kind, STL_ATTR.marker, STL_ATTR.mode];
+  const annotated = photos
+    .filter((elem) => !elem.hasAttribute(POINT_CLOUD_ATTR.marker))
+    .map((elem) => {
+      const previous = temporaryAttributes.map((name) => [name, elem.getAttribute(name)] as const);
+
+      elem.setAttribute(STL_ATTR.kind, 'photo');
+      elem.setAttribute(STL_ATTR.marker, '1');
+      elem.setAttribute(STL_ATTR.mode, 'dot');
+
+      return { elem, previous };
+    });
+  const replacements = photos
+    .filter((elem) => elem.hasAttribute(POINT_CLOUD_ATTR.marker))
+    .map((elem) => {
+      const next = elem.nextSibling;
+      const parent = elem.parentNode!;
+      const placeholder = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+      for (const attribute of Array.from(elem.attributes)) {
+        if (!['href', 'origImage', 'xlink:href'].includes(attribute.name)) {
+          placeholder.setAttribute(attribute.name, attribute.value);
+        }
+      }
+
+      placeholder.setAttribute('fill', 'none');
+      placeholder.setAttribute('stroke', '#000');
+      placeholder.setAttribute(STL_ATTR.kind, 'point-cloud');
+      placeholder.setAttribute(STL_ATTR.marker, '1');
+      placeholder.setAttribute(STL_ATTR.mode, 'dot');
+      elem.replaceWith(placeholder);
+
+      return { elem, next, parent, placeholder };
+    });
+
+  return () => {
+    replacements.reverse().forEach(({ elem, next, parent, placeholder }) => {
+      placeholder.remove();
+      parent.insertBefore(elem, next?.parentNode === parent ? next : null);
+    });
+    annotated.forEach(({ elem, previous }) =>
+      previous.forEach(([name, value]) => {
+        if (value === null) elem.removeAttribute(name);
+        else elem.setAttribute(name, value);
+      }),
+    );
+  };
 };
 
 /** Turn an imported SVG image into a zero-thickness plane centred halfway up the material. */

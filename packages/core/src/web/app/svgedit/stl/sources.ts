@@ -17,6 +17,8 @@ export const getStlSources = (): Record<string, ArrayBuffer> => {
   document.querySelectorAll(`#svgcontent [${STL_ATTR.marker}]`).forEach(({ id }) => {
     const object = objects[id];
 
+    if (object?.kind === 'photo' || object?.kind === 'point-cloud') return;
+
     if (object?.buffer) result[id] = object.buffer;
     // the mesh lives outside the DOM, so this means the two halves went out of sync
     else console.error(`STL projection rect ${id} has no mesh in the store, the object is not exported`);

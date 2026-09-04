@@ -267,6 +267,10 @@ class SwiftrayClient extends EventEmitter {
         payload.params.stlObjects = `[${Object.keys(payload.params.stlObjects).length} stl objects]`;
       }
 
+      if (payload.params?.pointCloudObjects) {
+        payload.params.pointCloudObjects = `[${Object.keys(payload.params.pointCloudObjects).length} point-cloud objects]`;
+      }
+
       this.logger.append(payload);
 
       if (this.socket?.readyState === WebSocket.OPEN) {
@@ -320,8 +324,12 @@ class SwiftrayClient extends EventEmitter {
     },
   ): Promise<{
     error?: ErrorObject;
+    /** Inner engraving: BSPC payloads swiftray could not parse */
+    failedPointCloudObjects?: Array<{ error: string; id: string }>;
     /** Inner engraving: meshes swiftray could not parse */
     failedStlObjects?: Array<{ error: string; id: string }>;
+    /** Inner engraving: number of BSPC point clouds swiftray accepted */
+    loadedPointCloudObjects?: number;
     /** Inner engraving: number of meshes swiftray accepted */
     loadedStlObjects?: number;
     success: boolean;
@@ -330,13 +338,15 @@ class SwiftrayClient extends EventEmitter {
 
     booleanConfig.forEach((key) => delete defaultConfig[key]);
 
-    // swiftray reads stlObjects from the top level of params, not from inside file
+    // swiftray reads 3D binaries from the top level of params, not from inside file
     // (the SWIFTRAY_SUPPORT_STL check happens up in handleExportAlerts, before the payload is built)
-    const { stlObjects, ...taskFile } = file;
+    const { pointCloudObjects, stlObjects, ...taskFile } = file;
 
     const uploadRes = await this.action<{
       error?: ErrorObject;
+      failedPointCloudObjects?: Array<{ error: string; id: string }>;
       failedStlObjects?: Array<{ error: string; id: string }>;
+      loadedPointCloudObjects?: number;
       loadedStlObjects?: number;
       success: boolean;
     }>('/parser', 'loadSVG', {
@@ -344,11 +354,16 @@ class SwiftrayClient extends EventEmitter {
       file: taskFile,
       model: loadOptions.model,
       rotaryMode: loadOptions.rotaryMode,
+      ...(pointCloudObjects ? { pointCloudObjects } : {}),
       ...(stlObjects ? { stlObjects } : {}),
     });
 
     if (uploadRes.failedStlObjects?.length) {
       console.error('Failed to load STL objects', uploadRes.failedStlObjects);
+    }
+
+    if (uploadRes.failedPointCloudObjects?.length) {
+      console.error('Failed to load point-cloud objects', uploadRes.failedPointCloudObjects);
     }
 
     if (!uploadRes.success) {

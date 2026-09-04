@@ -11,7 +11,7 @@ import { controlConfig } from '@core/app/constants/promark-constants';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { detachPhotoPlaneElements } from '@core/app/svgedit/stl/photoPlane';
+import { preparePhotoPlaneElementsForExport } from '@core/app/svgedit/stl/photoPlane';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -40,6 +40,7 @@ import { getAdorPaddingAccel } from './export/ador-utils';
 import { annotateLayerBBox } from './export/annotateLayerBBox';
 import { annotateLayerDpmm } from './export/annotateLayerDpmm';
 import generateThumbnail from './export/generate-thumbnail';
+import getPointCloudObjects from './export/getPointCloudObjects';
 import getStlObjects from './export/getStlObjects';
 
 let svgCanvas: ISVGCanvas;
@@ -59,7 +60,10 @@ export const dpiTextMap: { [key in EngraveDpiOption]: number } = {
 const generateUploadFile = async (
   thumbnail: string,
   thumbnailUrl: string,
-  { withStlObjects = true }: { withStlObjects?: boolean } = {},
+  {
+    pointCloudObjects,
+    withStlObjects = true,
+  }: { pointCloudObjects?: Record<string, string>; withStlObjects?: boolean } = {},
 ): Promise<IWrappedSwiftrayTaskFile> => {
   Progress.openNonstopProgress({
     id: 'retrieve-image-data',
@@ -85,6 +89,7 @@ const generateUploadFile = async (
     data: svgString,
     extension: 'svg',
     name: 'svgeditor.svg',
+    pointCloudObjects,
     stlObjects,
     thumbnail: thumbnail.toString(),
     uploadName: thumbnailUrl.split('/').pop() ?? '',
@@ -258,10 +263,11 @@ const fetchTaskCodeSwiftray = async (
 
   // Generate Thumbnail
   const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
+  const pointCloudObjects = await getPointCloudObjects();
 
-  // A photo image is the editable source for either a fallback plane or relief point-cloud data.
-  // Keep it in .beam, but never let the 2D bitmap pipeline engrave it again as a flat job.
-  revertFunctions.push(detachPhotoPlaneElements());
+  // Plain photos remain SVG images and are marked for Swiftray's 3D photo path. Only generated
+  // point clouds use a typed placeholder plus a separate BSPC payload.
+  revertFunctions.push(preparePhotoPlaneElementsForExport());
 
   Progress.update('fetch-task-code', {
     caption: i18n.lang.beambox.popup.progress.calculating,
@@ -291,7 +297,7 @@ const fetchTaskCodeSwiftray = async (
     message: 'Generating Upload File',
   });
 
-  const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
+  const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL, { pointCloudObjects });
 
   await cleanUpTempModification();
 
@@ -438,7 +444,7 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
     message: 'Simplifying bitmap',
   });
 
-  const restorePhotoPlanes = detachPhotoPlaneElements();
+  const restorePhotoPlanes = preparePhotoPlaneElementsForExport();
   const revertBitmap = convertBitmapToInfilledRect();
 
   Progress.update('fetch-task-code', {
