@@ -23,10 +23,6 @@ jest.mock('@core/app/svgedit/selection', () => ({
 
 import PathPreviewButton from './PathPreviewButton';
 
-const mockUseWorkarea = jest.fn();
-
-jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
-
 describe('test PathPreviewButton', () => {
   beforeEach(() => {
     useCanvasStore.getState().setMode(CanvasMode.PathPreview);
@@ -38,16 +34,6 @@ describe('test PathPreviewButton', () => {
     const { container } = render(<PathPreviewButton isDeviceConnected />);
 
     expect(container).toMatchSnapshot();
-  });
-
-  describe('workarea is Ador', () => {
-    it('should not render', () => {
-      mockUseWorkarea.mockReturnValue('ado1');
-
-      const { container } = render(<PathPreviewButton isDeviceConnected />);
-
-      expect(container).toMatchSnapshot();
-    });
   });
 
   describe('has WebGL', () => {
