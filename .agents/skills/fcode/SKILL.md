@@ -63,6 +63,9 @@ Inside `CONT`, a sequence of entries:
   pyx binding passes NULL for `''`): `xMIN` blocks have one (`0001`–`0008`, always
   ASCII digits), `TRAN`/`MAIN` do not. Disambiguate by digit-peeking the 4 bytes
   after the tag — a length whose 4 bytes are all `0x30–0x39` would be ≥ 800MB.
+  `xMIN` blocks are machine scripts (0003 pre-task homing, 0001/0002 prespray,
+  0005–0008 lid/table, 0004 post-task); parseFcode skips them so no records, moves,
+  or prespray swaths from them reach the preview (the slicer copies them as raw bytes).
 - **`TASK`**: bare 4-byte marker, no payload (one per layer, before its blocks).
 - **`INFO`**: 4-byte tag + u32 len + per-task json (time_cost, travel_dist…).
 - **`PREV`**: 4-byte tag + u32 len + per-task thumbnail. Yes, `PREV` appears both as

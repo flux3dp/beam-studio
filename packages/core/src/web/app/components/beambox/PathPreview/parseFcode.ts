@@ -713,7 +713,9 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         continue;
       }
 
-      if (!entry.isBlock) continue;
+      // xMIN blocks are machine scripts (homing, prespray, lid/table moves, post-task),
+      // not design content: skip them so their moves and prespray swaths stay out of the preview
+      if (!entry.isBlock || entry.tag === 'xMIN') continue;
 
       reader.pos = entry.bodyStart;
       pendingBlock = { bodyStart: entry.bodyStart, recordCount: recordOffsets.length };
