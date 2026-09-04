@@ -15,7 +15,7 @@
 
 'use strict';
 
-class ParsedGcode {
+export class ParsedGcode {
   chunks = [[]];
 
   maxChunkSize = 1000000;

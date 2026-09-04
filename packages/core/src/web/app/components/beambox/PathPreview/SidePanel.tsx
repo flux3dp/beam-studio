@@ -3,8 +3,9 @@ import React, { useMemo } from 'react';
 import { Button } from 'antd';
 import classNames from 'classnames';
 
-import { getConvertEngine } from '@core/app/actions/beambox/export-funcs';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import workareaManager from '@core/app/svgedit/workarea';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
@@ -52,11 +53,7 @@ function SidePanel({
     [],
   );
 
-  const isStartHereHidden = useMemo(() => {
-    const { useSwiftray } = getConvertEngine();
-
-    return useSwiftray;
-  }, []);
+  const isStartHereHidden = useMemo(() => promarkModels.has(workareaManager.model), []);
 
   return (
     <div className={sideClass} id="path-preview-side-panel">

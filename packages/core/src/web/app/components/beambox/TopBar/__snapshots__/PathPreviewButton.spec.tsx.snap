@@ -23,5 +23,3 @@ exports[`test PathPreviewButton has WebGL no devices connected in web version 1`
 `;
 
 exports[`test PathPreviewButton no WebGL 1`] = `<div />`;
-
-exports[`test PathPreviewButton workarea is Ador should not render 1`] = `<div />`;

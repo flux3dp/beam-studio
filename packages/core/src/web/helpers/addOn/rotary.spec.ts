@@ -22,7 +22,17 @@ const mockGetRotaryRatio = jest.fn();
 
 jest.mock('@core/helpers/device/get-rotary-ratio', () => mockGetRotaryRatio);
 
-import { getRotaryInfo } from './rotary';
+const mockGetAutoFeeder = jest.fn();
+
+jest.mock('@core/helpers/addOn', () => ({
+  getAutoFeeder: mockGetAutoFeeder,
+}));
+
+jest.mock('@core/app/constants/workarea-constants', () => ({
+  getWorkarea: () => ({ pxHeight: 3000 }),
+}));
+
+import { getRotaryInfo, getSpinningAxis } from './rotary';
 
 describe('test getAutoFeeder', () => {
   beforeEach(() => {
@@ -119,5 +129,40 @@ describe('test getAutoFeeder', () => {
       y: 15,
       yRatio: 1.23,
     });
+  });
+});
+
+describe('test getSpinningAxis', () => {
+  beforeEach(() => {
+    jest.resetAllMocks();
+    mockGetPosition.mockReturnValue(10);
+    mockGetRotaryRatio.mockReturnValue(1.23);
+  });
+
+  it('should return null when neither rotary nor auto feeder is on', () => {
+    mockGetAddOnInfo.mockReturnValue({ autoFeeder: { rotaryRatio: 0.5 } });
+    mockGetState.mockReturnValue({ rotary_mode: false });
+    mockGetAutoFeeder.mockReturnValue(false);
+
+    expect(getSpinningAxis('fbb2')).toBe(null);
+  });
+
+  it('should use the rotary axis and ratio in rotary mode', () => {
+    mockGetAddOnInfo.mockReturnValue({ rotary: {} });
+    mockGetState.mockReturnValue({ rotary_mode: true });
+
+    expect(getSpinningAxis('ado1')).toEqual({ ratio: 1.23, spin: 10 });
+    // job origin (mm) pins the axis to the origin, in px
+    expect(getSpinningAxis('ado1', { jobOriginY: 15 })).toEqual({ ratio: 1.23, spin: 150 });
+  });
+
+  it('should use the feeder edge and scaled ratio for auto feeder', () => {
+    mockGetAddOnInfo.mockReturnValue({ autoFeeder: { minY: 20, rotaryRatio: 0.5 } });
+    mockGetState.mockReturnValue({ 'auto-feeder-scale': 2, rotary_mode: false });
+    mockGetAutoFeeder.mockReturnValue(true);
+
+    expect(getSpinningAxis('fbb2')).toEqual({ ratio: 1, spin: 20 });
+    expect(getSpinningAxis('fbb2', { reverse: true })).toEqual({ ratio: 1, spin: 3000 });
+    expect(getSpinningAxis('fbb2', { jobOriginY: 15, reverse: true })).toEqual({ ratio: 1, spin: 150 });
   });
 });

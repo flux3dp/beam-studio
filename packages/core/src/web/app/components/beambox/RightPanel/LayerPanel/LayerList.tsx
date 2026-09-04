@@ -57,9 +57,12 @@ const LayerList = ({
   unLockLayers,
 }: Props): React.JSX.Element => {
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
+  // Subscribe to layers/currentLayerName so store rebuilds (identifyLayers/resync,
+  // e.g. the temp full-color split revert during export) re-render the list.
+  const layers = useLayerStore((state) => state.layers);
+  const currentLayerName = useLayerStore((state) => state.currentLayerName);
 
   const items: React.ReactNode[] = [];
-  const currentLayerName = layerManager.getCurrentLayerName();
   const isMobile = useIsMobile();
   const workarea = useWorkarea();
   const supportedModules = useSupportedModules(workarea);
@@ -71,17 +74,15 @@ const LayerList = ({
     }
   }, [ref, draggingDestIndex, selectedLayers]);
 
-  const allLayerNames = layerManager.getAllLayerNames();
-
-  if (draggingDestIndex === allLayerNames.length) {
+  if (draggingDestIndex === layers.length) {
     items.push(renderDragBar());
   }
 
   const shouldShowModuleIcon = supportedModules.length > 1;
 
-  for (let i = allLayerNames.length - 1; i >= 0; i -= 1) {
-    const layerName = allLayerNames[i];
-    const layerObject = layerManager.getLayerByName(layerName);
+  for (let i = layers.length - 1; i >= 0; i -= 1) {
+    const layerObject = layers[i];
+    const layerName = layerObject.getName();
 
     if (layerObject) {
       const layer = layerObject.getGroup();
