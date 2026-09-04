@@ -246,6 +246,7 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
   const addedLayers: Element[] = [];
   const removedLayers: Array<{ layer: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
   const currentLayerName = layerManager.getCurrentLayerName();
+  const selectedLayers = [...layerManager.getSelectedLayers()];
 
   for (const layer of layerManager.getAllLayers()) {
     const layerElement = layer.getGroup();
@@ -283,7 +284,9 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
     });
 
     layerManager.identifyLayers();
-    layerManager.setCurrentLayer(currentLayerName!);
+    // the split dropped the original names from the selection; restore both
+    // selection and current layer now that the original groups are back
+    layerManager.setSelectedLayers(selectedLayers, currentLayerName ?? undefined);
   };
 
   return revert;
