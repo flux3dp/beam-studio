@@ -12,7 +12,7 @@ module.exports = () => {
       static: path.resolve(__dirname, 'dist'),
     },
     watchOptions: {
-      poll: 1000,
+      poll: process.env.WEBPACK_POLLING === 'true' ? 1000 : false,
     },
     mode: 'development',
     output: {
