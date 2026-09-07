@@ -29,7 +29,7 @@ const RECOMMENDED_OUTPUT_SIZE = 8192;
 const UpscaleModal = ({ cost, imageSize, onClose, requiredScale, run }: Props) => {
   const lang = useI18n();
   const t = lang.beambox.ai_upscale_panel;
-  const fits = useCallback(
+  const fitRecommendedOutput = useCallback(
     (factor: number) => imageSize.width * imageSize.height * factor ** 2 <= RECOMMENDED_OUTPUT_SIZE ** 2,
     [imageSize],
   );
@@ -37,10 +37,10 @@ const UpscaleModal = ({ cost, imageSize, onClose, requiredScale, run }: Props) =
   const recommended = useMemo(() => {
     if (requiredScale <= 1) return null;
 
-    const fitting = SCALES.filter(fits);
+    const fitting = SCALES.filter(fitRecommendedOutput);
 
     return fitting.find((s) => s >= requiredScale) ?? fitting.at(-1)!;
-  }, [fits, requiredScale]);
+  }, [fitRecommendedOutput, requiredScale]);
   const [scale, setScale] = useState(recommended ?? SCALES[0]);
   const [failed, setFailed] = useState(false);
   const info = getCurrentUser()?.info;
@@ -49,7 +49,7 @@ const UpscaleModal = ({ cost, imageSize, onClose, requiredScale, run }: Props) =
   const sizeText = (factor: number) => `${imageSize.width * factor} × ${imageSize.height * factor} px`;
 
   const start = async () => {
-    if (!fits(scale)) {
+    if (!fitRecommendedOutput(scale)) {
       const proceed = await new Promise<boolean>((resolve) =>
         alertCaller.popUp({
           buttonType: alertConstants.CONFIRM_CANCEL,
