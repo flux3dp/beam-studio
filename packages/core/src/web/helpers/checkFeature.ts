@@ -5,6 +5,7 @@ import localeHelper from './locale-helper';
 const enableAllMachines = window?.localStorage?.getItem('enableAllMachines') === 'true';
 
 export const checkFpm1 = (): boolean => !isWeb();
+export const checkHxRf = (): boolean => true;
 export const checkBM2 = (): boolean => true;
 export const checkBM24C = (): boolean => isDev() || localeHelper.isTwOrHk;
 // TODO: Can be removed after we move all testing machine to fuv1
