@@ -23,6 +23,7 @@ const mockCheckDeviceStatus = jest.fn();
 const mockStartFraming = jest.fn();
 const mockStopFraming = jest.fn();
 const mockGetRotaryInfo = jest.fn();
+const mockGetSpinningAxis = jest.fn();
 const mockGetAddOnInfo = jest.fn();
 const mockSwiftrayOn = jest.fn();
 const mockSwiftrayOff = jest.fn();
@@ -73,6 +74,7 @@ jest.mock('@core/helpers/device-master', () => ({
 
 jest.mock('@core/helpers/addOn/rotary', () => ({
   getRotaryInfo: (...args: any[]) => mockGetRotaryInfo(...args),
+  getSpinningAxis: (...args: any[]) => mockGetSpinningAxis(...args),
 }));
 
 jest.mock('@core/app/constants/addOn', () => ({
