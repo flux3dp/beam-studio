@@ -4,6 +4,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { dpmm } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getEngraveDpmm } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import selectionManager from '@core/app/svgedit/selection';
@@ -100,12 +101,16 @@ export const showUpscaleModal = async (elem?: SVGImageElement): Promise<void> =>
   }
 
   // Scale needed for the image to fill its canvas size at the layer's engrave resolution.
-  const dpiOption = getData(getObjectLayer(element)?.elem, 'dpi') ?? 'medium';
-  const engraveDpmm = getEngraveDpmm(dpiOption, useDocumentStore.getState().workarea);
-  const requiredScale = Math.max(
-    ((Number(element.getAttribute('width')) / dpmm) * engraveDpmm) / imageSize.width,
-    ((Number(element.getAttribute('height')) / dpmm) * engraveDpmm) / imageSize.height,
-  );
+  // Printing modules have a fixed resolution, so no recommendation is made for them.
+  const layer = getObjectLayer(element)?.elem;
+  const isPrinting = printingModules.has(getData(layer, 'module')!);
+  const engraveDpmm = getEngraveDpmm(getData(layer, 'dpi') ?? 'medium', useDocumentStore.getState().workarea);
+  const requiredScale = isPrinting
+    ? 0
+    : Math.max(
+        ((Number(element.getAttribute('width')) / dpmm) * engraveDpmm) / imageSize.width,
+        ((Number(element.getAttribute('height')) / dpmm) * engraveDpmm) / imageSize.height,
+      );
 
   addDialogComponent(
     id,
