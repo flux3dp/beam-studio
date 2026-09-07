@@ -162,13 +162,17 @@ export interface ILang {
       credit_cost: string;
       description: string;
       done: string;
+      dpi_recommended: string;
+      dpi_recommended_capped: string;
       failed: string;
       insufficient_credit: string;
+      layer_dpi: string;
       original_size: string;
       output_size: string;
       oversize_warning: string;
       processing: string;
       processing_hint: string;
+      recommended: string;
       retry: string;
       start: string;
     };

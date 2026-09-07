@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
 import { Alert } from 'antd';
 import { sprintf } from 'sprintf-js';
@@ -18,19 +18,30 @@ interface Props {
   cost: number;
   imageSize: { height: number; width: number };
   onClose: () => void;
-  /** Runs the upscale; resolves true once the canvas image has been replaced. */
+  requiredScale: number;
   run: (scale: number) => Promise<boolean>;
 }
 
-// Prototype D1: Select with 2x–10x, default 4x.
 const SCALES = [2, 4, 6, 8, 10];
 // Outputs beyond this get slow and heavy (1440² × 10x measured at 104s and a 143MB PNG); the user is warned, not blocked.
 const RECOMMENDED_OUTPUT_SIZE = 8192;
 
-const UpscaleModal = ({ cost, imageSize, onClose, run }: Props) => {
+const UpscaleModal = ({ cost, imageSize, onClose, requiredScale, run }: Props) => {
   const lang = useI18n();
   const t = lang.beambox.ai_upscale_panel;
-  const [scale, setScale] = useState(4);
+  const fits = useCallback(
+    (factor: number) => imageSize.width * imageSize.height * factor ** 2 <= RECOMMENDED_OUTPUT_SIZE ** 2,
+    [imageSize],
+  );
+  // Smallest fitting option covering the layer DPI need, else the largest fitting one; never triggers the oversize alert.
+  const recommended = useMemo(() => {
+    if (requiredScale <= 1) return null;
+
+    const fitting = SCALES.filter(fits);
+
+    return fitting.find((s) => s >= requiredScale) ?? fitting.at(-1)!;
+  }, [fits, requiredScale]);
+  const [scale, setScale] = useState(recommended ?? SCALES[0]);
   const [failed, setFailed] = useState(false);
   const info = getCurrentUser()?.info;
   const balance = (info?.subscription?.credit ?? 0) + (info?.credit ?? 0);
@@ -38,7 +49,7 @@ const UpscaleModal = ({ cost, imageSize, onClose, run }: Props) => {
   const sizeText = (factor: number) => `${imageSize.width * factor} × ${imageSize.height * factor} px`;
 
   const start = async () => {
-    if (imageSize.width * imageSize.height * scale ** 2 > RECOMMENDED_OUTPUT_SIZE ** 2) {
+    if (!fits(scale)) {
       const proceed = await new Promise<boolean>((resolve) =>
         alertCaller.popUp({
           buttonType: alertConstants.CONFIRM_CANCEL,
@@ -85,7 +96,10 @@ const UpscaleModal = ({ cost, imageSize, onClose, run }: Props) => {
               <span className={styles.hint}>{sizeText(value as number)}</span>
             </div>
           )}
-          options={SCALES.map((value) => ({ label: `${value}x`, value }))}
+          options={SCALES.map((value) => ({
+            label: value === recommended ? `${value}x (${t.recommended})` : `${value}x`,
+            value,
+          }))}
           popupMatchSelectWidth
           style={{ width: '100%' }}
           value={scale}
@@ -99,6 +113,16 @@ const UpscaleModal = ({ cost, imageSize, onClose, run }: Props) => {
             <span className={styles.key}>{t.output_size}</span>
             <span>{sizeText(scale)}</span>
           </div>
+          {recommended && (
+            <div className={styles.row}>
+              <span className={styles.key}>{t.layer_dpi}</span>
+              <span>
+                {recommended >= requiredScale
+                  ? sprintf(t.dpi_recommended, recommended)
+                  : sprintf(t.dpi_recommended_capped, Math.min(Math.ceil(requiredScale), SCALES.at(-1)!), recommended)}
+              </span>
+            </div>
+          )}
           <div className={styles.row}>
             <span className={styles.key}>{t.credit_cost}</span>
             <span>

@@ -3,10 +3,13 @@ import ImageTracer from 'imagetracerjs';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { dpmm } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import progress from '@core/app/actions/progress-caller';
 import { showUpscaleModal } from '@core/app/components/dialogs/image';
 import alertConstants from '@core/app/constants/alert-constants';
+import { getEngraveDpmm } from '@core/app/constants/resolutions';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
@@ -22,6 +25,8 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import imageData from '@core/helpers/image-data';
 import jimpHelper from '@core/helpers/jimp-helper';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -507,9 +512,18 @@ const upscaleImage = async (elem?: SVGImageElement): Promise<void> => {
     return;
   }
 
+  // Scale needed for the image to fill its canvas size at the layer's engrave resolution.
+  const dpiOption = getData(getObjectLayer(element)?.elem, 'dpi') ?? 'medium';
+  const engraveDpmm = getEngraveDpmm(dpiOption, useDocumentStore.getState().workarea);
+  const requiredScale = Math.max(
+    ((Number(element.getAttribute('width')) / dpmm) * engraveDpmm) / image.naturalWidth,
+    ((Number(element.getAttribute('height')) / dpmm) * engraveDpmm) / image.naturalHeight,
+  );
+
   showUpscaleModal({
     cost: UPSCALE_COST,
     imageSize: { height: image.naturalHeight, width: image.naturalWidth },
+    requiredScale,
     run: async (scale) => {
       const { naturalHeight: height, naturalWidth: width } = image;
       const progressId = 'photo-edit-processing';
