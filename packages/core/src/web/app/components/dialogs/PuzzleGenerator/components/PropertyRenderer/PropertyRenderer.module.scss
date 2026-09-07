@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .property-row {
   display: flex;
   flex-direction: column;
@@ -154,8 +156,8 @@
     background-color 0.2s;
 
   &:hover {
-    border-color: #1890ff;
-    background-color: #f0f7ff;
+    border-color: variables.$primary-blue;
+    background-color: variables.$light-blue;
   }
 
   &.has-image {

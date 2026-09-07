@@ -29,7 +29,7 @@
   font-size: 8px;
 
   &:hover {
-    background: #e6f4ff;
+    background: variables.$light-blue;
     border-color: variables.$primary-blue;
   }
 }

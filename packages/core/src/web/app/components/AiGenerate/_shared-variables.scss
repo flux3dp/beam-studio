@@ -1,14 +1,15 @@
+@use '@core/styles/variables' as variables;
+
 // Colors
 $container-bg: #ffffff;
 $background-light-gray: #f5f5f5;
 $background-dark-gray: #f0f0f0;
-$background-welcome: #f6f9fb;
-$primary-blue: #1890ff;
-$selected-bg: #e6f4ff;
+$primary-blue: variables.$primary-blue;
+$selected-bg: variables.$light-blue;
 
 $border-color: #e8e8e8;
 $button-border: #d9d9d9;
-$selected-border: #1890ff;
+$selected-border: variables.$primary-blue;
 
 $text-primary: #333333;
 $text-secondary: #666666;
@@ -16,8 +17,6 @@ $text-placeholder: #999999;
 $success-color: #52c41a;
 $error-color: #ff4d4f;
 
-$icon-warning: #faad14;
-$icon-warning-hover: #ffc53d;
 $ai-credit-icon: #f8b800;
 
 // Common mixins

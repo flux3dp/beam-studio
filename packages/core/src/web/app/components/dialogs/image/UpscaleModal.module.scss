@@ -1,46 +1,53 @@
-.upscale {
+@use '@core/styles/variables' as variables;
+
+.container {
   display: flex;
   flex-direction: column;
   gap: 12px;
   font-size: 13px;
 
   .description {
-    color: #9aa0a6;
+    color: variables.$secondary-gray;
     margin: 0;
   }
+
   .label {
     margin-bottom: -4px;
   }
+
   .info {
-    background: #f0f4f8;
+    background: variables.$light-blue;
     border-radius: 8px;
     padding: 12px;
   }
+
   .row {
     display: flex;
     padding: 4px 0;
     .key {
-      color: #9aa0a6;
+      color: variables.$secondary-gray;
       width: 100px;
       flex: none;
     }
   }
+
   .balance {
     display: flex;
     justify-content: space-between;
     margin-top: 8px;
     padding-top: 8px;
     border-top: 1px solid #e2e8ee;
-    color: #9aa0a6;
+    color: variables.$secondary-gray;
   }
 }
 
+// Rendered inside the Select dropdown (a portal), so these must not be nested under .container.
 .option {
   display: flex;
   justify-content: space-between;
 }
 
 .hint {
-  color: #9aa0a6;
+  color: variables.$secondary-gray;
   font-size: 12px;
 }

@@ -83,7 +83,7 @@ const UpscaleModal = ({ element, imageSize, onClose, requiredScale }: Props) => 
       title={lang.beambox.right_panel.object_panel.actions_panel.ai_upscale}
       width={480}
     >
-      <div className={styles.upscale}>
+      <div className={styles.container}>
         <p className={styles.description}>{t.description}</p>
         {insufficient && <Alert message={t.insufficient_credit} type="warning" />}
         {failed && <Alert message={t.failed} type="info" />}
