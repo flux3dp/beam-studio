@@ -28,7 +28,13 @@ import { deleteLayers } from '@core/helpers/layer/deleteLayer';
 import splitFullColorLayer from '@core/helpers/layer/full-color/splitFullColorLayer';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import { cloneLayers, getLayerPosition, mergeLayers, setLayersLock } from '@core/helpers/layer/layer-helper';
+import {
+  cloneLayers,
+  getLayerName,
+  getLayerPosition,
+  mergeLayers,
+  setLayersLock,
+} from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
@@ -160,8 +166,9 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
 
     const layer = selectedLayers[0];
 
-    await splitFullColorLayer(layer);
-    layerManager.setSelectedLayers([]);
+    const splitRes = await splitFullColorLayer(layer);
+
+    layerManager.setSelectedLayers(splitRes?.newLayers.map(getLayerName) ?? []);
   };
 
   const handleLayerFullColor = (newColor?: string) => {
