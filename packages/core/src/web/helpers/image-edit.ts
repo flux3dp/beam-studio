@@ -1,14 +1,8 @@
 // @ts-expect-error don't has type definition
 import ImageTracer from 'imagetracerjs';
-import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { dpmm } from '@core/app/actions/beambox/constant';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import progress from '@core/app/actions/progress-caller';
-import { showUpscaleModal } from '@core/app/components/dialogs/image';
-import { getEngraveDpmm } from '@core/app/constants/resolutions';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
@@ -17,13 +11,10 @@ import { simplifyPath } from '@core/app/svgedit/operations/pathActions';
 import selectionManager from '@core/app/svgedit/selection';
 import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import { estimateUpscaleMs, processImageWithAi } from '@core/helpers/api/ai-image-process';
-import { getCurrentUser } from '@core/helpers/api/flux-id';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import imageData from '@core/helpers/image-data';
 import jimpHelper from '@core/helpers/jimp-helper';
-import { getData } from '@core/helpers/layer/layer-config-helper';
-import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -37,7 +28,8 @@ getSVGAsync((globalSVG) => {
 });
 
 const REMOVE_BACKGROUND_COST = 0.02;
-const UPSCALE_COST = 0.01;
+
+export const UPSCALE_COST = 0.01;
 
 const getSelectedElem = (): null | SVGImageElement => {
   const selectedElements = selectionManager.getSelectedElements();
@@ -303,112 +295,69 @@ export const removeImageBackground = async (
   });
 
 // The upscale API accepts input images up to about this total pixel count (1440 × 1440); 4x is verified safe at that size.
-const MAX_UPSCALE_INPUT_SIZE = 1440;
+export const MAX_UPSCALE_INPUT_SIZE = 1440;
 
-const upscaleImage = async (elem?: SVGImageElement): Promise<void> => {
-  const element = elem || getSelectedElem();
-
-  if (!element) {
-    return;
-  }
-
+/**
+ * Runs the upscale API on an image element and replaces it with the result.
+ * Preparation (size/login checks, scale choice) lives in dialogs/image/showUpscaleModal.
+ * @param imageSize natural size of the source, for the duration estimate
+ * @returns true once the canvas image was replaced, false on cancel/error.
+ */
+const upscaleImage = async (
+  element: SVGImageElement,
+  scale: number,
+  imageSize: { height: number; width: number },
+): Promise<boolean> => {
   const { imgUrl, isFullColor, shading, threshold } = getImageAttributes(element);
+  const progressId = 'photo-edit-processing';
+  const startTime = performance.now();
+  const estimateMs = estimateUpscaleMs(imageSize.width * imageSize.height, scale);
 
-  if (!imgUrl) {
-    return;
-  }
-
-  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-    const img = new Image();
-
-    img.onload = () => resolve(img);
-    img.onerror = reject;
-    img.src = imgUrl;
+  progress.openSteppingProgress({
+    caption: i18n.lang.beambox.ai_upscale_panel.processing,
+    id: progressId,
+    message: i18n.lang.beambox.ai_upscale_panel.processing_hint,
+    showTips: true,
   });
 
-  if (image.naturalWidth * image.naturalHeight > MAX_UPSCALE_INPUT_SIZE ** 2) {
-    alertCaller.popUp({
-      message: sprintf(
-        i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_upscale_too_large,
-        MAX_UPSCALE_INPUT_SIZE,
-        MAX_UPSCALE_INPUT_SIZE,
-      ),
+  // No progress from the API; advance by elapsed time against the estimate and hold at 95% if it runs long.
+  const timer = setInterval(() => {
+    progress.update(progressId, {
+      percentage: Math.min(95, Math.round(((performance.now() - startTime) / estimateMs) * 100)),
+    });
+  }, 500);
+
+  try {
+    const imgData = await (await fetch(imgUrl)).blob();
+    // The dialog already shows the cost before starting (prototype D2), so no extra credit confirmation.
+    const blob = await processImageWithAi(imgData, {
+      cost: UPSCALE_COST,
+      endpoint: '/api/upscale',
+      formData: { scale: String(scale) },
     });
 
-    return;
+    if (!blob) return false;
+
+    // API done; the rest is local decode + re-render.
+    clearInterval(timer);
+    progress.update(progressId, { percentage: 95 });
+    // generateBase64Image blocks the main thread; yield so the 95% bar animation (300ms) gets painted first.
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    const blobUrl = URL.createObjectURL(blob);
+    const base64Img = await generateBase64Image(blobUrl, shading, threshold, isFullColor);
+
+    addBatchCommand('Image Edit: Upscale', element, {
+      origImage: blobUrl,
+      'xlink:href': base64Img,
+    });
+    selectionManager.selectOnly([element], true);
+
+    return true;
+  } finally {
+    clearInterval(timer);
+    progress.popById(progressId);
   }
-
-  if (!getCurrentUser()) {
-    dialogCaller.showLoginDialog();
-
-    return;
-  }
-
-  // Scale needed for the image to fill its canvas size at the layer's engrave resolution.
-  const dpiOption = getData(getObjectLayer(element)?.elem, 'dpi') ?? 'medium';
-  const engraveDpmm = getEngraveDpmm(dpiOption, useDocumentStore.getState().workarea);
-  const requiredScale = Math.max(
-    ((Number(element.getAttribute('width')) / dpmm) * engraveDpmm) / image.naturalWidth,
-    ((Number(element.getAttribute('height')) / dpmm) * engraveDpmm) / image.naturalHeight,
-  );
-
-  showUpscaleModal({
-    cost: UPSCALE_COST,
-    imageSize: { height: image.naturalHeight, width: image.naturalWidth },
-    requiredScale,
-    run: async (scale) => {
-      const { naturalHeight: height, naturalWidth: width } = image;
-      const progressId = 'photo-edit-processing';
-      const startTime = performance.now();
-      const estimateMs = estimateUpscaleMs(width * height, scale);
-
-      progress.openSteppingProgress({
-        caption: i18n.lang.beambox.ai_upscale_panel.processing,
-        id: progressId,
-        message: i18n.lang.beambox.ai_upscale_panel.processing_hint,
-        showTips: true,
-      });
-
-      // No progress from the API; advance by elapsed time against the estimate and hold at 95% if it runs long.
-      const timer = setInterval(() => {
-        progress.update(progressId, {
-          percentage: Math.min(95, Math.round(((performance.now() - startTime) / estimateMs) * 100)),
-        });
-      }, 500);
-
-      try {
-        const imgData = await (await fetch(imgUrl)).blob();
-        // The dialog already shows the cost before starting (prototype D2), so no extra credit confirmation.
-        const blob = await processImageWithAi(imgData, {
-          cost: UPSCALE_COST,
-          endpoint: '/api/upscale',
-          formData: { scale: String(scale) },
-        });
-
-        if (!blob) return false;
-
-        // API done; the rest is local decode + re-render.
-        clearInterval(timer);
-        progress.update(progressId, { percentage: 95 });
-        // generateBase64Image blocks the main thread; yield so the 95% bar animation (300ms) gets painted first.
-        await new Promise((resolve) => setTimeout(resolve, 300));
-
-        const blobUrl = URL.createObjectURL(blob);
-        const base64Img = await generateBase64Image(blobUrl, shading, threshold, isFullColor);
-
-        addBatchCommand('Image Edit: Upscale', element, {
-          origImage: blobUrl,
-          'xlink:href': base64Img,
-        });
-        selectionManager.selectOnly([element], true);
-
-        return true;
-      } finally {
-        clearInterval(timer);
-        progress.popById(progressId);
-      }
-    },
-  });
 };
 
 const removeBackground = async (elem?: SVGImageElement): Promise<void> => {

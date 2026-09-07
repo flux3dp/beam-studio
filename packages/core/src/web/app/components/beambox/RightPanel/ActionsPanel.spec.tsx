@@ -66,11 +66,13 @@ jest.mock('@core/app/actions/beambox/textPathEdit', () => ({
 const mockShowCurvePanel = jest.fn();
 const mockShowRotaryWarped = jest.fn();
 const mockShowSharpenPanel = jest.fn();
+const mockShowUpscaleModal = jest.fn();
 
 jest.mock('@core/app/components/dialogs/image', () => ({
   showCurvePanel: (...args: any[]) => mockShowCurvePanel(...args),
   showRotaryWarped: (...args: any[]) => mockShowRotaryWarped(...args),
   showSharpenPanel: (...args: any[]) => mockShowSharpenPanel(...args),
+  showUpscaleModal: (...args: any[]) => mockShowUpscaleModal(...args),
 }));
 
 const openNonstopProgress = jest.fn();

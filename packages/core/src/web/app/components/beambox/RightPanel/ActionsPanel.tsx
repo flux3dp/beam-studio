@@ -8,7 +8,12 @@ import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
 import { showArrayModal } from '@core/app/components/dialogs/ArrayModal';
-import { showCurvePanel, showRotaryWarped, showSharpenPanel } from '@core/app/components/dialogs/image';
+import {
+  showCurvePanel,
+  showRotaryWarped,
+  showSharpenPanel,
+  showUpscaleModal,
+} from '@core/app/components/dialogs/image';
 import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
@@ -326,7 +331,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       upscale: renderButtons(
         'upscale',
         lang.ai_upscale,
-        () => imageEdit.upscaleImage(elem as SVGImageElement),
+        () => showUpscaleModal(elem as SVGImageElement),
         <ActionPanelIcons.Upscale />,
         <ActionPanelIcons.Upscale />,
         { isFullLine: true, mobileLabel: lang.ai_upscale_short },

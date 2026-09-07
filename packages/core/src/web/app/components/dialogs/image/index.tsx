@@ -1,7 +1,17 @@
-import type { ComponentProps } from 'react';
+import { sprintf } from 'sprintf-js';
 
+import alertCaller from '@core/app/actions/alert-caller';
+import { dpmm } from '@core/app/actions/beambox/constant';
+import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { getEngraveDpmm } from '@core/app/constants/resolutions';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import selectionManager from '@core/app/svgedit/selection';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
+import i18n from '@core/helpers/i18n';
+import imageEdit, { MAX_UPSCALE_INPUT_SIZE, UPSCALE_COST } from '@core/helpers/image-edit';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 
 import Curve from './Curve';
@@ -9,8 +19,8 @@ import RotaryWarped from './RotaryWarped';
 import Sharpen from './Sharpen';
 import UpscaleModal from './UpscaleModal';
 
-const getProps = () => {
-  const element = selectionManager.getSelectedElements()[0];
+const getProps = (elem?: SVGImageElement) => {
+  const element = elem ?? selectionManager.getSelectedElements()[0];
 
   if (!element || element.tagName !== 'image') return;
 
@@ -51,13 +61,62 @@ export const showCurvePanel = () => {
   addDialogComponent('curve-panel', <Curve element={element} onClose={onClose} src={src} />);
 };
 
-/** Shows the upscale dialog; `run` performs the upscale and resolves true once the image was replaced. */
-export const showUpscaleModal = (props: Omit<ComponentProps<typeof UpscaleModal>, 'onClose'>): void => {
+/** Checks size and login, works out the layer-DPI recommendation, then opens the upscale dialog. */
+export const showUpscaleModal = async (elem?: SVGImageElement): Promise<void> => {
   const id = 'upscale-modal';
 
   if (isIdExist(id)) return;
 
-  addDialogComponent(id, <UpscaleModal {...props} onClose={() => popDialogById(id)} />);
+  const data = getProps(elem);
+
+  if (!data) return;
+
+  const { element, src } = data;
+  const image = await new Promise<HTMLImageElement>((resolve, reject) => {
+    const img = new Image();
+
+    img.onload = () => resolve(img);
+    img.onerror = reject;
+    img.src = src;
+  });
+  const imageSize = { height: image.naturalHeight, width: image.naturalWidth };
+
+  if (imageSize.width * imageSize.height > MAX_UPSCALE_INPUT_SIZE ** 2) {
+    alertCaller.popUp({
+      message: sprintf(
+        i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_upscale_too_large,
+        MAX_UPSCALE_INPUT_SIZE,
+        MAX_UPSCALE_INPUT_SIZE,
+      ),
+    });
+
+    return;
+  }
+
+  if (!getCurrentUser()) {
+    dialogCaller.showLoginDialog();
+
+    return;
+  }
+
+  // Scale needed for the image to fill its canvas size at the layer's engrave resolution.
+  const dpiOption = getData(getObjectLayer(element)?.elem, 'dpi') ?? 'medium';
+  const engraveDpmm = getEngraveDpmm(dpiOption, useDocumentStore.getState().workarea);
+  const requiredScale = Math.max(
+    ((Number(element.getAttribute('width')) / dpmm) * engraveDpmm) / imageSize.width,
+    ((Number(element.getAttribute('height')) / dpmm) * engraveDpmm) / imageSize.height,
+  );
+
+  addDialogComponent(
+    id,
+    <UpscaleModal
+      cost={UPSCALE_COST}
+      imageSize={imageSize}
+      onClose={() => popDialogById(id)}
+      requiredScale={requiredScale}
+      run={(scale) => imageEdit.upscaleImage(element, scale, imageSize)}
+    />,
+  );
 };
 
 export const showRotaryWarped = (elem?: SVGImageElement): void => {
