@@ -158,6 +158,7 @@ export interface ILang {
       };
     };
     ai_upscale_panel: {
+      credit_amount: string;
       credit_balance: string;
       credit_cost: string;
       description: string;

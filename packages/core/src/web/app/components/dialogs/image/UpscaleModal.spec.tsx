@@ -118,7 +118,7 @@ describe('UpscaleModal', () => {
     const { getByTestId, getByText } = renderModal();
 
     expect(getByTestId('ok')).toBeDisabled();
-    expect(getByText(/Insufficient credit/)).toBeInTheDocument();
+    expect(getByText(/Insufficient AI Credits/)).toBeInTheDocument();
   });
 
   test('opens the member center link', () => {

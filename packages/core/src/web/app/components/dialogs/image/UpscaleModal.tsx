@@ -89,6 +89,7 @@ const UpscaleModal = ({ element, imageSize, onClose, requiredScale }: Props) => 
         {failed && <Alert message={t.failed} type="info" />}
         <div className={styles.label}>{lang.beambox.photo_edit_panel.scale}</div>
         <Select
+          className={styles.select}
           onChange={setScale}
           optionRender={({ label, value }) => (
             <div className={styles.option}>
@@ -101,7 +102,6 @@ const UpscaleModal = ({ element, imageSize, onClose, requiredScale }: Props) => 
             value,
           }))}
           popupMatchSelectWidth
-          style={{ width: '100%' }}
           value={scale}
         />
         <div className={styles.info}>
@@ -125,9 +125,7 @@ const UpscaleModal = ({ element, imageSize, onClose, requiredScale }: Props) => 
           )}
           <div className={styles.row}>
             <span className={styles.key}>{t.credit_cost}</span>
-            <span>
-              <b>{UPSCALE_COST}</b> Credit
-            </span>
+            <b>{sprintf(t.credit_amount, UPSCALE_COST)}</b>
           </div>
           <div className={styles.balance}>
             <span>
