@@ -81,7 +81,7 @@ exports[`test LayerList should render correctly 1`] = `
       />
     </div>
     <div
-      class="layer-item item selected"
+      class="layer-item item current selected"
       data-layer="layer1"
       data-testid="layer1"
       draggable="true"
@@ -311,7 +311,7 @@ exports[`test LayerList should render correctly on mobile 1`] = `
             style="pointer-events: auto;"
           >
             <div
-              class="layer-item item selected"
+              class="layer-item item current selected"
               data-layer="layer1"
               data-testid="layer1"
               draggable="true"

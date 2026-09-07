@@ -21,6 +21,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getSpinningAxis } from '@core/helpers/addOn/rotary';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';
@@ -28,6 +29,7 @@ import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
+import isDev from '@core/helpers/is-dev';
 import getJobOrigin from '@core/helpers/job-origin';
 import { DrawCommands } from '@core/helpers/path-preview/draw-commands';
 import { GcodePreview } from '@core/helpers/path-preview/draw-commands/GcodePreview';
@@ -39,11 +41,15 @@ import {
   removeVariableText,
 } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
+import dialog from '@core/implementations/dialog';
 
+import { parseFcode } from './parseFcode';
 import styles from './PathPreview.module.scss';
 import Pointable from './Pointable';
 import ProgressBar from './ProgressBar';
 import SidePanel from './SidePanel';
+import { sliceFcode } from './sliceFcode';
+import type { FcodeTask } from './sliceFcode';
 import { parseGcode } from './tmpParseGcode';
 
 const TOOLS_PANEL_HEIGHT = 100;
@@ -276,7 +282,10 @@ const settings = {
 const defaultWorkspace = {
   cursorPos: [0, 0, 0],
   g0Rate: 7500,
-  rotaryDiameter: 10,
+  // mm of preview y per a-slot unit: for fcode the a slot already holds the display offset
+  // that maps rotary-space y back to the design y (GcodePreview.setParsedGcode), so 1
+  // (the LaserWeb degrees->arc model does not apply)
+  rotaryScale: 1,
   showCursor: true,
   showGcode: true,
   showRotary: false,
@@ -386,7 +395,7 @@ function cacheDrawing(
     height?: any;
     isInverting?: boolean;
     perspective?: any;
-    rotaryDiameter?: any;
+    rotaryScale?: any;
     showRemaining?: boolean;
     showTraversal?: boolean;
     simTime?: any;
@@ -433,7 +442,7 @@ const drawTaskPreview = (
   workspace: {
     cursorPos?: number[];
     g0Rate: any;
-    rotaryDiameter: any;
+    rotaryScale: any;
     showCursor?: boolean;
     showGcode?: boolean;
     showRotary?: boolean;
@@ -451,7 +460,7 @@ const drawTaskPreview = (
       camera.view,
       workspace.g0Rate,
       workspace.simTime,
-      workspace.rotaryDiameter,
+      workspace.rotaryScale,
       isInverting,
       showTraversal,
       showRemaining,
@@ -465,7 +474,7 @@ const drawTaskPreview = (
     height: canvas.height,
     isInverting,
     perspective: camera.perspective,
-    rotaryDiameter: workspace.rotaryDiameter,
+    rotaryScale: workspace.rotaryScale,
     showRemaining,
     showTraversal,
     simTime: workspace.simTime,
@@ -573,7 +582,7 @@ interface State {
   workspace: {
     cursorPos: number[];
     g0Rate: number;
-    rotaryDiameter: number;
+    rotaryScale: number;
     showCursor: boolean;
     showGcode: boolean;
     showRotary: boolean;
@@ -590,6 +599,8 @@ class PathPreview extends React.Component<Props, State> {
   private fingers: any;
   private pointers: any;
   private position: any;
+
+  private positionA: number = 0;
   private moveStarted: boolean;
   private adjustingCamera: boolean;
   private gcodePreview: GcodePreview;
@@ -598,6 +609,8 @@ class PathPreview extends React.Component<Props, State> {
   private simInterval?: NodeJS.Timeout;
   private drawGcodeState: any;
   private gcodeString: string = '';
+
+  private fcodeTask: FcodeTask | null = null;
   private fastGradientGcodeString?: string;
   private isUpdating: boolean = false;
   private spaceKey: boolean = false;
@@ -609,6 +622,7 @@ class PathPreview extends React.Component<Props, State> {
     // TODO: make config interface
     this.canvas = null;
     this.position = [0, 0];
+    this.positionA = 0;
     this.grid = new Grid();
 
     let { width } = workareaManager;
@@ -666,7 +680,7 @@ class PathPreview extends React.Component<Props, State> {
     window.addEventListener('resize', this.resizeHandler);
     this.resetView();
     this.updateJobOrigin();
-    this.updateGcode();
+    this.updateTaskCode();
 
     canvasEventEmitter.on('canvas-change', this.onDeviceChange);
   }
@@ -759,8 +773,21 @@ class PathPreview extends React.Component<Props, State> {
     this.resetView();
   };
 
-  updateGcode = async (): Promise<void> => {
+  updateTaskCode = async (): Promise<void> => {
+    // Promark previews rely on gcode-only behavior (wobble, dotting, variable text);
+    // everything else previews the fcode directly.
+    if (promarkModels.has(workareaManager.model)) {
+      await this.updateGcodeText();
+    } else {
+      await this.updateFcode();
+    }
+  };
+
+  // Gcode-text preview path (Promark, incl. its variable-text tasks).
+  updateGcodeText = async (): Promise<void> => {
     const { togglePathPreview } = useCanvasStore.getState();
+
+    this.fcodeTask = null;
 
     let fileTimeCost: number;
     let gcodeBlob: Blob | undefined;
@@ -837,6 +864,68 @@ class PathPreview extends React.Component<Props, State> {
     fileReader.readAsText(gcodeBlob);
   };
 
+  // FLUXGhost machines: parse the fcode binary directly, no extra gcode generation.
+  updateFcode = async (): Promise<void> => {
+    const { togglePathPreview } = useCanvasStore.getState();
+
+    // Variable text is Promark-only (isVariableTextSupported), so no VT handling here.
+    const { fcodeBlob, fileTimeCost } = await exportFuncs.getFcode();
+
+    if (!fcodeBlob) {
+      togglePathPreview();
+
+      return;
+    }
+
+    progressCaller.openNonstopProgress({
+      caption: 'Parsing FCode',
+      id: 'parsing-gcode',
+      timeout: 30000,
+    });
+
+    this.gcodeString = '';
+
+    const arrayBuffer = await fcodeBlob.arrayBuffer();
+    const { metadata, parsedGcode, ...sliceExtras } = parseFcode(arrayBuffer);
+
+    // Cached so "start here" can slice the fcode directly instead of regenerating gcode.
+    this.fcodeTask = parsedGcode.length > 0 ? { buffer: arrayBuffer, parsedGcode, ...sliceExtras } : null;
+
+    if (parsedGcode.length > 0) {
+      const model = workareaManager.model;
+      const globalPreference = useGlobalPreferenceStore.getState();
+      const spinningAxis = getSpinningAxis(model, {
+        jobOriginY: this.jobOrigin?.y,
+        reverse: globalPreference['reverse-engraving'],
+      });
+      // Rotary/auto-feeder tasks carry y in rotary space; map it back to the design y so the
+      // preview matches the canvas (fcode coords are job-origin relative, like the grid).
+      const rotary = spinningAxis && {
+        axisY: spinningAxis.spin / constant.dpmm - (this.jobOrigin?.y ?? 0),
+        ratio: spinningAxis.ratio,
+        // v1 firmware scales y itself from rotary-mode-on (cmd 6); v2 moves content on the A axis
+        scaledYFrom: constant.fcodeV2Models.has(model)
+          ? Number.POSITIVE_INFINITY
+          : (sliceExtras.pauseEvents.find(([, cmd]) => cmd === 6)?.[0] ?? Number.POSITIVE_INFINITY),
+      };
+
+      this.gcodePreview.setParsedGcode(
+        parsedGcode,
+        false,
+        (dpiTextMap[globalPreference.engrave_dpi] || 254) / 25.4,
+        1,
+        rotary,
+      );
+      this.simTimeMax =
+        Math.ceil((this.gcodePreview.g1Time + this.gcodePreview.g0Time) / SIM_TIME_MINUTE) * SIM_TIME_MINUTE +
+        SIM_TIME_MINUTE / 2;
+      this.timeDisplayRatio = fileTimeCost / (60 * this.simTimeMax);
+      this.handleSimTimeChange(this.simTimeMax);
+    }
+
+    progressCaller.popById('parsing-gcode');
+  };
+
   private windowKeyDown = (e: KeyboardEvent) => {
     if (e.key === ' ') {
       this.spaceKey = true;
@@ -874,23 +963,12 @@ class PathPreview extends React.Component<Props, State> {
     if (this.position[0] !== 0 && this.position[1] !== 0) {
       const crossPoints = [];
       const crossValue = 10 / this.camera.scale;
+      // rotary tasks draw content at y + a * rotaryScale (see the gcode shader);
+      // place the cross with the same offset so it tracks the displayed path
+      const displayY = -this.position[1] + this.positionA * workspace.rotaryScale;
 
-      crossPoints.push(
-        this.position[0] - crossValue,
-        -this.position[1],
-        0,
-        this.position[0] + crossValue,
-        -this.position[1],
-        0,
-      );
-      crossPoints.push(
-        this.position[0],
-        -this.position[1] - crossValue,
-        0,
-        this.position[0],
-        -this.position[1] + crossValue,
-        0,
-      );
+      crossPoints.push(this.position[0] - crossValue, displayY, 0, this.position[0] + crossValue, displayY, 0);
+      crossPoints.push(this.position[0], displayY - crossValue, 0, this.position[0], displayY + crossValue, 0);
 
       const crossPosition = new Float32Array(crossPoints);
 
@@ -1020,7 +1098,7 @@ class PathPreview extends React.Component<Props, State> {
       }));
     }
 
-    this.updateGcode();
+    this.updateTaskCode();
   };
 
   onPointerCancel = (e: { pointerId: any; preventDefault: () => void }) => {
@@ -1292,8 +1370,10 @@ class PathPreview extends React.Component<Props, State> {
 
   private handleSimTimeChange = (value: number) => {
     const { workspace } = this.state;
+    const simTimeInfo = this.gcodePreview.getSimTimeInfo(Number(value));
 
-    this.position = this.gcodePreview.getSimTimeInfo(Number(value)).position;
+    this.position = simTimeInfo.position;
+    this.positionA = simTimeInfo.a ?? 0;
     this.setState({
       workspace: {
         ...workspace,
@@ -1405,8 +1485,27 @@ class PathPreview extends React.Component<Props, State> {
     };
   };
 
-  private handleStartHere = async (): Promise<void> => {
+  private handleStartHere = async (e?: React.MouseEvent): Promise<void> => {
     const { workspace } = this.state;
+
+    // Dev-only: shift-click exports the sliced start-here fcode for inspection,
+    // no machine needed. Enable with localStorage.setItem('dev', 'true').
+    if (isDev() && e?.shiftKey && this.fcodeTask && workspace.simTime > 0) {
+      const simTimeInfo = this.gcodePreview.getSimTimeInfo(Number(workspace.simTime));
+      const remainingTime = Math.max(0, (this.simTimeMax - workspace.simTime) * 60 * this.timeDisplayRatio);
+      const slicedBlob = sliceFcode(this.fcodeTask, simTimeInfo, { timeCost: remainingTime });
+
+      if (slicedBlob) {
+        await dialog.writeFileDialog(() => slicedBlob, 'Export Start Here FCode', 'start-here.fc', [
+          { extensions: ['fc'], name: 'FCode' },
+        ]);
+      } else {
+        alertCaller.popUpError({ message: 'sliceFcode returned null; see console.' });
+      }
+
+      return;
+    }
+
     const { device } = await getDevice();
 
     if (!device) {
@@ -1555,6 +1654,47 @@ class PathPreview extends React.Component<Props, State> {
       });
       try {
         const simTimeInfo = this.gcodePreview.getSimTimeInfo(Number(workspace.simTime));
+
+        // Preview came from fcode: slice the cached binary directly, no gcode round-trips.
+        if (this.fcodeTask) {
+          const remainingTime = Math.max(0, (this.simTimeMax - workspace.simTime) * 60 * this.timeDisplayRatio);
+          // thumbnail is a png data url of the remaining path; embed it so the
+          // machine shows the sliced task, not the original full task
+          const previewPng = Uint8Array.from(atob(thumbnail.split(',')[1]), (c) => c.charCodeAt(0));
+          const slicedBlob = sliceFcode(this.fcodeTask, simTimeInfo, { previewPng, timeCost: remainingTime });
+
+          if (slicedBlob) {
+            const report = await deviceMaster.getReport();
+
+            if (report && (await checkDeviceStatus(device))) {
+              await exportFuncs.openTaskInDeviceMonitor(device, {
+                blob: slicedBlob,
+                taskTime: remainingTime,
+                thumbnailUrl,
+              });
+            }
+
+            return;
+          }
+          // fall through to the gcode-text flow if slicing failed
+        }
+
+        if (!this.gcodeString) {
+          // Promark preview never cached gcode text (e.g. after a failed slice fallback).
+          const { gcodeBlob, useSwiftray } = await exportFuncs.getGcode();
+
+          if (gcodeBlob) {
+            if (useSwiftray) {
+              this.gcodeString = await gcodeBlob.text();
+            } else {
+              const result = (await gcodeBlob.text()).split('\n');
+
+              result.splice(5, 0, 'G1 X0 Y0');
+              this.gcodeString = result.join('\n');
+            }
+          }
+        }
+
         const gcodeList = this.gcodeString.split('\n');
         let target = 0;
         let count = -2;

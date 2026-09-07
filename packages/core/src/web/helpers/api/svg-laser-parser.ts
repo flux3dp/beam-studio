@@ -20,7 +20,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
-import { getRotaryInfo } from '@core/helpers/addOn/rotary';
+import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
@@ -108,27 +108,19 @@ export const getExportOpt = async (
   });
   const rotaryMode = Boolean(rotaryInfo);
   const autoFeeder = getAutoFeeder(addOnInfo);
+  const spinningAxis = getSpinningAxis(model, { jobOriginY: config.job_origin?.[1], reverse: config.rev });
+
+  if (spinningAxis) {
+    config.spin = spinningAxis.spin;
+
+    if (spinningAxis.ratio !== 1) config.rotary_y_ratio = spinningAxis.ratio;
+  }
 
   if (rotaryInfo) {
-    config.spin = rotaryInfo.y;
     config.rotary_split = rotaryInfo.ySplit;
     config.rotary_overlap = rotaryInfo.yOverlap;
-
-    const rotaryRatio = rotaryInfo.yRatio;
-
-    if (rotaryRatio !== 1) {
-      config.rotary_y_ratio = rotaryRatio;
-    }
   } else if (autoFeeder) {
-    config.rotary_y_ratio = addOnInfo.autoFeeder!.rotaryRatio;
-    config.rotary_y_ratio *= documentState['auto-feeder-scale'];
     config.rotary_z_motion = false;
-
-    if (config.job_origin) {
-      config.spin = config.job_origin[1] * constant.dpmm;
-    } else {
-      config.spin = config.rev ? workareaObj.pxHeight : (addOnInfo.autoFeeder!.minY ?? 0);
-    }
   }
 
   const updateAccOverride = (value: TAccelerationOverride) => {

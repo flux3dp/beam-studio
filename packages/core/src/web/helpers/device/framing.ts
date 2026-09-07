@@ -17,9 +17,8 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import selectionManager from '@core/app/svgedit/selection';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import { getAutoFeeder } from '@core/helpers/addOn';
 import type { RotaryInfo } from '@core/helpers/addOn/rotary';
-import { getRotaryInfo } from '@core/helpers/addOn/rotary';
+import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -726,28 +725,17 @@ class FramingTaskManager extends EventEmitter {
     this.showMessage(sprintf(lang.message.connectingMachine, this.device.name));
     this.resetEnabledInfo();
     this.curPos = { a: 0, x: 0, y: 0 };
-    this.rotaryInfo = getRotaryInfo(this.device.model, { axisInMm: true, forceY: this.jobOrigin?.y });
 
-    const autoFeeder = getAutoFeeder(this.addOnInfo);
+    const spinningAxis = getSpinningAxis(this.device.model, {
+      jobOriginY: this.jobOrigin?.y,
+      reverse: useGlobalPreferenceStore.getState()['reverse-engraving'],
+    });
 
-    if (!this.rotaryInfo && autoFeeder && this.addOnInfo.autoFeeder) {
-      let y: number;
-
-      if (this.jobOrigin) {
-        y = this.jobOrigin.y;
-      } else {
-        const reverseEngraving = useGlobalPreferenceStore.getState()['reverse-engraving'];
-        const workareaObj = getWorkarea(this.device.model);
-
-        y = reverseEngraving ? workareaObj.height : (this.addOnInfo.autoFeeder.minY ?? 0) / dpmm;
-      }
-
-      this.rotaryInfo = {
-        useAAxis: this.isFcodeV2,
-        y,
-        yRatio: this.addOnInfo.autoFeeder.rotaryRatio * useDocumentStore.getState()['auto-feeder-scale'],
-      };
-    }
+    this.rotaryInfo = spinningAxis && {
+      useAAxis: this.isFcodeV2,
+      y: spinningAxis.spin / dpmm,
+      yRatio: spinningAxis.ratio,
+    };
 
     this.shouldCheckDoor = this.isInDangerZone();
   };

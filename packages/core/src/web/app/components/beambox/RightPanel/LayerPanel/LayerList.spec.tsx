@@ -4,6 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { useScreenStore } from '@core/app/stores/screenStore';
 import { useLayerStore } from '@core/app/stores/layer/layerStore';
+import type { Layer } from '@core/app/svgedit/layer/layer';
 
 const mockGetSupportedModules = jest.fn();
 
@@ -106,10 +107,12 @@ describe('test LayerList', () => {
 
     const mockLayerObject1 = {
       getGroup: () => mockLayer1,
+      getName: () => 'layer1',
       isVisible: jest.fn().mockReturnValue(false),
     };
     const mockLayerObject2 = {
       getGroup: () => mockLayer2,
+      getName: () => 'layer2',
       isVisible: jest.fn().mockReturnValue(true),
     };
 
@@ -120,7 +123,10 @@ describe('test LayerList', () => {
       layerName === 'layer1' ? mockLayerObject1 : mockLayerObject2,
     );
     mockGetAllLayers.mockReturnValue([mockLayerObject1, mockLayerObject2]);
-    useLayerStore.setState({ selectedLayers: ['layer1'] });
+    useLayerStore.setState({
+      layers: [mockLayerObject1, mockLayerObject2] as unknown as Layer[],
+      selectedLayers: ['layer1'],
+    });
 
     const { container } = render(
       <LayerList
@@ -160,10 +166,12 @@ describe('test LayerList', () => {
 
     const mockLayerObject1 = {
       getGroup: () => mockLayer1,
+      getName: () => 'layer1',
       isVisible: jest.fn().mockReturnValue(false),
     };
     const mockLayerObject2 = {
       getGroup: () => mockLayer2,
+      getName: () => 'layer2',
       isVisible: jest.fn().mockReturnValue(true),
     };
 
@@ -183,7 +191,10 @@ describe('test LayerList', () => {
       return false;
     });
     useScreenStore.setState({ isMobile: true });
-    useLayerStore.setState({ selectedLayers: ['layer1'] });
+    useLayerStore.setState({
+      layers: [mockLayerObject1, mockLayerObject2] as unknown as Layer[],
+      selectedLayers: ['layer1'],
+    });
 
     const { container } = render(
       <LayerList
@@ -219,10 +230,12 @@ describe('test LayerList', () => {
 
     const mockLayerObject1 = {
       getGroup: () => mockLayer1,
+      getName: () => 'layer1',
       isVisible: jest.fn().mockReturnValue(false),
     };
     const mockLayerObject2 = {
       getGroup: () => mockLayer2,
+      getName: () => 'layer2',
       isVisible: jest.fn().mockReturnValue(true),
     };
 
@@ -241,7 +254,10 @@ describe('test LayerList', () => {
 
       return false;
     });
-    useLayerStore.setState({ selectedLayers: ['layer1'] });
+    useLayerStore.setState({
+      layers: [mockLayerObject1, mockLayerObject2] as unknown as Layer[],
+      selectedLayers: ['layer1'],
+    });
 
     const { container, getAllByText, getByTestId } = render(
       <LayerList

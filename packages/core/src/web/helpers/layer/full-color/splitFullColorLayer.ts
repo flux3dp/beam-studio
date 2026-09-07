@@ -108,6 +108,13 @@ const splitFullColorLayer = async (
   const batchCmd = new history.BatchCommand('Split Full Color Layer');
   const newLayers: Array<Element | null> = [];
   const promises = [];
+  // cloneLayer appends at the top and records that position; record the move so redo lands here too
+  const placeAboveOriginal = (newLayer: Element) => {
+    const { nextSibling, parentNode } = newLayer;
+
+    layer.parentNode!.insertBefore(newLayer, layer.nextSibling);
+    batchCmd.addSubCommand(new history.MoveElementCommand(newLayer, nextSibling, parentNode!));
+  };
 
   if (is4c) {
     const cloneRes = cloneLayer(layerName, {
@@ -154,7 +161,7 @@ const splitFullColorLayer = async (
         promises.push(promise);
       }
 
-      layer.parentNode!.insertBefore(newLayer, layer.nextSibling);
+      placeAboveOriginal(newLayer);
       newLayers.push(newLayer);
     }
   } else {
@@ -205,7 +212,7 @@ const splitFullColorLayer = async (
         writeDataLayer(newLayer, 'printingStrength', strength);
       }
 
-      layer.parentNode!.insertBefore(newLayer, layer.nextSibling);
+      placeAboveOriginal(newLayer);
       newLayers.push(newLayer);
 
       if (!data) continue;
@@ -246,6 +253,7 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
   const addedLayers: Element[] = [];
   const removedLayers: Array<{ layer: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
   const currentLayerName = layerManager.getCurrentLayerName();
+  const selectedLayers = [...layerManager.getSelectedLayers()];
 
   for (const layer of layerManager.getAllLayers()) {
     const layerElement = layer.getGroup();
@@ -283,7 +291,9 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
     });
 
     layerManager.identifyLayers();
-    layerManager.setCurrentLayer(currentLayerName!);
+    // the split dropped the original names from the selection; restore both
+    // selection and current layer now that the original groups are back
+    layerManager.setSelectedLayers(selectedLayers, currentLayerName ?? undefined);
   };
 
   return revert;
