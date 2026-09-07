@@ -6,7 +6,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import beamFileHelper from '@core/helpers/beam-file-helper';
-import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkBM24C, checkHxRf } from '@core/helpers/checkFeature';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
@@ -180,6 +180,9 @@ export const getExampleVisibility = (
   if (!checkBM2()) {
     delete examples.EXAMPLE_FILE_BEAMO_2;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_LASER;
+  }
+
+  if (!checkBM2() || !checkBM24C()) {
     delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST;
   }

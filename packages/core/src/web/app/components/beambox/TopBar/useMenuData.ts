@@ -9,7 +9,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import { useMenuItemStatusStore } from '@core/app/stores/menuItemStatusStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { discoverManager } from '@core/helpers/api/discover';
-import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkBM24C, checkHxRf } from '@core/helpers/checkFeature';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -310,17 +310,17 @@ const useMenuData = (email?: string): MenuNode[] => {
                           label: menuCms.import_beamo_2_laser_example,
                           type: 'item' as const,
                         },
-                        {
+                        checkBM24C() && {
                           id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT',
                           label: menuCms.import_beamo_2_printing_example,
                           type: 'item' as const,
                         },
-                        {
+                        checkBM24C() && {
                           id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST',
                           label: menuCms.import_beamo_2_printing_test,
                           type: 'item' as const,
                         },
-                      ],
+                      ].filter(Boolean),
                       label: 'beamo II',
                       type: 'submenu' as const,
                     },
