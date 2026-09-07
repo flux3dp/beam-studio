@@ -3,7 +3,7 @@ import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
-import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkBM24C, checkHxRf } from '@core/helpers/checkFeature';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { checkIsAtEditor, isAtPage } from '@core/helpers/hashHelper';
@@ -140,6 +140,9 @@ export const getExampleVisibility = (
 
   if (!checkBM2()) {
     delete examples.IMPORT_EXAMPLE_BEAMO_2_LASER;
+  }
+
+  if (!checkBM2() || !checkBM24C()) {
     delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT;
   }
 

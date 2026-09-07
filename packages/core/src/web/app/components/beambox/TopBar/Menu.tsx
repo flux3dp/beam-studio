@@ -13,7 +13,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { discoverManager } from '@core/helpers/api/discover';
-import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkBM24C, checkHxRf } from '@core/helpers/checkFeature';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -273,7 +273,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
                 {menuCms.import_beamo_2_laser_example}
               </MenuItem>
             )}
-            {checkBM2() && (
+            {checkBM24C() && (
               <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_PRINT')}>
                 {menuCms.import_beamo_2_printing_example}
               </MenuItem>
