@@ -9,24 +9,24 @@ import alertConstants from '@core/app/constants/alert-constants';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
+import imageEdit, { UPSCALE_COST } from '@core/helpers/image-edit';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
 import styles from './UpscaleModal.module.scss';
 
 interface Props {
-  cost: number;
+  element: SVGImageElement;
   imageSize: { height: number; width: number };
   onClose: () => void;
   requiredScale: number;
-  run: (scale: number) => Promise<boolean>;
 }
 
 const SCALES = [2, 4, 6, 8, 10];
 // Outputs beyond this get slow and heavy (1440² × 10x measured at 104s and a 143MB PNG); the user is warned, not blocked.
 const RECOMMENDED_OUTPUT_SIZE = 8192;
 
-const UpscaleModal = ({ cost, imageSize, onClose, requiredScale, run }: Props) => {
+const UpscaleModal = ({ element, imageSize, onClose, requiredScale }: Props) => {
   const lang = useI18n();
   const t = lang.beambox.ai_upscale_panel;
   const fitRecommendedOutput = useCallback(
@@ -45,7 +45,7 @@ const UpscaleModal = ({ cost, imageSize, onClose, requiredScale, run }: Props) =
   const [failed, setFailed] = useState(false);
   const info = getCurrentUser()?.info;
   const balance = (info?.subscription?.credit ?? 0) + (info?.credit ?? 0);
-  const insufficient = balance < cost;
+  const insufficient = balance < UPSCALE_COST;
   const sizeText = (factor: number) => `${imageSize.width * factor} × ${imageSize.height * factor} px`;
 
   const start = async () => {
@@ -63,7 +63,7 @@ const UpscaleModal = ({ cost, imageSize, onClose, requiredScale, run }: Props) =
       if (!proceed) return;
     }
 
-    if (await run(scale)) {
+    if (await imageEdit.upscaleImage(element, scale, imageSize)) {
       MessageCaller.openMessage({ content: t.done, level: MessageLevel.SUCCESS });
       onClose();
     } else {
@@ -126,7 +126,7 @@ const UpscaleModal = ({ cost, imageSize, onClose, requiredScale, run }: Props) =
           <div className={styles.row}>
             <span className={styles.key}>{t.credit_cost}</span>
             <span>
-              <b>{cost}</b> Credit
+              <b>{UPSCALE_COST}</b> Credit
             </span>
           </div>
           <div className={styles.balance}>

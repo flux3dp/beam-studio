@@ -16,6 +16,13 @@ jest.mock('@core/app/actions/message-caller', () => ({
 
 const mockBrowserOpen = jest.fn();
 
+const mockUpscaleImage = jest.fn();
+
+jest.mock('@core/helpers/image-edit', () => ({
+  UPSCALE_COST: 0.01,
+  upscaleImage: (...args: any[]) => mockUpscaleImage(...args),
+}));
+
 jest.mock('@core/implementations/browser', () => ({ open: (...args: any[]) => mockBrowserOpen(...args) }));
 
 jest.mock('@core/app/widgets/AntdSelect', () => ({ onChange, options, value }: any) => (
@@ -51,14 +58,15 @@ const mockGetCurrentUser = getCurrentUser as jest.Mock;
 const small = { height: 314, width: 352 };
 const large = { height: 1440, width: 1440 };
 
+const element = { tagName: 'image' } as unknown as SVGImageElement;
+
 const renderModal = (props: Partial<React.ComponentProps<typeof UpscaleModal>> = {}) => {
   const onClose = jest.fn();
-  const run = jest.fn();
   const utils = render(
-    <UpscaleModal cost={0.01} imageSize={small} onClose={onClose} requiredScale={1} run={run} {...props} />,
+    <UpscaleModal element={element} imageSize={small} onClose={onClose} requiredScale={1} {...props} />,
   );
 
-  return { ...utils, onClose, run };
+  return { ...utils, onClose, run: mockUpscaleImage };
 };
 
 describe('UpscaleModal', () => {
@@ -126,7 +134,7 @@ describe('UpscaleModal', () => {
     run.mockResolvedValue(true);
     fireEvent.click(getByTestId('ok'));
     await waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
-    expect(run).toHaveBeenCalledWith(6);
+    expect(run).toHaveBeenCalledWith(element, 6, small);
     expect(mockOpenMessage).toHaveBeenCalledWith(expect.objectContaining({ level: 'SUCCESS' }));
     expect(mockPopUp).not.toHaveBeenCalled();
   });
@@ -157,6 +165,6 @@ describe('UpscaleModal', () => {
     fireEvent.click(getByTestId('ok'));
     await waitFor(() => expect(mockPopUp).toHaveBeenCalledTimes(2));
     mockPopUp.mock.calls[1][0].onConfirm();
-    await waitFor(() => expect(run).toHaveBeenCalledWith(10));
+    await waitFor(() => expect(run).toHaveBeenCalledWith(element, 10, large));
   });
 });

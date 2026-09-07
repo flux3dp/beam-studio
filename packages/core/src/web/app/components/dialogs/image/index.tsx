@@ -9,7 +9,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import selectionManager from '@core/app/svgedit/selection';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
-import imageEdit, { MAX_UPSCALE_INPUT_SIZE, UPSCALE_COST } from '@core/helpers/image-edit';
+import { MAX_UPSCALE_INPUT_SIZE } from '@core/helpers/image-edit';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
@@ -110,11 +110,10 @@ export const showUpscaleModal = async (elem?: SVGImageElement): Promise<void> =>
   addDialogComponent(
     id,
     <UpscaleModal
-      cost={UPSCALE_COST}
+      element={element}
       imageSize={imageSize}
       onClose={() => popDialogById(id)}
       requiredScale={requiredScale}
-      run={(scale) => imageEdit.upscaleImage(element, scale, imageSize)}
     />,
   );
 };
