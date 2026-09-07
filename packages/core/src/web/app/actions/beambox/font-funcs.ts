@@ -7,6 +7,7 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import changeAttribute from '@core/app/svgedit/history/changeAttribute';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -19,6 +20,7 @@ import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import { getOS } from '@core/helpers/getOS';
@@ -94,10 +96,27 @@ const fontNameMap = new Map<string, string>();
 // Cache for available font families and lowercase mappings for O(1) lookup
 let lowercaseFontFamilyMap: Map<string, string> | null = null;
 
+// Cache computed family lists per variant; the underlying font list only changes
+// when monotype fonts finish loading or the active language changes
+const familiesCache = new Map<string, { families: string[]; lowercaseMap: Map<string, string> }>();
+const clearFamiliesCache = () => familiesCache.clear();
+
+eventEmitterFactory.createEventEmitter('font').on('GET_MONOTYPE_FONTS', clearFamiliesCache);
+useStorageStore.subscribe((state) => state['active-lang'], clearFamiliesCache);
+
 const requestAvailableFontFamilies = ({
   queryByLang = true,
   withoutMonotype = false,
 }: { queryByLang?: boolean; withoutMonotype?: boolean } = {}) => {
+  const cacheKey = `${queryByLang}:${withoutMonotype}`;
+  const cached = familiesCache.get(cacheKey);
+
+  if (cached) {
+    lowercaseFontFamilyMap = cached.lowercaseMap;
+
+    return cached.families;
+  }
+
   // get all available fonts in local
   const fonts = fontHelper.getAvailableFonts({ queryByLang, withoutMonotype });
 
@@ -126,6 +145,7 @@ const requestAvailableFontFamilies = ({
   );
 
   lowercaseFontFamilyMap = new Map(sortedFamilies.map((family) => [family.toLowerCase(), family]));
+  familiesCache.set(cacheKey, { families: sortedFamilies, lowercaseMap: lowercaseFontFamilyMap });
 
   return sortedFamilies;
 };

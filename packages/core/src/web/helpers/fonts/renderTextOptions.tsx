@@ -33,6 +33,20 @@ export const renderTextOptions = (family: string, isHistory = false): FontOption
   return isHistory ? { family, label, value: `history-${family}` } : { label, value: family };
 };
 
+// Keyed by array identity: font-funcs caches the families array, so a new array means the list changed
+const fontFamilyOptionsCache = new WeakMap<string[], FontOption[]>();
+
+export const getFontFamilyOptions = (families: string[]): FontOption[] => {
+  let options = fontFamilyOptionsCache.get(families);
+
+  if (!options) {
+    options = families.map((family) => renderTextOptions(family));
+    fontFamilyOptionsCache.set(families, options);
+  }
+
+  return options;
+};
+
 export const fontFamilySelectFilterOption: any = (input: string, option?: FontOption) => {
   if (!option) return false;
 
