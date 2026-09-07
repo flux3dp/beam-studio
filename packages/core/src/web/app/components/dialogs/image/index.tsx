@@ -1,3 +1,5 @@
+import type { ComponentProps } from 'react';
+
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import selectionManager from '@core/app/svgedit/selection';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
@@ -5,6 +7,7 @@ import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import Curve from './Curve';
 import RotaryWarped from './RotaryWarped';
 import Sharpen from './Sharpen';
+import UpscaleModal from './UpscaleModal';
 
 const getProps = () => {
   const element = selectionManager.getSelectedElements()[0];
@@ -46,6 +49,15 @@ export const showCurvePanel = () => {
   const onClose = () => popDialogById('curve-panel');
 
   addDialogComponent('curve-panel', <Curve element={element} onClose={onClose} src={src} />);
+};
+
+/** Shows the upscale dialog; `run` performs the upscale and resolves true once the image was replaced. */
+export const showUpscaleModal = (props: Omit<ComponentProps<typeof UpscaleModal>, 'onClose'>): void => {
+  const id = 'upscale-modal';
+
+  if (isIdExist(id)) return;
+
+  addDialogComponent(id, <UpscaleModal {...props} onClose={() => popDialogById(id)} />);
 };
 
 export const showRotaryWarped = (elem?: SVGImageElement): void => {
