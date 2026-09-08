@@ -6,7 +6,6 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import beamFileHelper from '@core/helpers/beam-file-helper';
-import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
@@ -15,6 +14,8 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
+
+import { checkBM24C } from '../checkFeature';
 
 export const exampleFileKeys = [
   // FOCUS PROBE
@@ -121,7 +122,7 @@ const getStaticExamples = (workarea: WorkAreaModel): ExampleFileMap => {
         IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
         IMPORT_EXAMPLE_BEAMO_2_PRINT: 'examples/beamo_2_example_printing_full.bvg',
         IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST: 'examples/beamo_2_printing_test.beam',
-        IMPORT_MATERIAL_TESTING_PRINT: 'examples/beamo_2_color_ring.bvg',
+        IMPORT_MATERIAL_TESTING_PRINT: checkBM24C() ? 'examples/beamo_2_color_ring.bvg' : '',
       };
     }
   } else if (workarea === 'fpm1') {
@@ -177,15 +178,9 @@ export const getExampleVisibility = (
 ): { disabledKeys: ExampleFileKey[]; enabledKeys: ExampleFileKey[] } => {
   const examples = { ...getExamples(workarea) };
 
-  if (!checkBM2()) {
-    delete examples.EXAMPLE_FILE_BEAMO_2;
-    delete examples.IMPORT_EXAMPLE_BEAMO_2_LASER;
+  if (!checkBM24C()) {
     delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT;
     delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT_TEST;
-  }
-
-  if (!checkHxRf()) {
-    delete examples.IMPORT_EXAMPLE_HEXA_RF;
   }
 
   const enabledKeys = Object.keys(examples) as ExampleFileKey[];

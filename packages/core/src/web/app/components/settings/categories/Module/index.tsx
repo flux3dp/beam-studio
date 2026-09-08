@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { match } from 'ts-pattern';
 
 import type { WorkAreaLabel, WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { checkBM2 } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
 
 import { SettingsCard, SettingSelect, type SettingUnitInputProps } from '../../shared';
@@ -24,7 +23,7 @@ function Module({ subSectionTitleClass, unitInputProps, wrapped = false }: Props
   const moduleOptions: Array<{ label: WorkAreaLabel; value: WorkAreaModel }> = [
     { label: 'Ador', value: 'ado1' },
     { label: 'beamo', value: 'fbm1' },
-    checkBM2() && { label: 'beamo II', value: 'fbm2' },
+    { label: 'beamo II', value: 'fbm2' },
   ].filter(Boolean);
 
   const renderModuleSettings = () =>

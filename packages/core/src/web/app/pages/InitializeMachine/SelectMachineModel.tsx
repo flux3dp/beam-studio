@@ -9,7 +9,7 @@ import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-consta
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
 import { useInitializeMachineStore } from '@core/app/pages/InitializeMachine/store';
 import { isMobile } from '@core/app/stores/screenStore';
-import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { checkFpm1 } from '@core/helpers/checkFeature';
 import { decodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
@@ -74,17 +74,13 @@ const SelectMachineModel = (): React.JSX.Element => {
   };
 
   const modelList = useMemo(() => {
-    const supportBm2 = checkBM2();
-    const supportHxRf = checkHxRf();
-
     return [
       { Icon: InitializeIcons.Ador, label: 'Ador', model: 'ado1' },
       {
         Icon: InitializeIcons.Beamo,
-        label: supportBm2 ? 'beamo Series' : 'beamo',
+        label: 'beamo Series',
         labelClass: styles.bb,
-        model: supportBm2 ? undefined : 'fbm1',
-        type: supportBm2 ? 'beamo' : undefined,
+        type: 'beamo',
       },
       {
         Icon: InitializeIcons.Beambox,
@@ -94,9 +90,8 @@ const SelectMachineModel = (): React.JSX.Element => {
       },
       {
         Icon: InitializeIcons.Hexa,
-        label: supportHxRf ? 'HEXA Series' : 'HEXA',
-        model: supportHxRf ? undefined : 'fhexa1',
-        type: supportHxRf ? 'hexa' : undefined,
+        label: 'HEXA Series',
+        type: 'hexa',
       },
       !isMobile() && checkFpm1() && { Icon: InitializeIcons.Promark, label: 'Promark Series', type: 'promark' },
     ].filter(Boolean) as ModelItem[];
