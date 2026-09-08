@@ -2,7 +2,7 @@ import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { checkBM2, checkBM2UV, checkBM24C, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2UV, checkBM24C, checkFpm1, checkFUV1 } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
@@ -275,12 +275,12 @@ export const workareaOptions: Array<{ label: string; value: AnnotatedWorkareaMod
   { label: 'Beambox', value: 'fbb1b' },
   { label: 'Beambox Pro', value: 'fbb1p' },
   { label: 'HEXA', value: 'fhexa1' },
-  checkHxRf() && { label: 'HEXA RF', value: 'fhx2rf' },
+  { label: 'HEXA RF', value: 'fhx2rf' },
   { label: 'Ador', value: 'ado1' },
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   checkFpm1() && { label: 'Promark (Safe+)', value: 'fpm1_safe' },
   { label: 'Beambox II', value: 'fbb2' },
-  checkBM2() && { label: 'beamo II', value: 'fbm2' },
+  { label: 'beamo II', value: 'fbm2' },
   checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
   isDev() && { label: 'Lazervida', value: 'flv1' },
 ].filter(Boolean);

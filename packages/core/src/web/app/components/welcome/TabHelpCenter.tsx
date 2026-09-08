@@ -5,7 +5,6 @@ import classNames from 'classnames';
 
 import GridGuide from '@core/app/components/welcome/GridGuide';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
@@ -14,12 +13,12 @@ import ThemedButton from './ThemedButton';
 
 // TODO: Can be merged into guides after en version release
 const guidesForZhTwOnly = [
-  checkHxRf() && {
+  {
     category: 14101381797647,
     name: 'HEXA RF',
     src: 'core-img/init-panel/hexa-rf-real.webp',
   },
-  checkBM2() && {
+  {
     category: 13025863120655,
     name: 'beamo II',
     src: 'core-img/init-panel/beamo2-real.webp',

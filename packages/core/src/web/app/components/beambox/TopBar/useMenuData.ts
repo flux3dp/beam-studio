@@ -9,7 +9,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import { useMenuItemStatusStore } from '@core/app/stores/menuItemStatusStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { discoverManager } from '@core/helpers/api/discover';
-import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM24C } from '@core/helpers/checkFeature';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -281,9 +281,7 @@ const useMenuData = (email?: string): MenuNode[] => {
               { id: 'IMPORT_EXAMPLE', label: menuCms.import_hello_beamo, type: 'item' },
               { id: 'IMPORT_HELLO_BEAMBOX', label: menuCms.import_hello_beambox, type: 'item' },
               { id: 'IMPORT_EXAMPLE_HEXA', label: menuCms.import_hexa_example, type: 'item' as const },
-              ...(checkHxRf()
-                ? [{ id: 'IMPORT_EXAMPLE_HEXA_RF', label: menuCms.import_hexa_rf_example, type: 'item' as const }]
-                : []),
+              { id: 'IMPORT_EXAMPLE_HEXA_RF', label: menuCms.import_hexa_rf_example, type: 'item' as const },
               {
                 children: [
                   { id: 'IMPORT_EXAMPLE_ADOR_LASER', label: menuCms.import_ador_laser_example, type: 'item' },
@@ -301,15 +299,15 @@ const useMenuData = (email?: string): MenuNode[] => {
                 label: 'Ador',
                 type: 'submenu',
               },
-              ...(checkBM2()
-                ? [
-                    {
-                      children: [
-                        {
-                          id: 'IMPORT_EXAMPLE_BEAMO_2_LASER',
-                          label: menuCms.import_beamo_2_laser_example,
-                          type: 'item' as const,
-                        },
+              {
+                children: [
+                  {
+                    id: 'IMPORT_EXAMPLE_BEAMO_2_LASER',
+                    label: menuCms.import_beamo_2_laser_example,
+                    type: 'item' as const,
+                  },
+                  ...(checkBM24C()
+                    ? [
                         {
                           id: 'IMPORT_EXAMPLE_BEAMO_2_PRINT',
                           label: menuCms.import_beamo_2_printing_example,
@@ -320,12 +318,12 @@ const useMenuData = (email?: string): MenuNode[] => {
                           label: menuCms.import_beamo_2_printing_test,
                           type: 'item' as const,
                         },
-                      ],
-                      label: 'beamo II',
-                      type: 'submenu' as const,
-                    },
-                  ]
-                : []),
+                      ]
+                    : []),
+                ],
+                label: 'beamo II',
+                type: 'submenu' as const,
+              },
               { id: 'IMPORT_EXAMPLE_BEAMBOX_2', label: menuCms.import_beambox_2_example, type: 'item' },
               ...(!isWeb()
                 ? [
