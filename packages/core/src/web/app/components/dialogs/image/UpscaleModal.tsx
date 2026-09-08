@@ -46,7 +46,7 @@ const UpscaleModal = ({ element, imageSize, onClose, requiredScale }: Props) => 
   const info = getCurrentUser()?.info;
   const balance = (info?.subscription?.credit ?? 0) + (info?.credit ?? 0);
   const insufficient = balance < UPSCALE_COST;
-  const sizeText = (factor: number) => `${imageSize.width * factor} × ${imageSize.height * factor} px`;
+  const sizeText = (factor: number) => `${imageSize.width * factor}px × ${imageSize.height * factor}px`;
 
   const start = async () => {
     if (!fitRecommendedOutput(scale)) {

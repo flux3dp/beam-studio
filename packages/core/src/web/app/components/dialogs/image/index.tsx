@@ -5,7 +5,7 @@ import { dpmm } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
-import { getEngraveDpmm } from '@core/app/constants/resolutions';
+import { getEngraveDpmm, getPrintingDpmm } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import selectionManager from '@core/app/svgedit/selection';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
@@ -100,17 +100,16 @@ export const showUpscaleModal = async (elem?: SVGImageElement): Promise<void> =>
     return;
   }
 
-  // Scale needed for the image to fill its canvas size at the layer's engrave resolution.
-  // Printing modules have a fixed resolution, so no recommendation is made for them.
   const layer = getObjectLayer(element)?.elem;
-  const isPrinting = printingModules.has(getData(layer, 'module')!);
-  const engraveDpmm = getEngraveDpmm(getData(layer, 'dpi') ?? 'medium', useDocumentStore.getState().workarea);
-  const requiredScale = isPrinting
-    ? 0
-    : Math.max(
-        ((Number(element.getAttribute('width')) / dpmm) * engraveDpmm) / imageSize.width,
-        ((Number(element.getAttribute('height')) / dpmm) * engraveDpmm) / imageSize.height,
-      );
+  const layerModule = getData(layer, 'module')!;
+  const exportDpmm = printingModules.has(layerModule)
+    ? getPrintingDpmm(layerModule)
+    : getEngraveDpmm(getData(layer, 'dpi') ?? 'medium', useDocumentStore.getState().workarea);
+
+  const requiredScale = Math.max(
+    ((Number(element.getAttribute('width')) / dpmm) * exportDpmm) / imageSize.width,
+    ((Number(element.getAttribute('height')) / dpmm) * exportDpmm) / imageSize.height,
+  );
 
   addDialogComponent(
     id,

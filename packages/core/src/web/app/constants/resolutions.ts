@@ -1,6 +1,8 @@
 import { invert } from 'remeda';
 import { match } from 'ts-pattern';
 
+import type { LayerModuleType } from './layer-module/layer-modules';
+import { LayerModule } from './layer-module/layer-modules';
 import type { WorkAreaModel } from './workarea-constants';
 
 export type EngraveDpiOption = 'detailed' | 'high' | 'low' | 'medium' | 'ultra';
@@ -26,4 +28,11 @@ export const getEngraveDpmm = (dpi: EngraveDpiOption, workarea: WorkAreaModel): 
     .with('medium', () => 10)
     .with('low', () => 5)
     .exhaustive();
+};
+
+export const getPrintingDpmm = (layerModule: LayerModuleType): number => {
+  return match<LayerModuleType, number>(layerModule)
+    .with(LayerModule.PRINTER_4C, () => 600 / 25.4)
+    .with(LayerModule.PRINTER, () => 300 / 25.4)
+    .otherwise(() => 300 / 25.4);
 };
