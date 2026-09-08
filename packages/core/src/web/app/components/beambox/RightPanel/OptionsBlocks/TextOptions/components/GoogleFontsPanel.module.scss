@@ -1,4 +1,5 @@
 @use '@core/styles/mixins' as mixins;
+@use '@core/styles/variables' as variables;
 
 .modal {
   .ant-modal-content {
@@ -259,8 +260,8 @@
   }
 
   &.selected {
-    background: #e8f0fe;
-    border-left-color: #1a73e8;
+    background: variables.$light-blue;
+    border-left-color: variables.$primary-blue;
   }
 
   .fontHeader {

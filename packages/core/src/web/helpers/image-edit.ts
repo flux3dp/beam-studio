@@ -2,9 +2,7 @@
 import ImageTracer from 'imagetracerjs';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import progress from '@core/app/actions/progress-caller';
-import alertConstants from '@core/app/constants/alert-constants';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
@@ -12,9 +10,7 @@ import { moveElements } from '@core/app/svgedit/operations/move';
 import { simplifyPath } from '@core/app/svgedit/operations/pathActions';
 import selectionManager from '@core/app/svgedit/selection';
 import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
-import alertConfig from '@core/helpers/api/alert-config';
-import { axiosFluxId, getCurrentUser, getDefaultHeader } from '@core/helpers/api/flux-id';
-import type { ResponseWithError } from '@core/helpers/api/flux-id';
+import { estimateUpscaleMs, processImageWithAi } from '@core/helpers/api/ai-image-process';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import imageData from '@core/helpers/image-data';
@@ -32,6 +28,8 @@ getSVGAsync((globalSVG) => {
 });
 
 const REMOVE_BACKGROUND_COST = 0.02;
+
+export const UPSCALE_COST = 0.01;
 
 const getSelectedElem = (): null | SVGImageElement => {
   const selectedElements = selectionManager.getSelectedElements();
@@ -284,146 +282,81 @@ const traceImage = async (img = getSelectedElem()): Promise<void> => {
 
 /**
  * Sends an image blob to the remove-background API.
- * Handles auth check, credit check, and warning dialog internally.
  * @returns The cleaned PNG blob on success, null on cancel/error.
  */
 export const removeImageBackground = async (
   imageBlob: Blob,
   { showAlert = true }: { showAlert?: boolean } = {},
-): Promise<Blob | null> => {
-  const user = getCurrentUser();
+): Promise<Blob | null> =>
+  processImageWithAi(imageBlob, {
+    cost: REMOVE_BACKGROUND_COST,
+    endpoint: '/api/remove-background',
+    warning: showAlert ? { configKey: 'skip_bg_removal_warning' } : undefined,
+  });
 
-  if (!user) {
-    dialogCaller.showLoginDialog();
+// The upscale API accepts input images up to about this total pixel count (1440 × 1440); 4x is verified safe at that size.
+export const MAX_UPSCALE_INPUT_SIZE = 1440;
 
-    return null;
-  }
+/**
+ * Runs the upscale API on an image element and replaces it with the result.
+ * Preparation (size/login checks, scale choice) lives in dialogs/image/showUpscaleModal.
+ * @param imageSize natural size of the source, for the duration estimate
+ * @returns true once the canvas image was replaced, false on cancel/error.
+ */
+const upscaleImage = async (
+  element: SVGImageElement,
+  scale: number,
+  imageSize: { height: number; width: number },
+): Promise<boolean> => {
+  const { imgUrl, isFullColor, shading, threshold } = getImageAttributes(element);
+  const progressId = 'photo-edit-processing';
+  const startTime = performance.now();
+  const estimateMs = estimateUpscaleMs(imageSize.width * imageSize.height, scale);
 
-  const showBalanceAlert = () =>
-    alertCaller.popUpCreditAlert({ available: user.info.credit, required: String(REMOVE_BACKGROUND_COST) });
+  progress.openSteppingProgress({
+    caption: i18n.lang.beambox.ai_upscale_panel.processing,
+    id: progressId,
+    message: i18n.lang.beambox.ai_upscale_panel.processing_hint,
+    showTips: true,
+  });
 
-  if ((user.info?.subscription && user.info.subscription.credit) + user.info.credit < 0.02) {
-    showBalanceAlert();
-
-    return null;
-  }
-
-  if (showAlert && !alertConfig.read('skip_bg_removal_warning')) {
-    const res = await new Promise<boolean>((resolve) => {
-      alertCaller.popUp({
-        buttonType: alertConstants.CONFIRM_CANCEL,
-        checkbox: {
-          callbacks: [
-            () => {
-              alertConfig.write('skip_bg_removal_warning', true);
-              resolve(true);
-            },
-            () => resolve(false),
-          ],
-          text: i18n.lang.alert.dont_show_again,
-        },
-        message: i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_bg_removal_reminder,
-        onCancel: () => resolve(false),
-        onConfirm: () => resolve(true),
-      });
+  // No progress from the API; advance by elapsed time against the estimate and hold at 95% if it runs long.
+  const timer = setInterval(() => {
+    progress.update(progressId, {
+      percentage: Math.min(95, Math.round(((performance.now() - startTime) / estimateMs) * 100)),
     });
-
-    if (!res) {
-      return null;
-    }
-  }
-
-  const form = new FormData();
-
-  form.append('image', imageBlob);
+  }, 500);
 
   try {
-    const removeResult = (await axiosFluxId.post('/api/remove-background', form, {
-      headers: getDefaultHeader(),
-      responseType: 'blob',
-      timeout: 1000 * 60 * 3, // 3 min
-      withCredentials: true,
-    })) as ResponseWithError;
+    const imgData = await (await fetch(imgUrl)).blob();
+    // The dialog already shows the cost before starting (prototype D2), so no extra credit confirmation.
+    const blob = await processImageWithAi(imgData, {
+      cost: UPSCALE_COST,
+      endpoint: '/api/upscale',
+      formData: { scale: String(scale) },
+    });
 
-    if (removeResult.error) {
-      const { message, response: { data, status } = {} } = removeResult.error;
-      let errorDetail = '';
+    if (!blob) return false;
 
-      if (data instanceof Blob && data.type === 'application/json') {
-        errorDetail = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
+    // API done; the rest is local decode + re-render.
+    clearInterval(timer);
+    progress.update(progressId, { percentage: 95 });
+    // generateBase64Image blocks the main thread; yield so the 95% bar animation (300ms) gets painted first.
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
-          reader.onloadend = (e) => {
-            const str = e.target!.result as string;
-            const d = JSON.parse(str) as any;
+    const blobUrl = URL.createObjectURL(blob);
+    const base64Img = await generateBase64Image(blobUrl, shading, threshold, isFullColor);
 
-            resolve(d.detail);
-          };
-          reader.readAsText(data);
-        });
-      }
+    addBatchCommand('Image Edit: Upscale', element, {
+      origImage: blobUrl,
+      'xlink:href': base64Img,
+    });
+    selectionManager.selectOnly([element], true);
 
-      if (status === 403 && errorDetail.startsWith('CSRF Failed')) {
-        alertCaller.popUp({
-          buttonType: alertConstants.CONFIRM_CANCEL,
-          message: i18n.lang.beambox.popup.ai_credit.relogin_to_use,
-          onConfirm: dialogCaller.showLoginDialog,
-        });
-
-        return null;
-      }
-
-      alertCaller.popUpError({
-        message: `Server Error: ${status} ${errorDetail || message}`,
-      });
-
-      return null;
-    }
-
-    const contentType = removeResult.headers['content-type'];
-
-    if (contentType === 'application/json') {
-      const { info, message, status } = await new Promise<{
-        info: string;
-        message?: string;
-        status: string;
-      }>((resolve) => {
-        const reader = new FileReader();
-
-        reader.onloadend = (e) => {
-          const str = e.target!.result as string;
-          const d = JSON.parse(str) as any;
-
-          resolve(d);
-        };
-        reader.readAsText(removeResult.data);
-      });
-
-      if (status === 'error') {
-        if (info === 'NOT_LOGGED_IN') {
-          dialogCaller.showLoginDialog();
-        } else if (info === 'INSUFFICIENT_CREDITS') {
-          showBalanceAlert();
-        } else if (info === 'API_ERROR') {
-          alertCaller.popUpError({ message: `API Error: ${message}` });
-        } else {
-          alertCaller.popUpError({ message: `Error: ${info}` });
-        }
-      }
-
-      return null;
-    }
-
-    if (contentType !== 'image/png') {
-      console.error('unknown response type', contentType);
-      alertCaller.popUpError({ message: `Unknown Response Type: ${contentType}` });
-
-      return null;
-    }
-
-    return removeResult.data as Blob;
-  } catch {
-    return null;
+    return true;
+  } finally {
+    clearInterval(timer);
+    progress.popById(progressId);
   }
 };
 
@@ -707,4 +640,5 @@ export default {
   removeImageBackground,
   traceImage,
   trapezoid,
+  upscaleImage,
 };

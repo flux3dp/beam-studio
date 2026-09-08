@@ -157,6 +157,26 @@ export interface ILang {
         max_images: string;
       };
     };
+    ai_upscale_panel: {
+      credit_amount: string;
+      credit_balance: string;
+      credit_cost: string;
+      description: string;
+      done: string;
+      dpi_recommended: string;
+      dpi_recommended_capped: string;
+      failed: string;
+      insufficient_credit: string;
+      layer_dpi: string;
+      original_size: string;
+      output_size: string;
+      oversize_warning: string;
+      processing: string;
+      processing_hint: string;
+      recommended: string;
+      retry: string;
+      start: string;
+    };
     announcement_panel: {
       title: string;
     };
@@ -425,6 +445,7 @@ export interface ILang {
       radius: string;
       rotary_warped: string;
       rotary_warped_link: string;
+      scale: string;
       sharpen: string;
       sharpness: string;
       start: string;
@@ -854,8 +875,11 @@ export interface ILang {
       object_panel: {
         actions_panel: {
           ai_bg_removal: string;
-          ai_bg_removal_reminder: string;
           ai_bg_removal_short: string;
+          ai_credit_reminder: string;
+          ai_upscale: string;
+          ai_upscale_short: string;
+          ai_upscale_too_large: string;
           array: string;
           auto_fit: string;
           bevel: string;

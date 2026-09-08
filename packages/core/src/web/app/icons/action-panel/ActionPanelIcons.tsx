@@ -35,6 +35,7 @@ import SmartNest from './smart-nest.svg';
 import Stamp from './stamp.svg';
 import Tab from './tab.svg';
 import Trace from './trace.svg';
+import Upscale from './upscale.svg';
 import WeldText from './weld-text.svg';
 
 export default {
@@ -75,5 +76,6 @@ export default {
   Stamp,
   Tab,
   Trace,
+  Upscale,
   WeldText,
 };
