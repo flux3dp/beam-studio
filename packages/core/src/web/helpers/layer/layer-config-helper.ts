@@ -607,7 +607,7 @@ export const cloneLayerConfig = (targetLayerName: string, base: Element | string
       } else {
         const value = getData(baseLayer, key);
 
-        if (value) writeDataLayer(targetLayer, key, value, { shouldApplyModuleBaseConfig: false });
+        if (value || value === 0) writeDataLayer(targetLayer, key, value, { shouldApplyModuleBaseConfig: false });
       }
     }
     updateLayerColorFilter(targetLayer as SVGGElement);

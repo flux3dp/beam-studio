@@ -161,6 +161,16 @@ describe('test layer-config-helper', () => {
     });
   });
 
+  test('cloneLayerConfig copies zero values', () => {
+    // 0 is falsy: a power of 0 must not be dropped in favor of the default
+    writeData('layer 1', 'power', 0);
+    cloneLayerConfig('layer 3', 'layer 1');
+    expect(getLayerConfig('layer 3')).toEqual({
+      ...defaultConfigs,
+      power: { value: 0 },
+    });
+  });
+
   test('cloneLayerConfig from a detached element', () => {
     writeData('layer 1', 'speed', 30);
 
