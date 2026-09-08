@@ -106,10 +106,10 @@ describe('UpscaleModal', () => {
   test('shows the output size for the selected scale', () => {
     const { getByTestId, getByText } = renderModal();
 
-    expect(getByText('352 × 314 px')).toBeInTheDocument();
-    expect(getByText('704 × 628 px')).toBeInTheDocument();
+    expect(getByText('352px × 314px')).toBeInTheDocument();
+    expect(getByText('704px × 628px')).toBeInTheDocument();
     fireEvent.change(getByTestId('scale'), { target: { value: '4' } });
-    expect(getByText('1408 × 1256 px')).toBeInTheDocument();
+    expect(getByText('1408px × 1256px')).toBeInTheDocument();
   });
 
   test('disables Start and warns when the combined credit is insufficient', () => {
@@ -158,7 +158,7 @@ describe('UpscaleModal', () => {
 
     fireEvent.click(getByTestId('ok'));
     await waitFor(() => expect(mockPopUp).toHaveBeenCalledTimes(1));
-    expect(mockPopUp.mock.calls[0][0].message).toContain('14400 × 14400 px');
+    expect(mockPopUp.mock.calls[0][0].message).toContain('14400px × 14400px');
     mockPopUp.mock.calls[0][0].onCancel();
     await waitFor(() => expect(run).not.toHaveBeenCalled());
 
