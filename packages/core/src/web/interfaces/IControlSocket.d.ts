@@ -1,5 +1,6 @@
 import type { EventEmitter } from 'eventemitter3';
 
+import type { PromarkLaserSource } from '@core/app/constants/promark-constants';
 import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import type { SwiftrayClient } from '@core/helpers/api/swiftray-client';
 
@@ -100,7 +101,7 @@ interface IControlSocket extends EventEmitter {
   setLaserPowerTemp(power: number): Promise<unknown>;
   setLaserSpeed(speed: number): Promise<unknown>;
   setLaserSpeedTemp(speed: number): Promise<unknown>;
-  setLensCorrection(x: LensCorrection, y: LensCorrection): Promise<boolean>;
+  setLensCorrection(x: LensCorrection, y: LensCorrection, laserSource: PromarkLaserSource): Promise<boolean>;
   setOriginX(x: number): Promise<unknown>;
   setOriginY(y: number): Promise<unknown>;
   setProgressListener(listener: (...args: unknown[]) => void): void;

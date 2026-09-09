@@ -9,7 +9,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
-import { LaserType } from '@core/app/constants/promark-constants';
+import { getPromarkLaserSource, LaserType } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
@@ -1491,8 +1491,9 @@ class DeviceMaster {
 
   async setGalvoParameters(data: GalvoParameters) {
     const controlSocket = await this.getControl();
+    const laserSource = getPromarkLaserSource(getPromarkInfo().laserType);
 
-    return controlSocket.addTask(controlSocket.setLensCorrection, data.x, data.y);
+    return controlSocket.addTask(controlSocket.setLensCorrection, data.x, data.y, laserSource);
   }
 
   async getDeviceDetailInfo(): Promise<IDeviceDetailInfo> {

@@ -532,7 +532,7 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'setScanaheadParams', params);
   }
 
-  public async setDeviceCorrection(data: { [key: string]: number }): Promise<boolean> {
+  public async setDeviceCorrection(data: Record<string, number | string>): Promise<boolean> {
     return this.action(`/devices/${this.port}`, 'setCorrection', data);
   }
 

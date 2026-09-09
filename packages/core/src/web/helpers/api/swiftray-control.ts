@@ -2,6 +2,7 @@
 import { EventEmitter } from 'eventemitter3';
 
 import ErrorConstants from '@core/app/constants/error-constants';
+import type { PromarkLaserSource } from '@core/app/constants/promark-constants';
 import type { RawChipSettings } from '@core/interfaces/Cartridge';
 import type { FisheyeCameraParameters, RotationParameters3D } from '@core/interfaces/FisheyePreview';
 import type { Mode, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
@@ -530,10 +531,11 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return this.sc.setScanaheadParams(data);
   };
 
-  setLensCorrection = async (x: LensCorrection, y: LensCorrection) => {
+  setLensCorrection = async (x: LensCorrection, y: LensCorrection, laserSource: PromarkLaserSource) => {
     const data = {
       bucketX: x.bulge,
       bucketY: y.bulge,
+      laserSource,
       paralleX: x.skew,
       paralleY: y.skew,
       scaleX: x.scale,
