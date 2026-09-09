@@ -1,7 +1,7 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
-import { isFitText } from '@core/app/svgedit/text/textedit/getters';
+import { isFitText, isParamsLabel } from '@core/app/svgedit/text/textedit/getters';
 import type { ILang } from '@core/interfaces/ILang';
 
 type CanvasNodeType = keyof ILang['topbar']['tag_names'];
@@ -11,6 +11,7 @@ const categoryOverride = {
   ellipse: 'shape',
   fit_text: 'text',
   line: 'shape',
+  params_label: 'text',
   pass_through_object: 'g',
   polygon: 'shape',
   rect: 'shape',
@@ -52,6 +53,8 @@ const getNodeType = (elem: Element | null): { nodeCategory: CanvasNodeCategory; 
     } else {
       if (elem.getAttribute('data-textpath-g')) {
         nodeType = 'text_path';
+      } else if (isParamsLabel(elem)) {
+        nodeType = 'params_label';
       } else if (isFitText(elem)) {
         nodeType = 'fit_text';
       } else if (elem.getAttribute('data-pass-through')) {

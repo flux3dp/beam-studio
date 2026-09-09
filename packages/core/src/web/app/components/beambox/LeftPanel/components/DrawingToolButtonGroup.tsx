@@ -13,7 +13,9 @@ import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import selectionManager from '@core/app/svgedit/selection';
+import { createParamsLabel } from '@core/app/svgedit/text/paramsLabel';
 import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
+import { isParamsLabelDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
@@ -31,7 +33,10 @@ type ToolButtonProps = {
 
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
   const lang = useI18n();
-  const t = lang.beambox.left_panel;
+  const {
+    beambox: { left_panel: t },
+    topbar: { tag_names: tTag },
+  } = lang;
   const { hasPassthroughExtension } = use(CanvasContext);
   const { isDrawing, isStarting } = useCameraPreviewStore();
   const { drawerMode, mouseMode, toggleDrawerMode } = useCanvasStore();
@@ -179,6 +184,13 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
           id: 'PassThrough',
           label: t.label.pass_through,
           onClick: () => showPassThrough(FnWrapper.useSelectTool),
+        })}
+      {isParamsLabelDev() &&
+        renderToolButton({
+          icon: <LeftPanelIcons.Text />,
+          id: 'ParamsLabel',
+          label: tTag.params_label,
+          onClick: () => createParamsLabel(100, 250),
         })}
 
       <div className={styles.separator} />

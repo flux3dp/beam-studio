@@ -44,7 +44,8 @@ import {
   recordFitTextAttributesBeforeResize,
   setFitTextBBox,
 } from '../../text/fitText';
-import textEdit, { isFitText } from '../../text/textedit';
+import { renderParamsLabel } from '../../text/paramsLabel';
+import textEdit, { isFitText, isParamsLabel } from '../../text/textedit';
 import touchEvents from '../../touchEvents';
 import { recalculateDimensions, setStartTransform } from '../../transform/recalculate';
 import { setRotationAngle } from '../../transform/rotation';
@@ -1462,7 +1463,12 @@ const dblClick = (evt: MouseEvent) => {
 
   if (!['preview_color', 'text', 'textedit'].includes(currentMode)) {
     if (tagName === 'text') {
-      svgCanvas.textActions.select(mouseTarget as SVGTextElement);
+      if (isParamsLabel(mouseTarget)) {
+        // A params label renders its layer's params, editing it by hand would be overwritten
+        renderParamsLabel(mouseTarget as SVGTextElement);
+      } else {
+        svgCanvas.textActions.select(mouseTarget as SVGTextElement);
+      }
     } else if (mouseTarget.getAttribute('data-textpath-g')) {
       const clickOnText = ['text', 'textPath'].includes((evt.target as SVGElement).tagName);
       const text = mouseTarget.querySelector('text');

@@ -1,0 +1,24 @@
+@use '@core/styles/mixins' as mixins;
+
+.footer {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.save {
+  margin-right: auto;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.keys {
+  display: block;
+  width: 100%;
+  @include mixins.viewport-size(50, $property: max-height);
+  overflow-y: auto;
+}

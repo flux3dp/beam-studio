@@ -28,6 +28,21 @@ Beam Studio is the companion application for [FLUX Beam Series](http://flux3dp.c
 
 1. Run webpack dev server: `$> pnpm run web:start` or `$> pnpm nx run web:start`
 
+Webpack uses native file system events by default. If file changes are not detected reliably, such
+as when using Docker, WSL, a virtual machine, or a network-mounted directory, enable polling when
+starting the development server:
+
+```bash
+WEBPACK_POLLING=true pnpm nx run web:start
+```
+
+In Windows PowerShell:
+
+```powershell
+$env:WEBPACK_POLLING = 'true'
+pnpm nx run web:start
+```
+
 ## License
 
 * AGPLv3
