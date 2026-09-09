@@ -5,6 +5,7 @@ import { LaserType } from '@core/app/constants/promark-constants';
 const mockDocumentState = {
   'auto-feeder': false,
   borderless: false,
+  'customized-dimension': { fpm1: { height: 70, width: 70 } },
   'inner-engraving': false,
   'pass-through': false,
   rotary_mode: false,
@@ -92,6 +93,7 @@ describe('exclusive modes', () => {
     Object.assign(mockDocumentState, {
       'auto-feeder': false,
       borderless: false,
+      'customized-dimension': { fpm1: { height: 70, width: 70 } },
       'inner-engraving': false,
       'pass-through': false,
       rotary_mode: false,

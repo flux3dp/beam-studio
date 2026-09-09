@@ -33,7 +33,7 @@ export const getInnerEngravingCustomizedDimension = (
 export const checkInnerEngraving = (context: AddOnModeContext = {}): boolean => {
   const promarkInfo = context.promarkInfo === undefined ? getPromarkInfo() : context.promarkInfo;
   const workarea = resolveWorkarea(context);
-  const dimension = resolveDocumentValue('customized-dimension', context)[workarea];
+  const dimension = resolveDocumentValue('customized-dimension', context)?.[workarea];
   const requiredSize = UV_WORKAREA_OPTIONS[0];
 
   return (
