@@ -111,6 +111,7 @@ export const setExclusiveMode = (
     applyRuntime,
     promarkInfo: context.promarkInfo ?? undefined,
     update: (values) => Object.assign(patch, values),
+    values: context.values,
   };
 
   if (enabled) {

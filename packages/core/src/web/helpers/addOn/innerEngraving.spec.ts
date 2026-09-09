@@ -26,13 +26,22 @@ describe('inner engraving add-on', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     setPromarkInfo(desktopInfo);
-    useDocumentStore.setState({ 'inner-engraving': false, workarea: 'fbb1b' });
+    useDocumentStore.setState({
+      'customized-dimension': { fpm1: { height: 70, width: 70 } },
+      'inner-engraving': false,
+      workarea: 'fbb1b',
+    });
   });
 
-  test('supports inner engraving only on fpm1 with a UV laser source', () => {
+  test('supports inner engraving only on the 70x70 fpm1 work area with a UV laser source', () => {
     expect(supportInnerEngraving('fpm1', uvInfo)).toBe(true);
     expect(supportInnerEngraving('fpm1', desktopInfo)).toBe(false);
     expect(supportInnerEngraving('fbb1b', uvInfo)).toBe(false);
+    expect(
+      supportInnerEngraving('fpm1', uvInfo, {
+        fpm1: { height: 110, width: 110 },
+      }),
+    ).toBe(false);
   });
 
   test('exposes capability and effective-state helpers', () => {
@@ -56,7 +65,10 @@ describe('inner engraving add-on', () => {
 
     enableInnerEngraving({ promarkInfo: uvInfo, update });
 
-    expect(update).toHaveBeenCalledWith({ 'inner-engraving': true });
+    expect(update).toHaveBeenCalledWith({
+      'customized-dimension': { fpm1: { height: 70, width: 70 } },
+      'inner-engraving': true,
+    });
     expect(getPromarkInfo()).toEqual(uvInfo);
 
     setPromarkInfo(desktopInfo);
@@ -76,7 +88,11 @@ describe('inner engraving add-on', () => {
 
   test('reads the current PromarkInfo in both imperative and hook forms', () => {
     setPromarkInfo(uvInfo);
-    useDocumentStore.setState({ 'inner-engraving': true, workarea: 'fpm1' });
+    useDocumentStore.setState({
+      'customized-dimension': { fpm1: { height: 70, width: 70 } },
+      'inner-engraving': true,
+      workarea: 'fpm1',
+    });
 
     expect(isInnerEngravingActive()).toBe(true);
     expect(renderHook(() => useInnerEngravingActive()).result.current).toBe(true);

@@ -33,7 +33,11 @@ describe('switchInnerEngravingMode', () => {
     mockClearScene.mockResolvedValue(true);
     mockIsInnerEngravingActive.mockReturnValue(false);
     setPromarkInfo(desktopInfo);
-    useDocumentStore.setState({ 'inner-engraving': false, workarea: 'fbb1b' });
+    useDocumentStore.setState({
+      'customized-dimension': { fpm1: { height: 110, width: 110 } },
+      'inner-engraving': false,
+      workarea: 'fbb1b',
+    });
   });
 
   test('applies the fpm1 work area and UV PromarkInfo after clearing the document', async () => {
@@ -42,6 +46,7 @@ describe('switchInnerEngravingMode', () => {
     expect(mockClearScene).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenCalledWith('fpm1');
     expect(getPromarkInfo()).toEqual(uvInfo);
+    expect(useDocumentStore.getState()['customized-dimension'].fpm1).toEqual({ height: 70, width: 70 });
     expect(useDocumentStore.getState()['inner-engraving']).toBe(true);
   });
 

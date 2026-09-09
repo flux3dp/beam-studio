@@ -16,10 +16,12 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import {
+  getDefaultPromarkWorkarea,
+  getPromarkWorkareaOptions,
+  isPromarkWorkareaCompatible,
   laserSourceWattMap,
   LaserType,
   laserTypes,
-  workareaOptions as pmWorkareaOptions,
 } from '@core/app/constants/promark-constants';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { defaultEngraveDpiOptions, dpiValueMap } from '@core/app/constants/resolutions';
@@ -104,7 +106,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [innerEngraving, setInnerEngraving] = useState(useDocumentStore.getState()['inner-engraving']);
-  const supportsInnerEngraving = useMemo(() => supportInnerEngraving(workarea, pmInfo), [workarea, pmInfo]);
+  const supportsInnerEngraving = useMemo(
+    () => supportInnerEngraving(workarea, pmInfo, customDimension),
+    [customDimension, pmInfo, workarea],
+  );
   const [rotaryMode, setRotaryMode] = useState(useDocumentStore.getState().rotary_mode);
   const [rotaryType, setRotaryType] = useState(useDocumentStore.getState()['rotary-type']);
   const [enableStartButton, setEnableStartButton] = useState(useDocumentStore.getState()['promark-start-button']);
@@ -122,6 +127,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [enable1064, setEnable1064] = useState(!!useDocumentStore.getState()['enable-1064']);
   const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
+  const pmWorkareaOptions = useMemo(() => getPromarkWorkareaOptions(pmInfo.laserType), [pmInfo.laserType]);
   const wattsOptions = useMemo(() => {
     return match(workarea)
       .with('fhx2rf', () => fhx2rfWatts.map((watt) => ({ label: `${watt}W`, value: watt })))
@@ -199,7 +205,16 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     (mode: ExclusiveMode) => {
       const patch: Partial<DocumentState> = {};
 
-      if (!applyExclusiveModePatch(patch, mode, true, { addOnInfo, promarkInfo: pmInfo, workarea })) return;
+      if (
+        !applyExclusiveModePatch(patch, mode, true, {
+          addOnInfo,
+          promarkInfo: pmInfo,
+          values: { 'customized-dimension': customDimension },
+          workarea,
+        })
+      ) {
+        return;
+      }
 
       if (patch.rotary_mode !== undefined) setRotaryMode(patch.rotary_mode);
 
@@ -209,7 +224,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
       if (patch['inner-engraving'] !== undefined) setInnerEngraving(patch['inner-engraving']);
     },
-    [addOnInfo, pmInfo, workarea],
+    [addOnInfo, customDimension, pmInfo, workarea],
   );
 
   useEffect(() => {
@@ -227,6 +242,21 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   useEffect(() => setRotaryMode(storeRotaryMode), [storeRotaryMode]);
   useEffect(() => setRotaryType(storeRotaryType), [storeRotaryType]);
+
+  useEffect(() => {
+    if (workarea !== 'fpm1') return;
+
+    setCustomDimension((current) => {
+      const dimension = current.fpm1;
+      const size = dimension?.width ?? workareaObj.width;
+
+      if (isPromarkWorkareaCompatible(pmInfo.laserType, size) && dimension?.height === size) return current;
+
+      const defaultSize = getDefaultPromarkWorkarea(pmInfo);
+
+      return { ...current, fpm1: { height: defaultSize, width: defaultSize } };
+    });
+  }, [pmInfo, workarea, workareaObj.width]);
 
   // for openBottom machine, path-through and autofeed require open-bottom mode
   const { showAutoFeeder, showPassThrough } = useMemo(() => {
@@ -547,6 +577,25 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 variant="outlined"
               />
             </div>
+            {isPromark && (
+              <div className={styles.row}>
+                <label className={styles.title} htmlFor="pm-laser-source">
+                  {tDocument.laser_source}
+                </label>
+                <Select
+                  className={styles.control}
+                  id="pm-laser-source"
+                  onChange={(val) => {
+                    const [type, watt] = val.split('-').map(Number);
+
+                    setPmInfo({ laserType: type, watt } as PromarkInfo);
+                  }}
+                  options={promarkLaserOptions}
+                  value={`${pmInfo.laserType}-${pmInfo.watt}`}
+                  variant="outlined"
+                />
+              </div>
+            )}
             {workareaObj.dimensionCustomizable && (
               <div className={styles.row}>
                 <label className={styles.title} htmlFor="customDimension">
@@ -563,25 +612,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   }}
                   options={pmWorkareaOptions.map((value) => ({ label: `${value} x ${value} mm`, value }))}
                   value={customDimension[workarea]?.width ?? workareaObj.width}
-                  variant="outlined"
-                />
-              </div>
-            )}
-            {isPromark && (
-              <div className={styles.row}>
-                <label className={styles.title} htmlFor="pm-laser-source">
-                  {tDocument.laser_source}
-                </label>
-                <Select
-                  className={styles.control}
-                  id="pm-laser-source"
-                  onChange={(val) => {
-                    const [type, watt] = val.split('-').map(Number);
-
-                    setPmInfo({ laserType: type, watt } as PromarkInfo);
-                  }}
-                  options={promarkLaserOptions}
-                  value={`${pmInfo.laserType}-${pmInfo.watt}`}
                   variant="outlined"
                 />
               </div>

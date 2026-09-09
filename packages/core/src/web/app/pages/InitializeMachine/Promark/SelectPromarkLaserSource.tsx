@@ -4,7 +4,13 @@ import type { RadioChangeEvent } from 'antd';
 import { Divider, Flex, Radio, Space } from 'antd';
 import classNames from 'classnames';
 
-import { laserSourceWattMap, LaserType, laserTypes, workareaOptions } from '@core/app/constants/promark-constants';
+import {
+  getDefaultPromarkWorkarea,
+  getPromarkWorkareaOptions,
+  laserSourceWattMap,
+  LaserType,
+  laserTypes,
+} from '@core/app/constants/promark-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import useI18n from '@core/helpers/useI18n';
@@ -25,7 +31,19 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
       label: `${source} - ${watt}W`,
       value: `${source}-${watt}`,
     }));
-  const generateWorkareaOptions = () => workareaOptions.map((area) => ({ label: `${area}x${area}`, value: area }));
+  const getSelectedPromarkInfo = (value: string): PromarkInfo => {
+    const [source, watt] = value.split('-') as [keyof typeof laserSourceWattMap, string];
+
+    return { laserType: LaserType[source], watt: Number(watt) };
+  };
+  const generateWorkareaOptions = () => {
+    if (!laserSource) return [];
+
+    return getPromarkWorkareaOptions(getSelectedPromarkInfo(laserSource).laserType).map((area) => ({
+      label: `${area}x${area}`,
+      value: area,
+    }));
+  };
 
   const renderLaserSourceRadio = (source: keyof typeof laserSourceWattMap) => (
     <Space direction="vertical" key={source}>
@@ -39,28 +57,20 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
 
   const onLaserSourceChange = ({ target: { value } }: RadioChangeEvent) => {
     setLaserSource(value);
-
-    // setup 110mm for Promark MOPA 20W, 70mm for UV 5W by default, otherwise 220mm
-    if (value === 'MOPA-20') {
-      setWorkarea(110);
-    } else if (value === 'UV-5') {
-      setWorkarea(70);
-    } else {
-      setWorkarea(220);
-    }
+    setWorkarea(getDefaultPromarkWorkarea(getSelectedPromarkInfo(value)));
   };
   const onWorkareaChange = (e: RadioChangeEvent) => setWorkarea(e.target.value);
 
   const handleNext = () => {
     const { 'customized-dimension': customizedDimension, set } = useDocumentStore.getState();
-    const [source, watt] = laserSource.split('-') as [keyof typeof laserSourceWattMap, string];
+    const promarkInfo = getSelectedPromarkInfo(laserSource);
 
     set('customized-dimension', {
       ...customizedDimension,
       fpm1: { height: workarea, width: workarea },
     });
 
-    setPromarkInfo({ laserType: LaserType[source], watt: Number(watt) } as PromarkInfo);
+    setPromarkInfo(promarkInfo);
 
     window.location.hash = `#/initialize/connect/promark-settings`;
   };

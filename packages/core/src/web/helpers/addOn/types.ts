@@ -17,6 +17,7 @@ export interface AddOnModeMutationOptions {
   applyRuntime?: boolean;
   promarkInfo?: PromarkInfo;
   update?: (values: Partial<DocumentState>) => void;
+  values?: Partial<DocumentState>;
 }
 
 export const resolveWorkarea = ({ values, workarea }: AddOnModeContext = {}): WorkAreaModel =>

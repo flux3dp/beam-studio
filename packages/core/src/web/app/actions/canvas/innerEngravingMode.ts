@@ -43,10 +43,11 @@ export const switchInnerEngravingMode = async (
   // clearScene owns the save prompt and resets the undo stack; svgCanvas.clear() drops the meshes
   if (!(await svgEditor.clearScene())) return false;
 
-  if (workarea) changeWorkarea(workarea);
-
   if (enabled) enableInnerEngraving({ promarkInfo });
   else disableInnerEngraving();
+
+  // The inner-engraving dimension must be stored before changeWorkarea reads it to resize the canvas.
+  if (workarea) changeWorkarea(workarea);
 
   return true;
 };

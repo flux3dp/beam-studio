@@ -15,6 +15,7 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import { resolveInnerEngravingForFile } from '@core/app/svgedit/operations/import/innerEngravingGate';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getInnerEngravingCustomizedDimension } from '@core/helpers/addOn/innerEngraving';
 import { applyExclusiveModePatch } from '@core/helpers/exclusiveModes';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
@@ -119,8 +120,14 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
     const innerEngravingResult = await resolveInnerEngravingForFile(innerEngraving, currentWorkarea);
 
     innerEngravingWorkarea = innerEngravingResult.workarea;
+
+    const innerEngravingDimension = innerEngravingResult.innerEngraving
+      ? getInnerEngravingCustomizedDimension()
+      : undefined;
+
     applyExclusiveModePatch(newDocumentState, 'inner-engraving', innerEngravingResult.innerEngraving, {
       applyRuntime: innerEngravingResult.innerEngraving,
+      values: innerEngravingDimension ? { 'customized-dimension': innerEngravingDimension } : undefined,
       workarea: innerEngravingResult.workarea ?? currentWorkarea,
     });
 

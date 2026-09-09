@@ -1,4 +1,4 @@
-import { LaserType } from '@core/app/constants/promark-constants';
+import { LaserType, UV_WORKAREA_OPTIONS } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { checkFpm1UV } from '@core/helpers/checkFeature';
@@ -12,17 +12,38 @@ import {
   type AddOnModeMutationOptions,
   resolveAddOnInfo,
   resolveDocumentValue,
+  resolveWorkarea,
   updateDocumentMode,
 } from './types';
 
-type InnerEngravingState = Pick<DocumentState, 'inner-engraving' | 'workarea'>;
+type CustomizedDimension = DocumentState['customized-dimension'];
+type InnerEngravingState = Partial<Pick<DocumentState, 'customized-dimension'>> &
+  Pick<DocumentState, 'inner-engraving' | 'workarea'>;
 
 export const PROMARK_UV_INFO = { laserType: LaserType.UV, watt: 5 } satisfies PromarkInfo;
 
+export const getInnerEngravingCustomizedDimension = (
+  current: CustomizedDimension = useDocumentStore.getState()['customized-dimension'],
+): CustomizedDimension => {
+  const requiredSize = UV_WORKAREA_OPTIONS[0];
+
+  return { ...current, fpm1: { height: requiredSize, width: requiredSize } };
+};
+
 export const checkInnerEngraving = (context: AddOnModeContext = {}): boolean => {
   const promarkInfo = context.promarkInfo === undefined ? getPromarkInfo() : context.promarkInfo;
+  const workarea = resolveWorkarea(context);
+  const dimension = resolveDocumentValue('customized-dimension', context)[workarea];
+  const requiredSize = UV_WORKAREA_OPTIONS[0];
 
-  return checkFpm1UV() && Boolean(resolveAddOnInfo(context)?.innerEngraving) && promarkInfo?.laserType === LaserType.UV;
+  return (
+    checkFpm1UV() &&
+    Boolean(resolveAddOnInfo(context)?.innerEngraving) &&
+    promarkInfo?.laserType === LaserType.UV &&
+    workarea === 'fpm1' &&
+    dimension?.width === requiredSize &&
+    dimension.height === requiredSize
+  );
 };
 
 /** Whether inner engraving is supported and currently enabled. */
@@ -30,7 +51,16 @@ export const getInnerEngraving = (context: AddOnModeContext = {}): boolean =>
   checkInnerEngraving(context) && Boolean(resolveDocumentValue('inner-engraving', context));
 
 export const enableInnerEngraving = (options: AddOnModeMutationOptions = {}): void => {
-  updateDocumentMode({ 'inner-engraving': true }, options);
+  const customizedDimension =
+    options.values?.['customized-dimension'] ?? useDocumentStore.getState()['customized-dimension'];
+
+  updateDocumentMode(
+    {
+      'customized-dimension': getInnerEngravingCustomizedDimension(customizedDimension),
+      'inner-engraving': true,
+    },
+    options,
+  );
 
   if (options.applyRuntime !== false) setPromarkInfo(options.promarkInfo ?? PROMARK_UV_INFO);
 };
@@ -39,8 +69,16 @@ export const disableInnerEngraving = (options: AddOnModeMutationOptions = {}): v
   updateDocumentMode({ 'inner-engraving': false }, options);
 
 /** Whether a work area and laser source can run inner engraving. */
-export const supportInnerEngraving = (model: WorkAreaModel, promarkInfo: PromarkInfo = getPromarkInfo()): boolean =>
-  checkInnerEngraving({ promarkInfo, workarea: model });
+export const supportInnerEngraving = (
+  model: WorkAreaModel,
+  promarkInfo: PromarkInfo = getPromarkInfo(),
+  customizedDimension?: CustomizedDimension,
+): boolean =>
+  checkInnerEngraving({
+    promarkInfo,
+    values: customizedDimension ? { 'customized-dimension': customizedDimension } : undefined,
+    workarea: model,
+  });
 
 /** Resolve the effective mode from both the document toggle and machine capability. */
 export const resolveInnerEngravingActive = (

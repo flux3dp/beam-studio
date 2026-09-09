@@ -16,6 +16,31 @@ export enum LaserType {
   UV = 2,
 }
 
+export const MOPA_WORKAREA_OPTIONS = [110, 150, 220] as const;
+export const UV_WORKAREA_OPTIONS = [70] as const;
+
+export type PromarkLaserSource = 'MOPA' | 'UV';
+
+/** Work areas compatible with the selected Promark laser source. */
+export const getPromarkWorkareaOptions = (laserType: LaserType): ReadonlyArray<number> =>
+  laserType === LaserType.UV ? UV_WORKAREA_OPTIONS : MOPA_WORKAREA_OPTIONS;
+
+/** Default work area shared by initialization and document settings. */
+export const getDefaultPromarkWorkarea = ({ laserType, watt }: { laserType: LaserType; watt: number }): number => {
+  if (laserType === LaserType.UV) return UV_WORKAREA_OPTIONS[0];
+
+  if (laserType === LaserType.MOPA && watt === 20) return MOPA_WORKAREA_OPTIONS[0];
+
+  return MOPA_WORKAREA_OPTIONS.at(-1)!;
+};
+
+export const isPromarkWorkareaCompatible = (laserType: LaserType, size: number): boolean =>
+  getPromarkWorkareaOptions(laserType).includes(size);
+
+/** Swiftray currently distinguishes UV from all MOPA-family sources. */
+export const getPromarkLaserSource = (laserType: unknown): PromarkLaserSource =>
+  laserType === LaserType.UV ? 'UV' : 'MOPA';
+
 todo('Add Promark UV 5W param');
 // Recommended layer parameters for the Promark example file, keyed by laser type and watt.
 // pulseWidth only applies to MOPA sources.
