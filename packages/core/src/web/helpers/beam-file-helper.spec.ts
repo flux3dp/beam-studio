@@ -1,5 +1,6 @@
 const mockLoadCurveData = jest.fn();
 const mockImportBvgString = jest.fn();
+const mockParseStl = jest.fn();
 const mockSyncStlObjectsWithDom = jest.fn();
 
 jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => ({
@@ -7,6 +8,9 @@ jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => ({
   loadData: (...args: unknown[]) => mockLoadCurveData(...args),
 }));
 jest.mock('@core/app/actions/progress-caller', () => ({ popById: jest.fn() }));
+jest.mock('@core/app/components/dialogs/PrintAndCut/resumeConfigStore', () => ({
+  useResumeConfigStore: { getState: () => ({ config: null }), setState: jest.fn() },
+}));
 jest.mock('@core/app/stores/variableText', () => ({
   useVariableTextState: { getState: () => ({}), setState: jest.fn() },
 }));
@@ -22,7 +26,11 @@ jest.mock('@core/app/svgedit/stl/sync', () => ({
 jest.mock('@core/app/svgedit/workarea', () => ({ resetView: jest.fn(), setWorkarea: jest.fn() }));
 jest.mock('@core/helpers/image/updateImageDisplay', () => jest.fn());
 jest.mock('@core/helpers/variableText', () => ({ hasVariableText: () => false }));
-jest.mock('three/examples/jsm/loaders/STLLoader.js', () => ({ STLLoader: class {} }));
+jest.mock('three/examples/jsm/loaders/STLLoader.js', () => ({
+  STLLoader: class {
+    parse = (...args: unknown[]) => mockParseStl(...args);
+  },
+}));
 
 import { Buffer } from 'buffer';
 
@@ -141,5 +149,25 @@ describe('beam-file-helper point cloud block', () => {
     });
     expect(object.geometry.getAttribute('position').count).toBe(2);
     expect(Array.from(new Uint8Array(object.pointCloudBuffer))).toEqual(Array.from(new Uint8Array(pointCloud)));
+  });
+
+  test('does not materialize binary 3D data after the SVG projections were downgraded to 2D', async () => {
+    mockImportBvgString.mockImplementation(async () => {
+      document.body.innerHTML = '<svg id="svgcontent"><rect id="mesh" fill="none" /></svg>';
+    });
+
+    const pointCloud = encodePointCloud(new Float32Array([0, 0, 0]));
+    const beam = beamFileHelper.generateBeamBuffer(
+      '<svg/>',
+      {},
+      undefined,
+      { mesh: new Uint8Array([1, 2, 3]).buffer },
+      { photo: pointCloud },
+    );
+
+    await beamFileHelper.readBeam(new File([beam], 'declined-inner-engraving.beam'));
+
+    expect(mockParseStl).not.toHaveBeenCalled();
+    expect(mockSyncStlObjectsWithDom).toHaveBeenCalledWith([]);
   });
 });

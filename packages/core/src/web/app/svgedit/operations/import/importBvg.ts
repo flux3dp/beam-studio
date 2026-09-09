@@ -13,6 +13,7 @@ import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import { resolveInnerEngravingForFile } from '@core/app/svgedit/operations/import/innerEngravingGate';
+import { downgradeInnerEngravingElements } from '@core/app/svgedit/stl/downgrade';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getInnerEngravingCustomizedDimension } from '@core/helpers/addOn/innerEngraving';
@@ -120,6 +121,10 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
     const innerEngravingResult = await resolveInnerEngravingForFile(innerEngraving, currentWorkarea);
 
     innerEngravingWorkarea = innerEngravingResult.workarea;
+
+    if (innerEngraving && !innerEngravingResult.innerEngraving) {
+      downgradeInnerEngravingElements(document.getElementById('svgcontent')!);
+    }
 
     const innerEngravingDimension = innerEngravingResult.innerEngraving
       ? getInnerEngravingCustomizedDimension()

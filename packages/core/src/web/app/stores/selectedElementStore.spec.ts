@@ -6,6 +6,9 @@ jest.mock('@core/app/svgedit/text/textedit/getters', () => ({
   isParamsLabel: mockIsParamsLabel,
 }));
 
+import type { StlObject } from '@core/app/stores/stlStore';
+import { useStlStore } from '@core/app/stores/stlStore';
+
 import { getDerivedData, useSelectedElementStore } from './selectedElementStore';
 
 const makeElem = (tagName: string, attrs: Record<string, string> = {}): Element => {
@@ -22,6 +25,7 @@ describe('selectedElementStore', () => {
     jest.clearAllMocks();
     mockIsFitText.mockReturnValue(false);
     mockIsParamsLabel.mockReturnValue(false);
+    useStlStore.setState({ objects: {} });
   });
 
   describe('defaults', () => {
@@ -64,6 +68,16 @@ describe('selectedElementStore', () => {
       expect(data.canGroup).toBe(false);
       expect(data.canUngroup).toBe(true);
       expect(data.canUngroupOrDisassemble).toBe(true);
+    });
+
+    it('should only classify a 3D projection as stl when its runtime object was loaded', () => {
+      const projection = makeElem('rect', { 'data-stl': '1', id: 'mesh' });
+
+      expect(getDerivedData(projection)).toMatchObject({ nodeCategory: 'shape', nodeType: 'rect' });
+
+      useStlStore.setState({ objects: { mesh: { id: 'mesh' } as StlObject } });
+
+      expect(getDerivedData(projection)).toMatchObject({ nodeCategory: 'stl', nodeType: 'stl' });
     });
 
     it.each([

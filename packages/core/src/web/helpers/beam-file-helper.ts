@@ -426,9 +426,7 @@ const readStlSource = (buf: Buffer, offset: number, end: number, loaded: StlObje
 
     currentOffset = newOffset;
 
-    // a standalone copy: `subarray` is a view over the whole file, and this buffer outlives the read
-    // — it is what gets written back out and sent to swiftray
-    const meshBuffer = new Uint8Array(buf.subarray(currentOffset, currentOffset + meshSize)).buffer;
+    const meshOffset = currentOffset;
 
     currentOffset += meshSize;
 
@@ -438,6 +436,11 @@ const readStlSource = (buf: Buffer, offset: number, end: number, loaded: StlObje
       console.warn(`STL mesh ${id} has no projection rect, skipped`);
       continue;
     }
+
+    // a standalone copy: `subarray` is a view over the whole file, and this buffer outlives the read
+    // — it is what gets written back out and sent to swiftray. Copy only after the projection has
+    // accepted the binary; a document downgraded to 2D must not materialize its STL payload.
+    const meshBuffer = new Uint8Array(buf.subarray(meshOffset, meshOffset + meshSize)).buffer;
 
     const transforms = parseStlTransform(elem);
 
@@ -479,7 +482,7 @@ const readPointCloudSource = (buf: Buffer, offset: number, end: number, loaded: 
 
     currentOffset = newOffset;
 
-    const pointCloudBuffer = new Uint8Array(buf.subarray(currentOffset, currentOffset + pointCloudSize)).buffer;
+    const pointCloudOffset = currentOffset;
 
     currentOffset += pointCloudSize;
 
@@ -489,6 +492,10 @@ const readPointCloudSource = (buf: Buffer, offset: number, end: number, loaded: 
       console.warn(`Point cloud ${id} has no marked photo source, skipped`);
       continue;
     }
+
+    const pointCloudBuffer = new Uint8Array(
+      buf.subarray(pointCloudOffset, pointCloudOffset + pointCloudSize),
+    ).buffer;
 
     const transforms = parseStlTransform(elem);
 
