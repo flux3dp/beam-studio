@@ -1,6 +1,6 @@
 ---
 name: svgedit-text
-description: SVG text editing system — multi-line text, tspans, fitText, and text-on-path. Use when creating or modifying text elements under app/svgedit/text/, textedit/, textactions.ts, or the TextContentBlock panel.
+description: SVG text editing system — plain (multi-line) text, tspans, fitText, text-on-path, and params labels. Use when creating or modifying text elements under app/svgedit/text/, textedit/, textactions.ts, or the TextContentBlock panel.
 ---
 
 # SVG Text Editing System
@@ -9,13 +9,20 @@ Location: `packages/core/src/web/app/svgedit/text/`
 
 ## Overview
 
-The text system handles three types of text elements:
+The text system handles four types of text elements. Plain text is the base; fitText and params
+labels are plain text plus a marker attribute, and only text-on-path has a different structure:
 
 | Type | SVG structure | Creation mode | Key attribute |
 |------|--------------|---------------|---------------|
-| **Multi-line text** | `<text>` with `<tspan>` children | Click (`text` mode) | — |
+| **Plain text** (multi-line) | `<text>` with `<tspan>` children | Click (`text` mode) | — |
 | **FitText** | `<text data-fit-text="true">` with `<tspan>` children | Click-to-create (`fit-text` mode) | `data-fit-text="true"` |
 | **Text-on-path** | `<g data-textpath-g>` wrapping `<text data-textpath>` with `<textPath>` child | Separate flow | `data-textpath` |
+| **Params label** | `<text data-params-label="true" data-column-count="3">` with `<tspan>` children | Left panel tool (dev flag `isParamsLabelDev`) | `data-params-label="true"` |
+
+A params label renders the params of the layer it sits on and is regenerated before a task is
+sent, so its text is never edited by hand: double-clicking it refreshes the content instead of
+entering the text editor, and TextContentBlock shows update / settings buttons in place of the
+textarea.
 
 All text content uses `\u0085` as the internal line separator (in the hidden `#text` input and `renderText` val parameter). The `<tspan>` children each hold one line's text content.
 
@@ -30,7 +37,10 @@ text/
 │   ├── setters.ts       # Attribute setters with undo support
 │   └── renderText.ts    # Rendering: renderTspan, renderFitTextTspan, renderTextPath
 ├── textactions.ts       # In-place canvas editing (cursor, selection, keyboard)
-├── createNewText.ts     # Creates new multi-line text elements
+├── createNewText.ts     # Creates new plain text elements
+├── paramsLabel/         # Params labels: layer params rendered as text
+│   ├── index.ts         # Create, render (keeps the label's size, undo), config key selection
+│   └── ParamsLabelSettings.tsx  # Key picker modal
 └── fitText.ts           # Creates new fitText elements + resize transform handler
 ```
 
@@ -47,9 +57,22 @@ text/
 | `font-style` | `italic` / `normal` | Italic toggle |
 | `letter-spacing` | `0.1em` | Letter spacing (em units) |
 | `data-line-spacing` | `1` | Line spacing multiplier |
+| `data-column-count` | `3` | Optional positive integer for row-major multi-column layout; absent means no columns |
 | `data-verti` | `true` / `false` | Vertical text mode |
 | `data-ratiofixed` | `true` / `false` | Aspect ratio lock on resize |
 | `xml:space` | `preserve` | Whitespace preservation |
+
+### Params-label-specific attributes
+
+| Attribute | Example | Description |
+|-----------|---------|-------------|
+| `data-params-label` | `true` | Marks element as a params label |
+| `data-params-label-keys` | `layerName,power,speed` | Config keys to display, `none` for none; absent means the storage default (`default-params-label-keys`), then all keys |
+
+A render keeps the label at the size it already had: the bbox is recorded before the text is
+replaced and `setSvgElemSize` stretches the label back to it afterwards, width and height
+independently. So the label stays exactly where the user put it, and the text it shows is
+distorted to fill that box rather than the box following the text.
 
 ### FitText-specific attributes
 
@@ -86,6 +109,8 @@ All functions take `(elem: SVGTextElement)` and return the attribute value:
 - `getFontSize`, `getFontWeight`, `getItalic`
 - `getLetterSpacing`, `getLineSpacing`, `getIsVertical`
 - `isFitText(elem)` — checks `data-fit-text === 'true'`
+- `isParamsLabel(elem)` — checks `data-params-label`
+- `getColumnCount(elem)` — reads `data-column-count`, `null` when absent or not a positive integer
 - `getFitTextSize(elem)` — reads `data-fit-text-size`
 - `getFitTextAlign(elem)` — reads `data-fit-text-align`, defaults to `'start'`
 - `getTextContent(elem)` — extracts text from `<tspan>` children, merging consecutive wrapped tspans (`data-wrapped="1"`) into single manual lines, joined by `\n`
@@ -116,6 +141,7 @@ After rendering, always calls `recalculateDimensions(elem)`.
 - Splits `val` by `\u0085` into lines
 - Creates/removes `<tspan>` elements to match line count
 - **Horizontal**: sets each tspan's `x` = text's `x`, `y` = text's `y` + line index * lineSpacing * fontSize
+- **Horizontal with `data-column-count`**: measures tspan widths during render, then positions rows using each column's maximum width
 - **Vertical**: sets per-character `x`/`y` positions, columns go right-to-left
 
 #### renderFitTextTspan (fitText)
@@ -175,7 +201,7 @@ The `#text` input's keyboard events are handled in `svg-editor.ts`:
 - `Escape` → `textActions.toSelectMode()`
 - `Cmd/Ctrl+C/X/V/A` → copy/cut/paste/selectAll via `textActions` methods
 
-## createNewText.ts — Multi-line Text Creation
+## createNewText.ts — Plain Text Creation
 
 `createNewText(x, y, options)` creates a `<text>` element at the given position using current font defaults from `curText`. Optionally adds to history and emits `canvasEvents.emit('addText')`.
 

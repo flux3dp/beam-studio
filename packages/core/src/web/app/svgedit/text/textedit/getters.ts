@@ -59,8 +59,22 @@ export const getLineSpacing = (elem: SVGTextElement): number => {
   return Number.parseFloat(elem.getAttribute('data-line-spacing') || '1');
 };
 
+export const getColumnCount = (elem: SVGTextElement): null | number => {
+  const value = elem.getAttribute('data-column-count');
+
+  if (value === null) return null;
+
+  const columnCount = Number(value);
+
+  return Number.isInteger(columnCount) && columnCount > 0 ? columnCount : null;
+};
+
 export const isFitText = (elem: Element): boolean => {
   return !!elem.getAttribute('data-fit-text') && !elem.getAttribute('data-textpath');
+};
+
+export const isParamsLabel = (elem: Element): boolean => {
+  return !!elem.getAttribute('data-params-label');
 };
 
 export const getFitTextSize = (elem: Element): number => {

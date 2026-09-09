@@ -9,8 +9,10 @@ const mockUngroupTempGroup = jest.fn();
 const mockMultiSelect = jest.fn();
 
 const mockToSelectMode = jest.fn();
+const mockIsEditing = { value: false };
 
 const mockRenderText = jest.fn();
+const mockRenderAllParamsLabels = jest.fn();
 
 const mockAlertPopUp = jest.fn();
 const mockAlertConfigRead = jest.fn();
@@ -18,6 +20,7 @@ const mockAlertConfigWrite = jest.fn();
 
 // svgCanvas methods
 const mockConvertToPath = jest.fn();
+const ConvertResult = { CANCEL_OPERATION: 0, CONTINUE: 2, UNSUPPORT: 1 } as const;
 
 // --- Real BatchCommand-like fake so unapply/isEmpty behavior is observable ---
 class FakeBatchCommand {
@@ -38,9 +41,9 @@ class FakeBatchCommand {
 
 jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   __esModule: true,
-  ConvertResult: { CANCEL_OPERATION: 0, CONTINUE: 2, UNSUPPORT: 1 },
+  ConvertResult,
   default: {
-    convertTextToPath: (...args: any[]) => mockFontFuncsConvertTextToPath(...args),
+    convertTextToPath: mockFontFuncsConvertTextToPath,
   },
 }));
 
@@ -55,7 +58,7 @@ const mockChangeAttribute = jest.fn((elem: Element, attrs: Record<string, null |
 });
 
 jest.mock('@core/app/svgedit/history/changeAttribute', () => ({
-  changeAttribute: (...args: any[]) => mockChangeAttribute(...(args as [Element, Record<string, string>])),
+  changeAttribute: mockChangeAttribute,
 }));
 
 jest.mock('@core/app/svgedit/history/history', () => ({
@@ -64,11 +67,11 @@ jest.mock('@core/app/svgedit/history/history', () => ({
 }));
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
-  addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
+  addCommandToHistory: mockAddCommandToHistory,
 }));
 
 jest.mock('@core/app/svgedit/history/utils/handleHistoryActionOptions', () => ({
-  handleHistoryActionOptions: (...args: any[]) => mockHandleHistoryActionOptions(...args),
+  handleHistoryActionOptions: mockHandleHistoryActionOptions,
 }));
 
 jest.mock('@core/app/svgedit/operations/delete', () => ({
@@ -80,40 +83,40 @@ jest.mock('@core/app/svgedit/operations/disassembleUse', () => jest.fn());
 jest.mock('@core/app/svgedit/selection', () => ({
   clearSelection: jest.fn(),
   getSelectedElements: jest.fn(() => []),
-  multiSelect: (...args: any[]) => mockMultiSelect(...args),
-  selectOnly: (...args: any[]) => mockSelectOnly(...args),
-  ungroupTempGroup: (...args: any[]) => mockUngroupTempGroup(...args),
+  multiSelect: mockMultiSelect,
+  selectOnly: mockSelectOnly,
+  ungroupTempGroup: mockUngroupTempGroup,
+}));
+
+jest.mock('@core/app/svgedit/text/paramsLabel', () => ({
+  renderAllParamsLabels: mockRenderAllParamsLabels,
 }));
 
 jest.mock('@core/app/svgedit/text/textactions', () => ({
   get isEditing() {
     return mockIsEditing.value;
   },
-  toSelectMode: (...args: any[]) => mockToSelectMode(...args),
+  toSelectMode: mockToSelectMode,
 }));
 
-const mockIsEditing = { value: false };
+jest.mock('@core/app/svgedit/text/textedit', () => ({ renderText: mockRenderText }));
 
-jest.mock('@core/app/svgedit/text/textedit', () => ({ renderText: (...args: any[]) => mockRenderText(...args) }));
-
-jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args: any[]) => mockAlertPopUp(...args) }));
+jest.mock('@core/app/actions/alert-caller', () => ({ popUp: mockAlertPopUp }));
 
 jest.mock('../api/alert-config', () => ({
-  read: (...args: any[]) => mockAlertConfigRead(...args),
-  write: (...args: any[]) => mockAlertConfigWrite(...args),
+  read: mockAlertConfigRead,
+  write: mockAlertConfigWrite,
 }));
 
 jest.mock('../svg-editor-helper', () => ({
   getSVGAsync: (cb: any) =>
     cb({
       Canvas: {
-        convertToPath: (...args: any[]) => mockConvertToPath(...args),
+        convertToPath: mockConvertToPath,
       },
       Edit: { utilities: { getRotationAngle: jest.fn(() => 0) } },
     }),
 }));
-
-import { ConvertResult } from '@core/app/actions/beambox/font-funcs';
 
 import { convertAllTextToPath, convertSvgToPath, convertTextOnPathToPath, convertTextToPath } from './convertToPath';
 

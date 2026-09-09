@@ -23,6 +23,7 @@ interface Options {
   fill?: string;
   fontSize?: number;
   isDefaultFont?: boolean;
+  isParamsLabel?: boolean;
   isToSelect?: boolean;
   text?: string;
 }
@@ -35,6 +36,7 @@ const createNewText = (
     fill = '#333333',
     fontSize,
     isDefaultFont = false,
+    isParamsLabel,
     isToSelect = false,
     text = '',
   }: Options = {},
@@ -44,7 +46,7 @@ const createNewText = (
 
   const newText = svgCanvas.addSvgElementFromJson({
     attr: {
-      'data-ratiofixed': true,
+      'data-ratiofixed': !isParamsLabel,
       fill,
       'fill-opacity': fill === 'none' ? modelText.fill_opacity : 1,
       'font-family': modelText.font_family,
@@ -62,6 +64,12 @@ const createNewText = (
   }) as SVGTextElement;
 
   updateElementColor(newText);
+
+  if (isParamsLabel) {
+    // Content is rendered by createParamsLabel, which knows the layer the label landed on
+    newText.setAttribute('data-params-label', 'true');
+    newText.setAttribute('data-column-count', '3');
+  }
 
   if (text) {
     textEdit.renderText(newText, text);

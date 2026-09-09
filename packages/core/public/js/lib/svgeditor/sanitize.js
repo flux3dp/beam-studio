@@ -625,6 +625,9 @@
       'data-fit-text',
       'data-fit-text-align',
       'data-fit-text-size',
+      'data-column-count',
+      'data-params-label',
+      'data-params-label-keys',
     ],
     textPath: [
       'alignment-baseline',

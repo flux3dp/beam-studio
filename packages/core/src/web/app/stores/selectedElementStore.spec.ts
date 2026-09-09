@@ -1,7 +1,9 @@
 const mockIsFitText = jest.fn();
+const mockIsParamsLabel = jest.fn();
 
 jest.mock('@core/app/svgedit/text/textedit/getters', () => ({
-  isFitText: (...args: any[]) => mockIsFitText(...args),
+  isFitText: mockIsFitText,
+  isParamsLabel: mockIsParamsLabel,
 }));
 
 import { getDerivedData, useSelectedElementStore } from './selectedElementStore';
@@ -19,6 +21,7 @@ describe('selectedElementStore', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsFitText.mockReturnValue(false);
+    mockIsParamsLabel.mockReturnValue(false);
   });
 
   describe('defaults', () => {
@@ -90,6 +93,16 @@ describe('selectedElementStore', () => {
       const data = getDerivedData(makeElem('text'));
 
       expect(data.nodeType).toBe('fit_text');
+      expect(data.nodeCategory).toBe('text');
+      expect(data.canGroup).toBe(true);
+    });
+
+    it('should treat params_label (via isParamsLabel) as text category', () => {
+      mockIsParamsLabel.mockReturnValue(true);
+
+      const data = getDerivedData(makeElem('text'));
+
+      expect(data.nodeType).toBe('params_label');
       expect(data.nodeCategory).toBe('text');
       expect(data.canGroup).toBe(true);
     });

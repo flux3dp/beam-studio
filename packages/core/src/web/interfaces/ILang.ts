@@ -2220,6 +2220,18 @@ export interface ILang {
     search: string;
     shapes: string;
   };
+  params_label: {
+    check_all: string;
+    layer_name: string;
+    placeholder: string;
+    preview_hint: string;
+    save_as_default: string;
+    settings: string;
+    update: string;
+    updated: string;
+    use_default: string;
+    use_recommended: string;
+  };
   pass_through: {
     export: string;
     exporting: string;
@@ -2835,6 +2847,7 @@ export interface ILang {
       line: string;
       multi_select: string;
       no_selection: string;
+      params_label: string;
       pass_through_object: string;
       path: string;
       polygon: string;

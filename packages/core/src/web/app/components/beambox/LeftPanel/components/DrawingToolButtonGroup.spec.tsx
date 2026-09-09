@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { isParamsLabelDev } from '@core/helpers/is-dev';
 
 const mockSetMouseMode = jest.fn();
 
@@ -48,6 +49,12 @@ jest.mock('@core/app/svgedit/selection', () => ({
   clearSelection: mockClearSelection,
 }));
 
+const mockCreateParamsLabel = jest.fn();
+
+jest.mock('@core/app/svgedit/text/paramsLabel', () => ({
+  createParamsLabel: mockCreateParamsLabel,
+}));
+
 jest.mock('./LeftPanelButtonGroup', () => {
   const MockLeftPanelButtonGroup = ({ id, options, shortcut }: any) => (
     <div data-testid="button-group" id={id} title={`${options[0].label} (${shortcut})`}>
@@ -68,6 +75,7 @@ describe('test DrawingToolButtonGroup', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useRealTimers();
+    jest.mocked(isParamsLabelDev).mockReturnValue(false);
   });
 
   test('should render correctly', () => {
@@ -138,5 +146,16 @@ describe('test DrawingToolButtonGroup', () => {
     fireEvent.click(container.querySelector('#left-PassThrough')!);
     expect(mockShowPassThrough).toHaveBeenCalledTimes(1);
     expect(mockShowPassThrough).toHaveBeenCalledWith(mockUseSelectTool);
+  });
+
+  test('should create params label', () => {
+    jest.mocked(isParamsLabelDev).mockReturnValue(true);
+
+    const { getByTitle } = render(<DrawingToolButtonGroup className="flux" />);
+
+    fireEvent.click(getByTitle('Params Label'));
+
+    expect(mockCreateParamsLabel).toHaveBeenCalledTimes(1);
+    expect(mockCreateParamsLabel).toHaveBeenCalledWith(100, 250);
   });
 });
