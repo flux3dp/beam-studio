@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { InputNumber, Radio, Tooltip } from 'antd';
 import { funnel } from 'remeda';
 
@@ -102,13 +103,16 @@ const StepSetup = (): React.JSX.Element => {
           { label: t.generate_from_contour, value: 'outline' },
           {
             disabled: pathLayers.length === 0,
-            // the option is disabled because no layer qualifies; the tooltip says so
-            label:
-              pathLayers.length === 0 ? (
-                <Tooltip title={t.no_layer_with_path}>{t.use_layer_as_cut_path}</Tooltip>
-              ) : (
-                t.use_layer_as_cut_path
-              ),
+            label: (
+              <span className={styles.optionLabel}>
+                {t.use_layer_as_cut_path}
+                {pathLayers.length === 0 && (
+                  <Tooltip title={t.no_layer_with_path}>
+                    <ExclamationCircleOutlined className={styles.hint} />
+                  </Tooltip>
+                )}
+              </span>
+            ),
             value: 'layer',
           },
         ]}

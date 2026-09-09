@@ -2311,7 +2311,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Tanda penyelarasan yang terdeteksi tidak mencukupi. Ulangi pratinjau kamera dan coba lagi.',
+      fit_error: 'Kesalahan penyesuaian (X / Y)',
       no_preview: 'Gambar pratinjau kamera tidak ditemukan. Jalankan pratinjau kamera terlebih dahulu untuk mengambil gambar material yang sudah dicetak.',
+      rotation: 'Rotasi',
+      scale: 'Skala',
       success: 'Penyelarasan selesai!',
     },
     backend_outdated: 'Firmware mesin saat ini belum mendukung Print & Cut.',

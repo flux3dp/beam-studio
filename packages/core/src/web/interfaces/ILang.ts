@@ -2252,7 +2252,10 @@ export interface ILang {
     };
     alignment: {
       detect_failed: string;
+      fit_error: string;
       no_preview: string;
+      rotation: string;
+      scale: string;
       success: string;
     };
     backend_outdated: string;

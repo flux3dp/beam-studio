@@ -2310,7 +2310,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'No se detectaron suficientes marcas de alineación. Vuelve a realizar la vista previa de la cámara e inténtalo de nuevo.',
+      fit_error: 'Error de ajuste (X / Y)',
       no_preview: 'No se encontró ninguna imagen de vista previa de la cámara. Ejecuta primero la vista previa de la cámara para capturar el material impreso.',
+      rotation: 'Rotación',
+      scale: 'Escala',
       success: '¡Alineación completada!',
     },
     backend_outdated: 'El firmware actual de la máquina aún no es compatible con Print & Cut.',

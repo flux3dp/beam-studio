@@ -2311,7 +2311,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Non sono stati rilevati marcatori di allineamento sufficienti. Ripeti l’anteprima fotocamera e riprova.',
+      fit_error: 'Errore di allineamento (X / Y)',
       no_preview: 'Nessuna immagine di anteprima fotocamera trovata. Esegui prima l’anteprima fotocamera per acquisire il materiale stampato.',
+      rotation: 'Rotazione',
+      scale: 'Scala',
       success: 'Allineamento completato!',
     },
     backend_outdated: 'Il firmware attuale della macchina non supporta ancora Print & Cut.',

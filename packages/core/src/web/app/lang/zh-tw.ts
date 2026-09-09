@@ -2311,7 +2311,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: '偵測到的定位標記不足，請重新執行相機預覽後再試一次。',
+      fit_error: '誤差 (X / Y)',
       no_preview: '找不到相機預覽影像，請先執行相機預覽拍攝列印好的材料。',
+      rotation: '旋轉',
+      scale: '縮放',
       success: '對位完成！',
     },
     backend_outdated: '目前的機器韌體尚不支援精準對位功能。',

@@ -53,8 +53,10 @@ export const markBaseRadiusPx = (MARK_BASE_DIAMETER_MM / 2) * dpmm;
  */
 export const REFINE_PATCH_SIZE_PX = 2 * MARK_DIAMETER_MM * dpmm;
 
-/** Maximum rms fit error between transformed expected marks and detected blobs, in canvas units (px) */
-export const MATCH_TOLERANCE = 2 * dpmm;
+/** Floor of the mark fit tolerance, in mm */
+export const MATCH_TOLERANCE_MM = 2;
+/** Mark fit tolerance as a fraction of the mark rectangle's side length (camera distortion grows with the design) */
+export const MATCH_TOLERANCE_RATIO = 0.02;
 
 /**
  * The smart mark sweep assumes the sheet is placed with little rotation;

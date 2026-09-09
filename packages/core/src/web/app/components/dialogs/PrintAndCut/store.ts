@@ -4,12 +4,12 @@ import { combine } from 'zustand/middleware';
 import type { PaperSelection, PrintAndCutStep } from './constants';
 import { printAndCutSteps } from './constants';
 import type { ResumeConfig } from './resumeConfigStore';
-import type { AlignProgress } from './utils/alignProgress';
+import type { AlignProgress } from './utils/align/alignProgress';
 import type { CanvasContents } from './utils/collectContents';
 import type { MarkPosition } from './utils/layout';
 import { computeFullBBox, computeMarks } from './utils/layout';
 import type { PrintingContentsElementSnapshot, PrintingContentsMatch } from './utils/printingContentsSnapshot';
-import type { Point } from './utils/rigidTransform';
+import type { Point, RigidTransform } from './utils/rigidTransform';
 
 export interface BBox {
   height: number;
@@ -28,6 +28,12 @@ export interface AlignmentTransform {
 
 /** State produced by the camera capture in the align step */
 interface AlignState {
+  /**
+   * Latest mark fit, for the align step's info readout. Unlike
+   * alignmentTransform it is also set when the fit missed the tolerance, so
+   * the user can see the rotation/scale/error of a rejected detection
+   */
+  alignmentFit: null | RigidTransform;
   /** Rigid transform fitted to the detected marks in the align step; null until detected */
   alignmentTransform: AlignmentTransform | null;
   /** Progress of the align step's camera flow; null while it is not running */
@@ -117,6 +123,7 @@ interface CanvasState extends SheetSetupState {
 type State = AlignState & CanvasState;
 
 const initialState: State = {
+  alignmentFit: null,
   alignmentTransform: null,
   alignProgress: null,
   cameraImageUrl: null,
@@ -185,6 +192,7 @@ export const usePrintAndCutStore = create(
       if (index > 0) set({ step: printAndCutSteps[index - 1] });
     },
     reset: (): void => set(initialState),
+    setAlignmentFit: (alignmentFit: null | RigidTransform): void => set({ alignmentFit }),
     setAlignmentTransform: (alignmentTransform: AlignmentTransform | null): void => set({ alignmentTransform }),
     setAlignProgress: (alignProgress: AlignProgress | null): void =>
       set((state) => ({

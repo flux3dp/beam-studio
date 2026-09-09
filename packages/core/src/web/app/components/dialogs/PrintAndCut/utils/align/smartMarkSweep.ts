@@ -4,12 +4,18 @@ import previewModeController from '@core/app/actions/beambox/preview-mode-contro
 import workareaManager from '@core/app/svgedit/workarea';
 import shortcuts from '@core/helpers/shortcuts';
 
-import { MARK_DIAMETER_MM, markRadiusPx, MATCH_TOLERANCE, MAX_SMART_ANGLE_RAD } from '../constants';
+import { MARK_DIAMETER_MM, markRadiusPx, MAX_SMART_ANGLE_RAD } from '../../constants';
+import type { Point } from '../rigidTransform';
+import {
+  applyRigidTransform,
+  distance,
+  exceedsTolerance,
+  fitRigidTransform,
+  getMatchTolerance,
+} from '../rigidTransform';
 
 import { reportAlignProgress } from './alignProgress';
-import { detectMarkBlobs } from './detectMarkBlobs';
-import type { Point } from './rigidTransform';
-import { applyRigidTransform, distance, fitRigidTransform } from './rigidTransform';
+import { detectMarkBlobs } from './detectMarks';
 
 /**
  * Search radius around a translation-only prediction: must tolerate the error a
@@ -357,7 +363,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
       SINGLE_PRIORITY.map((index) => confirmed.get(index)!),
     );
 
-    if (fit.residual > MATCH_TOLERANCE || Math.abs(fit.angle) > MAX_SMART_ANGLE_RAD) {
+    if (exceedsTolerance(fit, getMatchTolerance(expectedMarks)) || Math.abs(fit.angle) > MAX_SMART_ANGLE_RAD) {
       refuted.add(hypothesis.key);
 
       return null;

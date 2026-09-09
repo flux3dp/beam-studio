@@ -2311,7 +2311,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Nie wykryto wystarczającej liczby znaczników wyrównania. Wykonaj ponownie podgląd kamery i spróbuj jeszcze raz.',
+      fit_error: 'Błąd dopasowania (X / Y)',
       no_preview: 'Nie znaleziono obrazu z podglądu kamery. Najpierw uruchom podgląd kamery, aby zarejestrować zadrukowany materiał.',
+      rotation: 'Obrót',
+      scale: 'Skala',
       success: 'Wyrównanie zakończone!',
     },
     backend_outdated: 'Obecne oprogramowanie układowe maszyny nie obsługuje jeszcze funkcji Print & Cut.',

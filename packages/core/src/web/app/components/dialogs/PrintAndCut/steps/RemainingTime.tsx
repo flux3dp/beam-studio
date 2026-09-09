@@ -6,7 +6,7 @@ import formatDuration from '@core/helpers/duration-formatter';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
-import type { AlignPhase } from '../utils/alignProgress';
+import type { AlignPhase } from '../utils/align/alignProgress';
 
 interface RemainingTimeProps {
   phase: AlignPhase;

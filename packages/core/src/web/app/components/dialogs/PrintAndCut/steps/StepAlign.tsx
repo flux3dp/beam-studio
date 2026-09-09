@@ -2,18 +2,20 @@ import React from 'react';
 
 import { AimOutlined, CloseCircleFilled } from '@ant-design/icons';
 import { Button, Progress } from 'antd';
+import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
+import { dpmm } from '@core/app/actions/beambox/constant';
 import useI18n from '@core/helpers/useI18n';
 import type { ILang } from '@core/interfaces/ILang';
 
 import styles from '../index.module.scss';
 import { usePrintAndCutStore } from '../store';
-import { detectAlignmentTransform } from '../utils/alignByCamera';
-import type { AlignProgress } from '../utils/alignProgress';
-import { clearAlignProgress } from '../utils/alignProgress';
-import { captureWorkareaImage } from '../utils/captureWorkareaImage';
-import { stopSmartMarkSweep } from '../utils/smartMarkSweep';
+import { alignByCamera } from '../utils/align/alignByCamera';
+import type { AlignProgress } from '../utils/align/alignProgress';
+import { clearAlignProgress } from '../utils/align/alignProgress';
+import { stopSmartMarkSweep } from '../utils/align/smartMarkSweep';
+import { exceedsTolerance, getMatchTolerance } from '../utils/rigidTransform';
 
 import ExposureControl from './ExposureControl';
 import RemainingTime from './RemainingTime';
@@ -37,9 +39,11 @@ const buildMessage = (
 
 const StepAlign = (): React.JSX.Element => {
   const { alert: tAlert, print_and_cut: t } = useI18n();
+  const alignmentFit = usePrintAndCutStore((state) => state.alignmentFit);
   const alignProgress = usePrintAndCutStore((state) => state.alignProgress);
   const isProcessing = usePrintAndCutStore((state) => state.isProcessing);
   const markPositions = usePrintAndCutStore((state) => state.markPositions);
+  const setAlignmentFit = usePrintAndCutStore((state) => state.setAlignmentFit);
   const setAlignmentTransform = usePrintAndCutStore((state) => state.setAlignmentTransform);
   const setCameraImageUrl = usePrintAndCutStore((state) => state.setCameraImageUrl);
   const setDetectedMarkCenters = usePrintAndCutStore((state) => state.setDetectedMarkCenters);
@@ -50,29 +54,12 @@ const StepAlign = (): React.JSX.Element => {
     // a new capture invalidates a previous alignment; the capture also clears
     // the stale background (revoking its url), so drop our reference too
     setAlignmentTransform(null);
+    setAlignmentFit(null);
     setCameraImageUrl(null);
     setDetectedMarkCenters(null);
     try {
-      // 1. capture: show the sweep progressively while the machine is still
-      // capturing; the smart sweep stops early once it has found all the marks
-      const capture = await captureWorkareaImage({
-        expectedMarks: markPositions.map(({ cx, cy }) => ({ x: cx, y: cy })),
-        onProgress: setCameraImageUrl,
-      });
+      const transform = await alignByCamera();
 
-      if (!capture) return;
-
-      setCameraImageUrl(capture.url);
-
-      if (capture.stopped) return;
-
-      // 2. detect the marks, refine each with a centered retake, redetect
-      const transform = await detectAlignmentTransform({
-        detectedMarks: capture.detectedMarks,
-        onPreviewUpdate: setCameraImageUrl,
-      });
-
-      // 3. apply
       if (transform) {
         const { angle, tx, ty } = transform;
 
@@ -92,6 +79,25 @@ const StepAlign = (): React.JSX.Element => {
         {t.preview_and_align}
       </Button>
       <ExposureControl />
+      {alignmentFit && !alignProgress && (
+        <div className={styles.fitInfo}>
+          <span>{t.alignment.rotation}</span>
+          <span>{((alignmentFit.angle * 180) / Math.PI).toFixed(2)}°</span>
+          <span>{t.alignment.scale}</span>
+          <span>{(alignmentFit.scale * 100).toFixed(1)}%</span>
+          <span>{t.alignment.fit_error}</span>
+          <span
+            className={classNames({
+              [styles.error]: exceedsTolerance(
+                alignmentFit,
+                getMatchTolerance(markPositions.map(({ cx, cy }) => ({ x: cx, y: cy }))),
+              ),
+            })}
+          >
+            {(alignmentFit.residualX / dpmm).toFixed(2)} mm / {(alignmentFit.residualY / dpmm).toFixed(2)} mm
+          </span>
+        </div>
+      )}
       {alignProgress && (
         <div className={styles.alignProgress}>
           <Progress percent={alignProgress.percentage} showInfo={false} size="small" status="active" />

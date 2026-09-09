@@ -2311,7 +2311,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Kohdistusmerkkejä ei tunnistettu riittävästi. Ota kameran esikatselu uudelleen ja yritä uudestaan.',
+      fit_error: 'Sovitusvirhe (X / Y)',
       no_preview: 'Kameran esikatselukuvaa ei löytynyt. Suorita ensin kameran esikatselu ja kuvaa tulostettu materiaali.',
+      rotation: 'Kierto',
+      scale: 'Skaalaus',
       success: 'Kohdistus valmis!',
     },
     backend_outdated: 'Laitteen nykyinen laiteohjelmisto ei vielä tue Print & Cut -toimintoa.',

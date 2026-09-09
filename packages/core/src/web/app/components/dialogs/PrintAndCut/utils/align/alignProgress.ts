@@ -1,4 +1,4 @@
-import { usePrintAndCutStore } from '../store';
+import { usePrintAndCutStore } from '../../store';
 
 /**
  * Percentage range covered by each phase of the align step's camera flow, in
