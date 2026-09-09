@@ -188,6 +188,7 @@ export const generateAlignedCutLayer = (): void => {
   });
 
   layerManager.resync();
+  layerManager.setSelectedLayers([newLayerName]);
   selectionManager.clearSelection();
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
