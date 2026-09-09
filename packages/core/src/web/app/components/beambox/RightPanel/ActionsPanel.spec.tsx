@@ -360,6 +360,7 @@ describe('should render correctly', () => {
     expect(container.querySelector('button#sharpen')).toBeEnabled();
     expect(container.querySelector('button#invert')).toBeEnabled();
     expect(container.querySelector('button#array')).toBeEnabled();
+    expect(container.querySelector('button#replace_with')).toBeEnabled();
     expect(container.querySelector('button#crop')).toBeDisabled();
     expect(container.querySelector('button#potrace')).toBeDisabled();
   });

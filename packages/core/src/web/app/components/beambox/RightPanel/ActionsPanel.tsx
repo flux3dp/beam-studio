@@ -302,7 +302,7 @@ const ActionsPanel = ({ elem, is3d, typeOverride }: Props): React.JSX.Element =>
         replaceImage,
         <ActionPanelIcons.Replace />,
         <ActionPanelIcons.ReplaceMobile />,
-        { autoClose: false, isFullLine: true, mobileLabel: lang.replace_with_short },
+        { autoClose: false, isFullLine: true, mobileLabel: lang.replace_with_short, supportedIn3D: true },
       ),
       sharpen: renderButtons(
         'sharpen',
