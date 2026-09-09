@@ -68,6 +68,15 @@ export type TFcodeOptionalConfig = Partial<{
   engraving_erode?: number;
   expected_module?: number;
   fg: boolean;
+  /** Apply first-pulse suppression when the Promark controller starts each list. */
+  first_pulse_killer_enabled: boolean;
+  /**
+   * Inner engraving: lens focal length in mm, optical centre to the designed focal plane.
+   *
+   * Omitting it degrades the backend's refraction compensation to depth-only — the XY spread an
+   * off-axis refracted beam picks up cannot be corrected without knowing F.
+   */
+  focal_length: number;
   gc: boolean; // output gcode
   job_origin: [number, number];
   loop_compensation: number;
@@ -79,6 +88,18 @@ export type TFcodeOptionalConfig = Partial<{
    * clipping mask in [top right bottom left]
    */
   mask: [number, number, number, number];
+  /**
+   * Inner engraving: how high the workpiece's top surface sits above the focus origin, in mm.
+   *
+   * Where the beam enters the material, so the refraction compensation is impossible without it.
+   * Shape and XY position stay on the frontend; the backend also receives a separate model-Z
+   * interval for clipping.
+   */
+  material_height: number;
+  /** Inner engraving: inclusive upper model-Z bound, before refraction compensation, in mm. */
+  material_max_z: number;
+  /** Inner engraving: inclusive lower model-Z bound, before refraction compensation, in mm. */
+  material_min_z: number;
   /**
    * min engraving padding in mm
    */
@@ -92,21 +113,6 @@ export type TFcodeOptionalConfig = Partial<{
    * module offset
    */
   mof: { [key: number]: [number, number] };
-  /**
-   * Inner engraving: lens focal length in mm, optical centre to the designed focal plane.
-   *
-   * Omitting it degrades the backend's refraction compensation to depth-only — the XY spread an
-   * off-axis refracted beam picks up cannot be corrected without knowing F.
-   */
-  focal_length: number;
-  /**
-   * Inner engraving: how high the workpiece's top surface sits above the focus origin, in mm.
-   *
-   * Where the beam enters the material, so the refraction compensation is impossible without it.
-   * The only part of the material settings the backend sees — the shape and position stay on the
-   * frontend, since swiftray does no material clipping (B-10).
-   */
-  material_height: number;
   /**
    * multipass compensation
    */
@@ -145,6 +151,10 @@ export type TFcodeOptionalConfig = Partial<{
    * path travel speed
    */
   pts: number; //
+  /** Enables the backend's refraction correction for an inner-engraving job. */
+  refraction_compensation: boolean;
+  /** Refraction algorithm selected by Beam Studio. */
+  refraction_model: 'basic';
   /**
    * Inner engraving: the workpiece's refractive index n.
    *

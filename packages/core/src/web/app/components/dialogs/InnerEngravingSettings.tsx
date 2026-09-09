@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
-import { Alert, Button, Segmented } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Alert, Button, Segmented, Tooltip } from 'antd';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -57,6 +58,7 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
   /** Which point of the material the X/Y inputs refer to. A view setting, so it is not persisted. */
   const [anchor, setAnchor] = useState<Anchor>('center');
   const [shape, setShape] = useState<MaterialShape>(initial['inner-engraving-shape']);
+  const [baseHeight, setBaseHeight] = useState(initial['inner-engraving-base-height']);
   const [width, setWidth] = useState(initial['inner-engraving-width']);
   const [depth, setDepth] = useState(initial['inner-engraving-depth']);
   const [height, setHeight] = useState(initial['inner-engraving-height']);
@@ -68,11 +70,19 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
   const [safetyMargin, setSafetyMargin] = useState(initial['inner-engraving-safety-margin']);
 
   const isRound = shape !== 'box';
-  // a sphere is filled with liquid of the same refractive index up to the height, so it can never
-  // be taller than the ball itself
-  const heightMax = shape === 'sphere' ? Math.min(diameter, maxHeight) : maxHeight;
+  const isSphere = shape === 'sphere';
+  // Keep the complete sphere within the model's Z travel. Normalize on render as well as save so
+  // older preferences with no base-height constraint never present an impossible combination.
+  const normalizedBaseHeight = isSphere ? Math.min(baseHeight, Math.max(0, maxHeight - MATERIAL_SIZE_LIMIT.min)) : 0;
+  const diameterMax = isSphere
+    ? Math.max(MATERIAL_SIZE_LIMIT.min, maxHeight - normalizedBaseHeight)
+    : MATERIAL_SIZE_LIMIT.max;
+  const normalizedDiameter = isSphere ? Math.min(diameter, diameterMax) : diameter;
+  const baseHeightMax = Math.max(0, maxHeight - normalizedDiameter);
+  const sphereTop = normalizedBaseHeight + normalizedDiameter;
+  const normalizedHeight = isSphere ? Math.min(Math.max(height, sphereTop), maxHeight) : Math.min(height, maxHeight);
   // the XY footprint, which is what turns a centre into a corner and back
-  const footprint = isRound ? { depth: diameter, width: diameter } : { depth, width };
+  const footprint = isRound ? { depth: normalizedDiameter, width: normalizedDiameter } : { depth, width };
 
   const toAnchor = (center: number, size: number) => (anchor === 'center' ? center : center - size / 2);
   const toCenter = (value: number, size: number) => (anchor === 'center' ? value : value + size / 2);
@@ -96,13 +106,15 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
     // only write the fields the chosen shape actually uses, so switching shape and back keeps the
     // other shape's dimensions
     if (isRound) {
-      newState['inner-engraving-diameter'] = diameter;
+      newState['inner-engraving-diameter'] = normalizedDiameter;
     } else {
       newState['inner-engraving-width'] = width;
       newState['inner-engraving-depth'] = depth;
     }
 
-    newState['inner-engraving-height'] = Math.min(height, heightMax);
+    if (isSphere) newState['inner-engraving-base-height'] = normalizedBaseHeight;
+
+    newState['inner-engraving-height'] = normalizedHeight;
 
     useDocumentStore.getState().update(newState);
   };
@@ -126,6 +138,17 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
       precision={isInch ? 4 : 2}
       value={value}
     />
+  );
+
+  const inputLabel = (htmlFor: string, label: string, tooltip?: string) => (
+    <div className={styles.inputLabel}>
+      <label htmlFor={htmlFor}>{label}</label>
+      {tooltip && (
+        <Tooltip title={tooltip}>
+          <QuestionCircleOutlined aria-label={`${label} info`} className={styles.tooltip} />
+        </Tooltip>
+      )}
+    </div>
   );
 
   return (
@@ -166,7 +189,7 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
               <div>
                 <label htmlFor="diameter">{t.diameter}</label>
               </div>
-              <div>{lengthInput('diameter', diameter, setDiameter)}</div>
+              <div>{lengthInput('diameter', normalizedDiameter, setDiameter, { max: diameterMax })}</div>
               <div>
                 <label htmlFor="circumference">{t.circumference}</label>
               </div>
@@ -177,13 +200,13 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
                   className={styles.input}
                   id="circumference"
                   isInch={isInch}
-                  max={MATERIAL_SIZE_LIMIT.max * Math.PI}
+                  max={diameterMax * Math.PI}
                   min={MATERIAL_SIZE_LIMIT.min * Math.PI}
                   onChange={(val) => {
                     if (typeof val === 'number') setDiameter(val / Math.PI);
                   }}
                   precision={isInch ? 6 : 4}
-                  value={diameter * Math.PI}
+                  value={normalizedDiameter * Math.PI}
                 />
               </div>
             </>
@@ -199,10 +222,26 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
               <div>{lengthInput('depth', depth, setDepth)}</div>
             </>
           )}
+          {isSphere && (
+            <>
+              <div>{inputLabel('base_height', t.sphere_base_height, t.sphere_base_height_hint)}</div>
+              <div>
+                {lengthInput('base_height', normalizedBaseHeight, setBaseHeight, { max: baseHeightMax, min: 0 })}
+              </div>
+            </>
+          )}
+          <div>{inputLabel('height', t.height, isSphere ? t.sphere_height_hint : undefined)}</div>
           <div>
-            <label htmlFor="height">{t.height}</label>
+            {lengthInput('height', normalizedHeight, setHeight, {
+              max: maxHeight,
+              min: isSphere ? sphereTop : MATERIAL_SIZE_LIMIT.min,
+            })}
           </div>
-          <div>{lengthInput('height', Math.min(height, heightMax), setHeight, { max: heightMax })}</div>
+          {isSphere && (
+            <div className={styles.row}>
+              <Alert className={styles.sphereAlert} message={t.sphere_liquid_alert} showIcon type="info" />
+            </div>
+          )}
 
           <div className={styles.row}>
             <strong>{t.material_position}</strong>
@@ -268,9 +307,7 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
             </>
           )}
 
-          <div>
-            <label htmlFor="refractive_index">{t.refractive_index}</label>
-          </div>
+          <div>{inputLabel('refractive_index', t.refractive_index, t.refractive_index_hint)}</div>
           <div>
             {/* unitless: no isInch, or the value would be converted like a length */}
             <UnitInput
@@ -286,23 +323,15 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
               value={refractiveIndex}
             />
           </div>
-          <div className={styles.row}>
-            <div className={styles.hint}>{t.refractive_index_hint}</div>
-          </div>
 
           {/* the lens, not the job — but swiftray's machine settings have no field for it, so it
               rides along with the material settings that feed the same refraction compensation */}
-          <div>
-            <label htmlFor="focal_length">{t.focal_length}</label>
-          </div>
+          <div>{inputLabel('focal_length', t.focal_length, t.focal_length_hint)}</div>
           <div>
             {lengthInput('focal_length', focalLength, setFocalLength, {
               max: FOCAL_LENGTH_LIMIT.max,
               min: FOCAL_LENGTH_LIMIT.min,
             })}
-          </div>
-          <div className={styles.row}>
-            <div className={styles.hint}>{t.focal_length_hint}</div>
           </div>
         </div>
         {/* the machine cannot read its Z position, so a wrong focus ruins the whole workpiece */}

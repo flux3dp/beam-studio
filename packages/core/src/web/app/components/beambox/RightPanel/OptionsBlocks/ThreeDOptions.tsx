@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Segmented } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Button, Segmented, Switch, Tooltip } from 'antd';
 
 import type { EngravingMode } from '@core/app/constants/innerEngraving';
 import { LAYER_HEIGHT_LIMIT, POINT_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
@@ -46,6 +47,13 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
   const [params, setParams] = useState(readParams);
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationError, setGenerationError] = useState<null | string>(null);
+  const fill = elem.getAttribute('fill') || '#000000';
+  const isFilled =
+    !isPhoto &&
+    Number.parseFloat(elem.getAttribute('fill-opacity') ?? '1') !== 0 &&
+    !['#fff', '#ffffff', 'none'].includes(fill.toLowerCase());
+  const showLayerHeight = params.mode === 'line' || isFilled;
+  const showAdaptiveLayerHeight = !isPhoto && params.mode === 'line';
 
   // the selection can change without this component unmounting, and undo can change the attributes
   // underneath us
@@ -55,7 +63,15 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
 
     refresh();
     observer.observe(elem, {
-      attributeFilter: ['data-shading', STL_ATTR.layerHeight, STL_ATTR.mode, STL_ATTR.pointSpacing],
+      attributeFilter: [
+        'data-shading',
+        'fill',
+        'fill-opacity',
+        STL_ATTR.layerHeight,
+        STL_ATTR.minLayerHeight,
+        STL_ATTR.mode,
+        STL_ATTR.pointSpacing,
+      ],
       attributes: true,
     });
 
@@ -84,16 +100,27 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
     }
   };
 
-  const renderRow = (label: string, control: React.ReactNode, key: string) => (
+  const renderRow = (label: string, control: React.ReactNode, key: string, tooltip?: string) => (
     <div className={styles.row} key={key}>
-      <div className={styles.label} title={label}>
-        {label}
+      <div className={styles.label}>
+        <span title={label}>{label}</span>
+        {tooltip && (
+          <Tooltip title={tooltip}>
+            <QuestionCircleOutlined aria-label={`${label} info`} className={styles.hint} />
+          </Tooltip>
+        )}
       </div>
       <div className={styles.control}>{control}</div>
     </div>
   );
 
-  const renderLengthInput = (id: string, value: number, attr: string, limit: { max: number; min: number }) => (
+  const renderLengthInput = (
+    id: string,
+    value: number,
+    attr: string,
+    limit: { max: number; min: number },
+    isValid: (next: number) => boolean = () => true,
+  ) => (
     <UnitInput
       addonAfter={isInch ? 'in' : 'mm'}
       containerClassName={styles.input}
@@ -102,13 +129,25 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
       max={limit.max}
       min={limit.min}
       onChange={(next) => {
-        if (typeof next === 'number') update(attr, next);
+        if (typeof next === 'number' && isValid(next)) update(attr, next);
       }}
       precision={isInch ? 5 : 3}
       size="small"
       value={value}
     />
   );
+
+  const toggleAdaptiveLayerHeight = (enabled: boolean) => {
+    if (!enabled) {
+      update(STL_ATTR.minLayerHeight, '');
+
+      return;
+    }
+
+    const next = Math.max(LAYER_HEIGHT_LIMIT.min, params.layerHeight / 2);
+
+    if (next < params.layerHeight) update(STL_ATTR.minLayerHeight, next);
+  };
 
   return (
     <div className={styles.block}>
@@ -127,11 +166,51 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
           />,
           'mode',
         )}
-      {renderRow(
-        t.layer_height,
-        renderLengthInput('stl-layer-height', params.layerHeight, STL_ATTR.layerHeight, LAYER_HEIGHT_LIMIT),
-        'layer-height',
-      )}
+      {showLayerHeight &&
+        renderRow(
+          t.layer_height,
+          renderLengthInput(
+            'stl-layer-height',
+            params.layerHeight,
+            STL_ATTR.layerHeight,
+            {
+              ...LAYER_HEIGHT_LIMIT,
+              min: params.minLayerHeight
+                ? Math.min(LAYER_HEIGHT_LIMIT.max, params.minLayerHeight + LAYER_HEIGHT_LIMIT.min)
+                : LAYER_HEIGHT_LIMIT.min,
+            },
+            (next) => params.minLayerHeight === null || next > params.minLayerHeight,
+          ),
+          'layer-height',
+          params.mode === 'line' ? t.layer_height_hint_line : t.layer_height_hint_dot_fill,
+        )}
+      {showAdaptiveLayerHeight &&
+        renderRow(
+          t.adaptive_layer_height,
+          <Switch
+            checked={params.minLayerHeight !== null}
+            disabled={params.layerHeight <= LAYER_HEIGHT_LIMIT.min}
+            id="stl-adaptive-layer-height"
+            onChange={toggleAdaptiveLayerHeight}
+            size="small"
+          />,
+          'adaptive-layer-height',
+          t.adaptive_layer_height_hint,
+        )}
+      {showAdaptiveLayerHeight &&
+        params.minLayerHeight !== null &&
+        renderRow(
+          t.min_layer_height,
+          renderLengthInput(
+            'stl-min-layer-height',
+            params.minLayerHeight,
+            STL_ATTR.minLayerHeight,
+            { max: params.layerHeight - LAYER_HEIGHT_LIMIT.min, min: LAYER_HEIGHT_LIMIT.min },
+            (next) => next < params.layerHeight,
+          ),
+          'min-layer-height',
+          t.min_layer_height_hint,
+        )}
       {/* only dot mode samples the contour into points, so the spacing means nothing in line mode */}
       {params.mode === 'dot' &&
         renderRow(

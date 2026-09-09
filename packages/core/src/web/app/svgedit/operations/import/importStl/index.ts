@@ -122,6 +122,7 @@ export const insertStlGeometry = async (
   const id = svgCanvas.getNextId();
   const elem = svgCanvas.addSvgElementFromJson<SVGRectElement>({
     attr: {
+      'data-ratiofixed': true,
       fill: 'none',
       height: 0,
       id,

@@ -3,8 +3,8 @@
  *
  * All values are in **mm**, matching the other document settings (the scene converts to its own
  * 0.1mm units at the render boundary). The material is a document setting rather than a canvas
- * object: it is not sent to swiftray (A-3 — the backend does no material clipping) and is not
- * stored in the .beam file (A-2), it only tells the user where their workpiece is.
+ * object. Its optical height and engravable Z interval are derived into Swiftray export params;
+ * shape and XY placement remain frontend-only.
  */
 
 export const MATERIAL_SHAPES = ['box', 'cylinder', 'sphere'] as const;
@@ -64,6 +64,7 @@ export const DEFAULT_SAFETY_MARGIN = 4;
 export const SAFETY_MARGIN_LIMIT = { max: 50, min: 0 } as const;
 
 export const DEFAULT_MATERIAL = {
+  baseHeight: 0,
   depth: 50,
   diameter: 50,
   height: 50,

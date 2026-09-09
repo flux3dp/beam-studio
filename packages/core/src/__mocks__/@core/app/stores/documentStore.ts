@@ -14,6 +14,7 @@ const state: DocumentState = {
   'extend-rotary-workarea': false,
   'frame-before-start': false,
   'inner-engraving': false,
+  'inner-engraving-base-height': DEFAULT_MATERIAL.baseHeight,
   'inner-engraving-depth': DEFAULT_MATERIAL.depth,
   'inner-engraving-diameter': DEFAULT_MATERIAL.diameter,
   'inner-engraving-focal-length': DEFAULT_FOCAL_LENGTH,

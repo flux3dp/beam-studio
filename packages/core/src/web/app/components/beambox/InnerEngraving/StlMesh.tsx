@@ -15,6 +15,7 @@ import { updateProjectionRect } from './utils/projection';
 import { ROTATION_SNAP_RAD, snapPosition, snapScale, TRANSLATION_SNAP } from './utils/snapping';
 import { getBaseSize, getMeshCenter, setTransform } from './utils/transform';
 import { useObjectLayerState } from './utils/useLayerColor';
+import useRatioLocked from './utils/useRatioLocked';
 import { useViewStore } from './viewStore';
 
 /** Below this the object is invisible and the transform is not invertible; scaling stops here. */
@@ -47,7 +48,8 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   const objectRef = useRef<Mesh | Points>(null);
   const { geometry, id, transform } = object;
   const { flip, position, rotation, scale } = transform;
-  const { ratioLocked, transformMode } = useViewStore();
+  const transformMode = useViewStore((state) => state.transformMode);
+  const ratioLocked = useRatioLocked(id);
   const { color, isLocked, isVisible } = useObjectLayerState(id);
   const [textureSource, setTextureSource] = useState(object.textureUrl);
   const [texture, setTexture] = useState<null | Texture>(null);

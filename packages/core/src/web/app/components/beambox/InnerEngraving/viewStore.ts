@@ -94,7 +94,8 @@ export const getDefaultZoomLevel = (): number => {
   if (!canvasHeight) return 0;
 
   const { height, width } = workareaManager;
-  const extent = Math.max(width, height, getMaterial().height);
+  const material = getMaterial();
+  const extent = Math.max(width, height, material.height, material.maxZ);
 
   return canvasHeight / (extent * VIEW_HEIGHT_RATIO);
 };
@@ -124,16 +125,10 @@ interface ViewStore {
   /** Called when the user drives the camera by hand, dropping out of whatever preset was active. */
   markViewCustom: () => void;
   projection: ProjectionMode;
-  /**
-   * Uniform scaling. Lives here rather than on the object because it is a tool mode, not a property
-   * of the model: it has to constrain the scale gizmo as well as the panel's size inputs.
-   */
-  ratioLocked: boolean;
   requestView: (preset: Exclude<ViewPreset, 'custom'>) => void;
   /** A zoom asked for from outside the canvas. `version` so asking for the current value still applies. */
   requestZoom: (zoomLevel: number) => void;
   setProjection: (projection: ProjectionMode) => void;
-  setRatioLocked: (locked: boolean) => void;
   setTransformMode: (mode: TransformMode) => void;
   /** Published by the canvas so the zoom control has something to display. */
   setZoomLevel: (zoomLevel: number) => void;
@@ -157,7 +152,6 @@ export const useViewStore = create<ViewStore>((set) => ({
   markViewCustom: () =>
     set((state) => (state.view.preset === 'custom' ? state : { view: { ...state.view, preset: 'custom' } })),
   projection: 'perspective',
-  ratioLocked: true,
   requestView: (preset) => set((state) => ({ view: { preset, version: state.view.version + 1 } })),
   requestZoom: (zoomLevel) => set((state) => ({ zoomRequest: { version: state.zoomRequest.version + 1, zoomLevel } })),
   // deliberately does not touch `view`: the camera keeps its pose across the swap (ViewController
@@ -165,7 +159,6 @@ export const useViewStore = create<ViewStore>((set) => ({
   // bump the version to force a snap back to a named view, which was a way of coping with the pose
   // being lost — and it threw away any camera the user had orbited to by hand
   setProjection: (projection) => set({ projection }),
-  setRatioLocked: (ratioLocked) => set({ ratioLocked }),
   setTransformMode: (transformMode) => set({ transformMode }),
   setZoomLevel: (zoomLevel) => set({ zoomLevel }),
   transformMode: 'translate',

@@ -10,7 +10,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import Progress from '@core/app/actions/progress-caller';
-import { getMaterialHeightMm } from '@core/app/components/beambox/InnerEngraving/utils/material';
+import { getMaterialHeightMm, getMaterialZRangeMm } from '@core/app/components/beambox/InnerEngraving/utils/material';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -275,10 +275,20 @@ export const getExportOpt = async (
   // surface. Gated on the mode rather than on the presence of STL objects, because these describe
   // the material and the optics, not the artwork — a document in this mode has no other kind of job
   if (isInnerEngravingActive()) {
+    const materialZRange = getMaterialZRangeMm();
+
+    config.refraction_compensation = true;
+    config.refraction_model = 'basic';
     config.refractive_index = documentState['inner-engraving-refractive-index'];
     config.material_height = getMaterialHeightMm();
+    config.material_min_z = materialZRange.min;
+    config.material_max_z = materialZRange.max;
     config.focal_length = documentState['inner-engraving-focal-length'];
   }
+
+  // Developer opt-in. Omit the parameter unless explicitly enabled so older backends keep their
+  // default behavior and do not have to accept a new CLI flag for ordinary jobs.
+  if (storage.get('first_pulse_killer_enabled') === true) config.first_pulse_killer_enabled = true;
 
   if (globalPreference['vector_speed_constraint']) {
     const vectorSpeedLimit = (autoFeeder && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;

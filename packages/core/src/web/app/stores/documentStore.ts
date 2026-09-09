@@ -58,7 +58,9 @@ const getInitDocumentStore = (): DocumentState => {
     'extend-rotary-workarea': preference['extend-rotary-workarea'],
     'frame-before-start': preference['frame-before-start'],
     'inner-engraving': isInnerEngravingEnabled,
-    // the material is a pure document setting: not sent to swiftray, not stored in the .beam file
+    // material settings are document-local preferences; selected values are converted into the
+    // refraction and engravable-Z parameters sent to swiftray during export
+    'inner-engraving-base-height': preference['inner-engraving-base-height'] ?? 0,
     'inner-engraving-depth': preference['inner-engraving-depth'],
     'inner-engraving-diameter': preference['inner-engraving-diameter'],
     'inner-engraving-focal-length': preference['inner-engraving-focal-length'],

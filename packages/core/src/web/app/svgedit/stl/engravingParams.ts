@@ -24,6 +24,8 @@ getSVGAsync((globalSVG) => {
  */
 export interface StlEngravingParams {
   layerHeight: number;
+  /** `null` keeps fixed-height slicing; a positive value enables adaptive slicing. */
+  minLayerHeight: null | number;
   mode: EngravingMode;
   pointSpacing: number;
 }
@@ -35,9 +37,17 @@ const readPositive = (value: null | string, fallback: number): number => {
   return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
 };
 
+/** A positive number from an opt-in attribute, or null when the feature is disabled. */
+const readOptionalPositive = (value: null | string): null | number => {
+  const parsed = Number(value);
+
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
+};
+
 export const getStlEngravingParams = (elem: Element): StlEngravingParams => {
   return {
     layerHeight: readPositive(elem.getAttribute(STL_ATTR.layerHeight), DEFAULT_LAYER_HEIGHT),
+    minLayerHeight: readOptionalPositive(elem.getAttribute(STL_ATTR.minLayerHeight)),
     mode: elem.getAttribute(STL_ATTR.mode) === 'dot' ? 'dot' : 'line',
     pointSpacing: readPositive(elem.getAttribute(STL_ATTR.pointSpacing), DEFAULT_POINT_SPACING),
   };

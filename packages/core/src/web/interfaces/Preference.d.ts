@@ -24,13 +24,15 @@ export type DocumentState = {
   'extend-rotary-workarea': boolean;
   'frame-before-start': boolean;
   'inner-engraving': boolean;
+  /** Height from the work platform to the sphere's lowest point, in mm. Sphere only. */
+  'inner-engraving-base-height': number;
   /** Material depth (Y) in mm, box only. */
   'inner-engraving-depth': number;
   /** Material diameter in mm, cylinder and sphere only. */
   'inner-engraving-diameter': number;
   /** Lens focal length in mm. A machine property, but swiftray has nowhere else to receive it. */
   'inner-engraving-focal-length': number;
-  /** Material height (Z) in mm. For a sphere this is the liquid level, capped at the diameter. */
+  /** Material height (Z) in mm. For a sphere this is the liquid surface height above the platform. */
   'inner-engraving-height': number;
   'inner-engraving-refractive-index': number;
   /** How far engraving keeps away from the material surfaces, in mm. */

@@ -36,7 +36,7 @@ export interface EngravableBox {
  * put engraving in mid-air. Conservative on purpose — this feeds the safety check.
  */
 const getInsetHalfExtents = (material: Material, margin: number): { x: number; y: number; z: number } => {
-  const halfHeight = material.height / 2 - margin;
+  const halfHeight = (material.maxZ - material.minZ) / 2 - margin;
 
   if (material.shape === 'box') {
     return { x: material.width / 2 - margin, y: material.depth / 2 - margin, z: halfHeight };
@@ -49,10 +49,10 @@ const getInsetHalfExtents = (material: Material, margin: number): { x: number; y
     return { x: radius / Math.SQRT2, y: radius / Math.SQRT2, z: halfHeight };
   }
 
-  // sphere: largest cube inscribed in the ball, then still bounded by the liquid level
+  // sphere: largest cube inscribed in the ball
   const half = radius / Math.sqrt(3);
 
-  return { x: half, y: half, z: Math.min(half, halfHeight) };
+  return { x: half, y: half, z: half };
 };
 
 export const getEngravableBoxFrom = (
@@ -62,20 +62,21 @@ export const getEngravableBoxFrom = (
 ): EngravableBox => {
   const margin = marginMm * MM_TO_SCENE;
   const inset = getInsetHalfExtents(material, margin);
-  const [cx, cy] = material.center;
-  // the sphere's inscribed cube is centred on the ball, every other shape on its own centre
-  const cz = material.shape === 'sphere' ? material.width / 2 : material.height / 2;
+  const [cx, cy, cz] = material.center;
+  // The optical medium must cover the model. Normally the sphere dialog enforces this, but keeping
+  // it as an intersection here makes older or externally edited preferences safe as well.
+  const maxMaterialZ = Math.min(material.maxZ, material.height);
 
   // intersect with the work area in XY; Z is unbounded by the machine here, the material is the limit
   const min: [number, number, number] = [
     Math.max(cx - inset.x, 0),
     Math.max(cy - inset.y, 0),
-    Math.max(cz - inset.z, margin),
+    Math.max(cz - inset.z, material.minZ + margin),
   ];
   const max: [number, number, number] = [
     Math.min(cx + inset.x, workarea.width),
     Math.min(cy + inset.y, workarea.height),
-    Math.min(cz + inset.z, material.height - margin),
+    Math.min(cz + inset.z, maxMaterialZ - margin),
   ];
   const [width, depth, height] = [max[0] - min[0], max[1] - min[1], max[2] - min[2]];
 

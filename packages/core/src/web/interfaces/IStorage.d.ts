@@ -36,6 +36,8 @@ export interface Storage {
   dockviewLayout: string;
   'elements-history': History[];
   'enable-sentry': boolean | null;
+  /** Developer opt-in for applying first-pulse suppression to generated Promark jobs. */
+  first_pulse_killer_enabled: boolean;
   'flux-rsa-key': string;
   'font-history': string[];
   /** font name to display name */

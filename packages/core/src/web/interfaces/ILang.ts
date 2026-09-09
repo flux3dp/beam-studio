@@ -1755,6 +1755,8 @@ export interface ILang {
     reading_file: string;
   };
   inner_engraving_settings: {
+    adaptive_layer_height: string;
+    adaptive_layer_height_hint: string;
     adjust_hint: string;
     anchor: string;
     bottom_left: string;
@@ -1775,9 +1777,13 @@ export interface ILang {
     generate_test_point_cloud?: string;
     height: string;
     layer_height: string;
+    layer_height_hint_dot_fill: string;
+    layer_height_hint_line: string;
     material_position: string;
     material_shape: string;
     material_size: string;
+    min_layer_height: string;
+    min_layer_height_hint: string;
     mode_dot: string;
     mode_line: string;
     no_engravable_area: string;
@@ -1793,6 +1799,10 @@ export interface ILang {
     shape_cylinder: string;
     shape_sphere: string;
     size: string;
+    sphere_base_height: string;
+    sphere_base_height_hint: string;
+    sphere_height_hint: string;
+    sphere_liquid_alert: string;
     title: string;
     width: string;
   };

@@ -15,10 +15,19 @@
 
   .label {
     @include mixins.option-label();
+    display: flex;
+    align-items: center;
+    gap: 4px;
     // the label yields first when the panel is dragged to its 260px minimum
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .hint {
+    flex: 0 0 auto;
+    color: #999;
+    cursor: help;
   }
 
   .control {
@@ -28,7 +37,7 @@
 
 /** antd's default InputNumber width ignores the row, so the field has to be sized here. */
 .input {
-  width: 96px;
+  width: 140px;
 
   :global(.ant-input-number) {
     width: 100%;

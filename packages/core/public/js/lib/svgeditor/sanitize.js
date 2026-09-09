@@ -539,6 +539,7 @@
       'data-stl-matrix',
       'data-stl-transform',
       'data-stl-layer-height',
+      'data-stl-min-layer-height',
       'data-stl-mode',
       'data-stl-point-spacing',
       'data-stl-source',

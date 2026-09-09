@@ -1,5 +1,11 @@
+@use '@core/styles/mixins' as mixins;
+
 .container {
+  box-sizing: border-box;
+  @include mixins.viewport-size(70, $property: max-height);
   margin: 28px 0 0;
+  overflow-y: auto;
+  padding-right: 4px;
 
   .table {
     display: grid;
@@ -10,7 +16,7 @@
     align-items: center;
 
     .input {
-      width: 120px;
+      width: 140px;
     }
 
     .row {
@@ -25,6 +31,21 @@
       color: #999;
       font-size: 12px;
       line-height: 1.5;
+    }
+
+    .inputLabel {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tooltip {
+      color: #999;
+      cursor: help;
+    }
+
+    .sphereAlert {
+      width: 100%;
     }
 
     .sub-items {

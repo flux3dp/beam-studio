@@ -76,6 +76,12 @@
   // colour comes from AXIS_COLORS, matching three.js's axes
 }
 
+.actionButton {
+  :global(.ant-btn-icon) {
+    font-size: 18px;
+  }
+}
+
 .flips {
   display: flex;
   gap: 4px;

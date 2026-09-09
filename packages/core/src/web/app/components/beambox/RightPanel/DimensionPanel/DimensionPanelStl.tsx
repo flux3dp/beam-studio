@@ -1,11 +1,12 @@
 import React, { useMemo } from 'react';
 
-import { UndoOutlined } from '@ant-design/icons';
+import { AimOutlined, UndoOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Tooltip } from 'antd';
 
 import { AXIS_COLORS } from '@core/app/components/beambox/InnerEngraving/constants';
 import { MM_TO_SCENE } from '@core/app/components/beambox/InnerEngraving/utils/coordinates';
 import { getBaseSize, setTransform } from '@core/app/components/beambox/InnerEngraving/utils/transform';
+import useRatioLocked from '@core/app/components/beambox/InnerEngraving/utils/useRatioLocked';
 import { useViewStore } from '@core/app/components/beambox/InnerEngraving/viewStore';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
@@ -13,7 +14,9 @@ import type { StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './DimensionPanelStl.module.scss';
 import StlAdjustInput from './StlAdjustInput';
@@ -23,6 +26,12 @@ const AXIS_LABELS = ['X', 'Y', 'Z'] as const;
 const RAD_TO_DEG = 180 / Math.PI;
 /** A size of exactly 0 cannot be turned back into a scale, and the object would vanish. */
 const MIN_SIZE = 0.01;
+
+let svgCanvas: ISVGCanvas;
+
+getSVGAsync((globalSVG) => {
+  svgCanvas = globalSVG.Canvas;
+});
 
 interface AxisInputOpts {
   addonAfter?: string;
@@ -61,8 +70,10 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
     inner_engraving_settings: t,
   } = useI18n();
   const object = useStlStore((state) => state.objects[id]);
-  const { ratioLocked, setRatioLocked } = useViewStore();
+  const setTransformMode = useViewStore((state) => state.setTransformMode);
+  const transformMode = useViewStore((state) => state.transformMode);
   const isInch = useStorageStore((state) => state.isInch);
+  const ratioLocked = useRatioLocked(id);
   const baseSize = useMemo(() => (object ? getBaseSize(object.geometry) : null), [object]);
 
   if (!object || !baseSize) return null;
@@ -134,9 +145,38 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
   // reset that moved the object somewhere it has never been would not read as a reset
   const resetPosition = () => apply({ position: [...object.initialTransform.position] });
 
+  const toggleRatioLocked = () => {
+    const elem = document.getElementById(id);
+
+    if (elem) svgCanvas.changeSelectedAttribute('data-ratiofixed', String(!ratioLocked), [elem]);
+  };
+
   const renderReset = (buttonId: string, onClick: () => void) => (
     <Tooltip title={t.reset}>
-      <Button icon={<UndoOutlined />} id={buttonId} onClick={onClick} size="small" type="text" />
+      <Button
+        className={styles.actionButton}
+        color="default"
+        icon={<UndoOutlined />}
+        id={buttonId}
+        onClick={onClick}
+        size="small"
+        variant="text"
+      />
+    </Tooltip>
+  );
+
+  const renderTransformMode = (mode: typeof transformMode, title: string) => (
+    <Tooltip title={title}>
+      <Button
+        aria-label={title}
+        className={styles.actionButton}
+        color={transformMode === mode ? 'blue' : 'default'}
+        icon={<AimOutlined />}
+        id={`stl-transform-${mode}`}
+        onClick={() => setTransformMode(mode)}
+        size="small"
+        variant="text"
+      />
     </Tooltip>
   );
 
@@ -222,7 +262,10 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
               precision: lengthPrecision,
             },
           ),
-          renderReset('stl-position-reset', resetPosition),
+          <>
+            {renderReset('stl-position-reset', resetPosition)}
+            {renderTransformMode('translate', t.position)}
+          </>,
         )}
         {renderSection(
           t.size,
@@ -242,13 +285,11 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
             },
           ),
           <>
-            {/* the lock is a tool mode, not a property of this object: it also constrains the scale
-                gizmo on the canvas */}
             <Tooltip title={ratioLocked ? tObject.unlock_aspect : tObject.lock_aspect}>
               <Button
                 icon={ratioLocked ? <DimensionPanelIcons.Locked /> : <DimensionPanelIcons.Unlocked />}
                 id="stl-ratio-lock"
-                onClick={() => setRatioLocked(!ratioLocked)}
+                onClick={toggleRatioLocked}
                 size="small"
                 type="text"
               />
@@ -256,17 +297,21 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
             {/* back to the size the object was imported at, which is not the STL file's own size
                 when import had to shrink it to fit the engravable area */}
             {renderReset('stl-size-reset', () => apply({ scale: [...object.initialTransform.scale] }))}
+            {renderTransformMode('scale', t.size)}
           </>,
         )}
         {renderSection(
-          `${t.rotation} (${t.euler_order})`,
+          t.rotation,
           renderAxisInputs(
             'stl-rotation',
             rotation.map((value) => value * RAD_TO_DEG),
             changeRotation,
             { addonAfter: '°', adjust: adjustRotation, adjustPlaceholder: '±', precision: 2 },
           ),
-          renderReset('stl-rotation-reset', () => apply({ rotation: [...object.initialTransform.rotation] })),
+          <>
+            {renderReset('stl-rotation-reset', () => apply({ rotation: [...object.initialTransform.rotation] }))}
+            {renderTransformMode('rotate', t.rotation)}
+          </>,
         )}
         {renderSection(
           t.flip,

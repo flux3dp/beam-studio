@@ -16,8 +16,12 @@ export interface Material {
   center: [number, number, number];
   /** Y extent of the bounding box. */
   depth: number;
-  /** Z extent. For a sphere this is the liquid level, never more than the diameter. */
+  /** Optical material surface height above the work platform. For a sphere, this is the liquid level. */
   height: number;
+  /** Highest engravable model Z. For a sphere this is `minZ + diameter`. */
+  maxZ: number;
+  /** Lowest engravable model Z. Non-spherical materials always start at the platform. */
+  minZ: number;
   shape: MaterialShape;
   /** X extent of the bounding box. For a round shape this equals `depth` (the diameter). */
   width: number;
@@ -26,6 +30,7 @@ export interface Material {
 }
 
 const toMaterial = (state: {
+  baseHeight: number;
   depth: number;
   diameter: number;
   height: number;
@@ -35,18 +40,22 @@ const toMaterial = (state: {
   y: number;
 }): Material => {
   const isRound = state.shape !== 'box';
+  const isSphere = state.shape === 'sphere';
   const width = (isRound ? state.diameter : state.width) * MM_TO_SCENE;
   const depth = (isRound ? state.diameter : state.depth) * MM_TO_SCENE;
-  // a sphere is filled to the liquid level, which cannot be above the top of the ball
-  const height = (state.shape === 'sphere' ? Math.min(state.height, state.diameter) : state.height) * MM_TO_SCENE;
+  const height = state.height * MM_TO_SCENE;
+  const minZ = (isSphere ? state.baseHeight : 0) * MM_TO_SCENE;
+  const maxZ = minZ + (isSphere ? width : height);
   // the store positions the material by its centre, the geometry below wants the min corner
   const x = state.x * MM_TO_SCENE - width / 2;
   const y = state.y * MM_TO_SCENE - depth / 2;
 
   return {
-    center: [x + width / 2, y + depth / 2, height / 2],
+    center: [x + width / 2, y + depth / 2, (minZ + maxZ) / 2],
     depth,
     height,
+    maxZ,
+    minZ,
     shape: state.shape,
     width,
     x,
@@ -55,6 +64,7 @@ const toMaterial = (state: {
 };
 
 const select = (state: ReturnType<typeof useDocumentStore.getState>) => ({
+  baseHeight: state['inner-engraving-base-height'],
   depth: state['inner-engraving-depth'],
   diameter: state['inner-engraving-diameter'],
   height: state['inner-engraving-height'],
@@ -74,8 +84,14 @@ export const getMaterial = (): Material => toMaterial(select(useDocumentStore.ge
  * How high the material's top surface sits above the focus origin, in mm.
  *
  * What swiftray needs for the refraction compensation — the beam enters the workpiece there, so
- * without it there is nothing to measure the optical path against. Read through here rather than
- * off `inner-engraving-height` directly, so a sphere still reports its liquid level rather than a
- * height that could exceed the ball.
+ * without it there is nothing to measure the optical path against. For a sphere this is the liquid
+ * surface rather than the ball's top.
  */
 export const getMaterialHeightMm = (): number => getMaterial().height / MM_TO_SCENE;
+
+/** The model-space Z interval the backend may engrave, in mm. */
+export const getMaterialZRangeMm = (): { max: number; min: number } => {
+  const material = getMaterial();
+
+  return { max: material.maxZ / MM_TO_SCENE, min: material.minZ / MM_TO_SCENE };
+};

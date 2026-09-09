@@ -36,15 +36,16 @@ const DEFAULT_SIZE = 300;
 /** Breathing room around the fitted content, as a fraction of its size. */
 const PADDING_RATIO = 1.08;
 
-const getMaterialGeometry = ({ depth, height, shape, width }: Material) =>
+const getMaterialGeometry = ({ depth, height, maxZ, minZ, shape, width }: Material) =>
   match(shape)
     .with('box', () => new BoxGeometry(width, depth, height))
     // three.js builds cylinders around Y; the mesh below stands it up onto Z
     .with('cylinder', () => new CylinderGeometry(width / 2, width / 2, height, 48))
     .with('sphere', () => {
       const radius = width / 2;
-      // filled with liquid up to `height`, so the cap above that level is not part of the workpiece
-      const thetaStart = Math.acos(Math.min(1, Math.max(-1, (height - radius) / radius)));
+      const centerZ = (minZ + maxZ) / 2;
+      // Filled with liquid up to `height`, so the cap above that level is not part of the workpiece.
+      const thetaStart = Math.acos(Math.min(1, Math.max(-1, (Math.min(height, maxZ) - centerZ) / radius)));
 
       return new SphereGeometry(radius, 48, 24, 0, Math.PI * 2, thetaStart, Math.PI - thetaStart);
     })
@@ -124,11 +125,7 @@ export const renderInnerEngravingThumbnail = (size: number = DEFAULT_SIZE): HTML
       }),
     );
 
-    materialMesh.position.set(
-      material.center[0],
-      material.center[1],
-      material.shape === 'sphere' ? material.width / 2 : material.center[2],
-    );
+    materialMesh.position.set(...material.center);
 
     if (material.shape !== 'box') materialMesh.rotation.set(Math.PI / 2, 0, 0);
 

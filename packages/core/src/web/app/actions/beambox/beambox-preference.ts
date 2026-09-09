@@ -47,6 +47,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   guide_y0: 0,
   image_downsampling: true,
   'inner-engraving': false,
+  'inner-engraving-base-height': DEFAULT_MATERIAL.baseHeight,
   'inner-engraving-depth': DEFAULT_MATERIAL.depth,
   'inner-engraving-diameter': DEFAULT_MATERIAL.diameter,
   'inner-engraving-focal-length': DEFAULT_FOCAL_LENGTH,

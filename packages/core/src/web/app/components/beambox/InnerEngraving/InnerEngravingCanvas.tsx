@@ -194,14 +194,20 @@ const Scene = () => {
     () => [width / 2, height / 2, material.height / 2],
     [height, material.height, width],
   );
-  const viewExtent = useMemo(() => Math.max(width, height, material.height), [height, material.height, width]);
+  const viewExtent = useMemo(
+    () => Math.max(width, height, material.height, material.maxZ),
+    [height, material.height, material.maxZ, width],
+  );
   const diagonal = useMemo(() => Math.hypot(width, height), [height, width]);
   const step = useAdaptiveStep(center);
   // the same two View menu items the 2D canvas answers to, so one setting means one thing in both
   const showGrids = useGlobalPreferenceStore((state) => state.show_grids);
   const showRulers = useGlobalPreferenceStore((state) => state.show_rulers);
   // walls tall enough for the workpiece, and never a degenerate zero-height box
-  const wallHeight = useMemo(() => Math.max(material.height, step), [material.height, step]);
+  const wallHeight = useMemo(
+    () => Math.max(material.height, material.maxZ, step),
+    [material.height, material.maxZ, step],
+  );
   const previewInteraction = mouseMode === 'pre_preview' || mouseMode === 'preview';
 
   useEffect(() => {
@@ -323,7 +329,11 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
   const mouseMode = useCanvasStore((state) => state.mouseMode);
   // read once rather than subscribed: this only seeds the first frame, after which the camera
   // belongs to OrbitControls and re-seeding it would yank the view out from under the user
-  const materialHeight = useMemo(() => getMaterial().height, []);
+  const materialHeight = useMemo(() => {
+    const material = getMaterial();
+
+    return Math.max(material.height, material.maxZ);
+  }, []);
   // matches ViewController's isometric preset, so the first frame is already the default view
   const viewTarget = useMemo<[number, number, number]>(
     () => [width / 2, height / 2, materialHeight / 2],

@@ -46,6 +46,8 @@ export const STL_ATTR = {
    * matrix as-is and never need to reason about units.
    */
   matrix: 'data-stl-matrix',
+  /** Minimum slice thickness in mm. A positive value opts line mode into adaptive slicing. */
+  minLayerHeight: 'data-stl-min-layer-height',
   /** `'dot'` or `'line'`. Absent means line. */
   mode: 'data-stl-mode',
   /** Distance between dots in mm, dot mode only. Absent or <= 0 falls back to the backend's default. */
