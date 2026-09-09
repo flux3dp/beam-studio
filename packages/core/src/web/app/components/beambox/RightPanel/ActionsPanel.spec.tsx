@@ -344,6 +344,7 @@ describe('should render correctly', () => {
     expect(container.querySelector('button#edit_path')).toBeDisabled();
     expect(container.querySelector('button#decompose_path')).toBeDisabled();
     expect(container.querySelector('button#offset')).toBeDisabled();
+    expect(container.querySelector('button#array')).toBeEnabled();
   });
 
   test('keeps pixel-only photo actions available in 3D', () => {
@@ -354,8 +355,11 @@ describe('should render correctly', () => {
     );
 
     expect(container.querySelector('button#imageEditPanel')).toBeEnabled();
+    expect(container.querySelector('button#bg-removal')).toBeEnabled();
+    expect(container.querySelector('button#grading')).toBeEnabled();
     expect(container.querySelector('button#sharpen')).toBeEnabled();
     expect(container.querySelector('button#invert')).toBeEnabled();
+    expect(container.querySelector('button#array')).toBeEnabled();
     expect(container.querySelector('button#crop')).toBeDisabled();
     expect(container.querySelector('button#potrace')).toBeDisabled();
   });

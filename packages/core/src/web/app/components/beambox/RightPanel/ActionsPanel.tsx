@@ -152,6 +152,7 @@ const ActionsPanel = ({ elem, is3d, typeOverride }: Props): React.JSX.Element =>
   const renderArrayButton = (opts: ButtonOpts = {}): React.JSX.Element =>
     renderButtons('array', lang.array, showArrayModal, <ActionPanelIcons.Array />, <ActionPanelIcons.ArrayMobile />, {
       autoClose: false,
+      supportedIn3D: true,
       ...opts,
     });
 
