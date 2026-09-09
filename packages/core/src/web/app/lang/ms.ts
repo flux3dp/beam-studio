@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Beli di FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Akrilik',
+          acrylic: 'Akrilik lut sinar',
+          acrylic_with_film: 'Akrilik (dengan filem pelindung)',
           aluminum: 'Aluminium',
           bamboo: 'Buluh',
+          basswood_sheet: 'Kepingan kayu basswood',
           black_abs: 'ABS Hitam',
           black_acrylic: 'Akrilik Hitam',
           brass: 'Loyang',
           canvas: 'Kanvas',
           cardboard: 'Kadbod',
           cardstock: 'Kertas Tebal',
+          ceramic_tile: 'Jubin seramik',
           copper: 'Tembaga',
           cork: 'Gabus',
           denim: 'Denim',
+          eva_foam: 'Busa EVA',
           fabric: 'Kain',
+          faux_leather: 'Kulit tiruan',
+          felt: 'Felt',
+          fluorescent_acrylic: 'Akrilik pendarfluor',
           glass: 'Kaca',
+          glitter_acrylic: 'Akrilik berkilau',
           gloss_leather: 'Kulit Berkilat',
           gold: 'Emas',
           iron: 'Besi',
-          leather: 'Kulit',
+          kraft_paper: 'Kertas kraft',
+          leather: 'Kulit asli',
           mdf: 'MDF',
           metal: 'Logam',
+          mirror_acrylic: 'Akrilik cermin',
+          mixed_acrylic: 'Akrilik warna campuran',
           my_materials: 'Bahan Saya',
+
           opaque_acrylic: 'Akrilik Legap',
-          pc: 'PC',
+
+          pc: 'Polikarbonat (PC)',
+
           rubber: 'Getah',
+
           silver: 'Perak',
+
           slate: 'Batu Loh',
+
+          solid_wood: 'Kayu pepejal',
+
           stainless_steel: 'Keluli Tahan Karat',
+
           sticker: 'Pelekat',
+
           stone: 'Batu',
+
+          sublimation_acrylic: 'Akrilik sublimasi',
+
           titanium: 'Titanium',
+
+          walnut_veneer: 'Venir kayu walnut',
+
           white_abs: 'ABS Putih',
-          wood: 'Kayu',
+
+          wood: 'Papan lapis',
         },
         presets: {
           cutting: 'Pemotongan',

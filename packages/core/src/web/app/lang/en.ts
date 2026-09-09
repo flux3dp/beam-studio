@@ -387,6 +387,7 @@ const lang: ILang = {
       catalog: {
         materials: {
           acrylic: 'Transparent Acrylic',
+          acrylic_with_film: 'Acrylic (With Protective Film)',
           aluminum: 'Aluminum',
           bamboo: 'Bamboo',
           basswood_sheet: 'Basswood Sheet',

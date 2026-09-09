@@ -7,8 +7,10 @@ import { generateUserId } from '@core/app/stores/materialStore/utils';
 import useI18n from '@core/helpers/useI18n';
 import type { Material, MaterialRegion } from '@core/interfaces/IMaterial';
 
-import type { ThicknessValue } from './ThicknessInput';
-import ThicknessInput, { toVariantThickness } from './ThicknessInput';
+import type { ThicknessValue } from '../utils/inchDisplay';
+import { toVariantThickness } from '../utils/inchDisplay';
+
+import ThicknessInput from './ThicknessInput';
 
 interface AddVariantModalProps {
   material: Material;

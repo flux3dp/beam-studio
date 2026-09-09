@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Comprar en FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Acrílico',
+          acrylic: 'Acrílico transparente',
+          acrylic_with_film: 'Acrílico (con película protectora)',
           aluminum: 'Aluminio',
           bamboo: 'Bambú',
+          basswood_sheet: 'Lámina de tilo',
           black_abs: 'ABS negro',
           black_acrylic: 'Acrílico negro',
           brass: 'Latón',
           canvas: 'Lienzo',
           cardboard: 'Cartón',
           cardstock: 'Cartulina',
+          ceramic_tile: 'Azulejo cerámico',
           copper: 'Cobre',
           cork: 'Corcho',
           denim: 'Tela vaquera',
+          eva_foam: 'Espuma EVA',
           fabric: 'Tela',
+          faux_leather: 'Cuero sintético',
+          felt: 'Fieltro',
+          fluorescent_acrylic: 'Acrílico fluorescente',
           glass: 'Vidrio',
+          glitter_acrylic: 'Acrílico con purpurina',
           gloss_leather: 'Cuero brillante',
           gold: 'Oro',
           iron: 'Hierro',
-          leather: 'Cuero',
+          kraft_paper: 'Papel kraft',
+          leather: 'Cuero genuino',
           mdf: 'MDF',
           metal: 'Metal',
+          mirror_acrylic: 'Acrílico espejo',
+          mixed_acrylic: 'Acrílico de colores mezclados',
           my_materials: 'Mis materiales',
+
           opaque_acrylic: 'Acrílico opaco',
-          pc: 'PC',
+
+          pc: 'Policarbonato (PC)',
+
           rubber: 'Goma',
+
           silver: 'Plata',
+
           slate: 'Pizarra',
+
+          solid_wood: 'Madera maciza',
+
           stainless_steel: 'Acero inoxidable',
+
           sticker: 'Pegatina',
+
           stone: 'Piedra',
+
+          sublimation_acrylic: 'Acrílico para sublimación',
+
           titanium: 'Titanio',
+
+          walnut_veneer: 'Chapa de nogal',
+
           white_abs: 'ABS blanco',
-          wood: 'Madera',
+
+          wood: 'Contrachapado',
         },
         presets: {
           cutting: 'Corte',

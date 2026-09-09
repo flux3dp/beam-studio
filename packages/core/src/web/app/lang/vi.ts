@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Mua tại cửa hàng FLUX',
       catalog: {
         materials: {
-          acrylic: 'Mica',
+          acrylic: 'Mica trong suốt',
+          acrylic_with_film: 'Mica (có màng bảo vệ)',
           aluminum: 'Nhôm',
           bamboo: 'Tre',
+          basswood_sheet: 'Tấm gỗ đoạn',
           black_abs: 'ABS đen',
           black_acrylic: 'Mica đen',
           brass: 'Đồng thau',
           canvas: 'Vải canvas',
           cardboard: 'Bìa carton',
           cardstock: 'Giấy bìa',
+          ceramic_tile: 'Gạch men',
           copper: 'Đồng đỏ',
           cork: 'Bần',
           denim: 'Vải denim',
+          eva_foam: 'Xốp EVA',
           fabric: 'Vải',
+          faux_leather: 'Da giả',
+          felt: 'Nỉ',
+          fluorescent_acrylic: 'Mica huỳnh quang',
           glass: 'Thủy tinh',
+          glitter_acrylic: 'Mica kim tuyến',
           gloss_leather: 'Da bóng',
           gold: 'Vàng',
           iron: 'Sắt',
-          leather: 'Da',
+          kraft_paper: 'Giấy kraft',
+          leather: 'Da thật',
           mdf: 'MDF',
           metal: 'Kim loại',
+          mirror_acrylic: 'Mica gương',
+          mixed_acrylic: 'Mica nhiều màu',
           my_materials: 'Vật liệu của tôi',
+
           opaque_acrylic: 'Mica mờ đục',
-          pc: 'PC',
+
+          pc: 'Polycarbonate (PC)',
+
           rubber: 'Cao su',
+
           silver: 'Bạc',
+
           slate: 'Đá phiến',
+
+          solid_wood: 'Gỗ tự nhiên',
+
           stainless_steel: 'Thép không gỉ',
+
           sticker: 'Nhãn dán',
+
           stone: 'Đá',
+
+          sublimation_acrylic: 'Mica chuyển nhiệt',
+
           titanium: 'Titan',
+
+          walnut_veneer: 'Veneer gỗ óc chó',
+
           white_abs: 'ABS trắng',
-          wood: 'Gỗ',
+
+          wood: 'Gỗ dán',
         },
         presets: {
           cutting: 'Cắt',

@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: '前往 FLUX 商店购买',
       catalog: {
         materials: {
-          acrylic: '亚克力',
+          acrylic: '透明亚克力',
+          acrylic_with_film: '有膜亚克力',
           aluminum: '铝',
           bamboo: '竹',
+          basswood_sheet: '椴木板',
           black_abs: '黑色 ABS',
           black_acrylic: '黑色亚克力',
           brass: '黄铜',
           canvas: '画布',
           cardboard: '瓦楞纸',
           cardstock: '卡纸',
+          ceramic_tile: '陶瓷砖',
           copper: '紫铜',
           cork: '软木',
           denim: '牛仔布',
+          eva_foam: 'EVA 泡棉',
           fabric: '布料',
+          faux_leather: '仿皮革',
+          felt: '不织布',
+          fluorescent_acrylic: '荧光亚克力',
           glass: '玻璃',
+          glitter_acrylic: '亮片亚克力',
           gloss_leather: '亮面皮革',
           gold: '金',
           iron: '铁',
-          leather: '皮革',
+          kraft_paper: '牛皮纸',
+          leather: '真皮',
           mdf: 'MDF',
           metal: '金属',
+          mirror_acrylic: '镜面亚克力',
+          mixed_acrylic: '混色亚克力',
           my_materials: '我的材质',
+
           opaque_acrylic: '不透明亚克力',
-          pc: 'PC',
+
+          pc: '聚碳酸酯 (PC)',
+
           rubber: '橡胶',
+
           silver: '银',
+
           slate: '石板',
+
+          solid_wood: '实木板',
+
           stainless_steel: '不锈钢',
+
           sticker: '贴纸',
+
           stone: '石材',
+
+          sublimation_acrylic: '升华亚克力',
+
           titanium: '钛',
+
+          walnut_veneer: '胡桃木薄片',
+
           white_abs: '白色 ABS',
-          wood: '木板',
+
+          wood: '胶合板',
         },
         presets: {
           cutting: '切割',

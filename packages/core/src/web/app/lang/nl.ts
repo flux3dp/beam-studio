@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Kopen in de FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Acryl',
+          acrylic: 'Transparant acryl',
+          acrylic_with_film: 'Acryl (met beschermfolie)',
           aluminum: 'Aluminium',
           bamboo: 'Bamboe',
+          basswood_sheet: 'Lindehouten plaat',
           black_abs: 'Zwart ABS',
           black_acrylic: 'Zwart acryl',
           brass: 'Messing',
           canvas: 'Canvas',
           cardboard: 'Karton',
           cardstock: 'Stevig karton',
+          ceramic_tile: 'Keramische tegel',
           copper: 'Koper',
           cork: 'Kurk',
           denim: 'Denim',
+          eva_foam: 'EVA-schuim',
           fabric: 'Stof',
+          faux_leather: 'Kunstleer',
+          felt: 'Vilt',
+          fluorescent_acrylic: 'Fluorescerend acryl',
           glass: 'Glas',
+          glitter_acrylic: 'Glitteracryl',
           gloss_leather: 'Glanzend leer',
           gold: 'Goud',
           iron: 'IJzer',
-          leather: 'Leer',
+          kraft_paper: 'Kraftpapier',
+          leather: 'Echt leer',
           mdf: 'MDF',
           metal: 'Metaal',
+          mirror_acrylic: 'Spiegelacryl',
+          mixed_acrylic: 'Meerkleurig acryl',
           my_materials: 'Mijn materialen',
+
           opaque_acrylic: 'Ondoorzichtig acryl',
-          pc: 'PC',
+
+          pc: 'Polycarbonaat (PC)',
+
           rubber: 'Rubber',
+
           silver: 'Zilver',
+
           slate: 'Leisteen',
+
+          solid_wood: 'Massief hout',
+
           stainless_steel: 'Roestvrij staal',
+
           sticker: 'Sticker',
+
           stone: 'Steen',
+
+          sublimation_acrylic: 'Sublimatie-acryl',
+
           titanium: 'Titanium',
+
+          walnut_veneer: 'Notenhoutfineer',
+
           white_abs: 'Wit ABS',
-          wood: 'Hout',
+
+          wood: 'Multiplex',
         },
         presets: {
           cutting: 'Snijden',

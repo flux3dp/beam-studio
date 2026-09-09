@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Kup w FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Akryl',
+          acrylic: 'Akryl przezroczysty',
+          acrylic_with_film: 'Akryl (z folią ochronną)',
           aluminum: 'Aluminium',
           bamboo: 'Bambus',
+          basswood_sheet: 'Płyta lipowa',
           black_abs: 'Czarny ABS',
           black_acrylic: 'Czarny akryl',
           brass: 'Mosiądz',
           canvas: 'Płótno',
           cardboard: 'Tektura',
           cardstock: 'Karton',
+          ceramic_tile: 'Płytka ceramiczna',
           copper: 'Miedź',
           cork: 'Korek',
           denim: 'Denim',
+          eva_foam: 'Pianka EVA',
           fabric: 'Tkanina',
+          faux_leather: 'Sztuczna skóra',
+          felt: 'Filc',
+          fluorescent_acrylic: 'Akryl fluorescencyjny',
           glass: 'Szkło',
+          glitter_acrylic: 'Akryl brokatowy',
           gloss_leather: 'Skóra błyszcząca',
           gold: 'Złoto',
           iron: 'Żelazo',
-          leather: 'Skóra',
+          kraft_paper: 'Papier kraft',
+          leather: 'Skóra naturalna',
           mdf: 'MDF',
           metal: 'Metal',
+          mirror_acrylic: 'Akryl lustrzany',
+          mixed_acrylic: 'Akryl wielokolorowy',
           my_materials: 'Moje materiały',
+
           opaque_acrylic: 'Akryl nieprzezroczysty',
-          pc: 'PC',
+
+          pc: 'Poliwęglan (PC)',
+
           rubber: 'Guma',
+
           silver: 'Srebro',
+
           slate: 'Łupek',
+
+          solid_wood: 'Lite drewno',
+
           stainless_steel: 'Stal nierdzewna',
+
           sticker: 'Naklejka',
+
           stone: 'Kamień',
+
+          sublimation_acrylic: 'Akryl do sublimacji',
+
           titanium: 'Tytan',
+
+          walnut_veneer: 'Fornir orzechowy',
+
           white_abs: 'Biały ABS',
-          wood: 'Drewno',
+
+          wood: 'Sklejka',
         },
         presets: {
           cutting: 'Cięcie',

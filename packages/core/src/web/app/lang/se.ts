@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Köp i FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Akryl',
+          acrylic: 'Transparent akryl',
+          acrylic_with_film: 'Akryl (med skyddsfilm)',
           aluminum: 'Aluminium',
           bamboo: 'Bambu',
+          basswood_sheet: 'Lindträskiva',
           black_abs: 'Svart ABS',
           black_acrylic: 'Svart akryl',
           brass: 'Mässing',
           canvas: 'Kanvas',
           cardboard: 'Kartong',
           cardstock: 'Tjockt papper',
+          ceramic_tile: 'Keramisk platta',
           copper: 'Koppar',
           cork: 'Kork',
           denim: 'Denim',
+          eva_foam: 'EVA-skum',
           fabric: 'Tyg',
+          faux_leather: 'Konstläder',
+          felt: 'Filt',
+          fluorescent_acrylic: 'Fluorescerande akryl',
           glass: 'Glas',
+          glitter_acrylic: 'Glitterakryl',
           gloss_leather: 'Blankt läder',
           gold: 'Guld',
           iron: 'Järn',
-          leather: 'Läder',
+          kraft_paper: 'Kraftpapper',
+          leather: 'Äkta läder',
           mdf: 'MDF',
           metal: 'Metall',
+          mirror_acrylic: 'Spegelakryl',
+          mixed_acrylic: 'Flerfärgad akryl',
           my_materials: 'Mina material',
+
           opaque_acrylic: 'Ogenomskinlig akryl',
-          pc: 'PC',
+
+          pc: 'Polykarbonat (PC)',
+
           rubber: 'Gummi',
+
           silver: 'Silver',
+
           slate: 'Skiffer',
+
+          solid_wood: 'Massivt trä',
+
           stainless_steel: 'Rostfritt stål',
+
           sticker: 'Klistermärke',
+
           stone: 'Sten',
+
+          sublimation_acrylic: 'Sublimeringsakryl',
+
           titanium: 'Titan',
+
+          walnut_veneer: 'Valnötsfaner',
+
           white_abs: 'Vit ABS',
-          wood: 'Trä',
+
+          wood: 'Plywood',
         },
         presets: {
           cutting: 'Skärning',

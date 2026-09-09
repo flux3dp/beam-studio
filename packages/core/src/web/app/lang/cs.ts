@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Koupit ve FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Akryl',
+          acrylic: 'Průhledný akryl',
+          acrylic_with_film: 'Akryl (s ochrannou fólií)',
           aluminum: 'Hliník',
           bamboo: 'Bambus',
+          basswood_sheet: 'Lipová deska',
           black_abs: 'Černý ABS',
           black_acrylic: 'Černý akryl',
           brass: 'Mosaz',
           canvas: 'Plátno',
           cardboard: 'Lepenka',
           cardstock: 'Kartón',
+          ceramic_tile: 'Keramická dlaždice',
           copper: 'Měď',
           cork: 'Korek',
           denim: 'Denim',
+          eva_foam: 'EVA pěna',
           fabric: 'Textil',
+          faux_leather: 'Umělá kůže',
+          felt: 'Plsť',
+          fluorescent_acrylic: 'Fluorescenční akryl',
           glass: 'Sklo',
+          glitter_acrylic: 'Třpytivý akryl',
           gloss_leather: 'Lesklá kůže',
           gold: 'Zlato',
           iron: 'Železo',
-          leather: 'Kůže',
+          kraft_paper: 'Kraftový papír',
+          leather: 'Pravá kůže',
           mdf: 'MDF',
           metal: 'Kov',
+          mirror_acrylic: 'Zrcadlový akryl',
+          mixed_acrylic: 'Vícebarevný akryl',
           my_materials: 'Moje materiály',
+
           opaque_acrylic: 'Neprůhledný akryl',
-          pc: 'PC',
+
+          pc: 'Polykarbonát (PC)',
+
           rubber: 'Guma',
+
           silver: 'Stříbro',
+
           slate: 'Břidlice',
+
+          solid_wood: 'Masivní dřevo',
+
           stainless_steel: 'Nerezová ocel',
+
           sticker: 'Samolepka',
+
           stone: 'Kámen',
+
+          sublimation_acrylic: 'Sublimační akryl',
+
           titanium: 'Titan',
+
+          walnut_veneer: 'Ořechová dýha',
+
           white_abs: 'Bílý ABS',
-          wood: 'Dřevo',
+
+          wood: 'Překližka',
         },
         presets: {
           cutting: 'Řezání',

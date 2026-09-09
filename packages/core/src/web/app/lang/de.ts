@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Im FLUX Shop kaufen',
       catalog: {
         materials: {
-          acrylic: 'Acryl',
+          acrylic: 'Transparentes Acryl',
+          acrylic_with_film: 'Acryl (mit Schutzfolie)',
           aluminum: 'Aluminium',
           bamboo: 'Bambus',
+          basswood_sheet: 'Lindenholzplatte',
           black_abs: 'Schwarzes ABS',
           black_acrylic: 'Schwarzes Acryl',
           brass: 'Messing',
           canvas: 'Leinwand',
           cardboard: 'Karton',
           cardstock: 'Tonkarton',
+          ceramic_tile: 'Keramikfliese',
           copper: 'Kupfer',
           cork: 'Kork',
           denim: 'Denim',
+          eva_foam: 'EVA-Schaum',
           fabric: 'Stoff',
+          faux_leather: 'Kunstleder',
+          felt: 'Filz',
+          fluorescent_acrylic: 'Fluoreszierendes Acryl',
           glass: 'Glas',
+          glitter_acrylic: 'Glitzer-Acryl',
           gloss_leather: 'Glanzleder',
           gold: 'Gold',
           iron: 'Eisen',
-          leather: 'Leder',
+          kraft_paper: 'Kraftpapier',
+          leather: 'Echtleder',
           mdf: 'MDF',
           metal: 'Metall',
+          mirror_acrylic: 'Spiegelacryl',
+          mixed_acrylic: 'Mehrfarbiges Acryl',
           my_materials: 'Meine Materialien',
+
           opaque_acrylic: 'Opakes Acryl',
-          pc: 'PC',
+
+          pc: 'Polycarbonat (PC)',
+
           rubber: 'Gummi',
+
           silver: 'Silber',
+
           slate: 'Schiefer',
+
+          solid_wood: 'Massivholz',
+
           stainless_steel: 'Edelstahl',
+
           sticker: 'Aufkleber',
+
           stone: 'Stein',
+
+          sublimation_acrylic: 'Sublimationsacryl',
+
           titanium: 'Titan',
+
+          walnut_veneer: 'Walnussfurnier',
+
           white_abs: 'Weißes ABS',
-          wood: 'Holz',
+
+          wood: 'Sperrholz',
         },
         presets: {
           cutting: 'Schneiden',

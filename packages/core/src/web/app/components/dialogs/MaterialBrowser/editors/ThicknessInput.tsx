@@ -2,29 +2,10 @@ import React from 'react';
 
 import { InputNumber, Segmented, Space } from 'antd';
 
-import type { MaterialVariant } from '@core/interfaces/IMaterial';
-
+import type { ThicknessValue } from '../utils/inchDisplay';
 import { getThicknessLabel } from '../utils/inchDisplay';
 
 import styles from './ThicknessInput.module.scss';
-
-export interface ThicknessValue {
-  thicknessDen?: number;
-  thicknessNum?: number;
-  thicknessUnit: 'inch' | 'mm';
-}
-
-/** Drops the denominator outside inch mode and collapses "no number" to undefined, ready for addVariant */
-export const toVariantThickness = (
-  value: ThicknessValue,
-): Pick<MaterialVariant, 'thicknessDen' | 'thicknessNum' | 'thicknessUnit'> | undefined =>
-  value.thicknessNum
-    ? {
-        thicknessNum: value.thicknessNum,
-        thicknessUnit: value.thicknessUnit,
-        ...(value.thicknessUnit === 'inch' && value.thicknessDen && { thicknessDen: value.thicknessDen }),
-      }
-    : undefined;
 
 interface ThicknessInputProps {
   onChange: (value: ThicknessValue) => void;
@@ -34,6 +15,9 @@ interface ThicknessInputProps {
 /** Unit switch + fraction inputs (denominator in inch mode) with a live formatted preview */
 const ThicknessInput = ({ onChange, value }: ThicknessInputProps): React.JSX.Element => {
   const { thicknessDen, thicknessNum, thicknessUnit } = value;
+  // InputNumber only rounds to `precision` on blur/enter but reports every keystroke; keep the
+  // committed value (and the live preview) integral in inch mode
+  const toNum = (num: null | number) => (num == null ? undefined : thicknessUnit === 'inch' ? Math.round(num) : num);
 
   return (
     <Space align="center">
@@ -44,7 +28,8 @@ const ThicknessInput = ({ onChange, value }: ThicknessInputProps): React.JSX.Ele
       />
       <InputNumber
         min={0}
-        onChange={(num) => onChange({ ...value, thicknessNum: num ?? undefined })}
+        onChange={(num) => onChange({ ...value, thicknessNum: toNum(num) })}
+        precision={thicknessUnit === 'inch' ? 0 : undefined}
         step={thicknessUnit === 'inch' ? 1 : 0.1}
         style={{ width: 80 }}
         value={thicknessNum}
@@ -54,8 +39,9 @@ const ThicknessInput = ({ onChange, value }: ThicknessInputProps): React.JSX.Ele
           ⁄
           <InputNumber
             min={1}
-            onChange={(den) => onChange({ ...value, thicknessDen: den ?? undefined })}
+            onChange={(den) => onChange({ ...value, thicknessDen: toNum(den) })}
             placeholder="16"
+            precision={0}
             step={1}
             style={{ width: 70 }}
             value={thicknessDen}

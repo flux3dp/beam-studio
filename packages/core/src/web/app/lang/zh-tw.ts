@@ -387,6 +387,7 @@ const lang: ILang = {
       catalog: {
         materials: {
           acrylic: '透明壓克力',
+          acrylic_with_film: '有膜壓克力',
           aluminum: '鋁',
           bamboo: '竹材',
           basswood_sheet: '椴木板',

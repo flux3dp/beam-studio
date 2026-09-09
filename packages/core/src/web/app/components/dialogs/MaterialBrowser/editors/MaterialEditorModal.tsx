@@ -13,10 +13,11 @@ import useI18n from '@core/helpers/useI18n';
 import type { Material, MaterialCategory } from '@core/interfaces/IMaterial';
 
 import { fileToCoverDataUrl } from '../utils/coverImage';
+import type { ThicknessValue } from '../utils/inchDisplay';
+import { toVariantThickness } from '../utils/inchDisplay';
 
 import styles from './MaterialEditorModal.module.scss';
-import type { ThicknessValue } from './ThicknessInput';
-import ThicknessInput, { toVariantThickness } from './ThicknessInput';
+import ThicknessInput from './ThicknessInput';
 
 interface FormValues {
   category: MaterialCategory;

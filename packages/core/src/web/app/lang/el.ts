@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Αγορά στο FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Ακρυλικό',
+          acrylic: 'Διαφανές ακρυλικό',
+          acrylic_with_film: 'Ακρυλικό (με προστατευτική μεμβράνη)',
           aluminum: 'Αλουμίνιο',
           bamboo: 'Μπαμπού',
+          basswood_sheet: 'Φύλλο φλαμουριάς',
           black_abs: 'Μαύρο ABS',
           black_acrylic: 'Μαύρο ακρυλικό',
           brass: 'Ορείχαλκος',
           canvas: 'Καμβάς',
           cardboard: 'Χαρτόνι',
           cardstock: 'Χοντρό χαρτί',
+          ceramic_tile: 'Κεραμικό πλακάκι',
           copper: 'Χαλκός',
           cork: 'Φελλός',
           denim: 'Τζιν',
+          eva_foam: 'Αφρός EVA',
           fabric: 'Ύφασμα',
+          faux_leather: 'Συνθετικό δέρμα',
+          felt: 'Τσόχα',
+          fluorescent_acrylic: 'Φθορίζον ακρυλικό',
           glass: 'Γυαλί',
+          glitter_acrylic: 'Ακρυλικό με γκλίτερ',
           gloss_leather: 'Γυαλιστερό δέρμα',
           gold: 'Χρυσός',
           iron: 'Σίδηρος',
-          leather: 'Δέρμα',
+          kraft_paper: 'Χαρτί κραφτ',
+          leather: 'Γνήσιο δέρμα',
           mdf: 'MDF',
           metal: 'Μέταλλο',
+          mirror_acrylic: 'Ακρυλικό καθρέφτης',
+          mixed_acrylic: 'Πολύχρωμο ακρυλικό',
           my_materials: 'Τα υλικά μου',
+
           opaque_acrylic: 'Αδιαφανές ακρυλικό',
-          pc: 'PC',
+
+          pc: 'Πολυανθρακικό (PC)',
+
           rubber: 'Καουτσούκ',
+
           silver: 'Ασήμι',
+
           slate: 'Σχιστόλιθος',
+
+          solid_wood: 'Μασίφ ξύλο',
+
           stainless_steel: 'Ανοξείδωτος χάλυβας',
+
           sticker: 'Αυτοκόλλητο',
+
           stone: 'Πέτρα',
+
+          sublimation_acrylic: 'Ακρυλικό εξάχνωσης',
+
           titanium: 'Τιτάνιο',
+
+          walnut_veneer: 'Καπλαμάς καρυδιάς',
+
           white_abs: 'Λευκό ABS',
-          wood: 'Ξύλο',
+
+          wood: 'Κόντρα πλακέ',
         },
         presets: {
           cutting: 'Κοπή',

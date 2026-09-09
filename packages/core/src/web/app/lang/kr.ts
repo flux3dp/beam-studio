@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'FLUX 스토어에서 구매',
       catalog: {
         materials: {
-          acrylic: '아크릴',
+          acrylic: '투명 아크릴',
+          acrylic_with_film: '아크릴 (보호 필름 부착)',
           aluminum: '알루미늄',
           bamboo: '대나무',
+          basswood_sheet: '피나무 판재',
           black_abs: '검정 ABS',
           black_acrylic: '검정 아크릴',
           brass: '황동',
           canvas: '캔버스',
           cardboard: '골판지',
           cardstock: '두꺼운 종이',
+          ceramic_tile: '세라믹 타일',
           copper: '구리',
           cork: '코르크',
           denim: '데님',
+          eva_foam: 'EVA 폼',
           fabric: '직물',
+          faux_leather: '인조 가죽',
+          felt: '펠트',
+          fluorescent_acrylic: '형광 아크릴',
           glass: '유리',
+          glitter_acrylic: '글리터 아크릴',
           gloss_leather: '유광 가죽',
           gold: '금',
           iron: '철',
-          leather: '가죽',
+          kraft_paper: '크라프트지',
+          leather: '천연 가죽',
           mdf: 'MDF',
           metal: '금속',
+          mirror_acrylic: '미러 아크릴',
+          mixed_acrylic: '혼합 색상 아크릴',
           my_materials: '내 소재',
+
           opaque_acrylic: '불투명 아크릴',
-          pc: 'PC',
+
+          pc: '폴리카보네이트 (PC)',
+
           rubber: '고무',
+
           silver: '은',
+
           slate: '슬레이트',
+
+          solid_wood: '원목',
+
           stainless_steel: '스테인리스 스틸',
+
           sticker: '스티커',
+
           stone: '석재',
+
+          sublimation_acrylic: '승화 아크릴',
+
           titanium: '티타늄',
+
+          walnut_veneer: '호두나무 무늬목',
+
           white_abs: '흰색 ABS',
-          wood: '목재',
+
+          wood: '합판',
         },
         presets: {
           cutting: '커팅',

@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Compra a FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Acrílic',
+          acrylic: 'Acrílic transparent',
+          acrylic_with_film: 'Acrílic (amb pel·lícula protectora)',
           aluminum: 'Alumini',
           bamboo: 'Bambú',
+          basswood_sheet: 'Làmina de til·ler',
           black_abs: 'ABS negre',
           black_acrylic: 'Acrílic negre',
           brass: 'Llautó',
           canvas: 'Lona',
           cardboard: 'Cartró',
           cardstock: 'Cartolina',
+          ceramic_tile: 'Rajola ceràmica',
           copper: 'Coure',
           cork: 'Suro',
           denim: 'Texà',
+          eva_foam: 'Escuma EVA',
           fabric: 'Teixit',
+          faux_leather: 'Pell sintètica',
+          felt: 'Feltre',
+          fluorescent_acrylic: 'Acrílic fluorescent',
           glass: 'Vidre',
+          glitter_acrylic: 'Acrílic amb purpurina',
           gloss_leather: 'Pell brillant',
           gold: 'Or',
           iron: 'Ferro',
-          leather: 'Pell',
+          kraft_paper: 'Paper kraft',
+          leather: 'Pell genuïna',
           mdf: 'MDF',
           metal: 'Metall',
+          mirror_acrylic: 'Acrílic mirall',
+          mixed_acrylic: 'Acrílic de colors barrejats',
           my_materials: 'Els meus materials',
+
           opaque_acrylic: 'Acrílic opac',
-          pc: 'PC',
+
+          pc: 'Policarbonat (PC)',
+
           rubber: 'Cautxú',
+
           silver: 'Plata',
+
           slate: 'Pissarra',
+
+          solid_wood: 'Fusta massissa',
+
           stainless_steel: 'Acer inoxidable',
+
           sticker: 'Adhesiu',
+
           stone: 'Pedra',
+
+          sublimation_acrylic: 'Acrílic per a sublimació',
+
           titanium: 'Titani',
+
+          walnut_veneer: 'Xapa de noguera',
+
           white_abs: 'ABS blanc',
-          wood: 'Fusta',
+
+          wood: 'Contraxapat',
         },
         presets: {
           cutting: 'Tall',

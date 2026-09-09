@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'FLUX ショップで購入',
       catalog: {
         materials: {
-          acrylic: 'アクリル',
+          acrylic: '透明アクリル',
+          acrylic_with_film: 'アクリル（保護フィルム付き）',
           aluminum: 'アルミニウム',
           bamboo: '竹',
+          basswood_sheet: 'シナ材板',
           black_abs: '黒 ABS',
           black_acrylic: '黒アクリル',
           brass: '真鍮',
           canvas: 'キャンバス',
           cardboard: '段ボール',
           cardstock: '厚紙',
+          ceramic_tile: 'セラミックタイル',
           copper: '銅',
           cork: 'コルク',
           denim: 'デニム',
+          eva_foam: 'EVAフォーム',
           fabric: '布',
+          faux_leather: '合成皮革',
+          felt: 'フェルト',
+          fluorescent_acrylic: '蛍光アクリル',
           glass: 'ガラス',
+          glitter_acrylic: 'ラメアクリル',
           gloss_leather: 'グロスレザー',
           gold: '金',
           iron: '鉄',
-          leather: 'レザー',
+          kraft_paper: 'クラフト紙',
+          leather: '本革',
           mdf: 'MDF',
           metal: '金属',
+          mirror_acrylic: 'ミラーアクリル',
+          mixed_acrylic: 'ミックスカラーアクリル',
           my_materials: 'マイ素材',
+
           opaque_acrylic: '不透明アクリル',
-          pc: 'PC',
+
+          pc: 'ポリカーボネート（PC）',
+
           rubber: 'ゴム',
+
           silver: '銀',
+
           slate: 'スレート',
+
+          solid_wood: '無垢材',
+
           stainless_steel: 'ステンレス',
+
           sticker: 'ステッカー',
+
           stone: '石材',
+
+          sublimation_acrylic: '昇華アクリル',
+
           titanium: 'チタン',
+
+          walnut_veneer: 'ウォールナット突板',
+
           white_abs: '白 ABS',
-          wood: '木材',
+
+          wood: '合板',
         },
         presets: {
           cutting: 'カット',

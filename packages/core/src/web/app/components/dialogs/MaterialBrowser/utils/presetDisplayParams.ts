@@ -1,6 +1,8 @@
 import { type LayerModuleType, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { dpiValueMap } from '@core/app/constants/resolutions';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import i18n from '@core/helpers/i18n';
+import units from '@core/helpers/units';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { PresetValues } from '@core/interfaces/IMaterial';
 
@@ -22,6 +24,11 @@ export const getPresetDisplayParams = (
   const push = (label: string, value: number | string | undefined, unit = '') => {
     if (value !== undefined) pills.push({ label, value: `${value}${unit}` });
   };
+  // Same display rule as SpeedBlock: in/s with 2 decimals when default-units is inches
+  const pushSpeed = (speed: number | undefined) =>
+    useStorageStore.getState().isInch
+      ? push(lang.speed, speed === undefined ? undefined : units.convertUnit(speed, 'inch', 'mm', 2), ' in/s')
+      : push(lang.speed, speed, ' mm/s');
 
   if (printingModules.has(module)) {
     push(lang.ink_saturation, values.ink);
@@ -35,7 +42,7 @@ export const getPresetDisplayParams = (
     const isMopa = model.startsWith('fpm1_1');
 
     push(lang.strength, values.power, '%');
-    push(lang.speed, values.speed, ' mm/s');
+    pushSpeed(values.speed);
 
     if (isMopa) {
       push(lang.pulse_width, values.pulseWidth, ' ns');
@@ -50,7 +57,7 @@ export const getPresetDisplayParams = (
   }
 
   push(lang.strength, values.power, '%');
-  push(lang.speed, values.speed, ' mm/s');
+  pushSpeed(values.speed);
   push(lang.repeat, values.repeat);
 
   if (values.dpi) push('DPI', dpiValueMap[values.dpi]);

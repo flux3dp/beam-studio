@@ -785,6 +785,16 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "nameKey": "cutting",
           "origin": "default",
           "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 4,
+              },
+              "2": {
+                "power": 100,
+                "speed": 8,
+              },
+            },
             "fbb2": {
               "15": {
                 "power": 30,
@@ -824,16 +834,26 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "nameKey": "cutting",
           "origin": "default",
           "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 2,
+              },
+              "2": {
+                "power": 100,
+                "speed": 4,
+              },
+            },
             "fbb2": {
               "15": {
-                "power": 30,
-                "speed": 10,
+                "power": 50,
+                "speed": 5,
               },
             },
             "fbm2": {
               "15": {
-                "power": 55,
-                "speed": 6,
+                "power": 80,
+                "speed": 5,
               },
             },
             "fhx2rf_30": {
@@ -864,6 +884,16 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "nameKey": "engraving",
           "origin": "default",
           "settings": {
+            "ado1": {
+              "1": {
+                "power": 80,
+                "speed": 100,
+              },
+              "2": {
+                "power": 70,
+                "speed": 100,
+              },
+            },
             "fbb2": {
               "15": {
                 "power": 30,
@@ -893,7 +923,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
             "fhx2rf_80": {
               "15": {
                 "dpi": "medium",
-                "power": 25,
+                "power": 10,
                 "speed": 300,
               },
             },
@@ -1121,6 +1151,33 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       "nameKey": "acrylic",
       "presets": [
         {
+          "id": "acrylic_2mm_cutting",
+          "legacyKey": "acrylic_2mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6,
+              },
+            },
+          },
+          "variantId": "acrylic-2mm",
+        },
+        {
           "id": "acrylic_3mm_cutting",
           "legacyKey": "acrylic_3mm_cutting",
           "nameKey": "cutting",
@@ -1152,7 +1209,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
             },
             "fbm2": {
               "15": {
-                "power": 45,
+                "power": 65,
                 "speed": 7,
               },
             },
@@ -1216,7 +1273,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
             },
             "fbm2": {
               "15": {
-                "power": 55,
+                "power": 85,
                 "speed": 3,
               },
             },
@@ -1246,6 +1303,34 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
             },
           },
           "variantId": "acrylic-5mm",
+        },
+        {
+          "id": "acrylic_6mm_cutting",
+          "legacyKey": "acrylic_6mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 5,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3,
+              },
+            },
+          },
+          "variantId": "acrylic-6mm",
         },
         {
           "id": "acrylic_7mm_cutting",
@@ -1483,6 +1568,11 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
       ],
       "variants": [
         {
+          "id": "acrylic-2mm",
+          "thicknessNum": 2,
+          "thicknessUnit": "mm",
+        },
+        {
           "id": "acrylic-3mm",
           "thicknessNum": 3,
           "thicknessUnit": "mm",
@@ -1490,6 +1580,11 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
         {
           "id": "acrylic-5mm",
           "thicknessNum": 5,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "acrylic-6mm",
+          "thicknessNum": 6,
           "thicknessUnit": "mm",
         },
         {
@@ -2279,6 +2374,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
     {
       "category": "acrylic",
       "id": "sublimation-acrylic",
+      "image": "core-img/material-catalog/acrylic_sublimation.jpg",
       "nameKey": "sublimation_acrylic",
       "presets": [
         {
@@ -2877,7 +2973,308 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
     },
     {
       "category": "acrylic",
+      "id": "acrylic-with-film",
+      "image": "core-img/material-catalog/acrylic_film.jpg",
+      "nameKey": "acrylic_with_film",
+      "presets": [
+        {
+          "id": "acrylic_film_3mm_cutting",
+          "legacyKey": "acrylic_film_3mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 8,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 7,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 55,
+                "speed": 10,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 75,
+                "speed": 7,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 40,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 6,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 9,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 12,
+              },
+            },
+          },
+          "variantId": "acrylic-with-film-3mm",
+        },
+        {
+          "id": "acrylic_film_5mm_cutting",
+          "legacyKey": "acrylic_film_5mm_cutting",
+          "nameKey": "cutting",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 60,
+                "speed": 4,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 55,
+                "speed": 4,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 59,
+                "speed": 3,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 55,
+                "repeat": 2,
+                "speed": 5,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 85,
+                "speed": 3,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 55,
+                "speed": 3,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "power": 70,
+                "speed": 3,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "power": 70,
+                "speed": 4,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "power": 70,
+                "speed": 6,
+              },
+            },
+          },
+          "variantId": "acrylic-with-film-5mm",
+        },
+        {
+          "groupId": "acrylic_film_engraving",
+          "id": "acrylic_film_engraving",
+          "legacyKey": "acrylic_film_engraving",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fbb1b": {
+              "15": {
+                "power": 25,
+                "speed": 150,
+              },
+            },
+            "fbb1p": {
+              "15": {
+                "power": 15,
+                "speed": 150,
+              },
+            },
+            "fbb2": {
+              "15": {
+                "power": 13,
+                "speed": 500,
+              },
+            },
+            "fbm1": {
+              "15": {
+                "power": 25,
+                "speed": 150,
+              },
+            },
+            "fbm2": {
+              "15": {
+                "power": 15,
+                "speed": 300,
+              },
+            },
+            "fhexa1": {
+              "15": {
+                "power": 15,
+                "speed": 300,
+              },
+            },
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "medium",
+                "power": 80,
+                "speed": 500,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "medium",
+                "power": 15,
+                "speed": 500,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "medium",
+                "power": 30,
+                "speed": 500,
+              },
+            },
+          },
+        },
+        {
+          "groupId": "acrylic_film_engraving",
+          "id": "acrylic_film_engraving_high",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "high",
+                "power": 12,
+                "speed": 500,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "high",
+                "power": 9,
+                "speed": 500,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "high",
+                "power": 6,
+                "speed": 500,
+              },
+            },
+          },
+        },
+        {
+          "groupId": "acrylic_film_engraving",
+          "id": "acrylic_film_engraving_detailed",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "detailed",
+                "power": 12,
+                "speed": 500,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "detailed",
+                "power": 9,
+                "speed": 500,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "detailed",
+                "power": 6,
+                "speed": 500,
+              },
+            },
+          },
+        },
+        {
+          "groupId": "acrylic_film_engraving",
+          "id": "acrylic_film_engraving_ultra",
+          "nameKey": "engraving",
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": {
+              "15": {
+                "dpi": "ultra",
+                "power": 12,
+                "speed": 500,
+              },
+            },
+            "fhx2rf_60": {
+              "15": {
+                "dpi": "ultra",
+                "power": 9,
+                "speed": 500,
+              },
+            },
+            "fhx2rf_80": {
+              "15": {
+                "dpi": "ultra",
+                "power": 6,
+                "speed": 500,
+              },
+            },
+          },
+        },
+      ],
+      "variants": [
+        {
+          "id": "acrylic-with-film-3mm",
+          "thicknessNum": 3,
+          "thicknessUnit": "mm",
+        },
+        {
+          "id": "acrylic-with-film-5mm",
+          "thicknessNum": 5,
+          "thicknessUnit": "mm",
+        },
+      ],
+    },
+    {
+      "category": "acrylic",
       "id": "mirror-acrylic",
+      "image": "core-img/material-catalog/acrylic_mirror.jpg",
       "nameKey": "mirror_acrylic",
       "presets": [],
       "regions": [
@@ -3242,6 +3639,16 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "nameKey": "cutting",
           "origin": "default",
           "settings": {
+            "ado1": {
+              "1": {
+                "power": 100,
+                "speed": 4,
+              },
+              "2": {
+                "power": 100,
+                "speed": 8,
+              },
+            },
             "fbb1b": {
               "15": {
                 "power": 65,
@@ -3307,6 +3714,16 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
           "nameKey": "engraving",
           "origin": "default",
           "settings": {
+            "ado1": {
+              "1": {
+                "power": 30,
+                "speed": 100,
+              },
+              "2": {
+                "power": 30,
+                "speed": 125,
+              },
+            },
             "fbb1b": {
               "15": {
                 "power": 30,
@@ -5461,6 +5878,7 @@ exports[`getBundledCatalog catalog snapshot 1`] = `
     {
       "category": "plastic",
       "id": "pc",
+      "image": "core-img/material-catalog/plastic_pc.jpg",
       "nameKey": "pc",
       "presets": [
         {

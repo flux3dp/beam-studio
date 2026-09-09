@@ -124,6 +124,12 @@
     min-width: 280px;
   }
 
+  // Many thicknesses scroll inside the row instead of widening the whole dialog
+  .variant-scroll {
+    min-width: 0;
+    overflow-x: auto;
+  }
+
   .section-title {
     font-size: 12px;
     font-weight: 600;

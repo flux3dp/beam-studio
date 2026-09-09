@@ -1,4 +1,4 @@
-import { getThicknessLabel, inchDisplay } from './inchDisplay';
+import { getThicknessLabel, inchDisplay, toVariantThickness } from './inchDisplay';
 
 describe('inchDisplay', () => {
   test('standard vulgar fractions', () => {
@@ -15,9 +15,11 @@ describe('inchDisplay', () => {
     expect(inchDisplay(5, 16)).toBe('⁵⁄₁₆″');
   });
 
-  test('non-16th marketing fractions render verbatim', () => {
-    expect(inchDisplay(5, 64)).toBe('5⁄64″'); // 2 mm bamboo
-    expect(inchDisplay(1, 32)).toBe('1⁄32″'); // 1 mm denim
+  test('any other denominator composes super/subscript digits', () => {
+    expect(inchDisplay(5, 64)).toBe('⁵⁄₆₄″'); // 2 mm bamboo
+    expect(inchDisplay(1, 32)).toBe('¹⁄₃₂″'); // 1 mm denim
+    expect(inchDisplay(11, 20)).toBe('¹¹⁄₂₀″');
+    expect(inchDisplay(7, 100)).toBe('⁷⁄₁₀₀″');
   });
 
   test('fractions reduce before rendering', () => {
@@ -48,5 +50,20 @@ describe('getThicknessLabel', () => {
     expect(getThicknessLabel({})).toBeNull();
     expect(getThicknessLabel({ thicknessNum: 0, thicknessUnit: 'mm' })).toBeNull();
     expect(getThicknessLabel({ thicknessNum: 3 })).toBeNull();
+  });
+});
+
+describe('toVariantThickness', () => {
+  test('keeps the denominator only in inch mode; no number → undefined', () => {
+    expect(toVariantThickness({ thicknessDen: 8, thicknessNum: 1, thicknessUnit: 'inch' })).toEqual({
+      thicknessDen: 8,
+      thicknessNum: 1,
+      thicknessUnit: 'inch',
+    });
+    expect(toVariantThickness({ thicknessDen: 8, thicknessNum: 3, thicknessUnit: 'mm' })).toEqual({
+      thicknessNum: 3,
+      thicknessUnit: 'mm',
+    });
+    expect(toVariantThickness({ thicknessUnit: 'mm' })).toBeUndefined();
   });
 });

@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Osta FLUX Shop -kaupasta',
       catalog: {
         materials: {
-          acrylic: 'Akryyli',
+          acrylic: 'Läpinäkyvä akryyli',
+          acrylic_with_film: 'Akryyli (suojakalvolla)',
           aluminum: 'Alumiini',
           bamboo: 'Bambu',
+          basswood_sheet: 'Lehmuslevy',
           black_abs: 'Musta ABS',
           black_acrylic: 'Musta akryyli',
           brass: 'Messinki',
           canvas: 'Kanvaasi',
           cardboard: 'Pahvi',
           cardstock: 'Kartonki',
+          ceramic_tile: 'Keraaminen laatta',
           copper: 'Kupari',
           cork: 'Korkki',
           denim: 'Denim',
+          eva_foam: 'EVA-vaahto',
           fabric: 'Kangas',
+          faux_leather: 'Tekonahka',
+          felt: 'Huopa',
+          fluorescent_acrylic: 'Fluoresoiva akryyli',
           glass: 'Lasi',
+          glitter_acrylic: 'Glitterakryyli',
           gloss_leather: 'Kiiltävä nahka',
           gold: 'Kulta',
           iron: 'Rauta',
-          leather: 'Nahka',
+          kraft_paper: 'Voimapaperi',
+          leather: 'Aito nahka',
           mdf: 'MDF',
           metal: 'Metalli',
+          mirror_acrylic: 'Peiliakryyli',
+          mixed_acrylic: 'Monivärinen akryyli',
           my_materials: 'Omat materiaalit',
+
           opaque_acrylic: 'Läpinäkymätön akryyli',
-          pc: 'PC',
+
+          pc: 'Polykarbonaatti (PC)',
+
           rubber: 'Kumi',
+
           silver: 'Hopea',
+
           slate: 'Liuskekivi',
+
+          solid_wood: 'Massiivipuu',
+
           stainless_steel: 'Ruostumaton teräs',
+
           sticker: 'Tarra',
+
           stone: 'Kivi',
+
+          sublimation_acrylic: 'Sublimaatioakryyli',
+
           titanium: 'Titaani',
+
+          walnut_veneer: 'Pähkinäviilu',
+
           white_abs: 'Valkoinen ABS',
-          wood: 'Puu',
+
+          wood: 'Vaneri',
         },
         presets: {
           cutting: 'Leikkaus',

@@ -10,7 +10,8 @@ export interface BundledVariantDef {
   id: string;
   /**
    * Curated marketing fraction [numerator, denominator] from the legacy inch dropdown
-   * labels (3mm → [1, 8] = ⅛″; 8mm corrected to [5, 16]), NOT a mm conversion.
+   * labels (3mm → [1, 8] = ⅛″; 8mm corrected to [5, 16]; 7mm → [9, 32], the nearest 32nd,
+   * so it stays distinct from 6mm = ¼″), NOT a mm conversion.
    * A generated variant carries ONE authoritative unit — the builder emits either this
    * fraction or thicknessMm, picked by the user's default-units.
    */
@@ -52,7 +53,7 @@ export const materialDefs: BundledMaterialDef[] = [
     variants: [
       { id: 'wood-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
       { id: 'wood-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
-      { id: 'wood-7mm', thicknessMm: 7, thicknessInch: [1, 4] },
+      { id: 'wood-7mm', thicknessMm: 7, thicknessInch: [9, 32] },
       { id: 'wood-8mm', thicknessMm: 8, thicknessInch: [5, 16] },
       { id: 'wood-10mm', thicknessMm: 10, thicknessInch: [3, 8] },
     ],
@@ -65,7 +66,7 @@ export const materialDefs: BundledMaterialDef[] = [
     variants: [
       { id: 'mdf-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
       { id: 'mdf-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
-      { id: 'mdf-7mm', thicknessMm: 7, thicknessInch: [1, 4] },
+      { id: 'mdf-7mm', thicknessMm: 7, thicknessInch: [9, 32] },
     ],
   },
   {
@@ -86,7 +87,7 @@ export const materialDefs: BundledMaterialDef[] = [
     image: 'bamboo',
     category: 'wood',
     variants: [
-      { id: 'bamboo-2mm', thicknessMm: 2, thicknessInch: [5, 64] },
+      { id: 'bamboo-2mm', thicknessMm: 2, thicknessInch: [1, 16] },
       { id: 'bamboo-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
     ],
   },
@@ -98,9 +99,11 @@ export const materialDefs: BundledMaterialDef[] = [
     image: 'acrylic_transparent',
     category: 'acrylic',
     variants: [
+      { id: 'acrylic-2mm', thicknessMm: 2, thicknessInch: [1, 16] },
       { id: 'acrylic-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
       { id: 'acrylic-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
-      { id: 'acrylic-7mm', thicknessMm: 7, thicknessInch: [1, 4] },
+      { id: 'acrylic-6mm', thicknessMm: 6, thicknessInch: [1, 4] },
+      { id: 'acrylic-7mm', thicknessMm: 7, thicknessInch: [9, 32] },
       { id: 'acrylic-8mm', thicknessMm: 8, thicknessInch: [5, 16] },
       { id: 'acrylic-10mm', thicknessMm: 10, thicknessInch: [3, 8] },
     ],
@@ -141,6 +144,7 @@ export const materialDefs: BundledMaterialDef[] = [
   {
     id: 'sublimation-acrylic',
     nameKey: 'sublimation_acrylic',
+    image: 'acrylic_sublimation',
     category: 'acrylic',
     variants: [
       { id: 'sublimation-acrylic-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
@@ -157,7 +161,17 @@ export const materialDefs: BundledMaterialDef[] = [
       { id: 'mixed-acrylic-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
     ],
   },
-  { id: 'mirror-acrylic', nameKey: 'mirror_acrylic', category: 'acrylic', regions: ['us'] },
+  {
+    id: 'acrylic-with-film',
+    nameKey: 'acrylic_with_film',
+    image: 'acrylic_film',
+    category: 'acrylic',
+    variants: [
+      { id: 'acrylic-with-film-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
+      { id: 'acrylic-with-film-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
+    ],
+  },
+  { id: 'mirror-acrylic', nameKey: 'mirror_acrylic', image: 'acrylic_mirror', category: 'acrylic', regions: ['us'] },
   // Leather
   {
     id: 'leather',
@@ -222,7 +236,7 @@ export const materialDefs: BundledMaterialDef[] = [
   // Plastic
   { id: 'white-abs', nameKey: 'white_abs', image: 'plastic_abs', category: 'plastic' },
   { id: 'black-abs', nameKey: 'black_abs', image: 'plastic_abs', category: 'plastic' },
-  { id: 'pc', nameKey: 'pc', category: 'plastic' },
+  { id: 'pc', nameKey: 'pc', image: 'plastic_pc', category: 'plastic' },
 ];
 
 /**
@@ -251,8 +265,10 @@ export const presetMappings: Record<string, PresetMapping> = {
   bamboo_printing: { materialId: 'bamboo', nameKey: 'printing' },
   cork_printing: { materialId: 'cork', nameKey: 'printing' },
   // Acrylic
+  acrylic_2mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-2mm', nameKey: 'cutting' },
   acrylic_3mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-3mm', nameKey: 'cutting' },
   acrylic_5mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-5mm', nameKey: 'cutting' },
+  acrylic_6mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-6mm', nameKey: 'cutting' },
   acrylic_7mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-7mm', nameKey: 'cutting' },
   acrylic_8mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-8mm', nameKey: 'cutting' },
   acrylic_10mm_cutting: { materialId: 'acrylic', variantId: 'acrylic-10mm', nameKey: 'cutting' },
@@ -290,6 +306,9 @@ export const presetMappings: Record<string, PresetMapping> = {
   acrylic_mixed_3mm_cutting: { materialId: 'mixed-acrylic', variantId: 'mixed-acrylic-3mm', nameKey: 'cutting' },
   acrylic_mixed_5mm_cutting: { materialId: 'mixed-acrylic', variantId: 'mixed-acrylic-5mm', nameKey: 'cutting' },
   acrylic_mixed_engraving: { materialId: 'mixed-acrylic', nameKey: 'engraving' },
+  acrylic_film_3mm_cutting: { materialId: 'acrylic-with-film', variantId: 'acrylic-with-film-3mm', nameKey: 'cutting' },
+  acrylic_film_5mm_cutting: { materialId: 'acrylic-with-film', variantId: 'acrylic-with-film-5mm', nameKey: 'cutting' },
+  acrylic_film_engraving: { materialId: 'acrylic-with-film', nameKey: 'engraving' },
   // Leather
   leather_3mm_cutting: { materialId: 'leather', variantId: 'leather-3mm', nameKey: 'cutting' },
   leather_5mm_cutting: { materialId: 'leather', variantId: 'leather-5mm', nameKey: 'cutting' },

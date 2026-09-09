@@ -25,9 +25,9 @@ import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { Material, MaterialRegion, MaterialVariant } from '@core/interfaces/IMaterial';
 
+import { showMaterialEditorModal } from '../editors';
 import AddVariantModal from '../editors/AddVariantModal';
 import styles from '../MaterialBrowser.module.scss';
-import { showMaterialEditorModal } from '../editors';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 import { getCoverStyle } from '../utils/coverStyle';
 import { getThicknessLabel } from '../utils/inchDisplay';
@@ -212,11 +212,13 @@ const MaterialDetail = ({
             <div className={styles['section-title']}>{t.thickness}</div>
             <div style={{ alignItems: 'center', display: 'flex', gap: 8, marginTop: 6 }}>
               {variants.length > 0 && (
-                <Segmented
-                  onChange={(value) => setSelectedVariantId(value as string)}
-                  options={variants.map((variant) => ({ label: variantLabel(variant), value: variant.id }))}
-                  value={selectedVariant?.id}
-                />
+                <div className={styles['variant-scroll']}>
+                  <Segmented
+                    onChange={(value) => setSelectedVariantId(value as string)}
+                    options={variants.map((variant) => ({ label: variantLabel(variant), value: variant.id }))}
+                    value={selectedVariant?.id}
+                  />
+                </div>
               )}
               {/* User variants attach to ANY material (catalog included); only they are deletable */}
               <Button

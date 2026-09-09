@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'ซื้อที่ร้านค้า FLUX',
       catalog: {
         materials: {
-          acrylic: 'อะคริลิก',
+          acrylic: 'อะคริลิกใส',
+          acrylic_with_film: 'อะคริลิก (มีฟิล์มกันรอย)',
           aluminum: 'อะลูมิเนียม',
           bamboo: 'ไม้ไผ่',
+          basswood_sheet: 'แผ่นไม้บาสวูด',
           black_abs: 'ABS สีดำ',
           black_acrylic: 'อะคริลิกสีดำ',
           brass: 'ทองเหลือง',
           canvas: 'ผ้าใบ',
           cardboard: 'กระดาษลูกฟูก',
           cardstock: 'กระดาษแข็ง',
+          ceramic_tile: 'กระเบื้องเซรามิก',
           copper: 'ทองแดง',
           cork: 'ไม้ก๊อก',
           denim: 'ผ้าเดนิม',
+          eva_foam: 'โฟม EVA',
           fabric: 'ผ้า',
+          faux_leather: 'หนังเทียม',
+          felt: 'ผ้าสักหลาด',
+          fluorescent_acrylic: 'อะคริลิกเรืองแสง',
           glass: 'แก้ว',
+          glitter_acrylic: 'อะคริลิกกลิตเตอร์',
           gloss_leather: 'หนังเงา',
           gold: 'ทอง',
           iron: 'เหล็ก',
-          leather: 'หนัง',
+          kraft_paper: 'กระดาษคราฟท์',
+          leather: 'หนังแท้',
           mdf: 'MDF',
           metal: 'โลหะ',
+          mirror_acrylic: 'อะคริลิกกระจกเงา',
+          mixed_acrylic: 'อะคริลิกหลากสี',
           my_materials: 'วัสดุของฉัน',
+
           opaque_acrylic: 'อะคริลิกทึบแสง',
-          pc: 'PC',
+
+          pc: 'โพลีคาร์บอเนต (PC)',
+
           rubber: 'ยาง',
+
           silver: 'เงิน',
+
           slate: 'หินชนวน',
+
+          solid_wood: 'ไม้จริง',
+
           stainless_steel: 'สเตนเลส',
+
           sticker: 'สติกเกอร์',
+
           stone: 'หิน',
+
+          sublimation_acrylic: 'อะคริลิกซับลิเมชัน',
+
           titanium: 'ไทเทเนียม',
+
+          walnut_veneer: 'วีเนียร์ไม้วอลนัท',
+
           white_abs: 'ABS สีขาว',
-          wood: 'ไม้',
+
+          wood: 'ไม้อัด',
         },
         presets: {
           cutting: 'การตัด',

@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Comprar na FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Acrílico',
+          acrylic: 'Acrílico transparente',
+          acrylic_with_film: 'Acrílico (com película protetora)',
           aluminum: 'Alumínio',
           bamboo: 'Bambu',
+          basswood_sheet: 'Placa de tília',
           black_abs: 'ABS preto',
           black_acrylic: 'Acrílico preto',
           brass: 'Latão',
           canvas: 'Tela',
           cardboard: 'Cartão',
           cardstock: 'Cartolina',
+          ceramic_tile: 'Azulejo cerâmico',
           copper: 'Cobre',
           cork: 'Cortiça',
           denim: 'Ganga',
+          eva_foam: 'Espuma EVA',
           fabric: 'Tecido',
+          faux_leather: 'Couro sintético',
+          felt: 'Feltro',
+          fluorescent_acrylic: 'Acrílico fluorescente',
           glass: 'Vidro',
+          glitter_acrylic: 'Acrílico com glitter',
           gloss_leather: 'Couro brilhante',
           gold: 'Ouro',
           iron: 'Ferro',
-          leather: 'Couro',
+          kraft_paper: 'Papel kraft',
+          leather: 'Couro genuíno',
           mdf: 'MDF',
           metal: 'Metal',
+          mirror_acrylic: 'Acrílico espelhado',
+          mixed_acrylic: 'Acrílico multicolorido',
           my_materials: 'Os meus materiais',
+
           opaque_acrylic: 'Acrílico opaco',
-          pc: 'PC',
+
+          pc: 'Policarbonato (PC)',
+
           rubber: 'Borracha',
+
           silver: 'Prata',
+
           slate: 'Ardósia',
+
+          solid_wood: 'Madeira maciça',
+
           stainless_steel: 'Aço inoxidável',
+
           sticker: 'Autocolante',
+
           stone: 'Pedra',
+
+          sublimation_acrylic: 'Acrílico para sublimação',
+
           titanium: 'Titânio',
+
+          walnut_veneer: 'Folha de nogueira',
+
           white_abs: 'ABS branco',
-          wood: 'Madeira',
+
+          wood: 'Contraplacado',
         },
         presets: {
           cutting: 'Corte',

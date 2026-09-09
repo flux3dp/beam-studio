@@ -386,38 +386,66 @@ const lang: ILang = {
       buy_on_shop: 'Acquista su FLUX Shop',
       catalog: {
         materials: {
-          acrylic: 'Acrilico',
+          acrylic: 'Acrilico trasparente',
+          acrylic_with_film: 'Acrilico (con pellicola protettiva)',
           aluminum: 'Alluminio',
           bamboo: 'Bambù',
+          basswood_sheet: 'Tavola di tiglio',
           black_abs: 'ABS nero',
           black_acrylic: 'Acrilico nero',
           brass: 'Ottone',
           canvas: 'Tela',
           cardboard: 'Cartone',
           cardstock: 'Cartoncino',
+          ceramic_tile: 'Piastrella in ceramica',
           copper: 'Rame',
           cork: 'Sughero',
           denim: 'Denim',
+          eva_foam: 'Schiuma EVA',
           fabric: 'Tessuto',
+          faux_leather: 'Ecopelle',
+          felt: 'Feltro',
+          fluorescent_acrylic: 'Acrilico fluorescente',
           glass: 'Vetro',
+          glitter_acrylic: 'Acrilico glitterato',
           gloss_leather: 'Pelle lucida',
           gold: 'Oro',
           iron: 'Ferro',
-          leather: 'Pelle',
+          kraft_paper: 'Carta kraft',
+          leather: 'Vera pelle',
           mdf: 'MDF',
           metal: 'Metallo',
+          mirror_acrylic: 'Acrilico specchiato',
+          mixed_acrylic: 'Acrilico multicolore',
           my_materials: 'I miei materiali',
+
           opaque_acrylic: 'Acrilico opaco',
-          pc: 'PC',
+
+          pc: 'Policarbonato (PC)',
+
           rubber: 'Gomma',
+
           silver: 'Argento',
+
           slate: 'Ardesia',
+
+          solid_wood: 'Legno massello',
+
           stainless_steel: 'Acciaio inossidabile',
+
           sticker: 'Adesivo',
+
           stone: 'Pietra',
+
+          sublimation_acrylic: 'Acrilico per sublimazione',
+
           titanium: 'Titanio',
+
+          walnut_veneer: 'Impiallacciatura di noce',
+
           white_abs: 'ABS bianco',
-          wood: 'Legno',
+
+          wood: 'Compensato',
         },
         presets: {
           cutting: 'Taglio',
