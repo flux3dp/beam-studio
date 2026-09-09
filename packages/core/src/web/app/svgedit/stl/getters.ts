@@ -1,5 +1,3 @@
-import { todo } from '@core/helpers/is-dev';
-
 import { PHOTO_3D_ATTR, STL_ATTR } from './constants';
 
 /**
@@ -17,10 +15,3 @@ export const isPhotoPlaneProjection = (elem?: Element | null): boolean =>
 
 /** Any object rendered and transformed by the inner-engraving 3D canvas. */
 export const is3dProjection = (elem?: Element | null): boolean => isStlProjection(elem) || isPhotoPlaneProjection(elem);
-
-todo('If isPlainRect is not used, it may be removed');
-/**
- * Whether the element is a real `<rect>` shape, excluding STL projection rects.
- */
-export const isPlainRect = (elem?: Element | null): boolean =>
-  elem?.tagName.toLowerCase() === 'rect' && !is3dProjection(elem);

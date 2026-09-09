@@ -31,10 +31,17 @@ const transform = {
   scale: [1, 1, 1],
 } as StlObject['transform'];
 
+const initialTransform = {
+  flip: [false, false, false],
+  position: [4, 5, 6],
+  rotation: [0.1, 0.2, 0.3],
+  scale: [0.5, 0.5, 0.5],
+} as StlObject['transform'];
+
 const object = {
   geometry: {},
   id: 'stl',
-  initialTransform: transform,
+  initialTransform,
   transform,
 } as StlObject;
 
@@ -97,6 +104,19 @@ describe('DimensionPanelStl', () => {
     expect(scale).toHaveClass('ant-btn-color-default', 'ant-btn-variant-text');
     expect(positionReset).toHaveClass('actionButton');
     expect(translate).toHaveClass('actionButton');
+
+    fireEvent.click(positionReset);
+    expect(mockSetTransform).toHaveBeenLastCalledWith(object, {
+      ...transform,
+      position: initialTransform.position,
+    });
+    fireEvent.click(sizeReset);
+    expect(mockSetTransform).toHaveBeenLastCalledWith(object, { ...transform, scale: initialTransform.scale });
+    fireEvent.click(rotationReset);
+    expect(mockSetTransform).toHaveBeenLastCalledWith(object, {
+      ...transform,
+      rotation: initialTransform.rotation,
+    });
 
     fireEvent.click(scale);
 

@@ -11,13 +11,10 @@ import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { isMobile } from '@core/app/stores/screenStore';
 import type { StlObject } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
-import { todo } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ActionsPanel.module.scss';
 import ObjectPanelItem from './ObjectPanelItem';
-
-todo('Add icons');
 
 interface Props {
   id: string;

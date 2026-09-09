@@ -20,7 +20,7 @@ jest.mock('@core/helpers/i18n', () => ({
     inner_engraving: {
       enable_mode: 'enable mode',
       enable_mode_with_workarea: 'apply Promark UV and 70 × 70 settings',
-      file_needs_workarea: 'apply the file\'s Promark UV and 70 × 70 settings',
+      file_needs_workarea: "apply the file's Promark UV and 70 × 70 settings",
       mode_switch_title: 'switch canvas mode',
       mode_unavailable: 'unavailable',
     },

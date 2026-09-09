@@ -17,7 +17,6 @@ import { useStlStore } from '@core/app/stores/stlStore';
 import selectionManager from '@core/app/svgedit/selection';
 import workareaManager from '@core/app/svgedit/workarea';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
-import { todo } from '@core/helpers/is-dev';
 
 import {
   AXIS_COLORS,
@@ -40,10 +39,6 @@ import { getSelectedStlId, selectStlObject } from './utils/selection';
 import ViewController from './ViewController';
 import { CAMERA_FOV, DEFAULT_VIEW, getPresetPosition, useViewStore } from './viewStore';
 import ZoomController from './ZoomController';
-
-todo(
-  '標明這些顏色來自哪裡，基本上是 scss 或 JS，確認沿用舊的顏色的話，最好對齊原本的寫法（例如 rgba）；scss container background color 實際上可以直接套用整個 beam studio 的底色，不用另外設定，除非決定給內雕改成暗色模式，但容易影響到很多其他的顏色顯示',
-);
 
 /** Orbit on the left button, pan on the right — the three.js default, and the 3D convention. */
 const MOUSE_BUTTONS = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PAN };

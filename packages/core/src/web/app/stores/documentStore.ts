@@ -2,7 +2,6 @@ import { create } from 'zustand';
 import { combine, subscribeWithSelector } from 'zustand/middleware';
 
 import { TabEvents } from '@core/app/constants/ipcEvents';
-import { todo } from '@core/helpers/is-dev';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
@@ -18,8 +17,6 @@ export type DocumentStore = DocumentState & {
   set: <K extends keyof DocumentState>(key: K, value: DocumentState[K]) => void;
   update: (payload: Partial<DocumentState>) => void;
 };
-
-todo('TBD：是否需要為了 isInnerEngravingEnabled 而解 circular dependency？');
 
 const getInitDocumentStore = (): DocumentState => {
   const preference = storage.get('beambox-preference', false) as BeamboxPreference;

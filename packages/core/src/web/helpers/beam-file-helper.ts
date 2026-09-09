@@ -493,9 +493,7 @@ const readPointCloudSource = (buf: Buffer, offset: number, end: number, loaded: 
       continue;
     }
 
-    const pointCloudBuffer = new Uint8Array(
-      buf.subarray(pointCloudOffset, pointCloudOffset + pointCloudSize),
-    ).buffer;
+    const pointCloudBuffer = new Uint8Array(buf.subarray(pointCloudOffset, pointCloudOffset + pointCloudSize)).buffer;
 
     const transforms = parseStlTransform(elem);
 

@@ -20,7 +20,6 @@ import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
-import { todo } from '@core/helpers/is-dev';
 import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
 
 import Generators from '../../Generators';
@@ -35,8 +34,6 @@ import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
 import Workarea from './Workarea';
 import WorkareaInfo from './WorkareaInfo';
-
-todo('Fix Ruler with inner engraving');
 
 const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
@@ -69,7 +66,6 @@ const SvgEditor = (): ReactNode => {
         <Banner />
         <div className={styles['workarea-container']} id="workarea-container">
           <ElementTitle />
-          {/* esther TODO: show related Ruler in InnerEngravingCanvas (this might need setup within InnerEngravingCanvas) */}
           {!innerEngraving && <Ruler />}
           {/* svgcontent still holds the layers and the projection rects, so the SVG canvas stays
               mounted underneath the 3D canvas rather than being unmounted */}

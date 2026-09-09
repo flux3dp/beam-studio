@@ -12,12 +12,9 @@ import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
 import { applyPhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloud';
 import { generatePhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloudGenerator';
 import UnitInput from '@core/app/widgets/UnitInput';
-import { todo } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ThreeDOptions.module.scss';
-
-todo('mobile 版還沒處理，其他 OptionsBlocks 都有 ObjectPanelItem 的分支');
 
 interface Props {
   elem: Element;

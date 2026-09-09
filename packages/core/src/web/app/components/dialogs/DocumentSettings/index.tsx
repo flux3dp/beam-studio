@@ -44,7 +44,6 @@ import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/pro
 import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { applyExclusiveModePatch, type ExclusiveMode } from '@core/helpers/exclusiveModes';
-import { todo } from '@core/helpers/is-dev';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
@@ -64,9 +63,6 @@ import InnerEngravingBlock from './InnerEngravingBlock';
 import JobOriginBlock from './JobOriginBlock';
 import RotaryBlock from './RotaryBlock';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
-
-todo('useExclusiveBooleans');
-todo('Fix 內雕不應該被歸類於【擴充模組】之下；TBD 入口是否應參考【曲面雕刻】，放在 menu tool？');
 
 const promarkLaserOptions = laserTypes
   .map((type) =>

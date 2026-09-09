@@ -15,18 +15,15 @@ import {
 import alertConstants from '@core/app/constants/alert-constants';
 import type { StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
+import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
-import { todo } from '@core/helpers/is-dev';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-todo('建議使用 @core 路徑');
-import history from '../../../history/history';
-import undoManager from '../../../history/undoManager';
 
 import { performStlPreChecks } from './preCheck';
 
@@ -35,8 +32,6 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
-
-todo('TBD: resize + relocate 要視作 reset 參考的原始值嗎？這個行為要併入 import 還是另外有一個 history command？');
 
 /** The user's answer to the adaptive-scaling prompt. Asked only when the model does not fit. */
 const askToScaleDown = (): Promise<boolean> =>
@@ -103,6 +98,13 @@ const yieldToUi = () => new Promise((resolve) => setTimeout(resolve, 0));
 
 const PROGRESS_ID = 'import-stl';
 
+const cloneTransform = ({ flip, position, rotation, scale }: StlTransform): StlTransform => ({
+  flip: [...flip],
+  position: [...position],
+  rotation: [...rotation],
+  scale: [...scale],
+});
+
 export const insertStlGeometry = async (
   buffer: ArrayBuffer,
   geometry: BufferGeometry,
@@ -118,7 +120,10 @@ export const insertStlGeometry = async (
 
   if (!geometry.boundingBox) throw new Error('Failed to read STL geometry');
 
-  const transform = options.initialTransform ?? (await getInitialTransform(geometry, options));
+  // Placement and adaptive scaling are part of the imported state. Keep a separate immutable
+  // snapshot so every DimensionPanel reset returns to exactly what the user first saw.
+  const initialTransform = cloneTransform(options.initialTransform ?? (await getInitialTransform(geometry, options)));
+  const transform = cloneTransform(initialTransform);
   const id = svgCanvas.getNextId();
   const elem = svgCanvas.addSvgElementFromJson<SVGRectElement>({
     attr: {
@@ -135,9 +140,9 @@ export const insertStlGeometry = async (
     },
     element: 'rect',
   });
-  const object = { buffer, geometry, id, initialTransform: transform, transform };
+  const object = { buffer, geometry, id, initialTransform, transform };
 
-  updateProjectionRect(elem, geometry, getMatrix(object), { initialTransform: transform, transform });
+  updateProjectionRect(elem, geometry, getMatrix(object), { initialTransform, transform });
   useStlStore.getState().set(object);
   updateElementColor(elem);
 
