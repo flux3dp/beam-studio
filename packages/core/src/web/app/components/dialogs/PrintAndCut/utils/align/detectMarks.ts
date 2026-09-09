@@ -6,6 +6,8 @@ import { markRadiusPx } from '../../constants';
 import type { Point, RigidTransform } from '../rigidTransform';
 import { applyRigidTransform, exceedsTolerance, fitRigidTransform, getMatchTolerance } from '../rigidTransform';
 
+import { fitSummary, logAlign, pointMm } from './alignLog';
+
 /** More detected blobs than this means the detection is too noisy to search */
 const MAX_DETECTED_MARKS = 20;
 
@@ -122,18 +124,28 @@ export const findAlignment = (expected: Point[], detected: Point[]): MarkSearch 
   };
 };
 
-/** Detect the marks in the current preview background (whole workarea) and fit them */
-export const detectFromBackground = async (expected: Point[]): Promise<MarkSearch & { url: string }> => {
+/**
+ * Detect the marks in the current preview background (whole workarea) and fit them
+ * @param stage which image is being searched, for the log
+ */
+export const detectFromBackground = async (expected: Point[], stage: string): Promise<MarkSearch & { url: string }> => {
   const url = await previewModeBackgroundDrawer.getCameraCanvasUrl({ useCache: false });
   const response = await fetch(url);
   const blob = await response.blob();
   const bitmap = await createImageBitmap(blob);
   const ratio = bitmap.width / workareaManager.width;
 
-  bitmap.close();
-
   const points = await detectMarkBlobs(blob, ratio);
   const detected: Point[] = points.map(([x, y]) => ({ x: x / ratio, y: y / ratio }));
+  const search = findAlignment(expected, detected);
 
-  return { ...findAlignment(expected, detected), url };
+  logAlign('detect', {
+    closestFit: search.closest && fitSummary(search.closest),
+    detectedMm: detected.map(pointMm),
+    imageWidth: bitmap.width,
+    matched: Boolean(search.transform),
+    stage,
+  });
+
+  return { ...search, url };
 };

@@ -14,6 +14,7 @@ import {
   getMatchTolerance,
 } from '../rigidTransform';
 
+import { logAlign, pointMm } from './alignLog';
 import { reportAlignProgress } from './alignProgress';
 import { detectMarkBlobs } from './detectMarks';
 
@@ -122,6 +123,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
   const found: Point[] = [];
   const refuted = new Set<string>();
   let targetedCount = 0;
+  let sweptTiles = 0;
   let detectionBroken = false;
   let hypothesisEnabled = true;
   let stopped = false;
@@ -397,6 +399,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
 
       if (!ok) return { detectedMarks: null, failed: true, stopped };
 
+      sweptTiles += 1;
       lastCapture = { x: point[0], y: point[1] };
 
       if (detectionBroken || !hypothesisEnabled) continue;
@@ -422,6 +425,14 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
 
     throw error;
   } finally {
+    logAlign('smart-sweep', {
+      blobsMm: found.map(pointMm),
+      detectionBroken,
+      refutedHypotheses: refuted.size,
+      stopped,
+      sweptTiles: `${sweptTiles}/${points.length}`,
+      targetedCaptures: targetedCount,
+    });
     requestStop = () => {};
     unregisterEsc();
   }

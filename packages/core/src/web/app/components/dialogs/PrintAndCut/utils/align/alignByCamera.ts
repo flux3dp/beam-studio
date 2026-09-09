@@ -1,36 +1,54 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import { dpmm } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import workareaManager from '@core/app/svgedit/workarea';
+import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 
 import { usePrintAndCutStore } from '../../store';
 import type { Point, RigidTransform } from '../rigidTransform';
-import { centroid, fitRigidTransform } from '../rigidTransform';
+import { centroid, fitRigidTransform, getMatchTolerance } from '../rigidTransform';
 
+import { fitSummary, logAlign, logAlignError, mm, pointMm, saveFailureImage } from './alignLog';
 import { reportAlignProgress } from './alignProgress';
 import { captureWorkareaImage } from './capture';
 import { detectFromBackground } from './detectMarks';
 import { endPreviewMode } from './previewSession';
 import { refineMarkPatches } from './refineMarkPatches';
 
-/** Log the fitted alignment for debugging; the user only sees a success message */
+/** Log the fitted alignment for the bug report; the user only sees a success message */
 const logAlignmentResult = (expected: Point[], transform: RigidTransform): void => {
-  const { angle, errors, residual, residualX, residualY, scale, tx, ty } = transform;
+  const { angle, tx, ty } = transform;
   // mean mark displacement: R·centroid(expected) + t − centroid(expected)
   const c = centroid(expected);
   const dx = Math.cos(angle) * c.x - Math.sin(angle) * c.y + tx - c.x;
   const dy = Math.sin(angle) * c.x + Math.cos(angle) * c.y + ty - c.y;
 
-  console.log('print-and-cut align', {
-    // per mark, sheet frame, in markPositions order: TL, TR, BL, BR
-    markErrorsMm: errors.map(({ x, y }) => [Number((x / dpmm).toFixed(3)), Number((y / dpmm).toFixed(3))]),
-    movedXMm: Number((dx / dpmm).toFixed(2)),
-    movedYMm: Number((dy / dpmm).toFixed(2)),
-    residualMm: Number((residual / dpmm).toFixed(3)),
-    residualXMm: Number((residualX / dpmm).toFixed(3)),
-    residualYMm: Number((residualY / dpmm).toFixed(3)),
-    rotationDeg: Number(((angle * 180) / Math.PI).toFixed(3)),
-    scale: Number(scale.toFixed(4)),
+  logAlign('aligned', { ...fitSummary(transform), movedMm: [mm(dx), mm(dy)] });
+};
+
+/** Everything a failed run needs to be diagnosed from the bug report */
+const logRunContext = (expected: Point[]): void => {
+  const {
+    contourSource,
+    fullBBox,
+    gridColumns,
+    gridGapMm,
+    gridRows,
+    offsetDistance,
+    orientation,
+    paperKey,
+    whiteMarkBase,
+  } = usePrintAndCutStore.getState();
+  const device = deviceMaster.currentDevice?.info;
+  const tolerance = getMatchTolerance(expected);
+
+  logAlign('run', {
+    device: device && { model: device.model, serial: device.serial, version: device.version },
+    expectedMarksMm: expected.map(pointMm),
+    fullBBoxMm: fullBBox && [mm(fullBBox.x), mm(fullBBox.y), mm(fullBBox.width), mm(fullBBox.height)],
+    sheet: { contourSource, gridColumns, gridGapMm, gridRows, offsetDistance, orientation, paperKey, whiteMarkBase },
+    toleranceMm: pointMm(tolerance),
+    workareaMm: [mm(workareaManager.width), mm(workareaManager.modelHeight)],
   });
 };
 
@@ -52,6 +70,8 @@ export const alignByCamera = async (): Promise<null | RigidTransform> => {
 
   if (expected.length === 0) return null;
 
+  logRunContext(expected);
+
   try {
     // 1. capture + locate: the sweep is shown progressively while it runs
     const capture = await captureWorkareaImage({ expectedMarks: expected, onProgress: setCameraImageUrl });
@@ -66,6 +86,8 @@ export const alignByCamera = async (): Promise<null | RigidTransform> => {
     setAlignmentFit(capture.closestFit);
 
     if (!capture.detectedMarks) {
+      logAlign('detect-failed', { closestFit: capture.closestFit && fitSummary(capture.closestFit) });
+      await saveFailureImage();
       alertCaller.popUpError({ message: t.detect_failed });
 
       return null;
@@ -83,12 +105,12 @@ export const alignByCamera = async (): Promise<null | RigidTransform> => {
       // reported after `refine` so the tail phases stay in ascending order
       reportAlignProgress('completing');
 
-      const refined = await detectFromBackground(expected);
+      const refined = await detectFromBackground(expected, 'refined');
 
       setCameraImageUrl(refined.url);
       transform = refined.transform;
 
-      if (!transform) console.warn('print-and-cut align: refined detection failed, falling back to the located marks');
+      if (!transform) logAlign('refined-detect-failed', { closestFit: refined.closest && fitSummary(refined.closest) });
     }
 
     // 3. fit: the redetected marks, else the located ones as they are
@@ -100,7 +122,8 @@ export const alignByCamera = async (): Promise<null | RigidTransform> => {
 
     return transform;
   } catch (error) {
-    console.error('Failed to align print and cut by camera', error);
+    logAlignError('align', error);
+    await saveFailureImage();
     alertCaller.popUpError({ message: t.detect_failed });
 
     return null;

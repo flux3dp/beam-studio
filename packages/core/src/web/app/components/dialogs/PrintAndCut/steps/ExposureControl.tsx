@@ -10,6 +10,7 @@ import versionChecker from '@core/helpers/version-checker';
 import type { IConfigSetting, IDeviceInfo } from '@core/interfaces/IDevice';
 
 import { usePrintAndCutStore } from '../store';
+import { logAlign } from '../utils/align/alignLog';
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
@@ -139,6 +140,11 @@ const ExposureControl = (): React.ReactNode => {
 
     loadExposureSettings();
   }, [isProcessing, loadExposureSettings]);
+
+  // the values in effect for the next run, for the bug report
+  useEffect(() => {
+    if (exposureSetting) logAlign('exposure', { auto: autoExposure, value: exposureSetting.value });
+  }, [autoExposure, exposureSetting]);
 
   if (isProcessing || !exposureSetting) return null;
 

@@ -95,7 +95,8 @@ PrintAndCut/
     │   ├── refineMarkPatches.ts # L2 per-mark centered retake, patch kept
     │   ├── detectMarks.ts       # L1 detectMarkBlobs (fluxghost window) + findAlignment + detectFromBackground
     │   ├── previewSession.ts    # L1 supportsRegionPreview / ensurePreviewMode / ensureRegionPreview / endPreviewMode
-    │   └── alignProgress.ts     # reporter: phases → store alignProgress
+    │   ├── alignProgress.ts     # reporter: phases → store alignProgress
+    │   └── alignLog.ts          # leaf: Logger('print-and-cut') events + one failure-image slot → bug report section
     └── generateCutLayer.ts  # Finish: cutting layer + config save
 ```
 
@@ -196,6 +197,17 @@ callers only reset state, call, and apply the returned transform. Layers:
    best-fit, diagnostic only — the applied transform stays rigid). `endPreviewMode` in `finally`.
 4. `setAlignmentTransform` → CanvasManager `setContentTransform` moves
    design+marks overlay over the fixed camera image.
+
+Diagnostics: every stage calls `logAlign(event, data)` (alignLog.ts; mm units,
+also mirrored to the console) — `run` (device, sheet setup, expected marks,
+tolerance), `exposure` (from ExposureControl), `detect` (per searched image:
+blobs, closest fit, matched), `smart-sweep` / `sweep` / `dual-mode-fallback`,
+`refine`, `aligned`, `detect-failed`, `error`. A failed run also keeps ONE
+downscaled JPEG of the background (`saveFailureImage`, ~200 KB base64,
+overwritten by the next failure). `output-error.ts` emits both as the
+`======::print-and-cut::======` section; the automatic S3 upload passes
+`includeImages: false` so a photo of the bed only leaves with a deliberate
+report.
 
 Progress: reporters call `reportAlignProgress(phase, {current, total, stoppable})`
 (`alignProgress.ts` phases: preparing/capture/locate/detect/refine/completing →

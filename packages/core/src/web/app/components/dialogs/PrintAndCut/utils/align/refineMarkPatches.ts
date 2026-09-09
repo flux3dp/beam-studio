@@ -5,6 +5,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import { REFINE_PATCH_SIZE_PX } from '../../constants';
 import type { Point } from '../rigidTransform';
 
+import { logAlign, logAlignError } from './alignLog';
 import { reportAlignProgress } from './alignProgress';
 import { ensureRegionPreview } from './previewSession';
 
@@ -36,6 +37,7 @@ export const refineMarkPatches = async (
 
     const { modelHeight, width } = workareaManager;
     let refinedAny = false;
+    let retaken = 0;
 
     for (const [index, { x, y }] of markCenters.entries()) {
       reportAlignProgress('refine', { current: index, total: markCenters.length });
@@ -64,12 +66,15 @@ export const refineMarkPatches = async (
       );
       await previewModeBackgroundDrawer.drawImageToCanvas(mask, width / 2, modelHeight / 2);
       refinedAny = true;
+      retaken += 1;
       onPatchDrawn?.(await previewModeBackgroundDrawer.getCameraCanvasUrl({ useCache: false }));
     }
 
+    logAlign('refine', { retaken: `${retaken}/${markCenters.length}` });
+
     return refinedAny;
   } catch (error) {
-    console.warn('Failed to refine print and cut mark patches', error);
+    logAlignError('refine', error);
 
     return false;
   }

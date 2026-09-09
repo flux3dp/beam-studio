@@ -3,6 +3,7 @@
  */
 import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
+import { getPrintAndCutReport } from '@core/app/components/dialogs/PrintAndCut/utils/align/alignLog';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import { getOS } from '@core/helpers/getOS';
@@ -15,7 +16,11 @@ import type { StorageKey } from '@core/interfaces/IStorage';
 
 import i18n from './i18n';
 
-const getOutput = (): string[] => {
+/**
+ * @param includeImages embed captured images (print-and-cut failure photo);
+ * off for automatic uploads, which the user did not explicitly send
+ */
+const getOutput = ({ includeImages = true } = {}): string[] => {
   const output = [];
   const logger = Logger('');
   let allLog = logger.getAll();
@@ -75,6 +80,9 @@ const getOutput = (): string[] => {
   output.push('\n\n======::generic::======\n');
   output.push(JSON.stringify(reportInfo.general, null, 2));
 
+  output.push('\n\n======::print-and-cut::======\n');
+  output.push(getPrintAndCutReport({ includeImage: includeImages }));
+
   return output;
 };
 
@@ -94,7 +102,7 @@ export default {
   uploadBackendErrorLog: async (): Promise<void> => {
     Progress.openNonstopProgress({ id: 'output-error-log', message: i18n.lang.beambox.popup.progress.uploading });
 
-    const output = getOutput();
+    const output = getOutput({ includeImages: false });
     const reportFile = new Blob(output, { type: 'application/octet-stream' });
     // reportFile.lastModifiedDate = new Date();
     const reportName = `bug_report_${Math.floor(Date.now() / 1000)}_${getOS()}_${window.FLUX.version}.log`;
