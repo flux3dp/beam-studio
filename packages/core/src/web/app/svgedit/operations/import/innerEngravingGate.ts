@@ -1,10 +1,7 @@
-import { sprintf } from 'sprintf-js';
-
 import alertCaller from '@core/app/actions/alert-caller';
 import { switchInnerEngravingMode } from '@core/app/actions/canvas/innerEngravingMode';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { isInnerEngravingActive, PROMARK_UV_INFO, supportInnerEngraving } from '@core/helpers/addOn/innerEngraving';
 import { checkFpm1UV } from '@core/helpers/checkFeature';
@@ -69,7 +66,7 @@ export const resolveInnerEngravingForFile = async (
   }
 
   const t = i18n.lang.inner_engraving;
-  const accepted = await ask(t.mode_switch_title, sprintf(t.file_needs_workarea, getWorkarea(target).label));
+  const accepted = await ask(t.mode_switch_title, t.file_needs_workarea);
 
   if (!accepted) return { innerEngraving: false, workarea: null };
 
@@ -116,7 +113,7 @@ export const ensureModeForImport = async (needsInnerEngraving: boolean): Promise
   }
 
   const target = getInnerEngravingWorkarea(useDocumentStore.getState().workarea);
-  const message = target ? sprintf(t.enable_mode_with_workarea, getWorkarea(target).label) : t.enable_mode;
+  const message = target ? t.enable_mode_with_workarea : t.enable_mode;
 
   if (!(await ask(t.mode_switch_title, message))) return false;
 
