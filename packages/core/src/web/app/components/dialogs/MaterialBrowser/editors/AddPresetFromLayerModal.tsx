@@ -26,7 +26,6 @@ const NEW_MATERIAL = '__new__';
 export interface AddPresetFromLayerModalProps {
   defaultMaterialId?: string;
   onClose: () => void;
-  onSaved?: (materialId: string, presetId: string) => void;
 }
 
 /** Snapshot of the active layer's live parameters for the current module */
@@ -47,11 +46,7 @@ const captureLayerValues = (module: LayerModuleType): PresetValues => {
   return values;
 };
 
-const AddPresetFromLayerModal = ({
-  defaultMaterialId,
-  onClose,
-  onSaved,
-}: AddPresetFromLayerModalProps): React.JSX.Element => {
+const AddPresetFromLayerModal = ({ defaultMaterialId, onClose }: AddPresetFromLayerModalProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const module = useConfigPanelStore((state) => state.module.value);
   const workarea = useDocumentStore((state) => state.workarea);
@@ -116,7 +111,6 @@ const AddPresetFromLayerModal = ({
     });
     useConfigPanelStore.getState().change({ configName: presetName.trim(), materialId: targetId, presetId: preset.id });
 
-    onSaved?.(targetId, preset.id);
     onClose();
   };
 

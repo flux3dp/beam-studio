@@ -1,3 +1,4 @@
+import type { Preset } from '@core/interfaces/ILayerConfig';
 import type {
   Material,
   MaterialPreset,
@@ -47,6 +48,8 @@ export interface MaterialStoreActions {
   ensureBucket: () => Material;
   getExportData: () => MaterialLibraryExport;
   importData: (data: Partial<MaterialLibraryExport>) => void;
+  /** Merges a legacy `presets` array (storage or exported file) into the "My Materials" bucket */
+  importLegacyPresets: (legacy: Preset[] | undefined) => void;
   /** Re-files a user preset onto another material (id unchanged, layer refs stay valid) */
   movePreset: (presetId: string, targetMaterialId: string) => void;
   pushRecent: (materialId: string, presetId: string) => void;

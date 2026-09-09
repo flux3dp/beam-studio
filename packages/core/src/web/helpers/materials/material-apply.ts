@@ -6,7 +6,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
-import { getPresetDisplayName, resolvePresetSettings } from '@core/helpers/api/material-catalog/utils';
+import { getPresetDisplayName, resolvePresetValues } from '@core/helpers/api/material-catalog/utils';
 import {
   applyPreset,
   clampLayerConfigLimits,
@@ -22,29 +22,12 @@ import type { Material, MaterialPreset, PresetValues } from '@core/interfaces/IM
 
 import { isMaterialBrowserActive } from './isMaterialBrowserActive';
 
-/** Base values merged with the user's [Customized] overlay for the given context */
+/** Store-bound resolvePresetValues: base values merged with the user's [Customized] overlay */
 export const resolveWithOverlay = (
   preset: MaterialPreset,
   model: ReturnType<typeof getPresetModel>,
   module: LayerModuleType,
-): null | PresetValues => {
-  const base = resolvePresetSettings(preset.settings, model, module);
-
-  if (!base) return null;
-
-  if (preset.origin !== 'default') return base;
-
-  const overlay = useMaterialStore.getState().presetOverrides[preset.id];
-
-  if (!overlay) return base;
-
-  const { name: _name, ...overlayValues } =
-    (resolvePresetSettings(overlay as MaterialPreset['settings'], model, module) as
-      | null
-      | (PresetValues & { name?: string })) ?? {};
-
-  return { ...base, ...overlayValues };
-};
+): null | PresetValues => resolvePresetValues(preset, useMaterialStore.getState().presetOverrides, model, module);
 
 /**
  * Adapter into the legacy apply pipeline. configName is written by applyPreset as

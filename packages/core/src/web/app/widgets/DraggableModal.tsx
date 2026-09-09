@@ -18,7 +18,6 @@ interface Props extends Omit<ModalProps, 'centered'> {
   disableMobileDrag?: boolean;
   scrollableContent?: boolean;
   width?: number | string;
-  widthType?: 'maxWidth' | 'minWidth' | 'width';
   xRef?: 'center' | 'left' | 'right';
   yRef?: 'bottom' | 'center' | 'top';
 }
@@ -32,7 +31,6 @@ const DraggableModal = (props: Props): React.JSX.Element => {
     scrollableContent,
     title,
     width = 520,
-    widthType = 'minWidth',
     xRef = 'center',
     yRef = 'center',
     ...restProps
@@ -133,7 +131,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
               [styles.scrollable]: scrollableContent,
             })}
             ref={draggableRef}
-            style={{ [widthType]: `min(${typeof width === 'string' ? width : `${width}px`}, 95vw)` }}
+            style={{ minWidth: `min(${typeof width === 'string' ? width : `${width}px`}, 95vw)` }}
           >
             {modalRender(modal)}
           </div>

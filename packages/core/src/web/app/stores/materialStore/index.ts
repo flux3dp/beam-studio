@@ -222,6 +222,21 @@ export const useMaterialStore = create(
             userVariants: [...state.userVariants, ...importedVariants],
           });
         },
+        importLegacyPresets: (legacy) => {
+          const { bucketPresets, disabledPresetIds } = convertLegacyPresets(legacy);
+
+          if (bucketPresets.length === 0 && disabledPresetIds.length === 0) return;
+
+          if (bucketPresets.length > 0) actions.ensureBucket();
+
+          apply({
+            disabledPresetIds: [...new Set([...get().disabledPresetIds, ...disabledPresetIds])],
+            userPresets: [
+              ...get().userPresets,
+              ...bucketPresets.map((preset) => ({ ...preset, materialId: MY_MATERIALS_ID })),
+            ],
+          });
+        },
         movePreset: (presetId, targetMaterialId) => {
           const preset = get().userPresets.find(({ id }) => id === presetId);
 
@@ -339,18 +354,7 @@ export const initMaterialStore = (): void => {
 
   if (state.migratedFromPresets) return;
 
-  const { bucketPresets, disabledPresetIds } = convertLegacyPresets(getStorage('presets'));
-
-  if (bucketPresets.length > 0) {
-    state.ensureBucket();
-    bucketPresets.forEach((preset) => useMaterialStore.getState().addPreset(MY_MATERIALS_ID, preset));
-  }
-
-  disabledPresetIds.forEach((id) => {
-    if (!useMaterialStore.getState().disabledPresetIds.includes(id)) {
-      useMaterialStore.getState().togglePresetDisabled(id);
-    }
-  });
+  state.importLegacyPresets(getStorage('presets'));
 
   // Flag flips even when there was nothing to migrate, so re-activation never re-runs
   useMaterialStore.setState({ migratedFromPresets: true });

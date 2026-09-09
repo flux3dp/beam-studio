@@ -23,8 +23,11 @@ export const applyDpiOverrides = (
 
   if (!configName) return false;
 
-  const preset =
-    getLayerMaterialPresetValues(layer) ?? getDefaultPreset(configName, model, getData(layer, 'module'));
+  // New mode: material presets are flat (per-DPI siblings, see switchPresetDpiGroup), so a
+  // resolved material ref has no legacy dpiOverrides to replay
+  if (getLayerMaterialPresetValues(layer)) return false;
+
+  const preset = getDefaultPreset(configName, model, getData(layer, 'module'));
   const oldOverrides = preset?.dpiOverrides?.[prevDpi];
   const newOverrides = preset?.dpiOverrides?.[newDpi];
 

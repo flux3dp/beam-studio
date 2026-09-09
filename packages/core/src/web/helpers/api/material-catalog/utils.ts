@@ -10,6 +10,7 @@ import type {
   Material,
   MaterialPreset,
   MaterialRegion,
+  MaterialUserData,
   PresetValues,
 } from '@core/interfaces/IMaterial';
 
@@ -43,6 +44,34 @@ export const resolvePresetSettings = (
   const wildcardScope = settings['*'];
 
   return modelScope?.[moduleKey] ?? modelScope?.['*'] ?? wildcardScope?.[moduleKey] ?? wildcardScope?.['*'] ?? null;
+};
+
+/** The user's [Customized] overlay of a catalog preset, resolved for the context (null = untouched) */
+export const resolvePresetOverlay = (
+  overrides: MaterialUserData['presetOverrides'],
+  presetId: string,
+  model: PresetModel,
+  module: LayerModuleType,
+): null | (PresetValues & { name?: string }) => {
+  const overlay = overrides[presetId];
+
+  return overlay ? resolvePresetSettings(overlay as MaterialPreset['settings'], model, module) : null;
+};
+
+/** Base values for the context merged with the user's overlay; null when the preset has nothing for this context */
+export const resolvePresetValues = (
+  preset: MaterialPreset,
+  overrides: MaterialUserData['presetOverrides'],
+  model: PresetModel,
+  module: LayerModuleType,
+): null | PresetValues => {
+  const base = resolvePresetSettings(preset.settings, model, module);
+
+  if (!base || preset.origin !== 'default') return base;
+
+  const { name: _name, ...overlayValues } = resolvePresetOverlay(overrides, preset.id, model, module) ?? {};
+
+  return { ...base, ...overlayValues };
 };
 
 /** Active catalog region: Preferences override first, then language + timezone detection */

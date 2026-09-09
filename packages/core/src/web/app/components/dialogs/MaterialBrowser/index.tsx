@@ -146,12 +146,9 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
       undoManager.addCommandToHistory(batchCmd);
       initState();
     } else {
-      // Mobile modal variant: stage values in the config store only. Mirrors applyPreset's
-      // dpi handling: entries declaring a dpi apply at it, others keep the layer's current
-      // dpi — either way the matching override tier is merged in.
-      const { dpiOverrides, ...base } = toLegacyPreset(row.preset, row.values, module);
-      const targetDpi = row.values.dpi ?? useConfigPanelStore.getState().getState().dpi.value;
-      const legacy = { ...base, ...dpiOverrides?.[targetDpi] };
+      // Mobile modal variant: stage values in the config store only. Entries declaring a
+      // dpi apply at it, others keep the layer's current dpi.
+      const legacy = toLegacyPreset(row.preset, row.values, module);
       const payload: Record<string, unknown> = {
         configName: legacy.isDefault ? legacy.key : legacy.name,
         materialId: material.id,

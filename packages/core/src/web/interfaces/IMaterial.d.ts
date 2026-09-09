@@ -25,11 +25,7 @@ export type LocalizedString = (Partial<Record<string, string>> & { default: stri
  * with `dpi` promoted to a first-class parameter (option string, see resolutions.ts;
  * 'medium' = 250 DPI).
  */
-export type PresetValues = Partial<ConfigKeyTypeMap> & {
-  dpi?: EngraveDpiOption;
-  /** Per-dpi deltas merged on top of the base values at apply time (same semantics as Preset.dpiOverrides) */
-  dpiOverrides?: Partial<Record<EngraveDpiOption, Partial<ConfigKeyTypeMap>>>;
-};
+export type PresetValues = Partial<ConfigKeyTypeMap> & { dpi?: EngraveDpiOption };
 
 /** '*' = applies to any machine model (user presets, legacy migrations) */
 export type PresetScopeKey = '*' | PresetModel;

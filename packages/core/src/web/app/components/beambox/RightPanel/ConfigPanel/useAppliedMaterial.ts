@@ -61,8 +61,7 @@ export const useAppliedMaterial = (): AppliedMaterialState => {
 
     // The declared dpi is excluded from the comparison: DPI is a layer property
     // (per-DPI rows share the preset), never part of the applied identity
-    const { dpi: _declaredDpi, dpiOverrides, ...base } = values;
-    const compareValues = { ...base, ...dpiOverrides?.[state.dpi?.value] };
+    const { dpi: _declaredDpi, ...compareValues } = values;
     const isModified = Object.entries(compareValues).some(([key, value]) => {
       const item = state[key as ConfigKey];
 

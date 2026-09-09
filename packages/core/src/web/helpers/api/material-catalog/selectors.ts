@@ -17,7 +17,8 @@ import {
   getMaterialDisplayName,
   getPresetDisplayName,
   isMaterialVisibleInRegion,
-  resolvePresetSettings,
+  resolvePresetOverlay,
+  resolvePresetValues,
 } from './utils';
 
 export type PresetState = 'customized' | 'default' | 'user';
@@ -70,19 +71,6 @@ export const getSortedVariants = (material: Material, userVariants: UserVariant[
       Number(a.thicknessUnit === 'inch') - Number(b.thicknessUnit === 'inch') || thicknessValue(a) - thicknessValue(b),
   );
 
-const resolveOverlay = (
-  overrides: MaterialUserData['presetOverrides'],
-  presetId: string,
-  model: PresetModel,
-  module: LayerModuleType,
-): null | (PresetValues & { name?: string }) => {
-  const overlay = overrides[presetId];
-
-  if (!overlay) return null;
-
-  return resolvePresetSettings(overlay as MaterialPreset['settings'], model, module);
-};
-
 /**
  * One material's preset rows for the active machine context (own presets + user additions).
  * With `variantId`, variant-scoped presets are filtered to that variant; material-wide
@@ -104,14 +92,13 @@ export const getPresetsForContext = (
   const rows: ResolvedPresetRow[] = [];
 
   for (const preset of presets) {
-    const base = resolvePresetSettings(preset.settings, model, module);
+    const values = resolvePresetValues(preset, userData.presetOverrides, model, module);
 
-    if (!base) continue;
+    if (!values) continue;
 
     const overlay =
-      preset.origin === 'default' ? resolveOverlay(userData.presetOverrides, preset.id, model, module) : null;
-    const { name: overlayName, ...overlayValues } = overlay ?? {};
-    const values = { ...base, ...overlayValues };
+      preset.origin === 'default' ? resolvePresetOverlay(userData.presetOverrides, preset.id, model, module) : null;
+    const overlayName = overlay?.name;
     // Catalog dpi entries disambiguate by suffix IN THE BROWSER ONLY — the layer chip uses
     // getPresetDisplayName directly, so it keeps the plain name and never claims a DPI
     const displayName =

@@ -1,8 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import { MY_MATERIALS_ID } from '@core/app/constants/material-catalog/constants';
 import { useMaterialStore } from '@core/app/stores/materialStore';
-import { convertLegacyPresets } from '@core/app/stores/materialStore/migration';
 import type { MaterialLibraryExport } from '@core/app/stores/materialStore/types';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
@@ -50,18 +48,7 @@ const importParsed = (parsed: LegacyPresetFile | MaterialLibraryExport): boolean
 
   if (!legacyPresets) return false;
 
-  const { bucketPresets, disabledPresetIds } = convertLegacyPresets(legacyPresets);
-
-  if (bucketPresets.length > 0) {
-    store.ensureBucket();
-    bucketPresets.forEach((preset) => useMaterialStore.getState().addPreset(MY_MATERIALS_ID, preset));
-  }
-
-  disabledPresetIds.forEach((id) => {
-    if (!useMaterialStore.getState().disabledPresetIds.includes(id)) {
-      useMaterialStore.getState().togglePresetDisabled(id);
-    }
-  });
+  store.importLegacyPresets(legacyPresets);
 
   return true;
 };
