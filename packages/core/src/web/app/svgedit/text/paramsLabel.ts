@@ -9,9 +9,10 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import i18n from '@core/helpers/i18n';
-import { isParamsLabelDev } from '@core/helpers/is-dev';
+import isDev, { isParamsLabelDev } from '@core/helpers/is-dev';
 import { attributeMap, getConfigKeys, getData, objectConfig } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -44,19 +45,53 @@ const messageKey = 'params-label-updated';
 /** Not a layer config key, rendered as the title line of the label */
 export const layerNameKey = 'layerName';
 
-const hiddenKeys = ['clipRect', 'color', 'printingSpeed'] as const satisfies ReadonlyArray<ConfigKey>;
+const hiddenKeys = [
+  'clipRect',
+  'color',
+  'printingSpeed',
+  'ref',
+  'fullcolor',
+] as const satisfies ReadonlyArray<ConfigKey>;
+
+/** Keys only reachable through DevBlock, so only offered in dev mode */
+const devKeys = [
+  'accX',
+  'accY',
+  'amAngleMap',
+  'backlash',
+  'blendKWithCmy',
+  'colorCurvesMap',
+  'minPadding',
+  'nozzleMode',
+  'nozzleOffsetX',
+  'nozzleOffsetY',
+  'oneWayEngraving',
+  'oneWayEngravingReverse',
+  'printingBotPadding',
+  'printingTopPadding',
+  'refreshThreshold',
+  'scA0',
+  'scAMax',
+  'scEnable',
+  'scJerk',
+  'travelSpeed',
+] as const satisfies ReadonlyArray<ConfigKey>;
 
 const hiddenKeySet: Set<ConfigKey> = new Set(hiddenKeys);
+const devKeySet: Set<ConfigKey> = new Set(devKeys);
 
 export type ParamsLabelConfigKey = Exclude<ConfigKey, (typeof hiddenKeys)[number]>;
 
 export type ParamsLabelKey = ParamsLabelConfigKey | typeof layerNameKey;
 
-export const allConfigKeys: ParamsLabelKey[] = [
+const sortedConfigKeys: ParamsLabelConfigKey[] = (Object.keys(attributeMap) as ConfigKey[])
+  .filter((key): key is ParamsLabelConfigKey => !hiddenKeySet.has(key))
+  .sort();
+
+/** Every key a params label can show, dev only keys included in dev mode */
+export const getAllConfigKeys = (): ParamsLabelKey[] => [
   layerNameKey,
-  ...(Object.keys(attributeMap) as ConfigKey[])
-    .filter((key): key is ParamsLabelConfigKey => !hiddenKeySet.has(key))
-    .sort(),
+  ...(isDev() ? sortedConfigKeys : sortedConfigKeys.filter((key) => !devKeySet.has(key))),
 ];
 
 /** Storage may hold anything, e.g. a leftover value that failed to parse back into an array */
@@ -71,20 +106,6 @@ export const getStorageParamsLabelKeys = (): null | ParamsLabelKey[] =>
 
 export const setStorageParamsLabelKeys = (keys: ParamsLabelKey[]): void => {
   setStorage('default-params-label-keys', keys);
-};
-
-/**
- * Keys to display on a params label, falls back to the saved default and then to all
- * keys when the label has no keys of its own.
- */
-export const getLabelKeys = (elem: SVGTextElement): ParamsLabelKey[] => {
-  const attr = elem.getAttribute(labelKeysAttr);
-
-  if (attr === null) return getStorageParamsLabelKeys() ?? [...allConfigKeys];
-
-  const selected = new Set(attr.split(','));
-
-  return allConfigKeys.filter((key) => selected.has(key));
 };
 
 /** Units shown after config values, an empty string for values without one. Always metric, en only. */
@@ -110,7 +131,6 @@ export const configUnitMap: Record<ParamsLabelKey, string> = {
   focus: 'mm',
   focusStep: 'mm',
   frequency: 'kHz',
-  fullcolor: '',
   halftone: '',
   height: 'mm',
   highQuality: '',
@@ -133,7 +153,6 @@ export const configUnitMap: Record<ParamsLabelKey, string> = {
   printingStrength: '%',
   printingTopPadding: 'px',
   pulseWidth: 'ns',
-  ref: '',
   refreshInterval: 'sec',
   refreshThreshold: '',
   repeat: 'times',
@@ -201,11 +220,42 @@ const getAdvancedBlockKeys = (module: LayerModuleType, workarea: WorkAreaModel):
 };
 
 /**
+ * Keys of the blocks DevBlock renders, empty when dev mode is off
+ */
+const getDevBlockKeys = (module: LayerModuleType, workarea: WorkAreaModel, fullcolor: boolean): ConfigKey[] => {
+  if (!isDev()) return [];
+
+  const keys: ConfigKey[] = ['minPadding'];
+
+  if (printingModules.has(module)) {
+    keys.push('printingTopPadding', 'printingBotPadding');
+
+    // wInk is rendered next to it, but it is already part of printerConfigKeys
+    if (fullcolor) keys.push('blendKWithCmy');
+  }
+
+  if (useGlobalPreferenceStore.getState()['enable-custom-backlash']) keys.push('backlash');
+
+  if (laserModules.has(module)) {
+    keys.push('oneWayEngraving', 'oneWayEngravingReverse', 'travelSpeed', 'accX', 'accY');
+
+    if (workarea === 'fhx2rf' || workarea === 'fbb2') keys.push('scEnable', 'scA0', 'scAMax', 'scJerk');
+  }
+
+  if (module === LayerModule.PRINTER_4C) {
+    keys.push('colorCurvesMap', 'amAngleMap', 'refreshThreshold', 'nozzleMode', 'nozzleOffsetX', 'nozzleOffsetY');
+  }
+
+  return keys;
+};
+
+/**
  * Config keys worth showing for the layer the label sits on
  */
 export const getRecommendedConfigKeys = (elem: SVGTextElement): ParamsLabelKey[] => {
   const workarea = useDocumentStore.getState().workarea;
-  const module = getData(getObjectLayer(elem)?.elem, 'module') ?? LayerModule.LASER_UNIVERSAL;
+  const layer = getObjectLayer(elem)?.elem;
+  const module = getData(layer, 'module') ?? LayerModule.LASER_UNIVERSAL;
   const keys: Array<ConfigKey | typeof layerNameKey> = [layerNameKey, ...getConfigKeys(module)];
 
   keys.push(
@@ -229,12 +279,27 @@ export const getRecommendedConfigKeys = (elem: SVGTextElement): ParamsLabelKey[]
   );
 
   keys.push(...getAdvancedBlockKeys(module, workarea));
+  keys.push(...getDevBlockKeys(module, workarea, Boolean(getData(layer, 'fullcolor'))));
 
   // UV modules are not printing modules, so getConfigKeys falls back to the laser keys, but
   // ConfigPanel renders PowerBlock for laser modules only
   const excluded = new Set<string>(UVModules.has(module) ? ['power', 'minPower'] : []);
 
-  return allConfigKeys.filter((key) => keys.includes(key) && !excluded.has(key));
+  return getAllConfigKeys().filter((key) => keys.includes(key) && !excluded.has(key));
+};
+
+/**
+ * Keys to display on a params label, falls back to the saved default and then to the recommended
+ * keys when the label has no keys of its own.
+ */
+export const getLabelKeys = (elem: SVGTextElement): ParamsLabelKey[] => {
+  const attr = elem.getAttribute(labelKeysAttr);
+
+  if (attr === null) return getStorageParamsLabelKeys() ?? getRecommendedConfigKeys(elem);
+
+  const selected = new Set(attr.split(','));
+
+  return getAllConfigKeys().filter((key) => selected.has(key));
 };
 
 /** Rows of a full line value, empty when the layer has no value for it */

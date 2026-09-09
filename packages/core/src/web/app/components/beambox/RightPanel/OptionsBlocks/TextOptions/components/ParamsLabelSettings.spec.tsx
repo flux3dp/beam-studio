@@ -27,7 +27,7 @@ jest.mock('@core/app/stores/storageStore');
 jest.mock('@core/helpers/i18n');
 
 jest.mock('@core/app/svgedit/text/paramsLabel', () => ({
-  allConfigKeys,
+  getAllConfigKeys: () => [...allConfigKeys],
   getLabelKeys: mockGetLabelKeys,
   getRecommendedConfigKeys: mockGetRecommendedConfigKeys,
   layerNameKey: 'layerName',

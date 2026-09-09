@@ -6,7 +6,7 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import { useStorageStore } from '@core/app/stores/storageStore';
 import type { ParamsLabelKey } from '@core/app/svgedit/text/paramsLabel';
 import {
-  allConfigKeys,
+  getAllConfigKeys,
   getLabelKeys,
   getRecommendedConfigKeys,
   layerNameKey,
@@ -26,6 +26,7 @@ interface Props {
 const ParamsLabelSettings = ({ elem, onClose }: Props): React.JSX.Element => {
   const { alert: tAlert, global: tGlobal, params_label: t } = useI18n();
   const [keys, setKeys] = useState<ParamsLabelKey[]>(() => getLabelKeys(elem));
+  const allConfigKeys = useMemo(() => getAllConfigKeys(), []);
   const checkedAll = keys.length === allConfigKeys.length;
   const checkedNone = keys.length === 0;
   const storedKeys = useStorageStore((state) => state['default-params-label-keys']);
