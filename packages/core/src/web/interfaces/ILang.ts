@@ -1738,6 +1738,20 @@ export interface ILang {
   inner_engraving: {
     auto_fit_message: string;
     auto_fit_title: string;
+    canvas_controls: {
+      back: string;
+      bottom: string;
+      front: string;
+      isometric: string;
+      left: string;
+      move: string;
+      orthographic: string;
+      perspective: string;
+      right: string;
+      rotate: string;
+      scale: string;
+      top: string;
+    };
     continue_export: string;
     disable_mode: string;
     enable_mode: string;
