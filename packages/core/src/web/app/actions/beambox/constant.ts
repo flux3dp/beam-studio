@@ -21,14 +21,13 @@ export const nxModels = new Set<WorkAreaModel>(nxModelsArray);
 export const PreviewSpeedLevel = { FAST: 3, MEDIUM: 2, SLOW: 1 } as const;
 export type PreviewSpeedLevelType = (typeof PreviewSpeedLevel)[keyof typeof PreviewSpeedLevel];
 
-export const needToShowProbeBeforeAutoFocusModelsArray = ['fbb2'] as const;
-export type NeedToShowProbeBeforeAutoFocusModelsType = (typeof needToShowProbeBeforeAutoFocusModelsArray)[number];
-
 export const fcodeV2ModelsArray = [...adorModelsArray, 'fbb2', 'fhx2rf', 'fbm2', 'fuv1'] as const;
 export const fcodeV2Models = new Set(fcodeV2ModelsArray);
 
 export const supportAutoFocusModelsArray = ['fhexa1', ...adorModelsArray, 'fbb2', 'fhx2rf'] as const;
 export const supportAutoFocusModels = new Set(supportAutoFocusModelsArray);
+export const needToShowProbeBeforeAutoFocusModelsArray = ['fbb2', 'fhx2rf'] as const;
+export type NeedToShowProbeBeforeAutoFocusModelsType = (typeof needToShowProbeBeforeAutoFocusModelsArray)[number];
 
 export const fisheyeModelsArray = [...adorModelsArray, 'fbb2', 'fhx2rf'] as const;
 export const fisheyeModels = new Set<string>(fisheyeModelsArray);
