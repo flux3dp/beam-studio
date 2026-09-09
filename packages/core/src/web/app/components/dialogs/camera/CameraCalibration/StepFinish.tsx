@@ -15,7 +15,6 @@ const StepFinish = (): React.JSX.Element => {
   return (
     <DraggableModal
       cancelButtonProps={{ style: { display: 'none' } }}
-      className="modal-camera-calibration"
       okText={lang.finish}
       onOk={() => {
         useGlobalPreferenceStore.getState().set('should_remind_calibrate_camera', false);

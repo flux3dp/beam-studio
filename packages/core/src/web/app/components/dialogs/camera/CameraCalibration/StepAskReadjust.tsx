@@ -64,7 +64,6 @@ const StepAskReadjust = (): React.JSX.Element => {
 
   return (
     <DraggableModal
-      className="modal-camera-calibration"
       footer={[
         <Button onClick={() => onClose(false)}>{langCalibration.cancel}</Button>,
         <Button onClick={onSkip}>{langCalibration.skip}</Button>,

@@ -1,7 +1,8 @@
-import React, { use, useEffect, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 
 import { QuestionOutlined } from '@ant-design/icons';
 import { Button, Col, Form, InputNumber, Row, Space } from 'antd';
+import classNames from 'classnames';
 
 import Alert from '@core/app/actions/alert-caller';
 import Constant from '@core/app/actions/beambox/constant';
@@ -15,11 +16,15 @@ import { sendPictureThenSetConfig } from '@core/helpers/camera-calibration-helpe
 import useI18n from '@core/helpers/useI18n';
 import type { CameraConfig } from '@core/interfaces/Camera';
 
+import styles from './CameraCalibration.module.scss';
+
 const StepBeforeAnalyzePicture = (): React.JSX.Element => {
   const lang = useI18n().calibration;
   const [showHint, setShowHint] = useState(false);
   const [showLastConfig, setShowLastConfig] = useState(false);
   const [form] = Form.useForm();
+  const squareRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
   const context = use(CalibrationContext);
   const {
     borderless,
@@ -41,26 +46,23 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
   }, []);
 
   const renderHintModal = () => {
-    const virtualSquare = $('.modal-camera-calibration .virtual-square');
-    const position1 = virtualSquare.offset()!;
-
-    position1.top += (virtualSquare.height() || 0) + 5;
-
-    const controls = $('.modal-camera-calibration .controls');
-    const position2 = controls.offset()!;
-
-    position2.left += 30;
-    position2.top -= 45;
+    // hintModalBackground is position:fixed inside react-draggable's transformed wrapper,
+    // so its origin is the modal content box, not the viewport. Measure relative to it.
+    const modal = squareRef.current!.closest('.ant-modal-content')!.getBoundingClientRect();
+    const square = squareRef.current!.getBoundingClientRect();
+    const controls = controlsRef.current!.getBoundingClientRect();
+    const position1 = { left: square.left - modal.left, top: square.bottom - modal.top + 5 };
+    const position2 = { left: controls.left - modal.left + 30, top: controls.top - modal.top - 5 };
 
     return (
-      <div className="hint-modal-background" onClick={() => setShowHint(false)}>
-        <div className="hint-box" style={position1}>
-          <div className="arrowup" />
-          <div className="hint-body">{lang.hint_red_square}</div>
+      <div className={styles.hintModalBackground} onClick={() => setShowHint(false)}>
+        <div className={styles.hintBox} style={position1}>
+          <div className={styles.arrowUp} />
+          <div className={styles.hintBody}>{lang.hint_red_square}</div>
         </div>
-        <div className="hint-box" style={position2}>
-          <div className="hint-body">{lang.hint_adjust_parameters}</div>
-          <div className="arrowdown" />
+        <div className={styles.hintBox} style={{ ...position2, transform: 'translateY(-100%)' }}>
+          <div className={styles.hintBody}>{lang.hint_adjust_parameters}</div>
+          <div className={styles.arrowDown} />
         </div>
       </div>
     );
@@ -140,7 +142,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
 
   const hintModal = showHint ? renderHintModal() : null;
   const lastConfigSquare = showLastConfig ? (
-    <div className="virtual-square last-config" style={lastConfigSquareStyle} />
+    <div className={classNames(styles.virtualSquare, styles.lastConfig)} style={lastConfigSquareStyle} />
   ) : null;
   const manualCalibration = (
     <Row
@@ -149,21 +151,24 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
       }}
     >
       <Col span={12}>
-        <div className="img-center" style={imgBackground}>
-          <div className="virtual-square" style={squareStyle} />
+        <div className={styles.imgCenter} style={imgBackground}>
+          <div className={styles.virtualSquare} ref={squareRef} style={squareStyle} />
           {lastConfigSquare}
-          <div className="camera-control up" onClick={() => moveAndRetakePicture('up')} />
-          <div className="camera-control down" onClick={() => moveAndRetakePicture('down')} />
-          <div className="camera-control left" onClick={() => moveAndRetakePicture('left')} />
-          <div className="camera-control right" onClick={() => moveAndRetakePicture('right')} />
+          <div className={classNames(styles.cameraControl, styles.up)} onClick={() => moveAndRetakePicture('up')} />
+          <div className={classNames(styles.cameraControl, styles.down)} onClick={() => moveAndRetakePicture('down')} />
+          <div className={classNames(styles.cameraControl, styles.left)} onClick={() => moveAndRetakePicture('left')} />
+          <div
+            className={classNames(styles.cameraControl, styles.right)}
+            onClick={() => moveAndRetakePicture('right')}
+          />
         </div>
-        <div className="checkbox-container" onClick={() => setShowLastConfig(!showLastConfig)}>
+        <div className={styles.checkboxContainer} onClick={() => setShowLastConfig(!showLastConfig)}>
           <input checked={showLastConfig} onChange={() => {}} type="checkbox" />
-          <div className="title">{lang.show_last_config}</div>
+          <div className={styles.title}>{lang.show_last_config}</div>
         </div>
       </Col>
-      <Col span={12}>
-        <Form className="controls" form={form} size="small">
+      <Col ref={controlsRef} span={12}>
+        <Form className={styles.controls} form={form} size="small">
           <Form.Item initialValue={currentOffset.X - 15} label={lang.dx} name="X">
             <InputNumber
               addonAfter={unit}
@@ -247,7 +252,6 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
 
   return (
     <DraggableModal
-      className="modal-camera-calibration"
       closable={false}
       footer={[
         <Button
