@@ -200,6 +200,20 @@ describe('importElementToCanvas', () => {
       expect(mockProjectRemove).toHaveBeenCalled();
     });
 
+    it('keeps the editable path source when importing an SVG icon in 3D', async () => {
+      const mockPathItem = createMockPathItem();
+      const mockGroup = Object.create(MockGroup.prototype);
+
+      mockGroup.children = [mockPathItem];
+      mockImportSVG.mockReturnValue(mockGroup);
+      mockIsInnerEngravingActive.mockReturnValue(true);
+
+      await importElementToCanvas('basic/mock-svg-icon');
+
+      expect(mockImportPathAsStl).toHaveBeenCalledWith('M0,0 L10,10', true);
+      expect(mockAddSvgElementFromJson).not.toHaveBeenCalled();
+    });
+
     it('should unite multiple paths into one', async () => {
       const path1 = createMockPathItem();
       const path2 = createMockPathItem();

@@ -76,7 +76,7 @@ const importSvgPaths = async (svgString: string, isFromNounProject = false): Pro
     const d = unitedPath.pathData;
 
     if (isInnerEngravingActive()) {
-      await importPathAsStl(d);
+      await importPathAsStl(d, true);
 
       return;
     }
