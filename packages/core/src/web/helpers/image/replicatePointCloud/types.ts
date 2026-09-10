@@ -20,12 +20,26 @@ export type ReplicatePointCloudFormat =
   | 'depth-image'
   | 'depth-pro-npz'
   | 'glb'
+  | 'glb-mesh'
   | 'normal-map-preview'
   | 'ply';
 
 export type ReplicateSampleAvailability = 'importable' | 'preview-only';
 export type ReplicateSampleCommercialUse = 'review' | boolean;
-export type ReplicateSampleDisplay = 'point-cloud' | 'relief-mesh';
+export type ReplicateSampleDisplay = 'point-cloud' | 'reference-mesh' | 'relief-mesh';
+export type ReplicateSampleGroup = 'captured-test' | 'pasted-result' | 'public-example';
+
+export interface ReplicateSampleRunMetrics {
+  cost?: string;
+  queued?: string;
+  running?: string;
+  total?: string;
+}
+
+export interface ReplicateSampleOutput {
+  format: ReplicatePointCloudFormat;
+  url: string;
+}
 
 export interface ReplicatePointCloudSample {
   /** Current public example cost. Replicate bills by hardware time, so this is informational only. */
@@ -35,9 +49,13 @@ export interface ReplicatePointCloudSample {
   conversionOptions?: PointCloudConversionOptions;
   /** Why the captured public result cannot be converted reliably in this PoC. */
   disabledReason?: string;
+  /** Optional representation-specific files, for models that return point cloud and mesh separately. */
+  displayOutputs?: Partial<Record<ReplicateSampleDisplay, ReplicateSampleOutput>>;
   /** Representations that can be derived from this captured result. */
   displays: ReadonlyArray<ReplicateSampleDisplay>;
   format: ReplicatePointCloudFormat;
+  /** Captured tests are kept separate from the original public examples in the picker. */
+  group?: ReplicateSampleGroup;
   id: string;
   /** Original model input shown in the picker so the resulting geometry is recognisable. */
   inputPreview: { kind: 'image' | 'video'; url: string };
@@ -46,6 +64,12 @@ export interface ReplicatePointCloudSample {
   model: string;
   modelUrl: string;
   outputUrl: string;
+  /** Human-readable notes about the captured output or known limitations. */
+  resultNote?: string;
+  /** Raster preview returned by the model; binary 3D results are still inspected on the canvas. */
+  resultPreview?: { kind: 'image' | 'video'; label?: string; url: string };
+  /** Actual timing/cost shown by Replicate for this captured prediction. */
+  runMetrics?: ReplicateSampleRunMetrics;
   /** Direct source image, or a Replicate tensor JSON containing its `image` field. */
   source: { kind: 'image' | 'tensor-json'; url: string };
   version: string;

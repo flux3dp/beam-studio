@@ -20,7 +20,7 @@ import { createParamsLabel } from '@core/app/svgedit/text/paramsLabel';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
-import { type ReplicatePointCloudSampleId, type ReplicateSampleDisplay } from '@core/helpers/image/replicatePointCloud';
+import { type ReplicatePointCloudSample, type ReplicateSampleDisplay } from '@core/helpers/image/replicatePointCloud';
 import { isParamsLabelDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -69,9 +69,9 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     selectionManager.clearSelection();
     void insertDefaultTextAsStl(type);
   };
-  const insertReplicateSample = (id: ReplicatePointCloudSampleId, display: ReplicateSampleDisplay) => {
+  const insertReplicateSample = (sample: ReplicatePointCloudSample, display: ReplicateSampleDisplay) => {
     setReplicateModalOpen(false);
-    void importReplicatePointCloudSample(id, display).catch((error: unknown) => {
+    void importReplicatePointCloudSample(sample, display).catch((error: unknown) => {
       alertCaller.popUpError({
         message: error instanceof Error ? error.message : 'Unable to import 3D sample',
       });

@@ -1,0 +1,53 @@
+.form {
+  display: grid;
+  gap: 14px;
+  padding-top: 8px;
+}
+
+.field {
+  display: grid;
+  gap: 6px;
+
+  > span {
+    color: #444;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+.sourceHeading,
+.sourceShortcuts {
+  display: flex;
+  align-items: center;
+}
+
+.sourceHeading {
+  justify-content: space-between;
+  gap: 12px;
+
+  > span {
+    color: #444;
+    font-size: 12px;
+    font-weight: 600;
+  }
+}
+
+.sourceShortcuts {
+  flex: none;
+}
+
+.hint,
+.privacy {
+  color: #777;
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.hint {
+  margin-top: -8px;
+}
+
+.output {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 12px;
+}
