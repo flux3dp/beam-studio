@@ -20,17 +20,17 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
 import { getPresetsForContext, getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
+import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName, resolveLocalizedString } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { Material, MaterialRegion, MaterialVariant } from '@core/interfaces/IMaterial';
 
-import { showMaterialEditorModal } from '../editors';
+import { showAddPresetFromLayer, showMaterialEditorModal } from '../editors';
 import AddVariantModal from '../editors/AddVariantModal';
 import styles from '../MaterialBrowser.module.scss';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 import { getCoverStyle } from '../utils/coverStyle';
-import { getThicknessLabel } from '../utils/inchDisplay';
 
 import PresetRow from './PresetRow';
 
@@ -250,14 +250,11 @@ const MaterialDetail = ({
                   { icon: <ThunderboltOutlined />, key: 'layer', label: t.from_current_layer },
                 ],
                 onClick: ({ key }) =>
-                  // Defaults to the selected variant; the editor lets the user retarget
-                  // (a specific variant or the whole material)
-                  openPresetEditor({
-                    materialId: material.id,
-                    mode: 'add',
-                    presetId: key === 'layer' ? 'from-layer' : undefined,
-                    variantId: selectedVariant?.id,
-                  }),
+                  key === 'layer'
+                    ? showAddPresetFromLayer({ defaultMaterialId: material.id })
+                    : // Defaults to the selected variant; the editor lets the user retarget
+                      // (a specific variant or the whole material)
+                      openPresetEditor({ materialId: material.id, mode: 'add', variantId: selectedVariant?.id }),
               }}
               trigger={['click']}
             >

@@ -4,9 +4,9 @@ import { EllipsisOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 import { showMaterialBrowser } from '@core/app/components/dialogs/MaterialBrowser/show';
-import { getThicknessLabel } from '@core/app/components/dialogs/MaterialBrowser/utils/inchDisplay';
 import { CATEGORY_COLORS } from '@core/app/constants/material-catalog/constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName, getPresetDisplayName } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
 

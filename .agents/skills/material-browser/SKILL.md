@@ -168,7 +168,7 @@ catalog presets get a " - N DPI" suffix in the browser only).
 - `useMaterialBrowserStore.ts` — dialog-local state (activeTab, query, detailMaterialId,
   selectedVariantId, module, writeLayers, presetEditor). `reset(init)` on every open,
   seeded from the current layer's ref (R2: open focused on the applied material).
-- `utils/` — `inchDisplay`/`getThicknessLabel` (fraction → label, never rounds),
+- `utils/` — (thickness label helpers `inchDisplay`/`getThicknessLabel` live in `helpers/api/material-catalog/thickness.ts`, never round),
   `getCoverStyle`/`fileToCoverDataUrl` (image or `coverColor`/category fallback),
   `getPresetDisplayParams` (parameter pills; speed follows default-units like SpeedBlock —
   in/s with 2 decimals under inches, other lengths stay mm like their ConfigPanel blocks).

@@ -35,7 +35,6 @@ import type { Material, MaterialCatalog } from '@core/interfaces/IMaterial';
 import CatalogGrid from './CatalogGrid';
 import CategoryTabs from './CategoryTabs';
 import ControlBar from './ControlBar';
-import { showAddPresetFromLayer } from './editors';
 import MovePresetModal from './editors/MovePresetModal';
 import PresetEditorModal from './editors/PresetEditorModal';
 import styles from './MaterialBrowser.module.scss';
@@ -202,9 +201,6 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
         model={model}
         module={module}
       />
-      {presetEditor.open && presetEditor.presetId === 'from-layer' && (
-        <ShowAddFromLayerOnce materialId={presetEditor.materialId} />
-      )}
       {movePresetId && <MovePresetModal onClose={() => setMovePresetId(null)} presetId={movePresetId} />}
     </div>
   );
@@ -239,19 +235,6 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
       {body}
     </DraggableModal>
   );
-};
-
-/** Bridges the detail view's "From current layer" action to the standalone dialog */
-const ShowAddFromLayerOnce = ({ materialId }: { materialId?: string }): null => {
-  const { closeEditors } = useMaterialBrowserStore();
-
-  useEffect(() => {
-    closeEditors();
-    showAddPresetFromLayer({ defaultMaterialId: materialId });
-    // eslint-disable-next-line hooks/exhaustive-deps
-  }, []);
-
-  return null;
 };
 
 export default MaterialBrowser;

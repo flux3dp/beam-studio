@@ -2,8 +2,8 @@ import React from 'react';
 
 import { InputNumber, Segmented, Space } from 'antd';
 
-import type { ThicknessValue } from '../utils/inchDisplay';
-import { getThicknessLabel } from '../utils/inchDisplay';
+import type { ThicknessValue } from '@core/helpers/api/material-catalog/thickness';
+import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 
 import styles from './ThicknessInput.module.scss';
 

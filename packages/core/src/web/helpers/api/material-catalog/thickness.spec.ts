@@ -1,4 +1,4 @@
-import { getThicknessLabel, inchDisplay, toVariantThickness } from './inchDisplay';
+import { getThicknessLabel, inchDisplay, toVariantThickness } from './thickness';
 
 describe('inchDisplay', () => {
   test('standard vulgar fractions', () => {

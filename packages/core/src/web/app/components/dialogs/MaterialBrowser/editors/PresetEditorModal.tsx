@@ -10,13 +10,13 @@ import { generateUserId } from '@core/app/stores/materialStore/utils';
 import Select from '@core/app/widgets/AntdSelect';
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
 import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
+import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { Material, PresetValues } from '@core/interfaces/IMaterial';
 
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
-import { getThicknessLabel } from '../utils/inchDisplay';
 
 interface FormValues {
   dottingTime?: number;
@@ -92,7 +92,7 @@ const PresetEditorModal = ({
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [presetEditor.open]);
 
-  if (!presetEditor.open || presetEditor.presetId === 'from-layer') return null;
+  if (!presetEditor.open) return null;
 
   const handleOk = async () => {
     const { dpi, name, ...raw } = await form.validateFields();

@@ -4,11 +4,10 @@ import { Modal, Typography } from 'antd';
 
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
+import type { ThicknessValue } from '@core/helpers/api/material-catalog/thickness';
+import { toVariantThickness } from '@core/helpers/api/material-catalog/thickness';
 import useI18n from '@core/helpers/useI18n';
 import type { Material, MaterialRegion } from '@core/interfaces/IMaterial';
-
-import type { ThicknessValue } from '../utils/inchDisplay';
-import { toVariantThickness } from '../utils/inchDisplay';
 
 import ThicknessInput from './ThicknessInput';
 

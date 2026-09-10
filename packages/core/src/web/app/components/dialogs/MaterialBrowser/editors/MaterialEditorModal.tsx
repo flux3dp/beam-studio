@@ -8,13 +8,13 @@ import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
+import type { ThicknessValue } from '@core/helpers/api/material-catalog/thickness';
+import { toVariantThickness } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName, getMaterialRegion } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
 import type { Material, MaterialCategory } from '@core/interfaces/IMaterial';
 
 import { fileToCoverDataUrl } from '../utils/coverImage';
-import type { ThicknessValue } from '../utils/inchDisplay';
-import { toVariantThickness } from '../utils/inchDisplay';
 
 import styles from './MaterialEditorModal.module.scss';
 import ThicknessInput from './ThicknessInput';

@@ -4,13 +4,13 @@ import { StarFilled, StarOutlined } from '@ant-design/icons';
 import { Space, Tag } from 'antd';
 import { sprintf } from 'sprintf-js';
 
+import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
 import type { Material, MaterialVariant } from '@core/interfaces/IMaterial';
 
 import styles from './MaterialBrowser.module.scss';
 import { getCoverStyle } from './utils/coverStyle';
-import { getThicknessLabel } from './utils/inchDisplay';
 
 interface MaterialCardProps {
   isFavorite: boolean;
