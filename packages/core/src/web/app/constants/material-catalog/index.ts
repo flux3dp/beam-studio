@@ -149,19 +149,22 @@ export const getBundledCatalog = (): MaterialCatalog => {
         ? { thicknessNum: thicknessMm, thicknessUnit: unit }
         : undefined;
 
-  const materials: Material[] = materialDefs.map(({ category, id, image, nameKey, regions, tags, variants }) => ({
-    category,
-    id,
-    nameKey,
-    presets: buildPresetsForMaterial(id),
-    ...(image && { image: `core-img/material-catalog/${image}.jpg` }),
-    ...(regions && { regions }),
-    ...(tags && { tags }),
-    ...(variants && {
-      variants: variants.map(({ id: variantId, ...rest }) => ({ id: variantId, ...toThickness(rest) })),
+  const materials: Material[] = materialDefs.map(
+    ({ category, id, image, nameKey, regions, shopLinks, tags, variants }) => ({
+      category,
+      id,
+      nameKey,
+      presets: buildPresetsForMaterial(id),
+      ...(image && { image: `core-img/material-catalog/${image}.jpg` }),
+      ...(regions && { regions }),
+      ...(shopLinks && { shopLinks }),
+      ...(tags && { tags }),
+      ...(variants && {
+        variants: variants.map(({ id: variantId, ...rest }) => ({ id: variantId, ...toThickness(rest) })),
+      }),
+      // `source` omitted: absent means catalog content (see Material.source)
     }),
-    // `source` omitted: absent means catalog content (see Material.source)
-  }));
+  );
 
   bundledCatalogs[unit] = { materials, publishedAt: '2026-08-07T00:00:00Z', version: 0 };
 

@@ -23,6 +23,7 @@ import { getPresetsForContext, getSortedVariants } from '@core/helpers/api/mater
 import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName, resolveLocalizedString } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { Material, MaterialRegion, MaterialVariant } from '@core/interfaces/IMaterial';
 
@@ -170,11 +171,9 @@ const MaterialDetail = ({
             <Button
               block
               ghost
-              href={shopLink}
               icon={<ShoppingOutlined />}
-              rel="noreferrer"
+              onClick={() => browser.open(shopLink)}
               style={{ marginTop: 14 }}
-              target="_blank"
               type="primary"
             >
               {t.buy_on_shop}

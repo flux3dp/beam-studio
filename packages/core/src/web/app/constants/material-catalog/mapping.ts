@@ -1,4 +1,4 @@
-import type { MaterialCategory, MaterialRegion } from '@core/interfaces/IMaterial';
+import type { Material, MaterialCategory, MaterialRegion } from '@core/interfaces/IMaterial';
 
 /**
  * Hand-authored curation layer that groups the flat presets.ts keys into Materials
@@ -28,6 +28,8 @@ export interface BundledMaterialDef {
   nameKey: string;
   /** Regions where this material is visible; absent = global (visible everywhere) */
   regions?: MaterialRegion[];
+  /** Per-region FLUX Shop links (shown in the detail view when the viewer's region has one) */
+  shopLinks?: Material['shopLinks'];
   tags?: string[];
   /** Thickness variants (one level only) — ALL thickness lives here, single-thickness materials get one variant */
   variants?: BundledVariantDef[];
