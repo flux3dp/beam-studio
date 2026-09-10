@@ -11,15 +11,8 @@ import type {
 } from '@core/interfaces/IMaterial';
 import type { PresetModuleKey, PresetScopeKey } from '@core/interfaces/IMaterial';
 
-export interface MaterialLibraryExport {
-  disabledPresetIds: string[];
-  presetOverrides: MaterialUserData['presetOverrides'];
-  type: 'flux-material-library';
-  userMaterials: Material[];
-  userPresets: UserPreset[];
-  userVariants: UserVariant[];
-  version: 1;
-}
+/** Export file = the persisted user data plus a type tag */
+export type MaterialLibraryExport = MaterialUserData & { type: 'flux-material-library' };
 
 export interface MaterialStoreState {
   disabledPresetIds: string[];

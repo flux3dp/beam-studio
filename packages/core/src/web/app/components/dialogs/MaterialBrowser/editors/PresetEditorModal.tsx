@@ -138,7 +138,7 @@ const PresetEditorModal = ({
           <Input />
         </Form.Item>
         {!isEdit && variantOptions.length > 0 && (
-          <Form.Item label={t.add_from_layer.attach_to}>
+          <Form.Item label={t.thickness}>
             <Select onChange={setVariantTarget} options={variantOptions} value={variantTarget} />
           </Form.Item>
         )}

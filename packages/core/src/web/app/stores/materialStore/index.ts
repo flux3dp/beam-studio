@@ -9,7 +9,7 @@ import i18n from '@core/helpers/i18n';
 import type { Material, PresetModuleKey, PresetScopeKey, UserPreset, UserVariant } from '@core/interfaces/IMaterial';
 
 import { convertLegacyPresets } from './migration';
-import type { MaterialLibraryExport, MaterialStore, MaterialStoreState } from './types';
+import type { MaterialStore, MaterialStoreState } from './types';
 import { generateUserId, toUserData } from './utils';
 
 const getInitialState = (): MaterialStoreState => {
@@ -145,19 +145,7 @@ export const useMaterialStore = create(
 
           return bucket;
         },
-        getExportData: (): MaterialLibraryExport => {
-          const { disabledPresetIds, presetOverrides, userMaterials, userPresets, userVariants } = get();
-
-          return {
-            disabledPresetIds,
-            presetOverrides,
-            type: 'flux-material-library',
-            userMaterials,
-            userPresets,
-            userVariants,
-            version: 1,
-          };
-        },
+        getExportData: () => ({ ...toUserData(get()), type: 'flux-material-library' as const }),
         importData: (data) => {
           const state = get();
           const existingIds = new Set(state.userMaterials.map(({ id }) => id));
