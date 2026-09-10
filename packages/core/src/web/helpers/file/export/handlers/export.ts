@@ -12,7 +12,7 @@ import { isMac } from '@core/helpers/system-helper';
 import dialog from '@core/implementations/dialog';
 
 import { getCanvasContent, prepareCanvasContent } from '../utils/canvasContent';
-import { getDefaultFileName } from '../utils/common';
+import { getDefaultFileName } from '../utils/fileName';
 
 export const exportAsBVG = async (): Promise<boolean> => {
   if (!(await prepareCanvasContent('bvg'))) {

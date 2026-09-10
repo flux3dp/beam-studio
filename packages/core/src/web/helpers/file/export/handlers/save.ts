@@ -10,7 +10,7 @@ import fs from '@core/implementations/fileSystem';
 
 import { generateBeamBuffer } from '../utils/beam';
 import { getCanvasContent, prepareCanvasContent } from '../utils/canvasContent';
-import { getDefaultFileName } from '../utils/common';
+import { getDefaultFileName } from '../utils/fileName';
 
 import { saveToCloud } from './cloud';
 

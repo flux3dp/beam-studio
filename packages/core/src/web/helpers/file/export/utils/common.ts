@@ -1,8 +1,4 @@
-import currentFileManager from '@core/app/svgedit/currentFileManager';
-import i18n from '@core/helpers/i18n';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-
-export const getDefaultFileName = () => (currentFileManager.getName() || i18n.lang.topbar.untitled).replace('/', ':');
 
 /**
  * Run `fn` with every `use` pointing at its original vector symbol, then switch back.
