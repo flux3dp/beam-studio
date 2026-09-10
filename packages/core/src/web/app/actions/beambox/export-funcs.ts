@@ -18,16 +18,13 @@ import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray, swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
 import deviceMaster from '@core/helpers/device-master';
+import { getTaskCanvasContent, prepareCanvasContent } from '@core/helpers/file/export/utils/canvasContent';
+import { switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
-import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
-import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
-import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
-import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
 import logMemory from '@core/helpers/log-memory';
 import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { VariableTextElemHandler } from '@core/helpers/variableText';
 import { extractVariableText, hasVariableText, removeVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
@@ -38,12 +35,6 @@ import type { BackendProgressData, TaskMetaData } from '@core/interfaces/ITask';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 import { getAdorPaddingAccel } from './export/ador-utils';
-import {
-  annotateCurveEngravingZSpeed,
-  removeCurveEngravingZSpeedAnnotation,
-} from './export/annotateCurveEngravingZSpeed';
-import { annotateLayerBBox } from './export/annotateLayerBBox';
-import { annotateLayerDpmm } from './export/annotateLayerDpmm';
 import generateThumbnail from './export/generate-thumbnail';
 
 let svgCanvas: ISVGCanvas;
@@ -72,16 +63,7 @@ const handleProgress = (id: string, { message, percentage, translation_key }: Ba
   });
 };
 
-const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
-  Progress.openNonstopProgress({
-    id: 'retrieve-image-data',
-    message: i18n.lang.beambox.bottom_right_panel.retreive_image_data,
-    showTips: true,
-  });
-  Progress.popById('retrieve-image-data');
-
-  const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
-
+const generateUploadFile = async (svgString: string, thumbnail: string, thumbnailUrl: string) => {
   console.log('File Size', svgString.length);
   logMemory('export: getSvgString done', svgString.length);
 
@@ -115,11 +97,9 @@ const fetchTaskCode = async (
   device: IDeviceInfo | null = null,
   opts: { fgGcode?: boolean; output?: 'fcode' | 'gcode' } = {},
 ) => {
-  svgCanvas.removeUnusedDefs();
-
   let isCanceled = false;
 
-  SymbolMaker.switchImageSymbolForAll(false);
+  await prepareCanvasContent('task');
   Progress.openNonstopProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
@@ -127,54 +107,21 @@ const fetchTaskCode = async (
     showTips: true,
   });
 
-  const revertFunctions: Array<() => void> = [];
-  const { revert: revertConvertTextToPath, success } = await convertAllTextToPath();
+  const content = await getTaskCanvasContent('task', {
+    device,
+    onProgress: (message) =>
+      Progress.update('fetch-task-code', { caption: i18n.lang.beambox.popup.progress.calculating, message }),
+  });
 
-  revertFunctions.push(revertConvertTextToPath);
-
-  if (!success) {
+  if (!content) {
     Progress.popById('fetch-task-code');
-    SymbolMaker.switchImageSymbolForAll(true);
 
     return null;
   }
 
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Generating Thumbnail',
-  });
+  const { svgString, thumbnail, thumbnailBlobURL } = content;
+  const uploadFile = await generateUploadFile(svgString, thumbnail, thumbnailBlobURL);
 
-  const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
-
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Splitting Full color layer',
-  });
-  annotateLayerDpmm(device);
-  annotateCurveEngravingZSpeed(device);
-
-  revertFunctions.push(
-    removeCurveEngravingZSpeedAnnotation,
-    await updateImagesResolution(),
-    await convertShapeToBitmap(),
-    annotatePrintingColor(),
-    await tempSplitFullColorLayers(),
-    annotateLayerBBox(),
-  );
-
-  const cleanUp = () => {
-    revertFunctions.toReversed().forEach((revert) => revert());
-    SymbolMaker.switchImageSymbolForAll(true);
-  };
-
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Generating Upload File',
-  });
-
-  const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
-
-  cleanUp();
   Progress.popById('fetch-task-code');
   Progress.openSteppingProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
@@ -630,22 +577,21 @@ export default {
     return res.metadata;
   },
   openTaskInDeviceMonitor,
-  prepareFileWrappedFromSvgStringAndThumbnail: async (): Promise<{
+  // Shares the `task` target with the UI flow, so a task calculated through the API matches what
+  // the editor would send for the same scene.
+  prepareFileWrappedFromSvgStringAndThumbnail: async (): Promise<null | {
     thumbnailBlobURL: string;
     uploadFile: IWrappedTaskFile;
   }> => {
-    const { revert } = await convertAllTextToPath();
+    await prepareCanvasContent('task');
 
-    const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
+    const content = await getTaskCanvasContent('task');
 
-    const revertUpdateImagesResolution = await updateImagesResolution();
+    if (!content) return null;
 
-    const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
+    const { svgString, thumbnail, thumbnailBlobURL } = content;
 
-    revertUpdateImagesResolution();
-    revert();
-
-    return { thumbnailBlobURL, uploadFile };
+    return { thumbnailBlobURL, uploadFile: await generateUploadFile(svgString, thumbnail, thumbnailBlobURL) };
   },
   uploadFcode: async (device: IDeviceInfo, autoStart?: boolean): Promise<void> => {
     const { convertEngine } = getConvertEngine(device);
@@ -665,13 +611,15 @@ export default {
 
     if (hasVariableText({ visibleOnly: true })) {
       // Update thumbnail with variable text placeholder
-      SymbolMaker.switchImageSymbolForAll(false);
+      ({ thumbnail, thumbnailBlobURL } = await switchSymbolWrapper(async () => {
+        const { revert } = await convertAllTextToPath();
 
-      const { revert } = await convertAllTextToPath();
-
-      ({ thumbnail, thumbnailBlobURL } = await generateThumbnail());
-      revert();
-      SymbolMaker.switchImageSymbolForAll(true);
+        try {
+          return await generateThumbnail();
+        } finally {
+          revert();
+        }
+      }));
       // Get variable text task info for initial total time estimation
       vtElemHandler = extractVariableText() ?? undefined;
       vtTaskTinfo = ((await convertEngine(device)) as null | VariableTextTask) ?? undefined;

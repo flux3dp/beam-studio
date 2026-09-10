@@ -130,7 +130,15 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     </svg>`; */
     await importBvgString(this.bvg);
 
-    const { uploadFile } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
+    const prepared = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
+
+    if (!prepared) {
+      this.emit('ERROR', { detail: { error: 'Failed to prepare the scene for upload' } });
+
+      return false;
+    }
+
+    const { uploadFile } = prepared;
     const { workarea } = useDocumentStore.getState();
     const { message, res } = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
       engraveDpi: useGlobalPreferenceStore.getState().engrave_dpi,

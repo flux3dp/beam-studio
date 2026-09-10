@@ -1,8 +1,4 @@
 import Alert from '@core/app/actions/alert-caller';
-import {
-  annotateCurveEngravingZSpeed,
-  removeCurveEngravingZSpeedAnnotation,
-} from '@core/app/actions/beambox/export/annotateCurveEngravingZSpeed';
 import Progress from '@core/app/actions/progress-caller';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -15,17 +11,9 @@ import workareaManager from '@core/app/svgedit/workarea';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
+import { getTaskCanvasContent, prepareCanvasContent } from '@core/helpers/file/export/utils/canvasContent';
 import i18n from '@core/helpers/i18n';
-import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
-import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
-import convertBitmapToInfilledRect from '@core/helpers/layer/convertBitmapToInfilledRect';
-import convertClipPath from '@core/helpers/layer/convertClipPath';
-import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
-import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
-import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import { convertVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import type { SwiftrayConvertType } from '@core/interfaces/IControlSocket';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -36,9 +24,6 @@ import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 
 import { adorModels, promarkModels } from './constant';
 import { getAdorPaddingAccel } from './export/ador-utils';
-import { annotateLayerBBox } from './export/annotateLayerBBox';
-import { annotateLayerDpmm } from './export/annotateLayerDpmm';
-import generateThumbnail from './export/generate-thumbnail';
 
 let svgCanvas: ISVGCanvas;
 
@@ -54,16 +39,7 @@ export const dpiTextMap: { [key in EngraveDpiOption]: number } = {
   ultra: 1016,
 };
 
-const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Promise<IWrappedSwiftrayTaskFile> => {
-  Progress.openNonstopProgress({
-    id: 'retrieve-image-data',
-    message: i18n.lang.beambox.bottom_right_panel.retreive_image_data,
-    showTips: true,
-  });
-  Progress.popById('retrieve-image-data');
-
-  const svgString = svgCanvas.getSvgString({ fixTopExpansion: true });
-
+const generateUploadFile = (svgString: string, thumbnail: string, thumbnailUrl: string): IWrappedSwiftrayTaskFile => {
   console.log('File Size', svgString.length);
 
   return {
@@ -213,8 +189,7 @@ const fetchTaskCodeSwiftray = async (
 > => {
   let isCanceled = false;
 
-  svgCanvas.removeUnusedDefs();
-  SymbolMaker.switchImageSymbolForAll(false);
+  await prepareCanvasContent('taskSwiftray');
   Progress.openNonstopProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
@@ -222,60 +197,20 @@ const fetchTaskCodeSwiftray = async (
     showTips: true,
   });
 
-  const revertFunctions: Array<() => void> = [];
-  // Convert text to path
-  const { revert, success } = await convertAllTextToPath();
+  const content = await getTaskCanvasContent('taskSwiftray', {
+    device,
+    onProgress: (message) =>
+      Progress.update('fetch-task-code', { caption: i18n.lang.beambox.popup.progress.calculating, message }),
+  });
 
-  revertFunctions.push(revert);
-
-  if (!success) {
+  if (!content) {
     Progress.popById('fetch-task-code');
-    SymbolMaker.switchImageSymbolForAll(true);
 
     return {};
   }
 
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Generating Thumbnail',
-  });
-
-  // Generate Thumbnail
-  const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
-
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Splitting Full color layer',
-  });
-  annotateLayerDpmm(device);
-  annotateCurveEngravingZSpeed(device);
-
-  // Prepare for Printing task & clean up temp modification
-  revertFunctions.push(
-    removeCurveEngravingZSpeedAnnotation,
-    await updateImagesResolution(),
-    await convertShapeToBitmap(),
-    annotatePrintingColor(),
-    await tempSplitFullColorLayers(),
-    await convertClipPath(),
-    annotateLayerBBox(),
-  );
-
-  const cleanUpTempModification = async () => {
-    revertFunctions.toReversed().forEach((revert) => revert());
-    SymbolMaker.switchImageSymbolForAll(true);
-  };
-
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Generating Upload File',
-  });
-
-  const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
-
-  await cleanUpTempModification();
-
-  const didUpload = await uploadToParser(uploadFile);
+  const { svgString, thumbnail, thumbnailBlobURL } = content;
+  const didUpload = await uploadToParser(generateUploadFile(svgString, thumbnail, thumbnailBlobURL));
 
   if (!didUpload) {
     return {};
@@ -391,10 +326,9 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
   }
 
   let isCanceled = false;
-  const revertVariableText = await convertVariableText();
+  const target = hull ? 'taskFramingHull' : 'taskFramingOutline';
 
-  svgCanvas.removeUnusedDefs();
-  SymbolMaker.switchImageSymbolForAll(false);
+  await prepareCanvasContent(target);
   Progress.openNonstopProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
@@ -402,49 +336,18 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
     showTips: true,
   });
 
-  // Convert text to path
-  const { revert, success } = await convertAllTextToPath({ pathPerChar: hull });
+  const content = await getTaskCanvasContent(target, {
+    onProgress: (message) =>
+      Progress.update('fetch-task-code', { caption: i18n.lang.beambox.popup.progress.calculating, message }),
+  });
 
-  if (!success) {
+  if (!content) {
     Progress.popById('fetch-task-code');
-    SymbolMaker.switchImageSymbolForAll(true);
-    revertVariableText?.();
 
     return null;
   }
 
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Simplifying bitmap',
-  });
-
-  const revertBitmap = convertBitmapToInfilledRect();
-
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Calculating clip path',
-  });
-
-  const revertClipPath = await convertClipPath();
-
-  const cleanUpTempModification = async () => {
-    revertClipPath();
-    revertBitmap();
-    revert();
-    SymbolMaker.switchImageSymbolForAll(true);
-    revertVariableText?.();
-  };
-
-  Progress.update('fetch-task-code', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: 'Generating Upload File',
-  });
-
-  const uploadFile = await generateUploadFile('', '');
-
-  await cleanUpTempModification();
-
-  const didUpload = await uploadToParser(uploadFile);
+  const didUpload = await uploadToParser(generateUploadFile(content.svgString, '', ''));
 
   Progress.popById('upload-scene');
 
