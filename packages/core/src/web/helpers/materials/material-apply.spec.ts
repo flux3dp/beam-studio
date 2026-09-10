@@ -12,7 +12,10 @@ const mockWriteDataLayer = jest.fn((layer: FakeLayer, key: string, value: unknow
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   applyPreset: (...args: unknown[]) => mockApplyPreset(...args),
   clampLayerConfigLimits: (...args: unknown[]) => mockClamp(...args),
+  forcedKeys: ['speed', 'power', 'repeat'],
+  getConfigKeys: () => ['speed', 'power', 'repeat', 'zStep'],
   getData: (layer: FakeLayer, key: string) => layer?.attrs?.[key],
+  getDefaultConfig: () => ({ power: 15, repeat: 1, speed: 20, zStep: 0 }),
   setPostPresetChangeOverride: (...args: unknown[]) => mockSetOverride(...args),
   writeDataLayer: (layer: FakeLayer, key: string, value: unknown, opts?: unknown) =>
     mockWriteDataLayer(layer, key, value, opts),
@@ -42,6 +45,7 @@ jest.mock('@core/helpers/materials/isMaterialBrowserActive', () => ({
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { presets as defaultPresets } from '@core/app/constants/presets';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { resetMaterialStoreInit, useMaterialStore } from '@core/app/stores/materialStore';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
@@ -53,6 +57,7 @@ import {
   postMaterialPresetChange,
   resetMaterialApplyInit,
   resolveLayerMaterialRef,
+  stageMaterialPreset,
   switchPresetDpiGroup,
   toLegacyPreset,
 } from './material-apply';
@@ -291,6 +296,33 @@ describe('material-apply', () => {
 
       expect(mockApplyPreset).not.toHaveBeenCalled();
       expect(target.attrs.presetId).toBeUndefined();
+    });
+  });
+
+  describe('stageMaterialPreset', () => {
+    test('stages refs + values in the config store with forced defaults and clamped speed', () => {
+      const material = { category: 'wood', id: 'wood', presets: [] } as never;
+      const preset = {
+        id: 'p1',
+        legacyKey: 'wood_3mm_cutting',
+        origin: 'default',
+        settings: {},
+      } as never;
+
+      stageMaterialPreset(material, preset, { dpi: 'high', power: 60, speed: 100000 }, LayerModule.LASER_UNIVERSAL);
+
+      const state = useConfigPanelStore.getState();
+
+      expect(state.configName.value).toBe('wood_3mm_cutting');
+      expect(state.materialId.value).toBe('wood');
+      expect(state.presetId.value).toBe('p1');
+      expect(state.dpi.value).toBe('high');
+      expect(state.power.value).toBe(60);
+      // Forced key absent from the preset falls back to the default; speed is clamped to the workarea
+      expect(state.repeat.value).toBe(1);
+      expect(state.speed.value).toBeLessThan(100000);
+      // Non-forced key absent from the preset is left alone
+      expect(useMaterialStore.getState().recents[0]).toMatchObject({ materialId: 'wood', presetId: 'p1' });
     });
   });
 

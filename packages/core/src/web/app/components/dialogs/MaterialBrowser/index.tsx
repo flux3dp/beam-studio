@@ -5,7 +5,6 @@ import { Drawer, Tag, Typography } from 'antd';
 import initState from '@core/app/components/beambox/RightPanel/ConfigPanel/initState';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useMaterialStore } from '@core/app/stores/materialStore';
@@ -25,8 +24,7 @@ import {
   searchMaterials,
 } from '@core/helpers/api/material-catalog/selectors';
 import { getMaterialRegion } from '@core/helpers/api/material-catalog/utils';
-import { getConfigKeys } from '@core/helpers/layer/layer-config-helper';
-import { applyMaterialPreset, toLegacyPreset } from '@core/helpers/materials/material-apply';
+import { applyMaterialPreset, stageMaterialPreset } from '@core/helpers/materials/material-apply';
 import { exportMaterialLibrary, importMaterialLibrary } from '@core/helpers/materials/material-import-export';
 import { getPresetModel } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -145,23 +143,8 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
       undoManager.addCommandToHistory(batchCmd);
       initState();
     } else {
-      // Mobile modal variant: stage values in the config store only. Entries declaring a
-      // dpi apply at it, others keep the layer's current dpi.
-      const legacy = toLegacyPreset(row.preset, row.values, module);
-      const payload: Record<string, unknown> = {
-        configName: legacy.isDefault ? legacy.key : legacy.name,
-        materialId: material.id,
-        presetId: row.presetId,
-      };
-
-      for (const key of getConfigKeys(module)) {
-        if (legacy[key] !== undefined) payload[key] = legacy[key];
-      }
-
-      if (row.values.dpi) payload.dpi = row.values.dpi;
-
-      useConfigPanelStore.getState().change(payload as never);
-      useMaterialStore.getState().pushRecent(material.id, row.presetId);
+      // Mobile modal variant: stage in the config store only; the modal's Save writes layers
+      stageMaterialPreset(material, row.preset, row.values, module);
     }
 
     onClose();

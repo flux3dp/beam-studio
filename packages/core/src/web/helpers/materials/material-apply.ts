@@ -1,6 +1,8 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { initMaterialStore, useMaterialStore } from '@core/app/stores/materialStore';
@@ -10,7 +12,10 @@ import { getPresetDisplayName, resolvePresetValues } from '@core/helpers/api/mat
 import {
   applyPreset,
   clampLayerConfigLimits,
+  forcedKeys,
+  getConfigKeys,
   getData,
+  getDefaultConfig,
   setPostPresetChangeOverride,
   writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
@@ -72,6 +77,45 @@ export const applyMaterialPreset = (
 
   useMaterialStore.getState().pushRecent(material.id, preset.id);
   checkPresetTutorialStep({ isDefault: preset.origin === 'default', key: preset.legacyKey });
+};
+
+/**
+ * Mobile-modal flavor of applyMaterialPreset: stage the resolved values in the config
+ * store only (the modal's Save writes the layers later). Same forced keys and speed
+ * clamp as applyPreset / the legacy dropdown, so both entry points stage one payload.
+ */
+export const stageMaterialPreset = (
+  material: Material,
+  preset: MaterialPreset,
+  values: PresetValues,
+  module: LayerModuleType,
+): void => {
+  const legacy = toLegacyPreset(preset, values, module);
+  const { maxSpeed, minSpeed } = getWorkarea(useDocumentStore.getState().workarea);
+  const defaultConfig = getDefaultConfig();
+  const payload: Record<string, unknown> = {
+    configName: legacy.isDefault ? legacy.key : legacy.name,
+    materialId: material.id,
+    presetId: preset.id,
+    ...(values.dpi && { dpi: values.dpi }),
+  };
+
+  for (const key of getConfigKeys(module)) {
+    let value = legacy[key];
+
+    if (value === undefined) {
+      if (!forcedKeys.includes(key as (typeof forcedKeys)[number])) continue;
+
+      value = defaultConfig[key];
+    }
+
+    if (key === 'speed') value = Math.max(minSpeed, Math.min(value as number, maxSpeed));
+
+    payload[key] = value;
+  }
+
+  useConfigPanelStore.getState().change(payload as never);
+  useMaterialStore.getState().pushRecent(material.id, preset.id);
 };
 
 /**
