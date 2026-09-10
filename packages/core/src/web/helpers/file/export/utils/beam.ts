@@ -1,9 +1,8 @@
 import { pipe } from 'remeda';
 
-import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import beamFileHelper from '@core/helpers/beam-file-helper';
-import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -39,25 +38,16 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
     // calculate image width and height
     (downRatio) => [Math.ceil(bbox.width * downRatio), Math.ceil(bbox.height * downRatio)],
   );
-  const svgDefs = findDefs();
   const clonedSvgContent = svgContent.cloneNode(true) as SVGSVGElement;
   const useElements = clonedSvgContent.querySelectorAll('use');
 
   useElements.forEach((useElement) => SymbolMaker.switchImageSymbol(useElement, false));
 
-  const svgString = `
-    <svg
-      width="${imageWidth}"
-      height="${imageHeight}"
-      viewBox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${svgDefs.outerHTML}
-      ${clonedSvgContent.innerHTML}
-    </svg>`;
-  const canvas = await svgStringToCanvas(svgString, imageWidth, imageHeight);
+  const canvas = await rasterizeStandaloneSvg({
+    content: [clonedSvgContent.innerHTML],
+    size: { height: imageHeight, width: imageWidth },
+    viewBox: bbox,
+  });
   const blob = await new Promise<Blob>((resolve) => {
     canvas.toBlob((b) => resolve(b!), 'image/png', 1.0);
   });

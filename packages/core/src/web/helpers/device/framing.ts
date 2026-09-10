@@ -15,7 +15,6 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import selectionManager from '@core/app/svgedit/selection';
-import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import type { RotaryInfo } from '@core/helpers/addOn/rotary';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
@@ -24,7 +23,7 @@ import getUtilWS from '@core/helpers/api/utils-ws';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import getJobOrigin from '@core/helpers/job-origin';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
@@ -213,22 +212,13 @@ const getCanvasImage = async (negative = false): Promise<Blob | null> => {
     });
   });
 
-  const svgDefs = findDefs();
   const height = negative ? -minY : maxY;
   const y = negative ? minY : 0;
-  const svgString = `
-    <svg
-      width="${width}"
-      height="${height}"
-      viewBox="0 ${y} ${width} ${height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${svgDefs.outerHTML}
-      ${allLayers.map((layer) => layer.outerHTML).join('')}
-    </svg>`;
-  const canvas = await svgStringToCanvas(svgString, width, height);
+  const canvas = await rasterizeStandaloneSvg({
+    content: allLayers,
+    size: { height, width },
+    viewBox: { height, width, x: 0, y },
+  });
   const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
   ctx.globalCompositeOperation = 'destination-over';

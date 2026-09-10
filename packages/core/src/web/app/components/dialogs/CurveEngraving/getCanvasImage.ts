@@ -1,6 +1,5 @@
-import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
 // TODO: Add unit tests
@@ -15,25 +14,16 @@ const getCanvasImage = async (x: number, y: number, width: number, height: numbe
   bbox.width = Math.min(bbox.width, workareaManager.width);
   bbox.height = Math.min(bbox.height, workareaManager.height);
 
-  const svgDefs = findDefs();
   const clonedSvgContent = svgContent.cloneNode(true) as SVGSVGElement;
   const useElements = clonedSvgContent.querySelectorAll('use');
 
   useElements.forEach((useElement) => symbolMaker.switchImageSymbol(useElement, false));
 
-  const svgString = `
-    <svg
-      width="${bbox.width}"
-      height="${bbox.height}"
-      viewBox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${svgDefs.outerHTML}
-      ${clonedSvgContent.innerHTML}
-    </svg>`;
-  const canvas = await svgStringToCanvas(svgString, bbox.width, bbox.height);
+  const canvas = await rasterizeStandaloneSvg({
+    content: [clonedSvgContent.innerHTML],
+    size: { height: bbox.height, width: bbox.width },
+    viewBox: bbox,
+  });
   const imageBitmap = await createImageBitmap(canvas);
 
   return imageBitmap;

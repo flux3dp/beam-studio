@@ -1,6 +1,5 @@
 import { dpmm } from '@core/app/actions/beambox/constant';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { findDefs } from '@core/app/svgedit/utils/findDef';
 import getOpenCV from '@core/helpers/api/open-cv';
 import ClipperBase from '@core/helpers/clipper/clipper';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
@@ -8,7 +7,7 @@ import { buildSvgPathD } from '@core/helpers/clipper/offset/buildSvgPathD';
 import type { Path } from '@core/helpers/clipper/offset/constants';
 import { ARC_TOLERANCE, MITER_LIMIT, SCALE_FACTOR } from '@core/helpers/clipper/offset/constants';
 import { switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
-import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 
 import { getContentsLayers } from './contentsLayers';
@@ -96,21 +95,13 @@ const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null>
         return clone.outerHTML;
       })
       .join('');
-    const svgString = `
-    <svg
-      width="${width}"
-      height="${height}"
-      viewBox="${printingContentsBBox.x} ${printingContentsBBox.y} ${width} ${height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${fontFaceCss}
-      ${findDefs().outerHTML}
-      ${layersHtml}
-    </svg>`;
 
-    return svgStringToCanvas(svgString, width, height);
+    return rasterizeStandaloneSvg({
+      content: [layersHtml],
+      fontFaceCss,
+      size: { height, width },
+      viewBox: { height, width, x: printingContentsBBox.x, y: printingContentsBBox.y },
+    });
   });
 
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));

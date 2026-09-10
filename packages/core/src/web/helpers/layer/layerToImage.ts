@@ -1,8 +1,7 @@
 import constant from '@core/app/actions/beambox/constant';
-import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import getUtilWS from '@core/helpers/api/utils-ws';
-import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 
 import updateImageForSplitting from './full-color/updateImageForSplitting';
 
@@ -42,23 +41,12 @@ const layerToImage = async (
   const { height, minY, width } = workareaManager;
   const canvasWidth = Math.round(width * ratio);
   const canvasHeight = Math.round(height * ratio);
-  const svgDefs = findDefs();
-  const getCanvas = async (element: SVGElement) => {
-    const svgString = `
-      <svg
-        width="${canvasWidth}"
-        height="${canvasHeight}"
-        viewBox="0 ${minY} ${width} ${height}"
-        xmlns:svg="http://www.w3.org/2000/svg"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-      >
-        ${svgDefs.outerHTML}
-        ${element.outerHTML}
-      </svg>`;
-
-    return svgStringToCanvas(svgString, canvasWidth, canvasHeight);
-  };
+  const getCanvas = async (element: SVGElement) =>
+    rasterizeStandaloneSvg({
+      content: [element],
+      size: { height: canvasHeight, width: canvasWidth },
+      viewBox: { height, width, x: 0, y: minY },
+    });
   const rgbCanvas = await getCanvas(layerClone);
   let cmykCanvas: Record<'c' | 'k' | 'm' | 'y', HTMLCanvasElement> | undefined = undefined;
 

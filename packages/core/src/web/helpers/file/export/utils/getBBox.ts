@@ -1,5 +1,5 @@
-import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { buildStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
@@ -22,22 +22,14 @@ export async function getSvgContentActualBBox(shouldSwitchSymbol = true): Promis
 
   if (passThroughElements.length > 0) {
     const { height, minY, width } = workareaManager;
-    const svgDefs = findDefs();
 
     if (shouldSwitchSymbol) symbolMaker.switchImageSymbolForAll(false);
 
-    const svgString = `
-      <svg
-        width="${width}"
-        height="${height}"
-        viewBox="0 ${minY} ${width} ${height}"
-        xmlns:svg="http://www.w3.org/2000/svg"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlns:xlink="http://www.w3.org/1999/xlink"
-      >
-        ${svgDefs.outerHTML}
-        ${passThroughElements.map((el) => el.outerHTML).join('')}
-      </svg>`;
+    const svgString = buildStandaloneSvg({
+      content: passThroughElements,
+      size: { height, width },
+      viewBox: { height, width, x: 0, y: minY },
+    });
 
     if (shouldSwitchSymbol) symbolMaker.switchImageSymbolForAll(true);
 

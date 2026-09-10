@@ -2,8 +2,7 @@ import { map, pipe, prop } from 'remeda';
 import { match } from 'ts-pattern';
 
 import { dpmm } from '@core/app/actions/beambox/constant';
-import { findDefs } from '@core/app/svgedit/utils/findDef';
-import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 
 type Options = {
@@ -17,7 +16,6 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
   const ratio = dpi / (dpmm * 25.4);
   const canvasWidth = Math.round(width * ratio);
   const canvasHeight = Math.round(height * ratio);
-  const svgDefs = findDefs();
   // the isolated <img> render cannot see the app document's webfonts, so inline their bytes
   const fontFaceCss = await buildWebFontFaceCss(layers);
   const getCanvas = async (elements: SVGElement[]) => {
@@ -30,21 +28,13 @@ export const layersToA4Base64 = async (layers: SVGGElement[], options?: Options)
           .with('portrait', () => `<g transform="translate(${width}, 0) rotate(90)">${outerHTML}</g>`)
           .otherwise(() => `<g>${outerHTML}</g>`),
     );
-    const svgString = `
-    <svg
-    width="${canvasWidth}"
-    height="${canvasHeight}"
-    viewBox="0 0 ${width} ${height}"
-    xmlns:svg="http://www.w3.org/2000/svg"
-    xmlns="http://www.w3.org/2000/svg"
-    xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-    ${fontFaceCss}
-    ${svgDefs.outerHTML}
-    ${outerHTML}
-    </svg>`;
 
-    return svgStringToCanvas(svgString, canvasWidth, canvasHeight);
+    return rasterizeStandaloneSvg({
+      content: [outerHTML],
+      fontFaceCss,
+      size: { height: canvasHeight, width: canvasWidth },
+      viewBox: { height, width, x: 0, y: 0 },
+    });
   };
 
   const canvas = await pipe(

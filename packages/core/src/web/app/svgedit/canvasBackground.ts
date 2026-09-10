@@ -2,7 +2,7 @@ import { match } from 'ts-pattern';
 
 import NS from '@core/app/constants/namespaces';
 import { isWebKit } from '@core/helpers/browser';
-import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 
 const generateFixedSizeSvg = (dimension: number[]) => {
   const svg = document.createElementNS(NS.SVG, 'svg');
@@ -205,17 +205,10 @@ export const getBackgroundUrl = async (
   });
 
   // To make mask work, we need to create a new SVG with the mask and convert it to a canvas.
-  const svgString = `
-    <svg
-      width="${width}"
-      height="${height}"
-      viewBox="0 0 ${width} ${height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${(document.getElementById('previewDefs')?.cloneNode(true) as Element).outerHTML ?? ''}
-      <image
+  // The mask lives in the preview defs, not the canvas ones.
+  const maskImageCanvas = await rasterizeStandaloneSvg({
+    content: [
+      `<image
         id="maskImage"
         x="0"
         y="0"
@@ -224,10 +217,12 @@ export const getBackgroundUrl = async (
         preserveAspectRatio="xMinYMin"
         mask="${maskImage?.getAttribute('mask') || ''}"
         xlink:href="${maskImageBase64}"
-      />
-    </svg>`;
-
-  const maskImageCanvas = await svgStringToCanvas(svgString, width, height);
+      />`,
+    ],
+    defs: (document.getElementById('previewDefs')?.cloneNode(true) as Element | undefined) ?? false,
+    size: { height, width },
+    viewBox: { height, width, x: 0, y: 0 },
+  });
   const canvas = document.createElement('canvas');
 
   canvas.width = width;

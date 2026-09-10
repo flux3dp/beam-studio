@@ -1,7 +1,7 @@
 import NS from '@core/app/constants/namespaces';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import EmbeddedCanvasManager from '@core/app/widgets/FullWindowPanel/EmbeddedCanvasManager';
-import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 
 import styles from './PassThrough.module.scss';
 
@@ -160,22 +160,14 @@ export class PassThroughCanvasManager extends EmbeddedCanvasManager {
       await Promise.allSettled(promises);
     }
 
-    const svgString = `
-    <svg
-      width="${this.width}"
-      height="${this.height}"
-      viewBox="0 0 ${this.width} ${this.height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${clonedDefs?.outerHTML || ''}
-      ${this.svgcontent.innerHTML}
-    </svg>`;
-    const canvas = await svgStringToCanvas(
-      svgString,
-      Math.round(this.width / downScale),
-      Math.round(this.height / downScale),
+    const canvas = await rasterizeStandaloneSvg(
+      {
+        content: [this.svgcontent.innerHTML],
+        defs: clonedDefs ?? false,
+        size: { height: this.height, width: this.width },
+        viewBox: { height: this.height, width: this.width, x: 0, y: 0 },
+      },
+      { height: Math.round(this.height / downScale), width: Math.round(this.width / downScale) },
     );
     const refImages: Array<null | string> = [];
 

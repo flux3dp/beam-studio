@@ -6,7 +6,7 @@ import { findDefs } from '@core/app/svgedit/utils/findDef';
 import { getDefaultFileName, switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
 import i18n from '@core/helpers/i18n';
 import { getOriginalImageHrefs, restoreOriginalColors } from '@core/helpers/image/originalColors';
-import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 import { isMac } from '@core/helpers/system-helper';
 import { convertVariableText } from '@core/helpers/variableText';
@@ -87,22 +87,13 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
     .filter(({ dx, dy }) => dx !== 0 || dy !== 0)
     .map(({ dx, dy }) => `<use href="#print-and-cut-pdf-design" transform="translate(${dx}, ${dy})"/>`)
     .join('');
-  const svgString = `
-    <svg
-      width="${canvasWidth}"
-      height="${canvasHeight}"
-      viewBox="${contentRect.x} ${contentRect.y} ${contentRect.width} ${contentRect.height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${fontFaceCss}
-      ${defsClone.outerHTML}
-      <g id="print-and-cut-pdf-design">${layersHtml}</g>
-      ${copiesHtml}
-      ${marksHtml}
-    </svg>`;
-  const canvas = await svgStringToCanvas(svgString, canvasWidth, canvasHeight);
+  const canvas = await rasterizeStandaloneSvg({
+    content: [`<g id="print-and-cut-pdf-design">${layersHtml}</g>`, copiesHtml, marksHtml],
+    defs: defsClone,
+    fontFaceCss,
+    size: { height: canvasHeight, width: canvasWidth },
+    viewBox: contentRect,
+  });
 
   return {
     base64: canvas.toDataURL('image/png'),
