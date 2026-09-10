@@ -18,11 +18,6 @@ interface MaterialChipProps {
   UIType: 'default' | 'modal' | 'panel-item';
 }
 
-/**
- * The layer panel material chip (new mode replacement for the preset dropdown, PRD §5.1):
- * swatch + material/preset label + "opens a window" affordance. Click opens the
- * Material Browser scoped to the current machine + layer module.
- */
 const MaterialChip = ({ UIType }: MaterialChipProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const module = useConfigPanelStore((state) => state.module.value);
