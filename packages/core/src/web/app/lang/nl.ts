@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Voorinstelling toevoegen',
       apply: 'Toepassen',
       back_to_catalog: 'Terug naar catalogus',
-      buy_on_shop: 'Kopen in de FLUX Shop',
+      buy_on_shop: 'Kopen in de shop',
       catalog: {
         materials: {
           acrylic: 'Transparant acryl',

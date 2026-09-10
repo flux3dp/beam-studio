@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: '프리셋 추가',
       apply: '적용',
       back_to_catalog: '소재 카탈로그로 돌아가기',
-      buy_on_shop: 'FLUX 스토어에서 구매',
+      buy_on_shop: '스토어에서 구매',
       catalog: {
         materials: {
           acrylic: '투명 아크릴',

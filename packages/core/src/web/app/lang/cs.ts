@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Přidat předvolbu',
       apply: 'Použít',
       back_to_catalog: 'Zpět do katalogu',
-      buy_on_shop: 'Koupit ve FLUX Shop',
+      buy_on_shop: 'Koupit v obchodě',
       catalog: {
         materials: {
           acrylic: 'Průhledný akryl',

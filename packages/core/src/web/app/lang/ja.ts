@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'パラメータを追加',
       apply: '適用',
       back_to_catalog: '素材カタログに戻る',
-      buy_on_shop: 'FLUX ショップで購入',
+      buy_on_shop: 'ショップで購入',
       catalog: {
         materials: {
           acrylic: '透明アクリル',

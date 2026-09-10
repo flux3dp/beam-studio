@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Lisää esiasetus',
       apply: 'Käytä',
       back_to_catalog: 'Takaisin luetteloon',
-      buy_on_shop: 'Osta FLUX Shop -kaupasta',
+      buy_on_shop: 'Osta kaupasta',
       catalog: {
         materials: {
           acrylic: 'Läpinäkyvä akryyli',

@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: '新增參數',
       apply: '套用',
       back_to_catalog: '返回材質目錄',
-      buy_on_shop: '前往 FLUX 商店購買',
+      buy_on_shop: '前往商店購買',
       catalog: {
         materials: {
           acrylic: '透明壓克力',

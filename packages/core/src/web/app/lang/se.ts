@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Lägg till förinställning',
       apply: 'Tillämpa',
       back_to_catalog: 'Tillbaka till katalogen',
-      buy_on_shop: 'Köp i FLUX Shop',
+      buy_on_shop: 'Köp i butiken',
       catalog: {
         materials: {
           acrylic: 'Transparent akryl',

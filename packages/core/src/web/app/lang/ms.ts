@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Tambah praset',
       apply: 'Guna',
       back_to_catalog: 'Kembali ke katalog',
-      buy_on_shop: 'Beli di FLUX Shop',
+      buy_on_shop: 'Beli di Kedai',
       catalog: {
         materials: {
           acrylic: 'Akrilik lut sinar',

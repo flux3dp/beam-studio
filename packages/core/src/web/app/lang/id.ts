@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Tambah preset',
       apply: 'Terapkan',
       back_to_catalog: 'Kembali ke katalog',
-      buy_on_shop: 'Beli di Toko FLUX',
+      buy_on_shop: 'Beli di Toko',
       catalog: {
         materials: {
           acrylic: 'Akrilik transparan',

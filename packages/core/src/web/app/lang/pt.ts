@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Adicionar predefinição',
       apply: 'Aplicar',
       back_to_catalog: 'Voltar ao catálogo',
-      buy_on_shop: 'Comprar na FLUX Shop',
+      buy_on_shop: 'Comprar na loja',
       catalog: {
         materials: {
           acrylic: 'Acrílico transparente',

@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Προσθήκη προεπιλογής',
       apply: 'Εφαρμογή',
       back_to_catalog: 'Επιστροφή στον κατάλογο',
-      buy_on_shop: 'Αγορά στο FLUX Shop',
+      buy_on_shop: 'Αγορά στο κατάστημα',
       catalog: {
         materials: {
           acrylic: 'Διαφανές ακρυλικό',

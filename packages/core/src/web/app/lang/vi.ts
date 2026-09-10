@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Thêm thông số',
       apply: 'Áp dụng',
       back_to_catalog: 'Quay lại danh mục',
-      buy_on_shop: 'Mua tại cửa hàng FLUX',
+      buy_on_shop: 'Mua tại cửa hàng',
       catalog: {
         materials: {
           acrylic: 'Mica trong suốt',

@@ -383,7 +383,7 @@ const lang: ILang = {
       add_preset: 'Legg til forhåndsinnstilling',
       apply: 'Bruk',
       back_to_catalog: 'Tilbake til katalogen',
-      buy_on_shop: 'Kjøp i FLUX Shop',
+      buy_on_shop: 'Kjøp i butikken',
       catalog: {
         materials: {
           acrylic: 'Transparent akryl',
