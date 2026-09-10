@@ -126,9 +126,7 @@ describe('getBundledCatalog', () => {
     expect(baseIds.sort()).toEqual(Object.keys(presetMappings).sort());
     expect(new Set(allPresets.map(({ id }) => id)).size).toBe(allPresets.length);
     // Per-DPI presets reuse the base name — the browser suffixes it with the declared DPI
-    allPresets
-      .filter(({ legacyKey }) => !legacyKey)
-      .forEach((preset) => expect(preset.nameKey).toBe('engraving'));
+    allPresets.filter(({ legacyKey }) => !legacyKey).forEach((preset) => expect(preset.nameKey).toBe('engraving'));
   });
 
   test('the catalog is FLAT: per-DPI presets carry merged values, dpiOverrides never leave the builder', () => {
