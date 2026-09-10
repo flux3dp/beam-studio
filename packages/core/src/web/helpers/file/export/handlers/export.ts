@@ -83,7 +83,7 @@ export const exportAsSVG = async (): Promise<void> => {
 
     allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
 
-    const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
+    const res = await removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
 
     allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
     reverts.toReversed().forEach((revert) => revert?.());
@@ -110,7 +110,7 @@ export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
     // the isolated <img> render cannot see the app document's webfonts, so inline their bytes
     // instead of converting text to paths
     const fontFaceCss = await buildWebFontFaceCss([document.getElementById('svgcontent')!]);
-    const output = switchSymbolWrapper(() => svgCanvas.getSvgString()).replace(
+    const output = (await switchSymbolWrapper(() => svgCanvas.getSvgString())).replace(
       /<svg[^>]*>/,
       (svgTag) => svgTag + fontFaceCss,
     );
