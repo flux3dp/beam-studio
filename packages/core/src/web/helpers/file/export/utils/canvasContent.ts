@@ -51,7 +51,12 @@ export type CanvasContentOptions = {
   remove?: {
     /** Strip the scene mask so the output is not clipped to the workarea. */
     clipPath?: boolean;
-    /** Drop Noun Project elements nested inside another Noun Project element. */
+    /**
+     * Exclude Noun Project artwork the user has disassembled. Disassembling copies `data-np="1"`
+     * onto every descendant, so dropping the elements whose parent also carries it empties the
+     * shape out and keeps the licensed vector data from being redistributed. Paired with
+     * `checks.nounProject`, which tells the user this is about to happen.
+     */
     npElements?: boolean;
     selection?: boolean;
     unusedDefs?: boolean;
@@ -71,6 +76,9 @@ export const canvasContentPresets = {
    * `.beam` scene file. Deliberately converts nothing: variable text stays variable and `use` keeps
    * pointing at image symbols, because the file re-opens in the editor, carries an imageSource
    * block, and stores a rendered thumbnail of its own rather than being re-rendered from source.
+   *
+   * It also keeps Noun Project artwork, which is what the export warning promises the user: .beam
+   * is the format that holds their entire scene.
    */
   beam: {
     remove: { selection: true, unusedDefs: true },
@@ -85,9 +93,8 @@ export const canvasContentPresets = {
    * Raster targets (jpg / png). Text stays as text and the fonts ride along inline, so the render
    * resolves the same faces the canvas does.
    *
-   * Note: unlike bvg/svg this runs no Noun Project check and keeps nested Noun Project elements,
-   * matching the behavior these targets have always had. Whether that divergence is intended has
-   * not been decided.
+   * Unlike bvg/svg these run no Noun Project exclusion: rasterizing does not redistribute the
+   * vector artwork, so there is nothing to strip.
    */
   image: {
     convert: { symbol: true, variableText: true },
