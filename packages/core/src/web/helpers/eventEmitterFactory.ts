@@ -13,6 +13,7 @@ const eventEmitters: Record<string, any> = {
   'top-bar': null,
   'top-bar-hints': null,
   'top-bar-menu': null,
+  tutorial: null,
   workarea: null,
   'zoom-block': null,
 };
