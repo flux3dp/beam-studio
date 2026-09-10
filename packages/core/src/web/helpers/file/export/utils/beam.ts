@@ -43,8 +43,14 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
 
   useElements.forEach((useElement) => SymbolMaker.switchImageSymbol(useElement, false));
 
+  // loaded on demand: webFontFaceCss reaches font-funcs, which imports this folder's index back —
+  // a static import here would close that loop
+  const { buildWebFontFaceCss } = await import('@core/helpers/image/webFontFaceCss');
   const canvas = await rasterizeStandaloneSvg({
     content: [clonedSvgContent.innerHTML],
+    // the isolated <img> render cannot see the app document's webfonts, so text in the thumbnail
+    // would otherwise fall back to another face — visible on the welcome page's recent files
+    fontFaceCss: await buildWebFontFaceCss([clonedSvgContent]),
     size: { height: imageHeight, width: imageWidth },
     viewBox: bbox,
   });
