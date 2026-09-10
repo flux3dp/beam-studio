@@ -7,3 +7,7 @@ import { checkMaterialBrowser } from '@core/helpers/checkFeature';
  */
 export const isMaterialBrowserActive = (): boolean =>
   checkMaterialBrowser() && useGlobalPreferenceStore.getState()['use-material-browser'];
+
+/** Reactive flavor for components: re-renders when the preference flips */
+export const useIsMaterialBrowserActive = (): boolean =>
+  useGlobalPreferenceStore((state) => state['use-material-browser']) && checkMaterialBrowser();

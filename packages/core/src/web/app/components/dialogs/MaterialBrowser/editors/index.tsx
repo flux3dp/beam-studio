@@ -2,8 +2,7 @@ import React from 'react';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { MATERIAL_CATEGORIES } from '@core/app/constants/material-catalog/constants';
-import { initMaterialStore } from '@core/app/stores/materialStore';
-import { initMaterialApply } from '@core/helpers/materials/material-apply';
+import { initMaterialBrowser } from '@core/helpers/materials/material-apply';
 import type { MaterialCategory } from '@core/interfaces/IMaterial';
 
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
@@ -17,8 +16,7 @@ const MATERIAL_EDITOR_ID = 'material-editor';
 export const showAddPresetFromLayer = (options: { defaultMaterialId?: string } = {}): void => {
   if (isIdExist(ADD_PRESET_ID)) return;
 
-  initMaterialStore();
-  initMaterialApply();
+  initMaterialBrowser();
   addDialogComponent(
     ADD_PRESET_ID,
     <AddPresetFromLayerModal
@@ -31,7 +29,7 @@ export const showAddPresetFromLayer = (options: { defaultMaterialId?: string } =
 export const showMaterialEditorModal = (options: { materialId?: string } = {}): void => {
   if (isIdExist(MATERIAL_EDITOR_ID)) return;
 
-  initMaterialStore();
+  initMaterialBrowser();
 
   // New materials default to the browser's current category tab (favorites/recents → none)
   const { activeTab, setActiveTab } = useMaterialBrowserStore.getState();

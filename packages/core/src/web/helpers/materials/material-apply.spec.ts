@@ -43,12 +43,13 @@ jest.mock('@core/helpers/materials/isMaterialBrowserActive', () => ({
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { presets as defaultPresets } from '@core/app/constants/presets';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { useMaterialStore } from '@core/app/stores/materialStore';
+import { resetMaterialStoreInit, useMaterialStore } from '@core/app/stores/materialStore';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
 
 import {
   applyMaterialPreset,
   initMaterialApply,
+  initMaterialBrowser,
   postMaterialPresetChange,
   resetMaterialApplyInit,
   resolveLayerMaterialRef,
@@ -290,6 +291,20 @@ describe('material-apply', () => {
 
       expect(mockApplyPreset).not.toHaveBeenCalled();
       expect(target.attrs.presetId).toBeUndefined();
+    });
+  });
+
+  describe('initMaterialBrowser', () => {
+    test('migrates the store only while the gate is on', () => {
+      resetMaterialStoreInit();
+      useMaterialStore.setState({ migratedFromPresets: false });
+      mockIsActive.mockReturnValue(false);
+      initMaterialBrowser();
+      expect(useMaterialStore.getState().migratedFromPresets).toBe(false);
+
+      mockIsActive.mockReturnValue(true);
+      initMaterialBrowser();
+      expect(useMaterialStore.getState().migratedFromPresets).toBe(true);
     });
   });
 

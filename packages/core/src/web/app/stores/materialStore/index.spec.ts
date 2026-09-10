@@ -1,9 +1,3 @@
-const mockIsMaterialBrowserActive = jest.fn(() => true);
-
-jest.mock('@core/helpers/materials/isMaterialBrowserActive', () => ({
-  isMaterialBrowserActive: () => mockIsMaterialBrowserActive(),
-}));
-
 import { MY_MATERIALS_ID, RECENTS_LIMIT } from '@core/app/constants/material-catalog/constants';
 import * as storageStore from '@core/app/stores/storageStore';
 import type { Material } from '@core/interfaces/IMaterial';
@@ -237,7 +231,6 @@ describe('legacy migration', () => {
     jest.clearAllMocks();
     resetStorage();
     resetMaterialStoreInit();
-    mockIsMaterialBrowserActive.mockReturnValue(true);
   });
 
   const legacyPresets = [
@@ -284,16 +277,6 @@ describe('legacy migration', () => {
     // the legacy key is read-only for the new system
     expect(setStorageSpy).not.toHaveBeenCalledWith('presets', expect.anything());
     expect(storageStore.getStorage('presets')).toEqual(legacyPresets);
-  });
-
-  test('initMaterialStore is a no-op when the browser is not active', () => {
-    mockIsMaterialBrowserActive.mockReturnValue(false);
-    storageStore.useStorageStore.getState().update({ presets: legacyPresets } as never);
-
-    initMaterialStore();
-
-    expect(useMaterialStore.getState().migratedFromPresets).toBe(false);
-    expect(useMaterialStore.getState().userMaterials).toHaveLength(0);
   });
 
   test('migration flag flips even with nothing to migrate', () => {

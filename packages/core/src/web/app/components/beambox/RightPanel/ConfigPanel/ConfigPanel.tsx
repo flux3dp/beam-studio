@@ -16,20 +16,18 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useLayerStore } from '@core/app/stores/layer/layerStore';
-import { initMaterialStore } from '@core/app/stores/materialStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
-import { checkMaterialBrowser } from '@core/helpers/checkFeature';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
 import { getData, objectConfig, postPresetChange, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { moveToOtherLayer } from '@core/helpers/layer/layer-helper';
-import { initMaterialApply } from '@core/helpers/materials/material-apply';
+import { useIsMaterialBrowserActive } from '@core/helpers/materials/isMaterialBrowserActive';
+import { initMaterialBrowser } from '@core/helpers/materials/material-apply';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
@@ -81,8 +79,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const workarea = useWorkarea();
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const [modalMoveLayerDest, setModalMoveLayerDest] = useState(selectedLayers[0]);
-  const useMaterialBrowserPref = useGlobalPreferenceStore((state) => state['use-material-browser']);
-  const useMaterialBrowser = checkMaterialBrowser() && useMaterialBrowserPref;
+  const useMaterialBrowser = useIsMaterialBrowserActive();
   const { getState } = useConfigPanelStore();
   const supportedModules = useSupportedModules(workarea);
   const state = getState();
@@ -153,8 +150,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     if (useMaterialBrowser) {
       // First-activation migration + postPresetChange override, before any
       // workarea-change event can fire in new mode
-      initMaterialStore();
-      initMaterialApply();
+      initMaterialBrowser();
     }
   }, [useMaterialBrowser]);
 

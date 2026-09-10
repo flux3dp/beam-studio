@@ -3,10 +3,9 @@ import React from 'react';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useLayerStore } from '@core/app/stores/layer/layerStore';
-import { initMaterialStore } from '@core/app/stores/materialStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
-import { initMaterialApply, resolveLayerMaterialRef } from '@core/helpers/materials/material-apply';
+import { initMaterialBrowser, resolveLayerMaterialRef } from '@core/helpers/materials/material-apply';
 
 import { useMaterialBrowserStore } from './useMaterialBrowserStore';
 
@@ -25,8 +24,7 @@ export const showMaterialBrowser = ({ module, writeLayers = true }: ShowMaterial
   if (isIdExist(BROWSER_ID)) return;
 
   // First-activation migration + postPresetChange override, before any browser state is read
-  initMaterialStore();
-  initMaterialApply();
+  initMaterialBrowser();
 
   // Open focused on the currently applied material (R2)
   const currentLayerName = useLayerStore.getState().selectedLayers[0];

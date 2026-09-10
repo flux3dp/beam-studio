@@ -3,7 +3,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { useMaterialStore } from '@core/app/stores/materialStore';
+import { initMaterialStore, useMaterialStore } from '@core/app/stores/materialStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
 import { getPresetDisplayName, resolvePresetValues } from '@core/helpers/api/material-catalog/utils';
@@ -281,6 +281,17 @@ export const initMaterialApply = (): void => {
     (state) => state['use-material-browser'],
     () => syncOverride(),
   );
+};
+
+/**
+ * New-mode setup for every entry point (chip mount, browser/editor open, JSON import):
+ * the self-syncing postPresetChange override, plus the legacy-preset migration once the
+ * gate is on. Idempotent.
+ */
+export const initMaterialBrowser = (): void => {
+  initMaterialApply();
+
+  if (isMaterialBrowserActive()) initMaterialStore();
 };
 
 /** Test-only */

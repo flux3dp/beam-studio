@@ -6,8 +6,7 @@ import { showAddPresetFromLayer } from '@core/app/components/dialogs/MaterialBro
 import { showPresetsManagementPanel } from '@core/app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { checkMaterialBrowser } from '@core/helpers/checkFeature';
+import { useIsMaterialBrowserActive } from '@core/helpers/materials/isMaterialBrowserActive';
 import useI18n from '@core/helpers/useI18n';
 
 import initState from './initState';
@@ -18,8 +17,7 @@ const ParameterTitle = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
   const tMaterial = useI18n().beambox.material_browser;
   const { configName, module } = useConfigPanelStore();
-  const useMaterialBrowserPref = useGlobalPreferenceStore((state) => state['use-material-browser']);
-  const useMaterialBrowser = checkMaterialBrowser() && useMaterialBrowserPref;
+  const useMaterialBrowser = useIsMaterialBrowserActive();
 
   const handleOpenManageModal = () => {
     showPresetsManagementPanel({

@@ -6,7 +6,6 @@ import { MY_MATERIALS_ID, RECENTS_LIMIT } from '@core/app/constants/material-cat
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { getMaterialDisplayName, getPresetDisplayName } from '@core/helpers/api/material-catalog/utils';
 import i18n from '@core/helpers/i18n';
-import { isMaterialBrowserActive } from '@core/helpers/materials/isMaterialBrowserActive';
 import type { Material, PresetModuleKey, PresetScopeKey, UserPreset, UserVariant } from '@core/interfaces/IMaterial';
 
 import { convertLegacyPresets } from './migration';
@@ -341,12 +340,11 @@ export const useMaterialStore = create(
 let initialized = false;
 
 /**
- * One-time init: runs the legacy-preset migration on first activation of the new UI.
- * Called from Material Browser entry points (never at import time, so tests and the
- * legacy UI never trigger it).
+ * One-time init: runs the legacy-preset migration. Gated by the caller
+ * (initMaterialBrowser) — never at import time, so tests and the legacy UI never trigger it.
  */
 export const initMaterialStore = (): void => {
-  if (initialized || !isMaterialBrowserActive()) return;
+  if (initialized) return;
 
   initialized = true;
 

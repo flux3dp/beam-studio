@@ -34,8 +34,9 @@ through this one helper — never re-derive the gate.
 
 Entry points: `MaterialChip` in the ConfigPanel (`writeLayers: false` for the mobile modal
 variant, where Apply only stages config-store values) and the legacy menu path in
-`svg-editor.ts`. `showMaterialBrowser` calls `initMaterialStore()` + `initMaterialApply()`
-first — both are idempotent and must never run at import time.
+`svg-editor.ts`. Every entry point calls `initMaterialBrowser()` (material-apply.ts) first:
+it installs the postPresetChange override and, while the gate is on, runs the store
+migration. Idempotent, never at import time.
 
 ## Data model (IMaterial.d.ts)
 
@@ -104,7 +105,7 @@ access (memoized per unit). Parameter values are **never duplicated** in mapping
 Zustand store persisting three storage keys: `materials` (MaterialUserData),
 `material-favorites` (material ids), `material-recents` (`{ materialId, presetId, timestamp }`,
 capped at `RECENTS_LIMIT`). The legacy `presets` key is **never written** by new code
-(tests enforce). `initMaterialStore()` runs the one-way idempotent migration
+(tests enforce). `initMaterialStore()` (called via `initMaterialBrowser()`) runs the one-way idempotent migration
 (`migration.ts: convertLegacyPresets`) — legacy user presets become `origin: 'user'` presets
 on the "My Materials" bucket (`ensureBucket()`), legacy hidden defaults become
 `disabledPresetIds` (ids = presets.ts keys).
