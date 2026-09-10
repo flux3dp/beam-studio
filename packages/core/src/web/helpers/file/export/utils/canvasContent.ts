@@ -169,6 +169,17 @@ export const canvasContentPresets = {
     insert: { webFontFace: true },
     remove: { selection: true, unusedDefs: true },
   },
+  /**
+   * Print and Cut renders the design twice: once as the pdf that gets printed, once as the raster
+   * whose silhouette becomes the cut path. Both have to see the same drawing, or the cut misses
+   * what was printed — so both bake variable text and point `use` at vector symbols.
+   *
+   * Text stays text on purpose: the render inlines the webfont bytes instead, so the printed glyphs
+   * and the traced contour resolve the same faces the canvas does.
+   */
+  printAndCut: {
+    convert: { symbol: true, variableText: true },
+  },
   /** `.svg` for other software: text as paths, mm units, no scene mask. */
   svg: {
     checks: { nounProject: true },

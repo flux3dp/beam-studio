@@ -6,7 +6,7 @@ import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import { buildSvgPathD } from '@core/helpers/clipper/offset/buildSvgPathD';
 import type { Path } from '@core/helpers/clipper/offset/constants';
 import { ARC_TOLERANCE, MITER_LIMIT, SCALE_FACTOR } from '@core/helpers/clipper/offset/constants';
-import { switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
+import { withCanvasContent } from '@core/helpers/file/export/utils/canvasContent';
 import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 
@@ -76,14 +76,13 @@ export const clearRasterCache = (): void => {
 const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null> => {
   const width = Math.max(1, Math.ceil(printingContentsBBox.width));
   const height = Math.max(1, Math.ceil(printingContentsBBox.height));
-  // serialization must happen inside switchSymbolWrapper: image symbols use blob
-  // urls that cannot load in a standalone svg string, so uses are switched to the
-  // original vector symbols while the string is built
-  const contentsLayers = getContentsLayers();
-  // the traced silhouette becomes the cut path, so the raster has to use the same faces the
-  // canvas does: the isolated <img> render cannot see the app document's webfonts
-  const fontFaceCss = await buildWebFontFaceCss(contentsLayers);
-  const canvas = await switchSymbolWrapper(() => {
+  // the `printAndCut` target is what keeps this raster and the printed pdf describing the same
+  // drawing: same baked variable text, same vector symbols
+  const canvas = await withCanvasContent('printAndCut', async () => {
+    const contentsLayers = getContentsLayers();
+    // the traced silhouette becomes the cut path, so the raster has to use the same faces the
+    // canvas does: the isolated <img> render cannot see the app document's webfonts
+    const fontFaceCss = await buildWebFontFaceCss(contentsLayers);
     const layersHtml = contentsLayers
       .map((layerGroup) => {
         const clone = layerGroup.cloneNode(true) as SVGGElement;
@@ -103,6 +102,8 @@ const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null>
       viewBox: { height, width, x: printingContentsBBox.x, y: printingContentsBBox.y },
     });
   });
+
+  if (!canvas) return null;
 
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
 };

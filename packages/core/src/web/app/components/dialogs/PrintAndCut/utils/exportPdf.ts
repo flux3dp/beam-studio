@@ -3,14 +3,13 @@ import jsPDF from 'jspdf';
 import { dpmm } from '@core/app/actions/beambox/constant';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { findDefs } from '@core/app/svgedit/utils/findDef';
-import { switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
+import { withCanvasContent } from '@core/helpers/file/export/utils/canvasContent';
 import { getDefaultFileName } from '@core/helpers/file/export/utils/fileName';
 import i18n from '@core/helpers/i18n';
 import { getOriginalImageHrefs, restoreOriginalColors } from '@core/helpers/image/originalColors';
 import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 import { isMac } from '@core/helpers/system-helper';
-import { convertVariableText } from '@core/helpers/variableText';
 import dialog from '@core/implementations/dialog';
 
 import { markBaseRadiusPx, markRadiusPx, PDF_DPI } from '../constants';
@@ -113,13 +112,10 @@ const renderContentBase64 = async (imageHrefs: Map<string, string>): Promise<nul
 export const exportPrintAndCutPdf = async (): Promise<boolean> => {
   const t = i18n.lang.topmenu.file;
 
+  // read outside the prepared state: it fetches every blob url, and nothing about it depends on
+  // variable text or which symbol a `use` points at
   const imageHrefs = await getOriginalImageHrefs();
-  // text is not converted to paths: the render inlines the webfont bytes (see buildWebFontFaceCss) and
-  // resolves local fonts exactly like the canvas does, so what prints matches the contour to be cut
-  const variableTextRevert = await convertVariableText();
-  const content = await switchSymbolWrapper(() => renderContentBase64(imageHrefs));
-
-  variableTextRevert?.();
+  const content = await withCanvasContent('printAndCut', () => renderContentBase64(imageHrefs));
 
   if (!content) return false;
 
