@@ -4,12 +4,19 @@ import previewModeController from '@core/app/actions/beambox/preview-mode-contro
 import workareaManager from '@core/app/svgedit/workarea';
 import shortcuts from '@core/helpers/shortcuts';
 
-import { MARK_DIAMETER_MM, markRadiusPx, MATCH_TOLERANCE, MAX_SMART_ANGLE_RAD } from '../constants';
+import { MARK_DIAMETER_MM, markRadiusPx, MAX_SMART_ANGLE_RAD } from '../../constants';
+import type { Point } from '../rigidTransform';
+import {
+  applyRigidTransform,
+  distance,
+  exceedsTolerance,
+  fitRigidTransform,
+  getMatchTolerance,
+} from '../rigidTransform';
 
+import { logAlign, pointMm } from './alignLog';
 import { reportAlignProgress } from './alignProgress';
-import { detectMarkBlobs } from './detectMarkBlobs';
-import type { Point } from './rigidTransform';
-import { applyRigidTransform, distance, fitRigidTransform } from './rigidTransform';
+import { detectMarkBlobs } from './detectMarks';
 
 /**
  * Search radius around a translation-only prediction: must tolerate the error a
@@ -116,6 +123,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
   const found: Point[] = [];
   const refuted = new Set<string>();
   let targetedCount = 0;
+  let sweptTiles = 0;
   let detectionBroken = false;
   let hypothesisEnabled = true;
   let stopped = false;
@@ -357,7 +365,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
       SINGLE_PRIORITY.map((index) => confirmed.get(index)!),
     );
 
-    if (fit.residual > MATCH_TOLERANCE || Math.abs(fit.angle) > MAX_SMART_ANGLE_RAD) {
+    if (exceedsTolerance(fit, getMatchTolerance(expectedMarks)) || Math.abs(fit.angle) > MAX_SMART_ANGLE_RAD) {
       refuted.add(hypothesis.key);
 
       return null;
@@ -391,6 +399,7 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
 
       if (!ok) return { detectedMarks: null, failed: true, stopped };
 
+      sweptTiles += 1;
       lastCapture = { x: point[0], y: point[1] };
 
       if (detectionBroken || !hypothesisEnabled) continue;
@@ -416,6 +425,14 @@ export const runSmartMarkSweep = async (expectedMarks: Point[]): Promise<SmartSw
 
     throw error;
   } finally {
+    logAlign('smart-sweep', {
+      blobsMm: found.map(pointMm),
+      detectionBroken,
+      refutedHypotheses: refuted.size,
+      stopped,
+      sweptTiles: `${sweptTiles}/${points.length}`,
+      targetedCaptures: targetedCount,
+    });
     requestStop = () => {};
     unregisterEsc();
   }

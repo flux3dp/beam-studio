@@ -87,12 +87,16 @@ PrintAndCut/
     ├── layout.ts            # Pure sheet geometry: computeFullBBox, marks, grid, content bbox, paper
     ├── measure.ts           # getPathBBox, measureWithLayersShown
     ├── exportPdf.ts         # jsPDF export (marks incl. white base disc)
-    ├── captureWorkareaImage.ts  # Camera capture orchestration (preview mode + sweeps)
-    ├── smartMarkSweep.ts    # Mark-seeking regional sweep (stops when 4 marks found)
-    ├── alignByCamera.ts     # detectAlignmentTransform + refineMarkPatches
-    ├── detectMarkBlobs.ts   # Shared fluxghost detect_blobs param window
-    ├── rigidTransform.ts    # Point/RigidTransform, 2D Kabsch fit
-    ├── alignProgress.ts     # Unified align progress (phases → store alignProgress)
+    ├── rigidTransform.ts    # L0 pure math: Point/RigidTransform, 2D Kabsch fit (+ per-axis residual, diagnostic scale), match tolerance
+    ├── align/               # Camera alignment, layered (each file imports only lower layers)
+    │   ├── alignByCamera.ts     # L3 orchestrator: alignByCamera() = capture → refine → redetect → fit
+    │   ├── capture.ts           # L2 captureWorkareaImage: full-area shot / smart sweep / region sweep → mark centers
+    │   ├── smartMarkSweep.ts    # L2 mark-seeking regional sweep (stops when 4 marks found)
+    │   ├── refineMarkPatches.ts # L2 per-mark centered retake, patch kept
+    │   ├── detectMarks.ts       # L1 detectMarkBlobs (fluxghost window) + findAlignment + detectFromBackground
+    │   ├── previewSession.ts    # L1 supportsRegionPreview / ensurePreviewMode / ensureRegionPreview / endPreviewMode
+    │   ├── alignProgress.ts     # reporter: phases → store alignProgress
+    │   └── alignLog.ts          # leaf: Logger('print-and-cut') events + one failure-image slot → bug report section
     └── generateCutLayer.ts  # Finish: cutting layer + config save
 ```
 
@@ -157,28 +161,53 @@ StepSetup drives it through a remeda `funnel` (300 ms, leading+trailing) with a
 
 ## Alignment pipeline (step 4)
 
-`handlePreviewAndAlign` in StepAlign:
+One entry point, `alignByCamera()` in `utils/align/`, called by StepAlign.
+It writes `cameraImageUrl`,
+`detectedMarkCenters` and `alignmentFit` to the store as it goes, so the
+callers only reset state, call, and apply the returned transform. Layers:
 
-1. `captureWorkareaImage({expectedMarks, onProgress})` — clears the background
-   drawer, enters preview mode if needed (`setupPreviewMode({waitForFullAreaCapture:
-   true})` so the setup's own full-area capture is awaited, not raced); regional
-   machines run `runSmartMarkSweep` (serpentine tiles + per-tile `detectMarkBlobs` +
-   pair-lock/single-anchor hypotheses + targeted confirm captures, budget 10,
-   ESC stops); degrades to a plain full `previewRegion`; full-area machines
-   one-shot. Keeps preview mode running whenever `supportsRegionPreview()`
-   (manager's supportedPreviewModes includes REGION — regional AND dual-mode
-   machines), because refinement needs the camera.
-2. `detectAlignmentTransform` — mark centers from the sweep, else
-   `detectFromBackground` (`findAlignment`: all C(N,4)×4! assignments, Kabsch fit,
-   residual < `MATCH_TOLERANCE` (2 mm rms), smallest |angle| wins — the mark
-   rectangle is 180°-symmetric). Then `refineMarkPatches`: per-mark centered
-   retake, only a `REFINE_PATCH_SIZE_PX` patch kept, redetect. On a dual-mode
-   machine still in FULL_AREA (fbm2, wide-angle BB2/HEXA II) it first
-   `switchPreviewMode(REGION)` so the camera can be driven over each mark;
-   machines without region previews skip refinement. Always ends preview mode
-   in `finally`.
-3. `setAlignmentTransform` → CanvasManager `setContentTransform` moves
+1. **capture** — `captureWorkareaImage({expectedMarks, onProgress})` returns
+   the located mark centers (or null) plus the image: clears the background
+   drawer, `ensurePreviewMode` (setup awaited, so a full-area machine's own
+   capture is not raced), then
+   - regional machine: `runSmartMarkSweep` (serpentine tiles + per-tile
+     `detectMarkBlobs` + pair-lock/single-anchor hypotheses + targeted confirm
+     captures, budget 10, ESC/Stop stops it); a sweep that never locked on
+     degrades to a plain `previewRegion` and `detectFromBackground` on the
+     whole bed;
+   - full-area machine: one shot, `detectFromBackground` → `findAlignment`
+     (all C(N,4)×4! assignments, Kabsch fit, per-axis residual within
+     `getMatchTolerance(expected)` — each axis max(2 mm, 2 % of the mark
+     rectangle's side along that axis), residuals measured in the sheet frame
+     so camera distortion on large designs widens the tolerance rather than
+     failing — smallest |angle| wins; the rectangle is 180°-symmetric);
+   - dual-mode fallback (fbm2, wide-angle BB2/HEXA II): blobs seen
+     (`detectedCount > 0`) but no fit → `ensureRegionPreview` and the regional
+     sweep above; zero blobs still fail fast (sheet missing / exposure).
+   Preview mode stays running whenever `supportsRegionPreview()`; the
+   lowest-residual fit of a failed detection comes back as `closestFit` for
+   the readout.
+2. **refine** — `refineMarkPatches`: `ensureRegionPreview` (switches a
+   dual-mode machine out of FULL_AREA), then per mark a centered retake of
+   which only a `REFINE_PATCH_SIZE_PX` patch is kept; machines without region
+   previews skip it. Then `detectFromBackground` again on the patched image.
+3. **fit** — the redetected fit, else `fitRigidTransform(expected, marks)`
+   on the located centers; stored as `alignmentFit` (rotation / scale / fit
+   error x / y mm in StepAlign, red over tolerance; `scale` is the similarity
+   best-fit, diagnostic only — the applied transform stays rigid). `endPreviewMode` in `finally`.
+4. `setAlignmentTransform` → CanvasManager `setContentTransform` moves
    design+marks overlay over the fixed camera image.
+
+Diagnostics: every stage calls `logAlign(event, data)` (alignLog.ts; mm units,
+also mirrored to the console) — `run` (device, sheet setup, expected marks,
+tolerance), `exposure` (from ExposureControl), `detect` (per searched image:
+blobs, closest fit, matched), `smart-sweep` / `sweep` / `dual-mode-fallback`,
+`refine`, `aligned`, `detect-failed`, `error`. A failed run also keeps ONE
+downscaled JPEG of the background (`saveFailureImage`, ~200 KB base64,
+overwritten by the next failure). `output-error.ts` emits both as the
+`======::print-and-cut::======` section; the automatic S3 upload passes
+`includeImages: false` so a photo of the bed only leaves with a deliberate
+report.
 
 Progress: reporters call `reportAlignProgress(phase, {current, total, stoppable})`
 (`alignProgress.ts` phases: preparing/capture/locate/detect/refine/completing →

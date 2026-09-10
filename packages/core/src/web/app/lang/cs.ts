@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Nebyl rozpoznán dostatečný počet zarovnávacích značek. Zopakujte prosím náhled kamery a zkuste to znovu.',
+      fit_error: 'Chyba lícování (X / Y)',
       no_preview: 'Nebyl nalezen žádný snímek z náhledu kamery. Nejprve prosím spusťte náhled kamery a nasnímejte potištěný materiál.',
+      rotation: 'Otočení',
+      scale: 'Měřítko',
       success: 'Zarovnání dokončeno!',
     },
     backend_outdated: 'Aktuální firmware zařízení zatím nepodporuje funkci Print & Cut.',

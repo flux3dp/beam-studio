@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: '检测到的定位标记不足，请重新执行相机预览后再试一次。',
+      fit_error: '误差 (X / Y)',
       no_preview: '找不到相机预览图像，请先执行相机预览拍摄打印好的材料。',
+      rotation: '旋转',
+      scale: '缩放',
       success: '对位完成！',
     },
     backend_outdated: '当前的机器固件尚不支持精准对位功能。',

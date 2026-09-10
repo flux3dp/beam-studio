@@ -5,12 +5,14 @@ import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
+import styles from './CameraCalibration.module.scss';
+
 const StepPutPaper = (): React.JSX.Element => {
   const lang = useI18n().calibration;
   const { gotoNextStep, onClose } = use(CalibrationContext);
 
   const video = (
-    <video autoPlay className="video" loop muted>
+    <video autoPlay className={styles.video} loop muted>
       <source src="video/put_paper.webm" type="video/webm" />
       <source src="video/put_paper.mp4" type="video/mp4" />
     </video>
@@ -19,7 +21,6 @@ const StepPutPaper = (): React.JSX.Element => {
   return (
     <DraggableModal
       cancelText={lang.cancel}
-      className="modal-camera-calibration"
       okText={lang.next}
       onCancel={() => onClose(false)}
       onOk={() => gotoNextStep(STEP_REFOCUS)}

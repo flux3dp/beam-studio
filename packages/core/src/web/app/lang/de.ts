@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Es wurden nicht genügend Passermarken erkannt. Bitte wiederholen Sie die Kameravorschau und versuchen Sie es erneut.',
+      fit_error: 'Passfehler (X / Y)',
       no_preview: 'Kein Kameravorschaubild gefunden. Bitte führen Sie zuerst die Kameravorschau aus, um das bedruckte Material aufzunehmen.',
+      rotation: 'Drehung',
+      scale: 'Skalierung',
       success: 'Ausrichtung abgeschlossen!',
     },
     backend_outdated: 'Die aktuelle Firmware der Maschine unterstützt Print & Cut noch nicht.',

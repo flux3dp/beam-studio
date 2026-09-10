@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Det gick inte att identifiera tillräckligt många justeringsmarkeringar. Gör om kameraförhandsgranskningen och försök igen.',
+      fit_error: 'Passningsfel (X / Y)',
       no_preview: 'Ingen bild från kameraförhandsgranskningen hittades. Kör först kameraförhandsgranskningen för att fotografera det utskrivna materialet.',
+      rotation: 'Rotation',
+      scale: 'Skala',
       success: 'Justeringen är klar!',
     },
     backend_outdated: 'Maskinens nuvarande firmware stöder ännu inte Print & Cut.',

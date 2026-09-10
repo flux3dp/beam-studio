@@ -66,6 +66,23 @@
   gap: 8px;
 }
 
+.hint {
+  color: variables.$secondary-gray;
+  cursor: help;
+  pointer-events: auto;
+}
+
+.fitInfo {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  color: variables.$secondary-gray;
+
+  .error {
+    color: #f5222d;
+  }
+}
+
 .swatch {
   flex: none;
   width: 12px;

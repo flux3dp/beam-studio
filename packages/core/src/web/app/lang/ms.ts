@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Tanda penjajaran yang dikesan tidak mencukupi. Ulang pratonton kamera dan cuba lagi.',
+      fit_error: 'Ralat padanan (X / Y)',
       no_preview: 'Tiada imej pratonton kamera ditemui. Jalankan pratonton kamera terlebih dahulu untuk menangkap bahan yang telah dicetak.',
+      rotation: 'Putaran',
+      scale: 'Skala',
       success: 'Penjajaran selesai!',
     },
     backend_outdated: 'Perisian tegar mesin semasa belum menyokong Print & Cut.',

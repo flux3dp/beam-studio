@@ -1,3 +1,7 @@
+import { dpmm } from '@core/app/actions/beambox/constant';
+
+import { MATCH_TOLERANCE_MM, MATCH_TOLERANCE_RATIO } from '../constants';
+
 export interface Point {
   x: number;
   y: number;
@@ -7,8 +11,19 @@ export interface Point {
 export interface RigidTransform {
   /** radians, counterclockwise in svg coordinates */
   angle: number;
+  /** Per-point error (transformed expected − detected) in the sheet's frame, canvas px, in `from` order */
+  errors: Point[];
   /** rms distance between transformed expected points and detected points */
   residual: number;
+  /** rms error along the sheet's x axis (the mark rectangle's width direction) */
+  residualX: number;
+  /** rms error along the sheet's y axis (the mark rectangle's height direction) */
+  residualY: number;
+  /**
+   * Best-fit similarity scale from `from` to `to`, diagnostic only: the
+   * transform itself stays rigid (1 = the print came out at actual size)
+   */
+  scale: number;
   tx: number;
   ty: number;
 }
@@ -24,6 +39,7 @@ export const fitRigidTransform = (from: Point[], to: Point[]): RigidTransform =>
   const cTo = centroid(to);
   let a = 0;
   let b = 0;
+  let fromNorm = 0;
 
   for (let i = 0; i < from.length; i += 1) {
     const fx = from[i].x - cFrom.x;
@@ -33,6 +49,7 @@ export const fitRigidTransform = (from: Point[], to: Point[]): RigidTransform =>
 
     a += fx * tx + fy * ty;
     b += fx * ty - fy * tx;
+    fromNorm += fx * fx + fy * fy;
   }
 
   const angle = Math.atan2(b, a);
@@ -40,17 +57,53 @@ export const fitRigidTransform = (from: Point[], to: Point[]): RigidTransform =>
   const sin = Math.sin(angle);
   const tx = cTo.x - (cos * cFrom.x - sin * cFrom.y);
   const ty = cTo.y - (sin * cFrom.x + cos * cFrom.y);
-  let squaredSum = 0;
+  let sumX = 0;
+  let sumY = 0;
+  const errors: Point[] = [];
 
   for (let i = 0; i < from.length; i += 1) {
-    const px = cos * from[i].x - sin * from[i].y + tx;
-    const py = sin * from[i].x + cos * from[i].y + ty;
+    const ex = cos * from[i].x - sin * from[i].y + tx - to[i].x;
+    const ey = sin * from[i].x + cos * from[i].y + ty - to[i].y;
+    // error rotated back into the sheet's frame, so each axis can be judged
+    // against its own side of the mark rectangle
+    const error = { x: cos * ex + sin * ey, y: cos * ey - sin * ex };
 
-    squaredSum = squaredSum + (px - to[i].x) ** 2 + (py - to[i].y) ** 2;
+    errors.push(error);
+    sumX += error.x ** 2;
+    sumY += error.y ** 2;
   }
 
-  return { angle, residual: Math.sqrt(squaredSum / from.length), tx, ty };
+  return {
+    angle,
+    errors,
+    residual: Math.sqrt((sumX + sumY) / from.length),
+    residualX: Math.sqrt(sumX / from.length),
+    residualY: Math.sqrt(sumY / from.length),
+    scale: Math.hypot(a, b) / fromNorm,
+    tx,
+    ty,
+  };
 };
+
+/**
+ * Per-axis maximum rms fit error between transformed expected marks and
+ * detected blobs, in canvas units (px): a fixed floor, or a fraction of the
+ * mark rectangle's side along that axis for large designs where camera
+ * distortion dominates.
+ */
+export const getMatchTolerance = (expected: Point[]): Point => {
+  const xs = expected.map(({ x }) => x);
+  const ys = expected.map(({ y }) => y);
+  const floor = MATCH_TOLERANCE_MM * dpmm;
+
+  return {
+    x: Math.max(floor, MATCH_TOLERANCE_RATIO * (Math.max(...xs) - Math.min(...xs))),
+    y: Math.max(floor, MATCH_TOLERANCE_RATIO * (Math.max(...ys) - Math.min(...ys))),
+  };
+};
+
+export const exceedsTolerance = ({ residualX, residualY }: RigidTransform, tolerance: Point): boolean =>
+  residualX > tolerance.x || residualY > tolerance.y;
 
 /** Apply the transform to a point: R(angle)·p + (tx, ty) */
 export const applyRigidTransform = ({ x, y }: Point, { angle, tx, ty }: RigidTransform): Point => {

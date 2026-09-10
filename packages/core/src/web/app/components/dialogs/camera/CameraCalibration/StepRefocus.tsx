@@ -19,6 +19,8 @@ import VersionChecker from '@core/helpers/version-checker';
 import Browser from '@core/implementations/browser';
 import type { CameraConfig } from '@core/interfaces/Camera';
 
+import styles from './CameraCalibration.module.scss';
+
 const StepRefocus = (): React.JSX.Element => {
   const lang = useI18n();
   const langAlert = lang.alert;
@@ -119,15 +121,15 @@ const StepRefocus = (): React.JSX.Element => {
 
   if (device.model === 'fbm1') {
     child = (
-      <div className="video-container">
-        <div className="tab-container">
+      <div className={styles.videoContainer}>
+        <div className={styles.tabContainer}>
           <Segmented
             block
             onChange={(v) => setIsAutoFocus(v === langCalibration.with_af)}
             options={[langCalibration.without_af, langCalibration.with_af]}
           />
         </div>
-        <video autoPlay className="video" loop muted ref={videoElem}>
+        <video autoPlay className={styles.video} loop muted ref={videoElem}>
           <source src={isAutoFocus ? 'video/autofocus.webm' : 'video/bm_focus.webm'} type="video/webm" />
           <source src={isAutoFocus ? 'video/autofocus.mp4' : 'video/bm_focus.mp4'} type="video/mp4" />
         </video>
@@ -137,7 +139,7 @@ const StepRefocus = (): React.JSX.Element => {
   } else if (device.model === 'fhexa1') {
     message = langCalibration.please_refocus.hexa;
     child = (
-      <video autoPlay className="video" loop ref={videoElem}>
+      <video autoPlay className={styles.video} loop ref={videoElem}>
         <source src="video/bb2_focus.webm" type="video/webm" />
         <source src="video/bb2_focus.mp4" type="video/mp4" />
       </video>
@@ -145,7 +147,7 @@ const StepRefocus = (): React.JSX.Element => {
   } else {
     message = langCalibration.please_refocus.beambox;
     child = (
-      <video autoPlay className="video" loop muted ref={videoElem}>
+      <video autoPlay className={styles.video} loop muted ref={videoElem}>
         <source src="video/bb_focus.webm" type="video/webm" />
         <source src="video/bb_focus.mp4" type="video/mp4" />
       </video>
@@ -194,7 +196,6 @@ const StepRefocus = (): React.JSX.Element => {
   return (
     <DraggableModal
       cancelText={langCalibration.cancel}
-      className="modal-camera-calibration"
       okButtonProps={{ disabled: isCutButtonDisabled }}
       okText={langCalibration.start_engrave}
       onCancel={() => onClose(false)}

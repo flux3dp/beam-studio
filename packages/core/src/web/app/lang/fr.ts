@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Le nombre de repères d’alignement détectés est insuffisant. Veuillez relancer l’aperçu de la caméra et réessayer.',
+      fit_error: 'Erreur d’ajustement (X / Y)',
       no_preview: 'Aucune image d’aperçu de la caméra n’a été trouvée. Veuillez d’abord lancer l’aperçu de la caméra pour capturer le matériau imprimé.',
+      rotation: 'Rotation',
+      scale: 'Échelle',
       success: 'Alignement terminé !',
     },
     backend_outdated: 'Le micrologiciel actuel de la machine ne prend pas encore en charge Print & Cut.',

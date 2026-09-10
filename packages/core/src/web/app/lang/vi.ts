@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Không phát hiện đủ dấu căn chỉnh. Vui lòng chụp lại ảnh xem trước camera và thử lại.',
+      fit_error: 'Sai số khớp (X / Y)',
       no_preview: 'Không tìm thấy ảnh xem trước camera. Vui lòng chạy xem trước camera để chụp vật liệu đã in trước.',
+      rotation: 'Xoay',
+      scale: 'Tỷ lệ',
       success: 'Căn chỉnh hoàn tất!',
     },
     backend_outdated: 'Firmware hiện tại của máy chưa hỗ trợ Print & Cut.',

@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Er zijn niet genoeg uitlijnmarkeringen gedetecteerd. Maak opnieuw een cameravoorvertoning en probeer het nogmaals.',
+      fit_error: 'Pasfout (X / Y)',
       no_preview: 'Geen cameravoorvertoning gevonden. Voer eerst de cameravoorvertoning uit om het bedrukte materiaal vast te leggen.',
+      rotation: 'Rotatie',
+      scale: 'Schaal',
       success: 'Uitlijning voltooid!',
     },
     backend_outdated: 'De huidige firmware van de machine ondersteunt Print & Cut nog niet.',

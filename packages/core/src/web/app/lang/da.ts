@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: 'Der blev ikke registreret nok justeringsmærker. Tag kameraforhåndsvisningen igen, og prøv på ny.',
+      fit_error: 'Tilpasningsfejl (X / Y)',
       no_preview: 'Der blev ikke fundet noget kameraforhåndsvisningsbillede. Kør først kameraforhåndsvisningen for at tage et billede af det printede materiale.',
+      rotation: 'Rotation',
+      scale: 'Skalering',
       success: 'Justering fuldført!',
     },
     backend_outdated: 'Maskinens nuværende firmware understøtter endnu ikke Print & Cut.',

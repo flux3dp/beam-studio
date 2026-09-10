@@ -2323,7 +2323,10 @@ const lang: ILang = {
     },
     alignment: {
       detect_failed: '감지된 정렬 마크가 충분하지 않습니다. 카메라 미리보기를 다시 촬영한 후 시도해 주세요.',
+      fit_error: '맞춤 오차 (X / Y)',
       no_preview: '카메라 미리보기 이미지를 찾을 수 없습니다. 먼저 카메라 미리보기를 실행하여 인쇄된 소재를 촬영해 주세요.',
+      rotation: '회전',
+      scale: '배율',
       success: '정렬이 완료되었습니다!',
     },
     backend_outdated: '현재 기기 펌웨어는 아직 프린트 앤 컷 기능을 지원하지 않습니다.',
