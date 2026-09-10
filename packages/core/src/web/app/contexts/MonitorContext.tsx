@@ -22,7 +22,7 @@ import i18n from '@core/helpers/i18n';
 import MonitorStatus from '@core/helpers/monitor-status';
 import OutputError from '@core/helpers/output-error';
 import type { VariableTextElemHandler } from '@core/helpers/variableText';
-import { convertVariableText } from '@core/helpers/variableText';
+import { withVariableTextOnly } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
@@ -219,15 +219,9 @@ export class MonitorContextProvider extends React.Component<Props, State> {
   getVariableTextTask = async (): Promise<null | VariableTextTask> => {
     if (!this.props.vtElemHandler) return null;
 
-    this.props.vtElemHandler.extract();
-
-    const revert = await convertVariableText();
     const { device } = this.props;
     const { convertEngine } = getConvertEngine(device);
-    const res = await convertEngine(device);
-
-    revert?.();
-    this.props.vtElemHandler.revert();
+    const res = await withVariableTextOnly(this.props.vtElemHandler, () => convertEngine(device));
 
     if (res) return { fileTimeCost: res.fileTimeCost, taskCodeBlob: res.taskCodeBlob };
 

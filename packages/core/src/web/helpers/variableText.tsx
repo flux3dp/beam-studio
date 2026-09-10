@@ -412,6 +412,47 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
   return { extract, revert };
 };
 
+/**
+ * Run `fn` against the static half of the job: the variable-text elements come off the canvas
+ * first, and go back afterwards whether `fn` succeeds or throws.
+ */
+export const withVariableTextRemoved = async <T,>(fn: () => Promise<T> | T): Promise<T> => {
+  const revert = removeVariableText();
+
+  try {
+    return await fn();
+  } finally {
+    revert?.();
+  }
+};
+
+/**
+ * Run `fn` against the variable half: everything that is not variable text comes off the canvas,
+ * and the remaining fields are baked to the value they currently show.
+ *
+ * The handler belongs to the caller because it outlives this call — the monitor extracts through
+ * the same one again for every item as the job runs.
+ *
+ * @param bake false to leave the fields showing their placeholder, which is enough to estimate how
+ *   long the variable half takes.
+ */
+export const withVariableTextOnly = async <T,>(
+  handler: VariableTextElemHandler,
+  fn: () => Promise<T> | T,
+  { bake = true }: { bake?: boolean } = {},
+): Promise<T> => {
+  handler.extract();
+
+  const revertBake = bake ? await convertVariableText() : null;
+
+  try {
+    return await fn();
+  } finally {
+    revertBake?.();
+    handler.revert();
+  }
+};
+
 export function setVariableCodeData(
   elem: SVGElement,
   type: VariableTextType,
