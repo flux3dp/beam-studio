@@ -29,7 +29,12 @@ import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { VariableTextElemHandler } from '@core/helpers/variableText';
-import { extractVariableText, hasVariableText, removeVariableText } from '@core/helpers/variableText';
+import {
+  extractVariableText,
+  hasVariableText,
+  withVariableTextOnly,
+  withVariableTextRemoved,
+} from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -649,10 +654,7 @@ export default {
   },
   uploadFcode: async (device: IDeviceInfo, autoStart?: boolean): Promise<void> => {
     const { convertEngine } = getConvertEngine(device);
-    const revertVT = removeVariableText();
-    const res = await convertEngine(device);
-
-    revertVT?.();
+    const res = await withVariableTextRemoved(() => convertEngine(device));
 
     if (!res) return;
 
@@ -667,15 +669,28 @@ export default {
       // Update thumbnail with variable text placeholder
       SymbolMaker.switchImageSymbolForAll(false);
 
-      const { revert } = await convertAllTextToPath();
+      try {
+        const { revert } = await convertAllTextToPath();
 
-      ({ thumbnail, thumbnailBlobURL } = await generateThumbnail());
-      revert();
-      SymbolMaker.switchImageSymbolForAll(true);
-      // Get variable text task info for initial total time estimation
-      vtElemHandler = extractVariableText() ?? undefined;
-      vtTaskTinfo = ((await convertEngine(device)) as null | VariableTextTask) ?? undefined;
-      vtElemHandler?.revert();
+        try {
+          ({ thumbnail, thumbnailBlobURL } = await generateThumbnail());
+        } finally {
+          revert();
+        }
+      } finally {
+        SymbolMaker.switchImageSymbolForAll(true);
+      }
+
+      // Get variable text task info for initial total time estimation. The fields keep their
+      // placeholder here, unlike the task the monitor actually runs, which bakes them.
+      vtElemHandler = extractVariableText(false) ?? undefined;
+
+      if (vtElemHandler) {
+        vtTaskTinfo =
+          ((await withVariableTextOnly(vtElemHandler, () => convertEngine(device), {
+            bake: false,
+          })) as null | VariableTextTask) ?? undefined;
+      }
     }
 
     try {

@@ -35,10 +35,10 @@ import { DrawCommands } from '@core/helpers/path-preview/draw-commands';
 import { GcodePreview } from '@core/helpers/path-preview/draw-commands/GcodePreview';
 import units from '@core/helpers/units';
 import {
-  convertVariableText,
   extractVariableText,
   hasVariableText,
-  removeVariableText,
+  withVariableTextOnly,
+  withVariableTextRemoved,
 } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
@@ -794,17 +794,12 @@ class PathPreview extends React.Component<Props, State> {
     let useSwiftray: boolean;
 
     if (hasVariableText({ visibleOnly: true })) {
-      const extractFn = extractVariableText();
-      const revertConvert = await convertVariableText();
-      const vtTask = await exportFuncs.getGcode();
+      const handler = extractVariableText(false);
+      const vtTask = handler
+        ? await withVariableTextOnly(handler, () => exportFuncs.getGcode())
+        : { fileTimeCost: 0, gcodeBlob: undefined, useSwiftray: false };
+      const normalTask = await withVariableTextRemoved(() => exportFuncs.getGcode());
 
-      revertConvert?.();
-      extractFn?.revert();
-
-      const revertRemove = removeVariableText();
-      const normalTask = await exportFuncs.getGcode();
-
-      revertRemove?.();
       fileTimeCost = vtTask.fileTimeCost + normalTask.fileTimeCost;
       gcodeBlob =
         vtTask.gcodeBlob && normalTask.gcodeBlob
