@@ -9,11 +9,17 @@ import { saveFile } from '../handlers/save';
 
 export const getDefaultFileName = () => (currentFileManager.getName() || i18n.lang.topbar.untitled).replace('/', ':');
 
-export const switchSymbolWrapper = <T>(fn: () => T): T => {
+/**
+ * Run `fn` with every `use` pointing at its original vector symbol, then switch back.
+ *
+ * Awaits `fn`: a synchronous wrapper would switch back the moment an async `fn` hit its first
+ * await, leaving the rest of it to run against image symbols and their blob urls.
+ */
+export const switchSymbolWrapper = async <T>(fn: () => Promise<T> | T): Promise<T> => {
   symbolMaker.switchImageSymbolForAll(false);
 
   try {
-    return fn();
+    return await fn();
   } finally {
     symbolMaker.switchImageSymbolForAll(true);
   }

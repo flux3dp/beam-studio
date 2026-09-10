@@ -476,6 +476,13 @@ const readBeamFileInfo = async (file: File): Promise<{ thumbnail: string; workar
   };
 };
 
+/**
+ * Note: bvg has no thumbnail block, so the whole file is handed to an `<img>` as a data uri. That
+ * render is an isolated document, so two things do not come through: text falls back to another
+ * face, since the app's webfonts are not inlined; and in files saved before the export flow started
+ * switching `use` back to the original symbols, elements pointing at an `_image` preview symbol are
+ * missing, since those reference blob urls from the editing session that has long since ended.
+ */
 const readBvgFileInfo = async (file: File): Promise<{ thumbnail: string; workarea: null | string }> => {
   const data = await new Promise<ArrayBuffer>((resolve) => {
     const fr = new FileReader();

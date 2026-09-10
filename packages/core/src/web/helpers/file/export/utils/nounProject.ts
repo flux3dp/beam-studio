@@ -22,7 +22,14 @@ export const checkNounProjectElements = (): Promise<boolean> => {
   });
 };
 
-export const removeNPElementsWrapper = <T>(fn: () => T) => {
+/**
+ * Run `fn` with Noun Project elements nested inside another Noun Project element detached, then put
+ * them back.
+ *
+ * Awaits `fn` for the same reason as `switchSymbolWrapper`: a synchronous wrapper would restore the
+ * elements before an async `fn` reached the serialization it was meant to exclude them from.
+ */
+export const removeNPElementsWrapper = async <T>(fn: () => Promise<T> | T): Promise<T> => {
   const svgContent = document.getElementById('svgcontent')!;
   const npElements = svgContent.querySelectorAll('[data-np="1"]');
   const removedElements = Array.of<{ elem: Element; nextSibling: Element; parentNode: Element }>();
@@ -38,17 +45,17 @@ export const removeNPElementsWrapper = <T>(fn: () => T) => {
     }
   }
 
-  const res = fn();
+  try {
+    return await fn();
+  } finally {
+    for (let i = removedElements.length - 1; i >= 0; i--) {
+      const { elem, nextSibling, parentNode } = removedElements[i];
 
-  for (let i = removedElements.length - 1; i >= 0; i--) {
-    const { elem, nextSibling, parentNode } = removedElements[i];
-
-    try {
-      parentNode.insertBefore(elem, nextSibling);
-    } catch {
-      parentNode.appendChild(elem);
+      try {
+        parentNode.insertBefore(elem, nextSibling);
+      } catch {
+        parentNode.appendChild(elem);
+      }
     }
   }
-
-  return res;
 };
