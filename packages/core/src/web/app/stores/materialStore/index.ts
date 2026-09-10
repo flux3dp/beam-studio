@@ -236,19 +236,18 @@ export const useMaterialStore = create(
             ],
           });
         },
-        movePreset: (presetId, targetMaterialId) => {
+        movePreset: (presetId, targetMaterialId, targetVariantId) => {
           const preset = get().userPresets.find(({ id }) => id === presetId);
 
-          if (!preset || preset.materialId === targetMaterialId) return;
+          if (!preset || (preset.materialId === targetMaterialId && preset.variantId === targetVariantId)) return;
 
           if (targetMaterialId === MY_MATERIALS_ID) actions.ensureBucket();
 
           // Remove + append so the preset lands at the end of the target's list.
-          // Variant scope is dropped — it referenced a variant of the source material.
           apply({
             userPresets: [
               ...get().userPresets.filter(({ id }) => id !== presetId),
-              { ...preset, materialId: targetMaterialId, variantId: undefined },
+              { ...preset, materialId: targetMaterialId, variantId: targetVariantId },
             ],
           });
         },

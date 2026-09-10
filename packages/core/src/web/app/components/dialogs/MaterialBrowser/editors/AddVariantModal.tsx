@@ -20,6 +20,7 @@ interface AddVariantModalProps {
 /** Adds a user thickness variant to any material — a variant is only a thickness (identity comes from the material) */
 const AddVariantModal = ({ material, onClose, region }: AddVariantModalProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
+  const tGlobal = useI18n().global;
   const { addVariant, userVariants } = useMaterialStore();
   const [thickness, setThickness] = useState<ThicknessValue>({ thicknessUnit: region === 'us' ? 'inch' : 'mm' });
   const { thicknessDen, thicknessNum, thicknessUnit } = thickness;
@@ -46,6 +47,7 @@ const AddVariantModal = ({ material, onClose, region }: AddVariantModalProps): R
 
   return (
     <Modal
+      cancelText={tGlobal.cancel}
       okButtonProps={{ disabled: !thicknessNum || isDuplicate }}
       onCancel={onClose}
       onOk={handleOk}

@@ -50,8 +50,8 @@ export interface MaterialStoreActions {
   importData: (data: Partial<MaterialLibraryExport>) => void;
   /** Merges a legacy `presets` array (storage or exported file) into the "My Materials" bucket */
   importLegacyPresets: (legacy: Preset[] | undefined) => void;
-  /** Re-files a user preset onto another material (id unchanged, layer refs stay valid) */
-  movePreset: (presetId: string, targetMaterialId: string) => void;
+  /** Re-files a user preset onto another material and optional thickness scope (id unchanged, layer refs stay valid) */
+  movePreset: (presetId: string, targetMaterialId: string, targetVariantId?: string) => void;
   pushRecent: (materialId: string, presetId: string) => void;
   restorePreset: (presetId: string) => void;
   toggleFavorite: (materialId: string) => void;

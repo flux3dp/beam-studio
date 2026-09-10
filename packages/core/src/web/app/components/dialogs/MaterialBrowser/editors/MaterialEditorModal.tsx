@@ -42,6 +42,7 @@ const MaterialEditorModal = ({
   onCreated,
 }: MaterialEditorModalProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
+  const tGlobal = useI18n().global;
   const [form] = Form.useForm<FormValues>();
   const { addMaterial, addVariant, updateMaterial, userMaterials } = useMaterialStore();
   const editing = materialId ? userMaterials.find(({ id }) => id === materialId) : undefined;
@@ -84,6 +85,7 @@ const MaterialEditorModal = ({
 
   return (
     <DraggableModal
+      cancelText={tGlobal.cancel}
       okText={editing ? t.editor.title_edit : t.editor.title_add}
       onCancel={onClose}
       onOk={handleOk}

@@ -9,14 +9,12 @@ import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
 import Select from '@core/app/widgets/AntdSelect';
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
-import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
-import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
-import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { Material, PresetValues } from '@core/interfaces/IMaterial';
 
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
+import { getVariantTargetOptions } from '../utils/materialTargetOptions';
 
 interface FormValues {
   dottingTime?: number;
@@ -48,12 +46,14 @@ const PresetEditorModal = ({
   module,
 }: PresetEditorModalProps): null | React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
+  const tGlobal = useI18n().global;
   const laserPanelLang = useI18n().beambox.right_panel.laser_panel;
   const [form] = Form.useForm<FormValues>();
   const { closeEditors, presetEditor } = useMaterialBrowserStore();
   const { addPreset, updatePreset, userVariants } = useMaterialStore();
   // '' = whole material; otherwise a variant id
   const [variantTarget, setVariantTarget] = useState('');
+  const variantOptions = material ? getVariantTargetOptions(material, userVariants) : [];
 
   const isPrinting = printingModules.has(module);
   const isPromark = model.startsWith('fpm1_');
@@ -121,6 +121,7 @@ const PresetEditorModal = ({
 
   return (
     <Modal
+      cancelText={tGlobal.cancel}
       okText={isEdit ? t.preset_editor.title_edit : t.preset_editor.title_new}
       onCancel={closeEditors}
       onOk={handleOk}
@@ -136,20 +137,9 @@ const PresetEditorModal = ({
         >
           <Input />
         </Form.Item>
-        {!isEdit && material && getSortedVariants(material, userVariants).length > 0 && (
-          // Target scope: the whole material (labeled by its name) or one thickness variant
+        {!isEdit && variantOptions.length > 0 && (
           <Form.Item label={t.add_from_layer.attach_to}>
-            <Select
-              onChange={setVariantTarget}
-              options={[
-                { label: getMaterialDisplayName(material), value: '' },
-                ...getSortedVariants(material, userVariants).map((variant) => ({
-                  label: getThicknessLabel(variant) ?? variant.id,
-                  value: variant.id,
-                })),
-              ]}
-              value={variantTarget}
-            />
+            <Select onChange={setVariantTarget} options={variantOptions} value={variantTarget} />
           </Form.Item>
         )}
         <Row gutter={12}>

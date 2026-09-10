@@ -11,20 +11,20 @@ import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
-import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
-import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
 import { getConfigKeys, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getPresetModel } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
-import type { Material, MaterialPreset, PresetValues } from '@core/interfaces/IMaterial';
+import type { MaterialPreset, PresetValues } from '@core/interfaces/IMaterial';
 
 import styles from '../MaterialBrowser.module.scss';
+import { findTargetMaterial, getMaterialTargetOptions, getVariantTargetOptions } from '../utils/materialTargetOptions';
 import { getPresetDisplayParams } from '../utils/presetDisplayParams';
 
 const NEW_MATERIAL = '__new__';
 
 export interface AddPresetFromLayerModalProps {
   defaultMaterialId?: string;
+  defaultVariantId?: string;
   onClose: () => void;
 }
 
@@ -46,29 +46,31 @@ const captureLayerValues = (module: LayerModuleType): PresetValues => {
   return values;
 };
 
-const AddPresetFromLayerModal = ({ defaultMaterialId, onClose }: AddPresetFromLayerModalProps): React.JSX.Element => {
+const AddPresetFromLayerModal = ({
+  defaultMaterialId,
+  defaultVariantId,
+  onClose,
+}: AddPresetFromLayerModalProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
+  const tGlobal = useI18n().global;
   const module = useConfigPanelStore((state) => state.module.value);
   const workarea = useDocumentStore((state) => state.workarea);
-  const { addMaterial, addPreset, ensureBucket, userMaterials } = useMaterialStore();
+  const { addMaterial, addPreset, ensureBucket, userMaterials, userVariants } = useMaterialStore();
   const [materialId, setMaterialId] = useState(defaultMaterialId ?? MY_MATERIALS_ID);
+  // '' = whole material; otherwise a variant id of the chosen material
+  const [variantId, setVariantId] = useState(defaultVariantId ?? '');
   const [newMaterialName, setNewMaterialName] = useState('');
   const [presetName, setPresetName] = useState('');
 
   const values = useMemo(() => captureLayerValues(module), [module]);
   const model = getPresetModel(workarea);
 
-  const options = useMemo(() => {
-    const catalogMaterials = materialCatalogCache.getCatalogSync().materials;
-    const toOption = (material: Material) => ({ label: getMaterialDisplayName(material), value: material.id });
-
-    return [
-      { label: t.add_from_layer.create_new, value: NEW_MATERIAL },
-      { label: t.catalog.materials.my_materials, value: MY_MATERIALS_ID },
-      ...userMaterials.filter(({ id }) => id !== MY_MATERIALS_ID).map(toOption),
-      ...catalogMaterials.map(toOption),
-    ];
-  }, [userMaterials, t]);
+  const options = useMemo(
+    () => [{ label: t.add_from_layer.create_new, value: NEW_MATERIAL }, ...getMaterialTargetOptions(userMaterials)],
+    [userMaterials, t],
+  );
+  const targetMaterial = findTargetMaterial(materialId, userMaterials);
+  const variantOptions = targetMaterial ? getVariantTargetOptions(targetMaterial, userVariants) : [];
 
   const handleSave = () => {
     if (!presetName.trim()) return;
@@ -95,6 +97,7 @@ const AddPresetFromLayerModal = ({ defaultMaterialId, onClose }: AddPresetFromLa
       name: presetName.trim(),
       origin: 'user',
       settings: { '*': { [`${module}`]: values } },
+      ...(variantId && { variantId }),
     };
 
     addPreset(targetId, preset);
@@ -116,6 +119,7 @@ const AddPresetFromLayerModal = ({ defaultMaterialId, onClose }: AddPresetFromLa
 
   return (
     <Modal
+      cancelText={tGlobal.cancel}
       okText={t.add_from_layer.title}
       onCancel={onClose}
       onOk={handleSave}
@@ -140,8 +144,21 @@ const AddPresetFromLayerModal = ({ defaultMaterialId, onClose }: AddPresetFromLa
       </div>
       <Form layout="vertical">
         <Form.Item label={t.add_from_layer.attach_to}>
-          <Select onChange={setMaterialId} options={options} showSearch value={materialId} />
+          <Select
+            onChange={(id) => {
+              setMaterialId(id);
+              setVariantId('');
+            }}
+            options={options}
+            showSearch
+            value={materialId}
+          />
         </Form.Item>
+        {variantOptions.length > 0 && (
+          <Form.Item label={t.thickness}>
+            <Select onChange={setVariantId} options={variantOptions} value={variantId} />
+          </Form.Item>
+        )}
         {materialId === NEW_MATERIAL && (
           <Form.Item label={t.add_from_layer.new_material_name} required>
             <Input onChange={(e) => setNewMaterialName(e.target.value)} value={newMaterialName} />

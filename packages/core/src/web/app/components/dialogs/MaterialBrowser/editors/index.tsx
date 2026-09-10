@@ -13,7 +13,9 @@ import MaterialEditorModal from './MaterialEditorModal';
 const ADD_PRESET_ID = 'add-preset-from-layer';
 const MATERIAL_EDITOR_ID = 'material-editor';
 
-export const showAddPresetFromLayer = (options: { defaultMaterialId?: string } = {}): void => {
+export const showAddPresetFromLayer = (
+  options: { defaultMaterialId?: string; defaultVariantId?: string } = {},
+): void => {
   if (isIdExist(ADD_PRESET_ID)) return;
 
   initMaterialBrowser();
@@ -21,6 +23,7 @@ export const showAddPresetFromLayer = (options: { defaultMaterialId?: string } =
     ADD_PRESET_ID,
     <AddPresetFromLayerModal
       defaultMaterialId={options.defaultMaterialId}
+      defaultVariantId={options.defaultVariantId}
       onClose={() => popDialogById(ADD_PRESET_ID)}
     />,
   );

@@ -251,7 +251,7 @@ const MaterialDetail = ({
                 ],
                 onClick: ({ key }) =>
                   key === 'layer'
-                    ? showAddPresetFromLayer({ defaultMaterialId: material.id })
+                    ? showAddPresetFromLayer({ defaultMaterialId: material.id, defaultVariantId: selectedVariant?.id })
                     : // Defaults to the selected variant; the editor lets the user retarget
                       // (a specific variant or the whole material)
                       openPresetEditor({ materialId: material.id, mode: 'add', variantId: selectedVariant?.id }),

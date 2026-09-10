@@ -140,6 +140,31 @@ describe('materialStore actions', () => {
     expect(userPresets[0].variantId).toBeUndefined();
   });
 
+  test('movePreset onto a target variant keeps that scope; same material re-scopes', () => {
+    useMaterialStore.getState().addMaterial(userMaterial('m1'));
+    useMaterialStore.getState().addMaterial(userMaterial('m2'));
+    useMaterialStore.getState().addPreset('m1', { id: 'p1', name: 'Cut', origin: 'user', settings: {} });
+    useMaterialStore.getState().addPreset('m1', { id: 'p2', name: 'Engrave', origin: 'user', settings: {} });
+
+    useMaterialStore.getState().movePreset('p1', 'm2', 'm2-3mm');
+    expect(useMaterialStore.getState().userPresets.find(({ id }) => id === 'p1')).toMatchObject({
+      materialId: 'm2',
+      variantId: 'm2-3mm',
+    });
+
+    useMaterialStore.getState().movePreset('p2', 'm1', 'm1-5mm');
+    expect(useMaterialStore.getState().userPresets.find(({ id }) => id === 'p2')).toMatchObject({
+      materialId: 'm1',
+      variantId: 'm1-5mm',
+    });
+
+    // Same material + same scope is a no-op
+    const before = useMaterialStore.getState().userPresets;
+
+    useMaterialStore.getState().movePreset('p2', 'm1', 'm1-5mm');
+    expect(useMaterialStore.getState().userPresets).toBe(before);
+  });
+
   test('movePreset to the bucket lazily creates it', () => {
     useMaterialStore.getState().addMaterial(userMaterial('m1'));
     useMaterialStore.getState().addPreset('m1', { id: 'p1', name: 'Cut', origin: 'user', settings: {} });
