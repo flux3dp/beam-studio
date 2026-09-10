@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { Col, Form, Input, InputNumber, Modal, Row } from 'antd';
+import { match } from 'ts-pattern';
 
 import { type LayerModuleType, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { defaultEngraveDpiOptions, dpiValueMap, valueDpiMap } from '@core/app/constants/resolutions';
@@ -59,6 +60,31 @@ const PresetEditorModal = ({
   const isPromark = model.startsWith('fpm1_');
   const isMopa = model.startsWith('fpm1_1');
   const isEdit = presetEditor.mode === 'edit';
+
+  // Numeric fields per machine context (same branching as getPresetDisplayParams)
+  const laserFields = [
+    { label: laserPanelLang.strength, max: 100, min: 0, name: 'power' },
+    { label: laserPanelLang.speed, min: 0, name: 'speed' },
+    { label: laserPanelLang.repeat, min: 1, name: 'repeat' },
+  ];
+  const numberFields = match({ isMopa, isPrinting, isPromark })
+    .with({ isPrinting: true }, () => [
+      { label: laserPanelLang.ink_saturation, min: 0, name: 'ink' },
+      { label: laserPanelLang.print_multipass, min: 1, name: 'multipass' },
+      { label: laserPanelLang.repeat, min: 1, name: 'repeat' },
+    ])
+    .with({ isMopa: true, isPromark: true }, () => [
+      ...laserFields,
+      { label: laserPanelLang.pulse_width, min: 0, name: 'pulseWidth' },
+      { label: laserPanelLang.frequency, min: 0, name: 'frequency' },
+    ])
+    .with({ isPromark: true }, () => [
+      ...laserFields,
+      { label: laserPanelLang.dottingTime, min: 0, name: 'dottingTime' },
+      { label: laserPanelLang.fill_interval, min: 0.0001, name: 'fillInterval', step: 0.001 },
+      { label: laserPanelLang.frequency, min: 0, name: 'frequency' },
+    ])
+    .otherwise(() => laserFields);
 
   useEffect(() => {
     if (!presetEditor.open) return;
@@ -143,82 +169,24 @@ const PresetEditorModal = ({
           </Form.Item>
         )}
         <Row gutter={12}>
-          {isPrinting ? (
-            <>
-              <Col span={8}>
-                <Form.Item label={laserPanelLang.ink_saturation} name="ink">
-                  <InputNumber min={0} style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label={laserPanelLang.print_multipass} name="multipass">
-                  <InputNumber min={1} style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label={laserPanelLang.repeat} name="repeat">
-                  <InputNumber min={1} style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-            </>
-          ) : (
-            <>
-              <Col span={8}>
-                <Form.Item label={laserPanelLang.strength} name="power">
-                  <InputNumber max={100} min={0} style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label={laserPanelLang.speed} name="speed">
-                  <InputNumber min={0} style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              <Col span={8}>
-                <Form.Item label={laserPanelLang.repeat} name="repeat">
-                  <InputNumber min={1} style={{ width: '100%' }} />
-                </Form.Item>
-              </Col>
-              {isPromark ? (
-                <>
-                  {isMopa ? (
-                    <Col span={8}>
-                      <Form.Item label={laserPanelLang.pulse_width} name="pulseWidth">
-                        <InputNumber min={0} style={{ width: '100%' }} />
-                      </Form.Item>
-                    </Col>
-                  ) : (
-                    <>
-                      <Col span={8}>
-                        <Form.Item label={laserPanelLang.dottingTime} name="dottingTime">
-                          <InputNumber min={0} style={{ width: '100%' }} />
-                        </Form.Item>
-                      </Col>
-                      <Col span={8}>
-                        <Form.Item label={laserPanelLang.fill_interval} name="fillInterval">
-                          <InputNumber min={0.0001} step={0.001} style={{ width: '100%' }} />
-                        </Form.Item>
-                      </Col>
-                    </>
-                  )}
-                  <Col span={8}>
-                    <Form.Item label={laserPanelLang.frequency} name="frequency">
-                      <InputNumber min={0} style={{ width: '100%' }} />
-                    </Form.Item>
-                  </Col>
-                </>
-              ) : (
-                <Col span={8}>
-                  <Form.Item label="DPI" name="dpi">
-                    <Select
-                      options={defaultEngraveDpiOptions.map((option) => ({
-                        label: `${dpiValueMap[option]} DPI`,
-                        value: dpiValueMap[option],
-                      }))}
-                    />
-                  </Form.Item>
-                </Col>
-              )}
-            </>
+          {numberFields.map(({ label, name, ...inputProps }) => (
+            <Col key={name} span={8}>
+              <Form.Item label={label} name={name}>
+                <InputNumber {...inputProps} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          ))}
+          {!isPrinting && !isPromark && (
+            <Col span={8}>
+              <Form.Item label="DPI" name="dpi">
+                <Select
+                  options={defaultEngraveDpiOptions.map((option) => ({
+                    label: `${dpiValueMap[option]} DPI`,
+                    value: dpiValueMap[option],
+                  }))}
+                />
+              </Form.Item>
+            </Col>
           )}
         </Row>
       </Form>
