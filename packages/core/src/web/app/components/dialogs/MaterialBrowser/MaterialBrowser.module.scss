@@ -1,9 +1,11 @@
+@use '@core/styles/mixins' as mixins;
+
 .body {
   display: flex;
   flex-direction: column;
   gap: 12px;
   width: 80vw;
-  height: 72vh;
+  @include mixins.viewport-size(72);
   overflow: hidden;
 
   @media screen and (max-width: 600px) {
