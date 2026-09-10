@@ -7,12 +7,12 @@ import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { convertVariableText } from '@core/helpers/variableText';
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { generateBeamBuffer } from '../utils/beam';
+import { getCanvasContent, prepareCanvasContent } from '../utils/canvasContent';
 import { getDefaultFileName } from '../utils/common';
 
 import { saveToCloud } from './cloud';
@@ -79,11 +79,11 @@ export const saveFile = async (): Promise<boolean> => {
   }
 
   if (path.endsWith('.bvg')) {
-    const revert = await convertVariableText();
-    const output = svgCanvas.getSvgString();
+    if (!(await prepareCanvasContent('bvg'))) {
+      return false;
+    }
 
-    revert?.();
-    await fs.writeFile(path, output);
+    await fs.writeFile(path, await getCanvasContent('bvg'));
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;

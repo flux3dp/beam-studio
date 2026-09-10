@@ -11,18 +11,16 @@ import workareaManager from '@core/app/svgedit/workarea';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
-import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
-import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMac } from '@core/helpers/system-helper';
 import { convertVariableText } from '@core/helpers/variableText';
 import dialog from '@core/implementations/dialog';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getCanvasContent, prepareCanvasContent } from '../utils/canvasContent';
 import { getDefaultFileName, switchSymbolWrapper } from '../utils/common';
-import { checkNounProjectElements, removeNPElementsWrapper } from '../utils/nounProject';
 
 let svgCanvas: ISVGCanvas;
 
@@ -31,28 +29,13 @@ getSVGAsync((globalSVG) => {
 });
 
 export const exportAsBVG = async (): Promise<boolean> => {
-  if (!(await checkNounProjectElements())) {
+  if (!(await prepareCanvasContent('bvg'))) {
     return false;
   }
 
-  selectionManager.clearSelection();
-
   const defaultFileName = getDefaultFileName();
   const langFile = i18n.lang.topmenu.file;
-
-  svgCanvas.removeUnusedDefs();
-
-  const getContent = () =>
-    removeNPElementsWrapper(() =>
-      switchSymbolWrapper(async () => {
-        const revert = await convertVariableText();
-        const content = svgCanvas.getSvgString();
-
-        revert?.();
-
-        return content;
-      }),
-    );
+  const getContent = () => getCanvasContent('bvg');
   const newFilePath = await dialog.writeFileDialog(getContent, langFile.save_scene, defaultFileName, [
     { extensions: ['bvg'], name: isMac() ? `${langFile.scene_files} (*.bvg)` : langFile.scene_files },
     { extensions: ['*'], name: langFile.all_files },
@@ -70,26 +53,11 @@ export const exportAsBVG = async (): Promise<boolean> => {
 };
 
 export const exportAsSVG = async (): Promise<void> => {
-  if (!(await checkNounProjectElements())) {
+  if (!(await prepareCanvasContent('svg'))) {
     return;
   }
 
-  selectionManager.clearSelection();
-  svgCanvas.removeUnusedDefs();
-
-  const getContent = async () => {
-    const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
-    const allLayers = document.querySelectorAll('g.layer');
-
-    allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
-
-    const res = await removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
-
-    allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
-    reverts.toReversed().forEach((revert) => revert?.());
-
-    return res;
-  };
+  const getContent = () => getCanvasContent('svg');
   const defaultFileName = getDefaultFileName();
   const langFile = i18n.lang.topmenu.file;
 
@@ -102,20 +70,13 @@ export const exportAsSVG = async (): Promise<void> => {
 export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
   const langFile = i18n.lang.topmenu.file;
 
-  selectionManager.clearSelection();
-  svgCanvas.removeUnusedDefs();
+  if (!(await prepareCanvasContent('image'))) {
+    return;
+  }
 
   const getContent = async () => {
-    const revert = await convertVariableText();
-    // the isolated <img> render cannot see the app document's webfonts, so inline their bytes
-    // instead of converting text to paths
-    const fontFaceCss = await buildWebFontFaceCss([document.getElementById('svgcontent')!]);
-    const output = (await switchSymbolWrapper(() => svgCanvas.getSvgString())).replace(
-      /<svg[^>]*>/,
-      (svgTag) => svgTag + fontFaceCss,
-    );
+    const output = await getCanvasContent('image');
 
-    revert?.();
     Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
 
     const { height, width } = workareaManager;
