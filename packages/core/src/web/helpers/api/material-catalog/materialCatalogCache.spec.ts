@@ -7,6 +7,8 @@ jest.mock('@core/helpers/api/flux-id', () => ({
   axiosFluxId: { get: (...args: unknown[]) => mockGet(...args) },
 }));
 
+import { useStorageStore } from '@core/app/stores/storageStore';
+
 import { materialCatalogCache, materialCatalogEventEmitter } from './materialCatalogCache';
 
 describe('materialCatalogCache', () => {
@@ -23,6 +25,21 @@ describe('materialCatalogCache', () => {
     expect(mockGet).not.toHaveBeenCalled();
     // No hint while the cloud catalog is disabled — bundled is the norm, not degraded
     expect(materialCatalogCache.isUsingBundled()).toBe(false);
+  });
+
+  test('bundled fallback follows a default-units switch after load', async () => {
+    const thicknessUnit = () =>
+      materialCatalogCache.getCatalogSync().materials.find(({ id }) => id === 'wood')!.variants![0].thicknessUnit;
+
+    await materialCatalogCache.getCatalog();
+    expect(thicknessUnit()).toBe('mm');
+
+    useStorageStore.getState().set('default-units', 'inches');
+    expect(thicknessUnit()).toBe('inch');
+    expect(
+      (await materialCatalogCache.getCatalog()).materials.find(({ id }) => id === 'wood')!.variants![0].thicknessUnit,
+    ).toBe('inch');
+    useStorageStore.getState().set('default-units', 'mm');
   });
 
   test('getCatalogSync returns bundled before any load', () => {

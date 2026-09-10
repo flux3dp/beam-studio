@@ -33,9 +33,11 @@ class MaterialCatalogCache {
     this.loading = (async () => {
       const remote = await this.fetchRemote(0);
 
-      this.cache = remote ?? getBundledCatalog();
+      // Only a cloud catalog is cached: the bundled fallback is memoized per thickness unit
+      // in getBundledCatalog, so pinning it here would freeze the unit at first load
+      if (remote) this.cache = remote;
 
-      return this.cache;
+      return this.cache ?? getBundledCatalog();
     })().finally(() => {
       this.loading = null;
     });

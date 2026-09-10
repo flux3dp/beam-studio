@@ -9,6 +9,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -57,6 +58,9 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
   const [catalog, setCatalog] = useState<MaterialCatalog>(() => materialCatalogCache.getCatalogSync());
   const [movePresetId, setMovePresetId] = useState<null | string>(null);
 
+  // The bundled catalog is built per thickness unit — reload when default-units flips
+  const isInch = useStorageStore((state) => state.isInch);
+
   useEffect(() => {
     materialCatalogCache.getCatalog().then(setCatalog);
 
@@ -67,7 +71,7 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
     return () => {
       materialCatalogEventEmitter.removeListener('updated', onUpdated);
     };
-  }, []);
+  }, [isInch]);
 
   const region = getMaterialRegion();
   const model = getPresetModel(workarea);
