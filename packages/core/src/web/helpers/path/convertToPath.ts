@@ -9,6 +9,7 @@ import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/hand
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import selectionManager from '@core/app/svgedit/selection';
+import { renderAllParamsLabels } from '@core/app/svgedit/text/paramsLabel';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
 import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
@@ -259,6 +260,11 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
 }> => {
   // 1. Create a master command to record all changes.
   const batchCmd = new BatchCommand('Convert All Text to Path');
+
+  // Temporary trigger for refreshing parameter labels.
+  // TODO: Move this to the common export flow.
+  renderAllParamsLabels({ parentCmd: batchCmd });
+
   const texts = [
     ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
     ...document.querySelectorAll('#svg_defs text'),

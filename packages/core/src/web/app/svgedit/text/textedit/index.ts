@@ -5,6 +5,7 @@
 export { getCurText, initCurText, updateCurText, useDefaultFont } from './curText';
 export type { FitTextAlign } from './getters';
 export {
+  getColumnCount,
   getFitTextAlign,
   getFitTextSize,
   getFontFamily,
@@ -18,6 +19,7 @@ export {
   getLineSpacing,
   getTextContent,
   isFitText,
+  isParamsLabel,
 } from './getters';
 export { renderAll, renderText } from './renderText';
 export {
@@ -37,6 +39,7 @@ export {
 // Default export for backward compatibility
 import { getCurText, updateCurText, useDefaultFont } from './curText';
 import {
+  getColumnCount,
   getFitTextAlign,
   getFitTextSize,
   getFontFamily,
@@ -50,6 +53,7 @@ import {
   getLineSpacing,
   getTextContent,
   isFitText,
+  isParamsLabel,
 } from './getters';
 import { renderText } from './renderText';
 import {
@@ -67,6 +71,7 @@ import {
 } from './setters';
 
 export default {
+  getColumnCount,
   getCurText,
   getFitTextAlign,
   getFitTextSize,
@@ -81,6 +86,7 @@ export default {
   getLineSpacing,
   getTextContent,
   isFitText,
+  isParamsLabel,
   renderText,
   setFitTextAlign,
   setFontFamily,

@@ -19,7 +19,7 @@ import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
 
-const attributeMap: Record<ConfigKey, string> = {
+export const attributeMap: Record<ConfigKey, string> = {
   accX: 'data-accX',
   accY: 'data-accY',
   airAssist: 'data-airAssist',

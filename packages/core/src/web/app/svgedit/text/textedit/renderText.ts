@@ -8,6 +8,7 @@ import { recalculateDimensions } from '../../transform/recalculate';
 import { getBBox } from '../../utils/getBBox';
 
 import {
+  getColumnCount,
   getFitTextAlign,
   getFitTextSize,
   getFontSize,
@@ -33,9 +34,26 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
   ) as SVGTextContentElement[];
   const lines = typeof val === 'string' ? val.split('\u0085') : tspans.map((tspan) => tspan.textContent ?? '');
   const isVertical = getIsVertical(text);
+  const columnCount = isVertical ? null : getColumnCount(text);
   const lineSpacing = getLineSpacing(text);
   const charHeight = getFontSize(text);
   const letterSpacing = getLetterSpacing(text);
+  const columnWidths = columnCount === null ? null : Array<number>(columnCount).fill(0);
+  const renderedTspans: SVGTextContentElement[] = [];
+  // A cell followed by empty cells for the rest of its row spans every column, e.g. the heading of
+  // a params label or one of its long values. Do not let its width enlarge the first data column.
+  const spanningRows = new Set<number>();
+
+  if (columnCount !== null) {
+    for (let row = 0; row * columnCount < lines.length; row += 1) {
+      const cells = lines.slice(row * columnCount, (row + 1) * columnCount);
+
+      if (cells.length === columnCount && cells[0].length > 0 && cells.slice(1).every((cell) => cell.length === 0)) {
+        spanningRows.add(row);
+      }
+    }
+  }
+
   let isNewElementCreated = false;
 
   textActions.setIsVertical(isVertical);
@@ -71,13 +89,40 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
         tspan.setAttribute('y', y.join(' '));
       } else {
         tspan.setAttribute('x', text.getAttribute('x')!);
-        tspan.setAttribute('y', (Number(text.getAttribute('y')) + i * lineSpacing * charHeight).toFixed(2));
-        tspan.textContent = lines[i];
+        tspan.setAttribute(
+          'y',
+          (
+            Number(text.getAttribute('y')) +
+            (columnCount === null ? i : Math.floor(i / columnCount)) * lineSpacing * charHeight
+          ).toFixed(2),
+        );
         text.appendChild(tspan);
+
+        if (columnWidths && !spanningRows.has(Math.floor(i / columnWidths.length))) {
+          const columnIndex = i % columnWidths.length;
+
+          columnWidths[columnIndex] = Math.max(columnWidths[columnIndex], getBBox(tspan).width);
+        }
       }
+
+      renderedTspans.push(tspan);
     } else if (tspans[i]) {
       tspans[i].remove();
     }
+  }
+
+  if (columnWidths) {
+    const xOffsets: number[] = [];
+    let xOffset = Number(text.getAttribute('x'));
+
+    columnWidths.forEach((width) => {
+      xOffsets.push(xOffset);
+      xOffset += width;
+    });
+
+    renderedTspans.forEach((tspan, index) => {
+      tspan.setAttribute('x', xOffsets[index % columnWidths.length].toFixed(2));
+    });
   }
 
   if (isNewElementCreated) updateElementColor(text);

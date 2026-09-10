@@ -24,6 +24,8 @@ export interface Storage {
   /** @deprecated Customized laser configurations for version <= 2.3.9 */
   customizedLaserConfigs: any;
   'default-font': IDefaultFont;
+  /** Config keys displayed on newly created params labels */
+  'default-params-label-keys'?: string[];
   'default-units': 'inches' | 'mm';
   /** @deprecated Customized laser configurations for version <= 2.3.9 */
   defaultLaserConfigsInUse: any;

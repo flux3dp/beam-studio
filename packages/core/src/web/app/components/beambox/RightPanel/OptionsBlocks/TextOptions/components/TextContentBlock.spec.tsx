@@ -1,6 +1,8 @@
 import React from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
+
+import langEn from '@core/app/lang/en';
 
 const mockGetTextContent = jest.fn().mockReturnValue('Hello\nWorld');
 const mockRenderText = jest.fn();
@@ -12,34 +14,48 @@ const mockBatchCommand = jest.fn();
 const mockAddSubCommand = jest.fn();
 const mockDeleteElements = jest.fn();
 const mockToSelectMode = jest.fn();
+const mockRenderParamsLabel = jest.fn();
+const mockShowParamsLabelSettings = jest.fn();
+const mockIsParamsLabel = jest.fn();
 // textActions.isEditing is a mutable field on the singleton, so expose it through a
 // getter and flip `.value` per test rather than re-mocking the module.
 const mockIsEditing = { value: false };
 
+jest.mock('@core/app/svgedit/text/paramsLabel', () => ({
+  renderParamsLabel: mockRenderParamsLabel,
+}));
+
+jest.mock('@core/app/components/beambox/RightPanel/OptionsBlocks/TextOptions/components/ParamsLabelSettings', () => ({
+  showParamsLabelSettings: mockShowParamsLabelSettings,
+}));
+
 jest.mock('@core/app/svgedit/text/textedit', () => ({
-  __esModule: true,
-  getTextContent: (...args: any[]) => mockGetTextContent(...args),
-  renderText: (...args: any[]) => mockRenderText(...args),
+  getTextContent: mockGetTextContent,
+  renderText: mockRenderText,
   textContentEvents: {
-    on: (...args: any[]) => mockOn(...args),
-    removeListener: (...args: any[]) => mockRemoveListener(...args),
+    on: mockOn,
+    removeListener: mockRemoveListener,
   },
+}));
+
+jest.mock('@core/app/svgedit/text/textedit/getters', () => ({
+  isParamsLabel: mockIsParamsLabel,
 }));
 
 jest.mock('@core/app/svgedit/text/textactions', () => ({
   get isEditing() {
     return mockIsEditing.value;
   },
-  toSelectMode: (...args: any[]) => mockToSelectMode(...args),
+  toSelectMode: mockToSelectMode,
 }));
 
 jest.mock('@core/app/svgedit/operations/delete', () => ({
-  deleteElements: (...args: any[]) => mockDeleteElements(...args),
+  deleteElements: mockDeleteElements,
 }));
 
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: class {
-    addSubCommand = (...args: any[]) => mockAddSubCommand(...args);
+    addSubCommand = mockAddSubCommand;
     constructor(...args: any[]) {
       mockBatchCommand(...args);
     }
@@ -52,22 +68,7 @@ jest.mock('@core/app/svgedit/history/history', () => ({
 }));
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
-  addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
-}));
-
-jest.mock('antd', () => ({
-  Input: {
-    TextArea: ({ autoSize, id, onBlur, onChange, onFocus, value }: any) => (
-      <textarea
-        data-autosize={JSON.stringify(autoSize)}
-        id={id}
-        onBlur={onBlur}
-        onChange={onChange}
-        onFocus={onFocus}
-        value={value}
-      />
-    ),
-  },
+  addCommandToHistory: mockAddCommandToHistory,
 }));
 
 import TextContentBlock from './TextContentBlock';
@@ -80,6 +81,7 @@ describe('TextContentBlock', () => {
     mockGetTextContent.mockReturnValue('Hello\nWorld');
     mockDeleteElements.mockReturnValue({ type: 'delete-cmd' });
     mockIsEditing.value = false;
+    mockIsParamsLabel.mockReturnValue(false);
   });
 
   test('should render textarea with text content', () => {
@@ -206,5 +208,25 @@ describe('TextContentBlock', () => {
 
     // The component should have re-read from getTextContent
     expect(mockGetTextContent).toHaveBeenCalledWith(mockTextElement);
+  });
+
+  test('should hide the textarea and show params label actions for a params label', () => {
+    mockIsParamsLabel.mockReturnValue(true);
+    render(<TextContentBlock textElement={mockTextElement} />);
+
+    expect(screen.queryByRole('textbox')).not.toBeInTheDocument();
+    expect(screen.getByRole('button', { name: langEn.params_label.update })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: langEn.params_label.settings })).toBeInTheDocument();
+  });
+
+  test('should update the params label and open its settings from the action buttons', () => {
+    mockIsParamsLabel.mockReturnValue(true);
+    render(<TextContentBlock textElement={mockTextElement} />);
+
+    fireEvent.click(screen.getByRole('button', { name: langEn.params_label.update }));
+    expect(mockRenderParamsLabel).toHaveBeenCalledWith(mockTextElement);
+
+    fireEvent.click(screen.getByRole('button', { name: langEn.params_label.settings }));
+    expect(mockShowParamsLabelSettings).toHaveBeenCalledWith(mockTextElement);
   });
 });

@@ -1,15 +1,19 @@
 import type { ReactNode } from 'react';
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Input } from 'antd';
+import { EyeFilled, InfoCircleOutlined, SettingFilled } from '@ant-design/icons';
+import { Button, Input, Tooltip } from 'antd';
 import type { TextAreaRef } from 'antd/lib/input/TextArea';
 
+import { showParamsLabelSettings } from '@core/app/components/beambox/RightPanel/OptionsBlocks/TextOptions/components/ParamsLabelSettings';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
+import { renderParamsLabel } from '@core/app/svgedit/text/paramsLabel';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getTextContent, renderText, textContentEvents } from '@core/app/svgedit/text/textedit';
+import { isParamsLabel } from '@core/app/svgedit/text/textedit/getters';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './TextContentBlock.module.scss';
@@ -19,11 +23,13 @@ interface Props {
 }
 
 function TextContentBlock({ textElement }: Props): ReactNode {
-  const t = useI18n().beambox.right_panel.object_panel.option_panel;
+  const { beambox, params_label: tLabel } = useI18n();
+  const t = beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const [textContent, setTextContent] = useState(() => getTextContent(textElement));
   const textAreaRef = useRef<TextAreaRef>(null);
   const valueBeforeEditRef = useRef('');
+  const isParamsLabelElem = useMemo(() => isParamsLabel(textElement), [textElement]);
 
   useEffect(() => {
     setTextContent(getTextContent(textElement));
@@ -51,6 +57,26 @@ function TextContentBlock({ textElement }: Props): ReactNode {
   }, [textElement]);
 
   if (isMobile) return null;
+
+  if (isParamsLabelElem) {
+    return (
+      <div className={styles.buttons}>
+        <Tooltip title={tLabel.update}>
+          <Button aria-label={tLabel.update} icon={<EyeFilled />} onClick={() => renderParamsLabel(textElement)} />
+        </Tooltip>
+        <Tooltip title={tLabel.settings}>
+          <Button
+            aria-label={tLabel.settings}
+            icon={<SettingFilled />}
+            onClick={() => showParamsLabelSettings(textElement)}
+          />
+        </Tooltip>
+        <Tooltip title={tLabel.preview_hint}>
+          <InfoCircleOutlined />
+        </Tooltip>
+      </div>
+    );
+  }
 
   return (
     <div className={styles.container}>

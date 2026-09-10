@@ -12,6 +12,7 @@ export const getStorageKeys: () => StorageKey[] = () => [
   'black-list',
   'customizedLaserConfigs',
   'default-font',
+  'default-params-label-keys',
   'default-units',
   'defaultLaserConfigsInUse',
   'did-gesture-tutorial',
