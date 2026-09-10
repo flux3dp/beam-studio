@@ -50,7 +50,7 @@ describe('getMaterialRegion', () => {
     mockLocale.isEu = false;
     mockLocale.isJp = false;
     mockLocale.isNorthAmerica = false;
-    mockLocale.isTw = false;
+    mockLocale.isTwOrHk = false;
   });
 
   test('auto detection fallback to global', () => {
@@ -58,7 +58,7 @@ describe('getMaterialRegion', () => {
   });
 
   test('auto detection per locale flag with precedence', () => {
-    mockLocale.isTw = true;
+    mockLocale.isTwOrHk = true;
     expect(getMaterialRegion()).toBe('tw');
 
     mockLocale.isEu = true;

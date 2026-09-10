@@ -84,7 +84,7 @@ export const getMaterialRegion = (): MaterialRegion => {
 
   if (localeHelper.isEu) return 'eu';
 
-  if (localeHelper.isTw) return 'tw';
+  if (localeHelper.isTwOrHk) return 'tw';
 
   if (localeHelper.isJp) return 'jp';
 
