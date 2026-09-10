@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea, workareaOptions } from '@core/app/constants/workarea-constants';
-import { checkMaterialBrowser } from '@core/helpers/checkFeature';
+import { checkMaterialBrowser, materialBrowserRegions } from '@core/helpers/checkFeature';
 import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
@@ -105,16 +105,19 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
             label={lang.beambox.material_browser.settings_use}
             onChange={(e) => setPreference('use-material-browser', e)}
           />
-          <SettingSelect
-            defaultValue={getPreference('material-region-override')}
-            id="set-material-region"
-            label={lang.beambox.material_browser.settings_region}
-            onChange={(e) => setPreference('material-region-override', e)}
-            options={(['auto', 'us', 'eu', 'tw', 'jp', 'global'] as const).map((value) => ({
-              label: lang.beambox.material_browser.regions[value],
-              value,
-            }))}
-          />
+          {materialBrowserRegions.length > 1 && (
+            // Only meaningful once the browser is released in more than one region
+            <SettingSelect
+              defaultValue={getPreference('material-region-override')}
+              id="set-material-region"
+              label={lang.beambox.material_browser.settings_region}
+              onChange={(e) => setPreference('material-region-override', e)}
+              options={(['auto', ...materialBrowserRegions] as const).map((value) => ({
+                label: lang.beambox.material_browser.regions[value],
+                value,
+              }))}
+            />
+          )}
         </>
       )}
       <SettingSwitch

@@ -28,8 +28,10 @@ exist behind one gate:
 isMaterialBrowserActive() === checkMaterialBrowser() && globalPreference['use-material-browser']
 ```
 
-`checkMaterialBrowser` (checkFeature.ts) = dev, TW/HK locale (`localeHelper.isTwOrHk`, the
-checkBM24C pattern), or `localStorage.enableMaterialBrowser`; other regions are a rollout TODO. Every old-UI/new-UI branch
+`checkMaterialBrowser` (checkFeature.ts) = dev, `localStorage.enableMaterialBrowser`, or the
+user's locale matching an entry of `materialBrowserRegions` (currently `['tw']`, TW+HK). Adding a
+region there is the whole rollout step; the Preferences region picker (auto + released regions)
+appears on its own once the list has more than one entry. Every old-UI/new-UI branch
 (`svg-editor.ts`, `MaterialChip.tsx`, `switchPresetDpiGroup`, `initMaterialApply`) goes
 through this one helper — never re-derive the gate.
 
