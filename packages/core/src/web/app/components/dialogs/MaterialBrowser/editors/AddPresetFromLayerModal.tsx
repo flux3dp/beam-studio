@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 
-import { Form, Input, Modal, Space, Typography } from 'antd';
+import { Form, Input, Modal, Typography } from 'antd';
 
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { MY_MATERIALS_ID } from '@core/app/constants/material-catalog/constants';
@@ -16,9 +16,10 @@ import { getPresetModel } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { MaterialPreset, PresetValues } from '@core/interfaces/IMaterial';
 
-import styles from '../MaterialBrowser.module.scss';
 import { findTargetMaterial, getMaterialTargetOptions, getVariantTargetOptions } from '../utils/materialTargetOptions';
 import { getPresetDisplayParams } from '../utils/presetDisplayParams';
+
+import styles from './AddPresetFromLayerModal.module.scss';
 
 const NEW_MATERIAL = '__new__';
 
@@ -120,26 +121,24 @@ const AddPresetFromLayerModal = ({
   return (
     <Modal
       cancelText={tGlobal.cancel}
-      okText={t.add_from_layer.title}
+      okText={tGlobal.save}
       onCancel={onClose}
       onOk={handleSave}
       open
       title={t.add_from_layer.title}
       width={520}
     >
-      <div style={{ background: '#f6f8fa', borderRadius: 8, marginBottom: 16, padding: '10px 12px' }}>
-        <Typography.Text strong style={{ color: '#888', fontSize: 12 }}>
+      <div className={styles.summary}>
+        <Typography.Text className={styles.caption} strong>
           {t.add_from_layer.settings_from_layer}
         </Typography.Text>
-        <div style={{ marginTop: 6 }}>
-          <Space size={[6, 6]} wrap>
-            {getPresetDisplayParams(values, { model, module }).map(({ label, value }) => (
-              <span className={styles.pill} key={label}>
-                <b>{label}</b>
-                {value}
-              </span>
-            ))}
-          </Space>
+        <div className={styles.pills}>
+          {getPresetDisplayParams(values, { model, module }).map(({ label, value }) => (
+            <span className={styles.pill} key={label}>
+              <b>{label}</b>
+              {value}
+            </span>
+          ))}
         </div>
       </div>
       <Form layout="vertical">
@@ -165,7 +164,7 @@ const AddPresetFromLayerModal = ({
           </Form.Item>
         )}
         {materialId === MY_MATERIALS_ID && (
-          <Typography.Text style={{ display: 'block', marginBottom: 12 }} type="secondary">
+          <Typography.Text className={styles.hint} type="secondary">
             {t.add_from_layer.bucket_hint}
           </Typography.Text>
         )}

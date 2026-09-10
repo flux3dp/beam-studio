@@ -1,0 +1,38 @@
+@use '@core/styles/variables' as variables;
+
+.summary {
+  background: #f6f8fa;
+  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+
+  .caption {
+    color: variables.$secondary-gray;
+    font-size: 12px;
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+  }
+
+  .pill {
+    background: #ffffff;
+    border: 1px solid variables.$panelBorderColor;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-size: 12px;
+    color: #555555;
+
+    b {
+      margin-right: 4px;
+    }
+  }
+}
+
+.hint {
+  display: block;
+  margin-bottom: 12px;
+}
