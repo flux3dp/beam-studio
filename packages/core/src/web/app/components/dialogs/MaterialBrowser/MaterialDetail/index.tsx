@@ -18,7 +18,6 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useMaterialStore } from '@core/app/stores/materialStore';
-import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
 import { getPresetsForContext, getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
 import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName, resolveLocalizedString } from '@core/helpers/api/material-catalog/utils';
@@ -42,31 +41,18 @@ interface MaterialDetailProps {
   material: Material;
   model: PresetModel;
   module: LayerModuleType;
-  onApply: (row: ResolvedPresetRow, material: Material) => void;
-  onMovePreset: (row: ResolvedPresetRow) => void;
   region: MaterialRegion;
 }
 
-const MaterialDetail = ({
-  machineLabel,
-  material,
-  model,
-  module,
-  onApply,
-  onMovePreset,
-  region,
-}: MaterialDetailProps): React.JSX.Element => {
+const MaterialDetail = ({ machineLabel, material, model, module, region }: MaterialDetailProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const { openDetail, openPresetEditor, selectedVariantId, setSelectedVariantId } = useMaterialBrowserStore();
   const {
     deleteMaterial,
-    deletePreset,
     deleteVariant,
     disabledPresetIds,
     duplicateMaterial,
     presetOverrides,
-    restorePreset,
-    togglePresetDisabled,
     userPresets,
     userVariants,
   } = useMaterialStore();
@@ -129,14 +115,6 @@ const MaterialDetail = ({
         deleteVariant(selectedVariant.id);
         setSelectedVariantId(null);
       },
-    });
-  };
-
-  const handleDeletePreset = (row: ResolvedPresetRow) => {
-    alertCaller.popUp({
-      buttonType: alertConstants.CONFIRM_CANCEL,
-      message: t.sure_to_delete_preset,
-      onConfirm: () => deletePreset(row.presetId),
     });
   };
 
@@ -265,19 +243,7 @@ const MaterialDetail = ({
           {rows.length > 0 ? (
             <div className={styles.presets}>
               {rows.map((row) => (
-                <PresetRow
-                  context={{ model, module }}
-                  key={row.presetId}
-                  onApply={(applied) => onApply(applied, material)}
-                  onDelete={handleDeletePreset}
-                  onEdit={(edited) =>
-                    openPresetEditor({ materialId: edited.materialId, mode: 'edit', presetId: edited.presetId })
-                  }
-                  onMove={onMovePreset}
-                  onRestore={(restored) => restorePreset(restored.presetId)}
-                  onToggleDisabled={(toggled) => togglePresetDisabled(toggled.presetId)}
-                  row={row}
-                />
+                <PresetRow context={{ model, module }} key={row.presetId} row={row} />
               ))}
             </div>
           ) : (

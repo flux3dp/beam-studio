@@ -4,6 +4,8 @@ import { combine } from 'zustand/middleware';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
+export const MATERIAL_BROWSER_DIALOG_ID = 'material-browser';
+
 export type BrowserTab = 'favorites' | 'recents' | 'result' | (string & {});
 
 export interface PresetEditorState {

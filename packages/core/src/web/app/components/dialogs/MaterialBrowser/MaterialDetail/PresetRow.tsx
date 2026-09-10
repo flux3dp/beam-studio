@@ -13,37 +13,28 @@ import type { MenuProps } from 'antd';
 import { Button, Dropdown, Space, Tag } from 'antd';
 import classNames from 'classnames';
 
+import alertCaller from '@core/app/actions/alert-caller';
+import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { useMaterialStore } from '@core/app/stores/materialStore';
 import type { ResolvedPresetRow } from '@core/helpers/api/material-catalog/selectors';
 import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 
+import { showMovePresetModal } from '../editors';
 import styles from '../MaterialBrowser.module.scss';
+import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
+import { applyPresetRow } from '../utils/applyPresetRow';
 import { getPresetDisplayParams } from '../utils/presetDisplayParams';
 
 interface PresetRowProps {
   context: { model: PresetModel; module: LayerModuleType };
-  onApply: (row: ResolvedPresetRow) => void;
-  onDelete: (row: ResolvedPresetRow) => void;
-  onEdit: (row: ResolvedPresetRow) => void;
-  onMove: (row: ResolvedPresetRow) => void;
-  onRestore: (row: ResolvedPresetRow) => void;
-  onToggleDisabled: (row: ResolvedPresetRow) => void;
   row: ResolvedPresetRow;
 }
 
 const stateTagColor = { customized: 'orange', default: 'default', user: 'green' } as const;
 
-const PresetRow = ({
-  context,
-  onApply,
-  onDelete,
-  onEdit,
-  onMove,
-  onRestore,
-  onToggleDisabled,
-  row,
-}: PresetRowProps): React.JSX.Element => {
+const PresetRow = ({ context, row }: PresetRowProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const stateLabel = { customized: t.state_customized, default: t.state_default, user: t.state_user }[row.state];
 
@@ -64,12 +55,27 @@ const PresetRow = ({
     items.push({ danger: true, icon: <DeleteOutlined />, key: 'delete', label: t.delete });
   }
 
+  // Store actions are read at click time so rows subscribe to nothing
   const onMenuClick: MenuProps['onClick'] = ({ key }) => {
-    if (key === 'edit') onEdit(row);
-    else if (key === 'restore') onRestore(row);
-    else if (key === 'move') onMove(row);
-    else if (key === 'delete') onDelete(row);
-    else onToggleDisabled(row);
+    const { deletePreset, restorePreset, togglePresetDisabled } = useMaterialStore.getState();
+
+    if (key === 'edit') {
+      useMaterialBrowserStore
+        .getState()
+        .openPresetEditor({ materialId: row.materialId, mode: 'edit', presetId: row.presetId });
+    } else if (key === 'restore') {
+      restorePreset(row.presetId);
+    } else if (key === 'move') {
+      showMovePresetModal(row.presetId);
+    } else if (key === 'delete') {
+      alertCaller.popUp({
+        buttonType: alertConstants.CONFIRM_CANCEL,
+        message: t.sure_to_delete_preset,
+        onConfirm: () => deletePreset(row.presetId),
+      });
+    } else {
+      togglePresetDisabled(row.presetId);
+    }
   };
 
   return (
@@ -94,7 +100,7 @@ const PresetRow = ({
           ))}
         </Space>
       </div>
-      <Button disabled={row.isDisabled} onClick={() => onApply(row)} type="primary">
+      <Button disabled={row.isDisabled} onClick={() => applyPresetRow(row, context.module)} type="primary">
         {t.apply}
       </Button>
       <Dropdown menu={{ items, onClick: onMenuClick }} trigger={['click']}>

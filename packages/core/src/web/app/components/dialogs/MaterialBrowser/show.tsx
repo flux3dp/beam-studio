@@ -7,11 +7,9 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
 import { initMaterialBrowser, resolveLayerMaterialRef } from '@core/helpers/materials/material-apply';
 
-import { useMaterialBrowserStore } from './useMaterialBrowserStore';
+import { MATERIAL_BROWSER_DIALOG_ID, useMaterialBrowserStore } from './useMaterialBrowserStore';
 
 import MaterialBrowser from './index';
-
-const BROWSER_ID = 'material-browser';
 
 export interface ShowMaterialBrowserOptions {
   module: LayerModuleType;
@@ -21,7 +19,7 @@ export interface ShowMaterialBrowserOptions {
 
 /** Entry point for the dialog. Lives outside the dialog folder's import graph so nothing inside it imports upward. */
 export const showMaterialBrowser = ({ module, writeLayers = true }: ShowMaterialBrowserOptions): void => {
-  if (isIdExist(BROWSER_ID)) return;
+  if (isIdExist(MATERIAL_BROWSER_DIALOG_ID)) return;
 
   // First-activation migration + postPresetChange override, before any browser state is read
   initMaterialBrowser();
@@ -42,5 +40,8 @@ export const showMaterialBrowser = ({ module, writeLayers = true }: ShowMaterial
   // Non-blocking background refresh (silent failure per contract)
   materialCatalogCache.refresh();
 
-  addDialogComponent(BROWSER_ID, <MaterialBrowser onClose={() => popDialogById(BROWSER_ID)} />);
+  addDialogComponent(
+    MATERIAL_BROWSER_DIALOG_ID,
+    <MaterialBrowser onClose={() => popDialogById(MATERIAL_BROWSER_DIALOG_ID)} />,
+  );
 };

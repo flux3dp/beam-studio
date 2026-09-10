@@ -2,17 +2,12 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { Drawer, Tag, Typography } from 'antd';
 
-import initState from '@core/app/components/beambox/RightPanel/ConfigPanel/initState';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import history from '@core/app/svgedit/history/history';
-import undoManager from '@core/app/svgedit/history/undoManager';
-import layerManager from '@core/app/svgedit/layer/layerManager';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import {
   materialCatalogCache,
@@ -25,7 +20,6 @@ import {
   searchMaterials,
 } from '@core/helpers/api/material-catalog/selectors';
 import { getMaterialRegion } from '@core/helpers/api/material-catalog/utils';
-import { applyMaterialPreset, stageMaterialPreset } from '@core/helpers/materials/material-apply';
 import { exportMaterialLibrary, importMaterialLibrary } from '@core/helpers/materials/material-import-export';
 import { getPresetModel } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -34,7 +28,6 @@ import type { Material, MaterialCatalog } from '@core/interfaces/IMaterial';
 import CatalogGrid from './CatalogGrid';
 import CategoryTabs from './CategoryTabs';
 import ControlBar from './ControlBar';
-import MovePresetModal from './editors/MovePresetModal';
 import PresetEditorModal from './editors/PresetEditorModal';
 import styles from './MaterialBrowser.module.scss';
 import MaterialDetail from './MaterialDetail';
@@ -52,11 +45,10 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
   // HEXA RF watt affects getPresetModel — re-filter while the browser is open
   useCanvasStore((state) => state.watt);
 
-  const { activeTab, detailMaterialId, module, presetEditor, query, reset, writeLayers } = useMaterialBrowserStore();
+  const { activeTab, detailMaterialId, module, presetEditor, query, reset } = useMaterialBrowserStore();
   const { disabledPresetIds, favorites, presetOverrides, recents, userMaterials, userPresets } = useMaterialStore();
 
   const [catalog, setCatalog] = useState<MaterialCatalog>(() => materialCatalogCache.getCatalogSync());
-  const [movePresetId, setMovePresetId] = useState<null | string>(null);
 
   // The bundled catalog is built per thickness unit — reload when default-units flips
   const isInch = useStorageStore((state) => state.isInch);
@@ -134,26 +126,6 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
     }).find((row) => row.presetId === presetEditor.presetId);
   }, [presetEditor, allMaterials, model, module, disabledPresetIds, presetOverrides, userPresets]);
 
-  const handleApply = (row: ResolvedPresetRow, material: Material) => {
-    if (writeLayers) {
-      const batchCmd = new history.BatchCommand('Change layer preset');
-      const layers = useLayerStore
-        .getState()
-        .selectedLayers.map((layerName) => layerManager.getLayerElementByName(layerName))
-        .filter(Boolean) as Element[];
-
-      applyMaterialPreset(material, row.preset, { batchCmd, layers });
-      batchCmd.onAfter = initState;
-      undoManager.addCommandToHistory(batchCmd);
-      initState();
-    } else {
-      // Mobile modal variant: stage in the config store only; the modal's Save writes layers
-      stageMaterialPreset(material, row.preset, row.values, module);
-    }
-
-    onClose();
-  };
-
   const body = (
     <div className={styles.body}>
       {detailMaterial ? (
@@ -163,8 +135,6 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
             material={detailMaterial}
             model={model}
             module={module}
-            onApply={handleApply}
-            onMovePreset={(row) => setMovePresetId(row.presetId)}
             region={region}
           />
         </div>
@@ -188,7 +158,6 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
         model={model}
         module={module}
       />
-      {movePresetId && <MovePresetModal onClose={() => setMovePresetId(null)} presetId={movePresetId} />}
     </div>
   );
 

@@ -1,3 +1,17 @@
+const mockApplyPresetRow = jest.fn();
+const mockShowMovePresetModal = jest.fn();
+const mockRestorePreset = jest.fn();
+
+jest.mock('../utils/applyPresetRow', () => ({
+  applyPresetRow: (...args: unknown[]) => mockApplyPresetRow(...args),
+}));
+jest.mock('../editors', () => ({
+  showMovePresetModal: (...args: unknown[]) => mockShowMovePresetModal(...args),
+}));
+jest.mock('@core/app/stores/materialStore', () => ({
+  useMaterialStore: { getState: () => ({ restorePreset: mockRestorePreset }) },
+}));
+
 import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
@@ -21,19 +35,10 @@ const baseRow: ResolvedPresetRow = {
 const context = { model: 'fbb2', module: LayerModule.LASER_UNIVERSAL } as const;
 
 describe('PresetRow', () => {
-  const handlers = {
-    onApply: jest.fn(),
-    onDelete: jest.fn(),
-    onEdit: jest.fn(),
-    onMove: jest.fn(),
-    onRestore: jest.fn(),
-    onToggleDisabled: jest.fn(),
-  };
-
   beforeEach(() => jest.clearAllMocks());
 
   test('default preset renders pills and state tag', () => {
-    const { container, getByText } = render(<PresetRow context={context} row={baseRow} {...handlers} />);
+    const { container, getByText } = render(<PresetRow context={context} row={baseRow} />);
 
     expect(getByText('Default')).toBeInTheDocument();
     expect(getByText('55%')).toBeInTheDocument();
@@ -43,7 +48,7 @@ describe('PresetRow', () => {
 
   test('customized and disabled states', () => {
     const { getByText } = render(
-      <PresetRow context={context} row={{ ...baseRow, isDisabled: true, state: 'customized' }} {...handlers} />,
+      <PresetRow context={context} row={{ ...baseRow, isDisabled: true, state: 'customized' }} />,
     );
 
     expect(getByText('Customized')).toBeInTheDocument();
@@ -51,30 +56,30 @@ describe('PresetRow', () => {
     expect(getByText('Apply').closest('button')).toBeDisabled();
   });
 
-  test('apply fires with the row', () => {
-    const { getByText } = render(<PresetRow context={context} row={baseRow} {...handlers} />);
+  test('apply hands the row and module to applyPresetRow', () => {
+    const { getByText } = render(<PresetRow context={context} row={baseRow} />);
 
     fireEvent.click(getByText('Apply'));
-    expect(handlers.onApply).toHaveBeenCalledWith(baseRow);
+    expect(mockApplyPresetRow).toHaveBeenCalledWith(baseRow, LayerModule.LASER_UNIVERSAL);
   });
 
   test('user preset menu offers move and delete', async () => {
     const userRow: ResolvedPresetRow = { ...baseRow, state: 'user' };
-    const { findByText, getByTestId } = render(<PresetRow context={context} row={userRow} {...handlers} />);
+    const { findByText, getByTestId } = render(<PresetRow context={context} row={userRow} />);
 
     fireEvent.click(getByTestId('preset-menu-wood_3mm_cutting'));
 
     fireEvent.click(await findByText('Move to material…'));
-    expect(handlers.onMove).toHaveBeenCalledWith(userRow);
+    expect(mockShowMovePresetModal).toHaveBeenCalledWith('wood_3mm_cutting');
   });
 
   test('customized preset menu offers restore', async () => {
     const customizedRow: ResolvedPresetRow = { ...baseRow, state: 'customized' };
-    const { findByText, getByTestId } = render(<PresetRow context={context} row={customizedRow} {...handlers} />);
+    const { findByText, getByTestId } = render(<PresetRow context={context} row={customizedRow} />);
 
     fireEvent.click(getByTestId('preset-menu-wood_3mm_cutting'));
 
     fireEvent.click(await findByText('Restore FLUX default'));
-    expect(handlers.onRestore).toHaveBeenCalledWith(customizedRow);
+    expect(mockRestorePreset).toHaveBeenCalledWith('wood_3mm_cutting');
   });
 });

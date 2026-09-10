@@ -9,9 +9,11 @@ import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 
 import AddPresetFromLayerModal from './AddPresetFromLayerModal';
 import MaterialEditorModal from './MaterialEditorModal';
+import MovePresetModal from './MovePresetModal';
 
 const ADD_PRESET_ID = 'add-preset-from-layer';
 const MATERIAL_EDITOR_ID = 'material-editor';
+const MOVE_PRESET_ID = 'move-preset';
 
 export const showAddPresetFromLayer = (
   options: { defaultMaterialId?: string; defaultVariantId?: string } = {},
@@ -26,6 +28,15 @@ export const showAddPresetFromLayer = (
       defaultVariantId={options.defaultVariantId}
       onClose={() => popDialogById(ADD_PRESET_ID)}
     />,
+  );
+};
+
+export const showMovePresetModal = (presetId: string): void => {
+  if (isIdExist(MOVE_PRESET_ID)) return;
+
+  addDialogComponent(
+    MOVE_PRESET_ID,
+    <MovePresetModal onClose={() => popDialogById(MOVE_PRESET_ID)} presetId={presetId} />,
   );
 };
 
