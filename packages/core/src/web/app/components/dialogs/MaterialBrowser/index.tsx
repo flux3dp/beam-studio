@@ -193,10 +193,10 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
   );
 
   const title = (
-    <div style={{ alignItems: 'center', display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-      <span style={{ whiteSpace: 'nowrap' }}>{t.title}</span>
-      <span style={{ color: '#888', fontSize: 13, fontWeight: 400, whiteSpace: 'nowrap' }}>
-        {t.machine}: <Tag style={{ marginLeft: 4 }}>{machineLabel}</Tag>
+    <div className={styles.title}>
+      <span className={styles.name}>{t.title}</span>
+      <span className={styles.machine}>
+        {t.machine}: <Tag className={styles.tag}>{machineLabel}</Tag>
       </span>
       {materialCatalogCache.isUsingBundled() && (
         <Typography.Text className={styles['bundled-hint']}>{t.showing_bundled}</Typography.Text>
