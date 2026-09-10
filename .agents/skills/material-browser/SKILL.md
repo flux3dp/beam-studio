@@ -92,7 +92,7 @@ access (memoized per unit). Parameter values are **never duplicated** in mapping
   5mm = 3/16″, 6mm = ¼″ (the shop sells ¼″ sheets as 6mm), 7mm = 9/32″ (nearest 32nd,
   keeps it distinct from 6mm), 8mm = 5/16″, 10mm = ⅜″. Keep labels unique within a
   material — the variant Segmented and the preset editor's variant picker list every
-  catalog variant regardless of machine. `inchDisplay` renders any reduced fraction
+  catalog variant regardless of machine. `inchDisplay` (`helpers/api/material-catalog/thickness.ts`) renders any reduced fraction
   typographically (precomposed glyph or super/subscript digits), so unusual denominators
   are fine to use.
 - Variants are **not filtered by machine** — `getPresetsForContext` filters presets per
@@ -112,8 +112,9 @@ on the "My Materials" bucket (`ensureBucket()`), legacy hidden defaults become
 
 Actions take ids, not objects: `addPreset(materialId, preset)`, `updatePreset(presetId,
 scope, moduleKey, values)` (user preset → replaced in the flat list; catalog preset →
-`presetOverrides` overlay, `restorePreset` deletes it), `movePreset(presetId, targetMaterialId)`
-(id unchanged so layer refs stay valid), `deleteVariant` cascades scoped user presets,
+`presetOverrides` overlay, `restorePreset` deletes it), `movePreset(presetId, targetMaterialId,
+targetVariantId?)` (id unchanged so layer refs stay valid; same material + same scope is a
+no-op, any other move re-appends at the end), `deleteVariant` cascades scoped user presets,
 `duplicateMaterial(source, name?)` deep-copies a catalog material into a user one.
 `getExportData`/`importData` back `material-import-export.ts`
 (`{ type: 'flux-material-library', version: 1, … }`).
@@ -121,10 +122,13 @@ scope, moduleKey, values)` (user preset → replaced in the flat list; catalog p
 ## Apply pipeline (`helpers/materials/material-apply.ts`)
 
 1. `applyMaterialPreset(material, preset, { layers, batchCmd })` — per layer: resolve
-   values for the workarea's `PresetModel` + the layer module (`resolveWithOverlay` merges
-   `presetOverrides`), write `dpi` if declared, call the legacy `applyPreset` with
+   values for the workarea's `PresetModel` + the layer module (`resolveWithOverlay` = the pure
+   `resolvePresetValues` from material-catalog utils bound to the store's `presetOverrides`),
+   write `dpi` if declared, call the legacy `applyPreset` with
    `toLegacyPreset(...)` (keeps forced keys / speed clamping / configName), then write
    `data-materialId` + `data-presetId`. Pushes a recent and fires the preset tutorial hook.
+   `stageMaterialPreset(material, preset, values, module)` is the mobile-modal flavor: same
+   payload (forced keys, speed clamp) staged in the config store only.
 2. `resolveMaterialRef({ presetId, configName })` — presetId first (user presets, then
    `materialCatalogCache.findPresetById`), then configName against catalog `legacyKey`s and
    user preset names. `legacyKeyAliases` maps retired presets.ts keys
@@ -164,12 +168,16 @@ catalog presets get a " - N DPI" suffix in the browser only).
   `PresetRow`s with Apply / edit / disable / restore / move.
 - `editors/` — `MaterialEditorModal`, `PresetEditorModal` (retarget to a variant or the
   whole material), `AddPresetFromLayerModal`, `AddVariantModal`, `MovePresetModal`,
-  `ThicknessInput`; `editors/index.tsx` owns the dialog ids and `show*` functions.
+  `ThicknessInput`; `editors/index.tsx` owns the modal openers (`showAddPresetFromLayer`,
+  `showMaterialEditorModal`), while `show.tsx` at the folder root owns `showMaterialBrowser`
+  so nothing under `editors/` imports the dialog upward. Add-from-layer and Move both offer
+  a Thickness scope ('-' = whole material) via `utils/materialTargetOptions.ts`
+  (`getMaterialTargetOptions` / `getVariantTargetOptions` / `findTargetMaterial`).
 - `useMaterialBrowserStore.ts` — dialog-local state (activeTab, query, detailMaterialId,
   selectedVariantId, module, writeLayers, presetEditor). `reset(init)` on every open,
   seeded from the current layer's ref (R2: open focused on the applied material).
-- `utils/` — (thickness label helpers `inchDisplay`/`getThicknessLabel` live in `helpers/api/material-catalog/thickness.ts`, never round),
-  `getCoverStyle`/`fileToCoverDataUrl` (image or `coverColor`/category fallback),
+- `utils/` — `materialTargetOptions` (above), `getCoverStyle`/`fileToCoverDataUrl` (image or
+  `coverColor`/category fallback),
   `getPresetDisplayParams` (parameter pills; speed follows default-units like SpeedBlock —
   in/s with 2 decimals under inches, other lengths stay mm like their ConfigPanel blocks).
 
@@ -203,7 +211,7 @@ Retiring or renaming a presets.ts key is **not** part of this: it touches
   (mm) + inch-mode variant checks.
 - `stores/materialStore/index.spec.ts` — actions, migration, never-writes-`presets`.
 - `helpers/materials/material-apply.spec.ts`, `helpers/api/material-catalog/*.spec.ts`
-  (selectors, cache, utils), `utils/inchDisplay.spec.ts`, `useAppliedMaterial.spec.ts`,
+  (selectors, cache, utils, thickness), `useAppliedMaterial.spec.ts`,
   `MaterialCard.spec.tsx`, `MaterialDetail/PresetRow.spec.tsx`.
 - Central mocks: `checkFeature` mock returns `checkMaterialBrowser() === false` so legacy
   specs run the old UI; `globalPreferenceStore` mock carries `use-material-browser`;
