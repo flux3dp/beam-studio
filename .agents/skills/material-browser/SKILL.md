@@ -28,8 +28,8 @@ exist behind one gate:
 isMaterialBrowserActive() === checkMaterialBrowser() && globalPreference['use-material-browser']
 ```
 
-`checkMaterialBrowser` (checkFeature.ts) is dev-only / `localStorage.enableMaterialBrowser`
-until PM sets rollout dates (TODO, checkHxRf pattern). Every old-UI/new-UI branch
+`checkMaterialBrowser` (checkFeature.ts) = dev, TW/HK locale (`localeHelper.isTwOrHk`, the
+checkBM24C pattern), or `localStorage.enableMaterialBrowser`; other regions are a rollout TODO. Every old-UI/new-UI branch
 (`svg-editor.ts`, `MaterialChip.tsx`, `switchPresetDpiGroup`, `initMaterialApply`) goes
 through this one helper — never re-derive the gate.
 
