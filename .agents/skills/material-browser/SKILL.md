@@ -14,7 +14,8 @@ Locations:
 - Apply pipeline: `packages/core/src/web/helpers/materials/`
 - Catalog cache + selectors: `packages/core/src/web/helpers/api/material-catalog/`
 - Schema: `packages/core/src/web/interfaces/IMaterial.d.ts`
-- Cloud contract: `docs/material-catalog-api.md` (+ `material-catalog-example.json`, `material-catalog-seed.json`)
+- Cloud contract: `docs/material-catalog-api.md` (+ `material-catalog-example.json`). The import seed for
+  flux-id is NOT kept here — generate it on demand (step 4 of the CSV workflow) and hand it over.
 
 ## Overview
 
@@ -197,9 +198,11 @@ dpi_high/detailed/ultra_power, region, status, source, image_filename`) plus an
    display-only materials (kept in mapping/i18n, hidden until presets exist).
 3. New `preset_key`s: add to presets.ts, `presetMappings`, and (if a new material) a
    `materialDefs` entry + `en.ts`/`zh-tw.ts` names. New thicknesses = new variants.
-4. Regenerate `docs/material-catalog-seed.json` from the real builder (throwaway spec
-   calling `getBundledCatalog()`, strip `image` — the seed never carries images) and
-   update the catalog snapshot with `-u`.
+4. Update the catalog snapshot with `-u`. If flux-id needs a fresh import seed, generate it
+   from the real builder (throwaway spec calling `getBundledCatalog()` in mm mode, strip
+   `image` — the seed never carries images) and copy it to
+   `flux-id/fluxid/apps/beam_studio/tests/fixtures/material-catalog-seed.json`; it is not
+   committed in this repo.
 5. Check the CSV `image_filename` column for `MISSING`, and bundle any new photos.
 
 Retiring or renaming a presets.ts key is **not** part of this: it touches
