@@ -10,7 +10,6 @@ import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import deviceConstants from '@core/app/constants/device-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -22,6 +21,7 @@ import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import { withCanvasContent } from '@core/helpers/file/export/utils/canvasContent';
 import i18n from '@core/helpers/i18n';
 import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
 import getJobOrigin from '@core/helpers/job-origin';
@@ -29,8 +29,7 @@ import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getAllLayers } from '@core/helpers/layer/layer-helper';
 import monitorStatus from '@core/helpers/monitor-status';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import { convertVariableText, hasVariableText } from '@core/helpers/variableText';
+import { hasVariableText } from '@core/helpers/variableText';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -105,8 +104,7 @@ export const getFramingOptions = (device: IDeviceInfo): TFramingType[] => {
   return [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
 };
 
-const getCoords = async (mm?: boolean): Promise<Coordinates> => {
-  const revertVariableText = await convertVariableText();
+const measureCoords = (mm?: boolean): Coordinates => {
   const coords: Partial<Coordinates> = {
     maxX: undefined,
     maxY: undefined,
@@ -170,62 +168,40 @@ const getCoords = async (mm?: boolean): Promise<Coordinates> => {
     coords.maxY = Math.min(coords.maxY ?? workareaMaxY, workareaMaxY) / ratio;
   }
 
-  revertVariableText?.();
-
   return coords as Coordinates;
 };
+
+/**
+ * The area the job will cover. Measured with the canvas in the state the job runs in, the same one
+ * `getCanvasImage` rasterizes, so the frame and the hull cannot disagree about what is on the bed.
+ */
+const getCoords = async (mm?: boolean): Promise<Coordinates> =>
+  (await withCanvasContent('framingBBox', () => measureCoords(mm))) ?? ({} as Coordinates);
 
 const getCanvasImage = async (negative = false): Promise<Blob | null> => {
   const { maxY, minY, width } = workareaManager;
 
   if (negative && minY >= 0) return null;
 
-  symbolMaker.switchImageSymbolForAll(false);
-
-  const allLayers = getAllLayers()
-    .filter((layer) => getData(layer, 'repeat')! > 0)
-    .map((layer) => layer.cloneNode(true) as SVGGElement);
-
-  symbolMaker.switchImageSymbolForAll(true);
-  allLayers.forEach((layer) => {
-    const images = layer.querySelectorAll('image');
-
-    images.forEach((image) => {
-      const x = image.getAttribute('x');
-      const y = image.getAttribute('y');
-      const width = image.getAttribute('width');
-      const height = image.getAttribute('height');
-      const transform = image.getAttribute('transform');
-      const rect = document.createElementNS(NS.SVG, 'rect');
-
-      if (x) rect.setAttribute('x', x);
-
-      if (y) rect.setAttribute('y', y);
-
-      if (width) rect.setAttribute('width', width);
-
-      if (height) rect.setAttribute('height', height);
-
-      if (transform) rect.setAttribute('transform', transform);
-
-      image.replaceWith(rect);
+  // `framingRaster` has already collapsed the bitmaps to rectangles: the hull only needs outlines.
+  const rasterize = async (): Promise<Blob | null> => {
+    const height = negative ? -minY : maxY;
+    const y = negative ? minY : 0;
+    const canvas = await rasterizeStandaloneSvg({
+      content: getAllLayers().filter((layer) => getData(layer, 'repeat')! > 0),
+      size: { height, width },
+      viewBox: { height, width, x: 0, y },
     });
-  });
+    const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
 
-  const height = negative ? -minY : maxY;
-  const y = negative ? minY : 0;
-  const canvas = await rasterizeStandaloneSvg({
-    content: allLayers,
-    size: { height, width },
-    viewBox: { height, width, x: 0, y },
-  });
-  const ctx = canvas.getContext('2d') as CanvasRenderingContext2D;
+    ctx.globalCompositeOperation = 'destination-over';
+    ctx.fillStyle = 'white';
+    ctx.fillRect(0, 0, width, height);
 
-  ctx.globalCompositeOperation = 'destination-over';
-  ctx.fillStyle = 'white';
-  ctx.fillRect(0, 0, width, height);
+    return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve));
+  };
 
-  return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve));
+  return (await withCanvasContent('framingRaster', rasterize)) ?? null;
 };
 
 const getConvexHull = async (imgBlob: Blob): Promise<Array<[number, number]>> => getUtilWS().getConvexHull(imgBlob);

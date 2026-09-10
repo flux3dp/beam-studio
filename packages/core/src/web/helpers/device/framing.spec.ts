@@ -37,6 +37,12 @@ jest.mock('@core/helpers/variableText', () => ({
   hasVariableText: (...args: any[]) => mockHasVariableText(...args),
 }));
 
+// Framing reads the canvas through the export preset layer now. The preparation itself is covered
+// by that module's own tests; here it only has to run the producer and stay out of the way.
+jest.mock('@core/helpers/file/export/utils/canvasContent', () => ({
+  withCanvasContent: (_target: string, produce: () => unknown) => produce(),
+}));
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getAllLayers: (...args: any[]) => mockGetAllLayers(...args),
 }));

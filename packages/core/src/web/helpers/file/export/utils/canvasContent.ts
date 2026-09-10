@@ -1,32 +1,41 @@
-import {
-  annotateCurveEngravingZSpeed,
-  removeCurveEngravingZSpeedAnnotation,
-} from '@core/app/actions/beambox/export/annotateCurveEngravingZSpeed';
-import { annotateLayerBBox } from '@core/app/actions/beambox/export/annotateLayerBBox';
-import { annotateLayerDpmm } from '@core/app/actions/beambox/export/annotateLayerDpmm';
-import generateThumbnail from '@core/app/actions/beambox/export/generate-thumbnail';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import layerManager from '@core/app/svgedit/layer/layerManager';
-import selectionManager from '@core/app/svgedit/selection';
-import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
-import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
-import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
-import convertBitmapToInfilledRect from '@core/helpers/layer/convertBitmapToInfilledRect';
-import convertClipPath from '@core/helpers/layer/convertClipPath';
-import convertShapeToBitmap from '@core/helpers/layer/convertShapeToBitmap';
-import { tempSplitFullColorLayers } from '@core/helpers/layer/full-color/splitFullColorLayer';
-import { getData } from '@core/helpers/layer/layer-config-helper';
-import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
-import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { Units } from '@core/helpers/units';
-import { convertVariableText } from '@core/helpers/variableText';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { switchSymbolWrapper } from './common';
 import { checkNounProjectElements, removeNPElementsWrapper } from './nounProject';
+
+/*
+ * Every step below is loaded on demand rather than imported at the top.
+ *
+ * This module is the one place that knows about all of them, so importing them statically would
+ * make anything that touches an export preset pull in the whole set — paper.js, the font stack, the
+ * layer manager — whether its target uses them or not. That reached far enough to start killing
+ * jest workers, and in the app it meant a save dialog loading the task-code machinery. A target now
+ * costs what it declares and nothing else.
+ */
+const load = {
+  annotateCurveEngravingZSpeed: () => import('@core/app/actions/beambox/export/annotateCurveEngravingZSpeed'),
+  annotateLayerBBox: () => import('@core/app/actions/beambox/export/annotateLayerBBox'),
+  annotateLayerDpmm: () => import('@core/app/actions/beambox/export/annotateLayerDpmm'),
+  annotatePrintingColor: () => import('@core/helpers/layer/annotatePrintingColor'),
+  convertAllTextToPath: () => import('@core/helpers/path/convertToPath'),
+  convertBitmapToInfilledRect: () => import('@core/helpers/layer/convertBitmapToInfilledRect'),
+  convertClipPath: () => import('@core/helpers/layer/convertClipPath'),
+  convertShapeToBitmap: () => import('@core/helpers/layer/convertShapeToBitmap'),
+  convertVariableText: () => import('@core/helpers/variableText'),
+  generateThumbnail: () => import('@core/app/actions/beambox/export/generate-thumbnail'),
+  layerConfig: () => import('@core/helpers/layer/layer-config-helper'),
+  layerManager: () => import('@core/app/svgedit/layer/layerManager'),
+  layersToA4Base64: () => import('@core/helpers/layer/layersToA4Base64'),
+  selectionManager: () => import('@core/app/svgedit/selection'),
+  splitFullColorLayer: () => import('@core/helpers/layer/full-color/splitFullColorLayer'),
+  updateImagesResolution: () => import('@core/helpers/image/updateImagesResolution'),
+  webFontFaceCss: () => import('@core/helpers/image/webFontFaceCss'),
+};
 
 let svgCanvas: ISVGCanvas;
 
@@ -137,6 +146,18 @@ export const canvasContentPresets = {
     remove: { npElements: true, selection: true, unusedDefs: true },
   },
   /**
+   * Framing measures the drawing rather than exporting it, so the canvas has to be in the state the
+   * job will actually run in: variable text baked to the value that will be marked, and `use`
+   * pointing at vector symbols so it reports the geometry the laser will follow.
+   */
+  framingBBox: {
+    convert: { symbol: true, variableText: true },
+  },
+  /** The same state as `framingBBox`, plus bitmaps collapsed to rectangles: the hull needs only their outline. */
+  framingRaster: {
+    convert: { bitmapToRect: true, symbol: true, variableText: true },
+  },
+  /**
    * Raster targets (jpg / png). Text stays as text and the fonts ride along inline, so the render
    * resolves the same faces the canvas does.
    *
@@ -242,10 +263,13 @@ const detachLayerClipPaths = (): (() => void) => {
   };
 };
 
-const getScopedLayers = (scope: CanvasContentOptions['scope']): SVGGElement[] => {
+const getScopedLayers = async (scope: CanvasContentOptions['scope']): Promise<SVGGElement[]> => {
+  const { default: layerManager } = await load.layerManager();
   const groups = layerManager.getAllLayers().map((layer) => layer.getGroup());
 
   if (scope?.layerModule === undefined) return groups;
+
+  const { getData } = await load.layerConfig();
 
   return groups.filter((group) => getData(group, 'module') === scope.layerModule);
 };
@@ -263,7 +287,7 @@ export const prepareCanvasContent = async (target: CanvasContentTarget): Promise
 
   if (checks.nounProject && !(await checkNounProjectElements())) return false;
 
-  if (remove.selection) selectionManager.clearSelection();
+  if (remove.selection) (await load.selectionManager()).default.clearSelection();
 
   if (remove.unusedDefs) svgCanvas.removeUnusedDefs();
 
@@ -278,9 +302,14 @@ export const prepareCanvasContent = async (target: CanvasContentTarget): Promise
 const applyDrawingChanges = async (preset: CanvasContentOptions, reverts: Revert[]): Promise<boolean> => {
   const { convert = {}, remove = {} } = preset;
 
-  if (convert.variableText) reverts.push(await convertVariableText());
+  if (convert.variableText) {
+    const { convertVariableText } = await load.convertVariableText();
+
+    reverts.push(await convertVariableText());
+  }
 
   if (convert.text) {
+    const { convertAllTextToPath } = await load.convertAllTextToPath();
     const { revert, success } = await convertAllTextToPath({ pathPerChar: convert.text === 'pathPerChar' });
 
     reverts.push(revert);
@@ -301,33 +330,86 @@ const applyBackendChanges = async (
 ): Promise<void> => {
   const { annotate = {}, convert = {} } = preset;
 
-  if (annotate.layerDpmm) annotateLayerDpmm(device);
+  if (annotate.layerDpmm) (await load.annotateLayerDpmm()).annotateLayerDpmm(device);
 
   if (annotate.curveZSpeed) {
+    const { annotateCurveEngravingZSpeed, removeCurveEngravingZSpeedAnnotation } =
+      await load.annotateCurveEngravingZSpeed();
+
     annotateCurveEngravingZSpeed(device);
     reverts.push(removeCurveEngravingZSpeedAnnotation);
   }
 
-  if (convert.imageResolution) reverts.push(await updateImagesResolution());
+  if (convert.imageResolution) reverts.push(await (await load.updateImagesResolution()).default());
 
-  if (convert.shapeToBitmap) reverts.push(await convertShapeToBitmap());
+  if (convert.shapeToBitmap) reverts.push(await (await load.convertShapeToBitmap()).default());
 
-  if (convert.bitmapToRect) reverts.push(convertBitmapToInfilledRect());
+  if (convert.bitmapToRect) reverts.push((await load.convertBitmapToInfilledRect()).default());
 
-  if (annotate.printingColor) reverts.push(annotatePrintingColor());
+  if (annotate.printingColor) reverts.push((await load.annotatePrintingColor()).default());
 
-  if (annotate.splitFullColor) reverts.push(await tempSplitFullColorLayers());
+  if (annotate.splitFullColor) reverts.push(await (await load.splitFullColorLayer()).tempSplitFullColorLayers());
 
-  if (convert.clipPath) reverts.push(await convertClipPath());
+  if (convert.clipPath) reverts.push(await (await load.convertClipPath()).default());
 
-  if (annotate.layerBBox) reverts.push(annotateLayerBBox());
+  if (annotate.layerBBox) reverts.push((await load.annotateLayerBBox()).annotateLayerBBox());
 };
+
+/**
+ * Put the canvas into the state `preset` describes, run `produce`, then restore everything —
+ * including when `produce` throws.
+ *
+ * The symbol switch is the outermost wrapper so it is the last thing undone: anything detached and
+ * put back inside it (Noun Project shapes) is returned to image symbols along with the rest.
+ *
+ * @returns null when the user cancelled the font substitution prompt.
+ */
+const runPrepared = async <T>(
+  preset: CanvasContentOptions,
+  produce: (reverts: Revert[]) => Promise<T> | T,
+  device: IDeviceInfo | null,
+): Promise<null | T> => {
+  const { convert = {}, remove = {} } = preset;
+  const build = async (): Promise<null | T> => {
+    const reverts: Revert[] = [];
+
+    try {
+      if (!(await applyDrawingChanges(preset, reverts))) return null;
+
+      await applyBackendChanges(preset, reverts, device);
+
+      return await produce(reverts);
+    } finally {
+      reverts.toReversed().forEach((revert) => revert?.());
+    }
+  };
+  const withNPElements = remove.npElements ? () => removeNPElementsWrapper(build) : build;
+
+  return convert.symbol ? switchSymbolWrapper(withNPElements) : withNPElements();
+};
+
+/**
+ * Read something off the canvas with a target's preparation applied.
+ *
+ * For callers that measure or rasterize the canvas themselves: the preset decides what state the
+ * canvas is in, `produce` decides what to take from it.
+ *
+ * Call `prepareCanvasContent` for the same target first.
+ *
+ * @returns null when the user cancelled the font substitution prompt.
+ */
+export const withCanvasContent = async <T>(
+  target: CanvasContentTarget,
+  produce: () => Promise<T> | T,
+  { device = null }: { device?: IDeviceInfo | null } = {},
+): Promise<null | T> => runPrepared(getPreset(target), produce, device);
 
 /**
  * Build the canvas content for a task backend, plus the thumbnail the machine displays.
  *
  * The thumbnail is taken partway through on purpose: after the drawing itself is final, before the
- * annotations and rasterization that only describe how to cut it.
+ * annotations and rasterization that only describe how to cut it. That ordering is why this does
+ * not go through `withCanvasContent`.
  *
  * Call `prepareCanvasContent` for the same target first.
  *
@@ -349,7 +431,7 @@ export const getTaskCanvasContent = async (
 
       if (capture.thumbnail) {
         onProgress?.('Generating Thumbnail');
-        ({ thumbnail, thumbnailBlobURL } = await generateThumbnail());
+        ({ thumbnail, thumbnailBlobURL } = await (await load.generateThumbnail()).default());
       }
 
       onProgress?.('Applying layer settings');
@@ -376,33 +458,25 @@ export const getTaskCanvasContent = async (
  * Call `prepareCanvasContent` for the same target first.
  */
 export const getCanvasContent = async (target: CanvasContentTarget): Promise<string> => {
-  const { convert = {}, insert = {}, output = {}, remove = {}, scope } = getPreset(target);
-  const reverts: Array<(() => void) | null | undefined> = [];
-
-  try {
-    if (convert.variableText) reverts.push(await convertVariableText());
-
-    if (convert.text) reverts.push((await convertAllTextToPath()).revert);
-
-    if (remove.clipPath) reverts.push(detachLayerClipPaths());
-
+  const preset = getPreset(target);
+  const { insert = {}, output = {}, scope } = preset;
+  const produce = async (): Promise<string> => {
     if (output.type === 'a4Base64') {
-      const layers = getScopedLayers(scope);
-      const build = () => layersToA4Base64(layers, { dpi: output.dpi, orientation: output.orientation });
+      const { layersToA4Base64 } = await load.layersToA4Base64();
 
-      return await (convert.symbol ? switchSymbolWrapper(build) : build());
+      return layersToA4Base64(await getScopedLayers(scope), { dpi: output.dpi, orientation: output.orientation });
     }
 
-    const serialize = () => svgCanvas.getSvgString({ unit: output.unit });
-    const withSymbol = convert.symbol ? () => switchSymbolWrapper(serialize) : serialize;
-    const svgString = await (remove.npElements ? removeNPElementsWrapper(withSymbol) : withSymbol());
+    const svgString = svgCanvas.getSvgString({ unit: output.unit });
 
     if (!insert.webFontFace) return svgString;
 
+    const { buildWebFontFaceCss } = await load.webFontFaceCss();
     const fontFaceCss = await buildWebFontFaceCss([document.getElementById('svgcontent')!]);
 
     return svgString.replace(/<svg[^>]*>/, (svgTag) => svgTag + fontFaceCss);
-  } finally {
-    reverts.toReversed().forEach((revert) => revert?.());
-  }
+  };
+
+  // None of the file targets convert text, so the cancel path cannot be reached here.
+  return (await runPrepared(preset, produce, null)) ?? '';
 };
