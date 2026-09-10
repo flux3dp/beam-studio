@@ -3,6 +3,7 @@ import React from 'react';
 import { StarFilled, StarOutlined } from '@ant-design/icons';
 import { Space, Tag } from 'antd';
 import { sprintf } from 'sprintf-js';
+import { match, P } from 'ts-pattern';
 
 import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
@@ -29,9 +30,10 @@ const MaterialCard = ({
   variants,
 }: MaterialCardProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
-  // Single thickness shows its label; several show the count; none hides the badge (D18)
-  const badge =
-    variants.length > 1 ? sprintf(t.variants, variants.length) : variants[0] ? getThicknessLabel(variants[0]) : null;
+  const badge = match(variants)
+    .with([], () => null)
+    .with([P._], () => getThicknessLabel(variants[0]))
+    .otherwise(() => sprintf(t.variants, variants.length));
 
   return (
     <div className={styles.card} data-testid={`material-card-${material.id}`} onClick={() => onOpen(material.id)}>
