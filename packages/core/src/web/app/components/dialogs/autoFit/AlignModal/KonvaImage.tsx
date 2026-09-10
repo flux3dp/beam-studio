@@ -9,7 +9,8 @@ import NS from '@core/app/constants/namespaces';
 import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { rasterizeStandaloneSvg } from '@core/helpers/image/standaloneSvg';
+import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
 import type { ImageDimension } from './dimension';
@@ -22,11 +23,6 @@ const getImageUrl = async (
   const { height, width, x, y } = bbox;
   const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const clonedSvgContent = svgContent.cloneNode(true) as SVGSVGElement;
-
-  clonedSvgContent.setAttribute('width', (width + 2).toString());
-  clonedSvgContent.setAttribute('height', (height + 2).toString());
-  clonedSvgContent.setAttribute('viewBox', `${x - 1} ${y - 1} ${width + 2} ${height + 2}`);
-
   const elementId = element.getAttribute('id')!;
   const clonedElement = clonedSvgContent.getElementById(elementId)!;
 
@@ -37,10 +33,9 @@ const getImageUrl = async (
 
   elementsToDelete.forEach((e) => e.remove());
 
+  // only the symbols this element draws from travel with it, so the standalone svg carries no
+  // more of the scene's defs than it needs
   const defs = document.createElementNS(NS.SVG, 'defs');
-
-  clonedSvgContent.appendChild(defs);
-
   const useElements =
     clonedElement.tagName === 'use' ? [clonedElement as SVGUseElement] : [...clonedElement.querySelectorAll('use')];
 
@@ -60,8 +55,14 @@ const getImageUrl = async (
     updateElementColor(useElement);
   });
 
-  const svgStr = new XMLSerializer().serializeToString(clonedSvgContent);
-  const canvas = await svgStringToCanvas(svgStr, width + 2, height + 2);
+  const canvas = await rasterizeStandaloneSvg({
+    content: [clonedSvgContent.innerHTML],
+    defs,
+    // the isolated <img> render cannot see the app document's webfonts
+    fontFaceCss: await buildWebFontFaceCss([clonedSvgContent]),
+    size: { height: height + 2, width: width + 2 },
+    viewBox: { height: height + 2, width: width + 2, x: x - 1, y: y - 1 },
+  });
 
   return canvas.toDataURL();
 };
