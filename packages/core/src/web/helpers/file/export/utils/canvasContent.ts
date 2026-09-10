@@ -1,5 +1,10 @@
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import selectionManager from '@core/app/svgedit/selection';
 import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
 import { convertAllTextToPath } from '@core/helpers/path/convertToPath';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { Units } from '@core/helpers/units';
@@ -40,9 +45,9 @@ export type CanvasContentOptions = {
      */
     webFontFace?: boolean;
   };
-  output?: {
-    unit?: Units;
-  };
+  output?:
+    | { dpi?: number; orientation?: 'landscape' | 'portrait'; type: 'a4Base64' }
+    | { type?: 'svgString'; unit?: Units };
   remove?: {
     /** Strip the scene mask so the output is not clipped to the workarea. */
     clipPath?: boolean;
@@ -51,6 +56,10 @@ export type CanvasContentOptions = {
     selection?: boolean;
     unusedDefs?: boolean;
   };
+  /** Which part of the canvas ends up in the output. Defaults to the whole scene. */
+  scope?: {
+    layerModule?: LayerModuleType;
+  };
 };
 
 /**
@@ -58,6 +67,14 @@ export type CanvasContentOptions = {
  * themselves, so a policy change happens here once instead of in every handler.
  */
 export const canvasContentPresets = {
+  /**
+   * `.beam` scene file. Deliberately converts nothing: variable text stays variable and `use` keeps
+   * pointing at image symbols, because the file re-opens in the editor, carries an imageSource
+   * block, and stores a rendered thumbnail of its own rather than being re-rendered from source.
+   */
+  beam: {
+    remove: { selection: true, unusedDefs: true },
+  },
   /** `.bvg` scene file: keeps text and layer structure editable for re-opening in Beam Studio. */
   bvg: {
     checks: { nounProject: true },
@@ -84,9 +101,22 @@ export const canvasContentPresets = {
     output: { unit: 'mm' },
     remove: { clipPath: true, npElements: true, selection: true, unusedDefs: true },
   },
+  /**
+   * The printable sheet behind the UV Print pdf: only UV Print layers, laid out on A4.
+   * `layersToA4Base64` inlines the webfonts itself, so `insert.webFontFace` does not apply here.
+   */
+  uvPdf: {
+    convert: { symbol: true, variableText: true },
+    output: { type: 'a4Base64' },
+    remove: { selection: true, unusedDefs: true },
+    scope: { layerModule: LayerModule.UV_PRINT },
+  },
 } as const satisfies Record<string, CanvasContentOptions>;
 
 export type CanvasContentTarget = keyof typeof canvasContentPresets;
+
+const getPreset = (target: CanvasContentTarget): CanvasContentOptions =>
+  canvasContentPresets[target] as CanvasContentOptions;
 
 /**
  * Detach every layer's clip-path, remembering what each one had. Layers are not required to carry
@@ -106,6 +136,14 @@ const detachLayerClipPaths = (): (() => void) => {
   };
 };
 
+const getScopedLayers = (scope: CanvasContentOptions['scope']): SVGGElement[] => {
+  const groups = layerManager.getAllLayers().map((layer) => layer.getGroup());
+
+  if (scope?.layerModule === undefined) return groups;
+
+  return groups.filter((group) => getData(group, 'module') === scope.layerModule);
+};
+
 /**
  * Run the target's pre-checks and the clean-up that is not reverted afterwards.
  *
@@ -115,7 +153,7 @@ const detachLayerClipPaths = (): (() => void) => {
  * @returns false when the user declined a check, in which case the export must not proceed.
  */
 export const prepareCanvasContent = async (target: CanvasContentTarget): Promise<boolean> => {
-  const { checks = {}, remove = {} } = canvasContentPresets[target] as CanvasContentOptions;
+  const { checks = {}, remove = {} } = getPreset(target);
 
   if (checks.nounProject && !(await checkNounProjectElements())) return false;
 
@@ -127,13 +165,14 @@ export const prepareCanvasContent = async (target: CanvasContentTarget): Promise
 };
 
 /**
- * Serialize the canvas for an export target. Every change made to the live canvas along the way is
- * reverted before returning, including when the serialization throws.
+ * Build the canvas content for an export target: an svg string, or a base64 png for targets that
+ * rasterize. Every change made to the live canvas along the way is reverted before returning,
+ * including when the build throws.
  *
  * Call `prepareCanvasContent` for the same target first.
  */
 export const getCanvasContent = async (target: CanvasContentTarget): Promise<string> => {
-  const { convert = {}, insert = {}, output = {}, remove = {} } = canvasContentPresets[target] as CanvasContentOptions;
+  const { convert = {}, insert = {}, output = {}, remove = {}, scope } = getPreset(target);
   const reverts: Array<(() => void) | null | undefined> = [];
 
   try {
@@ -142,6 +181,13 @@ export const getCanvasContent = async (target: CanvasContentTarget): Promise<str
     if (convert.text) reverts.push((await convertAllTextToPath()).revert);
 
     if (remove.clipPath) reverts.push(detachLayerClipPaths());
+
+    if (output.type === 'a4Base64') {
+      const layers = getScopedLayers(scope);
+      const build = () => layersToA4Base64(layers, { dpi: output.dpi, orientation: output.orientation });
+
+      return await (convert.symbol ? switchSymbolWrapper(build) : build());
+    }
 
     const serialize = () => svgCanvas.getSvgString({ unit: output.unit });
     const withSymbol = convert.symbol ? () => switchSymbolWrapper(serialize) : serialize;

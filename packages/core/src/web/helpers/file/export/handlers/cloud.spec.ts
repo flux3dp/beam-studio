@@ -32,21 +32,10 @@ jest.mock('@core/app/svgedit/currentFileManager', () => ({
   setHasUnsavedChanges: (...args: any[]) => mockSetHasUnsavedChanges(...args),
 }));
 
-const mockClearSelection = jest.fn();
+const mockPrepareCanvasContent = jest.fn();
 
-jest.mock('@core/app/svgedit/selection', () => ({
-  clearSelection: (...args: any[]) => mockClearSelection(...args),
-}));
-
-const mockRemoveUnusedDefs = jest.fn();
-
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (cb: any) =>
-    cb({
-      Canvas: {
-        removeUnusedDefs: (...args: any[]) => mockRemoveUnusedDefs(...args),
-      },
-    }),
+jest.mock('../utils/canvasContent', () => ({
+  prepareCanvasContent: (...args: any[]) => mockPrepareCanvasContent(...args),
 }));
 
 const mockGenerateBeamBuffer = jest.fn();
@@ -81,6 +70,7 @@ describe('saveToCloud', () => {
     mockGetCurrentUser.mockReturnValue({ email: 'test@flux3dp.com' });
     mockGetDefaultHeader.mockReturnValue({ 'X-CSRFToken': 'token' });
     mockOpenNonstopProgress.mockResolvedValue(undefined);
+    mockPrepareCanvasContent.mockResolvedValue(true);
     mockGenerateBeamBuffer.mockResolvedValue([1, 2, 3]);
     useDocumentStore.setState({ workarea: 'ado1' });
   });
@@ -92,9 +82,29 @@ describe('saveToCloud', () => {
 
     expect(mockShowLoginDialog).toHaveBeenCalledTimes(1);
     expect(result).toBe(false);
+    expect(mockPrepareCanvasContent).not.toHaveBeenCalled();
     expect(mockPost).not.toHaveBeenCalled();
     expect(mockPut).not.toHaveBeenCalled();
     expect(mockSaveToCloudDialog).not.toHaveBeenCalled();
+  });
+
+  test('prepares the canvas for the beam target before building the buffer', async () => {
+    mockPut.mockResolvedValueOnce({ data: { status: 'ok' }, status: 200 });
+
+    await saveToCloud('uuid-1');
+
+    expect(mockPrepareCanvasContent).toHaveBeenCalledWith('beam');
+  });
+
+  test('aborts without uploading when the canvas preparation is declined', async () => {
+    mockPrepareCanvasContent.mockResolvedValueOnce(false);
+
+    const result = await saveToCloud('uuid-1');
+
+    expect(result).toBe(false);
+    expect(mockGenerateBeamBuffer).not.toHaveBeenCalled();
+    expect(mockPut).not.toHaveBeenCalled();
+    expect(mockPost).not.toHaveBeenCalled();
   });
 
   test('save with uuid overwrites the same cloud file via PUT', async () => {

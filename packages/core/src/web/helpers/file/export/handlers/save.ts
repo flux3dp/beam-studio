@@ -1,15 +1,12 @@
 import { pipe, prop } from 'remeda';
 
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import selectionManager from '@core/app/svgedit/selection';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { generateBeamBuffer } from '../utils/beam';
 import { getCanvasContent, prepareCanvasContent } from '../utils/canvasContent';
@@ -17,15 +14,10 @@ import { getDefaultFileName } from '../utils/common';
 
 import { saveToCloud } from './cloud';
 
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
-
 export const saveAsFile = async (): Promise<boolean> => {
-  selectionManager.clearSelection();
-  svgCanvas.removeUnusedDefs();
+  if (!(await prepareCanvasContent('beam'))) {
+    return false;
+  }
 
   const defaultFileName = getDefaultFileName();
   const langFile = i18n.lang.topmenu.file;
@@ -71,9 +63,6 @@ export const saveFile = async (): Promise<boolean> => {
     return await saveAsFile();
   }
 
-  selectionManager.clearSelection();
-  svgCanvas.removeUnusedDefs();
-
   if (currentFileManager.isCloudFile) {
     return saveToCloud(path);
   }
@@ -90,9 +79,11 @@ export const saveFile = async (): Promise<boolean> => {
   }
 
   if (path.endsWith('.beam')) {
-    const buffer = await generateBeamBuffer();
+    if (!(await prepareCanvasContent('beam'))) {
+      return false;
+    }
 
-    await fs.writeFile(path, buffer);
+    await fs.writeFile(path, await generateBeamBuffer());
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;

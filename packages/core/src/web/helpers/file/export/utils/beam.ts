@@ -8,6 +8,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getCanvasContent } from './canvasContent';
 import { getSvgContentActualBBox } from './getBBox';
 
 let svgCanvas: ISVGCanvas;
@@ -68,7 +69,7 @@ export const generateBeamBuffer = async (): Promise<Buffer> =>
   pipe(
     {
       imageSource: await svgCanvas.getImageSource(),
-      svgString: svgCanvas.getSvgString(),
+      svgString: await getCanvasContent('beam'),
       thumbnail: (await generateBeamThumbnail()) || undefined,
     },
     ({ imageSource, svgString, thumbnail }) => beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail),

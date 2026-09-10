@@ -3,30 +3,16 @@ import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
 import Progress from '@core/app/actions/progress-caller';
-import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import layerManager from '@core/app/svgedit/layer/layerManager';
-import selectionManager from '@core/app/svgedit/selection';
 import workareaManager from '@core/app/svgedit/workarea';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
-import { getData } from '@core/helpers/layer/layer-config-helper';
-import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMac } from '@core/helpers/system-helper';
-import { convertVariableText } from '@core/helpers/variableText';
 import dialog from '@core/implementations/dialog';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getCanvasContent, prepareCanvasContent } from '../utils/canvasContent';
-import { getDefaultFileName, switchSymbolWrapper } from '../utils/common';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
+import { getDefaultFileName } from '../utils/common';
 
 export const exportAsBVG = async (): Promise<boolean> => {
   if (!(await prepareCanvasContent('bvg'))) {
@@ -112,22 +98,15 @@ export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
 };
 
 export const exportUvPrintAsPdf = async (): Promise<void> => {
-  selectionManager.clearSelection();
-  svgCanvas.removeUnusedDefs();
+  if (!(await prepareCanvasContent('uvPdf'))) {
+    return;
+  }
 
   const {
     topmenu: { file: lang },
   } = i18n.lang;
-  const revert = await convertVariableText();
-  const layers = layerManager
-    .getAllLayers()
-    .map((layer) => layer.getGroup())
-    .filter((layerG) => getData(layerG, 'module') === LayerModule.UV_PRINT);
-  const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
+  const base64 = await getCanvasContent('uvPdf');
   const defaultFileName = getDefaultFileName();
-
-  revert?.();
-
   const pdf = new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297);
   const getContent = () => new Blob([pdf.output('blob')], { type: 'application/pdf' });
 

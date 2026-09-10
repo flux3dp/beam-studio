@@ -6,20 +6,12 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import selectionManager from '@core/app/svgedit/selection';
 import type { ResponseWithError } from '@core/helpers/api/flux-id';
 import { axiosFluxId, getCurrentUser, getDefaultHeader } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { generateBeamBuffer } from '../utils/beam';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
+import { prepareCanvasContent } from '../utils/canvasContent';
 
 export const saveToCloud = async (uuid?: string): Promise<boolean> => {
   const { lang } = i18n;
@@ -32,8 +24,10 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
     return false;
   }
 
-  selectionManager.clearSelection();
-  svgCanvas.removeUnusedDefs();
+  if (!(await prepareCanvasContent('beam'))) {
+    return false;
+  }
+
   await Progress.openNonstopProgress({ id });
 
   try {
