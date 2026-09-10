@@ -1,6 +1,5 @@
 import React from 'react';
 
-import { EllipsisOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 import { showMaterialBrowser } from '@core/app/components/dialogs/MaterialBrowser/show';
@@ -79,7 +78,6 @@ const MaterialChip = ({ UIType }: MaterialChipProps): React.JSX.Element => {
           </div>
           <div className={styles.sub}>{sub}</div>
         </div>
-        <EllipsisOutlined className={styles.more} />
       </button>
     </div>
   );
