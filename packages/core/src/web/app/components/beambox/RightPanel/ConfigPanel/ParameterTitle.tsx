@@ -32,8 +32,6 @@ const ParameterTitle = (): React.JSX.Element => {
       <div className={styles.title}>{t.parameters}</div>
       <div>
         {useMaterialBrowser ? (
-          // New mode: preset management lives in the Material Browser; the save button
-          // becomes the "add preset from current layer" flow (R5).
           <button onClick={() => showAddPresetFromLayer()} title={tMaterial.add_from_layer.title} type="button">
             <PlusOutlined />
           </button>
