@@ -224,9 +224,7 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
                 onClick: ({ key }) =>
                   key === 'layer'
                     ? showAddPresetFromLayer({ defaultMaterialId: material.id, defaultVariantId: selectedVariant?.id })
-                    : // Defaults to the selected variant; the editor lets the user retarget
-                      // (a specific variant or the whole material)
-                      openPresetEditor({ materialId: material.id, mode: 'add', variantId: selectedVariant?.id }),
+                    : openPresetEditor({ materialId: material.id, mode: 'add', variantId: selectedVariant?.id }),
               }}
               trigger={['click']}
             >

@@ -18,7 +18,7 @@ interface CategoryTabsProps {
 }
 
 /**
- * Tab order (D3/D10): [Result while searching] → Favorites (only if any) → Recents →
+ * Tab order [Result while searching] → Favorites (only if any) → Recents →
  * non-empty categories → Others → empty categories (dimmed) last.
  */
 const CategoryTabs = ({
@@ -30,7 +30,6 @@ const CategoryTabs = ({
   const t = useI18n().beambox.material_browser;
   const { activeTab, setActiveTab } = useMaterialBrowserStore();
 
-  // The Favorites tab is removed when its last material is unfavorited; fall back to Recents
   useEffect(() => {
     if (activeTab === 'favorites' && favoritesCount === 0) setActiveTab('recents');
   }, [activeTab, favoritesCount, setActiveTab]);

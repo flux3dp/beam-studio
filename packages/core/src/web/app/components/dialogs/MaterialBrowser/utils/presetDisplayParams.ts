@@ -13,7 +13,6 @@ export interface PresetParamPill {
 
 /**
  * The key-parameter pills of a preset row, matching the machine context
- * (PRD §6.2): laser / Promark Q-Switch / Promark MOPA / printing.
  */
 export const getPresetDisplayParams = (
   values: PresetValues,
