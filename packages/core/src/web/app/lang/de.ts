@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Bitte deaktivieren Sie den Farbverlauf, bevor Sie diese Funktion verwenden.',
           disabled_by_infilled: 'Bitte schließen Sie die Füllung, bevor Sie diese Funktion verwenden.',
           disabled_by_infilled_and_variable_text: 'Bitte schließen Sie die Füllung und den variablen Text, bevor Sie diese Funktion verwenden.',
+          disabled_by_noun_project: 'Formen aus dem Noun Project sind durch das Gesetz zum Schutz des geistigen Eigentums geschützt, daher können ihre Pfade nicht bearbeitet werden.',
           disabled_by_variable_text: 'Bitte schließen Sie den variablen Text, bevor Sie diese Funktion verwenden.',
           disassemble_use: 'Zerlegen',
           disassembling: 'Zerlegen ...',

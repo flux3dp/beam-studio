@@ -2,6 +2,7 @@
 import * as paper from 'paper';
 
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import RightPanelController from '@core/app/components/beambox/RightPanel/contexts/RightPanelController';
 import { type CanvasMouseMode } from '@core/app/stores/canvas/canvasStore';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
@@ -12,9 +13,11 @@ import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
 import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
 import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
+import { isNounProjectElement } from '@core/app/svgedit/utils/nounProject';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
 import round from '@core/helpers/math/round';
 import { simplifyPathD } from '@core/helpers/path/simplifyPath';
 import shortcuts from '@core/helpers/shortcuts';
@@ -212,6 +215,18 @@ export const finishPath = (toEditMode = true) => {
 };
 
 const toEditMode = (element: Element): void => {
+  // licensed artwork: reshaping its nodes would make a derivative the license does not cover, the
+  // same reason exports leave it out
+  if (isNounProjectElement(element)) {
+    MessageCaller.openMessage({
+      content: i18n.lang.beambox.right_panel.object_panel.actions_panel.disabled_by_noun_project,
+      level: MessageLevel.INFO,
+    });
+
+    return;
+  }
+
+  console.warn('Switching to edit mode for element:', element);
   svgedit.path.path = svgedit.path.getPath(element);
 
   const isContinuousDrawing = useGlobalPreferenceStore.getState()['continuous_drawing'];

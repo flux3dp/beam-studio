@@ -25,6 +25,7 @@ import { autoFit } from '@core/app/svgedit/operations/autoFit';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import selectionManager from '@core/app/svgedit/selection';
 import textEdit from '@core/app/svgedit/text/textedit';
+import { isNounProjectElement } from '@core/app/svgedit/utils/nounProject';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
 import imageEdit from '@core/helpers/image-edit';
@@ -471,6 +472,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           () => svgCanvas.pathActions.toEditMode(elem),
           <ActionPanelIcons.EditPath />,
           <ActionPanelIcons.EditPathMobile />,
+          {
+            isDisabled: isNounProjectElement(elem),
+            tooltipIfDisabled: lang.disabled_by_noun_project,
+          },
         ),
         renderButtons(
           'decompose_path',

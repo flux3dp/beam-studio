@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: '請先關閉漸層後再使用此功能。',
           disabled_by_infilled: '請先關閉填充後再使用此功能。',
           disabled_by_infilled_and_variable_text: '請先關閉填充和可變文字後再使用此功能。',
+          disabled_by_noun_project: '來自 Noun Project 的圖形受知識產權法律保護，因此無法編輯其路徑。',
           disabled_by_variable_text: '請先關閉可變文字後再使用此功能。',
           disassemble_use: '解散圖檔',
           disassembling: '解散中...',

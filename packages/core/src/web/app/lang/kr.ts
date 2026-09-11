@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: '이 기능을 사용하기 전에 그라데이션을 비활성화하세요.',
           disabled_by_infilled: '이 기능을 사용하기 전에 인필을 먼저 종료하세요。',
           disabled_by_infilled_and_variable_text: '이 기능을 사용하기 전에 인필과 가변 텍스트를 먼저 종료하세요。',
+          disabled_by_noun_project: 'Noun Project의 도형은 지적 재산권으로 보호되므로 경로를 편집할 수 없습니다.',
           disabled_by_variable_text: '이 기능을 사용하기 전에 가변 텍스트를 먼저 종료하세요。',
           disassemble_use: '해체',
           disassembling: '분해 중...',

@@ -893,6 +893,7 @@ export interface ILang {
           disabled_by_gradient: string;
           disabled_by_infilled: string;
           disabled_by_infilled_and_variable_text: string;
+          disabled_by_noun_project: string;
           disabled_by_variable_text: string;
           disassemble_use: string;
           disassembling: string;
