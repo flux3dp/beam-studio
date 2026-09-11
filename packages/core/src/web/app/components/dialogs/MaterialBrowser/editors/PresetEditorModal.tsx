@@ -17,6 +17,8 @@ import type { Material, PresetValues } from '@core/interfaces/IMaterial';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 import { getVariantTargetOptions } from '../utils/materialTargetOptions';
 
+import styles from './PresetEditorModal.module.scss';
+
 interface FormValues {
   dottingTime?: number;
   dpi?: EngraveDpiValue;
@@ -172,7 +174,7 @@ const PresetEditorModal = ({
           {numberFields.map(({ label, name, ...inputProps }) => (
             <Col key={name} span={8}>
               <Form.Item label={label} name={name}>
-                <InputNumber {...inputProps} style={{ width: '100%' }} />
+                <InputNumber {...inputProps} className={styles.field} />
               </Form.Item>
             </Col>
           ))}

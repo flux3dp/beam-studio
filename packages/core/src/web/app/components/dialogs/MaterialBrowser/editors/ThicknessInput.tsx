@@ -27,23 +27,23 @@ const ThicknessInput = ({ onChange, value }: ThicknessInputProps): React.JSX.Ele
         value={thicknessUnit}
       />
       <InputNumber
+        className={styles.number}
         min={0}
         onChange={(num) => onChange({ ...value, thicknessNum: toNum(num) })}
         precision={thicknessUnit === 'inch' ? 0 : undefined}
         step={thicknessUnit === 'inch' ? 1 : 0.1}
-        style={{ width: 80 }}
         value={thicknessNum}
       />
       {thicknessUnit === 'inch' && (
         <>
           ⁄
           <InputNumber
+            className={styles.denominator}
             min={1}
             onChange={(den) => onChange({ ...value, thicknessDen: toNum(den) })}
             placeholder="16"
             precision={0}
             step={1}
-            style={{ width: 70 }}
             value={thicknessDen}
           />
         </>

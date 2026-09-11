@@ -31,7 +31,7 @@ interface MaterialEditorModalProps {
   /** Edits this user material; omitted = create a new one */
   materialId?: string;
   onClose: () => void;
-  /** Called with the new material after creation (e.g. to jump the browser tab, R14) */
+  /** Called with the new material after creation */
   onCreated?: (material: Material) => void;
 }
 
@@ -152,7 +152,7 @@ const MaterialEditorModal = ({
                   showUploadList={false}
                 >
                   {image ? (
-                    <img alt="" src={image} style={{ borderRadius: 8, maxHeight: 120, maxWidth: '100%' }} />
+                    <img alt="" className={styles['image-preview']} src={image} />
                   ) : (
                     <>
                       <p className="ant-upload-drag-icon">

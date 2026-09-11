@@ -9,6 +9,7 @@ import { toVariantThickness } from '@core/helpers/api/material-catalog/thickness
 import useI18n from '@core/helpers/useI18n';
 import type { Material, MaterialRegion } from '@core/interfaces/IMaterial';
 
+import styles from './AddVariantModal.module.scss';
 import ThicknessInput from './ThicknessInput';
 
 interface AddVariantModalProps {
@@ -57,7 +58,7 @@ const AddVariantModal = ({ material, onClose, region }: AddVariantModalProps): R
     >
       <ThicknessInput onChange={setThickness} value={thickness} />
       {isDuplicate && (
-        <Typography.Text style={{ display: 'block', marginTop: 8 }} type="danger">
+        <Typography.Text className={styles.error} type="danger">
           {t.variant_exists}
         </Typography.Text>
       )}
