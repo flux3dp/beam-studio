@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { Button, Image, Modal, Segmented, Tag } from 'antd';
+import { Alert, Button, Image, Modal, Segmented, Tag } from 'antd';
 import { match } from 'ts-pattern';
 
 import {
@@ -130,8 +130,7 @@ const Replicate3DSampleModal = ({ onClose, onSelect }: Replicate3DSampleModalPro
     <>
       <Modal centered footer={null} onCancel={onClose} open title="Captured 2D to 3D results" width={1040}>
         <div className={styles.intro}>
-          Compare the bundled test results as point clouds, model-provided reference meshes, or generated relief meshes.
-          Beam Studio does not call Replicate.
+          <Alert message="本區塊主要用於展示測試模型效果，還沒有確認最終使用哪個版本的模式" showIcon type="info" />
         </div>
         <div className={styles.toolbar}>
           <div className={styles.toolbarControls}>
