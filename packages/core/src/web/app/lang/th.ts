@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'อะคริลิกกระจกเงา',
           mixed_acrylic: 'อะคริลิกหลากสี',
           my_materials: 'วัสดุของฉัน',
-
           opaque_acrylic: 'อะคริลิกทึบแสง',
-
           pc: 'โพลีคาร์บอเนต (PC)',
-
           rubber: 'ยาง',
-
           silver: 'เงิน',
-
           slate: 'หินชนวน',
-
           solid_wood: 'ไม้จริง',
-
           stainless_steel: 'สเตนเลส',
-
           sticker: 'สติกเกอร์',
-
           stone: 'หิน',
-
           sublimation_acrylic: 'อะคริลิกซับลิเมชัน',
-
           titanium: 'ไทเทเนียม',
-
           walnut_veneer: 'วีเนียร์ไม้วอลนัท',
-
           white_abs: 'ABS สีขาว',
-
           wood: 'ไม้อัด',
         },
         presets: {

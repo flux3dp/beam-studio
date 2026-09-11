@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Acrilico specchiato',
           mixed_acrylic: 'Acrilico multicolore',
           my_materials: 'I miei materiali',
-
           opaque_acrylic: 'Acrilico opaco',
-
           pc: 'Policarbonato (PC)',
-
           rubber: 'Gomma',
-
           silver: 'Argento',
-
           slate: 'Ardesia',
-
           solid_wood: 'Legno massello',
-
           stainless_steel: 'Acciaio inossidabile',
-
           sticker: 'Adesivo',
-
           stone: 'Pietra',
-
           sublimation_acrylic: 'Acrilico per sublimazione',
-
           titanium: 'Titanio',
-
           walnut_veneer: 'Impiallacciatura di noce',
-
           white_abs: 'ABS bianco',
-
           wood: 'Compensato',
         },
         presets: {

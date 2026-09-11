@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Zrcadlový akryl',
           mixed_acrylic: 'Vícebarevný akryl',
           my_materials: 'Moje materiály',
-
           opaque_acrylic: 'Neprůhledný akryl',
-
           pc: 'Polykarbonát (PC)',
-
           rubber: 'Guma',
-
           silver: 'Stříbro',
-
           slate: 'Břidlice',
-
           solid_wood: 'Masivní dřevo',
-
           stainless_steel: 'Nerezová ocel',
-
           sticker: 'Samolepka',
-
           stone: 'Kámen',
-
           sublimation_acrylic: 'Sublimační akryl',
-
           titanium: 'Titan',
-
           walnut_veneer: 'Ořechová dýha',
-
           white_abs: 'Bílý ABS',
-
           wood: 'Překližka',
         },
         presets: {

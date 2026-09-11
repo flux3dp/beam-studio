@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Speilakryl',
           mixed_acrylic: 'Flerfarget akryl',
           my_materials: 'Mine materialer',
-
           opaque_acrylic: 'Ugjennomsiktig akryl',
-
           pc: 'Polykarbonat (PC)',
-
           rubber: 'Gummi',
-
           silver: 'Sølv',
-
           slate: 'Skifer',
-
           solid_wood: 'Massivt tre',
-
           stainless_steel: 'Rustfritt stål',
-
           sticker: 'Klistremerke',
-
           stone: 'Stein',
-
           sublimation_acrylic: 'Sublimeringsakryl',
-
           titanium: 'Titan',
-
           walnut_veneer: 'Valnøttfiner',
-
           white_abs: 'Hvit ABS',
-
           wood: 'Kryssfiner',
         },
         presets: {

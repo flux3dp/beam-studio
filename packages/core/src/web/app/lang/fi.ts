@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Peiliakryyli',
           mixed_acrylic: 'Monivärinen akryyli',
           my_materials: 'Omat materiaalit',
-
           opaque_acrylic: 'Läpinäkymätön akryyli',
-
           pc: 'Polykarbonaatti (PC)',
-
           rubber: 'Kumi',
-
           silver: 'Hopea',
-
           slate: 'Liuskekivi',
-
           solid_wood: 'Massiivipuu',
-
           stainless_steel: 'Ruostumaton teräs',
-
           sticker: 'Tarra',
-
           stone: 'Kivi',
-
           sublimation_acrylic: 'Sublimaatioakryyli',
-
           titanium: 'Titaani',
-
           walnut_veneer: 'Pähkinäviilu',
-
           white_abs: 'Valkoinen ABS',
-
           wood: 'Vaneri',
         },
         presets: {

@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Akryl lustrzany',
           mixed_acrylic: 'Akryl wielokolorowy',
           my_materials: 'Moje materiały',
-
           opaque_acrylic: 'Akryl nieprzezroczysty',
-
           pc: 'Poliwęglan (PC)',
-
           rubber: 'Guma',
-
           silver: 'Srebro',
-
           slate: 'Łupek',
-
           solid_wood: 'Lite drewno',
-
           stainless_steel: 'Stal nierdzewna',
-
           sticker: 'Naklejka',
-
           stone: 'Kamień',
-
           sublimation_acrylic: 'Akryl do sublimacji',
-
           titanium: 'Tytan',
-
           walnut_veneer: 'Fornir orzechowy',
-
           white_abs: 'Biały ABS',
-
           wood: 'Sklejka',
         },
         presets: {

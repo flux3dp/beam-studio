@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: '镜面亚克力',
           mixed_acrylic: '混色亚克力',
           my_materials: '我的材质',
-
           opaque_acrylic: '不透明亚克力',
-
           pc: '聚碳酸酯 (PC)',
-
           rubber: '橡胶',
-
           silver: '银',
-
           slate: '石板',
-
           solid_wood: '实木板',
-
           stainless_steel: '不锈钢',
-
           sticker: '贴纸',
-
           stone: '石材',
-
           sublimation_acrylic: '升华亚克力',
-
           titanium: '钛',
-
           walnut_veneer: '胡桃木薄片',
-
           white_abs: '白色 ABS',
-
           wood: '胶合板',
         },
         presets: {

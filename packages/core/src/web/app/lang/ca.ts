@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Acrílic mirall',
           mixed_acrylic: 'Acrílic de colors barrejats',
           my_materials: 'Els meus materials',
-
           opaque_acrylic: 'Acrílic opac',
-
           pc: 'Policarbonat (PC)',
-
           rubber: 'Cautxú',
-
           silver: 'Plata',
-
           slate: 'Pissarra',
-
           solid_wood: 'Fusta massissa',
-
           stainless_steel: 'Acer inoxidable',
-
           sticker: 'Adhesiu',
-
           stone: 'Pedra',
-
           sublimation_acrylic: 'Acrílic per a sublimació',
-
           titanium: 'Titani',
-
           walnut_veneer: 'Xapa de noguera',
-
           white_abs: 'ABS blanc',
-
           wood: 'Contraxapat',
         },
         presets: {

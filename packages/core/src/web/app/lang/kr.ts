@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: '미러 아크릴',
           mixed_acrylic: '혼합 색상 아크릴',
           my_materials: '내 소재',
-
           opaque_acrylic: '불투명 아크릴',
-
           pc: '폴리카보네이트 (PC)',
-
           rubber: '고무',
-
           silver: '은',
-
           slate: '슬레이트',
-
           solid_wood: '원목',
-
           stainless_steel: '스테인리스 스틸',
-
           sticker: '스티커',
-
           stone: '석재',
-
           sublimation_acrylic: '승화 아크릴',
-
           titanium: '티타늄',
-
           walnut_veneer: '호두나무 무늬목',
-
           white_abs: '흰색 ABS',
-
           wood: '합판',
         },
         presets: {

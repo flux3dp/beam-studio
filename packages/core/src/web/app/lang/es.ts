@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Acrílico espejo',
           mixed_acrylic: 'Acrílico de colores mezclados',
           my_materials: 'Mis materiales',
-
           opaque_acrylic: 'Acrílico opaco',
-
           pc: 'Policarbonato (PC)',
-
           rubber: 'Goma',
-
           silver: 'Plata',
-
           slate: 'Pizarra',
-
           solid_wood: 'Madera maciza',
-
           stainless_steel: 'Acero inoxidable',
-
           sticker: 'Pegatina',
-
           stone: 'Piedra',
-
           sublimation_acrylic: 'Acrílico para sublimación',
-
           titanium: 'Titanio',
-
           walnut_veneer: 'Chapa de nogal',
-
           white_abs: 'ABS blanco',
-
           wood: 'Contrachapado',
         },
         presets: {

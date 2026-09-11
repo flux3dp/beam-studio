@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Spiegelacryl',
           mixed_acrylic: 'Meerkleurig acryl',
           my_materials: 'Mijn materialen',
-
           opaque_acrylic: 'Ondoorzichtig acryl',
-
           pc: 'Polycarbonaat (PC)',
-
           rubber: 'Rubber',
-
           silver: 'Zilver',
-
           slate: 'Leisteen',
-
           solid_wood: 'Massief hout',
-
           stainless_steel: 'Roestvrij staal',
-
           sticker: 'Sticker',
-
           stone: 'Steen',
-
           sublimation_acrylic: 'Sublimatie-acryl',
-
           titanium: 'Titanium',
-
           walnut_veneer: 'Notenhoutfineer',
-
           white_abs: 'Wit ABS',
-
           wood: 'Multiplex',
         },
         presets: {

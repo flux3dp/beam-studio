@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Mica gương',
           mixed_acrylic: 'Mica nhiều màu',
           my_materials: 'Vật liệu của tôi',
-
           opaque_acrylic: 'Mica mờ đục',
-
           pc: 'Polycarbonate (PC)',
-
           rubber: 'Cao su',
-
           silver: 'Bạc',
-
           slate: 'Đá phiến',
-
           solid_wood: 'Gỗ tự nhiên',
-
           stainless_steel: 'Thép không gỉ',
-
           sticker: 'Nhãn dán',
-
           stone: 'Đá',
-
           sublimation_acrylic: 'Mica chuyển nhiệt',
-
           titanium: 'Titan',
-
           walnut_veneer: 'Veneer gỗ óc chó',
-
           white_abs: 'ABS trắng',
-
           wood: 'Gỗ dán',
         },
         presets: {

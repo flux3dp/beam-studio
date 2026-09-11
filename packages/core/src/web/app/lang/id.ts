@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Akrilik cermin',
           mixed_acrylic: 'Akrilik warna campuran',
           my_materials: 'Material Saya',
-
           opaque_acrylic: 'Akrilik Buram',
-
           pc: 'Polikarbonat (PC)',
-
           rubber: 'Karet',
-
           silver: 'Perak',
-
           slate: 'Batu Tulis',
-
           solid_wood: 'Kayu solid',
-
           stainless_steel: 'Baja Tahan Karat',
-
           sticker: 'Stiker',
-
           stone: 'Batu',
-
           sublimation_acrylic: 'Akrilik sublimasi',
-
           titanium: 'Titanium',
-
           walnut_veneer: 'Veneer kayu walnut',
-
           white_abs: 'ABS Putih',
-
           wood: 'Kayu lapis',
         },
         presets: {

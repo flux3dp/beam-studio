@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Ακρυλικό καθρέφτης',
           mixed_acrylic: 'Πολύχρωμο ακρυλικό',
           my_materials: 'Τα υλικά μου',
-
           opaque_acrylic: 'Αδιαφανές ακρυλικό',
-
           pc: 'Πολυανθρακικό (PC)',
-
           rubber: 'Καουτσούκ',
-
           silver: 'Ασήμι',
-
           slate: 'Σχιστόλιθος',
-
           solid_wood: 'Μασίφ ξύλο',
-
           stainless_steel: 'Ανοξείδωτος χάλυβας',
-
           sticker: 'Αυτοκόλλητο',
-
           stone: 'Πέτρα',
-
           sublimation_acrylic: 'Ακρυλικό εξάχνωσης',
-
           titanium: 'Τιτάνιο',
-
           walnut_veneer: 'Καπλαμάς καρυδιάς',
-
           white_abs: 'Λευκό ABS',
-
           wood: 'Κόντρα πλακέ',
         },
         presets: {

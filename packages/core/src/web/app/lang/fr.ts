@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'Acrylique miroir',
           mixed_acrylic: 'Acrylique multicolore',
           my_materials: 'Mes matériaux',
-
           opaque_acrylic: 'Acrylique opaque',
-
           pc: 'Polycarbonate (PC)',
-
           rubber: 'Caoutchouc',
-
           silver: 'Argent',
-
           slate: 'Ardoise',
-
           solid_wood: 'Bois massif',
-
           stainless_steel: 'Acier inoxydable',
-
           sticker: 'Autocollant',
-
           stone: 'Pierre',
-
           sublimation_acrylic: 'Acrylique pour sublimation',
-
           titanium: 'Titane',
-
           walnut_veneer: 'Placage de noyer',
-
           white_abs: 'ABS blanc',
-
           wood: 'Contreplaqué',
         },
         presets: {

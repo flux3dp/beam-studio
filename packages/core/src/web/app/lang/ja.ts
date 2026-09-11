@@ -418,33 +418,19 @@ const lang: ILang = {
           mirror_acrylic: 'ミラーアクリル',
           mixed_acrylic: 'ミックスカラーアクリル',
           my_materials: 'マイ素材',
-
           opaque_acrylic: '不透明アクリル',
-
           pc: 'ポリカーボネート（PC）',
-
           rubber: 'ゴム',
-
           silver: '銀',
-
           slate: 'スレート',
-
           solid_wood: '無垢材',
-
           stainless_steel: 'ステンレス',
-
           sticker: 'ステッカー',
-
           stone: '石材',
-
           sublimation_acrylic: '昇華アクリル',
-
           titanium: 'チタン',
-
           walnut_veneer: 'ウォールナット突板',
-
           white_abs: '白 ABS',
-
           wood: '合板',
         },
         presets: {
