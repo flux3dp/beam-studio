@@ -1,8 +1,12 @@
 import React, { memo } from 'react';
 
+import { PlusOutlined } from '@ant-design/icons';
+
+import { showAddPresetFromLayer } from '@core/app/components/dialogs/MaterialBrowser/editors';
 import { showPresetsManagementPanel } from '@core/app/components/dialogs/PresetsManagementPanel/PresetsManagementPanel';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useIsMaterialBrowserActive } from '@core/helpers/materials/isMaterialBrowserActive';
 import useI18n from '@core/helpers/useI18n';
 
 import initState from './initState';
@@ -11,7 +15,9 @@ import SaveConfigButton from './SaveConfigButton';
 
 const ParameterTitle = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
+  const tMaterial = useI18n().beambox.material_browser;
   const { configName, module } = useConfigPanelStore();
+  const useMaterialBrowser = useIsMaterialBrowserActive();
 
   const handleOpenManageModal = () => {
     showPresetsManagementPanel({
@@ -25,10 +31,18 @@ const ParameterTitle = (): React.JSX.Element => {
     <div className={styles.container}>
       <div className={styles.title}>{t.parameters}</div>
       <div>
-        <SaveConfigButton />
-        <button onClick={handleOpenManageModal} title={t.preset_management.title} type="button">
-          <ConfigPanelIcons.Settings />
-        </button>
+        {useMaterialBrowser ? (
+          <button onClick={() => showAddPresetFromLayer()} title={tMaterial.add_from_layer.title} type="button">
+            <PlusOutlined />
+          </button>
+        ) : (
+          <>
+            <SaveConfigButton />
+            <button onClick={handleOpenManageModal} title={t.preset_management.title} type="button">
+              <ConfigPanelIcons.Settings />
+            </button>
+          </>
+        )}
       </div>
     </div>
   );

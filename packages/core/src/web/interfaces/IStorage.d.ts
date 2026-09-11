@@ -8,6 +8,7 @@ import type { IRecord as RatingRecord } from '@core/helpers/rating-helper';
 import type { AutoSaveConfig } from './AutoSaveConfig';
 import type { IDefaultFont } from './IFont';
 import type { Preset } from './ILayerConfig';
+import type { MaterialRecentEntry, MaterialUserData } from './IMaterial';
 import type { BeamboxPreference } from './Preference';
 import type { PromarkStore } from './Promark';
 
@@ -50,6 +51,12 @@ export interface Storage {
   loop_compensation: number;
   /** Per-machine maintenance records, keyed by serial (fallback UUID). */
   'maintenance-records': Record<string, MachineMaintenanceRecord>;
+  /** Material Browser: favorited material ids (local only) */
+  'material-favorites'?: string[];
+  /** Material Browser: recently applied material/preset refs, most recent first */
+  'material-recents'?: MaterialRecentEntry[];
+  /** Material Browser user data; the legacy 'presets' key is never written by the new system */
+  materials?: MaterialUserData;
   'new-user': boolean;
   notification: boolean;
   'poke-ip-addr': string;

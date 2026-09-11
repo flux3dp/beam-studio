@@ -14,6 +14,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { switchPresetDpiGroup } from '@core/helpers/materials/material-apply';
 import useI18n from '@core/helpers/useI18n';
 
 import ObjectPanelItem from '../ObjectPanelItem';
@@ -54,6 +55,9 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
         if (!layer) return;
 
         writeDataLayer(layer, 'dpi', newDpi, { batchCmd });
+
+        // New mode: presets in a per-DPI group switch to the member declaring the new dpi
+        if (switchPresetDpiGroup(layer, newDpi, { batchCmd })) shouldInitState = true;
 
         shouldInitState = applyDpiOverrides(layer, dpi.value, newDpi, workarea, batchCmd) || shouldInitState;
       });
