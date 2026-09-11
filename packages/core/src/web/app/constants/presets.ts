@@ -692,6 +692,7 @@ export const presets: PresetTable = {
     ado1: { [LayerModule.PRINTER]: { ink: 2, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
     fbm2: { [LayerModule.PRINTER_4C]: { ink: 70, speed: 15 } },
   },
+  canvas_fabric_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 90, speed: 15 } } },
   canvas_printing: {
     ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 4, speed: 60 } },
     fbm2: { [LayerModule.PRINTER_4C]: { ink: 90, speed: 15 } },

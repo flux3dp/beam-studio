@@ -277,7 +277,14 @@ export const materialDefs: BundledMaterialDef[] = [
 ];
 
 /**
- * Every presets.ts key mapped exactly once (enforced by unit test).
+ * Legacy presets.ts keys the browser folds into another catalog preset: they stay in
+ * presets.ts (the legacy dropdown still lists them) but are never built into the catalog, and
+ * files saved with them resolve to the target's legacyKey. Extend whenever a key is merged.
+ */
+export const mergedLegacyKeys: Record<string, string> = { canvas_fabric_printing: 'canvas_printing' };
+
+/**
+ * Every presets.ts key mapped exactly once (enforced by unit test), except mergedLegacyKeys.
  * Order within a material follows insertion order here.
  */
 export const presetMappings: Record<string, PresetMapping> = {
