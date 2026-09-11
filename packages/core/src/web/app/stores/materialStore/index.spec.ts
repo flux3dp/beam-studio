@@ -212,6 +212,23 @@ describe('materialStore actions', () => {
     expect(state.userPresets.map(({ id }) => id)).toEqual(['p2']);
   });
 
+  test('pinVariant dedupes; deleteVariant unpins and cascades the presets scoped to the catalog variant', () => {
+    useMaterialStore.getState().pinVariant('wood-8mm');
+    useMaterialStore.getState().pinVariant('wood-8mm');
+    useMaterialStore
+      .getState()
+      .addPreset('wood', { id: 'p1', name: 'Cut', origin: 'user', settings: {}, variantId: 'wood-8mm' });
+
+    expect(useMaterialStore.getState().pinnedVariantIds).toEqual(['wood-8mm']);
+
+    useMaterialStore.getState().deleteVariant('wood-8mm');
+
+    const state = useMaterialStore.getState();
+
+    expect(state.pinnedVariantIds).toEqual([]);
+    expect(state.userPresets).toEqual([]);
+  });
+
   test('pushRecent dedupes and caps', () => {
     for (let i = 0; i < RECENTS_LIMIT + 5; i++) {
       useMaterialStore.getState().pushRecent(`m${i}`, `p${i}`);

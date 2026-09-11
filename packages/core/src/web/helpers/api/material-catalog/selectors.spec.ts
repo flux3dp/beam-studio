@@ -1,7 +1,13 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { Material } from '@core/interfaces/IMaterial';
 
-import { getPresetsForContext, getSortedVariants, getVisibleMaterials, searchMaterials } from './selectors';
+import {
+  getPresetsForContext,
+  getSortedVariants,
+  getVisibleMaterials,
+  getVisibleVariants,
+  searchMaterials,
+} from './selectors';
 
 const material = (overrides: Partial<Material> & { id: string }): Material => ({
   category: 'wood',
@@ -69,6 +75,82 @@ describe('getSortedVariants', () => {
       'wood-quarter',
     ]);
     expect(getSortedVariants(material({ id: 'bare' }), [])).toEqual([]);
+  });
+});
+
+describe('getVisibleVariants', () => {
+  const wood = material({
+    id: 'wood',
+    presets: [
+      {
+        id: 'wood_3mm_cutting',
+        origin: 'default',
+        settings: { fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } } },
+        variantId: 'wood-3mm',
+      },
+      {
+        id: 'wood_5mm_cutting',
+        origin: 'default',
+        settings: { ado1: { [LayerModule.LASER_10W_DIODE]: { power: 100, speed: 3 } } },
+        variantId: 'wood-5mm',
+      },
+    ],
+    variants: [
+      { id: 'wood-3mm', thicknessNum: 3, thicknessUnit: 'mm' },
+      { id: 'wood-5mm', thicknessNum: 5, thicknessUnit: 'mm' },
+      { id: 'wood-8mm', thicknessNum: 8, thicknessUnit: 'mm' },
+    ],
+  });
+  const userData = {
+    disabledPresetIds: [],
+    pinnedVariantIds: [],
+    presetOverrides: {},
+    userPresets: [],
+    userVariants: [{ id: 'user-6mm', materialId: 'wood', thicknessNum: 6, thicknessUnit: 'mm' as const }],
+  };
+  const ids = (variants: Array<{ id: string }>) => variants.map(({ id }) => id);
+
+  test('catalog variants need a resolvable scoped preset; user additions always show', () => {
+    expect(ids(getVisibleVariants(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, userData))).toEqual([
+      'wood-3mm',
+      'user-6mm',
+    ]);
+    expect(ids(getVisibleVariants(wood, 'ado1', LayerModule.LASER_10W_DIODE, userData))).toEqual([
+      'wood-5mm',
+      'user-6mm',
+    ]);
+  });
+
+  test('pinned catalog variants show regardless of machine', () => {
+    const pinned = { ...userData, pinnedVariantIds: ['wood-8mm'] };
+
+    expect(ids(getVisibleVariants(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, pinned))).toEqual([
+      'wood-3mm',
+      'user-6mm',
+      'wood-8mm',
+    ]);
+  });
+
+  test('a user preset scoped to a catalog variant keeps it visible', () => {
+    const withUserPreset = {
+      ...userData,
+      userPresets: [
+        {
+          id: 'u1',
+          materialId: 'wood',
+          name: 'Mine',
+          origin: 'user' as const,
+          settings: { '*': { '*': { power: 10, speed: 10 } } },
+          variantId: 'wood-8mm',
+        },
+      ],
+    };
+
+    expect(ids(getVisibleVariants(wood, 'fbb2', LayerModule.LASER_UNIVERSAL, withUserPreset))).toEqual([
+      'wood-3mm',
+      'user-6mm',
+      'wood-8mm',
+    ]);
   });
 });
 

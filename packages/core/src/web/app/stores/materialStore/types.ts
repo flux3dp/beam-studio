@@ -18,6 +18,7 @@ export interface MaterialStoreState {
   disabledPresetIds: string[];
   favorites: string[];
   migratedFromPresets: boolean;
+  pinnedVariantIds: string[];
   presetOverrides: MaterialUserData['presetOverrides'];
   recents: MaterialRecentEntry[];
   /** User materials never embed presets or variants; those live in the flat lists below */
@@ -45,6 +46,8 @@ export interface MaterialStoreActions {
   importLegacyPresets: (legacy: Preset[] | undefined) => void;
   /** Re-files a user preset onto another material and optional thickness scope (id unchanged, layer refs stay valid) */
   movePreset: (presetId: string, targetMaterialId: string, targetVariantId?: string) => void;
+  /** Keeps a catalog variant listed regardless of machine presets; undone by deleteVariant */
+  pinVariant: (variantId: string) => void;
   pushRecent: (materialId: string, presetId: string) => void;
   restorePreset: (presetId: string) => void;
   toggleFavorite: (materialId: string) => void;

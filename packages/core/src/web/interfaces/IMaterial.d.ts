@@ -142,6 +142,12 @@ export interface MaterialUserData {
   /** One-way migration from the legacy 'presets' storage key has run */
   migratedFromPresets: boolean;
   /**
+   * Catalog variant ids the user re-added: a catalog variant is only listed for machines
+   * it has presets for, so these stay visible everywhere (until deleted, which also drops
+   * the user presets scoped to them).
+   */
+  pinnedVariantIds: string[];
+  /**
    * Edits applied on top of `origin: 'default'` catalog presets ([Customized] state),
    * keyed by preset id. Restore = delete the entry. `name` override lives beside the values.
    */

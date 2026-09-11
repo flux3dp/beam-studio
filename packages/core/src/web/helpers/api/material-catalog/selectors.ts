@@ -72,6 +72,29 @@ export const getSortedVariants = (material: Material, userVariants: UserVariant[
   );
 
 /**
+ * The variants the browser lists for the active machine: catalog variants only when a preset
+ * scoped to them resolves here (or the user pinned them), user-added variants always.
+ * Sorted like getSortedVariants.
+ */
+export const getVisibleVariants = (
+  material: Material,
+  model: PresetModel,
+  module: LayerModuleType,
+  userData: Pick<
+    MaterialUserData,
+    'disabledPresetIds' | 'pinnedVariantIds' | 'presetOverrides' | 'userPresets' | 'userVariants'
+  >,
+): MaterialVariant[] => {
+  const variants = getSortedVariants(material, userData.userVariants);
+  const userVariantIds = new Set([...userData.pinnedVariantIds, ...userData.userVariants.map(({ id }) => id)]);
+  const presets = getPresetsForContext(material, model, module, userData);
+
+  return variants.filter(
+    (variant) => userVariantIds.has(variant.id) || presets.some((preset) => preset.preset.variantId === variant.id),
+  );
+};
+
+/**
  * One material's preset rows for the active machine context (own presets + user additions).
  * With `variantId`, variant-scoped presets are filtered to that variant; material-wide
  * presets (no variantId) always show. Without it, every preset of the material is listed

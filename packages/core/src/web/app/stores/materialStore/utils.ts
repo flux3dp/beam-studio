@@ -11,11 +11,18 @@ export const generateUserId = (prefix: 'user' | 'user_mat' | 'user_var' = 'user'
 export const toUserData = (
   state: Pick<
     MaterialStoreState,
-    'disabledPresetIds' | 'migratedFromPresets' | 'presetOverrides' | 'userMaterials' | 'userPresets' | 'userVariants'
+    | 'disabledPresetIds'
+    | 'migratedFromPresets'
+    | 'pinnedVariantIds'
+    | 'presetOverrides'
+    | 'userMaterials'
+    | 'userPresets'
+    | 'userVariants'
   >,
 ): MaterialUserData => ({
   disabledPresetIds: state.disabledPresetIds,
   migratedFromPresets: state.migratedFromPresets,
+  pinnedVariantIds: state.pinnedVariantIds,
   presetOverrides: state.presetOverrides,
   userMaterials: state.userMaterials,
   userPresets: state.userPresets,

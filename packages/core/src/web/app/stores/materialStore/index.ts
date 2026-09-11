@@ -19,6 +19,7 @@ const getInitialState = (): MaterialStoreState => {
     disabledPresetIds: userData?.disabledPresetIds ?? [],
     favorites: getStorage('material-favorites') ?? [],
     migratedFromPresets: userData?.migratedFromPresets ?? false,
+    pinnedVariantIds: userData?.pinnedVariantIds ?? [],
     presetOverrides: userData?.presetOverrides ?? {},
     recents: getStorage('material-recents') ?? [],
     userMaterials: userData?.userMaterials ?? [],
@@ -83,6 +84,7 @@ export const useMaterialStore = create(
       },
       deleteVariant: (variantId) => {
         apply({
+          pinnedVariantIds: get().pinnedVariantIds.filter((id) => id !== variantId),
           userPresets: get().userPresets.filter((preset) => preset.variantId !== variantId),
           userVariants: get().userVariants.filter(({ id }) => id !== variantId),
         });
@@ -200,6 +202,7 @@ export const useMaterialStore = create(
 
         apply({
           disabledPresetIds: [...new Set([...state.disabledPresetIds, ...(data.disabledPresetIds ?? [])])],
+          pinnedVariantIds: [...new Set([...state.pinnedVariantIds, ...(data.pinnedVariantIds ?? [])])],
           presetOverrides: { ...state.presetOverrides, ...(data.presetOverrides ?? {}) },
           userMaterials,
           userPresets: [...state.userPresets, ...importedPresets],
@@ -235,6 +238,11 @@ export const useMaterialStore = create(
             { ...preset, materialId: targetMaterialId, variantId: targetVariantId },
           ],
         });
+      },
+      pinVariant: (variantId) => {
+        if (get().pinnedVariantIds.includes(variantId)) return;
+
+        apply({ pinnedVariantIds: [...get().pinnedVariantIds, variantId] });
       },
       pushRecent: (materialId, presetId) => {
         const recents = [
