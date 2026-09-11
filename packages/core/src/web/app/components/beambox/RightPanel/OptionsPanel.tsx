@@ -73,8 +73,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
   const contents = useMemo(() => {
     if (!elem) return [];
 
-    // A generated point cloud is the final representation. The source bitmap remains in the SVG
-    // for save/rebuild purposes, but none of its bitmap or 3D generation controls apply anymore.
+    // A point cloud is the final representation. A generated one's source bitmap remains in the
+    // SVG for save/rebuild purposes, but neither generated nor directly imported point clouds have
+    // editable source controls here.
     if (stlObjectKind === 'point-cloud' || elem.hasAttribute(POINT_CLOUD_ATTR.marker)) return [];
 
     // a projection rect is a `rect`, so without this it would fall into the RectOptions branch below

@@ -37,11 +37,11 @@ export const PHOTO_3D_ATTR = {
   width: 'data-stl-photo-width',
 } as const;
 
-/** Frontend and .beam metadata for a relief point cloud generated from a photo. */
+/** Frontend and .beam metadata for a generated or directly imported point cloud. */
 export const POINT_CLOUD_ATTR = {
   /**
-   * Marks a photo whose 3D representation is a point cloud rather than its fallback plane.
-   * The value is the binary format version, so an SVG-only reader can reject a mismatched block.
+   * Marks a projection whose 3D representation lives in the BSPC block. The value is the binary
+   * format version, so an SVG-only reader can reject a mismatched block.
    */
   marker: 'data-stl-point-cloud',
 } as const;

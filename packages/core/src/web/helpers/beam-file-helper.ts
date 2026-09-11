@@ -465,7 +465,7 @@ const readStlSource = (buf: Buffer, offset: number, end: number, loaded: StlObje
   }
 };
 
-/** Rebuild photo-relief point clouds from block 7 after their SVG image has been restored. */
+/** Rebuild generated or standalone point clouds from block 7 after their SVG projection is restored. */
 const readPointCloudSource = (buf: Buffer, offset: number, end: number, loaded: StlObject[]) => {
   let currentOffset = offset;
 
@@ -487,9 +487,12 @@ const readPointCloudSource = (buf: Buffer, offset: number, end: number, loaded: 
     currentOffset += pointCloudSize;
 
     const elem = document.getElementById(id);
+    const isPhotoPointCloud = elem?.hasAttribute(PHOTO_3D_ATTR.marker);
+    const isStandalonePointCloud =
+      elem?.hasAttribute(STL_ATTR.marker) && elem.getAttribute(STL_ATTR.kind) === 'point-cloud';
 
-    if (!elem?.getAttribute(PHOTO_3D_ATTR.marker) || !elem.getAttribute(POINT_CLOUD_ATTR.marker)) {
-      console.warn(`Point cloud ${id} has no marked photo source, skipped`);
+    if (!elem?.hasAttribute(POINT_CLOUD_ATTR.marker) || (!isPhotoPointCloud && !isStandalonePointCloud)) {
+      console.warn(`Point cloud ${id} has no marked projection, skipped`);
       continue;
     }
 

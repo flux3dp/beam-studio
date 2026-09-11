@@ -13,11 +13,12 @@ import {
   IDENTITY_TRANSFORM,
 } from '@core/app/components/beambox/InnerEngraving/utils/transform';
 import alertConstants from '@core/app/constants/alert-constants';
-import type { StlTransform } from '@core/app/stores/stlStore';
+import type { StlObject, StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { STL_ATTR } from '@core/app/svgedit/stl/constants';
+import { POINT_CLOUD_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
+import { decodePointCloud } from '@core/app/svgedit/stl/pointCloud';
 import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -105,20 +106,24 @@ const cloneTransform = ({ flip, position, rotation, scale }: StlTransform): StlT
   scale: [...scale],
 });
 
-export const insertStlGeometry = async (
+interface Insert3dGeometryOptions {
+  historyLabel?: string;
+  initialTransform?: StlTransform;
+  kind?: 'mesh' | 'point-cloud';
+  mergeWithPreviousHistory?: boolean;
+  replaceElement?: SVGElement;
+  skipFitPrompt?: boolean;
+}
+
+const insert3dGeometry = async (
   buffer: ArrayBuffer,
   geometry: BufferGeometry,
   attributes: Record<string, number | string> = {},
-  options: {
-    initialTransform?: StlTransform;
-    mergeWithPreviousHistory?: boolean;
-    replaceElement?: SVGElement;
-    skipFitPrompt?: boolean;
-  } = {},
+  options: Insert3dGeometryOptions = {},
 ): Promise<void> => {
   geometry.computeBoundingBox();
 
-  if (!geometry.boundingBox) throw new Error('Failed to read STL geometry');
+  if (!geometry.boundingBox) throw new Error('Failed to read 3D geometry');
 
   // Placement and adaptive scaling are part of the imported state. Keep a separate immutable
   // snapshot so every DimensionPanel reset returns to exactly what the user first saw.
@@ -140,18 +145,21 @@ export const insertStlGeometry = async (
     },
     element: 'rect',
   });
-  const object = { buffer, geometry, id, initialTransform, transform };
+  const object: StlObject =
+    options.kind === 'point-cloud'
+      ? { geometry, id, initialTransform, kind: 'point-cloud', pointCloudBuffer: buffer, transform }
+      : { buffer, geometry, id, initialTransform, transform };
 
   updateProjectionRect(elem, geometry, getMatrix(object), { initialTransform, transform });
   useStlStore.getState().set(object);
   updateElementColor(elem);
 
-  const batchCmd = new history.BatchCommand('Import STL');
+  const batchCmd = new history.BatchCommand(options.historyLabel ?? 'Import STL');
 
-  if (options.replaceElement?.parentNode) {
-    const source = options.replaceElement;
-    const parent = source.parentNode;
+  const source = options.replaceElement;
+  const parent = source?.parentNode;
 
+  if (source && parent) {
     batchCmd.addSubCommand(new history.RemoveElementCommand(source, source.nextSibling, parent));
     source.remove();
   }
@@ -166,6 +174,32 @@ export const insertStlGeometry = async (
   }
 
   selectStlObject(id);
+};
+
+export const insertStlGeometry = async (
+  buffer: ArrayBuffer,
+  geometry: BufferGeometry,
+  attributes: Record<string, number | string> = {},
+  options: Omit<Insert3dGeometryOptions, 'historyLabel' | 'kind'> = {},
+): Promise<void> => insert3dGeometry(buffer, geometry, attributes, options);
+
+/** Insert an already-normalized BSPC point cloud as a standalone 3D object. */
+export const insertPointCloudGeometry = async (
+  pointCloudBuffer: ArrayBuffer,
+  geometry: BufferGeometry,
+): Promise<void> => {
+  const { version } = decodePointCloud(pointCloudBuffer);
+
+  await insert3dGeometry(
+    pointCloudBuffer,
+    geometry,
+    {
+      [POINT_CLOUD_ATTR.marker]: String(version),
+      [STL_ATTR.kind]: 'point-cloud',
+      [STL_ATTR.mode]: 'dot',
+    },
+    { historyLabel: 'Import Point Cloud', kind: 'point-cloud' },
+  );
 };
 
 /**

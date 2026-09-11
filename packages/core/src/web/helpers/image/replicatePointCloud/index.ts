@@ -21,7 +21,7 @@ export { REPLICATE_POINT_CLOUD_SAMPLES } from './constants';
 export type { ReplicatePointCloudSampleId } from './constants';
 export { convertDepthAnythingV3Output, parseDepthAnythingHeightField, tensorJsonImageToBlob } from './depthAnything';
 export { convertDepthProOutput, parseDepthProHeightField, parseNpyFloat32 } from './depthPro';
-export { convertMapAnythingOutput, parseGlbMeshGeometry, parseGlbPositions } from './glb';
+export { convertMapAnythingOutput, getGlbPrimitiveKinds, parseGlbMeshGeometry, parseGlbPositions } from './glb';
 export {
   createReliefGeometry,
   createReliefPointPositions,

@@ -59,7 +59,7 @@ export interface StlObject {
   /** Omitted on legacy/runtime objects and therefore treated as a normal mesh. */
   kind?: 'mesh' | 'photo' | 'point-cloud';
   /**
-   * Versioned XYZ Float32 LE binary returned by the photo-relief API.
+   * Versioned XYZ Float32 LE binary generated from a photo or imported from a point-cloud file.
    *
    * Separate from `buffer`: that field is always an STL file and is sent to swiftray's STL
    * slicer. A point cloud has its own .beam block and backend path and must never be mistaken for

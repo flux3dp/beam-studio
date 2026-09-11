@@ -36,6 +36,7 @@ import {
 import { deleteSelectedElements } from '@core/app/svgedit/operations/delete';
 import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
+import import3dFile, { isThreeDFileName } from '@core/app/svgedit/operations/import/import3dFile';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
 import { importDxfFromText, looksLikeDxfText } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
 import importStl from '@core/app/svgedit/operations/import/importStl';
@@ -968,6 +969,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       /** Whether each canvas-content file type requires inner engraving mode to be on. */
       const MODE_GATED_TYPES: Record<string, boolean> = {
+        '3d-file': true,
         ai: false,
         dxf: false,
         pdf: false,
@@ -994,6 +996,10 @@ const svgEditor = (window['svgEditor'] = (function () {
 
           if (file.name.toLowerCase().endsWith('.stl')) {
             return 'stl';
+          }
+
+          if (isThreeDFileName(file.name)) {
+            return '3d-file';
           }
 
           if (file.type.toLowerCase().includes('image')) {
@@ -1073,6 +1079,12 @@ const svgEditor = (window['svgEditor'] = (function () {
             Progress.popById('loading_image');
             await importStl(file);
             break;
+          case '3d-file':
+            // PLY/BSPC are point clouds. A GLB is inspected and routed to point-cloud or STL mesh
+            // handling based on its primitives. The importer owns its parsing and fit progress.
+            Progress.popById('loading_image');
+            await import3dFile(file);
+            break;
           case 'pdf':
           case 'ai':
             const { blob, errorMessage } = await pdfHelper.pdfToSvgBlob(file);
@@ -1145,7 +1157,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // Keep for e2e import image
       // enable beambox-global-interaction to click (data-file-input, trigger_file_input_click)
       var imgImport = $(
-        '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf,.stl" data-file-input="import_image">',
+        '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf,.stl,.ply,.glb,.bspc" data-file-input="import_image">',
       ).change(importImage);
 
       $('#tool_import').show().prepend(imgImport);

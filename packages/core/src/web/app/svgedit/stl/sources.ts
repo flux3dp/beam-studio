@@ -27,7 +27,7 @@ export const getStlSources = (): Record<string, ArrayBuffer> => {
   return result;
 };
 
-/** Point-cloud block 7 sources, keyed by their retained SVG image id. */
+/** Point-cloud block 7 sources, keyed by their SVG projection id. */
 export const getPointCloudSources = (): Record<string, ArrayBuffer> => {
   const { objects } = useStlStore.getState();
   const result: Record<string, ArrayBuffer> = {};
@@ -36,7 +36,7 @@ export const getPointCloudSources = (): Record<string, ArrayBuffer> => {
     const object = objects[id];
 
     if (object?.kind === 'point-cloud' && object.pointCloudBuffer) result[id] = object.pointCloudBuffer;
-    else console.error(`Point-cloud photo ${id} has no point data in the store, the object is not exported`);
+    else console.error(`Point-cloud projection ${id} has no point data in the store, the object is not exported`);
   });
 
   return result;

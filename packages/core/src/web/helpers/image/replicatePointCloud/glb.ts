@@ -61,7 +61,7 @@ const parseGlbChunks = (buffer: ArrayBuffer): { binary: Uint8Array; json: GlbJso
   const view = new DataView(buffer);
 
   if (view.getUint32(0, true) !== GLB_MAGIC || view.getUint32(4, true) !== 2) {
-    throw new Error('Only glTF 2.0 GLB point clouds are supported');
+    throw new Error('Only glTF 2.0 GLB files are supported');
   }
 
   if (view.getUint32(8, true) !== buffer.byteLength) throw new Error('GLB length does not match its header');
@@ -225,6 +225,28 @@ const readIndexAccessor = (binary: Uint8Array, json: GlbJson, accessorIndex: num
   }
 
   return output;
+};
+
+export interface GlbPrimitiveKinds {
+  hasPoints: boolean;
+  hasTriangles: boolean;
+}
+
+/** Inspect the renderable geometry so a generic GLB import can choose point-cloud or mesh handling. */
+export const getGlbPrimitiveKinds = (buffer: ArrayBuffer): GlbPrimitiveKinds => {
+  const { json } = parseGlbChunks(buffer);
+  const result: GlbPrimitiveKinds = { hasPoints: false, hasTriangles: false };
+
+  visitPrimitives(json, (primitive) => {
+    if (primitive.attributes?.POSITION === undefined) return;
+
+    const mode = primitive.mode ?? TRIANGLES_MODE;
+
+    if (mode === POINTS_MODE) result.hasPoints = true;
+    else if (mode === TRIANGLES_MODE) result.hasTriangles = true;
+  });
+
+  return result;
 };
 
 /** Extract world-space POSITION accessors from the GLB point-cloud output used by MapAnything. */

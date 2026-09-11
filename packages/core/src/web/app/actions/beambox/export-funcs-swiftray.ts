@@ -265,8 +265,9 @@ const fetchTaskCodeSwiftray = async (
   const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
   const pointCloudObjects = await getPointCloudObjects();
 
-  // Plain photos remain SVG images and are marked for Swiftray's 3D photo path. Only generated
-  // point clouds use a typed placeholder plus a separate BSPC payload.
+  // Plain photos remain SVG images and are marked for Swiftray's 3D photo path. Generated point
+  // clouds use temporary typed placeholders; directly imported ones already have typed rects.
+  // Both resolve their geometry through the separate BSPC payload collected above.
   revertFunctions.push(preparePhotoPlaneElementsForExport());
 
   Progress.update('fetch-task-code', {
