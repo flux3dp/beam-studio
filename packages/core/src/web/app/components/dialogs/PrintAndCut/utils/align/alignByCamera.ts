@@ -1,9 +1,12 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import { dpmm } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import workareaManager from '@core/app/svgedit/workarea';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 
+import type { PncOffset } from '../../calibration/offsetStore';
+import { fetchPncOffset } from '../../calibration/offsetStore';
 import { usePrintAndCutStore } from '../../store';
 import type { Point, RigidTransform } from '../rigidTransform';
 import { centroid, fitRigidTransform, getMatchTolerance } from '../rigidTransform';
@@ -14,6 +17,25 @@ import { captureWorkareaImage } from './capture';
 import { detectFromBackground } from './detectMarks';
 import { endPreviewMode } from './previewSession';
 import { refineMarkPatches } from './refineMarkPatches';
+
+/**
+ * Shift the fit by the machine's calibrated print-and-cut offset: the laser
+ * lands `offset` (sheet frame, mm) away from the print, so the cut moves by
+ * its negation, rotated into the canvas frame
+ */
+const correctByCalibration = (transform: RigidTransform, offset: PncOffset): RigidTransform => {
+  const { angle, tx, ty } = transform;
+  const dx = -offset.x * dpmm;
+  const dy = -offset.y * dpmm;
+
+  logAlign('calibration-offset', { offsetMm: offset });
+
+  return {
+    ...transform,
+    tx: tx + Math.cos(angle) * dx - Math.sin(angle) * dy,
+    ty: ty + Math.sin(angle) * dx + Math.cos(angle) * dy,
+  };
+};
 
 /** Log the fitted alignment for the bug report; the user only sees a success message */
 const logAlignmentResult = (expected: Point[], transform: RigidTransform): void => {
@@ -61,9 +83,11 @@ const logRunContext = (expected: Point[]): void => {
  * Publishes the camera image, the located marks and the fit to the dialog
  * store as it goes; ends preview mode. Nothing on the canvas is modified — the
  * caller applies the transform.
+ * @param applyCalibration shift the fit by the machine's stored print-and-cut
+ * offset (off while the calibration measures it)
  * @returns the fitted transform, or null when the flow failed or was stopped
  */
-export const alignByCamera = async (): Promise<null | RigidTransform> => {
+export const alignByCamera = async ({ applyCalibration = true } = {}): Promise<null | RigidTransform> => {
   const t = i18n.lang.print_and_cut.alignment;
   const { markPositions, setAlignmentFit, setCameraImageUrl, setDetectedMarkCenters } = usePrintAndCutStore.getState();
   const expected: Point[] = markPositions.map(({ cx, cy }) => ({ x: cx, y: cy }));
@@ -71,6 +95,11 @@ export const alignByCamera = async (): Promise<null | RigidTransform> => {
   if (expected.length === 0) return null;
 
   logRunContext(expected);
+
+  // read the machine's stored offset before the capture: the control socket is
+  // still free here, while preview mode may hold it in raw mode
+  const serial = deviceMaster.currentDevice?.info.serial;
+  const offset = applyCalibration && serial ? await fetchPncOffset(serial) : undefined;
 
   try {
     // 1. capture + locate: the sweep is shown progressively while it runs
@@ -116,6 +145,8 @@ export const alignByCamera = async (): Promise<null | RigidTransform> => {
     // 3. fit: the redetected marks, else the located ones as they are
     transform ??= fitRigidTransform(expected, markCenters);
     setAlignmentFit(transform);
+
+    if (offset) transform = correctByCalibration(transform, offset);
 
     logAlignmentResult(expected, transform);
     MessageCaller.openMessage({ content: t.success, duration: 3, level: MessageLevel.SUCCESS });

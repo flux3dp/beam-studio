@@ -869,7 +869,12 @@ class DeviceMaster {
     }
   }
 
-  doCalibration = async ({ blob, fcodeSource }: { blob?: Blob; fcodeSource?: string } = {}) => {
+  /** @param onProgress receive the run progress (0–1) instead of the progress dialog */
+  doCalibration = async ({
+    blob,
+    fcodeSource,
+    onProgress,
+  }: { blob?: Blob; fcodeSource?: string; onProgress?: (progress: number) => void } = {}) => {
     const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (fcodeSource) {
@@ -898,23 +903,24 @@ class DeviceMaster {
       throw new Error('UPLOAD_FAILED');
     }
 
-    Progress.openSteppingProgress({
-      id: 'cali-task',
-      message: i18n.lang.calibration.drawing_calibration_image,
-      onCancel: async () => {
-        await this.stop();
-        await this.quit();
-      },
-    });
+    if (!onProgress) {
+      Progress.openSteppingProgress({
+        id: 'cali-task',
+        message: i18n.lang.calibration.drawing_calibration_image,
+        onCancel: async () => {
+          await this.stop();
+          await this.quit();
+        },
+      });
+    }
 
-    const onProgress = (progress: number) => Progress.update('cali-task', { percentage: Math.round(progress * 100) });
+    const reportProgress =
+      onProgress ?? ((progress: number) => Progress.update('cali-task', { percentage: Math.round(progress * 100) }));
 
     try {
-      await this.waitTillStatusPredicate({ onProgress });
-      Progress.popById('cali-task');
-    } catch (err) {
-      Progress.popById('cali-task');
-      throw err; // Error while running test
+      await this.waitTillStatusPredicate({ onProgress: reportProgress });
+    } finally {
+      if (!onProgress) Progress.popById('cali-task');
     }
   };
 

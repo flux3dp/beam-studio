@@ -54,7 +54,13 @@ getSVGAsync((globalSVG) => {
 
 const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
 
-const handleProgress = (id: string, { message, percentage, translation_key }: BackendProgressData) => {
+export interface TaskProgress {
+  message: string;
+  /** 0–100 */
+  percentage: number;
+}
+
+const formatBackendProgress = ({ message, percentage, translation_key }: BackendProgressData): TaskProgress => {
   if (
     translation_key &&
     i18n.lang.message.backend_calculation[translation_key as keyof typeof i18n.lang.message.backend_calculation]
@@ -65,10 +71,38 @@ const handleProgress = (id: string, { message, percentage, translation_key }: Ba
     );
   }
 
-  Progress.update(id, {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message,
-    percentage: percentage * 100,
+  return { message, percentage: percentage * 100 };
+};
+
+const handleProgress = (id: string, data: BackendProgressData) => {
+  Progress.update(id, { caption: i18n.lang.beambox.popup.progress.calculating, ...formatBackendProgress(data) });
+};
+
+/** Wrap a scene (thumbnail data url + svg string) as the parser's upload file */
+export const wrapUploadFile = async (
+  thumbnail: string,
+  svgString: string,
+  uploadName: string,
+): Promise<IWrappedTaskFile> => {
+  const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
+  const reader = new FileReader();
+
+  return new Promise<IWrappedTaskFile>((resolve) => {
+    reader.onload = () => {
+      // not sure whether all para is needed
+      resolve({
+        data: reader.result!,
+        extension: 'svg',
+        index: 0,
+        name: 'svgeditor.svg',
+        size: blob.size,
+        thumbnailSize: thumbnail.length,
+        totalFiles: 1,
+        type: 'application/octet-stream',
+        uploadName,
+      });
+    };
+    reader.readAsArrayBuffer(blob);
   });
 };
 
@@ -85,40 +119,18 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   console.log('File Size', svgString.length);
   logMemory('export: getSvgString done', svgString.length);
 
-  const blob = new Blob([thumbnail, svgString], { type: 'application/octet-stream' });
-  const reader = new FileReader();
-  const uploadFile = await new Promise<IWrappedTaskFile>((resolve) => {
-    reader.onload = () => {
-      // not sure whether all para is needed
-      const file = {
-        data: reader.result!,
-        extension: 'svg',
-        index: 0,
-        name: 'svgeditor.svg',
-        size: blob.size,
-        thumbnailSize: thumbnail.length,
-        totalFiles: 1,
-        type: 'application/octet-stream',
-        uploadName: thumbnailUrl.split('/').pop() ?? 'upload-file',
-      };
-
-      resolve(file);
-    };
-    reader.readAsArrayBuffer(blob);
-  });
-
-  return uploadFile;
+  return wrapUploadFile(thumbnail, svgString, thumbnailUrl.split('/').pop() ?? 'upload-file');
 };
 
-// Send svg string calculate taskcode, output Fcode in default
-const fetchTaskCode = async (
-  device: IDeviceInfo | null = null,
-  opts: { fgGcode?: boolean; output?: 'fcode' | 'gcode' } = {},
-) => {
+interface Scene {
+  thumbnail: string;
+  thumbnailBlobURL: string;
+  uploadFile: IWrappedTaskFile;
+}
+
+/** Prepare the current canvas as the parser's upload file; null when the text conversion failed */
+const prepareCanvasScene = async (device: IDeviceInfo | null): Promise<null | Scene> => {
   svgCanvas.removeUnusedDefs();
-
-  let isCanceled = false;
-
   SymbolMaker.switchImageSymbolForAll(false);
   Progress.openNonstopProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
@@ -176,16 +188,53 @@ const fetchTaskCode = async (
 
   cleanUp();
   Progress.popById('fetch-task-code');
-  Progress.openSteppingProgress({
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    id: 'upload-scene',
-    message: '',
-    onCancel: async () => {
-      svgeditorParser.interruptCalculation();
-      isCanceled = true;
-    },
-    showTips: true,
-  });
+
+  return { thumbnail, thumbnailBlobURL, uploadFile };
+};
+
+// Send svg string calculate taskcode, output Fcode in default
+const fetchTaskCode = async (
+  device: IDeviceInfo | null = null,
+  opts: {
+    fgGcode?: boolean;
+    /** Receive the progress instead of the stepping progress dialogs (e.g. to embed it in a dialog) */
+    onProgress?: (progress: TaskProgress) => void;
+    output?: 'fcode' | 'gcode';
+    scene?: Scene;
+  } = {},
+) => {
+  let isCanceled = false;
+  // a generated scene (e.g. a calibration pattern) skips the canvas preparation
+  const scene = opts.scene ?? (await prepareCanvasScene(device));
+
+  if (!scene) return null;
+
+  const { thumbnail, thumbnailBlobURL, uploadFile } = scene;
+  const { onProgress } = opts;
+  const openProgress = (id: string) => {
+    if (onProgress) return;
+
+    Progress.openSteppingProgress({
+      caption: i18n.lang.beambox.popup.progress.calculating,
+      id,
+      message: '',
+      onCancel: async () => {
+        svgeditorParser.interruptCalculation();
+        isCanceled = true;
+      },
+      showTips: true,
+    });
+  };
+  const popProgress = (id: string) => {
+    if (!onProgress) Progress.popById(id);
+  };
+  const updateProgress = (id: string, progress: TaskProgress) => {
+    if (onProgress) onProgress(progress);
+    else Progress.update(id, { caption: i18n.lang.beambox.popup.progress.calculating, ...progress });
+  };
+  const reportProgress = (id: string, data: BackendProgressData) => updateProgress(id, formatBackendProgress(data));
+
+  openProgress('upload-scene');
 
   const documentState = useDocumentStore.getState();
   const globalPreference = useGlobalPreferenceStore.getState();
@@ -193,13 +242,13 @@ const fetchTaskCode = async (
     // TODO: fallback dpmm for older backend, can remove after firmware ghost update
     engraveDpi: globalPreference.engrave_dpi,
     model: workareaManager.model,
-    onProgressing: (data: BackendProgressData) => handleProgress('upload-scene', data),
+    onProgressing: (data: BackendProgressData) => reportProgress('upload-scene', data),
   });
 
   if (isCanceled) return null;
 
   if (!uploadRes.res) {
-    Progress.popById('upload-scene');
+    popProgress('upload-scene');
     Alert.popUp({
       buttonType: AlertConstants.YES_NO,
       id: 'get-taskcode-error',
@@ -215,11 +264,7 @@ const fetchTaskCode = async (
     return null;
   }
 
-  Progress.update('upload-scene', {
-    caption: i18n.lang.beambox.popup.progress.calculating,
-    message: i18n.lang.message.uploading_fcode,
-    percentage: 100,
-  });
+  updateProgress('upload-scene', { message: i18n.lang.message.uploading_fcode, percentage: 100 });
 
   let doesSupportDiodeAndAF = true;
   let shouldUseFastGradient = globalPreference.fast_gradient !== false;
@@ -238,16 +283,8 @@ const fetchTaskCode = async (
     supportAccOverrideV1 = vc.meetRequirement('BEAMO_ACC_OVERRIDE');
   }
 
-  Progress.popById('upload-scene');
-  Progress.openSteppingProgress({
-    id: 'fetch-task',
-    message: '',
-    onCancel: () => {
-      svgeditorParser.interruptCalculation();
-      isCanceled = true;
-    },
-    showTips: true,
-  });
+  popProgress('upload-scene');
+  openProgress('fetch-task');
 
   let didErrorOccur = false;
   const targetDevice = device || TopBarController.getSelectedDevice();
@@ -269,7 +306,7 @@ const fetchTaskCode = async (
         fileMode: '-f',
         model: workareaManager.model,
         onError: (message: string) => {
-          Progress.popById('fetch-task');
+          popProgress('fetch-task');
           Alert.popUp({
             buttonType: AlertConstants.YES_NO,
             id: 'get-taskcode-error',
@@ -285,10 +322,10 @@ const fetchTaskCode = async (
           resolve(null);
         },
         onFinished: (taskBlob: Blob, timeCost: number, metadata: TaskMetaData) => {
-          Progress.update('fetch-task', { message: i18n.lang.message.uploading_fcode, percentage: 100 });
+          updateProgress('fetch-task', { message: i18n.lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
         },
-        onProgressing: (data: BackendProgressData) => handleProgress('fetch-task', data),
+        onProgressing: (data: BackendProgressData) => reportProgress('fetch-task', data),
         shouldUseFastGradient,
         ...getTaskCodeOpts,
         paddingAccel,
@@ -322,7 +359,7 @@ const fetchTaskCode = async (
     fileTimeCost = fcodeRes.fileTimeCost;
   }
 
-  Progress.popById('fetch-task');
+  popProgress('fetch-task');
 
   if (isCanceled || didErrorOccur) return null;
 
@@ -609,6 +646,24 @@ export default {
     const res = await convertEngine(null);
 
     return { fcodeBlob: res?.taskCodeBlob, fileTimeCost: res?.fileTimeCost || 0 };
+  },
+  /** Fcode of a generated scene for the selected device (fluxghost parser; the canvas is untouched) */
+  getFcodeFromSvgString: async (
+    svgString: string,
+    uploadName: string,
+    {
+      onProgress,
+      // the parser decodes the thumbnail as an image, so a 1×1 png stands in for a scene without one
+      thumbnail = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=',
+    }: { onProgress?: (progress: TaskProgress) => void; thumbnail?: string } = {},
+  ): Promise<Blob | undefined> => {
+    const uploadFile = await wrapUploadFile(thumbnail, svgString, uploadName);
+    const res = await fetchTaskCode(null, {
+      onProgress,
+      scene: { thumbnail, thumbnailBlobURL: thumbnail, uploadFile },
+    });
+
+    return res?.taskCodeBlob;
   },
   getGcode: async (): Promise<{
     fileTimeCost: number;

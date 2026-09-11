@@ -104,6 +104,13 @@ const useMenuData = (email?: string): MenuNode[] => {
         label: `${menuCms.calibrate_beambox_camera}${isMobile ? ' (PC Only)' : ''}`,
         type: 'item',
       },
+      {
+        device,
+        disabled: isMobile,
+        id: 'CALIBRATE_PRINT_AND_CUT',
+        label: menuCms.calibrate_print_and_cut,
+        type: 'item',
+      },
       ...(isBb2 || isBeamo2 || isHexa2 || isAdor
         ? [
             {
