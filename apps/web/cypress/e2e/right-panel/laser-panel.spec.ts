@@ -31,7 +31,7 @@ describe('manipulate laser panel', () => {
     cy.get('button[class^="ant-btn"]').contains('Reset').click();
     cy.get('button[class^="ant-btn"]').contains('Confirm').click();
     cy.get(`[class*="${ConfigPanelPrefix}preset-dropdown"] > .ant-select-selector`).click();
-    cy.get('.ant-select-item').should('have.length', '16');
+    cy.get('.ant-select-item').should('have.length', '19');
   });
 
   it('add new parameter at laser panel', () => {
