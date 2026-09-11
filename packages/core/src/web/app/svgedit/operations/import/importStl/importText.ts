@@ -1,17 +1,15 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
-import { MM_TO_SCENE } from '@core/app/components/beambox/InnerEngraving/utils/coordinates';
 import { getMaterial } from '@core/app/components/beambox/InnerEngraving/utils/material';
 import { IDENTITY_TRANSFORM } from '@core/app/components/beambox/InnerEngraving/utils/transform';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import selectionManager from '@core/app/svgedit/selection';
 import { STL_ATTR } from '@core/app/svgedit/stl/constants';
-import { buildExtrusion, type ExtrusionSource, serializeExtrusionSource } from '@core/app/svgedit/stl/extrusionSource';
+import { buildExtrusion, createExtrusionSource, serializeExtrusionSource } from '@core/app/svgedit/stl/extrusionSource';
 import workareaManager from '@core/app/svgedit/workarea';
 
 import { insertStlGeometry } from '.';
 
 const DEPTH_MM = 1;
-const SVG_UNIT_TO_MM = 1 / MM_TO_SCENE;
 
 const createConversionRoot = (): SVGSVGElement => {
   const root = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -45,7 +43,6 @@ export const outlineText = async (text: SVGTextElement): Promise<null | string> 
 const importTextAsStl = async (text: SVGTextElement): Promise<boolean> => {
   if (!text.textContent || !text.parentNode) return false;
 
-  const editableMarkup = new XMLSerializer().serializeToString(text);
   const geometryMarkup = await outlineText(text);
 
   if (!geometryMarkup) {
@@ -55,12 +52,9 @@ const importTextAsStl = async (text: SVGTextElement): Promise<boolean> => {
     return false;
   }
 
-  const source: ExtrusionSource = {
-    depth: DEPTH_MM,
+  const source = {
+    ...createExtrusionSource(text, { depth: DEPTH_MM, unit: 'scene' }),
     geometryMarkup,
-    markup: editableMarkup,
-    scale: SVG_UNIT_TO_MM,
-    type: 'svg',
   };
 
   const built = buildExtrusion(source);

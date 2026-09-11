@@ -157,7 +157,10 @@ describe('importElementToCanvas', () => {
       await importElementToCanvas('basic/icon-circle');
 
       expect(mockImportSvgElementAsStl).toHaveBeenCalledTimes(1);
-      expect(mockImportSvgElementAsStl).toHaveBeenCalledWith(expect.objectContaining({ tagName: 'ellipse' }), true);
+      expect(mockImportSvgElementAsStl).toHaveBeenCalledWith(expect.objectContaining({ tagName: 'ellipse' }), {
+        preserveSource: true,
+        unit: 'scene',
+      });
       expect(mockAddSvgElementFromJson).not.toHaveBeenCalled();
     });
   });
@@ -210,7 +213,7 @@ describe('importElementToCanvas', () => {
 
       await importElementToCanvas('basic/mock-svg-icon');
 
-      expect(mockImportPathAsStl).toHaveBeenCalledWith('M0,0 L10,10', true);
+      expect(mockImportPathAsStl).toHaveBeenCalledWith('M0,0 L10,10', { preserveSource: true, unit: 'scene' });
       expect(mockAddSvgElementFromJson).not.toHaveBeenCalled();
     });
 

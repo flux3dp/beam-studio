@@ -13,13 +13,18 @@ jest.mock('@core/app/components/beambox/InnerEngraving/utils/engravable', () => 
 }));
 
 const mockBuildExtrusion = jest.fn(() => ({ buffer: new ArrayBuffer(8), geometry: { id: 'geometry' } }));
-const mockCreateExtrusionSource = jest.fn(() => ({
-  depth: 1,
-  markup: '<rect height="250" width="500" />',
-  scale: 1,
-  type: 'svg' as const,
+const mockCreateExtrusionSource = jest.fn(
+  (_elem: SVGElement, { depth = 1, unit = 'mm' }: { depth?: number; unit?: 'mm' | 'scene' } = {}) => ({
+    depth,
+    markup: '<rect height="250" width="500" />',
+    scale: unit === 'scene' ? 0.1 : 1,
+    type: 'svg' as const,
+  }),
+);
+const mockGetExtrusionSize = jest.fn((source: { scale: number }) => ({
+  x: 500 * source.scale,
+  y: 250 * source.scale,
 }));
-const mockGetExtrusionSize = jest.fn(() => ({ x: 500, y: 250 }));
 const mockSerializeExtrusionSource = jest.fn(() => 'serialized-source');
 
 jest.mock('@core/app/svgedit/stl/extrusionSource', () => ({
@@ -40,17 +45,27 @@ import { importSvgElementAsStl } from './importPath';
 describe('importSvgElementAsStl', () => {
   beforeEach(() => jest.clearAllMocks());
 
-  it('sizes generated geometry from the safe engravable box and skips the STL fit prompt', async () => {
+  it('preserves scene-unit geometry size when it fits and skips the STL fit prompt', async () => {
     const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
 
-    await importSvgElementAsStl(elem, true);
+    await importSvgElementAsStl(elem, { preserveSource: true, unit: 'scene' });
 
-    expect(mockBuildExtrusion).toHaveBeenCalledWith(expect.objectContaining({ depth: 1, scale: 0.14 }));
+    expect(mockCreateExtrusionSource).toHaveBeenCalledWith(elem, { depth: 1, unit: 'scene' });
+    expect(mockBuildExtrusion).toHaveBeenCalledWith(expect.objectContaining({ depth: 1, scale: 0.1 }));
     expect(mockInsertStlGeometry).toHaveBeenCalledWith(
       expect.any(ArrayBuffer),
       expect.anything(),
       { 'data-stl-source': 'serialized-source' },
       { skipFitPrompt: true },
     );
+  });
+
+  it('treats source units as millimetres by default', async () => {
+    const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+    await importSvgElementAsStl(elem);
+
+    expect(mockCreateExtrusionSource).toHaveBeenCalledWith(elem, { depth: 1, unit: 'mm' });
+    expect(mockBuildExtrusion).toHaveBeenCalledWith(expect.objectContaining({ depth: 1, scale: 0.14 }));
   });
 });

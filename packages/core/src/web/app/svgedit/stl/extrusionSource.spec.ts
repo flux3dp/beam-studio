@@ -18,10 +18,22 @@ jest.mock('three/examples/jsm/exporters/STLExporter.js', () => ({
   },
 }));
 
-import { buildExtrusion, parseExtrusionSourceValue, serializeExtrusionSource } from './extrusionSource';
+import {
+  buildExtrusion,
+  createExtrusionSource,
+  parseExtrusionSourceValue,
+  serializeExtrusionSource,
+} from './extrusionSource';
 
 describe('extrusionSource', () => {
   beforeEach(() => jest.clearAllMocks());
+
+  test('normalizes source coordinates to millimetres when created', () => {
+    const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+
+    expect(createExtrusionSource(elem).scale).toBe(1);
+    expect(createExtrusionSource(elem, { unit: 'scene' }).scale).toBe(0.1);
+  });
 
   test('round trips a valid editable SVG source', () => {
     const source = {

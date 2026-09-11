@@ -1,5 +1,11 @@
 const mockBuildExtrusion = jest.fn();
 const mockConvertTextToPath = jest.fn();
+const mockCreateExtrusionSource = jest.fn((elem: SVGElement, _options?: unknown) => ({
+  depth: 1,
+  markup: new XMLSerializer().serializeToString(elem),
+  scale: 0.1,
+  type: 'svg' as const,
+}));
 const mockInsertStlGeometry = jest.fn();
 
 jest.mock('@core/app/actions/beambox/font-funcs', () => ({
@@ -22,6 +28,7 @@ jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({ setMouseMode: jest
 jest.mock('@core/app/svgedit/selection', () => ({ selectOnly: jest.fn() }));
 jest.mock('@core/app/svgedit/stl/extrusionSource', () => ({
   buildExtrusion: (...args: unknown[]) => mockBuildExtrusion(...args),
+  createExtrusionSource: (...args: [SVGElement, unknown?]) => mockCreateExtrusionSource(...args),
   serializeExtrusionSource: (source: unknown) => JSON.stringify(source),
 }));
 jest.mock('@core/app/svgedit/workarea', () => ({ height: 1000, width: 1000 }));
@@ -58,6 +65,7 @@ describe('importTextAsStl', () => {
 
     const source = mockBuildExtrusion.mock.calls[0][0];
 
+    expect(mockCreateExtrusionSource).toHaveBeenCalledWith(text, { depth: 1, unit: 'scene' });
     expect(source).toMatchObject({
       depth: 1,
       markup: expect.stringContaining('<text'),

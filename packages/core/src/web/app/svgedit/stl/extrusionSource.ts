@@ -2,6 +2,7 @@ import { ExtrudeGeometry, Mesh, Vector3 } from 'three';
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 
+import { MM_TO_SCENE } from '@core/app/components/beambox/InnerEngraving/utils/coordinates';
 import { updateProjectionRect } from '@core/app/components/beambox/InnerEngraving/utils/projection';
 import { getMatrix } from '@core/app/components/beambox/InnerEngraving/utils/transform';
 import { useStlStore } from '@core/app/stores/stlStore';
@@ -21,6 +22,18 @@ export interface ExtrusionSource {
   scale: number;
   type: 'svg';
 }
+
+export type ExtrusionSourceUnit = 'mm' | 'scene';
+
+export interface CreateExtrusionSourceOptions {
+  depth?: number;
+  unit?: ExtrusionSourceUnit;
+}
+
+const UNIT_TO_MM: Record<ExtrusionSourceUnit, number> = {
+  mm: 1,
+  scene: 1 / MM_TO_SCENE,
+};
 
 export const extrusionSourceEvents = eventEmitterFactory.createEventEmitter();
 
@@ -95,11 +108,14 @@ export const buildExtrusion = (
   return { buffer, geometry };
 };
 
-/** Create a source whose longest XY dimension can be scaled by the caller before insertion. */
-export const createExtrusionSource = (elem: SVGElement, depth = 1): ExtrusionSource => ({
+/** Create a source normalized to millimetres from the specified SVG coordinate unit. */
+export const createExtrusionSource = (
+  elem: SVGElement,
+  { depth = 1, unit = 'mm' }: CreateExtrusionSourceOptions = {},
+): ExtrusionSource => ({
   depth,
   markup: new XMLSerializer().serializeToString(elem),
-  scale: 1,
+  scale: UNIT_TO_MM[unit],
   type: 'svg',
 });
 
@@ -165,6 +181,7 @@ export const setExtrusionSource = (
   }
 };
 
+/** Return the physical size in millimetres after applying the source's unit scale. */
 export const getExtrusionSize = (source: ExtrusionSource): null | Vector3 => {
   const built = buildExtrusion(source);
 
