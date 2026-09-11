@@ -1,4 +1,5 @@
-import { presets as defaultPresets } from '@core/app/constants/presets';
+import type { PresetTable } from '@core/app/constants/presets';
+import { presets as legacyPresets } from '@core/app/constants/presets';
 import { dpiValueMap, type EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import type { Preset } from '@core/interfaces/ILayerConfig';
@@ -11,6 +12,10 @@ import type {
 } from '@core/interfaces/IMaterial';
 
 import { materialDefs, presetMappings } from './mapping';
+import { materialBrowserPresets } from './presets';
+
+/** Every bundled preset: the legacy dropdown set plus the browser-only keys */
+export const bundledPresets: PresetTable = { ...legacyPresets, ...materialBrowserPresets };
 
 export { CATEGORY_COLORS, MATERIAL_CATEGORIES, MY_MATERIALS_ID, RECENTS_LIMIT } from './constants';
 export { materialDefs, presetMappings } from './mapping';
@@ -39,7 +44,7 @@ const toPresetValues = (preset: Preset, dpi?: EngraveDpiOption): PresetValues =>
 };
 
 /** Override options above the curated 250 DPI base, ascending (e.g. high → detailed → ultra) */
-const getQualityOptions = (source: NonNullable<(typeof defaultPresets)[string]>): EngraveDpiOption[] => {
+const getQualityOptions = (source: NonNullable<PresetTable[string]>): EngraveDpiOption[] => {
   const options = new Set<EngraveDpiOption>();
 
   for (const modules of Object.values(source)) {
@@ -59,7 +64,7 @@ const buildPresetsForMaterial = (materialId: string): MaterialPreset[] => {
   for (const [key, mapping] of Object.entries(presetMappings)) {
     if (mapping.materialId !== materialId) continue;
 
-    const source = defaultPresets[key];
+    const source = bundledPresets[key];
 
     if (!source) continue;
 

@@ -29,6 +29,9 @@ jest.mock('@core/app/constants/presets', () => {
   };
 });
 
+// The browser-only table is real data too; the fixture above is the whole input
+jest.mock('./presets', () => ({ materialBrowserPresets: {} }));
+
 import { getBundledCatalog } from './index';
 
 test('bundled catalog shape for a fixed preset set', () => {

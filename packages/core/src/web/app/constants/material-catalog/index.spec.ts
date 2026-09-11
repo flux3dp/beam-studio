@@ -6,15 +6,22 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { presets as defaultPresets } from '@core/app/constants/presets';
 import { useStorageStore } from '@core/app/stores/storageStore';
 
-import { getBundledCatalog } from './index';
+import { bundledPresets, getBundledCatalog } from './index';
 import { materialDefs, presetMappings } from './mapping';
+import { materialBrowserPresets } from './presets';
 
 describe('material-catalog mapping', () => {
-  test('every presets.ts key is mapped exactly once', () => {
-    const presetKeys = Object.keys(defaultPresets).sort();
+  test('every bundled preset key (legacy + browser-only) is mapped exactly once', () => {
+    const presetKeys = Object.keys(bundledPresets).sort();
     const mappedKeys = Object.keys(presetMappings).sort();
 
     expect(mappedKeys).toEqual(presetKeys);
+  });
+
+  test('browser-only presets never shadow a legacy key', () => {
+    const legacyKeys = new Set(Object.keys(defaultPresets));
+
+    expect(Object.keys(materialBrowserPresets).filter((key) => legacyKeys.has(key))).toEqual([]);
   });
 
   test('every mapping targets an existing material, and variant refs its variants', () => {
