@@ -44,6 +44,10 @@ export interface PresetMapping {
   variantId?: string;
 }
 
+// TODO: confirm the TW shop links below against https://tw-shop.flux3dp.com/collections/materials
+// (open: teak/poplar plywood unmapped, leather kits unmapped, mixed acrylic points at a search page)
+const TW_SHOP = 'https://tw-shop.flux3dp.com';
+
 /* eslint-disable perfectionist/sort-objects */
 export const materialDefs: BundledMaterialDef[] = [
   // Wood
@@ -52,6 +56,7 @@ export const materialDefs: BundledMaterialDef[] = [
     nameKey: 'wood',
     image: 'wood_plywood',
     category: 'wood',
+    shopLinks: { tw: `${TW_SHOP}/products/%E7%B4%A0%E9%9D%A2%E5%90%88%E6%9D%BF%E7%B3%BB%E5%88%97` },
     variants: [
       { id: 'wood-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
       { id: 'wood-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
@@ -65,6 +70,7 @@ export const materialDefs: BundledMaterialDef[] = [
     nameKey: 'mdf',
     image: 'mdf',
     category: 'wood',
+    shopLinks: { tw: `${TW_SHOP}/products/mdf` },
     variants: [
       { id: 'mdf-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
       { id: 'mdf-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
@@ -81,8 +87,22 @@ export const materialDefs: BundledMaterialDef[] = [
       { id: 'solid-wood-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
     ],
   },
-  { id: 'walnut-veneer', nameKey: 'walnut_veneer', image: 'wood_veneer', category: 'wood', regions: ['tw'] },
-  { id: 'basswood-sheet', nameKey: 'basswood_sheet', image: 'wood_basswood', category: 'wood', regions: ['tw'] },
+  {
+    id: 'walnut-veneer',
+    nameKey: 'walnut_veneer',
+    image: 'wood_veneer',
+    category: 'wood',
+    regions: ['tw'],
+    shopLinks: { tw: `${TW_SHOP}/products/%E8%83%A1%E6%A1%83%E5%90%88%E6%9D%BF%E7%B3%BB%E5%88%97` },
+  },
+  {
+    id: 'basswood-sheet',
+    nameKey: 'basswood_sheet',
+    image: 'wood_basswood',
+    category: 'wood',
+    regions: ['tw'],
+    shopLinks: { tw: `${TW_SHOP}/products/basswood` },
+  },
   {
     id: 'bamboo',
     nameKey: 'bamboo',
@@ -100,6 +120,7 @@ export const materialDefs: BundledMaterialDef[] = [
     nameKey: 'acrylic',
     image: 'acrylic_transparent',
     category: 'acrylic',
+    shopLinks: { tw: `${TW_SHOP}/products/3mm-%E5%A3%93%E5%85%8B%E5%8A%9B-40x30-%E5%85%AC%E5%88%86` },
     variants: [
       { id: 'acrylic-2mm', thicknessMm: 2, thicknessInch: [1, 16] },
       { id: 'acrylic-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
@@ -115,12 +136,19 @@ export const materialDefs: BundledMaterialDef[] = [
     nameKey: 'black_acrylic',
     image: 'acrylic_opaque',
     category: 'acrylic',
+    shopLinks: { tw: `${TW_SHOP}/products/3mm-%E5%A3%93%E5%85%8B%E5%8A%9B-40x30-%E5%85%AC%E5%88%86` },
     variants: [
       { id: 'black-acrylic-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
       { id: 'black-acrylic-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
     ],
   },
-  { id: 'opaque-acrylic', nameKey: 'opaque_acrylic', image: 'acrylic_opaque', category: 'acrylic' },
+  {
+    id: 'opaque-acrylic',
+    nameKey: 'opaque_acrylic',
+    image: 'acrylic_opaque',
+    category: 'acrylic',
+    shopLinks: { tw: `${TW_SHOP}/products/3mm-%E5%A3%93%E5%85%8B%E5%8A%9B-40x30-%E5%85%AC%E5%88%86` },
+  },
   {
     id: 'fluorescent-acrylic',
     nameKey: 'fluorescent_acrylic',
@@ -158,6 +186,7 @@ export const materialDefs: BundledMaterialDef[] = [
     nameKey: 'mixed_acrylic',
     image: 'acrylic_mixed',
     category: 'acrylic',
+    shopLinks: { tw: `${TW_SHOP}/search?type=product&q=%E6%B7%B7%E8%89%B2%E5%A3%93%E5%85%8B%E5%8A%9B` },
     variants: [
       { id: 'mixed-acrylic-3mm', thicknessMm: 3, thicknessInch: [1, 8] },
       { id: 'mixed-acrylic-5mm', thicknessMm: 5, thicknessInch: [3, 16] },
@@ -223,7 +252,13 @@ export const materialDefs: BundledMaterialDef[] = [
   { id: 'glass', nameKey: 'glass', image: 'glass', category: 'other' },
   { id: 'slate', nameKey: 'slate', image: 'stone_slate', category: 'other' },
   { id: 'stone', nameKey: 'stone', image: 'stone', category: 'other' },
-  { id: 'rubber', nameKey: 'rubber', image: 'rubber', category: 'other' },
+  {
+    id: 'rubber',
+    nameKey: 'rubber',
+    image: 'rubber',
+    category: 'other',
+    shopLinks: { tw: `${TW_SHOP}/products/%E7%84%A1%E6%AF%92%E7%84%A1%E8%87%AD%E5%8D%B0%E7%AB%A0%E5%A2%8A` },
+  },
   { id: 'ceramic-tile', nameKey: 'ceramic_tile', image: 'ceramic', category: 'other', regions: ['tw'] },
   // Metal
   { id: 'metal', nameKey: 'metal', image: 'metal_general', category: 'metal' },
