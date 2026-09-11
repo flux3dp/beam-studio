@@ -20,7 +20,7 @@ export const presets: PresetTable = {
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 15 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 5 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 12 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 8 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
     flv1: { [LayerModule.LASER_UNIVERSAL]: { power: 100, speed: 6 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
