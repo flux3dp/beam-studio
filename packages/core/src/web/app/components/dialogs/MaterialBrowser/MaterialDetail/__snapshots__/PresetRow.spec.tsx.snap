@@ -14,8 +14,7 @@ exports[`PresetRow default preset renders pills and state tag 1`] = `
       >
         Cutting
         <span
-          class="ant-tag ant-tag-default css-dev-only-do-not-override-hash"
-          style="margin-left: 8px;"
+          class="ant-tag ant-tag-default state-tag css-dev-only-do-not-override-hash"
         >
           Default
         </span>

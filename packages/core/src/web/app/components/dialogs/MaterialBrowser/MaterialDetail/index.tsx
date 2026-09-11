@@ -28,10 +28,10 @@ import type { Material, MaterialRegion, MaterialVariant } from '@core/interfaces
 
 import { showAddPresetFromLayer, showMaterialEditorModal } from '../editors';
 import AddVariantModal from '../editors/AddVariantModal';
-import styles from '../MaterialBrowser.module.scss';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 import { getCoverStyle } from '../utils/coverStyle';
 
+import styles from './MaterialDetail.module.scss';
 import PresetRow from './PresetRow';
 
 const { Paragraph, Text, Title } = Typography;
@@ -120,12 +120,7 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
 
   return (
     <div>
-      <Button
-        icon={<ArrowLeftOutlined />}
-        onClick={() => openDetail(null)}
-        style={{ marginBottom: 8, paddingLeft: 0 }}
-        type="link"
-      >
+      <Button className={styles.back} icon={<ArrowLeftOutlined />} onClick={() => openDetail(null)} type="link">
         {t.back_to_catalog}
       </Button>
       <div className={styles.detail}>
@@ -135,7 +130,7 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
             style={getCoverStyle(selectedVariant?.image ? { ...material, image: selectedVariant.image } : material)}
           />
           {material.tags && material.tags.length > 0 && (
-            <div style={{ marginTop: 12 }}>
+            <div className={styles.tags}>
               <Space size={[6, 6]} wrap>
                 {material.tags.map((tag) => (
                   <Tag bordered={false} key={tag}>
@@ -148,16 +143,16 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
           {shopLink && (
             <Button
               block
+              className={styles.shop}
               ghost
               icon={<ShoppingOutlined />}
               onClick={() => browser.open(shopLink)}
-              style={{ marginTop: 14 }}
               type="primary"
             >
               {t.buy_on_shop}
             </Button>
           )}
-          <Space style={{ marginTop: 14 }}>
+          <Space className={styles.actions}>
             {isUserMaterial && (
               <Button icon={<EditOutlined />} onClick={() => showMaterialEditorModal({ materialId: material.id })}>
                 {t.edit}
@@ -175,19 +170,19 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
         </div>
 
         <div className={styles.content}>
-          <Title level={4} style={{ marginBottom: 2, marginTop: 0 }}>
+          <Title className={styles.title} level={4}>
             {getMaterialDisplayName(material)}
           </Title>
-          <Text style={{ textTransform: 'capitalize' }} type="secondary">
+          <Text className={styles.category} type="secondary">
             {t.categories[material.category]}
           </Text>
           {material.description && (
-            <Paragraph style={{ marginTop: 10 }}>{resolveLocalizedString(material.description)}</Paragraph>
+            <Paragraph className={styles.description}>{resolveLocalizedString(material.description)}</Paragraph>
           )}
 
-          <div style={{ margin: '14px 0' }}>
+          <div className={styles.thickness}>
             <div className={styles['section-title']}>{t.thickness}</div>
-            <div style={{ alignItems: 'center', display: 'flex', gap: 8, marginTop: 6 }}>
+            <div className={styles['variant-row']}>
               {variants.length > 0 && (
                 <div className={styles['variant-scroll']}>
                   <Segmented
@@ -247,7 +242,7 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
               ))}
             </div>
           ) : (
-            <Empty description={sprintf(t.no_presets_for_machine, machineLabel)} style={{ padding: '24px 0' }} />
+            <Empty className={styles.empty} description={sprintf(t.no_presets_for_machine, machineLabel)} />
           )}
         </div>
       </div>

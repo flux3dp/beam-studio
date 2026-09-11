@@ -22,10 +22,11 @@ import useI18n from '@core/helpers/useI18n';
 import type { PresetModel } from '@core/interfaces/ILayerConfig';
 
 import { showMovePresetModal } from '../editors';
-import styles from '../MaterialBrowser.module.scss';
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
 import { applyPresetRow } from '../utils/applyPresetRow';
 import { getPresetDisplayParams } from '../utils/presetDisplayParams';
+
+import styles from './PresetRow.module.scss';
 
 interface PresetRowProps {
   context: { model: PresetModel; module: LayerModuleType };
@@ -86,10 +87,10 @@ const PresetRow = ({ context, row }: PresetRowProps): React.JSX.Element => {
       <div className={styles.main}>
         <div className={styles.name}>
           {row.displayName}
-          <Tag color={stateTagColor[row.state]} style={{ marginLeft: 8 }}>
+          <Tag className={styles['state-tag']} color={stateTagColor[row.state]}>
             {stateLabel}
           </Tag>
-          {row.isDisabled && <Tag style={{ marginLeft: 4 }}>{t.state_disabled}</Tag>}
+          {row.isDisabled && <Tag className={styles['disabled-tag']}>{t.state_disabled}</Tag>}
         </div>
         <Space className={styles.pills} size={[6, 6]} wrap>
           {getPresetDisplayParams(row.values, context).map(({ label, value }) => (

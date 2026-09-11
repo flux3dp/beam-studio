@@ -10,7 +10,7 @@ import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils
 import useI18n from '@core/helpers/useI18n';
 import type { Material, MaterialVariant } from '@core/interfaces/IMaterial';
 
-import styles from './MaterialBrowser.module.scss';
+import styles from './MaterialCard.module.scss';
 import { getCoverStyle } from './utils/coverStyle';
 
 interface MaterialCardProps {
@@ -46,7 +46,7 @@ const MaterialCard = ({
             onToggleFavorite(material.id);
           }}
         >
-          {isFavorite ? <StarFilled style={{ color: '#ffc53d' }} /> : <StarOutlined />}
+          {isFavorite ? <StarFilled className={styles.favorite} /> : <StarOutlined />}
         </span>
         {badge && <span className={styles.badge}>{badge}</span>}
       </div>
@@ -55,7 +55,7 @@ const MaterialCard = ({
         {material.tags && material.tags.length > 0 && (
           <Space size={[4, 4]} wrap>
             {material.tags.map((tag) => (
-              <Tag bordered={false} key={tag} style={{ fontSize: 11, margin: 0 }}>
+              <Tag bordered={false} className={styles.tag} key={tag}>
                 {tag}
               </Tag>
             ))}

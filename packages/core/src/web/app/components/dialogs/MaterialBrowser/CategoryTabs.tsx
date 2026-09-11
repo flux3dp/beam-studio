@@ -7,6 +7,7 @@ import { MATERIAL_CATEGORIES } from '@core/app/constants/material-catalog/consta
 import useI18n from '@core/helpers/useI18n';
 import type { Material } from '@core/interfaces/IMaterial';
 
+import styles from './CategoryTabs.module.scss';
 import { useMaterialBrowserStore } from './useMaterialBrowserStore';
 
 interface CategoryTabsProps {
@@ -57,7 +58,7 @@ const CategoryTabs = ({
         key: 'favorites',
         label: (
           <span>
-            <StarFilled style={{ color: '#ffc53d' }} /> {t.favorites}
+            <StarFilled className={styles.favorite} /> {t.favorites}
           </span>
         ),
       });
@@ -80,7 +81,7 @@ const CategoryTabs = ({
       label: countOf('other') ? `${t.categories.other} (${countOf('other')})` : t.categories.other,
     });
     empty.forEach((category) => {
-      tabs.push({ key: category, label: <span style={{ opacity: 0.5 }}>{t.categories[category]}</span> });
+      tabs.push({ key: category, label: <span className={styles.empty}>{t.categories[category]}</span> });
     });
 
     return tabs;

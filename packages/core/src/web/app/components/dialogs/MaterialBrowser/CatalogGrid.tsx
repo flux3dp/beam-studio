@@ -9,8 +9,8 @@ import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors'
 import useI18n from '@core/helpers/useI18n';
 import type { Material } from '@core/interfaces/IMaterial';
 
+import styles from './CatalogGrid.module.scss';
 import { showMaterialEditorModal } from './editors';
-import styles from './MaterialBrowser.module.scss';
 import MaterialCard from './MaterialCard';
 import { useMaterialBrowserStore } from './useMaterialBrowserStore';
 
@@ -33,7 +33,7 @@ const CatalogGrid = ({ machineLabel, materials }: CatalogGridProps): React.JSX.E
           : sprintf(t.no_materials_in_category, machineLabel);
 
     return (
-      <Empty description={description} style={{ padding: '40px 0' }}>
+      <Empty className={styles.empty} description={description}>
         {activeTab !== 'recents' && query.trim() === '' && (
           <Button icon={<PlusOutlined />} onClick={() => showMaterialEditorModal()} type="primary">
             {t.add_material}

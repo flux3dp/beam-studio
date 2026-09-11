@@ -5,8 +5,8 @@ import { Button, Input, Tooltip } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
+import styles from './ControlBar.module.scss';
 import { showMaterialEditorModal } from './editors';
-import styles from './MaterialBrowser.module.scss';
 import { useMaterialBrowserStore } from './useMaterialBrowserStore';
 
 interface ControlBarProps {

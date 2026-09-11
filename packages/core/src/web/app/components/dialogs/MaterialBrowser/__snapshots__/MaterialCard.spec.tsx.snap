@@ -56,8 +56,7 @@ exports[`MaterialCard single variant shows its thickness badge 1`] = `
           class="ant-space-item"
         >
           <span
-            class="ant-tag ant-tag-borderless css-dev-only-do-not-override-hash"
-            style="font-size: 11px; margin: 0px;"
+            class="ant-tag ant-tag-borderless tag css-dev-only-do-not-override-hash"
           >
             Premium
           </span>
@@ -66,8 +65,7 @@ exports[`MaterialCard single variant shows its thickness badge 1`] = `
           class="ant-space-item"
         >
           <span
-            class="ant-tag ant-tag-borderless css-dev-only-do-not-override-hash"
-            style="font-size: 11px; margin: 0px;"
+            class="ant-tag ant-tag-borderless tag css-dev-only-do-not-override-hash"
           >
             FLUX Shop
           </span>
