@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: 'Tmavé značení',
           marking_light: 'Světlé značení',
           printing: 'Tisk',
+          printing_fabric: 'Tisk (textil)',
         },
       },
       categories: {

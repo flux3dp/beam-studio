@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: '濃いマーキング',
           marking_light: '淡いマーキング',
           printing: '印刷',
+          printing_fabric: '印刷（布）',
         },
       },
       categories: {

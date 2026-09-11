@@ -1,6 +1,5 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import { mergedLegacyKeys } from '@core/app/constants/material-catalog/mapping';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -153,12 +152,9 @@ export const resolveMaterialRef = ({
 
   if (!configName || configName.trim() === '') return null;
 
-  // Legacy keys the browser folds into another catalog preset (still listed by the legacy dropdown)
-  const legacyName = mergedLegacyKeys[configName] ?? configName;
-
   // Catalog presets by legacy key
   for (const material of materialCatalogCache.getCatalogSync().materials) {
-    const preset = material.presets.find(({ legacyKey }) => legacyKey === legacyName);
+    const preset = material.presets.find(({ legacyKey }) => legacyKey === configName);
 
     if (preset) return { material, preset };
   }

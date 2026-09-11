@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: '深色打标',
           marking_light: '浅色打标',
           printing: '打印',
+          printing_fabric: '打印（布料）',
         },
       },
       categories: {

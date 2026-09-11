@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: 'Penandaan Gelap',
           marking_light: 'Penandaan Cerah',
           printing: 'Percetakan',
+          printing_fabric: 'Percetakan (Kain)',
         },
       },
       categories: {

@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: 'Σκούρα σήμανση',
           marking_light: 'Ανοιχτή σήμανση',
           printing: 'Εκτύπωση',
+          printing_fabric: 'Εκτύπωση (ύφασμα)',
         },
       },
       categories: {

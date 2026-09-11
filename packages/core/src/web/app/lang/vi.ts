@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: 'Đánh dấu đậm',
           marking_light: 'Đánh dấu nhạt',
           printing: 'In',
+          printing_fabric: 'In (Vải)',
         },
       },
       categories: {

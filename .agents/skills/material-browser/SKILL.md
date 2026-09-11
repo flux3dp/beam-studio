@@ -143,10 +143,10 @@ no-op, any other move re-appends at the end), `pinVariant(variantId)` (catalog i
    payload (forced keys, speed clamp) staged in the config store only.
 2. `resolveMaterialRef({ presetId, configName })` — presetId first (user presets, then
    `materialCatalogCache.findPresetById`), then configName against catalog `legacyKey`s and
-   user preset names. `mergedLegacyKeys` (mapping.ts) maps legacy keys the browser folds into
-   another preset (`canvas_fabric_printing → canvas_printing`): they stay in presets.ts for the
-   legacy dropdown, are skipped by the builder, and resolve to the target — **extend this table
-   whenever a key is merged; never delete a presets.ts key**. Null = Manual.
+   user preset names. Null = Manual. **Never delete or rename a presets.ts key** — legacy mode
+   and saved files depend on it; a key that no longer fits the catalog gets its own
+   `presetMappings` entry (with a distinct `nameKey` if it shares a material, e.g.
+   `canvas_fabric_printing` → Canvas / `printing_fabric`).
 3. `switchPresetDpiGroup(layer, newDpi)` — when the layer DPI changes and the applied preset
    has a `groupId`, switch refs to the sibling declaring that dpi and apply only the keys
    that differ (manual tweaks on agreed keys survive).

@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: 'ทำเครื่องหมายสีเข้ม',
           marking_light: 'ทำเครื่องหมายสีอ่อน',
           printing: 'การพิมพ์',
+          printing_fabric: 'การพิมพ์ (ผ้า)',
         },
       },
       categories: {

@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: 'Mörk märkning',
           marking_light: 'Ljus märkning',
           printing: 'Utskrift',
+          printing_fabric: 'Utskrift (tyg)',
         },
       },
       categories: {

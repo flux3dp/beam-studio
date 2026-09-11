@@ -7,25 +7,15 @@ import { presets as defaultPresets } from '@core/app/constants/presets';
 import { useStorageStore } from '@core/app/stores/storageStore';
 
 import { bundledPresets, getBundledCatalog } from './index';
-import { materialDefs, mergedLegacyKeys, presetMappings } from './mapping';
+import { materialDefs, presetMappings } from './mapping';
 import { materialBrowserPresets } from './presets';
 
 describe('material-catalog mapping', () => {
-  test('every bundled preset key (legacy + browser-only) is mapped exactly once, unless merged', () => {
-    const presetKeys = Object.keys(bundledPresets)
-      .filter((key) => !(key in mergedLegacyKeys))
-      .sort();
+  test('every bundled preset key (legacy + browser-only) is mapped exactly once', () => {
+    const presetKeys = Object.keys(bundledPresets).sort();
     const mappedKeys = Object.keys(presetMappings).sort();
 
     expect(mappedKeys).toEqual(presetKeys);
-  });
-
-  test('merged legacy keys exist in presets.ts and point at a mapped key', () => {
-    Object.entries(mergedLegacyKeys).forEach(([key, target]) => {
-      expect(defaultPresets[key]).toBeDefined();
-      expect(presetMappings[key]).toBeUndefined();
-      expect(presetMappings[target]).toBeDefined();
-    });
   });
 
   test('browser-only presets never shadow a legacy key', () => {

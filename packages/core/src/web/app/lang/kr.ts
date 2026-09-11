@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: '진한 마킹',
           marking_light: '연한 마킹',
           printing: '인쇄',
+          printing_fabric: '인쇄(직물)',
         },
       },
       categories: {

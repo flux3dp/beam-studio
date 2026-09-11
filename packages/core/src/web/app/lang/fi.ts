@@ -444,6 +444,7 @@ const lang: ILang = {
           marking_dark: 'Tumma merkintä',
           marking_light: 'Vaalea merkintä',
           printing: 'Tulostus',
+          printing_fabric: 'Tulostus (kangas)',
         },
       },
       categories: {
