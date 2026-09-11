@@ -67,7 +67,7 @@ const PresetRow = ({ context, row }: PresetRowProps): React.JSX.Element => {
     } else if (key === 'restore') {
       restorePreset(row.presetId);
     } else if (key === 'move') {
-      showMovePresetModal(row.presetId);
+      showMovePresetModal(row.presetId, context);
     } else if (key === 'delete') {
       alertCaller.popUp({
         buttonType: alertConstants.CONFIRM_CANCEL,

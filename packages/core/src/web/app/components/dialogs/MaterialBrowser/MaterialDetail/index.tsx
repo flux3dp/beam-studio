@@ -18,7 +18,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useMaterialStore } from '@core/app/stores/materialStore';
-import { getPresetsForContext, getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
+import { getPresetsForContext, getVisibleVariants } from '@core/helpers/api/material-catalog/selectors';
 import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName, resolveLocalizedString } from '@core/helpers/api/material-catalog/utils';
 import useI18n from '@core/helpers/useI18n';
@@ -47,21 +47,24 @@ interface MaterialDetailProps {
 const MaterialDetail = ({ machineLabel, material, model, module, region }: MaterialDetailProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const { openDetail, openPresetEditor, selectedVariantId, setSelectedVariantId } = useMaterialBrowserStore();
+  const materialStore = useMaterialStore();
   const {
     deleteMaterial,
     deleteVariant,
     disabledPresetIds,
     duplicateMaterial,
+    pinnedVariantIds,
     presetOverrides,
     userPresets,
     userVariants,
-  } = useMaterialStore();
+  } = materialStore;
 
-  const variants = useMemo(() => getSortedVariants(material, userVariants), [material, userVariants]);
+  const variants = useMemo(
+    () => getVisibleVariants(material, model, module, materialStore),
+    [material, model, module, materialStore],
+  );
   const selectedVariant = variants.find(({ id }) => id === selectedVariantId) ?? variants[0];
   const isUserMaterial = material.source === 'user';
-  // Only user-added variants are deletable (catalog ones aren't user content)
-  const isUserVariant = !!selectedVariant && userVariants.some(({ id }) => id === selectedVariant.id);
   const [addingVariant, setAddingVariant] = useState(false);
 
   // Variant-scoped presets filtered to the selected variant; material-wide presets always show
@@ -76,6 +79,13 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
       ),
     [material, model, module, disabledPresetIds, presetOverrides, userPresets, selectedVariant],
   );
+  // User content only: user-added variants, and pinned catalog variants while the pin is the sole
+  // reason they are listed — once a built-in preset resolves for this device, unpinning changes nothing
+  const isDeletableVariant =
+    !!selectedVariant &&
+    (userVariants.some(({ id }) => id === selectedVariant.id) ||
+      (pinnedVariantIds.includes(selectedVariant.id) &&
+        !rows.some(({ preset }) => preset.origin === 'default' && preset.variantId === selectedVariant.id)));
 
   const shopLink = region !== 'global' ? material.shopLinks?.[region] : undefined;
   const variantLabel = (variant: MaterialVariant) => getThicknessLabel(variant) ?? '—';
@@ -192,7 +202,7 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
                   />
                 </div>
               )}
-              {/* User variants attach to ANY material (catalog included); only they are deletable */}
+              {/* User variants attach to ANY material (catalog included); a thickness matching a hidden catalog variant re-adds (pins) it */}
               <Button
                 icon={<PlusOutlined />}
                 onClick={() => setAddingVariant(true)}
@@ -200,7 +210,7 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
                 title={t.thickness}
                 type="text"
               />
-              {isUserVariant && (
+              {isDeletableVariant && (
                 <Button
                   danger
                   icon={<DeleteOutlined />}
@@ -244,7 +254,14 @@ const MaterialDetail = ({ machineLabel, material, model, module, region }: Mater
           )}
         </div>
       </div>
-      {addingVariant && <AddVariantModal material={material} onClose={() => setAddingVariant(false)} region={region} />}
+      {addingVariant && (
+        <AddVariantModal
+          material={material}
+          onClose={() => setAddingVariant(false)}
+          region={region}
+          visibleVariants={variants}
+        />
+      )}
     </div>
   );
 };

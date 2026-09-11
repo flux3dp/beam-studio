@@ -18,7 +18,7 @@ interface MaterialCardProps {
   material: Material;
   onOpen: (materialId: string) => void;
   onToggleFavorite: (materialId: string) => void;
-  /** Effective variants (catalog ∪ user-added) */
+  /** Variants visible for the current machine (getVisibleVariants) */
   variants: MaterialVariant[];
 }
 

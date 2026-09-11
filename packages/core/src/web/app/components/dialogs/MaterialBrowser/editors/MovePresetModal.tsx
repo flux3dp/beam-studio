@@ -2,29 +2,34 @@ import React, { useState } from 'react';
 
 import { Form, Modal } from 'antd';
 
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { MY_MATERIALS_ID } from '@core/app/constants/material-catalog/constants';
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
+import type { PresetModel } from '@core/interfaces/ILayerConfig';
 
 import { findTargetMaterial, getMaterialTargetOptions, getVariantTargetOptions } from '../utils/materialTargetOptions';
 
 interface MovePresetModalProps {
+  model: PresetModel;
+  module: LayerModuleType;
   onClose: () => void;
   presetId: string;
 }
 
-const MovePresetModal = ({ onClose, presetId }: MovePresetModalProps): React.JSX.Element => {
+const MovePresetModal = ({ model, module, onClose, presetId }: MovePresetModalProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const tGlobal = useI18n().global;
-  const { movePreset, userMaterials, userVariants } = useMaterialStore();
+  const materialStore = useMaterialStore();
+  const { movePreset, userMaterials } = materialStore;
   const [targetId, setTargetId] = useState(MY_MATERIALS_ID);
   // '' = whole material; otherwise a variant id of the target material
   const [variantId, setVariantId] = useState('');
 
   const options = getMaterialTargetOptions(userMaterials);
   const targetMaterial = findTargetMaterial(targetId, userMaterials);
-  const variantOptions = targetMaterial ? getVariantTargetOptions(targetMaterial, userVariants) : [];
+  const variantOptions = targetMaterial ? getVariantTargetOptions(targetMaterial, model, module, materialStore) : [];
 
   return (
     <Modal

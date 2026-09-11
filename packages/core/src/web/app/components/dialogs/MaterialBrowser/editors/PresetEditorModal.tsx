@@ -53,10 +53,11 @@ const PresetEditorModal = ({
   const laserPanelLang = useI18n().beambox.right_panel.laser_panel;
   const [form] = Form.useForm<FormValues>();
   const { closeEditors, presetEditor } = useMaterialBrowserStore();
-  const { addPreset, updatePreset, userVariants } = useMaterialStore();
+  const materialStore = useMaterialStore();
+  const { addPreset, updatePreset } = materialStore;
   // '' = whole material; otherwise a variant id
   const [variantTarget, setVariantTarget] = useState('');
-  const variantOptions = material ? getVariantTargetOptions(material, userVariants) : [];
+  const variantOptions = material ? getVariantTargetOptions(material, model, module, materialStore) : [];
 
   const isPrinting = printingModules.has(module);
   const isPromark = model.startsWith('fpm1_');

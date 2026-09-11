@@ -1,8 +1,10 @@
 import React from 'react';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { MATERIAL_CATEGORIES } from '@core/app/constants/material-catalog/constants';
 import { initMaterialBrowser } from '@core/helpers/materials/material-apply';
+import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { MaterialCategory } from '@core/interfaces/IMaterial';
 
 import { useMaterialBrowserStore } from '../useMaterialBrowserStore';
@@ -31,12 +33,20 @@ export const showAddPresetFromLayer = (
   );
 };
 
-export const showMovePresetModal = (presetId: string): void => {
+export const showMovePresetModal = (
+  presetId: string,
+  context: { model: PresetModel; module: LayerModuleType },
+): void => {
   if (isIdExist(MOVE_PRESET_ID)) return;
 
   addDialogComponent(
     MOVE_PRESET_ID,
-    <MovePresetModal onClose={() => popDialogById(MOVE_PRESET_ID)} presetId={presetId} />,
+    <MovePresetModal
+      model={context.model}
+      module={context.module}
+      onClose={() => popDialogById(MOVE_PRESET_ID)}
+      presetId={presetId}
+    />,
   );
 };
 

@@ -4,10 +4,11 @@ import { Modal, Typography } from 'antd';
 
 import { useMaterialStore } from '@core/app/stores/materialStore';
 import { generateUserId } from '@core/app/stores/materialStore/utils';
+import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
 import type { ThicknessValue } from '@core/helpers/api/material-catalog/thickness';
 import { toVariantThickness } from '@core/helpers/api/material-catalog/thickness';
 import useI18n from '@core/helpers/useI18n';
-import type { Material, MaterialRegion } from '@core/interfaces/IMaterial';
+import type { Material, MaterialRegion, MaterialVariant } from '@core/interfaces/IMaterial';
 
 import styles from './AddVariantModal.module.scss';
 import ThicknessInput from './ThicknessInput';
@@ -16,33 +17,42 @@ interface AddVariantModalProps {
   material: Material;
   onClose: () => void;
   region: MaterialRegion;
+  /** What the detail view currently lists; a catalog variant outside it is hidden for this machine */
+  visibleVariants: MaterialVariant[];
 }
 
-/** Adds a user thickness variant to any material — a variant is only a thickness (identity comes from the material) */
-const AddVariantModal = ({ material, onClose, region }: AddVariantModalProps): React.JSX.Element => {
+/**
+ * Adds a user thickness variant to any material — a variant is only a thickness (identity
+ * comes from the material). A thickness matching a catalog variant hidden for this machine
+ * pins that variant instead of duplicating it.
+ */
+const AddVariantModal = ({ material, onClose, region, visibleVariants }: AddVariantModalProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const tGlobal = useI18n().global;
-  const { addVariant, userVariants } = useMaterialStore();
+  const { addVariant, pinVariant, userVariants } = useMaterialStore();
   const [thickness, setThickness] = useState<ThicknessValue>({ thicknessUnit: region === 'us' ? 'inch' : 'mm' });
   const { thicknessDen, thicknessNum, thicknessUnit } = thickness;
 
   // Same unit + same resolved fraction (cross-multiplied, so 2/16 == 1/8 without float error),
-  // checked against catalog variants and user additions alike
+  // checked against catalog variants (hidden ones included) and user additions alike
   const effectiveDen = thicknessUnit === 'inch' ? (thicknessDen ?? 1) : 1;
-  const isDuplicate =
-    !!thicknessNum &&
-    [...(material.variants ?? []), ...userVariants.filter(({ materialId }) => materialId === material.id)].some(
-      (variant) =>
-        variant.thicknessUnit === thicknessUnit &&
-        (variant.thicknessNum ?? 0) * effectiveDen === thicknessNum * (variant.thicknessDen ?? 1),
-    );
+  const existing = thicknessNum
+    ? getSortedVariants(material, userVariants).find(
+        (variant) =>
+          variant.thicknessUnit === thicknessUnit &&
+          (variant.thicknessNum ?? 0) * effectiveDen === thicknessNum * (variant.thicknessDen ?? 1),
+      )
+    : undefined;
+  const isDuplicate = !!existing && visibleVariants.some(({ id }) => id === existing.id);
 
   const handleOk = () => {
     const variantThickness = toVariantThickness(thickness);
 
     if (!variantThickness || isDuplicate) return;
 
-    addVariant(material.id, { id: generateUserId('user_var'), ...variantThickness });
+    if (existing) pinVariant(existing.id);
+    else addVariant(material.id, { id: generateUserId('user_var'), ...variantThickness });
+
     onClose();
   };
 

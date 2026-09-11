@@ -4,9 +4,11 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Button, Empty } from 'antd';
 import { sprintf } from 'sprintf-js';
 
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useMaterialStore } from '@core/app/stores/materialStore';
-import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
+import { getVisibleVariants } from '@core/helpers/api/material-catalog/selectors';
 import useI18n from '@core/helpers/useI18n';
+import type { PresetModel } from '@core/interfaces/ILayerConfig';
 import type { Material } from '@core/interfaces/IMaterial';
 
 import styles from './CatalogGrid.module.scss';
@@ -17,12 +19,15 @@ import { useMaterialBrowserStore } from './useMaterialBrowserStore';
 interface CatalogGridProps {
   machineLabel: string;
   materials: Material[];
+  model: PresetModel;
+  module: LayerModuleType;
 }
 
-const CatalogGrid = ({ machineLabel, materials }: CatalogGridProps): React.JSX.Element => {
+const CatalogGrid = ({ machineLabel, materials, model, module }: CatalogGridProps): React.JSX.Element => {
   const t = useI18n().beambox.material_browser;
   const { activeTab, openDetail, query } = useMaterialBrowserStore();
-  const { favorites, toggleFavorite, userVariants } = useMaterialStore();
+  const materialStore = useMaterialStore();
+  const { favorites, toggleFavorite } = materialStore;
 
   if (materials.length === 0) {
     const description =
@@ -52,7 +57,7 @@ const CatalogGrid = ({ machineLabel, materials }: CatalogGridProps): React.JSX.E
           material={material}
           onOpen={openDetail}
           onToggleFavorite={toggleFavorite}
-          variants={getSortedVariants(material, userVariants)}
+          variants={getVisibleVariants(material, model, module, materialStore)}
         />
       ))}
     </div>

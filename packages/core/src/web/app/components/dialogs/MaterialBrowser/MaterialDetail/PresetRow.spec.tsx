@@ -70,7 +70,10 @@ describe('PresetRow', () => {
     fireEvent.click(getByTestId('preset-menu-wood_3mm_cutting'));
 
     fireEvent.click(await findByText('Move to material…'));
-    expect(mockShowMovePresetModal).toHaveBeenCalledWith('wood_3mm_cutting');
+    expect(mockShowMovePresetModal).toHaveBeenCalledWith('wood_3mm_cutting', {
+      model: 'fbb2',
+      module: LayerModule.LASER_UNIVERSAL,
+    });
   });
 
   test('customized preset menu offers restore', async () => {

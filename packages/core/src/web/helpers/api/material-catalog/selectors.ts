@@ -71,6 +71,11 @@ export const getSortedVariants = (material: Material, userVariants: UserVariant[
       Number(a.thicknessUnit === 'inch') - Number(b.thicknessUnit === 'inch') || thicknessValue(a) - thicknessValue(b),
   );
 
+export type VariantUserData = Pick<
+  MaterialUserData,
+  'disabledPresetIds' | 'pinnedVariantIds' | 'presetOverrides' | 'userPresets' | 'userVariants'
+>;
+
 /**
  * The variants the browser lists for the active machine: catalog variants only when a preset
  * scoped to them resolves here (or the user pinned them), user-added variants always.
@@ -80,10 +85,7 @@ export const getVisibleVariants = (
   material: Material,
   model: PresetModel,
   module: LayerModuleType,
-  userData: Pick<
-    MaterialUserData,
-    'disabledPresetIds' | 'pinnedVariantIds' | 'presetOverrides' | 'userPresets' | 'userVariants'
-  >,
+  userData: VariantUserData,
 ): MaterialVariant[] => {
   const variants = getSortedVariants(material, userData.userVariants);
   const userVariantIds = new Set([...userData.pinnedVariantIds, ...userData.userVariants.map(({ id }) => id)]);

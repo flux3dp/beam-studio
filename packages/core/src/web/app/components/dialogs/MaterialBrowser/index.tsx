@@ -148,7 +148,7 @@ const MaterialBrowser = ({ onClose }: MaterialBrowserProps): React.JSX.Element =
             visibleMaterials={visibleMaterials}
           />
           <div className={styles['scroll-area']}>
-            <CatalogGrid machineLabel={machineLabel} materials={gridMaterials} />
+            <CatalogGrid machineLabel={machineLabel} materials={gridMaterials} model={model} module={module} />
           </div>
         </>
       )}

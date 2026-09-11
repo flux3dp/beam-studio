@@ -56,7 +56,8 @@ const AddPresetFromLayerModal = ({
   const tGlobal = useI18n().global;
   const module = useConfigPanelStore((state) => state.module.value);
   const workarea = useDocumentStore((state) => state.workarea);
-  const { addMaterial, addPreset, ensureBucket, userMaterials, userVariants } = useMaterialStore();
+  const materialStore = useMaterialStore();
+  const { addMaterial, addPreset, ensureBucket, userMaterials } = materialStore;
   const [materialId, setMaterialId] = useState(defaultMaterialId ?? MY_MATERIALS_ID);
   // '' = whole material; otherwise a variant id of the chosen material
   const [variantId, setVariantId] = useState(defaultVariantId ?? '');
@@ -71,7 +72,7 @@ const AddPresetFromLayerModal = ({
     [userMaterials, t],
   );
   const targetMaterial = findTargetMaterial(materialId, userMaterials);
-  const variantOptions = targetMaterial ? getVariantTargetOptions(targetMaterial, userVariants) : [];
+  const variantOptions = targetMaterial ? getVariantTargetOptions(targetMaterial, model, module, materialStore) : [];
 
   const handleSave = () => {
     if (!presetName.trim()) return;

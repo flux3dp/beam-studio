@@ -1,10 +1,13 @@
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { MY_MATERIALS_ID } from '@core/app/constants/material-catalog/constants';
 import { materialCatalogCache } from '@core/helpers/api/material-catalog/materialCatalogCache';
-import { getSortedVariants } from '@core/helpers/api/material-catalog/selectors';
+import type { VariantUserData } from '@core/helpers/api/material-catalog/selectors';
+import { getVisibleVariants } from '@core/helpers/api/material-catalog/selectors';
 import { getThicknessLabel } from '@core/helpers/api/material-catalog/thickness';
 import { getMaterialDisplayName } from '@core/helpers/api/material-catalog/utils';
 import i18n from '@core/helpers/i18n';
-import type { Material, UserVariant } from '@core/interfaces/IMaterial';
+import type { PresetModel } from '@core/interfaces/ILayerConfig';
+import type { Material } from '@core/interfaces/IMaterial';
 
 /** Select options for "which material owns this preset": My Materials, user materials, then the catalog */
 export const getMaterialTargetOptions = (userMaterials: Material[]): Array<{ label: string; value: string }> => {
@@ -23,14 +26,16 @@ export const findTargetMaterial = (materialId: string, userMaterials: Material[]
   materialCatalogCache.getCatalogSync().materials.find(({ id }) => id === materialId);
 
 /**
- * Scope options under a chosen material: the whole material (value '', labeled by its
- * name) or one thickness variant. Empty when the material has no variants.
+ * Scope options under a chosen material: the whole material (value '', labeled '-') or one
+ * thickness variant visible for this machine. Empty when there is none.
  */
 export const getVariantTargetOptions = (
   material: Material,
-  userVariants: UserVariant[],
+  model: PresetModel,
+  module: LayerModuleType,
+  userData: VariantUserData,
 ): Array<{ label: string; value: string }> => {
-  const variants = getSortedVariants(material, userVariants);
+  const variants = getVisibleVariants(material, model, module, userData);
 
   if (variants.length === 0) return [];
 
