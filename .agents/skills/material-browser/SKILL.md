@@ -9,7 +9,10 @@ Locations:
 
 - UI: `packages/core/src/web/app/components/dialogs/MaterialBrowser/`
 - Bundled catalog + curation: `packages/core/src/web/app/constants/material-catalog/`
-- Parameter source of truth: `packages/core/src/web/app/constants/presets.ts`
+- Parameter source of truth: `packages/core/src/web/app/constants/presets.ts` (keys the legacy
+  dropdown lists) + `constants/material-catalog/presets.ts` (`materialBrowserPresets`, keys that
+  exist only in the browser — never shown in legacy mode). The builder merges both
+  (`bundledPresets`).
 - User data store: `packages/core/src/web/app/stores/materialStore/`
 - Apply pipeline: `packages/core/src/web/helpers/materials/`
 - Catalog cache + selectors: `packages/core/src/web/helpers/api/material-catalog/`
@@ -49,7 +52,7 @@ migration. Idempotent, never at import time.
 | `MaterialVariant` | Thickness only, **one level, never a Material**. `thicknessNum`/`thicknessDen`/`thicknessUnit` store the marketed fraction exactly (⅛″ = 1/8) — display never converts. |
 | `MaterialPreset` | `settings[model][module]` → `PresetValues`. Resolution order `[model][module]` → `[model]['*']` → `['*'][module]` → `['*']['*']` (`resolvePresetSettings`). `variantId?` scopes it to one variant; absent = whole material. `groupId?` links flat per-DPI siblings. `legacyKey` = presets.ts key. |
 | `MaterialCatalog` | `{ materials, publishedAt, version }`. Bundled = version 0; any cloud version ≥ 1 supersedes. |
-| `MaterialUserData` | Storage key `materials`: `userMaterials` (presets/variants always empty), flat `userPresets[]` / `userVariants[]` (owner = `materialId`), `presetOverrides` (edits on catalog presets = [Customized]), `disabledPresetIds`, `migratedFromPresets`. |
+| `MaterialUserData` | Storage key `materials`: `userMaterials` (presets/variants always empty), flat `userPresets[]` / `userVariants[]` (owner = `materialId`), `presetOverrides` (edits on catalog presets = [Customized]), `disabledPresetIds`, `pinnedVariantIds` (catalog variants the user re-added via Add Thickness), `migratedFromPresets`. |
 
 Rules that shape everything else:
 
@@ -94,14 +97,17 @@ access (memoized per unit). Parameter values are **never duplicated** in mapping
 - Inch fractions are **curated marketing labels**, not conversions: 2mm = 1/16″, 3mm = ⅛″,
   5mm = 3/16″, 6mm = ¼″ (the shop sells ¼″ sheets as 6mm), 7mm = 9/32″ (nearest 32nd,
   keeps it distinct from 6mm), 8mm = 5/16″, 10mm = ⅜″. Keep labels unique within a
-  material — the variant Segmented and the preset editor's variant picker list every
-  catalog variant regardless of machine. `inchDisplay` (`helpers/api/material-catalog/thickness.ts`) renders any reduced fraction
+  material. `inchDisplay` (`helpers/api/material-catalog/thickness.ts`) renders any reduced fraction
   typographically (precomposed glyph or super/subscript digits), so unusual denominators
   are fine to use.
-- Variants are **not filtered by machine** — `getPresetsForContext` filters presets per
-  model/module underneath, so a variant with no preset for the current machine just lists
-  the material-wide presets. A model-aware variant filter was tried and reverted (2026-09-09):
-  the preset editor's variant picker must list every variant anyway.
+- **Variants ARE filtered by machine** (`getVisibleVariants`, 2026-09-11): a catalog variant
+  is listed only when a preset scoped to it resolves for the current model/module, or when
+  the user pinned it; user-added variants always show. Every list in the browser (thickness
+  Segmented, card badge, the three variant pickers) uses it. Add Thickness with a value
+  matching a hidden catalog variant **pins** it (`pinVariant`) instead of warning
+  "exists"; the delete icon shows for user variants and for pinned catalog variants only
+  while the pin is the sole reason they are listed. `deleteVariant` on a pinned id drops the
+  pin and cascades the user presets scoped to it, same as for a user variant.
 
 ## User data store (`stores/materialStore/`)
 
@@ -117,7 +123,8 @@ Actions take ids, not objects: `addPreset(materialId, preset)`, `updatePreset(pr
 scope, moduleKey, values)` (user preset → replaced in the flat list; catalog preset →
 `presetOverrides` overlay, `restorePreset` deletes it), `movePreset(presetId, targetMaterialId,
 targetVariantId?)` (id unchanged so layer refs stay valid; same material + same scope is a
-no-op, any other move re-appends at the end), `deleteVariant` cascades scoped user presets,
+no-op, any other move re-appends at the end), `pinVariant(variantId)` (catalog ids only),
+`deleteVariant` cascades scoped user presets and drops the pin,
 `duplicateMaterial(source, name?)` deep-copies a catalog material into a user one.
 `getExportData`/`importData` back `material-import-export.ts`
 (`{ type: 'flux-material-library', version: 1, … }`).
@@ -156,10 +163,12 @@ cache/bundle and fetches in the background; `getCatalogSync()` for the apply pip
 ships `GET /api/beam-studio/material-catalog/`. Emits on `materialCatalogEventEmitter`.
 
 Selectors (`selectors.ts`): `getVisibleMaterials`, `getMaterialsByCategory`, `searchMaterials`
-(name, tags, translated category), `getSortedVariants(material, userVariants)` (mm before
-inch, then by resolved thickness), `getPresetsForContext(material, model, module, userData,
-variantId?)` → `ResolvedPresetRow[]` (`state: 'default' | 'customized' | 'user'`, per-DPI
-catalog presets get a " - N DPI" suffix in the browser only).
+(name, tags, translated category), `getSortedVariants(material, userVariants)` (every
+variant, mm before inch, then by resolved thickness — duplicate checks and ref lookups),
+`getVisibleVariants(material, model, module, userData)` (the machine-filtered subset the UI
+lists; `VariantUserData` = the user-data fields it reads), `getPresetsForContext(material,
+model, module, userData, variantId?)` → `ResolvedPresetRow[]` (`state: 'default' |
+'customized' | 'user'`, per-DPI catalog presets get a " - N DPI" suffix in the browser only).
 
 ## UI structure
 
@@ -175,7 +184,9 @@ catalog presets get a " - N DPI" suffix in the browser only).
   `showMaterialEditorModal`), while `show.tsx` at the folder root owns `showMaterialBrowser`
   so nothing under `editors/` imports the dialog upward. Add-from-layer and Move both offer
   a Thickness scope ('-' = whole material) via `utils/materialTargetOptions.ts`
-  (`getMaterialTargetOptions` / `getVariantTargetOptions` / `findTargetMaterial`).
+  (`getMaterialTargetOptions` / `getVariantTargetOptions(material, model, module, userData)` /
+  `findTargetMaterial`); `showMovePresetModal(presetId, { model, module })` carries the
+  machine context so the picker lists visible variants only.
 - `useMaterialBrowserStore.ts` — dialog-local state (activeTab, query, detailMaterialId,
   selectedVariantId, module, writeLayers, presetEditor). `reset(init)` on every open,
   seeded from the current layer's ref (R2: open focused on the applied material).
@@ -198,9 +209,11 @@ dpi_high/detailed/ultra_power, region, status, source, image_filename`) plus an
    = 15, 10W diode = 1, 20W diode = 2, 1064 = 4, PRINTER = 5, PRINTER_4C = 7).
 2. `repeat = 1` in the CSV is the default — don't write it. `status = no_preset` rows are
    display-only materials (kept in mapping/i18n, hidden until presets exist).
-3. New `preset_key`s: add to presets.ts, `presetMappings`, and (if a new material) a
-   `materialDefs` entry + `en.ts`/`zh-tw.ts` names. New thicknesses = new variants.
-4. Run `material-catalog` specs (`index.spec.ts` diffs the mapping against the real presets.ts; the
+3. New `preset_key`s: add to `material-catalog/presets.ts` (browser-only — legacy mode has no
+   dropdown label for them), `presetMappings`, and (if a new material) a `materialDefs` entry +
+   `en.ts`/`zh-tw.ts` names. New thicknesses = new variants. Value or scope changes to keys
+   already in presets.ts stay in presets.ts and reach legacy mode too.
+4. Run `material-catalog` specs (`index.spec.ts` diffs the mapping against both real preset tables; the
    builder-shape snapshot in `shape.spec.ts` uses a fixed 3-key fixture and should NOT change).
    If flux-id needs a fresh import seed, generate it
    from the real builder (throwaway spec calling `getBundledCatalog()` in mm mode, strip
