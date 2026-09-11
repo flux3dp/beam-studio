@@ -200,7 +200,9 @@ dpi_high/detailed/ultra_power, region, status, source, image_filename`) plus an
    display-only materials (kept in mapping/i18n, hidden until presets exist).
 3. New `preset_key`s: add to presets.ts, `presetMappings`, and (if a new material) a
    `materialDefs` entry + `en.ts`/`zh-tw.ts` names. New thicknesses = new variants.
-4. Update the catalog snapshot with `-u`. If flux-id needs a fresh import seed, generate it
+4. Run `material-catalog` specs (`index.spec.ts` diffs the mapping against the real presets.ts; the
+   builder-shape snapshot in `shape.spec.ts` uses a fixed 3-key fixture and should NOT change).
+   If flux-id needs a fresh import seed, generate it
    from the real builder (throwaway spec calling `getBundledCatalog()` in mm mode, strip
    `image` — the seed never carries images) and copy it to
    `flux-id/fluxid/apps/beam_studio/tests/fixtures/material-catalog-seed.json`; it is not
@@ -212,8 +214,9 @@ Retiring or renaming a presets.ts key is **not** part of this: it touches
 
 ## Tests
 
-- `constants/material-catalog/index.spec.ts` — mapping completeness + catalog snapshot
-  (mm) + inch-mode variant checks.
+- `constants/material-catalog/index.spec.ts` — mapping completeness + builder rules against the
+  real presets.ts (mm + inch-mode variant checks); `shape.spec.ts` — output-shape snapshot on a
+  3-key mocked preset set (stable across PM packages).
 - `stores/materialStore/index.spec.ts` — actions, migration, never-writes-`presets`.
 - `helpers/materials/material-apply.spec.ts`, `helpers/api/material-catalog/*.spec.ts`
   (selectors, cache, utils, thickness), `useAppliedMaterial.spec.ts`,

@@ -180,8 +180,4 @@ describe('getBundledCatalog', () => {
     expect(built.frequency).toBe(source.frequency);
     expect(built.fillInterval).toBe(source.fillInterval);
   });
-
-  test('catalog snapshot', () => {
-    expect(catalog).toMatchSnapshot();
-  });
 });
