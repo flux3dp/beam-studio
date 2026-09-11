@@ -1742,6 +1742,7 @@ const lang: ILang = {
     canvas_controls: {
       back: 'Back',
       bottom: 'Bottom',
+      custom: 'Custom View',
       front: 'Front',
       isometric: 'Isometric',
       left: 'Left',

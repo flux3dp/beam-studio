@@ -2,33 +2,21 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-jest.mock('@core/app/widgets/ContextMenu', () => ({
-  __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => children,
-}));
-jest.mock('@core/helpers/useI18n', () => () => ({
-  inner_engraving: {
-    canvas_controls: {
-      back: 'localized back',
-      bottom: 'localized bottom',
-      front: 'localized front',
-      isometric: 'localized isometric',
-      left: 'localized left',
-      move: 'localized move',
-      orthographic: 'localized orthographic',
-      perspective: 'localized perspective',
-      right: 'localized right',
-      rotate: 'localized rotate',
-      scale: 'localized scale',
-      top: 'localized top',
-    },
-  },
-}));
+jest.mock(
+  '@core/app/widgets/ContextMenu',
+  () =>
+    ({ children }: { children: React.ReactNode }) =>
+      children,
+);
 
 import { ObjectControls, ViewControls } from './CanvasControls';
 import { useViewStore } from './viewStore';
 
 describe('CanvasControls', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
   test('renders the localized labels for the selected controls', () => {
     useViewStore.setState({
       projection: 'perspective',
@@ -43,8 +31,17 @@ describe('CanvasControls', () => {
       </>,
     );
 
-    expect(getByText('localized move')).toBeInTheDocument();
-    expect(getByText('localized isometric')).toBeInTheDocument();
-    expect(getByText('localized perspective')).toBeInTheDocument();
+    expect(getByText('Move')).toBeInTheDocument();
+    expect(getByText('Isometric')).toBeInTheDocument();
+    expect(getByText('Perspective')).toBeInTheDocument();
+  });
+
+  test('renders a localized label when the current view is custom but not selectable', () => {
+    useViewStore.setState({ view: { preset: 'custom', version: 1 } });
+
+    const { getByText, queryByText } = render(<ViewControls />);
+
+    expect(getByText('Custom View')).toBeInTheDocument();
+    expect(queryByText('custom')).not.toBeInTheDocument();
   });
 });

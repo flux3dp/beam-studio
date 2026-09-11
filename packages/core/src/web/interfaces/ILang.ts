@@ -1741,6 +1741,7 @@ export interface ILang {
     canvas_controls: {
       back: string;
       bottom: string;
+      custom: string;
       front: string;
       isometric: string;
       left: string;

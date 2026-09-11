@@ -1743,6 +1743,7 @@ const lang: ILang = {
     canvas_controls: {
       back: '后视图',
       bottom: '底视图',
+      custom: '自定义视角',
       front: '前视图',
       isometric: '等角视图',
       left: '左视图',

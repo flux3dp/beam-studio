@@ -14,16 +14,18 @@ const toMenuItems = (options: Array<{ label: string; value: string }>): MenuProp
   options.map(({ label, value }) => ({ key: value, label }));
 
 const MenuSelect = ({
+  fallbackLabel,
   items,
   onChange,
   value,
 }: {
+  fallbackLabel?: React.ReactNode;
   items: MenuProps['items'];
   onChange: (value: string) => void;
   value: string;
 }): React.JSX.Element => {
   const selected = items?.find((item) => item && 'key' in item && item.key === value);
-  const label = selected && 'label' in selected ? selected.label : value;
+  const label = selected && 'label' in selected ? selected.label : (fallbackLabel ?? value);
 
   return (
     <ContextMenu items={items} onClick={({ key }) => onChange(key)} trigger={['contextMenu', 'click']}>
@@ -81,6 +83,7 @@ export const ViewControls = (): React.JSX.Element => {
   return (
     <div className={styles.controls}>
       <MenuSelect
+        fallbackLabel={view.preset === 'custom' ? t.custom : undefined}
         items={viewItems}
         onChange={(value) => requestView(value as Exclude<ViewPreset, 'custom'>)}
         value={view.preset}

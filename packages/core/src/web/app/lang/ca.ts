@@ -1743,6 +1743,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     canvas_controls: {
       back: 'Back',
       bottom: 'Bottom',
+      custom: 'Custom View',
       front: 'Front',
       isometric: 'Isometric',
       left: 'Left',
