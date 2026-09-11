@@ -27,7 +27,10 @@ const localeInRegion: Record<Exclude<MaterialRegion, 'global'>, () => boolean> =
   us: () => localeHelper.isNorthAmerica,
 };
 
+/** Flip once the 2.7.2 preset package is confirmed; until then only dev and the local flag see the browser */
+const materialBrowserReleased = false;
+
 export const checkMaterialBrowser = (): boolean =>
   isDev() ||
   window?.localStorage?.getItem('dev-material-browser') === 'true' ||
-  materialBrowserRegions.some((region) => localeInRegion[region]());
+  (materialBrowserReleased && materialBrowserRegions.some((region) => localeInRegion[region]()));
