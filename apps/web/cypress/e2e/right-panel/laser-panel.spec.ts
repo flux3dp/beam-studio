@@ -18,7 +18,7 @@ describe('manipulate laser panel', () => {
 
   it('should have correct presets length', () => {
     cy.get('button[title="Manage Parameters"]').click();
-    cy.get(`div[class*="${presetManagementPrefix}list"]`).children().should('have.length', '15');
+    cy.get(`div[class*="${presetManagementPrefix}list"]`).children().should('have.length', '18');
   });
 
   it('reset the parameter', () => {
