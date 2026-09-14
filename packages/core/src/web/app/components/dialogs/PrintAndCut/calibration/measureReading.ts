@@ -174,6 +174,7 @@ export const measureReading = async (
         scratchLengthsMm: rounded(lines.scratchLengthsMm),
         scratchMm: rounded(lines.scratchMm),
       });
+
       if (isDev()) {
         console.log(`print-and-cut read-scales ${axis}`, { estimate, lines, profiles });
         logDebugCrop(image, ratio, bbox, transform, axis, lines);
