@@ -1,3 +1,5 @@
+import { renderHook } from '@testing-library/react';
+
 const mockGetObjectLayer = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-helper', () => ({
@@ -5,12 +7,10 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
 }));
 
 jest.mock('@core/app/stores/globalPreferenceStore', () => ({
-  useGlobalPreferenceStore: jest.fn(),
+  useGlobalPreferenceStore: jest.fn((selector) => selector({ use_layer_color: true })),
 }));
 
-jest.mock('@core/app/stores/layer/layerStore', () => jest.fn());
-
-import { getObjectLayerState } from './useLayerColor';
+import { getObjectLayerState, useObjectLayerState } from './useLayerColor';
 
 describe('getObjectLayerState', () => {
   beforeEach(() => {
@@ -53,6 +53,19 @@ describe('getObjectLayerState', () => {
       color: '#000',
       isLocked: false,
       isVisible: false,
+    });
+  });
+
+  test('reads layer state through the current named layer store export', () => {
+    const layer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+    layer.setAttribute('data-color', '#123456');
+    mockGetObjectLayer.mockReturnValue({ elem: layer, title: 'Layer 1' });
+
+    expect(renderHook(() => useObjectLayerState('projection')).result.current).toEqual({
+      color: '#123456',
+      isLocked: false,
+      isVisible: true,
     });
   });
 });

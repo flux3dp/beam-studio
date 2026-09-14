@@ -1,5 +1,5 @@
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 
 export interface ObjectLayerState {
