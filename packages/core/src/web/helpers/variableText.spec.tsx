@@ -170,6 +170,7 @@ import {
   hasVariableText,
   isVariableTextSupported,
   removeVariableText,
+  withVariableTextOnly,
 } from './variableText';
 
 describe('test variableText helper', () => {
@@ -405,6 +406,43 @@ describe('test variableText helper', () => {
     expect(mockClearSelection).toHaveBeenCalledTimes(2);
     expect(mockClear).toHaveBeenCalledTimes(2);
     expect(document.body).toBe(expectedRevertResult);
+  });
+
+  test('withVariableTextOnly restores extracted elements when baking fails', async () => {
+    const error = new Error('Failed to get localized time');
+    const handler = { extract: jest.fn(), revert: jest.fn() };
+    const fn = jest.fn();
+
+    document.body.innerHTML = '<g class="layer"><text data-vt-type="2"><tspan>YYYY</tspan></text></g>';
+    mockGetLocalizedTime.mockRejectedValueOnce(error);
+
+    await expect(withVariableTextOnly(handler, fn)).rejects.toBe(error);
+    expect(handler.extract).toHaveBeenCalledTimes(1);
+    expect(handler.revert).toHaveBeenCalledTimes(1);
+    expect(fn).not.toHaveBeenCalled();
+  });
+
+  test('withVariableTextOnly restores extracted elements when the task fails', async () => {
+    const error = new Error('Failed to export');
+    const handler = { extract: jest.fn(), revert: jest.fn() };
+
+    await expect(withVariableTextOnly(handler, () => Promise.reject(error), { bake: false })).rejects.toBe(error);
+    expect(handler.extract).toHaveBeenCalledTimes(1);
+    expect(handler.revert).toHaveBeenCalledTimes(1);
+  });
+
+  test('withVariableTextOnly restores extracted elements when reverting the bake fails', async () => {
+    const error = new Error('Failed to revert bake');
+    const handler = { extract: jest.fn(), revert: jest.fn() };
+
+    document.body.innerHTML = '';
+    mockUnapply.mockImplementationOnce(() => {
+      throw error;
+    });
+
+    await expect(withVariableTextOnly(handler, jest.fn())).rejects.toBe(error);
+    expect(handler.extract).toHaveBeenCalledTimes(1);
+    expect(handler.revert).toHaveBeenCalledTimes(1);
   });
 });
 

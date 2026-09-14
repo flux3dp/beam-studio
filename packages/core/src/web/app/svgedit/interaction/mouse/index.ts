@@ -16,6 +16,7 @@ import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { isNounProjectElement } from '@core/app/svgedit/utils/nounProject';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -1225,7 +1226,12 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           setMouseMode('select');
           t = evt.target;
 
-          if (selectedElements[0].nodeName === 'path' && selectedElements[1] == null) {
+          if (
+            selectedElements[0].nodeName === 'path' &&
+            selectedElements[1] == null &&
+            // licensed artwork is not ours to reshape, so a second click leaves it selected
+            !isNounProjectElement(selectedElements[0])
+          ) {
             // if it was a path
             svgCanvas.pathActions.select(selectedElements[0]);
           } else if (evt.shiftKey) {

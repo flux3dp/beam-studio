@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Poista gradientti käytöstä ennen tämän toiminnon käyttöä.',
           disabled_by_infilled: 'Sulje täyttö ennen tämän toiminnon käyttöä.',
           disabled_by_infilled_and_variable_text: 'Sulje täyttö ja muuttuva teksti ennen tämän toiminnon käyttöä.',
+          disabled_by_noun_project: 'Noun Project -muodot ovat tekijänoikeussuojan alaisia, joten niiden polkuja ei voi muokata.',
           disabled_by_variable_text: 'Sulje muuttuva teksti ennen tämän toiminnon käyttöä.',
           disassemble_use: 'Purkaa',
           disassembling: 'Purkaa...',

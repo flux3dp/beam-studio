@@ -295,6 +295,24 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
   });
 
+  test('path from the Noun Project cannot be edited', () => {
+    // licensed artwork: the same reason exports leave it out
+    document.body.innerHTML = '<path id="svg_1" data-np="1" />';
+
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
+
+    expect(container.querySelector('#edit_path')).toBeDisabled();
+
+    fireEvent.click(getByText(tActionPanel.edit_path));
+    expect(pathActions.toEditMode).not.toHaveBeenCalled();
+
+    // the rest of the path actions stay available
+    fireEvent.click(getByText(tActionPanel.decompose_path));
+    expect(decomposePath).toHaveBeenCalledTimes(1);
+  });
+
   test('path', () => {
     document.body.innerHTML = '<path id="svg_1" />';
 

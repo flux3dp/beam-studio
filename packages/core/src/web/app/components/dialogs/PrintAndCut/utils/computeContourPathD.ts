@@ -10,6 +10,7 @@ import { ARC_TOLERANCE, MITER_LIMIT, SCALE_FACTOR } from '@core/helpers/clipper/
 import { switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
 import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
 import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
+import { convertVariableText } from '@core/helpers/variableText';
 
 import { getContentsLayers } from './contentsLayers';
 
@@ -80,37 +81,43 @@ const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null>
   // serialization must happen inside switchSymbolWrapper: image symbols use blob
   // urls that cannot load in a standalone svg string, so uses are switched to the
   // original vector symbols while the string is built
-  const contentsLayers = getContentsLayers();
-  // the traced silhouette becomes the cut path, so the raster has to use the same faces the
-  // canvas does: the isolated <img> render cannot see the app document's webfonts
-  const fontFaceCss = await buildWebFontFaceCss(contentsLayers);
-  const canvas = await switchSymbolWrapper(() => {
-    const layersHtml = contentsLayers
-      .map((layerGroup) => {
-        const clone = layerGroup.cloneNode(true) as SVGGElement;
+  const canvas = await switchSymbolWrapper(async () => {
+    const revertVariableText = await convertVariableText();
 
-        clone.removeAttribute('clip-path');
-        // content layers can be hidden (tagged by Finish)
-        clone.removeAttribute('display');
+    try {
+      const contentsLayers = getContentsLayers();
+      // the traced silhouette becomes the cut path, so the raster has to use the same faces the
+      // canvas does: the isolated <img> render cannot see the app document's webfonts
+      const fontFaceCss = await buildWebFontFaceCss(contentsLayers);
+      const layersHtml = contentsLayers
+        .map((layerGroup) => {
+          const clone = layerGroup.cloneNode(true) as SVGGElement;
 
-        return clone.outerHTML;
-      })
-      .join('');
-    const svgString = `
-    <svg
-      width="${width}"
-      height="${height}"
-      viewBox="${printingContentsBBox.x} ${printingContentsBBox.y} ${width} ${height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${fontFaceCss}
-      ${findDefs().outerHTML}
-      ${layersHtml}
-    </svg>`;
+          clone.removeAttribute('clip-path');
+          // content layers can be hidden (tagged by Finish)
+          clone.removeAttribute('display');
 
-    return svgStringToCanvas(svgString, width, height);
+          return clone.outerHTML;
+        })
+        .join('');
+      const svgString = `
+      <svg
+        width="${width}"
+        height="${height}"
+        viewBox="${printingContentsBBox.x} ${printingContentsBBox.y} ${width} ${height}"
+        xmlns:svg="http://www.w3.org/2000/svg"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+      >
+        ${fontFaceCss}
+        ${findDefs().outerHTML}
+        ${layersHtml}
+      </svg>`;
+
+      return await svgStringToCanvas(svgString, width, height);
+    } finally {
+      revertVariableText?.();
+    }
   });
 
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));

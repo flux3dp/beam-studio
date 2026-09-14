@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Schakel de verloopfunctie uit voordat u deze functie gebruikt.',
           disabled_by_infilled: 'Sluit de vulling voordat u deze functie gebruikt.',
           disabled_by_infilled_and_variable_text: 'Sluit de vulling en de variabele tekst voordat u deze functie gebruikt.',
+          disabled_by_noun_project: 'Vormen uit het Noun Project zijn beschermd door de intellectuele eigendomswet, daarom kunnen hun paden niet worden bewerkt.',
           disabled_by_variable_text: 'Sluit de variabele tekst voordat u deze functie gebruikt.',
           disassemble_use: 'Demonteren',
           disassembling: 'Aan het demonteren...',

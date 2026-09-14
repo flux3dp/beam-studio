@@ -46,11 +46,12 @@ export const exportAsBVG = async (): Promise<boolean> => {
     removeNPElementsWrapper(() =>
       switchSymbolWrapper(async () => {
         const revert = await convertVariableText();
-        const content = svgCanvas.getSvgString();
 
-        revert?.();
-
-        return content;
+        try {
+          return svgCanvas.getSvgString();
+        } finally {
+          revert?.();
+        }
       }),
     );
   const newFilePath = await dialog.writeFileDialog(getContent, langFile.save_scene, defaultFileName, [
@@ -78,17 +79,24 @@ export const exportAsSVG = async (): Promise<void> => {
   svgCanvas.removeUnusedDefs();
 
   const getContent = async () => {
-    const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
-    const allLayers = document.querySelectorAll('g.layer');
+    const reverts: Array<(() => void) | null | undefined> = [];
+    const layers = Array.from(document.querySelectorAll<SVGGElement>('#svgcontent g.layer'));
+    const clipPaths = layers.map((layer) => layer.getAttribute('clip-path'));
 
-    allLayers.forEach((layer) => layer.removeAttribute('clip-path'));
+    try {
+      reverts.push(await convertVariableText(), (await convertAllTextToPath()).revert);
+      layers.forEach((layer) => layer.removeAttribute('clip-path'));
 
-    const res = removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
+      return await removeNPElementsWrapper(() => switchSymbolWrapper(() => svgCanvas.getSvgString({ unit: 'mm' })));
+    } finally {
+      layers.forEach((layer, index) => {
+        const clipPath = clipPaths[index];
 
-    allLayers.forEach((layer) => layer.setAttribute('clip-path', 'url(#scene_mask)'));
-    reverts.toReversed().forEach((revert) => revert?.());
-
-    return res;
+        if (clipPath === null) layer.removeAttribute('clip-path');
+        else layer.setAttribute('clip-path', clipPath);
+      });
+      reverts.toReversed().forEach((revert) => revert?.());
+    }
   };
   const defaultFileName = getDefaultFileName();
   const langFile = i18n.lang.topmenu.file;
@@ -107,15 +115,21 @@ export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
 
   const getContent = async () => {
     const revert = await convertVariableText();
-    // the isolated <img> render cannot see the app document's webfonts, so inline their bytes
-    // instead of converting text to paths
-    const fontFaceCss = await buildWebFontFaceCss([document.getElementById('svgcontent')!]);
-    const output = switchSymbolWrapper(() => svgCanvas.getSvgString()).replace(
-      /<svg[^>]*>/,
-      (svgTag) => svgTag + fontFaceCss,
-    );
+    let output: string;
 
-    revert?.();
+    try {
+      // the isolated <img> render cannot see the app document's webfonts, so inline their bytes
+      // instead of converting text to paths
+      const fontFaceCss = await buildWebFontFaceCss([document.getElementById('svgcontent')!]);
+
+      output = (await switchSymbolWrapper(() => svgCanvas.getSvgString())).replace(
+        /<svg[^>]*>/,
+        (svgTag) => svgTag + fontFaceCss,
+      );
+    } finally {
+      revert?.();
+    }
+
     Progress.openNonstopProgress({ id: 'export_image', message: langFile.converting });
 
     const { height, width } = workareaManager;
@@ -158,14 +172,20 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
     topmenu: { file: lang },
   } = i18n.lang;
   const revert = await convertVariableText();
-  const layers = layerManager
-    .getAllLayers()
-    .map((layer) => layer.getGroup())
-    .filter((layerG) => getData(layerG, 'module') === LayerModule.UV_PRINT);
-  const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
-  const defaultFileName = getDefaultFileName();
+  let base64: string;
 
-  revert?.();
+  try {
+    const layers = layerManager
+      .getAllLayers()
+      .map((layer) => layer.getGroup())
+      .filter((layerG) => getData(layerG, 'module') === LayerModule.UV_PRINT);
+
+    base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
+  } finally {
+    revert?.();
+  }
+
+  const defaultFileName = getDefaultFileName();
 
   const pdf = new jsPDF().addImage(base64, 'PNG', 0, 0, 210, 297);
   const getContent = () => new Blob([pdf.output('blob')], { type: 'application/pdf' });
