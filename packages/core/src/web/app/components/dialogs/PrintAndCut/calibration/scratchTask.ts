@@ -42,7 +42,7 @@ export const getDefaultScratchParams = (model: WorkAreaModel): ScratchParams =>
  * document flags travel as parser arguments, so the svg itself stays bare.
  */
 export const buildScratchSvg = (bbox: BBox, transform: RigidTransform, { power, speed }: ScratchParams): string => {
-  const { model, modelHeight, width } = workareaManager;
+  const { height, minY, model, width } = workareaManager;
   const paths = getScaleSegments(bbox, 'scratch')
     .map(({ from, to }) => {
       const a = applyRigidTransform(from, transform);
@@ -59,8 +59,8 @@ export const buildScratchSvg = (bbox: BBox, transform: RigidTransform, { power, 
   ].join(' ');
 
   return (
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${modelHeight}" viewBox="0 0 ${width} ${modelHeight}">` +
-    `<g class="layer" ${layerAttrs}><title>scratch</title>${paths}</g></svg>`
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">` +
+    `<g class="layer" ${layerAttrs}><title>scratch</title><g transform="translate(0, ${-minY})">${paths}</g></g></svg>`
   );
 };
 
@@ -81,7 +81,8 @@ export const buildScratchThumbnail = async (svg: string, bbox: BBox, transform: 
   ].map((p) => applyRigidTransform(p, transform));
   const xs = corners.map(({ x }) => x);
   const ys = corners.map(({ y }) => y);
-  const crop = { height: 0, width: 0, x: Math.min(...xs), y: Math.min(...ys) };
+  // the combs sit in the expanded frame, see buildScratchSvg
+  const crop = { height: 0, width: 0, x: Math.min(...xs), y: Math.min(...ys) - workareaManager.minY };
 
   crop.width = Math.max(...xs) - crop.x;
   crop.height = Math.max(...ys) - crop.y;
