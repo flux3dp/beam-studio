@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Nonaktifkan gradasi sebelum menggunakan fitur ini.',
           disabled_by_infilled: 'Tutup infill sebelum menggunakan fitur ini.',
           disabled_by_infilled_and_variable_text: 'Tutup infill dan teks variabel sebelum menggunakan fitur ini.',
+          disabled_by_noun_project: 'Bentuk dari Noun Project dilindungi oleh hukum kekayaan intelektual, sehingga jalurnya tidak dapat diedit.',
           disabled_by_variable_text: 'Tutup teks variabel sebelum menggunakan fitur ini.',
           disassemble_use: 'Lepaskan',
           disassembling: 'Membongkar...',

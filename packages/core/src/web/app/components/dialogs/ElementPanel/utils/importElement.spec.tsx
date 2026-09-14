@@ -121,6 +121,7 @@ import { importElementToCanvas } from './importElement';
 describe('importElementToCanvas', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPathEl.removeAttribute('data-np');
   });
 
   describe('JSON element import (builtInElements)', () => {
@@ -167,6 +168,7 @@ describe('importElementToCanvas', () => {
       expect(mockPathItem.scale).toHaveBeenCalled();
       expect(mockAddSvgElementFromJson).toHaveBeenCalledTimes(1);
       expect(mockAddSvgElementFromJson).toHaveBeenCalledWith(expect.objectContaining({ element: 'path' }));
+      expect(mockPathEl).not.toHaveAttribute('data-np');
       expect(mockConvertPath).toHaveBeenCalledTimes(1);
       expect(mockFixEnd).toHaveBeenCalledTimes(1);
       expect(mockUpdateElementColor).toHaveBeenCalledTimes(1);
@@ -238,6 +240,7 @@ describe('importElementToCanvas', () => {
       expect(mockFetch).toHaveBeenCalledWith('data:image/svg+xml;base64,1234');
       expect(mockImportSVG).toHaveBeenCalled();
       expect(mockAddSvgElementFromJson).toHaveBeenCalledTimes(1);
+      expect(mockPathEl).toHaveAttribute('data-np', '1');
       expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
       expect(mockPopById).toHaveBeenCalledWith('import-noun-project-svg');
     });

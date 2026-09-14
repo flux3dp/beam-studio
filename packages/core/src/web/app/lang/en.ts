@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Please disable gradient before using this feature.',
           disabled_by_infilled: 'Please close infill before using this feature.',
           disabled_by_infilled_and_variable_text: 'Please close infill and variable text before using this feature.',
+          disabled_by_noun_project: 'Shapes from the Noun Project are protected by intellectual property law, so their paths cannot be edited.',
           disabled_by_variable_text: 'Please close variable text before using this feature.',
           disassemble_use: 'Disassemble',
           disassembling: 'Disassembling...',

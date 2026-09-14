@@ -44,6 +44,10 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
 
   useElements.forEach((useElement) => SymbolMaker.switchImageSymbol(useElement, false));
 
+  // Loaded on demand because webFontFaceCss reaches font-funcs, which imports this folder's index.
+  const { buildWebFontFaceCss } = await import('@core/helpers/image/webFontFaceCss');
+  const fontFaceCss = await buildWebFontFaceCss([clonedSvgContent]);
+
   const svgString = `
     <svg
       width="${imageWidth}"
@@ -53,6 +57,7 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+      ${fontFaceCss}
       ${svgDefs.outerHTML}
       ${clonedSvgContent.innerHTML}
     </svg>`;

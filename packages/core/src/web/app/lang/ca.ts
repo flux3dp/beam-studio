@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: "Si us plau, desactiva el degradat abans d'utilitzar aquesta funció.",
           disabled_by_infilled: "Si us plau, tanca el farciment abans d'utilitzar aquesta funció.",
           disabled_by_infilled_and_variable_text: "Si us plau, tanca el farciment i el text variable abans d'utilitzar aquesta funció.",
+          disabled_by_noun_project: 'Les formes del Noun Project estan protegides per la llei de propietat intel·lectual, per tant els seus traçats no es poden editar.',
           disabled_by_variable_text: "Si us plau, tanca el text variable abans d'utilitzar aquesta funció.",
           disassemble_use: 'Desmuntar',
           disassembling: 'Desmuntant...',

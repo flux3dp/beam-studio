@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'この機能を使用する前に、シェーディングを無効にしてください。',
           disabled_by_infilled: 'この機能を使用する前に、インフィルを閉じてください。',
           disabled_by_infilled_and_variable_text: 'この機能を使用する前に、インフィルと可変テキストを閉じてください。',
+          disabled_by_noun_project: 'Noun Project の図形は知的財産法によって保護されているため、パスを編集できません。',
           disabled_by_variable_text: 'この機能を使用する前に、可変テキストを閉じてください。',
           disassemble_use: '逆アセンブル',
           disassembling: '逆アセンブル中…',

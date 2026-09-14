@@ -42,7 +42,7 @@ const collectPathItems = (item: paper.Item): paper.PathItem[] => {
  * Parse SVG string with paper.js, unite all paths into one, create element via addSvgElementFromJson.
  * Scale to fit 500x500 (matching builtInElements convention).
  */
-const importSvgPaths = (svgString: string): void => {
+const importSvgPaths = (svgString: string, isFromNounProject = false): void => {
   const canvas = document.createElement('canvas');
   const project = new paper.Project(canvas);
 
@@ -83,6 +83,8 @@ const importSvgPaths = (svgString: string): void => {
       },
       element: 'path',
     }) as SVGPathElement;
+
+    if (isFromNounProject) pathEl.setAttribute('data-np', '1');
 
     pathEl.setAttribute('d', svgCanvas.pathActions.convertPath(pathEl, false));
     fixEnd(pathEl);
@@ -137,7 +139,7 @@ const importNPIcon = async (id: string): Promise<void> => {
     const res = await fetch(base64);
     const svgString = await res.text();
 
-    importSvgPaths(svgString);
+    importSvgPaths(svgString, true);
   } finally {
     progressCaller.popById(progressId);
   }

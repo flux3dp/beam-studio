@@ -893,6 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Inaktivera övertoning innan du använder den här funktionen.',
           disabled_by_infilled: 'Stäng fyllningen innan du använder denna funktion.',
           disabled_by_infilled_and_variable_text: 'Stäng fyllningen och den variabla texten innan du använder denna funktion.',
+          disabled_by_noun_project: 'Former från Noun Project skyddas av upphovsrätten, därför kan deras banor inte redigeras.',
           disabled_by_variable_text: 'Stäng den variabla texten innan du använder denna funktion.',
           disassemble_use: 'Demontera',
           disassembling: 'Demonterar...',
