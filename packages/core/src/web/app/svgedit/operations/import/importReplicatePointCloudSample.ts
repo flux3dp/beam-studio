@@ -11,9 +11,12 @@ import {
   type ReplicatePointCloudSample,
   type ReplicateSampleDisplay,
 } from '@core/helpers/image/replicatePointCloud';
+import { isUvDev2 } from '@core/helpers/is-dev';
 
 import { insertStlGeometry } from './importStl';
 import readBitmapFile from './readBitmapFile';
+
+void isUvDev2();
 
 const PROGRESS_ID = 'import-replicate-point-cloud';
 const TARGET_WIDTH_SCENE = 1000;

@@ -15,7 +15,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import { allowWebSwiftray, supportSwiftray } from '@core/helpers/is-dev';
+import { isUvDev2, supportSwiftray } from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
 import Logger from '@core/helpers/logger';
@@ -132,7 +132,7 @@ class SwiftrayClient extends EventEmitter {
     this.socket.onerror = this.handleError.bind(this);
     this.socket.onmessage = this.handleMessage.bind(this);
 
-    window.sw_ws = this.socket;
+    if (isUvDev2()) window.sw_ws = this.socket;
   }
 
   private async updateStatus(newStatus: TStatus): Promise<void> {
@@ -644,15 +644,13 @@ class SwiftrayClient extends EventEmitter {
 }
 
 const checkSwiftray = async (): Promise<boolean> => {
-  return true;
+  if (isUvDev2()) return true;
 
   const res = supportSwiftray();
 
-  if (!res) {
-    return false;
-  }
+  if (!res || isWeb()) return false;
 
-  return isWeb() ? allowWebSwiftray() : Boolean(await communicator.invoke(BackendEvents.CheckSwiftray));
+  return Boolean(await communicator.invoke(BackendEvents.CheckSwiftray));
 };
 let hasSwiftray = false;
 

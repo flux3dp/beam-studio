@@ -5,7 +5,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 
 export interface Detail {
-  // A simple flag. TODO: change to precision config
+  // Whether this parameter accepts decimal values.
   allowDecimal?: boolean;
   // default value is used when the param is not set
   default: number;
@@ -122,27 +122,29 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
       minValue: 15,
       selected: 0,
     },
-    ...(limit.pulseWidth && {
-      pulseWidth: {
-        default: 350,
-        max: limit.pulseWidth.max,
-        maxValue: limit.pulseWidth.max,
-        min: limit.pulseWidth.min,
-        minValue: limit.pulseWidth.min,
-        selected: 2,
-      },
-    }),
-    ...(limit.qPulseWidth && {
-      qPulseWidth: {
-        allowDecimal: true,
-        default: 1,
-        max: limit.qPulseWidth.max,
-        maxValue: limit.qPulseWidth.max,
-        min: limit.qPulseWidth.min,
-        minValue: limit.qPulseWidth.min,
-        selected: 2,
-      },
-    }),
+    ...(laserType !== LaserType.Desktop &&
+      limit.pulseWidth && {
+        pulseWidth: {
+          default: 350,
+          max: limit.pulseWidth.max,
+          maxValue: limit.pulseWidth.max,
+          min: limit.pulseWidth.min,
+          minValue: limit.pulseWidth.min,
+          selected: 2,
+        },
+      }),
+    ...(laserType === LaserType.UV &&
+      limit.qPulseWidth && {
+        qPulseWidth: {
+          allowDecimal: true,
+          default: 1,
+          max: limit.qPulseWidth.max,
+          maxValue: limit.qPulseWidth.max,
+          min: limit.qPulseWidth.min,
+          minValue: limit.qPulseWidth.min,
+          selected: 2,
+        },
+      }),
   };
 };
 

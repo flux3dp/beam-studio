@@ -58,7 +58,8 @@ export const FOCAL_LENGTH_LIMIT = { max: 1000, min: 10 } as const;
  *
  * Cracking too close to a surface breaks it out, so both the fit-on-import check and the
  * "centre in the engravable area" action inset the material by this much. xTool leaves 4mm.
- * Dev-only setting for now (TODO.md 08/06 with PM), a document setting so it travels with the file.
+ * This setting is shown only in developer mode while the 4mm default is verified on real hardware.
+ * It remains a document setting so it travels with the file.
  */
 export const DEFAULT_SAFETY_MARGIN = 4;
 export const SAFETY_MARGIN_LIMIT = { max: 50, min: 0 } as const;
@@ -78,11 +79,10 @@ export const DEFAULT_MATERIAL = {
 } as const;
 
 /**
- * Per-object engraving parameters (TODO.md 第 6 點).
+ * Per-object engraving parameters.
  *
  * Kept per object rather than per layer, which is what the panel edits and what swiftray reads
- * first — it falls back to the layer when an attribute is absent, so both models work and the
- * per-object / per-layer question stays open (TODO.md 的 TBD).
+ * first. It falls back to the layer when an attribute is absent, so both models remain compatible.
  *
  * The defaults here are only what the panel shows for a fresh object; the backend has its own
  * matching defaults for the absent case, so the two must be kept in step.
@@ -91,7 +91,7 @@ export const ENGRAVING_MODES = ['line', 'dot'] as const;
 
 export type EngravingMode = (typeof ENGRAVING_MODES)[number];
 
-/** mm. Ranges are provisional until verified on real hardware (TODO.md 仍待補充的資訊 2). */
+/** Millimetres. These ranges are provisional until verified on real hardware. */
 export const DEFAULT_LAYER_HEIGHT = 0.1;
 export const DEFAULT_POINT_SPACING = 0.1;
 export const LAYER_HEIGHT_LIMIT = { max: 5, min: 0.001 } as const;

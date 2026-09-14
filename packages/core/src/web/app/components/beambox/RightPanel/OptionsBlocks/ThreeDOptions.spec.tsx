@@ -30,7 +30,7 @@ jest.mock(
       />
     ),
 );
-jest.mock('@core/helpers/is-dev', () => ({ todo: jest.fn() }));
+jest.mock('@core/helpers/is-dev', () => ({ isUvDev2: () => true }));
 jest.mock('@core/helpers/useI18n', () => () => ({
   inner_engraving_settings: {
     adaptive_layer_height: 'Adaptive Layer Height',

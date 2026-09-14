@@ -3,7 +3,6 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { checkFpm1UV } from '@core/helpers/checkFeature';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
-import { todo } from '@core/helpers/is-dev';
 import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
@@ -100,9 +99,6 @@ export const isInnerEngravingActive = (): boolean => {
 /** Hook form of {@link isInnerEngravingActive}. */
 export const useInnerEngravingActive = (): boolean => useDocumentStore(resolveInnerEngravingActive);
 
-todo(
-  '【Flux-id】myCloud 的 list API 要在 metadata 補一個內雕旗標，回傳到 IFile.innerEngraving —— 在那之前雲端檔案一律當成 2D。刻意不用工作區域推測：Promark UV 上的 2D 檔案會被誤判，而這裡只是底色，不值得用一個會錯的猜測換',
-);
 /**
  * Whether a file in a file browser should be presented as an inner engraving (3D) document.
  *
@@ -110,8 +106,8 @@ todo(
  * 2D thumbnails — which stands for the 2D canvas — is the wrong backdrop for it.
  *
  * Deliberately just the flag: the local browser reads it out of the .beam header, and the cloud
- * listing will carry it once the field exists (see the todo above). Until then a cloud file falls
- * back to the 2D presentation, which is the harmless direction to be wrong in.
+ * listing can carry the same field in its metadata. Until that field is available, a cloud file
+ * falls back to the 2D presentation rather than guessing from its Promark UV work area.
  */
 export const isInnerEngravingFile = (file: { innerEngraving?: boolean }): boolean => Boolean(file.innerEngraving);
 

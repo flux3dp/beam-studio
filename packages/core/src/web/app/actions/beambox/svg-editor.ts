@@ -1074,7 +1074,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             Progress.popById('loading_image');
             break;
           case 'stl':
-            // TODO: unit and up-axis options (a Blender export is usually Y-up)
+            // STL imports currently assume millimetres and Z-up; Blender commonly exports Y-up.
             // importStl runs its own pre-checks and progress, so the generic spinner goes first
             Progress.popById('loading_image');
             await importStl(file);

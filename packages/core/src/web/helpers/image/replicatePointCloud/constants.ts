@@ -1,5 +1,9 @@
+import { isUvDev2 } from '@core/helpers/is-dev';
+
 import { REPLICATE_CAPTURED_TEST_SAMPLES } from './capturedTests';
 import type { ReplicatePointCloudSample } from './types';
+
+void isUvDev2();
 
 /**
  * Frontend-only result fixtures. Local comparison runs are listed first; the public examples below

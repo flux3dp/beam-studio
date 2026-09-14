@@ -10,10 +10,7 @@ export const isParamsLabelDev = (): boolean => window?.localStorage?.getItem('pa
 export default isDev;
 
 export const isUvDev = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
-export const showDevMsg = (): boolean => window?.localStorage?.getItem('devMsg') === 'true';
-export const allowWebSwiftray = (): boolean => true;
-export const supportSwiftray = () => (allowWebSwiftray() || !isWeb() || isDev()) && getOS() !== 'Linux';
+// Alpha-only test and demonstration features. Keep separate so they can be removed before release.
+export const isUvDev2 = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
+export const supportSwiftray = () => (!isWeb() || isDev()) && getOS() !== 'Linux';
 export const mockT = (key: string) => key;
-export const todo = (msg: string) => console.warn(`TODO: ${msg}`);
-// esther ask/TODO: 這種形式的內容在 PR 前要處理掉
-// 另外，在 PR 前要移除 /TODO*/md

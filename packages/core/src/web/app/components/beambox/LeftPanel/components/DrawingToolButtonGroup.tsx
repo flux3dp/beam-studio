@@ -21,7 +21,7 @@ import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { type ReplicatePointCloudSample, type ReplicateSampleDisplay } from '@core/helpers/image/replicatePointCloud';
-import { isParamsLabelDev } from '@core/helpers/is-dev';
+import { isParamsLabelDev, isUvDev2 } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
@@ -63,6 +63,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     [mouseMode],
   );
   const isInnerEngravingMode = useInnerEngravingActive();
+  const showReplicateSamples = isInnerEngravingMode && isUvDev2();
   const [replicateModalOpen, setReplicateModalOpen] = useState(false);
   const modeRef = useRef(isInnerEngravingMode);
   const insertDefault3dText = (type: 'fit-text' | 'text') => {
@@ -147,7 +148,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         onClick: FnWrapper.importImage,
         supportedIn3D: true,
       })}
-      {isInnerEngravingMode
+      {showReplicateSamples
         ? renderToolButton({
             icon: <span style={{ fontSize: 20 }}>3D</span>,
             id: 'Replicate3DSamples',
@@ -156,7 +157,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
             supportedIn3D: true,
           })
         : null}
-      {isInnerEngravingMode && replicateModalOpen ? (
+      {showReplicateSamples && replicateModalOpen ? (
         <Replicate3DSampleModal onClose={() => setReplicateModalOpen(false)} onSelect={insertReplicateSample} />
       ) : null}
       <LeftPanelButtonGroup

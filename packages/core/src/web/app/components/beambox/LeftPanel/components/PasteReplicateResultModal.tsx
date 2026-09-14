@@ -9,8 +9,11 @@ import {
   type PastedReplicateModelId,
   type ReplicatePointCloudSample,
 } from '@core/helpers/image/replicatePointCloud';
+import { isUvDev2 } from '@core/helpers/is-dev';
 
 import styles from './PasteReplicateResultModal.module.scss';
+
+void isUvDev2();
 
 interface PasteReplicateResultModalProps {
   onAdd: (sample: ReplicatePointCloudSample) => void;

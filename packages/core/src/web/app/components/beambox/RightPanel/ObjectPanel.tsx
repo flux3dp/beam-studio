@@ -47,7 +47,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
   const elem = useSelectedElementStore((state) => state.selectedElement);
   // an STL object is a 3D mesh behind a projection rect: the rect's tagName says 'rect', so every
-  // dispatch here has to go through nodeType instead (TODO.md A-1)
+  // dispatch here has to go through nodeType instead
   const isStl = useSelectedElementStore((state) => state.nodeType) === 'stl';
   const sourceType = isPhotoPlaneProjection(elem) ? 'image' : elem ? getExtrusionSourceTagName(elem) : null;
   const groupAvailability = useSelectedElementStore(

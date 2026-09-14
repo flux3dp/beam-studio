@@ -1,3 +1,5 @@
+import { isUvDev2 } from '@core/helpers/is-dev';
+
 import type {
   PointCloudConversionOptions,
   ReplicatePointCloudFormat,
@@ -5,6 +7,8 @@ import type {
   ReplicateSampleCommercialUse,
   ReplicateSampleDisplay,
 } from './types';
+
+void isUvDev2();
 
 type JsonPath = ReadonlyArray<number | string>;
 

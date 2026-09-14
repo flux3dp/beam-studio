@@ -7,6 +7,7 @@ import { isParamsLabelDev } from '@core/helpers/is-dev';
 
 const mockSetMouseMode = jest.fn();
 const mockInsertDefaultTextAsStl = jest.fn();
+const mockImportReplicatePointCloudSample = jest.fn();
 let mockInnerEngraving = false;
 
 jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
@@ -21,6 +22,12 @@ jest.mock(
     (...args: unknown[]) =>
       mockInsertDefaultTextAsStl(...args),
 );
+jest.mock(
+  '@core/app/svgedit/operations/import/importReplicatePointCloudSample',
+  () =>
+    (...args: unknown[]) =>
+      mockImportReplicatePointCloudSample(...args),
+);
 
 const mockUseSelectTool = jest.fn();
 const mockImportImage = jest.fn();
@@ -33,6 +40,7 @@ jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
 jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({}),
 }));
+jest.mock('./Replicate3DSampleModal', () => () => null);
 
 const mockShowPassThrough = jest.fn();
 

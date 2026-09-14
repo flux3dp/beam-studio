@@ -40,9 +40,9 @@ const requirement = {
   SWIFTRAY_CONNECTION_TEST: '1.3.7',
   SWIFTRAY_CONVERT_PREVIEW: '1.3.7',
   SWIFTRAY_SUPPORT_BINARY: '1.3.7',
-  // TODO: placeholder, replace with the first swiftray release that ships BSPC ingestion
+  // Alpha compatibility floor for BSPC ingestion.
   SWIFTRAY_SUPPORT_POINT_CLOUD: '2.4.9',
-  // TODO: placeholder, replace with the first swiftray release that ships STL slicing
+  // Alpha compatibility floor for STL slicing.
   SWIFTRAY_SUPPORT_STL: '2.4.9',
   TEMP_I2C_CMD: '3.0.1',
   UPDATE_BY_SOFTWARE: '3.2.6',

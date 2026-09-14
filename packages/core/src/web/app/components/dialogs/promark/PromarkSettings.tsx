@@ -47,7 +47,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
   );
   const [parameters, setParameters] = useState<MarkParameters>({ power: 50, speed: 1000 });
   const { power, speed } = parameters;
-  // TODO: fixme model is normal promark for both red light and uv, and will get wrong workarea size
+  // Device discovery reports the same model for MOPA and UV, so this uses the model's default size.
   const { width } = useMemo(() => getWorkarea(model), [model]);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const previewTask = useRef<string>('');

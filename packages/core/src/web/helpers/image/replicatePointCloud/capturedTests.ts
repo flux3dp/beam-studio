@@ -1,4 +1,8 @@
+import { isUvDev2 } from '@core/helpers/is-dev';
+
 import type { ReplicatePointCloudSample } from './types';
+
+void isUvDev2();
 
 const ASSET_ROOT = 'core-img/replicate-3d';
 const TEST_1 = `${ASSET_ROOT}/test-1-standard.jpg`;

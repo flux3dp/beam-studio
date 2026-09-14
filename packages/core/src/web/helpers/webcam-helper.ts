@@ -4,8 +4,6 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import communicator from '@core/implementations/communicator';
 
-import { todo } from './is-dev';
-
 const askForPermission = async (): Promise<boolean> => {
   if (isWeb()) {
     try {
@@ -133,10 +131,8 @@ export class WebCamConnection {
   };
 
   getPicture = async ({ flip = false }: { flip?: boolean } = {}): Promise<Blob> => {
-    todo(
-      'Normal Promark cameras need flip = true, check if there is some method to distinguish between normal and UV. Also check if no-flip works for all UV',
-    );
-
+    // Normal Promark cameras require flipping; UV callers currently opt out because the device API
+    // does not expose a reliable camera-variant discriminator.
     const canvas = document.createElement('canvas');
 
     canvas.width = this.video.videoWidth;

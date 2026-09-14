@@ -36,7 +36,7 @@ interface Props {
 }
 
 /**
- * The inner engraving material: shape, size, position and refractive index (TODO.md 第 3 點).
+ * The inner engraving material: shape, size, position and refractive index.
  *
  * Saves straight into the document store, the same way RotarySettings does, so the material can be
  * adjusted from the canvas without going through DocumentSettings.
@@ -291,8 +291,8 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
             </Button>
           </div>
 
-          {/* dev only for now: the 4mm default comes from xTool and still needs verifying on real
-              hardware, so it is not something users should be tuning yet (TODO.md 08/06 with PM) */}
+          {/* The 4mm default comes from xTool and still needs verification on real hardware, so this
+              setting remains developer-only for now. */}
           {isDev() && (
             <>
               <div>

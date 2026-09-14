@@ -1,8 +1,12 @@
+import { isUvDev2 } from '@core/helpers/is-dev';
+
 import { PHOTO_3D_ATTR } from './constants';
 import type { StlEngravingParams } from './engravingParams';
 import { getStlEngravingParams } from './engravingParams';
 import { getPhotoTextureUrl } from './photoPlane';
 import { encodePointCloud } from './pointCloud';
+
+void isUvDev2();
 
 const MAX_SAMPLE_COUNT = 10_000_000;
 

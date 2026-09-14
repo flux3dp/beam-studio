@@ -1,9 +1,7 @@
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { LaserType } from '@core/app/constants/promark-constants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { showDevMsg } from '@core/helpers/is-dev';
 import storage from '@core/implementations/storage';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
@@ -16,14 +14,7 @@ const defaultValue: PromarkInfo = {
 
 const getFallbackSerial = (): string => storage.get('last-promark-serial') || 'no-serial';
 
-const eventEmitter = eventEmitterFactory.createEventEmitter('workarea');
-let messageCache = {
-  laserType: null as LaserType | null,
-  serial: null as null | string,
-  watt: null as null | number,
-};
-
-const _getSerial = (): string => {
+export const getSerial = (): string => {
   const { model, serial } = TopBarController.getSelectedDevice() ?? {};
 
   if (promarkModels.has(model!)) {
@@ -31,22 +22,6 @@ const _getSerial = (): string => {
   }
 
   return getFallbackSerial();
-};
-
-export const getSerial = (): string => {
-  const serial = _getSerial();
-
-  if (showDevMsg() && messageCache.serial !== serial) {
-    messageCache.serial = serial;
-    MessageCaller.openMessage({
-      content: `Current Promark Serial: ${serial}`,
-      level: MessageLevel.INFO,
-    });
-  }
-
-  eventEmitter.emit('UPDATE_PROMARK_INFO');
-
-  return serial;
 };
 
 /**
@@ -64,39 +39,17 @@ export const initPromarkInfo = (serial: string): void => {
 
 export const getPromarkInfo = (): PromarkInfo => {
   const serial = getSerial();
-  const data = promarkDataStore.get(serial, 'info') || defaultValue;
 
-  if (showDevMsg() && (messageCache.laserType !== data.laserType || messageCache.watt !== data.watt)) {
-    messageCache.laserType = data.laserType;
-    messageCache.watt = data.watt;
-
-    MessageCaller.openMessage({
-      content: `Current Promark Info: Laser Type - ${LaserType[data.laserType]}, Watt - ${data.watt}`,
-      level: MessageLevel.INFO,
-    });
-  }
-
-  eventEmitter.emit('UPDATE_PROMARK_INFO');
-
-  return data;
+  return promarkDataStore.get(serial, 'info') || defaultValue;
 };
 
 export const setPromarkInfo = (info: PromarkInfo): void => {
   const serial = getSerial();
 
   if (serial) {
-    if (showDevMsg()) {
-      MessageCaller.openMessage({
-        content: `Promark info updated. Serial: ${serial}. Data: ${JSON.stringify(info)}`,
-        level: MessageLevel.INFO,
-      });
-    }
-
     promarkDataStore.set(serial, 'info', info);
     eventEmitterFactory.createEventEmitter('canvas').emit('promark-info-changed', info);
   }
-
-  eventEmitter.emit('UPDATE_PROMARK_INFO');
 };
 
 export default {

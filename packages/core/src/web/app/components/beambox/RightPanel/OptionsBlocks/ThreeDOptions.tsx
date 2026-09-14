@@ -12,6 +12,7 @@ import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
 import { applyPhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloud';
 import { generatePhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloudGenerator';
 import UnitInput from '@core/app/widgets/UnitInput';
+import { isUvDev2 } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ThreeDOptions.module.scss';
@@ -32,6 +33,7 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
   const { inner_engraving_settings: t } = useI18n();
   const isInch = useStorageStore((state) => state.isInch);
   const isPhoto = isPhotoPlaneProjection(elem);
+  const showTestPointCloud = isPhoto && isUvDev2();
   const readParams = () => {
     const next = getStlEngravingParams(elem);
 
@@ -215,7 +217,7 @@ const ThreeDOptions = ({ elem, hideEngravingMode = false }: Props): React.JSX.El
           renderLengthInput('stl-point-spacing', params.pointSpacing, STL_ATTR.pointSpacing, POINT_SPACING_LIMIT),
           'point-spacing',
         )}
-      {isPhoto ? (
+      {showTestPointCloud ? (
         <Button block loading={isGenerating} onClick={generateTestPointCloud} size="small">
           {t.generate_test_point_cloud ?? 'Generate Test Point Cloud'}
         </Button>

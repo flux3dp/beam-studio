@@ -1,5 +1,4 @@
 import { checkFpm1UV } from '@core/helpers/checkFeature';
-import { todo } from '@core/helpers/is-dev';
 import type { Field, GalvoParameters, RedDot } from '@core/interfaces/Promark';
 
 export const workareaOptions = checkFpm1UV() ? ([70, 110, 150, 220] as const) : ([110, 150, 220] as const);
@@ -41,9 +40,8 @@ export const isPromarkWorkareaCompatible = (laserType: LaserType, size: number):
 export const getPromarkLaserSource = (laserType: unknown): PromarkLaserSource =>
   laserType === LaserType.UV ? 'UV' : 'MOPA';
 
-todo('Add Promark UV 5W param');
 // Recommended layer parameters for the Promark example file, keyed by laser type and watt.
-// pulseWidth only applies to MOPA sources.
+// pulseWidth only applies to MOPA sources. UV stays empty until hardware defaults are available.
 export const promarkExampleParams: Record<
   LaserType,
   Record<number, { frequency: number; power: number; pulseWidth?: number; speed: number }>

@@ -8,9 +8,12 @@ import {
   type ReplicatePointCloudSample,
   type ReplicateSampleDisplay,
 } from '@core/helpers/image/replicatePointCloud';
+import { isUvDev2 } from '@core/helpers/is-dev';
 
 import PasteReplicateResultModal from './PasteReplicateResultModal';
 import styles from './Replicate3DSampleModal.module.scss';
+
+void isUvDev2();
 
 interface Replicate3DSampleModalProps {
   onClose: () => void;

@@ -92,6 +92,7 @@ describe('getTableSetting', () => {
       const { maxSpeed, minSpeed } = getWorkarea('fpm1');
 
       expect(setting.fillInterval).toEqual({
+        allowDecimal: true,
         default: 0.01,
         max: 100,
         maxValue: 1,
@@ -124,13 +125,21 @@ describe('getTableSetting', () => {
 
       expect(setting.pulseWidth).toBeUndefined();
       // Exact key set: common params + promark params, nothing else.
-      expect(Object.keys(setting).sort()).toEqual(['fillInterval', 'frequency', 'repeat', 'speed', 'strength']);
+      expect(Object.keys(setting).sort()).toEqual([
+        'dottingTime',
+        'fillInterval',
+        'frequency',
+        'repeat',
+        'speed',
+        'strength',
+      ]);
     });
 
     test('includes pulseWidth for a MOPA laser, bounded by the promark limit', () => {
       const setting = getTableSetting('fpm1', { laserType: LaserType.MOPA });
 
       expect(Object.keys(setting).sort()).toEqual([
+        'dottingTime',
         'fillInterval',
         'frequency',
         'pulseWidth',
