@@ -11,7 +11,7 @@ import type { BBox } from '../store';
 import type { RigidTransform } from '../utils/rigidTransform';
 import { applyRigidTransform } from '../utils/rigidTransform';
 
-import { getScratchSegments } from './layout';
+import { getScaleSegments } from './layout';
 
 export interface ScratchParams {
   /** % */
@@ -43,7 +43,7 @@ export const getDefaultScratchParams = (model: WorkAreaModel): ScratchParams =>
  */
 export const buildScratchSvg = (bbox: BBox, transform: RigidTransform, { power, speed }: ScratchParams): string => {
   const { model, modelHeight, width } = workareaManager;
-  const paths = getScratchSegments(bbox)
+  const paths = getScaleSegments(bbox, 'scratch')
     .map(({ from, to }) => {
       const a = applyRigidTransform(from, transform);
       const b = applyRigidTransform(to, transform);
