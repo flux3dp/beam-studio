@@ -226,7 +226,6 @@ const toEditMode = (element: Element): void => {
     return;
   }
 
-  console.warn('Switching to edit mode for element:', element);
   svgedit.path.path = svgedit.path.getPath(element);
 
   const isContinuousDrawing = useGlobalPreferenceStore.getState()['continuous_drawing'];
