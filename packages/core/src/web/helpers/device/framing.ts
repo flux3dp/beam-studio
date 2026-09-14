@@ -106,8 +106,17 @@ export const getFramingOptions = (device: IDeviceInfo): TFramingType[] => {
   return [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
 };
 
-const getCoords = async (mm?: boolean): Promise<Coordinates> => {
-  const revertVariableText = await convertVariableText();
+const withVectorSymbols = async <T>(fn: () => Promise<T> | T): Promise<T> => {
+  symbolMaker.switchImageSymbolForAll(false);
+
+  try {
+    return await fn();
+  } finally {
+    symbolMaker.switchImageSymbolForAll(true);
+  }
+};
+
+const measureCoords = (mm?: boolean): Coordinates => {
   const coords: Partial<Coordinates> = {
     maxX: undefined,
     maxY: undefined,
@@ -171,23 +180,29 @@ const getCoords = async (mm?: boolean): Promise<Coordinates> => {
     coords.maxY = Math.min(coords.maxY ?? workareaMaxY, workareaMaxY) / ratio;
   }
 
-  revertVariableText?.();
-
   return coords as Coordinates;
 };
 
-const getCanvasImage = async (negative = false): Promise<Blob | null> => {
+const getCoords = async (mm?: boolean): Promise<Coordinates> =>
+  withVectorSymbols(async () => {
+    const revertVariableText = await convertVariableText();
+
+    try {
+      return measureCoords(mm);
+    } finally {
+      revertVariableText?.();
+    }
+  });
+
+const renderCanvasImage = async (negative = false): Promise<Blob | null> => {
   const { maxY, minY, width } = workareaManager;
 
   if (negative && minY >= 0) return null;
-
-  symbolMaker.switchImageSymbolForAll(false);
 
   const allLayers = getAllLayers()
     .filter((layer) => getData(layer, 'repeat')! > 0)
     .map((layer) => layer.cloneNode(true) as SVGGElement);
 
-  symbolMaker.switchImageSymbolForAll(true);
   allLayers.forEach((layer) => {
     const images = layer.querySelectorAll('image');
 
@@ -236,6 +251,20 @@ const getCanvasImage = async (negative = false): Promise<Blob | null> => {
   ctx.fillRect(0, 0, width, height);
 
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve));
+};
+
+const getCanvasImage = async (negative = false): Promise<Blob | null> => {
+  if (negative && workareaManager.minY >= 0) return null;
+
+  return withVectorSymbols(async () => {
+    const revertVariableText = await convertVariableText();
+
+    try {
+      return await renderCanvasImage(negative);
+    } finally {
+      revertVariableText?.();
+    }
+  });
 };
 
 const getConvexHull = async (imgBlob: Blob): Promise<Array<[number, number]>> => getUtilWS().getConvexHull(imgBlob);
