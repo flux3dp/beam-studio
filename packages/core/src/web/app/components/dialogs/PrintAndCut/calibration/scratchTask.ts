@@ -121,6 +121,8 @@ export const buildScratchThumbnail = async (svg: string, bbox: BBox, transform: 
  * a generated scene, so the document is never touched, then run on the
  * selected machine.
  * @param onProgress task computation, then the machine run; shown in the dialog instead of the progress popups
+ * @param isStopped the user pressed Stop: checked before the upload, so a stop during the computation never runs the task
+ * (a stop during the run aborts the machine, which rejects the wait)
  * @returns whether the task ran
  */
 export const runScratchTask = async (
@@ -128,13 +130,14 @@ export const runScratchTask = async (
   transform: RigidTransform,
   params: ScratchParams,
   onProgress: (progress: TaskProgress) => void,
+  isStopped: () => boolean = () => false,
 ): Promise<boolean> => {
   const svg = buildScratchSvg(bbox, transform, params);
 
   const thumbnail = await buildScratchThumbnail(svg, bbox, transform);
   const fcodeBlob = await exportFuncs.getFcodeFromSvgString(svg, 'pnc-scratch', { onProgress, thumbnail });
 
-  if (!fcodeBlob) return false;
+  if (!fcodeBlob || isStopped()) return false;
 
   const message = i18n.lang.calibration.drawing_calibration_image;
 

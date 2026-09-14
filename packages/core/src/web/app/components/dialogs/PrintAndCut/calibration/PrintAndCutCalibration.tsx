@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 
-import { AimOutlined } from '@ant-design/icons';
+import { AimOutlined, CloseCircleFilled } from '@ant-design/icons';
 import { Button, InputNumber, Progress } from 'antd';
 import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
@@ -13,6 +13,9 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
+import checkDeviceStatus from '@core/helpers/check-device-status';
+import DeviceErrorHandler from '@core/helpers/device-error-handler';
+import deviceMaster from '@core/helpers/device-master';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -20,6 +23,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { usePrintAndCutStore } from '../store';
 import { alignByCamera } from '../utils/align/alignByCamera';
 import { clearAlignProgress } from '../utils/align/alignProgress';
+import { stopSmartMarkSweep } from '../utils/align/smartMarkSweep';
 import type { RigidTransform } from '../utils/rigidTransform';
 
 import { exportCalibrationPdf } from './exportCalibrationPdf';
@@ -52,6 +56,7 @@ const PrintAndCutCalibration = ({ device, onClose }: PrintAndCutCalibrationProps
   const [{ power, speed }, setParams] = useState(() => getDefaultScratchParams(device.model));
   const [transform, setTransform] = useState<null | RigidTransform>(null);
   const [scratchProgress, setScratchProgress] = useState<null | TaskProgress>(null);
+  const scratchStopped = useRef(false);
   const [isSaving, setIsSaving] = useState(false);
   const [isReading, setIsReading] = useState(false);
   const [reading, setReading] = useState({ x: 0, y: 0 });
@@ -116,18 +121,60 @@ const PrintAndCutCalibration = ({ device, onClose }: PrintAndCutCalibrationProps
   const handleScratch = async () => {
     if (!transform) return;
 
+    scratchStopped.current = false;
     setScratchProgress({ message: '', percentage: 0 });
     try {
-      if (await runScratchTask(bbox, transform, { power, speed }, setScratchProgress)) {
+      // the discovery st_id is stale by now: a task aborted since the dialog opened leaves the
+      // machine in ABORTED, which the check quits before the upload
+      const { st_id: stId } = await deviceMaster.getReport();
+
+      if (!(await checkDeviceStatus({ ...device, st_id: stId }))) return;
+
+      const ran = await runScratchTask(
+        bbox,
+        transform,
+        { power, speed },
+        setScratchProgress,
+        () => scratchStopped.current,
+      );
+
+      if (ran && !scratchStopped.current) {
         setStep('reading');
         await handleRead();
       }
     } catch (error) {
+      // an aborted machine task rejects the wait with the device's error list, which is
+      // empty for a plain abort (Stop here or on the machine): not a failure
+      const message =
+        error instanceof Error ? error.message : DeviceErrorHandler.translate(error as string | string[]);
+
+      if (scratchStopped.current || !message) return;
+
       console.error('print-and-cut calibration scratch failed', error);
-      alertCaller.popUpError({ message: String(error) });
+      alertCaller.popUpError({ message });
     } finally {
       setScratchProgress(null);
     }
+  };
+
+  const handleStopScratch = async () => {
+    scratchStopped.current = true;
+    try {
+      await deviceMaster.stop();
+      await deviceMaster.quit();
+    } catch (error) {
+      // nothing running yet (stop during the computation): the runner skips the upload
+      console.warn('print-and-cut calibration stop', error);
+    }
+  };
+
+  /** Closing mid-run stops what can be stopped: the mark sweep (a single full-area shot just finishes) and the machine task */
+  const handleClose = () => {
+    if (isProcessing) stopSmartMarkSweep();
+
+    if (scratchProgress) handleStopScratch();
+
+    onClose();
   };
 
   const handleSave = async () => {
@@ -183,7 +230,7 @@ const PrintAndCutCalibration = ({ device, onClose }: PrintAndCutCalibrationProps
         </>
       }
       maskClosable={false}
-      onCancel={onClose}
+      onCancel={handleClose}
       open
       title={`${t.title} (${stepIndex + 1}/${steps.length})`}
     >
@@ -234,6 +281,9 @@ const PrintAndCutCalibration = ({ device, onClose }: PrintAndCutCalibrationProps
                 <>
                   <Progress percent={scratchProgress.percentage} showInfo={false} size="small" status="active" />
                   <div className={styles.desc}>{scratchProgress.message}</div>
+                  <Button block danger icon={<CloseCircleFilled />} onClick={handleStopScratch}>
+                    {tAlert.stop}
+                  </Button>
                 </>
               )}
             </>
