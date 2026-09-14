@@ -124,8 +124,6 @@ const PrintAndCutCalibration = ({ device, onClose }: PrintAndCutCalibrationProps
     scratchStopped.current = false;
     setScratchProgress({ message: '', percentage: 0 });
     try {
-      // the discovery st_id is stale by now: a task aborted since the dialog opened leaves the
-      // machine in ABORTED, which the check quits before the upload
       const { st_id: stId } = await deviceMaster.getReport();
 
       if (!(await checkDeviceStatus({ ...device, st_id: stId }))) return;
@@ -145,8 +143,7 @@ const PrintAndCutCalibration = ({ device, onClose }: PrintAndCutCalibrationProps
     } catch (error) {
       // an aborted machine task rejects the wait with the device's error list, which is
       // empty for a plain abort (Stop here or on the machine): not a failure
-      const message =
-        error instanceof Error ? error.message : DeviceErrorHandler.translate(error as string | string[]);
+      const message = error instanceof Error ? error.message : DeviceErrorHandler.translate(error as string | string[]);
 
       if (scratchStopped.current || !message) return;
 
