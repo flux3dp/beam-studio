@@ -443,13 +443,18 @@ export const withVariableTextOnly = async <T,>(
 ): Promise<T> => {
   handler.extract();
 
-  const revertBake = bake ? await convertVariableText() : null;
+  let revertBake: (() => void) | null = null;
 
   try {
+    revertBake = bake ? await convertVariableText() : null;
+
     return await fn();
   } finally {
-    revertBake?.();
-    handler.revert();
+    try {
+      revertBake?.();
+    } finally {
+      handler.revert();
+    }
   }
 };
 
