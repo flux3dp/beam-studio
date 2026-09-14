@@ -13,7 +13,8 @@ import fs from '@core/implementations/fileSystem';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { generateBeamBuffer } from '../utils/beam';
-import { getDefaultFileName } from '../utils/common';
+import { getDefaultFileName, switchSymbolWrapper } from '../utils/common';
+import { checkNounProjectElements, removeNPElementsWrapper } from '../utils/nounProject';
 
 import { saveToCloud } from './cloud';
 
@@ -79,10 +80,22 @@ export const saveFile = async (): Promise<boolean> => {
   }
 
   if (path.endsWith('.bvg')) {
-    const revert = await convertVariableText();
-    const output = svgCanvas.getSvgString();
+    if (!(await checkNounProjectElements())) {
+      return false;
+    }
 
-    revert?.();
+    const output = await removeNPElementsWrapper(() =>
+      switchSymbolWrapper(async () => {
+        const revert = await convertVariableText();
+
+        try {
+          return svgCanvas.getSvgString();
+        } finally {
+          revert?.();
+        }
+      }),
+    );
+
     await fs.writeFile(path, output);
     currentFileManager.setHasUnsavedChanges(false, false);
 
