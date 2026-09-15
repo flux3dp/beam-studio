@@ -73,10 +73,18 @@ jest.mock('../ObjectPanelItem', () => ({
 }));
 
 const mockWriteData = jest.fn();
+const mockGetData = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
+  getData: (...args) => mockGetData(...args),
   writeData: (...args) => mockWriteData(...args),
+}));
+
+const mockGetLayerElementByName = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
 }));
 
 const mockUseGlobalPreferenceStore = jest.fn();
@@ -161,6 +169,8 @@ describe('test SpeedBlock', () => {
     mockCurveEngravingState.hasData = false;
     setStorage('default-units', 'mm');
     mockUseWorkarea.mockReturnValue('fbm1');
+    mockGetLayerElementByName.mockImplementation((name) => ({ name }));
+    mockGetData.mockReturnValue(undefined);
     mockGetAutoFeeder.mockReturnValue(false);
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
@@ -256,6 +266,37 @@ describe('test SpeedBlock', () => {
     expect(container).toMatchSnapshot();
   });
 
+  test('mixed laser and galvo selection falls back to the narrowest range', () => {
+    mockUseWorkarea.mockReturnValue('fhx2galvo');
+    mockGetData.mockImplementation((layer) =>
+      layer.name === 'layer1' ? LayerModule.LASER_UNIVERSAL : LayerModule.GALVO_CO2,
+    );
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      module: { hasMultiValue: true, value: LayerModule.GALVO_CO2 },
+      speed: { hasMultiValue: false, value: 87 },
+    });
+
+    const { container } = render(<SpeedBlock />);
+
+    // the galvo alone would allow 10000, but the CO2 layer in the selection caps it
+    expect(container.querySelector('input')!.getAttribute('max')).toBe('2000');
+  });
+
+  test('a galvo-only selection may exceed the machine max speed', () => {
+    mockUseWorkarea.mockReturnValue('fhx2galvo');
+    mockGetData.mockReturnValue(LayerModule.GALVO_CO2);
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      module: { hasMultiValue: false, value: LayerModule.GALVO_CO2 },
+      speed: { hasMultiValue: false, value: 87 },
+    });
+
+    const { container } = render(<SpeedBlock />);
+
+    expect(container.querySelector('input')!.getAttribute('max')).toBe('10000');
+  });
+
   test('onChange should work', () => {
     const { container } = render(<SpeedBlock />);
 
@@ -309,5 +350,28 @@ describe('test SpeedBlock', () => {
     expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', speed: 88 });
     expect(mockWriteData).not.toHaveBeenCalled();
     expect(mockBatchCommand).not.toHaveBeenCalled();
+  });
+  test('no layer is written a speed above its own limit', () => {
+    mockUseWorkarea.mockReturnValue('fhx2galvo');
+    mockGetData.mockImplementation((layer) =>
+      layer.name === 'layer1' ? LayerModule.LASER_UNIVERSAL : LayerModule.GALVO_CO2,
+    );
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      module: { hasMultiValue: true, value: LayerModule.GALVO_CO2 },
+      speed: { hasMultiValue: false, value: 87 },
+    });
+
+    const { container } = render(<SpeedBlock />);
+
+    // dragging past the CO2 ceiling: neither layer may be written a value above its own limit
+    fireEvent.change(container.querySelector('input')!, { target: { value: '5000' } });
+
+    const speedWrites = mockWriteData.mock.calls.filter(([, key]) => key === 'speed');
+
+    expect(speedWrites.map(([layerName, , value]) => [layerName, value])).toEqual([
+      ['layer1', 2000],
+      ['layer2', 2000],
+    ]);
   });
 });

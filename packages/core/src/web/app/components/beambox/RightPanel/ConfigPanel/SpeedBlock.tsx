@@ -12,6 +12,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSpeedOptions } from '@core/app/constants/config-options';
 import { getWarningSpeed as getCurveEngravingWarningSpeed } from '@core/app/constants/curveEngraving';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import {
   galvoModules,
   laserModules,
@@ -27,11 +28,12 @@ import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getSpeedLimit } from '@core/helpers/layer/getSpeedLimit';
-import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
+import { getSelectionSpeedLimit, getSpeedLimit } from '@core/helpers/layer/getSpeedLimit';
+import { CUSTOM_PRESET_CONSTANT, getData, writeData } from '@core/helpers/layer/layer-config-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
 
@@ -103,9 +105,21 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     };
   }, [workarea, addOnInfo, isAutoFeederOn]);
 
+  // one slider writes one value to every selected layer, so the range has to be the narrowest
+  // that all of them can honour -- a CO2 layer selected alongside a galvo layer caps the galvo
+  const selectedModules = useMemo(
+    () =>
+      selectedLayers
+        .map((layerName) => getData(layerManager.getLayerElementByName(layerName), 'module'))
+        .filter((value): value is LayerModuleType => value !== undefined),
+    [selectedLayers],
+  );
   const { max: maxValue, min: minValue } = useMemo(
-    () => getSpeedLimit(layerModule, workarea, { hasCurveEngraving }),
-    [layerModule, hasCurveEngraving, workarea],
+    () =>
+      selectedModules.length > 0
+        ? getSelectionSpeedLimit(selectedModules, workarea, { hasCurveEngraving })
+        : getSpeedLimit(layerModule, workarea, { hasCurveEngraving }),
+    [selectedModules, layerModule, hasCurveEngraving, workarea],
   );
 
   const vectorSpeedWarning = useMemo(() => {
@@ -143,8 +157,12 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change speed');
 
-      selectedLayers.forEach((layerName) => {
-        writeData(layerName, 'speed', val, { applyPrinting: true, batchCmd });
+      selectedLayers.forEach((layerName, index) => {
+        // the shared range should already prevent this, but each layer keeps its own valid value
+        const { max, min } = getSpeedLimit(selectedModules[index] ?? layerModule, workarea);
+        const layerVal = Math.max(min, Math.min(val, max));
+
+        writeData(layerName, 'speed', layerVal, { applyPrinting: true, batchCmd });
         writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
       });
       batchCmd.onAfter = initState;
