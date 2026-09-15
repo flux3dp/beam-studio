@@ -1,3 +1,4 @@
+import { hexa2Models } from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
@@ -35,7 +36,7 @@ export const endPreviewMode = (): void => {
 let isSettingUpPreview = false;
 
 export const checkCameraOblique = async (device: IDeviceInfo): Promise<boolean> => {
-  if (device.model === 'fhx2rf') return true;
+  if (hexa2Models.has(device.model)) return true;
 
   if (device.model === 'fbb2') {
     const vc = versionChecker(device.version);

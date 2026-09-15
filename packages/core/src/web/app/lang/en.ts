@@ -1795,6 +1795,8 @@ Machines > ‘Promark Name’ > Promark Settings`,
     },
   },
   layer_module: {
+    galvo_co2: 'CO2 Galvo',
+    galvo_mopa: 'MOPA Galvo',
     general_laser: 'Laser',
     laser_2w_infrared: '2W Infrared Laser',
     laser_10w_diode: '10W Diode Laser',

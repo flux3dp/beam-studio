@@ -20,14 +20,14 @@ import { findSimilarContours } from './findSimilarContours';
 
 /**
  * Returns the single-shot region preview size in canvas pixels for the current workarea.
- * Only workareas with perspective grids (fbb2, fhx2rf, fbm2) support region preview;
+ * Only workareas with perspective grids (fbb2, fhx2rf, fhx2galvo, fbm2) support region preview;
  * returns null for unsupported workareas, which disables the retake feature.
  * When adding a new workarea with region preview, add its grid mapping here.
  */
 export const getRegionPreviewSizePx = (): null | { height: number; width: number } => {
   const { workarea } = useDocumentStore.getState();
   const grid = match(workarea)
-    .with('fbb2', 'fhx2rf', () => bb2PerspectiveGrid)
+    .with('fbb2', 'fhx2rf', 'fhx2galvo', () => bb2PerspectiveGrid)
     .with('fbm2', () => bm2PerspectiveGrid)
     .otherwise(() => null);
 

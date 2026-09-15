@@ -100,6 +100,8 @@ describe('test layer-module-helper', () => {
 
   test('getModulesTranslations', () => {
     expect(getModulesTranslations()).toEqual({
+      [LayerModule.GALVO_CO2]: lang.layer_module.galvo_co2,
+      [LayerModule.GALVO_MOPA]: lang.layer_module.galvo_mopa,
       [LayerModule.LASER_10W_DIODE]: lang.layer_module.laser_10w_diode,
       [LayerModule.LASER_20W_DIODE]: lang.layer_module.laser_20w_diode,
       [LayerModule.LASER_1064]: lang.layer_module.laser_2w_infrared,
@@ -114,6 +116,8 @@ describe('test layer-module-helper', () => {
 
   test('getModulesTranslations with 4c note', () => {
     expect(getModulesTranslations(true)).toEqual({
+      [LayerModule.GALVO_CO2]: lang.layer_module.galvo_co2,
+      [LayerModule.GALVO_MOPA]: lang.layer_module.galvo_mopa,
       [LayerModule.LASER_10W_DIODE]: lang.layer_module.laser_10w_diode,
       [LayerModule.LASER_20W_DIODE]: lang.layer_module.laser_20w_diode,
       [LayerModule.LASER_1064]: lang.layer_module.laser_2w_infrared,
@@ -128,6 +132,8 @@ describe('test layer-module-helper', () => {
 
   test('getDetectedModulesTranslations', () => {
     expect(getDetectedModulesTranslations()).toEqual({
+      [DetectedLayerModule.GALVO_CO2]: lang.layer_module.galvo_co2,
+      [DetectedLayerModule.GALVO_MOPA]: lang.layer_module.galvo_mopa,
       [DetectedLayerModule.LASER_10W_DIODE]: lang.layer_module.laser_10w_diode,
       [DetectedLayerModule.LASER_20W_DIODE]: lang.layer_module.laser_20w_diode,
       [DetectedLayerModule.LASER_1064]: lang.layer_module.laser_2w_infrared,
@@ -143,6 +149,8 @@ describe('test layer-module-helper', () => {
 
   test('getDetectedModulesTranslations with 4c note', () => {
     expect(getDetectedModulesTranslations(true)).toEqual({
+      [DetectedLayerModule.GALVO_CO2]: lang.layer_module.galvo_co2,
+      [DetectedLayerModule.GALVO_MOPA]: lang.layer_module.galvo_mopa,
       [DetectedLayerModule.LASER_10W_DIODE]: lang.layer_module.laser_10w_diode,
       [DetectedLayerModule.LASER_20W_DIODE]: lang.layer_module.laser_20w_diode,
       [DetectedLayerModule.LASER_1064]: lang.layer_module.laser_2w_infrared,

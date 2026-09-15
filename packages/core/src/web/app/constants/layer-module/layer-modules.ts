@@ -15,6 +15,8 @@ export const LayerModule = {
   // virtual values for uv layer (they are seen as printer 4c in firmware)
   UV_WHITE_INK: 8,
   UV_VARNISH: 9,
+  GALVO_CO2: 12,
+  GALVO_MOPA: 13,
   LASER_UNIVERSAL: 15,
 } as const;
 
@@ -32,6 +34,8 @@ export const DetectedLayerModule = {
   UNKNOWN: 9,
   PRINTER_4C_WITH_UV: 10,
   PRINTER_4C_WITH_UV_1064: 11,
+  GALVO_CO2: 12,
+  GALVO_MOPA: 13,
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 export type LayerModuleType = (typeof LayerModule)[keyof typeof LayerModule];
@@ -42,7 +46,12 @@ export const laserModules = new Set<LayerModuleType>([
   LayerModule.LASER_20W_DIODE,
   LayerModule.LASER_1064,
   LayerModule.LASER_UNIVERSAL,
+  LayerModule.GALVO_CO2,
+  LayerModule.GALVO_MOPA,
 ]);
+/** Galvo module heads. Layers using these take the galvo parameter set (frequency, pulse width, etc.). */
+export const galvoModulesArray = [LayerModule.GALVO_CO2, LayerModule.GALVO_MOPA] as const;
+export const galvoModules = new Set<LayerModuleType>(galvoModulesArray);
 export const printingModules = new Set<LayerModuleType>([LayerModule.PRINTER, LayerModule.PRINTER_4C]);
 
 export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_PRINT] as const;

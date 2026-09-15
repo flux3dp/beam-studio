@@ -4,7 +4,13 @@ import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import { funnel } from 'remeda';
 
-import { adorModels, fcodeV2Models, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import {
+  adorModels,
+  fcodeV2Models,
+  hexa2Models,
+  modelsWithModules,
+  promarkModels,
+} from '@core/app/actions/beambox/constant';
 import { AuthEvents, MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -99,7 +105,9 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
   const isBeamo = model === 'fbm1';
   const isBeamo2 = model === 'fbm2';
   const isBb2 = model === 'fbb2';
-  const isHexa2 = model === 'fhx2rf';
+  const isHexaRf = model === 'fhx2rf';
+  // HEXA RF and HEXA II share the same camera generation, but little else
+  const hasHx2Camera = hexa2Models.has(model);
   const vc = versionChecker(version);
   const handleClick = (item: MenuItem) => callback({ ...item, machineName, serial, source, uuid });
   const submenu = [
@@ -128,12 +136,12 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       label: r.calibration,
       submenu: [
         { click: handleClick, id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera },
-        (isBb2 || isBeamo2 || isHexa2 || isAdor) && {
+        (isBb2 || isBeamo2 || hasHx2Camera || isAdor) && {
           click: handleClick,
           id: 'CALIBRATE_CAMERA_ADVANCED',
           label: r.calibrate_camera_advanced,
         },
-        ((isBb2 && (vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') || isDevMode)) || isHexa2) && {
+        ((isBb2 && (vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') || isDevMode)) || hasHx2Camera) && {
           click: handleClick,
           id: 'CALIBRATE_CAMERA_WIDE_ANGLE',
           label: r.calibrate_wide_angle_camera,
@@ -228,7 +236,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
         },
       ].filter(Boolean),
     },
-    isHexa2 &&
+    isHexaRf &&
       isDevMode && {
         click: handleClick,
         id: 'LASER_DELAY_SETTING',

@@ -1795,6 +1795,8 @@ const lang: ILang = {
     },
   },
   layer_module: {
+    galvo_co2: 'CO2 Galvo',
+    galvo_mopa: 'MOPA Galvo',
     general_laser: 'レーザー',
     laser_2w_infrared: '2W赤外線レーザー',
     laser_10w_diode: '10Wダイオードレーザー',

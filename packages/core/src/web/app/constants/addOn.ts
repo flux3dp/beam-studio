@@ -168,6 +168,32 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       roller: true,
     },
   },
+  fhx2galvo: {
+    autoFeeder: isDev()
+      ? {
+          // TODO: confirm maxHeight and xRange
+          maxHeight: 3000,
+          rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
+        }
+      : undefined,
+    autoFocus: true,
+    curveEngraving: isDev() ? {} : undefined,
+    jobOrigin: true,
+    lowerFocus: true,
+    multiModules: true,
+    // TODO: confirm maxHeight and xRange
+    passThrough: isDev() ? { maxHeight: 300 } : undefined,
+    redLight: true,
+    rotary: {
+      chuck: true,
+      chuckDiameter: CHUCK_ROTARY_DIAMETER / 2,
+      defaultMirror: true,
+      extendWorkarea: true,
+      mirror: true,
+      roller: true,
+      split: true,
+    },
+  },
   fhx2rf: {
     autoFeeder: isDev()
       ? {

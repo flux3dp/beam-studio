@@ -10,3 +10,4 @@ export const checkBM24C = (): boolean => isDev() || localeHelper.isTwOrHk;
 export const checkBM2UV = (): boolean => isDev();
 export const checkBM2CurveEngraving = (): boolean => isDev();
 export const checkFUV1 = (): boolean => enableAllMachines || isDev();
+export const checkHexa2Galvo = (): boolean => isDev();

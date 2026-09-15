@@ -14,26 +14,40 @@ export const promarkModelsArray = ['fpm1'] as const;
 export const promarkModels = new Set(promarkModelsArray);
 
 export const modelsWithPrinter4C = ['fbm2', 'fuv1'] as const;
-export const modelsWithModules = new Set([...adorModelsArray, ...modelsWithPrinter4C]);
-export const nxModelsArray = ['fbb2', 'fhx2rf', 'fbm2', 'fuv1'] as const;
+// TODO: derive from addOn multiModules instead of listing models here
+export const modelsWithModules = new Set<string>([...adorModelsArray, ...modelsWithPrinter4C, 'fhx2galvo']);
+export const nxModelsArray = ['fbb2', 'fhx2rf', 'fhx2galvo', 'fbm2', 'fuv1'] as const;
 export const nxModels = new Set<WorkAreaModel>(nxModelsArray);
 
 export const PreviewSpeedLevel = { FAST: 3, MEDIUM: 2, SLOW: 1 } as const;
 export type PreviewSpeedLevelType = (typeof PreviewSpeedLevel)[keyof typeof PreviewSpeedLevel];
 
-export const fcodeV2ModelsArray = [...adorModelsArray, 'fbb2', 'fhx2rf', 'fbm2', 'fuv1'] as const;
+export const fcodeV2ModelsArray = [...adorModelsArray, 'fbb2', 'fhx2rf', 'fhx2galvo', 'fbm2', 'fuv1'] as const;
 export const fcodeV2Models = new Set(fcodeV2ModelsArray);
 
-export const supportAutoFocusModelsArray = ['fhexa1', ...adorModelsArray, 'fbb2', 'fhx2rf'] as const;
+export const supportAutoFocusModelsArray = ['fhexa1', ...adorModelsArray, 'fbb2', 'fhx2rf', 'fhx2galvo'] as const;
 export const supportAutoFocusModels = new Set(supportAutoFocusModelsArray);
-export const needToShowProbeBeforeAutoFocusModelsArray = ['fbb2', 'fhx2rf'] as const;
+export const needToShowProbeBeforeAutoFocusModelsArray = ['fbb2', 'fhx2rf', 'fhx2galvo'] as const;
 export type NeedToShowProbeBeforeAutoFocusModelsType = (typeof needToShowProbeBeforeAutoFocusModelsArray)[number];
 
-export const fisheyeModelsArray = [...adorModelsArray, 'fbb2', 'fhx2rf'] as const;
+export const fisheyeModelsArray = [...adorModelsArray, 'fbb2', 'fhx2rf', 'fhx2galvo'] as const;
 export const fisheyeModels = new Set<string>(fisheyeModelsArray);
 
-export const supportCameraAutoExposureModels = ['fhx2rf', 'fbb2', 'fbm2'] as const;
-export const modelsWithWideAngleCamera: WorkAreaModel[] = ['fbb2', 'fhx2rf'] as const;
+/**
+ * HEXA 2nd-generation platform (HEXA RF and HEXA II).
+ *
+ * These two machines are far from interchangeable: HEXA II is a CO2 cutter with galvo module
+ * heads, HEXA RF is an RF-tube engraver. Only use this set for behaviour they genuinely share
+ * (camera generation, perspective grids, DPI options). Anything else belongs in a per-model
+ * check -- LASER_DELAY_SETTING, for instance, is HEXA RF only.
+ *
+ * TODO: before release, re-verify every use of this set against real HEXA II hardware.
+ */
+export const hexa2ModelsArray = ['fhx2rf', 'fhx2galvo'] as const;
+export const hexa2Models = new Set<WorkAreaModel>(hexa2ModelsArray);
+
+export const supportCameraAutoExposureModels = ['fhx2rf', 'fhx2galvo', 'fbb2', 'fbm2'] as const;
+export const modelsWithWideAngleCamera: WorkAreaModel[] = ['fbb2', 'fhx2rf', 'fhx2galvo'] as const;
 
 export const dpmm = 10;
 
@@ -48,6 +62,7 @@ export default {
     fbm1: ['fbm1'],
     fbm2: ['fbm2', 'fuv1'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
+    fhx2galvo: ['fhx2galvo'],
     fhx2rf: ['fhx2rf', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     flv1: ['flv1'],
     fpm1: ['fpm1'],

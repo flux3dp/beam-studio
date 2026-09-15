@@ -260,7 +260,7 @@ export const getRecommendedConfigKeys = (elem: SVGTextElement): ParamsLabelKey[]
 
   keys.push(
     ...match<WorkAreaModel, ConfigKey[]>(workarea)
-      .with('fhx2rf', () => ['highQuality'])
+      .with('fhx2rf', 'fhx2galvo', () => ['highQuality'])
       .with('fuv1', () => ['rightPadding', 'uvStrength', 'uvCuringAfter', 'uvCuringRepeat', 'uvPrintingRepeat'])
       .otherwise(() => []),
   );

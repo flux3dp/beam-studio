@@ -2,7 +2,7 @@ import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
+import { hexa2Models, PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import {
@@ -48,7 +48,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     super(device);
     this.progressId = 'beam-preview-manager';
 
-    if (device.model === 'fhx2rf') {
+    if (hexa2Models.has(device.model)) {
       this.isCameraOblique = true;
       this.fullAreaGrid = hx2FullAreaPerspectiveGrid;
     }

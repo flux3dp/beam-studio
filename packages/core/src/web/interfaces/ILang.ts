@@ -1793,6 +1793,8 @@ export interface ILang {
     };
   };
   layer_module: {
+    galvo_co2: string;
+    galvo_mopa: string;
     general_laser: string;
     laser_2w_infrared: string;
     laser_10w_diode: string;

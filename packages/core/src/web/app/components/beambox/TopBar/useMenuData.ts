@@ -1,6 +1,12 @@
 import { useEffect, useState } from 'react';
 
-import { adorModels, fcodeV2Models, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import {
+  adorModels,
+  fcodeV2Models,
+  hexa2Models,
+  modelsWithModules,
+  promarkModels,
+} from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { MenuItemKey } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -95,7 +101,8 @@ const useMenuData = (email?: string): MenuNode[] => {
     const isBeamo = model === 'fbm1';
     const isBb2 = model === 'fbb2';
     const isBeamo2 = model === 'fbm2';
-    const isHexa2 = model === 'fhx2rf';
+    // HEXA RF and HEXA II share the same camera generation, but little else
+    const hasHx2Camera = hexa2Models.has(model);
     const isAdor = adorModels.has(model);
     const calibrationChildren: MenuNode[] = [
       {
@@ -105,7 +112,7 @@ const useMenuData = (email?: string): MenuNode[] => {
         label: `${menuCms.calibrate_beambox_camera}${isMobile ? ' (PC Only)' : ''}`,
         type: 'item',
       },
-      ...(isBb2 || isBeamo2 || isHexa2 || isAdor
+      ...(isBb2 || isBeamo2 || hasHx2Camera || isAdor
         ? [
             {
               device,

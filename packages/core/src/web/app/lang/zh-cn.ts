@@ -1795,6 +1795,8 @@ const lang: ILang = {
     },
   },
   layer_module: {
+    galvo_co2: 'CO2 振镜',
+    galvo_mopa: 'MOPA 振镜',
     general_laser: '激光',
     laser_2w_infrared: '2W 红外激光器',
     laser_10w_diode: '10W 二极管激光器',

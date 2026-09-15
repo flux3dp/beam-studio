@@ -84,6 +84,10 @@ export const getExportOpt = async (
   } else if (model === 'fhx2rf') {
     config.watt = useCanvasStore.getState().watt;
     config.acc = 10000;
+  } else if (model === 'fhx2galvo') {
+    config.acc = 10000;
+    // galvo module heads engrave in tiles and the backend stitches them together
+    config.block_size = [100, 100];
   }
 
   if (addOnInfo.sCurve && vc.meetVersion(addOnInfo.sCurve)) {

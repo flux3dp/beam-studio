@@ -2,7 +2,7 @@ import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { checkBM2UV, checkBM24C, checkFpm1, checkFUV1 } from '@core/helpers/checkFeature';
+import { checkBM2UV, checkBM24C, checkFpm1, checkFUV1, checkHexa2Galvo } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
@@ -17,6 +17,7 @@ export type WorkAreaLabel =
   | 'beamo'
   | 'beamo II'
   | 'HEXA'
+  | 'HEXA II'
   | 'HEXA RF'
   | 'Lazervida'
   | 'Miro UV'
@@ -29,6 +30,7 @@ export const workArea = [
   'fbb1p',
   'fhexa1',
   'fhx2rf',
+  'fhx2galvo',
   'ado1',
   'fpm1',
   'flv1',
@@ -214,6 +216,40 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     vectorSpeedLimit: 20,
     width: 740,
   },
+  /**
+   * HEXA II. Motion, DPI and camera values below are provisional: they are copied from fhx2rf
+   * because no measurements exist yet, not because the two machines are known to match.
+   * TODO: verify every value here against real hardware before release.
+   */
+  fhx2galvo: {
+    accOverride: { path: { x: 1000, y: 1000 } },
+    autoFocusOffset: [31.13, 1.2, 6.5],
+    autoShrink: 0.025,
+    // the workarea is larger than fhx2rf, so this cannot simply be copied
+    cameraCenter: [450, 255],
+    curveSpeedLimit: {
+      x: 50,
+      zHighSpeed: 300,
+      zRegular: 140,
+    },
+    engraveDpiOptions: ['low', 'medium', 'high', 'detailed', 'ultra'],
+    height: 510,
+    label: 'HEXA II',
+    maxSpeed: 2000,
+    minPower: 10,
+    minSpeed: 0.5,
+    minSpeedWarning: 3,
+    pxHeight: 510 * dpmm,
+    pxWidth: 900 * dpmm,
+    supportedModules: [
+      LayerModule.LASER_UNIVERSAL,
+      LayerModule.GALVO_CO2,
+      LayerModule.GALVO_MOPA,
+      LayerModule.UV_PRINT,
+    ],
+    vectorSpeedLimit: 20,
+    width: 900,
+  },
   fhx2rf: {
     accOverride: { path: { x: 1000, y: 1000 } },
     autoFocusOffset: [31.13, 1.2, 6.5],
@@ -276,6 +312,7 @@ export const workareaOptions: Array<{ label: string; value: AnnotatedWorkareaMod
   { label: 'Beambox Pro', value: 'fbb1p' },
   { label: 'HEXA', value: 'fhexa1' },
   { label: 'HEXA RF', value: 'fhx2rf' },
+  checkHexa2Galvo() && { label: 'HEXA II', value: 'fhx2galvo' },
   { label: 'Ador', value: 'ado1' },
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   checkFpm1() && { label: 'Promark (Safe+)', value: 'fpm1_safe' },

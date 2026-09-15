@@ -26,7 +26,7 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
 
       this.regionPreviewGrid = match(this.device.model)
         .with('fbb2', () => bb2PerspectiveGrid)
-        .with('fhx2rf', () => bb2PerspectiveGridWide)
+        .with('fhx2rf', 'fhx2galvo', () => bb2PerspectiveGridWide)
         .with('fbm2', () => bm2PerspectiveGrid)
         .otherwise(() => bb2PerspectiveGrid);
 

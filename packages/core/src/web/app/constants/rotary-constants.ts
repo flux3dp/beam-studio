@@ -24,6 +24,11 @@ const rotaryConstants: { [key in WorkAreaModel]?: RotaryConstants } = {
     boundary: [0, 240],
     maxHeight: 290,
   },
+  fhx2galvo: {
+    boundary: [0, 510],
+    // TODO: confirm max height of the rotary extension
+    maxHeight: 1625,
+  },
   get fpm1() {
     const height = useDocumentStore.getState()['customized-dimension']?.fpm1?.height || 150;
 

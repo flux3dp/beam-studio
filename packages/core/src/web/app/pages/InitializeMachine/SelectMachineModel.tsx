@@ -9,7 +9,7 @@ import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-consta
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
 import { useInitializeMachineStore } from '@core/app/pages/InitializeMachine/store';
 import { isMobile } from '@core/app/stores/screenStore';
-import { checkFpm1 } from '@core/helpers/checkFeature';
+import { checkFpm1, checkHexa2Galvo } from '@core/helpers/checkFeature';
 import { decodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
@@ -134,20 +134,28 @@ const SelectMachineModel = (): React.JSX.Element => {
   );
 
   const hexaModelList: ModelItem[] = useMemo(
-    () => [
-      {
-        btnClass: styles['btn-real'],
-        imageSrc: 'core-img/init-panel/hexa-real.webp',
-        label: 'HEXA',
-        model: 'fhexa1',
-      },
-      {
-        btnClass: styles['btn-real'],
-        imageSrc: 'core-img/init-panel/hexa-rf-real.webp',
-        label: 'HEXA RF',
-        model: 'fhx2rf',
-      },
-    ],
+    () =>
+      [
+        {
+          btnClass: styles['btn-real'],
+          imageSrc: 'core-img/init-panel/hexa-real.webp',
+          label: 'HEXA',
+          model: 'fhexa1',
+        },
+        {
+          btnClass: styles['btn-real'],
+          imageSrc: 'core-img/init-panel/hexa-rf-real.webp',
+          label: 'HEXA RF',
+          model: 'fhx2rf',
+        },
+        // TODO: replace with the HEXA II image before release
+        checkHexa2Galvo() && {
+          btnClass: styles['btn-real'],
+          imageSrc: 'core-img/init-panel/hexa-rf-real.webp',
+          label: 'HEXA II',
+          model: 'fhx2galvo',
+        },
+      ].filter(Boolean) as ModelItem[],
     [],
   );
 

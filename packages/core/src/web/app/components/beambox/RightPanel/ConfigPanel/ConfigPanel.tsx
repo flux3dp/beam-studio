@@ -6,7 +6,7 @@ import { piped } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { hexa2Models, promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import HighQualityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/HighQualityBlock';
@@ -288,7 +288,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isLaser && <DpiBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
       {isPromark && <FillIntervalBlock type={UIType} />}
-      {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
+      {hexa2Models.has(workarea) && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
       {isPromark && <PulseWidthBlock type={UIType} />}

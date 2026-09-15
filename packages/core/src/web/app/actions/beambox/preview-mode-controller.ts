@@ -143,7 +143,7 @@ class PreviewModeController {
           this.previewManager = new PromarkPreviewManager(device);
         } else if (Constant.adorModels.includes(device.model)) {
           this.previewManager = new AdorPreviewManager(device);
-        } else if (['fbb2', 'fhx2rf'].includes(device.model)) {
+        } else if (['fbb2', 'fhx2galvo', 'fhx2rf'].includes(device.model)) {
           this.previewManager = new Bb2Hx2PreviewManager(device);
         } else if (device.model === 'fbm2') {
           this.previewManager = new Beamo2PreviewManager(device);
