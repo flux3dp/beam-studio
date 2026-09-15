@@ -5,6 +5,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import {
   fullColorModules,
+  galvoModules,
   LayerModule,
   printingModules,
   UVModules,
@@ -200,6 +201,14 @@ useGlobalPreferenceStore.subscribe((state) => state.engrave_dpi, updateDefaultDp
 useDocumentStore.subscribe((state) => state.workarea, updateDefaultDpi);
 
 export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<ConfigKeyTypeMap, 'module'>>>> = {
+  [LayerModule.GALVO_CO2]: {
+    speed: 1000,
+  },
+  [LayerModule.GALVO_MOPA]: {
+    frequency: 25,
+    pulseWidth: 350,
+    speed: 1000,
+  },
   [LayerModule.PRINTER]: {
     amDensity: 2,
     halftone: 1,
@@ -710,7 +719,8 @@ export const applyModuleBaseConfig = (
 export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
   const workarea = useDocumentStore.getState().workarea;
 
-  if (promarkModels.has(workarea)) {
+  // galvo layers take the same parameter set as Promark, whatever machine they sit on
+  if (promarkModels.has(workarea) || galvoModules.has(module)) {
     return promarkConfigKeys;
   }
 
@@ -738,6 +748,22 @@ export const getPromarkLimit = (): {
     .with({ watt: 50 }, () => ({ frequency: { max: 170, min: 45 } }))
     .with({ watt: 30 }, () => ({ frequency: { max: 60, min: 30 } }))
     .otherwise(() => ({ frequency: { max: 60, min: 27 } }));
+
+/**
+ * Frequency and pulse width ranges for the HEXA II galvo module heads.
+ *
+ * TODO: provisional. The MOPA range mirrors the Promark MOPA source, which is the same kind of
+ * hardware; the CO2 galvo range is a placeholder. Replace both once the module specs are confirmed.
+ */
+export const getGalvoLimit = (
+  module: LayerModuleType,
+): {
+  frequency?: { max: number; min: number };
+  pulseWidth?: { max: number; min: number };
+} =>
+  module === LayerModule.GALVO_MOPA
+    ? { frequency: { max: 4000, min: 1 }, pulseWidth: { max: 500, min: 2 } }
+    : { frequency: { max: 100, min: 1 } };
 
 export const applyPreset = (
   layer: Element,
@@ -795,11 +821,11 @@ export const postPresetChange = (): void => {
 
     if (!layerElement) return;
 
+    const layerModule = getData(layerElement, 'module') as LayerModuleType;
     const configName = getData(layerElement, 'configName');
     const preset = allPresets.find((c) => !c.hide && (configName === c.key || configName === c.name));
 
     if (preset?.isDefault) {
-      const layerModule = getData(layerElement, 'module') as LayerModuleType;
       const defaultPreset = getDefaultPreset(preset.key!, workarea, layerModule);
 
       if (!defaultPreset) {
@@ -834,24 +860,26 @@ export const postPresetChange = (): void => {
       writeDataLayer(layerElement, 'printingSpeed', minSpeed);
     }
 
-    if (isPromark) {
-      if (promarkLimit?.frequency) {
+    const limit = isPromark ? promarkLimit : galvoModules.has(layerModule) ? getGalvoLimit(layerModule) : null;
+
+    if (limit) {
+      if (limit.frequency) {
         const frequency = getData(layerElement, 'frequency') as number;
 
-        if (frequency < promarkLimit.frequency.min) {
-          writeDataLayer(layerElement, 'frequency', promarkLimit.frequency.min);
-        } else if (frequency > promarkLimit.frequency.max) {
-          writeDataLayer(layerElement, 'frequency', promarkLimit.frequency.max);
+        if (frequency < limit.frequency.min) {
+          writeDataLayer(layerElement, 'frequency', limit.frequency.min);
+        } else if (frequency > limit.frequency.max) {
+          writeDataLayer(layerElement, 'frequency', limit.frequency.max);
         }
       }
 
-      if (promarkLimit?.pulseWidth) {
+      if (limit.pulseWidth) {
         const pulseWidth = getData(layerElement, 'pulseWidth') as number;
 
-        if (pulseWidth < promarkLimit.pulseWidth.min) {
-          writeDataLayer(layerElement, 'pulseWidth', promarkLimit.pulseWidth.min);
-        } else if (pulseWidth > promarkLimit.pulseWidth.max) {
-          writeDataLayer(layerElement, 'pulseWidth', promarkLimit.pulseWidth.max);
+        if (pulseWidth < limit.pulseWidth.min) {
+          writeDataLayer(layerElement, 'pulseWidth', limit.pulseWidth.min);
+        } else if (pulseWidth > limit.pulseWidth.max) {
+          writeDataLayer(layerElement, 'pulseWidth', limit.pulseWidth.max);
         }
       }
     }

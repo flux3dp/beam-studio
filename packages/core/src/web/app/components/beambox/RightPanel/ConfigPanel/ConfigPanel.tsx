@@ -13,7 +13,7 @@ import HighQualityBlock from '@core/app/components/beambox/RightPanel/ConfigPane
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
+import { galvoModules, laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -118,14 +118,17 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   }, [workarea, watt]);
 
   const { module } = state;
-  const { isLaser, isPrinting, isUV } = useMemo(() => {
+  const { isGalvo, isLaser, isPrinting, isUV } = useMemo(() => {
     return {
+      isGalvo: galvoModules.has(module.value),
       isLaser: laserModules.has(module.value),
       isPrinting: printingModules.has(module.value),
       isUV: UVModules.has(module.value),
     };
   }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  // galvo parameters belong to the layer's module head, not to the machine
+  const hasGalvoParams = isPromark || isGalvo;
 
   useEffect(() => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
@@ -286,15 +289,15 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {(isPrinting || isUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
       {isLaser && <DpiBlock type={UIType} />}
-      {isPromark && <DottingTimeBlock type={UIType} />}
-      {isPromark && <FillIntervalBlock type={UIType} />}
+      {hasGalvoParams && <DottingTimeBlock type={UIType} />}
+      {hasGalvoParams && <FillIntervalBlock type={UIType} />}
       {hexa2Models.has(workarea) && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
-      {isPromark && <PulseWidthBlock type={UIType} />}
-      {isPromark && <FrequencyBlock type={UIType} />}
+      {hasGalvoParams && <PulseWidthBlock type={UIType} />}
+      {hasGalvoParams && <FrequencyBlock type={UIType} />}
       <RepeatBlock type={UIType} />
-      {isPromark && <AdvancedSettingButton type={UIType} />}
+      {hasGalvoParams && <AdvancedSettingButton type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
     </>
