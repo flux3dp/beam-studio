@@ -126,9 +126,11 @@ export class BoundaryDrawer {
     useDocumentStore.subscribe((state) => state['pass-through'], onPassThroughChange);
     useDocumentStore.subscribe((state) => state['borderless'], onBorderlessChange);
     useDocumentStore.subscribe((state) => state['enable-diode'], onEnableDiodeChange);
-    useDocumentStore.subscribe((state) => [state['enable-4c'], state['enable-1064']], onSupportedModulesChange, {
-      equalityFn: shallow,
-    });
+    useDocumentStore.subscribe(
+      (state) => [state['enable-4c'], state['enable-1064'], state['enable-galvo-mopa']],
+      onSupportedModulesChange,
+      { equalityFn: shallow },
+    );
     useGlobalPreferenceStore.subscribe((state) => [state['diode_offset_x'], state['diode_offset_y']], onDiodeChange, {
       equalityFn: shallow,
     });

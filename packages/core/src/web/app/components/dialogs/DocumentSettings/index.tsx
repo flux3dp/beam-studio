@@ -127,6 +127,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [autoShrink, setAutoShrink] = useState(useDocumentStore.getState()['auto_shrink']);
   const [enable4C, setEnable4C] = useState(!!useDocumentStore.getState()['enable-4c']);
   const [enable1064, setEnable1064] = useState(!!useDocumentStore.getState()['enable-1064']);
+  const [enableGalvoMopa, setEnableGalvoMopa] = useState(!!useDocumentStore.getState()['enable-galvo-mopa']);
   const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const pmWorkareaOptions = useMemo(() => getPromarkWorkareaOptions(pmInfo.laserType), [pmInfo.laserType]);
@@ -324,6 +325,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       'enable-1064': enable1064,
       'enable-autofocus': Boolean(addOnInfo.autoFocus && enableAutofocus),
       'enable-diode': Boolean(addOnInfo.hybridLaser && enableDiode),
+      'enable-galvo-mopa': enableGalvoMopa,
     };
 
     const defaultModule = getDefaultModule(workarea);
@@ -346,6 +348,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
       if (layers.length > 0) {
         await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, defaultModule);
+      }
+    }
+
+    if (origState['enable-galvo-mopa'] && !enableGalvoMopa) {
+      const layers = getLayersByModule([LayerModule.GALVO_MOPA]);
+
+      if (layers.length > 0) {
+        await changeLayersModule(Array.from(layers), LayerModule.GALVO_MOPA, defaultModule);
       }
     }
 
@@ -789,6 +799,17 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     </div>
                     <div className={styles.control}>
                       <Switch checked={enable1064} id="laser_1064_module" onChange={setEnable1064} />
+                    </div>
+                  </div>
+                )}
+                {/* the CO2 galvo is always fitted, so only the optional MOPA galvo is listed here */}
+                {workareaObj.supportedModules?.includes(LayerModule.GALVO_MOPA) && (
+                  <div className={styles.row}>
+                    <div className={styles.title}>
+                      <label htmlFor="galvo_mopa_module">{getModulesTranslations()[LayerModule.GALVO_MOPA]}</label>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch checked={enableGalvoMopa} id="galvo_mopa_module" onChange={setEnableGalvoMopa} />
                     </div>
                   </div>
                 )}
