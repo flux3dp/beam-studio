@@ -201,6 +201,16 @@ callers only reset state, call, and apply the returned transform. Layers:
 4. `setAlignmentTransform` → CanvasManager `setContentTransform` moves
    design+marks overlay over the fixed camera image.
 
+Frames: everything in the pipeline is the machine frame — canvas px with the
+top expansion at negative y (the editor's element coordinates, the store's
+`markPositions`, the camera canvas mapped from the machine origin with
+`ratio = image px / workareaManager.width`, and thus the fitted transform).
+No consumer shifts by `minY` except an svg string handed to the task parser,
+which wants the 0-based export frame (`buildScratchSvg`'s
+`translate(0, -minY)`, same as `getSvgString({ fixTopExpansion: true })`).
+Do not move that shift into `alignByCamera`: the canvas overlay,
+`generateCutLayer` and `measureReading` all consume the machine frame directly.
+
 Diagnostics: every stage calls `logAlign(event, data)` (alignLog.ts; mm units,
 also mirrored to the console) — `run` (device, sheet setup, expected marks,
 tolerance), `exposure` (from ExposureControl), `detect` (per searched image:

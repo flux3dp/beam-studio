@@ -40,6 +40,9 @@ export const getDefaultScratchParams = (model: WorkAreaModel): ScratchParams =>
  * The vernier combs as a stand-alone scene for the task parser: one laser
  * layer of line paths at their aligned positions. Workarea, engrave dpi and
  * document flags travel as parser arguments, so the svg itself stays bare.
+ * The transform is in the machine frame like everything else in the dialog;
+ * the `translate(0, -minY)` is the parser's 0-based frame, mirroring
+ * `getSvgString({ fixTopExpansion: true })` in the regular export.
  */
 export const buildScratchSvg = (bbox: BBox, transform: RigidTransform, { power, speed }: ScratchParams): string => {
   const { height, minY, model, width } = workareaManager;
