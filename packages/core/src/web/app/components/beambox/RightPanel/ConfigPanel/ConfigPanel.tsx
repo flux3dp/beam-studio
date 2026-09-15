@@ -16,7 +16,6 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { galvoModules, laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -28,6 +27,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
+import { getSpeedLimit } from '@core/helpers/layer/getSpeedLimit';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,
@@ -221,7 +221,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
     payload.configName = value;
 
-    const { maxSpeed, minSpeed } = getWorkarea(workarea);
+    const { max: maxSpeed, min: minSpeed } = getSpeedLimit(module.value, workarea);
     const { dpiOverrides, ...base } = preset;
     const dpi = state.dpi.value;
     const resolvedPreset = { ...base, ...dpiOverrides?.[dpi] };

@@ -37,3 +37,23 @@ export const getSpeedLimit = (
 
   return { max, min: minSpeed };
 };
+
+/**
+ * Speed range shared by a selection of layers: the narrowest range every layer can honour.
+ *
+ * Selecting a CO2 layer together with a galvo layer has to fall back to the CO2 ceiling, because
+ * one slider writes one value to all of them.
+ */
+export const getSelectionSpeedLimit = (
+  modules: LayerModuleType[],
+  workarea: WorkAreaModel,
+  opts?: { hasCurveEngraving?: boolean },
+): { max: number; min: number } =>
+  modules.reduce(
+    (acc, module) => {
+      const { max, min } = getSpeedLimit(module, workarea, opts);
+
+      return { max: Math.min(acc.max, max), min: Math.max(acc.min, min) };
+    },
+    { max: Number.POSITIVE_INFINITY, min: 0 },
+  );
