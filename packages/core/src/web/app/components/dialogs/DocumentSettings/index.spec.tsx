@@ -257,6 +257,7 @@ describe('test DocumentSettings', () => {
       'enable-1064': false,
       'enable-autofocus': true,
       'enable-diode': true,
+      'enable-galvo-mopa': false,
       'enable-job-origin': true,
       'job-origin': 1,
       'pass-through': false,

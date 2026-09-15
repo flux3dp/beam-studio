@@ -10,9 +10,10 @@ export const useSupportedModules = (workarea: WorkAreaModel): LayerModuleType[] 
   const isUvPrintEnabled = useGlobalPreferenceStore((state) => state['enable-uv-print-file']);
   const is4CEnabled = useDocumentStore((state) => state['enable-4c']);
   const is1064Enabled = useDocumentStore((state) => state['enable-1064']);
+  const isGalvoMopaEnabled = useDocumentStore((state) => state['enable-galvo-mopa']);
 
   return useMemo(
-    () => getSupportedModules(workarea, { is4CEnabled, is1064Enabled, isUvPrintEnabled }),
-    [workarea, isUvPrintEnabled, is4CEnabled, is1064Enabled],
+    () => getSupportedModules(workarea, { is4CEnabled, is1064Enabled, isGalvoMopaEnabled, isUvPrintEnabled }),
+    [workarea, isUvPrintEnabled, is4CEnabled, is1064Enabled, isGalvoMopaEnabled],
   );
 };

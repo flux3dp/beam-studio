@@ -19,6 +19,8 @@ export type DocumentState = {
   'enable-1064': boolean;
   'enable-autofocus'?: boolean;
   'enable-diode'?: boolean;
+  /** whether the optional MOPA galvo module head is fitted; the CO2 galvo is always present */
+  'enable-galvo-mopa': boolean;
   'enable-job-origin': boolean;
   'extend-rotary-workarea': boolean;
   'frame-before-start': boolean;

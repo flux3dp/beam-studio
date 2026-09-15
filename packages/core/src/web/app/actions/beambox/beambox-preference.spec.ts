@@ -72,6 +72,7 @@ test('test beambox-preference', () => {
     'enable-1064': false,
     'enable-custom-backlash': false,
     'enable-custom-preview-height': false,
+    'enable-galvo-mopa': false,
     'enable-job-origin': false,
     'enable-uv-print-file': false,
     engrave_dpi: 'medium',

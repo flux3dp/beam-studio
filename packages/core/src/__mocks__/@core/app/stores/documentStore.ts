@@ -9,6 +9,7 @@ const state: DocumentState = {
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
   'enable-4c': false,
   'enable-1064': false,
+  'enable-galvo-mopa': false,
   'enable-job-origin': false,
   'extend-rotary-workarea': false,
   'frame-before-start': false,

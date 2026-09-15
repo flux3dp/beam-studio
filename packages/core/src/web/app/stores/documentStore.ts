@@ -47,6 +47,7 @@ const getInitDocumentStore = (): DocumentState => {
     'enable-1064': preference['enable-1064'],
     'enable-autofocus': isAutofocusEnabled,
     'enable-diode': isDiodeEnabled,
+    'enable-galvo-mopa': preference['enable-galvo-mopa'],
     'enable-job-origin': preference['enable-job-origin'],
     'extend-rotary-workarea': preference['extend-rotary-workarea'],
     'frame-before-start': preference['frame-before-start'],

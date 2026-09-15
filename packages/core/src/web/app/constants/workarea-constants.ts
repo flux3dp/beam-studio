@@ -343,12 +343,14 @@ export const getSupportedModules = (
   storeValues?: {
     is4CEnabled: boolean;
     is1064Enabled: boolean;
+    isGalvoMopaEnabled: boolean;
     isUvPrintEnabled: boolean;
   },
 ): LayerModuleType[] => {
   const {
     is4CEnabled = useDocumentStore.getState()['enable-4c'],
     is1064Enabled = useDocumentStore.getState()['enable-1064'],
+    isGalvoMopaEnabled = useDocumentStore.getState()['enable-galvo-mopa'],
     isUvPrintEnabled = useGlobalPreferenceStore.getState()['enable-uv-print-file'],
   } = storeValues || {};
   const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model] ?? {};
@@ -360,6 +362,9 @@ export const getSupportedModules = (
     if (!is4CEnabled) excludedModules.push(...fullColorHeadModules);
 
     if (!is1064Enabled) excludedModules.push(LayerModule.LASER_1064);
+
+    // the CO2 galvo is always fitted; the MOPA galvo is an optional purchase
+    if (!isGalvoMopaEnabled) excludedModules.push(LayerModule.GALVO_MOPA);
   }
 
   return excludedModules.length
