@@ -241,7 +241,6 @@ describe('scaleProfile (hardware crops)', () => {
   }
 
   const crops: HardwareCrop[] = [
-    // beamo, 2026-09-14: even lighting, burns at their designed length
     { axis: 'x', file: 'read-scales-x-beamo.png', pxPerMm: 10.05, reading: -1, u0Mm: -23, v0Mm: 4 },
     { axis: 'y', file: 'read-scales-y-beamo.png', pxPerMm: 10.05, reading: -1, u0Mm: -23, v0Mm: 4 },
   ];
