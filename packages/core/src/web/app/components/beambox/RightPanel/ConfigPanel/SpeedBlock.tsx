@@ -12,7 +12,12 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSpeedOptions } from '@core/app/constants/config-options';
 import { getWarningSpeed as getCurveEngravingWarningSpeed } from '@core/app/constants/curveEngraving';
-import { laserModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import {
+  galvoModules,
+  laserModules,
+  LayerModule,
+  printingModules,
+} from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
@@ -78,6 +83,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }, [isInch]);
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  // a galvo head ignores the gantry-oriented vector and low-speed warnings
+  const isGalvo = useMemo(() => galvoModules.has(layerModule), [layerModule]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const { 'auto-feeder': autoFeeder, borderless } = useDocumentStore(
     useShallow((state) => pick(state, ['auto-feeder', 'borderless'])),
@@ -112,6 +119,9 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     if (layerModule === LayerModule.PRINTER_4C) value = Math.min(value, 45);
     else if (layerModule === LayerModule.LASER_1064 && workarea === 'fbm2') value = Math.min(value, 150);
 
+    // TODO: a galvo module head is much faster than the gantry that workarea maxSpeed describes.
+    // Raising the ceiling here alone would desync from the clamps in applyPreset and
+    // postPresetChange, so it waits for the per-module speed work.
     return value;
   }, [workareaMaxSpeed, layerModule, workarea, hasCurveEngraving, curveSpeedLimit]);
 
@@ -133,7 +143,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   let warningText = '';
 
-  if (!isPromark && isLaser) {
+  if (!isPromark && !isGalvo && isLaser) {
     if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {
       warningText = vectorSpeedWarning;
     } else if (minSpeedWarning && value < minSpeedWarning) {
@@ -183,7 +193,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     <div className={classNames(styles.panel, styles[type])}>
       <span className={styles.title}>
         {t.speed}
-        {isPromark && (
+        {(isPromark || isGalvo) && (
           <Tooltip title={t.promark_speed_desc}>
             <QuestionCircleOutlined className={styles.hint} />
           </Tooltip>

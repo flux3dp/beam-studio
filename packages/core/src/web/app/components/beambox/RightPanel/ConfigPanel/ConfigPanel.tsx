@@ -13,7 +13,7 @@ import tutorialController from '@core/app/components/tutorials/tutorialControlle
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { CAP_INTERVAL_LIMIT, LAYER_SPACING_LIMIT, POINT_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
+import { galvoModules, laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -127,8 +127,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   }, [workarea, watt]);
 
   const { module } = state;
-  const { isLaser, isPrinting, isUV } = useMemo(() => {
+  const { isGalvo, isLaser, isPrinting, isUV } = useMemo(() => {
     return {
+      isGalvo: galvoModules.has(module.value),
       isLaser: laserModules.has(module.value),
       isPrinting: printingModules.has(module.value),
       isUV: UVModules.has(module.value),
@@ -146,6 +147,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     hasStlPhoto,
     isInnerEngraving: isInnerEngravingReady,
   });
+  // galvo parameters belong to the layer's module head, not to the machine
+  const hasGalvoParams = isPromark || isGalvo;
 
   useEffect(() => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
@@ -312,7 +315,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {/* a dot has no speed; in inner engraving only slice contours are travelled */}
       {(!isInnerEngraving || innerEngravingBlocks.line) && <SpeedBlock type={UIType} />}
       {isLaser && !isInnerEngraving && <DpiBlock type={UIType} />}
-      {isPromark && (!isInnerEngraving || innerEngravingBlocks.dot) && <DottingTimeBlock type={UIType} />}
+      {hasGalvoParams && (!isInnerEngraving || innerEngravingBlocks.dot) && <DottingTimeBlock type={UIType} />}
       {innerEngravingBlocks.dot && (
         <NumberBlock
           configKey="stlPointSpacing"
@@ -359,14 +362,14 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         />
       )}
       {/* only paths are filled, and an inner engraving layer holds none */}
-      {isPromark && !isInnerEngraving && <FillIntervalBlock type={UIType} />}
+      {hasGalvoParams && !isInnerEngraving && <FillIntervalBlock type={UIType} />}
       {hexa2Models.has(workarea) && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
-      {isPromark && !isPromarkUV && <PulseWidthBlock type={UIType} />}
-      {isPromark && !isPromarkUV && <FrequencyBlock type={UIType} />}
+      {hasGalvoParams && !isPromarkUV && <PulseWidthBlock type={UIType} />}
+      {hasGalvoParams && !isPromarkUV && <FrequencyBlock type={UIType} />}
       {!isInnerEngraving && <RepeatBlock type={UIType} />}
-      {isPromark && <AdvancedSettingButton type={UIType} />}
+      {hasGalvoParams && <AdvancedSettingButton type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
     </>

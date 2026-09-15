@@ -5,6 +5,8 @@ import DepthBlock from '@core/app/components/beambox/RightPanel/OptionsBlocks/Im
 import GradientBlock from '@core/app/components/beambox/RightPanel/OptionsBlocks/ImageOptions/GradientBlock';
 import PwmBlock from '@core/app/components/beambox/RightPanel/OptionsBlocks/ImageOptions/PwmBlock';
 import ThresholdBlock from '@core/app/components/beambox/RightPanel/OptionsBlocks/ImageOptions/ThresholdBlock';
+import { galvoModules } from '@core/app/constants/layer-module/layer-modules';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -38,6 +40,9 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
   const elemRef = useRef(-1);
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const layerModule = useConfigPanelStore((state) => state.module.value);
+  // a galvo layer engraves depth rather than modulating power, whatever machine it sits on
+  const useDepth = useMemo(() => isPromark || galvoModules.has(layerModule), [isPromark, layerModule]);
   const isGradient = elem.getAttribute('data-shading') === 'true';
   const threshold = Number.parseInt(elem.getAttribute('data-threshold') ?? '128', 10) || 128;
 
@@ -136,7 +141,7 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
     ];
 
     if (isGradient) {
-      if (isPromark) {
+      if (useDepth) {
         if (!isMobile && !isInnerEngravingMode) {
           blocks.push(<DepthBlock changeAttribute={changeAttribute} elem={elem} key="depth" />);
         }
@@ -155,7 +160,7 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
     }
 
     return blocks;
-  }, [changeAttribute, generateImageData, isGradient, isPromark, isMobile, isInnerEngravingMode, elem, threshold]);
+  }, [changeAttribute, generateImageData, isGradient, useDepth, isMobile, isInnerEngravingMode, elem, threshold]);
 
   return isMobile ? content : <div className={styles.options}>{content}</div>;
 };

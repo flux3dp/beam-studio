@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { galvoModules } from '@core/app/constants/layer-module/layer-modules';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getPromarkLimit, isPromarkUV } from '@core/helpers/layer/layer-config-helper';
+import { getGalvoLimit, getPromarkLimit, isPromarkUV } from '@core/helpers/layer/layer-config-helper';
 
 /** Bumps whenever the promark info changes, which happens when document settings are saved. */
 const usePromarkInfoVersion = (): number => {
@@ -24,11 +26,13 @@ const usePromarkInfoVersion = (): number => {
 
 const usePromarkLimit = (): ReturnType<typeof getPromarkLimit> => {
   const infoVersion = usePromarkInfoVersion();
+  // a galvo module head carries its own range, whichever machine it is fitted to
+  const layerModule = useConfigPanelStore((state) => state.module.value);
 
   return useMemo(
-    () => getPromarkLimit(),
+    () => (galvoModules.has(layerModule) ? getGalvoLimit(layerModule) : getPromarkLimit()),
     // eslint-disable-next-line hooks/exhaustive-deps
-    [infoVersion],
+    [infoVersion, layerModule],
   );
 };
 
