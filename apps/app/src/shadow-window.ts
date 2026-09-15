@@ -18,12 +18,12 @@ const main = async () => {
       const ctx = imgCanvas.getContext('2d') as CanvasRenderingContext2D;
 
       ctx.imageSmoothingEnabled = false;
-      ctx.drawImage(img, 0, 0, width, height);
+      ctx.drawImage(img, 0, 0, img.width, img.height);
 
       const outCanvas = document.createElement('canvas');
 
-      outCanvas.width = Math.max(1, width);
-      outCanvas.height = Math.max(1, height);
+      outCanvas.width = imgCanvas.width;
+      outCanvas.height = imgCanvas.height;
 
       const outCtx = outCanvas.getContext('2d') as CanvasRenderingContext2D;
 

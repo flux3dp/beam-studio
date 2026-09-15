@@ -230,33 +230,37 @@ const makeSymbol = (
     return prefix + replace;
   });
 
+  // laser-only overrides; makeImageSymbol mirrors the layer's fullcolor flag onto the symbol so
+  // printing / uv-export layers keep the original stroke widths (symbol, image symbol and export)
+  const laserOnly = `#${symbol.id}:not([data-fullcolor="1"])`;
+
   prefixedStyle = `${prefixedStyle}
-        #${symbol.id} *[data-color] ellipse[fill=none],
-        #${symbol.id} *[data-color] circle[fill=none],
-        #${symbol.id} *[data-color] rect[fill=none],
-        #${symbol.id} *[data-color] path[fill=none],
-        #${symbol.id} *[data-color] polygon[fill=none] {
+        ${laserOnly} ellipse[fill=none],
+        ${laserOnly} circle[fill=none],
+        ${laserOnly} rect[fill=none],
+        ${laserOnly} path[fill=none],
+        ${laserOnly} polygon[fill=none] {
             fill-opacity: 0 !important;
             stroke-width: 1px !important;
             stroke-opacity: 1 !important;
             vector-effect: non-scaling-stroke !important;
         }
 
-        #${symbol.id} *[data-color] ellipse[stroke=none],
-        #${symbol.id} *[data-color] circle[stroke=none],
-        #${symbol.id} *[data-color] rect[stroke=none],
-        #${symbol.id} *[data-color] path[stroke=none],
-        #${symbol.id} *[data-color] polygon[stroke=none],
-        #${symbol.id} *[data-color] ellipse:not([stroke]),
-        #${symbol.id} *[data-color] circle:not([stroke]),
-        #${symbol.id} *[data-color] rect:not([stroke]),
-        #${symbol.id} *[data-color] path:not([stroke]),
-        #${symbol.id} *[data-color] polygon:not([stroke]) {
+        ${laserOnly} ellipse[stroke=none],
+        ${laserOnly} circle[stroke=none],
+        ${laserOnly} rect[stroke=none],
+        ${laserOnly} path[stroke=none],
+        ${laserOnly} polygon[stroke=none],
+        ${laserOnly} ellipse:not([stroke]),
+        ${laserOnly} circle:not([stroke]),
+        ${laserOnly} rect:not([stroke]),
+        ${laserOnly} path:not([stroke]),
+        ${laserOnly} polygon:not([stroke]) {
             fill-opacity: 1 !important;
             stroke-width: 0 !important;
         }
 
-        *[data-wireframe] {
+        ${laserOnly} *[data-wireframe] {
             stroke-width: 1px !important;
             stroke-opacity: 1.0 !important;
             stroke-dasharray: 0 !important;
@@ -287,6 +291,26 @@ const getStrokeWidth = (imageRatio: number, scale: number) => {
   let strokeWidth = (0.8 * imageRatio) / (scale * workareaManager.zoomRatio);
 
   return Math.max(4, strokeWidth);
+};
+
+/**
+ * Widest stroke in the symbol, in symbol user units, so the fullcolor raster can pad the bbox by
+ * half of it (strokes on the bbox edge are otherwise cropped; getBBox ignores strokes).
+ */
+const getMaxStrokeWidth = (symbol: SVGSymbolElement): number => {
+  let maxStrokeWidth = 0;
+
+  symbol.querySelectorAll('[stroke-width]').forEach((elem) => {
+    if (elem.getAttribute('stroke') === 'none') return;
+
+    const strokeWidth = Number.parseFloat(elem.getAttribute('stroke-width') || '0');
+
+    if (!Number.isNaN(strokeWidth)) {
+      maxStrokeWidth = Math.max(maxStrokeWidth, strokeWidth);
+    }
+  });
+
+  return maxStrokeWidth;
 };
 
 const sendTaskToWorker = async (data: any) =>
@@ -407,7 +431,12 @@ const makeImageSymbol = async (
     }
 
     const imageRatio = calculateImageRatio(bb);
-    const strokeWidth = fullColor ? 1 : getStrokeWidth(imageRatio, scale);
+    const strokeWidth = fullColor
+      ? Math.max(1, getMaxStrokeWidth(symbol) * imageRatio)
+      : getStrokeWidth(imageRatio, scale);
+
+    // gates the laser-only stroke overrides in the symbol <style> (see makeSymbol)
+    symbol.setAttribute('data-fullcolor', fullColor ? '1' : '0');
 
     if (
       imageSymbol?.getAttribute('data-stroke-width') === strokeWidth.toPrecision(6) &&
@@ -427,11 +456,12 @@ const makeImageSymbol = async (
     const descendants = Array.from(tempSymbol.querySelectorAll('*'));
 
     descendants.forEach((d) => {
-      if (!fullColor) {
+      if (fullColor) {
+        d.removeAttribute('vector-effect');
+      } else {
         d.setAttribute('stroke-width', `${strokeWidth}px`);
+        d.setAttribute('vector-effect', 'non-scaling-stroke');
       }
-
-      d.setAttribute('vector-effect', 'non-scaling-stroke');
     });
 
     const styles = Array.from(tempSymbol.querySelectorAll('style'));
