@@ -16,6 +16,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { getSVGAsync } from '../svg-editor-helper';
 
+import getMaxStrokeWidth from './getMaxStrokeWidth';
 import updateImageSymbol, { waitForImageSymbolUrl } from './updateImageSymbol';
 
 let svgCanvas: ISVGCanvas;
@@ -291,26 +292,6 @@ const getStrokeWidth = (imageRatio: number, scale: number) => {
   let strokeWidth = (0.8 * imageRatio) / (scale * workareaManager.zoomRatio);
 
   return Math.max(4, strokeWidth);
-};
-
-/**
- * Widest stroke in the symbol, in symbol user units, so the fullcolor raster can pad the bbox by
- * half of it (strokes on the bbox edge are otherwise cropped; getBBox ignores strokes).
- */
-const getMaxStrokeWidth = (symbol: SVGSymbolElement): number => {
-  let maxStrokeWidth = 0;
-
-  symbol.querySelectorAll('[stroke-width]').forEach((elem) => {
-    if (elem.getAttribute('stroke') === 'none') return;
-
-    const strokeWidth = Number.parseFloat(elem.getAttribute('stroke-width') || '0');
-
-    if (!Number.isNaN(strokeWidth)) {
-      maxStrokeWidth = Math.max(maxStrokeWidth, strokeWidth);
-    }
-  });
-
-  return maxStrokeWidth;
 };
 
 const sendTaskToWorker = async (data: any) =>
