@@ -88,7 +88,7 @@ jobs:
 
 
       - name: Install Fluxsvg
-        uses: flux3dp/fluxsvg@2.7.8
+        uses: flux3dp/fluxsvg@2.7.9
 
       - name: Checkout FluxClient
         uses: actions/checkout@v5
