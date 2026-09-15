@@ -437,6 +437,7 @@ const makeImageSymbol = async (
 
     // gates the laser-only stroke overrides in the symbol <style> (see makeSymbol)
     symbol.setAttribute('data-fullcolor', fullColor ? '1' : '0');
+    symbol.setAttribute('overflow', 'visible');
 
     if (
       imageSymbol?.getAttribute('data-stroke-width') === strokeWidth.toPrecision(6) &&
