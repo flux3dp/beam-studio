@@ -36,6 +36,7 @@ For Cypress E2E specs (release-test automation under `apps/web/cypress/`), see
 | Antd `css-dev-only-do-not-override-*` hashes are normalized by a snapshot serializer | Antd class hashes won't break snapshots |
 | `.module.scss` → `identity-obj-proxy` | `styles['font-size']` returns the string `'font-size'` |
 | `.svg` imports → `svgrMock.ts`, `.svg?url` → `urlMock.ts` | Never mock SVG assets |
+| No image decoding (`createImageBitmap`, `<img>` load, `getImageData` are stubs) | Pixel fixtures go in as PNG files decoded with `pngjs` + `fs.readFileSync` (core devDependency); see `PrintAndCut/calibration/scaleProfile.spec.ts` |
 
 ### Path Aliases in Tests
 
