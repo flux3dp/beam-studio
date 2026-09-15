@@ -33,14 +33,11 @@ const offsetContourPaths = async (paths: Path[], delta: number): Promise<null | 
   const ClipperLib = getClipperLib();
 
   try {
-    // normalize orientation so a positive delta offsets outward, and drop
-    // duplicate / near-collinear vertices before offsetting
-    const simplified = ClipperLib.Clipper.SimplifyPolygons(paths, ClipperLib.PolyFillType.pftNonZero) as Path[];
-    let result = ClipperLib.Clipper.CleanPolygons(simplified, 0.05 * SCALE_FACTOR) as Path[];
+    let result: Path[];
     const clipper = new ClipperBase('offset', MITER_LIMIT, ARC_TOLERANCE);
 
     try {
-      await clipper.addPaths(result, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedLine);
+      await clipper.addPaths(paths, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedLine);
       result = (await clipper.execute([], delta)) as Path[];
     } finally {
       clipper.terminate();

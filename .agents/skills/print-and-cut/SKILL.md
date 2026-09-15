@@ -1,6 +1,6 @@
 ---
 name: print-and-cut
-description: Print and Cut dialog — print a design on paper, then camera-align and laser-cut it. Covers the step flow, stores (dialog + persisted config), contour tracing, mark alignment pipeline, resume/repeat runs, and .beam persistence. Use when working on components/dialogs/PrintAndCut/ or its fluxghost opencv commands.
+description: Print and Cut dialog — print a design on paper, then camera-align and laser-cut it. Covers the step flow, stores (dialog + persisted config), contour tracing, mark alignment pipeline, resume/repeat runs, and .beam persistence. Use when working on components/dialogs/PrintAndCut/ or its fluxghost opencv commands. Also covers the offset-calibration modal under calibration/ (vernier sheet, scratch task, camera scale reading, PncOffset store) via references/calibration.md.
 ---
 
 # Print and Cut
@@ -89,7 +89,7 @@ PrintAndCut/
     ├── exportPdf.ts         # jsPDF export (marks incl. white base disc)
     ├── rigidTransform.ts    # L0 pure math: Point/RigidTransform, 2D Kabsch fit (+ per-axis residual, diagnostic scale), match tolerance
     ├── align/               # Camera alignment, layered (each file imports only lower layers)
-    │   ├── alignByCamera.ts     # L3 orchestrator: alignByCamera() = capture → refine → redetect → fit
+    │   ├── alignByCamera.ts     # L3 orchestrator: alignByCamera() = capture → refine → redetect → fit → calibration offset
     │   ├── capture.ts           # L2 captureWorkareaImage: full-area shot / smart sweep / region sweep → mark centers
     │   ├── smartMarkSweep.ts    # L2 mark-seeking regional sweep (stops when 4 marks found)
     │   ├── refineMarkPatches.ts # L2 per-mark centered retake, patch kept
@@ -98,6 +98,7 @@ PrintAndCut/
     │   ├── alignProgress.ts     # reporter: phases → store alignProgress
     │   └── alignLog.ts          # leaf: Logger('print-and-cut') events + one failure-image slot → bug report section
     └── generateCutLayer.ts  # Finish: cutting layer + config save
+└── calibration/             # Vernier offset calibration modal — see references/calibration.md
 ```
 
 ## State model
@@ -162,8 +163,8 @@ StepSetup drives it through a remeda `funnel` (300 ms, leading+trailing) with a
 
 ## Alignment pipeline (step 4)
 
-One entry point, `alignByCamera()` in `utils/align/`, called by StepAlign.
-It writes `cameraImageUrl`,
+One entry point, `alignByCamera({ applyCalibration })` in `utils/align/`,
+called by StepAlign and by the calibration dialog. It writes `cameraImageUrl`,
 `detectedMarkCenters` and `alignmentFit` to the store as it goes, so the
 callers only reset state, call, and apply the returned transform. Layers:
 
@@ -195,9 +196,21 @@ callers only reset state, call, and apply the returned transform. Layers:
 3. **fit** — the redetected fit, else `fitRigidTransform(expected, marks)`
    on the located centers; stored as `alignmentFit` (rotation / scale / fit
    error x / y mm in StepAlign, red over tolerance; `scale` is the similarity
-   best-fit, diagnostic only — the applied transform stays rigid). `endPreviewMode` in `finally`.
+   best-fit, diagnostic only — the applied transform stays rigid); then
+   `correctByCalibration` (machine-stored offset, see below) unless
+   `applyCalibration: false`. `endPreviewMode` in `finally`.
 4. `setAlignmentTransform` → CanvasManager `setContentTransform` moves
    design+marks overlay over the fixed camera image.
+
+Frames: everything in the pipeline is the machine frame — canvas px with the
+top expansion at negative y (the editor's element coordinates, the store's
+`markPositions`, the camera canvas mapped from the machine origin with
+`ratio = image px / workareaManager.width`, and thus the fitted transform).
+No consumer shifts by `minY` except an svg string handed to the task parser,
+which wants the 0-based export frame (`buildScratchSvg`'s
+`translate(0, -minY)`, same as `getSvgString({ fixTopExpansion: true })`).
+Do not move that shift into `alignByCamera`: the canvas overlay,
+`generateCutLayer` and `measureReading` all consume the machine frame directly.
 
 Diagnostics: every stage calls `logAlign(event, data)` (alignLog.ts; mm units,
 also mirrored to the console) — `run` (device, sheet setup, expected marks,
@@ -225,6 +238,25 @@ the `detecting` label so the message does not flip). StepAlign renders an antd
 locally in between, showing `calculating` until an estimate exists and
 `completing` during the wrap-up phase instead of a time.
 `isProcessing` disables the shared footer (owned by PrintAndCut.tsx).
+
+## Offset calibration (`calibration/`)
+
+Separate menu item (`CALIBRATE_PRINT_AND_CUT`) that measures the machine's
+systematic print-to-laser offset with a vernier sheet and stores it as
+`PncOffset {x, y}` (machine `camera_calib/pnc.json`, else local storage by
+serial). **Read `references/calibration.md` (same folder as this file) before
+touching anything under `calibration/`** — it covers the sheet geometry, scratch
+task, camera scale reading and its fixtures, and the offset store. What the main
+dialog needs to know:
+
+- The calibration modal borrows `usePrintAndCutStore` (`init` with
+  `getCalibrationBBox()`, `reset()` on unmount); each entry point refuses to
+  open while the other is up (both dialog ids live in `constants.ts`).
+- `alignByCamera` fetches the offset BEFORE the capture and applies it after
+  the fit via `correctByCalibration`; the calibration modal passes
+  `applyCalibration: false` so the offset is not applied while measuring it.
+- `clearPncOffset` runs after every camera calibration write — a new camera
+  write path must call it too.
 
 ## Preview canvas
 

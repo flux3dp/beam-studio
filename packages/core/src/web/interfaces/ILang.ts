@@ -2272,6 +2272,23 @@ export interface ILang {
       success: string;
     };
     backend_outdated: string;
+    calibration: {
+      align_desc: string;
+      aligned: string;
+      auto_read: string;
+      auto_read_failed: string;
+      auto_read_hint: string;
+      current_offset: string;
+      export_pdf: string;
+      power: string;
+      print_desc: string;
+      reading_desc: string;
+      reading_x: string;
+      reading_y: string;
+      scratch: string;
+      speed: string;
+      title: string;
+    };
     continue_to_alignment: string;
     cutting_layer_name: string;
     design_changed: string;
@@ -2676,6 +2693,7 @@ export interface ILang {
       calibrate_camera_advanced: string;
       calibrate_diode_module: string;
       calibrate_ir_module: string;
+      calibrate_print_and_cut: string;
       calibrate_printer_module: string;
       calibrate_wide_angle_camera: string;
       calibration: string;
