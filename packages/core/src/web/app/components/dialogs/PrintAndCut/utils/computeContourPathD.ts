@@ -167,7 +167,7 @@ export const computeContourPathD = async (
   printingContentsBBox: BBox | null,
   distanceMm: number,
 ): Promise<null | string> => {
-  if (!printingContentsBBox || printingContentsBBox.width === 0 || printingContentsBBox.height === 0) return null;
+  if (!printingContentsBBox || (printingContentsBBox.width === 0 && printingContentsBBox.height === 0)) return null;
 
   const distancePx = Math.max(1, Math.round(distanceMm * dpmm));
 
