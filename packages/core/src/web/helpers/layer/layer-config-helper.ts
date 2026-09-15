@@ -346,8 +346,14 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
   const config = structuredClone(baseConfig);
 
   if (isPromark) {
+    const promarkInfo = getPromarkInfo();
+
     config.speed = 1000;
-    config.frequency = match(getPromarkInfo())
+    config.frequency = match(promarkInfo)
+      .when(
+        ({ laserType }) => laserType === LaserType.UV,
+        () => 40,
+      )
       .when(
         ({ laserType, watt }) => laserType === LaserType.MOPA && watt >= 100,
         () => 55,
@@ -368,7 +374,13 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
         ({ watt }) => watt >= 30,
         () => 30,
       )
-      .otherwise(() => 27);
+      .otherwise(() => config.frequency);
+    config.pulseWidth = match(promarkInfo)
+      .when(
+        ({ laserType }) => laserType === LaserType.UV,
+        () => 13,
+      )
+      .otherwise(() => config.pulseWidth);
   }
 
   return config;
