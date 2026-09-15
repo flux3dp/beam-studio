@@ -13,7 +13,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
 
 // Models whose region preview capture footprint is defined by a perspective grid.
-const gridPreviewModels = ['fbb2', 'fbm2', 'fhx2rf'];
+const gridPreviewModels = ['fbb2', 'fbm2', 'fhx2rf', 'fhx2galvo'];
 // Models whose preview only supports full-area capture; no region indicator.
 const fullAreaOnlyModels = new Set(['ado1', ...promarkModels]);
 

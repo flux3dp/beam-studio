@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { hexa2Models } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { bb2PerspectiveGrid, bb2PerspectiveGridWide, bb2PnPPoints } from '@core/app/constants/fisheyeCameraConstants';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
@@ -72,7 +73,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
   const model = useMemo(() => deviceMaster.currentDevice?.info.model ?? 'fbb2', []);
-  const isHexaRf = useMemo(() => model === 'fhx2rf', [model]);
+  const isHexa2 = useMemo(() => hexa2Models.has(model), [model]);
 
   if (step === Steps.PRE_CHESSBOARD) {
     return (
@@ -143,7 +144,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
         });
 
         if (doEngraving) {
-          if (isHexaRf) await deviceMaster.doHexa2Calibration();
+          if (isHexa2) await deviceMaster.doHexa2Calibration();
           else await deviceMaster.doBB2Calibration();
         }
 

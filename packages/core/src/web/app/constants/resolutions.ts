@@ -1,6 +1,8 @@
 import { invert } from 'remeda';
 import { match } from 'ts-pattern';
 
+import { hexa2Models } from '@core/app/actions/beambox/constant';
+
 import type { LayerModuleType } from './layer-module/layer-modules';
 import { LayerModule } from './layer-module/layer-modules';
 import type { WorkAreaModel } from './workarea-constants';
@@ -22,8 +24,8 @@ export const dpiValueMap: Record<EngraveDpiOption, EngraveDpiValue> = {
 export const valueDpiMap: Record<EngraveDpiValue, EngraveDpiOption> = invert(dpiValueMap);
 export const getEngraveDpmm = (dpi: EngraveDpiOption, workarea: WorkAreaModel): EngraveDpmmValue => {
   return match<EngraveDpiOption, EngraveDpmmValue>(dpi)
-    .with('ultra', () => (workarea === 'fhx2rf' ? 80 : 50))
-    .with('detailed', () => (workarea === 'fhx2rf' ? 40 : 50))
+    .with('ultra', () => (hexa2Models.has(workarea) ? 80 : 50))
+    .with('detailed', () => (hexa2Models.has(workarea) ? 40 : 50))
     .with('high', () => 20)
     .with('medium', () => 10)
     .with('low', () => 5)

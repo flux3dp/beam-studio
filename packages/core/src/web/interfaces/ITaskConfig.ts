@@ -37,6 +37,10 @@ export type TFcodeOptionalConfig = Partial<{
    * a travel speed
    */
   ats: number;
+  /**
+   * tile size [width, height] in mm for galvo module heads; the backend stitches the tiles together
+   */
+  block_size: [number, number];
   /** whether to use firmware burst refresh for 4C printing */
   burst_refresh: boolean;
   /**

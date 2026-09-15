@@ -39,6 +39,8 @@ export const getModulesTranslations = (shouldNote4C = false): Record<LayerModule
   const t = i18n.lang.layer_module;
 
   return {
+    [LayerModule.GALVO_CO2]: t.galvo_co2,
+    [LayerModule.GALVO_MOPA]: t.galvo_mopa,
     [LayerModule.LASER_10W_DIODE]: t.laser_10w_diode,
     [LayerModule.LASER_20W_DIODE]: t.laser_20w_diode,
     [LayerModule.LASER_1064]: t.laser_2w_infrared,
@@ -56,6 +58,8 @@ export const getDetectedModulesTranslations = (shouldNote4C = false): Record<Det
   const printer4CText = shouldNote4C ? `${t.printing} (4C)` : t.printing;
 
   return {
+    [DetectedLayerModule.GALVO_CO2]: t.galvo_co2,
+    [DetectedLayerModule.GALVO_MOPA]: t.galvo_mopa,
     [DetectedLayerModule.LASER_10W_DIODE]: t.laser_10w_diode,
     [DetectedLayerModule.LASER_20W_DIODE]: t.laser_20w_diode,
     [DetectedLayerModule.LASER_1064]: t.laser_2w_infrared,

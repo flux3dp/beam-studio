@@ -25,6 +25,7 @@ export default async function checkFirmware(device: IDeviceInfo): Promise<
       .with('fhexa1', () => 'hexa-latest')
       .with('fbm2', () => 'beamo-ii-latest')
       .with('fhx2rf', () => 'hexa-rf-latest')
+      .with('fhx2galvo', () => 'nx-latest')
       .with('fbb2', () => 'nx-latest')
       .otherwise(() => 'firmware-latest');
     const resp = await axiosFluxId.get(`api/check-update?key=${key}`);

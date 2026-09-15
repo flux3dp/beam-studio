@@ -1940,6 +1940,8 @@ const lang: ILang = {
     },
   },
   layer_module: {
+    galvo_co2: 'CO2 Galvo',
+    galvo_mopa: 'MOPA Galvo',
     general_laser: 'Laser',
     laser_2w_infrared: 'Laser Inframerah 2W',
     laser_10w_diode: 'Laser Diode 10W',
