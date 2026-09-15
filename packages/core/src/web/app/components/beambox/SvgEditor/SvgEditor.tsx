@@ -33,7 +33,6 @@ import PreviewFloatingBar from './PreviewFloatingBar';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
 import Workarea from './Workarea';
-import WorkareaInfo from './WorkareaInfo';
 
 const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
@@ -85,9 +84,6 @@ const SvgEditor = (): ReactNode => {
 
         {mode !== CanvasMode.PathPreview && (
           <>
-            <div className={styles['top-right']}>
-              <WorkareaInfo />
-            </div>
             {!isMobile && <PreviewFloatingBar />}
             {!innerEngraving && <DpiInfo />}
             <div className={styles['bottom-right']}>
