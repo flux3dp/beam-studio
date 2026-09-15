@@ -1,6 +1,3 @@
-import { getOS } from '@core/helpers/getOS';
-import isWeb from '@core/helpers/is-web';
-
 // manage dev mode feature flag here, so we can easily turn it off for production
 const isDev = (): boolean => window?.localStorage?.getItem('dev') === 'true';
 
@@ -9,8 +6,7 @@ export const isParamsLabelDev = (): boolean => window?.localStorage?.getItem('pa
 
 export default isDev;
 
-export const isUvDev = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
+export const isUvDev = (): boolean => true;
 // Alpha-only test and demonstration features. Keep separate so they can be removed before release.
 export const isUvDev2 = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
-export const supportSwiftray = () => (!isWeb() || isDev()) && getOS() !== 'Linux';
 export const mockT = (key: string) => key;
