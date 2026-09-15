@@ -151,7 +151,8 @@ holds only state, actions and `withFullBBox`.
 
 `computeContourPathD(printingContentsBBox, offsetDistance)`:
 raster all design layers at 1px = 1 canvas unit (`switchSymbolWrapper` for image
-symbols) → fluxghost `image_contour` (`min_area: 1`, alpha/luminance silhouette,
+symbols; box = contents bbox padded by half of `getMaxStrokeWidth` (symbol-helper),
+since getBBox ignores strokes; contours come back in canvas coords) → fluxghost `image_contour` (`min_area: 1`, alpha/luminance silhouette,
 RETR_EXTERNAL — no holes) → **contours cached as a promise per dialog run**
 (`cachedContours`, cleared by `clearRasterCache` in `startFreshRun`) → one outward
 `ClipperOffset` pass (jtRound + **etClosedLine**, NOT etClosedPolygon — spikes at

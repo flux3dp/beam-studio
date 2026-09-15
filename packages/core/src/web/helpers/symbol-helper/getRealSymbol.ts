@@ -9,12 +9,14 @@ const getRealSymbol = (elem: Element): Element | null => {
 
   const refElem = document.getElementById(refId.substring(1));
 
-  if (refElem.getAttribute('data-origin-symbol')) {
-    const originalSymbol = document.getElementById(refElem.getAttribute('data-origin-symbol'));
+  if (!refElem) return null;
 
-    if (originalSymbol) {
-      return originalSymbol;
-    }
+  const originId = refElem.getAttribute('data-origin-symbol');
+
+  if (originId) {
+    const originalSymbol = document.getElementById(originId);
+
+    if (originalSymbol) return originalSymbol;
   }
 
   return refElem;
