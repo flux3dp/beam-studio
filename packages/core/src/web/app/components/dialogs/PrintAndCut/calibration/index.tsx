@@ -10,15 +10,13 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import { PRINT_AND_CUT_DIALOG_ID } from '../constants';
+import { PRINT_AND_CUT_CALIBRATION_DIALOG_ID, PRINT_AND_CUT_DIALOG_ID } from '../constants';
 
 import PrintAndCutCalibration from './PrintAndCutCalibration';
 
-const DIALOG_ID = 'print-and-cut-calibration';
-
 export const showPrintAndCutCalibration = async (device: IDeviceInfo): Promise<void> => {
   // the calibration borrows the print-and-cut store, so the two cannot coexist
-  if (isIdExist(DIALOG_ID) || isIdExist(PRINT_AND_CUT_DIALOG_ID)) return;
+  if (isIdExist(PRINT_AND_CUT_CALIBRATION_DIALOG_ID) || isIdExist(PRINT_AND_CUT_DIALOG_ID)) return;
 
   if (isWeb() && !(await checkOpenCvSupport('imageContour'))) {
     alertCaller.popUpError({ message: i18n.lang.print_and_cut.backend_outdated });
@@ -34,5 +32,8 @@ export const showPrintAndCutCalibration = async (device: IDeviceInfo): Promise<v
   // top bar selection, so the menu's device must become that selection
   TopBarController.setSelectedDevice(device);
 
-  addDialogComponent(DIALOG_ID, <PrintAndCutCalibration device={device} onClose={() => popDialogById(DIALOG_ID)} />);
+  addDialogComponent(
+    PRINT_AND_CUT_CALIBRATION_DIALOG_ID,
+    <PrintAndCutCalibration device={device} onClose={() => popDialogById(PRINT_AND_CUT_CALIBRATION_DIALOG_ID)} />,
+  );
 };

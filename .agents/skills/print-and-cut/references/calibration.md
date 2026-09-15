@@ -33,8 +33,9 @@ calibration/
 ## Dialog flow
 
 - Borrows the main dialog store: `init({printingContentsBBox: getCalibrationBBox()})`
-  seeds `markPositions`, `reset()` on unmount; refuses to open while the main
-  dialog is open (the reverse is not guarded — the calibration is modal).
+  seeds `markPositions`, `reset()` on unmount. Both entry points refuse to open
+  while the other dialog is up (`PRINT_AND_CUT_DIALOG_ID` /
+  `PRINT_AND_CUT_CALIBRATION_DIALOG_ID` in `../constants.ts`).
 - Step 2 align = `alignByCamera({ applyCalibration: false })` — the stored offset
   must not be applied while measuring it. The capture lands in the editor's
   background drawer like any preview (showing it in the modal / clearing it on

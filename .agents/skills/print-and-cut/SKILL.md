@@ -239,8 +239,8 @@ task, camera scale reading and its fixtures, and the offset store. What the main
 dialog needs to know:
 
 - The calibration modal borrows `usePrintAndCutStore` (`init` with
-  `getCalibrationBBox()`, `reset()` on unmount) and refuses to open while the
-  main dialog is open.
+  `getCalibrationBBox()`, `reset()` on unmount); each entry point refuses to
+  open while the other is up (both dialog ids live in `constants.ts`).
 - `alignByCamera` fetches the offset BEFORE the capture and applies it after
   the fit via `correctByCalibration`; the calibration modal passes
   `applyCalibration: false` so the offset is not applied while measuring it.
