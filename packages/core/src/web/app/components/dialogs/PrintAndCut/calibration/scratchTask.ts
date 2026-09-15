@@ -80,9 +80,9 @@ export const buildScratchThumbnail = async (svg: string, bbox: BBox, transform: 
     { x: bbox.x + bbox.width, y: bbox.y + bbox.height },
   ].map((p) => applyRigidTransform(p, transform));
   const xs = corners.map(({ x }) => x);
-  const ys = corners.map(({ y }) => y);
   // the combs sit in the expanded frame, see buildScratchSvg
-  const crop = { height: 0, width: 0, x: Math.min(...xs), y: Math.min(...ys) - workareaManager.minY };
+  const ys = corners.map(({ y }) => y - workareaManager.minY);
+  const crop = { height: 0, width: 0, x: Math.min(...xs), y: Math.min(...ys) };
 
   crop.width = Math.max(...xs) - crop.x;
   crop.height = Math.max(...ys) - crop.y;
