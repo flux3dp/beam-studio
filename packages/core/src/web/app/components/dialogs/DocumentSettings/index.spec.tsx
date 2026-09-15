@@ -335,7 +335,7 @@ describe('test DocumentSettings', () => {
       option.getAttribute('title'),
     );
 
-    expect(options).toEqual(['70 x 70 mm']);
+    expect(options).toEqual(['70 x 70 mm', '200 x 200 mm']);
   });
 
   it('should render correctly for beamo 2', async () => {

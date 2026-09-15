@@ -1,4 +1,4 @@
-import { LaserType, UV_WORKAREA_OPTIONS } from '@core/app/constants/promark-constants';
+import { LaserType, UV_INNER_ENGRAVING_WORKAREA } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { checkFpm1UV } from '@core/helpers/checkFeature';
@@ -24,24 +24,24 @@ export const PROMARK_UV_INFO = { laserType: LaserType.UV, watt: 5 } satisfies Pr
 export const getInnerEngravingCustomizedDimension = (
   current: CustomizedDimension = useDocumentStore.getState()['customized-dimension'],
 ): CustomizedDimension => {
-  const requiredSize = UV_WORKAREA_OPTIONS[0];
-
-  return { ...current, fpm1: { height: requiredSize, width: requiredSize } };
+  return {
+    ...current,
+    fpm1: { height: UV_INNER_ENGRAVING_WORKAREA, width: UV_INNER_ENGRAVING_WORKAREA },
+  };
 };
 
 export const checkInnerEngraving = (context: AddOnModeContext = {}): boolean => {
   const promarkInfo = context.promarkInfo === undefined ? getPromarkInfo() : context.promarkInfo;
   const workarea = resolveWorkarea(context);
   const dimension = resolveDocumentValue('customized-dimension', context)?.[workarea];
-  const requiredSize = UV_WORKAREA_OPTIONS[0];
 
   return (
     checkFpm1UV() &&
     Boolean(resolveAddOnInfo(context)?.innerEngraving) &&
     promarkInfo?.laserType === LaserType.UV &&
     workarea === 'fpm1' &&
-    dimension?.width === requiredSize &&
-    dimension.height === requiredSize
+    dimension?.width === UV_INNER_ENGRAVING_WORKAREA &&
+    dimension.height === UV_INNER_ENGRAVING_WORKAREA
   );
 };
 

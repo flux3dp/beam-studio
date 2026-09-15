@@ -47,6 +47,13 @@ describe('inner engraving add-on', () => {
   test('exposes capability and effective-state helpers', () => {
     expect(checkInnerEngraving({ promarkInfo: uvInfo, workarea: 'fpm1' })).toBe(true);
     expect(
+      checkInnerEngraving({
+        promarkInfo: uvInfo,
+        values: { 'customized-dimension': { fpm1: { height: 200, width: 200 } } },
+        workarea: 'fpm1',
+      }),
+    ).toBe(false);
+    expect(
       getInnerEngraving({
         promarkInfo: uvInfo,
         values: { 'inner-engraving': true, workarea: 'fpm1' },

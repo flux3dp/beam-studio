@@ -1,7 +1,5 @@
-import { checkFpm1UV } from '@core/helpers/checkFeature';
 import type { Field, GalvoParameters, RedDot } from '@core/interfaces/Promark';
 
-export const workareaOptions = checkFpm1UV() ? ([70, 110, 150, 220] as const) : ([110, 150, 220] as const);
 export const promarkWatts = [20, 30, 50] as const;
 export const mopaWatts = [20, 60, 100] as const;
 export const uvWatts = [5] as const;
@@ -16,7 +14,8 @@ export enum LaserType {
 }
 
 export const MOPA_WORKAREA_OPTIONS = [110, 150, 220] as const;
-export const UV_WORKAREA_OPTIONS = [70] as const;
+export const UV_INNER_ENGRAVING_WORKAREA = 70;
+export const UV_WORKAREA_OPTIONS = [UV_INNER_ENGRAVING_WORKAREA, 200] as const;
 
 export type PromarkLaserSource = 'MOPA' | 'UV';
 
@@ -26,12 +25,16 @@ export const getPromarkWorkareaOptions = (laserType: LaserType): ReadonlyArray<n
 
 /** Default work area shared by initialization and document settings. */
 export const getDefaultPromarkWorkarea = ({ laserType, watt }: { laserType: LaserType; watt: number }): number => {
-  if (laserType === LaserType.UV) return UV_WORKAREA_OPTIONS[0];
+  if (laserType === LaserType.UV) return UV_INNER_ENGRAVING_WORKAREA;
 
   if (laserType === LaserType.MOPA && watt === 20) return MOPA_WORKAREA_OPTIONS[0];
 
   return MOPA_WORKAREA_OPTIONS.at(-1)!;
 };
+
+/** The 70 mm UV lens uses a 75 mm backend correction field; other UV fields use their real size. */
+export const getPromarkFieldWorksize = (laserType: LaserType, worksize: number): number =>
+  laserType === LaserType.UV && worksize === UV_INNER_ENGRAVING_WORKAREA ? 75 : worksize;
 
 export const isPromarkWorkareaCompatible = (laserType: LaserType, size: number): boolean =>
   getPromarkWorkareaOptions(laserType).includes(size);
@@ -78,5 +81,4 @@ export default {
   mopaWatts,
   promarkWatts,
   uvWatts,
-  workareaOptions,
 };
