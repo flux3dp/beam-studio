@@ -12,7 +12,7 @@ import {
 } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { getEngraveDpmm, getPrintingDpmm } from '@core/app/constants/resolutions';
-import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
+import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
@@ -20,6 +20,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import { getSpeedLimit } from '@core/helpers/layer/getSpeedLimit';
 import { getDefaultModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
@@ -771,7 +772,6 @@ export const applyPreset = (
   opts: { applyName?: boolean; batchCmd?: IBatchCommand } = {},
 ): void => {
   const workarea = useDocumentStore.getState().workarea;
-  const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
   // Resolve dpi-specific overrides against the target layer's current dpi, then strip the
   // dpiOverrides map so it never leaks into a data-* attribute.
@@ -779,6 +779,7 @@ export const applyPreset = (
   const { dpiOverrides, ...base } = preset;
   const resolved: Preset = { ...base, ...dpiOverrides?.[dpi] };
   const { module = LayerModule.LASER_UNIVERSAL } = resolved;
+  const { max: maxSpeed, min: minSpeed } = getSpeedLimit(module as LayerModuleType, workarea);
   const keys = getConfigKeys(module as LayerModuleType);
   const defaultConfig = getDefaultConfig();
 
@@ -811,7 +812,6 @@ export const applyPreset = (
 export const postPresetChange = (): void => {
   // TODO: add test
   const workarea = useDocumentStore.getState().workarea;
-  const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const isPromark = promarkModels.has(workarea);
   const promarkLimit = isPromark ? getPromarkLimit() : null;
   const allPresets = getAllPresets();
@@ -840,6 +840,7 @@ export const postPresetChange = (): void => {
       writeDataLayer(layerElement, 'configName', undefined);
     }
 
+    const { max: maxSpeed, min: minSpeed } = getSpeedLimit(layerModule, workarea);
     const speed = getData(layerElement, 'speed') as number;
 
     if (speed > maxSpeed) {

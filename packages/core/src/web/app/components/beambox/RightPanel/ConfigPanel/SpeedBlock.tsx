@@ -30,6 +30,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { getSpeedLimit } from '@core/helpers/layer/getSpeedLimit';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
@@ -93,37 +94,19 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     () => getAutoFeeder(addOnInfo, { autoFeeder, borderless }),
     [addOnInfo, autoFeeder, borderless],
   );
-  const {
-    curveSpeedLimit,
-    maxSpeed: workareaMaxSpeed,
-    minSpeed: minValue,
-    minSpeedWarning,
-    vectorSpeedLimit,
-  } = useMemo(() => {
+  const { minSpeedWarning, vectorSpeedLimit } = useMemo(() => {
     const workareaObj = getWorkarea(workarea);
 
     return {
-      curveSpeedLimit: workareaObj.curveSpeedLimit?.x,
-      maxSpeed: workareaObj.maxSpeed,
-      minSpeed: workareaObj.minSpeed,
       minSpeedWarning: workareaObj.minSpeedWarning,
       vectorSpeedLimit: (isAutoFeederOn && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit,
     };
   }, [workarea, addOnInfo, isAutoFeederOn]);
 
-  const maxValue = useMemo(() => {
-    let value = workareaMaxSpeed;
-
-    if (curveSpeedLimit !== undefined && hasCurveEngraving) value = Math.min(value, curveSpeedLimit);
-
-    if (layerModule === LayerModule.PRINTER_4C) value = Math.min(value, 45);
-    else if (layerModule === LayerModule.LASER_1064 && workarea === 'fbm2') value = Math.min(value, 150);
-
-    // TODO: a galvo module head is much faster than the gantry that workarea maxSpeed describes.
-    // Raising the ceiling here alone would desync from the clamps in applyPreset and
-    // postPresetChange, so it waits for the per-module speed work.
-    return value;
-  }, [workareaMaxSpeed, layerModule, workarea, hasCurveEngraving, curveSpeedLimit]);
+  const { max: maxValue, min: minValue } = useMemo(
+    () => getSpeedLimit(layerModule, workarea, { hasCurveEngraving }),
+    [layerModule, hasCurveEngraving, workarea],
+  );
 
   const vectorSpeedWarning = useMemo(() => {
     if (!vectorSpeedLimit || !isLaser) return '';
