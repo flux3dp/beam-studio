@@ -893,7 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Wyłącz gradient przed użyciem tej funkcji.',
           disabled_by_infilled: 'Zamknij wypełnienie przed użyciem tej funkcji.',
           disabled_by_infilled_and_variable_text: 'Zamknij wypełnienie i zmienny tekst przed użyciem tej funkcji.',
-          disabled_by_noun_project: 'Kształty z Noun Project są chronione prawem własności intelektualnej, dlatego ich ścieżek nie można edytować.',
+          disabled_by_noun_project: 'Ten kształt jest chroniony prawem własności intelektualnej, dlatego jego ścieżki nie można edytować.',
           disabled_by_variable_text: 'Zamknij zmienny tekst przed użyciem tej funkcji.',
           disassemble_use: 'Rozłóż',
           disassembling: 'Demontuję...',

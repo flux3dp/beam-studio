@@ -893,7 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Nyahaktifkan kecerunan sebelum menggunakan fungsi ini.',
           disabled_by_infilled: 'Tutup infill sebelum menggunakan fungsi ini.',
           disabled_by_infilled_and_variable_text: 'Tutup infill dan teks boleh ubah sebelum menggunakan fungsi ini.',
-          disabled_by_noun_project: 'Bentuk daripada Noun Project dilindungi oleh undang-undang harta intelek, jadi laluannya tidak boleh diedit.',
+          disabled_by_noun_project: 'Bentuk ini dilindungi oleh undang-undang harta intelek, jadi laluannya tidak boleh diedit.',
           disabled_by_variable_text: 'Tutup teks boleh ubah sebelum menggunakan fungsi ini.',
           disassemble_use: 'Hurai',
           disassembling: 'Menghurai...',

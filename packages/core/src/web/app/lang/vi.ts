@@ -893,7 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Vui lòng tắt hiệu ứng chuyển sắc trước khi sử dụng tính năng này.',
           disabled_by_infilled: 'Vui lòng tắt infill trước khi sử dụng tính năng này.',
           disabled_by_infilled_and_variable_text: 'Vui lòng tắt infill và văn bản biến trước khi sử dụng tính năng này.',
-          disabled_by_noun_project: 'Các hình dạng từ Noun Project được bảo vệ bởi luật sở hữu trí tuệ, vì vậy không thể chỉnh sửa đường dẫn của chúng.',
+          disabled_by_noun_project: 'Hình dạng này được bảo vệ bởi luật sở hữu trí tuệ, vì vậy không thể chỉnh sửa đường dẫn của nó.',
           disabled_by_variable_text: 'Vui lòng tắt văn bản biến trước khi sử dụng tính năng này.',
           disassemble_use: 'Tháo rời',
           disassembling: 'Đang tháo rời...',

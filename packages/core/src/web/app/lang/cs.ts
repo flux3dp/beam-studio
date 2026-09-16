@@ -893,7 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Před použitím této funkce prosím vypněte přechod.',
           disabled_by_infilled: 'Před použitím této funkce zavřete výplň.',
           disabled_by_infilled_and_variable_text: 'Před použitím této funkce zavřete výplň a proměnný text.',
-          disabled_by_noun_project: 'Tvary z Noun Project jsou chráněny právem duševního vlastnictví, proto jejich cesty nelze upravovat.',
+          disabled_by_noun_project: 'Tento tvar je chráněn právem duševního vlastnictví, proto jeho cestu nelze upravovat.',
           disabled_by_variable_text: 'Před použitím této funkce zavřete proměnný text.',
           disassemble_use: 'Rozebrat',
           disassembling: 'Rozebírám...',

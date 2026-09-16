@@ -893,7 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Desactive el degradado antes de utilizar esta función.',
           disabled_by_infilled: 'Cierre el relleno antes de utilizar esta función.',
           disabled_by_infilled_and_variable_text: 'Cierre el relleno y el texto variable antes de utilizar esta función.',
-          disabled_by_noun_project: 'Las formas del Noun Project están protegidas por la ley de propiedad intelectual, por lo que sus trazados no se pueden editar.',
+          disabled_by_noun_project: 'Esta forma está protegida por la ley de propiedad intelectual, por lo que su trazado no se puede editar.',
           disabled_by_variable_text: 'Cierre el texto variable antes de utilizar esta función.',
           disassemble_use: 'Desagrupar',
           disassembling: 'Desagrupando...',
