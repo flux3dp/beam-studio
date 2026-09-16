@@ -1919,6 +1919,8 @@ export interface ILang {
       convertFromLaserModuleTitle: string;
       convertFromPrintingModuleMsg: string;
       convertFromPrintingModuleTitle: string;
+      galvoNotConfiguredMsg: string;
+      galvoNotConfiguredTitle: string;
       importedDocumentContainsPrinting: string;
       importedDocumentContainsPrinting4C: string;
       performIRCaliMsg: string;

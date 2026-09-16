@@ -6,7 +6,7 @@ import { sprintf } from 'sprintf-js';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
-import type { GalvoConfig, GalvoModule } from '@core/helpers/device/galvoConfig';
+import type { GalvoConfig, GalvoModule, GalvoWorkarea } from '@core/helpers/device/galvoConfig';
 import { galvoWorkareaOptions, getGalvoConfig, updateGalvoConfig } from '@core/helpers/device/galvoConfig';
 import deviceMaster from '@core/helpers/device-master';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -72,7 +72,7 @@ export const GalvoSettings = ({ initData, module, onClose }: Props): React.JSX.E
           hideOffsets
           isInch={isInch}
           onFocusHeightChange={(value) => update('focusHeight', value)}
-          onWidthChange={(value) => update('workarea', value)}
+          onWidthChange={(value) => update('workarea', value as GalvoWorkarea)}
           setField={(value) =>
             setConfig((cur) => ({ ...cur, field: typeof value === 'function' ? value(cur.field) : value }))
           }
