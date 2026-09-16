@@ -52,7 +52,7 @@ class Menu extends AbstractMenu {
     useDocumentStore.subscribe(
       (state) => state['enable-galvo-mopa'],
       (enabled) => {
-        this.changeMenuItemStatus(['CALIBRATE_GALVO_MOPA_MODULE'], 'visible', enabled);
+        this.changeMenuItemStatus(['CALIBRATE_GALVO_MOPA_MODULE', 'GALVO_MOPA_SETTINGS'], 'visible', enabled);
       },
     );
     useGlobalPreferenceStore.subscribe(
@@ -127,7 +127,7 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', dockableStore.panelPathEdit);
 
     this.changeMenuItemStatus(
-      ['CALIBRATE_GALVO_MOPA_MODULE'],
+      ['CALIBRATE_GALVO_MOPA_MODULE', 'GALVO_MOPA_SETTINGS'],
       'visible',
       useDocumentStore.getState()['enable-galvo-mopa'],
     );

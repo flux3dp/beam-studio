@@ -2504,6 +2504,7 @@ export interface ILang {
     engraving_mode: string;
     field: string;
     flat: string;
+    focus_height: string;
     galvo_configuration: string;
     go_to_settings: string;
     inner_engraving: string;
@@ -2987,6 +2988,7 @@ export interface ILang {
       flux_101: string;
       follow_us: string;
       forum: string;
+      galvo_settings: string;
       group: string;
       help: string;
       help_center: string;

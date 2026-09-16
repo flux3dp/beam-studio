@@ -120,6 +120,17 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       id: 'PROMARK_SETTINGS',
       label: i18n.lang.promark_settings?.title,
     },
+    isHexa2Galvo && {
+      click: handleClick,
+      id: 'GALVO_CO2_SETTINGS',
+      label: `${r.galvo_settings} (${i18n.lang.layer_module.galvo_co2})`,
+    },
+    // visibility follows the document setting, toggled from the renderer
+    isHexa2Galvo && {
+      click: handleClick,
+      id: 'GALVO_MOPA_SETTINGS',
+      label: `${r.galvo_settings} (${i18n.lang.layer_module.galvo_mopa})`,
+    },
     isPromark && {
       click: handleClick,
       id: 'Z_AXIS_ADJUSTMENT',
