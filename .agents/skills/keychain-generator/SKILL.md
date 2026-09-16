@@ -19,7 +19,7 @@ KeyChainGenerator/
 ├── types.ts                        # All type definitions
 ├── categories.ts                   # resolveCategory/getStateForCategory + re-exports KEYCHAIN_CATEGORIES & DEFAULT_*
 ├── useKeychainShapeStore.ts        # Zustand store (state + build actions)
-├── exportToCanvas.ts               # Export final shape to SVG canvas
+├── exportToCanvas.ts               # Export final shape to SVG canvas (path/text helpers live in helpers/generator/)
 ├── constants/
 │   ├── index.ts                    # PX_TO_MM_RATIO=10, PUNCH_HOLE_OFFSET=-5, colors
 │   ├── decorations.ts              # Decoration path definitions
@@ -40,7 +40,7 @@ KeyChainGenerator/
 │   ├── buildShape.ts               # importBasePath, applyHoles, getStartPoint (ray intersection)
 │   ├── buildDecorations.ts         # buildDecorations (text + elements + decoration paths)
 │   ├── buildSvgViews.ts            # buildSvgView → design/exploded SVG strings
-│   ├── buildText.ts                # createTextElement, createTextPath, applyTexts
+│   ├── buildText.ts                # applyTexts (re-exports createTextElement/createTextPath from helpers/generator/textElement)
 │   ├── buildElement.ts             # loadShape, applyElements for icon shapes
 │   ├── buildCustomBaseShape.ts     # Text/icon-derived base shape generation
 │   └── *.spec.ts                   # Unit tests
