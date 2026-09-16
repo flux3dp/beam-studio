@@ -79,10 +79,3 @@ export const getSpeedLimit = (
 
   return { max: maxSpeed, min: minSpeed };
 };
-
-/** Speed range of one named layer, for writing a shared value back to each layer it belongs to. */
-export const getLayerSpeedLimit = (
-  layerName: string,
-  workarea: WorkAreaModel,
-  fallbackModule: LayerModuleType,
-): { max: number; min: number } => getSpeedLimit(getModuleOfLayer(layerName) ?? fallbackModule, workarea);
