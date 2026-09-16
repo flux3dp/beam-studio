@@ -2353,6 +2353,7 @@ export interface ILang {
     angle: string;
     bulge: string;
     field: string;
+    focus_height: string;
     galvo_configuration: string;
     mark: string;
     mark_parameters: string;
@@ -2742,6 +2743,7 @@ export interface ILang {
       fit_to_window: string;
       follow_us: string;
       forum: string;
+      galvo_settings: string;
       group: string;
       help: string;
       help_center: string;

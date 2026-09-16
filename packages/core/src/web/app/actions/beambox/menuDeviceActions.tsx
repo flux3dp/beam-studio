@@ -13,6 +13,7 @@ import { showDiodeCalibration } from '@core/app/components/dialogs/DiodeCalibrat
 import { showLaserDelaySettingPanel } from '@core/app/components/dialogs/LaserDelay';
 import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist/showMaintenanceChecklist';
 import { showPrintAndCutCalibration } from '@core/app/components/dialogs/PrintAndCut/calibration';
+import { showGalvoSettings } from '@core/app/components/dialogs/promark/GalvoSettings';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import { showUploadFirmwareDialog } from '@core/app/components/dialogs/updateFirmware';
@@ -353,6 +354,12 @@ export default {
   },
   EXPORT_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
     backUpCalibrationData(device, 'download');
+  },
+  GALVO_CO2_SETTINGS: async (device: IDeviceInfo): Promise<void> => {
+    showGalvoSettings(device, LayerModule.GALVO_CO2);
+  },
+  GALVO_MOPA_SETTINGS: async (device: IDeviceInfo): Promise<void> => {
+    showGalvoSettings(device, LayerModule.GALVO_MOPA);
   },
   IMPORT_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
     backUpCalibrationData(device, 'upload');
