@@ -73,18 +73,20 @@ jest.mock('../ObjectPanelItem', () => ({
 }));
 
 const mockWriteData = jest.fn();
-const mockGetData = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
-  getData: (...args) => mockGetData(...args),
   writeData: (...args) => mockWriteData(...args),
 }));
 
-const mockGetLayerElementByName = jest.fn();
+// getSpeedLimit reads each selected layer's module straight off the layer element
+let mockLayerModules: Record<string, number | undefined> = {};
 
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
-  getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
+  getLayerElementByName: (name: string) => ({
+    getAttribute: () => mockLayerModules[name]?.toString() ?? null,
+  }),
+  getSelectedLayers: () => Object.keys(mockLayerModules),
 }));
 
 const mockUseGlobalPreferenceStore = jest.fn();
@@ -169,8 +171,7 @@ describe('test SpeedBlock', () => {
     mockCurveEngravingState.hasData = false;
     setStorage('default-units', 'mm');
     mockUseWorkarea.mockReturnValue('fbm1');
-    mockGetLayerElementByName.mockImplementation((name) => ({ name }));
-    mockGetData.mockReturnValue(undefined);
+    mockLayerModules = { layer1: undefined, layer2: undefined };
     mockGetAutoFeeder.mockReturnValue(false);
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
@@ -268,9 +269,7 @@ describe('test SpeedBlock', () => {
 
   test('mixed laser and galvo selection falls back to the narrowest range', () => {
     mockUseWorkarea.mockReturnValue('fhx2galvo');
-    mockGetData.mockImplementation((layer) =>
-      layer.name === 'layer1' ? LayerModule.LASER_UNIVERSAL : LayerModule.GALVO_CO2,
-    );
+    mockLayerModules = { layer1: LayerModule.LASER_UNIVERSAL, layer2: LayerModule.GALVO_CO2 };
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       module: { hasMultiValue: true, value: LayerModule.GALVO_CO2 },
@@ -283,9 +282,38 @@ describe('test SpeedBlock', () => {
     expect(container.querySelector('input')!.getAttribute('max')).toBe('2000');
   });
 
+  test('a UV print layer in the selection does not drag the ceiling down', () => {
+    mockUseWorkarea.mockReturnValue('fhx2galvo');
+    mockLayerModules = { layer1: LayerModule.UV_PRINT, layer2: LayerModule.GALVO_CO2 };
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      module: { hasMultiValue: true, value: LayerModule.GALVO_CO2 },
+      speed: { hasMultiValue: false, value: 87 },
+    });
+
+    const { container } = render(<SpeedBlock />);
+
+    // speed means nothing to a UV print layer, so the galvo keeps its own range
+    expect(container.querySelector('input')!.getAttribute('max')).toBe('10000');
+  });
+
+  test('a selection of only UV print layers falls back to the machine range', () => {
+    mockUseWorkarea.mockReturnValue('fhx2galvo');
+    mockLayerModules = { layer1: LayerModule.UV_PRINT, layer2: LayerModule.UV_PRINT };
+    mockUseConfigPanelStore.mockReturnValue({
+      change: mockChange,
+      module: { hasMultiValue: true, value: LayerModule.UV_PRINT },
+      speed: { hasMultiValue: false, value: 87 },
+    });
+
+    const { container } = render(<SpeedBlock />);
+
+    expect(container.querySelector('input')!.getAttribute('max')).toBe('2000');
+  });
+
   test('a galvo-only selection may exceed the machine max speed', () => {
     mockUseWorkarea.mockReturnValue('fhx2galvo');
-    mockGetData.mockReturnValue(LayerModule.GALVO_CO2);
+    mockLayerModules = { layer1: LayerModule.GALVO_CO2, layer2: LayerModule.GALVO_CO2 };
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       module: { hasMultiValue: false, value: LayerModule.GALVO_CO2 },
@@ -353,9 +381,7 @@ describe('test SpeedBlock', () => {
   });
   test('no layer is written a speed above its own limit', () => {
     mockUseWorkarea.mockReturnValue('fhx2galvo');
-    mockGetData.mockImplementation((layer) =>
-      layer.name === 'layer1' ? LayerModule.LASER_UNIVERSAL : LayerModule.GALVO_CO2,
-    );
+    mockLayerModules = { layer1: LayerModule.LASER_UNIVERSAL, layer2: LayerModule.GALVO_CO2 };
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       module: { hasMultiValue: true, value: LayerModule.GALVO_CO2 },
