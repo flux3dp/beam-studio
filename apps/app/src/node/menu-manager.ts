@@ -3,6 +3,7 @@ import { EventEmitter } from 'events';
 import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import { funnel } from 'remeda';
+import { sprintf } from 'sprintf-js';
 
 import {
   adorModels,
@@ -123,13 +124,13 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
     isHexa2Galvo && {
       click: handleClick,
       id: 'GALVO_CO2_SETTINGS',
-      label: `${r.galvo_settings} (${i18n.lang.layer_module.galvo_co2})`,
+      label: sprintf(r.galvo_settings, i18n.lang.layer_module.galvo_co2),
     },
     // visibility follows the document setting, toggled from the renderer
     isHexa2Galvo && {
       click: handleClick,
       id: 'GALVO_MOPA_SETTINGS',
-      label: `${r.galvo_settings} (${i18n.lang.layer_module.galvo_mopa})`,
+      label: sprintf(r.galvo_settings, i18n.lang.layer_module.galvo_mopa),
     },
     isPromark && {
       click: handleClick,
@@ -199,13 +200,13 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
         isHexa2Galvo && {
           click: handleClick,
           id: 'CALIBRATE_GALVO_CO2_MODULE',
-          label: `${r.calibrate_galvo_module} (${i18n.lang.layer_module.galvo_co2})`,
+          label: sprintf(r.calibrate_galvo_module, i18n.lang.layer_module.galvo_co2),
         },
         // visibility follows the document setting, toggled from the renderer
         isHexa2Galvo && {
           click: handleClick,
           id: 'CALIBRATE_GALVO_MOPA_MODULE',
-          label: `${r.calibrate_galvo_module} (${i18n.lang.layer_module.galvo_mopa})`,
+          label: sprintf(r.calibrate_galvo_module, i18n.lang.layer_module.galvo_mopa),
         },
         (isAdor || isBeamo2) && {
           click: handleClick,

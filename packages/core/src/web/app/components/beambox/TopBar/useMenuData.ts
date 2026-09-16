@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { sprintf } from 'sprintf-js';
+
 import {
   adorModels,
   fcodeV2Models,
@@ -174,14 +176,14 @@ const useMenuData = (email?: string): MenuNode[] => {
             {
               device,
               id: 'GALVO_CO2_SETTINGS',
-              label: `${menuCms.galvo_settings} (${modulesTranslations[LayerModule.GALVO_CO2]})`,
+              label: sprintf(menuCms.galvo_settings, modulesTranslations[LayerModule.GALVO_CO2]),
               type: 'item' as const,
             },
             {
               device,
               disabled: isMobile,
               id: 'CALIBRATE_GALVO_CO2_MODULE',
-              label: `${menuCms.calibrate_galvo_module} (${modulesTranslations[LayerModule.GALVO_CO2]})`,
+              label: sprintf(menuCms.calibrate_galvo_module, modulesTranslations[LayerModule.GALVO_CO2]),
               type: 'item' as const,
             },
           ]
@@ -192,14 +194,14 @@ const useMenuData = (email?: string): MenuNode[] => {
             {
               device,
               id: 'GALVO_MOPA_SETTINGS',
-              label: `${menuCms.galvo_settings} (${modulesTranslations[LayerModule.GALVO_MOPA]})`,
+              label: sprintf(menuCms.galvo_settings, modulesTranslations[LayerModule.GALVO_MOPA]),
               type: 'item' as const,
             },
             {
               device,
               disabled: isMobile,
               id: 'CALIBRATE_GALVO_MOPA_MODULE',
-              label: `${menuCms.calibrate_galvo_module} (${modulesTranslations[LayerModule.GALVO_MOPA]})`,
+              label: sprintf(menuCms.calibrate_galvo_module, modulesTranslations[LayerModule.GALVO_MOPA]),
               type: 'item' as const,
             },
           ]
