@@ -49,6 +49,12 @@ class Menu extends AbstractMenu {
 
     // model related
     useDocumentStore.subscribe((state) => state.workarea, this.updateMenuByWorkarea);
+    useDocumentStore.subscribe(
+      (state) => state['enable-galvo-mopa'],
+      (enabled) => {
+        this.changeMenuItemStatus(['CALIBRATE_GALVO_MOPA_MODULE'], 'visible', enabled);
+      },
+    );
     useGlobalPreferenceStore.subscribe(
       (state) => state['enable-uv-print-file'],
       (newValue) => {
@@ -120,6 +126,11 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', dockableStore.panelObjectProperties);
     this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', dockableStore.panelPathEdit);
 
+    this.changeMenuItemStatus(
+      ['CALIBRATE_GALVO_MOPA_MODULE'],
+      'visible',
+      useDocumentStore.getState()['enable-galvo-mopa'],
+    );
     this.updateMenuByWorkarea(useDocumentStore.getState().workarea);
   };
 

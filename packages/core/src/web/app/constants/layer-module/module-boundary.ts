@@ -20,6 +20,13 @@ const moduleBoundaries: Partial<
     [LayerModule.UV_VARNISH]: { bottom: 0, left: 0, right: 30, top: 0 },
     [LayerModule.UV_WHITE_INK]: { bottom: 0, left: 0, right: 30, top: 0 },
   },
+  // The galvo heads sit to the right, whether coupled to the nozzle or parked at the edge, so both
+  // states lose the same strip of travel.
+  // TODO: confirm how much, the values below are placeholders
+  fhx2galvo: {
+    [LayerModule.GALVO_CO2]: { bottom: 0, left: 0, right: 0, top: 0 },
+    [LayerModule.GALVO_MOPA]: { bottom: 0, left: 0, right: 0, top: 0 },
+  },
 };
 
 export const getModuleBoundary = (model: WorkAreaModel, layerModule: LayerModuleType) => {
