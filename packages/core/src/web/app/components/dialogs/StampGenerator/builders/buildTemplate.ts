@@ -1,9 +1,7 @@
 import paper from 'paper';
 import { match } from 'ts-pattern';
 
-import NS from '@core/app/constants/namespaces';
-
-import { DESIGN_SIZE, ROLE_COLORS } from '../constants';
+import { ROLE_COLORS } from '../constants';
 import type { ParsedTemplate, StampTemplate } from '../types';
 
 type PathRole = 'baseline' | 'frame';
@@ -66,25 +64,4 @@ export const parseTemplate = (project: paper.Project, template: StampTemplate): 
     });
 
   return { baselines, frames: byRole.frame, outline };
-};
-
-/**
- * Renders the parsed template into a standalone <svg viewBox="0 0 150 150"> for the preview.
- * Chunk 1 only draws the frames; later chunks add texts and elements.
- */
-export const buildPreviewSvg = (parsed: ParsedTemplate): SVGSVGElement => {
-  const svg = document.createElementNS(NS.SVG, 'svg');
-
-  svg.setAttribute('xmlns', NS.SVG);
-  svg.setAttribute('viewBox', `0 0 ${DESIGN_SIZE} ${DESIGN_SIZE}`);
-
-  for (const frame of parsed.frames) {
-    const path = document.createElementNS(NS.SVG, 'path');
-
-    path.setAttribute('d', frame.pathData);
-    path.setAttribute('fill', '#000');
-    svg.appendChild(path);
-  }
-
-  return svg;
 };

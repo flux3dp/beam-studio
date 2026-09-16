@@ -10,6 +10,7 @@ import NS from '@core/app/constants/namespaces';
 export const convertTextsToPath = async (
   textElements: SVGTextElement[],
   refPaths: SVGPathElement[] = [],
+  { glyphScaleY = 1 }: { glyphScaleY?: number } = {},
 ): Promise<SVGPathElement[]> => {
   const svg = document.createElementNS(NS.SVG, 'svg');
 
@@ -49,7 +50,7 @@ export const convertTextsToPath = async (
       }
 
       const fontObj = await getFontObj(fontDesc);
-      const result = convertTextToPathByFontkit(textEl, fontObj, false);
+      const result = convertTextToPathByFontkit(textEl, fontObj, false, glyphScaleY);
 
       if (!result?.d) continue;
 

@@ -11,12 +11,23 @@ export interface Bounds {
 
 /** Where a text slot lives inside the 150×150 design space. */
 export type TextPlacement =
-  /** Text-on-path along the n-th baseline (baselines are sorted top→bottom). */
-  | { baseline: number }
-  /** Multi-line text fitted into a fixed box. */
-  | { bounds: Bounds; vertical?: boolean };
+  /**
+   * Text-on-path along the n-th baseline (baselines are sorted top→bottom), at this design-px font
+   * size. `offset` shifts the baseline parallel to itself, in design px: positive moves it toward the
+   * glyph tops (outward on the top arc, inward on the bottom arc).
+   */
+  | { baseline: number; fontSize: number; offset?: number }
+  /**
+   * Text fitted into a fixed box, at a font size equal to the box height.
+   * - 'spacing' (default): keeps glyph shape, spreads or tightens letter spacing to span the width
+   * - 'center': keeps glyph shape and the user's letter spacing, just centers the ink in the box
+   * - 'stretch': scales the ink non-uniformly to fill the box
+   */
+  | { bounds: Bounds; fit?: 'center' | 'spacing' | 'stretch'; vertical?: boolean };
 
 export type TextSlotDef = TextPlacement & {
+  /** Default for the slot's bold toggle (faux bold: glyph outlines offset outward). */
+  bold?: boolean;
   id: string;
   placeholder: string;
 };
@@ -54,7 +65,19 @@ export interface ParsedTemplate {
   outline: paper.PathItem;
 }
 
+/** Built geometry for the current template + state. All items live inside `group` (removed on rebuild). */
+export interface StampShape {
+  /** Bounds of the cut outline; export shifts everything so this lands at the canvas origin. */
+  bounds: paper.Rectangle;
+  /** Outer contour of the outermost frame — the cut layer. */
+  cut: paper.PathItem;
+  /** Frames + text glyphs (+ elements later) — the engrave layer. */
+  engrave: paper.PathItem[];
+  group: paper.Group;
+}
+
 export interface TextOptionValues {
+  bold: boolean;
   enabled: boolean;
   font: { family: string; postscriptName: string; style: string };
   fontSize: number;

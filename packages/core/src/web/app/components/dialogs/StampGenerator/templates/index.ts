@@ -28,11 +28,17 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     sizes: [{ widthMm: 51 }],
     svgContent: OVAL_COMPANY,
     texts: [
-      { baseline: 0, id: 'arc_top', placeholder: '通量三維股份有限公司' },
+      { baseline: 0, fontSize: 12, id: 'arc_top', offset: 2, placeholder: '通量三維股份有限公司' },
       { bounds: { height: 11, width: 60, x: 45, y: 51 }, id: 'line_1', placeholder: '免用統一發票' },
-      { bounds: { height: 15, width: 90, x: 30, y: 66 }, id: 'line_2', placeholder: '42642569' },
+      {
+        bold: true,
+        bounds: { height: 15, width: 90, x: 30, y: 66 },
+        fontSize: 20,
+        id: 'line_2',
+        placeholder: '42642569',
+      },
       { bounds: { height: 10, width: 70, x: 40, y: 85 }, id: 'line_3', placeholder: 'TEL:(02)26513171' },
-      { baseline: 1, id: 'arc_bottom', placeholder: '台北市南港區忠孝東路六段467號9樓' },
+      { baseline: 1, fontSize: 12, id: 'arc_bottom', offset: 2.5, placeholder: '台北市南港區忠孝東路六段467號9樓' },
     ],
   },
   {
@@ -45,12 +51,18 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     sizes: [{ widthMm: 41 }],
     svgContent: RECT_COMPANY,
     texts: [
-      { baseline: 0, id: 'arc_top', placeholder: '達寶三維股份有限公司' },
+      { baseline: 0, fontSize: 11, id: 'arc_top', offset: 1, placeholder: '通量三維股份有限公司' },
       { bounds: { height: 11, width: 75, x: 37.5, y: 47 }, id: 'line_1', placeholder: '統一發票專用章' },
       { bounds: { height: 11, width: 45, x: 52.5, y: 59 }, id: 'line_2', placeholder: '統一編號' },
-      { bounds: { height: 15, width: 85, x: 32.5, y: 70 }, id: 'line_3', placeholder: '42642569' },
-      { bounds: { height: 8, width: 60, x: 45, y: 95 }, id: 'line_4', placeholder: 'TEL:(02)26513171' },
-      { baseline: 1, id: 'arc_bottom', placeholder: '台北市南港區忠孝東路六段467號9樓' },
+      {
+        bold: true,
+        bounds: { height: 11, width: 80, x: 35, y: 71 },
+        id: 'line_3',
+        placeholder: '42642569',
+      },
+      { bounds: { height: 11, width: 85, x: 32.5, y: 83 }, id: 'line_4', placeholder: 'TEL:(02)26513171' },
+      { bounds: { height: 8, width: 54, x: 48, y: 95 }, id: 'line_5', placeholder: '負責人：XXX' },
+      { baseline: 1, fontSize: 11, id: 'arc_bottom', placeholder: '台北市南港區忠孝東路六段467號9樓' },
     ],
   },
   {
@@ -60,8 +72,20 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     sizes: SQUARE_SIZES,
     svgContent: SQUARE_RING,
     texts: [
-      { bounds: { height: 83.3, width: 37.5, x: 33.8, y: 33.8 }, id: 'col_1', placeholder: '大明', vertical: true },
-      { bounds: { height: 83.3, width: 37.5, x: 79.7, y: 33.8 }, id: 'col_2', placeholder: '王', vertical: true },
+      {
+        bounds: { height: 83.3, width: 37.5, x: 33.8, y: 33.8 },
+        fit: 'stretch',
+        id: 'col_1',
+        placeholder: '大明',
+        vertical: true,
+      },
+      {
+        bounds: { height: 83.3, width: 37.5, x: 79.7, y: 33.8 },
+        fit: 'stretch',
+        id: 'col_2',
+        placeholder: '王',
+        vertical: true,
+      },
     ],
   },
   {
@@ -71,9 +95,27 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     sizes: SQUARE_SIZES,
     svgContent: SQUARE_RING,
     texts: [
-      { bounds: { height: 86.7, width: 24, x: 32.1, y: 31.7 }, id: 'col_1', placeholder: '有限公司', vertical: true },
-      { bounds: { height: 86.7, width: 24, x: 63.2, y: 31.7 }, id: 'col_2', placeholder: '心心股份', vertical: true },
-      { bounds: { height: 86.7, width: 24, x: 94.3, y: 31.7 }, id: 'col_3', placeholder: '', vertical: true },
+      {
+        bounds: { height: 86.7, width: 24, x: 32.1, y: 31.7 },
+        fit: 'stretch',
+        id: 'col_1',
+        placeholder: '公司',
+        vertical: true,
+      },
+      {
+        bounds: { height: 86.7, width: 24, x: 63.2, y: 31.7 },
+        fit: 'stretch',
+        id: 'col_2',
+        placeholder: '份有限',
+        vertical: true,
+      },
+      {
+        bounds: { height: 86.7, width: 24, x: 94.3, y: 31.7 },
+        fit: 'stretch',
+        id: 'col_3',
+        placeholder: '心心股',
+        vertical: true,
+      },
     ],
   },
 ];

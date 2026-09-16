@@ -10,7 +10,7 @@ import styles from './Preview.module.scss';
 
 const Preview = (): React.JSX.Element => {
   const previewSvg = useStampStore((s) => s.previewSvg);
-  const parsed = useStampStore((s) => s.parsed);
+  const shape = useStampStore((s) => s.shape);
   const sizeRatio = useStampStore((s) => s.sizeRatio);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -31,7 +31,7 @@ const Preview = (): React.JSX.Element => {
   }, [previewSvg]);
 
   const isInch = useStorageStore((s) => s.isInch);
-  const { height = 0, width = 0 } = parsed?.outline.bounds ?? {};
+  const { height = 0, width = 0 } = shape?.bounds ?? {};
   const format = (px: number) => {
     const mm = (px * sizeRatio) / PX_TO_MM_RATIO;
 

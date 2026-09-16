@@ -293,6 +293,8 @@ export const convertTextToPathByFontkit = (
   textElem: Element,
   fontObj: fontkit.Font | undefined,
   pathPerChar: boolean,
+  /** Extra vertical scale applied to each glyph in its own frame (before it is rotated onto a path). */
+  glyphScaleY = 1,
 ): IConvertInfo => {
   try {
     if (!fontObj) {
@@ -382,7 +384,7 @@ export const convertTextToPathByFontkit = (
 
           return char.path
             .translate(pos.xOffset, pos.yOffset)
-            .scale(sizeRatio, -sizeRatio)
+            .scale(sizeRatio, -sizeRatio * glyphScaleY)
             .translate(0, alignOffset)
             .rotate(rot)
             .translate(x, y)
@@ -433,7 +435,11 @@ export const convertTextToPathByFontkit = (
           // browser has resolved bidi, so a latin word or digit run inside rtl text runs the other way.
           const { x, y } = start.x > end.x ? end : start;
 
-          return char.path.translate(pos.xOffset, pos.yOffset).scale(sizeRatio, -sizeRatio).translate(x, y).toSVG();
+          return char.path
+            .translate(pos.xOffset, pos.yOffset)
+            .scale(sizeRatio, -sizeRatio * glyphScaleY)
+            .translate(x, y)
+            .toSVG();
         }),
       );
     });
