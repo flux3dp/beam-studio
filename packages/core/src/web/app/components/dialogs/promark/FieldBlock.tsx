@@ -70,6 +70,23 @@ const FieldBlock = ({
           <UnitInput addonAfter="mm" className={styles.input} disabled size="small" value={width} />
         )}
       </Flex>
+      {focusHeight !== undefined && (
+        <Flex align="center" className={styles.row} justify="space-between">
+          <span className={styles.label}>{t.focus_height}</span>
+          <UnitInput
+            addonAfter={isInch ? 'in' : 'mm'}
+            className={styles.input}
+            data-testid="focus-height"
+            isInch={isInch}
+            onChange={(val) => {
+              if (val !== null) onFocusHeightChange?.(val);
+            }}
+            precision={isInch ? 5 : 2}
+            size="small"
+            value={focusHeight}
+          />
+        </Flex>
+      )}
       {!hideOffsets && (
         <>
           <Flex align="center" className={styles.row} justify="space-between">
@@ -113,23 +130,6 @@ const FieldBlock = ({
           value={angle}
         />
       </Flex>
-      {focusHeight !== undefined && (
-        <Flex align="center" className={styles.row} justify="space-between">
-          <span className={styles.label}>{t.focus_height}</span>
-          <UnitInput
-            addonAfter={isInch ? 'in' : 'mm'}
-            className={styles.input}
-            data-testid="focus-height"
-            isInch={isInch}
-            onChange={(val) => {
-              if (val !== null) onFocusHeightChange?.(val);
-            }}
-            precision={isInch ? 5 : 2}
-            size="small"
-            value={focusHeight}
-          />
-        </Flex>
-      )}
     </Flex>
   );
 };
