@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Vil du konvertere Lasermodulen til Utskriftsmodul?',
       convertFromPrintingModuleMsg: 'Vær oppmerksom på at hvis du fullfører denne operasjonen, vil fargeinnstillingene for utskriftslaget fjernes og settes i henhold til gjeldende lag.',
       convertFromPrintingModuleTitle: 'Vil du konvertere Utskriftsmodulen til Lasermodul?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'Dokumentet inneholder utskriftslag, vil du endre arbeidsområde til Ador?',
       importedDocumentContainsPrinting4C: 'Dokumentet inneholder utskriftslag, vil du endre arbeidsområde til beamo II?',
       performIRCaliMsg: 'Klikk på "Bekreft" for å utføre kalibreringen, eller gå til kalibrering via toppmenyen.<br />(Maskin > [Maskinnavn] > Kalibrer infrarød modul)',

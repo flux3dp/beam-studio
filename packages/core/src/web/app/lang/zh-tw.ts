@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: '您是否要將雷射圖層轉換為列印圖層？',
       convertFromPrintingModuleMsg: '請注意，如果您繼續此操作，列印圖層的顏色設定將會被刪除，並根據當前圖層參數而定。',
       convertFromPrintingModuleTitle: '您是否要將列印圖層轉換為雷射圖層？',
+      galvoNotConfiguredMsg: '此機器尚未設定 %s，工作將以預設值執行。要現在開啟設定嗎？',
+      galvoNotConfiguredTitle: '振鏡模組尚未設定',
       importedDocumentContainsPrinting: '這份文件包含列印圖層，您是否要將工作範圍切換成 Ador ？',
       importedDocumentContainsPrinting4C: '這份文件包含列印圖層，您是否要將工作範圍切換成 beamo II？',
       performIRCaliMsg: '點選 「確認」 以執行校正，或者透過上方選單中的「機器」>「您的機器名稱」>「校正紅外線模組」進行校正。',

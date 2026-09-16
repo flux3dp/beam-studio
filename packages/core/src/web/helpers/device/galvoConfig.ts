@@ -6,6 +6,10 @@ import deviceMaster from '../device-master';
 
 import { stringifyDeviceSettingJson } from './deviceSettingJson';
 
+export const galvoWorkareaOptions = [70, 110] as const;
+
+export type GalvoWorkarea = (typeof galvoWorkareaOptions)[number];
+
 /**
  * Settings of one galvo module head, stored on the machine.
  *
@@ -18,13 +22,20 @@ export interface GalvoConfig {
   focusHeight: number;
   galvoParameters: GalvoParameters;
   redDot: RedDot;
-  /** field lens size in mm, one of galvoWorkareaOptions */
-  workarea: number;
+  /** field lens size in mm */
+  workarea: GalvoWorkarea;
 }
 
-export const galvoWorkareaOptions = [70, 110] as const;
-
-/** Keep in sync with galvo_default in the firmware's fluxmonitor/storage.py */
+/**
+ * Neutral values, not measurements: a machine that has never been calibrated should behave as if
+ * no correction were applied. The firmware keeps no defaults of its own, so these have to agree
+ * with the player's own fallback.
+ *
+ * Only one focusHeight is needed even though the two field lens sizes focus differently: workarea
+ * falls back to 110 as well, so an unconfigured machine is always the 110 case.
+ *
+ * TODO: focusHeight is 0 as a placeholder. How it drives the machine is not settled yet.
+ */
 export const defaultGalvoConfig: GalvoConfig = {
   field: { angle: 0, offsetX: 0, offsetY: 0 },
   focusHeight: 0,
@@ -47,6 +58,7 @@ export const isGalvoModule = (module: LayerModuleType): module is GalvoModule =>
 
 // keyed by `${uuid}:${configKey}`, in memory only
 const cache: Record<string, GalvoConfig> = {};
+const isConfigured: Record<string, boolean> = {};
 
 const getCacheKey = (uuid: string, module: GalvoModule) => `${uuid}:${configKeys[module]}`;
 
@@ -64,10 +76,14 @@ export const getGalvoConfig = async (
 
   try {
     const res = await deviceMaster.getDeviceSetting(configKeys[module]);
-    // the firmware fills in its own defaults, so anything missing is still worth defaulting here
-    const config: GalvoConfig = { ...defaultGalvoConfig, ...(JSON.parse(res.value) as Partial<GalvoConfig>) };
+    // an uncalibrated machine answers empty, and a calibrated one may still omit keys it has
+    // never been given, so every read is layered onto the defaults
+    const stored = res.value ? (JSON.parse(res.value) as Partial<GalvoConfig>) : {};
+    const config: GalvoConfig = { ...defaultGalvoConfig, ...stored };
 
     cache[cacheKey] = config;
+    // an empty answer means the machine has never been configured for this head
+    isConfigured[cacheKey] = Boolean(res.value);
 
     return config;
   } catch (error) {
@@ -92,6 +108,7 @@ export const updateGalvoConfig = async (module: GalvoModule, config: Partial<Gal
     const cacheKey = getCacheKey(uuid, module);
 
     cache[cacheKey] = { ...(cache[cacheKey] ?? defaultGalvoConfig), ...config };
+    isConfigured[cacheKey] = true;
 
     return true;
   } catch (error) {
@@ -99,4 +116,20 @@ export const updateGalvoConfig = async (module: GalvoModule, config: Partial<Gal
 
     return false;
   }
+};
+
+/**
+ * Whether the machine holds a config for this head, as opposed to the defaults standing in for
+ * one. Reads the machine unless a previous read is cached.
+ */
+export const hasGalvoConfig = async (module: GalvoModule): Promise<boolean> => {
+  const uuid = deviceMaster.currentDevice?.info.uuid;
+
+  if (!uuid) return false;
+
+  const cacheKey = getCacheKey(uuid, module);
+
+  if (isConfigured[cacheKey] === undefined) await getGalvoConfig(module);
+
+  return Boolean(isConfigured[cacheKey]);
 };

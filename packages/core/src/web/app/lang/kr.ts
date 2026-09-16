@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: '레이저 모듈을 인쇄 모듈로 변환하시겠습니까?',
       convertFromPrintingModuleMsg: '이 작업을 완료하면 인쇄 레이어의 색상 설정이 제거되어 현재 레이어에 따라 설정됩니다.',
       convertFromPrintingModuleTitle: '인쇄 모듈을 레이저 모듈로 변환하시겠습니까?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: '이 문서에는 인쇄 레이어가 포함되어 있습니다. 작업 영역을 Ador로 변경하시겠습니까?',
       importedDocumentContainsPrinting4C: '이 문서에는 인쇄 레이어가 포함되어 있습니다. 작업 영역을 beamo II로 변경하시겠습니까?',
       performIRCaliMsg: '확인"을 클릭하여 보정을 실행하거나 상단 메뉴에서 보정에 접근하십시오.<br />(기계 > [귀하의 기계 이름] > 적외선 모듈 보정)',

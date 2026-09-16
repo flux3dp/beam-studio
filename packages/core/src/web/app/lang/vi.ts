@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Bạn có muốn chuyển đổi Module Laser thành Module In ấn?',
       convertFromPrintingModuleMsg: 'Vui lòng lưu ý rằng nếu bạn hoàn tất thao tác này, các cài đặt màu của lớp in ấn sẽ bị xóa và được đặt theo lớp hiện tại.',
       convertFromPrintingModuleTitle: 'Bạn có muốn chuyển đổi mô-đun In ấn thành mô-đun Laser?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'Tài liệu chứa lớp in ấn, bạn có muốn chuyển sang Không gian Làm việc Ador?',
       importedDocumentContainsPrinting4C: 'Tài liệu chứa lớp in ấn, bạn có muốn chuyển sang Không gian Làm việc beamo II?',
       performIRCaliMsg: 'Nhấp “Xác nhận” để thực hiện hiệu chuẩn, hoặc truy cập hiệu chuẩn qua menu trên cùng. <br />(Máy > [Tên máy của bạn] > Hiệu chuẩn Module Hồng ngoại)',

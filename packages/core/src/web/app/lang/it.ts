@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Vuoi convertire il modulo laser in modulo di stampa?',
       convertFromPrintingModuleMsg: 'Tieni presente che se completi questa operazione, le impostazioni di colore dello strato di stampa verranno rimosse e impostate in base allo strato corrente.',
       convertFromPrintingModuleTitle: 'Vuoi convertire il modulo di stampa in modulo laser?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: "Il documento contiene uno strato di stampa, vuoi cambiare l'area di lavoro in Ador?",
       importedDocumentContainsPrinting4C: "Il documento contiene uno strato di stampa, vuoi cambiare l'area di lavoro in beamo II?",
       performIRCaliMsg: 'Fare clic su "Conferma" per eseguire la calibrazione o accedere alla calibrazione dal menu in alto.<br />(Macchina> [Nome macchina] > Calibra modulo a infrarossi)',

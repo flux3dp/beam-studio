@@ -12,7 +12,7 @@ jest.mock('../device-master', () => ({
   setDeviceSetting: (...args: unknown[]) => mockSetDeviceSetting(...args),
 }));
 
-import { defaultGalvoConfig, getGalvoConfig, isGalvoModule, updateGalvoConfig } from './galvoConfig';
+import { defaultGalvoConfig, getGalvoConfig, hasGalvoConfig, isGalvoModule, updateGalvoConfig } from './galvoConfig';
 
 describe('test galvoConfig', () => {
   beforeEach(() => {
@@ -80,5 +80,29 @@ describe('test galvoConfig', () => {
     await getGalvoConfig(LayerModule.GALVO_CO2, { useCache: false });
 
     expect(mockGetDeviceSetting).toHaveBeenCalledTimes(2);
+  });
+  it('should treat an empty answer as never configured', async () => {
+    mockGetDeviceSetting.mockResolvedValue({ status: 'ok', value: undefined });
+
+    await expect(getGalvoConfig(LayerModule.GALVO_CO2)).resolves.toEqual(defaultGalvoConfig);
+    await expect(hasGalvoConfig(LayerModule.GALVO_CO2)).resolves.toBe(false);
+  });
+
+  it('should count as configured once written', async () => {
+    mockGetDeviceSetting.mockResolvedValue({ status: 'ok', value: undefined });
+    mockSetDeviceSetting.mockResolvedValue({ status: 'ok' });
+
+    await expect(hasGalvoConfig(LayerModule.GALVO_CO2)).resolves.toBe(false);
+
+    await updateGalvoConfig(LayerModule.GALVO_CO2, { workarea: 70 });
+
+    // saving from the dialog should stop the export warning firing again
+    await expect(hasGalvoConfig(LayerModule.GALVO_CO2)).resolves.toBe(true);
+  });
+
+  it('should report a stored config as configured', async () => {
+    mockGetDeviceSetting.mockResolvedValue({ status: 'ok', value: JSON.stringify({ workarea: 70 }) });
+
+    await expect(hasGalvoConfig(LayerModule.GALVO_CO2)).resolves.toBe(true);
   });
 });

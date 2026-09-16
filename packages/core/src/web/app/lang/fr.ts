@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Voulez-vous convertir le module Laser en module Impression ?',
       convertFromPrintingModuleMsg: "Veuillez noter que si vous terminez cette opération, les paramètres de couleur de la couche d'impression seront supprimés et définis en fonction de la couche actuelle.",
       convertFromPrintingModuleTitle: 'Voulez-vous convertir le module Impression en module Laser ?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: "Le document contient une couche d'impression, souhaitez-vous changer l'espace de travail en Ador ?",
       importedDocumentContainsPrinting4C: "Le document contient une couche d'impression, souhaitez-vous changer l'espace de travail en beamo II ?",
       performIRCaliMsg: "Cliquez sur « Confirmer » pour exécuter l'étalonnage ou accédez à l'étalonnage via le menu supérieur. <br /> (Machine > [Nom de votre machine] > Étalonner le module infrarouge)",

@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Czy chcesz przekonwertować moduł lasera na moduł drukowania?',
       convertFromPrintingModuleMsg: 'Należy pamiętać, że po wykonaniu tej operacji ustawienia kolorów warstwy druku zostaną usunięte i ustawione zgodnie z bieżącą warstwą.',
       convertFromPrintingModuleTitle: 'Czy chcesz przekonwertować moduł drukowania na moduł lasera?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'Dokument zawiera warstwę do druku, czy chcesz zmienić obszar roboczy na Ador?',
       importedDocumentContainsPrinting4C: 'Dokument zawiera warstwę do druku, czy chcesz zmienić obszar roboczy na beamo II?',
       performIRCaliMsg: 'Kliknij „Potwierdź”, aby wykonać kalibrację lub przejdź do kalibracji z górnego menu. ( Urządzenie > [Nazwa Twojego urządzenia] > Kalibruj moduł podczerwieni)',

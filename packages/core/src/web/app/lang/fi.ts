@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Haluatko muuntaa lasermoduulin tulostusmoduuliksi?',
       convertFromPrintingModuleMsg: 'Huomaa, että jos suoritat tämän toiminnon, tulostuskerroksen väriasetukset poistetaan ja asetetaan nykyisen kerroksen mukaan.',
       convertFromPrintingModuleTitle: 'Haluatko muuntaa tulostusmoduulin lasermoduuliksi?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'Asiakirja sisältää tulostuskerroksen, haluatko vaihtaa työalueen Adoriin?',
       importedDocumentContainsPrinting4C: 'Asiakirja sisältää tulostuskerroksen, haluatko vaihtaa työalueen beamo II:een?',
       performIRCaliMsg: 'Napsauta "Vahvista" suorittaaksesi kalibroinnin, tai käytä kalibrointia ylävalikon kautta.<br />(Kone > [Koneen nimi] > Kalibroi infrapunamoduuli)',

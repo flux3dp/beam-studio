@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Přejte si převést Laserový modul na Tiskový modul?',
       convertFromPrintingModuleMsg: 'Pozor: Pokud tuto operaci dokončíte, nastavení barev tiskové vrstvy bude odstraněno a nastaveno podle současné vrstvy.',
       convertFromPrintingModuleTitle: 'Přejte si převést Tiskový modul na Laserový modul?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'Dokument obsahuje tiskovou vrstvu, přejete si změnit pracovní oblast na Ador?',
       importedDocumentContainsPrinting4C: 'Dokument obsahuje tiskovou vrstvu, přejete si změnit pracovní oblast na beamo II?',
       performIRCaliMsg: 'Klikněte na Potvrdit k provedení kalibrace, nebo vyberte kalibraci přes horní menu.<br />(Přístroj > [Jméno vašeho přístroje] > Kalibrovat infračervený modul)',

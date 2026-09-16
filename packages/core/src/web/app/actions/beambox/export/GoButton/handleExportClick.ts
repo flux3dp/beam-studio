@@ -13,6 +13,7 @@ import promarkButtonHandler from '@core/helpers/device/promark/promark-button-ha
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import type { ILang } from '@core/interfaces/ILang';
 
+import { checkGalvoConfig } from './checkGalvoConfig';
 import { checkModuleCalibration } from './checkModuleCalibration';
 import { exportTask } from './exportTask';
 import { handleExportAlerts } from './handleExportAlerts';
@@ -60,6 +61,7 @@ export const handleExportClick =
       if (!(await checkDeviceStatus(device))) return;
 
       await checkModuleCalibration(device, lang);
+      await checkGalvoConfig(device, lang);
       await exportTask(device, byHandler, lang);
     } finally {
       progressCaller.popById('preparing-export');

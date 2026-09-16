@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Wilt u de lasermodule converteren naar de printmodule?',
       convertFromPrintingModuleMsg: 'Houd er rekening mee dat als u deze bewerking voltooit, de kleurinstellingen van de printlaag worden verwijderd en ingesteld volgens de huidige laag.',
       convertFromPrintingModuleTitle: 'Wilt u de Printmodule converteren naar de Lasermodule?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'Het document bevat een printlaag, wilt u het werkgebied wijzigen naar printen?',
       importedDocumentContainsPrinting4C: 'Het document bevat een printlaag, wilt u het werkgebied wijzigen naar beamo II?',
       performIRCaliMsg: 'Klik op "Bevestigen" om de kalibratie uit te voeren, of open de kalibratie via het bovenste menu. <br /> (Machine> [Uw machinenaam]> Kalibreer lasermodule)',

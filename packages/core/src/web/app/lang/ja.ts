@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'レーザーモジュールを印刷モジュールに変換しますか？',
       convertFromPrintingModuleMsg: 'この操作を完了すると、印刷レイヤーの色設定が削除され、現在のレイヤに設定されます。',
       convertFromPrintingModuleTitle: '印刷モジュールをレーザーモジュールに変換しますか？',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'このドキュメントには印刷レイヤーが含まれています。Adorの作業領域に切り替えますか？',
       importedDocumentContainsPrinting4C: 'このドキュメントには印刷レイヤーが含まれています。beamo II の作業領域に切り替えますか？',
       performIRCaliMsg: '「確認」をクリックしてキャリブレーションを実行する、または上部メニューからアクセスしてください。<br />（機器 > [ご使用の機器名] > 赤外線モジュールのキャリブレーション）',

@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Adakah anda mahu menukar modul Laser kepada modul Pencetakan?',
       convertFromPrintingModuleMsg: 'Sila ambil perhatian bahawa jika anda melengkapkan operasi ini, tetapan warna lapisan pencetakan akan dibuang dan ditetapkan mengikut lapisan semasa.',
       convertFromPrintingModuleTitle: 'Adakah anda mahu menukar modul Pencetakan kepada modul Laser?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'Dokumen mengandungi lapisan pencetakan, adakah anda mahu menukar ruang kerja kepada Ador?',
       importedDocumentContainsPrinting4C: 'Dokumen mengandungi lapisan pencetakan, adakah anda mahu menukar ruang kerja kepada beamo II?',
       performIRCaliMsg: 'Klik “Sahkan” untuk melaksanakan penentukuran, atau akses penentukuran melalui menu atas.<br />(Mesin > [Nama Mesin Anda] > Tentukur Modul Inframerah)',

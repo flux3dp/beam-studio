@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'คุณต้องการแปลงโมดูลเลเซอร์เป็นโมดูลการพิมพ์หรือไม่?',
       convertFromPrintingModuleMsg: 'โปรดทราบว่าหากคุณดําเนินการครบถ้วนแล้ว การตั้งค่าสีของชั้นการพิมพ์จะถูกลบออกและตั้งค่าตามชั้นปัจจุบัน',
       convertFromPrintingModuleTitle: 'คุณต้องการแปลงโมดูลการพิมพ์เป็นโมดูลเลเซอร์หรือไม่?',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'เอกสารมีชั้นการพิมพ์ คุณต้องการเปลี่ยนพื้นที่ทํางานเป็น Ador หรือไม่',
       importedDocumentContainsPrinting4C: 'เอกสารมีชั้นการพิมพ์ คุณต้องการเปลี่ยนพื้นที่ทำงานเป็น beamo II หรือไม่',
       performIRCaliMsg: 'คลิก "ยืนยัน" เพื่อทําการปรับเทียบ หรือเข้าถึงการปรับเทียบผ่านเมนูด้านบน <br /> (เครื่อง > [ชื่อเครื่องของคุณ] > ปรับเทียบโมดูลอินฟราเรด)',

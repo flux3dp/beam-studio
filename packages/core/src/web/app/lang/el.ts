@@ -1809,6 +1809,8 @@ const lang: ILang = {
       convertFromLaserModuleTitle: 'Θέλετε να μετατρέψετε το λέιζερ σε εκτύπωση;',
       convertFromPrintingModuleMsg: 'Προσέξτε, αν ολοκληρώσετε αυτή τη λειτουργία, οι ρυθμίσεις χρωμάτων του στρώματος εκτύπωσης θα αφαιρεθούν.',
       convertFromPrintingModuleTitle: 'Θέλετε να μετατρέψετε την εκτύπωση σε λέιζερ;',
+      galvoNotConfiguredMsg: 'This machine has no settings for %s yet, so the job will run with default values. Open the settings now?',
+      galvoNotConfiguredTitle: 'Galvo module is not set up',
       importedDocumentContainsPrinting: 'Το έγγραφο περιέχει στρώμα εκτύπωσης, θέλετε να αλλάξετε την περιοχή εργασίας σε Ador;',
       importedDocumentContainsPrinting4C: 'Το έγγραφο περιέχει στρώμα εκτύπωσης, θέλετε να αλλάξετε την περιοχή εργασίας σε beamo II;',
       performIRCaliMsg: 'Κάντε κλικ στο "Επιβεβαίωση" για να εκτελέσετε βαθμονόμηση ή μέσω του μενού (Μηχάνημα > [Όνομα Μηχανήματος] > Βαθμονόμηση Υπερύθρου)',
