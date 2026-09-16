@@ -134,7 +134,7 @@ const doSetConfigTask = async (device, data: CameraConfig, borderless) => {
     await deviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX + SY) / 2}`);
   }
 
-  await clearPncOffset(device.serial);
+  clearPncOffset(device.serial);
 };
 
 export const sendPictureThenSetConfig = async (
@@ -176,7 +176,7 @@ export const setFisheyeConfig = async (data: FisheyeCameraParameters): Promise<{
   const res = await deviceMaster.uploadFisheyeParams(strData, () => {});
   const serial = deviceMaster.currentDevice?.info.serial;
 
-  if (serial) await clearPncOffset(serial);
+  if (serial) clearPncOffset(serial);
 
   return res;
 };
