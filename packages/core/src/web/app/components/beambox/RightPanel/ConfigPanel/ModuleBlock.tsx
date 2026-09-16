@@ -28,7 +28,7 @@ const ModuleBlock = (): React.ReactNode => {
   } = useI18n();
   const { module } = useConfigPanelStore();
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
-  const { value } = module;
+  const { hasMultiValue, value } = module;
   const workarea = useWorkarea();
   const supportedModules = useSupportedModules(workarea);
   const layers = useMemo(
@@ -64,7 +64,11 @@ const ModuleBlock = (): React.ReactNode => {
       label={t.module}
       onChange={handleChange as any}
       options={options}
-      selected={options.find((option) => option.value === value) as { label: string; value: number }}
+      selected={
+        hasMultiValue
+          ? { label: '-', value }
+          : (options.find((option) => option.value === value) as { label: string; value: number })
+      }
     />
   ) : (
     <div className={styles.panel}>
@@ -74,7 +78,7 @@ const ModuleBlock = (): React.ReactNode => {
         onChange={handleChange}
         options={options}
         placement="bottomRight"
-        value={value}
+        value={hasMultiValue ? '-' : value}
       />
     </div>
   );
