@@ -53,9 +53,11 @@ const FieldBlock = ({
       <Flex align="center" className={styles.row} justify="space-between">
         <Flex align="center">
           <span className={styles.label}>{tDocu.workarea}</span>
-          <Tooltip title={t.workarea_hint}>
-            <QuestionCircleOutlined className={styles.tooltip} />
-          </Tooltip>
+          {!widthOptions && (
+            <Tooltip title={t.workarea_hint}>
+              <QuestionCircleOutlined className={styles.tooltip} />
+            </Tooltip>
+          )}
         </Flex>
         {widthOptions ? (
           <Select
