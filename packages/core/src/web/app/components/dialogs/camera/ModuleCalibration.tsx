@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button } from 'antd';
+import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -8,7 +9,12 @@ import { adorModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import { LayerModule, type LayerModuleType, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import {
+  galvoModules,
+  LayerModule,
+  type LayerModuleType,
+  printingModules,
+} from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import deviceMaster from '@core/helpers/device-master';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -73,6 +79,10 @@ const doCalibration = async (model: WorkAreaModel, module: LayerModuleType): Pro
     }
   } else if (module === LayerModule.LASER_1064) {
     await deviceMaster.doBeamo2IRCalibration();
+  } else if (galvoModules.has(module)) {
+    // TODO: no engraving task exists for the galvo heads yet, so nothing is marked on the paper.
+    // The offset can still be entered by hand from the align step until the fcode is added.
+    console.error('TODO: add galvo module calibration fcode');
   } else {
     // TODO: bm2 white ink, varnish
     console.error('TODO: add calibration fcode');
@@ -140,6 +150,9 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
     return match(module)
       .with(LayerModule.LASER_1064, () => lang.module_calibration_2w_ir)
       .with(LayerModule.PRINTER, LayerModule.PRINTER_4C, () => lang.module_calibration_printer)
+      .with(LayerModule.GALVO_CO2, LayerModule.GALVO_MOPA, () =>
+        sprintf('%s (%s)', lang.module_calibration_galvo, getModulesTranslations()[module]),
+      )
       .otherwise(() => `${lang.module_calibration_printer} (${getModulesTranslations()[module]})`);
   }, [module, lang]);
 

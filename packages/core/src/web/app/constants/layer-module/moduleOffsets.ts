@@ -18,7 +18,7 @@ export type DeviceModuleOffsets = Partial<Record<LayerModuleType, OffsetTuple>>;
 
 export type ModuleOffsets = Partial<Record<WorkAreaModel, DeviceModuleOffsets>>;
 
-export const modelsWithStores = ['fbm2', 'fuv1'] as const;
+export const modelsWithStores = ['fbm2', 'fuv1', 'fhx2galvo'] as const;
 
 // Default Module Boundary
 export const defaultModuleOffsets: ModuleOffsets = {
@@ -35,6 +35,12 @@ export const defaultModuleOffsets: ModuleOffsets = {
     [LayerModule.PRINTER_4C]: [15.5, -37.1],
     [LayerModule.UV_VARNISH]: [30.2, -1.1],
     [LayerModule.UV_WHITE_INK]: [19.7, -1.1],
+  },
+  // TODO: confirm fhx2galvo default offsets
+  fhx2galvo: {
+    [LayerModule.GALVO_CO2]: [0, 0],
+    [LayerModule.GALVO_MOPA]: [0, 0],
+    [LayerModule.LASER_UNIVERSAL]: [0, 0],
   },
   // TODO: confirm fuv1 default offsets
   fuv1: {

@@ -106,6 +106,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
   const isBeamo2 = model === 'fbm2';
   const isBb2 = model === 'fbb2';
   const isHexaRf = model === 'fhx2rf';
+  const isHexa2Galvo = model === 'fhx2galvo';
   // HEXA RF and HEXA II share the same camera generation, but little else
   const hasHx2Camera = hexa2Models.has(model);
   const vc = versionChecker(version);
@@ -184,6 +185,17 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
             id: 'CALIBRATE_UV_VARNISH_MODULE',
             label: `${r.calibrate_printer_module} (${i18n.lang.layer_module.uv_varnish})`,
           },
+        isHexa2Galvo && {
+          click: handleClick,
+          id: 'CALIBRATE_GALVO_CO2_MODULE',
+          label: `${r.calibrate_galvo_module} (${i18n.lang.layer_module.galvo_co2})`,
+        },
+        // visibility follows the document setting, toggled from the renderer
+        isHexa2Galvo && {
+          click: handleClick,
+          id: 'CALIBRATE_GALVO_MOPA_MODULE',
+          label: `${r.calibrate_galvo_module} (${i18n.lang.layer_module.galvo_mopa})`,
+        },
         (isAdor || isBeamo2) && {
           click: handleClick,
           id: 'CALIBRATE_IR_MODULE',

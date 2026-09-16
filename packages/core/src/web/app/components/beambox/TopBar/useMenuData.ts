@@ -11,6 +11,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { MenuItemKey } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDockableStore } from '@core/app/stores/dockableStore';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useMenuItemStatusStore } from '@core/app/stores/menuItemStatusStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
@@ -91,6 +92,7 @@ const useMenuData = (email?: string): MenuNode[] => {
   } = lang;
 
   const isMobile = useIsMobile();
+  const isGalvoMopaEnabled = useDocumentStore((state) => state['enable-galvo-mopa']);
   const modulesTranslations = getModulesTranslations();
 
   const buildDeviceSubmenu = (device: IDeviceInfo): MenuNode => {
@@ -163,6 +165,29 @@ const useMenuData = (email?: string): MenuNode[] => {
               disabled: isMobile,
               id: 'CALIBRATE_UV_VARNISH_MODULE',
               label: `${menuCms.calibrate_printer_module} (${modulesTranslations[LayerModule.UV_VARNISH]})`,
+              type: 'item' as const,
+            },
+          ]
+        : []),
+      ...(supportedModules?.includes(LayerModule.GALVO_CO2)
+        ? [
+            {
+              device,
+              disabled: isMobile,
+              id: 'CALIBRATE_GALVO_CO2_MODULE',
+              label: `${menuCms.calibrate_galvo_module} (${modulesTranslations[LayerModule.GALVO_CO2]})`,
+              type: 'item' as const,
+            },
+          ]
+        : []),
+      // the MOPA galvo is an optional purchase, so it follows the document setting
+      ...(supportedModules?.includes(LayerModule.GALVO_MOPA) && isGalvoMopaEnabled
+        ? [
+            {
+              device,
+              disabled: isMobile,
+              id: 'CALIBRATE_GALVO_MOPA_MODULE',
+              label: `${menuCms.calibrate_galvo_module} (${modulesTranslations[LayerModule.GALVO_MOPA]})`,
               type: 'item' as const,
             },
           ]

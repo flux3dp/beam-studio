@@ -1178,6 +1178,7 @@ export interface ILang {
     material_a4_calibration_pattern: string;
     materials_required: string;
     module_calibration_2w_ir: string;
+    module_calibration_galvo: string;
     module_calibration_printer: string;
     module_offset_settings: string;
     module_offset_settings_desc: string;
@@ -2701,6 +2702,7 @@ export interface ILang {
       calibrate_beambox_camera_borderless: string;
       calibrate_camera_advanced: string;
       calibrate_diode_module: string;
+      calibrate_galvo_module: string;
       calibrate_ir_module: string;
       calibrate_print_and_cut: string;
       calibrate_printer_module: string;

@@ -240,6 +240,12 @@ export default {
       });
     }
   },
+  CALIBRATE_GALVO_CO2_MODULE: async (device: IDeviceInfo): Promise<void> => {
+    calibrateModule(device, LayerModule.GALVO_CO2);
+  },
+  CALIBRATE_GALVO_MOPA_MODULE: async (device: IDeviceInfo): Promise<void> => {
+    calibrateModule(device, LayerModule.GALVO_MOPA);
+  },
   CALIBRATE_IR_MODULE: async (device: IDeviceInfo): Promise<void> => {
     calibrateModule(device, LayerModule.LASER_1064);
   },
