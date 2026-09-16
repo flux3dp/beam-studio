@@ -121,17 +121,6 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       id: 'PROMARK_SETTINGS',
       label: i18n.lang.promark_settings?.title,
     },
-    isHexa2Galvo && {
-      click: handleClick,
-      id: 'GALVO_CO2_SETTINGS',
-      label: sprintf(r.galvo_settings, i18n.lang.layer_module.galvo_co2),
-    },
-    // visibility follows the document setting, toggled from the renderer
-    isHexa2Galvo && {
-      click: handleClick,
-      id: 'GALVO_MOPA_SETTINGS',
-      label: sprintf(r.galvo_settings, i18n.lang.layer_module.galvo_mopa),
-    },
     isPromark && {
       click: handleClick,
       id: 'Z_AXIS_ADJUSTMENT',
@@ -199,10 +188,21 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           },
         isHexa2Galvo && {
           click: handleClick,
+          id: 'GALVO_CO2_SETTINGS',
+          label: sprintf(r.galvo_settings, i18n.lang.layer_module.galvo_co2),
+        },
+        isHexa2Galvo && {
+          click: handleClick,
           id: 'CALIBRATE_GALVO_CO2_MODULE',
           label: sprintf(r.calibrate_galvo_module, i18n.lang.layer_module.galvo_co2),
         },
-        // visibility follows the document setting, toggled from the renderer
+        // the MOPA head is an optional purchase, so both of its entries follow the document
+        // setting; the renderer toggles their visibility
+        isHexa2Galvo && {
+          click: handleClick,
+          id: 'GALVO_MOPA_SETTINGS',
+          label: sprintf(r.galvo_settings, i18n.lang.layer_module.galvo_mopa),
+        },
         isHexa2Galvo && {
           click: handleClick,
           id: 'CALIBRATE_GALVO_MOPA_MODULE',
