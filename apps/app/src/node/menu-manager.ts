@@ -128,7 +128,6 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       label: r.calibration,
       submenu: [
         { click: handleClick, id: 'CALIBRATE_BEAMBOX_CAMERA', label: r.calibrate_beambox_camera },
-        { click: handleClick, id: 'CALIBRATE_PRINT_AND_CUT', label: r.calibrate_print_and_cut },
         (isBb2 || isBeamo2 || isHexa2 || isAdor) && {
           click: handleClick,
           id: 'CALIBRATE_CAMERA_ADVANCED',
@@ -188,6 +187,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
             id: 'CARTRIDGE_CHIP_SETTING',
             label: 'Cartridge Chip Setting',
           },
+        { click: handleClick, id: 'CALIBRATE_PRINT_AND_CUT', label: r.calibrate_print_and_cut },
       ].filter(Boolean),
     },
     !isPromark && { type: 'separator' },
