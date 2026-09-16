@@ -32,7 +32,7 @@ interface Props {
  * applied when a task runs.
  */
 export const GalvoSettings = ({ initData, module, onClose }: Props): React.JSX.Element => {
-  const { global: tGlobal, promark_settings: t } = useI18n();
+  const { global: tGlobal, topbar: tTopbar } = useI18n();
   const isInch = useStorageStore((state) => state.isInch);
   const [config, setConfig] = useState<GalvoConfig>(initData);
   const update = <K extends keyof GalvoConfig>(key: K, value: GalvoConfig[K]) =>
@@ -62,7 +62,7 @@ export const GalvoSettings = ({ initData, module, onClose }: Props): React.JSX.E
       maskClosable={false}
       onCancel={onClose}
       open
-      title={sprintf('%s (%s)', t.title, getModulesTranslations()[module])}
+      title={sprintf(tTopbar.menu.galvo_settings, getModulesTranslations()[module])}
       width={620}
     >
       <div className={styles.container}>

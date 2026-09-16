@@ -151,7 +151,7 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
       .with(LayerModule.LASER_1064, () => lang.module_calibration_2w_ir)
       .with(LayerModule.PRINTER, LayerModule.PRINTER_4C, () => lang.module_calibration_printer)
       .with(LayerModule.GALVO_CO2, LayerModule.GALVO_MOPA, () =>
-        sprintf('%s (%s)', lang.module_calibration_galvo, getModulesTranslations()[module]),
+        sprintf(lang.module_calibration_galvo, getModulesTranslations()[module]),
       )
       .otherwise(() => `${lang.module_calibration_printer} (${getModulesTranslations()[module]})`);
   }, [module, lang]);
