@@ -3,6 +3,7 @@ import { galvoModules, LayerModule } from '@core/app/constants/layer-module/laye
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import { getLayerModule } from '@core/helpers/layer-module/layer-module-helper';
 
 /**
  * Traverse speed of a galvo module head, in mm/s.
@@ -12,19 +13,8 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
  */
 export const GALVO_MAX_SPEED = 10000;
 
-// layer-config-helper imports this module, so read the attribute rather than importing its
-// attributeMap back and creating a cycle
-const MODULE_ATTRIBUTE = 'data-module';
-
-export const getLayerModule = (layerName: string): LayerModuleType | undefined => {
-  const value = layerManager.getLayerElementByName(layerName)?.getAttribute(MODULE_ATTRIBUTE);
-
-  if (!value) return undefined;
-
-  const module = Number(value) as LayerModuleType;
-
-  return Number.isNaN(module) ? undefined : module;
-};
+const getModuleOfLayer = (layerName: string): LayerModuleType | undefined =>
+  getLayerModule(layerManager.getLayerElementByName(layerName));
 
 const getModuleSpeedLimit = (
   module: LayerModuleType,
@@ -69,7 +59,7 @@ export const getSpeedLimit = (
   const selected = hasMultiModule
     ? layerManager
         .getSelectedLayers()
-        .map(getLayerModule)
+        .map(getModuleOfLayer)
         .filter((value): value is LayerModuleType => value !== undefined)
     : [];
   const modules = selected.length > 0 ? selected : [module];
@@ -89,3 +79,10 @@ export const getSpeedLimit = (
 
   return { max: maxSpeed, min: minSpeed };
 };
+
+/** Speed range of one named layer, for writing a shared value back to each layer it belongs to. */
+export const getLayerSpeedLimit = (
+  layerName: string,
+  workarea: WorkAreaModel,
+  fallbackModule: LayerModuleType,
+): { max: number; min: number } => getSpeedLimit(getModuleOfLayer(layerName) ?? fallbackModule, workarea);

@@ -30,7 +30,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getLayerModule, getSpeedLimit } from '@core/helpers/layer/getSpeedLimit';
+import { getLayerSpeedLimit, getSpeedLimit } from '@core/helpers/layer/getSpeedLimit';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
@@ -149,7 +149,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
       selectedLayers.forEach((layerName) => {
         // the shared range should already prevent this, but each layer keeps its own valid value
-        const { max, min } = getSpeedLimit(getLayerModule(layerName) ?? layerModule, workarea);
+        const { max, min } = getLayerSpeedLimit(layerName, workarea, layerModule);
         const layerVal = Math.max(min, Math.min(val, max));
 
         writeData(layerName, 'speed', layerVal, { applyPrinting: true, batchCmd });
