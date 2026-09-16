@@ -176,7 +176,7 @@ export const setFisheyeConfig = async (data: FisheyeCameraParameters): Promise<{
   const res = await deviceMaster.uploadFisheyeParams(strData, () => {});
   const serial = deviceMaster.currentDevice?.info.serial;
 
-  if (serial) clearPncOffset(serial);
+  if (serial) await clearPncOffset(serial);
 
   return res;
 };
