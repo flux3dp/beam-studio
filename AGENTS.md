@@ -219,6 +219,10 @@ Location: `packages/core/src/web/app/lang/`
 ### Formatted Strings
 
 - Prefer `sprintf-js` for strings with interpolated values, including translated strings.
+- Punctuation around an interpolated value belongs in the translated string, not in the code
+  that assembles the label. CJK writes `振鏡設定（%s）` where Latin scripts write
+  `Galvo Settings (%s)`; building `` `${label} (${value})` `` in code forces halfwidth brackets
+  on every language. The same goes for colons, ellipses and quotes.
 
 ## Electron App Multi-Tab
 

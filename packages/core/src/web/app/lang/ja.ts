@@ -2773,7 +2773,7 @@ const lang: ILang = {
       calibrate_ir_module: '赤外線モジュールを校正',
       calibrate_print_and_cut: 'プリント＆カットを校正',
       calibrate_printer_module: '印刷モジュールを校正',
-      calibrate_wide_angle_camera: 'カメラを校正(広角カメラ)',
+      calibrate_wide_angle_camera: 'カメラを校正（広角カメラ）',
       calibration: 'キャリブレーション',
       camera_calibration_data: 'カメラキャリブレーションデータ',
       change_logs: '変更ログ',
