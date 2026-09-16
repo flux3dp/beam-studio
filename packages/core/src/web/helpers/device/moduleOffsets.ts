@@ -10,6 +10,8 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 
 import deviceMaster from '../device-master';
 
+import { stringifyDeviceSettingJson } from './deviceSettingJson';
+
 const devicesModuleOffsetsCache: Record<string, DeviceModuleOffsets> = {};
 
 export const getAllOffsetsFromDevices = async (useCache = true): Promise<DeviceModuleOffsets | null> => {
@@ -125,13 +127,13 @@ export const updateModuleOffsetsInDevice = async (
     newOffsets = [newOffsets[0] + defaultOffset[0], newOffsets[1] + defaultOffset[1]];
   }
 
-  const data = JSON.stringify({ [getLayerModuleName(module)]: newOffsets }, (_, val) => {
+  const data = stringifyDeviceSettingJson({ [getLayerModuleName(module)]: newOffsets }, (_, val) => {
     if (typeof val === 'number') return round(val, 2);
 
     return val;
   });
 
-  const res = await deviceMaster.setDeviceSetting('toolhead_shift', data.replaceAll('"', '\\\\\\"'));
+  const res = await deviceMaster.setDeviceSetting('toolhead_shift', data);
 
   console.log(res);
 

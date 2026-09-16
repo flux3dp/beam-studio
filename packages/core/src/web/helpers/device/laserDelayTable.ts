@@ -1,3 +1,4 @@
+import { stringifyDeviceSettingJson } from '@core/helpers/device/deviceSettingJson';
 import deviceMaster from '@core/helpers/device-master';
 
 export type LaserDelayTable = Record<string, number>;
@@ -21,6 +22,5 @@ export const getLaserDelayTable = async (): Promise<LaserDelayTable> => {
 };
 
 export const setLaserDelayTable = async (table: LaserDelayTable): Promise<void> => {
-  // Parsing for shlex.split in python in ghost and firmware, ('\\\"' => '\"' (ghost) => '"' (firmware))
-  await deviceMaster.setDeviceSetting('laser_delay', JSON.stringify(table).replaceAll('"', '\\\\\\"'));
+  await deviceMaster.setDeviceSetting('laser_delay', stringifyDeviceSettingJson(table));
 };
