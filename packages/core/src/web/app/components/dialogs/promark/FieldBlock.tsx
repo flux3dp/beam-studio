@@ -42,6 +42,10 @@ const FieldBlock = ({
     promark_settings: t,
   } = useI18n();
   const { angle, offsetX, offsetY } = field;
+  // UnitInput reports null while its box is empty; Field has no room for that
+  const handleChange = (key: keyof Field) => (val: null | number) => {
+    if (val !== null) setField((cur) => ({ ...cur, [key]: val }));
+  };
 
   return (
     <Flex className={styles.block} gap={8} vertical>
@@ -75,7 +79,7 @@ const FieldBlock = ({
               className={styles.input}
               data-testid="offset-x"
               isInch={isInch}
-              onChange={(val) => setField((cur) => ({ ...cur, offsetX: val }))}
+              onChange={handleChange('offsetX')}
               precision={isInch ? 5 : 3}
               size="small"
               value={offsetX}
@@ -88,7 +92,7 @@ const FieldBlock = ({
               className={styles.input}
               data-testid="offset-y"
               isInch={isInch}
-              onChange={(val) => setField((cur) => ({ ...cur, offsetY: val }))}
+              onChange={handleChange('offsetY')}
               precision={isInch ? 5 : 3}
               size="small"
               value={offsetY}
@@ -102,7 +106,7 @@ const FieldBlock = ({
           addonAfter="deg"
           className={styles.input}
           data-testid="angle"
-          onChange={(val) => setField((cur) => ({ ...cur, angle: val }))}
+          onChange={handleChange('angle')}
           precision={3}
           size="small"
           step={0.001}
