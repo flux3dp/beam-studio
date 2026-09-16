@@ -22,6 +22,7 @@ import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
+import { getBundledFont } from '@core/helpers/fonts/bundledFonts';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import { getOS } from '@core/helpers/getOS';
 import { hashMap } from '@core/helpers/hashHelper';
@@ -160,6 +161,12 @@ const findFontFamilyCaseInsensitive = (family: string): string | undefined => {
 };
 
 const getFontOfPostscriptName = memoize((postscriptName: string) => {
+  const bundledFont = getBundledFont(postscriptName);
+
+  if (bundledFont) {
+    return bundledFont;
+  }
+
   // Check if font is already registered in the registry
   const registeredFont = useGoogleFontStore.getState().getRegisteredFont(postscriptName);
 
