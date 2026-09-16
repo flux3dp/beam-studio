@@ -893,7 +893,7 @@ const lang: ILang = {
           disabled_by_gradient: 'Deaktiver gradient, før du bruger denne funktion.',
           disabled_by_infilled: 'Luk udfyldning, før du bruger denne funktion.',
           disabled_by_infilled_and_variable_text: 'Luk udfyldning og variabel tekst, før du bruger denne funktion.',
-          disabled_by_noun_project: 'Former fra Noun Project er beskyttet af ophavsret, derfor kan deres stier ikke redigeres.',
+          disabled_by_noun_project: 'Denne form er beskyttet af loven om immaterielle rettigheder, derfor kan dens sti ikke redigeres.',
           disabled_by_variable_text: 'Luk variabel tekst, før du bruger denne funktion.',
           disassemble_use: 'Skil ad',
           disassembling: 'Skiller ad...',
