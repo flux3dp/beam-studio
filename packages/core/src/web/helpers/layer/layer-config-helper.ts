@@ -8,6 +8,7 @@ import {
   fullColorModules,
   galvoModules,
   LayerModule,
+  MODULE_ATTRIBUTE,
   printingModules,
   UVModules,
 } from '@core/app/constants/layer-module/layer-modules';
@@ -74,7 +75,7 @@ export const attributeMap: Record<ConfigKey, string> = {
   laserFrequency: 'data-laserFrequency',
   minPadding: 'data-minPadding',
   minPower: 'data-minPower',
-  module: 'data-module',
+  module: MODULE_ATTRIBUTE,
   mRatio: 'data-mRatio',
   multipass: 'data-multipass',
   nozzleMode: 'data-nozzleMode',

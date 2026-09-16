@@ -60,6 +60,9 @@ export const fullColorHeadModules = [LayerModule.PRINTER_4C, LayerModule.UV_WHIT
 // uv for fuv1, not for uv printing export
 export const UVModules = new Set<LayerModuleType>([LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH]);
 
+/** Attribute holding a layer's module. */
+export const MODULE_ATTRIBUTE = 'data-module';
+
 const ModuleNameToValue = invert(LayerModule);
 
 export const getLayerModuleName = (module: LayerModuleType): string => {

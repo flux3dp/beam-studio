@@ -1,6 +1,6 @@
 import { adorModels } from '@core/app/actions/beambox/constant';
 import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { DetectedLayerModule, LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { DetectedLayerModule, LayerModule, MODULE_ATTRIBUTE } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -73,13 +73,23 @@ export const getDetectedModulesTranslations = (shouldNote4C = false): Record<Det
   };
 };
 
+export const getLayerModule = (layer: Element | null | undefined): LayerModuleType | undefined => {
+  const value = layer?.getAttribute(MODULE_ATTRIBUTE);
+
+  if (!value) return undefined;
+
+  const module = Number(value) as LayerModuleType;
+
+  return Number.isNaN(module) ? undefined : module;
+};
+
 type SelectorOpt = { checkRepeat?: boolean; checkVisible?: boolean };
 
 const getSelector = (
   modules: LayerModuleType[],
   { checkRepeat = false, checkVisible = false }: SelectorOpt = {},
 ): string => {
-  let query = 'g.layer[data-module="{module}"]';
+  let query = `g.layer[${MODULE_ATTRIBUTE}="{module}"]`;
 
   if (checkVisible) query += ':not([display="none"])';
 
