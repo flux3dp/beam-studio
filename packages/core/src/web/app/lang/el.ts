@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: 'Γεννήτρια μπρελόκ',
     material_test_generator: 'Γεννήτρια Δοκιμής Υλικού',
     puzzle_generator: 'Γεννήτρια παζλ',
+    stamp_generator: 'Stamp Generator',
     title: 'Γεννήτριες',
   },
   generic_error: {

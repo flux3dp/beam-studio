@@ -1,0 +1,27 @@
+@use '@core/styles/mixins' as mixins;
+
+.modal {
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  width: calc(90vw - 48px); // 48px: padding of antd modal
+  @include mixins.viewport-size($offset: 180px);
+  max-height: 800px;
+  gap: 16px;
+
+  @include mixins.is-mobile {
+    flex-direction: column;
+    height: auto;
+    @include mixins.viewport-size(80, $property: max-height, $unit: svh);
+    overflow-y: hidden;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}

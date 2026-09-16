@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: 'Penjana Rantai Kunci',
     material_test_generator: 'Penjana Ujian Bahan',
     puzzle_generator: 'Penjana teka-teki',
+    stamp_generator: 'Stamp Generator',
     title: 'Penjana',
   },
   generic_error: {

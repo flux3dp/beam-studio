@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: 'Trình tạo móc khóa',
     material_test_generator: 'Trình tạo thử nghiệm vật liệu',
     puzzle_generator: 'Trình tạo ghép hình',
+    stamp_generator: 'Stamp Generator',
     title: 'Trình Tạo',
   },
   generic_error: {

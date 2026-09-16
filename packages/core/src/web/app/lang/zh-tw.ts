@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: '鑰匙圈產生器',
     material_test_generator: '材質測試產生器',
     puzzle_generator: '拼圖產生器',
+    stamp_generator: '印章產生器',
     title: '產生器',
   },
   generic_error: {
@@ -2646,6 +2647,27 @@ const lang: ILang = {
     facebook: '與 FLUX 使用者交流、提出問題並學習技巧！',
     instagram: '獲取最新靈感、優惠與贈品！',
     youtube: '查看 Beam Studio 教學與手作靈感。',
+  },
+  stamp_generator: {
+    export_failed: '匯入印章至畫布失敗，請再試一次。',
+    import_to_canvas: '匯入至畫布',
+    layers: {
+      engrave: '印章 - 雕刻',
+      outline: '印章 - 外框',
+    },
+    size: '尺寸',
+    switch_template_warning: '您目前的設定尚未匯入至畫布。\n切換模板將會重設所有設定為預設值。',
+    tabs: {
+      basic: '基本',
+      element: '元素',
+      text: '文字',
+    },
+    templates: {
+      name_seal: '姓名印章',
+      oval_company: '橢圓統編章',
+      rect_company: '長方形統編章',
+      square_seal_3col: '方形印章（三行）',
+    },
   },
   stamp_maker_panel: {
     bevel_radius: '斜角半徑',

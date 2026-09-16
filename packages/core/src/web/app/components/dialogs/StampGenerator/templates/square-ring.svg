@@ -1,0 +1,4 @@
+<svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- 公司小章 frame: outer 100×100 centered, corner radius 1/10 of the side, ring width 1/30 (0.4mm at 四分, 1mm at 一吋). -->
+<path fill-rule="evenodd" d="M35 25H115A10 10 0 0 1 125 35V115A10 10 0 0 1 115 125H35A10 10 0 0 1 25 115V35A10 10 0 0 1 35 25ZM35 28.333H115A6.667 6.667 0 0 1 121.667 35V115A6.667 6.667 0 0 1 115 121.667H35A6.667 6.667 0 0 1 28.333 115V35A6.667 6.667 0 0 1 35 28.333Z" fill="#E5400A"/>
+</svg>

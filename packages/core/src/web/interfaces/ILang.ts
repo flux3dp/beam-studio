@@ -1494,6 +1494,7 @@ export interface ILang {
     keychain_generator: string;
     material_test_generator: string;
     puzzle_generator: string;
+    stamp_generator: string;
     title: string;
   };
   generic_error: {
@@ -2546,6 +2547,27 @@ export interface ILang {
     facebook: string;
     instagram: string;
     youtube: string;
+  };
+  stamp_generator: {
+    export_failed: string;
+    import_to_canvas: string;
+    layers: {
+      engrave: string;
+      outline: string;
+    };
+    size: string;
+    switch_template_warning: string;
+    tabs: {
+      basic: string;
+      element: string;
+      text: string;
+    };
+    templates: {
+      name_seal: string;
+      oval_company: string;
+      rect_company: string;
+      square_seal_3col: string;
+    };
   };
   stamp_maker_panel: {
     bevel_radius: string;

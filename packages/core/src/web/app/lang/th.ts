@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: 'เครื่องสร้างพวงกุญแจ',
     material_test_generator: 'ตัวสร้างการทดสอบวัสดุ',
     puzzle_generator: 'เครื่องสร้างจิ๊กซอว์',
+    stamp_generator: 'Stamp Generator',
     title: 'เครื่องสร้าง',
   },
   generic_error: {

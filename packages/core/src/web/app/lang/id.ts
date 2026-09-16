@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: 'Generator Gantungan Kunci',
     material_test_generator: 'Generator Uji Material',
     puzzle_generator: 'Pembuat puzzle',
+    stamp_generator: 'Stamp Generator',
     title: 'Generator',
   },
   generic_error: {

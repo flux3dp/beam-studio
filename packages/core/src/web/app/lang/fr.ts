@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: 'Générateur de porte-clés',
     material_test_generator: 'Générateur de Test de Matériau',
     puzzle_generator: 'Générateur de puzzle',
+    stamp_generator: 'Stamp Generator',
     title: 'Générateurs',
   },
   generic_error: {

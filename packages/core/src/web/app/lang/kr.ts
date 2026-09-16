@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: '키체인 생성기',
     material_test_generator: '재질 테스트 생성기',
     puzzle_generator: '퍼즐 생성기',
+    stamp_generator: 'Stamp Generator',
     title: '생성기',
   },
   generic_error: {

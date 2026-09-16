@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: 'Keychain Generator',
     material_test_generator: 'Material Test Generator',
     puzzle_generator: 'Puzzle Generator',
+    stamp_generator: 'Stamp Generator',
     title: 'Generators',
   },
   generic_error: {
@@ -2646,6 +2647,27 @@ Machines > ‘Promark Name’ > Promark Settings`,
     facebook: 'Chat with FLUXers, ask questions, and learn tips!',
     instagram: 'Get the latest inspirations, deals, and freebies!',
     youtube: 'View Beam Studio tutorials and craft ideas.',
+  },
+  stamp_generator: {
+    export_failed: 'Failed to import stamp to canvas. Please try again.',
+    import_to_canvas: 'Import to Canvas',
+    layers: {
+      engrave: 'Stamp - Engrave',
+      outline: 'Stamp - Outline',
+    },
+    size: 'Size',
+    switch_template_warning: 'Your current settings have not been imported to the canvas yet.\nSwitching the template will reset all settings to their default values.',
+    tabs: {
+      basic: 'Basic',
+      element: 'Element',
+      text: 'Text',
+    },
+    templates: {
+      name_seal: 'Name Seal',
+      oval_company: 'Oval Company Seal',
+      rect_company: 'Rectangular Company Seal',
+      square_seal_3col: 'Square Seal (3 Columns)',
+    },
   },
   stamp_maker_panel: {
     bevel_radius: 'Bevel Radius',

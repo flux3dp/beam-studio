@@ -1,0 +1,5 @@
+<!-- TODO: placeholder drawn by hand; replace with the design team's stamp icon before release. -->
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M16 5a4.5 4.5 0 0 0-4.5 4.5c0 1.6.9 3 2.2 3.8L12.9 18H10a3 3 0 0 0-3 3v2.5h18V21a3 3 0 0 0-3-3h-2.9l-.8-4.7A4.5 4.5 0 0 0 16 5Zm0 1.5a3 3 0 0 1 1.5 5.6l-.4.2.9 5.7H14l.9-5.7-.4-.2A3 3 0 0 1 16 6.5ZM10 19.5h12a1.5 1.5 0 0 1 1.5 1.5v1H8.5v-1A1.5 1.5 0 0 1 10 19.5Z" fill="currentColor"/>
+<path d="M7 25.5h18V27H7v-1.5Z" fill="currentColor"/>
+</svg>

@@ -1528,6 +1528,7 @@ const lang: ILang = {
     keychain_generator: '钥匙扣生成器',
     material_test_generator: '材质测试生成器',
     puzzle_generator: '拼图生成器',
+    stamp_generator: 'Stamp Generator',
     title: '生成器',
   },
   generic_error: {

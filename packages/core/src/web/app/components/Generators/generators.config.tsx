@@ -7,6 +7,7 @@ import type { ILang } from '@core/interfaces/ILang';
 
 import { showKeyChainGenerator } from '../dialogs/KeyChainGenerator';
 import { showPuzzleGenerator } from '../dialogs/PuzzleGenerator';
+import { showStampGenerator } from '../dialogs/StampGenerator';
 
 export interface GeneratorConfig {
   icon: React.ReactNode;
@@ -47,6 +48,12 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       id: 'keychain',
       onClick: () => showKeyChainGenerator(),
       titleKey: 'keychain_generator',
+    } as const,
+    {
+      icon: <GeneratorIcons.Stamp />,
+      id: 'stamp',
+      onClick: () => showStampGenerator(),
+      titleKey: 'stamp_generator',
     } as const,
     {
       icon: <GeneratorIcons.Material />,
