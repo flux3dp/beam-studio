@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Vyboulení',
     cached_task_lens_mismatch: 'Poslední úloha byla vytvořena pro %s, ale nastavení dokumentu používá %s. Které parametry se mají použít?',
     cloud_lens_differs: 'Parametry v cloudu se od tohoto počítače liší u: %s\nPoužít parametry z cloudu? Vyplní se a uloží po kliknutí na Uložit.',
+    connect: 'Connect',
     engraving_mode: 'Režim gravírování',
     field: 'Pole',
     flat: 'Plochý',

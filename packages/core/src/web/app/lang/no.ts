@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Bulking',
     cached_task_lens_mismatch: 'Den siste jobben ble generert for %s, men dokumentinnstillingene bruker %s. Hvilke parametere skal brukes?',
     cloud_lens_differs: 'Sky-parameterne avviker fra denne datamaskinen for: %s\nBruke sky-parameterne? De fylles inn og lagres når du klikker på Lagre.',
+    connect: 'Connect',
     engraving_mode: 'Graveringsmodus',
     field: 'Felt',
     flat: 'Flat',

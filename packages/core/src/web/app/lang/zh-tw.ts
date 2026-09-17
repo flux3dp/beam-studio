@@ -2606,6 +2606,7 @@ const lang: ILang = {
     bulge: '桶形',
     cached_task_lens_mismatch: '上次送出的工作是依 %s 產生的，但目前文件設定是 %s。要套用哪一組參數？',
     cloud_lens_differs: '以下組別的雲端參數和本機不同：%s\n是否使用雲端參數？參數會填入畫面，按保存後才會寫入。',
+    connect: '串聯',
     engraving_mode: '雕刻模式',
     field: '區域',
     flat: '平面',

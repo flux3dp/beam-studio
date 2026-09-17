@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: '桶形',
     cached_task_lens_mismatch: '上次发送的工作是依 %s 生成的，但当前文档设置是 %s。要套用哪一组参数？',
     cloud_lens_differs: '以下组别的云端参数和本机不同：%s\n是否使用云端参数？参数会填入画面，按保存后才会写入。',
+    connect: '串联',
     engraving_mode: '雕刻模式',
     field: '区域',
     flat: '平面',

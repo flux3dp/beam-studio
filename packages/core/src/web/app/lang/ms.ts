@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Bonjolan',
     cached_task_lens_mismatch: 'Kerja terakhir dijana untuk %s, tetapi Tetapan Dokumen menggunakan %s. Parameter mana yang patut digunakan?',
     cloud_lens_differs: 'Parameter awan berbeza daripada komputer ini untuk: %s\nGunakan parameter awan? Parameter akan diisi dan disimpan apabila anda klik Simpan.',
+    connect: 'Connect',
     engraving_mode: 'Mod Ukiran',
     field: 'Medan',
     flat: 'Rata',

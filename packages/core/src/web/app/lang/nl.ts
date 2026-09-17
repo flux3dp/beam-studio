@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Bolling',
     cached_task_lens_mismatch: 'De laatste taak is gemaakt voor %s, maar de documentinstellingen gebruiken %s. Welke parameters moeten worden toegepast?',
     cloud_lens_differs: 'De cloudparameters verschillen van deze computer voor: %s\nCloudparameters gebruiken? Ze worden ingevuld en opgeslagen zodra je op Opslaan klikt.',
+    connect: 'Connect',
     engraving_mode: 'Graveermodus',
     field: 'Veld',
     flat: 'Vlak',

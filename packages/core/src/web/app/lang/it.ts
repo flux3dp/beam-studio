@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Rigonfiamento',
     cached_task_lens_mismatch: 'L’ultimo lavoro è stato generato per %s, ma le impostazioni documento usano %s. Quali parametri applicare?',
     cloud_lens_differs: 'I parametri nel cloud differiscono da questo computer per: %s\nUsare i parametri del cloud? Verranno inseriti e salvati quando fai clic su Salva.',
+    connect: 'Connect',
     engraving_mode: 'Modalità di incisione',
     field: 'Campo',
     flat: 'Piano',

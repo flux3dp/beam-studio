@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Udbuling',
     cached_task_lens_mismatch: 'Det seneste job blev genereret til %s, men dokumentindstillingerne bruger %s. Hvilke parametre skal anvendes?',
     cloud_lens_differs: 'Cloud-parametrene afviger fra denne computer for: %s\nBrug cloud-parametrene? De udfyldes og gemmes, når du klikker på Gem.',
+    connect: 'Connect',
     engraving_mode: 'Graveringstilstand',
     field: 'Felt',
     flat: 'Flad',

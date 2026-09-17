@@ -2503,6 +2503,7 @@ export interface ILang {
     bulge: string;
     cached_task_lens_mismatch: string;
     cloud_lens_differs: string;
+    connect: string;
     engraving_mode: string;
     field: string;
     flat: string;

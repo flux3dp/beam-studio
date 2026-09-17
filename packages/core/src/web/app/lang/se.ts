@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Utbuktning',
     cached_task_lens_mismatch: 'Det senaste jobbet skapades för %s, men dokumentinställningarna använder %s. Vilka parametrar ska användas?',
     cloud_lens_differs: 'Molnparametrarna skiljer sig från den här datorn för: %s\nAnvända molnparametrarna? De fylls i och sparas när du klickar på Spara.',
+    connect: 'Connect',
     engraving_mode: 'Graveringsläge',
     field: 'Fält',
     flat: 'Platt',

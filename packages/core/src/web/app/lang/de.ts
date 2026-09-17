@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Wölbung',
     cached_task_lens_mismatch: 'Der letzte Auftrag wurde für %s erzeugt, die Dokumenteinstellungen verwenden aber %s. Welche Parameter sollen angewendet werden?',
     cloud_lens_differs: 'Die Cloud-Parameter unterscheiden sich von diesem Computer bei: %s\nCloud-Parameter verwenden? Sie werden eingetragen und beim Klick auf Speichern gespeichert.',
+    connect: 'Connect',
     engraving_mode: 'Graviermodus',
     field: 'Feld',
     flat: 'Flach',

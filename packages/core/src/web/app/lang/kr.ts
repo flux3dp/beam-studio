@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: '볼록함',
     cached_task_lens_mismatch: '마지막 작업은 %s 기준으로 생성되었지만 문서 설정은 %s입니다. 어떤 매개변수를 적용할까요?',
     cloud_lens_differs: '다음 항목의 클라우드 매개변수가 이 컴퓨터와 다릅니다: %s\n클라우드 매개변수를 사용할까요? 값이 화면에 입력되며 저장을 클릭하면 저장됩니다.',
+    connect: 'Connect',
     engraving_mode: '각인 모드',
     field: '필드',
     flat: '평면',

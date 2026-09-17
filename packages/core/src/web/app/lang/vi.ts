@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Phồng',
     cached_task_lens_mismatch: 'Công việc gần nhất được tạo cho %s, nhưng cài đặt tài liệu đang dùng %s. Áp dụng bộ tham số nào?',
     cloud_lens_differs: 'Tham số trên đám mây khác với máy này ở: %s\nDùng tham số đám mây? Tham số sẽ được điền vào và lưu khi bạn nhấn Lưu.',
+    connect: 'Connect',
     engraving_mode: 'Chế độ khắc',
     field: 'Trường',
     flat: 'Phẳng',

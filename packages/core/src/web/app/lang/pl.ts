@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Wybrzuszenie',
     cached_task_lens_mismatch: 'Ostatnie zadanie wygenerowano dla %s, ale ustawienia dokumentu używają %s. Które parametry zastosować?',
     cloud_lens_differs: 'Parametry w chmurze różnią się od tych na tym komputerze dla: %s\nUżyć parametrów z chmury? Zostaną wpisane i zapisane po kliknięciu Zapisz.',
+    connect: 'Connect',
     engraving_mode: 'Tryb grawerowania',
     field: 'Pole',
     flat: 'Płaski',

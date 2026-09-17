@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: '膨らみ',
     cached_task_lens_mismatch: '前回のジョブは %s 用に生成されましたが、ドキュメント設定は %s です。どちらのパラメータを適用しますか？',
     cloud_lens_differs: '次の組のクラウドのパラメータがこのコンピュータと異なります：%s\nクラウドのパラメータを使用しますか？値は画面に入力され、保存をクリックしたときに保存されます。',
+    connect: 'Connect',
     engraving_mode: '彫刻モード',
     field: 'フィールド',
     flat: '平面',

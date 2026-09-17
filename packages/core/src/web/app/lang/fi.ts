@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Pullistuma',
     cached_task_lens_mismatch: 'Viimeisin työ luotiin kohteelle %s, mutta asiakirjan asetukset käyttävät kohdetta %s. Mitkä parametrit otetaan käyttöön?',
     cloud_lens_differs: 'Pilven parametrit eroavat tämän tietokoneen parametreista kohteissa: %s\nKäytetäänkö pilven parametreja? Ne täytetään ja tallennetaan, kun napsautat Tallenna.',
+    connect: 'Connect',
     engraving_mode: 'Kaiverrustila',
     field: 'Kenttä',
     flat: 'Tasainen',

@@ -2604,6 +2604,7 @@ const lang: ILang = {
     bulge: 'Abultamiento',
     cached_task_lens_mismatch: 'El último trabajo se generó para %s, pero la configuración del documento usa %s. ¿Qué parámetros se deben aplicar?',
     cloud_lens_differs: 'Los parámetros de la nube difieren de los de este equipo en: %s\n¿Usar los parámetros de la nube? Se rellenarán y se guardarán al hacer clic en Guardar.',
+    connect: 'Connect',
     engraving_mode: 'Modo de grabado',
     field: 'Campo',
     flat: 'Plano',

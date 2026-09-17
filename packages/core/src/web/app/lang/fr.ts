@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Renflement',
     cached_task_lens_mismatch: 'La dernière tâche a été générée pour %s, mais les paramètres du document utilisent %s. Quels paramètres appliquer ?',
     cloud_lens_differs: 'Les paramètres du cloud diffèrent de ceux de cet ordinateur pour : %s\nUtiliser les paramètres du cloud ? Ils seront renseignés et enregistrés lorsque vous cliquerez sur Enregistrer.',
+    connect: 'Connect',
     engraving_mode: 'Mode de gravure',
     field: 'Champ',
     flat: 'Plat',

@@ -42,9 +42,9 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
   const { global: tGlobal, promark_settings: t, topbar: tTopbar } = useI18n();
   const isInch = useStorageStore((state) => state.isInch);
   const [config, setConfig] = useState<GalvoConfig>(initData);
-  // The galvo only reaches its own field, so nothing may fire or trace until the head is coupled
+  // The galvo only reaches its own field, so nothing may fire or trace until the head is connected
   // to the nozzle and the operator has parked the gantry where they want the field.
-  const [isCoupled, setIsCoupled] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
   const [redLight, setRedLight] = useState(false);
   const [isFraming, setIsFraming] = useState(false);
   const [parameters, setParameters] = useState<MarkParameters>({ power: 50, speed: 1000 });
@@ -66,16 +66,17 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
     }
   };
 
-  // TODO: dev only. The coupling script is not written yet, so the operator is asked to confirm
-  // the head is already coupled. Replace with the real command once it exists.
-  const handleCouple = () => {
+  // TODO: dev only. The connect script is not written yet, so the operator is asked to confirm the
+  // head is already connected. Replace with the real command once it exists. The prompt is left
+  // untranslated on purpose: it disappears with the script.
+  const handleConnect = () => {
     alertCaller.popUp({
       buttonType: alertConstants.CONFIRM_CANCEL,
-      caption: 'Couple the galvo head',
-      id: 'galvo-couple',
+      caption: t.connect,
+      id: 'galvo-connect',
       message: '請確保已處於串聯狀態，並將龍門移動到要測試的位置。',
       onConfirm: async () => {
-        setIsCoupled(true);
+        setIsConnected(true);
 
         if (initialRedLight.current === null) initialRedLight.current = false;
 
@@ -124,25 +125,22 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
   const footer = (
     <Flex align="center" justify="space-between">
       <Flex align="center" gap={8}>
-        <Button className={styles.button} disabled={isCoupled} onClick={handleCouple}>
-          Couple
+        <Button className={styles.button} disabled={isConnected} onClick={handleConnect}>
+          {t.connect}
         </Button>
         <Button
           className={styles.button}
-          disabled={!isCoupled || isFraming}
+          disabled={!isConnected || isFraming}
           onClick={() => runFrame('Red light trace', redLightFrameParameters)}
         >
           {tGlobal.preview}
         </Button>
         <Button
           className={styles.button}
-          disabled={!isCoupled || isFraming}
+          disabled={!isConnected || isFraming}
           onClick={() => runFrame('Mark', parameters)}
         >
           {t.mark}
-        </Button>
-        <Button className={styles.button} disabled={!isCoupled} onClick={() => setRedLightOn(!redLight)}>
-          {redLight ? 'Red light off' : 'Red light on'}
         </Button>
       </Flex>
       <Flex align="center" gap={8}>

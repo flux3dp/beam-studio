@@ -2605,6 +2605,7 @@ const lang: ILang = {
     bulge: 'Tonjolan',
     cached_task_lens_mismatch: 'Pekerjaan terakhir dibuat untuk %s, tetapi Pengaturan Dokumen menggunakan %s. Parameter mana yang akan diterapkan?',
     cloud_lens_differs: 'Parameter di cloud berbeda dari komputer ini untuk: %s\nGunakan parameter cloud? Parameter akan diisi dan disimpan saat Anda mengklik Simpan.',
+    connect: 'Connect',
     engraving_mode: 'Mode Ukir',
     field: 'Bidang',
     flat: 'Datar',
