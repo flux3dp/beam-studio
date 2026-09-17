@@ -571,11 +571,17 @@ const openTaskInDeviceMonitor = async (
 export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
   const currentWorkarea = workareaManager.model;
   const isPromark = promarkModels.has(currentWorkarea);
+  // TODO: dev only. fluxghost's renderer drops the galvo layer parameters -- frequency, pulse
+  // width, dotting time, fill interval and the wobble pair are absent from its attribute table --
+  // so a galvo job would run with those silently ignored. Swiftray already reads them for Promark,
+  // so HEXA II goes through it. Remove this once fluxghost handles the galvo attributes.
+  const isHexa2Galvo = currentWorkarea === 'fhx2galvo' || targetDevice?.model === 'fhx2galvo';
 
   const useSwiftray =
     hasSwiftray &&
     swiftrayClient.readyState === WebSocket.OPEN &&
     (isPromark ||
+      isHexa2Galvo ||
       useGlobalPreferenceStore.getState()['path-engine'] === 'swiftray' ||
       targetDevice?.source === 'swiftray');
   const convertEngine = useSwiftray ? fetchTaskCodeSwiftray : fetchTaskCode;
