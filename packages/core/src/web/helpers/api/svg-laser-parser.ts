@@ -287,7 +287,7 @@ export const getExportOpt = async (
 
   // Developer opt-in. Omit the parameter unless explicitly enabled so older backends keep their
   // default behavior and do not have to accept a new CLI flag for ordinary jobs.
-  if (isUvDev2() && storage.get('first_pulse_killer_enabled') === true) {
+  if (isUvDev2() && localStorage.getItem('first_pulse_killer_enabled') === 'true') {
     config.first_pulse_killer_enabled = true;
   }
 
