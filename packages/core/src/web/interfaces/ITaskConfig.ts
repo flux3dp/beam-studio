@@ -8,6 +8,8 @@ export interface IBaseConfig {
   device?: IDeviceInfo | null;
   enableAutoFocus?: boolean;
   enableDiode?: boolean;
+  /** place the job around this point instead of deriving one from the document */
+  forceJobOrigin?: [number, number];
   isPromark?: boolean;
   model: WorkAreaModel;
   paddingAccel?: null | number;
