@@ -2413,6 +2413,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
   promark_settings: {
     angle: 'Angle',
     bulge: 'Bulge',
+    connect: 'Connect',
     field: 'Field',
     focus_height: 'Focus Height',
     galvo_configuration: 'Galvo Configuration',

@@ -2413,6 +2413,7 @@ const lang: ILang = {
   promark_settings: {
     angle: 'มุม',
     bulge: 'การโป่งพอง',
+    connect: 'Connect',
     field: 'ฟิลด์',
     focus_height: 'Focus Height',
     galvo_configuration: 'การตั้งค่า Galvo',

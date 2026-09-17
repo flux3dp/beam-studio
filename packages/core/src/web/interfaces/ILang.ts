@@ -2354,6 +2354,7 @@ export interface ILang {
   promark_settings: {
     angle: string;
     bulge: string;
+    connect: string;
     field: string;
     focus_height: string;
     galvo_configuration: string;

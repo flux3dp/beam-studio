@@ -2413,6 +2413,7 @@ const lang: ILang = {
   promark_settings: {
     angle: '각도',
     bulge: '볼록함',
+    connect: 'Connect',
     field: '필드',
     focus_height: 'Focus Height',
     galvo_configuration: '갈보 설정',

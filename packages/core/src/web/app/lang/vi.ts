@@ -2413,6 +2413,7 @@ const lang: ILang = {
   promark_settings: {
     angle: 'Góc',
     bulge: 'Phồng',
+    connect: 'Connect',
     field: 'Trường',
     focus_height: 'Focus Height',
     galvo_configuration: 'Cấu hình Galvo',

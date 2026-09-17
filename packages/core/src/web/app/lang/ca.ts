@@ -2413,6 +2413,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
   promark_settings: {
     angle: 'Angle',
     bulge: 'Protuberància',
+    connect: 'Connect',
     field: 'Camp',
     focus_height: 'Focus Height',
     galvo_configuration: 'Configuració Galvo',

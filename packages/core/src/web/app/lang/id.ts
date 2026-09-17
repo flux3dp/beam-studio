@@ -2413,6 +2413,7 @@ const lang: ILang = {
   promark_settings: {
     angle: 'Sudut',
     bulge: 'Tonjolan',
+    connect: 'Connect',
     field: 'Bidang',
     focus_height: 'Focus Height',
     galvo_configuration: 'Konfigurasi Galvo',
