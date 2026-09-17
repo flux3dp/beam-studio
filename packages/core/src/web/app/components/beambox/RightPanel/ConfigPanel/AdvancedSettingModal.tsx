@@ -35,6 +35,9 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
     biDirectional: state.biDirectional,
     crossHatch: state.crossHatch,
     fillAngle: state.fillAngle,
+    fillDwellAdaptive: state.fillDwellAdaptive,
+    fillDwellTime: state.fillDwellTime,
+    fillStagger: state.fillStagger,
     focus: state.focus,
     focusReverse: state.focusReverse,
     focusStep: state.focusStep,
@@ -50,6 +53,9 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       'fillAngle',
       'biDirectional',
       'crossHatch',
+      'fillStagger',
+      'fillDwellTime',
+      'fillDwellAdaptive',
       'wobbleStep',
       'wobbleDiameter',
       'focus',
@@ -92,6 +98,12 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
   };
   const setFocusStep = (on: boolean) => {
     handleValueChange('focusStep', Math.abs(draftValue.focusStep.value) * (on ? 1 : -1));
+  };
+
+  // the fill pause is off while fillDwellTime is negative, which keeps the last used duration
+  const fillDwellOn = draftValue.fillDwellTime.value > 0;
+  const setFillDwell = (on: boolean) => {
+    handleValueChange('fillDwellTime', Math.abs(draftValue.fillDwellTime.value) * (on ? 1 : -1));
   };
 
   // wobble on/off is encoded by the sign of wobbleStep/wobbleDiameter
@@ -272,6 +284,67 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
             onChange={(value) => handleValueChange('crossHatch', value)}
           />
         </div>
+        <div>
+          <span>
+            <label htmlFor="fillStagger">{mockT('雕刻間隔')}</label>
+            <Tooltip title={mockT('把掃描線分成 N 組交錯雕刻，避免長時間連續停留在同一小範圍。1 為關閉')}>
+              <QuestionCircleOutlined className={styles.hint} />
+            </Tooltip>
+          </span>
+          <Input
+            hasMultiValue={draftValue.fillStagger.hasMultiValue}
+            id="fillStagger"
+            isInch={false}
+            max={100}
+            min={1}
+            onChange={(value) => handleValueChange('fillStagger', value)}
+            precision={0}
+            value={draftValue.fillStagger.value}
+          />
+        </div>
+        <div>
+          <span>
+            <label htmlFor="fillDwell">{mockT('每行停留')}</label>
+            <Tooltip title={mockT('每雕刻完一行後暫停，讓材料散熱')}>
+              <QuestionCircleOutlined className={styles.hint} />
+            </Tooltip>
+          </span>
+          <Switch checked={fillDwellOn} id="fillDwell" onChange={setFillDwell} />
+        </div>
+        {fillDwellOn && (
+          <>
+            <div>
+              <span>{mockT('停留時間')}</span>
+              <Input
+                hasMultiValue={draftValue.fillDwellTime.hasMultiValue}
+                id="fillDwellTime"
+                isInch={false}
+                max={1000000}
+                min={1}
+                onChange={(value) => handleValueChange('fillDwellTime', value)}
+                precision={0}
+                step={1000}
+                unit="us"
+                value={draftValue.fillDwellTime.value}
+              />
+            </div>
+            <div>
+              <span>
+                <label htmlFor="fillDwellAdaptive">{mockT('依雕刻時間調整')}</label>
+                <Tooltip title={mockT('扣掉本行實際雕刻所花的時間，本行夠長就少等一點')}>
+                  <QuestionCircleOutlined className={styles.hint} />
+                </Tooltip>
+              </span>
+              <Switch
+                checked={draftValue.fillDwellAdaptive.value}
+                className={styles.switch}
+                id="fillDwellAdaptive"
+                onChange={(value) => handleValueChange('fillDwellAdaptive', value)}
+                size="small"
+              />
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   );

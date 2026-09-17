@@ -129,7 +129,13 @@ type PromarkConfig = {
   crossHatch: boolean;
   dottingTime: number;
   fillAngle: number;
+  /** subtract the scan line's own marking time from fillDwellTime */
+  fillDwellAdaptive: boolean;
+  /** us, pause after each fill scan line, negative to disable */
+  fillDwellTime: number;
   fillInterval: number;
+  /** number of blocks the fill scan lines are interleaved into, 1 for plain spatial order */
+  fillStagger: number;
   focusReverse: boolean;
   focusStepReverse: boolean;
   frequency: number;
