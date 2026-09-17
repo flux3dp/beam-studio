@@ -1,13 +1,16 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 
 import { Button, Flex, Modal } from 'antd';
 import { sprintf } from 'sprintf-js';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import alertConstants from '@core/app/constants/alert-constants';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import type { GalvoConfig, GalvoModule, GalvoWorkarea } from '@core/helpers/device/galvoConfig';
 import { galvoWorkareaOptions, getGalvoConfig, updateGalvoConfig } from '@core/helpers/device/galvoConfig';
+import { runGalvoFrame } from '@core/helpers/device/galvoFrameTask';
 import deviceMaster from '@core/helpers/device-master';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -19,6 +22,7 @@ import styles from './PromarkSettings.module.scss';
 import RedDotBlock from './RedDotBlock';
 
 interface Props {
+  device: IDeviceInfo;
   initData: GalvoConfig;
   module: GalvoModule;
   onClose: () => void;
@@ -31,26 +35,109 @@ interface Props {
  * which the fluxghost control socket cannot do yet. Everything here is stored on the machine and
  * applied when a task runs.
  */
-export const GalvoSettings = ({ initData, module, onClose }: Props): React.JSX.Element => {
+export const GalvoSettings = ({ device, initData, module, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, topbar: tTopbar } = useI18n();
   const isInch = useStorageStore((state) => state.isInch);
   const [config, setConfig] = useState<GalvoConfig>(initData);
+  // The galvo only reaches its own field, so nothing may fire or trace until the head is coupled
+  // to the nozzle and the operator has parked the gantry where they want the field.
+  const [isCoupled, setIsCoupled] = useState(false);
+  const [redLight, setRedLight] = useState(false);
+  const [isFraming, setIsFraming] = useState(false);
+  const initialRedLight = useRef<boolean | null>(null);
+
+  const reportError = (error: unknown, action: string) => {
+    console.error(`Galvo settings: ${action} failed`, error);
+    alertCaller.popUpError({ message: `${action} failed: ${error instanceof Error ? error.message : error}` });
+  };
+
+  const setRedLightOn = async (on: boolean) => {
+    try {
+      if (deviceMaster.currentControlMode !== 'raw') await deviceMaster.enterRawMode();
+
+      await deviceMaster.rawSetRedLight(on);
+      setRedLight(on);
+    } catch (error) {
+      reportError(error, 'Red light');
+    }
+  };
+
+  // TODO: dev only. The coupling script is not written yet, so the operator is asked to confirm
+  // the head is already coupled. Replace with the real command once it exists.
+  const handleCouple = () => {
+    alertCaller.popUp({
+      buttonType: alertConstants.CONFIRM_CANCEL,
+      caption: 'Couple the galvo head',
+      id: 'galvo-couple',
+      message: '請確保已處於串聯狀態，並將龍門移動到要測試的位置。',
+      onConfirm: async () => {
+        setIsCoupled(true);
+
+        if (initialRedLight.current === null) initialRedLight.current = false;
+
+        await setRedLightOn(true);
+      },
+    });
+  };
+
+  const handleFrame = async () => {
+    setIsFraming(true);
+    try {
+      await runGalvoFrame({ model: device.model, module, width: config.workarea });
+    } catch (error) {
+      reportError(error, 'Frame');
+    } finally {
+      setIsFraming(false);
+    }
+  };
+
+  const restoreRedLight = async () => {
+    if (initialRedLight.current === null || redLight === initialRedLight.current) return;
+
+    await setRedLightOn(initialRedLight.current);
+  };
   const update = <K extends keyof GalvoConfig>(key: K, value: GalvoConfig[K]) =>
     setConfig((cur) => ({ ...cur, [key]: value }));
 
   const handleSave = async () => {
-    await updateGalvoConfig(module, config);
+    try {
+      await updateGalvoConfig(module, config);
+    } catch (error) {
+      reportError(error, 'Save');
+
+      return;
+    }
+
+    await restoreRedLight();
+    onClose();
+  };
+
+  const handleCancel = async () => {
+    await restoreRedLight();
     onClose();
   };
 
   const footer = (
-    <Flex align="center" gap={8} justify="flex-end">
-      <Button className={styles.button} onClick={onClose}>
-        {tGlobal.cancel}
-      </Button>
-      <Button className={styles.button} onClick={handleSave} type="primary">
-        {tGlobal.save}
-      </Button>
+    <Flex align="center" justify="space-between">
+      <Flex align="center" gap={8}>
+        <Button className={styles.button} disabled={isCoupled} onClick={handleCouple}>
+          Couple
+        </Button>
+        <Button className={styles.button} disabled={!isCoupled || isFraming} onClick={handleFrame}>
+          {tGlobal.preview}
+        </Button>
+        <Button className={styles.button} disabled={!isCoupled} onClick={() => setRedLightOn(!redLight)}>
+          {redLight ? 'Red light off' : 'Red light on'}
+        </Button>
+      </Flex>
+      <Flex align="center" gap={8}>
+        <Button className={styles.button} onClick={handleCancel}>
+          {tGlobal.cancel}
+        </Button>
+        <Button className={styles.button} onClick={handleSave} type="primary">
+          {tGlobal.save}
+        </Button>
+      </Flex>
     </Flex>
   );
 
@@ -60,7 +147,7 @@ export const GalvoSettings = ({ initData, module, onClose }: Props): React.JSX.E
       footer={footer}
       keyboard={false}
       maskClosable={false}
-      onCancel={onClose}
+      onCancel={handleCancel}
       open
       title={sprintf(tTopbar.menu.galvo_settings, getModulesTranslations()[module])}
       width={620}
@@ -114,7 +201,10 @@ export const showGalvoSettings = async (device: IDeviceInfo, module: GalvoModule
   // read past the cache: the machine is the only source of truth for these
   const initData = await getGalvoConfig(module, { useCache: false });
 
-  addDialogComponent(id, <GalvoSettings initData={initData} module={module} onClose={() => popDialogById(id)} />);
+  addDialogComponent(
+    id,
+    <GalvoSettings device={device} initData={initData} module={module} onClose={() => popDialogById(id)} />,
+  );
 };
 
 export default GalvoSettings;
