@@ -53,7 +53,11 @@ export const runGalvoFrame = async ({
 
     if (!loadRes.success) throw new Error(loadRes.error?.message ?? 'Failed to load the frame scene');
 
-    const baseConfig = { forceJobOrigin: [width / 2, width / 2] as [number, number], model };
+    const baseConfig = {
+      forceJobOrigin: [width / 2, width / 2] as [number, number],
+      ignoreDocumentAddOns: true,
+      model,
+    };
     const taskConfig = { ...baseConfig, ...(await getExportOpt(baseConfig)).config };
     let task: Blob | null = null;
 

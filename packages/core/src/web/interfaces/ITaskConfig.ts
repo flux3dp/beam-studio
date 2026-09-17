@@ -10,6 +10,11 @@ export interface IBaseConfig {
   enableDiode?: boolean;
   /** place the job around this point instead of deriving one from the document */
   forceJobOrigin?: [number, number];
+  /**
+   * Ignore the document's add-ons -- rotary, pass-through, auto feeder, curve engraving and
+   * auto shrink. A synthetic scene has no business inheriting transforms meant for the canvas.
+   */
+  ignoreDocumentAddOns?: boolean;
   isPromark?: boolean;
   model: WorkAreaModel;
   paddingAccel?: null | number;

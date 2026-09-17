@@ -50,7 +50,14 @@ export const getExportOpt = async (
   // with args, push data to original args array and return other data
   loopCompensation?: number;
 }> => {
-  const { device, model, supportAccOverrideV1, supportJobOrigin = true, supportPwm = true } = opt;
+  const {
+    device,
+    ignoreDocumentAddOns = false,
+    model,
+    supportAccOverrideV1,
+    supportJobOrigin = true,
+    supportPwm = true,
+  } = opt;
   const vc = versionChecker(device?.version || '0.0.0');
   const config: IFcodeConfig = {
     hardware_name: 'beambox',
@@ -112,12 +119,16 @@ export const getExportOpt = async (
     config.job_origin = [Math.round(x * 10 ** 3) / 10 ** 3, Math.round(y * 10 ** 3) / 10 ** 3];
   }
 
-  const rotaryInfo = getRotaryInfo(model, {
-    forceY: config.job_origin ? config.job_origin[1] * constant.dpmm : undefined,
-  });
+  const rotaryInfo = ignoreDocumentAddOns
+    ? null
+    : getRotaryInfo(model, {
+        forceY: config.job_origin ? config.job_origin[1] * constant.dpmm : undefined,
+      });
   const rotaryMode = Boolean(rotaryInfo);
-  const autoFeeder = getAutoFeeder(addOnInfo);
-  const spinningAxis = getSpinningAxis(model, { jobOriginY: config.job_origin?.[1], reverse: config.rev });
+  const autoFeeder = ignoreDocumentAddOns ? false : getAutoFeeder(addOnInfo);
+  const spinningAxis = ignoreDocumentAddOns
+    ? null
+    : getSpinningAxis(model, { jobOriginY: config.job_origin?.[1], reverse: config.rev });
 
   if (spinningAxis) {
     config.spin = spinningAxis.spin;
@@ -241,7 +252,7 @@ export const getExportOpt = async (
     config.mfg = true;
   }
 
-  if (curveEngravingModeController.hasArea() && addOnInfo.curveEngraving) {
+  if (!ignoreDocumentAddOns && curveEngravingModeController.hasArea() && addOnInfo.curveEngraving) {
     const {
       bbox,
       gap,
@@ -309,8 +320,9 @@ export const getExportOpt = async (
   }
 
   const isPassThroughTask =
-    document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
-    getPassThrough(addOnInfo);
+    !ignoreDocumentAddOns &&
+    (document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
+      getPassThrough(addOnInfo));
 
   if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) {
     config.mep = 30;
@@ -428,7 +440,7 @@ export const getExportOpt = async (
 
   config.use_ga_reorder = globalPreference.use_ga_reorder;
 
-  if (documentState.auto_shrink) {
+  if (!ignoreDocumentAddOns && documentState.auto_shrink) {
     let value = workareaObj.autoShrink;
 
     if (isDevMode) {
