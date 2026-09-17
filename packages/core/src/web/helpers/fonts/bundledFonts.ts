@@ -7,16 +7,26 @@ import type { FontDescriptor, GeneralFont, WebFont } from '@core/interfaces/IFon
  *
  * - Electron reads the file from disk via localFontHelper (nodeIntegration), like an OS font.
  * - Web fetches the same relative URL from its own dist, like an S3 web font.
+ *
+ * Each font's license text lives next to it in the same folder.
  */
 interface BundledFont {
   family: string;
   fileName: string;
   postscriptName: string;
+  style: string;
+  weight: number;
 }
 
 const BUNDLED_FONTS: BundledFont[] = [
-  // 教育部標準楷書 v5.1 — CC BY-ND 3.0 TW (attribution shown in the stamp generator's text tab)
-  { family: '教育部標準楷書', fileName: 'TW-MOE-Std-Kai.ttf', postscriptName: 'TW-MOE-Std-Kai' },
+  // Montserrat Medium — SIL OFL 1.1 (Montserrat-OFL.txt). Required sans-serif for stamp 統一編號 lines.
+  {
+    family: 'Montserrat',
+    fileName: 'Montserrat-Medium.ttf',
+    postscriptName: 'Montserrat-Medium',
+    style: 'Medium',
+    weight: 500,
+  },
 ];
 
 const relativeUrl = (font: BundledFont) => `assets/fonts/${font.fileName}`;
@@ -35,8 +45,8 @@ const toGeneralFont = (font: BundledFont): GeneralFont => {
     family: font.family,
     italic: false,
     postscriptName: font.postscriptName,
-    style: 'Regular',
-    weight: 400,
+    style: font.style,
+    weight: font.weight,
   };
 
   if (isWeb()) return { ...base, fileName: font.fileName, url: relativeUrl(font) } satisfies WebFont;
@@ -60,7 +70,7 @@ export const applyBundledFontStyle = (postscriptName: string): void => {
 
   const style = document.createElement('style');
 
-  style.innerHTML = `@font-face { font-family: '${font.family}'; font-style: normal; font-weight: 400; src: url('${relativeUrl(font)}'); }`;
+  style.innerHTML = `@font-face { font-family: '${font.family}'; font-style: normal; font-weight: ${font.weight}; src: url('${relativeUrl(font)}'); }`;
   document.head.appendChild(style);
   applied.add(postscriptName);
 };

@@ -385,7 +385,7 @@ export const convertTextToPathByFontkit = (
           return char.path
             .translate(pos.xOffset, pos.yOffset)
             .scale(sizeRatio, -sizeRatio * glyphScaleY)
-            .translate(0, alignOffset)
+            .translate(0, alignOffset * glyphScaleY)
             .rotate(rot)
             .translate(x, y)
             .toSVG();
