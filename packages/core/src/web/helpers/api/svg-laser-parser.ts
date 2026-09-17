@@ -100,7 +100,12 @@ export const getExportOpt = async (
 
   const hasJobOrigin = documentState['enable-job-origin'] && addOnInfo.jobOrigin && supportJobOrigin;
 
-  if (hasJobOrigin) {
+  if (opt.forceJobOrigin) {
+    // a synthetic scene placing itself around wherever the machine already is
+    const [x, y] = opt.forceJobOrigin;
+
+    config.job_origin = [Math.round(x * 10 ** 3) / 10 ** 3, Math.round(y * 10 ** 3) / 10 ** 3];
+  } else if (hasJobOrigin) {
     // firmware version / model check
     const { x, y } = await getJobOrigin();
 

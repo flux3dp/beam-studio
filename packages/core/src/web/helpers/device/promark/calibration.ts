@@ -1,6 +1,8 @@
 import { sprintf } from 'sprintf-js';
 
 import constant from '@core/app/actions/beambox/constant';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -37,10 +39,13 @@ export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel): P
 };
 
 export const generateCalibrationTaskString = async ({
+  module = LayerModule.LASER_UNIVERSAL,
   power = 100,
   speed = 350,
   width,
 }: {
+  /** Promark is always a galvo, so its layer needs no module; HEXA II names the head. */
+  module?: LayerModuleType;
   power?: number;
   speed?: number;
   width: number;
@@ -49,7 +54,7 @@ export const generateCalibrationTaskString = async ({
   const resp = await fetch(fileName);
   let res = await resp.text();
 
-  res = sprintf(res, { power, speed, width: width * constant.dpmm });
+  res = sprintf(res, { module, power, speed, width: width * constant.dpmm });
 
   return res;
 };
