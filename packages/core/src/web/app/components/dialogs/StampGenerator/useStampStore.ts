@@ -2,35 +2,84 @@ import paper from 'paper';
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
-import fontFuncs from '@core/app/actions/beambox/font-funcs';
+import fontFuncs, { getFontObj } from '@core/app/actions/beambox/font-funcs';
 import { applyBundledFontStyle } from '@core/helpers/fonts/bundledFonts';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
+import type { GeneralFont } from '@core/interfaces/IFont';
 
 import { buildPreviewSvg, buildStampShape } from './builders/buildShape';
 import { parseTemplate } from './builders/buildTemplate';
-import { PX_TO_MM_RATIO, SEAL_FONT_POSTSCRIPT_NAME } from './constants';
+import { PX_TO_MM_RATIO } from './constants';
 import { getTemplateById } from './templates';
-import type { ParsedTemplate, StampShape, StampState, StampTemplate, TextOptionValues } from './types';
+import type {
+  ElementOptionValues,
+  ParsedTemplate,
+  StampShape,
+  StampState,
+  StampTemplate,
+  TextOptionValues,
+  TextSlotDef,
+} from './types';
 
-/** Bundled 教育部標準楷書; falls back to the user's default font if it can't be resolved. */
-const getSealFont = (): TextOptionValues['font'] => {
-  const sealFont = fontFuncs.getFontOfPostscriptName(SEAL_FONT_POSTSCRIPT_NAME);
+/** Regular (upright, normal weight) face of a family when it has one; families often list italics first. */
+export const pickRegularFace = (faces: GeneralFont[]): GeneralFont | undefined =>
+  faces.find((f) => !f.italic && f.weight === 400) ?? faces.find((f) => !f.italic) ?? faces[0];
 
-  if (sealFont?.postscriptName === SEAL_FONT_POSTSCRIPT_NAME) {
-    applyBundledFontStyle(SEAL_FONT_POSTSCRIPT_NAME);
+const toFont = (font: GeneralFont | undefined, fallback: TextOptionValues['font']): TextOptionValues['font'] =>
+  font ? { family: font.family, postscriptName: font.postscriptName, style: font.style ?? 'Regular' } : fallback;
 
-    return { family: sealFont.family, postscriptName: sealFont.postscriptName, style: sealFont.style };
-  }
-
+const getUserDefaultFont = (): TextOptionValues['font'] => {
   const { font_family, font_postscriptName } = getDefaultFont();
-  const fontObj = fontFuncs.getFontOfPostscriptName(font_postscriptName);
 
-  return { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' };
+  return toFont(fontFuncs.getFontOfPostscriptName(font_postscriptName), {
+    family: font_family,
+    postscriptName: font_postscriptName,
+    style: 'Regular',
+  });
 };
 
-const getDefaultState = (template: StampTemplate): StampState => {
-  const font = getSealFont();
+const defaultFontCache = new Map<string, Promise<TextOptionValues['font']>>();
 
+/**
+ * First preferred font that resolves by name AND loads (a web font fails offline; a not-downloaded
+ * macOS font fails to open), else the user's default font. Probed once per candidate list per session.
+ */
+const resolveDefaultFont = (preferred: ReadonlyArray<string> = []): Promise<TextOptionValues['font']> => {
+  const key = preferred.join('|');
+  let promise = defaultFontCache.get(key);
+
+  if (!promise) {
+    promise = (async () => {
+      for (const postscriptName of preferred) {
+        const font = fontFuncs.getFontOfPostscriptName(postscriptName);
+
+        if (font?.postscriptName === postscriptName && (await getFontObj(font))) {
+          return toFont(font, getUserDefaultFont());
+        }
+      }
+
+      return getUserDefaultFont();
+    })();
+    defaultFontCache.set(key, promise);
+  }
+
+  return promise;
+};
+
+/** The slot's fixed face when it resolves, else the resolved default font. */
+const getSlotFont = (slot: TextSlotDef, defaultFont: TextOptionValues['font']): TextOptionValues['font'] => {
+  if (!slot.fontPostscriptName) return defaultFont;
+
+  const font = fontFuncs.getFontOfPostscriptName(slot.fontPostscriptName);
+
+  if (font?.postscriptName !== slot.fontPostscriptName) return defaultFont;
+
+  applyBundledFontStyle(slot.fontPostscriptName);
+
+  return toFont(font, defaultFont);
+};
+
+const getDefaultState = (template: StampTemplate, defaultFont: TextOptionValues['font']): StampState => {
   return {
     elements: Object.fromEntries(
       template.elements.map((e) => [e.id, { enabled: true, rotation: 0, scale: 100, shapeKey: 'plum' }]),
@@ -43,10 +92,9 @@ const getDefaultState = (template: StampTemplate): StampState => {
       template.texts.map((t) => [
         t.id,
         {
-          bold: t.bold ?? false,
           enabled: true,
-          font,
-          fontSize: 8,
+          font: getSlotFont(t, defaultFont),
+          fontSize: 'fontSize' in t && t.fontSize ? t.fontSize : 8,
           letterSpacing: 0,
           lineSpacing: 1.2,
           text: t.placeholder,
@@ -119,17 +167,38 @@ const useStampStore = create(
       },
 
       /** Enters the editor for a template: parses its SVG into paper and initializes user state. */
-      selectTemplate: (templateId: string): void => {
+      selectTemplate: async (templateId: string): Promise<void> => {
         const template = getTemplateById(templateId);
 
         if (!template) return;
+
+        const defaultFont = await resolveDefaultFont(template.preferredFonts);
 
         get().project?.remove();
 
         const project = new paper.Project(document.createElement('canvas'));
         const parsed = parseTemplate(project, template);
 
-        set({ isModified: false, parsed, project, shape: null, state: getDefaultState(template), template });
+        set({
+          isModified: false,
+          parsed,
+          project,
+          shape: null,
+          state: getDefaultState(template, defaultFont),
+          template,
+        });
+        applyOptions();
+      },
+
+      updateElement: (id: string, patch: Partial<ElementOptionValues>): void => {
+        const { state } = get();
+
+        if (!state?.elements[id]) return;
+
+        set({
+          isModified: true,
+          state: { ...state, elements: { ...state.elements, [id]: { ...state.elements[id], ...patch } } },
+        });
         applyOptions();
       },
 
@@ -139,6 +208,18 @@ const useStampStore = create(
         if (!state) return;
 
         set({ isModified: true, state: { ...state, ...patch } });
+        applyOptions();
+      },
+
+      updateText: (id: string, patch: Partial<TextOptionValues>): void => {
+        const { state } = get();
+
+        if (!state?.texts[id]) return;
+
+        set({
+          isModified: true,
+          state: { ...state, texts: { ...state.texts, [id]: { ...state.texts[id], ...patch } } },
+        });
         applyOptions();
       },
     };

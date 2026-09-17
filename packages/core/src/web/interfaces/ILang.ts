@@ -1491,10 +1491,26 @@ export interface ILang {
   generators: {
     box_generator: string;
     code_generator: string;
+    general: {
+      design_preview: string;
+      exploded_view: string;
+      import_to_canvas: string;
+      reset_to_default: string;
+      size: string;
+    };
     keychain_generator: string;
     material_test_generator: string;
     puzzle_generator: string;
     stamp_generator: string;
+    text_options: {
+      font_family: string;
+      font_settings: string;
+      font_size: string;
+      font_style: string;
+      letter_spacing: string;
+      line_spacing: string;
+      text_placeholder: string;
+    };
     title: string;
   };
   generic_error: {
@@ -1679,11 +1695,8 @@ export interface ILang {
   };
   keychain_generator: {
     decoration: string;
-    design_preview: string;
     element: string;
-    element_size: string;
     emboss: string;
-    exploded_view: string;
     export_failed: string;
     hole: string;
     hole_options: {
@@ -1695,7 +1708,6 @@ export interface ILang {
       type_punch: string;
       type_ring: string;
     };
-    import_to_canvas: string;
     layers: {
       keychain: string;
       keychain_deco_emboss: string;
@@ -1704,20 +1716,10 @@ export interface ILang {
     };
     more_shapes: string;
     outline_offset: string;
-    reset_to_default: string;
     shape: string;
     size_scale: string;
     switch_type_warning: string;
     text: string;
-    text_options: {
-      font_family: string;
-      font_settings: string;
-      font_size: string;
-      font_style: string;
-      letter_spacing: string;
-      line_spacing: string;
-      text_placeholder: string;
-    };
     types: {
       animal: string;
       capsule: string;
@@ -2319,8 +2321,6 @@ export interface ILang {
     board_width: string;
     change_image: string;
     columns: string;
-    design_preview: string;
-    exploded_view: string;
     export_as: string;
     export_engrave: string;
     export_failed: string;
@@ -2332,7 +2332,6 @@ export interface ILang {
     image: string;
     image_load_failed: string;
     image_resolution_warning: string;
-    import_to_canvas: string;
     layers: {
       board_base: string;
       guide_lines: string;
@@ -2353,7 +2352,6 @@ export interface ILang {
     puzzle_pieces: string;
     radius: string;
     raised_edges: string;
-    reset_to_default: string;
     rows: string;
     switch_type_warning: string;
     tab_size: string;
@@ -2550,12 +2548,22 @@ export interface ILang {
   };
   stamp_generator: {
     export_failed: string;
-    import_to_canvas: string;
     layers: {
       engrave: string;
       outline: string;
     };
-    size: string;
+    slots: {
+      address: string;
+      column_1: string;
+      column_2: string;
+      column_3: string;
+      company_name: string;
+      contact: string;
+      given_name: string;
+      phone: string;
+      surname: string;
+      tax_id: string;
+    };
     switch_template_warning: string;
     tabs: {
       basic: string;
@@ -2567,6 +2575,13 @@ export interface ILang {
       oval_company: string;
       rect_company: string;
       square_seal_3col: string;
+    };
+    text_options: {
+      font_family: string;
+      font_settings: string;
+      font_size: string;
+      font_style: string;
+      letter_spacing: string;
     };
   };
   stamp_maker_panel: {

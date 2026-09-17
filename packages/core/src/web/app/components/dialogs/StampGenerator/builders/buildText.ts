@@ -5,7 +5,6 @@ import NS from '@core/app/constants/namespaces';
 import { createTextElement, createTextPath } from '@core/helpers/generator/textElement';
 import { convertTextsToPath } from '@core/helpers/generator/textToPath';
 
-import { BOLD_OFFSET_RATIO } from '../constants';
 import type { Bounds, ParsedTemplate, StampState, StampTemplate, TextSlotDef } from '../types';
 
 /**
@@ -92,17 +91,6 @@ const fitTextToArc = (textEl: SVGTextElement, refPath: SVGPathElement, arcLength
     return fontSize / size;
   });
 
-/** Faux bold: offsets glyph outlines outward by a fraction of the font size. */
-const embolden = (item: paper.PathItem, fontSize: number): paper.PathItem => {
-  if (!(item instanceof paper.Path || item instanceof paper.CompoundPath)) return item;
-
-  const bold = PaperOffset.offset(item, fontSize * BOLD_OFFSET_RATIO, { insert: true, join: 'round' });
-
-  item.remove();
-
-  return bold;
-};
-
 const toPathItem = (pathEl: SVGPathElement | undefined): null | paper.PathItem => {
   const d = pathEl?.getAttribute('d');
 
@@ -138,7 +126,7 @@ const buildTextSlot = async (
   slot: TextSlotDef,
   values: StampState['texts'][string],
 ): Promise<null | paper.PathItem> => {
-  const { bold, font, letterSpacing, lineSpacing, text } = values;
+  const { font, letterSpacing, lineSpacing, text } = values;
 
   if ('baseline' in slot) {
     const baseline = parsed.baselines[slot.baseline];
@@ -146,35 +134,41 @@ const buildTextSlot = async (
     if (!baseline) return null;
 
     const pathId = `stamp-baseline-${slot.id}`;
+    const { fontSize } = values;
     const line = slot.offset ? PaperOffset.offset(baseline, slot.offset, { insert: false }) : baseline;
-    const { refPath, textEl } = await createTextPath(text, font, slot.fontSize, letterSpacing, line.pathData, pathId);
+    const { refPath, textEl } = await createTextPath(text, font, fontSize, letterSpacing, line.pathData, pathId);
 
-    const glyphScaleY = fitTextToArc(textEl, refPath, line.length, slot.fontSize);
+    // Center the glyphs' em box on the arc so font size changes grow the text symmetrically.
+    const textPath = textEl.querySelector('textPath');
+
+    textPath?.setAttribute('alignment-baseline', 'central');
+    textPath?.setAttribute('dominant-baseline', 'central');
+
+    const glyphScaleY = fitTextToArc(textEl, refPath, line.length, fontSize);
 
     if (line !== baseline) line.remove();
 
     const [pathEl] = await convertTextsToPath([textEl], [refPath], { glyphScaleY });
-    const item = toPathItem(pathEl);
 
-    return item && bold ? embolden(item, slot.fontSize) : item;
+    return toPathItem(pathEl);
   }
 
   // ponytail: vertical (column) text lands in chunk 6; until then those slots are skipped.
   if (slot.vertical) return null;
 
   const { bounds } = slot;
-  const textEl = await createTextElement(text, font, bounds.height, letterSpacing, lineSpacing, bounds);
+  // Slots with an explicit template font size are user-adjustable; the rest are sized by their box.
+  const fontSize = slot.fontSize === undefined ? bounds.height : values.fontSize;
+  const textEl = await createTextElement(text, font, fontSize, letterSpacing, lineSpacing, bounds);
   const fit = slot.fit ?? 'spacing';
 
   // Glyphs keep their shape; letter spacing grows or shrinks so the line spans the box width.
   if (fit === 'spacing') fitTextByLetterSpacing(textEl, bounds.width, text.length - 1, letterSpacing, false);
 
   const [pathEl] = await convertTextsToPath([textEl]);
-  let item = toPathItem(pathEl);
+  const item = toPathItem(pathEl);
 
   if (!item) return null;
-
-  if (bold) item = embolden(item, bounds.height);
 
   if (fit === 'stretch') fitToBounds(item, bounds);
   else item.position = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);

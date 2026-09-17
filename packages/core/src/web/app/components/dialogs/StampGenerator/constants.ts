@@ -17,9 +17,3 @@ export const EXPORT_COLORS = {
   engrave: '#ff7a45',
   outline: '#000000',
 } as const;
-
-/** Bundled seal font (see helpers/fonts/bundledFonts.ts). */
-export const SEAL_FONT_POSTSCRIPT_NAME = 'TW-MOE-Std-Kai';
-
-/** Faux-bold outline offset as a fraction of the font size (each side), since the seal font has no bold face. */
-export const BOLD_OFFSET_RATIO = 0.025;

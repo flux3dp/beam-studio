@@ -70,7 +70,7 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
             {tGlobal.cancel}
           </Button>
           <Button loading={isExporting} onClick={handleImport} type="primary">
-            {t.import_to_canvas}
+            {tGenerators.general.import_to_canvas}
           </Button>
         </div>
       }

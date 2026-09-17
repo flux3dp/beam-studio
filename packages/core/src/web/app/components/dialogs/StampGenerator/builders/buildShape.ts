@@ -5,6 +5,7 @@ import NS from '@core/app/constants/namespaces';
 import { DESIGN_SIZE } from '../constants';
 import type { ParsedTemplate, StampShape, StampState, StampTemplate } from '../types';
 
+import { buildElementPaths } from './buildElement';
 import { buildTextPaths } from './buildText';
 
 /** Outer contour of a (possibly compound) frame: the child with the largest area. */
@@ -18,7 +19,8 @@ const outerContour = (item: paper.PathItem): paper.PathItem => {
 
 /**
  * Composes engrave + cut geometry for the current state inside one paper group.
- * Frames are cloned so the parsed template stays pristine; text is converted to outlines.
+ * Frames are cloned so the parsed template stays pristine; text is converted to outlines and
+ * element shapes are fitted into their slots.
  * `flipHorizontal` mirrors everything about the outline center (a stamp face is a mirror image).
  */
 export const buildStampShape = async (
@@ -29,8 +31,9 @@ export const buildStampShape = async (
   const group = new paper.Group();
   const frames = parsed.frames.map((f) => f.clone());
   const texts = await buildTextPaths(parsed, template, state);
+  const elements = buildElementPaths(paper.project, template, state);
   const cut = outerContour(parsed.outline);
-  const engrave = [...frames, ...texts];
+  const engrave = [...frames, ...texts, ...elements];
 
   group.addChildren([...engrave, cut]);
 
