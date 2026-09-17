@@ -202,6 +202,22 @@ const useStampStore = create(
         applyOptions();
       },
 
+      /** Sets the font on every editable slot that isn't pinned to a fixed face. */
+      updateSharedFont: (font: TextOptionValues['font']): void => {
+        const { state, template } = get();
+
+        if (!state || !template) return;
+
+        const texts = { ...state.texts };
+
+        for (const slot of template.texts) {
+          if (slot.labelKey && !slot.fontPostscriptName && texts[slot.id]) texts[slot.id] = { ...texts[slot.id], font };
+        }
+
+        set({ isModified: true, state: { ...state, texts } });
+        applyOptions();
+      },
+
       updateState: (patch: Partial<StampState>): void => {
         const { state } = get();
 

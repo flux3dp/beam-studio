@@ -153,13 +153,19 @@ const buildTextSlot = async (
     return toPathItem(pathEl);
   }
 
-  // ponytail: vertical (column) text lands in chunk 6; until then those slots are skipped.
-  if (slot.vertical) return null;
-
   const { bounds } = slot;
+  // A vertical column is one character per line, stacked at 1em; its fit mode then sizes the stack.
+  const content = slot.vertical ? [...text.replace(/\s+/g, '')].join('\n') : text;
   // Slots with an explicit template font size are user-adjustable; the rest are sized by their box.
-  const fontSize = slot.fontSize === undefined ? bounds.height : values.fontSize;
-  const textEl = await createTextElement(text, font, fontSize, letterSpacing, lineSpacing, bounds);
+  const fontSize = slot.fontSize === undefined ? (slot.vertical ? bounds.width : bounds.height) : values.fontSize;
+  const textEl = await createTextElement(
+    content,
+    font,
+    fontSize,
+    letterSpacing,
+    slot.vertical ? 1 : lineSpacing,
+    bounds,
+  );
   const fit = slot.fit ?? 'spacing';
 
   // Glyphs keep their shape; letter spacing grows or shrinks so the line spans the box width.

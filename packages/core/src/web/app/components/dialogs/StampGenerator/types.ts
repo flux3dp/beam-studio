@@ -24,7 +24,12 @@ export type TextPlacement =
    * - 'center': keeps glyph shape and the user's letter spacing, just centers the ink in the box
    * - 'stretch': scales the ink non-uniformly to fill the box
    */
-  | { bounds: Bounds; fit?: 'center' | 'spacing' | 'stretch'; fontSize?: number; vertical?: boolean };
+  | {
+      bounds: Bounds;
+      fit?: 'center' | 'spacing' | 'stretch';
+      fontSize?: number;
+      vertical?: boolean;
+    };
 
 export type TextSlotDef = TextPlacement & {
   /** Fixed face for this slot by postscript name (e.g. a bundled font); omit for the resolved default font. */
@@ -58,6 +63,7 @@ export interface StampTemplate {
    * resolve or load (web font offline, macOS font not downloaded). Falls back to the user's default font.
    */
   preferredFonts?: ReadonlyArray<string>;
+  sharedFont?: boolean;
   sizes: StampSize[];
   svgContent: string;
   texts: TextSlotDef[];
