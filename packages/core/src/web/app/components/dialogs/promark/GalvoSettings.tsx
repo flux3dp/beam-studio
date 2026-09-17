@@ -188,10 +188,6 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
             setConfig((cur) => ({ ...cur, redDot: typeof value === 'function' ? value(cur.redDot) : value }))
           }
         />
-        <Flex align="center" className={blockStyles['full-row']} gap={8} justify="space-between">
-          <div className={blockStyles.title}>{t.mark_parameters}</div>
-          <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
-        </Flex>
         <LensBlock
           data={config.galvoParameters}
           setData={(value) =>
@@ -201,6 +197,10 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
             }))
           }
         />
+        <Flex align="center" className={blockStyles['full-row']} gap={8} justify="space-between">
+          <div className={blockStyles.title}>{t.mark_parameters}</div>
+          <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
+        </Flex>
       </div>
     </Modal>
   );
