@@ -22,6 +22,9 @@ const mockRemoveDegenerateCurves = jest.fn();
 
 jest.mock('./buildShape', () => ({
   collectPathItems: mockCollectPathItems,
+}));
+
+jest.mock('@core/helpers/generator/removeDegenerateCurves', () => ({
   removeDegenerateCurves: mockRemoveDegenerateCurves,
 }));
 

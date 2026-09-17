@@ -37,7 +37,7 @@ KeyChainGenerator/
 │       ├── animal.ts               # animal variants
 │       └── customShapes.ts         # text, iconTextLeft (isCustomShape)
 ├── builders/
-│   ├── buildShape.ts               # importBasePath, applyHoles, getStartPoint (ray intersection)
+│   ├── buildShape.ts               # importBasePath, applyHoles, getStartPoint (ray intersection); uses helpers/generator/removeDegenerateCurves
 │   ├── buildDecorations.ts         # buildDecorations (text + elements + decoration paths)
 │   ├── buildSvgViews.ts            # buildSvgView → design/exploded SVG strings
 │   ├── buildText.ts                # applyTexts (re-exports createTextElement/createTextPath from helpers/generator/textElement)

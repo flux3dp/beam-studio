@@ -5,12 +5,12 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { exportPathsToSvgCanvas, pathItemToSvgPath } from '@core/helpers/generator/exportPaths';
+import { removeDegenerateCurves } from '@core/helpers/generator/removeDegenerateCurves';
 import { convertTextsToPath } from '@core/helpers/generator/textToPath';
 import i18n from '@core/helpers/i18n';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
-import { removeDegenerateCurves } from './builders/buildShape';
 import { EXPLODED_GAP_PX, INNER_ALIGN_OFFSET_PX, KEYCHAIN_COLORS } from './constants';
 import type { KeyChainShape } from './types';
 import useKeychainShapeStore from './useKeychainShapeStore';
