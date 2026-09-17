@@ -7,9 +7,10 @@ import deviceMaster from '@core/helpers/device-master';
 
 import type { GalvoModule } from './galvoConfig';
 
-/** Traced with the laser off, so the red pointer alone shows where the field lands. */
-const FRAME_POWER = 0;
-const FRAME_SPEED = 4000;
+/** The red pointer pass runs with the laser off, so only the pointer marks the field out. */
+export const redLightFrameParameters = { power: 0, speed: 4000 } as const;
+
+const TRAVEL_SPEED = 4000;
 
 /**
  * Build the frame scene around a point, rather than around the origin, so the machine traces where
@@ -19,10 +20,14 @@ const FRAME_SPEED = 4000;
 export const generateGalvoFrameScene = async ({
   center,
   module,
+  power,
+  speed,
   width,
 }: {
   center: { x: number; y: number };
   module: GalvoModule;
+  power: number;
+  speed: number;
   width: number;
 }): Promise<string> => {
   const resp = await fetch('fcode/hx2-galvo-frame.bvg');
@@ -31,8 +36,8 @@ export const generateGalvoFrameScene = async ({
 
   return sprintf(template, {
     module,
-    power: FRAME_POWER,
-    speed: FRAME_SPEED,
+    power,
+    speed,
     width: sizeInPx,
     x: center.x * constant.dpmm - sizeInPx / 2,
     y: center.y * constant.dpmm - sizeInPx / 2,
@@ -67,7 +72,7 @@ export const convertSceneToTask = async (scene: string, model: WorkAreaModel): P
       },
       onProgressing: () => {},
     },
-    { isPromark: false, model, travelSpeed: FRAME_SPEED },
+    { isPromark: false, model, travelSpeed: TRAVEL_SPEED },
   );
 
   if (!convertRes.success) {
@@ -88,14 +93,18 @@ export const convertSceneToTask = async (scene: string, model: WorkAreaModel): P
 export const runGalvoFrame = async ({
   model,
   module,
+  power,
+  speed,
   width,
 }: {
   model: WorkAreaModel;
   module: GalvoModule;
+  power: number;
+  speed: number;
   width: number;
 }): Promise<void> => {
   const { x, y } = await deviceMaster.rawGetStatePos();
-  const scene = await generateGalvoFrameScene({ center: { x, y }, module, width });
+  const scene = await generateGalvoFrameScene({ center: { x, y }, module, power, speed, width });
   const task = await convertSceneToTask(scene, model);
 
   await deviceMaster.go(task);

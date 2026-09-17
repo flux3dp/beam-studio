@@ -10,14 +10,17 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import type { GalvoConfig, GalvoModule, GalvoWorkarea } from '@core/helpers/device/galvoConfig';
 import { galvoWorkareaOptions, getGalvoConfig, updateGalvoConfig } from '@core/helpers/device/galvoConfig';
-import { runGalvoFrame } from '@core/helpers/device/galvoFrameTask';
+import { redLightFrameParameters, runGalvoFrame } from '@core/helpers/device/galvoFrameTask';
 import deviceMaster from '@core/helpers/device-master';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import blockStyles from './Block.module.scss';
 import FieldBlock from './FieldBlock';
 import LensBlock from './LensBlock';
+import type { MarkParameters } from './ParametersBlock';
+import ParametersBlock from './ParametersBlock';
 import styles from './PromarkSettings.module.scss';
 import RedDotBlock from './RedDotBlock';
 
@@ -36,7 +39,7 @@ interface Props {
  * applied when a task runs.
  */
 export const GalvoSettings = ({ device, initData, module, onClose }: Props): React.JSX.Element => {
-  const { global: tGlobal, topbar: tTopbar } = useI18n();
+  const { global: tGlobal, promark_settings: t, topbar: tTopbar } = useI18n();
   const isInch = useStorageStore((state) => state.isInch);
   const [config, setConfig] = useState<GalvoConfig>(initData);
   // The galvo only reaches its own field, so nothing may fire or trace until the head is coupled
@@ -44,6 +47,7 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
   const [isCoupled, setIsCoupled] = useState(false);
   const [redLight, setRedLight] = useState(false);
   const [isFraming, setIsFraming] = useState(false);
+  const [parameters, setParameters] = useState<MarkParameters>({ power: 50, speed: 1000 });
   const initialRedLight = useRef<boolean | null>(null);
 
   const reportError = (error: unknown, action: string) => {
@@ -80,12 +84,12 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
     });
   };
 
-  const handleFrame = async () => {
+  const runFrame = async (action: string, { power, speed }: MarkParameters) => {
     setIsFraming(true);
     try {
-      await runGalvoFrame({ model: device.model, module, width: config.workarea });
+      await runGalvoFrame({ model: device.model, module, power, speed, width: config.workarea });
     } catch (error) {
-      reportError(error, 'Frame');
+      reportError(error, action);
     } finally {
       setIsFraming(false);
     }
@@ -123,8 +127,19 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
         <Button className={styles.button} disabled={isCoupled} onClick={handleCouple}>
           Couple
         </Button>
-        <Button className={styles.button} disabled={!isCoupled || isFraming} onClick={handleFrame}>
+        <Button
+          className={styles.button}
+          disabled={!isCoupled || isFraming}
+          onClick={() => runFrame('Red light trace', redLightFrameParameters)}
+        >
           {tGlobal.preview}
+        </Button>
+        <Button
+          className={styles.button}
+          disabled={!isCoupled || isFraming}
+          onClick={() => runFrame('Mark', parameters)}
+        >
+          {t.mark}
         </Button>
         <Button className={styles.button} disabled={!isCoupled} onClick={() => setRedLightOn(!redLight)}>
           {redLight ? 'Red light off' : 'Red light on'}
@@ -173,6 +188,10 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
             setConfig((cur) => ({ ...cur, redDot: typeof value === 'function' ? value(cur.redDot) : value }))
           }
         />
+        <Flex align="center" className={blockStyles['full-row']} gap={8} justify="space-between">
+          <div className={blockStyles.title}>{t.mark_parameters}</div>
+          <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
+        </Flex>
         <LensBlock
           data={config.galvoParameters}
           setData={(value) =>
