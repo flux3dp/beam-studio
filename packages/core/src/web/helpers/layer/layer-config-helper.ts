@@ -3,8 +3,14 @@ import { match } from 'ts-pattern';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { fullColorModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import {
+  fullColorModules,
+  LayerModule,
+  printingModules,
+  UVModules,
+} from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
+import { getEngraveDpmm, getPrintingDpmm } from '@core/app/constants/resolutions';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -326,6 +332,20 @@ const getLayerElementByName = (layerName: string) =>
     Array.from(document.querySelectorAll('g.layer')),
     (layers) => layers.find((l) => l?.querySelector('title')?.textContent === layerName),
   );
+
+/**
+ * Resolve the output resolution (px/mm) a layer will actually be exported at.
+ * Printing and UV layers use the printer's fixed dpmm; laser layers use the layer's dpi option.
+ */
+export const getLayerDpmm = (layer: Element | null | undefined): number => {
+  const layerModule = getData(layer, 'module')!;
+  const exportDpmm =
+    printingModules.has(layerModule) || UVModules.has(layerModule)
+      ? getPrintingDpmm(layerModule)
+      : getEngraveDpmm(getData(layer, 'dpi') ?? 'medium', useDocumentStore.getState().workarea);
+
+  return exportDpmm;
+};
 
 /**
  * @returns Default config based on Promark laser type and watt

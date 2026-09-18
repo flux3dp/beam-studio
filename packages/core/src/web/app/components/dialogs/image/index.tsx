@@ -4,14 +4,11 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { dpmm } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { printingModules } from '@core/app/constants/layer-module/layer-modules';
-import { getEngraveDpmm, getPrintingDpmm } from '@core/app/constants/resolutions';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import selectionManager from '@core/app/svgedit/selection';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
 import { MAX_UPSCALE_INPUT_SIZE } from '@core/helpers/image-edit';
-import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getLayerDpmm } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 
@@ -100,11 +97,7 @@ export const showUpscaleModal = async (elem?: SVGImageElement): Promise<void> =>
     return;
   }
 
-  const layer = getObjectLayer(element)?.elem;
-  const layerModule = getData(layer, 'module')!;
-  const exportDpmm = printingModules.has(layerModule)
-    ? getPrintingDpmm(layerModule)
-    : getEngraveDpmm(getData(layer, 'dpi') ?? 'medium', useDocumentStore.getState().workarea);
+  const exportDpmm = getLayerDpmm(getObjectLayer(element)?.elem);
 
   const requiredScale = Math.max(
     ((Number(element.getAttribute('width')) / dpmm) * exportDpmm) / imageSize.width,

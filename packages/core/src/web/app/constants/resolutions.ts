@@ -31,8 +31,12 @@ export const getEngraveDpmm = (dpi: EngraveDpiOption, workarea: WorkAreaModel): 
 };
 
 export const getPrintingDpmm = (layerModule: LayerModuleType): number => {
-  return match<LayerModuleType, number>(layerModule)
-    .with(LayerModule.PRINTER_4C, () => 600 / 25.4)
-    .with(LayerModule.PRINTER, () => 300 / 25.4)
-    .otherwise(() => 300 / 25.4);
+  return (
+    match<LayerModuleType, number>(layerModule)
+      .with(LayerModule.PRINTER_4C, () => 600 / 25.4)
+      .with(LayerModule.PRINTER, () => 300 / 25.4)
+      // fluxclient/toolpath/bitmap/uv.py: DPMM_96
+      .with(LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH, () => 96 / 25.4)
+      .otherwise(() => 300 / 25.4)
+  );
 };
