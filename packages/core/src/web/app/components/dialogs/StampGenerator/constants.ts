@@ -17,3 +17,9 @@ export const EXPORT_COLORS = {
   engrave: '#ff7a45',
   outline: '#000000',
 } as const;
+
+/** Preview colors; the legend and the drawn paths share them. */
+export const PREVIEW_COLORS = {
+  cut: '#f00',
+  engrave: '#000',
+} as const;

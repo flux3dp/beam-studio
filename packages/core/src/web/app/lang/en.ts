@@ -2647,10 +2647,18 @@ Machines > ‘Promark Name’ > Promark Settings`,
     youtube: 'View Beam Studio tutorials and craft ideas.',
   },
   stamp_generator: {
+    basic: {
+      flip_horizontal: 'Flip horizontal',
+      invert_color: 'Invert',
+    },
     export_failed: 'Failed to import stamp to canvas. Please try again.',
     layers: {
       engrave: 'Stamp - Engrave',
       outline: 'Stamp - Outline',
+    },
+    legend: {
+      cut: 'Cut',
+      engrave: 'Engrave',
     },
     slots: {
       address: 'Address',

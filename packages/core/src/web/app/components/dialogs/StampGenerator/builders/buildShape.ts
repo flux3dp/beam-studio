@@ -2,19 +2,61 @@ import paper from 'paper';
 
 import NS from '@core/app/constants/namespaces';
 
-import { DESIGN_SIZE } from '../constants';
+import { DESIGN_SIZE, PREVIEW_COLORS } from '../constants';
 import type { ParsedTemplate, StampShape, StampState, StampTemplate } from '../types';
 
 import { buildElementPaths } from './buildElement';
 import { buildTextPaths } from './buildText';
 
-/** Outer contour of a (possibly compound) frame: the child with the largest area. */
+/**
+ * Outer contour of a (possibly compound) frame: the child with the largest area.
+ * Cloned detached: cloning a compound's child otherwise inserts the copy back into that compound.
+ */
 const outerContour = (item: paper.PathItem): paper.PathItem => {
-  if (!(item instanceof paper.CompoundPath)) return item.clone();
+  if (!(item instanceof paper.CompoundPath)) return item.clone({ insert: false });
 
   const outer = (item.children as paper.Path[]).reduce((a, b) => (Math.abs(b.area) > Math.abs(a.area) ? b : a));
 
-  return outer.clone();
+  return outer.clone({ insert: false });
+};
+
+/**
+ * Inverted face = outline minus everything engraved, via nesting instead of boolean ops (~40ms vs
+ * ~2.4s on the rect template): collect every engraved contour into one compound and `reorient` so
+ * each contour's depth decides fill (glyph → hole, its counter → filled again). The outermost ring's
+ * outer edge IS the cut, so it's dropped and the ring's inner edge bounds the face.
+ * Assumes engraved parts don't overlap or leave the outline (templates + resolveOverlaps guarantee it).
+ */
+export const invertFace = (cut: paper.PathItem, engraved: paper.PathItem[]): paper.PathItem => {
+  const face = new paper.CompoundPath({ insert: true });
+  const cutArea = Math.abs((cut as paper.Path).area);
+  const coincidesWithCut = (c: paper.Path) =>
+    Math.abs(Math.abs(c.area) - cutArea) < 1e-6 * cutArea &&
+    c.bounds.center.getDistance(cut.bounds.center) < 1e-6 &&
+    Math.abs(c.bounds.width - cut.bounds.width) < 1e-6;
+  let hasCut = false;
+
+  for (const item of engraved) {
+    // Copy: `children` is live, and re-parenting a child while iterating it would skip every other one.
+    const contours = item instanceof paper.CompoundPath ? [...(item.children as paper.Path[])] : [item as paper.Path];
+
+    for (const c of contours) {
+      if (coincidesWithCut(c)) {
+        hasCut = true;
+        c.remove();
+      } else {
+        face.addChild(c);
+      }
+    }
+
+    if (item instanceof paper.CompoundPath) item.remove();
+  }
+
+  if (!hasCut) face.addChild(cut.clone());
+
+  face.reorient(false, true);
+
+  return face;
 };
 
 /**
@@ -33,7 +75,9 @@ export const buildStampShape = async (
   const texts = await buildTextPaths(parsed, template, state);
   const elements = buildElementPaths(paper.project, template, state);
   const cut = outerContour(parsed.outline);
-  const engrave = [...frames, ...texts, ...elements];
+  const engrave = state.invertColor
+    ? [invertFace(cut, [...frames, ...texts, ...elements])]
+    : [...frames, ...texts, ...elements];
 
   group.addChildren([...engrave, cut]);
 
@@ -57,7 +101,10 @@ export const buildPreviewSvg = (shape: StampShape): SVGSVGElement => {
     svg.appendChild(path);
   };
 
-  shape.engrave.forEach((item) => addPath(item, { fill: '#000' }));
+  shape.engrave.forEach((item) => addPath(item, { fill: PREVIEW_COLORS.engrave }));
+  // Dashed cut boundary: coincides with the outer ring's edge normally, but when inverted that ring is
+  // blank and the stamp's edge would vanish against the background.
+  addPath(shape.cut, { fill: 'none', stroke: PREVIEW_COLORS.cut, 'stroke-dasharray': '2 1', 'stroke-width': '0.5' });
 
   return svg;
 };

@@ -2547,10 +2547,18 @@ export interface ILang {
     youtube: string;
   };
   stamp_generator: {
+    basic: {
+      flip_horizontal: string;
+      invert_color: string;
+    };
     export_failed: string;
     layers: {
       engrave: string;
       outline: string;
+    };
+    legend: {
+      cut: string;
+      engrave: string;
     };
     slots: {
       address: string;

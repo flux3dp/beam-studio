@@ -53,3 +53,27 @@
   text-align: center;
   z-index: 1;
 }
+
+// Mirrors PuzzleGenerator's Preview.module.scss legend.
+.legend {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.legend-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #999;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}

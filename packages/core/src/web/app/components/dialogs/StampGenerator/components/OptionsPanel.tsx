@@ -1,6 +1,6 @@
 import React, { memo, useState } from 'react';
 
-import { Switch, Tabs } from 'antd';
+import { Button, Switch, Tabs } from 'antd';
 
 import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
@@ -15,20 +15,18 @@ const BasicTab = (): null | React.JSX.Element => {
   const template = useStampStore((s) => s.template);
   const state = useStampStore((s) => s.state);
   const updateState = useStampStore((s) => s.updateState);
+  const resetState = useStampStore((s) => s.resetState);
 
   if (!template || !state) return null;
 
   return (
     <div className={styles.rows}>
       <div className={styles.row}>
-        <span>{t.tabs.basic}</span>
-      </div>
-      <div className={styles.row}>
-        <span>Invert</span>
+        <span>{t.basic.invert_color}</span>
         <Switch checked={state.invertColor} onChange={(invertColor) => updateState({ invertColor })} size="small" />
       </div>
       <div className={styles.row}>
-        <span>Flip horizontal</span>
+        <span>{t.basic.flip_horizontal}</span>
         <Switch
           checked={state.flipHorizontal}
           onChange={(flipHorizontal) => updateState({ flipHorizontal })}
@@ -48,6 +46,9 @@ const BasicTab = (): null | React.JSX.Element => {
           />
         </div>
       )}
+      <Button onClick={resetState} size="small">
+        {tGenerators.general.reset_to_default}
+      </Button>
     </div>
   );
 };

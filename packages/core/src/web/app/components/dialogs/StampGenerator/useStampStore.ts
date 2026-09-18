@@ -107,6 +107,8 @@ const getDefaultState = (template: StampTemplate, defaultFont: TextOptionValues[
 interface StoreState {
   /** Bumped per applyOptions call so a slower, older build can't overwrite a newer one. */
   buildVersion: number;
+  /** Resolved default text font for the current template (kept for reset). */
+  defaultFont: null | TextOptionValues['font'];
   isModified: boolean;
   parsed: null | ParsedTemplate;
   previewSvg: null | SVGSVGElement;
@@ -120,6 +122,7 @@ interface StoreState {
 
 const initialState: StoreState = {
   buildVersion: 0,
+  defaultFont: null,
   isModified: false,
   parsed: null,
   previewSvg: null,
@@ -166,6 +169,16 @@ const useStampStore = create(
         set({ ...initialState });
       },
 
+      /** Restores the template's default settings (texts, fonts, size, flips). */
+      resetState: (): void => {
+        const { defaultFont, template } = get();
+
+        if (!template || !defaultFont) return;
+
+        set({ isModified: false, state: getDefaultState(template, defaultFont) });
+        applyOptions();
+      },
+
       /** Enters the editor for a template: parses its SVG into paper and initializes user state. */
       selectTemplate: async (templateId: string): Promise<void> => {
         const template = getTemplateById(templateId);
@@ -180,6 +193,7 @@ const useStampStore = create(
         const parsed = parseTemplate(project, template);
 
         set({
+          defaultFont,
           isModified: false,
           parsed,
           project,

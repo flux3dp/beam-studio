@@ -7,6 +7,8 @@ import { convertTextsToPath } from '@core/helpers/generator/textToPath';
 
 import type { Bounds, ParsedTemplate, StampState, StampTemplate, TextSlotDef } from '../types';
 
+import { resolveOverlaps } from './resolveOverlaps';
+
 /**
  * Stretches `item` so its ink bounds exactly fill `bounds` (non-uniform, like seal makers do),
  * then centers it. No-op on degenerate items.
@@ -94,7 +96,7 @@ const fitTextToArc = (textEl: SVGTextElement, refPath: SVGPathElement, arcLength
 const toPathItem = (pathEl: SVGPathElement | undefined): null | paper.PathItem => {
   const d = pathEl?.getAttribute('d');
 
-  return d ? new paper.CompoundPath(d) : null;
+  return d ? resolveOverlaps(new paper.CompoundPath(d)) : null;
 };
 
 /**

@@ -3,6 +3,8 @@ import paper from 'paper';
 import PLUM_ICON from '../templates/plum-icon.svg?raw';
 import type { StampState, StampTemplate } from '../types';
 
+import { resolveOverlaps } from './resolveOverlaps';
+
 /** Shape key → SVG markup. Only the bundled plum blossom for now; the Element tab picker comes later. */
 const SHAPES: Record<string, string> = { plum: PLUM_ICON };
 
@@ -37,13 +39,14 @@ export const buildElementPaths = (
     item.scale(values.scale / 100);
     item.rotate(values.rotation);
 
-    const paths = item.removeChildren() as paper.PathItem[];
+    const compound = new paper.CompoundPath({ children: item.removeChildren(), insert: true });
 
     item.remove();
-    paths.forEach((p) => {
-      p.fillColor = new paper.Color('black');
-      p.strokeColor = null;
-    });
 
-    return paths;
+    const shape = resolveOverlaps(compound);
+
+    shape.fillColor = new paper.Color('black');
+    shape.strokeColor = null;
+
+    return [shape];
   });

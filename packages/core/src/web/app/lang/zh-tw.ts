@@ -2647,10 +2647,18 @@ const lang: ILang = {
     youtube: '查看 Beam Studio 教學與手作靈感。',
   },
   stamp_generator: {
+    basic: {
+      flip_horizontal: '水平翻轉',
+      invert_color: '顏色反轉',
+    },
     export_failed: '匯入印章至畫布失敗，請再試一次。',
     layers: {
       engrave: '印章 - 雕刻',
       outline: '印章 - 外框',
+    },
+    legend: {
+      cut: '切割',
+      engrave: '雕刻',
     },
     slots: {
       address: '地址',

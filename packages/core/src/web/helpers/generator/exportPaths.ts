@@ -53,13 +53,14 @@ export const exportPathsToSvgCanvas = async (
     }
 
     const fill = path.getAttribute('fill') ?? 'none';
+    const stroke = path.getAttribute('stroke') ?? '#000';
     const pathEl = svgCanvas.addSvgElementFromJson({
       attr: {
         d,
         fill,
         'fill-opacity': fill === 'none' ? '0' : '1',
         id: svgCanvas.getNextId(),
-        stroke: '#000',
+        stroke,
         'stroke-width': 1,
         'vector-effect': 'non-scaling-stroke',
       },

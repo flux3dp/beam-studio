@@ -2,8 +2,9 @@ import React, { memo, useEffect, useRef } from 'react';
 
 import { useStorageStore } from '@core/app/stores/storageStore';
 import units from '@core/helpers/units';
+import useI18n from '@core/helpers/useI18n';
 
-import { PX_TO_MM_RATIO } from '../constants';
+import { PREVIEW_COLORS, PX_TO_MM_RATIO } from '../constants';
 import useStampStore from '../useStampStore';
 
 import styles from './Preview.module.scss';
@@ -30,6 +31,7 @@ const Preview = (): React.JSX.Element => {
     }
   }, [previewSvg]);
 
+  const { stamp_generator: t } = useI18n();
   const isInch = useStorageStore((s) => s.isInch);
   const { height = 0, width = 0 } = shape?.bounds ?? {};
   const format = (px: number) => {
@@ -42,6 +44,16 @@ const Preview = (): React.JSX.Element => {
     <div className={styles.container}>
       <div className={styles.dimensions}>
         {format(width)} × {format(height)}
+        <div className={styles.legend}>
+          <div className={styles['legend-entry']}>
+            <span className={styles['legend-swatch']} style={{ backgroundColor: PREVIEW_COLORS.engrave }} />
+            <span>{t.legend.engrave}</span>
+          </div>
+          <div className={styles['legend-entry']}>
+            <span className={styles['legend-swatch']} style={{ border: `1px dashed ${PREVIEW_COLORS.cut}` }} />
+            <span>{t.legend.cut}</span>
+          </div>
+        </div>
       </div>
       <div className={styles.canvas} ref={containerRef} />
     </div>
