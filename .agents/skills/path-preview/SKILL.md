@@ -37,21 +37,53 @@ Record contract (`ParsedGcode`, a chunked array dodging V8 length limits):
   canvas while slot 2 keeps machine y for start-here slicing. Promark keeps its own
   `y - a / rotaryRatio` fold.
 - `f` is mm/min; feeds the sim-time estimate per segment.
-- `s`/`t`: Promark uses `t` as dotting time. FCode raster runs set `t = RASTER_T` (6)
-  with `s` = pixel power 0-255 so PWM engraving previews as grayscale; vector records
-  keep `t = 0`.
+- `s`/`t`: Promark uses `t` as dotting time — **only on the gcode path**; the
+  dotting-time branch in `GcodePreview` is inside `if (isPromark)`, so an fcode `t`
+  is never read that way. FCode raster runs set `t = RASTER_T` (6) with `s` = pixel
+  power 0-255 so PWM engraving previews as grayscale; vector records keep `t = 0`.
+- A **NaN position** makes the segments touching a record non-rasterizable, which is
+  how synthetic jumps (printer swath content, galvo dots, a galvo block's return to
+  the park position) are kept out of the traversal display. Such a record must also
+  carry `f = NaN`: segment time is computed over segment length, and a NaN length
+  with a live feedrate puts NaN into the cumulative timeline and takes every later
+  record with it. `pushBreak` in `parseFcode` does both.
 
 Two parsers produce this: `tmpParseGcode.js` (gcode text; Promark wobble, `$H`,
 `G1S0/V0`) and `parseFcode.ts` (fcode binary; also returns the slicing extras).
 
+## Galvo content (HEXA II)
+
+A galvo block moves no gantry: the head parks and the beam is deflected around it, so
+`parseFcode` adds the field-local coordinate to the park position and restores the
+park when the run ends. Marks become cut records, jumps travels, at the list's own
+mark/jump speeds converted to mm/min.
+
+**Dots** (`LASER_ON`) are the one shape with no path. They are drawn the way printer
+swaths draw deposited pixels: the jump that placed the beam is the record that carries
+the motion time, and the dot itself is a zero-sim-time run (`f = NaN`) one pitch wide
+with `t = RASTER_T`, bracketed by break records. A dot has no size in the file, so the
+width comes from the spacing to the previous dot in the same list — they come off a
+grid — falling back to 0.1mm for the first one.
+
+Slicing gets `galvoLists` (record-index spans) from the parser, because a galvo list
+cannot be cut into: see the `fcode` skill. `sliceFcode` rewinds a cut that lands
+inside one to that list's start, which re-marks at most one list where skipping would
+leave a hole.
+
 ## Task code routing (`updateTaskCode`)
 
-- **Promark** (`promarkModels`) → `updateGcodeText`: Swiftray gcode text, variable-text
-  tasks merged by string concat (VT is Promark-only, see `isVariableTextSupported`).
+- **Promark** (`promarkModels`, which is `fpm1` alone) → `updateGcodeText`: Swiftray
+  gcode text, variable-text tasks merged by string concat (VT is Promark-only, see
+  `isVariableTextSupported`).
 - **Everything else** → `updateFcode`: one `exportFuncs.getFcode()` call (single
   fluxghost/Swiftray conversion — no gcode generated), parsed by `parseFcode`, and the
   parse result cached as `this.fcodeTask` for start-here slicing. `gcodeString` stays
   empty on this path and is fetched lazily only if the gcode fallback is ever needed.
+- **HEXA II (`fhx2galvo`) is in the second group, not the first.** It has a galvo like
+  a Promark, but it is not a Promark model: its tasks are fcode and everything about
+  its galvo content lives in `parseFcode`, never in `tmpParseGcode`. None of the
+  Promark gcode handling (wobble, dotting time on `t`, the `y - a / rotaryRatio` fold)
+  applies to it.
 
 ## Sim time model
 
@@ -69,7 +101,9 @@ Two parsers produce this: `tmpParseGcode.js` (gcode text; Promark wobble, `$H`,
 - Mid-timeline, fcode path: `sliceFcode(this.fcodeTask, simTimeInfo, { previewPng,
   timeCost })` byte-splices the cached task — zero fluxghost calls; the thumbnail
   (remaining-path render) and remaining time are embedded so the machine monitor shows
-  the sliced task. Falls back to the gcode flow if slicing returns null.
+  the sliced task. Falls back to the gcode flow if slicing returns null. A cut inside
+  a galvo list is moved back to that list's start, and the restore position becomes
+  the block's park position rather than the interpolated beam position.
 - Gcode fallback / Promark: lazy-fetch gcode text, map the record index to a gcode line
   by counting `G1`s, splice preparation lines, `gcodeToFcode` via fluxghost. The
   fast-gradient branch reconstructs `F16` raster words to resume mid-line.

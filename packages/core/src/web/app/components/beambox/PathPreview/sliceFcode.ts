@@ -202,6 +202,7 @@ export const sliceFcode = (
       accelEvents,
       blockPrologues,
       buffer,
+      galvoLists,
       gradientEvents,
       moduleEvents,
       parsedGcode,
@@ -211,9 +212,30 @@ export const sliceFcode = (
     } = task;
     const { previewPng, timeCost } = extras;
     const recordCount = recordOffsets.length;
-    const cutAfter = simTimeInfo.index;
+    let cutAfter = simTimeInfo.index;
 
     if (cutAfter < 0 || cutAfter + 1 >= recordCount) return null;
+
+    // A galvo list is indivisible: its prologue sets the speed, power and pulses
+    // for everything after it, and the board keeps nothing across the boundary
+    // (§19.3), so a cut landing inside one would resume with the laser never
+    // enabled. Fall back to the list's own start -- that re-marks at most one
+    // list, where skipping to the next would leave a hole. The record before it
+    // is the gantry move that parked the head, so the sync that follows and the
+    // list's prologue are both inside the copied bytes.
+    const containingList = galvoLists.find(([first, last]) => cutAfter + 1 >= first && cutAfter + 1 <= last);
+    let position = simTimeInfo.position;
+
+    if (containingList) {
+      cutAfter = containingList[0] - 1;
+
+      if (cutAfter < 0) return null;
+
+      const parkX = parsedGcode.getItem(cutAfter * 9 + 1);
+      const parkY = parsedGcode.getItem(cutAfter * 9 + 2);
+
+      if (!Number.isNaN(parkX) && !Number.isNaN(parkY)) position = [parkX, -parkY];
+    }
 
     const arrival = cutAfter + 1;
     const cutOffset = recordOffsets[cutAfter];
@@ -256,10 +278,12 @@ export const sliceFcode = (
         gradientChar: lastEventAt(gradientEvents, arrival),
         isV1: version === 1 && !hasPrologue,
         laserModule: lastEventAt(moduleEvents, arrival),
-        pwm: isRaster ? 0 : record(7),
+        // a galvo list carries its own power on opcode 11; the gantry pwm the
+        // block prologue restores is the only one that matters there
+        pwm: isRaster || containingList ? 0 : record(7),
         rotaryOn,
-        x: simTimeInfo.position[0],
-        y: simTimeInfo.position[1],
+        x: position[0],
+        y: position[1],
         z: record(3),
       });
 

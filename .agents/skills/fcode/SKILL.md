@@ -1,6 +1,6 @@
 ---
 name: fcode
-description: FCode binary task format — v1/v2 container layouts, command opcodes, the moveto flag byte, the fast-gradient raster line protocol, and printer (inkjet) packets. Use when working on parseFcode.ts, sliceFcode.ts, Path Preview's fcode path, or anything that reads or inspects .fc task files.
+description: FCode binary task format — v1/v2 container layouts, command opcodes, the moveto flag byte, the fast-gradient raster line protocol, galvo (BSL) lists for HEXA II, and printer (inkjet) packets. Use when working on parseFcode.ts, sliceFcode.ts, Path Preview's fcode path, or anything that reads or inspects .fc task files.
 ---
 
 # FCode Format
@@ -27,6 +27,10 @@ Source of truth (writers, in the fluxclient repo — verify there before changin
   (`generators/fcode-generator.cpp`, `toolpath-exporter-fcode.cpp`); identical container,
   block tags, arming, P150/P154-157 commands, and F16 opcodes as of 2026-09. TRAN/MAIN
   proc ids are true NULL there (no bytes). Keep both writers in mind for format changes.
+- `../swiftray/src/toolpath_exporter/generators/galvo-list.cpp` — sole writer of the
+  galvo records (byte 23). Its contract is `BeamOS_NX_backend/docs/agents/
+  HX2_GALVO_PROTOCOL.md` §19, which the decoders on the machine follow too; that
+  document wins over this one for galvo questions.
 
 All integers/floats are **little-endian**; floats are 4-byte IEEE 754.
 
@@ -87,6 +91,7 @@ One command byte, dispatched by exact value except moveto:
 | 17 | printer (inkjet) packets — see "Printer packets" below | u8 sub + varies |
 | 19 | flux custom cmd | u8 + u32 |
 | 20 / 21 / 22 | user-selection / miscellaneous / grbl system (`$H`=0, `$HZ`=1) | u8 |
+| 23 | galvo (BSL) list record — see "Galvo lists" below | u16 opcode + u8 count + count x f64 |
 | 8 | calibrate | u32 |
 | 7 | set laser module | u32 |
 | 6 / 5 | pause in place / to standby; on laser firmware 6 = rotary-mode-on, 5 = gcode boost. Rotary tasks: v1 preamble movetos y to the axis then emits 6 and 5; v2 A-mode machines park y at the axis and move content on the A flag, non-A v2 uses rotary_wait_move (moveto y, 6, offset moveto, P185/P179 syncs). **A is in mm with the document rotary ratio already applied** (fluxclient `rotary_y + (y - rotary_y) * ratio`; the FILE min_y/max_y bounds are the A range) — parseFcode keeps `a` NaN until the first A move; the preview inverts the ratio back to design y (path-preview skill, `getSpinningAxis`), NOT LaserWeb's degrees model (a x diameter x pi/360). Start-here slicing re-emits 6/5 and pre-positions A (when set) after the position restore | — |
@@ -117,6 +122,66 @@ Traps:
 - Pixel width needs no DPI lookup: `(endX − startX) / pixelCount`.
 - Each line is padded with blank pixels (~10–20mm) on both sides; the sweep extends
   past the engraved content, so metadata min/max x exceed the fired-pixel bounds.
+
+## Galvo lists (cmd 23)
+
+HEXA II (`fhx2galvo`) layers on a galvo head put **all** their geometry here; the
+gantry only parks the head. One record per command, and it is the sole
+self-describing command in the stream — `u16 opcode | u8 paramCount | paramCount x
+float64 LE`, so an unknown opcode cannot desync a reader. All little-endian, all
+parameters float64; there is no float32 anywhere in this sub-format.
+
+A **galvo block** is a run of consecutive byte-23 commands; it ends at the first
+command that is not one. There is no block marker. Swiftray parks the gantry with a
+moveto and then emits `sync_grbl_motion(0)` before the run, because a bare `ok` is an
+ack, not a completed move.
+
+Coordinates are **field-local mm about the lens centre** (±55 on the 110mm field), so
+`beam = park + local`. The file stays bed-aligned: the axis mirroring HX2 needs is
+applied at the SDK boundary on the machine, not here. Every list's first move is
+absolute.
+
+| opcode | name | params |
+|---|---|---|
+| 1 / 3 | `JUMP_ABS` / `MARK_ABS` | x, y |
+| 2 / 4 | `JUMP_REL` / `MARK_REL` | dx, dy |
+| 5 | `LASER_ON` (a dot) | dwell us |
+| 6 | `LONG_DELAY` | us |
+| 7 / 8 | `SET_JUMP_SPEED` / `SET_MARK_SPEED` | mm/s |
+| 9 | `SET_LASER_DELAYS` | on us, off us (**on may be negative**) |
+| 10 | `SET_SCANNER_DELAYS` | mark us, polygon us |
+| 11 | `SET_LASER_POWER` | 0–100 |
+| 12 | `SET_LASER_PULSES` | period us, pulse length us, **mopaPulse ns** |
+| 13 | `SET_STANDBY` | period us, width us (width is a uint32 on the SDK side) |
+| 14 / 15 | `ENABLE_LASER` / `DISABLE_LASER` | MO delay us |
+| 16 | `SET_WOBBLE` | transversal, longitudinal, space, mode |
+| 19 | `SET_END_OF_LIST` | **estimated list run time in ms** |
+| 0x21 / 0x22 | `AXIS_MOVE` (A only) / `SET_IO` | see §4.4 |
+
+17 and 18 are forbidden. The old `{23, 0..13}` promark sub-commands are gone — same
+command byte, completely different meaning, and the container cannot tell the two
+apart, so old promark files and new ones must not share a machine.
+
+Traps:
+
+- **Each list is self-sufficient and indivisible.** It opens with the prologue
+  (`SET_STANDBY` → `SET_JUMP_SPEED` → `SET_MARK_SPEED` → `SET_LASER_DELAYS` →
+  `SET_SCANNER_DELAYS` → `SET_LASER_POWER` → `SET_LASER_PULSES` → `ENABLE_LASER(0)`)
+  and closes with `DISABLE_LASER(0)` → `SET_END_OF_LIST`. The board frames every list
+  with its own disable_laser and replays nothing across the boundary, so a list that
+  starts mid-stream marks with whatever the previous job left behind, or not at all.
+  Anything that splices fcode must cut on a list edge — `parseFcode` returns
+  `galvoLists` for exactly this.
+- **opcode 12 took 2 parameters before 2026-09-18** and takes 3 now. The third is a
+  real Mopa pulse width in ns (1..65535), not a flag. A CO2 head derives the second
+  from its power and re-sends the whole record after every power change; a Mopa head
+  carries its width on the third and is set once per layer.
+- `SET_STANDBY` is **CO2 only** — it is pre-ionization, and the machine emits none of
+  its own, so its absence means the board is never told.
+- Opcodes 19 (1 param here, 0 in the simulator's spec) and 12 (3 vs 2) are deliberate
+  divergences from the laser-phy-simulator format. Do not "fix" them to match it.
+- The gantry does not move for the whole run. A reader that tracks head position must
+  restore the park position afterwards, not leave it on the last galvo point.
 
 ## Printer packets (cmd 17)
 
@@ -180,4 +245,7 @@ sweep length / w. Traps (all verified against a real fbm2 export):
 
 Update this skill and `parseFcode.ts` together if fluxclient's writers change:
 new command opcodes, new `CONT` entry tags, new resolution chars, or a new
-`magic_number` with container (not just generator) differences.
+`magic_number` with container (not just generator) differences. For the galvo
+records the moving document is `HX2_GALVO_PROTOCOL.md` §19 in the backend repo —
+it has already changed opcode arities once, so check it before trusting the table
+above.
