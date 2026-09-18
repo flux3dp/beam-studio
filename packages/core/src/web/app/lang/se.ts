@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Denna fil innehåller en klippmask och kan inte delas upp.',
         execute_time_warning: 'Detta kommer att separera importerad DXF eller SVG. Eftersom filen kan innehålla ett stort antal element kan det ta tid att separera. Är du säker på att du vill fortsätta?',
+        variable_text_warning: 'Objekt med variabel text hoppades över. Stäng av variabel text innan du monterar isär dem.',
       },
       dxf_bounding_box_size_over: 'Ritningens storlek är utanför arbetsområdet. Flytta din ritning närmare origo i ditt CAD-program, eller se till att enheten är korrekt inställd.',
       dxf_paste_failed: 'Det gick inte att klistra in DXF från urklipp. Kontrollera att det kopierade innehållet är giltig DXF.',

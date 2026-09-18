@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Ten plik zawiera maskę przycinania i nie może zostać rozłożony.',
         execute_time_warning: 'Spowoduje to rozgrupowanie zaimportowanych plików DXF lub SVG. Ponieważ plik może zawierać dużą liczbę elementów, rozgrupowanie może zająć trochę czasu. Czy na pewno chcesz kontynuować?',
+        variable_text_warning: 'Obiekty z tekstem zmiennym zostały pominięte. Wyłącz tekst zmienny przed ich rozłożeniem.',
       },
       dxf_bounding_box_size_over: 'Rozmiar rysunku jest poza obszarem roboczym. Przesuń rysunek bliżej punktu początkowego w oprogramowaniu CAD lub upewnij się, że jednostka jest ustawiona prawidłowo.',
       dxf_paste_failed: 'Nie udało się wkleić pliku DXF ze schowka. Upewnij się, że skopiowana zawartość to prawidłowy DXF.',

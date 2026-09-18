@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Dit bestand bevat een afsnijdmasker en kan niet worden ontleed.',
         execute_time_warning: 'Dit zal geïmporteerde DXF/SVG ontgroeperen. Omdat er veel elementen kunnen zijn, kan het even duren. Weet u zeker dat u wilt doorgaan?',
+        variable_text_warning: 'Objecten met variabele tekst zijn overgeslagen. Schakel variabele tekst uit voordat u ze demonteert.',
       },
       dxf_bounding_box_size_over: 'De tekeninggrootte is buiten het werkgebied. Verplaats uw tekening dichter bij de oorsprong in uw CAD-software, of zorg dat de eenheid correct is.',
       dxf_paste_failed: 'Kan DXF niet vanaf het klembord plakken. Zorg ervoor dat de gekopieerde inhoud geldige DXF is.',

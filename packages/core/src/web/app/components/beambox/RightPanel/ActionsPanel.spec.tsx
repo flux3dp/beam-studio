@@ -454,6 +454,31 @@ describe('should render correctly', () => {
       expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
     });
 
+    test('multiple selection with use', () => {
+      // Real SVG namespace so nodeName is lowercase, as on the canvas
+      document.body.innerHTML = `
+        <svg>
+          <g id="svg_3" data-tempgroup="true">
+            <use id="svg_1" />
+            <use id="svg_2" />
+          </g>
+        </svg>
+      `;
+
+      const { container, getByText, rerender } = render(
+        <ActionsPanel elem={document.getElementById('svg_3') as unknown as SVGElement} />,
+      );
+
+      expect(container).toMatchSnapshot();
+
+      fireEvent.click(getByText(tActionPanel.disassemble_use));
+      expect(disassembleUse).toHaveBeenCalledTimes(1);
+
+      mockGetVariableTextType.mockReturnValue(VariableTextType.NUMBER);
+      rerender(<ActionsPanel elem={document.getElementById('svg_3') as unknown as SVGElement} />);
+      expect(getByText(tActionPanel.disassemble_use).closest('button')).toBeDisabled();
+    });
+
     test('single selection', () => {
       document.body.innerHTML = '<g id="svg_1" />';
 

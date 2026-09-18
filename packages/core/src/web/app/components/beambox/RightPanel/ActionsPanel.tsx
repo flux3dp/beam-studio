@@ -592,6 +592,21 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const conversionButtons: React.JSX.Element[] = [];
     const optimizationButtons: React.JSX.Element[] = [];
 
+    if (children.some((child) => child.nodeName === 'use')) {
+      const isDisassembleDisabled = children.every((child) => getVariableTextType(child) !== VariableTextType.NONE);
+
+      actionButtons.push(
+        renderButtons(
+          'disassemble_use',
+          lang.disassemble_use,
+          () => disassembleUse(),
+          <ActionPanelIcons.Disassemble />,
+          <ActionPanelIcons.DisassembleMobile />,
+          { isDisabled: isDisassembleDisabled, isFullLine: true, tooltipIfDisabled: lang.disabled_by_variable_text },
+        ),
+      );
+    }
+
     const texts = children.filter((child) => child.nodeName === 'text');
     const textCount = texts.length;
     const pathLikeCount = children.filter((child) => CanvasElements.basicPaths.includes(child.nodeName)).length;

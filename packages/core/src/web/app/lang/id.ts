@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'File ini mengandung clipping mask dan tidak dapat dibongkar.',
         execute_time_warning: 'Ini akan membatalkan pengelompokan DXF atau SVG yang diimpor. Karena file mungkin berisi sejumlah besar elemen, mungkin memerlukan waktu untuk membatalkan pengelompokan. Apakah Anda yakin untuk melanjutkan?',
+        variable_text_warning: 'Objek teks variabel dilewati. Nonaktifkan teks variabel sebelum membongkarnya.',
       },
       dxf_bounding_box_size_over: 'Ukuran gambar melebihi area kerja. Harap pindahkan gambar Anda lebih dekat ke asal dalam perangkat lunak CAD Anda, atau pastikan bahwa unit diatur dengan benar.',
       dxf_paste_failed: 'Gagal menempelkan DXF dari papan klip. Pastikan konten yang disalin adalah DXF yang valid.',

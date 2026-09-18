@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: '圖檔中含有剪裁路徑（Clipping Mask），無法解散圖檔。',
         execute_time_warning: '正要解散外部匯入的 DXF 或是 SVG ，在含有物件較多的情況，可能會需要等一陣子，是否確定解散？',
+        variable_text_warning: '已略過可變文字物件，請先關閉可變文字後再解散。',
       },
       dxf_bounding_box_size_over: '圖像超出工作範圍，請在 CAD 軟體中將圖像放置於原點附近，或確定圖檔單位是否正確設定。',
       dxf_paste_failed: '無法從剪貼簿貼上 DXF，請確認複製的內容為有效的 DXF。',

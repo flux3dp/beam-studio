@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Tento soubor obsahuje ořezovou masku a nelze jej rozložit.',
         execute_time_warning: 'Toto odstraní ze skupiny importované DXF nebo SVG. Protože může soubor obsahovat velký počet prvků, může rozdělování skupiny trvat. Opravdu si přejete pokračovat?',
+        variable_text_warning: 'Objekty s proměnným textem byly přeskočeny. Před rozložením nejprve vypněte proměnný text.',
       },
       dxf_bounding_box_size_over: 'Velikost kresby je mimo pracovní oblast. Přesuňte prosím svou kresbu blíž k vodítku ve vašem CAD softwaru, nebo se ujistěte, že je jednotka správně nastavena.',
       dxf_paste_failed: 'Nepodařilo se vložit DXF ze schránky. Ujistěte se, že zkopírovaný obsah je platný DXF.',
