@@ -225,8 +225,15 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     accOverride: { path: { x: 1000, y: 1000 } },
     autoFocusOffset: [31.13, 1.2, 6.5],
     autoShrink: 0.025,
-    // the workarea is larger than fhx2rf, so this cannot simply be copied
-    cameraCenter: [450, 255],
+    /**
+     * Where moveLaserHead() parks the gantry to photograph the calibration marks, so it is fixed
+     * by whichever fcode engraves them -- not by the bed centre. HEXA II reuses fhx2rf's
+     * fcode/hx2-calibration.fc, which marks x 309.1-430.9, y 189.7-270.2, i.e. the camera view
+     * with the head at fhx2rf's camera centre. Moving this without also re-cutting that fcode
+     * leaves the marks outside the frame.
+     * TODO: measure on real hardware; re-cut the fcode if HEXA II wants a different position.
+     */
+    cameraCenter: [370, 180],
     curveSpeedLimit: {
       x: 50,
       zHighSpeed: 300,
