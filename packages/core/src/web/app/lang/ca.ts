@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Aquest fitxer conté una màscara de retall i no es pot desmuntar.',
         execute_time_warning: "Això desagruparà el DXF o SVG importat. Com que el fitxer pot contenir un gran nombre d'elements, pot trigar temps a desagrupar-se. Estàs segur de procedir?",
+        variable_text_warning: "S'han omès els objectes de text variable. Tanqueu el text variable abans de desmuntar-los.",
       },
       dxf_bounding_box_size_over: "La mida del dibuix està fora de l'àrea de treball. Si us plau, mou el teu dibuix més a prop de l'origen al teu programari CAD, o assegura't que la unitat estigui configurada correctament.",
       dxf_paste_failed: "No s'ha pogut enganxar el DXF des del porta-retalls. Assegura't que el contingut copiat sigui un DXF vàlid.",

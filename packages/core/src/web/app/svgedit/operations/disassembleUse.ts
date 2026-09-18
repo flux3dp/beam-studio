@@ -11,8 +11,10 @@ import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
+import { getVariableTextType } from '@core/helpers/variableText';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
 import currentFileManager from '../currentFileManager';
 import ungroupElement from '../group/ungroup';
@@ -88,7 +90,9 @@ export const disassembleUse = async (
 
   const batchCmd = new history.BatchCommand('Disassemble Use');
   const progressId = 'disassemble-use';
+  const results: SVGElement[] = [];
   let isSomeWithClipPath = false;
+  let isSomeVariableText = false;
 
   if (showProgress) {
     progressCaller.openSteppingProgress({
@@ -114,6 +118,11 @@ export const disassembleUse = async (
     }
 
     if (!elem || elem.tagName !== 'use') continue;
+
+    if (getVariableTextType(elem) !== VariableTextType.NONE) {
+      isSomeVariableText = true;
+      continue;
+    }
 
     const isFromNP = elem.getAttribute('data-np') === '1';
     const ratioFixed = elem.getAttribute('data-ratiofixed');
@@ -251,24 +260,19 @@ export const disassembleUse = async (
     updateElementColor(g);
 
     const res = ungroupElement(g);
+    const newElems = (res ? res.children : [g]) as SVGElement[];
 
-    if (res) {
-      const { batchCmd: cmd, children } = res;
+    if (res && !res.batchCmd.isEmpty()) batchCmd.addSubCommand(res.batchCmd);
 
-      if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+    if (ratioFixed) newElems.forEach((newElem) => newElem.setAttribute('data-ratiofixed', ratioFixed));
 
-      selectionManager.selectOnly(children as SVGElement[], true);
-    } else {
-      selectionManager.selectOnly([g], true);
-    }
-
-    if (ratioFixed) {
-      selectionManager.getSelectedElements().forEach((elem) => elem.setAttribute('data-ratiofixed', ratioFixed));
-    }
-
-    selectionManager.tempGroupSelectedElements();
+    results.push(...newElems);
     currentFileManager.setHasUnsavedChanges(true);
   }
+
+  // Disassembled <use> elements are detached from the DOM; anything still connected was skipped and stays selected
+  selectionManager.selectOnly([...elems.filter((elem) => elem?.isConnected), ...results], true);
+  selectionManager.tempGroupSelectedElements();
 
   if (showProgress) {
     progressCaller.update(progressId, {
@@ -278,11 +282,13 @@ export const disassembleUse = async (
     progressCaller.popById(progressId);
   }
 
-  if (isSomeWithClipPath) {
-    alertCaller.popUp({
-      message: t.popup.disassemble_use.clip_path_warning,
-      type: alertConstants.SHOW_POPUP_WARNING,
-    });
+  const warnings = [
+    isSomeWithClipPath && t.popup.disassemble_use.clip_path_warning,
+    isSomeVariableText && t.popup.disassemble_use.variable_text_warning,
+  ].filter(Boolean);
+
+  if (warnings.length > 0) {
+    alertCaller.popUp({ message: warnings.join('\n'), type: alertConstants.SHOW_POPUP_WARNING });
   }
 
   handleHistoryActionOptions(batchCmd, historyOptions);

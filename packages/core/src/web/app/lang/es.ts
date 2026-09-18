@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Este archivo contiene una máscara de recorte y no se puede desagrupar.',
         execute_time_warning: 'Se desagrupará el archivo DXF o SVG importado. Dado que el archivo puede contener un gran número de elementos, es posible que el desagrupado tarde un tiempo.\n¿Seguro que desea continuar?',
+        variable_text_warning: 'Se omitieron los objetos de texto variable. Desactive el texto variable antes de desensamblarlos.',
       },
       dxf_bounding_box_size_over: 'El tamaño del dibujo está fuera del área de trabajo. Acerque el dibujo al origen en su programa CAD o asegúrese de que la unidad esté configurada correctamente.',
       dxf_paste_failed: 'No se pudo pegar el DXF desde el portapapeles. Asegúrese de que el contenido copiado sea un DXF válido.',

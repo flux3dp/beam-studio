@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'This file contains a clipping mask and cannot be disassembled.',
         execute_time_warning: 'This will ungroup imported DXF or SVG. Because the file might contain a great number of elements, it might take time to ungroup. Are you sure to proceed?',
+        variable_text_warning: 'Variable text objects were skipped. Please close variable text before disassembling them.',
       },
       dxf_bounding_box_size_over: 'Drawing size is out of workarea. Please move your drawing closer to origin in your CAD software, or make sure that the unit is set correctly.',
       dxf_paste_failed: 'Failed to paste DXF from the clipboard. Please make sure the copied content is valid DXF.',

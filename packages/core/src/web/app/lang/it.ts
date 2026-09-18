@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Questo file contiene una maschera di ritaglio e non può essere scomposto.',
         execute_time_warning: 'Questo separerà il gruppo di file DXF o SVG importati. Poiché il file potrebbe contenere un gran numero di elementi, potrebbe volerci del tempo per separare il gruppo. Sei sicuro di voler procedere?',
+        variable_text_warning: 'Gli oggetti di testo variabile sono stati ignorati. Disattiva il testo variabile prima di disassemblarli.',
       },
       dxf_bounding_box_size_over: "Le dimensioni del disegno superano l'area di lavoro. Sposta il tuo disegno più vicino all'origine nel tuo software CAD, o assicurati che l'unità sia impostata correttamente.",
       dxf_paste_failed: 'Impossibile incollare il DXF dagli appunti. Assicurati che il contenuto copiato sia un DXF valido.',

@@ -472,6 +472,7 @@ export interface ILang {
       disassemble_use: {
         clip_path_warning: string;
         execute_time_warning: string;
+        variable_text_warning: string;
       };
       dxf_bounding_box_size_over: string;
       dxf_paste_failed: string;

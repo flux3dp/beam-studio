@@ -486,6 +486,14 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
     Pair it with a `transformListToTransform` mock that parses `tlist.elem`'s transform attribute
     (see `helpers/layer/convertClipPath.spec.ts`).
 
+12. **`document.body.innerHTML` parses as HTML, not SVG** — bare `<use id="a" /><use id="b" />`
+    fixtures become `HTMLUnknownElement`s with uppercase `nodeName` (`'USE'`), and `/>` is ignored
+    so the second element nests inside the first. Code that checks `nodeName === 'use'` (e.g.
+    `ActionsPanel` multi-select) silently never matches. Wrap fixtures in `<svg>…</svg>` to get
+    real SVG elements with lowercase names (see `ActionsPanel.spec.tsx`, "multiple selection with
+    use"). `tagName.toLowerCase()` checks are tolerant of either form, which is why older fixtures
+    get away without the wrapper.
+
 11. **Running against the real paper.js** — most specs fake `paper` (§Pattern 1), which is right
     when you only care that the code calls it. When the behavior under test *is* the interaction
     with paper's geometry (boolean ops, path splitting), fake results prove nothing — use the real

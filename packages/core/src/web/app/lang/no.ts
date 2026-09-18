@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Denne filen inneholder en klippemaske og kan ikke demonteres.',
         execute_time_warning: 'Dette vil oppheve grupperingen av importerte DXF eller SVG. Fordi filen kan inneholde et stort antall elementer, kan det ta tid å oppheve grupperingen. Er du sikker på at du vil fortsette?',
+        variable_text_warning: 'Objekter med variabel tekst ble hoppet over. Slå av variabel tekst før du demonterer dem.',
       },
       dxf_bounding_box_size_over: 'Tegnestørrelsen er utenfor arbeidsområdet. Flytt tegningen nærmere opprinnelsen i CAD-programvaren, eller kontroller at enheten er riktig satt.',
       dxf_paste_failed: 'Kunne ikke lime inn DXF fra utklippstavlen. Kontroller at det kopierte innholdet er gyldig DXF.',
