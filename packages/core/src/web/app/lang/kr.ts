@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: '자 모양 보이기',
       show_start_tutorial: '시작 튜토리얼 보기',
       show_ui_intro: '인터페이스 소개 보기',
+      snap_to_object_center: '개체 중심에 스냅',
       software_update: '소프트웨어 업데이트',
       svg_edit: 'SVG',
       switch_to_beta: '베타 릴리스로 전환',

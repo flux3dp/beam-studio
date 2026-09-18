@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'Zobrazit pravítka',
       show_start_tutorial: 'Ukázat Úvodní výuku',
       show_ui_intro: 'Ukázat Úvod do uživatelského rozhraní',
+      snap_to_object_center: 'Snap to Object Center',
       software_update: 'Aktualizace softwaru',
       svg_edit: 'SVG',
       switch_to_beta: 'Přepnout na beta verzi',

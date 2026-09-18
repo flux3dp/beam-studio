@@ -787,6 +787,14 @@ exports[`should render correctly test checkbox menu item 2`] = `
             role="menuitemcheckbox"
             tabindex="-1"
           >
+            Snap to Object Center
+          </li>
+          <li
+            aria-checked="false"
+            class="szh-menu__item szh-menu__item--type-checkbox"
+            role="menuitemcheckbox"
+            tabindex="-1"
+          >
             Anti-Aliasing
           </li>
         </ul>
@@ -1032,6 +1040,14 @@ exports[`should render correctly test checkbox menu item 3`] = `
             tabindex="-1"
           >
             Auto Align
+          </li>
+          <li
+            aria-checked="false"
+            class="szh-menu__item szh-menu__item--type-checkbox"
+            role="menuitemcheckbox"
+            tabindex="-1"
+          >
+            Snap to Object Center
           </li>
           <li
             aria-checked="false"

@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: '定規を表示',
       show_start_tutorial: '初めてのチュートリアルを表示',
       show_ui_intro: 'インターフェイスの紹介を表示',
+      snap_to_object_center: 'オブジェクトの中心にスナップ',
       software_update: 'ソフトウェア更新',
       svg_edit: 'SVG',
       switch_to_beta: 'ベータリリースに切り替える',

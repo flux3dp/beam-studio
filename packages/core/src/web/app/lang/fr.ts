@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'Afficher les règles',
       show_start_tutorial: 'Afficher le didacticiel de démarrage',
       show_ui_intro: "Afficher l'introduction à l'interface",
+      snap_to_object_center: 'Aligner sur le centre de l’objet',
       software_update: 'Mise à jour du logiciel',
       svg_edit: 'SVG',
       switch_to_beta: 'Passer à la version bêta',

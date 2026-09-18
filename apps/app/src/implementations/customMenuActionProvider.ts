@@ -42,6 +42,11 @@ export default {
 
         menu.changeMenuItemStatus(['SHOW_RULERS'], 'checked', shouldShowRulers);
       },
+      SNAP_TO_OBJECT_CENTER: () => {
+        const snapToObjectCenter = viewMenu.toggleSnapToObjectCenter();
+
+        menu.changeMenuItemStatus(['SNAP_TO_OBJECT_CENTER'], 'checked', snapToObjectCenter);
+      },
       SWITCH_VERSION: () => ElectronUpdater.switchVersion(),
       UPDATE_BS: () => ElectronUpdater.checkForUpdate(),
       ZOOM_WITH_WINDOW: () => {

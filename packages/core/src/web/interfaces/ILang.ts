@@ -2799,6 +2799,7 @@ export interface ILang {
       show_rulers: string;
       show_start_tutorial: string;
       show_ui_intro: string;
+      snap_to_object_center: string;
       software_update: string;
       svg_edit: string;
       switch_to_beta: string;

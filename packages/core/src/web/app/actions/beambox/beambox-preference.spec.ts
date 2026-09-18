@@ -124,6 +124,7 @@ test('test beambox-preference', () => {
     show_rulers: false,
     simplify_clipper_path: false,
     skip_prespray: false,
+    snap_to_object_center: false,
     'use-real-boundary': false,
     'use-union-boundary': true,
     use_ga_reorder: true,

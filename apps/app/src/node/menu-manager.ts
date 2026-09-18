@@ -638,6 +638,13 @@ class MenuManager extends EventEmitter {
         {
           click: callback,
           enabled: false,
+          id: 'SNAP_TO_OBJECT_CENTER',
+          label: r.snap_to_object_center || 'Snap to Object Center',
+          type: 'checkbox',
+        },
+        {
+          click: callback,
+          enabled: false,
           id: 'ANTI_ALIASING',
           label: r.anti_aliasing,
           type: 'checkbox',

@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'Vis linealer',
       show_start_tutorial: 'Vis startvejledning',
       show_ui_intro: 'Vis grænsefladeintroduktion',
+      snap_to_object_center: 'Snap to Object Center',
       software_update: 'Softwareopdatering',
       svg_edit: 'SVG',
       switch_to_beta: 'Skift til Beta-udgivelse',

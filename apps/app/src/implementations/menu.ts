@@ -111,6 +111,7 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['ZOOM_WITH_WINDOW'], 'checked', globalPreference.zoom_with_window);
     this.changeMenuItemStatus(['SHOW_GRIDS'], 'checked', globalPreference.show_grids);
     this.changeMenuItemStatus(['SHOW_RULERS'], 'checked', globalPreference.show_rulers);
+    this.changeMenuItemStatus(['SNAP_TO_OBJECT_CENTER'], 'checked', globalPreference.snap_to_object_center);
     this.changeMenuItemStatus(['SHOW_LAYER_COLOR'], 'checked', globalPreference.use_layer_color);
     this.changeMenuItemStatus(['ANTI_ALIASING'], 'checked', globalPreference['anti-aliasing']);
     this.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', globalPreference.auto_align);

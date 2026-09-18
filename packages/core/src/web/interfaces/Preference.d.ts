@@ -94,6 +94,10 @@ export type GlobalPreference = {
   show_rulers: boolean;
   simplify_clipper_path: boolean;
   /**
+   * Snap dragged elements to camera-detected object centers (mini-sam)
+   */
+  snap_to_object_center: boolean;
+  /**
    * Auto turn on auto-exposure if possible when previewing
    */
   'use-auto-exposure'?: boolean;

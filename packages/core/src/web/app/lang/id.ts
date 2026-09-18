@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'Tampilkan Penggaris',
       show_start_tutorial: 'Tampilkan Tutorial Mulai',
       show_ui_intro: 'Tampilkan Pengenalan Antarmuka',
+      snap_to_object_center: 'Snap to Object Center',
       software_update: 'Pembaruan Perangkat Lunak',
       svg_edit: 'SVG',
       switch_to_beta: 'Beralih ke Rilis Beta',

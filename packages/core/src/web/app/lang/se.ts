@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'Visa linjaler',
       show_start_tutorial: 'Visa startguide',
       show_ui_intro: 'Visa gränssnittsintroduktion',
+      snap_to_object_center: 'Snap to Object Center',
       software_update: 'Programuppdatering',
       svg_edit: 'SVG',
       switch_to_beta: 'Växla till Beta-version',

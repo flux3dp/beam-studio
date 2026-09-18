@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: '显示尺规',
       show_start_tutorial: '显示新手教学',
       show_ui_intro: '显示界面介绍',
+      snap_to_object_center: '吸附到对象中心',
       software_update: '软件更新',
       svg_edit: 'SVG',
       switch_to_beta: '切换至 Beta 版',

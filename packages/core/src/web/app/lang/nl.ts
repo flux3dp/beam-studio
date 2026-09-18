@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'Linialen tonen',
       show_start_tutorial: 'Introductietutorial tonen',
       show_ui_intro: 'Interface-introductie tonen',
+      snap_to_object_center: 'Uitlijnen op objectcentrum',
       software_update: 'Software-update',
       svg_edit: 'SVG',
       switch_to_beta: 'Schakel over naar bètaversie',

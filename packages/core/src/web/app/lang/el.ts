@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'Εμφάνιση οδηγών',
       show_start_tutorial: 'Εμφάνιση εισαγωγικού μαθήματος',
       show_ui_intro: 'Εμφάνιση εισαγωγής διεπαφής',
+      snap_to_object_center: 'Snap to Object Center',
       software_update: 'Ενημέρωση λογισμικού',
       svg_edit: 'SVG',
       switch_to_beta: 'Μετάβαση σε Beta Έκδοση',

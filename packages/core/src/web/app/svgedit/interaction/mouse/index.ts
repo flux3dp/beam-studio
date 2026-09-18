@@ -22,6 +22,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
+import snapToObjectCenter from '@core/helpers/snap-to-object-center';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { ICommand } from '@core/interfaces/IHistory';
@@ -757,6 +758,18 @@ const mouseMove = (evt: MouseEvent) => {
 
           dx = diff.x;
           dy = diff.y;
+        }
+
+        // snap the dragged selection's center to a camera-detected object center
+        if (currentBoundingBox.length >= 8 && snapToObjectCenter.isActive()) {
+          const startCenter = { x: currentBoundingBox[1].x, y: currentBoundingBox[3].y };
+          const snapTarget = snapToObjectCenter.checkSnap({ x: startCenter.x + dx, y: startCenter.y + dy });
+
+          if (snapTarget) {
+            dx = snapTarget.center.x - startCenter.x;
+            dy = snapTarget.center.y - startCenter.y;
+            snapToObjectCenter.drawGuides(snapTarget);
+          }
         }
 
         if (dx !== 0 || dy !== 0) {

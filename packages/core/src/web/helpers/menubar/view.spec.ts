@@ -15,6 +15,7 @@ const mockGlobalPreference = {
   set: mockSet,
   show_grids: true,
   show_rulers: true,
+  snap_to_object_center: false,
   use_layer_color: true,
   zoom_with_window: true,
 };
@@ -136,6 +137,32 @@ describe('test view', () => {
 
       expect(mockSet).toHaveBeenCalledTimes(1);
       expect(mockSet).toHaveBeenNthCalledWith(1, 'show_rulers', false);
+      expect(result).toBeFalsy();
+    });
+  });
+
+  describe('test toggleSnapToObjectCenter', () => {
+    afterEach(() => {
+      jest.resetAllMocks();
+    });
+
+    test('default is false', () => {
+      mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, snap_to_object_center: false });
+
+      const result = viewMenu.toggleSnapToObjectCenter();
+
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenNthCalledWith(1, 'snap_to_object_center', true);
+      expect(result).toBeTruthy();
+    });
+
+    test('default is true', () => {
+      mockGetGlobalPreference.mockReturnValue({ ...mockGlobalPreference, snap_to_object_center: true });
+
+      const result = viewMenu.toggleSnapToObjectCenter();
+
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockSet).toHaveBeenNthCalledWith(1, 'snap_to_object_center', false);
       expect(result).toBeFalsy();
     });
   });

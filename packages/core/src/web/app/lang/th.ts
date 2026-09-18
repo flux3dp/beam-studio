@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'แสดงตัวบอกขนาด',
       show_start_tutorial: 'แสดงการสอนเริ่มต้น',
       show_ui_intro: 'แสดงการแนะนําหน้าจอ',
+      snap_to_object_center: 'Snap to Object Center',
       software_update: 'อัปเดตซอฟต์แวร์',
       svg_edit: 'SVG',
       switch_to_beta: 'สลับเป็นรุ่นเบต้า',

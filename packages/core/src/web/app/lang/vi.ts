@@ -2863,6 +2863,7 @@ const lang: ILang = {
       show_rulers: 'Hiển thị thước kẻ',
       show_start_tutorial: 'Xem hướng dẫn bắt đầu',
       show_ui_intro: 'Xem giới thiệu giao diện',
+      snap_to_object_center: 'Snap to Object Center',
       software_update: 'Cập nhật phần mềm',
       svg_edit: 'SVG',
       switch_to_beta: 'Chuyển sang Bản Beta',
