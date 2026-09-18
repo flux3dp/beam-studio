@@ -43,10 +43,15 @@ Record contract (`ParsedGcode`, a chunked array dodging V8 length limits):
   power 0-255 so PWM engraving previews as grayscale; vector records keep `t = 0`.
 - A **NaN position** makes the segments touching a record non-rasterizable, which is
   how synthetic jumps (printer swath content, galvo dots, a galvo block's return to
-  the park position) are kept out of the traversal display. Such a record must also
-  carry `f = NaN`: segment time is computed over segment length, and a NaN length
-  with a live feedrate puts NaN into the cumulative timeline and takes every later
-  record with it. `pushBreak` in `parseFcode` does both.
+  the park position) are kept out of the traversal display. Two segments touch such a
+  record, and **the dangerous one is the segment leaving it**, whose own feedrate is
+  perfectly real: segment time is length over speed, so a NaN length yields a NaN
+  time and — far worse — a NaN `lastFeedrate` that poisons every segment after it,
+  taking the whole timeline, scrubber and progress bar with it. `GcodePreview` skips
+  the estimate whenever the distance is NaN, which covers both sides; `pushBreak`
+  additionally clears the feedrate on the break record itself. The printer path
+  survived this for a while by accident, because it happened to have `f` already NaN
+  on both sides.
 
 Two parsers produce this: `tmpParseGcode.js` (gcode text; Promark wobble, `$H`,
 `G1S0/V0`) and `parseFcode.ts` (fcode binary; also returns the slicing extras).

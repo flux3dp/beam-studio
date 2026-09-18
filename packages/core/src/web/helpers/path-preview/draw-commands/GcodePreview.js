@@ -286,7 +286,12 @@ export class GcodePreview {
             }
           }
           lastDottingTime = t;
-        } else if (!Number.isNaN(f) && dist !== 0) {
+        } else if (!Number.isNaN(f) && dist !== 0 && !Number.isNaN(dist)) {
+          // A NaN endpoint marks a synthetic break (parseFcode pushBreak), so BOTH
+          // touching segments are non-motion: the one arriving at it and the one
+          // leaving it. Without the distance check the leaving segment - whose own
+          // feedrate is real - yields a NaN time and, worse, a NaN lastFeedrate that
+          // poisons every segment after it, taking the whole timeline with it.
           const acc = Math.abs(y2 - y1) > 0 ? accX : accY;
           const direction = Math.atan2(y2 - y1, x2 - x1);
           const lastVel = lastFeedrate * Math.cos(direction - lastDirection);
