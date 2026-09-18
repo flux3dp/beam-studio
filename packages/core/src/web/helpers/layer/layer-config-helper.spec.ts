@@ -26,6 +26,7 @@ import {
   cloneLayerConfig,
   getConfigKeys,
   getLayerConfig,
+  getLayerDpmm,
   getLayersConfig,
   getPromarkLimit,
   initLayerConfig,
@@ -333,6 +334,25 @@ describe('test layer-config-helper', () => {
       frequency: { max: 4000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
     });
+  });
+
+  test('getLayerDpmm', () => {
+    const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
+
+    // laser layer: dpi option resolved against current workarea
+    writeData('layer 1', 'dpi', 'detailed');
+    expect(getLayerDpmm(layer1)).toBe(50);
+    useDocumentStore.setState({ workarea: 'fhx2rf' });
+    expect(getLayerDpmm(layer1)).toBe(40);
+
+    // printing layer: fixed printer dpmm regardless of dpi
+    writeData('layer 1', 'module', LayerModule.PRINTER);
+    expect(getLayerDpmm(layer1)).toBeCloseTo(300 / 25.4);
+    writeData('layer 1', 'module', LayerModule.PRINTER_4C);
+    expect(getLayerDpmm(layer1)).toBeCloseTo(600 / 25.4);
+
+    // no layer: falls back to medium
+    expect(getLayerDpmm(null)).toBe(10);
   });
 
   test('baseConfig when multipass-compensation changed', () => {

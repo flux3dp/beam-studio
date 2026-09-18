@@ -1,6 +1,8 @@
+const MAX_CANVAS_SIDE = 16384;
+
 export const getPngUrlFromSvg = async (
   svgElement: SVGGraphicsElement,
-  { img }: { img?: HTMLImageElement } = {},
+  { img, scale = 1 }: { img?: HTMLImageElement; scale?: number } = {},
 ): Promise<string> => {
   const svgString = new XMLSerializer().serializeToString(svgElement);
   const svgUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svgString)}`;
@@ -11,8 +13,13 @@ export const getPngUrlFromSvg = async (
 
     image.onload = () => {
       if (ctx) {
-        canvas.width = image.naturalWidth;
-        canvas.height = image.naturalHeight;
+        // ponytail: browsers blank the canvas past ~16384px per side; clamp instead of failing silently
+        const safeScale = Math.min(scale, MAX_CANVAS_SIDE / Math.max(image.naturalWidth, image.naturalHeight));
+
+        canvas.width = Math.round(image.naturalWidth * safeScale);
+        canvas.height = Math.round(image.naturalHeight * safeScale);
+
+        console.log(canvas.width, canvas.height);
         ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
         // Export the canvas content as a PNG data URL
         resolve(canvas.toDataURL('image/png'));
