@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Ce fichier contient un masque d’écrêtage et ne peut pas être dissocié.',
         execute_time_warning: "Cela dégroupera le DXF ou le SVG importé. Comme le fichier pourrait contenir un grand nombre d'éléments, le dégroupage pourrait prendre du temps. Êtes-vous sûr de procéder ?",
+        variable_text_warning: 'Les objets de texte variable ont été ignorés. Veuillez désactiver le texte variable avant de les désassembler.',
       },
       dxf_bounding_box_size_over: "La taille du dessin dépasse la zone de travail. Veuillez déplacer votre dessin plus près de l'origine dans votre logiciel CAO, ou assurez-vous que l'unité est définie correctement.",
       dxf_paste_failed: 'Échec du collage du DXF depuis le presse-papiers. Veuillez vous assurer que le contenu copié est un DXF valide.',

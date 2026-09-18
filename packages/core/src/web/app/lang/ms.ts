@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Fail ini mengandungi topeng klip dan tidak boleh dibongkar.',
         execute_time_warning: 'Ini akan menyahkumpulkan DXF atau SVG yang diimport. Oleh kerana fail itu mungkin mengandungi sejumlah besar elemen, ia mungkin mengambil masa untuk menyahkumpulkan. Adakah anda pasti untuk meneruskan?',
+        variable_text_warning: 'Objek teks pemboleh ubah dilangkau. Sila matikan teks pemboleh ubah sebelum meleraikannya.',
       },
       dxf_bounding_box_size_over: 'Saiz lukisan melebihi kawasan kerja. Sila pindahkan lukisan anda lebih dekat kepada asal dalam perisian CAD anda, atau pastikan unit ditetapkan dengan betul.',
       dxf_paste_failed: 'Gagal menampal DXF daripada papan keratan. Sila pastikan kandungan yang disalin ialah DXF yang sah.',

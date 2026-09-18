@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Denne fil indeholder en klippemaske og kan ikke adskilles.',
         execute_time_warning: 'Dette vil opdele importerede DXF eller SVG filer. Fordi filen kan indeholde et stort antal elementer, kan det tage tid at opdele. Er du sikker på at fortsætte?',
+        variable_text_warning: 'Objekter med variabel tekst blev sprunget over. Slå variabel tekst fra, før du skiller dem ad.',
       },
       dxf_bounding_box_size_over: 'Tegningsstørrelsen er uden for arbejdsområdet. Flyt venligst din tegning tættere på oprindelsen i dit CAD-software, eller sørg for, at enheden er indstillet korrekt.',
       dxf_paste_failed: 'Kunne ikke indsætte DXF fra udklipsholderen. Sørg for, at det kopierede indhold er gyldig DXF.',

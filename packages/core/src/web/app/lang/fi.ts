@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Tämä tiedosto sisältää leikkausmaskin eikä sitä voi purkaa.',
         execute_time_warning: 'Tämä purkaa tuodun tiedoston ryhmityksen. Koska tiedosto voi sisältää suuren määrän elementtejä, ryhmityksen purku voi viedä aikaa. Haluatko jatkaa?',
+        variable_text_warning: 'Muuttuvan tekstin objektit ohitettiin. Poista muuttuva teksti käytöstä ennen purkamista.',
       },
       dxf_bounding_box_size_over: 'Piirroksen koko ylittää työalueen. Siirrä piirrosta lähemmäs origoa CAD-ohjelmassa tai tarkista mittayksiköt.',
       dxf_paste_failed: 'DXF:n liittäminen leikepöydältä epäonnistui. Varmista, että kopioitu sisältö on kelvollinen DXF.',

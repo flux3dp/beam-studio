@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: '该文件包含剪切蒙版，无法拆解。',
         execute_time_warning: '正要解散外部汇入的 DXF 或是 SVG ，在含有物件较多的情况，可能会需要等一阵子，是否确定解散？',
+        variable_text_warning: '已跳过可变文字对象，请先关闭可变文字后再解散。',
       },
       dxf_bounding_box_size_over: '图像超出工作范围，请在 CAD 软体中将图像放置于原点附近，或确定图档单位是否正确设定。',
       dxf_paste_failed: '无法从剪贴板粘贴 DXF，请确认复制的内容为有效的 DXF。',

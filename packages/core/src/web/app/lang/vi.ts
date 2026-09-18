@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Tệp này chứa mặt nạ cắt và không thể được tách rời.',
         execute_time_warning: 'Điều này sẽ bỏ nhóm và có thể mất thời gian. Bạn có chắc tiếp tục?',
+        variable_text_warning: 'Đã bỏ qua các đối tượng văn bản biến đổi. Vui lòng tắt văn bản biến đổi trước khi tháo rời.',
       },
       dxf_bounding_box_size_over: 'Kích thước bản vẽ vượt quá khu vực làm việc. Vui lòng di chuyển gần gốc tọa độ hơn hoặc đảm bảo đơn vị chính xác',
       dxf_paste_failed: 'Không thể dán DXF từ bảng nhớ tạm. Vui lòng đảm bảo nội dung đã sao chép là DXF hợp lệ.',

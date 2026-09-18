@@ -472,6 +472,7 @@ const lang: ILang = {
       disassemble_use: {
         clip_path_warning: 'Diese Datei enthält eine Schnittmaske und kann nicht zerlegt werden.',
         execute_time_warning: 'Dadurch wird die Gruppierung von importiertem DXF oder SVG aufgehoben. Da die Datei möglicherweise eine große Anzahl von Elementen enthält, kann das Aufheben der Gruppierung einige Zeit dauern. Sind Sie sicher, fortzufahren?',
+        variable_text_warning: 'Objekte mit variablem Text wurden übersprungen. Bitte deaktivieren Sie den variablen Text, bevor Sie sie zerlegen.',
       },
       dxf_bounding_box_size_over: 'Die Zeichnungsgröße ist außerhalb des Arbeitsbereichs. Bewege bitte deine Zeichnung näher an den Ursprung in Ihrer CAD-Software oder stelle sicher, dass das Gerät richtig eingestellt ist.',
       dxf_paste_failed: 'DXF konnte nicht aus der Zwischenablage eingefügt werden. Bitte stelle sicher, dass der kopierte Inhalt gültiges DXF ist.',
