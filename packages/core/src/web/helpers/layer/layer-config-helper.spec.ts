@@ -350,6 +350,8 @@ describe('test layer-config-helper', () => {
     expect(getLayerDpmm(layer1)).toBeCloseTo(300 / 25.4);
     writeData('layer 1', 'module', LayerModule.PRINTER_4C);
     expect(getLayerDpmm(layer1)).toBeCloseTo(600 / 25.4);
+    writeData('layer 1', 'module', LayerModule.UV_WHITE_INK);
+    expect(getLayerDpmm(layer1)).toBeCloseTo(96 / 25.4);
 
     // no layer: falls back to medium
     expect(getLayerDpmm(null)).toBe(10);
