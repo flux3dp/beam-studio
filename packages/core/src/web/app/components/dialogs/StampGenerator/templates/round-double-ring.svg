@@ -1,0 +1,7 @@
+<svg width="150" height="150" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Double-ring round seal: outer Ø100 (ring 2.5), inner Ø68 (ring 1); arc baselines at r=42 for the band. -->
+<path fill-rule="evenodd" d="M25.000 75A50.000 50.000 0 1 1 125.000 75A50.000 50.000 0 1 1 25.000 75ZM27.500 75A47.500 47.500 0 1 1 122.500 75A47.500 47.500 0 1 1 27.500 75Z" fill="#E5400A"/>
+<path fill-rule="evenodd" d="M41.000 75A34.000 34.000 0 1 1 109.000 75A34.000 34.000 0 1 1 41.000 75ZM42.000 75A33.000 33.000 0 1 1 108.000 75A33.000 33.000 0 1 1 42.000 75Z" fill="#E5400A"/>
+<path d="M33.000 75A42.000 42.000 0 0 1 117.000 75" stroke="#1890FF"/>
+<path d="M33.000 75A42.000 42.000 0 0 0 117.000 75" stroke="#1890FF"/>
+</svg>

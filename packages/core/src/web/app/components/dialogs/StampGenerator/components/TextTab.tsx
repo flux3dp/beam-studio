@@ -11,7 +11,7 @@ import FontSelect from './FontSelect';
 import styles from './OptionsPanel.module.scss';
 
 const TextSlotFields = ({ showFont, slot }: { showFont: boolean; slot: TextSlotDef }): null | React.JSX.Element => {
-  const { generators: t } = useI18n();
+  const { generators: tGen } = useI18n();
   const values = useStampStore((s) => s.state?.texts[slot.id]);
   const updateText = useStampStore((s) => s.updateText);
 
@@ -40,7 +40,7 @@ const TextSlotFields = ({ showFont, slot }: { showFont: boolean; slot: TextSlotD
                     {showFont && <FontSelect font={values.font} onChange={(font) => patch({ font })} />}
                     {showLetterSpacing && (
                       <div className={styles.row}>
-                        <span>{t.text_options.letter_spacing}</span>
+                        <span>{tGen.text_options.letter_spacing}</span>
                         <InputNumber
                           onChange={(v) => patch({ letterSpacing: v ?? 0 })}
                           step={0.5}
@@ -50,7 +50,7 @@ const TextSlotFields = ({ showFont, slot }: { showFont: boolean; slot: TextSlotD
                     )}
                     {showFontSize && (
                       <div className={styles.row}>
-                        <span>{t.text_options.font_size}</span>
+                        <span>{tGen.text_options.font_size}</span>
                         <InputNumber
                           min={1}
                           onChange={(v) => patch({ fontSize: v ?? slot.fontSize ?? 1 })}
@@ -62,7 +62,7 @@ const TextSlotFields = ({ showFont, slot }: { showFont: boolean; slot: TextSlotD
                 ),
                 classNames: { body: styles.fields },
                 key: 'font',
-                label: <span className={styles.label}>{t.text_options.font_settings}</span>,
+                label: <span className={styles.label}>{tGen.text_options.font_settings}</span>,
               },
             ]}
           />

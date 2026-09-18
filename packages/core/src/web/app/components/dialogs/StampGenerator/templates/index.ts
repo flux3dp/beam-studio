@@ -4,6 +4,11 @@ import type { StampSize, StampTemplate } from '../types';
 // Color roles: #E5400A filled = frame (rings, even-odd), #1890FF stroke = arc-text baseline. Slot boxes live below, not in the SVG.
 import OVAL_COMPANY from './oval-company.svg?raw';
 import RECT_COMPANY from './rect-company.svg?raw';
+import RECT_RING_2X1 from './rect-ring-2x1.svg?raw';
+import RECT_RING_3X1 from './rect-ring-3x1.svg?raw';
+import RECT_RING_EU from './rect-ring-eu.svg?raw';
+import ROUND_DOUBLE_RING from './round-double-ring.svg?raw';
+import ROUND_RING from './round-ring.svg?raw';
 import SQUARE_RING from './square-ring.svg?raw';
 
 /**
@@ -11,6 +16,14 @@ import SQUARE_RING from './square-ring.svg?raw';
  * on macOS and Windows.
  */
 const KAI_FONTS = ['TW-MOE-Std-Kai', 'DFKaiShu-SB-Estd-BF', 'DFKai-SB'];
+
+/** 明朝体 for Japanese seals: Hiragino Mincho (macOS), Yu Mincho / MS Mincho (Windows). */
+const JP_FONTS = ['HiraMinProN-W6', 'YuMincho-Regular', 'MS-Mincho'];
+
+/** Western stamps: the bundled Montserrat Medium (always resolvable). */
+const WESTERN_FONTS = ['Montserrat-Medium'];
+
+const inch = (n: number) => Math.round(n * 25.4 * 10) / 10;
 
 /** 台灣公司小章 standard sizes, 四分 to 一吋 (1 分 = 0.3 cm). */
 const SQUARE_SIZES: StampSize[] = [
@@ -184,6 +197,246 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
         placeholder: '公司',
         vertical: true,
       },
+    ],
+  },
+  // ---- Japan ----
+  {
+    elements: [],
+    id: 'jp_personal_round',
+    nameKey: 'jp_personal_round',
+    preferredFonts: JP_FONTS,
+    sharedFont: true,
+    sizes: [10.5, 12, 13.5, 15, 16.5].map((widthMm) => ({ label: `${widthMm}mm`, widthMm })),
+    svgContent: ROUND_RING,
+    texts: [
+      {
+        bounds: { height: 76, width: 36, x: 57, y: 37 },
+        fit: 'stretch',
+        id: 'col_1',
+        labelKey: 'name',
+        placeholder: '山田',
+        vertical: true,
+      },
+    ],
+  },
+  {
+    elements: [],
+    id: 'jp_corporate_round',
+    nameKey: 'jp_corporate_round',
+    preferredFonts: JP_FONTS,
+    sharedFont: true,
+    sizes: [{ label: '18mm', widthMm: 18 }],
+    svgContent: ROUND_DOUBLE_RING,
+    texts: [
+      { baseline: 0, fontSize: 9, id: 'arc_top', labelKey: 'company_name', placeholder: '通量三維株式会社' },
+      {
+        bounds: { height: 58, width: 22, x: 64, y: 46 },
+        fit: 'stretch',
+        id: 'col_1',
+        labelKey: 'title',
+        placeholder: '代表取締役印',
+        vertical: true,
+      },
+    ],
+  },
+  {
+    elements: [],
+    id: 'jp_corporate_square',
+    nameKey: 'jp_corporate_square',
+    preferredFonts: JP_FONTS,
+    sharedFont: true,
+    sizes: [15, 18, 21, 24].map((widthMm) => ({ label: `${widthMm}mm`, widthMm })),
+    svgContent: SQUARE_RING,
+    // Columns read right to left, like 角印.
+    texts: [
+      {
+        bounds: { height: 86.7, width: 24, x: 94.3, y: 31.7 },
+        fit: 'stretch',
+        id: 'col_1',
+        labelKey: 'column_1',
+        placeholder: '通量三維',
+        vertical: true,
+      },
+      {
+        bounds: { height: 86.7, width: 24, x: 63.2, y: 31.7 },
+        fit: 'stretch',
+        id: 'col_2',
+        labelKey: 'column_2',
+        placeholder: '株式会社',
+        vertical: true,
+      },
+      {
+        bounds: { height: 86.7, width: 24, x: 32.1, y: 31.7 },
+        fit: 'stretch',
+        id: 'col_3',
+        labelKey: 'column_3',
+        placeholder: '之印',
+        vertical: true,
+      },
+    ],
+  },
+  // ---- USA ----
+  {
+    elements: [],
+    id: 'us_address',
+    nameKey: 'us_address',
+    preferredFonts: WESTERN_FONTS,
+    sharedFont: true,
+    sizes: [{ label: '1.5 × 3 in', widthMm: inch(3) }],
+    svgContent: RECT_RING_2X1,
+    texts: [
+      {
+        bounds: { height: 12, width: 120, x: 15, y: 46 },
+        fit: 'center',
+        fontSize: 10,
+        id: 'line_1',
+        labelKey: 'line_1',
+        placeholder: 'FLUX Inc.',
+      },
+      {
+        bounds: { height: 12, width: 120, x: 15, y: 60 },
+        fit: 'center',
+        fontSize: 10,
+        id: 'line_2',
+        labelKey: 'line_2',
+        placeholder: '123 Main Street',
+      },
+      {
+        bounds: { height: 12, width: 120, x: 15, y: 74 },
+        fit: 'center',
+        fontSize: 10,
+        id: 'line_3',
+        labelKey: 'line_3',
+        placeholder: 'Springfield, IL 62701',
+      },
+      {
+        bounds: { height: 12, width: 120, x: 15, y: 88 },
+        fit: 'center',
+        fontSize: 10,
+        id: 'line_4',
+        labelKey: 'line_4',
+        placeholder: 'Tel (555) 123-4567',
+      },
+    ],
+  },
+  {
+    elements: [],
+    id: 'us_round_seal',
+    nameKey: 'us_round_seal',
+    preferredFonts: WESTERN_FONTS,
+    sharedFont: true,
+    sizes: [{ label: '1.6 in', widthMm: inch(1.6) }],
+    svgContent: ROUND_DOUBLE_RING,
+    texts: [
+      { baseline: 0, fontSize: 9, id: 'arc_top', labelKey: 'company_name', placeholder: 'FLUX TECHNOLOGY INC.' },
+      {
+        bounds: { height: 12, width: 44, x: 53, y: 62 },
+        fit: 'center',
+        fontSize: 9,
+        id: 'line_1',
+        labelKey: 'line_1',
+        placeholder: 'OFFICIAL',
+      },
+      {
+        bounds: { height: 12, width: 44, x: 53, y: 76 },
+        fit: 'center',
+        fontSize: 9,
+        id: 'line_2',
+        labelKey: 'line_2',
+        placeholder: 'SEAL',
+      },
+      { baseline: 1, fontSize: 9, id: 'arc_bottom', labelKey: 'city', placeholder: 'SPRINGFIELD, ILLINOIS' },
+    ],
+  },
+  {
+    elements: [],
+    id: 'us_office',
+    nameKey: 'us_office',
+    preferredFonts: WESTERN_FONTS,
+    sharedFont: true,
+    sizes: [{ label: '0.5 × 1.5 in', widthMm: inch(1.5) }],
+    svgContent: RECT_RING_3X1,
+    texts: [
+      {
+        bounds: { height: 34, width: 122, x: 14, y: 58 },
+        fit: 'stretch',
+        id: 'line_1',
+        labelKey: 'word',
+        placeholder: 'PAID',
+      },
+    ],
+  },
+  // ---- Europe ----
+  {
+    elements: [],
+    id: 'eu_address',
+    nameKey: 'eu_address',
+    preferredFonts: WESTERN_FONTS,
+    sharedFont: true,
+    sizes: [58, 47, 38].map((widthMm) => ({ label: `${widthMm} × ${Math.round((widthMm * 22) / 58)} mm`, widthMm })),
+    svgContent: RECT_RING_EU,
+    texts: [
+      {
+        bounds: { height: 10, width: 126, x: 12, y: 53 },
+        fit: 'center',
+        fontSize: 8,
+        id: 'line_1',
+        labelKey: 'line_1',
+        placeholder: 'Musterfirma GmbH',
+      },
+      {
+        bounds: { height: 10, width: 126, x: 12, y: 64.5 },
+        fit: 'center',
+        fontSize: 8,
+        id: 'line_2',
+        labelKey: 'line_2',
+        placeholder: 'Musterstraße 12',
+      },
+      {
+        bounds: { height: 10, width: 126, x: 12, y: 76 },
+        fit: 'center',
+        fontSize: 8,
+        id: 'line_3',
+        labelKey: 'line_3',
+        placeholder: '10115 Berlin',
+      },
+      {
+        bounds: { height: 10, width: 126, x: 12, y: 87.5 },
+        fit: 'center',
+        fontSize: 8,
+        id: 'line_4',
+        labelKey: 'line_4',
+        placeholder: 'USt-IdNr. DE123456789',
+      },
+    ],
+  },
+  {
+    elements: [],
+    id: 'eu_round',
+    nameKey: 'eu_round',
+    preferredFonts: WESTERN_FONTS,
+    sharedFont: true,
+    sizes: [{ label: '40mm', widthMm: 40 }],
+    svgContent: ROUND_DOUBLE_RING,
+    texts: [
+      { baseline: 0, fontSize: 9, id: 'arc_top', labelKey: 'company_name', placeholder: 'MUSTERFIRMA GMBH' },
+      {
+        bounds: { height: 12, width: 44, x: 53, y: 62 },
+        fit: 'center',
+        fontSize: 9,
+        id: 'line_1',
+        labelKey: 'line_1',
+        placeholder: 'Geschäfts-',
+      },
+      {
+        bounds: { height: 12, width: 44, x: 53, y: 76 },
+        fit: 'center',
+        fontSize: 9,
+        id: 'line_2',
+        labelKey: 'line_2',
+        placeholder: 'führung',
+      },
+      { baseline: 1, fontSize: 9, id: 'arc_bottom', labelKey: 'city', placeholder: 'BERLIN' },
     ],
   },
 ];
