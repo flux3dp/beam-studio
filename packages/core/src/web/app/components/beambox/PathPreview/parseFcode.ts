@@ -34,6 +34,36 @@ const CHANNEL_X_OFFSETS_4C = [0, 42, 84, 126];
 // pixel_to_actual_position); right-nozzle swaths bake it into the motion.
 const RIGHT_NOZZLE_X_GAP = 0.55035;
 
+/**
+ * Galvo (BSL) list opcodes carried by fcode command byte 23, one record per
+ * command: uint16 opcode, uint8 param count, then that many float64. HEXA II
+ * galvo layers put all their geometry here instead of in movetos; see the fcode
+ * skill and HX2_GALVO_PROTOCOL.md §19.
+ */
+const GALVO_OP = {
+  DISABLE_LASER: 15,
+  ENABLE_LASER: 14,
+  END_OF_LIST: 19,
+  JUMP_ABS: 1,
+  JUMP_REL: 2,
+  LASER_ON: 5,
+  MARK_ABS: 3,
+  MARK_REL: 4,
+  SET_JUMP_SPEED: 7,
+  SET_LASER_POWER: 11,
+  SET_MARK_SPEED: 8,
+} as const;
+
+/**
+ * Drawn size of one dot (LASER_ON) when the spacing to its neighbour gives no
+ * better answer, and the range an inferred spacing is trusted within. A dot has
+ * no size in the file: like a printer pixel it is a point of deposited energy,
+ * so it is drawn at the pitch of the grid it belongs to.
+ */
+const GALVO_DOT_MM = 0.1;
+const GALVO_DOT_MIN_MM = 0.02;
+const GALVO_DOT_MAX_MM = 0.5;
+
 export class Reader {
   view: DataView;
 
@@ -79,6 +109,14 @@ export class Reader {
     return v;
   };
 
+  f64 = (): number => {
+    const v = this.view.getFloat64(this.pos, true);
+
+    this.pos += 8;
+
+    return v;
+  };
+
   tag = (): string => {
     const s = String.fromCharCode(...this.bytes.subarray(this.pos, this.pos + 4));
 
@@ -101,6 +139,30 @@ interface RasterState {
   pixelCount: number;
   pixels: number[];
   pwmMode: boolean;
+}
+
+/**
+ * One run of byte-23 commands. The gantry stands still for its whole duration:
+ * the head parked at the block centre and the galvo deflects the beam around it,
+ * so `beam = park + local` (§19.4, field-local mm about the lens centre).
+ */
+interface GalvoState {
+  /** mm, field-local, machine frame (y down) */
+  dotPitch: number;
+  enabled: boolean;
+  jumpF: number;
+  lastDot: [number, number] | null;
+  /** record index the current list started at */
+  listFirstRecord: number;
+  markF: number;
+  /** preview-space park position the field is centred on */
+  originX: number;
+  originY: number;
+  power: number;
+  savedF: number;
+  savedPwm: number;
+  x: number;
+  y: number;
 }
 
 /**
@@ -250,6 +312,14 @@ export interface ParsedFcode {
    * slicing must replay verbatim, ending at the first record-producing command.
    */
   blockPrologues: Array<[number, number]>;
+  /**
+   * [firstRecordIndex, lastRecordIndex] per galvo list (fcode byte 23), in order.
+   * A list is self-sufficient and indivisible: it opens with the prologue that
+   * sets speed, power and pulses and closes with SET_END_OF_LIST, and the board
+   * keeps no state across the boundary, so start-here slicing may only cut on a
+   * list edge (§19.3).
+   */
+  galvoLists: Array<[number, number]>;
   /** [recordIndex, resolutionChar | null]: gradient print mode changes, sparse */
   gradientEvents: Array<[number, null | number]>;
   metadata: Record<string, number | string>;
@@ -284,6 +354,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   const accelEvents: Array<[number, [number, number]]> = [];
   const sCurveEvents: Array<[number, number, [number, number] | null]> = [];
   const pauseEvents: Array<[number, number]> = [];
+  const galvoLists: Array<[number, number]> = [];
   let pendingBlock: null | { bodyStart: number; recordCount: number } = null;
   const reader = new Reader(buffer);
 
@@ -292,6 +363,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   // printS: the moveto S axis — printer swath sweeps carry s=1, travels s=0
   const state = { a: Number.NaN, f: 7500, printS: 0, pwm: 0, x: 0, y: 0, z: 0 };
   let raster: null | RasterState = null;
+  let galvo: GalvoState | null = null;
   // Payload length announced by the printer packet-length sub-command; the
   // payload marker is followed by that many raw unframed bytes.
   let printerPayloadLength = 0;
@@ -314,6 +386,23 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     parsedGcode.push(s);
     parsedGcode.push(t);
     recordOffsets.push(reader.pos);
+  };
+
+  // A NaN-position record makes the segments touching it non-rasterizable, hiding
+  // a synthetic jump from the traversal display (it is not actual head motion).
+  // The feedrate goes NaN with it: GcodePreview measures a segment's time over
+  // its length, and a NaN length with a live feedrate would put NaN into the
+  // cumulative timeline and take every later record with it.
+  const pushBreak = () => {
+    const { f: sf, x: sx, y: sy } = state;
+
+    state.x = Number.NaN;
+    state.y = Number.NaN;
+    state.f = Number.NaN;
+    push(0, 0);
+    state.x = sx;
+    state.y = sy;
+    state.f = sf;
   };
 
   const emitRasterSweep = (targetX: number) => {
@@ -380,18 +469,6 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
 
     state.f = Number.NaN;
 
-    // A NaN-position record makes the segments touching it non-rasterizable,
-    // hiding the synthetic jumps between runs/rows from the traversal display
-    // (they are not actual head motion; the real sweep travel above remains).
-    const pushBreak = () => {
-      const { x: sx, y: sy } = state;
-
-      state.x = Number.NaN;
-      state.y = Number.NaN;
-      push(0, 0);
-      state.x = sx;
-      state.y = sy;
-    };
     const colStep = Math.max(1, Math.round(0.2 / rowPitch));
     const rowStep = Math.max(1, Math.round(0.2 / rowPitch));
     const cellCount = Math.ceil(swath.w / colStep);
@@ -470,6 +547,146 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     state.f = savedF;
 
     return true;
+  };
+
+  // --- galvo (fcode byte 23) -------------------------------------------------
+  // The gantry does not move for the whole run, so the park position at its start
+  // is the field centre every local coordinate is measured from.
+
+  const beginGalvoRun = () => {
+    galvo = {
+      dotPitch: GALVO_DOT_MM,
+      enabled: false,
+      jumpF: 4000 * 60,
+      lastDot: null,
+      listFirstRecord: recordOffsets.length,
+      markF: state.f,
+      originX: state.x,
+      originY: state.y,
+      power: state.pwm,
+      savedF: state.f,
+      savedPwm: state.pwm,
+      x: 0,
+      y: 0,
+    };
+  };
+
+  const closeGalvoList = () => {
+    if (!galvo) return;
+
+    const last = recordOffsets.length - 1;
+
+    if (last >= galvo.listFirstRecord) galvoLists.push([galvo.listFirstRecord, last]);
+
+    galvo.listFirstRecord = recordOffsets.length;
+    // the board frames every list with disable_laser, so nothing carries over
+    galvo.enabled = false;
+    galvo.lastDot = null;
+  };
+
+  const endGalvoRun = () => {
+    if (!galvo) return;
+
+    closeGalvoList();
+    state.f = galvo.savedF;
+    state.pwm = galvo.savedPwm;
+    // the head never left the park position; break so the return does not draw
+    pushBreak();
+    state.x = galvo.originX;
+    state.y = galvo.originY;
+    galvo = null;
+  };
+
+  /** Field-local mm -> preview space. Preview y is negated, so local y subtracts. */
+  const galvoPoint = (): [number, number] => [galvo!.originX + galvo!.x, galvo!.originY - galvo!.y];
+
+  const emitGalvoMove = (marking: boolean) => {
+    const [x, y] = galvoPoint();
+
+    state.x = x;
+    state.y = y;
+    state.f = marking ? galvo!.markF : galvo!.jumpF;
+    state.pwm = galvo!.power;
+    push(marking && galvo!.enabled && galvo!.power > 0 ? 1 : 0);
+  };
+
+  /**
+   * A dot has position but no path, so it is drawn the way printer swaths draw
+   * deposited pixels: the jump that placed the beam already carried the motion
+   * time, and the mark itself is a zero-sim-time run (f = NaN) one pitch wide,
+   * bracketed by break records so the synthetic jumps stay out of the traversal
+   * display. Spacing to the previous dot gives the pitch, since dots come from a
+   * grid; the default only covers the first dot of a list.
+   */
+  const emitGalvoDot = () => {
+    const [cx, cy] = galvoPoint();
+
+    if (galvo!.lastDot) {
+      const gap = Math.hypot(cx - galvo!.lastDot[0], cy - galvo!.lastDot[1]);
+
+      if (gap >= GALVO_DOT_MIN_MM && gap <= GALVO_DOT_MAX_MM) galvo!.dotPitch = gap;
+    }
+
+    galvo!.lastDot = [cx, cy];
+
+    const half = galvo!.dotPitch / 2;
+    const savedF = state.f;
+
+    state.x = cx;
+    state.y = cy;
+    pushBreak();
+    state.f = Number.NaN;
+    state.x = cx - half;
+    push(0, 0, RASTER_T);
+    state.x = cx + half;
+    push(1, (galvo!.power * 255) / 100, RASTER_T);
+    state.f = savedF;
+    state.x = cx;
+    pushBreak();
+  };
+
+  const handleGalvoCommand = (opcode: number, params: number[]) => {
+    if (!galvo) beginGalvoRun();
+
+    switch (opcode) {
+      case GALVO_OP.JUMP_ABS:
+      case GALVO_OP.MARK_ABS:
+        [galvo!.x, galvo!.y] = params as [number, number];
+        emitGalvoMove(opcode === GALVO_OP.MARK_ABS);
+        break;
+      case GALVO_OP.JUMP_REL:
+      case GALVO_OP.MARK_REL:
+        galvo!.x += params[0];
+        galvo!.y += params[1];
+        emitGalvoMove(opcode === GALVO_OP.MARK_REL);
+        break;
+      case GALVO_OP.LASER_ON:
+        emitGalvoDot();
+        break;
+      case GALVO_OP.SET_JUMP_SPEED:
+        galvo!.jumpF = params[0] * 60; // mm/s -> mm/min
+        break;
+      case GALVO_OP.SET_MARK_SPEED:
+        galvo!.markF = params[0] * 60;
+        break;
+      case GALVO_OP.SET_LASER_POWER:
+        [galvo!.power] = params;
+        break;
+      case GALVO_OP.ENABLE_LASER:
+        galvo!.enabled = true;
+        break;
+      case GALVO_OP.DISABLE_LASER:
+        galvo!.enabled = false;
+        break;
+      case GALVO_OP.END_OF_LIST:
+        closeGalvoList();
+        break;
+      default:
+        // delays, scanner/laser delays, pulses, standby, wobble, IO, axis moves:
+        // no effect on where the beam goes, and the record is self-describing so
+        // an unknown opcode cannot desync the stream.
+        break;
+    }
   };
 
   const handleMoveto = (cmd: number) => {
@@ -556,6 +773,10 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
       const cmdStart = reader.pos;
       const cmd = reader.u8();
 
+      // A galvo block is a run of byte 23 and ends at the first command that is
+      // not one (§19.1) -- the container carries no block marker.
+      if (galvo && cmd !== 23) endGalvoRun();
+
       if (cmd & 128) {
         handleMoveto(cmd);
       } else {
@@ -567,6 +788,9 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         pendingBlock = null;
       }
     }
+
+    // a block ending on byte 23 closes the run too
+    endGalvoRun();
   };
 
   const parseSimpleCommand = (cmd: number, cmdStart: number) => {
@@ -657,6 +881,17 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
           accelEvents.push([recordOffsets.length, [cmdStart, reader.pos]]);
         }
 
+        break;
+      }
+      case 23: {
+        // galvo list record: uint16 opcode, uint8 param count, count x float64
+        const opcode = reader.u16();
+        const count = reader.u8();
+        const params: number[] = [];
+
+        for (let i = 0; i < count; i += 1) params.push(reader.f64());
+
+        handleGalvoCommand(opcode, params);
         break;
       }
       case 19: // flux custom cmd
@@ -793,6 +1028,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   return {
     accelEvents,
     blockPrologues,
+    galvoLists,
     gradientEvents,
     metadata,
     moduleEvents,
