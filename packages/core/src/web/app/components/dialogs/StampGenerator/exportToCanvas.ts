@@ -28,14 +28,18 @@ const exportLayer = async (
  * Exports the current stamp to the canvas as two layers aligned at the canvas origin:
  * - engrave: frames + text outlines (filled)
  * - outline: the outer contour of the outermost frame (cut)
+ * A stamp face is a mirror image, so `flipHorizontal` mirrors the geometry here, not in the preview.
  */
 export const exportToCanvas = async (): Promise<void> => {
-  const { shape, sizeRatio } = useStampStore.getState();
+  const { shape, sizeRatio, state } = useStampStore.getState();
 
-  if (!shape) throw new Error('No template selected');
+  if (!shape || !state) throw new Error('No template selected');
 
   const { layers: tLayers } = i18n.lang.stamp_generator;
   const batchCmd = new history.BatchCommand('Export Stamp');
+  const flip = () => state.flipHorizontal && shape.group.scale(-1, 1, shape.bounds.center);
+
+  flip();
 
   const engravePaths = shape.engrave.map((item) => {
     const path = pathItemToSvgPath(item);
@@ -46,8 +50,12 @@ export const exportToCanvas = async (): Promise<void> => {
     return path;
   });
 
+  const cutPath = pathItemToSvgPath(shape.cut);
+
+  flip(); // path data is captured; restore the preview's orientation before any await
+
   await exportLayer(tLayers.engrave, EXPORT_COLORS.engrave, engravePaths, shape, sizeRatio, batchCmd);
-  await exportLayer(tLayers.outline, EXPORT_COLORS.outline, [pathItemToSvgPath(shape.cut)], shape, sizeRatio, batchCmd);
+  await exportLayer(tLayers.outline, EXPORT_COLORS.outline, [cutPath], shape, sizeRatio, batchCmd);
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 };

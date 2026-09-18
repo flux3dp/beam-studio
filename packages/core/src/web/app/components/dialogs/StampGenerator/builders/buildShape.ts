@@ -62,8 +62,8 @@ export const invertFace = (cut: paper.PathItem, engraved: paper.PathItem[]): pap
 /**
  * Composes engrave + cut geometry for the current state inside one paper group.
  * Frames are cloned so the parsed template stays pristine; text is converted to outlines and
- * element shapes are fitted into their slots.
- * `flipHorizontal` mirrors everything about the outline center (a stamp face is a mirror image).
+ * element shapes are fitted into their slots. Built unmirrored so the preview reads naturally; the
+ * export mirrors it when `flipHorizontal` is set.
  */
 export const buildStampShape = async (
   parsed: ParsedTemplate,
@@ -80,8 +80,6 @@ export const buildStampShape = async (
     : [...frames, ...texts, ...elements];
 
   group.addChildren([...engrave, cut]);
-
-  if (state.flipHorizontal) group.scale(-1, 1, cut.bounds.center);
 
   return { bounds: cut.bounds.clone(), cut, engrave, group };
 };

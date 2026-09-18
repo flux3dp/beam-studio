@@ -2559,6 +2559,7 @@ export interface ILang {
     legend: {
       cut: string;
       engrave: string;
+      mirrored: string;
     };
     slots: {
       address: string;

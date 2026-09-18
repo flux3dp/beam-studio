@@ -2659,6 +2659,7 @@ const lang: ILang = {
     legend: {
       cut: '切割',
       engrave: '雕刻',
+      mirrored: '匯入時鏡像翻轉',
     },
     slots: {
       address: '地址',

@@ -12,6 +12,7 @@ import styles from './Preview.module.scss';
 const Preview = (): React.JSX.Element => {
   const previewSvg = useStampStore((s) => s.previewSvg);
   const shape = useStampStore((s) => s.shape);
+  const flipHorizontal = useStampStore((s) => s.state?.flipHorizontal ?? false);
   const sizeRatio = useStampStore((s) => s.sizeRatio);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -53,6 +54,7 @@ const Preview = (): React.JSX.Element => {
             <span className={styles['legend-swatch']} style={{ border: `1px dashed ${PREVIEW_COLORS.cut}` }} />
             <span>{t.legend.cut}</span>
           </div>
+          {flipHorizontal && <div className={styles['legend-entry']}>↔ {t.legend.mirrored}</div>}
         </div>
       </div>
       <div className={styles.canvas} ref={containerRef} />

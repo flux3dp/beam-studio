@@ -2659,6 +2659,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     legend: {
       cut: 'Cut',
       engrave: 'Engrave',
+      mirrored: 'Mirrored on import',
     },
     slots: {
       address: 'Address',
