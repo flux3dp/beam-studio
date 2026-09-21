@@ -1,7 +1,9 @@
+import { dpmm } from '@core/app/actions/beambox/constant';
 import history from '@core/app/svgedit/history/history';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import workareaManager from '@core/app/svgedit/workarea';
 
+import { getLayerDpmm } from '../layer/layer-config-helper';
 import { getObjectLayer } from '../layer/layer-helper';
 
 import { createAndFinalizeImage } from './createAndFinalizeImage';
@@ -87,7 +89,8 @@ export async function rasterizeGenericSvgElement({
     // 3. Create wrapper, rasterize, and finalize
     const wrapper = createSvgWrapper(initialDimensions, cloned);
     const img = new Image();
-    const href = await getPngUrlFromSvg(wrapper, { img });
+    const scale = getLayerDpmm(getObjectLayer(svgElement)?.elem) / dpmm;
+    const href = await getPngUrlFromSvg(wrapper, { img, scale });
     const dimensions = { height: img.height, width: img.width, x: initialDimensions.x, y: initialDimensions.y };
 
     return await createAndFinalizeImage({ angle, dimensions, href }, { isToSelect, parentCmd, svgElement });
