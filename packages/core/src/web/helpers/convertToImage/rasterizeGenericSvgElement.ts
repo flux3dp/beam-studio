@@ -90,9 +90,6 @@ export async function rasterizeGenericSvgElement({
     const wrapper = createSvgWrapper(initialDimensions, cloned);
     const img = new Image();
     const scale = getLayerDpmm(getObjectLayer(svgElement)?.elem) / dpmm;
-
-    console.log('scale', scale);
-
     const href = await getPngUrlFromSvg(wrapper, { img, scale });
     const dimensions = { height: img.height, width: img.width, x: initialDimensions.x, y: initialDimensions.y };
 

@@ -13,7 +13,7 @@ export const getPngUrlFromSvg = async (
 
     image.onload = () => {
       if (ctx) {
-        // ponytail: browsers blank the canvas past ~16384px per side; clamp instead of failing silently
+        // browsers blank the canvas past ~16384px per side; clamp instead of failing silently
         const safeScale = Math.min(scale, MAX_CANVAS_SIDE / Math.max(image.naturalWidth, image.naturalHeight));
 
         canvas.width = Math.round(image.naturalWidth * safeScale);
