@@ -1,4 +1,5 @@
 import { ipcMain } from 'electron';
+import { openSync } from 'fontkit';
 
 import { FontEvents } from '@core/app/constants/ipcEvents';
 
@@ -18,11 +19,42 @@ try {
 
 let fontsListCache: Font[] = [];
 
+// font-scanner's mac backend maps CoreText's weight trait onto a 9-step table, so
+// non-standard weights collapse: Noto Sans Mono Thin (usWeightClass 250) comes back as 400
+// and Chromium then renders Regular. Read the real value from the file instead: the named
+// instance's wght for a variable font (its OS/2 table only describes the default instance),
+// otherwise the OS/2 table.
+const os2WeightCache = new Map<string, number>();
+const withOs2Weight = (font: Font): Font => {
+  if (process.platform !== 'darwin' || !font.path) return font;
+
+  const key = `${font.path}#${font.postscriptName}`;
+  let weight = os2WeightCache.get(key);
+
+  if (weight === undefined) {
+    try {
+      const opened = openSync(font.path);
+      const face = 'fonts' in opened ? opened.fonts.find((f) => f.postscriptName === font.postscriptName) : opened;
+
+      // namedVariations is missing from @types/fontkit
+      const instances = (face as undefined | { namedVariations?: Record<string, { wght?: number }> })?.namedVariations;
+
+      weight = instances?.[font.style]?.wght ?? face?.['OS/2']?.usWeightClass ?? 0;
+    } catch {
+      weight = 0;
+    }
+
+    os2WeightCache.set(key, weight);
+  }
+
+  return weight >= 1 && weight <= 1000 ? { ...font, weight } : font;
+};
+
 const getAvailableFontsSync = (): Font[] => fontScanner?.getAvailableFontsSync() ?? [];
 
 const findFontsSync = (arg: Font) => {
   const availableFonts = fontsListCache || getAvailableFontsSync();
-  const matchFamily = availableFonts.filter((font) => font.family === arg.family);
+  const matchFamily = availableFonts.filter((font) => font.family === arg.family).map(withOs2Weight);
   const match = matchFamily.filter((font) => {
     let result = true;
 
@@ -40,14 +72,16 @@ const findFontsSync = (arg: Font) => {
 
 const findFontSync = (arg: Font): Font | undefined => {
   if (arg.postscriptName) {
-    return fontScanner?.findFontSync(arg);
+    const font = fontScanner?.findFontSync(arg);
+
+    return font && withOs2Weight(font);
   }
 
   arg.style = arg.style || 'Regular';
 
   const availableFonts = fontsListCache || getAvailableFontsSync();
   let font = availableFonts[0];
-  let match = availableFonts.filter((f) => f.family === arg.family);
+  let match = availableFonts.filter((f) => f.family === arg.family).map(withOs2Weight);
 
   font = match[0] || font;
 
