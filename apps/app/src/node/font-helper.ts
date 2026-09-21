@@ -19,17 +19,34 @@ try {
 
 let fontsListCache: Font[] = [];
 
-// font-scanner's mac backend maps CoreText's weight trait onto a 9-step table, so
-// non-standard weights collapse: Noto Sans Mono Thin (usWeightClass 250) comes back as 400
-// and Chromium then renders Regular. Read the real value from the file instead: the named
-// instance's wght for a variable font (its OS/2 table only describes the default instance),
-// otherwise the OS/2 table.
-const os2WeightCache = new Map<string, number>();
-const withOs2Weight = (font: Font): Font => {
-  if (process.platform !== 'darwin' || !font.path) return font;
+// font-scanner's mac and Linux backends map the platform weight (CoreText trait, fontconfig
+// scale) onto a 9-step table, so non-standard weights collapse: Noto Sans Mono Thin
+// (usWeightClass 250) comes back as 400 and Chromium then renders Regular. Windows returns
+// usWeightClass directly. Resolve the weight ourselves: a standard style name wins (Noto's Thin
+// and ExtraLight files both carry 250, so the file alone cannot tell them apart), otherwise
+// the named instance's wght for a variable font (its OS/2 table only describes the default
+// instance), otherwise the OS/2 table.
+const STYLE_WEIGHTS: Array<[RegExp, number]> = [
+  [/thin|hairline/i, 100],
+  [/extra ?light|ultra ?light/i, 200],
+  [/light/i, 300],
+  [/regular|normal|book|roman/i, 400],
+  [/medium/i, 500],
+  [/semi ?bold|demi ?bold/i, 600],
+  [/bold/i, 700],
+  [/extra ?bold|ultra ?bold/i, 800],
+  [/black|heavy/i, 900],
+];
+const fileWeightCache = new Map<string, number>();
+const withResolvedWeight = (font: Font, readFile: boolean): Font => {
+  const named = STYLE_WEIGHTS.find(([re]) => re.test(font.style))?.[1];
+
+  if (named) return { ...font, weight: named };
+
+  if (!readFile || !font.path) return font;
 
   const key = `${font.path}#${font.postscriptName}`;
-  let weight = os2WeightCache.get(key);
+  let weight = fileWeightCache.get(key);
 
   if (weight === undefined) {
     try {
@@ -44,17 +61,20 @@ const withOs2Weight = (font: Font): Font => {
       weight = 0;
     }
 
-    os2WeightCache.set(key, weight);
+    fileWeightCache.set(key, weight);
   }
 
   return weight >= 1 && weight <= 1000 ? { ...font, weight } : font;
 };
 
-const getAvailableFontsSync = (): Font[] => fontScanner?.getAvailableFontsSync() ?? [];
+const getAvailableFontsSync = (): Font[] =>
+  (fontScanner?.getAvailableFontsSync() ?? []).map((font) => withResolvedWeight(font, false));
 
 const findFontsSync = (arg: Font) => {
   const availableFonts = fontsListCache || getAvailableFontsSync();
-  const matchFamily = availableFonts.filter((font) => font.family === arg.family).map(withOs2Weight);
+  const matchFamily = availableFonts
+    .filter((font) => font.family === arg.family)
+    .map((font) => withResolvedWeight(font, true));
   const match = matchFamily.filter((font) => {
     let result = true;
 
@@ -74,14 +94,14 @@ const findFontSync = (arg: Font): Font | undefined => {
   if (arg.postscriptName) {
     const font = fontScanner?.findFontSync(arg);
 
-    return font && withOs2Weight(font);
+    return font && withResolvedWeight(font, true);
   }
 
   arg.style = arg.style || 'Regular';
 
   const availableFonts = fontsListCache || getAvailableFontsSync();
   let font = availableFonts[0];
-  let match = availableFonts.filter((f) => f.family === arg.family).map(withOs2Weight);
+  let match = availableFonts.filter((f) => f.family === arg.family).map((font) => withResolvedWeight(font, true));
 
   font = match[0] || font;
 
