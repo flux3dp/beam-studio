@@ -11,7 +11,7 @@ import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import isDev from '@core/helpers/is-dev';
 import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
-import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { getData, getLayerDpmm, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { cloneLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -69,7 +69,7 @@ const splitFullColorLayer = async (
 
   const { bbox, cmykBlob, rgbBlob } = await layerToImage(layer as SVGGElement, {
     blendKWithCmy,
-    dpmm: is4c ? 600 / 25.4 : 300 / 25.4,
+    dpmm: getLayerDpmm(layer),
     isFullColor: true,
   });
 
