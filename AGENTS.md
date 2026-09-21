@@ -259,6 +259,26 @@ To synchronize data between tabs:
 1. Send TabEvents from source view via ipcRenderer to main process
 2. Main process broadcasts to other views via ipcMain
 
+## Specs (Spec-Driven Development)
+
+We lean spec-driven: for any large feature, the agent writes a PRD **before** implementation and
+keeps it in `docs/prd/`. Small fixes and single-file changes don't need one.
+
+- **Location**: one Markdown file per feature (`docs/prd/<feature>.md`), or a folder
+  (`docs/prd/<feature>/`) when the feature has more than one document, e.g. a client PRD plus a
+  companion PRD for another repo (`docs/prd/flux-101/` is the reference example).
+- **Header table** (copy from an existing PRD): status, created/revised dates, tracking link
+  (ClickUp), companion PRD, and a `Related code` row with real paths. Verify every codebase claim
+  in the PRD against the source before relying on it — AI-drafted PRDs get file paths and "no
+  backend change needed" wrong.
+- **Living, not a snapshot**: when review changes a decision, edit the affected sections in place
+  and append a numbered decision (`D11`, `D12`, …) with the date. Don't leave the PRD contradicting
+  what was built.
+- **Companion PRDs** for work in other repos (flux-id, fluxghost, firmware) live next to the client
+  PRD here; the other repo's session implements from it.
+- **Not in the repo**: interactive HTML mockups, screenshots, meeting notes. Attach those to the
+  ClickUp task and link it from the PRD header.
+
 ## Important Configuration
 
 - **Nx Configuration**: nx.json - workspace settings and build caching
