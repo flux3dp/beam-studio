@@ -69,6 +69,34 @@ interface PreferenceSettingsObject {
 
 type TStatus = 'connected' | 'disconnected' | 'init';
 
+export interface SegmentObject {
+  angle: number; // rad, cv::minAreaRect of the polygon
+  area: number;
+  bbox: [number, number, number, number];
+  center: [number, number];
+  id: number;
+  polygon: Array<[number, number]>;
+  score: number;
+}
+
+export interface SegmentDetectResult {
+  error?: ErrorObject;
+  height: number;
+  objects: SegmentObject[];
+  success: boolean;
+  timeMs: number;
+  width: number;
+}
+
+const blobToBase64 = (blob: Blob): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.onload = () => resolve((reader.result as string).split(',')[1]);
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(blob);
+  });
+
 class SwiftrayClient extends EventEmitter {
   private socket?: WebSocket; // The websocket here is the browser websocket, not wrapped FLUX websocket
 
@@ -300,6 +328,35 @@ class SwiftrayClient extends EventEmitter {
   }
 
   // Parser API
+  /**
+   * MobileSAM "segment everything" on the given image (Swiftray >= 1.5.0, path /segment).
+   * Coordinates in the reply are pixels of `blob`.
+   */
+  public async detectContours(
+    blob: Blob,
+    opts: { grid?: [number, number]; maxObjects?: number; onProgress?: (done: number, total: number) => void } = {},
+  ): Promise<SegmentDetectResult> {
+    const image = await blobToBase64(blob);
+    const handlers = opts.onProgress
+      ? [
+          {
+            handler: ({ done, total }: { done: number; total: number }) => opts.onProgress!(done, total),
+            type: 'progress',
+          },
+        ]
+      : undefined;
+    const res = await this.action<SegmentDetectResult>(
+      '/segment',
+      'detect',
+      { grid: opts.grid, image, maxObjects: opts.maxObjects },
+      handlers,
+    );
+
+    if (!res.success) throw new Error(res.error?.message ?? 'Contour detection failed');
+
+    return res;
+  }
+
   public async loadSVG(
     file: IWrappedSwiftrayTaskFile,
     eventListeners: {

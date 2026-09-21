@@ -2,7 +2,7 @@ import { EventEmitter } from 'eventemitter3';
 
 import arrayBuffer from '@core/helpers/arrayBuffer';
 import Websocket from '@core/helpers/websocket';
-import type { AutoFit, AutoFitContour } from '@core/interfaces/IAutoFit';
+import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 import type { WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 class UtilsWebSocket extends EventEmitter {
@@ -251,211 +251,93 @@ class UtilsWebSocket extends EventEmitter {
 
   splitColor = async (
     blob: Blob,
-    opts: { colorType: 'cmy' | 'cmyk' | 'rgb'; onProgress?: (progress: number) => void } = {
-      colorType: 'rgb',
-    },
-  ) => {
+    opts: { colorType: 'cmy' | 'cmyk' | 'rgb'; onProgress?: (progress: number) => void } = { colorType: 'rgb' },
+  ): Promise<{ c: string; k: string; m: string; y: string }> => {
     const data = await arrayBuffer(blob);
-    const { colorType = 'rgb' } = opts;
+    const { colorType = 'rgb', onProgress } = opts;
 
-    return new Promise<{ c: string; k: string; m: string; y: string }>((resolve, reject) => {
-      this.removeCommandListeners();
-      this.setDefaultErrorResponse(reject);
-      this.setDefaultFatalResponse(reject);
-
-      let sentLength = 0;
-
-      this.on(
-        'message',
-        (response: { c?: string; data?: string; k?: string; m?: string; status: string; y?: string }) => {
-          if (response instanceof Blob) {
-            console.log('strange message from /ws/utils', response);
-            reject(new Error('strange message from /ws/utils'));
-          } else {
-            const { status } = response as {
-              status: string;
-            };
-
-            if (status === 'continue') {
-              while (sentLength < data.byteLength) {
-                const end = Math.min(sentLength + 1000000, data.byteLength);
-
-                this.ws.send(data.slice(sentLength, end));
-                sentLength = end;
-              }
-            } else if (status === 'uploaded') {
-              console.log('Upload finished');
-            } else if (status === 'ok') {
-              const { c, k, m, y } = response as { c: string; k: string; m: string; y: string };
-
-              resolve({ c, k, m, y });
-            } else {
-              console.log('strange message from /ws/utils', response);
-              reject(new Error('strange message from /ws/utils'));
-            }
-          }
-        },
-      );
-
-      const args = ['split_color', data.byteLength, colorType];
-
-      this.ws.send(args.join(' '));
-    });
-  };
-
-  getSimilarContours = async (
-    imgBlob: Blob,
-    opts?: {
-      isSplicingImg?: boolean;
-      onProgress?: (progress: number) => void;
-    },
-  ) => {
-    const data = await arrayBuffer(imgBlob);
-
-    return new Promise<AutoFit[]>((resolve, reject) => {
-      this.removeCommandListeners();
-      this.setDefaultErrorResponse(reject);
-      this.setDefaultFatalResponse(reject);
-
-      const { isSplicingImg, onProgress } = opts || {};
-      let sentLength = 0;
-
-      this.on('message', (response: { data?: AutoFit[]; info?: string; progress?: number }) => {
-        if (response instanceof Blob) {
-          console.log('strange message from /ws/utils', response);
-          reject(new Error('strange message from /ws/utils'));
-        } else {
-          const { status } = response as {
-            status: string;
-          };
-
-          if (status === 'continue') {
-            while (sentLength < data.byteLength) {
-              const end = Math.min(sentLength + 1000000, data.byteLength);
-
-              this.ws.send(data.slice(sentLength, end));
-              sentLength = end;
-            }
-          } else if (status === 'uploaded') {
-            console.log('Upload finished');
-          } else if (status === 'ok') {
-            console.log(response.data);
-            resolve(response.data!);
-          } else if (status === 'progress') {
-            onProgress?.(response.progress!);
-          } else if (status === 'error') {
-            reject(new Error(response.info));
-          } else {
-            console.log('strange message from /ws/utils', response);
-            reject(new Error('strange message from /ws/utils'));
-          }
-        }
-      });
-
-      const args = ['get_similar_contours', data.byteLength, isSplicingImg ? 1 : 0];
-
-      this.ws.send(args.join(' '));
+    return this.uploadCommand(['split_color', data.byteLength, colorType], data, {
+      onProgress,
+      pick: ({ c, k, m, y }: { c: string; k: string; m: string; y: string }) => ({ c, k, m, y }),
     });
   };
 
   getAllSimilarContours = async (
     imgBlob: Blob,
-    opts?: {
-      isSplicingImg?: boolean;
-      onProgress?: (progress: number) => void;
-    },
-  ) => {
+    opts?: { isSplicingImg?: boolean; onProgress?: (progress: number) => void },
+  ): Promise<AutoFitContour[][]> => {
     const data = await arrayBuffer(imgBlob);
 
-    return new Promise<AutoFitContour[][]>((resolve, reject) => {
-      this.removeCommandListeners();
-      this.setDefaultErrorResponse(reject);
-      this.setDefaultFatalResponse(reject);
-
-      const { isSplicingImg, onProgress } = opts || {};
-      let sentLength = 0;
-
-      this.on('message', (response: { data?: AutoFitContour[][]; info?: string; progress?: number }) => {
-        if (response instanceof Blob) {
-          console.log('strange message from /ws/utils', response);
-          reject(new Error('strange message from /ws/utils'));
-        } else {
-          const { status } = response as {
-            status: string;
-          };
-
-          if (status === 'continue') {
-            while (sentLength < data.byteLength) {
-              const end = Math.min(sentLength + 1000000, data.byteLength);
-
-              this.ws.send(data.slice(sentLength, end));
-              sentLength = end;
-            }
-          } else if (status === 'uploaded') {
-            console.log('Upload finished');
-          } else if (status === 'ok') {
-            console.log(response.data);
-            resolve(response.data!);
-          } else if (status === 'progress') {
-            onProgress?.(response.progress!);
-          } else if (status === 'error') {
-            reject(new Error(response.info));
-          } else {
-            console.log('strange message from /ws/utils', response);
-            reject(new Error('strange message from /ws/utils'));
-          }
-        }
-      });
-
-      const args = ['get_all_similar_contours', data.byteLength, isSplicingImg ? 1 : 0];
-
-      this.ws.send(args.join(' '));
+    return this.uploadCommand(['get_all_similar_contours', data.byteLength, opts?.isSplicingImg ? 1 : 0], data, {
+      onProgress: opts?.onProgress,
     });
   };
 
-  getConvexHull = async (imgBlob: Blob) => {
-    const data = await arrayBuffer(imgBlob);
-
-    return new Promise<Array<[number, number]>>((resolve, reject) => {
+  /** Two-phase command: text `<cmd> <bytes> ...` -> 'continue' -> binary chunks -> 'ok' with data. */
+  private uploadCommand = <T>(
+    args: Array<number | string>,
+    data: ArrayBuffer,
+    opts: { onProgress?: (p: number) => void; pick?: (reply: any) => T } = {},
+  ) =>
+    new Promise<T>((resolve, reject) => {
+      const { onProgress, pick = (reply) => reply.data } = opts;
       this.removeCommandListeners();
       this.setDefaultErrorResponse(reject);
       this.setDefaultFatalResponse(reject);
 
       let sentLength = 0;
 
-      this.on('message', (response: { data?: Array<[number, number]>; info?: string; progress?: number }) => {
+      this.on('message', (response: { info?: string; progress?: number; status?: string }) => {
         if (response instanceof Blob) {
-          console.log('strange message from /ws/utils', response);
           reject(new Error('strange message from /ws/utils'));
-        } else {
-          const { status } = response as {
-            status: string;
-          };
 
-          if (status === 'continue') {
-            while (sentLength < data.byteLength) {
-              const end = Math.min(sentLength + 1000000, data.byteLength);
+          return;
+        }
 
-              this.ws.send(data.slice(sentLength, end));
-              sentLength = end;
-            }
-          } else if (status === 'uploaded') {
-            console.log('Upload finished');
-          } else if (status === 'ok') {
-            resolve(response.data!);
-          } else if (status === 'error') {
-            reject(new Error(response.info));
-          } else {
-            console.log('strange message from /ws/utils', response);
-            reject(new Error('strange message from /ws/utils'));
+        const { status } = response;
+
+        if (status === 'continue') {
+          while (sentLength < data.byteLength) {
+            const end = Math.min(sentLength + 1000000, data.byteLength);
+
+            this.ws.send(data.slice(sentLength, end));
+            sentLength = end;
           }
+        } else if (status === 'ok') {
+          resolve(pick(response));
+        } else if (status === 'progress') {
+          onProgress?.(response.progress!);
+        } else if (status === 'error') {
+          reject(new Error(response.info));
+        } else if (status !== 'uploaded') {
+          reject(new Error('strange message from /ws/utils'));
         }
       });
 
-      const args = ['get_convex_hull', data.byteLength];
-
       this.ws.send(args.join(' '));
     });
+
+  /** Classic-CV detection stage only: flat contour list incl. singletons. */
+  getContours = async (imgBlob: Blob, opts?: { isSplicingImg?: boolean }): Promise<AutoFitContour[]> => {
+    const data = await arrayBuffer(imgBlob);
+
+    return this.uploadCommand(['get_contours', data.byteLength, opts?.isSplicingImg ? 1 : 0], data);
+  };
+
+  /** Grouping stage only: polygons from an external detector -> same groups as getAllSimilarContours. */
+  groupContours = async (
+    contours: Array<Array<[number, number]>>,
+    opts?: { isSplicingImg?: boolean },
+  ): Promise<AutoFitContour[][]> => {
+    const data = new TextEncoder().encode(JSON.stringify({ contours })).buffer as ArrayBuffer;
+
+    return this.uploadCommand(['group_contours', data.byteLength, opts?.isSplicingImg ? 1 : 0], data);
+  };
+
+  getConvexHull = async (imgBlob: Blob): Promise<Array<[number, number]>> => {
+    const data = await arrayBuffer(imgBlob);
+
+    return this.uploadCommand(['get_convex_hull', data.byteLength], data);
   };
 }
 

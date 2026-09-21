@@ -20,6 +20,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   auto_shrink: false,
   borderless: false,
   continuous_drawing: false,
+  'contour-engine': 'onnx',
   'crop-task-thumbnail': false,
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
   'default-autofocus': false,

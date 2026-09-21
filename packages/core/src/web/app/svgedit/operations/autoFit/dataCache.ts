@@ -1,3 +1,4 @@
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 interface DataCache {
@@ -16,3 +17,9 @@ export const setDataCache = (newCache: DataCache): void => {
 
   Object.assign(dataCache, { data: undefined, removedBgData: undefined, removedBgImageUrl: undefined, ...newCache });
 };
+
+// cached contours belong to the engine that produced them
+useGlobalPreferenceStore.subscribe(
+  (state) => state['contour-engine'],
+  () => setDataCache({ url: '' }),
+);

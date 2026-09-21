@@ -2453,6 +2453,8 @@ export interface ILang {
     unable_to_connect: string;
   };
   settings: {
+    ai_contour_detection: string;
+    ai_contour_detection_tooltip: string;
     anti_aliasing: string;
     auto_connect: string;
     auto_switch_tab: string;

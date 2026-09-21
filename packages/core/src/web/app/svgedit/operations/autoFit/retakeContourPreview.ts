@@ -11,12 +11,12 @@ import { bb2PerspectiveGrid, bm2PerspectiveGrid } from '@core/app/constants/fish
 import { setCameraPreviewState, useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import alertConfig from '@core/helpers/api/alert-config';
-import getUtilWS from '@core/helpers/api/utils-ws';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import i18n from '@core/helpers/i18n';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import { dataCache, setDataCache } from './dataCache';
+import { findSimilarContours } from './findSimilarContours';
 
 /**
  * Returns the single-shot region preview size in canvas pixels for the current workarea.
@@ -166,8 +166,7 @@ const retakeContourPreview = async (
 
     const resp = await fetch(newUrl);
     const blob = await resp.blob();
-    const utilWS = getUtilWS();
-    const data = await utilWS.getAllSimilarContours(blob, { isSplicingImg: true });
+    const data = await findSimilarContours(blob, { isSplicingImg: true });
 
     setDataCache({ data, url: newUrl });
 

@@ -11,6 +11,7 @@ const state: GlobalPreference = {
   'auto-switch-tab': true,
   auto_align: true,
   continuous_drawing: false,
+  'contour-engine': 'onnx',
   'crop-task-thumbnail': false,
   'default-autofocus': false,
   'default-borderless': false,

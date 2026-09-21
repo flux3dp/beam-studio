@@ -52,6 +52,7 @@ export type GlobalPreference = {
   'auto-switch-tab': boolean;
   auto_align: boolean;
   continuous_drawing: boolean;
+  'contour-engine': 'onnx' | 'opencv';
   'crop-task-thumbnail': boolean;
   'default-autofocus': boolean;
   'default-borderless': boolean;

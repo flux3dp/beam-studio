@@ -36,6 +36,13 @@ function Camera(): React.JSX.Element {
         label={lang.settings.keep_preview_result}
         onChange={(e) => setPreference('keep-preview-result', e)}
       />
+      <SettingSwitch
+        checked={getPreference('contour-engine') === 'onnx'}
+        id="set-ai-contour-detection"
+        label={lang.settings.ai_contour_detection}
+        onChange={(e) => setPreference('contour-engine', e ? 'onnx' : 'opencv')}
+        tooltip={lang.settings.ai_contour_detection_tooltip}
+      />
     </>
   );
 }
