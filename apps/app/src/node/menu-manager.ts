@@ -435,6 +435,12 @@ class MenuManager extends EventEmitter {
       if (this.appmenu) {
         Menu.setApplicationMenu(this.appmenu);
       }
+
+      // A device submenu carries items the renderer controls the visibility of (the MOPA galvo
+      // entries follow a document setting). The renderer caches the item lookup and what it last
+      // applied, so both go stale the moment the item set changes -- announce it like
+      // constructMenu does, or those items keep whatever visibility they were built with.
+      this.emit(MenuEvents.NewAppMenu);
     }
   }
 
@@ -484,6 +490,7 @@ class MenuManager extends EventEmitter {
       }
 
       Menu.setApplicationMenu(this.appmenu);
+      this.emit(MenuEvents.NewAppMenu);
     }
   }
 
