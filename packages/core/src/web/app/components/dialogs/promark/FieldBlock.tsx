@@ -15,10 +15,14 @@ interface Props {
   field: Field;
   /** shown when the head focuses independently of the gantry; omitted leaves the row out */
   focusHeight?: number;
-  /** offsets are hidden when the head's position is handled as a module offset instead */
-  hideOffsets?: boolean;
   isInch: boolean;
+  /**
+   * Offsets to show in place of the field's own. HEXA II keeps the head's position relative to the
+   * nozzle in toolhead_shift, so the dialog owns those two numbers rather than the galvo config.
+   */
+  offsets?: { x: number; y: number };
   onFocusHeightChange?: (value: number) => void;
+  onOffsetsChange?: (offsets: { x: number; y: number }) => void;
   /** given when the field lens size is chosen rather than derived from the workarea */
   onWidthChange?: (value: number) => void;
   setField: Dispatch<SetStateAction<Field>>;
@@ -29,9 +33,10 @@ interface Props {
 const FieldBlock = ({
   field,
   focusHeight,
-  hideOffsets = false,
   isInch,
+  offsets,
   onFocusHeightChange,
+  onOffsetsChange,
   onWidthChange,
   setField,
   width,
@@ -42,9 +47,16 @@ const FieldBlock = ({
     promark_settings: t,
   } = useI18n();
   const { angle, offsetX, offsetY } = field;
+  const shownOffsets = offsets ?? { x: offsetX, y: offsetY };
   // UnitInput reports null while its box is empty; Field has no room for that
   const handleChange = (key: keyof Field) => (val: null | number) => {
     if (val !== null) setField((cur) => ({ ...cur, [key]: val }));
+  };
+  const handleOffsetChange = (axis: 'x' | 'y') => (val: null | number) => {
+    if (val === null) return;
+
+    if (offsets) onOffsetsChange?.({ ...offsets, [axis]: val });
+    else handleChange(axis === 'x' ? 'offsetX' : 'offsetY')(val);
   };
 
   return (
@@ -89,36 +101,32 @@ const FieldBlock = ({
           />
         </Flex>
       )}
-      {!hideOffsets && (
-        <>
-          <Flex align="center" className={styles.row} justify="space-between">
-            <span className={styles.label}>{t.offsetX}</span>
-            <UnitInput
-              addonAfter={isInch ? 'in' : 'mm'}
-              className={styles.input}
-              data-testid="offset-x"
-              isInch={isInch}
-              onChange={handleChange('offsetX')}
-              precision={isInch ? 5 : 3}
-              size="small"
-              value={offsetX}
-            />
-          </Flex>
-          <Flex align="center" className={styles.row} justify="space-between">
-            <span className={styles.label}>{t.offsetY}</span>
-            <UnitInput
-              addonAfter={isInch ? 'in' : 'mm'}
-              className={styles.input}
-              data-testid="offset-y"
-              isInch={isInch}
-              onChange={handleChange('offsetY')}
-              precision={isInch ? 5 : 3}
-              size="small"
-              value={offsetY}
-            />
-          </Flex>
-        </>
-      )}
+      <Flex align="center" className={styles.row} justify="space-between">
+        <span className={styles.label}>{t.offsetX}</span>
+        <UnitInput
+          addonAfter={isInch ? 'in' : 'mm'}
+          className={styles.input}
+          data-testid="offset-x"
+          isInch={isInch}
+          onChange={handleOffsetChange('x')}
+          precision={isInch ? 5 : 3}
+          size="small"
+          value={shownOffsets.x}
+        />
+      </Flex>
+      <Flex align="center" className={styles.row} justify="space-between">
+        <span className={styles.label}>{t.offsetY}</span>
+        <UnitInput
+          addonAfter={isInch ? 'in' : 'mm'}
+          className={styles.input}
+          data-testid="offset-y"
+          isInch={isInch}
+          onChange={handleOffsetChange('y')}
+          precision={isInch ? 5 : 3}
+          size="small"
+          value={shownOffsets.y}
+        />
+      </Flex>
       <Flex align="center" className={styles.row} justify="space-between">
         <span className={styles.label}>{t.angle}</span>
         <UnitInput

@@ -1,0 +1,13 @@
+@use '@core/styles/variables' as v;
+
+.notes {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 12px;
+  line-height: 1.6;
+  color: v.$print-default-font-color;
+
+  li + li {
+    margin-top: 4px;
+  }
+}

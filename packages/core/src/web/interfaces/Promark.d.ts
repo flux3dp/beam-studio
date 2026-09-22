@@ -13,8 +13,15 @@ export type PromarkInfo =
 
 export interface Field {
   angle: number;
+  /**
+   * Axis orientation of a galvo scan head, stored alongside the rest of the field. Optional
+   * because only the HEXA II galvo heads carry them -- Promark's firmware has no such setting.
+   */
+  invertX?: boolean;
+  invertY?: boolean;
   offsetX: number;
   offsetY: number;
+  swapXY?: boolean;
 }
 
 export interface RedDot {

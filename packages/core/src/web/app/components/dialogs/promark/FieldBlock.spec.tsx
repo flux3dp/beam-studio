@@ -8,6 +8,7 @@ const mockSetField = jest.fn();
 const mockField = { angle: 0, offsetX: 0, offsetY: 0 };
 const mockWidthChange = jest.fn();
 const mockFocusHeightChange = jest.fn();
+const mockOffsetsChange = jest.fn();
 
 describe('test FieldBlock', () => {
   beforeEach(() => {
@@ -21,14 +22,15 @@ describe('test FieldBlock', () => {
   });
 
   describe('galvo variant', () => {
-    it('should offer the field lens sizes and hide the module offsets', () => {
-      const { queryByTestId } = render(
+    const renderGalvo = () =>
+      render(
         <FieldBlock
           field={mockField}
           focusHeight={8}
-          hideOffsets
           isInch={false}
+          offsets={{ x: 1.5, y: -2 }}
           onFocusHeightChange={mockFocusHeightChange}
+          onOffsetsChange={mockOffsetsChange}
           onWidthChange={mockWidthChange}
           setField={mockSetField}
           width={110}
@@ -36,26 +38,36 @@ describe('test FieldBlock', () => {
         />,
       );
 
-      // the head's position relative to the nozzle is module offset, not field offset
-      expect(queryByTestId('offset-x')).not.toBeInTheDocument();
-      expect(queryByTestId('offset-y')).not.toBeInTheDocument();
+    it('should offer the field lens sizes', () => {
+      const { queryByTestId } = renderGalvo();
+
       expect(queryByTestId('field-width')).toBeInTheDocument();
       expect(queryByTestId('angle')).toBeInTheDocument();
     });
 
+    // the head's position relative to the nozzle is module offset, held in toolhead_shift, so the
+    // dialog owns these two numbers and the field's own offsets stay untouched
+    it('should show the offsets it was given rather than the field ones', () => {
+      const { getByTestId } = renderGalvo();
+
+      expect(getByTestId('offset-x')).toHaveValue('1.5');
+      expect(getByTestId('offset-y')).toHaveValue('-2');
+    });
+
+    it('should report an offset change without writing to the field', () => {
+      const { getByTestId } = renderGalvo();
+
+      fireEvent.change(getByTestId('offset-x'), { target: { value: '10' } });
+      expect(mockOffsetsChange).toHaveBeenLastCalledWith({ x: 10, y: -2 });
+
+      fireEvent.change(getByTestId('offset-y'), { target: { value: '4' } });
+      expect(mockOffsetsChange).toHaveBeenLastCalledWith({ x: 1.5, y: 4 });
+
+      expect(mockSetField).not.toHaveBeenCalled();
+    });
+
     it('should report a focus height change', () => {
-      const { getByTestId } = render(
-        <FieldBlock
-          field={mockField}
-          focusHeight={8}
-          hideOffsets
-          isInch={false}
-          onFocusHeightChange={mockFocusHeightChange}
-          setField={mockSetField}
-          width={110}
-          widthOptions={[70, 110]}
-        />,
-      );
+      const { getByTestId } = renderGalvo();
 
       fireEvent.change(getByTestId('focus-height'), { target: { value: '12.5' } });
       expect(mockFocusHeightChange).toHaveBeenLastCalledWith(12.5);
@@ -68,6 +80,7 @@ describe('test FieldBlock', () => {
 
       expect(queryByTestId('field-width')).not.toBeInTheDocument();
       expect(queryByTestId('focus-height')).not.toBeInTheDocument();
+      // without an offsets prop the rows fall back to the field's own numbers
       expect(queryByTestId('offset-x')).toBeInTheDocument();
     });
   });

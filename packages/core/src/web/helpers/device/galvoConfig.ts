@@ -14,7 +14,8 @@ export type GalvoWorkarea = (typeof galvoWorkareaOptions)[number];
  * Settings of one galvo module head, stored on the machine.
  *
  * field.offsetX and field.offsetY stay zero on HEXA II: the head's position relative to the nozzle
- * is module offset, handled by toolhead_shift, so the settings dialog hides them.
+ * is module offset, so the settings dialog reads and writes those two numbers through
+ * toolhead_shift instead -- the same place module calibration and the canvas boundary read them.
  */
 export interface GalvoConfig {
   field: Field;
@@ -31,13 +32,16 @@ export interface GalvoConfig {
  * no correction were applied. The firmware keeps no defaults of its own, so these have to agree
  * with the player's own fallback.
  *
+ * Axis orientation is the one exception -- it is mounting, not calibration -- so it is overridden
+ * per head in getDefaultGalvoConfig rather than left neutral here.
+ *
  * Only one focusHeight is needed even though the two field lens sizes focus differently: workarea
  * falls back to 110 as well, so an unconfigured machine is always the 110 case.
  *
  * TODO: focusHeight is 0 as a placeholder. How it drives the machine is not settled yet.
  */
 export const defaultGalvoConfig: GalvoConfig = {
-  field: { angle: 0, offsetX: 0, offsetY: 0 },
+  field: { angle: 0, invertX: false, invertY: false, offsetX: 0, offsetY: 0, swapXY: false },
   focusHeight: 0,
   galvoParameters: {
     x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
@@ -56,6 +60,21 @@ export type GalvoModule = keyof typeof configKeys;
 
 export const isGalvoModule = (module: LayerModuleType): module is GalvoModule => module in configKeys;
 
+/**
+ * How each head is mounted, which is fixed by the hardware rather than measured per machine: the
+ * CO2 galvo sits mirrored in both axes, the MOPA one does not.
+ */
+const defaultAxesByModule = {
+  [LayerModule.GALVO_CO2]: { invertX: true, invertY: true, swapXY: false },
+  [LayerModule.GALVO_MOPA]: { invertX: false, invertY: false, swapXY: false },
+} as const satisfies Record<GalvoModule, Pick<Field, 'invertX' | 'invertY' | 'swapXY'>>;
+
+/** The defaults standing in for a head the machine has never been configured for. */
+export const getDefaultGalvoConfig = (module: GalvoModule): GalvoConfig => ({
+  ...defaultGalvoConfig,
+  field: { ...defaultGalvoConfig.field, ...defaultAxesByModule[module] },
+});
+
 // keyed by `${uuid}:${configKey}`, in memory only
 const cache: Record<string, GalvoConfig> = {};
 const isConfigured: Record<string, boolean> = {};
@@ -68,7 +87,9 @@ export const getGalvoConfig = async (
 ): Promise<GalvoConfig> => {
   const uuid = deviceMaster.currentDevice?.info.uuid;
 
-  if (!uuid) return { ...defaultGalvoConfig };
+  const defaults = getDefaultGalvoConfig(module);
+
+  if (!uuid) return defaults;
 
   const cacheKey = getCacheKey(uuid, module);
 
@@ -79,7 +100,18 @@ export const getGalvoConfig = async (
     // an uncalibrated machine answers empty, and a calibrated one may still omit keys it has
     // never been given, so every read is layered onto the defaults
     const stored = res.value ? (JSON.parse(res.value) as Partial<GalvoConfig>) : {};
-    const config: GalvoConfig = { ...defaultGalvoConfig, ...stored };
+    // One level deep: a machine configured before a key existed answers without it, and a plain
+    // spread would drop the whole nested group's defaults along with it.
+    const config: GalvoConfig = {
+      ...defaults,
+      ...stored,
+      field: { ...defaults.field, ...stored.field },
+      galvoParameters: {
+        x: { ...defaults.galvoParameters.x, ...stored.galvoParameters?.x },
+        y: { ...defaults.galvoParameters.y, ...stored.galvoParameters?.y },
+      },
+      redDot: { ...defaults.redDot, ...stored.redDot },
+    };
 
     cache[cacheKey] = config;
     // an empty answer means the machine has never been configured for this head
@@ -90,7 +122,7 @@ export const getGalvoConfig = async (
     console.error(`Failed to get ${configKeys[module]} from device`, error);
   }
 
-  return { ...defaultGalvoConfig };
+  return defaults;
 };
 
 /**
@@ -107,7 +139,7 @@ export const updateGalvoConfig = async (module: GalvoModule, config: Partial<Gal
 
     const cacheKey = getCacheKey(uuid, module);
 
-    cache[cacheKey] = { ...(cache[cacheKey] ?? defaultGalvoConfig), ...config };
+    cache[cacheKey] = { ...(cache[cacheKey] ?? getDefaultGalvoConfig(module)), ...config };
     isConfigured[cacheKey] = true;
 
     return true;

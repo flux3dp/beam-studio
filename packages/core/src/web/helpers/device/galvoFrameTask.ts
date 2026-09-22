@@ -19,7 +19,7 @@ const PROGRESS_ID = 'galvo-frame';
  * under test. Its job origin is forced to the middle of that square, so the machine places the
  * frame around its current position instead of homing and losing the spot the operator chose.
  *
- * Requires the head to be coupled to the nozzle: a galvo reaches only its own field.
+ * Requires the head to be connected to the nozzle: a galvo reaches only its own field.
  */
 export const runGalvoFrame = async ({
   model,

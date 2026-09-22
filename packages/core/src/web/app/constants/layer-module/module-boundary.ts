@@ -20,7 +20,7 @@ const moduleBoundaries: Partial<
     [LayerModule.UV_VARNISH]: { bottom: 0, left: 0, right: 30, top: 0 },
     [LayerModule.UV_WHITE_INK]: { bottom: 0, left: 0, right: 30, top: 0 },
   },
-  // The galvo heads sit to the right, whether coupled to the nozzle or parked at the edge, so both
+  // The galvo heads sit to the right, whether connected to the nozzle or parked at the edge, so both
   // states lose the same strip of travel.
   // TODO: confirm how much, the values below are placeholders
   fhx2galvo: {
