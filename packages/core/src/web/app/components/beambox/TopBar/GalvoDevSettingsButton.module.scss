@@ -1,0 +1,21 @@
+@use './_mixins.scss' as mixins;
+
+.button {
+  @include mixins.button-container();
+
+  & {
+    display: flex;
+    align-items: center;
+  }
+
+  // Sized by font-size: this is an antd icon glyph, not one of the 30px inline svgs its
+  // siblings use.
+  .icon {
+    @include mixins.button-opacity();
+
+    & {
+      font-size: 20px;
+      color: #ffffff;
+    }
+  }
+}

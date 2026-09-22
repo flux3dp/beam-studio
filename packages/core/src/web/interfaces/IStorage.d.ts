@@ -1,6 +1,7 @@
 import type { Flux101Storage } from '@core/app/components/dialogs/Flux101/progress';
 import type { PncOffset } from '@core/app/components/dialogs/PrintAndCut/calibration/offsetStore';
 import type { ColorConfig } from '@core/app/constants/color-constants';
+import type { GalvoDevOverrides } from '@core/app/constants/galvo-dev-settings';
 import type { History } from '@core/app/contexts/ElementPanelContext';
 import type { IRecord as AnnouncementRecord } from '@core/helpers/announcement-helper';
 import type { DeviceStore } from '@core/helpers/device/deviceStore';
@@ -58,6 +59,12 @@ export interface Storage {
   'font-history': string[];
   /** font name to display name */
   'font-name-map': Record<string, string>;
+  /**
+   * Developer overrides for the HEXA II galvo path, keyed the way swiftray's exporter reads
+   * them. Only keys the user actually changed are stored; the rest fall through to swiftray's
+   * own defaults instead of being pinned here, where they could drift.
+   */
+  'galvo-dev-settings'?: GalvoDevOverrides;
   guessing_poke: boolean;
   'keep-flux-id-login': boolean;
   'last-installed-version': string;
