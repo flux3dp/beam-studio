@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | In progress — PR 2 (fluxghost) committed, PR 3 (Swiftray `feat/segment-onnx`) and PR 4 (beam-studio `feat/onnx-contour-detection`) written, awaiting build/test on a Qt machine; §10 decisions pending |
+| **Status** | PRs open: fluxghost #122, Swiftray #530, beam-studio #1006 (Auto Fit v2 verified on Intel Mac). Auto Align extraction (PR 1) and image-contour align (PR 5) not started; §10 items 2–4 pending |
 | **Author** | Product (AI PM agent) with Dean |
 | **Created** | 2026-09-21 |
 | **Target product** | Beam Studio desktop (Electron). Web falls back to the OpenCV engine (no Swiftray). |
