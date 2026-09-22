@@ -67,7 +67,7 @@ All state lives inside the `svgcanvas.ts` closure:
 - `QWebSocketServer` on **localhost:6611** (hardcoded, `main_application.cpp:49`). Envelope: request `{type:'action', path, data:{action, id, params}}`; reply `{id, result, type:'callback'|'progress'|'chunk'}`; result carries `success` + `error`. Binary frames are just UTF-8 JSON (`processBinaryMessage`), so images travel as base64 inside JSON. Routing by path prefix (`/devices`, `/devices/*`, `/parser`, `/ws/sr/system`), flat if/else on action strings.
 - Long jobs run on a worker `QThread` guarded by `canvas_mutex_` (busy → "The backend is currently busy"). Segmentation must **not** share that mutex (a convert must not block detection and vice versa).
 - Spawned by Electron `backend-manager.ts:255` (`--daemon`), auto-respawn, orphan sweep; **absent on web and Linux** (`checkSwiftray()` → `hasSwiftray`). Client: `swiftray-client.ts` singleton, version from `getSystemInfo()`, gates via `versionChecker` keys (`SWIFTRAY_SUPPORT_BINARY = '1.3.7'`).
-- Distributed as a versioned zip from S3 at Beam Studio CD time (`app.cd.mac.yml:138-160`, `app.cd.x64.yml:112-120`, pin `SWIFTRAY_DAEMON_VERSION: 1.4.10`), landing in `<resources>/backend` via electron-builder `extraResources`. macOS CI builds only x86_64; arm64 is built on a dev machine.
+- Distributed as a versioned zip from S3 at Beam Studio CD time (`app.cd.mac.yml:138-160`, `app.cd.x64.yml:112-120`, pin `SWIFTRAY_DAEMON_VERSION: 1.4.11`), landing in `<resources>/backend` via electron-builder `extraResources`. macOS CI builds only x86_64; arm64 is built on a dev machine.
 
 ### 2.5 mini-sam (what is proven)
 
@@ -136,7 +136,7 @@ Progress: `type:'progress'` messages every ~10 decoder calls (`{done, total}`) r
 
 Images are base64 in JSON (≈ +33 %); a full 3000×2100 bed PNG is a few MB, a region tile far less. Acceptable; the existing `SWIFTRAY_SUPPORT_BINARY` path already sends >4 KB payloads as binary frames.
 
-Version bump: Swiftray `1.5.0`; new `versionChecker` key `SWIFTRAY_SEGMENT = '1.5.0'`.
+Version: Swiftray `1.4.11` (develop's current bump; no separate minor); new `versionChecker` key `SWIFTRAY_SEGMENT = '1.4.11'`.
 
 ### 5.3 Frontend engine abstraction, preference, fallback, warning
 
@@ -265,11 +265,11 @@ export const autoAlign = {
 | item | number | consequence |
 |---|---|---|
 | Full pass, x64 desktop CPU | ≈ 3.3 s | Auto Fit is comparable to today's fluxghost round trip; align runs stay behind the preview but catch up |
-| Full pass, Intel Mac / low-RAM Windows | unmeasured, expect 2–4× | warning (§5.3); coalescing keeps the queue depth at 1 |
+| Full pass, Intel Mac (i5-1038NG7), Swiftray, 600 mm bed preview | **8.5 s wall / 7.4 s model** after downscaling to 1280 px (was 58 s at the native 6000 px) — measured 2026-09-22 | frontend downscales to `ONNX_MAX_SIDE = 1280` before sending (§5.3); warning (§5.3); coalescing keeps the queue depth at 1 |
 | Apple Silicon CPU / CoreML | unmeasured (`mac-todo.md` §4) | fill the timing matrix before choosing default EP on mac |
 | Model RAM | ≈ 560 MB loaded | lazy load + 5 min idle unload; this is why < 8 GB machines get the warning |
 | Install size | +16 MB ORT, +43 MB models | inside the Swiftray S3 zip; INT8 (~12 MB) is the follow-up if size is challenged |
-| Tile crop vs full bed | encoder rescales longest side to 1024 | a 100 mm tile gets ~10× the pixel budget per mm of a full-bed pass — region-based detection is *better*, not just faster |
+| Tile crop vs full bed | encoder rescales longest side to 1024; the frontend caps inputs at 1280 px so full-res mask/polygon work and transfer don't scale with bed size | a 100 mm tile gets ~10× the pixel budget per mm of a full-bed pass — region-based detection is *better*, not just faster |
 
 Region tiles that partially contain an object produce truncated masks; the roi-border filter in §5.5 step 3 plus re-detection when the neighbour lands handles it. Objects larger than one tile (e.g. a full sheet) are found only after the union roi covers them; the accumulator crop makes this automatic.
 
@@ -277,7 +277,7 @@ Region tiles that partially contain an object produce truncated masks; the roi-b
 
 ## 8. Packaging & distribution
 
-- Swiftray zip gains `models/mobile_sam.{encoder,decoder}.onnx` and the ORT shared lib; `app.cd.mac.yml` / `app.cd.x64.yml` bump `SWIFTRAY_DAEMON_VERSION` to `1.5.0`. mac `codesign --deep` already covers added dylibs; verify notarisation accepts the ORT dylib (it is signed by Microsoft, should be fine).
+- Swiftray zip gains `models/mobile_sam.{encoder,decoder}.onnx` and the ORT shared lib; `app.cd.mac.yml` / `app.cd.x64.yml` bump `SWIFTRAY_DAEMON_VERSION` to `1.4.11`. mac `codesign --deep` already covers added dylibs; verify notarisation accepts the ORT dylib (it is signed by Microsoft, should be fine).
 - macOS arm64 Swiftray is built off-CI today; the ORT arm64 tgz must be present on that machine. Add a CMake check that fails configure if `third_party/onnxruntime/<arch>` is missing rather than silently building without segmentation.
 - Licences: MobileSAM Apache-2.0, ORT MIT, both bundle-safe; add to the third-party notices list.
 - Backward compatibility: old Beam Studio + new Swiftray — unaffected (new path only). New Beam Studio + old Swiftray — `SWIFTRAY_SEGMENT` version gate → OpenCV engine, no alert.
@@ -292,7 +292,7 @@ Each PR is independently shippable; order matters only for 4 → 5.
 |---|---|---|---|
 | 1 | beam-studio | Extract Auto Align into `app/svgedit/autoAlign/` (§5.6). Pure refactor. | M |
 | 2 | fluxghost | `get_contours` + `group_contours` utils commands, docs, `ws_smoke.py` cases. | S |
-| 3 | swiftray | `src/segment/` port of mini-sam, `/segment` path, ORT vendoring per platform, models in bundle, version 1.5.0. | L |
+| 3 | swiftray | `src/segment/` port of mini-sam, `/segment` path, ORT vendoring per platform, models in bundle, version 1.4.11. | L |
 | 4 | beam-studio | `detectContours` abstraction, Swiftray client method, preferences + Camera settings, perf warning, Auto Fit switched to `detectContours` + `groupContours`. | M |
 | 5 | beam-studio | `imageContourStore`, `preview-region-drawn` event, detection service with coalescing, toasts, align integration, `auto_align_image_contour`. | M |
 | 6 | beam-studio | (optional) bbox overlay in `#previewSvg`. | S |

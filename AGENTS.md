@@ -102,6 +102,31 @@ pnpm nx affected:lint    # Lint only affected projects
 - **Canvas Operations**: packages/core/src/web/app/svgedit/
 - **Undo/Redo**: Command pattern via packages/core/src/web/app/svgedit/history/
 
+## Specs (PRDs)
+
+Large features are spec-driven: write the PRD before the implementation and keep it alive
+afterwards. Small fixes and single-file changes do not need one.
+
+- **When**: a new subsystem or user-facing feature, anything touching more than one repo
+  (fluxghost, Swiftray, fluxclient, firmware), or a change with design decisions worth
+  recording. Ask if unsure.
+- **Where**: `docs/prd/<feature>.md`. Use a folder (`docs/prd/<feature>/`) only when a companion
+  PRD for another repo belongs next to it (see `work-manager.md` + `machine-task-queue-firmware.md`).
+- **Header table** at the top: Status, Author, Created, Target product, Owner area, Related code
+  (real paths), plus Companion PRD / External repos / Playground when they apply.
+- **Body**: Summary → Background & current state → Goals & non-goals → Scenarios → Design →
+  Data contracts → Performance/packaging where relevant → Rollout (PR plan) → Open decisions →
+  Risks & follow-ups → Test plan. Keep the design grounded in the codebase: every claim about
+  existing code names a file and, where useful, a line; verify it before writing it down.
+- **Living document**: edit in place rather than appending. Number the open decisions; when one
+  is settled, strike it through and record the outcome with the date instead of deleting it.
+  Update the Status row and measured numbers as the work lands.
+- **Stays out of the repo**: HTML mockups, screenshots of designs, and meeting notes live in
+  ClickUp, not under `docs/`. The PRD links to them if needed.
+
+Reference examples: `docs/prd/onnx-contour-detection.md` (multi-repo, with measurements and a
+decided/pending decision log), `docs/prd/maintenance-checklist.md` (phased status after shipping).
+
 ## Coding Conventions
 
 ### Critical Rules

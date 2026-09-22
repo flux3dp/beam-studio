@@ -22,10 +22,48 @@ export const getEffectiveContourEngine = (): ContourEngine => {
   return preferred;
 };
 
-const detectWithOnnx = async (blob: Blob): Promise<DetectedContour[]> => {
-  const { objects } = await swiftrayClient.detectContours(blob);
+/**
+ * SAM encodes at 1024 px on the longest side regardless of input, so anything larger only makes the
+ * full-resolution mask upsampling, contour tracing and transfer slower (a 10 px/mm bed preview is
+ * 3000+ px wide). 1280 px is what the golden parity was validated at; 0.23 mm/px on a 300 mm bed.
+ */
+const ONNX_MAX_SIDE = 1280;
 
-  return objects.map(({ angle, bbox, center, polygon }) => ({ angle, bbox, center, contour: polygon }));
+const downscaleForOnnx = async (blob: Blob, maxSide: number): Promise<{ blob: Blob; scale: number }> => {
+  const bitmap = await createImageBitmap(blob);
+  const scale = Math.min(1, maxSide / Math.max(bitmap.width, bitmap.height));
+
+  if (scale === 1) return { blob, scale };
+
+  const canvas = document.createElement('canvas');
+
+  canvas.width = Math.round(bitmap.width * scale);
+  canvas.height = Math.round(bitmap.height * scale);
+  canvas.getContext('2d')!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+  bitmap.close();
+
+  const scaled = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
+
+  if (!scaled) throw new Error('Failed to downscale image');
+
+  return { blob: scaled, scale };
+};
+
+const detectWithOnnx = async (blob: Blob): Promise<DetectedContour[]> => {
+  const { blob: scaled, scale } = await downscaleForOnnx(blob, ONNX_MAX_SIDE);
+  const { height, objects, timeMs, width } = await swiftrayClient.detectContours(scaled);
+  const k = 1 / scale;
+
+  console.info(
+    `[detectContours] onnx model ${Math.round(timeMs)} ms at ${width}x${height} (scale ${scale.toFixed(3)})`,
+  );
+
+  return objects.map(({ angle, bbox, center, polygon }) => ({
+    angle,
+    bbox: bbox.map((v) => v * k),
+    center: center.map((v) => v * k),
+    contour: polygon.map(([x, y]) => [x * k, y * k] as [number, number]),
+  }));
 };
 
 /**

@@ -11,13 +11,24 @@ export const findSimilarContours = async (
   opts: { isSplicingImg?: boolean; onProgress?: (progress: number) => void } = {},
 ): Promise<AutoFitContour[][]> => {
   const utilWS = getUtilWS();
+  const engine = getEffectiveContourEngine();
+  const start = performance.now();
+  let groups: AutoFitContour[][];
 
-  if (getEffectiveContourEngine() === 'opencv') return utilWS.getAllSimilarContours(blob, opts);
+  if (engine === 'opencv') {
+    groups = await utilWS.getAllSimilarContours(blob, opts);
+  } else {
+    const contours = await detectContours(blob, { engine, isSplicingImg: opts.isSplicingImg });
 
-  const contours = await detectContours(blob, { engine: 'onnx', isSplicingImg: opts.isSplicingImg });
+    groups = await utilWS.groupContours(
+      contours.map(({ contour }) => contour),
+      { isSplicingImg: opts.isSplicingImg },
+    );
+  }
 
-  return utilWS.groupContours(
-    contours.map(({ contour }) => contour),
-    { isSplicingImg: opts.isSplicingImg },
+  console.info(
+    `[autoFit] ${engine} detect+group ${Math.round(performance.now() - start)} ms, ${groups.flat().length} contours in ${groups.length} groups`,
   );
+
+  return groups;
 };

@@ -2517,6 +2517,8 @@ const lang: ILang = {
     unable_to_connect: '#810 Kan geen stabiele verbinding maken met machine',
   },
   settings: {
+    ai_contour_detection: 'AI-contourdetectie',
+    ai_contour_detection_tooltip: 'Gebruikt een AI-model om objecten in het cameravoorbeeld te vinden. Nauwkeuriger op materialen met textuur, maar langzamer op oudere computers; schakel uit om klassieke detectie te gebruiken. Gebruikt door: Auto Aanpassen.',
     anti_aliasing: 'Antialiasing',
     auto_connect: 'Selecteer automatisch de enige machine',
     auto_switch_tab: 'Automatisch schakelen tussen laag- en objectpaneel',

@@ -2517,6 +2517,8 @@ const lang: ILang = {
     unable_to_connect: '#810 Kan ikke oprette en stabil forbindelse til maskinen',
   },
   settings: {
+    ai_contour_detection: 'AI-konturgenkendelse',
+    ai_contour_detection_tooltip: 'Bruger en AI-model til at finde objekter i kameraforhåndsvisningen. Mere præcis på teksturerede materialer, men langsommere på ældre computere; slå fra for at bruge klassisk genkendelse. Bruges af: Auto Fit.',
     anti_aliasing: 'Kantudjævning',
     auto_connect: 'Vælg automatisk den eneste maskine',
     auto_switch_tab: 'Automatisk skift mellem lag- og objektpanel',

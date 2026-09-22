@@ -329,7 +329,7 @@ class SwiftrayClient extends EventEmitter {
 
   // Parser API
   /**
-   * MobileSAM "segment everything" on the given image (Swiftray >= 1.5.0, path /segment).
+   * MobileSAM "segment everything" on the given image (Swiftray >= 1.4.11, path /segment).
    * Coordinates in the reply are pixels of `blob`.
    */
   public async detectContours(

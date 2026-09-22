@@ -2518,7 +2518,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'AI 輪廓偵測',
-    ai_contour_detection_tooltip: '使用 AI 模型在相機預覽中尋找物件以進行自動對位。在有紋理的材料上更準確，但在較舊的電腦上速度較慢；關閉則使用傳統偵測。',
+    ai_contour_detection_tooltip: '使用 AI 模型在相機預覽中尋找物件。在有紋理的材料上更準確，但在較舊的電腦上速度較慢；關閉則使用傳統偵測。使用於自動對位功能。',
     anti_aliasing: '反鋸齒',
     auto_connect: '自動選擇唯一機器',
     auto_switch_tab: '自動切換圖層與物件面板',
