@@ -11,7 +11,12 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
-import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import {
+  DetectedLayerModule,
+  galvoModulesArray,
+  LayerModule,
+  type LayerModuleType,
+} from '@core/app/constants/layer-module/layer-modules';
 import { type EngraveDpiOption, getEngraveDpmm } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -22,6 +27,7 @@ import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
+import { getGalvoConfig } from '@core/helpers/device/galvoConfig';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -93,8 +99,21 @@ export const getExportOpt = async (
     config.acc = 10000;
   } else if (model === 'fhx2galvo') {
     config.acc = 10000;
-    // galvo module heads engrave in tiles and the backend stitches them together
-    config.block_size = [100, 100];
+
+    // The field lens is the one thing here the machine knows and the document does not, and
+    // swiftray needs it: it sets how far the galvo reaches, how the bed is divided into blocks,
+    // and whether the drawing has to be divided at all. Physically only one head is mounted, so
+    // the first galvo module with anything on it answers for the machine.
+    const galvoModule = galvoModulesArray.find((module) =>
+      hasModuleLayer([module], { checkRepeat: true, checkVisible: true }),
+    );
+
+    if (galvoModule) config.galvo_field = (await getGalvoConfig(galvoModule)).workarea;
+
+    // Everything else that governs splitting and seam blending has a default inside the
+    // exporter, so only what a developer has actually overridden is sent -- an absent key means
+    // "use yours", which is what keeps the two sides from drifting apart.
+    Object.assign(config, storage.get('galvo-dev-settings') ?? {});
   }
 
   if (addOnInfo.sCurve && vc.meetVersion(addOnInfo.sCurve)) {

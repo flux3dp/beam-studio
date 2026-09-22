@@ -1,4 +1,6 @@
+import type { GalvoBlendProfile, GalvoRunEmission, GalvoStrategy } from '@core/app/constants/galvo-dev-settings';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { GalvoWorkarea } from '@core/helpers/device/galvoConfig';
 import type { BBox } from '@core/interfaces/ICurveEngraving';
 
 import type { IDeviceInfo } from './IDevice';
@@ -44,10 +46,6 @@ export type TFcodeOptionalConfig = Partial<{
    * a travel speed
    */
   ats: number;
-  /**
-   * tile size [width, height] in mm for galvo module heads; the backend stitches the tiles together
-   */
-  block_size: [number, number];
   /** whether to use firmware burst refresh for 4C printing */
   burst_refresh: boolean;
   /**
@@ -79,6 +77,51 @@ export type TFcodeOptionalConfig = Partial<{
   engraving_erode?: number;
   expected_module?: number;
   fg: boolean;
+  /**
+   * HEXA II galvo only, and only read when the model is `fhx2galvo`. Every key below is a
+   * developer override with a default inside swiftray's exporter, so leaving one out is not
+   * the same as sending its default -- it is what lets the two sides stay in step. See
+   * `@core/app/constants/galvo-dev-settings` for what each one does.
+   */
+  galvo_block: [number, number];
+  galvo_debug_image: string;
+  galvo_dot_blend_line_core: boolean;
+  galvo_dot_blend_overlap: number;
+  galvo_dot_blend_profile: GalvoBlendProfile;
+  /**
+   * Field lens size in mm, from the mounted head's own config on the machine. Not a developer
+   * override: it decides how far the galvo reaches, the block size and whether the drawing is
+   * split at all, so it has to be the lens that is actually fitted.
+   */
+  galvo_field: GalvoWorkarea;
+  galvo_jump_speed: number;
+  galvo_laser_off_delay: number;
+  galvo_laser_on_delay: number;
+  galvo_line_blend_emission: GalvoRunEmission;
+  galvo_line_blend_overlap: number;
+  galvo_line_blend_profile: GalvoBlendProfile;
+  galvo_line_blend_segment: number;
+  galvo_max_list_commands: number;
+  galvo_mopa_pulse_length: number;
+  galvo_process_dot_jump_speed: number;
+  galvo_process_dot_laser_off_delay: number;
+  galvo_process_dot_laser_on_delay: number;
+  galvo_process_dot_pitch: number;
+  galvo_process_dot_power: number;
+  galvo_process_dot_pulse_on_time: number;
+  galvo_process_dot_pulse_period: number;
+  galvo_scanner_mark_delay: number;
+  galvo_scanner_polygon_delay: number;
+  galvo_standby: boolean;
+  galvo_standby_period: number;
+  galvo_standby_width: number;
+  /**
+   * One of laser-phy-simulator's own strategy ids, which settles the whole seam at once.
+   * Read before the individual keys above, so one of them still overrides it.
+   */
+  galvo_strategy: GalvoStrategy;
+  /** gantry travel speed while a galvo layer runs, mm/min; ordinary layers keep using `ts` */
+  galvo_ts: number;
   gc: boolean; // output gcode
   /**
    * 4C ink color order by cartridge slot, e.g. 'cymk' (default cmyk)
