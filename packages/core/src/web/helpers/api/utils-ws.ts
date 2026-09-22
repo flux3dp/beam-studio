@@ -281,6 +281,7 @@ class UtilsWebSocket extends EventEmitter {
   ) =>
     new Promise<T>((resolve, reject) => {
       const { onProgress, pick = (reply) => reply.data } = opts;
+
       this.removeCommandListeners();
       this.setDefaultErrorResponse(reject);
       this.setDefaultFatalResponse(reject);
