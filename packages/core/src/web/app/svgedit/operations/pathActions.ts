@@ -8,6 +8,7 @@ import { type CanvasMouseMode } from '@core/app/stores/canvas/canvasStore';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { isMobile } from '@core/app/stores/screenStore';
+import autoAlign from '@core/app/svgedit/autoAlign';
 import history from '@core/app/svgedit/history/history';
 import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
 import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
@@ -165,7 +166,7 @@ const getCurveLocationByPaperjs = (x: number, y: number, elem: SVGPathElement) =
 };
 
 export const finishPath = (toEditMode = true) => {
-  svgCanvas.clearAlignLines();
+  autoAlign.clearAlignLines();
 
   if (!drawnPath) {
     const pathPointGripContainer = document.getElementById('pathpointgrip_container');
@@ -276,7 +277,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
   const currentMode = getMouseMode();
   const currentZoom = workareaManager.zoomRatio;
 
-  svgCanvas.clearAlignLines();
+  autoAlign.clearAlignLines();
 
   let x = startX / currentZoom;
   let y = startY / currentZoom;
@@ -294,7 +295,7 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
 
     newPoint = [x, y];
 
-    if (svgCanvas.isAutoAlign) svgCanvas.addAlignPoint(x, y);
+    if (autoAlign.isEnabled()) autoAlign.addAlignPoint(x, y);
 
     if (!stretchy) {
       stretchy = document.createElementNS(NS.SVG, 'path');
@@ -964,7 +965,7 @@ export const clear = () => {
     svgedit.path.path.init().show(false);
   }
 
-  svgCanvas.clearAlignLines();
+  autoAlign.clearAlignLines();
 };
 
 const resetOrientation = (path) => {

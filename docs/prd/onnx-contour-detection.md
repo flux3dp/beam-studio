@@ -159,9 +159,9 @@ export const detectContours = (blob: Blob, opts?: { onProgress?, engine?: Contou
 | key | type | default | meaning |
 |---|---|---|---|
 | `contour_detection_engine` | `'onnx' \| 'opencv'` | `'onnx'` | user choice; effective engine may still be `opencv` |
-| `auto_align_image_contour` | `boolean` | `true` | image-contour align on/off (also requires `auto_align`) |
+| `snap_to_object_center` | `boolean` | `true` | image-contour align on/off (also requires `auto_align`) |
 
-**Settings UI** — `components/settings/categories/Camera.tsx`: `SettingSelect` "Contour detection" (`lang.settings.contour_engine_smart` / `_classic`), disabled with a hint when `!hasSwiftray`; `SettingSwitch` "Snap to objects in camera preview" (`auto_align_image_contour`). No new menu item; `AUTO_ALIGN` menu stays the master switch.
+**Settings UI** — `components/settings/categories/Camera.tsx`: `SettingSwitch` "AI Contour Detection" / "AI 輪廓偵測" writing `'onnx' | 'opencv'` into `contour-engine` (engine names are never shown; rendered only on desktop with Swiftray); `SettingSwitch` "Snap to object center" (`snap_to_object_center`). No new menu item; `AUTO_ALIGN` menu stays the master switch.
 
 ~~**Weak-machine warning**~~ — dropped, see §10 item 1. (Original proposal: one-time alert on Windows < 8 GiB or Intel Mac offering the classic engine.)
 
@@ -192,10 +192,10 @@ type State = { contours: ImageContour[]; status: 'idle' | 'detecting' | 'detecte
 
 **Service** — `app/actions/beambox/image-contour-align.ts` (started once from `svgEditor` init, like `previewModeController`):
 
-1. **Trigger.** `previewModeBackgroundDrawer.drawImageToCanvas` and `drawFullWorkarea` emit a new `canvasEventEmitter 'preview-region-drawn'` with `{x, y, width, height}` in canvas px (the drawer already computes these to stamp). The service subscribes when `auto_align && auto_align_image_contour && isPreviewMode`.
+1. **Trigger.** `previewModeBackgroundDrawer.drawImageToCanvas` and `drawFullWorkarea` emit a new `canvasEventEmitter 'preview-region-drawn'` with `{x, y, width, height}` in canvas px (the drawer already computes these to stamp). The service subscribes when `auto_align && snap_to_object_center && isPreviewMode`.
 2. **Coalesce.** Dirty rects accumulate in a module array; a 300 ms trailing debounce starts a run; a run in flight sets `pending = true` and the next run starts when it finishes. Region preview stamps a tile every few seconds, ONNX takes ~3 s a pass, so runs naturally batch 1–2 tiles on fast machines and many on slow ones.
 3. **Run.** `dirty = union(dirtyRects)`; `victims = contours whose bbox intersects dirty`; `roi = union(dirty, victims.bbox)` clamped to the workarea; remove `victims` from the store; `status = 'detecting'`; `crop = previewModeBackgroundDrawer.getCanvasCrop(roi)`; `objects = await detectContours(crop.blob)`; map each back with `crop.x + x / crop.ratio` (this is also the `canvasRatio` fix from §2.1); drop objects whose bbox touches the **roi border** unless that border is also the workarea border (they are truncated by the crop and will be re-detected when the neighbouring tile lands); insert; `status = 'detected'`.
-4. **Clear.** Subscribe to `cameraPreview.isClean === true` and to `model-changed` → `contours = []`. Also clear when `auto_align_image_contour` flips to false.
+4. **Clear.** Subscribe to `cameraPreview.isClean === true` and to `model-changed` → `contours = []`. Also clear when `snap_to_object_center` flips to false.
 5. **Toasts.** `MessageCaller.openMessage({ key: 'image-contour', level: LOADING, content: lang.auto_align.detecting_contours, duration: 0 })` on the first `detecting` after idle; `SUCCESS` `contours_detected` (duration 2 s) when the queue drains with ≥ 1 contour; silent on zero results; `WARNING` once per preview session on repeated engine errors. `key` reuse means the toasts replace each other rather than stack.
 
 **Align integration** — inside the new `autoAlign` module's `collectAlignPoints()`:
@@ -210,7 +210,7 @@ edges.push(...imageContours.flatMap(getBboxEdges));
 - Because `collectAlignPoints()` already re-runs on selection change and undo, no extra wiring is needed for points to refresh; the store additionally calls `autoAlign.collectAlignPoints()` on change so a drag already in progress picks new contours up on the next mouse-down.
 - `angle` is stored but unused for snapping in v1.
 
-**Overlay (should-have).** A `#imageContourOverlay` `<g>` inside `#previewSvg` (non-exported, cleared with the preview) drawing each bbox as a 1 px dashed rect with `vector-effect: non-scaling-stroke`, shown only while `auto_align_image_contour` is on. Lets the user see what will snap. Cheap; ship if the first user test asks "why did it snap there?".
+**Overlay (should-have).** A `#imageContourOverlay` `<g>` inside `#previewSvg` (non-exported, cleared with the preview) drawing each bbox as a 1 px dashed rect with `vector-effect: non-scaling-stroke`, shown only while `snap_to_object_center` is on. Lets the user see what will snap. Cheap; ship if the first user test asks "why did it snap there?".
 
 ### 5.6 Auto Align extraction (prerequisite refactor)
 
@@ -231,7 +231,7 @@ export const autoAlign = {
 ### 5.7 i18n
 
 `en.ts` / `zh-tw.ts` first, all 23 before PR:
-- `settings.contour_engine`, `settings.contour_engine_smart`, `settings.contour_engine_classic`, `settings.contour_engine_unavailable`, `settings.contour_engine_slow_warning`, `settings.use_classic_detection`, `settings.auto_align_image_contour`
+- `settings.ai_contour_detection`, `settings.ai_contour_detection_tooltip` (shipped in PR #1006; the tooltip ends with a "used by" sentence to extend with Auto Align), `settings.snap_to_object_center`
 - `auto_align.detecting_contours`, `auto_align.contours_detected`, `auto_align.contour_detection_failed`
 
 ---
@@ -253,7 +253,7 @@ export const autoAlign = {
 - `get_contours <bytes> <isSplicing 0|1>` → `{status:'ok', data: AutoFitContour[]}` (flat, incl. singletons)
 - `group_contours <bytes> <isSplicing 0|1>` with a JSON body `{width, height, contours: [[x,y]…][]}` → `{status:'ok', data: AutoFitContour[][]}`
 
-**Preferences**: `contour_detection_engine`, `auto_align_image_contour` (§5.3). Both are global (broadcast via `TabEvents.GlobalPreferenceChanged` like `auto_align`).
+**Preferences**: `contour_detection_engine`, `snap_to_object_center` (§5.3). Both are global (broadcast via `TabEvents.GlobalPreferenceChanged` like `auto_align`).
 
 ---
 
@@ -291,7 +291,7 @@ Each PR is independently shippable; order matters only for 4 → 5.
 | 2 | fluxghost | `get_contours` + `group_contours` utils commands, docs, `ws_smoke.py` cases. | S |
 | 3 | swiftray | `src/segment/` port of mini-sam, `/segment` path, ORT vendoring per platform, models in bundle, version 1.4.11. | L |
 | 4 | beam-studio | `detectContours` abstraction, Swiftray client method, preferences + Camera settings, perf warning, Auto Fit switched to `detectContours` + `groupContours`. | M |
-| 5 | beam-studio | `imageContourStore`, `preview-region-drawn` event, detection service with coalescing, toasts, align integration, `auto_align_image_contour`. | M |
+| 5 | beam-studio | `imageContourStore`, `preview-region-drawn` event, detection service with coalescing, toasts, align integration, `snap_to_object_center`. | M |
 | 6 | beam-studio | (optional) bbox overlay in `#previewSvg`. | S |
 | 7 | beam-studio | CD workflow version bump once 3 is on S3. | XS |
 
@@ -302,7 +302,7 @@ Each PR is independently shippable; order matters only for 4 → 5.
 1. ~~Default engine on weak machines / one-time perf warning~~ — **decided 2026-09-22: default `onnx` everywhere, no warning.** Measured on the weakest supported Mac (Intel i5): AI 8.5 s vs OpenCV 10 s after the 1280 px downscale, so the "slower on old computers" premise no longer holds; the settings switch plus its tooltip is the opt-out. Memory (~560 MB loaded) is covered by the 5 min idle unload.
 2. **Grouping stays in fluxghost** (`group_contours`) vs. port to C++ — proposal: fluxghost (§5.4 rationale).
 3. **Overlay of detected bboxes** — ship in v1 or wait for feedback?
-4. **Include the object centre as a snap point** — proposed yes (elements skip centre today; contours would not).
+4. ~~Include the object centre as a snap point~~ — **decided 2026-09-22: yes.** The feature is named after it: preference `snap_to_object_center`. Corners and edge midpoints of the detected bbox are added as well (open: confirm, see §5.5).
 5. ~~Model files in the Swiftray zip vs. on-demand download~~ — **decided 2026-09-21: bundled.** Models (43 MB) and ORT ship inside Swiftray; no runtime download.
 6. **Which region-preview machines get align-on-preview** — all that emit `preview-region-drawn` (region + full-area). Full-area single shot on Ador/Promark/beamo II runs one whole-bed pass (~3 s); fine.
 

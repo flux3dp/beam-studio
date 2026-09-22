@@ -1,17 +1,10 @@
 import windowLocationReload from '@core/app/actions/windowLocation';
+import autoAlign from '@core/app/svgedit/autoAlign';
 import viewMenu from '@core/helpers/menubar/view';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ICustomMenuActionProvider } from '@core/interfaces/ICustomMenuActionProvider';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ElectronUpdater from './electron-updater';
 import menu from './menu';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 export default {
   getCustomMenuActions() {
@@ -22,7 +15,7 @@ export default {
         menu.changeMenuItemStatus(['ANTI_ALIASING'], 'checked', newValue);
       },
       AUTO_ALIGN: () => {
-        const toggleAutoAlign = svgCanvas.toggleAutoAlign();
+        const toggleAutoAlign = autoAlign.toggle();
 
         menu.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', toggleAutoAlign);
       },

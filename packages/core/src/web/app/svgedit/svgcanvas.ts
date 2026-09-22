@@ -43,7 +43,6 @@ import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import elementIntersectsRect from '@core/app/svgedit/utils/elementIntersectsRect';
 import rectsIntersect from '@core/app/svgedit/utils/rectsIntersect';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -54,7 +53,6 @@ import i18n from '@core/helpers/i18n';
 import { initLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import logMemory from '@core/helpers/log-memory';
-import round from '@core/helpers/math/round';
 import viewMenu from '@core/helpers/menubar/view';
 import randomColor from '@core/helpers/randomColor';
 import sanitizeXmlString from '@core/helpers/sanitize-xml-string';
@@ -62,9 +60,9 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { Units } from '@core/helpers/units';
 import units from '@core/helpers/units';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type { IPoint } from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 
+import autoAlign from './autoAlign';
 import canvasBackground from './canvasBackground';
 import currentFileManager from './currentFileManager';
 import { ungroupElement } from './group/ungroup';
@@ -84,11 +82,8 @@ import textActions from './text/textactions';
 import textEdit from './text/textedit';
 import { getStartTransform, recalculateDimensions, setStartTransform } from './transform/recalculate';
 import { getRotationAngle, setRotationAngle } from './transform/rotation';
-import { binarySearchLowerBoundIndex } from './utils/binarySearchIndex';
 import findDefs from './utils/findDef';
-import { findNearestAndFarthestAlignPoints } from './utils/findNearestAndFarthestAlignPoints';
 import { getBBox } from './utils/getBBox';
-import { isLineCoincide } from './utils/isLineCoincide';
 import workareaManager from './workarea';
 
 let svgCanvas: ISVGCanvas;
@@ -153,39 +148,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // The actual element that represents the final output SVG element
   var svgcontent = svgdoc.createElementNS(NS.SVG, 'svg') as unknown as SVGSVGElement;
-
-  // CUSTOM VARIABLES
-  const alignPoints: Record<'x' | 'y', Array<Record<'x' | 'y', number>>> = { x: [], y: [] };
-  let alignEdges: Array<Record<'x1' | 'x2' | 'y1' | 'y2', number>> = [];
-  const WORKAREA_ALIGN_POINTS = Array.of<IPoint>();
-  const updateWorkAreaAlignPoints = () => {
-    const {
-      boundary: { maxX, maxY, minX, minY },
-    } = workareaManager;
-    const midX = (minX + maxX) / 2;
-    const midY = (minY + maxY) / 2;
-    const points = [
-      // Top row
-      { x: minX, y: minY },
-      { x: midX, y: minY },
-      { x: maxX, y: minY },
-      // Middle side
-      { x: minX, y: midY },
-      { x: maxX, y: midY },
-      // Bottom row
-      { x: minX, y: maxY },
-      { x: midX, y: maxY },
-      { x: maxX, y: maxY },
-    ];
-
-    WORKAREA_ALIGN_POINTS.length = 0;
-    WORKAREA_ALIGN_POINTS.push(...points);
-  };
-
-  canvasEventEmitter.on('boundary-updated', () => {
-    updateWorkAreaAlignPoints();
-    this.collectAlignPoints();
-  });
 
   // This function resets the svgcontent element while keeping it in the DOM.
   var clearSvgContentElement = (canvas.clearSvgContentElement = function () {
@@ -550,7 +512,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   workareaManager.init(useDocumentStore.getState()['workarea']);
   grid.init(workareaManager.zoomRatio);
   guideLineDrawer.init();
-  updateWorkAreaAlignPoints();
+  autoAlign.init();
   presprayArea.generatePresprayArea();
   rotaryAxis.init();
 
@@ -658,8 +620,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // Canvas point for the most recent right click
   let lastClickPoint = null;
-
-  this.isAutoAlign = useGlobalPreferenceStore.getState().auto_align;
 
   let root_sctm = null;
 
@@ -2627,220 +2587,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (allNewPaths.length > 0) {
       selectionManager.multiSelect(allNewPaths);
     }
-  };
-
-  this.clearAlignLines = () => {
-    $('[id^="align_line"]').remove();
-    $('[id^="align_text"]').remove();
-  };
-
-  const onAutoAlignChanged = () => {
-    const { auto_align: value } = useGlobalPreferenceStore.getState();
-
-    this.isAutoAlign = value;
-
-    if (!this.isAutoAlign) {
-      this.clearAlignLines();
-    }
-  };
-
-  useGlobalPreferenceStore.subscribe((state) => state.auto_align, onAutoAlignChanged);
-
-  this.toggleAutoAlign = () => {
-    const { auto_align: value, set } = useGlobalPreferenceStore.getState();
-    const newValue = !value;
-
-    set('auto_align', newValue);
-
-    return newValue;
-  };
-
-  this.drawAlignLine = function (tx: number, ty: number, x: IPoint | null, y: IPoint | null, index: number = 0) {
-    const points: [number[], number[]] = [[], []];
-    const stroke: Record<'nearest' | 'normal', string> = { nearest: '#F707F0', normal: '#1890EF' };
-
-    WORKAREA_ALIGN_POINTS.forEach(({ x, y }) => {
-      points[0].push(x);
-      points[1].push(y);
-    });
-
-    const detectIfLineCoincide = (line: { x1: number; x2: number; y1: number; y2: number }) => {
-      if (!line.x1 || !line.x2 || !line.y1 || !line.y2) return false;
-
-      for (const line2 of alignEdges) {
-        if (isLineCoincide(line, line2)) return true;
-      }
-
-      return false;
-    };
-
-    const draw = (by: 'x' | 'y') => {
-      let alignLine = svgedit.utilities.getElem(`align_line_${by}_${index}`);
-      let alignText = svgedit.utilities.getElem(`align_text_${by}_${index}`);
-      const [major, minor] = by === 'x' ? [x, y] : [y, x];
-
-      if (!major) return;
-
-      const isCanvas = points[0].includes(major.x) && points[1].includes(major.y);
-      const startPoints = by === 'x' ? [major.x, minor ? minor.y : ty] : [minor ? minor.x : tx, major.y];
-      const line = { x1: startPoints[0], x2: major.x, y1: startPoints[1], y2: major.y };
-      const needText = !isCanvas && index < 10 && !detectIfLineCoincide(line);
-
-      alignLine = document.createElementNS(NS.SVG, 'path');
-      alignText = document.createElementNS(NS.SVG, 'text');
-
-      svgedit.utilities.getElem('svgcontent').appendChild(alignLine);
-      svgedit.utilities.getElem('svgcontent').appendChild(alignText);
-
-      svgedit.utilities.assignAttributes(alignLine, {
-        fill: 'none',
-        id: `align_line_${by}_${index}`,
-        stroke: needText ? stroke.nearest : stroke.normal,
-        'stroke-width': isCanvas ? '2' : '1',
-        'vector-effect': 'non-scaling-stroke',
-      });
-      svgedit.utilities.assignAttributes(alignText, {
-        fill: stroke.nearest,
-        'font-family': 'Arial',
-        'font-size': 20 / Math.sqrt(workareaManager.zoomRatio),
-        id: `align_text_${by}_${index}`,
-        stroke: stroke.nearest,
-        'stroke-width': '1',
-        'vector-effect': 'non-scaling-stroke',
-      });
-
-      const distance = Math.max(Math.abs(major.x - startPoints[0]), Math.abs(major.y - startPoints[1]));
-      const offset = 5 / workareaManager.zoomRatio;
-
-      alignLine.setAttribute('d', `M ${major.x} ${major.y} L ${startPoints[0]} ${startPoints[1]}`);
-      alignLine.setAttribute('display', 'inline');
-
-      alignText.setAttribute('x', (major.x + startPoints[0]) / 2 + (by === 'x' ? offset : -2 * offset));
-      alignText.setAttribute('y', (major.y + startPoints[1]) / 2 + (by === 'y' ? -offset : 0));
-
-      if (distance < 10 || !needText) {
-        alignText.setAttribute('display', 'none');
-      } else {
-        textEdit.renderText(
-          alignText,
-          round(Math.max(Math.abs(major.x - startPoints[0]), Math.abs(major.y - startPoints[1])) / 10, 2).toString(),
-        );
-      }
-    };
-
-    draw('x');
-    draw('y');
-  };
-
-  this.findMatchedAlignPoints = function (x: number, y: number) {
-    // for consistent align experience
-    const FUZZY_RANGE = 8 / workareaManager.zoomRatio;
-
-    // if no alignPoints, return null
-    if (!alignPoints.x.length) return { farthest: { x: null, y: null }, nearest: { x: null, y: null } };
-
-    const [nearestX, farthestX] = findNearestAndFarthestAlignPoints(alignPoints, { x, y }, 'x', FUZZY_RANGE);
-    const [nearestY, farthestY] = findNearestAndFarthestAlignPoints(alignPoints, { x, y }, 'y', FUZZY_RANGE);
-
-    return {
-      farthest: { x: farthestX, y: farthestY },
-      nearest: { x: nearestX, y: nearestY },
-    };
-  };
-
-  this.collectAlignPoints = () => {
-    const elements = Array.of<SVGGraphicsElement>();
-    const layers = document.querySelectorAll('#svgcontent > g.layer');
-
-    for (const layer of layers) {
-      if (layer?.getAttribute('display') === 'none' || !layer?.childNodes.length) continue;
-
-      elements.push(...(layer.childNodes as unknown as SVGGraphicsElement[]));
-    }
-
-    const selectedElements = selectionManager.getSelectedElements();
-    const unSelectedElements = elements.filter((elem) => !selectedElements.includes(elem));
-    const unFlatedPoints = unSelectedElements.map((elem) => getElemAlignPoints(elem));
-    const edges = unFlatedPoints
-      .filter(({ length }) => length === 8)
-      .flatMap((points) => {
-        const [{ x: sx, y: sy }, { x: ex, y: ey }] = [points[0], points[7]];
-
-        return [
-          { x1: sx, x2: ex, y1: sy, y2: sy },
-          { x1: sx, x2: sx, y1: sy, y2: ey },
-          { x1: ex, x2: ex, y1: sy, y2: ey },
-          { x1: sx, x2: ex, y1: ey, y2: ey },
-        ];
-      });
-    const points = unFlatedPoints.flat();
-
-    WORKAREA_ALIGN_POINTS.forEach((point) => {
-      points.push(point);
-    });
-
-    alignPoints.x = points.toSorted((a, b) => a.x - b.x);
-    alignPoints.y = points.toSorted((a, b) => a.y - b.y);
-    alignEdges = edges;
-  };
-
-  this.addAlignEdges = (edges: Array<{ x1: number; x2: number; y1: number; y2: number }>) => {
-    alignEdges.push(...edges);
-  };
-
-  this.removeAlignEdges = (n: number) => {
-    for (let i = 0; i < n; i++) {
-      alignEdges.pop();
-    }
-  };
-
-  this.getSelectedElementsAlignPoints = () =>
-    selectionManager.getSelectedElements().flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
-
-  this.addAlignPoint = function (x: number, y: number) {
-    const { length } = alignPoints.x;
-    const newPoint = { x, y };
-    const insertToAlignPoints = (points: IPoint[], newPoint: IPoint, dimension: 'x' | 'y') => {
-      const pos = binarySearchLowerBoundIndex(
-        points.map((point) => point[dimension]),
-        newPoint[dimension],
-      );
-
-      if (pos === length - 1 && newPoint[dimension] > points[pos]?.[dimension]) {
-        points.push(newPoint);
-      } else {
-        points.splice(pos, 0, newPoint);
-      }
-    };
-
-    insertToAlignPoints(alignPoints.x, newPoint, 'x');
-    insertToAlignPoints(alignPoints.y, newPoint, 'y');
-  };
-
-  const getElemAlignPoints = (elem: SVGGraphicsElement): Array<{ x: number; y: number }> => {
-    const { tagName } = elem;
-    const angle: number = svgedit.utilities.getRotationAngle(elem, true);
-
-    if (!CanvasElements.visibleElems.includes(tagName) || angle) return [];
-
-    const bbox = getBBox(elem);
-    const getPoints = (bbox: { height: number; width: number; x: number; y: number }) => {
-      const points = Array.of<IPoint>();
-      const levels = [0, 0.5, 1] as const;
-
-      for (const col of levels) {
-        for (const row of levels) {
-          // skip center point
-          if (col === 0.5 && row === 0.5) continue;
-
-          points.push({ x: bbox.x + row * bbox.width, y: bbox.y + col * bbox.height });
-        }
-      }
-
-      return points;
-    };
-
-    return getPoints(bbox);
   };
 
   this.groupSelectedElements = (isSubCmd = false): void | { command: BaseHistoryCommand; group: SVGGElement } => {
