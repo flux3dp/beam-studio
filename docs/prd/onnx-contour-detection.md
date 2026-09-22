@@ -84,7 +84,7 @@ All state lives inside the `svgcanvas.ts` closure:
 - G1 Auto Fit produces stable object boundaries on wood, acrylic, leather and mixed-colour beds where Canny fails, with no UI change beyond a settings entry.
 - G2 While previewing, physical objects become Auto Align targets (centre, corners, edge midpoints) with no extra click; feedback via two toasts.
 - G3 Both features work with either engine; the OpenCV engine remains the automatic fallback (web, Linux, old Swiftray, user preference).
-- G4 Weak machines are warned once and can opt out.
+- G4 Users can opt out via a single setting; the tooltip names the trade-off.
 - G5 Auto Align code leaves `svgcanvas.ts`.
 
 **Non-goals (this PRD)**
@@ -163,10 +163,7 @@ export const detectContours = (blob: Blob, opts?: { onProgress?, engine?: Contou
 
 **Settings UI** — `components/settings/categories/Camera.tsx`: `SettingSelect` "Contour detection" (`lang.settings.contour_engine_smart` / `_classic`), disabled with a hint when `!hasSwiftray`; `SettingSwitch` "Snap to objects in camera preview" (`auto_align_image_contour`). No new menu item; `AUTO_ALIGN` menu stays the master switch.
 
-**Weak-machine warning** — new `helpers/contour/checkContourEnginePerf.ts`, called once per session before the first ONNX call:
-- Add `totalMemory: () => number` to `IOperatingSystem` (`os.totalmem` in `apps/app/src/implementations/os.ts`, `() => 0` on web).
-- weak = (`os.type() === 'Windows_NT'` && `totalMemory() < 8 GiB`) || (`os.type() === 'Darwin'` && `os.arch() === 'x64'`). Note `os.arch()` reports the *process* arch; an x64 build under Rosetta also counts as weak, which is the right call since ORT under Rosetta is slow too.
-- Alert `lang.settings.contour_engine_slow_warning` with buttons **Use classic detection** (sets pref `opencv`) / **Continue**, and the `alertConfig` "don't show again" key `skip_contour_engine_perf_warning` (`helpers/api/alert-config.ts`).
+~~**Weak-machine warning**~~ — dropped, see §10 item 1. (Original proposal: one-time alert on Windows < 8 GiB or Intel Mac offering the classic engine.)
 
 ### 5.4 Auto Fit on ONNX
 
@@ -302,7 +299,7 @@ Each PR is independently shippable; order matters only for 4 → 5.
 
 ## 10. Open decisions (need Dean)
 
-1. **Default engine on weak machines** — proposal: default `onnx` for everyone + one-time warning with a one-click switch. Alternative: auto-default to `opencv` when weak. Proposal keeps one code path for "what does a fresh install do".
+1. ~~Default engine on weak machines / one-time perf warning~~ — **decided 2026-09-22: default `onnx` everywhere, no warning.** Measured on the weakest supported Mac (Intel i5): AI 8.5 s vs OpenCV 10 s after the 1280 px downscale, so the "slower on old computers" premise no longer holds; the settings switch plus its tooltip is the opt-out. Memory (~560 MB loaded) is covered by the 5 min idle unload.
 2. **Grouping stays in fluxghost** (`group_contours`) vs. port to C++ — proposal: fluxghost (§5.4 rationale).
 3. **Overlay of detected bboxes** — ship in v1 or wait for feedback?
 4. **Include the object centre as a snap point** — proposed yes (elements skip centre today; contours would not).
@@ -316,7 +313,8 @@ Each PR is independently shippable; order matters only for 4 → 5.
 - **Mask quality on low-contrast objects** (clear acrylic, white paper on white honeycomb) — SAM is markedly better than Canny here but not perfect; the OpenCV fallback and Auto Fit's existing bg-removal retry remain.
 - **Latency on Intel Macs** unmeasured — measure before GA; the warning exists for this.
 - **Swiftray process RAM** while a convert runs concurrently — separate thread and idle unload; if both peak together on 8 GB machines, add a "skip detection while converting" guard.
-- Follow-ups: INT8 models; decoder re-export with dynamic batch (biggest speedup); CoreML/DirectML EPs behind Experimental; click-to-segment Auto Fit using `prompt`; rotation-aware snapping using `angle`; onnxruntime-web for the web app.
+- Follow-ups: INT8 models; decoder re-export with dynamic batch (biggest speedup); CoreML/DirectML EPs behind Experimental; click-to-segment Auto Fit using `prompt`; rotation-aware snapping using `angle` (rule below); onnxruntime-web for the web app.
+- **Rotation snapping (v2 rule, discussed 2026-09-22).** An object never has one "correct" angle: its edges repeat every 180° (rectangles) or 90° (squares), so a deliberately 45°-placed square must not pull a design sitting at 0°. Therefore: (1) per object take `cv::minAreaRect`; use it as a rotation candidate only if polygon area / rect area ≥ ~0.85 (circles and blobs give position snaps only); (2) candidates = long-edge angle + k·180°, plus k·90° when aspect ≈ 1; (3) snap only while the user is rotating a selection and within ~3° of a candidate, with a guide line, exactly like position snapping; (4) an explicit "align to object" action picks the candidate with the smallest rotation from the design's current angle. Never auto-rotate on drop; intent cannot be inferred without user motion.
 
 ---
 
