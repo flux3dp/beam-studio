@@ -38,7 +38,6 @@ function Camera(): React.JSX.Element {
         label={lang.settings.keep_preview_result}
         onChange={(e) => setPreference('keep-preview-result', e)}
       />
-      {/* the model is hosted by Swiftray (desktop only); elsewhere the OpenCV engine is used regardless */}
       {!isWeb() && hasSwiftray && (
         <SettingSwitch
           checked={getPreference('contour-engine') === 'onnx'}
