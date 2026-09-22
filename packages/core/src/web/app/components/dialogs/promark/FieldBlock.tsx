@@ -15,17 +15,8 @@ import RangeTooltip from './RangeTooltip';
 
 interface Props {
   field: Field;
-  /** shown when the head focuses independently of the gantry; omitted leaves the row out */
-  focusHeight?: number;
   isInch: boolean;
   issues?: LensParameterIssues;
-  /**
-   * Offsets to show in place of the field's own. HEXA II keeps the head's position relative to the
-   * nozzle in toolhead_shift, so the dialog owns those two numbers rather than the galvo config.
-   */
-  offsets?: { x: number; y: number };
-  onFocusHeightChange?: (value: number) => void;
-  onOffsetsChange?: (offsets: { x: number; y: number }) => void;
   /** given when the field lens size is chosen rather than derived from the workarea */
   onWidthChange?: (value: number) => void;
   setField: Dispatch<SetStateAction<Field>>;
@@ -36,12 +27,8 @@ interface Props {
 
 const FieldBlock = ({
   field,
-  focusHeight,
   isInch,
   issues,
-  offsets,
-  onFocusHeightChange,
-  onOffsetsChange,
   onWidthChange,
   setField,
   width,
@@ -52,16 +39,9 @@ const FieldBlock = ({
     promark_settings: t,
   } = useI18n();
   const { angle, offsetX, offsetY } = field;
-  const shownOffsets = offsets ?? { x: offsetX, y: offsetY };
   // UnitInput reports null while its box is empty; Field has no room for that
   const handleChange = (key: keyof Field) => (val: null | number) => {
     if (val !== null) setField((cur) => ({ ...cur, [key]: val }));
-  };
-  const handleOffsetChange = (axis: 'x' | 'y') => (val: null | number) => {
-    if (val === null) return;
-
-    if (offsets) onOffsetsChange?.({ ...offsets, [axis]: val });
-    else handleChange(axis === 'x' ? 'offsetX' : 'offsetY')(val);
   };
 
   return (
@@ -91,23 +71,6 @@ const FieldBlock = ({
           )}
         </Flex>
       )}
-      {focusHeight !== undefined && (
-        <Flex align="center" className={styles.row} justify="space-between">
-          <span className={styles.label}>{t.focus_height}</span>
-          <UnitInput
-            addonAfter={isInch ? 'in' : 'mm'}
-            className={styles.input}
-            data-testid="focus-height"
-            isInch={isInch}
-            onChange={(val) => {
-              if (val !== null) onFocusHeightChange?.(val);
-            }}
-            precision={isInch ? 5 : 2}
-            size="small"
-            value={focusHeight}
-          />
-        </Flex>
-      )}
       <Flex align="center" className={styles.row} justify="space-between">
         <span className={styles.label}>{t.offsetX}</span>
         <RangeTooltip isInch={isInch} issue={issues?.['field.offsetX']}>
@@ -117,11 +80,11 @@ const FieldBlock = ({
             clipValue={false}
             data-testid="offset-x"
             isInch={isInch}
-            onChange={handleOffsetChange('x')}
+            onChange={handleChange('offsetX')}
             precision={isInch ? 5 : 3}
             size="small"
             status={issues?.['field.offsetX']?.level}
-            value={shownOffsets.x}
+            value={offsetX}
           />
         </RangeTooltip>
       </Flex>
@@ -134,11 +97,11 @@ const FieldBlock = ({
             clipValue={false}
             data-testid="offset-y"
             isInch={isInch}
-            onChange={handleOffsetChange('y')}
+            onChange={handleChange('offsetY')}
             precision={isInch ? 5 : 3}
             size="small"
             status={issues?.['field.offsetY']?.level}
-            value={shownOffsets.y}
+            value={offsetY}
           />
         </RangeTooltip>
       </Flex>

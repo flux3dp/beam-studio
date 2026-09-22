@@ -139,6 +139,16 @@ jest.mock('@core/helpers/device/moduleOffsets', () => ({
   getModuleOffsets: mockGetModuleOffsets,
 }));
 
+const mockGetGalvoConfig = jest.fn();
+const mockIsGalvoModule = jest.fn();
+
+// Mocked rather than imported: the real module reaches deviceMaster, and pulling that graph in
+// mid-test makes the zustand mock register its hooks inside a test body.
+jest.mock('@core/helpers/device/galvoConfig', () => ({
+  getGalvoConfig: mockGetGalvoConfig,
+  isGalvoModule: mockIsGalvoModule,
+}));
+
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
   createEventEmitter: (key: string) => {
     registeredEvents[key] = {};
@@ -192,6 +202,8 @@ describe('test boundaryDrawer', () => {
     mockGetAutoFeeder.mockReturnValue(false);
     mockGetPassThrough.mockReturnValue(false);
     mockGetModuleOffsets.mockResolvedValue([0, 0]);
+    mockIsGalvoModule.mockReturnValue(false);
+    mockGetGalvoConfig.mockResolvedValue({ workarea: 110 });
     mockGetSupportedModules.mockReturnValue([LayerModule.LASER_UNIVERSAL]);
     document.body.innerHTML = '<svg id="canvasBackground"><svg id="fixedSizeSvg"></svg>';
   });
