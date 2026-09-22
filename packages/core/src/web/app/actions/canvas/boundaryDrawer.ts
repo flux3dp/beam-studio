@@ -6,6 +6,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -21,6 +22,7 @@ import {
   getTextPosition,
   mergeBoundaries,
 } from '@core/helpers/boundary-helper';
+import { getGalvoConfig, isGalvoModule } from '@core/helpers/device/galvoConfig';
 import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -41,8 +43,19 @@ export class BoundaryDrawer {
   private appended = false;
 
   private useRealBoundary: boolean;
-  private useUnionBoundary: boolean;
   private supportMultiModules = false;
+
+  /**
+   * HEXA II decides this per document, in Document Settings; every other machine follows the
+   * global preference. Read on demand rather than cached, so the two sources cannot drift.
+   */
+  private get useUnionBoundary(): boolean {
+    const documentState = useDocumentStore.getState();
+
+    if (documentState.workarea === 'fhx2galvo') return documentState['use-union-boundary-hx2'];
+
+    return useGlobalPreferenceStore.getState()['use-union-boundary'];
+  }
 
   /**
    * Boundaries in px. Top expansion is not included.
@@ -54,7 +67,6 @@ export class BoundaryDrawer {
     const globalPreference = useGlobalPreferenceStore.getState();
 
     this.useRealBoundary = globalPreference['use-real-boundary'];
-    this.useUnionBoundary = globalPreference['use-union-boundary'];
     this.container = createBoundaryContainer('workarea-boundary');
     this.boundary = createBoundaryPath('boundary-path', this.container, !this.useRealBoundary);
     this.text = createBoundaryText(this.container);
@@ -117,7 +129,6 @@ export class BoundaryDrawer {
       const globalPreference = useGlobalPreferenceStore.getState();
 
       this.useRealBoundary = globalPreference['use-real-boundary'];
-      this.useUnionBoundary = globalPreference['use-union-boundary'];
       this.boundary.setAttribute('stroke', !this.useRealBoundary ? '#000' : '');
       this.update();
     };
@@ -130,6 +141,10 @@ export class BoundaryDrawer {
       (state) => [state['enable-4c'], state['enable-1064'], state['enable-galvo-mopa']],
       onSupportedModulesChange,
       { equalityFn: shallow },
+    );
+    useDocumentStore.subscribe(
+      (state) => state['use-union-boundary-hx2'],
+      () => this.update(),
     );
     useGlobalPreferenceStore.subscribe((state) => [state['diode_offset_x'], state['diode_offset_y']], onDiodeChange, {
       equalityFn: shallow,
@@ -286,6 +301,28 @@ export class BoundaryDrawer {
     };
   };
 
+  /**
+   * How far one module's reach falls short of the gantry's, per edge, in mm.
+   *
+   * A galvo head is the odd one out: it marks a square centred on wherever it sits, so from any
+   * one position it already reaches half a field in every direction. That buys back part of what
+   * its own offset costs -- never more than the canvas, which the clamp at the end of
+   * updateFinalBoundary takes care of.
+   */
+  private getModuleReach = async (module: LayerModuleType, model: WorkAreaModel) => {
+    const offsets = await getModuleOffsets({ module, workarea: model });
+    const [offsetX, offsetY] = offsets;
+    const halfField = isGalvoModule(module) ? (await getGalvoConfig(module)).workarea / 2 : 0;
+    const inset: TBoundary = {
+      bottom: -offsetY - (printingModules.has(module) ? printerHeight : 0) - halfField,
+      left: offsetX - halfField,
+      right: -offsetX - halfField,
+      top: offsetY - halfField,
+    };
+
+    return { inset, offsets };
+  };
+
   updateFinalBoundary = async (currentModule: LayerModuleType): Promise<void> => {
     const { maxY: workareaBottom, minY: workareaTop, model, width: w } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
@@ -293,13 +330,11 @@ export class BoundaryDrawer {
     const isAutoFeeder = getAutoFeeder(addOnInfo);
     const finalBoundary: TBoundary = { bottom: 0, left: 0, right: 0, top: 0 };
     let { bottom, left, right, top } = finalBoundary;
-    const [offsetX, offsetY] = await getModuleOffsets({ module: currentModule, workarea: model });
-    const unionOffsets = {
-      bottom: -offsetY - (printingModules.has(currentModule) ? printerHeight : 0),
-      left: offsetX,
-      right: -offsetX,
-      top: offsetY,
-    };
+    const {
+      inset: unionOffsets,
+      // needed on its own below, for the Ador printer's height handling
+      offsets: [, offsetY],
+    } = await this.getModuleReach(currentModule, model);
 
     if (this.boundaries.uvPrint) {
       ({ bottom, left, right, top } = this.boundaries.uvPrint);
@@ -307,17 +342,12 @@ export class BoundaryDrawer {
       if (this.supportMultiModules && this.useUnionBoundary) {
         const supportedModules = getSupportedModules(model);
 
+        // Each head is expanded by its own field before the merge: the two galvos may carry
+        // different field lenses, so the union has to compare what each can actually reach.
         await Promise.allSettled(
           supportedModules?.map(async (module) => {
             if (module !== currentModule) {
-              const offsets = await getModuleOffsets({ module, workarea: model });
-
-              mergeBoundaries(unionOffsets, {
-                bottom: -offsets[1] - (printingModules.has(module) ? printerHeight : 0),
-                left: offsets[0],
-                right: -offsets[0],
-                top: offsets[1],
-              });
+              mergeBoundaries(unionOffsets, (await this.getModuleReach(module, model)).inset);
             }
           }),
         );

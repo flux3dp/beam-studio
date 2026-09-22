@@ -23,6 +23,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import blockStyles from './Block.module.scss';
 import FieldBlock from './FieldBlock';
 import GalvoAxisBlock from './GalvoAxisBlock';
+import GalvoModuleBlock from './GalvoModuleBlock';
 import GalvoNoteBlock from './GalvoNoteBlock';
 import LensBlock from './LensBlock';
 import type { MarkParameters } from './ParametersBlock';
@@ -182,11 +183,7 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
       <div className={styles.container}>
         <FieldBlock
           field={config.field}
-          focusHeight={config.focusHeight}
           isInch={isInch}
-          offsets={offsets}
-          onFocusHeightChange={(value) => update('focusHeight', value)}
-          onOffsetsChange={setOffsets}
           onWidthChange={(value) => update('workarea', value as GalvoWorkarea)}
           setField={setFieldValue}
           width={config.workarea}
@@ -207,6 +204,13 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
               galvoParameters: typeof value === 'function' ? value(cur.galvoParameters) : value,
             }))
           }
+        />
+        <GalvoModuleBlock
+          focusHeight={config.focusHeight}
+          isInch={isInch}
+          offsets={offsets}
+          onFocusHeightChange={(value) => update('focusHeight', value)}
+          onOffsetsChange={setOffsets}
         />
         {isDev() && <GalvoAxisBlock field={config.field} setField={setFieldValue} />}
         {isDev() && <GalvoNoteBlock />}

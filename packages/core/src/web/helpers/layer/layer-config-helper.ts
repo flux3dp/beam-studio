@@ -204,6 +204,7 @@ useDocumentStore.subscribe((state) => state.workarea, updateDefaultDpi);
 
 export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<ConfigKeyTypeMap, 'module'>>>> = {
   [LayerModule.GALVO_CO2]: {
+    frequency: 32,
     speed: 1000,
   },
   [LayerModule.GALVO_MOPA]: {

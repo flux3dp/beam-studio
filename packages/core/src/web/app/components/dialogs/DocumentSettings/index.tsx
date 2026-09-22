@@ -72,6 +72,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     device: tDevice,
     global: tGlobal,
     resolution: tResolution,
+    settings: tSettings,
   } = useI18n();
   const {
     autoFeeder: origAutoFeeder,
@@ -109,6 +110,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [enable4C, setEnable4C] = useState(!!useDocumentStore.getState()['enable-4c']);
   const [enable1064, setEnable1064] = useState(!!useDocumentStore.getState()['enable-1064']);
   const [enableGalvoMopa, setEnableGalvoMopa] = useState(!!useDocumentStore.getState()['enable-galvo-mopa']);
+  const [useUnionBoundary, setUseUnionBoundary] = useState(!!useDocumentStore.getState()['use-union-boundary-hx2']);
   const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const wattsOptions = useMemo(() => {
@@ -246,6 +248,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       'enable-diode': Boolean(addOnInfo.hybridLaser && enableDiode),
       'enable-galvo-mopa': enableGalvoMopa,
     };
+
+    // Only HEXA II has this switch, so only HEXA II writes it -- other documents keep whatever
+    // the preference already held rather than gaining a value nothing reads.
+    if (workarea === 'fhx2galvo') newState['use-union-boundary-hx2'] = useUnionBoundary;
 
     const defaultModule = getDefaultModule(workarea);
 
@@ -709,6 +715,20 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     </div>
                     <div className={styles.control}>
                       <Switch checked={enable1064} id="laser_1064_module" onChange={setEnable1064} />
+                    </div>
+                  </div>
+                )}
+                {/* HEXA II decides this per document rather than following the global preference */}
+                {workarea === 'fhx2galvo' && (
+                  <div className={styles.row}>
+                    <div className={styles.title}>
+                      <label htmlFor="use_union_boundary">{tSettings.use_union_boundary}</label>
+                      <Tooltip title={tSettings.use_union_boundary_tooltip}>
+                        <QuestionCircleOutlined className={styles.icon} />
+                      </Tooltip>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch checked={useUnionBoundary} id="use_union_boundary" onChange={setUseUnionBoundary} />
                     </div>
                   </div>
                 )}

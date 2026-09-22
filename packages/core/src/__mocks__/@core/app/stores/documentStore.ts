@@ -26,6 +26,7 @@ const state: DocumentState = {
   'rotary-y': null,
   rotary_mode: false,
   skip_prespray: false,
+  'use-union-boundary-hx2': true,
   workarea: 'fbb1b',
   'workarea-annotation': {},
 };

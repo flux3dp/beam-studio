@@ -1,0 +1,94 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`test GalvoModuleBlock should render correctly 1`] = `
+<div>
+  <div
+    class="block ant-flex css-dev-only-do-not-override-hash ant-flex-align-stretch ant-flex-vertical"
+    style="gap: 8px;"
+  >
+    <div
+      class="title"
+    >
+      Module
+    </div>
+    <div
+      class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center ant-flex-justify-space-between"
+    >
+      <span
+        class="label"
+      >
+        Focus Height
+      </span>
+      <div
+        class="input"
+      >
+        UnitInput: 
+        <p>
+          addonAfter: 
+          mm
+        </p>
+        <p>
+          precision: 
+          2
+        </p>
+        <input
+          data-testid="focus-height"
+          value="8"
+        />
+      </div>
+    </div>
+    <div
+      class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center ant-flex-justify-space-between"
+    >
+      <span
+        class="label"
+      >
+        Offset X
+      </span>
+      <div
+        class="input"
+      >
+        UnitInput: 
+        <p>
+          addonAfter: 
+          mm
+        </p>
+        <p>
+          precision: 
+          3
+        </p>
+        <input
+          data-testid="module-offset-x"
+          value="1.5"
+        />
+      </div>
+    </div>
+    <div
+      class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center ant-flex-justify-space-between"
+    >
+      <span
+        class="label"
+      >
+        Offset Y
+      </span>
+      <div
+        class="input"
+      >
+        UnitInput: 
+        <p>
+          addonAfter: 
+          mm
+        </p>
+        <p>
+          precision: 
+          3
+        </p>
+        <input
+          data-testid="module-offset-y"
+          value="-2"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;

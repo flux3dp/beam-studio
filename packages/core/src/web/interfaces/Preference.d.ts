@@ -41,6 +41,8 @@ export type DocumentState = {
   skip_prespray: boolean;
   /** Dev only: cartridge with M/Y slots swapped (CYMK) */
   'swap-4c-ink-order'?: boolean;
+  /** HEXA II's own copy of use-union-boundary, decided per document rather than in preferences. */
+  'use-union-boundary-hx2': boolean;
   workarea: WorkAreaModel;
   'workarea-annotation'?: ModelAnnotation;
 };
