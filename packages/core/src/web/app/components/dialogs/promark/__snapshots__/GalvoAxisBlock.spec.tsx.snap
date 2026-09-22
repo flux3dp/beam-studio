@@ -1,0 +1,114 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`test GalvoAxisBlock should render correctly 1`] = `
+<div>
+  <div
+    class="block full-row ant-flex css-dev-only-do-not-override-hash ant-flex-align-stretch ant-flex-vertical"
+    style="gap: 8px;"
+  >
+    <div
+      class="title"
+    >
+      Axis (dev)
+    </div>
+    <div
+      class="ant-flex css-dev-only-do-not-override-hash ant-flex-wrap-wrap ant-flex-align-center"
+      style="gap: 32px;"
+    >
+      <div
+        class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
+        style="gap: 8px;"
+      >
+        <span
+          class="label"
+        >
+          Swap XY
+        </span>
+        <button
+          aria-checked="false"
+          class="ant-switch ant-switch-small css-dev-only-do-not-override-hash"
+          data-testid="swapXY"
+          role="switch"
+          type="button"
+        >
+          <div
+            class="ant-switch-handle"
+          />
+          <span
+            class="ant-switch-inner"
+          >
+            <span
+              class="ant-switch-inner-checked"
+            />
+            <span
+              class="ant-switch-inner-unchecked"
+            />
+          </span>
+        </button>
+      </div>
+      <div
+        class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
+        style="gap: 8px;"
+      >
+        <span
+          class="label"
+        >
+          Invert X
+        </span>
+        <button
+          aria-checked="false"
+          class="ant-switch ant-switch-small css-dev-only-do-not-override-hash"
+          data-testid="invertX"
+          role="switch"
+          type="button"
+        >
+          <div
+            class="ant-switch-handle"
+          />
+          <span
+            class="ant-switch-inner"
+          >
+            <span
+              class="ant-switch-inner-checked"
+            />
+            <span
+              class="ant-switch-inner-unchecked"
+            />
+          </span>
+        </button>
+      </div>
+      <div
+        class="row ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
+        style="gap: 8px;"
+      >
+        <span
+          class="label"
+        >
+          Invert Y
+        </span>
+        <button
+          aria-checked="true"
+          class="ant-switch ant-switch-small css-dev-only-do-not-override-hash ant-switch-checked"
+          data-testid="invertY"
+          role="switch"
+          type="button"
+        >
+          <div
+            class="ant-switch-handle"
+          />
+          <span
+            class="ant-switch-inner"
+          >
+            <span
+              class="ant-switch-inner-checked"
+            />
+            <span
+              class="ant-switch-inner-unchecked"
+            />
+          </span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

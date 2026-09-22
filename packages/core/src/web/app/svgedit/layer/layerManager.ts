@@ -7,8 +7,10 @@
  */
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import { galvoModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import { PHOTO_3D_ATTR } from '@core/app/svgedit/stl/constants';
@@ -19,6 +21,14 @@ import { InsertElementCommand } from '../history/history';
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 
 import { Layer } from './layer';
+
+/**
+ * Whether a layer on this machine can carry galvo parameters: Promark is a galvo end to end, and
+ * a machine with galvo module heads has them layer by layer.
+ */
+const hasGalvoLayers = (workarea: WorkAreaModel): boolean =>
+  promarkModels.has(workarea) ||
+  Boolean(getWorkarea(workarea).supportedModules?.some((module) => galvoModules.has(module)));
 
 /**
  * Visible SVG elements that can be orphaned
@@ -244,11 +254,12 @@ export class LayerManager {
   };
 
   /**
-   * Recompute whether the selected layers contain gradient images and inner engraving photo planes
-   * (Promark models only).
+   * Recompute whether the selected layers contain gradient images and inner engraving photo planes.
+   * Only machines with galvo layers ask: dotting time is the one parameter that applies to
+   * gradients alone.
    */
   public checkGradient = (workarea: WorkAreaModel = useDocumentStore.getState().workarea): void => {
-    if (!promarkModels.has(workarea)) return;
+    if (!hasGalvoLayers(workarea)) return;
 
     const layers = this.getState().selectedLayers.map(this.getLayerElementByName);
     const hasGradient = layers.some((layer) => Boolean(layer?.querySelector('image[data-shading="true"]')));
@@ -505,7 +516,7 @@ export class LayerManager {
 
 export const layerManager = new LayerManager(document.createElementNS(NS.SVG, 'svg'));
 
-// Recompute the Promark gradient flag when the workarea changes
+// Recompute the gradient flag when the workarea changes
 useDocumentStore.subscribe(
   (state) => state.workarea,
   (workarea) => layerManager.checkGradient(workarea),

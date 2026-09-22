@@ -1,3 +1,4 @@
+import type { Dispatch, SetStateAction } from 'react';
 import React, { useRef, useState } from 'react';
 
 import { Button, Flex, Modal } from 'antd';
@@ -8,16 +9,21 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import alertConstants from '@core/app/constants/alert-constants';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import { describeControlSocketError } from '@core/helpers/device/controlSocketError';
 import type { GalvoConfig, GalvoModule, GalvoWorkarea } from '@core/helpers/device/galvoConfig';
 import { galvoWorkareaOptions, getGalvoConfig, updateGalvoConfig } from '@core/helpers/device/galvoConfig';
 import { redLightFrameParameters, runGalvoFrame } from '@core/helpers/device/galvoFrameTask';
+import { getModuleOffsets, updateModuleOffsetsInDevice } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
+import isDev from '@core/helpers/is-dev';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import blockStyles from './Block.module.scss';
 import FieldBlock from './FieldBlock';
+import GalvoAxisBlock from './GalvoAxisBlock';
+import GalvoNoteBlock from './GalvoNoteBlock';
 import LensBlock from './LensBlock';
 import type { MarkParameters } from './ParametersBlock';
 import ParametersBlock from './ParametersBlock';
@@ -27,6 +33,8 @@ import RedDotBlock from './RedDotBlock';
 interface Props {
   device: IDeviceInfo;
   initData: GalvoConfig;
+  /** the head's position relative to the nozzle, read from toolhead_shift */
+  initOffsets: { x: number; y: number };
   module: GalvoModule;
   onClose: () => void;
 }
@@ -38,10 +46,13 @@ interface Props {
  * which the fluxghost control socket cannot do yet. Everything here is stored on the machine and
  * applied when a task runs.
  */
-export const GalvoSettings = ({ device, initData, module, onClose }: Props): React.JSX.Element => {
+export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, promark_settings: t, topbar: tTopbar } = useI18n();
   const isInch = useStorageStore((state) => state.isInch);
   const [config, setConfig] = useState<GalvoConfig>(initData);
+  // Kept apart from config: the head's offset lives in toolhead_shift, shared with module
+  // calibration and the canvas boundary, not in this head's galvo config.
+  const [offsets, setOffsets] = useState(initOffsets);
   // The galvo only reaches its own field, so nothing may fire or trace until the head is connected
   // to the nozzle and the operator has parked the gantry where they want the field.
   const [isConnected, setIsConnected] = useState(false);
@@ -52,7 +63,7 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
 
   const reportError = (error: unknown, action: string) => {
     console.error(`Galvo settings: ${action} failed`, error);
-    alertCaller.popUpError({ message: `${action} failed: ${error instanceof Error ? error.message : error}` });
+    alertCaller.popUpError({ message: `${action} failed: ${describeControlSocketError(error)}` });
   };
 
   const setRedLightOn = async (on: boolean) => {
@@ -66,9 +77,9 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
     }
   };
 
-  // TODO: dev only. The connect script is not written yet, so the operator is asked to confirm the
-  // head is already connected. Replace with the real command once it exists. The prompt is left
-  // untranslated on purpose: it disappears with the script.
+  // TODO: dev only. The connect command is not wired up here yet, so the operator is asked to
+  // confirm the head is already connected. The prompt is left untranslated on purpose: it goes
+  // away with the placeholder.
   const handleConnect = () => {
     alertCaller.popUp({
       buttonType: alertConstants.CONFIRM_CANCEL,
@@ -103,10 +114,13 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
   };
   const update = <K extends keyof GalvoConfig>(key: K, value: GalvoConfig[K]) =>
     setConfig((cur) => ({ ...cur, [key]: value }));
+  const setFieldValue: Dispatch<SetStateAction<GalvoConfig['field']>> = (value) =>
+    setConfig((cur) => ({ ...cur, field: typeof value === 'function' ? value(cur.field) : value }));
 
   const handleSave = async () => {
     try {
       await updateGalvoConfig(module, config);
+      await updateModuleOffsetsInDevice([offsets.x, offsets.y], { module, workarea: device.model });
     } catch (error) {
       reportError(error, 'Save');
 
@@ -169,13 +183,12 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
         <FieldBlock
           field={config.field}
           focusHeight={config.focusHeight}
-          hideOffsets
           isInch={isInch}
+          offsets={offsets}
           onFocusHeightChange={(value) => update('focusHeight', value)}
+          onOffsetsChange={setOffsets}
           onWidthChange={(value) => update('workarea', value as GalvoWorkarea)}
-          setField={(value) =>
-            setConfig((cur) => ({ ...cur, field: typeof value === 'function' ? value(cur.field) : value }))
-          }
+          setField={setFieldValue}
           width={config.workarea}
           widthOptions={galvoWorkareaOptions}
         />
@@ -195,6 +208,8 @@ export const GalvoSettings = ({ device, initData, module, onClose }: Props): Rea
             }))
           }
         />
+        {isDev() && <GalvoAxisBlock field={config.field} setField={setFieldValue} />}
+        {isDev() && <GalvoNoteBlock />}
         <Flex align="center" className={blockStyles['full-row']} gap={8} justify="space-between">
           <div className={blockStyles.title}>{t.mark_parameters}</div>
           <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
@@ -215,12 +230,19 @@ export const showGalvoSettings = async (device: IDeviceInfo, module: GalvoModule
 
   if (isIdExist(id)) return;
 
-  // read past the cache: the machine is the only source of truth for these
+  // read past the caches: the machine is the only source of truth for both of these
   const initData = await getGalvoConfig(module, { useCache: false });
+  const [offsetX, offsetY] = await getModuleOffsets({ module, useCache: false, workarea: device.model });
 
   addDialogComponent(
     id,
-    <GalvoSettings device={device} initData={initData} module={module} onClose={() => popDialogById(id)} />,
+    <GalvoSettings
+      device={device}
+      initData={initData}
+      initOffsets={{ x: offsetX, y: offsetY }}
+      module={module}
+      onClose={() => popDialogById(id)}
+    />,
   );
 };
 

@@ -12,7 +12,14 @@ jest.mock('../device-master', () => ({
   setDeviceSetting: (...args: unknown[]) => mockSetDeviceSetting(...args),
 }));
 
-import { defaultGalvoConfig, getGalvoConfig, hasGalvoConfig, isGalvoModule, updateGalvoConfig } from './galvoConfig';
+import {
+  defaultGalvoConfig,
+  getDefaultGalvoConfig,
+  getGalvoConfig,
+  hasGalvoConfig,
+  isGalvoModule,
+  updateGalvoConfig,
+} from './galvoConfig';
 
 describe('test galvoConfig', () => {
   beforeEach(() => {
@@ -42,13 +49,28 @@ describe('test galvoConfig', () => {
     const config = await getGalvoConfig(LayerModule.GALVO_CO2);
 
     expect(config.workarea).toBe(70);
-    expect(config.field).toEqual(defaultGalvoConfig.field);
+    expect(config.field).toEqual(getDefaultGalvoConfig(LayerModule.GALVO_CO2).field);
+  });
+
+  // Mounting, not calibration: the CO2 head sits mirrored and the MOPA one does not, so the two
+  // heads must not share one fallback.
+  it('should default the axes per head', () => {
+    expect(getDefaultGalvoConfig(LayerModule.GALVO_CO2).field).toMatchObject({
+      invertX: true,
+      invertY: true,
+      swapXY: false,
+    });
+    expect(getDefaultGalvoConfig(LayerModule.GALVO_MOPA).field).toMatchObject({
+      invertX: false,
+      invertY: false,
+      swapXY: false,
+    });
   });
 
   it('should fall back to defaults when the read fails', async () => {
     mockGetDeviceSetting.mockRejectedValue(new Error('offline'));
 
-    await expect(getGalvoConfig(LayerModule.GALVO_CO2)).resolves.toEqual(defaultGalvoConfig);
+    await expect(getGalvoConfig(LayerModule.GALVO_CO2)).resolves.toEqual(getDefaultGalvoConfig(LayerModule.GALVO_CO2));
   });
 
   it('should send only the keys being changed, escaped', async () => {
@@ -84,7 +106,7 @@ describe('test galvoConfig', () => {
   it('should treat an empty answer as never configured', async () => {
     mockGetDeviceSetting.mockResolvedValue({ status: 'ok', value: undefined });
 
-    await expect(getGalvoConfig(LayerModule.GALVO_CO2)).resolves.toEqual(defaultGalvoConfig);
+    await expect(getGalvoConfig(LayerModule.GALVO_CO2)).resolves.toEqual(getDefaultGalvoConfig(LayerModule.GALVO_CO2));
     await expect(hasGalvoConfig(LayerModule.GALVO_CO2)).resolves.toBe(false);
   });
 
