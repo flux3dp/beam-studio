@@ -3,6 +3,7 @@ const mockGetContours = jest.fn();
 let mockHasSwiftray = true;
 let mockIsWeb = false;
 let mockVersion = '1.4.11';
+let mockReadyState = WebSocket.OPEN;
 
 jest.mock('@core/helpers/api/swiftray-client', () => ({
   get hasSwiftray() {
@@ -10,6 +11,9 @@ jest.mock('@core/helpers/api/swiftray-client', () => ({
   },
   swiftrayClient: {
     detectContours: (...args: any[]) => mockDetectContours(...args),
+    get readyState() {
+      return mockReadyState;
+    },
     get version() {
       return mockVersion;
     },
@@ -45,6 +49,7 @@ const resetEnv = () => {
   mockHasSwiftray = true;
   mockIsWeb = false;
   mockVersion = '1.4.11';
+  mockReadyState = WebSocket.OPEN;
   useGlobalPreferenceStore.getState().set('contour-engine', 'onnx');
 };
 
@@ -61,6 +66,7 @@ describe('getEffectiveContourEngine', () => {
     ['web', () => (mockIsWeb = true)],
     ['no Swiftray', () => (mockHasSwiftray = false)],
     ['old Swiftray', () => (mockVersion = '1.4.10')],
+    ['disconnected Swiftray', () => (mockReadyState = WebSocket.CLOSED)],
   ])('downgrades to opencv on %s', (_, setup) => {
     setup();
     expect(getEffectiveContourEngine()).toBe('opencv');

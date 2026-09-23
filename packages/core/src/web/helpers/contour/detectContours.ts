@@ -10,12 +10,17 @@ export type DetectedContour = AutoFitContour;
 
 /**
  * Resolve the engine that will actually run: the user's preference, downgraded to 'opencv'
- * whenever the ONNX host is not available in this build/environment.
+ * whenever the ONNX host is not available right now. The socket check matters: a request on a
+ * closed Swiftray socket never resolves (action() only shows the disconnected toast), so we must
+ * not even try.
  */
 export const getEffectiveContourEngine = (): ContourEngine => {
-  if (isWeb() || !hasSwiftray || !versionChecker(swiftrayClient.version).meetRequirement('SWIFTRAY_SEGMENT')) {
-    return 'opencv';
-  }
+  const swiftrayReady =
+    hasSwiftray &&
+    swiftrayClient.readyState === WebSocket.OPEN &&
+    versionChecker(swiftrayClient.version).meetRequirement('SWIFTRAY_SEGMENT');
+
+  if (isWeb() || !swiftrayReady) return 'opencv';
 
   const preferred = useGlobalPreferenceStore.getState()['contour-engine'];
 

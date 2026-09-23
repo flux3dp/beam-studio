@@ -288,6 +288,10 @@ class SwiftrayClient extends EventEmitter {
         payload.params.file = '[file object]';
       }
 
+      if (payload.params?.image) {
+        payload.params.image = `[image, ${payload.params.image.length} chars]`;
+      }
+
       this.logger.append(payload);
 
       if (this.socket?.readyState === WebSocket.OPEN) {
