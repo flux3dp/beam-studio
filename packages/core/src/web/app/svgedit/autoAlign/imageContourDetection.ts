@@ -31,20 +31,15 @@ export interface ImageContour {
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 const MESSAGE_KEY = 'snap-to-object-center';
 const OVERLAY_ID = 'imageContourOverlay';
-
-/**
- * Debug view of what will snap: each polygon as a dashed outline plus a centre dot, inside
- * #previewSvg (workarea px viewBox, never exported). Enabled by localStorage 'dev-image-contour' = 'true'.
- * PRD §5.5 "Overlay"; swap the gate for the preference to ship it.
- */
-const isOverlayEnabled = (): boolean => window?.localStorage?.getItem('dev-image-contour') === 'true';
+/** An object spanning nearly the whole bed in one direction is a rail or a sheet of material, not a part. */
+const MAX_SPAN_RATIO = 0.9;
 
 const renderOverlay = (contours: ImageContour[]): void => {
   document.getElementById(OVERLAY_ID)?.remove();
 
   const previewSvg = document.getElementById('previewSvg');
 
-  if (!isOverlayEnabled() || !previewSvg || !contours.length) return;
+  if (!window?.localStorage?.getItem('dev-image-contour') === 'true' || !previewSvg || !contours.length) return;
 
   const g = document.createElementNS(NS.SVG, 'g');
 
@@ -161,13 +156,15 @@ export class ImageContourDetector {
     const k = 1 / crop.ratio; // canvasRatio < 1 only on iOS
     const detected = await detectContours(crop.blob);
 
-    this.contours = detected.map(({ angle, bbox, center, contour }, i) => ({
-      angle,
-      bbox: [bbox[0] * k, bbox[1] * k, bbox[2] * k, bbox[3] * k] as ImageContour['bbox'],
-      center: [center[0] * k, center[1] * k] as ImageContour['center'],
-      contour: contour.map(([x, y]) => [x * k, y * k] as [number, number]),
-      id: `${Date.now()}-${i}`,
-    }));
+    this.contours = detected
+      .filter(({ bbox }) => bbox[2] * k < width * MAX_SPAN_RATIO && bbox[3] * k < modelHeight * MAX_SPAN_RATIO)
+      .map(({ angle, bbox, center, contour }, i) => ({
+        angle,
+        bbox: [bbox[0] * k, bbox[1] * k, bbox[2] * k, bbox[3] * k] as ImageContour['bbox'],
+        center: [center[0] * k, center[1] * k] as ImageContour['center'],
+        contour: contour.map(([x, y]) => [x * k, y * k] as [number, number]),
+        id: `${Date.now()}-${i}`,
+      }));
     renderOverlay(this.contours);
   };
 }
