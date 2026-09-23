@@ -124,6 +124,8 @@ const records = (buffer: ArrayBuffer) => {
   return {
     galvoLists: parsed.galvoLists,
     rows: parsed.recordOffsets.map((_, i) => ({
+      /** minutes the beam dwells here with nothing moving, in the slot LaserWeb called e */
+      dwell: get(i, 4),
       f: get(i, 5),
       g: get(i, 0),
       s: get(i, 7),
@@ -216,8 +218,19 @@ describe('parseFcode galvo lists', () => {
     expect(marks[0].x).toBeCloseTo(115.05);
     // the second dot takes its width from the 0.2mm spacing
     expect(marks[1].x).toBeCloseTo(115.3);
-    // dot marks add no simulated time; the jump before them carries it
+    // no feedrate, so the kinematic estimate leaves them alone...
     expect(marks.every((r) => Number.isNaN(r.f))).toBe(true);
+    // ...but the beam still burns in place: LASER_ON's 300us, in minutes. Without this a
+    // dense dotted block costs nothing and appears in a single frame of the time preview.
+    expect(marks.every((r) => r.dwell === 300 / 60000000)).toBe(true);
+  });
+
+  test('leaves every record but a dot free of dwell', () => {
+    const { rows } = records(
+      buildTask([...park, ...prologue(800), ...galvo(1, 0, 0), ...galvo(3, 5, 0), ...galvo(19, 1)]),
+    );
+
+    expect(rows.every((r) => r.dwell === 0)).toBe(true);
   });
 
   test('keeps a break record time-neutral so the timeline cannot go NaN', () => {

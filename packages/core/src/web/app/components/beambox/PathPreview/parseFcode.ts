@@ -46,6 +46,7 @@ const GALVO_OP = {
   END_OF_LIST: 19,
   JUMP_ABS: 1,
   JUMP_REL: 2,
+  /** Dot: its one parameter is the dwell in microseconds (the dotting time). */
   LASER_ON: 5,
   MARK_ABS: 3,
   MARK_REL: 4,
@@ -63,6 +64,9 @@ const GALVO_OP = {
 const GALVO_DOT_MM = 0.1;
 const GALVO_DOT_MIN_MM = 0.02;
 const GALVO_DOT_MAX_MM = 0.5;
+
+/** Sim time is kept in minutes, and a dot's dwell arrives in microseconds. */
+const US_TO_MIN = 1 / 60000000;
 
 export class Reader {
   view: DataView;
@@ -375,12 +379,17 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   // image packets (17 = nozzle settings, 5 = white ink, 6 = varnish)
   let printerPacketType = 0;
 
-  const push = (g: number, s = state.pwm, t = 0) => {
+  /**
+   * `dwell` is minutes the beam spends on this record with nothing moving, which only a galvo dot
+   * has. It rides in the slot LaserWeb called `e`: nothing on either parser's path reads that, and
+   * a time held in place cannot be expressed as a feedrate over a distance.
+   */
+  const push = (g: number, s = state.pwm, t = 0, dwell = 0) => {
     parsedGcode.push(g);
     parsedGcode.push(state.x);
     parsedGcode.push(state.y);
     parsedGcode.push(state.z);
-    parsedGcode.push(0); // e
+    parsedGcode.push(dwell); // e
     parsedGcode.push(state.f);
     parsedGcode.push(state.a);
     parsedGcode.push(s);
@@ -613,12 +622,16 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   /**
    * A dot has position but no path, so it is drawn the way printer swaths draw
    * deposited pixels: the jump that placed the beam already carried the motion
-   * time, and the mark itself is a zero-sim-time run (f = NaN) one pitch wide,
-   * bracketed by break records so the synthetic jumps stay out of the traversal
-   * display. Spacing to the previous dot gives the pitch, since dots come from a
-   * grid; the default only covers the first dot of a list.
+   * time, and the mark itself is one pitch wide with no feedrate, bracketed by
+   * break records so the synthetic jumps stay out of the traversal display.
+   * Spacing to the previous dot gives the pitch, since dots come from a grid; the
+   * default only covers the first dot of a list.
+   *
+   * The beam does spend time there, though: `dwellUs` is the LASER_ON period, and
+   * on a dense block it is most of what the job costs. Carried as a dwell so the
+   * timeline advances across the dot instead of the whole block appearing at once.
    */
-  const emitGalvoDot = () => {
+  const emitGalvoDot = (dwellUs: number) => {
     const [cx, cy] = galvoPoint();
 
     if (galvo!.lastDot) {
@@ -639,7 +652,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     state.x = cx - half;
     push(0, 0, RASTER_T);
     state.x = cx + half;
-    push(1, (galvo!.power * 255) / 100, RASTER_T);
+    push(1, (galvo!.power * 255) / 100, RASTER_T, dwellUs * US_TO_MIN);
     state.f = savedF;
     state.x = cx;
     pushBreak();
@@ -661,7 +674,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         emitGalvoMove(opcode === GALVO_OP.MARK_REL);
         break;
       case GALVO_OP.LASER_ON:
-        emitGalvoDot();
+        emitGalvoDot(params[0] ?? 0);
         break;
       case GALVO_OP.SET_JUMP_SPEED:
         galvo!.jumpF = params[0] * 60; // mm/s -> mm/min
