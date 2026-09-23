@@ -24,6 +24,14 @@ import workareaManager from '../workarea';
 import imageContourDetection from './imageContourDetection';
 import type { ImageContour } from './imageContourDetection';
 import { getMatchedDiffFromBBox } from './utils/getMatchedDiffFromBBox';
+import {
+  axisPath,
+  getRotationCandidates,
+  OBJECT_SNAP_SCREEN_PX,
+  RECTANGULAR_MIN,
+  ROTATION_SNAP_DEG,
+  wrapDeg,
+} from './utils/objectSnap';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -49,9 +57,6 @@ const getElemAlignPoints = (elem: SVGGraphicsElement): IPoint[] => {
 
   return points;
 };
-
-/** Snap to object center engages within this many screen px of the object's centre, so zooming in tightens it. */
-const OBJECT_SNAP_SCREEN_PX = 20;
 
 export class AutoAlignManager {
   private alignPoints: Record<'x' | 'y', IPoint[]> = { x: [], y: [] };
@@ -274,36 +279,89 @@ export class AutoAlignManager {
    */
   findObjectCenterSnap = (center: IPoint): ImageContour | null => {
     const range = OBJECT_SNAP_SCREEN_PX / workareaManager.zoomRatio;
-    let best: ImageContour | null = null;
-    let bestDist = range;
+    // smallest bbox first, so a part centred on its parent (an engraving on a tile) wins over the parent
+    const candidates = [...imageContourDetection.contours].sort(
+      (a, b) => a.bbox[2] * a.bbox[3] - b.bbox[2] * b.bbox[3],
+    );
 
-    for (const contour of imageContourDetection.contours) {
+    for (const contour of candidates) {
       const [x, y, w, h] = contour.bbox;
       const inside = center.x >= x && center.x <= x + w && center.y >= y && center.y <= y + h;
 
-      if (!inside) continue;
+      if (inside && Math.hypot(contour.center[0] - center.x, contour.center[1] - center.y) < range) return contour;
+    }
 
-      const dist = Math.hypot(contour.center[0] - center.x, contour.center[1] - center.y);
+    return null;
+  };
 
-      if (dist < bestDist) {
-        best = contour;
-        bestDist = dist;
-      }
+  /**
+   * While rotating a selection whose centre sits on a rectangular detected object, snap `angle` (deg)
+   * to the nearest candidate within ROTATION_SNAP_DEG and draw the matched edge direction through the
+   * object's centre. Returns `angle` unchanged otherwise. Nothing ever rotates without user motion.
+   */
+  getRotationSnap = (angle: number, center: IPoint): number => {
+    if (!imageContourDetection.isEnabled()) return angle;
+
+    const candidates = [...imageContourDetection.contours]
+      .filter((c) => c.rect.rectangularity >= RECTANGULAR_MIN)
+      .sort((a, b) => a.bbox[2] * a.bbox[3] - b.bbox[2] * b.bbox[3]);
+    const target = candidates.find(
+      ({ bbox: [x, y, w, h] }) => center.x >= x && center.x <= x + w && center.y >= y && center.y <= y + h,
+    );
+
+    if (!target) return angle;
+
+    let best: null | number = null;
+
+    for (const candidate of getRotationCandidates(target.rect)) {
+      const diff = Math.abs(wrapDeg(angle - candidate));
+
+      if (diff < ROTATION_SNAP_DEG && (best === null || diff < Math.abs(wrapDeg(angle - best)))) best = candidate;
+    }
+
+    if (best === null) return angle;
+
+    const svgcontent = document.getElementById('svgcontent');
+
+    if (svgcontent) {
+      const line = document.createElementNS(NS.SVG, 'path');
+      const [cx, cy] = target.center;
+
+      setAttributes(line, {
+        d: axisPath(cx, cy, (best * Math.PI) / 180, target.rect.width / 2),
+        fill: 'none',
+        id: 'align_line_object_r',
+        'pointer-events': 'none',
+        stroke: '#F707F0',
+        'stroke-dasharray': '4 4',
+        'stroke-width': '1',
+        'vector-effect': 'non-scaling-stroke',
+      });
+      svgcontent.appendChild(line);
     }
 
     return best;
   };
 
-  /** Cross through the object's centre spanning its bbox, styled like the other align lines (same id prefix, so clearAlignLines removes it). */
-  drawObjectCenterGuides = ({ bbox: [x, y, w, h], center: [cx, cy] }: ImageContour): void => {
+  /**
+   * Cross through the object's centre, styled like the other align lines (same id prefix, so clearAlignLines
+   * removes it).
+   */
+  drawObjectCenterGuides = ({ bbox: [x, y, w, h], center: [cx, cy], rect }: ImageContour): void => {
     const svgcontent = document.getElementById('svgcontent');
 
     if (!svgcontent) return;
 
-    const lines = [
-      { d: `M ${x} ${cy} L ${x + w} ${cy}`, id: 'align_line_object_h' },
-      { d: `M ${cx} ${y} L ${cx} ${y + h}`, id: 'align_line_object_v' },
-    ];
+    const lines =
+      rect.rectangularity >= RECTANGULAR_MIN
+        ? [
+            { d: axisPath(cx, cy, rect.angle, rect.width / 2), id: 'align_line_object_h' },
+            { d: axisPath(cx, cy, rect.angle + Math.PI / 2, rect.height / 2), id: 'align_line_object_v' },
+          ]
+        : [
+            { d: `M ${x} ${cy} L ${x + w} ${cy}`, id: 'align_line_object_h' },
+            { d: `M ${cx} ${y} L ${cx} ${y + h}`, id: 'align_line_object_v' },
+          ];
 
     for (const { d, id } of lines) {
       const line = document.createElementNS(NS.SVG, 'path');

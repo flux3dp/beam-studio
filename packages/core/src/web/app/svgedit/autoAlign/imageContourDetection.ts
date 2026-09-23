@@ -18,14 +18,17 @@ import i18n from '@core/helpers/i18n';
 
 import workareaManager from '../workarea';
 
+import { getMinAreaRect, type MinAreaRect } from './utils/getMinAreaRect';
+
 /** An object detected in the camera preview; all coordinates in workarea canvas px (10 px/mm). */
 export interface ImageContour {
-  /** rad, from cv::minAreaRect; reserved for rotation snapping */
-  angle: number;
   bbox: [number, number, number, number];
+  /** mask centroid */
   center: [number, number];
   contour: Array<[number, number]>;
   id: string;
+  /** minimum-area rect of `contour`, computed here so both engines are treated alike */
+  rect: MinAreaRect;
 }
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
@@ -158,13 +161,17 @@ export class ImageContourDetector {
 
     this.contours = detected
       .filter(({ bbox }) => bbox[2] * k < width * MAX_SPAN_RATIO && bbox[3] * k < modelHeight * MAX_SPAN_RATIO)
-      .map(({ angle, bbox, center, contour }, i) => ({
-        angle,
-        bbox: [bbox[0] * k, bbox[1] * k, bbox[2] * k, bbox[3] * k] as ImageContour['bbox'],
-        center: [center[0] * k, center[1] * k] as ImageContour['center'],
-        contour: contour.map(([x, y]) => [x * k, y * k] as [number, number]),
-        id: `${Date.now()}-${i}`,
-      }));
+      .map(({ bbox, center, contour }, i) => {
+        const polygon = contour.map(([x, y]) => [x * k, y * k] as [number, number]);
+
+        return {
+          bbox: [bbox[0] * k, bbox[1] * k, bbox[2] * k, bbox[3] * k] as ImageContour['bbox'],
+          center: [center[0] * k, center[1] * k] as ImageContour['center'],
+          contour: polygon,
+          id: `${Date.now()}-${i}`,
+          rect: getMinAreaRect(polygon),
+        };
+      });
     renderOverlay(this.contours);
   };
 }

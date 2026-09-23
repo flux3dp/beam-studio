@@ -924,6 +924,9 @@ const mouseMove = (evt: MouseEvent) => {
         const snap = 45;
 
         angle = Math.round(angle / snap) * snap;
+      } else {
+        autoAlign.clearAlignLines();
+        angle = autoAlign.getRotationSnap(angle, { x: cx, y: cy });
       }
 
       setRotationAngle(selected, angle < -180 ? 360 + angle : angle, { addToHistory: false });
