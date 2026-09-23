@@ -5,6 +5,7 @@ import { Button, Flex, Modal } from 'antd';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { useStorageStore } from '@core/app/stores/storageStore';
@@ -128,6 +129,10 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
       return;
     }
 
+    // Both the module offset and the field lens size feed the canvas boundary, and neither write
+    // redraws it on its own.
+    boundaryDrawer.update();
+
     await restoreRedLight();
     onClose();
   };
@@ -172,6 +177,7 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
   return (
     <Modal
       centered
+      className={styles.scrollable}
       footer={footer}
       keyboard={false}
       maskClosable={false}
