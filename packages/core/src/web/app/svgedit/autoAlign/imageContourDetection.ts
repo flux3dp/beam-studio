@@ -39,7 +39,7 @@ const renderOverlay = (contours: ImageContour[]): void => {
 
   const previewSvg = document.getElementById('previewSvg');
 
-  if (!window?.localStorage?.getItem('dev-image-contour') === 'true' || !previewSvg || !contours.length) return;
+  if (window?.localStorage?.getItem('dev-image-contour') !== 'true' || !previewSvg || !contours.length) return;
 
   const g = document.createElementNS(NS.SVG, 'g');
 
