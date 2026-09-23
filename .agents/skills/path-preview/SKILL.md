@@ -37,6 +37,10 @@ Record contract (`ParsedGcode`, a chunked array dodging V8 length limits):
   canvas while slot 2 keeps machine y for start-here slicing. Promark keeps its own
   `y - a / rotaryRatio` fold.
 - `f` is mm/min; feeds the sim-time estimate per segment.
+- `e` carries a **dwell in minutes** on the arrival record: time the beam spends with
+  nothing moving, which only a galvo dot has (0 everywhere else). LaserWeb's extrusion
+  slot, read by nothing else. A dwell cannot be a feedrate over a distance, and
+  `GcodePreview` charges it as its own `tc` branch beside the Promark dotting one.
 - `s`/`t`: Promark uses `t` as dotting time — **only on the gcode path**; the
   dotting-time branch in `GcodePreview` is inside `if (isPromark)`, so an fcode `t`
   is never read that way. FCode raster runs set `t = RASTER_T` (6) with `s` = pixel
@@ -64,11 +68,13 @@ park when the run ends. Marks become cut records, jumps travels, at the list's o
 mark/jump speeds converted to mm/min.
 
 **Dots** (`LASER_ON`) are the one shape with no path. They are drawn the way printer
-swaths draw deposited pixels: the jump that placed the beam is the record that carries
-the motion time, and the dot itself is a zero-sim-time run (`f = NaN`) one pitch wide
-with `t = RASTER_T`, bracketed by break records. A dot has no size in the file, so the
-width comes from the spacing to the previous dot in the same list — they come off a
-grid — falling back to 0.1mm for the first one.
+swaths draw deposited pixels: the jump that placed the beam carries the motion time, and
+the dot itself is a run with no feedrate (`f = NaN`) one pitch wide with `t = RASTER_T`,
+bracketed by break records. A dot has no size in the file, so the width comes from the
+spacing to the previous dot in the same list — they come off a grid — falling back to
+0.1mm for the first one. `LASER_ON`'s one parameter is the dwell in microseconds, which
+rides the arrival record's `e` slot: on a dense block it is most of what the job costs,
+and without it the whole block appears in one frame of the time preview.
 
 Slicing gets `galvoLists` (record-index spans) from the parser, because a galvo list
 cannot be cut into: see the `fcode` skill. `sliceFcode` rewinds a cut that lands

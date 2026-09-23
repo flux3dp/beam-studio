@@ -242,6 +242,9 @@ export class GcodePreview {
         // segment power: next record's s (raster pixel power, see RASTER_T in parseFcode)
         const s = parsed.getItem(i * parsedStride + 16);
         const t = parsed.getItem(i * parsedStride + 8);
+        // minutes the beam dwells on arrival with nothing moving: a galvo dot's LASER_ON
+        // period, which parseFcode puts in the otherwise unused e slot. 0 everywhere else.
+        const dwell = parsed.getItem(i * parsedStride + 13);
 
         if (g) {
           this.minX = Math.min(this.minX, x1, x2);
@@ -300,25 +303,37 @@ export class GcodePreview {
           tc = Math.abs(estimateVel - lastVel) / acc + dist / estimateVel;
           lastFeedrate = estimateVel;
           lastDirection = direction;
+        } else if (dwell > 0) {
+          // A galvo dot: the beam stands still and burns, so its cost is the dwell itself
+          // rather than a length over a speed. Same idea as the Promark dotting branch
+          // above, but per dot - fcode gives each one its own record instead of spreading
+          // them along a single move.
+          tc = dwell;
         }
 
         // f = NaN marks synthetic zero-time records (printer swath content, see
-        // parseFcode) - not head motion, so they add no distance or time
-        if (g && !Number.isNaN(f)) {
+        // parseFcode) - not head motion, so they add no distance or time. A dot is the
+        // exception: it has no feedrate either, but it does take time.
+        const counts = !Number.isNaN(f) || dwell > 0;
+        // A dot's drawn width is the display pitch of its grid, not travel: it costs time
+        // without covering ground.
+        const moved = Number.isNaN(f) ? 0 : dist;
+
+        if (g && counts) {
           g1Time += tc;
-          g1Dist += dist;
+          g1Dist += moved;
           g1TimeReal += tc;
-          g1DistReal += dist;
-        } else if (!g && !Number.isNaN(f)) {
+          g1DistReal += moved;
+        } else if (!g && counts) {
           if (f === 7500) {
             g0Time += tc;
-            g0Dist += dist;
+            g0Dist += moved;
           } else {
             g1Time += tc;
-            g1Dist += dist;
+            g1Dist += moved;
           }
           g0TimeReal += tc;
-          g0DistReal += dist;
+          g0DistReal += moved;
         }
 
         this.timeInterval.push(g1Time + g0Time);
