@@ -9,6 +9,7 @@
  */
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import NS from '@core/app/constants/namespaces';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { detectContours } from '@core/helpers/contour/detectContours';
@@ -29,6 +30,35 @@ export interface ImageContour {
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 const MESSAGE_KEY = 'snap-to-object-center';
+const OVERLAY_ID = 'imageContourOverlay';
+
+/**
+ * Debug view of what will snap: each polygon as a dashed outline plus a centre dot, inside
+ * #previewSvg (workarea px viewBox, never exported). Enabled by localStorage 'dev-image-contour' = 'true'.
+ * PRD §5.5 "Overlay"; swap the gate for the preference to ship it.
+ */
+const isOverlayEnabled = (): boolean => window?.localStorage?.getItem('dev-image-contour') === 'true';
+
+const renderOverlay = (contours: ImageContour[]): void => {
+  document.getElementById(OVERLAY_ID)?.remove();
+
+  const previewSvg = document.getElementById('previewSvg');
+
+  if (!isOverlayEnabled() || !previewSvg || !contours.length) return;
+
+  const g = document.createElementNS(NS.SVG, 'g');
+
+  g.setAttribute('id', OVERLAY_ID);
+  g.setAttribute('pointer-events', 'none');
+  g.innerHTML = contours
+    .map(
+      ({ center: [cx, cy], contour }) =>
+        `<path d="M ${contour.map(([x, y]) => `${x} ${y}`).join(' L ')} Z" fill="none" stroke="#F707F0" stroke-width="1" stroke-dasharray="4 4" vector-effect="non-scaling-stroke"/>` +
+        `<circle cx="${cx}" cy="${cy}" r="3" fill="#F707F0"/>`,
+    )
+    .join('');
+  previewSvg.appendChild(g);
+};
 
 export class ImageContourDetector {
   /** objects currently known in the preview; read by autoAlign while dragging */
@@ -64,6 +94,7 @@ export class ImageContourDetector {
     this.dirty = false;
     this.errorShown = false;
     this.contours = [];
+    renderOverlay([]);
     MessageCaller.closeMessage(MESSAGE_KEY);
   };
 
@@ -137,6 +168,7 @@ export class ImageContourDetector {
       contour: contour.map(([x, y]) => [x * k, y * k] as [number, number]),
       id: `${Date.now()}-${i}`,
     }));
+    renderOverlay(this.contours);
   };
 }
 
