@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Đang kết nối camera...',
     connectingMachine: 'Đang kết nối %s...',
     connectionTimeout: '#805 Hết thời gian kết nối thiết bị. Vui lòng kiểm tra kết nối mạng và đèn báo Wi-Fi của máy.',
+    detecting_objects: 'Đang phát hiện đối tượng trong bản xem trước…',
     device_blocked: {
       caption: 'Số Serial Không Hợp Lệ',
       offline: 'Số serial của thiết bị bị giới hạn chỉ sử dụng ngoại tuyến vì dường như đã bị vô hiệu hóa. Vui lòng cung cấp số serial của thiết bị (nằm ở mặt sau của thiết bị) cho nhà bán lẻ của bạn và yêu cầu họ liên hệ với support@flux3dp.com để kích hoạt quyền sử dụng trực tuyến. Nếu bạn muốn sử dụng thiết bị ngoại tuyến, vui lòng liên hệ trực tiếp với support@flux3dp.com.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Máy Mac này sử dụng Apple Silicon. Tải xuống phiên bản Apple Silicon và cài đặt lại.',
     },
     need_password: 'Cần Mật khẩu để Kết nối với Máy',
+    object_detection_failed: 'Phát hiện đối tượng thất bại; không thể bắt dính vào đối tượng trong bản xem trước này.',
+    objects_detected: 'Đã phát hiện đối tượng',
     please_enter_dpi: 'Vui lòng nhập Đơn vị của tệp tin (tính bằng mm)',
     preview: {
       adjust: 'Điều chỉnh',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Hiển thị thước kẻ',
       show_start_tutorial: 'Xem hướng dẫn bắt đầu',
       show_ui_intro: 'Xem giới thiệu giao diện',
+      snap_to_object_center: 'Bắt dính vào tâm vật thể',
       software_update: 'Cập nhật phần mềm',
       svg_edit: 'SVG',
       switch_to_beta: 'Chuyển sang Bản Beta',

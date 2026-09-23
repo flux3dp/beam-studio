@@ -152,6 +152,7 @@ export default {
   SHOW_RULERS: (): boolean => viewMenu.toggleRulers(),
   SIGN_IN: (): void => Dialog.showLoginDialog(),
   SIGN_OUT: (): Promise<boolean> => signOut(),
+  SNAP_TO_OBJECT_CENTER: (): boolean => viewMenu.toggleSnapToObjectCenter(),
   START_CURVE_ENGRAVING_MODE: () => curveEngravingModeController.start(),
   START_GESTURE_INTRO: (): Promise<void> => Dialog.showMediaTutorial(getGestureIntroduction()),
   START_TUTORIAL: (): void => {

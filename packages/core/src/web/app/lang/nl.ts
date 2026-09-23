@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Camera verbinden...',
     connectingMachine: 'Verbinden met %s...',
     connectionTimeout: '#805 Apparaat verbinding time-out. Controleer uw netwerkstatus en de Wi-Fi-indicator van uw machine.',
+    detecting_objects: 'Objecten in de voorbeeldweergave detecteren…',
     device_blocked: {
       caption: 'Niet-geautoriseerd serienummer',
       offline: 'Het serienummer van uw apparaat is beperkt tot offline gebruik omdat het gedeactiveerd lijkt te zijn. Geef het serienummer van het apparaat (te vinden aan de achterkant van het apparaat) aan uw verkoper en vraag hem contact op te nemen met support@flux3dp.com om de online autorisatie te activeren. Als u het apparaat offline wilt gebruiken, neem dan rechtstreeks contact op met support@flux3dp.com.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Deze Mac gebruikt Apple Silicon. Download de Apple Silicon versie en installeer opnieuw.',
     },
     need_password: 'Wachtwoord vereist om verbinding te maken met het apparaat',
+    object_detection_failed: 'Objectdetectie mislukt; uitlijnen op objecten is niet beschikbaar voor deze voorbeeldweergave.',
+    objects_detected: 'Objecten gedetecteerd',
     please_enter_dpi: 'Voer de eenheid van uw bestand in (in mm)',
     preview: {
       adjust: 'Aanpassen',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Linialen tonen',
       show_start_tutorial: 'Introductietutorial tonen',
       show_ui_intro: 'Interface-introductie tonen',
+      snap_to_object_center: 'Uitlijnen op objectcentrum',
       software_update: 'Software-update',
       svg_edit: 'SVG',
       switch_to_beta: 'Schakel over naar bètaversie',

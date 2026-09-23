@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Yhdistetään kameraan...',
     connectingMachine: 'Yhdistetään %s...',
     connectionTimeout: '#805 Laitteen yhteys katkaistiin. Tarkista verkkoyhteytesi ja laitteen Wi-Fi-merkkivalo.',
+    detecting_objects: 'Tunnistetaan kohteita esikatselusta…',
     device_blocked: {
       caption: 'Luvaton sarjanumero',
       offline: 'Laitteesi sarjanumero on rajoitettu offline-käyttöön, koska se näyttää olevan pois käytöstä. Anna laitteen sarjanumero (löytyy laitteen takaa) jälleenmyyjällesi ja pyydä häntä ottamaan yhteyttä osoitteeseen support@flux3dp.com online-valtuutuksen aktivoimiseksi. Jos haluat käyttää laitetta offline-tilassa, ota suoraan yhteyttä support@flux3dp.com.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Tämä Mac käyttää Apple Siliconia. Lataa Apple Silicon -versio ja asenna uudelleen.',
     },
     need_password: 'Tarvitaan salasana koneeseen yhdistämiseen',
+    object_detection_failed: 'Kohteiden tunnistus epäonnistui; kohteisiin kiinnittäminen ei ole käytettävissä tässä esikatselussa.',
+    objects_detected: 'Kohteet tunnistettu',
     please_enter_dpi: 'Anna tiedoston mittayksikkö (mm)',
     preview: {
       adjust: 'Säädä',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Näytä viivain',
       show_start_tutorial: 'Näytä aloitusopastus',
       show_ui_intro: 'Näytä käyttöliittymän esittely',
+      snap_to_object_center: 'Kohdista objektin keskipisteeseen',
       software_update: 'Ohjelmistopäivitys',
       svg_edit: 'SVG',
       switch_to_beta: 'Vaihda Beta-versioon',

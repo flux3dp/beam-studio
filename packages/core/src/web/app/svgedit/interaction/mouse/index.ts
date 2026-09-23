@@ -28,7 +28,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
+import type { IRect } from '@core/interfaces/ISVGCanvas';
 
 import history from '../../history/history';
 import undoManager from '../../history/undoManager';
@@ -56,7 +56,6 @@ import workareaManager from '../../workarea';
 import wheelEventHandlerGenerator from '../wheelEventHandler';
 
 import { getEventPoint } from './utils/getEventPoint';
-import { getMatchedDiffFromBBox } from './utils/getMatchedDiffFromBBox';
 import { initResizeTransform } from './utils/initResizeTransform';
 import { setRubberBoxStart } from './utils/setRubberBoxStart';
 
@@ -84,7 +83,6 @@ let startMouseY = 0;
 let selectedBBox: IRect | null = null;
 let justSelected: null | SVGElement = null;
 let angleOffset = 90;
-let currentBoundingBox = Array.of<IPoint>();
 
 const checkShouldIgnore = () => ObjectPanelController.getActiveKey() && navigator.maxTouchPoints > 1;
 const findAndDrawAlignPoints = (x: number, y: number) => {
@@ -309,7 +307,7 @@ const mouseDown = async (evt: MouseEvent) => {
         setRubberBoxStart(startMouseX, startMouseY);
       }
 
-      currentBoundingBox = autoAlign.getSelectedElementsAlignPoints();
+      autoAlign.captureSelection();
 
       break;
     case 'curve-engraving':
@@ -749,18 +747,13 @@ const mouseMove = (evt: MouseEvent) => {
         if (evt.shiftKey) {
           const xya = svgedit.math.snapToAngle(startX, startY, x, y);
 
-          // update input coords for getMatchedDiffFromBBox
+          // update input coords for autoAlign.getDragDelta
           current = xya;
           dx = xya.x - startX;
           dy = xya.y - startY;
         }
 
-        if (autoAlign.isEnabled()) {
-          const diff = getMatchedDiffFromBBox(currentBoundingBox, current, { x: startX, y: startY });
-
-          dx = diff.x;
-          dy = diff.y;
-        }
+        ({ x: dx, y: dy } = autoAlign.getDragDelta(current, { x: startX, y: startY }));
 
         if (dx !== 0 || dy !== 0) {
           for (const selected of selectedElements) {

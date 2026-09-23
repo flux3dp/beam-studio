@@ -94,6 +94,8 @@ export type GlobalPreference = {
   show_guides: boolean;
   show_rulers: boolean;
   simplify_clipper_path: boolean;
+  /** Auto Align also snaps to objects detected in the camera preview */
+  snap_to_object_center: boolean;
   /**
    * Auto turn on auto-exposure if possible when previewing
    */

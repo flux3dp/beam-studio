@@ -79,6 +79,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   show_guides: false,
   show_rulers: false,
   simplify_clipper_path: false,
+  snap_to_object_center: true,
   skip_prespray: false,
   'use-real-boundary': false,
   'use-union-boundary': true,

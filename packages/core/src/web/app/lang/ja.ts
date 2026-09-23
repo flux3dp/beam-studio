@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'カメラを接続中…',
     connectingMachine: '%sを接続しています…',
     connectionTimeout: '#805 デバイス接続タイムアウト，ネットワークの状態とマシンのWi-Fiインジケーターを確認してください。',
+    detecting_objects: 'プレビュー内のオブジェクトを検出中…',
     device_blocked: {
       caption: '未承認のシリアル番号',
       offline: 'デバイスのシリアル番号はオフラインでの使用に制限されています。デバイスの背面に記載されているシリアル番号を販売店に提供し、support@flux3dp.comに連絡してオンライン認証を有効にしてください。オフラインでの使用を希望する場合は、直接support@flux3dp.comにお問い合わせください。',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'このMacはApple Siliconを使用しています。Apple Silicon バージョンをダウンロードして再インストールしてください。',
     },
     need_password: 'マシンに接続するには、パスワードが必要です',
+    object_detection_failed: 'オブジェクトの検出に失敗しました。このプレビューではオブジェクトへのスナップは利用できません。',
+    objects_detected: 'オブジェクトを検出しました',
     please_enter_dpi: 'ファイルの単位を入力してください (in mm)',
     preview: {
       adjust: '調整',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: '定規を表示',
       show_start_tutorial: '初めてのチュートリアルを表示',
       show_ui_intro: 'インターフェイスの紹介を表示',
+      snap_to_object_center: 'オブジェクトの中心にスナップ',
       software_update: 'ソフトウェア更新',
       svg_edit: 'SVG',
       switch_to_beta: 'ベータリリースに切り替える',

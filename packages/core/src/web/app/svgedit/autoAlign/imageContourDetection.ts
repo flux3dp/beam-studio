@@ -1,0 +1,145 @@
+/**
+ * Snap to object center: detect the objects in the camera preview once a preview batch has landed
+ * and hand them to autoAlign as snap targets. Any tile stamped during a batch (region sweep, single
+ * shot, full area) marks the preview dirty; when the batch ends (cameraPreview.isDrawing -> false,
+ * outside live mode) the whole preview canvas is re-detected and the list replaced. The model
+ * rescales every input to the same size, so a full pass costs the same as a crop (§7).
+ * Batches landing during a run are drained by the same loop.
+ * Design: docs/prd/onnx-contour-detection.md §5.5.
+ */
+import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { detectContours } from '@core/helpers/contour/detectContours';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import i18n from '@core/helpers/i18n';
+
+import workareaManager from '../workarea';
+
+/** An object detected in the camera preview; all coordinates in workarea canvas px (10 px/mm). */
+export interface ImageContour {
+  /** rad, from cv::minAreaRect; reserved for rotation snapping */
+  angle: number;
+  bbox: [number, number, number, number];
+  center: [number, number];
+  contour: Array<[number, number]>;
+  id: string;
+}
+
+const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
+const MESSAGE_KEY = 'snap-to-object-center';
+
+export class ImageContourDetector {
+  /** objects currently known in the preview; read by autoAlign while dragging */
+  contours: ImageContour[] = [];
+
+  /** a preview tile landed since the last run */
+  private dirty = false;
+
+  private running = false;
+
+  private errorShown = false;
+
+  init = (): void => {
+    canvasEventEmitter.on('preview-background-updated', this.onBackgroundUpdated);
+    canvasEventEmitter.on('model-changed', this.clear);
+    useCameraPreviewStore.subscribe((state) => state.isDrawing, this.onBatchEnded);
+    useCameraPreviewStore.subscribe((state) => state.isLiveMode, this.onBatchEnded);
+    useCameraPreviewStore.subscribe(
+      (state) => state.isClean,
+      (isClean) => {
+        if (isClean) this.clear();
+      },
+    );
+    useGlobalPreferenceStore.subscribe(
+      (state) => state.snap_to_object_center,
+      (active) => {
+        if (!active) this.clear();
+      },
+    );
+  };
+
+  clear = (): void => {
+    this.dirty = false;
+    this.errorShown = false;
+    this.contours = [];
+    MessageCaller.closeMessage(MESSAGE_KEY);
+  };
+
+  isEnabled = (): boolean => useGlobalPreferenceStore.getState().snap_to_object_center;
+
+  private onBackgroundUpdated = (): void => {
+    if (this.isEnabled()) this.dirty = true;
+  };
+
+  /** A batch is over when the controller stops drawing; live mode re-draws every second, so wait for it to stop. */
+  private onBatchEnded = (): void => {
+    const { isDrawing, isLiveMode } = useCameraPreviewStore.getState();
+
+    if (this.dirty && !isDrawing && !isLiveMode) this.run();
+  };
+
+  private run = async (): Promise<void> => {
+    if (this.running) return;
+
+    this.running = true;
+    MessageCaller.openMessage({
+      content: i18n.lang.message.detecting_objects,
+      duration: 0,
+      key: MESSAGE_KEY,
+      level: MessageLevel.LOADING,
+    });
+
+    try {
+      while (this.dirty && this.isEnabled()) {
+        this.dirty = false;
+        await this.detectAll();
+      }
+
+      MessageCaller.openMessage({
+        content: i18n.lang.message.objects_detected,
+        duration: 2,
+        key: MESSAGE_KEY,
+        level: this.contours.length ? MessageLevel.SUCCESS : MessageLevel.INFO,
+      });
+    } catch (error) {
+      console.warn('[snapToObjectCenter] detection failed', error);
+
+      if (!this.errorShown) {
+        this.errorShown = true;
+        MessageCaller.openMessage({
+          content: i18n.lang.message.object_detection_failed,
+          duration: 3,
+          key: MESSAGE_KEY,
+          level: MessageLevel.WARNING,
+        });
+      }
+    } finally {
+      this.running = false;
+    }
+  };
+
+  /** Re-detect the whole preview canvas and replace the list. */
+  private detectAll = async (): Promise<void> => {
+    const { modelHeight, width } = workareaManager;
+    const crop = await previewModeBackgroundDrawer.getCanvasCrop(0, 0, width, modelHeight);
+
+    if (!crop) return;
+
+    const k = 1 / crop.ratio; // canvasRatio < 1 only on iOS
+    const detected = await detectContours(crop.blob);
+
+    this.contours = detected.map(({ angle, bbox, center, contour }, i) => ({
+      angle,
+      bbox: [bbox[0] * k, bbox[1] * k, bbox[2] * k, bbox[3] * k] as ImageContour['bbox'],
+      center: [center[0] * k, center[1] * k] as ImageContour['center'],
+      contour: contour.map(([x, y]) => [x * k, y * k] as [number, number]),
+      id: `${Date.now()}-${i}`,
+    }));
+  };
+}
+
+const imageContourDetection = new ImageContourDetector();
+
+export default imageContourDetection;

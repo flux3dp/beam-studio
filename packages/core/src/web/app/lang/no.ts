@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Kobler til kamera...',
     connectingMachine: 'Kobler til %s...',
     connectionTimeout: '#805 Tilkobling til enhet tidsavbrudd. Sjekk nettverkstilstanden og maskinens Wi-Fi-indikator.',
+    detecting_objects: 'Oppdager objekter i forhåndsvisningen…',
     device_blocked: {
       caption: 'Uautorisert serienummer',
       offline: 'Serienummeret til enheten din er begrenset til offline bruk, da det ser ut til å være deaktivert. Vennligst oppgi enhetens serienummer (plassert på baksiden av enheten) til forhandleren din og be dem kontakte support@flux3dp.com for å aktivere online-autorisasjon. Hvis du ønsker å bruke enheten offline, vennligst kontakt support@flux3dp.com direkte.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Denne Mac-en bruker Apple Silicon. Last ned Apple Silicon-versjonen og installer på nytt.',
     },
     need_password: 'Trenger passord for å koble til maskinen',
+    object_detection_failed: 'Objektgjenkjenning mislyktes; festing til objekter er ikke tilgjengelig for denne forhåndsvisningen.',
+    objects_detected: 'Objekter oppdaget',
     please_enter_dpi: 'Angi enheten for filen (i mm)',
     preview: {
       adjust: 'Juster',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Vis linjal',
       show_start_tutorial: 'Vis startopplæring',
       show_ui_intro: 'Vis grensesnittintroduksjon',
+      snap_to_object_center: 'Fest til objektets senter',
       software_update: 'Programvareoppdatering',
       svg_edit: 'SVG',
       switch_to_beta: 'Bytt til Beta-versjon',

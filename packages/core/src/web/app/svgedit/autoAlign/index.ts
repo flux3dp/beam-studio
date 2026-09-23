@@ -21,6 +21,10 @@ import { getBBox } from '../utils/getBBox';
 import { isLineCoincide } from '../utils/isLineCoincide';
 import workareaManager from '../workarea';
 
+import imageContourDetection from './imageContourDetection';
+import type { ImageContour } from './imageContourDetection';
+import { getMatchedDiffFromBBox } from './utils/getMatchedDiffFromBBox';
+
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 type Edge = Record<'x1' | 'x2' | 'y1' | 'y2', number>;
@@ -46,6 +50,9 @@ const getElemAlignPoints = (elem: SVGGraphicsElement): IPoint[] => {
   return points;
 };
 
+/** Snap to object center engages within this many screen px of the object's centre, so zooming in tightens it. */
+const OBJECT_SNAP_SCREEN_PX = 20;
+
 export class AutoAlignManager {
   private alignPoints: Record<'x' | 'y', IPoint[]> = { x: [], y: [] };
 
@@ -53,8 +60,15 @@ export class AutoAlignManager {
 
   private workareaPoints: IPoint[] = [];
 
+  /** align points of the selection captured at mouse-down, matched against the others while dragging */
+  private currentBoundingBox: IPoint[] = [];
+
+  /** centre of the selection at mouse-down; from bboxes, so rotated selections have one too */
+  private selectionCenter: IPoint | null = null;
+
   /** Call once after workareaManager.init(); keeps the workarea points current afterwards. */
   init = (): void => {
+    imageContourDetection.init();
     this.updateWorkareaPoints();
     canvasEventEmitter.on('boundary-updated', () => {
       this.updateWorkareaPoints();
@@ -187,6 +201,127 @@ export class AutoAlignManager {
     draw('y');
   };
 
+  /** Remember the selection's geometry at mouse-down for getDragDelta. */
+  captureSelection = (): void => {
+    this.currentBoundingBox = this.getSelectedElementsAlignPoints();
+    this.selectionCenter = this.getSelectedElementsCenter();
+  };
+
+  /**
+   * Delta to apply while dragging the selection from `start` to `current` (workarea px).
+   * Auto Align matches the captured bbox points against the other elements; Snap to Object Center
+   * then lands the selection's centre on a detected object's centre. Each applies on its own
+   * preference, so object snapping works with Auto Align off.
+   */
+  getDragDelta = (current: IPoint, start: IPoint): IPoint => {
+    let dx = current.x - start.x;
+    let dy = current.y - start.y;
+
+    if (this.isEnabled()) {
+      ({ x: dx, y: dy } = getMatchedDiffFromBBox(this.currentBoundingBox, current, start));
+    }
+
+    if (imageContourDetection.isEnabled() && this.selectionCenter) {
+      const { x: cx, y: cy } = this.selectionCenter;
+      const target = this.findObjectCenterSnap({ x: cx + dx, y: cy + dy });
+
+      if (target) {
+        dx = target.center[0] - cx;
+        dy = target.center[1] - cy;
+        this.clearAlignLines(); // the edge guides no longer describe the final position
+        this.drawObjectCenterGuides(target);
+      }
+    }
+
+    return { x: dx, y: dy };
+  };
+
+  /**
+   * Centre of the selection's combined bbox, rotation included: svgedit rotates about the bbox
+   * centre, so a rotated element's centre is the same point. Null when nothing snappable is selected.
+   */
+  private getSelectedElementsCenter = (): IPoint | null => {
+    const boxes = selectionManager
+      .getSelectedElements()
+      .filter((elem) => CanvasElements.visibleElems.includes(elem.tagName))
+      .map((elem) => getBBox(elem as SVGGraphicsElement));
+
+    if (!boxes.length) return null;
+
+    const { maxX, maxY, minX, minY } = boxes.reduce(
+      (acc, box) => ({
+        maxX: Math.max(acc.maxX, box.x + box.width),
+        maxY: Math.max(acc.maxY, box.y + box.height),
+        minX: Math.min(acc.minX, box.x),
+        minY: Math.min(acc.minY, box.y),
+      }),
+      {
+        maxX: -Infinity,
+        maxY: -Infinity,
+        minX: Infinity,
+        minY: Infinity,
+      },
+    );
+
+    return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+  };
+
+  /**
+   * Snap to object center: the nearest object detected in the camera preview whose bbox contains
+   * `center` (workarea px) and whose centre is within OBJECT_SNAP_SCREEN_PX on screen. Null when
+   * nothing qualifies, so dragging elsewhere (including fine placement inside an object, away
+   * from its centre) is unaffected. The caller checks imageContourDetection.isEnabled().
+   */
+  findObjectCenterSnap = (center: IPoint): ImageContour | null => {
+    const range = OBJECT_SNAP_SCREEN_PX / workareaManager.zoomRatio;
+    let best: ImageContour | null = null;
+    let bestDist = range;
+
+    for (const contour of imageContourDetection.contours) {
+      const [x, y, w, h] = contour.bbox;
+      const inside = center.x >= x && center.x <= x + w && center.y >= y && center.y <= y + h;
+
+      if (!inside) continue;
+
+      const dist = Math.hypot(contour.center[0] - center.x, contour.center[1] - center.y);
+
+      if (dist < bestDist) {
+        best = contour;
+        bestDist = dist;
+      }
+    }
+
+    return best;
+  };
+
+  /** Cross through the object's centre spanning its bbox, styled like the other align lines (same id prefix, so clearAlignLines removes it). */
+  drawObjectCenterGuides = ({ bbox: [x, y, w, h], center: [cx, cy] }: ImageContour): void => {
+    const svgcontent = document.getElementById('svgcontent');
+
+    if (!svgcontent) return;
+
+    const lines = [
+      { d: `M ${x} ${cy} L ${x + w} ${cy}`, id: 'align_line_object_h' },
+      { d: `M ${cx} ${y} L ${cx} ${y + h}`, id: 'align_line_object_v' },
+    ];
+
+    for (const { d, id } of lines) {
+      const line = document.createElementNS(NS.SVG, 'path');
+
+      setAttributes(line, {
+        d,
+        fill: 'none',
+        id,
+        'pointer-events': 'none',
+        stroke: '#F707F0',
+        'stroke-dasharray': '4 4',
+        'stroke-width': '1',
+        'vector-effect': 'non-scaling-stroke',
+      });
+      svgcontent.appendChild(line);
+    }
+  };
+
   addAlignEdges = (edges: Edge[]): void => {
     this.alignEdges.push(...edges);
   };
@@ -195,7 +330,7 @@ export class AutoAlignManager {
     for (let i = 0; i < n; i++) this.alignEdges.pop();
   };
 
-  getSelectedElementsAlignPoints = (): IPoint[] =>
+  private getSelectedElementsAlignPoints = (): IPoint[] =>
     selectionManager.getSelectedElements().flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
 
   /** Insert one point keeping both sorted lists ordered (used while drawing a path). */

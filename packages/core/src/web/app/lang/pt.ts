@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Conectando a câmera...',
     connectingMachine: 'Conectando %s...',
     connectionTimeout: '#805 Tempo limite de conexão do dispositivo. Verifique o estado da rede e o indicador Wi-Fi da sua máquina.',
+    detecting_objects: 'A detetar objetos na pré-visualização…',
     device_blocked: {
       caption: 'Número de série não autorizado',
       offline: 'O número de série do seu dispositivo está restrito ao uso offline, pois parece estar desativado. Por favor, forneça o número de série da máquina (localizado na parte de trás do dispositivo) ao seu revendedor e peça para que ele entre em contato com support@flux3dp.com para ativar a autorização online. Caso deseje usar o dispositivo offline, entre em contato diretamente com support@flux3dp.com.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Este Mac usa Apple Silicon. Baixe a versão Apple Silicon e reinstale.',
     },
     need_password: 'É necessária senha para conectar à máquina',
+    object_detection_failed: 'A deteção de objetos falhou; o ajuste a objetos não está disponível para esta pré-visualização.',
+    objects_detected: 'Objetos detetados',
     please_enter_dpi: 'Informe a resolução do seu arquivo (em mm)',
     preview: {
       adjust: 'Ajustar',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Mostrar réguas',
       show_start_tutorial: 'Mostrar tutorial inicial',
       show_ui_intro: 'Mostrar introdução da interface',
+      snap_to_object_center: 'Ajustar ao centro do objeto',
       software_update: 'Atualização de Software',
       svg_edit: 'SVG',
       switch_to_beta: 'Mudar para a versão beta',

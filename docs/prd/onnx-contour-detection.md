@@ -23,7 +23,7 @@ Three design choices drive everything else:
 
 1. **One detector, one contract.** A single frontend function `detectContours(blob, opts)` returns the existing `AutoFitContour` shape from either engine. Auto Fit and image-contour align both consume it; grouping/rotation matching for Auto Fit stays in fluxghost (already validated) and is fed the ONNX contours instead of Canny ones.
 2. **Engine is a preference with silent fallback.** `contour_detection_engine: 'onnx' | 'opencv'` (default `onnx`). Effective engine = `onnx` only when Swiftray is present and new enough; otherwise OpenCV via fluxghost, no user action needed. A one-time perf warning on weak machines (Windows < 8 GB RAM, Intel Mac) offers the OpenCV switch.
-3. **Detect while previewing, incrementally.** Each region-preview tile that lands on the background dirties a rect; a coalescing worker re-detects the union of the dirty rect and any existing contours it overlaps, removes those, and inserts the new ones. The user sees `Detecting contours…` / `Contours detected` toasts and never waits on a dialog.
+3. **Detect while previewing, per batch.** Each preview tile that lands marks the background dirty; when the batch ends the whole preview canvas is re-detected and the list replaced. The user sees `Detecting contours…` / `Contours detected` toasts and never waits on a dialog.
 
 A prerequisite refactor moves all Auto Align state and helpers out of `svgcanvas.ts` into a standalone `app/svgedit/autoAlign/` module (`svgCanvas.isAutoAlign` and nine sibling methods today).
 
@@ -159,7 +159,7 @@ export const detectContours = (blob: Blob, opts?: { onProgress?, engine?: Contou
 | key | type | default | meaning |
 |---|---|---|---|
 | `contour_detection_engine` | `'onnx' \| 'opencv'` | `'onnx'` | user choice; effective engine may still be `opencv` |
-| `snap_to_object_center` | `boolean` | `true` | image-contour align on/off (also requires `auto_align`) |
+| `snap_to_object_center` | `boolean` | `true` | image-contour align on/off; independent of `auto_align` (decided 2026-09-23: object snapping works with Auto Align off) |
 
 **Settings UI** — `components/settings/categories/Camera.tsx`: `SettingSwitch` "AI Contour Detection" / "AI 輪廓偵測" writing `'onnx' | 'opencv'` into `contour-engine` (engine names are never shown; rendered only on desktop with Swiftray); `SettingSwitch` "Snap to object center" (`snap_to_object_center`). No new menu item; `AUTO_ALIGN` menu stays the master switch.
 
@@ -183,32 +183,17 @@ blob → detectContours(blob)            // engine-agnostic
 
 ### 5.5 Image-contour Auto Align
 
-**Store** — `app/stores/imageContourStore.ts` (Zustand + `subscribeWithSelector`, wide-scope per conventions):
+**State (decided 2026-09-23: no store).** Nothing renders or subscribes to the detected objects, so they are a plain `contours: ImageContour[]` field on the detector, read by `autoAlign.findObjectCenterSnap` at drag time. `ImageContour = { id; bbox: [x, y, w, h]; center: [x, y]; angle; contour }`, workarea px.
 
-```ts
-type ImageContour = { id: string; bbox: [x, y, w, h]; center: [x, y]; angle: number; contour: Array<[number, number]> }; // canvas px
-type State = { contours: ImageContour[]; status: 'idle' | 'detecting' | 'detected' | 'error' };
-```
+**Service** — `app/svgedit/autoAlign/imageContourDetection.ts` (`init()` called from svgcanvas right after `autoAlign.init()`):
 
-**Service** — `app/actions/beambox/image-contour-align.ts` (started once from `svgEditor` init, like `previewModeController`):
-
-1. **Trigger.** `previewModeBackgroundDrawer.drawImageToCanvas` and `drawFullWorkarea` emit a new `canvasEventEmitter 'preview-region-drawn'` with `{x, y, width, height}` in canvas px (the drawer already computes these to stamp). The service subscribes when `auto_align && snap_to_object_center && isPreviewMode`.
-2. **Coalesce.** Dirty rects accumulate in a module array; a 300 ms trailing debounce starts a run; a run in flight sets `pending = true` and the next run starts when it finishes. Region preview stamps a tile every few seconds, ONNX takes ~3 s a pass, so runs naturally batch 1–2 tiles on fast machines and many on slow ones.
-3. **Run.** `dirty = union(dirtyRects)`; `victims = contours whose bbox intersects dirty`; `roi = union(dirty, victims.bbox)` clamped to the workarea; remove `victims` from the store; `status = 'detecting'`; `crop = previewModeBackgroundDrawer.getCanvasCrop(roi)`; `objects = await detectContours(crop.blob)`; map each back with `crop.x + x / crop.ratio` (this is also the `canvasRatio` fix from §2.1); drop objects whose bbox touches the **roi border** unless that border is also the workarea border (they are truncated by the crop and will be re-detected when the neighbouring tile lands); insert; `status = 'detected'`.
+1. **Trigger.** The existing `canvasEventEmitter 'preview-background-updated'`, emitted by `previewModeBackgroundDrawer.drawBlobToBackground` for every drawn capture (region tile, single shot, full area). The service marks the preview dirty when `snap_to_object_center` is on.
+2. **Coalesce per batch (decided 2026-09-22).** A dirty flag is set while a preview batch is in progress; the run starts when the batch ends, i.e. `cameraPreview.isDrawing` flips false (set by `PreviewModeController.prePreview` / `onPreviewSuccess` for full-area, single and region previews alike), and never during live mode (runs when `isLiveMode` flips false). A run drains `dirty` in a loop, so batches landing mid-run are picked up without a second trigger. Per-tile detection was rejected: a region sweep would otherwise queue one ~8 s pass per tile on an Intel Mac.
+3. **Run (decided 2026-09-23: full canvas, not incremental).** `crop = previewModeBackgroundDrawer.getCanvasCrop(0, 0, workarea.width, workarea.modelHeight)`; `objects = await detectContours(crop.blob)`; map each back with `x / crop.ratio` (this is also the `canvasRatio` fix from §2.1); replace `contours`. ~~Incremental: re-detect the union of the dirty rect and the stored contours it overlaps, drop those, filter objects cut by the crop border, append.~~ Dropped: the frontend caps inputs at 1280 px and the encoder rescales to 1024 px, so a crop and a full pass take the same ~8 s; the incremental path only added the border filter, victim bookkeeping and seam-straddling objects that appear one tile late. Known cost: a full 600 mm bed lands at scale 0.21, so small parts on large beds get ~5× less detail than a tile crop would; if that shows in testing, raise the ONNX cap for detection rather than reinstate regions.
 4. **Clear.** Subscribe to `cameraPreview.isClean === true` and to `model-changed` → `contours = []`. Also clear when `snap_to_object_center` flips to false.
 5. **Toasts.** `MessageCaller.openMessage({ key: 'image-contour', level: LOADING, content: lang.auto_align.detecting_contours, duration: 0 })` on the first `detecting` after idle; `SUCCESS` `contours_detected` (duration 2 s) when the queue drains with ≥ 1 contour; silent on zero results; `WARNING` once per preview session on repeated engine errors. `key` reuse means the toasts replace each other rather than stack.
 
-**Align integration** — inside the new `autoAlign` module's `collectAlignPoints()`:
-
-```ts
-const imageContours = useImageContourStore.getState().contours;
-points.push(...imageContours.flatMap(getContourAlignPoints)); // 8 bbox points + centre
-edges.push(...imageContours.flatMap(getBboxEdges));
-```
-
-- The **centre point is included** for image contours (elements deliberately skip it). "Centre a design on the object" is the headline use case.
-- Because `collectAlignPoints()` already re-runs on selection change and undo, no extra wiring is needed for points to refresh; the store additionally calls `autoAlign.collectAlignPoints()` on change so a drag already in progress picks new contours up on the next mouse-down.
-- `angle` is stored but unused for snapping in v1.
+**Align integration (decided 2026-09-22 after trying the point-based version).** Detected objects do **not** feed the general matcher: 9 points and 4 edges per object made snapping feel cluttered. Instead, while dragging in select mode, `autoAlign.findObjectCenterSnap(center)` returns the object whose bbox contains the dragged selection's centre (smallest bbox wins for nested parts); the drag delta is overridden so the selection's centre lands on the object's centre, and `drawObjectCenterGuides` draws a dashed magenta cross through that centre spanning the bbox (ids prefixed `align_line_` so the usual `clearAlignLines` removes them). Outside every bbox, dragging is unaffected. The `angle` field stays stored for the rotation follow-up (§11).
 
 **Overlay (should-have).** A `#imageContourOverlay` `<g>` inside `#previewSvg` (non-exported, cleared with the preview) drawing each bbox as a 1 px dashed rect with `vector-effect: non-scaling-stroke`, shown only while `snap_to_object_center` is on. Lets the user see what will snap. Cheap; ship if the first user test asks "why did it snap there?".
 
@@ -266,9 +251,7 @@ export const autoAlign = {
 | Apple Silicon CPU / CoreML | unmeasured (`mac-todo.md` §4) | fill the timing matrix before choosing default EP on mac |
 | Model RAM | ≈ 560 MB loaded | lazy load + 5 min idle unload; this is why < 8 GB machines get the warning |
 | Install size | +16 MB ORT, +43 MB models | inside the Swiftray S3 zip; INT8 (~12 MB) is the follow-up if size is challenged |
-| Tile crop vs full bed | encoder rescales longest side to 1024; the frontend caps inputs at 1280 px so full-res mask/polygon work and transfer don't scale with bed size | a 100 mm tile gets ~10× the pixel budget per mm of a full-bed pass — region-based detection is *better*, not just faster |
-
-Region tiles that partially contain an object produce truncated masks; the roi-border filter in §5.5 step 3 plus re-detection when the neighbour lands handles it. Objects larger than one tile (e.g. a full sheet) are found only after the union roi covers them; the accumulator crop makes this automatic.
+| Tile crop vs full bed | encoder rescales longest side to 1024; the frontend caps inputs at 1280 px so full-res mask/polygon work and transfer don't scale with bed size | same wall time either way (measured 2026-09-23), which is why §5.5 detects the full canvas; a tile would only buy detail, not speed |
 
 ---
 
@@ -291,7 +274,7 @@ Each PR is independently shippable; order matters only for 4 → 5.
 | 2 | fluxghost | `get_contours` + `group_contours` utils commands, docs, `ws_smoke.py` cases. | S |
 | 3 | swiftray | `src/segment/` port of mini-sam, `/segment` path, ORT vendoring per platform, models in bundle, version 1.4.11. | L |
 | 4 | beam-studio | `detectContours` abstraction, Swiftray client method, preferences + Camera settings, perf warning, Auto Fit switched to `detectContours` + `groupContours`. | M |
-| 5 | beam-studio | `imageContourStore`, `preview-region-drawn` event, detection service with coalescing, toasts, align integration, `snap_to_object_center`. | M |
+| 5 | beam-studio | `ImageContourDetector` (contours held on the detector, no store), `preview-background-updated` trigger, per-batch coalescing, toasts, align integration, `snap_to_object_center`. | M |
 | 6 | beam-studio | (optional) bbox overlay in `#previewSvg`. | S |
 | 7 | beam-studio | CD workflow version bump once 3 is on S3. | XS |
 
@@ -304,7 +287,7 @@ Each PR is independently shippable; order matters only for 4 → 5.
 3. **Overlay of detected bboxes** — ship in v1 or wait for feedback?
 4. ~~Include the object centre as a snap point~~ — **decided 2026-09-22: yes.** The feature is named after it: preference `snap_to_object_center`. Corners and edge midpoints of the detected bbox are added as well (open: confirm, see §5.5).
 5. ~~Model files in the Swiftray zip vs. on-demand download~~ — **decided 2026-09-21: bundled.** Models (43 MB) and ORT ship inside Swiftray; no runtime download.
-6. **Which region-preview machines get align-on-preview** — all that emit `preview-region-drawn` (region + full-area). Full-area single shot on Ador/Promark/beamo II runs one whole-bed pass (~3 s); fine.
+6. **Which region-preview machines get align-on-preview** — all that draw through `drawBlobToBackground` (region + full-area). Full-area single shot on Ador/Promark/beamo II runs one whole-bed pass (~3 s); fine.
 
 ---
 
@@ -322,5 +305,5 @@ Each PR is independently shippable; order matters only for 4 → 5.
 
 - **Swiftray**: port `test/compare.py` golden (`bed.jpg` → 20/20 objects, centre < 6 px) as a Swiftray CI step against the `/segment` ws path; `angle` sanity on a rotated rectangle fixture.
 - **fluxghost**: `ws_smoke.py` cases for `get_contours` and `group_contours` (must end `ALL PASS`); grouping parity: ONNX polygons of `bed.jpg` → same groups as `get_all_similar_contours`.
-- **beam-studio unit**: `detectContours` engine selection matrix (pref × hasSwiftray × version × info.available × failure → retry); `image-contour-align` coalescing (dirty union, victim removal, roi-border filter, mapping with `ratio`); `autoAlign` refactor covered by existing `mouse`/`pathActions` specs plus one spec asserting image-contour points and centre enter `collectAlignPoints`.
+- **beam-studio unit**: `detectContours` engine selection matrix (pref × hasSwiftray × version × info.available × failure → retry); `imageContourDetection` (batch-end trigger, drain loop, mapping with `ratio`, clear on isClean/model-changed/pref off); `autoAlign` refactor covered by existing `mouse`/`pathActions` specs plus one spec asserting image-contour points and centre enter `collectAlignPoints`.
 - **Manual**: scenarios §4 on fbb2 (region), fbm2 (full area + mask), Promark (full area), web (fallback); low-RAM Windows VM for the warning.
