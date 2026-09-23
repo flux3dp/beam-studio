@@ -2,6 +2,8 @@ import React from 'react';
 
 import type { PreviewSpeedLevelType } from '@core/app/actions/beambox/constant';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
+import { hasSwiftray } from '@core/helpers/api/swiftray-client';
+import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 
 import { SettingSelect, SettingSwitch, useSettingStore } from '../shared';
@@ -36,6 +38,15 @@ function Camera(): React.JSX.Element {
         label={lang.settings.keep_preview_result}
         onChange={(e) => setPreference('keep-preview-result', e)}
       />
+      {!isWeb() && hasSwiftray && (
+        <SettingSwitch
+          checked={getPreference('contour-engine') === 'onnx'}
+          id="set-ai-contour-detection"
+          label={lang.settings.ai_contour_detection}
+          onChange={(e) => setPreference('contour-engine', e ? 'onnx' : 'opencv')}
+          tooltip={lang.settings.ai_contour_detection_tooltip}
+        />
+      )}
     </>
   );
 }

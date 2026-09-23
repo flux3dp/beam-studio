@@ -2517,6 +2517,8 @@ const lang: ILang = {
     unable_to_connect: "#810 Impossible d'établir une connexion stable avec la machine",
   },
   settings: {
+    ai_contour_detection: 'Détection de contours par IA',
+    ai_contour_detection_tooltip: 'Utilise un modèle d’IA pour repérer les objets dans l’aperçu caméra. Plus précis sur les matériaux texturés, mais plus lent sur les ordinateurs anciens ; désactivez pour utiliser la détection classique. Utilisé par : Ajustement Automatique.',
     anti_aliasing: 'Anticrénelage',
     auto_connect: 'Sélectionner automatiquement la seule machine',
     auto_switch_tab: "Changement automatique entre le panneau de calques et d'objets",

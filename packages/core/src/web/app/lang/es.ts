@@ -2516,6 +2516,8 @@ const lang: ILang = {
     unable_to_connect: '#810 No se ha podido establecer una conexión estable con la máquina.',
   },
   settings: {
+    ai_contour_detection: 'Detección de contornos con IA',
+    ai_contour_detection_tooltip: 'Usa un modelo de IA para detectar objetos en la vista previa de la cámara. Más preciso en materiales con textura, pero más lento en equipos antiguos; desactívalo para usar la detección clásica. Usado por: Ajuste automático.',
     anti_aliasing: 'Suavizado',
     auto_connect: 'Seleccionar automáticamente la única máquina',
     auto_switch_tab: 'Cambio automático entre capa y panel de objetos',

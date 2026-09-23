@@ -23,6 +23,7 @@ const getInitStore = (): GlobalPreference => {
     'auto-switch-tab': preference['auto-switch-tab'],
     auto_align: preference.auto_align,
     continuous_drawing: preference.continuous_drawing,
+    'contour-engine': preference['contour-engine'],
     'crop-task-thumbnail': preference['crop-task-thumbnail'],
     'default-autofocus': preference['default-autofocus'],
     'default-borderless': preference['default-borderless'],

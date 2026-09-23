@@ -2517,6 +2517,8 @@ const lang: ILang = {
     unable_to_connect: '#810 マシンとの安定した接続を構築できません',
   },
   settings: {
+    ai_contour_detection: 'AI 輪郭検出',
+    ai_contour_detection_tooltip: 'AI モデルでカメラプレビュー内の対象物を検出します。質感のある素材でより正確ですが、古いパソコンでは処理が遅くなります。オフにすると従来の検出方式を使用します。自動フィットで使用されます。',
     anti_aliasing: 'アンチエイリアス',
     auto_connect: '自動的に唯一のマシンを選択する',
     auto_switch_tab: 'レイヤーとオブジェクトパネルの自動切り替え',

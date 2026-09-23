@@ -2517,6 +2517,8 @@ Machines > ‘Promark Name’ > Promark Settings`,
     unable_to_connect: '#810 Unable to build a stable connection with machine',
   },
   settings: {
+    ai_contour_detection: 'AI Contour Detection',
+    ai_contour_detection_tooltip: 'Use an AI model to find objects in the camera preview. More accurate on textured materials, but slower on older computers; turn off to use classic detection. Used by Auto Fit.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Automatically select the only machine',
     auto_switch_tab: 'Auto Switch Layer and Object Panel',

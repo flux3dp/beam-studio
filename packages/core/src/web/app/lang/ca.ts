@@ -2517,6 +2517,8 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     unable_to_connect: '#810 No es pot establir una connexió estable amb la màquina',
   },
   settings: {
+    ai_contour_detection: 'Detecció de contorns amb IA',
+    ai_contour_detection_tooltip: 'Utilitza un model d’IA per trobar objectes a la previsualització de la càmera. Més precís en materials amb textura, però més lent en ordinadors antics; desactiva-ho per fer servir la detecció clàssica. Utilitzat per: Ajust automàtic.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: "Seleccionar automàticament l'única màquina",
     auto_switch_tab: 'Canvi automàtic panell Capa i Objecte',

@@ -49,5 +49,23 @@ exports[`test Camera settings should render correctly 1`] = `
       type="checkbox"
     />
   </div>
+  <div>
+    mock-switch-control id:
+    set-ai-contour-detection
+    label:
+    AI Contour Detection
+    url:
+    tooltip:Use an AI model to find objects in the camera preview. More accurate on textured materials, but slower on older computers; turn off to use classic detection. Used by Auto Fit.
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-ai-contour-detection"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
 </div>
 `;

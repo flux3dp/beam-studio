@@ -2517,6 +2517,8 @@ const lang: ILang = {
     unable_to_connect: '#810 Impossibile stabilire una connessione stabile con la macchina',
   },
   settings: {
+    ai_contour_detection: 'Rilevamento contorni con IA',
+    ai_contour_detection_tooltip: 'Usa un modello di IA per individuare gli oggetti nell’anteprima della fotocamera. Più preciso su materiali con texture, ma più lento su computer datati; disattivalo per usare il rilevamento classico. Usato da: Adattamento Automatico.',
     anti_aliasing: 'Anti-aliasing',
     auto_connect: "Seleziona automaticamente l'unica macchina",
     auto_switch_tab: 'Commutazione automatica tra pannello livelli e oggetti',
