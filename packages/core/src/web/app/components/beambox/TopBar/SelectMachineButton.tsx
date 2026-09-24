@@ -8,6 +8,7 @@ import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import { checkHexa2GalvoDev } from '@core/helpers/checkFeature';
 import getDevice from '@core/helpers/device/get-device';
 import deviceMaster from '@core/helpers/device-master';
 import { useDeviceList } from '@core/helpers/hooks/useDeviceList';
@@ -25,22 +26,25 @@ function SelectMachineButton(): React.JSX.Element {
   const [selectionTick, setSelectionTick] = useState(0);
 
   /**
-   * DEVELOPMENT ONLY, to tell at a glance whether the machine-held settings on screen were ever
-   * read from a machine. The selected device survives a reload and can name one this session has
-   * never reached, so two things have to hold: discovery still sees it, and the control socket we
-   * hold is that machine's and still open. Goes away with the rest of the HEXA II work-range
+   * HEXA II development only, to tell at a glance whether the machine-held settings on screen were
+   * ever read from a machine. The selected device survives a reload and can name one this session
+   * has never reached, so two things have to hold: discovery still sees it, and the control socket
+   * we hold is that machine's and still open. Goes away with the rest of the HEXA II work-range
    * scaffolding; see helpers/device/galvoWorkRange.
+   *
+   * Behind fhx2galvo-dev rather than dev, because the indicator is about every machine and would
+   * otherwise sit in the toolbar of sessions that have nothing to do with a machine being measured.
    */
-  const isConnected = useMemo(() => {
-    if (!selectedDevice) return false;
+  const showDisconnected = useMemo(() => {
+    if (!checkHexa2GalvoDev() || !selectedDevice) return false;
 
     const { currentDevice } = deviceMaster;
-
-    return (
+    const isConnected =
       devices.some((device) => device.uuid === selectedDevice.uuid) &&
       currentDevice?.info.uuid === selectedDevice.uuid &&
-      Boolean(currentDevice.control?.isConnected)
-    );
+      Boolean(currentDevice.control?.isConnected);
+
+    return !isConnected;
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [devices, selectedDevice, selectionTick]);
   const text = useMemo(() => {
@@ -77,7 +81,7 @@ function SelectMachineButton(): React.JSX.Element {
           {text}
         </span>
       )}
-      {selectedDevice && !isConnected && (
+      {showDisconnected && (
         <Tooltip title="尚未與這台機器連線，畫面上來自機器的設定可能不是最新的">
           <DisconnectOutlined className={styles.disconnected} data-testid="disconnected" />
         </Tooltip>

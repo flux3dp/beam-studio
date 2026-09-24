@@ -169,20 +169,18 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fhx2galvo: {
-    autoFeeder: isDev()
-      ? {
-          // TODO: confirm maxHeight and xRange
-          maxHeight: 3000,
-          rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
-        }
-      : undefined,
+    // Off until someone verifies them on HEXA II hardware, rather than behind a dev flag that says
+    // nothing about whether they work: the auto feeder needs a real maxHeight and x range (3000 and
+    // the chuck ratio were placeholders), curve engraving needs the probe checked against the galvo
+    // heads, and pass-through a measured maxHeight (300 was a guess).
+    // TODO: measure all three, then give them real values.
+    autoFeeder: undefined,
     autoFocus: true,
-    curveEngraving: isDev() ? {} : undefined,
+    curveEngraving: undefined,
     jobOrigin: true,
     lowerFocus: true,
     multiModules: true,
-    // TODO: confirm maxHeight and xRange
-    passThrough: isDev() ? { maxHeight: 300 } : undefined,
+    passThrough: undefined,
     redLight: true,
     rotary: {
       chuck: true,

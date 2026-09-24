@@ -46,6 +46,13 @@ jest.mock('@core/helpers/device-master', () => ({
   },
 }));
 
+const mockHexa2GalvoDev = jest.fn();
+
+// The indicator is HEXA II development scaffolding; on for these cases except where stated.
+jest.mock('@core/helpers/checkFeature', () => ({
+  checkHexa2GalvoDev: () => mockHexa2GalvoDev(),
+}));
+
 const mockGetDevice = jest.fn();
 
 jest.mock(
@@ -63,6 +70,7 @@ describe('test SelectMachineButton', () => {
     useScreenStore.setState({ isMobile: false });
     useCanvasStore.getState().setMode(CanvasMode.Draw);
     mockGetIsPreviewMode.mockReturnValue(false);
+    mockHexa2GalvoDev.mockReturnValue(true);
     mockDeviceList.mockReturnValue([{ uuid: '1234' }]);
     mockCurrentDevice.mockReturnValue({ control: { isConnected: true }, info: { uuid: '1234' } });
     mockGetDevice.mockResolvedValue({
@@ -153,6 +161,15 @@ describe('test SelectMachineButton', () => {
       mockCurrentDevice.mockReturnValue({ control: { isConnected: true }, info: { uuid: '1234' } });
       await act(() => fireEvent.click(container.querySelector('div[class*="button"]')));
       expect(queryByTestId('disconnected')).not.toBeInTheDocument();
+    });
+
+    // It is scaffolding for one machine being brought up; an unrelated session should not see it.
+    test('stays hidden when the HEXA II dev flag is off, however disconnected things look', () => {
+      mockHexa2GalvoDev.mockReturnValue(false);
+      mockDeviceList.mockReturnValue([]);
+      mockCurrentDevice.mockReturnValue(undefined);
+
+      expect(renderWith().queryByTestId('disconnected')).not.toBeInTheDocument();
     });
 
     test('stays hidden when no machine is selected', () => {
