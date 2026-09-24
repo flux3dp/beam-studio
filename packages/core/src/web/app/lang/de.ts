@@ -2521,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'KI-Konturerkennung',
-    ai_contour_detection_tooltip: 'Erkennt Objekte in der Kameravorschau mit einem KI-Modell. Genauer auf strukturierten Materialien, aber langsamer auf älteren Computern; ausschalten, um die klassische Erkennung zu verwenden. Verwendet von: Automatische Anpassung.',
+    ai_contour_detection_tooltip: 'Erkennt Objekte in der Kameravorschau mit einem KI-Modell. Genauer auf strukturierten Materialien, aber langsamer auf älteren Computern; ausschalten, um die klassische Erkennung zu verwenden. Verwendet von: Automatische Anpassung, Am Objektzentrum ausrichten.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Wählen Sie automatisch die einzige Maschine aus',
     auto_switch_tab: 'Automatisches Umschalten von Ebenen- und Objektpanel',

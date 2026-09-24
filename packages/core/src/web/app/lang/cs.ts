@@ -2521,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Detekce obrysů pomocí AI',
-    ai_contour_detection_tooltip: 'Používá model AI k nalezení objektů v náhledu kamery. Přesnější na texturovaných materiálech, ale pomalejší na starších počítačích; vypněte pro klasickou detekci. Používá: Automaticky přizpůsobit.',
+    ai_contour_detection_tooltip: 'Používá model AI k nalezení objektů v náhledu kamery. Přesnější na texturovaných materiálech, ale pomalejší na starších počítačích; vypněte pro klasickou detekci. Používá: Automaticky přizpůsobit, Přichytit ke středu objektu.',
     anti_aliasing: 'Vyhlazování',
     auto_connect: 'Automaticky vybrat jediný přístroj',
     auto_switch_tab: 'Automatický přepínač panelu vrstev a objektů',

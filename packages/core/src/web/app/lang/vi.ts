@@ -2521,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Phát hiện đường viền bằng AI',
-    ai_contour_detection_tooltip: 'Dùng mô hình AI để tìm vật thể trong bản xem trước camera. Chính xác hơn trên vật liệu có vân, nhưng chậm hơn trên máy tính cũ; tắt để dùng phát hiện truyền thống. Dùng cho: Tự Động Vừa Khít.',
+    ai_contour_detection_tooltip: 'Dùng mô hình AI để tìm vật thể trong bản xem trước camera. Chính xác hơn trên vật liệu có vân, nhưng chậm hơn trên máy tính cũ; tắt để dùng phát hiện truyền thống. Dùng cho: Tự Động Vừa Khít, Bắt dính vào tâm vật thể.',
     anti_aliasing: 'Làm mịn cạnh',
     auto_connect: 'Tự động kết nối máy duy nhất',
     auto_switch_tab: 'Chuyển đổi tự động giữa bảng Lớp và Đối tượng',

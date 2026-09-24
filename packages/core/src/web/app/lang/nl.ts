@@ -2521,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'AI-contourdetectie',
-    ai_contour_detection_tooltip: 'Gebruikt een AI-model om objecten in het cameravoorbeeld te vinden. Nauwkeuriger op materialen met textuur, maar langzamer op oudere computers; schakel uit om klassieke detectie te gebruiken. Gebruikt door: Auto Aanpassen.',
+    ai_contour_detection_tooltip: 'Gebruikt een AI-model om objecten in het cameravoorbeeld te vinden. Nauwkeuriger op materialen met textuur, maar langzamer op oudere computers; schakel uit om klassieke detectie te gebruiken. Gebruikt door: Auto Aanpassen, Uitlijnen op objectcentrum.',
     anti_aliasing: 'Antialiasing',
     auto_connect: 'Selecteer automatisch de enige machine',
     auto_switch_tab: 'Automatisch schakelen tussen laag- en objectpaneel',

@@ -2521,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'AI 윤곽 감지',
-    ai_contour_detection_tooltip: 'AI 모델로 카메라 미리보기에서 물체를 찾습니다. 질감이 있는 소재에서 더 정확하지만 구형 컴퓨터에서는 느립니다. 끄면 기존 감지 방식을 사용합니다. 자동 맞춤에 사용됩니다.',
+    ai_contour_detection_tooltip: 'AI 모델로 카메라 미리보기에서 물체를 찾습니다. 질감이 있는 소재에서 더 정확하지만 구형 컴퓨터에서는 느립니다. 끄면 기존 감지 방식을 사용합니다. 자동 맞춤과 개체 중심에 스냅에 사용됩니다.',
     anti_aliasing: '앤티앨리어싱',
     auto_connect: '유일한 기계 자동 선택',
     auto_switch_tab: '레이어 및 객체 패널 자동 전환',

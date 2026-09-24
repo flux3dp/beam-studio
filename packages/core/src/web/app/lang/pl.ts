@@ -2521,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Wykrywanie kontur przez AI',
-    ai_contour_detection_tooltip: 'Używa modelu AI do wykrywania obiektów w podglądzie kamery. Dokładniejsze na materiałach z teksturą, ale wolniejsze na starszych komputerach; wyłącz, aby użyć klasycznego wykrywania. Używane przez: Dopasowanie Automatyczne.',
+    ai_contour_detection_tooltip: 'Używa modelu AI do wykrywania obiektów w podglądzie kamery. Dokładniejsze na materiałach z teksturą, ale wolniejsze na starszych komputerach; wyłącz, aby użyć klasycznego wykrywania. Używane przez: Dopasowanie Automatyczne, Przyciągaj do środka obiektu.',
     anti_aliasing: 'Wygładzanie krawędzi',
     auto_connect: 'Automatycznie wybierz jedyną maszynę',
     auto_switch_tab: 'Automatyczne przełączanie między panelem warstw a panelem obiektów',
