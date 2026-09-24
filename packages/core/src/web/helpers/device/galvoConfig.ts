@@ -22,6 +22,10 @@ export interface GalvoConfig {
   /** distance from the lens to the focal plane, in mm */
   focusHeight: number;
   galvoParameters: GalvoParameters;
+  /**
+   * Red dot alignment, stored and written back untouched: HEXA II's pointer lands where the laser
+   * does, so there is nothing to correct and the settings dialog shows no controls for it.
+   */
   redDot: RedDot;
   /** field lens size in mm */
   workarea: GalvoWorkarea;
