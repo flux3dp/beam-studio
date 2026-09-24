@@ -182,7 +182,10 @@ export class ImageContourDetector {
           id: `${Date.now()}-${i}`,
           rect: getMinAreaRect(polygon),
         };
-      });
+      })
+      // a part cut off by the edge of the previewed area: its centre and rect describe the visible
+      // fragment only, so it is no snap target until the neighbouring region is previewed
+      .filter(({ contour }) => !previewModeBackgroundDrawer.isPolygonCutByPreviewEdge(contour));
     renderOverlay(this.contours);
   };
 }

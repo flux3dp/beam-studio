@@ -1,13 +1,14 @@
 import { mockSubscribe, useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 
 const mockGetCanvasCrop = jest.fn();
+const mockIsPolygonCutByPreviewEdge = jest.fn();
 const mockDetectContours = jest.fn();
 const mockOpenMessage = jest.fn();
 const mockCloseMessage = jest.fn();
 
 jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
-  __esModule: true,
-  default: { getCanvasCrop: (...args: unknown[]) => mockGetCanvasCrop(...args) },
+  getCanvasCrop: (...args: unknown[]) => mockGetCanvasCrop(...args),
+  isPolygonCutByPreviewEdge: (...args: unknown[]) => mockIsPolygonCutByPreviewEdge(...args),
 }));
 jest.mock('@core/helpers/contour/detectContours', () => ({
   detectContours: (...args: unknown[]) => mockDetectContours(...args),
@@ -21,17 +22,11 @@ jest.mock('@core/app/actions/message-caller', () => ({
   MessageLevel: { INFO: 'info', LOADING: 'loading', SUCCESS: 'success', WARNING: 'warning' },
 }));
 jest.mock('@core/helpers/i18n', () => ({
-  __esModule: true,
-  default: {
-    lang: {
-      message: { detecting_objects: 'detecting', object_detection_failed: 'failed', objects_detected: 'detected' },
-    },
+  lang: {
+    message: { detecting_objects: 'detecting', object_detection_failed: 'failed', objects_detected: 'detected' },
   },
 }));
-jest.mock('@core/app/svgedit/workarea', () => ({
-  __esModule: true,
-  default: { modelHeight: 3000, width: 4000, zoomRatio: 1 },
-}));
+jest.mock('@core/app/svgedit/workarea', () => ({ modelHeight: 3000, width: 4000, zoomRatio: 1 }));
 
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -82,6 +77,7 @@ describe('ImageContourDetector', () => {
     useGlobalPreferenceStore.getState().set('snap_to_object_center', true);
     useCameraPreviewStore.setState({ isClean: false, isDrawing: false, isLiveMode: false });
     mockGetCanvasCrop.mockResolvedValue({ blob: new Blob(), ratio: 0.5, x: 0, y: 0 });
+    mockIsPolygonCutByPreviewEdge.mockReturnValue(false);
     mockDetectContours.mockResolvedValue([part]);
     detector = new ImageContourDetector();
     detector.init();
@@ -142,6 +138,21 @@ describe('ImageContourDetector', () => {
     await endBatch();
 
     expect(detector.contours.map((c) => c.bbox[2])).toEqual([100]);
+  });
+
+  it('drops objects cut off by the edge of the previewed area, probing the mapped polygon', async () => {
+    mockIsPolygonCutByPreviewEdge.mockReturnValue(true);
+    canvasEventEmitter.emit('preview-background-updated');
+    await endBatch();
+
+    expect(mockIsPolygonCutByPreviewEdge).toHaveBeenCalledWith([
+      [100, 200],
+      [200, 200],
+      [200, 300],
+      [100, 300],
+    ]);
+    expect(detector.contours).toEqual([]);
+    expect(mockOpenMessage.mock.calls.at(-1)[0].level).toBe('info');
   });
 
   it('ignores previews while the preference is off and clears when it turns off', async () => {
