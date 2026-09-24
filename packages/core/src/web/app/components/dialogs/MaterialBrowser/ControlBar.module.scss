@@ -1,0 +1,13 @@
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .search {
+    max-width: 360px;
+  }
+
+  .spacer {
+    flex: 1;
+  }
+}

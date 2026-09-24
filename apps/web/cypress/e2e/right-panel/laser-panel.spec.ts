@@ -18,7 +18,7 @@ describe('manipulate laser panel', () => {
 
   it('should have correct presets length', () => {
     cy.get('button[title="Manage Parameters"]').click();
-    cy.get(`div[class*="${presetManagementPrefix}list"]`).children().should('have.length', '15');
+    cy.get(`div[class*="${presetManagementPrefix}list"]`).children().should('have.length', '18');
   });
 
   it('reset the parameter', () => {
@@ -26,12 +26,12 @@ describe('manipulate laser panel', () => {
     cy.get(`div[class*="${presetManagementPrefix}eye"]`).eq(0).click();
     cy.get('button[class^="ant-btn"]').contains('Save and Exit').click();
     cy.get(`[class*="${ConfigPanelPrefix}preset-dropdown"] > .ant-select-selector`).click();
-    cy.get('.ant-select-item').should('have.length', '15');
+    cy.get('.ant-select-item').should('have.length', '18');
     cy.get('button[title="Manage Parameters"]').click();
     cy.get('button[class^="ant-btn"]').contains('Reset').click();
     cy.get('button[class^="ant-btn"]').contains('Confirm').click();
     cy.get(`[class*="${ConfigPanelPrefix}preset-dropdown"] > .ant-select-selector`).click();
-    cy.get('.ant-select-item').should('have.length', '16');
+    cy.get('.ant-select-item').should('have.length', '19');
   });
 
   it('add new parameter at laser panel', () => {

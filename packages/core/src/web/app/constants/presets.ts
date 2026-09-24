@@ -2,8 +2,15 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
 
+export type PresetTable = Record<string, Partial<Record<PresetModel, Partial<Record<LayerModuleType, Preset>>>>>;
+
+/**
+ * Presets the legacy laser-config dropdown lists (named via the ILang dropdown blocks).
+ * Keys introduced for the Material Browser live in material-catalog/presets.ts instead;
+ * value/scope changes to the keys here reach both UIs.
+ */
 /* eslint-disable perfectionist/sort-objects */
-export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<LayerModuleType, Preset>>>>> = {
+export const presets: PresetTable = {
   wood_3mm_cutting: {
     ado1: {
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 6 },
@@ -13,7 +20,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 15 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 5 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 12 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 8 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
     flv1: { [LayerModule.LASER_UNIVERSAL]: { power: 100, speed: 6 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
@@ -84,7 +91,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 10 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 7 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 9 } },
@@ -95,7 +102,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 59, speed: 3 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 5 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 85, speed: 3 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 3 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
@@ -166,8 +173,12 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 4 },
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 100, speed: 8 },
     },
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 15 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 15 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 15 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
     fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 7 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 5 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 8 } },
     fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 10 } },
@@ -177,8 +188,12 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 2 },
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 100, speed: 4 },
     },
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 10 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 10 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 10 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 6 } },
     fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 6 } },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 50, speed: 4 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
     fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 8 } },
@@ -193,7 +208,10 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 30, speed: 100 },
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 70, speed: 100 },
     },
+    fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 500 } },
+    fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 500 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 500 } },
+    fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     fhx2rf_30: {
       [LayerModule.LASER_UNIVERSAL]: {
@@ -283,6 +301,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 14 },
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 50, speed: 10 },
     },
+    fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 15 } },
   },
   fabric_3mm_cutting: {
     ado1: {

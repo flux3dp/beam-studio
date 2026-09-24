@@ -1,0 +1,78 @@
+@use '@core/styles/variables' as variables;
+
+.chip {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  background: #ffffff;
+  text-align: left;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+
+  &:hover {
+    border-color: variables.$primary-blue-hover;
+    box-shadow: 0 0 0 2px rgba(64, 150, 255, 0.1);
+  }
+
+  .swatch {
+    width: 30px;
+    height: 30px;
+    border-radius: 6px;
+    flex: 0 0 auto;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.06);
+    background-size: cover;
+    background-position: center;
+
+    &.manual {
+      background: repeating-linear-gradient(45deg, #eeeeee 0 6px, #e0e0e0 6px 12px);
+    }
+  }
+
+  .label {
+    flex: 1;
+    min-width: 0;
+
+    .name {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 13px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .sub {
+      font-size: 11px;
+      line-height: 15px;
+      color: #999999;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+
+  .more {
+    color: #999999;
+    font-size: 18px;
+  }
+}
+
+.modified-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #fa8c16;
+}
+
+.container {
+  margin: 8px 15px;
+}
