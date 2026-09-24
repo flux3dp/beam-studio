@@ -22,7 +22,7 @@ import type {
   RotationParameters3D,
   RotationParameters3DGhostApi,
 } from '@core/interfaces/FisheyePreview';
-import type { TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
+import type { GalvoLaserMode, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
 import type {
   FirmwareType,
@@ -1142,6 +1142,42 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.enterSubTask, 'z_speed_limit_test');
+  }
+
+  async enterControlTaskMode() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.enterSubTask, 'control_task');
+  }
+
+  async setGalvoLaserMode(mode: GalvoLaserMode) {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.setGalvoLaserMode, mode);
+  }
+
+  async galvoExec(payload: unknown) {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.galvoExec, payload);
+  }
+
+  async galvoStop() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.galvoStop);
+  }
+
+  async getControlTaskResult() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.getControlTaskResult);
+  }
+
+  async stopControlTask() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.stopControlTask);
   }
 
   async zSpeedLimitTestSetSpeed(speed: number) {

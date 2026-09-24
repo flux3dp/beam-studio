@@ -1,5 +1,5 @@
 import type { Dispatch, SetStateAction } from 'react';
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Button, Flex, Modal } from 'antd';
 import { sprintf } from 'sprintf-js';
@@ -7,13 +7,14 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import alertConstants from '@core/app/constants/alert-constants';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { describeControlSocketError } from '@core/helpers/device/controlSocketError';
 import type { GalvoConfig, GalvoModule, GalvoWorkarea } from '@core/helpers/device/galvoConfig';
 import { galvoWorkareaOptions, getGalvoConfig, updateGalvoConfig } from '@core/helpers/device/galvoConfig';
-import { redLightFrameParameters, runGalvoFrame } from '@core/helpers/device/galvoFrameTask';
+import type { GalvoPreviewTuning } from '@core/helpers/device/galvoExec';
+import { awaitGalvoResult, galvoDot, galvoFrame, galvoGoto, stopGalvo } from '@core/helpers/device/galvoExec';
+import { connectGalvoHead, disconnectGalvoHead, releaseGalvoControl } from '@core/helpers/device/galvoLaserMode';
 import { getModuleOffsets, updateModuleOffsetsInDevice } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import isDev from '@core/helpers/is-dev';
@@ -24,13 +25,14 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import blockStyles from './Block.module.scss';
 import FieldBlock from './FieldBlock';
 import GalvoAxisBlock from './GalvoAxisBlock';
+import type { GalvoAction } from './GalvoManualBlock';
+import GalvoManualBlock from './GalvoManualBlock';
 import GalvoModuleBlock from './GalvoModuleBlock';
 import GalvoNoteBlock from './GalvoNoteBlock';
 import LensBlock from './LensBlock';
 import type { MarkParameters } from './ParametersBlock';
 import ParametersBlock from './ParametersBlock';
 import styles from './PromarkSettings.module.scss';
-import RedDotBlock from './RedDotBlock';
 
 interface Props {
   device: IDeviceInfo;
@@ -55,64 +57,109 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
   // Kept apart from config: the head's offset lives in toolhead_shift, shared with module
   // calibration and the canvas boundary, not in this head's galvo config.
   const [offsets, setOffsets] = useState(initOffsets);
-  // The galvo only reaches its own field, so nothing may fire or trace until the head is connected
-  // to the nozzle and the operator has parked the gantry where they want the field.
-  const [isConnected, setIsConnected] = useState(false);
-  const [redLight, setRedLight] = useState(false);
-  const [isFraming, setIsFraming] = useState(false);
+  /** Which action is in flight: only that button spins, and none of the others start meanwhile. */
+  const [pending, setPending] = useState<GalvoAction | null>(null);
+  const [isPreviewing, setIsPreviewing] = useState(false);
   const [parameters, setParameters] = useState<MarkParameters>({ power: 50, speed: 1000 });
-  const initialRedLight = useRef<boolean | null>(null);
+  // Field coordinates for the manual operations, origin at the lens centre.
+  const [spot, setSpot] = useState({ durationUs: 1000, x: 0, y: 0 });
+  // Empty: the machine's own pacing, which is the only copy of those numbers. Preview only.
+  const [tuning, setTuning] = useState<GalvoPreviewTuning>({});
 
   const reportError = (error: unknown, action: string) => {
     console.error(`Galvo settings: ${action} failed`, error);
     alertCaller.popUpError({ message: `${action} failed: ${describeControlSocketError(error)}` });
   };
 
-  const setRedLightOn = async (on: boolean) => {
-    try {
-      if (deviceMaster.currentControlMode !== 'raw') await deviceMaster.enterRawMode();
+  /**
+   * Every galvo command carries the settings on screen rather than the ones on the machine, so what
+   * is being looked at is what was just typed; the card takes them as an overlay on its own stored
+   * values, and all fifteen go together (see toGalvoOptics).
+   *
+   * Each one also makes sure the head is coupled first. Asking for that when it already is costs
+   * nothing -- the machine skips the move when the limit switches say the head has arrived -- which
+   * is what lets any button be the first one pressed.
+   */
+  const run = async (action: GalvoAction, label: string, body: () => Promise<void>) => {
+    // Entering the control task is refused while a job runs, and forcing it would leave the one
+    // connection to the galvo card waiting on a lock the player holds until the card is restarted
+    // under the running job. The same check the dialog opened with says so in words the operator
+    // already knows, and offers to stop the job.
+    if (!(await checkDeviceStatus(device))) return;
 
-      await deviceMaster.rawSetRedLight(on);
-      setRedLight(on);
+    setPending(action);
+    try {
+      await body();
     } catch (error) {
-      reportError(error, 'Red light');
+      reportError(error, label);
+    } finally {
+      setPending(null);
     }
   };
 
-  // TODO: dev only. The connect command is not wired up here yet, so the operator is asked to
-  // confirm the head is already connected. The prompt is left untranslated on purpose: it goes
-  // away with the placeholder.
-  const handleConnect = () => {
-    alertCaller.popUp({
-      buttonType: alertConstants.CONFIRM_CANCEL,
-      caption: t.connect,
-      id: 'galvo-connect',
-      message: '請確保已處於串聯狀態，並將龍門移動到要測試的位置。',
-      onConfirm: async () => {
-        setIsConnected(true);
+  const handleConnect = () => run('connect', t.connect, () => connectGalvoHead(module));
 
-        if (initialRedLight.current === null) initialRedLight.current = false;
+  const handleDisconnect = () => run('disconnect', 'Disconnect', disconnectGalvoHead);
 
-        await setRedLightOn(true);
-      },
+  const handleMark = () =>
+    run('mark', t.mark, async () => {
+      await connectGalvoHead(module);
+      await galvoFrame({ config, module, power: parameters.power, speed: parameters.speed });
+      await awaitGalvoResult(t.mark);
+    });
+
+  /**
+   * A toggle, not a one-shot: the red light keeps going round the outline until it is stopped, and
+   * get_result answers `wait` for as long as it does, so there is nothing to wait for here.
+   */
+  const handlePreview = async () => {
+    if (isPreviewing) {
+      setPending('preview');
+      try {
+        await stopGalvo();
+        setIsPreviewing(false);
+      } catch (error) {
+        reportError(error, tGlobal.preview);
+      } finally {
+        setPending(null);
+      }
+
+      return;
+    }
+
+    await run('preview', tGlobal.preview, async () => {
+      await connectGalvoHead(module);
+      await galvoFrame({ config, module, power: 0, preview: true, speed: parameters.speed, tuning });
+      setIsPreviewing(true);
     });
   };
 
-  const runFrame = async (action: string, { power, speed }: MarkParameters) => {
-    setIsFraming(true);
-    try {
-      await runGalvoFrame({ model: device.model, module, power, speed, width: config.workarea });
-    } catch (error) {
-      reportError(error, action);
-    } finally {
-      setIsFraming(false);
-    }
-  };
+  const handleMove = () =>
+    run('move', 'Move', async () => {
+      await connectGalvoHead(module);
+      await galvoGoto({ config, module, x: spot.x, y: spot.y });
+      await awaitGalvoResult('Move');
+    });
 
-  const restoreRedLight = async () => {
-    if (initialRedLight.current === null || redLight === initialRedLight.current) return;
+  const handleDot = () =>
+    run('dot', 'Dot', async () => {
+      await connectGalvoHead(module);
+      await galvoDot({
+        config,
+        durationUs: spot.durationUs,
+        module,
+        points: [{ x: spot.x, y: spot.y }],
+        power: parameters.power,
+      });
+      await awaitGalvoResult('Dot');
+    });
 
-    await setRedLightOn(initialRedLight.current);
+  /**
+   * The control task restores the red light on its own way out, following the machine's setting,
+   * so leaving the mode is the whole of the tidying up.
+   */
+  const release = async () => {
+    if (deviceMaster.currentControlMode === 'control_task') await releaseGalvoControl();
   };
   const update = <K extends keyof GalvoConfig>(key: K, value: GalvoConfig[K]) =>
     setConfig((cur) => ({ ...cur, [key]: value }));
@@ -133,32 +180,33 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
     // redraws it on its own.
     boundaryDrawer.update();
 
-    await restoreRedLight();
+    await release();
     onClose();
   };
 
   const handleCancel = async () => {
-    await restoreRedLight();
+    await release();
     onClose();
   };
 
   const footer = (
     <Flex align="center" justify="space-between">
       <Flex align="center" gap={8}>
-        <Button className={styles.button} disabled={isConnected} onClick={handleConnect}>
-          {t.connect}
-        </Button>
+        {/* Both couple the head themselves, so there is nothing to press first. */}
         <Button
           className={styles.button}
-          disabled={!isConnected || isFraming}
-          onClick={() => runFrame('Red light trace', redLightFrameParameters)}
+          disabled={pending !== null && pending !== 'preview'}
+          loading={pending === 'preview'}
+          onClick={handlePreview}
+          type={isPreviewing ? 'primary' : 'default'}
         >
-          {tGlobal.preview}
+          {isPreviewing ? tGlobal.stop : tGlobal.preview}
         </Button>
         <Button
           className={styles.button}
-          disabled={!isConnected || isFraming}
-          onClick={() => runFrame('Mark', parameters)}
+          disabled={pending !== null || isPreviewing}
+          loading={pending === 'mark'}
+          onClick={handleMark}
         >
           {t.mark}
         </Button>
@@ -195,12 +243,12 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
           width={config.workarea}
           widthOptions={galvoWorkareaOptions}
         />
-        <RedDotBlock
+        <GalvoModuleBlock
+          focusHeight={config.focusHeight}
           isInch={isInch}
-          redDot={config.redDot}
-          setRedDot={(value) =>
-            setConfig((cur) => ({ ...cur, redDot: typeof value === 'function' ? value(cur.redDot) : value }))
-          }
+          offsets={offsets}
+          onFocusHeightChange={(value) => update('focusHeight', value)}
+          onOffsetsChange={setOffsets}
         />
         <LensBlock
           data={config.galvoParameters}
@@ -211,19 +259,27 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
             }))
           }
         />
-        <GalvoModuleBlock
-          focusHeight={config.focusHeight}
-          isInch={isInch}
-          offsets={offsets}
-          onFocusHeightChange={(value) => update('focusHeight', value)}
-          onOffsetsChange={setOffsets}
-        />
         {isDev() && <GalvoAxisBlock field={config.field} setField={setFieldValue} />}
         {isDev() && <GalvoNoteBlock />}
         <Flex align="center" className={blockStyles['full-row']} gap={8} justify="space-between">
           <div className={blockStyles.title}>{t.mark_parameters}</div>
           <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
         </Flex>
+        {isDev() && (
+          <GalvoManualBlock
+            isInch={isInch}
+            onConnect={handleConnect}
+            onDisconnect={handleDisconnect}
+            onDot={handleDot}
+            onMove={handleMove}
+            pending={isPreviewing ? 'preview' : pending}
+            reach={config.workarea / 2}
+            setSpot={setSpot}
+            setTuning={setTuning}
+            spot={spot}
+            tuning={tuning}
+          />
+        )}
       </div>
     </Modal>
   );

@@ -6,7 +6,7 @@ import rsaKey from '@core/helpers/rsa-key';
 import Websocket from '@core/helpers/websocket';
 import type { FisheyeCameraParameters, RotationParameters3D } from '@core/interfaces/FisheyePreview';
 import type IControlSocket from '@core/interfaces/IControlSocket';
-import type { Mode } from '@core/interfaces/IControlSocket';
+import type { GalvoLaserMode, Mode } from '@core/interfaces/IControlSocket';
 import type { FirmwareType, IDeviceDetailInfo, IReport } from '@core/interfaces/IDevice';
 import type { WrappedWebSocket } from '@core/interfaces/WebSocket';
 
@@ -1082,6 +1082,64 @@ class Control extends EventEmitter implements IControlSocket {
     const res = await this.useWaitOKResponse('start', 90000);
 
     return res?.response.data.includes('pass');
+  };
+
+  /**
+   * Switch which laser the machine is wired to. The answer is only an acknowledgement that the
+   * sequence started -- it homes, moves the gantry and throws the galvo linkage, which takes a
+   * while -- so completion has to be polled with getControlTaskResult.
+   */
+  setGalvoLaserMode = async (mode: GalvoLaserMode): Promise<string> => {
+    if (this.mode !== 'control_task') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return (await this.useWaitAnyResponse(mode))?.data;
+  };
+
+  /** `wait` while the sequence is still running, `ok` once it has finished. */
+  getControlTaskResult = async (): Promise<string> => {
+    if (this.mode !== 'control_task') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return (await this.useWaitAnyResponse('get_result'))?.data;
+  };
+
+  /**
+   * Drive the galvo card directly: trace a rectangle, move the mirrors, or burn dots. No fcode
+   * and no player -- this is for calibrating and for checking a setting before saving it.
+   *
+   * Answers `ok` the moment it is accepted, or `fail <code>` if the arguments were refused before
+   * anything was sent. What happened afterwards comes from getControlTaskResult.
+   *
+   * The payload is sent as it stands: the sub-task path hands the message to the machine verbatim,
+   * so unlike `config set` there is no shlex layer to escape the quotes for.
+   */
+  galvoExec = async (payload: unknown): Promise<string> => {
+    if (this.mode !== 'control_task') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return (await this.useWaitAnyResponse(`galvo_exec ${JSON.stringify(payload)}`))?.data;
+  };
+
+  /** End a preview loop and release the galvo card. Leaves the red light on. */
+  galvoStop = async (): Promise<string> => {
+    if (this.mode !== 'control_task') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return (await this.useWaitAnyResponse('galvo_stop'))?.data;
+  };
+
+  /** Abort the running sequence. Leaves the machine wherever it stopped. */
+  stopControlTask = async (): Promise<string> => {
+    if (this.mode !== 'control_task') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return (await this.useWaitAnyResponse('stop'))?.data;
   };
 
   enterRawMode = async () => {

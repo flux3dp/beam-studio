@@ -76,6 +76,21 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
   takeReferenceZ?: ((args?: { F?: number; H?: number; X?: number; Y?: number }) => Promise<number>) | undefined;
   updateFisheye3DRotation?: ((data: RotationParameters3D) => Promise<{ status: string }>) | undefined;
   uploadFisheyeParams?: ((data: string) => Promise<{ status: string }>) | undefined;
+  setGalvoLaserMode(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+  galvoExec(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+  galvoStop(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+  getControlTaskResult(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+  stopControlTask(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
   zSpeedLimitTestSetSpeed(speed: number): Promise<boolean> {
     throw new Error('Method not implemented.');
   }

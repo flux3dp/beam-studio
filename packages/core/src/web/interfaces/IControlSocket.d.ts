@@ -9,7 +9,10 @@ import type { FirmwareType, IDeviceDetailInfo, IDeviceInfoFlux, IReport } from '
 import type { ButtonState, Field, LensCorrection } from './Promark';
 import type { WrappedWebSocket } from './WebSocket';
 
-export type Mode = '' | 'cartridge_io' | 'raw' | 'red_laser_measure' | 'z_speed_limit_test';
+export type Mode = '' | 'cartridge_io' | 'control_task' | 'raw' | 'red_laser_measure' | 'z_speed_limit_test';
+
+/** Laser routing on a galvo machine. `default_mode` parks the galvo and cuts with the gantry. */
+export type GalvoLaserMode = 'default_mode' | 'galvo_mode' | 'mopa_mode';
 
 interface IControlSocket extends EventEmitter {
   abort(): Promise<unknown>;
@@ -36,7 +39,10 @@ interface IControlSocket extends EventEmitter {
   fetchFisheye3DRotation?: () => Promise<RotationParameters3D>;
   fetchFisheyeParams?: () => Promise<FisheyeCameraParameters>;
   fileInfo(path: string, fileName: string): Promise<unknown[]>;
+  galvoExec(payload: unknown): Promise<string>;
+  galvoStop(): Promise<string>;
   getCartridgeChipData?: () => Promise<{ data: { result: RawChipSettings }; status: string }>;
+  getControlTaskResult(): Promise<string>;
   getDeviceSetting(name: string): Promise<{ status: string; value: string }>;
   getDoorOpen(): Promise<{ value: string }>;
   getFan(): Promise<{ value: number }>;
@@ -96,6 +102,7 @@ interface IControlSocket extends EventEmitter {
   setFan(fanSpeed: number): Promise<unknown>;
   setFanTemp(fanSpeed: number): Promise<unknown>;
   setField(worksize: number, fieldData: Field): Promise<boolean>;
+  setGalvoLaserMode(mode: GalvoLaserMode): Promise<string>;
   setLaserPower(power: number): Promise<unknown>;
   setLaserPowerTemp(power: number): Promise<unknown>;
   setLaserSpeed(speed: number): Promise<unknown>;
@@ -105,6 +112,7 @@ interface IControlSocket extends EventEmitter {
   setOriginY(y: number): Promise<unknown>;
   setProgressListener(listener: (...args: unknown[]) => void): void;
   start(): Promise<unknown>;
+  stopControlTask(): Promise<string>;
   takeReferenceZ?: (args?: { F?: number; H?: number; X?: number; Y?: number }) => Promise<number>;
   updateFirmware(file: File, type: FirmwareType): Promise<unknown>;
   updateFisheye3DRotation?: (data: RotationParameters3D) => Promise<{ status: string }>;
