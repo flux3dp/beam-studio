@@ -23,6 +23,9 @@ import {
   mergeBoundaries,
 } from '@core/helpers/boundary-helper';
 import { getGalvoConfig, isGalvoModule } from '@core/helpers/device/galvoConfig';
+// Side effect: registers the listener that turns a HEXA II's reported travel into the module
+// boundary this file draws. DEVELOPMENT ONLY, see that file.
+import '@core/helpers/device/galvoWorkRange';
 import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -311,6 +314,7 @@ export class BoundaryDrawer {
    */
   private getModuleReach = async (module: LayerModuleType, model: WorkAreaModel) => {
     const offsets = await getModuleOffsets({ module, workarea: model });
+
     const [offsetX, offsetY] = offsets;
     const halfField = isGalvoModule(module) ? (await getGalvoConfig(module)).workarea / 2 : 0;
     const inset: TBoundary = {

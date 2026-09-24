@@ -5,6 +5,7 @@ import { Button, Checkbox, Divider, Input, InputNumber, Modal, Select, Tooltip }
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import {
   GALVO_DEV_SETTING_FIELDS,
   GALVO_DEV_SETTING_GROUPS,
@@ -17,6 +18,13 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import type { GalvoModule } from '@core/helpers/device/galvoConfig';
 import { getGalvoConfig } from '@core/helpers/device/galvoConfig';
+import type { GalvoWorkRange, GalvoWorkRangeMode } from '@core/helpers/device/galvoWorkRange';
+import {
+  fetchGalvoWorkRange,
+  getGalvoWorkRangeMin,
+  setGalvoWorkRangeMin,
+  updateGalvoWorkRange,
+} from '@core/helpers/device/galvoWorkRange';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 
@@ -58,6 +66,13 @@ const GalvoDevSettings = ({ onClose }: Props): React.JSX.Element => {
   const mopaEnabled = useDocumentStore((state) => state['enable-galvo-mopa']);
   const [draft, setDraft] = useState<GalvoDevOverrides>(() => ({ ...stored }));
   const [machine, setMachine] = useState<MachineValues>({ state: 'loading' });
+  /**
+   * Travel limits are machine state, not a swiftray override, so they are kept out of `draft`:
+   * anything in there is written to local storage and handed to the exporter verbatim. The far
+   * edges live on the machine, the near ones only here.
+   */
+  const [maxDraft, setMaxDraft] = useState<GalvoWorkRange | null>(null);
+  const [minDraft, setMinDraft] = useState<GalvoWorkRange>(getGalvoWorkRangeMin);
 
   useEffect(() => {
     let cancelled = false;
@@ -73,12 +88,15 @@ const GalvoDevSettings = ({ onClose }: Props): React.JSX.Element => {
     }
 
     const load = async () => {
-      const [all, fields] = await Promise.all([
+      const [all, fields, range] = await Promise.all([
         getAllOffsets(workarea),
         Promise.all(galvoModulesArray.map((module) => getGalvoConfig(module as GalvoModule))),
+        fetchGalvoWorkRange({ useCache: false }),
       ]);
 
       if (cancelled) return;
+
+      setMaxDraft(range);
 
       setMachine({
         lenses: Object.fromEntries(galvoModulesArray.map((module, index) => [module, fields[index].workarea])),
@@ -235,6 +253,83 @@ const GalvoDevSettings = ({ onClose }: Props): React.JSX.Element => {
     },
   ];
 
+  /**
+   * Near edge first, then far: the machine holds only the far one, so the two halves of a row
+   * are saved to different places. The last column names which, the way it names the wire key
+   * for an override.
+   */
+  const travelRows: Array<{
+    label: string;
+    mode: GalvoWorkRangeMode;
+    source: string;
+    tooltip: string;
+    which: 'max' | 'min';
+  }> = (['galvo', 'mopa'] as const).flatMap((mode) => {
+    const fitted = mode === 'galvo' ? '沒有裝 Mopa 模組頭' : '裝著 Mopa 模組頭';
+    const name = mode === 'galvo' ? '無 Mopa' : '有 Mopa';
+
+    return [
+      {
+        label: `${name} · 最小`,
+        mode,
+        source: '本機',
+        tooltip: `${fitted}時，龍門走得到的最靠近原點的位置。機器上沒有存這組值，只留在這台電腦。`,
+        which: 'min' as const,
+      },
+      {
+        label: `${name} · 最大`,
+        mode,
+        source: `galvo_work_range.${mode}`,
+        tooltip:
+          `${fitted}時，龍門走得到的最遠位置。存在機器上，連接／脫離序列也讀同一組值。` +
+          `畫布寬高減掉這裡就是右側與下方的邊界。`,
+        which: 'max' as const,
+      },
+    ];
+  });
+
+  const renderTravel = (row: (typeof travelRows)[number]): React.JSX.Element => {
+    const value = row.which === 'min' ? minDraft[row.mode] : maxDraft?.[row.mode];
+    const disabled = row.which === 'max' && !maxDraft;
+    const set = (axis: 'x' | 'y', next: null | number) => {
+      if (next === null || !value) return;
+
+      if (row.which === 'min') setMinDraft((prev) => ({ ...prev, [row.mode]: { ...prev[row.mode], [axis]: next } }));
+      else setMaxDraft((prev) => (prev ? { ...prev, [row.mode]: { ...prev[row.mode], [axis]: next } } : prev));
+    };
+
+    return (
+      <div className={styles.pair}>
+        {(['x', 'y'] as const).map((axis) => (
+          <InputNumber
+            addonBefore={axis.toUpperCase()}
+            className={styles.control}
+            disabled={disabled}
+            key={axis}
+            min={0}
+            onChange={(next) => set(axis, next)}
+            placeholder={disabled ? unavailable : undefined}
+            value={value ? value[axis] : null}
+          />
+        ))}
+      </div>
+    );
+  };
+
+  const handleSave = async () => {
+    setStorage('galvo-dev-settings', draft);
+    setGalvoWorkRangeMin(minDraft);
+
+    // Only the far edges have to reach the machine, and only if one answered in the first place.
+    if (maxDraft && !(await updateGalvoWorkRange(maxDraft))) {
+      alertCaller.popUpError({ message: '移動範圍寫入機器失敗，其餘設定已儲存' });
+
+      return;
+    }
+
+    onClose();
+  };
+
   return (
     <Modal
       cancelText="取消"
@@ -251,10 +346,7 @@ const GalvoDevSettings = ({ onClose }: Props): React.JSX.Element => {
       )}
       okText="儲存"
       onCancel={onClose}
-      onOk={() => {
-        setStorage('galvo-dev-settings', draft);
-        onClose();
-      }}
+      onOk={handleSave}
       open
       // The body is long enough to run off a laptop screen, and a Modal grows to fit it, which
       // would push the footer past the bottom edge. Cap it and let the body scroll instead.
@@ -272,38 +364,52 @@ const GalvoDevSettings = ({ onClose }: Props): React.JSX.Element => {
             {group.title}
           </Divider>
           <div className={styles.groupNote}>{group.description}</div>
-          {group.key === 'readOnly'
-            ? readOnlyRows.map((row) => (
-                <div className={classNames(styles.row, { [styles.disabled]: row.disabled })} key={row.label}>
+          {group.key === 'travel'
+            ? travelRows.map((row) => (
+                <div className={styles.row} key={`${row.mode}-${row.which}`}>
                   <div className={styles.label}>
                     {row.label}
+                    <span className={styles.unit}>(mm)</span>
                     <Tooltip title={row.tooltip}>
                       <QuestionCircleOutlined className={styles.hint} />
                     </Tooltip>
                   </div>
-                  <div className={styles.readOnly}>{row.value}</div>
+                  <div className={styles.value}>{renderTravel(row)}</div>
+                  <code className={styles.key}>{row.source}</code>
                 </div>
               ))
-            : GALVO_DEV_SETTING_FIELDS.filter((field) => field.group === group.key).map((field) => (
-                <div className={styles.row} key={field.key}>
-                  <div className={styles.label}>
-                    {field.label}
-                    {field.unit ? <span className={styles.unit}>({field.unit})</span> : null}
-                    <Tooltip title={field.tooltip}>
-                      <QuestionCircleOutlined className={styles.hint} />
-                    </Tooltip>
+            : group.key === 'readOnly'
+              ? readOnlyRows.map((row) => (
+                  <div className={classNames(styles.row, { [styles.disabled]: row.disabled })} key={row.label}>
+                    <div className={styles.label}>
+                      {row.label}
+                      <Tooltip title={row.tooltip}>
+                        <QuestionCircleOutlined className={styles.hint} />
+                      </Tooltip>
+                    </div>
+                    <div className={styles.readOnly}>{row.value}</div>
                   </div>
-                  <div className={styles.value}>
-                    {renderControl(field)}
-                    {draft[field.key] === undefined ? null : (
-                      <Button onClick={() => clearValue(field.key)} size="small" type="link">
-                        還原
-                      </Button>
-                    )}
+                ))
+              : GALVO_DEV_SETTING_FIELDS.filter((field) => field.group === group.key).map((field) => (
+                  <div className={styles.row} key={field.key}>
+                    <div className={styles.label}>
+                      {field.label}
+                      {field.unit ? <span className={styles.unit}>({field.unit})</span> : null}
+                      <Tooltip title={field.tooltip}>
+                        <QuestionCircleOutlined className={styles.hint} />
+                      </Tooltip>
+                    </div>
+                    <div className={styles.value}>
+                      {renderControl(field)}
+                      {draft[field.key] === undefined ? null : (
+                        <Button onClick={() => clearValue(field.key)} size="small" type="link">
+                          還原
+                        </Button>
+                      )}
+                    </div>
+                    <code className={styles.key}>{field.key}</code>
                   </div>
-                  <code className={styles.key}>{field.key}</code>
-                </div>
-              ))}
+                ))}
         </div>
       ))}
     </Modal>

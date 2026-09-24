@@ -31,6 +31,21 @@ jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
   setMouseMode: (mode: string) => mockSetMouseMode(mode),
 }));
 
+const mockDeviceList = jest.fn();
+
+jest.mock('@core/helpers/hooks/useDeviceList', () => ({
+  useDeviceList: () => mockDeviceList(),
+}));
+
+const mockCurrentDevice = jest.fn();
+
+// The real module reaches a worker that jest cannot parse, and only currentDevice is read here.
+jest.mock('@core/helpers/device-master', () => ({
+  get currentDevice() {
+    return mockCurrentDevice();
+  },
+}));
+
 const mockGetDevice = jest.fn();
 
 jest.mock(
@@ -48,6 +63,8 @@ describe('test SelectMachineButton', () => {
     useScreenStore.setState({ isMobile: false });
     useCanvasStore.getState().setMode(CanvasMode.Draw);
     mockGetIsPreviewMode.mockReturnValue(false);
+    mockDeviceList.mockReturnValue([{ uuid: '1234' }]);
+    mockCurrentDevice.mockReturnValue({ control: { isConnected: true }, info: { uuid: '1234' } });
     mockGetDevice.mockResolvedValue({
       device: {
         uuid: '1234',
@@ -84,16 +101,72 @@ describe('test SelectMachineButton', () => {
   });
 
   test('with device', () => {
-    const { container } = render(
-      <CanvasContext value={{ selectedDevice: { model: 'fbm1', name: 'device name' } } as any}>
+    const { container, queryByTestId } = render(
+      <CanvasContext value={{ selectedDevice: { model: 'fbm1', name: 'device name', uuid: '1234' } } as any}>
         <SelectMachineButton />
       </CanvasContext>,
     );
 
     expect(container).toMatchSnapshot();
+    expect(queryByTestId('disconnected')).not.toBeInTheDocument();
     fireEvent.click(container.querySelector('div[class*="button"]'));
     expect(mockGetDevice).toHaveBeenCalledTimes(1);
     expect(mockEndPreviewMode).toHaveBeenCalledTimes(0);
+  });
+
+  // The selected device survives a reload, so it can name a machine this session never reached.
+  describe('disconnected indicator', () => {
+    const device = { model: 'fbm1', name: 'device name', uuid: '1234' };
+    const renderWith = () =>
+      render(
+        <CanvasContext value={{ selectedDevice: device } as any}>
+          <SelectMachineButton />
+        </CanvasContext>,
+      );
+
+    test('shows when discovery no longer sees the machine', () => {
+      mockDeviceList.mockReturnValue([]);
+
+      expect(renderWith().queryByTestId('disconnected')).toBeInTheDocument();
+    });
+
+    test('shows when the open socket belongs to another machine', () => {
+      mockCurrentDevice.mockReturnValue({ control: { isConnected: true }, info: { uuid: 'other' } });
+
+      expect(renderWith().queryByTestId('disconnected')).toBeInTheDocument();
+    });
+
+    test('shows when the socket dropped', () => {
+      mockCurrentDevice.mockReturnValue({ control: { isConnected: false }, info: { uuid: '1234' } });
+
+      expect(renderWith().queryByTestId('disconnected')).toBeInTheDocument();
+    });
+
+    // The click renders once before the selection has connected; without a re-read after the
+    // await it would sit on that first answer for good.
+    test('re-reads once the selection finishes connecting', async () => {
+      mockCurrentDevice.mockReturnValue(undefined);
+
+      const { container, queryByTestId } = renderWith();
+
+      expect(queryByTestId('disconnected')).toBeInTheDocument();
+      mockCurrentDevice.mockReturnValue({ control: { isConnected: true }, info: { uuid: '1234' } });
+      await act(() => fireEvent.click(container.querySelector('div[class*="button"]')));
+      expect(queryByTestId('disconnected')).not.toBeInTheDocument();
+    });
+
+    test('stays hidden when no machine is selected', () => {
+      mockDeviceList.mockReturnValue([]);
+      mockCurrentDevice.mockReturnValue(undefined);
+
+      const { queryByTestId } = render(
+        <CanvasContext value={{ selectedDevice: null } as any}>
+          <SelectMachineButton />
+        </CanvasContext>,
+      );
+
+      expect(queryByTestId('disconnected')).not.toBeInTheDocument();
+    });
   });
 
   test('when in pre preview mode', async () => {

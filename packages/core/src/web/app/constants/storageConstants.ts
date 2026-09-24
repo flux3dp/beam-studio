@@ -27,6 +27,7 @@ export const getStorageKeys: () => StorageKey[] = () => [
   'font-history',
   'font-name-map',
   'galvo-dev-settings',
+  'galvo-work-range-min',
   'guessing_poke',
   'keep-flux-id-login',
   'last-installed-version',

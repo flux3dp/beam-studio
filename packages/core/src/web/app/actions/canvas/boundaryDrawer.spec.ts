@@ -139,6 +139,10 @@ jest.mock('@core/helpers/device/moduleOffsets', () => ({
   getModuleOffsets: mockGetModuleOffsets,
 }));
 
+// Imported only for its listener registration, and the real module reaches deviceMaster: pulling
+// that graph in mid-test makes the zustand mock register its hooks inside a test body.
+jest.mock('@core/helpers/device/galvoWorkRange', () => ({}));
+
 const mockGetGalvoConfig = jest.fn();
 const mockIsGalvoModule = jest.fn();
 
