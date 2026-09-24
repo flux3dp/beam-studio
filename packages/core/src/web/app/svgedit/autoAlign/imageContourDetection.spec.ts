@@ -152,7 +152,9 @@ describe('ImageContourDetector', () => {
       [100, 300],
     ]);
     expect(detector.contours).toEqual([]);
-    expect(mockOpenMessage.mock.calls.at(-1)[0].level).toBe('info');
+    // zero results: silent, only the loading toast is closed
+    expect(mockOpenMessage.mock.calls.at(-1)[0].level).toBe('loading');
+    expect(mockCloseMessage).toHaveBeenCalledWith('snap-to-object-center');
   });
 
   it('ignores previews while the preference is off and clears when it turns off', async () => {

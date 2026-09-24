@@ -143,11 +143,18 @@ export class ImageContourDetector {
       // clear() mid-run already closed the loading toast; don't re-open one for an image that is gone
       if (!applied) return;
 
+      // silent on zero results: "detected" would mislead on an empty bed
+      if (!this.contours.length) {
+        MessageCaller.closeMessage(MESSAGE_KEY);
+
+        return;
+      }
+
       MessageCaller.openMessage({
         content: i18n.lang.message.objects_detected,
         duration: 2,
         key: MESSAGE_KEY,
-        level: this.contours.length ? MessageLevel.SUCCESS : MessageLevel.INFO,
+        level: MessageLevel.SUCCESS,
       });
     } catch (error) {
       console.warn('[snapToObjectCenter] detection failed', error);

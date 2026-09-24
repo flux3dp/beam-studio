@@ -99,9 +99,69 @@ All state lives inside the `svgcanvas.ts` closure:
 
 1. **Stack of coasters, dark walnut.** User previews the bed (region preview, ~12 tiles). Toast `Detecting contours…` appears after the first tile lands; each detected coaster gets a bbox. User drags a logo; it snaps to a coaster's centre with the magenta align line. Toast `Contours detected` fades.
 2. **Auto Fit on leather patch.** User selects a design, presses Auto Fit. Engine = ONNX. Contours come from Swiftray in ~3 s, grouping from fluxghost, the panel opens as today with cleaner outlines.
-3. **Intel MacBook Air, first Auto Fit.** Alert: "Smart contour detection may be slow on this computer… [Use classic detection] [Continue]" with "don't show again". Choosing classic flips the preference; Auto Fit runs via fluxghost immediately.
+3. ~~**Intel MacBook Air, first Auto Fit.** Alert: "Smart contour detection may be slow on this computer… [Use classic detection] [Continue]" with "don't show again". Choosing classic flips the preference; Auto Fit runs via fluxghost immediately.~~ Dropped with the warning, §10 item 1.
 4. **Web app.** `hasSwiftray` is false → OpenCV engine, the setting shows as unavailable (disabled select with a hint).
 5. **Preview cleared / machine switched.** Contours and their align points vanish; no stale snapping.
+
+### 4.1 Acceptance criteria
+
+How to operate each behaviour, what must be observable, and the edge cases. **Check** names the
+spec that covers it or says manual; **Status** is the last verification of `feat/snap-to-object-center`
+(2026-09-24: the five snap specs pass, 51 tests). AC7–AC8 shipped in #1006 and are listed so the
+section covers the whole PRD.
+
+**AC1 — Toggle (View › Snap to Object Center).**
+- Operate: open the View menu (Electron menu bar or web top bar). The checkbox sits under Auto Align, checked by default.
+- Expect: the check state follows the preference `snap_to_object_center` and survives a restart. Turning it off empties the snap targets and closes the toast at once; turning it back on while a preview is already on the canvas starts a detection run without another preview.
+- Edge cases: works with Auto Align unchecked; on the web the item exists and detection runs on the OpenCV engine.
+- Check: `helpers/menubar/view.spec.ts` (toggle); `imageContourDetection.spec.ts` "ignores previews while the preference is off and clears when it turns off". Re-enable over an existing preview: manual.
+- Status: unit ✅; re-enable manual, unverified.
+
+**AC2 — Detection runs once per preview batch.**
+- Operate: with the toggle on, run a region preview (fbb2, ~12 tiles), a single shot, or a full-area preview (fbm2, Promark).
+- Expect: no toast while tiles are still landing. When the batch ends the loading toast "Detecting objects in the preview…" appears, then "Objects detected" for 2 s. In live mode nothing runs until live mode stops.
+- Edge cases: a batch landing during a run is drained by the same run (one loading toast, one result toast); a run whose preview is cleared midway is discarded and shows no result toast; an engine failure shows the warning toast once per preview and the next batch retries. Zero objects: the loading toast closes and no result toast is shown (decided 2026-09-24: silent).
+- Check: `imageContourDetection.spec.ts` (batch end + ratio mapping, drawing/live hold, drain loop, discard after clear, warn once).
+- Status: unit ✅; hardware pass on fbb2 / fbm2 / Promark not yet recorded.
+
+**AC3 — Rails, sheets and half-seen parts are not targets.**
+- Operate: preview a bed with a material sheet and a part lying across the edge of the previewed region. Set `localStorage['dev-image-contour'] = 'true'` to see the targets.
+- Expect: no target on an object spanning ≥ 90 % of the workarea in either direction, nor on a part whose outline runs along never-previewed canvas. Previewing the neighbouring region brings that part back whole.
+- Check: `imageContourDetection.spec.ts` "drops objects spanning 90% or more", "drops objects cut off by the edge of the previewed area". The alpha probe itself (`isPolygonCutByPreviewEdge`) is manual.
+- Status: unit ✅.
+
+**AC4 — Centre snap while dragging.**
+- Operate: select mode, drag an element until its centre enters a detected object's bbox and comes within 20 screen px of the object's centroid.
+- Expect: the selection jumps so the two centres coincide and a dashed magenta cross appears through the object centre (along the object's own axes and sized to it when rectangularity ≥ 0.8, else the axis-aligned bbox cross). Releasing keeps the snapped position; undo restores the start. When objects nest (an engraving centred on a tile) the smaller one wins.
+- Edge cases: Shift held (axis lock) → no object snap; centre outside every bbox → drag unaffected; zooming in tightens the radius (it is in screen px); dragging back onto the original position still lands on the object (the translate is rewritten once the selection has moved); the Auto Align edge guides are cleared when the object snap takes over.
+- Check: manual. `getDragDelta` / `findObjectCenterSnap` have no spec.
+- Status: code-reviewed; manual pass unverified.
+
+**AC5 — Rotation snap.**
+- Operate: drag the rotate grip of an element whose centre lies over a rectangular detected object (rectangularity ≥ 0.8).
+- Expect: within 3° of one of the object's edge directions (every 90°, plus the 45° diagonals when the object is near-square, aspect ≤ 1.1) the angle snaps and a dashed guide through the object centre shows the matched direction, sized to the object's extent along it. Nothing rotates on drop by itself.
+- Edge cases: Shift → 45° steps and no object snap; blob-like object (star, circle) → no candidates; no rectangular object under the centre → free rotation.
+- Check: `utils/objectSnap/index.spec.ts` (candidate sets, guide half-lengths), `utils/getMinAreaRect/index.spec.ts` (angles mod 180, circle rectangularity, degenerate input). `getRotationSnap` itself is manual.
+- Status: unit ✅ for the helpers; manual pass unverified.
+
+**AC6 — Clearing.**
+- Operate: clear the preview, or switch to another machine model.
+- Expect: overlay and targets vanish, dragging no longer snaps, an in-flight loading toast closes and its late result is dropped.
+- Check: `imageContourDetection.spec.ts` "discards a result that lands after the preview was cleared". `model-changed`: manual.
+- Status: unit ✅.
+
+**AC7 — Engine selection (shipped #1006).**
+- Operate: desktop with Swiftray ≥ 1.4.11 and AI Contour Detection on → ONNX. Setting off, web, or Swiftray unavailable → OpenCV via fluxghost `get_contours`. A Swiftray error retries that one call on OpenCV.
+- Expect: identical snap behaviour on both engines; rect and angle are computed in the frontend.
+- Check: `helpers/contour/detectContours.spec.ts`. Status: ✅.
+
+**AC8 — Auto Fit v2 (shipped #1006).**
+- Operate: select a design, press Auto Fit. Expect: the panel opens with contours from the effective engine and grouping from fluxghost `group_contours`; flipping the engine in Settings › Camera changes the next run.
+- Check: Auto Fit specs; golden `bed.jpg` 20/20 in Swiftray. Status: ✅.
+
+**AC9 — i18n.**
+- Expect: `topbar.menu.snap_to_object_center`, `message.detecting_objects`, `message.objects_detected`, `message.object_detection_failed` in all 23 language files; the AI Contour Detection tooltip names Snap to Object Center.
+- Check: grep. Status: ✅ 23/23.
 
 ---
 
@@ -161,7 +221,7 @@ export const detectContours = (blob: Blob, opts?: { onProgress?, engine?: Contou
 | `contour_detection_engine` | `'onnx' \| 'opencv'` | `'onnx'` | user choice; effective engine may still be `opencv` |
 | `snap_to_object_center` | `boolean` | `true` | image-contour align on/off; independent of `auto_align` (decided 2026-09-23: object snapping works with Auto Align off) |
 
-**Settings UI** — `components/settings/categories/Camera.tsx`: `SettingSwitch` "AI Contour Detection" / "AI 輪廓偵測" writing `'onnx' | 'opencv'` into `contour-engine` (engine names are never shown; rendered only on desktop with Swiftray); `SettingSwitch` "Snap to object center" (`snap_to_object_center`). No new menu item; `AUTO_ALIGN` menu stays the master switch.
+**Settings UI** — `components/settings/categories/Camera.tsx`: `SettingSwitch` "AI Contour Detection" / "AI 輪廓偵測" writing `'onnx' | 'opencv'` into `contour-engine` (engine names are never shown; rendered only on desktop with Swiftray). ~~`SettingSwitch` "Snap to object center" (`snap_to_object_center`). No new menu item; `AUTO_ALIGN` menu stays the master switch.~~ Shipped instead as a **View menu checkbox** "Snap to Object Center" under Auto Align (`SNAP_TO_OBJECT_CENTER` in `menu-manager.ts`, `useMenuData.ts`, `menuItemStatus.ts`; `viewMenu.toggleSnapToObjectCenter`), since it is a canvas behaviour toggled as often as Auto Align. No settings switch.
 
 ~~**Weak-machine warning**~~ — dropped, see §10 item 1. (Original proposal: one-time alert on Windows < 8 GiB or Intel Mac offering the classic engine.)
 
@@ -185,15 +245,16 @@ blob → detectContours(blob)            // engine-agnostic
 
 **State (decided 2026-09-23: no store).** Nothing renders or subscribes to the detected objects, so they are a plain `contours: ImageContour[]` field on the detector, read by `autoAlign.findObjectCenterSnap` at drag time. `ImageContour = { id; bbox: [x, y, w, h]; center: [x, y]; contour; rect }`, workarea px. `rect` is the minimum-area rect of the polygon (`utils/getMinAreaRect`: long edge as `width`, its direction as `angle`, `rectangularity` = polygon area / rect area), computed in the frontend so both engines are treated alike; the backend `angle` is not used because OpenCV's minAreaRect angle is ambiguous without the rect size.
 
-**Service** — `app/svgedit/autoAlign/imageContourDetection.ts` (`init()` called from svgcanvas right after `autoAlign.init()`):
+**Service** — `app/svgedit/autoAlign/imageContourDetection.ts` (`init()` called from inside `autoAlign.init()`, which svgcanvas calls once):
 
 1. **Trigger.** The existing `canvasEventEmitter 'preview-background-updated'`, emitted by `previewModeBackgroundDrawer.drawBlobToBackground` for every drawn capture (region tile, single shot, full area). The service marks the preview dirty when `snap_to_object_center` is on.
 2. **Coalesce per batch (decided 2026-09-22).** A dirty flag is set while a preview batch is in progress; the run starts when the batch ends, i.e. `cameraPreview.isDrawing` flips false (set by `PreviewModeController.prePreview` / `onPreviewSuccess` for full-area, single and region previews alike), and never during live mode (runs when `isLiveMode` flips false). A run drains `dirty` in a loop, so batches landing mid-run are picked up without a second trigger. Per-tile detection was rejected: a region sweep would otherwise queue one ~8 s pass per tile on an Intel Mac.
 3. **Run (decided 2026-09-23: full canvas, not incremental).** `crop = previewModeBackgroundDrawer.getCanvasCrop(0, 0, workarea.width, workarea.modelHeight)`; `objects = await detectContours(crop.blob)`; map each back with `x / crop.ratio` (this is also the `canvasRatio` fix from §2.1); drop objects whose bbox spans ≥ 90 % of the workarea in either direction (`MAX_SPAN_RATIO`: the front rail, a sheet of material) and objects whose outline runs along never-previewed canvas (`previewModeBackgroundDrawer.isPolygonCutByPreviewEdge`, canvas alpha sampled every 10 px along the polygon: a part cut by the edge of a sparse region preview has a centre and rect that describe the visible fragment only; it comes back whole once the neighbouring region is previewed); replace `contours`. ~~Incremental: re-detect the union of the dirty rect and the stored contours it overlaps, drop those, filter objects cut by the crop border, append.~~ Dropped: the frontend caps inputs at 1280 px and the encoder rescales to 1024 px, so a crop and a full pass take the same ~8 s; the incremental path only added the border filter, victim bookkeeping and seam-straddling objects that appear one tile late. Known cost: a full 600 mm bed lands at scale 0.21, so small parts on large beds get ~5× less detail than a tile crop would; if that shows in testing, raise the ONNX cap for detection rather than reinstate regions.
 4. **Clear.** Subscribe to `cameraPreview.isClean === true` and to `model-changed` → `contours = []`. Also clear when `snap_to_object_center` flips to false.
-5. **Toasts.** `MessageCaller.openMessage({ key: 'image-contour', level: LOADING, content: lang.auto_align.detecting_contours, duration: 0 })` on the first `detecting` after idle; `SUCCESS` `contours_detected` (duration 2 s) when the queue drains with ≥ 1 contour; silent on zero results; `WARNING` once per preview session on repeated engine errors. `key` reuse means the toasts replace each other rather than stack.
+5. **Toasts.** `MessageCaller.openMessage({ key: 'snap-to-object-center', level: LOADING, content: lang.message.detecting_objects, duration: 0 })` when a run starts; `objects_detected` (duration 2 s) when the drain loop ends with a result that was applied — `SUCCESS` with ≥ 1 object, silent with zero (the loading toast is closed; decided 2026-09-24); no result toast when the last pass was discarded by `clear()`; `WARNING` `object_detection_failed` once per preview session (reset by `clear()`) on an engine error. `key` reuse means the toasts replace each other rather than stack.
+6. **Re-enable.** Turning `snap_to_object_center` back on while `cameraPreview.isClean` is false marks the preview dirty and runs at once, since no tile will land to trigger it.
 
-**Align integration (decided 2026-09-22 after trying the point-based version).** Detected objects do **not** feed the general matcher: 9 points and 4 edges per object made snapping feel cluttered. Instead, while dragging in select mode, `autoAlign.findObjectCenterSnap(center)` returns the smallest-bbox object that contains the dragged selection's centre and whose centroid is within `OBJECT_SNAP_SCREEN_PX` = 20 screen px (zoom-aware; smallest first so an engraving centred on a tile wins over the tile); the drag delta is overridden so the selection's centre lands on the object's centroid, and `drawObjectCenterGuides` draws a dashed magenta cross through it (ids prefixed `align_line_` so the usual `clearAlignLines` removes them). For a rectangular object (`rectangularity ≥ RECTANGULAR_MIN` = 0.8) the cross runs along the rect's own axes, sized to the rect, so its rotation is visible; blobs get the axis-aligned bbox cross. Outside every bbox, dragging is unaffected. Snapping is independent of `auto_align`.
+**Align integration (decided 2026-09-22 after trying the point-based version).** Detected objects do **not** feed the general matcher: 9 points and 4 edges per object made snapping feel cluttered. Instead, while dragging in select mode, `autoAlign.findObjectCenterSnap(center)` returns the smallest-bbox object that contains the dragged selection's centre and whose centroid is within `OBJECT_SNAP_SCREEN_PX` = 20 screen px (zoom-aware; smallest first so an engraving centred on a tile wins over the tile); the drag delta is overridden so the selection's centre lands on the object's centroid, and `drawObjectCenterGuides` draws a dashed magenta cross through it (ids prefixed `align_line_` so the usual `clearAlignLines` removes them). For a rectangular object (`rectangularity ≥ RECTANGULAR_MIN` = 0.8) the cross runs along the rect's own axes, sized to the rect, so its rotation is visible; blobs get the axis-aligned bbox cross. Outside every bbox, dragging is unaffected. Snapping is independent of `auto_align`. With Shift held the drag is axis-locked and the object snap is skipped (`getDragDelta(current, start, axisLocked)`). Once the selection has moved, the drag translate is rewritten even when the delta is zero, so snapping back onto an object at the start position lands there instead of leaving the stale translate in the tlist.
 
 **Rotation snap (decided 2026-09-24, rule in §11).** While dragging the rotate grip (not with Shift, which keeps the 45° steps), `autoAlign.getRotationSnap(angle, center)` looks up the smallest rectangular object under the selection's centre and snaps within `ROTATION_SNAP_DEG` = 3° to one of its candidate angles (`utils/objectSnap.getRotationCandidates`: both edge directions every 90°, plus the diagonals every 45° when aspect ≤ 1.1); a dashed guide through the object centre shows the matched direction, sized to the object's extent along it. Nothing rotates on drop.
 
@@ -218,8 +279,8 @@ export const autoAlign = {
 ### 5.7 i18n
 
 `en.ts` / `zh-tw.ts` first, all 23 before PR:
-- `settings.ai_contour_detection`, `settings.ai_contour_detection_tooltip` (shipped in PR #1006; the tooltip ends with a "used by" sentence to extend with Auto Align), `settings.snap_to_object_center`
-- `auto_align.detecting_contours`, `auto_align.contours_detected`, `auto_align.contour_detection_failed`
+- `settings.ai_contour_detection`, `settings.ai_contour_detection_tooltip` (shipped in PR #1006; the tooltip now ends "Used by Auto Fit and Snap to Object Center"), `topbar.menu.snap_to_object_center`
+- `message.detecting_objects`, `message.objects_detected`, `message.object_detection_failed`
 
 ---
 
@@ -310,4 +371,4 @@ Each PR is independently shippable; order matters only for 4 → 5.
 - **Swiftray**: port `test/compare.py` golden (`bed.jpg` → 20/20 objects, centre < 6 px) as a Swiftray CI step against the `/segment` ws path; `angle` sanity on a rotated rectangle fixture.
 - **fluxghost**: `ws_smoke.py` cases for `get_contours` and `group_contours` (must end `ALL PASS`); grouping parity: ONNX polygons of `bed.jpg` → same groups as `get_all_similar_contours`.
 - **beam-studio unit**: `detectContours` engine selection matrix (pref × hasSwiftray × version × info.available × failure → retry); `imageContourDetection.spec.ts` (batch-end trigger, live-mode hold, drain loop, mapping with `ratio`, span filter, clear on isClean/model-changed/pref off, warn once); `utils/getMinAreaRect` spec (rotations recovered mod 180, rectangularity of a circle, degenerate input); `utils/objectSnap` spec (candidate sets for square vs elongated, guide half-lengths); `autoAlign` refactor covered by the existing `mouse`/`pathActions`/menubar specs.
-- **Manual**: scenarios §4 on fbb2 (region), fbm2 (full area + mask), Promark (full area), web (fallback); low-RAM Windows VM for the warning.
+- **Manual**: acceptance criteria §4.1 on fbb2 (region), fbm2 (full area + mask), Promark (full area), web (fallback). AC4 and AC5 (drag / rotation snap) are manual-only; record the pass in §4.1 Status. ~~Low-RAM Windows VM for the warning~~ (warning dropped, §10 item 1).
