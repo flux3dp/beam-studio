@@ -71,6 +71,9 @@ export class ImageContourDetector {
 
   private errorShown = false;
 
+  /** bumped by clear(); a detection that started under an older generation is discarded */
+  private generation = 0;
+
   init = (): void => {
     canvasEventEmitter.on('preview-background-updated', this.onBackgroundUpdated);
     canvasEventEmitter.on('model-changed', this.clear);
@@ -91,6 +94,7 @@ export class ImageContourDetector {
   };
 
   clear = (): void => {
+    this.generation += 1;
     this.dirty = false;
     this.errorShown = false;
     this.contours = [];
@@ -154,12 +158,17 @@ export class ImageContourDetector {
   /** Re-detect the whole preview canvas and replace the list. */
   private detectAll = async (): Promise<void> => {
     const { modelHeight, width } = workareaManager;
+    const generation = this.generation;
     const crop = await previewModeBackgroundDrawer.getCanvasCrop(0, 0, width, modelHeight);
 
     if (!crop) return;
 
     const k = 1 / crop.ratio; // canvasRatio < 1 only on iOS
     const detected = await detectContours(crop.blob);
+
+    // the preview was cleared (or the feature turned off) while the model ran: the result describes
+    // an image that is gone, and the empty list from clear() must stand
+    if (generation !== this.generation) return;
 
     this.contours = detected
       .filter(({ bbox }) => bbox[2] * k < width * MAX_SPAN_RATIO && bbox[3] * k < modelHeight * MAX_SPAN_RATIO)

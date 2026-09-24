@@ -176,6 +176,26 @@ describe('ImageContourDetector', () => {
     expect(detector.contours).toEqual([]);
   });
 
+  it('discards a result that lands after the preview was cleared', async () => {
+    let finish!: (value: unknown[]) => void;
+
+    mockDetectContours.mockReturnValueOnce(new Promise((resolve) => (finish = resolve)));
+    canvasEventEmitter.emit('preview-background-updated');
+    await endBatch();
+    expect(mockDetectContours).toHaveBeenCalledTimes(1);
+
+    useCameraPreviewStore.setState({ isClean: true }); // preview cleared mid-run
+    finish([part]);
+    await flush();
+    await flush();
+    expect(detector.contours).toEqual([]);
+
+    useCameraPreviewStore.setState({ isClean: false });
+    canvasEventEmitter.emit('preview-background-updated');
+    await endBatch();
+    expect(detector.contours).toHaveLength(1);
+  });
+
   it('warns once on failure and recovers on the next batch', async () => {
     mockDetectContours.mockRejectedValueOnce(new Error('boom')).mockRejectedValueOnce(new Error('boom'));
     canvasEventEmitter.emit('preview-background-updated');
