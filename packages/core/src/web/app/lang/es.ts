@@ -2089,6 +2089,7 @@ const lang: ILang = {
     connectingCamera: 'Conectando cámara ...',
     connectingMachine: 'Conectando %s...',
     connectionTimeout: '#805 Tiempo de espera de conexión del dispositivo agotado. Comprueba el estado de su red y el indicador WiFi de su máquina.',
+    detecting_objects: 'Detectando objetos en la vista previa…',
     device_blocked: {
       caption: 'Número de serie no autorizado',
       offline: 'El número de serie de su dispositivo está restringido al uso sin conexión, ya que parece estar desactivado. Facilite el número de serie (localizado en su parte posterior) a su distribuidor y pídale que contacte con support@flux3dp.com para activar la autorización en línea. Si desea utilizar el dispositivo sin conexión, contacte directamente con support@flux3dp.com.',
@@ -2119,6 +2120,8 @@ const lang: ILang = {
       message: 'Este Mac usa Apple Silicon. Descargue la versión Apple Silicon y vuelva a instalar.',
     },
     need_password: 'Se necesita contraseña para conectarse a la máquina.',
+    object_detection_failed: 'La detección de objetos ha fallado; el ajuste a objetos no está disponible para esta vista previa.',
+    objects_detected: 'Objetos detectados',
     please_enter_dpi: 'Introduzca la unidad de medida de su archivo (en mm).',
     preview: {
       adjust: 'Ajustar',
@@ -2517,7 +2520,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Detección de contornos con IA',
-    ai_contour_detection_tooltip: 'Usa un modelo de IA para detectar objetos en la vista previa de la cámara. Más preciso en materiales con textura, pero más lento en equipos antiguos; desactívalo para usar la detección clásica. Usado por: Ajuste automático.',
+    ai_contour_detection_tooltip: 'Usa un modelo de IA para detectar objetos en la vista previa de la cámara. Más preciso en materiales con textura, pero más lento en equipos antiguos; desactívalo para usar la detección clásica. Usado por: Ajuste automático, Ajustar al centro del objeto.',
     anti_aliasing: 'Suavizado',
     auto_connect: 'Seleccionar automáticamente la única máquina',
     auto_switch_tab: 'Cambio automático entre capa y panel de objetos',
@@ -2899,6 +2902,7 @@ const lang: ILang = {
       show_rulers: 'Mostrar las reglas',
       show_start_tutorial: 'Mostrar tutorial de inicio',
       show_ui_intro: 'Mostrar introducción a la interface',
+      snap_to_object_center: 'Ajustar al centro del objeto',
       software_update: 'Actualización del software',
       svg_edit: 'SVG',
       switch_to_beta: 'Cambiar a la versión Beta',

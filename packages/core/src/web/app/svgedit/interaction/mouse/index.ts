@@ -16,6 +16,7 @@ import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import autoAlign from '@core/app/svgedit/autoAlign';
 import { isNounProjectElement } from '@core/app/svgedit/utils/nounProject';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
@@ -27,7 +28,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
+import type { IRect } from '@core/interfaces/ISVGCanvas';
 
 import history from '../../history/history';
 import undoManager from '../../history/undoManager';
@@ -55,7 +56,6 @@ import workareaManager from '../../workarea';
 import wheelEventHandlerGenerator from '../wheelEventHandler';
 
 import { getEventPoint } from './utils/getEventPoint';
-import { getMatchedDiffFromBBox } from './utils/getMatchedDiffFromBBox';
 import { initResizeTransform } from './utils/initResizeTransform';
 import { setRubberBoxStart } from './utils/setRubberBoxStart';
 
@@ -83,22 +83,21 @@ let startMouseY = 0;
 let selectedBBox: IRect | null = null;
 let justSelected: null | SVGElement = null;
 let angleOffset = 90;
-let currentBoundingBox = Array.of<IPoint>();
 
 const checkShouldIgnore = () => ObjectPanelController.getActiveKey() && navigator.maxTouchPoints > 1;
 const findAndDrawAlignPoints = (x: number, y: number) => {
   const {
     farthest: { x: fx, y: fy },
     nearest: { x: nx, y: ny },
-  } = svgCanvas.findMatchedAlignPoints(x, y);
+  } = autoAlign.findMatchedAlignPoints(x, y);
 
   if (!nx && !ny) return [x, y];
 
-  svgCanvas.drawAlignLine(x, y, nx, ny);
+  autoAlign.drawAlignLine(x, y, nx, ny);
 
   const startPoint = { x: nx?.x ?? ny?.x ?? x, y: ny?.y ?? nx?.y ?? y };
 
-  svgCanvas.drawAlignLine(startPoint.x, startPoint.y, fx, fy, 10);
+  autoAlign.drawAlignLine(startPoint.x, startPoint.y, fx, fy, 10);
 
   return [nx?.x ?? x, ny?.y ?? y];
 };
@@ -308,7 +307,7 @@ const mouseDown = async (evt: MouseEvent) => {
         setRubberBoxStart(startMouseX, startMouseY);
       }
 
-      currentBoundingBox = svgCanvas.getSelectedElementsAlignPoints();
+      autoAlign.captureSelection();
 
       break;
     case 'curve-engraving':
@@ -450,7 +449,7 @@ const mouseDown = async (evt: MouseEvent) => {
     }
     case 'path':
     case 'pathedit':
-      if (svgCanvas.isAutoAlign) {
+      if (autoAlign.isEnabled()) {
         [startX, startY] = findAndDrawAlignPoints(startX, startY);
       }
 
@@ -515,7 +514,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const angle = svgedit.utilities.getRotationAngle(selected);
   let { height, width, x: left, y: top } = box;
 
-  if (svgCanvas.isAutoAlign && isFreeResize && !angle) {
+  if (autoAlign.isEnabled() && isFreeResize && !angle) {
     let [inputX, inputY] = [x, y];
 
     if (!resizeMode.includes('n') && !resizeMode.includes('s')) inputY = startY;
@@ -687,10 +686,10 @@ const mouseMove = (evt: MouseEvent) => {
   let x = realX;
   let y = realY;
 
-  svgCanvas.clearAlignLines();
+  autoAlign.clearAlignLines();
 
   if (!started) {
-    if (svgCanvas.isAutoAlign && currentMode === 'path') {
+    if (autoAlign.isEnabled() && currentMode === 'path') {
       findAndDrawAlignPoints(realX, realY);
     }
 
@@ -748,20 +747,17 @@ const mouseMove = (evt: MouseEvent) => {
         if (evt.shiftKey) {
           const xya = svgedit.math.snapToAngle(startX, startY, x, y);
 
-          // update input coords for getMatchedDiffFromBBox
+          // update input coords for autoAlign.getDragDelta
           current = xya;
           dx = xya.x - startX;
           dy = xya.y - startY;
         }
 
-        if (svgCanvas.isAutoAlign) {
-          const diff = getMatchedDiffFromBBox(currentBoundingBox, current, { x: startX, y: startY });
+        ({ x: dx, y: dy } = autoAlign.getDragDelta(current, { x: startX, y: startY }, evt.shiftKey));
 
-          dx = diff.x;
-          dy = diff.y;
-        }
-
-        if (dx !== 0 || dy !== 0) {
+        // once moved, a zero delta is a real position (snapped back onto an object), so it must overwrite
+        // the stale translate rather than leave it in the tlist
+        if (moved || dx !== 0 || dy !== 0) {
           for (const selected of selectedElements) {
             if (!selected) break;
 
@@ -826,7 +822,7 @@ const mouseMove = (evt: MouseEvent) => {
 
         x2 = xya.x;
         y2 = xya.y;
-      } else if (svgCanvas.isAutoAlign) {
+      } else if (autoAlign.isEnabled()) {
         [x2, y2] = findAndDrawAlignPoints(x2, y2);
       }
 
@@ -852,7 +848,7 @@ const mouseMove = (evt: MouseEvent) => {
         newY = Math.min(startY, y);
       }
 
-      if (!isSquare && svgCanvas.isAutoAlign) {
+      if (!isSquare && autoAlign.isEnabled()) {
         [newX, newY] = findAndDrawAlignPoints(newX, newY);
 
         // because we don't want to change the width and height of the element
@@ -871,7 +867,7 @@ const mouseMove = (evt: MouseEvent) => {
       cx = c.cx;
       cy = c.cy;
 
-      if (!evt.shiftKey && svgCanvas.isAutoAlign) {
+      if (!evt.shiftKey && autoAlign.isEnabled()) {
         [x, y] = findAndDrawAlignPoints(x, y);
       }
 
@@ -895,7 +891,7 @@ const mouseMove = (evt: MouseEvent) => {
 
         x = xya.x;
         y = xya.y;
-      } else if (svgCanvas.isAutoAlign) {
+      } else if (autoAlign.isEnabled()) {
         [x, y] = findAndDrawAlignPoints(x, y);
       }
 
@@ -930,6 +926,9 @@ const mouseMove = (evt: MouseEvent) => {
         const snap = 45;
 
         angle = Math.round(angle / snap) * snap;
+      } else {
+        autoAlign.clearAlignLines();
+        angle = autoAlign.getRotationSnap(angle, { x: cx, y: cy });
       }
 
       setRotationAngle(selected, angle < -180 ? 360 + angle : angle, { addToHistory: false });
@@ -970,7 +969,7 @@ const mouseMove = (evt: MouseEvent) => {
 // this is done in when we recalculate the selected dimensions()
 
 const mouseUp = async (evt: MouseEvent, blocked = false) => {
-  svgCanvas.clearAlignLines();
+  autoAlign.clearAlignLines();
 
   const rightClick = evt.button === MouseButtons.Right;
 

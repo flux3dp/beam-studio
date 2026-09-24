@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Connessione telecamera...',
     connectingMachine: 'Connessione a %s in corso...',
     connectionTimeout: "#805 Timeout connessione dispositivo. Controllare lo stato della rete e l'indicatore Wi-Fi della macchina.",
+    detecting_objects: "Rilevamento degli oggetti nell'anteprima…",
     device_blocked: {
       caption: 'Numero di serie non autorizzato',
       offline: "Il numero di serie del dispositivo è limitato all'uso offline poiché sembra essere disattivato. Fornire il numero di serie del dispositivo (posizionato sul retro del dispositivo) al rivenditore e chiedere di contattare support@flux3dp.com per attivare l'autorizzazione online. Se desideri utilizzare il dispositivo offline, contatta direttamente support@flux3dp.com.",
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Questo Mac utilizza Apple Silicon. Scarica la versione Apple Silicon e reinstalla.',
     },
     need_password: 'Necessaria password per connettersi alla macchina',
+    object_detection_failed: "Rilevamento degli oggetti non riuscito; l'aggancio agli oggetti non è disponibile per questa anteprima.",
+    objects_detected: 'Oggetti rilevati',
     please_enter_dpi: 'Inserire la dimensione del file (in mm)',
     preview: {
       adjust: 'Regola',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Rilevamento contorni con IA',
-    ai_contour_detection_tooltip: 'Usa un modello di IA per individuare gli oggetti nell’anteprima della fotocamera. Più preciso su materiali con texture, ma più lento su computer datati; disattivalo per usare il rilevamento classico. Usato da: Adattamento Automatico.',
+    ai_contour_detection_tooltip: 'Usa un modello di IA per individuare gli oggetti nell’anteprima della fotocamera. Più preciso su materiali con texture, ma più lento su computer datati; disattivalo per usare il rilevamento classico. Usato da: Adattamento Automatico, Aggancia al centro dell’oggetto.',
     anti_aliasing: 'Anti-aliasing',
     auto_connect: "Seleziona automaticamente l'unica macchina",
     auto_switch_tab: 'Commutazione automatica tra pannello livelli e oggetti',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Mostra righelli',
       show_start_tutorial: 'Mostra tutorial introduttivo',
       show_ui_intro: 'Mostra introduzione interfaccia',
+      snap_to_object_center: 'Aggancia al centro dell’oggetto',
       software_update: 'Aggiornamento software',
       svg_edit: 'SVG',
       switch_to_beta: 'Passa alla Versione Beta',

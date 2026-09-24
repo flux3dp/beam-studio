@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Ansluter kamera...',
     connectingMachine: 'Ansluter %s...',
     connectionTimeout: '#805 Enhetens anslutningstid gick ut. Kontrollera ditt nätverkstillstånd och maskinens WiFi-indikator.',
+    detecting_objects: 'Identifierar objekt i förhandsgranskningen…',
     device_blocked: {
       caption: 'Otillåtet serienummer',
       offline: 'Enhetens serienummer är begränsat till offline-användning eftersom det verkar vara inaktiverat. Vänligen uppge enhetens serienummer (placerat på baksidan av enheten) till din återförsäljare och be dem kontakta support@flux3dp.com för att aktivera online-autentisering. Om du vill använda enheten offline, kontakta support@flux3dp.com direkt.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Denna Mac använder Apple Silicon. Ladda ner Apple Silicon-versionen och installera om.',
     },
     need_password: 'Lösenord krävs för att ansluta till maskinen',
+    object_detection_failed: 'Objektidentifiering misslyckades; fästning mot objekt är inte tillgänglig för den här förhandsgranskningen.',
+    objects_detected: 'Objekt identifierade',
     please_enter_dpi: 'Ange enheten för din fil (i mm)',
     preview: {
       adjust: 'Justera',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'AI-konturdetektering',
-    ai_contour_detection_tooltip: 'Använder en AI-modell för att hitta objekt i kameraförhandsvisningen. Mer exakt på texturerade material men långsammare på äldre datorer; stäng av för att använda klassisk detektering. Används av: Auto Fit.',
+    ai_contour_detection_tooltip: 'Använder en AI-modell för att hitta objekt i kameraförhandsvisningen. Mer exakt på texturerade material men långsammare på äldre datorer; stäng av för att använda klassisk detektering. Används av: Auto Fit, Fäst vid objektets mitt.',
     anti_aliasing: 'Kantutjämning',
     auto_connect: 'Välj automatiskt den enda maskinen',
     auto_switch_tab: 'Automatisk växling mellan lager- och objektpanelen',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Visa linjaler',
       show_start_tutorial: 'Visa startguide',
       show_ui_intro: 'Visa gränssnittsintroduktion',
+      snap_to_object_center: 'Fäst vid objektets mitt',
       software_update: 'Programuppdatering',
       svg_edit: 'SVG',
       switch_to_beta: 'Växla till Beta-version',

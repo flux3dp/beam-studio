@@ -5,6 +5,7 @@ import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import autoAlign from '../autoAlign';
 import history from '../history/history';
 import layerManager from '../layer/layerManager';
 import selector from '../selector';
@@ -60,7 +61,7 @@ export class SelectionManager {
 
       this.selectedElements = [];
 
-      this.svgCanvas!.collectAlignPoints();
+      autoAlign.collectAlignPoints();
 
       if (!noCall) this.svgCanvas!.call('selected', []);
     }
@@ -110,7 +111,7 @@ export class SelectionManager {
       selector.getSelectorManager().requestSelector(this.selectedElements[0])?.show(true, false);
     }
 
-    this.svgCanvas!.collectAlignPoints();
+    autoAlign.collectAlignPoints();
   };
 
   selectOnly = (elems: SVGElement[], showGrips?: boolean): void => {

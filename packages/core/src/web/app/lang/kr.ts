@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: '카메라에 연결 중입니다...',
     connectingMachine: '%s 연결 중...',
     connectionTimeout: '#805 기기 연결 시간 초과. 네트워크 상태와 기기의 Wi-Fi 표시기를 확인해주세요.',
+    detecting_objects: '미리보기에서 개체를 감지하는 중…',
     device_blocked: {
       caption: '허가되지 않은 시리얼 번호',
       offline: '기기의 시리얼 번호는 비활성화된 것으로 보이며 오프라인 사용으로 제한됩니다. 기기의 뒷면에 있는 시리얼 번호를 소매업체에 제공하고 support@flux3dp.com에 연락하여 온라인 인증을 활성화하세요. 기기를 오프라인으로 사용하려면 support@flux3dp.com에 직접 문의하세요.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: '이 Mac은 Apple Silicon을 사용합니다. Apple Silicon 버전을 다운로드하여 다시 설치하세요.',
     },
     need_password: '기계에 연결하려면 비밀번호가 필요합니다',
+    object_detection_failed: '개체 감지에 실패했습니다. 이 미리보기에서는 개체에 스냅할 수 없습니다.',
+    objects_detected: '개체 감지 완료',
     please_enter_dpi: '파일의 단위를 입력해주세요 (mm)',
     preview: {
       adjust: '조절',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'AI 윤곽 감지',
-    ai_contour_detection_tooltip: 'AI 모델로 카메라 미리보기에서 물체를 찾습니다. 질감이 있는 소재에서 더 정확하지만 구형 컴퓨터에서는 느립니다. 끄면 기존 감지 방식을 사용합니다. 자동 맞춤에 사용됩니다.',
+    ai_contour_detection_tooltip: 'AI 모델로 카메라 미리보기에서 물체를 찾습니다. 질감이 있는 소재에서 더 정확하지만 구형 컴퓨터에서는 느립니다. 끄면 기존 감지 방식을 사용합니다. 자동 맞춤과 개체 중심에 스냅에 사용됩니다.',
     anti_aliasing: '앤티앨리어싱',
     auto_connect: '유일한 기계 자동 선택',
     auto_switch_tab: '레이어 및 객체 패널 자동 전환',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: '자 모양 보이기',
       show_start_tutorial: '시작 튜토리얼 보기',
       show_ui_intro: '인터페이스 소개 보기',
+      snap_to_object_center: '개체 중심에 스냅',
       software_update: '소프트웨어 업데이트',
       svg_edit: 'SVG',
       switch_to_beta: '베타 릴리스로 전환',

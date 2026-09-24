@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Menyambung kamera...',
     connectingMachine: 'Menyambung %s...',
     connectionTimeout: '#805 Sambungan Peranti Tamat Masa. Sila semak keadaan rangkaian anda dan penunjuk Wi-Fi mesin anda.',
+    detecting_objects: 'Mengesan objek dalam pratonton…',
     device_blocked: {
       caption: 'Nombor Siri Tidak Sah',
       offline: 'Nombor siri peranti anda terhad untuk kegunaan luar talian kerana ia nampaknya telah dinyahaktifkan. Sila berikan nombor siri peranti (terletak di bahagian belakang peranti) kepada penjual anda dan minta mereka menghubungi support@flux3dp.com untuk mengaktifkan kebenaran dalam talian. Jika anda ingin menggunakan peranti secara luar talian, sila hubungi support@flux3dp.com secara langsung.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Mac ini menggunakan Apple Silicon. Muat turun versi Apple Silicon dan pasang semula.',
     },
     need_password: 'Kata laluan diperlukan untuk Menyambung ke Mesin',
+    object_detection_failed: 'Pengesanan objek gagal; petik ke objek tidak tersedia untuk pratonton ini.',
+    objects_detected: 'Objek dikesan',
     please_enter_dpi: 'Sila masukkan unit fail anda (dalam mm)',
     preview: {
       adjust: 'Laras',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Pengesanan Kontur AI',
-    ai_contour_detection_tooltip: 'Menggunakan model AI untuk mencari objek dalam pratonton kamera. Lebih tepat pada bahan bertekstur, tetapi lebih perlahan pada komputer lama; matikan untuk menggunakan pengesanan klasik. Digunakan oleh: Muat Auto.',
+    ai_contour_detection_tooltip: 'Menggunakan model AI untuk mencari objek dalam pratonton kamera. Lebih tepat pada bahan bertekstur, tetapi lebih perlahan pada komputer lama; matikan untuk menggunakan pengesanan klasik. Digunakan oleh: Muat Auto, Lekat ke Pusat Objek.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Pilih mesin tunggal secara automatik',
     auto_switch_tab: 'Tukar Automatik Panel Lapisan dan Objek',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Tunjukkan Pembaris',
       show_start_tutorial: 'Tunjukkan Tutorial Permulaan',
       show_ui_intro: 'Tunjukkan Pengenalan Antaramuka',
+      snap_to_object_center: 'Lekat ke Pusat Objek',
       software_update: 'Kemas Kini Perisian',
       svg_edit: 'SVG',
       switch_to_beta: 'Tukar ke Beta Release',

@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Připojuji kameru...',
     connectingMachine: 'Připojuji %s...',
     connectionTimeout: '#805 Vypršel časový limit připojení přístroje. Zkontrolujte prosím stav své sítě a indikátor Wi-Fi vašeho přístroje.',
+    detecting_objects: 'Detekce objektů v náhledu…',
     device_blocked: {
       caption: 'Neautorizované sériové číslo',
       offline: 'Sériové číslo vašeho zařízení je omezeno na offline použití, protože se zdá být deaktivováno. Poskytněte sériové číslo zařízení (umístěné na zadní straně zařízení) vašemu prodejci a požádejte jej, aby kontaktoval support@flux3dp.com k aktivaci online autorizace. Pokud chcete zařízení používat offline, kontaktujte přímo support@flux3dp.com.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Tento Mac používá Apple Silicon. Stáhněte verzi pro Apple Silicon a přeinstalujte.',
     },
     need_password: 'K připojení k přístroji je zapotřebí heslo',
+    object_detection_failed: 'Detekce objektů selhala; přichycení k objektům není pro tento náhled k dispozici.',
+    objects_detected: 'Objekty detekovány',
     please_enter_dpi: 'Zadejte prosím jednotku svého souboru (v mm)',
     preview: {
       adjust: 'Přizpůsobit',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Detekce obrysů pomocí AI',
-    ai_contour_detection_tooltip: 'Používá model AI k nalezení objektů v náhledu kamery. Přesnější na texturovaných materiálech, ale pomalejší na starších počítačích; vypněte pro klasickou detekci. Používá: Automaticky přizpůsobit.',
+    ai_contour_detection_tooltip: 'Používá model AI k nalezení objektů v náhledu kamery. Přesnější na texturovaných materiálech, ale pomalejší na starších počítačích; vypněte pro klasickou detekci. Používá: Automaticky přizpůsobit, Přichytit ke středu objektu.',
     anti_aliasing: 'Vyhlazování',
     auto_connect: 'Automaticky vybrat jediný přístroj',
     auto_switch_tab: 'Automatický přepínač panelu vrstev a objektů',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Zobrazit pravítka',
       show_start_tutorial: 'Ukázat Úvodní výuku',
       show_ui_intro: 'Ukázat Úvod do uživatelského rozhraní',
+      snap_to_object_center: 'Přichytit ke středu objektu',
       software_update: 'Aktualizace softwaru',
       svg_edit: 'SVG',
       switch_to_beta: 'Přepnout na beta verzi',

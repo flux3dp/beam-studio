@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Kamera anschließen...',
     connectingMachine: 'Verbinden von %s...',
     connectionTimeout: '#805 Zeitlimit für Geräteverbindung. Bitte überprüfe den Zustand Ihres Netzwerks und die Wi-Fi-Anzeige Ihres Geräts.',
+    detecting_objects: 'Objekte in der Vorschau werden erkannt…',
     device_blocked: {
       caption: 'Nicht autorisierte Seriennummer',
       offline: 'Die Seriennummer Ihres Geräts ist auf die Offline-Nutzung beschränkt, da sie deaktiviert zu sein scheint. Bitte geben Sie die Seriennummer des Geräts (auf der Rückseite des Geräts) an Ihren Händler weiter und bitten Sie ihn, support@flux3dp.com zu kontaktieren, um die Online-Autorisierung zu aktivieren. Wenn Sie das Gerät offline verwenden möchten, kontaktieren Sie bitte direkt support@flux3dp.com.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Dieser Mac verwendet Apple Silicon. Laden Sie die Apple Silicon Version herunter und installieren Sie sie neu.',
     },
     need_password: 'Benötigen Passwort für die Verbindung mit der Maschine',
+    object_detection_failed: 'Objekterkennung fehlgeschlagen; das Einrasten an Objekten ist für diese Vorschau nicht verfügbar.',
+    objects_detected: 'Objekte erkannt',
     please_enter_dpi: 'Bitte geben Sie die Einheit Ihrer Datei ein (in mm)',
     preview: {
       adjust: 'Anpassen',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'KI-Konturerkennung',
-    ai_contour_detection_tooltip: 'Erkennt Objekte in der Kameravorschau mit einem KI-Modell. Genauer auf strukturierten Materialien, aber langsamer auf älteren Computern; ausschalten, um die klassische Erkennung zu verwenden. Verwendet von: Automatische Anpassung.',
+    ai_contour_detection_tooltip: 'Erkennt Objekte in der Kameravorschau mit einem KI-Modell. Genauer auf strukturierten Materialien, aber langsamer auf älteren Computern; ausschalten, um die klassische Erkennung zu verwenden. Verwendet von: Automatische Anpassung, Am Objektzentrum ausrichten.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Wählen Sie automatisch die einzige Maschine aus',
     auto_switch_tab: 'Automatisches Umschalten von Ebenen- und Objektpanel',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Lineale anzeigen',
       show_start_tutorial: 'Erstmaliges Tutorial anzeigen',
       show_ui_intro: 'Einführung in die Benutzeroberfläche anzeigen',
+      snap_to_object_center: 'Am Objektzentrum ausrichten',
       software_update: 'Software-Update',
       svg_edit: 'SVG',
       switch_to_beta: 'Wechsle zur Beta-Version',
