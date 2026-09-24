@@ -755,7 +755,9 @@ const mouseMove = (evt: MouseEvent) => {
 
         ({ x: dx, y: dy } = autoAlign.getDragDelta(current, { x: startX, y: startY }, evt.shiftKey));
 
-        if (dx !== 0 || dy !== 0) {
+        // once moved, a zero delta is a real position (snapped back onto an object), so it must overwrite
+        // the stale translate rather than leave it in the tlist
+        if (moved || dx !== 0 || dy !== 0) {
           for (const selected of selectedElements) {
             if (!selected) break;
 
