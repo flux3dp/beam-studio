@@ -3,6 +3,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { setModuleBoundaryOverride } from '@core/app/constants/layer-module/module-boundary';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { checkHexa2GalvoDev } from '@core/helpers/checkFeature';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -14,10 +15,11 @@ import { getGalvoConfig } from './galvoConfig';
 import { getAllOffsetsFromDevices } from './moduleOffsets';
 
 /**
- * DEVELOPMENT ONLY. The machine being brought up needs its travel limits changed without a
- * rebuild, so the boundary is computed from what the machine reports. For release this whole
- * path goes away -- module-boundary.ts gets one fixed safe set of numbers, and this file, the
- * locally stored minimums and the panel that edits them are all deleted.
+ * DEVELOPMENT ONLY, behind fhx2galvo-dev. The machine being brought up needs its travel limits
+ * changed without a rebuild, so the boundary is computed from what the machine reports. With the
+ * flag off nothing here runs: no reads on select, no override pushed into module-boundary. For
+ * release this whole path goes away -- module-boundary.ts gets one fixed safe set of numbers, and
+ * this file, the locally stored minimums and the panel that edits them are all deleted.
  *
  * Range is where the gantry may go, in machine mm; the boundary is what that leaves unreachable
  * at each edge of the canvas. Only two ranges exist: the CO2 galvo is always fitted, so the plain
@@ -161,7 +163,8 @@ export const updateGalvoWorkRange = async (value: GalvoWorkRange): Promise<boole
  * noticed. The cost is four reads per select, and select runs on every export and camera action.
  */
 const prefetchOnSelect = async (device: IDeviceInfo): Promise<void> => {
-  if (device.model !== MODEL) return;
+  // Checked per call rather than at registration, so the flag can be turned off without a reload.
+  if (device.model !== MODEL || !checkHexa2GalvoDev()) return;
 
   await Promise.allSettled([
     fetchGalvoWorkRange({ useCache: false }),

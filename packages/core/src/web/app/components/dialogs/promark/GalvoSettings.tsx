@@ -9,6 +9,7 @@ import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import { checkHexa2GalvoDev } from '@core/helpers/checkFeature';
 import { describeControlSocketError } from '@core/helpers/device/controlSocketError';
 import type { GalvoConfig, GalvoModule, GalvoWorkarea } from '@core/helpers/device/galvoConfig';
 import { galvoWorkareaOptions, getGalvoConfig, updateGalvoConfig } from '@core/helpers/device/galvoConfig';
@@ -17,7 +18,6 @@ import { awaitGalvoResult, galvoDot, galvoFrame, galvoGoto, stopGalvo } from '@c
 import { connectGalvoHead, disconnectGalvoHead, releaseGalvoControl } from '@core/helpers/device/galvoLaserMode';
 import { getModuleOffsets, updateModuleOffsetsInDevice } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
-import isDev from '@core/helpers/is-dev';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -259,13 +259,13 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
             }))
           }
         />
-        {isDev() && <GalvoAxisBlock field={config.field} setField={setFieldValue} />}
-        {isDev() && <GalvoNoteBlock />}
+        {checkHexa2GalvoDev() && <GalvoAxisBlock field={config.field} setField={setFieldValue} />}
+        {checkHexa2GalvoDev() && <GalvoNoteBlock />}
         <Flex align="center" className={blockStyles['full-row']} gap={8} justify="space-between">
           <div className={blockStyles.title}>{t.mark_parameters}</div>
           <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
         </Flex>
-        {isDev() && (
+        {checkHexa2GalvoDev() && (
           <GalvoManualBlock
             isInch={isInch}
             onConnect={handleConnect}
