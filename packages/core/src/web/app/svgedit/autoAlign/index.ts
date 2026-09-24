@@ -217,9 +217,10 @@ export class AutoAlignManager {
    * Delta to apply while dragging the selection from `start` to `current` (workarea px).
    * Auto Align matches the captured bbox points against the other elements; Snap to Object Center
    * then lands the selection's centre on a detected object's centre. Each applies on its own
-   * preference, so object snapping works with Auto Align off.
+   * preference, so object snapping works with Auto Align off. `axisLocked` (shift held) keeps the
+   * move on the constrained axis instead of jumping to an object centre.
    */
-  getDragDelta = (current: IPoint, start: IPoint): IPoint => {
+  getDragDelta = (current: IPoint, start: IPoint, axisLocked = false): IPoint => {
     let dx = current.x - start.x;
     let dy = current.y - start.y;
 
@@ -227,7 +228,7 @@ export class AutoAlignManager {
       ({ x: dx, y: dy } = getMatchedDiffFromBBox(this.currentBoundingBox, current, start));
     }
 
-    if (imageContourDetection.isEnabled() && this.selectionCenter) {
+    if (!axisLocked && imageContourDetection.isEnabled() && this.selectionCenter) {
       const { x: cx, y: cy } = this.selectionCenter;
       const target = this.findObjectCenterSnap({ x: cx + dx, y: cy + dy });
 

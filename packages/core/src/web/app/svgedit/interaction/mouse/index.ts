@@ -753,7 +753,7 @@ const mouseMove = (evt: MouseEvent) => {
           dy = xya.y - startY;
         }
 
-        ({ x: dx, y: dy } = autoAlign.getDragDelta(current, { x: startX, y: startY }));
+        ({ x: dx, y: dy } = autoAlign.getDragDelta(current, { x: startX, y: startY }, evt.shiftKey));
 
         if (dx !== 0 || dy !== 0) {
           for (const selected of selectedElements) {

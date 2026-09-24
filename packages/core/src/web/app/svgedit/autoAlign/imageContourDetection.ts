@@ -88,7 +88,13 @@ export class ImageContourDetector {
     useGlobalPreferenceStore.subscribe(
       (state) => state.snap_to_object_center,
       (active) => {
-        if (!active) this.clear();
+        if (!active) {
+          this.clear();
+        } else if (!useCameraPreviewStore.getState().isClean) {
+          // a preview is already on the canvas; no tile will land to mark it dirty
+          this.dirty = true;
+          this.onBatchEnded();
+        }
       },
     );
   };
@@ -127,10 +133,15 @@ export class ImageContourDetector {
     });
 
     try {
+      let applied = false;
+
       while (this.dirty && this.isEnabled()) {
         this.dirty = false;
-        await this.detectAll();
+        applied = await this.detectAll();
       }
+
+      // clear() mid-run already closed the loading toast; don't re-open one for an image that is gone
+      if (!applied) return;
 
       MessageCaller.openMessage({
         content: i18n.lang.message.objects_detected,
@@ -155,20 +166,20 @@ export class ImageContourDetector {
     }
   };
 
-  /** Re-detect the whole preview canvas and replace the list. */
-  private detectAll = async (): Promise<void> => {
+  /** Re-detect the whole preview canvas and replace the list. Returns false when the result was discarded. */
+  private detectAll = async (): Promise<boolean> => {
     const { modelHeight, width } = workareaManager;
     const generation = this.generation;
     const crop = await previewModeBackgroundDrawer.getCanvasCrop(0, 0, width, modelHeight);
 
-    if (!crop) return;
+    if (!crop) return false;
 
     const k = 1 / crop.ratio; // canvasRatio < 1 only on iOS
     const detected = await detectContours(crop.blob);
 
     // the preview was cleared (or the feature turned off) while the model ran: the result describes
     // an image that is gone, and the empty list from clear() must stand
-    if (generation !== this.generation) return;
+    if (generation !== this.generation) return false;
 
     this.contours = detected
       .filter(({ bbox }) => bbox[2] * k < width * MAX_SPAN_RATIO && bbox[3] * k < modelHeight * MAX_SPAN_RATIO)
@@ -185,6 +196,8 @@ export class ImageContourDetector {
       })
       .filter(({ contour }) => !previewModeBackgroundDrawer.isPolygonCutByPreviewEdge(contour));
     renderOverlay(this.contours);
+
+    return true;
   };
 }
 
