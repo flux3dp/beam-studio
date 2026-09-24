@@ -4,6 +4,7 @@ import type { GalvoDevOverrides } from '@core/app/constants/galvo-dev-settings';
 import type { History } from '@core/app/contexts/ElementPanelContext';
 import type { IRecord as AnnouncementRecord } from '@core/helpers/announcement-helper';
 import type { DeviceStore } from '@core/helpers/device/deviceStore';
+import type { GalvoWorkRange } from '@core/helpers/device/galvoWorkRange';
 import type { MachineMaintenanceRecord } from '@core/helpers/maintenance/records';
 import type { IRecord as RatingRecord } from '@core/helpers/rating-helper';
 
@@ -48,6 +49,11 @@ export interface Storage {
    * own defaults instead of being pinned here, where they could drift.
    */
   'galvo-dev-settings'?: GalvoDevOverrides;
+  /**
+   * DEVELOPMENT ONLY. The near edges of the HEXA II gantry's travel, which the machine does not
+   * store. Goes away with the rest of the work-range path; see helpers/device/galvoWorkRange.
+   */
+  'galvo-work-range-min'?: GalvoWorkRange;
   guessing_poke: boolean;
   'keep-flux-id-login': boolean;
   'last-installed-version': string;

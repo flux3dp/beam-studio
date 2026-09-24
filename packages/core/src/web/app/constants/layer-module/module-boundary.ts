@@ -24,11 +24,29 @@ const moduleBoundaries: Partial<
   // states lose the same strip of travel.
   // TODO: confirm how much, the values below are placeholders
   fhx2galvo: {
-    [LayerModule.GALVO_CO2]: { bottom: 0, left: 0, right: 0, top: 0 },
-    [LayerModule.GALVO_MOPA]: { bottom: 0, left: 0, right: 0, top: 0 },
+    [LayerModule.GALVO_CO2]: { bottom: 0, left: 0, right: 50, top: 0 },
+    [LayerModule.GALVO_MOPA]: { bottom: 0, left: 0, right: 100, top: 0 },
+    [LayerModule.LASER_UNIVERSAL]: { bottom: 0, left: 0, right: 50, top: 0 },
   },
 };
 
+type ModuleBoundaries = Partial<Record<LayerModuleType, { bottom: number; left: number; right: number; top: number }>>;
+
+/**
+ * DEVELOPMENT ONLY. Boundaries computed from what a machine reports rather than from the table
+ * above, pushed in by helpers/device/galvoWorkRange so this file keeps no device imports -- boxgen
+ * and the material test panel read it too. For release the machine path goes away and the table is
+ * the only source again.
+ */
+const overrides: Partial<Record<WorkAreaModel, ModuleBoundaries>> = {};
+
+export const setModuleBoundaryOverride = (model: WorkAreaModel, boundaries: ModuleBoundaries): void => {
+  overrides[model] = boundaries;
+};
+
 export const getModuleBoundary = (model: WorkAreaModel, layerModule: LayerModuleType) => {
-  return moduleBoundaries[model]?.[layerModule] || { bottom: 0, left: 0, right: 0, top: 0 };
+  return (
+    overrides[model]?.[layerModule] ||
+    moduleBoundaries[model]?.[layerModule] || { bottom: 0, left: 0, right: 0, top: 0 }
+  );
 };

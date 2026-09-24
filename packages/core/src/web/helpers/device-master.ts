@@ -9,9 +9,11 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
+import { DeviceOperationEvents } from '@core/app/constants/deviceEvents';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import storage from '@core/implementations/storage';
 import type {
   FisheyeCameraParameters,
@@ -43,6 +45,8 @@ import i18n from './i18n';
 import VersionChecker from './version-checker';
 
 export type TakePictureOptions = { timeout?: number; useLowResolution?: boolean };
+
+const deviceEventEmitter = eventEmitterFactory.createEventEmitter('device');
 
 class DeviceMaster {
   private deviceConnections: Map<string, IDeviceConnection>;
@@ -316,6 +320,10 @@ class DeviceMaster {
     }
 
     const res = await this.selectDeviceWithGhost(deviceInfo);
+
+    // Listeners cache per uuid and decide for themselves whether they have work to do, so this
+    // fires on every successful select rather than only when the machine changed.
+    if (res.success) deviceEventEmitter.emit(DeviceOperationEvents.Selected, deviceInfo);
 
     // Check not in any sub-mode
     if (res.success && res.isDeviceChanged && !this.currentDevice?.control?.getMode()) {

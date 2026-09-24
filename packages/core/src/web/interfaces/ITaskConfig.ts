@@ -84,6 +84,14 @@ export type TFcodeOptionalConfig = Partial<{
    * `@core/app/constants/galvo-dev-settings` for what each one does.
    */
   galvo_block: [number, number];
+  /**
+   * Travel the parked module heads cost the gantry, in mm per edge, matching swiftray's
+   * InwardRect. Not widened by the galvo's reach -- the exporter does that itself.
+   *
+   * DEVELOPMENT ONLY: overrides the exporter's own table so a machine being brought up can be
+   * measured without a rebuild. Goes away with helpers/device/galvoWorkRange.
+   */
+  galvo_boundary: { bottom: number; left: number; right: number; top: number };
   galvo_debug_image: string;
   galvo_dot_blend_line_core: boolean;
   galvo_dot_blend_overlap: number;

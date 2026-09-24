@@ -90,7 +90,7 @@ export interface GalvoDevConfig {
 
 export type GalvoDevConfigKey = keyof GalvoDevConfig;
 
-export type GalvoDevSettingGroup = 'blend' | 'prologue' | 'readOnly' | 'split';
+export type GalvoDevSettingGroup = 'blend' | 'prologue' | 'readOnly' | 'split' | 'travel';
 
 export const GALVO_DEV_SETTING_GROUPS: Array<{ description: string; key: GalvoDevSettingGroup; title: string }> = [
   // First, because everything below is read against it: the same override means something
@@ -99,6 +99,15 @@ export const GALVO_DEV_SETTING_GROUPS: Array<{ description: string; key: GalvoDe
     description: '正常使用時由別處設定，這裡只是顯示目前生效的值。',
     key: 'readOnly',
     title: '目前生效',
+  },
+  // Second, because it decides the canvas boundary everything else is laid out inside.
+  {
+    description:
+      '龍門實際走得到的範圍。停泊在機器上的模組頭會限制龍門，所以有沒有裝 Mopa 是兩組不同的值，' +
+      '與這份工作用不用得到那顆頭無關。畫布上超出這個範圍的部分會被畫成邊界外。' +
+      '開發期間的臨時設定：正式版會直接用一組固定的安全值，這一整組會移除。',
+    key: 'travel',
+    title: '移動範圍',
   },
   {
     description: '龍門會停在哪些位置，以及圖案如何分配給這些停位。',
