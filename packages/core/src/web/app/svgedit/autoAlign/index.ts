@@ -30,6 +30,7 @@ import {
   OBJECT_SNAP_SCREEN_PX,
   RECTANGULAR_MIN,
   ROTATION_SNAP_DEG,
+  type RotationCandidate,
   wrapDeg,
 } from './utils/objectSnap';
 
@@ -311,12 +312,12 @@ export class AutoAlignManager {
 
     if (!target) return angle;
 
-    let best: null | number = null;
+    let best: null | RotationCandidate = null;
 
     for (const candidate of getRotationCandidates(target.rect)) {
-      const diff = Math.abs(wrapDeg(angle - candidate));
+      const diff = Math.abs(wrapDeg(angle - candidate.angle));
 
-      if (diff < ROTATION_SNAP_DEG && (best === null || diff < Math.abs(wrapDeg(angle - best)))) best = candidate;
+      if (diff < ROTATION_SNAP_DEG && (best === null || diff < Math.abs(wrapDeg(angle - best.angle)))) best = candidate;
     }
 
     if (best === null) return angle;
@@ -328,7 +329,7 @@ export class AutoAlignManager {
       const [cx, cy] = target.center;
 
       setAttributes(line, {
-        d: axisPath(cx, cy, (best * Math.PI) / 180, target.rect.width / 2),
+        d: axisPath(cx, cy, (best.angle * Math.PI) / 180, best.halfLength),
         fill: 'none',
         id: 'align_line_object_r',
         'pointer-events': 'none',
@@ -340,7 +341,7 @@ export class AutoAlignManager {
       svgcontent.appendChild(line);
     }
 
-    return best;
+    return best.angle;
   };
 
   /**

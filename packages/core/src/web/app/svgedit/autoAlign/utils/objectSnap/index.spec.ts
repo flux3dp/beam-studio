@@ -23,15 +23,27 @@ describe('wrapDeg', () => {
 });
 
 describe('getRotationCandidates', () => {
-  it('offers every 45° for a near-square object', () => {
-    const c = getRotationCandidates(rect(48.3, 392, 371)).map((v) => Math.round(v * 10) / 10);
+  const angles = (rect: ReturnType<typeof rect>) =>
+    getRotationCandidates(rect)
+      .map((c) => Math.round(c.angle * 10) / 10)
+      .sort((a, b) => a - b);
 
-    expect(c).toEqual([48.3, 93.3, 138.3, -176.7, -131.7, -86.7, -41.7, 3.3]);
+  it('offers every 45° for a near-square object', () => {
+    expect(angles(rect(48.3, 392, 371))).toEqual([-176.7, -131.7, -86.7, -41.7, 3.3, 48.3, 93.3, 138.3]);
   });
 
   it('offers only edge directions for an elongated object', () => {
-    expect(getRotationCandidates(rect(0.3, 1174, 88)).map((v) => Math.round(v * 10) / 10)).toEqual([
-      0.3, 90.3, -179.7, -89.7,
-    ]);
+    expect(angles(rect(0.3, 1174, 88))).toEqual([-179.7, -89.7, 0.3, 90.3]);
+  });
+
+  it('sizes the guide to the extent along each direction', () => {
+    const byAngle = Object.fromEntries(
+      getRotationCandidates(rect(0, 100, 40)).map((c) => [Math.round(c.angle), c.halfLength]),
+    );
+
+    expect(byAngle[0]).toBe(50);
+    expect(byAngle[90]).toBe(20);
+    expect(byAngle[-90]).toBe(20);
+    expect(byAngle[-180]).toBe(50);
   });
 });

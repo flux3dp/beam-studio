@@ -40,9 +40,11 @@ const MAX_SPAN_RATIO = 0.9;
 const renderOverlay = (contours: ImageContour[]): void => {
   document.getElementById(OVERLAY_ID)?.remove();
 
+  if (window?.localStorage?.getItem('dev-image-contour') !== 'true') return;
+
   const previewSvg = document.getElementById('previewSvg');
 
-  if (window?.localStorage?.getItem('dev-image-contour') !== 'true' || !previewSvg || !contours.length) return;
+  if (!previewSvg || !contours.length) return;
 
   const g = document.createElementNS(NS.SVG, 'g');
 

@@ -12,19 +12,33 @@ export const ROTATION_SNAP_DEG = 3;
 /** wrap to [-180, 180) */
 export const wrapDeg = (deg: number): number => ((((deg + 180) % 360) + 360) % 360) - 180;
 
+export interface RotationCandidate {
+  /** deg, svgedit convention (clockwise on screen), in [-180, 180) */
+  angle: number;
+  /** half the object extent along this direction, for the guide line */
+  halfLength: number;
+}
+
 /**
- * Rotation angles (deg, svgedit convention: clockwise on screen, 0 = design's long edge horizontal) at
- * which a design would line up with a detected rectangular object described by `rect`.
+ * Rotation angles at which a design whose long edge is horizontal lines up with a detected rectangular
+ * object: parallel to its long edge, its short edge, and for near-square objects its diagonals too.
  * `rect.angle` is the object's long-edge direction in rad, in (-π/2, π/2].
  */
-export const getRotationCandidates = (rect: MinAreaRect): number[] => {
+export const getRotationCandidates = (rect: MinAreaRect): RotationCandidate[] => {
   const { angle, height, width } = rect;
-
-  const options = width / height <= 1.1 ? [0, 45, 90, 135, 180, 225, 270, 315] : [0, 90, 180, 270];
-
   const base = (angle * 180) / Math.PI;
+  const long = { halfLength: width / 2, step: 0 };
+  const short = { halfLength: height / 2, step: 90 };
+  const diagonal = Math.hypot(width, height) / 2;
+  const options =
+    width / height <= 1.1
+      ? [long, { halfLength: diagonal, step: 45 }, short, { halfLength: diagonal, step: 135 }]
+      : [long, short];
 
-  return options.map((r) => wrapDeg(base + r));
+  return options.flatMap(({ halfLength, step }) => [
+    { angle: wrapDeg(base + step), halfLength },
+    { angle: wrapDeg(base + step + 180), halfLength },
+  ]);
 };
 
 /** Path of a segment through (cx, cy) along `angle` (rad), `half` long on each side. */
