@@ -1481,6 +1481,12 @@ export interface ILang {
   error_pages: {
     screen_size: string;
   };
+  flux_101: {
+    badges: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    lessons: Record<string, string>;
+    title: string;
+  };
   flux_id_login: {
     connection_fail: string;
     email: string;
