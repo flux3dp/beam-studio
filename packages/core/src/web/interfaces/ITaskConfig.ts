@@ -85,6 +85,16 @@ export type TFcodeOptionalConfig = Partial<{
    */
   machine_limit_position: string;
   /**
+   * Inner engraving: machine-Z quantisation of the STL output, in mm.
+   *
+   * Every engraved point is snapped to a multiple of this and each distinct value costs one Z
+   * move, which on the Promark is dominated by a fixed ~50ms command overhead — so this sets the
+   * floor on how long an inner-carving job takes. Coarser buckets trade depth resolution for
+   * time. Omit it to keep the backend default (0.001mm); values below that are refused by both
+   * sides, finer buckets have been observed to stall the job at runtime.
+   */
+  machine_z_bucket?: number;
+  /**
    * clipping mask in [top right bottom left]
    */
   mask: [number, number, number, number];

@@ -44,6 +44,12 @@ import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 import versionChecker from '../version-checker';
 
+/**
+ * Smallest machine-Z bucket the backend accepts for inner engraving, in mm. Below this the job has
+ * been observed to stall at runtime; the Z axis resolves 0.000625mm per pulse anyway.
+ */
+const MIN_MACHINE_Z_BUCKET_MM = 0.001;
+
 export const getExportOpt = async (
   opt: IBaseConfig,
   args?: string[],
@@ -349,6 +355,7 @@ export const getExportOpt = async (
       'jump_delay_min',
       'jump_delay_max',
       'is_uv_light',
+      'machine_z_bucket',
     ];
     let storageValue: null | string = null;
     const overwrite: Record<string, number> = {};
@@ -361,6 +368,15 @@ export const getExportOpt = async (
         overwrite[key] = Number(storageValue);
       }
     });
+
+    // The backend clamps to the same floor; doing it here too keeps the logged override honest.
+    // Finer buckets have been observed to stall the job at runtime, so this is a floor, not a
+    // preference.
+    if (config.machine_z_bucket !== undefined && config.machine_z_bucket < MIN_MACHINE_Z_BUCKET_MM) {
+      console.warn(`machine_z_bucket ${config.machine_z_bucket} is below the floor, using ${MIN_MACHINE_Z_BUCKET_MM}`);
+      config.machine_z_bucket = MIN_MACHINE_Z_BUCKET_MM;
+      overwrite.machine_z_bucket = MIN_MACHINE_Z_BUCKET_MM;
+    }
 
     if (Object.keys(overwrite).length > 0) console.warn('Using UV dev config', overwrite);
   }
