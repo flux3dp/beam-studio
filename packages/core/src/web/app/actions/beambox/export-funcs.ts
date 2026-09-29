@@ -438,6 +438,7 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
     metadata: TaskMetaData;
     taskCodeBlob: Blob;
   }>((resolve) => {
+    // Note: only contains black block, add -ico if black ink position is swapped
     svgeditorParser.getTaskCode([], {
       forceArgString: `${taskArgsString} -machine-limit-position ${limitPosition}`,
       onError: (message: string) => {

@@ -5,6 +5,7 @@ import { Checkbox } from 'antd';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
+import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ModuleSettings4C.module.scss';
@@ -25,11 +26,13 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
   const [enablePresprayArea, setEnablePresprayArea] = useState(
     Boolean(useDocumentStore.getState()['enable-4c-prespray-area']),
   );
+  const [swapInkOrder, setSwapInkOrder] = useState(Boolean(useDocumentStore.getState()['swap-4c-ink-order']));
   const handleSave = () => {
     useDocumentStore.getState().update({
       'enable-4c-prespray-area': enablePresprayArea,
       prespray_times: presprayTimes,
       skip_prespray: skipPrespray,
+      'swap-4c-ink-order': swapInkOrder,
     });
     onClose();
   };
@@ -71,6 +74,13 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
             {tDocument.enable_nozzle_refresh_area}
           </Checkbox>
         </div>
+        {isDev() && (
+          <div>
+            <Checkbox checked={swapInkOrder} onChange={(e) => setSwapInkOrder(e.target.checked)}>
+              Swap ink order (CYMK cartridge)
+            </Checkbox>
+          </div>
+        )}
       </div>
     </DraggableModal>
   );

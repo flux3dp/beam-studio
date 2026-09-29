@@ -365,6 +365,10 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     const pixelWidth = (targetX - x1) / swath.w;
     // dot interval is a fixed pixel-per-mm in both axes, so row pitch = column pitch
     const rowPitch = Math.abs(pixelWidth);
+    // 4C nibble bit = cartridge slot; COLOR_ORDER metadata (e.g. 'cymk') says which ink each slot holds
+    const slotInks = String(metadata.COLOR_ORDER ?? 'cmyk')
+      .split('')
+      .map((c) => 'cmyk'.indexOf(c));
     // 4C right-nozzle swaths compensate the nozzle x gap in the MOTION
     // (printer_4c pixel_to_actual_position adds +-0.55035mm to the movetos, sign by
     // task direction); undo it so content draws at the true deposit position
@@ -432,7 +436,11 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         // physical nozzle-column offset, always machine +x regardless of sweep direction
         const channelOffset = channels === 4 ? CHANNEL_X_OFFSETS_4C[channel] * rowPitch : 0;
         const runT =
-          channels === 4 ? PRINTER_CHANNEL_T + channel : taskInk === null ? RASTER_T : PRINTER_CHANNEL_T + taskInk;
+          channels === 4
+            ? PRINTER_CHANNEL_T + slotInks[channel]
+            : taskInk === null
+              ? RASTER_T
+              : PRINTER_CHANNEL_T + taskInk;
 
         for (let ci = 0; ci < cellCount; ci += 1) {
           const colEnd = Math.min((ci + 1) * colStep, swath.w);
