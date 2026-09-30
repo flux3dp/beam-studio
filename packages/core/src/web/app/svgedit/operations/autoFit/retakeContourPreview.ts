@@ -1,5 +1,3 @@
-import { match } from 'ts-pattern';
-
 import alertCaller from '@core/app/actions/alert-caller';
 import Constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
@@ -7,7 +5,7 @@ import previewModeController from '@core/app/actions/beambox/preview-mode-contro
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
-import { bb2PerspectiveGrid, bm2PerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
+import { getRegionPreviewGrid, gridRegionPreviewModels } from '@core/app/constants/fisheyeCameraConstants';
 import { setCameraPreviewState, useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import alertConfig from '@core/helpers/api/alert-config';
@@ -18,33 +16,36 @@ import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 import { dataCache, setDataCache } from './dataCache';
 import { findSimilarContours } from './findSimilarContours';
 
-/**
- * Returns the single-shot region preview size in canvas pixels for the current workarea.
- * Only workareas with perspective grids (fbb2, fhx2rf, fhx2galvo, fbm2) support region preview;
- * returns null for unsupported workareas, which disables the retake feature.
- * When adding a new workarea with region preview, add its grid mapping here.
- */
-export const getRegionPreviewSizePx = (): null | { height: number; width: number } => {
-  const { workarea } = useDocumentStore.getState();
-  const grid = match(workarea)
-    .with('fbb2', 'fhx2rf', 'fhx2galvo', () => bb2PerspectiveGrid)
-    .with('fbm2', () => bm2PerspectiveGrid)
-    .otherwise(() => null);
-
-  if (!grid) return null;
-
-  return {
-    height: (grid.y[1] - grid.y[0]) * Constant.dpmm,
-    width: (grid.x[1] - grid.x[0]) * Constant.dpmm,
-  };
-};
-
 const regionModes = [PreviewMode.PRECISE_REGION, PreviewMode.REGION] as const;
 
 const getRegionMode = (): null | PreviewMode => {
   const { supportedPreviewModes } = useCameraPreviewStore.getState();
 
   return regionModes.find((mode) => supportedPreviewModes.includes(mode)) ?? null;
+};
+
+/**
+ * The single-shot region preview size in canvas pixels for the current workarea, or null where
+ * region preview is not a grid footprint at all -- which disables the retake feature.
+ *
+ * Asked of the same helper the capture and the hover indicator ask, with the mode the retake will
+ * actually switch to: an oblique camera has a wider footprint in REGION than in PRECISE_REGION, and
+ * ensurePreviewMode below prefers PRECISE_REGION wherever it is offered.
+ */
+export const getRegionPreviewSizePx = (): null | { height: number; width: number } => {
+  const { workarea } = useDocumentStore.getState();
+
+  if (!gridRegionPreviewModels.has(workarea)) return null;
+
+  const { supportedPreviewModes } = useCameraPreviewStore.getState();
+  // PRECISE_REGION is offered if and only if the camera is oblique, the same tell the indicator uses
+  const isCameraOblique = supportedPreviewModes.includes(PreviewMode.PRECISE_REGION);
+  const grid = getRegionPreviewGrid(workarea, { isCameraOblique, mode: getRegionMode() ?? PreviewMode.REGION });
+
+  return {
+    height: (grid.y[1] - grid.y[0]) * Constant.dpmm,
+    width: (grid.x[1] - grid.x[0]) * Constant.dpmm,
+  };
 };
 
 const ensurePreviewMode = async (): Promise<boolean> => {

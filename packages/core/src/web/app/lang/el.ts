@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Ελέγξτε την ένδειξη Wi-Fi της συσκευής σας',
     },
     disconnected: 'Ασταθής σύνδεση, παρακαλώ ελέγξτε τη σύνδεση της συσκευής και δοκιμάστε ξανά αργότερα',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Έξοδος από τη λειτουργία ελέγχου γραμμής...',
     endingRawMode: 'Έξοδος από τη λειτουργία ελέγχου μηχανήματος...',
     enteringLineCheckMode: 'Είσοδος σε λειτουργία ελέγχου γραμμής...',

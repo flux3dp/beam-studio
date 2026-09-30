@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 기기의 Wi-Fi 표시기를 확인해주세요.',
     },
     disconnected: '연결이 불안정합니다. 기기 연결을 확인하고 나중에 다시 시도해주세요.',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: '라인 체크 모드에서 빠져나옵니다...',
     endingRawMode: '기계 제어 모드에서 빠져나옵니다...',
     enteringLineCheckMode: '라인 체크 모드로 진입 중...',

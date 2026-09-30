@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Tarkista koneen Wi-Fi-merkkivalo',
     },
     disconnected: 'Epävakaa yhteys, tarkista laitteen yhteys ja yritä myöhemmin uudelleen',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Poistutaan linjantarkistustilasta...',
     endingRawMode: 'Poistutaan koneen ohjaustilasta...',
     enteringLineCheckMode: 'Siirrytään linjantarkistustilaan...',

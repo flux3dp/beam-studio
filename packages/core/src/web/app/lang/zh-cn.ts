@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 请确认默认机器的 Wi-Fi 指示灯，或取消设置默认机器',
     },
     disconnected: '连接不稳，请确认机器连接状况并稍后再试一次',
+    disconnectingGalvoHead: '正在解联振镜模组，这会需要几十秒...',
     endingLineCheckMode: '正在结束可靠传输模式...',
     endingRawMode: '正在结束机器控制模式...',
     enteringLineCheckMode: '正在进入可靠传输模式...',

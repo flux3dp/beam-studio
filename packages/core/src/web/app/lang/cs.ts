@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Zkontrolujte prosím indikátor Wi-Fi svého přístroje',
     },
     disconnected: 'Připojení nestále, zkontrolujte prosím nastavení zařízení a zkuste to později.',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Ukončuji mód kontroly linek...',
     endingRawMode: 'Ukončuji režim ovládání stroje...',
     enteringLineCheckMode: 'Otevírám mód kontroly linek...',

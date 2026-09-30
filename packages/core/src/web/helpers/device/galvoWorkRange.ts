@@ -166,6 +166,8 @@ const prefetchOnSelect = async (device: IDeviceInfo): Promise<void> => {
   // Checked per call rather than at registration, so the flag can be turned off without a reload.
   if (device.model !== MODEL || !checkHexa2GalvoDev()) return;
 
+  if (deviceMaster.currentDevice?.control?.getMode()) return;
+
   await Promise.allSettled([
     fetchGalvoWorkRange({ useCache: false }),
     // the field lens sets how far the galvo reaches past the head; read both heads while

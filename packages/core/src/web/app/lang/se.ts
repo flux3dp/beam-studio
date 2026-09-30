@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Kontrollera maskinens WiFi-indikator',
     },
     disconnected: 'Ostabil anslutning, kontrollera enhetsanslutning och försök igen senare',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Avslutar linjekontrollläge...',
     endingRawMode: 'Avslutar maskinkontrollläge...',
     enteringLineCheckMode: 'Går in i linjekontrolläge...',

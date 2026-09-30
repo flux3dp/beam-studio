@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Bitte überprüfe die Wi-Fi-Anzeige Ihres Geräts',
     },
     disconnected: 'Verbindung instabil, Bitte überprüfe die Geräteverbindung und versuche es später erneut',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Verlassen des Leitungsprüfmodus...',
     endingRawMode: 'Maschinensteuerungsmodus beenden...',
     enteringLineCheckMode: 'Aufrufen des Leitungsprüfmodus...',

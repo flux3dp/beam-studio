@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 โปรดตรวจสอบตัวบ่งชี้ Wi-Fi ของเครื่อง',
     },
     disconnected: 'การเชื่อมต่อไม่มั่นคง โปรดตรวจสอบการเชื่อมต่ออุปกรณ์และลองอีกครั้งในภายหลัง',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'ออกจากโหมดตรวจสอบเส้น...',
     endingRawMode: 'กำลังออกจากโหมดควบคุมเครื่อง...',
     enteringLineCheckMode: 'กําลังเข้าสู่โหมดตรวจสอบเส้น...',

@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Verifique o indicador Wi-Fi da sua máquina',
     },
     disconnected: 'Conexão instável, verifique a conexão com o dispositivo e tente novamente mais tarde',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Saindo do modo de verificação de linha...',
     endingRawMode: 'Saindo do modo de controle da máquina...',
     enteringLineCheckMode: 'Entrando no modo de verificação de linha...',

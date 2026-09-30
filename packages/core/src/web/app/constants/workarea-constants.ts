@@ -227,13 +227,14 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     autoShrink: 0.025,
     /**
      * Where moveLaserHead() parks the gantry to photograph the calibration marks, so it is fixed
-     * by whichever fcode engraves them -- not by the bed centre. HEXA II reuses fhx2rf's
-     * fcode/hx2-calibration.fc, which marks x 309.1-430.9, y 189.7-270.2, i.e. the camera view
-     * with the head at fhx2rf's camera centre. Moving this without also re-cutting that fcode
-     * leaves the marks outside the frame.
-     * TODO: measure on real hardware; re-cut the fcode if HEXA II wants a different position.
+     * by whichever fcode engraves them -- not by the bed centre. HEXA G has its own
+     * fcode/hexa-g-calibration.fc, whose dots sit at x 200-420, y 200-300, and its head camera
+     * looks to the left of the head rather than straight down at it (see hx2GalvoPerspectiveGrid,
+     * whose x range is negative), which is why the head parks to the right of them. Set from a
+     * real machine; three things have to move together -- that fcode, this, and hx2GalvoPnPPoints,
+     * which is the same dots expressed relative to here.
      */
-    cameraCenter: [370, 180],
+    cameraCenter: [440, 180],
     curveSpeedLimit: {
       x: 50,
       zHighSpeed: 300,

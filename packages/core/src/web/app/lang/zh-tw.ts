@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 請確認預設機器的 Wi-Fi 指示燈，或取消設定預設機器',
     },
     disconnected: '連線不穩，請確認機器連線狀況並稍後再試一次',
+    disconnectingGalvoHead: '正在解聯振鏡模組，這會需要幾十秒...',
     endingLineCheckMode: '正在結束可靠傳輸模式...',
     endingRawMode: '正在結束機器控制模式...',
     enteringLineCheckMode: '正在進入可靠傳輸模式...',

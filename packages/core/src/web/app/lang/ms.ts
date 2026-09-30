@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Sila semak penunjuk Wi-Fi mesin anda',
     },
     disconnected: 'Sambungan tidak stabil, Sila semak sambungan peranti dan cuba lagi nanti',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Keluar dari mod semakan garis akhir...',
     endingRawMode: 'Keluar dari Mod Kawalan Mesin...',
     enteringLineCheckMode: 'Memasuki mod semak garisan...',

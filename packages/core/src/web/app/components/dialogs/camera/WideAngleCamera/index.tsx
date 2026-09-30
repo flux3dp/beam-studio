@@ -67,12 +67,18 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
   const next = useCallback(() => setStep((cur) => cur + 1), []);
   const prev = useCallback(() => setStep((cur) => cur - 1), []);
   const deviceModel = useMemo(() => deviceMaster.currentDevice!.info.model, []);
-  const isHexa2 = useMemo(() => hexa2Models.has(deviceModel), [deviceModel]);
+  const isHexa2Series = useMemo(() => hexa2Models.has(deviceModel), [deviceModel]);
+  /**
+   * Still HEXA RF's for both machines of the series: these points are laid out for a 740x410 bed and
+   * HEXA G's is 920x520, so its four corner regions would land well inside the bed instead of at its
+   * corners. The machine with that camera is still in transit; nothing can be measured until it is.
+   * TODO: measure a HEXA G set, alongside a 920x520 wide-angle pattern.
+   */
   const solvePnPPoints = useMemo(() => {
-    if (isHexa2) return hx2WideAngleCameraPnpPoints;
+    if (isHexa2Series) return hx2WideAngleCameraPnpPoints;
 
     return bb2WideAngleCameraPnpPoints;
-  }, [isHexa2]);
+  }, [isHexa2Series]);
 
   const calibratingParam = useRef<FisheyeCameraParametersV4Cali>({});
   const handleClose = (res?: boolean) => {
@@ -168,7 +174,7 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
       return (
         <ChArUco
           cameraIndex={1}
-          isFisheye={!isHexa2}
+          isFisheye={!isHexa2Series}
           onClose={handleClose}
           onNext={next}
           onPrev={prev}
@@ -206,7 +212,8 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
           progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
 
           if (doEngraving) {
-            if (isHexa2) await deviceMaster.doHexa2Calibration('wide-angle');
+            if (deviceModel === 'fhx2galvo') await deviceMaster.doHexaGCalibration('wide-angle');
+            else if (isHexa2Series) await deviceMaster.doHexaRfCalibration('wide-angle');
             else await deviceMaster.doBB2Calibration('wide-angle');
           } else {
             await deviceMaster.enterRawMode();
@@ -222,7 +229,7 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
         }
       };
 
-      const videoName = `video/wide-angle-calibration/2-cut${isHexa2 ? '-fhx2rf' : ''}`;
+      const videoName = `video/wide-angle-calibration/2-cut${isHexa2Series ? '-fhx2rf' : ''}`;
 
       return (
         <Instruction
@@ -302,28 +309,28 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
         >(step)
           .with(Step.SOLVE_PNP_TL_1, Step.SOLVE_PNP_TL_2, () => ({
             currentStep: 0,
-            interestArea: isHexa2
+            interestArea: isHexa2Series
               ? { height: 1632, width: 1632, x: 0, y: 0 }
               : { height: 1300, width: 2300, x: 500, y: 900 },
             region: 'topLeft',
           }))
           .with(Step.SOLVE_PNP_TR_1, Step.SOLVE_PNP_TR_2, () => ({
             currentStep: 1,
-            interestArea: isHexa2
+            interestArea: isHexa2Series
               ? { height: 1632, width: 1632, x: 1632, y: 0 }
               : { height: 1300, width: 2300, x: 2800, y: 900 },
             region: 'topRight',
           }))
           .with(Step.SOLVE_PNP_BL_1, Step.SOLVE_PNP_BL_2, () => ({
             currentStep: 2,
-            interestArea: isHexa2
+            interestArea: isHexa2Series
               ? { height: 1632, width: 1632, x: 0, y: 816 }
               : { height: 800, width: 1600, x: 1200, y: 2200 },
             region: 'bottomLeft',
           }))
           .otherwise(() => ({
             currentStep: 3,
-            interestArea: isHexa2
+            interestArea: isHexa2Series
               ? { height: 1632, width: 1632, x: 1632, y: 816 }
               : { height: 800, width: 1600, x: 2800, y: 2200 },
             region: 'bottomRight',
@@ -450,7 +457,7 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
         <CheckPnP
           cameraOptions={{ index: 1 }}
           dh={dh!}
-          grid={isHexa2 ? hx2FullAreaPerspectiveGrid : bb2FullAreaPerspectiveGrid}
+          grid={isHexa2Series ? hx2FullAreaPerspectiveGrid : bb2FullAreaPerspectiveGrid}
           hasNext
           onBack={() => setStep(step === Step.CHECK_PNP_1 ? Step.SOLVE_PNP_TL_1 : Step.SOLVE_PNP_TL_2)}
           onClose={onClose}

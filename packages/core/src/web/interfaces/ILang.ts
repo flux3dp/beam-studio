@@ -2053,6 +2053,7 @@ export interface ILang {
       message: string;
     };
     disconnected: string;
+    disconnectingGalvoHead: string;
     endingLineCheckMode: string;
     endingRawMode: string;
     enteringLineCheckMode: string;

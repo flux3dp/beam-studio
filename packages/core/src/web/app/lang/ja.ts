@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 マシンのWi-Fiインジケーターを確認してください',
     },
     disconnected: '接続が不安定です。デバイスの接続を確認して、後で再試行してください',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'ラインチェックモードを終了中…',
     endingRawMode: 'マシン制御モードを終了中...',
     enteringLineCheckMode: 'ラインチェックモードへ移行中...',

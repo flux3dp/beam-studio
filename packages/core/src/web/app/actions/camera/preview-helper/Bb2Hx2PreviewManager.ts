@@ -7,12 +7,12 @@ import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import {
   bb2FullAreaPerspectiveGrid,
-  bb2PerspectiveGrid,
-  bb2PerspectiveGridWide,
+  getRegionPreviewGrid,
   hx2FullAreaPerspectiveGrid,
 } from '@core/app/constants/fisheyeCameraConstants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { checkCameraOblique, getSupportedPreviewModes } from '@core/helpers/device/camera/previewMode';
+import { getGalvoGantryFeedrateCap } from '@core/helpers/device/galvoHeadConnection';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParameters, FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
@@ -37,6 +37,8 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private fisheyeParams?: FisheyeCameraParameters;
   private fullAreaGrid = bb2FullAreaPerspectiveGrid;
   protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
+  /** mm/min, set in setup() when a galvo head is connected to the gantry and rides along on captures. */
+  private gantryFeedrateCap?: number;
 
   public hasWideAngleCamera: boolean = false;
 
@@ -56,12 +58,14 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
   protected getMovementSpeed = (): number => {
     const previewMovementSpeedLevel = useGlobalPreferenceStore.getState()['preview_movement_speed_level'];
-
-    return match(previewMovementSpeedLevel)
+    const speed = match(previewMovementSpeedLevel)
       .with(PreviewSpeedLevel.FAST, () => 42000)
       .with(PreviewSpeedLevel.MEDIUM, () => 36000)
       .with(PreviewSpeedLevel.SLOW, () => 30000)
       .otherwise(() => 30000);
+
+    // The user's own choice is a preference about waiting, not about what the carriage can take.
+    return Math.min(speed, this.gantryFeedrateCap ?? speed);
   };
 
   private handleSetupError = async (error: unknown): Promise<void> => {
@@ -85,7 +89,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     try {
       this.showMessage({ content: lang.message.camera.switching_camera });
 
-      const grid = this.isCameraOblique && mode === PreviewMode.REGION ? bb2PerspectiveGridWide : bb2PerspectiveGrid;
+      const grid = getRegionPreviewGrid(this.device.model, { isCameraOblique: this.isCameraOblique, mode });
 
       if (isLaserHeadMode(this._previewMode)) {
         if (isLaserHeadMode(mode)) {
@@ -230,6 +234,19 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       const isCameraOblique = await callWithRetry(() => checkCameraOblique(this.device));
 
       this.isCameraOblique = isCameraOblique;
+      // Every capture position is a gantry move, and on HEXA II the gantry may have a galvo head
+      // connected to it. Unlike framing this flow does not disconnect -- there is no red light to
+      // get wrong, and disconnecting costs tens of seconds and a homing run for a photograph -- so
+      // it slows down instead, to galvo_ts. Read while no sub task is open, and cap both the
+      // feedrate the moves are commanded at and the machine limits the waits are estimated from.
+      this.gantryFeedrateCap = await getGalvoGantryFeedrateCap(this.device.model);
+
+      if (this.gantryFeedrateCap) {
+        const cap = this.gantryFeedrateCap;
+
+        this.maxMovementSpeed = [Math.min(this.maxMovementSpeed[0], cap), Math.min(this.maxMovementSpeed[1], cap)];
+      }
+
       await callWithRetry(() => deviceMaster.connectCamera());
 
       const { canPreview, hasWideAngleCamera, parameters } = await callWithRetry(() =>
@@ -243,7 +260,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this._previewMode = canPreview && this.hasWideAngleCamera ? PreviewMode.FULL_AREA : PreviewMode.REGION;
 
       if (this.isCameraOblique) {
-        this.setRegionPreviewGrid(bb2PerspectiveGridWide);
+        this.setRegionPreviewGrid(getRegionPreviewGrid(this.device.model, { isCameraOblique: true }));
       }
 
       const res = await match(this._previewMode)

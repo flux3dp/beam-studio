@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Vui lòng kiểm tra đèn báo Wi-Fi của máy',
     },
     disconnected: 'Kết nối không ổn định, vui lòng kiểm tra kết nối thiết bị và thử lại sau',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Đang thoát chế độ kiểm tra đường...',
     endingRawMode: 'Đang thoát chế độ điều khiển máy...',
     enteringLineCheckMode: 'Đang vào chế độ kiểm tra đường...',

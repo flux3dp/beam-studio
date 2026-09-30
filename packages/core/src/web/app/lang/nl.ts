@@ -2112,6 +2112,7 @@ const lang: ILang = {
       message: '#812 Controleer de Wi-Fi-indicator van uw apparaat',
     },
     disconnected: 'Verbinding instabiel, controleer apparaatverbinding en probeer het later opnieuw',
+    disconnectingGalvoHead: 'Disconnecting the galvo module, this takes tens of seconds...',
     endingLineCheckMode: 'Lijncontrolemodus sluiten...',
     endingRawMode: 'Machinebesturingsmodus afsluiten...',
     enteringLineCheckMode: 'Lijncontrolemodus openen...',

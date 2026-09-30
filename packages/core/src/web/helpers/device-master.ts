@@ -956,9 +956,26 @@ class DeviceMaster {
     await this.doCalibration({ fcodeSource: fileName });
   }
 
-  async doHexa2Calibration(type: '' | 'wide-angle' = '') {
+  async doHexaRfCalibration(type: '' | 'wide-angle' = '') {
     const fileName = match(type)
       .with('', () => 'fcode/hx2-calibration.fc')
+      .with('wide-angle', () => 'fcode/hx2-calibration-wide-angle.fc')
+      .exhaustive();
+
+    await this.doCalibration({ fcodeSource: fileName });
+  }
+
+  /**
+   * HEXA G cannot share HEXA RF's head camera pattern: its bed is wider, its head camera looks to
+   * the side rather than straight down, and the nozzle blocks part of that view, so the dots sit
+   * elsewhere and much further apart.
+   *
+   * The wide-angle pattern is still HEXA RF's, sized for a 740x410 bed rather than 920x520.
+   * TODO: cut a 920x520 wide-angle pattern; the machine with that camera is still in transit.
+   */
+  async doHexaGCalibration(type: '' | 'wide-angle' = '') {
+    const fileName = match(type)
+      .with('', () => 'fcode/hexa-g-calibration.fc')
       .with('wide-angle', () => 'fcode/hx2-calibration-wide-angle.fc')
       .exhaustive();
 
@@ -1201,8 +1218,9 @@ class DeviceMaster {
 
   async rawHome() {
     const controlSocket = await this.getControl();
+    const allowedStall = this.currentDevice?.info.model === 'fhx2galvo' ? 30000 : undefined;
 
-    return controlSocket.addTask(controlSocket.rawHome);
+    return controlSocket.addTask(controlSocket.rawHome, { allowedStall });
   }
 
   async rawHomeCamera() {
@@ -1213,8 +1231,9 @@ class DeviceMaster {
     }
 
     const controlSocket = await this.getControl();
+    const allowedStall = this.currentDevice?.info.model === 'fhx2galvo' ? 30000 : undefined;
 
-    return controlSocket.addTask(controlSocket.rawHome, { cameraMode: true });
+    return controlSocket.addTask(controlSocket.rawHome, { allowedStall, cameraMode: true });
   }
 
   async rawHomeZ() {
