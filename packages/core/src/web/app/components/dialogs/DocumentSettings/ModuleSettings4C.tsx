@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { Checkbox } from 'antd';
 
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
@@ -25,11 +26,13 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
   const [enablePresprayArea, setEnablePresprayArea] = useState(
     Boolean(useDocumentStore.getState()['enable-4c-prespray-area']),
   );
+  const [swapInkOrder, setSwapInkOrder] = useState(Boolean(useDocumentStore.getState()['swap-4c-ink-order']));
   const handleSave = () => {
     useDocumentStore.getState().update({
       'enable-4c-prespray-area': enablePresprayArea,
       prespray_times: presprayTimes,
       skip_prespray: skipPrespray,
+      'swap-4c-ink-order': swapInkOrder,
     });
     onClose();
   };
@@ -70,6 +73,18 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
           <Checkbox checked={enablePresprayArea} onChange={(e) => setEnablePresprayArea(e.target.checked)}>
             {tDocument.enable_nozzle_refresh_area}
           </Checkbox>
+        </div>
+        <div className={styles.row}>
+          <span>{tDocument.cartridge_version}</span>
+          <Select
+            className={styles.select}
+            onChange={(version) => setSwapInkOrder(version === 2)}
+            options={[
+              { label: 'V1', value: 1 },
+              { label: 'V2', value: 2 },
+            ]}
+            value={swapInkOrder ? 2 : 1}
+          />
         </div>
       </div>
     </DraggableModal>

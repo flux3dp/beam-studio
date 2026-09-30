@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'Chỉ áp dụng cho các lớp có độ phân giải từ 250 DPI trở lên.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Mở đáy',
+      cartridge_version: 'Phiên bản hộp mực',
       current_position: 'Vị Trí Hiện Tại',
       disable: 'Tắt',
       document_settings: 'Cài đặt tài liệu',

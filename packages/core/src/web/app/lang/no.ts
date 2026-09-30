@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'Gjelder kun lag med oppløsning på 250 DPI eller høyere.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Åpen bunn',
+      cartridge_version: 'Patronversjon',
       current_position: 'Gjeldende Posisjon',
       disable: 'Deaktiver',
       document_settings: 'Dokumentinnstillinger',

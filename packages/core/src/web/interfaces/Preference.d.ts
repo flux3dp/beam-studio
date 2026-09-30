@@ -37,6 +37,8 @@ export type DocumentState = {
   'rotary-y': null | number;
   rotary_mode: boolean;
   skip_prespray: boolean;
+  /** Dev only: cartridge with M/Y slots swapped (CYMK) */
+  'swap-4c-ink-order'?: boolean;
   workarea: WorkAreaModel;
   'workarea-annotation'?: ModelAnnotation;
 };

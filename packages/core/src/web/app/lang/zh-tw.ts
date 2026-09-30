@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: '僅套用於解析度大於 250 DPI（含）的圖層。',
       auto_shrink_url: 'https://support.flux3dp.com/hc/zh-tw/articles/12997377035919',
       borderless_mode: '開蓋模式',
+      cartridge_version: '墨水匣版本',
       current_position: '當前位置',
       disable: '關閉',
       document_settings: '文件設定',

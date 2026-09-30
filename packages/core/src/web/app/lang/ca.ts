@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: "Només s'aplica a capes amb una resolució superior o igual a 250 DPI.",
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Fons obert',
+      cartridge_version: 'Versió del cartutx',
       current_position: 'Posició actual',
       disable: 'Deshabilitar',
       document_settings: 'Configuració del document',

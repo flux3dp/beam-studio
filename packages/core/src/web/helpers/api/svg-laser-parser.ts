@@ -284,6 +284,8 @@ export const getExportOpt = async (
 
   if (isDevMode && globalPreference['enable-custom-backlash']) config.cbl = true;
 
+  if (documentState['swap-4c-ink-order']) config.ico = 'cymk';
+
   let printingTopPadding: number | undefined = undefined;
   let printingBotPadding: number | undefined = undefined;
 

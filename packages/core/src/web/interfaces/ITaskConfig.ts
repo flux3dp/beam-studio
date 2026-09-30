@@ -69,6 +69,10 @@ export type TFcodeOptionalConfig = Partial<{
   expected_module?: number;
   fg: boolean;
   gc: boolean; // output gcode
+  /**
+   * 4C ink color order by cartridge slot, e.g. 'cymk' (default cmyk)
+   */
+  ico: string;
   job_origin: [number, number];
   loop_compensation: number;
   /**

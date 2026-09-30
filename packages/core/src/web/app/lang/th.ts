@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'ใช้กับเลเยอร์ที่มีความละเอียดตั้งแต่ 250 DPI ขึ้นไปเท่านั้น',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'โหมดเปิดก้น',
+      cartridge_version: 'เวอร์ชันตลับหมึก',
       current_position: 'ตำแหน่งปัจจุบัน',
       disable: 'ปิดใช้งาน',
       document_settings: 'การตั้งค่าเอกสาร',

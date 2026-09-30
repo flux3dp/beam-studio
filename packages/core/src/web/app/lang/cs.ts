@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'Platí pouze pro vrstvy s rozlišením 250 DPI nebo vyšším.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Otevřít spodní část',
+      cartridge_version: 'Verze kazety',
       current_position: 'Aktuální pozice',
       disable: 'Zakázat',
       document_settings: 'Nastavení dokumentu',

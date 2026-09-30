@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'Koskee vain tasoja, joiden resoluutio on vähintään 250 DPI.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Avoin pohja',
+      cartridge_version: 'Kasetin versio',
       current_position: 'Nykyinen Sijainti',
       disable: 'Poista käytöstä',
       document_settings: 'Asiakirjan asetukset',

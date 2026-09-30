@@ -82,6 +82,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   simplify_clipper_path: false,
   skip_prespray: false,
   snap_to_object_center: true,
+  'swap-4c-ink-order': false,
   'use-real-boundary': false,
   'use-union-boundary': true,
   use_ga_reorder: true,

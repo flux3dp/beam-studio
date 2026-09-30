@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'Solo se aplica a capas con una resolución mayor o igual a 250 DPI.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Fondo abierto',
+      cartridge_version: 'Versión del cartucho',
       current_position: 'Posición actual',
       disable: 'Deshabilitar',
       document_settings: 'Configuración del documento',
