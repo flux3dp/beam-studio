@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'Dotyczy tylko warstw o rozdzielczości 250 DPI lub wyższej.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Otwarte dno',
+      cartridge_version: 'Wersja kartridża',
       current_position: 'Aktualna Pozycja',
       disable: 'Wyłącz',
       document_settings: 'Ustawienia dokumentu',

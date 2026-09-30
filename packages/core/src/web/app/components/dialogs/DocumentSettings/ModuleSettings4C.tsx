@@ -3,9 +3,9 @@ import { useState } from 'react';
 import { Checkbox } from 'antd';
 
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
-import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ModuleSettings4C.module.scss';
@@ -74,13 +74,18 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
             {tDocument.enable_nozzle_refresh_area}
           </Checkbox>
         </div>
-        {isDev() && (
-          <div>
-            <Checkbox checked={swapInkOrder} onChange={(e) => setSwapInkOrder(e.target.checked)}>
-              Swap ink order (CYMK cartridge)
-            </Checkbox>
-          </div>
-        )}
+        <div className={styles.row}>
+          <span>{tDocument.cartridge_version}</span>
+          <Select
+            className={styles.select}
+            onChange={(version) => setSwapInkOrder(version === 2)}
+            options={[
+              { label: 'V1', value: 1 },
+              { label: 'V2', value: 2 },
+            ]}
+            value={swapInkOrder ? 2 : 1}
+          />
+        </div>
       </div>
     </DraggableModal>
   );

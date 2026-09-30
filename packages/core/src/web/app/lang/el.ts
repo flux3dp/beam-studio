@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'Ισχύει μόνο για επίπεδα με ανάλυση μεγαλύτερη ή ίση με 250 DPI.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Ανοιχτό κάτω μέρος',
+      cartridge_version: 'Έκδοση κασέτας',
       current_position: 'Τρέχουσα Θέση',
       disable: 'Απενεργοποίηση',
       document_settings: 'Ρυθμίσεις εγγράφου',

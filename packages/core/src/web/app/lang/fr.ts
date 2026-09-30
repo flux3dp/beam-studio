@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: "S'applique uniquement aux calques avec une résolution supérieure ou égale à 250 DPI.",
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Mode sans bordure',
+      cartridge_version: 'Version de la cartouche',
       current_position: 'Position Actuelle',
       disable: 'Désactiver',
       document_settings: 'Paramètres du document',

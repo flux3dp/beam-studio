@@ -221,6 +221,7 @@ const lang: ILang = {
       auto_shrink_tooltip: 'Hanya berlaku untuk lapisan dengan resolusi lebih besar atau sama dengan 250 DPI.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Buka Bawah',
+      cartridge_version: 'Versi kartrid',
       current_position: 'Posisi Saat Ini',
       disable: 'Nonaktifkan',
       document_settings: 'Pengaturan Dokumen',

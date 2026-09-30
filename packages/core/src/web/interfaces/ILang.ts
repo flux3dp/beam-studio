@@ -221,6 +221,7 @@ export interface ILang {
       auto_shrink_tooltip: string;
       auto_shrink_url: string;
       borderless_mode: string;
+      cartridge_version: string;
       current_position: string;
       disable: string;
       document_settings: string;
