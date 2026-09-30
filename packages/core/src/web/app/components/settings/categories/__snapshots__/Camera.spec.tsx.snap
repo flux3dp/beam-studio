@@ -55,7 +55,7 @@ exports[`test Camera settings should render correctly 1`] = `
     label:
     AI Contour Detection
     url:
-    tooltip:Use an AI model to find objects in the camera preview. More accurate on textured materials, but slower on older computers; turn off to use classic detection. Used by Auto Fit.
+    tooltip:Use an AI model to find objects in the camera preview. More accurate on textured materials, but slower on older computers; turn off to use classic detection. Used by Auto Fit and Snap to Object Center.
     checked:
     false
     disabled:

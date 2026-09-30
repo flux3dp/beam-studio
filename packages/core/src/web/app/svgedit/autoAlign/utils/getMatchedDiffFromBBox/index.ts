@@ -1,18 +1,11 @@
 import { match, P } from 'ts-pattern';
 
+import autoAlign from '@core/app/svgedit/autoAlign';
 import round from '@core/helpers/math/round';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { isSameTarget } from './isSameTarget';
 import { isValidMatch } from './isValidMatch';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 type Matched = Record<'farthest' | 'nearest', Record<'x' | 'y', IPoint | null>>;
 type PointSet = Record<'x' | 'y', IPoint | null>;
@@ -22,7 +15,7 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
 
   if (!currentBoundingBox.length) return { x: dx, y: dy };
 
-  const matchPoints = currentBoundingBox.map(({ x, y }) => svgCanvas.findMatchedAlignPoints(x + dx, y + dy));
+  const matchPoints = currentBoundingBox.map(({ x, y }) => autoAlign.findMatchedAlignPoints(x + dx, y + dy));
   const center = { x: currentBoundingBox[1].x + dx, y: currentBoundingBox[3].y + dy };
   const target: IPoint = { x: current.x, y: current.y };
   // map string is the matched point and matched by(dimension)
@@ -99,9 +92,9 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
 
       const startPoint = { x: nearest.x?.x ?? nearest.y?.x ?? x, y: nearest.y?.y ?? nearest.x?.y ?? y };
 
-      svgCanvas.drawAlignLine(pos[0], pos[1], nearest.x, nearest.y, (index + 1) * 10 + i * 2);
+      autoAlign.drawAlignLine(pos[0], pos[1], nearest.x, nearest.y, (index + 1) * 10 + i * 2);
       // farthest point
-      svgCanvas.drawAlignLine(startPoint.x, startPoint.y, farthest.x, farthest.y, (index + 1) * 10 + i * 2 + 1);
+      autoAlign.drawAlignLine(startPoint.x, startPoint.y, farthest.x, farthest.y, (index + 1) * 10 + i * 2 + 1);
     }
 
     // if aligned, move the nearest point to the target point by the difference of the bbox
@@ -136,13 +129,13 @@ export function getMatchedDiffFromBBox(currentBoundingBox: IPoint[], current: IP
     ];
   };
 
-  svgCanvas.addAlignEdges(estimateBboxEdges());
+  autoAlign.addAlignEdges(estimateBboxEdges());
 
   nearestLines.forEach(([[tx, ty], { x, y }, i]) => {
-    svgCanvas.drawAlignLine(tx, ty, x, y, i);
+    autoAlign.drawAlignLine(tx, ty, x, y, i);
   });
 
-  svgCanvas.removeAlignEdges(4);
+  autoAlign.removeAlignEdges(4);
 
   return { x: target.x - start.x, y: target.y - start.y };
 }

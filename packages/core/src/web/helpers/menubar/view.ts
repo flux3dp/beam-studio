@@ -42,6 +42,15 @@ const toggleRulers = (): boolean => {
   return newVal;
 };
 
+const toggleSnapToObjectCenter = (): boolean => {
+  const { set, snap_to_object_center: value } = useGlobalPreferenceStore.getState();
+  const newVal = !value;
+
+  set('snap_to_object_center', newVal);
+
+  return newVal;
+};
+
 const observer = new ResizeObserver(workareaManager.resetView);
 
 const updateZoomWithWindow = (value: boolean): void => {
@@ -105,6 +114,7 @@ export default {
   toggleGrid,
   toggleLayerColor,
   toggleRulers,
+  toggleSnapToObjectCenter,
   toggleZoomWithWindow,
   updateZoomWithWindow,
 };

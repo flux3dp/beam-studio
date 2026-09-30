@@ -114,10 +114,23 @@ afterwards. Small fixes and single-file changes do not need one.
   PRD for another repo belongs next to it (see `work-manager.md` + `machine-task-queue-firmware.md`).
 - **Header table** at the top: Status, Author, Created, Target product, Owner area, Related code
   (real paths), plus Companion PRD / External repos / Playground when they apply.
-- **Body**: Summary → Background & current state → Goals & non-goals → Scenarios → Design →
-  Data contracts → Performance/packaging where relevant → Rollout (PR plan) → Open decisions →
-  Risks & follow-ups → Test plan. Keep the design grounded in the codebase: every claim about
-  existing code names a file and, where useful, a line; verify it before writing it down.
+- **Body**: Summary → Background & current state → Goals & non-goals → Scenarios →
+  Acceptance criteria → Must not change → Design → Data contracts → Performance/packaging where
+  relevant → Rollout (PR plan) → Open decisions → Risks & follow-ups → Test plan. Keep the design grounded
+  in the codebase: every claim about existing code names a file and, where useful, a line;
+  verify it before writing it down.
+- **Acceptance criteria**: for each scenario, state how to operate it (entry point, steps,
+  inputs), the observable result that means it is done, and the edge cases with their expected
+  behaviour. Write them so a human or an agent who did not build the feature can verify it
+  without reading the code; the Test plan maps onto them.
+- **Must not change**: the regression contract. Acceptance criteria say what the feature does;
+  this section says what the rest of the app must keep doing. Fill it from the blast radius, not
+  from imagination: list every existing shared file or function the design will touch (anything
+  outside the feature's own folder), and for each one its callers with the behaviour that must
+  stay the same, one line per caller (`caller — expected behaviour`). Write it before coding and
+  update it as the diff grows; reviewers check it against `git diff --stat` and the
+  `feature-review` skill, so a touched shared file that is not listed here is a review finding.
+  A feature that only adds new files can say "none" — but say it.
 - **Living document**: edit in place rather than appending. Number the open decisions; when one
   is settled, strike it through and record the outcome with the date instead of deleting it.
   Update the Status row and measured numbers as the work lands.

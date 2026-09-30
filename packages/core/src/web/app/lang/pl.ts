@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Łączenie z kamerą...',
     connectingMachine: 'Łączenie %s...',
     connectionTimeout: '#805 Upłynął limit czasu połączenia urządzenia. Sprawdź stan sieci i wskaźnik Wi-Fi urządzenia.',
+    detecting_objects: 'Wykrywanie obiektów w podglądzie…',
     device_blocked: {
       caption: 'Nieautoryzowany numer seryjny',
       offline: 'Numer seryjny urządzenia jest ograniczony do użytku offline, ponieważ wydaje się być dezaktywowany. Proszę podać numer seryjny urządzenia (znajdujący się z tyłu urządzenia) swojemu sprzedawcy i poprosić go o kontakt z support@flux3dp.com w celu aktywacji autoryzacji online. Jeśli chcesz używać urządzenia offline, skontaktuj się bezpośrednio z support@flux3dp.com.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Ten Mac używa Apple Silicon. Pobierz wersję Apple Silicon i zainstaluj ponownie.',
     },
     need_password: 'Potrzebujesz hasła, aby połączyć się z urządzeniem',
+    object_detection_failed: 'Wykrywanie obiektów nie powiodło się; przyciąganie do obiektów jest niedostępne dla tego podglądu.',
+    objects_detected: 'Wykryto obiekty',
     please_enter_dpi: 'Wprowadź jednostkę swojego pliku (in mm)',
     preview: {
       adjust: 'Regulować',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Wykrywanie kontur przez AI',
-    ai_contour_detection_tooltip: 'Używa modelu AI do wykrywania obiektów w podglądzie kamery. Dokładniejsze na materiałach z teksturą, ale wolniejsze na starszych komputerach; wyłącz, aby użyć klasycznego wykrywania. Używane przez: Dopasowanie Automatyczne.',
+    ai_contour_detection_tooltip: 'Używa modelu AI do wykrywania obiektów w podglądzie kamery. Dokładniejsze na materiałach z teksturą, ale wolniejsze na starszych komputerach; wyłącz, aby użyć klasycznego wykrywania. Używane przez: Dopasowanie Automatyczne, Przyciągaj do środka obiektu.',
     anti_aliasing: 'Wygładzanie krawędzi',
     auto_connect: 'Automatycznie wybierz jedyną maszynę',
     auto_switch_tab: 'Automatyczne przełączanie między panelem warstw a panelem obiektów',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Pokaż miarki',
       show_start_tutorial: 'Pokaż samouczek startowy',
       show_ui_intro: 'Pokaż wprowadzenie do interfejsu',
+      snap_to_object_center: 'Przyciągaj do środka obiektu',
       software_update: 'Aktualizacja oprogramowania',
       svg_edit: 'SVG',
       switch_to_beta: 'Przełącz na Wersję Beta',

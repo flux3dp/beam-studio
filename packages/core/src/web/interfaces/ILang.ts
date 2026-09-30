@@ -2031,6 +2031,7 @@ export interface ILang {
     connectingCamera: string;
     connectingMachine: string;
     connectionTimeout: string;
+    detecting_objects: string;
     device_blocked: {
       caption: string;
       offline: string;
@@ -2061,6 +2062,8 @@ export interface ILang {
       message: string;
     };
     need_password: string;
+    object_detection_failed: string;
+    objects_detected: string;
     please_enter_dpi: string;
     preview: {
       adjust: string;
@@ -2836,6 +2839,7 @@ export interface ILang {
       show_rulers: string;
       show_start_tutorial: string;
       show_ui_intro: string;
+      snap_to_object_center: string;
       software_update: string;
       svg_edit: string;
       switch_to_beta: string;

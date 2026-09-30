@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Connexion de la caméra...',
     connectingMachine: 'Connexion de %s en cours...',
     connectionTimeout: "#805 Délai de connexion du périphérique. Veuillez vérifier l'état de votre réseau et le voyant Wi-Fi de votre machine.",
+    detecting_objects: "Détection des objets dans l'aperçu…",
     device_blocked: {
       caption: 'Numéro de série non autorisé',
       offline: "Le numéro de série de votre appareil est limité à une utilisation hors ligne car il semble être désactivé. Veuillez fournir le numéro de série de la machine (situé à l'arrière de l'appareil) à votre revendeur et demandez-lui de contacter support@flux3dp.com pour activer l'autorisation en ligne. Si vous souhaitez utiliser l'appareil hors ligne, veuillez contacter directement support@flux3dp.com.",
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Ce Mac utilise Apple Silicon. Téléchargez la version Apple Silicon et réinstallez.',
     },
     need_password: 'Mot de passe requis pour se connecter à la machine',
+    object_detection_failed: "La détection des objets a échoué ; l'accrochage aux objets n'est pas disponible pour cet aperçu.",
+    objects_detected: 'Objets détectés',
     please_enter_dpi: "Veuillez entrer l'unité de votre fichier (en mm)",
     preview: {
       adjust: 'Ajuster',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Détection de contours par IA',
-    ai_contour_detection_tooltip: 'Utilise un modèle d’IA pour repérer les objets dans l’aperçu caméra. Plus précis sur les matériaux texturés, mais plus lent sur les ordinateurs anciens ; désactivez pour utiliser la détection classique. Utilisé par : Ajustement Automatique.',
+    ai_contour_detection_tooltip: 'Utilise un modèle d’IA pour repérer les objets dans l’aperçu caméra. Plus précis sur les matériaux texturés, mais plus lent sur les ordinateurs anciens ; désactivez pour utiliser la détection classique. Utilisé par : Ajustement Automatique, Aligner sur le centre de l’objet.',
     anti_aliasing: 'Anticrénelage',
     auto_connect: 'Sélectionner automatiquement la seule machine',
     auto_switch_tab: "Changement automatique entre le panneau de calques et d'objets",
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Afficher les règles',
       show_start_tutorial: 'Afficher le didacticiel de démarrage',
       show_ui_intro: "Afficher l'introduction à l'interface",
+      snap_to_object_center: 'Aligner sur le centre de l’objet',
       software_update: 'Mise à jour du logiciel',
       svg_edit: 'SVG',
       switch_to_beta: 'Passer à la version bêta',

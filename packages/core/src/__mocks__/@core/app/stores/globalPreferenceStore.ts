@@ -51,6 +51,7 @@ const state: GlobalPreference = {
   show_guides: false,
   show_rulers: false,
   simplify_clipper_path: false,
+  snap_to_object_center: true,
   'use-real-boundary': false,
   'use-union-boundary': true,
   use_layer_color: true,
