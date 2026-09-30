@@ -260,7 +260,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
         },
       ].filter(Boolean),
     },
-    isHexaRf &&
+    (isHexaRf || isHexa2Galvo) &&
       isDevMode && {
         click: handleClick,
         id: 'LASER_DELAY_SETTING',
