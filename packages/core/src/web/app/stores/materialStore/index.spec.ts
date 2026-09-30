@@ -4,6 +4,7 @@ import type { Material } from '@core/interfaces/IMaterial';
 
 import { initMaterialStore, resetMaterialStoreInit, useMaterialStore } from './index';
 import { convertLegacyPresets } from './migration';
+import { toUserData } from './utils';
 
 // Capture the store's storage subscription so a test can replay a cross-tab update.
 // The factory runs while imports are hoisted, so the list lives on the mock module itself.
@@ -316,6 +317,50 @@ describe('materialStore actions', () => {
 
     expect(copy.id).not.toBe('p1');
     expect(disabledPresetIds).toEqual([copy.id]);
+  });
+
+  test('export → import round-trips the library; importing it again duplicates with fresh ids', () => {
+    const store = useMaterialStore.getState();
+
+    store.addMaterial(userMaterial('m1'));
+    store.addVariant('m1', { id: 'v1', thicknessNum: 3, thicknessUnit: 'mm' });
+    store.addPreset('m1', {
+      id: 'p1',
+      name: 'Cut',
+      origin: 'user',
+      settings: { '*': { '*': { power: 50 } } },
+      variantId: 'v1',
+    });
+    store.updatePreset('wood_engraving', 'fbb2', '15', { power: 60 });
+    store.pinVariant('wood-8mm');
+    store.togglePresetDisabled('p1');
+
+    const seed = toUserData(useMaterialStore.getState());
+    // Through the file format: what exportMaterialLibrary writes and importMaterialLibrary parses
+    const file = JSON.parse(JSON.stringify(useMaterialStore.getState().getExportData()));
+
+    useMaterialStore.setState(useMaterialStore.getInitialState(), true);
+    useMaterialStore.getState().importData(file);
+
+    expect(toUserData(useMaterialStore.getState())).toEqual(seed);
+
+    useMaterialStore.getState().importData(file);
+
+    const { disabledPresetIds, pinnedVariantIds, presetOverrides, userMaterials, userPresets, userVariants } =
+      useMaterialStore.getState();
+    const [, copyMaterial] = userMaterials;
+    const [, copyVariant] = userVariants;
+    const [, copyPreset] = userPresets;
+
+    expect(userMaterials).toHaveLength(2);
+    expect(copyMaterial.id).not.toBe('m1');
+    expect(copyVariant).toMatchObject({ materialId: copyMaterial.id });
+    expect(copyVariant.id).not.toBe('v1');
+    expect(copyPreset).toMatchObject({ materialId: copyMaterial.id, variantId: copyVariant.id });
+    expect(copyPreset.id).not.toBe('p1');
+    expect(disabledPresetIds.sort()).toEqual(['p1', copyPreset.id].sort());
+    expect(pinnedVariantIds).toEqual(['wood-8mm']);
+    expect(presetOverrides).toEqual(seed.presetOverrides);
   });
 
   test('a storage update from another tab replaces the in-memory user data', () => {
