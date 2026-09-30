@@ -38,6 +38,8 @@ export type DocumentState = {
   'rotary-y': null | number;
   rotary_mode: boolean;
   skip_prespray: boolean;
+  /** Dev only: cartridge with M/Y slots swapped (CYMK) */
+  'swap-4c-ink-order'?: boolean;
   workarea: WorkAreaModel;
   'workarea-annotation'?: ModelAnnotation;
 };
@@ -53,6 +55,7 @@ export type GlobalPreference = {
   'auto-switch-tab': boolean;
   auto_align: boolean;
   continuous_drawing: boolean;
+  'contour-engine': 'onnx' | 'opencv';
   'crop-task-thumbnail': boolean;
   'default-autofocus': boolean;
   'default-borderless': boolean;
@@ -96,6 +99,8 @@ export type GlobalPreference = {
   show_guides: boolean;
   show_rulers: boolean;
   simplify_clipper_path: boolean;
+  /** Auto Align also snaps to objects detected in the camera preview */
+  snap_to_object_center: boolean;
   /**
    * Auto turn on auto-exposure if possible when previewing
    */

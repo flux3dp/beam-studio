@@ -65,6 +65,7 @@ const getInitDocumentStore = (): DocumentState => {
     'rotary-y': preference['rotary-y'],
     rotary_mode: isRotaryEnabled,
     skip_prespray: Boolean(preference['skip_prespray']),
+    'swap-4c-ink-order': Boolean(preference['swap-4c-ink-order']),
     workarea: defaultWorkarea,
     'workarea-annotation': preference['model-annotation'],
   };

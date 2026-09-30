@@ -1,0 +1,33 @@
+@use '@core/styles/variables' as variables;
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.desc {
+  color: variables.$secondary-gray;
+  white-space: pre-line;
+}
+
+// one-line caveat under a button, quieter than the step description
+.hint {
+  color: variables.$secondary-gray;
+  font-size: 12px;
+}
+
+// label / input pairs on one line, spread across the width so the inputs line up
+.row {
+  display: flex;
+  gap: 8px 12px;
+  justify-content: space-between;
+  align-items: center;
+}
+
+// the widget centers the unit vertically for a 24px input; the default 32px antd input needs its own line box
+.unit {
+  top: 0;
+  right: 8px;
+  line-height: 32px;
+}

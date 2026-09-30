@@ -10,6 +10,7 @@ import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
 import type { ImageDimension } from './dimension';
@@ -60,7 +61,10 @@ const getImageUrl = async (
     updateElementColor(useElement);
   });
 
-  const svgStr = new XMLSerializer().serializeToString(clonedSvgContent);
+  const fontFaceCss = await buildWebFontFaceCss([clonedSvgContent]);
+  const svgStr = new XMLSerializer()
+    .serializeToString(clonedSvgContent)
+    .replace(/<svg[^>]*>/, (svgTag) => svgTag + fontFaceCss);
   const canvas = await svgStringToCanvas(svgStr, width + 2, height + 2);
 
   return canvas.toDataURL();

@@ -1,17 +1,10 @@
+import autoAlign from '@core/app/svgedit/autoAlign';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import isDev from '@core/helpers/is-dev';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand, IHistoryHandler, IUndoManager } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import type { BaseHistoryCommand } from './history';
 import history from './history';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 const isDevMode = isDev();
 
@@ -99,7 +92,7 @@ export class UndoManager implements IUndoManager {
     // try to revise this function that accept plugin
     if (!isInitCommand) {
       currentFileManager.setHasUnsavedChanges(true);
-      svgCanvas.collectAlignPoints();
+      autoAlign.collectAlignPoints();
     }
   }
 

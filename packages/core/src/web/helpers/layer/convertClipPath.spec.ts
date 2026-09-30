@@ -255,6 +255,24 @@ describe('convertClipPath', () => {
 
       expect(item.bounds.toString()).toBe(new paper.Rectangle(50, 50, 50, 50).toString());
     });
+
+    test('should keep a hole that lies inside the clipped area', async () => {
+      // Outer 0..100 square and inner 20..40 square wound the opposite way: a nonzero hole. The outer
+      // runs counter-clockwise (negative paper area), the way Illustrator exports usually come in
+      buildDom({
+        clipPath: '<rect x="0" y="0" width="50" height="100"/>',
+        content: `<g clip-path="url(#def1)"><path id="target" d="M0,0 V100 H100 V0 Z M20,20 H40 V40 H20 Z" fill="#000000"/></g>`,
+      });
+      await convertClipPath();
+
+      const item = paper.PathItem.create(getResultPaths()[0].getAttribute('d'));
+
+      // Regression: clipping each subpath on its own reoriented the outer piece, so the untouched
+      // hole ended up with the same winding and got filled
+      expect(item.contains(new paper.Point(30, 30))).toBe(false);
+      expect(item.contains(new paper.Point(10, 10))).toBe(true);
+      expect(item.contains(new paper.Point(60, 60))).toBe(false);
+    });
   });
 
   describe('clip path resolution', () => {

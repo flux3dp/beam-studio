@@ -22,33 +22,43 @@ export const checkNounProjectElements = (): Promise<boolean> => {
   });
 };
 
-export const removeNPElementsWrapper = <T>(fn: () => T) => {
+type Detached = { elem: Element; nextSibling: Node | null; parentNode: Node };
+
+/**
+ * Run `fn` with every Noun Project shape taken off the canvas, then put it all back.
+ *
+ * This is what `checkNounProjectElements` promises the user: shapes from the Noun Project are
+ * protected artwork, so an export must not carry their vector data. Noun Project imports are
+ * flattened into paths before they reach the canvas, so detaching those marked paths is sufficient.
+ *
+ * Awaits `fn`: a synchronous wrapper would put everything back before an async `fn` reached the
+ * serialization it was meant to exclude them from.
+ */
+export const removeNPElementsWrapper = async <T>(fn: () => Promise<T> | T): Promise<T> => {
   const svgContent = document.getElementById('svgcontent')!;
-  const npElements = svgContent.querySelectorAll('[data-np="1"]');
-  const removedElements = Array.of<{ elem: Element; nextSibling: Element; parentNode: Element }>();
+  // Keep legacy grouped scenes safe too: detaching an outer marked element takes its descendants along.
+  const npElements = Array.from(svgContent.querySelectorAll('[data-np="1"]')).filter(
+    (elem) => !elem.parentElement?.closest('[data-np="1"]'),
+  );
+  const detached: Detached[] = [];
+  const detach = (elem: Element) => {
+    detached.push({ elem, nextSibling: elem.nextSibling, parentNode: elem.parentNode! });
+    elem.remove();
+  };
 
-  for (const elem of npElements) {
-    const parentNode = elem.parentNode as Element;
+  npElements.forEach(detach);
 
-    if (parentNode && parentNode.getAttribute('data-np') === '1') {
-      const nextSibling = elem.nextSibling as Element;
+  try {
+    return await fn();
+  } finally {
+    for (let i = detached.length - 1; i >= 0; i--) {
+      const { elem, nextSibling, parentNode } = detached[i];
 
-      removedElements.push({ elem, nextSibling, parentNode });
-      elem.remove();
+      try {
+        parentNode.insertBefore(elem, nextSibling);
+      } catch {
+        parentNode.appendChild(elem);
+      }
     }
   }
-
-  const res = fn();
-
-  for (let i = removedElements.length - 1; i >= 0; i--) {
-    const { elem, nextSibling, parentNode } = removedElements[i];
-
-    try {
-      parentNode.insertBefore(elem, nextSibling);
-    } catch {
-      parentNode.appendChild(elem);
-    }
-  }
-
-  return res;
 };

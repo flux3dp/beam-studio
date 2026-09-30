@@ -221,6 +221,7 @@ export interface ILang {
       auto_shrink_tooltip: string;
       auto_shrink_url: string;
       borderless_mode: string;
+      cartridge_version: string;
       current_position: string;
       disable: string;
       document_settings: string;
@@ -569,6 +570,7 @@ export interface ILang {
       disassemble_use: {
         clip_path_warning: string;
         execute_time_warning: string;
+        variable_text_warning: string;
       };
       dxf_bounding_box_size_over: string;
       dxf_paste_failed: string;
@@ -990,6 +992,7 @@ export interface ILang {
           disabled_by_gradient: string;
           disabled_by_infilled: string;
           disabled_by_infilled_and_variable_text: string;
+          disabled_by_noun_project: string;
           disabled_by_variable_text: string;
           disassemble_use: string;
           disassembling: string;
@@ -2126,6 +2129,7 @@ export interface ILang {
     connectingCamera: string;
     connectingMachine: string;
     connectionTimeout: string;
+    detecting_objects: string;
     device_blocked: {
       caption: string;
       offline: string;
@@ -2156,6 +2160,8 @@ export interface ILang {
       message: string;
     };
     need_password: string;
+    object_detection_failed: string;
+    objects_detected: string;
     please_enter_dpi: string;
     preview: {
       adjust: string;
@@ -2368,6 +2374,23 @@ export interface ILang {
       success: string;
     };
     backend_outdated: string;
+    calibration: {
+      align_desc: string;
+      aligned: string;
+      auto_read: string;
+      auto_read_failed: string;
+      auto_read_hint: string;
+      current_offset: string;
+      export_pdf: string;
+      power: string;
+      print_desc: string;
+      reading_desc: string;
+      reading_x: string;
+      reading_y: string;
+      scratch: string;
+      speed: string;
+      title: string;
+    };
     continue_to_alignment: string;
     cutting_layer_name: string;
     design_changed: string;
@@ -2531,6 +2554,8 @@ export interface ILang {
     unable_to_connect: string;
   };
   settings: {
+    ai_contour_detection: string;
+    ai_contour_detection_tooltip: string;
     anti_aliasing: string;
     auto_connect: string;
     auto_switch_tab: string;
@@ -2772,6 +2797,7 @@ export interface ILang {
       calibrate_camera_advanced: string;
       calibrate_diode_module: string;
       calibrate_ir_module: string;
+      calibrate_print_and_cut: string;
       calibrate_printer_module: string;
       calibrate_wide_angle_camera: string;
       calibration: string;
@@ -2911,6 +2937,7 @@ export interface ILang {
       show_rulers: string;
       show_start_tutorial: string;
       show_ui_intro: string;
+      snap_to_object_center: string;
       software_update: string;
       svg_edit: string;
       switch_to_beta: string;

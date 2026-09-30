@@ -11,6 +11,7 @@ const defaultGlobalPreference = {
   'enable-uv-print-file': true,
   show_grids: true,
   show_rulers: true,
+  snap_to_object_center: true,
   use_layer_color: true,
   zoom_with_window: true,
 };

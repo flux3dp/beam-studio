@@ -12,6 +12,10 @@ jest.mock('../shared/components/SettingSelect');
 jest.mock('../shared/components/SettingFormItem');
 jest.mock('../shared/components/SettingSwitch');
 
+// AI contour detection switch is desktop-with-Swiftray only
+jest.mock('@core/helpers/api/swiftray-client', () => ({ hasSwiftray: true }));
+jest.mock('@core/helpers/is-web', () => () => false);
+
 import Camera from './Camera';
 
 describe('test Camera settings', () => {

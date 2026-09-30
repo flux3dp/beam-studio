@@ -79,6 +79,7 @@
     "@types/jest": "30.0.0",
     "@types/jquery": "^3.5.5",
     "@types/papaparse": "^5.3.16",
+    "@types/pngjs": "^6.0.5",
     "@types/react": "^19.2.13",
     "@types/react-dom": "19.2.3",
     "@types/react-resizable": "^3.0.7",
@@ -90,6 +91,7 @@
     "jest-canvas-mock": "^2.5.2",
     "jest-environment-jsdom": "^29.7.0",
     "jest-fetch-mock": "^3.0.3",
+    "pngjs": "7.0.0",
     "ts-jest": "29.4.6",
     "typescript": "5.9.3"
   }

@@ -295,6 +295,24 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
   });
 
+  test('path from the Noun Project cannot be edited', () => {
+    // licensed artwork: the same reason exports leave it out
+    document.body.innerHTML = '<path id="svg_1" data-np="1" />';
+
+    const { container, getByText } = render(
+      <ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />,
+    );
+
+    expect(container.querySelector('#edit_path')).toBeDisabled();
+
+    fireEvent.click(getByText(tActionPanel.edit_path));
+    expect(pathActions.toEditMode).not.toHaveBeenCalled();
+
+    // the rest of the path actions stay available
+    fireEvent.click(getByText(tActionPanel.decompose_path));
+    expect(decomposePath).toHaveBeenCalledTimes(1);
+  });
+
   test('path', () => {
     document.body.innerHTML = '<path id="svg_1" />';
 
@@ -434,6 +452,31 @@ describe('should render correctly', () => {
       expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
       fireEvent.click(getByText(tActionPanel.smart_nest));
       expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
+    });
+
+    test('multiple selection with use', () => {
+      // Real SVG namespace so nodeName is lowercase, as on the canvas
+      document.body.innerHTML = `
+        <svg>
+          <g id="svg_3" data-tempgroup="true">
+            <use id="svg_1" />
+            <use id="svg_2" />
+          </g>
+        </svg>
+      `;
+
+      const { container, getByText, rerender } = render(
+        <ActionsPanel elem={document.getElementById('svg_3') as unknown as SVGElement} />,
+      );
+
+      expect(container).toMatchSnapshot();
+
+      fireEvent.click(getByText(tActionPanel.disassemble_use));
+      expect(disassembleUse).toHaveBeenCalledTimes(1);
+
+      mockGetVariableTextType.mockReturnValue(VariableTextType.NUMBER);
+      rerender(<ActionsPanel elem={document.getElementById('svg_3') as unknown as SVGElement} />);
+      expect(getByText(tActionPanel.disassemble_use).closest('button')).toBeDisabled();
     });
 
     test('single selection', () => {

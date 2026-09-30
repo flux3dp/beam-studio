@@ -2,6 +2,7 @@ import { dpmm } from '@core/app/actions/beambox/constant';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 
 export const PRINT_AND_CUT_DIALOG_ID = 'print-and-cut';
+export const PRINT_AND_CUT_CALIBRATION_DIALOG_ID = 'print-and-cut-calibration';
 
 export const printAndCutSteps = ['setup', 'paper', 'export', 'align'] as const;
 

@@ -1,3 +1,4 @@
+import type { PncOffset } from '@core/app/components/dialogs/PrintAndCut/calibration/offsetStore';
 import type { ColorConfig } from '@core/app/constants/color-constants';
 import type { History } from '@core/app/contexts/ElementPanelContext';
 import type { IRecord as AnnouncementRecord } from '@core/helpers/announcement-helper';
@@ -59,6 +60,7 @@ export interface Storage {
   materials?: MaterialUserData;
   'new-user': boolean;
   notification: boolean;
+  'pnc-offset-store': Record<string, PncOffset>;
   'poke-ip-addr': string;
   /** For version > 2.3.9, replace 'customizedLaserConfigs' & 'defaultLaserConfigsInUse' */
   presets: Preset[];

@@ -132,8 +132,10 @@ Per swath: positioning moveto (s=0) → image packet → px count →
 
 Image payload: `u32 w | u32 h | u32 x | u32 y` (+4 reserved bytes, single-color
 only — header size follows the sub family), then w columns of pixel bits in sweep
-order, MSB first. Single-color: 1 bit/pixel. 4C: 4 bits/pixel, one per CMYK channel
-(nibble bit 3 = C .. bit 0 = K). Dot pitch is the same in both axes, so row pitch =
+order, MSB first. Single-color: 1 bit/pixel. 4C: 4 bits/pixel, one per cartridge slot
+(nibble bit 3 = slot 0 .. bit 0 = slot 3). Slots hold C, M, Y, K unless the FILE metadata
+key `COLOR_ORDER` (e.g. `cymk`, written by fluxclient when the task was built with
+`-ico`) says otherwise; the per-slot x offsets below never change, only the ink identity. Dot pitch is the same in both axes, so row pitch =
 sweep length / w. Traps (all verified against a real fbm2 export):
 
 - Channels are ALIGNED with each other in payload space (verified by cross-correlation

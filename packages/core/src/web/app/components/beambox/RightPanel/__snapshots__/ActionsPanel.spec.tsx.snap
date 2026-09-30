@@ -348,6 +348,180 @@ exports[`should render correctly g multiple selection 1`] = `
 </div>
 `;
 
+exports[`should render correctly g multiple selection with use 1`] = `
+<div>
+  <div
+    class="panel"
+  >
+    <div
+      class="section"
+    >
+      <div
+        class="section-title"
+      >
+        ACTIONS
+      </div>
+      <div
+        class="btns-container"
+      >
+        <div
+          class="btn-container half"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+            id="offset"
+            title="Offset"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+            <span
+              class="label"
+            >
+              Offset
+            </span>
+          </button>
+        </div>
+        <div
+          class="btn-container half"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+            id="array"
+            title="Array"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+            <span
+              class="label"
+            >
+              Array
+            </span>
+          </button>
+        </div>
+        <div
+          class="btn-container"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+            id="disassemble_use"
+            title="Disassemble"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+            <span
+              class="label"
+            >
+              Disassemble
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="section"
+    >
+      <div
+        class="section-title"
+      >
+        CONVERSIONS
+      </div>
+      <div
+        class="btns-container"
+      >
+        <div
+          class="btn-container"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+            id="to_image"
+            title="To Image"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+            <span
+              class="label"
+            >
+              To Image
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      class="section"
+    >
+      <div
+        class="section-title"
+      >
+        OPTIMIZATIONS
+      </div>
+      <div
+        class="btns-container"
+      >
+        <div
+          class="btn-container"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+            id="smart-nest"
+            title="Smart Nest"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+            <span
+              class="label"
+            >
+              Smart Nest
+            </span>
+          </button>
+        </div>
+        <div
+          class="btn-container"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
+            id="auto-fit"
+            title="Auto Fit"
+            type="button"
+          >
+            <span
+              class="ant-btn-icon"
+            >
+              <svgr-url />
+            </span>
+            <span
+              class="label"
+            >
+              Auto Fit
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`should render correctly g single selection 1`] = `
 <div>
   <div

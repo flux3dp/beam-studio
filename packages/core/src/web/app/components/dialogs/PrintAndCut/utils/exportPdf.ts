@@ -125,9 +125,13 @@ export const exportPrintAndCutPdf = async (): Promise<boolean> => {
   // text is not converted to paths: the render inlines the webfont bytes (see buildWebFontFaceCss) and
   // resolves local fonts exactly like the canvas does, so what prints matches the contour to be cut
   const variableTextRevert = await convertVariableText();
-  const content = await switchSymbolWrapper(() => renderContentBase64(imageHrefs));
+  let content: Awaited<ReturnType<typeof renderContentBase64>>;
 
-  variableTextRevert?.();
+  try {
+    content = await switchSymbolWrapper(() => renderContentBase64(imageHrefs));
+  } finally {
+    variableTextRevert?.();
+  }
 
   if (!content) return false;
 

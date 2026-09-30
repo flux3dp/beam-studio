@@ -1,4 +1,5 @@
 import Constant from '@core/app/actions/beambox/constant';
+import { clearPncOffset } from '@core/app/components/dialogs/PrintAndCut/calibration/offsetStore';
 import { CALIBRATION_PARAMS, DEFAULT_CAMERA_OFFSET } from '@core/app/constants/cameraConstants';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import deviceMaster from '@core/helpers/device-master';
@@ -132,6 +133,8 @@ const doSetConfigTask = async (device, data: CameraConfig, borderless) => {
   } else {
     await deviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX + SY) / 2}`);
   }
+
+  await clearPncOffset(device.serial);
 };
 
 export const sendPictureThenSetConfig = async (
@@ -171,6 +174,9 @@ export const setFisheyeConfig = async (data: FisheyeCameraParameters): Promise<{
     return val;
   });
   const res = await deviceMaster.uploadFisheyeParams(strData, () => {});
+  const serial = deviceMaster.currentDevice?.info.serial;
+
+  if (serial) await clearPncOffset(serial);
 
   return res;
 };

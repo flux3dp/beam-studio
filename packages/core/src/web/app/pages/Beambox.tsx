@@ -49,9 +49,19 @@ const Beambox = (): React.JSX.Element => {
       communicator.on(MenuEvents.NewAppMenu, BeamboxGlobalInteraction.attach);
     }
 
+    // Electron only: trap mouse/trackpad "back" (no address bar to recover from) by duplicating the
+    // current entry so a pop lands on the same route, then re-arm. Web keeps native browser history.
+    const armBackTrap = () => window.history.pushState(null, '', window.location.href);
+
+    if (!isWeb()) {
+      armBackTrap();
+      window.addEventListener('popstate', armBackTrap);
+    }
+
     return () => {
       BeamboxGlobalInteraction.detach();
       communicator.off(MenuEvents.NewAppMenu, BeamboxGlobalInteraction.attach);
+      window.removeEventListener('popstate', armBackTrap);
     };
   }, []);
 

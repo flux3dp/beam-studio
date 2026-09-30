@@ -52,6 +52,11 @@ class BeamboxGlobalInteraction {
       }
     } else if (tagName === 'path') {
       menu.enable(['DECOMPOSE_PATH']);
+    } else if (
+      firstElement.getAttribute('data-tempgroup') === 'true' &&
+      Array.from(firstElement.children).some((child) => child.tagName === 'use')
+    ) {
+      menu.enable(['SVG_EDIT']);
     }
 
     const { canGroup, canUngroupOrDisassemble } = useSelectedElementStore.getState();

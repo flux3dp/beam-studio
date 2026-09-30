@@ -1,6 +1,7 @@
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
+import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
 // TODO: Add unit tests
@@ -21,6 +22,8 @@ const getCanvasImage = async (x: number, y: number, width: number, height: numbe
 
   useElements.forEach((useElement) => symbolMaker.switchImageSymbol(useElement, false));
 
+  const fontFaceCss = await buildWebFontFaceCss([clonedSvgContent]);
+
   const svgString = `
     <svg
       width="${bbox.width}"
@@ -30,6 +33,7 @@ const getCanvasImage = async (x: number, y: number, width: number, height: numbe
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
     >
+      ${fontFaceCss}
       ${svgDefs.outerHTML}
       ${clonedSvgContent.innerHTML}
     </svg>`;

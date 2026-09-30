@@ -10,6 +10,8 @@ import { ARC_TOLERANCE, MITER_LIMIT, SCALE_FACTOR } from '@core/helpers/clipper/
 import { switchSymbolWrapper } from '@core/helpers/file/export/utils/common';
 import { svgStringToCanvas } from '@core/helpers/image/svgStringToCanvas';
 import { buildWebFontFaceCss } from '@core/helpers/image/webFontFaceCss';
+import getMaxStrokeWidth from '@core/helpers/symbol-helper/getMaxStrokeWidth';
+import { convertVariableText } from '@core/helpers/variableText';
 
 import { getContentsLayers } from './contentsLayers';
 
@@ -31,14 +33,11 @@ const offsetContourPaths = async (paths: Path[], delta: number): Promise<null | 
   const ClipperLib = getClipperLib();
 
   try {
-    // normalize orientation so a positive delta offsets outward, and drop
-    // duplicate / near-collinear vertices before offsetting
-    const simplified = ClipperLib.Clipper.SimplifyPolygons(paths, ClipperLib.PolyFillType.pftNonZero) as Path[];
-    let result = ClipperLib.Clipper.CleanPolygons(simplified, 0.05 * SCALE_FACTOR) as Path[];
+    let result: Path[];
     const clipper = new ClipperBase('offset', MITER_LIMIT, ARC_TOLERANCE);
 
     try {
-      await clipper.addPaths(result, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedLine);
+      await clipper.addPaths(paths, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedLine);
       result = (await clipper.execute([], delta)) as Path[];
     } finally {
       clipper.terminate();
@@ -71,54 +70,71 @@ export const clearRasterCache = (): void => {
 };
 
 /**
- * Render all visible layers into one raster of the design bounding box on a
- * transparent background, at canvas resolution (1 raster px == 1 canvas unit).
+ * Render all visible layers into one raster of `rasterBBox` on a transparent
+ * background, at canvas resolution (1 raster px == 1 canvas unit).
  */
-const rasterizeDesign = async (printingContentsBBox: BBox): Promise<Blob | null> => {
-  const width = Math.max(1, Math.ceil(printingContentsBBox.width));
-  const height = Math.max(1, Math.ceil(printingContentsBBox.height));
+const rasterizeDesign = async (rasterBBox: BBox): Promise<Blob | null> => {
+  const width = Math.max(1, Math.ceil(rasterBBox.width));
+  const height = Math.max(1, Math.ceil(rasterBBox.height));
   // serialization must happen inside switchSymbolWrapper: image symbols use blob
   // urls that cannot load in a standalone svg string, so uses are switched to the
   // original vector symbols while the string is built
-  const contentsLayers = getContentsLayers();
-  // the traced silhouette becomes the cut path, so the raster has to use the same faces the
-  // canvas does: the isolated <img> render cannot see the app document's webfonts
-  const fontFaceCss = await buildWebFontFaceCss(contentsLayers);
-  const canvas = await switchSymbolWrapper(() => {
-    const layersHtml = contentsLayers
-      .map((layerGroup) => {
-        const clone = layerGroup.cloneNode(true) as SVGGElement;
+  const canvas = await switchSymbolWrapper(async () => {
+    const revertVariableText = await convertVariableText();
 
-        clone.removeAttribute('clip-path');
-        // content layers can be hidden (tagged by Finish)
-        clone.removeAttribute('display');
+    try {
+      const contentsLayers = getContentsLayers();
+      // the traced silhouette becomes the cut path, so the raster has to use the same faces the
+      // canvas does: the isolated <img> render cannot see the app document's webfonts
+      const fontFaceCss = await buildWebFontFaceCss(contentsLayers);
+      const layersHtml = contentsLayers
+        .map((layerGroup) => {
+          const clone = layerGroup.cloneNode(true) as SVGGElement;
 
-        return clone.outerHTML;
-      })
-      .join('');
-    const svgString = `
-    <svg
-      width="${width}"
-      height="${height}"
-      viewBox="${printingContentsBBox.x} ${printingContentsBBox.y} ${width} ${height}"
-      xmlns:svg="http://www.w3.org/2000/svg"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlns:xlink="http://www.w3.org/1999/xlink"
-    >
-      ${fontFaceCss}
-      ${findDefs().outerHTML}
-      ${layersHtml}
-    </svg>`;
+          clone.removeAttribute('clip-path');
+          // content layers can be hidden (tagged by Finish)
+          clone.removeAttribute('display');
 
-    return svgStringToCanvas(svgString, width, height);
+          return clone.outerHTML;
+        })
+        .join('');
+      const svgString = `
+      <svg
+        width="${width}"
+        height="${height}"
+        viewBox="${rasterBBox.x} ${rasterBBox.y} ${width} ${height}"
+        xmlns:svg="http://www.w3.org/2000/svg"
+        xmlns="http://www.w3.org/2000/svg"
+        xmlns:xlink="http://www.w3.org/1999/xlink"
+      >
+        ${fontFaceCss}
+        ${findDefs().outerHTML}
+        ${layersHtml}
+      </svg>`;
+
+      return await svgStringToCanvas(svgString, width, height);
+    } finally {
+      revertVariableText?.();
+    }
   });
 
   return new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, 'image/png'));
 };
 
-/** Rasterize the design and trace its silhouette; empty result signals a fallback */
+/**
+ * Rasterize the design (bbox padded so edge strokes survive) and trace its silhouette, in canvas
+ * coordinates; empty result signals a fallback
+ */
 const traceDesignContours = async (printingContentsBBox: BBox): Promise<Array<Array<[number, number]>>> => {
-  const blob = await rasterizeDesign(printingContentsBBox);
+  // getBBox ignores strokes, so pad by half the widest one or edge strokes get clipped
+  const pad = Math.ceil(Math.max(0, ...getContentsLayers().map(getMaxStrokeWidth)) / 2);
+  const rasterBBox = {
+    height: printingContentsBBox.height + 2 * pad,
+    width: printingContentsBBox.width + 2 * pad,
+    x: printingContentsBBox.x - pad,
+    y: printingContentsBBox.y - pad,
+  };
+  const blob = await rasterizeDesign(rasterBBox);
 
   if (!blob) return [];
 
@@ -126,7 +142,7 @@ const traceDesignContours = async (printingContentsBBox: BBox): Promise<Array<Ar
   // default min_area (100 px²) would drop them; epsilon keeps its default (1)
   const { contours } = await getOpenCV().imageContour(blob, { min_area: 1 });
 
-  return contours;
+  return contours.map((contour) => contour.map(([px, py]) => [rasterBBox.x + px, rasterBBox.y + py]));
 };
 
 /** Round-cornered rectangle around the design bbox, used when the backend is unavailable */
@@ -151,7 +167,7 @@ export const computeContourPathD = async (
   printingContentsBBox: BBox | null,
   distanceMm: number,
 ): Promise<null | string> => {
-  if (!printingContentsBBox || printingContentsBBox.width === 0 || printingContentsBBox.height === 0) return null;
+  if (!printingContentsBBox || (printingContentsBBox.width === 0 && printingContentsBBox.height === 0)) return null;
 
   const distancePx = Math.max(1, Math.round(distanceMm * dpmm));
 
@@ -171,10 +187,7 @@ export const computeContourPathD = async (
     if (contours.length === 0) return fallbackRectD(printingContentsBBox, distancePx);
 
     const solutionPaths: Path[] = contours.map((contour) =>
-      contour.map(([px, py]) => ({
-        X: Math.round((printingContentsBBox.x + px) * SCALE_FACTOR),
-        Y: Math.round((printingContentsBBox.y + py) * SCALE_FACTOR),
-      })),
+      contour.map(([x, y]) => ({ X: Math.round(x * SCALE_FACTOR), Y: Math.round(y * SCALE_FACTOR) })),
     );
     const offsetPaths = await offsetContourPaths(solutionPaths, Math.round(distanceMm * dpmm * SCALE_FACTOR));
 

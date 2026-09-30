@@ -77,8 +77,8 @@ const svgToImgUrl = async (data: SvgToImageUrlData) =>
 
       const outCanvas = document.createElement('canvas');
 
-      outCanvas.width = Math.max(1, width);
-      outCanvas.height = Math.max(1, height);
+      outCanvas.width = imgCanvas.width;
+      outCanvas.height = imgCanvas.height;
 
       const outCtx = outCanvas.getContext('2d')!;
 
@@ -153,16 +153,20 @@ const getImageUrl = async ({
 
 const updateImageUrl = (
   imageSymbol: SVGSymbolElement,
-  { bb, fullColor, strokeWidth }: SvgToImageUrlData,
+  { bb, fullColor, imageRatio, strokeWidth }: SvgToImageUrlData,
   imageUrl: string,
 ) => {
   const image = imageSymbol.firstChild as SVGElement;
   const oldImageUrl = image.getAttribute('href');
+  // the raster is bbox + strokeWidth px. Fullcolor strokes are real widths, so the image covers
+  // that margin and matches the vector symbol's extent; laser strokes are zoom-dependent hairlines,
+  // so the image is squeezed into the bbox to keep it stable across zooms
+  const margin = fullColor ? strokeWidth / imageRatio : 0;
 
-  image.setAttribute('x', String(bb.x));
-  image.setAttribute('y', String(bb.y));
-  image.setAttribute('width', String(bb.width));
-  image.setAttribute('height', String(bb.height));
+  image.setAttribute('x', String(bb.x - margin / 2));
+  image.setAttribute('y', String(bb.y - margin / 2));
+  image.setAttribute('width', String(bb.width + margin));
+  image.setAttribute('height', String(bb.height + margin));
   image.setAttribute('href', imageUrl);
 
   const defs = findDefs();

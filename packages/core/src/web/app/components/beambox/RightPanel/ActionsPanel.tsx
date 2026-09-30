@@ -25,6 +25,7 @@ import { autoFit } from '@core/app/svgedit/operations/autoFit';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import selectionManager from '@core/app/svgedit/selection';
 import textEdit from '@core/app/svgedit/text/textedit';
+import { isNounProjectElement } from '@core/app/svgedit/utils/nounProject';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
 import imageEdit from '@core/helpers/image-edit';
@@ -471,6 +472,10 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           () => svgCanvas.pathActions.toEditMode(elem),
           <ActionPanelIcons.EditPath />,
           <ActionPanelIcons.EditPathMobile />,
+          {
+            isDisabled: isNounProjectElement(elem),
+            tooltipIfDisabled: lang.disabled_by_noun_project,
+          },
         ),
         renderButtons(
           'decompose_path',
@@ -586,6 +591,21 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const actionButtons: React.JSX.Element[] = [renderOffsetButton(), renderArrayButton()];
     const conversionButtons: React.JSX.Element[] = [];
     const optimizationButtons: React.JSX.Element[] = [];
+
+    if (children.some((child) => child.nodeName === 'use')) {
+      const isDisassembleDisabled = children.every((child) => getVariableTextType(child) !== VariableTextType.NONE);
+
+      actionButtons.push(
+        renderButtons(
+          'disassemble_use',
+          lang.disassemble_use,
+          () => disassembleUse(),
+          <ActionPanelIcons.Disassemble />,
+          <ActionPanelIcons.DisassembleMobile />,
+          { isDisabled: isDisassembleDisabled, isFullLine: true, tooltipIfDisabled: lang.disabled_by_variable_text },
+        ),
+      );
+    }
 
     const texts = children.filter((child) => child.nodeName === 'text');
     const textCount = texts.length;

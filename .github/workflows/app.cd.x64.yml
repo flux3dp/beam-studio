@@ -67,7 +67,7 @@ jobs:
         uses: ./apps/app/.github/actions/beamify
 
       - name: Install Fluxsvg
-        uses: flux3dp/fluxsvg@2.7.8
+        uses: flux3dp/fluxsvg@2.7.9
 
       - name: Checkout FluxClient
         uses: actions/checkout@v5
@@ -139,5 +139,5 @@ jobs:
           WIN_CODESIGN_CREDENTIAL: ${{ secrets.WIN_CODESIGN_CREDENTIAL }}
           WIN_CODESIGN_SERVER: ${{ secrets.WIN_CODESIGN_SERVER }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SWIFTRAY_DAEMON_VERSION: 1.4.10
+          SWIFTRAY_DAEMON_VERSION: 1.4.11
           SKIP_CODE_SIGN: ${{ github.event.inputs.skip_code_sign }}
