@@ -28,15 +28,45 @@ export const bb2PnPPoints: Points = [
   [30, 70],
 ];
 
+/**
+ * Where fcode/hx2galvo-calibration.fc puts its dots, relative to the head parked at cameraCenter
+ * [440, 180] -- absolute x 200/420 with 255/365 inside, y 200/300 with 225/275 inside.
+ *
+ * Wider than Beambox II's set because HEXA II's head camera sees about 260mm across while the
+ * nozzle blocks the right of that view: the pattern has to reach left to sit centred in what is
+ * left. The first attempt kept Beambox II's 120x80mm pattern, which left 130mm of the view with no
+ * control points at all -- the distortion that showed up on the left of the preview.
+ */
+export const hx2GalvoPnPPoints: Points = [
+  [-240, 20],
+  [-20, 20],
+  [-240, 120],
+  [-20, 120],
+  [-185, 45],
+  [-75, 45],
+  [-185, 95],
+  [-75, 95],
+];
+
 // Share with hexa 2
 export const bb2PerspectiveGrid: PerspectiveGrid = {
   x: [-80, 80, 10],
   y: [0, 100, 10],
 } as const;
 
+export const hx2GalvoPerspectiveGrid: PerspectiveGrid = {
+  x: [-160, 0, 10],
+  y: [0, 100, 10],
+} as const;
+
 // Share with hexa 2
 export const bb2PerspectiveGridWide: PerspectiveGrid = {
   x: [-130, 130, 10],
+  y: [0, 145, 10],
+} as const;
+
+export const hx2GalvoPerspectiveGridWide: PerspectiveGrid = {
+  x: [-260, 0, 10],
   y: [0, 145, 10],
 } as const;
 
@@ -142,16 +172,33 @@ export const bm2FullAreaPerspectiveGrid: PerspectiveGrid = {
 } as const;
 
 /**
- * Perspective grid (= single-shot capture footprint) used by region preview,
- * mirroring RegionPreviewMixin's constructor and Bb2Hx2PreviewManager.switchPreviewMode.
+ * The two region-preview grids each model can use: the plain one, and the wider one an oblique
+ * camera sees in REGION mode. HEXA II's head camera looks to the left of the head rather than
+ * straight down at it, so its pair is shifted rather than centred on the head -- which is why it
+ * cannot share Beambox II's.
+ */
+const regionPreviewGrids: Record<string, { narrow: PerspectiveGrid; wide: PerspectiveGrid }> = {
+  fbb2: { narrow: bb2PerspectiveGrid, wide: bb2PerspectiveGridWide },
+  fbm2: { narrow: bm2PerspectiveGrid, wide: bm2PerspectiveGrid },
+  fhx2galvo: { narrow: hx2GalvoPerspectiveGrid, wide: hx2GalvoPerspectiveGridWide },
+  fhx2rf: { narrow: bb2PerspectiveGrid, wide: bb2PerspectiveGridWide },
+};
+
+/** The models whose region preview is a grid footprint, as opposed to the legacy Beam geometry. */
+export const gridRegionPreviewModels = new Set(Object.keys(regionPreviewGrids));
+
+/**
+ * Perspective grid (= single-shot capture footprint) used by region preview. The one definition:
+ * RegionPreviewMixin, Bb2Hx2PreviewManager and the hover indicator all ask here, so a grid cannot
+ * be right in the capture and wrong in the rectangle drawn under the cursor.
  */
 export const getRegionPreviewGrid = (
   model: string,
   { isCameraOblique = false, mode = PreviewMode.REGION }: { isCameraOblique?: boolean; mode?: PreviewMode } = {},
 ): PerspectiveGrid => {
-  if (model === 'fbm2') return bm2PerspectiveGrid;
+  const { narrow, wide } = regionPreviewGrids[model] ?? regionPreviewGrids.fbb2;
 
-  return isCameraOblique && mode === PreviewMode.REGION ? bb2PerspectiveGridWide : bb2PerspectiveGrid;
+  return isCameraOblique && mode === PreviewMode.REGION ? wide : narrow;
 };
 
 export const getRegionalPoints = (

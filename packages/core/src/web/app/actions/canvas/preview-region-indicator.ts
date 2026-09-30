@@ -2,7 +2,7 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
-import { getRegionPreviewGrid } from '@core/app/constants/fisheyeCameraConstants';
+import { getRegionPreviewGrid, gridRegionPreviewModels } from '@core/app/constants/fisheyeCameraConstants';
 import NS from '@core/app/constants/namespaces';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -13,7 +13,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
 
 // Models whose region preview capture footprint is defined by a perspective grid.
-const gridPreviewModels = ['fbb2', 'fbm2', 'fhx2rf', 'fhx2galvo'];
+
 // Models whose preview only supports full-area capture; no region indicator.
 const fullAreaOnlyModels = new Set(['ado1', ...promarkModels]);
 
@@ -132,7 +132,7 @@ const updateConfig = (): void => {
 
   const isCameraOblique = supportedPreviewModes.includes(PreviewMode.PRECISE_REGION);
 
-  config = gridPreviewModels.includes(model)
+  config = gridRegionPreviewModels.has(model)
     ? getGridConfig(model, getRegionPreviewGrid(model, { isCameraOblique, mode }))
     : getBeamConfig(model);
 };

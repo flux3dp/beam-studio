@@ -1,13 +1,8 @@
-import { match } from 'ts-pattern';
-
-import constant from '@core/app/actions/beambox/constant';
+import constant, { hexa2Models } from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import {
-  bb2PerspectiveGrid,
-  bb2PerspectiveGridWide,
-  bm2PerspectiveGrid,
-} from '@core/app/constants/fisheyeCameraConstants';
+import { getRegionPreviewGrid } from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { getGantryTravelRange } from '@core/helpers/device/gantryTravelRange';
 import i18n from '@core/helpers/i18n';
 import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
 import { MessageLevel } from '@core/interfaces/IMessage';
@@ -24,11 +19,11 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
     constructor(...args: any[]) {
       super(...args);
 
-      this.regionPreviewGrid = match(this.device.model)
-        .with('fbb2', () => bb2PerspectiveGrid)
-        .with('fhx2rf', 'fhx2galvo', () => bb2PerspectiveGridWide)
-        .with('fbm2', () => bm2PerspectiveGrid)
-        .otherwise(() => bb2PerspectiveGrid);
+      // A HEXA II of either kind always has an oblique camera, so it starts on the wide grid; a
+      // Beambox II only learns whether it has one during setup, and swaps then.
+      this.regionPreviewGrid = getRegionPreviewGrid(this.device.model, {
+        isCameraOblique: hexa2Models.has(this.device.model),
+      });
 
       this.regionPreviewOffset = {
         x: this.regionPreviewGrid.x[0] + (this.regionPreviewGrid.x[1] - this.regionPreviewGrid.x[0]) / 2,
@@ -58,9 +53,22 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       if (clipByWorkArea) {
         const { displayHeight, height: origH, width } = getWorkarea(this.workarea);
         const height = displayHeight ?? origH;
+        // Keeping the tile on the bed is not the same as keeping the camera somewhere the gantry can
+        // go: where a head is parked, the right edge of the bed is somewhere it cannot. Clamping
+        // here rather than at the capture means getRegionPreviewTile and the hover indicator show
+        // the tile that will actually be stamped, so the region you cannot photograph looks like it.
+        const travel = getGantryTravelRange(this.workarea);
 
-        newX = Math.min(Math.max(newX, -this.regionPreviewGrid.x[0]), width - this.regionPreviewGrid.x[1]);
-        newY = Math.min(Math.max(newY, -this.regionPreviewGrid.y[0]), height - this.regionPreviewGrid.y[1]);
+        newX = Math.min(
+          Math.max(newX, -this.regionPreviewGrid.x[0], travel.minX),
+          width - this.regionPreviewGrid.x[1],
+          travel.maxX,
+        );
+        newY = Math.min(
+          Math.max(newY, -this.regionPreviewGrid.y[0], travel.minY),
+          height - this.regionPreviewGrid.y[1],
+          travel.maxY,
+        );
       }
 
       return { x: newX, y: newY };

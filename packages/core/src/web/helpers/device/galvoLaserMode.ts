@@ -1,4 +1,5 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { describeControlSocketError } from '@core/helpers/device/controlSocketError';
 import { resetGalvoGoto } from '@core/helpers/device/galvoExec';
 import deviceMaster from '@core/helpers/device-master';
@@ -6,6 +7,8 @@ import isWeb from '@core/helpers/is-web';
 import type { GalvoLaserMode } from '@core/interfaces/IControlSocket';
 
 import type { GalvoModule } from './galvoConfig';
+import { getGalvoHeadConnection } from './galvoHeadConnection';
+import { isGalvoHeadMachine } from './gantryTravelRange';
 
 /**
  * Which laser each galvo head is: the head is fed by whichever laser the machine routes to it, and
@@ -130,6 +133,33 @@ export const connectGalvoHead = async (module: GalvoModule): Promise<void> => {
 export const disconnectGalvoHead = async (): Promise<void> => {
   await enterGalvoControl();
   await applyGalvoLaserMode(DEFAULT_LASER_MODE);
+};
+
+/**
+ * Put the head back in its dock before anything that moves the gantry or uses the red light: the
+ * red light follows the laser path, so with a head connected it comes out of the galvo and lands
+ * somewhere else entirely, and a job engraved through the nozzle would go the same way.
+ *
+ * Asks the limit switches first, because the ask itself is the cheap part: disconnecting homes the
+ * machine and takes tens of seconds, so `onSlow` exists for the caller to say so on screen. Throws
+ * if the head could not be parked -- a caller that carried on regardless would be marking blind.
+ */
+export const ensureGalvoHeadDisconnected = async (
+  model: WorkAreaModel,
+  { onSlow }: { onSlow?: () => void } = {},
+): Promise<void> => {
+  if (!isGalvoHeadMachine(model)) return;
+
+  if ((await getGalvoHeadConnection(model)) === 'disconnected') return;
+
+  onSlow?.();
+
+  try {
+    await disconnectGalvoHead();
+  } finally {
+    // Only what this opened: raw mode cannot be entered while the control task holds the machine.
+    await releaseGalvoControl();
+  }
 };
 
 /**

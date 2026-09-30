@@ -47,6 +47,10 @@ export interface IReport {
 }
 
 export interface IDeviceDetailInfo {
+  /** HEXA II only, bit 0 of the i2c status tail: the cut head's dock switch. See galvoHeadConnection. */
+  cut_limit?: number | string;
+  /** HEXA II only, bit 1: the galvo head's dock switch. Only both together mean anything. */
+  galvo_limit?: number | string;
   head_submodule_info: string;
   head_type: string;
   // detect if the probe is showing for Beambox II
