@@ -336,10 +336,12 @@ describe('test boundaryDrawer', () => {
     registeredEvents.canvas['canvas-change']();
     registeredEvents.globalPreference['use-union-boundary']();
     await waitFor(() => expect(mockOnBoundaryUpdated).toHaveBeenCalled());
+    // Which modules are asked, not in what order: the union is taken by getGantryTravelBoundary,
+    // which walks the supported modules and is order-independent by construction.
     expect(mockGetModuleBoundary).toHaveBeenCalledTimes(3);
-    expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(1, 'fbm2', LayerModule.UV_WHITE_INK);
-    expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(2, 'fbm2', LayerModule.LASER_UNIVERSAL);
-    expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(3, 'fbm2', LayerModule.LASER_1064);
+    expect(mockGetModuleBoundary).toHaveBeenCalledWith('fbm2', LayerModule.UV_WHITE_INK);
+    expect(mockGetModuleBoundary).toHaveBeenCalledWith('fbm2', LayerModule.LASER_UNIVERSAL);
+    expect(mockGetModuleBoundary).toHaveBeenCalledWith('fbm2', LayerModule.LASER_1064);
     expect(boundaryDrawer.boundaries.module).toEqual({ bottom: 211, left: 222, right: 433, top: 444 });
     expect(mockGetModuleOffsets).toHaveBeenCalledTimes(3);
     expect(mockGetModuleOffsets).toHaveBeenNthCalledWith(1, { module: LayerModule.UV_WHITE_INK, workarea: 'fbm2' });

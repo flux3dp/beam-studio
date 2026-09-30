@@ -18,11 +18,10 @@ import {
   LayerModule,
   type LayerModuleType,
 } from '@core/app/constants/layer-module/layer-modules';
-import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { type EngraveDpiOption, getEngraveDpmm } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -32,6 +31,7 @@ import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
 import { getGalvoConfig } from '@core/helpers/device/galvoConfig';
+import { getGantryTravelBoundary } from '@core/helpers/device/gantryTravelRange';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
@@ -141,19 +141,7 @@ export const getExportOpt = async (
     // subtracts half a field itself, so sending the widened value would take it off twice and
     // say nothing about it. Unioned across the modules this document supports, the same way the
     // canvas boundary is -- a head parked on the machine limits travel whatever this job uses.
-    config.galvo_boundary = getSupportedModules(model).reduce(
-      (acc, module) => {
-        const { bottom, left, right, top } = getModuleBoundary(model, module);
-
-        return {
-          bottom: Math.max(acc.bottom, bottom),
-          left: Math.max(acc.left, left),
-          right: Math.max(acc.right, right),
-          top: Math.max(acc.top, top),
-        };
-      },
-      { bottom: 0, left: 0, right: 0, top: 0 },
-    );
+    config.galvo_boundary = getGantryTravelBoundary(model);
 
     // Everything else that governs splitting and seam blending has a default inside the
     // exporter, so only what a developer has actually overridden is sent -- an absent key means
