@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
+import { shallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { MY_MATERIALS_ID, RECENTS_LIMIT } from '@core/app/constants/material-catalog/constants';
-import { getStorage, setStorage } from '@core/app/stores/storageStore';
+import { getStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import { getMaterialDisplayName, getPresetDisplayName } from '@core/helpers/api/material-catalog/utils';
 import i18n from '@core/helpers/i18n';
 import type { Material, PresetModuleKey, PresetScopeKey, UserPreset, UserVariant } from '@core/interfaces/IMaterial';
@@ -343,6 +344,13 @@ export const useMaterialStore = create(
 
     return actions;
   }),
+);
+
+// Sync with other tabs
+useStorageStore.subscribe(
+  (state) => [state.materials, state['material-favorites'], state['material-recents']],
+  () => useMaterialStore.setState(getInitialState()),
+  { equalityFn: shallow },
 );
 
 let initialized = false;

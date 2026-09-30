@@ -5,6 +5,23 @@ import type { Material } from '@core/interfaces/IMaterial';
 import { initMaterialStore, resetMaterialStoreInit, useMaterialStore } from './index';
 import { convertLegacyPresets } from './migration';
 
+// Capture the store's storage subscription so a test can replay a cross-tab update.
+// The factory runs while imports are hoisted, so the list lives on the mock module itself.
+jest.mock('@core/app/stores/storageStore', () => {
+  const mock = jest.requireActual('@mocks/@core/app/stores/storageStore');
+
+  mock.storageListeners = [] as Array<() => void>;
+  mock.useStorageStore.subscribe = (_selector: unknown, listener: () => void) => {
+    mock.storageListeners.push(listener);
+
+    return () => {};
+  };
+
+  return mock;
+});
+
+const storageListeners = (storageStore as unknown as { storageListeners: Array<() => void> }).storageListeners;
+
 const userMaterial = (id: string, overrides: Partial<Material> = {}): Material => ({
   category: 'wood',
   id,
@@ -299,6 +316,21 @@ describe('materialStore actions', () => {
 
     expect(copy.id).not.toBe('p1');
     expect(disabledPresetIds).toEqual([copy.id]);
+  });
+
+  test('a storage update from another tab replaces the in-memory user data', () => {
+    useMaterialStore.getState().addMaterial(userMaterial('mine'));
+    // Simulate TabEvents.StorageValueChanged: storageStore is updated without going through set()
+    storageStore.useStorageStore.getState().update({
+      'material-favorites': ['theirs'],
+      materials: { userMaterials: [userMaterial('theirs')] },
+    } as never);
+    storageListeners.forEach((listener) => listener());
+
+    const state = useMaterialStore.getState();
+
+    expect(state.userMaterials.map(({ id }) => id)).toEqual(['theirs']);
+    expect(state.favorites).toEqual(['theirs']);
   });
 });
 
