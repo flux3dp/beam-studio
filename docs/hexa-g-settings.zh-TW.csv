@@ -1,0 +1,57 @@
+群組,設定項,UI 入口,保存位置,預設值,需要測出正式預設值,需要各機器分別校正,備註
+啟用旗標,HEXA G 機型,"devtools：localStorage[""fhx2galvo-enable""] = ""true""",Beam Studio（localStorage，不隨檔案）,未設定（關閉）,否,,關著的話機型清單與初始設定精靈都看不到 HEXA G。正式版按照地區等判斷分批開放 checkHexa2Galvo
+啟用旗標,HEXA G 開發期功能,"devtools：localStorage[""fhx2galvo-dev""] = ""true""",Beam Studio（localStorage，不隨檔案）,未設定（關閉）,否,,開啟後才有：振鏡開發者設定入口、GalvoSettings 的軸向／說明／手動區塊、選擇機器按鈕的斷線提示、連線時抓取機器移動範圍並覆寫邊界、相機校正的【預覽雕刻範圍】按鈕。與 fhx2galvo-enable 互不依賴
+啟用旗標,一般 dev 模式,"devtools：localStorage[""dev""] = ""true""",Beam Studio（localStorage）,未設定（關閉）,否,,只影響其他機型與通用 dev 功能
+文件設定,機型（工作範圍）,文件設定 > 機型,Beam Studio（documentStore workarea）,—（沿用上次）,是,,選 HEXA G 後畫布（板材放置區域）固定 920 x 520，正式版需要決定是否使用這個尺寸
+文件設定,Mopa 模組,文件設定 > Mopa 振鏡 開關,Beam Studio（documentStore enable-galvo-mopa）,關閉,否,,決定圖層能不能選 Mopa 模組，也決定死區聯集要不要算進 Mopa 停泊位置
+文件設定,顯示重疊工作範圍,文件設定 > 顯示重疊工作範圍（只有 HEXA G 顯示）,Beam Studio（documentStore use-union-boundary-hx2）,開啟,否,,其他機型看的是偏好設定裡的同名選項；HEXA G 改為放在文件決定，並默認開啟
+文件設定,旋轉軸／工作原點／自動對焦等,文件設定 其餘各列,Beam Studio,各自預設,否,,通用功能，HEXA G 沒有特別行為。自動送料、曲面雕刻、貫穿加工目前對 HEXA G 一律關閉（未在硬體上驗證）
+GalvoSettings（CO2／Mopa 各一份）,場鏡尺寸 workarea,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡）,機器（config galvo_co2 / galvo_mopa，JSON）,110 mm,否,是,只有 70／110 兩個選項。決定振鏡往兩側各可達多遠，也決定區塊大小與要不要分割圖案
+GalvoSettings（CO2／Mopa 各一份）,場鏡旋轉角 field.angle,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡）,機器（config galvo_co2 / galvo_mopa，JSON）,0,否,是,
+GalvoSettings（CO2／Mopa 各一份）,場鏡偏移 field.offsetX / offsetY,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡）,機器（config galvo_co2 / galvo_mopa，JSON）,0 / 0,否,是,
+GalvoSettings（CO2／Mopa 各一份）,畸變 X：scale / bulge / skew / trapezoid,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > 鏡頭參數,機器（config galvo_co2 / galvo_mopa，JSON）,100 / 1 / 1 / 1,否,是,
+GalvoSettings（CO2／Mopa 各一份）,畸變 Y：scale / bulge / skew / trapezoid,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > 鏡頭參數,機器（config galvo_co2 / galvo_mopa，JSON）,100 / 1 / 1 / 1,否,是,
+GalvoSettings（CO2／Mopa 各一份）,軸向 invertX / invertY / swapXY,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > 軸向（需 fhx2galvo-dev）,機器（config galvo_co2 / galvo_mopa，JSON）,CO2：true / true / false；Mopa：false / false / false,是,,這個值應該在各個機型上都一致，若會不一致，則需要對用戶開放設定入口
+GalvoSettings（CO2／Mopa 各一份）,焦距 focusHeight,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > 模組,機器（config galvo_co2 / galvo_mopa，JSON）,0,是？,是,目前不會生效，它如何驅動機器還沒定案。目前規劃會設計成預設值 = 特殊值（例如 0 或負數） = 不做對焦，避免碰撞風險。若是機構設計上確保 70/110 & CO2/Mopa 會有4組固定的對焦距離，也可以直接寫成預設值。
+GalvoSettings（CO2／Mopa 各一份）,"模組偏移 offsets（X, Y）",機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > 模組,機器（config toolhead_shift，JSON）,"[0, 0]",是,是,分塊是以主雷射頭座標系劃分的，這個值會改變圖案落在哪一格；模組校正與畫布邊界讀的是同一個地方
+GalvoSettings（CO2／Mopa 各一份）,標記參數 功率 / 速度,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > 標記參數,不保存（僅此次對話框測試行為）,50 % / 1000 mm/s,否,,給預覽與標記按鈕用；預覽一律 0 功率
+GalvoSettings（CO2／Mopa 各一份）,手動測試 X / Y / 打點時間,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > Manual（需 fhx2galvo-dev）,不保存,0 / 0 / 0,否,,Move 與 Dot 用；Dot 的功率取自標記參數
+GalvoSettings（CO2／Mopa 各一份）,預覽參數 步距 / 跳躍速度 / 跳躍延遲 / 圈數,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > Manual > 預覽參數（需 fhx2galvo-dev）,不保存（留空即用機器端預設）,留空＝機器端預設 10 / 4000 / 0 / 1,是,,只影響紅光預覽，不影響標記。個人覺得默認值在機器上看可能有一點卡，所以先開一個 UI 提供調整。
+GalvoDevSettings · 目前生效（唯讀）,場鏡尺寸（CO2 / Mopa）,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G）（唯讀顯示）,機器（config galvo_co2 / galvo_mopa，JSON）,—,否,,要改請到振鏡設定
+GalvoDevSettings · 目前生效（唯讀）,模組偏移（CO2 / Mopa）,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G）（唯讀顯示）,機器（config toolhead_shift，JSON）,—,否,,同上
+GalvoDevSettings · 移動範圍,無 Mopa · 最大 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,機器（config galvo_work_range.galvo，JSON）,600 / 520,是,是,畫布寬高減掉這裡就是右側與下方邊界，正式版前端會用一個所有機器都適用的安全值。串聯／解聯右側位置會讀這個 X
+GalvoDevSettings · 移動範圍,有 Mopa · 最大 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,機器（config galvo_work_range.mopa，JSON）,600 / 520,是,是,同上
+GalvoDevSettings · 移動範圍,無 Mopa · 最小 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,Beam Studio（storage galvo-work-range-min，只在這台電腦）,0 / 0,是,,機器上沒有存這組值
+GalvoDevSettings · 移動範圍,有 Mopa · 最小 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,Beam Studio（storage galvo-work-range-min，只在這台電腦）,0 / 0,是,,同上
+GalvoDevSettings · 分塊,區塊大小 galvo_block,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 分塊,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,"100, 100 mm（EVT）",是,,龍門每次移動的距離，硬體只能停在整數倍 full step 上，每種場鏡與平台各一組。留空時 swiftray 查 EVT 的表（110 mm → 100 x 100，70 mm → 60 x 60）；步距不同的平台要自己填，例如測試機是 100 x 99.9744
+GalvoDevSettings · 分塊,龍門移動速度 galvo_ts,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 分塊,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,3000 mm/min,是,,區塊之間移動龍門的速度，比一般圖層（7500）慢。相機預覽在串聯狀態下也借用這個值當上限
+GalvoDevSettings · 分塊,單一 list 指令上限 galvo_max_list_commands,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 分塊,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0（不限制）,是？,,若是板卡出現 list 長度問題時需要調。與龍門移動完之後的停頓時間有關（**目前這版是在移動停止後才會給 bsl 送指令，後續會改**）。可能與偶發的 bsl 漏雕部分指令有關。
+GalvoDevSettings · 分塊,Debug 圖輸出路徑 galvo_debug_image,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 分塊,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,（空）,否,,算圖時輸出分塊示意圖的路徑/資料夾
+GalvoDevSettings · 接縫混合,Simulator 策略 galvo_strategy,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,（空）,是？,,一次設定整組接縫參數；下面的個別鍵會覆寫它。此區塊與下方區塊大部分設定應該都會測試一個標準值並直接寫死而不是開放給一般用戶自行定義？
+GalvoDevSettings · 接縫混合,點陣重疊帶寬度 galvo_dot_blend_overlap,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,10 mm,是,,
+GalvoDevSettings · 接縫混合,點陣密度曲線 galvo_dot_blend_profile,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,granular,是,,
+GalvoDevSettings · 接縫混合,線段重疊帶寬度 galvo_line_blend_overlap,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,10 mm,是,,
+GalvoDevSettings · 接縫混合,線段密度曲線 galvo_line_blend_profile,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,super-granular,是,,
+GalvoDevSettings · 接縫混合,線段接縫策略 galvo_line_blend_emission,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,overlap-checkerboard,是,,四種策略：checkerboard / segments / scanlines / pwm
+GalvoDevSettings · 接縫混合,齒紋長度 galvo_line_blend_segment,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,2 mm,是,,
+GalvoDevSettings · 接縫混合,重疊帶改用打點 galvo_dot_blend_line_core,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,false,是,,
+GalvoDevSettings · 接縫混合,重疊帶打點時間 galvo_process_dot_pulse_on_time,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0 us,是,,0 表示沿用圖層設定
+GalvoDevSettings · 接縫混合,重疊帶打點功率 galvo_process_dot_power,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0 %,是,,0 表示沿用圖層設定
+GalvoDevSettings · 接縫混合,重疊帶點距 galvo_process_dot_pitch,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0 mm,是,,0 表示沿用圖層設定
+GalvoDevSettings · 接縫混合,重疊帶脈衝週期 galvo_process_dot_pulse_period,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0 us,是,,0 表示沿用圖層設定
+GalvoDevSettings · 接縫混合,重疊帶跳躍速度 galvo_process_dot_jump_speed,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0 mm/s,是,,0 表示沿用圖層設定
+GalvoDevSettings · 接縫混合,重疊帶雷射開啟延遲 galvo_process_dot_laser_on_delay,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0 us,是,,
+GalvoDevSettings · 接縫混合,重疊帶雷射關閉延遲 galvo_process_dot_laser_off_delay,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 接縫混合,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0 us,是,,
+GalvoDevSettings · List 前置指令,跳躍速度 galvo_jump_speed,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,4000 mm/s,是,,
+GalvoDevSettings · List 前置指令,雷射開啟延遲 galvo_laser_on_delay,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,-100 us,是,,
+GalvoDevSettings · List 前置指令,雷射關閉延遲 galvo_laser_off_delay,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,100 us,是,,
+GalvoDevSettings · List 前置指令,振鏡雕刻延遲 galvo_scanner_mark_delay,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,100 us,是,,
+GalvoDevSettings · List 前置指令,振鏡轉角延遲 galvo_scanner_polygon_delay,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,50 us,是,,
+GalvoDevSettings · List 前置指令,待機脈衝 galvo_standby,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,true,是,,
+GalvoDevSettings · List 前置指令,待機脈衝週期 galvo_standby_period,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,100 us,是,,
+GalvoDevSettings · List 前置指令,待機脈衝寬度 galvo_standby_width,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,1 us,是,,
+GalvoDevSettings · List 前置指令,Mopa 脈衝寬度 galvo_mopa_pulse_length,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > List 前置指令,Beam Studio（storage galvo-dev-settings）→ 匯出時送進 fcode,0 us,是,,只對 Mopa 有意義
+圖層參數,模組（CO2 振鏡 / Mopa 振鏡 / 雷射）,右側圖層面板 > 模組,Beam Studio（圖層屬性，隨檔案）,雷射,否,,切換模組頭就是在這裡，與其他多模組機型同一個慣例
+圖層參數,CO2 振鏡圖層預設,右側圖層面板,Beam Studio（圖層屬性，隨檔案）,頻率 32 kHz、速度 1000 mm/s,是,,切到該模組時自動套用
+圖層參數,Mopa 振鏡圖層預設,右側圖層面板,Beam Studio（圖層屬性，隨檔案）,頻率 25 kHz、脈衝寬度 350 ns、速度 1000 mm/s,是,,同上
+,,,,,,
