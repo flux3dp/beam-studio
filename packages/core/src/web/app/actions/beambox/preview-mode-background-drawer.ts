@@ -379,6 +379,63 @@ class PreviewModeBackgroundDrawer {
   }
 
   /**
+   * Whether a polygon (workarea px) runs along canvas that has never been previewed, i.e. the
+   * object it outlines is cut off by the edge of the previewed area. One readback of the polygon's
+   * bbox, then the alpha is sampled every `step` px along each edge in a 5×5 window so a boundary
+   * that coincides with the preview edge is caught.
+   */
+  isPolygonCutByPreviewEdge = (polygon: Array<[number, number]>, step = 10): boolean => {
+    const ctx = this.canvas.getContext('2d');
+
+    if (!ctx || polygon.length < 2) return false;
+
+    const ratio = this.canvasRatio;
+    const bounds = polygon.reduce(
+      (acc, [x, y]) => ({
+        maxX: Math.max(acc.maxX, x * ratio),
+        maxY: Math.max(acc.maxY, y * ratio),
+        minX: Math.min(acc.minX, x * ratio),
+        minY: Math.min(acc.minY, y * ratio),
+      }),
+      { maxX: -Infinity, maxY: -Infinity, minX: Infinity, minY: Infinity },
+    );
+    const x0 = Math.max(0, Math.floor(bounds.minX) - 2);
+    const y0 = Math.max(0, Math.floor(bounds.minY) - 2);
+    const x1 = Math.min(this.canvas.width, Math.ceil(bounds.maxX) + 3);
+    const y1 = Math.min(this.canvas.height, Math.ceil(bounds.maxY) + 3);
+    const w = x1 - x0;
+    const h = y1 - y0;
+
+    if (w < 1 || h < 1) return false;
+
+    const { data } = ctx.getImageData(x0, y0, w, h);
+    const isTransparentNear = (px: number, py: number): boolean => {
+      const cx = Math.round(px * ratio) - x0;
+      const cy = Math.round(py * ratio) - y0;
+
+      for (let y = Math.max(0, cy - 2); y <= Math.min(h - 1, cy + 2); y++) {
+        for (let x = Math.max(0, cx - 2); x <= Math.min(w - 1, cx + 2); x++) {
+          if (data[(y * w + x) * 4 + 3] < 128) return true;
+        }
+      }
+
+      return false;
+    };
+
+    for (let i = 0; i < polygon.length; i++) {
+      const [ax, ay] = polygon[i];
+      const [bx, by] = polygon[(i + 1) % polygon.length];
+      const n = Math.max(1, Math.ceil(Math.hypot(bx - ax, by - ay) / step));
+
+      for (let k = 0; k < n; k++) {
+        if (isTransparentNear(ax + ((bx - ax) * k) / n, ay + ((by - ay) * k) / n)) return true;
+      }
+    }
+
+    return false;
+  };
+
+  /**
    * Crop of the accumulated preview canvas; the rect is in workarea canvas px
    * and clamped to the canvas bounds. Reads the canvas directly, so the crop
    * reflects a just-drawn capture even before the background url updates.

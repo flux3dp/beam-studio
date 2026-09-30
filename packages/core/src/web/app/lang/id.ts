@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Menghubungkan kamera...',
     connectingMachine: 'Menghubungkan %s...',
     connectionTimeout: '#805 Waktu Koneksi Perangkat Habis. Silakan periksa koneksi jaringan Anda dan indikator Wi-Fi mesin.',
+    detecting_objects: 'Mendeteksi objek di pratinjau…',
     device_blocked: {
       caption: 'Nomor Seri Tidak Sah',
       offline: 'Nomor seri perangkat Anda dibatasi untuk penggunaan offline karena tampaknya dinonaktifkan. Silakan berikan nomor seri perangkat (terletak di bagian belakang perangkat) kepada penjual Anda dan minta mereka menghubungi support@flux3dp.com untuk mengaktifkan otorisasi online. Jika Anda ingin menggunakan perangkat secara offline, silakan hubungi support@flux3dp.com langsung.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Mac ini menggunakan Apple Silicon. Unduh versi Apple Silicon dan instal ulang.',
     },
     need_password: 'Memerlukan Kata Sandi untuk Menghubungkan ke Mesin',
+    object_detection_failed: 'Deteksi objek gagal; pengaitan ke objek tidak tersedia untuk pratinjau ini.',
+    objects_detected: 'Objek terdeteksi',
     please_enter_dpi: 'Harap masukkan Satuan file Anda (dalam mm)',
     preview: {
       adjust: 'Sesuaikan',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Deteksi Kontur AI',
-    ai_contour_detection_tooltip: 'Menggunakan model AI untuk menemukan objek pada pratinjau kamera. Lebih akurat pada material bertekstur, tetapi lebih lambat di komputer lama; matikan untuk menggunakan deteksi klasik. Digunakan oleh: Pas Otomatis.',
+    ai_contour_detection_tooltip: 'Menggunakan model AI untuk menemukan objek pada pratinjau kamera. Lebih akurat pada material bertekstur, tetapi lebih lambat di komputer lama; matikan untuk menggunakan deteksi klasik. Digunakan oleh: Pas Otomatis, Jepret ke Pusat Objek.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Pilih otomatis satu-satunya mesin',
     auto_switch_tab: 'Sakelar Otomatis Panel Lapisan dan Objek',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Tampilkan Penggaris',
       show_start_tutorial: 'Tampilkan Tutorial Mulai',
       show_ui_intro: 'Tampilkan Pengenalan Antarmuka',
+      snap_to_object_center: 'Jepret ke Pusat Objek',
       software_update: 'Pembaruan Perangkat Lunak',
       svg_edit: 'SVG',
       switch_to_beta: 'Beralih ke Rilis Beta',

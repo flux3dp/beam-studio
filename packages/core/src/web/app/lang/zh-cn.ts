@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: '正在连接相机...',
     connectingMachine: '连接 %s 中...',
     connectionTimeout: '#805 连接机器逾时，请确认你的网路状态和机器的 Wi-Fi 讯号符号。',
+    detecting_objects: '正在检测预览中的对象...',
     device_blocked: {
       caption: '未授权的序列号',
       offline: '您的设备序列号的离线使用已被限制，因为似乎已被停用。请将设备序列号（位于设备背面）提供给您的经销商，并请他们联系 support@flux3dp.com 以激活在线授权。如果您希望离线使用该设备，请直接联系 support@flux3dp.com。',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: '此 Mac 使用 Apple 芯片。请下载 Apple 芯片 (Apple Silicon) 版本并重新安装。',
     },
     need_password: '需要密码与机器创建连接',
+    object_detection_failed: '对象检测失败，本次预览无法吸附至对象。',
+    objects_detected: '对象检测完成',
     please_enter_dpi: '请输入该文件的 dpi (in mm)',
     preview: {
       adjust: '调整',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'AI 轮廓检测',
-    ai_contour_detection_tooltip: '使用 AI 模型在相机预览中寻找物件。在有纹理的材料上更准确，但在较旧的电脑上速度较慢；关闭则使用传统检测。用于自动适配功能。',
+    ai_contour_detection_tooltip: '使用 AI 模型在相机预览中寻找物件。在有纹理的材料上更准确，但在较旧的电脑上速度较慢；关闭则使用传统检测。用于自动适配与吸附到对象中心功能。',
     anti_aliasing: '抗锯齿',
     auto_connect: '自动选择唯一机器',
     auto_switch_tab: '自动切换图层和物件面板',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: '显示尺规',
       show_start_tutorial: '显示新手教学',
       show_ui_intro: '显示界面介绍',
+      snap_to_object_center: '吸附到对象中心',
       software_update: '软件更新',
       svg_edit: 'SVG',
       switch_to_beta: '切换至 Beta 版',

@@ -2090,6 +2090,7 @@ const lang: ILang = {
     connectingCamera: 'Forbinder kamera...',
     connectingMachine: 'Forbinder %s...',
     connectionTimeout: '#805 Enhedsforbindelse timeout. Kontroller venligst dit netværks tilstand og din maskines Wi-Fi-indikator.',
+    detecting_objects: 'Registrerer objekter i forhåndsvisningen…',
     device_blocked: {
       caption: 'Uautoriseret serienummer',
       offline: 'Dit enheds serienummer er begrænset til offline brug, da det ser ud til at være deaktiveret. Angiv venligst enhedens serienummer (placeret bag på enheden) til din forhandler og bed dem kontakte support@flux3dp.com for at aktivere online autorisation. Hvis du ønsker at bruge enheden offline, bedes du kontakte support@flux3dp.com direkte.',
@@ -2120,6 +2121,8 @@ const lang: ILang = {
       message: 'Denne Mac bruger Apple Silicon. Download Apple Silicon versionen og geninstaller.',
     },
     need_password: 'Adgangskode kræves for at oprette forbindelse til maskinen',
+    object_detection_failed: 'Objektregistrering mislykkedes; fastgørelse til objekter er ikke tilgængelig for denne forhåndsvisning.',
+    objects_detected: 'Objekter registreret',
     please_enter_dpi: 'Angiv venligst enheden for din fil (i mm)',
     preview: {
       adjust: 'Juster',
@@ -2518,7 +2521,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'AI-konturgenkendelse',
-    ai_contour_detection_tooltip: 'Bruger en AI-model til at finde objekter i kameraforhåndsvisningen. Mere præcis på teksturerede materialer, men langsommere på ældre computere; slå fra for at bruge klassisk genkendelse. Bruges af: Auto Fit.',
+    ai_contour_detection_tooltip: 'Bruger en AI-model til at finde objekter i kameraforhåndsvisningen. Mere præcis på teksturerede materialer, men langsommere på ældre computere; slå fra for at bruge klassisk genkendelse. Bruges af: Auto Fit, Fastgør til objektets centrum.',
     anti_aliasing: 'Kantudjævning',
     auto_connect: 'Vælg automatisk den eneste maskine',
     auto_switch_tab: 'Automatisk skift mellem lag- og objektpanel',
@@ -2900,6 +2903,7 @@ const lang: ILang = {
       show_rulers: 'Vis linealer',
       show_start_tutorial: 'Vis startvejledning',
       show_ui_intro: 'Vis grænsefladeintroduktion',
+      snap_to_object_center: 'Fastgør til objektets centrum',
       software_update: 'Softwareopdatering',
       svg_edit: 'SVG',
       switch_to_beta: 'Skift til Beta-udgivelse',
