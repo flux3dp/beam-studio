@@ -185,6 +185,7 @@ export const useMaterialStore = create(
 
         // Presets: re-point remapped owners, skip bucket name collisions, regenerate colliding ids
         const existingPresetIds = new Set(state.userPresets.map(({ id }) => id));
+        const presetIdRemap = new Map<string, string>();
         const bucketNames = new Set(
           state.userPresets
             .filter(({ materialId }) => materialId === MY_MATERIALS_ID)
@@ -198,10 +199,20 @@ export const useMaterialStore = create(
               variantIdRemap.has(preset.variantId) && { variantId: variantIdRemap.get(preset.variantId) }),
           }))
           .filter((preset) => !(preset.materialId === MY_MATERIALS_ID && bucketNames.has(getPresetDisplayName(preset))))
-          .map((preset) => (existingPresetIds.has(preset.id) ? { ...preset, id: generateUserId() } : preset));
+          .map((preset) => {
+            if (!existingPresetIds.has(preset.id)) return preset;
+
+            const newId = generateUserId();
+
+            presetIdRemap.set(preset.id, newId);
+
+            return { ...preset, id: newId };
+          });
+        // Disabled ids must follow the remap or the imported copy comes back enabled
+        const importedDisabledIds = (data.disabledPresetIds ?? []).map((id) => presetIdRemap.get(id) ?? id);
 
         apply({
-          disabledPresetIds: [...new Set([...state.disabledPresetIds, ...(data.disabledPresetIds ?? [])])],
+          disabledPresetIds: [...new Set([...state.disabledPresetIds, ...importedDisabledIds])],
           pinnedVariantIds: [...new Set([...state.pinnedVariantIds, ...(data.pinnedVariantIds ?? [])])],
           presetOverrides: { ...state.presetOverrides, ...(data.presetOverrides ?? {}) },
           userMaterials,

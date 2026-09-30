@@ -266,6 +266,22 @@ describe('materialStore actions', () => {
     expect(state.disabledPresetIds.sort()).toEqual(['a', 'b']);
     expect(state.presetOverrides.wood_engraving).toBeDefined();
   });
+
+  test('importData remaps disabledPresetIds along with colliding user preset ids', () => {
+    useMaterialStore.getState().addMaterial(userMaterial('m1'));
+    useMaterialStore.getState().addPreset('m1', { id: 'p1', name: 'Cut', origin: 'user', settings: {} });
+    useMaterialStore.getState().importData({
+      disabledPresetIds: ['p1'],
+      userMaterials: [userMaterial('m1')],
+      userPresets: [{ id: 'p1', materialId: 'm1', name: 'Cut', origin: 'user', settings: {} }],
+    });
+
+    const { disabledPresetIds, userPresets } = useMaterialStore.getState();
+    const copy = userPresets[1];
+
+    expect(copy.id).not.toBe('p1');
+    expect(disabledPresetIds).toEqual([copy.id]);
+  });
 });
 
 describe('legacy migration', () => {
