@@ -8,6 +8,7 @@ export const getStorageKeys: () => StorageKey[] = () => [
   'auto-save-config',
   'auto_check_update',
   'auto_connect',
+  'beam-studio-101',
   'beambox-preference',
   'black-list',
   'customizedLaserConfigs',

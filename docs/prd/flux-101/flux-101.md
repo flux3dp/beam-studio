@@ -71,7 +71,7 @@ Persistent (always available):
 3. **Help menu → "FLUX 101"** (R1c). New `START_101_COURSE` item near `START_TUTORIAL`, wired through `dialog-caller`.
 
 Contextual (once):
-4. **After the new-user tutorial** (R2a). When `showTutorial` resolves (accepted or declined), show a one-time, non-blocking prompt: *"Want to go deeper? FLUX 101 has 23 short videos — watch the course?"* **[Watch FLUX 101] / [Maybe later]**. Recorded in `nudgeDismissedAt`.
+4. **After the new-user tutorial** (R2a). When `showTutorial` resolves (accepted or declined), show a one-time, non-blocking prompt: *"Want to go deeper? FLUX 101 has 23 short videos — watch the course?"* **[Watch FLUX 101] / [Maybe later]**. Recorded in `nudgeDismissed`.
 
 The v1 "continue learning" notification on every app open (formerly R2b) is **dropped** (D18): it contradicted G5. The book-icon badge carries the reminder.
 
@@ -165,15 +165,15 @@ Local storage key `beam-studio-101` holds a map of **buckets keyed by owner**:
 
 ```ts
 type Flux101Storage = {
-  anonymous: Flux101Bucket & { claimedBy?: string /* uid */ };
-  [uid: string]: Flux101Bucket;
+  anonymous: Flux101Bucket & { claimedBy?: string /* email */ };
+  [email: string]: Flux101Bucket; // lower-cased FLUX ID email (IUser only guarantees email)
 };
 
 type Flux101Bucket = {
   catalogVersion: number;
   lessons: Record<LessonId, LessonProgress>;
   lastLessonId?: LessonId;
-  nudgeDismissedAt?: string; // ISO
+  nudgeDismissed?: true;     // R2a prompt answered; OR-ed on merge
   updatedAt: string;         // ISO
 };
 
@@ -187,7 +187,7 @@ type LessonProgress = {
 };
 ```
 
-The **active bucket** is the logged-in uid's bucket, or `anonymous` when logged out. All writes go to the active bucket.
+The **active bucket** is the logged-in user's bucket (keyed by email), or `anonymous` when logged out. All writes go to the active bucket.
 
 **Lifecycle**
 - `completed` when `playedSec ≥ 0.9 × durationSec`, or the YouTube player reports `ENDED`, or the user taps **Mark done** (`completedVia = 'marked_done'`). Completion is monotonic.
@@ -210,7 +210,7 @@ The **active bucket** is the logged-in uid's bucket, or `anonymous` when logged 
 - **R1a** Book icon in `DrawingToolButtonGroup` (below the separator, next to Beamy) with a remaining-lessons badge. Opens the course; is its collapsed home. Snapshot test updated.
 - **R1b** Welcome page tab "FLUX 101" rendering the dashboard inline.
 - **R1c** Help menu item `START_101_COURSE` → `dialogCaller.showFlux101()`.
-- **R2a** One-time post-tutorial prompt on `showTutorial` resolve. Never shown again once answered (`nudgeDismissedAt`) or once the course is complete.
+- **R2a** One-time post-tutorial prompt on `showTutorial` resolve. Never shown again once answered (`nudgeDismissed`) or once the course is complete.
 - **R3** Dashboard lists chapters → lessons with status, progress meter, badges, credits, sync state, Continue CTA.
 - **R3a** Lessons with `helpArticleUrl` show a grey hint + external-link icon → `browser.open`.
 - **R3b** Lesson 2-1 shows "Not required for first-time use of beamo / beamo II" when the selected machine (fallback: workarea) is `fbm1`/`fbm2`.
@@ -317,6 +317,7 @@ Added 2026-09-18 (engineering review):
 - **D20** **Meeting items:** XP (likely cut — no use for it), certificate design ownership, credit abuse handling (device id / IP, multi-account, public endpoint).
 - **D21** Machine note source: `deviceMaster.currentDevice` first, then workarea.
 - **D22** Feature flag via Experimental settings; credits UI behind its own switch until the backend lands.
+- **D23** (2026-09-30) Bucket key is the lower-cased FLUX ID email, not a uid (`IUser` only guarantees `email`, and the masked-email prompt needs it anyway). `nudgeDismissedAt` timestamp replaced by a `nudgeDismissed: true` flag — nothing re-prompts on a schedule. `marked_done` upgrades to `watched` if the user later plays ≥ 90 %; never the reverse.
 
 ## 15. Appendix: key references
 

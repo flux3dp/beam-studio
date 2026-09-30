@@ -1,3 +1,4 @@
+import type { Flux101Storage } from '@core/app/components/dialogs/Flux101/progress';
 import type { PncOffset } from '@core/app/components/dialogs/PrintAndCut/calibration/offsetStore';
 import type { ColorConfig } from '@core/app/constants/color-constants';
 import type { History } from '@core/app/contexts/ElementPanelContext';
@@ -20,6 +21,8 @@ export interface Storage {
   'auto-save-config'?: AutoSaveConfig;
   auto_check_update: boolean;
   auto_connect: boolean;
+  /** FLUX 101 course progress, bucketed by owner (FLUX ID email or 'anonymous') */
+  'beam-studio-101': Flux101Storage;
   'beambox-preference': BeamboxPreference;
   'black-list': string;
   /** @deprecated Customized laser configurations for version <= 2.3.9 */
