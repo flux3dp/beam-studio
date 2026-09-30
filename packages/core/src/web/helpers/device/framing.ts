@@ -22,6 +22,8 @@ import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import checkDeviceStatus from '@core/helpers/check-device-status';
+import { ensureGalvoHeadDisconnected } from '@core/helpers/device/galvoLaserMode';
+import { clampToGantryTravelRange, isGalvoHeadMachine } from '@core/helpers/device/gantryTravelRange';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
@@ -738,6 +740,49 @@ class FramingTaskManager extends EventEmitter {
     };
 
     this.shouldCheckDoor = this.isInDangerZone();
+    await this.parkGalvoHead();
+  };
+
+  /**
+   * Framing is a red light tracing the job, and the red light follows whatever the laser path is
+   * pointed at: with a galvo head connected, it comes out of the galvo instead of the gantry head
+   * and lands somewhere else entirely. So the head is always disconnected first, which also leaves
+   * the gantry free to move at its usual speed.
+   *
+   * Asked before raw mode, since neither deviceinfo nor the control task is available inside it.
+   * The machine skips the mechanical part when it is already disconnected, so the common case is
+   * cheap -- but not free, hence the read: disconnecting takes tens of seconds and homes the machine.
+   */
+  private parkGalvoHead = async (): Promise<void> => {
+    try {
+      await ensureGalvoHeadDisconnected(this.device.model, {
+        onSlow: () => this.showMessage(i18n.lang.message.disconnectingGalvoHead, 0),
+      });
+    } catch (error) {
+      console.error('Failed to disconnect the galvo head before framing', error);
+    }
+  };
+
+  /**
+   * The gantry cannot reach where a head is parked, and on HEXA II that can be a wide strip of the
+   * right edge -- wider with the Mopa head parked, and wider than the canvas boundary suggests,
+   * since that one is widened by the galvo's own reach. Points that fall inside it are pulled back
+   * to the edge of the travel range rather than sent and refused.
+   */
+  private clampPointsToTravelRange = (): boolean => {
+    if (!isGalvoHeadMachine(this.device.model)) return false;
+
+    let clamped = false;
+
+    this.taskPoints = this.taskPoints.map(([x, y]) => {
+      const res = clampToGantryTravelRange(this.device.model, x, y);
+
+      clamped = clamped || res.clamped;
+
+      return [res.x, res.y];
+    });
+
+    return clamped;
   };
 
   private setLowPowerValue = async (settingValue: number) => {
@@ -987,7 +1032,11 @@ class FramingTaskManager extends EventEmitter {
       return false;
     }
 
-    if (this.taskCache[type]?.isOutOfBounds) {
+    // The cached points are the ones the drawing asked for; clamping is about where this machine can
+    // go, so it is applied to the copy about to be traced and re-applied on a cached second run.
+    const clampedToTravelRange = this.clampPointsToTravelRange();
+
+    if (this.taskCache[type]?.isOutOfBounds || clampedToTravelRange) {
       MessageCaller.openMessage({
         content: i18n.lang.topbar.alerts.object_outside_moving_area,
         duration: 3,

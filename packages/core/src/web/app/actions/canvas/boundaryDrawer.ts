@@ -24,8 +24,10 @@ import {
 } from '@core/helpers/boundary-helper';
 import { getGalvoConfig, isGalvoModule } from '@core/helpers/device/galvoConfig';
 // Side effect: registers the listener that turns a HEXA II's reported travel into the module
-// boundary this file draws. DEVELOPMENT ONLY, see that file.
+// boundary this file draws. DEVELOPMENT ONLY, and the listener itself does nothing unless
+// fhx2galvo-dev is set -- see that file.
 import '@core/helpers/device/galvoWorkRange';
+import { getGantryTravelBoundary } from '@core/helpers/device/gantryTravelRange';
 import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -284,17 +286,12 @@ export class BoundaryDrawer {
 
   updateModuleBoundary = (currentModule: LayerModuleType): void => {
     const { model } = workareaManager;
-    const boundary = structuredClone(getModuleBoundary(model, currentModule));
-
-    if (this.supportMultiModules) {
-      const supportedModules = getSupportedModules(model);
-
-      supportedModules?.forEach((module) => {
-        if (module !== currentModule) {
-          mergeBoundaries(boundary, getModuleBoundary(model, module));
-        }
-      });
-    }
+    // A machine that can hold several heads loses the travel every one of them costs, whichever
+    // this job uses -- the same union the exporter sends and the travel clamps read, taken from the
+    // one place that defines it. A machine that holds one head at a time only loses that head's.
+    const boundary = this.supportMultiModules
+      ? getGantryTravelBoundary(model)
+      : getModuleBoundary(model, currentModule);
 
     this.boundaries.module = {
       bottom: boundary.bottom * dpmm,
