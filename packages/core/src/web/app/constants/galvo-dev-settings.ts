@@ -153,7 +153,7 @@ export type GalvoDevSettingField = BaseField &
 export const GALVO_DEV_SETTING_FIELDS: GalvoDevSettingField[] = [
   // --- splitting ---------------------------------------------------------
   {
-    default: [100, 99.9744],
+    default: [100, 100],
     group: 'split',
     key: 'galvo_block',
     kind: 'pair',
@@ -161,8 +161,8 @@ export const GALVO_DEV_SETTING_FIELDS: GalvoDevSettingField[] = [
     step: 0.0001,
     tooltip:
       '龍門每次移動的距離，也就是每個區塊負責的範圍。硬體只能停在整數倍的 full step 上，' +
-      '所以這是每種場鏡與平台實測出來的一組值，不能隨便填。留空時 swiftray 會依場鏡查表：' +
-      '110 mm 用 100 x 99.9744，70 mm 用 60 x 59.944。',
+      '所以每種場鏡與平台各有一組值，不能隨便填。留空時 swiftray 依場鏡查 EVT 的表：' +
+      '110 mm 用 100 x 100，70 mm 用 60 x 60。',
     unit: 'mm',
   },
   {
