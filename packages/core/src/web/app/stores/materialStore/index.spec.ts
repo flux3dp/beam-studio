@@ -56,6 +56,24 @@ describe('materialStore actions', () => {
     expect(useMaterialStore.getState().presetOverrides).toEqual({});
   });
 
+  test('updatePreset keeps keys the editor does not show', () => {
+    useMaterialStore.getState().addMaterial(userMaterial('m1'));
+    useMaterialStore.getState().addPreset('m1', {
+      id: 'p1',
+      name: 'Cut',
+      origin: 'user',
+      settings: { '*': { '*': { focus: 2, minPower: 10, power: 50, speed: 5 } } },
+    });
+    useMaterialStore.getState().updatePreset('p1', '*', '*', { name: 'Deep Cut', power: 80, speed: 5 });
+
+    expect(useMaterialStore.getState().userPresets[0].settings['*']!['*']).toEqual({
+      focus: 2,
+      minPower: 10,
+      power: 80,
+      speed: 5,
+    });
+  });
+
   test('updatePreset writes back to the cell the context resolves from', () => {
     useMaterialStore.getState().addMaterial(userMaterial('m1'));
     // From-layer presets are module-specific: settings['*']['15']

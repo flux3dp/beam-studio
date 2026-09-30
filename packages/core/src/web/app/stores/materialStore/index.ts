@@ -311,7 +311,13 @@ export const useMaterialStore = create(
           const updated: UserPreset = {
             ...preset,
             ...(name !== undefined && { name }),
-            settings: { ...preset.settings, [scopeKey]: { ...preset.settings[scopeKey], [cellKey]: values } },
+            settings: {
+              ...preset.settings,
+              [scopeKey]: {
+                ...preset.settings[scopeKey],
+                [cellKey]: { ...preset.settings[scopeKey]?.[cellKey], ...values },
+              },
+            },
           };
 
           apply({ userPresets: userPresets.map((p) => (p.id === presetId ? updated : p)) });
