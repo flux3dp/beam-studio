@@ -11,6 +11,7 @@ export interface SvgInfo {
   fillInterval?: number;
   frequency?: number;
   name: string;
+  pointSpacing?: number;
   pulseWidth?: number;
   qPulseWidth?: number;
   repeat: number;
@@ -22,6 +23,7 @@ const namingMap = {
   dottingTime: 'DT',
   fillInterval: 'FI',
   frequency: 'F',
+  pointSpacing: 'PS',
   pulseWidth: 'PW',
   qPulseWidth: 'QW',
   repeat: 'C',

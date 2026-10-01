@@ -245,6 +245,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         label: lang.generators.title,
         onClick: () => toggleDrawerMode('generator'),
         style: { color: drawerMode === 'generator' ? '#000000' : undefined },
+        // only the material test generator has a 3D version, and it is still in development
+        supportedIn3D: isUvDev2(),
       })}
       {hasPassthroughExtension &&
         renderToolButton({

@@ -2078,11 +2078,16 @@ export interface ILang {
     | 'cut'
     | 'engrave'
     | 'export'
+    | 'force_offset'
+    | 'force_scale'
+    | 'force_transform'
     | 'max'
     | 'min'
     | 'parameter'
     // table setting form
     | 'rows'
+    | 'scaled_block_size'
+    | 'scaled_block_spacing'
     | 'size'
     | 'spacing'
     // block setting form

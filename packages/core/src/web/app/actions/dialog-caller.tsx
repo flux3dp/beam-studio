@@ -17,6 +17,7 @@ import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
 import CropPanel from '@core/app/components/dialogs/image/CropPanel';
 import LayerColorConfigPanel from '@core/app/components/dialogs/LayerColorConfig';
 import MaterialTestGeneratorPanel from '@core/app/components/dialogs/MaterialTestGeneratorPanel';
+import InnerEngravingMaterialTestPanel from '@core/app/components/dialogs/MaterialTestGeneratorPanel/InnerEngraving';
 import MediaTutorial from '@core/app/components/dialogs/MediaTutorial';
 import MyCloud from '@core/app/components/dialogs/myCloud/MyCloud';
 import SaveFileModal from '@core/app/components/dialogs/myCloud/SaveFileModal';
@@ -480,6 +481,21 @@ export default {
           popDialogById('image-edit-panel');
         }}
         src={src!}
+      />,
+    );
+  },
+  showInnerEngravingMaterialTestGenerator: (onClose: () => void = () => {}): void => {
+    if (isIdExist('material-test-generator')) {
+      return;
+    }
+
+    addDialogComponent(
+      'material-test-generator',
+      <InnerEngravingMaterialTestPanel
+        onClose={() => {
+          popDialogById('material-test-generator');
+          onClose();
+        }}
       />,
     );
   },

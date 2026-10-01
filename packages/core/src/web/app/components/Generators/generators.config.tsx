@@ -17,13 +17,29 @@ export interface GeneratorConfig {
 }
 
 interface GetGeneratorsOptions {
+  /** Inner engraving documents only hold 3D objects, so only the generators with a 3D version. */
+  isInnerEngraving?: boolean;
   isMobile?: boolean;
   // add workarea for some models that might not need certain generators
   workarea?: WorkAreaModel;
 }
 
-export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): GeneratorConfig[] =>
-  [
+export const getGenerators = ({
+  isInnerEngraving = false,
+  isMobile = false,
+}: GetGeneratorsOptions = {}): GeneratorConfig[] => {
+  if (isInnerEngraving) {
+    return [
+      {
+        icon: <GeneratorIcons.Material />,
+        id: 'material-test',
+        onClick: () => dialogCaller.showInnerEngravingMaterialTestGenerator(),
+        titleKey: 'material_test_generator',
+      },
+    ];
+  }
+
+  return [
     {
       icon: <GeneratorIcons.Box />,
       id: 'box',
@@ -56,3 +72,4 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       visible: !isMobile,
     } as const,
   ].filter((generator) => generator.visible !== false);
+};

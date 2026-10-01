@@ -15,6 +15,7 @@ import {
 import alertConstants from '@core/app/constants/alert-constants';
 import type { StlObject, StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
+import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { POINT_CLOUD_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
@@ -115,19 +116,26 @@ interface Insert3dGeometryOptions {
   skipFitPrompt?: boolean;
 }
 
-const insert3dGeometry = async (
+export interface Create3dObjectOptions {
+  attributes?: Record<string, number | string>;
+  historyLabel?: string;
+  initialTransform: StlTransform;
+  kind?: 'mesh' | 'point-cloud';
+  replaceElement?: SVGElement;
+}
+
+/**
+ * Synchronously create both halves of a 3D object in the current layer, without touching history
+ * or selection: the returned command is for the caller to record (or nest in its own batch).
+ */
+export const create3dObject = (
   buffer: ArrayBuffer,
   geometry: BufferGeometry,
-  attributes: Record<string, number | string> = {},
-  options: Insert3dGeometryOptions = {},
-): Promise<void> => {
-  geometry.computeBoundingBox();
-
-  if (!geometry.boundingBox) throw new Error('Failed to read 3D geometry');
-
-  // Placement and adaptive scaling are part of the imported state. Keep a separate immutable
-  // snapshot so every DimensionPanel reset returns to exactly what the user first saw.
-  const initialTransform = cloneTransform(options.initialTransform ?? (await getInitialTransform(geometry, options)));
+  { attributes = {}, historyLabel, initialTransform: init, kind, replaceElement }: Create3dObjectOptions,
+): { cmd: BatchCommand; id: string } => {
+  // Keep a separate immutable snapshot so every DimensionPanel reset returns to exactly what the
+  // user first saw.
+  const initialTransform = cloneTransform(init);
   const transform = cloneTransform(initialTransform);
   const id = svgCanvas.getNextId();
   const elem = svgCanvas.addSvgElementFromJson<SVGRectElement>({
@@ -146,7 +154,7 @@ const insert3dGeometry = async (
     element: 'rect',
   });
   const object: StlObject =
-    options.kind === 'point-cloud'
+    kind === 'point-cloud'
       ? { geometry, id, initialTransform, kind: 'point-cloud', pointCloudBuffer: buffer, transform }
       : { buffer, geometry, id, initialTransform, transform };
 
@@ -154,23 +162,44 @@ const insert3dGeometry = async (
   useStlStore.getState().set(object);
   updateElementColor(elem);
 
-  const batchCmd = new history.BatchCommand(options.historyLabel ?? 'Import STL');
+  const batchCmd = new history.BatchCommand(historyLabel ?? 'Import STL');
+  const parent = replaceElement?.parentNode;
 
-  const source = options.replaceElement;
-  const parent = source?.parentNode;
-
-  if (source && parent) {
-    batchCmd.addSubCommand(new history.RemoveElementCommand(source, source.nextSibling, parent));
-    source.remove();
+  if (replaceElement && parent) {
+    batchCmd.addSubCommand(new history.RemoveElementCommand(replaceElement, replaceElement.nextSibling, parent));
+    replaceElement.remove();
   }
 
   batchCmd.addSubCommand(new history.InsertElementCommand(elem));
   batchCmd.onAfter = () => syncStlObjectsWithDom([object]);
 
+  return { cmd: batchCmd, id };
+};
+
+const insert3dGeometry = async (
+  buffer: ArrayBuffer,
+  geometry: BufferGeometry,
+  attributes: Record<string, number | string> = {},
+  options: Insert3dGeometryOptions = {},
+): Promise<void> => {
+  geometry.computeBoundingBox();
+
+  if (!geometry.boundingBox) throw new Error('Failed to read 3D geometry');
+
+  // Placement and adaptive scaling are part of the imported state.
+  const initialTransform = options.initialTransform ?? (await getInitialTransform(geometry, options));
+  const { cmd, id } = create3dObject(buffer, geometry, {
+    attributes,
+    historyLabel: options.historyLabel,
+    initialTransform,
+    kind: options.kind,
+    replaceElement: options.replaceElement,
+  });
+
   if (options.mergeWithPreviousHistory) {
-    undoManager.appendCommandToLast(batchCmd, 'Create 3D Text', options.replaceElement);
+    undoManager.appendCommandToLast(cmd, 'Create 3D Text', options.replaceElement);
   } else {
-    undoManager.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(cmd);
   }
 
   selectStlObject(id);

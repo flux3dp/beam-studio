@@ -1,4 +1,5 @@
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import { DEFAULT_POINT_SPACING, POINT_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -19,6 +20,8 @@ export interface Detail {
 }
 
 interface SettingInfos {
+  /** Inner engraving test: UV Promark params without power and passes, plus the STL point spacing. */
+  innerEngraving?: boolean;
   laserType?: LaserType;
 }
 
@@ -30,9 +33,20 @@ export const commonTableParams = ['strength', 'speed', 'repeat'] as const;
 export const promarkTableParams = ['fillInterval', 'frequency', 'dottingTime'] as const;
 export const mopaTableParams = ['pulseWidth'] as const;
 export const uvTableParams = ['pulseWidth', 'qPulseWidth'] as const;
-export const tableParams = [...commonTableParams, ...promarkTableParams, ...mopaTableParams, ...uvTableParams] as const;
+/** Written onto the 3D object rather than the layer. */
+export const innerEngravingTableParams = ['pointSpacing'] as const;
+export const tableParams = [
+  ...commonTableParams,
+  ...promarkTableParams,
+  ...mopaTableParams,
+  ...uvTableParams,
+  ...innerEngravingTableParams,
+] as const;
 
-export type TableSetting = TableSettingConstruct<typeof commonTableParams> &
+// power and passes are absent from the inner engraving table
+export type TableSetting = TableSettingConstruct<['repeat', 'strength'], false> &
+  TableSettingConstruct<['speed']> &
+  TableSettingConstruct<typeof innerEngravingTableParams, false> &
   TableSettingConstruct<typeof mopaTableParams, false> &
   TableSettingConstruct<typeof promarkTableParams, false> &
   TableSettingConstruct<typeof uvTableParams, false>;
@@ -148,10 +162,35 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
   };
 };
 
+const getInnerEngravingTableSetting = (workarea: WorkAreaModel): TableSetting => {
+  const {
+    repeat: _repeat,
+    strength: _strength,
+    ...setting
+  } = getPromarkTableSetting(workarea, { laserType: LaserType.UV });
+
+  return {
+    ...setting,
+    dottingTime: { ...setting.dottingTime!, selected: 0 },
+    pointSpacing: {
+      allowDecimal: true,
+      default: DEFAULT_POINT_SPACING,
+      max: POINT_SPACING_LIMIT.max,
+      maxValue: 0.2,
+      min: POINT_SPACING_LIMIT.min,
+      minValue: 0.05,
+      selected: 1,
+    },
+    speed: { ...setting.speed, selected: 2 },
+  };
+};
+
 export const getTableSetting = (
   workarea: WorkAreaModel,
-  { laserType }: SettingInfos = { laserType: LaserType.Desktop },
+  { innerEngraving = false, laserType }: SettingInfos = { laserType: LaserType.Desktop },
 ): TableSetting => {
+  if (innerEngraving) return getInnerEngravingTableSetting(workarea);
+
   if (promarkModels.has(workarea)) {
     return getPromarkTableSetting(workarea, { laserType });
   }

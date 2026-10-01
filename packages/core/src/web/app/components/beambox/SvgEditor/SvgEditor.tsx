@@ -20,6 +20,7 @@ import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
+import { isUvDev2 } from '@core/helpers/is-dev';
 import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
 
 import Generators from '../../Generators';
@@ -105,8 +106,9 @@ const SvgEditor = (): ReactNode => {
           </ToolBarDrawer>
         )}
         {/* the generators all produce 2D artwork (boxgen, code, keychain, puzzle...), which an inner
-            engraving document has nowhere to put — V1 only holds STL objects */}
-        {!innerEngraving &&
+            engraving document has nowhere to put — V1 only holds STL objects. The only exception is
+            the 3D material test, still in development */}
+        {(!innerEngraving || (!isMobile && isUvDev2())) &&
           (isMobile ? (
             drawerMode === 'generator' && <MobileGenerators />
           ) : (

@@ -41,18 +41,21 @@ export default function TableSettingForm({
     beambox: {
       right_panel: { laser_panel: tLaserPanel },
     },
+    inner_engraving_settings: tInnerEngraving,
     material_test_generator: tMaterial,
   } = useI18n();
   const lengthUnit = isInch ? 'in' : 'mm';
-  const { options, settingEntries } = useMemo(
-    () => ({
+  const { options, settingEntries } = useMemo(() => {
+    const getLabel = (key: string): string =>
+      key === 'pointSpacing' ? tInnerEngraving.point_spacing : (tLaserPanel[camelToSnake(key)] ?? tLaserPanel[key]);
+
+    return {
       options: Object.keys(tableSetting)
         .filter((key) => blockOption === 'engrave' || key !== 'fillInterval')
-        .map((value) => ({ label: tLaserPanel[camelToSnake(value)] ?? tLaserPanel[value], value })),
+        .map((value) => ({ label: getLabel(value), value })),
       settingEntries: Object.entries(tableSetting) as Array<[TableParams, Detail]>,
-    }),
-    [blockOption, tLaserPanel, tableSetting],
-  );
+    };
+  }, [blockOption, tInnerEngraving, tLaserPanel, tableSetting]);
 
   const handleOptionChange = () => {
     const availableOptions = new Set(options.map(({ value }) => value));
@@ -140,6 +143,7 @@ export default function TableSettingForm({
               case 'speed':
                 return `${lengthUnit}/s`;
               case 'fillInterval':
+              case 'pointSpacing':
                 return 'mm';
               case 'dottingTime':
               case 'qPulseWidth':

@@ -29,6 +29,7 @@ import BlockSettingForm from './BlockSettingForm';
 import type { SvgInfo } from './generateSvgInfo';
 import generateSvgInfo from './generateSvgInfo';
 import styles from './index.module.scss';
+import { paramString } from './paramString';
 import { getTableSetting } from './TableSetting';
 import TableSettingForm from './TableSettingForm';
 import { getTextSetting } from './TextSetting';
@@ -56,16 +57,6 @@ const paramWidth = {
   repeat: 42.63,
   speed: 81.61,
   strength: 60.66,
-} as const;
-const paramString = {
-  dottingTime: 'Dotting Time (us)',
-  fillInterval: 'Fill Interval (mm)',
-  frequency: 'Frequency (kHz)',
-  pulseWidth: 'Pulse Width (ns)',
-  qPulseWidth: 'Q Pulse Width (us)',
-  repeat: 'Passes',
-  speed: 'Speed (mm/s)',
-  strength: 'Power (%)',
 } as const;
 
 const getTextAdjustment = (rawText: number | string) => (rawText.toString().length * 2.7) / 2;
