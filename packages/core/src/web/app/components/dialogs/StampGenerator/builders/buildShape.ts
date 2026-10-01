@@ -5,6 +5,7 @@ import NS from '@core/app/constants/namespaces';
 import { DESIGN_SIZE, PREVIEW_COLORS } from '../constants';
 import type { ParsedTemplate, StampShape, StampState, StampTemplate } from '../types';
 
+import { buildBorder, roundedRect } from './buildBorder';
 import { buildElementPaths } from './buildElement';
 import { buildTextPaths } from './buildText';
 
@@ -60,6 +61,39 @@ export const invertFace = (cut: paper.PathItem, engraved: paper.PathItem[]): pap
 };
 
 /**
+ * Cuts `text` out of the frame that contains it: both become one compound reoriented by containment
+ * depth (frame filled → glyph hole → counter filled), the same trick as invertFace. Returns null when
+ * no frame's filled region holds the text (e.g. the user enlarged it past its band): the caller then
+ * engraves the text normally instead of merging it into a ring, where it would vanish.
+ */
+export const knockoutText = (frames: paper.PathItem[], text: paper.PathItem): null | paper.PathItem[] => {
+  // Smallest frame whose filled area holds the text: the band, not the outer ring (its center is a hole).
+  const index =
+    frames
+      .map((f, i) => ({
+        area: f.bounds.area,
+        contains: f.bounds.contains(text.bounds) && f.contains(text.bounds.center),
+        i,
+      }))
+      .filter((c) => c.contains)
+      .sort((a, b) => a.area - b.area)[0]?.i ?? -1;
+
+  if (index < 0) return null;
+
+  const contours = (item: paper.PathItem): paper.Path[] =>
+    item instanceof paper.CompoundPath ? [...(item.children as paper.Path[])] : [item as paper.Path];
+  const merged = new paper.CompoundPath({ children: [...contours(frames[index]), ...contours(text)], insert: true });
+
+  merged.fillColor = frames[index].fillColor;
+  // The contours were re-parented into `merged`; only the emptied compound shells are left to drop.
+  for (const item of [frames[index], text]) if (item instanceof paper.CompoundPath) item.remove();
+
+  merged.reorient(false, true);
+
+  return frames.map((f, i) => (i === index ? merged : f));
+};
+
+/**
  * Composes engrave + cut geometry for the current state inside one paper group.
  * Frames are cloned so the parsed template stays pristine; text is converted to outlines and
  * element shapes are fitted into their slots. Built unmirrored so the preview reads naturally; the
@@ -71,10 +105,31 @@ export const buildStampShape = async (
   state: StampState,
 ): Promise<StampShape> => {
   const group = new paper.Group();
-  const frames = parsed.frames.map((f) => f.clone());
-  const texts = await buildTextPaths(parsed, template, state);
-  const elements = buildElementPaths(paper.project, template, state);
-  const cut = outerContour(parsed.outline);
+  // Elements first: a text slot with `clearOf` lays out around the element's built bounds.
+  const elementsById = await buildElementPaths(paper.project, template, state);
+  const built = await buildTextPaths(parsed, template, state, elementsById);
+  const elements = Object.values(elementsById);
+  const texts: paper.PathItem[] = [];
+  let frames = parsed.frames.map((f) => f.clone());
+
+  if (template.border && state.border) {
+    const { widthMm } = template.sizes[state.sizeIndex] ?? template.sizes[0];
+
+    frames.push(buildBorder(template.border, state.border, template.border.bounds.width / widthMm));
+  }
+
+  for (const { item, slot } of built) {
+    const knocked = 'knockout' in slot && slot.knockout ? knockoutText(frames, item) : null;
+
+    if (knocked) frames = knocked;
+    else texts.push(item);
+  }
+
+  // A decorative border style fills its box to the corners, so its cut is the sharp box, not the stroke ring's rounded one.
+  const cut =
+    template.border && state.border && state.border.style !== 'stroke'
+      ? roundedRect(template.border.bounds)
+      : outerContour(parsed.outline);
   const engrave = state.invertColor
     ? [invertFace(cut, [...frames, ...texts, ...elements])]
     : [...frames, ...texts, ...elements];

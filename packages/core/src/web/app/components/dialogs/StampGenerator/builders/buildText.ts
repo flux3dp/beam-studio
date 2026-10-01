@@ -100,24 +100,47 @@ const toPathItem = (pathEl: SVGPathElement | undefined): null | paper.PathItem =
 };
 
 /**
+ * Trims `box` so it stays `padding` away from `obstacle` on the side the obstacle's center is, when
+ * the two overlap vertically. Returns the box unchanged otherwise or if nothing would be left.
+ */
+export const keepClear = (box: Bounds, obstacle: Bounds, padding: number): Bounds => {
+  const overlapsRows = obstacle.y < box.y + box.height && obstacle.y + obstacle.height > box.y;
+
+  if (!overlapsRows) return box;
+
+  const onLeft = obstacle.x + obstacle.width / 2 < box.x + box.width / 2;
+  const x = onLeft ? Math.max(box.x, obstacle.x + obstacle.width + padding) : box.x;
+  const right = onLeft ? box.x + box.width : Math.min(box.x + box.width, obstacle.x - padding);
+
+  return right - x > 0 ? { ...box, width: right - x, x } : box;
+};
+
+/**
  * Builds one paper path item per enabled text slot, with glyphs already converted to outlines
- * via fontkit so preview and export share the same geometry.
+ * via fontkit so preview and export share the same geometry. `elements` (built element items by
+ * slot id) lets `clearOf` slots lay out around an icon's actual size.
  */
 export const buildTextPaths = async (
   parsed: ParsedTemplate,
   template: StampTemplate,
   state: StampState,
-): Promise<paper.PathItem[]> => {
-  const items: paper.PathItem[] = [];
+  elements: Record<string, paper.PathItem> = {},
+): Promise<Array<{ item: paper.PathItem; slot: TextSlotDef }>> => {
+  const items: Array<{ item: paper.PathItem; slot: TextSlotDef }> = [];
 
   for (const slot of template.texts) {
     const values = state.texts[slot.id];
 
     if (!values?.enabled || !values.text.trim()) continue;
 
-    const item = await buildTextSlot(parsed, slot, values);
+    const obstacle = 'clearOf' in slot && slot.clearOf ? elements[slot.clearOf.elementId]?.bounds : undefined;
+    const laidOut =
+      'bounds' in slot && obstacle && slot.clearOf
+        ? { ...slot, bounds: keepClear(slot.bounds, obstacle, slot.clearOf.padding) }
+        : slot;
+    const item = await buildTextSlot(parsed, laidOut, values);
 
-    if (item) items.push(item);
+    if (item) items.push({ item, slot });
   }
 
   return items;
@@ -178,8 +201,16 @@ const buildTextSlot = async (
 
   if (!item) return null;
 
-  if (fit === 'stretch') fitToBounds(item, bounds);
-  else item.position = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  if (fit === 'stretch') {
+    fitToBounds(item, bounds);
+  } else {
+    // Overlong lines shrink uniformly, floored at half size so the text stays legible (design prototype rule).
+    const [size, limit] = slot.vertical ? [item.bounds.height, bounds.height] : [item.bounds.width, bounds.width];
+
+    if (fit === 'shrink' && size > limit) item.scale(Math.max(0.5, limit / size));
+
+    item.position = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  }
 
   return item;
 };

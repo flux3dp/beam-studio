@@ -1,18 +1,14 @@
 import paper from 'paper';
 import { match } from 'ts-pattern';
 
+import { collectPathItems } from '@core/helpers/generator/collectPathItems';
+
 import { ROLE_COLORS } from '../constants';
 import type { ParsedTemplate, StampTemplate } from '../types';
 
-type PathRole = 'baseline' | 'frame';
+import { roundedRect } from './buildBorder';
 
-const collectPaths = (item: paper.Item): paper.PathItem[] => {
-  if (item instanceof paper.Path || item instanceof paper.CompoundPath) return [item];
-
-  if (item instanceof paper.Group || item instanceof paper.Layer) return item.children.flatMap(collectPaths);
-
-  return [];
-};
+type PathRole = 'baseline' | 'cut' | 'frame';
 
 /**
  * Classifies an imported SVG path by the designer's color convention (see ROLE_COLORS).
@@ -25,6 +21,7 @@ const getPathRole = (item: paper.PathItem): null | PathRole => {
 
   return match(color)
     .with(ROLE_COLORS.baseline, () => 'baseline' as const)
+    .with(ROLE_COLORS.cut, () => 'cut' as const)
     .with(ROLE_COLORS.frame, () => 'frame' as const)
     .otherwise(() => null);
 };
@@ -37,23 +34,39 @@ const getPathRole = (item: paper.PathItem): null | PathRole => {
 export const parseTemplate = (project: paper.Project, template: StampTemplate): ParsedTemplate => {
   project.activate();
 
-  const imported = project.importSVG(template.svgContent, { expandShapes: true, insert: true });
-  const paths = collectPaths(imported);
-  const byRole = { baseline: [] as paper.Path[], frame: [] as paper.PathItem[] };
+  const paths = template.svgContent
+    ? collectPathItems(project.importSVG(template.svgContent, { expandShapes: true, insert: true }))
+    : [];
+  const byRole = { baseline: [] as paper.Path[], cut: [] as paper.PathItem[], frame: [] as paper.PathItem[] };
 
   for (const path of paths) {
     const role = getPathRole(path);
 
     if (role === 'baseline' && path instanceof paper.Path) byRole.baseline.push(path);
     else if (role === 'frame') byRole.frame.push(path);
+    else if (role === 'cut') byRole.cut.push(path);
     else path.remove();
   }
 
-  if (byRole.frame.length === 0) throw new Error(`Template ${template.id} has no frame paths`);
+  if (byRole.frame.length === 0 && !template.border) throw new Error(`Template ${template.id} has no frame paths`);
 
   byRole.frame.forEach((frame) => frame.reorient(false, true));
 
-  const outline = byRole.frame.reduce((a, b) => (b.bounds.area > a.bounds.area ? b : a));
+  // An explicit cut path (e.g. under a dashed edge) wins; otherwise the border box or the largest frame's outer edge is the cut.
+  const [cut] = byRole.cut;
+
+  if (cut) {
+    cut.remove();
+    cut.strokeColor = null;
+    cut.fillColor = new paper.Color('black');
+    cut.reorient(false, true);
+  }
+
+  const outline =
+    cut ??
+    (template.border
+      ? roundedRect(template.border.bounds, template.border.radius)
+      : byRole.frame.reduce((a, b) => (b.bounds.area > a.bounds.area ? b : a)));
 
   const baselines = byRole.baseline
     .sort((a, b) => a.bounds.center.y - b.bounds.center.y)

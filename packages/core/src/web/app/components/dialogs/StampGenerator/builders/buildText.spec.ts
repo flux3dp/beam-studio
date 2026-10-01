@@ -1,6 +1,6 @@
 import paper from 'paper';
 
-import { fitLetterSpacing, fitToBounds } from './buildText';
+import { fitLetterSpacing, fitToBounds, keepClear } from './buildText';
 
 // The generator helpers pull in font-funcs, whose deps are ESM-only under Jest.
 jest.mock('@core/helpers/generator/textElement', () => ({}));
@@ -48,5 +48,22 @@ describe('fitLetterSpacing', () => {
   it('is a no-op without gaps', () => {
     expect(fitLetterSpacing(130, 100, 0, 0)).toBe(0);
     expect(fitLetterSpacing(30, 100, 0, 0, false)).toBe(0);
+  });
+});
+
+describe('keepClear', () => {
+  const box = { height: 10, width: 100, x: 20, y: 40 };
+
+  it('trims the side the obstacle is on and keeps the padding', () => {
+    expect(keepClear(box, { height: 30, width: 30, x: 10, y: 30 }, 4)).toEqual({ ...box, width: 76, x: 44 });
+    expect(keepClear(box, { height: 30, width: 30, x: 100, y: 30 }, 4)).toEqual({ ...box, width: 76 });
+  });
+
+  it('ignores obstacles that do not overlap the box vertically', () => {
+    expect(keepClear(box, { height: 10, width: 30, x: 10, y: 60 }, 4)).toBe(box);
+  });
+
+  it('keeps the box when trimming would leave nothing', () => {
+    expect(keepClear(box, { height: 30, width: 200, x: 0, y: 30 }, 4)).toBe(box);
   });
 });

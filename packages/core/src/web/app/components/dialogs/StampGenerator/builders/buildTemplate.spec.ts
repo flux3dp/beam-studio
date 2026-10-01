@@ -22,21 +22,24 @@ describe('parseTemplate', () => {
     baselines.forEach((b) => expect(b.firstSegment.point.x).toBeLessThan(b.lastSegment.point.x));
   });
 
-  it('imports the even-odd square ring as a single filled compound frame', () => {
+  it('uses the border box as the outline of a frameless (border) template', () => {
     const { baselines, frames, outline } = parse('name_seal');
     const roundedRectArea = (side: number, r: number) => side * side - (4 - Math.PI) * r * r;
 
-    expect(frames).toHaveLength(1);
+    expect(frames).toHaveLength(0);
     expect(baselines).toHaveLength(0);
-    expect(outline instanceof paper.CompoundPath).toBe(true);
-    expect(outline.fillColor).not.toBeNull();
     expect(outline.bounds.width).toBeCloseTo(100, 3);
     expect(outline.bounds.center.x).toBeCloseTo(75, 3);
     expect(outline.bounds.center.y).toBeCloseTo(75, 3);
-    // reoriented for nonzero: signed area = outer − inner
-    expect(Math.abs(outline.area)).toBeCloseTo(
-      roundedRectArea(100, 10) - roundedRectArea(100 - 200 / 30, 10 - 100 / 30),
-      0,
-    );
+    expect(Math.abs(outline.area)).toBeCloseTo(roundedRectArea(100, 10), 0);
+  });
+
+  it('uses an explicit cut path as the outline and keeps the dashes as frames', () => {
+    const { frames, outline } = parse('office_round_post_01');
+
+    expect(outline instanceof paper.CompoundPath).toBe(false);
+    // The dashes come in as one compound frame with one child per dash.
+    expect(frames.some((f) => f instanceof paper.CompoundPath && f.children.length > 10)).toBe(true);
+    expect(frames.every((f) => f.bounds.area <= outline.bounds.area)).toBe(true);
   });
 });

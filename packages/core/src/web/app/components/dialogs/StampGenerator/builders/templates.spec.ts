@@ -12,7 +12,8 @@ describe('every template', () => {
       const parsed = parseTemplate(project, template);
       const arcSlots = template.texts.filter((s) => 'baseline' in s).length;
 
-      expect(parsed.frames.length).toBeGreaterThan(0);
+      // A runtime border stands in for SVG frame paths.
+      expect(parsed.frames.length + (template.border ? 1 : 0)).toBeGreaterThan(0);
       expect(parsed.baselines.length).toBeGreaterThanOrEqual(arcSlots);
       // Baselines read left→right so text-on-path sits upright.
       parsed.baselines.forEach((b) => expect(b.firstSegment.point.x).toBeLessThan(b.lastSegment.point.x));

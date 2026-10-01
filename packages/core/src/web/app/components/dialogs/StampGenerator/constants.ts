@@ -8,6 +8,8 @@ export const DESIGN_SIZE = 150;
 export const ROLE_COLORS = {
   /** Text-on-path baseline (stroke only, never exported). */
   baseline: '#1890ff',
+  /** Explicit cut outline (stroke only): overrides the largest-frame rule, never engraved. */
+  cut: '#722ed1',
   /** Engraved frame rings; the outermost one doubles as the cut outline. */
   frame: '#e5400a',
 } as const;

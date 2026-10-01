@@ -13,6 +13,8 @@ export type IconSelectorItem = OneOf<{ innerHTML: string }, { icon: ReactNode }>
 
 interface IconSelectorGridProps {
   className?: string;
+  /** Per-cell override (e.g. a wide aspect ratio for thumbnails that aren't square). */
+  itemClassName?: string;
   items: IconSelectorItem[];
   onSelect: (key: string) => void;
   /** Extra slots rendered before the selectable items (e.g. "current shape" slot). */
@@ -25,6 +27,7 @@ interface IconSelectorGridProps {
 
 const IconSelectorGrid = ({
   className,
+  itemClassName,
   items,
   onSelect,
   prefix,
@@ -36,7 +39,7 @@ const IconSelectorGrid = ({
     {prefix}
     {items.map((item) => (
       <button
-        className={classNames(styles.item, { [styles.selected]: item.key === selectedKey })}
+        className={classNames(styles.item, itemClassName, { [styles.selected]: item.key === selectedKey })}
         key={item.key}
         onClick={() => onSelect(item.key)}
         type="button"

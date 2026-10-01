@@ -5,8 +5,11 @@ import { Button, Switch, Tabs } from 'antd';
 import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
 
+import { isLabeled } from '../types';
 import useStampStore from '../useStampStore';
 
+import BorderTab from './BorderTab';
+import ElementTab from './ElementTab';
 import styles from './OptionsPanel.module.scss';
 import TextTab from './TextTab';
 
@@ -55,13 +58,15 @@ const BasicTab = (): null | React.JSX.Element => {
 
 const OptionsPanel = (): React.JSX.Element => {
   const { stamp_generator: t } = useI18n();
-  const hasTexts = useStampStore((s) => s.template?.texts.some((slot) => slot.labelKey) ?? false);
-  const hasElements = useStampStore((s) => s.template?.elements.some((slot) => slot.labelKey) ?? false);
+  const hasTexts = useStampStore((s) => s.template?.texts.some(isLabeled) ?? false);
+  const hasElements = useStampStore((s) => s.template?.elements.some(isLabeled) ?? false);
+  const hasBorder = useStampStore((s) => Boolean(s.template?.border));
   const [activeKey, setActiveKey] = useState('basic');
   const items = [
     { children: <BasicTab />, key: 'basic', label: t.tabs.basic },
     ...(hasTexts ? [{ children: <TextTab />, key: 'text', label: t.tabs.text }] : []),
-    ...(hasElements ? [{ children: null, key: 'element', label: t.tabs.element }] : []),
+    ...(hasElements ? [{ children: <ElementTab />, key: 'element', label: t.tabs.element }] : []),
+    ...(hasBorder ? [{ children: <BorderTab />, key: 'border', label: t.tabs.border }] : []),
   ];
 
   return (

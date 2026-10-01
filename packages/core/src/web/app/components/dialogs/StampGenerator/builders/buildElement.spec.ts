@@ -3,19 +3,19 @@ import paper from 'paper';
 import { STAMP_TEMPLATES } from '../templates';
 import type { StampState } from '../types';
 
-import PLUM_ICON from '../templates/plum-icon.svg?raw';
+import PLUM_ICON from '../templates/icons/plum.svg?raw';
 
 import { buildElementPaths } from './buildElement';
 
 describe('buildElementPaths', () => {
-  it('fits the plum into its slot uniformly (aspect preserved, centered) and honors scale', () => {
+  it('fits the plum into its slot uniformly (aspect preserved, centered) and honors scale', async () => {
     const project = new paper.Project(document.createElement('canvas'));
     const template = STAMP_TEMPLATES.find((t) => t.id === 'oval_company')!;
     const slot = template.elements[0];
     const state = {
-      elements: { [slot.id]: { enabled: true, rotation: 0, scale: 100, shapeKey: 'plum' } },
+      elements: { [slot.id]: { enabled: true, rotation: 0, scale: 100, shapeKey: 'stamp/plum' } },
     } as unknown as StampState;
-    const paths = buildElementPaths(project, template, state);
+    const paths = Object.values(await buildElementPaths(project, template, state));
     const group = new paper.Group(paths);
     const { bounds } = group;
     const box = slot.bounds;
@@ -33,11 +33,11 @@ describe('buildElementPaths', () => {
 
     expect(bounds.width / bounds.height).toBeCloseTo(rawInk.width / rawInk.height, 3);
 
-    const scaled = buildElementPaths(project, template, {
+    const scaled = await buildElementPaths(project, template, {
       ...state,
       elements: { [slot.id]: { ...state.elements[slot.id], scale: 50 } },
     } as StampState);
 
-    expect(new paper.Group(scaled).bounds.width).toBeCloseTo(bounds.width / 2, 2);
+    expect(new paper.Group(Object.values(scaled)).bounds.width).toBeCloseTo(bounds.width / 2, 2);
   });
 });

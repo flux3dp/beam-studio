@@ -54,6 +54,15 @@ const toGeneralFont = (font: BundledFont): GeneralFont => {
   return { ...base, monospace: false, path: localPath(font), width: 5 } satisfies FontDescriptor;
 };
 
+/** Bundled faces of a family, so they show up next to (or instead of) the OS faces in style pickers. */
+export const getBundledFontsOfFamily = (family: string): GeneralFont[] =>
+  BUNDLED_FONTS.filter((f) => f.family === family).map(toGeneralFont);
+
+export const getBundledFamilies = (): string[] => [...new Set(BUNDLED_FONTS.map((f) => f.family))];
+
+/** Registers every bundled font's @font-face, so a family offered in a font list also renders on the canvas. */
+export const applyBundledFontStyles = (): void => BUNDLED_FONTS.forEach((f) => applyBundledFontStyle(f.postscriptName));
+
 export const getBundledFont = (postscriptName: string): GeneralFont | undefined => {
   const font = BUNDLED_FONTS.find((f) => f.postscriptName === postscriptName);
 

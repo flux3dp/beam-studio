@@ -5,6 +5,7 @@ import { Collapse, ConfigProvider, Input, InputNumber, Switch } from 'antd';
 import useI18n from '@core/helpers/useI18n';
 
 import type { TextSlotDef } from '../types';
+import { isLabeled } from '../types';
 import useStampStore from '../useStampStore';
 
 import FontSelect from './FontSelect';
@@ -85,9 +86,7 @@ const TextTab = (): null | React.JSX.Element => {
   if (!template || !texts) return null;
 
   const items = template.texts.flatMap((slot) => {
-    const { labelKey } = slot;
-
-    if (!labelKey) return [];
+    if (!isLabeled(slot)) return [];
 
     const enabled = texts[slot.id]?.enabled ?? false;
     const item = {
@@ -99,7 +98,7 @@ const TextTab = (): null | React.JSX.Element => {
         </div>
       ),
       key: slot.id,
-      label: t.slots[labelKey],
+      label: slot.labelKey ? t.slots[slot.labelKey] : slot.label,
     };
 
     return [item];
@@ -107,7 +106,7 @@ const TextTab = (): null | React.JSX.Element => {
 
   // With a shared font, one picker (seeded from the first editable, unpinned slot) drives every slot.
   const sharedSlot = template.sharedFont
-    ? template.texts.find((slot) => slot.labelKey && !slot.fontPostscriptName && texts[slot.id])
+    ? template.texts.find((slot) => isLabeled(slot) && !slot.fontPostscriptName && texts[slot.id])
     : undefined;
 
   return (

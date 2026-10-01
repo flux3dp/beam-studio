@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback } from 'react';
 
+import ElementPicker from '@core/app/widgets/ElementPicker';
 import useI18n from '@core/helpers/useI18n';
 
 import type { CustomShapeElementOptionDef, CustomShapeElementValues } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
 import GroupCollapse from '../Controls/GroupCollapse';
 import NumberControl from '../Controls/NumberControl';
-import ElementPicker from '../Element/ElementPicker';
 
 interface CustomShapeElementGroupProps {
   elementDef: CustomShapeElementOptionDef;

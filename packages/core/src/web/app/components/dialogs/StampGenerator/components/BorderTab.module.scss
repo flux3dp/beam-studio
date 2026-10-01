@@ -1,0 +1,10 @@
+.grid {
+  grid-template-columns: repeat(2, 1fr);
+  max-height: none;
+  padding: 0;
+}
+
+// The designs are 188×72; keep the cells that shape so 11 of them fit without scrolling.
+.item {
+  aspect-ratio: 188 / 60;
+}

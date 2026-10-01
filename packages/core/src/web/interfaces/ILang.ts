@@ -2551,6 +2551,18 @@ export interface ILang {
       flip_horizontal: string;
       invert_color: string;
     };
+    border: {
+      dashed: string;
+      frame: string;
+      line_width: string;
+    };
+    categories: {
+      circle: string;
+      oval: string;
+      rect: string;
+      square: string;
+      tw_company: string;
+    };
     export_failed: string;
     layers: {
       engrave: string;
@@ -2563,43 +2575,28 @@ export interface ILang {
     };
     slots: {
       address: string;
-      city: string;
       column_1: string;
       column_2: string;
       column_3: string;
       company_name: string;
       contact: string;
       given_name: string;
-      line_1: string;
-      line_2: string;
-      line_3: string;
-      line_4: string;
-      name: string;
       phone: string;
       surname: string;
       tax_id: string;
-      title: string;
-      word: string;
     };
     switch_template_warning: string;
     tabs: {
       basic: string;
+      border: string;
       element: string;
       text: string;
     };
     templates: {
-      eu_address: string;
-      eu_round: string;
-      jp_corporate_round: string;
-      jp_corporate_square: string;
-      jp_personal_round: string;
       name_seal: string;
       oval_company: string;
       rect_company: string;
       square_seal_3col: string;
-      us_address: string;
-      us_office: string;
-      us_round_seal: string;
     };
   };
   stamp_maker_panel: {

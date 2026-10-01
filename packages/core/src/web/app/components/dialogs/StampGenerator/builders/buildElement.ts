@@ -1,38 +1,52 @@
 import paper from 'paper';
 
-import PLUM_ICON from '../templates/plum-icon.svg?raw';
+import { collectPathItems } from '@core/helpers/generator/collectPathItems';
+import { loadShape, svgCache } from '@core/helpers/generator/loadShape';
+
+import CAMERA from '../templates/icons/camera.svg?raw';
+import CHECK from '../templates/icons/check.svg?raw';
+import PLANE from '../templates/icons/plane.svg?raw';
+import PLUM from '../templates/icons/plum.svg?raw';
+import STAR from '../templates/icons/star.svg?raw';
 import type { StampState, StampTemplate } from '../types';
 
 import { resolveOverlaps } from './resolveOverlaps';
 
-/** Shape key → SVG markup. Only the bundled plum blossom for now; the Element tab picker comes later. */
-const SHAPES: Record<string, string> = { plum: PLUM_ICON };
-
-const collectPaths = (item: paper.Item): paper.PathItem[] => {
-  if (item instanceof paper.Path || item instanceof paper.CompoundPath) return [item];
-
-  return item.children?.flatMap(collectPaths) ?? [];
+/**
+ * Bundled icons the Element panel has no equivalent for, registered in the shared shape cache under
+ * `stamp/*` so loadShape and the preset thumbnails treat them like any other key.
+ */
+export const BUNDLED_SHAPES: Record<string, string> = {
+  'stamp/camera': CAMERA,
+  'stamp/check': CHECK,
+  'stamp/plane': PLANE,
+  'stamp/plum': PLUM,
+  'stamp/star': STAR,
 };
 
+Object.entries(BUNDLED_SHAPES).forEach(([key, svg]) => svgCache.set(key, svg));
+
 /**
- * One group of paths per enabled element slot: the shape is fitted inside the slot box (uniform
- * scale, centered), then the user's scale % and rotation are applied about the slot center.
+ * One path item per enabled element slot, keyed by slot id: the shape is fitted inside the slot box
+ * (uniform scale, centered), then the user's scale % and rotation are applied about the slot center.
  */
-export const buildElementPaths = (
+export const buildElementPaths = async (
   project: paper.Project,
   template: StampTemplate,
   state: StampState,
-): paper.PathItem[] =>
-  template.elements.flatMap((slot) => {
-    const values = state.elements[slot.id];
-    const svg = values?.enabled ? SHAPES[values.shapeKey] : undefined;
+): Promise<Record<string, paper.PathItem>> => {
+  const items: Record<string, paper.PathItem> = {};
 
-    if (!svg) return [];
+  for (const slot of template.elements) {
+    const values = state.elements[slot.id];
+    const svg = values?.enabled && values.shapeKey ? await loadShape(values.shapeKey) : null;
+
+    if (!svg) continue;
 
     const { bounds } = slot;
     const imported = project.importSVG(svg, { expandShapes: true, insert: true });
     // Fit the ink, not the SVG viewport: the imported root's bounds are the viewBox.
-    const item = new paper.Group(collectPaths(imported));
+    const item = new paper.Group(collectPathItems(imported));
 
     imported.remove();
     item.fitBounds(new paper.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height));
@@ -47,6 +61,8 @@ export const buildElementPaths = (
 
     shape.fillColor = new paper.Color('black');
     shape.strokeColor = null;
+    items[slot.id] = shape;
+  }
 
-    return [shape];
-  });
+  return items;
+};

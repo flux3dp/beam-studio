@@ -11,6 +11,7 @@ import { buildPreviewSvg, buildStampShape } from './builders/buildShape';
 import { parseTemplate } from './builders/buildTemplate';
 import { PX_TO_MM_RATIO } from './constants';
 import { getTemplateById } from './templates';
+import { isLabeled } from './types';
 import type {
   ElementOptionValues,
   ParsedTemplate,
@@ -81,8 +82,12 @@ const getSlotFont = (slot: TextSlotDef, defaultFont: TextOptionValues['font']): 
 
 const getDefaultState = (template: StampTemplate, defaultFont: TextOptionValues['font']): StampState => {
   return {
+    border: template.border ? { dashed: false, lineWidth: template.border.lineWidth ?? 2, style: 'stroke' } : undefined,
     elements: Object.fromEntries(
-      template.elements.map((e) => [e.id, { enabled: true, rotation: 0, scale: 100, shapeKey: 'plum' }]),
+      template.elements.map((e) => [
+        e.id,
+        { enabled: true, rotation: 0, scale: 100, shapeKey: e.shapeKey ?? 'stamp/plum' },
+      ]),
     ),
     flipHorizontal: true,
     invertColor: false,
@@ -95,7 +100,7 @@ const getDefaultState = (template: StampTemplate, defaultFont: TextOptionValues[
           enabled: true,
           font: getSlotFont(t, defaultFont),
           fontSize: 'fontSize' in t && t.fontSize ? t.fontSize : 8,
-          letterSpacing: 0,
+          letterSpacing: t.letterSpacing ?? 0,
           lineSpacing: 1.2,
           text: t.placeholder,
         },
@@ -146,7 +151,16 @@ const useStampStore = create(
       set({ buildVersion });
       project.activate();
 
-      const shape = await buildStampShape(parsed, template, state);
+      let shape: StampShape;
+
+      try {
+        shape = await buildStampShape(parsed, template, state);
+      } catch (error) {
+        // e.g. an Element-panel / Noun Project shape that fails to load offline: keep the last preview.
+        console.error('Stamp build failed:', error);
+
+        return;
+      }
 
       if (get().buildVersion !== buildVersion) {
         shape.group.remove();
@@ -225,7 +239,9 @@ const useStampStore = create(
         const texts = { ...state.texts };
 
         for (const slot of template.texts) {
-          if (slot.labelKey && !slot.fontPostscriptName && texts[slot.id]) texts[slot.id] = { ...texts[slot.id], font };
+          if (isLabeled(slot) && !slot.fontPostscriptName && texts[slot.id]) {
+            texts[slot.id] = { ...texts[slot.id], font };
+          }
         }
 
         set({ isModified: true, state: { ...state, texts } });

@@ -12,6 +12,9 @@ import Preview from './components/Preview';
 import TemplatePicker from './components/TemplatePicker';
 import { exportToCanvas } from './exportToCanvas';
 import styles from './StampGenerator.module.scss';
+import { STAMP_TEMPLATES } from './templates';
+import { TEMPLATE_CATEGORIES } from './types';
+import type { TemplateCategory } from './types';
 import useStampStore from './useStampStore';
 
 interface StampGeneratorProps {
@@ -22,6 +25,7 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
   const { generators: tGenerators, global: tGlobal, stamp_generator: t } = useI18n();
   const [isExporting, setIsExporting] = useState(false);
   const templateId = useStampStore((s) => s.template?.id);
+  const category = useStampStore((s) => s.template?.category);
   const isModified = useStampStore((s) => s.isModified);
   const selectTemplate = useStampStore((s) => s.selectTemplate);
 
@@ -43,6 +47,17 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
       });
     },
     [templateId, isModified, selectTemplate, t.switch_template_warning],
+  );
+
+  const handleCategoryChange = useCallback(
+    (value: TemplateCategory) => {
+      if (value === category) return;
+
+      const first = STAMP_TEMPLATES.find((template) => template.category === value);
+
+      if (first) handleTemplateChange(first.id);
+    },
+    [category, handleTemplateChange],
   );
 
   const handleImport = useCallback(async () => {
@@ -80,9 +95,23 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
       title={tGenerators.stamp_generator}
     >
       <div className={styles.container}>
-        <TemplatePicker currentTemplateId={templateId} onSelect={handleTemplateChange} />
-        <Preview />
-        <OptionsPanel />
+        <div className={styles.categories}>
+          {TEMPLATE_CATEGORIES.map((value) => (
+            <Button
+              color={value === category ? 'primary' : 'default'}
+              key={value}
+              onClick={() => handleCategoryChange(value)}
+              variant="outlined"
+            >
+              {t.categories[value]}
+            </Button>
+          ))}
+        </div>
+        <div className={styles.body}>
+          <TemplatePicker category={category} currentTemplateId={templateId} onSelect={handleTemplateChange} />
+          <Preview />
+          <OptionsPanel />
+        </div>
       </div>
     </DraggableModal>
   );

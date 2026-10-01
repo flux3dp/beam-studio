@@ -22,7 +22,12 @@ import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
-import { getBundledFont } from '@core/helpers/fonts/bundledFonts';
+import {
+  applyBundledFontStyles,
+  getBundledFamilies,
+  getBundledFont,
+  getBundledFontsOfFamily,
+} from '@core/helpers/fonts/bundledFonts';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import { getOS } from '@core/helpers/getOS';
 import { hashMap } from '@core/helpers/hashHelper';
@@ -140,6 +145,14 @@ const requestAvailableFontFamilies = ({
   const fontFamilySet = new Set<string>();
 
   fonts.map((font) => fontFamilySet.add(font.family!));
+  // Bundled fonts are always available, installed or not; their @font-face is registered here so the
+  // canvas renders them with the same file the export converts with.
+  applyBundledFontStyles();
+  getBundledFamilies().forEach((family) => {
+    fontFamilySet.add(family);
+
+    if (!fontNameMap.get(family)) fontNameMap.set(family, family);
+  });
 
   const sortedFamilies = Array.from(fontFamilySet).sort((a, b) =>
     String(a ?? '').localeCompare(String(b ?? ''), undefined, { sensitivity: 'base' }),
@@ -218,7 +231,12 @@ const requestFontsOfTheFontFamily = memoize((family: string) => {
 
   registerLocalFontFaces(fonts);
 
-  return fonts;
+  // Bundled faces the OS doesn't have come after (e.g. Montserrat Medium next to an installed Montserrat).
+  const bundled = getBundledFontsOfFamily(family).filter(
+    (b) => !fonts.some((f) => f.postscriptName === b.postscriptName),
+  );
+
+  return [...fonts, ...bundled];
 });
 
 /** Pin the local faces of every family used by text in the document (call after a file is loaded). */

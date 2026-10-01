@@ -5,21 +5,23 @@ import classNames from 'classnames';
 import useI18n from '@core/helpers/useI18n';
 
 import { STAMP_TEMPLATES } from '../templates';
+import type { TemplateCategory } from '../types';
 
 import styles from './TemplatePicker.module.scss';
 
 interface TemplatePickerProps {
+  category?: TemplateCategory;
   currentTemplateId?: string;
   onSelect: (templateId: string) => void;
 }
 
-const TemplatePicker = ({ currentTemplateId, onSelect }: TemplatePickerProps): React.JSX.Element => {
+const TemplatePicker = ({ category, currentTemplateId, onSelect }: TemplatePickerProps): React.JSX.Element => {
   const { stamp_generator: t } = useI18n();
 
   return (
     <div className={styles.picker}>
-      {STAMP_TEMPLATES.map((template) => {
-        const label = t.templates[template.nameKey];
+      {STAMP_TEMPLATES.filter((template) => template.category === category).map((template) => {
+        const label = template.nameKey ? t.templates[template.nameKey] : template.name;
 
         return (
           <button

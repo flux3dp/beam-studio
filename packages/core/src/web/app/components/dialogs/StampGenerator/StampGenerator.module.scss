@@ -6,17 +6,33 @@
 
 .container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   width: calc(90vw - 48px); // 48px: padding of antd modal
   @include mixins.viewport-size($offset: 180px);
   max-height: 800px;
+  gap: 12px;
+
+  @include mixins.is-mobile {
+    height: auto;
+    @include mixins.viewport-size(80, $property: max-height, $unit: svh);
+    overflow-y: hidden;
+  }
+}
+
+.categories {
+  display: flex;
+  gap: 8px;
+}
+
+
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
   gap: 16px;
 
   @include mixins.is-mobile {
     flex-direction: column;
-    height: auto;
-    @include mixins.viewport-size(80, $property: max-height, $unit: svh);
-    overflow-y: hidden;
   }
 }
 

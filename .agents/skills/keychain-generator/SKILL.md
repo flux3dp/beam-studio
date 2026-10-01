@@ -41,7 +41,7 @@ KeyChainGenerator/
 │   ├── buildDecorations.ts         # buildDecorations (text + elements + decoration paths)
 │   ├── buildSvgViews.ts            # buildSvgView → design/exploded SVG strings
 │   ├── buildText.ts                # applyTexts (re-exports createTextElement/createTextPath from helpers/generator/textElement)
-│   ├── buildElement.ts             # loadShape, applyElements for icon shapes
+│   ├── buildElement.ts             # applyElements for icon shapes; re-exports loadShape/svgCache/NP_SHAPE_PREFIX from @core/helpers/generator/loadShape
 │   ├── buildCustomBaseShape.ts     # Text/icon-derived base shape generation
 │   └── *.spec.ts                   # Unit tests
 ├── components/
@@ -147,3 +147,7 @@ pnpm test packages/core/src/web/app/components/dialogs/KeyChainGenerator/builder
 ```
 
 Paper.js is fully mocked in tests (MockPath, MockCompoundPath, MockCircle, MockLine). The mock lives inline in the spec file via `jest.mock('paper', ...)`.
+
+The icon grid used by the preset/decoration/variant selectors is the shared `@core/app/widgets/IconSelectorGrid` (moved out of Controls/ 2026-09-30; the stamp generator's Border tab uses it too).
+
+The preset picker (ElementPicker = PresetSelector + SelectedItemSlot + Element panel browser) lives in `@core/app/widgets/ElementPicker` (moved 2026-10-01; the stamp generator's Element tab uses it too). PresetSelector renders a key from the shared `svgCache` when a dialog pre-registered it there, else via `importIcon`.

@@ -31,3 +31,18 @@
   padding: 0 !important;
   padding-block: 8px 0 !important;
 }
+
+// The Element picker's "more" drawer is an inline antd Drawer positioned against the nearest positioned
+// ancestor; antd's tab content pane is one, and at 280px it would clip the 400px drawer. Let it anchor
+// to the modal instead, like the keychain generator.
+.panel :global(.ant-tabs-content) {
+  position: static;
+}
+
+// The panel scrolls; keep the tab bar in view.
+.panel :global(.ant-tabs-nav) {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;
+}
