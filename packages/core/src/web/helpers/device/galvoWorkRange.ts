@@ -87,6 +87,19 @@ export const getCachedGalvoWorkRange = (): GalvoWorkRange => {
   return (uuid && cache[uuid]) || defaultGalvoWorkRange;
 };
 
+/**
+ * How far short of the X range the machine reports everything here stops, in mm.
+ *
+ * The parked heads are not where galvo_work_range says they are: the X axis is belt driven and
+ * bounces off its limit, so a head ends up a little to the left of the nominal position and the
+ * machine's own number is optimistic by however much that was this time. Every gantry move in Beam
+ * Studio is held back by this instead -- it is cheaper than a collision and the X travel is not
+ * what anyone is short of.
+ *
+ * Only X: the Y number has no dock behind it.
+ */
+const X_SAFE_MARGIN = 30;
+
 /** Range in, inset out: what each edge of the canvas loses because the gantry stops short. */
 const toBoundary = (max: GalvoRange, min: GalvoRange) => {
   const { height, width } = getWorkarea(MODEL);
@@ -94,7 +107,7 @@ const toBoundary = (max: GalvoRange, min: GalvoRange) => {
   return {
     bottom: Math.max(height - max.y, 0),
     left: Math.max(min.x, 0),
-    right: Math.max(width - max.x, 0),
+    right: Math.max(width - max.x + X_SAFE_MARGIN, 0),
     top: Math.max(min.y, 0),
   };
 };

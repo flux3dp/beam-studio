@@ -19,7 +19,7 @@ GalvoSettings（CO2／Mopa 各一份）,手動測試 X / Y / 打點時間,機器
 GalvoSettings（CO2／Mopa 各一份）,預覽參數 步距 / 跳躍速度 / 跳躍延遲 / 圈數,機器選單 > 振鏡設定（CO2 振鏡 / Mopa 振鏡） > Manual > 預覽參數（需 fhx2galvo-dev）,不保存（留空即用機器端預設）,留空＝機器端預設 10 / 4000 / 0 / 1,是,,只影響紅光預覽，不影響標記。個人覺得默認值在機器上看可能有一點卡，所以先開一個 UI 提供調整。
 GalvoDevSettings · 目前生效（唯讀）,場鏡尺寸（CO2 / Mopa）,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G）（唯讀顯示）,機器（config galvo_co2 / galvo_mopa，JSON）,—,否,,要改請到振鏡設定
 GalvoDevSettings · 目前生效（唯讀）,模組偏移（CO2 / Mopa）,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G）（唯讀顯示）,機器（config toolhead_shift，JSON）,—,否,,同上
-GalvoDevSettings · 移動範圍,無 Mopa · 最大 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,機器（config galvo_work_range.galvo，JSON）,600 / 520,是,是,畫布寬高減掉這裡就是右側與下方邊界，正式版前端會用一個所有機器都適用的安全值。串聯／解聯右側位置會讀這個 X
+GalvoDevSettings · 移動範圍,無 Mopa · 最大 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,機器（config galvo_work_range.galvo，JSON）,600 / 520,是,是,畫布高度減掉 Y 就是下方邊界；X 會再多留 30 mm 安全距離後才算右側邊界 —— 皮帶驅動的 X 軸撞極限會回彈，停泊的模組頭實際位置比機器報的數字再偏左一些。正式版前端會用一個所有機器都適用的安全值。串聯／解聯右側位置會讀這個 X
 GalvoDevSettings · 移動範圍,有 Mopa · 最大 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,機器（config galvo_work_range.mopa，JSON）,600 / 520,是,是,同上
 GalvoDevSettings · 移動範圍,無 Mopa · 最小 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,Beam Studio（storage galvo-work-range-min，只在這台電腦）,0 / 0,是,,機器上沒有存這組值
 GalvoDevSettings · 移動範圍,有 Mopa · 最小 X / Y,頂列 燒瓶圖示 > 振鏡開發者設定（需 fhx2galvo-dev，且文件機型為 HEXA G） > 移動範圍,Beam Studio（storage galvo-work-range-min，只在這台電腦）,0 / 0,是,,同上

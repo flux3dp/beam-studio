@@ -282,7 +282,8 @@ const GalvoDevSettings = ({ onClose }: Props): React.JSX.Element => {
         source: `galvo_work_range.${mode}`,
         tooltip:
           `${fitted}時，龍門走得到的最遠位置。存在機器上，連接／脫離序列也讀同一組值。` +
-          `畫布寬高減掉這裡就是右側與下方的邊界。`,
+          `畫布寬高減掉這裡就是下方與右側的邊界，但 X 會再多留 30 mm 安全距離：皮帶驅動的 X 軸` +
+          `撞極限會回彈，停泊的模組頭實際位置比這個數字再偏左一些。`,
         which: 'max' as const,
       },
     ];
