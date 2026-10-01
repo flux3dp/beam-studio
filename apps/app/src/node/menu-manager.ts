@@ -191,11 +191,11 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           id: 'GALVO_CO2_SETTINGS',
           label: sprintf(r.galvo_settings, i18n.lang.layer_module.galvo_co2),
         },
-        isHexa2Galvo && {
-          click: handleClick,
-          id: 'CALIBRATE_GALVO_CO2_MODULE',
-          label: sprintf(r.calibrate_galvo_module, i18n.lang.layer_module.galvo_co2),
-        },
+        // isHexa2Galvo && {
+        //   click: handleClick,
+        //   id: 'CALIBRATE_GALVO_CO2_MODULE',
+        //   label: sprintf(r.calibrate_galvo_module, i18n.lang.layer_module.galvo_co2),
+        // },
         // the MOPA head is an optional purchase, so both of its entries follow the document
         // setting; the renderer toggles their visibility
         isHexa2Galvo && {
@@ -203,11 +203,11 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           id: 'GALVO_MOPA_SETTINGS',
           label: sprintf(r.galvo_settings, i18n.lang.layer_module.galvo_mopa),
         },
-        isHexa2Galvo && {
-          click: handleClick,
-          id: 'CALIBRATE_GALVO_MOPA_MODULE',
-          label: sprintf(r.calibrate_galvo_module, i18n.lang.layer_module.galvo_mopa),
-        },
+        // isHexa2Galvo && {
+        //   click: handleClick,
+        //   id: 'CALIBRATE_GALVO_MOPA_MODULE',
+        //   label: sprintf(r.calibrate_galvo_module, i18n.lang.layer_module.galvo_mopa),
+        // },
         (isAdor || isBeamo2) && {
           click: handleClick,
           id: 'CALIBRATE_IR_MODULE',
