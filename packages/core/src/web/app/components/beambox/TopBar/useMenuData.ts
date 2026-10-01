@@ -179,13 +179,13 @@ const useMenuData = (email?: string): MenuNode[] => {
               label: sprintf(menuCms.galvo_settings, modulesTranslations[LayerModule.GALVO_CO2]),
               type: 'item' as const,
             },
-            {
-              device,
-              disabled: isMobile,
-              id: 'CALIBRATE_GALVO_CO2_MODULE',
-              label: sprintf(menuCms.calibrate_galvo_module, modulesTranslations[LayerModule.GALVO_CO2]),
-              type: 'item' as const,
-            },
+            // {
+            //   device,
+            //   disabled: isMobile,
+            //   id: 'CALIBRATE_GALVO_CO2_MODULE',
+            //   label: sprintf(menuCms.calibrate_galvo_module, modulesTranslations[LayerModule.GALVO_CO2]),
+            //   type: 'item' as const,
+            // },
           ]
         : []),
       // the MOPA galvo is an optional purchase, so it follows the document setting
@@ -197,13 +197,13 @@ const useMenuData = (email?: string): MenuNode[] => {
               label: sprintf(menuCms.galvo_settings, modulesTranslations[LayerModule.GALVO_MOPA]),
               type: 'item' as const,
             },
-            {
-              device,
-              disabled: isMobile,
-              id: 'CALIBRATE_GALVO_MOPA_MODULE',
-              label: sprintf(menuCms.calibrate_galvo_module, modulesTranslations[LayerModule.GALVO_MOPA]),
-              type: 'item' as const,
-            },
+            // {
+            //   device,
+            //   disabled: isMobile,
+            //   id: 'CALIBRATE_GALVO_MOPA_MODULE',
+            //   label: sprintf(menuCms.calibrate_galvo_module, modulesTranslations[LayerModule.GALVO_MOPA]),
+            //   type: 'item' as const,
+            // },
           ]
         : []),
       ...(supportedModules?.includes(LayerModule.LASER_1064)
