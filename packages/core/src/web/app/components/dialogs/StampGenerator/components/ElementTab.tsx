@@ -28,7 +28,7 @@ const ElementTab = (): null | React.JSX.Element => {
 
         return (
           <React.Fragment key={slot.id}>
-            <span>{slot.labelKey ? t.slots[slot.labelKey] : slot.label}</span>
+            <span>{t.slots[slot.labelKey!]}</span>
             <ElementPicker
               onChange={(shapeKey) => updateElement(slot.id, { enabled: true, shapeKey })}
               onClear={values.enabled ? () => updateElement(slot.id, { enabled: false, shapeKey: '' }) : undefined}

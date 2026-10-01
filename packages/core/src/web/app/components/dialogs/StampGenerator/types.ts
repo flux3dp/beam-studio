@@ -46,9 +46,7 @@ export type TextSlotDef = TextPlacement & {
   /** Fixed face for this slot by postscript name (e.g. a bundled font); omit for the resolved default font. */
   fontPostscriptName?: string;
   id: string;
-  /** Plain-text row label for generated templates (design-provided). Same fixed-slot rule as labelKey. */
-  label?: string;
-  /** Row label in the Text tab. Omit (with label) to keep the slot fixed: it renders its placeholder and isn't listed. */
+  /** Row label in the Text tab. Omit to keep the slot fixed: it renders its placeholder and isn't listed. */
   labelKey?: keyof ILang['stamp_generator']['slots'];
   /** Initial letter spacing in design px (user-adjustable). */
   letterSpacing?: number;
@@ -58,9 +56,7 @@ export type TextSlotDef = TextPlacement & {
 export interface ElementSlotDef {
   bounds: Bounds;
   id: string;
-  /** Plain-text row label for generated templates (design-provided). Same fixed-slot rule as labelKey. */
-  label?: string;
-  /** Row label in the Element tab. Omit (with label) to keep the slot fixed: it renders its default shape and isn't listed. */
+  /** Row label in the Element tab. Omit to keep the slot fixed: it renders its default shape and isn't listed. */
   labelKey?: keyof ILang['stamp_generator']['slots'];
   /** Preset shape keys offered in the Element tab (Element-panel keys like `animals/i_land-16`, or bundled `stamp/*`). */
   options?: string[];
@@ -106,9 +102,7 @@ export interface StampTemplate {
   category: TemplateCategory;
   elements: ElementSlotDef[];
   id: string;
-  /** Plain-text picker name for generated templates; nameKey wins when both are set. */
-  name?: string;
-  nameKey?: keyof ILang['stamp_generator']['templates'];
+  nameKey: keyof ILang['stamp_generator']['templates'];
   /**
    * Default text font, tried in order by postscript name; a candidate is skipped when it doesn't
    * resolve or load (web font offline, macOS font not downloaded). Falls back to the user's default font.
@@ -178,5 +172,5 @@ export interface StampState {
   texts: Record<string, TextOptionValues>;
 }
 
-/** A slot is user-editable (listed in the Text tab) when it carries either kind of label. */
-export const isLabeled = (slot: { label?: string; labelKey?: string }): boolean => Boolean(slot.labelKey || slot.label);
+/** A slot is user-editable (listed in its tab) when it carries a label key. */
+export const isLabeled = (slot: { labelKey?: string }): boolean => Boolean(slot.labelKey);

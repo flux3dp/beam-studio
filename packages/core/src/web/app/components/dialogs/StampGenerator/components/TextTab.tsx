@@ -98,7 +98,7 @@ const TextTab = (): null | React.JSX.Element => {
         </div>
       ),
       key: slot.id,
-      label: slot.labelKey ? t.slots[slot.labelKey] : slot.label,
+      label: t.slots[slot.labelKey!],
     };
 
     return [item];

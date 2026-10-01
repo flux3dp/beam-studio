@@ -29,8 +29,7 @@ StampGenerator/
 │   ├── borders.ts / borders/<family>/  # BORDER_STYLES[BorderShape]: decorative borders per family (rect: design's 188×72 SVGs, ?raw)
 │   ├── index.ts               # STAMP_TEMPLATES[] (hand-authored + ...CATALOG_TEMPLATES) + getTemplateById; size tables
 │   ├── catalog.ts             # Entries converted from design-team JSONs; plain objects, tune by hand
-│   ├── catalog/<id>.svg       # Their frames, written by fromJson.mjs (imported as `?raw` like the hand-authored ones)
-│   ├── fromJson.mjs           # node script: flux-stamp-template@1 JSON → catalog/<id>.svg + import + entry to paste
+│   ├── catalog/<id>.svg       # Their frames (imported as `?raw` like the hand-authored ones)
 │   ├── fonts.ts               # KAI_FONTS / JP_FONTS candidate lists (shared with catalog.ts)
 │   ├── *.svg                  # Hand-authored template frames (imported as `?raw`)
 │   └── icons/*.svg            # Bundled element shapes registered as stamp/<name> (buildElement BUNDLED_SHAPES): plum, star, plane, camera, check
@@ -90,19 +89,13 @@ will parse it.
 
 Design exports `flux-stamp-template@1` JSONs (id, name, shape, sizeMm, `gen`, `p`, `fields`). They are
 parameter sets for the prototype's render engine (印章製作 Stamp Maker Prototype.html), not
-self-describing: ring radii, arc radii and star positions live in the engine. `templates/fromJson.mjs`
-ports that geometry (prototype box = sizeMm × 4 px, 3 px inset, everything relative to R = min(rx, ry);
-mapped so the outer frame spans 140 design px), writes the frame to `catalog/<id>.svg` and prints the
-`?raw` import plus one entry per JSON:
-
-```
-node packages/core/src/web/app/components/dialogs/StampGenerator/templates/fromJson.mjs ~/Downloads/x_dev/x.json
-```
-
-Paste both into `catalog.ts` and tune the entry there; the JSON stays out of the repo. Re-running for a
-template rewrites its SVG but never touches `catalog.ts`, so slot tweaks survive; frame tweaks go in the
-SVG. Generated entries use plain
-`name` / `label` strings from the JSON instead of i18n keys (catalog is ~180 templates), arc slots
+self-describing: ring radii, arc radii and star positions live in the engine. The catalog entries were
+produced once by a converter script (`fromJson.mjs`, a one-time tool kept out of the repo; it is in
+the history of commit e3348a97a if design sends more JSONs) that ported that geometry (prototype box =
+sizeMm × 4 px, 3 px inset, everything relative to R = min(rx, ry); mapped so the outer frame spans 140
+design px) into `catalog/<id>.svg` frames plus the entries below. The entries are plain objects: tune
+them by hand, the JSONs stay out of the repo. Entries use `nameKey` = template id and `labelKey` =
+a `stamp_generator.slots` key (design label → key); every new key goes into all 23 lang files. Arc slots
 carry the prototype's default 2 px tracking via `letterSpacing`, center lines become `fit: 'center'`
 boxes (`fontSize` = R × s, box center 0.35 em above the baseline), stars become element slots with
 `shapeKey: 'star'`, `hr` / divider / signature rules become thin frame rects, ornaments (`orn`, the
@@ -182,17 +175,17 @@ SVG frames.
     buildShape.ts: smallest frame whose bounds contain the text + the glyphs become one compound,
     `reorient(false, true)` so containment depth decides fill — same trick as invert, no boolean ops).
     Used by the split "bar" catalog templates (title in negative on a filled band).
-- `TextSlotDef` adds `id`, `placeholder`, optional `labelKey` (i18n `stamp_generator.slots`) or plain
-  `label` (generated templates) — **omit both to keep the slot fixed**: it renders its placeholder and is
+- `TextSlotDef` adds `id`, `placeholder`, optional `labelKey` (i18n `stamp_generator.slots`) —
+  **omit it to keep the slot fixed**: it renders its placeholder and is
   not listed in the Text tab (`isLabeled()` in types.ts is the one check) — optional `letterSpacing`
   (initial tracking, design px) and `fontPostscriptName` (pins a face, e.g. the bundled
-  `Montserrat-Medium` for 統一編號). `StampTemplate` likewise takes `nameKey` or plain `name`.
+  `Montserrat-Medium` for 統一編號). `StampTemplate.nameKey` is the i18n key (= id for catalog entries).
 - Every template declares `category: TemplateCategory` (`TEMPLATE_CATEGORIES` in types.ts:
   `tw_company` for the regulated 統編章 pair oval_company / rect_company, then the frame shapes
   `circle | oval | square | rect`). The dialog's top bar (a row of antd outlined Buttons in
   `StampGenerator.tsx`) reads the current template's category, filters the picker to it, and picking one
   selects its first template through the normal switch-template path (so the unsaved-changes warning
-  still applies). No extra store state. `fromJson.mjs` emits `category` (`round` → `circle`). The TW
+  still applies). No extra store state. The TW
   seals keep their SVG frames: their outer rings are fixed by regulation, never a border.
 
 Text measurement mounts the element off-screen (`withMounted`); glyph outlines come from
@@ -248,7 +241,7 @@ exportToCanvas()
   while the toggle is on.
 - **Elements**: `buildElementPaths` fits the shape uniformly inside the slot box, then applies scale %
   and rotation about the slot center. `ElementSlotDef.shapeKey` picks the default shape (`plum`, `star`, …);
-  a slot with `labelKey` / `label` is listed in the Element tab (switch + size %; rotation and shape picker
+  a slot with `labelKey` is listed in the Element tab (switch + size %; rotation and shape picker
   have store support but no UI yet). Converted ornaments are labeled 圖示; stars stay fixed.
 
 ## paper.js Gotchas

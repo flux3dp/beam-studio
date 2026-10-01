@@ -21,7 +21,7 @@ const TemplatePicker = ({ category, currentTemplateId, onSelect }: TemplatePicke
   return (
     <div className={styles.picker}>
       {STAMP_TEMPLATES.filter((template) => template.category === category).map((template) => {
-        const label = template.nameKey ? t.templates[template.nameKey] : template.name;
+        const label = t.templates[template.nameKey];
 
         return (
           <button
