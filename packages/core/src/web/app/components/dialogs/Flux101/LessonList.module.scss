@@ -1,10 +1,10 @@
 .collapse {
   :global(.ant-collapse-header) {
-    padding: 6px 4px !important;
+    padding: 8px 4px !important;
     align-items: center !important;
   }
   :global(.ant-collapse-content-box) {
-    padding: 0 2px 4px !important;
+    padding: 0 4px 4px !important;
   }
 }
 
@@ -27,14 +27,14 @@
 }
 .chapterName {
   font-weight: 600;
-  font-size: 12.5px;
+  font-size: 12px;
 }
 .progress {
   display: flex;
   align-items: center;
-  gap: 5px;
+  gap: 4px;
   margin-left: auto;
-  font-size: 11px;
+  font-size: 12px;
   color: #9aa0a6;
 }
 .emoji {
@@ -44,9 +44,9 @@
 .lesson {
   display: flex;
   align-items: center;
-  gap: 9px;
-  padding: 6px 8px;
-  margin: 1px 0;
+  gap: 8px;
+  padding: 4px 8px;
+  margin: 2px 0;
   border-radius: 8px;
   cursor: pointer;
   &:hover {
@@ -77,13 +77,13 @@
 .id {
   flex: none;
   width: 24px;
-  font-size: 10.5px;
+  font-size: 10px;
   color: #9aa0a6;
   font-variant-numeric: tabular-nums;
 }
 .name {
   flex: 1;
-  font-size: 12.5px;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

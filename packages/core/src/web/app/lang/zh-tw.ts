@@ -1480,6 +1480,8 @@ const lang: ILang = {
     screen_size: '請注意，Beam Studio 無法在您的裝置上順利執行。若要獲得最佳使用體驗，裝置螢幕寬度至少應有 1024 像素。',
   },
   flux_101: {
+    badge_earned: '%(badge)s：已看完「%(chapter)s」',
+    badge_locked: '看完「%(chapter)s」解鎖 %(badge)s',
     badges: {
       ch1: '安全第一',
       ch2: '校正達人',
@@ -1496,7 +1498,6 @@ const lang: ILang = {
     },
     close: '關閉',
     completed: '已完成',
-    continue: '繼續學習',
     english_audio: '影片為英文語音。',
     expand: '回到課程',
     help_article: '說明中心文章',

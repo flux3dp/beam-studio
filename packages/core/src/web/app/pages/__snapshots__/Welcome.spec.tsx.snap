@@ -202,7 +202,9 @@ exports[`test Welcome should render correctly 1`] = `
           <div
             class="menu-item"
           >
-            <svgr-url />
+            <svgr-url
+              class="book-icon"
+            />
              
             FLUX 101
           </div>
@@ -511,7 +513,9 @@ exports[`test Welcome should render correctly 2`] = `
           <div
             class="menu-item"
           >
-            <svgr-url />
+            <svgr-url
+              class="book-icon"
+            />
              
             FLUX 101
           </div>
@@ -863,7 +867,9 @@ exports[`test Welcome should render correctly in mobile 1`] = `
                   <div
                     class="menu-item"
                   >
-                    <svgr-url />
+                    <svgr-url
+                      class="book-icon"
+                    />
                      
                     FLUX 101
                   </div>
@@ -1236,7 +1242,9 @@ exports[`test Welcome should render correctly in mobile 2`] = `
                   <div
                     class="menu-item"
                   >
-                    <svgr-url />
+                    <svgr-url
+                      class="book-icon"
+                    />
                      
                     FLUX 101
                   </div>
@@ -1528,7 +1536,9 @@ exports[`test Welcome should render correctly in web 1`] = `
           <div
             class="menu-item"
           >
-            <svgr-url />
+            <svgr-url
+              class="book-icon"
+            />
              
             FLUX 101
           </div>
@@ -1805,7 +1815,9 @@ exports[`test Welcome should render correctly in web 2`] = `
           <div
             class="menu-item"
           >
-            <svgr-url />
+            <svgr-url
+              class="book-icon"
+            />
              
             FLUX 101
           </div>

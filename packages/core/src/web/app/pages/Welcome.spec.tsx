@@ -7,6 +7,7 @@ import { useScreenStore } from '@core/app/stores/screenStore';
 jest.mock('@core/app/components/Chat', () => 'mock-chat');
 jest.mock('@core/app/components/beambox/TopBar/tabs/Tabs', () => 'mock-tabs');
 jest.mock('@core/app/components/welcome/Banners', () => 'mock-banners');
+jest.mock('@core/app/components/welcome/TabFlux101', () => 'mock-tab-flux-101');
 jest.mock('@core/app/components/welcome/TabFollowUs', () => 'mock-tab-follow-us');
 jest.mock('@core/app/components/welcome/TabHelpCenter', () => 'mock-tab-help-center');
 jest.mock('@core/app/components/welcome/TabMyCloud', () => 'mock-tab-my-cloud');

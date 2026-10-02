@@ -1480,6 +1480,8 @@ const lang: ILang = {
     screen_size: 'Please note that Beam Studio may not work optimally on your device. For an optimal experience, it should be a device with a screen width of at least 1024 pixels width.',
   },
   flux_101: {
+    badge_earned: '%(badge)s — you completed "%(chapter)s"',
+    badge_locked: 'Complete "%(chapter)s" to unlock %(badge)s',
     badges: {
       ch1: 'Safety First',
       ch2: 'Calibrated',
@@ -1496,7 +1498,6 @@ const lang: ILang = {
     },
     close: 'Close',
     completed: 'Completed',
-    continue: 'Continue learning',
     english_audio: 'Videos are in English.',
     expand: 'Back to course',
     help_article: 'Help Center article',

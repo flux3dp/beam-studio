@@ -262,7 +262,7 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 | `apps/app/src/node/tabManager.ts` `setWindowOpenHandler` | no child windows any more: every non-`file://` / `about:` target goes to `shell.openExternal` | `file://` still denied; `target="_blank"` links in alert strings (Help Center, `x-apple.systempreferences:`) now open in the system browser instead of an Electron window; FLUX ID OAuth unaffected (uses `browser.open` + `beam-studio://` deep link) |
 | `public/js/lib/svg-nest/util/eval.js` | handler registered only inside a `WorkerGlobalScope` | svg-nest parallel workers (`new Worker('…/eval.js')`) — still eval posted code; Electron bootstrap (`requireConfig.js` loads it in the main window for load order) — no longer installs `window.onmessage` |
 | `LeftPanel/components/DrawingToolButtonGroup.tsx`, `icons/left-panel/LeftPanelIcons.tsx` (+ `book.svg`) | add the FLUX 101 button (remaining-lesson badge) between the separator and Beamy | every other tool button, order and ids — unchanged; snapshot `DrawingToolButtonGroup.spec.tsx.snap` is additive only |
-| `pages/Welcome.tsx` | add menu key `flux-101` after Help Center, content `welcome/TabFlux101.tsx` | other tabs, default tab, recent-files loading — unchanged; snapshot `Welcome.spec.tsx.snap` is additive only |
+| `pages/Welcome.tsx` (+ `Welcome.spec.tsx`) | add menu key `flux-101` after Help Center, content `welcome/TabFlux101.tsx` (embeds `Flux101/CourseBody`); the spec mocks the tab like every other tab | other tabs, default tab, recent-files loading — unchanged; snapshot `Welcome.spec.tsx.snap` is additive only |
 
 Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.tsx` via `dialog-controller`, the PrintAndCut pattern).
 

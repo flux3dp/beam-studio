@@ -1482,11 +1482,12 @@ export interface ILang {
     screen_size: string;
   };
   flux_101: {
+    badge_earned: string;
+    badge_locked: string;
     badges: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
     chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
     close: string;
     completed: string;
-    continue: string;
     english_audio: string;
     expand: string;
     help_article: string;
@@ -1837,6 +1838,7 @@ export interface ILang {
     uv_white_ink: string;
   };
   machine_linking: {
+    continue: string;
     i_have_read: string;
     input_birthday_to_link: string;
     input_birthday_to_link_note: string;

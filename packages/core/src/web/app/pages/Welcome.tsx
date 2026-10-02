@@ -170,7 +170,7 @@ const Welcome = (): ReactNode => {
       label: tMenu.help_center,
     },
     {
-      icon: <LeftPanelIcons.Book />,
+      icon: <LeftPanelIcons.Book className={styles['book-icon']} />,
       key: 'flux-101',
       label: tFlux101.title,
     },
@@ -206,7 +206,7 @@ const Welcome = (): ReactNode => {
     'recent-files': <TabRecentFiles />,
   };
 
-  const isFullTab = useMemo(() => activeKey === 'beamy', [activeKey]);
+  const isFullTab = useMemo(() => activeKey === 'beamy' || activeKey === 'flux-101', [activeKey]);
 
   return isLoading ? (
     <div />
