@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import classNames from 'classnames';
 import type { Subscription } from 'rxjs';
 
+import { legacyBeamSeriesModels } from '@core/app/actions/beambox/constant';
 import DeviceMaster from '@core/helpers/device-master';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -24,10 +25,7 @@ interface MonitorCameraProps {
 const MonitorCamera = ({ device }: MonitorCameraProps): React.JSX.Element => {
   const [isHd, setIsHd] = useState(false);
 
-  const isBeamboxCamera = useMemo(
-    () => ['darwin-dev', 'fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2', 'mozu1'].includes(device.model),
-    [device.model],
-  );
+  const isBeamboxCamera = useMemo(() => legacyBeamSeriesModels.has(device.model), [device.model]);
 
   const deviceRef = useRef(device);
 

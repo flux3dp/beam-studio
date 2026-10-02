@@ -7,6 +7,10 @@ export type SupportUsbModels = (typeof supportUsbModelsArray)[number];
 export const supportUsbModelsStrict = new Set(supportUsbModelsArray);
 export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));
 
+// Beam series machines before Ador: their camera firmware pushes frames on enable_streaming.
+export const legacyBeamSeriesModelsArray = ['fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2'] as const;
+export const legacyBeamSeriesModels = new Set<string>(legacyBeamSeriesModelsArray);
+
 export const adorModelsArray = ['ado1', 'fad1'] as const;
 export const adorModels = new Set(adorModelsArray);
 
