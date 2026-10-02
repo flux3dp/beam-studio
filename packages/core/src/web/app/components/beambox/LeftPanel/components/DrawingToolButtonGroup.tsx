@@ -1,10 +1,14 @@
 import React, { memo, use, useMemo } from 'react';
 
+import { Badge } from 'antd';
 import { match } from 'ts-pattern';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import LeftPanelButtonGroup from '@core/app/components/beambox/LeftPanel/components/LeftPanelButtonGroup';
+import { showFlux101 } from '@core/app/components/dialogs/Flux101';
+import { LESSONS } from '@core/app/components/dialogs/Flux101/catalog';
+import { completedCount, useFlux101Bucket } from '@core/app/components/dialogs/Flux101/progress';
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
@@ -40,6 +44,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const { hasPassthroughExtension } = use(CanvasContext);
   const { isDrawing, isStarting } = useCameraPreviewStore();
   const { drawerMode, mouseMode, toggleDrawerMode } = useCanvasStore();
+  const lessonsLeft = LESSONS.length - completedCount(useFlux101Bucket());
   const activeButton = useMemo(
     () =>
       match(mouseMode)
@@ -195,6 +200,22 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
 
       <div className={styles.separator} />
 
+      {renderToolButton({
+        icon: (
+          <Badge
+            color="#1677ff"
+            count={lessonsLeft}
+            offset={[-8, 2]}
+            size="small"
+            styles={{ root: { color: 'inherit', fontSize: 'inherit' } }}
+          >
+            <LeftPanelIcons.Book />
+          </Badge>
+        ),
+        id: 'Flux101',
+        label: lang.flux_101.title,
+        onClick: () => showFlux101(),
+      })}
       {renderToolButton({
         className: styles.beamy,
         icon: <LeftPanelIcons.Beamy />,

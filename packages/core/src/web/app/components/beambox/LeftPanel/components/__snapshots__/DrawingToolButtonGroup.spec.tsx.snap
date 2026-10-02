@@ -146,6 +146,50 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
       class="separator"
     />
     <div
+      class="container"
+      id="left-Flux101"
+      title="FLUX 101"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <span
+          class="ant-badge css-dev-only-do-not-override-hash"
+        >
+          <svgr-url />
+          <sup
+            class="ant-scroll-number ant-badge-count ant-badge-count-sm ant-badge-multiple-words"
+            data-show="true"
+            style="margin-top: 2px; right: 8px; background: rgb(22, 119, 255);"
+            title="23"
+          >
+            <bdi>
+              <span
+                class="ant-scroll-number-only"
+                style="transition: none;"
+              >
+                <span
+                  class="ant-scroll-number-only-unit current"
+                >
+                  2
+                </span>
+              </span>
+              <span
+                class="ant-scroll-number-only"
+                style="transition: none;"
+              >
+                <span
+                  class="ant-scroll-number-only-unit current"
+                >
+                  3
+                </span>
+              </span>
+            </bdi>
+          </sup>
+        </span>
+      </span>
+    </div>
+    <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
@@ -316,6 +360,50 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
     <div
       class="separator"
     />
+    <div
+      class="container"
+      id="left-Flux101"
+      title="FLUX 101"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <span
+          class="ant-badge css-dev-only-do-not-override-hash"
+        >
+          <svgr-url />
+          <sup
+            class="ant-scroll-number ant-badge-count ant-badge-count-sm ant-badge-multiple-words"
+            data-show="true"
+            style="margin-top: 2px; right: 8px; background: rgb(22, 119, 255);"
+            title="23"
+          >
+            <bdi>
+              <span
+                class="ant-scroll-number-only"
+                style="transition: none;"
+              >
+                <span
+                  class="ant-scroll-number-only-unit current"
+                >
+                  2
+                </span>
+              </span>
+              <span
+                class="ant-scroll-number-only"
+                style="transition: none;"
+              >
+                <span
+                  class="ant-scroll-number-only-unit current"
+                >
+                  3
+                </span>
+              </span>
+            </bdi>
+          </sup>
+        </span>
+      </span>
+    </div>
     <div
       class="container beamy"
       id="left-Beamy"

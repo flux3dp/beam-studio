@@ -260,6 +260,8 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 | `apps/app/src/node/menu-manager.ts` | add the same Help item to the Electron template | native menu — other items unchanged |
 | `apps/app/src/main.ts` `setReferer()` | filter adds `www.youtube.com` / `www.youtube-nocookie.com`, sets `Referer: https://flux3dp.com/` for them | flux-id requests — still get their own origin as Referer (unchanged branch) |
 | `public/js/lib/svg-nest/util/eval.js` | handler registered only inside a `WorkerGlobalScope` | svg-nest parallel workers (`new Worker('…/eval.js')`) — still eval posted code; Electron bootstrap (`requireConfig.js` loads it in the main window for load order) — no longer installs `window.onmessage` |
+| `LeftPanel/components/DrawingToolButtonGroup.tsx`, `icons/left-panel/LeftPanelIcons.tsx` (+ `book.svg`) | add the FLUX 101 button (remaining-lesson badge) between the separator and Beamy | every other tool button, order and ids — unchanged; snapshot `DrawingToolButtonGroup.spec.tsx.snap` is additive only |
+| `pages/Welcome.tsx` | add menu key `flux-101` after Help Center, content `welcome/TabFlux101.tsx` | other tabs, default tab, recent-files loading — unchanged; snapshot `Welcome.spec.tsx.snap` is additive only |
 
 Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.tsx` via `dialog-controller`, the PrintAndCut pattern).
 

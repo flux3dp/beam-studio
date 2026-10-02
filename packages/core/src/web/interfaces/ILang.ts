@@ -1486,10 +1486,12 @@ export interface ILang {
     chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
     close: string;
     completed: string;
+    continue: string;
     english_audio: string;
     expand: string;
     help_article: string;
     lessons: Record<string, string>;
+    lessons_done: string;
     mark_done: string;
     minimize: string;
     next: string;
@@ -1835,7 +1837,6 @@ export interface ILang {
     uv_white_ink: string;
   };
   machine_linking: {
-    continue: string;
     i_have_read: string;
     input_birthday_to_link: string;
     input_birthday_to_link_note: string;

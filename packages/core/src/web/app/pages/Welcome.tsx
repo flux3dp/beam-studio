@@ -18,6 +18,7 @@ import Tabs from '@core/app/components/beambox/TopBar/tabs/Tabs';
 import Chat from '@core/app/components/Chat';
 import type { IBanner } from '@core/app/components/welcome/Banners';
 import Banners from '@core/app/components/welcome/Banners';
+import TabFlux101 from '@core/app/components/welcome/TabFlux101';
 import TabFollowUs from '@core/app/components/welcome/TabFollowUs';
 import TabHelpCenter from '@core/app/components/welcome/TabHelpCenter';
 import TabMyCloud from '@core/app/components/welcome/TabMyCloud';
@@ -43,7 +44,7 @@ import type { IUser } from '@core/interfaces/IUser';
 
 import styles from './Welcome.module.scss';
 
-type MenuKey = 'beamy' | 'dmkt' | 'follow' | 'help-center' | 'my-cloud' | 'recent-files';
+type MenuKey = 'beamy' | 'dmkt' | 'flux-101' | 'follow' | 'help-center' | 'my-cloud' | 'recent-files';
 interface MenuItem {
   icon: ReactNode;
   key: MenuKey;
@@ -65,6 +66,7 @@ const naBanner: IBanner = {
 
 const Welcome = (): ReactNode => {
   const {
+    flux_101: tFlux101,
     my_cloud: tMyCloud,
     topbar: { menu: tMenu },
     welcome_page: t,
@@ -168,6 +170,11 @@ const Welcome = (): ReactNode => {
       label: tMenu.help_center,
     },
     {
+      icon: <LeftPanelIcons.Book />,
+      key: 'flux-101',
+      label: tFlux101.title,
+    },
+    {
       icon: <LeftPanelIcons.Beamy className={styles['beamy-icon']} />,
       key: 'beamy',
       label: 'Beamy',
@@ -192,6 +199,7 @@ const Welcome = (): ReactNode => {
   const contents = {
     beamy: <Chat />,
     dmkt: null,
+    'flux-101': <TabFlux101 />,
     follow: <TabFollowUs />,
     'help-center': <TabHelpCenter />,
     'my-cloud': <TabMyCloud user={currentUser} />,
