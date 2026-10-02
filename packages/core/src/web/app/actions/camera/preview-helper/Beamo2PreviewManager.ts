@@ -12,6 +12,7 @@ import { clearBackgroundImage, setMaskImage } from '@core/app/svgedit/canvasBack
 import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
+import versionChecker from '@core/helpers/version-checker';
 import type { FisheyeCameraParametersV4, PerspectiveGrid } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
@@ -269,7 +270,9 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       };
 
       try {
-        await takePictures(true);
+        // Firmware >= 6.5.3 captures fast enough that the low-res warm-up pass is not needed
+        if (!versionChecker(this.device.version).meetRequirement('BM2_FAST_CAMERA_CAPTURE')) await takePictures(true);
+
         this.showMessage({ content: i18n.lang.message.preview.capturing_image });
         await takePictures(false);
       } finally {
