@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 import Alert from '@core/app/actions/alert-caller';
-import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs, { getConvertEngine } from '@core/app/actions/beambox/export-funcs';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
@@ -9,7 +9,6 @@ import DeviceConstants from '@core/app/constants/device-constants';
 import { DeviceOperationEvents } from '@core/app/constants/deviceEvents';
 import type { ItemType } from '@core/app/constants/monitor-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import { setVariableTextState, useVariableTextState } from '@core/app/stores/variableText';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import doZSpeedLimitTest from '@core/helpers/device/doZSpeedLimitTest';
@@ -28,8 +27,6 @@ import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IProgress } from '@core/interfaces/IProgress';
 import type { TaskMetaData } from '@core/interfaces/ITask';
-
-import { DEFAULT_CAMERA_OFFSET } from '../constants/cameraConstants';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('monitor');
 const deviceEventEmitter = eventEmitterFactory.createEventEmitter('device');
@@ -114,25 +111,15 @@ interface Props {
 }
 
 interface State {
-  cameraOffset?: {
-    angle: number;
-    scaleRatioX: number;
-    scaleRatioY: number;
-    x: number;
-    y: number;
-  };
   currentPath: string[];
-  currentPosition: { x: number; y: number };
   downloadProgress: null | { left: number; size: number };
   fileInfo: any[] | null;
   highlightedItem: {
     name?: string;
     type?: ItemType;
   };
-  isMaintainMoving?: boolean;
   mode: Mode;
   previewTask?: PreviewTask;
-  relocateOrigin: { x: number; y: number };
   report: IReport;
   shouldUpdateFileList: boolean;
   taskImageURL: null | string;
@@ -147,8 +134,6 @@ interface Context extends State {
   onDeleteFile: () => void;
   onDownload: () => Promise<void>;
   onHighlightItem: (item: { name: string; type: ItemType }) => void;
-  onMaintainMoveEnd: (x: number, y: number) => void;
-  onMaintainMoveStart: () => void;
   onPause: () => void;
   onPlay: (forceResend?: boolean) => Promise<null | number>;
   onSelectFile: (fileName: string, fileInfo: any) => Promise<void>;
@@ -166,8 +151,6 @@ export class MonitorContextProvider extends React.Component<Props, State> {
   lastErrorId: null | string;
 
   modeBeforeCamera: Mode;
-
-  modeBeforeRelocate: Mode;
 
   reporter?: NodeJS.Timeout;
 
@@ -189,19 +172,16 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     this.isGettingReport = false;
     this.lastErrorId = null;
     this.modeBeforeCamera = mode;
-    this.modeBeforeRelocate = mode;
     this.isClosed = false;
     this.autoStart = autoStart;
     this.isPromark = promarkModels.has(device.model);
     this.state = {
       currentPath: [],
-      currentPosition: { x: 0, y: 0 },
       downloadProgress: null,
       fileInfo: null,
       highlightedItem: {},
       mode,
       previewTask,
-      relocateOrigin: { x: 0, y: 0 },
       report: {} as IReport,
       shouldUpdateFileList: false,
       taskImageURL: isPreviewingTask ? previewTask.taskImageURL : null,
@@ -739,83 +719,6 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     }
   };
 
-  startRelocate = async (): Promise<void> => {
-    const { mode } = this.state;
-
-    if (mode === Mode.CAMERA_RELOCATE) {
-      return;
-    }
-
-    this.modeBeforeRelocate = mode;
-
-    const getCameraOffset = async () => {
-      const configName = useDocumentStore.getState().borderless ? 'camera_offset_borderless' : 'camera_offset';
-      const resp = await DeviceMaster.getDeviceSetting(configName);
-
-      console.log(`Reading ${configName}\nResp = ${resp.value}`);
-      resp.value = ` ${resp.value}`;
-
-      let cameraOffset = {
-        angle: Number(/R:\s?(-?\d+\.?\d+)/.exec(resp.value)?.[1] ?? DEFAULT_CAMERA_OFFSET.R),
-        scaleRatioX: Number(
-          (/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))?.[1] ??
-            DEFAULT_CAMERA_OFFSET.SX,
-        ),
-        scaleRatioY: Number(
-          (/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))?.[1] ??
-            DEFAULT_CAMERA_OFFSET.SY,
-        ),
-        x: Number(/ X:\s?(-?\d+\.?\d+)/.exec(resp.value)?.[1] ?? DEFAULT_CAMERA_OFFSET.X),
-        y: Number(/ Y:\s?(-?\d+\.?\d+)/.exec(resp.value)?.[1] ?? DEFAULT_CAMERA_OFFSET.Y),
-      };
-
-      console.log(`Got ${configName}`, cameraOffset);
-
-      if (cameraOffset.x === 0 && cameraOffset.y === 0) {
-        cameraOffset = {
-          angle: 0,
-          scaleRatioX: Constant.camera.scaleRatio_ideal,
-          scaleRatioY: Constant.camera.scaleRatio_ideal,
-          x: Constant.camera.offsetX_ideal,
-          y: Constant.camera.offsetY_ideal,
-        };
-      }
-
-      return cameraOffset;
-    };
-
-    Progress.popById('prepare-relocate');
-    Progress.openNonstopProgress({
-      id: 'prepare-relocate',
-      message: LANG.monitor.prepareRelocate,
-    });
-    this.stopReport();
-    try {
-      const cameraOffset = await getCameraOffset();
-
-      await DeviceMaster.enterRawMode();
-      await DeviceMaster.rawSetRotary(false);
-      await DeviceMaster.rawHome();
-      this.setState({
-        cameraOffset,
-        currentPosition: { x: 0, y: 0 },
-        mode: Mode.CAMERA_RELOCATE,
-      });
-    } catch (error) {
-      console.error('Error when entering relocate mode', error);
-      this.startReport();
-    }
-    Progress.popById('prepare-relocate');
-  };
-
-  endRelocate = (): void => {
-    this.setState({ mode: this.modeBeforeRelocate }, () => {
-      if (!this.reporter) {
-        this.startReport();
-      }
-    });
-  };
-
   onHighlightItem = (item: { name: string; type: ItemType }): void => {
     const { highlightedItem } = this.state;
 
@@ -1027,7 +930,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
   onPlay = async (forceResend = false): Promise<null | number> => {
     const { device } = this.props;
-    const { currentPath, fileInfo, mode, relocateOrigin, report } = this.state;
+    const { currentPath, fileInfo, mode, report } = this.state;
     let { totalTaskTime } = this.state;
 
     this.clearErrorPopup();
@@ -1038,9 +941,8 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       console.log(device.version);
 
       if (vc.meetRequirement('RELOCATE_ORIGIN')) {
-        console.log(relocateOrigin);
-        await DeviceMaster.setOriginX(relocateOrigin.x);
-        await DeviceMaster.setOriginY(relocateOrigin.y);
+        await DeviceMaster.setOriginX(0);
+        await DeviceMaster.setOriginY(0);
       }
 
       if (mode === Mode.PREVIEW || forceResend) {
@@ -1106,35 +1008,12 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     DeviceMaster.stop();
   };
 
-  onMaintainMoveStart = (): void => {
-    this.setState({ isMaintainMoving: true });
-  };
-
-  onMaintainMoveEnd = (x: number, y: number): void => {
-    this.setState({
-      currentPosition: { x, y },
-      isMaintainMoving: false,
-    });
-  };
-
-  onRelocate = (): void => {
-    const { currentPosition } = this.state;
-    const { x, y } = currentPosition;
-
-    this.setState({
-      mode: this.modeBeforeRelocate,
-      relocateOrigin: { x, y },
-    });
-  };
-
   render(): React.JSX.Element {
     const { children, onClose } = this.props;
     const {
       onDeleteFile,
       onDownload,
       onHighlightItem,
-      onMaintainMoveEnd,
-      onMaintainMoveStart,
       onPause,
       onPlay,
       onSelectFile,
@@ -1154,8 +1033,6 @@ export class MonitorContextProvider extends React.Component<Props, State> {
           onDeleteFile,
           onDownload,
           onHighlightItem,
-          onMaintainMoveEnd,
-          onMaintainMoveStart,
           onPause,
           onPlay,
           onSelectFile,

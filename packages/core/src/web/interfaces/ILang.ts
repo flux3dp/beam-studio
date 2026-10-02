@@ -2152,10 +2152,8 @@ export interface ILang {
     NO_RESPONSE: string;
     no_task_info: string;
     pause: string;
-    prepareRelocate: string;
     processing: string;
     record: string;
-    relocate: string;
     RESOURCE_BUSY: string;
     resume: string;
     savingPreview: string;
