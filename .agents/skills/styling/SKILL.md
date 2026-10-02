@@ -25,6 +25,32 @@ offsets — is a **multiple of 4 or of 10**. Allowed: 2, 4, 8, 10, 12, 16, 20, 2
   the number. Mixins in `_mixins.scss` (`footer`, `viewport-size`); page-local mixins next to
   the page (e.g. `components/welcome/_mixins.scss`: `title`, `subtitle`, `content`).
 
+## Palette
+
+Colours come from `packages/core/src/web/styles/_variables.scss`, not from the mockup or from
+antd's defaults:
+
+| Role | Variable | Value |
+|---|---|---|
+| Accent / links / active | `$primary-blue` (`$primary-blue-hover`) | `#1890ff` (`#40a9ff`) |
+| Secondary text, muted meta | `$secondary-gray` | `#7c7c7c` |
+| Headings / ink | `$primary-gray` | `#1e1e1e` |
+| Panel borders, dividers | `$panelBorderColor` | `#e0e0e0` |
+| Panel background | `$backgroundColor` | `#f0f0f0` |
+| Status | `$status-normal` / `$status-warning` / `$status-critical` | green / amber / red |
+
+- The app's antd `colorPrimary` is **`#494949`** (`constants/antd-config.ts`), so `type="primary"`
+  buttons are dark grey. The blue accent is `$primary-blue`; a mockup's blue (antd's default, for
+  example) is translated to it rather than copied.
+- Tints of the accent are `rgba(variables.$primary-blue, 0.1)` etc., not separate hex codes, so a
+  palette change propagates.
+- No variable close enough? Add one to `_variables.scss` with a role-based name
+  (`$status-warning`, not `$orange`) and use it from the start, instead of leaving a literal that
+  the next feature copies. A colour used once, in one place, can stay a literal.
+- In TSX, where SCSS variables are out of reach (antd `Progress` `strokeColor`, `Badge` `color`),
+  write the literal `'#1890ff'` — precedent `MaintenanceChecklist/components/Header.tsx`.
+- Import with `@use '@core/styles/variables' as variables;` at the top of the module.
+
 ## Icons sized with `1em`
 
 SVG icons imported as React components (`@svgr/webpack`) render at `width="1em" height="1em"`,
@@ -73,6 +99,6 @@ under it. Put the element inside the dialog's own DOM instead.
 ## Checklist
 
 - [ ] Every spacing value is a multiple of 4 or 10; font sizes are whole pixels.
-- [ ] Repeated constants come from `_variables.scss`.
+- [ ] Colours and repeated constants come from `_variables.scss` (add a variable there if none fits).
 - [ ] Icons placed inside a third-party wrapper keep their `font-size`.
 - [ ] Nothing fixed-positioned relies on out-z-indexing antd modals.

@@ -203,7 +203,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       {renderToolButton({
         icon: (
           <Badge
-            color="#1677ff"
+            color="#1890ff"
             count={lessonsLeft}
             offset={[-8, 2]}
             size="small"

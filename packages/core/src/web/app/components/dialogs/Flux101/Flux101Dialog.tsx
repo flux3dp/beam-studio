@@ -13,7 +13,10 @@ import CourseBody from './CourseBody';
 import styles from './Flux101Dialog.module.scss';
 import { useFlux101Store } from './flux101Store';
 import PipPlayer from './PipPlayer';
-import { completedCount, useFlux101Bucket } from './progress';
+import { completedCount, isCourseComplete, useFlux101Bucket } from './progress';
+import { useCelebration } from './useCelebration';
+
+import { showCertificate } from './index';
 
 interface Flux101DialogProps {
   onClose: () => void;
@@ -24,6 +27,8 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
   const { close, expand, lessonId, minimize, view } = useFlux101Store();
   const isMobile = useIsMobile();
   const bucket = useFlux101Bucket();
+
+  useCelebration();
 
   // Close (✕) unmounts the whole window, which destroys the player and stops playback (R5a).
   useEffect(() => {
@@ -55,6 +60,11 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
               {completedCount(bucket)}/{LESSONS.length}
             </Tag>
             <Space className={styles.actions} size={2}>
+              {isCourseComplete(bucket) && (
+                <Button onClick={() => showCertificate()} title={t.view_certificate} type="text">
+                  🎓
+                </Button>
+              )}
               {!isMobile && <Button icon={<MinusOutlined />} onClick={minimize} title={t.minimize} type="text" />}
               <Button icon={<CloseOutlined />} onClick={close} title={t.close} type="text" />
             </Space>

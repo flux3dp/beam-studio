@@ -1485,12 +1485,20 @@ export interface ILang {
     badge_earned: string;
     badge_locked: string;
     badges: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    certificate: string;
+    certificate_completed_on: string;
+    certificate_desc: string;
+    certificate_subtitle: string;
+    certificate_this_certifies: string;
+    certificate_title: string;
+    chapter_done: string;
     chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
     close: string;
     completed: string;
     english_audio: string;
     expand: string;
     help_article: string;
+    lesson_done: string;
     lessons: Record<string, string>;
     lessons_done: string;
     mark_done: string;
@@ -1498,6 +1506,7 @@ export interface ILang {
     next: string;
     prev: string;
     title: string;
+    view_certificate: string;
     water_tank_note: string;
   };
   flux_id_login: {

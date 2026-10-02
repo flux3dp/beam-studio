@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .actions {
   margin-left: auto;
 }
@@ -10,7 +12,7 @@
   width: 260px;
   flex: none;
   padding: 8px 4px 12px;
-  border-right: 1px solid #f0f0f0;
+  border-right: 1px solid variables.$panelBorderColor;
   overflow-y: auto;
 }
 .main {
@@ -29,7 +31,7 @@
 .help {
   margin-left: auto;
   font-size: 12px;
-  color: #9aa0a6 !important;
+  color: variables.$secondary-gray !important;
 }
 // The slot is whatever height is left in the column; the player inside is the largest 16:9 box
 // that fits it (height-limited → narrower and centred, width-limited → full width).

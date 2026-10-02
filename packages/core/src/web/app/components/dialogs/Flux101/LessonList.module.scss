@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .collapse {
   :global(.ant-collapse-header) {
     padding: 8px 4px !important;
@@ -21,7 +23,7 @@
   font-weight: 700;
   font-size: 12px;
   &.done {
-    background: #1677ff;
+    background: variables.$primary-blue;
     color: #fff;
   }
 }
@@ -35,7 +37,7 @@
   gap: 4px;
   margin-left: auto;
   font-size: 12px;
-  color: #9aa0a6;
+  color: variables.$secondary-gray;
 }
 .emoji {
   font-size: 14px;
@@ -53,32 +55,32 @@
     background: #f4f8f8;
   }
   &.current {
-    background: #e6f0ff;
-    box-shadow: inset 0 0 0 1px #91caff;
+    background: rgba(variables.$primary-blue, 0.1);
+    box-shadow: inset 0 0 0 1px rgba(variables.$primary-blue, 0.45);
   }
 }
 .status {
   flex: none;
   background: #fff;
   border: 1.5px solid #d4d9dd;
-  color: #1677ff;
+  color: variables.$primary-blue;
   :global(.anticon) {
     font-size: 10px;
   }
   &.done {
-    background: #1677ff;
-    border-color: #1677ff;
+    background: variables.$primary-blue;
+    border-color: variables.$primary-blue;
     color: #fff;
   }
   &.next {
-    border-color: #1677ff;
+    border-color: variables.$primary-blue;
   }
 }
 .id {
   flex: none;
   width: 24px;
   font-size: 10px;
-  color: #9aa0a6;
+  color: variables.$secondary-gray;
   font-variant-numeric: tabular-nums;
 }
 .name {

@@ -1,0 +1,45 @@
+@use '@core/styles/variables' as variables;
+
+.body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 0 8px;
+  text-align: center;
+}
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: variables.$primary-blue;
+  font-size: 40px;
+}
+.headline {
+  margin-top: 8px;
+  font-size: 20px;
+  font-weight: 700;
+}
+.lesson {
+  font-size: 14px;
+  color: variables.$secondary-gray;
+}
+.chapter {
+  display: flex;
+  justify-content: space-between;
+  align-self: stretch;
+  margin-top: 12px;
+  font-size: 13px;
+  color: variables.$secondary-gray;
+  + :global(.ant-progress) {
+    margin: 0;
+  }
+}
+.actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+}

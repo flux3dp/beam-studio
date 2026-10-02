@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .course {
   display: flex;
   flex-direction: column;
@@ -10,7 +12,7 @@
   gap: 10px;
   height: 56px;
   padding: 0 10px 0 16px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid variables.$panelBorderColor;
 }
 .logo {
   font-size: 20px;

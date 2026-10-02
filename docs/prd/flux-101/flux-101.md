@@ -91,7 +91,7 @@ The player (`Flux101Player`) is rendered inside whichever slot is on screen. Swi
 
 ### 5.4 Completion celebration
 
-On lesson completion: confetti (`popConfetti`), check-stamp on the lesson, progress bar animates, and (if credit-eligible and logged in) "+0.5 credits". Chapter complete → bigger moment + badge unlock. Course complete (23/23) → certificate screen + `rainConfetti`. Celebration is non-blocking, ≤ ~1.5 s, dismissible, and offers **Next lesson ›**.
+On lesson completion: confetti (`popConfetti` from the player), check-stamp on the lesson, progress bar animates, and (if credit-eligible and logged in) "+0.5 credits" (D22, later). A centred `CelebrationDialog` (after the ClickUp draft: icon, headline, lesson, chapter progress bar, **Back to course** / **Next ›**) opens on every completion; when the chapter just completed, its icon is the badge emoji and the headline names the badge. Course complete (23/23) → certificate modal + `rainConfetti` instead. XP is not shown (D20). Both dialogs are opened imperatively (`showCelebrationDialog` / `showCertificate` in `Flux101/index.tsx`, `dialog-controller`) and fire their own confetti on mount, so they work from the course window, from PiP and from the Welcome tab alike. `Flux101/useCelebration.tsx` (mounted in `Flux101Dialog` and `TabFlux101`) diffs the completed set between renders of the active bucket — so it fires for watched and marked-done alike, and never on first mount. Once complete, a 🎓 button in the dialog header and on the Welcome tab reopens the certificate (`Flux101Certificate.tsx`).
 
 XP is **not shown** pending the meeting decision (D20); if kept, it is derived, never stored.
 

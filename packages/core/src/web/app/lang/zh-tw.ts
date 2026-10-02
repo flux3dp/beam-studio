@@ -1489,6 +1489,13 @@ const lang: ILang = {
       ch4: '畫布學徒',
       ch5: '101 畢業生',
     },
+    certificate: '證書',
+    certificate_completed_on: '完成於 %(date)s',
+    certificate_desc: '已完成全部 5 章 23 堂課，從機器設定到預覽與送出工作。',
+    certificate_subtitle: 'Laser Cutter 101 · 入門課程',
+    certificate_this_certifies: '茲證明',
+    certificate_title: '完成證書',
+    chapter_done: '章節完成，解鎖徽章：%(badge)s',
     chapters: {
       ch1: '開始之前',
       ch2: '機器設定',
@@ -1501,6 +1508,7 @@ const lang: ILang = {
     english_audio: '影片為英文語音。',
     expand: '回到課程',
     help_article: '說明中心文章',
+    lesson_done: '課程完成',
     lessons: {
       '1-1': '課程介紹',
       '1-2': '安全注意事項',
@@ -1532,6 +1540,7 @@ const lang: ILang = {
     next: '下一課',
     prev: '上一課',
     title: 'FLUX 101',
+    view_certificate: '查看證書',
     water_tank_note: 'beamo / beamo II 首次使用不需要此步驟。',
   },
   flux_id_login: {

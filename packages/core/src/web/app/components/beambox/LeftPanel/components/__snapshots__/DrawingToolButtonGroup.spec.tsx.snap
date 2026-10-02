@@ -160,7 +160,7 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
           <sup
             class="ant-scroll-number ant-badge-count ant-badge-count-sm ant-badge-multiple-words"
             data-show="true"
-            style="margin-top: 2px; right: 8px; background: rgb(22, 119, 255);"
+            style="margin-top: 2px; right: 8px; background: rgb(24, 144, 255);"
             title="23"
           >
             <bdi>
@@ -375,7 +375,7 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
           <sup
             class="ant-scroll-number ant-badge-count ant-badge-count-sm ant-badge-multiple-words"
             data-show="true"
-            style="margin-top: 2px; right: 8px; background: rgb(22, 119, 255);"
+            style="margin-top: 2px; right: 8px; background: rgb(24, 144, 255);"
             title="23"
           >
             <bdi>

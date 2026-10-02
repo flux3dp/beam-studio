@@ -1,0 +1,132 @@
+@use '@core/styles/variables' as variables;
+
+.cert {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 40px 32px;
+  border-radius: 8px;
+  background: #fff;
+  color: variables.$primary-gray;
+  text-align: center;
+}
+.frame {
+  position: absolute;
+  inset: 16px;
+  border: 2px solid variables.$primary-blue;
+  border-radius: 4px;
+  pointer-events: none;
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 4px;
+    border: 1px solid rgba(variables.$primary-blue, 0.3);
+    border-radius: 2px;
+  }
+}
+.top {
+  align-self: stretch;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+.brand {
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  b {
+    color: variables.$primary-blue;
+  }
+}
+.kicker {
+  margin-top: 40px;
+  font-size: 12px;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  color: variables.$secondary-gray;
+}
+.title {
+  margin-top: 12px;
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, variables.$primary-blue, variables.$primary-blue-hover);
+  background-clip: text;
+  color: transparent;
+}
+.sub {
+  margin-top: 8px;
+  font-size: 14px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: variables.$secondary-gray;
+}
+.cap {
+  margin-top: 32px;
+  font-size: 12px;
+  color: variables.$secondary-gray;
+}
+.name {
+  width: 360px;
+  margin-top: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(variables.$primary-blue, 0.3);
+  font-size: 32px;
+  font-weight: 600;
+}
+.desc {
+  margin-top: 16px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.badges {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+}
+.badge {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  font-size: 10px;
+  color: variables.$secondary-gray;
+}
+.emoji {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(variables.$primary-blue, 0.3);
+  border-radius: 50%;
+  background: rgba(variables.$primary-blue, 0.08);
+  font-size: 20px;
+}
+.foot {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 32px;
+  font-size: 12px;
+  color: variables.$secondary-gray;
+}
+.seal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, variables.$primary-blue, variables.$primary-blue-hover);
+  color: #fff;
+  font-size: 20px;
+  box-shadow: 0 4px 12px rgba(variables.$primary-blue, 0.35);
+}
+.actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+}

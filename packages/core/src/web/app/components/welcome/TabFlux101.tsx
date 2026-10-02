@@ -1,12 +1,19 @@
 import React from 'react';
 
-import { Progress, Tooltip } from 'antd';
+import { Button, Progress, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 
+import { showCertificate } from '@core/app/components/dialogs/Flux101';
 import { CHAPTERS, LESSONS } from '@core/app/components/dialogs/Flux101/catalog';
 import CourseBody from '@core/app/components/dialogs/Flux101/CourseBody';
-import { completedCount, isChapterComplete, useFlux101Bucket } from '@core/app/components/dialogs/Flux101/progress';
+import {
+  completedCount,
+  isChapterComplete,
+  isCourseComplete,
+  useFlux101Bucket,
+} from '@core/app/components/dialogs/Flux101/progress';
+import { useCelebration } from '@core/app/components/dialogs/Flux101/useCelebration';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import useI18n from '@core/helpers/useI18n';
 
@@ -18,6 +25,8 @@ const TabFlux101 = (): React.JSX.Element => {
   const bucket = useFlux101Bucket();
   const done = completedCount(bucket);
 
+  useCelebration();
+
   return (
     <div className={styles.root}>
       <div className={styles.title}>
@@ -27,7 +36,7 @@ const TabFlux101 = (): React.JSX.Element => {
       <div className={styles.subtitle}>{sprintf(t.lessons_done, { done, total: LESSONS.length })}</div>
       <div className={styles.content}>
         <div className={styles.summary}>
-          <Progress percent={Math.round((done / LESSONS.length) * 100)} showInfo={false} strokeColor="#1677ff" />
+          <Progress percent={Math.round((done / LESSONS.length) * 100)} showInfo={false} strokeColor="#1890ff" />
           <span className={styles.badges}>
             {CHAPTERS.map((ch) => {
               const earned = isChapterComplete(bucket, ch);
@@ -43,6 +52,7 @@ const TabFlux101 = (): React.JSX.Element => {
               );
             })}
           </span>
+          {isCourseComplete(bucket) && <Button onClick={() => showCertificate()}>🎓 {t.view_certificate}</Button>}
         </div>
         <div className={styles.course}>
           <CourseBody />

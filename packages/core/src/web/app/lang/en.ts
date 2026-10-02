@@ -1489,6 +1489,13 @@ const lang: ILang = {
       ch4: 'Canvas Apprentice',
       ch5: '101 Graduate',
     },
+    certificate: 'Certificate',
+    certificate_completed_on: 'Completed on %(date)s',
+    certificate_desc: 'has completed all 23 lessons across 5 chapters, from machine setup to preview and sending jobs.',
+    certificate_subtitle: 'Laser Cutter 101 · Beginner Course',
+    certificate_this_certifies: 'This certifies that',
+    certificate_title: 'Certificate of Completion',
+    chapter_done: 'Chapter complete — badge unlocked: %(badge)s',
     chapters: {
       ch1: 'Before You Start',
       ch2: 'Machine Setup',
@@ -1501,6 +1508,7 @@ const lang: ILang = {
     english_audio: 'Videos are in English.',
     expand: 'Back to course',
     help_article: 'Help Center article',
+    lesson_done: 'Lesson complete',
     lessons: {
       '1-1': 'Introduction',
       '1-2': 'Safety Consideration',
@@ -1532,6 +1540,7 @@ const lang: ILang = {
     next: 'Next',
     prev: 'Prev',
     title: 'FLUX 101',
+    view_certificate: 'View certificate',
     water_tank_note: 'Not required for first-time use of beamo / beamo II.',
   },
   flux_id_login: {
