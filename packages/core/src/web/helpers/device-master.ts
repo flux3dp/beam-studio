@@ -1686,7 +1686,7 @@ class DeviceMaster {
   async streamCamera(shouldCrop = true) {
     await this.connectCamera(shouldCrop);
 
-    // return an instance of RxJS Observable.
+    // RxJS Observable polling require_frame; unsubscribe to stop polling.
     return this.currentDevice!.camera!.getLiveStreamSource();
   }
 

@@ -3,11 +3,10 @@
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-camera(monitoring)
  */
 import PQueue from 'p-queue';
-import type { Observable } from 'rxjs';
-import { EmptyError, from, lastValueFrom, partition, Subject } from 'rxjs';
+import { EmptyError, from, lastValueFrom, Observable, partition, Subject } from 'rxjs';
 import { concatMap, filter, map, take, timeout } from 'rxjs/operators';
 
-import constant, { fisheyeModels } from '@core/app/actions/beambox/constant';
+import constant, { fisheyeModels, legacyBeamSeriesModels } from '@core/app/actions/beambox/constant';
 import Progress from '@core/app/actions/progress-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -434,10 +433,35 @@ class Camera {
     return this.commandQueue.add(() => this.sendOneShot(useLowResolution));
   };
 
-  getLiveStreamSource() {
-    this.ws.send('enable_streaming');
+  getLiveStreamSource(useLowResolution = false): Observable<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
+    // Legacy firmware pushes frames on enable_streaming; newer firmware does not, so poll require_frame.
+    if (legacyBeamSeriesModels.has(this.device.model ?? '')) {
+      this.ws.send('enable_streaming');
 
-    return this.source.pipe(timeout(this.imageTimeout));
+      return this.source.pipe(timeout(this.imageTimeout));
+    }
+
+    return new Observable((subscriber) => {
+      let stopped = false;
+
+      const loop = async () => {
+        while (!stopped) {
+          try {
+            subscriber.next(await this.oneShot(useLowResolution));
+          } catch (error) {
+            if (!stopped) subscriber.error(error);
+
+            return;
+          }
+        }
+      };
+
+      loop();
+
+      return () => {
+        stopped = true;
+      };
+    });
   }
 
   closeWs(): void {
@@ -513,9 +537,7 @@ class Camera {
       return blob;
     }
 
-    if (
-      !['darwin-dev', 'fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2', 'mozu1'].includes(this.device.model!)
-    ) {
+    if (!legacyBeamSeriesModels.has(this.device.model!)) {
       return blob;
     }
 
