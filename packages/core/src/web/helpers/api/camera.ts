@@ -3,8 +3,7 @@
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-camera(monitoring)
  */
 import PQueue from 'p-queue';
-import type { Observable } from 'rxjs';
-import { EmptyError, from, lastValueFrom, partition, Subject } from 'rxjs';
+import { EmptyError, from, lastValueFrom, Observable, partition, Subject } from 'rxjs';
 import { concatMap, filter, map, take, timeout } from 'rxjs/operators';
 
 import constant, { fisheyeModels } from '@core/app/actions/beambox/constant';
@@ -434,10 +433,28 @@ class Camera {
     return this.commandQueue.add(() => this.sendOneShot(useLowResolution));
   };
 
-  getLiveStreamSource() {
-    this.ws.send('enable_streaming');
+  getLiveStreamSource(useLowResolution = false): Observable<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
+    return new Observable((subscriber) => {
+      let stopped = false;
 
-    return this.source.pipe(timeout(this.imageTimeout));
+      const loop = async () => {
+        while (!stopped) {
+          try {
+            subscriber.next(await this.oneShot(useLowResolution));
+          } catch (error) {
+            if (!stopped) subscriber.error(error);
+
+            return;
+          }
+        }
+      };
+
+      loop();
+
+      return () => {
+        stopped = true;
+      };
+    });
   }
 
   closeWs(): void {

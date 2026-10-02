@@ -1,6 +1,7 @@
 import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
+import type { Subscription } from 'rxjs';
 
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
 import RawMovePanel from '@core/app/widgets/Raw-Move-Panel';
@@ -73,18 +74,25 @@ const MonitorRelocate = ({ device }: MonitorRelocateProps): React.JSX.Element =>
   }, []);
 
   useEffect(() => {
-    let cameraStream: any;
+    const cameraImage = imgRef.current;
+    let subscription: Subscription | undefined;
 
     const startCamera = async () => {
-      cameraStream = await DeviceMaster.streamCamera(false);
-      cameraStream.subscribe(processImage);
+      const cameraStream = await DeviceMaster.streamCamera(false);
+
+      subscription = cameraStream.subscribe(processImage);
     };
 
     startCamera();
 
     return () => {
+      subscription?.unsubscribe();
       DeviceMaster.endSubTask();
       DeviceMaster.disconnectCamera();
+
+      const lastUrl = cameraImage?.getAttribute('src');
+
+      if (lastUrl) URL.revokeObjectURL(lastUrl);
     };
   }, [processImage]);
 

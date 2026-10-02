@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
+import type { Subscription } from 'rxjs';
 
 import DeviceMaster from '@core/helpers/device-master';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -68,17 +69,24 @@ const MonitorCamera = ({ device }: MonitorCameraProps): React.JSX.Element => {
   }, []);
 
   useEffect(() => {
-    let cameraStream: any;
+    const cameraImage = document.getElementById('camera-image');
+    let subscription: Subscription | undefined;
 
     const startCamera = async () => {
-      cameraStream = await DeviceMaster.streamCamera();
-      cameraStream.subscribe(processImage);
+      const cameraStream = await DeviceMaster.streamCamera();
+
+      subscription = cameraStream.subscribe(processImage);
     };
 
     startCamera();
 
     return () => {
+      subscription?.unsubscribe();
       DeviceMaster.disconnectCamera();
+
+      const lastUrl = cameraImage?.getAttribute('src');
+
+      if (lastUrl) URL.revokeObjectURL(lastUrl);
     };
   }, [processImage]);
 
