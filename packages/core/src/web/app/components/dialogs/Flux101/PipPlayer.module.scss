@@ -1,0 +1,38 @@
+.pip {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000; // the shared player sits at 1001, just above
+  overflow: hidden;
+  border-radius: 10px;
+  background: #1f2327;
+  color: #fff;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+}
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0 4px 0 8px;
+  cursor: grab;
+  user-select: none;
+  &:active {
+    cursor: grabbing;
+  }
+  :global(.ant-btn) {
+    color: #c9ced3;
+  }
+}
+.title {
+  flex: 1;
+  min-width: 0;
+  font-size: 12px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.slot {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}

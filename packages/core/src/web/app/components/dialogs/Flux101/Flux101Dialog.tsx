@@ -16,6 +16,7 @@ import { Button, Modal, Space, Tag, Typography } from 'antd';
 import { createPortal } from 'react-dom';
 
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -24,6 +25,7 @@ import { LESSONS } from './catalog';
 import styles from './Flux101Dialog.module.scss';
 import { useFlux101Store } from './flux101Store';
 import LessonList from './LessonList';
+import PipPlayer from './PipPlayer';
 import { completedCount, completeLesson, isLessonComplete, useFlux101Bucket } from './progress';
 import { useYouTubePlayer } from './useYouTubePlayer';
 
@@ -63,7 +65,8 @@ interface Flux101DialogProps {
 
 const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
   const t = useI18n().flux_101;
-  const { close, lessonId, minimize, selectLesson, view } = useFlux101Store();
+  const { close, expand, lessonId, minimize, selectLesson, view } = useFlux101Store();
+  const isMobile = useIsMobile();
   const bucket = useFlux101Bucket();
   const workarea = useDocumentStore((s) => s.workarea);
   const machine = deviceMaster.currentDevice?.info?.model ?? workarea;
@@ -72,8 +75,10 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
   const done = isLessonComplete(bucket, lessonId);
 
   const slotRef = useRef<HTMLDivElement>(null);
+  const pipSlotRef = useRef<HTMLDivElement>(null);
   const hostRef = useRef<HTMLDivElement>(null);
-  const rect = useRect(slotRef, [view, lessonId]);
+  const [dragTick, setDragTick] = useState(0);
+  const rect = useRect(view === 'pip' ? pipSlotRef : slotRef, [view, lessonId, dragTick]);
 
   useYouTubePlayer(hostRef, lessonId);
 
@@ -106,7 +111,7 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
               {completedCount(bucket)}/{LESSONS.length}
             </Tag>
             <Space className={styles.actions} size={2}>
-              <Button icon={<MinusOutlined />} onClick={minimize} title={t.minimize} type="text" />
+              {!isMobile && <Button icon={<MinusOutlined />} onClick={minimize} title={t.minimize} type="text" />}
               <Button icon={<CloseOutlined />} onClick={close} title={t.close} type="text" />
             </Space>
           </header>
@@ -170,6 +175,16 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
           </div>
         </div>
       </Modal>
+
+      {view === 'pip' && (
+        <PipPlayer
+          lessonId={lessonId}
+          onClose={close}
+          onDrag={() => setDragTick((n) => n + 1)}
+          onExpand={expand}
+          slotRef={pipSlotRef}
+        />
+      )}
 
       {/* the one and only player, laid over the active slot; portaled to body so no ancestor
           stacking context or transform can trap the fixed positioning below the antd modal */}
