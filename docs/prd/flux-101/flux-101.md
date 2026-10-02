@@ -246,6 +246,23 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 - **R19** Dashboard reflects "Synced ✓" vs "Sign in to save progress" with one-tap `FluxIdLogin`.
 - **R19a** Claimed-bucket warning per §5.5, once per app session (D14).
 
+## 8a. Must not change (regression contract)
+
+Shared files outside `components/dialogs/Flux101/` that the implementation touches, and what their
+existing callers must keep doing. Reviewers check this list against `git diff --stat`.
+
+| Shared file | Change | Callers — expected behaviour |
+|---|---|---|
+| `constants/storageConstants.ts`, `interfaces/IStorage.d.ts` | add key `beam-studio-101` | `storageStore` init / `storage.getStore()` — all other keys unaffected |
+| `lang/en.ts`, `lang/zh-tw.ts`, `interfaces/ILang.ts` | add `flux_101.*` block and `topbar.menu.flux_101` | every other lang consumer — untouched keys; remaining 21 lang files filled before PR |
+| `actions/beambox/menuActions.ts` | add `START_101_COURSE` | all other menu ids — unchanged handlers |
+| `TopBar/useMenuData.ts` | add Help item `START_101_COURSE` (not in `MENU_ITEMS`, so always enabled) | Help menu order: About, Start Tutorial, UI Intro, **FLUX 101**, …; attach/detach enable logic — unchanged |
+| `apps/app/src/node/menu-manager.ts` | add the same Help item to the Electron template | native menu — other items unchanged |
+| `apps/app/src/main.ts` `setReferer()` | filter adds `www.youtube.com` / `www.youtube-nocookie.com`, sets `Referer: https://flux3dp.com/` for them | flux-id requests — still get their own origin as Referer (unchanged branch) |
+| `public/js/lib/svg-nest/util/eval.js` | handler registered only inside a `WorkerGlobalScope` | svg-nest parallel workers (`new Worker('…/eval.js')`) — still eval posted code; Electron bootstrap (`requireConfig.js` loads it in the main window for load order) — no longer installs `window.onmessage` |
+
+Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.tsx` via `dialog-controller`, the PrintAndCut pattern).
+
 ## 9. Buckets, claim & merge
 
 **Merge rule (per lesson, completion-biased):** `completed` beats non-completed; same status → higher `playedSec` (and higher `resumeSec`); ties → newer `updatedAt`. `creditGranted` is OR-ed. Badges / certificate are derived, so nothing to merge. Unknown lesson ids are kept (not deleted) to tolerate catalog rollbacks; new lessons appear not started.

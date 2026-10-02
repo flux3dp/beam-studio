@@ -8,6 +8,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist/showMaintenanceChecklist';
 import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
+import { showFlux101 } from '@core/app/components/dialogs/Flux101';
 import { showPrintAndCut } from '@core/app/components/dialogs/PrintAndCut';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { showSettingsModal } from '@core/app/components/settings/modal/SettingsModal';
@@ -153,6 +154,7 @@ export default {
   SIGN_IN: (): void => Dialog.showLoginDialog(),
   SIGN_OUT: (): Promise<boolean> => signOut(),
   SNAP_TO_OBJECT_CENTER: (): boolean => viewMenu.toggleSnapToObjectCenter(),
+  START_101_COURSE: (): void => showFlux101(),
   START_CURVE_ENGRAVING_MODE: () => curveEngravingModeController.start(),
   START_GESTURE_INTRO: (): Promise<void> => Dialog.showMediaTutorial(getGestureIntroduction()),
   START_TUTORIAL: (): void => {

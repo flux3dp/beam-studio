@@ -1484,8 +1484,18 @@ export interface ILang {
   flux_101: {
     badges: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
     chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    close: string;
+    completed: string;
+    english_audio: string;
+    expand: string;
+    help_article: string;
     lessons: Record<string, string>;
+    mark_done: string;
+    minimize: string;
+    next: string;
+    prev: string;
     title: string;
+    water_tank_note: string;
   };
   flux_id_login: {
     connection_fail: string;
@@ -2740,6 +2750,7 @@ export interface ILang {
       export_UV_print: string;
       file: string;
       fit_to_window: string;
+      flux_101: string;
       follow_us: string;
       forum: string;
       group: string;
