@@ -83,6 +83,12 @@ describe('actions on the anonymous bucket', () => {
     expect(getBucket().lastLessonId).toBe('1-1');
   });
 
+  test('recordPlayback keeps the furthest position as the resume point (rewinds stay in-session)', () => {
+    recordPlayback('1-2', 30, 30);
+    recordPlayback('1-2', 1, 10); // user scrubbed back to 0:10
+    expect(getBucket().lessons['1-2']).toMatchObject({ playedSec: 31, resumeSec: 30 });
+  });
+
   test('completeLesson is monotonic: marked_done upgrades to watched, never the reverse', () => {
     completeLesson('2-1', 'marked_done');
     expect(getBucket().lessons['2-1'].completedVia).toBe('marked_done');

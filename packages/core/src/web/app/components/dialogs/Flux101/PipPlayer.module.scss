@@ -2,7 +2,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000; // the shared player sits at 1001, just above
+  z-index: 1000; // same layer as antd modals; later dialogs stack above
   overflow: hidden;
   border-radius: 10px;
   background: #1f2327;

@@ -87,7 +87,7 @@ Two presentation modes over one player instance:
 - **PiP mode** — **Minimize** collapses to a small draggable always-on-top player over the canvas; the canvas and panels stay fully interactive. **Expand** returns to dialog mode.
 - **Closed** — **Close (✕)** in either mode stops playback and collapses the course into the book icon. No floating chip is left on the canvas. Reopening restores the last lesson and playback position.
 
-Switching modes never reloads the video: the `<iframe>` is a single `position: fixed` element that is repositioned over whichever slot (dialog or PiP) is currently mounted (the mockup technique). Re-parenting an iframe reloads it, so this overlay approach is required, not optional.
+The player (`Flux101Player`) is rendered inside whichever slot is on screen. Switching dialog ⇄ PiP therefore remounts the `<iframe>` (about half a second of black); if the video was playing, the new player autoplays from the saved resume point, so the viewer only sees a brief reload. Opening the course never autoplays (D24).
 
 ### 5.4 Completion celebration
 
@@ -199,7 +199,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 - **YouTube IFrame Player API** on `youtube-nocookie.com` (`host` option), loaded lazily once. Used for: `onStateChange` (PLAYING / PAUSED / ENDED), a 1 s `setInterval` while PLAYING that increments `playedSec` and records `resumeSec` via `getCurrentTime()`, `seekTo(resumeSec)` on open, and `pauseVideo()` on tab blur (D16). Counting *played* seconds rather than max position means scrubbing to the end does not count as watched.
 - **No autoplay.** The user presses play; videos need sound and autoplay-with-sound is blocked by browser policy anyway (D15).
 - **PiP shell** — `react-draggable` (already a dependency; `DraggableModal` is the precedent). Fixed width, **no resize** (D17). Bounded to the viewport. Position kept in component state for the session only.
-- **Single persistent iframe** morphing between dialog and PiP slots (§5.3). Exactly one player instance app-wide, owned by the course dialog registered in `dialog-caller`.
+- **One player at a time**, mounted in the active slot (§5.3); the dialog is `destroyOnClose` so its player is gone while PiP is up. The launcher lives in `Flux101/index.tsx` via `dialog-controller`.
 - **Pause on tab switch** — Electron: `TabEvents.TabBlurred` (already consumed in `pages/Beambox.tsx`); web: `visibilitychange`.
 - **Lifecycle** — close stops playback; switching lessons reuses the player (`loadVideoById`) and seeks to that lesson's `resumeSec`.
 - **Mobile** — dialog mode only; no PiP (D17).
@@ -259,6 +259,7 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 | `TopBar/useMenuData.ts` | add Help item `START_101_COURSE` (not in `MENU_ITEMS`, so always enabled) | Help menu order: About, Start Tutorial, UI Intro, **FLUX 101**, …; attach/detach enable logic — unchanged |
 | `apps/app/src/node/menu-manager.ts` | add the same Help item to the Electron template | native menu — other items unchanged |
 | `apps/app/src/main.ts` `setReferer()` | filter adds `www.youtube.com` / `www.youtube-nocookie.com`, sets `Referer: https://flux3dp.com/` for them | flux-id requests — still get their own origin as Referer (unchanged branch) |
+| `apps/app/src/node/tabManager.ts` `setWindowOpenHandler` | no child windows any more: every non-`file://` / `about:` target goes to `shell.openExternal` | `file://` still denied; `target="_blank"` links in alert strings (Help Center, `x-apple.systempreferences:`) now open in the system browser instead of an Electron window; FLUX ID OAuth unaffected (uses `browser.open` + `beam-studio://` deep link) |
 | `public/js/lib/svg-nest/util/eval.js` | handler registered only inside a `WorkerGlobalScope` | svg-nest parallel workers (`new Worker('…/eval.js')`) — still eval posted code; Electron bootstrap (`requireConfig.js` loads it in the main window for load order) — no longer installs `window.onmessage` |
 | `LeftPanel/components/DrawingToolButtonGroup.tsx`, `icons/left-panel/LeftPanelIcons.tsx` (+ `book.svg`) | add the FLUX 101 button (remaining-lesson badge) between the separator and Beamy | every other tool button, order and ids — unchanged; snapshot `DrawingToolButtonGroup.spec.tsx.snap` is additive only |
 | `pages/Welcome.tsx` | add menu key `flux-101` after Help Center, content `welcome/TabFlux101.tsx` | other tabs, default tab, recent-files loading — unchanged; snapshot `Welcome.spec.tsx.snap` is additive only |
@@ -337,6 +338,7 @@ Added 2026-09-18 (engineering review):
 - **D21** Machine note source: `deviceMaster.currentDevice` first, then workarea.
 - **D22** Feature flag via Experimental settings; credits UI behind its own switch until the backend lands.
 - **D23** (2026-09-30) Bucket key is the lower-cased FLUX ID email, not a uid (`IUser` only guarantees `email`, and the masked-email prompt needs it anyway). `nudgeDismissedAt` timestamp replaced by a `nudgeDismissed: true` flag — nothing re-prompts on a schedule. `marked_done` upgrades to `watched` if the user later plays ≥ 90 %; never the reverse.
+- **D24** (2026-10-02) Dropped the single `position: fixed` iframe laid over the active slot (the mockup technique). It needed a `z-index` above every antd modal, so dialogs opened later (e.g. machine info) rendered *under* the video, and it had already caused the Electron black-player stacking bug and would need scroll tracking for the Welcome embed. The player now lives in the slot; dialog ⇄ PiP remounts it and `useYouTubePlayer` autoplays only when the video was playing at the moment of the switch (`wasPlaying`, reset on close).
 
 ## 15. Appendix: key references
 

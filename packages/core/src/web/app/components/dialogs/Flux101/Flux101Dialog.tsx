@@ -1,7 +1,6 @@
-// FLUX 101 course window (PRD §5.3). The YouTube player lives in a single position:fixed host
-// that is laid over whichever slot is mounted (dialog now, PiP later) so switching modes never
-// remounts the iframe.
-import React, { type RefObject, useEffect, useLayoutEffect, useRef, useState } from 'react';
+// FLUX 101 course window (PRD §5.3): header, lesson list, player slot and footer. In PiP mode the
+// modal is destroyed and `PipPlayer` mounts its own player (D24).
+import React, { useEffect } from 'react';
 
 import {
   CheckOutlined,
@@ -13,7 +12,6 @@ import {
   StepForwardOutlined,
 } from '@ant-design/icons';
 import { Button, Modal, Space, Tag, Typography } from 'antd';
-import { createPortal } from 'react-dom';
 
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
@@ -23,41 +21,11 @@ import browser from '@core/implementations/browser';
 
 import { LESSONS } from './catalog';
 import styles from './Flux101Dialog.module.scss';
+import Flux101Player from './Flux101Player';
 import { useFlux101Store } from './flux101Store';
 import LessonList from './LessonList';
 import PipPlayer from './PipPlayer';
 import { completedCount, completeLesson, isLessonComplete, useFlux101Bucket } from './progress';
-import { useYouTubePlayer } from './useYouTubePlayer';
-
-const useRect = (ref: RefObject<HTMLElement | null>, deps: unknown[]): DOMRect | null => {
-  const [rect, setRect] = useState<DOMRect | null>(null);
-
-  useLayoutEffect(() => {
-    const measure = () => {
-      const next = ref.current?.getBoundingClientRect();
-
-      if (next) {
-        setRect((prev) =>
-          prev && ['x', 'y', 'width', 'height'].every((k) => prev[k as 'x'] === next[k as 'x']) ? prev : next,
-        );
-      }
-    };
-    const raf = requestAnimationFrame(measure);
-    const timer = setTimeout(measure, 300); // antd portal / modal layout settles
-
-    measure();
-    window.addEventListener('resize', measure);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      clearTimeout(timer);
-      window.removeEventListener('resize', measure);
-    };
-    // eslint-disable-next-line hooks/exhaustive-deps
-  }, deps);
-
-  return rect;
-};
 
 interface Flux101DialogProps {
   onClose: () => void;
@@ -74,14 +42,6 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
   const index = LESSONS.indexOf(lesson);
   const done = isLessonComplete(bucket, lessonId);
 
-  const slotRef = useRef<HTMLDivElement>(null);
-  const pipSlotRef = useRef<HTMLDivElement>(null);
-  const hostRef = useRef<HTMLDivElement>(null);
-  const [dragTick, setDragTick] = useState(0);
-  const rect = useRect(view === 'pip' ? pipSlotRef : slotRef, [view, lessonId, dragTick]);
-
-  useYouTubePlayer(hostRef, lessonId);
-
   // Close (✕) unmounts the whole window, which destroys the player and stops playback (R5a).
   useEffect(() => {
     if (view === 'closed') onClose();
@@ -92,6 +52,7 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
       <Modal
         centered
         closable={false}
+        destroyOnClose
         footer={null}
         maskClosable={false}
         maskTransitionName=""
@@ -139,7 +100,9 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
                 </Tag>
               )}
 
-              <div className={styles.slot} ref={slotRef} />
+              <div className={styles.slot}>
+                <Flux101Player lessonId={lessonId} />
+              </div>
 
               <Typography.Text className={styles.audioNote} type="secondary">
                 {t.english_audio}
@@ -176,29 +139,7 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
         </div>
       </Modal>
 
-      {view === 'pip' && (
-        <PipPlayer
-          lessonId={lessonId}
-          onClose={close}
-          onDrag={() => setDragTick((n) => n + 1)}
-          onExpand={expand}
-          slotRef={pipSlotRef}
-        />
-      )}
-
-      {/* the one and only player, laid over the active slot; portaled to body so no ancestor
-          stacking context or transform can trap the fixed positioning below the antd modal */}
-      {createPortal(
-        <div
-          className={styles.player}
-          style={
-            rect ? { height: rect.height, left: rect.x, top: rect.y, width: rect.width } : { visibility: 'hidden' }
-          }
-        >
-          <div ref={hostRef} />
-        </div>,
-        document.body,
-      )}
+      {view === 'pip' && <PipPlayer lessonId={lessonId} onClose={close} onExpand={expand} />}
     </>
   );
 };
