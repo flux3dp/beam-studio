@@ -1,0 +1,47 @@
+@use '@core/styles/mixins' as mixins;
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 80vw;
+  @include mixins.viewport-size(72);
+  overflow: hidden;
+
+  @media screen and (max-width: 600px) {
+    height: 100%;
+  }
+}
+
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 2px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+
+  .name {
+    white-space: nowrap;
+  }
+
+  .machine {
+    color: #888;
+    font-size: 13px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .tag {
+    margin-left: 4px;
+  }
+}
+
+.bundled-hint {
+  font-size: 11px;
+  color: #999999;
+}

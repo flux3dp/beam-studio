@@ -13,6 +13,11 @@ const getDefaultState = (): ILayerConfig => {
     initState[key as ConfigKey] = { value: defaultConfig[key as ConfigKey] } as any;
   });
 
+  // Meta refs without a default config value: present (value undefined) so the state
+  // shape matches post-hydration getLayerConfig, which enumerates all attributeMap keys.
+  initState.materialId = { value: undefined as never };
+  initState.presetId = { value: undefined as never };
+
   return initState as ILayerConfig;
 };
 

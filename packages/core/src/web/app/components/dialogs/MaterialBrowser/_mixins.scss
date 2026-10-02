@@ -1,0 +1,15 @@
+// Shared between MaterialBrowser components; each component keeps its own module.
+
+$favorite-star: #ffc53d;
+
+/** Parameter pill (label + value); the caller sets background / border for its surface */
+@mixin param-pill {
+  border-radius: 6px;
+  padding: 2px 8px;
+  font-size: 12px;
+  color: #555555;
+
+  b {
+    margin-right: 4px;
+  }
+}

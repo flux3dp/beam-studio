@@ -8,7 +8,11 @@ type MetaConfig = {
   clipRect: string; // x y w h
   color: string;
   configName: string;
+  /** Material Browser: applied material id (authoritative new-mode ref; configName kept as legacy shadow) */
+  materialId: string;
   module: LayerModuleType;
+  /** Material Browser: applied preset id */
+  presetId: string;
   ref: boolean;
 };
 

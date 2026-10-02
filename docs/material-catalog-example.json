@@ -1,0 +1,127 @@
+{
+  "version": 1,
+  "publishedAt": "2026-08-07T04:00:00Z",
+  "materials": [
+    {
+      "id": "wood",
+      "name": { "default": "Wood", "zh-tw": "木板", "ja": "木材" },
+      "category": "wood",
+      "image": "https://cdn.example.flux3dp.com/materials/wood/cover.jpg",
+      "tags": ["FLUX tested"],
+      "variants": [{ "id": "wood-3mm", "thicknessUnit": "mm", "thicknessNum": 3 }],
+      "presets": [
+        {
+          "id": "wood_3mm_cutting",
+          "legacyKey": "wood_3mm_cutting",
+          "name": { "default": "Cutting", "zh-tw": "切割" },
+          "origin": "default",
+          "variantId": "wood-3mm",
+          "settings": {
+            "fbb2": { "15": { "power": 55, "speed": 7, "repeat": 1 } },
+            "ado1": { "2": { "power": 65, "speed": 5, "repeat": 1 } }
+          }
+        },
+        {
+          "id": "wood_engraving",
+          "legacyKey": "wood_engraving",
+          "groupId": "wood_engraving",
+          "name": { "default": "Engraving", "zh-tw": "雕刻" },
+          "origin": "default",
+          "settings": {
+            "fbb2": { "15": { "power": 25, "speed": 120, "dpi": "medium" } },
+            "ado1": {
+              "1": { "power": 40, "speed": 100, "dpi": "medium" },
+              "2": { "power": 25, "speed": 100, "dpi": "medium" }
+            },
+            "fhx2rf_30": { "15": { "power": 55, "speed": 600, "dpi": "medium" } }
+          }
+        },
+        {
+          "id": "wood_engraving_high",
+          "groupId": "wood_engraving",
+          "name": { "default": "Engraving", "zh-tw": "雕刻" },
+          "origin": "default",
+          "settings": {
+            "fhx2rf_30": { "15": { "power": 25, "speed": 600, "dpi": "high" } }
+          }
+        },
+        {
+          "id": "wood_printing",
+          "legacyKey": "wood_printing",
+          "name": { "default": "Printing", "zh-tw": "列印" },
+          "origin": "default",
+          "settings": {
+            "ado1": { "5": { "ink": 3, "multipass": 3, "halftone": 1 } },
+            "fbm2": { "7": { "ink": 2, "multipass": 2, "halftone": 1 } }
+          }
+        }
+      ]
+    },
+    {
+      "id": "sparkle-acrylic",
+      "name": { "default": "Sparkle Acrylic", "zh-tw": "星光壓克力" },
+      "description": {
+        "default": "FLUX Shop premium cast acrylic with embedded sparkle flakes.",
+        "zh-tw": "FLUX 商店高級亮片鑄造壓克力。"
+      },
+      "category": "acrylic",
+      "image": "https://cdn.example.flux3dp.com/materials/sparkle-acrylic/cover.jpg",
+      "variants": [{ "id": "sparkle-acrylic-1-8", "thicknessUnit": "inch", "thicknessNum": 1, "thicknessDen": 8 }],
+      "tags": ["Premium", "FLUX Shop"],
+      "regions": ["us"],
+      "shopLinks": { "us": "https://shop.flux3dp.us/products/sparkle-acrylic" },
+      "presets": [
+        {
+          "id": "sparkle_acrylic_cutting",
+          "name": { "default": "Cutting" },
+          "origin": "default",
+          "variantId": "sparkle-acrylic-1-8",
+          "settings": { "fbb2": { "15": { "power": 60, "speed": 6, "repeat": 1 } } }
+        }
+      ]
+    },
+    {
+      "id": "stainless-steel",
+      "name": { "default": "Stainless Steel", "zh-tw": "不鏽鋼" },
+      "category": "metal",
+      "coverColor": "#9aa4af",
+      "presets": [
+        {
+          "id": "stainless_steel_bw_engraving_diode",
+          "legacyKey": "stainless_steel_bw_engraving_diode",
+          "name": { "default": "Engraving (Diode)" },
+          "origin": "default",
+          "settings": { "ado1": { "1": { "power": 100, "speed": 10, "dpi": "medium" } } }
+        },
+        {
+          "id": "stainless_steel_dark",
+          "legacyKey": "stainless_steel_dark",
+          "name": { "default": "Dark Marking", "zh-tw": "深色標記" },
+          "origin": "default",
+          "settings": {
+            "fpm1_0_20": { "15": { "power": 90, "speed": 800, "frequency": 45, "fillInterval": 0.05 } },
+            "fpm1_1_20": { "15": { "power": 80, "speed": 800, "frequency": 55, "pulseWidth": 200 } }
+          }
+        }
+      ]
+    },
+    {
+      "id": "tw-bamboo",
+      "name": { "default": "Taiwan Bamboo Ply", "zh-tw": "台灣竹合板" },
+      "category": "wood",
+      "variants": [{ "id": "tw-bamboo-3mm", "thicknessUnit": "mm", "thicknessNum": 3 }],
+      "tags": ["TW Pack"],
+      "regions": ["tw"],
+      "shopLinks": { "tw": "https://tw-shop.flux3dp.com/products/bamboo-ply" },
+      "presets": [
+        {
+          "id": "tw_bamboo_cutting",
+          "name": { "default": "Cutting", "zh-tw": "切割" },
+          "origin": "default",
+          "variantId": "tw-bamboo-3mm",
+          "settings": { "*": { "15": { "power": 55, "speed": 7, "repeat": 1 } } }
+        }
+      ]
+    }
+  ]
+}

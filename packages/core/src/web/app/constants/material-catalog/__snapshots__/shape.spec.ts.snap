@@ -1,0 +1,122 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`bundled catalog shape for a fixed preset set 1`] = `
+[
+  {
+    "category": "wood",
+    "id": "solid-wood",
+    "image": "core-img/material-catalog/wood_solid.jpg",
+    "nameKey": "solid_wood",
+    "presets": [
+      {
+        "id": "wood_solid_3mm_cutting",
+        "legacyKey": "wood_solid_3mm_cutting",
+        "nameKey": "cutting",
+        "origin": "default",
+        "settings": {
+          "ado1": {
+            "1": {
+              "power": 100,
+              "speed": 4,
+            },
+          },
+          "fbb2": {
+            "15": {
+              "power": 30,
+              "speed": 15,
+            },
+          },
+        },
+        "variantId": "solid-wood-3mm",
+      },
+      {
+        "groupId": "wood_solid_engraving",
+        "id": "wood_solid_engraving",
+        "legacyKey": "wood_solid_engraving",
+        "nameKey": "engraving",
+        "origin": "default",
+        "settings": {
+          "fbb2": {
+            "15": {
+              "power": 30,
+              "speed": 500,
+            },
+          },
+          "fhx2rf_30": {
+            "15": {
+              "dpi": "medium",
+              "power": 55,
+              "speed": 300,
+            },
+          },
+        },
+      },
+      {
+        "groupId": "wood_solid_engraving",
+        "id": "wood_solid_engraving_high",
+        "nameKey": "engraving",
+        "origin": "default",
+        "settings": {
+          "fhx2rf_30": {
+            "15": {
+              "dpi": "high",
+              "power": 20,
+              "speed": 300,
+            },
+          },
+        },
+      },
+      {
+        "groupId": "wood_solid_engraving",
+        "id": "wood_solid_engraving_detailed",
+        "nameKey": "engraving",
+        "origin": "default",
+        "settings": {
+          "fhx2rf_30": {
+            "15": {
+              "dpi": "detailed",
+              "power": 10,
+              "speed": 300,
+            },
+          },
+        },
+      },
+    ],
+    "variants": [
+      {
+        "id": "solid-wood-3mm",
+        "thicknessNum": 3,
+        "thicknessUnit": "mm",
+      },
+      {
+        "id": "solid-wood-5mm",
+        "thicknessNum": 5,
+        "thicknessUnit": "mm",
+      },
+    ],
+  },
+  {
+    "category": "other",
+    "id": "canvas",
+    "image": "core-img/material-catalog/fabric_canvas.jpg",
+    "nameKey": "canvas",
+    "presets": [
+      {
+        "id": "canvas_printing",
+        "legacyKey": "canvas_printing",
+        "nameKey": "printing",
+        "origin": "default",
+        "settings": {
+          "ado1": {
+            "5": {
+              "ink": 3,
+              "multipass": 3,
+              "speed": 60,
+            },
+          },
+        },
+      },
+    ],
+  },
+]
+`;

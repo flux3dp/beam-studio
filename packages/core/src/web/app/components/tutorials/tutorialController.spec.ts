@@ -1,9 +1,7 @@
 const mockEmit = jest.fn();
 
-jest.mock('./TutorialContext', () => ({
-  eventEmitter: {
-    emit: mockEmit,
-  },
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
+  createEventEmitter: () => ({ emit: mockEmit }),
 }));
 
 import { getNextStepRequirement, handleNextStep } from './tutorialController';
