@@ -50,6 +50,12 @@ const GALVO_OP = {
   LASER_ON: 5,
   MARK_ABS: 3,
   MARK_REL: 4,
+  /**
+   * A compressed dot sweep: 7 float64 header params, then a site bitmap packed into the
+   * remaining 8-byte param slots. Expands to JUMP_ABS + LASER_ON per set bit (swiftray
+   * docs/galvo-packed-dots.md, HX2_GALVO_PROTOCOL.md §4.4).
+   */
+  PACKED_DOTS: 0x20,
   SET_JUMP_SPEED: 7,
   SET_LASER_POWER: 11,
   SET_MARK_SPEED: 8,
@@ -67,6 +73,83 @@ const GALVO_DOT_MAX_MM = 0.5;
 
 /** Sim time is kept in minutes, and a dot's dwell arrives in microseconds. */
 const US_TO_MIN = 1 / 60000000;
+
+/** Header of a PACKED_DOTS record, in field-local mm and microseconds. */
+export interface PackedDotsHeader {
+  dotCount: number;
+  dwellUs: number;
+  originX: number;
+  originY: number;
+  siteCount: number;
+  stepX: number;
+  stepY: number;
+}
+
+const PACKED_DOTS_HEADER_PARAMS = 7;
+
+/** Site i of a packed mask is byte i >> 3, bit 7 - (i & 7): MSB first, bytes in site order. */
+const packedBit = (mask: Uint8Array, site: number): boolean => ((mask[site >> 3] >> (7 - (site & 7))) & 1) === 1;
+
+/**
+ * Checks a PACKED_DOTS record against the canonical form of swiftray's
+ * docs/galvo-packed-dots.md. The machine refuses a malformed record, so the preview
+ * must not draw one either. Rule 5 (longest zero gap) is a MAY and depends on the
+ * card's jump-delay limit, so it is not checked here.
+ * @param header the 7 header params
+ * @param mask the bytes of the mask slots, i.e. 8 x (paramCount - 7)
+ * @returns the broken rule, or null for a well-formed record
+ */
+export const packedDotsIssue = (header: PackedDotsHeader, mask: Uint8Array): null | string => {
+  const { dotCount, siteCount, stepX, stepY } = header;
+
+  if (!Number.isInteger(siteCount) || !Number.isInteger(dotCount)) return 'rule 1: counts are not integral';
+
+  // checked before anything reads the mask, which the slot count bounds
+  if (mask.length !== Math.ceil(Math.ceil(siteCount / 8) / 8) * 8) {
+    return `rule 6: ${mask.length / 8} mask slots cannot hold ${siteCount} sites`;
+  }
+
+  if (siteCount < 1 || dotCount < 1) return 'rule 1: the run marks nothing';
+
+  if (stepX === 0 && stepY === 0) return 'rule 3: zero step';
+
+  for (let i = siteCount; i < mask.length * 8; i += 1) {
+    if (packedBit(mask, i)) return `mask: padding bit ${i} is set`;
+  }
+
+  if (!packedBit(mask, 0) || !packedBit(mask, siteCount - 1)) return 'rule 2: the run does not begin and end on a dot';
+
+  let popcount = 0;
+
+  for (let i = 0; i < siteCount; i += 1) if (packedBit(mask, i)) popcount += 1;
+
+  if (popcount !== dotCount) return `rule 4: dot_count ${dotCount} but the mask holds ${popcount}`;
+
+  return null;
+};
+
+/**
+ * Runs of consecutive set bits in a packed mask: adjacent dots touch at the grid
+ * pitch, so each run is drawn as one mark instead of one per dot.
+ * @returns [firstSite, lastSite] per run, inclusive, in site order
+ */
+export const packedDotRuns = (mask: Uint8Array, siteCount: number): Array<[number, number]> => {
+  const runs: Array<[number, number]> = [];
+  let start = -1;
+
+  for (let i = 0; i <= siteCount; i += 1) {
+    const set = i < siteCount && packedBit(mask, i);
+
+    if (set && start < 0) {
+      start = i;
+    } else if (!set && start >= 0) {
+      runs.push([start, i - 1]);
+      start = -1;
+    }
+  }
+
+  return runs;
+};
 
 export class Reader {
   view: DataView;
@@ -620,6 +703,28 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   };
 
   /**
+   * Draws deposited dots from `from` to `to` (preview space) as one feedrate-less mark,
+   * bracketed by breaks, then leaves the beam on the last dot's centre.
+   */
+  const drawGalvoMark = (from: [number, number], to: [number, number], dwellMin: number) => {
+    const [cx, cy] = galvoPoint();
+    const savedF = state.f;
+
+    state.x = cx;
+    state.y = cy;
+    pushBreak();
+    state.f = Number.NaN;
+    [state.x, state.y] = from;
+    push(0, 0, RASTER_T);
+    [state.x, state.y] = to;
+    push(1, (galvo!.power * 255) / 100, RASTER_T, dwellMin);
+    state.f = savedF;
+    state.x = cx;
+    state.y = cy;
+    pushBreak();
+  };
+
+  /**
    * A dot has position but no path, so it is drawn the way printer swaths draw
    * deposited pixels: the jump that placed the beam already carried the motion
    * time, and the mark itself is one pitch wide with no feedrate, bracketed by
@@ -643,19 +748,46 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
     galvo!.lastDot = [cx, cy];
 
     const half = galvo!.dotPitch / 2;
-    const savedF = state.f;
 
-    state.x = cx;
-    state.y = cy;
-    pushBreak();
-    state.f = Number.NaN;
-    state.x = cx - half;
-    push(0, 0, RASTER_T);
-    state.x = cx + half;
-    push(1, (galvo!.power * 255) / 100, RASTER_T, dwellUs * US_TO_MIN);
-    state.f = savedF;
-    state.x = cx;
-    pushBreak();
+    drawGalvoMark([cx - half, cy], [cx + half, cy], dwellUs * US_TO_MIN);
+  };
+
+  /**
+   * Expands a PACKED_DOTS record. The machine turns each set bit into JUMP_ABS +
+   * LASER_ON, skipping a zero-length jump and measuring the first jump from wherever
+   * the previous record left the beam; the preview does the same, except that a run
+   * of adjacent dots becomes one mark one pitch wider than its span. That draws the
+   * same pixels and costs the same time: the jumps between dots follow a break and
+   * add none, so only the summed dwell counts.
+   */
+  const emitPackedDots = (header: PackedDotsHeader, mask: Uint8Array) => {
+    const { dwellUs, originX, originY, siteCount, stepX, stepY } = header;
+    // preview y is negated, so the half-step along the sweep flips its y too
+    const halfX = stepX / 2;
+    const halfY = -stepY / 2;
+
+    galvo!.dotPitch = Math.hypot(stepX, stepY);
+
+    for (const [first, last] of packedDotRuns(mask, siteCount)) {
+      const x = originX + first * stepX;
+      const y = originY + first * stepY;
+
+      if (x !== galvo!.x || y !== galvo!.y) {
+        galvo!.x = x;
+        galvo!.y = y;
+        emitGalvoMove(false);
+      }
+
+      const [sx, sy] = galvoPoint();
+
+      galvo!.x = originX + last * stepX;
+      galvo!.y = originY + last * stepY;
+
+      const [ex, ey] = galvoPoint();
+
+      drawGalvoMark([sx - halfX, sy - halfY], [ex + halfX, ey + halfY], (last - first + 1) * dwellUs * US_TO_MIN);
+      galvo!.lastDot = [ex, ey];
+    }
   };
 
   const handleGalvoCommand = (opcode: number, params: number[]) => {
@@ -900,6 +1032,34 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         // galvo list record: uint16 opcode, uint8 param count, count x float64
         const opcode = reader.u16();
         const count = reader.u8();
+
+        if (opcode === GALVO_OP.PACKED_DOTS) {
+          if (count < PACKED_DOTS_HEADER_PARAMS) {
+            throw new Error(`Malformed galvo packed-dots record: ${count} params, need at least 7`);
+          }
+
+          const [originX, originY, stepX, stepY, siteCount, dotCount, dwellUs] = Array.from(
+            { length: PACKED_DOTS_HEADER_PARAMS },
+            reader.f64,
+          );
+          const header = { dotCount, dwellUs, originX, originY, siteCount, stepX, stepY };
+          // the mask is a bit pattern in param slots, not floats: read it as bytes so no
+          // NaN canonicalization can touch it
+          const maskLength = (count - PACKED_DOTS_HEADER_PARAMS) * 8;
+          const mask = reader.bytes.slice(reader.pos, reader.pos + maskLength);
+
+          reader.pos += maskLength;
+
+          const issue = packedDotsIssue(header, mask);
+
+          if (issue) throw new Error(`Malformed galvo packed-dots record (${issue})`);
+
+          if (!galvo) beginGalvoRun();
+
+          emitPackedDots(header, mask);
+          break;
+        }
+
         const params: number[] = [];
 
         for (let i = 0; i < count; i += 1) params.push(reader.f64());

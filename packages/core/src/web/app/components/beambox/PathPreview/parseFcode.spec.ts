@@ -12,7 +12,13 @@ jest.mock('./tmpParseGcode', () => ({
   },
 }));
 
-import parseFcode, { decodePixelRuns, decodePrinterSwath, RASTER_T } from './parseFcode';
+import parseFcode, {
+  decodePixelRuns,
+  decodePrinterSwath,
+  packedDotRuns,
+  packedDotsIssue,
+  RASTER_T,
+} from './parseFcode';
 
 describe('decodePixelRuns', () => {
   test('splits on laser off and on power changes, keeping each run power', () => {
@@ -241,5 +247,211 @@ describe('parseFcode galvo lists', () => {
     for (const row of rows) {
       if (Number.isNaN(row.x)) expect(row.f).toBeNaN();
     }
+  });
+});
+
+// --- packed dots (galvo opcode 0x20) ------------------------------------------
+// Cases follow BeamOS_NX_backend docs/agents/vectors/galvo-packed-dots.vectors.
+
+const US = 1 / 60000000;
+
+/** The mask bytes for these set sites, zero-padded to whole 8-byte slots. */
+const packMask = (siteCount: number, sites: number[]): Uint8Array => {
+  const mask = new Uint8Array(Math.ceil(Math.ceil(siteCount / 8) / 8) * 8);
+
+  for (const i of sites) mask[i >> 3] |= 1 << (7 - (i & 7));
+
+  return mask;
+};
+
+/** header: origin_x origin_y step_x step_y site_count dot_count dwell_us, as in the vectors file */
+const packedRecord = (header: number[], mask: Uint8Array): number[] => [
+  23,
+  0x20,
+  0,
+  7 + mask.length / 8,
+  ...header.flatMap(f64),
+  ...mask,
+];
+
+const headerOf = ([originX, originY, stepX, stepY, siteCount, dotCount, dwellUs]: number[]) => ({
+  dotCount,
+  dwellUs,
+  originX,
+  originY,
+  siteCount,
+  stepX,
+  stepY,
+});
+
+/** The vectors' worked example: a Y sweep, sites 0-2 and 67-69 of 70. */
+const Y_RUN_HEADER = [10, -5, 0, 0.0127, 70, 6, 120];
+const Y_RUN_BYTES = [
+  ...[0x17, 0x20, 0x00, 0x09],
+  ...[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x24, 0x40],
+  ...[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x14, 0xc0],
+  ...[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+  ...[0xa6, 0x0a, 0x46, 0x25, 0x75, 0x02, 0x8a, 0x3f],
+  ...[0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x51, 0x40],
+  ...[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x40],
+  ...[0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5e, 0x40],
+  ...[0xe0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+  ...[0x1c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00],
+];
+
+/** Park at (115, 115): field-local (x, y) lands at preview (115 + x, -115 - y). */
+const toPreview = (x: number, y: number) => ({ x: 115 + x, y: -115 - y });
+
+const packedRows = (body: number[]) => records(buildTask([...park, ...prologue(800), ...body, ...galvo(19, 1)])).rows;
+
+const marksOf = (rows: ReturnType<typeof packedRows>) =>
+  rows.flatMap((row, i) => (row.t === RASTER_T && row.g === 1 ? [{ end: row, start: rows[i - 1] }] : []));
+
+const jumpsOf = (rows: ReturnType<typeof packedRows>) => rows.filter((row) => row.g === 0 && row.f === 4000 * 60);
+
+describe('packedDotsIssue', () => {
+  test('accepts every expansion vector', () => {
+    expect(packedDotsIssue(headerOf(Y_RUN_HEADER), packMask(70, [0, 1, 2, 67, 68, 69]))).toBeNull();
+    expect(packedDotsIssue(headerOf([0, 0, 0.05, 0, 1, 1, 50]), packMask(1, [0]))).toBeNull();
+    expect(packedDotsIssue(headerOf([0, 0, 0.0127, 0, 64, 4, 120]), packMask(64, [0, 1, 62, 63]))).toBeNull();
+    expect(packedDotsIssue(headerOf([0, 0, 0.0127, 0, 65, 2, 120]), packMask(65, [0, 64]))).toBeNull();
+    expect(packedDotsIssue(headerOf([-55, 0, 0.00693, 0, 15872, 2, 120]), packMask(15872, [0, 15871]))).toBeNull();
+  });
+
+  test.each([
+    ['origin-not-a-dot', [0, 0, 0.0127, 0, 8, 2, 120], [0x41], 'rule 2'],
+    ['trailing-zeros', [0, 0, 0.0127, 0, 8, 2, 120], [0x90], 'rule 2'],
+    ['dot-count-disagrees', [0, 0, 0.0127, 0, 8, 4, 120], [0x91], 'rule 4'],
+    ['padding-bit-set', [0, 0, 0.0127, 0, 5, 2, 120], [0x89], 'mask'],
+    ['zero-step', [1, 1, 0, 0, 4, 2, 120], [0x90], 'rule 3'],
+    ['site-count-zero', [0, 0, 0.0127, 0, 0, 0, 120], null, 'rule 1'],
+    ['slots-too-few', [0, 0, 0.0127, 0, 200, 2, 120], [0x81], 'rule 6'],
+  ])('rejects %s', (_, header, firstByte, rule) => {
+    const mask = new Uint8Array(firstByte ? 8 : 0);
+
+    if (firstByte) mask.set(firstByte);
+
+    expect(packedDotsIssue(headerOf(header), mask)).toMatch(new RegExp(`^${rule}:`));
+
+    // the machine refuses it, so the preview draws none of it and stops there, the way
+    // parseFcode treats any stream it cannot read
+    const consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+    expect(marksOf(packedRows(packedRecord(header, mask)))).toHaveLength(0);
+    expect(consoleError).toHaveBeenCalledWith(
+      'parseFcode failed:',
+      expect.objectContaining({ message: expect.stringContaining(rule) }),
+    );
+    consoleError.mockRestore();
+  });
+});
+
+describe('packedDotRuns', () => {
+  test('groups adjacent set bits, MSB first', () => {
+    expect(packedDotRuns(packMask(70, [0, 1, 2, 67, 68, 69]), 70)).toEqual([
+      [0, 2],
+      [67, 69],
+    ]);
+    expect(packedDotRuns(Uint8Array.of(0x91, 0, 0, 0, 0, 0, 0, 0), 8)).toEqual([
+      [0, 0],
+      [3, 3],
+      [7, 7],
+    ]);
+  });
+});
+
+describe('parseFcode packed dots', () => {
+  test('reads the literal worked example and draws each cluster as one mark', () => {
+    const rows = packedRows(Y_RUN_BYTES);
+    const marks = marksOf(rows);
+    const half = 0.0127 / 2;
+
+    expect(marks).toHaveLength(2);
+    // a Y sweep: the mark runs along y, half a pitch past the first and last dot centres
+    // (vector expect: sites 0, 2, 67, 69 at local y -5, -4.9746, -4.1491, -4.1237)
+    expect(marks[0].start.x).toBeCloseTo(125, 6);
+    expect(marks[0].start.y).toBeCloseTo(toPreview(10, -5 - half).y, 6);
+    expect(marks[0].end.y).toBeCloseTo(toPreview(10, -4.9746 + half).y, 6);
+    expect(marks[1].start.y).toBeCloseTo(toPreview(10, -4.1491 - half).y, 6);
+    expect(marks[1].end.y).toBeCloseTo(toPreview(10, -4.1237 + half).y, 6);
+    // three dots of 120us each, exactly what the expanded LASER_ONs would cost
+    expect(marks.map((m) => m.end.dwell)).toEqual([3 * 120 * US, 3 * 120 * US]);
+    expect(marks[0].end.s).toBeCloseTo(102);
+    // the jumps to each cluster's first dot
+    expect(jumpsOf(rows).map(({ x, y }) => ({ x, y }))).toEqual([
+      toPreview(10, -5),
+      expect.objectContaining({ x: 125, y: expect.closeTo(toPreview(10, -4.1491).y, 6) }),
+    ]);
+  });
+
+  test('suppresses a zero-length entry jump', () => {
+    const rows = packedRows([...galvo(1, 10, -5), ...Y_RUN_BYTES]);
+
+    // the explicit JUMP_ABS is the only jump to site 0; the record sits on it already
+    expect(jumpsOf(rows)).toHaveLength(2);
+    expect(rows[1]).toMatchObject(toPreview(10, -5));
+    expect(rows[2].x).toBeNaN();
+  });
+
+  test('measures the entry jump from where the previous record left the beam', () => {
+    const rows = packedRows([...galvo(1, 10, 5), ...Y_RUN_BYTES]);
+
+    expect(jumpsOf(rows)).toHaveLength(3);
+    expect(rows[2]).toMatchObject({ g: 0, ...toPreview(10, -5) });
+  });
+
+  test('sweeps a negative step backwards', () => {
+    const rows = packedRows(packedRecord([20, 3, -0.1, 0, 8, 3, 200], Uint8Array.of(0x91, 0, 0, 0, 0, 0, 0, 0)));
+    const marks = marksOf(rows);
+
+    // sites 0, 3, 7 at local x 20, 19.7, 19.3: three lone dots, each one pitch wide
+    expect(marks.map((m) => [m.start.x, m.end.x])).toEqual([
+      [expect.closeTo(135.05, 6), expect.closeTo(134.95, 6)],
+      [expect.closeTo(134.75, 6), expect.closeTo(134.65, 6)],
+      [expect.closeTo(134.35, 6), expect.closeTo(134.25, 6)],
+    ]);
+    expect(marks.every((m) => m.end.y === -118)).toBe(true);
+  });
+
+  test('reads a record at the uint8 param ceiling', () => {
+    const rows = packedRows(packedRecord([-55, 0, 0.00693, 0, 15872, 2, 120], packMask(15872, [0, 15871])));
+
+    expect(jumpsOf(rows).map((r) => r.x)).toEqual([60, expect.closeTo(115 + 54.98603, 6)]);
+    expect(marksOf(rows)).toHaveLength(2);
+  });
+
+  test('never reads mask slots as floats', () => {
+    // slot bytes 81 00 00 00 00 00 f0 7f are a signalling NaN as a little-endian float64
+    const mask = Uint8Array.of(0x81, 0, 0, 0, 0, 0, 0xf0, 0x7f);
+    const rows = packedRows(packedRecord([0, 0, 0.1, 0, 64, 13, 100], mask));
+
+    expect(marksOf(rows).map((m) => m.end.dwell / (100 * US))).toEqual([1, 1, 4, 7]);
+  });
+
+  test('costs the same time and covers the same ground as the expanded stream', () => {
+    const expand = (sites: number[]) =>
+      marksOf(packedRows(sites.flatMap((i) => [...galvo(1, -1 + i * 0.1, 2), ...galvo(5, 150)])));
+    const pack = (sites: number[]) =>
+      marksOf(
+        packedRows(
+          packedRecord([-1, 2, 0.1, 0, sites.at(-1)! + 1, sites.length, 150], packMask(sites.at(-1)! + 1, sites)),
+        ),
+      );
+    const total = (marks: ReturnType<typeof pack>) => marks.reduce((sum, m) => sum + m.end.dwell, 0);
+
+    // gaps and all, the summed dwell is the expanded LASER_ONs'
+    const gapped = [0, 1, 2, 5, 6, 9];
+
+    expect(total(pack(gapped))).toBeCloseTo(total(expand(gapped)), 12);
+
+    // adjacent dots draw the same span; with gaps the expanded stream infers a wider
+    // pitch from the gap, while the packed record knows its step exactly
+    const solid = [0, 1, 2, 3];
+    const packed = pack(solid);
+    const expanded = expand(solid);
+
+    expect(packed).toHaveLength(1);
+    expect(packed[0].start.x).toBeCloseTo(expanded[0].start.x, 9);
+    expect(packed[0].end.x).toBeCloseTo(expanded.at(-1)!.end.x, 9);
   });
 });

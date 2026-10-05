@@ -156,7 +156,18 @@ absolute.
 | 14 / 15 | `ENABLE_LASER` / `DISABLE_LASER` | MO delay us |
 | 16 | `SET_WOBBLE` | transversal, longitudinal, space, mode |
 | 19 | `SET_END_OF_LIST` | **estimated list run time in ms** |
+| 0x20 | `PACKED_DOTS` | 7 f64 header (origin x/y, step x/y, site_count, dot_count, dwell us) + a site bitmap in the remaining param slots |
 | 0x21 / 0x22 | `AXIS_MOVE` (A only) / `SET_IO` | see §4.4 |
+
+`PACKED_DOTS` (swiftray `docs/galvo-packed-dots.md`, vectors in the backend's
+`docs/agents/vectors/galvo-packed-dots.vectors`) is how galvo layers carry every dot
+now -- swiftray emits no bare `LASER_ON`. Site `i` is at `origin + i * step` and is a
+dot when mask byte `i >> 3`, bit `7 - (i & 7)` is set; each dot expands to `JUMP_ABS` +
+`LASER_ON(dwell)`, skipping a zero-length jump, with the first jump measured from where
+the previous record left the beam. The mask slots are bytes, not floats: read them
+raw (a slot can be a signalling NaN). `parseFcode` validates the canonical form
+(`packedDotsIssue`; a malformed record ends the preview there) and draws each run of
+adjacent dots as one `RASTER_T` mark along the step, dwell = dots x dwell_us.
 
 17 and 18 are forbidden. The old `{23, 0..13}` promark sub-commands are gone — same
 command byte, completely different meaning, and the container cannot tell the two
