@@ -1496,6 +1496,7 @@ export interface ILang {
     claimed_warning: string;
     close: string;
     completed: string;
+    credit_pending: string;
     credits_earned: string;
     credits_plus: string;
     english_audio: string;
@@ -1505,6 +1506,7 @@ export interface ILang {
     lessons: Record<string, string>;
     lessons_done: string;
     mark_done: string;
+    marked_done_hint: string;
     minimize: string;
     next: string;
     nudge_later: string;

@@ -1,12 +1,12 @@
 import React from 'react';
 
 import { CaretRightFilled, CheckOutlined } from '@ant-design/icons';
-import { Avatar, Collapse } from 'antd';
+import { Avatar, Collapse, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
 
-import { CHAPTERS } from './catalog';
+import { CHAPTERS, CREDITS_PER_LESSON } from './catalog';
 import styles from './LessonList.module.scss';
 import { continueLessonId, isChapterComplete, isLessonComplete, useFlux101Bucket } from './progress';
 
@@ -28,7 +28,9 @@ const LessonList = ({ currentId, onSelect }: LessonListProps): React.JSX.Element
 
     return {
       children: ch.lessons.map((l) => {
+        const progress = bucket.lessons[l.id];
         const complete = isLessonComplete(bucket, l.id);
+        const watched = complete && progress?.completedVia === 'watched';
 
         return (
           <div
@@ -48,6 +50,20 @@ const LessonList = ({ currentId, onSelect }: LessonListProps): React.JSX.Element
             />
             <span className={styles.id}>{l.id}</span>
             <span className={styles.name}>{t.lessons[l.id]}</span>
+            {watched && (
+              <Tooltip title={progress.creditGranted ? undefined : t.credit_pending}>
+                <span className={classNames(styles.credit, { [styles.granted]: progress.creditGranted })}>
+                  +{CREDITS_PER_LESSON}
+                </span>
+              </Tooltip>
+            )}
+            {complete && !watched && (
+              <Tooltip title={t.marked_done_hint}>
+                <span className={classNames(styles.credit, styles.marked)}>
+                  <CheckOutlined />
+                </span>
+              </Tooltip>
+            )}
             <span className={styles.duration}>{fmt(l.durationSec)}</span>
           </div>
         );

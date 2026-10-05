@@ -37,7 +37,10 @@ const TabFlux101 = (): React.JSX.Element => {
         <LeftPanelIcons.Book />
         {t.title}
       </div>
-      <div className={styles.subtitle}>{sprintf(t.lessons_done, { done, total: LESSONS.length })}</div>
+      <div className={styles.subtitle}>
+        {sprintf(t.lessons_done, { done, total: LESSONS.length })}
+        {credits > 0 && ` · ${sprintf(t.credits_earned, { credits })}`}
+      </div>
       <div className={styles.content}>
         <div className={styles.summary}>
           <Progress percent={Math.round((done / LESSONS.length) * 100)} showInfo={false} strokeColor="#1890ff" />
@@ -56,7 +59,6 @@ const TabFlux101 = (): React.JSX.Element => {
               );
             })}
           </span>
-          {credits > 0 && <span className={styles.credits}>{sprintf(t.credits_earned, { credits })}</span>}
           {isCourseComplete(bucket) && <Button onClick={() => showCertificate()}>🎓 {t.view_certificate}</Button>}
         </div>
         <div className={styles.course}>

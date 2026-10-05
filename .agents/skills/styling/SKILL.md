@@ -38,6 +38,7 @@ antd's defaults:
 | Panel borders, dividers | `$panelBorderColor` | `#e0e0e0` |
 | Panel background | `$backgroundColor` | `#f0f0f0` |
 | Status | `$status-normal` / `$status-warning` / `$status-critical` | green / amber / red |
+| Rewards (credits tag) | `$reward-yellow` | `#f6c026` (as a `rgba(…, 0.25)` tint) |
 
 - The app's antd `colorPrimary` is **`#494949`** (`constants/antd-config.ts`), so `type="primary"`
   buttons are dark grey. The blue accent is `$primary-blue`; a mockup's blue (antd's default, for

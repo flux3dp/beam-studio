@@ -6,6 +6,10 @@
   height: 560px;
   background: #fff;
 }
+.credits {
+  background: rgba(variables.$reward-yellow, 0.25);
+  color: variables.$primary-gray;
+}
 .header {
   display: flex;
   align-items: center;

@@ -90,6 +90,27 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.credit {
+  flex: none;
+  padding: 0 4px;
+  border: 1px solid currentColor;
+  border-radius: 4px;
+  font-size: 10px;
+  font-weight: 600;
+  color: #c0c5c9;
+  &.granted {
+    background: rgba(variables.$reward-yellow, 0.25);
+    border-color: transparent;
+    color: variables.$primary-gray;
+  }
+  // marked done by hand: completed, but no credits
+  &.marked {
+    color: variables.$status-normal;
+    :global(.anticon) {
+      font-size: 10px;
+    }
+  }
+}
 .duration {
   font-size: 10px;
   color: #c0c5c9;
