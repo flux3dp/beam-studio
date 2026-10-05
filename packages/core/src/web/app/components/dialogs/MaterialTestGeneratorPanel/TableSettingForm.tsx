@@ -13,7 +13,7 @@ import styles from './Form.module.scss';
 import type { Detail, tableParams, TableSetting } from './TableSetting';
 
 interface Props {
-  blockOption?: 'cut' | 'engrave';
+  blockOption?: 'cut' | 'dotCompare' | 'engrave';
   className?: string;
   handleChange: (tableSetting: TableSetting) => void;
   isInch: boolean;
@@ -48,7 +48,8 @@ export default function TableSettingForm({
     () => ({
       options: Object.keys(tableSetting)
         .filter((key) => blockOption === 'engrave' || key !== 'fillInterval')
-        .map((value) => ({ label: tLaserPanel[camelToSnake(value)], value })),
+        // most of these labels are snake_case in the lang files, dottingTime is not
+        .map((value) => ({ label: tLaserPanel[camelToSnake(value)] ?? tLaserPanel[value], value })),
       settingEntries: Object.entries(tableSetting) as Array<[TableParams, Detail]>,
     }),
     [blockOption, tLaserPanel, tableSetting],
@@ -79,7 +80,7 @@ export default function TableSettingForm({
     handleChange(modifiedTableSetting);
   };
 
-  const handleBlockOptionChange = (value: 'cut' | 'engrave') => {
+  const handleBlockOptionChange = (value: Props['blockOption']) => {
     // for promark models, when blockOption is 'cut', fillInterval should be set to default value
     if (promarkModels.has(workarea) || value === 'cut') {
       handleOptionChange();
@@ -128,6 +129,7 @@ export default function TableSettingForm({
         <div className={styles['sub-title']}>{tMaterial[index ? 'rows' : 'columns']}</div>
         <Select
           className={styles.input}
+          disabled={blockOption === 'dotCompare'}
           onChange={(value) => handleSelectChange(value, index)}
           options={options}
           value={key}
@@ -141,6 +143,8 @@ export default function TableSettingForm({
                 return `${lengthUnit}/s`;
               case 'fillInterval':
                 return 'mm';
+              case 'dottingTime':
+                return 'us';
               default:
                 return '';
             }

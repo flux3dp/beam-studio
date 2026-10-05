@@ -159,4 +159,25 @@ describe('generateSvgInfo', () => {
       expect(staticValues).toEqual({ frequency: 27, repeat: 1, strength: 15 });
     });
   });
+
+  // One cell, one layer, both halves: the layer's speed engraves the line half and its dotting time
+  // the dot half, so the two swept parameters have to land on the same entry rather than split it.
+  test('puts the line speed and the dot dwell on one entry', () => {
+    const tableSetting: TableSetting = {
+      dottingTime: makeDetail({ default: 100, maxValue: 400, minValue: 100, selected: 1 }),
+      repeat: makeDetail({ default: 1, maxValue: 5, minValue: 1, selected: 2 }),
+      speed: makeDetail({ default: 1000, maxValue: 2000, minValue: 1000, selected: 0 }),
+      strength: makeDetail({ default: 100, maxValue: 100, minValue: 100, selected: 2 }),
+    };
+
+    const result = generateSvgInfo({ blockSetting: makeBlockSetting(2, 2), tableSetting });
+
+    expect(result).toHaveLength(4);
+    expect(result.map(({ dottingTime, name, speed }) => ({ dottingTime, name, speed }))).toEqual([
+      { dottingTime: 100, name: 'S1000-DT100', speed: 1000 },
+      { dottingTime: 400, name: 'S1000-DT400', speed: 1000 },
+      { dottingTime: 100, name: 'S2000-DT100', speed: 2000 },
+      { dottingTime: 400, name: 'S2000-DT400', speed: 2000 },
+    ]);
+  });
 });

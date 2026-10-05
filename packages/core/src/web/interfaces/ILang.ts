@@ -1981,14 +1981,20 @@ export interface ILang {
     | 'columns'
     | 'count'
     | 'cut'
+    | 'dot_compare'
     | 'engrave'
     | 'export'
+    | 'field_size'
+    | 'field_size_unknown'
     | 'max'
     | 'min'
+    // module setting form
+    | 'module_settings'
     | 'parameter'
     // table setting form
     | 'rows'
     | 'size'
+    | 'size_limit_hint'
     | 'spacing'
     // block setting form
     | 'table_settings'

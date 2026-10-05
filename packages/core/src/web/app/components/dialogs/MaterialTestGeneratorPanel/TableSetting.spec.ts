@@ -171,4 +171,37 @@ describe('getTableSetting', () => {
 
     expect(setting.pulseWidth).toBeUndefined();
   });
+
+  // The dot-vs-line matrix has no free choice of axes: each parameter drives one half of a block,
+  // so which axis it sits on is not a preference.
+  describe('dot-vs-line comparison', () => {
+    test('fixes speed to the column and dotting time to the row', () => {
+      const setting = getTableSetting('fhx2galvo', { isDotCompare: true });
+
+      expect(setting.speed.selected).toBe(0);
+      expect(setting.dottingTime!.selected).toBe(1);
+    });
+
+    test('leaves power and passes out of the sweep', () => {
+      const setting = getTableSetting('fhx2galvo', { isDotCompare: true });
+
+      expect(setting.strength.selected).toBe(2);
+      expect(setting.repeat.selected).toBe(2);
+    });
+
+    test('offers nothing a galvo layer would ignore', () => {
+      const setting = getTableSetting('fhx2galvo', { isDotCompare: true });
+
+      // fillInterval is a Promark parameter; the galvo raster takes its pitch from the layer dpi
+      expect(setting.fillInterval).toBeUndefined();
+      expect(setting.frequency).toBeUndefined();
+    });
+
+    test('keeps the ordinary axes when the mode is off', () => {
+      const setting = getTableSetting('fhx2galvo');
+
+      expect(setting.dottingTime).toBeUndefined();
+      expect(setting.strength.selected).toBe(0);
+    });
+  });
 });

@@ -17,8 +17,12 @@ export interface Detail {
 }
 
 interface SettingInfos {
+  isDotCompare?: boolean;
   laserType?: LaserType;
 }
+
+/** Highest dwell the dot axis offers, in us. A dot that sits longer than this drills rather than marks. */
+const MAX_DOTTING_TIME = 1000;
 
 type TableSettingConstruct<T extends ReadonlyArray<string>, IsRequired = true> = IsRequired extends true
   ? { [K in T[number]]: Detail }
@@ -27,9 +31,17 @@ type TableSettingConstruct<T extends ReadonlyArray<string>, IsRequired = true> =
 export const commonTableParams = ['strength', 'speed', 'repeat'] as const;
 export const promarkTableParams = ['fillInterval', 'frequency'] as const;
 export const mopaTableParams = ['pulseWidth'] as const;
-export const tableParams = [...commonTableParams, ...promarkTableParams, ...mopaTableParams] as const;
+/** The dot axis of the dot-vs-line matrix: how long the beam dwells on each dot. */
+export const galvoTableParams = ['dottingTime'] as const;
+export const tableParams = [
+  ...commonTableParams,
+  ...promarkTableParams,
+  ...mopaTableParams,
+  ...galvoTableParams,
+] as const;
 
 export type TableSetting = TableSettingConstruct<typeof commonTableParams> &
+  TableSettingConstruct<typeof galvoTableParams, false> &
   TableSettingConstruct<typeof mopaTableParams, false> &
   TableSettingConstruct<typeof promarkTableParams, false>;
 
@@ -122,10 +134,59 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
   };
 };
 
+/**
+ * The dot-vs-line matrix, whose axes are fixed: the column sweeps the speed the line half is
+ * engraved at, the row sweeps the dwell of each dot in the dot half. Both halves live on one layer
+ * -- a galvo layer engraves a dithered image as dots and a binarised one as lines -- so the two
+ * parameters do not compete, they each drive their own half.
+ */
+const getDotCompareTableSetting = (workarea: WorkAreaModel): TableSetting => {
+  const { maxSpeed, minSpeed } = getWorkarea(workarea);
+
+  return {
+    dottingTime: {
+      default: 100,
+      max: MAX_DOTTING_TIME,
+      maxValue: 400,
+      min: 1,
+      minValue: 25,
+      selected: 1,
+    },
+    repeat: {
+      default: 1,
+      max: 100,
+      maxValue: 5,
+      min: 1,
+      minValue: 1,
+      selected: 2,
+    },
+    speed: {
+      default: 1000,
+      max: maxSpeed,
+      maxValue: maxSpeed,
+      min: minSpeed,
+      minValue: 250,
+      selected: 0,
+    },
+    strength: {
+      default: 100,
+      max: 100,
+      maxValue: 100,
+      min: 1,
+      minValue: 100,
+      selected: 2,
+    },
+  };
+};
+
 export const getTableSetting = (
   workarea: WorkAreaModel,
-  { laserType }: SettingInfos = { laserType: LaserType.Desktop },
+  { isDotCompare, laserType }: SettingInfos = { laserType: LaserType.Desktop },
 ): TableSetting => {
+  if (isDotCompare) {
+    return getDotCompareTableSetting(workarea);
+  }
+
   if (promarkModels.has(workarea)) {
     return getPromarkTableSetting(workarea, { laserType });
   }

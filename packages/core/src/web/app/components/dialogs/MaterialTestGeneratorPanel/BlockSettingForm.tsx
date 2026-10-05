@@ -13,13 +13,21 @@ interface Props {
   blockSetting: BlockSetting;
   className?: string;
   handleChange: (blockSetting: BlockSetting) => void;
+  /** Shown under the inputs when the sizes are capped and the reason is not obvious from them. */
+  hint?: string;
   isInch: boolean;
 }
 
 type Scope = (typeof blockSettingScopes)[number];
 type Param = (typeof blockSettingParams)[number];
 
-export default function BlockSettingForm({ blockSetting, className, handleChange, isInch }: Props): React.JSX.Element {
+export default function BlockSettingForm({
+  blockSetting,
+  className,
+  handleChange,
+  hint,
+  isInch,
+}: Props): React.JSX.Element {
   const t = useI18n();
   const lengthUnit = isInch ? 'in' : 'mm';
   const handleValueChange = (scope: Scope, param: Param, value: number) => {
@@ -63,17 +71,25 @@ export default function BlockSettingForm({ blockSetting, className, handleChange
   );
 
   return (
-    <Flex className={className} justify="space-between">
-      <Flex gap="8px" justify="space-between" vertical>
-        <div className={styles.title}>{t.material_test_generator.block_settings}</div>
-        <div className={styles.label}>{t.material_test_generator.count}</div>
-        <div className={styles.label}>{t.material_test_generator.size}</div>
-        <div className={styles.label}>{t.material_test_generator.spacing}</div>
+    <Flex className={className} gap="8px" vertical>
+      <Flex justify="space-between">
+        <Flex gap="8px" justify="space-between" vertical>
+          <div className={styles.title}>{t.material_test_generator.block_settings}</div>
+          <div className={styles.label}>{t.material_test_generator.count}</div>
+          <div className={styles.label}>{t.material_test_generator.size}</div>
+          <div className={styles.label}>{t.material_test_generator.spacing}</div>
+        </Flex>
+
+        <Flex className={styles.inputs} gap="20px" justify="flex-end">
+          {blockSettingScopes.map(renderColumn)}
+        </Flex>
       </Flex>
 
-      <Flex className={styles.inputs} gap="20px" justify="flex-end">
-        {blockSettingScopes.map(renderColumn)}
-      </Flex>
+      {hint ? (
+        <div className={styles.hint} data-testid="block-hint">
+          {hint}
+        </div>
+      ) : null}
     </Flex>
   );
 }

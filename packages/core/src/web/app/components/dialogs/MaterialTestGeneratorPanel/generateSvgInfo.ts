@@ -7,6 +7,7 @@ interface Props {
 }
 
 export interface SvgInfo {
+  dottingTime?: number;
   fillInterval?: number;
   frequency?: number;
   name: string;
@@ -17,6 +18,7 @@ export interface SvgInfo {
 }
 
 const namingMap = {
+  dottingTime: 'DT',
   fillInterval: 'FI',
   frequency: 'F',
   pulseWidth: 'PW',
