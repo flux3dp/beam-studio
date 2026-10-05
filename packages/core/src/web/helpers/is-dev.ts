@@ -6,7 +6,6 @@ export const isParamsLabelDev = (): boolean => window?.localStorage?.getItem('pa
 
 export default isDev;
 
-export const isUvDev = (): boolean => true;
 // Alpha-only test and demonstration features. Keep separate so they can be removed before release.
 export const isUvDev2 = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
 export const mockT = (key: string) => key;
