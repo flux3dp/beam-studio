@@ -16,8 +16,8 @@ For Cypress E2E specs (release-test automation under `apps/web/cypress/`), see
 - **Runner**: Jest 30 with `ts-jest`, environment `jsdom`
 - **Assertion/DOM**: `@testing-library/react`, `@testing-library/jest-dom`
 - **Test files**: `*.spec.tsx` / `*.spec.ts`, colocated next to the source file
-- **Run**: `pnpm test <filename>` (e.g. `pnpm test FontSizeBlock`)
-- **Update snapshots**: `pnpm test <filename> -u`
+- **Run**: `pnpm test --runInBand <filename>` (e.g. `pnpm test --runInBand FontSizeBlock`). Agents always add `--runInBand` — see AGENTS.md Critical Rules
+- **Update snapshots**: `pnpm test --runInBand <filename> -u`
 
 ### Environment facts (from `jest.config.ts` + `setupTests.ts` — already set up, do NOT redo)
 
@@ -415,7 +415,7 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
 - A snapshot test **never replaces** behavioral assertions (`toHaveBeenCalledWith`, DOM
   queries). Add both.
 - When a snapshot fails: read the diff. If the change is intended, run
-  `pnpm test <file> -u` and eyeball the updated `.snap`. If you cannot explain the diff,
+  `pnpm test --runInBand <file> -u` and eyeball the updated `.snap`. If you cannot explain the diff,
   the test caught a bug — do not blindly update.
 - Antd hash noise and `transform-origin: NaNpx` are already normalized by serializers.
 
@@ -451,7 +451,7 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
 
 5. **SCSS modules** — `identity-obj-proxy` returns the class name string as-is. `styles['font-size']` returns `'font-size'` in tests.
 
-6. **Snapshot tests** — when adding/removing UI elements, run `pnpm test <file> -u` to update snapshots (see Snapshot Policy).
+6. **Snapshot tests** — when adding/removing UI elements, run `pnpm test --runInBand <file> -u` to update snapshots (see Snapshot Policy).
 
 7. **Antd components** — often need mocking because they have complex internals. Mock only the components you use:
    ```ts
@@ -530,7 +530,7 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
 
 Before declaring a test done:
 
-- [ ] `pnpm test <filename>` passes locally (all tests, not just the new one)
+- [ ] `pnpm test --runInBand <filename>` passes locally (all tests, not just the new one)
 - [ ] No module from the `__mocks__` table is re-mocked inline
 - [ ] No default-only mock wrapped in `{ __esModule: true, default: X }` — collapsed to `() => X` (§Pattern 2)
 - [ ] `jest.clearAllMocks()` in `beforeEach`; `jest.useRealTimers()` restored if faked
