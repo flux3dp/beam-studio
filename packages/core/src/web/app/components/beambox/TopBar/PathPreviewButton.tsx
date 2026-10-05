@@ -5,7 +5,6 @@ import classNames from 'classnames';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/shallow';
 
-import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -13,7 +12,6 @@ import { useIsMobile } from '@core/app/stores/screenStore';
 import selectionManager from '@core/app/svgedit/selection';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import checkWebGL from '@core/helpers/check-webgl';
-import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
@@ -29,12 +27,11 @@ function PathPreviewButton({ isDeviceConnected }: Props): ReactNode {
   const lang = useI18n().topbar;
   const isMobile = useIsMobile();
   const { mode, togglePathPreview } = useCanvasStore(useShallow((state) => pick(state, ['mode', 'togglePathPreview'])));
-  const workarea = useWorkarea();
   const isInnerEngraving = useInnerEngravingActive();
 
   // path preview draws the 2D toolpath; the 3D version is a later phase, so it is hidden in inner
   // engraving mode and left available to devs (PM, 08/06)
-  if (isMobile || !checkWebGL() || (!isDev() && (isInnerEngraving || modelsWithModules.has(workarea)))) {
+  if (isMobile || !checkWebGL() || (isInnerEngraving && !isDev())) {
     return null;
   }
 
