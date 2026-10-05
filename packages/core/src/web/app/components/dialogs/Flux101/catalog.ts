@@ -3,6 +3,8 @@
 
 export const COURSE_ID = 'beam-studio-101';
 export const CATALOG_VERSION = 1;
+/** FLUX+ one-time credits per `watched` lesson (D5); the server holds the authoritative amount. */
+export const CREDITS_PER_LESSON = 0.5;
 
 export type ChapterId = 'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5';
 

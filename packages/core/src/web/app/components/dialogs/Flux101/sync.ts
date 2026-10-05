@@ -1,7 +1,8 @@
 // FLUX ID sync (PRD §9, R14, R19a). Cloud copy lives in the `bxpref` preference `flux101_progress`
 // (companion PRD adds the column; until then the server answers INVALID_KEY and this degrades to
 // local-only). Login → pull + completion-biased merge + claim the anonymous bucket; every local
-// write while signed in → debounced push of the whole bucket.
+// write while signed in → debounced push of the whole bucket, plus a credit-grant request for any
+// `watched` lesson the server has not confirmed yet (R12a; the server is idempotent per lesson).
 import { funnel } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
@@ -18,9 +19,11 @@ import {
   claimedByOther,
   type Flux101Bucket,
   getBucket,
+  markCreditsGranted,
   maskEmail,
   ownerKey,
   STORAGE_KEY,
+  ungrantedLessonIds,
 } from './progress';
 
 const PREF_KEY = 'flux101_progress';
@@ -41,14 +44,30 @@ const push = funnel(
   { minQuietPeriodMs: 5000, triggerAt: 'end' },
 );
 
+// R12a: one request per quiet second covers the completion tick and the post-login back-grant alike
+const grant = funnel(
+  async () => {
+    const owner = ownerKey();
+
+    if (owner === ANONYMOUS) return;
+
+    const pending = ungrantedLessonIds(getBucket(owner));
+
+    if (!pending.length) return;
+
+    const granted = await fluxId.grantFlux101Credits(pending);
+
+    if (granted && ownerKey() === owner) markCreditsGranted(granted, owner);
+  },
+  { minQuietPeriodMs: 1000, triggerAt: 'end' },
+);
+
 // who we have adopted this session; starts as nobody so a session restored before this module
 // loaded is still pulled and merged by the start-up call
 let lastOwner: string = ANONYMOUS;
 
 const onUserChange = async (): Promise<void> => {
   const owner = ownerKey();
-
-  console.log(owner, lastOwner);
 
   if (owner === lastOwner) return; // 'update-user' also fires for plain info refreshes
 
@@ -58,6 +77,7 @@ const onUserChange = async (): Promise<void> => {
 
   adoptOnLogin(owner, await pull());
   push.call();
+  grant.call();
 };
 
 let started = false;
@@ -69,7 +89,10 @@ export const startFlux101Sync = (): void => {
   started = true;
   fluxIDEvents.on('update-user', onUserChange);
   useStorageStore.subscribe((s, prev) => {
-    if (s[STORAGE_KEY] !== prev[STORAGE_KEY] && ownerKey() !== ANONYMOUS) push.call();
+    if (s[STORAGE_KEY] !== prev[STORAGE_KEY] && ownerKey() !== ANONYMOUS) {
+      push.call();
+      grant.call();
+    }
   });
   onUserChange(); // session restored before this module loaded
 };

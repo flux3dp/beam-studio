@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'この学習記録は %(email)s のものです。報酬を引き続き獲得するにはサインインしてください。',
     close: '閉じる',
     completed: '修了',
+    credits_earned: '獲得した FLUX+ クレジット：%(credits)s',
+    credits_plus: '+%(credits)s FLUX+ クレジット',
     english_audio: '動画は英語音声です。',
     expand: 'コースに戻る',
     help_article: 'ヘルプセンターの記事',

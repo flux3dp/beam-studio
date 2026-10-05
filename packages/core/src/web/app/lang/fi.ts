@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Tämä edistyminen kuuluu käyttäjälle %(email)s. Kirjaudu sisään jatkaaksesi palkintojen keräämistä.',
     close: 'Sulje',
     completed: 'Suoritettu',
+    credits_earned: '%(credits)s FLUX+ krediittiä ansaittu',
+    credits_plus: '+%(credits)s FLUX+ krediittiä',
     english_audio: 'Videot ovat englanniksi.',
     expand: 'Takaisin kurssiin',
     help_article: 'Ohjekeskuksen artikkeli',

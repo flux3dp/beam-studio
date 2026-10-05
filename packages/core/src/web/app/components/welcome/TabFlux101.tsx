@@ -9,6 +9,7 @@ import { CHAPTERS, LESSONS } from '@core/app/components/dialogs/Flux101/catalog'
 import CourseBody from '@core/app/components/dialogs/Flux101/CourseBody';
 import {
   completedCount,
+  creditsEarned,
   isChapterComplete,
   isCourseComplete,
   useFlux101Bucket,
@@ -25,6 +26,7 @@ const TabFlux101 = (): React.JSX.Element => {
   const t = useI18n().flux_101;
   const bucket = useFlux101Bucket();
   const done = completedCount(bucket);
+  const credits = creditsEarned(bucket);
 
   useCelebration();
   useEffect(warnIfClaimed, []);
@@ -54,6 +56,7 @@ const TabFlux101 = (): React.JSX.Element => {
               );
             })}
           </span>
+          {credits > 0 && <span className={styles.credits}>{sprintf(t.credits_earned, { credits })}</span>}
           {isCourseComplete(bucket) && <Button onClick={() => showCertificate()}>🎓 {t.view_certificate}</Button>}
         </div>
         <div className={styles.course}>

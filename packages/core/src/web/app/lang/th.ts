@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'ความคืบหน้านี้เป็นของ %(email)s ลงชื่อเข้าใช้เพื่อรับรางวัลต่อไป',
     close: 'ปิด',
     completed: 'เรียนจบแล้ว',
+    credits_earned: 'ได้รับ %(credits)s เครดิต FLUX+',
+    credits_plus: '+%(credits)s เครดิต FLUX+',
     english_audio: 'วิดีโอเป็นภาษาอังกฤษ',
     expand: 'กลับไปที่หลักสูตร',
     help_article: 'บทความศูนย์ช่วยเหลือ',

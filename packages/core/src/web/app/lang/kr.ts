@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: '이 학습 기록은 %(email)s의 것입니다. 보상을 계속 받으려면 로그인하세요.',
     close: '닫기',
     completed: '완료',
+    credits_earned: 'FLUX+ 크레딧 %(credits)s 획득',
+    credits_plus: '+%(credits)s FLUX+ 크레딧',
     english_audio: '영상은 영어 음성입니다.',
     expand: '과정으로 돌아가기',
     help_article: '도움말 센터 문서',

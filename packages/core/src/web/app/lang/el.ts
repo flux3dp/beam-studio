@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Αυτή η πρόοδος ανήκει στον χρήστη %(email)s. Συνδεθείτε για να συνεχίσετε να κερδίζετε ανταμοιβές.',
     close: 'Κλείσιμο',
     completed: 'Ολοκληρώθηκε',
+    credits_earned: '%(credits)s πιστωτικά μόρια FLUX+ κερδισμένα',
+    credits_plus: '+%(credits)s πιστωτικά μόρια FLUX+',
     english_audio: 'Τα βίντεο είναι στα αγγλικά.',
     expand: 'Επιστροφή στο μάθημα',
     help_article: 'Άρθρο Κέντρου βοήθειας',

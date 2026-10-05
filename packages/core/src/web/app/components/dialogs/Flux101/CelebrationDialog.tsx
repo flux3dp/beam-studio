@@ -1,6 +1,7 @@
 // Lesson / chapter completion dialog (PRD §5.4), after the ClickUp draft: icon, headline, lesson,
 // chapter progress, "Back to course" / "Next ›". Opened via `showCelebrationDialog` (index.tsx) so
-// the dialog, PiP and Welcome tab all use it. Credits tag arrives with D22; XP was cut (D20).
+// the dialog, PiP and Welcome tab all use it. The credits tag appears once the server confirms the
+// grant (R12a), so it is simply absent while the backend is unreachable; XP was cut (D20).
 import React, { useEffect } from 'react';
 
 import { Button, Modal, Progress } from 'antd';
@@ -9,7 +10,7 @@ import { sprintf } from 'sprintf-js';
 import { popConfetti } from '@core/helpers/confetti';
 import useI18n from '@core/helpers/useI18n';
 
-import { chapterOf } from './catalog';
+import { chapterOf, CREDITS_PER_LESSON } from './catalog';
 import styles from './CelebrationDialog.module.scss';
 import { useFlux101Store } from './flux101Store';
 import { continueLessonId, isChapterComplete, isLessonComplete, useFlux101Bucket } from './progress';
@@ -26,6 +27,7 @@ const CelebrationDialog = ({ lessonId, onClose }: CelebrationDialogProps): React
   const chapter = chapterOf(lessonId)!;
   const chapterDone = isChapterComplete(bucket, chapter);
   const done = chapter.lessons.filter((l) => isLessonComplete(bucket, l.id)).length;
+  const granted = !!bucket.lessons[lessonId]?.creditGranted;
 
   useEffect(() => popConfetti(window.innerWidth / 2, window.innerHeight / 2), []);
 
@@ -39,6 +41,7 @@ const CelebrationDialog = ({ lessonId, onClose }: CelebrationDialogProps): React
         <div className={styles.lesson}>
           {lessonId} {t.lessons[lessonId]}
         </div>
+        {granted && <div className={styles.credits}>{sprintf(t.credits_plus, { credits: CREDITS_PER_LESSON })}</div>}
         <div className={styles.chapter}>
           <span>{t.chapters[chapter.id]}</span>
           <span>

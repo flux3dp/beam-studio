@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Denne fremgang tilhører %(email)s. Log ind for at fortsætte med at optjene belønninger.',
     close: 'Luk',
     completed: 'Gennemført',
+    credits_earned: '%(credits)s FLUX+ kreditter optjent',
+    credits_plus: '+%(credits)s FLUX+ kreditter',
     english_audio: 'Videoerne er på engelsk.',
     expand: 'Tilbage til kurset',
     help_article: 'Artikel i Hjælpecenter',

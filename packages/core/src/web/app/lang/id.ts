@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Progres ini milik %(email)s. Masuk untuk terus mengumpulkan hadiah.',
     close: 'Tutup',
     completed: 'Selesai',
+    credits_earned: '%(credits)s kredit FLUX+ diperoleh',
+    credits_plus: '+%(credits)s kredit FLUX+',
     english_audio: 'Video dalam bahasa Inggris.',
     expand: 'Kembali ke kursus',
     help_article: 'Artikel Pusat Bantuan',

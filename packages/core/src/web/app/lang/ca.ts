@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Aquest progrés pertany a %(email)s. Inicia la sessió per continuar guanyant recompenses.',
     close: 'Tanca',
     completed: 'Completat',
+    credits_earned: '%(credits)s crèdits FLUX+ guanyats',
+    credits_plus: '+%(credits)s crèdits FLUX+',
     english_audio: 'Els vídeos són en anglès.',
     expand: 'Torna al curs',
     help_article: "Article del Centre d'ajuda",

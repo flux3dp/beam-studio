@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: '這份學習紀錄屬於 %(email)s，登入後才能繼續累積獎勵。',
     close: '關閉',
     completed: '已完成',
+    credits_earned: '已獲得 %(credits)s FLUX+ 點數',
+    credits_plus: '+%(credits)s FLUX+ 點數',
     english_audio: '影片為英文語音。',
     expand: '回到課程',
     help_article: '說明中心文章',

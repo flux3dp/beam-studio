@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Tento postup patří k účtu %(email)s. Přihlaste se, abyste mohli dál získávat odměny.',
     close: 'Zavřít',
     completed: 'Dokončeno',
+    credits_earned: 'Získáno %(credits)s kreditů FLUX+',
+    credits_plus: '+%(credits)s kreditů FLUX+',
     english_audio: 'Videa jsou v angličtině.',
     expand: 'Zpět ke kurzu',
     help_article: 'Článek v Centru nápovědy',

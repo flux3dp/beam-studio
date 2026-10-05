@@ -9,12 +9,14 @@ import {
   getBucket,
   isCourseComplete,
   type LessonProgress,
+  markCreditsGranted,
   maskEmail,
   mergeBuckets,
   mergeLesson,
   readStorage,
   recordPlayback,
   STORAGE_KEY,
+  ungrantedLessonIds,
   updateBucket,
 } from './progress';
 
@@ -149,5 +151,35 @@ describe('login / claim', () => {
     expect(b.lessons['1-1']).toBeUndefined();
     expect(readStorage().anonymous?.claimedBy).toBe('b@x.io');
     expect(claimedByOther()).toBe('b@x.io');
+  });
+});
+
+describe('credits', () => {
+  beforeEach(() => setStorage(STORAGE_KEY, {}));
+
+  test('only watched, unconfirmed lessons are pending; marked_done never earns', () => {
+    updateBucket((b) => ({
+      ...b,
+      lessons: { '1-1': watched(), '1-2': marked(), '1-3': { ...watched(), creditGranted: true }, '2-1': partial(10) },
+    }));
+    expect(ungrantedLessonIds(getBucket())).toEqual(['1-1']);
+  });
+
+  test('markCreditsGranted flags the lessons the server confirmed and leaves the rest alone', () => {
+    updateBucket((b) => ({ ...b, lessons: { '1-1': watched(), '1-2': watched() } }));
+    markCreditsGranted(['1-1']);
+    expect(getBucket().lessons['1-1'].creditGranted).toBe(true);
+    expect(getBucket().lessons['1-2'].creditGranted).toBeUndefined();
+    expect(ungrantedLessonIds(getBucket())).toEqual(['1-2']);
+  });
+
+  test('a grant the bucket never saw becomes a watched completion (server is the truth); unknown ids are dropped', () => {
+    markCreditsGranted(['2-1', '9-9']);
+
+    const lesson = getBucket().lessons['2-1'];
+
+    expect(lesson).toMatchObject({ completedVia: 'watched', creditGranted: true, playedSec: 0, status: 'completed' });
+    expect(getBucket().lessons['9-9']).toBeUndefined();
+    expect(ungrantedLessonIds(getBucket())).toEqual([]);
   });
 });

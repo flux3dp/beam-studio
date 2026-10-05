@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Tiến trình này thuộc về %(email)s. Đăng nhập để tiếp tục nhận phần thưởng.',
     close: 'Đóng',
     completed: 'Đã hoàn thành',
+    credits_earned: 'Đã nhận %(credits)s tín dụng FLUX+',
+    credits_plus: '+%(credits)s tín dụng FLUX+',
     english_audio: 'Video bằng tiếng Anh.',
     expand: 'Quay lại khóa học',
     help_article: 'Bài viết Trung tâm trợ giúp',

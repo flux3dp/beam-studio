@@ -1,3 +1,4 @@
+@use '@core/styles/variables' as variables;
 @use './mixins' as mixins;
 
 .root {
@@ -47,6 +48,12 @@
     filter: grayscale(1);
     opacity: 0.3;
   }
+}
+
+.credits {
+  font-size: 13px;
+  color: variables.$secondary-gray;
+  white-space: nowrap;
 }
 
 .course {

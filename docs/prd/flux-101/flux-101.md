@@ -91,7 +91,7 @@ The player (`Flux101Player`) is rendered inside whichever slot is on screen. Swi
 
 ### 5.4 Completion celebration
 
-On lesson completion: confetti (`popConfetti` from the player), check-stamp on the lesson, progress bar animates, and (if credit-eligible and logged in) "+0.5 credits" (D22, later). A centred `CelebrationDialog` (after the ClickUp draft: icon, headline, lesson, chapter progress bar, **Back to course** / **Next ›**) opens on every completion; when the chapter just completed, its icon is the badge emoji and the headline names the badge. Course complete (23/23) → certificate modal + `rainConfetti` instead. XP is not shown (D20). Both dialogs are opened imperatively (`showCelebrationDialog` / `showCertificate` in `Flux101/index.tsx`, `dialog-controller`) and fire their own confetti on mount, so they work from the course window, from PiP and from the Welcome tab alike. `Flux101/useCelebration.tsx` (mounted in `Flux101Dialog` and `TabFlux101`) diffs the completed set between renders of the active bucket — so it fires for watched and marked-done alike, and never on first mount. Once complete, a 🎓 button in the dialog header and on the Welcome tab reopens the certificate (`Flux101Certificate.tsx`).
+On lesson completion: confetti (`popConfetti` from the player), check-stamp on the lesson, progress bar animates, and, once the server confirms the grant, a "+0.5 FLUX+ credits" tag (R12a). A centred `CelebrationDialog` (after the ClickUp draft: icon, headline, lesson, chapter progress bar, **Back to course** / **Next ›**) opens on every completion; when the chapter just completed, its icon is the badge emoji and the headline names the badge. Course complete (23/23) → certificate modal + `rainConfetti` instead. XP is not shown (D20). Both dialogs are opened imperatively (`showCelebrationDialog` / `showCertificate` in `Flux101/index.tsx`, `dialog-controller`) and fire their own confetti on mount, so they work from the course window, from PiP and from the Welcome tab alike. `Flux101/useCelebration.tsx` (mounted in `Flux101Dialog` and `TabFlux101`) diffs the completed set between renders of the active bucket — so it fires for watched and marked-done alike, and never on first mount. Once complete, a 🎓 button in the dialog header and on the Welcome tab reopens the certificate (`Flux101Certificate.tsx`).
 
 XP is **not shown** pending the meeting decision (D20); if kept, it is derived, never stored.
 
@@ -230,7 +230,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 - **R10** Chapter badge on chapter completion with a larger celebration.
 - **R11** Certificate screen on 23/23. v1 is a screen only; "Save as image" ships when a design exists (D19).
 - **R12** Rewards are deterministic.
-- **R12a** Credit grant: on `watched` completion while logged in, call the grant endpoint (companion PRD) and set `creditGranted` on success. Failure never blocks completion or celebration; ungranted `watched` lessons retry on next sync. Credits UI (tags, "+0.5" in celebration) is behind a switch until the backend ships (D22).
+- **R12a** Credit grant: on `watched` completion while logged in, call the grant endpoint (companion PRD) and set `creditGranted` on success. Failure never blocks completion or celebration; ungranted `watched` lessons retry on the next local write or login (`Flux101/sync.ts` `grant`, one request per quiet second, via `fluxId.grantFlux101Credits`). Credits UI needs no switch: the "+0.5" tag in the celebration and the "credits earned" count on the Welcome tab render only from `creditGranted`, which only the server sets — so they are simply absent until the backend is deployed.
 
 **Persistence & sync**
 - **R13** Local persistence under storage key `beam-studio-101` via `storageStore` (cross-tab sync included). Add the key to `getStorageKeys()` and the `Storage` interface.
@@ -263,6 +263,7 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 | `public/js/lib/svg-nest/util/eval.js` | handler registered only inside a `WorkerGlobalScope` | svg-nest parallel workers (`new Worker('…/eval.js')`) — still eval posted code; Electron bootstrap (`requireConfig.js` loads it in the main window for load order) — no longer installs `window.onmessage` |
 | `LeftPanel/components/DrawingToolButtonGroup.tsx` (+ `.spec.tsx`), `icons/left-panel/LeftPanelIcons.tsx` (+ `book.svg`) | add the FLUX 101 button (remaining-lesson badge) between the separator and Beamy; the spec mocks the `dialogs/Flux101` entry so `startFlux101Sync()` and its `dialog-caller` → `device-master` chain never load | every other tool button, order and ids — unchanged; snapshot `DrawingToolButtonGroup.spec.tsx.snap` is additive only |
 | `pages/Welcome.tsx` (+ `Welcome.spec.tsx`) | add menu key `flux-101` after Help Center, content `welcome/TabFlux101.tsx` (embeds `Flux101/CourseBody`); the spec mocks the tab like every other tab | other tabs, default tab, recent-files loading — unchanged; snapshot `Welcome.spec.tsx.snap` is additive only |
+| `helpers/api/flux-id/activity.ts` (+ `index.ts` default export) | add `grantFlux101Credits(lessonIds)` → `POST /api/beam-studio/flux101/grant`, resolves to the server's `granted_lesson_ids` or `undefined` | `getPreference` / `setPreference` / `submitRating` / `recordMachines` — unchanged |
 | `actions/beambox/beambox-init.ts` `showStartUpDialogs` | `await showFlux101Nudge()` right after the tutorial block, gated by `!isMobile()` only (no machine connection needed, unlike the tutorial) | gesture tutorial, first calibration, tutorial prompt, changelog, path-engine dialog, announcements — same order; the nudge resolves at once when already answered or the course is complete |
 
 Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.tsx` via `dialog-controller`, the PrintAndCut pattern).
@@ -275,7 +276,7 @@ Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.t
 1. `A = merge(local[A], cloud[A], anonymous)`.
 2. Write `A` to `local[A]`, push to cloud.
 3. Mark `anonymous.claimedBy = A` and **mirror `A` into `anonymous`** (do not clear it), so a session expiry does not show an empty course.
-4. Request grants for every `watched` lesson in `A` with `creditGranted !== true` (server is idempotent).
+4. Request grants for every `watched` lesson in `A` with `creditGranted !== true` (server is idempotent). The reply lists every lesson the account was ever granted: known lessons get `creditGranted`, and a granted lesson the local bucket has never seen is recorded as a `watched` completion with `playedSec: 0` — the grant is server truth and the local record follows it (decided 2026-10-05).
 
 **Login as user B while `anonymous.claimedBy === A`:** `B = merge(local[B], cloud[B])`. The anonymous bucket is **not** merged into B; it belongs to A. The once-per-session warning (§5.5) is what tells B this before they watch.
 
@@ -303,7 +304,7 @@ Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.t
 
 ## 12. Rollout
 
-One release, no feature flag (D22 struck), dogfooded through the existing alpha → beta → stable channels. Credits UI has its own switch that stays off until the flux-id endpoint is deployed. The former Phase 0–2 split is collapsed; "Phase 3" items (CMS-fed catalog, localized video, deep-links) remain future work.
+One release, no feature flag (D22 struck), dogfooded through the existing alpha → beta → stable channels. Credits UI is self-gating (renders from server-confirmed `creditGranted` only), so no switch is needed while the flux-id endpoint rolls out. The former Phase 0–2 split is collapsed; "Phase 3" items (CMS-fed catalog, localized video, deep-links) remain future work.
 
 ## 13. Edge cases & risks
 
@@ -320,7 +321,7 @@ One release, no feature flag (D22 struck), dogfooded through the existing alpha 
 - **D1** Recommended-linear, not hard-locked.
 - **D2** Progress lives in `storage` (`beam-studio-101`) + FLUX ID `bxpref`, not `BeamboxPreference`.
 - **D3** Sync reuses `bxpref`; **but** the server model needs a `flux101_progress` JSON column (companion PRD). Credit granting needs a new endpoint.
-- **D5** 0.5 FLUX+ credits per `watched` lesson, once, server-authoritative. Context: a new FLUX ID account starts with 10 one-time credits and machine linking grants 10, so 11.5 for the full course is in the same band.
+- **D5** 0.5 FLUX+ credits per `watched` lesson, once, server-authoritative (client constant `CREDITS_PER_LESSON` in `catalog.ts` is display-only). Context: a new FLUX ID account starts with 10 one-time credits and machine linking grants 10, so 11.5 for the full course is in the same band.
 - **D6** Catalog finalized as §6.1.1.
 - **D7** `marked_done` earns no credit.
 - **D8** Name FLUX 101; internal key `beam-studio-101`.

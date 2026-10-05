@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Den här progressen tillhör %(email)s. Logga in för att fortsätta tjäna belöningar.',
     close: 'Stäng',
     completed: 'Slutfört',
+    credits_earned: '%(credits)s FLUX+ krediter intjänade',
+    credits_plus: '+%(credits)s FLUX+ krediter',
     english_audio: 'Videorna är på engelska.',
     expand: 'Tillbaka till kursen',
     help_article: 'Artikel i hjälpcentret',

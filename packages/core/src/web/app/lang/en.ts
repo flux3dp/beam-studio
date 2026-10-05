@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'This progress is bound to %(email)s. Sign in to keep earning rewards.',
     close: 'Close',
     completed: 'Completed',
+    credits_earned: '%(credits)s FLUX+ credits earned',
+    credits_plus: '+%(credits)s FLUX+ credits',
     english_audio: 'Videos are in English.',
     expand: 'Back to course',
     help_article: 'Help Center article',

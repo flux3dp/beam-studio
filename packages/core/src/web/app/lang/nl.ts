@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Deze voortgang hoort bij %(email)s. Log in om beloningen te blijven verdienen.',
     close: 'Sluiten',
     completed: 'Afgerond',
+    credits_earned: '%(credits)s FLUX+ credits verdiend',
+    credits_plus: '+%(credits)s FLUX+ credits',
     english_audio: "De video's zijn in het Engels.",
     expand: 'Terug naar de cursus',
     help_article: 'Artikel in het Helpcentrum',

@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Dieser Fortschritt gehört zu %(email)s. Melde dich an, um weiter Belohnungen zu sammeln.',
     close: 'Schließen',
     completed: 'Abgeschlossen',
+    credits_earned: '%(credits)s FLUX+ Credits verdient',
+    credits_plus: '+%(credits)s FLUX+ Credits',
     english_audio: 'Die Videos sind auf Englisch.',
     expand: 'Zurück zum Kurs',
     help_article: 'Artikel im Hilfe-Center',

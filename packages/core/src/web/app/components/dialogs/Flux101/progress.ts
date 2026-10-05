@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 
-import { CATALOG_VERSION, type Chapter, CHAPTERS, LESSON_IDS, LESSONS } from './catalog';
+import { CATALOG_VERSION, type Chapter, CHAPTERS, CREDITS_PER_LESSON, LESSON_IDS, LESSONS } from './catalog';
 
 export const STORAGE_KEY = 'beam-studio-101';
 export const ANONYMOUS = 'anonymous';
@@ -139,6 +139,49 @@ export const completeLesson = (lessonId: string, via: CompletedVia): void =>
 
 export const setLastLesson = (lessonId: string): void => updateBucket((b) => ({ ...b, lastLessonId: lessonId }));
 export const dismissNudge = (): void => updateBucket((b) => ({ ...b, nudgeDismissed: true }));
+
+/* ───────────── credits (R12a, D5, D7) ───────────── */
+
+/** `watched` completions the server has not confirmed a grant for yet (`marked_done` earns nothing, D7). */
+export const ungrantedLessonIds = (b: Flux101Bucket): string[] =>
+  Object.entries(b.lessons)
+    .filter(
+      ([id, l]) => LESSON_IDS.has(id) && l.status === 'completed' && l.completedVia === 'watched' && !l.creditGranted,
+    )
+    .map(([id]) => id);
+
+/**
+ * The server answered with every lesson this account was ever granted (not just this call), so a
+ * fresh login can mark them all. Lessons the local bucket already knows are simply flagged; a
+ * granted lesson the bucket has never seen (progress lost, another install) is recorded as a
+ * `watched` completion — the grant is server truth, so the local record follows it.
+ */
+export const markCreditsGranted = (ids: string[], owner = ownerKey()): void =>
+  updateBucket((b) => {
+    const lessons = { ...b.lessons };
+
+    for (const id of ids) {
+      const cur = lessons[id];
+
+      if (cur) {
+        lessons[id] = { ...cur, creditGranted: true };
+      } else if (LESSON_IDS.has(id)) {
+        lessons[id] = {
+          completedAt: now(),
+          completedVia: 'watched',
+          creditGranted: true,
+          playedSec: 0,
+          resumeSec: 0,
+          status: 'completed',
+        };
+      }
+    }
+
+    return { ...b, lessons };
+  }, owner);
+
+export const creditsEarned = (b: Flux101Bucket): number =>
+  Object.values(b.lessons).filter((l) => l.creditGranted).length * CREDITS_PER_LESSON;
 
 /* ───────────── login / claim (PRD §9, D14) ───────────── */
 

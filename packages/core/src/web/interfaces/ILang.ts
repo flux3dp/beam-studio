@@ -1496,6 +1496,8 @@ export interface ILang {
     claimed_warning: string;
     close: string;
     completed: string;
+    credits_earned: string;
+    credits_plus: string;
     english_audio: string;
     expand: string;
     help_article: string;

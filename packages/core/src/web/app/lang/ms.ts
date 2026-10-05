@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: 'Kemajuan ini milik %(email)s. Log masuk untuk terus mengumpul ganjaran.',
     close: 'Tutup',
     completed: 'Selesai',
+    credits_earned: '%(credits)s kredit FLUX+ diperoleh',
+    credits_plus: '+%(credits)s kredit FLUX+',
     english_audio: 'Video dalam bahasa Inggeris.',
     expand: 'Kembali ke kursus',
     help_article: 'Artikel Pusat Bantuan',

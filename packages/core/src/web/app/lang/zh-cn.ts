@@ -1506,6 +1506,8 @@ const lang: ILang = {
     claimed_warning: '这份学习记录属于 %(email)s，登录后才能继续累积奖励。',
     close: '关闭',
     completed: '已完成',
+    credits_earned: '已获得 %(credits)s FLUX+ 点数',
+    credits_plus: '+%(credits)s FLUX+ 点数',
     english_audio: '视频为英文语音。',
     expand: '回到课程',
     help_article: '帮助中心文章',

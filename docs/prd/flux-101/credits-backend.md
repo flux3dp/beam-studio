@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft |
+| **Status** | Implemented on flux-id `feat/flux101-credits` (2026-10-05, branched from `main`, not yet committed/PR'd); §4 decisions still open |
 | **Created** | 2026-09-18 |
 | **Owner** | flux-id repo (`../flux-id`, Django / DRF) |
 | **Companion of** | [FLUX 101 — Gamified Beginner Course](flux-101.md) (Beam Studio client; owns the UX and the client-side contract in its R12a / R14 / §9) |
@@ -16,7 +16,7 @@
 Two small, independent backend changes so the Beam Studio FLUX 101 course can (a) sync per-user progress and (b) reward completed lessons:
 
 1. **Progress sync** — add a JSON column to `BeamStudioPreference` so the existing `bxpref` endpoint accepts a `flux101_progress` key. No new endpoint.
-2. **Credit grant** — one idempotent endpoint that grants **0.5 one-time credits** per `(user, lesson_id)` exactly once, using the existing `add_onetime_credits` helper and a new grant-record table.
+2. **Credit grant** — one idempotent endpoint that grants **0.5 one-time credits** per `(user, lesson_id)` exactly once, using the existing `add_onetime_credits` helper and a new grant-record table. The helper's `onetime_credits += …; save()` was made an atomic `F()` update at the same time, so two concurrent grants to one user cannot lose an increment (also benefits machine linking / registration, its other callers).
 
 Everything else (thresholds, celebration, badges) is client-side.
 
@@ -94,13 +94,15 @@ The id list bounds exposure to 23 × 0.5 = 11.5 credits per user by construction
 `granted_lesson_ids` is the full set of lessons this user has ever been granted (not just this call), so the client can set `creditGranted` on all of them after a fresh login.
 
 - Logged out → the standard `check_user_login_and_valid` error response.
+- Throttle: `Flux101GrantThrottle` (DRF `UserRateThrottle`, `30/hour` per user; a learner needs 23 grants in total). Over the limit → DRF's standard **HTTP 429** `{ "detail": … }`, not the `status: 'error'` shape; the client treats any non-ok as "retry on next sync". The repo's first DRF throttle; the cache is Redis in production and locmem under `TESTING`.
 
 ### Admin
-Register `Flux101LessonGrant` in `beam_studio/admin.py` as a read-only list (user email, lesson, credits, created_at) with search by email. This is the audit surface for "abnormal grant velocity".
+Register `Flux101LessonGrant` in `beam_studio/admin.py` as a read-only list (user email, lesson, credits, created_at) with search by email; no add, delete for superusers only (deleting a row re-enables that grant). This is the audit surface for "abnormal grant velocity".
 
 ### Tests
-`fluxid/apps/beam_studio/tests/test_flux101.py`, following the existing test module pattern:
+`fluxid/apps/beam_studio/tests/flux101.py` (the app's pattern: one module per feature, imported from `tests/__init__.py`), following the existing test module pattern:
 - grants once and returns `granted`; second call returns `already_granted` and the user's `onetime_credits` rose by exactly 0.5;
+- a third call inside the window is answered 429 and grants nothing (throttle rate patched down in the test);
 - invalid id is reported and grants nothing;
 - logged-out request is rejected;
 - `flux101_progress` round-trips through `bxpref` and oversize payload is rejected.
@@ -111,7 +113,7 @@ Register `Flux101LessonGrant` in `beam_studio/admin.py` as a read-only list (use
 - Beam Studio is a public repo, so the endpoint and payload are discoverable; anyone can script all 23 grants. Countermeasures (HMAC of a server-issued nonce, minimum wall-clock between grants, requiring a linked machine) are possible but likely not worth it at this exposure. **Decision needed.**
 - Multi-account farming yields 11.5 per account, less than the 10 + 40 an account gets for registering and linking a machine; not a new incentive.
 - Device id / IP logging: optional `X-Device-Id` header stored on the grant row for later analysis. Cheap to add, no enforcement in v1. **Decision needed.**
-- Rate limit: reuse whatever throttle the AI image endpoints use, if any, at e.g. 30 grant calls / hour / user.
+- Rate limit: 30 grant calls / hour / user via a DRF `UserRateThrottle` on the endpoint (the repo's first throttle; added 2026-10-05).
 
 ## 5. Open questions
 
