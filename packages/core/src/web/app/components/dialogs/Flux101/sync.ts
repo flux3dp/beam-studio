@@ -13,6 +13,7 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import fluxId, { fluxIDEvents } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
 
+import { useFlux101Store } from './flux101Store';
 import {
   adoptOnLogin,
   ANONYMOUS,
@@ -36,10 +37,14 @@ const pull = async (): Promise<Flux101Bucket | undefined> => {
 
 // the player ticks every second; one push per quiet 5 s is plenty
 const push = funnel(
-  () => {
+  async () => {
     const owner = ownerKey();
 
-    if (owner !== ANONYMOUS) fluxId.setPreference({ [PREF_KEY]: getBucket(owner) });
+    if (owner === ANONYMOUS) return;
+
+    const ok = await fluxId.setPreference({ [PREF_KEY]: getBucket(owner) });
+
+    if (ownerKey() === owner) useFlux101Store.setState({ synced: ok });
   },
   { minQuietPeriodMs: 5000, triggerAt: 'end' },
 );
@@ -73,7 +78,11 @@ const onUserChange = async (): Promise<void> => {
 
   lastOwner = owner;
 
-  if (owner === ANONYMOUS) return; // logout: the anonymous bucket already mirrors the last claimer
+  if (owner === ANONYMOUS) {
+    useFlux101Store.setState({ synced: undefined });
+
+    return; // logout: the anonymous bucket already mirrors the last claimer
+  }
 
   adoptOnLogin(owner, await pull());
   push.call();

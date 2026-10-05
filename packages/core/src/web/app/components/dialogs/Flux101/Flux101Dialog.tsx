@@ -2,10 +2,11 @@
 // modal is destroyed and `PipPlayer` mounts its own player (D24).
 import React, { useEffect } from 'react';
 
-import { CloseOutlined, MinusOutlined } from '@ant-design/icons';
+import { CloseOutlined, CloudOutlined, CloudSyncOutlined, MinusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Modal, Space, Tag, Tooltip, Typography } from 'antd';
 import { sprintf } from 'sprintf-js';
 
+import dialogCaller from '@core/app/actions/dialog-caller';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import useI18n from '@core/helpers/useI18n';
 
@@ -14,7 +15,7 @@ import CourseBody from './CourseBody';
 import styles from './Flux101Dialog.module.scss';
 import { useFlux101Store } from './flux101Store';
 import PipPlayer from './PipPlayer';
-import { completedCount, creditsEarned, isCourseComplete, useFlux101Bucket } from './progress';
+import { ANONYMOUS, completedCount, creditsEarned, isCourseComplete, ownerKey, useFlux101Bucket } from './progress';
 import { useCelebration } from './useCelebration';
 
 import { showCertificate } from './index';
@@ -24,11 +25,14 @@ interface Flux101DialogProps {
 }
 
 const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
-  const t = useI18n().flux_101;
-  const { close, expand, lessonId, minimize, view } = useFlux101Store();
+  const lang = useI18n();
+  const t = lang.flux_101;
+  const { close, expand, lessonId, minimize, synced, view } = useFlux101Store();
   const isMobile = useIsMobile();
   const bucket = useFlux101Bucket();
   const credits = creditsEarned(bucket);
+  // useFlux101Bucket re-renders on login / logout, so reading the owner here stays current
+  const loggedIn = ownerKey() !== ANONYMOUS;
 
   useCelebration();
 
@@ -67,6 +71,27 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
                   +{credits}
                 </Tag>
               </Tooltip>
+            )}
+            {!loggedIn && (
+              <Tooltip title={t.sync_login}>
+                <Tag
+                  bordered={false}
+                  className={styles.login}
+                  icon={<UserOutlined />}
+                  onClick={() => dialogCaller.showLoginDialog()}
+                >
+                  {lang.flux_id_login.login}
+                </Tag>
+              </Tooltip>
+            )}
+            {loggedIn && synced !== undefined && (
+              <Tag
+                bordered={false}
+                className={synced ? styles.synced : undefined}
+                icon={synced ? <CloudOutlined /> : <CloudSyncOutlined />}
+              >
+                {synced ? t.synced : t.not_synced}
+              </Tag>
             )}
             <Space className={styles.actions} size={2}>
               {isCourseComplete(bucket) && (

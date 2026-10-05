@@ -10,6 +10,13 @@
   background: rgba(variables.$reward-yellow, 0.25);
   color: variables.$primary-gray;
 }
+.login {
+  cursor: pointer;
+}
+.synced {
+  background: rgba(variables.$status-normal, 0.15);
+  color: variables.$status-normal;
+}
 .header {
   display: flex;
   align-items: center;

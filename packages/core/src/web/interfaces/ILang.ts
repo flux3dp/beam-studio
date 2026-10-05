@@ -1509,10 +1509,13 @@ export interface ILang {
     marked_done_hint: string;
     minimize: string;
     next: string;
+    not_synced: string;
     nudge_later: string;
     nudge_message: string;
     nudge_watch: string;
     prev: string;
+    sync_login: string;
+    synced: string;
     title: string;
     view_certificate: string;
     water_tank_note: string;
