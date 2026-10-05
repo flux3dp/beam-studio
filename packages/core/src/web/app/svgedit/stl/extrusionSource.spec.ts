@@ -102,4 +102,34 @@ describe('extrusionSource', () => {
 
     built!.geometry.dispose();
   });
+
+  test('flattens a circle within half a pixel at 2000 DPI instead of a fixed segment count', () => {
+    // the Element panel circle: r = 250 scene units = 25mm
+    const circle = new Shape();
+
+    circle.absellipse(250, 250, 250, 250, 0, Math.PI * 2, false, 0);
+    mockParseSvg.mockReturnValue({ paths: [{ shapes: [circle] }] });
+
+    const built = buildExtrusion({ depth: 1, markup: '<ellipse />', scale: 0.1, type: 'svg' });
+    const position = built!.geometry.getAttribute('position');
+    let maxDeviation = 0;
+
+    for (let i = 0; i < position.count; i += 1) {
+      // geometry is in mm, centred at (25, -25) after the y flip
+      const radius = Math.hypot(position.getX(i) - 25, position.getY(i) + 25);
+
+      maxDeviation = Math.max(maxDeviation, 25 - radius);
+    }
+
+    // vertices sit on the circle; the chord sagitta is the deviation, bounded by the step angle
+    // front and back caps share their xy, so the distinct xy count is the segment count
+    const segments = new Set(
+      Array.from({ length: position.count }, (_, i) => `${position.getX(i).toFixed(4)},${position.getY(i).toFixed(4)}`),
+    ).size;
+    const sagitta = 25 * (1 - Math.cos(Math.PI / segments));
+
+    expect(maxDeviation).toBeLessThan(1e-4); // float32 positions
+    expect(segments).toBeGreaterThan(100);
+    expect(sagitta).toBeLessThanOrEqual(1 / 80 / 2);
+  });
 });

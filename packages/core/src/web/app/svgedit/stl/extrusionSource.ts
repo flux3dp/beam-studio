@@ -1,4 +1,14 @@
-import { ExtrudeGeometry, Mesh, Vector3 } from 'three';
+import type { Curve, Vector2 } from 'three';
+import {
+  CubicBezierCurve,
+  EllipseCurve,
+  ExtrudeGeometry,
+  Mesh,
+  Path,
+  QuadraticBezierCurve,
+  Shape,
+  Vector3,
+} from 'three';
 import { STLExporter } from 'three/examples/jsm/exporters/STLExporter.js';
 import { SVGLoader } from 'three/examples/jsm/loaders/SVGLoader.js';
 
@@ -79,6 +89,74 @@ export const getExtrusionSourceElement = (source: ExtrusionSource): null | SVGEl
   return elem as null | SVGElement;
 };
 
+/** Max chord deviation when flattening curves: half a pixel at 2000 DPI (80 px/mm). */
+const FLATTEN_TOLERANCE_MM = 1 / 80 / 2;
+const MAX_SEGMENTS_PER_CURVE = 4096;
+// ExtrudeGeometry's own default, kept for curve types without an error bound below
+const FALLBACK_SEGMENTS = 12;
+
+/** Segment count keeping `curve` within `tolerance` (source units) of its chords. */
+const getSegmentCount = (curve: Curve<Vector2>, tolerance: number): number => {
+  let count = FALLBACK_SEGMENTS;
+
+  if (curve instanceof EllipseCurve) {
+    const radius = Math.max(curve.xRadius, curve.yRadius);
+    const step = radius > tolerance ? 2 * Math.acos(1 - tolerance / radius) : Math.PI / 2;
+    // same normalisation as EllipseCurve.getPoint, so a clockwise partial arc gets its real sweep
+    const twoPi = 2 * Math.PI;
+    let delta = curve.aEndAngle - curve.aStartAngle;
+    const isSamePoint = Math.abs(delta) < Number.EPSILON;
+
+    while (delta < 0) delta += twoPi;
+    while (delta > twoPi) delta -= twoPi;
+    if (delta < Number.EPSILON) delta = isSamePoint ? 0 : twoPi;
+    if (curve.aClockwise && !isSamePoint) delta = delta === twoPi ? -twoPi : delta - twoPi;
+
+    count = Math.ceil(Math.abs(delta) / step);
+  } else if (curve instanceof CubicBezierCurve) {
+    const { v0, v1, v2, v3 } = curve;
+    const m = Math.max(
+      v0.clone().sub(v1.clone().multiplyScalar(2)).add(v2).length(),
+      v1.clone().sub(v2.clone().multiplyScalar(2)).add(v3).length(),
+    );
+
+    count = Math.ceil(Math.sqrt((0.75 * m) / tolerance));
+  } else if (curve instanceof QuadraticBezierCurve) {
+    const { v0, v1, v2 } = curve;
+    const m = v0.clone().sub(v1.clone().multiplyScalar(2)).add(v2).length();
+
+    count = Math.ceil(Math.sqrt(m / (4 * tolerance)));
+  } else if ((curve as { isLineCurve?: boolean }).isLineCurve) {
+    return 1;
+  }
+
+  return Math.min(MAX_SEGMENTS_PER_CURVE, Math.max(1, count));
+};
+
+const flattenCurves = (curves: Array<Curve<Vector2>>, tolerance: number): Vector2[] => {
+  const points: Vector2[] = [];
+
+  curves.forEach((curve) => {
+    curve.getPoints(getSegmentCount(curve, tolerance)).forEach((point) => {
+      if (!points.at(-1)?.equals(point)) points.push(point);
+    });
+  });
+
+  return points;
+};
+
+/**
+ * ExtrudeGeometry cuts every curve into a fixed 12 (arcs 24) segments whatever its size, so a
+ * 50mm circle would come out a visible 24-gon. Flatten by deviation instead, at engraving resolution.
+ */
+const flattenShape = (shape: Shape, tolerance: number): Shape => {
+  const flat = new Shape(flattenCurves(shape.curves, tolerance));
+
+  flat.holes = shape.holes.map((hole) => new Path(flattenCurves(hole.curves, tolerance)));
+
+  return flat;
+};
+
 export const buildExtrusion = (
   source: ExtrusionSource,
 ): null | {
@@ -90,7 +168,12 @@ export const buildExtrusion = (
 
   if (!shapes.length) return null;
 
-  const geometry = new ExtrudeGeometry(shapes, { bevelEnabled: false, depth: source.depth });
+  // source.scale converts source units to mm, so the mm tolerance is divided back into source units
+  const tolerance = FLATTEN_TOLERANCE_MM / source.scale;
+  const geometry = new ExtrudeGeometry(
+    shapes.map((shape) => flattenShape(shape, tolerance)),
+    { bevelEnabled: false, curveSegments: 1, depth: source.depth },
+  );
 
   geometry.scale(source.scale, -source.scale, 1);
   geometry.computeVertexNormals();
