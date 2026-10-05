@@ -7,7 +7,7 @@ import NS from '@core/app/constants/namespaces';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 
-import { getData } from './layer-config-helper';
+import { getData, getLayerDpmm } from './layer-config-helper';
 import layerToImage from './layerToImage';
 
 /**
@@ -34,6 +34,7 @@ const convertShapeToBitmap = async (): Promise<() => void> => {
       // eslint-disable-next-line no-async-promise-executor
       const promise = new Promise<void>(async (resolve) => {
         const { bbox, rgbBlob: blob } = await layerToImage(layer as SVGGElement, {
+          dpmm: getLayerDpmm(layer),
           shapesOnly: true,
         });
 

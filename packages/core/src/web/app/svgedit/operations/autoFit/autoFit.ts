@@ -2,11 +2,11 @@ import alertCaller from '@core/app/actions/alert-caller';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import progressCaller from '@core/app/actions/progress-caller';
 import { showAutoFitPanel } from '@core/app/components/dialogs/autoFit';
-import getUtilWS from '@core/helpers/api/utils-ws';
 import i18n from '@core/helpers/i18n';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import { dataCache, setDataCache } from './dataCache';
+import { findSimilarContours } from './findSimilarContours';
 
 // TODO: add unit test
 const autoFit = async (elem: SVGElement): Promise<void> => {
@@ -21,7 +21,6 @@ const autoFit = async (elem: SVGElement): Promise<void> => {
 
   progressCaller.openNonstopProgress({ id: 'auto-fit', message: i18n.lang.general.processing });
   try {
-    const utilWS = getUtilWS();
     const resp = await fetch(previewBackgroundUrl);
     const blob = await resp.blob();
     const isSplicingImg = !previewModeBackgroundDrawer.isFullWorkareaDrawn;
@@ -30,7 +29,7 @@ const autoFit = async (elem: SVGElement): Promise<void> => {
     if (dataCache.url === previewBackgroundUrl && dataCache.data) {
       data = dataCache.data;
     } else {
-      data = await utilWS.getAllSimilarContours(blob, { isSplicingImg });
+      data = await findSimilarContours(blob, { isSplicingImg });
       setDataCache({ data, url: previewBackgroundUrl });
     }
 

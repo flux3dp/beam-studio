@@ -4,8 +4,7 @@ const mockGetCameraCanvasUrl = jest.fn();
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
 const mockShowAutoFitPanel = jest.fn();
-const mockGetAllSimilarContours = jest.fn();
-const mockGetUtilWS = jest.fn();
+const mockFindSimilarContours = jest.fn();
 
 let mockIsFullWorkareaDrawn = true;
 
@@ -30,12 +29,9 @@ jest.mock('@core/app/components/dialogs/autoFit', () => ({
   showAutoFitPanel: (...args: any[]) => mockShowAutoFitPanel(...args),
 }));
 
-jest.mock(
-  '@core/helpers/api/utils-ws',
-  () =>
-    (...args: any[]) =>
-      mockGetUtilWS(...args),
-);
+jest.mock('./findSimilarContours', () => ({
+  findSimilarContours: (...args: any[]) => mockFindSimilarContours(...args),
+}));
 
 import i18n from '@core/helpers/i18n';
 
@@ -54,7 +50,6 @@ describe('autoFit', () => {
     mockIsFullWorkareaDrawn = true;
     setDataCache({ url: '' });
     mockGetCameraCanvasUrl.mockResolvedValue(url);
-    mockGetUtilWS.mockReturnValue({ getAllSimilarContours: mockGetAllSimilarContours });
     (global as any).fetch = jest.fn().mockResolvedValue({ blob: jest.fn().mockResolvedValue('blob-data') });
   });
 
@@ -71,12 +66,12 @@ describe('autoFit', () => {
   test('fetches contours and shows panel on success', async () => {
     const data = [makeContour(), makeContour()];
 
-    mockGetAllSimilarContours.mockResolvedValueOnce(data);
+    mockFindSimilarContours.mockResolvedValueOnce(data);
 
     await autoFit(elem);
 
     expect(mockOpenNonstopProgress).toHaveBeenCalledWith({ id: 'auto-fit', message: expect.any(String) });
-    expect(mockGetAllSimilarContours).toHaveBeenCalledWith('blob-data', { isSplicingImg: false });
+    expect(mockFindSimilarContours).toHaveBeenCalledWith('blob-data', { isSplicingImg: false });
     expect(mockShowAutoFitPanel).toHaveBeenCalledWith(elem, url, data, false);
     // progress is always closed in finally
     expect(mockPopById).toHaveBeenCalledWith('auto-fit');
@@ -84,45 +79,45 @@ describe('autoFit', () => {
 
   test('passes isSplicingImg=true when workarea is not fully drawn', async () => {
     mockIsFullWorkareaDrawn = false;
-    mockGetAllSimilarContours.mockResolvedValueOnce([makeContour()]);
+    mockFindSimilarContours.mockResolvedValueOnce([makeContour()]);
 
     await autoFit(elem);
 
-    expect(mockGetAllSimilarContours).toHaveBeenCalledWith('blob-data', { isSplicingImg: true });
+    expect(mockFindSimilarContours).toHaveBeenCalledWith('blob-data', { isSplicingImg: true });
     expect(mockShowAutoFitPanel).toHaveBeenCalledWith(elem, url, [makeContour()], true);
   });
 
   test('caches contour data and reuses it on subsequent calls with same url', async () => {
     const data = [makeContour()];
 
-    mockGetAllSimilarContours.mockResolvedValueOnce(data);
+    mockFindSimilarContours.mockResolvedValueOnce(data);
 
     await autoFit(elem);
 
     expect(dataCache.url).toBe(url);
     expect(dataCache.data).toBe(data);
-    expect(mockGetAllSimilarContours).toHaveBeenCalledTimes(1);
+    expect(mockFindSimilarContours).toHaveBeenCalledTimes(1);
 
     // second call should hit cache, not re-fetch contours
     await autoFit(elem);
 
-    expect(mockGetAllSimilarContours).toHaveBeenCalledTimes(1);
+    expect(mockFindSimilarContours).toHaveBeenCalledTimes(1);
     expect(mockShowAutoFitPanel).toHaveBeenCalledTimes(2);
     expect(mockShowAutoFitPanel).toHaveBeenLastCalledWith(elem, url, data, false);
   });
 
   test('re-fetches when url changes', async () => {
     setDataCache({ data: [makeContour()], url: 'blob:stale-url' });
-    mockGetAllSimilarContours.mockResolvedValueOnce([makeContour()]);
+    mockFindSimilarContours.mockResolvedValueOnce([makeContour()]);
 
     await autoFit(elem);
 
-    expect(mockGetAllSimilarContours).toHaveBeenCalledTimes(1);
+    expect(mockFindSimilarContours).toHaveBeenCalledTimes(1);
     expect(dataCache.url).toBe(url);
   });
 
   test('alerts when no contours found and does not show panel', async () => {
-    mockGetAllSimilarContours.mockResolvedValueOnce([]);
+    mockFindSimilarContours.mockResolvedValueOnce([]);
 
     await autoFit(elem);
 
@@ -145,7 +140,7 @@ describe('autoFit', () => {
   });
 
   test('opens and closes progress as a pair on the happy path', async () => {
-    mockGetAllSimilarContours.mockResolvedValueOnce([makeContour()]);
+    mockFindSimilarContours.mockResolvedValueOnce([makeContour()]);
 
     await autoFit(elem);
 

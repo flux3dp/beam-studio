@@ -13,6 +13,7 @@ import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings'
 import { showSettingsModal } from '@core/app/components/settings/modal/SettingsModal';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import autoAlign from '@core/app/svgedit/autoAlign';
 import historyUtils from '@core/app/svgedit/history/utils';
 import { cloneSelectedElements, pasteElements, pasteWithDefaultPosition } from '@core/app/svgedit/operations/clipboard';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
@@ -59,7 +60,7 @@ export default {
     }
   },
   ANTI_ALIASING: (): boolean => viewMenu.toggleAntiAliasing(),
-  AUTO_ALIGN: (): boolean => svgCanvas.toggleAutoAlign(),
+  AUTO_ALIGN: (): boolean => autoAlign.toggle(),
   BUG_REPORT: (): void => void OutputError.downloadErrorLog(),
   CHANGE_LOGS: (): void => Dialog.showChangLog(),
   CLEAR_SCENE: (): Promise<void> => FnWrapper.clearScene(),
@@ -151,6 +152,7 @@ export default {
   SHOW_RULERS: (): boolean => viewMenu.toggleRulers(),
   SIGN_IN: (): void => Dialog.showLoginDialog(),
   SIGN_OUT: (): Promise<boolean> => signOut(),
+  SNAP_TO_OBJECT_CENTER: (): boolean => viewMenu.toggleSnapToObjectCenter(),
   START_CURVE_ENGRAVING_MODE: () => curveEngravingModeController.start(),
   START_GESTURE_INTRO: (): Promise<void> => Dialog.showMediaTutorial(getGestureIntroduction()),
   START_TUTORIAL: (): void => {

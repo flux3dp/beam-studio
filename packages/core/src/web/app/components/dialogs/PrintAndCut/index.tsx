@@ -9,7 +9,7 @@ import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { PRINT_AND_CUT_DIALOG_ID } from './constants';
+import { PRINT_AND_CUT_CALIBRATION_DIALOG_ID, PRINT_AND_CUT_DIALOG_ID } from './constants';
 import PrintAndCut from './PrintAndCut';
 import { useResumeConfigStore } from './resumeConfigStore';
 import { usePrintAndCutStore } from './store';
@@ -23,7 +23,8 @@ getSVGAsync((globalSVG) => {
 });
 
 export const showPrintAndCut = async (): Promise<void> => {
-  if (isIdExist(PRINT_AND_CUT_DIALOG_ID)) return;
+  // the calibration borrows this dialog's store, so the two cannot coexist
+  if (isIdExist(PRINT_AND_CUT_DIALOG_ID) || isIdExist(PRINT_AND_CUT_CALIBRATION_DIALOG_ID)) return;
 
   // the desktop app bundles its own fluxghost; the web version talks to the
   // machine's, which may predate the opencv commands the whole flow relies on

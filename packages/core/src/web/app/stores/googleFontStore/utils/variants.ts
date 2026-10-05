@@ -11,6 +11,13 @@ export const getCSSWeight = (variant: string) =>
     .with(P.string.endsWith('italic'), (v) => v.replace('italic', ':ital'))
     .otherwise((variant) => variant);
 
+/** css2 `wght` list covering every variant, so one stylesheet serves every style the user can pick. */
+export const getAllCSSWeights = (variants: Iterable<string>) =>
+  Array.from(variants)
+    .map(getCSSWeight)
+    .filter((w, i, arr) => arr.indexOf(w) === i)
+    .sort((a, b) => Number.parseInt(a.split(':')[0]) - Number.parseInt(b.split(':')[0]));
+
 export const discoverAvailableVariants = (variants: string[]) => {
   const available = new Set<keyof GoogleFontFiles>();
 
@@ -80,7 +87,7 @@ export const findBestVariant = (
 
 export const buildGoogleFontURL = (
   fontFamily: string,
-  options: { italicOnly?: boolean; weight: number } | { variant: string } | { weights: string[] },
+  options: { variant: string } | { weights: string[] },
 ): string => {
   const encodedFamily = fontFamily.replace(/ /g, '+');
 
@@ -94,17 +101,9 @@ export const buildGoogleFontURL = (
     return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@${cssWeight}&display=swap`;
   }
 
-  if ('weights' in options) {
-    const formattedWeights = options.weights
-      .map((w) => (w.includes(':ital') ? `1,${w.replace(':ital', '')}` : `0,${w}`))
-      .join(';');
+  const formattedWeights = options.weights
+    .map((w) => (w.includes(':ital') ? `1,${w.replace(':ital', '')}` : `0,${w}`))
+    .join(';');
 
-    return `https://fonts.googleapis.com/css2?family=${encodedFamily}:ital,wght@${formattedWeights}&display=swap`;
-  }
-
-  if (options.italicOnly) {
-    return `https://fonts.googleapis.com/css2?family=${encodedFamily}:ital,wght@1,${options.weight}&display=swap`;
-  }
-
-  return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@${options.weight}&display=swap`;
+  return `https://fonts.googleapis.com/css2?family=${encodedFamily}:ital,wght@${formattedWeights}&display=swap`;
 };

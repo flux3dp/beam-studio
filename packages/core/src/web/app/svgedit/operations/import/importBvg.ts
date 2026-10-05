@@ -1,5 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithPrinter4C } from '@core/app/actions/beambox/constant';
+import { registerDocumentLocalFontFaces } from '@core/app/actions/beambox/font-funcs';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -302,6 +303,7 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
   await postImportBvgString();
   batchCmd.onAfter = postImportBvgString;
   loadContextGoogleFonts();
+  registerDocumentLocalFontFaces();
 
   handleHistoryActionOptions(batchCmd, opts);
 };

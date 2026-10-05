@@ -17,7 +17,10 @@ getSVGAsync(({ Canvas }) => {
  * @param elements - An array of SVGImageElement objects to combine.
  * @returns The final, single SVGImageElement that has been added to the canvas.
  */
-export const combineImagesIntoSingleElement = async (elements: SVGImageElement[]): Promise<SVGImageElement> => {
+export const combineImagesIntoSingleElement = async (
+  elements: SVGImageElement[],
+  { scale = 1 }: { scale?: number } = {},
+): Promise<SVGImageElement> => {
   // 1. Calculate the union bounding box of all the images.
   // This gives us the final position (x, y) and size (width, height) of our new image.
   const bbox = getUnionBBox(elements);
@@ -42,7 +45,7 @@ export const combineImagesIntoSingleElement = async (elements: SVGImageElement[]
   });
 
   // 4. Serialize the wrapper SVG into a string and create a data URL.
-  const pngUrl = await getPngUrlFromSvg(wrapper);
+  const pngUrl = await getPngUrlFromSvg(wrapper, { scale });
 
   // 5. Use `svgCanvas.addSvgElementFromJson` to create the final, large image element.
   const imageElement = svgCanvas.addSvgElementFromJson({

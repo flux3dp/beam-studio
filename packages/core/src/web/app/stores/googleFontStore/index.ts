@@ -21,7 +21,7 @@ import type { CSSLinkTracker, GoogleFontStore } from './types';
 import { isIconFont, isLocalOrWebFont } from './utils/detection';
 import { getFallbackFont, getFallbackPostScriptName } from './utils/fallbacks';
 import { createNetworkDetector, isNetworkAvailableForGoogleFonts } from './utils/network';
-import { buildGoogleFontURL, discoverAvailableVariants, findBestVariant, getCSSWeight } from './utils/variants';
+import { buildGoogleFontURL, discoverAvailableVariants, findBestVariant, getAllCSSWeights } from './utils/variants';
 
 /* eslint-disable perfectionist/sort-objects */
 export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
@@ -171,17 +171,14 @@ export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
         }
 
         const availableVariants = discoverAvailableVariants(fontData.variants);
-        const bestVariant = findBestVariant(availableVariants, DEFAULT_FONT_WEIGHT, 'normal');
 
-        if (!bestVariant) {
+        if (availableVariants.size === 0) {
           throw new Error(`No suitable variant found for ${fontFamily}`);
         }
 
-        const { weight } = getWeightAndStyleFromVariant(bestVariant);
-        const hasNormalVariants = Array.from(availableVariants).some((v) => v === 'regular' || /^\d+$/.test(v));
-        const hasOnlyItalicVariants =
-          !hasNormalVariants && Array.from(availableVariants).some((v) => v === 'italic' || /^\d+italic$/.test(v));
-        const fontUrl = buildGoogleFontURL(fontFamily, { italicOnly: hasOnlyItalicVariants, weight });
+        // Every weight in one stylesheet: Chromium only downloads the faces text actually uses,
+        // and a 400-only sheet makes every other style render as Regular.
+        const fontUrl = buildGoogleFontURL(fontFamily, { weights: getAllCSSWeights(availableVariants) });
         const state = get();
         const existingTracker = state.cssLinks.get(fontFamily);
 
@@ -392,14 +389,11 @@ export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
 
       const availableVariants = discoverAvailableVariants(fontData.variants);
       const allVariants = Array.from(availableVariants);
-      const weights = allVariants
-        .map((variant) => getCSSWeight(variant))
-        .filter((w, i, arr) => arr.indexOf(w) === i)
-        .sort((a, b) => Number.parseInt(a.split(':')[0]) - Number.parseInt(b.split(':')[0]));
-      const fontUrl = buildGoogleFontURL(fontFamily, { weights });
+      const fontUrl = buildGoogleFontURL(fontFamily, { weights: getAllCSSWeights(allVariants) });
       const existingTracker = state.cssLinks.get(fontFamily);
 
-      if (existingTracker && (existingTracker.purpose === 'text-editing' || existingTracker.purpose === 'preview')) {
+      // A preview sheet only carries one weight; only reuse a sheet that already covers every weight.
+      if (existingTracker?.url === fontUrl) {
         set((state) => {
           const updatedLinks = new Map(state.cssLinks);
           const tracker = updatedLinks.get(fontFamily)!;
@@ -451,6 +445,8 @@ export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
 
         document.head.appendChild(link);
       });
+
+      existingTracker?.element.remove();
 
       const tracker: CSSLinkTracker = {
         element: link,

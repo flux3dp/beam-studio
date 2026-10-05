@@ -110,16 +110,18 @@ describe('googleFontStore', () => {
   });
 
   describe('loadGoogleFont', () => {
-    it('injects a stylesheet link with the URL derived from the best variant and marks the font loaded', async () => {
+    it('injects one stylesheet link covering every variant and marks the font loaded', async () => {
       mockFindFont.mockResolvedValue(ROBOTO_ITEM);
 
       await useGoogleFontStore.getState().loadGoogleFont('Roboto');
 
-      // Roboto has a 'regular' variant → best variant weight 400 → non-italic URL.
+      // Every weight in one sheet, otherwise picking Bold/Thin later renders as Regular.
       const link = document.head.querySelector('link[rel="stylesheet"]') as HTMLLinkElement;
 
       expect(link).not.toBeNull();
-      expect(link.href).toBe('https://fonts.googleapis.com/css2?family=Roboto:wght@400&display=swap');
+      expect(link.href).toBe(
+        'https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,400;1,400;0,700&display=swap',
+      );
 
       const state = useGoogleFontStore.getState();
 
@@ -140,8 +142,27 @@ describe('googleFontStore', () => {
 
       const link = document.head.querySelector('link[rel="stylesheet"]') as HTMLLinkElement;
 
-      // italicOnly=true → ital,wght@1,<weight>. Best italic variant resolves to weight 400.
-      expect(link.href).toBe('https://fonts.googleapis.com/css2?family=OnlyItalic:ital,wght@1,400&display=swap');
+      expect(link.href).toBe('https://fonts.googleapis.com/css2?family=OnlyItalic:ital,wght@1,300;1,400&display=swap');
+    });
+
+    it('replaces a single-weight preview sheet when the font is loaded for text editing', async () => {
+      // Fresh family: Roboto is already session-loaded by earlier tests.
+      mockFindFont.mockResolvedValue({ ...ROBOTO_ITEM, family: 'Lato' });
+
+      await useGoogleFontStore.getState().loadGoogleFontForPreview('Lato');
+      expect(useGoogleFontStore.getState().cssLinks.get('Lato')?.url).toBe(
+        'https://fonts.googleapis.com/css2?family=Lato:wght@400&display=swap',
+      );
+
+      await useGoogleFontStore.getState().loadGoogleFontForTextEditing('Lato');
+
+      const links = document.head.querySelectorAll('link[rel="stylesheet"]');
+
+      expect(links).toHaveLength(1);
+      expect((links[0] as HTMLLinkElement).href).toBe(
+        'https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,400;1,400;0,700&display=swap',
+      );
+      expect(useGoogleFontStore.getState().cssLinks.get('Lato')?.purpose).toBe('text-editing');
     });
 
     it('is a no-op (no fetch, no link) when the font is already in sessionLoadedFonts', async () => {

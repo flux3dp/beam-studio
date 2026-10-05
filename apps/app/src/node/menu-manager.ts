@@ -187,6 +187,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
             id: 'CARTRIDGE_CHIP_SETTING',
             label: 'Cartridge Chip Setting',
           },
+        { click: handleClick, id: 'CALIBRATE_PRINT_AND_CUT', label: r.calibrate_print_and_cut },
       ].filter(Boolean),
     },
     !isPromark && { type: 'separator' },
@@ -633,6 +634,13 @@ class MenuManager extends EventEmitter {
           enabled: false,
           id: 'AUTO_ALIGN',
           label: r.auto_align || 'Auto Align',
+          type: 'checkbox',
+        },
+        {
+          click: callback,
+          enabled: false,
+          id: 'SNAP_TO_OBJECT_CENTER',
+          label: r.snap_to_object_center,
           type: 'checkbox',
         },
         {

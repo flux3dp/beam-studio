@@ -12,7 +12,8 @@ import styles from './TabHelpCenter.module.scss';
 import ThemedButton from './ThemedButton';
 
 // TODO: Can be merged into guides after en version release
-const guidesForZhTwOnly = [
+const guidesForZhTwOnly: any[] = [];
+const guides = [
   {
     category: 14101381797647,
     name: 'HEXA RF',
@@ -23,8 +24,6 @@ const guidesForZhTwOnly = [
     name: 'beamo II',
     src: 'core-img/init-panel/beamo2-real.webp',
   },
-];
-const guides = [
   {
     category: 10647778378639,
     name: 'Beambox II',

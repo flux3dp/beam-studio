@@ -7,6 +7,7 @@ jest.mock('@core/helpers/addOn/innerEngraving', () => ({
 const mockReleaseSelector = jest.fn();
 const mockRequestSelector = jest.fn(() => ({ show: jest.fn() }));
 
+jest.mock('../autoAlign', () => ({ __esModule: true, default: { collectAlignPoints: jest.fn() } }));
 jest.mock('../selector', () => ({
   __esModule: true,
   default: {

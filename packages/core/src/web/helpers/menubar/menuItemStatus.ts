@@ -36,6 +36,7 @@ const VIEW_MENU_ITEMS = [
   'SHOW_RULERS',
   'SHOW_LAYER_COLOR',
   'AUTO_ALIGN',
+  'SNAP_TO_OBJECT_CENTER',
   'ANTI_ALIASING',
 ] as const;
 

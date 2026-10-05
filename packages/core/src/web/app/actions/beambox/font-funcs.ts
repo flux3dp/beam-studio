@@ -183,7 +183,47 @@ const init = () => {
 
 init();
 
-const requestFontsOfTheFontFamily = memoize((family: string) => Array.from(fontHelper.findFonts({ family })));
+// Chromium on macOS picks a local face by AppKit weight class, which is unreliable (Noto Sans
+// Mono: CSS 900 lands on ExtraBold, 200 on Thin). Pin each face of the family to its postscript
+// name via @font-face so family + weight resolves exactly. A face whose local() lookup fails is
+// simply not added, leaving the system matching for it untouched.
+const registerLocalFontFaces = (fonts: GeneralFont[]): void => {
+  if (typeof FontFace === 'undefined') return;
+
+  fonts.forEach(async (font) => {
+    if (!('path' in font) || !font.postscriptName) return;
+
+    try {
+      const face = new FontFace(font.family, `local("${font.postscriptName}")`, {
+        style: font.italic ? 'italic' : 'normal',
+        weight: String(font.weight),
+      });
+
+      document.fonts.add(await face.load());
+    } catch {
+      // not resolvable by postscript name; keep system matching
+    }
+  });
+};
+
+const requestFontsOfTheFontFamily = memoize((family: string) => {
+  const fonts = Array.from(fontHelper.findFonts({ family }));
+
+  registerLocalFontFaces(fonts);
+
+  return fonts;
+});
+
+/** Pin the local faces of every family used by text in the document (call after a file is loaded). */
+export const registerDocumentLocalFontFaces = (): void => {
+  const families = new Set(
+    Array.from(document.querySelectorAll('#svgcontent g.layer text, #svg_defs text'), (text) =>
+      (text.getAttribute('font-family') ?? '').replace(/^['"]|['"]$/g, ''),
+    ),
+  );
+
+  families.forEach((family) => family && requestFontsOfTheFontFamily(family));
+};
 
 const requestFontByFamilyAndStyle = ({ family, italic, style, weight }: IFontQuery): GeneralFont =>
   fontHelper.findFont({ family, italic, style, weight });

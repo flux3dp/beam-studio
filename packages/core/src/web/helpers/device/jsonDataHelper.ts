@@ -1,6 +1,7 @@
 import deviceMaster from '@core/helpers/device-master';
 
 type FileMap = {
+  camera_calib: 'pnc.json';
   fisheye: 'checkpoint.json' | 'fisheye_params.json' | 'wide-angle.json';
 };
 

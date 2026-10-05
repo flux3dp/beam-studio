@@ -196,25 +196,10 @@ const clipOpenPath = (path: paper.Path, clipPath: paper.PathItem): paper.Path[] 
   });
 };
 
-const clipSubPath = (
-  subPath: paper.PathItem,
-  clipPath: paper.PathItem,
-  isAllFilled: boolean,
-  epsilon: number,
-): paper.PathItem[] => {
-  // Nothing to cut: keep the subpath as it is rather than running it through a boolean operation
-  if (isInsideClipPath(subPath, clipPath, epsilon)) {
-    return [subPath];
-  }
-
-  if (!isAllFilled) {
-    return clipOpenPath(subPath as paper.Path, clipPath);
-  }
-
-  const result = subPath.intersect(clipPath, { insert: false, trace: true });
-
-  return result.isEmpty() ? [] : [result];
-};
+// Cuts one subpath of an unfilled path. Filled paths are clipped whole, see clip() below.
+const clipSubPath = (subPath: paper.Path, clipPath: paper.PathItem, epsilon: number): paper.Path[] =>
+  // Nothing to cut: keep the subpath as it is rather than splitting it
+  isInsideClipPath(subPath, clipPath, epsilon) ? [subPath] : clipOpenPath(subPath, clipPath);
 
 const getBBoxByAttr = (elem: Element) => {
   const left = +(elem.getAttribute('x') ?? '');
@@ -350,18 +335,27 @@ const convertClipPath = async (): Promise<() => void> => {
       const subPaths = (obj instanceof paper.Path ? [obj] : (obj.children as paper.PathItem[])).map((child) =>
         child.clone({ insert: false }),
       );
-      const resPath = new paper.CompoundPath('');
+      let resPath: paper.PathItem;
 
-      // A fresh CompoundPath carries the paper defaults (no fill, no stroke) and would export as an
-      // invisible path, so the source style has to be carried over explicitly
-      resPath.copyAttributes(obj, true);
-      subPaths.forEach((subPath) => {
-        if (isAllFilled) {
-          subPath.closePath();
-        }
-
-        clipSubPath(subPath, clipPath, isAllFilled, epsilon).forEach((piece) => resPath.addChild(piece));
-      });
+      if (isAllFilled) {
+        // A filled compound path has to be clipped as a whole: a hole is only a hole relative to the
+        // subpath around it, and clipping it on its own hands back a plain (reoriented) shape that
+        // fills the hole instead of cutting it. paper's boolean resolves the fill rule for us.
+        subPaths.forEach((subPath) => subPath.closePath());
+        resPath = new paper.CompoundPath({ children: subPaths, insert: false });
+        resPath.copyAttributes(obj, true);
+        resPath = resPath.intersect(clipPath, { insert: false, trace: true });
+      } else {
+        resPath = new paper.CompoundPath('');
+        // A fresh CompoundPath carries the paper defaults (no fill, no stroke) and would export as an
+        // invisible path, so the source style has to be carried over explicitly
+        resPath.copyAttributes(obj, true);
+        subPaths.forEach((subPath) => {
+          clipSubPath(subPath as paper.Path, clipPath, epsilon).forEach((piece) =>
+            (resPath as paper.CompoundPath).addChild(piece),
+          );
+        });
+      }
 
       if (resPath.isEmpty()) {
         elem.remove();

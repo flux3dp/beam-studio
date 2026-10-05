@@ -1,16 +1,19 @@
 import { pipe } from 'remeda';
 import { match, P } from 'ts-pattern';
 
+import { dpmm } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import ungroupElement from '@core/app/svgedit/group/ungroup';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import selectionManager from '@core/app/svgedit/selection';
 
 import updateElementColor from '../color/updateElementColor';
 import i18n from '../i18n';
+import { getLayerDpmm } from '../layer/layer-config-helper';
 import { sortLayerNamesByPosition } from '../layer/layer-helper';
 import moveElementsToLayer from '../layer/moveToLayer';
 import { convertTextOnPathToPath, convertTextToPath } from '../path/convertToPath';
@@ -106,7 +109,8 @@ export const convertSvgToImage: MainConverterFunc = async ({
       return undefined;
     }
 
-    const combinedImage = await combineImagesIntoSingleElement(result.imageElements);
+    const scale = getLayerDpmm(layer ? layerManager.getLayerElementByName(layer) : null) / dpmm;
+    const combinedImage = await combineImagesIntoSingleElement(result.imageElements, { scale });
 
     parentCmd.addSubCommand(new history.InsertElementCommand(combinedImage));
     parentCmd.addSubCommand(deleteElements([...result.svgElements, ...result.imageElements], true));

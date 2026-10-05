@@ -2,12 +2,12 @@ import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import alertConfig from '@core/helpers/api/alert-config';
-import getUtilWS from '@core/helpers/api/utils-ws';
 import i18n from '@core/helpers/i18n';
 import { removeImageBackground } from '@core/helpers/image-edit';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import { dataCache, setDataCache } from './dataCache';
+import { findSimilarContours } from './findSimilarContours';
 
 const retryWithRemoveBackground = async (
   previewBackgroundUrl: string,
@@ -49,8 +49,7 @@ const retryWithRemoveBackground = async (
 
     if (!cleanedBlob) return null;
 
-    const utilWS = getUtilWS();
-    const newData = await utilWS.getAllSimilarContours(cleanedBlob, { isSplicingImg });
+    const newData = await findSimilarContours(cleanedBlob, { isSplicingImg });
 
     if (newData.length === 0) {
       alertCaller.popUp({ message: i18n.lang.auto_fit.failed_to_find_contour });

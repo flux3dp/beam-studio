@@ -603,6 +603,7 @@
       'data-image-symbol',
       'overflow',
       'data-bbox',
+      'data-fullcolor',
     ],
     text: [
       'data-ratiofixed',

@@ -12,6 +12,7 @@ import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPa
 import { showDiodeCalibration } from '@core/app/components/dialogs/DiodeCalibration';
 import { showLaserDelaySettingPanel } from '@core/app/components/dialogs/LaserDelay';
 import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist/showMaintenanceChecklist';
+import { showPrintAndCutCalibration } from '@core/app/components/dialogs/PrintAndCut/calibration';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import { showUploadFirmwareDialog } from '@core/app/components/dialogs/updateFirmware';
@@ -241,6 +242,11 @@ export default {
   },
   CALIBRATE_IR_MODULE: async (device: IDeviceInfo): Promise<void> => {
     calibrateModule(device, LayerModule.LASER_1064);
+  },
+  CALIBRATE_PRINT_AND_CUT: async (device: IDeviceInfo): Promise<void> => {
+    if (!checkIsAtEditor()) return;
+
+    showPrintAndCutCalibration(device);
   },
   CALIBRATE_PRINTER_4C_MODULE: async (device: IDeviceInfo): Promise<void> => {
     calibrateModule(device, LayerModule.PRINTER_4C);

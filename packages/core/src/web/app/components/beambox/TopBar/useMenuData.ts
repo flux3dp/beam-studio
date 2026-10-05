@@ -50,6 +50,7 @@ const useMenuData = (email?: string): MenuNode[] => {
   const shouldUseLayerColor = useGlobalPreferenceStore((state) => state.use_layer_color);
   const isUsingAntiAliasing = useGlobalPreferenceStore((state) => state['anti-aliasing']);
   const isAutoAlign = useGlobalPreferenceStore((state) => state.auto_align);
+  const isSnapToObjectCenter = useGlobalPreferenceStore((state) => state.snap_to_object_center);
   const shouldZoomWithWindow = useGlobalPreferenceStore((state) => state.zoom_with_window);
   const isUvPrintFileEnabled = useGlobalPreferenceStore((state) => state['enable-uv-print-file']);
 
@@ -186,6 +187,13 @@ const useMenuData = (email?: string): MenuNode[] => {
             },
           ]
         : []),
+      {
+        device,
+        disabled: isMobile,
+        id: 'CALIBRATE_PRINT_AND_CUT',
+        label: menuCms.calibrate_print_and_cut,
+        type: 'item',
+      },
     ];
 
     const children: MenuNode[] = [
@@ -509,6 +517,12 @@ const useMenuData = (email?: string): MenuNode[] => {
       { checked: shouldShowRulers, id: 'SHOW_RULERS', label: menuCms.show_rulers, type: 'checkbox' },
       { checked: shouldUseLayerColor, id: 'SHOW_LAYER_COLOR', label: menuCms.show_layer_color, type: 'checkbox' },
       { checked: isAutoAlign, id: 'AUTO_ALIGN', label: menuCms.auto_align, type: 'checkbox' },
+      {
+        checked: isSnapToObjectCenter,
+        id: 'SNAP_TO_OBJECT_CENTER',
+        label: menuCms.snap_to_object_center,
+        type: 'checkbox',
+      },
       { checked: isUsingAntiAliasing, id: 'ANTI_ALIASING', label: menuCms.anti_aliasing, type: 'checkbox' },
     ],
     label: menuCms.view,
