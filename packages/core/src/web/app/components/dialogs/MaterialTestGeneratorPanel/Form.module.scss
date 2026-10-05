@@ -42,3 +42,16 @@
     color: #bbbbbb;
   }
 }
+
+.hint {
+  color: #999999;
+  font-size: 11px;
+  line-height: 1.4;
+  max-width: 420px;
+}
+
+// Sits in the inputs column where an input would, but sized by its text: the field is unknown more
+// often than not, and "unknown, assuming 70 mm" does not fit an input's width.
+.read-only {
+  line-height: 32px;
+}

@@ -24,8 +24,12 @@ export interface Detail {
 interface SettingInfos {
   /** Inner engraving test: UV Promark params without power and passes, plus the STL point spacing. */
   innerEngraving?: boolean;
+  isDotCompare?: boolean;
   laserType?: LaserType;
 }
+
+/** Highest dwell the dot axis offers, in us. A dot that sits longer than this drills rather than marks. */
+const MAX_DOTTING_TIME = 1000;
 
 type TableSettingConstruct<T extends ReadonlyArray<string>, IsRequired = true> = IsRequired extends true
   ? { [K in T[number]]: Detail }
@@ -38,6 +42,8 @@ export const mopaTableParams = ['pulseWidth'] as const;
 export const uvTableParams = ['qPulseWidth', 'fillInterleave', 'fillDwellTime'] as const;
 /** Dot parameters: a 2D block is a vector shape, which is never dotted. */
 export const innerEngravingTableParams = ['dottingTime', 'pointSpacing'] as const;
+/** The dot axis of the dot-vs-line matrix: how long the beam dwells on each dot. */
+export const galvoTableParams = ['dottingTime'] as const;
 export const tableParams = [
   ...commonTableParams,
   ...promarkTableParams,
@@ -203,11 +209,60 @@ const getInnerEngravingTableSetting = (workarea: WorkAreaModel): TableSetting =>
   };
 };
 
+/**
+ * The dot-vs-line matrix, whose axes are fixed: the column sweeps the speed the line half is
+ * engraved at, the row sweeps the dwell of each dot in the dot half. Both halves live on one layer
+ * -- a galvo layer engraves a dithered image as dots and a binarised one as lines -- so the two
+ * parameters do not compete, they each drive their own half.
+ */
+const getDotCompareTableSetting = (workarea: WorkAreaModel): TableSetting => {
+  const { maxSpeed, minSpeed } = getWorkarea(workarea);
+
+  return {
+    dottingTime: {
+      default: 100,
+      max: MAX_DOTTING_TIME,
+      maxValue: 400,
+      min: 1,
+      minValue: 25,
+      selected: 1,
+    },
+    repeat: {
+      default: 1,
+      max: 100,
+      maxValue: 5,
+      min: 1,
+      minValue: 1,
+      selected: 2,
+    },
+    speed: {
+      default: 1000,
+      max: maxSpeed,
+      maxValue: maxSpeed,
+      min: minSpeed,
+      minValue: 250,
+      selected: 0,
+    },
+    strength: {
+      default: 100,
+      max: 100,
+      maxValue: 100,
+      min: 1,
+      minValue: 100,
+      selected: 2,
+    },
+  };
+};
+
 export const getTableSetting = (
   workarea: WorkAreaModel,
-  { innerEngraving = false, laserType }: SettingInfos = { laserType: LaserType.Desktop },
+  { innerEngraving = false, isDotCompare, laserType }: SettingInfos = { laserType: LaserType.Desktop },
 ): TableSetting => {
   if (innerEngraving) return getInnerEngravingTableSetting(workarea);
+
+  if (isDotCompare) {
+    return getDotCompareTableSetting(workarea);
+  }
 
   if (promarkModels.has(workarea)) {
     return getPromarkTableSetting(workarea, { laserType });
