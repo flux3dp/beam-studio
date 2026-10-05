@@ -8,26 +8,23 @@ import { applyPhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloud';
 import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import {
   fetchReplicateSampleResult,
-  type ReplicatePointCloudSample,
+  type ReplicatePointCloudSampleId,
   type ReplicateSampleDisplay,
 } from '@core/helpers/image/replicatePointCloud';
-import { isUvDev2 } from '@core/helpers/is-dev';
 
 import { insertStlGeometry } from './importStl';
 import readBitmapFile from './readBitmapFile';
 
-void isUvDev2();
-
 const PROGRESS_ID = 'import-replicate-point-cloud';
 const TARGET_WIDTH_SCENE = 1000;
 
-/** Load and import one captured result as a point cloud, reference mesh, or lit relief mesh. */
+/** Download and import one captured public result as a point cloud or a lit relief mesh. */
 const importReplicatePointCloudSample = async (
-  sample: ReplicatePointCloudSample,
+  id: ReplicatePointCloudSampleId,
   display: ReplicateSampleDisplay,
 ): Promise<void> => {
   await progressCaller.openSteppingProgress({
-    caption: 'Loading captured 3D sample',
+    caption: 'Downloading public 3D sample',
     id: PROGRESS_ID,
     percentage: 0,
   });
@@ -36,10 +33,10 @@ const importReplicatePointCloudSample = async (
   let progressOpen = true;
 
   try {
-    const result = await fetchReplicateSampleResult(sample, display);
+    const result = await fetchReplicateSampleResult(id, display);
 
-    if (result.kind === 'mesh') {
-      progressCaller.update(PROGRESS_ID, { caption: 'Placing mesh', percentage: 90 });
+    if (result.kind === 'relief-mesh') {
+      progressCaller.update(PROGRESS_ID, { caption: 'Placing relief mesh', percentage: 90 });
       progressCaller.popById(PROGRESS_ID);
       progressOpen = false;
       await insertStlGeometry(result.buffer, result.geometry);

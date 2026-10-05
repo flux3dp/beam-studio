@@ -1,13 +1,7 @@
-import { isUvDev2 } from '@core/helpers/is-dev';
-
-import { REPLICATE_CAPTURED_TEST_SAMPLES } from './capturedTests';
 import type { ReplicatePointCloudSample } from './types';
 
-void isUvDev2();
-
 /**
- * Frontend-only result fixtures. Local comparison runs are listed first; the public examples below
- * were captured from Replicate on 2026-09-03.
+ * Frontend-only public result fixtures captured from Replicate on 2026-09-03.
  *
  * Keep the model version and immutable output URL together. Adding our own comparison images later
  * only requires appending another entry named, for example, `moge-2-test-1`; the UI and conversion
@@ -15,7 +9,6 @@ void isUvDev2();
  * Beam Studio neither creates predictions nor owns provider credentials.
  */
 export const REPLICATE_POINT_CLOUD_SAMPLES = [
-  ...REPLICATE_CAPTURED_TEST_SAMPLES,
   {
     approximateCostUsd: 0.0018,
     availability: 'importable',

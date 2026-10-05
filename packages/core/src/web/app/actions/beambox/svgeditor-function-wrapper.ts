@@ -99,7 +99,7 @@ const funcs = {
             'webp',
             // offered whenever the machine is available, not only while the mode is on: picking one
             // outside inner engraving mode is what triggers the offer to switch into it
-            ...(checkFpm1UV() ? ['stl', 'ply', 'glb', 'bspc'] : []),
+            ...(checkFpm1UV() ? ['stl'] : []),
           ],
           name: 'Images',
         },
