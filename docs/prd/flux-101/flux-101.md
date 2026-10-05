@@ -68,7 +68,7 @@ Engineering review (2026-09-18) confirmed the feature is mostly new UI over exis
 Persistent (always available):
 1. **Left control bar → book icon** (R1a). Below the separator next to Beamy. Tooltip "FLUX 101". antd `Badge` (`size="small"`) shows the number of remaining lessons (max 23, so no overflow handling). Opens the course dialog; also the collapsed home of the course when closed (§5.3).
 2. **Welcome page → "FLUX 101" tab** (R1b). A new `menuItems` entry whose content is the course dashboard rendered inline (list + player), sharing components with the editor dialog. No PiP on this page.
-3. **Help menu → "FLUX 101"** (R1c). New `START_101_COURSE` item near `START_TUTORIAL`, wired through `dialog-caller`.
+3. **Help menu → "FLUX 101"** (R1c). New `START_101_COURSE` item near `START_TUTORIAL`. In the editor it opens the course window; on the Welcome page it switches to the FLUX 101 tab instead (the tab already hosts the player, and a window on top would mount a second one).
 
 Contextual (once):
 4. **After the new-user tutorial** (R2a). When `showTutorial` resolves (accepted or declined), show a one-time prompt: *"Want to go deeper? FLUX 101 has 23 short videos that take you from unboxing to your first job."* **[Maybe later] / [Watch FLUX 101]** (Watch is the primary button, on the right). Answering either way sets `nudgeDismissed`; Watch also opens the course. Awaited like the tutorial so the later start-up dialogs do not stack on it. Desktop only (`!isMobile()`); unlike the tutorial it does not need a machine connection, since users who have not set one up yet are the course's audience.
@@ -209,7 +209,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 **Entry & navigation**
 - **R1a** Book icon in `DrawingToolButtonGroup` (below the separator, next to Beamy) with a remaining-lessons badge. Opens the course; is its collapsed home. Snapshot test updated.
 - **R1b** Welcome page tab "FLUX 101" rendering the dashboard inline.
-- **R1c** Help menu item `START_101_COURSE` → `dialogCaller.showFlux101()`.
+- **R1c** Help menu item `START_101_COURSE` → `showFlux101()` in the editor; on the Welcome page → `welcome` event `select-tab: 'flux-101'` (listened to in `pages/Welcome.tsx`).
 - **R2a** One-time post-tutorial prompt on `showTutorial` resolve (`showFlux101Nudge` in `Flux101/index.tsx`, called from `beambox-init.ts`). Never shown again once answered (`nudgeDismissed`) or once the course is complete. Existing users whose tutorial was skipped long ago still get it once, on their first launch with this release.
 - **R3** Dashboard lists chapters → lessons with status, progress meter, badges, credits, sync state, Continue CTA.
 - **R3a** Lessons with `helpArticleUrl` show a grey hint + external-link icon → `browser.open`.
@@ -255,7 +255,8 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 |---|---|---|
 | `constants/storageConstants.ts`, `interfaces/IStorage.d.ts` | add key `beam-studio-101` | `storageStore` init / `storage.getStore()` — all other keys unaffected |
 | `lang/en.ts`, `lang/zh-tw.ts`, `interfaces/ILang.ts` | add `flux_101.*` block and `topbar.menu.flux_101` | every other lang consumer — untouched keys; remaining 21 lang files filled before PR |
-| `actions/beambox/menuActions.ts` | add `START_101_COURSE` | all other menu ids — unchanged handlers |
+| `actions/beambox/menuActions.ts` | add `START_101_COURSE` (window in the editor, tab switch on Welcome via the `welcome` event emitter) | all other menu ids — unchanged handlers |
+| `helpers/eventEmitterFactory.ts` | add the `welcome` channel | every other channel — unchanged |
 | `TopBar/useMenuData.ts` | add Help item `START_101_COURSE` (not in `MENU_ITEMS`, so always enabled) | Help menu order: About, Start Tutorial, UI Intro, **FLUX 101**, …; attach/detach enable logic — unchanged |
 | `apps/app/src/node/menu-manager.ts` | add the same Help item to the Electron template | native menu — other items unchanged |
 | `apps/app/src/main.ts` `setReferer()` | filter adds `www.youtube.com` / `www.youtube-nocookie.com`, sets `Referer: https://flux3dp.com/` for them | flux-id requests — still get their own origin as Referer (unchanged branch) |
