@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: 'Αποθήκευση και έξοδος',
     saving: 'Αποθήκευση...',
     select: 'Επιλογή',
+    skip: 'Παράλειψη',
     stop: 'Σταμάτημα',
     width: 'Πλάτος',
   },

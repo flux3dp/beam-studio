@@ -1,16 +1,21 @@
 import { setStorage } from '@core/app/stores/storageStore';
 
 import {
+  adoptOnLogin,
+  claimedByOther,
   completeLesson,
   continueLessonId,
   earnedBadges,
   getBucket,
   isCourseComplete,
   type LessonProgress,
+  maskEmail,
   mergeBuckets,
   mergeLesson,
+  readStorage,
   recordPlayback,
   STORAGE_KEY,
+  updateBucket,
 } from './progress';
 
 const watched = (playedSec = 100): LessonProgress => ({
@@ -105,5 +110,44 @@ describe('actions on the anonymous bucket', () => {
     recordPlayback('3-3', 5, 5);
     expect(continueLessonId(getBucket())).toBe('3-3'); // last opened, unfinished
     expect(isCourseComplete(getBucket())).toBe(false);
+  });
+});
+
+describe('login / claim', () => {
+  beforeEach(() => setStorage(STORAGE_KEY, {} as any));
+
+  test('maskEmail keeps first and last char of the local part and the whole domain', () => {
+    expect(maskEmail('software@flux3dp.com')).toBe('s******e@flux3dp.com');
+    expect(maskEmail('ab@x.io')).toBe('ab@x.io');
+  });
+
+  test('adoptOnLogin merges an unclaimed anonymous bucket, claims and mirrors it', () => {
+    recordPlayback('1-1', 60, 60); // anonymous progress
+
+    const merged = adoptOnLogin('a@x.io', {
+      ...getBucket(),
+      lessons: { '1-2': { playedSec: 5, resumeSec: 5, status: 'in_progress' } },
+    });
+
+    expect(Object.keys(merged.lessons).sort()).toEqual(['1-1', '1-2']);
+    expect(readStorage()['a@x.io']).toEqual(merged);
+    expect(readStorage().anonymous).toEqual({ ...merged, claimedBy: 'a@x.io' });
+  });
+
+  test("a signed-in owner's writes keep the anonymous mirror current", () => {
+    adoptOnLogin('a@x.io');
+    updateBucket((b) => ({ ...b, lastLessonId: '2-1' }), 'a@x.io');
+    expect(readStorage().anonymous).toEqual({ ...readStorage()['a@x.io'], claimedBy: 'a@x.io' });
+  });
+
+  test('adoptOnLogin does not merge a bucket claimed by another account, but re-mirrors', () => {
+    recordPlayback('1-1', 60, 60);
+    adoptOnLogin('a@x.io');
+
+    const b = adoptOnLogin('b@x.io');
+
+    expect(b.lessons['1-1']).toBeUndefined();
+    expect(readStorage().anonymous?.claimedBy).toBe('b@x.io');
+    expect(claimedByOther()).toBe('b@x.io');
   });
 });

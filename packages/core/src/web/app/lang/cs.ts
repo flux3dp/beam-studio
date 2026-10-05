@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: 'Uložit a ukončit',
     saving: 'Ukládání...',
     select: 'Vybrat',
+    skip: 'Přeskočit',
     stop: 'Zastavit',
     width: 'Šířka',
   },

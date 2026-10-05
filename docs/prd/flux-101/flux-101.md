@@ -98,7 +98,7 @@ XP is **not shown** pending the meeting decision (D20); if kept, it is derived, 
 ### 5.5 States
 
 - **Logged out** — course works fully on the local `anonymous` bucket; "Sign in to save your progress" affordance.
-- **Logged out, anonymous bucket already claimed by another account, online** — once per app session, on opening the course, show: *"This progress is bound to s******e@example.com. Sign in to keep earning rewards."* **[Sign in] / [Continue anyway]**. Email mask: first and last character before `@`, domain in full (D14).
+- **Logged out, anonymous bucket already claimed by another account, online** — once per app session, on opening the course, show: *"This progress is bound to s******e@example.com. Sign in to keep earning rewards."* **[Skip] / [Sign in]** (Sign in is the primary button, on the right; Skip reuses `global.skip`). Email mask: first and last character before `@`, domain in full (D14).
 - **Offline** — dashboard renders from local progress; player shows "You're offline"; ✓ persist.
 - **Empty** — Chapter 1 expanded, "Start lesson 1-1" hero CTA.
 - **Error** — video fails → inline retry + "Open on YouTube" (`browser.open`).
@@ -261,7 +261,7 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 | `apps/app/src/main.ts` `setReferer()` | filter adds `www.youtube.com` / `www.youtube-nocookie.com`, sets `Referer: https://flux3dp.com/` for them | flux-id requests — still get their own origin as Referer (unchanged branch) |
 | `apps/app/src/node/tabManager.ts` `setWindowOpenHandler` | no child windows any more: every non-`file://` / `about:` target goes to `shell.openExternal` | `file://` still denied; `target="_blank"` links in alert strings (Help Center, `x-apple.systempreferences:`) now open in the system browser instead of an Electron window; FLUX ID OAuth unaffected (uses `browser.open` + `beam-studio://` deep link) |
 | `public/js/lib/svg-nest/util/eval.js` | handler registered only inside a `WorkerGlobalScope` | svg-nest parallel workers (`new Worker('…/eval.js')`) — still eval posted code; Electron bootstrap (`requireConfig.js` loads it in the main window for load order) — no longer installs `window.onmessage` |
-| `LeftPanel/components/DrawingToolButtonGroup.tsx`, `icons/left-panel/LeftPanelIcons.tsx` (+ `book.svg`) | add the FLUX 101 button (remaining-lesson badge) between the separator and Beamy | every other tool button, order and ids — unchanged; snapshot `DrawingToolButtonGroup.spec.tsx.snap` is additive only |
+| `LeftPanel/components/DrawingToolButtonGroup.tsx` (+ `.spec.tsx`), `icons/left-panel/LeftPanelIcons.tsx` (+ `book.svg`) | add the FLUX 101 button (remaining-lesson badge) between the separator and Beamy; the spec mocks the `dialogs/Flux101` entry so `startFlux101Sync()` and its `dialog-caller` → `device-master` chain never load | every other tool button, order and ids — unchanged; snapshot `DrawingToolButtonGroup.spec.tsx.snap` is additive only |
 | `pages/Welcome.tsx` (+ `Welcome.spec.tsx`) | add menu key `flux-101` after Help Center, content `welcome/TabFlux101.tsx` (embeds `Flux101/CourseBody`); the spec mocks the tab like every other tab | other tabs, default tab, recent-files loading — unchanged; snapshot `Welcome.spec.tsx.snap` is additive only |
 
 Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.tsx` via `dialog-controller`, the PrintAndCut pattern).
@@ -279,6 +279,8 @@ Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.t
 **Login as user B while `anonymous.claimedBy === A`:** `B = merge(local[B], cloud[B])`. The anonymous bucket is **not** merged into B; it belongs to A. The once-per-session warning (§5.5) is what tells B this before they watch.
 
 **Logout / session expiry:** active bucket becomes `anonymous` (which mirrors the last claimer's progress). No cloud writes while logged out.
+
+**Implementation:** pure merge/claim logic in `Flux101/progress.ts` (`adoptOnLogin`, `maskEmail`, `claimedByOther`, unit-tested); side effects in `Flux101/sync.ts` — `startFlux101Sync()` (run once from `Flux101/index.tsx`) listens to `fluxIDEvents 'update-user'`, pulls `bxpref/flux101_progress`, merges, pushes the whole bucket after every local write (5 s quiet-period debounce), and `warnIfClaimed()` shows the §5.5 alert once per session. Until the backend column exists the pull answers `INVALID_KEY` and everything stays local-only.
 
 **Catalog version drift:** progress matches by stable lesson id; chapter/course completion is recomputed against the current catalog.
 

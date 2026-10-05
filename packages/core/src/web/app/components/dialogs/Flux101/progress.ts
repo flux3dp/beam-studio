@@ -52,8 +52,14 @@ export const ownerKey = (): string => getCurrentUser()?.email?.toLowerCase() ?? 
 
 export const readStorage = (): Flux101Storage => useStorageStore.getState()[STORAGE_KEY] ?? {};
 export const getBucket = (owner = ownerKey()): Flux101Bucket => readStorage()[owner] ?? emptyBucket();
-export const writeBucket = (owner: string, bucket: Flux101Bucket): void =>
-  useStorageStore.getState().set(STORAGE_KEY, { ...readStorage(), [owner]: bucket });
+/** A signed-in owner's writes also refresh the anonymous mirror (§9), so logout never shows an empty course. */
+export const writeBucket = (owner: string, bucket: Flux101Bucket): void => {
+  const next: Flux101Storage = { ...readStorage(), [owner]: bucket };
+
+  if (owner !== ANONYMOUS) next[ANONYMOUS] = { ...bucket, claimedBy: owner };
+
+  useStorageStore.getState().set(STORAGE_KEY, next);
+};
 export const updateBucket = (fn: (bucket: Flux101Bucket) => Flux101Bucket, owner = ownerKey()): void =>
   writeBucket(owner, { ...fn(getBucket(owner)), updatedAt: now() });
 
@@ -133,6 +139,35 @@ export const completeLesson = (lessonId: string, via: CompletedVia): void =>
 
 export const setLastLesson = (lessonId: string): void => updateBucket((b) => ({ ...b, lastLessonId: lessonId }));
 export const dismissNudge = (): void => updateBucket((b) => ({ ...b, nudgeDismissed: true }));
+
+/* ───────────── login / claim (PRD §9, D14) ───────────── */
+
+/** first and last char of the local part, domain in full. */
+export const maskEmail = (email: string): string => {
+  const [local, domain] = email.split('@');
+
+  return local.length <= 2 ? email : `${local[0]}${'*'.repeat(local.length - 2)}${local.at(-1)}@${domain}`;
+};
+
+/**
+ * Login as `owner`: merge local[owner], the cloud copy and the anonymous bucket (only if nobody
+ * else claimed it), store the result under `owner`, then mark the anonymous bucket as claimed
+ * and mirror the merged progress into it so a session expiry never shows an empty course.
+ */
+export const adoptOnLogin = (owner: string, cloud?: Flux101Bucket): Flux101Bucket => {
+  const all = readStorage();
+  const anonymousRecord = all[ANONYMOUS];
+  const anonymousUsable = anonymousRecord && (!anonymousRecord.claimedBy || anonymousRecord.claimedBy === owner);
+  const merged = mergeBuckets(...[all[owner], cloud, anonymousUsable ? anonymousRecord : undefined].filter((b) => !!b));
+
+  writeBucket(owner, merged); // also claims + mirrors into anonymous
+
+  return merged;
+};
+
+/** While logged out: the account the anonymous bucket belongs to, if any (§5.5 warning). */
+export const claimedByOther = (): string | undefined =>
+  ownerKey() === ANONYMOUS ? readStorage()[ANONYMOUS]?.claimedBy : undefined;
 
 /* ───────────── derived ───────────── */
 

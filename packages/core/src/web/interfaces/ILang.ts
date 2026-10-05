@@ -1493,6 +1493,7 @@ export interface ILang {
     certificate_title: string;
     chapter_done: string;
     chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    claimed_warning: string;
     close: string;
     completed: string;
     english_audio: string;
@@ -1601,6 +1602,7 @@ export interface ILang {
     | 'save_and_exit'
     | 'saving'
     | 'select'
+    | 'skip'
     | 'stop'
     | 'width',
     string

@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: 'Simpan dan Keluar',
     saving: 'Menyimpan...',
     select: 'Pilih',
+    skip: 'Langkau',
     stop: 'Henti',
     width: 'Lebar',
   },

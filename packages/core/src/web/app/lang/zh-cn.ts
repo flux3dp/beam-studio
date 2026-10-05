@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: '保存并退出',
     saving: '保存中...',
     select: '选择',
+    skip: '跳过',
     stop: '停止',
     width: '宽度',
   },

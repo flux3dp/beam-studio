@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: 'Tallenna ja poistu',
     saving: 'Tallennetaan...',
     select: 'Valitse',
+    skip: 'Ohita',
     stop: 'Pysäytä',
     width: 'Leveys',
   },

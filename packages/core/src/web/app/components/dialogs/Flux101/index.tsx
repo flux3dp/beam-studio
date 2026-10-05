@@ -4,11 +4,16 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 
 import CelebrationDialog from './CelebrationDialog';
 import Flux101Certificate from './Flux101Certificate';
+import Flux101Dialog from './Flux101Dialog';
 import { useFlux101Store } from './flux101Store';
+import { startFlux101Sync, warnIfClaimed } from './sync';
 
 const DIALOG_ID = 'flux-101';
 const CELEBRATION_ID = 'flux-101-celebration';
 const CERTIFICATE_ID = 'flux-101-certificate';
+
+// this module is imported by every entry point (left panel, Welcome, Help menu), i.e. at app start
+startFlux101Sync();
 
 /**
  * Open the course window at `lessonId` (default: the "Continue" lesson). One instance app-wide.
@@ -16,11 +21,10 @@ const CERTIFICATE_ID = 'flux-101-certificate';
  * entry points (left panel, Welcome tab, Help menu) must not drag into their module graph.
  */
 export const showFlux101 = async (lessonId?: string): Promise<void> => {
+  warnIfClaimed();
   useFlux101Store.getState().open(lessonId);
 
   if (isIdExist(DIALOG_ID)) return;
-
-  const { default: Flux101Dialog } = await import('./Flux101Dialog');
 
   addDialogComponent(DIALOG_ID, <Flux101Dialog onClose={() => popDialogById(DIALOG_ID)} />);
 };

@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: 'Speichern und beenden',
     saving: 'Speichern...',
     select: 'Auswählen',
+    skip: 'Überspringen',
     stop: 'Stopp',
     width: 'Breite',
   },

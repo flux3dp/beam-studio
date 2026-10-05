@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: '保存して終了',
     saving: '保存中...',
     select: '選択',
+    skip: 'スキップ',
     stop: '停止',
     width: '幅',
   },

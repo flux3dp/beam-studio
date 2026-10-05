@@ -1,0 +1,96 @@
+// FLUX ID sync (PRD §9, R14, R19a). Cloud copy lives in the `bxpref` preference `flux101_progress`
+// (companion PRD adds the column; until then the server answers INVALID_KEY and this degrades to
+// local-only). Login → pull + completion-biased merge + claim the anonymous bucket; every local
+// write while signed in → debounced push of the whole bucket.
+import { funnel } from 'remeda';
+import { sprintf } from 'sprintf-js';
+
+import alertCaller from '@core/app/actions/alert-caller';
+import dialogCaller from '@core/app/actions/dialog-caller';
+import alertConstants from '@core/app/constants/alert-constants';
+import { useStorageStore } from '@core/app/stores/storageStore';
+import fluxId, { fluxIDEvents } from '@core/helpers/api/flux-id';
+import i18n from '@core/helpers/i18n';
+
+import {
+  adoptOnLogin,
+  ANONYMOUS,
+  claimedByOther,
+  type Flux101Bucket,
+  getBucket,
+  maskEmail,
+  ownerKey,
+  STORAGE_KEY,
+} from './progress';
+
+const PREF_KEY = 'flux101_progress';
+
+const pull = async (): Promise<Flux101Bucket | undefined> => {
+  const res = await fluxId.getPreference(PREF_KEY, true);
+
+  return res?.status === 'ok' && res.value?.lessons ? (res.value as Flux101Bucket) : undefined;
+};
+
+// the player ticks every second; one push per quiet 5 s is plenty
+const push = funnel(
+  () => {
+    const owner = ownerKey();
+
+    if (owner !== ANONYMOUS) fluxId.setPreference({ [PREF_KEY]: getBucket(owner) });
+  },
+  { minQuietPeriodMs: 5000, triggerAt: 'end' },
+);
+
+// who we have adopted this session; starts as nobody so a session restored before this module
+// loaded is still pulled and merged by the start-up call
+let lastOwner: string = ANONYMOUS;
+
+const onUserChange = async (): Promise<void> => {
+  const owner = ownerKey();
+
+  console.log(owner, lastOwner);
+
+  if (owner === lastOwner) return; // 'update-user' also fires for plain info refreshes
+
+  lastOwner = owner;
+
+  if (owner === ANONYMOUS) return; // logout: the anonymous bucket already mirrors the last claimer
+
+  adoptOnLogin(owner, await pull());
+  push.call();
+};
+
+let started = false;
+
+/** Idempotent; called from the course entry module so it runs once per app session. */
+export const startFlux101Sync = (): void => {
+  if (started) return;
+
+  started = true;
+  fluxIDEvents.on('update-user', onUserChange);
+  useStorageStore.subscribe((s, prev) => {
+    if (s[STORAGE_KEY] !== prev[STORAGE_KEY] && ownerKey() !== ANONYMOUS) push.call();
+  });
+  onUserChange(); // session restored before this module loaded
+};
+
+let warned = false;
+
+/** §5.5: logged out on a bucket another account claimed → once per session, offer to sign in. */
+export const warnIfClaimed = (): void => {
+  const email = claimedByOther();
+
+  if (warned || !email || !navigator.onLine) return;
+
+  warned = true;
+
+  const t = i18n.lang.flux_101;
+
+  alertCaller.popUp({
+    buttonLabels: [i18n.lang.global.skip, i18n.lang.flux_id_login.login],
+    buttonType: alertConstants.CUSTOM,
+    callbacks: [() => {}, () => dialogCaller.showLoginDialog()],
+    message: sprintf(t.claimed_warning, { email: maskEmail(email) }),
+    primaryButtonIndex: 1,
+  });
+};

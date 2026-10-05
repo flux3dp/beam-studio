@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: 'Lagre og avslutt',
     saving: 'Lagrer...',
     select: 'Velg',
+    skip: 'Hopp Over',
     stop: 'Stopp',
     width: 'Bredde',
   },

@@ -1579,6 +1579,7 @@ const lang: ILang = {
     save_and_exit: 'Lưu và Thoát',
     saving: 'Đang lưu...',
     select: 'Chọn',
+    skip: 'Bỏ Qua',
     stop: 'Dừng',
     width: 'Chiều rộng',
   },
