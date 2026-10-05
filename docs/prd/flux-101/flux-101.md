@@ -71,7 +71,7 @@ Persistent (always available):
 3. **Help menu → "FLUX 101"** (R1c). New `START_101_COURSE` item near `START_TUTORIAL`, wired through `dialog-caller`.
 
 Contextual (once):
-4. **After the new-user tutorial** (R2a). When `showTutorial` resolves (accepted or declined), show a one-time, non-blocking prompt: *"Want to go deeper? FLUX 101 has 23 short videos — watch the course?"* **[Watch FLUX 101] / [Maybe later]**. Recorded in `nudgeDismissed`.
+4. **After the new-user tutorial** (R2a). When `showTutorial` resolves (accepted or declined), show a one-time prompt: *"Want to go deeper? FLUX 101 has 23 short videos that take you from unboxing to your first job."* **[Maybe later] / [Watch FLUX 101]** (Watch is the primary button, on the right). Answering either way sets `nudgeDismissed`; Watch also opens the course. Awaited like the tutorial so the later start-up dialogs do not stack on it. Desktop only (`!isMobile()`); unlike the tutorial it does not need a machine connection, since users who have not set one up yet are the course's audience.
 
 The v1 "continue learning" notification on every app open (formerly R2b) is **dropped** (D18): it contradicted G5. The book-icon badge carries the reminder.
 
@@ -210,7 +210,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 - **R1a** Book icon in `DrawingToolButtonGroup` (below the separator, next to Beamy) with a remaining-lessons badge. Opens the course; is its collapsed home. Snapshot test updated.
 - **R1b** Welcome page tab "FLUX 101" rendering the dashboard inline.
 - **R1c** Help menu item `START_101_COURSE` → `dialogCaller.showFlux101()`.
-- **R2a** One-time post-tutorial prompt on `showTutorial` resolve. Never shown again once answered (`nudgeDismissed`) or once the course is complete.
+- **R2a** One-time post-tutorial prompt on `showTutorial` resolve (`showFlux101Nudge` in `Flux101/index.tsx`, called from `beambox-init.ts`). Never shown again once answered (`nudgeDismissed`) or once the course is complete. Existing users whose tutorial was skipped long ago still get it once, on their first launch with this release.
 - **R3** Dashboard lists chapters → lessons with status, progress meter, badges, credits, sync state, Continue CTA.
 - **R3a** Lessons with `helpArticleUrl` show a grey hint + external-link icon → `browser.open`.
 - **R3b** Lesson 2-1 shows "Not required for first-time use of beamo / beamo II" when the selected machine (fallback: workarea) is `fbm1`/`fbm2`.
@@ -263,6 +263,7 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 | `public/js/lib/svg-nest/util/eval.js` | handler registered only inside a `WorkerGlobalScope` | svg-nest parallel workers (`new Worker('…/eval.js')`) — still eval posted code; Electron bootstrap (`requireConfig.js` loads it in the main window for load order) — no longer installs `window.onmessage` |
 | `LeftPanel/components/DrawingToolButtonGroup.tsx` (+ `.spec.tsx`), `icons/left-panel/LeftPanelIcons.tsx` (+ `book.svg`) | add the FLUX 101 button (remaining-lesson badge) between the separator and Beamy; the spec mocks the `dialogs/Flux101` entry so `startFlux101Sync()` and its `dialog-caller` → `device-master` chain never load | every other tool button, order and ids — unchanged; snapshot `DrawingToolButtonGroup.spec.tsx.snap` is additive only |
 | `pages/Welcome.tsx` (+ `Welcome.spec.tsx`) | add menu key `flux-101` after Help Center, content `welcome/TabFlux101.tsx` (embeds `Flux101/CourseBody`); the spec mocks the tab like every other tab | other tabs, default tab, recent-files loading — unchanged; snapshot `Welcome.spec.tsx.snap` is additive only |
+| `actions/beambox/beambox-init.ts` `showStartUpDialogs` | `await showFlux101Nudge()` right after the tutorial block, gated by `!isMobile()` only (no machine connection needed, unlike the tutorial) | gesture tutorial, first calibration, tutorial prompt, changelog, path-engine dialog, announcements — same order; the nudge resolves at once when already answered or the course is complete |
 
 Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.tsx` via `dialog-controller`, the PrintAndCut pattern).
 
@@ -302,7 +303,7 @@ Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.t
 
 ## 12. Rollout
 
-One release, gated by an **Experimental settings** toggle (D22) and dogfooded through the existing alpha → beta → stable channels. Credits UI has its own switch that stays off until the flux-id endpoint is deployed. The former Phase 0–2 split is collapsed; "Phase 3" items (CMS-fed catalog, localized video, deep-links) remain future work.
+One release, no feature flag (D22 struck), dogfooded through the existing alpha → beta → stable channels. Credits UI has its own switch that stays off until the flux-id endpoint is deployed. The former Phase 0–2 split is collapsed; "Phase 3" items (CMS-fed catalog, localized video, deep-links) remain future work.
 
 ## 13. Edge cases & risks
 
@@ -338,7 +339,7 @@ Added 2026-09-18 (engineering review):
 - **D19** Certificate v1 is a screen; image export waits for a design. Draft layout attached in ClickUp.
 - **D20** **Meeting items:** XP (likely cut — no use for it), certificate design ownership, credit abuse handling (device id / IP, multi-account, public endpoint).
 - **D21** Machine note source: `deviceMaster.currentDevice` first, then workarea.
-- **D22** Feature flag via Experimental settings; credits UI behind its own switch until the backend lands.
+- ~~**D22** Feature flag via Experimental settings~~ — struck 2026-10-05: the feature is additive UI (entries, a dialog, a start-up nudge), never touches the canvas or job output, and sync degrades silently while the backend column is missing. The Experimental category is also dev-only (`isDev()`), so a flag there would have blocked alpha/beta dogfooding, and the Electron native Help item could not be gated anyway. Credits UI keeps its own switch until the backend lands.
 - **D23** (2026-09-30) Bucket key is the lower-cased FLUX ID email, not a uid (`IUser` only guarantees `email`, and the masked-email prompt needs it anyway). `nudgeDismissedAt` timestamp replaced by a `nudgeDismissed: true` flag — nothing re-prompts on a schedule. `marked_done` upgrades to `watched` if the user later plays ≥ 90 %; never the reverse.
 - **D24** (2026-10-02) Dropped the single `position: fixed` iframe laid over the active slot (the mockup technique). It needed a `z-index` above every antd modal, so dialogs opened later (e.g. machine info) rendered *under* the video, and it had already caused the Electron black-player stacking bug and would need scroll tracking for the Welcome embed. The player now lives in the slot; dialog ⇄ PiP remounts it and `useYouTubePlayer` autoplays only when the video was playing at the moment of the switch (`wasPlaying`, reset on close).
 

@@ -1505,6 +1505,9 @@ export interface ILang {
     mark_done: string;
     minimize: string;
     next: string;
+    nudge_later: string;
+    nudge_message: string;
+    nudge_watch: string;
     prev: string;
     title: string;
     view_certificate: string;
