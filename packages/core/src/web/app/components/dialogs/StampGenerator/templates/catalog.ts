@@ -379,7 +379,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 30×30 mm outer frame edge.
-    border: { bounds: { height: 139.4, width: 139.4, x: 5.3, y: 5.3 }, lineWidth: 3.57, radius: 5.36 },
+    border: { bounds: { height: 139.4, width: 139.4, x: 5.3, y: 5.3 }, lineWidth: 3.57, radius: 5.36, shape: 'square' },
     category: 'square',
     elements: [
       {
@@ -414,7 +414,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 25×25 mm outer frame edge.
-    border: { bounds: { height: 140, width: 140, x: 5, y: 5 }, lineWidth: 4.33, radius: 6.49 },
+    border: { bounds: { height: 140, width: 140, x: 5, y: 5 }, lineWidth: 4.33, radius: 6.49, shape: 'square' },
     category: 'square',
     elements: [],
     id: 'jp_rakkan_01',

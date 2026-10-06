@@ -125,23 +125,37 @@ frame. Dashed rings: `dashRanges(length, lineWidth)` picks an integer dash count
 width, half a gap in so a dash centers each side), and `strokeSegment` traces each dash on the outer
 and inner rounded rects by matching curve (arcs by angle, straights by midpoint distance); rounded
 rects are floored at radius 0.01 so all three rings share the 8-curve structure. Butt caps.
-`state.border.style` is `'stroke'` or a key of `BORDER_STYLES` (`templates/borders.ts`, SVGs under
-`templates/borders/`: the design team's 長方形邊匡12種, cleaned to shapes only, 188×72 viewBox = the
-47×18 mm engine box at 4 px/mm). `builders/sliceBorder.ts` nine-slices a style by its `slice`
-config (native px): `sliceStyle` first centers the ink in the 188×72 canvas (design files aren't
-centered, margins differ up to 1.5 px), then cuts it once per style (contours wholly inside a cell pass
-through; the rest are merged and boolean-clipped per cell so band pieces are plain filled contours,
-holes already subtracted) and `layoutSlices` places it in the box at the stamp's physical scale
-(`pxPerMm / 4`, capped so a corner cell is at most 40% of a side: MAX_CORNER_SHARE, for the 12 mm name
-seals and narrow stamps): corners fixed, center stretched, each edge stretched along its axis or, with
-`tile.h/v`, repeated a whole number of times (stars, postage scallops, floral side motif, and the
-hand-drawn waves: their corner cut + period were searched for a self-matching peak/trough, see
-borders.ts). Only the top-left corner and the top/left repeat units come from the drawing; the other
-corners and the bottom/right units are their mirrors, so tile junctions match even when the designer's
-file isn't symmetric. A style with four different corners would need a flag to opt out. A portrait box is laid out
-landscape and rotated 90° so long-side motifs follow the long sides. A style's cut is the sharp box;
-the stroke ring's cut keeps `radius`. `BorderDef.shape` (`BorderShape`, only `rect` so far) picks
-the family in `BORDER_STYLES`; round/oval families from design will be new keys + folders.
+`state.border.style` is `'stroke'` or a key of `BORDER_STYLES[shape]` (`templates/borders.ts`, SVGs under
+`templates/borders/<family>/`, one folder per `BorderShape`). Files are the design team's, cleaned to
+`<svg viewBox><path|circle|g>` only (no `<defs>/<style>`, ids or classes: the Border tab inlines them as
+thumbnails on one page). **rect** (長方形邊匡12種, 188×72 viewBox = the 47×18 mm engine box at 4 px/mm)
+is nine-sliced by `builders/sliceBorder.ts` per its `slice` config (native px): `sliceStyle` first
+centers the ink in the 188×72 canvas (design files aren't centered, margins differ up to 1.5 px), then
+cuts it once per style (contours wholly inside a cell pass through; the rest are merged and
+boolean-clipped per cell so band pieces are plain filled contours, holes already subtracted) and
+`layoutSlices` places it in the box at the stamp's physical scale (`pxPerMm / 4`, capped so a corner
+cell is at most 40% of a side: MAX_CORNER_SHARE, for the 12 mm name seals and narrow stamps): corners
+fixed, center stretched, each edge stretched along its axis or, with `tile.h/v`, repeated a whole
+number of times (stars, postage scallops, floral side motif, and the hand-drawn waves: their corner
+cut + period were searched for a self-matching peak/trough, see borders.ts). Only the top-left corner
+and the top/left repeat units come from the drawing; the other corners and the bottom/right units are
+their mirrors, so tile junctions match even when the designer's file isn't symmetric. A style with
+four different corners would need a flag to opt out. A portrait box is laid out landscape and rotated
+90° so long-side motifs follow the long sides. **square** (100×100 = 25 mm), **circle** (120×120 =
+30 mm) and **oval** (180×120 = 45×30 mm) have no `slice`: `fitStyleBorder` scales the design canvas
+(the viewBox, which the designers drew as the stamp box) uniformly onto `bounds` and centers it, so
+ornaments shrink with the stamp and keep their drawn margins. The ink itself is not fitted — asymmetric
+ornaments make it off-square (floral_1 is 99.2×100). An oval box off 3:2 (the 50×30 templates) gets a
+small gap between frame and cut on the long axis rather than a stretched frame (user decision). Both
+caches (`inkCache`, slice `cache`) are keyed by the style object: keys like `postage` / `vintage_1`
+repeat across families. Skipped from design's folders: the "adjustable" stroked variants
+(可調式波浪匡 / 可調整波浪 / 可調整虛線 — a wavy or dashed line at the user's width, a different
+feature; dashed already exists in stroke mode) and the two Illustrator working files; the stroked
+square 同心框 was hand-outlined into filled rings (`square/concentric.svg`).
+A style's cut is the sharp box;
+the stroke ring's cut keeps `radius`. `BorderDef.shape` (`BorderShape`: `rect | square | circle | oval`, default `rect`) picks
+the family in `BORDER_STYLES`; circle / oval templates still carry their rings in their SVGs and need
+`border` defs (an elliptical stroke ring) before the Border tab can offer them styles.
 `BorderDef.styles: false` keeps a template to the plain line (name_seal, square_seal_3col: the
 characters fill the box; design_rect_01/02: the title bar spans the box; a decorative frame collides). The
 Border tab picks styles from the shared `@core/app/widgets/IconSelectorGrid` (moved out of the

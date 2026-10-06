@@ -1,10 +1,14 @@
 .grid {
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   max-height: none;
   padding: 0;
 }
 
-// The designs are 188×72; keep the cells that shape so 11 of them fit without scrolling.
-.item {
-  aspect-ratio: 188 / 60;
+// Landscape designs (rect 188×72, oval 180×120): wide cells, two per row.
+.wideGrid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.wide {
+  aspect-ratio: 3 / 1;
 }

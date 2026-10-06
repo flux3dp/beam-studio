@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 
 import { InputNumber, Switch } from 'antd';
+import classNames from 'classnames';
 
 import IconSelectorGrid from '@core/app/widgets/IconSelectorGrid';
 import useI18n from '@core/helpers/useI18n';
@@ -34,6 +35,8 @@ const BorderTab = (): null | React.JSX.Element => {
 
   const frameStyles = BORDER_STYLES[shape];
   const isFrame = border.style !== 'stroke';
+  // Landscape designs get wide cells, two per row; square-ish ones use the default square cells.
+  const isWide = shape === 'rect' || shape === 'oval';
   const select = (style: string) => updateState({ border: { ...border, style } });
 
   return (
@@ -46,8 +49,8 @@ const BorderTab = (): null | React.JSX.Element => {
       )}
       {isFrame ? (
         <IconSelectorGrid
-          className={styles.grid}
-          itemClassName={styles.item}
+          className={classNames(styles.grid, { [styles.wideGrid]: isWide })}
+          itemClassName={isWide ? styles.wide : undefined}
           items={frameStyles.map((s) => ({ innerHTML: s.svg, key: s.key }))}
           onSelect={select}
           selectedKey={border.style}

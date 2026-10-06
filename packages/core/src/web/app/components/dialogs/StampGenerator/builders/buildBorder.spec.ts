@@ -115,6 +115,27 @@ describe('buildBorder', () => {
     expect(item.contains(new paper.Point(75, border.bounds.y + 2.5))).toBe(true);
   });
 
+  it.each(['square', 'circle', 'oval'] as const)(
+    '%s styles: every style sits inside its box, spans it, keeps a hole',
+    (shape) => {
+      const box = { bounds: { height: shape === 'oval' ? 60 : 90, width: 90, x: 30, y: 30 }, shape };
+      // Design files overshoot their canvas by up to 0.4 px (oval floral_2), scaled here by 0.5.
+    const rect = toRect(box.bounds).expand(0.5);
+
+      for (const { key } of BORDER_STYLES[shape]) {
+        const item = buildBorder(box, { dashed: false, lineWidth: 2, style: key }, 4) as paper.CompoundPath;
+        const span = Math.max(item.bounds.width / box.bounds.width, item.bounds.height / box.bounds.height);
+
+        expect([key, rect.contains(item.bounds), span > 0.9, item.contains(rect.center)]).toEqual([
+          key,
+          true,
+          true,
+          false,
+        ]);
+      }
+    },
+  );
+
   it('solid: a ring whose area is the outer box minus the inset box', () => {
     const ring = buildBorder(border, { dashed: false, lineWidth: 2, style: 'stroke' }, 3);
     const outer = Math.abs(roundedRect(border.bounds, 3.4).area);

@@ -56,6 +56,10 @@ const contoursOf = (item: paper.Item): paper.Path[] =>
     p instanceof paper.CompoundPath ? (p.children as paper.Path[]) : [p as paper.Path],
   );
 
+/** A style's drawing as detached contours (shapes like <circle> expanded to paths). */
+export const importStyle = (style: BorderStyle): paper.Path[] =>
+  contoursOf(paper.project.importSVG(style.svg, { expandShapes: true, insert: false }));
+
 const clip = (contours: paper.Path[], bounds: Bounds): paper.Path[] => {
   if (!contours.length) return [];
 
@@ -68,7 +72,7 @@ const clip = (contours: paper.Path[], bounds: Bounds): paper.Path[] => {
   );
 };
 
-const cache = new Map<string, Slices>();
+const cache = new Map<BorderStyle, Slices>();
 
 /** Mirrored clones about the canvas center: x, y, or both. */
 const mirror = (contours: paper.Path[], sx: number, sy: number): paper.Path[] =>
@@ -89,13 +93,13 @@ const mirror = (contours: paper.Path[], sx: number, sy: number): paper.Path[] =>
  * top-left corner and the top/left units: every tile junction then matches by construction.
  */
 export const sliceStyle = (style: BorderStyle): Slices => {
-  const cached = cache.get(style.key);
+  const cached = cache.get(style);
 
   if (cached) return cached;
 
-  const { corner, tile } = style.slice;
+  const { corner, tile } = style.slice!;
   const regions = regionsOf(NATIVE.width, NATIVE.height, corner);
-  const contours = contoursOf(paper.project.importSVG(style.svg, { expandShapes: true, insert: false }));
+  const contours = importStyle(style);
   // The designs aren't centered in their viewBox (margins differ by up to 1.5 px), which would give the
   // left and right corner cells different slices of the same ornament. Center the ink first; tiled
   // styles' cut positions in borders.ts are measured after this shift.
@@ -139,7 +143,7 @@ export const sliceStyle = (style: BorderStyle): Slices => {
 
   if (slices.l.unit) slices.r.unit = { contours: mirror(slices.l.unit.contours, -1, 1), src: slices.r.unit!.src };
 
-  cache.set(style.key, slices);
+  cache.set(style, slices);
 
   return slices;
 };

@@ -4,7 +4,7 @@ import { BORDER_STYLES } from '../templates/borders';
 import type { BorderStyle } from '../templates/borders';
 import type { BorderDef, BorderOptionValues, Bounds } from '../types';
 
-import { layoutSlices, NATIVE, sliceStyle } from './sliceBorder';
+import { importStyle, layoutSlices, NATIVE, sliceStyle } from './sliceBorder';
 
 /** Sample step along the centerline when tracing a dash outline, in design px. */
 const DASH_STEP = 0.5;
@@ -78,6 +78,42 @@ const strokeSegment = ({ center, inner, outer }: Rings, s0: number, s1: number):
   return new paper.Path({ closed: true, insert: false, segments: [...on(outer), ...on(inner).reverse()] });
 };
 
+const inkCache = new Map<BorderStyle, paper.Path[]>();
+
+/** The design canvas of a style SVG (`viewBox="0 0 w h"`), which the designers drew as the stamp box. */
+const canvasOf = (svg: string): [number, number] => {
+  const [, w, h] = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg)!;
+
+  return [Number(w), Number(h)];
+};
+
+/**
+ * A square / circle / oval style placed onto the box as drawn: the design canvas is scaled uniformly
+ * onto the box and centered, so ornaments shrink with the stamp and keep their drawn margins. The ink
+ * itself isn't fitted — asymmetric ornaments make it off-square. An oval box off the drawn 3:2 ratio
+ * gets a small gap between frame and cut on its long axis rather than a stretched frame.
+ */
+const fitStyleBorder = (bounds: Bounds, style: BorderStyle): paper.PathItem => {
+  if (!inkCache.has(style)) inkCache.set(style, importStyle(style));
+
+  const item = new paper.CompoundPath({
+    children: inkCache.get(style)!.map((c) => c.clone({ insert: false })),
+    insert: true,
+  });
+  const [w, h] = canvasOf(style.svg);
+  const scale = Math.min(bounds.width / w, bounds.height / h);
+
+  item.scale(scale, new paper.Point(0, 0));
+  item.translate(
+    new paper.Point(bounds.x + (bounds.width - w * scale) / 2, bounds.y + (bounds.height - h * scale) / 2),
+  );
+
+  item.fillColor = new paper.Color('black');
+  item.reorient(false, true);
+
+  return item;
+};
+
 /** Corner cells never take more than this share of a side, so small or narrow stamps keep an edge run. */
 const MAX_CORNER_SHARE = 0.4;
 
@@ -87,6 +123,8 @@ const MAX_CORNER_SHARE = 0.4;
  * designs' long-side motifs run along the long sides.
  */
 const buildStyleBorder = (bounds: Bounds, style: BorderStyle, pxPerMm: number): paper.PathItem => {
+  if (!style.slice) return fitStyleBorder(bounds, style);
+
   const [cx, cy] = style.slice.corner;
   const center = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
   const portrait = bounds.height > bounds.width;

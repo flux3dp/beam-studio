@@ -69,8 +69,11 @@ export interface ElementSlotDef {
  * fitted inside `bounds`, whose outer edge is also the cut outline. `lineWidth` is the default stroke
  * width in design px.
  */
-/** Border style families (`BORDER_STYLES` keys). Round/oval styles are still to come from design. */
-export type BorderShape = 'rect';
+/**
+ * Border style families (`BORDER_STYLES` keys). `rect` styles are nine-sliced for any aspect ratio; the
+ * others are scaled onto the box as drawn.
+ */
+export type BorderShape = 'circle' | 'oval' | 'rect' | 'square';
 
 export interface BorderDef {
   bounds: Bounds;
