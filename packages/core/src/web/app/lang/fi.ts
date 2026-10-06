@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Seuraava',
     not_synced: 'Ei synkronoitu',
     nudge_later: 'Ehkä myöhemmin',
-    nudge_message: 'Haluatko syventyä? FLUX 101 vie sinut 23 lyhyellä videolla pakkauksen avaamisesta ensimmäiseen työhön.',
+    nudge_message: 'Haluatko syventyä? FLUX 101 vie sinut 23 lyhyellä videolla pakkauksen avaamisesta ensimmäiseen työhön.\nVoit avata sen milloin tahansa vasemman työkalupalkin kirjakuvakkeesta, tervetulosivulta tai Ohje-valikosta.',
     nudge_watch: 'Katso FLUX 101',
     prev: 'Edellinen',
     sync_login: 'Kirjaudu sisään synkronoidaksesi edistymisen ja ansaitaksesi krediittejä',

@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Dalej',
     not_synced: 'Nie zsynchronizowano',
     nudge_later: 'Może później',
-    nudge_message: 'Chcesz wiedzieć więcej? FLUX 101 w 23 krótkich filmach prowadzi od rozpakowania do pierwszego zadania.',
+    nudge_message: 'Chcesz wiedzieć więcej? FLUX 101 w 23 krótkich filmach prowadzi od rozpakowania do pierwszego zadania.\nMożesz go otworzyć w każdej chwili z ikony książki na lewym pasku narzędzi, strony powitalnej lub menu Pomoc.',
     nudge_watch: 'Obejrzyj FLUX 101',
     prev: 'Wstecz',
     sync_login: 'Zaloguj się, aby synchronizować postępy i zdobywać kredyty',

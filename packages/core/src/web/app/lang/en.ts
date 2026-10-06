@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Next',
     not_synced: 'Not synced',
     nudge_later: 'Maybe later',
-    nudge_message: 'Want to go deeper? FLUX 101 has 23 short videos that take you from unboxing to your first job.',
+    nudge_message: 'Want to go deeper? FLUX 101 has 23 short videos that take you from unboxing to your first job.\nYou can open it later any time from the book icon in the left toolbar, the Welcome page or the Help menu.',
     nudge_watch: 'Watch FLUX 101',
     prev: 'Prev',
     sync_login: 'Sign in to sync your progress and earn credits',

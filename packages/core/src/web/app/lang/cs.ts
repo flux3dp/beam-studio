@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Další',
     not_synced: 'Nesynchronizováno',
     nudge_later: 'Možná později',
-    nudge_message: 'Chcete jít hlouběji? FLUX 101 vás ve 23 krátkých videích provede od rozbalení k první úloze.',
+    nudge_message: 'Chcete jít hlouběji? FLUX 101 vás ve 23 krátkých videích provede od rozbalení k první úloze.\nKdykoli ho otevřete přes ikonu knihy v levém panelu nástrojů, na uvítací stránce nebo v nabídce Nápověda.',
     nudge_watch: 'Sledovat FLUX 101',
     prev: 'Předchozí',
     sync_login: 'Přihlaste se pro synchronizaci postupu a získávání kreditů',

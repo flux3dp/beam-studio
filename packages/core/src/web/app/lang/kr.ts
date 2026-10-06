@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: '다음',
     not_synced: '동기화 안 됨',
     nudge_later: '나중에',
-    nudge_message: '더 깊이 배워볼까요? FLUX 101은 개봉부터 첫 작업까지 23개의 짧은 영상으로 안내합니다.',
+    nudge_message: '더 깊이 배워볼까요? FLUX 101은 개봉부터 첫 작업까지 23개의 짧은 영상으로 안내합니다.\n나중에 왼쪽 도구 모음의 책 아이콘, 시작 페이지 또는 도움말 메뉴에서 언제든지 열 수 있습니다.',
     nudge_watch: 'FLUX 101 보기',
     prev: '이전',
     sync_login: '로그인하여 진도를 동기화하고 크레딧을 받으세요',

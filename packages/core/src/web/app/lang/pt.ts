@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Próxima',
     not_synced: 'Não sincronizado',
     nudge_later: 'Talvez depois',
-    nudge_message: 'Quer ir mais fundo? O FLUX 101 leva você da caixa ao primeiro trabalho em 23 vídeos curtos.',
+    nudge_message: 'Quer ir mais fundo? O FLUX 101 leva você da caixa ao primeiro trabalho em 23 vídeos curtos.\nVocê pode abri-lo a qualquer momento pelo ícone do livro na barra de ferramentas à esquerda, pela página de boas-vindas ou pelo menu Ajuda.',
     nudge_watch: 'Assistir ao FLUX 101',
     prev: 'Anterior',
     sync_login: 'Entre para sincronizar seu progresso e ganhar créditos',

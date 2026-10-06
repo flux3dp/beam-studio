@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Suivant',
     not_synced: 'Non synchronisé',
     nudge_later: 'Plus tard',
-    nudge_message: "Envie d'aller plus loin ? FLUX 101 vous accompagne du déballage à votre première tâche en 23 courtes vidéos.",
+    nudge_message: "Envie d'aller plus loin ? FLUX 101 vous accompagne du déballage à votre première tâche en 23 courtes vidéos.\nVous pourrez l'ouvrir à tout moment depuis l'icône livre de la barre d'outils gauche, la page d'accueil ou le menu Aide.",
     nudge_watch: 'Regarder FLUX 101',
     prev: 'Précédent',
     sync_login: 'Connectez-vous pour synchroniser votre progression et gagner des crédits',

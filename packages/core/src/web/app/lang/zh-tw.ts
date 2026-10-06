@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: '下一課',
     not_synced: '未同步',
     nudge_later: '之後再說',
-    nudge_message: '想更進一步嗎？FLUX 101 有 23 支短片，帶你從開箱到送出第一個工作。',
+    nudge_message: '想更進一步嗎？FLUX 101 有 23 支短片，帶你從開箱到送出第一個工作。\n之後也可以隨時從左側工具列的書本圖示、歡迎頁或「說明」選單開啟。',
     nudge_watch: '觀看 FLUX 101',
     prev: '上一課',
     sync_login: '登入以同步進度並獲得點數',

@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Volgende',
     not_synced: 'Niet gesynchroniseerd',
     nudge_later: 'Misschien later',
-    nudge_message: "Wil je verder? FLUX 101 neemt je in 23 korte video's mee van uitpakken tot je eerste taak.",
+    nudge_message: "Wil je verder? FLUX 101 neemt je in 23 korte video's mee van uitpakken tot je eerste taak.\nJe kunt het later altijd openen via het boekpictogram in de linker werkbalk, de welkomstpagina of het menu Help.",
     nudge_watch: 'FLUX 101 bekijken',
     prev: 'Vorige',
     sync_login: 'Log in om je voortgang te synchroniseren en credits te verdienen',

@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Següent',
     not_synced: 'No sincronitzat',
     nudge_later: 'Potser més tard',
-    nudge_message: 'Vols aprofundir? FLUX 101 et porta del desembalatge al primer treball en 23 vídeos curts.',
+    nudge_message: "Vols aprofundir? FLUX 101 et porta del desembalatge al primer treball en 23 vídeos curts.\nPots obrir-lo en qualsevol moment des de la icona del llibre de la barra d'eines esquerra, la pàgina de benvinguda o el menú Ajuda.",
     nudge_watch: 'Mira FLUX 101',
     prev: 'Anterior',
     sync_login: 'Inicia la sessió per sincronitzar el progrés i guanyar crèdits',

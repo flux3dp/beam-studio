@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Nästa',
     not_synced: 'Inte synkroniserad',
     nudge_later: 'Kanske senare',
-    nudge_message: 'Vill du lära dig mer? FLUX 101 tar dig från uppackning till ditt första jobb i 23 korta videor.',
+    nudge_message: 'Vill du lära dig mer? FLUX 101 tar dig från uppackning till ditt första jobb i 23 korta videor.\nDu kan när som helst öppna det via bokikonen i verktygsfältet till vänster, välkomstsidan eller Hjälp-menyn.',
     nudge_watch: 'Titta på FLUX 101',
     prev: 'Föregående',
     sync_login: 'Logga in för att synkronisera din progress och tjäna krediter',

@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Weiter',
     not_synced: 'Nicht synchronisiert',
     nudge_later: 'Vielleicht später',
-    nudge_message: 'Lust auf mehr? FLUX 101 begleitet dich in 23 kurzen Videos vom Auspacken bis zum ersten Auftrag.',
+    nudge_message: 'Lust auf mehr? FLUX 101 begleitet dich in 23 kurzen Videos vom Auspacken bis zum ersten Auftrag.\nDu findest es jederzeit über das Buch-Symbol in der linken Werkzeugleiste, die Willkommensseite oder das Hilfe-Menü.',
     nudge_watch: 'FLUX 101 ansehen',
     prev: 'Zurück',
     sync_login: 'Melde dich an, um deinen Fortschritt zu synchronisieren und Credits zu verdienen',

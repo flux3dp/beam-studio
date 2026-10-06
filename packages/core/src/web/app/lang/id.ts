@@ -1545,7 +1545,7 @@ const lang: ILang = {
     next: 'Berikutnya',
     not_synced: 'Belum tersinkron',
     nudge_later: 'Nanti saja',
-    nudge_message: 'Ingin belajar lebih jauh? FLUX 101 memandu Anda dari membuka kemasan hingga pekerjaan pertama dalam 23 video singkat.',
+    nudge_message: 'Ingin belajar lebih jauh? FLUX 101 memandu Anda dari membuka kemasan hingga pekerjaan pertama dalam 23 video singkat.\nAnda dapat membukanya kapan saja dari ikon buku di bilah alat kiri, halaman Selamat Datang, atau menu Bantuan.',
     nudge_watch: 'Tonton FLUX 101',
     prev: 'Sebelumnya',
     sync_login: 'Masuk untuk menyinkronkan progres dan mendapatkan kredit',
