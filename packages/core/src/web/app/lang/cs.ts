@@ -1482,6 +1482,7 @@ const lang: ILang = {
   flux_101: {
     badge_earned: '%(badge)s — dokončili jste „%(chapter)s“',
     badge_locked: 'Dokončete „%(chapter)s“ a odemkněte %(badge)s',
+    badge_unlocked: 'Odznak odemčen',
     badges: {
       ch1: 'Bezpečnost na prvním místě',
       ch2: 'Zkalibrováno',
@@ -1495,7 +1496,6 @@ const lang: ILang = {
     certificate_subtitle: 'Laser Cutter 101 · Kurz pro začátečníky',
     certificate_this_certifies: 'Tímto se potvrzuje, že',
     certificate_title: 'Certifikát o absolvování',
-    chapter_done: 'Kapitola dokončena — odemčen odznak: %(badge)s',
     chapters: {
       ch1: 'Než začnete',
       ch2: 'Nastavení stroje',
@@ -1547,10 +1547,13 @@ const lang: ILang = {
     nudge_later: 'Možná později',
     nudge_message: 'Chcete jít hlouběji? FLUX 101 vás ve 23 krátkých videích provede od rozbalení k první úloze.\nKdykoli ho otevřete přes ikonu knihy v levém panelu nástrojů, na uvítací stránce nebo v nabídce Nápověda.',
     nudge_watch: 'Sledovat FLUX 101',
+    offline: 'Jste offline',
+    open_on_youtube: 'Otevřít na YouTube',
     prev: 'Předchozí',
     sync_login: 'Přihlaste se pro synchronizaci postupu a získávání kreditů',
     synced: 'Synchronizováno',
     title: 'FLUX 101',
+    video_error: 'Toto video zde teď nelze přehrát.',
     view_certificate: 'Zobrazit certifikát',
     water_tank_note: 'Při prvním použití beamo / beamo II není potřeba.',
   },

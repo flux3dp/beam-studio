@@ -1482,6 +1482,7 @@ const lang: ILang = {
   flux_101: {
     badge_earned: '%(badge)s — Anda telah menyelesaikan "%(chapter)s"',
     badge_locked: 'Selesaikan "%(chapter)s" untuk membuka %(badge)s',
+    badge_unlocked: 'Lencana terbuka',
     badges: {
       ch1: 'Keselamatan Utama',
       ch2: 'Terkalibrasi',
@@ -1495,7 +1496,6 @@ const lang: ILang = {
     certificate_subtitle: 'Laser Cutter 101 · Kursus Pemula',
     certificate_this_certifies: 'Dengan ini menyatakan bahwa',
     certificate_title: 'Sertifikat Penyelesaian',
-    chapter_done: 'Bab selesai — lencana terbuka: %(badge)s',
     chapters: {
       ch1: 'Sebelum Memulai',
       ch2: 'Penyiapan Mesin',
@@ -1547,10 +1547,13 @@ const lang: ILang = {
     nudge_later: 'Nanti saja',
     nudge_message: 'Ingin belajar lebih jauh? FLUX 101 memandu Anda dari membuka kemasan hingga pekerjaan pertama dalam 23 video singkat.\nAnda dapat membukanya kapan saja dari ikon buku di bilah alat kiri, halaman Selamat Datang, atau menu Bantuan.',
     nudge_watch: 'Tonton FLUX 101',
+    offline: 'Anda sedang offline',
+    open_on_youtube: 'Buka di YouTube',
     prev: 'Sebelumnya',
     sync_login: 'Masuk untuk menyinkronkan progres dan mendapatkan kredit',
     synced: 'Tersinkron',
     title: 'FLUX 101',
+    video_error: 'Video ini tidak dapat diputar di sini saat ini.',
     view_certificate: 'Lihat sertifikat',
     water_tank_note: 'Tidak diperlukan untuk penggunaan pertama beamo / beamo II.',
   },

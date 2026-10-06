@@ -1482,6 +1482,7 @@ const lang: ILang = {
   flux_101: {
     badge_earned: '%(badge)s — suoritit luvun ”%(chapter)s”',
     badge_locked: 'Suorita ”%(chapter)s” avataksesi merkin %(badge)s',
+    badge_unlocked: 'Merkki avattu',
     badges: {
       ch1: 'Turvallisuus ensin',
       ch2: 'Kalibroitu',
@@ -1495,7 +1496,6 @@ const lang: ILang = {
     certificate_subtitle: 'Laser Cutter 101 · Aloittelijan kurssi',
     certificate_this_certifies: 'Täten todistetaan, että',
     certificate_title: 'Suoritustodistus',
-    chapter_done: 'Luku suoritettu — merkki avattu: %(badge)s',
     chapters: {
       ch1: 'Ennen aloittamista',
       ch2: 'Laitteen käyttöönotto',
@@ -1547,10 +1547,13 @@ const lang: ILang = {
     nudge_later: 'Ehkä myöhemmin',
     nudge_message: 'Haluatko syventyä? FLUX 101 vie sinut 23 lyhyellä videolla pakkauksen avaamisesta ensimmäiseen työhön.\nVoit avata sen milloin tahansa vasemman työkalupalkin kirjakuvakkeesta, tervetulosivulta tai Ohje-valikosta.',
     nudge_watch: 'Katso FLUX 101',
+    offline: 'Olet offline-tilassa',
+    open_on_youtube: 'Avaa YouTubessa',
     prev: 'Edellinen',
     sync_login: 'Kirjaudu sisään synkronoidaksesi edistymisen ja ansaitaksesi krediittejä',
     synced: 'Synkronoitu',
     title: 'FLUX 101',
+    video_error: 'Tätä videota ei voi toistaa tässä juuri nyt.',
     view_certificate: 'Näytä todistus',
     water_tank_note: 'Ei tarvita beamo / beamo II:n ensimmäisellä käyttökerralla.',
   },

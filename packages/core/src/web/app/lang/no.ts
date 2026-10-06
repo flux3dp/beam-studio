@@ -1482,6 +1482,7 @@ const lang: ILang = {
   flux_101: {
     badge_earned: '%(badge)s — du har fullført «%(chapter)s»',
     badge_locked: 'Fullfør «%(chapter)s» for å låse opp %(badge)s',
+    badge_unlocked: 'Merke låst opp',
     badges: {
       ch1: 'Sikkerhet først',
       ch2: 'Kalibrert',
@@ -1495,7 +1496,6 @@ const lang: ILang = {
     certificate_subtitle: 'Laser Cutter 101 · Nybegynnerkurs',
     certificate_this_certifies: 'Dette bekrefter at',
     certificate_title: 'Kursbevis',
-    chapter_done: 'Kapittel fullført — merke låst opp: %(badge)s',
     chapters: {
       ch1: 'Før du begynner',
       ch2: 'Maskinoppsett',
@@ -1547,10 +1547,13 @@ const lang: ILang = {
     nudge_later: 'Kanskje senere',
     nudge_message: 'Vil du lære mer? FLUX 101 tar deg fra utpakking til første jobb i 23 korte videoer.\nDu kan når som helst åpne det fra bokikonet i verktøylinjen til venstre, velkomstsiden eller Hjelp-menyen.',
     nudge_watch: 'Se FLUX 101',
+    offline: 'Du er frakoblet',
+    open_on_youtube: 'Åpne på YouTube',
     prev: 'Forrige',
     sync_login: 'Logg inn for å synkronisere fremgangen og tjene kreditter',
     synced: 'Synkronisert',
     title: 'FLUX 101',
+    video_error: 'Denne videoen kan ikke spilles av her akkurat nå.',
     view_certificate: 'Vis sertifikat',
     water_tank_note: 'Ikke nødvendig ved første bruk av beamo / beamo II.',
   },

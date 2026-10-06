@@ -1,6 +1,7 @@
 // Lesson / chapter completion dialog (PRD §5.4), after the ClickUp draft: icon, headline, lesson,
-// chapter progress, "Back to course" / "Next ›". Opened via `showCelebrationDialog` (index.tsx) so
-// the dialog, PiP and Welcome tab all use it. The credits tag appears once the server confirms the
+// chapter progress, "Back to course" / "Next ›"; when the chapter just completed, a badge section
+// (emoji, "Badge unlocked", badge name) follows the progress bar (R10). Opened via
+// `showCelebrationDialog` (index.tsx) so the dialog, PiP and Welcome tab all use it. The credits tag appears once the server confirms the
 // grant (R12a), so it is simply absent while the backend is unreachable; XP was cut (D20).
 import React, { useEffect } from 'react';
 
@@ -34,10 +35,8 @@ const CelebrationDialog = ({ lessonId, onClose }: CelebrationDialogProps): React
   return (
     <Modal centered footer={null} onCancel={onClose} open width={400}>
       <div className={styles.body}>
-        <div className={styles.icon}>{chapterDone ? chapter.badgeEmoji : '🎉'}</div>
-        <div className={styles.headline}>
-          {chapterDone ? sprintf(t.chapter_done, { badge: t.badges[chapter.id] }) : t.lesson_done}
-        </div>
+        <div className={styles.icon}>🎉</div>
+        <div className={styles.headline}>{t.lesson_done}</div>
         <div className={styles.lesson}>
           {lessonId} {t.lessons[lessonId]}
         </div>
@@ -49,6 +48,13 @@ const CelebrationDialog = ({ lessonId, onClose }: CelebrationDialogProps): React
           </span>
         </div>
         <Progress percent={(done / chapter.lessons.length) * 100} showInfo={false} strokeColor="#1890ff" />
+        {chapterDone && (
+          <div className={styles.badge}>
+            <div className={styles.badgeEmoji}>{chapter.badgeEmoji}</div>
+            <span className={styles.badgeLabel}>{t.badge_unlocked}</span>
+            <strong>{t.badges[chapter.id]}</strong>
+          </div>
+        )}
         <div className={styles.actions}>
           <Button onClick={onClose}>{t.expand}</Button>
           <Button

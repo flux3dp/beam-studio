@@ -77,7 +77,7 @@ The v1 "continue learning" notification on every app open (formerly R2b) is **dr
 
 ### 5.2 Course dashboard
 
-Chapters → lessons with per-lesson status (✓ completed · ▶ next up · ○ not started), an overall progress meter, earned badges, credits earned, sync state, and a **Continue** CTA targeting `lastLessonId` (or 1-1). Chapters are recommended-linear, not locked (D1). Each lesson row shows its duration and, for `watched` lessons, a `+0.5` credit tag — yellow once the server confirmed the grant, grey outline (tooltip: granted once signed in and online) while pending; `marked_done` rows get a green check tag in the same slot (tooltip: marked by hand, watch the video to earn credits) (so hand-marked and watched lessons are distinguishable at a glance). lessons with a Help Center article show a grey hint line with an external-link icon that opens the article via `browser.open` (D12).
+Chapters → lessons with per-lesson status (✓ completed · ▶ next up · ○ not started), an overall progress meter, earned badges, credits earned, sync state, and the continue target (`lastLessonId` if unfinished, else the first unfinished lesson, else 1-1): the ▶ next-up marker in the list, and the lesson the window opens on. There is no separate Continue button. Chapters are recommended-linear, not locked (D1). Each lesson row shows its duration and, for `watched` lessons, a `+0.5` credit tag — yellow once the server confirmed the grant, grey outline (tooltip: granted once signed in and online) while pending; `marked_done` rows get a green check tag in the same slot (tooltip: marked by hand, watch the video to earn credits) (so hand-marked and watched lessons are distinguishable at a glance). lessons with a Help Center article show a grey hint line with an external-link icon that opens the article via `browser.open` (D12).
 
 ### 5.3 Lesson + PiP player
 
@@ -91,7 +91,7 @@ The player (`Flux101Player`) is rendered inside whichever slot is on screen. Swi
 
 ### 5.4 Completion celebration
 
-On lesson completion: confetti (`popConfetti` from the player), check-stamp on the lesson, progress bar animates, and, once the server confirms the grant, a "+0.5 FLUX+ credits" tag (R12a). A centred `CelebrationDialog` (after the ClickUp draft: icon, headline, lesson, chapter progress bar, **Back to course** / **Next ›**) opens on every completion — including when a hand-marked lesson is later actually watched, the moment its credit is earned; when the chapter just completed, its icon is the badge emoji and the headline names the badge. Course complete (23/23) → certificate modal + `rainConfetti` instead. XP is not shown (D20). Both dialogs are opened imperatively (`showCelebrationDialog` / `showCertificate` in `Flux101/index.tsx`, `dialog-controller`) and fire their own confetti on mount, so they work from the course window, from PiP and from the Welcome tab alike. The trigger is the return value of the user-driven writers: `completeLesson` (Mark done, `ENDED`) and `recordPlayback` (the 90 % tick) return a `Completion` only when that write finished a lesson or upgraded a hand-marked one, and the three call sites pass it to `celebrate()` in `Flux101/index.tsx`. Login merges, cloud pulls and server back-grants write the bucket through other paths and never celebrate (an earlier render-diff hook replayed every merged lesson on sign-in). Once complete, a 🎓 button in the dialog header and on the Welcome tab reopens the certificate (`Flux101Certificate.tsx`).
+On lesson completion: confetti (`popConfetti` from the player), check-stamp on the lesson, progress bar animates, and, once the server confirms the grant, a "+0.5 FLUX+ credits" tag (R12a). A centred `CelebrationDialog` (after the ClickUp draft: icon, headline, lesson, chapter progress bar, **Back to course** / **Next ›**) opens on every completion — including when a hand-marked lesson is later actually watched, the moment its credit is earned; when the chapter just completed, a dashed-top badge section (badge emoji with a ring animation, "Badge unlocked", badge name) follows the chapter progress bar; icon and headline stay the lesson ones (R10). Course complete (23/23) → certificate modal + `rainConfetti` instead. XP is not shown (D20). Both dialogs are opened imperatively (`showCelebrationDialog` / `showCertificate` in `Flux101/index.tsx`, `dialog-controller`) and fire their own confetti on mount, so they work from the course window, from PiP and from the Welcome tab alike. The trigger is the return value of the user-driven writers: `completeLesson` (Mark done, `ENDED`) and `recordPlayback` (the 90 % tick) return a `Completion` only when that write finished a lesson or upgraded a hand-marked one, and the three call sites pass it to `celebrate()` in `Flux101/index.tsx`. Login merges, cloud pulls and server back-grants write the bucket through other paths and never celebrate (an earlier render-diff hook replayed every merged lesson on sign-in). Once complete, a 🎓 button in the dialog header and on the Welcome tab reopens the certificate (`Flux101Certificate.tsx`).
 
 The course window header carries, next to the title: an `N / 23` tag; a yellow `+N` credits tag (hover: "N FLUX+ credits earned") when any credit was granted; and the sync state — signed in: green **Synced** / grey **Not synced** from the last `bxpref` push result (`flux101Store.synced`, undefined until the first push of the session, reset on logout); signed out: a clickable **Sign in** tag (hover: sign in to sync progress and earn credits) that opens the FLUX ID login.
 
@@ -101,9 +101,9 @@ XP is **not shown** pending the meeting decision (D20); if kept, it is derived, 
 
 - **Logged out** — course works fully on the local `anonymous` bucket; "Sign in to save your progress" affordance.
 - **Logged out, anonymous bucket already claimed by another account, online** — once per app session, on opening the course, show: *"This progress is bound to s******e@example.com. Sign in to keep earning rewards."* **[Skip] / [Sign in]** (Sign in is the primary button, on the right; Skip reuses `global.skip`). Email mask: first and last character before `@`, domain in full (D14).
-- **Offline** — dashboard renders from local progress; player shows "You're offline"; ✓ persist.
-- **Empty** — Chapter 1 expanded, "Start lesson 1-1" hero CTA.
-- **Error** — video fails → inline retry + "Open on YouTube" (`browser.open`).
+- **Offline** — dashboard renders from local progress; the player shows a "You're offline" overlay over the lesson thumbnail (`navigator.onLine` via `online` / `offline` events, `Flux101Player.tsx`); ✓ persist.
+- **Empty** — every chapter is expanded by default and the window opens on 1-1 with its thumbnail and YouTube's own play button; there is no separate hero CTA (it would duplicate the play button).
+- **Error** — the IFrame API script fails to load, or the player reports `onError` (removed, private, embedding disabled) → overlay with **Retry** (`alert.retry`; re-cues the video, or redoes the setup when the API never arrived) and **Open on YouTube** (`browser.open`, primary). Cleared on lesson switch.
 
 ## 6. Data model
 
@@ -213,7 +213,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 - **R1b** Welcome page tab "FLUX 101" rendering the dashboard inline.
 - **R1c** Help menu item `START_101_COURSE` → `showFlux101()` in the editor; on the Welcome page → `welcome` event `select-tab: 'flux-101'` (listened to in `pages/Welcome.tsx`).
 - **R2a** One-time post-tutorial prompt on `showTutorial` resolve (`showFlux101Nudge` in `Flux101/index.tsx`, called from `beambox-init.ts`). Never shown again once answered or dismissed with Esc (`nudgeDismissed`), or once the course is complete; every close path resolves the promise so the start-up chain continues. Existing users whose tutorial was skipped long ago still get it once, on their first launch with this release.
-- **R3** Dashboard lists chapters → lessons with status, progress meter, badges, credits, sync state, Continue CTA.
+- **R3** Dashboard lists chapters → lessons with status, progress meter, badges, credits, sync state; the continue target is the ▶ marker and the lesson opened by default (no separate button).
 - **R3a** Lessons with `helpArticleId` show a grey hint + external-link icon → `browser.open(helpArticleUrl(id))`.
 - **R3b** Lesson 2-1 shows "Not required for first-time use of beamo / beamo II" when the selected machine (fallback: workarea) is `fbm1`/`fbm2`.
 
@@ -229,7 +229,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 **Progress & rewards**
 - **R8** Track `playedSec` / `resumeSec` via the IFrame API; complete at ≥ 90 % played, `ENDED`, or Mark done. Monotonic.
 - **R9** Non-blocking celebration on completion; auto-advance Continue; offer Next lesson.
-- **R10** Chapter badge on chapter completion with a larger celebration.
+- **R10** Chapter completion: the lesson celebration gains a badge section (emoji with a ring animation, "Badge unlocked", badge name) below the chapter progress bar, after the ClickUp draft.
 - **R11** Certificate screen on 23/23. v1 is a screen only; "Save as image" ships when a design exists (D19).
 - **R12** Rewards are deterministic.
 - **R12a** Credit grant: on `watched` completion while logged in, call the grant endpoint (companion PRD) and set `creditGranted` on success. Failure never blocks completion or celebration; ungranted `watched` lessons retry on the next local write or login (`Flux101/sync.ts` `grant`, one request per quiet second, via `fluxId.grantFlux101Credits`). Credits UI needs no switch: the "+0.5" tag in the celebration and the "credits earned" count in the Welcome tab subtitle (next to N/23) render only from `creditGranted`, which only the server sets — so they are simply absent until the backend is deployed.
@@ -297,7 +297,7 @@ Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.t
 - Lazy-load the IFrame API and mount one iframe only when a lesson opens; never 23 iframes.
 - antd + existing dialog patterns; match `MediaTutorial.tsx` conventions where sensible.
 - Reduced-motion: `helpers/confetti.ts` already no-ops; celebration falls back to a static check.
-- Keyboard-operable controls; PiP nudgeable via arrow keys.
+- Keyboard-operable controls (antd buttons, focusable lesson rows); the PiP window moves by mouse / touch drag only.
 - Tone: encouraging, never punishing. Mark done and skipping ahead are first-class.
 
 ## 11. Success metrics

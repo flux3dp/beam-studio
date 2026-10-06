@@ -1484,6 +1484,7 @@ export interface ILang {
   flux_101: {
     badge_earned: string;
     badge_locked: string;
+    badge_unlocked: string;
     badges: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
     certificate: string;
     certificate_completed_on: string;
@@ -1491,7 +1492,6 @@ export interface ILang {
     certificate_subtitle: string;
     certificate_this_certifies: string;
     certificate_title: string;
-    chapter_done: string;
     chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
     claimed_warning: string;
     close: string;
@@ -1513,10 +1513,13 @@ export interface ILang {
     nudge_later: string;
     nudge_message: string;
     nudge_watch: string;
+    offline: string;
+    open_on_youtube: string;
     prev: string;
     sync_login: string;
     synced: string;
     title: string;
+    video_error: string;
     view_certificate: string;
     water_tank_note: string;
   };

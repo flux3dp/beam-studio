@@ -1482,6 +1482,7 @@ const lang: ILang = {
   flux_101: {
     badge_earned: '%(badge)s：已看完「%(chapter)s」',
     badge_locked: '看完「%(chapter)s」解锁 %(badge)s',
+    badge_unlocked: '解锁徽章',
     badges: {
       ch1: '安全第一',
       ch2: '校正达人',
@@ -1495,7 +1496,6 @@ const lang: ILang = {
     certificate_subtitle: 'Laser Cutter 101 · 入门课程',
     certificate_this_certifies: '兹证明',
     certificate_title: '完成证书',
-    chapter_done: '章节完成，解锁徽章：%(badge)s',
     chapters: {
       ch1: '开始之前',
       ch2: '机器设置',
@@ -1547,10 +1547,13 @@ const lang: ILang = {
     nudge_later: '以后再说',
     nudge_message: '想更进一步吗？FLUX 101 有 23 支短片，带你从开箱到发送第一个任务。\n之后也可以随时从左侧工具栏的书本图标、欢迎页或“帮助”菜单打开。',
     nudge_watch: '观看 FLUX 101',
+    offline: '当前离线',
+    open_on_youtube: '在 YouTube 打开',
     prev: '上一课',
     sync_login: '登录以同步进度并获得点数',
     synced: '已同步',
     title: 'FLUX 101',
+    video_error: '目前无法在这里播放此视频。',
     view_certificate: '查看证书',
     water_tank_note: 'beamo / beamo II 首次使用无需此步骤。',
   },
