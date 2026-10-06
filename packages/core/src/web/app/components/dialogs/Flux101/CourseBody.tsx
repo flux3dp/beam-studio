@@ -1,6 +1,6 @@
 // Lesson list + current lesson (title, player, footer). Shared by the course dialog and the
 // Welcome-page tab (PRD §5.2); reads the current lesson from `flux101Store`.
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import {
   CheckOutlined,
@@ -16,7 +16,7 @@ import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
-import { LESSONS } from './catalog';
+import { helpArticleIdFor, helpArticleUrl, LESSONS } from './catalog';
 import styles from './CourseBody.module.scss';
 import Flux101Player from './Flux101Player';
 import { useFlux101Store } from './flux101Store';
@@ -28,8 +28,9 @@ const CourseBody = (): React.JSX.Element => {
   const { lessonId, selectLesson } = useFlux101Store();
   const bucket = useFlux101Bucket();
   const workarea = useDocumentStore((s) => s.workarea);
-  const machine = deviceMaster.currentDevice?.info?.model ?? workarea;
+  const machine = useMemo(() => deviceMaster.currentDevice?.info?.model ?? workarea, [workarea]);
   const lesson = LESSONS.find((l) => l.id === lessonId)!;
+  const articleId = helpArticleIdFor(lesson, machine);
   const index = LESSONS.indexOf(lesson);
   const done = isLessonComplete(bucket, lessonId);
 
@@ -45,8 +46,8 @@ const CourseBody = (): React.JSX.Element => {
             {lesson.id}
           </Tag>
           <Typography.Text strong>{t.lessons[lesson.id]}</Typography.Text>
-          {lesson.helpArticleUrl && (
-            <Typography.Link className={styles.help} onClick={() => browser.open(lesson.helpArticleUrl!)}>
+          {articleId && (
+            <Typography.Link className={styles.help} onClick={() => browser.open(helpArticleUrl(articleId))}>
               {t.help_article} <ExportOutlined />
             </Typography.Link>
           )}

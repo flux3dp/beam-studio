@@ -120,7 +120,7 @@ XP is **not shown** pending the meeting decision (D20); if kept, it is derived, 
 | `chapters[].lessons[].title` | i18n key | |
 | `chapters[].lessons[].youtubeId` | string | |
 | `chapters[].lessons[].durationSec` | number | For the 90 % threshold. |
-| `chapters[].lessons[].helpArticleUrl` | string? | Help Center companion article. **URL list still to be collected** (Engineering will scrape once Product supplies the Help Center links). |
+| `chapters[].lessons[].helpArticleId` | string? | Zendesk article id (shared by every locale); `helpArticleUrl(id)` in `catalog.ts` builds `https://support.flux3dp.com/hc/{zh-tw\|en-us}/articles/{id}` — only those two locales, since other translations are not guaranteed to exist. Filled 2026-10-06 for 1-3, 3-1, 3-2, 3-3, 4-1 … 4-5, 5-3 from the Beam Studio and 材料 categories; 3-4 / 3-5 / 4-6 / 5-1 have no matching article yet. The machine-operation lessons (1-2, 2-1, 2-2, 2-3, 3-6, 5-2) carry a `{ model: id }` map instead — resolved for the current machine (`deviceMaster.currentDevice`, else the workarea model; `helpArticleIdFor`), e.g. 2-1 → each model's 水箱加水, 3-6 → its 夾爪型旋轉軸 install article, 5-2 → its 材料切不斷; models without such an article (no water tank on Ador / HEXA RF / Promark, no focusing article on Promark) show no link. 2-4 and 4-7 have no fitting per-model article either. |
 
 The **2-1 Filling Water Tank** note for beamo / beamo II is a hardcoded special case in the lesson view (D13), not a generic `applicabilityNotes` structure: shown when `deviceMaster.currentDevice?.info.model` is `fbm1`/`fbm2`, falling back to `useDocumentStore().workarea` when no machine is selected (D21). Informational only.
 
@@ -214,7 +214,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 - **R1c** Help menu item `START_101_COURSE` → `showFlux101()` in the editor; on the Welcome page → `welcome` event `select-tab: 'flux-101'` (listened to in `pages/Welcome.tsx`).
 - **R2a** One-time post-tutorial prompt on `showTutorial` resolve (`showFlux101Nudge` in `Flux101/index.tsx`, called from `beambox-init.ts`). Never shown again once answered (`nudgeDismissed`) or once the course is complete. Existing users whose tutorial was skipped long ago still get it once, on their first launch with this release.
 - **R3** Dashboard lists chapters → lessons with status, progress meter, badges, credits, sync state, Continue CTA.
-- **R3a** Lessons with `helpArticleUrl` show a grey hint + external-link icon → `browser.open`.
+- **R3a** Lessons with `helpArticleId` show a grey hint + external-link icon → `browser.open(helpArticleUrl(id))`.
 - **R3b** Lesson 2-1 shows "Not required for first-time use of beamo / beamo II" when the selected machine (fallback: workarea) is `fbm1`/`fbm2`.
 
 **Player**
@@ -333,7 +333,7 @@ One release, no feature flag (D22 struck), dogfooded through the existing alpha 
 
 Added 2026-09-18 (engineering review):
 - **D11** Store source data only; derive XP / credits / badges / certificate.
-- **D12** Keep `helpArticleUrl` (grey hint + external link); drop `relatedFeature`.
+- **D12** Keep the Help Center link per lesson (grey hint + external link, now `helpArticleId` + locale-aware URL); drop `relatedFeature`.
 - **D13** 2-1 note is a hardcoded special case, not a generic notes structure.
 - **D14** Per-owner buckets with `claimedBy`; mirror on claim; other users never inherit a claimed bucket; once-per-session warning with masked email.
 - **D15** No autoplay; user presses play.
