@@ -112,30 +112,45 @@ const complete = (cur: LessonProgress, via: CompletedVia): LessonProgress =>
     ? cur // monotonic: never downgrade watched → marked_done, never re-complete
     : { ...cur, completedAt: now(), completedVia: via, status: 'completed' };
 
-/** Called from player tick while PLAYING. */
-export const recordPlayback = (lessonId: string, playedDelta: number, resumeSec: number): void =>
+/**
+ * What a user action just completed (§5.4 celebrates exactly these). Login merges, cloud pulls and
+ * server grants write the bucket through other paths and never produce one.
+ */
+export interface Completion {
+  lessonId: string;
+  /** false when a hand-marked lesson was upgraded to watched */
+  newlyCompleted: boolean;
+}
+
+const writeLesson = (lessonId: string, step: (cur: LessonProgress) => LessonProgress): Completion | undefined => {
+  let completion: Completion | undefined;
+
   updateBucket((b) => {
     const cur = b.lessons[lessonId] ?? { playedSec: 0, resumeSec: 0, status: 'in_progress' };
+    const next = step(cur);
+
+    if (next.status === 'completed' && (cur.status !== 'completed' || cur.completedVia !== next.completedVia)) {
+      completion = { lessonId, newlyCompleted: cur.status !== 'completed' };
+    }
+
+    return { ...b, lastLessonId: lessonId, lessons: { ...b.lessons, [lessonId]: next } };
+  });
+
+  return completion;
+};
+
+/** Called from player tick while PLAYING. */
+export const recordPlayback = (lessonId: string, playedDelta: number, resumeSec: number): Completion | undefined =>
+  writeLesson(lessonId, (cur) => {
     const duration = LESSONS.find((l) => l.id === lessonId)?.durationSec ?? Infinity;
     const next = { ...cur, playedSec: cur.playedSec + playedDelta, resumeSec: Math.max(cur.resumeSec, resumeSec) };
 
-    return {
-      ...b,
-      lastLessonId: lessonId,
-      lessons: {
-        ...b.lessons,
-        [lessonId]: next.playedSec >= WATCHED_RATIO * duration ? complete(next, 'watched') : next,
-      },
-    };
+    return next.playedSec >= WATCHED_RATIO * duration ? complete(next, 'watched') : next;
   });
 
 /** ENDED event → 'watched'; the Mark done button → 'marked_done'. */
-export const completeLesson = (lessonId: string, via: CompletedVia): void =>
-  updateBucket((b) => {
-    const cur = b.lessons[lessonId] ?? { playedSec: 0, resumeSec: 0, status: 'in_progress' };
-
-    return { ...b, lastLessonId: lessonId, lessons: { ...b.lessons, [lessonId]: complete(cur, via) } };
-  });
+export const completeLesson = (lessonId: string, via: CompletedVia): Completion | undefined =>
+  writeLesson(lessonId, (cur) => complete(cur, via));
 
 export const setLastLesson = (lessonId: string): void => updateBucket((b) => ({ ...b, lastLessonId: lessonId }));
 export const dismissNudge = (): void => updateBucket((b) => ({ ...b, nudgeDismissed: true }));

@@ -10,6 +10,8 @@ import { LESSONS } from './catalog';
 import { useFlux101Store } from './flux101Store';
 import { completeLesson, getBucket, recordPlayback } from './progress';
 
+import { celebrate } from '.';
+
 interface YTPlayer {
   cueVideoById: (opts: { startSeconds?: number; videoId: string }) => void;
   destroy: () => void;
@@ -75,9 +77,12 @@ export const useYouTubePlayer = (host: RefObject<HTMLDivElement | null>, lessonI
             wasPlaying = data === YT.PlayerState.PLAYING || data === YT.PlayerState.BUFFERING;
 
             if (data === YT.PlayerState.PLAYING) {
-              tick = setInterval(() => recordPlayback(lesson.current, 1, player.current!.getCurrentTime()), 1000);
+              tick = setInterval(
+                () => celebrate(recordPlayback(lesson.current, 1, player.current!.getCurrentTime())),
+                1000,
+              );
             } else if (data === YT.PlayerState.ENDED) {
-              completeLesson(lesson.current, 'watched');
+              celebrate(completeLesson(lesson.current, 'watched'));
             }
           },
         },

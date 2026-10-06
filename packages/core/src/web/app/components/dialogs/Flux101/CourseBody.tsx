@@ -23,6 +23,8 @@ import { useFlux101Store } from './flux101Store';
 import LessonList from './LessonList';
 import { completeLesson, isLessonComplete, useFlux101Bucket } from './progress';
 
+import { celebrate } from '.';
+
 const CourseBody = (): React.JSX.Element => {
   const t = useI18n().flux_101;
   const { lessonId, selectLesson } = useFlux101Store();
@@ -78,7 +80,7 @@ const CourseBody = (): React.JSX.Element => {
             <Button
               disabled={done}
               icon={done ? <CheckOutlined /> : undefined}
-              onClick={() => completeLesson(lessonId, 'marked_done')}
+              onClick={() => celebrate(completeLesson(lessonId, 'marked_done'))}
             >
               {done ? t.completed : t.mark_done}
             </Button>

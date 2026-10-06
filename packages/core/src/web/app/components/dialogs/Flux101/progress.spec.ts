@@ -1,5 +1,6 @@
 import { setStorage } from '@core/app/stores/storageStore';
 
+import { LESSONS } from './catalog';
 import {
   adoptOnLogin,
   claimedByOther,
@@ -97,12 +98,21 @@ describe('actions on the anonymous bucket', () => {
   });
 
   test('completeLesson is monotonic: marked_done upgrades to watched, never the reverse', () => {
-    completeLesson('2-1', 'marked_done');
+    expect(completeLesson('2-1', 'marked_done')).toEqual({ lessonId: '2-1', newlyCompleted: true });
     expect(getBucket().lessons['2-1'].completedVia).toBe('marked_done');
-    completeLesson('2-1', 'watched');
+    expect(completeLesson('2-1', 'watched')).toEqual({ lessonId: '2-1', newlyCompleted: false });
     expect(getBucket().lessons['2-1'].completedVia).toBe('watched');
-    completeLesson('2-1', 'marked_done');
+    expect(completeLesson('2-1', 'marked_done')).toBeUndefined();
+    expect(completeLesson('2-1', 'watched')).toBeUndefined(); // nothing to celebrate twice
     expect(getBucket().lessons['2-1'].completedVia).toBe('watched');
+  });
+
+  test('recordPlayback reports the completion only on the tick that crosses the threshold', () => {
+    const duration = LESSONS.find((l) => l.id === '1-1')!.durationSec;
+
+    expect(recordPlayback('1-1', Math.ceil(duration * 0.9) - 1, 0)).toBeUndefined();
+    expect(recordPlayback('1-1', 1, 0)).toEqual({ lessonId: '1-1', newlyCompleted: true });
+    expect(recordPlayback('1-1', 1, 0)).toBeUndefined();
   });
 
   test('derived: badges, continue target, course completion', () => {

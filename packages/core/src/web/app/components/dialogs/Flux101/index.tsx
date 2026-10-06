@@ -9,7 +9,7 @@ import CelebrationDialog from './CelebrationDialog';
 import Flux101Certificate from './Flux101Certificate';
 import Flux101Dialog from './Flux101Dialog';
 import { useFlux101Store } from './flux101Store';
-import { dismissNudge, getBucket, isCourseComplete } from './progress';
+import { type Completion, dismissNudge, getBucket, isCourseComplete } from './progress';
 import { startFlux101Sync, warnIfClaimed } from './sync';
 
 const DIALOG_ID = 'flux-101';
@@ -47,6 +47,18 @@ export const showCertificate = (celebrate = false): void => {
     CERTIFICATE_ID,
     <Flux101Certificate celebrate={celebrate} onClose={() => popDialogById(CERTIFICATE_ID)} />,
   );
+};
+
+/**
+ * §5.4: lesson dialog for a completion a user action just produced — or the certificate with
+ * confetti rain when that completion made it 23/23. Upgrading an already finished course (a
+ * hand-marked lesson actually watched) celebrates the lesson, not the certificate again.
+ */
+export const celebrate = (completion: Completion | undefined): void => {
+  if (!completion) return;
+
+  if (completion.newlyCompleted && isCourseComplete(getBucket())) showCertificate(true);
+  else showCelebrationDialog(completion.lessonId);
 };
 
 /**

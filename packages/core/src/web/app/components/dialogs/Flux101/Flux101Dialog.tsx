@@ -16,7 +16,6 @@ import styles from './Flux101Dialog.module.scss';
 import { useFlux101Store } from './flux101Store';
 import PipPlayer from './PipPlayer';
 import { ANONYMOUS, completedCount, creditsEarned, isCourseComplete, ownerKey, useFlux101Bucket } from './progress';
-import { useCelebration } from './useCelebration';
 
 import { showCertificate } from './index';
 
@@ -33,8 +32,6 @@ const Flux101Dialog = ({ onClose }: Flux101DialogProps): React.JSX.Element => {
   const credits = creditsEarned(bucket);
   // useFlux101Bucket re-renders on login / logout, so reading the owner here stays current
   const loggedIn = ownerKey() !== ANONYMOUS;
-
-  useCelebration();
 
   // Close (✕) unmounts the whole window, which destroys the player and stops playback (R5a).
   useEffect(() => {

@@ -15,7 +15,6 @@ import {
   useFlux101Bucket,
 } from '@core/app/components/dialogs/Flux101/progress';
 import { warnIfClaimed } from '@core/app/components/dialogs/Flux101/sync';
-import { useCelebration } from '@core/app/components/dialogs/Flux101/useCelebration';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import useI18n from '@core/helpers/useI18n';
 
@@ -28,7 +27,6 @@ const TabFlux101 = (): React.JSX.Element => {
   const done = completedCount(bucket);
   const credits = creditsEarned(bucket);
 
-  useCelebration();
   useEffect(warnIfClaimed, []);
 
   return (
