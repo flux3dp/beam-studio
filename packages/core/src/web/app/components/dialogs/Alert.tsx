@@ -79,6 +79,7 @@ const Alert = ({
     links,
     message,
     messageIcon,
+    onClose,
     reverse = false,
     width = undefined,
   },
@@ -226,7 +227,10 @@ const Alert = ({
         </div>
       }
       maskClosable={false}
-      onCancel={popFromStack}
+      onCancel={() => {
+        popFromStack();
+        onClose?.();
+      }}
       open
       title={caption}
       width={width}

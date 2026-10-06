@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Status** | Draft v2 — revised after engineering review |
+| **Status** | Implemented on `feat/flux-101` (2026-10-06), PR pending; companion flux-id PR #682 open, credits UI appears once it deploys |
 | **Author** | Product (AI PM agent); revised with Engineering |
 | **Created** | 2026-06-30 |
-| **Revised** | 2026-09-18 (decisions D11–D22 below supersede the v1 text) |
+| **Revised** | 2026-10-06 (decisions D11–D24 below supersede the v1 text; §8a is the merge checklist) |
 | **Tracking** | ClickUp <https://app.clickup.com/t/5719332/86ey3weh9> (v1 PRD and the interactive HTML mockup are attached there; the mockup is intentionally **not** in this repo) |
 | **Target product** | Beam Studio (desktop + web) |
 | **Owner area** | Onboarding / Tutorials, FLUX ID account, Welcome page, Left control bar, Help menu |
@@ -256,9 +256,11 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 | Shared file | Change | Callers — expected behaviour |
 |---|---|---|
 | `constants/storageConstants.ts`, `interfaces/IStorage.d.ts` | add key `beam-studio-101` | `storageStore` init / `storage.getStore()` — all other keys unaffected |
-| `lang/en.ts`, `lang/zh-tw.ts`, `interfaces/ILang.ts` | add `flux_101.*` block and `topbar.menu.flux_101` | every other lang consumer — untouched keys; remaining 21 lang files filled before PR |
+| `lang/*.ts` (all 23), `interfaces/ILang.ts` | add `global.skip`, the `flux_101.*` block and `topbar.menu.flux_101` | every other lang consumer — untouched keys |
 | `actions/beambox/menuActions.ts` | add `START_101_COURSE` (window in the editor, tab switch on Welcome via the `welcome` event emitter) | all other menu ids — unchanged handlers |
 | `helpers/eventEmitterFactory.ts` | add the `welcome` channel | every other channel — unchanged |
+| `styles/_variables.scss` | add `$reward-yellow` (credits tag tint; documented in the `styling` skill palette) | existing variables — unchanged |
+| `pages/Welcome.module.scss` | add the `.flux-101` tab slot (`flex: 1; min-height: 0`) and `.book-icon` scale | other tab slots — unchanged |
 | `TopBar/useMenuData.ts` | add Help item `START_101_COURSE` (not in `MENU_ITEMS`, so always enabled) | Help menu order: About, Start Tutorial, UI Intro, **FLUX 101**, …; attach/detach enable logic — unchanged |
 | `apps/app/src/node/menu-manager.ts` | add the same Help item to the Electron template | native menu — other items unchanged |
 | `apps/app/src/main.ts` `setReferer()` | filter adds `www.youtube.com` / `www.youtube-nocookie.com`, sets `Referer: https://flux3dp.com/` for them | flux-id requests — still get their own origin as Referer (unchanged branch) |
@@ -269,7 +271,7 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 | `helpers/api/flux-id/activity.ts` (+ `index.ts` default export) | add `grantFlux101Credits(lessonIds)` → `POST /api/beam-studio/flux101/grant`, resolves to the server's `granted_lesson_ids` or `undefined` | `getPreference` / `setPreference` / `submitRating` / `recordMachines` — unchanged |
 | `actions/beambox/beambox-init.ts` `showStartUpDialogs` | `await showFlux101Nudge()` right after the tutorial block, gated by `!isMobile()` only (no machine connection needed, unlike the tutorial) | gesture tutorial, first calibration, tutorial prompt, changelog, path-engine dialog, announcements — same order; the nudge resolves at once when already answered or the course is complete |
 
-Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.tsx` via `dialog-controller`, the PrintAndCut pattern).
+Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.tsx` via `dialog-controller`, the PrintAndCut pattern). Docs only: `.agents/skills/styling/SKILL.md` is a new skill (spacing scale, palette, 16:9 fit pattern) written during the SCSS cleanup; `AGENTS.md` carries no change from this branch.
 
 ## 9. Buckets, claim & merge
 
@@ -343,7 +345,7 @@ Added 2026-09-18 (engineering review):
 - **D19** Certificate v1 is a screen; image export waits for a design. Draft layout attached in ClickUp.
 - **D20** **Meeting items:** XP (likely cut — no use for it), certificate design ownership, credit abuse handling (device id / IP, multi-account, public endpoint).
 - **D21** Machine note source: `deviceMaster.currentDevice` first, then workarea.
-- ~~**D22** Feature flag via Experimental settings~~ — struck 2026-10-05: the feature is additive UI (entries, a dialog, a start-up nudge), never touches the canvas or job output, and sync degrades silently while the backend column is missing. The Experimental category is also dev-only (`isDev()`), so a flag there would have blocked alpha/beta dogfooding, and the Electron native Help item could not be gated anyway. Credits UI keeps its own switch until the backend lands.
+- ~~**D22** Feature flag via Experimental settings~~ — struck 2026-10-05: the feature is additive UI (entries, a dialog, a start-up nudge), never touches the canvas or job output, and sync degrades silently while the backend column is missing. The Experimental category is also dev-only (`isDev()`), so a flag there would have blocked alpha/beta dogfooding, and the Electron native Help item could not be gated anyway. The credits UI needs no switch either: it renders only from server-confirmed `creditGranted`, so it is simply absent until the flux-id endpoint deploys (§12).
 - **D23** (2026-09-30) Bucket key is the lower-cased FLUX ID email, not a uid (`IUser` only guarantees `email`, and the masked-email prompt needs it anyway). `nudgeDismissedAt` timestamp replaced by a `nudgeDismissed: true` flag — nothing re-prompts on a schedule. `marked_done` upgrades to `watched` if the user later plays ≥ 90 %; never the reverse.
 - **D24** (2026-10-02) Dropped the single `position: fixed` iframe laid over the active slot (the mockup technique). It needed a `z-index` above every antd modal, so dialogs opened later (e.g. machine info) rendered *under* the video, and it had already caused the Electron black-player stacking bug and would need scroll tracking for the Welcome embed. The player now lives in the slot; dialog ⇄ PiP remounts it and `useYouTubePlayer` autoplays only when the video was playing at the moment of the switch (`wasPlaying`, reset on close).
 

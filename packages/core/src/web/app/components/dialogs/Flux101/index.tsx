@@ -75,6 +75,7 @@ export const showFlux101Nudge = (): Promise<void> => {
       callbacks: [() => answer(false), () => answer(true)],
       caption: t.title,
       message: t.nudge_message,
+      onClose: () => answer(false),
       primaryButtonIndex: 1,
     });
   });
