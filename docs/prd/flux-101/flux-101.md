@@ -198,12 +198,12 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 
 ## 7. Player (the new infrastructure)
 
-- **YouTube IFrame Player API** on `youtube-nocookie.com` (`host` option), loaded lazily once. Used for: `onStateChange` (PLAYING / PAUSED / ENDED), a 1 s `setInterval` while PLAYING that increments `playedSec` and records `resumeSec` via `getCurrentTime()`, `seekTo(resumeSec)` on open, and `pauseVideo()` on tab blur (D16). Counting *played* seconds rather than max position means scrubbing to the end does not count as watched.
+- **YouTube IFrame Player API** on `youtube-nocookie.com` (`host` option), loaded lazily once. Used for: `onStateChange` (PLAYING / PAUSED / ENDED), a 1 s `setInterval` while PLAYING that counts played seconds in memory and writes them with `resumeSec` (`getCurrentTime()`) every 10 s and on every state change, lesson switch and unmount — a bucket write is a full config-file write plus an IPC broadcast, so not once a second; `start` / `cueVideoById({ startSeconds })` at `resumeSec` on open, and `pauseVideo()` on tab blur (D16). Counting *played* seconds rather than max position means scrubbing to the end does not count as watched.
 - **No autoplay.** The user presses play; videos need sound and autoplay-with-sound is blocked by browser policy anyway (D15).
 - **PiP shell** — `react-draggable` (already a dependency; `DraggableModal` is the precedent). Fixed width, **no resize** (D17). Bounded to the viewport. Position kept in component state for the session only.
 - **One player at a time**, mounted in the active slot (§5.3); the dialog is `destroyOnClose` so its player is gone while PiP is up. The launcher lives in `Flux101/index.tsx` via `dialog-controller`.
 - **Pause on tab switch** — Electron: `TabEvents.TabBlurred` (already consumed in `pages/Beambox.tsx`); web: `visibilitychange`.
-- **Lifecycle** — close stops playback; switching lessons reuses the player (`loadVideoById`) and seeks to that lesson's `resumeSec`.
+- **Lifecycle** — close stops playback; switching lessons reuses the player (`cueVideoById`, no autoplay) at that lesson's `resumeSec`, after writing what the previous lesson still had pending.
 - **Mobile** (≤ 600 px, `mixins.is-mobile`) — dialog mode only; no PiP (D17). The course body stacks: player and footer first, lesson list below, the whole body scrolls; the window takes the viewport height (`100dvh − 40px`) instead of the fixed 560 px. Same stylesheet serves the Welcome tab.
 
 ## 8. Requirements
@@ -237,7 +237,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 **Persistence & sync**
 - **R13** Local persistence under storage key `beam-studio-101` via `storageStore` (cross-tab sync included). Add the key to `getStorageKeys()` and the `Storage` interface.
 - **R14** When logged in, push the active bucket with `setPreference({ flux101_progress: bucket })` and hydrate with `getPreference('flux101_progress')` on login and app launch. Server key is `flux101_progress` (Python attribute naming; see companion PRD).
-- **R15** Sync triggers: lesson completion events and login hydration only. No idle/poll-tick writes. Fail silently; retry opportunistically.
+- **R15** Sync triggers: every bucket write made in this tab (`onBucketWrite` in `progress.ts`; playback writes are batched per §7) → push debounced 5 s, plus login hydration. Tabs that only receive the change over IPC do not push. Fail silently; the push retries on the next write, a grant the server did not answer ok (offline, 429, endpoint missing) waits 10 min before it is asked again.
 - **R16** Claim and merge per §9.
 
 **Content & i18n**
@@ -288,7 +288,7 @@ Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.t
 
 **Logout / session expiry:** active bucket becomes `anonymous` (which mirrors the last claimer's progress). No cloud writes while logged out.
 
-**Implementation:** pure merge/claim logic in `Flux101/progress.ts` (`adoptOnLogin`, `maskEmail`, `claimedByOther`, unit-tested); side effects in `Flux101/sync.ts` — `startFlux101Sync()` (run once from `Flux101/index.tsx`) listens to `fluxIDEvents 'update-user'`, pulls `bxpref/flux101_progress`, merges, pushes the whole bucket after every local write (5 s quiet-period debounce), and `warnIfClaimed()` shows the §5.5 alert once per session. Until the backend column exists the pull answers `INVALID_KEY` and everything stays local-only.
+**Implementation:** pure merge/claim logic in `Flux101/progress.ts` (`adoptOnLogin`, `maskEmail`, `claimedByOther`, unit-tested); side effects in `Flux101/sync.ts` — `startFlux101Sync()` (run once from `Flux101/index.tsx`) listens to `fluxIDEvents 'update-user'`, pulls `bxpref/flux101_progress`, merges, pushes the whole bucket after every write made in this tab (5 s quiet-period debounce; `onBucketWrite`), and `warnIfClaimed()` shows the §5.5 alert once per session. Until the backend column exists the pull answers `INVALID_KEY` and everything stays local-only.
 
 **Catalog version drift:** progress matches by stable lesson id; chapter/course completion is recomputed against the current catalog.
 
@@ -315,7 +315,7 @@ One release, no feature flag (D22 struck), dogfooded through the existing alpha 
 ## 13. Edge cases & risks
 
 - **YouTube blocked / video removed** → inline error + "Open on YouTube"; dead ids need a patch release until the catalog is CMS-fed.
-- **Two Electron tabs with the course open** → each tab has its own player; tab blur pauses the inactive one (R7b). Not otherwise coordinated in v1.
+- **Two Electron tabs with the course open** → each tab has its own player; tab blur pauses the inactive one (R7b). Only the tab that wrote a change pushes / grants it (R15); on login every tab still pulls and merges once (idempotent, bounded by the tab limit). Not otherwise coordinated in v1.
 - **Concurrent progress on two devices** → completion-biased merge; a lesson may re-show as in-progress, never lost.
 - **Credit farming** → server-idempotent per (user, lesson), `watched`-only, capped at 11.5/user by construction. The client cannot prove watching and the endpoint is discoverable (public repo); accepted exposure, see companion PRD §4 and the meeting items in D20.
 - **Anonymous bucket claimed by A, used by B** → warned once per session; B's watching still lands in the anonymous bucket and will be picked up by A. Accepted.

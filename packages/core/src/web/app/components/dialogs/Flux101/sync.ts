@@ -1,15 +1,15 @@
 // FLUX ID sync (PRD §9, R14, R19a). Cloud copy lives in the `bxpref` preference `flux101_progress`
 // (companion PRD adds the column; until then the server answers INVALID_KEY and this degrades to
-// local-only). Login → pull + completion-biased merge + claim the anonymous bucket; every local
-// write while signed in → debounced push of the whole bucket, plus a credit-grant request for any
-// `watched` lesson the server has not confirmed yet (R12a; the server is idempotent per lesson).
+// local-only). Login → pull + completion-biased merge + claim the anonymous bucket; every bucket
+// write made in this tab while signed in → debounced push of the whole bucket, plus a credit-grant
+// request for any `watched` lesson the server has not confirmed yet (R12a; the server is idempotent
+// per lesson). Tabs that only receive the change over IPC do not sync it again.
 import { funnel } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import { useStorageStore } from '@core/app/stores/storageStore';
 import fluxId, { fluxIDEvents } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
 
@@ -22,8 +22,8 @@ import {
   getBucket,
   markCreditsGranted,
   maskEmail,
+  onBucketWrite,
   ownerKey,
-  STORAGE_KEY,
   ungrantedLessonIds,
 } from './progress';
 
@@ -49,12 +49,18 @@ const push = funnel(
   { minQuietPeriodMs: 5000, triggerAt: 'end' },
 );
 
+// A grant the server did not answer ok (offline, 429 from its 30/hour throttle, endpoint not
+// deployed yet) is not asked again before this; the lessons stay pending and the next write after
+// the window retries. Without it every playback write would re-fire the request.
+const GRANT_BACKOFF_MS = 10 * 60_000;
+let grantBlockedUntil = 0;
+
 // R12a: one request per quiet second covers the completion tick and the post-login back-grant alike
 const grant = funnel(
   async () => {
     const owner = ownerKey();
 
-    if (owner === ANONYMOUS) return;
+    if (owner === ANONYMOUS || Date.now() < grantBlockedUntil) return;
 
     const pending = ungrantedLessonIds(getBucket(owner));
 
@@ -62,7 +68,13 @@ const grant = funnel(
 
     const granted = await fluxId.grantFlux101Credits(pending);
 
-    if (granted && ownerKey() === owner) markCreditsGranted(granted, owner);
+    if (!granted) {
+      grantBlockedUntil = Date.now() + GRANT_BACKOFF_MS;
+
+      return;
+    }
+
+    if (ownerKey() === owner) markCreditsGranted(granted, owner);
   },
   { minQuietPeriodMs: 1000, triggerAt: 'end' },
 );
@@ -97,8 +109,8 @@ export const startFlux101Sync = (): void => {
 
   started = true;
   fluxIDEvents.on('update-user', onUserChange);
-  useStorageStore.subscribe((s, prev) => {
-    if (s[STORAGE_KEY] !== prev[STORAGE_KEY] && ownerKey() !== ANONYMOUS) {
+  onBucketWrite(() => {
+    if (ownerKey() !== ANONYMOUS) {
       push.call();
       grant.call();
     }

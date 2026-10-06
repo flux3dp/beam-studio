@@ -14,8 +14,10 @@ import {
   maskEmail,
   mergeBuckets,
   mergeLesson,
+  onBucketWrite,
   readStorage,
   recordPlayback,
+  setLastLesson,
   STORAGE_KEY,
   ungrantedLessonIds,
   updateBucket,
@@ -191,5 +193,16 @@ describe('credits', () => {
     expect(lesson).toMatchObject({ completedVia: 'watched', creditGranted: true, playedSec: 0, status: 'completed' });
     expect(getBucket().lessons['9-9']).toBeUndefined();
     expect(ungrantedLessonIds(getBucket())).toEqual([]);
+  });
+});
+
+describe('onBucketWrite', () => {
+  test('fires once per write made here, after the storage holds the new bucket', () => {
+    const seen: string[] = [];
+
+    onBucketWrite(() => seen.push(getBucket().lastLessonId!));
+    completeLesson('1-1', 'watched');
+    setLastLesson('1-2');
+    expect(seen).toEqual(['1-1', '1-2']);
   });
 });

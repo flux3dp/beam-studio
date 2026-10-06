@@ -1,6 +1,10 @@
 // One YouTube IFrame Player at a time (PRD §7). Loads the API once, cues the current lesson at its
-// resume point, ticks playedSec while PLAYING, completes on ENDED, and pauses when the tab loses
+// resume point, counts playedSec while PLAYING, completes on ENDED, and pauses when the tab loses
 // focus. Never autoplays on open; only resumes across the dialog ⇄ PiP remount (D24).
+//
+// Played seconds are counted in memory and written every WRITE_EVERY_SEC seconds and on every
+// state change, lesson switch and unmount: a bucket write is a full config-file write plus an IPC
+// broadcast to every tab (R15), so once a second was far too often.
 import { type RefObject, useEffect, useRef } from 'react';
 
 import { TabEvents } from '@core/app/constants/ipcEvents';
@@ -51,6 +55,8 @@ const loadApi = (): Promise<YTNamespace> => {
 let wasPlaying = false;
 let carried: null | { lessonId: string; sec: number } = null;
 
+const WRITE_EVERY_SEC = 10;
+
 const videoIdOf = (lessonId: string): string => LESSONS.find((l) => l.id === lessonId)!.youtubeId;
 const resumeOf = (lessonId: string): number => getBucket().lessons[lessonId]?.resumeSec ?? 0;
 
@@ -58,10 +64,21 @@ const resumeOf = (lessonId: string): number => getBucket().lessons[lessonId]?.re
 export const useYouTubePlayer = (host: RefObject<HTMLDivElement | null>, lessonId: string): void => {
   const player = useRef<null | YTPlayer>(null);
   const lesson = useRef(lessonId);
+  // seconds played since the last write, and the lesson they belong to
+  const pending = useRef({ lessonId, sec: 0 });
 
   lesson.current = lessonId;
 
+  const flush = () => {
+    const { lessonId: id, sec } = pending.current;
+
+    pending.current.sec = 0;
+
+    if (sec && player.current) celebrate(recordPlayback(id, sec, player.current.getCurrentTime()));
+  };
+
   useEffect(() => {
+    const played = pending.current; // same object for the hook's lifetime; only its fields change
     let tick: ReturnType<typeof setInterval> | undefined;
     let disposed = false;
 
@@ -74,13 +91,16 @@ export const useYouTubePlayer = (host: RefObject<HTMLDivElement | null>, lessonI
         events: {
           onStateChange: ({ data }: { data: number }) => {
             clearInterval(tick);
+            flush();
             wasPlaying = data === YT.PlayerState.PLAYING || data === YT.PlayerState.BUFFERING;
 
             if (data === YT.PlayerState.PLAYING) {
-              tick = setInterval(
-                () => celebrate(recordPlayback(lesson.current, 1, player.current!.getCurrentTime())),
-                1000,
-              );
+              pending.current.lessonId = lesson.current;
+              tick = setInterval(() => {
+                pending.current.sec += 1;
+
+                if (pending.current.sec >= WRITE_EVERY_SEC) flush();
+              }, 1000);
             } else if (data === YT.PlayerState.ENDED) {
               celebrate(completeLesson(lesson.current, 'watched'));
             }
@@ -112,13 +132,19 @@ export const useYouTubePlayer = (host: RefObject<HTMLDivElement | null>, lessonI
       document.removeEventListener('visibilitychange', onVisibility);
       communicator.off(TabEvents.TabBlurred, pause);
 
-      // Methods exist only once the iframe is up. Persist the position (furthest-point rule) and
-      // carry the exact one for a remount; a close drops the carried state so reopening starts
-      // paused at the furthest point.
+      // Methods exist only once the iframe is up. Persist the played seconds and the position
+      // (furthest-point rule) and carry the exact one for a remount; a close drops the carried
+      // state so reopening starts paused at the furthest point.
       const sec = player.current?.getCurrentTime?.();
       const closing = useFlux101Store.getState().view === 'closed';
 
-      if (sec) recordPlayback(lesson.current, 0, sec);
+      if (sec) {
+        const done = recordPlayback(played.lessonId, played.sec, sec);
+
+        played.sec = 0;
+
+        if (!closing) celebrate(done); // no surprise dialog over a window the user just closed
+      }
 
       carried = closing || !sec ? null : { lessonId: lesson.current, sec };
       wasPlaying &&= !closing;
@@ -129,8 +155,11 @@ export const useYouTubePlayer = (host: RefObject<HTMLDivElement | null>, lessonI
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
 
-  // lesson switch: cue (no autoplay) at that lesson's resume point
+  // lesson switch: write what the previous lesson still has pending, then cue (no autoplay) the new
+  // one at its resume point
   useEffect(() => {
+    flush();
+    pending.current.lessonId = lessonId;
     player.current?.cueVideoById({ startSeconds: Math.floor(resumeOf(lessonId)), videoId: videoIdOf(lessonId) });
   }, [lessonId]);
 };

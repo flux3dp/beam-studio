@@ -52,6 +52,17 @@ export const ownerKey = (): string => getCurrentUser()?.email?.toLowerCase() ?? 
 
 export const readStorage = (): Flux101Storage => useStorageStore.getState()[STORAGE_KEY] ?? {};
 export const getBucket = (owner = ownerKey()): Flux101Bucket => readStorage()[owner] ?? emptyBucket();
+
+const writeListeners = new Set<() => void>();
+
+/**
+ * Runs after every bucket write made in this tab. Other Electron tabs see the change through the
+ * storage store (IPC) but not through this, so cloud sync happens once, from the writer.
+ */
+export const onBucketWrite = (fn: () => void): void => {
+  writeListeners.add(fn);
+};
+
 /** A signed-in owner's writes also refresh the anonymous mirror (§9), so logout never shows an empty course. */
 export const writeBucket = (owner: string, bucket: Flux101Bucket): void => {
   const next: Flux101Storage = { ...readStorage(), [owner]: bucket };
@@ -59,6 +70,7 @@ export const writeBucket = (owner: string, bucket: Flux101Bucket): void => {
   if (owner !== ANONYMOUS) next[ANONYMOUS] = { ...bucket, claimedBy: owner };
 
   useStorageStore.getState().set(STORAGE_KEY, next);
+  writeListeners.forEach((fn) => fn());
 };
 export const updateBucket = (fn: (bucket: Flux101Bucket) => Flux101Bucket, owner = ownerKey()): void =>
   writeBucket(owner, { ...fn(getBucket(owner)), updatedAt: now() });
