@@ -191,7 +191,7 @@ export const markCreditsGranted = (ids: string[], owner = ownerKey()): void =>
       const cur = lessons[id];
 
       if (cur) {
-        lessons[id] = { ...cur, creditGranted: true };
+        lessons[id] = { ...cur, completedVia: 'watched', creditGranted: true }; // a grant is proof of watching
       } else if (LESSON_IDS.has(id)) {
         lessons[id] = {
           completedAt: now(),

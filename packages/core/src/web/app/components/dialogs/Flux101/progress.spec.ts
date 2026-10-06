@@ -178,10 +178,12 @@ describe('credits', () => {
   });
 
   test('markCreditsGranted flags the lessons the server confirmed and leaves the rest alone', () => {
-    updateBucket((b) => ({ ...b, lessons: { '1-1': watched(), '1-2': watched() } }));
-    markCreditsGranted(['1-1']);
+    updateBucket((b) => ({ ...b, lessons: { '1-1': watched(), '1-2': watched(), '1-3': marked() } }));
+    markCreditsGranted(['1-1', '1-3']);
     expect(getBucket().lessons['1-1'].creditGranted).toBe(true);
     expect(getBucket().lessons['1-2'].creditGranted).toBeUndefined();
+    // granted on another install: the grant proves it was watched there
+    expect(getBucket().lessons['1-3']).toMatchObject({ completedVia: 'watched', creditGranted: true });
     expect(ungrantedLessonIds(getBucket())).toEqual(['1-2']);
   });
 

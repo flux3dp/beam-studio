@@ -282,7 +282,7 @@ Not touched: `actions/dialog-caller.tsx` (the launcher lives in `Flux101/index.t
 1. `A = merge(local[A], cloud[A], anonymous)`.
 2. Write `A` to `local[A]`, push to cloud.
 3. Mark `anonymous.claimedBy = A` and **mirror `A` into `anonymous`** (do not clear it), so a session expiry does not show an empty course.
-4. Request grants for every `watched` lesson in `A` with `creditGranted !== true` (server is idempotent). The reply lists every lesson the account was ever granted: known lessons get `creditGranted`, and a granted lesson the local bucket has never seen is recorded as a `watched` completion with `playedSec: 0` — the grant is server truth and the local record follows it (decided 2026-10-05).
+4. Request grants for every `watched` lesson in `A` with `creditGranted !== true` (server is idempotent). The reply lists every lesson the account was ever granted: known lessons get `creditGranted` and `completedVia: 'watched'` (a hand-marked lesson granted elsewhere was watched there, so the list and the header agree), and a granted lesson the local bucket has never seen is recorded as a `watched` completion with `playedSec: 0` — the grant is server truth and the local record follows it (decided 2026-10-05).
 
 **Login as user B while `anonymous.claimedBy === A`:** `B = merge(local[B], cloud[B])`. The anonymous bucket is **not** merged into B; it belongs to A. The once-per-session warning (§5.5) is what tells B this before they watch.
 
