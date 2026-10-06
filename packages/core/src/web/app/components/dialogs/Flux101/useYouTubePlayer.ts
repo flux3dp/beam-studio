@@ -85,7 +85,11 @@ export const useYouTubePlayer = (host: RefObject<HTMLDivElement | null>, lessonI
     loadApi().then((YT) => {
       if (disposed || !host.current) return;
 
-      const start = carried?.lessonId === lessonId ? carried.sec : resumeOf(lessonId);
+      // the API may resolve after a lesson switch; the switch effect is a no-op until the player exists
+      const id = lesson.current;
+      const start = carried?.lessonId === id ? carried.sec : resumeOf(id);
+
+      played.lessonId = id;
 
       player.current = new YT.Player(host.current, {
         events: {
@@ -115,7 +119,7 @@ export const useYouTubePlayer = (host: RefObject<HTMLDivElement | null>, lessonI
           rel: 0,
           start: Math.floor(start),
         },
-        videoId: videoIdOf(lessonId),
+        videoId: videoIdOf(id),
         width: '100%',
       });
     });
