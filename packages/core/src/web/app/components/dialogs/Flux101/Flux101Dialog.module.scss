@@ -1,3 +1,4 @@
+@use '@core/styles/mixins' as mixins;
 @use '@core/styles/variables' as variables;
 
 .course {
@@ -5,6 +6,9 @@
   flex-direction: column;
   height: 560px;
   background: #fff;
+  @include mixins.is-mobile {
+    @include mixins.viewport-size(100, 40px, height);
+  }
 }
 .credits {
   background: rgba(variables.$reward-yellow, 0.25);
@@ -24,6 +28,22 @@
   height: 56px;
   padding: 0 10px 0 16px;
   border-bottom: 1px solid variables.$panelBorderColor;
+  @include mixins.is-mobile {
+    flex-wrap: wrap;
+    height: auto;
+    padding: 8px 10px 8px 16px;
+  }
+}
+// desktop: the tags sit inline after the title; phone: their own row under title + actions
+.tags {
+  display: contents;
+  @include mixins.is-mobile {
+    display: flex;
+    flex-basis: 100%;
+    flex-wrap: wrap;
+    gap: 8px;
+    order: 1;
+  }
 }
 .logo {
   font-size: 20px;

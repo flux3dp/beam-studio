@@ -204,7 +204,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 - **One player at a time**, mounted in the active slot (§5.3); the dialog is `destroyOnClose` so its player is gone while PiP is up. The launcher lives in `Flux101/index.tsx` via `dialog-controller`.
 - **Pause on tab switch** — Electron: `TabEvents.TabBlurred` (already consumed in `pages/Beambox.tsx`); web: `visibilitychange`.
 - **Lifecycle** — close stops playback; switching lessons reuses the player (`loadVideoById`) and seeks to that lesson's `resumeSec`.
-- **Mobile** — dialog mode only; no PiP (D17).
+- **Mobile** (≤ 600 px, `mixins.is-mobile`) — dialog mode only; no PiP (D17). The course body stacks: player and footer first, lesson list below, the whole body scrolls; the window takes the viewport height (`100dvh − 40px`) instead of the fixed 560 px. Same stylesheet serves the Welcome tab.
 
 ## 8. Requirements
 

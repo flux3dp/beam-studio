@@ -1,3 +1,4 @@
+@use '@core/styles/mixins' as mixins;
 @use '@core/styles/variables' as variables;
 
 .actions {
@@ -7,6 +8,11 @@
   display: flex;
   flex: 1;
   min-height: 0;
+  // phone: player first, lesson list below, the whole body scrolls
+  @include mixins.is-mobile {
+    flex-direction: column;
+    overflow-y: auto;
+  }
 }
 .list {
   width: 260px;
@@ -14,6 +20,13 @@
   padding: 8px 4px 12px;
   border-right: 1px solid variables.$panelBorderColor;
   overflow-y: auto;
+  @include mixins.is-mobile {
+    width: auto;
+    order: 1;
+    border-right: 0;
+    border-top: 1px solid variables.$panelBorderColor;
+    overflow: visible;
+  }
 }
 .main {
   display: flex;
@@ -22,10 +35,15 @@
   gap: 10px;
   min-width: 0;
   padding: 16px;
+  @include mixins.is-mobile {
+    flex: none;
+    padding: 12px;
+  }
 }
 .lessonHeader {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
 }
 .help {
@@ -44,6 +62,15 @@
   > div {
     width: min(100%, calc(100cqh * 16 / 9));
   }
+  // stacked: no height to fit into, the player is simply full width (aspect-ratio sets its height)
+  @include mixins.is-mobile {
+    container-type: normal;
+    display: block;
+    flex: none;
+    > div {
+      width: 100%;
+    }
+  }
 }
 .audioNote {
   font-size: 12px;
@@ -51,6 +78,7 @@
 .footer {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: auto;
 }
