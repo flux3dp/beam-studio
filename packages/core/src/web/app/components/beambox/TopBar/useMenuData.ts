@@ -261,6 +261,7 @@ const useMenuData = (email?: string): MenuNode[] => {
                 { device, id: 'LOG_CAMERA', label: menuCms.log.camera, type: 'item' as const },
                 { device, id: 'LOG_PLAYER', label: menuCms.log.player, type: 'item' as const },
                 { device, id: 'LOG_ROBOT', label: menuCms.log.robot, type: 'item' as const },
+                { device, id: 'LOG_LIGHTBURN', label: 'LightBurn', type: 'item' as const },
               ],
               label: menuCms.download_log,
               type: 'submenu' as const,

@@ -371,6 +371,9 @@ export default {
   LOG_HARDWARE: (device: IDeviceInfo): void => {
     getLog(device, 'fluxhald.log');
   },
+  LOG_LIGHTBURN: (device: IDeviceInfo): void => {
+    getLog(device, 'gradient_telnet_bridge.log');
+  },
   LOG_NETWORK: (device: IDeviceInfo): void => {
     getLog(device, 'fluxnetworkd.log');
   },
