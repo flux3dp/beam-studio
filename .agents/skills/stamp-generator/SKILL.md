@@ -142,20 +142,32 @@ and the top/left repeat units come from the drawing; the other corners and the b
 their mirrors, so tile junctions match even when the designer's file isn't symmetric. A style with
 four different corners would need a flag to opt out. A portrait box is laid out landscape and rotated
 90° so long-side motifs follow the long sides. **square** (100×100 = 25 mm), **circle** (120×120 =
-30 mm) and **oval** (180×120 = 45×30 mm) have no `slice`: `fitStyleBorder` scales the design canvas
-(the viewBox, which the designers drew as the stamp box) uniformly onto `bounds` and centers it, so
-ornaments shrink with the stamp and keep their drawn margins. The ink itself is not fitted — asymmetric
-ornaments make it off-square (floral_1 is 99.2×100). An oval box off 3:2 (the 50×30 templates) gets a
-small gap between frame and cut on the long axis rather than a stretched frame (user decision). Both
+30 mm) and **oval** (180×120 = 45×30 mm) have no `slice`: `fitStyleBorder` maps the design canvas
+(the viewBox, which the designers drew as the stamp box) onto `bounds` per axis, so ornaments shrink
+with the stamp, keep their drawn margins and meet the cut on every side. The ink itself is not fitted —
+asymmetric ornaments make it off-square (floral_1 is 99.2×100). An oval box off 3:2 (the 50×30
+templates) stretches the frame 11%; a uniform fit was tried first and its bare rim on the long axis
+read worse than the stretch. Both
 caches (`inkCache`, slice `cache`) are keyed by the style object: keys like `postage` / `vintage_1`
-repeat across families. Skipped from design's folders: the "adjustable" stroked variants
+repeat across families. Round styles are drawn to a square canvas, so after the fit they shrink until
+their farthest ink point (ellipse metric) lies on the cut (the vintage frames: ~85%).
+**Content fits the hole**: a decorative frame reaches further in than the stroke ring the design was
+laid out against, so `buildStampShape` scales the whole design (SVG frames, text, elements) about the
+box center by `holeScale`: the Minkowski gauge of the ring's inner shape (`hypot(u/a, v/b)` for an
+ellipse, `roundedRectGauge` with a side test + corner quadratic for rects) evaluated over the frame's
+flattened vertices, minimum wins (0.54 wreath … 0.97 radial dots). Both measurements flatten to
+`FLATNESS_MM` (0.02 mm, a stated precision rather than a sample count) and are memoized per style /
+box / scale because the 6000-curve florals cost ~50 ms and every keystroke rebuilds. Stroke mode is
+untouched (scale 1). Default stroke width rounds to 0.05 mm at the default size
+(`defaultLineWidth` in the store). Skipped from design's folders: the "adjustable" stroked variants
 (可調式波浪匡 / 可調整波浪 / 可調整虛線 — a wavy or dashed line at the user's width, a different
 feature; dashed already exists in stroke mode) and the two Illustrator working files; the stroked
 square 同心框 was hand-outlined into filled rings (`square/concentric.svg`).
 A style's cut is the sharp box;
 the stroke ring's cut keeps `radius`. `BorderDef.shape` (`BorderShape`: `rect | square | circle | oval`, default `rect`) picks
-the family in `BORDER_STYLES`; circle / oval templates still carry their rings in their SVGs and need
-`border` defs (an elliptical stroke ring) before the Border tab can offer them styles.
+the family in `BORDER_STYLES`. For `circle` / `oval` the ring is an ellipse (`ringPath`, used for the
+stroke ring, the dashes, the parsed outline and a style's cut). `BorderDef.dashed` is the initial dash
+state (the post / passport date stamps).
 `BorderDef.styles: false` keeps a template to the plain line (name_seal, square_seal_3col: the
 characters fill the box; design_rect_01/02: the title bar spans the box; a decorative frame collides). The
 Border tab picks styles from the shared `@core/app/widgets/IconSelectorGrid` (moved out of the
@@ -163,8 +175,10 @@ keychain generator) with the raw SVG as thumbnail and no labels. Border template
 wb_confidential_01, world_passport_rect, office_rect_date_01, the portrait name_rect_04, and the
 squares name_seal / square_seal_3col (100 px box, ring 1/30), illu_camera, jp_rakkan_01 (boxes = their
 old frame edges; SVGs deleted) and the split templates design_rect_01/02 (ring removed from the SVG,
-the filled title bar stays there as a frame for the knockout text). Only the TW 統編章 pair still uses
-SVG frames.
+the filled title bar stays there as a frame for the knockout text). The circle (wb_corpseal_01, wb_notary_01, illu_paw, office_round_check_01, office_round_post_01,
+jp_sumi_01) and oval (company_oval_02, world_india_oval, office_oval_recv_01, world_passport_oval)
+catalog templates lost their outer ring the same way; inner rings and date rules stay in the SVG. Only
+the TW 統編章 pair still uses SVG outer frames.
 
 ## Text Slots (`TextPlacement`)
 

@@ -18,6 +18,8 @@ import { JP_FONTS, KAI_FONTS } from './fonts';
 
 export const CATALOG_TEMPLATES: StampTemplate[] = [
   {
+    // Frame built at runtime (Border tab); box = the converter's 45×30 mm outer ring edge.
+    border: { bounds: { height: 92.68, width: 140, x: 5, y: 28.66 }, lineWidth: 2.76, shape: 'oval' },
     category: 'oval',
     elements: [
       { bounds: { height: 6.3, width: 6.3, x: 17, y: 71.9 }, id: 'star_left', shapeKey: 'stamp/star' },
@@ -185,6 +187,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 50×30 mm outer ring edge.
+    border: { bounds: { height: 83.3, width: 140, x: 5, y: 33.35 }, lineWidth: 2.48, shape: 'oval' },
     category: 'oval',
     elements: [
       { bounds: { height: 5.7, width: 5.7, x: 17.2, y: 72.2 }, id: 'star_left', shapeKey: 'stamp/star' },
@@ -532,6 +536,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 50×30 mm outer ring edge.
+    border: { bounds: { height: 82.94, width: 139.64, x: 5.18, y: 33.53 }, lineWidth: 2.12, shape: 'oval' },
     category: 'oval',
     elements: [],
     id: 'office_oval_recv_01',
@@ -562,6 +568,13 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 45×30 mm outer ring edge.
+    border: {
+      bounds: { height: 94.14, width: 142.4, x: 3.8, y: 27.93 },
+      dashed: true,
+      lineWidth: 2.41,
+      shape: 'oval',
+    },
     category: 'oval',
     elements: [],
     id: 'world_passport_oval',

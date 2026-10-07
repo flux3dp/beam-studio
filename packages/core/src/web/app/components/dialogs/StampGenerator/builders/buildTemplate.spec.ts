@@ -60,4 +60,13 @@ describe('parseTemplate', () => {
     // paper draws ellipses as 4 béziers, 0.03% off a true circle.
     expect(Math.abs(outline.area) / (Math.PI * 71.36 ** 2)).toBeCloseTo(1, 3);
   });
+
+  it('uses an ellipse as the outline of an oval border template', () => {
+    const { frames, outline } = parse('world_passport_oval');
+
+    expect(frames).toHaveLength(2);
+    expect(outline.bounds.width).toBeCloseTo(142.4, 3);
+    expect(outline.bounds.height).toBeCloseTo(94.14, 3);
+    expect(Math.abs(outline.area) / (Math.PI * 71.2 * 47.07)).toBeCloseTo(1, 3);
+  });
 });

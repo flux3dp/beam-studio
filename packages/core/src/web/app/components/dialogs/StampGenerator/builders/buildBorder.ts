@@ -130,10 +130,11 @@ const canvasOf = (svg: string): [number, number] => {
 };
 
 /**
- * A square / circle / oval style placed onto the box as drawn: the design canvas is scaled uniformly
- * onto the box and centered, so ornaments shrink with the stamp and keep their drawn margins. The ink
- * itself isn't fitted — asymmetric ornaments make it off-square. An oval box off the drawn 3:2 ratio
- * gets a small gap between frame and cut on its long axis rather than a stretched frame.
+ * A square / circle / oval style placed onto the box as drawn: the design canvas is mapped onto the box
+ * per axis, so ornaments shrink with the stamp and keep their drawn margins, and the frame meets the
+ * cut on every side. The ink itself isn't fitted — asymmetric ornaments make it off-square. An oval
+ * box off the drawn 3:2 ratio stretches the frame (11% on the 50×30 templates) rather than leaving a
+ * bare rim on the long axis; a uniform fit was tried first and the rim read worse than the stretch.
  */
 const fitStyleBorder = (bounds: Bounds, style: BorderStyle, pxPerMm: number, shape?: BorderShape): paper.PathItem => {
   if (!inkCache.has(style)) inkCache.set(style, importStyle(style));
@@ -143,13 +144,10 @@ const fitStyleBorder = (bounds: Bounds, style: BorderStyle, pxPerMm: number, sha
     insert: true,
   });
   const [w, h] = canvasOf(style.svg);
-  const scale = Math.min(bounds.width / w, bounds.height / h);
   const center = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
 
-  item.scale(scale, new paper.Point(0, 0));
-  item.translate(
-    new paper.Point(bounds.x + (bounds.width - w * scale) / 2, bounds.y + (bounds.height - h * scale) / 2),
-  );
+  item.scale(bounds.width / w, bounds.height / h, new paper.Point(0, 0));
+  item.translate(new paper.Point(bounds.x, bounds.y));
 
   // Round designs are drawn to a square canvas, so corner ornaments (the vintage frames) reach past
   // the ellipse cut at 45°. Shrink until the farthest ink point (in the ellipse metric) lies on it.
