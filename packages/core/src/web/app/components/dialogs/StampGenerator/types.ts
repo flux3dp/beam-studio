@@ -95,8 +95,9 @@ export interface StampSize {
 }
 
 /**
- * Top-bar group. The first four are outer frame shapes; `tw_company` (last, zh-tw only) is the regulated
- * Taiwan 統編章 pair, whose frames are fixed by regulation and so never take a border style.
+ * Top-bar group. The first four are outer frame shapes; `tw_company` is the regulated Taiwan 統編章 pair,
+ * whose frames are fixed by regulation and so never take a border style. A group is shown only while it
+ * has a template visible in the active language (see `locales`).
  */
 export const TEMPLATE_CATEGORIES = ['circle', 'oval', 'square', 'rect', 'tw_company'] as const;
 
@@ -107,6 +108,8 @@ export interface StampTemplate {
   category: TemplateCategory;
   elements: ElementSlotDef[];
   id: string;
+  /** Listed only in these UI languages (e.g. ['zh-tw'] for Taiwan-regulated seals); unset = every language. */
+  locales?: string[];
   nameKey: keyof ILang['stamp_generator']['templates'];
   /**
    * Default text font, tried in order by postscript name; a candidate is skipped when it doesn't

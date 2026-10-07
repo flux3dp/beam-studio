@@ -1,3 +1,5 @@
+import i18n from '@core/helpers/i18n';
+
 import type { StampSize, StampTemplate } from '../types';
 
 import { CATALOG_TEMPLATES } from './catalog';
@@ -26,6 +28,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       { bounds: { height: 12.4, width: 12.4, x: 128.6, y: 68.8 }, id: 'logo_right' },
     ],
     id: 'oval_company',
+    locales: ['zh-tw'],
     nameKey: 'oval_company',
     preferredFonts: KAI_FONTS,
     sizes: [{ widthMm: 51 }],
@@ -71,6 +74,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       { bounds: { height: 12.4, width: 12.4, x: 118.6, y: 68.8 }, id: 'logo_right' },
     ],
     id: 'rect_company',
+    locales: ['zh-tw'],
     nameKey: 'rect_company',
     preferredFonts: KAI_FONTS,
     sizes: [{ widthMm: 41 }],
@@ -128,6 +132,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     category: 'square',
     elements: [],
     id: 'name_seal',
+    locales: ['zh-tw'],
     nameKey: 'name_seal',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
@@ -156,6 +161,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     category: 'square',
     elements: [],
     id: 'square_seal_3col',
+    locales: ['zh-tw'],
     nameKey: 'square_seal_3col',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
@@ -189,5 +195,9 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
   },
   ...CATALOG_TEMPLATES,
 ];
+
+/** Templates offered in the active UI language (a template with `locales` is listed only in those). */
+export const getVisibleTemplates = (): StampTemplate[] =>
+  STAMP_TEMPLATES.filter((template) => !template.locales || template.locales.includes(i18n.getActiveLang()));
 
 export const getTemplateById = (id: string): StampTemplate | undefined => STAMP_TEMPLATES.find((t) => t.id === id);

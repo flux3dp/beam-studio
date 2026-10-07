@@ -251,49 +251,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
-    // Frame built at runtime (Border tab); box = the converter's 47×18 mm outer frame edge.
-    border: { bounds: { height: 52.68, width: 140, x: 5, y: 48.66 }, lineWidth: 3.01, radius: 3.76 },
-    category: 'rect',
-    elements: [],
-    id: 'wb_confidential_01',
-    nameKey: 'wb_confidential_01',
-    preferredFonts: ['Georgia', 'Montserrat-Medium'],
-    sharedFont: true,
-    sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
-    texts: [
-      {
-        bounds: { height: 17, width: 117.8, x: 16.1, y: 66 },
-        fit: 'shrink',
-        fontSize: 17,
-        id: 'r1',
-        labelKey: 'text',
-        letterSpacing: 0.8,
-        placeholder: 'CONFIDENTIAL',
-      },
-    ],
-  },
-  {
-    // Frame built at runtime (Border tab); box = the converter's 47×18 mm outer frame edge.
-    border: { bounds: { height: 52.08, width: 139.62, x: 5.19, y: 48.96 }, lineWidth: 2.26, radius: 3.4 },
-    category: 'rect',
-    elements: [],
-    id: 'company_rect_02',
-    nameKey: 'company_rect_02',
-    preferredFonts: KAI_FONTS,
-    sharedFont: true,
-    sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
-    texts: [
-      {
-        bounds: { height: 15, width: 118.1, x: 16, y: 66.1 },
-        fit: 'shrink',
-        fontSize: 15,
-        id: 'r1',
-        labelKey: 'title_name',
-        placeholder: '專案經理  王大明',
-      },
-    ],
-  },
-  {
     // Frame built at runtime (Border tab); box = the converter's 50×24 mm outer frame edge.
     border: { bounds: { height: 65.94, width: 140, x: 5, y: 42.03 }, lineWidth: 1.85, radius: 9.47 },
     category: 'rect',
@@ -336,6 +293,49 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         id: 'r2',
         labelKey: 'date_port',
         placeholder: '2026.09.18 · TPE',
+      },
+    ],
+  },
+  {
+    // Frame built at runtime (Border tab); box = the converter's 47×18 mm outer frame edge.
+    border: { bounds: { height: 52.68, width: 140, x: 5, y: 48.66 }, lineWidth: 3.01, radius: 3.76 },
+    category: 'rect',
+    elements: [],
+    id: 'wb_confidential_01',
+    nameKey: 'wb_confidential_01',
+    preferredFonts: ['Georgia', 'Montserrat-Medium'],
+    sharedFont: true,
+    sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
+    texts: [
+      {
+        bounds: { height: 17, width: 117.8, x: 16.1, y: 66 },
+        fit: 'shrink',
+        fontSize: 17,
+        id: 'r1',
+        labelKey: 'text',
+        letterSpacing: 0.8,
+        placeholder: 'CONFIDENTIAL',
+      },
+    ],
+  },
+  {
+    // Frame built at runtime (Border tab); box = the converter's 47×18 mm outer frame edge.
+    border: { bounds: { height: 52.08, width: 139.62, x: 5.19, y: 48.96 }, lineWidth: 2.26, radius: 3.4 },
+    category: 'rect',
+    elements: [],
+    id: 'company_rect_02',
+    nameKey: 'company_rect_02',
+    preferredFonts: KAI_FONTS,
+    sharedFont: true,
+    sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
+    texts: [
+      {
+        bounds: { height: 15, width: 118.1, x: 16, y: 66.1 },
+        fit: 'shrink',
+        fontSize: 15,
+        id: 'r1',
+        labelKey: 'title_name',
+        placeholder: '專案經理  王大明',
       },
     ],
   },
@@ -625,7 +625,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         fontSize: 10,
         id: 'text',
         labelKey: 'main_text',
-        placeholder: '手作標籤',
+        placeholder: 'FLUX WORKSHOP',
       },
       {
         bounds: { height: 6, width: 118.6, x: 15.7, y: 88.2 },
@@ -668,7 +668,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         fontSize: 17,
         id: 'text',
         labelKey: 'main_text',
-        placeholder: '出品認證',
+        placeholder: 'CERTIFIED PRODUCT',
       },
       {
         bounds: { height: 10, width: 118.6, x: 15.7, y: 98.6 },

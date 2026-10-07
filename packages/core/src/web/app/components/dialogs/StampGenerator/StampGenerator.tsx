@@ -5,7 +5,6 @@ import { Button } from 'antd';
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import DraggableModal from '@core/app/widgets/DraggableModal';
-import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 
 import OptionsPanel from './components/OptionsPanel';
@@ -13,7 +12,7 @@ import Preview from './components/Preview';
 import TemplatePicker from './components/TemplatePicker';
 import { exportToCanvas } from './exportToCanvas';
 import styles from './StampGenerator.module.scss';
-import { STAMP_TEMPLATES } from './templates';
+import { getVisibleTemplates } from './templates';
 import { TEMPLATE_CATEGORIES } from './types';
 import type { TemplateCategory } from './types';
 import useStampStore from './useStampStore';
@@ -29,8 +28,8 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
   const category = useStampStore((s) => s.template?.category);
   const isModified = useStampStore((s) => s.isModified);
   const selectTemplate = useStampStore((s) => s.selectTemplate);
-  // The regulated Taiwan 統編章 pair only makes sense to zh-tw users.
-  const categories = TEMPLATE_CATEGORIES.filter((value) => value !== 'tw_company' || i18n.getActiveLang() === 'zh-tw');
+  const templates = getVisibleTemplates();
+  const categories = TEMPLATE_CATEGORIES.filter((value) => templates.some((template) => template.category === value));
 
   const handleTemplateChange = useCallback(
     (newTemplateId: string) => {
@@ -56,11 +55,11 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
     (value: TemplateCategory) => {
       if (value === category) return;
 
-      const first = STAMP_TEMPLATES.find((template) => template.category === value);
+      const first = templates.find((template) => template.category === value);
 
       if (first) handleTemplateChange(first.id);
     },
-    [category, handleTemplateChange],
+    [category, templates, handleTemplateChange],
   );
 
   const handleImport = useCallback(async () => {

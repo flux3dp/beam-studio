@@ -213,9 +213,11 @@ the TW 統編章 pair still uses SVG outer frames.
   oval_company / rect_company). The dialog's top bar (a row of antd outlined Buttons in
   `StampGenerator.tsx`) reads the current template's category, filters the picker to it, and picking one
   selects its first template through the normal switch-template path (so the unsaved-changes warning
-  still applies). No extra store state. `tw_company` is listed only when `i18n.getActiveLang()` is
-  `zh-tw`, and the dialog opens on the first circle template so every language starts on a visible
-  category. The TW seals keep their SVG frames: their outer rings are fixed by regulation, never a border.
+  still applies). No extra store state. A template with `locales` (the TW 統編章 pair and the two
+  公司小章 square seals: `['zh-tw']`) is listed only in those UI languages (`getVisibleTemplates()` in
+  templates/index.ts), and a category button appears only while it has a visible template, so
+  `tw_company` shows for zh-tw alone. The dialog opens on the first circle template. The TW seals keep
+  their SVG frames: their outer rings are fixed by regulation, never a border.
 
 Text measurement mounts the element off-screen (`withMounted`); glyph outlines come from
 `convertTextsToPath` (fontkit). Every converted line goes through `resolveOverlaps` because static

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
 
-import { STAMP_TEMPLATES } from '../templates';
+import { getVisibleTemplates } from '../templates';
 import type { TemplateCategory } from '../types';
 
 import styles from './TemplatePicker.module.scss';
@@ -20,24 +20,26 @@ const TemplatePicker = ({ category, currentTemplateId, onSelect }: TemplatePicke
 
   return (
     <div className={styles.picker}>
-      {STAMP_TEMPLATES.filter((template) => template.category === category).map((template) => {
-        const label = t.templates[template.nameKey];
+      {getVisibleTemplates()
+        .filter((template) => template.category === category)
+        .map((template) => {
+          const label = t.templates[template.nameKey];
 
-        return (
-          <button
-            className={classNames(styles.item, { [styles.active]: template.id === currentTemplateId })}
-            key={template.id}
-            onClick={() => onSelect(template.id)}
-            title={label}
-          >
-            {template.thumbnail ? (
-              <img alt={label} src={template.thumbnail} />
-            ) : (
-              <div className={styles.placeholder}>{label}</div>
-            )}
-          </button>
-        );
-      })}
+          return (
+            <button
+              className={classNames(styles.item, { [styles.active]: template.id === currentTemplateId })}
+              key={template.id}
+              onClick={() => onSelect(template.id)}
+              title={label}
+            >
+              {template.thumbnail ? (
+                <img alt={label} src={template.thumbnail} />
+              ) : (
+                <div className={styles.placeholder}>{label}</div>
+              )}
+            </button>
+          );
+        })}
     </div>
   );
 };
