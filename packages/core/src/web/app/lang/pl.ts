@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'Generator breloków',
     material_test_generator: 'Generator Testu Materiału',
     puzzle_generator: 'Generator puzzli',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'Generator pieczątek',
     text_options: {
       font_family: 'Rodzina czcionek',
       font_settings: 'Ustawienia czcionki',

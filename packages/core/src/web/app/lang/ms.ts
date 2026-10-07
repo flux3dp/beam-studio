@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'Penjana Rantai Kunci',
     material_test_generator: 'Penjana Ujian Bahan',
     puzzle_generator: 'Penjana teka-teki',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'Penjana Cop',
     text_options: {
       font_family: 'Keluarga fon',
       font_settings: 'Tetapan fon',

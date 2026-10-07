@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: '키체인 생성기',
     material_test_generator: '재질 테스트 생성기',
     puzzle_generator: '퍼즐 생성기',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: '도장 생성기',
     text_options: {
       font_family: '글꼴 모음',
       font_settings: '글꼴 설정',

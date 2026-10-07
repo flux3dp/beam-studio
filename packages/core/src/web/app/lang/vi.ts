@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'Trình tạo móc khóa',
     material_test_generator: 'Trình tạo thử nghiệm vật liệu',
     puzzle_generator: 'Trình tạo ghép hình',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'Trình tạo con dấu',
     text_options: {
       font_family: 'Họ phông chữ',
       font_settings: 'Cài đặt phông chữ',

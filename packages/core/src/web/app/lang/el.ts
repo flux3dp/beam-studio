@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'Γεννήτρια μπρελόκ',
     material_test_generator: 'Γεννήτρια Δοκιμής Υλικού',
     puzzle_generator: 'Γεννήτρια παζλ',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'Γεννήτρια σφραγίδων',
     text_options: {
       font_family: 'Οικογένεια γραμματοσειράς',
       font_settings: 'Ρυθμίσεις γραμματοσειράς',

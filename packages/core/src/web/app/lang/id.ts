@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'Generator Gantungan Kunci',
     material_test_generator: 'Generator Uji Material',
     puzzle_generator: 'Pembuat puzzle',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'Generator Stempel',
     text_options: {
       font_family: 'Keluarga huruf',
       font_settings: 'Pengaturan huruf',

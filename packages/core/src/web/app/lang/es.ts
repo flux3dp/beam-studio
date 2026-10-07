@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'Generador de llaveros',
     material_test_generator: 'Generador de pruebas de material',
     puzzle_generator: 'Generador de puzles',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'Generador de sellos',
     text_options: {
       font_family: 'Familia de fuentes',
       font_settings: 'Configuración de fuente',

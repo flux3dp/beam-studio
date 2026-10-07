@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'Avaimenperägeneraattori',
     material_test_generator: 'Materiaalitestin Generaattori',
     puzzle_generator: 'Palapeligeneraattori',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'Leimageneraattori',
     text_options: {
       font_family: 'Kirjasinperhe',
       font_settings: 'Kirjasinasetukset',

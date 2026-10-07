@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'Generátor přívěsků',
     material_test_generator: 'Generátor testování materiálu',
     puzzle_generator: 'Generátor puzzle',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'Generátor razítek',
     text_options: {
       font_family: 'Rodina písem',
       font_settings: 'Nastavení písma',

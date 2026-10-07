@@ -1535,7 +1535,7 @@ const lang: ILang = {
     keychain_generator: 'เครื่องสร้างพวงกุญแจ',
     material_test_generator: 'ตัวสร้างการทดสอบวัสดุ',
     puzzle_generator: 'เครื่องสร้างจิ๊กซอว์',
-    stamp_generator: 'Stamp Generator',
+    stamp_generator: 'เครื่องสร้างตราประทับ',
     text_options: {
       font_family: 'ตระกูลตัวอักษร',
       font_settings: 'การตั้งค่าตัวอักษร',
