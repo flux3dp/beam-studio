@@ -1,6 +1,6 @@
 // Lesson list + current lesson (title, player, footer). Shared by the course dialog and the
 // Welcome-page tab (PRD §5.2); reads the current lesson from `flux101Store`.
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import {
   CheckOutlined,
@@ -30,7 +30,7 @@ const CourseBody = (): React.JSX.Element => {
   const { lessonId, selectLesson } = useFlux101Store();
   const bucket = useFlux101Bucket();
   const workarea = useDocumentStore((s) => s.workarea);
-  const machine = useMemo(() => deviceMaster.currentDevice?.info?.model ?? workarea, [workarea]);
+  const machine = deviceMaster.currentDevice?.info?.model ?? workarea;
   const lesson = LESSONS.find((l) => l.id === lessonId)!;
   const articleId = helpArticleIdFor(lesson, machine);
   const index = LESSONS.indexOf(lesson);

@@ -1,5 +1,5 @@
 // Floating picture-in-picture window (PRD §5.3 / R5–R6): draggable chrome plus the player.
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 
 import { CloseOutlined, ExpandOutlined } from '@ant-design/icons';
 import { Button, Tag } from 'antd';
@@ -11,7 +11,7 @@ import useI18n from '@core/helpers/useI18n';
 import Flux101Player from './Flux101Player';
 import styles from './PipPlayer.module.scss';
 
-export const PIP_WIDTH = 340;
+const PIP_WIDTH = 340;
 
 const BAR_HEIGHT = 34;
 
@@ -24,16 +24,15 @@ interface PipPlayerProps {
 const PipPlayer = ({ lessonId, onClose, onExpand }: PipPlayerProps): React.JSX.Element => {
   const t = useI18n().flux_101;
   const nodeRef = useRef<HTMLDivElement>(null);
-  // bottom-right corner on first open; session-only afterwards (D17)
-  const [defaultPosition] = useState(() => ({
-    x: window.innerWidth - PIP_WIDTH - 16,
-    y: window.innerHeight - Math.round((PIP_WIDTH * 9) / 16) - BAR_HEIGHT - 16,
-  }));
 
   return createPortal(
     <Draggable
       bounds="body"
-      defaultPosition={defaultPosition}
+      // bottom-right corner; Draggable reads it on mount only, so drags survive re-renders (D17)
+      defaultPosition={{
+        x: window.innerWidth - PIP_WIDTH - 16,
+        y: window.innerHeight - Math.round((PIP_WIDTH * 9) / 16) - BAR_HEIGHT - 16,
+      }}
       handle="[data-pip-handle]"
       nodeRef={nodeRef as React.RefObject<HTMLDivElement>}
     >

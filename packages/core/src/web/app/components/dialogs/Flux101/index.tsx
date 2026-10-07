@@ -20,7 +20,7 @@ const CERTIFICATE_ID = 'flux-101-certificate';
 startFlux101Sync();
 
 /** Open the course window at `lessonId` (default: the "Continue" lesson). One instance app-wide. */
-export const showFlux101 = async (lessonId?: string): Promise<void> => {
+export const showFlux101 = (lessonId?: string): void => {
   warnIfClaimed();
   useFlux101Store.getState().open(lessonId);
 
