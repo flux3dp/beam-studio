@@ -4,6 +4,7 @@ import type { StampSize, StampTemplate } from '../types';
 
 import { CATALOG_TEMPLATES } from './catalog';
 import { KAI_FONTS } from './fonts';
+import { CHINESE_LOCALES } from './locales';
 // All templates live in a 150×150 space.
 // Color roles: #E5400A filled = frame (rings, even-odd), #1890FF stroke = arc-text baseline. Slot boxes live below, not in the SVG.
 import OVAL_COMPANY from './oval-company.svg?raw';
@@ -132,7 +133,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     category: 'square',
     elements: [],
     id: 'name_seal',
-    locales: ['zh-tw'],
+    locales: CHINESE_LOCALES,
     nameKey: 'name_seal',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
@@ -161,7 +162,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     category: 'square',
     elements: [],
     id: 'square_seal_3col',
-    locales: ['zh-tw'],
+    locales: CHINESE_LOCALES,
     nameKey: 'square_seal_3col',
     preferredFonts: KAI_FONTS,
     sharedFont: true,

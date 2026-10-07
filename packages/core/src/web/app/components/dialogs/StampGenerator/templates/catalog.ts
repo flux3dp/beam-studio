@@ -15,6 +15,7 @@ import WB_NOTARY_01 from './catalog/wb_notary_01.svg?raw';
 import WORLD_INDIA_OVAL from './catalog/world_india_oval.svg?raw';
 import WORLD_PASSPORT_OVAL from './catalog/world_passport_oval.svg?raw';
 import { JP_FONTS, KAI_FONTS } from './fonts';
+import { CHINESE_LOCALES, OTHER_LOCALES } from './locales';
 
 export const CATALOG_TEMPLATES: StampTemplate[] = [
   {
@@ -324,6 +325,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'rect',
     elements: [],
     id: 'company_rect_02',
+    locales: CHINESE_LOCALES,
     nameKey: 'company_rect_02',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
@@ -336,6 +338,27 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         id: 'r1',
         labelKey: 'title_name',
         placeholder: '專案經理  王大明',
+      },
+    ],
+  },
+  {
+    // Latin-script twin of company_rect_02 (same name, frame and slot): default font, name-then-title order.
+    border: { bounds: { height: 52.08, width: 139.62, x: 5.19, y: 48.96 }, lineWidth: 2.26, radius: 3.4 },
+    category: 'rect',
+    elements: [],
+    id: 'company_rect_02_latin',
+    locales: OTHER_LOCALES,
+    nameKey: 'company_rect_02',
+    sharedFont: true,
+    sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
+    texts: [
+      {
+        bounds: { height: 15, width: 118.1, x: 16, y: 66.1 },
+        fit: 'shrink',
+        fontSize: 15,
+        id: 'r1',
+        labelKey: 'title_name',
+        placeholder: 'ALEX CHEN · PROJECT MANAGER',
       },
     ],
   },
