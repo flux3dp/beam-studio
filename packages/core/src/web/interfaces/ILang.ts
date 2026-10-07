@@ -2580,7 +2580,6 @@ export interface ILang {
       bottom_text: string;
       center_line_1: string;
       center_line_2: string;
-      center_line_3: string;
       city: string;
       column_1: string;
       column_2: string;

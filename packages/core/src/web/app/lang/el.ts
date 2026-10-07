@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'Κάτω κείμενο',
       center_line_1: 'Κεντρική γραμμή 1',
       center_line_2: 'Κεντρική γραμμή 2',
-      center_line_3: 'Κεντρική γραμμή 3',
       city: 'Πόλη',
       column_1: 'Στήλη 1',
       column_2: 'Στήλη 2',

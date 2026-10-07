@@ -19,7 +19,7 @@ geometry. Sibling of the keychain and puzzle generators; shared text/path helper
 
 ```
 StampGenerator/
-├── index.tsx                  # showStampGenerator(): selects the first template, mounts the dialog, reset on close
+├── index.tsx                  # showStampGenerator(): selects the first circle template, mounts the dialog, reset on close
 ├── StampGenerator.tsx         # DraggableModal: [TemplatePicker][Preview][OptionsPanel]; switch-template warning
 ├── constants.ts               # PX_TO_MM_RATIO=10, DESIGN_SIZE=150, ROLE_COLORS, EXPORT_COLORS, PREVIEW_COLORS
 ├── types.ts                   # TextPlacement, TextSlotDef, ElementSlotDef, BorderDef, StampTemplate, ParsedTemplate, StampShape, StampState
@@ -208,13 +208,14 @@ the TW 統編章 pair still uses SVG outer frames.
   not listed in the Text tab (`isLabeled()` in types.ts is the one check) — optional `letterSpacing`
   (initial tracking, design px) and `fontPostscriptName` (pins a face, e.g. the bundled
   `Montserrat-Medium` for 統一編號). `StampTemplate.nameKey` is the i18n key (= id for catalog entries).
-- Every template declares `category: TemplateCategory` (`TEMPLATE_CATEGORIES` in types.ts:
-  `tw_company` for the regulated 統編章 pair oval_company / rect_company, then the frame shapes
-  `circle | oval | square | rect`). The dialog's top bar (a row of antd outlined Buttons in
+- Every template declares `category: TemplateCategory` (`TEMPLATE_CATEGORIES` in types.ts: the frame
+  shapes `circle | oval | square | rect`, then `tw_company` for the regulated 統編章 pair
+  oval_company / rect_company). The dialog's top bar (a row of antd outlined Buttons in
   `StampGenerator.tsx`) reads the current template's category, filters the picker to it, and picking one
   selects its first template through the normal switch-template path (so the unsaved-changes warning
-  still applies). No extra store state. The TW
-  seals keep their SVG frames: their outer rings are fixed by regulation, never a border.
+  still applies). No extra store state. `tw_company` is listed only when `i18n.getActiveLang()` is
+  `zh-tw`, and the dialog opens on the first circle template so every language starts on a visible
+  category. The TW seals keep their SVG frames: their outer rings are fixed by regulation, never a border.
 
 Text measurement mounts the element off-screen (`withMounted`); glyph outlines come from
 `convertTextsToPath` (fontkit). Every converted line goes through `resolveOverlaps` because static

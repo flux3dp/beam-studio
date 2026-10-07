@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'Nederste tekst',
       center_line_1: 'Midterlinje 1',
       center_line_2: 'Midterlinje 2',
-      center_line_3: 'Midterlinje 3',
       city: 'By',
       column_1: 'Kolonne 1',
       column_2: 'Kolonne 2',

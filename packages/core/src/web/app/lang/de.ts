@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'Unterer Text',
       center_line_1: 'Mittlere Zeile 1',
       center_line_2: 'Mittlere Zeile 2',
-      center_line_3: 'Mittlere Zeile 3',
       city: 'Stadt',
       column_1: 'Spalte 1',
       column_2: 'Spalte 2',

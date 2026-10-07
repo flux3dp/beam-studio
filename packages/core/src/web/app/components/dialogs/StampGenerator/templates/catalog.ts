@@ -42,28 +42,14 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'FLUX TECHNOLOGY',
       },
       {
-        bounds: { height: 9, width: 125, x: 12.5, y: 61.1 },
+        // One multi-line block inscribed in the inner ring (a 47.4, b 30.84): 3 lines × 8 × 1.2 ≈ 29 tall,
+        // and the ellipse is 82.8 wide at ±15 from center. Overlong lines shrink uniformly.
+        bounds: { height: 30, width: 82, x: 34, y: 60 },
         fit: 'shrink',
-        fontSize: 9,
-        id: 'c1',
-        labelKey: 'center_line_1',
-        placeholder: '通量三維',
-      },
-      {
-        bounds: { height: 5, width: 125.9, x: 12, y: 74.3 },
-        fit: 'shrink',
-        fontSize: 5,
-        id: 'c2',
-        labelKey: 'center_line_2',
-        placeholder: 'FLUX TECHNOLOGY INC.',
-      },
-      {
-        bounds: { height: 5, width: 121.2, x: 14.4, y: 83.3 },
-        fit: 'shrink',
-        fontSize: 5,
-        id: 'c3',
-        labelKey: 'center_line_3',
-        placeholder: '統一編號 42642569',
+        fontSize: 8,
+        id: 'center',
+        labelKey: 'main_text',
+        placeholder: 'FLUX TECHNOLOGY INC.\nTAX ID 42642569\nOFFICIAL SEAL',
       },
       {
         baseline: 1,
@@ -73,6 +59,42 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         letterSpacing: 1.6,
         offset: 2.4,
         placeholder: 'TAIPEI · TAIWAN',
+      },
+    ],
+  },
+  {
+    // Frame built at runtime (Border tab); box = the converter's 30×30 mm outer ring edge.
+    border: { bounds: { height: 139.4, width: 139.4, x: 5.3, y: 5.3 }, lineWidth: 3.57, shape: 'circle' },
+    category: 'circle',
+    elements: [
+      {
+        bounds: { height: 59.1, width: 59.1, x: 45.5, y: 37.3 },
+        id: 'orn',
+        labelKey: 'icon',
+        options: [
+          'animals/i_land-16',
+          'animals/i_land-2',
+          'animals/i_land-14',
+          'animals/i_land-36',
+          'animals/i_land-3',
+          'basic/icon-heart1',
+        ],
+        shapeKey: 'animals/i_land-16',
+      },
+    ],
+    id: 'illu_paw',
+    nameKey: 'illu_paw',
+    sharedFont: true,
+    sizes: [{ label: '30mm', widthMm: 30 }],
+    svgContent: ILLU_PAW,
+    texts: [
+      {
+        bounds: { height: 17, width: 99, x: 25.5, y: 102 },
+        fit: 'shrink',
+        fontSize: 17,
+        id: 'text',
+        labelKey: 'bottom_text',
+        placeholder: 'PET SHOP',
       },
     ],
   },
@@ -323,42 +345,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'circle',
     elements: [
       {
-        bounds: { height: 59.1, width: 59.1, x: 45.5, y: 37.3 },
-        id: 'orn',
-        labelKey: 'icon',
-        options: [
-          'animals/i_land-16',
-          'animals/i_land-2',
-          'animals/i_land-14',
-          'animals/i_land-36',
-          'animals/i_land-3',
-          'basic/icon-heart1',
-        ],
-        shapeKey: 'animals/i_land-16',
-      },
-    ],
-    id: 'illu_paw',
-    nameKey: 'illu_paw',
-    sharedFont: true,
-    sizes: [{ label: '30mm', widthMm: 30 }],
-    svgContent: ILLU_PAW,
-    texts: [
-      {
-        bounds: { height: 17, width: 99, x: 25.5, y: 102 },
-        fit: 'shrink',
-        fontSize: 17,
-        id: 'text',
-        labelKey: 'bottom_text',
-        placeholder: 'PET SHOP',
-      },
-    ],
-  },
-  {
-    // Frame built at runtime (Border tab); box = the converter's 30×30 mm outer ring edge.
-    border: { bounds: { height: 139.4, width: 139.4, x: 5.3, y: 5.3 }, lineWidth: 3.57, shape: 'circle' },
-    category: 'circle',
-    elements: [
-      {
         bounds: { height: 40, width: 40, x: 55, y: 44.1 },
         id: 'orn',
         labelKey: 'icon',
@@ -385,7 +371,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         fontSize: 17,
         id: 'text',
         labelKey: 'text',
-        placeholder: '審核通過',
+        placeholder: 'APPROVED',
       },
     ],
   },
@@ -525,8 +511,9 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: '2026.09.18',
       },
       {
+        // Bottom baseline radius raised to 64.1 in the SVG so, offset inward by 3.5, both arcs center at r = 60.6.
         baseline: 1,
-        fontSize: 10,
+        fontSize: 13,
         id: 'arc_bottom',
         labelKey: 'bottom_arc',
         letterSpacing: 1.8,
@@ -553,7 +540,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         labelKey: 'unit',
         letterSpacing: 1.4,
         offset: 2.4,
-        placeholder: '通量三維．收發室',
+        placeholder: 'FLUX · MAILROOM',
       },
       {
         bounds: { height: 12, width: 125.9, x: 12, y: 68.8 },

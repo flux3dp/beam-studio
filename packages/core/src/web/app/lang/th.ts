@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'ข้อความด้านล่าง',
       center_line_1: 'บรรทัดกลาง 1',
       center_line_2: 'บรรทัดกลาง 2',
-      center_line_3: 'บรรทัดกลาง 3',
       city: 'เมือง',
       column_1: 'คอลัมน์ 1',
       column_2: 'คอลัมน์ 2',

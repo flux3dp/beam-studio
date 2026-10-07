@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'Dolní text',
       center_line_1: 'Středový řádek 1',
       center_line_2: 'Středový řádek 2',
-      center_line_3: 'Středový řádek 3',
       city: 'Město',
       column_1: 'Sloupec 1',
       column_2: 'Sloupec 2',

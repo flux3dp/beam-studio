@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'Chữ phía dưới',
       center_line_1: 'Dòng giữa 1',
       center_line_2: 'Dòng giữa 2',
-      center_line_3: 'Dòng giữa 3',
       city: 'Thành phố',
       column_1: 'Cột 1',
       column_2: 'Cột 2',

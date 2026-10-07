@@ -9,7 +9,10 @@ export const showStampGenerator = () => {
 
   if (isIdExist(DIALOG_ID)) return;
 
-  useStampStore.getState().selectTemplate(STAMP_TEMPLATES[0].id);
+  // Always open on the first circle template (the first category in the bar).
+  const defaultTemplate = STAMP_TEMPLATES.find((template) => template.category === 'circle') ?? STAMP_TEMPLATES[0];
+
+  useStampStore.getState().selectTemplate(defaultTemplate.id);
   addDialogComponent(
     DIALOG_ID,
     <StampGenerator

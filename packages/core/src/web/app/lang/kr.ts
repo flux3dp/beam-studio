@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: '하단 텍스트',
       center_line_1: '중앙 1행',
       center_line_2: '중앙 2행',
-      center_line_3: '중앙 3행',
       city: '도시',
       column_1: '1열',
       column_2: '2열',

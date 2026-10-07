@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'Nedre text',
       center_line_1: 'Mittrad 1',
       center_line_2: 'Mittrad 2',
-      center_line_3: 'Mittrad 3',
       city: 'Stad',
       column_1: 'Kolumn 1',
       column_2: 'Kolumn 2',

@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'Alateksti',
       center_line_1: 'Keskirivi 1',
       center_line_2: 'Keskirivi 2',
-      center_line_3: 'Keskirivi 3',
       city: 'Kaupunki',
       column_1: 'Sarake 1',
       column_2: 'Sarake 2',

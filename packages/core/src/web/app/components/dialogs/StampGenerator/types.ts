@@ -95,10 +95,10 @@ export interface StampSize {
 }
 
 /**
- * Top-bar group. The first four are outer frame shapes; `tw_company` is the regulated Taiwan 統編章
- * pair, whose frames are fixed by regulation and so never take a border style.
+ * Top-bar group. The first four are outer frame shapes; `tw_company` (last, zh-tw only) is the regulated
+ * Taiwan 統編章 pair, whose frames are fixed by regulation and so never take a border style.
  */
-export const TEMPLATE_CATEGORIES = ['tw_company', 'circle', 'oval', 'square', 'rect'] as const;
+export const TEMPLATE_CATEGORIES = ['circle', 'oval', 'square', 'rect', 'tw_company'] as const;
 
 export type TemplateCategory = (typeof TEMPLATE_CATEGORIES)[number];
 

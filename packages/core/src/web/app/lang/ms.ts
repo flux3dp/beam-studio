@@ -2680,7 +2680,6 @@ const lang: ILang = {
       bottom_text: 'Teks bawah',
       center_line_1: 'Baris tengah 1',
       center_line_2: 'Baris tengah 2',
-      center_line_3: 'Baris tengah 3',
       city: 'Bandar',
       column_1: 'Lajur 1',
       column_2: 'Lajur 2',

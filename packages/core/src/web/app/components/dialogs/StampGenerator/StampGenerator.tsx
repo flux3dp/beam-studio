@@ -5,6 +5,7 @@ import { Button } from 'antd';
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import DraggableModal from '@core/app/widgets/DraggableModal';
+import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 
 import OptionsPanel from './components/OptionsPanel';
@@ -28,6 +29,8 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
   const category = useStampStore((s) => s.template?.category);
   const isModified = useStampStore((s) => s.isModified);
   const selectTemplate = useStampStore((s) => s.selectTemplate);
+  // The regulated Taiwan 統編章 pair only makes sense to zh-tw users.
+  const categories = TEMPLATE_CATEGORIES.filter((value) => value !== 'tw_company' || i18n.getActiveLang() === 'zh-tw');
 
   const handleTemplateChange = useCallback(
     (newTemplateId: string) => {
@@ -96,7 +99,7 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
     >
       <div className={styles.container}>
         <div className={styles.categories}>
-          {TEMPLATE_CATEGORIES.map((value) => (
+          {categories.map((value) => (
             <Button
               color={value === category ? 'primary' : 'default'}
               key={value}
