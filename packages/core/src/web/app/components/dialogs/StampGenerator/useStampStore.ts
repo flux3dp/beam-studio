@@ -126,6 +126,8 @@ interface StoreState {
   defaultFont: null | TextOptionValues['font'];
   isModified: boolean;
   parsed: null | ParsedTemplate;
+  /** Template whose font probe is in flight: the UI highlights it and shows a spinner until it lands. */
+  pendingTemplateId: null | string;
   previewSvg: null | SVGSVGElement;
   project: null | paper.Project;
   shape: null | StampShape;
@@ -140,6 +142,7 @@ const initialState: StoreState = {
   defaultFont: null,
   isModified: false,
   parsed: null,
+  pendingTemplateId: null,
   previewSvg: null,
   project: null,
   shape: null,
@@ -150,6 +153,9 @@ const initialState: StoreState = {
 
 const useStampStore = create(
   combine(initialState, (set, get) => {
+    // Bumped per selectTemplate / reset so a slower font probe can't land on top of a newer selection.
+    let selectVersion = 0;
+
     /** Rebuilds shape + preview from the current template and state. Stale builds are discarded. */
     const applyOptions = async (): Promise<void> => {
       const { parsed, project, state, template } = get();
@@ -189,6 +195,7 @@ const useStampStore = create(
       applyOptions,
 
       reset: (): void => {
+        selectVersion += 1;
         get().project?.remove();
         set({ ...initialState });
       },
@@ -209,7 +216,14 @@ const useStampStore = create(
 
         if (!template) return;
 
+        const version = ++selectVersion;
+
+        set({ pendingTemplateId: templateId });
+
         const defaultFont = await resolveDefaultFont(template.preferredFonts);
+
+        // Superseded by a newer selectTemplate or by reset() while the probe was pending.
+        if (version !== selectVersion) return;
 
         get().project?.remove();
 
@@ -220,6 +234,7 @@ const useStampStore = create(
           defaultFont,
           isModified: false,
           parsed,
+          pendingTemplateId: null,
           project,
           shape: null,
           state: getDefaultState(template, defaultFont),

@@ -12,7 +12,7 @@ import Preview from './components/Preview';
 import TemplatePicker from './components/TemplatePicker';
 import { exportToCanvas } from './exportToCanvas';
 import styles from './StampGenerator.module.scss';
-import { getVisibleTemplates } from './templates';
+import { getTemplateById, getVisibleTemplates } from './templates';
 import { TEMPLATE_CATEGORIES } from './types';
 import type { TemplateCategory } from './types';
 import useStampStore from './useStampStore';
@@ -24,8 +24,12 @@ interface StampGeneratorProps {
 const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => {
   const { generators: tGenerators, global: tGlobal, stamp_generator: t } = useI18n();
   const [isExporting, setIsExporting] = useState(false);
-  const templateId = useStampStore((s) => s.template?.id);
-  const category = useStampStore((s) => s.template?.category);
+  // While a template's font probe is pending, the bar and picker already show that template as current.
+  const pendingTemplateId = useStampStore((s) => s.pendingTemplateId);
+  const committedTemplate = useStampStore((s) => s.template);
+  const current = pendingTemplateId ? getTemplateById(pendingTemplateId) : committedTemplate;
+  const templateId = current?.id;
+  const category = current?.category;
   const isModified = useStampStore((s) => s.isModified);
   const selectTemplate = useStampStore((s) => s.selectTemplate);
   const templates = getVisibleTemplates();

@@ -98,7 +98,7 @@ them by hand, the JSONs stay out of the repo. Entries use `nameKey` = template i
 a `stamp_generator.slots` key (design label → key); every new key goes into all 23 lang files. Arc slots
 carry the prototype's default 2 px tracking via `letterSpacing`, center lines become `fit: 'center'`
 boxes (`fontSize` = R × s, box center 0.35 em above the baseline), stars become element slots with
-`shapeKey: 'star'`, `hr` / divider / signature rules become thin frame rects, ornaments (`orn`, the
+`shapeKey: 'stamp/star'`, `hr` / divider / signature rules become thin frame rects, ornaments (`orn`, the
 prototype's 24×24 `Qm` icons) become element slots keyed by icon name — icons live in
 `templates/icons/`, filled outlines only (nonzero winding, holes wound the other way; stroked prototype
 icons are re-drawn as outlines). The prototype scales the 24 px viewport but `buildElement` fits the
@@ -119,7 +119,7 @@ A template may declare `border: { bounds, radius?, lineWidth? }` instead of (or 
 paths in its SVG; `svgContent` is then optional. `bounds` is the ring's outer edge in design px and
 becomes the cut outline (`parseTemplate` uses it as `outline` when there is no `#722ED1` cut path), so
 the stamp size never changes with the line width: the ring grows inward. `state.border`
-(`{ lineWidth, dashed }`, design px) is edited in the Border tab, shown in mm via `sizeRatio`.
+(`{ lineWidth, dashed, style }`, design px) is edited in the Border tab, shown in mm via `sizeRatio`.
 `buildStampShape` appends `buildBorder()` to the cloned frames, so knockout/invert treat it like any
 frame. Dashed rings: `dashRanges(length, lineWidth)` picks an integer dash count (dash 2×, gap 1× the
 width, half a gap in so a dash centers each side), and `strokeSegment` traces each dash on the outer
@@ -259,9 +259,11 @@ render their `shapeKey`. The paw stamp's default is the panel's own paw; camera 
 ```
 selectTemplate(id)
   → resolveDefaultFont → new paper.Project → parseTemplate → getDefaultState → applyOptions()
-applyOptions()  (async, buildVersion guards against stale builds)
+applyOptions()  (async, buildVersion guards against stale builds; selectTemplate has its own
+                 selectVersion so a slower font probe can't land on a newer selection or after reset(),
+                 and `pendingTemplateId` drives the picker highlight + preview spinner meanwhile)
   → buildStampShape(parsed, template, state)
-      frames cloned · buildTextPaths · buildElementPaths · cut = outerContour(outline)
+      frames cloned · buildElementPaths · buildTextPaths (clearOf needs the built icon) · cut = outerContour(outline)
       invertColor ? [invertFace(cut, engraved)] : engraved
   → buildPreviewSvg(shape) (engrave filled black, cut dashed red) · sizeRatio
 exportToCanvas()
@@ -277,8 +279,9 @@ exportToCanvas()
   while the toggle is on.
 - **Elements**: `buildElementPaths` fits the shape uniformly inside the slot box, then applies scale %
   and rotation about the slot center. `ElementSlotDef.shapeKey` picks the default shape (`plum`, `star`, …);
-  a slot with `labelKey` is listed in the Element tab (switch + size %; rotation and shape picker
-  have store support but no UI yet). Converted ornaments are labeled 圖示; stars stay fixed.
+  a slot with `labelKey` is listed in the Element tab (shared `ElementPicker` for the shape, size %;
+  clearing the slot disables it; rotation has store support but no UI). Converted ornaments are labeled
+  圖示; stars stay fixed.
 
 ## paper.js Gotchas
 
@@ -295,7 +298,7 @@ The options panel scrolls; its tab bar is sticky and antd's tab content pane is 
 
 ## Store (`useStampStore.ts`)
 
-State: `template`, `parsed`, `project`, `state: StampState` (`texts`, `elements`, `invertColor`,
+State: `template`, `parsed`, `project`, `state: StampState` (`templateId`, `texts`, `elements`, `border`, `invertColor`,
 `flipHorizontal`, `sizeIndex`), `shape`, `previewSvg`, `sizeRatio`, `defaultFont`, `isModified`,
 `buildVersion`. Actions: `selectTemplate`, `updateText`, `updateElement`, `updateSharedFont`,
 `updateState`, `resetState` (rebuilds defaults from the stored `defaultFont`), `reset`. Every update
@@ -312,7 +315,7 @@ import_to_canvas, reset_to_default, size) and `generators.text_options`; the Bas
 
 `pnpm test packages/core/src/web/app/components/dialogs/StampGenerator` — builders have specs
 (`buildTemplate`, `buildText`, `buildShape` incl. invert on the real rect template, `buildElement`,
-`resolveOverlaps`, `templates`). Specs run paper headless via `paper.setup(document.createElement('canvas'))`.
+`buildBorder`, `resolveOverlaps`, `templates`). Specs run paper headless via `paper.setup(document.createElement('canvas'))`.
 
 ## Known Limits / Parked
 

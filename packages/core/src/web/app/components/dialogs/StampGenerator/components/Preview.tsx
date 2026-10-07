@@ -1,5 +1,7 @@
 import React, { memo, useEffect, useRef } from 'react';
 
+import { Spin } from 'antd';
+
 import { useStorageStore } from '@core/app/stores/storageStore';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
@@ -11,6 +13,7 @@ import styles from './Preview.module.scss';
 
 const Preview = (): React.JSX.Element => {
   const previewSvg = useStampStore((s) => s.previewSvg);
+  const isPending = useStampStore((s) => s.pendingTemplateId !== null);
   const shape = useStampStore((s) => s.shape);
   const flipHorizontal = useStampStore((s) => s.state?.flipHorizontal ?? false);
   const sizeRatio = useStampStore((s) => s.sizeRatio);
@@ -58,6 +61,11 @@ const Preview = (): React.JSX.Element => {
         </div>
       </div>
       <div className={styles.canvas} ref={containerRef} />
+      {isPending && (
+        <div className={styles.loading}>
+          <Spin />
+        </div>
+      )}
     </div>
   );
 };
