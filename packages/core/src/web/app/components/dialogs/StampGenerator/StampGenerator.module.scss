@@ -13,9 +13,14 @@
   gap: 12px;
 
   @include mixins.is-mobile {
+    width: auto; // the modal is already full width; a 90vw box would leave a strip on the right
     height: auto;
     @include mixins.viewport-size(80, $property: max-height, $unit: svh);
     overflow-y: hidden;
+  }
+
+  @media (max-width: 850px) and (min-width: 601px) {
+    width: calc(95vw - 48px);
   }
 }
 
@@ -34,6 +39,13 @@
 
   @include mixins.is-mobile {
     flex-direction: column;
+  }
+
+  // Tablet: picker as a row across the top, preview beside the options panel (like KeyChainGenerator).
+  @media (max-width: 850px) and (min-width: 601px) {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    grid-template-rows: auto 1fr;
   }
 }
 

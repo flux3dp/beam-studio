@@ -1,7 +1,20 @@
+@use '@core/styles/mixins' as mixins;
+
+// Breakpoints mirror KeyChainGenerator: full width under 600px, a grid column on tablets (601–850px).
 .panel {
   width: 280px;
   flex-shrink: 0;
   overflow-y: auto;
+
+  @include mixins.is-mobile {
+    width: auto;
+    flex: 1 1 auto;
+    max-height: 300px;
+  }
+
+  @media (max-width: 850px) and (min-width: 601px) {
+    min-height: 0; // allow shrinking within the grid row
+  }
 }
 
 .rows {
