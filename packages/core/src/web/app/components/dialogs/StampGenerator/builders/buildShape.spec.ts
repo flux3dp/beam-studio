@@ -38,7 +38,7 @@ describe('invertFace', () => {
 
   it('keeps plain-path frames (rect arcs) and uses the outermost ring edge as the boundary', () => {
     const project = new paper.Project(document.createElement('canvas'));
-    const parsed = parseTemplate(project, STAMP_TEMPLATES.find((t) => t.id === 'rect_company')!);
+    const parsed = parseTemplate(project, STAMP_TEMPLATES.find((t) => t.id === 'tw_company_rect')!);
     const outer = parsed.outline as paper.CompoundPath;
     const cut = (outer.children as paper.Path[])
       .reduce((a, b) => (Math.abs(b.area) > Math.abs(a.area) ? b : a))

@@ -20,7 +20,7 @@ const DASHED_WITH_CUT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 15
 
 describe('parseTemplate', () => {
   it('splits oval template into frames + baselines, baselines run left→right', () => {
-    const { baselines, frames, outline } = parse('oval_company');
+    const { baselines, frames, outline } = parse('tw_company_oval');
 
     expect(frames).toHaveLength(3);
     expect(baselines).toHaveLength(2);
@@ -30,7 +30,7 @@ describe('parseTemplate', () => {
   });
 
   it('uses the border box as the outline of a frameless (border) template', () => {
-    const { baselines, frames, outline } = parse('name_seal');
+    const { baselines, frames, outline } = parse('square_name');
     const roundedRectArea = (side: number, r: number) => side * side - (4 - Math.PI) * r * r;
 
     expect(frames).toHaveLength(0);
@@ -42,7 +42,7 @@ describe('parseTemplate', () => {
   });
 
   it('uses an explicit cut path as the outline and keeps the dashes as frames', () => {
-    const { frames, outline } = parse('oval_company', { svgContent: DASHED_WITH_CUT });
+    const { frames, outline } = parse('tw_company_oval', { svgContent: DASHED_WITH_CUT });
 
     expect(outline instanceof paper.CompoundPath).toBe(false);
     expect(outline.bounds.width).toBeCloseTo(140, 3);
@@ -52,7 +52,7 @@ describe('parseTemplate', () => {
   });
 
   it('uses an ellipse as the outline of a circle border template', () => {
-    const { frames, outline } = parse('office_round_post_01');
+    const { frames, outline } = parse('circle_postmark');
 
     // Only the two date rules are left in the SVG; the ring is the runtime border.
     expect(frames).toHaveLength(2);
@@ -62,7 +62,7 @@ describe('parseTemplate', () => {
   });
 
   it('uses an ellipse as the outline of an oval border template', () => {
-    const { frames, outline } = parse('world_passport_oval');
+    const { frames, outline } = parse('oval_exit');
 
     expect(frames).toHaveLength(2);
     expect(outline.bounds.width).toBeCloseTo(142.4, 3);

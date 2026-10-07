@@ -97,7 +97,7 @@ export interface StampSize {
 /**
  * Top-bar group. The first four are outer frame shapes; `tw_company` is the regulated Taiwan 統編章 pair,
  * whose frames are fixed by regulation and so never take a border style. A group is shown only while it
- * has a template visible in the active language (see `locales`).
+ * has a template visible in the active language (see `locales` / `excludedLocales`).
  */
 export const TEMPLATE_CATEGORIES = ['circle', 'oval', 'square', 'rect', 'tw_company'] as const;
 
@@ -107,6 +107,8 @@ export interface StampTemplate {
   border?: BorderDef;
   category: TemplateCategory;
   elements: ElementSlotDef[];
+  /** Hidden in these UI languages (e.g. a Latin-script twin of a Chinese template); unset = none. */
+  excludedLocales?: string[];
   id: string;
   /** Listed only in these UI languages (e.g. ['zh-tw'] for Taiwan-regulated seals); unset = every language. */
   locales?: string[];

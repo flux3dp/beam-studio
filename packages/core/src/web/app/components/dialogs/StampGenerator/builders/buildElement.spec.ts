@@ -10,7 +10,7 @@ import { buildElementPaths } from './buildElement';
 describe('buildElementPaths', () => {
   it('fits the plum into its slot uniformly (aspect preserved, centered) and honors scale', async () => {
     const project = new paper.Project(document.createElement('canvas'));
-    const template = STAMP_TEMPLATES.find((t) => t.id === 'oval_company')!;
+    const template = STAMP_TEMPLATES.find((t) => t.id === 'tw_company_oval')!;
     const slot = template.elements[0];
     const state = {
       elements: { [slot.id]: { enabled: true, rotation: 0, scale: 100, shapeKey: 'stamp/plum' } },

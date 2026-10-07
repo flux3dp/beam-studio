@@ -2,20 +2,19 @@
 // Plain objects on purpose: tune slots here by hand after pasting; frames live in catalog/<id>.svg.
 import type { StampTemplate } from '../types';
 
-import COMPANY_OVAL_02 from './catalog/company_oval_02.svg?raw';
-import DESIGN_RECT_01 from './catalog/design_rect_01.svg?raw';
-import DESIGN_RECT_02 from './catalog/design_rect_02.svg?raw';
-import ILLU_PAW from './catalog/illu_paw.svg?raw';
-import JP_SUMI_01 from './catalog/jp_sumi_01.svg?raw';
-import OFFICE_OVAL_RECV_01 from './catalog/office_oval_recv_01.svg?raw';
-import OFFICE_ROUND_CHECK_01 from './catalog/office_round_check_01.svg?raw';
-import OFFICE_ROUND_POST_01 from './catalog/office_round_post_01.svg?raw';
-import WB_CORPSEAL_01 from './catalog/wb_corpseal_01.svg?raw';
-import WB_NOTARY_01 from './catalog/wb_notary_01.svg?raw';
-import WORLD_INDIA_OVAL from './catalog/world_india_oval.svg?raw';
-import WORLD_PASSPORT_OVAL from './catalog/world_passport_oval.svg?raw';
-import { JP_FONTS, KAI_FONTS } from './fonts';
-import { CHINESE_LOCALES, OTHER_LOCALES } from './locales';
+import CIRCLE_APPROVED from './catalog/circle_approved.svg?raw';
+import CIRCLE_CORPORATE from './catalog/circle_corporate.svg?raw';
+import CIRCLE_DONE from './catalog/circle_done.svg?raw';
+import CIRCLE_NOTARY from './catalog/circle_notary.svg?raw';
+import CIRCLE_PAW from './catalog/circle_paw.svg?raw';
+import CIRCLE_POSTMARK from './catalog/circle_postmark.svg?raw';
+import OVAL_COMPANY from './catalog/oval_company.svg?raw';
+import OVAL_EXIT from './catalog/oval_exit.svg?raw';
+import OVAL_RECEIVED from './catalog/oval_received.svg?raw';
+import OVAL_REGISTRATION from './catalog/oval_registration.svg?raw';
+import RECT_HEADER_BAR from './catalog/rect_header_bar.svg?raw';
+import RECT_LABEL from './catalog/rect_label.svg?raw';
+import { CHINESE_LOCALES, JP_FONTS, KAI_FONTS } from './fonts';
 
 export const CATALOG_TEMPLATES: StampTemplate[] = [
   {
@@ -23,20 +22,20 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 92.68, width: 140, x: 5, y: 28.66 }, lineWidth: 2.76, shape: 'oval' },
     category: 'oval',
     elements: [
-      { bounds: { height: 6.3, width: 6.3, x: 17, y: 71.9 }, id: 'star_left', shapeKey: 'stamp/star' },
-      { bounds: { height: 6.3, width: 6.3, x: 126.7, y: 71.9 }, id: 'star_right', shapeKey: 'stamp/star' },
+      { bounds: { height: 6.3, width: 6.3, x: 17, y: 71.9 }, id: 'icon_left', shapeKey: 'stamp/star' },
+      { bounds: { height: 6.3, width: 6.3, x: 126.7, y: 71.9 }, id: 'icon_right', shapeKey: 'stamp/star' },
     ],
-    id: 'company_oval_02',
-    nameKey: 'company_oval_02',
+    id: 'oval_company',
+    nameKey: 'oval_company',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: [{ label: '45 × 30 mm', widthMm: 45 }],
-    svgContent: COMPANY_OVAL_02,
+    svgContent: OVAL_COMPANY,
     texts: [
       {
         baseline: 0,
         fontSize: 9,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'top_arc',
         letterSpacing: 1.6,
         offset: 3.2,
@@ -55,7 +54,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       {
         baseline: 1,
         fontSize: 7,
-        id: 'arc_bottom',
+        id: 'bottom_arc',
         labelKey: 'bottom_arc',
         letterSpacing: 1.6,
         offset: 2.4,
@@ -70,7 +69,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     elements: [
       {
         bounds: { height: 59.1, width: 59.1, x: 45.5, y: 37.3 },
-        id: 'orn',
+        id: 'icon',
         labelKey: 'icon',
         options: [
           'animals/i_land-16',
@@ -83,11 +82,11 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         shapeKey: 'animals/i_land-16',
       },
     ],
-    id: 'illu_paw',
-    nameKey: 'illu_paw',
+    id: 'circle_paw',
+    nameKey: 'circle_paw',
     sharedFont: true,
     sizes: [{ label: '30mm', widthMm: 30 }],
-    svgContent: ILLU_PAW,
+    svgContent: CIRCLE_PAW,
     texts: [
       {
         bounds: { height: 17, width: 99, x: 25.5, y: 102 },
@@ -104,20 +103,20 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 140, width: 140, x: 5, y: 5 }, lineWidth: 3.11, shape: 'circle' },
     category: 'circle',
     elements: [
-      { bounds: { height: 9.6, width: 9.6, x: 15.5, y: 70.2 }, id: 'star_left', shapeKey: 'stamp/star' },
-      { bounds: { height: 9.6, width: 9.6, x: 125, y: 70.2 }, id: 'star_right', shapeKey: 'stamp/star' },
+      { bounds: { height: 9.6, width: 9.6, x: 15.5, y: 70.2 }, id: 'icon_left', shapeKey: 'stamp/star' },
+      { bounds: { height: 9.6, width: 9.6, x: 125, y: 70.2 }, id: 'icon_right', shapeKey: 'stamp/star' },
     ],
-    id: 'wb_corpseal_01',
-    nameKey: 'wb_corpseal_01',
+    id: 'circle_corporate',
+    nameKey: 'circle_corporate',
     preferredFonts: ['Georgia', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '40mm', widthMm: 40 }],
-    svgContent: WB_CORPSEAL_01,
+    svgContent: CIRCLE_CORPORATE,
     texts: [
       {
         baseline: 0,
         fontSize: 9,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'company_name',
         letterSpacing: 0.9,
         offset: 3.2,
@@ -127,7 +126,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 12, width: 125.9, x: 12, y: 62.7 },
         fit: 'shrink',
         fontSize: 12,
-        id: 'c1',
+        id: 'line_1',
         labelKey: 'center_line_1',
         placeholder: 'CORPORATE',
       },
@@ -135,14 +134,14 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 15, width: 122.9, x: 13.5, y: 77.3 },
         fit: 'shrink',
         fontSize: 15,
-        id: 'c2',
+        id: 'line_2',
         labelKey: 'center_line_2',
         placeholder: 'SEAL',
       },
       {
         baseline: 1,
         fontSize: 9,
-        id: 'arc_bottom',
+        id: 'bottom_arc',
         labelKey: 'state_year',
         letterSpacing: 0.9,
         offset: 3.2,
@@ -155,20 +154,20 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 140, width: 140, x: 5, y: 5 }, lineWidth: 3.11, shape: 'circle' },
     category: 'circle',
     elements: [
-      { bounds: { height: 9.6, width: 9.6, x: 15.5, y: 70.2 }, id: 'star_left', shapeKey: 'stamp/star' },
-      { bounds: { height: 9.6, width: 9.6, x: 125, y: 70.2 }, id: 'star_right', shapeKey: 'stamp/star' },
+      { bounds: { height: 9.6, width: 9.6, x: 15.5, y: 70.2 }, id: 'icon_left', shapeKey: 'stamp/star' },
+      { bounds: { height: 9.6, width: 9.6, x: 125, y: 70.2 }, id: 'icon_right', shapeKey: 'stamp/star' },
     ],
-    id: 'wb_notary_01',
-    nameKey: 'wb_notary_01',
+    id: 'circle_notary',
+    nameKey: 'circle_notary',
     preferredFonts: ['Georgia', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '40mm', widthMm: 40 }],
-    svgContent: WB_NOTARY_01,
+    svgContent: CIRCLE_NOTARY,
     texts: [
       {
         baseline: 0,
         fontSize: 11,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'top_arc',
         letterSpacing: 1.8,
         offset: 3.9,
@@ -178,7 +177,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 11, width: 125.8, x: 12.1, y: 62.9 },
         fit: 'shrink',
         fontSize: 11,
-        id: 'c1',
+        id: 'line_1',
         labelKey: 'name',
         placeholder: 'DAVID WANG',
       },
@@ -186,7 +185,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 8, width: 124.7, x: 12.6, y: 77.8 },
         fit: 'shrink',
         fontSize: 8,
-        id: 'c2',
+        id: 'line_2',
         labelKey: 'license_no',
         placeholder: 'COMMISSION #123456',
       },
@@ -194,14 +193,14 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 9, width: 118.9, x: 15.5, y: 89.9 },
         fit: 'shrink',
         fontSize: 9,
-        id: 'c3',
+        id: 'line_3',
         labelKey: 'validity',
         placeholder: 'EXP. 12/31/2028',
       },
       {
         baseline: 1,
         fontSize: 10,
-        id: 'arc_bottom',
+        id: 'bottom_arc',
         labelKey: 'state',
         letterSpacing: 1.8,
         offset: 3.5,
@@ -214,19 +213,19 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 83.3, width: 140, x: 5, y: 33.35 }, lineWidth: 2.48, shape: 'oval' },
     category: 'oval',
     elements: [
-      { bounds: { height: 5.7, width: 5.7, x: 17.2, y: 72.2 }, id: 'star_left', shapeKey: 'stamp/star' },
-      { bounds: { height: 5.7, width: 5.7, x: 127.2, y: 72.2 }, id: 'star_right', shapeKey: 'stamp/star' },
+      { bounds: { height: 5.7, width: 5.7, x: 17.2, y: 72.2 }, id: 'icon_left', shapeKey: 'stamp/star' },
+      { bounds: { height: 5.7, width: 5.7, x: 127.2, y: 72.2 }, id: 'icon_right', shapeKey: 'stamp/star' },
     ],
-    id: 'world_india_oval',
-    nameKey: 'world_india_oval',
+    id: 'oval_registration',
+    nameKey: 'oval_registration',
     sharedFont: true,
     sizes: [{ label: '50 × 30 mm', widthMm: 50 }],
-    svgContent: WORLD_INDIA_OVAL,
+    svgContent: OVAL_REGISTRATION,
     texts: [
       {
         baseline: 0,
         fontSize: 7,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'top_arc',
         letterSpacing: 1.4,
         offset: 2.4,
@@ -236,14 +235,14 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 13, width: 125.9, x: 12, y: 68 },
         fit: 'shrink',
         fontSize: 13,
-        id: 'c1',
+        id: 'line_1',
         labelKey: 'number',
         placeholder: '№ 12345',
       },
       {
         baseline: 1,
         fontSize: 5,
-        id: 'arc_bottom',
+        id: 'bottom_arc',
         labelKey: 'city',
         letterSpacing: 1.4,
         offset: 1.8,
@@ -258,7 +257,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     elements: [
       {
         bounds: { height: 39, width: 39, x: 11.4, y: 55.5 },
-        id: 'orn',
+        id: 'icon',
         labelKey: 'icon',
         options: [
           'stamp/plane',
@@ -271,27 +270,27 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         shapeKey: 'stamp/plane',
       },
     ],
-    id: 'world_passport_rect',
-    nameKey: 'world_passport_rect',
+    id: 'rect_entry',
+    nameKey: 'rect_entry',
     sharedFont: true,
     sizes: [{ label: '50 × 24 mm', widthMm: 50 }],
     texts: [
       {
         bounds: { height: 12, width: 118.8, x: 15.6, y: 57.3 },
-        clearOf: { elementId: 'orn', padding: 4 },
+        clearOf: { elementId: 'icon', padding: 4 },
         fit: 'shrink',
         fontSize: 12,
-        id: 'r1',
+        id: 'line_1',
         labelKey: 'main_text',
         letterSpacing: 1.4,
         placeholder: 'ARRIVED',
       },
       {
         bounds: { height: 12, width: 118.8, x: 15.6, y: 76.4 },
-        clearOf: { elementId: 'orn', padding: 4 },
+        clearOf: { elementId: 'icon', padding: 4 },
         fit: 'shrink',
         fontSize: 12,
-        id: 'r2',
+        id: 'line_2',
         labelKey: 'date_port',
         placeholder: '2026.09.18 · TPE',
       },
@@ -302,8 +301,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 52.68, width: 140, x: 5, y: 48.66 }, lineWidth: 3.01, radius: 3.76 },
     category: 'rect',
     elements: [],
-    id: 'wb_confidential_01',
-    nameKey: 'wb_confidential_01',
+    id: 'rect_confidential',
+    nameKey: 'rect_confidential',
     preferredFonts: ['Georgia', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
@@ -312,7 +311,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 17, width: 117.8, x: 16.1, y: 66 },
         fit: 'shrink',
         fontSize: 17,
-        id: 'r1',
+        id: 'line_1',
         labelKey: 'text',
         letterSpacing: 0.8,
         placeholder: 'CONFIDENTIAL',
@@ -324,9 +323,9 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 52.08, width: 139.62, x: 5.19, y: 48.96 }, lineWidth: 2.26, radius: 3.4 },
     category: 'rect',
     elements: [],
-    id: 'company_rect_02',
+    id: 'rect_title_name',
     locales: CHINESE_LOCALES,
-    nameKey: 'company_rect_02',
+    nameKey: 'rect_title_name',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
@@ -335,20 +334,20 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 15, width: 118.1, x: 16, y: 66.1 },
         fit: 'shrink',
         fontSize: 15,
-        id: 'r1',
+        id: 'line_1',
         labelKey: 'title_name',
         placeholder: '專案經理  王大明',
       },
     ],
   },
   {
-    // Latin-script twin of company_rect_02 (same name, frame and slot): default font, name-then-title order.
+    // Latin-script twin of rect_title_name (same name, frame and slot): default font, name-then-title order.
     border: { bounds: { height: 52.08, width: 139.62, x: 5.19, y: 48.96 }, lineWidth: 2.26, radius: 3.4 },
     category: 'rect',
     elements: [],
-    id: 'company_rect_02_latin',
-    locales: OTHER_LOCALES,
-    nameKey: 'company_rect_02',
+    excludedLocales: CHINESE_LOCALES,
+    id: 'rect_title_name_latin',
+    nameKey: 'rect_title_name',
     sharedFont: true,
     sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
     texts: [
@@ -356,7 +355,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 15, width: 118.1, x: 16, y: 66.1 },
         fit: 'shrink',
         fontSize: 15,
-        id: 'r1',
+        id: 'line_1',
         labelKey: 'title_name',
         placeholder: 'ALEX CHEN · PROJECT MANAGER',
       },
@@ -369,7 +368,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     elements: [
       {
         bounds: { height: 40, width: 40, x: 55, y: 44.1 },
-        id: 'orn',
+        id: 'icon',
         labelKey: 'icon',
         options: [
           'stamp/check',
@@ -382,11 +381,11 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         shapeKey: 'stamp/check',
       },
     ],
-    id: 'office_round_check_01',
-    nameKey: 'office_round_check_01',
+    id: 'circle_approved',
+    nameKey: 'circle_approved',
     sharedFont: true,
     sizes: [{ label: '30mm', widthMm: 30 }],
-    svgContent: OFFICE_ROUND_CHECK_01,
+    svgContent: CIRCLE_APPROVED,
     texts: [
       {
         bounds: { height: 17, width: 98, x: 26, y: 102.7 },
@@ -405,7 +404,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     elements: [
       {
         bounds: { height: 48.9, width: 48.9, x: 50.6, y: 41.7 },
-        id: 'orn',
+        id: 'icon',
         labelKey: 'icon',
         options: [
           'stamp/camera',
@@ -418,8 +417,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         shapeKey: 'stamp/camera',
       },
     ],
-    id: 'illu_camera',
-    nameKey: 'illu_camera',
+    id: 'square_camera',
+    nameKey: 'square_camera',
     sharedFont: true,
     sizes: [{ label: '30mm', widthMm: 30 }],
     texts: [
@@ -438,8 +437,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 140, width: 140, x: 5, y: 5 }, lineWidth: 4.33, radius: 6.49, shape: 'square' },
     category: 'square',
     elements: [],
-    id: 'jp_rakkan_01',
-    nameKey: 'jp_rakkan_01',
+    id: 'square_signature',
+    nameKey: 'square_signature',
     preferredFonts: JP_FONTS,
     sharedFont: true,
     sizes: [{ label: '25mm', widthMm: 25 }],
@@ -460,8 +459,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 140, width: 52.2, x: 48.9, y: 5 }, lineWidth: 2.26, radius: 3.4 },
     category: 'rect',
     elements: [],
-    id: 'name_rect_04',
-    nameKey: 'name_rect_04',
+    id: 'rect_signature_vertical',
+    nameKey: 'rect_signature_vertical',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: [{ label: '18 × 47 mm', widthMm: 18 }],
@@ -482,8 +481,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 49.46, width: 140, x: 5, y: 50.27 }, lineWidth: 2.31, radius: 3.98 },
     category: 'rect',
     elements: [],
-    id: 'office_rect_date_01',
-    nameKey: 'office_rect_date_01',
+    id: 'rect_date',
+    nameKey: 'rect_date',
     preferredFonts: ['American Typewriter', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '38 × 14 mm', widthMm: 38 }],
@@ -509,16 +508,16 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     },
     category: 'circle',
     elements: [],
-    id: 'office_round_post_01',
-    nameKey: 'office_round_post_01',
+    id: 'circle_postmark',
+    nameKey: 'circle_postmark',
     sharedFont: true,
     sizes: [{ label: '40mm', widthMm: 40 }],
-    svgContent: OFFICE_ROUND_POST_01,
+    svgContent: CIRCLE_POSTMARK,
     texts: [
       {
         baseline: 0,
         fontSize: 13,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'place',
         letterSpacing: 1.8,
         offset: 4.6,
@@ -537,7 +536,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         // Bottom baseline radius raised to 64.1 in the SVG so, offset inward by 3.5, both arcs center at r = 60.6.
         baseline: 1,
         fontSize: 13,
-        id: 'arc_bottom',
+        id: 'bottom_arc',
         labelKey: 'bottom_arc',
         letterSpacing: 1.8,
         offset: 3.5,
@@ -550,16 +549,16 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 82.94, width: 139.64, x: 5.18, y: 33.53 }, lineWidth: 2.12, shape: 'oval' },
     category: 'oval',
     elements: [],
-    id: 'office_oval_recv_01',
-    nameKey: 'office_oval_recv_01',
+    id: 'oval_received',
+    nameKey: 'oval_received',
     sharedFont: true,
     sizes: [{ label: '50 × 30 mm', widthMm: 50 }],
-    svgContent: OFFICE_OVAL_RECV_01,
+    svgContent: OVAL_RECEIVED,
     texts: [
       {
         baseline: 0,
         fontSize: 7,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'unit',
         letterSpacing: 1.4,
         offset: 2.4,
@@ -574,7 +573,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         labelKey: 'date',
         placeholder: '2026.09.18',
       },
-      { baseline: 1, fontSize: 6, id: 'arc_bottom', letterSpacing: 1.4, offset: 2.1, placeholder: 'DOCUMENT RECEIVED' },
+      { baseline: 1, fontSize: 6, id: 'bottom_arc', letterSpacing: 1.4, offset: 2.1, placeholder: 'DOCUMENT RECEIVED' },
     ],
   },
   {
@@ -587,16 +586,16 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     },
     category: 'oval',
     elements: [],
-    id: 'world_passport_oval',
-    nameKey: 'world_passport_oval',
+    id: 'oval_exit',
+    nameKey: 'oval_exit',
     sharedFont: true,
     sizes: [{ label: '45 × 30 mm', widthMm: 45 }],
-    svgContent: WORLD_PASSPORT_OVAL,
+    svgContent: OVAL_EXIT,
     texts: [
       {
         baseline: 0,
         fontSize: 8,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'main_text',
         letterSpacing: 1.6,
         offset: 2.8,
@@ -614,7 +613,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       {
         baseline: 1,
         fontSize: 6,
-        id: 'arc_bottom',
+        id: 'bottom_arc',
         labelKey: 'bottom_arc',
         letterSpacing: 1.6,
         offset: 2.1,
@@ -627,17 +626,17 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 51.6, width: 139.46, x: 5.27, y: 49.2 }, lineWidth: 1.58, radius: 2.62, styles: false },
     category: 'rect',
     elements: [],
-    id: 'design_rect_01',
-    nameKey: 'design_rect_01',
+    id: 'rect_label',
+    nameKey: 'rect_label',
     sharedFont: true,
     sizes: [{ label: '58 × 22 mm', widthMm: 58 }],
-    svgContent: DESIGN_RECT_01,
+    svgContent: RECT_LABEL,
     texts: [
       {
         bounds: { height: 10, width: 118.6, x: 15.7, y: 52.5 },
         fit: 'shrink',
         fontSize: 10,
-        id: 'top',
+        id: 'bar',
         knockout: true,
         labelKey: 'bar_text',
         placeholder: 'HANDMADE',
@@ -654,7 +653,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 6, width: 118.6, x: 15.7, y: 88.2 },
         fit: 'shrink',
         fontSize: 6,
-        id: 'sub',
+        id: 'subtitle',
         labelKey: 'subtitle',
         placeholder: 'MADE WITH CARE',
       },
@@ -670,17 +669,17 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     },
     category: 'rect',
     elements: [],
-    id: 'design_rect_02',
-    nameKey: 'design_rect_02',
+    id: 'rect_header_bar',
+    nameKey: 'rect_header_bar',
     sharedFont: true,
     sizes: [{ label: '60 × 40 mm', widthMm: 60 }],
-    svgContent: DESIGN_RECT_02,
+    svgContent: RECT_HEADER_BAR,
     texts: [
       {
         bounds: { height: 15, width: 118.6, x: 15.7, y: 37.7 },
         fit: 'shrink',
         fontSize: 15,
-        id: 'top',
+        id: 'bar',
         knockout: true,
         labelKey: 'bar_text',
         placeholder: 'FLUX STUDIO',
@@ -697,7 +696,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         bounds: { height: 10, width: 118.6, x: 15.7, y: 98.6 },
         fit: 'shrink',
         fontSize: 10,
-        id: 'sub',
+        id: 'subtitle',
         labelKey: 'subtitle',
         placeholder: 'QUALITY ASSURED · 2026',
       },
@@ -708,12 +707,12 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 139.86, width: 139.86, x: 5.07, y: 5.07 }, lineWidth: 4.88, shape: 'circle' },
     category: 'circle',
     elements: [],
-    id: 'jp_sumi_01',
-    nameKey: 'jp_sumi_01',
+    id: 'circle_done',
+    nameKey: 'circle_done',
     preferredFonts: JP_FONTS,
     sharedFont: true,
     sizes: [{ label: '25mm', widthMm: 25 }],
-    svgContent: JP_SUMI_01,
+    svgContent: CIRCLE_DONE,
     texts: [
       {
         bounds: { height: 78, width: 124.2, x: 12.9, y: 36 },

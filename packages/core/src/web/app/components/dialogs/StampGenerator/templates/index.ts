@@ -3,12 +3,11 @@ import i18n from '@core/helpers/i18n';
 import type { StampSize, StampTemplate } from '../types';
 
 import { CATALOG_TEMPLATES } from './catalog';
-import { KAI_FONTS } from './fonts';
-import { CHINESE_LOCALES } from './locales';
+import { CHINESE_LOCALES, KAI_FONTS } from './fonts';
 // All templates live in a 150×150 space.
 // Color roles: #E5400A filled = frame (rings, even-odd), #1890FF stroke = arc-text baseline. Slot boxes live below, not in the SVG.
-import OVAL_COMPANY from './oval-company.svg?raw';
-import RECT_COMPANY from './rect-company.svg?raw';
+import TW_COMPANY_OVAL from './oval-company.svg?raw';
+import TW_COMPANY_RECT from './rect-company.svg?raw';
 
 /** 台灣公司小章 standard sizes, 四分 to 一吋 (1 分 = 0.3 cm). */
 const SQUARE_SIZES: StampSize[] = [
@@ -25,20 +24,20 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
   {
     category: 'tw_company',
     elements: [
-      { bounds: { height: 12.4, width: 12.4, x: 9, y: 68.8 }, id: 'logo_left' },
-      { bounds: { height: 12.4, width: 12.4, x: 128.6, y: 68.8 }, id: 'logo_right' },
+      { bounds: { height: 12.4, width: 12.4, x: 9, y: 68.8 }, id: 'icon_left' },
+      { bounds: { height: 12.4, width: 12.4, x: 128.6, y: 68.8 }, id: 'icon_right' },
     ],
-    id: 'oval_company',
+    id: 'tw_company_oval',
     locales: ['zh-tw'],
-    nameKey: 'oval_company',
+    nameKey: 'tw_company_oval',
     preferredFonts: KAI_FONTS,
     sizes: [{ widthMm: 51 }],
-    svgContent: OVAL_COMPANY,
+    svgContent: TW_COMPANY_OVAL,
     texts: [
       {
         baseline: 0,
         fontSize: 12,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'company_name',
         offset: 5,
         placeholder: '通量三維股份有限公司',
@@ -61,7 +60,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       {
         baseline: 1,
         fontSize: 12,
-        id: 'arc_bottom',
+        id: 'bottom_arc',
         labelKey: 'address',
         offset: 6,
         placeholder: '台北市南港區忠孝東路六段467號9樓',
@@ -71,20 +70,20 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
   {
     category: 'tw_company',
     elements: [
-      { bounds: { height: 12.4, width: 12.4, x: 19, y: 68.8 }, id: 'logo_left' },
-      { bounds: { height: 12.4, width: 12.4, x: 118.6, y: 68.8 }, id: 'logo_right' },
+      { bounds: { height: 12.4, width: 12.4, x: 19, y: 68.8 }, id: 'icon_left' },
+      { bounds: { height: 12.4, width: 12.4, x: 118.6, y: 68.8 }, id: 'icon_right' },
     ],
-    id: 'rect_company',
+    id: 'tw_company_rect',
     locales: ['zh-tw'],
-    nameKey: 'rect_company',
+    nameKey: 'tw_company_rect',
     preferredFonts: KAI_FONTS,
     sizes: [{ widthMm: 41 }],
-    svgContent: RECT_COMPANY,
+    svgContent: TW_COMPANY_RECT,
     texts: [
       {
         baseline: 0,
         fontSize: 11,
-        id: 'arc_top',
+        id: 'top_arc',
         labelKey: 'company_name',
         offset: 5,
         placeholder: '通量三維股份有限公司',
@@ -119,7 +118,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       {
         baseline: 1,
         fontSize: 11,
-        id: 'arc_bottom',
+        id: 'bottom_arc',
         labelKey: 'address',
         offset: 3,
         placeholder: '台北市南港區忠孝東路六段467號9樓',
@@ -132,9 +131,9 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 100, width: 100, x: 25, y: 25 }, lineWidth: 100 / 30, radius: 10, styles: false },
     category: 'square',
     elements: [],
-    id: 'name_seal',
+    id: 'square_name',
     locales: CHINESE_LOCALES,
-    nameKey: 'name_seal',
+    nameKey: 'square_name',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: SQUARE_SIZES,
@@ -142,7 +141,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       {
         bounds: { height: 83.3, width: 37.5, x: 79.7, y: 33.8 },
         fit: 'stretch',
-        id: 'col_1',
+        id: 'column_1',
         labelKey: 'surname',
         placeholder: '王',
         vertical: true,
@@ -150,7 +149,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       {
         bounds: { height: 83.3, width: 37.5, x: 33.8, y: 33.8 },
         fit: 'stretch',
-        id: 'col_2',
+        id: 'column_2',
         labelKey: 'given_name',
         placeholder: '大明',
         vertical: true,
@@ -161,9 +160,9 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     border: { bounds: { height: 100, width: 100, x: 25, y: 25 }, lineWidth: 100 / 30, radius: 10, styles: false },
     category: 'square',
     elements: [],
-    id: 'square_seal_3col',
+    id: 'square_three_column',
     locales: CHINESE_LOCALES,
-    nameKey: 'square_seal_3col',
+    nameKey: 'square_three_column',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: SQUARE_SIZES,
@@ -171,7 +170,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       {
         bounds: { height: 86.7, width: 24, x: 94.3, y: 31.7 },
         fit: 'stretch',
-        id: 'col_1',
+        id: 'column_1',
         labelKey: 'column_1',
         placeholder: '心心股',
         vertical: true,
@@ -179,7 +178,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       {
         bounds: { height: 86.7, width: 24, x: 63.2, y: 31.7 },
         fit: 'stretch',
-        id: 'col_2',
+        id: 'column_2',
         labelKey: 'column_2',
         placeholder: '份有限',
         vertical: true,
@@ -187,7 +186,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
       {
         bounds: { height: 86.7, width: 24, x: 32.1, y: 31.7 },
         fit: 'stretch',
-        id: 'col_3',
+        id: 'column_3',
         labelKey: 'column_3',
         placeholder: '公司',
         vertical: true,
@@ -197,8 +196,13 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
   ...CATALOG_TEMPLATES,
 ];
 
-/** Templates offered in the active UI language (a template with `locales` is listed only in those). */
-export const getVisibleTemplates = (): StampTemplate[] =>
-  STAMP_TEMPLATES.filter((template) => !template.locales || template.locales.includes(i18n.getActiveLang()));
+/** Templates offered in the active UI language: inside `locales` (when set) and outside `excludedLocales`. */
+export const getVisibleTemplates = (): StampTemplate[] => {
+  const lang = i18n.getActiveLang();
+
+  return STAMP_TEMPLATES.filter(
+    ({ excludedLocales, locales }) => (!locales || locales.includes(lang)) && !excludedLocales?.includes(lang),
+  );
+};
 
 export const getTemplateById = (id: string): StampTemplate | undefined => STAMP_TEMPLATES.find((t) => t.id === id);

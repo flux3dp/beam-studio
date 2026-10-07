@@ -103,7 +103,7 @@ prototype's 24×24 `Qm` icons) become element slots keyed by icon name — icons
 `templates/icons/`, filled outlines only (nonzero winding, holes wound the other way; stroked prototype
 icons are re-drawn as outlines). The prototype scales the 24 px viewport but `buildElement` fits the
 ink, so the script's `ORNAMENTS` table holds each icon's ink extent and sizes the slot by it — add the
-extent when adding an icon. Row templates with an ornament get `clearOf: { elementId: 'orn', padding: 4 }`
+extent when adding an icon. Row templates with an ornament get `clearOf: { elementId: 'icon', padding: 4 }`
 on every row, so the text sits beside the icon at any user size instead of under it (the design's own
 render overlaps them). `fontPreset` picks `preferredFonts`: `en-*` → named family + Montserrat,
 `tc-kai` → KAI_FONTS, `jp*` / `mono-type` → JP_FONTS / Montserrat. Supported gens on round / oval / rect /
@@ -168,15 +168,15 @@ the stroke ring's cut keeps `radius`. `BorderDef.shape` (`BorderShape`: `rect | 
 the family in `BORDER_STYLES`. For `circle` / `oval` the ring is an ellipse (`ringPath`, used for the
 stroke ring, the dashes, the parsed outline and a style's cut). `BorderDef.dashed` is the initial dash
 state (the post / passport date stamps).
-`BorderDef.styles: false` keeps a template to the plain line (name_seal, square_seal_3col: the
-characters fill the box; design_rect_01/02: the title bar spans the box; a decorative frame collides). The
+`BorderDef.styles: false` keeps a template to the plain line (square_name, square_three_column: the
+characters fill the box; rect_label/02: the title bar spans the box; a decorative frame collides). The
 Border tab picks styles from the shared `@core/app/widgets/IconSelectorGrid` (moved out of the
-keychain generator) with the raw SVG as thumbnail and no labels. Border templates: company_rect_02,
-wb_confidential_01, world_passport_rect, office_rect_date_01, the portrait name_rect_04, and the
-squares name_seal / square_seal_3col (100 px box, ring 1/30), illu_camera, jp_rakkan_01 (boxes = their
-old frame edges; SVGs deleted) and the split templates design_rect_01/02 (ring removed from the SVG,
-the filled title bar stays there as a frame for the knockout text). The circle (wb_corpseal_01, wb_notary_01, illu_paw, office_round_check_01, office_round_post_01,
-jp_sumi_01) and oval (company_oval_02, world_india_oval, office_oval_recv_01, world_passport_oval)
+keychain generator) with the raw SVG as thumbnail and no labels. Border templates: rect_title_name,
+rect_confidential, rect_entry, rect_date, the portrait rect_signature_vertical, and the
+squares square_name / square_three_column (100 px box, ring 1/30), square_camera, square_signature (boxes = their
+old frame edges; SVGs deleted) and the split templates rect_label/02 (ring removed from the SVG,
+the filled title bar stays there as a frame for the knockout text). The circle (circle_corporate, circle_notary, circle_paw, circle_approved, circle_postmark,
+circle_done) and oval (oval_company, oval_registration, oval_received, oval_exit)
 catalog templates lost their outer ring the same way; inner rings and date rules stay in the SVG. Only
 the TW 統編章 pair still uses SVG outer frames.
 
@@ -210,12 +210,14 @@ the TW 統編章 pair still uses SVG outer frames.
   `Montserrat-Medium` for 統一編號). `StampTemplate.nameKey` is the i18n key (= id for catalog entries).
 - Every template declares `category: TemplateCategory` (`TEMPLATE_CATEGORIES` in types.ts: the frame
   shapes `circle | oval | square | rect`, then `tw_company` for the regulated 統編章 pair
-  oval_company / rect_company). The dialog's top bar (a row of antd outlined Buttons in
+  tw_company_oval / tw_company_rect). The dialog's top bar (a row of antd outlined Buttons in
   `StampGenerator.tsx`) reads the current template's category, filters the picker to it, and picking one
   selects its first template through the normal switch-template path (so the unsaved-changes warning
   still applies). No extra store state. A template with `locales` is listed only in those UI languages
-  (the TW 統編章 pair: `['zh-tw']`; the 公司小章 square seals and company_rect_02: `CHINESE_LOCALES`
-  from templates/locales.ts, with company_rect_02_latin as its `OTHER_LOCALES` twin sharing the nameKey) (`getVisibleTemplates()` in
+  and one with `excludedLocales` everywhere else (the TW 統編章 pair: `['zh-tw']`; the 公司小章 square
+  seals and rect_title_name: `CHINESE_LOCALES` from templates/fonts.ts; rect_title_name_latin excludes
+  them and shares the nameKey). Japanese seals (circle_done, square_signature) stay global for now: too
+  few templates to split. (`getVisibleTemplates()` in
   templates/index.ts), and a category button appears only while it has a visible template, so
   `tw_company` shows for zh-tw alone. The dialog opens on the first circle template. The TW seals keep
   their SVG frames: their outer rings are fixed by regulation, never a border.
