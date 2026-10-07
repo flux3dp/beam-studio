@@ -1,15 +1,22 @@
 import paper from 'paper';
 
 import { STAMP_TEMPLATES } from '../templates';
+import type { StampTemplate } from '../types';
 
 import { parseTemplate } from './buildTemplate';
 
-const parse = (id: string) => {
+const parse = (id: string, override: Partial<StampTemplate> = {}) => {
   const template = STAMP_TEMPLATES.find((t) => t.id === id)!;
   const project = new paper.Project(document.createElement('canvas'));
 
-  return parseTemplate(project, template);
+  return parseTemplate(project, { ...template, ...override });
 };
+
+// A dashed ring (three dash segments as one compound frame) under an explicit cut circle.
+const DASHED_WITH_CUT = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 150 150">
+<path d="M5 75A70 70 0 1 1 145 75A70 70 0 1 1 5 75Z" stroke="#722ED1" fill="none"/>
+<path fill-rule="evenodd" d="M5 70h3v10h-3ZM142 70h3v10h-3ZM70 5h10v3h-10Z" fill="#E5400A"/>
+</svg>`;
 
 describe('parseTemplate', () => {
   it('splits oval template into frames + baselines, baselines run left→right', () => {
@@ -35,11 +42,22 @@ describe('parseTemplate', () => {
   });
 
   it('uses an explicit cut path as the outline and keeps the dashes as frames', () => {
-    const { frames, outline } = parse('office_round_post_01');
+    const { frames, outline } = parse('oval_company', { svgContent: DASHED_WITH_CUT });
 
     expect(outline instanceof paper.CompoundPath).toBe(false);
+    expect(outline.bounds.width).toBeCloseTo(140, 3);
     // The dashes come in as one compound frame with one child per dash.
-    expect(frames.some((f) => f instanceof paper.CompoundPath && f.children.length > 10)).toBe(true);
+    expect(frames.some((f) => f instanceof paper.CompoundPath && f.children.length === 3)).toBe(true);
     expect(frames.every((f) => f.bounds.area <= outline.bounds.area)).toBe(true);
+  });
+
+  it('uses an ellipse as the outline of a circle border template', () => {
+    const { frames, outline } = parse('office_round_post_01');
+
+    // Only the two date rules are left in the SVG; the ring is the runtime border.
+    expect(frames).toHaveLength(2);
+    expect(outline.bounds.width).toBeCloseTo(142.72, 3);
+    // paper draws ellipses as 4 béziers, 0.03% off a true circle.
+    expect(Math.abs(outline.area) / (Math.PI * 71.36 ** 2)).toBeCloseTo(1, 3);
   });
 });

@@ -75,6 +75,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 40×40 mm outer ring edge.
+    border: { bounds: { height: 140, width: 140, x: 5, y: 5 }, lineWidth: 3.11, shape: 'circle' },
     category: 'circle',
     elements: [
       { bounds: { height: 9.6, width: 9.6, x: 15.5, y: 70.2 }, id: 'star_left', shapeKey: 'stamp/star' },
@@ -124,6 +126,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 40×40 mm outer ring edge.
+    border: { bounds: { height: 140, width: 140, x: 5, y: 5 }, lineWidth: 3.11, shape: 'circle' },
     category: 'circle',
     elements: [
       { bounds: { height: 9.6, width: 9.6, x: 15.5, y: 70.2 }, id: 'star_left', shapeKey: 'stamp/star' },
@@ -310,6 +314,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 30×30 mm outer ring edge.
+    border: { bounds: { height: 139.4, width: 139.4, x: 5.3, y: 5.3 }, lineWidth: 3.57, shape: 'circle' },
     category: 'circle',
     elements: [
       {
@@ -344,6 +350,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 30×30 mm outer ring edge.
+    border: { bounds: { height: 139.4, width: 139.4, x: 5.3, y: 5.3 }, lineWidth: 3.57, shape: 'circle' },
     category: 'circle',
     elements: [
       {
@@ -479,6 +487,13 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 40×40 mm outer ring edge.
+    border: {
+      bounds: { height: 142.72, width: 142.72, x: 3.64, y: 3.64 },
+      dashed: true,
+      lineWidth: 2.73,
+      shape: 'circle',
+    },
     category: 'circle',
     elements: [],
     id: 'office_round_post_01',
@@ -666,6 +681,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
+    // Frame built at runtime (Border tab); box = the converter's 25×25 mm outer ring edge.
+    border: { bounds: { height: 139.86, width: 139.86, x: 5.07, y: 5.07 }, lineWidth: 4.88, shape: 'circle' },
     category: 'circle',
     elements: [],
     id: 'jp_sumi_01',

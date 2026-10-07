@@ -1,15 +1,17 @@
 import paper from 'paper';
 
+import { collectPathItems } from '@core/helpers/generator/collectPathItems';
+
 import { BORDER_STYLES } from '../templates/borders';
 import type { BorderStyle } from '../templates/borders';
-import type { BorderDef, BorderOptionValues, Bounds } from '../types';
+import type { BorderDef, BorderOptionValues, BorderShape, Bounds } from '../types';
 
 import { importStyle, layoutSlices, NATIVE, sliceStyle } from './sliceBorder';
 
 /** Sample step along the centerline when tracing a dash outline, in design px. */
 const DASH_STEP = 0.5;
 
-const inset = ({ height, width, x, y }: Bounds, d: number): Bounds => ({
+export const inset = ({ height, width, x, y }: Bounds, d: number): Bounds => ({
   height: height - 2 * d,
   width: width - 2 * d,
   x: x + d,
@@ -27,6 +29,21 @@ export const roundedRect = (bounds: Bounds, radius = 0): paper.Path =>
     radius: Math.max(0.01, Math.min(radius, bounds.width / 2, bounds.height / 2)),
     size: [bounds.width, bounds.height],
   });
+
+export const isRound = (shape: BorderShape = 'rect'): boolean => shape === 'circle' || shape === 'oval';
+
+/**
+ * The ring path of a border family at `bounds`: an ellipse for the round families, else a rounded
+ * rect. Concentric rings of one family share their curve structure (4 arcs / 4 sides + 4 arcs), which
+ * `strokeSegment` relies on.
+ */
+export const ringPath = (bounds: Bounds, radius = 0, shape: BorderShape = 'rect'): paper.Path =>
+  isRound(shape)
+    ? new paper.Path.Ellipse({
+        insert: false,
+        rectangle: new paper.Rectangle(bounds.x, bounds.y, bounds.width, bounds.height),
+      })
+    : roundedRect(bounds, radius);
 
 /**
  * Dash layout along a closed centerline of `length` design px drawn `lineWidth` wide: the
@@ -80,6 +97,31 @@ const strokeSegment = ({ center, inner, outer }: Rings, s0: number, s1: number):
 
 const inkCache = new Map<BorderStyle, paper.Path[]>();
 
+/** Flattening tolerance for frame measurements, in stamp mm: results are exact to within this. Far below the kerf. */
+const FLATNESS_MM = 0.02;
+
+/** Flattening the 6000-curve florals costs ~50 ms and every text keystroke rebuilds, so measurements are memoized. */
+const measureCache = new Map<string, number>();
+const measured = (key: string, measure: () => number): number => {
+  if (!measureCache.has(key)) measureCache.set(key, measure());
+
+  return measureCache.get(key)!;
+};
+const boundsKey = ({ height, width, x, y }: Bounds) => `${x},${y},${width},${height}`;
+
+/** Vertices of `item` flattened to within `flatness` px, so an extremum over them is exact to that tolerance. */
+const flatVertices = (item: paper.PathItem, flatness: number): paper.Point[] => {
+  const flat = item.clone({ insert: false });
+
+  flat.flatten(flatness);
+
+  return collectPathItems(flat).flatMap((p) =>
+    (p instanceof paper.CompoundPath ? (p.children as paper.Path[]) : [p as paper.Path]).flatMap((c) =>
+      c.segments.map((seg) => seg.point),
+    ),
+  );
+};
+
 /** The design canvas of a style SVG (`viewBox="0 0 w h"`), which the designers drew as the stamp box. */
 const canvasOf = (svg: string): [number, number] => {
   const [, w, h] = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg)!;
@@ -93,7 +135,7 @@ const canvasOf = (svg: string): [number, number] => {
  * itself isn't fitted — asymmetric ornaments make it off-square. An oval box off the drawn 3:2 ratio
  * gets a small gap between frame and cut on its long axis rather than a stretched frame.
  */
-const fitStyleBorder = (bounds: Bounds, style: BorderStyle): paper.PathItem => {
+const fitStyleBorder = (bounds: Bounds, style: BorderStyle, pxPerMm: number, shape?: BorderShape): paper.PathItem => {
   if (!inkCache.has(style)) inkCache.set(style, importStyle(style));
 
   const item = new paper.CompoundPath({
@@ -102,11 +144,26 @@ const fitStyleBorder = (bounds: Bounds, style: BorderStyle): paper.PathItem => {
   });
   const [w, h] = canvasOf(style.svg);
   const scale = Math.min(bounds.width / w, bounds.height / h);
+  const center = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
 
   item.scale(scale, new paper.Point(0, 0));
   item.translate(
     new paper.Point(bounds.x + (bounds.width - w * scale) / 2, bounds.y + (bounds.height - h * scale) / 2),
   );
+
+  // Round designs are drawn to a square canvas, so corner ornaments (the vintage frames) reach past
+  // the ellipse cut at 45°. Shrink until the farthest ink point (in the ellipse metric) lies on it.
+  if (isRound(shape)) {
+    const [a, b] = [bounds.width / 2, bounds.height / 2];
+    const reach = measured(`fit:${shape}/${style.key}@${boundsKey(bounds)}/${pxPerMm}`, () =>
+      flatVertices(item, FLATNESS_MM * pxPerMm).reduce(
+        (max, p) => Math.max(max, Math.hypot((p.x - center.x) / a, (p.y - center.y) / b)),
+        0,
+      ),
+    );
+
+    if (reach > 1) item.scale(1 / reach, center);
+  }
 
   item.fillColor = new paper.Color('black');
   item.reorient(false, true);
@@ -122,8 +179,8 @@ const MAX_CORNER_SHARE = 0.4;
  * scale, capped by MAX_CORNER_SHARE. A portrait box is laid out landscape and turned 90°, so the
  * designs' long-side motifs run along the long sides.
  */
-const buildStyleBorder = (bounds: Bounds, style: BorderStyle, pxPerMm: number): paper.PathItem => {
-  if (!style.slice) return fitStyleBorder(bounds, style);
+const buildStyleBorder = (bounds: Bounds, style: BorderStyle, pxPerMm: number, shape?: BorderShape): paper.PathItem => {
+  if (!style.slice) return fitStyleBorder(bounds, style, pxPerMm, shape);
 
   const [cx, cy] = style.slice.corner;
   const center = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
@@ -150,23 +207,71 @@ const buildStyleBorder = (bounds: Bounds, style: BorderStyle, pxPerMm: number): 
 };
 
 /**
+ * Gauge of a rounded rect centered at the origin (half size hw×hh, corner radius r): the scale at which
+ * its boundary passes through (u, v), u, v ≥ 0. Side spans scale with the shape, so the side test is
+ * scale-free; a corner point solves |(u, v) − s·(cw, ch)| = s·r, taking the root that leaves the point
+ * outside the scaled core (the smaller one, in the cancellation-free form).
+ */
+const roundedRectGauge = (u: number, v: number, hw: number, hh: number, r: number): number => {
+  const [cw, ch] = [hw - r, hh - r];
+
+  if (v * hw <= u * ch) return u / hw;
+
+  if (u * hh <= v * cw) return v / hh;
+
+  const a = cw * cw + ch * ch - r * r;
+  const b = -(u * cw + v * ch);
+  const c = u * u + v * v;
+
+  return c / (-b + Math.sqrt(b * b - a * c));
+};
+
+/**
+ * How much the design content must shrink to sit inside a decorative frame's hole. The template was
+ * laid out against the stroke ring's inner edge; for every (flattened) frame vertex the gauge gives the
+ * scale at which that ring would pass through it, and the smallest gauge (≤ 1) is the content scale.
+ * Whole-design scaling keeps inner rings, arc text and elements in proportion.
+ */
+export const holeScale = (frame: paper.PathItem, border: BorderDef, styleKey: string, pxPerMm: number): number =>
+  measured(
+    `hole:${border.shape}/${styleKey}@${boundsKey(border.bounds)}/${border.lineWidth}/${border.radius}/${pxPerMm}`,
+    () => measureHole(frame, border, pxPerMm),
+  );
+
+const measureHole = (frame: paper.PathItem, border: BorderDef, pxPerMm: number): number => {
+  const { bounds, lineWidth = 2, radius = 0, shape } = border;
+  const [hw, hh] = [bounds.width / 2 - lineWidth, bounds.height / 2 - lineWidth];
+  // Same clamp as roundedRect, so the gauge is the ring buildBorder draws.
+  const r = Math.max(0.01, Math.min(radius - lineWidth, hw, hh));
+  const center = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+  const gauge = isRound(shape)
+    ? (u: number, v: number) => Math.hypot(u / hw, v / hh)
+    : (u: number, v: number) => roundedRectGauge(u, v, hw, hh, r);
+
+  return flatVertices(frame, FLATNESS_MM * pxPerMm).reduce(
+    (min, p) => Math.min(min, gauge(Math.abs(p.x - center.x), Math.abs(p.y - center.y))),
+    1,
+  );
+};
+
+/**
  * Runtime-built frame inside `border.bounds`, whose outer edge is the box (and the cut): a stroke ring
  * growing inward (dashed = a compound of separate dash outlines) or a decorative style sliced into the
  * box. `pxPerMm` (design px per stamp mm) keeps style ornaments at the size the design drew them.
  */
 export const buildBorder = (border: BorderDef, values: BorderOptionValues, pxPerMm: number): paper.PathItem => {
-  const { bounds, radius = 0 } = border;
-  const style = BORDER_STYLES[border.shape ?? 'rect'].find((s) => s.key === values.style);
+  const { bounds, radius = 0, shape } = border;
+  const style = BORDER_STYLES[shape ?? 'rect'].find((s) => s.key === values.style);
 
-  if (style) return buildStyleBorder(bounds, style, pxPerMm);
+  if (style) return buildStyleBorder(bounds, style, pxPerMm, shape);
 
   const w = values.lineWidth;
-  const outer = roundedRect(bounds, radius);
-  const inner = roundedRect(inset(bounds, w), radius - w);
+  const outer = ringPath(bounds, radius, shape);
+  const inner = ringPath(inset(bounds, w), radius - w, shape);
   let item: paper.CompoundPath;
 
   if (values.dashed) {
-    const rings = { center: roundedRect(inset(bounds, w / 2), radius - w / 2), inner, outer };
+    const rings = { center: ringPath(inset(bounds, w / 2), radius - w / 2, shape), inner, outer };
     const dashes = dashRanges(rings.center.length, w).map(([s0, s1]) => strokeSegment(rings, s0, s1));
 
     item = new paper.CompoundPath({ children: dashes, insert: true });

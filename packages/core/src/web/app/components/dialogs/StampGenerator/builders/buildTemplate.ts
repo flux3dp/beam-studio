@@ -6,7 +6,7 @@ import { collectPathItems } from '@core/helpers/generator/collectPathItems';
 import { ROLE_COLORS } from '../constants';
 import type { ParsedTemplate, StampTemplate } from '../types';
 
-import { roundedRect } from './buildBorder';
+import { ringPath } from './buildBorder';
 
 type PathRole = 'baseline' | 'cut' | 'frame';
 
@@ -65,7 +65,7 @@ export const parseTemplate = (project: paper.Project, template: StampTemplate): 
   const outline =
     cut ??
     (template.border
-      ? roundedRect(template.border.bounds, template.border.radius)
+      ? ringPath(template.border.bounds, template.border.radius, template.border.shape)
       : byRole.frame.reduce((a, b) => (b.bounds.area > a.bounds.area ? b : a)));
 
   const baselines = byRole.baseline

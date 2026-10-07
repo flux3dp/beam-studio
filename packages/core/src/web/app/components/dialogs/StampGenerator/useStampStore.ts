@@ -80,9 +80,19 @@ const getSlotFont = (slot: TextSlotDef, defaultFont: TextOptionValues['font']): 
   return toFont(font, defaultFont);
 };
 
+/** Default stroke ring width in design px, rounded to 0.05 mm at the default size so the Border tab's 0.1 mm steps land on 5s and 0s. */
+const defaultLineWidth = ({ border, sizes }: StampTemplate): number => {
+  const pxPerMm = border!.bounds.width / sizes[0].widthMm;
+  const mm = (border!.lineWidth ?? 2) / pxPerMm;
+
+  return Math.round(mm / 0.05) * 0.05 * pxPerMm;
+};
+
 const getDefaultState = (template: StampTemplate, defaultFont: TextOptionValues['font']): StampState => {
   return {
-    border: template.border ? { dashed: false, lineWidth: template.border.lineWidth ?? 2, style: 'stroke' } : undefined,
+    border: template.border
+      ? { dashed: template.border.dashed ?? false, lineWidth: defaultLineWidth(template), style: 'stroke' }
+      : undefined,
     elements: Object.fromEntries(
       template.elements.map((e) => [
         e.id,

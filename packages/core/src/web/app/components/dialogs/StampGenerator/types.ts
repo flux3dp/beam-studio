@@ -77,6 +77,8 @@ export type BorderShape = 'circle' | 'oval' | 'rect' | 'square';
 
 export interface BorderDef {
   bounds: Bounds;
+  /** Initial dash setting of the stroke ring (the design's dashed rings). */
+  dashed?: boolean;
   lineWidth?: number;
   radius?: number;
   /** Which style family the Border tab offers; defaults to `rect`. */

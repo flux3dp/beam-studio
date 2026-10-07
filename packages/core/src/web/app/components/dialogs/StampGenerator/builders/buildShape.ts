@@ -5,7 +5,7 @@ import NS from '@core/app/constants/namespaces';
 import { DESIGN_SIZE, PREVIEW_COLORS } from '../constants';
 import type { ParsedTemplate, StampShape, StampState, StampTemplate } from '../types';
 
-import { buildBorder, roundedRect } from './buildBorder';
+import { buildBorder, holeScale, ringPath } from './buildBorder';
 import { buildElementPaths } from './buildElement';
 import { buildTextPaths } from './buildText';
 
@@ -114,8 +114,20 @@ export const buildStampShape = async (
 
   if (template.border && state.border) {
     const { widthMm } = template.sizes[state.sizeIndex] ?? template.sizes[0];
+    const pxPerMm = template.border.bounds.width / widthMm;
+    const border = buildBorder(template.border, state.border, pxPerMm);
 
-    frames.push(buildBorder(template.border, state.border, template.border.bounds.width / widthMm));
+    // A decorative frame reaches further in than the stroke ring the design was laid out against:
+    // shrink the whole design (SVG frames, text, elements) about the center to fit its hole.
+    if (state.border.style !== 'stroke') {
+      const { bounds } = template.border;
+      const scale = holeScale(border, template.border, state.border.style, pxPerMm);
+      const center = new paper.Point(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+
+      [...frames, ...built.map((b) => b.item), ...elements].forEach((item) => item.scale(scale, center));
+    }
+
+    frames.push(border);
   }
 
   for (const { item, slot } of built) {
@@ -125,10 +137,11 @@ export const buildStampShape = async (
     else texts.push(item);
   }
 
-  // A decorative border style fills its box to the corners, so its cut is the sharp box, not the stroke ring's rounded one.
+  // A decorative border style fills its box to the corners, so its cut is the sharp box (the ellipse for
+  // round families), not the stroke ring's rounded one.
   const cut =
     template.border && state.border && state.border.style !== 'stroke'
-      ? roundedRect(template.border.bounds)
+      ? ringPath(template.border.bounds, 0, template.border.shape)
       : outerContour(parsed.outline);
   const engrave = state.invertColor
     ? [invertFace(cut, [...frames, ...texts, ...elements])]

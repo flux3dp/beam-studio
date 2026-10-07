@@ -2,7 +2,7 @@ import paper from 'paper';
 
 import { BORDER_STYLES } from '../templates/borders';
 
-import { buildBorder, dashRanges, roundedRect } from './buildBorder';
+import { buildBorder, dashRanges, holeScale, roundedRect } from './buildBorder';
 import { sliceStyle } from './sliceBorder';
 
 const toRect = (b: { height: number; width: number; x: number; y: number }) =>
@@ -120,13 +120,14 @@ describe('buildBorder', () => {
     (shape) => {
       const box = { bounds: { height: shape === 'oval' ? 60 : 90, width: 90, x: 30, y: 30 }, shape };
       // Design files overshoot their canvas by up to 0.4 px (oval floral_2), scaled here by 0.5.
-    const rect = toRect(box.bounds).expand(0.5);
+      const rect = toRect(box.bounds).expand(0.5);
 
       for (const { key } of BORDER_STYLES[shape]) {
         const item = buildBorder(box, { dashed: false, lineWidth: 2, style: key }, 4) as paper.CompoundPath;
         const span = Math.max(item.bounds.width / box.bounds.width, item.bounds.height / box.bounds.height);
 
-        expect([key, rect.contains(item.bounds), span > 0.9, item.contains(rect.center)]).toEqual([
+        // Round vintage frames shrink to ~85% so their corner ornaments clear the ellipse cut.
+        expect([key, rect.contains(item.bounds), span > 0.8, item.contains(rect.center)]).toEqual([
           key,
           true,
           true,
@@ -135,6 +136,34 @@ describe('buildBorder', () => {
       }
     },
   );
+
+  it('holeScale: a round frame shrinks the content by hole radius over ring inner radius', () => {
+    const def = { bounds: { height: 140, width: 140, x: 5, y: 5 }, lineWidth: 3, shape: 'circle' as const };
+    const hole = new paper.CompoundPath({
+      children: [
+        new paper.Path.Circle({ center: [75, 75], insert: false, radius: 70 }),
+        new paper.Path.Circle({ center: [75, 75], insert: false, radius: 50 }),
+      ],
+      insert: false,
+    });
+
+    expect(holeScale(hole, def, 'test_round', 140 / 40)).toBeCloseTo(50 / 67, 3);
+  });
+
+  it('holeScale: on a rect ring, points on the ring itself gauge to 1 and an inward bar sets the scale', () => {
+    const def = { bounds: border.bounds, lineWidth: 2, radius: 3.4 };
+    const ring = buildBorder(def, { dashed: false, lineWidth: 2, style: 'stroke' }, 3) as paper.CompoundPath;
+    const inner = ring.children[1] as paper.Path;
+    // The inner ring's own points (sides and corner arcs) sit exactly on the gauge = 1 surface.
+    const onRing = new paper.CompoundPath({ children: [inner.clone({ insert: false })], insert: false });
+
+    expect(holeScale(onRing, def, 'test_ring', 3)).toBeCloseTo(1, 3);
+
+    // A bar reaching 10 px down from the top edge at the center: hole half-height 24.04 − 2 − 10 over 24.04.
+    const bar = new paper.Path.Rectangle({ insert: false, point: [70, 48.96], size: [10, 12] });
+
+    expect(holeScale(bar, def, 'test_bar', 3)).toBeCloseTo((26.04 - 2 - 10) / 24.04, 3);
+  });
 
   it('solid: a ring whose area is the outer box minus the inset box', () => {
     const ring = buildBorder(border, { dashed: false, lineWidth: 2, style: 'stroke' }, 3);
