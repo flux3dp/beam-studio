@@ -278,6 +278,11 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           id: 'LOG_ROBOT',
           label: r.log.robot,
         },
+        {
+          click: handleClick,
+          id: 'LOG_LIGHTBURN',
+          label: 'LightBurn',
+        },
       ],
     },
   ].filter(Boolean) as MenuItemConstructorOptions[];
