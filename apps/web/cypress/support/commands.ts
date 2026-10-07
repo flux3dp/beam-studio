@@ -26,7 +26,7 @@ const setStorage = () => {
   window.localStorage.setItem(
     'beam-studio-101',
     JSON.stringify({
-      anonymous: { catalogVersion: 1, lessons: {}, nudgeDismissed: true, updatedAt: '1970-01-01T00:00:00.000Z' },
+      anonymous: { lessons: {}, nudgeDismissed: true, updatedAt: '1970-01-01T00:00:00.000Z' },
     }),
   );
   window.localStorage.setItem('beambox-preference', '{"font-convert":"2.0", "auto-switch-tab": false}');

@@ -172,7 +172,6 @@ type Flux101Storage = {
 };
 
 type Flux101Bucket = {
-  catalogVersion: number;
   lessons: Record<LessonId, LessonProgress>;
   lastLessonId?: LessonId;
   nudgeDismissed?: true;     // R2a prompt answered; OR-ed on merge

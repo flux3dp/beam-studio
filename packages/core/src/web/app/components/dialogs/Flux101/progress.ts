@@ -6,7 +6,7 @@ import { useEffect, useState } from 'react';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 
-import { CATALOG_VERSION, type Chapter, CHAPTERS, CREDITS_PER_LESSON, LESSON_IDS, LESSONS } from './catalog';
+import { type Chapter, CHAPTERS, CREDITS_PER_LESSON, LESSON_IDS, LESSONS } from './catalog';
 
 export const STORAGE_KEY = 'beam-studio-101';
 export const ANONYMOUS = 'anonymous';
@@ -27,7 +27,6 @@ export interface LessonProgress {
 }
 
 export interface Flux101Bucket {
-  catalogVersion: number;
   lastLessonId?: string;
   lessons: Record<string, LessonProgress>;
   /** R2a post-tutorial prompt has been answered; never shown again. */
@@ -42,7 +41,6 @@ export type Flux101Storage = Record<string, Flux101Bucket> & {
 const now = (): string => new Date().toISOString();
 
 export const emptyBucket = (): Flux101Bucket => ({
-  catalogVersion: CATALOG_VERSION,
   lessons: {},
   updatedAt: new Date(0).toISOString(),
 });
@@ -109,7 +107,6 @@ export const mergeBuckets = (...buckets: Flux101Bucket[]): Flux101Bucket => {
   const newest = buckets.reduce((x, y) => (y.updatedAt > x.updatedAt ? y : x), emptyBucket());
 
   return {
-    catalogVersion: Math.max(...buckets.map((b) => b.catalogVersion)),
     lastLessonId: newest.lastLessonId,
     lessons,
     nudgeDismissed: buckets.some((b) => b.nudgeDismissed) || undefined,

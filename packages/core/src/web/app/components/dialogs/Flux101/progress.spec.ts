@@ -61,14 +61,12 @@ describe('mergeLesson', () => {
 describe('mergeBuckets', () => {
   test('unions lessons, keeps newest lastLessonId, ORs nudgeDismissed', () => {
     const a = {
-      catalogVersion: 1,
       lastLessonId: '1-2',
       lessons: { '1-1': watched() },
       nudgeDismissed: true as const,
       updatedAt: '2026-02-01T00:00:00.000Z',
     };
     const b = {
-      catalogVersion: 1,
       lastLessonId: '2-1',
       lessons: { '1-2': partial(5), 'x-9': partial(1) },
       updatedAt: '2026-03-01T00:00:00.000Z',
