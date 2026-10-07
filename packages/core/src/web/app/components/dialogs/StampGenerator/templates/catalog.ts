@@ -460,6 +460,8 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'rect',
     elements: [],
     id: 'rect_signature_vertical',
+    // Vertical name seals are a Chinese and Japanese convention.
+    locales: [...CHINESE_LOCALES, 'ja'],
     nameKey: 'rect_signature_vertical',
     preferredFonts: KAI_FONTS,
     sharedFont: true,

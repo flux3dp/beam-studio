@@ -21,7 +21,9 @@
 
 .categories {
   display: flex;
+  flex-shrink: 0;
   gap: 8px;
+  overflow-x: auto; // antd buttons don't wrap: on narrow screens the row scrolls instead of being clipped
 }
 
 .body {
