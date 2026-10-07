@@ -95,6 +95,7 @@ export const useYouTubePlayer = (
     const played = pending.current; // same object for the hook's lifetime; only its fields change
     let tick: ReturnType<typeof setInterval> | undefined;
     let disposed = false;
+    let created: null | YTPlayer = null;
 
     loadApi()
       .then((YT) => {
@@ -106,9 +107,16 @@ export const useYouTubePlayer = (
 
         played.lessonId = id;
 
-        player.current = new YT.Player(host.current, {
+        // Playback methods (cueVideoById, getCurrentTime, ...) exist only once the iframe reports
+        // ready, so the ref is published in onReady; until then every player.current?.x() is a no-op.
+        created = new YT.Player(host.current, {
           events: {
             onError: () => setError(true),
+            onReady: () => {
+              player.current = created;
+
+              if (lesson.current !== id) cue(); // switched lessons while the iframe was loading
+            },
             onStateChange: ({ data }: { data: number }) => {
               clearInterval(tick);
               flush();
@@ -155,10 +163,9 @@ export const useYouTubePlayer = (
       document.removeEventListener('visibilitychange', onVisibility);
       communicator.off(TabEvents.TabBlurred, pause);
 
-      // Methods exist only once the iframe is up. Persist the played seconds and the position
-      // (furthest-point rule) and carry the exact one for a remount; a close drops the carried
-      // state so reopening starts paused at the furthest point.
-      const sec = player.current?.getCurrentTime?.();
+      // Persist the played seconds and the position (furthest-point rule) and carry the exact one
+      // for a remount; a close drops the carried state so reopening starts paused at the furthest point.
+      const sec = player.current?.getCurrentTime();
       const closing = useFlux101Store.getState().view === 'closed';
 
       if (sec) {
@@ -172,14 +179,17 @@ export const useYouTubePlayer = (
       carried = closing || !sec ? null : { lessonId: lesson.current, sec };
       wasPlaying &&= !closing;
 
-      player.current?.destroy();
+      created?.destroy();
       player.current = null;
     };
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [attempt]);
 
-  const cue = () =>
-    player.current?.cueVideoById({ startSeconds: Math.floor(resumeOf(lessonId)), videoId: videoIdOf(lessonId) });
+  const cue = () => {
+    const id = lesson.current; // not the render's lessonId: onReady may call this from an older closure
+
+    player.current?.cueVideoById({ startSeconds: Math.floor(resumeOf(id)), videoId: videoIdOf(id) });
+  };
 
   // lesson switch: write what the previous lesson still has pending, then cue (no autoplay) the new
   // one at its resume point
@@ -188,7 +198,6 @@ export const useYouTubePlayer = (
     pending.current.lessonId = lessonId;
     setError(false);
     cue();
-    // eslint-disable-next-line hooks/exhaustive-deps
   }, [lessonId]);
 
   return {
