@@ -20,7 +20,7 @@ jest.mock('./buildText', () => ({
 const mockCollectPathItems = jest.fn();
 const mockRemoveDegenerateCurves = jest.fn();
 
-jest.mock('./buildShape', () => ({
+jest.mock('@core/helpers/generator/collectPathItems', () => ({
   collectPathItems: mockCollectPathItems,
 }));
 

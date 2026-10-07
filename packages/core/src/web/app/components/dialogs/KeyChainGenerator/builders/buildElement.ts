@@ -1,10 +1,9 @@
 import paper from 'paper';
 
+import { collectPathItems } from '@core/helpers/generator/collectPathItems';
 import { loadShape } from '@core/helpers/generator/loadShape';
 
 import type { ElementOptionDef, KeyChainState } from '../types';
-
-import { collectPathItems } from './buildShape';
 
 export { loadShape, NP_SHAPE_PREFIX, svgCache } from '@core/helpers/generator/loadShape';
 

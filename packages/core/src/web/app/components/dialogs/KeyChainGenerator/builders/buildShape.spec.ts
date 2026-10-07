@@ -75,58 +75,7 @@ jest.mock('paper', () => {
   return { __esModule: true, default: mod, ...mod };
 });
 
-import { applyHoles, collectPathItems, importBasePath, resolveHoleValues } from './buildShape';
-
-describe('collectPathItems', () => {
-  beforeEach(() => jest.clearAllMocks());
-
-  it('should return Path item in array', () => {
-    const path = new MockPath();
-    const result = collectPathItems(path as any);
-
-    expect(result).toEqual([path]);
-  });
-
-  it('should return CompoundPath item in array', () => {
-    const cp = new MockCompoundPath();
-    const result = collectPathItems(cp as any);
-
-    expect(result).toEqual([cp]);
-  });
-
-  it('should recursively collect from Group children', () => {
-    const path1 = new MockPath();
-    const path2 = new MockPath();
-    const group = new MockGroup([path1, path2]);
-    const result = collectPathItems(group as any);
-
-    expect(result).toEqual([path1, path2]);
-  });
-
-  it('should recursively collect from Layer children', () => {
-    const path = new MockPath();
-    const layer = new MockLayer([path]);
-    const result = collectPathItems(layer as any);
-
-    expect(result).toEqual([path]);
-  });
-
-  it('should handle nested groups', () => {
-    const path1 = new MockPath();
-    const path2 = new MockPath();
-    const innerGroup = new MockGroup([path2]);
-    const outerGroup = new MockGroup([path1, innerGroup]);
-    const result = collectPathItems(outerGroup as any);
-
-    expect(result).toEqual([path1, path2]);
-  });
-
-  it('should return empty array for unknown item types', () => {
-    const result = collectPathItems({} as any);
-
-    expect(result).toEqual([]);
-  });
-});
+import { applyHoles, importBasePath, resolveHoleValues } from './buildShape';
 
 describe('importBasePath', () => {
   beforeEach(() => jest.clearAllMocks());

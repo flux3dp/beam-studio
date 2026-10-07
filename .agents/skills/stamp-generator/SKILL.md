@@ -242,13 +242,15 @@ render their `shapeKey`. The paw stamp's default is the panel's own paw; camera 
 - `resolveDefaultFont(template.preferredFonts)` in the store probes candidates in order with
   `getFontObj` (skips fonts that don't resolve or don't load: web font offline, macOS font not
   downloaded), falls back to the user's default font; cached per candidate list per session.
-- Lists in `templates/index.ts`: `KAI_FONTS` (TW-MOE-Std-Kai web font, then OS 標楷體), `JP_FONTS`
+- Lists in `templates/fonts.ts`: `KAI_FONTS` (TW-MOE-Std-Kai web font, then OS 標楷體), `JP_FONTS`
   (Hiragino Mincho / Yu Mincho / MS Mincho). Catalog entries with a Latin preset pin the bundled
   Montserrat Medium as a fallback.
 - Bundled fonts: `helpers/fonts/bundledFonts.ts` (Electron disk path or web `WebFont.url`);
-  `getFontOfPostscriptName` checks bundled first, and font-funcs merges bundled faces into
-  `requestFontsOfTheFontFamily` / `requestAvailableFontFamilies` so the style picker lists Medium even
-  when the OS has a different Montserrat (or none). Only Montserrat-Medium is bundled (OFL).
+  `getFontOfPostscriptName` resolves them by exact postscript name, and `useStampStore` registers the
+  `@font-face` when a slot pins one. They are stamp-only on purpose: NOT in `requestAvailableFontFamilies`
+  / `requestFontsOfTheFontFamily`, because image-based exports (thumbnails, Print-and-Cut PDF) render in
+  an isolated document that only sees installed fonts and inlined web fonts, so a bundled family picked
+  in the main Text tool would fall back there. Only Montserrat-Medium is bundled (OFL).
 - `sharedFont: true` → one FontSelect above the slot list; `updateSharedFont` sets every labeled,
   unpinned slot. Per-slot pickers are hidden.
 

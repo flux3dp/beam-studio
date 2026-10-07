@@ -1,25 +1,11 @@
 import paper from 'paper';
 import { PaperOffset } from 'paperjs-offset';
 
+import { collectPathItems } from '@core/helpers/generator/collectPathItems';
 import { removeDegenerateCurves } from '@core/helpers/generator/removeDegenerateCurves';
 
 import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from '../constants';
 import type { HoleOptionDef, HoleOptionValues, KeyChainState } from '../types';
-
-/**
- * Recursively collects all Paper.js Path/CompoundPath items from the imported SVG.
- */
-export const collectPathItems = (item: paper.Item): paper.PathItem[] => {
-  if (item instanceof paper.Path || item instanceof paper.CompoundPath) {
-    return [item];
-  }
-
-  if (item instanceof paper.Group || item instanceof paper.Layer) {
-    return item.children.flatMap(collectPathItems);
-  }
-
-  return [];
-};
 
 /**
  * Imports SVG content into a Paper.js project and unites all sub-paths into a single base path.

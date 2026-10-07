@@ -1,13 +1,13 @@
-import { getBundledFamilies, getBundledFontsOfFamily } from './bundledFonts';
+import { getBundledFont } from './bundledFonts';
 
 jest.mock('@core/helpers/is-web', () => () => true);
 
 describe('bundledFonts', () => {
-  it('lists the bundled Montserrat Medium under its family', () => {
-    const faces = getBundledFontsOfFamily('Montserrat');
+  it('resolves the bundled Montserrat Medium by postscript name only', () => {
+    const font = getBundledFont('Montserrat-Medium');
 
-    expect(faces.map((f) => [f.postscriptName, f.style])).toEqual([['Montserrat-Medium', 'Medium']]);
-    expect(getBundledFontsOfFamily('Nope')).toEqual([]);
-    expect(getBundledFamilies()).toEqual(['Montserrat']);
+    expect(font).toMatchObject({ family: 'Montserrat', postscriptName: 'Montserrat-Medium', style: 'Medium' });
+    expect('url' in font!).toBe(true);
+    expect(getBundledFont('Montserrat-Regular')).toBeUndefined();
   });
 });

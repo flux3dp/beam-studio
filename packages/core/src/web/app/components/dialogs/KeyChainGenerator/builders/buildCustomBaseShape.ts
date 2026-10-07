@@ -4,6 +4,7 @@ import { match } from 'ts-pattern';
 
 import fontFuncs, { convertTextToPathByFontkit, getFontObj } from '@core/app/actions/beambox/font-funcs';
 import NS from '@core/app/constants/namespaces';
+import { collectPathItems } from '@core/helpers/generator/collectPathItems';
 import { removeDegenerateCurves } from '@core/helpers/generator/removeDegenerateCurves';
 
 import { PX_TO_MM_RATIO } from '../constants';
@@ -15,7 +16,6 @@ import type {
 } from '../types';
 
 import { svgCache } from './buildElement';
-import { collectPathItems } from './buildShape';
 import { createTextElement } from './buildText';
 
 export const generateShapeTextPathD = async (values: CustomShapeTextValues): Promise<null | string> => {
