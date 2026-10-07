@@ -1,0 +1,49 @@
+@use '../mixins' as mixins;
+
+.preset-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border: 1px solid #eeeeee;
+  border-radius: 8px;
+  padding: 10px 12px;
+
+  &:hover {
+    border-color: #d0d0d0;
+    background: #fafafa;
+  }
+
+  &.disabled {
+    opacity: 0.55;
+    background: #fafafa;
+  }
+
+  .main {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .name {
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .pill {
+    @include mixins.param-pill;
+    background: #f0f3f7;
+  }
+
+  .state-tag {
+    margin-left: 8px;
+  }
+
+  .disabled-tag {
+    margin-left: 4px;
+  }
+}

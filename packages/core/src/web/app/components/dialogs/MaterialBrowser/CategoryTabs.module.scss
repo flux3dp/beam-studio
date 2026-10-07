@@ -1,0 +1,9 @@
+@use './mixins' as mixins;
+
+.favorite {
+  color: mixins.$favorite-star;
+}
+
+.empty {
+  opacity: 0.5;
+}

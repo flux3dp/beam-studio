@@ -82,6 +82,8 @@ booleanConfig.forEach((key) => {
 Object.assign(defaultConfigs, {
   clipRect: { value: undefined },
   color: { value: '#333333' },
+  materialId: { value: undefined },
+  presetId: { value: undefined },
 });
 
 // Boolean without initLayerConfig will be false

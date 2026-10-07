@@ -196,6 +196,8 @@
       'data-zstep',
       'inkscape:label',
       'data-configName',
+      'data-materialId',
+      'data-presetId',
       'data-tempgroup',
       'data-module',
       'data-backlash',

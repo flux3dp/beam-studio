@@ -2,6 +2,7 @@ import colorConstants, { PrintingColors } from '@core/app/constants/color-consta
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { getLayerMaterialPresetValues } from '@core/helpers/materials/material-apply';
 import { getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, PresetModel } from '@core/interfaces/ILayerConfig';
@@ -21,6 +22,10 @@ export const applyDpiOverrides = (
   const configName = getData(layer, 'configName');
 
   if (!configName) return false;
+
+  // New mode: material presets are flat (per-DPI siblings, see switchPresetDpiGroup), so a
+  // resolved material ref has no legacy dpiOverrides to replay
+  if (getLayerMaterialPresetValues(layer)) return false;
 
   const preset = getDefaultPreset(configName, model, getData(layer, 'module'));
   const oldOverrides = preset?.dpiOverrides?.[prevDpi];

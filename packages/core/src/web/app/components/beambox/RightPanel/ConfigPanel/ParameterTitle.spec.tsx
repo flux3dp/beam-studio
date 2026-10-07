@@ -16,6 +16,12 @@ jest.mock('@core/app/components/dialogs/PresetsManagementPanel/PresetsManagement
   showPresetsManagementPanel: (...args) => mockShowPresetsManagementPanel(...args),
 }));
 
+const mockShowAddPresetFromLayer = jest.fn();
+
+jest.mock('@core/app/components/dialogs/MaterialBrowser/editors', () => ({
+  showAddPresetFromLayer: (...args) => mockShowAddPresetFromLayer(...args),
+}));
+
 jest.mock('./SaveConfigButton', () => () => <div>MockSaveConfigButton</div>);
 
 const mockUseConfigPanelStore = jest.fn();

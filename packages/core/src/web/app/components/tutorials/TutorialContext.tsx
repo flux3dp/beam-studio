@@ -11,6 +11,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { ITutorialDialog } from '@core/interfaces/ITutorial';
 
+const eventEmitter = eventEmitterFactory.createEventEmitter('tutorial');
+
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -30,8 +32,6 @@ export const TutorialContext = React.createContext<TutorialContextType>({
   handleNextStep: async () => {},
   hasNextButton: false,
 });
-
-export const eventEmitter = eventEmitterFactory.createEventEmitter();
 
 interface Props {
   children: React.ReactNode;
