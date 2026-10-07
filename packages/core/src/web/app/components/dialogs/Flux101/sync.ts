@@ -96,9 +96,7 @@ const onUserChange = async (): Promise<void> => {
     return; // logout: the anonymous bucket already mirrors the last claimer
   }
 
-  adoptOnLogin(owner, await pull());
-  push.call();
-  grant.call();
+  adoptOnLogin(owner, await pull()); // writeBucket -> onBucketWrite -> push + grant
 };
 
 let started = false;
