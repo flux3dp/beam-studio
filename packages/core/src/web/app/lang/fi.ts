@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Ota kuva uudelleen',
     rotation_angle: 'Kierto',
     show_last_config: 'Näytä viimeisin tulos',
-    skip: 'Ohita',
     solve_pnp_bm2: 'Vahvista, että 16 merkkiä on kaiverrettu papereihin. (Jos ei, napsauta Takaisin kaiverrrtaaksesi uudelleen.)',
     solve_pnp_keep_door_closed: 'Pidä ovi suljettuna seuraavan prosessin aikana.',
     solve_pnp_move_platform: 'Laite siirtyy automaattisesti alaspäin ja ottaa toisen valokuvan. Älä siirrä kalibrointipaperia tämän prosessin aikana.',

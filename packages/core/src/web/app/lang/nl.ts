@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Foto opnieuw nemen',
     rotation_angle: 'Rotatie',
     show_last_config: 'Laatste resultaat weergeven',
-    skip: 'Overslaan',
     solve_pnp_bm2: 'Bevestig dat 16 markeringen op de papieren zijn gegraveerd. (Zo niet, klik op Terug om opnieuw te graveren.)',
     solve_pnp_keep_door_closed: 'Houd de deur gesloten tijdens het volgende proces.',
     solve_pnp_move_platform: 'De machine zal automatisch naar beneden bewegen en een andere foto nemen. Verplaats het kalibratiepapier niet tijdens dit proces.',

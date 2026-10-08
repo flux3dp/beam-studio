@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Foto erneut aufnehmen',
     rotation_angle: 'Drehung',
     show_last_config: 'Letztes Ergebnis anzeigen',
-    skip: 'Überspringen',
     solve_pnp_bm2: 'Bestätigen Sie, dass 16 Markierungen auf den Papieren eingraviert sind. (Falls nicht, klicken Sie auf Zurück, um erneut zu gravieren.)',
     solve_pnp_keep_door_closed: 'Halten Sie die Tür während des folgenden Vorgangs geschlossen.',
     solve_pnp_move_platform: 'Die Maschine wird automatisch nach unten fahren und ein weiteres Foto aufnehmen. Bitte bewegen Sie das Kalibrierungspapier während dieses Vorgangs nicht.',

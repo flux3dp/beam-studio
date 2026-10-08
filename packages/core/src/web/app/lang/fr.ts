@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Reprendre la photo',
     rotation_angle: 'Rotation',
     show_last_config: 'Afficher le dernier résultat',
-    skip: 'Sauter',
     solve_pnp_bm2: 'Confirmez que 16 marques sont gravées sur les papiers. (Sinon, cliquez sur Retour pour graver à nouveau.)',
     solve_pnp_keep_door_closed: 'Gardez la porte fermée pendant le processus suivant.',
     solve_pnp_move_platform: 'La machine descendra automatiquement et prendra une autre photo. Veuillez ne pas déplacer le papier de calibration pendant ce processus.',

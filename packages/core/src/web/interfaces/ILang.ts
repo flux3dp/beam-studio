@@ -1240,7 +1240,6 @@ export interface ILang {
     retake: string;
     rotation_angle: string;
     show_last_config: string;
-    skip: string;
     solve_pnp_bm2: string;
     solve_pnp_keep_door_closed: string;
     solve_pnp_move_platform: string;

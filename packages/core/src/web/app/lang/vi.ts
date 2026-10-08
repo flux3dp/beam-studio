@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Chụp lại',
     rotation_angle: 'Xoay',
     show_last_config: 'Hiển thị kết quả gần nhất',
-    skip: 'Bỏ Qua',
     solve_pnp_bm2: 'Xác nhận rằng 16 dấu đã được khắc trên giấy. (Nếu không, nhấp Quay lại để khắc lại.)',
     solve_pnp_keep_door_closed: 'Giữ cửa đóng trong quá trình tiếp theo.',
     solve_pnp_move_platform: 'Máy sẽ tự động di chuyển xuống và chụp một bức ảnh khác. Vui lòng không di chuyển giấy hiệu chuẩn trong quá trình này.',

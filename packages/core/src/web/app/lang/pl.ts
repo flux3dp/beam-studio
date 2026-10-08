@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Powtórz zdjęcie',
     rotation_angle: 'Obrotu',
     show_last_config: 'Pokaż ostatni wynik',
-    skip: 'Pomiń',
     solve_pnp_bm2: 'Potwierdź, że 16 oznaczeń zostało wygrawerowanych na papierach. (Jeśli nie, kliknij Wstecz, aby wygrawerować ponownie.)',
     solve_pnp_keep_door_closed: 'Podczas poniższego procesu trzymaj drzwi zamknięte.',
     solve_pnp_move_platform: 'Maszyna automatycznie przesunie się w dół i zrobi kolejne zdjęcie. Proszę nie przesuwać papieru kalibracyjnego podczas tego procesu.',

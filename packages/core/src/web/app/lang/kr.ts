@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: '사진 다시 찍기',
     rotation_angle: '회전',
     show_last_config: '마지막 결과 표시',
-    skip: '건너 뛰기',
     solve_pnp_bm2: '용지에 16개의 마크가 새겨져 있는지 확인합니다. (없는 경우 뒤로를 클릭하여 다시 새기십시오.)',
     solve_pnp_keep_door_closed: '다음 과정 중에는 문을 닫아 두세요.',
     solve_pnp_move_platform: '기계가 자동으로 아래로 이동하여 다른 사진을 찍습니다. 이 과정 중에는 보정 용지를 움직이지 마십시오.',

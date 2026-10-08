@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Volver a tomar foto',
     rotation_angle: 'Rotación',
     show_last_config: 'Mostrar el último resultado',
-    skip: 'Omitir',
     solve_pnp_bm2: 'Confirme que hay 16 marcas grabadas en los papeles. (Si no es así, pulse en "Volver" para grabar de nuevo).',
     solve_pnp_keep_door_closed: 'Mantenga la puerta cerrada durante el proceso.',
     solve_pnp_move_platform: 'La máquina se moverá automáticamente hacia abajo y tomará otra foto. No mover el papel de calibración durante este proceso.',

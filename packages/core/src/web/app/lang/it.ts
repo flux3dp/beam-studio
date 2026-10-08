@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Riprendi immagine',
     rotation_angle: 'Rotazione',
     show_last_config: 'Mostra ultima calibrazione',
-    skip: 'Salta',
     solve_pnp_bm2: 'Confermare che 16 segni siano incisi sui fogli. (Se no, fare clic su Indietro per incidere di nuovo.)',
     solve_pnp_keep_door_closed: 'Tieni la porta chiusa durante il processo successivo.',
     solve_pnp_move_platform: "La macchina si sposterà automaticamente verso il basso e scatterà un'altra foto. Si prega di non spostare il foglio di calibrazione durante questo processo.",

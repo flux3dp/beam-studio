@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Tornar a fer foto',
     rotation_angle: 'Rotació',
     show_last_config: 'Mostrar últim resultat',
-    skip: 'Saltar',
     solve_pnp_bm2: "Confirma que s'han gravat 16 marques als papers. (Si no, fes clic a Enrere per gravar de nou.)",
     solve_pnp_keep_door_closed: 'Mantingues la porta tancada durant el procés.',
     solve_pnp_move_platform: 'La màquina es mourà automàticament cap avall i farà una altra foto. Si us plau, no moguis el paper de calibratge durant aquest procés.',

@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Retake Picture',
     rotation_angle: 'Rotation',
     show_last_config: 'Show Last Result',
-    skip: 'Skip',
     solve_pnp_bm2: 'Confirm that 16 marks are engraved on the papers. (If not, click Back to engrave again.)',
     solve_pnp_keep_door_closed: 'Keep the door closed during the process.',
     solve_pnp_move_platform: 'The machine will automatically move down and take another photo. Please do not move the calibration paper during this process.',

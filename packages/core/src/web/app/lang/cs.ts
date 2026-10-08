@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Znovu vyfotit',
     rotation_angle: 'Rotace',
     show_last_config: 'Ukázat poslední výsledek',
-    skip: 'Přeskočit',
     solve_pnp_bm2: 'Potvrďte, že na papírech je vyrytých 16 značek. (Pokud ne, klikněte na Zpět a znovu vyryjte.)',
     solve_pnp_keep_door_closed: 'Během následujícího procesu mějte dveře zavřené.',
     solve_pnp_move_platform: 'Stroj se automaticky posune dolů a pořídí další fotografii. Během tohoto procesu prosím nepohybujte kalibračním papírem.',

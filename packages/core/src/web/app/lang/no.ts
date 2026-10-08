@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Ta bilde på nytt',
     rotation_angle: 'Rotasjon',
     show_last_config: 'Vis siste resultat',
-    skip: 'Hopp Over',
     solve_pnp_bm2: 'Bekreft at 16 merker er gravert på papirene. (Hvis ikke, klikk på Tilbake for å gravere på nytt.)',
     solve_pnp_keep_door_closed: 'Hold døren lukket under den følgende prosessen.',
     solve_pnp_move_platform: 'Maskinen vil automatisk bevege seg ned og ta et nytt bilde. Vennligst ikke flytt kalibreringspapiret under denne prosessen.',

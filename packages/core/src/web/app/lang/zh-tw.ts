@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: '重拍照片',
     rotation_angle: '旋轉角度',
     show_last_config: '顯示前次校正結果',
-    skip: '跳過',
     solve_pnp_bm2: '確認紙張上已刻有 16 個標記。（如果沒有，請點擊上一步重新雕刻。）',
     solve_pnp_keep_door_closed: '接下來的流程中請保持門蓋關閉。',
     solve_pnp_move_platform: '機器會自動升降後再次拍照，過程中請勿移動校正紙張。',

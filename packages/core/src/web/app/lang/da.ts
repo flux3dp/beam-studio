@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Tag billede igen',
     rotation_angle: 'Rotation',
     show_last_config: 'Vis sidste resultat',
-    skip: 'Spring Over',
     solve_pnp_bm2: 'Bekræft, at 16 mærker er graveret på papirerne. (Hvis ikke, klik på Tilbage for at gravere igen.)',
     solve_pnp_keep_door_closed: 'Hold døren lukket under den følgende proces.',
     solve_pnp_move_platform: 'Maskinen vil automatisk bevæge sig ned og tage et andet foto. Venligst flyt ikke kalibreringspapiret under denne proces.',

@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: '写真を撮り直す',
     rotation_angle: '回転',
     show_last_config: '前回の結果を表示',
-    skip: 'スキップ',
     solve_pnp_bm2: '紙に16個のマークが刻まれていることを確認してください。（刻まれていない場合は、「戻る」をクリックして再度彫刻してください。）',
     solve_pnp_keep_door_closed: '以下の処理中はドアを閉めてください。',
     solve_pnp_move_platform: '機械が自動的に下に移動し、別の写真を撮影します。このプロセス中はキャリブレーション用紙を動かさないでください。',

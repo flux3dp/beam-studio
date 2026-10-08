@@ -1238,7 +1238,6 @@ const lang: ILang = {
     retake: 'Ambil Ulang Gambar',
     rotation_angle: 'Rotasi',
     show_last_config: 'Tampilkan Hasil Terakhir',
-    skip: 'Lewati',
     solve_pnp_bm2: 'Konfirmasi bahwa 16 tanda terukir pada kertas. (Jika tidak, klik Kembali untuk mengukir lagi.)',
     solve_pnp_keep_door_closed: 'Tetap tutup pintu selama proses berikut.',
     solve_pnp_move_platform: 'Mesin akan secara otomatis bergerak ke bawah dan mengambil foto lain. Mohon jangan memindahkan kertas kalibrasi selama proses ini.',
