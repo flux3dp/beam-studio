@@ -18,7 +18,12 @@ export const useFlux101Store = create(
       close: () => set({ view: 'closed' }),
       expand: () => set({ view: 'dialog' }),
       minimize: () => set({ view: 'pip' }),
-      open: (lessonId?: string) => set({ lessonId: lessonId ?? continueLessonId(getBucket()), view: 'dialog' }),
+      open: (lessonId?: string) => {
+        const id = lessonId ?? continueLessonId(getBucket());
+
+        setLastLesson(id);
+        set({ lessonId: id, view: 'dialog' });
+      },
       selectLesson: (lessonId: string) => {
         setLastLesson(lessonId);
         set({ lessonId });

@@ -88,7 +88,18 @@ describe('actions on the anonymous bucket', () => {
     expect(getBucket().lessons['1-1']).toMatchObject({ playedSec: 60, resumeSec: 60, status: 'in_progress' });
     recordPlayback('1-1', 12, 72);
     expect(getBucket().lessons['1-1']).toMatchObject({ completedVia: 'watched', playedSec: 72, status: 'completed' });
-    expect(getBucket().lastLessonId).toBe('1-1');
+    expect(getBucket().lastLessonId).toBeUndefined(); // only selection sets it
+  });
+
+  test('setLastLesson writes once per change, so a late playback write cannot undo a switch', () => {
+    setLastLesson('1-2');
+    recordPlayback('1-1', 5, 5); // the previous lesson's pending seconds
+    expect(getBucket().lastLessonId).toBe('1-2');
+
+    const before = getBucket().updatedAt;
+
+    setLastLesson('1-2');
+    expect(getBucket().updatedAt).toBe(before);
   });
 
   test('recordPlayback stores the last position, so a rewind resumes where the user left off', () => {
@@ -119,6 +130,7 @@ describe('actions on the anonymous bucket', () => {
     ['1-1', '1-2', '1-3'].forEach((id) => completeLesson(id, 'watched'));
     expect(earnedBadges(getBucket()).map((c) => c.id)).toEqual(['ch1']);
     expect(continueLessonId(getBucket())).toBe('2-1');
+    setLastLesson('3-3');
     recordPlayback('3-3', 5, 5);
     expect(continueLessonId(getBucket())).toBe('3-3'); // last opened, unfinished
     expect(isCourseComplete(getBucket())).toBe(false);
@@ -201,7 +213,7 @@ describe('onBucketWrite', () => {
     const seen: string[] = [];
 
     onBucketWrite(() => seen.push(getBucket().lastLessonId!));
-    completeLesson('1-1', 'watched');
+    setLastLesson('1-1');
     setLastLesson('1-2');
     expect(seen).toEqual(['1-1', '1-2']);
   });

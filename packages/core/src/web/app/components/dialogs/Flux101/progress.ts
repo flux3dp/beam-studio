@@ -142,7 +142,7 @@ const writeLesson = (lessonId: string, step: (cur: LessonProgress) => LessonProg
       completion = { lessonId, newlyCompleted: cur.status !== 'completed' };
     }
 
-    return { ...b, lastLessonId: lessonId, lessons: { ...b.lessons, [lessonId]: next } };
+    return { ...b, lessons: { ...b.lessons, [lessonId]: next } };
   });
 
   return completion;
@@ -161,7 +161,10 @@ export const recordPlayback = (lessonId: string, playedDelta: number, resumeSec:
 export const completeLesson = (lessonId: string, via: CompletedVia): Completion | undefined =>
   writeLesson(lessonId, (cur) => complete(cur, via));
 
-export const setLastLesson = (lessonId: string): void => updateBucket((b) => ({ ...b, lastLessonId: lessonId }));
+/** The lesson the user has open; only selection sets it, so a late write for the previous lesson cannot undo a switch. */
+export const setLastLesson = (lessonId: string): void => {
+  if (getBucket().lastLessonId !== lessonId) updateBucket((b) => ({ ...b, lastLessonId: lessonId }));
+};
 export const dismissNudge = (): void => updateBucket((b) => ({ ...b, nudgeDismissed: true }));
 
 /* ───────────── credits (R12a, D5, D7) ───────────── */
