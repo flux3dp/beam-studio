@@ -18,4 +18,14 @@
       MessageBox MB_OK "Visual C++ Redistributable install failed. Maybe you have to install manually. (Return $R5)"
     ${EndIf}
   ${EndIf}
+
+  ; Inbound UDP 1901: machines announce themselves by multicast to this port and fluxghost
+  ; listens on it (fluxclient/device/discover.py). The installer already runs elevated
+  ; (perMachine), so add the rule here instead of prompting for admin at every launch.
+  ExecWait 'netsh advfirewall firewall delete rule name="FLUX Discover Port 1901"'
+  ExecWait 'netsh advfirewall firewall add rule name="FLUX Discover Port 1901" dir=in action=allow protocol=UDP localport=1901'
+!macroend
+
+!macro customUnInstall
+  ExecWait 'netsh advfirewall firewall delete rule name="FLUX Discover Port 1901"'
 !macroend

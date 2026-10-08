@@ -1,4 +1,3 @@
-import { execSync } from 'child_process';
 import os from 'os';
 import path from 'path';
 
@@ -18,29 +17,11 @@ function bootstrapLinux() {
   bootstrapMacos();
 }
 
-function setupWindowsFirewall() {
-  try {
-    const cmd = path.join(resourcesRoot, 'backend', 'elevate.cmd');
-
-    execSync(
-      `"${cmd}" netsh advfirewall firewall add rule name="FLUX Discover Port 1901" dir=in action=allow protocol=UDP localport=1901`,
-    );
-  } catch (err) {
-    console.log('setup windows firewall error:', err);
-  }
-}
-
 function bootstrapWindows() {
   console.log('Bootstrap windows');
   process.env.BACKEND = process.env.BACKEND || path.join(resourcesRoot, 'backend', 'flux_api', 'flux_api.exe');
   process.env.BACKEND_ROOT = path.join(resourcesRoot, 'backend');
   console.log(`### backend: ${process.env.BACKEND}`);
-
-  try {
-    execSync('netsh advfirewall firewall show rule name="FLUX Discover Port 1901"');
-  } catch {
-    setupWindowsFirewall();
-  }
 }
 
 const bootstrap = (): void => {
