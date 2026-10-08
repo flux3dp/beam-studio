@@ -21,8 +21,6 @@ export interface Storage {
   'auto-save-config'?: AutoSaveConfig;
   auto_check_update: boolean;
   auto_connect: boolean;
-  /** FLUX 101 course progress, bucketed by owner (FLUX ID email or 'anonymous') */
-  'beam-studio-101': Flux101Storage;
   'beambox-preference': BeamboxPreference;
   'black-list': string;
   /** @deprecated Customized laser configurations for version <= 2.3.9 */
@@ -40,6 +38,8 @@ export interface Storage {
   dockviewLayout: string;
   'elements-history': History[];
   'enable-sentry': boolean | null;
+  /** FLUX 101 course progress, bucketed by owner (FLUX ID email or 'anonymous') */
+  'flux-101': Flux101Storage;
   'flux-rsa-key': string;
   'font-history': string[];
   /** font name to display name */

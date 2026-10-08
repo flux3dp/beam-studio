@@ -20,7 +20,7 @@ Beam Studio's onboarding is a scripted overlay walkthrough (`tutorials/Tutorial.
 
 **FLUX 101** surfaces that curriculum inside the app as a chaptered course with progress, badges, a certificate, and a small FLUX+ credit reward per lesson. Because the point is to learn *Beam Studio*, the course ships a **minimizable picture-in-picture (PiP) player**: shrink the video into a corner and do the thing you just watched on the real canvas. Progress is stored locally per user and synced to the FLUX ID account.
 
-The course is named **FLUX 101** (it covers hardware setup too); the internal `courseId` / local storage key is `beam-studio-101`.
+The course is named **FLUX 101** (it covers hardware setup too); the local storage key is `flux-101`.
 
 Engineering review (2026-09-18) confirmed the feature is mostly new UI over existing primitives: `DraggableModal` / `react-draggable` for the PiP shell, `helpers/confetti.ts` for celebrations, `storageStore` for local persistence, and the FLUX ID `bxpref` preference endpoint for sync. Two small backend changes are required (see companion PRD): a JSON column on `BeamStudioPreference` for progress, and an idempotent credit-grant endpoint.
 
@@ -111,7 +111,7 @@ XP is **not shown** pending the meeting decision (D20); if kept, it is derived, 
 
 | Field | Type | Notes |
 |---|---|---|
-| `courseId` | string | `'beam-studio-101'` |
+| `courseId` | string | `'flux-101'` |
 | `version` | number | Bumped when lessons change; drives merge tolerance (§9). |
 | `chapters[].id` | string | `'ch1'`… |
 | `chapters[].title` | i18n key | |
@@ -163,7 +163,7 @@ The **2-1 Filling Water Tank** note for beamo / beamo II is a hardcoded special 
 
 **Store source data only; derive everything else** (D11). XP, credits earned, badges, and certificate status are computed from `lessons` + the catalog at render time. This removes double-counting risks and simplifies the merge.
 
-Local storage key `beam-studio-101` holds a map of **buckets keyed by owner**:
+Local storage key `flux-101` holds a map of **buckets keyed by owner**:
 
 ```ts
 type Flux101Storage = {
@@ -234,7 +234,7 @@ The **active bucket** is the logged-in user's bucket (keyed by email), or `anony
 - **R12a** Credit grant: on `watched` completion while logged in, call the grant endpoint (companion PRD) and set `creditGranted` on success. Failure never blocks completion or celebration; ungranted `watched` lessons retry on the next local write or login (`Flux101/sync.ts` `grant`, one request per quiet second, via `fluxId.grantFlux101Credits`). Credits UI needs no switch: the "+0.5" tag in the celebration and the "credits earned" count in the Welcome tab subtitle (next to N/23) render only from `creditGranted`, which only the server sets — so they are simply absent until the backend is deployed.
 
 **Persistence & sync**
-- **R13** Local persistence under storage key `beam-studio-101` via `storageStore` (cross-tab sync included). Add the key to `getStorageKeys()` and the `Storage` interface.
+- **R13** Local persistence under storage key `flux-101` via `storageStore` (cross-tab sync included). Add the key to `getStorageKeys()` and the `Storage` interface.
 - **R14** When logged in, push the active bucket with `setPreference({ flux101_progress: bucket })` and hydrate with `getPreference('flux101_progress')` on login and app launch. Server key is `flux101_progress` (Python attribute naming; see companion PRD).
 - **R15** Sync triggers: every bucket write made in this tab (`onBucketWrite` in `progress.ts`; playback writes are batched per §7) → push debounced 5 s, plus login hydration. Tabs that only receive the change over IPC do not push. Fail silently; the push retries on the next write, a grant the server did not answer ok (offline, 429, endpoint missing) waits 10 min before it is asked again.
 - **R16** Claim and merge per §9.
@@ -254,7 +254,7 @@ existing callers must keep doing. Reviewers check this list against `git diff --
 
 | Shared file | Change | Callers — expected behaviour |
 |---|---|---|
-| `constants/storageConstants.ts`, `interfaces/IStorage.d.ts` | add key `beam-studio-101` | `storageStore` init / `storage.getStore()` — all other keys unaffected |
+| `constants/storageConstants.ts`, `interfaces/IStorage.d.ts` | add key `flux-101` | `storageStore` init / `storage.getStore()` — all other keys unaffected |
 | `lang/*.ts` (all 23), `interfaces/ILang.ts` | add `global.skip`, the `flux_101.*` block and `topbar.menu.flux_101` | every other lang consumer — untouched keys |
 | `actions/beambox/menuActions.ts` | add `START_101_COURSE` (window in the editor, tab switch on Welcome via the `welcome` event emitter) | all other menu ids — unchanged handlers |
 | `helpers/eventEmitterFactory.ts` | add the `welcome` channel | every other channel — unchanged |
@@ -324,12 +324,12 @@ One release, no feature flag (D22 struck), dogfooded through the existing alpha 
 ## 14. Decisions
 
 - **D1** Recommended-linear, not hard-locked.
-- **D2** Progress lives in `storage` (`beam-studio-101`) + FLUX ID `bxpref`, not `BeamboxPreference`.
+- **D2** Progress lives in `storage` (`flux-101`) + FLUX ID `bxpref`, not `BeamboxPreference`.
 - **D3** Sync reuses `bxpref`; **but** the server model needs a `flux101_progress` JSON column (companion PRD). Credit granting needs a new endpoint.
 - **D5** 0.5 FLUX+ credits per `watched` lesson, once, server-authoritative (client constant `CREDITS_PER_LESSON` in `catalog.ts` is display-only). Context: a new FLUX ID account starts with 10 one-time credits and machine linking grants 10, so 11.5 for the full course is in the same band.
 - **D6** Catalog finalized as §6.1.1.
 - **D7** `marked_done` earns no credit.
-- **D8** Name FLUX 101; internal key `beam-studio-101`.
+- **D8** Name FLUX 101; internal key ~~`beam-studio-101`~~ → `flux-101` (renamed 2026-10-08 before any release, to match `flux101_progress`, `flux101/grant` and the `Flux101/` folder; no migration).
 - **D9** Entries: book icon, Welcome tab, Help menu; one post-tutorial nudge.
 - **D10** Machine-conditional note for 2-1 only.
 

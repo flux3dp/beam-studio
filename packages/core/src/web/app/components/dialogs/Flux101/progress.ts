@@ -1,4 +1,4 @@
-// FLUX 101 progress: per-owner buckets in storage['beam-studio-101'] (PRD §6.2, §9).
+// FLUX 101 progress: per-owner buckets in storage['flux-101'] (PRD §6.2, §9).
 // Store source data only; badges / certificate / credits are derived from `lessons`.
 
 import { useEffect, useState } from 'react';
@@ -8,7 +8,7 @@ import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 
 import { type Chapter, CHAPTERS, CREDITS_PER_LESSON, LESSON_IDS, LESSONS } from './catalog';
 
-export const STORAGE_KEY = 'beam-studio-101';
+export const STORAGE_KEY = 'flux-101';
 export const ANONYMOUS = 'anonymous';
 export const WATCHED_RATIO = 0.9;
 
