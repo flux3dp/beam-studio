@@ -37,6 +37,12 @@ const LessonList = ({ currentId, onSelect }: LessonListProps): React.JSX.Element
             className={classNames(styles.lesson, { [styles.current]: l.id === currentId })}
             key={l.id}
             onClick={() => onSelect(l.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault(); // Space would scroll the list
+                onSelect(l.id);
+              }
+            }}
             role="button"
             tabIndex={0}
           >
