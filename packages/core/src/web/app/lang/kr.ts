@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: '수동으로 완료 표시됨. 크레딧을 받으려면 영상을 시청하세요',
     minimize: '플로팅 플레이어로 축소',
     next: '다음',
+    no_water_tank_note: '이 모델에는 물탱크가 없으므로 이 강의를 건너뛸 수 있습니다.',
     not_synced: '동기화 안 됨',
     nudge_later: '나중에',
     nudge_message: '더 깊이 배워볼까요? FLUX 101은 개봉부터 첫 작업까지 23개의 짧은 영상으로 안내합니다.\n나중에 왼쪽 도구 모음의 책 아이콘, 시작 페이지 또는 도움말 메뉴에서 언제든지 열 수 있습니다.',

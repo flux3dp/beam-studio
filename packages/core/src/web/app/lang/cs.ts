@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Označeno jako dokončené ručně; kredity získáte zhlédnutím videa',
     minimize: 'Zmenšit na plovoucí přehrávač',
     next: 'Další',
+    no_water_tank_note: 'Tento model nemá vodní nádrž; tuto lekci můžete přeskočit.',
     not_synced: 'Nesynchronizováno',
     nudge_later: 'Možná později',
     nudge_message: 'Chcete jít hlouběji? FLUX 101 vás ve 23 krátkých videích provede od rozbalení k první úloze.\nKdykoli ho otevřete přes ikonu knihy v levém panelu nástrojů, na uvítací stránce nebo v nabídce Nápověda.',

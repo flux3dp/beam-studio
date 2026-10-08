@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Manuell als erledigt markiert; sieh dir das Video an, um Credits zu verdienen',
     minimize: 'Zum schwebenden Player verkleinern',
     next: 'Weiter',
+    no_water_tank_note: 'Dieses Modell hat keinen Wassertank; diese Lektion kann übersprungen werden.',
     not_synced: 'Nicht synchronisiert',
     nudge_later: 'Vielleicht später',
     nudge_message: 'Lust auf mehr? FLUX 101 begleitet dich in 23 kurzen Videos vom Auspacken bis zum ersten Auftrag.\nDu findest es jederzeit über das Buch-Symbol in der linken Werkzeugleiste, die Willkommensseite oder das Hilfe-Menü.',

@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Merkitty suoritetuksi käsin; katso video ansaitaksesi krediittejä',
     minimize: 'Pienennä kelluvaksi soittimeksi',
     next: 'Seuraava',
+    no_water_tank_note: 'Tässä mallissa ei ole vesisäiliötä; voit ohittaa tämän oppitunnin.',
     not_synced: 'Ei synkronoitu',
     nudge_later: 'Ehkä myöhemmin',
     nudge_message: 'Haluatko syventyä? FLUX 101 vie sinut 23 lyhyellä videolla pakkauksen avaamisesta ensimmäiseen työhön.\nVoit avata sen milloin tahansa vasemman työkalupalkin kirjakuvakkeesta, tervetulosivulta tai Ohje-valikosta.',

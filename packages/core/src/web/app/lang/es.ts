@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Marcada como completada manualmente; mira el vídeo para ganar créditos',
     minimize: 'Minimizar a reproductor flotante',
     next: 'Siguiente',
+    no_water_tank_note: 'Este modelo no tiene depósito de agua; puedes omitir esta lección.',
     not_synced: 'Sin sincronizar',
     nudge_later: 'Quizás más tarde',
     nudge_message: '¿Quieres profundizar? FLUX 101 te lleva del desembalaje a tu primer trabajo en 23 vídeos cortos.\nPuedes abrirlo cuando quieras desde el icono del libro en la barra de herramientas izquierda, la página de bienvenida o el menú Ayuda.',

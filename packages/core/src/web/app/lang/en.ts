@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Marked done by hand; watch the video to earn credits',
     minimize: 'Minimize to floating player',
     next: 'Next',
+    no_water_tank_note: 'This model has no water tank; you can skip this lesson.',
     not_synced: 'Not synced',
     nudge_later: 'Maybe later',
     nudge_message: 'Want to go deeper? FLUX 101 has 23 short videos that take you from unboxing to your first job.\nYou can open it later any time from the book icon in the left toolbar, the Welcome page or the Help menu.',

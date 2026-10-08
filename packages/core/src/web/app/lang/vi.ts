@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Đã đánh dấu hoàn thành thủ công; hãy xem video để nhận tín dụng',
     minimize: 'Thu nhỏ thành trình phát nổi',
     next: 'Tiếp',
+    no_water_tank_note: 'Mẫu máy này không có bình nước; bạn có thể bỏ qua bài học này.',
     not_synced: 'Chưa đồng bộ',
     nudge_later: 'Để sau',
     nudge_message: 'Muốn tìm hiểu sâu hơn? FLUX 101 đưa bạn từ mở hộp đến tác vụ đầu tiên qua 23 video ngắn.\nBạn có thể mở lại bất cứ lúc nào từ biểu tượng cuốn sách trên thanh công cụ bên trái, trang Chào mừng hoặc menu Trợ giúp.',

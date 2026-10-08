@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Ditandakan selesai secara manual; tonton video untuk mendapat kredit',
     minimize: 'Kecilkan ke pemain terapung',
     next: 'Seterusnya',
+    no_water_tank_note: 'Model ini tiada tangki air; anda boleh melangkau pelajaran ini.',
     not_synced: 'Belum disegerakkan',
     nudge_later: 'Mungkin kemudian',
     nudge_message: 'Mahu belajar lebih lanjut? FLUX 101 membimbing anda daripada membuka kotak hingga kerja pertama dalam 23 video pendek.\nAnda boleh membukanya pada bila-bila masa daripada ikon buku di bar alat kiri, halaman Selamat Datang atau menu Bantuan.',

@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Handmatig als afgerond gemarkeerd; bekijk de video om credits te verdienen',
     minimize: 'Verkleinen naar zwevende speler',
     next: 'Volgende',
+    no_water_tank_note: 'Dit model heeft geen watertank; je kunt deze les overslaan.',
     not_synced: 'Niet gesynchroniseerd',
     nudge_later: 'Misschien later',
     nudge_message: "Wil je verder? FLUX 101 neemt je in 23 korte video's mee van uitpakken tot je eerste taak.\nJe kunt het later altijd openen via het boekpictogram in de linker werkbalk, de welkomstpagina of het menu Help.",

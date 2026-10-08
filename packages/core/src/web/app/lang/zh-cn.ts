@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: '已手动标记完成，需实际看完视频才会获得点数',
     minimize: '缩小为浮动播放器',
     next: '下一课',
+    no_water_tank_note: '此机型没有水箱，可略过本课。',
     not_synced: '未同步',
     nudge_later: '以后再说',
     nudge_message: '想更进一步吗？FLUX 101 有 23 支短片，带你从开箱到发送第一个任务。\n之后也可以随时从左侧工具栏的书本图标、欢迎页或“帮助”菜单打开。',

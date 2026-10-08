@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Marcada com a completada manualment; mira el vídeo per guanyar crèdits',
     minimize: 'Minimitza a reproductor flotant',
     next: 'Següent',
+    no_water_tank_note: "Aquest model no té dipòsit d'aigua; pots saltar aquesta lliçó.",
     not_synced: 'No sincronitzat',
     nudge_later: 'Potser més tard',
     nudge_message: "Vols aprofundir? FLUX 101 et porta del desembalatge al primer treball en 23 vídeos curts.\nPots obrir-lo en qualsevol moment des de la icona del llibre de la barra d'eines esquerra, la pàgina de benvinguda o el menú Ajuda.",

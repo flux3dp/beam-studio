@@ -11,6 +11,7 @@ import {
 } from '@ant-design/icons';
 import { Button, Space, Tag, Typography } from 'antd';
 
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
@@ -33,6 +34,8 @@ const CourseBody = (): React.JSX.Element => {
   const machine = deviceMaster.currentDevice?.info?.model ?? workarea;
   const lesson = LESSONS.find((l) => l.id === lessonId)!;
   const articleId = helpArticleIdFor(lesson, machine);
+  const noteKey = lesson.machineNote?.[machine as WorkAreaModel];
+  const machineNote = noteKey && t[noteKey];
   const index = LESSONS.indexOf(lesson);
   const done = isLessonComplete(bucket, lessonId);
 
@@ -54,9 +57,9 @@ const CourseBody = (): React.JSX.Element => {
             </Typography.Link>
           )}
         </div>
-        {lesson.id === '2-1' && (machine === 'fbm1' || machine === 'fbm2') && (
+        {machineNote && (
           <Tag bordered={false} color="geekblue" icon={<InfoCircleFilled />}>
-            {t.water_tank_note}
+            {machineNote}
           </Tag>
         )}
 

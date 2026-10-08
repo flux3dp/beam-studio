@@ -17,6 +17,8 @@ export interface Lesson {
    */
   helpArticleId?: Partial<Record<WorkAreaModel, string>> | string;
   id: string;
+  /** `flux_101` key of a per-model hint shown above the player; models not listed get none. */
+  machineNote?: Partial<Record<WorkAreaModel, 'no_water_tank_note' | 'water_tank_note'>>;
   youtubeId: string;
 }
 
@@ -66,6 +68,16 @@ export const CHAPTERS: Chapter[] = [
           fhexa1: '4410608969359',
         },
         id: '2-1',
+        // beamo ships filled; air-cooled / RF-tube models have no tank
+        machineNote: {
+          ado1: 'no_water_tank_note',
+          fbm1: 'water_tank_note',
+          fbm2: 'water_tank_note',
+          fhx2rf: 'no_water_tank_note',
+          flv1: 'no_water_tank_note',
+          fpm1: 'no_water_tank_note',
+          fuv1: 'no_water_tank_note',
+        },
         youtubeId: 'c64vKb833ZY',
       },
       {

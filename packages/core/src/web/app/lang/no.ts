@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Merket som fullført manuelt; se videoen for å tjene kreditter',
     minimize: 'Minimer til flytende spiller',
     next: 'Neste',
+    no_water_tank_note: 'Denne modellen har ingen vanntank; du kan hoppe over denne leksjonen.',
     not_synced: 'Ikke synkronisert',
     nudge_later: 'Kanskje senere',
     nudge_message: 'Vil du lære mer? FLUX 101 tar deg fra utpakking til første jobb i 23 korte videoer.\nDu kan når som helst åpne det fra bokikonet i verktøylinjen til venstre, velkomstsiden eller Hjelp-menyen.',

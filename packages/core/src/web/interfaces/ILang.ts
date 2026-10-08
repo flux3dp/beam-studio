@@ -1508,6 +1508,7 @@ export interface ILang {
     marked_done_hint: string;
     minimize: string;
     next: string;
+    no_water_tank_note: string;
     not_synced: string;
     nudge_later: string;
     nudge_message: string;

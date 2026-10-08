@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Ditandai selesai secara manual; tonton videonya untuk mendapatkan kredit',
     minimize: 'Perkecil ke pemutar mengambang',
     next: 'Berikutnya',
+    no_water_tank_note: 'Model ini tidak memiliki tangki air; Anda dapat melewati pelajaran ini.',
     not_synced: 'Belum tersinkron',
     nudge_later: 'Nanti saja',
     nudge_message: 'Ingin belajar lebih jauh? FLUX 101 memandu Anda dari membuka kemasan hingga pekerjaan pertama dalam 23 video singkat.\nAnda dapat membukanya kapan saja dari ikon buku di bilah alat kiri, halaman Selamat Datang, atau menu Bantuan.',

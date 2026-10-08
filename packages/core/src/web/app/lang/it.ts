@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Segnata come completata manualmente; guarda il video per guadagnare crediti',
     minimize: 'Riduci a lettore flottante',
     next: 'Avanti',
+    no_water_tank_note: "Questo modello non ha un serbatoio dell'acqua; puoi saltare questa lezione.",
     not_synced: 'Non sincronizzato',
     nudge_later: 'Forse più tardi',
     nudge_message: "Vuoi approfondire? FLUX 101 ti accompagna dall'unboxing al primo lavoro in 23 brevi video.\nPuoi aprirlo in qualsiasi momento dall'icona del libro nella barra degli strumenti a sinistra, dalla pagina di benvenuto o dal menu Aiuto.",

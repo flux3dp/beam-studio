@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: '已手動標記完成，需實際看完影片才會獲得點數',
     minimize: '縮小為浮動播放器',
     next: '下一課',
+    no_water_tank_note: '此機型沒有水箱，可略過本課。',
     not_synced: '未同步',
     nudge_later: '之後再說',
     nudge_message: '想更進一步嗎？FLUX 101 有 23 支短片，帶你從開箱到送出第一個工作。\n之後也可以隨時從左側工具列的書本圖示、歡迎頁或「說明」選單開啟。',

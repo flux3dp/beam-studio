@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Oznaczono jako ukończone ręcznie; obejrzyj film, aby zdobyć kredyty',
     minimize: 'Zminimalizuj do pływającego odtwarzacza',
     next: 'Dalej',
+    no_water_tank_note: 'Ten model nie ma zbiornika na wodę; możesz pominąć tę lekcję.',
     not_synced: 'Nie zsynchronizowano',
     nudge_later: 'Może później',
     nudge_message: 'Chcesz wiedzieć więcej? FLUX 101 w 23 krótkich filmach prowadzi od rozpakowania do pierwszego zadania.\nMożesz go otworzyć w każdej chwili z ikony książki na lewym pasku narzędzi, strony powitalnej lub menu Pomoc.',

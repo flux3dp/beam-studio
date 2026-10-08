@@ -1542,6 +1542,7 @@ const lang: ILang = {
     marked_done_hint: 'Markeret som gennemført manuelt; se videoen for at optjene kreditter',
     minimize: 'Minimer til flydende afspiller',
     next: 'Næste',
+    no_water_tank_note: 'Denne model har ingen vandtank; du kan springe denne lektion over.',
     not_synced: 'Ikke synkroniseret',
     nudge_later: 'Måske senere',
     nudge_message: 'Vil du videre? FLUX 101 fører dig fra udpakning til din første opgave i 23 korte videoer.\nDu kan altid åbne det senere fra bogikonet i venstre værktøjslinje, velkomstsiden eller menuen Hjælp.',
