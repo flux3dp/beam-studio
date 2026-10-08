@@ -91,10 +91,10 @@ describe('actions on the anonymous bucket', () => {
     expect(getBucket().lastLessonId).toBe('1-1');
   });
 
-  test('recordPlayback keeps the furthest position as the resume point (rewinds stay in-session)', () => {
+  test('recordPlayback stores the last position, so a rewind resumes where the user left off', () => {
     recordPlayback('1-2', 30, 30);
     recordPlayback('1-2', 1, 10); // user scrubbed back to 0:10
-    expect(getBucket().lessons['1-2']).toMatchObject({ playedSec: 31, resumeSec: 30 });
+    expect(getBucket().lessons['1-2']).toMatchObject({ playedSec: 31, resumeSec: 10 });
   });
 
   test('completeLesson is monotonic: marked_done upgrades to watched, never the reverse', () => {

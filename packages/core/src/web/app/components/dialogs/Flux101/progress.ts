@@ -152,7 +152,7 @@ const writeLesson = (lessonId: string, step: (cur: LessonProgress) => LessonProg
 export const recordPlayback = (lessonId: string, playedDelta: number, resumeSec: number): Completion | undefined =>
   writeLesson(lessonId, (cur) => {
     const duration = LESSONS.find((l) => l.id === lessonId)?.durationSec ?? Infinity;
-    const next = { ...cur, playedSec: cur.playedSec + playedDelta, resumeSec: Math.max(cur.resumeSec, resumeSec) };
+    const next = { ...cur, playedSec: cur.playedSec + playedDelta, resumeSec };
 
     return next.playedSec >= WATCHED_RATIO * duration ? complete(next, 'watched') : next;
   });

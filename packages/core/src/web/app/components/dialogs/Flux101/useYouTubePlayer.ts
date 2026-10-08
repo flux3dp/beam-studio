@@ -58,11 +58,9 @@ const loadApi = (): Promise<YTNamespace> => {
   return apiPromise;
 };
 
-// Carried across the dialog ⇄ PiP remount (D24): whether the video was playing, and its exact
-// position including rewinds. The persisted `resumeSec` is the furthest point instead (what a
-// reopen and the FLUX ID sync use), so both are dropped when the course is closed.
+// Carried across the dialog ⇄ PiP remount (D24): whether the video was playing. The position
+// itself is the persisted `resumeSec`, which the unmount writes exactly.
 let wasPlaying = false;
-let carried: null | { lessonId: string; sec: number } = null;
 
 const WRITE_EVERY_SEC = 10;
 
@@ -103,7 +101,7 @@ export const useYouTubePlayer = (
 
         // the API may resolve after a lesson switch; the switch effect is a no-op until the player exists
         const id = lesson.current;
-        const start = carried?.lessonId === id ? carried.sec : resumeOf(id);
+        const start = resumeOf(id);
 
         played.lessonId = id;
 
@@ -163,8 +161,7 @@ export const useYouTubePlayer = (
       document.removeEventListener('visibilitychange', onVisibility);
       communicator.off(TabEvents.TabBlurred, pause);
 
-      // Persist the played seconds and the position (furthest-point rule) and carry the exact one
-      // for a remount; a close drops the carried state so reopening starts paused at the furthest point.
+      // Persist the played seconds and the exact position; a remount or reopen resumes from it.
       const sec = player.current?.getCurrentTime();
       const closing = useFlux101Store.getState().view === 'closed';
 
@@ -176,7 +173,6 @@ export const useYouTubePlayer = (
         if (!closing) celebrate(done); // no surprise dialog over a window the user just closed
       }
 
-      carried = closing || !sec ? null : { lessonId: lesson.current, sec };
       wasPlaying &&= !closing;
 
       created?.destroy();
