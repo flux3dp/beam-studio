@@ -18,7 +18,7 @@
 
 Beam Studio's onboarding is a scripted overlay walkthrough (`tutorials/Tutorial.tsx`) that teaches a few mechanical steps. FLUX already has a **23-video "Laser Cutter 101" curriculum** on YouTube (playlist `PL97IZXQ17KZ8WhfmCDFn0ZBLRYkWAQRXu`, ~33 min total) that most new users never find.
 
-**FLUX 101** surfaces that curriculum inside the app as a chaptered course with progress, badges, a certificate, and a small FLUX+ credit reward per lesson. Because the point is to learn *Beam Studio*, the course ships a **minimizable picture-in-picture (PiP) player**: shrink the video into a corner and do the thing you just watched on the real canvas. Progress is stored locally per user and synced to the FLUX ID account.
+**FLUX 101** surfaces that curriculum inside the app as a chaptered course with progress, badges, a certificate, and a small AI-credit reward per lesson. Because the point is to learn *Beam Studio*, the course ships a **minimizable picture-in-picture (PiP) player**: shrink the video into a corner and do the thing you just watched on the real canvas. Progress is stored locally per user and synced to the FLUX ID account.
 
 The course is named **FLUX 101** (it covers hardware setup too); the local storage key is `flux-101`.
 
@@ -40,7 +40,7 @@ Engineering review (2026-09-18) confirmed the feature is mostly new UI over exis
 
 **Goals**
 - **G1** Surface the 23-video curriculum in-app as a chaptered course with a clear "Continue" path.
-- **G2** Make completion feel rewarding: celebration, badges, certificate, FLUX+ credits.
+- **G2** Make completion feel rewarding: celebration, badges, certificate, AI credits.
 - **G3** Persist progress locally per user and sync to FLUX ID.
 - **G4** Watch-and-do via a minimizable, draggable PiP player that remembers playback position.
 - **G5** Introduce the course to new users once, at the right moment, without nagging returning users.
@@ -91,9 +91,9 @@ The player (`Flux101Player`) is rendered inside whichever slot is on screen. Swi
 
 ### 5.4 Completion celebration
 
-On lesson completion: confetti (`popConfetti` from the player), check-stamp on the lesson, progress bar animates, and, once the server confirms the grant, a "+0.5 FLUX+ credits" tag (R12a). A centred `CelebrationDialog` (after the ClickUp draft: icon, headline, lesson, chapter progress bar, **Back to course** / **Next ›**) opens on every completion — including when a hand-marked lesson is later actually watched, the moment its credit is earned; when the chapter just completed, a dashed-top badge section (badge emoji with a ring animation, "Badge unlocked", badge name) follows the chapter progress bar; icon and headline stay the lesson ones (R10). Course complete (23/23) → certificate modal + `rainConfetti` instead. XP is not shown (D20). Both dialogs are opened imperatively (`showCelebrationDialog` / `showCertificate` in `Flux101/index.tsx`, `dialog-controller`) and fire their own confetti on mount, so they work from the course window, from PiP and from the Welcome tab alike. The trigger is the return value of the user-driven writers: `completeLesson` (Mark done, `ENDED`) and `recordPlayback` (the 90 % tick) return a `Completion` only when that write finished a lesson or upgraded a hand-marked one, and the three call sites pass it to `celebrate()` in `Flux101/index.tsx`. Login merges, cloud pulls and server back-grants write the bucket through other paths and never celebrate (an earlier render-diff hook replayed every merged lesson on sign-in). Once complete, a 🎓 button in the dialog header and on the Welcome tab reopens the certificate (`Flux101Certificate.tsx`).
+On lesson completion: confetti (`popConfetti` from the player), check-stamp on the lesson, progress bar animates, and, once the server confirms the grant, a "+0.5 AI credits" tag (R12a). A centred `CelebrationDialog` (after the ClickUp draft: icon, headline, lesson, chapter progress bar, **Back to course** / **Next ›**) opens on every completion — including when a hand-marked lesson is later actually watched, the moment its credit is earned; when the chapter just completed, a dashed-top badge section (badge emoji with a ring animation, "Badge unlocked", badge name) follows the chapter progress bar; icon and headline stay the lesson ones (R10). Course complete (23/23) → certificate modal + `rainConfetti` instead. XP is not shown (D20). Both dialogs are opened imperatively (`showCelebrationDialog` / `showCertificate` in `Flux101/index.tsx`, `dialog-controller`) and fire their own confetti on mount, so they work from the course window, from PiP and from the Welcome tab alike. The trigger is the return value of the user-driven writers: `completeLesson` (Mark done, `ENDED`) and `recordPlayback` (the 90 % tick) return a `Completion` only when that write finished a lesson or upgraded a hand-marked one, and the three call sites pass it to `celebrate()` in `Flux101/index.tsx`. Login merges, cloud pulls and server back-grants write the bucket through other paths and never celebrate (an earlier render-diff hook replayed every merged lesson on sign-in). Once complete, a 🎓 button in the dialog header and on the Welcome tab reopens the certificate (`Flux101Certificate.tsx`).
 
-The course window header carries, next to the title: an `N / 23` tag; a yellow `+N` credits tag (hover: "N FLUX+ credits earned") when any credit was granted; and the sync state — signed in: green **Synced** / grey **Not synced** from the last `bxpref` push result (`flux101Store.synced`, undefined until the first push of the session, reset on logout); signed out: a clickable **Sign in** tag (hover: sign in to sync progress and earn credits) that opens the FLUX ID login.
+The course window header carries, next to the title: an `N / 23` tag; a yellow `+N` credits tag (hover: "N AI credits earned") when any credit was granted; and the sync state — signed in: green **Synced** / grey **Not synced** from the last `bxpref` push result (`flux101Store.synced`, undefined until the first push of the session, reset on logout); signed out: a clickable **Sign in** tag (hover: sign in to sync progress and earn credits) that opens the FLUX ID login.
 
 XP is **not shown** pending the meeting decision (D20); if kept, it is derived, never stored.
 
@@ -326,7 +326,7 @@ One release, no feature flag (D22 struck), dogfooded through the existing alpha 
 - **D1** Recommended-linear, not hard-locked.
 - **D2** Progress lives in `storage` (`flux-101`) + FLUX ID `bxpref`, not `BeamboxPreference`.
 - **D3** Sync reuses `bxpref`; **but** the server model needs a `flux101_progress` JSON column (companion PRD). Credit granting needs a new endpoint.
-- **D5** 0.5 FLUX+ credits per `watched` lesson, once, server-authoritative (client constant `CREDITS_PER_LESSON` in `catalog.ts` is display-only). Context: a new FLUX ID account starts with 10 one-time credits and machine linking grants 10, so 11.5 for the full course is in the same band.
+- **D5** 0.5 AI credits (the FLUX ID one-time credit pool, named "AI credits" elsewhere in the app) per `watched` lesson, once, server-authoritative (client constant `CREDITS_PER_LESSON` in `catalog.ts` is display-only). Context: a new FLUX ID account starts with 10 one-time credits and machine linking grants 10, so 11.5 for the full course is in the same band.
 - **D6** Catalog finalized as §6.1.1.
 - **D7** `marked_done` earns no credit.
 - **D8** Name FLUX 101; internal key ~~`beam-studio-101`~~ → `flux-101` (renamed 2026-10-08 before any release, to match `flux101_progress`, `flux101/grant` and the `Flux101/` folder; no migration).

@@ -4,7 +4,7 @@
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getActiveLang } from '@core/helpers/i18n';
 
-/** FLUX+ one-time credits per `watched` lesson (D5); the server holds the authoritative amount. */
+/** AI credits (FLUX ID one-time credits) per `watched` lesson (D5); the server holds the authoritative amount. */
 export const CREDITS_PER_LESSON = 0.5;
 
 export type ChapterId = 'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5';
