@@ -40,9 +40,11 @@ antd's defaults:
 | Status | `$status-normal` / `$status-warning` / `$status-critical` | green / amber / red |
 | Rewards (credits tag) | `$reward-yellow` | `#f6c026` (as a `rgba(…, 0.25)` tint) |
 
-- The app's antd `colorPrimary` is **`#494949`** (`constants/antd-config.ts`), so `type="primary"`
-  buttons are dark grey. The blue accent is `$primary-blue`; a mockup's blue (antd's default, for
-  example) is translated to it rather than copied.
+- The app keeps antd's default `colorPrimary` (the root `ConfigProvider` in `router.tsx` sets no
+  colour), so `type="primary"` buttons are antd blue. The dark-grey `#494949` in
+  `constants/antd-config.ts` belongs to scoped themes only (`ConfigModalBlock`, the sliders); do not
+  treat it as the app's primary. In scss the accent is `$primary-blue`; a mockup's blue is
+  translated to it rather than copied.
 - Tints of the accent are `rgba(variables.$primary-blue, 0.1)` etc., not separate hex codes, so a
   palette change propagates.
 - No variable close enough? Add one to `_variables.scss` with a role-based name
