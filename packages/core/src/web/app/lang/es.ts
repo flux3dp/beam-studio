@@ -2660,7 +2660,6 @@ const lang: ILang = {
       oval: 'Óvalo',
       rect: 'Rectángulo',
       square: 'Cuadrado',
-      tw_company: 'Sello de empresa (TW)',
     },
     export_failed: 'No se pudo importar el sello al lienzo. Inténtalo de nuevo.',
     layers: {

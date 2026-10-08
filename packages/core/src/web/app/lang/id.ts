@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Oval',
       rect: 'Persegi panjang',
       square: 'Persegi',
-      tw_company: 'Stempel perusahaan (TW)',
     },
     export_failed: 'Gagal mengimpor stempel ke kanvas. Silakan coba lagi.',
     layers: {

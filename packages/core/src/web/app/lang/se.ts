@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Oval',
       rect: 'Rektangel',
       square: 'Kvadrat',
-      tw_company: 'Företagsstämpel (TW)',
     },
     export_failed: 'Stämpeln kunde inte importeras till arbetsytan. Försök igen.',
     layers: {

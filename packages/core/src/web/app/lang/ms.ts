@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Bujur',
       rect: 'Segi empat tepat',
       square: 'Segi empat sama',
-      tw_company: 'Cop syarikat (TW)',
     },
     export_failed: 'Gagal mengimport cop ke kanvas. Sila cuba lagi.',
     layers: {

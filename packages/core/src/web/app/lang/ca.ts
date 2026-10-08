@@ -2661,7 +2661,6 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
       oval: 'Oval',
       rect: 'Rectangle',
       square: 'Quadrat',
-      tw_company: "Segell d'empresa (TW)",
     },
     export_failed: "No s'ha pogut importar el segell al llenç. Torna-ho a provar.",
     layers: {

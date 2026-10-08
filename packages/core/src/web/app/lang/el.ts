@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Οβάλ',
       rect: 'Ορθογώνιο',
       square: 'Τετράγωνο',
-      tw_company: 'Εταιρική σφραγίδα (TW)',
     },
     export_failed: 'Η σφραγίδα δεν εισήχθη στον καμβά. Δοκιμάστε ξανά.',
     layers: {

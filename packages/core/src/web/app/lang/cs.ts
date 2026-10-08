@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Ovál',
       rect: 'Obdélník',
       square: 'Čtverec',
-      tw_company: 'Firemní razítko (TW)',
     },
     export_failed: 'Razítko se nepodařilo importovat na plátno. Zkuste to znovu.',
     layers: {

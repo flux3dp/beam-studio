@@ -2661,7 +2661,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
       oval: 'Oval',
       rect: 'Rectangle',
       square: 'Square',
-      tw_company: 'TW Company Seal',
     },
     export_failed: 'Failed to import stamp to canvas. Please try again.',
     layers: {

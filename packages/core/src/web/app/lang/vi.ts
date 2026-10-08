@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Hình bầu dục',
       rect: 'Hình chữ nhật',
       square: 'Hình vuông',
-      tw_company: 'Con dấu công ty (TW)',
     },
     export_failed: 'Không thể nhập con dấu vào khung vẽ. Vui lòng thử lại.',
     layers: {

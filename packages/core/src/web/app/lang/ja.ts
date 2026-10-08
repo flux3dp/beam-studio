@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: '楕円',
       rect: '長方形',
       square: '正方形',
-      tw_company: '台湾会社印',
     },
     export_failed: 'スタンプをキャンバスに読み込めませんでした。もう一度お試しください。',
     layers: {

@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Soikio',
       rect: 'Suorakulmio',
       square: 'Neliö',
-      tw_company: 'Yritysleima (TW)',
     },
     export_failed: 'Leiman tuonti piirtoalueelle epäonnistui. Yritä uudelleen.',
     layers: {

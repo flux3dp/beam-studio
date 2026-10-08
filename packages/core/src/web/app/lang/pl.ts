@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Owal',
       rect: 'Prostokąt',
       square: 'Kwadrat',
-      tw_company: 'Pieczęć firmowa (TW)',
     },
     export_failed: 'Nie udało się zaimportować pieczątki na płótno. Spróbuj ponownie.',
     layers: {

@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Oval',
       rect: 'Rektangel',
       square: 'Kvadrat',
-      tw_company: 'Firmastempel (TW)',
     },
     export_failed: 'Kunne ikke importere stempelet til lerretet. Prøv igjen.',
     layers: {

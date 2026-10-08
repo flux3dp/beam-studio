@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Ovale',
       rect: 'Rettangolo',
       square: 'Quadrato',
-      tw_company: 'Timbro aziendale (TW)',
     },
     export_failed: 'Impossibile importare il timbro nel canvas. Riprova.',
     layers: {

@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Ovaal',
       rect: 'Rechthoek',
       square: 'Vierkant',
-      tw_company: 'Bedrijfsstempel (TW)',
     },
     export_failed: 'Stempel kon niet naar het canvas worden geïmporteerd. Probeer het opnieuw.',
     layers: {

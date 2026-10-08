@@ -24,11 +24,17 @@
   }
 }
 
+// Shape tabs; antd scrolls the tab bar itself on narrow screens. Items have no panes, so hide the holder.
 .categories {
-  display: flex;
   flex-shrink: 0;
-  gap: 8px;
-  overflow-x: auto; // antd buttons don't wrap: on narrow screens the row scrolls instead of being clipped
+
+  :global(.ant-tabs-nav) {
+    margin: 0;
+  }
+
+  :global(.ant-tabs-content-holder) {
+    display: none;
+  }
 }
 
 .body {

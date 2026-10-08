@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Ovale',
       rect: 'Rectangle',
       square: 'Carré',
-      tw_company: "Cachet d'entreprise (TW)",
     },
     export_failed: "Impossible d'importer le tampon dans le canevas. Veuillez réessayer.",
     layers: {

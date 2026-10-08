@@ -2561,7 +2561,6 @@ export interface ILang {
       oval: string;
       rect: string;
       square: string;
-      tw_company: string;
     };
     export_failed: string;
     layers: {

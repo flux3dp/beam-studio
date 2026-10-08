@@ -22,7 +22,7 @@ const SQUARE_SIZES: StampSize[] = [
 
 export const STAMP_TEMPLATES: StampTemplate[] = [
   {
-    category: 'tw_company',
+    category: 'oval',
     elements: [
       { bounds: { height: 12.4, width: 12.4, x: 9, y: 68.8 }, id: 'icon_left' },
       { bounds: { height: 12.4, width: 12.4, x: 128.6, y: 68.8 }, id: 'icon_right' },
@@ -68,7 +68,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     ],
   },
   {
-    category: 'tw_company',
+    category: 'rect',
     elements: [
       { bounds: { height: 12.4, width: 12.4, x: 19, y: 68.8 }, id: 'icon_left' },
       { bounds: { height: 12.4, width: 12.4, x: 118.6, y: 68.8 }, id: 'icon_right' },

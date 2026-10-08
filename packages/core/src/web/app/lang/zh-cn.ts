@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: '椭圆',
       rect: '长方形',
       square: '方形',
-      tw_company: '统编章',
     },
     export_failed: '导入印章至画布失败，请重试。',
     layers: {

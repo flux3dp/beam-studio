@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Oval',
       rect: 'Retângulo',
       square: 'Quadrado',
-      tw_company: 'Carimbo de empresa (TW)',
     },
     export_failed: 'Não foi possível importar o carimbo para a tela. Tente novamente.',
     layers: {

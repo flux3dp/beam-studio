@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: '橢圓',
       rect: '長方形',
       square: '方形',
-      tw_company: '統編章',
     },
     export_failed: '匯入印章至畫布失敗，請再試一次。',
     layers: {

@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: '타원',
       rect: '직사각형',
       square: '정사각형',
-      tw_company: '대만 회사 인감',
     },
     export_failed: '스탬프를 캔버스로 가져오지 못했습니다. 다시 시도해 주세요.',
     layers: {

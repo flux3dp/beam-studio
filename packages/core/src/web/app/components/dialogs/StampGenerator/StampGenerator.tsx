@@ -1,12 +1,13 @@
 import React, { useCallback, useState } from 'react';
 
-import { Button } from 'antd';
+import { Button, Tabs } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
+import CategoryIcon from './components/CategoryIcon';
 import OptionsPanel from './components/OptionsPanel';
 import Preview from './components/Preview';
 import TemplatePicker from './components/TemplatePicker';
@@ -101,18 +102,17 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
       title={tGenerators.stamp_generator}
     >
       <div className={styles.container}>
-        <div className={styles.categories}>
-          {categories.map((value) => (
-            <Button
-              color={value === category ? 'primary' : 'default'}
-              key={value}
-              onClick={() => handleCategoryChange(value)}
-              variant="outlined"
-            >
-              {t.categories[value]}
-            </Button>
-          ))}
-        </div>
+        <Tabs
+          activeKey={category}
+          className={styles.categories}
+          items={categories.map((value) => ({
+            icon: <CategoryIcon category={value} />,
+            key: value,
+            label: t.categories[value],
+          }))}
+          onChange={(value) => handleCategoryChange(value as TemplateCategory)}
+          size="small"
+        />
         <div className={styles.body}>
           <TemplatePicker category={category} currentTemplateId={templateId} onSelect={handleTemplateChange} />
           <Preview />

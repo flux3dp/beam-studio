@@ -2661,7 +2661,6 @@ const lang: ILang = {
       oval: 'Oval',
       rect: 'Rechteck',
       square: 'Quadrat',
-      tw_company: 'Firmenstempel (TW)',
     },
     export_failed: 'Stempel konnte nicht in die Arbeitsfläche importiert werden. Bitte erneut versuchen.',
     layers: {
