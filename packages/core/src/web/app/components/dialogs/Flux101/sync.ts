@@ -89,6 +89,7 @@ const onUserChange = async (): Promise<void> => {
   if (owner === lastOwner) return; // 'update-user' also fires for plain info refreshes
 
   lastOwner = owner;
+  grantBlockedUntil = 0; // the server throttles per user, so one account's failure must not block the next
 
   if (owner === ANONYMOUS) {
     useFlux101Store.setState({ synced: undefined });
