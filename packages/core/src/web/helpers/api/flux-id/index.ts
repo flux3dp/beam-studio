@@ -19,11 +19,12 @@ export {
 } from './base';
 export { getNPIconByID, getNPIconsByTerm } from './nounProject';
 
-import { getPreference, setPreference } from './activity';
+import { getPreference, grantFlux101Credits, setPreference } from './activity';
 import { init } from './base';
 
 export default {
   getPreference,
+  grantFlux101Credits,
   init,
   setPreference,
 };

@@ -1,3 +1,4 @@
+import type { Flux101Storage } from '@core/app/components/dialogs/Flux101/progress';
 import type { PncOffset } from '@core/app/components/dialogs/PrintAndCut/calibration/offsetStore';
 import type { ColorConfig } from '@core/app/constants/color-constants';
 import type { History } from '@core/app/contexts/ElementPanelContext';
@@ -37,6 +38,8 @@ export interface Storage {
   dockviewLayout: string;
   'elements-history': History[];
   'enable-sentry': boolean | null;
+  /** FLUX 101 course progress, bucketed by owner (FLUX ID email or 'anonymous') */
+  'flux-101': Flux101Storage;
   'flux-rsa-key': string;
   'font-history': string[];
   /** font name to display name */

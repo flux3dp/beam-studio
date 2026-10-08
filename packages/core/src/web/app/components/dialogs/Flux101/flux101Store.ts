@@ -1,0 +1,33 @@
+// View state of the FLUX 101 course window (PRD §5.3): dialog ⇄ pip ⇄ closed, plus the last
+// cloud push result for the header's sync tag (undefined until the first push of a session).
+import { create } from 'zustand';
+import { combine } from 'zustand/middleware';
+
+import { continueLessonId, getBucket, setLastLesson } from './progress';
+
+export type Flux101View = 'closed' | 'dialog' | 'pip';
+
+export const useFlux101Store = create(
+  combine(
+    {
+      lessonId: continueLessonId(getBucket()),
+      synced: undefined as boolean | undefined,
+      view: 'closed' as Flux101View,
+    },
+    (set) => ({
+      close: () => set({ view: 'closed' }),
+      expand: () => set({ view: 'dialog' }),
+      minimize: () => set({ view: 'pip' }),
+      open: (lessonId?: string) => {
+        const id = lessonId ?? continueLessonId(getBucket());
+
+        setLastLesson(id);
+        set({ lessonId: id, view: 'dialog' });
+      },
+      selectLesson: (lessonId: string) => {
+        setLastLesson(lessonId);
+        set({ lessonId });
+      },
+    }),
+  ),
+);

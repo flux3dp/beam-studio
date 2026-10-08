@@ -13,6 +13,9 @@ describe('reset', () => {
     for (let i = 0; i < buttonCount; i++) {
       cy.get('button.ant-btn').contains('No').click({ multiple: true });
     }
+
+    // FLUX 101 nudge follows the start-up prompts for a reset (= new) user
+    cy.get('button.ant-btn').contains('Maybe later').click();
   };
 
   const selectOption = (selector, optionText) => {

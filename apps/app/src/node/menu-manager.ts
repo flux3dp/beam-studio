@@ -770,6 +770,7 @@ class MenuManager extends EventEmitter {
       ...[
         { click: callback, enabled: false, id: 'START_TUTORIAL', label: r.show_start_tutorial },
         { click: callback, enabled: false, id: 'START_UI_INTRO', label: r.show_ui_intro },
+        { click: callback, id: 'START_101_COURSE', label: r.flux_101 },
         { click: callback, id: 'MAINTENANCE_CHECKLIST', label: r.maintenance_checklist },
         { click: callback, id: 'CHANGE_LOGS', label: r.change_logs },
         {

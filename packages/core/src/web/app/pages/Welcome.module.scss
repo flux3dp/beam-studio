@@ -150,6 +150,11 @@ $header-height: 60px;
         height: 100%;
         overflow: hidden;
       }
+
+      .flux-101 {
+        flex: 1;
+        min-height: 0;
+      }
     }
   }
 }
@@ -166,4 +171,9 @@ $header-height: 60px;
 .beamy-icon {
   // Compensate viewbox padding
   transform: scale(1.25);
+}
+
+.book-icon {
+  // Compensate viewbox padding
+  transform: scale(1.5);
 }

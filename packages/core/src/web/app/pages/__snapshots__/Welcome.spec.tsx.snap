@@ -203,6 +203,15 @@ exports[`test Welcome should render correctly 1`] = `
             class="menu-item"
           >
             <svgr-url
+              class="book-icon"
+            />
+             
+            FLUX 101
+          </div>
+          <div
+            class="menu-item"
+          >
+            <svgr-url
               class="beamy-icon"
             />
              
@@ -500,6 +509,15 @@ exports[`test Welcome should render correctly 2`] = `
             </span>
              
             Help Center
+          </div>
+          <div
+            class="menu-item"
+          >
+            <svgr-url
+              class="book-icon"
+            />
+             
+            FLUX 101
           </div>
           <div
             class="menu-item active"
@@ -837,6 +855,23 @@ exports[`test Welcome should render correctly in mobile 1`] = `
                     </span>
                      
                     Help Center
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <svgr-url
+                      class="book-icon"
+                    />
+                     
+                    FLUX 101
                   </div>
                 </div>
               </div>
@@ -1202,6 +1237,23 @@ exports[`test Welcome should render correctly in mobile 2`] = `
                 class="adm-capsule-tabs-tab-wrapper"
               >
                 <div
+                  class="adm-capsule-tabs-tab"
+                >
+                  <div
+                    class="menu-item"
+                  >
+                    <svgr-url
+                      class="book-icon"
+                    />
+                     
+                    FLUX 101
+                  </div>
+                </div>
+              </div>
+              <div
+                class="adm-capsule-tabs-tab-wrapper"
+              >
+                <div
                   class="adm-capsule-tabs-tab adm-capsule-tabs-tab-active"
                 >
                   <div
@@ -1485,6 +1537,15 @@ exports[`test Welcome should render correctly in web 1`] = `
             class="menu-item"
           >
             <svgr-url
+              class="book-icon"
+            />
+             
+            FLUX 101
+          </div>
+          <div
+            class="menu-item"
+          >
+            <svgr-url
               class="beamy-icon"
             />
              
@@ -1750,6 +1811,15 @@ exports[`test Welcome should render correctly in web 2`] = `
             </span>
              
             Help Center
+          </div>
+          <div
+            class="menu-item"
+          >
+            <svgr-url
+              class="book-icon"
+            />
+             
+            FLUX 101
           </div>
           <div
             class="menu-item active"

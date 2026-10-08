@@ -174,7 +174,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
                 label: tCali.cancel,
                 onClick: () => onClose(false),
               },
-          { label: tCali.skip, onClick: () => handleNext(false) },
+          { label: lang.global.skip, onClick: () => handleNext(false) },
           { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
         ]}
         onClose={() => onClose(false)}

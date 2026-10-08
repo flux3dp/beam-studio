@@ -1240,7 +1240,6 @@ export interface ILang {
     retake: string;
     rotation_angle: string;
     show_last_config: string;
-    skip: string;
     solve_pnp_bm2: string;
     solve_pnp_keep_door_closed: string;
     solve_pnp_move_platform: string;
@@ -1481,6 +1480,49 @@ export interface ILang {
   error_pages: {
     screen_size: string;
   };
+  flux_101: {
+    badge_earned: string;
+    badge_locked: string;
+    badge_unlocked: string;
+    badges: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    certificate: string;
+    certificate_completed_on: string;
+    certificate_desc: string;
+    certificate_subtitle: string;
+    certificate_this_certifies: string;
+    certificate_title: string;
+    chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    claimed_warning: string;
+    close: string;
+    completed: string;
+    credit_pending: string;
+    credits_earned: string;
+    credits_plus: string;
+    english_audio: string;
+    expand: string;
+    help_article: string;
+    lesson_done: string;
+    lessons: Record<string, string>;
+    lessons_done: string;
+    mark_done: string;
+    marked_done_hint: string;
+    minimize: string;
+    next: string;
+    no_water_tank_note: string;
+    not_synced: string;
+    nudge_later: string;
+    nudge_message: string;
+    nudge_watch: string;
+    offline: string;
+    open_on_youtube: string;
+    prev: string;
+    sync_login: string;
+    synced: string;
+    title: string;
+    video_error: string;
+    view_certificate: string;
+    water_tank_note: string;
+  };
   flux_id_login: {
     connection_fail: string;
     email: string;
@@ -1573,6 +1615,7 @@ export interface ILang {
     | 'save_and_exit'
     | 'saving'
     | 'select'
+    | 'skip'
     | 'stop'
     | 'width',
     string
@@ -2734,6 +2777,7 @@ export interface ILang {
       export_UV_print: string;
       file: string;
       fit_to_window: string;
+      flux_101: string;
       follow_us: string;
       forum: string;
       group: string;

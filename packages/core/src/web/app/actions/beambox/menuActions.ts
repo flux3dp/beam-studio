@@ -5,6 +5,7 @@ import Tutorials from '@core/app/actions/beambox/tutorials';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { showFlux101 } from '@core/app/components/dialogs/Flux101';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showMaintenanceChecklist } from '@core/app/components/dialogs/MaintenanceChecklist/showMaintenanceChecklist';
 import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
@@ -21,6 +22,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import { loadLayout, togglePanel } from '@core/app/widgets/dockable/utils';
 import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
 import checkQuestionnaire from '@core/helpers/check-questionnaire';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import {
   exportAsBVG,
   exportAsImage,
@@ -31,7 +33,7 @@ import {
   saveToCloud,
   toggleUnsavedChangedDialog,
 } from '@core/helpers/file/export';
-import { hashMap } from '@core/helpers/hashHelper';
+import { hashMap, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
@@ -153,6 +155,11 @@ export default {
   SIGN_IN: (): void => Dialog.showLoginDialog(),
   SIGN_OUT: (): Promise<boolean> => signOut(),
   SNAP_TO_OBJECT_CENTER: (): boolean => viewMenu.toggleSnapToObjectCenter(),
+  START_101_COURSE: (): void => {
+    // the Welcome page embeds the course as a tab; opening the window there would mount a second player
+    if (isAtPage('welcome')) eventEmitterFactory.createEventEmitter('welcome').emit('select-tab', 'flux-101');
+    else showFlux101();
+  },
   START_CURVE_ENGRAVING_MODE: () => curveEngravingModeController.start(),
   START_GESTURE_INTRO: (): Promise<void> => Dialog.showMediaTutorial(getGestureIntroduction()),
   START_TUTORIAL: (): void => {

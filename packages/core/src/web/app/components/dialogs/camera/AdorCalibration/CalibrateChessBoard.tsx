@@ -201,7 +201,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, onSkip, updateParam }: P
       </Button>,
       onSkip ? (
         <Button key="skip" onClick={onSkip}>
-          {lang.calibration.skip}
+          {lang.global.skip}
         </Button>
       ) : null,
       <Button key="retry" onClick={() => handleCalibrate(0)}>

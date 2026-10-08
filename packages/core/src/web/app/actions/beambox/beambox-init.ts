@@ -6,6 +6,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import tabController from '@core/app/actions/tabController';
 import { registerConnectionIssueGuide } from '@core/app/components/dialogs/ConnectionIssueGuide/registerConnectionIssueGuide';
+import { showFlux101Nudge } from '@core/app/components/dialogs/Flux101';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -104,6 +105,8 @@ class BeamboxInit {
     if (hasMachineConnection && !isMobile()) {
       await this.showTutorial(isNewUser);
     }
+
+    if (!isMobile()) await showFlux101Nudge();
 
     if (!isNewUser) {
       const lastInstalledVersion = storage.get('last-installed-version');

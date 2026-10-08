@@ -34,6 +34,8 @@ export interface IAlert {
   message: ReactNode;
   messageIcon?: MessageIcon;
   onCancel?: Function;
+  /** Dismissed without a button (Esc). Button callbacks do not fire in that case. */
+  onClose?: () => void;
   onConfirm?: Function;
   onNo?: Function;
   onRetry?: Function;
