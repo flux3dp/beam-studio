@@ -1378,6 +1378,14 @@ const lang: ILang = {
   error_pages: {
     screen_size: 'Please note that Beam Studio may not work optimally on your device. For an optimal experience, it should be a device with a screen width of at least 1024 pixels width.',
   },
+  error_report: {
+    always: 'Always send',
+    ask: 'Ask each time',
+    consent_checkbox: 'Send diagnostic data to FLUX to help fix this error (no design files or personal data)',
+    never: 'Never send',
+    sent_automatically: 'Diagnostic data sent to FLUX automatically.',
+    setting_label: 'Error Report Upload',
+  },
   flux_101: {
     badge_earned: '%(badge)s — you completed "%(chapter)s"',
     badge_locked: 'Complete "%(chapter)s" to unlock %(badge)s',

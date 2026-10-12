@@ -21,6 +21,7 @@ export const getStorageKeys: () => StorageKey[] = () => [
   'error-report-cooldown',
   'error-report-counter',
   'error-report-install-id',
+  'error-report-upload',
   'flux-101',
   'flux-rsa-key',
   'font-history',

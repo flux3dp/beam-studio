@@ -1378,6 +1378,14 @@ const lang: ILang = {
   error_pages: {
     screen_size: '請注意，Beam Studio 無法在您的裝置上順利執行。若要獲得最佳使用體驗，裝置螢幕寬度至少應有 1024 像素。',
   },
+  error_report: {
+    always: '總是傳送',
+    ask: '每次詢問',
+    consent_checkbox: '傳送診斷資料給 FLUX 協助修復此錯誤（不含設計檔案或個人資料）',
+    never: '不傳送',
+    sent_automatically: '診斷資料已自動傳送給 FLUX。',
+    setting_label: '錯誤報告上傳',
+  },
   flux_101: {
     badge_earned: '%(badge)s：已看完「%(chapter)s」',
     badge_locked: '看完「%(chapter)s」解鎖 %(badge)s',

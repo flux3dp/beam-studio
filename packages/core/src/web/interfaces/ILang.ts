@@ -1380,6 +1380,14 @@ export interface ILang {
   error_pages: {
     screen_size: string;
   };
+  error_report: {
+    always: string;
+    ask: string;
+    consent_checkbox: string;
+    never: string;
+    sent_automatically: string;
+    setting_label: string;
+  };
   flux_101: {
     badge_earned: string;
     badge_locked: string;

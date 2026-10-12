@@ -20,5 +20,18 @@ exports[`should render correctly 1`] = `
       type="checkbox"
     />
   </div>
+  <div>
+    mock-select-control id:
+    set-error-report-upload
+    label:
+    Error Report Upload
+    url:
+    options:
+    [{"label":"Always send","value":"always"},{"label":"Ask each time","value":"ask"},{"label":"Never send","value":"never"}]
+    <input
+      class="select-control"
+      id="set-error-report-upload"
+    />
+  </div>
 </div>
 `;
