@@ -1,7 +1,7 @@
 /**
  * Automatic diagnostic upload (docs/prd/error-report-upload). Fire-and-forget: never throws,
  * never shows UI, never changes what the error popup it was triggered from does (§7.1.1).
- * The consent decorator that attaches this to alerts lives in consent.ts (PR 2).
+ * The consent decorator that attaches this to alerts lives in consent.tsx.
  */
 import type { AxiosError } from 'axios';
 
@@ -107,23 +107,44 @@ const post = async (form: FormData): Promise<'duplicate' | 'sent'> => {
   throw lastError;
 };
 
+const getContext = (errorCode: string) => {
+  const info = deviceMaster.currentDevice?.info;
+  const serial = info?.serial || 'none';
+  const firmwareVersion = info?.version ?? '';
+  const appVersion = window.FLUX.version;
+
+  return {
+    appVersion,
+    fingerprint: makeFingerprint(serial, errorCode, appVersion, firmwareVersion),
+    firmwareVersion,
+    serial,
+  };
+};
+
+/**
+ * Why an upload for this error must not happen now (§7.7), or null when it may.
+ * A blocked occurrence is counted for the next report's occurrences_since_last and logged.
+ */
+export const getUploadBlock = (errorCode: string): BlockReason | null => {
+  const { fingerprint, serial } = getContext(errorCode);
+  const blocked = inFlight.has(fingerprint) ? 'cooldown' : getBlockReason(serial, fingerprint);
+
+  // an occurrence during an in-flight upload rides with that upload (recorded when it lands)
+  if (inFlight.has(fingerprint)) inFlight.set(fingerprint, inFlight.get(fingerprint)! + 1);
+  else if (blocked === 'cooldown') recordSkipped(fingerprint);
+
+  if (blocked) logger.append(`error-report skipped (${blocked}) ${errorCode}`);
+
+  return blocked;
+};
+
 export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportOptions): Promise<UploadResult> => {
   try {
-    const info = deviceMaster.currentDevice?.info;
-    const serial = info?.serial || 'none';
-    const firmwareVersion = info?.version ?? '';
-    const appVersion = window.FLUX.version;
-    const fingerprint = makeFingerprint(serial, errorCode, appVersion, firmwareVersion);
-    const blocked = inFlight.has(fingerprint) ? 'cooldown' : getBlockReason(serial, fingerprint);
+    const blocked = getUploadBlock(errorCode);
 
-    if (blocked) {
-      if (inFlight.has(fingerprint)) inFlight.set(fingerprint, inFlight.get(fingerprint)! + 1);
-      else if (blocked === 'cooldown') recordSkipped(fingerprint);
+    if (blocked) return blocked;
 
-      logger.append(`error-report skipped (${blocked}) ${errorCode}`);
-
-      return blocked;
-    }
+    const { appVersion, fingerprint, firmwareVersion, serial } = getContext(errorCode);
 
     inFlight.set(fingerprint, 0);
 

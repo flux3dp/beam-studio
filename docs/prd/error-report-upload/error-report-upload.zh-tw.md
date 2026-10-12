@@ -68,7 +68,7 @@
 | A1 | 設定 → 隱私。 | 存在「錯誤報告上傳」下拉選單，選項 一律自動 / 每次詢問 / 永不；預設 每次詢問；重啟後保留。 | 值以 `'always' \| 'ask' \| 'never'` 存於 storage 鍵 `error-report-upload`。 |
 | A2 | 設為 每次詢問。在 Monitor 觸發裝置 `HARDWARE_ERROR`，或在連線途中將機器斷電以觸發 `popConnectionError`（或 §7.4 任一觸發點）。 | 既有視窗顯示，按鈕上方有未勾選的 checkbox；按鈕文字/順序不變。 | ALARM/FATAL 單按鈕視窗也有同樣 checkbox（原始 PRD §3.7）。 |
 | A3 | 勾選，按 取消。 | 有上傳（network 面板可見一次對 proxy 的請求）；toast「感謝您！診斷資料已傳送。」 | 取消與重試在上傳行為上完全相同。 |
-| A4 | 每次詢問 下首次成功上傳。 | 一次性 一律自動/每次詢問 提示；選 一律自動 會改變 A1 的選單值。 | 提示不再出現（旗標 `error-report-upload-prompted`）。 |
+| A4 | 每次詢問 下首次成功上傳。 | 一次性 一律自動/每次詢問 提示；選 一律自動 會改變 A1 的選單值。 | 提示不再出現：它會把 `'always'` 或 `'ask'` 寫入 `error-report-upload`，只有未設定（`null`）時才允許提示（§7.6）。按 Escape 關閉不寫入，下次上傳後可能再出現。 |
 | A5 | 設為 一律自動。觸發錯誤。 | 無 checkbox；底部灰色狀態列；不需使用者操作即送出請求。 | 達每日上限時不顯示狀態列。 |
 | A6 | 設為 永不。 | 視窗與 main 分支像素級相同。 | — |
 | A7 | 檢視上傳的 bug_report。 | 無 `recent_files`、`auto-save-config`、`ador-backup-path`；任何位置（含 fluxghost log 段落）都無 `/Users/<name>` 或 `C:\Users\<name>`；探索清單中的裝置以型號取代使用者自訂名稱。 | 手動 說明 → Bug Report 下載不變（仍包含上述內容）。 |
@@ -82,7 +82,7 @@
 功能資料夾以外會被碰到的共用檔案，以及必須維持原行為的呼叫者：
 
 - `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — 下載仍產出完整、未清除的報告；`MonitorContext.tsx:548` `handleReport` — 同上；`websocket.ts:41` — 改呼叫新的上傳函式，仍只在使用者同意後執行。
-- `app/components/dialogs/Alert.tsx` — 所有既有 `checkbox:` 呼叫者（`retryWithRemoveBackground.ts:25`、`retakeContourPreview.ts:77`、`importSvg/index.tsx:46`、`importDxf.ts:52,120`、`AutoFocusButton/index.tsx:140`、`BasePreviewManager.tsx:279`、`handleExportAlerts.ts:150`）— callback 語意不變。優先選項：完全不動 `Alert.tsx`；若 S3 需要狀態列插槽，以不改預設行為的選用 prop 加入。
+- `app/components/dialogs/Alert.tsx` — 所有既有 `checkbox:` 呼叫者（`retryWithRemoveBackground.ts:25`、`retakeContourPreview.ts:77`、`importSvg/index.tsx:46`、`importDxf.ts:52,120`、`AutoFocusButton/index.tsx:140`、`BasePreviewManager.tsx:279`、`handleExportAlerts.ts:150`）— callback 語意不變。2026-10-12 有動到：`Alert.tsx` 現在會渲染 `IAlert` 自 2021 年起就宣告、但改用 antd 後不再渲染的 `children` 欄位；S3 的狀態列用它。wave 1/2 的觸發點都沒有傳 `children`。唯一有傳的既有呼叫者 `NetworkTestingPanel.tsx:104`（網路測試正常後的三條說明提示，至今被默默丟棄，其 sass 仍掛在已失效的 `.modal-alert` 選擇器下）另開小分支修正：改用 `links` 並刪除該段 sass，於本功能的合併 PR 之前先進。
 - `helpers/device-master.ts:580` `popConnectionError` — `select` :410 與 `selectDeviceWithSwiftray` :530 — 警示 id `connection-error`、`Alert.popById` 原地替換、訊息文字與 `{ success: false, error }` 回傳值不變；`reconnect()` → `select()` 仍會跳出同一視窗（吸收重試風暴的是冷卻機制，不是視窗）。
 - `app/contexts/MonitorContext.tsx:314,495,980`、`helpers/device-master.ts:266`、`helpers/device/get-device.ts:103`、`actions/beambox/export-funcs.ts:778`、`export-funcs-swiftray.ts:106-192`、`helpers/handleAutoConnect.ts:216`、`PrintAndCut/calibration/PrintAndCutCalibration.tsx:150` — 第一波觸發點：警示 id、訊息文字、按鈕組與周邊控制流程（`onClose()`、`return { success: false }`、`setStatus('listening')`）不變；只包裝設定物件。
 - `actions/camera/preview-helper/*`、`components/dialogs/camera/*`、`DiodeCalibration/Component.tsx` — 第二波觸發點，同一規則；`BasePreviewManager.tsx:273` 保留自己的 `checkbox`（§7.4 規則）。
@@ -101,7 +101,8 @@
 
 - `index.ts`
   - `uploadErrorReport({ errorCode, scene? }): Promise<UploadResult>`（`'sent' | 'duplicate' | 'failed' | BlockReason`）— 組資料包、套用上限（加上進行中集合，同一指紋的兩個視窗只產生一次上傳）、以每個檔案 10 秒閒置上限讀取機器 log、以 3 分鐘逾時 POST 最多 3 次、成功後增加計數；呼叫端（同意裝飾器，PR 2）依回傳值顯示 toast 與一次性提示。
-  - `withErrorReportConsent(alert: IAlert, errorCode: string): IAlert` — 讀取偏好設定，回傳依情境 A/B/C 裝飾後的警示設定。對設定物件的純函式；觸發點寫成 `Alert.popUp(withErrorReportConsent({...}, code))`。
+  - `withErrorReportConsent(alert: IAlert, options: UploadErrorReportOptions): IAlert`（`consent.tsx`；2026-10-12 由 `errorCode: string` 改為選項物件，讓 `#806`/`#809` 能傳入場景檔）— 讀取偏好設定，回傳依情境 A/B/C 裝飾後的警示設定**副本**，無事可做時回傳原物件。觸發點寫成 `alertCaller.popUp(withErrorReportConsent({...}, { errorCode }))`。checkbox callback 使用函式形式：Alert 會在任一按鈕上先執行它、再執行該按鈕自己的 `onClick`；陣列形式則會取代按鈕的 `onClick`。
+  - `preference.ts` — `getErrorReportPreference()` 把未設定的鍵對應為 `'ask'`；這個後備值只住在這裡。
 - `scrub.ts` — `scrubReport(text: string): string`（家目錄路徑正規表示式）與 storage 排除清單，只用於上傳路徑。
 - `installationId.ts` — `getInstallationId(): string`。Electron：`os.machineId()`，為新增於 `IOperatingSystem` 並**內嵌**在 `apps/app/src/implementations/os.ts` 的方法（2026-10-06 定案，不引入 `node-machine-id` 相依）：執行與 node-machine-id 相同的各 OS 指令（`ioreg -rd1 -c IOPlatformExpertDevice` / `REG.exe QUERY HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid` / `/etc/machine-id`），做 sha256，並在自身 try/catch 內對任何失敗（指令不存在、逾時、解析錯誤）回傳 `''`。網頁版回傳 `''`。結果為空時 → 以 `uuid` v4（既有相依）產生一次並存於 `error-report-install-id`，因此識別碼永遠非空，呼叫端永遠不會看到例外。
 - `throttle.ts` — 每日計數 `{ date, counts: Record<serial, number> }` 存於 storage 鍵 `error-report-counter`，以及每指紋冷卻表（§7.7）存於 `error-report-cooldown`；提供單一介面 `getBlockReason(serial, fingerprint): 'cooldown' | 'daily-limit' | null` / `getSkipped(fingerprint)` / `recordUpload(serial, fingerprint)` / `recordSkipped(fingerprint)`，上傳與同意裝飾器共用。
@@ -185,9 +186,9 @@
 
 ### 7.6 偏好設定與提示
 
-- `error-report-upload: 'always' | 'ask' | 'never'`（未設定時預設 `'ask'`）。
-- `error-report-upload-prompted: boolean` — 一次性 一律自動/每次詢問 提示後設為 true。
-- 提示為 `Alert.popUp`，`buttonLabels: [一律自動, 每次詢問]`，在 `ask` 下首次成功上傳後顯示。
+- `error-report-upload: 'always' | 'ask' | 'never' | null`。`null`（從未選擇）行為同 `'ask'`，且是唯一允許顯示一次性提示的狀態；`'ask'` 代表使用者在提示或設定中選過，不再提示。2026-10-12 修訂：取消獨立的 `error-report-upload-prompted` 旗標，因為未設定值已經帶有這個資訊，與 `enable-sentry` 的慣例相同。此鍵刻意**不**放進 `useSettingStore` 的 `DEFAULT_CONFIG`：router 啟動時會把那張表的鍵全部寫進 storage，會在任何上傳之前就把 `null` 變成 `'ask'`。
+- 提示為 `Alert.popUp`，在 `null` 下首次成功上傳後顯示：標題「自動傳送？」，訊息「要每次發生錯誤時都自動傳送診斷資料嗎？您可隨時在「偏好設定 > 隱私權」中更改。」，按鈕 [總是傳送] / [每次詢問] 分別寫入 `'always'` / `'ask'`。按 Escape 不寫入。
+- 成功後的 toast（僅每次詢問）：「感謝您！診斷資料已傳送。」依產品規則用中性措辭：不得暗示開單或回覆。
 
 ### 7.7 重複抑制（指紋冷卻）
 
@@ -203,7 +204,7 @@
 
 ## 8. 資料契約
 
-- Storage：`error-report-upload`、`error-report-upload-prompted`、`error-report-install-id`（僅網頁版 / 後備）、`error-report-counter: { date: 'YYYY-MM-DD', counts: Record<serial, number> }`、`error-report-cooldown`（§7.7）。
+- Storage：`error-report-upload`（可為 null，§7.6）、`error-report-install-id`（僅網頁版 / 後備）、`error-report-counter: { date: 'YYYY-MM-DD', counts: Record<serial, number> }`、`error-report-cooldown`（§7.7）。
 - `IOperatingSystem.machineId(): string` — Electron 回傳 OS 機器 GUID 的 sha256（內嵌實作，§7.1），網頁版回傳 `''`。
 - 不新增相依；`machineId` 約 25 行，寫在既有 os 實作內，以 `crypto.createHash` 雜湊各 OS 指令的輸出；指令在模組載入時用非同步 `child_process.exec`（2 秒逾時）啟動，renderer 不會被卡住；`execSync` 只留作報告搶在結果回來之前觸發時的後備。
 - 上傳請求：§7.5 multipart，3 分鐘逾時。回應 `{ status: 'ok' }` → 已送出；`{ status: 'duplicate' }` → 視同已送出；沒有回應或 5xx → 重試（最多 3 次）；任何 4xx 或無法辨識的 2xx 內容 → 立即失敗。
@@ -237,7 +238,7 @@
 ## 10. 上線計畫（PR 順序）
 
 1. `helpers/error-report/`（scrub、throttle、installationId、`uploadErrorReport`）＋ `getOutput({ scrub, maxLength })` ＋ 單元測試。無呼叫者、無字串、無 UI。
-2. 偏好設定鍵、隱私頁下拉選單、i18n（en、zh-tw），以及 `helpers/error-report/consent.ts` 的 `withErrorReportConsent`（2026-10-12 自 PR 1 移到此處，因為它需要同意文案）。
+2. 偏好設定鍵、隱私頁下拉選單、i18n（en、zh-tw）、`preference.ts`、`helpers/error-report/consent.tsx` 的 `withErrorReportConsent`（2026-10-12 自 PR 1 移到此處，因為它需要同意文案），以及 `Alert.tsx` 的 `children` 渲染（§6）。2026-10-12 於 PR 1 同一分支完成。
 3. 取代 `uploadBackendErrorLog` 並刪除 `aws-helper.ts`；把 §7.4 第一波觸發點接上 `withErrorReportConsent`。
 3b. 接上 §7.4 第二波相機觸發點（同一機制，獨立 PR 以便 camera-preview skill 負責人審閱）。
 4. 一次性 一律自動 提示 ＋ toast。
@@ -263,6 +264,6 @@
 
 ## 13. 測試計畫
 
-- 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`withErrorReportConsent.spec.ts`（三種偏好 × checkbox 是否出現、冷卻或每日上限期間 checkbox 隱藏、任一按鈕都觸發 callback、**所有相依拋出例外 → 原樣回傳輸入的警示設定**）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
+- 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`consent.spec.tsx`（三種偏好 × checkbox 是否出現、既有 checkbox 保留、冷卻或每日上限期間 checkbox 隱藏、callback 啟動上傳、**所有相依拋出例外 → 原樣回傳輸入的警示設定**）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
 - 手動：在桌面版對可引發 `HARDWARE_ERROR` 的裝置執行上述 A1–A11，另以匯出途中關閉 fluxghost 觸發 `#806`。
 - 回歸：§6 所列既有 `checkbox:` 警示呼叫者行為不變；說明 → Bug Report 下載仍包含 `recent_files`。

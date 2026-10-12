@@ -66,7 +66,7 @@ When a whitelisted error popup appears, Beam Studio offers to send a diagnostic 
 | A1 | Settings → Privacy. | A select "Error report upload" with Always / Ask each time / Never exists; default Ask; survives restart. | Value persisted under storage key `error-report-upload` as `'always' \| 'ask' \| 'never'`. |
 | A2 | Set Ask. Trigger a device `HARDWARE_ERROR` on the Monitor, or power-cycle the machine mid-connect to get `popConnectionError` (or any site in §7.4). | Existing alert shows with an unchecked checkbox above the buttons; button labels/order unchanged. | ALARM/FATAL single-button alert gets the same checkbox (PRD §3.7). |
 | A3 | Tick, press Cancel. | Upload happens (network tab shows one request to the proxy); toast "Thanks! Diagnostic data sent." | Cancel and Retry behave identically for upload. |
-| A4 | First successful upload under Ask. | One-time Always/Ask prompt; choosing Always flips A1's select. | Prompt never shows again (flag `error-report-upload-prompted`). |
+| A4 | First successful upload under Ask. | One-time Always/Ask prompt; choosing Always flips A1's select. | Prompt never shows again: it writes `'always'` or `'ask'` into `error-report-upload`, and only the unset (`null`) value allows the prompt (§7.6). Dismissing with Escape stores nothing, so it may show after the next upload. |
 | A5 | Set Always. Trigger error. | No checkbox; grey status line at the bottom; request sent without user action. | Status line omitted when the daily limit is hit. |
 | A6 | Set Never. | Alert pixel-identical to main. | — |
 | A7 | Inspect the uploaded bug_report. | No `recent_files`, `auto-save-config`, `ador-backup-path`; no `/Users/<name>` or `C:\Users\<name>` anywhere (including the fluxghost log section); discover entries carry model, not user-given name. | Manual Help → Bug Report download is unchanged (still contains them). |
@@ -80,7 +80,7 @@ When a whitelisted error popup appears, Beam Studio offers to send a diagnostic 
 Shared files touched outside the feature's own folder, with the callers that must keep behaving:
 
 - `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — download still produces the full, un-scrubbed report; `MonitorContext.tsx:548` `handleReport` — same; `websocket.ts:41` — now calls the new upload function, still only after the user accepts.
-- `app/components/dialogs/Alert.tsx` — every existing `checkbox:` caller (`retryWithRemoveBackground.ts:25`, `retakeContourPreview.ts:77`, `importSvg/index.tsx:46`, `importDxf.ts:52,120`, `AutoFocusButton/index.tsx:140`, `BasePreviewManager.tsx:279`, `handleExportAlerts.ts:150`) — unchanged callback semantics. Preferred: do not touch `Alert.tsx` at all; if a status-line slot is needed for S3, add it as an optional prop with no default behaviour change.
+- `app/components/dialogs/Alert.tsx` — every existing `checkbox:` caller (`retryWithRemoveBackground.ts:25`, `retakeContourPreview.ts:77`, `importSvg/index.tsx:46`, `importDxf.ts:52,120`, `AutoFocusButton/index.tsx:140`, `BasePreviewManager.tsx:279`, `handleExportAlerts.ts:150`) — unchanged callback semantics. Touched 2026-10-12: `Alert.tsx` now renders the `children` field that `IAlert` has declared since 2021 but the antd rewrite stopped rendering; the status line for S3 uses it. No wave-1/2 caller passes `children`. The one existing caller that does, `NetworkTestingPanel.tsx:104` (three help hints after a healthy test, silently dropped until now, with their sass still under a dead `.modal-alert` selector), is fixed in a separate small branch that moves the hints to `links` and deletes that sass; it lands before this feature's combined PR.
 - `helpers/device-master.ts:580` `popConnectionError` — `select` :410 and `selectDeviceWithSwiftray` :530 — alert id `connection-error`, the `Alert.popById` replace-in-place, the message text and the `{ success: false, error }` return value unchanged; `reconnect()` → `select()` still pops the same alert (the cooldown, not the alert, absorbs retry storms).
 - `app/contexts/MonitorContext.tsx:314,495,980`, `helpers/device-master.ts:266`, `helpers/device/get-device.ts:103`, `actions/beambox/export-funcs.ts:778`, `export-funcs-swiftray.ts:106-192`, `helpers/handleAutoConnect.ts:216`, `PrintAndCut/calibration/PrintAndCutCalibration.tsx:150` — wave-1 sites: alert ids, message text, button sets and the surrounding control flow (`onClose()`, `return { success: false }`, `setStatus('listening')`) unchanged; only the config object is wrapped.
 - `actions/camera/preview-helper/*`, `components/dialogs/camera/*`, `DiodeCalibration/Component.tsx` — wave-2 sites, same rule; `BasePreviewManager.tsx:273` keeps its own `checkbox` (§7.4 rule).
@@ -99,7 +99,8 @@ New `packages/core/src/web/helpers/error-report/` (own folder, colocated spec):
 
 - `index.ts`
   - `uploadErrorReport({ errorCode, scene? }): Promise<UploadResult>` (`'sent' | 'duplicate' | 'failed' | BlockReason`) — builds the bundle, applies throttle (plus an in-flight set so two popups for one fingerprint make one upload), reads the device log with a 10 s idle bound per file, POSTs with a 3 min timeout and up to 3 attempts, bumps the counter on success; the caller (consent decorator, PR 2) shows the toast and the one-time prompt from the result.
-  - `withErrorReportConsent(alert: IAlert, errorCode: string): IAlert` — reads the preference and returns the alert decorated for scenario A/B/C. Pure function over the config object; the popup site does `Alert.popUp(withErrorReportConsent({...}, code))`.
+  - `withErrorReportConsent(alert: IAlert, options: UploadErrorReportOptions): IAlert` (`consent.tsx`; revised 2026-10-12 from `errorCode: string` so `#806`/`#809` can pass the scene) — reads the preference and returns a **copy** of the alert decorated for scenario A/B/C, or the input itself when nothing applies. The popup site does `alertCaller.popUp(withErrorReportConsent({...}, { errorCode }))`. The checkbox callback uses the function form, which the Alert runs on any button before that button's own `onClick`; the array form would replace the button's `onClick` instead.
+  - `preference.ts` — `getErrorReportPreference()` maps the unset key to `'ask'`; the single place that fallback lives.
 - `scrub.ts` — `scrubReport(text: string): string` (home-path regex) and the storage denylist, used only on the upload path.
 - `installationId.ts` — `getInstallationId(): string`. Electron: `os.machineId()`, a new `IOperatingSystem` method **inlined** in `apps/app/src/implementations/os.ts` (decided 2026-10-06, no `node-machine-id` dependency): runs the same per-OS command node-machine-id runs (`ioreg -rd1 -c IOPlatformExpertDevice` / `REG.exe QUERY HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid` / `/etc/machine-id`), sha256-hashes it, and returns `''` on any failure (command missing, timeout, parse error) inside its own try/catch. Web returns `''`. Empty result → a `uuid` v4 (already a dependency) stored once in `error-report-install-id`, so the id is always non-empty and the caller never sees an exception.
 - `throttle.ts` — daily counter `{ date, counts: Record<serial, number> }` in storage key `error-report-counter` and the per-fingerprint cooldown map (§7.7) in `error-report-cooldown`; one `getBlockReason(serial, fingerprint): 'cooldown' | 'daily-limit' | null` / `getSkipped(fingerprint)` / `recordUpload(serial, fingerprint)` / `recordSkipped(fingerprint)` surface used by both the upload and the consent decorator.
@@ -183,9 +184,9 @@ Decided §11 D1. The endpoint lives in flux-id so the team can swap the storage 
 
 ### 7.6 Preference and prompt
 
-- `error-report-upload: 'always' | 'ask' | 'never'` (default `'ask'` when unset).
-- `error-report-upload-prompted: boolean` — set after the one-time Always/Ask prompt.
-- Prompt is an `Alert.popUp` with `buttonLabels: [Always, Ask each time]`, shown after the first successful upload under `ask`.
+- `error-report-upload: 'always' | 'ask' | 'never' | null`. `null` (never chosen) behaves as `'ask'` and is the only state in which the one-time prompt may show; `'ask'` means the user chose it, in the prompt or in Settings, so no prompt. Revised 2026-10-12: the separate `error-report-upload-prompted` flag was dropped because the unset value already carries that bit, the same convention `enable-sentry` uses. The key is deliberately **not** in `useSettingStore` `DEFAULT_CONFIG`, whose keys the router writes to storage at startup; that would turn `null` into `'ask'` before any upload.
+- Prompt is an `Alert.popUp` after the first successful upload under `null`: caption "Send automatically?", message "Always send diagnostic data automatically when errors occur? You can change this anytime in Preferences > Privacy.", buttons [Always] / [Ask each time] writing `'always'` / `'ask'`. Escape stores nothing.
+- Toast on success (Ask only): "Thanks! Diagnostic data sent." Neutral wording by product rule: nothing that implies a ticket or a reply.
 
 ### 7.7 Repeat suppression (fingerprint cooldown)
 
@@ -201,7 +202,7 @@ Problem: a connection failure yields a report on every Retry, and the same LAN p
 
 ## 8. Data contracts
 
-- Storage: `error-report-upload`, `error-report-upload-prompted`, `error-report-install-id` (web / fallback only), `error-report-counter: { date: 'YYYY-MM-DD', counts: Record<serial, number> }`, `error-report-cooldown` (§7.7).
+- Storage: `error-report-upload` (nullable, §7.6), `error-report-install-id` (web / fallback only), `error-report-counter: { date: 'YYYY-MM-DD', counts: Record<serial, number> }`, `error-report-cooldown` (§7.7).
 - `IOperatingSystem.machineId(): string` — Electron returns the sha256 of the OS machine GUID (inlined, §7.1), web returns `''`.
 - No new dependency; `machineId` is ~25 lines in the existing os implementation using `crypto.createHash` over the output of the per-OS command, started with the async `child_process.exec` at module load (2 s timeout) so the renderer never blocks; `execSync` remains only as the fallback for a report that fires before it returns.
 - Upload request: §7.5 multipart, 3 min timeout. Response `{ status: 'ok' }` → sent; `{ status: 'duplicate' }` → counted as sent; no response or 5xx → retry (3 attempts); any 4xx or an unknown 2xx body → failed at once.
@@ -235,7 +236,7 @@ Procedure: record the baseline column for one week before step 6 of §10 ships; 
 ## 10. Rollout (PR plan)
 
 1. `helpers/error-report/` (scrub, throttle, installationId, `uploadErrorReport`) + `getOutput({ scrub, maxLength })` + unit tests. No callers, no strings, no UI.
-2. Preference key, Privacy select, i18n (en, zh-tw), and `withErrorReportConsent` in `helpers/error-report/consent.ts` (moved here from PR 1 on 2026-10-12 because it needs the consent strings).
+2. Preference key, Privacy select, i18n (en, zh-tw), `preference.ts`, `withErrorReportConsent` in `helpers/error-report/consent.tsx` (moved here from PR 1 on 2026-10-12 because it needs the consent strings), and the `children` render in `Alert.tsx` (§6). Built 2026-10-12 on the same branch as PR 1.
 3. Replace `uploadBackendErrorLog` and delete `aws-helper.ts`; wire the §7.4 wave-1 sites through `withErrorReportConsent`.
 3b. Wire the §7.4 wave-2 camera sites (same mechanism, separate PR so the camera-preview skill owner can review).
 4. One-time Always prompt + toast.
@@ -261,6 +262,6 @@ Procedure: record the baseline column for one week before step 6 of §10 ships; 
 
 ## 13. Test plan
 
-- Unit: `scrub.spec.ts` (fixtures for macOS, Windows, Linux home paths, a ws-section `> select_font /Users/x/Library/Fonts/a.ttf` line and the fluxghost `--debug` config line; denylist keys removed; manual path untouched), `throttle.spec.ts` (daily limit, reset at local midnight, failures not counted, per-serial; cooldown doubling 1 h → 24 h → 7 d → 30 d, skipped count carried and reset, new fingerprint on version change, pruning), `withErrorReportConsent.spec.ts` (three preferences × checkbox presence, checkbox hidden during cooldown or daily limit, callback fires on every button, **every dependency throwing → input alert returned unchanged**), `installationId.spec.ts` (machineId success → hashed value, machineId `''` or throw → stored UUID, stable across calls).
+- Unit: `scrub.spec.ts` (fixtures for macOS, Windows, Linux home paths, a ws-section `> select_font /Users/x/Library/Fonts/a.ttf` line and the fluxghost `--debug` config line; denylist keys removed; manual path untouched), `throttle.spec.ts` (daily limit, reset at local midnight, failures not counted, per-serial; cooldown doubling 1 h → 24 h → 7 d → 30 d, skipped count carried and reset, new fingerprint on version change, pruning), `consent.spec.tsx` (three preferences × checkbox presence, existing checkbox kept, checkbox hidden during cooldown or daily limit, callback starts the upload, **every dependency throwing → input alert returned unchanged**), `installationId.spec.ts` (machineId success → hashed value, machineId `''` or throw → stored UUID, stable across calls).
 - Manual: A1–A11 above on a desktop build against a device that can raise `HARDWARE_ERROR`, plus `#806` by killing fluxghost mid-export.
 - Regression: existing `checkbox:` alert callers listed in §6 behave as before; Help → Bug Report download still contains `recent_files`.
