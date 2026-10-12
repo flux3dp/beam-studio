@@ -4,4 +4,5 @@ export const macKernelVersionMap: Record<string, string> = {};
 
 export default {
   isMacOS15OrLater: false,
+  machineId: () => '',
 } as IOperatingSystem;

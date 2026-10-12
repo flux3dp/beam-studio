@@ -1,6 +1,9 @@
 import childProcess from 'child_process';
+import crypto from 'crypto';
 import os from 'os';
 import util from 'util';
+
+import { match } from 'ts-pattern';
 
 import type { IOperatingSystem } from '@core/interfaces/IOperatingSystem';
 
@@ -73,9 +76,47 @@ const isMacOS15OrLater = (() => {
   }
 })();
 
+// Same per-OS sources node-machine-id reads, inlined so no dependency and no rebuild
+// (docs/prd/error-report-upload §7.1). Hashed so the raw hardware id never leaves the machine.
+const MACHINE_ID_COMMANDS: Partial<Record<NodeJS.Platform, string>> = {
+  darwin: 'ioreg -rd1 -c IOPlatformExpertDevice',
+  linux: '( cat /var/lib/dbus/machine-id /etc/machine-id 2> /dev/null || hostname ) | head -n 1',
+  win32: '%windir%\\System32\\REG.exe QUERY HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography /v MachineGuid',
+};
+
+const parseMachineId = (platform: NodeJS.Platform, raw: string): string =>
+  match(platform)
+    .with('darwin', () => raw.split('IOPlatformUUID')[1]?.split('\n')[0] ?? '')
+    .with('win32', () => raw.split('REG_SZ')[1] ?? '')
+    .otherwise(() => raw)
+    .replace(/[="\s]/g, '')
+    .toLowerCase();
+
+let cachedMachineId: null | string = null;
+
+const machineId = (): string => {
+  if (cachedMachineId !== null) return cachedMachineId;
+
+  try {
+    const command = MACHINE_ID_COMMANDS[process.platform];
+    const raw = command
+      ? childProcess.execSync(command, { stdio: ['ignore', 'pipe', 'ignore'], timeout: 2000 }).toString()
+      : '';
+    const id = parseMachineId(process.platform, raw);
+
+    cachedMachineId = id ? crypto.createHash('sha256').update(id).digest('hex') : '';
+  } catch (e) {
+    console.warn('Failed to read machine id:', e);
+    cachedMachineId = '';
+  }
+
+  return cachedMachineId;
+};
+
 export default {
   arch: os.arch,
   isMacOS15OrLater,
+  machineId,
   networkInterfaces: os.networkInterfaces,
   process: {
     exec: util.promisify(childProcess.exec),
