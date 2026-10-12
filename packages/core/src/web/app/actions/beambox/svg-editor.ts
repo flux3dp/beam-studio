@@ -39,6 +39,7 @@ import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
 import { importDxfFromText, looksLikeDxfText } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
 import importStl from '@core/app/svgedit/operations/import/importStl';
+import importSvgFileAsStl from '@core/app/svgedit/operations/import/importStl/importSvgFile';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
 import { ensureModeForImport } from '@core/app/svgedit/operations/import/innerEngravingGate';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
@@ -966,13 +967,15 @@ const svgEditor = (window['svgEditor'] = (function () {
         $(this).attr('value', '');
       };
 
-      /** Whether each canvas-content file type requires inner engraving mode to be on. */
+      /**
+       * Whether each canvas-content file type requires inner engraving mode to be on. SVG is not
+       * gated: in 3D it is extruded (importSvgFileAsStl).
+       */
       const MODE_GATED_TYPES: Record<string, boolean> = {
         ai: false,
         dxf: false,
         pdf: false,
         stl: true,
-        svg: false,
       };
 
       const handleFile = async (file: File) => {
@@ -1027,12 +1030,12 @@ const svgEditor = (window['svgEditor'] = (function () {
 
         console.log('File type name:', fileType);
 
-        // Vector 2D artwork has nowhere to go in an inner engraving document, and an STL has
-        // nowhere to go in a 2D one, so both directions are gated — with an offer to switch mode
-        // rather than a dead end. Bitmap is intentionally not gated: its 3D importer creates a
-        // zero-thickness photo plane. .beam / .bvg carry the mode in the file itself and are
-        // resolved inside importBvgString; the rest (js / json) are not canvas content and are not
-        // gated at all.
+        // AI / PDF / DXF have nowhere to go in an inner engraving document, and an STL has nowhere
+        // to go in a 2D one, so both directions are gated — with an offer to switch mode rather
+        // than a dead end. Bitmap and SVG are intentionally not gated: in 3D a bitmap becomes a
+        // zero-thickness photo plane and an SVG is extruded. .beam / .bvg carry the mode in the file
+        // itself and are resolved inside importBvgString; the rest (js / json) are not canvas
+        // content and are not gated at all.
         // Asked before the spinner goes up: a question behind "loading, please wait" reads as a bug.
         if (fileType in MODE_GATED_TYPES && !(await ensureModeForImport(MODE_GATED_TYPES[fileType]))) {
           return;
@@ -1054,7 +1057,8 @@ const svgEditor = (window['svgEditor'] = (function () {
             break;
           case 'svg':
             await webNeedConnectionWrapper(async () => {
-              await importSvg(file);
+              if (isInnerEngravingActive()) await importSvgFileAsStl(file);
+              else await importSvg(file);
             });
             // remove the loading toast if loaded or no machine connection
             Progress.popById('loading_image');

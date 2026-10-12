@@ -36,7 +36,7 @@ getSVGAsync((globalSVG) => {
 });
 
 /** The user's answer to the adaptive-scaling prompt. Asked only when the model does not fit. */
-const askToScaleDown = (): Promise<boolean> =>
+export const askToScaleDown = (): Promise<boolean> =>
   new Promise<boolean>((resolve) => {
     const t = i18n.lang.inner_engraving;
 

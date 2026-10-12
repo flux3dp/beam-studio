@@ -121,8 +121,15 @@ export const preparePhotoPlaneElementsForExport = (): (() => void) => {
   };
 };
 
-/** Turn an imported SVG image into a zero-thickness plane centred halfway up the material. */
-export const initializePhotoPlane = (elem: SVGImageElement): StlObject => {
+/**
+ * Turn an imported SVG image into a zero-thickness plane halfway up the material: centred and
+ * shrunk to fit the engravable area, unless the caller places it (an image inside an SVG keeps its
+ * place next to the artwork).
+ */
+export const initializePhotoPlane = (
+  elem: SVGImageElement,
+  placement: { position?: [number, number]; scale?: number } = {},
+): StlObject => {
   const widthScene = Number(elem.getAttribute('width'));
   const heightScene = Number(elem.getAttribute('height'));
   const widthMm = widthScene / MM_TO_SCENE;
@@ -133,10 +140,12 @@ export const initializePhotoPlane = (elem: SVGImageElement): StlObject => {
     ? box.center
     : ([workareaManager.width / 2, workareaManager.height / 2, 0] as [number, number, number]);
   const fit = box.isValid ? Math.min(1, box.width / widthScene, box.depth / heightScene) : 1;
+  const [x, y] = placement.position ?? center;
+  const scale = placement.scale ?? fit;
   const transform: StlTransform = {
     ...IDENTITY_TRANSFORM,
-    position: [center[0], center[1], getMaterial().height / 2],
-    scale: [fit, fit, 1],
+    position: [x, y, getMaterial().height / 2],
+    scale: [scale, scale, 1],
   };
   const object: StlObject = {
     geometry,
