@@ -4,6 +4,7 @@ import type { ColorConfig } from '@core/app/constants/color-constants';
 import type { History } from '@core/app/contexts/ElementPanelContext';
 import type { IRecord as AnnouncementRecord } from '@core/helpers/announcement-helper';
 import type { DeviceStore } from '@core/helpers/device/deviceStore';
+import type { CooldownEntry } from '@core/helpers/error-report/throttle';
 import type { MachineMaintenanceRecord } from '@core/helpers/maintenance/records';
 import type { IRecord as RatingRecord } from '@core/helpers/rating-helper';
 
@@ -38,6 +39,12 @@ export interface Storage {
   dockviewLayout: string;
   'elements-history': History[];
   'enable-sentry': boolean | null;
+  /** per-fingerprint cooldown for the automatic error report, see helpers/error-report/throttle.ts */
+  'error-report-cooldown': Record<string, CooldownEntry>;
+  /** successful automatic error-report uploads per serial for one local day */
+  'error-report-counter': { counts: Record<string, number>; date: string };
+  /** random per-install id used when the OS machine id is unavailable (web, or failure) */
+  'error-report-install-id': string;
   /** FLUX 101 course progress, bucketed by owner (FLUX ID email or 'anonymous') */
   'flux-101': Flux101Storage;
   'flux-rsa-key': string;
