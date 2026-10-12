@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { TransformControls } from '@react-three/drei';
 import type { ThreeEvent } from '@react-three/fiber';
-import type { Group, Mesh, Points, Texture } from 'three';
+import type { Group, Mesh, Points, Shader, Texture } from 'three';
 import { DoubleSide, Euler, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
 
 import type { StlObject } from '@core/app/stores/stlStore';
@@ -11,6 +11,7 @@ import { getPhotoTextureUrl, photoPlaneEvents } from '@core/app/svgedit/stl/phot
 import BoundingBox from './BoundingBox';
 import { SELECTION_COLOR } from './constants';
 import { MM_TO_SCENE } from './utils/coordinates';
+import { createLayerColorUniform, getLayerColorOffset, injectLayerColor } from './utils/photoLayerColor';
 import { updateProjectionRect } from './utils/projection';
 import { ROTATION_SNAP_RAD, snapPosition, snapScale, TRANSLATION_SNAP } from './utils/snapping';
 import { getBaseSize, getMeshCenter, setTransform } from './utils/transform';
@@ -53,6 +54,9 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   const { color, isLocked, isVisible } = useObjectLayerState(id);
   const [textureSource, setTextureSource] = useState(object.textureUrl);
   const [texture, setTexture] = useState<null | Texture>(null);
+  // a uniform rather than a material prop: the layer colour is applied to the texture the way 2D's
+  // colour filter does it, which the stock material cannot express
+  const layerColorUniform = useMemo(createLayerColorUniform, []);
   const center = useMemo(() => getMeshCenter(geometry), [geometry]);
   const baseSize = useMemo(() => getBaseSize(geometry), [geometry]);
   const mirrored = flip.some(Boolean);
@@ -115,6 +119,15 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
       loaded?.dispose();
     };
   }, [object.kind, textureSource]);
+
+  useEffect(() => {
+    layerColorUniform.value.copy(getLayerColorOffset(color));
+  }, [color, layerColorUniform]);
+
+  const handlePhotoCompile = useCallback(
+    (shader: Shader) => injectLayerColor(shader, layerColorUniform),
+    [layerColorUniform],
+  );
 
   const meshScale = useMemo<[number, number, number]>(
     () => [flip[0] ? -1 : 1, flip[1] ? -1 : 1, flip[2] ? -1 : 1],
@@ -217,7 +230,13 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
                 stays readable while the object is being edited. DoubleSide because a mirrored mesh
                 has its winding reversed, and back-face culling would hollow it out */}
             {object.kind === 'photo' ? (
-              <meshBasicMaterial map={texture} side={DoubleSide} toneMapped={false} transparent />
+              <meshBasicMaterial
+                map={texture}
+                onBeforeCompile={handlePhotoCompile}
+                side={DoubleSide}
+                toneMapped={false}
+                transparent
+              />
             ) : (
               <meshStandardMaterial color={color} side={mirrored ? DoubleSide : undefined} />
             )}
