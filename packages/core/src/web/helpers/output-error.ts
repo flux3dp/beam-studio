@@ -6,6 +6,7 @@ import Progress from '@core/app/actions/progress-caller';
 import { getPrintAndCutReport } from '@core/app/components/dialogs/PrintAndCut/utils/align/alignLog';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { SCRUBBED_STORAGE_KEYS, scrubReport } from '@core/helpers/error-report/scrub';
 import { getOS } from '@core/helpers/getOS';
 import Logger from '@core/helpers/logger';
 import dialog from '@core/implementations/dialog';
@@ -16,16 +17,37 @@ import type { StorageKey } from '@core/interfaces/IStorage';
 
 import i18n from './i18n';
 
-/**
- * @param includeImages embed captured images (print-and-cut failure photo);
- * off for automatic uploads, which the user did not explicitly send
- */
-const getOutput = ({ includeImages = true } = {}): string[] => {
+const TRUNCATED_MARKER = '[... truncated for upload ...]\n';
+
+/** The user-chosen machine name is personal; the model is what diagnostics need. */
+const anonymizeDiscover = (discover: '' | Array<Record<string, { model: string }>>) =>
+  discover
+    ? discover.map((deviceMap) =>
+        Object.fromEntries(
+          Object.entries(deviceMap).map(([uuid, device]) => [uuid, { ...device, name: device.model }]),
+        ),
+      )
+    : discover;
+
+interface GetOutputOptions {
+  /** embed captured images (print-and-cut failure photo); off for automatic uploads, which the user did not explicitly send */
+  includeImages?: boolean;
+  /** keep only the last N characters of the fluxghost log (oldest lines dropped); unlimited when undefined */
+  maxBackendLogLength?: number;
+  /**
+   * automatic-upload mode (docs/prd/error-report-upload §7.2): drop storage keys that embed user
+   * paths, replace machine names with the model, and rewrite home directories to `~` in the whole text.
+   * The manual Help → Bug Report download leaves this off so the user can inspect everything.
+   */
+  scrub?: boolean;
+}
+
+const getOutput = ({ includeImages = true, maxBackendLogLength, scrub = false }: GetOutputOptions = {}): string[] => {
   const output = [];
   const logger = Logger('');
   let allLog = logger.getAll();
   const reportInfo = {
-    discoverDeviceList: allLog.discover || '',
+    discoverDeviceList: scrub ? anonymizeDiscover(allLog.discover || '') : allLog.discover || '',
     general: allLog.generic || '',
     localStorage: {},
     swiftray: allLog.swiftray || '',
@@ -45,10 +67,14 @@ const getOutput = ({ includeImages = true } = {}): string[] => {
 
   if (window.FLUX.logFile) {
     try {
-      const buf = fs.readFile(window.FLUX.logFile, 'utf8');
+      const buf = String(fs.readFile(window.FLUX.logFile, 'utf8'));
+      const truncated = maxBackendLogLength !== undefined && buf.length > maxBackendLogLength;
 
       output.push('\n\n======::backend::======\n');
-      output.push(buf);
+
+      if (truncated) output.push(TRUNCATED_MARKER);
+
+      output.push(truncated ? buf.slice(-maxBackendLogLength) : buf);
     } catch (err) {
       output.push('\n\n======::backend::======\n');
       output.push(`Open backend log failed: ${err}\n`);
@@ -70,6 +96,9 @@ const getOutput = ({ includeImages = true } = {}): string[] => {
 
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i];
+
+    if (scrub && SCRUBBED_STORAGE_KEYS.includes(key)) continue;
+
     let value = store.get(key);
 
     if (key === 'flux-rsa-key') value = '[hidden]';
@@ -83,7 +112,8 @@ const getOutput = ({ includeImages = true } = {}): string[] => {
   output.push('\n\n======::print-and-cut::======\n');
   output.push(getPrintAndCutReport({ includeImage: includeImages }));
 
-  return output;
+  // one pass over the joined text catches paths from every section, including ones added later
+  return scrub ? [scrubReport(output.join(''))] : output;
 };
 
 export default {
