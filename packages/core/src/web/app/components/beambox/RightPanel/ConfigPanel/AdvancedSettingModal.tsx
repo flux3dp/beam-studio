@@ -9,14 +9,16 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev, { isUvDev2, mockT } from '@core/helpers/is-dev';
-import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { CUSTOM_PRESET_CONSTANT, getPromarkLimit, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import { uvFrequencyToPower } from '@core/helpers/layer/uvPowerFrequency';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig';
 
 import styles from './AdvancedSettingModal.module.scss';
 import initState from './initState';
 import Input from './Input';
+import { useIsPromarkUV } from './usePromarkLimit';
 
 interface Props {
   onClose: () => void;
@@ -42,10 +44,14 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
     focusReverse: state.focusReverse,
     focusStep: state.focusStep,
     focusStepReverse: state.focusStepReverse,
+    frequency: state.frequency,
     wobbleDiameter: state.wobbleDiameter,
     wobbleStep: state.wobbleStep,
   });
   const isDevMode = useMemo(() => isDev(), []);
+  // UV sets its power through the frequency, so the frequency lives here instead of the main panel
+  const isPromarkUV = useIsPromarkUV();
+  const frequencyLimit = useMemo(() => getPromarkLimit().frequency, []);
   // UV heat-accumulation test params, read by Swiftray but not settled for release yet
   const showFillHeatTest = useMemo(() => isUvDev2(), []);
   const repeat = state.repeat.value;
@@ -67,6 +73,11 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
     ] as const;
 
     const batchCmd = new history.BatchCommand('Change advanced setting');
+    const frequencyChanged =
+      isPromarkUV &&
+      (state.frequency.value !== draftValue.frequency.value ||
+        state.frequency.hasMultiValue !== draftValue.frequency.hasMultiValue);
+    const linkedPower = frequencyChanged ? uvFrequencyToPower(draftValue.frequency.value) : 0;
 
     layerManager.getSelectedLayers().forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
@@ -76,6 +87,12 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
           writeDataLayer(layer, key, draftValue[key].value, { batchCmd });
         }
       });
+
+      if (frequencyChanged) {
+        writeDataLayer(layer, 'frequency', draftValue.frequency.value, { batchCmd });
+        writeDataLayer(layer, 'power', linkedPower, { batchCmd });
+        writeDataLayer(layer, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
+      }
     });
 
     if (!batchCmd.isEmpty()) {
@@ -83,7 +100,15 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       undoManager.addCommandToHistory(batchCmd);
     }
 
-    update(draftValue);
+    update(
+      frequencyChanged
+        ? {
+            ...draftValue,
+            configName: { hasMultiValue: false, value: CUSTOM_PRESET_CONSTANT },
+            power: { hasMultiValue: false, value: linkedPower },
+          }
+        : draftValue,
+    );
     eventEmitterFactory.createEventEmitter('time-estimation-button').emit('SET_ESTIMATED_TIME', null);
     onClose();
   };
@@ -133,6 +158,27 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       width={350}
     >
       <div className={styles.container}>
+        {isPromarkUV && frequencyLimit && (
+          <div>
+            <span>
+              <label htmlFor="frequency">{t.frequency}</label>
+              <Tooltip title={mockT('UV 的功率由頻率決定，改頻率會連動功率；40kHz 以下功率顯示為 100%')}>
+                <QuestionCircleOutlined className={styles.hint} />
+              </Tooltip>
+            </span>
+            <Input
+              hasMultiValue={draftValue.frequency.hasMultiValue}
+              id="frequency"
+              isInch={false}
+              max={frequencyLimit.max}
+              min={frequencyLimit.min}
+              onChange={(value) => handleValueChange('frequency', value)}
+              precision={0}
+              unit="kHz"
+              value={draftValue.frequency.value}
+            />
+          </div>
+        )}
         <div>
           <span>
             <label htmlFor="lower-focus">{t.lower_focus}</label>

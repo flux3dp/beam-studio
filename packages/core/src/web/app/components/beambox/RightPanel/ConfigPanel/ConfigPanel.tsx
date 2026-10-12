@@ -29,6 +29,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import i18n from '@core/helpers/i18n';
+import { isUvDev2 } from '@core/helpers/is-dev';
 import {
   applyPreset,
   CUSTOM_PRESET_CONSTANT,
@@ -73,6 +74,7 @@ import QPulseWidthBlock from './QPulseWidthBlock';
 import RepeatBlock from './RepeatBlock';
 import { applyDpiOverrides, applyFullColor, clearMinPower } from './sideEffects';
 import SpeedBlock from './SpeedBlock';
+import { useIsPromarkUV } from './usePromarkLimit';
 import UVLightConfigs from './UVConfigs/UVLightConfigs';
 import UVPrintingConfigs from './UVConfigs/UVPrintingConfigs';
 
@@ -128,6 +130,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     };
   }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  // UV fixes the pulse width and sets its power through the frequency, which moves to the advanced
+  // settings; Q pulse width is a dev-only tuning parameter
+  const isPromarkUV = useIsPromarkUV();
+  const showQPulseWidth = useMemo(() => isUvDev2(), []);
   const isInnerEngraving = useInnerEngravingActive();
 
   useEffect(() => {
@@ -294,9 +300,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
-      {isPromark && <PulseWidthBlock type={UIType} />}
-      {isPromark && <QPulseWidthBlock type={UIType} />}
-      {isPromark && <FrequencyBlock type={UIType} />}
+      {isPromark && !isPromarkUV && <PulseWidthBlock type={UIType} />}
+      {isPromark && showQPulseWidth && <QPulseWidthBlock type={UIType} />}
+      {isPromark && !isPromarkUV && <FrequencyBlock type={UIType} />}
       {!isInnerEngraving && <RepeatBlock type={UIType} />}
       {isPromark && <AdvancedSettingButton type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}

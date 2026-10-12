@@ -11,7 +11,15 @@ jest.mock('@core/implementations/storage', () => ({
 const mockWriteDataLayer = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
+  CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
+  getPromarkLimit: () => ({ frequency: { max: 200, min: 30 } }),
   writeDataLayer: (...args) => mockWriteDataLayer(...args),
+}));
+
+const mockUseIsPromarkUV = jest.fn();
+
+jest.mock('./usePromarkLimit', () => ({
+  useIsPromarkUV: () => mockUseIsPromarkUV(),
 }));
 
 const mockGetLayerByName = jest.fn();
@@ -118,6 +126,7 @@ describe('test AdvancedSettingModal', () => {
       wobbleStep: { hasMultiValue: false, value: -0.05 },
     });
     mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
+    mockUseIsPromarkUV.mockReturnValue(false);
   });
 
   it('should render correctly', () => {
@@ -174,6 +183,46 @@ describe('test AdvancedSettingModal', () => {
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('does not show the frequency when the source is not UV', () => {
+    const { baseElement } = render(<AdvancedSettingModal onClose={mockOnClose} />);
+
+    expect(baseElement.querySelector('#frequency')).toBeNull();
+  });
+
+  test('UV frequency writes the linked power', () => {
+    mockUseIsPromarkUV.mockReturnValue(true);
+    mockGetState.mockReturnValue({
+      ...mockGetState(),
+      frequency: { hasMultiValue: false, value: 40 },
+    });
+
+    const { baseElement, getByText } = render(<AdvancedSettingModal onClose={mockOnClose} />);
+    const frequencyInput = baseElement.querySelector('#frequency');
+
+    expect(frequencyInput).not.toBeNull();
+    fireEvent.change(frequencyInput, { target: { value: '120' } });
+    fireEvent.click(getByText('Save'));
+
+    expect(mockWriteDataLayer).toHaveBeenCalledTimes(6);
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, 'layer1', 'frequency', 120, { batchCmd: mockBatchCmd });
+    // 120kHz measured 1.8W of 4.5W
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(2, 'layer1', 'power', expect.closeTo(40), {
+      batchCmd: mockBatchCmd,
+    });
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(3, 'layer1', 'configName', 'CUSTOM_PRESET_CONSTANT', {
+      batchCmd: mockBatchCmd,
+    });
+    expect(mockWriteDataLayer).toHaveBeenNthCalledWith(4, 'layer2', 'frequency', 120, { batchCmd: mockBatchCmd });
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        configName: { hasMultiValue: false, value: 'CUSTOM_PRESET_CONSTANT' },
+        frequency: { hasMultiValue: false, value: 120 },
+        power: { hasMultiValue: false, value: expect.closeTo(40) },
+      }),
+    );
   });
 
   test('cancel should work', () => {

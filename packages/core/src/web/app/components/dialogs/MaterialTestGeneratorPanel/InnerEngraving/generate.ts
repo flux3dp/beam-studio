@@ -13,6 +13,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
+import { uvFrequencyToPower, uvPowerToFrequency } from '@core/helpers/layer/uvPowerFrequency';
 import type { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig';
 
 import type { SvgInfo } from '../generateSvgInfo';
@@ -174,6 +175,9 @@ export const insertMaterialTest = (
 
       if (key === 'pointSpacing') attributes[STL_ATTR.pointSpacing] = value;
       else writeDataLayer(layer, key as ConfigKey, value as ConfigKeyTypeMap[ConfigKey]);
+
+      // inner engraving is UV only, whose power stands for the frequency
+      if (key === 'frequency') writeDataLayer(layer, 'power', uvFrequencyToPower(value));
     });
 
     const rect = document.createElementNS(NS, 'rect');
@@ -192,6 +196,7 @@ export const insertMaterialTest = (
   });
 
   writeDataLayer(infoLayer, 'power', textSetting.power);
+  writeDataLayer(infoLayer, 'frequency', uvPowerToFrequency(textSetting.power));
   writeDataLayer(infoLayer, 'speed', textSetting.speed);
 
   labels.forEach(({ matrix, outline }) => {

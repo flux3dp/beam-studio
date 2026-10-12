@@ -10,6 +10,14 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getPromarkLimit: () => mockGetPromarkLimit(),
 }));
 
+const mockIsUvDev2 = jest.fn();
+
+jest.mock('@core/helpers/is-dev', () => ({
+  __esModule: true,
+  default: () => true,
+  isUvDev2: () => mockIsUvDev2(),
+}));
+
 import { getTableSetting } from './TableSetting';
 
 const promarkLimit = {
@@ -21,6 +29,7 @@ describe('getTableSetting', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetPromarkLimit.mockReturnValue(promarkLimit);
+    mockIsUvDev2.mockReturnValue(false);
   });
 
   describe('common (non-promark) laser model', () => {
@@ -172,6 +181,39 @@ describe('getTableSetting', () => {
         min: 1,
         minValue: 1,
       });
+    });
+  });
+
+  describe('promark UV', () => {
+    const uvLimit = {
+      frequency: { max: 200, min: 30 },
+      power: { max: 100, min: 15.556 },
+      pulseWidth: { max: 65535, min: 1 },
+      qPulseWidth: { max: 1365, min: 0.021 },
+    };
+
+    beforeEach(() => mockGetPromarkLimit.mockReturnValue(uvLimit));
+
+    test('power is the axis; frequency and pulse width are not separate params', () => {
+      const setting = getTableSetting('fpm1', { laserType: LaserType.UV });
+
+      expect(setting.frequency).toBeUndefined();
+      expect(setting.pulseWidth).toBeUndefined();
+      expect(setting.qPulseWidth).toBeUndefined();
+      expect(setting.strength).toMatchObject({ default: 16, min: 16, minValue: 16 });
+    });
+
+    test('Q pulse width only in uvDev', () => {
+      mockIsUvDev2.mockReturnValue(true);
+
+      expect(getTableSetting('fpm1', { laserType: LaserType.UV }).qPulseWidth).toMatchObject({ default: 1 });
+    });
+
+    test('the inner engraving table keeps the frequency as its output setting', () => {
+      const setting = getTableSetting('fpm1', { innerEngraving: true });
+
+      expect(setting.strength).toBeUndefined();
+      expect(setting.frequency).toMatchObject({ default: 40, max: 200, min: 30, selected: 2 });
     });
   });
 

@@ -18,6 +18,7 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
+import { uvPowerToFrequency } from '@core/helpers/layer/uvPowerFrequency';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -68,10 +69,12 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const isInch = useStorageStore((state) => state.isInch);
   const { laserType } = getPromarkInfo();
   const workarea = useDocumentStore((state) => state.workarea);
-  const { isMopa, isPromark } = useMemo(
+  const { isMopa, isPromark, isPromarkUV } = useMemo(
     () => ({
       isMopa: laserType === LaserType.MOPA,
       isPromark: promarkModels.has(workarea),
+      // UV power has no effect on its own: each block gets the frequency its power stands for
+      isPromarkUV: promarkModels.has(workarea) && laserType === LaserType.UV,
     }),
     [laserType, workarea],
   );
@@ -128,6 +131,9 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
 
     writeDataLayer(infoLayer, 'power', textSetting.power);
     writeDataLayer(infoLayer, 'speed', textSetting.speed);
+
+    if (isPromarkUV) writeDataLayer(infoLayer, 'frequency', uvPowerToFrequency(textSetting.power));
+
     // rowText
     createNewText(
       (startPadding + (right - startPadding) / 2 - paramWidth[rowParam[0]] / 2) * dpmm,
@@ -210,6 +216,8 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
             writeDataLayer(layer, 'frequency', frequency);
             writeDataLayer(layer, 'dottingTime', dottingTime);
           }
+
+          if (isPromarkUV) writeDataLayer(layer, 'frequency', uvPowerToFrequency(strength));
 
           if (tableSetting.pulseWidth) {
             writeDataLayer(layer, 'pulseWidth', pulseWidth);

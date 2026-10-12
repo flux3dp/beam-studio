@@ -21,10 +21,13 @@ jest.mock('@core/helpers/device/promark/promark-info', () => ({
 }));
 
 import {
+  applyPreset,
   baseConfig,
   booleanConfig,
   cloneLayerConfig,
   getConfigKeys,
+  getData,
+  getDefaultConfig,
   getLayerConfig,
   getLayerDpmm,
   getLayersConfig,
@@ -337,6 +340,57 @@ describe('test layer-config-helper', () => {
     expect(getPromarkLimit()).toEqual({
       frequency: { max: 4000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
+    });
+    mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.UV, watt: 5 });
+    expect(getPromarkLimit()).toEqual({
+      frequency: { max: 200, min: 30 },
+      power: { max: 100, min: expect.closeTo(15.556, 3) },
+      pulseWidth: { max: 65535, min: 1 },
+      qPulseWidth: { max: 1365, min: 0.021 },
+    });
+  });
+
+  describe('Promark UV power and frequency', () => {
+    const createUvLayer = () => document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+    beforeEach(() => {
+      useDocumentStore.setState({ workarea: 'fpm1' });
+      mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.UV, watt: 5 });
+    });
+
+    test('defaults agree: 100% is 40kHz', () => {
+      expect(getDefaultConfig()).toMatchObject({ frequency: 40, power: 100, pulseWidth: 13, qPulseWidth: 1 });
+    });
+
+    test('Desktop defaults are unchanged', () => {
+      mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
+      expect(getDefaultConfig()).toMatchObject({ frequency: 27, power: 15 });
+    });
+
+    test('applyPreset derives the frequency from a preset with only power', () => {
+      const layer = createUvLayer();
+
+      applyPreset(layer, { power: 40, speed: 1000 });
+      expect(getData(layer, 'power')).toBe(40);
+      expect(getData(layer, 'frequency')).toBeCloseTo(120);
+    });
+
+    test('applyPreset derives the power from a preset frequency', () => {
+      const layer = createUvLayer();
+
+      applyPreset(layer, { frequency: 35, power: 20, speed: 1000 });
+      expect(getData(layer, 'frequency')).toBe(35);
+      expect(getData(layer, 'power')).toBe(100);
+    });
+
+    test('applyPreset leaves other Promark sources alone', () => {
+      mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.MOPA, watt: 60 });
+
+      const layer = createUvLayer();
+
+      applyPreset(layer, { power: 40, speed: 1000 });
+      expect(getData(layer, 'power')).toBe(40);
+      expect(layer.getAttribute('data-frequency')).toBeNull();
     });
   });
 

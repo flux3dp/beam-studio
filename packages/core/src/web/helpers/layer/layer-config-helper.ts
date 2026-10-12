@@ -20,6 +20,12 @@ import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import {
+  UV_FREQUENCY_LIMIT,
+  UV_POWER_LIMIT,
+  uvFrequencyToPower,
+  uvPowerToFrequency,
+} from '@core/helpers/layer/uvPowerFrequency';
 import { getDefaultModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
@@ -372,6 +378,13 @@ export const getLayerDpmm = (layer: Element | null | undefined): number => {
 };
 
 /**
+ * Promark UV sets its output through the frequency, so power and frequency are written together
+ * (see uvPowerFrequency.ts).
+ */
+export const isPromarkUV = (): boolean =>
+  promarkModels.has(useDocumentStore.getState().workarea) && getPromarkInfo().laserType === LaserType.UV;
+
+/**
  * @returns Default config based on Promark laser type and watt
  */
 export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
@@ -415,6 +428,9 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
         () => 13,
       )
       .otherwise(() => config.pulseWidth);
+
+    // UV power stands for its frequency (40kHz), so the two have to agree
+    if (promarkInfo.laserType === LaserType.UV) config.power = uvFrequencyToPower(config.frequency!);
   }
 
   return config;
@@ -766,13 +782,16 @@ export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
 
 export const getPromarkLimit = (): {
   frequency?: { max: number; min: number };
+  /** Only UV narrows the power range; elsewhere it is 0–100. */
+  power?: { max: number; min: number };
   pulseWidth?: { max: number; min: number };
   qPulseWidth?: { max: number; min: number };
 } =>
   // pulseWidth for M100 V1: 10~500, M20 V1: 2~350
   match(getPromarkInfo())
     .with({ laserType: LaserType.UV }, () => ({
-      frequency: { max: 3000, min: 1 },
+      frequency: { ...UV_FREQUENCY_LIMIT },
+      power: { ...UV_POWER_LIMIT },
       pulseWidth: { max: 65535, min: 1 },
       qPulseWidth: { max: 1365, min: 0.021 },
     }))
@@ -821,6 +840,16 @@ export const applyPreset = (
     }
 
     writeDataLayer(layer, key, value, { applyPrinting: printingModules.has(module), batchCmd });
+  }
+
+  // a UV preset may carry power, frequency or both; frequency is what the machine uses
+  if (isPromarkUV()) {
+    if (resolved.frequency !== undefined) {
+      writeDataLayer(layer, 'power', uvFrequencyToPower(resolved.frequency), { batchCmd });
+    } else {
+      // power is a forced key, so the default above was written when the preset has none
+      writeDataLayer(layer, 'frequency', uvPowerToFrequency(resolved.power ?? defaultConfig.power!), { batchCmd });
+    }
   }
 
   if (applyName) {

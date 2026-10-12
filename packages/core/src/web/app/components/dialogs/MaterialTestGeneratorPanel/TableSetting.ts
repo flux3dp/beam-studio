@@ -3,6 +3,7 @@ import { DEFAULT_POINT_SPACING, POINT_SPACING_LIMIT } from '@core/app/constants/
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { isUvDev2 } from '@core/helpers/is-dev';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 
 export interface Detail {
@@ -85,8 +86,11 @@ const getCommonTableSetting = (workarea: WorkAreaModel): TableSetting => {
 const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingInfos): TableSetting => {
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const limit = getPromarkLimit();
-
-  return {
+  const isUV = laserType === LaserType.UV;
+  // UV power is converted to the frequency of each block, so the frequency is not a separate axis
+  // and the power starts at the weakest frequency; the pulse width is fixed
+  const powerMin = isUV && limit.power ? Math.ceil(limit.power.min) : 1;
+  const setting: TableSetting = {
     dottingTime: {
       default: 100,
       max: 10000,
@@ -129,14 +133,14 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
       selected: 1,
     },
     strength: {
-      default: 15,
+      default: Math.max(15, powerMin),
       max: 100,
       maxValue: 100,
-      min: 1,
-      minValue: 15,
+      min: powerMin,
+      minValue: Math.max(15, powerMin),
       selected: 0,
     },
-    ...(laserType !== LaserType.Desktop &&
+    ...(laserType === LaserType.MOPA &&
       limit.pulseWidth && {
         pulseWidth: {
           default: 350,
@@ -147,7 +151,8 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
           selected: 2,
         },
       }),
-    ...(laserType === LaserType.UV &&
+    ...(isUV &&
+      isUvDev2() &&
       limit.qPulseWidth && {
         qPulseWidth: {
           allowDecimal: true,
@@ -160,6 +165,10 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
         },
       }),
   };
+
+  if (isUV) delete setting.frequency;
+
+  return setting;
 };
 
 const getInnerEngravingTableSetting = (workarea: WorkAreaModel): TableSetting => {
@@ -169,9 +178,23 @@ const getInnerEngravingTableSetting = (workarea: WorkAreaModel): TableSetting =>
     ...setting
   } = getPromarkTableSetting(workarea, { laserType: LaserType.UV });
 
+  const { frequency: frequencyLimit } = getPromarkLimit();
+
   return {
     ...setting,
     dottingTime: { ...setting.dottingTime!, selected: 0 },
+    // with no power axis here, the frequency is what sets the output; generate.ts writes the power
+    // it stands for
+    ...(frequencyLimit && {
+      frequency: {
+        default: 40,
+        max: frequencyLimit.max,
+        maxValue: frequencyLimit.max,
+        min: frequencyLimit.min,
+        minValue: 40,
+        selected: 2,
+      },
+    }),
     pointSpacing: {
       allowDecimal: true,
       default: DEFAULT_POINT_SPACING,

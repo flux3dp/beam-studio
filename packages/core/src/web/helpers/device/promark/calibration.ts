@@ -5,6 +5,7 @@ import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import { getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
+import { UV_FREQUENCY_LIMIT, UV_POWER_LIMIT } from '@core/helpers/layer/uvPowerFrequency';
 
 import { getPromarkInfo } from './promark-info';
 
@@ -68,7 +69,9 @@ export const loadCameraCalibrationTask = async (model: WorkAreaModel, width: num
   const { laserType, watt } = getPromarkInfo();
 
   if (laserType === LaserType.UV) {
-    params.power = 10;
+    // UV output is set by the frequency alone (the power has no effect): use the weakest one
+    params.frequency = UV_FREQUENCY_LIMIT.max;
+    params.power = UV_POWER_LIMIT.min;
   } else if (laserType === LaserType.MOPA) {
     if (watt === 100) {
       params.power = 20;
