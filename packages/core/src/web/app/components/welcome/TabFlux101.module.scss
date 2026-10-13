@@ -1,0 +1,56 @@
+@use './mixins' as mixins;
+
+.root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  // full tab (no Welcome padding): same inset as the other tabs, but the course reaches the bottom
+  padding: 24px 60px 0;
+  @media screen and (max-width: 600px) {
+    padding: 20px 12px 0;
+  }
+}
+
+.title {
+  @include mixins.title;
+}
+
+.subtitle {
+  @include mixins.subtitle;
+}
+
+.content {
+  @include mixins.content;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 0;
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  :global(.ant-progress) {
+    flex: 1;
+    margin: 0;
+  }
+}
+
+.badges {
+  display: flex;
+  gap: 8px;
+  font-size: 24px;
+  .locked {
+    filter: grayscale(1);
+    opacity: 0.3;
+  }
+}
+
+.course {
+  display: flex; // so CourseBody's flex: 1 body fills the remaining height
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+}
