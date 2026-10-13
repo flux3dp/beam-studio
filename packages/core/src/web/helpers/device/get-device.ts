@@ -94,6 +94,9 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
         if (!isWorkareaMatched && isNewDevice) {
           isWorkareaMatched = await showResizeAlert(device);
         }
+      } else {
+        // DeviceMaster.select already popped its own error; hand callers null so they stop here
+        device = null;
       }
     }
   } else {
