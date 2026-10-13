@@ -47,10 +47,9 @@ export const REFRACTIVE_INDEX_LIMIT = { max: 3, min: 1, precision: 3 } as const;
  * compensation degrades to depth-only — the XY spread a refracted beam picks up off-axis cannot be
  * corrected without knowing F.
  *
- * ⚠️ The default is provisional: a 70x70mm galvo field is typically an F-theta around 100mm, but the
- * real lens has to be confirmed against the machine.
+ * The default is the focal distance measured on the Promark UV 70mm lens (2026-10).
  */
-export const DEFAULT_FOCAL_LENGTH = 100;
+export const DEFAULT_FOCAL_LENGTH = 140;
 export const FOCAL_LENGTH_LIMIT = { max: 1000, min: 10 } as const;
 
 /**
@@ -69,7 +68,8 @@ export const DEFAULT_MATERIAL = {
   depth: 50,
   diameter: 50,
   height: 50,
-  refractiveIndex: 1.52,
+  // measured on the K9 crystal used for the 2026-10 tests
+  refractiveIndex: 1.537,
   shape: 'box' as MaterialShape,
   width: 50,
   // centred on the 70x70mm work area: Promark UV is the only model with inner engraving, and
