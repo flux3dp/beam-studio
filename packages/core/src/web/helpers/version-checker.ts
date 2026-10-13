@@ -43,9 +43,9 @@ const requirement = {
   SWIFTRAY_SEGMENT: '1.4.11',
   SWIFTRAY_SUPPORT_BINARY: '1.3.7',
   // BSPC point cloud ingestion
-  SWIFTRAY_SUPPORT_POINT_CLOUD: '2.5.0',
+  SWIFTRAY_SUPPORT_POINT_CLOUD: '1.5.0',
   // STL slicing, with the inner engraving parameters read off the layer
-  SWIFTRAY_SUPPORT_STL: '2.5.0',
+  SWIFTRAY_SUPPORT_STL: '1.5.0',
   TEMP_I2C_CMD: '3.0.1',
   UPDATE_BY_SOFTWARE: '3.2.6',
   USABLE_VERSION: '1.4.9',
