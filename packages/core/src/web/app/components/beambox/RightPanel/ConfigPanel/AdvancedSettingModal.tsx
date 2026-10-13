@@ -44,7 +44,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
     fillAngle: state.fillAngle,
     fillDwellAdaptive: state.fillDwellAdaptive,
     fillDwellTime: state.fillDwellTime,
-    fillStagger: state.fillStagger,
+    fillInterleave: state.fillInterleave,
     focus: state.focus,
     focusReverse: state.focusReverse,
     focusStep: state.focusStep,
@@ -75,7 +75,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       'fillAngle',
       'biDirectional',
       'crossHatch',
-      'fillStagger',
+      'fillInterleave',
       'fillDwellTime',
       'fillDwellAdaptive',
       'wobbleStep',
@@ -400,20 +400,19 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
               <>
                 <div>
                   <span>
-                    <label htmlFor="fillStagger">{mockT('雕刻間隔')}</label>
-                    <Tooltip title={mockT('把掃描線分成 N 組交錯雕刻，避免長時間連續停留在同一小範圍。1 為關閉')}>
+                    <label htmlFor="fillInterleave">{mockT('打散掃描順序')}</label>
+                    <Tooltip
+                      title={mockT(
+                        '打散掃描線的雕刻順序：先後雕刻的兩行彼此相隔較遠，相鄰的兩行也不會接連雕刻，以分散熱量',
+                      )}
+                    >
                       <QuestionCircleOutlined className={styles.hint} />
                     </Tooltip>
                   </span>
-                  <Input
-                    hasMultiValue={draftValue.fillStagger.hasMultiValue}
-                    id="fillStagger"
-                    isInch={false}
-                    max={100}
-                    min={1}
-                    onChange={(value) => handleValueChange('fillStagger', value)}
-                    precision={0}
-                    value={draftValue.fillStagger.value}
+                  <Switch
+                    checked={draftValue.fillInterleave.value}
+                    id="fillInterleave"
+                    onChange={(value) => handleValueChange('fillInterleave', value)}
                   />
                 </div>
                 <div>

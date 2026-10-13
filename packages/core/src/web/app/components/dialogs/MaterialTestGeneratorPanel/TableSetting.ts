@@ -3,8 +3,9 @@ import { DEFAULT_POINT_SPACING, POINT_SPACING_LIMIT } from '@core/app/constants/
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { isUvDev2 } from '@core/helpers/is-dev';
+import isDev, { isUvDev2 } from '@core/helpers/is-dev';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
+import { uvFrequencyToPower } from '@core/helpers/layer/uvPowerFrequency';
 
 export interface Detail {
   // Whether this parameter accepts decimal values.
@@ -31,11 +32,12 @@ type TableSettingConstruct<T extends ReadonlyArray<string>, IsRequired = true> =
   : { [K in T[number]]?: Detail };
 
 export const commonTableParams = ['strength', 'speed', 'repeat'] as const;
-export const promarkTableParams = ['fillInterval', 'frequency', 'dottingTime'] as const;
+export const promarkTableParams = ['fillInterval', 'frequency'] as const;
 export const mopaTableParams = ['pulseWidth'] as const;
-export const uvTableParams = ['pulseWidth', 'qPulseWidth'] as const;
-/** Written onto the 3D object rather than the layer. */
-export const innerEngravingTableParams = ['pointSpacing'] as const;
+/** fillInterleave / fillDwellTime only apply to engraved (filled) blocks, see TableSettingForm */
+export const uvTableParams = ['qPulseWidth', 'fillInterleave', 'fillDwellTime'] as const;
+/** Dot parameters: a 2D block is a vector shape, which is never dotted. */
+export const innerEngravingTableParams = ['dottingTime', 'pointSpacing'] as const;
 export const tableParams = [
   ...commonTableParams,
   ...promarkTableParams,
@@ -91,14 +93,6 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
   // and the power starts at the weakest frequency; the pulse width is fixed
   const powerMin = isUV && limit.power ? Math.ceil(limit.power.min) : 1;
   const setting: TableSetting = {
-    dottingTime: {
-      default: 100,
-      max: 10000,
-      maxValue: 500,
-      min: 1,
-      minValue: 50,
-      selected: 2,
-    },
     fillInterval: {
       allowDecimal: true,
       default: 0.01,
@@ -151,8 +145,9 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
           selected: 2,
         },
       }),
+    // a developer option, like in the config panel (DevBlock)
     ...(isUV &&
-      isUvDev2() &&
+      isDev() &&
       limit.qPulseWidth && {
         qPulseWidth: {
           allowDecimal: true,
@@ -166,35 +161,33 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
       }),
   };
 
+  // UV heat mitigation, still a uvDev option in the advanced settings
+  if (isUV && isUvDev2()) {
+    // a switch, 0 for off and 1 for on, so as an axis it only has the two values
+    setting.fillInterleave = { default: 0, max: 1, maxValue: 1, min: 0, minValue: 0, selected: 2 };
+    setting.fillDwellTime = { default: 0, max: 1000000, maxValue: 10000, min: 0, minValue: 0, selected: 2 };
+  }
+
   if (isUV) delete setting.frequency;
 
   return setting;
 };
 
 const getInnerEngravingTableSetting = (workarea: WorkAreaModel): TableSetting => {
+  // no passes (fixed at 1), and nothing about filled paths: a 3D object is dotted or sliced
   const {
+    fillDwellTime: _fillDwellTime,
+    fillInterleave: _fillInterleave,
+    fillInterval: _fillInterval,
     repeat: _repeat,
-    strength: _strength,
     ...setting
   } = getPromarkTableSetting(workarea, { laserType: LaserType.UV });
-
-  const { frequency: frequencyLimit } = getPromarkLimit();
+  // the default of the contour-dotting preset, 110kHz
+  const defaultPower = Math.round(uvFrequencyToPower(110));
 
   return {
     ...setting,
-    dottingTime: { ...setting.dottingTime!, selected: 0 },
-    // with no power axis here, the frequency is what sets the output; generate.ts writes the power
-    // it stands for
-    ...(frequencyLimit && {
-      frequency: {
-        default: 40,
-        max: frequencyLimit.max,
-        maxValue: frequencyLimit.max,
-        min: frequencyLimit.min,
-        minValue: 40,
-        selected: 2,
-      },
-    }),
+    dottingTime: { default: 150, max: 10000, maxValue: 500, min: 1, minValue: 50, selected: 0 },
     pointSpacing: {
       allowDecimal: true,
       default: DEFAULT_POINT_SPACING,
@@ -205,6 +198,8 @@ const getInnerEngravingTableSetting = (workarea: WorkAreaModel): TableSetting =>
       selected: 1,
     },
     speed: { ...setting.speed, selected: 2 },
+    // the power stands for the frequency, which generate.ts writes along with it
+    strength: { ...setting.strength!, default: defaultPower, maxValue: 100, minValue: defaultPower, selected: 2 },
   };
 };
 

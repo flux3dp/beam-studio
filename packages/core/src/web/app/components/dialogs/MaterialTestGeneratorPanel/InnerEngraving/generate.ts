@@ -13,7 +13,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
-import { uvFrequencyToPower, uvPowerToFrequency } from '@core/helpers/layer/uvPowerFrequency';
+import { uvPowerToFrequency } from '@core/helpers/layer/uvPowerFrequency';
 import type { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig';
 
 import type { SvgInfo } from '../generateSvgInfo';
@@ -174,11 +174,15 @@ export const insertMaterialTest = (
     params.forEach((key) => {
       const value = info[key] as number;
 
-      if (key === 'pointSpacing') writeDataLayer(layer, 'stlPointSpacing', value);
-      else writeDataLayer(layer, key as ConfigKey, value as ConfigKeyTypeMap[ConfigKey]);
-
-      // inner engraving is UV only, whose power stands for the frequency
-      if (key === 'frequency') writeDataLayer(layer, 'power', uvFrequencyToPower(value));
+      if (key === 'pointSpacing') {
+        writeDataLayer(layer, 'stlPointSpacing', value);
+      } else if (key === 'strength') {
+        // inner engraving is UV only, whose power stands for the frequency
+        writeDataLayer(layer, 'power', value);
+        writeDataLayer(layer, 'frequency', uvPowerToFrequency(value));
+      } else {
+        writeDataLayer(layer, key as ConfigKey, value as ConfigKeyTypeMap[ConfigKey]);
+      }
     });
 
     const rect = document.createElementNS(NS, 'rect');

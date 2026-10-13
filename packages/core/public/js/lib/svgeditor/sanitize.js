@@ -219,7 +219,7 @@
       'data-focusStep',
       'data-focusStepRev',
       'data-fillInterval',
-      'data-fillStagger',
+      'data-fillInterleave',
       'data-fillDwellTime',
       'data-fillDwellAdaptive',
       'data-frequency',

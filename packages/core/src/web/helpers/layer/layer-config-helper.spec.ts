@@ -39,9 +39,9 @@ import {
   getPromarkLimit,
   initLayerConfig,
   innerEngravingConfigKeys,
-  writeDataLayer,
   toggleModuleAfterWorkareaChange,
   writeData,
+  writeDataLayer,
 } from './layer-config-helper';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
@@ -326,7 +326,7 @@ describe('test layer-config-helper', () => {
       'fillAngle',
       'biDirectional',
       'crossHatch',
-      'fillStagger',
+      'fillInterleave',
       'fillDwellTime',
       'fillDwellAdaptive',
       'focus',
@@ -356,7 +356,6 @@ describe('test layer-config-helper', () => {
     expect(getPromarkLimit()).toEqual({
       frequency: { max: 200, min: 30 },
       power: { max: 100, min: expect.closeTo(15.556, 3) },
-      pulseWidth: { max: 65535, min: 1 },
       qPulseWidth: { max: 1365, min: 0.021 },
     });
   });

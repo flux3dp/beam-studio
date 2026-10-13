@@ -8,6 +8,8 @@ interface Props {
 
 export interface SvgInfo {
   dottingTime?: number;
+  fillDwellTime?: number;
+  fillInterleave?: number;
   fillInterval?: number;
   frequency?: number;
   name: string;
@@ -21,6 +23,8 @@ export interface SvgInfo {
 
 const namingMap = {
   dottingTime: 'DT',
+  fillDwellTime: 'FD',
+  fillInterleave: 'IL',
   fillInterval: 'FI',
   frequency: 'F',
   pointSpacing: 'PS',
@@ -45,7 +49,7 @@ export default function generateSvgInfo({
   const [col, row, ...staticParams] = Object.entries(tableSetting).sort(
     ([, { selected: a }], [, { selected: b }]) => a - b,
   );
-  const generateRange = (length: number, [key, { allowDecimal, maxValue, minValue }]: [string, Detail]) =>
+  const generateRange = (length: number, [, { allowDecimal, maxValue, minValue }]: [string, Detail]) =>
     Array.from({ length }, (_, i) => {
       const value = minValue + (maxValue - minValue) * (i / (length !== 1 ? length - 1 : 1));
 
@@ -65,7 +69,8 @@ export default function generateSvgInfo({
       [col[0]]: c,
       name: `${namingMap[col[0]]}${c}-${namingMap[row[0]]}${r}`,
       [row[0]]: r,
-      ...staticParams.map(([key, value]) => ({ [key]: value.default })),
+      // the fixed params keep their default; spreading the array itself would key them by index
+      ...Object.fromEntries(staticParams.map(([key, value]) => [key, value.default])),
     })),
   ) as unknown as SvgInfo[];
 }

@@ -133,9 +133,9 @@ type PromarkConfig = {
   fillDwellAdaptive: boolean;
   /** us, pause after each fill scan line, negative to disable */
   fillDwellTime: number;
+  /** engrave the fill scan lines in an interleaved order instead of side by side */
+  fillInterleave: boolean;
   fillInterval: number;
-  /** number of blocks the fill scan lines are interleaved into, 1 for plain spatial order */
-  fillStagger: number;
   focusReverse: boolean;
   focusStepReverse: boolean;
   frequency: number;
@@ -147,11 +147,11 @@ type PromarkConfig = {
 
 /** Inner engraving (3D objects), written on the layer only while the mode is active */
 type InnerEngravingConfig = {
-  stlMode: 'dot' | 'line';
-  /** mm, > 0 opts line-mode slicing into adaptive spacing down to this value, 0 for off */
-  stlMinLayerSpacing: number;
   /** mm, Z step in line mode, inward-shell step in solid dot mode */
   stlLayerSpacing: number;
+  /** mm, > 0 opts line-mode slicing into adaptive spacing down to this value, 0 for off */
+  stlMinLayerSpacing: number;
+  stlMode: 'dot' | 'line';
   /** mm, blue-noise dot distance on a surface, and the dot pitch of a photo */
   stlPointSpacing: number;
   /** dot mode only: also dot inward shells */

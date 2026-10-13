@@ -49,12 +49,14 @@ getSVGAsync(({ Canvas }) => {
 
 const { dpmm } = constant;
 
+/** Rendered width of each paramString title, in mm, to centre it over its axis. */
 const paramWidth = {
-  dottingTime: 104.02,
+  fillDwellTime: 87.3,
+  fillInterleave: 141.62,
   fillInterval: 96.77,
   frequency: 97.31,
   pulseWidth: 97.79,
-  qPulseWidth: 110.07,
+  qPulseWidth: 79.22,
   repeat: 42.63,
   speed: 81.61,
   strength: 60.66,
@@ -204,7 +206,21 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
     [...svgInfos]
       .reverse()
       .forEach(
-        ({ dottingTime, fillInterval, frequency, name, pulseWidth, qPulseWidth, repeat, speed, strength }, index) => {
+        (
+          {
+            fillDwellTime,
+            fillInterleave,
+            fillInterval,
+            frequency,
+            name,
+            pulseWidth,
+            qPulseWidth,
+            repeat,
+            speed,
+            strength,
+          },
+          index,
+        ) => {
           const { layer } = createLayer(name, { initConfig: true, parentCmd: batchCmd });
 
           writeDataLayer(layer, 'power', strength);
@@ -214,7 +230,6 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
           if (isPromark) {
             writeDataLayer(layer, 'fillInterval', fillInterval);
             writeDataLayer(layer, 'frequency', frequency);
-            writeDataLayer(layer, 'dottingTime', dottingTime);
           }
 
           if (isPromarkUV) writeDataLayer(layer, 'frequency', uvPowerToFrequency(strength));
@@ -225,6 +240,14 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
 
           if (tableSetting.qPulseWidth) {
             writeDataLayer(layer, 'qPulseWidth', qPulseWidth);
+          }
+
+          // they spread the fill of an engraved block; a cut block has none
+          if (blockOption === 'engrave') {
+            if (tableSetting.fillInterleave) writeDataLayer(layer, 'fillInterleave', Boolean(fillInterleave));
+
+            // 0 is off; the layer stores off as a negative duration
+            if (tableSetting.fillDwellTime) writeDataLayer(layer, 'fillDwellTime', fillDwellTime || -50000);
           }
 
           const newRect = svgCanvas.addSvgElementFromJson({

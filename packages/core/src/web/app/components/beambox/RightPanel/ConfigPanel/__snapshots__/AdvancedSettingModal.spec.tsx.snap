@@ -325,9 +325,9 @@ exports[`test AdvancedSettingModal should render correctly 1`] = `
                   <div>
                     <span>
                       <label
-                        for="fillStagger"
+                        for="fillInterleave"
                       >
-                        雕刻間隔
+                        打散掃描順序
                       </label>
                       <span
                         aria-label="question-circle"
@@ -352,23 +352,27 @@ exports[`test AdvancedSettingModal should render correctly 1`] = `
                         </svg>
                       </span>
                     </span>
-                    <div>
-                      UnitInput: 
-                      fillStagger
-                      <p>
-                        precision: 
-                        0
-                      </p>
-                      <p>
-                        underline
-                      </p>
-                      <input
-                        id="fillStagger"
-                        max="100"
-                        min="1"
-                        value="1"
+                    <button
+                      aria-checked="false"
+                      class="ant-switch css-dev-only-do-not-override-hash"
+                      id="fillInterleave"
+                      role="switch"
+                      type="button"
+                    >
+                      <div
+                        class="ant-switch-handle"
                       />
-                    </div>
+                      <span
+                        class="ant-switch-inner"
+                      >
+                        <span
+                          class="ant-switch-inner-checked"
+                        />
+                        <span
+                          class="ant-switch-inner-unchecked"
+                        />
+                      </span>
+                    </button>
                   </div>
                   <div>
                     <span>

@@ -2,6 +2,7 @@ import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import { DEFAULT_LAYER_SPACING, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import {
   fullColorModules,
@@ -9,7 +10,6 @@ import {
   printingModules,
   UVModules,
 } from '@core/app/constants/layer-module/layer-modules';
-import { DEFAULT_LAYER_SPACING, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { getEngraveDpmm, getPrintingDpmm } from '@core/app/constants/resolutions';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
@@ -55,8 +55,8 @@ export const attributeMap: Record<ConfigKey, string> = {
   fillAngle: 'data-fillAngle',
   fillDwellAdaptive: 'data-fillDwellAdaptive',
   fillDwellTime: 'data-fillDwellTime',
+  fillInterleave: 'data-fillInterleave',
   fillInterval: 'data-fillInterval',
-  fillStagger: 'data-fillStagger',
   focus: 'data-focus',
   focusReverse: 'data-focusRev',
   focusStep: 'data-focusStep',
@@ -148,8 +148,8 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   fillDwellAdaptive: false,
   // negative keeps the last used value while the pause is off, like focus / wobble
   fillDwellTime: -50000,
+  fillInterleave: false,
   fillInterval: 0.01,
-  fillStagger: 1,
   focus: -2,
   focusReverse: false,
   focusStep: -2,
@@ -255,6 +255,7 @@ export const booleanConfig: ConfigKey[] = [
   'biDirectional',
   'crossHatch',
   'fillDwellAdaptive',
+  'fillInterleave',
   'ceZHighSpeed',
   'scEnable',
   'uvCuringAfter',
@@ -289,7 +290,7 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'fillAngle',
   'biDirectional',
   'crossHatch',
-  'fillStagger',
+  'fillInterleave',
   'fillDwellTime',
   'fillDwellAdaptive',
   'wobbleDiameter',
@@ -362,7 +363,7 @@ export const promarkConfigKeys: ConfigKey[] = [
   'fillAngle',
   'biDirectional',
   'crossHatch',
-  'fillStagger',
+  'fillInterleave',
   'fillDwellTime',
   'fillDwellAdaptive',
   'focus',
@@ -844,7 +845,6 @@ export const getPromarkLimit = (): {
     .with({ laserType: LaserType.UV }, () => ({
       frequency: { ...UV_FREQUENCY_LIMIT },
       power: { ...UV_POWER_LIMIT },
-      pulseWidth: { max: 65535, min: 1 },
       qPulseWidth: { max: 1365, min: 0.021 },
     }))
     .with({ laserType: LaserType.MOPA, watt: 60 }, () => ({

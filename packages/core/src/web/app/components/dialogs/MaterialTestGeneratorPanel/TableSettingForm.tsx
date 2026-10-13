@@ -7,6 +7,7 @@ import type { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
+import { mockT } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Form.module.scss';
@@ -23,6 +24,9 @@ interface Props {
 }
 
 type TableParams = (typeof tableParams)[number];
+
+/** Params of the fill, which only an engraved (filled) block has. */
+const ENGRAVE_ONLY_PARAMS = new Set(['fillDwellTime', 'fillInterleave', 'fillInterval']);
 
 function camelToSnake(str: string): string {
   return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
@@ -46,12 +50,18 @@ export default function TableSettingForm({
   } = useI18n();
   const lengthUnit = isInch ? 'in' : 'mm';
   const { options, settingEntries } = useMemo(() => {
-    const getLabel = (key: string): string =>
-      key === 'pointSpacing' ? tInnerEngraving.point_spacing : (tLaserPanel[camelToSnake(key)] ?? tLaserPanel[key]);
+    // labels the laser panel has no key for; the mockT ones are still to be translated
+    const labels: Record<string, string> = {
+      fillDwellTime: mockT('每行停留'),
+      fillInterleave: mockT('打散掃描順序'),
+      pointSpacing: tInnerEngraving.point_spacing,
+      qPulseWidth: mockT('Q 開關'),
+    };
+    const getLabel = (key: string): string => labels[key] ?? tLaserPanel[camelToSnake(key)] ?? tLaserPanel[key];
 
     return {
       options: Object.keys(tableSetting)
-        .filter((key) => blockOption === 'engrave' || key !== 'fillInterval')
+        .filter((key) => blockOption === 'engrave' || !ENGRAVE_ONLY_PARAMS.has(key))
         .map((value) => ({ label: getLabel(value), value })),
       settingEntries: Object.entries(tableSetting) as Array<[TableParams, Detail]>,
     };
@@ -146,6 +156,7 @@ export default function TableSettingForm({
               case 'pointSpacing':
                 return 'mm';
               case 'dottingTime':
+              case 'fillDwellTime':
               case 'qPulseWidth':
                 return 'us';
               case 'frequency':
