@@ -4,7 +4,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 
 const mockApplyPhotoPointCloud = jest.fn();
 const mockGeneratePhotoPointCloud = jest.fn();
-const mockIsUvDev2 = jest.fn();
+const mockIsUvDev = jest.fn();
 
 jest.mock('@core/app/svgedit/stl/photoPointCloud', () => ({
   applyPhotoPointCloud: (...args: unknown[]) => mockApplyPhotoPointCloud(...args),
@@ -12,7 +12,7 @@ jest.mock('@core/app/svgedit/stl/photoPointCloud', () => ({
 jest.mock('@core/app/svgedit/stl/photoPointCloudGenerator', () => ({
   generatePhotoPointCloud: (...args: unknown[]) => mockGeneratePhotoPointCloud(...args),
 }));
-jest.mock('@core/helpers/is-dev', () => ({ isUvDev2: () => mockIsUvDev2() }));
+jest.mock('@core/helpers/is-dev', () => ({ isUvDev: () => mockIsUvDev() }));
 jest.mock('@core/helpers/useI18n', () => () => ({
   inner_engraving_settings: { generate_test_point_cloud: 'Generate Test Point Cloud' },
 }));
@@ -24,7 +24,7 @@ const makeElem = (tag: 'image' | 'rect') => document.createElementNS('http://www
 describe('ThreeDOptions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsUvDev2.mockReturnValue(true);
+    mockIsUvDev.mockReturnValue(true);
   });
 
   test('has nothing for a mesh: its engraving parameters live on the layer', () => {
@@ -41,7 +41,7 @@ describe('ThreeDOptions', () => {
     const elem = makeElem('image');
 
     elem.setAttribute('data-stl-photo', '1');
-    mockIsUvDev2.mockReturnValue(false);
+    mockIsUvDev.mockReturnValue(false);
 
     const { container } = render(<ThreeDOptions elem={elem} />);
 

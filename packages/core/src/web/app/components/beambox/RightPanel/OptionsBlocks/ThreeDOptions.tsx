@@ -5,7 +5,7 @@ import { Button } from 'antd';
 import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
 import { applyPhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloud';
 import { generatePhotoPointCloud } from '@core/app/svgedit/stl/photoPointCloudGenerator';
-import { isUvDev2 } from '@core/helpers/is-dev';
+import { isUvDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ThreeDOptions.module.scss';
@@ -26,7 +26,7 @@ const ThreeDOptions = ({ elem }: Props): null | React.JSX.Element => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationError, setGenerationError] = useState<null | string>(null);
 
-  if (!isPhotoPlaneProjection(elem) || !isUvDev2()) return null;
+  if (!isPhotoPlaneProjection(elem) || !isUvDev()) return null;
 
   const generateTestPointCloud = async () => {
     setGenerationError(null);

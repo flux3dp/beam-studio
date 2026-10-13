@@ -3,7 +3,7 @@ import { DEFAULT_POINT_SPACING, POINT_SPACING_LIMIT } from '@core/app/constants/
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import isDev, { isUvDev2 } from '@core/helpers/is-dev';
+import isDev, { isUvDev } from '@core/helpers/is-dev';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
 import { uvFrequencyToPower } from '@core/helpers/layer/uvPowerFrequency';
 
@@ -162,7 +162,7 @@ const getPromarkTableSetting = (workarea: WorkAreaModel, { laserType }: SettingI
   };
 
   // UV heat mitigation, still a uvDev option in the advanced settings
-  if (isUV && isUvDev2()) {
+  if (isUV && isUvDev()) {
     // a switch, 0 for off and 1 for on, so as an axis it only has the two values
     setting.fillInterleave = { default: 0, max: 1, maxValue: 1, min: 0, minValue: 0, selected: 2 };
     setting.fillDwellTime = { default: 0, max: 1000000, maxValue: 10000, min: 0, minValue: 0, selected: 2 };

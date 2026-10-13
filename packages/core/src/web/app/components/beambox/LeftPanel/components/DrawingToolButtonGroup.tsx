@@ -21,7 +21,7 @@ import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { type ReplicatePointCloudSampleId, type ReplicateSampleDisplay } from '@core/helpers/image/replicatePointCloud';
-import { isParamsLabelDev, isUvDev2 } from '@core/helpers/is-dev';
+import { isParamsLabelDev, isUvDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
@@ -63,7 +63,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     [mouseMode],
   );
   const isInnerEngravingMode = useInnerEngravingActive();
-  const showReplicateSamples = isInnerEngravingMode && isUvDev2();
+  const showReplicateSamples = isInnerEngravingMode && isUvDev();
   const [replicateModalOpen, setReplicateModalOpen] = useState(false);
   const modeRef = useRef(isInnerEngravingMode);
   const insertDefault3dText = (type: 'fit-text' | 'text') => {
@@ -246,7 +246,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         onClick: () => toggleDrawerMode('generator'),
         style: { color: drawerMode === 'generator' ? '#000000' : undefined },
         // only the material test generator has a 3D version, and it is still in development
-        supportedIn3D: isUvDev2(),
+        supportedIn3D: isUvDev(),
       })}
       {hasPassthroughExtension &&
         renderToolButton({

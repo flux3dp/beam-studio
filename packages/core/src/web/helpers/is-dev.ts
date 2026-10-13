@@ -6,6 +6,6 @@ export const isParamsLabelDev = (): boolean => window?.localStorage?.getItem('pa
 
 export default isDev;
 
-// Alpha-only test and demonstration features. Keep separate so they can be removed before release.
-export const isUvDev2 = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
+// Promark UV tuning and in-development 3D tools, kept out of the general dev mode that already unlocks UV itself
+export const isUvDev = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
 export const mockT = (key: string) => key;

@@ -16,7 +16,7 @@ import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import deviceMaster from '@core/helpers/device-master';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
-import isDev, { isUvDev2 } from '@core/helpers/is-dev';
+import isDev, { isUvDev } from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
 import Logger from '@core/helpers/logger';
@@ -161,7 +161,7 @@ class SwiftrayClient extends EventEmitter {
     this.socket.onerror = this.handleError.bind(this);
     this.socket.onmessage = this.handleMessage.bind(this);
 
-    if (isUvDev2()) window.sw_ws = this.socket;
+    if (isUvDev()) window.sw_ws = this.socket;
   }
 
   private async updateStatus(newStatus: TStatus): Promise<void> {
@@ -221,7 +221,7 @@ class SwiftrayClient extends EventEmitter {
 
     console.log(`Swiftray version ${this.version}`);
 
-    if (isUvDev2()) this.checkVersion('SWIFTRAY_SUPPORT_STL');
+    if (isUvDev()) this.checkVersion('SWIFTRAY_SUPPORT_STL');
   }
 
   private handleClose() {

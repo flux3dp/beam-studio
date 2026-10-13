@@ -29,7 +29,7 @@ import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import isDev, { isUvDev2 } from '@core/helpers/is-dev';
+import isDev, { isUvDev } from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
@@ -305,7 +305,7 @@ export const getExportOpt = async (
 
   // Developer opt-in. Omit the parameter unless explicitly enabled so older backends keep their
   // default behavior and do not have to accept a new CLI flag for ordinary jobs.
-  if (isUvDev2() && localStorage.getItem('first_pulse_killer_enabled') === 'true') {
+  if (isUvDev() && localStorage.getItem('first_pulse_killer_enabled') === 'true') {
     config.first_pulse_killer_enabled = true;
   }
 
@@ -359,7 +359,7 @@ export const getExportOpt = async (
     }
   }
 
-  if (isUvDev2() && model === 'fpm1' && getPromarkInfo().laserType === LaserType.UV) {
+  if (isUvDev() && model === 'fpm1' && getPromarkInfo().laserType === LaserType.UV) {
     const devConfig = [
       'laser_on_delay',
       'laser_off_delay',
