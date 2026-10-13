@@ -3,7 +3,10 @@
  * never shows UI, never changes what the error popup it was triggered from does (§7.1.1).
  * The consent decorator that attaches this to alerts lives in consent.ts (PR 2).
  */
+import type { AxiosError } from 'axios';
+
 import { axiosFluxId } from '@core/helpers/api/flux-id';
+import type { ResponseWithError } from '@core/helpers/api/flux-id/base';
 import deviceMaster from '@core/helpers/device-master';
 import { getOS } from '@core/helpers/getOS';
 import Logger from '@core/helpers/logger';
@@ -55,21 +58,34 @@ const readDeviceLog = async (): Promise<Blob | null> => {
   return parts.length ? new Blob(parts, { type: 'text/plain' }) : null;
 };
 
+/** 10 MB bug_report + 10 MB system_log + scene must fit on a slow home uplink (~1 Mbit/s) */
+const UPLOAD_TIMEOUT_MS = 3 * 60 * 1000;
+
+/**
+ * Only transient failures earn another attempt: no response (timeout, dropped socket) or 5xx.
+ * 4xx means the body or the budget is the problem; `error` undefined means a 2xx with an unknown
+ * body, which the server already accepted.
+ */
+const shouldRetry = (error?: AxiosError): boolean =>
+  error !== undefined && (!error.response || error.response.status >= 500);
+
 const post = async (form: FormData): Promise<'duplicate' | 'sent'> => {
   let lastError: unknown;
 
   for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt += 1) {
-    try {
-      const { data } = await axiosFluxId.post(ERROR_REPORT_ENDPOINT, form);
+    const { data, error } = (await axiosFluxId.post(ERROR_REPORT_ENDPOINT, form, {
+      timeout: UPLOAD_TIMEOUT_MS,
+    })) as ResponseWithError;
 
-      if (data?.status === 'ok') return 'sent';
+    if (data?.status === 'ok') return 'sent';
 
-      if (data?.status === 'duplicate') return 'duplicate';
+    if (data?.status === 'duplicate') return 'duplicate';
 
-      throw new Error(`unexpected response ${JSON.stringify(data)}`);
-    } catch (error) {
-      lastError = error;
-    }
+    lastError = error
+      ? new Error(`HTTP ${error.response?.status ?? error.code} ${JSON.stringify(error.response?.data)}`)
+      : new Error(`unexpected response ${JSON.stringify(data)}`);
+
+    if (!shouldRetry(error)) break;
   }
 
   throw lastError;
