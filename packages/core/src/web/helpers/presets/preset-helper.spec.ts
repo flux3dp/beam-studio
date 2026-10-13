@@ -20,10 +20,8 @@ jest.mock('@core/helpers/i18n', () => ({
       right_panel: {
         laser_panel: {
           dropdown: {
-            mm: {
-              pre1: 'pre1_name',
-              pre2: 'pre2_name',
-            },
+            materials: { pre1: 'pre1_name', pre2: 'pre2_name' },
+            presets: {},
           },
           preset_management: {
             export_preset_title: 'export_preset_title',
@@ -38,6 +36,11 @@ jest.mock('@core/helpers/i18n', () => ({
       },
     },
   },
+}));
+
+jest.mock('@core/app/constants/presetNames', () => ({
+  inchLabels: {},
+  presetNames: { pre1: { material: 'pre1' }, pre2: { material: 'pre2' } },
 }));
 
 const mockGetStorage = jest.fn();
