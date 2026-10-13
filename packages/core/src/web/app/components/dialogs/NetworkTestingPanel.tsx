@@ -187,7 +187,7 @@ const NetworkTestingPanel = ({ ip, onClose }: Props): ReactNode => {
       title={lang.network_testing}
     >
       <Form>
-        {localIps.length && <Form.Item label={lang.local_ip}>{localIps.join(', ')}</Form.Item>}
+        {localIps.length > 0 && <Form.Item label={lang.local_ip}>{localIps.join(', ')}</Form.Item>}
         <Form.Item label={lang.insert_ip}>
           <Input defaultValue={ip || ''} onKeyDown={onInputKeydown} ref={textInputRef} />
         </Form.Item>
