@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: 'Kém',
     reset_points: 'Đặt lại điểm',
     retake: 'Chụp lại',
+    rotate_image_180: 'Xoay hình ảnh 180°',
     rotation_angle: 'Xoay',
     show_last_config: 'Hiển thị kết quả gần nhất',
     skip: 'Bỏ Qua',

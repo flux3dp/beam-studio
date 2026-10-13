@@ -130,9 +130,9 @@ export class WebCamConnection {
     return true;
   };
 
-  getPicture = async ({ flip = false }: { flip?: boolean } = {}): Promise<Blob> => {
-    // Normal Promark cameras require flipping; UV callers currently opt out because the device API
-    // does not expose a reliable camera-variant discriminator.
+  getPicture = async ({ rotate180 }: { rotate180: boolean }): Promise<Blob> => {
+    console.log('Getting picture from webcam, rotate180:', rotate180);
+
     const canvas = document.createElement('canvas');
 
     canvas.width = this.video.videoWidth;
@@ -140,7 +140,7 @@ export class WebCamConnection {
 
     const context = canvas.getContext('2d')!;
 
-    if (flip) {
+    if (rotate180) {
       context.save();
       context.translate(canvas.width, canvas.height);
       context.scale(-1, -1);

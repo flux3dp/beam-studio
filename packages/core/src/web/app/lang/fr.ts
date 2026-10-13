@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: 'Médiocre',
     reset_points: 'Réinitialiser les points',
     retake: 'Reprendre la photo',
+    rotate_image_180: "Faire pivoter l'image de 180°",
     rotation_angle: 'Rotation',
     show_last_config: 'Afficher le dernier résultat',
     skip: 'Sauter',

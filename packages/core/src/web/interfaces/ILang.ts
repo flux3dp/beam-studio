@@ -1302,6 +1302,7 @@ export interface ILang {
     res_poor: string;
     reset_points: string;
     retake: string;
+    rotate_image_180: string;
     rotation_angle: string;
     show_last_config: string;
     skip: string;

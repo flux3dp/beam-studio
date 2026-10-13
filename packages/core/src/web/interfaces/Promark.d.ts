@@ -40,9 +40,14 @@ export interface GalvoParameters {
   y: LensCorrection;
 }
 
+export interface PromarkCameraParameters extends FisheyeCameraParametersV3 {
+  /** Whether webcam frames are rotated 180° before use; absent in parameters saved before it existed */
+  rotate180?: boolean;
+}
+
 export interface PromarkStore {
   cameraDeviceId?: string;
-  cameraParameters?: FisheyeCameraParametersV3;
+  cameraParameters?: PromarkCameraParameters;
   field?: Field;
   galvoParameters?: GalvoParameters;
   info?: PromarkInfo;

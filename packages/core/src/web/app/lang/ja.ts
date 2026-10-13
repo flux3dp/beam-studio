@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: '悪い',
     reset_points: 'ポイントをリセット',
     retake: '写真を撮り直す',
+    rotate_image_180: '画像を180°回転',
     rotation_angle: '回転',
     show_last_config: '前回の結果を表示',
     skip: 'スキップ',

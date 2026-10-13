@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: 'Dårlig',
     reset_points: 'Tilbakestill punkter',
     retake: 'Ta bilde på nytt',
+    rotate_image_180: 'Roter bildet 180°',
     rotation_angle: 'Rotasjon',
     show_last_config: 'Vis siste resultat',
     skip: 'Hopp Over',

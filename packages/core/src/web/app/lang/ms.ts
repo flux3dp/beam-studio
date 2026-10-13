@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: 'Lemah',
     reset_points: 'Tetapkan semula titik',
     retake: 'Ambil Semula Gambar',
+    rotate_image_180: 'Putar imej 180°',
     rotation_angle: 'Pusingan',
     show_last_config: 'Tunjukkan Keputusan Terakhir',
     skip: 'Langkau',

@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: 'Heikko',
     reset_points: 'Nollaa pisteet',
     retake: 'Ota kuva uudelleen',
+    rotate_image_180: 'Kierrä kuvaa 180°',
     rotation_angle: 'Kierto',
     show_last_config: 'Näytä viimeisin tulos',
     skip: 'Ohita',

@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: 'Špatné',
     reset_points: 'Obnovit body',
     retake: 'Znovu vyfotit',
+    rotate_image_180: 'Otočit obraz o 180°',
     rotation_angle: 'Rotace',
     show_last_config: 'Ukázat poslední výsledek',
     skip: 'Přeskočit',

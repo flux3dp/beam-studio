@@ -4,13 +4,14 @@ import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
 import CameraTransformAPI from '@core/helpers/api/camera-transform';
+import { isCameraRotated } from '@core/helpers/device/promark/camera-rotation';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import i18n from '@core/helpers/i18n';
 import type { WebCamConnection } from '@core/helpers/webcam-helper';
 import webcamHelper from '@core/helpers/webcam-helper';
-import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
+import type { PromarkCameraParameters } from '@core/interfaces/Promark';
 
 import BasePreviewManager from './BasePreviewManager';
 import CalibrationDataMissingError from './CalibrationDataMissingError';
@@ -20,7 +21,7 @@ import handlePreviewSetupError from './handlePreviewSetupError';
 class PromarkPreviewManager extends BasePreviewManager implements PreviewManager {
   protected _previewMode = PreviewMode.FULL_AREA;
   protected _supportedPreviewModes = [PreviewMode.FULL_AREA];
-  private fisheyeParams?: FisheyeCameraParameters;
+  private fisheyeParams?: PromarkCameraParameters;
   private cameraTransformAPI?: CameraTransformAPI;
   private webCamConnection: null | WebCamConnection = null;
 
@@ -45,8 +46,11 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
         throw new CalibrationDataMissingError();
       }
 
+      console.log('Fisheye Params:', this.fisheyeParams);
       await this.setupAPI();
+      console.log('Setup API completed');
       this.webCamConnection = await webcamHelper.connectWebcam();
+      console.log('WebCam Connection established:', this.webCamConnection);
 
       return !!this.webCamConnection;
     } catch (error) {
@@ -87,7 +91,9 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
     try {
       this.showMessage({ content: i18n.lang.message.preview.capturing_image });
 
-      let imgBlob = await this.webCamConnection!.getPicture();
+      let imgBlob = await this.webCamConnection!.getPicture({
+        rotate180: isCameraRotated(this.fisheyeParams!),
+      });
 
       imgBlob = await this.cameraTransformAPI!.transformImage(imgBlob);
 

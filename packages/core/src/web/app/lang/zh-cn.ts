@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: '差',
     reset_points: '重置点位',
     retake: '重拍照片',
+    rotate_image_180: '图像旋转 180°',
     rotation_angle: '旋转角度',
     show_last_config: '显示前次校正结果',
     skip: '跳過',

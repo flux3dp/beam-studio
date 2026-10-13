@@ -1300,6 +1300,7 @@ const lang: ILang = {
     res_poor: 'Κακό',
     reset_points: 'Επαναφορά σημείων',
     retake: 'Επανάληψη λήψης',
+    rotate_image_180: 'Περιστροφή εικόνας 180°',
     rotation_angle: 'Περιστροφή',
     show_last_config: 'Εμφάνιση Τελευταίας Ρύθμισης',
     skip: 'Παράλειψη',

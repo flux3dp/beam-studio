@@ -12,11 +12,17 @@ import type { WebCamConnection } from '@core/helpers/webcam-helper';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
-export type Options<T = null> = {
+export type CameraSource =
+  | {
+      /** rotate the webcam frames 180° */
+      rotate180: boolean;
+      source: 'usb';
+    }
+  | { rotate180?: never; source?: 'wifi' };
+export type Options<T = null> = CameraSource & {
   firstImageArgs?: T;
   index?: number;
   initExposure?: number;
-  source?: 'usb' | 'wifi';
   videoElement?: HTMLVideoElement;
 };
 export type HandleTakePictureArgs<T = null> = {
@@ -27,7 +33,7 @@ export type HandleTakePictureArgs<T = null> = {
 
 const useCamera = <T>(
   handleImg?: (blob: Blob, args?: T) => boolean | Promise<boolean>,
-  { firstImageArgs, index, initExposure, source = 'wifi', videoElement }: Options<T> = {},
+  { firstImageArgs, index, initExposure, rotate180 = false, source = 'wifi', videoElement }: Options<T> = {},
 ): {
   autoExposure: boolean | null;
   connectWebCam: () => Promise<void>;
@@ -80,7 +86,7 @@ const useCamera = <T>(
           await connectWebCam();
         }
 
-        imgBlob = await webCamConnection.current?.getPicture();
+        imgBlob = await webCamConnection.current?.getPicture({ rotate180 });
       }
 
       if (!imgBlob) {
@@ -109,7 +115,7 @@ const useCamera = <T>(
 
       return imgBlob;
     },
-    [connectWebCam, handleImg, source],
+    [connectWebCam, handleImg, rotate180, source],
   );
 
   useEffect(() => {
