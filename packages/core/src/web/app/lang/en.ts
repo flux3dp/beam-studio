@@ -464,7 +464,7 @@ const lang: ILang = {
         message: 'A new option to automatically switch between the Layers panel and the Objects panel has been added to Preferences. This option is disabled by default. Would you like to enable automatic switching now?<br/>You can change this setting anytime in Preferences.',
         title: 'Auto Switching Layer and Object Panel',
       },
-      backend_connect_failed_ask_to_upload: '#802 Errors keeps occurring when trying to connect to the backend. Do you want to upload your bug report log?',
+      backend_connect_failed: '#802 Errors keep occurring when trying to connect to the backend.',
       backend_error_hint: 'Features might be not working properly due to backend error.',
       both_power_and_speed_too_high: "Using lower laser power will extends laser tube's lifetime.\nAlso, too high speed at this resolution may result in the lower quality of shading engraving.",
       bug_report: 'Bug Report',

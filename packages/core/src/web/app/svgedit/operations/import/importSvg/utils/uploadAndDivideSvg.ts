@@ -1,8 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import alertConstants from '@core/app/constants/alert-constants';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
-import awsHelper from '@core/helpers/aws-helper';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import type { ILang } from '@core/interfaces/ILang';
 import type { ImportType } from '@core/interfaces/ImportSvg';
 
@@ -28,21 +27,12 @@ export async function uploadAndDivideSvg(
   const output = await svgWebSocket.divideSVG({ byLayer: importType === 'layer' });
 
   if (!output.res) {
-    alertCaller.popUpError({
-      buttonType: alertConstants.YES_NO,
-      message: `#809 ${output.data}\n${lang.beambox.popup.import_file_error_ask_for_upload}`,
-      onYes: () => {
-        const fileReader = new FileReader();
-
-        fileReader.onloadend = (e) => {
-          const svgString = e.target?.result;
-
-          awsHelper.uploadToS3(file.name, svgString);
-        };
-
-        fileReader.readAsText(file);
-      },
-    });
+    alertCaller.popUpError(
+      withErrorReportConsent(
+        { message: `#809 ${output.data}` },
+        { errorCode: '#809', scene: { content: file, name: file instanceof File ? file.name : 'import.svg' } },
+      ),
+    );
 
     return null;
   }

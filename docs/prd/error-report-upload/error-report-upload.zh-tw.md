@@ -66,7 +66,7 @@
 | # | 操作方式 | 完成條件 | 邊界情況 |
 |---|---|---|---|
 | A1 | 設定 → 隱私。 | 存在「錯誤報告上傳」下拉選單，選項 一律自動 / 每次詢問 / 永不；預設 每次詢問；重啟後保留。 | 值以 `'always' \| 'ask' \| 'never'` 存於 storage 鍵 `error-report-upload`。 |
-| A2 | 設為 每次詢問。在 Monitor 觸發裝置 `HARDWARE_ERROR`，或在連線途中將機器斷電以觸發 `popConnectionError`（或 §7.4 任一觸發點）。 | 既有視窗顯示，按鈕上方有未勾選的 checkbox；按鈕文字/順序不變。 | ALARM/FATAL 單按鈕視窗也有同樣 checkbox（原始 PRD §3.7）。 |
+| A2 | 設為 每次詢問。在 Monitor 觸發非硬體類裝置錯誤（例如損壞的工作檔），或在連線途中將機器斷電以觸發 `popConnectionError`（或 §7.4 任一觸發點）。 | 既有視窗顯示，按鈕上方有未勾選的 checkbox；按鈕文字/順序不變。 | ALARM/FATAL 單按鈕視窗也有同樣 checkbox（原始 PRD §3.7）。 |
 | A3 | 勾選，按 取消。 | 有上傳（network 面板可見一次對 proxy 的請求）；toast「感謝您！診斷資料已傳送。」 | 取消與重試在上傳行為上完全相同。 |
 | A4 | 每次詢問 下首次成功上傳。 | 一次性 一律自動/每次詢問 提示；選 一律自動 會改變 A1 的選單值。 | 提示不再出現：它會把 `'always'` 或 `'ask'` 寫入 `error-report-upload`，只有未設定（`null`）時才允許提示（§7.6）。按 Escape 關閉不寫入，下次上傳後可能再出現。 |
 | A5 | 設為 一律自動。觸發錯誤。 | 無 checkbox；底部灰色狀態列；不需使用者操作即送出請求。 | 達每日上限時不顯示狀態列。 |
@@ -84,7 +84,7 @@
 - `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — 下載仍產出完整、未清除的報告；`MonitorContext.tsx:548` `handleReport` — 同上；`websocket.ts:41` — 改呼叫新的上傳函式，仍只在使用者同意後執行。
 - `app/components/dialogs/Alert.tsx` — 所有既有 `checkbox:` 呼叫者（`retryWithRemoveBackground.ts:25`、`retakeContourPreview.ts:77`、`importSvg/index.tsx:46`、`importDxf.ts:52,120`、`AutoFocusButton/index.tsx:140`、`BasePreviewManager.tsx:279`、`handleExportAlerts.ts:150`）— callback 語意不變。2026-10-12 有動到：`Alert.tsx` 現在會渲染 `IAlert` 自 2021 年起就宣告、但改用 antd 後不再渲染的 `children` 欄位；S3 的狀態列用它。wave 1/2 的觸發點都沒有傳 `children`。唯一有傳的既有呼叫者 `NetworkTestingPanel.tsx:104`（網路測試正常後的三條說明提示，至今被默默丟棄，其 sass 仍掛在已失效的 `.modal-alert` 選擇器下）另開小分支修正：改用 `links` 並刪除該段 sass，於本功能的合併 PR 之前先進。
 - `helpers/device-master.ts:580` `popConnectionError` — `select` :410 與 `selectDeviceWithSwiftray` :530 — 警示 id `connection-error`、`Alert.popById` 原地替換、訊息文字與 `{ success: false, error }` 回傳值不變；`reconnect()` → `select()` 仍會跳出同一視窗（吸收重試風暴的是冷卻機制，不是視窗）。
-- `app/contexts/MonitorContext.tsx:314,495,980`、`helpers/device-master.ts:266`、`helpers/device/get-device.ts:103`、`actions/beambox/export-funcs.ts:778`、`export-funcs-swiftray.ts:106-192`、`helpers/handleAutoConnect.ts:216`、`PrintAndCut/calibration/PrintAndCutCalibration.tsx:150` — 第一波觸發點：警示 id、訊息文字、按鈕組與周邊控制流程（`onClose()`、`return { success: false }`、`setStatus('listening')`）不變；只包裝設定物件。
+- `app/contexts/MonitorContext.tsx:314,495,980`、`helpers/device-master.ts:266`、`actions/beambox/export-funcs.ts:778`、`export-funcs-swiftray.ts:106-192`、`helpers/handleAutoConnect.ts:216` — 第一波觸發點：警示 id、訊息文字、按鈕組與周邊控制流程（`onClose()`、`return { success: false }`、`setStatus('listening')`）不變；只包裝設定物件。
 - `actions/camera/preview-helper/*`、`components/dialogs/camera/*`、`DiodeCalibration/Component.tsx` — 第二波觸發點，同一規則；`BasePreviewManager.tsx:273` 保留自己的 `checkbox`（§7.4 規則）。
 - `app/contexts/MonitorContext.tsx:598-633` — 三個錯誤分支維持各自的按鈕組（`abort` / `retry+cancel` / `retry+bug report+cancel`）與透過 `Alert.checkIdExist` 的 `errorId` 去重。
 - `actions/beambox/export-funcs.ts`、`export-funcs-swiftray.ts`、`importSvg/utils/uploadAndDivideSvg.ts` — 錯誤訊息文字（`#806 …`、`#809 …`）與 `resolve(null)` / `return null` 流程不變；只替換上傳掛鉤。
@@ -130,22 +130,18 @@
 
 | 觸發點 | 傳給 `withErrorReportConsent` 的代碼 | 序號 |
 |---|---|---|
-| `MonitorContext.tsx:598` ALARM/FATAL | `error.join('_')`，例如 `HARDWARE_ERROR_OVERHEAT`；涵蓋所有 `#9xx`、`#401`、`#402`、`#905` 字串（依韌體錯誤陣列查表） | 有 |
-| `MonitorContext.tsx:608` HARDWARE_ERROR（排除 USER_OPERATION 與 REMOVE_CARTRIDGE） | 同上 | 有 |
-| `MonitorContext.tsx:625` 其他裝置錯誤 | 同上 | 有 |
+| `MonitorContext.tsx:598` ALARM/FATAL 與 `:625` 其他裝置錯誤 | `error.join('_')`，但錯誤類別為 `HARDWARE_ERROR` 或 `USER_OPERATION` 時不接（2026-10-13 決定：韌體已明確回報硬體故障，診斷包沒有額外價值；因此 `#9xx`、`#401`、`#402`、`#905` 字串皆排除） | 有 |
+| ~~`MonitorContext.tsx:608` HARDWARE_ERROR~~ | 2026-10-13 排除，見上 | 無 |
 | `MonitorContext.tsx:495` 狀態輪詢逾時 | `#805` | 有 |
 | `MonitorContext.tsx:980` 工作無法啟動 | `#830` ＋ `error.join('_')` | 有 |
 | `MonitorContext.tsx:314` Promark USB 斷線 | `#850`（info 型視窗，同一裝飾器） | 有 |
-| `device-master.ts:580` `popConnectionError`（呼叫者 `select` :410、`selectDeviceWithSwiftray` :530） | `CONNECTION_TIMEOUT`、`CONNECTION_DISCONNECTED`（`#891`/`#892`）、`CONNECTION_UNKNOWN_DEVICE`、`CONNECTION_UNKNOWN`（default）。排除 `NOT_FOUND`：機器從探索清單消失，通常是關機。僅有「確認」按鈕的視窗（原始 PRD §3.7）。 | 有 |
+| `device-master.ts:580` `popConnectionError`（呼叫者 `select` :410、`selectDeviceWithSwiftray` :530） | `CONNECTION_TIMEOUT`、`CONNECTION_DISCONNECTED`（`#891`/`#892`）、`CONNECTION_UNKNOWN_DEVICE`，default 分支則為 `CONNECTION_` + fluxghost 原始代碼。排除 `NOT_FOUND`：機器從探索清單消失，通常是關機。僅有「確認」按鈕的視窗（原始 PRD §3.7）。 | 有 |
 | `device-master.ts:266` 密碼正確但連線失敗 | 僅 `#810`；`#811` 密碼錯誤排除 | 有 |
-| `device/get-device.ts:103` 選擇裝置時致命錯誤 | `#813` | 有 |
 | `export-funcs.ts:778` 在 Monitor 開啟工作失敗 | `#807` | 有 |
 | `export-funcs.ts:257,315,503`、`export-funcs-swiftray.ts:89` 工作產生失敗 | `#806`（＋ scene.svg） | 已連線時有 |
-| `export-funcs-swiftray.ts:106-192` 前綴 `#812` 的 Swiftray 匯出錯誤 | `#812`（＋ scene.svg）；接線時逐一確認各分支是錯誤視窗而非提示 | 已連線時有 |
 | `websocket.ts:28` 後端連線失敗 | `#802` | none |
 | `handleAutoConnect.ts:216` QR 自動連線失敗 | `QR_AUTOCONNECT_FAILED` | none |
 | `uploadAndDivideSvg.ts:31` 匯入失敗 | `#809`（＋ 匯入檔案） | none |
-| `PrintAndCut/calibration/PrintAndCutCalibration.tsx:150` 刮痕任務期間的裝置錯誤 | `PNC_SCRATCH_` ＋ 翻譯後的錯誤鍵 | 有 |
 
 **第二波 — 相機與校正**（皆為軟體端代碼；不需韌體對照表，故 §11 D4 定案）
 
@@ -164,7 +160,10 @@
 
 **排除項目與理由**
 
-- 使用者狀態或操作，非缺陷：`#801` 無裝置、`#804` 工作區不符、`#808` 無效圖片路徑、`#811` 密碼錯誤、`#814` / `#820` 韌體過舊、`#851` / `#852` 缺校正資料、Promark 對話框中的 `#901` 門未關、`USER_OPERATION_*`、`REMOVE_CARTRIDGE`、`ConnectionError.NOT_FOUND`。
+- 韌體回報的硬體故障 `HARDWARE_ERROR_*`（2026-10-13 決定）：韌體已指出故障為何，客戶端診斷包沒有額外價值。
+- 使用者狀態或操作，非缺陷：`#801` 無裝置、`#804` 工作區不符、`export-funcs-swiftray.ts` `popupError` 的 Swiftray `busy` 資訊視窗、`#808` 無效圖片路徑、`#811` 密碼錯誤、`#814` / `#820` 韌體過舊、`#851` / `#852` 缺校正資料、Promark 對話框中的 `#901` 門未關、`USER_OPERATION_*`、`REMOVE_CARTRIDGE`、`ConnectionError.NOT_FOUND`。
+- Print and Cut 校正刮痕任務失敗（`PrintAndCutCalibration.tsx:150`，2026-10-13 決定）：該處的錯誤是裝置自身的錯誤清單，多為硬體故障與使用者中止，已被上述規則排除；不值得為此單獨拆分。
+- 同一次失敗已有警示、此為第二個警示：`device/get-device.ts:103` 的 `#813`（2026-10-13 決定）。`select` 每種失敗都會先彈出 `popConnectionError`、`#810`/`#811` 或 `#820`，或是使用者取消密碼對話框後才出現；若也接上 `#813`，同一次失敗會出現兩個同意勾選框並送出兩份不同代碼的報告。
 - 診斷工具本身：`#817`、`#818`、`#840`–`#843` 網路測試面板；`#819` 上傳失敗。
 - 與機器無關：`#822` / `#823` 應用程式更新、`#847` 雲端服務、`#846` 文字轉路徑解析、`#974` 連續雕刻。
 - 無呼叫者的死字串：`#824`、`#825`、`#827`、`#843`、`#849`。
@@ -260,10 +259,10 @@
 - 內嵌的 `machineId` 讀取穩定的硬體/OS 識別碼，同一台電腦的報告在重新安裝後仍可關聯。2026-10-06 針對無序號的無裝置情境接受此點；維持雜湊輸出，同意文案已說明報告包含機器識別碼。
 - 請求內同步 R2 PUT 會佔用 gunicorn worker；上傳爆量可能延遲登入。§9.2 的門檻會在造成傷害前觸發 celery 或 presigned URL 升級。
 - Sentry（`enable-sentry`）已擷取 JS 堆疊；本功能不取代它。在隱私頁文案註明兩者的重疊。
-- 後續：接線時逐一分類 `export-funcs-swiftray.ts` 的 `#812` 分支；屬提示而非失敗者在該處排除並記於 §7.4。
+- ~~後續：接線時逐一分類 `export-funcs-swiftray.ts` 的 `#812` 分支。~~ 2026-10-13 已分類：該檔案沒有 `#812`；所有錯誤都經由 `popupError`，`cancel` 時靜默、`busy` 時為資訊視窗（排除，機器使用中）、其餘為 `#806`（已接線）。`#812` 只存在於未使用的語言字串（`message.device_not_found.message`），其標題在 `get-device.ts` 以資訊 toast 顯示。
 
 ## 13. 測試計畫
 
 - 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`consent.spec.tsx`（三種偏好 × checkbox 是否出現、既有 checkbox 保留、冷卻或每日上限期間 checkbox 隱藏、callback 啟動上傳、**所有相依拋出例外 → 原樣回傳輸入的警示設定**）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
-- 手動：在桌面版對可引發 `HARDWARE_ERROR` 的裝置執行上述 A1–A11，另以匯出途中關閉 fluxghost 觸發 `#806`。
+- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A11，另以匯出途中關閉 fluxghost 觸發 `#806`。
 - 回歸：§6 所列既有 `checkbox:` 警示呼叫者行為不變；說明 → Bug Report 下載仍包含 `recent_files`。

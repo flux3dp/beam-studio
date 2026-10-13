@@ -464,7 +464,7 @@ const lang: ILang = {
         message: '已在偏好設定中新增在圖層面板和物件面板之間自動切換的新選項。此選項預設為關閉。是否要啟用自動切換？ <br/>您可以隨時在偏好設定中更改此設定。',
         title: '自動切換圖層和物件面板',
       },
-      backend_connect_failed_ask_to_upload: '#802 連接後端程式時持續發生錯誤，請問您是否要將錯誤報告上傳到雲端?',
+      backend_connect_failed: '#802 連接後端程式時持續發生錯誤。',
       backend_error_hint: '後端程式無法連接，部分功能可能無法使用。',
       both_power_and_speed_too_high: '雷射管在高功率下耗損較快，使用低功率可以延長雷試管使用壽命。<br/>並且在此雕刻解析度使用過快的速度可能導致漸層雕刻的品質較差。',
       bug_report: '錯誤回報',

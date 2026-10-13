@@ -38,7 +38,7 @@ const fields = (form: FormData) =>
   Object.fromEntries([...form.entries()].map(([k, v]) => [k, v instanceof Blob ? `blob:${v.type}` : v]));
 const idleDevice = (serial = 'SN12345678') => ({
   control: { getMode: () => '' },
-  info: { serial, version: '6.5.3' },
+  info: { serial, uuid: 'uuid-1', version: '6.5.3' },
 });
 
 describe('uploadErrorReport', () => {
@@ -123,6 +123,22 @@ describe('uploadErrorReport', () => {
     expect((form.get('system_log') as Blob).size).toBe(
       '\n===\nfluxrobotd.log\n===\nrobot\n===\nplayerd.log\n===\n<playerd.log not downloaded: TIMEOUT>\n'.length,
     );
+  });
+
+  test('device override: its serial and firmware are used, log of another machine never read', async () => {
+    await expect(
+      uploadErrorReport({
+        device: { serial: 'SN-OTHER', uuid: 'uuid-2', version: '5.0.0' } as any,
+        errorCode: 'CONNECTION_TIMEOUT',
+      }),
+    ).resolves.toBe('sent');
+
+    const form = mockPost.mock.calls[0][1] as FormData;
+
+    expect(form.get('serial')).toBe('SN-OTHER');
+    expect(form.get('firmware_version')).toBe('5.0.0');
+    expect(form.has('system_log')).toBe(false);
+    expect(mockGetLogsTexts).not.toHaveBeenCalled();
   });
 
   test('device log failure is logged and does not block the upload', async () => {

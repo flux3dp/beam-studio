@@ -29,7 +29,7 @@ export const withErrorReportConsent = (alert: IAlert, options: UploadErrorReport
   try {
     const preference = getErrorReportPreference();
 
-    if (preference === 'never' || getUploadBlock(options.errorCode)) return alert;
+    if (preference === 'never' || getUploadBlock(options)) return alert;
 
     return match(preference)
       .with('always', () => {

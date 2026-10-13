@@ -464,7 +464,7 @@ export interface ILang {
         message: string;
         title: string;
       };
-      backend_connect_failed_ask_to_upload: string;
+      backend_connect_failed: string;
       backend_error_hint: string;
       both_power_and_speed_too_high: string;
       bug_report: string;
