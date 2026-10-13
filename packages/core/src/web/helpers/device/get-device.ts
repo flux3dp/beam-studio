@@ -1,9 +1,7 @@
-import Alert from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
-import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import checkSoftwareForAdor from '@core/helpers/check-software';
@@ -97,12 +95,8 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
           isWorkareaMatched = await showResizeAlert(device);
         }
       } else {
-        Alert.popUp({
-          caption: i18n.lang.alert.oops,
-          id: 'fatal-occurred',
-          message: `#813 ${res.error}`,
-          type: AlertConstants.SHOW_POPUP_ERROR,
-        });
+        // DeviceMaster.select already popped its own error; hand callers null so they stop here
+        device = null;
       }
     }
   } else {
