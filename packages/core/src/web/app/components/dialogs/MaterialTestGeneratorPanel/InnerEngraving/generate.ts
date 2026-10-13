@@ -168,12 +168,13 @@ export const insertMaterialTest = (
   // reversed so the layer list reads in grid order from the top
   [...blocks].reverse().forEach(({ box, info }) => {
     const { layer } = createLayer(info.name, { initConfig: true, parentCmd: batchCmd });
-    const attributes: Record<string, number | string> = { [STL_ATTR.mode]: 'dot' };
 
+    // the test is a dot test; mode and point spacing are layer parameters like the rest
+    writeDataLayer(layer, 'stlMode', 'dot');
     params.forEach((key) => {
       const value = info[key] as number;
 
-      if (key === 'pointSpacing') attributes[STL_ATTR.pointSpacing] = value;
+      if (key === 'pointSpacing') writeDataLayer(layer, 'stlPointSpacing', value);
       else writeDataLayer(layer, key as ConfigKey, value as ConfigKeyTypeMap[ConfigKey]);
 
       // inner engraving is UV only, whose power stands for the frequency
@@ -186,7 +187,7 @@ export const insertMaterialTest = (
     rect.setAttribute('y', String(box.minY));
     rect.setAttribute('width', String(box.maxX - box.minX));
     rect.setAttribute('height', String(box.maxY - box.minY));
-    add3dObject(createExtrusionSource(rect, { depth, unit: 'scene' }), z, attributes, batchCmd);
+    add3dObject(createExtrusionSource(rect, { depth, unit: 'scene' }), z, {}, batchCmd);
   });
 
   const { layer: infoLayer } = createLayer('Material Test - Info', {

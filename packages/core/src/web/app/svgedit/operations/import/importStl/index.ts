@@ -225,7 +225,6 @@ export const insertPointCloudGeometry = async (
     {
       [POINT_CLOUD_ATTR.marker]: String(version),
       [STL_ATTR.kind]: 'point-cloud',
-      [STL_ATTR.mode]: 'dot',
     },
     { historyLabel: 'Import Point Cloud', kind: 'point-cloud' },
   );

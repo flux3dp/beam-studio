@@ -78,21 +78,24 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
     // editable source controls here.
     if (stlObjectKind === 'point-cloud' || elem.hasAttribute(POINT_CLOUD_ATTR.marker)) return [];
 
-    // a projection rect is a `rect`, so without this it would fall into the RectOptions branch below
-    // (corner radius) and get an infill toggle that acts on the rect's own fill
     if (isPhotoPlaneProjection(elem)) {
-      return [<ImageOptions elem={elem} key="image" />, <ThreeDOptions elem={elem} hideEngravingMode key="3d" />];
+      return [<ImageOptions elem={elem} key="image" />, <ThreeDOptions elem={elem} key="3d" />];
     }
 
-    if (isStlProjection(elem) && !threeDSourceOptions.sourceElem) {
-      return [<InFillBlock elems={[elem]} key="3d-infill" />, <ThreeDOptions elem={elem} key="3d" />];
-    }
+    // a projection rect is a `rect`, so without this it would fall into the RectOptions branch below
+    // (corner radius). It has no infill either: how it is engraved, solid included, is set on its layer
+    if (isStlProjection(elem) && !threeDSourceOptions.sourceElem) return [];
 
     const sourceElem = threeDSourceOptions.sourceElem;
     const matchedElem = sourceElem ?? elem;
     const tagName = matchedElem.tagName.toLowerCase();
-    const colorOrInfill = (key = 'infill') =>
-      showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elems={[elem]} key={key} />;
+    const is3d = is3dProjection(elem);
+    // a 3D object's projection fill means nothing: solid is a layer parameter in inner engraving
+    const colorOrInfill = (key = 'infill') => {
+      if (showColorPanel) return <ColorPanel elem={elem} key="color" />;
+
+      return is3d ? null : <InFillBlock elems={[elem]} key={key} />;
+    };
 
     const matchedOptions = match(tagName)
       .with('rect', () => [
@@ -113,7 +116,7 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
         />,
         showColorPanel ? (
           <ColorPanel elem={elem} key="color" />
-        ) : isMobile ? (
+        ) : isMobile && !is3d ? (
           <InFillBlock elems={[elem]} key="fill" />
         ) : null,
       ])
@@ -153,7 +156,7 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
       ])
       .otherwise(() => [colorOrInfill()]);
 
-    return is3dProjection(elem) ? [...matchedOptions, <ThreeDOptions elem={elem} key="3d" />] : matchedOptions;
+    return matchedOptions;
   }, [elem, showColorPanel, showVariableBlock, isMobile, threeDSourceOptions, stlObjectKind]);
 
   return isMobile ? (

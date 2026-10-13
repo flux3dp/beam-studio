@@ -1,65 +1,35 @@
 import type { EngravingMode } from '@core/app/constants/innerEngraving';
-import { DEFAULT_LAYER_HEIGHT, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import { STL_ATTR } from './constants';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
+import { DEFAULT_LAYER_SPACING, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 
 /**
- * The engraving parameters of an STL object, read off its projection rect.
+ * The engraving parameters that apply to a 3D object: those of the layer it sits in.
  *
- * These live on the rect rather than in the STL store because they are what the **backend** reads:
- * the rect is what ends up in the svg string sent to swiftray, so keeping them anywhere else would
- * mean a second serialization path. It also means undo comes for free through svgedit's attribute
- * commands.
- *
- * Infill is deliberately absent here: it is the rect's own `fill`, handled by the shared
- * `InFillBlock`, so there is one fill concept in the app rather than two.
+ * They are layer parameters (data-stl-* on the layer group, see `innerEngravingConfigKeys`) because
+ * the dot / line choice decides which laser parameters fit, and Swiftray reads them off the layer.
  */
 export interface StlEngravingParams {
-  layerHeight: number;
-  /** `null` keeps fixed-height slicing; a positive value enables adaptive slicing. */
-  minLayerHeight: null | number;
+  layerSpacing: number;
+  /** `null` keeps fixed spacing; a positive value enables adaptive slicing in line mode. */
+  minLayerSpacing: null | number;
   mode: EngravingMode;
   pointSpacing: number;
+  solid: boolean;
 }
 
-/** A positive number from an attribute, or the default when it is absent, unparseable or <= 0. */
-const readPositive = (value: null | string, fallback: number): number => {
-  const parsed = Number(value);
-
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
-};
-
-/** A positive number from an opt-in attribute, or null when the feature is disabled. */
-const readOptionalPositive = (value: null | string): null | number => {
-  const parsed = Number(value);
-
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
-};
+const positiveOr = (value: number | undefined, fallback: number): number =>
+  value !== undefined && Number.isFinite(value) && value > 0 ? value : fallback;
 
 export const getStlEngravingParams = (elem: Element): StlEngravingParams => {
-  return {
-    layerHeight: readPositive(elem.getAttribute(STL_ATTR.layerHeight), DEFAULT_LAYER_HEIGHT),
-    minLayerHeight: readOptionalPositive(elem.getAttribute(STL_ATTR.minLayerHeight)),
-    mode: elem.getAttribute(STL_ATTR.mode) === 'dot' ? 'dot' : 'line',
-    pointSpacing: readPositive(elem.getAttribute(STL_ATTR.pointSpacing), DEFAULT_POINT_SPACING),
-  };
-};
+  const layer = getObjectLayer(elem as SVGElement)?.elem ?? null;
+  const minLayerSpacing = getData(layer, 'stlMinLayerSpacing');
 
-/**
- * Write one parameter, with undo.
- *
- * Goes through `changeSelectedAttribute` rather than `setAttribute` so the change lands in svgedit's
- * history like any other attribute edit — a 3D transform needs its own command (the mesh is not in
- * the DOM), but these are plain attributes on an element that is.
- */
-export const setStlEngravingParam = (elem: Element, attr: string, value: number | string): void => {
-  svgCanvas.changeSelectedAttribute(attr, value, [elem]);
+  return {
+    layerSpacing: positiveOr(getData(layer, 'stlLayerSpacing'), DEFAULT_LAYER_SPACING),
+    minLayerSpacing: minLayerSpacing !== undefined && minLayerSpacing > 0 ? minLayerSpacing : null,
+    mode: getData(layer, 'stlMode') === 'line' ? 'line' : 'dot',
+    pointSpacing: positiveOr(getData(layer, 'stlPointSpacing'), DEFAULT_POINT_SPACING),
+    solid: Boolean(getData(layer, 'stlSolid')),
+  };
 };

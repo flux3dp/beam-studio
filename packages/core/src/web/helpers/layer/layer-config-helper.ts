@@ -9,6 +9,7 @@ import {
   printingModules,
   UVModules,
 } from '@core/app/constants/layer-module/layer-modules';
+import { DEFAULT_LAYER_SPACING, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { getEngraveDpmm, getPrintingDpmm } from '@core/app/constants/resolutions';
 import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-constants';
@@ -96,6 +97,12 @@ export const attributeMap: Record<ConfigKey, string> = {
   scJerk: 'data-scJerk',
   speed: 'data-speed',
   split: 'data-split',
+  // inner engraving: the same names Swiftray reads off the layer
+  stlLayerSpacing: 'data-stl-layer-spacing',
+  stlMinLayerSpacing: 'data-stl-min-layer-spacing',
+  stlMode: 'data-stl-mode',
+  stlPointSpacing: 'data-stl-point-spacing',
+  stlSolid: 'data-stl-solid',
   texture: 'data-texture',
   textureMode: 'data-textureMode',
   textureRandomIntensity: 'data-textureRandomIntensity',
@@ -257,6 +264,7 @@ export const booleanConfig: ConfigKey[] = [
   'texture',
   'focusReverse',
   'focusStepReverse',
+  'stlSolid',
 ] as const;
 export const optionalNumberConfigs: ConfigKey[] = ['printingTopPadding', 'printingBotPadding'] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
@@ -286,6 +294,12 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'fillDwellAdaptive',
   'wobbleDiameter',
   'wobbleStep',
+  // inner engraving
+  'stlMode',
+  'stlPointSpacing',
+  'stlLayerSpacing',
+  'stlMinLayerSpacing',
+  'stlSolid',
   // UV
   'interpolation',
   'rightPadding',
@@ -302,6 +316,11 @@ export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'dottingTime',
   'frequency',
   'pulseWidth',
+  'stlMode',
+  'stlPointSpacing',
+  'stlLayerSpacing',
+  'stlMinLayerSpacing',
+  'stlSolid',
 ]);
 
 export const laserConfigKeys: ConfigKey[] = [
@@ -352,6 +371,30 @@ export const promarkConfigKeys: ConfigKey[] = [
   'wobbleStep',
   'wobbleDiameter',
 ] as const;
+
+/** Written on Promark layers only while inner engraving is on, so 2D layers never carry them. */
+export const innerEngravingConfigKeys: ConfigKey[] = [
+  'stlMode',
+  'stlPointSpacing',
+  'stlLayerSpacing',
+  'stlMinLayerSpacing',
+  'stlSolid',
+] as const;
+
+/**
+ * Layer defaults while inner engraving is on: the K9 crystal contour-dotting preset. The frequency
+ * stands for the UV power (see uvPowerFrequency.ts), so the power is derived from it.
+ */
+const innerEngravingDefaults: Partial<ConfigKeyTypeMap> = {
+  dottingTime: 150,
+  frequency: 110,
+  speed: 180,
+  stlLayerSpacing: DEFAULT_LAYER_SPACING,
+  stlMinLayerSpacing: 0,
+  stlMode: 'dot',
+  stlPointSpacing: DEFAULT_POINT_SPACING,
+  stlSolid: false,
+};
 
 // Forced Keys: If not set, use default value
 export const forcedKeys = ['speed', 'power', 'ink', 'multipass', 'halftone', 'repeat'] as const;
@@ -429,7 +472,9 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
       )
       .otherwise(() => config.pulseWidth);
 
-    // UV power stands for its frequency (40kHz), so the two have to agree
+    if (isInnerEngravingActive()) Object.assign(config, innerEngravingDefaults);
+
+    // UV power stands for its frequency, so the two have to agree
     if (promarkInfo.laserType === LaserType.UV) config.power = uvFrequencyToPower(config.frequency!);
   }
 
@@ -465,7 +510,7 @@ export const getData = <T extends ConfigKey>(
     attr = attributeMap.printingSpeed;
   }
 
-  if (['clipRect', 'color', 'configName', 'dpi'].includes(key)) {
+  if (['clipRect', 'color', 'configName', 'dpi', 'stlMode'].includes(key)) {
     return (layer.getAttribute(attr) || defaultConfig[key]) as ConfigKeyTypeMap[T];
   }
 
@@ -667,6 +712,13 @@ export const initLayerConfig = (layer: Element): void => {
   }
 };
 
+/** Every key with an attribute, except the inner engraving ones outside inner engraving. */
+const getReadableConfigKeys = (): ConfigKey[] => {
+  const keys = Object.keys(attributeMap) as ConfigKey[];
+
+  return isInnerEngravingActive() ? keys : keys.filter((key) => !innerEngravingConfigKeys.includes(key));
+};
+
 /** @param base the base layer's name, or its group element — which may be a detached (e.g. just-deleted) node */
 export const cloneLayerConfig = (targetLayerName: string, base: Element | string): void => {
   const targetLayer = getLayerElementByName(targetLayerName);
@@ -678,7 +730,7 @@ export const cloneLayerConfig = (targetLayerName: string, base: Element | string
   if (!baseLayer) {
     initLayerConfig(targetLayer);
   } else {
-    const keys = Object.keys(attributeMap) as ConfigKey[];
+    const keys = getReadableConfigKeys();
 
     for (const key of keys) {
       if (booleanConfig.includes(key)) {
@@ -699,7 +751,7 @@ export const getLayerConfig = (layerName: string): ILayerConfig | null => {
   if (!layer) return null;
 
   const data: Partial<ILayerConfig> = {};
-  const keys = Object.keys(attributeMap) as ConfigKey[];
+  const keys = getReadableConfigKeys();
 
   for (const key of keys) {
     // @ts-expect-error type mismatch
@@ -713,7 +765,7 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
   const layers = layerNames.map((layerName) => getLayerElementByName(layerName)).filter(Boolean);
   const currentLayerIdx = currentLayerName ? layerNames.indexOf(currentLayerName) : -1;
   const data = {};
-  const keys = Object.keys(attributeMap) as ConfigKey[];
+  const keys = getReadableConfigKeys();
 
   for (const key of keys) {
     // @ts-expect-error type mismatch
@@ -770,7 +822,7 @@ export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
   const workarea = useDocumentStore.getState().workarea;
 
   if (promarkModels.has(workarea)) {
-    return promarkConfigKeys;
+    return isInnerEngravingActive() ? [...promarkConfigKeys, ...innerEngravingConfigKeys] : promarkConfigKeys;
   }
 
   if (printingModules.has(module)) {

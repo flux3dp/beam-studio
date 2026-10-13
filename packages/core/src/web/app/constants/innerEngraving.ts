@@ -79,20 +79,19 @@ export const DEFAULT_MATERIAL = {
 } as const;
 
 /**
- * Per-object engraving parameters.
+ * Inner engraving parameters of a layer (data-stl-* on the layer group).
  *
- * Kept per object rather than per layer, which is what the panel edits and what swiftray reads
- * first. It falls back to the layer when an attribute is absent, so both models remain compatible.
- *
- * The defaults here are only what the panel shows for a fresh object; the backend has its own
- * matching defaults for the absent case, so the two must be kept in step.
+ * They decide how every 3D object in the layer is engraved, because the dot / line choice decides
+ * which laser parameters fit. Swiftray reads them off the layer and has the same defaults for an
+ * absent attribute (toolpath-exporter.cpp), so the two must be kept in step. The defaults are the
+ * values measured on K9 crystal (2026-10).
  */
 export const ENGRAVING_MODES = ['line', 'dot'] as const;
 
 export type EngravingMode = (typeof ENGRAVING_MODES)[number];
 
-/** Millimetres. These ranges are provisional until verified on real hardware. */
-export const DEFAULT_LAYER_HEIGHT = 0.1;
-export const DEFAULT_POINT_SPACING = 0.1;
-export const LAYER_HEIGHT_LIMIT = { max: 5, min: 0.001 } as const;
+/** Millimetres. The spacing is the Z step in line mode and the inward-shell step in solid dot mode. */
+export const DEFAULT_LAYER_SPACING = 0.04;
+export const DEFAULT_POINT_SPACING = 0.03;
+export const LAYER_SPACING_LIMIT = { max: 5, min: 0.001 } as const;
 export const POINT_SPACING_LIMIT = { max: 5, min: 0.001 } as const;

@@ -1,32 +1,57 @@
-const mockChangeSelectedAttribute = jest.fn();
+const mockGetObjectLayer = jest.fn();
+const mockGetData = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback: (svg: unknown) => void) =>
-    callback({ Canvas: { changeSelectedAttribute: (...args: unknown[]) => mockChangeSelectedAttribute(...args) } }),
+jest.mock('@core/helpers/layer/layer-helper', () => ({
+  getObjectLayer: (...args: unknown[]) => mockGetObjectLayer(...args),
+}));
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
+  getData: (...args: unknown[]) => mockGetData(...args),
 }));
 
-import { getStlEngravingParams, setStlEngravingParam } from './engravingParams';
+import { getStlEngravingParams } from './engravingParams';
 
-describe('engravingParams', () => {
-  beforeEach(() => jest.clearAllMocks());
+describe('getStlEngravingParams', () => {
+  const layer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  let data: Record<string, unknown>;
 
-  test('reads adaptive layer height only from a positive opt-in value', () => {
-    const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-
-    expect(getStlEngravingParams(elem).minLayerHeight).toBeNull();
-
-    elem.setAttribute('data-stl-min-layer-height', '0.025');
-    expect(getStlEngravingParams(elem).minLayerHeight).toBe(0.025);
-
-    elem.setAttribute('data-stl-min-layer-height', '0');
-    expect(getStlEngravingParams(elem).minLayerHeight).toBeNull();
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetObjectLayer.mockReturnValue({ elem: layer, title: 'layer' });
+    data = {};
+    mockGetData.mockImplementation((_layer: Element, key: string) => data[key]);
   });
 
-  test('writes the backend attribute through the undo-aware canvas API', () => {
-    const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+  test('reads the parameters of the object layer', () => {
+    data = { stlLayerSpacing: 0.05, stlMinLayerSpacing: 0.02, stlMode: 'line', stlPointSpacing: 0.04, stlSolid: true };
 
-    setStlEngravingParam(elem, 'data-stl-min-layer-height', 0.025);
+    expect(getStlEngravingParams(elem)).toEqual({
+      layerSpacing: 0.05,
+      minLayerSpacing: 0.02,
+      mode: 'line',
+      pointSpacing: 0.04,
+      solid: true,
+    });
+    expect(mockGetObjectLayer).toHaveBeenCalledWith(elem);
+    expect(mockGetData).toHaveBeenCalledWith(layer, 'stlMode');
+  });
 
-    expect(mockChangeSelectedAttribute).toHaveBeenCalledWith('data-stl-min-layer-height', 0.025, [elem]);
+  test('falls back to the defaults: dot mode, fixed spacing, not solid', () => {
+    data = { stlLayerSpacing: 0, stlMinLayerSpacing: 0, stlPointSpacing: Number.NaN };
+
+    expect(getStlEngravingParams(elem)).toEqual({
+      layerSpacing: 0.04,
+      minLayerSpacing: null,
+      mode: 'dot',
+      pointSpacing: 0.03,
+      solid: false,
+    });
+  });
+
+  test('an object outside any layer gets the defaults', () => {
+    mockGetObjectLayer.mockReturnValue(null);
+
+    expect(getStlEngravingParams(elem).mode).toBe('dot');
+    expect(mockGetData).toHaveBeenCalledWith(null, 'stlMode');
   });
 });

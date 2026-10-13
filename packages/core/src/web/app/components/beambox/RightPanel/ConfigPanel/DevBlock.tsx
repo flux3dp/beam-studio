@@ -4,6 +4,7 @@ import { Collapse, ConfigProvider } from 'antd';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/shallow';
 
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import { laserModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -18,6 +19,7 @@ import LaserDevOptions from './LaserDevOptions';
 import MinPadding from './MinPadding';
 import NozzleBlock from './NozzleBlock';
 import PrintingPaddingBlock from './PrintingPaddingBlock';
+import QPulseWidthBlock from './QPulseWidthBlock';
 import RefreshThresholdBlock from './RefreshThresholdBlock';
 import SCurveBlock from './SCurveBlock';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
@@ -48,6 +50,9 @@ const DevBlock = ({ type = 'default' }: Props): React.ReactNode => {
   if (isCustomBacklashEnabled) contents.push(<Backlash key="backlash" type={type} />);
 
   if (isLaser) contents.push(<LaserDevOptions key="laser-dev-options" />);
+
+  // UV fixes it at 1; it renders only for a UV source (getPromarkLimit has no limit otherwise)
+  if (promarkModels.has(workarea)) contents.push(<QPulseWidthBlock key="q-pulse-width" type={type} />);
 
   contents.push(<MinPadding key="min-padding" type={type} />);
 

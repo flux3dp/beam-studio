@@ -17,6 +17,11 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 }));
 
 const mockUseIsPromarkUV = jest.fn();
+const mockUseInnerEngravingActive = jest.fn();
+
+jest.mock('@core/helpers/addOn/innerEngraving', () => ({
+  useInnerEngravingActive: () => mockUseInnerEngravingActive(),
+}));
 
 jest.mock('./usePromarkLimit', () => ({
   useIsPromarkUV: () => mockUseIsPromarkUV(),
@@ -127,6 +132,7 @@ describe('test AdvancedSettingModal', () => {
     });
     mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
     mockUseIsPromarkUV.mockReturnValue(false);
+    mockUseInnerEngravingActive.mockReturnValue(false);
   });
 
   it('should render correctly', () => {
@@ -223,6 +229,42 @@ describe('test AdvancedSettingModal', () => {
         power: { hasMultiValue: false, value: expect.closeTo(40) },
       }),
     );
+  });
+
+  describe('inner engraving', () => {
+    const withMode = (mode: 'dot' | 'line') =>
+      mockGetState.mockReturnValue({
+        ...mockGetState(),
+        stlLayerSpacing: { hasMultiValue: false, value: 0.04 },
+        stlMinLayerSpacing: { hasMultiValue: false, value: 0 },
+        stlMode: { hasMultiValue: false, value: mode },
+        stlSolid: { hasMultiValue: false, value: false },
+      });
+
+    beforeEach(() => mockUseInnerEngravingActive.mockReturnValue(true));
+
+    test('dot mode has no inner engraving options here (solid is in the panel), nor wobble or fill', () => {
+      withMode('dot');
+
+      const { baseElement } = render(<AdvancedSettingModal onClose={mockOnClose} />);
+
+      expect(baseElement.querySelector('#stlSolid')).toBeNull();
+      expect(baseElement.querySelector('#stlAdaptiveSpacing')).toBeNull();
+      expect(baseElement.querySelector('#wobble')).toBeNull();
+      expect(baseElement.querySelector('#fillAngle')).toBeNull();
+    });
+
+    test('line mode offers adaptive spacing, starting at half the layer spacing', () => {
+      withMode('line');
+
+      const { baseElement, getByText } = render(<AdvancedSettingModal onClose={mockOnClose} />);
+
+      fireEvent.click(baseElement.querySelector('#stlAdaptiveSpacing')!);
+      expect(baseElement.querySelector('#stlMinLayerSpacing')).not.toBeNull();
+      fireEvent.click(getByText('Save'));
+
+      expect(mockWriteDataLayer).toHaveBeenCalledWith('layer1', 'stlMinLayerSpacing', 0.02, { batchCmd: mockBatchCmd });
+    });
   });
 
   test('cancel should work', () => {

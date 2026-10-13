@@ -3,10 +3,12 @@ import React, { useMemo, useState } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Modal, Switch, Tooltip } from 'antd';
 
+import { DEFAULT_LAYER_SPACING, LAYER_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev, { isUvDev2, mockT } from '@core/helpers/is-dev';
 import { CUSTOM_PRESET_CONSTANT, getPromarkLimit, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
@@ -16,6 +18,7 @@ import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig';
 
 import styles from './AdvancedSettingModal.module.scss';
+import getInnerEngravingBlocks from './getInnerEngravingBlocks';
 import initState from './initState';
 import Input from './Input';
 import { useIsPromarkUV } from './usePromarkLimit';
@@ -30,9 +33,11 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       right_panel: { laser_panel: t },
     },
     global: tGlobal,
+    inner_engraving_settings: tInnerEngraving,
   } = useI18n();
   const { getState, update } = useConfigPanelStore();
   const state = getState();
+  const isInnerEngraving = useInnerEngravingActive();
   const [draftValue, setDraftValue] = useState({
     biDirectional: state.biDirectional,
     crossHatch: state.crossHatch,
@@ -45,10 +50,19 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
     focusStep: state.focusStep,
     focusStepReverse: state.focusStepReverse,
     frequency: state.frequency,
+    // absent outside inner engraving, where they are neither shown nor saved
+    ...(isInnerEngraving && { stlMinLayerSpacing: state.stlMinLayerSpacing }),
     wobbleDiameter: state.wobbleDiameter,
     wobbleStep: state.wobbleStep,
   });
   const isDevMode = useMemo(() => isDev(), []);
+  // inner engraving: adaptive spacing is a line-mode option (solid sits in the panel itself); there
+  // are no filled paths and no wobble
+  const { line: showAdaptiveSpacing } = getInnerEngravingBlocks(state, {
+    hasStlPhoto: false,
+    isInnerEngraving: isInnerEngraving && state.stlMode !== undefined,
+  });
+  const layerSpacing = state.stlLayerSpacing?.value ?? DEFAULT_LAYER_SPACING;
   // UV sets its power through the frequency, so the frequency lives here instead of the main panel
   const isPromarkUV = useIsPromarkUV();
   const frequencyLimit = useMemo(() => getPromarkLimit().frequency, []);
@@ -70,6 +84,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       'focusReverse',
       'focusStep',
       'focusStepReverse',
+      ...(isInnerEngraving ? (['stlMinLayerSpacing'] as const) : []),
     ] as const;
 
     const batchCmd = new history.BatchCommand('Change advanced setting');
@@ -83,8 +98,12 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       const layer = getLayerByName(layerName)!;
 
       keys.forEach((key) => {
-        if (state[key].value !== draftValue[key].value || state[key].hasMultiValue !== draftValue[key].hasMultiValue) {
-          writeDataLayer(layer, key, draftValue[key].value, { batchCmd });
+        const draft = draftValue[key];
+
+        if (!draft) return;
+
+        if (state[key].value !== draft.value || state[key].hasMultiValue !== draft.hasMultiValue) {
+          writeDataLayer(layer, key, draft.value, { batchCmd });
         }
       });
 
@@ -131,6 +150,15 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
   const fillDwellOn = draftValue.fillDwellTime.value > 0;
   const setFillDwell = (on: boolean) => {
     handleValueChange('fillDwellTime', Math.abs(draftValue.fillDwellTime.value) * (on ? 1 : -1));
+  };
+
+  // adaptive spacing is on while the minimum spacing is positive, starting at half the layer spacing
+  const adaptiveSpacingOn = (draftValue.stlMinLayerSpacing?.value ?? 0) > 0;
+  const setAdaptiveSpacing = (on: boolean) => {
+    handleValueChange(
+      'stlMinLayerSpacing',
+      on ? Math.max(LAYER_SPACING_LIMIT.min, Math.round((layerSpacing / 2) * 1000) / 1000) : 0,
+    );
   };
 
   // wobble on/off is encoded by the sign of wobbleStep/wobbleDiameter
@@ -257,142 +285,180 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
             )}
           </>
         )}
-        <div>
-          <span>
-            <label htmlFor="wobble">{t.wobble}</label>
-            <Tooltip title={t.wobble_desc}>
-              <QuestionCircleOutlined className={styles.hint} />
-            </Tooltip>
-          </span>
-          <Switch checked={wobbleOn} id="wobble" onChange={setWobble} />
-        </div>
-        {wobbleOn && (
+        {showAdaptiveSpacing && (
           <>
             <div>
-              <span>{t.wobble_step}</span>
-              <Input
-                hasMultiValue={draftValue.wobbleStep.hasMultiValue}
-                id="wobbleStep"
-                isInch={false}
-                max={1}
-                min={0.01}
-                onChange={(value) => handleValueChange('wobbleStep', value)}
-                precision={2}
-                step={0.01}
-                unit="mm"
-                value={draftValue.wobbleStep.value}
+              <span>
+                <label htmlFor="stlAdaptiveSpacing">{tInnerEngraving.adaptive_layer_height}</label>
+                <Tooltip title={tInnerEngraving.adaptive_layer_height_hint}>
+                  <QuestionCircleOutlined className={styles.hint} />
+                </Tooltip>
+              </span>
+              <Switch
+                checked={adaptiveSpacingOn}
+                disabled={layerSpacing <= LAYER_SPACING_LIMIT.min}
+                id="stlAdaptiveSpacing"
+                onChange={setAdaptiveSpacing}
               />
             </div>
-            <div>
-              <span>{t.wobble_diameter}</span>
-              <Input
-                hasMultiValue={draftValue.wobbleDiameter.hasMultiValue}
-                id="wobbleDiameter"
-                isInch={false}
-                max={1}
-                min={0.1}
-                onChange={(value) => handleValueChange('wobbleDiameter', value)}
-                precision={1}
-                step={0.1}
-                unit="mm"
-                value={draftValue.wobbleDiameter.value}
-              />
-            </div>
+            {adaptiveSpacingOn && (
+              <div>
+                <span>{tInnerEngraving.min_layer_height}</span>
+                <Input
+                  hasMultiValue={draftValue.stlMinLayerSpacing?.hasMultiValue}
+                  id="stlMinLayerSpacing"
+                  isInch={false}
+                  max={Math.max(LAYER_SPACING_LIMIT.min, layerSpacing - LAYER_SPACING_LIMIT.min)}
+                  min={LAYER_SPACING_LIMIT.min}
+                  onChange={(value) => handleValueChange('stlMinLayerSpacing', value)}
+                  precision={3}
+                  unit="mm"
+                  value={draftValue.stlMinLayerSpacing?.value ?? 0}
+                />
+              </div>
+            )}
           </>
         )}
-        <div className={styles.subtitle}>{t.fill_setting}</div>
-        <div className={styles.hint}>{t.filled_path_only}</div>
-        <div>
-          <span>{t.fill_angle}</span>
-          <Input
-            hasMultiValue={draftValue.fillAngle.hasMultiValue}
-            id="fillAngle"
-            isInch={false}
-            max={360}
-            min={-360}
-            onChange={(value) => handleValueChange('fillAngle', value)}
-            precision={1}
-            unit="deg"
-            value={draftValue.fillAngle.value}
-          />
-        </div>
-        <div>
-          <label htmlFor="biDirectional">{t.bi_directional}</label>
-          <Switch
-            checked={draftValue.biDirectional.value}
-            id="biDirectional"
-            onChange={(value) => handleValueChange('biDirectional', value)}
-          />
-        </div>
-        <div>
-          <label htmlFor="crossHatch">{t.cross_hatch}</label>
-          <Switch
-            checked={draftValue.crossHatch.value}
-            id="crossHatch"
-            onChange={(value) => handleValueChange('crossHatch', value)}
-          />
-        </div>
-        {showFillHeatTest && (
+        {!isInnerEngraving && (
           <>
             <div>
               <span>
-                <label htmlFor="fillStagger">{mockT('雕刻間隔')}</label>
-                <Tooltip title={mockT('把掃描線分成 N 組交錯雕刻，避免長時間連續停留在同一小範圍。1 為關閉')}>
+                <label htmlFor="wobble">{t.wobble}</label>
+                <Tooltip title={t.wobble_desc}>
                   <QuestionCircleOutlined className={styles.hint} />
                 </Tooltip>
               </span>
+              <Switch checked={wobbleOn} id="wobble" onChange={setWobble} />
+            </div>
+            {wobbleOn && (
+              <>
+                <div>
+                  <span>{t.wobble_step}</span>
+                  <Input
+                    hasMultiValue={draftValue.wobbleStep.hasMultiValue}
+                    id="wobbleStep"
+                    isInch={false}
+                    max={1}
+                    min={0.01}
+                    onChange={(value) => handleValueChange('wobbleStep', value)}
+                    precision={2}
+                    step={0.01}
+                    unit="mm"
+                    value={draftValue.wobbleStep.value}
+                  />
+                </div>
+                <div>
+                  <span>{t.wobble_diameter}</span>
+                  <Input
+                    hasMultiValue={draftValue.wobbleDiameter.hasMultiValue}
+                    id="wobbleDiameter"
+                    isInch={false}
+                    max={1}
+                    min={0.1}
+                    onChange={(value) => handleValueChange('wobbleDiameter', value)}
+                    precision={1}
+                    step={0.1}
+                    unit="mm"
+                    value={draftValue.wobbleDiameter.value}
+                  />
+                </div>
+              </>
+            )}
+            <div className={styles.subtitle}>{t.fill_setting}</div>
+            <div className={styles.hint}>{t.filled_path_only}</div>
+            <div>
+              <span>{t.fill_angle}</span>
               <Input
-                hasMultiValue={draftValue.fillStagger.hasMultiValue}
-                id="fillStagger"
+                hasMultiValue={draftValue.fillAngle.hasMultiValue}
+                id="fillAngle"
                 isInch={false}
-                max={100}
-                min={1}
-                onChange={(value) => handleValueChange('fillStagger', value)}
-                precision={0}
-                value={draftValue.fillStagger.value}
+                max={360}
+                min={-360}
+                onChange={(value) => handleValueChange('fillAngle', value)}
+                precision={1}
+                unit="deg"
+                value={draftValue.fillAngle.value}
               />
             </div>
             <div>
-              <span>
-                <label htmlFor="fillDwell">{mockT('每行停留')}</label>
-                <Tooltip title={mockT('每雕刻完一行後暫停，讓材料散熱')}>
-                  <QuestionCircleOutlined className={styles.hint} />
-                </Tooltip>
-              </span>
-              <Switch checked={fillDwellOn} id="fillDwell" onChange={setFillDwell} />
+              <label htmlFor="biDirectional">{t.bi_directional}</label>
+              <Switch
+                checked={draftValue.biDirectional.value}
+                id="biDirectional"
+                onChange={(value) => handleValueChange('biDirectional', value)}
+              />
             </div>
-            {fillDwellOn && (
+            <div>
+              <label htmlFor="crossHatch">{t.cross_hatch}</label>
+              <Switch
+                checked={draftValue.crossHatch.value}
+                id="crossHatch"
+                onChange={(value) => handleValueChange('crossHatch', value)}
+              />
+            </div>
+            {showFillHeatTest && (
               <>
                 <div>
-                  <span>{mockT('停留時間')}</span>
+                  <span>
+                    <label htmlFor="fillStagger">{mockT('雕刻間隔')}</label>
+                    <Tooltip title={mockT('把掃描線分成 N 組交錯雕刻，避免長時間連續停留在同一小範圍。1 為關閉')}>
+                      <QuestionCircleOutlined className={styles.hint} />
+                    </Tooltip>
+                  </span>
                   <Input
-                    hasMultiValue={draftValue.fillDwellTime.hasMultiValue}
-                    id="fillDwellTime"
+                    hasMultiValue={draftValue.fillStagger.hasMultiValue}
+                    id="fillStagger"
                     isInch={false}
-                    max={1000000}
+                    max={100}
                     min={1}
-                    onChange={(value) => handleValueChange('fillDwellTime', value)}
+                    onChange={(value) => handleValueChange('fillStagger', value)}
                     precision={0}
-                    step={1000}
-                    unit="us"
-                    value={draftValue.fillDwellTime.value}
+                    value={draftValue.fillStagger.value}
                   />
                 </div>
                 <div>
                   <span>
-                    <label htmlFor="fillDwellAdaptive">{mockT('依雕刻時間調整')}</label>
-                    <Tooltip title={mockT('扣掉本行實際雕刻所花的時間，本行夠長就少等一點')}>
+                    <label htmlFor="fillDwell">{mockT('每行停留')}</label>
+                    <Tooltip title={mockT('每雕刻完一行後暫停，讓材料散熱')}>
                       <QuestionCircleOutlined className={styles.hint} />
                     </Tooltip>
                   </span>
-                  <Switch
-                    checked={draftValue.fillDwellAdaptive.value}
-                    className={styles.switch}
-                    id="fillDwellAdaptive"
-                    onChange={(value) => handleValueChange('fillDwellAdaptive', value)}
-                    size="small"
-                  />
+                  <Switch checked={fillDwellOn} id="fillDwell" onChange={setFillDwell} />
                 </div>
+                {fillDwellOn && (
+                  <>
+                    <div>
+                      <span>{mockT('停留時間')}</span>
+                      <Input
+                        hasMultiValue={draftValue.fillDwellTime.hasMultiValue}
+                        id="fillDwellTime"
+                        isInch={false}
+                        max={1000000}
+                        min={1}
+                        onChange={(value) => handleValueChange('fillDwellTime', value)}
+                        precision={0}
+                        step={1000}
+                        unit="us"
+                        value={draftValue.fillDwellTime.value}
+                      />
+                    </div>
+                    <div>
+                      <span>
+                        <label htmlFor="fillDwellAdaptive">{mockT('依雕刻時間調整')}</label>
+                        <Tooltip title={mockT('扣掉本行實際雕刻所花的時間，本行夠長就少等一點')}>
+                          <QuestionCircleOutlined className={styles.hint} />
+                        </Tooltip>
+                      </span>
+                      <Switch
+                        checked={draftValue.fillDwellAdaptive.value}
+                        className={styles.switch}
+                        id="fillDwellAdaptive"
+                        onChange={(value) => handleValueChange('fillDwellAdaptive', value)}
+                        size="small"
+                      />
+                    </div>
+                  </>
+                )}
               </>
             )}
           </>

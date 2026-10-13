@@ -109,7 +109,7 @@ export const generatePhotoPointCloud = async (
   const imageData = await loadRasterData(source);
   const positions = createPhotoPointPositions(imageData, {
     heightMm,
-    layerHeight: params.layerHeight,
+    layerHeight: params.layerSpacing,
     pointSpacing: params.pointSpacing,
     widthMm,
   });

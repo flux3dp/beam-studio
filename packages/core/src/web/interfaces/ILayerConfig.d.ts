@@ -1,5 +1,5 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import type { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
+import type { LaserType, mopaWatts, promarkWatts, uvWatts } from '@core/app/constants/promark-constants';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
@@ -145,8 +145,22 @@ type PromarkConfig = {
   wobbleStep: number;
 };
 
+/** Inner engraving (3D objects), written on the layer only while the mode is active */
+type InnerEngravingConfig = {
+  stlMode: 'dot' | 'line';
+  /** mm, > 0 opts line-mode slicing into adaptive spacing down to this value, 0 for off */
+  stlMinLayerSpacing: number;
+  /** mm, Z step in line mode, inward-shell step in solid dot mode */
+  stlLayerSpacing: number;
+  /** mm, blue-noise dot distance on a surface, and the dot pitch of a photo */
+  stlPointSpacing: number;
+  /** dot mode only: also dot inward shells */
+  stlSolid: boolean;
+};
+
 export type ConfigKeyTypeMap = CommonConfig &
   CurveEngravingConfig &
+  InnerEngravingConfig &
   LaserConfig &
   MetaConfig &
   PrintingConfig &
@@ -182,7 +196,9 @@ export type Preset = Partial<ConfigKeyTypeMap> & {
 
 type TPromarkDesktop = `${LaserType.Desktop}_${(typeof promarkWatts)[number]}`;
 type TPromarkMopa = `${LaserType.MOPA}_${(typeof mopaWatts)[number]}`;
+type TPromarkUV = `${LaserType.UV}_${(typeof uvWatts)[number]}`;
 
-export type PromarkModel = `fpm1_${TPromarkDesktop | TPromarkMopa}`;
+/** `fpm1_inner_engraving`: an inner engraving document has presets of its own, see getPresetModel */
+export type PromarkModel = 'fpm1_inner_engraving' | `fpm1_${TPromarkDesktop | TPromarkMopa | TPromarkUV}`;
 export type FHX2RFPresetModel = `fhx2rf_${Hexa2RfWatt}`;
 export type PresetModel = FHX2RFPresetModel | PromarkModel | WorkAreaModel;

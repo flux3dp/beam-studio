@@ -634,6 +634,9 @@ export interface ILang {
             gloss_leather_printing: string;
             gold_engraving: string;
             iron_engraving: string;
+            k9_crystal_contour_dot: string;
+            k9_crystal_contour_line: string;
+            k9_crystal_solid_dot: string;
             leather_3mm_cutting: string;
             leather_5mm_cutting: string;
             leather_engraving: string;
@@ -708,6 +711,9 @@ export interface ILang {
             gloss_leather_printing: string;
             gold_engraving: string;
             iron_engraving: string;
+            k9_crystal_contour_dot: string;
+            k9_crystal_contour_line: string;
+            k9_crystal_solid_dot: string;
             leather_3mm_cutting: string;
             leather_5mm_cutting: string;
             leather_engraving: string;

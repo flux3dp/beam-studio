@@ -7,6 +7,7 @@ import { updateProjectionRect } from '@core/app/components/beambox/InnerEngravin
 import { getMatrix, IDENTITY_TRANSFORM } from '@core/app/components/beambox/InnerEngraving/utils/transform';
 import type { StlObject, StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { getHref } from '@core/app/svgedit/utils/href';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -72,7 +73,7 @@ export const detachPhotoPlaneElements = (): (() => void) => {
  */
 export const preparePhotoPlaneElementsForExport = (): (() => void) => {
   const photos = Array.from(document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_3D_ATTR.marker}]`));
-  const temporaryAttributes = [STL_ATTR.kind, STL_ATTR.marker, STL_ATTR.mode];
+  const temporaryAttributes = [STL_ATTR.kind, STL_ATTR.marker];
   const annotated = photos
     .filter((elem) => !elem.hasAttribute(POINT_CLOUD_ATTR.marker))
     .map((elem) => {
@@ -80,7 +81,6 @@ export const preparePhotoPlaneElementsForExport = (): (() => void) => {
 
       elem.setAttribute(STL_ATTR.kind, 'photo');
       elem.setAttribute(STL_ATTR.marker, '1');
-      elem.setAttribute(STL_ATTR.mode, 'dot');
 
       return { elem, previous };
     });
@@ -101,7 +101,6 @@ export const preparePhotoPlaneElementsForExport = (): (() => void) => {
       placeholder.setAttribute('stroke', '#000');
       placeholder.setAttribute(STL_ATTR.kind, 'point-cloud');
       placeholder.setAttribute(STL_ATTR.marker, '1');
-      placeholder.setAttribute(STL_ATTR.mode, 'dot');
       elem.replaceWith(placeholder);
 
       return { elem, next, parent, placeholder };
@@ -161,6 +160,9 @@ export const initializePhotoPlane = (
   elem.setAttribute(PHOTO_3D_ATTR.height, String(heightMm));
   updateProjectionRect(elem, geometry, getMatrix(object), { initialTransform: transform, transform });
   useStlStore.getState().set(object);
+  // the marker only exists now, after the image was added: the config panel shows the dot
+  // parameters for any layer holding a photo
+  layerManager.checkGradient();
 
   return object;
 };

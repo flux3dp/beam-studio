@@ -23,9 +23,7 @@ jest.mock('./OptionsBlocks/useThreeDSourceOptions', () => (elem: null | SVGEleme
 
   return { sourceElem };
 });
-jest.mock('./OptionsBlocks/ThreeDOptions', () => ({ hideEngravingMode }: { hideEngravingMode?: boolean }) => (
-  <dummy-three-d-options data-hide-engraving-mode={String(Boolean(hideEngravingMode))} />
-));
+jest.mock('./OptionsBlocks/ThreeDOptions', () => 'dummy-three-d-options');
 jest.mock('./OptionsBlocks/MultiColorOptions', () => 'dummy-multi-color-options');
 jest.mock('./OptionsBlocks/VariableTextBlock', () => 'dummy-variable-text-block');
 jest.mock('./ColorPanel', () => 'dummy-color-panel');
@@ -80,7 +78,7 @@ describe('should render correctly', () => {
     const { container } = render(<OptionsPanel elem={getElem('image')} />);
 
     expect(container.querySelector('dummy-image-options')).toBeInTheDocument();
-    expect(container.querySelector('dummy-three-d-options')).toHaveAttribute('data-hide-engraving-mode', 'true');
+    expect(container.querySelector('dummy-three-d-options')).toBeInTheDocument();
     expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
   });
 
@@ -94,24 +92,25 @@ describe('should render correctly', () => {
     expect(container.querySelector('dummy-three-d-options')).not.toBeInTheDocument();
   });
 
-  test('pure STL shows infill and common 3D options before rect options', () => {
+  // how a 3D object is engraved, solid included, is set on its layer: no infill, no 3D options
+  test('pure STL has no object options', () => {
     document.body.innerHTML = '<rect id="stl" data-stl="1" />';
 
     const { container } = render(<OptionsPanel elem={getElem('stl')} />);
 
-    expect(container.querySelector('dummy-infill-block')).toBeInTheDocument();
-    expect(container.querySelector('dummy-three-d-options')).toBeInTheDocument();
+    expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
+    expect(container.querySelector('dummy-three-d-options')).not.toBeInTheDocument();
     expect(container.querySelector('dummy-rect-options')).not.toBeInTheDocument();
   });
 
-  test('extruded 2D source follows the original match branch and appends common 3D options', () => {
+  test('extruded 2D source keeps its source options without infill', () => {
     document.body.innerHTML = '<rect id="stl" data-stl="1" data-stl-source="source" />';
 
     const { container } = render(<OptionsPanel elem={getElem('stl')} />);
 
     expect(container.querySelector('dummy-rect-options')).toBeInTheDocument();
-    expect(container.querySelector('dummy-infill-block')).toBeInTheDocument();
-    expect(container.querySelector('dummy-three-d-options')).toBeInTheDocument();
+    expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
+    expect(container.querySelector('dummy-three-d-options')).not.toBeInTheDocument();
   });
 
   test('extruded text follows the original text match branch', () => {
@@ -120,7 +119,7 @@ describe('should render correctly', () => {
     const { container } = render(<OptionsPanel elem={getElem('stl')} />);
 
     expect(container.querySelector('dummy-text-options')).toBeInTheDocument();
-    expect(container.querySelector('dummy-three-d-options')).toBeInTheDocument();
+    expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
   });
 
   describe('polygon', () => {

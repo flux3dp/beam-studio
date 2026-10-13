@@ -24,6 +24,12 @@ jest.mock('@core/app/components/beambox/InnerEngraving/utils/transform', () => (
 }));
 jest.mock('@core/app/svgedit/workarea', () => ({ height: 1000, width: 1000 }));
 
+const mockCheckGradient = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  checkGradient: () => mockCheckGradient(),
+}));
+
 import { useStlStore } from '@core/app/stores/stlStore';
 
 import { PHOTO_3D_ATTR, POINT_CLOUD_ATTR } from './constants';
@@ -69,6 +75,23 @@ describe('photoPlane', () => {
       { matrix: true },
       { initialTransform: object.transform, transform: object.transform },
     );
+    // the marker is new, so the config panel's "layer holds a photo" flag is recomputed
+    expect(mockCheckGradient).toHaveBeenCalled();
+  });
+
+  test('places the plane where the caller says', () => {
+    const elem = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+
+    elem.id = 'photo-placed';
+    elem.setAttribute('height', '500');
+    elem.setAttribute('origImage', 'blob:photo');
+    elem.setAttribute('width', '1000');
+    document.getElementById('svgcontent')!.appendChild(elem);
+
+    const object = initializePhotoPlane(elem, { position: [123, 456], scale: 0.5 });
+
+    expect(object.transform.position).toEqual([123, 456, 60]);
+    expect(object.transform.scale).toEqual([0.5, 0.5, 1]);
   });
 
   test('rebuilds a saved photo after its source has been restored', () => {
