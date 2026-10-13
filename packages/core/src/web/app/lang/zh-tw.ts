@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: '切割',
             engraving: '刻印',
             engraving_diode: '刻印（二極體雷射）',
-            engraving_spray: '刻印（噴劑）',
             kiss_cut: '半斷切割',
             marking: '打標',
             marking_dark: '深色打標',

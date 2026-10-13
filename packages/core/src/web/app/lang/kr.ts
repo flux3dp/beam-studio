@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: '절단',
             engraving: '각인',
             engraving_diode: '각인 (다이오드 레이저)',
-            engraving_spray: '각인(스프레이)',
             kiss_cut: '키스컷',
             marking: '마킹',
             marking_dark: '진한 마킹',

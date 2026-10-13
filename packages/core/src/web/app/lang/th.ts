@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: 'ตัด',
             engraving: 'กัดขูด',
             engraving_diode: 'กัดขูด (เลเซอร์ไดโอด)',
-            engraving_spray: 'กัดขูด (สเปรย์)',
             kiss_cut: 'ตัดครึ่งชั้น',
             marking: 'การทำเครื่องหมาย',
             marking_dark: 'ทำเครื่องหมายสีเข้ม',

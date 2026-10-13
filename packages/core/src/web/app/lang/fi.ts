@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: 'leikkaus',
             engraving: 'kaivertaminen',
             engraving_diode: 'kaivertaminen (Diodilaser)',
-            engraving_spray: 'kaivertaminen (spray)',
             kiss_cut: 'puolileikkaus',
             marking: 'merkintä',
             marking_dark: 'tumma merkintä',

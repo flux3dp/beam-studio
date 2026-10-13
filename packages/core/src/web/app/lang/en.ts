@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: 'Cutting',
             engraving: 'Engraving',
             engraving_diode: 'Engraving (Diode Laser)',
-            engraving_spray: 'Engraving (Spray)',
             kiss_cut: 'Kiss Cut',
             marking: 'Marking',
             marking_dark: 'Dark Marking',

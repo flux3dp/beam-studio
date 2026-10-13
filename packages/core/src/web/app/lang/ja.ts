@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: '切断',
             engraving: '彫刻',
             engraving_diode: '彫刻 (ダイオードレーザー)',
-            engraving_spray: '彫刻（スプレー）',
             kiss_cut: 'キスカット',
             marking: 'マーキング',
             marking_dark: '濃いマーキング',

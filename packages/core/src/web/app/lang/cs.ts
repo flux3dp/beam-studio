@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: 'řez',
             engraving: 'gravírování',
             engraving_diode: 'gravírování (diodový laser)',
-            engraving_spray: 'gravírování (sprej)',
             kiss_cut: 'polovýsek',
             marking: 'značení',
             marking_dark: 'tmavé značení',

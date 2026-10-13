@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: 'Potong',
             engraving: 'Ukir',
             engraving_diode: 'Ukir (Laser Diod)',
-            engraving_spray: 'Ukir (Semburan)',
             kiss_cut: 'potongan separa',
             marking: 'Penandaan',
             marking_dark: 'Penandaan Gelap',

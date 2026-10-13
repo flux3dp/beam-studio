@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: 'Cắt',
             engraving: 'Khắc',
             engraving_diode: 'Khắc (Laser điốt)',
-            engraving_spray: 'Khắc (Phun phủ)',
             kiss_cut: 'cắt nửa',
             marking: 'Đánh dấu',
             marking_dark: 'Đánh dấu đậm',

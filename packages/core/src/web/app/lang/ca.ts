@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: 'Tall',
             engraving: 'Gravat',
             engraving_diode: 'Gravat (Làser de díode)',
-            engraving_spray: 'Gravat (esprai)',
             kiss_cut: 'Tall superficial',
             marking: 'Marcatge',
             marking_dark: 'Marcatge fosc',

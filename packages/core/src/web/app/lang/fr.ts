@@ -627,7 +627,6 @@ const lang: ILang = {
             cutting: 'Découpe',
             engraving: 'Gravure',
             engraving_diode: 'Gravure (Laser diode)',
-            engraving_spray: 'Gravure (spray)',
             kiss_cut: 'découpe à mi-chair',
             marking: 'Marquage',
             marking_dark: 'Marquage foncé',

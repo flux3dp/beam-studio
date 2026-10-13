@@ -68,8 +68,8 @@ export const presetNames: Record<string, PresetName> = {
   slate_engraving: { material: 'slate', preset: 'engraving' },
   rubber_bw_engraving: { material: 'rubber', preset: 'engraving' },
   glass_bw_engraving: { material: 'glass', preset: 'engraving' },
-  steel_engraving_spray_engraving: { material: 'metal', preset: 'engraving_spray' },
-  stainless_steel_bw_engraving_diode: { material: 'stainless_steel', preset: 'engraving_diode' },
+  steel_engraving_spray_engraving: { material: 'metal', preset: 'engraving' },
+  stainless_steel_bw_engraving_diode: { material: 'metal', preset: 'engraving_diode' },
   metal_bw_engraving: { material: 'metal', preset: 'engraving' },
   sticker_kiss_cut: { material: 'sticker', preset: 'kiss_cut' },
   // 1064

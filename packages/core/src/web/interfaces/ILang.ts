@@ -627,7 +627,6 @@ export interface ILang {
             cutting: string;
             engraving: string;
             engraving_diode: string;
-            engraving_spray: string;
             kiss_cut: string;
             marking: string;
             marking_dark: string;
