@@ -22,6 +22,8 @@ export const ERROR_REPORT_ENDPOINT = '/api/beam-studio/error-report';
 export const MAX_BUG_REPORT_LENGTH = 10 * 1024 * 1024;
 
 const MAX_ATTEMPTS = 3;
+/** control.downloadLog only settles on a Blob or an error frame; a stalled socket would hang the upload */
+const DEVICE_LOG_TIMEOUT_MS = 10 * 1000;
 
 export type UploadResult = 'duplicate' | 'failed' | 'sent' | BlockReason;
 
@@ -46,7 +48,14 @@ const readDeviceLog = async (): Promise<Blob | null> => {
   const playerLog = VersionChecker(device.info.version).meetRequirement('NEW_PLAYER')
     ? 'playerd.log'
     : 'fluxplayerd.log';
-  const files = await deviceMaster.getLogsTexts([playerLog, 'fluxrobotd.log']);
+  // ponytail: on timeout the pending fetch_log listener stays on the control socket until the
+  // next command replaces it; a cancellable downloadLog would be the clean fix.
+  const files = await Promise.race([
+    deviceMaster.getLogsTexts([playerLog, 'fluxrobotd.log']),
+    new Promise<never>((_, reject) => {
+      setTimeout(() => reject(new Error(`timed out after ${DEVICE_LOG_TIMEOUT_MS} ms`)), DEVICE_LOG_TIMEOUT_MS);
+    }),
+  ]);
   const parts: Array<Blob | string> = [];
 
   for (const [name, chunks] of Object.entries(files)) {
@@ -124,13 +133,13 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
 
     form.append('bug_report', new Blob([bugReport], { type: 'text/plain' }), 'bug_report.txt');
 
-    const deviceLog = await readDeviceLog().catch((error) => {
+    try {
+      const deviceLog = await readDeviceLog();
+
+      if (deviceLog) form.append('system_log', deviceLog, 'system_log.txt');
+    } catch (error) {
       logger.append(`error-report device log skipped: ${error}`);
-
-      return null;
-    });
-
-    if (deviceLog) form.append('system_log', deviceLog, 'system_log.txt');
+    }
 
     if (scene) form.append('scene', new Blob([scene.content], { type: 'image/svg+xml' }), scene.name);
 
