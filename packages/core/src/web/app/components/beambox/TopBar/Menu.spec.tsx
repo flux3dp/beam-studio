@@ -22,6 +22,10 @@ jest.mock('@core/app/stores/globalPreferenceStore', () => ({
   useGlobalPreferenceStore: mockUseGlobalPreferenceStore,
 }));
 
+jest.mock('@core/helpers/exclusiveModes', () => ({
+  canStartCurveEngraving: () => true,
+}));
+
 const open = jest.fn();
 
 jest.mock('@core/implementations/browser', () => ({

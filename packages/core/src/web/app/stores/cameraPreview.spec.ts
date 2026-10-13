@@ -5,6 +5,7 @@ import { setCameraPreviewState, useCameraPreviewStore } from './cameraPreview';
 describe('cameraPreview store', () => {
   it('should have the default state on init', () => {
     expect(useCameraPreviewStore.getState()).toEqual({
+      backgroundUrl: '',
       bgOpacity: 1,
       isClean: true,
       isDrawing: false,
