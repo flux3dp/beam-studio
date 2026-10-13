@@ -19,6 +19,10 @@ describe('scrubReport', () => {
       'will store in ~/Library/Preferences/',
     ],
     ['username with dot and dash', '/Users/a.b-c/x', '~/x'],
+    ['macOS username with space', '/Users/Dean Sung/Library/Fonts/a.ttf', '~/Library/Fonts/a.ttf'],
+    ['Windows username with space', 'C:\\Users\\Dean Sung\\Documents\\a.beam', '~\\Documents\\a.beam'],
+    ['Windows username with space, JSON-escaped', '"C:\\\\Users\\\\Dean Sung\\\\Documents"', '"~\\\\Documents"'],
+    ['bare home dir followed by words', 'saved in /Users/alice just now', 'saved in ~ just now'],
   ])('%s', (_name, input, expected) => {
     expect(scrubReport(input)).toBe(expected);
   });
