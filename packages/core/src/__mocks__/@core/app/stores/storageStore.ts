@@ -41,7 +41,6 @@ const state: StorageStoreState = {
   dockviewLayout: 'default',
   'elements-history': [],
   'enable-sentry': null,
-  first_pulse_killer_enabled: false,
   'flux-rsa-key': 'fluxRsaKey',
   'font-history': [],
   /** font name to display name */

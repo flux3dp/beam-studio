@@ -370,7 +370,7 @@ export const getExportOpt = async (
       'jump_delay_max',
       'is_uv_light',
       'machine_z_bucket',
-    ];
+    ] as const;
     let storageValue: null | string = null;
     const overwrite: Record<string, number> = {};
 

@@ -43,6 +43,8 @@ export type TFcodeOptionalConfig = Partial<{
    * custom backlash
    */
   cbl: boolean;
+  /** Promark: delay between two mark vectors, in us. */
+  corner_delay: number;
   /**
    * curve speed limit
    */
@@ -88,6 +90,8 @@ export type TFcodeOptionalConfig = Partial<{
   /** Promark: shortest and longest jump delays in us, scaled by jump length in between. */
   jump_delay_max: number;
   jump_delay_min: number;
+  /** Promark: galvo jump speed in mm/s. */
+  jump_speed: number;
   /** Promark: laser on / off delays in us. */
   laser_off_delay: number;
   laser_on_delay: number;
@@ -106,6 +110,8 @@ export type TFcodeOptionalConfig = Partial<{
    * sides, finer buckets have been observed to stall the job at runtime.
    */
   machine_z_bucket?: number;
+  /** Promark: delay after the last mark vector, in us. */
+  marking_delay: number;
   /**
    * clipping mask in [top right bottom left]
    */

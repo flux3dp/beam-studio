@@ -21,7 +21,6 @@ export const getStorageKeys: () => StorageKey[] = () => [
   'flux-rsa-key',
   'font-history',
   'font-name-map',
-  'first_pulse_killer_enabled',
   'guessing_poke',
   'keep-flux-id-login',
   'last-installed-version',
