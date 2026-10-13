@@ -50,6 +50,18 @@ import versionChecker from '../version-checker';
  */
 const MIN_MACHINE_Z_BUCKET_MM = 0.001;
 
+/**
+ * Promark UV controller settings for inner engraving, in us (measured). Sent as job parameters,
+ * which Swiftray writes as ";CONFIG" lines for the controller.
+ */
+const INNER_ENGRAVING_CONTROLLER_CONFIG = {
+  is_uv_light: 1,
+  jump_delay_max: 1000,
+  jump_delay_min: 1000,
+  laser_off_delay: 150,
+  laser_on_delay: 150,
+} as const;
+
 export const getExportOpt = async (
   opt: IBaseConfig,
   args?: string[],
@@ -282,13 +294,13 @@ export const getExportOpt = async (
   if (isInnerEngravingActive()) {
     const materialZRange = getMaterialZRangeMm();
 
-    config.refraction_compensation = true;
-    config.refraction_model = 'basic';
     config.refractive_index = documentState['inner-engraving-refractive-index'];
     config.material_height = getMaterialHeightMm();
     config.material_min_z = materialZRange.min;
     config.material_max_z = materialZRange.max;
     config.focal_length = documentState['inner-engraving-focal-length'];
+    // Promark UV controller settings for inner engraving (uvDev localStorage still overrides them)
+    Object.assign(config, INNER_ENGRAVING_CONTROLLER_CONFIG);
   }
 
   // Developer opt-in. Omit the parameter unless explicitly enabled so older backends keep their

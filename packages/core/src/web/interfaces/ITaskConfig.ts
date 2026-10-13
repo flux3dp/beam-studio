@@ -82,7 +82,15 @@ export type TFcodeOptionalConfig = Partial<{
    * 4C ink color order by cartridge slot, e.g. 'cymk' (default cmyk)
    */
   ico: string;
+  /** Promark: send ";CONFIG UV=1" so the controller runs the job as a UV source. 1 for UV. */
+  is_uv_light: number;
   job_origin: [number, number];
+  /** Promark: shortest and longest jump delays in us, scaled by jump length in between. */
+  jump_delay_max: number;
+  jump_delay_min: number;
+  /** Promark: laser on / off delays in us. */
+  laser_off_delay: number;
+  laser_on_delay: number;
   loop_compensation: number;
   /**
    * json string, current storing data for beamo 2 sliding table
@@ -165,10 +173,6 @@ export type TFcodeOptionalConfig = Partial<{
    * path travel speed
    */
   pts: number; //
-  /** Enables the backend's refraction correction for an inner-engraving job. */
-  refraction_compensation: boolean;
-  /** Refraction algorithm selected by Beam Studio. */
-  refraction_model: 'basic';
   /**
    * Inner engraving: the workpiece's refractive index n.
    *
