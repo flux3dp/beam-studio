@@ -1842,8 +1842,6 @@ const lang: ILang = {
     fill: 'Fill',
     fit_to_engravable: 'Fit to Engravable Area',
     flip: 'Flip',
-    focal_length: 'Focal Length',
-    focal_length_hint: "The lens's focal length, used to compensate for refraction inside the workpiece.",
     focus_reminder: 'The machine cannot read its Z position. Focus the laser on the work platform manually before starting a job.',
     height: 'Height',
     layer_height: 'Layer Height',

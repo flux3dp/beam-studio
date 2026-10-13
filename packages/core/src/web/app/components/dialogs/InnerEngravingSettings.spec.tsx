@@ -66,7 +66,6 @@ describe('InnerEngravingSettings', () => {
     expect(getByLabelText('sphere_base_height info')).toBeInTheDocument();
     expect(getByLabelText('height info')).toBeInTheDocument();
     expect(getByLabelText('refractive_index info')).toBeInTheDocument();
-    expect(getByLabelText('focal_length info')).toBeInTheDocument();
     expect(getByText('sphere_liquid_alert')).toBeInTheDocument();
   });
 

@@ -298,7 +298,6 @@ export const getExportOpt = async (
     config.material_height = getMaterialHeightMm();
     config.material_min_z = materialZRange.min;
     config.material_max_z = materialZRange.max;
-    config.focal_length = documentState['inner-engraving-focal-length'];
     // Promark UV controller settings for inner engraving (uvDev localStorage still overrides them)
     Object.assign(config, INNER_ENGRAVING_CONTROLLER_CONFIG);
   }

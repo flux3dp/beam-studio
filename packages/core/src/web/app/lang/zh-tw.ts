@@ -1843,8 +1843,6 @@ const lang: ILang = {
     fill: '填充',
     fit_to_engravable: '自適應',
     flip: '翻轉',
-    focal_length: '對焦距離',
-    focal_length_hint: '鏡頭的焦距，用於補償雷射在工件內的折射。',
     focus_reminder: '機器無法讀取當前 Z 軸位置，開始工作前請先手動將雷射對焦至工作平台。',
     generate_test_point_cloud: '產生測試點雲',
     height: '高',

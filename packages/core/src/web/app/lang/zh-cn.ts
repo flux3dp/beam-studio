@@ -1843,8 +1843,6 @@ const lang: ILang = {
     fill: '填充',
     fit_to_engravable: '自适应',
     flip: '翻转',
-    focal_length: '对焦距离',
-    focal_length_hint: '镜头的焦距，用于补偿激光在工件内的折射。',
     focus_reminder: '机器无法读取当前 Z 轴位置，开始工作前请先手动将激光对焦至工作平台。',
     height: '高',
     layer_height: '层高',

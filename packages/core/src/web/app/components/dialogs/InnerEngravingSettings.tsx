@@ -7,7 +7,6 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { MaterialShape } from '@core/app/constants/innerEngraving';
 import {
-  FOCAL_LENGTH_LIMIT,
   MATERIAL_POSITION_LIMIT,
   MATERIAL_SIZE_LIMIT,
   REFRACTIVE_INDEX_LIMIT,
@@ -66,7 +65,6 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
   const [x, setX] = useState(initial['inner-engraving-x']);
   const [y, setY] = useState(initial['inner-engraving-y']);
   const [refractiveIndex, setRefractiveIndex] = useState(initial['inner-engraving-refractive-index']);
-  const [focalLength, setFocalLength] = useState(initial['inner-engraving-focal-length']);
   const [safetyMargin, setSafetyMargin] = useState(initial['inner-engraving-safety-margin']);
 
   const isRound = shape !== 'box';
@@ -95,7 +93,6 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
 
   const handleSave = () => {
     const newState: Partial<DocumentState> = {
-      'inner-engraving-focal-length': focalLength,
       'inner-engraving-refractive-index': refractiveIndex,
       'inner-engraving-safety-margin': safetyMargin,
       'inner-engraving-shape': shape,
@@ -322,16 +319,6 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
               step={0.01}
               value={refractiveIndex}
             />
-          </div>
-
-          {/* the lens, not the job — but swiftray's machine settings have no field for it, so it
-              rides along with the material settings that feed the same refraction compensation */}
-          <div>{inputLabel('focal_length', t.focal_length, t.focal_length_hint)}</div>
-          <div>
-            {lengthInput('focal_length', focalLength, setFocalLength, {
-              max: FOCAL_LENGTH_LIMIT.max,
-              min: FOCAL_LENGTH_LIMIT.min,
-            })}
           </div>
         </div>
         {/* the machine cannot read its Z position, so a wrong focus ruins the whole workpiece */}

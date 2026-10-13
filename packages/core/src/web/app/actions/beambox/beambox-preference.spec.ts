@@ -87,7 +87,6 @@ test('test beambox-preference', () => {
     'inner-engraving-base-height': 0,
     'inner-engraving-depth': 50,
     'inner-engraving-diameter': 50,
-    'inner-engraving-focal-length': 140,
     'inner-engraving-height': 50,
     'inner-engraving-refractive-index': 1.537,
     'inner-engraving-safety-margin': 4,

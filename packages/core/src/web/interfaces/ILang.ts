@@ -1841,8 +1841,6 @@ export interface ILang {
     fill: string;
     fit_to_engravable: string;
     flip: string;
-    focal_length: string;
-    focal_length_hint: string;
     focus_reminder: string;
     generate_test_point_cloud?: string;
     height: string;

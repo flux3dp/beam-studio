@@ -72,13 +72,6 @@ export type TFcodeOptionalConfig = Partial<{
   fg: boolean;
   /** Apply first-pulse suppression when the Promark controller starts each list. */
   first_pulse_killer_enabled: boolean;
-  /**
-   * Inner engraving: lens focal length in mm, optical centre to the designed focal plane.
-   *
-   * Omitting it degrades the backend's refraction compensation to depth-only — the XY spread an
-   * off-axis refracted beam picks up cannot be corrected without knowing F.
-   */
-  focal_length: number;
   gc: boolean; // output gcode
   /**
    * 4C ink color order by cartridge slot, e.g. 'cymk' (default cmyk)

@@ -60,7 +60,6 @@ const getInitDocumentStore = (): DocumentState => {
     'inner-engraving-base-height': preference['inner-engraving-base-height'] ?? 0,
     'inner-engraving-depth': preference['inner-engraving-depth'],
     'inner-engraving-diameter': preference['inner-engraving-diameter'],
-    'inner-engraving-focal-length': preference['inner-engraving-focal-length'],
     'inner-engraving-height': preference['inner-engraving-height'],
     'inner-engraving-refractive-index': preference['inner-engraving-refractive-index'],
     'inner-engraving-safety-margin': preference['inner-engraving-safety-margin'],
