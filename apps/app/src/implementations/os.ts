@@ -92,19 +92,30 @@ const parseMachineId = (platform: NodeJS.Platform, raw: string): string =>
     .replace(/[="\s]/g, '')
     .toLowerCase();
 
-let cachedMachineId: null | string = null;
+const hashMachineId = (raw: string): string => {
+  const id = parseMachineId(process.platform, raw);
+
+  return id ? crypto.createHash('sha256').update(id).digest('hex') : '';
+};
+
+const machineIdCommand = MACHINE_ID_COMMANDS[process.platform];
+let cachedMachineId: null | string = machineIdCommand ? null : '';
+
+// Warm the cache off the renderer thread at startup (REG.exe can take seconds on a slow Windows
+// box); the synchronous path below only runs if an error report beats it.
+if (machineIdCommand) {
+  childProcess.exec(machineIdCommand, { timeout: 2000 }, (error, stdout) => {
+    if (cachedMachineId === null) cachedMachineId = error ? '' : hashMachineId(stdout);
+  });
+}
 
 const machineId = (): string => {
   if (cachedMachineId !== null) return cachedMachineId;
 
   try {
-    const command = MACHINE_ID_COMMANDS[process.platform];
-    const raw = command
-      ? childProcess.execSync(command, { stdio: ['ignore', 'pipe', 'ignore'], timeout: 2000 }).toString()
-      : '';
-    const id = parseMachineId(process.platform, raw);
+    const raw = childProcess.execSync(machineIdCommand!, { stdio: ['ignore', 'pipe', 'ignore'], timeout: 2000 });
 
-    cachedMachineId = id ? crypto.createHash('sha256').update(id).digest('hex') : '';
+    cachedMachineId = hashMachineId(raw.toString());
   } catch (e) {
     console.warn('Failed to read machine id:', e);
     cachedMachineId = '';
