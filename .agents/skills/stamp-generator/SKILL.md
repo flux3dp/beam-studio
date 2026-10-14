@@ -244,7 +244,9 @@ and plane have none.
 
 - `resolveDefaultFont(template.preferredFonts)` in the store probes candidates in order with
   `getFontObj` (skips fonts that don't resolve or don't load: web font offline, macOS font not
-  downloaded), falls back to the user's default font; cached per candidate list per session.
+  downloaded), falls back to the user's default font. Not memoized in the store: `getFontObj` caches
+  loaded fonts and dedupes in-flight loads, and a failed probe or the user's default is re-evaluated
+  on the next selection.
 - Lists in `templates/fonts.ts`: `KAI_FONTS` (TW-MOE-Std-Kai web font, then OS 標楷體), `JP_FONTS`
   (Hiragino Mincho / Yu Mincho / MS Mincho). Catalog entries with a Latin preset pin the bundled
   Montserrat Medium as a fallback.
@@ -267,9 +269,11 @@ and plane have none.
 ```
 selectTemplate(id)
   → resolveDefaultFont → new paper.Project → parseTemplate → getDefaultState → applyOptions()
-applyOptions()  (async, buildVersion guards against stale builds; selectTemplate has its own
-                 selectVersion so a slower font probe can't land on a newer selection or after reset(),
-                 and `pendingTemplateId` drives the picker highlight + preview spinner meanwhile)
+    (parseTemplate runs before the old project is removed; on throw the new project is dropped,
+     `pendingTemplateId` cleared and the previous template stays editable)
+applyOptions()  (async; `buildVersion` and `selectVersion` are closure counters, not state, bumped by
+                 reset() so a build or font probe from before the dialog closed can't land after it
+                 reopens; `pendingTemplateId` drives the picker highlight + preview spinner meanwhile)
   → buildStampShape(parsed, template, state)
       frames cloned · buildElementPaths · buildTextPaths (clearOf needs the built icon) · cut = outerContour(outline)
       invertColor ? [invertFace(cut, engraved)] : engraved
@@ -307,10 +311,12 @@ The options panel scrolls; its tab bar is sticky and antd's tab content pane is 
 ## Store (`useStampStore.ts`)
 
 State: `template`, `parsed`, `project`, `state: StampState` (`templateId`, `texts`, `elements`, `border`, `invertColor`,
-`flipHorizontal`, `sizeIndex`), `shape`, `previewSvg`, `sizeRatio`, `defaultFont`, `isModified`,
-`buildVersion`. Actions: `selectTemplate`, `updateText`, `updateElement`, `updateSharedFont`,
-`updateState`, `resetState` (rebuilds defaults from the stored `defaultFont`), `reset`. Every update
-calls `applyOptions()`; a slower older build is discarded by `buildVersion`.
+`flipHorizontal`, `sizeIndex`), `shape`, `previewSvg`, `sizeRatio`, `defaultFont`, `isModified`.
+Actions: `selectTemplate`, `updateText`, `updateElement`, `updateSharedFont`, `updateState`,
+`resetState` (rebuilds defaults from the stored `defaultFont`), `reset`. `selectTemplate` and
+`resetState` call `applyOptions()` at once; the four `update*` actions set state synchronously and
+rebuild through a 150 ms trailing `funnel` (remeda) so a typing burst costs one build. A slower
+older build is discarded by `buildVersion`. The dialog's Import button is disabled while `shape` is null.
 
 ## i18n
 
