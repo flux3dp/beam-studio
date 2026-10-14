@@ -39,7 +39,7 @@ When a whitelisted error popup appears, Beam Studio offers to send a diagnostic 
 - G2 Consent inline in the existing alert; primary buttons unchanged in label and position.
 - G3 Three-state preference, default **Ask each time**, always visible in Settings → Privacy.
 - G4 Report is scrubbed of personal data before automatic upload (§7.2); wording in the consent row is truthful.
-- G5 Per-serial daily throttle (10 successful uploads/day, local time) and 3 in-process retries.
+- G5 Per-serial daily throttle (10 successful uploads/day, local time) and up to 3 in-process attempts, retrying only when there was no response or a 5xx.
 
 **Non-goals**
 - No offline persistent queue in v1 (§11 D2, decided).
@@ -98,7 +98,7 @@ Shared files touched outside the feature's own folder, with the callers that mus
 New `packages/core/src/web/helpers/error-report/` (own folder, colocated spec):
 
 - `index.ts`
-  - `uploadErrorReport({ errorCode, extraFiles? }): Promise<boolean>` — builds the bundle, applies throttle, POSTs with 3 retries, bumps the counter on success, shows the toast and the one-time prompt.
+  - `uploadErrorReport({ errorCode, extraFiles? }): Promise<boolean>` — builds the bundle, applies throttle (plus an in-flight set so two popups for one fingerprint make one upload), reads the device log with a 10 s bound, POSTs with a 3 min timeout and up to 3 attempts, bumps the counter on success, shows the toast and the one-time prompt.
   - `withErrorReportConsent(alert: IAlert, errorCode: string): IAlert` — reads the preference and returns the alert decorated for scenario A/B/C. Pure function over the config object; the popup site does `Alert.popUp(withErrorReportConsent({...}, code))`.
 - `scrub.ts` — `scrubReport(text: string): string` (home-path regex) and the storage denylist, used only on the upload path.
 - `installationId.ts` — `getInstallationId(): string`. Electron: `os.machineId()`, a new `IOperatingSystem` method **inlined** in `apps/app/src/implementations/os.ts` (decided 2026-10-06, no `node-machine-id` dependency): runs the same per-OS command node-machine-id runs (`ioreg -rd1 -c IOPlatformExpertDevice` / `REG.exe QUERY HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid` / `/etc/machine-id`), sha256-hashes it, and returns `''` on any failure (command missing, timeout, parse error) inside its own try/catch. Web returns `''`. Empty result → `crypto.randomUUID()` stored once in `error-report-install-id`, so the id is always non-empty and the caller never sees an exception.
@@ -175,7 +175,7 @@ Decided §11 D1. The endpoint lives in flux-id so the team can swap the storage 
 - Storage: a Django 4.2 `STORAGES['error_report']` alias pointing at `storages.backends.s3boto3.S3Boto3Storage` with `endpoint_url = https://<account>.r2.cloudflarestorage.com`, bucket `beam-error-report`, `default_acl = private`. The view only calls `storages['error_report'].save(path, file)`. **Swapping provider = editing that settings entry** (S3, B2, GCS and MinIO are all S3-compatible; Google Drive would need a custom `Storage` subclass behind the same alias). No new abstraction in code; `django-storages` already is one.
 - Keys: `{serial}/{ISO ts}_{code}_bug_report.txt`, `_system_log.txt`, `_scene.svg` whenever a device was known; `no-device/{installation_id}/{ISO ts}_{code}_...` for the three sites with no machine at all (`#802`, `#809`, QR auto-connect). No serial verification: a verified/unverified split was considered and dropped (backend.md §10 B3) because too few field machines are in flux-id's serial tables. Serial format is validated loosely (`^[A-Za-z0-9-]{1,32}$`), not pinned to today's 10-char length.
 - Server-side dedupe (backstop for a client whose cooldown map was wiped): before saving, list the `{serial}/` or `no-device/{installation_id}/` prefix; if an object with the same `{code}` exists with `ts` inside the last 24 h, answer `{ status: 'duplicate' }` and store nothing. One R2 Class B list call per upload. The client treats `duplicate` as success for throttle and cooldown purposes, without the "sent" toast.
-- Spam control and storage bound, five layers (detail in [backend.md §6](backend.md)): Cloudflare WAF rate-limit rule per IP; DRF per-IP throttles `6/hour` and `20/day`, so one IP tops out at 20 × 20 MB = 400 MB/day even with fabricated serials; a **global daily byte budget** (2 GB/day, `429 { status: 'budget' }` when exceeded) bounding the bucket at ≈ 360 GB worst case no matter how many IPs or serials are spoofed; the per-folder cap and 24 h dedupe; the client-side daily limit and fingerprint cooldown (§7.7). A `429` is a failure to the client: 3 retries, then silent, cooldown not advanced.
+- Spam control and storage bound, five layers (detail in [backend.md §6](backend.md)): Cloudflare WAF rate-limit rule per IP; DRF per-IP throttles `6/hour` and `20/day`, so one IP tops out at 20 × 20 MB = 400 MB/day even with fabricated serials; a **global daily byte budget** (2 GB/day, `429 { status: 'budget' }` when exceeded) bounding the bucket at ≈ 360 GB worst case no matter how many IPs or serials are spoofed; the per-folder cap and 24 h dedupe; the client-side daily limit and fingerprint cooldown (§7.7). A `429` is a failure to the client: no retry (only no-response and 5xx retry), silent, cooldown not advanced.
 - Retention: R2 object lifecycle rule, delete after 180 days. No cron code.
 - Per-folder cap: kept (§11 D5). Each `{serial}/` and `no-device/{installation_id}/` folder is capped at `ERROR_REPORT_FOLDER_CAP_BYTES` (default 20 MB, a flux-id setting). The view reuses the prefix listing it already does for dedupe, so the cap costs no extra round-trip; algorithm and cost in [backend.md §4](backend.md).
 - Metrics: one structured log line per request from the view (`error_report <ok|duplicate|rejected> serial=… code=… bytes=… ms=… reason=…`, Django logging → gunicorn error log) plus the gunicorn access log with request time. flux-id's statsd is dead (no host, no receiver; verified 2026-10-12, [backend.md §7](backend.md)), so §9.2 reads from logs, Cloudflare analytics and Linode graphs.
@@ -203,15 +203,15 @@ Problem: a connection failure yields a report on every Retry, and the same LAN p
 
 - Storage: `error-report-upload`, `error-report-upload-prompted`, `error-report-install-id` (web / fallback only), `error-report-counter: { date: 'YYYY-MM-DD', counts: Record<serial, number> }`, `error-report-cooldown` (§7.7).
 - `IOperatingSystem.machineId(): string` — Electron returns the sha256 of the OS machine GUID (inlined, §7.1), web returns `''`.
-- No new dependency; `machineId` is ~15 lines in the existing os implementation using `child_process.execSync` (with a 2 s timeout) and `crypto.createHash`.
-- Upload request: §7.5 multipart. Response `{ status: 'ok' }` or non-2xx → retry.
+- No new dependency; `machineId` is ~25 lines in the existing os implementation using `crypto.createHash` over the output of the per-OS command, started with the async `child_process.exec` at module load (2 s timeout) so the renderer never blocks; `execSync` remains only as the fallback for a report that fires before it returns.
+- Upload request: §7.5 multipart, 3 min timeout. Response `{ status: 'ok' }` → sent; `{ status: 'duplicate' }` → counted as sent; no response or 5xx → retry (3 attempts); any 4xx or an unknown 2xx body → failed at once.
 - i18n: new namespace `error_report` in `en.ts`/`zh-tw.ts`: `consent`, `consent_detail`, `sent`, `sent_auto`, `ask_always_title`, `always`, `ask_each_time`, `setting_label`, `setting_always/ask/never`.
 
 ## 9. Performance
 
 ### 9.1 Client
 
-- Report size today can exceed 10 MB when the fluxghost log is large (the legacy `uploadToS3` refused bodies over 10 MB). Keep the 10 MB cap on `bug_report.txt` by truncating the backend section from the top, not by refusing the upload. Whole body stays under the view's 20 MB check, nginx's 32 MB and Cloudflare's 100 MB free-plan limit.
+- Report size today can exceed 10 MB when the fluxghost log is large (the legacy `uploadToS3` refused bodies over 10 MB). Keep the 10 MB cap on `bug_report.txt` by truncating the backend section from the top, not by refusing the upload: `getOutput({ maxLength })` measures every other section first and gives the fluxghost log the remaining budget, so the cap is on the whole file. Whole body stays under the view's 20 MB check, nginx's 32 MB and Cloudflare's 100 MB free-plan limit.
 - Device log download already shows a stepping progress in the Monitor path; the automatic path runs it silently and skips if the device is busy (`getMode()` not idle).
 
 ### 9.2 flux-id impact matrix
@@ -234,7 +234,7 @@ Procedure: record the baseline column for one week before step 6 of §10 ships; 
 
 ## 10. Rollout (PR plan)
 
-1. `helpers/error-report/` (scrub, throttle, installationId, `uploadErrorReport`) + `getOutput({ scrub, maxBackendLogLength })` + unit tests. No callers, no strings, no UI.
+1. `helpers/error-report/` (scrub, throttle, installationId, `uploadErrorReport`) + `getOutput({ scrub, maxLength })` + unit tests. No callers, no strings, no UI.
 2. Preference key, Privacy select, i18n (en, zh-tw), and `withErrorReportConsent` in `helpers/error-report/consent.ts` (moved here from PR 1 on 2026-10-12 because it needs the consent strings).
 3. Replace `uploadBackendErrorLog` and delete `aws-helper.ts`; wire the §7.4 wave-1 sites through `withErrorReportConsent`.
 3b. Wire the §7.4 wave-2 camera sites (same mechanism, separate PR so the camera-preview skill owner can review).

@@ -41,7 +41,7 @@
 - G2 同意機制內嵌於既有警示視窗；主按鈕的文字與位置不變。
 - G3 三態偏好設定，預設**每次詢問**，永遠顯示於 設定 → 隱私。
 - G4 自動上傳前先清除報告中的個人資料（§7.2）；同意列文案必須屬實。
-- G5 每序號每日上限（每日 10 次成功上傳，依本地時間）與 3 次程序內重試。
+- G5 每序號每日上限（每日 10 次成功上傳，依本地時間）與最多 3 次程序內嘗試，只在沒有回應或 5xx 時重試。
 
 **非目標**
 - v1 不做離線持久佇列（§11 D2，已定案）。
@@ -100,7 +100,7 @@
 新增 `packages/core/src/web/helpers/error-report/`（獨立資料夾，spec 同置）：
 
 - `index.ts`
-  - `uploadErrorReport({ errorCode, extraFiles? }): Promise<boolean>` — 組資料包、套用上限、POST 並重試 3 次、成功後增加計數、顯示 toast 與一次性提示。
+  - `uploadErrorReport({ errorCode, extraFiles? }): Promise<boolean>` — 組資料包、套用上限（加上進行中集合，同一指紋的兩個視窗只產生一次上傳）、以 10 秒上限讀取機器 log、以 3 分鐘逾時 POST 最多 3 次、成功後增加計數、顯示 toast 與一次性提示。
   - `withErrorReportConsent(alert: IAlert, errorCode: string): IAlert` — 讀取偏好設定，回傳依情境 A/B/C 裝飾後的警示設定。對設定物件的純函式；觸發點寫成 `Alert.popUp(withErrorReportConsent({...}, code))`。
 - `scrub.ts` — `scrubReport(text: string): string`（家目錄路徑正規表示式）與 storage 排除清單，只用於上傳路徑。
 - `installationId.ts` — `getInstallationId(): string`。Electron：`os.machineId()`，為新增於 `IOperatingSystem` 並**內嵌**在 `apps/app/src/implementations/os.ts` 的方法（2026-10-06 定案，不引入 `node-machine-id` 相依）：執行與 node-machine-id 相同的各 OS 指令（`ioreg -rd1 -c IOPlatformExpertDevice` / `REG.exe QUERY HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid` / `/etc/machine-id`），做 sha256，並在自身 try/catch 內對任何失敗（指令不存在、逾時、解析錯誤）回傳 `''`。網頁版回傳 `''`。結果為空時 → 以 `crypto.randomUUID()` 產生一次並存於 `error-report-install-id`，因此識別碼永遠非空，呼叫端永遠不會看到例外。
@@ -177,7 +177,7 @@
 - 儲存：Django 4.2 的 `STORAGES['error_report']` 別名，指向 `storages.backends.s3boto3.S3Boto3Storage`，`endpoint_url = https://<account>.r2.cloudflarestorage.com`，bucket `beam-error-report`，`default_acl = private`。view 只呼叫 `storages['error_report'].save(path, file)`。**切換供應商＝改那一筆設定**（S3、B2、GCS、MinIO 都相容 S3；Google Drive 需在同一別名後面放自訂 `Storage` 子類）。程式碼不新增抽象層；`django-storages` 本身就是。
 - 物件鍵：只要有已知裝置就是 `{serial}/{ISO ts}_{code}_bug_report.txt`、`_system_log.txt`、`_scene.svg`；完全沒有機器的三個觸發點（`#802`、`#809`、QR 自動連線）為 `no-device/{installation_id}/{ISO ts}_{code}_...`。不做序號驗證：曾考慮已驗證/未驗證分級，因 flux-id 序號表涵蓋的現役機器太少而放棄（backend.md §10 B3）。序號格式只做寬鬆驗證（`^[A-Za-z0-9-]{1,32}$`），不綁定目前的 10 字元長度。
 - 伺服器端去重（client 冷卻表被清除時的後備）：儲存前先列出 `{serial}/` 或 `no-device/{installation_id}/` 前綴；若已有相同 `{code}` 且 `ts` 在最近 24 小時內的物件，回應 `{ status: 'duplicate' }` 且不儲存。每次上傳一次 R2 Class B list 呼叫。client 把 `duplicate` 視為成功（計入上限與冷卻），但不顯示「已傳送」toast。
-- 防濫用與儲存上界，共五層（細節見 [backend.md §6](backend.md)）：Cloudflare WAF 每 IP 流量限制規則；DRF 每 IP 限流 `6/hour` 與 `20/day`，單一 IP 即使捏造序號每天最多 20 × 20 MB = 400 MB；**全域每日位元組預算**（2 GB/日，超過回 `429 { status: 'budget' }`），不論攻擊者用多少 IP 或偽造多少序號，bucket 最壞情況約 360 GB；每資料夾上限與 24 小時去重；client 端每日上限與指紋冷卻（§7.7）。`429` 對 client 而言就是失敗：重試 3 次後靜默，冷卻不推進。
+- 防濫用與儲存上界，共五層（細節見 [backend.md §6](backend.md)）：Cloudflare WAF 每 IP 流量限制規則；DRF 每 IP 限流 `6/hour` 與 `20/day`，單一 IP 即使捏造序號每天最多 20 × 20 MB = 400 MB；**全域每日位元組預算**（2 GB/日，超過回 `429 { status: 'budget' }`），不論攻擊者用多少 IP 或偽造多少序號，bucket 最壞情況約 360 GB；每資料夾上限與 24 小時去重；client 端每日上限與指紋冷卻（§7.7）。`429` 對 client 而言就是失敗：不重試（只有沒有回應與 5xx 會重試）、靜默，冷卻不推進。
 - 保留：R2 物件生命週期規則，180 天後刪除。不需 cron 程式。
 - 每資料夾上限：保留（§11 D5）。每個 `{serial}/` 與 `no-device/{installation_id}/` 資料夾上限為 `ERROR_REPORT_FOLDER_CAP_BYTES`（預設 20 MB，flux-id 設定）。view 重用去重時已做的前綴列舉，所以上限不多花一次來回；演算法與成本見 [backend.md §4](backend.md)。
 - 指標：view 每筆請求寫一行結構化 log（`error_report <ok|duplicate|rejected> serial=… code=… bytes=… ms=… reason=…`，經 Django logging 進 gunicorn error log）＋ 含請求耗時的 gunicorn access log。flux-id 的 statsd 已是死碼（無 host、無接收端；2026-10-12 確認，見 [backend.md §7](backend.md)），所以 §9.2 改讀 log、Cloudflare 分析與 Linode 圖表。
@@ -205,15 +205,15 @@
 
 - Storage：`error-report-upload`、`error-report-upload-prompted`、`error-report-install-id`（僅網頁版 / 後備）、`error-report-counter: { date: 'YYYY-MM-DD', counts: Record<serial, number> }`、`error-report-cooldown`（§7.7）。
 - `IOperatingSystem.machineId(): string` — Electron 回傳 OS 機器 GUID 的 sha256（內嵌實作，§7.1），網頁版回傳 `''`。
-- 不新增相依；`machineId` 約 15 行，寫在既有 os 實作內，使用 `child_process.execSync`（2 秒逾時）與 `crypto.createHash`。
-- 上傳請求：§7.5 multipart。回應 `{ status: 'ok' }`，非 2xx 則重試。
+- 不新增相依；`machineId` 約 25 行，寫在既有 os 實作內，以 `crypto.createHash` 雜湊各 OS 指令的輸出；指令在模組載入時用非同步 `child_process.exec`（2 秒逾時）啟動，renderer 不會被卡住；`execSync` 只留作報告搶在結果回來之前觸發時的後備。
+- 上傳請求：§7.5 multipart，3 分鐘逾時。回應 `{ status: 'ok' }` → 已送出；`{ status: 'duplicate' }` → 視同已送出；沒有回應或 5xx → 重試（最多 3 次）；任何 4xx 或無法辨識的 2xx 內容 → 立即失敗。
 - i18n：`en.ts`/`zh-tw.ts` 新增命名空間 `error_report`：`consent`、`consent_detail`、`sent`、`sent_auto`、`ask_always_title`、`always`、`ask_each_time`、`setting_label`、`setting_always/ask/never`。
 
 ## 9. 效能
 
 ### 9.1 Client
 
-- fluxghost log 很大時，報告現在可能超過 10 MB（舊的 `uploadToS3` 會拒絕超過 10 MB 的 body）。`bug_report.txt` 維持 10 MB 上限，做法是從後端段落的開頭截斷，而不是拒絕上傳。整體 body 維持在 view 的 20 MB 檢查、nginx 的 32 MB 與 Cloudflare 免費方案 100 MB 限制之下。
+- fluxghost log 很大時，報告現在可能超過 10 MB（舊的 `uploadToS3` 會拒絕超過 10 MB 的 body）。`bug_report.txt` 維持 10 MB 上限，做法是從後端段落的開頭截斷，而不是拒絕上傳：`getOutput({ maxLength })` 先量測其餘所有段落，再把剩下的預算給 fluxghost log，因此上限是針對整個檔案。整體 body 維持在 view 的 20 MB 檢查、nginx 的 32 MB 與 Cloudflare 免費方案 100 MB 限制之下。
 - Monitor 路徑的裝置 Log 下載已有分段進度；自動路徑靜默執行，裝置忙碌時（`getMode()` 非 idle）略過。
 
 ### 9.2 flux-id 影響矩陣
@@ -236,7 +236,7 @@
 
 ## 10. 上線計畫（PR 順序）
 
-1. `helpers/error-report/`（scrub、throttle、installationId、`uploadErrorReport`）＋ `getOutput({ scrub, maxBackendLogLength })` ＋ 單元測試。無呼叫者、無字串、無 UI。
+1. `helpers/error-report/`（scrub、throttle、installationId、`uploadErrorReport`）＋ `getOutput({ scrub, maxLength })` ＋ 單元測試。無呼叫者、無字串、無 UI。
 2. 偏好設定鍵、隱私頁下拉選單、i18n（en、zh-tw），以及 `helpers/error-report/consent.ts` 的 `withErrorReportConsent`（2026-10-12 自 PR 1 移到此處，因為它需要同意文案）。
 3. 取代 `uploadBackendErrorLog` 並刪除 `aws-helper.ts`；把 §7.4 第一波觸發點接上 `withErrorReportConsent`。
 3b. 接上 §7.4 第二波相機觸發點（同一機制，獨立 PR 以便 camera-preview skill 負責人審閱）。
