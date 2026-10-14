@@ -58,15 +58,18 @@ describe('getOutput', () => {
     expect(text).not.toContain('/Users/alice');
   });
 
-  test('maxBackendLogLength keeps the newest part of the fluxghost log and marks the cut', () => {
-    const text = outputError.getOutput({ maxBackendLogLength: 11 }).join('');
+  test('maxLength caps the whole report and the fluxghost log absorbs the cut, newest lines kept', () => {
+    const rest = outputError.getOutput({ maxLength: 0 }).join('');
+    const text = outputError.getOutput({ maxLength: rest.length + 'line2\nline3'.length }).join('');
 
+    expect(rest).toContain('======::backend::======\n[... truncated for upload ...]\n\n\n======::ws::======');
     expect(text).toContain('======::backend::======\n[... truncated for upload ...]\nline2\nline3');
     expect(text).not.toContain('line1');
+    expect(text.length).toBeLessThanOrEqual(rest.length + 'line2\nline3'.length);
   });
 
   test('a backend log within the limit is not marked', () => {
-    const text = outputError.getOutput({ maxBackendLogLength: 1000 }).join('');
+    const text = outputError.getOutput({ maxLength: 100_000 }).join('');
 
     expect(text).not.toContain('truncated');
     expect(text).toContain('line1');

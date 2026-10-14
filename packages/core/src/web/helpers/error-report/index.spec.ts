@@ -79,7 +79,7 @@ describe('uploadErrorReport', () => {
     });
     expect(mockGetOutput).toHaveBeenCalledWith({
       includeImages: false,
-      maxBackendLogLength: MAX_BUG_REPORT_LENGTH,
+      maxLength: MAX_BUG_REPORT_LENGTH,
       scrub: true,
     });
     expect(mockGetLogsTexts).toHaveBeenCalledWith(['playerd.log', 'fluxrobotd.log']);
@@ -126,20 +126,39 @@ describe('uploadErrorReport', () => {
     expect(fields(form).scene).toBe('blob:image/svg+xml');
   });
 
-  test('retries up to 3 times, then fails silently without recording', async () => {
-    mockPost.mockRejectedValue(new Error('network'));
+  // axiosFluxId never rejects: its interceptor resolves with { error } (flux-id/base.ts)
+  test('retries a network failure up to 3 times, then fails silently without recording', async () => {
+    mockPost.mockResolvedValue({ error: { code: 'ECONNABORTED' } });
 
     await expect(uploadErrorReport({ errorCode: 'X' })).resolves.toBe('failed');
     expect(mockPost).toHaveBeenCalledTimes(3);
+    expect(mockPost).toHaveBeenCalledWith(ERROR_REPORT_ENDPOINT, expect.any(FormData), { timeout: 180_000 });
     expect(storage.get('error-report-counter')).toBeUndefined();
-    expect(mockAppend).toHaveBeenCalledWith(expect.stringContaining('upload failed'));
+    expect(mockAppend).toHaveBeenCalledWith(expect.stringContaining('HTTP ECONNABORTED'));
   });
 
-  test('succeeds on the second attempt', async () => {
-    mockPost.mockRejectedValueOnce(new Error('network')).mockResolvedValueOnce({ data: { status: 'ok' } });
+  test('succeeds on the second attempt after a 5xx', async () => {
+    mockPost
+      .mockResolvedValueOnce({ error: { response: { status: 503 } } })
+      .mockResolvedValueOnce({ data: { status: 'ok' } });
 
     await expect(uploadErrorReport({ errorCode: 'X' })).resolves.toBe('sent');
     expect(mockPost).toHaveBeenCalledTimes(2);
+  });
+
+  test.each([400, 413, 429])('does not retry a %d', async (status) => {
+    mockPost.mockResolvedValue({ error: { response: { data: { status: 'budget' }, status } } });
+
+    await expect(uploadErrorReport({ errorCode: 'X' })).resolves.toBe('failed');
+    expect(mockPost).toHaveBeenCalledTimes(1);
+    expect(mockAppend).toHaveBeenCalledWith(expect.stringContaining(`HTTP ${status} {"status":"budget"}`));
+  });
+
+  test('does not retry an unknown 2xx body', async () => {
+    mockPost.mockResolvedValue({ data: { status: 'what' } });
+
+    await expect(uploadErrorReport({ errorCode: 'X' })).resolves.toBe('failed');
+    expect(mockPost).toHaveBeenCalledTimes(1);
   });
 
   test('duplicate counts as sent for throttle and cooldown', async () => {

@@ -32,8 +32,11 @@ const anonymizeDiscover = (discover: '' | Array<Record<string, { model: string }
 interface GetOutputOptions {
   /** embed captured images (print-and-cut failure photo); off for automatic uploads, which the user did not explicitly send */
   includeImages?: boolean;
-  /** keep only the last N characters of the fluxghost log (oldest lines dropped); unlimited when undefined */
-  maxBackendLogLength?: number;
+  /**
+   * cap on the joined report text; the fluxghost backend log absorbs the cut (oldest lines dropped)
+   * because every other section is already bounded by its logger. Unlimited when undefined.
+   */
+  maxLength?: number;
   /**
    * automatic-upload mode (docs/prd/error-report-upload §7.2): drop storage keys that embed user
    * paths, replace machine names with the model, and rewrite home directories to `~` in the whole text.
@@ -42,8 +45,27 @@ interface GetOutputOptions {
   scrub?: boolean;
 }
 
-const getOutput = ({ includeImages = true, maxBackendLogLength, scrub = false }: GetOutputOptions = {}): string[] => {
-  const output = [];
+/** fluxghost log section, trimmed to `budget` characters (header included) when one is given */
+const backendSection = (budget?: number): string[] => {
+  const header = '\n\n======::backend::======\n';
+
+  if (!window.FLUX.logFile) return [header, 'Not available\n'];
+
+  try {
+    const buf = String(fs.readFile(window.FLUX.logFile, 'utf8'));
+
+    if (budget === undefined || header.length + buf.length <= budget) return [header, buf];
+
+    const keep = Math.max(0, budget - header.length - TRUNCATED_MARKER.length);
+
+    return [header, TRUNCATED_MARKER, buf.slice(buf.length - keep)];
+  } catch (err) {
+    return [header, `Open backend log failed: ${err}\n`];
+  }
+};
+
+const getOutput = ({ includeImages = true, maxLength, scrub = false }: GetOutputOptions = {}): string[] => {
+  const output: string[] = [];
   const logger = Logger('');
   let allLog = logger.getAll();
   const reportInfo = {
@@ -65,23 +87,8 @@ const getOutput = ({ includeImages = true, maxBackendLogLength, scrub = false }:
   output.push('\n\n======::devices::======\n');
   output.push(JSON.stringify(reportInfo.discoverDeviceList, null, 2));
 
-  if (window.FLUX.logFile) {
-    try {
-      const buf = String(fs.readFile(window.FLUX.logFile, 'utf8'));
-      const truncated = maxBackendLogLength !== undefined && buf.length > maxBackendLogLength;
-
-      output.push('\n\n======::backend::======\n');
-
-      if (truncated) output.push(TRUNCATED_MARKER);
-
-      output.push(truncated ? buf.slice(-maxBackendLogLength) : buf);
-    } catch (err) {
-      output.push('\n\n======::backend::======\n');
-      output.push(`Open backend log failed: ${err}\n`);
-    }
-  } else {
-    output.push('\n\n======::backend::======\nNot available\n');
-  }
+  // the backend section is inserted here once the rest of the report has been measured
+  const backendAt = output.length;
 
   output.push('\n\n======::ws::======\n');
   output.push(JSON.stringify(reportInfo.ws, null, 2));
@@ -111,6 +118,11 @@ const getOutput = ({ includeImages = true, maxBackendLogLength, scrub = false }:
 
   output.push('\n\n======::print-and-cut::======\n');
   output.push(getPrintAndCutReport({ includeImage: includeImages }));
+
+  // scrubReport only shortens, so measuring before it keeps the cap an upper bound
+  const budget = maxLength === undefined ? undefined : maxLength - output.join('').length;
+
+  output.splice(backendAt, 0, ...backendSection(budget));
 
   // one pass over the joined text catches paths from every section, including ones added later
   return scrub ? [scrubReport(output.join(''))] : output;

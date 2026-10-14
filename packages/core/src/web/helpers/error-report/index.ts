@@ -18,7 +18,7 @@ import type { BlockReason } from './throttle';
 import { getBlockReason, getSkipped, makeFingerprint, recordSkipped, recordUpload } from './throttle';
 
 export const ERROR_REPORT_ENDPOINT = '/api/beam-studio/error-report';
-/** §9.1: bug_report.txt stays under 10 MB by dropping the oldest fluxghost log lines */
+/** §9.1: bug_report.txt stays within the backend's 10 MB file limit by dropping the oldest fluxghost log lines */
 export const MAX_BUG_REPORT_LENGTH = 10 * 1024 * 1024;
 
 const MAX_ATTEMPTS = 3;
@@ -128,7 +128,7 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
     form.append('occurrences_since_last', String(getSkipped(fingerprint)));
 
     const bugReport = outputError
-      .getOutput({ includeImages: false, maxBackendLogLength: MAX_BUG_REPORT_LENGTH, scrub: true })
+      .getOutput({ includeImages: false, maxLength: MAX_BUG_REPORT_LENGTH, scrub: true })
       .join('');
 
     form.append('bug_report', new Blob([bugReport], { type: 'text/plain' }), 'bug_report.txt');
