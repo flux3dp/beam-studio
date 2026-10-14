@@ -256,7 +256,9 @@ and plane have none.
   / `requestFontsOfTheFontFamily`, because image-based exports (thumbnails, Print-and-Cut PDF) render in
   an isolated document that only sees installed fonts and inlined web fonts, so a bundled family picked
   in the main Text tool would fall back there. Bundled (both OFL): Montserrat-Medium and Lobster-Regular
-  (the pet-shop template's `preferredFonts`).
+  (the pet-shop template's `preferredFonts`). The stamp `FontSelect` lists the bundled families first
+  (`getBundledFonts()`), resolving them to their postscript name directly since the family table
+  doesn't know them; its style select stays disabled for a one-face family.
 - `sharedFont: true` → one FontSelect above the slot list; `updateSharedFont` sets every labeled,
   unpinned slot. Per-slot pickers are hidden.
 

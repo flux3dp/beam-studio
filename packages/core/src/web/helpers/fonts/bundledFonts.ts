@@ -63,6 +63,9 @@ const toGeneralFont = (font: BundledFont): GeneralFont => {
   return { ...base, monospace: false, path: localPath(font), width: 5 } satisfies FontDescriptor;
 };
 
+/** Every bundled face, for a picker that lists them explicitly (they are not in the app's family lists). */
+export const getBundledFonts = (): GeneralFont[] => BUNDLED_FONTS.map(toGeneralFont);
+
 export const getBundledFont = (postscriptName: string): GeneralFont | undefined => {
   const font = BUNDLED_FONTS.find((f) => f.postscriptName === postscriptName);
 
