@@ -25,7 +25,7 @@ Multipart fields (all strings unless noted):
 |---|---|
 | `serial` | `^[A-Za-z0-9-]{1,32}$` or `none`. Deliberately not length-pinned: today's serials are typically 10 chars but the format is not guaranteed stable, and length is not a security control anyway (an attacker matches any format). The factory list in §2.1 is the control. |
 | `installation_id` | `^[a-f0-9]{64}$` (sha256) or UUID v4; always required (folder key for the no-machine sites, §2.1) |
-| `error_code` | ≤ 64 chars, `^[#A-Za-z0-9_-]+$` |
+| `error_code` | ≤ 64 chars, `^[#A-Za-z0-9_-]+$`; `#` is stripped before the key and the log line (`#806` is stored as `806`) because it would start a URL fragment in any pasted object link (decided 2026-10-14) |
 | `app_version`, `os`, `firmware_version` | ≤ 32 chars each; `firmware_version` may be empty |
 | `occurrences_since_last` | integer ≥ 0 |
 | `bug_report` | file, required, ≤ 10 MB |
@@ -47,12 +47,14 @@ Responses: `200 { status: 'ok' }`, `200 { status: 'duplicate' }` (§5), `400`, `
 STORAGES['error_report'] = {
     'BACKEND': 'storages.backends.s3boto3.S3Boto3Storage',
     'OPTIONS': {
-        'bucket_name': 'beam-error-report',
+        'bucket_name': os.environ.get('R2_BUCKET', 'flux-id-test'),   # settings_deploy: 'flux-id'
+        'location': 'error-report',                                  # one private bucket, one folder per feature
         'endpoint_url': os.environ['R2_ENDPOINT_URL'],      # https://<account>.r2.cloudflarestorage.com
         'access_key': os.environ['R2_ACCESS_KEY_ID'],
         'secret_key': os.environ['R2_SECRET_ACCESS_KEY'],
         'region_name': 'auto',
         'default_acl': 'private',
+        'object_parameters': {},  # the global AWS_S3_OBJECT_PARAMETERS sets StorageClass=INTELLIGENT_TIERING; R2 accepts STANDARD only (InvalidStorageClass otherwise)
         'querystring_auth': False,
     },
 }
@@ -62,18 +64,20 @@ ERROR_REPORT_DEDUPE_WINDOW = timedelta(hours=24)
 ERROR_REPORT_DAILY_BYTES_BUDGET = 2 * 1024 ** 3   # global ingest cap per UTC day, §6
 ```
 
+Buckets are split by access class and environment, never by feature: `flux-id` and `flux-id-test` hold every private feature under its own `location` prefix (decided 2026-10-14, so the bucket count stays at two; a `flux-id-public` pair appears only when a feature needs public URLs, since public access is a per-bucket switch). Lifecycle rules take a prefix, so retention still differs per feature. The S3 fast path in `list_folder` prepends `storage.location` itself; `save` and `delete` get it from django-storages.
+
 The view touches storage only through `storages['error_report']` (`save`, `listdir`/`bucket.objects.filter`, `delete`). **Changing provider = changing this dict**: S3, Backblaze B2, GCS (S3-interop) and MinIO need only new `endpoint_url` / keys; Google Drive would be a custom `Storage` subclass behind the same alias with its own cleanup cron, since Drive has no lifecycle rules.
 
-Key layout (ISO-8601 UTC timestamp first, so lexicographic order = chronological order):
+Key layout under the `error-report/` prefix (ISO-8601 UTC timestamp first, colon-free, so lexicographic order = chronological order; `{code}` is the client's `error_code` without `#`):
 
 ```
-{serial}/{ts}_{code}_bug_report.txt
-{serial}/{ts}_{code}_system_log.txt
-{serial}/{ts}_{code}_scene.svg
-no-device/{installation_id}/{ts}_{code}_bug_report.txt   # the three no-machine sites (§2.1)
+error-report/{serial}/{ts}_{code}_bug_report.txt
+error-report/{serial}/{ts}_{code}_system_log.txt
+error-report/{serial}/{ts}_{code}_scene.svg
+error-report/no-device/{installation_id}/{ts}_{code}_bug_report.txt   # the three no-machine sites (§2.1)
 ```
 
-Retention: R2 object lifecycle rule on the bucket, delete after 180 days. Set once in the Cloudflare dashboard (or `wrangler r2 bucket lifecycle add`). No cron.
+Retention: R2 object lifecycle rule scoped to prefix `error-report/`, delete after 180 days. Set once in the Cloudflare dashboard (or `wrangler r2 bucket lifecycle add`). No cron.
 
 ## 4. Folder cap (eviction)
 
@@ -104,7 +108,7 @@ Threat model: an attacker who has read the client source can post arbitrary `ser
 
 | Layer | Rule | What it bounds |
 |---|---|---|
-| 1. Cloudflare WAF rate-limit rule on `/api/beam-studio/error-report` | 10 req / 10 min per IP, action block; answers before nginx reads the body | request rate per IP, cheaply |
+| 1. Cloudflare WAF rate-limit rule on `/api/beam-studio/error-report` | 10 req / 10 min per IP, action block, mitigation 10 min (needs a Business zone; Pro allows at most a 1 min period, Free only 10 s: use 5 / min or 3 / 10 s there); expression `http.request.uri.path eq "/api/beam-studio/error-report" and http.request.method eq "POST"`; answers before nginx reads the body | request rate per IP, cheaply |
 | 2. DRF per-IP throttles (`AnonRateThrottle`, two scopes, redis-backed) | `error_report_hour = '6/hour'` and `error_report_day = '20/day'` | an honest NAT (workshop with several machines, each on cooldown) stays well under 20/day; a single abusive IP is capped at 20 × 20 MB = 400 MB/day |
 | 3. **Global daily byte budget** | `cache.incr(f'error_report:bytes:{utc date}', body_size)` before the write; over budget → `429 { status: 'budget' }`, nothing stored, log line `error_report rejected reason=budget` | total ingest ≤ 2 GB/day → bucket ≤ 2 GB × 180 d = 360 GB worst case (≈ $5/month on R2); honest traffic (≈ 45 GB/month) never touches it |
 | 4. Per-folder cap (§4) and 24 h dedupe (§5) | 20 MB per serial / installation folder | one spoofed id cannot grow a folder past 20 MB |
@@ -136,9 +140,9 @@ Linode outbound transfer counts the R2 PUTs (≈ 45 GB/month in the pessimistic 
 
 ## 9. Rollout
 
-1. Settings alias + env vars on staging; create the R2 bucket, API token scoped to that bucket, lifecycle rule.
-2. View + throttles + budget + tests (`tests/test_error_report.py`: validation table incl. 10-char and non-10-char serials both accepted, duplicate, eviction order with a fake storage, cap setting, per-IP 429, budget 429 at the boundary and reset at UTC midnight, 503 on storage failure).
-3. Cloudflare WAF rule on the path; R2 storage notification at 100 GB.
+1. Settings alias + env vars on staging; create the R2 buckets `flux-id-test` and `flux-id`, one API token per bucket (Object Read & Write, scoped to that bucket), lifecycle rule on prefix `error-report/`. Done in code 2026-10-14 (branch `feat/error-report-upload`); buckets pending.
+2. View + throttles + budget + tests (`tests/error_report.py`: validation table incl. 10-char and non-10-char serials both accepted, duplicate, eviction order on `InMemoryStorage`, cap setting, per-IP 429 keyed on the Cloudflare-appended client address (`REST_FRAMEWORK['NUM_PROXIES'] = 2`: Cloudflare and nginx each append one hop to `X-Forwarded-For`; without it DRF keyed on the whole header, which changes per edge node), budget 429 at the boundary and reset at UTC midnight, 503 on storage failure, S3 listing with the location prefix). Done 2026-10-14, 16 tests. The view's logger is pinned to INFO in `logging_generator` because the root logger sits at WARNING and would drop the §7 lines.
+3. Cloudflare WAF rule on the path (plan-dependent period, see §6); R2 storage notification at 100 GB on the bucket.
 4. Baseline week of metrics; ship; week-after readout into client PRD §9.2.
 
 ## 10. Open decisions
