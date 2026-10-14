@@ -96,7 +96,7 @@ const FocusBlock = ({
             size="small"
           />
         </div>
-        {isPromark && focus.value >= 0 && (
+        {isDevMode && isPromark && focus.value >= 0 && (
           <div className={classNames(styles.panel, styles.switch)}>
             <label htmlFor="lower-focus-rev">{t.reverse}</label>
             <Switch
@@ -139,7 +139,7 @@ const FocusBlock = ({
               size="small"
             />
           </div>
-          {isPromark && focusStep.value >= 0 && (
+          {isDevMode && isPromark && focusStep.value >= 0 && (
             <div className={classNames(styles.panel, styles.switch)}>
               <label htmlFor="focus-step-rev">{t.reverse}</label>
               <Switch

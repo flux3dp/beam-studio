@@ -216,7 +216,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
           </span>
           <Switch checked={focusOn} id="lower-focus" onChange={setLowerFocus} />
         </div>
-        {focusOn && (
+        {isDevMode && focusOn && (
           <div>
             <label htmlFor="lower-focus-rev">{t.reverse}</label>
             <Switch
@@ -255,7 +255,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
               </span>
               <Switch checked={focusStepOn} id="focus-step-toggle" onChange={setFocusStep} />
             </div>
-            {focusStepOn && (
+            {isDevMode && focusStepOn && (
               <div>
                 <label htmlFor="focus-step-rev">{t.reverse}</label>
                 <Switch

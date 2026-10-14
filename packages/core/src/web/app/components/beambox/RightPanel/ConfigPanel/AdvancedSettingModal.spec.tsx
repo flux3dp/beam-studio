@@ -4,6 +4,14 @@ import { fireEvent, render } from '@testing-library/react';
 
 const mockGet = jest.fn();
 
+const mockIsDev = jest.fn();
+
+jest.mock('@core/helpers/is-dev', () => ({
+  __esModule: true,
+  default: () => mockIsDev(),
+  isUvDev: () => true,
+}));
+
 jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
 }));
@@ -133,6 +141,7 @@ describe('test AdvancedSettingModal', () => {
     mockGetSelectedLayers.mockReturnValue(['layer1', 'layer2']);
     mockUseIsPromarkUV.mockReturnValue(false);
     mockUseInnerEngravingActive.mockReturnValue(false);
+    mockIsDev.mockReturnValue(true);
   });
 
   it('should render correctly', () => {
@@ -265,6 +274,27 @@ describe('test AdvancedSettingModal', () => {
 
       expect(mockWriteDataLayer).toHaveBeenCalledWith('layer1', 'stlMinLayerSpacing', 0.02, { batchCmd: mockBatchCmd });
     });
+  });
+
+  test('reverse switches are dev only', () => {
+    mockGetState.mockReturnValue({
+      ...mockGetState(),
+      focus: { hasMultiValue: false, value: 2 },
+      focusStep: { hasMultiValue: false, value: 1 },
+    });
+
+    const { baseElement, unmount } = render(<AdvancedSettingModal onClose={mockOnClose} />);
+
+    expect(baseElement.querySelector('#lower-focus-rev')).not.toBeNull();
+    expect(baseElement.querySelector('#focus-step-rev')).not.toBeNull();
+    unmount();
+
+    mockIsDev.mockReturnValue(false);
+
+    const { baseElement: nonDev } = render(<AdvancedSettingModal onClose={mockOnClose} />);
+
+    expect(nonDev.querySelector('#lower-focus-rev')).toBeNull();
+    expect(nonDev.querySelector('#focus-step-rev')).toBeNull();
   });
 
   test('cancel should work', () => {
