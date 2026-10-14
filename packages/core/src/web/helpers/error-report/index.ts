@@ -35,6 +35,8 @@ export interface UploadErrorReportOptions {
 }
 
 const logger = Logger('generic');
+/** fingerprints with an upload in progress: the throttle only learns about one once recordUpload runs */
+const inFlight = new Set<string>();
 
 /**
  * Device system log, only when a control socket exists and the machine is idle; null otherwise.
@@ -107,7 +109,7 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
     const firmwareVersion = info?.version ?? '';
     const appVersion = window.FLUX.version;
     const fingerprint = makeFingerprint(serial, errorCode, appVersion, firmwareVersion);
-    const blocked = getBlockReason(serial, fingerprint);
+    const blocked = inFlight.has(fingerprint) ? 'cooldown' : getBlockReason(serial, fingerprint);
 
     if (blocked) {
       if (blocked === 'cooldown') recordSkipped(fingerprint);
@@ -117,37 +119,43 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
       return blocked;
     }
 
-    const form = new FormData();
-
-    form.append('serial', serial);
-    form.append('installation_id', getInstallationId());
-    form.append('error_code', errorCode);
-    form.append('app_version', appVersion);
-    form.append('os', getOS());
-    form.append('firmware_version', firmwareVersion);
-    form.append('occurrences_since_last', String(getSkipped(fingerprint)));
-
-    const bugReport = outputError
-      .getOutput({ includeImages: false, maxLength: MAX_BUG_REPORT_LENGTH, scrub: true })
-      .join('');
-
-    form.append('bug_report', new Blob([bugReport], { type: 'text/plain' }), 'bug_report.txt');
+    inFlight.add(fingerprint);
 
     try {
-      const deviceLog = await readDeviceLog();
+      const form = new FormData();
 
-      if (deviceLog) form.append('system_log', deviceLog, 'system_log.txt');
-    } catch (error) {
-      logger.append(`error-report device log skipped: ${error}`);
+      form.append('serial', serial);
+      form.append('installation_id', getInstallationId());
+      form.append('error_code', errorCode);
+      form.append('app_version', appVersion);
+      form.append('os', getOS());
+      form.append('firmware_version', firmwareVersion);
+      form.append('occurrences_since_last', String(getSkipped(fingerprint)));
+
+      const bugReport = outputError
+        .getOutput({ includeImages: false, maxLength: MAX_BUG_REPORT_LENGTH, scrub: true })
+        .join('');
+
+      form.append('bug_report', new Blob([bugReport], { type: 'text/plain' }), 'bug_report.txt');
+
+      try {
+        const deviceLog = await readDeviceLog();
+
+        if (deviceLog) form.append('system_log', deviceLog, 'system_log.txt');
+      } catch (error) {
+        logger.append(`error-report device log skipped: ${error}`);
+      }
+
+      if (scene) form.append('scene', new Blob([scene.content], { type: 'image/svg+xml' }), scene.name);
+
+      const result = await post(form);
+
+      recordUpload(serial, fingerprint);
+
+      return result;
+    } finally {
+      inFlight.delete(fingerprint);
     }
-
-    if (scene) form.append('scene', new Blob([scene.content], { type: 'image/svg+xml' }), scene.name);
-
-    const result = await post(form);
-
-    recordUpload(serial, fingerprint);
-
-    return result;
   } catch (error) {
     logger.append(`error-report upload failed ${errorCode}: ${error}`);
 
