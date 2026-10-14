@@ -659,18 +659,26 @@ export interface ILang {
             marking_dark: string;
             marking_light: string;
             printing: string;
-            solid_dotting: string;
+            thick_contour_dotting: string;
           };
           save: string;
         };
         engrave: string;
         existing_name: string;
         fill_angle: string;
+        fill_dwell: string;
+        fill_dwell_adaptive: string;
+        fill_dwell_adaptive_hint: string;
+        fill_dwell_hint: string;
+        fill_dwell_time: string;
+        fill_interleave: string;
+        fill_interleave_hint: string;
         fill_interval: string;
         fill_setting: string;
         filled_path_only: string;
         focus_adjustment: string;
         frequency: string;
+        frequency_hint_uv: string;
         gradient_only: string;
         halftone: string;
         halftone_link: string;
@@ -716,9 +724,11 @@ export interface ILang {
         pwm_advanced_desc: string;
         pwm_advanced_hint: string;
         pwm_advanced_setting: string;
+        q_pulse_width: string;
         refresh_interval: string;
         refresh_printer: string;
         repeat: string;
+        reverse: string;
         single_color: string;
         single_color_desc: string;
         slider: {
@@ -1778,6 +1788,8 @@ export interface ILang {
     sphere_base_height_hint: string;
     sphere_height_hint: string;
     sphere_liquid_alert: string;
+    thick_contour: string;
+    thick_contour_hint: string;
     title: string;
     width: string;
   };

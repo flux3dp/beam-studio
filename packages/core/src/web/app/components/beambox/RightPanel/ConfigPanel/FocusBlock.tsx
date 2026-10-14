@@ -9,7 +9,7 @@ import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import isDev, { mockT } from '@core/helpers/is-dev';
+import isDev from '@core/helpers/is-dev';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -98,7 +98,7 @@ const FocusBlock = ({
         </div>
         {isPromark && focus.value >= 0 && (
           <div className={classNames(styles.panel, styles.switch)}>
-            <label htmlFor="lower-focus-rev">{mockT('反向')}</label>
+            <label htmlFor="lower-focus-rev">{t.reverse}</label>
             <Switch
               checked={focusReverse.value}
               className={styles.switch}
@@ -141,7 +141,7 @@ const FocusBlock = ({
           </div>
           {isPromark && focusStep.value >= 0 && (
             <div className={classNames(styles.panel, styles.switch)}>
-              <label htmlFor="focus-step-rev">{mockT('反向')}</label>
+              <label htmlFor="focus-step-rev">{t.reverse}</label>
               <Switch
                 checked={focusStepReverse.value}
                 className={styles.switch}

@@ -327,7 +327,7 @@ exports[`test AdvancedSettingModal should render correctly 1`] = `
                       <label
                         for="fillInterleave"
                       >
-                        打散掃描順序
+                        Interleave Scan Lines
                       </label>
                       <span
                         aria-label="question-circle"
@@ -379,7 +379,7 @@ exports[`test AdvancedSettingModal should render correctly 1`] = `
                       <label
                         for="fillDwell"
                       >
-                        每行停留
+                        Line Dwell
                       </label>
                       <span
                         aria-label="question-circle"

@@ -7,7 +7,6 @@ import type { LaserType } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
-import { mockT } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Form.module.scss';
@@ -50,12 +49,10 @@ export default function TableSettingForm({
   } = useI18n();
   const lengthUnit = isInch ? 'in' : 'mm';
   const { options, settingEntries } = useMemo(() => {
-    // labels the laser panel has no key for; the mockT ones are still to be translated
+    // params whose label is not the laser panel key of the same name
     const labels: Record<string, string> = {
-      fillDwellTime: mockT('每行停留'),
-      fillInterleave: mockT('打散掃描順序'),
+      fillDwellTime: tLaserPanel.fill_dwell,
       pointSpacing: tInnerEngraving.point_spacing,
-      qPulseWidth: mockT('Q 開關'),
     };
     const getLabel = (key: string): string => labels[key] ?? tLaserPanel[camelToSnake(key)] ?? tLaserPanel[key];
 

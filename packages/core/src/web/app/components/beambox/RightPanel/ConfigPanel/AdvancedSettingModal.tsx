@@ -10,7 +10,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import isDev, { isUvDev, mockT } from '@core/helpers/is-dev';
+import isDev, { isUvDev } from '@core/helpers/is-dev';
 import { CUSTOM_PRESET_CONSTANT, getPromarkLimit, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import { uvFrequencyToPower } from '@core/helpers/layer/uvPowerFrequency';
@@ -190,7 +190,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
           <div>
             <span>
               <label htmlFor="frequency">{t.frequency}</label>
-              <Tooltip title={mockT('UV 的功率由頻率決定，改頻率會連動功率；40kHz 以下功率顯示為 100%')}>
+              <Tooltip title={t.frequency_hint_uv}>
                 <QuestionCircleOutlined className={styles.hint} />
               </Tooltip>
             </span>
@@ -218,7 +218,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
         </div>
         {focusOn && (
           <div>
-            <label htmlFor="lower-focus-rev">{mockT('反向')}</label>
+            <label htmlFor="lower-focus-rev">{t.reverse}</label>
             <Switch
               checked={draftValue.focusReverse.value}
               className={styles.switch}
@@ -257,7 +257,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
             </div>
             {focusStepOn && (
               <div>
-                <label htmlFor="focus-step-rev">{mockT('反向')}</label>
+                <label htmlFor="focus-step-rev">{t.reverse}</label>
                 <Switch
                   checked={draftValue.focusStepReverse.value}
                   className={styles.switch}
@@ -400,12 +400,8 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
               <>
                 <div>
                   <span>
-                    <label htmlFor="fillInterleave">{mockT('打散掃描順序')}</label>
-                    <Tooltip
-                      title={mockT(
-                        '打散掃描線的雕刻順序：先後雕刻的兩行彼此相隔較遠，相鄰的兩行也不會接連雕刻，以分散熱量',
-                      )}
-                    >
+                    <label htmlFor="fillInterleave">{t.fill_interleave}</label>
+                    <Tooltip title={t.fill_interleave_hint}>
                       <QuestionCircleOutlined className={styles.hint} />
                     </Tooltip>
                   </span>
@@ -417,8 +413,8 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
                 </div>
                 <div>
                   <span>
-                    <label htmlFor="fillDwell">{mockT('每行停留')}</label>
-                    <Tooltip title={mockT('每雕刻完一行後暫停，讓材料散熱')}>
+                    <label htmlFor="fillDwell">{t.fill_dwell}</label>
+                    <Tooltip title={t.fill_dwell_hint}>
                       <QuestionCircleOutlined className={styles.hint} />
                     </Tooltip>
                   </span>
@@ -427,7 +423,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
                 {fillDwellOn && (
                   <>
                     <div>
-                      <span>{mockT('停留時間')}</span>
+                      <span>{t.fill_dwell_time}</span>
                       <Input
                         hasMultiValue={draftValue.fillDwellTime.hasMultiValue}
                         id="fillDwellTime"
@@ -443,8 +439,8 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
                     </div>
                     <div>
                       <span>
-                        <label htmlFor="fillDwellAdaptive">{mockT('依雕刻時間調整')}</label>
-                        <Tooltip title={mockT('扣掉本行實際雕刻所花的時間，本行夠長就少等一點')}>
+                        <label htmlFor="fillDwellAdaptive">{t.fill_dwell_adaptive}</label>
+                        <Tooltip title={t.fill_dwell_adaptive_hint}>
                           <QuestionCircleOutlined className={styles.hint} />
                         </Tooltip>
                       </span>

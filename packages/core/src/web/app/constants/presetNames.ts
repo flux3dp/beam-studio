@@ -122,7 +122,7 @@ export const presetNames: Record<string, PresetName> = {
   // promark UV inner engraving
   k9_crystal_contour_dot: { material: 'k9_crystal', preset: 'contour_dotting' },
   k9_crystal_contour_line: { material: 'k9_crystal', preset: 'contour_lines' },
-  k9_crystal_solid_dot: { material: 'k9_crystal', preset: 'solid_dotting' },
+  k9_crystal_solid_dot: { material: 'k9_crystal', preset: 'thick_contour_dotting' },
   // printing
   wood_printing: { material: 'wood', preset: 'printing' },
   mdf_printing: { material: 'mdf', preset: 'printing' },

@@ -8,4 +8,3 @@ export default isDev;
 
 // Promark UV tuning and in-development 3D tools, kept out of the general dev mode that already unlocks UV itself
 export const isUvDev = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
-export const mockT = (key: string) => key;
