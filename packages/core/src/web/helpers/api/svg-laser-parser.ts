@@ -227,7 +227,13 @@ export const getExportOpt = async (
     }
 
     if (addOnInfo.multiModules) {
-      if (documentState['enable-4c'] && documentState['enable-1064']) {
+      if (model === 'fhx2galvo') {
+        // The CO2 galvo head is always fitted and MOPA is optional; a document without MOPA
+        // makes the machine refuse the job when a MOPA head is installed.
+        config.expected_module = documentState['enable-galvo-mopa']
+          ? DetectedLayerModule.GALVO_MOPA
+          : DetectedLayerModule.GALVO_CO2;
+      } else if (documentState['enable-4c'] && documentState['enable-1064']) {
         config.expected_module = DetectedLayerModule.PRINTER_4C_WITH_1064;
         config.mep = config.mpp = 25;
         config.acc = 2000;
