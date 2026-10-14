@@ -227,11 +227,21 @@ const useStampStore = create(
         // Superseded by a newer selectTemplate or by reset() while the probe was pending.
         if (version !== selectVersion) return;
 
-        get().project?.remove();
-
         const project = new paper.Project(document.createElement('canvas'));
-        const parsed = parseTemplate(project, template);
+        let parsed: ParsedTemplate;
 
+        try {
+          parsed = parseTemplate(project, template);
+        } catch (error) {
+          // e.g. a template SVG paper can't import: keep the previous template editable.
+          console.error('Stamp template failed to load:', error);
+          project.remove();
+          set({ pendingTemplateId: null });
+
+          return;
+        }
+
+        get().project?.remove();
         set({
           defaultFont,
           isModified: false,

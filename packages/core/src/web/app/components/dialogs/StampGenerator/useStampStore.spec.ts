@@ -19,7 +19,10 @@ jest.mock('@core/app/actions/beambox/font-funcs', () => ({
 }));
 jest.mock('@core/helpers/fonts/bundledFonts', () => ({ applyBundledFontStyle: jest.fn() }));
 jest.mock('@core/helpers/fonts/getDefaultFont', () => () => ({ font_family: 'Arial', font_postscriptName: 'ArialMT' }));
-jest.mock('./builders/buildTemplate', () => ({ parseTemplate: () => ({ baselines: [], frames: [], outline: null }) }));
+
+let mockParseTemplate = () => ({ baselines: [], frames: [], outline: null });
+
+jest.mock('./builders/buildTemplate', () => ({ parseTemplate: () => mockParseTemplate() }));
 
 let mockBuildGate = async (): Promise<void> => {};
 
@@ -97,6 +100,25 @@ describe('useStampStore.selectTemplate', () => {
     expect(fresh).not.toBeNull();
     expect(useStampStore.getState().shape).toBe(fresh);
     mockBuildGate = async () => {};
+  });
+
+  it('clears the pending id and keeps the previous template when parsing fails', async () => {
+    const plain = STAMP_TEMPLATES.find((t) => !t.preferredFonts)!.id;
+    const other = STAMP_TEMPLATES.find((t) => !t.preferredFonts && t.id !== plain)!.id;
+
+    deferred.get('ArialMT')?.resolve();
+    await useStampStore.getState().selectTemplate(plain);
+
+    const parsed = useStampStore.getState().parsed;
+
+    mockParseTemplate = () => {
+      throw new Error('bad svg');
+    };
+    await expect(useStampStore.getState().selectTemplate(other)).resolves.toBeUndefined();
+    mockParseTemplate = () => ({ baselines: [], frames: [], outline: null });
+    expect(useStampStore.getState().pendingTemplateId).toBeNull();
+    expect(useStampStore.getState().template?.id).toBe(plain);
+    expect(useStampStore.getState().parsed).toBe(parsed);
   });
 
   it('registers the @font-face of a preferred font that resolves', async () => {
