@@ -2615,31 +2615,6 @@ export interface ILang {
       element: string;
       text: string;
     };
-    templates: {
-      circle_approved: string;
-      circle_corporate: string;
-      circle_done: string;
-      circle_notary: string;
-      circle_paw: string;
-      circle_postmark: string;
-      oval_company: string;
-      oval_exit: string;
-      oval_received: string;
-      oval_registration: string;
-      rect_confidential: string;
-      rect_date: string;
-      rect_entry: string;
-      rect_header_bar: string;
-      rect_label: string;
-      rect_signature_vertical: string;
-      rect_title_name: string;
-      square_camera: string;
-      square_name: string;
-      square_signature: string;
-      square_three_column: string;
-      tw_company_oval: string;
-      tw_company_rect: string;
-    };
   };
   stamp_maker_panel: {
     bevel_radius: string;

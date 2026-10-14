@@ -44,7 +44,7 @@ StampGenerator/
 │   ├── templates.spec.ts      # Parses every bundled template
 │   └── *.spec.ts
 └── components/
-    ├── TemplatePicker.tsx     # Template cards (thumbnail or name fallback)
+    ├── TemplatePicker.tsx     # Template cards (thumbnail only)
     ├── Preview.tsx            # Keychain-style preview, size badge (mm/inch), legend (engrave / cut / mirrored)
     ├── OptionsPanel.tsx       # Tabs: Basic (invert, flip, size, reset) · Text · Element · Border; tabs gated on slots / border
     ├── TextTab.tsx            # Accordion per labeled slot; shared FontSelect when template.sharedFont
@@ -81,8 +81,9 @@ The **outline** is the `#722ED1` path when present, else the largest frame: its 
 (`outerContour`, largest-area child) becomes the cut path and drives the scale. Slot boxes are NOT in the SVG; they live in `templates/index.ts`.
 
 Adding a hand-authored template: drop the SVG in `templates/`, import it with `?raw`, add an entry with
-`nameKey` (i18n `stamp_generator.templates`), `sizes`, `texts`, `elements`, optional `preferredFonts` /
-`sharedFont`; add the name key (and any new slot `labelKey`) to all 23 language files. `templates.spec.ts`
+`id`, `sizes`, `texts`, `elements`, `thumbnail`, optional `preferredFonts` / `sharedFont`; add any new slot
+`labelKey` to all 23 language files. Templates have no translated name: the picker shows only the thumbnail
+(`thumbnail` is required), with the id as the image `alt`. `templates.spec.ts`
 will parse it.
 
 ## Design-team JSON templates (`catalog.ts`)
@@ -94,7 +95,7 @@ produced once by a converter script (`fromJson.mjs`, a one-time tool kept out of
 the history of commit e3348a97a if design sends more JSONs) that ported that geometry (prototype box =
 sizeMm × 4 px, 3 px inset, everything relative to R = min(rx, ry); mapped so the outer frame spans 140
 design px) into `catalog/<id>.svg` frames plus the entries below. The entries are plain objects: tune
-them by hand, the JSONs stay out of the repo. Entries use `nameKey` = template id and `labelKey` =
+them by hand, the JSONs stay out of the repo. Entries use `labelKey` =
 a `stamp_generator.slots` key (design label → key); every new key goes into all 23 lang files. Arc slots
 carry the prototype's default 2 px tracking via `letterSpacing`, center lines become `fit: 'center'`
 boxes (`fontSize` = R × s, box center 0.35 em above the baseline), stars become element slots with
@@ -175,7 +176,7 @@ keychain generator) with the raw SVG as thumbnail and no labels. Border template
 rect_confidential, rect_entry, rect_date, the portrait rect_signature_vertical, and the
 squares square_name / square_three_column (100 px box, ring 1/30), square_camera, square_signature (boxes = their
 old frame edges; SVGs deleted) and the split templates rect_label/02 (ring removed from the SVG,
-the filled title bar stays there as a frame for the knockout text). The circle (circle_corporate, circle_notary, circle_paw, circle_approved, circle_postmark,
+the filled title bar stays there as a frame for the knockout text). The circle (circle_corporate, circle_notary, circle_pet, circle_approved, circle_postmark,
 circle_done) and oval (oval_company, oval_registration, oval_received, oval_exit)
 catalog templates lost their outer ring the same way; inner rings and date rules stay in the SVG. Only
 the TW 統編章 pair still uses SVG outer frames.
@@ -207,7 +208,7 @@ the TW 統編章 pair still uses SVG outer frames.
   **omit it to keep the slot fixed**: it renders its placeholder and is
   not listed in the Text tab (`isLabeled()` in types.ts is the one check) — optional `letterSpacing`
   (initial tracking, design px) and `fontPostscriptName` (pins a face, e.g. the bundled
-  `Montserrat-Medium` for 統一編號). `StampTemplate.nameKey` is the i18n key (= id for catalog entries).
+  `Montserrat-Medium` for 統一編號).
 - Every template declares `category: TemplateCategory` (`TEMPLATE_CATEGORIES` in types.ts: the frame
   shapes `circle | oval | square | rect`; the regulated 統編章 pair tw_company_oval / tw_company_rect
   sits under oval / rect). The dialog's top bar (antd `Tabs` with a `CategoryIcon` outline per shape in
@@ -216,7 +217,7 @@ the TW 統編章 pair still uses SVG outer frames.
   still applies). No extra store state. A template with `locales` is listed only in those UI languages
   and one with `excludedLocales` everywhere else (the TW 統編章 pair: `['zh-tw']`; the 公司小章 square
   seals and rect_title_name: `CHINESE_LOCALES` from templates/fonts.ts; rect_title_name_latin excludes
-  them and shares the nameKey). Japanese seals (circle_done, square_signature) stay global for now: too
+  them). Japanese seals (circle_done, square_signature) stay global for now: too
   few templates to split. (`getVisibleTemplates()` in
   templates/index.ts), and a category tab appears only while it has a visible template. The dialog opens on the first circle template. The TW seals keep
   their SVG frames: their outer rings are fixed by regulation, never a border.
@@ -229,12 +230,15 @@ Montserrat faces overlap contours on purpose (the "4").
 
 Element shape keys are Element-panel keys (`animals/i_land-16`, `basic/icon-star1`, Noun Project
 `np/<id>`) loaded through `@core/helpers/generator/loadShape` (moved out of the keychain generator),
-plus bundled `stamp/*` icons from `templates/icons` (camera, plane, check, plum, star: shapes the
-panel doesn't have) that `buildElement.ts` registers in the shared `svgCache` so thumbnails and
+plus bundled `stamp/*` icons from `templates/icons` (camera, plane, check, plum, star, dog: shapes the
+panel doesn't have; all drawn in-house. Noun Project `np/<id>` keys can't be template defaults: they
+need a logged-in flux-id session, count a download per fetch, and the API terms forbid bundling a
+fetched file) that `buildElement.ts` registers in the shared `svgCache` so thumbnails and
 loading treat them like any key. A labeled slot lists `options` (preset keys) in the Element tab via
 the shared `@core/app/widgets/ElementPicker` (preset grid, selected slot with clear, "more" opens the
 Element panel browser); clearing sets `enabled: false, shapeKey: ''`. Fixed slots (no label) just
-render their `shapeKey`. The paw stamp's default is the panel's own paw; camera and plane have none.
+render their `shapeKey`. The pet stamp (circle_pet) defaults to `stamp/dog` with the panel's paws as options; camera
+and plane have none.
 
 ## Fonts
 
@@ -249,7 +253,8 @@ render their `shapeKey`. The paw stamp's default is the panel's own paw; camera 
   `@font-face` when a slot pins one. They are stamp-only on purpose: NOT in `requestAvailableFontFamilies`
   / `requestFontsOfTheFontFamily`, because image-based exports (thumbnails, Print-and-Cut PDF) render in
   an isolated document that only sees installed fonts and inlined web fonts, so a bundled family picked
-  in the main Text tool would fall back there. Only Montserrat-Medium is bundled (OFL).
+  in the main Text tool would fall back there. Bundled (both OFL): Montserrat-Medium and Lobster-Regular
+  (the pet-shop template's `preferredFonts`).
 - `sharedFont: true` → one FontSelect above the slot list; `updateSharedFont` sets every labeled,
   unpinned slot. Per-slot pickers are hidden.
 
@@ -321,5 +326,8 @@ import_to_canvas, reset_to_default, size) and `generators.text_options`; the Bas
 - Frame bands are thin at small sizes (0.18mm inner ring on the JP corporate round seal at 10.5mm,
   0.35mm on the company seals at 四分). Kerf compensation was prototyped and reverted for that reason;
   thicken frames before revisiting.
-- Element tab rotation / shape picker, designer-provided thumbnails and generator icon
-  (`icons/generator/stamp.svg` is a placeholder), bold text (font-weight can't produce outlines; per-contour offset was too slow).
+- Element tab rotation / shape picker, bold text (font-weight can't produce outlines; per-contour
+  offset was too slow).
+- Thumbnails: designer JPGs live in `packages/core/src/web/assets/img/stamp-generator/<id>.jpg`
+  (360×240, served as `core-img/stamp-generator/<id>.jpg` by both webpack CopyPlugins) and are
+  referenced by the required `template.thumbnail`.

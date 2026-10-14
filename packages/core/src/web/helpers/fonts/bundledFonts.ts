@@ -27,6 +27,14 @@ const BUNDLED_FONTS: BundledFont[] = [
     style: 'Medium',
     weight: 500,
   },
+  // Lobster Regular — SIL OFL 1.1 (Lobster-OFL.txt). Script face for the stamp pet-shop template.
+  {
+    family: 'Lobster',
+    fileName: 'Lobster-Regular.ttf',
+    postscriptName: 'Lobster-Regular',
+    style: 'Regular',
+    weight: 400,
+  },
 ];
 
 const relativeUrl = (font: BundledFont) => `assets/fonts/${font.fileName}`;

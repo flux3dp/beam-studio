@@ -6,7 +6,7 @@ import CIRCLE_APPROVED from './catalog/circle_approved.svg?raw';
 import CIRCLE_CORPORATE from './catalog/circle_corporate.svg?raw';
 import CIRCLE_DONE from './catalog/circle_done.svg?raw';
 import CIRCLE_NOTARY from './catalog/circle_notary.svg?raw';
-import CIRCLE_PAW from './catalog/circle_paw.svg?raw';
+import CIRCLE_PET from './catalog/circle_pet.svg?raw';
 import CIRCLE_POSTMARK from './catalog/circle_postmark.svg?raw';
 import OVAL_COMPANY from './catalog/oval_company.svg?raw';
 import OVAL_EXIT from './catalog/oval_exit.svg?raw';
@@ -26,7 +26,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       { bounds: { height: 6.3, width: 6.3, x: 126.7, y: 71.9 }, id: 'icon_right', shapeKey: 'stamp/star' },
     ],
     id: 'oval_company',
-    nameKey: 'oval_company',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: [{ label: '45 × 30 mm', widthMm: 45 }],
@@ -61,6 +60,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'TAIPEI · TAIWAN',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/oval_company.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 30×30 mm outer ring edge.
@@ -72,6 +72,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         id: 'icon',
         labelKey: 'icon',
         options: [
+          'stamp/dog',
           'animals/i_land-16',
           'animals/i_land-2',
           'animals/i_land-14',
@@ -79,24 +80,25 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
           'animals/i_land-3',
           'basic/icon-heart1',
         ],
-        shapeKey: 'animals/i_land-16',
+        shapeKey: 'stamp/dog',
       },
     ],
-    id: 'circle_paw',
-    nameKey: 'circle_paw',
+    id: 'circle_pet',
+    preferredFonts: ['Lobster-Regular'],
     sharedFont: true,
     sizes: [{ label: '30mm', widthMm: 30 }],
-    svgContent: CIRCLE_PAW,
+    svgContent: CIRCLE_PET,
     texts: [
       {
         bounds: { height: 17, width: 99, x: 25.5, y: 102 },
         fit: 'shrink',
-        fontSize: 17,
+        fontSize: 25,
         id: 'text',
         labelKey: 'bottom_text',
-        placeholder: 'PET SHOP',
+        placeholder: 'Jacky',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/circle_pet.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 40×40 mm outer ring edge.
@@ -107,7 +109,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       { bounds: { height: 9.6, width: 9.6, x: 125, y: 70.2 }, id: 'icon_right', shapeKey: 'stamp/star' },
     ],
     id: 'circle_corporate',
-    nameKey: 'circle_corporate',
     preferredFonts: ['Georgia', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '40mm', widthMm: 40 }],
@@ -148,6 +149,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'DELAWARE · INC. 2020',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/circle_corporate.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 40×40 mm outer ring edge.
@@ -158,7 +160,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       { bounds: { height: 9.6, width: 9.6, x: 125, y: 70.2 }, id: 'icon_right', shapeKey: 'stamp/star' },
     ],
     id: 'circle_notary',
-    nameKey: 'circle_notary',
     preferredFonts: ['Georgia', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '40mm', widthMm: 40 }],
@@ -207,6 +208,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'STATE OF CALIFORNIA',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/circle_notary.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 50×30 mm outer ring edge.
@@ -217,7 +219,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       { bounds: { height: 5.7, width: 5.7, x: 127.2, y: 72.2 }, id: 'icon_right', shapeKey: 'stamp/star' },
     ],
     id: 'oval_registration',
-    nameKey: 'oval_registration',
     sharedFont: true,
     sizes: [{ label: '50 × 30 mm', widthMm: 50 }],
     svgContent: OVAL_REGISTRATION,
@@ -249,6 +250,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'NEW DELHI',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/oval_registration.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 50×24 mm outer frame edge.
@@ -271,7 +273,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       },
     ],
     id: 'rect_entry',
-    nameKey: 'rect_entry',
     sharedFont: true,
     sizes: [{ label: '50 × 24 mm', widthMm: 50 }],
     texts: [
@@ -295,6 +296,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: '2026.09.18 · TPE',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/rect_entry.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 47×18 mm outer frame edge.
@@ -302,7 +304,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'rect',
     elements: [],
     id: 'rect_confidential',
-    nameKey: 'rect_confidential',
     preferredFonts: ['Georgia', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
@@ -317,6 +318,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'CONFIDENTIAL',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/rect_confidential.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 47×18 mm outer frame edge.
@@ -325,7 +327,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     elements: [],
     id: 'rect_title_name',
     locales: CHINESE_LOCALES,
-    nameKey: 'rect_title_name',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
@@ -339,6 +340,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: '專案經理  王大明',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/rect_title_name.jpg',
   },
   {
     // Latin-script twin of rect_title_name (same name, frame and slot): default font, name-then-title order.
@@ -347,7 +349,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     elements: [],
     excludedLocales: CHINESE_LOCALES,
     id: 'rect_title_name_latin',
-    nameKey: 'rect_title_name',
     sharedFont: true,
     sizes: [{ label: '47 × 18 mm', widthMm: 47 }],
     texts: [
@@ -360,6 +361,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'ALEX CHEN · PROJECT MANAGER',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/rect_title_name_latin.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 30×30 mm outer ring edge.
@@ -382,7 +384,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       },
     ],
     id: 'circle_approved',
-    nameKey: 'circle_approved',
     sharedFont: true,
     sizes: [{ label: '30mm', widthMm: 30 }],
     svgContent: CIRCLE_APPROVED,
@@ -396,6 +397,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'APPROVED',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/circle_approved.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 30×30 mm outer frame edge.
@@ -418,7 +420,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       },
     ],
     id: 'square_camera',
-    nameKey: 'square_camera',
     sharedFont: true,
     sizes: [{ label: '30mm', widthMm: 30 }],
     texts: [
@@ -431,6 +432,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'MOMENTS',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/square_camera.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 25×25 mm outer frame edge.
@@ -438,7 +440,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'square',
     elements: [],
     id: 'square_signature',
-    nameKey: 'square_signature',
     preferredFonts: JP_FONTS,
     sharedFont: true,
     sizes: [{ label: '25mm', widthMm: 25 }],
@@ -453,6 +454,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         vertical: true,
       },
     ],
+    thumbnail: 'core-img/stamp-generator/square_signature.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 18×47 mm outer frame edge.
@@ -462,7 +464,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     id: 'rect_signature_vertical',
     // Vertical name seals are a Chinese and Japanese convention.
     locales: [...CHINESE_LOCALES, 'ja'],
-    nameKey: 'rect_signature_vertical',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: [{ label: '18 × 47 mm', widthMm: 18 }],
@@ -477,6 +478,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         vertical: true,
       },
     ],
+    thumbnail: 'core-img/stamp-generator/rect_signature_vertical.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 38×14 mm outer frame edge.
@@ -484,7 +486,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'rect',
     elements: [],
     id: 'rect_date',
-    nameKey: 'rect_date',
     preferredFonts: ['American Typewriter', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '38 × 14 mm', widthMm: 38 }],
@@ -499,6 +500,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: '2026.09.18',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/rect_date.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 40×40 mm outer ring edge.
@@ -511,7 +513,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'circle',
     elements: [],
     id: 'circle_postmark',
-    nameKey: 'circle_postmark',
     sharedFont: true,
     sizes: [{ label: '40mm', widthMm: 40 }],
     svgContent: CIRCLE_POSTMARK,
@@ -545,6 +546,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'POST OFFICE',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/circle_postmark.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 50×30 mm outer ring edge.
@@ -552,7 +554,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'oval',
     elements: [],
     id: 'oval_received',
-    nameKey: 'oval_received',
     sharedFont: true,
     sizes: [{ label: '50 × 30 mm', widthMm: 50 }],
     svgContent: OVAL_RECEIVED,
@@ -577,6 +578,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
       },
       { baseline: 1, fontSize: 6, id: 'bottom_arc', letterSpacing: 1.4, offset: 2.1, placeholder: 'DOCUMENT RECEIVED' },
     ],
+    thumbnail: 'core-img/stamp-generator/oval_received.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 45×30 mm outer ring edge.
@@ -589,7 +591,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'oval',
     elements: [],
     id: 'oval_exit',
-    nameKey: 'oval_exit',
     sharedFont: true,
     sizes: [{ label: '45 × 30 mm', widthMm: 45 }],
     svgContent: OVAL_EXIT,
@@ -622,6 +623,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'IMMIGRATION',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/oval_exit.jpg',
   },
   {
     // Ring built at runtime (Border tab); box = the converter's 58×22 mm outer frame edge. The SVG keeps the title bar, which rules out decorative styles.
@@ -629,7 +631,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'rect',
     elements: [],
     id: 'rect_label',
-    nameKey: 'rect_label',
     sharedFont: true,
     sizes: [{ label: '58 × 22 mm', widthMm: 58 }],
     svgContent: RECT_LABEL,
@@ -660,6 +661,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'MADE WITH CARE',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/rect_label.jpg',
   },
   {
     // Ring built at runtime (Border tab); box = the converter's 60×40 mm outer frame edge. The SVG keeps the title bar, which rules out decorative styles.
@@ -672,7 +674,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'rect',
     elements: [],
     id: 'rect_header_bar',
-    nameKey: 'rect_header_bar',
     sharedFont: true,
     sizes: [{ label: '60 × 40 mm', widthMm: 60 }],
     svgContent: RECT_HEADER_BAR,
@@ -703,6 +704,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: 'QUALITY ASSURED · 2026',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/rect_header_bar.jpg',
   },
   {
     // Frame built at runtime (Border tab); box = the converter's 25×25 mm outer ring edge.
@@ -710,7 +712,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'circle',
     elements: [],
     id: 'circle_done',
-    nameKey: 'circle_done',
     preferredFonts: JP_FONTS,
     sharedFont: true,
     sizes: [{ label: '25mm', widthMm: 25 }],
@@ -725,5 +726,6 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
         placeholder: '済',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/circle_done.jpg',
   },
 ];

@@ -2,8 +2,6 @@ import React, { memo } from 'react';
 
 import classNames from 'classnames';
 
-import useI18n from '@core/helpers/useI18n';
-
 import { getVisibleTemplates } from '../templates';
 import type { TemplateCategory } from '../types';
 
@@ -16,27 +14,18 @@ interface TemplatePickerProps {
 }
 
 const TemplatePicker = ({ category, currentTemplateId, onSelect }: TemplatePickerProps): React.JSX.Element => {
-  const { stamp_generator: t } = useI18n();
-
   return (
     <div className={styles.picker}>
       {getVisibleTemplates()
         .filter((template) => template.category === category)
         .map((template) => {
-          const label = t.templates[template.nameKey];
-
           return (
             <button
               className={classNames(styles.item, { [styles.active]: template.id === currentTemplateId })}
               key={template.id}
               onClick={() => onSelect(template.id)}
-              title={label}
             >
-              {template.thumbnail ? (
-                <img alt={label} src={template.thumbnail} />
-              ) : (
-                <div className={styles.placeholder}>{label}</div>
-              )}
+              <img alt={template.id} src={template.thumbnail} />
             </button>
           );
         })}

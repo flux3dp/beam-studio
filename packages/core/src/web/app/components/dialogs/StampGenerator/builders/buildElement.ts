@@ -5,6 +5,7 @@ import { loadShape, svgCache } from '@core/helpers/generator/loadShape';
 
 import CAMERA from '../templates/icons/camera.svg?raw';
 import CHECK from '../templates/icons/check.svg?raw';
+import DOG from '../templates/icons/dog.svg?raw';
 import PLANE from '../templates/icons/plane.svg?raw';
 import PLUM from '../templates/icons/plum.svg?raw';
 import STAR from '../templates/icons/star.svg?raw';
@@ -19,6 +20,7 @@ import { resolveOverlaps } from './resolveOverlaps';
 export const BUNDLED_SHAPES: Record<string, string> = {
   'stamp/camera': CAMERA,
   'stamp/check': CHECK,
+  'stamp/dog': DOG,
   'stamp/plane': PLANE,
   'stamp/plum': PLUM,
   'stamp/star': STAR,

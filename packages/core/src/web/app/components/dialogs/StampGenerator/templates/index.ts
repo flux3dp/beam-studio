@@ -29,7 +29,6 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     ],
     id: 'tw_company_oval',
     locales: ['zh-tw'],
-    nameKey: 'tw_company_oval',
     preferredFonts: KAI_FONTS,
     sizes: [{ widthMm: 51 }],
     svgContent: TW_COMPANY_OVAL,
@@ -66,6 +65,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
         placeholder: '台北市南港區忠孝東路六段467號9樓',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/tw_company_oval.jpg',
   },
   {
     category: 'rect',
@@ -75,7 +75,6 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     ],
     id: 'tw_company_rect',
     locales: ['zh-tw'],
-    nameKey: 'tw_company_rect',
     preferredFonts: KAI_FONTS,
     sizes: [{ widthMm: 41 }],
     svgContent: TW_COMPANY_RECT,
@@ -124,6 +123,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
         placeholder: '台北市南港區忠孝東路六段467號9樓',
       },
     ],
+    thumbnail: 'core-img/stamp-generator/tw_company_rect.jpg',
   },
   {
     // 公司小章 frame: 100 px box, corner radius 1/10 of the side, ring 1/30 (0.4 mm at 四分, 1 mm at 一吋).
@@ -133,7 +133,6 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     elements: [],
     id: 'square_name',
     locales: CHINESE_LOCALES,
-    nameKey: 'square_name',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: SQUARE_SIZES,
@@ -155,6 +154,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
         vertical: true,
       },
     ],
+    thumbnail: 'core-img/stamp-generator/square_name.jpg',
   },
   {
     border: { bounds: { height: 100, width: 100, x: 25, y: 25 }, lineWidth: 100 / 30, radius: 10, styles: false },
@@ -162,7 +162,6 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
     elements: [],
     id: 'square_three_column',
     locales: CHINESE_LOCALES,
-    nameKey: 'square_three_column',
     preferredFonts: KAI_FONTS,
     sharedFont: true,
     sizes: SQUARE_SIZES,
@@ -192,6 +191,7 @@ export const STAMP_TEMPLATES: StampTemplate[] = [
         vertical: true,
       },
     ],
+    thumbnail: 'core-img/stamp-generator/square_three_column.jpg',
   },
   ...CATALOG_TEMPLATES,
 ];

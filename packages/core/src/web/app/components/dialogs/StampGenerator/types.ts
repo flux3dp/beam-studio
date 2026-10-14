@@ -111,7 +111,6 @@ export interface StampTemplate {
   id: string;
   /** Listed only in these UI languages (e.g. ['zh-tw'] for Taiwan-regulated seals); unset = every language. */
   locales?: string[];
-  nameKey: keyof ILang['stamp_generator']['templates'];
   /**
    * Default text font, tried in order by postscript name; a candidate is skipped when it doesn't
    * resolve or load (web font offline, macOS font not downloaded). Falls back to the user's default font.
@@ -123,7 +122,7 @@ export interface StampTemplate {
   svgContent?: string;
   texts: TextSlotDef[];
   /** Picker card image URL. Falls back to the template name until design provides one. */
-  thumbnail?: string;
+  thumbnail: string;
 }
 
 /** Paper.js items extracted from a template SVG, grouped by role. */
