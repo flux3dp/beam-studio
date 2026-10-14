@@ -36,7 +36,14 @@ jest.mock('@core/app/widgets/UnitInput', () => ({ id, max, min, onChange, value 
     value={value}
   />
 ));
-jest.mock('@core/helpers/is-dev', () => () => false);
+
+const mockIsUvDev = jest.fn();
+
+jest.mock('@core/helpers/is-dev', () => ({
+  __esModule: true,
+  default: () => false,
+  isUvDev: () => mockIsUvDev(),
+}));
 jest.mock('@core/helpers/useI18n', () => () => ({
   global: { cancel: 'cancel', save: 'save' },
   inner_engraving_settings: new Proxy({}, { get: (_target, key) => String(key) }),
@@ -49,6 +56,7 @@ import InnerEngravingSettings from './InnerEngravingSettings';
 describe('InnerEngravingSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsUvDev.mockReturnValue(true);
     useDocumentStore.setState({
       'inner-engraving-base-height': 10,
       'inner-engraving-diameter': 40,
@@ -84,5 +92,16 @@ describe('InnerEngravingSettings', () => {
       }),
     );
     expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
+  test('without uvDev only the box is offered, and a stored sphere opens as a box', () => {
+    mockIsUvDev.mockReturnValue(false);
+
+    const { getByText, queryByText } = render(<InnerEngravingSettings onClose={jest.fn()} />);
+
+    expect(getByText('shape_box')).toBeInTheDocument();
+    expect(queryByText('shape_cylinder')).not.toBeInTheDocument();
+    expect(queryByText('shape_sphere')).not.toBeInTheDocument();
+    expect(queryByText('sphere_liquid_alert')).not.toBeInTheDocument();
   });
 });

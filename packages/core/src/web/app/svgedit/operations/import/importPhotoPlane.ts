@@ -7,7 +7,7 @@ import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 
 const importPhotoPlane = async (file: File): Promise<void> => {
   const command = new history.BatchCommand('Import 3D Photo');
-  const elem = await readBitmapFile(file, { parentCmd: command });
+  const elem = await readBitmapFile(file, { parentCmd: command, waitForImage: true });
   const object = initializePhotoPlane(elem);
 
   command.onAfter = () => syncStlObjectsWithDom([object]);

@@ -20,8 +20,8 @@ type RasterData = Pick<ImageData, 'data' | 'height' | 'width'>;
  *
  * XY samples are distributed no farther apart than `pointSpacing`. Z uses 256 discrete levels:
  * opaque white is the base at zero, opaque black is 255 × `layerHeight`, and transparent pixels
- * are omitted. This intentionally simple mapping can be replaced by the relief API without changing
- * the BSPC storage and rendering path.
+ * are omitted. Another generator can replace this mapping without changing the BSPC storage and
+ * rendering path.
  */
 export const createPhotoPointPositions = (
   imageData: RasterData,

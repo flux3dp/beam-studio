@@ -10,7 +10,6 @@ import { useMenuItemStatusStore } from '@core/app/stores/menuItemStatusStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import { checkBM24C } from '@core/helpers/checkFeature';
-import { canStartCurveEngraving } from '@core/helpers/exclusiveModes';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -33,12 +32,15 @@ export interface MenuNode {
 
 const divider: MenuNode = { type: 'divider' };
 
-/** Resolve `disabled` from every applicable condition. */
+/**
+ * Resolve `disabled` from the shared menu item status, an explicit `disabled` on the node wins so
+ * that static conditions (mobile only items, ...) can still be expressed in the tree.
+ */
 const applyDisabledKeys = (nodes: MenuNode[], disabledKeys: Set<string>): MenuNode[] =>
   nodes.map((node) => ({
     ...node,
     children: node.children ? applyDisabledKeys(node.children, disabledKeys) : undefined,
-    disabled: Boolean(node.disabled || (node.id !== undefined && disabledKeys.has(node.id))),
+    disabled: node.disabled ?? (node.id !== undefined && disabledKeys.has(node.id)),
   }));
 
 const useMenuData = (email?: string): MenuNode[] => {
@@ -541,14 +543,7 @@ const useMenuData = (email?: string): MenuNode[] => {
 
   const toolsMenu: MenuNode = {
     children: [
-      {
-        // the same gate the native menu uses, so rotary / pass-through / auto-feeder / inner
-        // engraving block curve engraving in both menus rather than only in the Electron one
-        disabled: !canStartCurveEngraving(),
-        id: 'START_CURVE_ENGRAVING_MODE',
-        label: tCurveEngraving.title,
-        type: 'item',
-      },
+      { id: 'START_CURVE_ENGRAVING_MODE', label: tCurveEngraving.title, type: 'item' },
       { id: 'PRINT_AND_CUT', label: lang.print_and_cut.title, type: 'item' },
     ],
     label: menuCms.tools.title,

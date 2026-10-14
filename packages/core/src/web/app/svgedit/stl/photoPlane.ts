@@ -52,17 +52,6 @@ export const readPhotoPlaneObjects = (): StlObject[] =>
     .map(createPhotoPlaneObject)
     .filter((object): object is StlObject => Boolean(object));
 
-/** Legacy helper for exports that cannot send typed photo projections to the backend. */
-export const detachPhotoPlaneElements = (): (() => void) => {
-  const detached = Array.from(
-    document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_3D_ATTR.marker}]`),
-  ).map((elem) => ({ elem, next: elem.nextSibling, parent: elem.parentNode! }));
-
-  detached.forEach(({ elem }) => elem.remove());
-
-  return () => detached.reverse().forEach(({ elem, next, parent }) => parent.insertBefore(elem, next));
-};
-
 /**
  * Prepare photo-backed 3D objects for one Swiftray export.
  *
@@ -121,9 +110,9 @@ export const preparePhotoPlaneElementsForExport = (): (() => void) => {
 };
 
 /**
- * Turn an imported SVG image into a zero-thickness plane halfway up the material: centred and
- * shrunk to fit the engravable area, unless the caller places it (an image inside an SVG keeps its
- * place next to the artwork).
+ * Turn an imported SVG image into a zero-thickness plane at the centre height of the engravable box:
+ * centred and shrunk to fit the engravable area, unless the caller places it (an image inside an SVG
+ * keeps its place next to the artwork).
  */
 export const initializePhotoPlane = (
   elem: SVGImageElement,
@@ -143,7 +132,7 @@ export const initializePhotoPlane = (
   const scale = placement.scale ?? fit;
   const transform: StlTransform = {
     ...IDENTITY_TRANSFORM,
-    position: [x, y, getMaterial().height / 2],
+    position: [x, y, box.isValid ? box.center[2] : getMaterial().height / 2],
     scale: [scale, scale, 1],
   };
   const object: StlObject = {

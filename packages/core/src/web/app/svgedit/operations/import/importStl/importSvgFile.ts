@@ -124,7 +124,11 @@ const importSvgFileAsStl = async (file: Blob): Promise<void> => {
     if (outputData.bitmap?.size > 0) {
       // its own command, so undo removes the image before syncing the store, as importPhotoPlane does
       const cmd = new history.BatchCommand('Import 3D Photo');
-      const elem = await readBitmapFile(outputData.bitmap, { offset: outputData.bitmapOffset, parentCmd: cmd });
+      const elem = await readBitmapFile(outputData.bitmap, {
+        offset: outputData.bitmapOffset,
+        parentCmd: cmd,
+        waitForImage: true,
+      });
 
       // read now: placing the photo plane rewrites the image's x / y / size as its projection
       photo = { cmd, elem, rect: getImageRect(elem) };

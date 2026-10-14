@@ -729,15 +729,28 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fpm1_2_5: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 40, speed: 200 } },
   },
   // inner engraving (Promark UV), measured on K9 crystal (2026-10). Mode-specific: switching a
-  // layer's mode keeps its frequency, these are how to get the matching set
+  // layer's mode keeps its frequency, these are how to get the matching set. applyPreset leaves the
+  // keys a preset omits untouched, so each one sets every option of its mode (solid, adaptive spacing)
   k9_crystal_contour_dot: {
     fpm1_inner_engraving: {
-      [LayerModule.LASER_UNIVERSAL]: { dottingTime: 150, frequency: 110, stlMode: 'dot', stlPointSpacing: 0.03 },
+      [LayerModule.LASER_UNIVERSAL]: {
+        dottingTime: 150,
+        frequency: 110,
+        stlMode: 'dot',
+        stlPointSpacing: 0.03,
+        stlSolid: false,
+      },
     },
   },
   k9_crystal_contour_line: {
     fpm1_inner_engraving: {
-      [LayerModule.LASER_UNIVERSAL]: { frequency: 90, speed: 180, stlLayerSpacing: 0.04, stlMode: 'line' },
+      [LayerModule.LASER_UNIVERSAL]: {
+        frequency: 90,
+        speed: 180,
+        stlLayerSpacing: 0.04,
+        stlMinLayerSpacing: 0,
+        stlMode: 'line',
+      },
     },
   },
   k9_crystal_solid_dot: {

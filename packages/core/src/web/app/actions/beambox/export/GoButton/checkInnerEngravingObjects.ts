@@ -3,7 +3,7 @@ import type { Box3 } from 'three';
 import { getEngravableBox } from '@core/app/components/beambox/InnerEngraving/utils/engravable';
 import { getWorldBox } from '@core/app/components/beambox/InnerEngraving/utils/transform';
 import { useStlStore } from '@core/app/stores/stlStore';
-import { STL_ATTR } from '@core/app/svgedit/stl/constants';
+import { PHOTO_3D_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
 
 export interface InnerEngravingObjectWarnings {
   hasInvalidEngravableArea: boolean;
@@ -43,7 +43,8 @@ export const checkInnerEngravingObjects = (): InnerEngravingObjectWarnings => {
   const checked: CheckedObject[] = [];
 
   executionLayers.forEach((layer, layerExecutionIndex) => {
-    layer.querySelectorAll(`[${STL_ATTR.marker}]`).forEach((elem) => {
+    // meshes and point clouds are data-stl rects; photo planes (and photo point clouds) are data-stl-photo images
+    layer.querySelectorAll(`[${STL_ATTR.marker}], [${PHOTO_3D_ATTR.marker}]`).forEach((elem) => {
       const object = objects[elem.id];
 
       if (!object) return;

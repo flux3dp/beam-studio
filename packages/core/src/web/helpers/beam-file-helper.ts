@@ -296,8 +296,8 @@ const generateBeamBuffer = (
 
   const miscDataBuffer = generateMiscDataBlockBuffer(miscData);
   const metaData = {
-    // the blocks this file actually has, rather than the hard-coded list it used to be: a reader
-    // can tell whether a block is missing from the one that follows it
+    // the blocks this file actually has, so a reader can tell whether a block is missing from the
+    // one that follows it
     contents: [
       1,
       2,
@@ -465,7 +465,10 @@ const readStlSource = (buf: Buffer, offset: number, end: number, loaded: StlObje
   }
 };
 
-/** Rebuild generated or standalone point clouds from block 7 after their SVG projection is restored. */
+/**
+ * Rebuild point clouds from block 7 after their SVG projection is restored: photo point clouds, and
+ * standalone ones (a data-stl rect of kind point-cloud), which only files from uv-dev builds have.
+ */
 const readPointCloudSource = (buf: Buffer, offset: number, end: number, loaded: StlObject[]) => {
   let currentOffset = offset;
 

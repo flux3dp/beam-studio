@@ -363,13 +363,10 @@ export const mergeLayers = async (layerNames: string[], baseLayerName?: string):
   }
 
   if (!batchCmd.isEmpty()) {
-    // Merging moves projection rects to a layer with potentially different color and visibility.
-    // The 3D meshes resolve those properties from the DOM, including after undo/redo.
-    batchCmd.onAfter = () => layerManager.resync();
     undoManager.addCommandToHistory(batchCmd);
   }
 
-  layerManager.resync();
+  layerManager.identifyLayers();
 
   return mergeBase;
 };

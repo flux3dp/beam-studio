@@ -302,6 +302,12 @@ describe('test PowerBlock', () => {
       expect(getByText('max: 100')).toBeInTheDocument();
     });
 
+    test('the slider starts at the next whole percent, the input keeps the decimal minimum', () => {
+      const { container } = render(<PowerBlock />);
+
+      expect(container.querySelector('#power_value')).toHaveAttribute('min', '16');
+    });
+
     test('writes the linked frequency with the power', () => {
       const { container } = render(<PowerBlock />);
 

@@ -12,6 +12,7 @@ import {
   laserTypes,
 } from '@core/app/constants/promark-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { checkFpm1UV } from '@core/helpers/checkFeature';
 import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import useI18n from '@core/helpers/useI18n';
 import type { PromarkInfo } from '@core/interfaces/Promark';
@@ -34,16 +35,13 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
   const getSelectedPromarkInfo = (value: string): PromarkInfo => {
     const [source, watt] = value.split('-') as [keyof typeof laserSourceWattMap, string];
 
-    return { laserType: LaserType[source], watt: Number(watt) };
+    return { laserType: LaserType[source], watt: Number(watt) } as PromarkInfo;
   };
-  const generateWorkareaOptions = () => {
-    if (!laserSource) return [];
-
-    return getPromarkWorkareaOptions(getSelectedPromarkInfo(laserSource).laserType).map((area) => ({
-      label: `${area}x${area}`,
-      value: area,
-    }));
-  };
+  // before a source is picked, the Desktop / MOPA sizes are shown
+  const generateWorkareaOptions = () =>
+    getPromarkWorkareaOptions(laserSource ? getSelectedPromarkInfo(laserSource).laserType : LaserType.Desktop).map(
+      (area) => ({ label: `${area}x${area}`, value: area }),
+    );
 
   const renderLaserSourceRadio = (source: keyof typeof laserSourceWattMap) => (
     <Space direction="vertical" key={source}>
@@ -98,7 +96,9 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
             <Flex>
               <Radio.Group onChange={onLaserSourceChange} value={laserSource}>
                 <Space split={<Divider className={styles['space-divider']} type="vertical" />}>
-                  {laserTypes.map((type) => renderLaserSourceRadio(type))}
+                  {laserTypes
+                    .filter((type) => type !== 'UV' || checkFpm1UV())
+                    .map((type) => renderLaserSourceRadio(type))}
                 </Space>
               </Radio.Group>
             </Flex>

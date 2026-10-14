@@ -37,8 +37,8 @@ export interface StlObject {
    * The original STL file bytes, exactly as imported.
    *
    * Kept alongside the parsed geometry because both consumers of the mesh want the file itself, not
-   * a re-serialized version of `geometry`: the `stlObjects` payload sent to swiftray (A-3) and the
-   * .beam block 6 (A-2). Round-tripping through three.js would lose nothing geometrically but would
+   * a re-serialized version of `geometry`: the `stlObjects` payload sent to swiftray and the .beam
+   * block 6. Round-tripping through three.js would lose nothing geometrically but would
    * mean two different meshes for the same object, so the raw buffer stays the single source.
    */
   buffer?: ArrayBuffer;
@@ -49,17 +49,15 @@ export interface StlObject {
   /**
    * The transform the object was imported with — what the panel's reset buttons go back to.
    *
-   * The whole transform rather than just the scale: import already decides more than one of these
-   * (it shrinks a model that would not fit the engravable area, and centres it), and a later
-   * feature that re-bases an object — changing the up axis, or re-orienting the whole scene — needs
-   * somewhere to record what "as imported" meant. Resetting the size to the STL file's own
-   * millimetres would blow the object straight back out of the workpiece.
+   * The whole transform rather than just the scale: import decides more than one of these (it
+   * shrinks a model that would not fit the engravable area, and centres it). Resetting the size to
+   * the STL file's own millimetres would blow the object straight back out of the workpiece.
    */
   initialTransform: StlTransform;
-  /** Omitted on legacy/runtime objects and therefore treated as a normal mesh. */
+  /** Omitted for STL meshes; set for photo planes and point clouds. */
   kind?: 'mesh' | 'photo' | 'point-cloud';
   /**
-   * Versioned XYZ Float32 LE binary generated from a photo or imported from a point-cloud file.
+   * BSPC binary (versioned XYZ Float32 LE) of a photo turned into a point cloud.
    *
    * Separate from `buffer`: that field is always an STL file and is sent to swiftray's STL
    * slicer. A point cloud has its own .beam block and backend path and must never be mistaken for

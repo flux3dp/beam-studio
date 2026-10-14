@@ -70,7 +70,7 @@ interface OrthographicViewProps {
 
 /**
  * Orthographic camera that takes over as the default while it is mounted; drei restores the previous
- * default on unmount, so the perspective path — including the `up` fix in `onCreated` — is untouched.
+ * default on unmount, so the perspective path — including the Z-up setup in `onCreated` — is untouched.
  *
  * Both ends of the swap are posed here rather than in an effect on the outside, and that is the
  * point of the component: drei makes its camera the default from a *layout* effect, so anything
@@ -153,10 +153,9 @@ const ViewController = ({ extent, target }: ViewControllerProps): null | React.J
     // whatever the user has orbited to
     if (view.preset === 'custom' || appliedVersion.current === view.version) return;
 
-    // OrbitControls mounts as a sibling, so on the first pass it may not exist yet. Waiting rather
-    // than applying half of the state is what makes the initial view repeatable: applying the camera
-    // now and letting the controls initialise afterwards left the final position dependent on which
-    // of the two happened to run last.
+    // OrbitControls mounts as a sibling, so on the first pass it may not exist yet. Applying the
+    // camera before the controls exist would make the final position depend on which effect ran
+    // last, so wait for them.
     if (!controls?.target) return;
 
     appliedVersion.current = view.version;

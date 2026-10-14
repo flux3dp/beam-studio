@@ -15,21 +15,28 @@ import {
   PointsMaterial,
   Scene,
   SphereGeometry,
+  SRGBColorSpace,
+  TextureLoader,
   Vector3,
   WebGLRenderer,
 } from 'three';
+import type { Texture } from 'three';
 import { match } from 'ts-pattern';
 
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import type { StlObject } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
+import { getPhotoTextureUrl } from '@core/app/svgedit/stl/photoPlane';
 import workareaManager from '@core/app/svgedit/workarea';
-import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 
 import { FLOOR_COLOR, FLOOR_MARGIN, FLOOR_Z, MATERIAL_COLOR, MATERIAL_OPACITY } from '../constants';
 import { VIEW_DIRECTIONS } from '../viewStore';
 
 import type { Material } from './material';
 import { getMaterial } from './material';
+import { createLayerColorUniform, getLayerColorOffset, injectLayerColor } from './photoLayerColor';
 import { getMatrix } from './transform';
+import { getObjectLayerState } from './useLayerColor';
 
 /** Longest side of the produced image, in pixels. Matches what the 2D thumbnails are scaled to. */
 const DEFAULT_SIZE = 300;
@@ -51,19 +58,49 @@ const getMaterialGeometry = ({ depth, height, maxZ, minZ, shape, width }: Materi
     })
     .exhaustive();
 
-/**
- * The layer colour of an STL object, read straight from the DOM.
- *
- * The non-React twin of `useLayerColor`: a thumbnail is rendered once, outside any component, so
- * there is nothing to subscribe to. Layer colours are always applied here regardless of the
- * `use_layer_color` preference — that preference is about editing legibility, while a thumbnail is
- * a picture of the job, and a file browser full of black silhouettes tells the user nothing.
- */
-const getObjectColor = (id: string): string => {
-  const elem = document.getElementById(id);
-  const layer = elem ? getObjectLayer(elem as unknown as SVGElement)?.elem : null;
+/** The photo of a photo plane, from the same source the canvas reads; null when it cannot be loaded. */
+const loadPhotoTexture = async (object: StlObject): Promise<null | Texture> => {
+  const elem = document.getElementById(object.id) as unknown as null | SVGImageElement;
+  const url = (elem && getPhotoTextureUrl(elem)) || object.textureUrl;
 
-  return layer?.getAttribute('data-color') ?? '#000';
+  if (!url) return null;
+
+  try {
+    const texture = await new TextureLoader().loadAsync(url);
+
+    texture.colorSpace = SRGBColorSpace;
+
+    return texture;
+  } catch (error) {
+    console.warn(`Failed to load the photo of ${object.id} for the thumbnail:`, error);
+
+    return null;
+  }
+};
+
+/**
+ * The material an object is drawn with. A photo plane shows its picture tinted by the layer colour,
+ * as on the canvas; it falls back to a plain layer-colour plane when the picture cannot be loaded.
+ */
+const createObjectMaterial = (object: StlObject, color: string, texture: null | Texture) => {
+  if (object.kind === 'point-cloud') return new PointsMaterial({ color, size: 2, sizeAttenuation: false });
+
+  if (object.kind === 'photo' && texture) {
+    const uniform = createLayerColorUniform();
+    const photoMaterial = new MeshBasicMaterial({
+      map: texture,
+      side: DoubleSide,
+      toneMapped: false,
+      transparent: true,
+    });
+
+    uniform.value.copy(getLayerColorOffset(color));
+    photoMaterial.onBeforeCompile = (shader) => injectLayerColor(shader, uniform);
+
+    return photoMaterial;
+  }
+
+  return new MeshStandardMaterial({ color, side: DoubleSide });
 };
 
 /**
@@ -81,15 +118,23 @@ const getObjectColor = (id: string): string => {
  * placement inside the field is visible (a model in the corner should look like one), the material
  * because a workpiece larger than the field is normal and cropping it would misrepresent the setup.
  *
- * @returns the rendered canvas, or null when there is nothing to draw or WebGL is unavailable
+ * @returns the rendered canvas, or null when rendering fails (e.g. WebGL is unavailable)
  */
-export const renderInnerEngravingThumbnail = (size: number = DEFAULT_SIZE): HTMLCanvasElement | null => {
-  const { objects } = useStlStore.getState();
+export const renderInnerEngravingThumbnail = async (size: number = DEFAULT_SIZE): Promise<HTMLCanvasElement | null> => {
+  const { use_layer_color: useLayerColor } = useGlobalPreferenceStore.getState();
+  // drawn as on the canvas: objects on hidden layers are left out, and the layer colour follows the
+  // use_layer_color preference
+  const objects = Object.values(useStlStore.getState().objects)
+    .map((object) => ({ object, ...getObjectLayerState(object.id, useLayerColor) }))
+    .filter(({ isVisible }) => isVisible);
+  const textures = await Promise.all(
+    objects.map(({ object }) => (object.kind === 'photo' ? loadPhotoTexture(object) : Promise.resolve(null))),
+  );
   const material = getMaterial();
   const { height: areaHeight, width: areaWidth } = workareaManager;
   const scene = new Scene();
   // every disposable this function creates, so a failure part-way still frees the GPU buffers
-  const disposables = Array.of<{ dispose: () => void }>();
+  const disposables = Array.of<{ dispose: () => void }>(...textures.filter((texture) => texture !== null));
   let renderer: null | WebGLRenderer = null;
 
   try {
@@ -134,16 +179,12 @@ export const renderInnerEngravingThumbnail = (size: number = DEFAULT_SIZE): HTML
 
     const content = new Group();
 
-    Object.values(objects).forEach((object) => {
-      const color = getObjectColor(object.id);
-      const objectMaterial =
-        object.kind === 'point-cloud'
-          ? new PointsMaterial({ color, size: 2, sizeAttenuation: false })
-          : new MeshStandardMaterial({ color, side: DoubleSide });
+    objects.forEach(({ color, object }, index) => {
+      const objectMaterial = createObjectMaterial(object, color, textures[index]);
       const renderedObject =
-        object.kind === 'point-cloud'
-          ? new Points(object.geometry, objectMaterial as PointsMaterial)
-          : new Mesh(object.geometry, objectMaterial as MeshStandardMaterial);
+        objectMaterial instanceof PointsMaterial
+          ? new Points(object.geometry, objectMaterial)
+          : new Mesh(object.geometry, objectMaterial);
 
       // the geometry is shared with the live canvas and must not be disposed of here, so only the
       // matrix is applied — never baked into the vertices

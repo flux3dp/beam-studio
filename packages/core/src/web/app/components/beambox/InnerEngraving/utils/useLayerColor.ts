@@ -37,7 +37,3 @@ export const useObjectLayerState = (id: string): ObjectLayerState => {
 
   return getObjectLayerState(id, useLayerColorPreference);
 };
-
-export const useLayerColor = (id: string): string => useObjectLayerState(id).color;
-
-export default useLayerColor;

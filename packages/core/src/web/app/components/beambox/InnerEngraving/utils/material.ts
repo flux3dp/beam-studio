@@ -2,6 +2,7 @@ import { useShallow } from 'zustand/shallow';
 
 import type { MaterialShape } from '@core/app/constants/innerEngraving';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { isUvDev } from '@core/helpers/is-dev';
 
 import { MM_TO_SCENE } from './coordinates';
 
@@ -63,12 +64,15 @@ const toMaterial = (state: {
   };
 };
 
+/** Cylinders and spheres are still in development (uvDev), so a stored round shape reads as a box elsewhere. */
+export const getMaterialShape = (shape: MaterialShape): MaterialShape => (isUvDev() ? shape : 'box');
+
 const select = (state: ReturnType<typeof useDocumentStore.getState>) => ({
   baseHeight: state['inner-engraving-base-height'],
   depth: state['inner-engraving-depth'],
   diameter: state['inner-engraving-diameter'],
   height: state['inner-engraving-height'],
-  shape: state['inner-engraving-shape'],
+  shape: getMaterialShape(state['inner-engraving-shape']),
   width: state['inner-engraving-width'],
   x: state['inner-engraving-x'],
   y: state['inner-engraving-y'],

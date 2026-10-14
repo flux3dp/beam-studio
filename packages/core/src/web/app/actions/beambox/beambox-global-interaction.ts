@@ -17,12 +17,12 @@ class BeamboxGlobalInteraction {
     tabController.onFocused(() => {
       this.attach();
     });
-    // the native menu is built once and toggled by id, so the mode has to push its changes rather
-    // than being read at build time like the web menu is
-    useDocumentStore.subscribe(
-      (state) => resolveInnerEngravingActive(state) && isAtPage('editor'),
-      () => this.onInnerEngravingChange(),
-    );
+    // both menus are toggled by id (native menu / menuItemStatusStore), so the mode has to push its
+    // changes when it flips
+    // outside the editor `attach` decides the menu, and applies the mode when the editor is entered
+    useDocumentStore.subscribe(resolveInnerEngravingActive, (active) => {
+      if (isAtPage('editor')) this.onInnerEngravingChange(active);
+    });
   }
 
   /**
@@ -33,9 +33,11 @@ class BeamboxGlobalInteraction {
       menu.disable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
     } else {
       menu.enable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
-      // curve engraving has conditions of its own — rotary, pass-through, auto-feeder — which the
-      // blanket enable above would trample
+      // curve engraving (rotary, pass-through, auto-feeder) and decompose path (selection) have
+      // conditions of their own, which the blanket enable above would trample
       menu.checkCurveEngraving();
+      this.onObjectBlur();
+      this.onObjectFocus();
     }
   }
 
@@ -49,8 +51,9 @@ class BeamboxGlobalInteraction {
       this.onObjectBlur();
       this.onObjectFocus();
       this.onCanvasModeChange();
+
       // `menu.attach()` above has just enabled everything, so the mode has to be applied after it
-      this.onInnerEngravingChange();
+      if (isInnerEngravingActive()) this.onInnerEngravingChange(true);
     } else {
       // disable all
       menu.attach([]);

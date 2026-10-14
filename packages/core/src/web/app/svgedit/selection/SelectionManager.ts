@@ -137,7 +137,7 @@ export class SelectionManager {
     this.clearSelection(true);
     this.addToSelection(elems, true);
 
-    if (this.selectedElements.length > 1) {
+    if (elems.length > 1) {
       this.tempGroupSelectedElements();
     }
   };

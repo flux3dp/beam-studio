@@ -131,8 +131,6 @@ export class WebCamConnection {
   };
 
   getPicture = async ({ rotate180 }: { rotate180: boolean }): Promise<Blob> => {
-    console.log('Getting picture from webcam, rotate180:', rotate180);
-
     const canvas = document.createElement('canvas');
 
     canvas.width = this.video.videoWidth;

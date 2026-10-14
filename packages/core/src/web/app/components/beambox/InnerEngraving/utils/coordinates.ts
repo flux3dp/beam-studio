@@ -6,7 +6,7 @@ import workareaManager from '@core/app/svgedit/workarea';
  *
  * - **Unit**: 0.1mm, the same as SVG user units (`constant.dpmm` = 10).
  * - **Axes**: X right, **Y towards the back of the scene** (away from the default camera), Z up.
- *   This is the CAD / CNC convention the PM asked for, and it is what the transform gizmo's arrows
+ *   This is the CAD / CNC convention, and it is what the transform gizmo's arrows
  *   and the panel's Y values agree on.
  * - **Origin**: (0, 0, 0) — the work area's near-left corner, at the height the user manually
  *   focuses to. The material's position does not move it.

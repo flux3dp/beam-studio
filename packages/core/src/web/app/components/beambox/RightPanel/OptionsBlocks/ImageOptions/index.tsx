@@ -54,14 +54,12 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
       const setAttribute = (key: string, value: boolean | number | string) => {
         undoManager.beginUndoableChange(key, [elem]);
 
-        if (key === 'xlink:href') {
+        if (key === 'xlink:href' && isPhotoPlaneProjection(elem)) {
+          // the 3D canvas reads the texture through the namespaced href
           setHref(elem as SVGElement, String(value));
-
-          if (isPhotoPlaneProjection(elem)) {
-            photoPlaneEvents.emit('texture-changed', elem.id, String(value));
-          }
+          photoPlaneEvents.emit('texture-changed', elem.id, String(value));
         } else {
-          elem.setAttribute(key, String(value));
+          elem.setAttribute(key, value as string);
         }
 
         const cmd = undoManager.finishUndoableChange();

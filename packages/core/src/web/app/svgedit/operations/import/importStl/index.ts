@@ -18,8 +18,7 @@ import { useStlStore } from '@core/app/stores/stlStore';
 import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { POINT_CLOUD_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
-import { decodePointCloud } from '@core/app/svgedit/stl/pointCloud';
+import { STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -55,10 +54,10 @@ export const askToScaleDown = (): Promise<boolean> =>
  * Initial placement for a freshly imported mesh: centred on the engravable area, at its real size.
  *
  * Centred rather than placed at the origin because inner engraving wants the work in the middle of
- * the field (PM, 08/06). The size is the model's own — Beam Studio's import convention is to keep
+ * the field. The size is the model's own — Beam Studio's import convention is to keep
  * it — and shrinking is **offered rather than applied**: a model sticking out of the engravable
- * area silently loses whatever is outside, so the user is asked, but only when that is the case
- * (PM, 08/06: no prompt for a model that already fits). Declining is a valid answer; the object
+ * area silently loses whatever is outside, so the user is asked, but only when it does not fit.
+ * Declining is a valid answer; the object
  * panel's fit action is there to change one's mind later, and it also enlarges, which this never
  * does.
  *
@@ -108,9 +107,7 @@ const cloneTransform = ({ flip, position, rotation, scale }: StlTransform): StlT
 });
 
 interface Insert3dGeometryOptions {
-  historyLabel?: string;
   initialTransform?: StlTransform;
-  kind?: 'mesh' | 'point-cloud';
   mergeWithPreviousHistory?: boolean;
   replaceElement?: SVGElement;
   skipFitPrompt?: boolean;
@@ -120,7 +117,6 @@ export interface Create3dObjectOptions {
   attributes?: Record<string, number | string>;
   historyLabel?: string;
   initialTransform: StlTransform;
-  kind?: 'mesh' | 'point-cloud';
   replaceElement?: SVGElement;
 }
 
@@ -131,7 +127,7 @@ export interface Create3dObjectOptions {
 export const create3dObject = (
   buffer: ArrayBuffer,
   geometry: BufferGeometry,
-  { attributes = {}, historyLabel, initialTransform: init, kind, replaceElement }: Create3dObjectOptions,
+  { attributes = {}, historyLabel, initialTransform: init, replaceElement }: Create3dObjectOptions,
 ): { cmd: BatchCommand; id: string } => {
   // Keep a separate immutable snapshot so every DimensionPanel reset returns to exactly what the
   // user first saw.
@@ -153,10 +149,7 @@ export const create3dObject = (
     },
     element: 'rect',
   });
-  const object: StlObject =
-    kind === 'point-cloud'
-      ? { geometry, id, initialTransform, kind: 'point-cloud', pointCloudBuffer: buffer, transform }
-      : { buffer, geometry, id, initialTransform, transform };
+  const object: StlObject = { buffer, geometry, id, initialTransform, transform };
 
   updateProjectionRect(elem, geometry, getMatrix(object), { initialTransform, transform });
   useStlStore.getState().set(object);
@@ -176,7 +169,7 @@ export const create3dObject = (
   return { cmd: batchCmd, id };
 };
 
-const insert3dGeometry = async (
+export const insertStlGeometry = async (
   buffer: ArrayBuffer,
   geometry: BufferGeometry,
   attributes: Record<string, number | string> = {},
@@ -190,9 +183,7 @@ const insert3dGeometry = async (
   const initialTransform = options.initialTransform ?? (await getInitialTransform(geometry, options));
   const { cmd, id } = create3dObject(buffer, geometry, {
     attributes,
-    historyLabel: options.historyLabel,
     initialTransform,
-    kind: options.kind,
     replaceElement: options.replaceElement,
   });
 
@@ -203,31 +194,6 @@ const insert3dGeometry = async (
   }
 
   selectStlObject(id);
-};
-
-export const insertStlGeometry = async (
-  buffer: ArrayBuffer,
-  geometry: BufferGeometry,
-  attributes: Record<string, number | string> = {},
-  options: Omit<Insert3dGeometryOptions, 'historyLabel' | 'kind'> = {},
-): Promise<void> => insert3dGeometry(buffer, geometry, attributes, options);
-
-/** Insert an already-normalized BSPC point cloud as a standalone 3D object. */
-export const insertPointCloudGeometry = async (
-  pointCloudBuffer: ArrayBuffer,
-  geometry: BufferGeometry,
-): Promise<void> => {
-  const { version } = decodePointCloud(pointCloudBuffer);
-
-  await insert3dGeometry(
-    pointCloudBuffer,
-    geometry,
-    {
-      [POINT_CLOUD_ATTR.marker]: String(version),
-      [STL_ATTR.kind]: 'point-cloud',
-    },
-    { historyLabel: 'Import Point Cloud', kind: 'point-cloud' },
-  );
 };
 
 /**

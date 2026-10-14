@@ -4,7 +4,7 @@ import { POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
 import { toBase64 } from './getStlObjects';
 
 /**
- * Build the BSPC payload for generated and directly imported point-cloud objects.
+ * Build the BSPC payload for photos turned into point clouds.
  * Plain photos remain SVG image projections and are sampled by Swiftray.
  */
 const getPointCloudObjects = async (): Promise<Record<string, string> | undefined> => {

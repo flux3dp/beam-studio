@@ -26,7 +26,7 @@ export const toBase64 = (buffer: ArrayBuffer): Promise<string> =>
   });
 
 /**
- * The `stlObjects` map sent alongside the svg string in the swiftray `loadSVG` payload (A-3).
+ * The `stlObjects` map sent alongside the svg string in the swiftray `loadSVG` payload.
  *
  * Keyed by the id of the projection rect, which is how swiftray links a `data-stl` placeholder in
  * the svg back to its mesh.

@@ -34,7 +34,7 @@ type TableSettingConstruct<T extends ReadonlyArray<string>, IsRequired = true> =
 export const commonTableParams = ['strength', 'speed', 'repeat'] as const;
 export const promarkTableParams = ['fillInterval', 'frequency'] as const;
 export const mopaTableParams = ['pulseWidth'] as const;
-/** fillInterleave / fillDwellTime only apply to engraved (filled) blocks, see TableSettingForm */
+/** UV-only params; fillInterleave / fillDwellTime only apply to engraved (filled) blocks, see TableSettingForm */
 export const uvTableParams = ['qPulseWidth', 'fillInterleave', 'fillDwellTime'] as const;
 /** Dot parameters: a 2D block is a vector shape, which is never dotted. */
 export const innerEngravingTableParams = ['dottingTime', 'pointSpacing'] as const;

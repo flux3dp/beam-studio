@@ -29,8 +29,8 @@ function PathPreviewButton({ isDeviceConnected }: Props): ReactNode {
   const { mode, togglePathPreview } = useCanvasStore(useShallow((state) => pick(state, ['mode', 'togglePathPreview'])));
   const isInnerEngraving = useInnerEngravingActive();
 
-  // path preview draws the 2D toolpath; the 3D version is a later phase, so it is hidden in inner
-  // engraving mode and left available to devs (PM, 08/06)
+  // path preview draws the 2D toolpath, so it is hidden in inner engraving mode and left available
+  // to devs
   if (isMobile || !checkWebGL() || (isInnerEngraving && !isDev())) {
     return null;
   }

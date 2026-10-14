@@ -51,7 +51,8 @@ const DevBlock = ({ type = 'default' }: Props): React.ReactNode => {
 
   if (isLaser) contents.push(<LaserDevOptions key="laser-dev-options" />);
 
-  // UV fixes it at 1; it renders only for a UV source (getPromarkLimit has no limit otherwise)
+  // Q pulse width: UV fixes it at 1; QPulseWidthBlock renders only for a UV source (getPromarkLimit
+  // has no qPulseWidth limit otherwise)
   if (promarkModels.has(workarea)) contents.push(<QPulseWidthBlock key="q-pulse-width" type={type} />);
 
   contents.push(<MinPadding key="min-padding" type={type} />);

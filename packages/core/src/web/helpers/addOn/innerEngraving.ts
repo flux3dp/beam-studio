@@ -114,11 +114,11 @@ export const isInnerEngravingFile = (file: { innerEngraving?: boolean }): boolea
 /**
  * Menu items switched off while inner engraving is on.
  *
- * Three reasons, and every id here is one of them:
+ * Four reasons, and every id here is one of them:
  * 1. **2D-only editing** — offset, decompose, the image tools: an STL object is a mesh, none of
  *    these have a 3D meaning and most would act on the projection rect by mistake
- * 2. **Exports that cannot carry a mesh** — SVG / PNG / JPG / PDF are flat, and .bvg has no block
- *    for the binaries (only .beam does, block 6)
+ * 2. **Exports that cannot carry a mesh** — SVG / PNG / JPG and the UV print export are flat, and
+ *    .bvg has no block for the binaries (only .beam does, block 6)
  * 3. **Scenes and modes that conflict** — the material-test imports drop 2D artwork into a document
  *    that only supports STL, and curve engraving is mutually exclusive with inner engraving
  * 4. **View settings with nothing to act on** — auto align has no 2D neighbours to align against

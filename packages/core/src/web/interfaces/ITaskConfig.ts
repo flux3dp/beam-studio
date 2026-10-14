@@ -99,8 +99,8 @@ export type TFcodeOptionalConfig = Partial<{
    * Every engraved point is snapped to a multiple of this and each distinct value costs one Z
    * move, which on the Promark is dominated by a fixed ~50ms command overhead — so this sets the
    * floor on how long an inner-carving job takes. Coarser buckets trade depth resolution for
-   * time. Omit it to keep the backend default (0.001mm); values below that are refused by both
-   * sides, finer buckets have been observed to stall the job at runtime.
+   * time. Omit it to keep the backend default (0.001mm), which is also the floor: smaller values are
+   * clamped up to it on both sides, because finer buckets stall the job at runtime.
    */
   machine_z_bucket?: number;
   /** Promark: delay after the last mark vector, in us. */
@@ -176,7 +176,7 @@ export type TFcodeOptionalConfig = Partial<{
    * Inner engraving: the workpiece's refractive index n.
    *
    * The beam bends at the surface, so the geometric depth and the real focus depth differ. The
-   * compensation itself is the backend's (B-3); <= 1 means no compensation.
+   * compensation itself is the backend's (depth / n); <= 1 means no compensation.
    */
   refractive_index: number;
   rev: boolean; // reverse engraving

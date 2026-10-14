@@ -27,8 +27,8 @@ interface Props {
  * familiar 2D actions visible and disables operations that cannot update a 3D object; this panel
  * adds placement actions that only make sense in the 3D scene.
  *
- * What is left is placement — moving the object into the part of the workpiece the machine can
- * actually reach. That is why these live here rather than in ObjectPanel's tool row: the tool row
+ * These are placement actions — moving the object into the part of the workpiece the machine can
+ * actually reach. They live here rather than in ObjectPanel's tool row because the tool row
  * arranges **several** objects relative to each other (align, distribute, group, boolean), and none
  * of those apply to STL objects, while these two act on the one selected object.
  */

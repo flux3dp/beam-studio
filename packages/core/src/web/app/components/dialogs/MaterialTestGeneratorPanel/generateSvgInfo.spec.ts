@@ -60,13 +60,23 @@ describe('generateSvgInfo', () => {
     expect(speeds).toEqual([20, 115, 210, 305, 400]);
   });
 
-  test('static params are attached under their own name, as their default', () => {
+  test('static params are attached under their own name, as their default, when asked', () => {
+    const result = generateSvgInfo({
+      blockSetting: makeBlockSetting(2, 2),
+      tableSetting: commonTableSetting,
+      withStaticParams: true,
+    });
+
+    expect(result.every((r) => r.repeat === 1)).toBe(true);
+  });
+
+  test('static params are left out by default, so the layer keeps its own defaults', () => {
     const result = generateSvgInfo({
       blockSetting: makeBlockSetting(2, 2),
       tableSetting: commonTableSetting,
     });
 
-    expect(result.every((r) => r.repeat === 1)).toBe(true);
+    expect(result.every((r) => !('repeat' in r))).toBe(true);
   });
 
   test('names encode column and row values with the naming map', () => {
@@ -126,7 +136,6 @@ describe('generateSvgInfo', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({ name: 'P15-S20', speed: 20, strength: 15 });
-    expect(result[0].repeat).toBe(1);
   });
 
   test('rounds fillInterval to 4 decimal places while ceil-ing integer params', () => {
@@ -142,6 +151,7 @@ describe('generateSvgInfo', () => {
     const result = generateSvgInfo({
       blockSetting: makeBlockSetting(3, 1),
       tableSetting,
+      withStaticParams: true,
     });
 
     // fillInterval column: min 0.01, max 1, length 3 -> 0.01, 0.505, 1

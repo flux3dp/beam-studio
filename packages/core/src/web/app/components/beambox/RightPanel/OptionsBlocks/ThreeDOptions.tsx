@@ -17,9 +17,8 @@ interface Props {
 /**
  * Object-level options of a 3D projection.
  *
- * How an object is engraved (dot / line, spacings, solid) is a layer parameter, set in the config
- * panel. What is left here is the development tool that turns a photo into a test point cloud,
- * which reads those parameters from the photo's layer.
+ * Currently only the uvDev tool that turns a photo into a test point cloud; it reads the dot and
+ * layer spacing from the photo's layer. How an object is engraved is a layer parameter (ConfigPanel).
  */
 const ThreeDOptions = ({ elem }: Props): null | React.JSX.Element => {
   const { inner_engraving_settings: t } = useI18n();

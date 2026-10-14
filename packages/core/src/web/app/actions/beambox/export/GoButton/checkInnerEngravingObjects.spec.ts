@@ -19,15 +19,15 @@ jest.mock('@core/app/stores/stlStore', () => ({
 const box = (min: [number, number, number], max: [number, number, number]) =>
   new Box3(new Vector3(...min), new Vector3(...max));
 
-const addLayer = (ids: string[]) => {
+const addLayer = (ids: string[], { photo = false }: { photo?: boolean } = {}) => {
   const layer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
 
   layer.classList.add('layer');
   ids.forEach((id) => {
-    const elem = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    const elem = document.createElementNS('http://www.w3.org/2000/svg', photo ? 'image' : 'rect');
 
     elem.id = id;
-    elem.setAttribute('data-stl', '1');
+    elem.setAttribute(photo ? 'data-stl-photo' : 'data-stl', '1');
     layer.appendChild(elem);
     mockObjects[id] = { id };
   });
@@ -65,6 +65,12 @@ describe('checkInnerEngravingObjects', () => {
     );
 
     expect(checkInnerEngravingObjects().wrongLayerOrder).toBe(1);
+  });
+
+  it('checks photo planes like meshes', () => {
+    addLayer(['outside'], { photo: true });
+
+    expect(checkInnerEngravingObjects().outOfRange).toBe(1);
   });
 
   it('ignores touching boundaries because they do not overlap in volume', () => {

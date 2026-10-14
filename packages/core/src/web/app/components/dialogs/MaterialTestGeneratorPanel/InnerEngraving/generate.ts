@@ -203,6 +203,8 @@ export const insertMaterialTest = (
   writeDataLayer(infoLayer, 'power', textSetting.power);
   writeDataLayer(infoLayer, 'frequency', uvPowerToFrequency(textSetting.power));
   writeDataLayer(infoLayer, 'speed', textSetting.speed);
+  // the labels are outlines: sliced into lines, not dotted like the blocks
+  writeDataLayer(infoLayer, 'stlMode', 'line');
 
   labels.forEach(({ matrix, outline }) => {
     const transform = toSvgMatrix(matrix);

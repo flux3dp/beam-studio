@@ -33,9 +33,9 @@ const imageToPngBlob = async (image: HTMLImageElement) =>
 
 const readBitmapFile = async (
   file: Blob | File,
-  opts?: { gray?: boolean; offset?: number[]; parentCmd?: IBatchCommand; scale?: number },
+  opts?: { gray?: boolean; offset?: number[]; parentCmd?: IBatchCommand; scale?: number; waitForImage?: boolean },
 ): Promise<SVGImageElement> => {
-  const { gray = true, offset = [0, 0], parentCmd } = opts ?? {};
+  const { gray = true, offset = [0, 0], parentCmd, waitForImage = false } = opts ?? {};
   const reader = new FileReader();
   const arrayBuffer = await new Promise<ArrayBuffer>((resolve) => {
     reader.onloadend = (e) => {
@@ -84,31 +84,39 @@ const readBitmapFile = async (
     newImage.setAttribute('origImage', newSrc);
   }
 
+  let imageReady = Promise.resolve();
+
   await new Promise<void>((resolve) => {
-    imageData(newImage.getAttribute('origImage')!, {
-      grayscale: gray ? { is_rgba: true, is_shading: true, is_svg: false, threshold: 254 } : undefined,
-      height,
-      onComplete: (result: any) => {
-        svgCanvas.setHref(newImage, result.pngBase64);
-        resolve();
-      },
-      rotationFlag,
-      width,
+    imageReady = new Promise<void>((resolveImage) => {
+      imageData(newImage.getAttribute('origImage')!, {
+        grayscale: gray ? { is_rgba: true, is_shading: true, is_svg: false, threshold: 254 } : undefined,
+        height,
+        onComplete: (result: any) => {
+          svgCanvas.setHref(newImage, result.pngBase64);
+          resolveImage();
+        },
+        rotationFlag,
+        width,
+      });
     });
+    updateElementColor(newImage);
+    selectionManager.selectOnly([newImage]);
+
+    const cmd = new history.InsertElementCommand(newImage);
+
+    if (!parentCmd) undoManager.addCommandToHistory(cmd);
+    else parentCmd.addSubCommand(cmd);
+
+    if (!offset) {
+      svgCanvas.alignSelectedElements('l', 'page');
+      svgCanvas.alignSelectedElements('t', 'page');
+    }
+
+    resolve();
   });
 
-  updateElementColor(newImage);
-  selectionManager.selectOnly([newImage]);
-
-  const cmd = new history.InsertElementCommand(newImage);
-
-  if (!parentCmd) undoManager.addCommandToHistory(cmd);
-  else parentCmd.addSubCommand(cmd);
-
-  if (!offset) {
-    svgCanvas.alignSelectedElements('l', 'page');
-    svgCanvas.alignSelectedElements('t', 'page');
-  }
+  // for callers that read the processed image right away, e.g. as the texture of a photo plane
+  if (waitForImage) await imageReady;
 
   return newImage as SVGImageElement;
 };

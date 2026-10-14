@@ -20,9 +20,9 @@ export type ViewPreset = 'back' | 'bottom' | 'custom' | 'front' | 'isometric' | 
  * the roll by taking `cross(up, viewDirection)`, and when those two are parallel that cross product
  * is zero. three.js does not fail on it — `Matrix4.lookAt` nudges the view direction along +X by
  * 0.0001 and carries on — but the roll then comes out of that fallback rather than out of anything
- * written here, and for this camera it lands 90° off. OrbitControls happens to undo it a moment
- * later (`Spherical.makeSafe` clamps the polar angle off the pole and re-aims), so the view on
- * screen has been right by luck, and only for as long as a preset is followed by `controls.update()`.
+ * written here, and for this camera it lands 90° off. OrbitControls' `Spherical.makeSafe` would
+ * re-aim it a moment later by clamping the polar angle off the pole, but only when a preset is
+ * followed by `controls.update()`.
  *
  * Tilting the preset itself is the same trick made deliberate: it picks the axis, so the roll is a
  * decision rather than a side effect. 1e-3 radians is invisible — a twentieth of a degree — and a
@@ -69,7 +69,7 @@ export const DISTANCE_RATIO = 1.6;
  * Named rather than left to r3f's default because the framing is worked out from it in three
  * places — the orthographic camera's zoom, the zoom control's readout, and the zoom control's
  * starting value — and a default that quietly changed would put all three out of step with the
- * camera. The value is r3f's own, so the view looks exactly as it did before it was written down.
+ * camera. 75 is r3f's default.
  */
 export const CAMERA_FOV = 75;
 
@@ -102,8 +102,8 @@ export const getDefaultZoomLevel = (): number => {
 
 /**
  * Camera position for a preset. Shared by the canvas's initial `camera` prop and by ViewController,
- * so the first frame and every later preset application agree exactly — computing it in two places
- * is how the view ended up slightly different on each mount.
+ * so the first frame and every later preset application agree exactly; computing it anywhere else
+ * makes the first frame differ from the preset.
  */
 export const getPresetPosition = (
   preset: Exclude<ViewPreset, 'custom'>,
@@ -155,9 +155,8 @@ export const useViewStore = create<ViewStore>((set) => ({
   requestView: (preset) => set((state) => ({ view: { preset, version: state.view.version + 1 } })),
   requestZoom: (zoomLevel) => set((state) => ({ zoomRequest: { version: state.zoomRequest.version + 1, zoomLevel } })),
   // deliberately does not touch `view`: the camera keeps its pose across the swap (ViewController
-  // carries it over), so the preset the user is on is still the preset they are on. This used to
-  // bump the version to force a snap back to a named view, which was a way of coping with the pose
-  // being lost — and it threw away any camera the user had orbited to by hand
+  // carries it over), so the preset the user is on is still the preset they are on, and bumping the
+  // version would snap away a camera the user orbited by hand
   setProjection: (projection) => set({ projection }),
   setTransformMode: (transformMode) => set({ transformMode }),
   setZoomLevel: (zoomLevel) => set({ zoomLevel }),

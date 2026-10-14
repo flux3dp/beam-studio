@@ -1,4 +1,5 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
+import { getEngravableBox } from '@core/app/components/beambox/InnerEngraving/utils/engravable';
 import { getMaterial } from '@core/app/components/beambox/InnerEngraving/utils/material';
 import { IDENTITY_TRANSFORM } from '@core/app/components/beambox/InnerEngraving/utils/transform';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
@@ -61,11 +62,11 @@ const importTextAsStl = async (text: SVGTextElement): Promise<boolean> => {
 
   if (!built) return false;
 
-  const position: [number, number, number] = [
-    workareaManager.width / 2,
-    workareaManager.height / 2,
-    getMaterial().height / 2,
-  ];
+  // centred on the engravable box like every other import; without one, on the work area
+  const box = getEngravableBox();
+  const position: [number, number, number] = box.isValid
+    ? [...box.center]
+    : [workareaManager.width / 2, workareaManager.height / 2, getMaterial().height / 2];
   const transform = { ...IDENTITY_TRANSFORM, position };
 
   await insertStlGeometry(

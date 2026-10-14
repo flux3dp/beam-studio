@@ -33,13 +33,7 @@ jest.mock('@core/app/svgedit/layer/layerManager', () => ({
 import { useStlStore } from '@core/app/stores/stlStore';
 
 import { PHOTO_3D_ATTR, POINT_CLOUD_ATTR } from './constants';
-import {
-  createPhotoPlaneObject,
-  detachPhotoPlaneElements,
-  getPhotoTextureUrl,
-  initializePhotoPlane,
-  readPhotoPlaneObjects,
-} from './photoPlane';
+import { createPhotoPlaneObject, getPhotoTextureUrl, initializePhotoPlane, readPhotoPlaneObjects } from './photoPlane';
 
 describe('photoPlane', () => {
   beforeEach(() => {
@@ -131,17 +125,5 @@ describe('photoPlane', () => {
     svg.innerHTML = `<image id="relief" ${PHOTO_3D_ATTR.marker}="1" ${POINT_CLOUD_ATTR.marker}="1" />`;
 
     expect(readPhotoPlaneObjects()).toEqual([]);
-  });
-
-  test('temporarily removes multiple photos and restores their DOM order', () => {
-    const svg = document.getElementById('svgcontent')!;
-
-    svg.innerHTML = `<image id="a" ${PHOTO_3D_ATTR.marker}="1"/><image id="b" ${PHOTO_3D_ATTR.marker}="1"/><rect id="c"/>`;
-
-    const restore = detachPhotoPlaneElements();
-
-    expect(Array.from(svg.children, ({ id }) => id)).toEqual(['c']);
-    restore();
-    expect(Array.from(svg.children, ({ id }) => id)).toEqual(['a', 'b', 'c']);
   });
 });

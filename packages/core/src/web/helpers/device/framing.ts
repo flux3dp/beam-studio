@@ -7,6 +7,7 @@ import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { fetchFramingTaskCode } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { sceneToSvgYMm } from '@core/app/components/beambox/InnerEngraving/utils/coordinates';
+import { getMaterialShape } from '@core/app/components/beambox/InnerEngraving/utils/material';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import deviceConstants from '@core/app/constants/device-constants';
@@ -132,7 +133,7 @@ const MATERIAL_CIRCLE_SEGMENTS = 48;
  */
 const getMaterialOutline = (): Array<[number, number]> => {
   const state = useDocumentStore.getState();
-  const shape = state['inner-engraving-shape'];
+  const shape = getMaterialShape(state['inner-engraving-shape']);
   const [centerX, centerY] = [state['inner-engraving-x'], sceneToSvgYMm(state['inner-engraving-y'])];
 
   if (shape === 'box') {

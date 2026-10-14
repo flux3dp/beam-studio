@@ -78,8 +78,8 @@ const Banner = (): React.ReactNode => {
 
     if (isBorderlessPreview) list.push(messageMap.openBottomPreview);
 
-    // exclusive — inner engraving is first because the document settings already make it exclusive
-    // with all of these, so the others cannot be on at the same time
+    // exclusive; inner engraving first because it wins when an old file has several modes on
+    // (exclusiveModes)
     if (isInnerEngraving) list.push(messageMap.innerEngraving);
     else if (isAutoFeeder) list.push(messageMap.autoFeeder);
     else if (isPassThrough) list.push(messageMap.passThrough);

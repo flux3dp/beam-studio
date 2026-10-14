@@ -109,7 +109,7 @@ const InnerEngravingMaterialTestPanel = ({ onClose }: InnerEngravingMaterialTest
 
   const handlePreview = async () => {
     const current = ++generation.current;
-    const svgInfos = generateSvgInfo({ blockSetting, tableSetting });
+    const svgInfos = generateSvgInfo({ blockSetting, tableSetting, withStaticParams: true });
     const [colKey, rowKey] = (Object.entries(tableSetting) as Array<[keyof SvgInfo, { selected: number }]>)
       .sort(([, { selected: a }], [, { selected: b }]) => a - b)
       .map(([key]) => key);

@@ -136,10 +136,10 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         id="power_value"
         isGradient
         max={max}
-        min={min}
+        // the slider counts whole steps from its min, so UV (from ~15.6%) starts at 16; decimals
+        // down to the real minimum are typed into the input
+        min={Math.ceil(min)}
         onChange={handleChange}
-        // UV starts at ~15.6%, so whole steps would land on 16.6, 17.6, …
-        step={isPromarkUV ? 0.1 : 1}
         value={power.value}
       />
       {power.value < (workareaObj.minPower ?? -1) && (

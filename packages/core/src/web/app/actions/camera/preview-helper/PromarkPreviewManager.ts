@@ -46,11 +46,8 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
         throw new CalibrationDataMissingError();
       }
 
-      console.log('Fisheye Params:', this.fisheyeParams);
       await this.setupAPI();
-      console.log('Setup API completed');
       this.webCamConnection = await webcamHelper.connectWebcam();
-      console.log('WebCam Connection established:', this.webCamConnection);
 
       return !!this.webCamConnection;
     } catch (error) {

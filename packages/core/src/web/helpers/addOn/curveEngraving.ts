@@ -25,9 +25,7 @@ export const getCurveEngraving = (context: AddOnModeContext = {}): boolean =>
   (useCurveEngravingStore.getState().hasData || useCanvasStore.getState().mode === CanvasMode.CurveEngraving);
 
 // Curve engraving is enabled by its controller's start/loadData flows; there is no document flag.
-export const enableCurveEngraving = (options: AddOnModeMutationOptions = {}): void => {
-  void options;
-};
+export const enableCurveEngraving = (): void => {};
 
 export const disableCurveEngraving = ({ applyRuntime = true }: AddOnModeMutationOptions = {}): void => {
   if (!applyRuntime) return;

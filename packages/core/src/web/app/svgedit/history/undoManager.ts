@@ -96,7 +96,10 @@ export class UndoManager implements IUndoManager {
     }
   }
 
-  /** Merge an already-applied follow-up into the latest undo step (used by source-to-3D conversion). */
+  /**
+   * Merge an already-applied follow-up into the latest undo step, or add it as a new step if the
+   * pointer moved or the last step does not involve `expectedElement`.
+   */
   appendCommandToLast(cmd: BaseHistoryCommand, text: string, expectedElement?: Element): void {
     const previous = this.undoStack[this.undoStack.length - 1];
 

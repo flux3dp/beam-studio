@@ -23,7 +23,7 @@ const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
   // an inner engraving document's svgcontent holds nothing but flat projection rects, so the 2D
   // path below would produce a picture of outlines rather than of the work
   if (isInnerEngravingActive()) {
-    const canvas = renderInnerEngravingThumbnail();
+    const canvas = await renderInnerEngravingThumbnail();
 
     if (!canvas) return null;
 

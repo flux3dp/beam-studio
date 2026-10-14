@@ -7,8 +7,7 @@ import { POINT_CLOUD_ATTR, STL_ATTR } from './constants';
  *
  * Driven by the DOM rather than by the store so that a deleted (or undone) object never ships its
  * mesh: the rect is what the rest of the app treats as the object's existence. The same map shape
- * feeds both consumers of the binaries — the `stlObjects` payload sent to swiftray (A-3) and .beam
- * block 6 (A-2).
+ * feeds both consumers of the binaries — the `stlObjects` payload sent to swiftray and .beam block 6.
  */
 export const getStlSources = (): Record<string, ArrayBuffer> => {
   const { objects } = useStlStore.getState();

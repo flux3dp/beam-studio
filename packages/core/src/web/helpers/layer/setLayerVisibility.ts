@@ -5,6 +5,7 @@ import history from '@core/app/svgedit/history/history';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import selectionManager from '@core/app/svgedit/selection';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -34,9 +35,10 @@ export const setLayerVisibility = (layerName: string, value: boolean, opts?: His
 
   const updateDisplay = () => {
     presprayArea.togglePresprayArea();
-    // The 3D canvas resolves visibility through the projection's owning layer. Publish the DOM
-    // attribute change so its meshes update both now and after undo/redo.
-    layerManager.resync();
+
+    // 3D meshes read their visibility from the owning layer in the DOM and re-render only on a
+    // layer store update, so publish the attribute change
+    if (isInnerEngravingActive()) layerManager.resync();
   };
 
   updateDisplay();

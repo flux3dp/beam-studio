@@ -11,7 +11,7 @@ interface SceneGridProps {
   width: number;
 }
 
-/** One plane of the box: `count` cells each way, drawn as line segments in the given plane. */
+/** One plane of the box: a line every `step` along each axis, plus one on the far edge, as line-segment endpoints. */
 const buildPlane = (
   uSize: number,
   vSize: number,

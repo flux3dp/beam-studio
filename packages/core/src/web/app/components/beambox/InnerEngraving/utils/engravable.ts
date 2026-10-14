@@ -64,7 +64,7 @@ export const getEngravableBoxFrom = (
   const inset = getInsetHalfExtents(material, margin);
   const [cx, cy, cz] = material.center;
   // The optical medium must cover the model. Normally the sphere dialog enforces this, but keeping
-  // it as an intersection here makes older or externally edited preferences safe as well.
+  // it as an intersection here makes older or externally edited documents safe as well.
   const maxMaterialZ = Math.min(material.maxZ, material.height);
 
   // intersect with the work area in XY; Z is unbounded by the machine here, the material is the limit

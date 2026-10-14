@@ -56,7 +56,7 @@ describe('importTextAsStl', () => {
     });
   });
 
-  test('retains editable text and creates a natural-size 1mm extrusion at the workarea centre', async () => {
+  test('retains editable text and creates a natural-size 1mm extrusion at the engravable box centre', async () => {
     document.body.innerHTML = '<svg><text id="text-1" font-size="20">Flux</text></svg>';
 
     const text = document.getElementById('text-1') as unknown as SVGTextElement;
@@ -80,7 +80,7 @@ describe('importTextAsStl', () => {
       {
         initialTransform: {
           flip: [false, false, false],
-          position: [500, 500, 60],
+          position: [400, 500, 60],
           rotation: [0, 0, 0],
           scale: [1, 1, 1],
         },

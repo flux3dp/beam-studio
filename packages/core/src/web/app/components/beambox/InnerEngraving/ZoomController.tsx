@@ -58,10 +58,9 @@ const ZoomController = ({ target }: { target: [number, number, number] }): null 
   // the control would show it in preference to the framing it can work out for itself
   useEffect(() => () => useViewStore.getState().setZoomLevel(0), []);
 
-  // Measuring once per frame kept the whole store churning while nothing moved. Everything that can
-  // move the camera announces itself, so the measurements can hang off those announcements instead:
-  // the controls' own `change` below, and here a mount, a resize, or a preset/projection ViewController
-  // has just applied — its effect runs before this one, being the earlier sibling.
+  // Measured on the events that move the camera rather than every frame: the controls' own `change`
+  // below, and here a mount, a resize, or a preset/projection ViewController has just applied — its
+  // effect runs before this one, being the earlier sibling.
   useEffect(publish, [publish, projection, view]);
 
   useEffect(() => {

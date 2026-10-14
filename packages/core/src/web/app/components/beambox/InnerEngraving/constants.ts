@@ -12,7 +12,7 @@ export const GRID_COLOR = '#c0c0c0';
 /** The two walls, kept fainter than the floor so the backdrop does not compete with the model. */
 export const GRID_WALL_COLOR = '#e0e0e0';
 export const RULER_COLOR = '#666666';
-/** Semi-transparent light grey, as specified for the material preview. */
+/** The workpiece preview: semi-transparent blue, drawn at MATERIAL_OPACITY. */
 export const MATERIAL_COLOR = '#1890ff';
 export const MATERIAL_OPACITY = 0.15;
 /**

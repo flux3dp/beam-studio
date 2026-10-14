@@ -117,8 +117,7 @@ const DimensionPanelStl = ({ id }: Props): null | React.JSX.Element => {
   };
 
   // "adjust from the current value": the panel's inputs are absolute, these are relative. Lengths
-  // and angles add, size multiplies by a percentage — 120 means 1.2x, which is how the PM's example
-  // ("scale x * 1.2") reads on a size field.
+  // and angles add, size multiplies by a percentage (120 = ×1.2).
   // The adjust field is a plain number input, so an inch document hands lengths over in inches.
   const toMm = (value: number) => (isInch ? value * 25.4 : value);
 

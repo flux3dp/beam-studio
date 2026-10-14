@@ -4,6 +4,7 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Alert, Button, Segmented, Tooltip } from 'antd';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { getMaterialShape } from '@core/app/components/beambox/InnerEngraving/utils/material';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { MaterialShape } from '@core/app/constants/innerEngraving';
 import {
@@ -18,7 +19,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
-import isDev from '@core/helpers/is-dev';
+import isDev, { isUvDev } from '@core/helpers/is-dev';
 import round from '@core/helpers/math/round';
 import useI18n from '@core/helpers/useI18n';
 import type { DocumentState } from '@core/interfaces/Preference';
@@ -56,7 +57,7 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
   const initial = useDocumentStore.getState();
   /** Which point of the material the X/Y inputs refer to. A view setting, so it is not persisted. */
   const [anchor, setAnchor] = useState<Anchor>('center');
-  const [shape, setShape] = useState<MaterialShape>(initial['inner-engraving-shape']);
+  const [shape, setShape] = useState<MaterialShape>(getMaterialShape(initial['inner-engraving-shape']));
   const [baseHeight, setBaseHeight] = useState(initial['inner-engraving-base-height']);
   const [width, setWidth] = useState(initial['inner-engraving-width']);
   const [depth, setDepth] = useState(initial['inner-engraving-depth']);
@@ -171,8 +172,13 @@ const InnerEngravingSettings = ({ onClose, workarea }: Props): React.JSX.Element
               onChange={(val: MaterialShape) => setShape(val)}
               options={[
                 { label: t.shape_box, value: 'box' },
-                { label: t.shape_cylinder, value: 'cylinder' },
-                { label: t.shape_sphere, value: 'sphere' },
+                // cylinders and spheres are still in development
+                ...(isUvDev()
+                  ? [
+                      { label: t.shape_cylinder, value: 'cylinder' as const },
+                      { label: t.shape_sphere, value: 'sphere' as const },
+                    ]
+                  : []),
               ]}
               value={shape}
             />

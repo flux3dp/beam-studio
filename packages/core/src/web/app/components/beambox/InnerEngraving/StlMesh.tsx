@@ -62,6 +62,8 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   const mirrored = flip.some(Boolean);
   // the scale at the start of a drag, so a locked ratio can be enforced against it
   const dragStartScale = useRef(new Vector3(1, 1, 1));
+  // the gizmo fires mouseUp for a click on a handle too; only a drag that moved anything is a step
+  const hasDragged = useRef(false);
 
   const handleSelect = useCallback(
     (event: ThreeEvent<MouseEvent>) => {
@@ -140,12 +142,16 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   );
 
   const handleMouseDown = useCallback(() => {
+    hasDragged.current = false;
+
     if (anchor) dragStartScale.current.copy(anchor.scale);
   }, [anchor]);
 
   // while dragging, write straight to the projection rect and leave the store alone: updating the
   // store mid-drag would feed the transform back through the props below and fight the gizmo
   const handleObjectChange = useCallback(() => {
+    hasDragged.current = true;
+
     const elem = document.getElementById(id) as unknown as null | SVGElement;
 
     if (!anchor || !objectRef.current) return;
@@ -183,7 +189,9 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
   }, [anchor, baseSize, geometry, id, ratioLocked, snapActive, snapCenter, transformMode]);
 
   const handleDragEnd = useCallback(() => {
-    if (!anchor) return;
+    if (!anchor || !hasDragged.current) return;
+
+    hasDragged.current = false;
 
     // read the parts back rather than decomposing a matrix: the mirror lives on the child mesh, so
     // the group's own scale stays positive and means exactly what the panel shows

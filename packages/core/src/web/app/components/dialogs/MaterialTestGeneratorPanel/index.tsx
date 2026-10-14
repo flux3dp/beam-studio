@@ -227,12 +227,11 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
           writeDataLayer(layer, 'speed', speed);
           writeDataLayer(layer, 'repeat', repeat);
 
-          if (isPromark) {
-            writeDataLayer(layer, 'fillInterval', fillInterval);
-            writeDataLayer(layer, 'frequency', frequency);
-          }
+          if (isPromark) writeDataLayer(layer, 'fillInterval', fillInterval);
 
+          // UV: the power stands in for the frequency, which is what the machine uses
           if (isPromarkUV) writeDataLayer(layer, 'frequency', uvPowerToFrequency(strength));
+          else if (isPromark) writeDataLayer(layer, 'frequency', frequency);
 
           if (tableSetting.pulseWidth) {
             writeDataLayer(layer, 'pulseWidth', pulseWidth);
@@ -279,7 +278,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   };
 
   const handlePreview = () => {
-    const svgInfos = generateSvgInfo({ blockSetting, tableSetting });
+    const svgInfos = generateSvgInfo({ blockSetting, tableSetting, withStaticParams: isPromarkUV });
 
     batchCmd.current.unapply();
     // to prevent layer id conflict

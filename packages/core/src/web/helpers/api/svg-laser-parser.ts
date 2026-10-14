@@ -51,8 +51,9 @@ import versionChecker from '../version-checker';
 const MIN_MACHINE_Z_BUCKET_MM = 0.001;
 
 /**
- * Promark UV controller settings for inner engraving, in us (measured). Sent as job parameters,
- * which Swiftray writes as ";CONFIG" lines for the controller.
+ * Promark UV controller settings for inner engraving: delays in us (measured 2026-10-13), and
+ * is_uv_light=1 runs the job as a UV source. Sent as job parameters, which Swiftray writes as
+ * ";CONFIG" lines for the controller.
  */
 const INNER_ENGRAVING_CONTROLLER_CONFIG = {
   is_uv_light: 1,
@@ -382,9 +383,7 @@ export const getExportOpt = async (
       }
     });
 
-    // The backend clamps to the same floor; doing it here too keeps the logged override honest.
-    // Finer buckets have been observed to stall the job at runtime, so this is a floor, not a
-    // preference.
+    // mirrors the backend clamp, so the logged override shows the value actually used
     if (config.machine_z_bucket !== undefined && config.machine_z_bucket < MIN_MACHINE_Z_BUCKET_MM) {
       console.warn(`machine_z_bucket ${config.machine_z_bucket} is below the floor, using ${MIN_MACHINE_Z_BUCKET_MM}`);
       config.machine_z_bucket = MIN_MACHINE_Z_BUCKET_MM;

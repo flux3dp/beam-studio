@@ -55,11 +55,12 @@ interface ApplyPhotoPointCloudOptions {
 }
 
 /**
- * Replace a photo plane's 3D representation with an API-produced point cloud.
+ * Replace a photo plane's 3D representation with a point cloud generated from it (currently the
+ * uvDev test generator).
  *
  * The SVG image stays in place as the preserved source, although its controls are hidden once the
  * point cloud exists. Only the runtime geometry and a marker pointing to .beam block 7 change, so
- * the future relief API can rebuild the result without losing the original bitmap.
+ * the point cloud can be regenerated from the original bitmap.
  */
 export const applyPhotoPointCloud = (
   id: string,

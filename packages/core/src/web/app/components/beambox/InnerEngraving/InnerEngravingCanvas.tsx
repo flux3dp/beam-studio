@@ -366,10 +366,10 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
         /**
          * Z is up. This has to happen here rather than through the `camera` prop above: r3f applies
          * those props and orients the camera before a late `up` would be picked up, leaving the
-         * camera's rotation built against the default Y-up vector. The result looks almost right but
-         * leaves the transform gizmo's axes off, which is exactly the bug this fixes. Setting `up`
-         * and re-running `lookAt` once the camera exists rebuilds the orientation from the right
-         * vector, and OrbitControls then reads the same `up` on every update.
+         * camera's rotation built against the default Y-up vector, which looks almost right but
+         * leaves the transform gizmo's axes skewed. Setting `up` and re-running `lookAt` once the
+         * camera exists rebuilds the orientation from the right vector, and OrbitControls then reads
+         * the same `up` on every update.
          */
         onCreated={({ camera }) => {
           camera.up.set(0, 0, 1);

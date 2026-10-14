@@ -30,7 +30,7 @@ export const PHOTO_3D_ATTR = {
   width: 'data-stl-photo-width',
 } as const;
 
-/** Frontend and .beam metadata for a generated or directly imported point cloud. */
+/** Marks a photo whose 3D representation is a generated point cloud (BSPC, .beam block 7). */
 export const POINT_CLOUD_ATTR = {
   /**
    * Marks a projection whose 3D representation lives in the BSPC block. The value is the binary

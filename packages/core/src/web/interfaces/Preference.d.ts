@@ -39,7 +39,10 @@ export type DocumentState = {
   'inner-engraving-shape': MaterialShape;
   /** Material width (X) in mm, box only. */
   'inner-engraving-width': number;
-  /** Material **centre** in mm, from the work area origin (x/y increase right/down as in SVG). */
+  /**
+   * Material **centre** in mm from the work area's near-left corner, in scene axes (X right, Y
+   * towards the back; see InnerEngraving/utils/coordinates.ts).
+   */
   'inner-engraving-x': number;
   'inner-engraving-y': number;
   'job-origin': number;

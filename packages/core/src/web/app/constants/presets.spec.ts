@@ -27,6 +27,14 @@ describe('Promark UV presets', () => {
     uv2d.forEach(([key]) => expect(innerKeys.has(key)).toBe(false));
   });
 
+  test('inner engraving presets set every option of their mode, so switching presets resets it', () => {
+    const byKey = Object.fromEntries(innerEngraving);
+
+    expect(byKey.k9_crystal_contour_dot).toMatchObject({ stlMode: 'dot', stlSolid: false });
+    expect(byKey.k9_crystal_solid_dot).toMatchObject({ stlMode: 'dot', stlSolid: true });
+    expect(byKey.k9_crystal_contour_line).toMatchObject({ stlMinLayerSpacing: 0, stlMode: 'line' });
+  });
+
   test('2D UV presets set the frequency, never the power, with a 0.01mm fill interval', () => {
     uv2d.forEach(([, preset]) => {
       expect(preset.frequency).toBeGreaterThanOrEqual(40);

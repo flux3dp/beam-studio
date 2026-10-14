@@ -74,12 +74,6 @@ export const checkExclusiveMode = (mode: ExclusiveMode, context: AddOnModeContex
 export const getExclusiveMode = (mode: ExclusiveMode, context: AddOnModeContext = {}): boolean =>
   handlers[mode].get(context);
 
-export const checkSupportMode = (context: AddOnModeContext = {}): Record<ExclusiveMode, boolean> =>
-  Object.fromEntries(EXCLUSIVE_MODES.map((mode) => [mode, checkExclusiveMode(mode, context)])) as Record<
-    ExclusiveMode,
-    boolean
-  >;
-
 /** The effective active mode after applying machine/add-on capability checks. */
 export const getActiveExclusiveMode = (context: AddOnModeContext = {}): ExclusiveMode | null => {
   // Keep document modes ahead of curve engraving so malformed legacy documents normalize

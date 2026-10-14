@@ -34,8 +34,8 @@ export const MATERIAL_POSITION_LIMIT = { max: 1000, min: -1000 } as const;
  * Refractive index of the workpiece.
  *
  * The laser refracts at the surface, so the geometric depth and the actual focus depth differ; the
- * value is only passed through to swiftray, which applies the compensation (A-3 / B-3). Default is
- * K9 / optical glass (~1.5168); ordinary crystal glass is 1.45~1.6.
+ * value is only passed through to swiftray, which applies the compensation (depth / n). The default
+ * is measured on K9 crystal (DEFAULT_MATERIAL); ordinary crystal glass is 1.45~1.6.
  */
 export const REFRACTIVE_INDEX_LIMIT = { max: 3, min: 1, precision: 3 } as const;
 
