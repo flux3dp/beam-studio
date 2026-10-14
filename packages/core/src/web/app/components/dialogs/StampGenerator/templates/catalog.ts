@@ -486,7 +486,7 @@ export const CATALOG_TEMPLATES: StampTemplate[] = [
     category: 'rect',
     elements: [],
     id: 'rect_date',
-    preferredFonts: ['American Typewriter', 'Montserrat-Medium'],
+    preferredFonts: ['AmericanTypewriter', 'Montserrat-Medium'],
     sharedFont: true,
     sizes: [{ label: '38 × 14 mm', widthMm: 38 }],
     texts: [
