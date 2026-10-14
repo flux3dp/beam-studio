@@ -123,8 +123,6 @@ const getDefaultState = (template: StampTemplate, defaultFont: TextOptionValues[
 };
 
 interface StoreState {
-  /** Bumped per applyOptions call so a slower, older build can't overwrite a newer one. */
-  buildVersion: number;
   /** Resolved default text font for the current template (kept for reset). */
   defaultFont: null | TextOptionValues['font'];
   isModified: boolean;
@@ -141,7 +139,6 @@ interface StoreState {
 }
 
 const initialState: StoreState = {
-  buildVersion: 0,
   defaultFont: null,
   isModified: false,
   parsed: null,
@@ -158,6 +155,8 @@ const useStampStore = create(
   combine(initialState, (set, get) => {
     // Bumped per selectTemplate / reset so a slower font probe can't land on top of a newer selection.
     let selectVersion = 0;
+    // Closure counters, not state: reset() must not rewind them or a build from before the dialog closed could land.
+    let buildVersion = 0;
 
     /** Rebuilds shape + preview from the current template and state. Stale builds are discarded. */
     const applyOptions = async (): Promise<void> => {
@@ -165,9 +164,8 @@ const useStampStore = create(
 
       if (!parsed || !project || !state || !template) return;
 
-      const buildVersion = get().buildVersion + 1;
+      const version = ++buildVersion;
 
-      set({ buildVersion });
       project.activate();
 
       let shape: StampShape;
@@ -181,7 +179,7 @@ const useStampStore = create(
         return;
       }
 
-      if (get().buildVersion !== buildVersion) {
+      if (version !== buildVersion) {
         shape.group.remove();
 
         return;
@@ -199,6 +197,7 @@ const useStampStore = create(
 
       reset: (): void => {
         selectVersion += 1;
+        buildVersion += 1;
         get().project?.remove();
         set({ ...initialState });
       },

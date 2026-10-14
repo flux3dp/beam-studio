@@ -20,14 +20,16 @@ jest.mock('@core/app/actions/beambox/font-funcs', () => ({
 jest.mock('@core/helpers/fonts/bundledFonts', () => ({ applyBundledFontStyle: jest.fn() }));
 jest.mock('@core/helpers/fonts/getDefaultFont', () => () => ({ font_family: 'Arial', font_postscriptName: 'ArialMT' }));
 jest.mock('./builders/buildTemplate', () => ({ parseTemplate: () => ({ baselines: [], frames: [], outline: null }) }));
+
+let mockBuildGate = async (): Promise<void> => {};
+
 jest.mock('./builders/buildShape', () => ({
   buildPreviewSvg: () => document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
-  buildStampShape: async () => ({
-    bounds: { height: 100, width: 100 },
-    cut: null,
-    engrave: [],
-    group: { remove: jest.fn() },
-  }),
+  buildStampShape: async () => {
+    await mockBuildGate();
+
+    return { bounds: { height: 100, width: 100 }, cut: null, engrave: [], group: { remove: jest.fn() } };
+  },
 }));
 
 import { applyBundledFontStyle } from '@core/helpers/fonts/bundledFonts';
@@ -70,6 +72,31 @@ describe('useStampStore.selectTemplate', () => {
     await flush();
     expect(useStampStore.getState().template).toBeNull();
     expect(useStampStore.getState().pendingTemplateId).toBeNull();
+  });
+
+  it('discards a build that was still in flight when reset() ran', async () => {
+    const plain = STAMP_TEMPLATES.find((t) => !t.preferredFonts)!.id;
+    const gates: Array<() => void> = [];
+
+    mockBuildGate = () => new Promise((r) => gates.push(r));
+    deferred.get('ArialMT')?.resolve();
+    await useStampStore.getState().selectTemplate(plain);
+    await flush();
+    useStampStore.getState().reset();
+    await useStampStore.getState().selectTemplate(plain);
+    await flush();
+    expect(gates).toHaveLength(2);
+
+    gates[1](); // the build for the reopened dialog lands first
+    await flush();
+
+    const fresh = useStampStore.getState().shape;
+
+    gates[0](); // the build from before reset() lands last
+    await flush();
+    expect(fresh).not.toBeNull();
+    expect(useStampStore.getState().shape).toBe(fresh);
+    mockBuildGate = async () => {};
   });
 
   it('registers the @font-face of a preferred font that resolves', async () => {
