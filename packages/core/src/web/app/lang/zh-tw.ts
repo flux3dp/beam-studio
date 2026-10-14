@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示。轉換文字至路徑中...',
-      export_file_error_ask_for_upload: '匯出工作時發生錯誤，是否願意上傳工作場景回報錯誤給開發團隊？',
       retreive_image_data: '擷取影像資料中...',
     },
     context_menu: {
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: '無法載入 SVG 資料',
       import_file_contain_invalid_path: '#808 匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
-      import_file_error_ask_for_upload: '讀取 SVG 檔時發生錯誤，是否願意上傳檔案回報錯誤給開發團隊？',
       import_svg: {
         advice_message: '這可能導致嚴重延遲或匯入失敗。',
         advice_message_2: '建議在匯入前簡化檔案。',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: '含有路徑物件的圖層速度過快，可能導致切割時位置誤差。<br/>不建議超過在切割路徑時超過 %(limit)s 。',
       too_fast_for_path_and_constrain: '以下圖層： <strong>%(layers)s</strong><br/>含有向量路徑物件且速度超過 %(limit)s，為維持雕刻的精度，向量路徑速度將被限制在 %(limit)s ，您可以在偏好設定解除此限制。',
       touchpad: '觸控板',
-      upload_failed: '#819 檔案上傳失敗。',
-      upload_file_too_large: '#819 檔案大小過大，請聯絡客服。',
       vectorize_shading_image: '漸層影像在向量化時將花費較多時間，且容易有雜點，請將影像漸層關閉後再執行。',
     },
     rating_panel: {

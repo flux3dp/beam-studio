@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Convertir le texte en tracé...',
-      export_file_error_ask_for_upload: "Échec de l'exportation de la tâche. Êtes-vous prêt à fournir la scène de travail à l'équipe de développement pour le rapport de bug ?",
       retreive_image_data: "Récupérer les données d'image...",
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Une nouvelle option permettant de basculer automatiquement entre le panneau des calques et le panneau des objets a été ajoutée aux Préférences. Cette option est désactivée par défaut. Souhaitez-vous activer la commutation automatique maintenant ? <br/>Vous pouvez modifier ce paramètre à tout moment dans les Préférences.',
         title: 'Commutation Automatique entre le Panneau des Calques et des Objets',
       },
-      backend_connect_failed_ask_to_upload: '#802 Des erreurs se sont produites en essayant de se connecter au backend. Voulez-vous télécharger votre journal de rapport de bug ?',
+      backend_connect_failed: '#802 Des erreurs se produisent en essayant de se connecter au backend.',
       backend_error_hint: "Les fonctionnalités pourraient ne pas fonctionner correctement en raison d'une erreur de backend.",
       both_power_and_speed_too_high: "Utiliser une puissance laser inférieure prolongera la durée de vie du tube laser.\\nDe plus, une vitesse trop élevée à cette résolution peut entraîner une qualité d'ombrage de gravure inférieure.",
       bug_report: 'Rapport de bug',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Impossible de charger les données SVG',
       import_file_contain_invalid_path: "#808 Le fichier SVG importé contient un chemin d'image non valide. Assurez-vous que tous les fichiers image existent ou intégrez l'image dans le fichier",
-      import_file_error_ask_for_upload: "Échec de l'importation du fichier SVG. Êtes-vous prêt à fournir le fichier à l'équipe de développement pour le rapport de bug ?",
       import_svg: {
         advice_message: 'Cela peut entraîner un sérieux ralentissement ou un échec de l’importation.',
         advice_message_2: 'Il est recommandé de simplifier le fichier avant l’importation.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: "Utiliser une vitesse trop élevée dans les couches contenant des objets de chemin peut entraîner une précision inférieure lors de la découpe.\\nNous ne recommandons pas d'utiliser une vitesse supérieure à %(limit)s lors de la découpe.",
       too_fast_for_path_and_constrain: 'Les couches suivantes : %(layers)s\ncontiennent des objets de chemin vectoriel, et ont une vitesse supérieure à %(limit)s.\\nLa vitesse de découpe des objets de chemin vectoriel sera limitée à %(limit)s.\\nVous pouvez supprimer cette limite dans les paramètres de préférences.',
       touchpad: 'Pavé tactile',
-      upload_failed: '#819 Échec du téléversement du fichier.',
-      upload_file_too_large: '#819 Le fichier est trop volumineux pour être téléversé.',
       vectorize_shading_image: "Les images dégradées prennent plus de temps à tracer et sont sujettes au bruit. Veuillez désactiver le dégradé de l'image avant d'exécuter.",
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: "Veuillez noter que Beam Studio peut ne pas fonctionner de manière optimale sur votre appareil. Pour une expérience optimale, il devrait s'agir d'un appareil avec une largeur d'écran d'au moins 1024 pixels.",
+  },
+  error_report: {
+    always: 'Toujours envoyer',
+    ask: 'Demander à chaque fois',
+    consent_checkbox: 'Envoyer des données de diagnostic à FLUX pour aider à corriger cette erreur (sans fichiers de conception ni données personnelles)',
+    never: 'Ne jamais envoyer',
+    prompt_caption: 'Envoyer automatiquement ?',
+    prompt_message: 'Toujours envoyer automatiquement les données de diagnostic en cas d’erreur ? Vous pouvez modifier ce choix à tout moment dans Préférences > Confidentialité.',
+    sent: 'Merci ! Données de diagnostic envoyées.',
+    sent_automatically: 'Données de diagnostic envoyées automatiquement à FLUX.',
+    setting_label: 'Envoi des rapports d’erreur',
   },
   flux_101: {
     badge_earned: '%(badge)s — vous avez terminé « %(chapter)s »',

@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konverter tekst til bane...',
-      export_file_error_ask_for_upload: 'Kunne ikke eksportere oppgave. Er du villig til å sende arbeidsscene til utviklingsteamet for feilrapportering?',
       retreive_image_data: 'Hente bildedata...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Et nytt alternativ for automatisk å bytte mellom lagpanelet og objektpanelet er lagt til i Innstillinger. Dette alternativet er deaktivert som standard. Vil du aktivere automatisk bytting nå? <br/>Du kan endre denne innstillingen når som helst i Innstillinger.',
         title: 'Automatisk Bytte Mellom Lag- og Objektpanel',
       },
-      backend_connect_failed_ask_to_upload: '#802 Feil oppstår kontinuerlig ved tilkobling til serveren. Vil du laste opp feilrapportloggen?',
+      backend_connect_failed: '#802 Feil oppstår kontinuerlig ved tilkobling til serveren.',
       backend_error_hint: 'Funksjoner fungerer kanskje ikke ordentlig på grunn av serverfeil.',
       both_power_and_speed_too_high: 'Bruk av lavere laserstyrke vil forlenge levetiden til laser-røret.\nOgså, for høy hastighet med denne oppløsningen kan resultere i lavere kvalitet på skyggegravering.',
       bug_report: 'Feilrapport',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Kan ikke laste SVG-data',
       import_file_contain_invalid_path: '#808 Importert SVG-fil inneholder ugyldig bildebane. Sjekk at alle bildefiler eksisterer eller integrer bildet i filen',
-      import_file_error_ask_for_upload: 'Kunne ikke importere SVG-filen. Ønsker du å sende filen til utviklingsteamet for feilrapportering?',
       import_svg: {
         advice_message: 'Dette kan føre til alvorlig forsinkelse eller importfeil.',
         advice_message_2: 'Det anbefales å forenkle filen før import.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'For høy hastighet i lag som inneholder baner kan resultere i lavere presisjon ved kutting.\nVi anbefaler ikke å bruke hastigheter over %(limit)s ved kutting.',
       too_fast_for_path_and_constrain: 'Følgende lag: %(layers)s \ninneholder vektorbaner, og har hastighet over %(limit)s.\nKuttehastigheten for vektorbaner vil bli begrenset til %(limit)s.\nDu kan fjerne denne begrensningen under Innstillinger.',
       touchpad: 'Touchpad',
-      upload_failed: '#819 Filopplasting mislyktes.',
-      upload_file_too_large: '#819 Filen er for stor til opplasting.',
       vectorize_shading_image: 'Gradientbilder tar lengre tid å spore og er utsatt for støy. Slå av bildegradienten før du utfører.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Vær oppmerksom på at Beam Studio kanskje ikke fungerer optimalt på enheten din. For best mulig opplevelse bør skjermbredden være minst 1024 piksler.',
+  },
+  error_report: {
+    always: 'Send alltid',
+    ask: 'Spør hver gang',
+    consent_checkbox: 'Send diagnosedata til FLUX for å hjelpe med å rette denne feilen (ingen designfiler eller personopplysninger)',
+    never: 'Send aldri',
+    prompt_caption: 'Send automatisk?',
+    prompt_message: 'Skal diagnosedata alltid sendes automatisk når feil oppstår? Du kan når som helst endre dette under Innstillinger > Personvern.',
+    sent: 'Takk! Diagnosedata er sendt.',
+    sent_automatically: 'Diagnosedata er automatisk sendt til FLUX.',
+    setting_label: 'Opplasting av feilrapporter',
   },
   flux_101: {
     badge_earned: '%(badge)s — du har fullført «%(chapter)s»',

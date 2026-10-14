@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konwertuj tekst na ścieżkę...',
-      export_file_error_ask_for_upload: 'Nie udało się wyeksportować zadania. Czy chcesz udostępnić scenę roboczą do opracowania zespołu do zgłaszania błędów?',
       retreive_image_data: 'Pobierz dane obrazu...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Nowa opcja automatycznego przełączania między panelem warstw a panelem obiektów została dodana do Preferencji. Ta opcja jest domyślnie wyłączona. Czy chcesz teraz włączyć automatyczne przełączanie? <br/>Możesz zmienić to ustawienie w dowolnym momencie w Preferencjach.',
         title: 'Automatyczne Przełączanie Między Panelem Warstw i Obiektów',
       },
-      backend_connect_failed_ask_to_upload: '#802 Podczas próby połączenia z backendem występują błędy. Czy chcesz przesłać dziennik raportów o błędach?',
+      backend_connect_failed: '#802 Podczas próby połączenia z backendem występują błędy.',
       backend_error_hint: 'Funkcje mogą nie działać poprawnie z powodu błędu zaplecza.',
       both_power_and_speed_too_high: '"Użycie niższej mocy lasera wydłuży żywotność tuby laserowej. \nPonadto wysoka prędkość przy tej rozdzielczości może skutkować niższą jakością cieniowania graweru."',
       bug_report: 'Zgłoszenie błędut',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Nie można załadować danych SVG',
       import_file_contain_invalid_path: '#808 Zaimportowany plik SVG zawiera nieprawidłową ścieżkę do obrazu. Upewnij się, że wszystkie pliki obrazów istnieją lub umieść obraz w pliku',
-      import_file_error_ask_for_upload: 'Nie udało się zaimportować pliku SVG. Czy chcesz udostępnić plik zespołowi programistycznemu w celu zgłoszenia błędu?',
       import_svg: {
         advice_message: 'Może to spowodować poważne opóźnienia lub błąd importu.',
         advice_message_2: 'Zaleca się uproszczenie pliku przed importem.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'Użycie zbyt dużej prędkości w warstwach zawierających obiekty ścieżki może spowodować niższą precyzję cięcia.\nNie zalecamy używania prędkości większej niż %(limit)s podczas cięcia.',
       too_fast_for_path_and_constrain: 'Następujące warstwy: %(layers)s \nzawierają obiekty wektorowe a ustawiona do nich prędkość przekracza %(limit)s. \nSzybkość cięcia obiektów wektorowych zostanie ograniczona do %(limit)s. \nMożesz usunąć to ograniczenie w Ustawieniach programu.',
       touchpad: 'Panel dotykowy',
-      upload_failed: '#819 Przesyłanie pliku nie powiodło się.',
-      upload_file_too_large: '#819 Plik jest za duży do przesłania.',
       vectorize_shading_image: 'Obrysowanie obrazów gradientowych zajmuje więcej czasu i jest podatne na szumy. Uprzejmie prosimy o wyłączenie gradientu obrazu przed kontynuowaniem.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Należy pamiętać, że Beam Studio może nie działać optymalnie na Twoim urządzeniu. Aby uzyskać optymalne wrażenia, Twoje urządzenie powinno mieć ekran o minimalnej szerokości 1024 pikseli.',
+  },
+  error_report: {
+    always: 'Zawsze wysyłaj',
+    ask: 'Pytaj za każdym razem',
+    consent_checkbox: 'Wyślij dane diagnostyczne do FLUX, aby pomóc naprawić ten błąd (bez plików projektów i danych osobowych)',
+    never: 'Nigdy nie wysyłaj',
+    prompt_caption: 'Wysyłać automatycznie?',
+    prompt_message: 'Zawsze automatycznie wysyłać dane diagnostyczne, gdy wystąpią błędy? Możesz to zmienić w dowolnym momencie w Preferencje > Prywatność.',
+    sent: 'Dziękujemy! Dane diagnostyczne zostały wysłane.',
+    sent_automatically: 'Dane diagnostyczne zostały automatycznie wysłane do FLUX.',
+    setting_label: 'Przesyłanie raportów o błędach',
   },
   flux_101: {
     badge_earned: '%(badge)s — ukończono „%(chapter)s”',

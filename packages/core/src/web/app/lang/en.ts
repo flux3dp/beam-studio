@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Convert Text to Path...',
-      export_file_error_ask_for_upload: 'Failed to export task. Are you willing to provide working scene to develop team for bug report?',
       retreive_image_data: 'Retrieve Image Data...',
     },
     context_menu: {
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Unable to load SVG data',
       import_file_contain_invalid_path: '#808 Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
-      import_file_error_ask_for_upload: 'Failed to Imported SVG file. Are you willing to provide file to develop team for bug report ?',
       import_svg: {
         advice_message: 'This may cause serious lag or import failure.',
         advice_message_2: "It's recommended to simplify the file before importing.",
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: "Using too high speed in layers containing path objects may result in lower precision when cutting.\nWe don't recommend using speed faster than %(limit)s when cutting.",
       too_fast_for_path_and_constrain: 'Following layers: %(layers)s \ncontain vector path objects, and have speed exceeding %(limit)s.\nThe cutting speed of vector path objects will be constrained to %(limit)s.\nYou can remove this limit at Preferences Settings.',
       touchpad: 'TouchPad',
-      upload_failed: '#819 File upload failed.',
-      upload_file_too_large: '#819 File is too large for upload.',
       vectorize_shading_image: 'Gradient images takes more time to trace and are prone to noise. Please kindly turn off the image gradient before executing.',
     },
     rating_panel: {

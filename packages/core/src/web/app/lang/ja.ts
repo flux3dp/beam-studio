@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'テキストをパスに変換…',
-      export_file_error_ask_for_upload: 'Failed to export task. Are you willing to provide working scene to develop team for bug report?',
       retreive_image_data: '画像データを読み出す…',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'レイヤーパネルとオブジェクトパネルの間を自動的に切り替える新しいオプションが環境設定に追加されました。このオプションはデフォルトではオフになっています。自動切り替えを今すぐオンにしますか？ <br/>この設定はいつでも環境設定で変更できます。',
         title: 'レイヤーとオブジェクトパネルの自動切り替え',
       },
-      backend_connect_failed_ask_to_upload: '#802 バックエンドに接続しようとすると、エラーが発生し続けます。バグレポートログをアップロードしますか？',
+      backend_connect_failed: '#802 バックエンドに接続しようとすると、エラーが発生し続けます。',
       backend_error_hint: 'バックエンドのエラーのため、機能が正しく動作しない可能性があります。',
       both_power_and_speed_too_high: 'より低いレーザー出力を使用すると、レーザー管の寿命が延びます。\nまた、この解像度で速度が速すぎると、シェーディング彫刻の品質が低下する場合があります。',
       bug_report: 'バグ報告',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'SVGデータを読み込めません',
       import_file_contain_invalid_path: '#808 インポートされたSVGファイルに無効は画像パスが含まれています。すべての画像ファイルが存在することを確認するか、ファイルに画像を埋め込んでください',
-      import_file_error_ask_for_upload: 'インポートされたSVGファイルに失敗しました。バグレポート用のチームを開発するためのファイルを提供してもよろしいですか？',
       import_svg: {
         advice_message: '深刻な遅延やインポート失敗の原因となる可能性があります。',
         advice_message_2: 'インポート前にファイルを簡略化することを推奨します。',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'パスオブジェクトを含む層で速すぎる速度を使用すると、切断時に精度が低下する場合があります。\n切断時に %(limit)s より速い速度を使用することはお勧めしません。',
       too_fast_for_path_and_constrain: '次のレイヤー：%(layers)s \nベクトルパスオブジェクトが含まれていて、速度が %(limit)sを超えています。\nベクトルパスオブジェクトの切断速度は %(limit)s に制限されます。\nこの制限は[好み]で削除できます。',
       touchpad: 'タッチパッド',
-      upload_failed: '#819 ファイルのアップロードに失敗しました。',
-      upload_file_too_large: '#819 ファイルが大きすぎてアップロードできません。',
       vectorize_shading_image: 'シェーディング画像はベクトル化に時間がかかり、ノイズが発生しやすくなります。実行する前に画像のシェーディングをオフにしてください。',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Please note that Beam Studio may not work optimally on your device. For an optimal experience, it should be a device with a screen width of at least 1024 pixels width.',
+  },
+  error_report: {
+    always: '常に送信',
+    ask: '毎回確認',
+    consent_checkbox: 'このエラーの修正に役立てるため、診断データを FLUX に送信する（デザインファイルや個人情報は含みません）',
+    never: '送信しない',
+    prompt_caption: '自動的に送信しますか？',
+    prompt_message: 'エラー発生時に診断データを常に自動送信しますか？この設定は 設定 > プライバシー でいつでも変更できます。',
+    sent: 'ありがとうございます。診断データを送信しました。',
+    sent_automatically: '診断データを FLUX に自動送信しました。',
+    setting_label: 'エラーレポートの送信',
   },
   flux_101: {
     badge_earned: '%(badge)s：「%(chapter)s」を修了しました',

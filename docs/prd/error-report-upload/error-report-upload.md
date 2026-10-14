@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Status** | Draft — scoped 2026-10-06; open decisions §11 |
+| **Status** | In review — PR 1 (#1021) under review; PRs 2–5 built on `feat/error-report-consent`, combined PR pending #1021 merge and the flux-id deploy (§10 step 6) |
 | **Author** | Product (zh-tw source PRD v1.1) + engineering scoping |
 | **Created** | 2026-10-06 |
-| **Revised** | 2026-10-08 (full error-site sweep in §7.4, D4 settled; D1–D5 on 2026-10-06, see §11) |
+| **Revised** | 2026-10-14 (§7.4 wired and corrected while building steps 3–5; 2026-10-08 full error-site sweep, D4 settled; D1–D5 on 2026-10-06, see §11) |
 | **Tracking** | ClickUp: TBD (attach the zh-tw source PRD v1.1 there; it is intentionally not in this repo) |
 | **Translation** | [繁體中文版](error-report-upload.zh-tw.md) — English is the source of truth; regenerate the translation when a section changes |
 | **Companion PRD** | [Error Report Upload — flux-id backend](backend.md): endpoint, storage alias, folder cap, dedupe, lifecycle, impact matrix (owned by the flux-id repo) |
@@ -234,12 +234,12 @@ Procedure: record the baseline column for one week before step 6 of §10 ships; 
 
 ## 10. Rollout (PR plan)
 
-1. `helpers/error-report/` (scrub, throttle, installationId, `uploadErrorReport`) + `getOutput({ scrub, maxLength })` + unit tests. No callers, no strings, no UI.
-2. Preference key, Privacy select, i18n (en, zh-tw), `preference.ts`, `withErrorReportConsent` in `helpers/error-report/consent.tsx` (moved here from PR 1 on 2026-10-12 because it needs the consent strings), and the `children` render in `Alert.tsx` (§6). Built 2026-10-12 on the same branch as PR 1.
-3. Replace `uploadBackendErrorLog` and delete `aws-helper.ts`; wire the §7.4 wave-1 sites through `withErrorReportConsent`.
-3b. Wire the §7.4 wave-2 camera sites (same mechanism, separate PR so the camera-preview skill owner can review).
-4. One-time Always prompt + toast.
-5. Remaining 21 languages; feature-review; bilingual PR.
+1. `helpers/error-report/` (scrub, throttle, installationId, `uploadErrorReport`) + `getOutput({ scrub, maxLength })` + unit tests. No callers, no strings, no UI. **PR #1021, in review** (review fixes 2026-10-14).
+2. Preference key, Privacy select, i18n (en, zh-tw), `preference.ts`, `withErrorReportConsent` in `helpers/error-report/consent.tsx` (moved here from PR 1 on 2026-10-12 because it needs the consent strings), and the `children` render in `Alert.tsx` (§6). Built 2026-10-12; carried on `feat/error-report-consent`.
+3. Replace `uploadBackendErrorLog` and delete `aws-helper.ts`; wire the §7.4 wave-1 sites through `withErrorReportConsent`. Done 2026-10-13: nine sites; `UploadErrorReportOptions.device` added for sites that fire before `currentDevice` is updated, device log read only when the current socket belongs to that machine.
+3b. Wire the §7.4 wave-2 camera sites (same mechanism). Done 2026-10-14 on the same branch; the separate-PR idea was dropped because the diff is six call sites of the same shape. `BeamPreviewManager` now reuses `handlePreviewSetupError`.
+4. One-time Always prompt + toast. Done 2026-10-14.
+5. Remaining 21 languages (done 2026-10-14, machine-drafted, native review pending; the four orphaned upload strings and `#819` removed); feature-review; bilingual PR for steps 2–5 after #1021 merges.
 6. flux-id: companion PRD, `STORAGES['error_report']` alias + R2 bucket + lifecycle rule, DRF view with throttle and structured log lines, gunicorn access log enabled, Cloudflare WAF rule. Baseline week of §9.2 before it ships. Can land in parallel with 1–2; step 3 targets staging until then.
 
 ## 11. Open decisions

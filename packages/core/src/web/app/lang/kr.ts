@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: '텍스트를 패스로 변환...',
-      export_file_error_ask_for_upload: '작업 내보내기 실패. 버그 보고를 위해 작업 중인 씬을 개발팀에 제공할 의사가 있으신가요?',
       retreive_image_data: '이미지 데이터 검색...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: '레이어 패널과 객체 패널 간 자동 전환 옵션이 기본 설정에 추가되었습니다. 이 옵션은 기본적으로 비활성화되어 있습니다. 지금 자동 전환을 활성화하시겠습니까? <br/>이 설정은 언제든지 기본 설정에서 변경할 수 있습니다.',
         title: '레이어 및 오브젝트 패널 자동 전환',
       },
-      backend_connect_failed_ask_to_upload: '#802 백엔드에 연결하려는 중 오류가 계속 발생합니다. 버그 리포트 로그를 업로드 하시겠습니까?',
+      backend_connect_failed: '#802 백엔드에 연결하려는 중 오류가 계속 발생합니다.',
       backend_error_hint: '백엔드 오류로 인해 기능이 제대로 작동하지 않을 수 있습니다.',
       both_power_and_speed_too_high: '낮은 레이저 파워를 사용하면 레이저 튜브의 수명이 연장됩니다. 또한, 이 해상도에서 너무 높은 속도를 사용하면 그림자 조각에 대한 품질이 낮아질 수 있습니다.',
       bug_report: '버그 리포트',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'SVG 데이터를 불러올 수 없습니다',
       import_file_contain_invalid_path: '#808 가져온 SVG 파일에는 잘못된 이미지 경로가 포함되어 있습니다. 모든 이미지 파일이 존재하거나 이미지를 파일에 포함시켰는지 확인해주세요.',
-      import_file_error_ask_for_upload: 'SVG 파일을 가져오는 데 실패했습니다. 버그 보고를 위해 개발팀에 파일을 제공하시겠습니까?',
       import_svg: {
         advice_message: '심각한 지연이나 가져오기 실패가 발생할 수 있습니다.',
         advice_message_2: '가져오기 전에 파일을 단순화하는 것이 좋습니다.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: '경로 객체를 포함한 레이어에서 너무 높은 속도를 사용하면 절단 정밀도가 낮아질 수 있습니다. 절단할 때 %(limit)s보다 빠른 속도를 사용하지 않는 것이 좋습니다.',
       too_fast_for_path_and_constrain: '다음 레이어: %(layers)s \n벡터 경로 객체를 포함하고, 속도가 %(limit)s를 초과합니다. 벡터 경로 객체의 절단 속도는 %(limit)s로 제한됩니다. 이 제한을 기본 설정에서 제거할 수 있습니다.',
       touchpad: '터치패드',
-      upload_failed: '#819 파일 업로드 실패.',
-      upload_file_too_large: '#819 파일이 업로드하기에 너무 큽니다.',
       vectorize_shading_image: '그라데이션 이미지는 추적하는 데 시간이 더 오래 걸리며, 잡음이 발생하기 쉽습니다. 실행하기 전에 이미지 그라데이션을 꺼주세요.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Beam Studio가 사용 중인 장치에서 최적으로 작동하지 않을 수 있습니다. 최적의 경험을 위해서는 최소한 1024 픽셀 너비의 스크린이 있는 장치를 사용해야 합니다.',
+  },
+  error_report: {
+    always: '항상 보내기',
+    ask: '매번 묻기',
+    consent_checkbox: '이 오류 수정에 도움이 되도록 진단 데이터를 FLUX에 보냅니다 (디자인 파일 및 개인 정보 제외)',
+    never: '보내지 않기',
+    prompt_caption: '자동으로 보낼까요?',
+    prompt_message: '오류가 발생하면 진단 데이터를 항상 자동으로 보낼까요? 환경설정 > 개인 정보에서 언제든지 변경할 수 있습니다.',
+    sent: '감사합니다! 진단 데이터를 보냈습니다.',
+    sent_automatically: '진단 데이터를 FLUX에 자동으로 보냈습니다.',
+    setting_label: '오류 보고서 업로드',
   },
   flux_101: {
     badge_earned: '%(badge)s — "%(chapter)s"을(를) 완료했습니다',

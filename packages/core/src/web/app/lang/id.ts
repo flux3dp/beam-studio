@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Ubah Teks Menjadi Lintasan...',
-      export_file_error_ask_for_upload: 'Gagal mengekspor pekerjaan. Apakah Anda bersedia memberikan adegan kerja kepada tim pengembang untuk laporan bug?',
       retreive_image_data: 'Ambil Data Gambar...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Opsi baru untuk beralih secara otomatis antara panel Lapisan dan panel Objek telah ditambahkan ke Preferensi. Opsi ini dinonaktifkan secara default. Apakah Anda ingin mengaktifkan pengalihan otomatis sekarang? <br/>Anda dapat mengubah pengaturan ini kapan saja di Preferensi.',
         title: 'Pengalihan Otomatis Panel Lapisan dan Objek',
       },
-      backend_connect_failed_ask_to_upload: '#802 Kesalahan terus terjadi saat mencoba terhubung ke backend. Apakah Anda ingin mengunggah log laporan bug Anda?',
+      backend_connect_failed: '#802 Kesalahan terus terjadi saat mencoba terhubung ke backend.',
       backend_error_hint: 'Fitur mungkin tidak berfungsi dengan benar karena kesalahan backend.',
       both_power_and_speed_too_high: 'Menggunakan daya laser lebih rendah akan memperpanjang umur tabung laser. Juga, kecepatan terlalu tinggi pada resolusi ini dapat mengurangi kualitas ukiran bayangan.',
       bug_report: 'Laporan Bug',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Tidak dapat memuat data SVG',
       import_file_contain_invalid_path: '#808 File SVG yang diimpor berisi path gambar yang tidak valid. Pastikan semua file gambar ada atau sisipkan gambar dalam file',
-      import_file_error_ask_for_upload: 'Gagal mengimpor file SVG. Apakah Anda bersedia memberikan file ke tim pengembang untuk laporan bug ?',
       import_svg: {
         advice_message: 'Ini dapat menyebabkan lag serius atau kegagalan impor.',
         advice_message_2: 'Disarankan untuk menyederhanakan file sebelum mengimpor.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'Menggunakan kecepatan terlalu tinggi pada lapisan yang berisi objek path dapat mengurangi presisi saat pemotongan. Kami tidak menyarankan menggunakan kecepatan lebih dari %(limit)s saat pemotongan.',
       too_fast_for_path_and_constrain: 'Lapisan berikut: %(layers)s \nberisi objek path vektor, dan memiliki kecepatan melebihi %(limit)s. Kecepatan pemotongan objek path vektor akan dibatasi hingga %(limit)s. Anda dapat menghapus batasan ini di Pengaturan Preferensi.',
       touchpad: 'TouchPad',
-      upload_failed: '#819 Unggah file gagal.',
-      upload_file_too_large: '#819 File terlalu besar untuk diunggah.',
       vectorize_shading_image: 'Gambar gradien memerlukan waktu lebih lama untuk melacak dan rentan terhadap noise. Harap matikan gradien gambar sebelum mengeksekusi.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Harap dicatat bahwa Beam Studio mungkin tidak berfungsi secara optimal pada perangkat Anda. Untuk pengalaman terbaik, disarankan perangkat dengan lebar layar minimal 1024 piksel.',
+  },
+  error_report: {
+    always: 'Selalu kirim',
+    ask: 'Tanya setiap kali',
+    consent_checkbox: 'Kirim data diagnostik ke FLUX untuk membantu memperbaiki kesalahan ini (tanpa file desain atau data pribadi)',
+    never: 'Jangan pernah kirim',
+    prompt_caption: 'Kirim secara otomatis?',
+    prompt_message: 'Selalu kirim data diagnostik secara otomatis saat terjadi kesalahan? Anda dapat mengubahnya kapan saja di Preferensi > Privasi.',
+    sent: 'Terima kasih! Data diagnostik telah dikirim.',
+    sent_automatically: 'Data diagnostik dikirim ke FLUX secara otomatis.',
+    setting_label: 'Unggah Laporan Kesalahan',
   },
   flux_101: {
     badge_earned: '%(badge)s — Anda telah menyelesaikan "%(chapter)s"',

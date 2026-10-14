@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **狀態** | 草稿 — 2026-10-06 完成範疇界定；待決事項見 §11 |
+| **狀態** | 審閱中 — PR 1（#1021）審閱中；PR 2–5 已在 `feat/error-report-consent` 完成，合併 PR 待 #1021 合併與 flux-id 部署（§10 第 6 步） |
 | **作者** | 產品（zh-tw 原始 PRD v1.1）＋工程範疇界定 |
 | **建立** | 2026-10-06 |
-| **修訂** | 2026-10-08（§7.4 完整錯誤觸發點掃描、D4 定案；D1–D5 於 2026-10-06，見 §11） |
+| **修訂** | 2026-10-14（實作第 3–5 步時接線並修正 §7.4；2026-10-08 完整錯誤觸發點掃描、D4 定案；D1–D5 於 2026-10-06，見 §11） |
 | **追蹤** | ClickUp：待補（原始 zh-tw PRD v1.1 請附於該任務；刻意不放進此 repo） |
 | **翻譯** | 本檔；英文版為準 |
 | **配套 PRD** | [錯誤報告上傳 — flux-id 後端](backend.md)：端點、儲存別名、資料夾上限、去重、生命週期、效能影響矩陣（由 flux-id repo 負責） |
@@ -236,12 +236,12 @@
 
 ## 10. 上線計畫（PR 順序）
 
-1. `helpers/error-report/`（scrub、throttle、installationId、`uploadErrorReport`）＋ `getOutput({ scrub, maxLength })` ＋ 單元測試。無呼叫者、無字串、無 UI。
-2. 偏好設定鍵、隱私頁下拉選單、i18n（en、zh-tw）、`preference.ts`、`helpers/error-report/consent.tsx` 的 `withErrorReportConsent`（2026-10-12 自 PR 1 移到此處，因為它需要同意文案），以及 `Alert.tsx` 的 `children` 渲染（§6）。2026-10-12 於 PR 1 同一分支完成。
-3. 取代 `uploadBackendErrorLog` 並刪除 `aws-helper.ts`；把 §7.4 第一波觸發點接上 `withErrorReportConsent`。
-3b. 接上 §7.4 第二波相機觸發點（同一機制，獨立 PR 以便 camera-preview skill 負責人審閱）。
-4. 一次性 一律自動 提示 ＋ toast。
-5. 其餘 21 種語言；feature-review；雙語 PR。
+1. `helpers/error-report/`（scrub、throttle、installationId、`uploadErrorReport`）＋ `getOutput({ scrub, maxLength })` ＋ 單元測試。無呼叫者、無字串、無 UI。**PR #1021，審閱中**（2026-10-14 審閱修正）。
+2. 偏好設定鍵、隱私頁下拉選單、i18n（en、zh-tw）、`preference.ts`、`helpers/error-report/consent.tsx` 的 `withErrorReportConsent`（2026-10-12 自 PR 1 移到此處，因為它需要同意文案），以及 `Alert.tsx` 的 `children` 渲染（§6）。2026-10-12 完成；放在 `feat/error-report-consent`。
+3. 取代 `uploadBackendErrorLog` 並刪除 `aws-helper.ts`；把 §7.4 第一波觸發點接上 `withErrorReportConsent`。2026-10-13 完成：九個觸發點；新增 `UploadErrorReportOptions.device` 供在 `currentDevice` 更新前就觸發的位置使用，裝置 Log 只在目前 socket 屬於該機器時讀取。
+3b. 接上 §7.4 第二波相機觸發點（同一機制）。2026-10-14 於同一分支完成；因為只是六個同形狀的呼叫點，放棄獨立 PR 的做法。`BeamPreviewManager` 改為重用 `handlePreviewSetupError`。
+4. 一次性 一律自動 提示 ＋ toast。2026-10-14 完成。
+5. 其餘 21 種語言（2026-10-14 完成，機器草譯、待母語校對；移除四個孤立的上傳字串與 `#819`）；feature-review；#1021 合併後提第 2–5 步的雙語 PR。
 6. flux-id：配套 PRD、`STORAGES['error_report']` 別名 ＋ R2 bucket ＋ 生命週期規則、含流量限制與結構化 log 的 DRF view、啟用 gunicorn access log、Cloudflare WAF 規則。上線前先做 §9.2 的基準週。可與 1–2 平行進行；在此之前第 3 步指向 staging。
 
 ## 11. 待決事項

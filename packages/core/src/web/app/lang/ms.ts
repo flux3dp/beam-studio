@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Tukar Teks ke Laluan...',
-      export_file_error_ask_for_upload: 'Gagal eksport tugas. Adakah anda bersedia untuk memberikan adegan kerja kepada pasukan pembangunan untuk laporan pepijat?',
       retreive_image_data: 'Dapatkan Data Imej...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Pilihan baru untuk menukar secara automatik antara panel Lapisan dan panel Objek telah ditambah dalam Keutamaan. Pilihan ini dilumpuhkan secara lalai. Adakah anda ingin mengaktifkan penukaran automatik sekarang? <br/>Anda boleh menukar tetapan ini pada bila-bila masa dalam Keutamaan.',
         title: 'Tukar Automatik Panel Lapisan dan Objek',
       },
-      backend_connect_failed_ask_to_upload: '#802 Ralat berterusan berlaku semasa cuba menyambung ke backend. Adakah anda mahu memuat naik laporan pepijat log anda?',
+      backend_connect_failed: '#802 Ralat berterusan berlaku semasa cuba menyambung ke backend.',
       backend_error_hint: 'Ciri-ciri mungkin tidak berfungsi dengan betul disebabkan ralat backend.',
       both_power_and_speed_too_high: 'Menggunakan kuasa laser yang lebih rendah akan melanjutkan jangka hayat tiub laser. Juga, kelajuan yang terlalu tinggi pada resolusi ini boleh mengakibatkan kualiti ukiran bayangan yang lebih rendah.',
       bug_report: 'Laporan Pepijat',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Tidak dapat memuat data SVG',
       import_file_contain_invalid_path: '#808 Fail SVG yang diimport mengandungi laluan imej yang tidak sah. Sila pastikan semua fail imej wujud atau benam imej dalam fail',
-      import_file_error_ask_for_upload: 'Gagal untuk Imported SVG file. Adakah anda bersedia untuk menyediakan fail kepada pasukan pembangunan untuk laporan pepijat ?',
       import_svg: {
         advice_message: 'Ini mungkin menyebabkan kelewatan serius atau kegagalan import.',
         advice_message_2: 'Disarankan untuk mempermudah fail sebelum mengimport.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'Menggunakan kelajuan yang terlalu tinggi dalam lapisan yang mengandungi objek laluan boleh mengakibatkan ketepatan yang lebih rendah semasa memotong. Kami tidak mengesyorkan menggunakan kelajuan lebih pantas daripada %(limit)s semasa memotong.',
       too_fast_for_path_and_constrain: 'Lapisan berikut: %(layers)s\n mengandungi objek laluan vektor, dan mempunyai kelajuan melebihi %(limit)s. Kelajuan pemotongan objek laluan vektor akan dihadkan kepada %(limit)s. Anda boleh mengalih keluar had ini di Tetapan Keutamaan.',
       touchpad: 'Pad Sentuh',
-      upload_failed: '#819 Gagal memuat naik fail.',
-      upload_file_too_large: '#819 Fail terlalu besar untuk dimuat naik.',
       vectorize_shading_image: 'Imej gradien mengambil lebih masa untuk mengesan dan cenderung kepada hingar. Sila matikan gradien imej sebelum melaksanakan.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Sila ambil perhatian bahawa Beam Studio mungkin tidak berfungsi dengan optimum pada peranti anda. Untuk pengalaman yang terbaik, ia memerlukan peranti dengan lebar skrin minimum 1024 piksel.',
+  },
+  error_report: {
+    always: 'Sentiasa hantar',
+    ask: 'Tanya setiap kali',
+    consent_checkbox: 'Hantar data diagnostik kepada FLUX untuk membantu membetulkan ralat ini (tiada fail reka bentuk atau data peribadi)',
+    never: 'Jangan hantar',
+    prompt_caption: 'Hantar secara automatik?',
+    prompt_message: 'Sentiasa hantar data diagnostik secara automatik apabila ralat berlaku? Anda boleh mengubahnya pada bila-bila masa di Keutamaan > Privasi.',
+    sent: 'Terima kasih! Data diagnostik telah dihantar.',
+    sent_automatically: 'Data diagnostik dihantar kepada FLUX secara automatik.',
+    setting_label: 'Muat Naik Laporan Ralat',
   },
   flux_101: {
     badge_earned: '%(badge)s — anda telah menamatkan "%(chapter)s"',

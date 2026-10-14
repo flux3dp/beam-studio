@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Text in Pfad konvertieren ...',
-      export_file_error_ask_for_upload: 'Aufgabe konnte nicht exportiert werden. Bist du bereit, eine Arbeitsszene für die Entwicklung eines Teams für Fehlerberichte bereitzustellen?',
       retreive_image_data: 'Bilddaten abrufen ...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Eine neue Option zum automatischen Umschalten zwischen dem Ebenen- und dem Objekt-Panel wurde zu den Voreinstellungen hinzugefügt. Diese Option ist standardmäßig deaktiviert. Möchten Sie das automatische Umschalten jetzt aktivieren? <br/>Sie können diese Einstellung jederzeit in den Voreinstellungen ändern.',
         title: 'Automatisches Umschalten zwischen Ebenen- und Objektfenster',
       },
-      backend_connect_failed_ask_to_upload: '#802 Beim Versuch, eine Verbindung zum Server herzustellen, treten immer wieder Fehler auf. Möchtest du Ihr Fehlerberichtsprotokoll hochladen?',
+      backend_connect_failed: '#802 Beim Versuch, eine Verbindung zum Server herzustellen, treten immer wieder Fehler auf.',
       backend_error_hint: 'Funktionen funktionieren möglicherweise aufgrund eines Backend-Fehlers nicht ordnungsgemäß.',
       both_power_and_speed_too_high: 'Die Verwendung einer niedrigeren Laserleistung verlängert die Lebensdauer der Laserröhre!\nAußerdem kann eine zu hohe Geschwindigkeit bei dieser Auflösung zu einer schlechteren Qualität der Gravur führen.',
       bug_report: 'Fehlerbericht',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'SVG-Daten konnten nicht geladen werden',
       import_file_contain_invalid_path: '#808 Importierte SVG-Datei enthält ungültigen Bildpfad. Bitte stelle sicher, dass alle Bilddateien existieren oder betten Sie das Bild in die Datei',
-      import_file_error_ask_for_upload: 'Importierte SVG-Datei konnte nicht importiert werden. Bist du bereit, dem Entwicklerteam eine Datei für den Fehlerbericht zur Verfügung zu stellen ?',
       import_svg: {
         advice_message: 'Dies kann zu erheblicher Verzögerung oder einem Importfehler führen.',
         advice_message_2: 'Es wird empfohlen, die Datei vor dem Import zu vereinfachen.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'Die Verwendung einer zu hohen Geschwindigkeit in Ebenen mit Pfadobjekten, kann zu einer geringeren Präzision beim Schneiden führen.\nWir empfehlen, beim Schneiden keine Geschwindigkeit von mehr als %(limit)s zu verwenden.',
       too_fast_for_path_and_constrain: 'Folgende Ebenen: %(layers)s \nenthalten Vektorpfadobjekte und eine Geschwindigkeit von mehr als %(limit)s \nDie Schnittgeschwindigkeit von Vektorpfadobjekten wird auf %(limit)s reduziert.\nDu kannst diese Beschränkung unter Präferenzen-Einstellungen entfernen.',
       touchpad: 'TouchPad',
-      upload_failed: '#819 Datei-Upload fehlgeschlagen.',
-      upload_file_too_large: '#819 Datei ist zu groß zum Hochladen.',
       vectorize_shading_image: 'Das Vektorisieren von Schattierungsbildern dauert länger und ist anfällig für Rauschen. Bitte schalten Sie die Bildschattierung aus, bevor Sie sie ausführen.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Please note that Beam Studio may not work optimally on your device. For an optimal experience, it should be a device with a screen width of at least 1024 pixels width.',
+  },
+  error_report: {
+    always: 'Immer senden',
+    ask: 'Jedes Mal fragen',
+    consent_checkbox: 'Diagnosedaten an FLUX senden, um diesen Fehler beheben zu helfen (keine Designdateien oder persönlichen Daten)',
+    never: 'Nie senden',
+    prompt_caption: 'Automatisch senden?',
+    prompt_message: 'Diagnosedaten bei Fehlern immer automatisch senden? Du kannst das jederzeit unter Einstellungen > Privatsphäre ändern.',
+    sent: 'Danke! Diagnosedaten gesendet.',
+    sent_automatically: 'Diagnosedaten wurden automatisch an FLUX gesendet.',
+    setting_label: 'Fehlerbericht-Upload',
   },
   flux_101: {
     badge_earned: '%(badge)s – „%(chapter)s“ abgeschlossen',

@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Đang chuyển đổi chữ thành đường dẫn...',
-      export_file_error_ask_for_upload: 'Xuất tệp thất bại. Bạn có muốn cung cấp cảnh làm việc để báo cáo lỗi không?',
       retreive_image_data: 'Đang truy xuất dữ liệu hình ảnh...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Một tùy chọn mới để tự động chuyển đổi giữa bảng Lớp và bảng Đối tượng đã được thêm vào Tùy chọn. Tùy chọn này bị tắt theo mặc định. Bạn có muốn bật chuyển đổi tự động ngay bây giờ không? <br/>Bạn có thể thay đổi cài đặt này bất kỳ lúc nào trong Tùy chọn.',
         title: 'Chuyển Đổi Tự Động Giữa Bảng Lớp và Đối Tượng',
       },
-      backend_connect_failed_ask_to_upload: '#802 Lỗi liên tục khi kết nối backend. Bạn có muốn gửi báo cáo lỗi?',
+      backend_connect_failed: '#802 Lỗi liên tục xảy ra khi kết nối backend.',
       backend_error_hint: 'Các tính năng có thể không hoạt động do lỗi backend',
       both_power_and_speed_too_high: 'Sử dụng công suất thấp hơn sẽ kéo dài tuổi thọ laser. Ngoài ra, tốc độ quá cao có thể làm giảm chất lượng khắc.',
       bug_report: 'Báo cáo lỗi',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Không thể tải dữ liệu SVG',
       import_file_contain_invalid_path: '#808 Tệp SVG được nhập chứa đường dẫn hình ảnh không hợp lệ. Hãy đảm bảo tất cả hình ảnh tồn tại hoặc nhúng hình vào tệp',
-      import_file_error_ask_for_upload: 'Nhập tệp SVG thất bại. Bạn có muốn cung cấp tệp cho nhóm phát triển để báo cáo lỗi?',
       import_svg: {
         advice_message: 'Điều này có thể gây ra độ trễ nghiêm trọng hoặc lỗi nhập tệp.',
         advice_message_2: 'Khuyến nghị đơn giản hóa tệp trước khi nhập.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'Sử dụng tốc độ quá cao cho đường dẫn có thể làm giảm độ chính xác khi cắt. Chúng tôi không khuyến nghị dùng tốc độ trên %(limit)s khi cắt đường dẫn.',
       too_fast_for_path_and_constrain: 'Các lớp: %(layers)s \nchứa đường dẫn vector và có tốc độ trên %(limit)s.\nTốc độ cắt đường dẫn sẽ bị giới hạn ở %(limit)s.\nBạn có thể bỏ giới hạn này trong Cài đặt.',
       touchpad: 'Bảng cảm ứng',
-      upload_failed: '#819 Tải tệp thất bại.',
-      upload_file_too_large: '#819 Tệp quá lớn để tải lên.',
       vectorize_shading_image: 'Ảnh gradient mất nhiều thời gian vector hóa và dễ bị nhiễu. Vui lòng tắt trước khi thực thi',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Lưu ý rằng Beam Studio có thể không hoạt động tối ưu trên thiết bị của bạn. Để trải nghiệm tốt nhất, nên sử dụng thiết bị có độ rộng màn hình tối thiểu 1024 pixel.',
+  },
+  error_report: {
+    always: 'Luôn gửi',
+    ask: 'Hỏi mỗi lần',
+    consent_checkbox: 'Gửi dữ liệu chẩn đoán cho FLUX để giúp khắc phục lỗi này (không bao gồm tệp thiết kế hoặc dữ liệu cá nhân)',
+    never: 'Không bao giờ gửi',
+    prompt_caption: 'Tự động gửi?',
+    prompt_message: 'Luôn tự động gửi dữ liệu chẩn đoán khi xảy ra lỗi? Bạn có thể thay đổi bất cứ lúc nào trong Tùy chọn > Quyền riêng tư.',
+    sent: 'Cảm ơn bạn! Đã gửi dữ liệu chẩn đoán.',
+    sent_automatically: 'Đã tự động gửi dữ liệu chẩn đoán cho FLUX.',
+    setting_label: 'Tải lên báo cáo lỗi',
   },
   flux_101: {
     badge_earned: '%(badge)s — bạn đã hoàn thành "%(chapter)s"',
