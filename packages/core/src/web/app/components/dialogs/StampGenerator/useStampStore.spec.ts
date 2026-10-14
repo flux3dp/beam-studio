@@ -25,10 +25,12 @@ let mockParseTemplate = () => ({ baselines: [], frames: [], outline: null });
 jest.mock('./builders/buildTemplate', () => ({ parseTemplate: () => mockParseTemplate() }));
 
 let mockBuildGate = async (): Promise<void> => {};
+let mockBuildCount = 0;
 
 jest.mock('./builders/buildShape', () => ({
   buildPreviewSvg: () => document.createElementNS('http://www.w3.org/2000/svg', 'svg'),
   buildStampShape: async () => {
+    mockBuildCount += 1;
     await mockBuildGate();
 
     return { bounds: { height: 100, width: 100 }, cut: null, engrave: [], group: { remove: jest.fn() } };
@@ -119,6 +121,24 @@ describe('useStampStore.selectTemplate', () => {
     expect(useStampStore.getState().pendingTemplateId).toBeNull();
     expect(useStampStore.getState().template?.id).toBe(plain);
     expect(useStampStore.getState().parsed).toBe(parsed);
+  });
+
+  it('rebuilds once after a burst of text edits', async () => {
+    const plain = STAMP_TEMPLATES.find((t) => !t.preferredFonts)!.id;
+
+    deferred.get('ArialMT')?.resolve();
+    await useStampStore.getState().selectTemplate(plain);
+    await flush();
+
+    const slotId = Object.keys(useStampStore.getState().state!.texts)[0];
+    const before = mockBuildCount;
+
+    for (const text of ['a', 'ab', 'abc']) useStampStore.getState().updateText(slotId, { text });
+
+    expect(useStampStore.getState().state?.texts[slotId].text).toBe('abc');
+    expect(mockBuildCount).toBe(before);
+    await new Promise((r) => setTimeout(r, 200));
+    expect(mockBuildCount).toBe(before + 1);
   });
 
   it('registers the @font-face of a preferred font that resolves', async () => {

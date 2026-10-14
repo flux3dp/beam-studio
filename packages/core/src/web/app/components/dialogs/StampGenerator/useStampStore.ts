@@ -1,4 +1,5 @@
 import paper from 'paper';
+import { funnel } from 'remeda';
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
@@ -182,12 +183,16 @@ const useStampStore = create(
       set({ previewSvg: buildPreviewSvg(shape), shape, sizeRatio: (widthMm * PX_TO_MM_RATIO) / shape.bounds.width });
     };
 
+    // User edits (typing, steppers) arrive faster than a build runs; rebuild once after the burst.
+    const scheduledBuild = funnel(applyOptions, { minQuietPeriodMs: 150 });
+
     return {
       applyOptions,
 
       reset: (): void => {
         selectVersion += 1;
         buildVersion += 1;
+        scheduledBuild.cancel();
         get().project?.remove();
         set({ ...initialState });
       },
@@ -254,7 +259,7 @@ const useStampStore = create(
           isModified: true,
           state: { ...state, elements: { ...state.elements, [id]: { ...state.elements[id], ...patch } } },
         });
-        applyOptions();
+        scheduledBuild.call();
       },
 
       /** Sets the font on every editable slot that isn't pinned to a fixed face. */
@@ -272,7 +277,7 @@ const useStampStore = create(
         }
 
         set({ isModified: true, state: { ...state, texts } });
-        applyOptions();
+        scheduledBuild.call();
       },
 
       updateState: (patch: Partial<StampState>): void => {
@@ -281,7 +286,7 @@ const useStampStore = create(
         if (!state) return;
 
         set({ isModified: true, state: { ...state, ...patch } });
-        applyOptions();
+        scheduledBuild.call();
       },
 
       updateText: (id: string, patch: Partial<TextOptionValues>): void => {
@@ -293,7 +298,7 @@ const useStampStore = create(
           isModified: true,
           state: { ...state, texts: { ...state.texts, [id]: { ...state.texts[id], ...patch } } },
         });
-        applyOptions();
+        scheduledBuild.call();
       },
     };
   }),
