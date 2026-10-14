@@ -32,6 +32,8 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
   const templateId = current?.id;
   const category = current?.category;
   const isModified = useStampStore((s) => s.isModified);
+  // Nothing to import until the first build of the selected template has landed.
+  const hasShape = useStampStore((s) => s.shape !== null);
   const selectTemplate = useStampStore((s) => s.selectTemplate);
   const templates = getVisibleTemplates();
   const categories = TEMPLATE_CATEGORIES.filter((value) => templates.some((template) => template.category === value));
@@ -91,7 +93,7 @@ const StampGenerator = ({ onClose }: StampGeneratorProps): React.JSX.Element => 
           <Button disabled={isExporting} onClick={onClose}>
             {tGlobal.cancel}
           </Button>
-          <Button loading={isExporting} onClick={handleImport} type="primary">
+          <Button disabled={!hasShape} loading={isExporting} onClick={handleImport} type="primary">
             {tGenerators.general.import_to_canvas}
           </Button>
         </div>
