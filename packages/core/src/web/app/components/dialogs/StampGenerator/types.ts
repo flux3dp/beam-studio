@@ -121,7 +121,7 @@ export interface StampTemplate {
   /** Frame rings + arc baselines. Optional for templates whose frame is a `border`. */
   svgContent?: string;
   texts: TextSlotDef[];
-  /** Picker card image URL. Falls back to the template name until design provides one. */
+  /** Picker card image (`core-img/stamp-generator/<id>.jpg`); the id is the image alt. */
   thumbnail: string;
 }
 

@@ -32,7 +32,7 @@ StampGenerator/
 │   ├── catalog/<id>.svg       # Their frames (imported as `?raw` like the hand-authored ones)
 │   ├── fonts.ts               # KAI_FONTS / JP_FONTS candidate lists (shared with catalog.ts)
 │   ├── *.svg                  # Hand-authored template frames (imported as `?raw`)
-│   └── icons/*.svg            # Bundled element shapes registered as stamp/<name> (buildElement BUNDLED_SHAPES): plum, star, plane, camera, check
+│   └── icons/*.svg            # Bundled element shapes registered as stamp/<name> (buildElement BUNDLED_SHAPES): plum, star, plane, camera, check, dog
 ├── builders/
 │   ├── buildTemplate.ts       # parseTemplate: SVG → { frames, outline, baselines } by color role
 │   ├── buildText.ts           # buildTextPaths: arc slots, box slots (spacing/center/stretch), vertical columns
@@ -312,7 +312,7 @@ calls `applyOptions()`; a slower older build is discarded by `buildVersion`.
 
 ## i18n
 
-`stamp_generator.{basic, border, categories, export_failed, layers, legend, slots, switch_template_warning, tabs, templates}`
+`stamp_generator.{basic, border, categories, export_failed, layers, legend, slots, switch_template_warning, tabs}`
 in all 23 languages. Shared generator strings are `generators.general` (design_preview, exploded_view,
 import_to_canvas, reset_to_default, size) and `generators.text_options`; the Basic tab reads
 `generators.general.size` / `reset_to_default`. Slot and template labels are keys, never ids.
