@@ -39,6 +39,13 @@ jest.mock('@core/helpers/i18n', () => ({
   },
 }));
 
+const mockPopUp = jest.fn();
+
+jest.mock('@core/app/actions/alert-caller', () => ({
+  popUp: (...args) => mockPopUp(...args),
+  popUpError: jest.fn(),
+}));
+
 const mockNetworkTest = jest.fn();
 
 jest.mock('@core/implementations/network', () => ({
@@ -100,5 +107,44 @@ describe('test NetworkTestingPanel', () => {
     expect(mockUnregister).not.toHaveBeenCalled();
     unmount();
     expect(mockUnregister).toHaveBeenCalledTimes(1);
+  });
+
+  it('should attach help links only when the network is healthy and the device is on the list', async () => {
+    const { getByText } = render(<NetworkTestingPanel ip="192.168.68.163" onClose={mockOnClose} />);
+    const onDevicesDiscovered = mockRegister.mock.lastCall![1];
+
+    onDevicesDiscovered([{ ipaddr: '192.168.68.163' }]);
+    mockNetworkTest.mockResolvedValue({ avgRRT: 30, quality: 90, successRate: 90 });
+    await act(async () => {
+      fireEvent.click(getByText('Start'));
+    });
+    expect(mockPopUp).toHaveBeenLastCalledWith({
+      caption: 'Test Completed',
+      links: [
+        {
+          text: 'The machine is often not found on the list?',
+          url: 'https://support.flux3dp.com/hc/en-us/articles/360001841636',
+        },
+        {
+          text: 'Failed to connect when sending a job?',
+          url: 'https://support.flux3dp.com/hc/en-us/articles/360001841656',
+        },
+        {
+          text: 'Timeout occurs when starting camera preview?',
+          url: 'https://support.flux3dp.com/hc/en-us/articles/360001791895',
+        },
+      ],
+      message: 'Connection Quality : 90\nAverage Response Time : 30 ms',
+    });
+
+    mockNetworkTest.mockResolvedValue({ avgRRT: 30, quality: 50, successRate: 90 });
+    await act(async () => {
+      fireEvent.click(getByText('Start'));
+    });
+    expect(mockPopUp).toHaveBeenLastCalledWith({
+      caption: 'Test Completed',
+      links: undefined,
+      message: expect.stringContaining('#841'),
+    });
   });
 });

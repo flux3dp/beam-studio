@@ -25,6 +25,8 @@ jest.mock(
 const mockUseSelectTool = jest.fn();
 const mockImportImage = jest.fn();
 
+jest.mock('@core/app/components/dialogs/Flux101', () => ({ showFlux101: jest.fn() }));
+
 jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   importImage: mockImportImage,
   useSelectTool: mockUseSelectTool,

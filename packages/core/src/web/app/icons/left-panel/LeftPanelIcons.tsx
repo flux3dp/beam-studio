@@ -3,6 +3,7 @@ import AdjustHeight from './adjust-height.svg';
 import AiGenerate from './ai-generate.svg';
 import Back from './back.svg';
 import Beamy from './beamy.svg';
+import Book from './book.svg';
 import Camera from './camera.svg';
 import Cloud from './cloud.svg';
 import Cursor from './cursor.svg';
@@ -33,6 +34,7 @@ export default {
   AiGenerate,
   Back,
   Beamy,
+  Book,
   Camera,
   Cloud,
   Cursor,

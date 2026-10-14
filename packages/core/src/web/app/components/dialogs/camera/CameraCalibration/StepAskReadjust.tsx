@@ -66,7 +66,7 @@ const StepAskReadjust = (): React.JSX.Element => {
     <DraggableModal
       footer={[
         <Button onClick={() => onClose(false)}>{langCalibration.cancel}</Button>,
-        <Button onClick={onSkip}>{langCalibration.skip}</Button>,
+        <Button onClick={onSkip}>{lang.global.skip}</Button>,
         <Button onClick={() => gotoNextStep(STEP_PUT_PAPER)} type="primary">
           {langCalibration.do_engraving}
         </Button>,

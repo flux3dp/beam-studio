@@ -10,9 +10,9 @@ import { discoverManager } from '@core/helpers/api/discover';
 import checkIPFormat from '@core/helpers/check-ip-format';
 import { getOS } from '@core/helpers/getOS';
 import useI18n from '@core/helpers/useI18n';
-import browser from '@core/implementations/browser';
 import network from '@core/implementations/network';
 import os from '@core/implementations/os';
+import type { IAlert } from '@core/interfaces/IAlert';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const TEST_TIME = 30000;
@@ -79,29 +79,21 @@ const NetworkTestingPanel = ({ ip, onClose }: Props): ReactNode => {
         let message = `${lang.connection_quality} : ${quality}\n${lang.average_response} : ${
           Math.round(100 * avgRRT) / 100
         } ms`;
-        let children: ReactNode = undefined;
+        let links: IAlert['links'];
 
         if (quality < 70 || avgRRT > 100) {
           message = `${lang.network_unhealthy}\n${message}`;
         } else if (!discoveredDevicesRef.current || !discoveredDevicesRef.current.find((d) => d.ipaddr === ipValue)) {
           message = `${lang.device_not_on_list}\n${message}`;
         } else {
-          children = (
-            <div className="hint-container network-testing">
-              <div className="hint" onClick={() => browser.open(lang.link_device_often_on_list)}>
-                {lang.hint_device_often_on_list}
-              </div>
-              <div className="hint" onClick={() => browser.open(lang.link_connect_failed_when_sending_job)}>
-                {lang.hint_connect_failed_when_sending_job}
-              </div>
-              <div className="hint" onClick={() => browser.open(lang.link_connect_camera_timeout)}>
-                {lang.hint_connect_camera_timeout}
-              </div>
-            </div>
-          );
+          links = [
+            { text: lang.hint_device_often_on_list, url: lang.link_device_often_on_list },
+            { text: lang.hint_connect_failed_when_sending_job, url: lang.link_connect_failed_when_sending_job },
+            { text: lang.hint_connect_camera_timeout, url: lang.link_connect_camera_timeout },
+          ];
         }
 
-        alertCaller.popUp({ caption: lang.test_completed, children, message });
+        alertCaller.popUp({ caption: lang.test_completed, links, message });
       } else {
         let match = false;
         const targetIpFirstThree = ipValue.match(/.*\./)![0];
@@ -195,7 +187,7 @@ const NetworkTestingPanel = ({ ip, onClose }: Props): ReactNode => {
       title={lang.network_testing}
     >
       <Form>
-        {localIps.length && <Form.Item label={lang.local_ip}>{localIps.join(', ')}</Form.Item>}
+        {localIps.length > 0 && <Form.Item label={lang.local_ip}>{localIps.join(', ')}</Form.Item>}
         <Form.Item label={lang.insert_ip}>
           <Input defaultValue={ip || ''} onKeyDown={onInputKeydown} ref={textInputRef} />
         </Form.Item>

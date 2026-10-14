@@ -43,6 +43,10 @@ describe('landing', () => {
       }
     });
 
+    // FLUX 101 nudge
+    cy.get('div.ant-modal-body').should('exist');
+    cy.get('button[class^="ant-btn"]').contains('Maybe later').click();
+
     // change log
     cy.get('div.ant-modal-body').should('exist');
     cy.get('button[class^="ant-btn"]').contains('OK').click();

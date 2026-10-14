@@ -76,7 +76,7 @@ const verifyChip = async (uid: string, privateKey: string, publicKey: string) =>
 
     return resp.data.result;
   } catch (error) {
-    const message = error.error ? JSON.stringify(error) : error.message;
+    const message = error instanceof Error ? error.message : JSON.stringify(error);
 
     alertCaller.popUpError({ message: `Failed to verify chip: ${message}` });
 
@@ -103,7 +103,7 @@ const writeChipData = async (data: ChipSettings) => {
 
     return true;
   } catch (error) {
-    const message = error.error ? JSON.stringify(error) : error.message;
+    const message = error instanceof Error ? error.message : JSON.stringify(error);
 
     alertCaller.popUpError({ message: `Failed to verify chip: ${message}` });
 
@@ -111,9 +111,11 @@ const writeChipData = async (data: ChipSettings) => {
   }
 };
 
+const isBeamo2 = () => deviceMaster.currentDevice?.info?.model === 'fbm2';
+
 let publicKeyCache = '';
 let privateKeyCache = '';
-let editValueCache: ChipSettings = null;
+let editValueCache: ChipSettings | null = null;
 
 const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JSX.Element => {
   const [publicKey, setPublicKey] = useState(publicKeyCache);
@@ -129,8 +131,7 @@ const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JS
     const res = await writeChipData(editingValues);
 
     progressCaller.popById('chip-settings');
-    // deep copy
-    editValueCache = JSON.parse(JSON.stringify(editingValues));
+    editValueCache = structuredClone(editingValues);
 
     if (res) {
       onClose();
@@ -272,11 +273,23 @@ const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JS
             </Col>
             <Col span={8}>Brand</Col>
             <Col span={16}>
-              <Input
-                disabled={!isEditing}
-                onChange={(e) => setEditingValues({ ...editingValues, brand: e.currentTarget.value })}
-                value={values.brand}
-              />
+              {isBeamo2() ? (
+                <Select
+                  disabled={!isEditing}
+                  onChange={(brand) => setEditingValues({ ...editingValues, brand })}
+                  options={[
+                    { label: 'IUT', value: 'IUT' },
+                    { label: 'IUT-V2', value: 'IUT-V2' },
+                  ]}
+                  value={values.brand}
+                />
+              ) : (
+                <Input
+                  disabled={!isEditing}
+                  onChange={(e) => setEditingValues({ ...editingValues, brand: e.currentTarget.value })}
+                  value={values.brand}
+                />
+              )}
             </Col>
             <Col span={8}>Type</Col>
             <Col span={16}>
@@ -310,7 +323,7 @@ const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JS
                 onChange={(val) =>
                   setEditingValues({
                     ...editingValues,
-                    offset: [val, editingValues.offset[1], editingValues.offset[2]],
+                    offset: [val ?? 0, editingValues.offset[1], editingValues.offset[2]],
                   })
                 }
                 precision={2}
@@ -326,7 +339,7 @@ const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JS
                 onChange={(val) =>
                   setEditingValues({
                     ...editingValues,
-                    offset: [editingValues.offset[0], val, editingValues.offset[2]],
+                    offset: [editingValues.offset[0], val ?? 0, editingValues.offset[2]],
                   })
                 }
                 precision={2}
@@ -342,7 +355,7 @@ const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JS
                 onChange={(val) =>
                   setEditingValues({
                     ...editingValues,
-                    offset: [editingValues.offset[0], editingValues.offset[1], val],
+                    offset: [editingValues.offset[0], editingValues.offset[1], val ?? 0],
                   })
                 }
                 precision={2}
@@ -354,7 +367,7 @@ const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JS
             <Col span={16}>
               <InputNumber
                 disabled={!isEditing}
-                onChange={(val) => setEditingValues({ ...editingValues, plScale: val })}
+                onChange={(val) => setEditingValues({ ...editingValues, plScale: val ?? 0 })}
                 value={values.plScale}
               />
             </Col>
@@ -362,7 +375,7 @@ const CartridgeSettingPanel = ({ initData, inkLevel, onClose }: Props): React.JS
             <Col span={16}>
               <InputNumber
                 disabled={!isEditing}
-                onChange={(val) => setEditingValues({ ...editingValues, totalCapacity: val })}
+                onChange={(val) => setEditingValues({ ...editingValues, totalCapacity: val ?? 0 })}
                 value={values.totalCapacity}
               />
             </Col>
