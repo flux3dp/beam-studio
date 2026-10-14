@@ -39,35 +39,25 @@ const getUserDefaultFont = (): TextOptionValues['font'] => {
   });
 };
 
-const defaultFontCache = new Map<string, Promise<TextOptionValues['font']>>();
-
 /**
  * First preferred font that resolves by name AND loads (a web font fails offline; a not-downloaded
- * macOS font fails to open), else the user's default font. Probed once per candidate list per session.
+ * macOS font fails to open), else the user's default font. Not memoized here: getFontObj already
+ * caches loaded fonts and dedupes in-flight loads, while a failed load and the user's default must
+ * be re-evaluated on the next selection.
  */
-const resolveDefaultFont = (preferred: ReadonlyArray<string> = []): Promise<TextOptionValues['font']> => {
-  const key = preferred.join('|');
-  let promise = defaultFontCache.get(key);
+const resolveDefaultFont = async (preferred: ReadonlyArray<string> = []): Promise<TextOptionValues['font']> => {
+  for (const postscriptName of preferred) {
+    const font = fontFuncs.getFontOfPostscriptName(postscriptName);
 
-  if (!promise) {
-    promise = (async () => {
-      for (const postscriptName of preferred) {
-        const font = fontFuncs.getFontOfPostscriptName(postscriptName);
+    if (font?.postscriptName === postscriptName && (await getFontObj(font))) {
+      // A bundled face needs its @font-face too: the DOM measures the text before fontkit outlines it.
+      applyBundledFontStyle(postscriptName);
 
-        if (font?.postscriptName === postscriptName && (await getFontObj(font))) {
-          // A bundled face needs its @font-face too: the DOM measures the text before fontkit outlines it.
-          applyBundledFontStyle(postscriptName);
-
-          return toFont(font, getUserDefaultFont());
-        }
-      }
-
-      return getUserDefaultFont();
-    })();
-    defaultFontCache.set(key, promise);
+      return toFont(font, getUserDefaultFont());
+    }
   }
 
-  return promise;
+  return getUserDefaultFont();
 };
 
 /** The slot's fixed face when it resolves, else the resolved default font. */
