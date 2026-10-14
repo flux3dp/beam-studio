@@ -42,11 +42,12 @@ const relativeUrl = (font: BundledFont) => `assets/fonts/${font.fileName}`;
 
 /** Absolute filesystem path of a bundled font in the Electron renderer (page is loaded via file://). */
 const localPath = (font: BundledFont): string => {
-  const { pathname } = new URL(relativeUrl(font), window.location.href);
+  const { host, pathname } = new URL(relativeUrl(font), window.location.href);
   const decoded = decodeURIComponent(pathname);
 
-  // file:///C:/x on Windows → pathname is "/C:/x"
-  return /^\/[A-Za-z]:/.test(decoded) ? decoded.slice(1) : decoded;
+  // file:///C:/x on Windows → pathname is "/C:/x"; an app run from a share (file://server/share/x)
+  // keeps its host as a forward-slash UNC path, which Windows accepts.
+  return host ? `//${host}${decoded}` : decoded.replace(/^\/(?=[A-Za-z]:)/, '');
 };
 
 const toGeneralFont = (font: BundledFont): GeneralFont => {
