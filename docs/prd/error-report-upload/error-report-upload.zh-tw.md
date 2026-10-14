@@ -85,7 +85,7 @@
 - `app/components/dialogs/Alert.tsx` — 所有既有 `checkbox:` 呼叫者（`retryWithRemoveBackground.ts:25`、`retakeContourPreview.ts:77`、`importSvg/index.tsx:46`、`importDxf.ts:52,120`、`AutoFocusButton/index.tsx:140`、`BasePreviewManager.tsx:279`、`handleExportAlerts.ts:150`）— callback 語意不變。2026-10-12 有動到：`Alert.tsx` 現在會渲染 `IAlert` 自 2021 年起就宣告、但改用 antd 後不再渲染的 `children` 欄位；S3 的狀態列用它。wave 1/2 的觸發點都沒有傳 `children`。唯一有傳的既有呼叫者 `NetworkTestingPanel.tsx:104`（網路測試正常後的三條說明提示，至今被默默丟棄，其 sass 仍掛在已失效的 `.modal-alert` 選擇器下）另開小分支修正：改用 `links` 並刪除該段 sass，於本功能的合併 PR 之前先進。
 - `helpers/device-master.ts:580` `popConnectionError` — `select` :410 與 `selectDeviceWithSwiftray` :530 — 警示 id `connection-error`、`Alert.popById` 原地替換、訊息文字與 `{ success: false, error }` 回傳值不變；`reconnect()` → `select()` 仍會跳出同一視窗（吸收重試風暴的是冷卻機制，不是視窗）。
 - `app/contexts/MonitorContext.tsx:314,495,980`、`helpers/device-master.ts:266`、`actions/beambox/export-funcs.ts:778`、`export-funcs-swiftray.ts:106-192`、`helpers/handleAutoConnect.ts:216` — 第一波觸發點：警示 id、訊息文字、按鈕組與周邊控制流程（`onClose()`、`return { success: false }`、`setStatus('listening')`）不變；只包裝設定物件。
-- `actions/camera/preview-helper/*`、`components/dialogs/camera/*`、`DiodeCalibration/Component.tsx` — 第二波觸發點，同一規則；`BasePreviewManager.tsx:273` 保留自己的 `checkbox`（§7.4 規則）。
+- `actions/camera/preview-helper/*`、`components/dialogs/camera/*`、`DiodeCalibration/Component.tsx` — 第二波觸發點，同一規則；`BasePreviewManager.tsx:273` 相機線材警告不動；`preview-mode-controller.ts:281` `onPreviewFail` 在警示後仍呼叫 `this.end()`。
 - `app/contexts/MonitorContext.tsx:598-633` — 三個錯誤分支維持各自的按鈕組（`abort` / `retry+cancel` / `retry+bug report+cancel`）與透過 `Alert.checkIdExist` 的 `errorId` 去重。
 - `actions/beambox/export-funcs.ts`、`export-funcs-swiftray.ts`、`importSvg/utils/uploadAndDivideSvg.ts` — 錯誤訊息文字（`#806 …`、`#809 …`）與 `resolve(null)` / `return null` 流程不變；只替換上傳掛鉤。
 - `app/constants/storageConstants.ts`、`interfaces/IStorage.d.ts` — 只新增鍵名。
@@ -147,21 +147,21 @@
 
 | 觸發點 | 代碼 | 備註 |
 |---|---|---|
-| `preview-helper/handlePreviewSetupError.tsx:39,55`、`BeamPreviewManager.ts:85,89` | `#803` | 預覽啟動 / 相機 WS |
-| `preview-helper/BasePreviewManager.tsx:273` 相機 WS 關閉 | `#844` | **已有 `checkbox`**；見下方規則 |
-| `helpers/api/camera.ts:130,424,427` 拋出 `#844`/`#845` | 由上述呼叫者顯示；本身無視窗 | — |
+| `preview-helper/handlePreviewSetupError.tsx:39,55`（`BeamPreviewManager.ts` 改為呼叫它，不再自帶一份） | `#803` | 預覽啟動 / 相機 WS |
+| `beambox/preview-mode-controller.ts:281` `onPreviewFail` | 訊息開頭的 `#8xx`（`#844` 相機關閉、`#845` 忙碌），否則 `PREVIEW_FAILED` | 預覽迴圈的所有失敗都在此顯示；2026-10-13 自 `BasePreviewManager.tsx:273` 修正，該處其實是相機線材不穩警告（自帶 `checkbox`、硬體狀態，排除） |
+| `helpers/api/camera.ts:130,424,427` 與 `BasePreviewManager.tsx:273` 拋出 `#844`/`#845` | 由 `onPreviewFail` 顯示；本身無視窗 | — |
 | `camera/AdorCalibration/utils.ts:122` | `#848` | 校正 / 下載照片失敗 |
 | `DiodeCalibration/Component.tsx:251,344`、`CameraCalibration/StepRefocus.tsx:189`、`StepAskReadjust.tsx:56` | `#815` | 校正移動 / 拍攝時的裝置錯誤 |
 | `CameraCalibration/StepBeforeAnalyzePicture.tsx:247` | `#816` | 分析失敗 |
 
-**已定義 `checkbox` 的視窗規則**（目前為 `BasePreviewManager.tsx:273`，以及 §6 的八個呼叫者）：`withErrorReportConsent` 絕不取代既有 `checkbox`。每次詢問 下原樣回傳；一律自動 下靜默上傳並只加狀態列。一個視窗只有一個 checkbox。
+**已定義 `checkbox` 的視窗規則**（目前接線的觸發點都沒有；`BasePreviewManager.tsx:273` 的相機線材警告已排除，§6 的八個呼叫者不是錯誤觸發點）：`withErrorReportConsent` 絕不取代既有 `checkbox`。每次詢問 下原樣回傳；一律自動 下靜默上傳並只加狀態列。一個視窗只有一個 checkbox。
 
 **Message toast 無法承載同意**（`AbstractMenu.ts:66` 以 `MessageCaller` toast 顯示 `#805`）：排除；同一逾時在下次選擇裝置時會進到 `popConnectionError`。
 
 **排除項目與理由**
 
 - 韌體回報的硬體故障 `HARDWARE_ERROR_*`（2026-10-13 決定）：韌體已指出故障為何，客戶端診斷包沒有額外價值。
-- 使用者狀態或操作，非缺陷：`#801` 無裝置、`#804` 工作區不符、`export-funcs-swiftray.ts` `popupError` 的 Swiftray `busy` 資訊視窗、`#808` 無效圖片路徑、`#811` 密碼錯誤、`#814` / `#820` 韌體過舊、`#851` / `#852` 缺校正資料、Promark 對話框中的 `#901` 門未關、`USER_OPERATION_*`、`REMOVE_CARTRIDGE`、`ConnectionError.NOT_FOUND`。
+- 使用者狀態或操作，非缺陷：相機線材不穩警告（`BasePreviewManager.tsx:273`，自帶 `checkbox`）、`#801` 無裝置、`#804` 工作區不符、`export-funcs-swiftray.ts` `popupError` 的 Swiftray `busy` 資訊視窗、`#808` 無效圖片路徑、`#811` 密碼錯誤、`#814` / `#820` 韌體過舊、`#851` / `#852` 缺校正資料、Promark 對話框中的 `#901` 門未關、`USER_OPERATION_*`、`REMOVE_CARTRIDGE`、`ConnectionError.NOT_FOUND`。
 - Print and Cut 校正刮痕任務失敗（`PrintAndCutCalibration.tsx:150`，2026-10-13 決定）：該處的錯誤是裝置自身的錯誤清單，多為硬體故障與使用者中止，已被上述規則排除；不值得為此單獨拆分。
 - 同一次失敗已有警示、此為第二個警示：`device/get-device.ts:103` 的 `#813`（2026-10-13 決定）。`select` 每種失敗都會先彈出 `popConnectionError`、`#810`/`#811` 或 `#820`，或是使用者取消密碼對話框後才出現；若也接上 `#813`，同一次失敗會出現兩個同意勾選框並送出兩份不同代碼的報告。
 - 診斷工具本身：`#817`、`#818`、`#840`–`#843` 網路測試面板；`#819` 上傳失敗。
@@ -207,7 +207,7 @@
 - `IOperatingSystem.machineId(): string` — Electron 回傳 OS 機器 GUID 的 sha256（內嵌實作，§7.1），網頁版回傳 `''`。
 - 不新增相依；`machineId` 約 25 行，寫在既有 os 實作內，以 `crypto.createHash` 雜湊各 OS 指令的輸出；指令在模組載入時用非同步 `child_process.exec`（2 秒逾時）啟動，renderer 不會被卡住；`execSync` 只留作報告搶在結果回來之前觸發時的後備。
 - 上傳請求：§7.5 multipart，3 分鐘逾時。回應 `{ status: 'ok' }` → 已送出；`{ status: 'duplicate' }` → 視同已送出；沒有回應或 5xx → 重試（最多 3 次）；任何 4xx 或無法辨識的 2xx 內容 → 立即失敗。
-- i18n：`en.ts`/`zh-tw.ts` 新增命名空間 `error_report`：`consent`、`consent_detail`、`sent`、`sent_auto`、`ask_always_title`、`always`、`ask_each_time`、`setting_label`、`setting_always/ask/never`。
+- i18n：`en.ts`/`zh-tw.ts` 新增命名空間 `error_report`（實作版本）：`consent_checkbox`、`sent`、`sent_automatically`、`prompt_caption`、`prompt_message`、`setting_label`、`always`、`ask`、`never`（後三者同時用於隱私設定的下拉選單與提示按鈕）。
 
 ## 9. 效能
 

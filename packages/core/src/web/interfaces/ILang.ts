@@ -1385,6 +1385,9 @@ export interface ILang {
     ask: string;
     consent_checkbox: string;
     never: string;
+    prompt_caption: string;
+    prompt_message: string;
+    sent: string;
     sent_automatically: string;
     setting_label: string;
   };

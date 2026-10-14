@@ -10,8 +10,26 @@ jest.mock('./index', () => ({
 }));
 
 const mockGetErrorReportPreference = jest.fn();
+const mockHasChosen = jest.fn();
+const mockSetPreference = jest.fn();
 
-jest.mock('./preference', () => ({ getErrorReportPreference: () => mockGetErrorReportPreference() }));
+jest.mock('./preference', () => ({
+  getErrorReportPreference: () => mockGetErrorReportPreference(),
+  hasChosenErrorReportPreference: () => mockHasChosen(),
+  setErrorReportPreference: (...args: any[]) => mockSetPreference(...args),
+}));
+
+const mockPopUp = jest.fn();
+
+jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args: any[]) => mockPopUp(...args) }));
+
+const mockOpenMessage = jest.fn();
+
+jest.mock('@core/app/actions/message-caller', () => ({
+  __esModule: true,
+  default: { openMessage: (...args: any[]) => mockOpenMessage(...args) },
+  MessageLevel: { SUCCESS: 'SUCCESS' },
+}));
 
 const mockAppend = jest.fn();
 
@@ -27,6 +45,7 @@ describe('withErrorReportConsent', () => {
     jest.clearAllMocks();
     mockGetUploadBlock.mockReturnValue(null);
     mockUploadErrorReport.mockResolvedValue('sent');
+    mockHasChosen.mockReturnValue(true);
   });
 
   test('never: returns the alert untouched and uploads nothing', () => {
@@ -73,6 +92,54 @@ describe('withErrorReportConsent', () => {
     expect(mockUploadErrorReport).toHaveBeenCalledWith(options);
   });
 
+  const tick = async () => {
+    mockGetErrorReportPreference.mockReturnValue('ask');
+    await (withErrorReportConsent(alert(), options).checkbox!.callbacks as () => void)();
+    await Promise.resolve();
+  };
+
+  test('ask: a sent upload shows the neutral toast; a chosen preference means no prompt', async () => {
+    await tick();
+
+    expect(mockOpenMessage).toHaveBeenCalledWith(
+      expect.objectContaining({ content: 'Thanks! Diagnostic data sent.', key: 'error-report-sent' }),
+    );
+    expect(mockPopUp).not.toHaveBeenCalled();
+  });
+
+  test('ask: first sent upload with no preference chosen prompts once; buttons store ask / always', async () => {
+    mockHasChosen.mockReturnValue(false);
+    await tick();
+
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
+
+    const prompt = mockPopUp.mock.calls[0][0];
+
+    expect(prompt).toMatchObject({
+      buttonLabels: ['Ask each time', 'Always send'],
+      caption: 'Send automatically?',
+      id: 'error-report-always-prompt',
+      primaryButtonIndex: 1,
+    });
+    expect(prompt.message).toContain('Preferences > Privacy');
+
+    prompt.callbacks[0]();
+    prompt.callbacks[1]();
+    expect(mockSetPreference.mock.calls).toEqual([['ask'], ['always']]);
+  });
+
+  test('ask: duplicate, failed or blocked uploads show neither toast nor prompt', async () => {
+    mockHasChosen.mockReturnValue(false);
+
+    for (const result of ['duplicate', 'failed', 'cooldown']) {
+      mockUploadErrorReport.mockResolvedValueOnce(result);
+      await tick();
+    }
+
+    expect(mockOpenMessage).not.toHaveBeenCalled();
+    expect(mockPopUp).not.toHaveBeenCalled();
+  });
+
   test('ask: never replaces an existing checkbox', () => {
     mockGetErrorReportPreference.mockReturnValue('ask');
 
@@ -92,6 +159,7 @@ describe('withErrorReportConsent', () => {
     expect(mockUploadErrorReport).toHaveBeenCalledWith(options);
     expect(result.checkbox).toBe(existing);
     expect(result.onRetry).toBe(input.onRetry);
+    expect(mockOpenMessage).not.toHaveBeenCalled();
 
     const { container } = render(<>{result.children}</>);
 

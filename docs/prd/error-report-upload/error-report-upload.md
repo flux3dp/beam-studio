@@ -83,7 +83,7 @@ Shared files touched outside the feature's own folder, with the callers that mus
 - `app/components/dialogs/Alert.tsx` — every existing `checkbox:` caller (`retryWithRemoveBackground.ts:25`, `retakeContourPreview.ts:77`, `importSvg/index.tsx:46`, `importDxf.ts:52,120`, `AutoFocusButton/index.tsx:140`, `BasePreviewManager.tsx:279`, `handleExportAlerts.ts:150`) — unchanged callback semantics. Touched 2026-10-12: `Alert.tsx` now renders the `children` field that `IAlert` has declared since 2021 but the antd rewrite stopped rendering; the status line for S3 uses it. No wave-1/2 caller passes `children`. The one existing caller that does, `NetworkTestingPanel.tsx:104` (three help hints after a healthy test, silently dropped until now, with their sass still under a dead `.modal-alert` selector), is fixed in a separate small branch that moves the hints to `links` and deletes that sass; it lands before this feature's combined PR.
 - `helpers/device-master.ts:580` `popConnectionError` — `select` :410 and `selectDeviceWithSwiftray` :530 — alert id `connection-error`, the `Alert.popById` replace-in-place, the message text and the `{ success: false, error }` return value unchanged; `reconnect()` → `select()` still pops the same alert (the cooldown, not the alert, absorbs retry storms).
 - `app/contexts/MonitorContext.tsx:314,495,980`, `helpers/device-master.ts:266`, `actions/beambox/export-funcs.ts:778`, `export-funcs-swiftray.ts:106-192`, `helpers/handleAutoConnect.ts:216` — wave-1 sites: alert ids, message text, button sets and the surrounding control flow (`onClose()`, `return { success: false }`, `setStatus('listening')`) unchanged; only the config object is wrapped.
-- `actions/camera/preview-helper/*`, `components/dialogs/camera/*`, `DiodeCalibration/Component.tsx` — wave-2 sites, same rule; `BasePreviewManager.tsx:273` keeps its own `checkbox` (§7.4 rule).
+- `actions/camera/preview-helper/*`, `components/dialogs/camera/*`, `DiodeCalibration/Component.tsx` — wave-2 sites, same rule; `BasePreviewManager.tsx:273` camera-cable warning untouched; `preview-mode-controller.ts:281` `onPreviewFail` still calls `this.end()` after the alert.
 - `app/contexts/MonitorContext.tsx:598-633` — three error branches keep their button sets (`abort` / `retry+cancel` / `retry+bug report+cancel`) and `errorId` de-dup via `Alert.checkIdExist`.
 - `actions/beambox/export-funcs.ts`, `export-funcs-swiftray.ts`, `importSvg/utils/uploadAndDivideSvg.ts` — error message text (`#806 …`, `#809 …`) and the `resolve(null)` / `return null` flow unchanged; only the upload hook is swapped.
 - `app/constants/storageConstants.ts`, `interfaces/IStorage.d.ts` — additive keys only.
@@ -145,21 +145,21 @@ Expressed in real codes, not the fictional ones in the source PRD. The sweep cov
 
 | Site | Code | Note |
 |---|---|---|
-| `preview-helper/handlePreviewSetupError.tsx:39,55`, `BeamPreviewManager.ts:85,89` | `#803` | preview setup / camera WS |
-| `preview-helper/BasePreviewManager.tsx:273` camera WS closed | `#844` | **already has a `checkbox`**; see rule below |
-| `helpers/api/camera.ts:130,424,427` throws `#844`/`#845` | surfaced by the callers above; no popup of its own | — |
+| `preview-helper/handlePreviewSetupError.tsx:39,55` (`BeamPreviewManager.ts` now calls it instead of its own copy) | `#803` | preview setup / camera WS |
+| `beambox/preview-mode-controller.ts:281` `onPreviewFail` | the message's `#8xx` prefix (`#844` camera closed, `#845` busy) or `PREVIEW_FAILED` | every preview-loop failure surfaces here; corrected 2026-10-13 from `BasePreviewManager.tsx:273`, which is the camera-cable warning (own `checkbox`, hardware state, excluded) |
+| `helpers/api/camera.ts:130,424,427` and `BasePreviewManager.tsx:273` throw `#844`/`#845` | surfaced by `onPreviewFail`; no popup of their own | — |
 | `camera/AdorCalibration/utils.ts:122` | `#848` | calibrate / download pictures failed |
 | `DiodeCalibration/Component.tsx:251,344`, `CameraCalibration/StepRefocus.tsx:189`, `StepAskReadjust.tsx:56` | `#815` | device error during calibration move / capture |
 | `CameraCalibration/StepBeforeAnalyzePicture.tsx:247` | `#816` | analysis failed |
 
-**Rule for alerts that already define `checkbox`** (`BasePreviewManager.tsx:273` today, and the eight callers in §6): `withErrorReportConsent` never replaces an existing `checkbox`. Under Ask it returns the alert untouched; under Always it uploads silently and adds the status line only. One checkbox per alert.
+**Rule for alerts that already define `checkbox`** (none of the wired sites today; the camera-cable warning at `BasePreviewManager.tsx:273` is excluded, and the eight callers in §6 are not error sites): `withErrorReportConsent` never replaces an existing `checkbox`. Under Ask it returns the alert untouched; under Always it uploads silently and adds the status line only. One checkbox per alert.
 
 **Message toasts cannot carry consent** (`AbstractMenu.ts:66` `#805` as a `MessageCaller` toast): excluded; the same timeout reaches `popConnectionError` on the next select.
 
 **Excluded, with reason**
 
 - Firmware-reported hardware faults, `HARDWARE_ERROR_*` (decided 2026-10-13): the firmware names the fault; a client-side bundle adds nothing.
-- User state or user action, not a defect: `#801` no device, `#804` workarea mismatch, Swiftray `busy` info popup in `export-funcs-swiftray.ts` `popupError`, `#808` invalid image path, `#811` wrong password, `#814` / `#820` firmware too old, `#851` / `#852` calibration data missing, `#901` door opened in the Promark dialogs, `USER_OPERATION_*`, `REMOVE_CARTRIDGE`, `ConnectionError.NOT_FOUND`.
+- User state or user action, not a defect: camera-cable-unstable warning (`BasePreviewManager.tsx:273`, own `checkbox`), `#801` no device, `#804` workarea mismatch, Swiftray `busy` info popup in `export-funcs-swiftray.ts` `popupError`, `#808` invalid image path, `#811` wrong password, `#814` / `#820` firmware too old, `#851` / `#852` calibration data missing, `#901` door opened in the Promark dialogs, `USER_OPERATION_*`, `REMOVE_CARTRIDGE`, `ConnectionError.NOT_FOUND`.
 - Print and Cut calibration scratch failure (`PrintAndCutCalibration.tsx:150`, decided 2026-10-13): the errors there are the device's own list, mostly hardware faults and user stops, which the rule above already excludes; not worth a site-specific split.
 - Always a second alert for a failure already reported: `#813` in `device/get-device.ts:103` (decided 2026-10-13). Every `select` failure pops `popConnectionError`, `#810`/`#811`, or `#820` first, or follows a user cancel of the password dialog; wiring `#813` too would offer two consent boxes and send two reports with different codes for one failure.
 - The diagnostic tooling itself: `#817`, `#818`, `#840`–`#843` network test panel; `#819` upload failed.
@@ -205,7 +205,7 @@ Problem: a connection failure yields a report on every Retry, and the same LAN p
 - `IOperatingSystem.machineId(): string` — Electron returns the sha256 of the OS machine GUID (inlined, §7.1), web returns `''`.
 - No new dependency; `machineId` is ~25 lines in the existing os implementation using `crypto.createHash` over the output of the per-OS command, started with the async `child_process.exec` at module load (2 s timeout) so the renderer never blocks; `execSync` remains only as the fallback for a report that fires before it returns.
 - Upload request: §7.5 multipart, 3 min timeout. Response `{ status: 'ok' }` → sent; `{ status: 'duplicate' }` → counted as sent; no response or 5xx → retry (3 attempts); any 4xx or an unknown 2xx body → failed at once.
-- i18n: new namespace `error_report` in `en.ts`/`zh-tw.ts`: `consent`, `consent_detail`, `sent`, `sent_auto`, `ask_always_title`, `always`, `ask_each_time`, `setting_label`, `setting_always/ask/never`.
+- i18n: new namespace `error_report` in `en.ts`/`zh-tw.ts` (as built): `consent_checkbox`, `sent`, `sent_automatically`, `prompt_caption`, `prompt_message`, `setting_label`, `always`, `ask`, `never` (the last three label both the Privacy select and the prompt buttons).
 
 ## 9. Performance
 
