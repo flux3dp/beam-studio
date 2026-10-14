@@ -194,7 +194,9 @@ const buildTextSlot = async (
   const fit = slot.fit ?? 'spacing';
 
   // Glyphs keep their shape; letter spacing grows or shrinks so the line spans the box width.
-  if (fit === 'spacing') fitTextByLetterSpacing(textEl, bounds.width, text.length - 1, letterSpacing, false);
+  if (fit === 'spacing') {
+    fitTextByLetterSpacing(textEl, bounds.width, content.split('\n')[0].length - 1, letterSpacing, false);
+  }
 
   const [pathEl] = await convertTextsToPath([textEl]);
   const item = toPathItem(pathEl);
