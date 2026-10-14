@@ -249,8 +249,10 @@ and plane have none.
   (Hiragino Mincho / Yu Mincho / MS Mincho). Catalog entries with a Latin preset pin the bundled
   Montserrat Medium as a fallback.
 - Bundled fonts: `helpers/fonts/bundledFonts.ts` (Electron disk path or web `WebFont.url`);
-  `getFontOfPostscriptName` resolves them by exact postscript name, and `useStampStore` registers the
-  `@font-face` when a slot pins one. They are stamp-only on purpose: NOT in `requestAvailableFontFamilies`
+  `getFontOfPostscriptName` resolves them by exact postscript name (after the Google-font registry, so a
+  Google Lobster already used in the Text tool keeps its inlinable descriptor), and `useStampStore` registers the
+  `@font-face` when a slot pins one or a `preferredFonts` probe resolves to one (the DOM measures text
+  before fontkit outlines it). They are stamp-only on purpose: NOT in `requestAvailableFontFamilies`
   / `requestFontsOfTheFontFamily`, because image-based exports (thumbnails, Print-and-Cut PDF) render in
   an isolated document that only sees installed fonts and inlined web fonts, so a bundled family picked
   in the main Text tool would fall back there. Bundled (both OFL): Montserrat-Medium and Lobster-Regular

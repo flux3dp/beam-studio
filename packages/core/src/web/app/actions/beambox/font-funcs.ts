@@ -160,23 +160,8 @@ const findFontFamilyCaseInsensitive = (family: string): string | undefined => {
   return lowercaseFontFamilyMap!.get(family.toLowerCase());
 };
 
-const getFontOfPostscriptName = memoize((postscriptName: string) => {
-  // Bundled fonts resolve by exact postscript name only (the stamp generator pins them per slot); they are
-  // deliberately absent from the family lists, because image-based exports (thumbnails, PDF) render
-  // through an isolated document that only sees installed fonts and inlined web fonts.
-  const bundledFont = getBundledFont(postscriptName);
-
-  if (bundledFont) {
-    return bundledFont;
-  }
-
-  // Check if font is already registered in the registry
-  const registeredFont = useGoogleFontStore.getState().getRegisteredFont(postscriptName);
-
-  if (registeredFont) {
-    return registeredFont;
-  }
-
+// Only the installed-font scan is memoized: a Google font can register after a name was first looked up.
+const getInstalledFontOfPostscriptName = memoize((postscriptName: string) => {
   if (getOS() === 'MacOS') {
     return fontHelper.findFont({ postscriptName });
   }
@@ -186,6 +171,16 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
 
   return (fit.length > 0 ? fit : allFonts)[0];
 });
+
+const getFontOfPostscriptName = (postscriptName: string): GeneralFont =>
+  // A registered Google font wins over a bundled copy of the same face (Lobster-Regular is both): the
+  // registry descriptor has no `path`, so image-based exports (thumbnails, PDF) can still inline it.
+  useGoogleFontStore.getState().getRegisteredFont(postscriptName) ??
+  // Bundled fonts resolve by exact postscript name only (the stamp generator pins them per slot); they are
+  // deliberately absent from the family lists, because image-based exports render through an isolated
+  // document that only sees installed fonts and inlined web fonts.
+  getBundledFont(postscriptName) ??
+  getInstalledFontOfPostscriptName(postscriptName);
 
 const init = () => {
   getFontOfPostscriptName('ArialMT');

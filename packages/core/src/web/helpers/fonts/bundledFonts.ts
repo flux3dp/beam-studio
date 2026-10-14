@@ -3,7 +3,8 @@ import type { FontDescriptor, GeneralFont, WebFont } from '@core/interfaces/IFon
 
 /**
  * Fonts shipped inside the app under `assets/fonts/` (copied from core `assets/assets/fonts/`
- * by both webpack configs). They resolve by postscript name ahead of OS/web fonts and work offline.
+ * by both webpack configs). They resolve by postscript name after the Google-font registry and ahead
+ * of OS fonts, and work offline.
  *
  * - Electron reads the file from disk via localFontHelper (nodeIntegration), like an OS font.
  * - Web fetches the same relative URL from its own dist, like an S3 web font.

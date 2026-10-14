@@ -55,6 +55,9 @@ const resolveDefaultFont = (preferred: ReadonlyArray<string> = []): Promise<Text
         const font = fontFuncs.getFontOfPostscriptName(postscriptName);
 
         if (font?.postscriptName === postscriptName && (await getFontObj(font))) {
+          // A bundled face needs its @font-face too: the DOM measures the text before fontkit outlines it.
+          applyBundledFontStyle(postscriptName);
+
           return toFont(font, getUserDefaultFont());
         }
       }

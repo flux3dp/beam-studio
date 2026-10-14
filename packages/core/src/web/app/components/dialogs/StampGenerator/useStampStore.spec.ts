@@ -30,6 +30,8 @@ jest.mock('./builders/buildShape', () => ({
   }),
 }));
 
+import { applyBundledFontStyle } from '@core/helpers/fonts/bundledFonts';
+
 import { STAMP_TEMPLATES } from './templates';
 import useStampStore from './useStampStore';
 
@@ -68,5 +70,14 @@ describe('useStampStore.selectTemplate', () => {
     await flush();
     expect(useStampStore.getState().template).toBeNull();
     expect(useStampStore.getState().pendingTemplateId).toBeNull();
+  });
+
+  it('registers the @font-face of a preferred font that resolves', async () => {
+    const lobsterTemplate = withFonts(['Lobster-Regular']);
+    const pending = useStampStore.getState().selectTemplate(lobsterTemplate);
+
+    deferred.get('Lobster-Regular')!.resolve();
+    await pending;
+    expect(applyBundledFontStyle).toHaveBeenCalledWith('Lobster-Regular');
   });
 });
