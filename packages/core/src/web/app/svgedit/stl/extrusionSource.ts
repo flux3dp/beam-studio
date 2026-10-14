@@ -109,7 +109,9 @@ const getSegmentCount = (curve: Curve<Vector2>, tolerance: number): number => {
 
     while (delta < 0) delta += twoPi;
     while (delta > twoPi) delta -= twoPi;
+
     if (delta < Number.EPSILON) delta = isSamePoint ? 0 : twoPi;
+
     if (curve.aClockwise && !isSamePoint) delta = delta === twoPi ? -twoPi : delta - twoPi;
 
     count = Math.ceil(Math.abs(delta) / step);

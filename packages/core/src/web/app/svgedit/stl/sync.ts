@@ -17,6 +17,7 @@ export const collectStlProjectionElements = (elems: Array<Element | null | undef
     if (!elem) return;
 
     if (is3dProjection(elem)) projections.add(elem);
+
     elem.querySelectorAll('*').forEach((child) => {
       if (is3dProjection(child)) projections.add(child);
     });

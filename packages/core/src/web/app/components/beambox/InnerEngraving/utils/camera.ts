@@ -13,8 +13,7 @@ export const MIN_DISTANCE = 1;
 export const isOrthographic = (camera: Camera): camera is OrthographicCamera =>
   Boolean((camera as OrthographicCamera).isOrthographicCamera);
 
-const halfFovTan = (camera: Camera): number =>
-  Math.tan(MathUtils.degToRad((camera as PerspectiveCamera).fov) / 2);
+const halfFovTan = (camera: Camera): number => Math.tan(MathUtils.degToRad((camera as PerspectiveCamera).fov) / 2);
 
 /**
  * Screen pixels per scene unit, measured at `target`.

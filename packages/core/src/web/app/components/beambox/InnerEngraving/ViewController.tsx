@@ -102,9 +102,10 @@ const OrthographicView = ({ extent, focus }: OrthographicViewProps) => {
 
   useLayoutEffect(() => {
     const camera = cameraRef.current;
+    const target = replaced.current;
 
     return () => {
-      if (camera) transferPose(camera, replaced.current, latest.current.focus, latest.current.canvasHeight);
+      if (camera) transferPose(camera, target, latest.current.focus, latest.current.canvasHeight);
     };
   }, []);
 

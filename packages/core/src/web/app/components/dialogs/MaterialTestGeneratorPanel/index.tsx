@@ -71,9 +71,8 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const isInch = useStorageStore((state) => state.isInch);
   const { laserType } = getPromarkInfo();
   const workarea = useDocumentStore((state) => state.workarea);
-  const { isMopa, isPromark, isPromarkUV } = useMemo(
+  const { isPromark, isPromarkUV } = useMemo(
     () => ({
-      isMopa: laserType === LaserType.MOPA,
       isPromark: promarkModels.has(workarea),
       // UV power has no effect on its own: each block gets the frequency its power stands for
       isPromarkUV: promarkModels.has(workarea) && laserType === LaserType.UV,

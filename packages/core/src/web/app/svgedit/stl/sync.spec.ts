@@ -13,12 +13,7 @@ jest.mock('./getters', () => ({
     Boolean(elem?.getAttribute('data-stl') || elem?.getAttribute('data-stl-photo')),
 }));
 
-import {
-  collectStlObjects,
-  collectStlProjectionElements,
-  createClonedStlObjects,
-  syncStlObjectsWithDom,
-} from './sync';
+import { collectStlObjects, collectStlProjectionElements, createClonedStlObjects, syncStlObjectsWithDom } from './sync';
 
 const makeObject = (id: string) => ({
   buffer: new ArrayBuffer(1),
@@ -45,6 +40,7 @@ describe('STL DOM synchronization', () => {
         </g>
       </svg>
     `;
+
     const layer = document.getElementById('layer')!;
     const mesh = document.getElementById('mesh')!;
     const meshObject = makeObject('mesh');
@@ -64,6 +60,7 @@ describe('STL DOM synchronization', () => {
         <g id="copy"><rect id="mesh-copy" data-stl="1" /><image id="photo-copy" data-stl-photo="1" /></g>
       </svg>
     `;
+
     const meshObject = makeObject('mesh');
     const photoObject = makeObject('photo');
 
@@ -82,6 +79,7 @@ describe('STL DOM synchronization', () => {
 
   test('adds or removes runtime objects according to projection existence', () => {
     document.body.innerHTML = '<svg><rect id="present" data-stl="1" /></svg>';
+
     const present = makeObject('present');
     const missing = makeObject('missing');
 
