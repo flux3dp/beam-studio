@@ -45,13 +45,13 @@ export const makeFingerprint = (
 const readCounter = (now: number): Record<string, number> => {
   const counter = storage.get('error-report-counter');
 
-  return counter?.date === todayKey(now) ? counter.counts : {};
+  return counter?.date === todayKey(now) ? (counter.counts ?? {}) : {};
 };
 
 const readCooldown = (now: number): Record<string, CooldownEntry> =>
   Object.fromEntries(
     Object.entries(storage.get('error-report-cooldown') ?? {}).filter(
-      ([, entry]) => entry.nextAllowed + PRUNE_AFTER_MS > now,
+      ([, entry]) => entry?.nextAllowed + PRUNE_AFTER_MS > now,
     ),
   );
 

@@ -116,4 +116,16 @@ describe('error-report-counter shape', () => {
     recordUpload('A', 'fp-4', new Date(2026, 9, 13, 0, 0, 1).getTime());
     expect(storage.get('error-report-counter')).toEqual({ counts: { A: 1 }, date: '2026-10-13' });
   });
+
+  test('a stored record with the wrong shape is treated as empty instead of throwing', () => {
+    storage.set('error-report-counter', { date: '2026-10-12' } as any);
+    storage.set('error-report-cooldown', { broken: null, [FP]: { level: 0, nextAllowed: T0 + 1, skipped: 0 } } as any);
+
+    expect(getBlockReason('A', 'fp-x', T0)).toBeNull();
+    expect(getBlockReason('A', FP, T0)).toBe('cooldown');
+
+    recordUpload('A', 'fp-x', T0);
+    expect(storage.get('error-report-counter')).toEqual({ counts: { A: 1 }, date: '2026-10-12' });
+    expect(storage.get('error-report-cooldown')).not.toHaveProperty('broken');
+  });
 });
