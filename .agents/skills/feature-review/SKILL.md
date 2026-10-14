@@ -53,7 +53,7 @@ Now open `docs/prd/<feature>.md`. Produce three lists:
 ## 4. Break it
 
 For every Unsaid item and every Must-not-change gap, name the one input or sequence most likely
-to expose a bug, and check it: run the relevant spec (`pnpm test <file>`), or trace the call by
+to expose a bug, and check it: run the relevant spec (`pnpm test --runInBand <file>`), or trace the call by
 hand when no spec exists. Report what you actually ran, not what should be run.
 
 ## 5. Report

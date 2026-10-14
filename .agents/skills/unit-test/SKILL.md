@@ -81,10 +81,10 @@ Location: `packages/core/src/__mocks__/`
 |---|---|
 | `zustand` | Wraps real `create`/`createStore` with auto-reset after each test |
 | `@core/helpers/i18n` | Returns `{ lang: langEn, getActiveLang: () => 'en' }` using real `en.ts` |
-| `@core/helpers/checkFeature` | `jest.fn()` |
+| `@core/helpers/checkFeature` | every `check*` (incl. `checkFpm1UV`) returns `true` |
 | `@core/helpers/getOS` | `jest.fn()` |
 | `@core/helpers/locale-helper` | all `is*` region flags `false` (mutable — reset in `beforeEach`); real module imports ESM-only `bcp-47` that Jest can't parse |
-| `@core/helpers/is-dev` | `jest.fn()` returns `false` |
+| `@core/helpers/is-dev` | default `isDev` returns `true`; `isUvDev` returns `true`; `isParamsLabelDev` is `jest.fn(() => false)` |
 | `@core/helpers/symbolMaker` | no-op |
 | `@core/helpers/api/flux-id` | stubs for auth functions |
 | `@core/helpers/layer/layer-config-helper` | stubs |
@@ -92,9 +92,9 @@ Location: `packages/core/src/__mocks__/`
 | `@core/implementations/communicator` | stub `send`/`sendSync`/`on`/`once` |
 | `@core/implementations/storage` | in-memory get/set |
 | `@core/app/stores/storageStore` | full in-memory store with `useStorageStore`, `getStorage`, `setStorage` |
-| `@core/app/stores/documentStore` | full in-memory store |
+| `@core/app/stores/documentStore` | full in-memory store (includes the `inner-engraving*` defaults with `'inner-engraving': false`; the `fpm1` customized dimension is 150×150, so the real `isInnerEngravingActive()` is false — specs toggle the mode by mocking `@core/helpers/addOn/innerEngraving`) |
 | `@core/app/stores/globalPreferenceStore` | full in-memory store |
-| `@core/app/stores/layer/layerStore` | state-only in-memory store (no actions; seed with `useLayerStore.setState({...})` — layer mutations live on `layerManager`, mock that inline per spec) |
+| `@core/app/stores/layer/layerStore` | state-only in-memory store (`hasStlPhoto: false` among the defaults; no actions; seed with `useLayerStore.setState({...})` — layer mutations live on `layerManager`, mock that inline per spec) |
 | `@core/app/pages/Settings/useSettingStore` | in-memory settings store |
 | `@core/app/contexts/CanvasContext` | stub context provider |
 | `@core/app/widgets/UnitInput` | renders real `<input>` with `onChange` wired to `Number(e.target.value)` |

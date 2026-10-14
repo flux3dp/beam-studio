@@ -23,6 +23,12 @@ manager by model → `manager.setup()` → writes `previewMode`/`supportedPrevie
 `previewCameraIndex` to the store → emits canvas `UPDATE_CONTEXT`. The controller is a thin
 dispatcher; all machine/camera specifics live in the managers.
 
+In inner-engraving mode the 2D canvas is hidden: the preview image is the 3D floor texture
+(`backgroundUrl`), and region clicks/drags come from `PreviewInteractionPlane` in
+`components/beambox/InnerEngraving/InnerEngravingCanvas.tsx` (mapped by `toCameraPreviewPoint`,
+`InnerEngraving/utils/cameraPreview.ts`) to `previewModeController.preview/previewRegion`, instead of
+the svgedit mouse handler.
+
 ## Preview modes
 
 `PreviewMode` (const enum, `app/constants/cameraConstants.ts`): `REGION = 1`,
@@ -45,7 +51,7 @@ All extend `BasePreviewManager` (message helpers, movement speed caps, `_preview
 |---|---|---|---|
 | `BeamPreviewManager` | legacy Beam Series (default) | REGION | offset laser-head camera |
 | `AdorPreviewManager` | `ado1` | FULL_AREA | fixed door camera |
-| `PromarkPreviewManager` | promark | FULL_AREA | fixed camera |
+| `PromarkPreviewManager` | promark | FULL_AREA | fixed USB webcam; frames rotated 180° per `isCameraRotated(params)` (see camera-calibration skill) |
 | `Beamo2PreviewManager` | `fbm2` | REGION, FULL_AREA | **one** camera; FULL_AREA moves head to `workarea.cameraCenter` and swaps perspective grid |
 | `Bb2Hx2PreviewManager` | `fbb2`, `fhx2rf` | REGION (+PRECISE_REGION if oblique), FULL_AREA if wide-angle calibrated | **two** cameras: laser-head `setCamera(0)` in raw mode for region modes; wide-angle `setCamera(1)` for FULL_AREA |
 
@@ -63,7 +69,9 @@ Beamo2 FULL_AREA capture manages exposure itself: shoots a light image at
 
 Zustand + `subscribeWithSelector`. Fields: `isPreviewMode`, `isStarting`, `isDrawing`,
 `isLiveMode`, `isClean`, `bgOpacity`, `previewMode`, `supportedPreviewModes`,
-`pendingPreviewMode`, `previewCameraIndex`. Write from outside React via
+`pendingPreviewMode`, `previewCameraIndex`, `backgroundUrl` (set by
+`preview-mode-background-drawer.ts`; the inner-engraving 3D canvas textures its floor with it).
+Write from outside React via
 `setCameraPreviewState`.
 
 - `pendingPreviewMode` — mode chosen from the floating bar before preview finished

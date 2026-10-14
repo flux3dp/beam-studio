@@ -1,10 +1,10 @@
-# PRD：Promark UV 與內雕（3D Inner Engraving）v2
+# PRD：Promark UV 與內雕（3D Inner Engraving）
 
 | | |
 |---|---|
 | **Status** | Phase 1 實作完成（branch `promark-3d-inner-carving` + Swiftray `codex/promark-3d-inner-carving-pr`），待送審。Phase 2 未開始（§3.4） |
 | **Author** | EstherFu（整理：Claude） |
-| **Created** | 2026-10-13（取代 `promark-uv-inner-engraving.md` 的寫法：以 `main` 為起點重寫，舊檔保留作為決策紀錄） |
+| **Created** | 2026-10-13 |
 | **Target product** | Beam Studio 桌面版（Promark `fpm1` + UV 雷射源）。網頁版不支援 |
 | **Owner area** | Promark 機台設定 / 圖層參數 / 相機校正；新子系統「內雕 3D 畫布」 |
 | **Related code** | 模式與開關：`helpers/addOn/innerEngraving.ts`、`helpers/exclusiveModes.ts`、`app/actions/canvas/innerEngravingMode.ts`、`svgedit/operations/import/innerEngravingGate.ts`；3D 畫布：`app/components/beambox/InnerEngraving/`；3D 物件：`app/stores/stlStore.ts`、`app/svgedit/stl/`、`app/svgedit/operations/import/importStl/`、`importPhotoPlane.ts`；面板：`RightPanel/DimensionPanel/DimensionPanelStl.tsx`、`RightPanel/ActionsPanelStl.tsx`、`RightPanel/OptionsBlocks/ThreeDOptions.tsx`；文件設定：`dialogs/InnerEngravingSettings.tsx`、`DocumentSettings/InnerEngravingBlock.tsx`；匯出：`app/actions/beambox/export/getStlObjects.ts`、`getPointCloudObjects.ts`、`GoButton/checkInnerEngravingObjects.ts`、`export-funcs-swiftray.ts`、`helpers/api/svg-laser-parser.ts`、`helpers/api/swiftray-client.ts`；UV：`app/constants/promark-constants.ts`、`helpers/layer/layer-config-helper.ts`、`helpers/layer/uvPowerFrequency.ts`、`RightPanel/ConfigPanel/{PowerBlock,AdvancedSettingModal,DevBlock,QPulseWidthBlock}.tsx`、`app/constants/presets.ts`；內雕圖層參數：`RightPanel/ConfigPanel/{EngravingModeBlock,SolidBlock,DottingTimeBlock}.tsx`、`getInnerEngravingBlocks.ts`、`app/svgedit/stl/engravingParams.ts`；材質測試：`dialogs/MaterialTestGeneratorPanel/`；相機方向：`helpers/device/promark/camera-rotation.ts`、`helpers/webcam-helper.ts`、`dialogs/camera/PromarkCalibration.tsx`、`dialogs/camera/common/{Calibration,SolvePnP,useCamera}`、`app/actions/camera/preview-helper/PromarkPreviewManager.ts` |
@@ -130,13 +130,12 @@
 - 內雕球體與圓柱材料。沒有 uvDev 時只能選方塊，文件裡存著的球體 / 圓柱一律當作方塊（`getMaterialShape`）。
 - 3D 材質測試產生器（左側 Generators 在內雕模式只在此時出現）。
 - UV 填充熱分散參數：打散掃描順序、每行停留、依雕刻時間調整（§6.7）。
-- UV 圖層允許 Z 軸反向移動。
 - 照片轉點雲（測試用，`ThreeDOptions`）。
 - 調機參數覆寫：`svg-laser-parser.ts` 從 localStorage 讀雷射延遲、跳躍速度、`machine_z_bucket`、first pulse killer 等。
 
 ### 3.3 Non-goals（Phase 1 刻意不做）
 
-- 3D 多選、框選、全選、對齊與分佈（V1 只能單選）。
+- 3D 多選、框選、全選、對齊與分佈（Phase 1 只能單選）。
 - 網頁版。
 - 跨分頁複製貼上 3D 物件（mesh 放不進系統剪貼簿）。
 - 打線＋填充（`kLineFill`）：移除，投影物件的填充不影響雕刻。
@@ -148,11 +147,10 @@
 |---|---|---|
 | P2-1 | **3D 多選** | 選取同步、整體 transform、尺寸面板，以及 2D 按鈕分流。待決：多選時的旋轉方式、填充開關、框選與對齊分佈。計畫在 `TODO-multi-select.md` |
 | P2-2 | 照片轉點雲轉正式功能 | 目前只在 uvDev，需要合適的深度估計模型 |
-| P2-3 | 點雲檔案直接匯入（PLY / GLB / BSPC） | 在 `uv-dev` branch，不送審 |
+| P2-3 | 點雲檔案直接匯入（PLY / GLB / BSPC） | 確認模型後討論支援範圍 |
 | P2-4 | 3D 材質測試、UV 填充熱分散參數轉正式功能 | 目前只在 uvDev，等上機結果 |
-| P2-5 | 加厚輪廓改用真正的網格偏移 | 目前沿頂點法向量內縮，凹角或細部可能交錯 |
-| P2-6 | 球體 / 圓柱材料轉正式功能 | 目前只在 uvDev |
-| P2-7 | **UV 70mm 場域大小** | 目前 UV 70mm 送給後端時當作 75mm 場域，而且是依「目前開啟的文件」判斷是否為 UV（`device-master.ts` `setField`），開著其他機型的文件連線時會送 70。要確認 UV 能否直接使用 70 的場域；若改成 70，需要修正既有的場鏡畸變校正參數（舊參數是以 75 校正的） |
+| P2-5 | 球體 / 圓柱材料轉正式功能 | 目前只在 uvDev |
+| P2-6 | **UV 70mm 場域大小** | 目前 UV 70mm 送給後端時當作 75mm 場域，而且是依「目前開啟的文件」判斷是否為 UV（`device-master.ts` `setField`），開著其他機型的文件連線時會送 70。要確認 UV 能否直接使用 70 的場域；若改成 70，需要修正既有的場鏡畸變校正參數（舊參數是以 75 校正的） |
 
 ---
 
@@ -282,7 +280,7 @@
 | `helpers/layer/layer-config-helper.ts` `writeDataLayer` | 所有 2D 圖層：repeat 照使用者設定寫入，只有內雕模式會被強制改成 1 |
 | 同檔 `getDefaultConfig`、`getPromarkLimit` | Desktop / MOPA Promark：frequency、pulse width 的預設值與範圍和 main 相同 |
 | 同檔 `getConfigKeys`、`getLayerConfig` / `getLayersConfig` / `cloneLayerConfig` | 非內雕的所有圖層：參數 key、預設值、讀取結果和 main 相同，不會出現 `stl*` |
-| `RightPanel/ConfigPanel/PowerBlock.tsx`、`FrequencyBlock.tsx`、`AdvancedSettingModal.tsx`、`ConfigPanel.tsx` | Desktop / MOPA Promark 與其他機型：功率範圍 0–100、頻率留在主面板、改功率不會寫入頻率；DPI、repeat、填充設定照舊顯示 |
+| `RightPanel/ConfigPanel/PowerBlock.tsx`、`FrequencyBlock.tsx`、`AdvancedSettingModal.tsx`、`ConfigPanel.tsx` | Desktop / MOPA Promark 與其他機型：功率範圍 0–100、頻率留在主面板、改功率不會寫入頻率；DPI、repeat、填充設定照舊顯示；沒開 `isDev()` 時不出現焦距「反向」開關（和 main 相同） |
 | `RightPanel/ConfigPanel/DottingTimeBlock.tsx` | 2D：只有漸層圖片時顯示，並帶「僅限漸層」說明 |
 | `helpers/presets/preset-helper.ts` `getPresetModel` | 非內雕：各機型與 Desktop / MOPA 雷射源的預設參數清單不變 |
 | `MaterialTestGeneratorPanel/*` | Desktop / MOPA 與其他機型：2D 材質測試的參數、色塊內容不變 |
@@ -359,6 +357,7 @@
 - 發佈開關：`checkFpm1UV()` = 桌面版，且 `isDev()`（`localStorage.dev`）或 `enableAllMachines`（`helpers/checkFeature.ts:8`）。
 - `isUvDev()` 讀 `localStorage.uvDev`，只擋 UV 調參與開發中的 3D 工具（§3.2 清單）；和 `isDev()` 分開，避免開了 dev 的人都看到半成品。
 - Q pulse 在 `DevBlock`，跟著 `isDev()`。
+- 下降焦距 / 逐層焦距的「反向」開關（`focusReverse`、`focusStepReverse`）只在 `isDev()` 顯示，Desktop / MOPA / UV 都有（`ConfigPanel/FocusBlock.tsx`、`AdvancedSettingModal.tsx`）。
 
 ### 6.5 UV 功率與頻率
 UV 雷射的功率 API 不生效，實際輸出由頻率決定（2026-10-09 實測；改變脈寬時輸出不變，所以脈寬固定 13）。功率% 是頻率的代稱，以 40kHz 的 4.5W 為 100%：
@@ -412,7 +411,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 ### 6.9 折射補償
 - **模型**（Swiftray `refraction-compensator.cpp`）：`機器 Z = H − (H − z) / n`，每個機器 Z 對應材料內一個水平深度。
 - 內雕場鏡以平面模式（同一個機器 Z）雕刻可得到平坦平面，所以只需要軸向公式，不需要焦距、場曲或離軸補償。
-- 換用其他場鏡時，要重新確認平面模式雕出的層是否仍然平坦；不平坦時才需要另外補償。
+- 一般平場鏡（非內雕場鏡）以平面模式雕刻，在材料內會得到曲面；但決定不做補償。
 
 ### 6.10 後端相容
 - fluxghost 的 `update_data`（`fluxghost/api/camera_calibration.py`）與 `set_fisheye_matrix`（`fisheye_camera_mixin.py`）只取認得的 key，多出的 `rotate180` 不影響，不用另外過濾。
@@ -425,11 +424,11 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 **文件 / 模式**
 | 行為 | 值 | 位置 | 依據 |
 |---|---|---|---|
-| 內雕只開放給 Promark + UV + 70×70 | 70 | `helpers/addOn/innerEngraving.ts`（`checkInnerEngraving`） | 註解 |
-| 打開內雕時雷射源固定設成 UV 5W | UV / 5W | `helpers/addOn/innerEngraving.ts`（`PROMARK_UV_INFO`） | – |
+| 內雕只開放給 Promark + UV + 70×70 | 70 | `helpers/addOn/innerEngraving.ts`（`checkInnerEngraving`） | PM |
+| 打開內雕時雷射源固定設成 UV 5W | UV / 5W | `helpers/addOn/innerEngraving.ts`（`PROMARK_UV_INFO`） | PM |
 | 只有桌面版可用，且要開 `isDev()` 或 `enableAllMachines` | – | `helpers/checkFeature.ts:8` | 2026-10-05 決定 |
-| 切換 2D/3D 一律開新文件 | – | `app/actions/canvas/innerEngravingMode.ts` | 註解（V1） |
-| 不同模式的檔案匯入時詢問切換，拒絕就中止 | – | `svg-editor.ts`（`MODE_GATED_TYPES`）、`innerEngravingGate.ts` | 註解（V1） |
+| 切換 2D/3D 一律開新文件 | – | `app/actions/canvas/innerEngravingMode.ts` | PM |
+| 不同模式的檔案匯入時詢問切換，拒絕就中止 | – | `svg-editor.ts`（`MODE_GATED_TYPES`）、`innerEngravingGate.ts` | 註解 |
 | 26 個選單項目停用 | – | `helpers/addOn/innerEngraving.ts:131` | 註解 |
 | auto align 強制關閉 | – | `app/svgedit/autoAlign/index.ts` `isEnabled` | 註解 |
 | 路徑預覽隱藏（dev 可見） | – | `TopBar/PathPreviewButton.tsx` | **PM 08/06** |
@@ -470,7 +469,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 | UV 脈寬固定隱藏；Q pulse 預設 1，只在 Developer Settings | 13 / 1 | `layer-config-helper.ts`、`ConfigPanel/DevBlock.tsx` | 實測 2026-10-12 |
 | UV 功率範圍；頻率範圍 | 15.6–100%（可小數）；30–200kHz（整數） | `getPromarkLimit`、`PowerBlock.tsx`、`AdvancedSettingModal.tsx` | 2026-10-09 決定 |
 | 新圖層：qPulseWidth、fillInterleave、fillDwellTime | 1 / 關閉 / −50000（關閉） | `layer-config-helper.ts` `baseConfig` | – |
-| focus「反向」開關：所有 Promark 雷射源都顯示 | – | `ConfigPanel/FocusBlock.tsx` | –（§10 #1） |
+| focus「反向」開關：只在 `isDev()` 顯示，所有 Promark 雷射源都有 | – | `ConfigPanel/FocusBlock.tsx`、`AdvancedSettingModal.tsx` | 2026-10-14 決定（§10 #1） |
 | UV 範例檔參數是空的 | `{}` | `promark-constants.ts` | 註解（等硬體預設值） |
 
 **匯出 / 後端**
@@ -538,31 +537,21 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 
 | # | Branch | 內容 | Base |
 |---|---|---|---|
-| PR1 | `promark-uv` | Promark UV 雷射源：雷射源選項、工作範圍、UV 圖層參數、功率與頻率連動、UV 預設參數、相機校正（含相機方向）、材質測試 UV 參數、`swiftray-control` / `device-master` 的雷射源。不含任何內雕程式 | `main` |
-| PR2 | `promark-3d-inner-carving` | 內雕模式全部內容，加上 add-on / 互斥模式重構 | `promark-uv`，PR1 合併後改成 `main` |
+| PR | `promark-3d-inner-carving` | Promark UV 雷射源：雷射源選項、工作範圍、UV 圖層參數、功率與頻率連動、UV 預設參數、相機校正（含相機方向）、材質測試 UV 參數、`swiftray-control` / `device-master` 的雷射源。內雕模式全部內容，加上 add-on / 互斥模式重構。 | `main` |
 | Swiftray | `codex/promark-3d-inner-carving-pr` | 1.5.0：STL / 點雲、內雕圖層參數、填充熱分散、Promark 工時 | `develop` |
-| — | `uv-dev` | 點雲檔案匯入等 dev 預覽，不送審 | — |
-
-**拆分方式**：
-1. 從 `origin/main` 開 `promark-uv`。
-2. 只和 UV 有關的檔案整檔 checkout 過來。
-3. 同時改到 UV 和內雕的檔案，用 `git restore -p` 只挑 UV 的 hunk（`sanitize.js`、`is-dev.ts`、`layer-config-helper.ts`、`ConfigPanel.tsx`、`DocumentSettings/index.tsx`、`svg-laser-parser.ts`、`swiftray-client.ts`、`ITaskConfig.ts`、`TableSetting.ts`、`TableSettingForm.tsx` 等）。
-4. PR2 把 `promark-uv` merge 回本 branch，不 rebase。
-
-**合併 main 的注意事項**：PR 1022（預設參數名稱改由材質 + 厚度 + 類型組成，`app/constants/presetNames.ts`）合併後，本 branch 新增的 26 個 UV / K9 預設參數名稱要改成 `presetNames` 的格式：新增材質（304 / 430 不鏽鋼、鍍鋅鋼、各種皮革、不織布、PLA、PVC、尼龍、矽膠、K9 水晶）、預設類型（輪廓打點、輪廓打線、加厚輪廓打點），並在 `inchLabels` 補 0.8mm、2mm。
 
 ---
 
 ## 10. Open decisions
 
-1. **focus「反向」開關**：目前所有 Promark 雷射源都顯示，要決定是否只給 UV。
-2. **uvDev 功能的去留**：照片轉點雲、3D 材質測試、填充熱分散、球體 / 圓柱材料目前都用 uvDev 擋著，要決定送審時留在 PR2，還是移到 `uv-dev`。
+1. ~~**focus「反向」開關**：目前所有 Promark 雷射源都顯示，要決定是否只給 UV。~~ **2026-10-14 決定**：屬於 dev 功能，只在 `isDev()` 顯示；Desktop / MOPA / UV 都支援，不另加雷射源判斷。
+2. ~~**uvDev 功能的去留**：照片轉點雲、3D 材質測試、填充熱分散、球體 / 圓柱材料目前都用 uvDev 擋著，要決定送審時留在本 PR，還是移到 `uv-dev`。~~ **2026-10-14 決定**：隨本 PR 一起送出，維持由 uvDev 擋著。
 
-**已決定**（細節見舊版 PRD 的決策紀錄）：
+**已決定**：
 - UV 功率以頻率實現，脈寬 13、Q 1（2026-10-12）；頻率 30–200、預設 40，在進階設定（2026-10-05 / 10-12）。
 - 內雕模式隱藏 DPI，送出沿用圖層 DPI（2026-10-05）。
 - ultra DPI 只給自己列出的機型（2026-10-05）。
-- 發佈開關用 `isDev()`；alpha 開關 `isUvDev()`（原 `isUvDev2`）只擋調參與開發中工具（2026-10-05 / 10-13）。
+- 發佈開關用 `isDev()`；alpha 開關 `isUvDev()` 只擋調參與開發中工具（2026-10-05 / 10-13）。
 - UV Z 軸步進和一般 Promark 相同（2026-10-05）。
 - Q pulse 留在圖層，放 Developer Settings（2026-10-13）。
 - 內雕參數全部放在圖層，前後端一起改（2026-10-12）；新增 K9 加厚輪廓打點預設（2026-10-13）。
@@ -577,7 +566,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 
 - **2D 材質測試的固定參數只對 UV 套用**（`generateSvgInfo.ts` 的 FIXME）：表格中非欄、非列的參數，`Detail.default` 不一定是有效的圖層值（Promark 頻率預設為範圍下限，MOPA 是 1kHz；MOPA 脈寬是 350），所以 Desktop / MOPA 不套用，每個色塊維持圖層預設值，UV（2D 與 3D）才套用。要讓所有表格都套用固定參數，得先修正各表格的預設值。
 - **翻譯**：所有介面字串都已放進語言檔、`mockT` 已移除。語言檔裡的字串（含內雕預設參數名稱、加厚輪廓、層間距）已補齊 23 個語言，用詞待母語者確認。
-- **加厚輪廓只有 3 層殼**：以預設層間距 0.04mm，總厚度 0.08mm，效果要上機確認；沿頂點法向量內縮在凹角或細部可能交錯（P2-5）。
+- **加厚輪廓只有 3 層殼**：以預設層間距 0.04mm，總厚度 0.08mm，效果要上機確認；沿頂點法向量內縮在凹角或細部可能交錯。
 - **AABB 誤判**：重疊與超出檢查用包圍盒，旋轉過的細長物件、L 形或中空物件可能誤判重疊；球體 / 圓柱材料的角落沒有材料但仍在包圍盒內。所以警告允許繼續。
 - **安全邊距、材料高度**是暫定值，要等硬體驗證。
 - **既有偏好設定不會跟著改**：折射率存在偏好設定，已經存過的電腦保留舊值（1.52），要在內雕設定手動改。
@@ -591,7 +580,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 
 - **單元測試**（`npx jest -c packages/core/jest.config.ts --runInBand`，以及 `apps/app`）：
   - 3D：`app/svgedit/stl/**`、`svgedit/operations/import/importStl/**`、`innerEngravingGate.spec`、`components/beambox/InnerEngraving/**`、`DimensionPanelStl.spec`、`ThreeDOptions.spec`、`beam-file-helper.spec`、`checkInnerEngravingObjects.spec`、`SelectionManager.spec`、`helpers/addOn/*.spec`、`exclusiveModes.spec`
-  - UV：`uvPowerFrequency.spec`（表上每一點、內插中點、端點與超出範圍、單調性、30–40kHz 換回 100%）、`PowerBlock` / `AdvancedSettingModal.spec`（UV 連動、一步 undo；Desktop / MOPA 不連動）、`layer-config-helper.spec`、`preset-helper.spec`
+  - UV：`uvPowerFrequency.spec`（表上每一點、內插中點、端點與超出範圍、單調性、30–40kHz 換回 100%）、`PowerBlock` / `AdvancedSettingModal.spec`（UV 連動、一步 undo；Desktop / MOPA 不連動；反向開關只在 dev 顯示）、`layer-config-helper.spec`、`preset-helper.spec`
   - 內雕圖層參數：`getInnerEngravingBlocks.spec`、`EngravingModeBlock.spec`、`layerManager.spec`（`hasStlPhoto`）、`engravingParams.spec`、`OptionsPanel.spec`
   - 材質測試：`TableSetting.spec`（UV 無頻率、功率最小 16、Q 只在 dev、dottingTime 只在 3D）、`generateSvgInfo.spec`
   - 相機：`camera-rotation.spec`、`useCamera.spec`（USB 取圖帶入 `rotate180`）
