@@ -51,7 +51,7 @@
 
 ## 4. 情境
 
-- **S1 每次詢問（預設），使用者勾選後按 重試/確認/取消** → 視窗如常關閉；背景上傳；成功後顯示中性 toast「感謝您！診斷資料已傳送。」。首次成功 → 跳出一次性提示「要每次都自動傳送嗎？」，按鈕 [一律自動] / [每次詢問]。
+- **S1 每次詢問（預設），使用者勾選後按 重試/確認/取消** → 視窗如常關閉；背景上傳；成功後顯示中性 toast「感謝您！診斷資料已傳送。」。尚未選擇偏好時的首次成功 → 跳出一次性提示「要自動傳送嗎？」，按鈕 [每次詢問] / [總是傳送]，總是傳送為右側主要按鈕（警示視窗慣例）。
 - **S2 每次詢問，使用者未勾選** → 不上傳、無 toast、無提示。
 - **S3 一律自動** → 無 checkbox；視窗開啟時即開始上傳；視窗底部一行小灰字「診斷資料已自動傳送」。
 - **S4 永不** → 視窗與現在完全相同。
@@ -81,17 +81,18 @@
 
 功能資料夾以外會被碰到的共用檔案，以及必須維持原行為的呼叫者：
 
-- `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — 下載仍產出完整、未清除的報告；`MonitorContext.tsx:548` `handleReport` — 同上；`websocket.ts:41` — 改呼叫新的上傳函式，仍只在使用者同意後執行。
+- `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — 下載仍產出完整、未清除的報告；`MonitorContext.tsx:548` `handleReport` — 同上；`websocket.ts` — 不再呼叫任何上傳函式；`uploadBackendErrorLog` 已刪除，由 `#802` 視窗的同意勾選框負責上傳。
 - `app/components/dialogs/Alert.tsx` — 所有既有 `checkbox:` 呼叫者（`retryWithRemoveBackground.ts:25`、`retakeContourPreview.ts:77`、`importSvg/index.tsx:46`、`importDxf.ts:52,120`、`AutoFocusButton/index.tsx:140`、`BasePreviewManager.tsx:279`、`handleExportAlerts.ts:150`）— callback 語意不變。2026-10-12 有動到：`Alert.tsx` 現在會渲染 `IAlert` 自 2021 年起就宣告、但改用 antd 後不再渲染的 `children` 欄位；S3 的狀態列用它。wave 1/2 的觸發點都沒有傳 `children`。唯一有傳的既有呼叫者 `NetworkTestingPanel.tsx:104`（網路測試正常後的三條說明提示，至今被默默丟棄，其 sass 仍掛在已失效的 `.modal-alert` 選擇器下）另開小分支修正：改用 `links` 並刪除該段 sass，於本功能的合併 PR 之前先進。
 - `helpers/device-master.ts:580` `popConnectionError` — `select` :410 與 `selectDeviceWithSwiftray` :530 — 警示 id `connection-error`、`Alert.popById` 原地替換、訊息文字與 `{ success: false, error }` 回傳值不變；`reconnect()` → `select()` 仍會跳出同一視窗（吸收重試風暴的是冷卻機制，不是視窗）。
 - `app/contexts/MonitorContext.tsx:314,495,980`、`helpers/device-master.ts:266`、`actions/beambox/export-funcs.ts:778`、`export-funcs-swiftray.ts:106-192`、`helpers/handleAutoConnect.ts:216` — 第一波觸發點：警示 id、訊息文字、按鈕組與周邊控制流程（`onClose()`、`return { success: false }`、`setStatus('listening')`）不變；只包裝設定物件。
-- `actions/camera/preview-helper/*`、`components/dialogs/camera/*`、`DiodeCalibration/Component.tsx` — 第二波觸發點，同一規則；`BasePreviewManager.tsx:273` 相機線材警告不動；`preview-mode-controller.ts:281` `onPreviewFail` 在警示後仍呼叫 `this.end()`。
+- `actions/camera/preview-helper/*`、`components/dialogs/camera/*`、`DiodeCalibration/Component.tsx` — 第二波觸發點，同一規則；`BasePreviewManager.tsx:273` 相機線材警告不動；`preview-mode-controller.ts:281` `onPreviewFail` 在警示後仍呼叫 `this.end()`。`BeamPreviewManager.setup` 的 catch 改走 `handlePreviewSetupError`；唯一可見差異是非 `Error` 的拋出值（fluxghost 的 `string[]`）會在 `#803` 文字後以 JSON 顯示，而不是空字串（2026-10-14 接受）。
 - `app/contexts/MonitorContext.tsx:598-633` — 三個錯誤分支維持各自的按鈕組（`abort` / `retry+cancel` / `retry+bug report+cancel`）與透過 `Alert.checkIdExist` 的 `errorId` 去重。
-- `actions/beambox/export-funcs.ts`、`export-funcs-swiftray.ts`、`importSvg/utils/uploadAndDivideSvg.ts` — 錯誤訊息文字（`#806 …`、`#809 …`）與 `resolve(null)` / `return null` 流程不變；只替換上傳掛鉤。
+- `actions/beambox/export-funcs.ts`、`export-funcs-swiftray.ts`、`importSvg/utils/uploadAndDivideSvg.ts` — 錯誤訊息文字（`#806 …`、`#809 …`）與 `resolve(null)` / `return null` 流程不變；是/否 上傳提問移除，場景改以 thunk 傳入，因此 `svgCanvas.getSvgString()`（會解散暫時選取群組）只在真的上傳時執行，不傳送 或冷卻期間都不會跑。
 - `app/constants/storageConstants.ts`、`interfaces/IStorage.d.ts` — 只新增鍵名。
 - `app/components/settings/categories/Privacy.tsx` — `enable-sentry` 開關不變。
 - `interfaces/IOperatingSystem.ts`、`apps/app/src/implementations/os.ts`、`apps/web/src/implementations/os.ts` — 只新增 `machineId`，自含 try/catch 並回傳 `''`；所有既有 `os.*` 呼叫者（`output-error.ts:39`、網路 helper、字型 helper）不變。
-- `app/lang/en.ts`、`zh-tw.ts`（PR 前補齊所有語言）— 只新增鍵名；既有 `successfully_uploaded` / `upload_failed` 字串保留給其餘呼叫者。
+- `app/lang/*.ts`（全部 23 個）與 `interfaces/ILang.ts` — 新增 `error_report` 命名空間；`beambox.popup.backend_connect_failed_ask_to_upload` 改名為 `backend_connect_failed` 並拿掉上傳提問；`export_file_error_ask_for_upload`、`import_file_error_ask_for_upload`、`upload_failed`、`upload_file_too_large` 隨最後呼叫者一併移除（`#819` 不再使用）。`successfully_uploaded` 與 `progress.uploading` 保留給 `Monitor.tsx`。
+- `components/settings/shared/hooks/useSettingStore.ts` `getConfig` — 鍵未設定時，只在 `DEFAULT_CONFIG` 有預設值才把預設值寫回儲存；其他鍵的行為不變（都有預設值）。若不改，開啟 設定 → 隱私 會為 `error-report-upload` 寫入 `undefined`，在 electron-store 會拋錯、在 web 會存成字串 `"undefined"`（2026-10-14 審閱發現）。由 `useSettingStore.spec.ts` 涵蓋。
 
 ## 7. 設計
 
@@ -100,7 +101,7 @@
 新增 `packages/core/src/web/helpers/error-report/`（獨立資料夾，spec 同置）：
 
 - `index.ts`
-  - `uploadErrorReport({ errorCode, scene? }): Promise<UploadResult>`（`'sent' | 'duplicate' | 'failed' | BlockReason`）— 組資料包、套用上限（加上進行中集合，同一指紋的兩個視窗只產生一次上傳）、以每個檔案 10 秒閒置上限讀取機器 log、以 3 分鐘逾時 POST 最多 3 次、成功後增加計數；呼叫端（同意裝飾器，PR 2）依回傳值顯示 toast 與一次性提示。
+  - `uploadErrorReport({ errorCode, scene? }): Promise<UploadResult>`（`'sent' | 'duplicate' | 'failed' | BlockReason`）— 組資料包、套用上限（加上進行中集合，同一指紋的兩個視窗只產生一次上傳）、以每個檔案 10 秒閒置上限讀取機器 log、以 3 分鐘逾時 POST 最多 3 次、成功後增加計數。toast 與一次性提示在 `consent.tsx`（`uploadWithFeedback`，僅每次詢問路徑），不在此處。`scene` 是在上傳內、偏好與上限檢查之後才解析的 thunk（2026-10-14，審閱發現）；其大小上限併入 §9.1 的 bytes 配額。
   - `withErrorReportConsent(alert: IAlert, options: UploadErrorReportOptions): IAlert`（`consent.tsx`；2026-10-12 由 `errorCode: string` 改為選項物件，讓 `#806`/`#809` 能傳入場景檔）— 讀取偏好設定，回傳依情境 A/B/C 裝飾後的警示設定**副本**，無事可做時回傳原物件。觸發點寫成 `alertCaller.popUp(withErrorReportConsent({...}, { errorCode }))`。checkbox callback 使用函式形式：Alert 會在任一按鈕上先執行它、再執行該按鈕自己的 `onClick`；陣列形式則會取代按鈕的 `onClick`。
   - `preference.ts` — `getErrorReportPreference()` 把未設定的鍵對應為 `'ask'`；這個後備值只住在這裡。
 - `scrub.ts` — `scrubReport(text: string): string`（家目錄路徑正規表示式）與 storage 排除清單，只用於上傳路徑。
@@ -186,7 +187,7 @@
 ### 7.6 偏好設定與提示
 
 - `error-report-upload: 'always' | 'ask' | 'never' | null`。`null`（從未選擇）行為同 `'ask'`，且是唯一允許顯示一次性提示的狀態；`'ask'` 代表使用者在提示或設定中選過，不再提示。2026-10-12 修訂：取消獨立的 `error-report-upload-prompted` 旗標，因為未設定值已經帶有這個資訊，與 `enable-sentry` 的慣例相同。此鍵刻意**不**放進 `useSettingStore` 的 `DEFAULT_CONFIG`：router 啟動時會把那張表的鍵全部寫進 storage，會在任何上傳之前就把 `null` 變成 `'ask'`。
-- 提示為 `Alert.popUp`，在 `null` 下首次成功上傳後顯示：標題「自動傳送？」，訊息「要每次發生錯誤時都自動傳送診斷資料嗎？您可隨時在「偏好設定 > 隱私權」中更改。」，按鈕 [總是傳送] / [每次詢問] 分別寫入 `'always'` / `'ask'`。按 Escape 不寫入。
+- 提示為 `Alert.popUp`，在 `null` 下首次成功上傳後顯示：標題「自動傳送？」，訊息「要每次發生錯誤時都自動傳送診斷資料嗎？您可隨時在「偏好設定 > 隱私權」中更改。」，按鈕 [每次詢問] / [總是傳送]（總是傳送為右側主要按鈕，依警示視窗慣例）分別寫入 `'ask'` / `'always'`。按 Escape 不寫入。「尚未選擇」的判斷在上傳完成後才做，所以上傳期間在設定中選好的值不會被覆寫；因此提示會在上傳結束時出現，在三次重試的路徑上可能是錯誤發生後數分鐘（2026-10-14 接受）。
 - 成功後的 toast（僅每次詢問）：「感謝您！診斷資料已傳送。」依產品規則用中性措辭：不得暗示開單或回覆。
 
 ### 7.7 重複抑制（指紋冷卻）

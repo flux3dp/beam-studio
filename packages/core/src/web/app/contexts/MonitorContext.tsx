@@ -1005,7 +1005,10 @@ export class MonitorContextProvider extends React.Component<Props, State> {
                 message: LANG.message.unable_to_start + (error as { error?: string[] }).error?.join('_'),
                 type: AlertConstants.SHOW_POPUP_ERROR,
               },
-              { device: this.props.device, errorCode: '#830' },
+              {
+                device: this.props.device,
+                errorCode: ['#830', ...((error as { error?: string[] }).error ?? [])].join('_'),
+              },
             ),
           );
           promarkButtonHandler.setStatus('listening');

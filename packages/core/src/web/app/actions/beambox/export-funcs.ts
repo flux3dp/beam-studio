@@ -257,7 +257,7 @@ const fetchTaskCode = async (
     Alert.popUp(
       withErrorReportConsent(
         { id: 'get-taskcode-error', message: `#806 ${uploadRes.message}`, type: AlertConstants.SHOW_POPUP_ERROR },
-        { errorCode: '#806', scene: { content: svgCanvas.getSvgString(), name: 'output.bvg' } },
+        { errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
       ),
     );
 
@@ -310,7 +310,7 @@ const fetchTaskCode = async (
           Alert.popUp(
             withErrorReportConsent(
               { id: 'get-taskcode-error', message: `#806 ${message}`, type: AlertConstants.SHOW_POPUP_ERROR },
-              { errorCode: '#806', scene: { content: svgCanvas.getSvgString(), name: 'output.bvg' } },
+              { errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
             ),
           );
           didErrorOccur = true;
@@ -493,7 +493,7 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
           Alert.popUp(
             withErrorReportConsent(
               { id: 'get-taskcode-error', message: `#806 ${message}`, type: AlertConstants.SHOW_POPUP_ERROR },
-              { errorCode: '#806', scene: { content: svgCanvas.getSvgString(), name: 'output.bvg' } },
+              { errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
             ),
           );
           isErrorOccur = true;

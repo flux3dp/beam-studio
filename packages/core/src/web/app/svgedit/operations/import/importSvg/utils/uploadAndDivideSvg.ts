@@ -30,7 +30,7 @@ export async function uploadAndDivideSvg(
     alertCaller.popUpError(
       withErrorReportConsent(
         { message: `#809 ${output.data}` },
-        { errorCode: '#809', scene: { content: file, name: file instanceof File ? file.name : 'import.svg' } },
+        { errorCode: '#809', scene: () => ({ content: file, name: file instanceof File ? file.name : 'import.svg' }) },
       ),
     );
 

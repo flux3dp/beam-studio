@@ -42,8 +42,11 @@ export interface UploadErrorReportOptions {
   device?: IDeviceInfo;
   /** real code, e.g. `HARDWARE_ERROR_OVERHEAT`, `#806`, `CONNECTION_TIMEOUT` (§7.4) */
   errorCode: string;
-  /** scene SVG (`#806`) or the imported file itself (`#809`) */
-  scene?: { content: Blob | string; name: string };
+  /**
+   * scene SVG (`#806`) or the imported file itself (`#809`); a thunk so the serialisation runs only
+   * for an upload that actually happens, after the preference and throttle checks (§7.1.1)
+   */
+  scene?: () => { content: Blob | string; name: string };
 }
 
 const logger = Logger('generic');
@@ -57,7 +60,7 @@ const inFlight = new Map<string, number>();
 const readDeviceLog = async (uuid?: string): Promise<Blob | null> => {
   const device = deviceMaster.currentDevice;
 
-  if (!device?.control || device.info.uuid !== uuid || device.control.getMode() !== '') return null;
+  if (!uuid || !device?.control || device.info.uuid !== uuid || device.control.getMode() !== '') return null;
 
   const playerLog = VersionChecker(device.info.version).meetRequirement('NEW_PLAYER')
     ? 'playerd.log'
@@ -181,10 +184,11 @@ export const uploadErrorReport = async (options: UploadErrorReportOptions): Prom
 
       // scene before system_log: the export / import errors that carry one need the design more than the device log
       if (scene) {
-        const sceneBlob = new Blob([scene.content], { type: 'image/svg+xml' });
+        const { content, name } = scene();
+        const sceneBlob = new Blob([content], { type: 'image/svg+xml' });
 
         if (sceneBlob.size <= Math.min(MAX_FILE_BYTES, budget)) {
-          form.append('scene', sceneBlob, scene.name);
+          form.append('scene', sceneBlob, name);
           budget -= sceneBlob.size;
         } else {
           logger.append(`error-report scene dropped: ${sceneBlob.size} bytes`);

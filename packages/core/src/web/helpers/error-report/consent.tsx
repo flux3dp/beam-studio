@@ -44,8 +44,6 @@ const promptAlways = (): void => {
 /** Ask path: upload, then the neutral toast and, when no preference was ever chosen, the prompt. */
 const uploadWithFeedback = async (options: UploadErrorReportOptions): Promise<void> => {
   try {
-    const neverChosen = !hasChosenErrorReportPreference();
-
     if ((await uploadErrorReport(options)) !== 'sent') return;
 
     MessageCaller.openMessage({
@@ -55,7 +53,8 @@ const uploadWithFeedback = async (options: UploadErrorReportOptions): Promise<vo
       level: MessageLevel.SUCCESS,
     });
 
-    if (neverChosen) promptAlways();
+    // checked after the upload: a value picked in Settings meanwhile must not be overwritten
+    if (!hasChosenErrorReportPreference()) promptAlways();
   } catch (error) {
     logger.append(`error-report feedback skipped ${options.errorCode}: ${error}`);
   }
