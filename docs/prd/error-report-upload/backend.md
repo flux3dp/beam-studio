@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Built — 2026-10-15, flux-id PR #683; R2 buckets, tokens, lifecycle rules and Slack webhook created 2026-10-15; WAF rule and baseline week pending |
+| **Status** | Built — 2026-10-15, flux-id PR #683; R2 buckets, tokens, lifecycle rules, Slack webhook and Cloudflare rate limit rule set 2026-10-15; deploy, logrotate copy and baseline week pending |
 | **Created** | 2026-10-06 |
 | **Owner** | flux-id repo (`../flux-id`, Django 4.2.27 / DRF 3.16 / gunicorn 23 / celery 5.6) |
 | **Companion of** | [Error Report Upload](error-report-upload.md) (Beam Studio client; owns the UX, consent, scrub, throttle and cooldown, and the request contract in its §7.5 / §8) |
@@ -108,7 +108,7 @@ Threat model: an attacker who has read the client source can post arbitrary `ser
 
 | Layer | Rule | What it bounds |
 |---|---|---|
-| 1. Cloudflare WAF rate-limit rule on `/api/beam-studio/error-report` | 10 req / 10 min per IP, action block, mitigation 10 min (needs a Business zone; Pro allows at most a 1 min period, Free only 10 s: use 5 / min or 3 / 10 s there); expression `http.request.uri.path eq "/api/beam-studio/error-report" and http.request.method eq "POST"`; answers before nginx reads the body | request rate per IP, cheaply |
+| 1. Cloudflare WAF rate-limit rule on `/api/beam-studio/error-report` | Deployed 2026-10-15 on the Pro zone: 5 req / 1 min per IP, action block 1 min, response 429 (Pro caps the period at 1 min; the PRD's 10 / 10 min would need Business). Expression `http.request.uri.path eq "/api/beam-studio/error-report" and http.request.method eq "POST"`, under Security → Security rules (the WAF tab is gone in the 2025 dashboard). Counters are per data centre in the current rate limiting, so a client spread over two edges gets up to twice this; the in-app throttle is the precise layer. Pro allows 2 rate limiting rules and this uses 1. Answers before nginx reads the body | request rate per IP, cheaply |
 | 2. DRF per-IP throttles (`AnonRateThrottle`, two scopes, redis-backed) | `error_report_hour = '6/hour'` and `error_report_day = '20/day'` | an honest NAT (workshop with several machines, each on cooldown) stays well under 20/day; a single abusive IP is capped at 20 × 20 MB = 400 MB/day |
 | 3. **Global daily byte budget** | `cache.incr(f'error_report:bytes:{utc date}', body_size)` before the write; over budget → `429 { status: 'budget' }`, nothing stored, `budget` increment on the stat row and a Slack alert (below) | total ingest ≤ 2 GB/day → bucket ≤ 2 GB × 180 d = 360 GB worst case (≈ $5/month on R2); honest traffic (≈ 45 GB/month) never touches it |
 | 4. Per-folder cap (§4) and 24 h dedupe (§5) | 20 MB per serial / installation folder | one spoofed id cannot grow a folder past 20 MB |
@@ -143,7 +143,7 @@ Linode outbound transfer counts the R2 PUTs (≈ 45 GB/month in the pessimistic 
 1. Settings alias + env vars on staging; create the R2 buckets `flux-id-test` and `flux-id`, one API token per bucket (Object Read & Write, scoped to that bucket), lifecycle rule on prefix `error-report/`. Done in code 2026-10-14 (branch `feat/error-report-upload`); buckets pending.
 2. View + throttles + budget + tests (`tests/error_report.py`: validation table incl. 10-char and non-10-char serials both accepted, duplicate, eviction order on `InMemoryStorage`, cap setting, per-IP 429 keyed on the Cloudflare-appended client address (`REST_FRAMEWORK['NUM_PROXIES'] = 2`: Cloudflare and nginx each append one hop to `X-Forwarded-For`; without it DRF keyed on the whole header, which changes per edge node), budget 429 at the boundary and reset at UTC midnight, 503 on storage failure, S3 listing with the location prefix). Done 2026-10-14, commit `7eeb33c`.
 3. `ErrorReportDailyStat` rows + admin (§7), daily Slack digest from Celery beat, budget/storage alerts (§6), `REDIS_HOST` env so `manage.py` / `celery` run on the host against a local Redis. Done 2026-10-15, commits `7888d70`, `52ef62b`, `fd9b87c`, `09c9729`; 24 tests. Server env additions: `SLACK_WEBHOOK_BS`; `REDIS_HOST` stays unset in docker compose.
-4. R2 buckets `flux-id-test` / `flux-id` (Asia Pacific), one Object Read & Write token each, 180-day lifecycle rule on prefix `error-report/` on both buckets (set in the dashboard; the Object token cannot, `PutBucketLifecycleConfiguration` needs an Admin token), Slack incoming webhook for the digest channel: done 2026-10-15. Still open: Cloudflare WAF rule on the path (plan-dependent period, see §6); R2 storage notification at 100 GB on the bucket.
+4. R2 buckets `flux-id-test` / `flux-id` (Asia Pacific), one Object Read & Write token each, 180-day lifecycle rule on prefix `error-report/` on both buckets (set in the dashboard; the Object token cannot, `PutBucketLifecycleConfiguration` needs an Admin token), Slack incoming webhook for the digest channel: done 2026-10-15. Cloudflare rate limit rule on the path: done 2026-10-15 (§6). Still open: R2 storage notification at 100 GB on the bucket.
 5. Baseline week of metrics (enable the gunicorn access log for the latency rows); ship; week-after readout into client PRD §9.2.
 
 ## 10. Open decisions
