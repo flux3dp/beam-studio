@@ -179,7 +179,7 @@ Decided §11 D1. The endpoint lives in flux-id so the team can swap the storage 
 - Spam control and storage bound, five layers (detail in [backend.md §6](backend.md)): Cloudflare WAF rate-limit rule per IP; DRF per-IP throttles `6/hour` and `20/day`, so one IP tops out at 20 × 20 MB = 400 MB/day even with fabricated serials; a **global daily byte budget** (2 GB/day, `429 { status: 'budget' }` when exceeded) bounding the bucket at ≈ 360 GB worst case no matter how many IPs or serials are spoofed; the per-folder cap and 24 h dedupe; the client-side daily limit and fingerprint cooldown (§7.7). A `429` is a failure to the client: no retry (only no-response and 5xx retry), silent, cooldown not advanced.
 - Retention: R2 object lifecycle rule, delete after 180 days. No cron code.
 - Per-folder cap: kept (§11 D5). Each `{serial}/` and `no-device/{installation_id}/` folder is capped at `ERROR_REPORT_FOLDER_CAP_BYTES` (default 20 MB, a flux-id setting). The view reuses the prefix listing it already does for dedupe, so the cap costs no extra round-trip; algorithm and cost in [backend.md §4](backend.md).
-- Metrics: one structured log line per request from the view (`error_report <ok|duplicate|rejected> serial=… code=… bytes=… ms=… reason=…`, Django logging → gunicorn error log) plus the gunicorn access log with request time. flux-id's statsd is dead (no host, no receiver; verified 2026-10-12, [backend.md §7](backend.md)), so §9.2 reads from logs, Cloudflare analytics and Linode graphs.
+- Metrics: `ErrorReportDailyStat` rows in flux-id, one per UTC day and error code (uploads, duplicates, rejects, budget hits, bytes, summed request time), aggregated for §9.2 and posted as a daily Slack digest from Celery beat; budget exhaustion and storage failures alert the flux-id Slack channel ([backend.md §6–7](backend.md), built 2026-10-15). flux-id's statsd is dead (no host, no receiver; verified 2026-10-12), and logs are not used as a data store. The latency rows of §9.2 still read the gunicorn access log, Cloudflare analytics and Linode graphs.
 - Sync vs. async: v1 writes to R2 inside the request (one sync gunicorn worker held for the R2 PUT, ~1–3 s for 10 MB from Linode). Upgrade path if §9 says so: save to local disk and push with a celery task, or hand the client a presigned R2 PUT URL so bytes never pass through Linode. The client contract does not change for the celery path; the presigned path adds one round-trip and is a v2 decision.
 
 ### 7.6 Preference and prompt
@@ -225,7 +225,7 @@ Load model: with §7.7 the realistic rate is about one upload per (serial, error
 |---|---|---|---|---|---|---|
 | p95 latency, existing endpoints (`/user/activity/beam-studio`, login) | gunicorn access log request time (enable in PR 6) / Cloudflare analytics | measure | measure | measure | +50 ms over baseline | move R2 PUT to celery |
 | gunicorn busy workers (of 9) | `ps` sampling of `gunicorn: worker` processes in state `R` | measure | expect < 1 | expect ≤ 10 queued | ≤ 4 sustained | presigned R2 PUT (bytes bypass Linode) |
-| upload `ms=` p50 / p95 | view log line | n/a | measure | measure | p95 ≤ 5 s | check Linode → R2 route, consider celery |
+| upload time, average (`duration_ms / uploads`) and p95 | `ErrorReportDailyStat` aggregate for the average; gunicorn access log for the p95 | n/a | measure | measure | p95 ≤ 5 s | check Linode → R2 route, consider celery |
 | CPU % (all containers) | Linode graphs | measure | measure | measure | +10 pp | celery |
 | RAM, nginx `client_body_temp` and Django temp upload usage | Linode graphs, `df /tmp` | measure | measure | measure | no growth after requests finish | fix cleanup |
 | Linode outbound transfer | Linode account transfer pool | measure | ≈ 45 GB/month | n/a | ≤ 10 % of plan pool | presigned PUT |
@@ -241,7 +241,7 @@ Procedure: record the baseline column for one week before step 6 of §10 ships; 
 3b. Wire the §7.4 wave-2 camera sites (same mechanism). Done 2026-10-14 on the same branch; the separate-PR idea was dropped because the diff is six call sites of the same shape. `BeamPreviewManager` now reuses `handlePreviewSetupError`.
 4. One-time Always prompt + toast. Done 2026-10-14.
 5. Remaining 21 languages (done 2026-10-14, machine-drafted, native review pending; the four orphaned upload strings and `#819` removed); feature-review; bilingual PR for steps 2–5 after #1021 merges.
-6. flux-id: companion PRD, `STORAGES['error_report']` alias + R2 bucket + lifecycle rule, DRF view with throttle and structured log lines, gunicorn access log enabled, Cloudflare WAF rule. Baseline week of §9.2 before it ships. Can land in parallel with 1–2; step 3 targets staging until then.
+6. flux-id: companion PRD, `STORAGES['error_report']` alias + R2 bucket + lifecycle rule, DRF view with throttle, daily stat rows with Slack digest and alerts, gunicorn access log enabled, Cloudflare WAF rule. Code built 2026-10-15 on flux-id `feat/error-report-upload`; buckets, webhook, WAF rule and the baseline week of §9.2 before it ships. Can land in parallel with 1–2; step 3 targets staging until then.
 
 ## 11. Open decisions
 

@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft — 2026-10-06 |
+| **Status** | Built — 2026-10-15, on flux-id `feat/error-report-upload` (5 commits); R2 buckets, Slack webhook and WAF rule pending |
 | **Created** | 2026-10-06 |
 | **Owner** | flux-id repo (`../flux-id`, Django 4.2.27 / DRF 3.16 / gunicorn 23 / celery 5.6) |
 | **Companion of** | [Error Report Upload](error-report-upload.md) (Beam Studio client; owns the UX, consent, scrub, throttle and cooldown, and the request contract in its §7.5 / §8) |
@@ -25,7 +25,7 @@ Multipart fields (all strings unless noted):
 |---|---|
 | `serial` | `^[A-Za-z0-9-]{1,32}$` or `none`. Deliberately not length-pinned: today's serials are typically 10 chars but the format is not guaranteed stable, and length is not a security control anyway (an attacker matches any format). The factory list in §2.1 is the control. |
 | `installation_id` | `^[a-f0-9]{64}$` (sha256) or UUID v4; always required (folder key for the no-machine sites, §2.1) |
-| `error_code` | ≤ 64 chars, `^[#A-Za-z0-9_-]+$`; `#` is stripped before the key and the log line (`#806` is stored as `806`) because it would start a URL fragment in any pasted object link (decided 2026-10-14) |
+| `error_code` | ≤ 64 chars, `^[#A-Za-z0-9_-]+$`; `#` is stripped before the key and the stat row (`#806` is stored as `806`) because it would start a URL fragment in any pasted object link (decided 2026-10-14) |
 | `app_version`, `os`, `firmware_version` | ≤ 32 chars each; `firmware_version` may be empty |
 | `occurrences_since_last` | integer ≥ 0 |
 | `bug_report` | file, required, ≤ 10 MB |
@@ -36,7 +36,7 @@ Multipart fields (all strings unless noted):
 
 `serial` is attacker-controlled on a public API, and flux-id's serial tables (`MachineInfo`, `MachineDetail`) cover too few machines in the field to make a verified/unverified split useful (decided 2026-10-08, see §10 B3 history). The view therefore trusts the serial only as a folder name: `{serial}/` when a device was known, `no-device/{installation_id}/` for the three client sites that have no machine at all (`#802` backend start, `#809` import, QR auto-connect). Fabricated serials are bounded by the per-IP throttles and the global byte budget (§6), not by a list. Serial format is validated loosely and not length-pinned (§2).
 
-Whole body ≤ `ERROR_REPORT_MAX_BODY_BYTES` (20 MB; nginx already caps at 32 MB). Any violation → `400 { status: 'error', reason }` and a log line `error_report rejected reason=<reason>`. Unknown fields are ignored. Content types from the client are ignored; objects are stored as `text/plain` (`.txt`) and `image/svg+xml` (`.svg`).
+Whole body ≤ `ERROR_REPORT_MAX_BODY_BYTES` (20 MB; nginx already caps at 32 MB). Any violation → `400 { status: 'error', reason }` and a `rejected` increment on the day's `ErrorReportDailyStat` row (§7; under code `''` when the code itself was not yet validated). Unknown fields are ignored. Content types from the client are ignored; objects are stored as `text/plain` (`.txt`) and `image/svg+xml` (`.svg`).
 
 Responses: `200 { status: 'ok' }`, `200 { status: 'duplicate' }` (§5), `400`, `429` (throttle), `503` if the storage write fails (client retries up to 3×).
 
@@ -88,7 +88,7 @@ Algorithm, run once per upload before the write:
 1. `objs = list(prefix)` — one `ListObjectsV2` call (paginated at 1000 keys; realistic folders hold < 30). Keys come back already sorted oldest-first because of the timestamp prefix. Each entry carries `Size`, so no extra HEAD calls.
 2. `total = sum(sizes)`; `incoming = sum(uploaded file sizes)`.
 3. While `total + incoming > cap` and `objs` non-empty: take the oldest **upload group** (all keys sharing the same `{ts}_{code}` prefix), move them to `to_delete`, subtract their sizes.
-4. If `to_delete`: one `DeleteObjects` batch call (≤ 1000 keys), log line `error_report evicted folder=… groups=…`.
+4. If `to_delete`: one `DeleteObjects` batch call (≤ 1000 keys).
 5. If `incoming > cap` on its own (impossible under the 10 MB per-file rule, but checked): reject `400 too_large` instead of emptying the folder.
 6. Write the new objects.
 
@@ -100,7 +100,7 @@ Adjusting: the cap, body limit and dedupe window are settings; raising the cap n
 
 ## 5. Dedupe
 
-Backstop for a client whose cooldown map was wiped. Using the listing from §4: if any key in the folder has the same `{code}` and a `{ts}` within `ERROR_REPORT_DEDUPE_WINDOW`, respond `200 { status: 'duplicate' }`, store nothing, log line `error_report duplicate …`. The client treats `duplicate` as sent for its throttle and cooldown, without the "sent" toast.
+Backstop for a client whose cooldown map was wiped. Using the listing from §4: if any key in the folder has the same `{code}` and a `{ts}` within `ERROR_REPORT_DEDUPE_WINDOW`, respond `200 { status: 'duplicate' }`, store nothing, `duplicates` increment on the stat row. The client treats `duplicate` as sent for its throttle and cooldown, without the "sent" toast.
 
 ## 6. Spam / abuse and the storage bound
 
@@ -110,11 +110,11 @@ Threat model: an attacker who has read the client source can post arbitrary `ser
 |---|---|---|
 | 1. Cloudflare WAF rate-limit rule on `/api/beam-studio/error-report` | 10 req / 10 min per IP, action block, mitigation 10 min (needs a Business zone; Pro allows at most a 1 min period, Free only 10 s: use 5 / min or 3 / 10 s there); expression `http.request.uri.path eq "/api/beam-studio/error-report" and http.request.method eq "POST"`; answers before nginx reads the body | request rate per IP, cheaply |
 | 2. DRF per-IP throttles (`AnonRateThrottle`, two scopes, redis-backed) | `error_report_hour = '6/hour'` and `error_report_day = '20/day'` | an honest NAT (workshop with several machines, each on cooldown) stays well under 20/day; a single abusive IP is capped at 20 × 20 MB = 400 MB/day |
-| 3. **Global daily byte budget** | `cache.incr(f'error_report:bytes:{utc date}', body_size)` before the write; over budget → `429 { status: 'budget' }`, nothing stored, log line `error_report rejected reason=budget` | total ingest ≤ 2 GB/day → bucket ≤ 2 GB × 180 d = 360 GB worst case (≈ $5/month on R2); honest traffic (≈ 45 GB/month) never touches it |
+| 3. **Global daily byte budget** | `cache.incr(f'error_report:bytes:{utc date}', body_size)` before the write; over budget → `429 { status: 'budget' }`, nothing stored, `budget` increment on the stat row and a Slack alert (below) | total ingest ≤ 2 GB/day → bucket ≤ 2 GB × 180 d = 360 GB worst case (≈ $5/month on R2); honest traffic (≈ 45 GB/month) never touches it |
 | 4. Per-folder cap (§4) and 24 h dedupe (§5) | 20 MB per serial / installation folder | one spoofed id cannot grow a folder past 20 MB |
 | 5. Client-side daily limit and fingerprint cooldown (client PRD §7.7) | 10/serial/day, exponential cooldown | honest volume |
 
-Alerting: a Cloudflare notification on R2 storage crossing 100 GB; `grep 'reason=budget'` over the gunicorn error log in the weekly readout (honest traffic never produces it, so any hit means abuse or a client bug). flux-id has no metrics or alerting pipeline today, see §7.
+Alerting (built 2026-10-15, `fluxid/apps/beam_studio/tasks.py`): two abnormal states post to the existing `flux-id` Slack app (`SLACK_WEBHOOK_ID`, the alert channel) through the `send_message_to_slack` Celery task so a slow Slack never holds a gunicorn worker. Budget exhausted → once per UTC day (gate key carries the date, so it realigns with the counter reset); storage list/write failure → once per hour. `cache.add` on `error_report:alert:<kind>` is the gate, so many workers and many requests produce one message. Nothing else alerts: validation rejects, duplicates, evictions and throttled requests only appear in the daily digest (§7). Plus a Cloudflare notification on R2 storage crossing 100 GB (manual, dashboard).
 
 The client treats `429 budget` like any other 4xx: no retry (only no-response and 5xx retry), silent. It does not count as sent, so the cooldown does not advance and the report is retried on the next occurrence.
 
@@ -122,7 +122,7 @@ Escalation only if abuse is observed: require a Beam Studio `User-Agent` prefix,
 
 ## 7. Performance
 
-**Metrics source.** flux-id's statsd integration (`StatsdMiddleWare`, `statsd.incr` in login / openai / design_market, added 2021-11-02 in #46) has never had a receiver: `STATSD_HOST` is unset, nothing listens on 8125 in `compose.deploy.yml`, and python-statsd then sends UDP to localhost where it is dropped. The receiver was a separate EC2 that was not migrated to Linode. Decided 2026-10-12: leave the dead integration in place until this feature ships, then decide whether to remove it or add a receiver. So this feature does not use it. Instead: one structured log line per request from the view (`error_report <ok|duplicate|rejected> serial=… code=… bytes=… ms=… reason=…`, Django logging → gunicorn error log) plus the gunicorn access log with request time (`nginx/gunicorn.conf.py` currently has `accesslog = None`; PR 6 enables it with `access_log_format` including `%(M)s`). The §9.2 readout is `awk` over those two logs plus Cloudflare analytics and Linode graphs. Counts (uploads, duplicates, rejects, budget hits, bytes, summed request time) are also kept per UTC day and error code in `ErrorReportDailyStat` rows, bumped from the view; the Celery beat task `error_report_daily_digest` posts yesterday's sums to the Beam Studio Slack channel, and the budget / storage-failure alerts go to the flux-id channel. The rows give totals and averages only; per-request reasons and p50 / p95 come from the log lines.
+**Metrics source.** flux-id's statsd integration (`StatsdMiddleWare`, `statsd.incr` in login / openai / design_market, added 2021-11-02 in #46) has never had a receiver: `STATSD_HOST` is unset, nothing listens on 8125 in `compose.deploy.yml`, and python-statsd then sends UDP to localhost where it is dropped. The receiver was a separate EC2 that was not migrated to Linode. Decided 2026-10-12: leave the dead integration in place until this feature ships, then decide whether to remove it or add a receiver. So this feature does not use it. Instead (decided 2026-10-14, built 2026-10-15; logs are not a data store): `ErrorReportDailyStat`, one row per UTC day and error code (`fluxid/apps/beam_studio/models/error_report.py`, migration `0013`), with `uploads`, `duplicates`, `rejected`, `budget`, `bytes` and `duration_ms` bumped from the view with `F()` increments; a failed bump is logged and never affects the upload. Admin lists the rows read-only with a date hierarchy. The §9.2 readout is one aggregate (`.filter(date__gte=start).aggregate(Sum('uploads'), Sum('bytes'), Sum('duration_ms'))`); the upload time column is an average (`duration_ms / uploads`), a p95 needs the gunicorn access log (`nginx/gunicorn.conf.py` has `accesslog = None`; enable it with `access_log_format` including `%(M)s` for the baseline week). A Celery beat task (`error_report_daily_digest`, 00:10 UTC, beat embedded in the worker with `-B --schedule /tmp/celerybeat-schedule`, one static `CELERY_BEAT_SCHEDULE` entry) posts yesterday's sums and the top codes to a new `beam-studio` Slack app (`SLACK_WEBHOOK_BS`, an info channel; the `flux-id` app stays an alert channel, §6). Rows are kept, not cleared: one per day and code is a few MB a year, and the week/month comparisons need them.
 
 Sync write inside the request holds one of the 9 gunicorn workers for the R2 PUT (~1–3 s for 10 MB). nginx buffers the request body first, so slow client links do not hold workers. Measure per client PRD §9.2 (baseline week → burst replay on staging → week after release). Upgrade paths, in order of effort:
 
@@ -141,12 +141,13 @@ Linode outbound transfer counts the R2 PUTs (≈ 45 GB/month in the pessimistic 
 ## 9. Rollout
 
 1. Settings alias + env vars on staging; create the R2 buckets `flux-id-test` and `flux-id`, one API token per bucket (Object Read & Write, scoped to that bucket), lifecycle rule on prefix `error-report/`. Done in code 2026-10-14 (branch `feat/error-report-upload`); buckets pending.
-2. View + throttles + budget + tests (`tests/error_report.py`: validation table incl. 10-char and non-10-char serials both accepted, duplicate, eviction order on `InMemoryStorage`, cap setting, per-IP 429 keyed on the Cloudflare-appended client address (`REST_FRAMEWORK['NUM_PROXIES'] = 2`: Cloudflare and nginx each append one hop to `X-Forwarded-For`; without it DRF keyed on the whole header, which changes per edge node), budget 429 at the boundary and reset at UTC midnight, 503 on storage failure, S3 listing with the location prefix). Done 2026-10-14, 16 tests. The view's logger is pinned to INFO in `logging_generator` because the root logger sits at WARNING and would drop the §7 lines.
-3. Cloudflare WAF rule on the path (plan-dependent period, see §6); R2 storage notification at 100 GB on the bucket.
-4. Baseline week of metrics; ship; week-after readout into client PRD §9.2.
+2. View + throttles + budget + tests (`tests/error_report.py`: validation table incl. 10-char and non-10-char serials both accepted, duplicate, eviction order on `InMemoryStorage`, cap setting, per-IP 429 keyed on the Cloudflare-appended client address (`REST_FRAMEWORK['NUM_PROXIES'] = 2`: Cloudflare and nginx each append one hop to `X-Forwarded-For`; without it DRF keyed on the whole header, which changes per edge node), budget 429 at the boundary and reset at UTC midnight, 503 on storage failure, S3 listing with the location prefix). Done 2026-10-14, commit `7eeb33c`.
+3. `ErrorReportDailyStat` rows + admin (§7), daily Slack digest from Celery beat, budget/storage alerts (§6), `REDIS_HOST` env so `manage.py` / `celery` run on the host against a local Redis. Done 2026-10-15, commits `7888d70`, `52ef62b`, `fd9b87c`, `09c9729`; 24 tests. Server env additions: `SLACK_WEBHOOK_BS`; `REDIS_HOST` stays unset in docker compose.
+4. Cloudflare WAF rule on the path (plan-dependent period, see §6); R2 storage notification at 100 GB on the bucket; a Slack incoming webhook for the digest channel.
+5. Baseline week of metrics (enable the gunicorn access log for the latency rows); ship; week-after readout into client PRD §9.2.
 
 ## 10. Open decisions
 
-1. **B1** Should `occurrences_since_last` and `fingerprint` also be written to a small DB table for reporting, or is object metadata plus the R2 dashboard enough for v1? Default: metadata only.
+1. ~~B1 Should `occurrences_since_last` and `fingerprint` also be written to a small DB table for reporting?~~ Decided 2026-10-14/15: no per-request rows; the daily `(date, code)` stat rows (§7) are the reporting table, `occurrences_since_last` stays in the object only. Per-request rows would need retention and grow with abuse.
 2. **B2** Remote-adjustable client daily limit (source PRD §6 note): expose `ERROR_REPORT_DAILY_LIMIT` via the existing beam-studio config endpoint, or leave it a client constant? Default: client constant for v1.
 3. ~~B3 Serial verification tier.~~ Proposed 2026-10-08 (route serials absent from `MachineInfo` / `MachineDetail` to an `unverified/` folder with a 300 MB/day budget), dropped the same day: too few field machines are in those tables, so the split would have had little discriminating power while costing an index migration and a second budget. Revisit only if abuse is observed and the tables are backfilled.

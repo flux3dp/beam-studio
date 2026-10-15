@@ -181,7 +181,7 @@
 - 防濫用與儲存上界，共五層（細節見 [backend.md §6](backend.md)）：Cloudflare WAF 每 IP 流量限制規則；DRF 每 IP 限流 `6/hour` 與 `20/day`，單一 IP 即使捏造序號每天最多 20 × 20 MB = 400 MB；**全域每日位元組預算**（2 GB/日，超過回 `429 { status: 'budget' }`），不論攻擊者用多少 IP 或偽造多少序號，bucket 最壞情況約 360 GB；每資料夾上限與 24 小時去重；client 端每日上限與指紋冷卻（§7.7）。`429` 對 client 而言就是失敗：不重試（只有沒有回應與 5xx 會重試）、靜默，冷卻不推進。
 - 保留：R2 物件生命週期規則，180 天後刪除。不需 cron 程式。
 - 每資料夾上限：保留（§11 D5）。每個 `{serial}/` 與 `no-device/{installation_id}/` 資料夾上限為 `ERROR_REPORT_FOLDER_CAP_BYTES`（預設 20 MB，flux-id 設定）。view 重用去重時已做的前綴列舉，所以上限不多花一次來回；演算法與成本見 [backend.md §4](backend.md)。
-- 指標：view 每筆請求寫一行結構化 log（`error_report <ok|duplicate|rejected> serial=… code=… bytes=… ms=… reason=…`，經 Django logging 進 gunicorn error log）＋ 含請求耗時的 gunicorn access log。flux-id 的 statsd 已是死碼（無 host、無接收端；2026-10-12 確認，見 [backend.md §7](backend.md)），所以 §9.2 改讀 log、Cloudflare 分析與 Linode 圖表。
+- 指標：flux-id 的 `ErrorReportDailyStat` 資料列，每個 UTC 日、每個錯誤碼一列（上傳數、重複數、拒絕數、預算拒絕數、位元組數、請求耗時總和），§9.2 直接彙總，並由 Celery beat 每日發一則 Slack 摘要；每日預算用盡與儲存失敗會警示到 flux-id 的 Slack 頻道（[backend.md §6–7](backend.md)，2026-10-15 完成）。flux-id 的 statsd 已是死碼（無 host、無接收端；2026-10-12 確認），log 不作為資料來源。§9.2 的延遲列仍讀 gunicorn access log、Cloudflare 分析與 Linode 圖表。
 - 同步 vs. 非同步：v1 在請求內寫入 R2（一個同步 gunicorn worker 被 R2 PUT 佔用，從 Linode 傳 10 MB 約 1–3 秒）。若 §9 顯示需要，升級路徑為：先存本機磁碟再由 celery 任務推送，或由端點發給 client 一個 presigned R2 PUT URL，讓資料完全不經 Linode。celery 路徑不改 client 契約；presigned 路徑多一次來回，屬 v2 決策。
 
 ### 7.6 偏好設定與提示
@@ -227,7 +227,7 @@
 |---|---|---|---|---|---|---|
 | 既有端點 p95 延遲（`/user/activity/beam-studio`、登入） | gunicorn access log 請求耗時（PR 6 啟用）/ Cloudflare 分析 | 量測 | 量測 | 量測 | 比基準多 50 ms | R2 PUT 移到 celery |
 | gunicorn 忙碌 worker 數（共 9） | `ps` 取樣 `gunicorn: worker` 處於 `R` 狀態的程序數 | 量測 | 預期 < 1 | 預期 ≤ 10 排隊 | 持續 ≤ 4 | presigned R2 PUT（資料繞過 Linode） |
-| 上傳 `ms=` p50 / p95 | view log 行 | 不適用 | 量測 | 量測 | p95 ≤ 5 秒 | 檢查 Linode → R2 路由，考慮 celery |
+| 上傳耗時，平均（`duration_ms / uploads`）與 p95 | 平均讀 `ErrorReportDailyStat` 彙總；p95 讀 gunicorn access log | 不適用 | 量測 | 量測 | p95 ≤ 5 秒 | 檢查 Linode → R2 路由，考慮 celery |
 | CPU %（所有容器） | Linode 圖表 | 量測 | 量測 | 量測 | +10 個百分點 | celery |
 | RAM、nginx `client_body_temp` 與 Django 暫存上傳用量 | Linode 圖表、`df /tmp` | 量測 | 量測 | 量測 | 請求結束後不增長 | 修正清理 |
 | Linode 對外流量 | Linode 帳號流量池 | 量測 | ≈ 45 GB/月 | 不適用 | ≤ 方案流量池 10 % | presigned PUT |
@@ -243,7 +243,7 @@
 3b. 接上 §7.4 第二波相機觸發點（同一機制）。2026-10-14 於同一分支完成；因為只是六個同形狀的呼叫點，放棄獨立 PR 的做法。`BeamPreviewManager` 改為重用 `handlePreviewSetupError`。
 4. 一次性 一律自動 提示 ＋ toast。2026-10-14 完成。
 5. 其餘 21 種語言（2026-10-14 完成，機器草譯、待母語校對；移除四個孤立的上傳字串與 `#819`）；feature-review；#1021 合併後提第 2–5 步的雙語 PR。
-6. flux-id：配套 PRD、`STORAGES['error_report']` 別名 ＋ R2 bucket ＋ 生命週期規則、含流量限制與結構化 log 的 DRF view、啟用 gunicorn access log、Cloudflare WAF 規則。上線前先做 §9.2 的基準週。可與 1–2 平行進行；在此之前第 3 步指向 staging。
+6. flux-id：配套 PRD、`STORAGES['error_report']` 別名 ＋ R2 bucket ＋ 生命週期規則、含流量限制的 DRF view、每日統計列與 Slack 摘要及警示、啟用 gunicorn access log、Cloudflare WAF 規則。程式已於 2026-10-15 在 flux-id `feat/error-report-upload` 完成；bucket、webhook、WAF 規則與 §9.2 的基準週在上線前完成。可與 1–2 平行進行；在此之前第 3 步指向 staging。
 
 ## 11. 待決事項
 
