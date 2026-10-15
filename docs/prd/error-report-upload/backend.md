@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Built — 2026-10-15, flux-id PR #683; R2 buckets, tokens and Slack webhook created 2026-10-15; lifecycle rule, WAF rule and baseline week pending |
+| **Status** | Built — 2026-10-15, flux-id PR #683; R2 buckets, tokens, lifecycle rules and Slack webhook created 2026-10-15; WAF rule and baseline week pending |
 | **Created** | 2026-10-06 |
 | **Owner** | flux-id repo (`../flux-id`, Django 4.2.27 / DRF 3.16 / gunicorn 23 / celery 5.6) |
 | **Companion of** | [Error Report Upload](error-report-upload.md) (Beam Studio client; owns the UX, consent, scrub, throttle and cooldown, and the request contract in its §7.5 / §8) |
@@ -143,7 +143,7 @@ Linode outbound transfer counts the R2 PUTs (≈ 45 GB/month in the pessimistic 
 1. Settings alias + env vars on staging; create the R2 buckets `flux-id-test` and `flux-id`, one API token per bucket (Object Read & Write, scoped to that bucket), lifecycle rule on prefix `error-report/`. Done in code 2026-10-14 (branch `feat/error-report-upload`); buckets pending.
 2. View + throttles + budget + tests (`tests/error_report.py`: validation table incl. 10-char and non-10-char serials both accepted, duplicate, eviction order on `InMemoryStorage`, cap setting, per-IP 429 keyed on the Cloudflare-appended client address (`REST_FRAMEWORK['NUM_PROXIES'] = 2`: Cloudflare and nginx each append one hop to `X-Forwarded-For`; without it DRF keyed on the whole header, which changes per edge node), budget 429 at the boundary and reset at UTC midnight, 503 on storage failure, S3 listing with the location prefix). Done 2026-10-14, commit `7eeb33c`.
 3. `ErrorReportDailyStat` rows + admin (§7), daily Slack digest from Celery beat, budget/storage alerts (§6), `REDIS_HOST` env so `manage.py` / `celery` run on the host against a local Redis. Done 2026-10-15, commits `7888d70`, `52ef62b`, `fd9b87c`, `09c9729`; 24 tests. Server env additions: `SLACK_WEBHOOK_BS`; `REDIS_HOST` stays unset in docker compose.
-4. R2 buckets `flux-id-test` / `flux-id` (Asia Pacific), one Object Read & Write token each, Slack incoming webhook for the digest channel: done 2026-10-15. Still open: 180-day lifecycle rule on prefix `error-report/` on both buckets (dashboard or `wrangler r2 bucket lifecycle add`; the Object token cannot set it, `PutBucketLifecycleConfiguration` needs an Admin token); Cloudflare WAF rule on the path (plan-dependent period, see §6); R2 storage notification at 100 GB on the bucket.
+4. R2 buckets `flux-id-test` / `flux-id` (Asia Pacific), one Object Read & Write token each, 180-day lifecycle rule on prefix `error-report/` on both buckets (set in the dashboard; the Object token cannot, `PutBucketLifecycleConfiguration` needs an Admin token), Slack incoming webhook for the digest channel: done 2026-10-15. Still open: Cloudflare WAF rule on the path (plan-dependent period, see §6); R2 storage notification at 100 GB on the bucket.
 5. Baseline week of metrics (enable the gunicorn access log for the latency rows); ship; week-after readout into client PRD §9.2.
 
 ## 10. Open decisions
