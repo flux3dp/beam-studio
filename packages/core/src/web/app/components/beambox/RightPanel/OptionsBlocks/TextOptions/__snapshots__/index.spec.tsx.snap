@@ -444,7 +444,6 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
         value="history-Arial"
       >
         <div
-          class="display"
           style="font-family: 'Arial';"
         >
           Arial
@@ -454,7 +453,6 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
         value="history-Times New Roman"
       >
         <div
-          class="display"
           style="font-family: 'Times New Roman';"
         >
           Times New Roman
@@ -464,7 +462,6 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
         value="Arial"
       >
         <div
-          class="display"
           style="font-family: 'Arial';"
         >
           Arial
@@ -474,7 +471,6 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
         value="Times New Roman"
       >
         <div
-          class="display"
           style="font-family: 'Times New Roman';"
         >
           Times New Roman
@@ -484,7 +480,6 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
         value="Helvetica"
       >
         <div
-          class="display"
           style="font-family: 'Helvetica';"
         >
           Helvetica
@@ -565,7 +560,6 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
         value="history-Arial"
       >
         <div
-          class="display"
           style="font-family: 'Arial';"
         >
           Arial
@@ -575,7 +569,6 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
         value="history-Times New Roman"
       >
         <div
-          class="display"
           style="font-family: 'Times New Roman';"
         >
           Times New Roman
@@ -585,7 +578,6 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
         value="Arial"
       >
         <div
-          class="display"
           style="font-family: 'Arial';"
         >
           Arial
@@ -595,7 +587,6 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
         value="Times New Roman"
       >
         <div
-          class="display"
           style="font-family: 'Times New Roman';"
         >
           Times New Roman
@@ -605,7 +596,6 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
         value="Helvetica"
       >
         <div
-          class="display"
           style="font-family: 'Helvetica';"
         >
           Helvetica
@@ -703,7 +693,6 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
         value="history-Arial"
       >
         <div
-          class="display"
           style="font-family: 'Arial';"
         >
           Arial
@@ -713,7 +702,6 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
         value="history-Times New Roman"
       >
         <div
-          class="display"
           style="font-family: 'Times New Roman';"
         >
           Times New Roman
@@ -723,7 +711,6 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
         value="Arial"
       >
         <div
-          class="display"
           style="font-family: 'Arial';"
         >
           Arial
@@ -733,7 +720,6 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
         value="Times New Roman"
       >
         <div
-          class="display"
           style="font-family: 'Times New Roman';"
         >
           Times New Roman
@@ -743,7 +729,6 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
         value="Helvetica"
       >
         <div
-          class="display"
           style="font-family: 'Helvetica';"
         >
           Helvetica

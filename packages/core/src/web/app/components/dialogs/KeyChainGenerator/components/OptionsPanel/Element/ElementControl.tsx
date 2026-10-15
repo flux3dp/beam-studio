@@ -1,14 +1,13 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback } from 'react';
 
+import ElementPicker from '@core/app/widgets/ElementPicker';
 import useI18n from '@core/helpers/useI18n';
 
 import type { ElementOptionDef } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
 import GroupCollapse from '../Controls/GroupCollapse';
 import SwitchControl from '../Controls/SwitchControl';
-
-import ElementPicker from './ElementPicker';
 
 interface ElementControlProps {
   optionDef: ElementOptionDef;
