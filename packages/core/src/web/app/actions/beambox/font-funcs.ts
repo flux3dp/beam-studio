@@ -172,15 +172,24 @@ const getInstalledFontOfPostscriptName = memoize((postscriptName: string) => {
   return (fit.length > 0 ? fit : allFonts)[0];
 });
 
-const getFontOfPostscriptName = (postscriptName: string): GeneralFont =>
+const getFontOfPostscriptName = (postscriptName: string): GeneralFont => {
   // A registered Google font wins over a bundled copy of the same face (Lobster-Regular is both): the
   // registry descriptor has no `path`, so image-based exports (thumbnails, PDF) can still inline it.
-  useGoogleFontStore.getState().getRegisteredFont(postscriptName) ??
+  const registered = useGoogleFontStore.getState().getRegisteredFont(postscriptName);
+
+  if (registered) return registered;
+
+  // An exact match in the installed / web font lists wins too: its family is what the font pickers list
+  // (the web list's `lobster` vs the bundled `Lobster`), and the scan falls back to an arbitrary font on a miss.
+  const installed = getInstalledFontOfPostscriptName(postscriptName);
+
+  if (installed?.postscriptName === postscriptName) return installed;
+
   // Bundled fonts resolve by exact postscript name only (the stamp generator pins them per slot); they are
   // deliberately absent from the family lists, because image-based exports render through an isolated
   // document that only sees installed fonts and inlined web fonts.
-  getBundledFont(postscriptName) ??
-  getInstalledFontOfPostscriptName(postscriptName);
+  return getBundledFont(postscriptName) ?? installed;
+};
 
 const init = () => {
   getFontOfPostscriptName('ArialMT');
