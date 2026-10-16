@@ -93,6 +93,8 @@ export const loadWebFont = async (font: WebFont): Promise<Font | undefined> => {
   if ('hasLoaded' in font) {
     // Indicates a Monotype font
     url = await fontHelper.getMonotypeUrl(postscriptName!);
+  } else if (font.url) {
+    url = font.url;
   } else {
     // Default to S3 bucket
     const fileName = font.fileName || `${postscriptName}.ttf`;

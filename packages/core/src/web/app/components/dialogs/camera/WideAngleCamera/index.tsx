@@ -61,7 +61,7 @@ interface Props {
 
 const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'wide-angle-camera-calibration';
-  const { calibration: tCali, device: tDevice } = useI18n();
+  const { calibration: tCali, device: tDevice, global: tGlobal } = useI18n();
   const [step, setStep] = useState(Step.PREPARE_MATERIALS);
   const next = useCallback(() => setStep((cur) => cur + 1), []);
   const prev = useCallback(() => setStep((cur) => cur - 1), []);
@@ -139,7 +139,7 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
             { label: tCali.cancel, onClick: () => handleClose(false) },
             // Reuse the existing camera parameters on the device instead of re-capturing the pattern.
             currentData && {
-              label: tCali.skip,
+              label: tGlobal.skip,
               onClick: async () => {
                 if (await applyCheckpointData(currentData)) {
                   updateParam(currentData);
@@ -231,7 +231,7 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
           ]}
           buttons={[
             { label: tCali.cancel, onClick: () => handleClose(false) },
-            { label: tCali.skip, onClick: () => handleNext(false) },
+            { label: tGlobal.skip, onClick: () => handleNext(false) },
             { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
           ]}
           onClose={() => handleClose(false)}

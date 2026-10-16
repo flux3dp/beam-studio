@@ -1,6 +1,6 @@
 {
   "name": "@beam-studio/app",
-  "version": "2.7.2-alpha",
+  "version": "2.7.3-alpha",
   "license": "AGPL-3.0-only",
   "homepage": "https://github.com/flux3dp/beam-studio",
   "description": "Beam Studio Electron App",
@@ -54,7 +54,7 @@
     "babel-loader": "^8.2.2",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^5.2.7",
-    "electron": "43.4.1",
+    "electron": "43.5.0",
     "electron-builder": "26.15.3",
     "electron-fix": "^1.1.7",
     "jest": "30.2.0",

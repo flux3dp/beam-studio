@@ -1,0 +1,14 @@
+.grid {
+  grid-template-columns: repeat(3, 1fr);
+  max-height: none;
+  padding: 0;
+}
+
+// Landscape designs (rect 188×72, oval 180×120): wide cells, two per row.
+.wideGrid {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.wide {
+  aspect-ratio: 3 / 1;
+}

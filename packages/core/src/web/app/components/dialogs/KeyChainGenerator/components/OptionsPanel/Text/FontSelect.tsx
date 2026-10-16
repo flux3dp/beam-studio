@@ -15,7 +15,7 @@ interface FontSelectProps {
 }
 
 const FontSelect = ({ font, onChange }: FontSelectProps): ReactNode => {
-  const t = useI18n().keychain_generator.text_options;
+  const t = useI18n().generators.text_options;
 
   const fontOptions = useMemo(() => {
     return fontFuncs.requestAvailableFontFamilies().map((value: string) => renderTextOptions(value));

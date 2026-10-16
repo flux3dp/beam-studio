@@ -600,6 +600,7 @@ const useMenuData = (email?: string): MenuNode[] => {
             { id: 'START_UI_INTRO', label: menuCms.show_ui_intro, type: 'item' as const },
           ]
         : []),
+      { id: 'START_101_COURSE', label: menuCms.flux_101, type: 'item' },
       { id: 'START_GESTURE_INTRO', label: menuCms.show_gesture_tutorial, type: 'item' },
       { id: 'MAINTENANCE_CHECKLIST', label: menuCms.maintenance_checklist, type: 'item' },
       { id: 'CHANGE_LOGS', label: menuCms.change_logs, type: 'item' },

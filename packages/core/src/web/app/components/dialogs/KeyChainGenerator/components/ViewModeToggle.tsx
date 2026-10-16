@@ -43,13 +43,13 @@ const Thumb = ({ svg }: ThumbProps): React.JSX.Element => {
 };
 
 const ViewModeToggle = ({ designSvg, explodedSvg }: ViewModeToggleProps): React.JSX.Element => {
-  const { keychain_generator: t } = useI18n();
+  const { generators: t } = useI18n();
   const viewMode = useKeychainShapeStore((s) => s.viewMode);
   const setViewMode = useKeychainShapeStore((s) => s.setViewMode);
 
   const buttons: Array<{ label: string; mode: KeychainViewMode; svg: null | SVGSVGElement }> = [
-    { label: t.design_preview, mode: 'design', svg: designSvg },
-    { label: t.exploded_view, mode: 'exploded', svg: explodedSvg },
+    { label: t.general.design_preview, mode: 'design', svg: designSvg },
+    { label: t.general.exploded_view, mode: 'exploded', svg: explodedSvg },
   ];
 
   return (

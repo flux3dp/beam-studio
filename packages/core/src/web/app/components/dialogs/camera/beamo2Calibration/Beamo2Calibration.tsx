@@ -84,7 +84,7 @@ const DEFAULT_POINTS_BR: Array<[number, number]> = [
 
 const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNode => {
   const PROGRESS_ID = 'fbm2-calibration';
-  const { calibration: tCalibration, device: tDevice } = useI18n();
+  const { calibration: tCalibration, device: tDevice, global: tGlobal } = useI18n();
   const calibratingParam = useRef<FisheyeCameraParametersV4Cali>(currentData ?? {});
   const updateParam = useCallback((param: FisheyeCameraParametersV4Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
@@ -205,7 +205,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
                   label: tCalibration.cancel,
                   onClick: () => onClose(false),
                 },
-            { label: tCalibration.skip, onClick: () => handleNext(false) },
+            { label: tGlobal.skip, onClick: () => handleNext(false) },
             { label: tCalibration.start_engrave, onClick: () => handleNext(), type: 'primary' },
           ]}
           onClose={onClose}

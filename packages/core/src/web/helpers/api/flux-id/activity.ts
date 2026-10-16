@@ -58,6 +58,20 @@ export const setPreference = async (value: { [key: string]: any }): Promise<bool
   return false;
 };
 
+/**
+ * FLUX 101 credit grant (companion PRD §3). Server-idempotent per (user, lesson); resolves to every
+ * lesson id this account has ever been granted, or undefined on any failure (offline, 429, logged out).
+ */
+export const grantFlux101Credits = async (lessonIds: string[]): Promise<string[] | undefined> => {
+  const response = (await axiosFluxId.post(
+    '/api/beam-studio/flux101/grant',
+    { lesson_ids: lessonIds },
+    { withCredentials: true },
+  )) as ResponseWithError;
+
+  return response.status === 200 && response.data?.status === 'ok' ? response.data.granted_lesson_ids : undefined;
+};
+
 export const recordMachines = async (): Promise<void> => {
   let shouldRecord = true;
 

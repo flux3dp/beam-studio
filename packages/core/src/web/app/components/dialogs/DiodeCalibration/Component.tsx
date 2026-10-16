@@ -39,7 +39,7 @@ interface Props {
 }
 
 const DiodeCalibration = ({ device, onClose }: Props): ReactNode => {
-  const { alert: langAlert, calibration: lang } = useI18n();
+  const { alert: langAlert, calibration: lang, global: tGlobal } = useI18n();
   const didCalibrate = calibratedMachineUUIDs.includes(device.uuid);
   const [cameraMovedX, setCameraMovedX] = useState(0);
   const [cameraMovedY, setCameraMovedY] = useState(0);
@@ -258,7 +258,7 @@ const DiodeCalibration = ({ device, onClose }: Props): ReactNode => {
               }}
               type="primary"
             >
-              {lang.skip}
+              {tGlobal.skip}
             </Button>
           </>
         }
@@ -270,7 +270,7 @@ const DiodeCalibration = ({ device, onClose }: Props): ReactNode => {
         <div>{lang.ask_for_skip_engraving_task}</div>
       </DraggableModal>
     );
-  }, [device, handleClose, doCaptureTask, cropAndRotateImg, lang, langAlert]);
+  }, [device, handleClose, doCaptureTask, cropAndRotateImg, lang, langAlert, tGlobal]);
 
   const renderStepAlert = useCallback((): React.JSX.Element => {
     const model = device.model === 'fbm1' ? 'beamo' : 'beambox';

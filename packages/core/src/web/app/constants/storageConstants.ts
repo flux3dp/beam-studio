@@ -18,6 +18,7 @@ export const getStorageKeys: () => StorageKey[] = () => [
   'did-gesture-tutorial',
   'elements-history',
   'enable-sentry',
+  'flux-101',
   'flux-rsa-key',
   'font-history',
   'font-name-map',

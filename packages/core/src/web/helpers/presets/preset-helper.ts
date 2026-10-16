@@ -7,6 +7,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { inchLabels, presetNames } from '@core/app/constants/presetNames';
 import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -95,6 +96,20 @@ const migrateStorage = () => {
   return presets;
 };
 
+/** `<material> - <thickness> <preset>`, e.g. "Wood - 3mm Cutting"; unknown keys fall back to the key. */
+export const getPresetName = (key: string, unit: 'inches' | 'mm'): string => {
+  const def = presetNames[key];
+
+  if (!def) return key;
+
+  const { materials, presets } = i18n.lang.beambox.right_panel.laser_panel.dropdown;
+  const thickness = def.thicknessMm && (unit === 'inches' ? inchLabels[def.thicknessMm] : `${def.thicknessMm}mm`);
+  const detail = [thickness, def.preset && presets[def.preset]].filter(Boolean).join(' ');
+  const material = materials[def.material];
+
+  return detail ? `${material} - ${detail}` : material;
+};
+
 // default + customized
 let allPresets: Preset[] | undefined;
 
@@ -113,17 +128,10 @@ const initPresets = (migrate = false) => {
       allPresets = getStorage('presets') || migrateStorage();
     }
 
-    // translate name
     const unit = getStorage('default-units') || 'mm';
-    const LANG = i18n.lang.beambox.right_panel.laser_panel;
 
     allPresets!.forEach((preset) => {
-      if (preset.isDefault && preset.key) {
-        const { key } = preset;
-        const translated = LANG.dropdown[unit][key as keyof (typeof LANG.dropdown)[typeof unit]];
-
-        preset.name = translated || key;
-      }
+      if (preset.isDefault && preset.key) preset.name = getPresetName(preset.key, unit);
     });
   }
 };

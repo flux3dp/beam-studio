@@ -3,7 +3,7 @@ import { pathToFileURL } from 'url';
 
 import { enable as enableRemote } from '@electron/remote/main';
 import type { BaseWindow, IpcMainEvent } from 'electron';
-import { ipcMain, WebContentsView } from 'electron';
+import { ipcMain, shell, WebContentsView } from 'electron';
 
 import type { CanvasMode } from '@core/app/constants/canvasMode';
 import { MiscEvents, TabConstants, TabEvents } from '@core/app/constants/ipcEvents';
@@ -221,12 +221,12 @@ class TabManager {
 
     enableRemote(webContents);
     webContents.setWindowOpenHandler(({ url: openUrl }) => {
-      // Prevent the new window from early input files
-      if (openUrl.startsWith('file://')) {
-        return { action: 'deny' };
-      }
+      // Never a child window: early input files (file://) are dropped, every other target
+      // (target="_blank" links in alerts, "Watch on YouTube" from the FLUX 101 iframe, deep links)
+      // opens in the system browser / handler.
+      if (!openUrl.startsWith('file://') && !openUrl.startsWith('about:')) shell.openExternal(openUrl);
 
-      return { action: 'allow' };
+      return { action: 'deny' };
     });
     initStore(webContents, isWelcomeTab);
 

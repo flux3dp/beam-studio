@@ -18,6 +18,8 @@ it('check new file', () => {
 });
 
 it('check new file after reset', () => {
+  const isRunningAtGithub = Cypress.env('envType') === 'github';
+
   cy.landingEditor();
   cy.go2Preference();
   cy.get('.ant-modal-footer button').contains('Reset Beam Studio').click();
@@ -25,17 +27,14 @@ it('check new file after reset', () => {
   cy.contains('Sign in later').click();
   cy.contains('Skip').click();
   cy.contains('New Project').click();
+  // Sentry, then (with a machine) camera calibration and the tutorial prompt, then the FLUX 101 nudge
   cy.get('button[class^="ant-btn"]').contains('No').click({ timeout: 100000 });
-  cy.get('body').then((body) => {
-    if (body.find('div.ant-modal-body').length > 0) {
-      cy.get('button[class^="ant-btn"]').contains('No').click();
-    }
-  });
-  cy.get('body').then((body) => {
-    if (body.find('div.ant-modal-body').length > 0) {
-      cy.get('button[class^="ant-btn"]').contains('No').click();
-    }
-  });
+
+  for (let i = 1; i < (isRunningAtGithub ? 1 : 3); i++) {
+    cy.get('button[class^="ant-btn"]').contains('No').click();
+  }
+
+  cy.get('button[class^="ant-btn"]').contains('Maybe later').click();
   cy.clickToolBtn('Pen');
   cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });

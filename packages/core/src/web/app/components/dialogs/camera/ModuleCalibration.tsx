@@ -83,7 +83,7 @@ const doCalibration = async (model: WorkAreaModel, module: LayerModuleType): Pro
 
 // TODO: add unit test
 const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Props): React.ReactNode => {
-  const lang = useI18n().calibration;
+  const { calibration: lang, global: tGlobal } = useI18n();
   const param = useRef<FisheyeCameraParameters>({} as any);
   const [step, setStep] = useState<Step>(Step.WAITING);
   const { model, uuid: currentDeviceId } = useMemo(() => deviceMaster.currentDevice!.info, []);
@@ -111,7 +111,7 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
     if (calibrated[module]?.has(currentDeviceId)) {
       const res = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({
-          buttonLabels: [lang.skip],
+          buttonLabels: [tGlobal.skip],
           buttonType: alertConstants.CUSTOM_CANCEL,
           callbacks: () => resolve(true),
           message: printingModules.has(module) ? lang.ask_for_skip_printing_task : lang.ask_for_skip_engraving_task,
@@ -247,7 +247,7 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
           animationSrcs={animationSrcs}
           buttons={[
             { label: lang.back, onClick: () => setStep(Step.PUT_PAPER) },
-            { label: lang.skip, onClick: () => setStep(Step.ALIGN) },
+            { label: tGlobal.skip, onClick: () => setStep(Step.ALIGN) },
             {
               label: cutLabel || lang.start_engrave,
               onClick: async () => {

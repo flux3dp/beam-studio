@@ -187,7 +187,7 @@ const AdorCalibration = ({
           ]}
           buttons={[
             { label: tCali.cancel, onClick: () => onClose(false) },
-            // { label: tCali.skip, onClick: () => handleNext(false) },
+            // { label: lang.global.skip, onClick: () => handleNext(false) },
             { label: tCali.start_engrave, onClick: () => handleNext(true), type: 'primary' },
           ]}
           onClose={() => onClose(false)}

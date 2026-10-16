@@ -66,13 +66,22 @@ function menuBar() {
 }
 
 const setReferer = () => {
-  const filter = { urls: ['https://id.flux3dp.com/*', 'https://id-test.flux3dp.com/*'] };
+  const filter = {
+    urls: [
+      'https://id.flux3dp.com/*',
+      'https://id-test.flux3dp.com/*',
+      // YouTube refuses embeds without an https Referer (error 153); the file:// renderer sends none
+      'https://www.youtube.com/*',
+      'https://www.youtube-nocookie.com/*',
+    ],
+  };
 
   session.defaultSession.webRequest.onBeforeSendHeaders(filter, (details, callback) => {
     const referer = /https:\/\/id(-test)?.flux3dp.com/.exec(details.url);
     const header = details.requestHeaders;
 
     if (referer) header['Referer'] = referer[0];
+    else if (details.url.includes('youtube')) header['Referer'] = 'https://flux3dp.com/';
 
     // Send new object to make sure header is updated
     callback({ requestHeaders: { ...header } });
