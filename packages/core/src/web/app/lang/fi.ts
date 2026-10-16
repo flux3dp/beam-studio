@@ -2498,7 +2498,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Tekoälypohjainen ääriviivojen tunnistus',
-    ai_contour_detection_tooltip: 'Käyttää tekoälymallia kohteiden tunnistamiseen kameran esikatselusta. Tarkempi kuvioiduilla materiaaleilla, mutta hitaampi vanhemmilla tietokoneilla; poista käytöstä käyttääksesi perinteistä tunnistusta. Käytössä: Automaattinen Sovitus, Kohdista objektin keskipisteeseen.',
+    ai_contour_detection_tooltip: 'Käyttää tekoälymallia kohteiden tunnistamiseen kameran esikatselusta. Tarkempi kuvioiduilla materiaaleilla, mutta hitaampi vanhemmilla tietokoneilla; poista käytöstä käyttääksesi perinteistä tunnistusta. Käytössä: Automaattinen Sovitus.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Valitse automaattisesti ainoa laite',
     auto_switch_tab: 'Automaattinen vaihto kerros- ja objektipaneelin välillä',
