@@ -191,6 +191,28 @@ describe('ImageContourDetector', () => {
     expect(detector.contours).toHaveLength(1);
   });
 
+  it('shows decoder progress on the loading toast, but not after the preview was cleared', async () => {
+    let onProgress: (done: number, total: number) => void = () => {};
+
+    mockDetectContours.mockImplementationOnce((_blob, opts) => {
+      onProgress = opts.onProgress;
+
+      return new Promise(() => {});
+    });
+    canvasEventEmitter.emit('preview-background-updated');
+    await endBatch();
+
+    onProgress(30, 75);
+    expect(mockOpenMessage).toHaveBeenLastCalledWith(
+      expect.objectContaining({ content: 'detecting 40%', level: 'loading' }),
+    );
+
+    detector.clear();
+    mockOpenMessage.mockClear();
+    onProgress(60, 75);
+    expect(mockOpenMessage).not.toHaveBeenCalled();
+  });
+
   it('ignores previews while the preference is off and clears when it turns off', async () => {
     useGlobalPreferenceStore.getState().set('snap_to_object_center', false);
     canvasEventEmitter.emit('preview-background-updated');

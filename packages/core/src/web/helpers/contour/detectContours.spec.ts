@@ -117,7 +117,7 @@ describe('detectContours', () => {
     const res = await detectContours(blob);
 
     expect(drawImage).not.toHaveBeenCalled();
-    expect(mockDetectContours).toHaveBeenCalledWith(blob);
+    expect(mockDetectContours).toHaveBeenCalledWith(blob, {});
     expect(res[0].bbox).toEqual([10, 20, 30, 40]);
   });
 

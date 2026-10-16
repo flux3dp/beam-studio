@@ -197,7 +197,19 @@ export class ImageContourDetector {
     if (!crop) return false;
 
     const k = 1 / crop.ratio; // canvasRatio < 1 only on iOS
-    const detected = await detectWithOnnx(crop.blob);
+    const detected = await detectWithOnnx(crop.blob, {
+      // decoder progress only: the encoder runs first with no events, so the toast sits at the plain text for a while
+      onProgress: (done, total) => {
+        if (generation !== this.generation) return; // cleared mid-run: the toast is closed, keep it closed
+
+        MessageCaller.openMessage({
+          content: `${i18n.lang.message.detecting_objects} ${Math.round((done / total) * 100)}%`,
+          duration: 0,
+          key: MESSAGE_KEY,
+          level: MessageLevel.LOADING,
+        });
+      },
+    });
 
     // the preview was cleared (or the feature turned off) while the model ran: the result describes
     // an image that is gone, and the empty list from clear() must stand

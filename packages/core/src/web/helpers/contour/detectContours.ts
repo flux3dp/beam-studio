@@ -51,9 +51,12 @@ const downscaleForOnnx = async (blob: Blob, maxSide: number): Promise<{ blob: Bl
 };
 
 /** ONNX only, no fallback: Snap to Object Center uses this directly (the OpenCV results were too unstable for silent snapping). */
-export const detectWithOnnx = async (blob: Blob): Promise<DetectedContour[]> => {
+export const detectWithOnnx = async (
+  blob: Blob,
+  opts: { onProgress?: (done: number, total: number) => void } = {},
+): Promise<DetectedContour[]> => {
   const { blob: scaled, scale } = await downscaleForOnnx(blob, ONNX_MAX_SIDE);
-  const { height, objects, timeMs, width } = await swiftrayClient.detectContours(scaled);
+  const { height, objects, timeMs, width } = await swiftrayClient.detectContours(scaled, opts);
   const k = 1 / scale;
 
   console.info(
