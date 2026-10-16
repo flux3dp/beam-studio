@@ -2,7 +2,6 @@ import type { ChildProcess } from 'child_process';
 import { spawn } from 'child_process';
 import { EventEmitter } from 'events';
 import fs from 'fs';
-import os from 'os';
 import path from 'path';
 
 import { app, ipcMain } from 'electron';
@@ -167,27 +166,36 @@ class BackendManager extends EventEmitter {
     }, 2500);
   }
 
+  /** The backend never came up: say so now, and keep retrying so a later fix heals without a restart. */
+  private failStart = (reason: unknown): void => {
+    console.error('Backend failed to start:', reason);
+    this.proc = undefined;
+    this.emit('stopped', { failedToStart: true });
+
+    if (this.isRunning) this.setRecover();
+  };
+
   spawn(): void {
-    const ghostDirectoy = path.dirname(this.ghostLocation);
-    const ghostExec = path.basename(this.ghostLocation);
-
-    // Nothing to run: anti-virus removed the binary, or the install is broken. Report it at once
-    // rather than leaving the renderer waiting for a port that will never arrive. Recovery still
-    // retries, so restoring the file heals without a restart.
+    // Nothing to run: anti-virus removed the binary, or the install is broken.
     if (!fs.existsSync(this.ghostLocation)) {
-      console.error(`Backend not found at ${this.ghostLocation}`);
-      this.emit('stopped', { failedToStart: true });
-
-      if (this.isRunning) this.setRecover();
+      this.failStart(`not found at ${this.ghostLocation}`);
 
       return;
     }
 
-    if (os.platform() === 'win32') {
-      this.proc = spawn(`"${ghostExec}"`, this.args, { cwd: ghostDirectoy, shell: true });
-    } else {
-      this.proc = spawn(`./"${ghostExec}"`, this.args, { cwd: ghostDirectoy, shell: true });
+    // No shell: a locked-down account (school lab policy, AppLocker) can be denied cmd.exe while the
+    // backend itself is allowed, and a direct child is also what proc.kill() actually kills.
+    try {
+      this.proc = spawn(this.ghostLocation, this.args, { cwd: path.dirname(this.ghostLocation) });
+    } catch (error) {
+      // Node throws synchronously for errors libuv cannot map ("spawn UNKNOWN"), e.g. a policy block.
+      this.failStart(error);
+
+      return;
     }
+
+    // Async spawn failures (ENOENT, EACCES) arrive here instead of 'exit'; unhandled, they crash the main process.
+    this.proc.on('error', this.failStart);
 
     this.proc.stdout?.on('data', (data) => {
       const result = uglyJsonParser(data.toString());
@@ -250,11 +258,21 @@ class BackendManager extends EventEmitter {
     // instance we are about to spawn unreachable. Clear the way before every spawn.
     killStaleSwiftray();
 
-    const command = os.platform() === 'win32' ? `"${paths.exec}"` : `./"${paths.exec}"`;
+    try {
+      this.swiftrayProc = spawn(path.join(paths.dir, paths.exec), ['--daemon'], { cwd: paths.dir });
+    } catch (error) {
+      // ponytail: no retry on a spawn-level failure; the 'exit' path below still recovers crashes.
+      console.error('Swiftray failed to start:', error);
 
-    this.swiftrayProc = spawn(command, ['--daemon'], { cwd: paths.dir, shell: true });
+      return;
+    }
+
     this.hasSpawnedSwiftray = true;
 
+    this.swiftrayProc.on('error', (error) => {
+      console.error('Swiftray failed to start:', error);
+      this.swiftrayProc = undefined;
+    });
     this.swiftrayProc.stdout?.on('data', (data) => {
       console.log(`Swiftray: ${data}`);
     });
@@ -284,8 +302,7 @@ class BackendManager extends EventEmitter {
 
     if (proc?.pid) killSwiftrayPid(proc.pid);
 
-    // `pid` is the shell wrapper, and on Windows a tree kill can miss a re-parented daemon, so
-    // always follow up with the name/port sweep.
+    // On Windows a tree kill can miss a re-parented daemon, so always follow up with the name/port sweep.
     killStaleSwiftray();
   }
 
