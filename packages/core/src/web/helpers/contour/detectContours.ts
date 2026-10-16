@@ -9,23 +9,19 @@ export type ContourEngine = 'onnx' | 'opencv';
 export type DetectedContour = AutoFitContour;
 
 /**
- * Resolve the engine that will actually run: the user's preference, downgraded to 'opencv'
- * whenever the ONNX host is not available right now. The socket check matters: a request on a
- * closed Swiftray socket never resolves (action() only shows the disconnected toast), so we must
- * not even try.
+ * The ONNX host can take a request right now: desktop, Swiftray found, socket open, new enough.
+ * The socket check matters: a request on a closed Swiftray socket never resolves (action() only
+ * shows the disconnected toast), so callers must not even try.
  */
-export const getEffectiveContourEngine = (): ContourEngine => {
-  const swiftrayReady =
-    hasSwiftray &&
-    swiftrayClient.readyState === WebSocket.OPEN &&
-    versionChecker(swiftrayClient.version).meetRequirement('SWIFTRAY_SEGMENT');
+export const isOnnxAvailable = (): boolean =>
+  !isWeb() &&
+  hasSwiftray &&
+  swiftrayClient.readyState === WebSocket.OPEN &&
+  versionChecker(swiftrayClient.version).meetRequirement('SWIFTRAY_SEGMENT');
 
-  if (isWeb() || !swiftrayReady) return 'opencv';
-
-  const preferred = useGlobalPreferenceStore.getState()['contour-engine'];
-
-  return preferred;
-};
+/** The engine Auto Fit will actually run: the user's preference, downgraded to 'opencv' when ONNX is unavailable. */
+export const getEffectiveContourEngine = (): ContourEngine =>
+  isOnnxAvailable() ? useGlobalPreferenceStore.getState()['contour-engine'] : 'opencv';
 
 /**
  * SAM encodes at 1024 px on the longest side regardless of input, so anything larger only makes the
@@ -54,9 +50,13 @@ const downscaleForOnnx = async (blob: Blob, maxSide: number): Promise<{ blob: Bl
   return { blob: scaled, scale };
 };
 
-const detectWithOnnx = async (blob: Blob): Promise<DetectedContour[]> => {
+/** ONNX only, no fallback: Snap to Object Center uses this directly (the OpenCV results were too unstable for silent snapping). */
+export const detectWithOnnx = async (
+  blob: Blob,
+  opts: { onProgress?: (done: number, total: number) => void } = {},
+): Promise<DetectedContour[]> => {
   const { blob: scaled, scale } = await downscaleForOnnx(blob, ONNX_MAX_SIDE);
-  const { height, objects, timeMs, width } = await swiftrayClient.detectContours(scaled);
+  const { height, objects, timeMs, width } = await swiftrayClient.detectContours(scaled, opts);
   const k = 1 / scale;
 
   console.info(
@@ -72,9 +72,9 @@ const detectWithOnnx = async (blob: Blob): Promise<DetectedContour[]> => {
 };
 
 /**
- * Engine-agnostic "find every object in this preview image" — the single seam both Auto Fit and
- * image-contour Auto Align consume. Coordinates are image px of `blob`.
- * An ONNX failure falls back to OpenCV for this call only (the preference is left untouched).
+ * Engine-agnostic "find every object in this preview image" for Auto Fit. Coordinates are image
+ * px of `blob`. An ONNX failure falls back to OpenCV for this call only (the preference is left
+ * untouched).
  */
 export const detectContours = async (
   blob: Blob,

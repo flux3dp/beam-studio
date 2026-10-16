@@ -2498,7 +2498,7 @@ const lang: ILang = {
   },
   settings: {
     ai_contour_detection: 'Deteksi Kontur AI',
-    ai_contour_detection_tooltip: 'Menggunakan model AI untuk menemukan objek pada pratinjau kamera. Lebih akurat pada material bertekstur, tetapi lebih lambat di komputer lama; matikan untuk menggunakan deteksi klasik. Digunakan oleh: Pas Otomatis, Jepret ke Pusat Objek.',
+    ai_contour_detection_tooltip: 'Menggunakan model AI untuk menemukan objek pada pratinjau kamera. Lebih akurat pada material bertekstur, tetapi lebih lambat di komputer lama; matikan untuk menggunakan deteksi klasik. Digunakan oleh: Pas Otomatis.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Pilih otomatis satu-satunya mesin',
     auto_switch_tab: 'Sakelar Otomatis Panel Lapisan dan Objek',
