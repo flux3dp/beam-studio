@@ -25,9 +25,7 @@ export const renderTextOptions = (family: string, isHistory = false): FontOption
       {src.includes('monotype') && <FluxIcons.FluxPlus />}
     </div>
   ) : (
-    <div className={styles.display} style={{ fontFamily: `'${family}'` }}>
-      {displayName}
-    </div>
+    <div style={{ fontFamily: `'${family}'` }}>{displayName}</div>
   );
 
   return isHistory ? { family, label, value: `history-${family}` } : { label, value: family };

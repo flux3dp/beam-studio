@@ -1,0 +1,62 @@
+@use '@core/styles/mixins' as mixins;
+
+.modal {
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  width: calc(90vw - 48px); // 48px: padding of antd modal
+  @include mixins.viewport-size($offset: 180px);
+  max-height: 800px;
+  gap: 12px;
+
+  @include mixins.is-mobile {
+    width: auto; // the modal is already full width; a 90vw box would leave a strip on the right
+    height: auto;
+    @include mixins.viewport-size(80, $property: max-height, $unit: svh);
+    overflow-y: hidden;
+  }
+
+  @media (max-width: 850px) and (min-width: 601px) {
+    width: calc(95vw - 48px);
+  }
+}
+
+// Shape tabs; antd scrolls the tab bar itself on narrow screens. Items have no panes, so hide the holder.
+.categories {
+  flex-shrink: 0;
+
+  :global(.ant-tabs-nav) {
+    margin: 0;
+  }
+
+  :global(.ant-tabs-content-holder) {
+    display: none;
+  }
+}
+
+.body {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  gap: 16px;
+
+  @include mixins.is-mobile {
+    flex-direction: column;
+  }
+
+  // Tablet: picker as a row across the top, preview beside the options panel (like KeyChainGenerator).
+  @media (max-width: 850px) and (min-width: 601px) {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    grid-template-rows: auto 1fr;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}

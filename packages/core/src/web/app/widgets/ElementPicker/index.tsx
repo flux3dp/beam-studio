@@ -14,6 +14,7 @@ interface ElementPickerProps {
   title?: string;
 }
 
+/** Preset shape grid (+ selected slot, clear) with a "more" button opening the Element panel browser. Shared by the generators. */
 const ElementPicker = ({ onChange, onClear, options, selectedKey }: ElementPickerProps): ReactNode => {
   const [browserOpen, setBrowserOpen] = useState(false);
 

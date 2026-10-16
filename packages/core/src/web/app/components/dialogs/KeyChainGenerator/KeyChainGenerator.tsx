@@ -77,7 +77,7 @@ const KeyChainGenerator = ({ onClose }: KeyChainGeneratorProps): React.JSX.Eleme
             {tGlobal.cancel}
           </Button>
           <Button loading={isExporting} onClick={handleImport} type="primary">
-            {t.import_to_canvas}
+            {tGenerators.general.import_to_canvas}
           </Button>
         </div>
       }

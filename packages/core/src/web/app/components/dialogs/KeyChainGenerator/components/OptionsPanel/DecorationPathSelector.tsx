@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
 import React, { memo, useMemo } from 'react';
 
-import { DECORATION_PATHS } from '../../constants/decorations';
+import SelectedItemSlot from '@core/app/widgets/ElementPicker/SelectedItemSlot';
+import type { IconSelectorItem } from '@core/app/widgets/IconSelectorGrid';
+import IconSelectorGrid from '@core/app/widgets/IconSelectorGrid';
 
-import type { IconSelectorItem } from './Controls/IconSelectorGrid';
-import IconSelectorGrid from './Controls/IconSelectorGrid';
-import SelectedItemSlot from './Controls/SelectedItemSlot';
+import { DECORATION_PATHS } from '../../constants/decorations';
 
 interface DecorationPathSelectorProps {
   onClear?: () => void;

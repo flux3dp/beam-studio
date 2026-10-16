@@ -91,8 +91,13 @@ module.exports = [
           type: 'asset',
         },
         {
-          // exclude react component if *.svg?url
-          resourceQuery: { not: [/url/] },
+          resourceQuery: /raw/, // *.svg?raw → file contents as a string
+          test: /\.svg$/i,
+          type: 'asset/source',
+        },
+        {
+          // exclude react component if *.svg?url or *.svg?raw
+          resourceQuery: { not: [/url/, /raw/] },
           test: /\.svg$/,
           use: [
             {
