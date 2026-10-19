@@ -6,6 +6,7 @@ import Progress from '@core/app/actions/progress-caller';
 import { getPrintAndCutReport } from '@core/app/components/dialogs/PrintAndCut/utils/align/alignLog';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { SCRUBBED_STORAGE_KEYS, scrubReport } from '@core/helpers/error-report/scrub';
 import { getOS } from '@core/helpers/getOS';
 import Logger from '@core/helpers/logger';
 import dialog from '@core/implementations/dialog';
@@ -16,16 +17,59 @@ import type { StorageKey } from '@core/interfaces/IStorage';
 
 import i18n from './i18n';
 
-/**
- * @param includeImages embed captured images (print-and-cut failure photo);
- * off for automatic uploads, which the user did not explicitly send
- */
-const getOutput = ({ includeImages = true } = {}): string[] => {
-  const output = [];
+const TRUNCATED_MARKER = '[... truncated for upload ...]\n';
+
+/** The user-chosen machine name is personal; the model is what diagnostics need. */
+const anonymizeDiscover = (discover: '' | Array<Record<string, { model: string }>>) =>
+  discover
+    ? discover.map((deviceMap) =>
+        Object.fromEntries(
+          Object.entries(deviceMap).map(([uuid, device]) => [uuid, { ...device, name: device.model }]),
+        ),
+      )
+    : discover;
+
+interface GetOutputOptions {
+  /** embed captured images (print-and-cut failure photo); off for automatic uploads, which the user did not explicitly send */
+  includeImages?: boolean;
+  /**
+   * cap on the joined report text; the fluxghost backend log absorbs the cut (oldest lines dropped)
+   * because every other section is already bounded by its logger. Unlimited when undefined.
+   */
+  maxLength?: number;
+  /**
+   * automatic-upload mode (docs/prd/error-report-upload §7.2): drop storage keys that embed user
+   * paths, replace machine names with the model, and rewrite home directories to `~` in the whole text.
+   * The manual Help → Bug Report download leaves this off so the user can inspect everything.
+   */
+  scrub?: boolean;
+}
+
+/** fluxghost log section, trimmed to `budget` characters (header included) when one is given */
+const backendSection = (budget?: number): string[] => {
+  const header = '\n\n======::backend::======\n';
+
+  if (!window.FLUX.logFile) return [header, 'Not available\n'];
+
+  try {
+    const buf = String(fs.readFile(window.FLUX.logFile, 'utf8'));
+
+    if (budget === undefined || header.length + buf.length <= budget) return [header, buf];
+
+    const keep = Math.max(0, budget - header.length - TRUNCATED_MARKER.length);
+
+    return [header, TRUNCATED_MARKER, buf.slice(buf.length - keep)];
+  } catch (err) {
+    return [header, `Open backend log failed: ${err}\n`];
+  }
+};
+
+const getOutput = ({ includeImages = true, maxLength, scrub = false }: GetOutputOptions = {}): string[] => {
+  const output: string[] = [];
   const logger = Logger('');
   let allLog = logger.getAll();
   const reportInfo = {
-    discoverDeviceList: allLog.discover || '',
+    discoverDeviceList: scrub ? anonymizeDiscover(allLog.discover || '') : allLog.discover || '',
     general: allLog.generic || '',
     localStorage: {},
     swiftray: allLog.swiftray || '',
@@ -43,19 +87,8 @@ const getOutput = ({ includeImages = true } = {}): string[] => {
   output.push('\n\n======::devices::======\n');
   output.push(JSON.stringify(reportInfo.discoverDeviceList, null, 2));
 
-  if (window.FLUX.logFile) {
-    try {
-      const buf = fs.readFile(window.FLUX.logFile, 'utf8');
-
-      output.push('\n\n======::backend::======\n');
-      output.push(buf);
-    } catch (err) {
-      output.push('\n\n======::backend::======\n');
-      output.push(`Open backend log failed: ${err}\n`);
-    }
-  } else {
-    output.push('\n\n======::backend::======\nNot available\n');
-  }
+  // the backend section is inserted here once the rest of the report has been measured
+  const backendAt = output.length;
 
   output.push('\n\n======::ws::======\n');
   output.push(JSON.stringify(reportInfo.ws, null, 2));
@@ -70,6 +103,9 @@ const getOutput = ({ includeImages = true } = {}): string[] => {
 
   for (let i = 0; i < keys.length; i += 1) {
     const key = keys[i];
+
+    if (scrub && SCRUBBED_STORAGE_KEYS.includes(key)) continue;
+
     let value = store.get(key);
 
     if (key === 'flux-rsa-key') value = '[hidden]';
@@ -83,7 +119,13 @@ const getOutput = ({ includeImages = true } = {}): string[] => {
   output.push('\n\n======::print-and-cut::======\n');
   output.push(getPrintAndCutReport({ includeImage: includeImages }));
 
-  return output;
+  // scrubReport only shortens, so measuring before it keeps the cap an upper bound
+  const budget = maxLength === undefined ? undefined : maxLength - output.join('').length;
+
+  output.splice(backendAt, 0, ...backendSection(budget));
+
+  // one pass over the joined text catches paths from every section, including ones added later
+  return scrub ? [scrubReport(output.join(''))] : output;
 };
 
 export default {
