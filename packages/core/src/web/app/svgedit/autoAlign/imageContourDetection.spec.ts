@@ -175,16 +175,24 @@ describe('ImageContourDetector', () => {
     expect(mockOpenMessage).not.toHaveBeenCalled();
   });
 
-  it('clears and releases the run lock on Swiftray disconnect; the next batch detects again', async () => {
-    mockDetectContours.mockReturnValueOnce(new Promise(() => {})); // never resolves on a closed socket
+  it('clears on Swiftray disconnect without a second error toast; the next batch detects again', async () => {
+    let rejectInFlight: (error: Error) => void = () => {};
+
+    // the client rejects the in-flight request when the socket closes
+    mockDetectContours.mockReturnValueOnce(new Promise((_resolve, reject) => (rejectInFlight = reject)));
     canvasEventEmitter.emit('preview-background-updated');
     await endBatch();
     detector.contours = [{ bbox: [0, 0, 1, 1], center: [0, 0], contour: [], id: 'x', rect: {} as never }];
 
+    mockIsOnnxAvailable = false;
     swiftrayListeners.disconnected();
+    rejectInFlight(new Error('Swiftray disconnected'));
+    await flush();
     expect(detector.contours).toEqual([]);
     expect(mockCloseMessage).toHaveBeenCalledWith('snap-to-object-center');
+    expect(mockOpenMessage).not.toHaveBeenCalledWith(expect.objectContaining({ content: 'failed' }));
 
+    mockIsOnnxAvailable = true;
     canvasEventEmitter.emit('preview-background-updated');
     await endBatch();
     expect(mockDetectContours).toHaveBeenCalledTimes(2);

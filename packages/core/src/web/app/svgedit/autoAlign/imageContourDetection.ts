@@ -96,13 +96,8 @@ export class ImageContourDetector {
         else this.clear();
       },
     );
-    swiftrayClient.on('disconnected', this.onSwiftrayDisconnected);
-  };
-
-  /** A /segment request in flight on the closed socket never resolves, so release the run lock here. */
-  private onSwiftrayDisconnected = (): void => {
-    this.clear();
-    this.running = false;
+    // a request in flight is rejected by the client on close; run()'s catch releases the lock
+    swiftrayClient.on('disconnected', this.clear);
   };
 
   /** A preview is already on the canvas and no tile will land to mark it dirty: detect it now. */
@@ -174,7 +169,8 @@ export class ImageContourDetector {
     } catch (error) {
       console.warn('[snapToObjectCenter] detection failed', error);
 
-      if (!this.errorShown) {
+      // a disconnect mid-run already shows the swiftray_disconnected toast
+      if (!this.errorShown && this.isEnabled()) {
         this.errorShown = true;
         MessageCaller.openMessage({
           content: i18n.lang.message.object_detection_failed,
