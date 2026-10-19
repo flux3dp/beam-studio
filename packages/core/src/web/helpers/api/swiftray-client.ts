@@ -225,7 +225,7 @@ class SwiftrayClient extends EventEmitter {
 
   private handleClose() {
     console.log('Disconnected from Swiftray server');
-    // a request in flight on the closed socket would otherwise hang forever, keeping its listeners and payload alive
+    // a request in flight would otherwise hang forever, keeping its listeners and payload alive
     this.pending.forEach((reject) => reject(new Error('Swiftray disconnected')));
     this.pending.clear();
     this.updateStatus('disconnected');
@@ -303,13 +303,18 @@ class SwiftrayClient extends EventEmitter {
 
         this.logger.append(payload);
 
-        if (this.socket?.readyState === WebSocket.OPEN) {
-          if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
-            this.socket.send(dataString);
-          } else {
-            // Change to binary string to avoid non-utf8 characters due to frame size limit
-            this.socket.send(Buffer.from(dataString));
-          }
+        if (this.socket?.readyState !== WebSocket.OPEN) {
+          // nothing will ever answer; fail now instead of waiting for a 'callback' that cannot come
+          reject(new Error('Swiftray disconnected'));
+
+          return;
+        }
+
+        if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
+          this.socket.send(dataString);
+        } else {
+          // Change to binary string to avoid non-utf8 characters due to frame size limit
+          this.socket.send(Buffer.from(dataString));
         }
 
         const callback = (data: any) => {

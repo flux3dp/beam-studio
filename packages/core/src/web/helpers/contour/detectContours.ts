@@ -10,8 +10,8 @@ export type DetectedContour = AutoFitContour;
 
 /**
  * The ONNX host can take a request right now: desktop, Swiftray found, socket open, new enough.
- * A request sent on a closed socket is never answered (action() only shows the disconnected toast),
- * so callers must not even try.
+ * action() rejects on a closed socket after showing the disconnected toast, so callers should not
+ * even try.
  */
 export const isOnnxAvailable = (): boolean =>
   !isWeb() &&

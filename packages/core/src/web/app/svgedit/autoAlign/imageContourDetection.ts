@@ -96,7 +96,7 @@ export class ImageContourDetector {
         else this.clear();
       },
     );
-    // a request in flight is rejected by the client on close; run()'s catch releases the lock
+    // a request in flight or sent while down is rejected by the client; run()'s catch releases the lock
     swiftrayClient.on('disconnected', this.clear);
   };
 
