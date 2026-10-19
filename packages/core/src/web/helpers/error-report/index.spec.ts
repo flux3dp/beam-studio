@@ -237,13 +237,14 @@ describe('uploadErrorReport', () => {
     const first = uploadErrorReport({ errorCode: 'X' });
 
     await expect(uploadErrorReport({ errorCode: 'X' })).resolves.toBe('cooldown');
+    await expect(uploadErrorReport({ errorCode: 'X' })).resolves.toBe('cooldown');
 
     release({ data: { status: 'ok' } });
     await expect(first).resolves.toBe('sent');
     expect(mockPost).toHaveBeenCalledTimes(1);
     expect(storage.get('error-report-counter')).toMatchObject({ counts: { SN12345678: 1 } });
-    // no cooldown entry exists yet while the first upload is in flight, so this skip is not carried
-    expect(Object.values(storage.get('error-report-cooldown'))[0]).toMatchObject({ skipped: 0 });
+    // the cooldown entry only exists after the upload; the two in-flight skips are added to it then
+    expect(Object.values(storage.get('error-report-cooldown'))[0]).toMatchObject({ skipped: 2 });
   });
 
   test('second occurrence inside the cooldown is skipped, counted, and carried on the next upload', async () => {

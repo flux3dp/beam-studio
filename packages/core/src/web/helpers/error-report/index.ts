@@ -41,8 +41,8 @@ export interface UploadErrorReportOptions {
 }
 
 const logger = Logger('generic');
-/** fingerprints with an upload in progress: the throttle only learns about one once recordUpload runs */
-const inFlight = new Set<string>();
+/** fingerprints with an upload in progress → occurrences suppressed meanwhile; the throttle only learns about one once recordUpload runs */
+const inFlight = new Map<string, number>();
 
 /**
  * Device system log, only when a control socket exists and the machine is idle; null otherwise.
@@ -117,14 +117,15 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
     const blocked = inFlight.has(fingerprint) ? 'cooldown' : getBlockReason(serial, fingerprint);
 
     if (blocked) {
-      if (blocked === 'cooldown') recordSkipped(fingerprint);
+      if (inFlight.has(fingerprint)) inFlight.set(fingerprint, inFlight.get(fingerprint)! + 1);
+      else if (blocked === 'cooldown') recordSkipped(fingerprint);
 
       logger.append(`error-report skipped (${blocked}) ${errorCode}`);
 
       return blocked;
     }
 
-    inFlight.add(fingerprint);
+    inFlight.set(fingerprint, 0);
 
     try {
       const form = new FormData();
@@ -174,6 +175,8 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
       const result = await post(form);
 
       recordUpload(serial, fingerprint);
+      // §7.7: what was suppressed while this upload was in flight rides with the next one
+      recordSkipped(fingerprint, Date.now(), inFlight.get(fingerprint));
 
       return result;
     } finally {

@@ -83,12 +83,12 @@ export const recordUpload = (serial: string, fingerprint: string, now = Date.now
 };
 
 /** Call when an occurrence was suppressed by the cooldown, so its count travels with the next upload. */
-export const recordSkipped = (fingerprint: string, now = Date.now()): void => {
+export const recordSkipped = (fingerprint: string, now = Date.now(), count = 1): void => {
   const cooldown = readCooldown(now);
   const entry = cooldown[fingerprint];
 
-  if (!entry) return;
+  if (!entry || !count) return;
 
-  entry.skipped += 1;
+  entry.skipped += count;
   storage.set('error-report-cooldown', cooldown);
 };
