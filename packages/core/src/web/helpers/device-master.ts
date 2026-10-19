@@ -1026,14 +1026,14 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.downloadFile, `${path}/${fileName}`, onProgress);
   }
 
-  async downloadLog(log: string, onProgress: (...args: any[]) => void = () => {}) {
+  async downloadLog(log: string, onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
     const controlSocket = await this.getControl();
 
     if (onProgress) {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.downloadLog(log);
+    return controlSocket.downloadLog(log, idleTimeout);
   }
 
   async fetchCameraCalibImage(fileName: string, onProgress: (...args: any[]) => void = () => {}) {
@@ -1064,18 +1064,23 @@ class DeviceMaster {
     return controlSocket.fetchAutoLevelingData!(dataType);
   }
 
-  async getLogsTexts(logs: string[], onProgress: (...args: any[]) => void = () => {}) {
+  async getLogsTexts(logs: string[], onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
     const res: Record<string, Array<Blob | string>> = {};
 
     for (let i = 0; i < logs.length; i += 1) {
       const log = logs[i];
 
       try {
-        const logFile = await this.downloadLog(log, onProgress);
+        const logFile = await this.downloadLog(log, onProgress, idleTimeout);
 
         res[log] = logFile;
       } catch (e) {
         console.error(`Failed to get ${log}`, e);
+        // callers that only take the Blob ignore this; the error report writes it in place of the log
+        res[log] = [`<${log} not downloaded: ${(e as { error?: string })?.error ?? e}>\n`];
+
+        // a socket that stopped answering will not answer the next fetch_log either
+        if ((e as { error?: string })?.error === 'TIMEOUT') break;
       }
     }
 

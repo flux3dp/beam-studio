@@ -4,6 +4,7 @@ import type { IOperatingSystem } from '@core/interfaces/IOperatingSystem';
 export default {
   arch: () => '',
   isMacOS15OrLater: false,
+  machineId: () => '',
   networkInterfaces: () => ({
     en0: [],
   }),

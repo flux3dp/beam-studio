@@ -27,7 +27,7 @@ interface IControlSocket extends EventEmitter {
   deviceDetailInfo(): Promise<IDeviceDetailInfo>;
   deviceInfoFlux: () => Promise<IDeviceInfoFlux>;
   downloadFile(fileNameWithPath: string): Promise<[string, Blob]>;
-  downloadLog(logName: string): Promise<Array<Blob | string>>;
+  downloadLog(logName: string, idleTimeout?: number): Promise<Array<Blob | string>>;
   endSubTask(): Promise<void>;
   enterRawMode(): Promise<unknown>;
   enterSubTask(mode: Mode, timeout?: number): Promise<void>;
