@@ -115,7 +115,7 @@
 - `bug_report.txt` = `getOutput({ includeImages: false, scrub: true })`。`scrub`（`getOutput` 的新選項）移除 storage 鍵 `recent_files`、`auto-save-config`、`ador-backup-path`，把探索清單的 `name` 換成 `model`，再對合併後的字串跑 `scrubReport`。即使有排除清單仍需要正規表示式，因為家目錄會從 `storage` 以外的地方進入報告：websocket 段落記錄每一筆送出的指令（`websocket.ts:325`），而字型指令帶有使用者自行安裝字型的絕對路徑（`utils-ws.ts:152` 的 `select_font` / `check_exist` / `upload_to`，`fontHelper.ts:236,325`），macOS 在 `~/Library/Fonts`、Windows 在 `%LOCALAPPDATA%\Microsoft\Windows\Fonts`。fluxghost log 預設為 INFO 等級（`../fluxghost/fluxghost/launcher.py:10`），其含家目錄的 debug 行只在 `--debug` 時出現；正規表示式也一併涵蓋。
 - `system_log.txt` = `getLogsTexts` 結果串接，只在 `deviceMaster.currentDevice?.control` 存在時附上。
 - `scene.svg`（僅 S7）= `svgCanvas.getSvgString()` 或匯入檔案文字。
-- 同意文案寫「不含設計檔案與個人資料；包含機器序號、電腦識別碼與錯誤紀錄」，而非「匿名」。序號是 FLUX 可對應到銷售紀錄的裝置識別碼，誠實的說法是「化名」。「我們不會主動聯繫您」的承諾不受影響。
+- 同意文案寫「不含個人資料；包含機器序號、電腦識別碼與錯誤紀錄，匯出或匯入錯誤時另包含正在處理的設計」，而非「匿名」。不得承諾「不含設計檔案」：S7 會為 `#806` / `#809` / `#812` 附上 `scene.svg` / 匯入檔案，§9.1 也讓該檔案優先於機器 log。序號是 FLUX 可對應到銷售紀錄的裝置識別碼，誠實的說法是「化名」。「我們不會主動聯繫您」的承諾不受影響。
 
 ### 7.3 網頁版的裝置 Log
 
@@ -248,7 +248,7 @@
 
 1. ~~D1 後端與儲存。~~ 2026-10-06 定案：端點放 flux-id（重用流量限制、部署；供應商可透過 `STORAGES` 別名切換），儲存用 Cloudflare R2（已有帳號、無流出費用、原生生命週期）。S3 否決；Google Drive 於 v1 否決（需共用雲端硬碟＋服務帳號＋cron 清理），但日後可作為同一別名後的自訂 storage 類別。flux-id 影響依 §9.2 量測。
 2. ~~D2 離線佇列。~~ 2026-10-06 定案：v1 不做（payload 可達 10 MB，`storage` 為 JSON）；只做 3 次程序內重試。
-3. ~~D3 清除 vs.「匿名」文案。~~ 2026-10-06 定案：依 §7.2 清除，文案改為「不含設計檔案與個人資料」。
+3. ~~D3 清除 vs.「匿名」文案。~~ 2026-10-06 定案：依 §7.2 清除，文案改為「不含設計檔案與個人資料」。2026-10-19 修正：「不含設計檔案」與 S7 衝突，文案改為點名匯出／匯入錯誤時包含設計（§7.2）。
 4. ~~D4 相機/校正白名單。~~ 2026-10-08 定案：由程式碼全面掃描列出（§7.4 第二波）；不需韌體對照表，因為 Monitor 錯誤以 `error.join('_')` 原樣透傳。
 5. ~~D5 每序號 20 MB 上限。~~ 2026-10-06 定案：**保留**，為每資料夾總量（非每檔案），可由 flux-id 設定調整，同時適用於 `{serial}/` 與 `no-device/{installation_id}/`。成本低，因為物件鍵依時間由舊到新排序，且列舉與去重檢查共用；每份報告大小受 client 10 MB 截斷限制。見 [backend.md §4](backend.md)。
 
