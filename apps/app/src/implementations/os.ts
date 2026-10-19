@@ -80,7 +80,7 @@ const isMacOS15OrLater = (() => {
 // (docs/prd/error-report-upload §7.1). Hashed so the raw hardware id never leaves the machine.
 const MACHINE_ID_COMMANDS: Partial<Record<NodeJS.Platform, string>> = {
   darwin: 'ioreg -rd1 -c IOPlatformExpertDevice',
-  linux: '( cat /var/lib/dbus/machine-id /etc/machine-id 2> /dev/null || hostname ) | head -n 1',
+  linux: 'cat /var/lib/dbus/machine-id /etc/machine-id 2> /dev/null | head -n 1',
   win32: '%windir%\\System32\\REG.exe QUERY HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Cryptography /v MachineGuid',
 };
 
