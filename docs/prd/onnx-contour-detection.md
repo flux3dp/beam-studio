@@ -112,7 +112,7 @@ spec that covers it or says manual; **Status** is the last verification of `feat
 section covers the whole PRD.
 
 **AC1 — Toggle (View › Snap to Object Center).**
-- Operate: open the View menu (Electron menu bar or web top bar). The checkbox sits under Auto Align, checked by default.
+- Operate: open the View menu (Electron menu bar; hidden in the web top bar). The checkbox sits under Auto Align, checked by default.
 - Expect: the check state follows the preference `snap_to_object_center` and survives a restart. Turning it off empties the snap targets and closes the toast at once; turning it back on while a preview is already on the canvas starts a detection run without another preview.
 - Edge cases: works with Auto Align unchecked; on the web the item exists but detection never runs (ONNX-only, no Swiftray).
 - Check: `helpers/menubar/view.spec.ts` (toggle); `imageContourDetection.spec.ts` "ignores previews while the preference is off and clears when it turns off". Re-enable over an existing preview: manual.
@@ -356,7 +356,7 @@ Each PR is independently shippable; order matters only for 4 → 5.
 4. ~~Include the object centre as a snap point~~ — **decided 2026-09-22: yes.** The feature is named after it: preference `snap_to_object_center`. ~~Corners and edge midpoints of the detected bbox are added as well~~ — **dropped 2026-09-22**: centre-to-centre only, see §5.5.
 5. ~~Model files in the Swiftray zip vs. on-demand download~~ — **decided 2026-09-21: bundled.** Models (43 MB) and ORT ship inside Swiftray; no runtime download.
 6. **Which region-preview machines get align-on-preview** — all that draw through `drawBlobToBackground` (region + full-area). Full-area single shot on Ador/Promark/beamo II runs one whole-bed pass (~3 s); fine.
-7. ~~Snap to Object Center falls back to OpenCV like Auto Fit~~ — **decided 2026-10-16: ONNX only.** The OpenCV contours were too unstable for a feature that snaps silently while dragging. Web, old Swiftray or a closed socket disables the feature (no detection, no toast, no snap) rather than degrading it; a disconnect clears the list, and the next preview after reconnect detects again (no automatic re-detection on reconnect). Auto Fit keeps the fallback. The View menu item stays enabled everywhere (follow-up if users ask why it does nothing on the web).
+7. ~~Snap to Object Center falls back to OpenCV like Auto Fit~~ — **decided 2026-10-16: ONNX only.** The OpenCV contours were too unstable for a feature that snaps silently while dragging. Web, old Swiftray or a closed socket disables the feature (no detection, no toast, no snap) rather than degrading it; a disconnect clears the list, and the next preview after reconnect detects again (no automatic re-detection on reconnect). Auto Fit keeps the fallback. ~~The View menu item stays enabled everywhere~~ — **changed 2026-10-19: hidden on the web** (`useMenuData.ts`), where it could never do anything; the Electron menu keeps it, since a desktop without Swiftray is a transient state already explained by the disconnected toast.
 
 ---
 
