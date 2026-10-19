@@ -213,7 +213,7 @@
 
 ### 9.1 Client
 
-- fluxghost log 很大時，報告現在可能超過 10 MB（舊的 `uploadToS3` 會拒絕超過 10 MB 的 body）。`bug_report.txt` 維持 10 MB 上限，做法是從後端段落的開頭截斷，而不是拒絕上傳：`getOutput({ maxLength })` 先量測其餘所有段落，再把剩下的預算給 fluxghost log，因此上限是針對整個檔案。整體 body 維持在 view 的 20 MB 檢查、nginx 的 32 MB 與 Cloudflare 免費方案 100 MB 限制之下。
+- fluxghost log 很大時，報告現在可能超過 10 MB（舊的 `uploadToS3` 會拒絕超過 10 MB 的 body）。`bug_report.txt` 維持 10 MB 上限，做法是從後端段落的開頭截斷，而不是拒絕上傳：`getOutput({ maxLength })` 先量測其餘所有段落，再把剩下的預算給 fluxghost log，因此上限是針對整個檔案。接著 `uploadErrorReport` 以 bytes（`Blob.size`）把整包塞進後端限制（`400 too_large` 不會重試，所以必須由 client 端配合）：`bug_report` 超過 10 MB 時保留最新的 10 MB，`scene` 超過 10 MB 或剩餘空間時整個丟掉，`system_log` 截到 20 MB 請求扣掉前兩者（再扣 64 KB 給 multipart 欄位）後的剩餘量，沒有剩餘就丟掉。scene 優先於機器 log，因為只有匯出／匯入錯誤會帶 scene，而那時設計檔才是主要證據。整體 body 因此維持在 view 的 20 MB 檢查、nginx 的 32 MB 與 Cloudflare 免費方案 100 MB 限制之下。
 - Monitor 路徑的裝置 Log 下載已有分段進度；自動路徑靜默執行，裝置忙碌時（`getMode()` 非 idle）略過。
 
 ### 9.2 flux-id 影響矩陣

@@ -132,6 +132,52 @@ describe('uploadErrorReport', () => {
     expect(mockAppend).toHaveBeenCalledWith(expect.stringContaining('device log skipped'));
   });
 
+  // backend limits: 10 MB per file, 20 MB per request (backend.md §2)
+  const MB = 1024 * 1024;
+  const size = (form: FormData, field: string) => (form.get(field) as Blob | null)?.size ?? null;
+
+  test('bug_report over 10 MB is clipped to its newest 10 MB', async () => {
+    mockGetOutput.mockReturnValue(['x'.repeat(11 * MB)]);
+
+    await uploadErrorReport({ errorCode: 'X' });
+
+    expect(size(mockPost.mock.calls[0][1], 'bug_report')).toBe(10 * MB);
+  });
+
+  test('scene over 10 MB is dropped, the rest still uploads', async () => {
+    await uploadErrorReport({ errorCode: '#806', scene: { content: 'x'.repeat(10 * MB + 1), name: 's.bvg' } });
+
+    const form = mockPost.mock.calls[0][1] as FormData;
+
+    expect(form.get('scene')).toBeNull();
+    expect(size(form, 'system_log')).toBeGreaterThan(0);
+    expect(mockAppend).toHaveBeenCalledWith(expect.stringContaining('scene dropped'));
+  });
+
+  test('system_log takes what the 20 MB request has left after bug_report and scene', async () => {
+    mockGetOutput.mockReturnValue(['x'.repeat(10 * MB)]);
+    mockGetLogsTexts.mockResolvedValue({ 'fluxrobotd.log': [new Blob(['y'.repeat(5 * MB)])] });
+
+    await uploadErrorReport({ errorCode: '#806', scene: { content: 'z'.repeat(8 * MB), name: 's.bvg' } });
+
+    const form = mockPost.mock.calls[0][1] as FormData;
+
+    expect(size(form, 'scene')).toBe(8 * MB);
+    expect(size(form, 'system_log')).toBe(2 * MB - 64 * 1024);
+  });
+
+  test('system_log is dropped when bug_report and scene leave no room', async () => {
+    mockGetOutput.mockReturnValue(['x'.repeat(10 * MB)]);
+
+    await uploadErrorReport({ errorCode: '#806', scene: { content: 'z'.repeat(10 * MB - 64 * 1024), name: 's.bvg' } });
+
+    const form = mockPost.mock.calls[0][1] as FormData;
+
+    expect(size(form, 'scene')).toBe(10 * MB - 64 * 1024);
+    expect(form.get('system_log')).toBeNull();
+    expect(mockAppend).toHaveBeenCalledWith(expect.stringContaining('device log dropped'));
+  });
+
   test('scene is attached as svg with its name', async () => {
     await uploadErrorReport({ errorCode: '#806', scene: { content: '<svg/>', name: 'output.bvg' } });
 

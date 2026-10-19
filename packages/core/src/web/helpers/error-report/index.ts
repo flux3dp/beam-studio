@@ -21,6 +21,12 @@ export const ERROR_REPORT_ENDPOINT = '/api/beam-studio/error-report';
 /** §9.1: bug_report.txt stays within the backend's 10 MB file limit by dropping the oldest fluxghost log lines */
 export const MAX_BUG_REPORT_LENGTH = 10 * 1024 * 1024;
 
+/** backend limits (backend.md §2): 10 MB per file, 20 MB per request; a 400 is final, so the client has to fit */
+const MAX_FILE_BYTES = 10 * 1024 * 1024;
+const MAX_REQUEST_BYTES = 20 * 1024 * 1024;
+/** multipart boundaries and the string fields */
+const REQUEST_MARGIN_BYTES = 64 * 1024;
+
 const MAX_ATTEMPTS = 3;
 /** idle bound on each device log download (control.downloadLog): a stalled socket must not hang the upload */
 const DEVICE_LOG_TIMEOUT_MS = 10 * 1000;
@@ -64,7 +70,11 @@ const readDeviceLog = async (): Promise<Blob | null> => {
   return parts.length ? new Blob(parts, { type: 'text/plain' }) : null;
 };
 
-/** 10 MB bug_report + 10 MB system_log + scene must fit on a slow home uplink (~1 Mbit/s) */
+/** the newest `limit` bytes of a text blob; the cut may land inside a line, fine for a log */
+const tail = (blob: Blob, limit: number): Blob =>
+  blob.size <= limit ? blob : blob.slice(blob.size - limit, blob.size, blob.type);
+
+/** up to 20 MB must fit on a slow home uplink (~1 Mbit/s) */
 const UPLOAD_TIMEOUT_MS = 3 * 60 * 1000;
 
 /**
@@ -127,21 +137,39 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
       form.append('firmware_version', firmwareVersion);
       form.append('occurrences_since_last', String(getSkipped(fingerprint)));
 
-      const bugReport = outputError
+      const text = outputError
         .getOutput({ includeImages: false, maxLength: MAX_BUG_REPORT_LENGTH, scrub: true })
         .join('');
+      // getOutput caps characters; this caps bytes (CJK text is 3 bytes a character in UTF-8)
+      const bugReport = tail(new Blob([text], { type: 'text/plain' }), MAX_FILE_BYTES);
 
-      form.append('bug_report', new Blob([bugReport], { type: 'text/plain' }), 'bug_report.txt');
+      form.append('bug_report', bugReport, 'bug_report.txt');
+
+      let budget = MAX_REQUEST_BYTES - REQUEST_MARGIN_BYTES - bugReport.size;
+
+      // scene before system_log: the export / import errors that carry one need the design more than the device log
+      if (scene) {
+        const sceneBlob = new Blob([scene.content], { type: 'image/svg+xml' });
+
+        if (sceneBlob.size <= Math.min(MAX_FILE_BYTES, budget)) {
+          form.append('scene', sceneBlob, scene.name);
+          budget -= sceneBlob.size;
+        } else {
+          logger.append(`error-report scene dropped: ${sceneBlob.size} bytes`);
+        }
+      }
 
       try {
         const deviceLog = await readDeviceLog();
 
-        if (deviceLog) form.append('system_log', deviceLog, 'system_log.txt');
+        if (deviceLog && budget > 0) {
+          form.append('system_log', tail(deviceLog, Math.min(MAX_FILE_BYTES, budget)), 'system_log.txt');
+        } else if (deviceLog) {
+          logger.append(`error-report device log dropped: ${deviceLog.size} bytes, no room`);
+        }
       } catch (error) {
         logger.append(`error-report device log skipped: ${error}`);
       }
-
-      if (scene) form.append('scene', new Blob([scene.content], { type: 'image/svg+xml' }), scene.name);
 
       const result = await post(form);
 
