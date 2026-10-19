@@ -121,7 +121,7 @@ export class ImageContourDetector {
   isEnabled = (): boolean => useGlobalPreferenceStore.getState().snap_to_object_center && isOnnxAvailable();
 
   private onBackgroundUpdated = (): void => {
-    if (this.isEnabled()) this.dirty = true;
+    this.dirty = true;
   };
 
   /** A batch is over when the controller stops drawing; live mode re-draws every second, so wait for it to stop. */

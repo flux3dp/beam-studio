@@ -173,6 +173,11 @@ describe('ImageContourDetector', () => {
     expect(detector.isEnabled()).toBe(false);
     expect(mockDetectContours).not.toHaveBeenCalled();
     expect(mockOpenMessage).not.toHaveBeenCalled();
+
+    // the tile stays dirty: once Swiftray is back, the next batch end detects it
+    mockIsOnnxAvailable = true;
+    await endBatch();
+    expect(mockDetectContours).toHaveBeenCalledTimes(1);
   });
 
   it('clears on Swiftray disconnect without a second error toast; the next batch detects again', async () => {
