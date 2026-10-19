@@ -17,7 +17,7 @@ One unauthenticated DRF endpoint receives a diagnostic bundle from Beam Studio, 
 
 ## 2. Endpoint
 
-`POST /api/beam-studio/error-report` — `APIView`, `authentication_classes = csrf_exempt_auth_classes`, `permission_classes = (AllowAny,)`, `throttle_classes = (ErrorReportThrottle,)` where `ErrorReportThrottle(AnonRateThrottle)` has `scope = 'error_report'`, `rate = '30/hour'`.
+`POST /api/beam-studio/error-report` — `APIView`, `authentication_classes = csrf_exempt_auth_classes`, `permission_classes = (AllowAny,)`, two `AnonRateThrottle` classes, scopes `error_report_hour = '6/hour'` and `error_report_day = '20/day'` (§6).
 
 Multipart fields (all strings unless noted):
 
@@ -112,13 +112,13 @@ Threat model: an attacker who has read the client source can post arbitrary `ser
 
 Alerting: a Cloudflare notification on R2 storage crossing 100 GB; `grep 'reason=budget'` over the gunicorn error log in the weekly readout (honest traffic never produces it, so any hit means abuse or a client bug). flux-id has no metrics or alerting pipeline today, see §7.
 
-The client treats `429 budget` like any other failure: 3 retries, then silent. It does not count as sent, so the cooldown does not advance and the report is retried on the next occurrence.
+The client treats `429 budget` like any other 4xx: no retry (only no-response and 5xx retry), silent. It does not count as sent, so the cooldown does not advance and the report is retried on the next occurrence.
 
 Escalation only if abuse is observed: require a Beam Studio `User-Agent` prefix, a Turnstile token, or, once the serial tables are fuller, a verified/unverified split with a small budget for unknown serials (the design that was dropped in §10 B3).
 
 ## 7. Performance
 
-**Metrics source.** flux-id's statsd integration (`StatsdMiddleWare`, `statsd.incr` in login / openai / design_market, added 2021-11-02 in #46) has never had a receiver: `STATSD_HOST` is unset, nothing listens on 8125 in `compose.deploy.yml`, and python-statsd then sends UDP to localhost where it is dropped. The receiver was a separate EC2 that was not migrated to Linode. Decided 2026-10-12: leave the dead integration in place until this feature ships, then decide whether to remove it or add a receiver. So this feature does not use it. Instead: one structured log line per request from the view (`error_report <ok|duplicate|rejected> serial=… code=… bytes=… ms=… reason=…`, Django logging → gunicorn error log) plus the gunicorn access log with request time (`nginx/gunicorn.conf.py` currently has `accesslog = None`; PR 6 enables it with `access_log_format` including `%(M)s`). The §9.2 readout is `awk` over those two logs plus Cloudflare analytics and Linode graphs.
+**Metrics source.** flux-id's statsd integration (`StatsdMiddleWare`, `statsd.incr` in login / openai / design_market, added 2021-11-02 in #46) has never had a receiver: `STATSD_HOST` is unset, nothing listens on 8125 in `compose.deploy.yml`, and python-statsd then sends UDP to localhost where it is dropped. The receiver was a separate EC2 that was not migrated to Linode. Decided 2026-10-12: leave the dead integration in place until this feature ships, then decide whether to remove it or add a receiver. So this feature does not use it. Instead: one structured log line per request from the view (`error_report <ok|duplicate|rejected> serial=… code=… bytes=… ms=… reason=…`, Django logging → gunicorn error log) plus the gunicorn access log with request time (`nginx/gunicorn.conf.py` currently has `accesslog = None`; PR 6 enables it with `access_log_format` including `%(M)s`). The §9.2 readout is `awk` over those two logs plus Cloudflare analytics and Linode graphs. Counts (uploads, duplicates, rejects, budget hits, bytes, summed request time) are also kept per UTC day and error code in `ErrorReportDailyStat` rows, bumped from the view; the Celery beat task `error_report_daily_digest` posts yesterday's sums to the Beam Studio Slack channel, and the budget / storage-failure alerts go to the flux-id channel. The rows give totals and averages only; per-request reasons and p50 / p95 come from the log lines.
 
 Sync write inside the request holds one of the 9 gunicorn workers for the R2 PUT (~1–3 s for 10 MB). nginx buffers the request body first, so slow client links do not hold workers. Measure per client PRD §9.2 (baseline week → burst replay on staging → week after release). Upgrade paths, in order of effort:
 
