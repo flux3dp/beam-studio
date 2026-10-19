@@ -22,7 +22,7 @@ export const ERROR_REPORT_ENDPOINT = '/api/beam-studio/error-report';
 export const MAX_BUG_REPORT_LENGTH = 10 * 1024 * 1024;
 
 const MAX_ATTEMPTS = 3;
-/** control.downloadLog only settles on a Blob or an error frame; a stalled socket would hang the upload */
+/** idle bound on each device log download (control.downloadLog): a stalled socket must not hang the upload */
 const DEVICE_LOG_TIMEOUT_MS = 10 * 1000;
 
 export type UploadResult = 'duplicate' | 'failed' | 'sent' | BlockReason;
@@ -50,20 +50,15 @@ const readDeviceLog = async (): Promise<Blob | null> => {
   const playerLog = VersionChecker(device.info.version).meetRequirement('NEW_PLAYER')
     ? 'playerd.log'
     : 'fluxplayerd.log';
-  // ponytail: on timeout the pending fetch_log listener stays on the control socket until the
-  // next command replaces it; a cancellable downloadLog would be the clean fix.
-  const files = await Promise.race([
-    deviceMaster.getLogsTexts([playerLog, 'fluxrobotd.log']),
-    new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error(`timed out after ${DEVICE_LOG_TIMEOUT_MS} ms`)), DEVICE_LOG_TIMEOUT_MS);
-    }),
-  ]);
+  const files = await deviceMaster.getLogsTexts([playerLog, 'fluxrobotd.log'], undefined, DEVICE_LOG_TIMEOUT_MS);
   const parts: Array<Blob | string> = [];
 
   for (const [name, chunks] of Object.entries(files)) {
-    const blob = chunks.find((chunk): chunk is Blob => chunk instanceof Blob);
+    // the Blob, or the "<name not downloaded: …>" note getLogsTexts leaves when a download fails
+    const content =
+      chunks.find((chunk): chunk is Blob => chunk instanceof Blob) ?? chunks.find((chunk) => typeof chunk === 'string');
 
-    if (blob) parts.push(`\n===\n${name}\n===\n`, blob);
+    if (content) parts.push(`\n===\n${name}\n===\n`, content);
   }
 
   return parts.length ? new Blob(parts, { type: 'text/plain' }) : null;

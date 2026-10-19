@@ -82,7 +82,7 @@ describe('uploadErrorReport', () => {
       maxLength: MAX_BUG_REPORT_LENGTH,
       scrub: true,
     });
-    expect(mockGetLogsTexts).toHaveBeenCalledWith(['playerd.log', 'fluxrobotd.log']);
+    expect(mockGetLogsTexts).toHaveBeenCalledWith(['playerd.log', 'fluxrobotd.log'], undefined, 10_000);
     // headers + 'robot' + 'player'; jsdom blobs have no text(), so compare sizes
     expect((form.get('system_log') as Blob).size).toBe(
       '\n===\nfluxrobotd.log\n===\nrobot\n===\nplayerd.log\n===\nplayer'.length,
@@ -108,6 +108,21 @@ describe('uploadErrorReport', () => {
 
     await expect(uploadErrorReport({ errorCode: 'X' })).resolves.toBe('sent');
     expect((mockPost.mock.calls[0][1] as FormData).has('system_log')).toBe(false);
+  });
+
+  test('a log that failed to download is noted in system_log in its place', async () => {
+    mockGetLogsTexts.mockResolvedValue({
+      'fluxrobotd.log': [new Blob(['robot'])],
+      'playerd.log': ['<playerd.log not downloaded: TIMEOUT>\n'],
+    });
+
+    await uploadErrorReport({ errorCode: 'X' });
+
+    const form = mockPost.mock.calls[0][1] as FormData;
+
+    expect((form.get('system_log') as Blob).size).toBe(
+      '\n===\nfluxrobotd.log\n===\nrobot\n===\nplayerd.log\n===\n<playerd.log not downloaded: TIMEOUT>\n'.length,
+    );
   });
 
   test('device log failure is logged and does not block the upload', async () => {
