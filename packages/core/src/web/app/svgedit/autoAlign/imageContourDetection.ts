@@ -101,7 +101,7 @@ export class ImageContourDetector {
   };
 
   /** A preview is already on the canvas and no tile will land to mark it dirty: detect it now. */
-  redetect = (): void => {
+  private redetect = (): void => {
     if (useCameraPreviewStore.getState().isClean) return;
 
     this.dirty = true;
