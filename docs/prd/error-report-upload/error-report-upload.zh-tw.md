@@ -100,11 +100,11 @@
 新增 `packages/core/src/web/helpers/error-report/`（獨立資料夾，spec 同置）：
 
 - `index.ts`
-  - `uploadErrorReport({ errorCode, extraFiles? }): Promise<boolean>` — 組資料包、套用上限（加上進行中集合，同一指紋的兩個視窗只產生一次上傳）、以 10 秒上限讀取機器 log、以 3 分鐘逾時 POST 最多 3 次、成功後增加計數、顯示 toast 與一次性提示。
+  - `uploadErrorReport({ errorCode, scene? }): Promise<UploadResult>`（`'sent' | 'duplicate' | 'failed' | BlockReason`）— 組資料包、套用上限（加上進行中集合，同一指紋的兩個視窗只產生一次上傳）、以每個檔案 10 秒閒置上限讀取機器 log、以 3 分鐘逾時 POST 最多 3 次、成功後增加計數；呼叫端（同意裝飾器，PR 2）依回傳值顯示 toast 與一次性提示。
   - `withErrorReportConsent(alert: IAlert, errorCode: string): IAlert` — 讀取偏好設定，回傳依情境 A/B/C 裝飾後的警示設定。對設定物件的純函式；觸發點寫成 `Alert.popUp(withErrorReportConsent({...}, code))`。
 - `scrub.ts` — `scrubReport(text: string): string`（家目錄路徑正規表示式）與 storage 排除清單，只用於上傳路徑。
-- `installationId.ts` — `getInstallationId(): string`。Electron：`os.machineId()`，為新增於 `IOperatingSystem` 並**內嵌**在 `apps/app/src/implementations/os.ts` 的方法（2026-10-06 定案，不引入 `node-machine-id` 相依）：執行與 node-machine-id 相同的各 OS 指令（`ioreg -rd1 -c IOPlatformExpertDevice` / `REG.exe QUERY HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid` / `/etc/machine-id`），做 sha256，並在自身 try/catch 內對任何失敗（指令不存在、逾時、解析錯誤）回傳 `''`。網頁版回傳 `''`。結果為空時 → 以 `crypto.randomUUID()` 產生一次並存於 `error-report-install-id`，因此識別碼永遠非空，呼叫端永遠不會看到例外。
-- `throttle.ts` — 每日計數 `{ date, counts: Record<serial, number> }` 存於 storage 鍵 `error-report-counter`，以及每指紋冷卻表（§7.7）存於 `error-report-cooldown`；提供單一介面 `canUpload(serial, fingerprint)` / `recordUpload(serial, fingerprint)` / `recordSkipped(fingerprint)`，上傳與同意裝飾器共用。
+- `installationId.ts` — `getInstallationId(): string`。Electron：`os.machineId()`，為新增於 `IOperatingSystem` 並**內嵌**在 `apps/app/src/implementations/os.ts` 的方法（2026-10-06 定案，不引入 `node-machine-id` 相依）：執行與 node-machine-id 相同的各 OS 指令（`ioreg -rd1 -c IOPlatformExpertDevice` / `REG.exe QUERY HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid` / `/etc/machine-id`），做 sha256，並在自身 try/catch 內對任何失敗（指令不存在、逾時、解析錯誤）回傳 `''`。網頁版回傳 `''`。結果為空時 → 以 `uuid` v4（既有相依）產生一次並存於 `error-report-install-id`，因此識別碼永遠非空，呼叫端永遠不會看到例外。
+- `throttle.ts` — 每日計數 `{ date, counts: Record<serial, number> }` 存於 storage 鍵 `error-report-counter`，以及每指紋冷卻表（§7.7）存於 `error-report-cooldown`；提供單一介面 `getBlockReason(serial, fingerprint): 'cooldown' | 'daily-limit' | null` / `getSkipped(fingerprint)` / `recordUpload(serial, fingerprint)` / `recordSkipped(fingerprint)`，上傳與同意裝飾器共用。
 
 ### 7.1.1 隔離原則
 
@@ -195,7 +195,7 @@
 
 - `fingerprint = serial | error_code | app_version | firmware_version`（直接串接，只存在 client 本地；2026-10-12 自 sha1 修訂：本地 map 的鍵不需要雜湊，且不送往伺服器，伺服器已收到這四個欄位）；無裝置連線時 `firmware_version` 為 `''`。安裝識別碼刻意**不**放進去：它在同一台電腦上是常數，不會改變本地去重結果，而伺服器需要明文的它來分組與去重（§7.5）。
 - storage 鍵 `error-report-cooldown: Record<fingerprint, { level: number; nextAllowed: number; skipped: number }>`（`level` 為下表視窗的索引；2026-10-12 自 `lastSent` 修訂）。
-- 首次發生即上傳。`now < nextAllowed` 期間 `canUpload` 為 false：不上傳、checkbox 隱藏（每次詢問）或無狀態列（一律自動），`skipped += 1`。
+- 首次發生即上傳。`now < nextAllowed` 期間 `getBlockReason` 回傳 `'cooldown'`：不上傳、checkbox 隱藏（每次詢問）或無狀態列（一律自動），`skipped += 1`。
 - 每次成功上傳後視窗沿表格放寬：1 小時 → 24 小時 → 7 天 → 30 天（上限）。報告帶上 `occurrences_since_last = skipped`，之後 `skipped` 歸零，伺服器仍能得知錯誤發生頻率。
 - 序號、錯誤碼、app 版本或韌體版本任一改變即產生新指紋與新視窗；使用者更新韌體試圖修復但仍失敗時，恰好得到一份新報告。
 - 寫入時修剪 `nextAllowed` 已過 30 天以上的項目，保持表格精簡。
