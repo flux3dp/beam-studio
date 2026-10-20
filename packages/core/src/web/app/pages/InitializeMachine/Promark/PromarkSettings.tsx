@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { CheckCircleFilled } from '@ant-design/icons';
 import { Flex } from 'antd';
@@ -6,16 +6,20 @@ import { Flex } from 'antd';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import FieldBlock from '@core/app/components/dialogs/promark/FieldBlock';
 import LensBlock from '@core/app/components/dialogs/promark/LensBlock';
+import LensProfileBlock from '@core/app/components/dialogs/promark/LensProfileBlock';
 import RedDotBlock from '@core/app/components/dialogs/promark/RedDotBlock';
-import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app/constants/promark-constants';
+import { confirmLensWarnings, useLensProfiles } from '@core/app/components/dialogs/promark/useLensProfiles';
+import { defaultField, defaultGalvoParameters } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { readCloudConfig, updateCloudConfig } from '@core/helpers/api/flux-id/cloudConfig';
+import { normalizeLensProfileKey, resolveLensProfile } from '@core/helpers/device/promark/lens-profiles';
+import { uploadLensCloudData } from '@core/helpers/device/promark/lens-profiles-cloud';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
-import { getSerial } from '@core/helpers/device/promark/promark-info';
+import { getPromarkInfo, getSerial } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
 import { getHomePage } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
+import type { LensProfileKey } from '@core/interfaces/Promark';
 
 import SetupPageLayout from '../Components/SetupPageLayout';
 import showSetupPageLayoutDialog from '../Components/showSetupPageLayoutDialog';
@@ -24,10 +28,6 @@ import styles from './PromarkSettings.module.scss';
 
 export default function PromarkSettings(): React.JSX.Element {
   const { initialize: t } = useI18n();
-  const [field, setField] = useState(defaultField);
-  const [redDot, setRedDot] = useState(defaultRedLight);
-  const [galvoParameters, setGalvoParameters] = useState(defaultGalvoParameters);
-
   const isInch = useStorageStore((state) => state.isInch);
   const [serial, hashedSerial] = useMemo(() => {
     const _serial = getSerial();
@@ -37,45 +37,35 @@ export default function PromarkSettings(): React.JSX.Element {
     return [_serial, device?.hashed_serial];
   }, []);
   const { width } = useMemo(() => getWorkarea('fpm1'), []);
+  const info = useMemo(() => getPromarkInfo(), []);
+  const [store] = useState(() => promarkDataStore.get(serial));
+  // the work area picked on the previous page is shown first and becomes the default lens
+  const initialKey = useMemo<LensProfileKey>(
+    () => normalizeLensProfileKey(info.laserType, { innerEngraving: false, workarea: width }),
+    [info.laserType, width],
+  );
+  const lens = useLensProfiles({ hashedSerial, info, initialDefaultKey: initialKey, initialKey, serial, store });
 
-  useEffect(() => {
-    const {
-      field = defaultField,
-      galvoParameters = defaultGalvoParameters,
-      redDot = defaultRedLight,
-    } = promarkDataStore.get(serial);
+  const handleUpdateParameter = async (): Promise<boolean> => {
+    if (!(await confirmLensWarnings(lens.getSaveWarnings(), info.laserType, isInch))) return false;
 
-    setField(field);
-    setRedDot(redDot);
-    setGalvoParameters(galvoParameters);
-    readCloudConfig({ hash: hashedSerial, key: 'promarkLens', serialNumber: serial }, (config) => {
-      setField((prev) => ({ ...prev, ...config.field }));
-      setRedDot((prev) => ({ ...prev, ...config.redDot }));
-      setGalvoParameters((prev) => ({ ...prev, ...config.galvoParameters }));
-    });
-  }, [hashedSerial, serial]);
-
-  const handleUpdateParameter = async () => {
-    promarkDataStore.update(serial, { field, galvoParameters, redDot });
+    const { includeLegacy, store: saved } = lens.save();
+    const applied = resolveLensProfile(saved, initialKey);
 
     try {
-      await deviceMaster.setField(width, field);
-      await deviceMaster.setGalvoParameters(galvoParameters);
+      await deviceMaster.setField(width, applied.field ?? defaultField);
+      await deviceMaster.setGalvoParameters(applied.galvoParameters ?? defaultGalvoParameters);
     } catch (error) {
       console.error('Failed to apply promark settings state', error);
     }
 
-    await updateCloudConfig({
-      data: { field, galvoParameters, redDot },
-      hash: hashedSerial,
-      key: 'promarkLens',
-      model: 'fpm1',
-      serialNumber: serial,
-    });
+    await uploadLensCloudData({ hash: hashedSerial, includeLegacy, info, model: 'fpm1', serial, store: saved });
+
+    return true;
   };
 
   const handleNext = async () => {
-    await handleUpdateParameter();
+    if (!(await handleUpdateParameter())) return;
 
     showSetupPageLayoutDialog({
       buttons: [
@@ -109,7 +99,7 @@ export default function PromarkSettings(): React.JSX.Element {
     <SetupPageLayout
       buttons={[
         { label: t.back, onClick: () => window.history.back() },
-        { label: t.next, onClick: handleNext, primary: true },
+        { disabled: lens.invalidProfiles.length > 0, label: t.next, onClick: handleNext, primary: true },
       ]}
     >
       <Flex className={styles.container} gap={24} justify="space-between" vertical>
@@ -121,9 +111,21 @@ export default function PromarkSettings(): React.JSX.Element {
         </Flex>
 
         <div className={styles['table-container']}>
-          {width && <FieldBlock field={field} isInch={isInch} setField={setField} width={width} />}
-          <RedDotBlock isInch={isInch} redDot={redDot} setRedDot={setRedDot} />
-          <LensBlock data={galvoParameters} setData={setGalvoParameters} />
+          <LensProfileBlock
+            canUseCloud={lens.canUseCloud}
+            info={info}
+            invalidProfiles={lens.invalidProfiles}
+            isDefault={lens.isDefault}
+            isSynced={lens.isSynced}
+            onChange={lens.changeLens}
+            onSetDefault={lens.setAsDefault}
+            onUseCloud={lens.applyCloudParameters}
+            status={lens.status}
+            value={lens.lensKey}
+          />
+          <FieldBlock field={lens.field} isInch={isInch} issues={lens.issues} setField={lens.setField} />
+          <RedDotBlock isInch={isInch} issues={lens.issues} redDot={lens.redDot} setRedDot={lens.setRedDot} />
+          <LensBlock data={lens.galvoParameters} issues={lens.issues} setData={lens.setGalvoParameters} />
         </div>
       </Flex>
     </SetupPageLayout>

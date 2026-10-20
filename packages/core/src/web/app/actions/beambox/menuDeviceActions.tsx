@@ -24,6 +24,11 @@ import { Mode } from '@core/app/constants/monitor-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { backUpCalibrationData } from '@core/helpers/device/camera/backUpCalibrationData';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
+import {
+  getDocumentLensProfile,
+  getLensProfile,
+  isSameLensProfileKey,
+} from '@core/helpers/device/promark/lens-profiles';
 import checkFirmware from '@core/helpers/device/updateFirmware/checkFirmware';
 import firmwareUpdater from '@core/helpers/device/updateFirmware/firmwareUpdater';
 import DeviceMaster from '@core/helpers/device-master';
@@ -331,6 +336,17 @@ export default {
       const isPromark = promarkModels.has(device.model);
       const isIdle = device.st_id <= 0;
       const previewTask = isIdle && isPromark ? exportFuncs.getCachedPromarkTask(device.serial) : undefined;
+      const cachedLensKey = previewTask?.lensProfileKey;
+
+      // select applied the current document's lens; the cached task was generated for its own
+      if (cachedLensKey && !isSameLensProfileKey(cachedLensKey, getDocumentLensProfile(device.serial).key)) {
+        const { field, galvoParameters, source } = getLensProfile(device.serial, cachedLensKey);
+
+        console.log('Applying lens profile of the cached task', cachedLensKey, source);
+        await DeviceMaster.setField(cachedLensKey.workarea, field);
+
+        if (galvoParameters) await DeviceMaster.setGalvoParameters(galvoParameters);
+      }
 
       await MonitorController.showMonitor(
         device,

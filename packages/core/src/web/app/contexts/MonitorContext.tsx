@@ -28,6 +28,7 @@ import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IProgress } from '@core/interfaces/IProgress';
 import type { TaskMetaData } from '@core/interfaces/ITask';
+import type { LensProfileKey } from '@core/interfaces/Promark';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('monitor');
 const deviceEventEmitter = eventEmitterFactory.createEventEmitter('device');
@@ -89,6 +90,8 @@ const reportStates = new Set([
 export interface PreviewTask {
   fcodeBlob: Blob;
   fileName: string;
+  /** Promark: the lens the task was generated for */
+  lensProfileKey?: LensProfileKey;
   metadata: TaskMetaData;
   taskImageURL: string;
   taskTime: number;

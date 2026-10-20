@@ -16,6 +16,7 @@ import currentFileManager from '@core/app/svgedit/currentFileManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray, swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { getDocumentLensProfile } from '@core/helpers/device/promark/lens-profiles';
 import deviceMaster from '@core/helpers/device-master';
 import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import { getOS } from '@core/helpers/getOS';
@@ -751,6 +752,8 @@ export default {
         promarkTaskCache[device.serial] = {
           fcodeBlob: taskCodeBlob,
           fileName: '',
+          // select applied the document's lens; a rerun from the dashboard must apply the same one
+          lensProfileKey: getDocumentLensProfile(device.serial).key,
           metadata,
           taskImageURL: thumbnail,
           taskTime: fileTimeCost,

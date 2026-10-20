@@ -69,6 +69,31 @@ export const defaultGalvoParameters: GalvoParameters = {
 };
 export const defaultRedLight: RedDot = { offsetX: 0, offsetY: 0, scaleX: 1, scaleY: 1 };
 
+/** Values outside `error` cannot be saved; values outside `warning` are saved after a confirmation. */
+export interface LensParameterRange {
+  error: readonly [number, number];
+  warning: readonly [number, number];
+}
+
+/** The field offset limit is a share of the work area; see `getLensParameterRanges`. */
+export const FIELD_OFFSET_ERROR_RATIO = 0.1;
+
+export const getLensParameterRanges = (workarea: number) =>
+  ({
+    fieldAngle: { error: [-10, 10], warning: [-2, 2] },
+    fieldOffset: {
+      error: [-workarea * FIELD_OFFSET_ERROR_RATIO, workarea * FIELD_OFFSET_ERROR_RATIO],
+      warning: [-5, 5],
+    },
+    galvoBulge: { error: [0.8, 1.2], warning: [0.9, 1.1] },
+    // %
+    galvoScale: { error: [50, 150], warning: [70, 110] },
+    galvoSkew: { error: [0.9, 1.1], warning: [0.97, 1.03] },
+    galvoTrapezoid: { error: [0.9, 1.1], warning: [0.98, 1.02] },
+    redDotOffset: { error: [-10, 10], warning: [-5, 5] },
+    redDotScale: { error: [0.8, 1.2], warning: [0.95, 1.05] },
+  }) as const satisfies Record<string, LensParameterRange>;
+
 export const controlConfig = {
   aSpeed: 19.6875, // mm/ms
   jumpDelay: 300, // us ((MaxJumpDelay+MinJumpDelay)/2)

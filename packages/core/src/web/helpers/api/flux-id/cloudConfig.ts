@@ -3,13 +3,23 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import i18n from '@core/helpers/i18n';
-import type { Field, GalvoParameters, RedDot } from '@core/interfaces/Promark';
+import type {
+  Field,
+  GalvoParameters,
+  LensProfile,
+  LensProfileKey,
+  PromarkInfo,
+  RedDot,
+} from '@core/interfaces/Promark';
 
 import type { ResponseWithError } from './base';
 import { axiosFluxId, formatErrorMessage, getCurrentUser } from './base';
 
 type CloudConfig = {
+  promarkLaserSource: PromarkInfo;
+  /** the default lens profile, kept in the format older versions read */
   promarkLens: { field: Field; galvoParameters: GalvoParameters; redDot: RedDot };
+  promarkLensProfiles: { defaultKey?: LensProfileKey; profiles: LensProfile[] };
 };
 export type ConfigKey = keyof CloudConfig;
 
@@ -64,9 +74,11 @@ export const readCloudConfig = async <T extends ConfigKey>(
   return config;
 };
 
-export const updateCloudConfigApi = async <T extends ConfigKey>(
-  data: BasicData<T> & { data: CloudConfig[T]; model?: WorkAreaModel },
-): Promise<void> => {
+type UpdateData<T extends ConfigKey> = BasicData<T> & { data: CloudConfig[T]; model?: WorkAreaModel };
+
+const postCloudConfig = async <T extends ConfigKey>(
+  data: UpdateData<T>,
+): Promise<{ errorMsg: string; success: boolean }> => {
   const response = (await axiosFluxId.post(
     '/machine/config/update',
     {
@@ -81,16 +93,22 @@ export const updateCloudConfigApi = async <T extends ConfigKey>(
 
   const success = !response.error && response.status === 200 && response.data?.status === 'ok';
 
+  return { errorMsg: success ? '' : (formatErrorMessage(response.error) ?? ''), success };
+};
+
+const showUpdateResult = ({ errorMsg, success }: { errorMsg: string; success: boolean }): void => {
   if (success) {
     MessageCaller.openMessage({
       content: i18n.lang.cloud_sync.sync_success,
       level: MessageLevel.SUCCESS,
     });
   } else {
-    const errorMsg = formatErrorMessage(response.error) ?? '';
-
     alertCaller.popUpError({ message: `${i18n.lang.cloud_sync.sync_failed}\n${errorMsg}` });
   }
+};
+
+export const updateCloudConfigApi = async <T extends ConfigKey>(data: UpdateData<T>): Promise<void> => {
+  showUpdateResult(await postCloudConfig(data));
 };
 
 export const updateCloudConfig = async <T extends ConfigKey>(
@@ -115,6 +133,45 @@ export const updateCloudConfig = async <T extends ConfigKey>(
       onYes: async () => {
         await updateCloudConfigApi(data);
         resolve();
+      },
+    });
+  });
+};
+
+type UpdateItem = { [K in ConfigKey]: { data: CloudConfig[K]; key: K } }[ConfigKey];
+
+/** Uploads several keys of one machine after a single confirmation; resolves whether every key was uploaded. */
+export const updateCloudConfigs = async (
+  {
+    hash,
+    items,
+    model,
+    serialNumber,
+  }: Omit<BasicData<ConfigKey>, 'key'> & { items: UpdateItem[]; model?: WorkAreaModel },
+  { checkHash = true, checkLogin = true }: Options = {},
+): Promise<boolean> => {
+  if (checkHash && !hash) return false;
+
+  if (checkLogin && !getCurrentUser()) return false;
+
+  return new Promise<boolean>((resolve) => {
+    alertCaller.popUp({
+      buttonType: alertConstants.YES_NO,
+      message: i18n.lang.cloud_sync.sync_config,
+      onNo: () => resolve(false),
+      onYes: async () => {
+        const errors: string[] = [];
+
+        for (const { data, key } of items) {
+          const { errorMsg, success } = await postCloudConfig({ data, hash, key, model, serialNumber } as UpdateData<
+            typeof key
+          >);
+
+          if (!success) errors.push(errorMsg);
+        }
+
+        showUpdateResult({ errorMsg: errors.filter(Boolean).join('\n'), success: errors.length === 0 });
+        resolve(errors.length === 0);
       },
     });
   });

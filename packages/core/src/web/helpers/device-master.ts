@@ -47,7 +47,7 @@ import { swiftrayClient } from './api/swiftray-client';
 import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';
 import { showBb2FirmwareWarning } from './device/bb2FirmwareWarning';
-import promarkDataStore from './device/promark/promark-data-store';
+import { getDocumentLensProfile } from './device/promark/lens-profiles';
 import { getPromarkInfo } from './device/promark/promark-info';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
@@ -506,16 +506,20 @@ class DeviceMaster {
       }
 
       if (promarkModels.has(device.info.model)) {
-        const { field = defaultField, galvoParameters = defaultGalvoParameters } = promarkDataStore.get(
-          device.info.serial,
-        );
+        // the saved lens profile matching the document, else the legacy set
+        const {
+          field = defaultField,
+          galvoParameters = defaultGalvoParameters,
+          key,
+          source,
+        } = getDocumentLensProfile(device.info.serial);
         const { width } = getWorkarea(device.info.model);
 
         // Always sent, defaults included: the backend keeps whatever the previous machine set, and
         // the correction also carries the laser source it is for, so a machine without local
         // calibration data would otherwise run with another machine's lens and source.
         await this.setField(width, field);
-        console.log('Applying', galvoParameters);
+        console.log('Applying lens profile', key, source, galvoParameters);
         await this.setGalvoParameters(galvoParameters);
       }
 

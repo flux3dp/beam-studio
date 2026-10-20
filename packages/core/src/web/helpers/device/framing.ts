@@ -39,10 +39,9 @@ import { convertVariableText, hasVariableText } from '@core/helpers/variableText
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type { PromarkStore } from '@core/interfaces/Promark';
 
 import applyRedDot from './promark/apply-red-dot';
-import promarkDataStore from './promark/promark-data-store';
+import { getDocumentLensProfile } from './promark/lens-profiles';
 
 // TODO: add unit test
 export const FramingType = {
@@ -439,7 +438,7 @@ class FramingTaskManager extends EventEmitter {
         field = defaultField,
         galvoParameters = defaultGalvoParameters,
         redDot,
-      } = promarkDataStore.get(this.device?.serial) as PromarkStore;
+      } = getDocumentLensProfile(this.device!.serial);
 
       if (redDot) {
         const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
@@ -515,7 +514,7 @@ class FramingTaskManager extends EventEmitter {
         field = defaultField,
         galvoParameters = defaultGalvoParameters,
         redDot,
-      } = promarkDataStore.get(this.device?.serial) as PromarkStore;
+      } = getDocumentLensProfile(this.device!.serial);
 
       if (redDot) {
         const { width } = getWorkarea(this.device.model);

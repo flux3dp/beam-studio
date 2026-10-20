@@ -45,12 +45,31 @@ export interface PromarkCameraParameters extends FisheyeCameraParametersV3 {
   rotate180?: boolean;
 }
 
+/** Identifies a field lens: its work area and whether it is used for inner engraving. */
+export interface LensProfileKey {
+  innerEngraving: boolean;
+  /** mm */
+  workarea: number;
+}
+
+export interface LensProfile extends LensProfileKey {
+  field?: Field;
+  galvoParameters?: GalvoParameters;
+  redDot?: RedDot;
+}
+
 export interface PromarkStore {
   cameraDeviceId?: string;
   cameraParameters?: PromarkCameraParameters;
+  /** at most one profile is the default; the legacy set is kept as a copy of it */
+  defaultLensProfile?: LensProfileKey;
+  /** legacy set, saved without a work area; used when neither a matching nor a default profile exists */
   field?: Field;
+  /** legacy set, see `field` */
   galvoParameters?: GalvoParameters;
   info?: PromarkInfo;
+  lensProfiles?: LensProfile[];
+  /** legacy set, see `field` */
   redDot?: RedDot;
 }
 

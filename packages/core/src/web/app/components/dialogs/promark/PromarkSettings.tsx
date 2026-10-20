@@ -6,28 +6,31 @@ import { Button, Flex, Modal, Spin } from 'antd';
 import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
-import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app/constants/promark-constants';
+import { defaultField, defaultGalvoParameters, LaserType } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import icons from '@core/app/icons/icons';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { readCloudConfig, updateCloudConfig } from '@core/helpers/api/flux-id/cloudConfig';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import applyRedDot from '@core/helpers/device/promark/apply-red-dot';
 import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
+import { getDocumentLensProfileKey, resolveLensProfile } from '@core/helpers/device/promark/lens-profiles';
+import { uploadLensCloudData } from '@core/helpers/device/promark/lens-profiles-cloud';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { Field, GalvoParameters, PromarkStore, RedDot } from '@core/interfaces/Promark';
+import type { PromarkInfo, PromarkStore } from '@core/interfaces/Promark';
 
 import blockStyles from './Block.module.scss';
 import FieldBlock from './FieldBlock';
 import LensBlock from './LensBlock';
+import LensProfileBlock from './LensProfileBlock';
 import type { MarkParameters } from './ParametersBlock';
 import ParametersBlock from './ParametersBlock';
 import styles from './PromarkSettings.module.scss';
 import RedDotBlock from './RedDotBlock';
+import { confirmLensWarnings, useLensProfiles } from './useLensProfiles';
 
 interface Props {
   device: IDeviceInfo;
@@ -39,26 +42,25 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { hashed_serial: hashedSerial, model, serial } = device;
   const isInch = useStorageStore((state) => state.isInch);
-  const [field, setField] = useState<Field>(initData.field || defaultField);
-  const [redDot, setRedDot] = useState<RedDot>(initData.redDot || defaultRedLight);
-  const [galvoParameters, setGalvoCorrection] = useState<GalvoParameters>(
-    initData.galvoParameters || defaultGalvoParameters,
-  );
+  const info = useMemo<PromarkInfo>(() => initData.info ?? { laserType: LaserType.Desktop, watt: 20 }, [initData.info]);
+  // what the current document applies, which is also what is on the machine when the dialog opens
+  const [documentProfile] = useState(() => resolveLensProfile(initData, getDocumentLensProfileKey(info)));
+  const lens = useLensProfiles({
+    hashedSerial,
+    info,
+    initialKey: documentProfile.key,
+    serial,
+    store: initData,
+  });
+  const { field, galvoParameters, redDot } = lens;
   const [parameters, setParameters] = useState<MarkParameters>({ power: 50, speed: 1000 });
   const { power, speed } = parameters;
-  // Device discovery reports the same model for MOPA and UV, so this uses the model's default size.
-  const { width } = useMemo(() => getWorkarea(model), [model]);
+  // the size the document applies to the field when the dialog closes
+  const documentWidth = useMemo(() => getWorkarea(model).width, [model]);
+  const width = lens.lensKey.workarea;
   const [isPreviewing, setIsPreviewing] = useState(false);
   const previewTask = useRef<string>('');
   const markTask = useRef<string>('');
-
-  useEffect(() => {
-    readCloudConfig({ hash: hashedSerial, key: 'promarkLens', serialNumber: serial }, (config) => {
-      setField((prev) => ({ ...prev, ...config.field }));
-      setRedDot((prev) => ({ ...prev, ...config.redDot }));
-      setGalvoCorrection((prev) => ({ ...prev, ...config.galvoParameters }));
-    });
-  }, [hashedSerial, serial]);
 
   useEffect(() => {
     previewTask.current = '';
@@ -145,24 +147,25 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
   };
 
   const handleSave = async () => {
-    promarkDataStore.update(serial, { field, galvoParameters, redDot });
+    if (!(await confirmLensWarnings(lens.getSaveWarnings(), info.laserType, isInch))) return;
+
+    const { includeLegacy, store } = lens.save();
+
     try {
       if (isPreviewing) {
         await deviceMaster.stopFraming();
       }
 
-      await handleUpdateParameter();
+      // the machine keeps what the current document applies, whichever lens was edited
+      const applied = resolveLensProfile(store, documentProfile.key);
+
+      await deviceMaster.setField(documentWidth, applied.field ?? defaultField);
+      await deviceMaster.setGalvoParameters(applied.galvoParameters ?? defaultGalvoParameters);
     } catch (error) {
       console.error('Failed to apply promark settings state', error);
     }
 
-    await updateCloudConfig({
-      data: { field, galvoParameters, redDot },
-      hash: hashedSerial,
-      key: 'promarkLens',
-      model: device.model,
-      serialNumber: serial,
-    });
+    await uploadLensCloudData({ hash: hashedSerial, includeLegacy, info, model, serial, store });
 
     onClose();
   };
@@ -174,13 +177,8 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
           await deviceMaster.stopFraming();
         }
 
-        await deviceMaster.setField(width, initData.field || { angle: 0, offsetX: 0, offsetY: 0 });
-        await deviceMaster.setGalvoParameters(
-          initData.galvoParameters || {
-            x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
-            y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
-          },
-        );
+        await deviceMaster.setField(documentWidth, documentProfile.field ?? defaultField);
+        await deviceMaster.setGalvoParameters(documentProfile.galvoParameters ?? defaultGalvoParameters);
       } catch (err) {
         console.error('Failed to restore from promark settings state', err);
       }
@@ -209,7 +207,12 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
         <Button className={styles.button} onClick={handleCancel}>
           {tGlobal.cancel}
         </Button>
-        <Button className={styles.button} onClick={handleSave} type="primary">
+        <Button
+          className={styles.button}
+          disabled={lens.invalidProfiles.length > 0}
+          onClick={handleSave}
+          type="primary"
+        >
           {tGlobal.save}
         </Button>
       </Flex>
@@ -228,9 +231,21 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
       width={620}
     >
       <div className={styles.container}>
-        <FieldBlock field={field} isInch={isInch} setField={setField} width={width} />
-        <RedDotBlock isInch={isInch} redDot={redDot} setRedDot={setRedDot} />
-        <LensBlock data={galvoParameters} setData={setGalvoCorrection} />
+        <LensProfileBlock
+          canUseCloud={lens.canUseCloud}
+          info={info}
+          invalidProfiles={lens.invalidProfiles}
+          isDefault={lens.isDefault}
+          isSynced={lens.isSynced}
+          onChange={lens.changeLens}
+          onSetDefault={lens.setAsDefault}
+          onUseCloud={lens.applyCloudParameters}
+          status={lens.status}
+          value={lens.lensKey}
+        />
+        <FieldBlock field={field} isInch={isInch} issues={lens.issues} setField={lens.setField} />
+        <RedDotBlock isInch={isInch} issues={lens.issues} redDot={redDot} setRedDot={lens.setRedDot} />
+        <LensBlock data={galvoParameters} issues={lens.issues} setData={lens.setGalvoParameters} />
         <Flex align="center" className={blockStyles['full-row']} gap={8} justify="space-between">
           <div className={blockStyles.title}>{t.mark_parameters}</div>
           <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
