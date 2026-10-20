@@ -174,6 +174,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     // the chuck ratio were placeholders), curve engraving needs the probe checked against the galvo
     // heads, and pass-through a measured maxHeight (300 was a guess).
     // TODO: measure all three, then give them real values.
+    airAssist: true,
     autoFeeder: undefined,
     autoFocus: true,
     curveEngraving: undefined,
