@@ -14,7 +14,7 @@ import styles from './PropertyRenderer.module.scss';
 import type { BasePropertyProps } from './index';
 
 const SliderProperty = ({ getValue, property, setValue }: BasePropertyProps<NumberPropertyDef>): React.JSX.Element => {
-  const { puzzle_generator: t } = useI18n();
+  const { generators: tGenerators, puzzle_generator: t } = useI18n();
   const isInch = useStorageStore((s) => s.isInch);
   const value = (getValue(property.key) as number) ?? property.default;
 
@@ -38,7 +38,12 @@ const SliderProperty = ({ getValue, property, setValue }: BasePropertyProps<Numb
         <div className={styles['property-label']}>{t[property.labelKey]}</div>
         <div className={styles['slider-input-group']}>
           {isModified && (
-            <button className={styles['reset-button']} onClick={handleReset} title={t.reset_to_default} type="button">
+            <button
+              className={styles['reset-button']}
+              onClick={handleReset}
+              title={tGenerators.general.reset_to_default}
+              type="button"
+            >
               <UndoOutlined />
             </button>
           )}

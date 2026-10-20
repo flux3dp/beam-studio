@@ -340,7 +340,7 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
           ...(profile.engraveArea && checkHexa2GalvoDev()
             ? [{ label: '預覽雕刻範圍', onClick: previewEngraveArea }]
             : []),
-          { label: tCali.skip, onClick: () => handleNext(false) },
+          { label: lang.global.skip, onClick: () => handleNext(false) },
           { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
         ]}
         onClose={() => onClose(false)}

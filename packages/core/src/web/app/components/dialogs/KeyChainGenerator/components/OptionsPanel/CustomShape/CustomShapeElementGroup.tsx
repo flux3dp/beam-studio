@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback } from 'react';
 
+import ElementPicker from '@core/app/widgets/ElementPicker';
 import useI18n from '@core/helpers/useI18n';
 
 import type { CustomShapeElementOptionDef, CustomShapeElementValues } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
 import GroupCollapse from '../Controls/GroupCollapse';
 import NumberControl from '../Controls/NumberControl';
-import ElementPicker from '../Element/ElementPicker';
 
 interface CustomShapeElementGroupProps {
   elementDef: CustomShapeElementOptionDef;
@@ -16,7 +16,7 @@ interface CustomShapeElementGroupProps {
 const CustomShapeElementGroup = ({ elementDef }: CustomShapeElementGroupProps): ReactNode => {
   const { defaults } = elementDef;
   const customShapeElement = useKeychainShapeStore((s) => s.state.customShapeElement);
-  const { keychain_generator: t } = useI18n();
+  const { generators: tGenerators, keychain_generator: t } = useI18n();
 
   const handleElementChange = useCallback(async (updates: Partial<CustomShapeElementValues>) => {
     const {
@@ -64,7 +64,7 @@ const CustomShapeElementGroup = ({ elementDef }: CustomShapeElementGroupProps): 
       {customShapeElement.shapeKey && (
         <NumberControl
           defaultValue={defaults.size}
-          label={t.element_size}
+          label={tGenerators.general.size}
           max={200}
           min={0}
           onChange={handleElementSizeChange}

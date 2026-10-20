@@ -13,7 +13,6 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 15 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 5 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 5 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
     flv1: { [LayerModule.LASER_UNIVERSAL]: { power: 100, speed: 6 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
@@ -29,7 +28,6 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 10 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 4 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 4 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 3 } },
     flv1: { [LayerModule.LASER_UNIVERSAL]: { power: 100, speed: 3 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 5 } },
@@ -54,7 +52,6 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 500 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     flv1: { [LayerModule.LASER_UNIVERSAL]: { power: 100, speed: 150 } },
     fhx2rf_30: {
@@ -79,12 +76,18 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       },
     },
   },
+  wood_plywood_3mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 12 } } },
+  wood_plywood_5mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 4 } } },
+  wood_plywood_engraving: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 250 } } },
+  wood_solid_3mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 6 } } },
+  wood_solid_5mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 50, speed: 4 } } },
+  wood_solid_engraving: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } } },
   acrylic_3mm_cutting: {
     fbb1b: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 8 } },
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 7 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 10 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 6 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 9 } },
@@ -95,7 +98,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 59, speed: 3 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 5 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 2, speed: 5 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 56, speed: 4 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 3 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 3 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
@@ -116,7 +119,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 13, speed: 500 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
     fhx2rf_30: {
       [LayerModule.LASER_UNIVERSAL]: {
@@ -140,6 +143,9 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       },
     },
   },
+  acrylic_film_3mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 6 } } },
+  acrylic_film_5mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 65, repeat: 2, speed: 5 } } },
+  acrylic_film_engraving: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 10, speed: 300 } } },
   black_acrylic_3mm_cutting: {
     ado1: {
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 2 },
@@ -159,7 +165,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 65, speed: 175 },
       [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 50, speed: 40 },
     },
-    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 50, speed: 40 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 20, speed: 20 } },
   },
   mdf_3mm_cutting: {
     ado1: {
@@ -167,7 +173,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 100, speed: 8 },
     },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 15 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 7 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 6 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 5 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 8 } },
     fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 10 } },
@@ -178,7 +184,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 100, speed: 4 },
     },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 10 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 6 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 4 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 4 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 6 } },
     fhx2rf_80: { [LayerModule.LASER_UNIVERSAL]: { power: 70, speed: 8 } },
@@ -194,7 +200,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 70, speed: 100 },
     },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 500 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 250 } },
     fhx2rf_30: {
       [LayerModule.LASER_UNIVERSAL]: {
         power: 55,
@@ -217,8 +223,8 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       },
     },
   },
-  bamboo_2mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 15 } } },
-  bamboo_5mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } } },
+  bamboo_2mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 10, speed: 3 } } },
+  bamboo_5mm_cutting: { fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 65, repeat: 2, speed: 5 } } },
   leather_3mm_cutting: {
     ado1: {
       [LayerModule.LASER_10W_DIODE]: { module: LayerModule.LASER_10W_DIODE, power: 100, speed: 4 },
@@ -228,7 +234,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 55, speed: 4 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 35, speed: 10 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 60, speed: 3 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 55, repeat: 3, speed: 10 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 10, repeat: 3, speed: 11 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 6 } },
     fhx2rf_30: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 6 } },
     fhx2rf_60: { [LayerModule.LASER_UNIVERSAL]: { power: 65, speed: 9 } },
@@ -254,7 +260,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 300 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 7, speed: 200 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 5, speed: 200 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     fhx2rf_30: {
       [LayerModule.LASER_UNIVERSAL]: {
@@ -321,7 +327,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 250 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 5, speed: 200 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 10, speed: 250 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 250 } },
     fhx2rf_30: {
       [LayerModule.LASER_UNIVERSAL]: {
@@ -353,7 +359,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 300 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 500 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 300 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 500 } },
     fhx2rf_30: {
       [LayerModule.LASER_UNIVERSAL]: {
@@ -386,7 +392,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 40, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 50, speed: 200 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 50, speed: 100 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 35, speed: 100 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 100 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 45, speed: 300 } },
     fhx2rf_30: {
       [LayerModule.LASER_UNIVERSAL]: {
@@ -419,7 +425,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 150 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 35, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 300 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 250 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 35, speed: 150 } },
     fhx2rf_30: {
       [LayerModule.LASER_UNIVERSAL]: {
@@ -457,7 +463,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     },
   },
   sticker_kiss_cut: {
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 3, speed: 35 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 30 } },
   },
   // 1064
   gold_engraving: {
@@ -466,19 +472,19 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
   },
   brass_engraving: {
     ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 85, speed: 30 } },
-    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 85, speed: 30 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 45, speed: 30 } },
   },
   ti_engraving: {
     ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 75, speed: 30 } },
-    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 75, speed: 30 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 45, speed: 30 } },
   },
   stainless_steel_engraving: {
     ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 90, speed: 20 } },
-    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 90, speed: 20 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 70, speed: 20 } },
   },
   aluminum_engraving: {
     ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 80, speed: 20 } },
-    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 80, speed: 20 } },
+    fbm2: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 20, speed: 10 } },
   },
   silver_engraving: {
     ado1: { [LayerModule.LASER_1064]: { module: LayerModule.LASER_1064, power: 95, speed: 20 } },

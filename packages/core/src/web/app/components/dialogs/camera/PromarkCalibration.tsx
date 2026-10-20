@@ -103,7 +103,7 @@ const PromarkCalibration = ({
         buttons={[
           { label: tCali.back, onClick: handleStepBack },
           currentData && {
-            label: tCali.skip,
+            label: lang.global.skip,
             onClick: async () => {
               await cameraCalibrationApi.updateData(currentData);
               updateParam(currentData);
@@ -219,7 +219,7 @@ const PromarkCalibration = ({
             label: tCali.back,
             onClick: handleStepBack,
           },
-          { label: tCali.skip, onClick: () => handleNext(true) },
+          { label: lang.global.skip, onClick: () => handleNext(true) },
           { label: tCali.start_engrave, onClick: () => handleNext(), type: 'primary' },
         ]}
         onClose={() => onClose(false)}

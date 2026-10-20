@@ -584,155 +584,55 @@ export interface ILang {
         do_not_adjust_default_para: string;
         dottingTime: string;
         dropdown: {
-          inches: {
-            abs_engraving: string;
-            acrylic_3mm_cutting: string;
-            acrylic_5mm_cutting: string;
-            acrylic_7mm_cutting: string;
-            acrylic_8mm_cutting: string;
-            acrylic_10mm_cutting: string;
-            acrylic_engraving: string;
-            acrylic_printing: string;
-            aluminum_engraving: string;
-            aluminum_light: string;
-            bamboo_2mm_cutting: string;
-            bamboo_5mm_cutting: string;
-            bamboo_printing: string;
+          materials: {
+            acrylic: string;
+            acrylic_film: string;
+            aluminum: string;
+            bamboo: string;
             black_abs: string;
-            black_acrylic_3mm_cutting: string;
-            black_acrylic_5mm_cutting: string;
-            black_acrylic_engraving: string;
-            brass_dark: string;
-            brass_engraving: string;
-            brass_light: string;
-            canvas_fabric_printing: string;
-            canvas_printing: string;
-            cardboard_printing: string;
-            cardstock_printing: string;
+            black_acrylic: string;
+            brass: string;
+            canvas: string;
+            canvas_fabric: string;
+            cardboard: string;
+            cardstock: string;
             copper: string;
-            cork_printing: string;
-            denim_1mm_cutting: string;
-            fabric_3mm_cutting: string;
-            fabric_5mm_cutting: string;
-            fabric_engraving: string;
-            fabric_printing: string;
-            flat_stone_printing: string;
-            glass_bw_engraving: string;
-            glass_printing: string;
-            gloss_leather_printing: string;
-            gold_engraving: string;
-            iron_engraving: string;
-            leather_3mm_cutting: string;
-            leather_5mm_cutting: string;
-            leather_engraving: string;
-            leather_printing: string;
-            mdf_3mm_cutting: string;
-            mdf_5mm_cutting: string;
-            mdf_7mm_cutting: string;
-            mdf_engraving: string;
-            mdf_printing: string;
-            metal_bw_engraving: string;
+            cork: string;
+            denim: string;
+            fabric: string;
+            flat_stone: string;
+            glass: string;
+            gloss_leather: string;
+            gold: string;
+            iron: string;
+            leather: string;
+            mdf: string;
+            metal: string;
             opaque_acrylic: string;
-            pc_printing: string;
-            rubber_bw_engraving: string;
-            silver_engraving: string;
-            slate_engraving: string;
-            stainless_steel_bw_engraving_diode: string;
-            stainless_steel_dark: string;
-            stainless_steel_engraving: string;
-            stainless_steel_light: string;
-            stainless_steel_printing: string;
-            steel_engraving_spray_engraving: string;
-            sticker_kiss_cut: string;
-            sticker_printing: string;
+            pc: string;
+            rubber: string;
+            silver: string;
+            slate: string;
+            stainless_steel: string;
+            sticker: string;
             stone: string;
-            ti_engraving: string;
-            titanium_dark: string;
-            titanium_light: string;
+            titanium: string;
             white_abs: string;
-            wood_3mm_cutting: string;
-            wood_5mm_cutting: string;
-            wood_7mm_cutting: string;
-            wood_8mm_cutting: string;
-            wood_10mm_cutting: string;
-            wood_engraving: string;
-            wood_printing: string;
-          };
-          mm: {
-            abs_engraving: string;
-            acrylic_3mm_cutting: string;
-            acrylic_5mm_cutting: string;
-            acrylic_7mm_cutting: string;
-            acrylic_8mm_cutting: string;
-            acrylic_10mm_cutting: string;
-            acrylic_engraving: string;
-            acrylic_printing: string;
-            aluminum_engraving: string;
-            aluminum_light: string;
-            bamboo_2mm_cutting: string;
-            bamboo_5mm_cutting: string;
-            bamboo_printing: string;
-            black_abs: string;
-            black_acrylic_3mm_cutting: string;
-            black_acrylic_5mm_cutting: string;
-            black_acrylic_engraving: string;
-            brass_dark: string;
-            brass_engraving: string;
-            brass_light: string;
-            canvas_fabric_printing: string;
-            canvas_printing: string;
-            cardboard_printing: string;
-            cardstock_printing: string;
-            copper: string;
-            cork_printing: string;
-            denim_1mm_cutting: string;
-            fabric_3mm_cutting: string;
-            fabric_5mm_cutting: string;
-            fabric_engraving: string;
-            fabric_printing: string;
-            flat_stone_printing: string;
-            glass_bw_engraving: string;
-            glass_printing: string;
-            gloss_leather_printing: string;
-            gold_engraving: string;
-            iron_engraving: string;
-            leather_3mm_cutting: string;
-            leather_5mm_cutting: string;
-            leather_engraving: string;
-            leather_printing: string;
-            mdf_3mm_cutting: string;
-            mdf_5mm_cutting: string;
-            mdf_7mm_cutting: string;
-            mdf_engraving: string;
-            mdf_printing: string;
-            metal_bw_engraving: string;
-            opaque_acrylic: string;
-            pc_printing: string;
-            rubber_bw_engraving: string;
-            silver_engraving: string;
-            slate_engraving: string;
-            stainless_steel_bw_engraving_diode: string;
-            stainless_steel_dark: string;
-            stainless_steel_engraving: string;
-            stainless_steel_light: string;
-            stainless_steel_printing: string;
-            steel_engraving_spray_engraving: string;
-            sticker_kiss_cut: string;
-            sticker_printing: string;
-            stone: string;
-            ti_engraving: string;
-            titanium_dark: string;
-            titanium_light: string;
-            white_abs: string;
-            wood_3mm_cutting: string;
-            wood_5mm_cutting: string;
-            wood_7mm_cutting: string;
-            wood_8mm_cutting: string;
-            wood_10mm_cutting: string;
-            wood_engraving: string;
-            wood_printing: string;
+            wood: string;
+            wood_plywood: string;
+            wood_solid: string;
           };
           parameters: string;
+          presets: {
+            cutting: string;
+            engraving: string;
+            engraving_diode: string;
+            kiss_cut: string;
+            marking: string;
+            marking_dark: string;
+            marking_light: string;
+            printing: string;
+          };
           save: string;
         };
         engrave: string;
@@ -1241,7 +1141,6 @@ export interface ILang {
     retake: string;
     rotation_angle: string;
     show_last_config: string;
-    skip: string;
     solve_pnp_bm2: string;
     solve_pnp_keep_door_closed: string;
     solve_pnp_move_platform: string;
@@ -1482,6 +1381,49 @@ export interface ILang {
   error_pages: {
     screen_size: string;
   };
+  flux_101: {
+    badge_earned: string;
+    badge_locked: string;
+    badge_unlocked: string;
+    badges: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    certificate: string;
+    certificate_completed_on: string;
+    certificate_desc: string;
+    certificate_subtitle: string;
+    certificate_this_certifies: string;
+    certificate_title: string;
+    chapters: Record<'ch1' | 'ch2' | 'ch3' | 'ch4' | 'ch5', string>;
+    claimed_warning: string;
+    close: string;
+    completed: string;
+    credit_pending: string;
+    credits_earned: string;
+    credits_plus: string;
+    english_audio: string;
+    expand: string;
+    help_article: string;
+    lesson_done: string;
+    lessons: Record<string, string>;
+    lessons_done: string;
+    mark_done: string;
+    marked_done_hint: string;
+    minimize: string;
+    next: string;
+    no_water_tank_note: string;
+    not_synced: string;
+    nudge_later: string;
+    nudge_message: string;
+    nudge_watch: string;
+    offline: string;
+    open_on_youtube: string;
+    prev: string;
+    sync_login: string;
+    synced: string;
+    title: string;
+    video_error: string;
+    view_certificate: string;
+    water_tank_note: string;
+  };
   flux_id_login: {
     connection_fail: string;
     email: string;
@@ -1550,9 +1492,26 @@ export interface ILang {
   generators: {
     box_generator: string;
     code_generator: string;
+    general: {
+      design_preview: string;
+      exploded_view: string;
+      import_to_canvas: string;
+      reset_to_default: string;
+      size: string;
+    };
     keychain_generator: string;
     material_test_generator: string;
     puzzle_generator: string;
+    stamp_generator: string;
+    text_options: {
+      font_family: string;
+      font_settings: string;
+      font_size: string;
+      font_style: string;
+      letter_spacing: string;
+      line_spacing: string;
+      text_placeholder: string;
+    };
     title: string;
   };
   generic_error: {
@@ -1574,6 +1533,7 @@ export interface ILang {
     | 'save_and_exit'
     | 'saving'
     | 'select'
+    | 'skip'
     | 'stop'
     | 'width',
     string
@@ -1736,11 +1696,8 @@ export interface ILang {
   };
   keychain_generator: {
     decoration: string;
-    design_preview: string;
     element: string;
-    element_size: string;
     emboss: string;
-    exploded_view: string;
     export_failed: string;
     hole: string;
     hole_options: {
@@ -1752,7 +1709,6 @@ export interface ILang {
       type_punch: string;
       type_ring: string;
     };
-    import_to_canvas: string;
     layers: {
       keychain: string;
       keychain_deco_emboss: string;
@@ -1761,20 +1717,10 @@ export interface ILang {
     };
     more_shapes: string;
     outline_offset: string;
-    reset_to_default: string;
     shape: string;
     size_scale: string;
     switch_type_warning: string;
     text: string;
-    text_options: {
-      font_family: string;
-      font_settings: string;
-      font_size: string;
-      font_style: string;
-      letter_spacing: string;
-      line_spacing: string;
-      text_placeholder: string;
-    };
     types: {
       animal: string;
       capsule: string;
@@ -2164,10 +2110,8 @@ export interface ILang {
     NO_RESPONSE: string;
     no_task_info: string;
     pause: string;
-    prepareRelocate: string;
     processing: string;
     record: string;
-    relocate: string;
     RESOURCE_BUSY: string;
     resume: string;
     savingPreview: string;
@@ -2391,8 +2335,6 @@ export interface ILang {
     board_width: string;
     change_image: string;
     columns: string;
-    design_preview: string;
-    exploded_view: string;
     export_as: string;
     export_engrave: string;
     export_failed: string;
@@ -2404,7 +2346,6 @@ export interface ILang {
     image: string;
     image_load_failed: string;
     image_resolution_warning: string;
-    import_to_canvas: string;
     layers: {
       board_base: string;
       guide_lines: string;
@@ -2425,7 +2366,6 @@ export interface ILang {
     puzzle_pieces: string;
     radius: string;
     raised_edges: string;
-    reset_to_default: string;
     rows: string;
     switch_type_warning: string;
     tab_size: string;
@@ -2620,6 +2560,76 @@ export interface ILang {
     instagram: string;
     youtube: string;
   };
+  stamp_generator: {
+    basic: {
+      flip_horizontal: string;
+      invert_color: string;
+    };
+    border: {
+      dashed: string;
+      frame: string;
+      line_width: string;
+    };
+    categories: {
+      circle: string;
+      oval: string;
+      rect: string;
+      square: string;
+    };
+    export_failed: string;
+    layers: {
+      engrave: string;
+      outline: string;
+    };
+    legend: {
+      cut: string;
+      engrave: string;
+      mirrored: string;
+    };
+    slots: {
+      address: string;
+      bar_text: string;
+      bottom_arc: string;
+      bottom_text: string;
+      center_line_1: string;
+      center_line_2: string;
+      city: string;
+      column_1: string;
+      column_2: string;
+      column_3: string;
+      company_name: string;
+      contact: string;
+      date: string;
+      date_port: string;
+      given_name: string;
+      icon: string;
+      license_no: string;
+      main_text: string;
+      name: string;
+      number: string;
+      phone: string;
+      place: string;
+      signature: string;
+      state: string;
+      state_year: string;
+      subtitle: string;
+      surname: string;
+      tax_id: string;
+      text: string;
+      title_name: string;
+      top_arc: string;
+      unit: string;
+      validity: string;
+      word: string;
+    };
+    switch_template_warning: string;
+    tabs: {
+      basic: string;
+      border: string;
+      element: string;
+      text: string;
+    };
+  };
   stamp_maker_panel: {
     bevel_radius: string;
     horizontal_flip: string;
@@ -2751,6 +2761,7 @@ export interface ILang {
       export_UV_print: string;
       file: string;
       fit_to_window: string;
+      flux_101: string;
       follow_us: string;
       forum: string;
       galvo_settings: string;

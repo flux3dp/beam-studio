@@ -39,7 +39,7 @@ const TextFields = ({
   onLineSpacingChange,
   values,
 }: TextFieldsProps): ReactNode => {
-  const t = useI18n().keychain_generator.text_options;
+  const t = useI18n().generators.text_options;
 
   return (
     <ConfigProvider

@@ -22,6 +22,7 @@ import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
+import { getBundledFont } from '@core/helpers/fonts/bundledFonts';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import { getOS } from '@core/helpers/getOS';
 import { hashMap } from '@core/helpers/hashHelper';
@@ -159,14 +160,8 @@ const findFontFamilyCaseInsensitive = (family: string): string | undefined => {
   return lowercaseFontFamilyMap!.get(family.toLowerCase());
 };
 
-const getFontOfPostscriptName = memoize((postscriptName: string) => {
-  // Check if font is already registered in the registry
-  const registeredFont = useGoogleFontStore.getState().getRegisteredFont(postscriptName);
-
-  if (registeredFont) {
-    return registeredFont;
-  }
-
+// Only the installed-font scan is memoized: a Google font can register after a name was first looked up.
+const getInstalledFontOfPostscriptName = memoize((postscriptName: string) => {
   if (getOS() === 'MacOS') {
     return fontHelper.findFont({ postscriptName });
   }
@@ -176,6 +171,25 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
 
   return (fit.length > 0 ? fit : allFonts)[0];
 });
+
+const getFontOfPostscriptName = (postscriptName: string): GeneralFont => {
+  // A registered Google font wins over a bundled copy of the same face (Lobster-Regular is both): the
+  // registry descriptor has no `path`, so image-based exports (thumbnails, PDF) can still inline it.
+  const registered = useGoogleFontStore.getState().getRegisteredFont(postscriptName);
+
+  if (registered) return registered;
+
+  // An exact match in the installed / web font lists wins too: its family is what the font pickers list
+  // (the web list's `lobster` vs the bundled `Lobster`), and the scan falls back to an arbitrary font on a miss.
+  const installed = getInstalledFontOfPostscriptName(postscriptName);
+
+  if (installed?.postscriptName === postscriptName) return installed;
+
+  // Bundled fonts resolve by exact postscript name only (the stamp generator pins them per slot); they are
+  // deliberately absent from the family lists, because image-based exports render through an isolated
+  // document that only sees installed fonts and inlined web fonts.
+  return getBundledFont(postscriptName) ?? installed;
+};
 
 const init = () => {
   getFontOfPostscriptName('ArialMT');
@@ -286,6 +300,8 @@ export const convertTextToPathByFontkit = (
   textElem: Element,
   fontObj: fontkit.Font | undefined,
   pathPerChar: boolean,
+  /** Extra vertical scale applied to each glyph in its own frame (before it is rotated onto a path). */
+  glyphScaleY = 1,
 ): IConvertInfo => {
   try {
     if (!fontObj) {
@@ -375,8 +391,8 @@ export const convertTextToPathByFontkit = (
 
           return char.path
             .translate(pos.xOffset, pos.yOffset)
-            .scale(sizeRatio, -sizeRatio)
-            .translate(0, alignOffset)
+            .scale(sizeRatio, -sizeRatio * glyphScaleY)
+            .translate(0, alignOffset * glyphScaleY)
             .rotate(rot)
             .translate(x, y)
             .toSVG();
@@ -426,7 +442,11 @@ export const convertTextToPathByFontkit = (
           // browser has resolved bidi, so a latin word or digit run inside rtl text runs the other way.
           const { x, y } = start.x > end.x ? end : start;
 
-          return char.path.translate(pos.xOffset, pos.yOffset).scale(sizeRatio, -sizeRatio).translate(x, y).toSVG();
+          return char.path
+            .translate(pos.xOffset, pos.yOffset)
+            .scale(sizeRatio, -sizeRatio * glyphScaleY)
+            .translate(x, y)
+            .toSVG();
         }),
       );
     });

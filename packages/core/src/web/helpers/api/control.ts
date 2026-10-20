@@ -734,11 +734,26 @@ class Control extends EventEmitter implements IControlSocket {
       this.ws.send(`file download ${fileNameWithPath}`);
     });
 
-  downloadLog = (logName: string) =>
+  /** `idleTimeout` (ms) rejects with TIMEOUT when no frame arrives for that long; re-armed on every frame so a long transfer is not cut off */
+  downloadLog = (logName: string, idleTimeout?: number) =>
     new Promise<[string, Blob]>((resolve, reject) => {
       let metadata: any = null;
+      let timeoutTimer: NodeJS.Timeout | undefined;
+      const arm = () => {
+        if (timeoutTimer) clearTimeout(timeoutTimer);
 
+        timeoutTimer = idleTimeout ? this.setTimeoutTimer(reject, idleTimeout) : undefined;
+      };
+      // the timer is re-armed, so error/fatal clear whichever one is live, not the one they were handed
+      const fail = (response: unknown) => {
+        clearTimeout(timeoutTimer);
+        reject(response);
+      };
+
+      arm();
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
+        arm();
+
         if (response.status === 'transfer') {
           this.emit(EVENT_COMMAND_PROGRESS, response);
         } else if (!Object.keys(response).includes('completed')) {
@@ -746,12 +761,13 @@ class Control extends EventEmitter implements IControlSocket {
         }
 
         if (response instanceof Blob) {
+          clearTimeout(timeoutTimer);
           this.removeCommandListeners();
           resolve([metadata, response]);
         }
       });
-      this.setDefaultErrorResponse(reject);
-      this.setDefaultFatalResponse(reject);
+      this.setDefaultErrorResponse(fail);
+      this.setDefaultFatalResponse(fail);
 
       this.ws.send(`fetch_log ${logName}`);
     });

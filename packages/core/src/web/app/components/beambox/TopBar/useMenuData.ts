@@ -307,6 +307,7 @@ const useMenuData = (email?: string): MenuNode[] => {
                 { device, id: 'LOG_CAMERA', label: menuCms.log.camera, type: 'item' as const },
                 { device, id: 'LOG_PLAYER', label: menuCms.log.player, type: 'item' as const },
                 { device, id: 'LOG_ROBOT', label: menuCms.log.robot, type: 'item' as const },
+                { device, id: 'LOG_LIGHTBURN', label: 'LightBurn', type: 'item' as const },
               ],
               label: menuCms.download_log,
               type: 'submenu' as const,
@@ -645,6 +646,7 @@ const useMenuData = (email?: string): MenuNode[] => {
             { id: 'START_UI_INTRO', label: menuCms.show_ui_intro, type: 'item' as const },
           ]
         : []),
+      { id: 'START_101_COURSE', label: menuCms.flux_101, type: 'item' },
       { id: 'START_GESTURE_INTRO', label: menuCms.show_gesture_tutorial, type: 'item' },
       { id: 'MAINTENANCE_CHECKLIST', label: menuCms.maintenance_checklist, type: 'item' },
       { id: 'CHANGE_LOGS', label: menuCms.change_logs, type: 'item' },
