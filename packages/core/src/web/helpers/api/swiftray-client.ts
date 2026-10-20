@@ -116,6 +116,9 @@ class SwiftrayClient extends EventEmitter {
 
   private lastPromark: IDeviceInfo | null = null;
 
+  /** rejecters of the action() calls still waiting for a 'callback', so a close can fail them */
+  private pending = new Map<string, (error: Error) => void>();
+
   public version: string = '1.0.0';
 
   constructor(private url: string) {
@@ -222,6 +225,9 @@ class SwiftrayClient extends EventEmitter {
 
   private handleClose() {
     console.log('Disconnected from Swiftray server');
+    // a request in flight would otherwise hang forever, keeping its listeners and payload alive
+    this.pending.forEach((reject) => reject(new Error('Swiftray disconnected')));
+    this.pending.clear();
     this.updateStatus('disconnected');
     this.retry();
   }
@@ -267,68 +273,76 @@ class SwiftrayClient extends EventEmitter {
     handlers?: Array<{ handler: (data: any) => void; type: string }>,
   ): Promise<T> {
     const eventListeners: Array<{ listener: (data: any) => void; type: string }> = [];
+    const id = Math.random().toString(36).substr(2, 9);
 
-    const res: T = await new Promise((resolve) => {
-      const id = Math.random().toString(36).substr(2, 9);
-      const payload = { action, id, params };
+    try {
+      return await new Promise<T>((resolve, reject) => {
+        const payload = { action, id, params };
 
-      if (this.readyState !== WebSocket.OPEN && action !== 'list') {
-        MessageCaller.openMessage({
-          content: i18n.lang.message.swiftray_disconnected,
-          key: 'swiftray-error-hint',
-          level: MessageLevel.ERROR,
-        });
-      }
+        this.pending.set(id, reject);
 
-      const dataString = JSON.stringify({ data: payload, path, type: 'action' });
-      const vc = versionChecker(this.version);
+        if (this.readyState !== WebSocket.OPEN && action !== 'list') {
+          MessageCaller.openMessage({
+            content: i18n.lang.message.swiftray_disconnected,
+            key: 'swiftray-error-hint',
+            level: MessageLevel.ERROR,
+          });
+        }
 
-      // Add to logger without large data
-      if (payload.params?.file) {
-        payload.params.file = '[file object]';
-      }
+        const dataString = JSON.stringify({ data: payload, path, type: 'action' });
+        const vc = versionChecker(this.version);
 
-      if (payload.params?.image) {
-        payload.params.image = `[image, ${payload.params.image.length} chars]`;
-      }
+        // Add to logger without large data
+        if (payload.params?.file) {
+          payload.params.file = '[file object]';
+        }
 
-      this.logger.append(payload);
+        if (payload.params?.image) {
+          payload.params.image = `[image, ${payload.params.image.length} chars]`;
+        }
 
-      if (this.socket?.readyState === WebSocket.OPEN) {
+        this.logger.append(payload);
+
+        if (this.socket?.readyState !== WebSocket.OPEN) {
+          // nothing will ever answer; fail now instead of waiting for a 'callback' that cannot come
+          reject(new Error('Swiftray disconnected'));
+
+          return;
+        }
+
         if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
           this.socket.send(dataString);
         } else {
           // Change to binary string to avoid non-utf8 characters due to frame size limit
           this.socket.send(Buffer.from(dataString));
         }
-      }
 
-      const callback = (data: any) => {
-        if (data.id === id) {
-          this.removeListener('callback', callback);
-          // console.log("SR Client Callback", data);
-          resolve(data.result);
-        }
-      };
-
-      handlers?.forEach(({ handler, type }) => {
-        const listener = (data: any) => {
+        const callback = (data: any) => {
           if (data.id === id) {
-            handler(data.result);
+            // console.log("SR Client Callback", data);
+            resolve(data.result);
           }
         };
 
-        eventListeners.push({ listener, type });
-        this.addListener(type, listener);
+        handlers?.forEach(({ handler, type }) => {
+          const listener = (data: any) => {
+            if (data.id === id) {
+              handler(data.result);
+            }
+          };
+
+          eventListeners.push({ listener, type });
+          this.addListener(type, listener);
+        });
+        eventListeners.push({ listener: callback, type: 'callback' });
+        this.addListener('callback', callback);
       });
-      this.addListener('callback', callback);
-    });
-
-    eventListeners.forEach(({ listener, type }) => {
-      this.removeListener(type, listener);
-    });
-
-    return res;
+    } finally {
+      this.pending.delete(id);
+      eventListeners.forEach(({ listener, type }) => {
+        this.removeListener(type, listener);
+      });
+    }
   }
 
   // Parser API

@@ -5,13 +5,21 @@ const mockIsPolygonCutByPreviewEdge = jest.fn();
 const mockDetectContours = jest.fn();
 const mockOpenMessage = jest.fn();
 const mockCloseMessage = jest.fn();
+let mockIsOnnxAvailable = true;
 
 jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
   getCanvasCrop: (...args: unknown[]) => mockGetCanvasCrop(...args),
   isPolygonCutByPreviewEdge: (...args: unknown[]) => mockIsPolygonCutByPreviewEdge(...args),
 }));
 jest.mock('@core/helpers/contour/detectContours', () => ({
-  detectContours: (...args: unknown[]) => mockDetectContours(...args),
+  detectWithOnnx: (...args: unknown[]) => mockDetectContours(...args),
+  isOnnxAvailable: () => mockIsOnnxAvailable,
+}));
+
+const swiftrayListeners: Record<string, () => void> = {};
+
+jest.mock('@core/helpers/api/swiftray-client', () => ({
+  swiftrayClient: { on: (event: string, listener: () => void) => (swiftrayListeners[event] = listener) },
 }));
 jest.mock('@core/app/actions/message-caller', () => ({
   __esModule: true,
@@ -75,6 +83,7 @@ describe('ImageContourDetector', () => {
     jest.clearAllMocks();
     canvasEventEmitter.removeAllListeners();
     useGlobalPreferenceStore.getState().set('snap_to_object_center', true);
+    mockIsOnnxAvailable = true;
     useCameraPreviewStore.setState({ isClean: false, isDrawing: false, isLiveMode: false });
     mockGetCanvasCrop.mockResolvedValue({ blob: new Blob(), ratio: 0.5, x: 0, y: 0 });
     mockIsPolygonCutByPreviewEdge.mockReturnValue(false);
@@ -155,6 +164,66 @@ describe('ImageContourDetector', () => {
     // zero results: silent, only the loading toast is closed
     expect(mockOpenMessage.mock.calls.at(-1)[0].level).toBe('loading');
     expect(mockCloseMessage).toHaveBeenCalledWith('snap-to-object-center');
+  });
+
+  it('is off, with no detection and no toast, while Swiftray cannot host the model', async () => {
+    mockIsOnnxAvailable = false;
+    canvasEventEmitter.emit('preview-background-updated');
+    await endBatch();
+    expect(detector.isEnabled()).toBe(false);
+    expect(mockDetectContours).not.toHaveBeenCalled();
+    expect(mockOpenMessage).not.toHaveBeenCalled();
+
+    // the tile stays dirty: once Swiftray is back, the next batch end detects it
+    mockIsOnnxAvailable = true;
+    await endBatch();
+    expect(mockDetectContours).toHaveBeenCalledTimes(1);
+  });
+
+  it('clears on Swiftray disconnect without a second error toast; the next batch detects again', async () => {
+    let rejectInFlight: (error: Error) => void = () => {};
+
+    // the client rejects the in-flight request when the socket closes
+    mockDetectContours.mockReturnValueOnce(new Promise((_resolve, reject) => (rejectInFlight = reject)));
+    canvasEventEmitter.emit('preview-background-updated');
+    await endBatch();
+    detector.contours = [{ bbox: [0, 0, 1, 1], center: [0, 0], contour: [], id: 'x', rect: {} as never }];
+
+    mockIsOnnxAvailable = false;
+    swiftrayListeners.disconnected();
+    rejectInFlight(new Error('Swiftray disconnected'));
+    await flush();
+    expect(detector.contours).toEqual([]);
+    expect(mockCloseMessage).toHaveBeenCalledWith('snap-to-object-center');
+    expect(mockOpenMessage).not.toHaveBeenCalledWith(expect.objectContaining({ content: 'failed' }));
+
+    mockIsOnnxAvailable = true;
+    canvasEventEmitter.emit('preview-background-updated');
+    await endBatch();
+    expect(mockDetectContours).toHaveBeenCalledTimes(2);
+    expect(detector.contours).toHaveLength(1);
+  });
+
+  it('shows decoder progress on the loading toast, but not after the preview was cleared', async () => {
+    let onProgress: (done: number, total: number) => void = () => {};
+
+    mockDetectContours.mockImplementationOnce((_blob, opts) => {
+      onProgress = opts.onProgress;
+
+      return new Promise(() => {});
+    });
+    canvasEventEmitter.emit('preview-background-updated');
+    await endBatch();
+
+    onProgress(30, 75);
+    expect(mockOpenMessage).toHaveBeenLastCalledWith(
+      expect.objectContaining({ content: 'detecting 40%', level: 'loading' }),
+    );
+
+    detector.clear();
+    mockOpenMessage.mockClear();
+    onProgress(60, 75);
+    expect(mockOpenMessage).not.toHaveBeenCalled();
   });
 
   it('ignores previews while the preference is off and clears when it turns off', async () => {

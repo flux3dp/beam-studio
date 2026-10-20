@@ -520,12 +520,17 @@ const useMenuData = (email?: string): MenuNode[] => {
       { checked: shouldShowRulers, id: 'SHOW_RULERS', label: menuCms.show_rulers, type: 'checkbox' },
       { checked: shouldUseLayerColor, id: 'SHOW_LAYER_COLOR', label: menuCms.show_layer_color, type: 'checkbox' },
       { checked: isAutoAlign, id: 'AUTO_ALIGN', label: menuCms.auto_align, type: 'checkbox' },
-      {
-        checked: isSnapToObjectCenter,
-        id: 'SNAP_TO_OBJECT_CENTER',
-        label: menuCms.snap_to_object_center,
-        type: 'checkbox',
-      },
+      // ONNX runs in Swiftray, which the web app never has
+      ...(!isWeb()
+        ? [
+            {
+              checked: isSnapToObjectCenter,
+              id: 'SNAP_TO_OBJECT_CENTER' as const,
+              label: menuCms.snap_to_object_center,
+              type: 'checkbox' as const,
+            },
+          ]
+        : []),
       { checked: isUsingAntiAliasing, id: 'ANTI_ALIASING', label: menuCms.anti_aliasing, type: 'checkbox' },
     ],
     label: menuCms.view,

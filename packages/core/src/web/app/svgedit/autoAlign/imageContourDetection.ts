@@ -5,6 +5,9 @@
  * outside live mode) the whole preview canvas is re-detected and the list replaced. The model
  * rescales every input to the same size, so a full pass costs the same as a crop (§7).
  * Batches landing during a run are drained by the same loop.
+ * ONNX only (decided 2026-10-16): the OpenCV engine was too unstable for silent snapping, so the
+ * feature is off whenever Swiftray is unavailable (web, old Swiftray, socket down); the next
+ * preview batch after it reconnects detects as usual.
  * Design: docs/prd/onnx-contour-detection.md §5.5.
  */
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
@@ -12,7 +15,8 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import NS from '@core/app/constants/namespaces';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { detectContours } from '@core/helpers/contour/detectContours';
+import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { detectWithOnnx, isOnnxAvailable } from '@core/helpers/contour/detectContours';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 
@@ -88,15 +92,20 @@ export class ImageContourDetector {
     useGlobalPreferenceStore.subscribe(
       (state) => state.snap_to_object_center,
       (active) => {
-        if (!active) {
-          this.clear();
-        } else if (!useCameraPreviewStore.getState().isClean) {
-          // a preview is already on the canvas; no tile will land to mark it dirty
-          this.dirty = true;
-          this.onBatchEnded();
-        }
+        if (active) this.redetect();
+        else this.clear();
       },
     );
+    // a request in flight or sent while down is rejected by the client; run()'s catch releases the lock
+    swiftrayClient.on('disconnected', this.clear);
+  };
+
+  /** A preview is already on the canvas and no tile will land to mark it dirty: detect it now. */
+  private redetect = (): void => {
+    if (useCameraPreviewStore.getState().isClean) return;
+
+    this.dirty = true;
+    this.onBatchEnded();
   };
 
   clear = (): void => {
@@ -108,10 +117,11 @@ export class ImageContourDetector {
     MessageCaller.closeMessage(MESSAGE_KEY);
   };
 
-  isEnabled = (): boolean => useGlobalPreferenceStore.getState().snap_to_object_center;
+  /** Preference on and the ONNX host reachable; checked live, so snapping stops the moment Swiftray drops. */
+  isEnabled = (): boolean => useGlobalPreferenceStore.getState().snap_to_object_center && isOnnxAvailable();
 
   private onBackgroundUpdated = (): void => {
-    if (this.isEnabled()) this.dirty = true;
+    this.dirty = true;
   };
 
   /** A batch is over when the controller stops drawing; live mode re-draws every second, so wait for it to stop. */
@@ -122,7 +132,7 @@ export class ImageContourDetector {
   };
 
   private run = async (): Promise<void> => {
-    if (this.running) return;
+    if (this.running || !this.isEnabled()) return;
 
     this.running = true;
     MessageCaller.openMessage({
@@ -159,7 +169,8 @@ export class ImageContourDetector {
     } catch (error) {
       console.warn('[snapToObjectCenter] detection failed', error);
 
-      if (!this.errorShown) {
+      // a disconnect mid-run already shows the swiftray_disconnected toast
+      if (!this.errorShown && this.isEnabled()) {
         this.errorShown = true;
         MessageCaller.openMessage({
           content: i18n.lang.message.object_detection_failed,
@@ -182,7 +193,19 @@ export class ImageContourDetector {
     if (!crop) return false;
 
     const k = 1 / crop.ratio; // canvasRatio < 1 only on iOS
-    const detected = await detectContours(crop.blob);
+    const detected = await detectWithOnnx(crop.blob, {
+      // decoder progress only: the encoder runs first with no events, so the toast sits at the plain text for a while
+      onProgress: (done, total) => {
+        if (generation !== this.generation) return; // cleared mid-run: the toast is closed, keep it closed
+
+        MessageCaller.openMessage({
+          content: `${i18n.lang.message.detecting_objects} ${Math.round((done / total) * 100)}%`,
+          duration: 0,
+          key: MESSAGE_KEY,
+          level: MessageLevel.LOADING,
+        });
+      },
+    });
 
     // the preview was cleared (or the feature turned off) while the model ran: the result describes
     // an image that is gone, and the empty list from clear() must stand
