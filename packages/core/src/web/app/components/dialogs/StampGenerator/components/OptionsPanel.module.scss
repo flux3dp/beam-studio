@@ -1,0 +1,61 @@
+@use '@core/styles/mixins' as mixins;
+
+// Breakpoints mirror KeyChainGenerator: full width under 600px, a grid column on tablets (601–850px).
+.panel {
+  width: 280px;
+  flex-shrink: 0;
+  overflow-y: auto;
+
+  @include mixins.is-mobile {
+    width: auto;
+    flex: 1 1 auto;
+    max-height: 300px;
+  }
+
+  @media (max-width: 850px) and (min-width: 601px) {
+    min-height: 0; // allow shrinking within the grid row
+  }
+}
+
+.rows {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.label {
+  font-size: 12px;
+  color: #777777;
+}
+
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: #777777;
+  padding: 0 !important;
+  padding-block: 8px 0 !important;
+}
+
+// The Element picker's "more" drawer is an inline antd Drawer positioned against the nearest positioned
+// ancestor; antd's tab content pane is one, and at 280px it would clip the 400px drawer. Let it anchor
+// to the modal instead, like the keychain generator.
+.panel :global(.ant-tabs-content) {
+  position: static;
+}
+
+// The panel scrolls; keep the tab bar in view.
+.panel :global(.ant-tabs-nav) {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #fff;
+}

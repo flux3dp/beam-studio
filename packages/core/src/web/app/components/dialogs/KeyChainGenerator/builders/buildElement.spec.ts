@@ -16,7 +16,7 @@ jest.mock('react-dom/server', () => ({
 
 const mockCollectPathItems = jest.fn();
 
-jest.mock('./buildShape', () => ({
+jest.mock('@core/helpers/generator/collectPathItems', () => ({
   collectPathItems: (...args: any[]) => mockCollectPathItems(...args),
 }));
 

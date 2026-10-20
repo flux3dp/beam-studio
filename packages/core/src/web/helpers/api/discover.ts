@@ -188,7 +188,13 @@ export class DiscoverManager {
 
   protected startIntervals(): void {
     const updateDeviceFromSwiftray = async () => {
-      const res = await swiftrayClient.listDevices();
+      let res: Awaited<ReturnType<typeof swiftrayClient.listDevices>>;
+
+      try {
+        res = await swiftrayClient.listDevices();
+      } catch {
+        return; // Swiftray down; the client is already retrying
+      }
 
       if (!res.devices) return;
 

@@ -87,6 +87,8 @@ export interface WebFont {
   queryString?: string;
   style: string;
   supportLangs?: string[];
+  /** Explicit source URL (e.g. a bundled font served from the app's own assets); defaults to the S3 fonts bucket. */
+  url?: string;
   weight: number;
 }
 

@@ -19,7 +19,7 @@ KeyChainGenerator/
 ├── types.ts                        # All type definitions
 ├── categories.ts                   # resolveCategory/getStateForCategory + re-exports KEYCHAIN_CATEGORIES & DEFAULT_*
 ├── useKeychainShapeStore.ts        # Zustand store (state + build actions)
-├── exportToCanvas.ts               # Export final shape to SVG canvas
+├── exportToCanvas.ts               # Export final shape to SVG canvas (path/text helpers live in helpers/generator/)
 ├── constants/
 │   ├── index.ts                    # PX_TO_MM_RATIO=10, PUNCH_HOLE_OFFSET=-5, colors
 │   ├── decorations.ts              # Decoration path definitions
@@ -37,11 +37,11 @@ KeyChainGenerator/
 │       ├── animal.ts               # animal variants
 │       └── customShapes.ts         # text, iconTextLeft (isCustomShape)
 ├── builders/
-│   ├── buildShape.ts               # importBasePath, applyHoles, getStartPoint (ray intersection)
+│   ├── buildShape.ts               # importBasePath, applyHoles, getStartPoint (ray intersection); uses helpers/generator/removeDegenerateCurves
 │   ├── buildDecorations.ts         # buildDecorations (text + elements + decoration paths)
 │   ├── buildSvgViews.ts            # buildSvgView → design/exploded SVG strings
-│   ├── buildText.ts                # createTextElement, createTextPath, applyTexts
-│   ├── buildElement.ts             # loadShape, applyElements for icon shapes
+│   ├── buildText.ts                # applyTexts (re-exports createTextElement/createTextPath from helpers/generator/textElement)
+│   ├── buildElement.ts             # applyElements for icon shapes; re-exports loadShape/svgCache/NP_SHAPE_PREFIX from @core/helpers/generator/loadShape
 │   ├── buildCustomBaseShape.ts     # Text/icon-derived base shape generation
 │   └── *.spec.ts                   # Unit tests
 ├── components/
@@ -147,3 +147,7 @@ pnpm test --runInBand packages/core/src/web/app/components/dialogs/KeyChainGener
 ```
 
 Paper.js is fully mocked in tests (MockPath, MockCompoundPath, MockCircle, MockLine). The mock lives inline in the spec file via `jest.mock('paper', ...)`.
+
+The icon grid used by the preset/decoration/variant selectors is the shared `@core/app/widgets/IconSelectorGrid` (moved out of Controls/ 2026-09-30; the stamp generator's Border tab uses it too).
+
+The preset picker (ElementPicker = PresetSelector + SelectedItemSlot + Element panel browser) lives in `@core/app/widgets/ElementPicker` (moved 2026-10-01; the stamp generator's Element tab uses it too). PresetSelector renders a key from the shared `svgCache` when a dialog pre-registered it there, else via `importIcon`.

@@ -38,7 +38,7 @@ const Preview = ({
   typeConfig,
   viewMode,
 }: PreviewProps): React.JSX.Element => {
-  const { puzzle_generator: t } = useI18n();
+  const { generators: tGenerators, puzzle_generator: t } = useI18n();
   const isMobile = useIsMobile();
   const isInch = useStorageStore((s) => s.isInch);
   const { containerRef, size: stageSize } = useContainerSize();
@@ -235,7 +235,10 @@ const Preview = ({
 
         <div className={styles['view-mode-overlay']}>
           {thumbConfigs.map(({ layout: thumbLayout, mode }) => (
-            <Tooltip key={mode} title={mode === 'design' ? t.design_preview : t.exploded_view}>
+            <Tooltip
+              key={mode}
+              title={mode === 'design' ? tGenerators.general.design_preview : tGenerators.general.exploded_view}
+            >
               <div
                 className={classNames(styles['view-mode-btn'], { [styles.active]: viewMode === mode })}
                 onClick={() => onViewModeChange(mode)}

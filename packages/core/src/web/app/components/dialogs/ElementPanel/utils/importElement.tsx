@@ -14,6 +14,7 @@ import selectionManager from '@core/app/svgedit/selection';
 import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getNPIconByID } from '@core/helpers/api/flux-id';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { collectPathItems } from '@core/helpers/generator/collectPathItems';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -27,18 +28,6 @@ getSVGAsync((globalSVG) => {
 
 const TARGET_SIZE_SCENE = 500;
 const progressId = 'import-noun-project-svg';
-
-const collectPathItems = (item: paper.Item): paper.PathItem[] => {
-  if (item instanceof paper.Path || item instanceof paper.CompoundPath) {
-    return [item];
-  }
-
-  if (item instanceof paper.Group || item instanceof paper.Layer) {
-    return item.children.flatMap(collectPathItems);
-  }
-
-  return [];
-};
 
 /**
  * Parse SVG string with paper.js, unite all paths into one, create element via addSvgElementFromJson.

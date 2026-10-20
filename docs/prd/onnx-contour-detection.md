@@ -22,7 +22,7 @@ This PRD replaces the *detection* stage with a **MobileSAM ONNX model** hosted i
 Three design choices drive everything else:
 
 1. **One detector, one contract.** A single frontend function `detectContours(blob, opts)` returns the existing `AutoFitContour` shape from either engine. Auto Fit and image-contour align both consume it; grouping/rotation matching for Auto Fit stays in fluxghost (already validated) and is fed the ONNX contours instead of Canny ones.
-2. **Engine is a preference with silent fallback.** `contour_detection_engine: 'onnx' | 'opencv'` (default `onnx`). Effective engine = `onnx` only when Swiftray is present and new enough; otherwise OpenCV via fluxghost, no user action needed. A one-time perf warning on weak machines (Windows < 8 GB RAM, Intel Mac) offers the OpenCV switch.
+2. **Engine is a preference with silent fallback.** `contour_detection_engine: 'onnx' | 'opencv'` (default `onnx`). Effective engine = `onnx` only when Swiftray is present and new enough; otherwise OpenCV via fluxghost, no user action needed. ~~A one-time perf warning on weak machines (Windows < 8 GB RAM, Intel Mac) offers the OpenCV switch.~~ **The fallback is Auto Fit only (decided 2026-10-16, §10 item 7): Snap to Object Center is ONNX-only and simply off while Swiftray is unavailable.**
 3. **Detect while previewing, per batch.** Each preview tile that lands marks the background dirty; when the batch ends the whole preview canvas is re-detected and the list replaced. The user sees `Detecting contours…` / `Contours detected` toasts and never waits on a dialog.
 
 A prerequisite refactor moves all Auto Align state and helpers out of `svgcanvas.ts` into a standalone `app/svgedit/autoAlign/` module (`svgCanvas.isAutoAlign` and nine sibling methods today).
@@ -100,7 +100,8 @@ All state lives inside the `svgcanvas.ts` closure:
 1. **Stack of coasters, dark walnut.** User previews the bed (region preview, ~12 tiles). Toast `Detecting contours…` appears after the first tile lands; each detected coaster gets a bbox. User drags a logo; it snaps to a coaster's centre with the magenta align line. Toast `Contours detected` fades.
 2. **Auto Fit on leather patch.** User selects a design, presses Auto Fit. Engine = ONNX. Contours come from Swiftray in ~3 s, grouping from fluxghost, the panel opens as today with cleaner outlines.
 3. ~~**Intel MacBook Air, first Auto Fit.** Alert: "Smart contour detection may be slow on this computer… [Use classic detection] [Continue]" with "don't show again". Choosing classic flips the preference; Auto Fit runs via fluxghost immediately.~~ Dropped with the warning, §10 item 1.
-4. **Web app.** `hasSwiftray` is false → OpenCV engine, the setting shows as unavailable (disabled select with a hint).
+4. **Web app.** `hasSwiftray` is false → Auto Fit on the OpenCV engine, the setting shows as unavailable (disabled select with a hint); Snap to Object Center never detects (ONNX-only).
+6. **Swiftray down (crash, restart, old version).** Snapping stops at once and no detection runs; Auto Fit keeps working on OpenCV. The next preview after Swiftray reconnects detects as usual; nothing re-detects on reconnect by itself (decided 2026-10-16: the `'reconnected'` event fires at an odd moment and a surprise toast is worse than a silent gap).
 5. **Preview cleared / machine switched.** Contours and their align points vanish; no stale snapping.
 
 ### 4.1 Acceptance criteria
@@ -111,9 +112,9 @@ spec that covers it or says manual; **Status** is the last verification of `feat
 section covers the whole PRD.
 
 **AC1 — Toggle (View › Snap to Object Center).**
-- Operate: open the View menu (Electron menu bar or web top bar). The checkbox sits under Auto Align, checked by default.
+- Operate: open the View menu (Electron menu bar; hidden in the web top bar). The checkbox sits under Auto Align, checked by default.
 - Expect: the check state follows the preference `snap_to_object_center` and survives a restart. Turning it off empties the snap targets and closes the toast at once; turning it back on while a preview is already on the canvas starts a detection run without another preview.
-- Edge cases: works with Auto Align unchecked; on the web the item exists and detection runs on the OpenCV engine.
+- Edge cases: works with Auto Align unchecked; on the web the item exists but detection never runs (ONNX-only, no Swiftray).
 - Check: `helpers/menubar/view.spec.ts` (toggle); `imageContourDetection.spec.ts` "ignores previews while the preference is off and clears when it turns off". Re-enable over an existing preview: manual.
 - Status: unit ✅; re-enable manual, unverified.
 
@@ -151,9 +152,10 @@ section covers the whole PRD.
 - Status: unit ✅.
 
 **AC7 — Engine selection (shipped #1006).**
-- Operate: desktop with Swiftray ≥ 1.4.11 and AI Contour Detection on → ONNX. Setting off, web, or Swiftray unavailable → OpenCV via fluxghost `get_contours`. A Swiftray error retries that one call on OpenCV.
-- Expect: identical snap behaviour on both engines; rect and angle are computed in the frontend.
-- Check: `helpers/contour/detectContours.spec.ts`. Status: ✅.
+- Operate (Auto Fit): desktop with Swiftray ≥ 1.4.11 and AI Contour Detection on → ONNX. Setting off, web, or Swiftray unavailable → OpenCV via fluxghost `get_contours`. A Swiftray error retries that one call on OpenCV.
+- Operate (Snap to Object Center, changed 2026-10-16): ONNX only, the AI Contour Detection setting is not consulted. Web, old Swiftray or a closed socket → `isEnabled()` is false: no detection, no toast, no snap while dragging or rotating. A Swiftray error shows `object_detection_failed` once; nothing retries on OpenCV.
+- Expect: rect and angle are computed in the frontend.
+- Check: `helpers/contour/detectContours.spec.ts`; `imageContourDetection.spec.ts` "is off, with no detection and no toast, while Swiftray cannot host the model". `imageContourDetection.spec.ts` "clears and releases the run lock on Swiftray disconnect". Status: unit ✅; Swiftray restart mid-session: manual, unverified.
 
 **AC8 — Auto Fit v2 (shipped #1006).**
 - Operate: select a design, press Auto Fit. Expect: the panel opens with contours from the effective engine and grouping from fluxghost `group_contours`; flipping the engine in Settings › Camera changes the next run.
@@ -206,13 +208,15 @@ Version: Swiftray `1.4.11` (develop's current bump; no separate minor); new `ver
 export type DetectedContour = AutoFitContour; // {bbox, center, angle, contour}
 export type ContourEngine = 'onnx' | 'opencv';
 
-export const getEffectiveContourEngine = async (): Promise<ContourEngine> // pref + hasSwiftray + version + info.available
-export const detectContours = (blob: Blob, opts?: { onProgress?, engine?: ContourEngine, signal? }): Promise<DetectedContour[]>
+export const isOnnxAvailable = (): boolean // !isWeb + hasSwiftray + socket open + version ≥ SWIFTRAY_SEGMENT
+export const getEffectiveContourEngine = (): ContourEngine // pref, downgraded to 'opencv' unless isOnnxAvailable()
+export const detectWithOnnx = (blob: Blob): Promise<DetectedContour[]> // ONNX only, used by Snap to Object Center
+export const detectContours = (blob: Blob, opts?: { engine?: ContourEngine, isSplicingImg? }): Promise<DetectedContour[]> // Auto Fit
 ```
 
 - `onnx` → `swiftrayClient.detectContours(blob)` (new method in `swiftray-client.ts`, mirrors `loadSVG`'s base64 handling; reads the blob with `FileReader`/`arrayBuffer` → base64).
 - `opencv` → **new fluxghost utils command `get_contours <bytes> <0|1>`** = today's detection stage without grouping (returns the flat `ContourData` list incl. singletons, with `angle` from `cv2.minAreaRect`). Needed because `get_all_similar_contours` drops singletons, which is fatal for align. Add to `docs/api/utils.md` and `tools/ws_smoke.py` in fluxghost.
-- Any Swiftray error/timeout → one `console.warn` and **retry once on `opencv`** for that call (not a persistent flip).
+- Any Swiftray error/timeout → one `console.warn` and **retry once on `opencv`** for that call (not a persistent flip). Auto Fit only: Snap to Object Center calls `detectWithOnnx` directly (decided 2026-10-16, §10 item 7).
 
 **Preferences** (`Preference.d.ts`, `beambox-preference.ts` defaults, `globalPreferenceStore.ts` mirror):
 
@@ -247,12 +251,12 @@ blob → detectContours(blob)            // engine-agnostic
 
 **Service** — `app/svgedit/autoAlign/imageContourDetection.ts` (`init()` called from inside `autoAlign.init()`, which svgcanvas calls once):
 
-1. **Trigger.** The existing `canvasEventEmitter 'preview-background-updated'`, emitted by `previewModeBackgroundDrawer.drawBlobToBackground` for every drawn capture (region tile, single shot, full area). The service marks the preview dirty when `snap_to_object_center` is on.
+1. **Trigger.** The existing `canvasEventEmitter 'preview-background-updated'`, emitted by `previewModeBackgroundDrawer.drawBlobToBackground` for every drawn capture (region tile, single shot, full area). Every tile marks the preview dirty; the run itself is gated on `isEnabled()`: `snap_to_object_center` on **and** `isOnnxAvailable()` (decided 2026-10-16: ONNX only; the check is live, so dragging stops snapping the moment the Swiftray socket closes). Gating the flag instead would lose tiles that land during a Swiftray blip (changed 2026-10-19).
 2. **Coalesce per batch (decided 2026-09-22).** A dirty flag is set while a preview batch is in progress; the run starts when the batch ends, i.e. `cameraPreview.isDrawing` flips false (set by `PreviewModeController.prePreview` / `onPreviewSuccess` for full-area, single and region previews alike), and never during live mode (runs when `isLiveMode` flips false). A run drains `dirty` in a loop, so batches landing mid-run are picked up without a second trigger. Per-tile detection was rejected: a region sweep would otherwise queue one ~8 s pass per tile on an Intel Mac.
 3. **Run (decided 2026-09-23: full canvas, not incremental).** `crop = previewModeBackgroundDrawer.getCanvasCrop(0, 0, workarea.width, workarea.modelHeight)`; `objects = await detectContours(crop.blob)`; map each back with `x / crop.ratio` (this is also the `canvasRatio` fix from §2.1); drop objects whose bbox spans ≥ 90 % of the workarea in either direction (`MAX_SPAN_RATIO`: the front rail, a sheet of material) and objects whose outline runs along never-previewed canvas (`previewModeBackgroundDrawer.isPolygonCutByPreviewEdge`, canvas alpha sampled every 10 px along the polygon: a part cut by the edge of a sparse region preview has a centre and rect that describe the visible fragment only; it comes back whole once the neighbouring region is previewed); replace `contours`. ~~Incremental: re-detect the union of the dirty rect and the stored contours it overlaps, drop those, filter objects cut by the crop border, append.~~ Dropped: the frontend caps inputs at 1280 px and the encoder rescales to 1024 px, so a crop and a full pass take the same ~8 s; the incremental path only added the border filter, victim bookkeeping and seam-straddling objects that appear one tile late. Known cost: a full 600 mm bed lands at scale 0.21, so small parts on large beds get ~5× less detail than a tile crop would; if that shows in testing, raise the ONNX cap for detection rather than reinstate regions.
-4. **Clear.** Subscribe to `cameraPreview.isClean === true` and to `model-changed` → `contours = []`. Also clear when `snap_to_object_center` flips to false.
+4. **Clear.** Subscribe to `cameraPreview.isClean === true` and to `model-changed` → `contours = []`. Also clear when `snap_to_object_center` flips to false, and on `swiftrayClient` `'disconnected'`. A `/segment` request in flight at close, or sent while the socket is down, is rejected by `swiftrayClient.action()`, so the run loop's `catch` releases the lock and skips the error toast while the socket is down.
 5. **Toasts.** `MessageCaller.openMessage({ key: 'snap-to-object-center', level: LOADING, content: lang.message.detecting_objects, duration: 0 })` when a run starts; `objects_detected` (duration 2 s) when the drain loop ends with a result that was applied — `SUCCESS` with ≥ 1 object, silent with zero (the loading toast is closed; decided 2026-09-24); no result toast when the last pass was discarded by `clear()`; `WARNING` `object_detection_failed` once per preview session (reset by `clear()`) on an engine error. `key` reuse means the toasts replace each other rather than stack.
-6. **Re-enable.** Turning `snap_to_object_center` back on while `cameraPreview.isClean` is false marks the preview dirty and runs at once, since no tile will land to trigger it.
+6. **Re-enable.** Turning `snap_to_object_center` back on while `cameraPreview.isClean` is false marks the preview dirty and runs at once (`redetect()`), since no tile will land to trigger it. Not wired to `'reconnected'` (decided 2026-10-16): after a Swiftray restart the list stays empty until the next preview.
 
 **Align integration (decided 2026-09-22 after trying the point-based version).** Detected objects do **not** feed the general matcher: 9 points and 4 edges per object made snapping feel cluttered. Instead, while dragging in select mode, `autoAlign.findObjectCenterSnap(center)` returns the smallest-bbox object that contains the dragged selection's centre and whose centroid is within `OBJECT_SNAP_SCREEN_PX` = 20 screen px (zoom-aware; smallest first so an engraving centred on a tile wins over the tile); the drag delta is overridden so the selection's centre lands on the object's centroid, and `drawObjectCenterGuides` draws a dashed magenta cross through it (ids prefixed `align_line_` so the usual `clearAlignLines` removes them). For a rectangular object (`rectangularity ≥ RECTANGULAR_MIN` = 0.8) the cross runs along the rect's own axes, sized to the rect, so its rotation is visible; blobs get the axis-aligned bbox cross. Outside every bbox, dragging is unaffected. Snapping is independent of `auto_align`. With Shift held the drag is axis-locked and the object snap is skipped (`getDragDelta(current, start, axisLocked)`). Once the selection has moved, the drag translate is rewritten even when the delta is zero, so snapping back onto an object at the start position lands there instead of leaving the stale translate in the tlist.
 
@@ -323,7 +327,7 @@ export const autoAlign = {
 - Swiftray zip gains `models/mobile_sam.{encoder,decoder}.onnx` and the ORT shared lib; `app.cd.mac.yml` / `app.cd.x64.yml` bump `SWIFTRAY_DAEMON_VERSION` to `1.4.11`. mac `codesign --deep` already covers added dylibs; verify notarisation accepts the ORT dylib (it is signed by Microsoft, should be fine).
 - macOS arm64 Swiftray is built off-CI today; the ORT arm64 tgz must be present on that machine. Add a CMake check that fails configure if `third_party/onnxruntime/<arch>` is missing rather than silently building without segmentation.
 - Licences: MobileSAM Apache-2.0, ORT MIT, both bundle-safe; add to the third-party notices list.
-- Backward compatibility: old Beam Studio + new Swiftray — unaffected (new path only). New Beam Studio + old Swiftray — `SWIFTRAY_SEGMENT` version gate → OpenCV engine, no alert.
+- Backward compatibility: old Beam Studio + new Swiftray — unaffected (new path only). New Beam Studio + old Swiftray — `SWIFTRAY_SEGMENT` version gate → Auto Fit on the OpenCV engine, Snap to Object Center off, no alert.
 
 ---
 
@@ -352,12 +356,13 @@ Each PR is independently shippable; order matters only for 4 → 5.
 4. ~~Include the object centre as a snap point~~ — **decided 2026-09-22: yes.** The feature is named after it: preference `snap_to_object_center`. ~~Corners and edge midpoints of the detected bbox are added as well~~ — **dropped 2026-09-22**: centre-to-centre only, see §5.5.
 5. ~~Model files in the Swiftray zip vs. on-demand download~~ — **decided 2026-09-21: bundled.** Models (43 MB) and ORT ship inside Swiftray; no runtime download.
 6. **Which region-preview machines get align-on-preview** — all that draw through `drawBlobToBackground` (region + full-area). Full-area single shot on Ador/Promark/beamo II runs one whole-bed pass (~3 s); fine.
+7. ~~Snap to Object Center falls back to OpenCV like Auto Fit~~ — **decided 2026-10-16: ONNX only.** The OpenCV contours were too unstable for a feature that snaps silently while dragging. Web, old Swiftray or a closed socket disables the feature (no detection, no toast, no snap) rather than degrading it; a disconnect clears the list, and the next preview after reconnect detects again (no automatic re-detection on reconnect). Auto Fit keeps the fallback. ~~The View menu item stays enabled everywhere~~ — **changed 2026-10-19: hidden on the web** (`useMenuData.ts`), where it could never do anything; the Electron menu keeps it, since a desktop without Swiftray is a transient state already explained by the disconnected toast.
 
 ---
 
 ## 11. Risks & follow-ups
 
-- **Mask quality on low-contrast objects** (clear acrylic, white paper on white honeycomb) — SAM is markedly better than Canny here but not perfect; the OpenCV fallback and Auto Fit's existing bg-removal retry remain.
+- **Mask quality on low-contrast objects** (clear acrylic, white paper on white honeycomb) — SAM is markedly better than Canny here but not perfect; Auto Fit's OpenCV fallback and bg-removal retry remain, Snap to Object Center has no fallback (§10 item 7).
 - **Latency on Intel Macs** unmeasured — measure before GA; the warning exists for this.
 - **Swiftray process RAM** while a convert runs concurrently — separate thread and idle unload; if both peak together on 8 GB machines, add a "skip detection while converting" guard.
 - Follow-ups: INT8 models; decoder re-export with dynamic batch (biggest speedup); CoreML/DirectML EPs behind Experimental; click-to-segment Auto Fit using `prompt`; rotation-aware snapping using `angle` (rule below); onnxruntime-web for the web app.

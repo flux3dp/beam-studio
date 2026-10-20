@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react';
 import React, { useMemo } from 'react';
 
+import IconSelectorGrid from '@core/app/widgets/IconSelectorGrid';
+import type { IconSelectorItem } from '@core/app/widgets/IconSelectorGrid';
 import useI18n from '@core/helpers/useI18n';
 
 import type { ShapeVariant } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
 import GroupCollapse from './Controls/GroupCollapse';
-import IconSelectorGrid from './Controls/IconSelectorGrid';
-import type { IconSelectorItem } from './Controls/IconSelectorGrid';
 
 interface ShapeVariantSelectorProps {
   variants: ShapeVariant[];

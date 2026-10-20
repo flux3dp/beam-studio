@@ -4,15 +4,17 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
 import type { ILang } from '@core/interfaces/ILang';
+import type { KeysWithType } from '@core/interfaces/utils';
 
 import { showKeyChainGenerator } from '../dialogs/KeyChainGenerator';
 import { showPuzzleGenerator } from '../dialogs/PuzzleGenerator';
+import { showStampGenerator } from '../dialogs/StampGenerator';
 
 export interface GeneratorConfig {
   icon: React.ReactNode;
   id: string;
   onClick: () => void;
-  titleKey: keyof ILang['generators'];
+  titleKey: KeysWithType<ILang['generators'], string>;
   visible?: boolean;
 }
 
@@ -63,6 +65,12 @@ export const getGenerators = ({
       id: 'keychain',
       onClick: () => showKeyChainGenerator(),
       titleKey: 'keychain_generator',
+    } as const,
+    {
+      icon: <GeneratorIcons.Stamp />,
+      id: 'stamp',
+      onClick: () => showStampGenerator(),
+      titleKey: 'stamp_generator',
     } as const,
     {
       icon: <GeneratorIcons.Material />,

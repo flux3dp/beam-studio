@@ -43,7 +43,7 @@ const NumberControl = ({
   value,
   withSlider = true,
 }: NumberControlProps): ReactNode => {
-  const { keychain_generator: t } = useI18n();
+  const { generators: t } = useI18n();
   const isModified = defaultValue !== undefined && value !== defaultValue;
   const isInch = useStorageStore((state) => state.isInch);
   const displayInch = useMemo(() => isInch && unit === 'mm', [isInch, unit]);
@@ -63,7 +63,7 @@ const NumberControl = ({
             <button
               className={styles['reset-button']}
               onClick={() => onChange(defaultValue)}
-              title={t.reset_to_default}
+              title={t.general.reset_to_default}
               type="button"
             >
               <UndoOutlined />
