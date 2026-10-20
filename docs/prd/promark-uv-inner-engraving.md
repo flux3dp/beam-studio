@@ -121,7 +121,7 @@
 **Swiftray（1.5.0）**
 - 解析 `stlObjects`（base64 STL）與 `pointCloudObjects`（base64 BSPC），依投影元素的 `data-stl-matrix` 擺放。
 - 內雕參數從物件所在圖層讀取（`data-stl-*`），打點以 blue-noise 取樣表面，打線依層間距切片，可選動態層間距；加厚輪廓往內多打兩層殼。
-- Basic 軸向折射：`Zm = H − (H − z) / n`，只限 `material_min_z`–`material_max_z` 的模型 Z；machine Z 量化到 `machine_z_bucket`（預設、下限 0.001mm）。
+- Basic 軸向折射：`Zm = H − (H − z) / n`，只限 `material_min_z`–`material_max_z` 的模型 Z；machine Z 量化到 `machine_z_bucket`（預設 0.01mm，下限 0.001mm）。
 - Promark：`;CONFIG` 行帶 UV 光源、跳躍 / 雷射延遲、first pulse killer；工時模型集中到 `promark_timing.h`，Z 軸移動加上實測固定開銷（約 50ms）。
 - 填充：打散掃描順序（黃金比例步距排列）與每行停留（§6.7）。
 - 長時間切片與排序可回報進度、可取消。
@@ -478,7 +478,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 | 行為 | 值 | 位置 | 依據 |
 |---|---|---|---|
 | 3D 一律帶折射參數；後端固定用 Basic 軸向模型 | – | `svg-laser-parser.ts`；Swiftray `refraction-compensator.cpp` | 註解 |
-| `machine_z_bucket` 只能透過 uvDev 設定；下限 0.001 | 0.001 | `svg-laser-parser.ts`；Swiftray `kDefaultMachineZBucketMm` | 註解（更細會卡住） |
+| `machine_z_bucket` 只能透過 uvDev 設定；預設 0.01、下限 0.001 | 0.01 / 0.001 | `svg-laser-parser.ts`；Swiftray `kDefaultMachineZBucketMm` / `kMinMachineZBucketMm` | 註解（預設較粗省時、更細會卡住） |
 | 內雕控制器設定：UV 光源、跳躍延遲 min / max、雷射開關延遲 | 1 / 1000µs / 1000µs / 150µs / 150µs | `svg-laser-parser.ts`（`INNER_ENGRAVING_CONTROLLER_CONFIG`） | 實測 2026-10-13 |
 | 上述延遲、跳躍速度、marking / corner delay、first pulse killer 可由 uvDev 覆寫 | – | `svg-laser-parser.ts` | 註解 |
 | Swiftray 低於 1.5.0 擋下 STL 與點雲 | 1.5.0 | `version-checker.ts:46,48`、`handleExportAlerts.ts:220,227` | 2026-10-13 決定 |

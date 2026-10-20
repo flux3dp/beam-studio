@@ -99,7 +99,7 @@ export type TFcodeOptionalConfig = Partial<{
    * Every engraved point is snapped to a multiple of this and each distinct value costs one Z
    * move, which on the Promark is dominated by a fixed ~50ms command overhead — so this sets the
    * floor on how long an inner-carving job takes. Coarser buckets trade depth resolution for
-   * time. Omit it to keep the backend default (0.001mm), which is also the floor: smaller values are
+   * time. Omit it to keep the backend default (0.01mm). The floor is 0.001mm: smaller values are
    * clamped up to it on both sides, because finer buckets stall the job at runtime.
    */
   machine_z_bucket?: number;
