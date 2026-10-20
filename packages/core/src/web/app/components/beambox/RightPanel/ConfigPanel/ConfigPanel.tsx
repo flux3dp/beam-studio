@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { hexa2Models, promarkModels } from '@core/app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import HighQualityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/HighQualityBlock';
@@ -363,7 +363,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       )}
       {/* only paths are filled, and an inner engraving layer holds none */}
       {hasGalvoParams && !isInnerEngraving && <FillIntervalBlock type={UIType} />}
-      {hexa2Models.has(workarea) && <HighQualityBlock type={UIType} />}
+      {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && (isLaser || isGalvo) && <AirAssistBlock type={UIType} />}
       {hasGalvoParams && !isPromarkUV && <PulseWidthBlock type={UIType} />}
