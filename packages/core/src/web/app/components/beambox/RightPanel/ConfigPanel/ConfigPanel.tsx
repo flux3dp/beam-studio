@@ -365,7 +365,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {hasGalvoParams && !isInnerEngraving && <FillIntervalBlock type={UIType} />}
       {hexa2Models.has(workarea) && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
-      {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
+      {addOnInfo.airAssist && (isLaser || isGalvo) && <AirAssistBlock type={UIType} />}
       {hasGalvoParams && !isPromarkUV && <PulseWidthBlock type={UIType} />}
       {hasGalvoParams && !isPromarkUV && <FrequencyBlock type={UIType} />}
       {!isInnerEngraving && <RepeatBlock type={UIType} />}
