@@ -4,6 +4,7 @@ import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/pro
 
 const mockChangeWorkarea = jest.fn();
 const mockClearScene = jest.fn();
+const mockDisableOtherExclusiveModes = jest.fn();
 const mockIsInnerEngravingActive = jest.fn();
 
 jest.mock('@core/app/stores/documentStore');
@@ -18,6 +19,9 @@ jest.mock('@core/helpers/addOn/innerEngraving', () => ({
   isInnerEngravingActive: () => mockIsInnerEngravingActive(),
 }));
 jest.mock('@core/helpers/device/promark/promark-info');
+jest.mock('@core/helpers/exclusiveModes', () => ({
+  disableOtherExclusiveModes: (...args) => mockDisableOtherExclusiveModes(...args),
+}));
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) => callback({ Editor: { clearScene: () => mockClearScene() } }),
 }));
@@ -45,6 +49,8 @@ describe('switchInnerEngravingMode', () => {
 
     expect(mockClearScene).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenCalledWith('fpm1');
+    // the rotary and the other coordinate-space modes go off with the switch
+    expect(mockDisableOtherExclusiveModes).toHaveBeenCalledWith('inner-engraving');
     expect(getPromarkInfo()).toEqual(uvInfo);
     expect(useDocumentStore.getState()['customized-dimension'].fpm1).toEqual({ height: 70, width: 70 });
     expect(useDocumentStore.getState()['inner-engraving']).toBe(true);

@@ -68,6 +68,19 @@ const handlers = {
 
 export const EXCLUSIVE_MODES = Object.keys(handlers) as ExclusiveMode[];
 
+/**
+ * Disable every exclusive mode other than `mode` through its own helper, runtime cleanup included.
+ *
+ * For callers that enable a mode themselves because its preconditions are only met as part of the
+ * switch: `switchInnerEngravingMode` applies the UV source and the 70 mm work area while enabling,
+ * so the capability check in {@link setExclusiveMode} would refuse it beforehand.
+ */
+export const disableOtherExclusiveModes = (mode: ExclusiveMode, options: AddOnModeMutationOptions = {}): void => {
+  for (const otherMode of EXCLUSIVE_MODES) {
+    if (otherMode !== mode) handlers[otherMode].disable(options);
+  }
+};
+
 export const checkExclusiveMode = (mode: ExclusiveMode, context: AddOnModeContext = {}): boolean =>
   handlers[mode].check(context);
 
@@ -109,10 +122,7 @@ export const setExclusiveMode = (
   };
 
   if (enabled) {
-    for (const otherMode of EXCLUSIVE_MODES) {
-      if (otherMode !== mode) handlers[otherMode].disable(mutationOptions);
-    }
-
+    disableOtherExclusiveModes(mode, mutationOptions);
     handlers[mode].enable(mutationOptions);
   } else {
     handlers[mode].disable(mutationOptions);

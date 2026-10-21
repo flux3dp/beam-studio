@@ -6,6 +6,7 @@ import {
   enableInnerEngraving,
   isInnerEngravingActive,
 } from '@core/helpers/addOn/innerEngraving';
+import { disableOtherExclusiveModes } from '@core/helpers/exclusiveModes';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
@@ -43,8 +44,15 @@ export const switchInnerEngravingMode = async (
   // clearScene owns the save prompt and resets the undo stack; svgCanvas.clear() drops the meshes
   if (!(await svgEditor.clearScene())) return false;
 
-  if (enabled) enableInnerEngraving({ promarkInfo });
-  else disableInnerEngraving();
+  if (enabled) {
+    // the rotary and the other coordinate-space modes cannot coexist with 3D; clearScene does not
+    // touch them, and `setExclusiveMode` cannot be used here because its capability check runs
+    // before the UV source and the 70 mm work area that this very switch applies
+    disableOtherExclusiveModes('inner-engraving');
+    enableInnerEngraving({ promarkInfo });
+  } else {
+    disableInnerEngraving();
+  }
 
   // The inner-engraving dimension must be stored before changeWorkarea reads it to resize the canvas.
   if (workarea) changeWorkarea(workarea);
