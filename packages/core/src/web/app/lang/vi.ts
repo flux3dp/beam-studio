@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Tiếp tục gửi công việc?',
     disable_mode: 'Không thể nhập tệp này ở chế độ khắc bên trong. Tắt chế độ khắc bên trong và nhập tệp?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'Tệp STL chỉ có thể được nhập ở chế độ khắc bên trong. Bật chế độ này?',
     enable_mode_with_workarea: 'Tệp STL chỉ có thể được nhập ở chế độ khắc bên trong. Áp dụng các cài đặt bắt buộc cho nguồn laser Promark UV và khu vực làm việc 70 × 70 mm?',
     export_warning_title: 'Kiểm tra khắc bên trong',

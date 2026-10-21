@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: '继续送出工作？',
     disable_mode: '内雕模式无法导入此文件，是否关闭内雕模式并继续导入？',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'STL 文件只能在内雕模式下导入，是否开启内雕模式？',
     enable_mode_with_workarea: 'STL 文件只能在内雕模式下导入。是否应用所需的 Promark UV 激光源与 70 × 70 mm 工作区域设置？',
     export_warning_title: '内雕工作检查',

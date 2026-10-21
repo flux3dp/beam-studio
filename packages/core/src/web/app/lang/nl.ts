@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Doorgaan met het verzenden van de taak?',
     disable_mode: 'Dit bestand kan niet worden geïmporteerd in de binnengravuremodus. Binnengravuremodus uitschakelen en het bestand importeren?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'STL-bestanden kunnen alleen in de binnengravuremodus worden geïmporteerd. Inschakelen?',
     enable_mode_with_workarea: 'STL-bestanden kunnen alleen in de binnengravuremodus worden geïmporteerd. De vereiste instellingen voor Promark UV-laserbron en werkgebied van 70 × 70 mm toepassen?',
     export_warning_title: 'Controle binnengravure',

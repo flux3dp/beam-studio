@@ -21,6 +21,10 @@ const ask = (caption: string, message: string): Promise<boolean> =>
     });
   });
 
+/** Ask whether to switch canvas mode, for callers outside the import flow (the rotary dialog). */
+export const askModeSwitch = (message: string): Promise<boolean> =>
+  ask(i18n.lang.inner_engraving.mode_switch_title, message);
+
 /**
  * The work area to move to in order to turn inner engraving on, or null when the current one
  * already supports it.

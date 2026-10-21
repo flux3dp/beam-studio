@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Kontynuować wysyłanie zadania?',
     disable_mode: 'Tego pliku nie można zaimportować w trybie grawerowania wewnętrznego. Wyłączyć ten tryb i zaimportować plik?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'Pliki STL można importować tylko w trybie grawerowania wewnętrznego. Włączyć go?',
     enable_mode_with_workarea: 'Pliki STL można importować tylko w trybie grawerowania wewnętrznego. Zastosować wymagane ustawienia źródła lasera Promark UV i obszaru roboczego 70 × 70 mm?',
     export_warning_title: 'Kontrola grawerowania wewnętrznego',

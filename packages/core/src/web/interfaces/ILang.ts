@@ -1744,6 +1744,7 @@ export interface ILang {
     };
     continue_export: string;
     disable_mode: string;
+    disable_mode_for_rotary: string;
     enable_mode: string;
     enable_mode_with_workarea: string;
     export_warning_title: string;

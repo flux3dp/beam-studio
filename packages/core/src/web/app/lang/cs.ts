@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Pokračovat v odeslání úlohy?',
     disable_mode: 'Tento soubor nelze importovat v režimu vnitřního gravírování. Vypnout režim vnitřního gravírování a soubor importovat?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'Soubory STL lze importovat pouze v režimu vnitřního gravírování. Zapnout jej?',
     enable_mode_with_workarea: 'Soubory STL lze importovat pouze v režimu vnitřního gravírování. Použít požadovaný laserový zdroj Promark UV a pracovní oblast 70 × 70 mm?',
     export_warning_title: 'Kontrola vnitřního gravírování',

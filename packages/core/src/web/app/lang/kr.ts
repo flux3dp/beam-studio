@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: '작업 전송을 계속하시겠습니까?',
     disable_mode: '내부 조각 모드에서는 이 파일을 가져올 수 없습니다. 내부 조각 모드를 끄고 가져오시겠습니까?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'STL 파일은 내부 조각 모드에서만 가져올 수 있습니다. 켜시겠습니까?',
     enable_mode_with_workarea: 'STL 파일은 내부 조각 모드에서만 가져올 수 있습니다. 필요한 Promark UV 레이저 소스 및 70 × 70 mm 작업 영역 설정을 적용하시겠습니까?',
     export_warning_title: '내부 조각 작업 확인',

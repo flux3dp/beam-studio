@@ -1,6 +1,6 @@
 import React, { act } from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { RotaryType } from '@core/app/constants/addOn';
 
@@ -38,14 +38,101 @@ jest.mock('@core/app/actions/dialog-controller', () => ({
   popDialogById: (...args) => mockPopDialogById(...args),
 }));
 
+const mockIsInnerEngravingActive = jest.fn();
+
+// the real module stays in place for setExclusiveMode's handlers; only the active check is faked
+jest.mock('@core/helpers/addOn/innerEngraving', () => ({
+  ...jest.requireActual('@core/helpers/addOn/innerEngraving'),
+  isInnerEngravingActive: () => mockIsInnerEngravingActive(),
+}));
+
+const mockAskModeSwitch = jest.fn();
+
+jest.mock('@core/app/svgedit/operations/import/innerEngravingGate', () => ({
+  askModeSwitch: (...args) => mockAskModeSwitch(...args),
+}));
+
+const mockSwitchInnerEngravingMode = jest.fn();
+
+jest.mock('@core/app/actions/canvas/innerEngravingMode', () => ({
+  switchInnerEngravingMode: (...args) => mockSwitchInnerEngravingMode(...args),
+}));
+
 const mockOnClose = jest.fn();
 
 describe('test RotarySettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockIsInnerEngravingActive.mockReturnValue(false);
     mockGetState.mockReturnValue({
       update: mockUpdate,
       workarea: 'ado1',
+    });
+  });
+
+  describe('enabling the rotary in an inner engraving document', () => {
+    beforeEach(() => {
+      mockIsInnerEngravingActive.mockReturnValue(true);
+      mockGetState.mockReturnValue({ 'inner-engraving': true, update: mockUpdate, workarea: 'fpm1' });
+    });
+
+    const enableRotaryAndSave = (baseElement: Element) => {
+      fireEvent.click(baseElement.querySelector('#rotary_mode')!);
+      fireEvent.click(baseElement.querySelector('.ant-btn-primary')!);
+    };
+
+    test('asks, switches the mode off, then saves', async () => {
+      mockAskModeSwitch.mockResolvedValue(true);
+      mockSwitchInnerEngravingMode.mockResolvedValue(true);
+
+      const { baseElement } = render(<RotarySettings onClose={mockOnClose} />);
+
+      enableRotaryAndSave(baseElement);
+      await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
+      expect(mockAskModeSwitch).toHaveBeenCalledTimes(1);
+      expect(mockSwitchInnerEngravingMode).toHaveBeenCalledWith(false);
+      expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ rotary_mode: true }));
+    });
+
+    test('keeps the dialog open and the document untouched when the prompt is declined', async () => {
+      mockAskModeSwitch.mockResolvedValue(false);
+
+      const { baseElement } = render(<RotarySettings onClose={mockOnClose} />);
+
+      enableRotaryAndSave(baseElement);
+      await waitFor(() => expect(mockAskModeSwitch).toHaveBeenCalledTimes(1));
+      expect(mockSwitchInnerEngravingMode).not.toHaveBeenCalled();
+      expect(mockUpdate).not.toHaveBeenCalled();
+      expect(mockOnClose).not.toHaveBeenCalled();
+    });
+
+    test('keeps the dialog open when the new-document switch is cancelled', async () => {
+      mockAskModeSwitch.mockResolvedValue(true);
+      mockSwitchInnerEngravingMode.mockResolvedValue(false);
+
+      const { baseElement } = render(<RotarySettings onClose={mockOnClose} />);
+
+      enableRotaryAndSave(baseElement);
+      await waitFor(() => expect(mockSwitchInnerEngravingMode).toHaveBeenCalledWith(false));
+      expect(mockUpdate).not.toHaveBeenCalled();
+      expect(mockOnClose).not.toHaveBeenCalled();
+    });
+
+    test('saves directly when the rotary is being turned off', () => {
+      mockGetState.mockReturnValue({
+        'inner-engraving': true,
+        rotary_mode: true,
+        update: mockUpdate,
+        workarea: 'fpm1',
+      });
+
+      const { baseElement } = render(<RotarySettings onClose={mockOnClose} />);
+
+      fireEvent.click(baseElement.querySelector('#rotary_mode')!);
+      fireEvent.click(baseElement.querySelector('.ant-btn-primary')!);
+      expect(mockAskModeSwitch).not.toHaveBeenCalled();
+      expect(mockUpdate).toHaveBeenCalledWith(expect.objectContaining({ rotary_mode: false }));
+      expect(mockOnClose).toHaveBeenCalledTimes(1);
     });
   });
 

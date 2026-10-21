@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Teruskan menghantar tugas?',
     disable_mode: 'Fail ini tidak boleh diimport dalam mod Ukiran Dalam. Matikan mod Ukiran Dalam dan import fail?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'Fail STL hanya boleh diimport dalam mod Ukiran Dalam. Hidupkan?',
     enable_mode_with_workarea: 'Fail STL hanya boleh diimport dalam mod Ukiran Dalam. Gunakan tetapan sumber laser Promark UV dan kawasan kerja 70 × 70 mm yang diperlukan?',
     export_warning_title: 'Semakan Ukiran Dalam',

@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Checkbox, Segmented, Switch } from 'antd';
 
+import { switchInnerEngravingMode } from '@core/app/actions/canvas/innerEngravingMode';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
@@ -11,9 +12,11 @@ import RotaryIcons from '@core/app/icons/rotary/RotaryIcons';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import { askModeSwitch } from '@core/app/svgedit/operations/import/innerEngravingGate';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { setExclusiveMode } from '@core/helpers/exclusiveModes';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -37,6 +40,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   const {
     beambox: { document_panel: tDocu },
     global: tGlobal,
+    inner_engraving: tInner,
     rotary_settings: t,
     topbar: { menu: tMenu },
   } = useI18n();
@@ -61,7 +65,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
     if (overlap > split) setOverlap(split);
   }, [split, overlap]);
 
-  const handleSave = async () => {
+  const handleSave = () => {
     const { update, ...origState } = useDocumentStore.getState();
     const rotaryChanged = rotaryMode !== origState.rotary_mode;
     const extendChanged = extend !== origState['extend-rotary-workarea'];
@@ -105,6 +109,35 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
       rotaryAxis.toggleDisplay();
     }
   };
+  const saveAndClose = () => {
+    handleSave();
+    afterSave?.();
+    onClose();
+  };
+
+  /**
+   * Enabling the rotary in an inner engraving document means leaving that mode, and leaving it is
+   * a new-document operation (see `switchInnerEngravingMode`): ask, then let the switch run its
+   * own save prompt and clear the canvas. Backing out of either leaves the dialog open.
+   */
+  const leaveInnerEngravingAndSave = async () => {
+    if (!(await askModeSwitch(tInner.disable_mode_for_rotary))) return;
+
+    if (!(await switchInnerEngravingMode(false))) return;
+
+    saveAndClose();
+  };
+
+  const handleOk = () => {
+    if (rotaryMode && isInnerEngravingActive()) {
+      leaveInnerEngravingAndSave();
+
+      return;
+    }
+
+    saveAndClose();
+  };
+
   const rotaryDisabled = !rotaryMode;
   const chuckOptionDisabled = rotaryDisabled || !addOnInfo.rotary?.chuck || rotaryType !== RotaryType.Chuck;
 
@@ -113,11 +146,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
       cancelText={tGlobal.cancel}
       okText={tGlobal.save}
       onCancel={onClose}
-      onOk={() => {
-        handleSave();
-        afterSave?.();
-        onClose();
-      }}
+      onOk={handleOk}
       open
       title={tMenu.rotary_setup}
     >

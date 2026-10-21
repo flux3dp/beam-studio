@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'ジョブの送信を続行しますか？',
     disable_mode: '内部彫刻モードではこのファイルをインポートできません。内部彫刻モードをオフにしてインポートしますか？',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'STL ファイルは内部彫刻モードでのみインポートできます。オンにしますか？',
     enable_mode_with_workarea: 'STL ファイルは内部彫刻モードでのみインポートできます。必要な Promark UV レーザー源と 70 × 70 mm 作業エリアの設定を適用しますか？',
     export_warning_title: '内部彫刻ジョブのチェック',

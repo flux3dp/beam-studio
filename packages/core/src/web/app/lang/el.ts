@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Συνέχεια αποστολής της εργασίας;',
     disable_mode: 'Αυτό το αρχείο δεν μπορεί να εισαχθεί στη λειτουργία εσωτερικής χάραξης. Απενεργοποίηση της λειτουργίας εσωτερικής χάραξης και εισαγωγή;',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'Τα αρχεία STL μπορούν να εισαχθούν μόνο στη λειτουργία εσωτερικής χάραξης. Ενεργοποίηση;',
     enable_mode_with_workarea: 'Τα αρχεία STL μπορούν να εισαχθούν μόνο στη λειτουργία εσωτερικής χάραξης. Εφαρμογή των απαιτούμενων ρυθμίσεων πηγής λέιζερ Promark UV και περιοχής εργασίας 70 × 70 mm;',
     export_warning_title: 'Έλεγχος εσωτερικής χάραξης',

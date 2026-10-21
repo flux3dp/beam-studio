@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Continuar enviando o trabalho?',
     disable_mode: 'Este arquivo não pode ser importado no modo de Gravação Interna. Desativar o modo de Gravação Interna e importá-lo?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'Arquivos STL só podem ser importados no modo de Gravação Interna. Ativá-lo?',
     enable_mode_with_workarea: 'Arquivos STL só podem ser importados no modo de Gravação Interna. Aplicar as configurações necessárias de fonte de laser Promark UV e área de trabalho de 70 × 70 mm?',
     export_warning_title: 'Verificação da Gravação Interna',

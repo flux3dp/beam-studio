@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Jatketaanko työn lähettämistä?',
     disable_mode: 'Tätä tiedostoa ei voi tuoda sisäkaiverrustilassa. Poistetaanko sisäkaiverrustila käytöstä ja tuodaan tiedosto?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'STL-tiedostoja voi tuoda vain sisäkaiverrustilassa. Otetaanko se käyttöön?',
     enable_mode_with_workarea: 'STL-tiedostoja voi tuoda vain sisäkaiverrustilassa. Otetaanko käyttöön vaadittu Promark UV -laserlähde ja 70 × 70 mm:n työalue?',
     export_warning_title: 'Sisäkaiverruksen tarkistus',

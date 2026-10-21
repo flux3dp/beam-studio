@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Auftrag weiter senden?',
     disable_mode: 'Diese Datei kann im Innengravur-Modus nicht importiert werden. Innengravur-Modus deaktivieren und importieren?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'STL-Dateien können nur im Innengravur-Modus importiert werden. Modus aktivieren?',
     enable_mode_with_workarea: 'STL-Dateien können nur im Innengravur-Modus importiert werden. Die erforderliche Promark UV-Laserquelle und den Arbeitsbereich 70 × 70 mm übernehmen?',
     export_warning_title: 'Innengravur-Prüfung',

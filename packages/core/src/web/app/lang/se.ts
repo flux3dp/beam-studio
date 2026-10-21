@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Fortsätta skicka jobbet?',
     disable_mode: 'Filen kan inte importeras i läget för invändig gravering. Vill du stänga av läget och importera den?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'STL-filer kan bara importeras i läget för invändig gravering. Vill du aktivera det?',
     enable_mode_with_workarea: 'STL-filer kan bara importeras i läget för invändig gravering. Vill du tillämpa de nödvändiga inställningarna för Promark UV-laserkälla och 70 × 70 mm arbetsområde?',
     export_warning_title: 'Kontroll av invändig gravering',

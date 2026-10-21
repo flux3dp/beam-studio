@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'Continuare l’invio del lavoro?',
     disable_mode: 'Questo file non può essere importato in modalità Incisione interna. Disattivare la modalità Incisione interna e importarlo?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'I file STL possono essere importati solo in modalità Incisione interna. Attivarla?',
     enable_mode_with_workarea: 'I file STL possono essere importati solo in modalità Incisione interna. Applicare le impostazioni richieste di sorgente laser Promark UV e area di lavoro 70 × 70 mm?',
     export_warning_title: 'Controllo incisione interna',

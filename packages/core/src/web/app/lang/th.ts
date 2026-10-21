@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: 'ส่งงานต่อหรือไม่?',
     disable_mode: 'ไม่สามารถนำเข้าไฟล์นี้ในโหมดสลักภายในได้ ต้องการปิดโหมดสลักภายในแล้วนำเข้าหรือไม่?',
+    disable_mode_for_rotary: 'The rotary cannot be used in Inner Engraving mode. Turn Inner Engraving mode off and start a new document?',
     enable_mode: 'ไฟล์ STL นำเข้าได้เฉพาะในโหมดสลักภายในเท่านั้น ต้องการเปิดโหมดนี้หรือไม่?',
     enable_mode_with_workarea: 'ไฟล์ STL นำเข้าได้เฉพาะในโหมดสลักภายในเท่านั้น ต้องการใช้การตั้งค่าแหล่งกำเนิดเลเซอร์ Promark UV และพื้นที่ทำงาน 70 × 70 mm ที่จำเป็นหรือไม่?',
     export_warning_title: 'ตรวจสอบงานสลักภายใน',

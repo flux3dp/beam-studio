@@ -1782,6 +1782,7 @@ const lang: ILang = {
     },
     continue_export: '繼續送出工作？',
     disable_mode: '內雕模式無法匯入此檔案，是否關閉內雕模式並繼續匯入？',
+    disable_mode_for_rotary: '旋轉軸無法在內雕模式下使用，是否關閉內雕模式並開啟新文件？',
     enable_mode: 'STL 檔案只能在內雕模式下匯入，是否開啟內雕模式？',
     enable_mode_with_workarea: 'STL 檔案只能在內雕模式下匯入。是否套用所需的 Promark UV 雷射光源與 70 × 70 mm 工作區域設定？',
     export_warning_title: '內雕工作檢查',
