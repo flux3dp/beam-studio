@@ -33,9 +33,11 @@ class BeamboxGlobalInteraction {
       menu.disable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
     } else {
       menu.enable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
-      // curve engraving (rotary, pass-through, auto-feeder) and decompose path (selection) have
-      // conditions of their own, which the blanket enable above would trample
+      // curve engraving (rotary, pass-through, auto-feeder), rotary setup (curve engraving) and
+      // decompose path (selection) have conditions of their own, which the blanket enable above
+      // would trample
       menu.checkCurveEngraving();
+      menu.checkRotarySetup();
       this.onObjectBlur();
       this.onObjectFocus();
     }
@@ -48,6 +50,7 @@ class BeamboxGlobalInteraction {
       // enable all
       menu.attach();
       menu.checkCurveEngraving();
+      menu.checkRotarySetup();
       this.onObjectBlur();
       this.onObjectFocus();
       this.onCanvasModeChange();

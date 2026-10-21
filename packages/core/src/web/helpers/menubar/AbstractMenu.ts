@@ -5,7 +5,11 @@ import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { MenuEvents } from '@core/app/constants/ipcEvents';
 import DeviceMaster from '@core/helpers/device-master';
-import { canStartCurveEngraving, subscribeExclusiveModeGate } from '@core/helpers/exclusiveModes';
+import {
+  canStartCurveEngraving,
+  getActiveExclusiveMode,
+  subscribeExclusiveModeGate,
+} from '@core/helpers/exclusiveModes';
 import { isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import type { ExampleFileKey } from '@core/helpers/menubar/exampleFiles';
@@ -94,6 +98,7 @@ export default abstract class AbstractMenu {
       registerMenuClickEvents();
 
       subscribeExclusiveModeGate('curve-engraving', this.checkCurveEngraving);
+      subscribeExclusiveModeGate('rotary', () => this.checkRotarySetup());
     }
   }
 
@@ -125,6 +130,23 @@ export default abstract class AbstractMenu {
       this.enable(['START_CURVE_ENGRAVING_MODE']);
     } else {
       this.disable(['START_CURVE_ENGRAVING_MODE']);
+    }
+  };
+
+  /**
+   * Rotary Setup stays available while no other exclusive mode is in effect (or the rotary itself
+   * is): with curve engraving data on the canvas or in inner engraving mode, the dialog would turn
+   * that mode off as a side effect of enabling the rotary. The document settings switch is gated
+   * the same way.
+   */
+  checkRotarySetup = () => {
+    const activeMode = getActiveExclusiveMode();
+    const canOpen = isAtPage('editor') && (activeMode === null || activeMode === 'rotary');
+
+    if (canOpen) {
+      this.enable(['ROTARY_SETUP']);
+    } else {
+      this.disable(['ROTARY_SETUP']);
     }
   };
 }
