@@ -1755,6 +1755,9 @@ export interface ILang {
     objects_out_of_range: string;
     objects_overlap: string;
     parsing_mesh: string;
+    paste_from_other_tab: string;
+    paste_no_2d_version: string;
+    paste_not_extrudable: string;
     placing_object: string;
     reading_file: string;
   };

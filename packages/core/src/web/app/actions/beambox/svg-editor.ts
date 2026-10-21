@@ -573,6 +573,9 @@ const svgEditor = (window['svgEditor'] = (function () {
             importedFromClipboard = true;
           }
         } else if (looksLikeDxfText(plainText)) {
+          // same gate as a .dxf file dropped on the canvas: 2D artwork has nowhere to go in 3D
+          if (isInnerEngravingActive() && !(await ensureModeForImport(false))) return;
+
           importedFromClipboard = await importDxfFromText(plainText);
 
           if (!importedFromClipboard) {
@@ -597,6 +600,14 @@ const svgEditor = (window['svgEditor'] = (function () {
 
                 if (res.ok) {
                   const resBlob = await res.blob();
+
+                  if (isInnerEngravingActive()) {
+                    // the file path lays an image flat as a photo plane; a bare <image> would be
+                    // invisible behind the 3D canvas yet still sent to the machine
+                    svgEditor.handleFile(new File([resBlob], 'clipboard-image.png', { type: resBlob.type }));
+                    continue;
+                  }
+
                   const blobSrc = URL.createObjectURL(resBlob);
 
                   ImageData(blobSrc, {
