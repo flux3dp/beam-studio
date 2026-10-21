@@ -263,7 +263,20 @@ const fetchTaskCodeSwiftray = async (
 
   // Generate Thumbnail
   const { thumbnail, thumbnailBlobURL } = await generateThumbnail();
-  const pointCloudObjects = await getPointCloudObjects();
+  let pointCloudObjects: Awaited<ReturnType<typeof getPointCloudObjects>>;
+
+  try {
+    pointCloudObjects = await getPointCloudObjects();
+  } catch (error) {
+    // a point-cloud projection without its store object: the canvas has already been prepared for
+    // export (text outlined, image symbols swapped), so put it back before giving up
+    console.error('Failed to collect point-cloud objects', error);
+    revertFunctions.toReversed().forEach((revert) => revert());
+    SymbolMaker.switchImageSymbolForAll(true);
+    Progress.popById('fetch-task-code');
+
+    return {};
+  }
 
   // Plain photos remain SVG images and are marked for Swiftray's 3D photo path. Generated point
   // clouds use temporary typed placeholders; directly imported ones already have typed rects.
