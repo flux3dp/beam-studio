@@ -39,6 +39,7 @@ import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { supportInnerEngraving } from '@core/helpers/addOn/innerEngraving';
+import { checkFpm1UV } from '@core/helpers/checkFeature';
 import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
@@ -64,11 +65,15 @@ import JobOriginBlock from './JobOriginBlock';
 import RotaryBlock from './RotaryBlock';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
 
-const promarkLaserOptions = laserTypes
-  .map((type) =>
-    laserSourceWattMap[type].map((watt) => ({ label: `${type} - ${watt}W`, value: `${LaserType[type]}-${watt}` })),
-  )
-  .flat();
+// same release gate as the machine initialization flow (SelectPromarkLaserSource): UV stays hidden
+// until the feature ships, so it is resolved at render time rather than once at module load
+const getPromarkLaserOptions = () =>
+  laserTypes
+    .filter((type) => type !== 'UV' || checkFpm1UV())
+    .map((type) =>
+      laserSourceWattMap[type].map((watt) => ({ label: `${type} - ${watt}W`, value: `${LaserType[type]}-${watt}` })),
+    )
+    .flat();
 
 interface Props {
   unmount: () => void;
@@ -586,7 +591,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
                     setPmInfo({ laserType: type, watt } as PromarkInfo);
                   }}
-                  options={promarkLaserOptions}
+                  options={getPromarkLaserOptions()}
                   value={`${pmInfo.laserType}-${pmInfo.watt}`}
                   variant="outlined"
                 />
