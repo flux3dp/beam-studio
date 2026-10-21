@@ -2,6 +2,7 @@ import { match } from 'ts-pattern';
 import { v4 as uuid } from 'uuid';
 
 import tabController from '@core/app/actions/tabController';
+import type { StlObject } from '@core/app/stores/stlStore';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ClipboardCore, ClipboardData, ClipboardElement } from '@core/interfaces/Clipboard';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -50,6 +51,16 @@ const serializeElement = ({
 };
 
 export class NativeClipboard extends Clipboard implements ClipboardCore {
+  /**
+   * The id of the data this tab wrote last. The meshes in `stlClipboard` were cached when that data
+   * was written, so they belong to it alone: the system clipboard may since have been written by
+   * another tab, whose rects can carry the very same ids (`svg_N` counts per document).
+   */
+  private writtenDataId: null | string = null;
+
+  /** The meshes re-keyed onto the elements the last `getData()` handed back. */
+  private pastedStl: Record<string, StlObject> = {};
+
   protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
     const serializedData: ClipboardData = {
       elements: [],
@@ -59,6 +70,7 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
       source: String(tabController.currentId),
     };
 
+    this.writtenDataId = serializedData.id;
     useClipboardStore.getState().reset(serializedData.id);
 
     elems.forEach((elem) => {
@@ -169,14 +181,19 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
 
     // `copyElemData` gives every element a fresh id, so the meshes cached at copy time — keyed by
     // the ids the rects had then — have to be re-keyed onto the elements actually being handed
-    // back. Nothing is re-keyed for data written by another tab: its meshes were never in this
-    // tab's cache, and paste drops those rects rather than pasting a rect with no mesh.
-    elements.forEach((element, index) => {
-      const originalId = element.attributes.find(({ nodeName }) => nodeName === 'id')?.value;
-      const object = originalId ? this.stlClipboard[originalId] : undefined;
+    // back. Only for the data this tab wrote: another tab's rects may reuse those ids, and matching
+    // them against this tab's cache would paste the wrong mesh. With no mesh of their own, paste
+    // drops those rects rather than pasting a rect with no mesh.
+    this.pastedStl = {};
 
-      if (object) this.stlClipboard[newElements[index].id] = object;
-    });
+    if (data.id === this.writtenDataId) {
+      elements.forEach((element, index) => {
+        const originalId = element.attributes.find(({ nodeName }) => nodeName === 'id')?.value;
+        const object = originalId ? this.stlClipboard[originalId] : undefined;
+
+        if (object) this.pastedStl[newElements[index].id] = object;
+      });
+    }
 
     // use clipboard image data if original image is not available
     await Promise.allSettled(
@@ -197,6 +214,8 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
 
     return newElements;
   };
+
+  getStlFromClipboard = (id: string): StlObject | undefined => this.pastedStl[id];
 
   hasData = async (): Promise<boolean> => {
     try {
