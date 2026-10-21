@@ -31,23 +31,29 @@ export const getInnerEngravingCustomizedDimension = (
 };
 
 export const checkInnerEngraving = (context: AddOnModeContext = {}): boolean => {
-  const promarkInfo = context.promarkInfo === undefined ? getPromarkInfo() : context.promarkInfo;
+  // cheapest checks first: this runs on hot paths (selection, drag auto-align) for every machine,
+  // and `getPromarkInfo` is a synchronous storage read, so it is only reached on a Promark UV setup
+  if (!checkFpm1UV()) return false;
+
   const workarea = resolveWorkarea(context);
+
+  if (workarea !== 'fpm1' || !resolveAddOnInfo(context)?.innerEngraving) return false;
+
   const dimension = resolveDocumentValue('customized-dimension', context)?.[workarea];
 
-  return (
-    checkFpm1UV() &&
-    Boolean(resolveAddOnInfo(context)?.innerEngraving) &&
-    promarkInfo?.laserType === LaserType.UV &&
-    workarea === 'fpm1' &&
-    dimension?.width === UV_INNER_ENGRAVING_WORKAREA &&
-    dimension.height === UV_INNER_ENGRAVING_WORKAREA
-  );
+  if (dimension?.width !== UV_INNER_ENGRAVING_WORKAREA || dimension.height !== UV_INNER_ENGRAVING_WORKAREA) {
+    return false;
+  }
+
+  const promarkInfo = context.promarkInfo === undefined ? getPromarkInfo() : context.promarkInfo;
+
+  return promarkInfo?.laserType === LaserType.UV;
 };
 
 /** Whether inner engraving is supported and currently enabled. */
 export const getInnerEngraving = (context: AddOnModeContext = {}): boolean =>
-  checkInnerEngraving(context) && Boolean(resolveDocumentValue('inner-engraving', context));
+  // the document flag is an in-memory read and false for every 2D document, so it goes first
+  Boolean(resolveDocumentValue('inner-engraving', context)) && checkInnerEngraving(context);
 
 export const enableInnerEngraving = (options: AddOnModeMutationOptions = {}): void => {
   const customizedDimension =
