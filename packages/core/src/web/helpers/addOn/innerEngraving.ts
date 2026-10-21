@@ -120,7 +120,9 @@ export const isInnerEngravingFile = (file: { innerEngraving?: boolean }): boolea
  * 2. **Exports that cannot carry a mesh** — SVG / PNG / JPG and the UV print export are flat, and
  *    .bvg has no block for the binaries (only .beam does, block 6)
  * 3. **Scenes and modes that conflict** — the material-test imports drop 2D artwork into a document
- *    that only supports STL, and curve engraving is mutually exclusive with inner engraving
+ *    that only supports STL, and curve engraving and the rotary are mutually exclusive with inner
+ *    engraving (the Rotary Setup dialog would otherwise switch the document back to 2D in place,
+ *    without the new-document flow that `switchInnerEngravingMode` owns)
  * 4. **View settings with nothing to act on** — auto align has no 2D neighbours to align against
  *    and draws its guide lines into the hidden SVG canvas; anti-aliasing sets `shape-rendering` on
  *    that same hidden canvas, while the 3D canvas's own antialiasing is fixed when its WebGL
@@ -153,6 +155,7 @@ export const INNER_ENGRAVING_DISABLED_MENU_ITEMS = [
   'IMPORT_MATERIAL_TESTING_PRINT',
   'IMPORT_ACRYLIC_FOCUS_PROBE',
   'START_CURVE_ENGRAVING_MODE',
+  'ROTARY_SETUP',
   'START_TUTORIAL',
   'START_UI_INTRO',
 ];
