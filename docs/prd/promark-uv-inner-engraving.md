@@ -330,6 +330,25 @@
 | `app/stores/cameraPreview.ts`（新增 `backgroundUrl`） | 2D 預覽背景的繪製不變 |
 | `app/constants/resolutions.ts` | 所有機型的 DPI 選項和 main 相同 |
 | `.github/workflows/app.cd.{mac,x64}.yml` | 升級打包的 Swiftray（1.5.0）後，所有機型的 2D 工作照常送出 |
+| `actions/beambox/beambox-preference.ts`、`stores/documentStore.ts`、`interfaces/Preference.d.ts` | 既有偏好與文件設定的預設值、讀寫不變；只新增 `inner-engraving*`（模式開關、材料形狀 / 尺寸 / 位置 / 折射率 / 安全邊距），預設值來自 `constants/innerEngraving.ts` |
+| `export/GoButton/handleExportAlerts.ts` | 2D 送出：自動送料、曲面雕刻、Promark 等既有檢查與提示的順序不變；只有內雕模式多出物件檢查、對焦提醒與 Swiftray 1.5.0 的版本檢查 |
+| `actions/dialog-caller.tsx`、`Generators/generators.config.tsx` | 既有對話框與 2D 的 Generators 清單、順序不變；只新增內雕材質測試的對話框，`isInnerEngraving` 時 Generators 只回傳它 |
+| `ConfigPanel/AdvancedBlock.tsx`、`FocusBlock.tsx`、`DevBlock.tsx`、`usePromarkLimit.ts` | 非 Promark 機型的焦距區塊不變（`isPromark` 只有 Promark 傳 true）；焦距「反向」開關只在 `isDev()` 且 Promark 顯示；`QPulseWidthBlock` 只掛在 Promark 上、非 UV 不渲染；`PulseWidthBlock` / `FrequencyBlock` / `AdvancedSettingModal` 拿到的 Desktop / MOPA 範圍和 main 相同 |
+| `dialogs/PresetsManagementPanel/PromarkInputs.tsx` | Desktop / MOPA：欄位、範圍與寫入的 key 和 main 相同；只有 UV 把強度顯示成頻率對應值並連動寫入，內雕時改列 `stl*` 參數 |
+| `OptionsBlocks/TextOptions/components/TextContentBlock.tsx` | 2D 文字編輯與 undo 不變；`onSourceChange` 只有 3D 文字（擠出來源）會傳 |
+| `RightPanel/_mixins.scss` | `option-block` 的樣式輸出不變（label 樣式抽成 `option-label` mixin） |
+| `dialogs/myCloud/GridFile.tsx`、`GridFile.module.scss`、`welcome/GridFileLocal.tsx`、`welcome/TabRecentFiles.tsx`、`interfaces/IMyCloud.ts` | 2D 檔案的縮圖卡片（導引線背景）與最近檔案列表不變；只有 `.beam` header 標記為內雕的檔案改用素色背景 |
+| `constants/fisheyeCameraConstants.ts` | 既有 110 / 220 工作範圍的 PnP 點不變；只新增 70 與 200 |
+| `constants/presets.ts`、`constants/presetNames.ts`、`constants/addOn.ts` | 既有機型的預設參數、材質 / 預設名稱對應、add-on 資訊不變；只新增 UV（`fpm1_2_5`）、內雕（`fpm1_inner_engraving`）的預設參數與名稱，以及 fpm1 的 `innerEngraving` 欄位（`raiseFocus` 只宣告、沒有使用） |
+| `stores/layer/layerStore.ts` | 既有欄位不變；只新增 `hasStlPhoto` |
+| `operations/import/importSvg/index.tsx`、`importSvg/utils/processOutputData.ts`、`svgedit/polygon/index.ts` | 只把 `performSvgPreChecks`、`preprocessSvgString`、`computePolygonPoints` 改為匯出給 3D 流程重用，2D 匯入與多邊形繪製不變 |
+| `interfaces/Clipboard.ts`、`IHistory.d.ts`、`IWrappedFile.d.ts`、`IControlSocket.d.ts`、`ITaskConfig.ts`、`ILayerConfig.d.ts` | 既有介面成員不變；只新增內雕 / UV 用的成員（`addStlToClipboard` / `getStlFromClipboard`、`appendCommandToLast`、`stlObjects` / `pointCloudObjects`、`setLensCorrection` 的 `laserSource`、Promark 控制器參數、`InnerEngravingConfig`、`PromarkModel` 的 UV 與 `fpm1_inner_engraving`） |
+| `helpers/api/alert-config.ts` | 既有 alert key 不變；只新增 `skip-inner-engraving-focus-reminder`、`skip-stl-import-warning` |
+| `helpers/checkFeature.ts`、`helpers/is-dev.ts` | 既有 `checkFpm1` 等判斷不變；只新增 `checkFpm1UV`（桌面版且 `enableAllMachines` 或 `isDev()`）與 `isUvDev` |
+| `helpers/device/promark/calibration.ts` | Desktop / MOPA 的相機校正任務參數和 main 相同；只有 UV 改用最弱輸出（200kHz） |
+| `helpers/version-checker.ts` | 既有版本需求不變；只新增 `SWIFTRAY_SUPPORT_STL` / `SWIFTRAY_SUPPORT_POINT_CLOUD`（1.5.0） |
+| `interfaces/ILang.ts`、`app/lang/*` | 既有翻譯 key 不變；只新增 `inner_engraving`、`inner_engraving_settings` 與 UV 相關的 key，23 個語言檔同步 |
+| `dialogs/promark/PromarkSettings.tsx`、`LeftPanel/index.tsx` | 只加註解，行為不變 |
 | Swiftray `createGNode`、`Layer::setParameters`、`ToolpathExporter` | 2D 圖層參數的解析與 2D 工作的輸出不變；`fillInterleave` 關閉、`fillDwellTime` 為負時，填充順序與時間和 1.4.10 相同 |
 | Swiftray `promark_timing.h`、`MachineJob::calcTotalTime`、`BSLMotionController` | 非內雕 Promark 工作的工時預估只因 Z 軸固定開銷而變長，其他不變 |
 | Swiftray `BSLMotionController::handleGcode`（`;CONFIG`）、`setCorrection`（`laserSource`） | `;CONFIG` 行只更新設定、不會被當成 G-code 執行；沒有 `;CONFIG` 的工作使用預設值。`setCorrection` 未帶 `laserSource` 時視為 `MOPA`，Desktop / MOPA 的脈衝設定和 1.4.10 相同 |
@@ -515,7 +534,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
   | `data-stl-min-layer-spacing` | mm，> 0 開啟打線的動態層間距 | 0（關閉） |
   | `data-stl-solid` | `1` / 不存在 | 關閉 |
   | `data-qPulseWidth` | 0 / 1 | UV 1 |
-  | `data-focusReverse`、`data-focusStepReverse` | 布林 | 關閉 |
+  | `data-focusRev`、`data-focusStepRev`（程式內的 key 是 `focusReverse` / `focusStepReverse`） | 布林 | 關閉 |
   | `data-fillInterleave` | 布林 | 關閉 |
   | `data-fillDwellTime` | µs，負值關閉 | −50000 |
   | `data-fillDwellAdaptive` | 布林 | 關閉 |
