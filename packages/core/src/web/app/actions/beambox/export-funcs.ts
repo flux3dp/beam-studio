@@ -16,8 +16,8 @@ import currentFileManager from '@core/app/svgedit/currentFileManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray, swiftrayClient } from '@core/helpers/api/swiftray-client';
-import AwsHelper from '@core/helpers/aws-helper';
 import deviceMaster from '@core/helpers/device-master';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
@@ -254,17 +254,12 @@ const fetchTaskCode = async (
 
   if (!uploadRes.res) {
     popProgress('upload-scene');
-    Alert.popUp({
-      buttonType: AlertConstants.YES_NO,
-      id: 'get-taskcode-error',
-      message: `#806 ${uploadRes.message}\n${i18n.lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
-      onYes: () => {
-        const svgString = svgCanvas.getSvgString();
-
-        AwsHelper.uploadToS3('output.bvg', svgString);
-      },
-      type: AlertConstants.SHOW_POPUP_ERROR,
-    });
+    Alert.popUp(
+      withErrorReportConsent(
+        { id: 'get-taskcode-error', message: `#806 ${uploadRes.message}`, type: AlertConstants.SHOW_POPUP_ERROR },
+        { errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
+      ),
+    );
 
     return null;
   }
@@ -312,17 +307,12 @@ const fetchTaskCode = async (
         model: workareaManager.model,
         onError: (message: string) => {
           popProgress('fetch-task');
-          Alert.popUp({
-            buttonType: AlertConstants.YES_NO,
-            id: 'get-taskcode-error',
-            message: `#806 ${message}\n${i18n.lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
-            onYes: () => {
-              const svgString = svgCanvas.getSvgString();
-
-              AwsHelper.uploadToS3('output.bvg', svgString);
-            },
-            type: AlertConstants.SHOW_POPUP_ERROR,
-          });
+          Alert.popUp(
+            withErrorReportConsent(
+              { id: 'get-taskcode-error', message: `#806 ${message}`, type: AlertConstants.SHOW_POPUP_ERROR },
+              { errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
+            ),
+          );
           didErrorOccur = true;
           resolve(null);
         },
@@ -500,17 +490,12 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
         model: workareaManager.model,
         onError: (message: string) => {
           Progress.popById('fetch-task');
-          Alert.popUp({
-            buttonType: AlertConstants.YES_NO,
-            id: 'get-taskcode-error',
-            message: `#806 ${message}\n${i18n.lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
-            onYes: () => {
-              const svgString = svgCanvas.getSvgString();
-
-              AwsHelper.uploadToS3('output.bvg', svgString);
-            },
-            type: AlertConstants.SHOW_POPUP_ERROR,
-          });
+          Alert.popUp(
+            withErrorReportConsent(
+              { id: 'get-taskcode-error', message: `#806 ${message}`, type: AlertConstants.SHOW_POPUP_ERROR },
+              { errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
+            ),
+          );
           isErrorOccur = true;
           resolve({
             fileTimeCost: null,
@@ -773,11 +758,12 @@ export default {
     } catch (errMsg) {
       console.error(errMsg);
       // TODO: handle err message
-      Alert.popUp({
-        id: 'menu-item',
-        message: `#807 ${errMsg}`,
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
+      Alert.popUp(
+        withErrorReportConsent(
+          { id: 'menu-item', message: `#807 ${errMsg}`, type: AlertConstants.SHOW_POPUP_ERROR },
+          { device, errorCode: '#807' },
+        ),
+      );
     }
   },
 };

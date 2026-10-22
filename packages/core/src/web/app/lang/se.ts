@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konvertera text till bana...',
-      export_file_error_ask_for_upload: 'Misslyckades att exportera uppgift. Vill du skicka arbetsytan till utvecklingsteamet för felrapportering?',
       retreive_image_data: 'Hämtar bilddata...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Ett nytt alternativ för att automatiskt växla mellan lagpanelen och objektpanelen har lagts till i Inställningar. Detta alternativ är inaktiverat som standard. Vill du aktivera automatisk växling nu? <br/>Du kan ändra denna inställning när som helst i Inställningar.',
         title: 'Automatisk Växling mellan Lager- och Objektpanel',
       },
-      backend_connect_failed_ask_to_upload: '#802 Fel uppstår hela tiden när anslutning till servern försöks. Vill du ladda upp din felrapportlogg?',
+      backend_connect_failed: '#802 Fel uppstår hela tiden när anslutning till servern försöks.',
       backend_error_hint: 'Funktioner kanske inte fungerar korrekt på grund av serverfel.',
       both_power_and_speed_too_high: 'Att använda lägre laserstyrka förlänger laserns livslängd.\nOckså, för hög hastighet vid denna upplösning kan ge sämre kvalitet på skugggravering.',
       bug_report: 'Felrapport',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Det gick inte att ladda SVG-data',
       import_file_contain_invalid_path: '#808 Importerad SVG-fil innehåller ogiltig bildsökväg. Se till att alla bildfiler finns eller bädda in bild i filen',
-      import_file_error_ask_for_upload: 'Misslyckades med att importera SVG-filen. Vill du skicka filen till utvecklingsteamet för felrapportering?',
       import_svg: {
         advice_message: 'Detta kan orsaka allvarlig fördröjning eller fel vid import.',
         advice_message_2: 'Det rekommenderas att förenkla filen innan import.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'För hög hastighet i lager med banobjekt kan ge lägre precision vid skärning.\nVi rekommenderar inte hastigheter över %(limit)s vid skärning.',
       too_fast_for_path_and_constrain: 'Följande lager: %(layers)s \ninnehåller vektorbanaobjekt och har hastighet över %(limit)s.\nSkärhastigheten för vektorbanaobjekt kommer begränsas till %(limit)s.\nDu kan ta bort denna begränsning under inställningar.',
       touchpad: 'Pekplatta',
-      upload_failed: '#819 Filuppladdningen misslyckades.',
-      upload_file_too_large: '#819 Filen är för stor för uppladdning.',
       vectorize_shading_image: 'Gradientbilder tar längre tid att spåra och är benägna till brus. Vänligen stäng av bildgradienten innan du kör.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Observera att Beam Studio kanske inte fungerar optimalt på din enhet. För bästa upplevelse bör enheten ha en skärmstorlek på minst 1024 bildpunkter.',
+  },
+  error_report: {
+    always: 'Skicka alltid',
+    ask: 'Fråga varje gång',
+    consent_checkbox: 'Skicka diagnostikdata till FLUX för att hjälpa till att åtgärda det här felet (inga designfiler eller personuppgifter)',
+    never: 'Skicka aldrig',
+    prompt_caption: 'Skicka automatiskt?',
+    prompt_message: 'Ska diagnostikdata alltid skickas automatiskt när fel uppstår? Du kan ändra detta när som helst under Inställningar > Sekretess.',
+    sent: 'Tack! Diagnostikdata har skickats.',
+    sent_automatically: 'Diagnostikdata har skickats automatiskt till FLUX.',
+    setting_label: 'Uppladdning av felrapporter',
   },
   flux_101: {
     badge_earned: '%(badge)s — du har slutfört ”%(chapter)s”',

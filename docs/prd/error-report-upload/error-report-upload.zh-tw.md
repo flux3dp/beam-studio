@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **狀態** | 草稿 — 2026-10-06 完成範疇界定；待決事項見 §11 |
+| **狀態** | 審閱中 — PR 1（#1021）已於 2026-10-19 合併；PR 2–5 合併為 #1028（2026-10-20 開啟）；flux-id #683 已於 2026-10-19 合併，正式環境端到端驗證待完成（§10 第 6 步） |
 | **作者** | 產品（zh-tw 原始 PRD v1.1）＋工程範疇界定 |
 | **建立** | 2026-10-06 |
-| **修訂** | 2026-10-08（§7.4 完整錯誤觸發點掃描、D4 定案；D1–D5 於 2026-10-06，見 §11） |
+| **修訂** | 2026-10-20（#1021 / #683 合併、#1028 開啟後更新狀態與 §10）；2026-10-14（實作第 3–5 步時接線並修正 §7.4；2026-10-08 完整錯誤觸發點掃描、D4 定案；D1–D5 於 2026-10-06，見 §11） |
 | **追蹤** | ClickUp：待補（原始 zh-tw PRD v1.1 請附於該任務；刻意不放進此 repo） |
 | **翻譯** | 本檔；英文版為準 |
 | **配套 PRD** | [錯誤報告上傳 — flux-id 後端](backend.md)：端點、儲存別名、資料夾上限、去重、生命週期、效能影響矩陣（由 flux-id repo 負責） |
@@ -51,7 +51,7 @@
 
 ## 4. 情境
 
-- **S1 每次詢問（預設），使用者勾選後按 重試/確認/取消** → 視窗如常關閉；背景上傳；成功後顯示中性 toast「感謝您！診斷資料已傳送。」。首次成功 → 跳出一次性提示「要每次都自動傳送嗎？」，按鈕 [一律自動] / [每次詢問]。
+- **S1 每次詢問（預設），使用者勾選後按 重試/確認/取消** → 視窗如常關閉；背景上傳；成功後顯示中性 toast「感謝您！診斷資料已傳送。」。尚未選擇偏好時的首次成功 → 跳出一次性提示「要自動傳送嗎？」，按鈕 [每次詢問] / [總是傳送]，總是傳送為右側主要按鈕（警示視窗慣例）。
 - **S2 每次詢問，使用者未勾選** → 不上傳、無 toast、無提示。
 - **S3 一律自動** → 無 checkbox；視窗開啟時即開始上傳；視窗底部一行小灰字「診斷資料已自動傳送」。
 - **S4 永不** → 視窗與現在完全相同。
@@ -66,9 +66,9 @@
 | # | 操作方式 | 完成條件 | 邊界情況 |
 |---|---|---|---|
 | A1 | 設定 → 隱私。 | 存在「錯誤報告上傳」下拉選單，選項 一律自動 / 每次詢問 / 永不；預設 每次詢問；重啟後保留。 | 值以 `'always' \| 'ask' \| 'never'` 存於 storage 鍵 `error-report-upload`。 |
-| A2 | 設為 每次詢問。在 Monitor 觸發裝置 `HARDWARE_ERROR`，或在連線途中將機器斷電以觸發 `popConnectionError`（或 §7.4 任一觸發點）。 | 既有視窗顯示，按鈕上方有未勾選的 checkbox；按鈕文字/順序不變。 | ALARM/FATAL 單按鈕視窗也有同樣 checkbox（原始 PRD §3.7）。 |
+| A2 | 設為 每次詢問。在 Monitor 觸發非硬體類裝置錯誤（例如損壞的工作檔），或在連線途中將機器斷電以觸發 `popConnectionError`（或 §7.4 任一觸發點）。 | 既有視窗顯示，按鈕上方有未勾選的 checkbox；按鈕文字/順序不變。 | ALARM/FATAL 單按鈕視窗也有同樣 checkbox（原始 PRD §3.7）。 |
 | A3 | 勾選，按 取消。 | 有上傳（network 面板可見一次對 proxy 的請求）；toast「感謝您！診斷資料已傳送。」 | 取消與重試在上傳行為上完全相同。 |
-| A4 | 每次詢問 下首次成功上傳。 | 一次性 一律自動/每次詢問 提示；選 一律自動 會改變 A1 的選單值。 | 提示不再出現（旗標 `error-report-upload-prompted`）。 |
+| A4 | 每次詢問 下首次成功上傳。 | 一次性 一律自動/每次詢問 提示；選 一律自動 會改變 A1 的選單值。 | 提示不再出現：它會把 `'always'` 或 `'ask'` 寫入 `error-report-upload`，只有未設定（`null`）時才允許提示（§7.6）。按 Escape 關閉不寫入，下次上傳後可能再出現。 |
 | A5 | 設為 一律自動。觸發錯誤。 | 無 checkbox；底部灰色狀態列；不需使用者操作即送出請求。 | 達每日上限時不顯示狀態列。 |
 | A6 | 設為 永不。 | 視窗與 main 分支像素級相同。 | — |
 | A7 | 檢視上傳的 bug_report。 | 無 `recent_files`、`auto-save-config`、`ador-backup-path`；任何位置（含 fluxghost log 段落）都無 `/Users/<name>` 或 `C:\Users\<name>`；探索清單中的裝置以型號取代使用者自訂名稱。 | 手動 說明 → Bug Report 下載不變（仍包含上述內容）。 |
@@ -81,17 +81,18 @@
 
 功能資料夾以外會被碰到的共用檔案，以及必須維持原行為的呼叫者：
 
-- `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — 下載仍產出完整、未清除的報告；`MonitorContext.tsx:548` `handleReport` — 同上；`websocket.ts:41` — 改呼叫新的上傳函式，仍只在使用者同意後執行。
-- `app/components/dialogs/Alert.tsx` — 所有既有 `checkbox:` 呼叫者（`retryWithRemoveBackground.ts:25`、`retakeContourPreview.ts:77`、`importSvg/index.tsx:46`、`importDxf.ts:52,120`、`AutoFocusButton/index.tsx:140`、`BasePreviewManager.tsx:279`、`handleExportAlerts.ts:150`）— callback 語意不變。優先選項：完全不動 `Alert.tsx`；若 S3 需要狀態列插槽，以不改預設行為的選用 prop 加入。
+- `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — 下載仍產出完整、未清除的報告；`MonitorContext.tsx:548` `handleReport` — 同上；`websocket.ts` — 不再呼叫任何上傳函式；`uploadBackendErrorLog` 已刪除，由 `#802` 視窗的同意勾選框負責上傳。
+- `app/components/dialogs/Alert.tsx` — 所有既有 `checkbox:` 呼叫者（`retryWithRemoveBackground.ts:25`、`retakeContourPreview.ts:77`、`importSvg/index.tsx:46`、`importDxf.ts:52,120`、`AutoFocusButton/index.tsx:140`、`BasePreviewManager.tsx:279`、`handleExportAlerts.ts:150`）— callback 語意不變。2026-10-12 有動到：`Alert.tsx` 現在會渲染 `IAlert` 自 2021 年起就宣告、但改用 antd 後不再渲染的 `children` 欄位；S3 的狀態列用它。wave 1/2 的觸發點都沒有傳 `children`。唯一有傳的既有呼叫者 `NetworkTestingPanel.tsx:104`（網路測試正常後的三條說明提示，至今被默默丟棄，其 sass 仍掛在已失效的 `.modal-alert` 選擇器下）另開小分支修正：改用 `links` 並刪除該段 sass，於本功能的合併 PR 之前先進。
 - `helpers/device-master.ts:580` `popConnectionError` — `select` :410 與 `selectDeviceWithSwiftray` :530 — 警示 id `connection-error`、`Alert.popById` 原地替換、訊息文字與 `{ success: false, error }` 回傳值不變；`reconnect()` → `select()` 仍會跳出同一視窗（吸收重試風暴的是冷卻機制，不是視窗）。
-- `app/contexts/MonitorContext.tsx:314,495,980`、`helpers/device-master.ts:266`、`helpers/device/get-device.ts:103`、`actions/beambox/export-funcs.ts:778`、`export-funcs-swiftray.ts:106-192`、`helpers/handleAutoConnect.ts:216`、`PrintAndCut/calibration/PrintAndCutCalibration.tsx:150` — 第一波觸發點：警示 id、訊息文字、按鈕組與周邊控制流程（`onClose()`、`return { success: false }`、`setStatus('listening')`）不變；只包裝設定物件。
-- `actions/camera/preview-helper/*`、`components/dialogs/camera/*`、`DiodeCalibration/Component.tsx` — 第二波觸發點，同一規則；`BasePreviewManager.tsx:273` 保留自己的 `checkbox`（§7.4 規則）。
+- `app/contexts/MonitorContext.tsx:314,495,980`、`helpers/device-master.ts:266`、`actions/beambox/export-funcs.ts:778`、`export-funcs-swiftray.ts:106-192`、`helpers/handleAutoConnect.ts:216` — 第一波觸發點：警示 id、訊息文字、按鈕組與周邊控制流程（`onClose()`、`return { success: false }`、`setStatus('listening')`）不變；只包裝設定物件。
+- `actions/camera/preview-helper/*`、`components/dialogs/camera/*`、`DiodeCalibration/Component.tsx` — 第二波觸發點，同一規則；`BasePreviewManager.tsx:273` 相機線材警告不動；`preview-mode-controller.ts:281` `onPreviewFail` 在警示後仍呼叫 `this.end()`。`BeamPreviewManager.setup` 的 catch 改走 `handlePreviewSetupError`；唯一可見差異是非 `Error` 的拋出值（fluxghost 的 `string[]`）會在 `#803` 文字後以 JSON 顯示，而不是空字串（2026-10-14 接受）。
 - `app/contexts/MonitorContext.tsx:598-633` — 三個錯誤分支維持各自的按鈕組（`abort` / `retry+cancel` / `retry+bug report+cancel`）與透過 `Alert.checkIdExist` 的 `errorId` 去重。
-- `actions/beambox/export-funcs.ts`、`export-funcs-swiftray.ts`、`importSvg/utils/uploadAndDivideSvg.ts` — 錯誤訊息文字（`#806 …`、`#809 …`）與 `resolve(null)` / `return null` 流程不變；只替換上傳掛鉤。
+- `actions/beambox/export-funcs.ts`、`export-funcs-swiftray.ts`、`importSvg/utils/uploadAndDivideSvg.ts` — 錯誤訊息文字（`#806 …`、`#809 …`）與 `resolve(null)` / `return null` 流程不變；是/否 上傳提問移除，場景改以 thunk 傳入，因此 `svgCanvas.getSvgString()`（會解散暫時選取群組）只在真的上傳時執行，不傳送 或冷卻期間都不會跑。
 - `app/constants/storageConstants.ts`、`interfaces/IStorage.d.ts` — 只新增鍵名。
 - `app/components/settings/categories/Privacy.tsx` — `enable-sentry` 開關不變。
 - `interfaces/IOperatingSystem.ts`、`apps/app/src/implementations/os.ts`、`apps/web/src/implementations/os.ts` — 只新增 `machineId`，自含 try/catch 並回傳 `''`；所有既有 `os.*` 呼叫者（`output-error.ts:39`、網路 helper、字型 helper）不變。
-- `app/lang/en.ts`、`zh-tw.ts`（PR 前補齊所有語言）— 只新增鍵名；既有 `successfully_uploaded` / `upload_failed` 字串保留給其餘呼叫者。
+- `app/lang/*.ts`（全部 23 個）與 `interfaces/ILang.ts` — 新增 `error_report` 命名空間；`beambox.popup.backend_connect_failed_ask_to_upload` 改名為 `backend_connect_failed` 並拿掉上傳提問；`export_file_error_ask_for_upload`、`import_file_error_ask_for_upload`、`upload_failed`、`upload_file_too_large` 隨最後呼叫者一併移除（`#819` 不再使用）。`successfully_uploaded` 與 `progress.uploading` 保留給 `Monitor.tsx`。
+- `components/settings/shared/hooks/useSettingStore.ts` `getConfig` — 鍵未設定時，只在 `DEFAULT_CONFIG` 有預設值才把預設值寫回儲存；其他鍵的行為不變（都有預設值）。若不改，開啟 設定 → 隱私 會為 `error-report-upload` 寫入 `undefined`，在 electron-store 會拋錯、在 web 會存成字串 `"undefined"`（2026-10-14 審閱發現）。由 `useSettingStore.spec.ts` 涵蓋。
 
 ## 7. 設計
 
@@ -100,8 +101,9 @@
 新增 `packages/core/src/web/helpers/error-report/`（獨立資料夾，spec 同置）：
 
 - `index.ts`
-  - `uploadErrorReport({ errorCode, scene? }): Promise<UploadResult>`（`'sent' | 'duplicate' | 'failed' | BlockReason`）— 組資料包、套用上限（加上進行中集合，同一指紋的兩個視窗只產生一次上傳）、以每個檔案 10 秒閒置上限讀取機器 log、以 3 分鐘逾時 POST 最多 3 次、成功後增加計數；呼叫端（同意裝飾器，PR 2）依回傳值顯示 toast 與一次性提示。
-  - `withErrorReportConsent(alert: IAlert, errorCode: string): IAlert` — 讀取偏好設定，回傳依情境 A/B/C 裝飾後的警示設定。對設定物件的純函式；觸發點寫成 `Alert.popUp(withErrorReportConsent({...}, code))`。
+  - `uploadErrorReport({ errorCode, scene? }): Promise<UploadResult>`（`'sent' | 'duplicate' | 'failed' | BlockReason`）— 組資料包、套用上限（加上進行中集合，同一指紋的兩個視窗只產生一次上傳）、以每個檔案 10 秒閒置上限讀取機器 log、以 3 分鐘逾時 POST 最多 3 次、成功後增加計數。toast 與一次性提示在 `consent.tsx`（`uploadWithFeedback`，僅每次詢問路徑），不在此處。`scene` 是在上傳內、偏好與上限檢查之後才解析的 thunk（2026-10-14，審閱發現）；其大小上限併入 §9.1 的 bytes 配額。
+  - `withErrorReportConsent(alert: IAlert, options: UploadErrorReportOptions): IAlert`（`consent.tsx`；2026-10-12 由 `errorCode: string` 改為選項物件，讓 `#806`/`#809` 能傳入場景檔）— 讀取偏好設定，回傳依情境 A/B/C 裝飾後的警示設定**副本**，無事可做時回傳原物件。觸發點寫成 `alertCaller.popUp(withErrorReportConsent({...}, { errorCode }))`。checkbox callback 使用函式形式：Alert 會在任一按鈕上先執行它、再執行該按鈕自己的 `onClick`；陣列形式則會取代按鈕的 `onClick`。
+  - `preference.ts` — `getErrorReportPreference()` 把未設定的鍵對應為 `'ask'`；這個後備值只住在這裡。
 - `scrub.ts` — `scrubReport(text: string): string`（家目錄路徑正規表示式）與 storage 排除清單，只用於上傳路徑。
 - `installationId.ts` — `getInstallationId(): string`。Electron：`os.machineId()`，為新增於 `IOperatingSystem` 並**內嵌**在 `apps/app/src/implementations/os.ts` 的方法（2026-10-06 定案，不引入 `node-machine-id` 相依）：執行與 node-machine-id 相同的各 OS 指令（`ioreg -rd1 -c IOPlatformExpertDevice` / `REG.exe QUERY HKLM\SOFTWARE\Microsoft\Cryptography /v MachineGuid` / `/etc/machine-id`），做 sha256，並在自身 try/catch 內對任何失敗（指令不存在、逾時、解析錯誤）回傳 `''`。網頁版回傳 `''`。結果為空時 → 以 `uuid` v4（既有相依）產生一次並存於 `error-report-install-id`，因此識別碼永遠非空，呼叫端永遠不會看到例外。
 - `throttle.ts` — 每日計數 `{ date, counts: Record<serial, number> }` 存於 storage 鍵 `error-report-counter`，以及每指紋冷卻表（§7.7）存於 `error-report-cooldown`；提供單一介面 `getBlockReason(serial, fingerprint): 'cooldown' | 'daily-limit' | null` / `getSkipped(fingerprint)` / `recordUpload(serial, fingerprint)` / `recordSkipped(fingerprint)`，上傳與同意裝飾器共用。
@@ -129,41 +131,40 @@
 
 | 觸發點 | 傳給 `withErrorReportConsent` 的代碼 | 序號 |
 |---|---|---|
-| `MonitorContext.tsx:598` ALARM/FATAL | `error.join('_')`，例如 `HARDWARE_ERROR_OVERHEAT`；涵蓋所有 `#9xx`、`#401`、`#402`、`#905` 字串（依韌體錯誤陣列查表） | 有 |
-| `MonitorContext.tsx:608` HARDWARE_ERROR（排除 USER_OPERATION 與 REMOVE_CARTRIDGE） | 同上 | 有 |
-| `MonitorContext.tsx:625` 其他裝置錯誤 | 同上 | 有 |
+| `MonitorContext.tsx:598` ALARM/FATAL 與 `:625` 其他裝置錯誤 | `error.join('_')`，但錯誤類別為 `HARDWARE_ERROR` 或 `USER_OPERATION` 時不接（2026-10-13 決定：韌體已明確回報硬體故障，診斷包沒有額外價值；因此 `#9xx`、`#401`、`#402`、`#905` 字串皆排除） | 有 |
+| ~~`MonitorContext.tsx:608` HARDWARE_ERROR~~ | 2026-10-13 排除，見上 | 無 |
 | `MonitorContext.tsx:495` 狀態輪詢逾時 | `#805` | 有 |
 | `MonitorContext.tsx:980` 工作無法啟動 | `#830` ＋ `error.join('_')` | 有 |
 | `MonitorContext.tsx:314` Promark USB 斷線 | `#850`（info 型視窗，同一裝飾器） | 有 |
-| `device-master.ts:580` `popConnectionError`（呼叫者 `select` :410、`selectDeviceWithSwiftray` :530） | `CONNECTION_TIMEOUT`、`CONNECTION_DISCONNECTED`（`#891`/`#892`）、`CONNECTION_UNKNOWN_DEVICE`、`CONNECTION_UNKNOWN`（default）。排除 `NOT_FOUND`：機器從探索清單消失，通常是關機。僅有「確認」按鈕的視窗（原始 PRD §3.7）。 | 有 |
+| `device-master.ts:580` `popConnectionError`（呼叫者 `select` :410、`selectDeviceWithSwiftray` :530） | `CONNECTION_TIMEOUT`、`CONNECTION_DISCONNECTED`（`#891`/`#892`）、`CONNECTION_UNKNOWN_DEVICE`，default 分支則為 `CONNECTION_` + fluxghost 原始代碼。排除 `NOT_FOUND`：機器從探索清單消失，通常是關機。僅有「確認」按鈕的視窗（原始 PRD §3.7）。 | 有 |
 | `device-master.ts:266` 密碼正確但連線失敗 | 僅 `#810`；`#811` 密碼錯誤排除 | 有 |
-| `device/get-device.ts:103` 選擇裝置時致命錯誤 | `#813` | 有 |
 | `export-funcs.ts:778` 在 Monitor 開啟工作失敗 | `#807` | 有 |
 | `export-funcs.ts:257,315,503`、`export-funcs-swiftray.ts:89` 工作產生失敗 | `#806`（＋ scene.svg） | 已連線時有 |
-| `export-funcs-swiftray.ts:106-192` 前綴 `#812` 的 Swiftray 匯出錯誤 | `#812`（＋ scene.svg）；接線時逐一確認各分支是錯誤視窗而非提示 | 已連線時有 |
 | `websocket.ts:28` 後端連線失敗 | `#802` | none |
 | `handleAutoConnect.ts:216` QR 自動連線失敗 | `QR_AUTOCONNECT_FAILED` | none |
 | `uploadAndDivideSvg.ts:31` 匯入失敗 | `#809`（＋ 匯入檔案） | none |
-| `PrintAndCut/calibration/PrintAndCutCalibration.tsx:150` 刮痕任務期間的裝置錯誤 | `PNC_SCRATCH_` ＋ 翻譯後的錯誤鍵 | 有 |
 
 **第二波 — 相機與校正**（皆為軟體端代碼；不需韌體對照表，故 §11 D4 定案）
 
 | 觸發點 | 代碼 | 備註 |
 |---|---|---|
-| `preview-helper/handlePreviewSetupError.tsx:39,55`、`BeamPreviewManager.ts:85,89` | `#803` | 預覽啟動 / 相機 WS |
-| `preview-helper/BasePreviewManager.tsx:273` 相機 WS 關閉 | `#844` | **已有 `checkbox`**；見下方規則 |
-| `helpers/api/camera.ts:130,424,427` 拋出 `#844`/`#845` | 由上述呼叫者顯示；本身無視窗 | — |
+| `preview-helper/handlePreviewSetupError.tsx:39,55`（`BeamPreviewManager.ts` 改為呼叫它，不再自帶一份） | `#803` | 預覽啟動 / 相機 WS |
+| `beambox/preview-mode-controller.ts:281` `onPreviewFail` | 訊息開頭的 `#8xx`（`#844` 相機關閉、`#845` 忙碌），否則 `PREVIEW_FAILED` | 預覽迴圈的所有失敗都在此顯示；2026-10-13 自 `BasePreviewManager.tsx:273` 修正，該處其實是相機線材不穩警告（自帶 `checkbox`、硬體狀態，排除） |
+| `helpers/api/camera.ts:130,424,427` 與 `BasePreviewManager.tsx:273` 拋出 `#844`/`#845` | 由 `onPreviewFail` 顯示；本身無視窗 | — |
 | `camera/AdorCalibration/utils.ts:122` | `#848` | 校正 / 下載照片失敗 |
 | `DiodeCalibration/Component.tsx:251,344`、`CameraCalibration/StepRefocus.tsx:189`、`StepAskReadjust.tsx:56` | `#815` | 校正移動 / 拍攝時的裝置錯誤 |
 | `CameraCalibration/StepBeforeAnalyzePicture.tsx:247` | `#816` | 分析失敗 |
 
-**已定義 `checkbox` 的視窗規則**（目前為 `BasePreviewManager.tsx:273`，以及 §6 的八個呼叫者）：`withErrorReportConsent` 絕不取代既有 `checkbox`。每次詢問 下原樣回傳；一律自動 下靜默上傳並只加狀態列。一個視窗只有一個 checkbox。
+**已定義 `checkbox` 的視窗規則**（目前接線的觸發點都沒有；`BasePreviewManager.tsx:273` 的相機線材警告已排除，§6 的八個呼叫者不是錯誤觸發點）：`withErrorReportConsent` 絕不取代既有 `checkbox`。每次詢問 下原樣回傳；一律自動 下靜默上傳並只加狀態列。一個視窗只有一個 checkbox。
 
 **Message toast 無法承載同意**（`AbstractMenu.ts:66` 以 `MessageCaller` toast 顯示 `#805`）：排除；同一逾時在下次選擇裝置時會進到 `popConnectionError`。
 
 **排除項目與理由**
 
-- 使用者狀態或操作，非缺陷：`#801` 無裝置、`#804` 工作區不符、`#808` 無效圖片路徑、`#811` 密碼錯誤、`#814` / `#820` 韌體過舊、`#851` / `#852` 缺校正資料、Promark 對話框中的 `#901` 門未關、`USER_OPERATION_*`、`REMOVE_CARTRIDGE`、`ConnectionError.NOT_FOUND`。
+- 韌體回報的硬體故障 `HARDWARE_ERROR_*`（2026-10-13 決定）：韌體已指出故障為何，客戶端診斷包沒有額外價值。
+- 使用者狀態或操作，非缺陷：相機線材不穩警告（`BasePreviewManager.tsx:273`，自帶 `checkbox`）、`#801` 無裝置、`#804` 工作區不符、`export-funcs-swiftray.ts` `popupError` 的 Swiftray `busy` 資訊視窗、`#808` 無效圖片路徑、`#811` 密碼錯誤、`#814` / `#820` 韌體過舊、`#851` / `#852` 缺校正資料、Promark 對話框中的 `#901` 門未關、`USER_OPERATION_*`、`REMOVE_CARTRIDGE`、`ConnectionError.NOT_FOUND`。
+- Print and Cut 校正刮痕任務失敗（`PrintAndCutCalibration.tsx:150`，2026-10-13 決定）：該處的錯誤是裝置自身的錯誤清單，多為硬體故障與使用者中止，已被上述規則排除；不值得為此單獨拆分。
+- 同一次失敗已有警示、此為第二個警示：`device/get-device.ts:103` 的 `#813`（2026-10-13 決定）。`select` 每種失敗都會先彈出 `popConnectionError`、`#810`/`#811` 或 `#820`，或是使用者取消密碼對話框後才出現；若也接上 `#813`，同一次失敗會出現兩個同意勾選框並送出兩份不同代碼的報告。
 - 診斷工具本身：`#817`、`#818`、`#840`–`#843` 網路測試面板；`#819` 上傳失敗。
 - 與機器無關：`#822` / `#823` 應用程式更新、`#847` 雲端服務、`#846` 文字轉路徑解析、`#974` 連續雕刻。
 - 無呼叫者的死字串：`#824`、`#825`、`#827`、`#843`、`#849`。
@@ -174,20 +175,20 @@
 
 - 端點：`POST {FLUXID_HOST}/api/beam-studio/error-report`，multipart，欄位 `serial`、`installation_id`、`error_code`、`app_version`、`os`、`firmware_version`、`occurrences_since_last`，檔案 `bug_report`、`system_log`、`scene`。回應 `{ status: 'ok' }`。不需驗證（`csrf_exempt_auth_classes`，同 `flux101.py`），不需 FLUX 帳號。
 - view 內驗證：整體 body ≤ 20 MB（nginx 已限 32 MB），`serial` 符合 `^[A-Za-z0-9-]{1,32}$` 或 `none`，`error_code` ≤ 64 字元，只接受三個已知檔案欄位，忽略各檔案的 content type，統一存為 `text/plain` / `image/svg+xml`。
-- 儲存：Django 4.2 的 `STORAGES['error_report']` 別名，指向 `storages.backends.s3boto3.S3Boto3Storage`，`endpoint_url = https://<account>.r2.cloudflarestorage.com`，bucket `beam-error-report`，`default_acl = private`。view 只呼叫 `storages['error_report'].save(path, file)`。**切換供應商＝改那一筆設定**（S3、B2、GCS、MinIO 都相容 S3；Google Drive 需在同一別名後面放自訂 `Storage` 子類）。程式碼不新增抽象層；`django-storages` 本身就是。
-- 物件鍵：只要有已知裝置就是 `{serial}/{ISO ts}_{code}_bug_report.txt`、`_system_log.txt`、`_scene.svg`；完全沒有機器的三個觸發點（`#802`、`#809`、QR 自動連線）為 `no-device/{installation_id}/{ISO ts}_{code}_...`。不做序號驗證：曾考慮已驗證/未驗證分級，因 flux-id 序號表涵蓋的現役機器太少而放棄（backend.md §10 B3）。序號格式只做寬鬆驗證（`^[A-Za-z0-9-]{1,32}$`），不綁定目前的 10 字元長度。
+- 儲存：Django 4.2 的 `STORAGES['error_report']` 別名，指向 `storages.backends.s3boto3.S3Boto3Storage`，`endpoint_url = https://<account>.r2.cloudflarestorage.com`，bucket `flux-id`（正式環境以外為 `flux-id-test`），置於 `error-report/` location 前綴下，`default_acl = private`。view 只呼叫 `storages['error_report'].save(path, file)`。**切換供應商＝改那一筆設定**（S3、B2、GCS、MinIO 都相容 S3；Google Drive 需在同一別名後面放自訂 `Storage` 子類）。程式碼不新增抽象層；`django-storages` 本身就是。
+- 物件鍵（`{code}` 為去掉 `#` 的 `error_code`，`#806` → `806`）：只要有已知裝置就是 `{serial}/{ISO ts}_{code}_bug_report.txt`、`_system_log.txt`、`_scene.svg`；完全沒有機器的三個觸發點（`#802`、`#809`、QR 自動連線）為 `no-device/{installation_id}/{ISO ts}_{code}_...`。不做序號驗證：曾考慮已驗證/未驗證分級，因 flux-id 序號表涵蓋的現役機器太少而放棄（backend.md §10 B3）。序號格式只做寬鬆驗證（`^[A-Za-z0-9-]{1,32}$`），不綁定目前的 10 字元長度。
 - 伺服器端去重（client 冷卻表被清除時的後備）：儲存前先列出 `{serial}/` 或 `no-device/{installation_id}/` 前綴；若已有相同 `{code}` 且 `ts` 在最近 24 小時內的物件，回應 `{ status: 'duplicate' }` 且不儲存。每次上傳一次 R2 Class B list 呼叫。client 把 `duplicate` 視為成功（計入上限與冷卻），但不顯示「已傳送」toast。
 - 防濫用與儲存上界，共五層（細節見 [backend.md §6](backend.md)）：Cloudflare WAF 每 IP 流量限制規則；DRF 每 IP 限流 `6/hour` 與 `20/day`，單一 IP 即使捏造序號每天最多 20 × 20 MB = 400 MB；**全域每日位元組預算**（2 GB/日，超過回 `429 { status: 'budget' }`），不論攻擊者用多少 IP 或偽造多少序號，bucket 最壞情況約 360 GB；每資料夾上限與 24 小時去重；client 端每日上限與指紋冷卻（§7.7）。`429` 對 client 而言就是失敗：不重試（只有沒有回應與 5xx 會重試）、靜默，冷卻不推進。
 - 保留：R2 物件生命週期規則，180 天後刪除。不需 cron 程式。
 - 每資料夾上限：保留（§11 D5）。每個 `{serial}/` 與 `no-device/{installation_id}/` 資料夾上限為 `ERROR_REPORT_FOLDER_CAP_BYTES`（預設 20 MB，flux-id 設定）。view 重用去重時已做的前綴列舉，所以上限不多花一次來回；演算法與成本見 [backend.md §4](backend.md)。
-- 指標：view 每筆請求寫一行結構化 log（`error_report <ok|duplicate|rejected> serial=… code=… bytes=… ms=… reason=…`，經 Django logging 進 gunicorn error log）＋ 含請求耗時的 gunicorn access log。flux-id 的 statsd 已是死碼（無 host、無接收端；2026-10-12 確認，見 [backend.md §7](backend.md)），所以 §9.2 改讀 log、Cloudflare 分析與 Linode 圖表。
+- 指標：flux-id 的 `ErrorReportDailyStat` 資料列，每個 UTC 日、每個錯誤碼一列（上傳數、重複數、拒絕數、預算拒絕數、位元組數、請求耗時總和），§9.2 直接彙總，並由 Celery beat 每日發一則 Slack 摘要；每日預算用盡與儲存失敗會警示到 flux-id 的 Slack 頻道（[backend.md §6–7](backend.md)，2026-10-15 完成）。flux-id 的 statsd 已是死碼（無 host、無接收端；2026-10-12 確認），log 不作為資料來源。§9.2 的延遲列仍讀 gunicorn access log、Cloudflare 分析與 Linode 圖表。
 - 同步 vs. 非同步：v1 在請求內寫入 R2（一個同步 gunicorn worker 被 R2 PUT 佔用，從 Linode 傳 10 MB 約 1–3 秒）。若 §9 顯示需要，升級路徑為：先存本機磁碟再由 celery 任務推送，或由端點發給 client 一個 presigned R2 PUT URL，讓資料完全不經 Linode。celery 路徑不改 client 契約；presigned 路徑多一次來回，屬 v2 決策。
 
 ### 7.6 偏好設定與提示
 
-- `error-report-upload: 'always' | 'ask' | 'never'`（未設定時預設 `'ask'`）。
-- `error-report-upload-prompted: boolean` — 一次性 一律自動/每次詢問 提示後設為 true。
-- 提示為 `Alert.popUp`，`buttonLabels: [一律自動, 每次詢問]`，在 `ask` 下首次成功上傳後顯示。
+- `error-report-upload: 'always' | 'ask' | 'never' | null`。`null`（從未選擇）行為同 `'ask'`，且是唯一允許顯示一次性提示的狀態；`'ask'` 代表使用者在提示或設定中選過，不再提示。2026-10-12 修訂：取消獨立的 `error-report-upload-prompted` 旗標，因為未設定值已經帶有這個資訊，與 `enable-sentry` 的慣例相同。此鍵刻意**不**放進 `useSettingStore` 的 `DEFAULT_CONFIG`：router 啟動時會把那張表的鍵全部寫進 storage，會在任何上傳之前就把 `null` 變成 `'ask'`。
+- 提示為 `Alert.popUp`，在 `null` 下首次成功上傳後顯示：標題「自動傳送？」，訊息「要每次發生錯誤時都自動傳送診斷資料嗎？您可隨時在「偏好設定 > 隱私權」中更改。」，按鈕 [每次詢問] / [總是傳送]（總是傳送為右側主要按鈕，依警示視窗慣例）分別寫入 `'ask'` / `'always'`。按 Escape 不寫入。「尚未選擇」的判斷在上傳完成後才做，所以上傳期間在設定中選好的值不會被覆寫；因此提示會在上傳結束時出現，在三次重試的路徑上可能是錯誤發生後數分鐘（2026-10-14 接受）。
+- 成功後的 toast（僅每次詢問）：「感謝您！診斷資料已傳送。」依產品規則用中性措辭：不得暗示開單或回覆。
 
 ### 7.7 重複抑制（指紋冷卻）
 
@@ -203,11 +204,11 @@
 
 ## 8. 資料契約
 
-- Storage：`error-report-upload`、`error-report-upload-prompted`、`error-report-install-id`（僅網頁版 / 後備）、`error-report-counter: { date: 'YYYY-MM-DD', counts: Record<serial, number> }`、`error-report-cooldown`（§7.7）。
+- Storage：`error-report-upload`（可為 null，§7.6）、`error-report-install-id`（僅網頁版 / 後備）、`error-report-counter: { date: 'YYYY-MM-DD', counts: Record<serial, number> }`、`error-report-cooldown`（§7.7）。
 - `IOperatingSystem.machineId(): string` — Electron 回傳 OS 機器 GUID 的 sha256（內嵌實作，§7.1），網頁版回傳 `''`。
 - 不新增相依；`machineId` 約 25 行，寫在既有 os 實作內，以 `crypto.createHash` 雜湊各 OS 指令的輸出；指令在模組載入時用非同步 `child_process.exec`（2 秒逾時）啟動，renderer 不會被卡住；`execSync` 只留作報告搶在結果回來之前觸發時的後備。
 - 上傳請求：§7.5 multipart，3 分鐘逾時。回應 `{ status: 'ok' }` → 已送出；`{ status: 'duplicate' }` → 視同已送出；沒有回應或 5xx → 重試（最多 3 次）；任何 4xx 或無法辨識的 2xx 內容 → 立即失敗。
-- i18n：`en.ts`/`zh-tw.ts` 新增命名空間 `error_report`：`consent`、`consent_detail`、`sent`、`sent_auto`、`ask_always_title`、`always`、`ask_each_time`、`setting_label`、`setting_always/ask/never`。
+- i18n：`en.ts`/`zh-tw.ts` 新增命名空間 `error_report`（實作版本）：`consent_checkbox`、`sent`、`sent_automatically`、`prompt_caption`、`prompt_message`、`setting_label`、`always`、`ask`、`never`（後三者同時用於隱私設定的下拉選單與提示按鈕）。
 
 ## 9. 效能
 
@@ -226,7 +227,7 @@
 |---|---|---|---|---|---|---|
 | 既有端點 p95 延遲（`/user/activity/beam-studio`、登入） | gunicorn access log 請求耗時（PR 6 啟用）/ Cloudflare 分析 | 量測 | 量測 | 量測 | 比基準多 50 ms | R2 PUT 移到 celery |
 | gunicorn 忙碌 worker 數（共 9） | `ps` 取樣 `gunicorn: worker` 處於 `R` 狀態的程序數 | 量測 | 預期 < 1 | 預期 ≤ 10 排隊 | 持續 ≤ 4 | presigned R2 PUT（資料繞過 Linode） |
-| 上傳 `ms=` p50 / p95 | view log 行 | 不適用 | 量測 | 量測 | p95 ≤ 5 秒 | 檢查 Linode → R2 路由，考慮 celery |
+| 上傳耗時，平均（`duration_ms / uploads`）與 p95 | 平均讀 `ErrorReportDailyStat` 彙總；p95 讀 gunicorn access log | 不適用 | 量測 | 量測 | p95 ≤ 5 秒 | 檢查 Linode → R2 路由，考慮 celery |
 | CPU %（所有容器） | Linode 圖表 | 量測 | 量測 | 量測 | +10 個百分點 | celery |
 | RAM、nginx `client_body_temp` 與 Django 暫存上傳用量 | Linode 圖表、`df /tmp` | 量測 | 量測 | 量測 | 請求結束後不增長 | 修正清理 |
 | Linode 對外流量 | Linode 帳號流量池 | 量測 | ≈ 45 GB/月 | 不適用 | ≤ 方案流量池 10 % | presigned PUT |
@@ -236,13 +237,13 @@
 
 ## 10. 上線計畫（PR 順序）
 
-1. `helpers/error-report/`（scrub、throttle、installationId、`uploadErrorReport`）＋ `getOutput({ scrub, maxLength })` ＋ 單元測試。無呼叫者、無字串、無 UI。
-2. 偏好設定鍵、隱私頁下拉選單、i18n（en、zh-tw），以及 `helpers/error-report/consent.ts` 的 `withErrorReportConsent`（2026-10-12 自 PR 1 移到此處，因為它需要同意文案）。
-3. 取代 `uploadBackendErrorLog` 並刪除 `aws-helper.ts`；把 §7.4 第一波觸發點接上 `withErrorReportConsent`。
-3b. 接上 §7.4 第二波相機觸發點（同一機制，獨立 PR 以便 camera-preview skill 負責人審閱）。
-4. 一次性 一律自動 提示 ＋ toast。
-5. 其餘 21 種語言；feature-review；雙語 PR。
-6. flux-id：配套 PRD、`STORAGES['error_report']` 別名 ＋ R2 bucket ＋ 生命週期規則、含流量限制與結構化 log 的 DRF view、啟用 gunicorn access log、Cloudflare WAF 規則。上線前先做 §9.2 的基準週。可與 1–2 平行進行；在此之前第 3 步指向 staging。
+1. `helpers/error-report/`（scrub、throttle、installationId、`uploadErrorReport`）＋ `getOutput({ scrub, maxLength })` ＋ 單元測試。無呼叫者、無字串、無 UI。**PR #1021，2026-10-19 已合併**（2026-10-14 審閱修正）。
+2. 偏好設定鍵、隱私頁下拉選單、i18n（en、zh-tw）、`preference.ts`、`helpers/error-report/consent.tsx` 的 `withErrorReportConsent`（2026-10-12 自 PR 1 移到此處，因為它需要同意文案），以及 `Alert.tsx` 的 `children` 渲染（§6）。2026-10-12 完成；放在 `feat/error-report-consent`。
+3. 取代 `uploadBackendErrorLog` 並刪除 `aws-helper.ts`；把 §7.4 第一波觸發點接上 `withErrorReportConsent`。2026-10-13 完成：九個觸發點；新增 `UploadErrorReportOptions.device` 供在 `currentDevice` 更新前就觸發的位置使用，裝置 Log 只在目前 socket 屬於該機器時讀取。
+3b. 接上 §7.4 第二波相機觸發點（同一機制）。2026-10-14 於同一分支完成；因為只是六個同形狀的呼叫點，放棄獨立 PR 的做法。`BeamPreviewManager` 改為重用 `handlePreviewSetupError`。
+4. 一次性 一律自動 提示 ＋ toast。2026-10-14 完成。
+5. 其餘 21 種語言（2026-10-14 完成，機器草譯、待母語校對；移除四個孤立的上傳字串與 `#819`）；feature-review；第 2–5 步的雙語 PR：**#1028**，2026-10-20 開啟。
+6. flux-id：配套 PRD、`STORAGES['error_report']` 別名 ＋ R2 bucket ＋ 生命週期規則、含流量限制的 DRF view、每日統計列與 Slack 摘要及警示、啟用 gunicorn access log、Cloudflare WAF 規則。程式於 2026-10-15 完成，flux-id PR #683 於 2026-10-19 合併；bucket、webhook、生命週期與 WAF 規則已於 2026-10-15 設定；§9.2 的基準週尚待讀數。可與 1–2 平行進行；在此之前第 3 步指向 staging。
 
 ## 11. 待決事項
 
@@ -259,10 +260,10 @@
 - 內嵌的 `machineId` 讀取穩定的硬體/OS 識別碼，同一台電腦的報告在重新安裝後仍可關聯。2026-10-06 針對無序號的無裝置情境接受此點；維持雜湊輸出，同意文案已說明報告包含機器識別碼。
 - 請求內同步 R2 PUT 會佔用 gunicorn worker；上傳爆量可能延遲登入。§9.2 的門檻會在造成傷害前觸發 celery 或 presigned URL 升級。
 - Sentry（`enable-sentry`）已擷取 JS 堆疊；本功能不取代它。在隱私頁文案註明兩者的重疊。
-- 後續：接線時逐一分類 `export-funcs-swiftray.ts` 的 `#812` 分支；屬提示而非失敗者在該處排除並記於 §7.4。
+- ~~後續：接線時逐一分類 `export-funcs-swiftray.ts` 的 `#812` 分支。~~ 2026-10-13 已分類：該檔案沒有 `#812`；所有錯誤都經由 `popupError`，`cancel` 時靜默、`busy` 時為資訊視窗（排除，機器使用中）、其餘為 `#806`（已接線）。`#812` 只存在於未使用的語言字串（`message.device_not_found.message`），其標題在 `get-device.ts` 以資訊 toast 顯示。
 
 ## 13. 測試計畫
 
-- 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`withErrorReportConsent.spec.ts`（三種偏好 × checkbox 是否出現、冷卻或每日上限期間 checkbox 隱藏、任一按鈕都觸發 callback、**所有相依拋出例外 → 原樣回傳輸入的警示設定**）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
-- 手動：在桌面版對可引發 `HARDWARE_ERROR` 的裝置執行上述 A1–A11，另以匯出途中關閉 fluxghost 觸發 `#806`。
+- 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`consent.spec.tsx`（三種偏好 × checkbox 是否出現、既有 checkbox 保留、冷卻或每日上限期間 checkbox 隱藏、callback 啟動上傳、**所有相依拋出例外 → 原樣回傳輸入的警示設定**）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
+- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A11，另以匯出途中關閉 fluxghost 觸發 `#806`。
 - 回歸：§6 所列既有 `checkbox:` 警示呼叫者行為不變；說明 → Bug Report 下載仍包含 `recent_files`。

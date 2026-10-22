@@ -38,7 +38,7 @@ const fields = (form: FormData) =>
   Object.fromEntries([...form.entries()].map(([k, v]) => [k, v instanceof Blob ? `blob:${v.type}` : v]));
 const idleDevice = (serial = 'SN12345678') => ({
   control: { getMode: () => '' },
-  info: { serial, version: '6.5.3' },
+  info: { serial, uuid: 'uuid-1', version: '6.5.3' },
 });
 
 describe('uploadErrorReport', () => {
@@ -125,6 +125,22 @@ describe('uploadErrorReport', () => {
     );
   });
 
+  test('device override: its serial and firmware are used, log of another machine never read', async () => {
+    await expect(
+      uploadErrorReport({
+        device: { serial: 'SN-OTHER', uuid: 'uuid-2', version: '5.0.0' } as any,
+        errorCode: 'CONNECTION_TIMEOUT',
+      }),
+    ).resolves.toBe('sent');
+
+    const form = mockPost.mock.calls[0][1] as FormData;
+
+    expect(form.get('serial')).toBe('SN-OTHER');
+    expect(form.get('firmware_version')).toBe('5.0.0');
+    expect(form.has('system_log')).toBe(false);
+    expect(mockGetLogsTexts).not.toHaveBeenCalled();
+  });
+
   test('device log failure is logged and does not block the upload', async () => {
     mockGetLogsTexts.mockRejectedValue(new Error('timeout'));
 
@@ -145,7 +161,7 @@ describe('uploadErrorReport', () => {
   });
 
   test('scene over 10 MB is dropped, the rest still uploads', async () => {
-    await uploadErrorReport({ errorCode: '#806', scene: { content: 'x'.repeat(10 * MB + 1), name: 's.bvg' } });
+    await uploadErrorReport({ errorCode: '#806', scene: () => ({ content: 'x'.repeat(10 * MB + 1), name: 's.bvg' }) });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
@@ -158,7 +174,7 @@ describe('uploadErrorReport', () => {
     mockGetOutput.mockReturnValue(['x'.repeat(10 * MB)]);
     mockGetLogsTexts.mockResolvedValue({ 'fluxrobotd.log': [new Blob(['y'.repeat(5 * MB)])] });
 
-    await uploadErrorReport({ errorCode: '#806', scene: { content: 'z'.repeat(8 * MB), name: 's.bvg' } });
+    await uploadErrorReport({ errorCode: '#806', scene: () => ({ content: 'z'.repeat(8 * MB), name: 's.bvg' }) });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
@@ -169,7 +185,10 @@ describe('uploadErrorReport', () => {
   test('system_log is dropped when bug_report and scene leave no room', async () => {
     mockGetOutput.mockReturnValue(['x'.repeat(10 * MB)]);
 
-    await uploadErrorReport({ errorCode: '#806', scene: { content: 'z'.repeat(10 * MB - 64 * 1024), name: 's.bvg' } });
+    await uploadErrorReport({
+      errorCode: '#806',
+      scene: () => ({ content: 'z'.repeat(10 * MB - 64 * 1024), name: 's.bvg' }),
+    });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
@@ -179,12 +198,21 @@ describe('uploadErrorReport', () => {
   });
 
   test('scene is attached as svg with its name', async () => {
-    await uploadErrorReport({ errorCode: '#806', scene: { content: '<svg/>', name: 'output.bvg' } });
+    await uploadErrorReport({ errorCode: '#806', scene: () => ({ content: '<svg/>', name: 'output.bvg' }) });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
     expect((form.get('scene') as File).name).toBe('output.bvg');
     expect(fields(form).scene).toBe('blob:image/svg+xml');
+  });
+
+  test('scene thunk is not called for a blocked upload', async () => {
+    const scene = jest.fn(() => ({ content: '<svg/>', name: 'output.bvg' }));
+
+    // first upload starts the cooldown window for this fingerprint
+    await expect(uploadErrorReport({ errorCode: '#806' })).resolves.toBe('sent');
+    await expect(uploadErrorReport({ errorCode: '#806', scene })).resolves.toBe('cooldown');
+    expect(scene).not.toHaveBeenCalled();
   });
 
   // axiosFluxId never rejects: its interceptor resolves with { error } (flux-id/base.ts)

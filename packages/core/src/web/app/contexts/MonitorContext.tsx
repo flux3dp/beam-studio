@@ -15,6 +15,7 @@ import doZSpeedLimitTest from '@core/helpers/device/doZSpeedLimitTest';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
@@ -311,10 +312,12 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
     if (type === 'Promark') {
       // Promark disconnected
-      Alert.popUp({
-        id,
-        message: i18n.lang.message.promark_disconnected,
-      });
+      Alert.popUp(
+        withErrorReportConsent(
+          { id, message: i18n.lang.message.promark_disconnected },
+          { device: this.props.device, errorCode: '#850' },
+        ),
+      );
     } else if (type === 'disconnected') {
       // Swiftray disconnected
       Progress.openNonstopProgress({
@@ -492,12 +495,17 @@ export class MonitorContextProvider extends React.Component<Props, State> {
 
         const { device, onClose } = this.props;
 
-        Alert.popUp({
-          device,
-          id: 'monitor-error',
-          message: LANG.message.connectionTimeout,
-          type: AlertConstants.SHOW_POPUP_ERROR,
-        });
+        Alert.popUp(
+          withErrorReportConsent(
+            {
+              device,
+              id: 'monitor-error',
+              message: LANG.message.connectionTimeout,
+              type: AlertConstants.SHOW_POPUP_ERROR,
+            },
+            { device, errorCode: '#805' },
+          ),
+        );
 
         onClose();
       }
@@ -592,17 +600,25 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         ]);
       };
       const errorMessage = DeviceErrorHandler.translate(error);
+      // HARDWARE_ERROR / USER_OPERATION are reported by firmware as what they are and never reach the
+      // ALARM/FATAL or generic branches, so only those two offer the diagnostic upload (PRD §7.4).
+      const reportOptions = { device: this.props.device, errorCode: errorId };
 
       if (!Alert.checkIdExist(errorId) && !this.lastErrorId) {
         if ([ALARM, FATAL].includes(report.st_id)) {
-          Alert.popUp({
-            buttonLabels: [LANG.alert.abort],
-            callbacks: [() => DeviceMaster.stop()],
-            id: errorId,
-            message: errorMessage,
-            primaryButtonIndex: 0,
-            type: AlertConstants.SHOW_POPUP_ERROR,
-          });
+          Alert.popUp(
+            withErrorReportConsent(
+              {
+                buttonLabels: [LANG.alert.abort],
+                callbacks: [() => DeviceMaster.stop()],
+                id: errorId,
+                message: errorMessage,
+                primaryButtonIndex: 0,
+                type: AlertConstants.SHOW_POPUP_ERROR,
+              },
+              reportOptions,
+            ),
+          );
         } else if (error[0] === 'HARDWARE_ERROR' || error[0] === 'USER_OPERATION') {
           if (error[1] !== 'REMOVE_CARTRIDGE') {
             Alert.popUp({
@@ -622,14 +638,19 @@ export class MonitorContextProvider extends React.Component<Props, State> {
             });
           }
         } else {
-          Alert.popUp({
-            buttonLabels: [LANG.alert.retry, LANG.monitor.bug_report, LANG.alert.cancel],
-            callbacks: [handleRetry, handleReport, () => {}],
-            id: errorId,
-            message: errorMessage,
-            primaryButtonIndex: 0,
-            type: AlertConstants.SHOW_POPUP_ERROR,
-          });
+          Alert.popUp(
+            withErrorReportConsent(
+              {
+                buttonLabels: [LANG.alert.retry, LANG.monitor.bug_report, LANG.alert.cancel],
+                callbacks: [handleRetry, handleReport, () => {}],
+                id: errorId,
+                message: errorMessage,
+                primaryButtonIndex: 0,
+                type: AlertConstants.SHOW_POPUP_ERROR,
+              },
+              reportOptions,
+            ),
+          );
         }
 
         this.lastErrorId = errorId;
@@ -978,10 +999,18 @@ export class MonitorContextProvider extends React.Component<Props, State> {
           setTimeout(() => promarkButtonHandler.setStatus('listening'), 1000);
         } catch (error) {
           this.setState({ uploadProgress: null });
-          Alert.popUp({
-            message: LANG.message.unable_to_start + error.error?.join('_'),
-            type: AlertConstants.SHOW_POPUP_ERROR,
-          });
+          Alert.popUp(
+            withErrorReportConsent(
+              {
+                message: LANG.message.unable_to_start + (error as { error?: string[] }).error?.join('_'),
+                type: AlertConstants.SHOW_POPUP_ERROR,
+              },
+              {
+                device: this.props.device,
+                errorCode: ['#830', ...((error as { error?: string[] }).error ?? [])].join('_'),
+              },
+            ),
+          );
           promarkButtonHandler.setStatus('listening');
         }
       } else if (mode === Mode.FILE_PREVIEW) {

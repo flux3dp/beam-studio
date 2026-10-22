@@ -12,6 +12,7 @@ import DeviceConstants from '@core/app/constants/device-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import storage from '@core/implementations/storage';
 import type {
   FisheyeCameraParameters,
@@ -259,16 +260,16 @@ class DeviceMaster {
     }
 
     if (authResult.data !== 'cancel') {
-      const message = authResult.data.reachable
-        ? lang.select_device.auth_failure
-        : lang.select_device.unable_to_connect;
+      const { reachable } = authResult.data;
+      const alert = {
+        id: 'device-auth-fail',
+        message: reachable ? lang.select_device.auth_failure : lang.select_device.unable_to_connect,
+        type: AlertConstants.SHOW_POPUP_ERROR,
+      };
 
       Alert.popById('device-auth-fail');
-      Alert.popUp({
-        id: 'device-auth-fail',
-        message,
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
+      // #811 wrong password is the user's state, not a defect
+      Alert.popUp(reachable ? alert : withErrorReportConsent(alert, { device: device.info, errorCode: '#810' }));
 
       // Display the dialog again
       const res = await this.showAuthDialog(device.info.uuid);
@@ -603,14 +604,22 @@ class DeviceMaster {
       default:
         errMessage = `${t.unknown_error} ${errorCode}`;
     }
-    Alert.popById('connection-error');
-    Alert.popUp({
+
+    const alertDevice = device ?? this.discoveredDevices.find((d) => d.uuid === uuid);
+    const alert = {
       caption: errCaption,
-      device: device ?? this.discoveredDevices.find((d) => d.uuid === uuid),
+      device: alertDevice,
       id: 'connection-error',
       message: errMessage,
       type: AlertConstants.SHOW_POPUP_ERROR,
-    });
+    };
+
+    Alert.popById('connection-error');
+    Alert.popUp(
+      errorCode === ConnectionError.NOT_FOUND
+        ? alert
+        : withErrorReportConsent(alert, { device: alertDevice, errorCode: `CONNECTION_${errorCode}` }),
+    );
   }
 
   async getControl(): Promise<IControlSocket> {

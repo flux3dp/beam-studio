@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konverter tekst til sti...',
-      export_file_error_ask_for_upload: 'Kunne ikke eksportere opgave. Er du villig til at dele arbejdsscenen med udviklingsholdet til fejlrapportering?',
       retreive_image_data: 'Henter billeddata...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'En ny mulighed for automatisk at skifte mellem lagpanelet og objektpanelet er blevet tilføjet i Præferencer. Denne mulighed er deaktiveret som standard. Vil du aktivere automatisk skift nu? <br/>Du kan ændre denne indstilling når som helst i Præferencer.',
         title: 'Automatisk Skift mellem Lag- og Objektpanel',
       },
-      backend_connect_failed_ask_to_upload: '#802 Fejl opstår hele tiden, når der forsøges forbindelse til backend. Vil du uploade din fejlrapportlog?',
+      backend_connect_failed: '#802 Fejl opstår hele tiden, når der forsøges forbindelse til backend.',
       backend_error_hint: 'Funktioner fungerer muligvis ikke korrekt på grund af backend-fejl.',
       both_power_and_speed_too_high: 'At bruge lavere laserstyrke forlænger laserens levetid. Desuden kan for høj hastighed ved denne opløsning resultere i ringere skyggegraveringskvalitet.',
       bug_report: 'Fejlrapport',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Kan ikke indlæse SVG-data',
       import_file_contain_invalid_path: '#808 Importeret SVG-fil indeholder ugyldig billedsti. Sørg for, at alle billedfiler findes, eller indsæt billede i filen',
-      import_file_error_ask_for_upload: 'Kunne ikke importere SVG-fil. Er du villig til at give filen til udviklingsholdet til fejlrapport?',
       import_svg: {
         advice_message: 'Dette kan forårsage alvorlig forsinkelse eller importfejl.',
         advice_message_2: 'Det anbefales at forenkle filen før import.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'At bruge for høj hastighed i lag, der indeholder stivektor-objekter, kan resultere i ringere præcision ved skæring. Vi anbefaler ikke at bruge hastigheder over %(limit)s. ved skæring.',
       too_fast_for_path_and_constrain: 'Følgende lag: %(layers)s \nindeholder stivektor-stibaner og har hastigheder over %(limit)s. Skærehastigheden for stivektor-stibaner vil blive begrænset til %(limit)s. Du kan fjerne denne begrænsning under Indstillinger.',
       touchpad: 'Touchpad',
-      upload_failed: '#819 Upload af fil mislykkedes.',
-      upload_file_too_large: '#819 Filen er for stor til upload.',
       vectorize_shading_image: 'Gradientbilleder tager længere tid at spore og er tilbøjelige til støj. Slå venligst billedgradienten fra, før du fortsætter.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Bemærk venligst at Beam Studio muligvis ikke fungerer optimalt på din enhed. For en optimal oplevelse bør det være en enhed med en skærm bredde på mindst 1024 pixels.',
+  },
+  error_report: {
+    always: 'Send altid',
+    ask: 'Spørg hver gang',
+    consent_checkbox: 'Send diagnosedata til FLUX for at hjælpe med at rette denne fejl (ingen designfiler eller personlige data)',
+    never: 'Send aldrig',
+    prompt_caption: 'Send automatisk?',
+    prompt_message: 'Skal diagnosedata altid sendes automatisk, når der opstår fejl? Du kan altid ændre dette under Indstillinger > Privacy.',
+    sent: 'Tak! Diagnosedata er sendt.',
+    sent_automatically: 'Diagnosedata er automatisk sendt til FLUX.',
+    setting_label: 'Upload af fejlrapporter',
   },
   flux_101: {
     badge_earned: '%(badge)s — du har gennemført "%(chapter)s"',

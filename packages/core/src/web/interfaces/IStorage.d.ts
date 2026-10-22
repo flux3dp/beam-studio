@@ -14,6 +14,8 @@ import type { Preset } from './ILayerConfig';
 import type { BeamboxPreference } from './Preference';
 import type { PromarkStore } from './Promark';
 
+export type ErrorReportUploadPreference = 'always' | 'ask' | 'never';
+
 export interface Storage {
   'active-lang': string;
   'ador-backup-path': string;
@@ -45,6 +47,11 @@ export interface Storage {
   'error-report-counter': { counts: Record<string, number>; date: string };
   /** random per-install id used when the OS machine id is unavailable (web, or failure) */
   'error-report-install-id': string;
+  /**
+   * automatic error report preference, Settings → Privacy. null = never chosen: behaves as 'ask'
+   * and the one-time "Always send automatically?" prompt may still show; 'ask' = chosen (no prompt).
+   */
+  'error-report-upload': ErrorReportUploadPreference | null;
   /** FLUX 101 course progress, bucketed by owner (FLUX ID email or 'anonymous') */
   'flux-101': Flux101Storage;
   'flux-rsa-key': string;

@@ -9,6 +9,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
 import deviceMaster from '@core/helpers/device-master';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import VersionChecker from '@core/helpers/version-checker';
@@ -278,7 +279,15 @@ class PreviewModeController {
     if (this.isPreviewMode) {
       console.log(error);
 
-      Alert.popUpError({ message: (error as Error).message || (error as any).text });
+      const message: string = (error as Error).message || (error as any).text || '';
+
+      // #844 camera closed, #845 camera busy and anything else the preview loop throws
+      Alert.popUpError(
+        withErrorReportConsent(
+          { message },
+          { device: this.currentDevice ?? undefined, errorCode: message.match(/^#\d+/)?.[0] ?? 'PREVIEW_FAILED' },
+        ),
+      );
     }
 
     this.end();

@@ -74,6 +74,7 @@ const Alert = ({
     buttons,
     caption,
     checkbox,
+    children,
     device,
     iconUrl,
     links,
@@ -240,6 +241,7 @@ const Alert = ({
       {animation}
       {renderLink()}
       {renderCheckbox()}
+      {children}
     </Modal>
   );
 };

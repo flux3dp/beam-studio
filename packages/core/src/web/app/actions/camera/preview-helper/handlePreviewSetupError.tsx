@@ -3,6 +3,7 @@ import { CameraOutlined, UploadOutlined } from '@ant-design/icons';
 import alertCaller from '@core/app/actions/alert-caller';
 import { showCalibrateCamera } from '@core/app/actions/dialog-controller';
 import { backUpCalibrationData } from '@core/helpers/device/camera/backUpCalibrationData';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -35,9 +36,12 @@ const handlePreviewSetupError = (device: IDeviceInfo, error: unknown): void => {
       message: lang.message.camera.calibration_data_missing_message,
     });
   } else if (error instanceof Error && error.message.startsWith('Camera WS')) {
-    alertCaller.popUpError({
-      message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
-    });
+    alertCaller.popUpError(
+      withErrorReportConsent(
+        { message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}` },
+        { device, errorCode: '#803' },
+      ),
+    );
   } else {
     let errorMessage: string;
 
@@ -51,9 +55,12 @@ const handlePreviewSetupError = (device: IDeviceInfo, error: unknown): void => {
       }
     }
 
-    alertCaller.popUpError({
-      message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${errorMessage}`,
-    });
+    alertCaller.popUpError(
+      withErrorReportConsent(
+        { message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${errorMessage}` },
+        { device, errorCode: '#803' },
+      ),
+    );
   }
 };
 

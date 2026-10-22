@@ -1,7 +1,7 @@
 /**
  * Automatic diagnostic upload (docs/prd/error-report-upload). Fire-and-forget: never throws,
  * never shows UI, never changes what the error popup it was triggered from does (§7.1.1).
- * The consent decorator that attaches this to alerts lives in consent.ts (PR 2).
+ * The consent decorator that attaches this to alerts lives in consent.tsx.
  */
 import type { AxiosError } from 'axios';
 
@@ -12,6 +12,7 @@ import { getOS } from '@core/helpers/getOS';
 import Logger from '@core/helpers/logger';
 import outputError from '@core/helpers/output-error';
 import VersionChecker from '@core/helpers/version-checker';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import { getInstallationId } from './installationId';
 import type { BlockReason } from './throttle';
@@ -34,10 +35,18 @@ const DEVICE_LOG_TIMEOUT_MS = 10 * 1000;
 export type UploadResult = 'duplicate' | 'failed' | 'sent' | BlockReason;
 
 export interface UploadErrorReportOptions {
+  /**
+   * Machine the error belongs to when it is not `deviceMaster.currentDevice`, e.g. a failed
+   * `select` (§6 S6). The device log is read only when the current control socket is this machine's.
+   */
+  device?: IDeviceInfo;
   /** real code, e.g. `HARDWARE_ERROR_OVERHEAT`, `#806`, `CONNECTION_TIMEOUT` (§7.4) */
   errorCode: string;
-  /** scene SVG or imported file for `#806` / `#809` */
-  scene?: { content: string; name: string };
+  /**
+   * scene SVG (`#806`) or the imported file itself (`#809`); a thunk so the serialisation runs only
+   * for an upload that actually happens, after the preference and throttle checks (§7.1.1)
+   */
+  scene?: () => { content: Blob | string; name: string };
 }
 
 const logger = Logger('generic');
@@ -45,13 +54,13 @@ const logger = Logger('generic');
 const inFlight = new Map<string, number>();
 
 /**
- * Device system log, only when a control socket exists and the machine is idle; null otherwise.
- * The downloaded blobs are concatenated as blob parts, never decoded into strings.
+ * System log of the machine `uuid`, only when it is the current device, has a control socket and is
+ * idle; null otherwise. The downloaded blobs are concatenated as blob parts, never decoded into strings.
  */
-const readDeviceLog = async (): Promise<Blob | null> => {
+const readDeviceLog = async (uuid?: string): Promise<Blob | null> => {
   const device = deviceMaster.currentDevice;
 
-  if (!device?.control || device.control.getMode() !== '') return null;
+  if (!uuid || !device?.control || device.info.uuid !== uuid || device.control.getMode() !== '') return null;
 
   const playerLog = VersionChecker(device.info.version).meetRequirement('NEW_PLAYER')
     ? 'playerd.log'
@@ -107,23 +116,48 @@ const post = async (form: FormData): Promise<'duplicate' | 'sent'> => {
   throw lastError;
 };
 
-export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportOptions): Promise<UploadResult> => {
+const getContext = ({ device, errorCode }: UploadErrorReportOptions) => {
+  const info = device ?? deviceMaster.currentDevice?.info;
+  const serial = info?.serial || 'none';
+  const firmwareVersion = info?.version ?? '';
+  const appVersion = window.FLUX.version;
+
+  return {
+    appVersion,
+    fingerprint: makeFingerprint(serial, errorCode, appVersion, firmwareVersion),
+    firmwareVersion,
+    serial,
+    uuid: info?.uuid,
+  };
+};
+
+/**
+ * Why an upload for this error must not happen now (§7.7), or null when it may.
+ * A blocked occurrence is counted for the next report's occurrences_since_last and logged.
+ */
+export const getUploadBlock = (options: UploadErrorReportOptions): BlockReason | null => {
+  const { errorCode } = options;
+  const { fingerprint, serial } = getContext(options);
+  const blocked = inFlight.has(fingerprint) ? 'cooldown' : getBlockReason(serial, fingerprint);
+
+  // an occurrence during an in-flight upload rides with that upload (recorded when it lands)
+  if (inFlight.has(fingerprint)) inFlight.set(fingerprint, inFlight.get(fingerprint)! + 1);
+  else if (blocked === 'cooldown') recordSkipped(fingerprint);
+
+  if (blocked) logger.append(`error-report skipped (${blocked}) ${errorCode}`);
+
+  return blocked;
+};
+
+export const uploadErrorReport = async (options: UploadErrorReportOptions): Promise<UploadResult> => {
+  const { errorCode, scene } = options;
+
   try {
-    const info = deviceMaster.currentDevice?.info;
-    const serial = info?.serial || 'none';
-    const firmwareVersion = info?.version ?? '';
-    const appVersion = window.FLUX.version;
-    const fingerprint = makeFingerprint(serial, errorCode, appVersion, firmwareVersion);
-    const blocked = inFlight.has(fingerprint) ? 'cooldown' : getBlockReason(serial, fingerprint);
+    const blocked = getUploadBlock(options);
 
-    if (blocked) {
-      if (inFlight.has(fingerprint)) inFlight.set(fingerprint, inFlight.get(fingerprint)! + 1);
-      else if (blocked === 'cooldown') recordSkipped(fingerprint);
+    if (blocked) return blocked;
 
-      logger.append(`error-report skipped (${blocked}) ${errorCode}`);
-
-      return blocked;
-    }
+    const { appVersion, fingerprint, firmwareVersion, serial, uuid } = getContext(options);
 
     inFlight.set(fingerprint, 0);
 
@@ -150,10 +184,11 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
 
       // scene before system_log: the export / import errors that carry one need the design more than the device log
       if (scene) {
-        const sceneBlob = new Blob([scene.content], { type: 'image/svg+xml' });
+        const { content, name } = scene();
+        const sceneBlob = new Blob([content], { type: 'image/svg+xml' });
 
         if (sceneBlob.size <= Math.min(MAX_FILE_BYTES, budget)) {
-          form.append('scene', sceneBlob, scene.name);
+          form.append('scene', sceneBlob, name);
           budget -= sceneBlob.size;
         } else {
           logger.append(`error-report scene dropped: ${sceneBlob.size} bytes`);
@@ -161,7 +196,7 @@ export const uploadErrorReport = async ({ errorCode, scene }: UploadErrorReportO
       }
 
       try {
-        const deviceLog = await readDeviceLog();
+        const deviceLog = await readDeviceLog(uuid);
 
         if (deviceLog && budget > 0) {
           form.append('system_log', tail(deviceLog, Math.min(MAX_FILE_BYTES, budget)), 'system_log.txt');

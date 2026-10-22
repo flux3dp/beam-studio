@@ -1,10 +1,7 @@
 /**
  * output error log
  */
-import Alert from '@core/app/actions/alert-caller';
-import Progress from '@core/app/actions/progress-caller';
 import { getPrintAndCutReport } from '@core/app/components/dialogs/PrintAndCut/utils/align/alignLog';
-import AlertConstants from '@core/app/constants/alert-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import { SCRUBBED_STORAGE_KEYS, scrubReport } from '@core/helpers/error-report/scrub';
 import { getOS } from '@core/helpers/getOS';
@@ -141,52 +138,4 @@ export default {
     ]);
   },
   getOutput,
-  uploadBackendErrorLog: async (): Promise<void> => {
-    Progress.openNonstopProgress({ id: 'output-error-log', message: i18n.lang.beambox.popup.progress.uploading });
-
-    const output = getOutput({ includeImages: false });
-    const reportFile = new Blob(output, { type: 'application/octet-stream' });
-    // reportFile.lastModifiedDate = new Date();
-    const reportName = `bug_report_${Math.floor(Date.now() / 1000)}_${getOS()}_${window.FLUX.version}.log`;
-    const uploadFormData = new FormData();
-
-    uploadFormData.append('file', reportFile);
-    uploadFormData.append('Content-Type', reportFile.type);
-    uploadFormData.append('acl', 'bucket-owner-full-control');
-    uploadFormData.append('key', `backend/${reportName}`);
-
-    const url = `https://beamstudio-bug-report.s3.amazonaws.com/backend/${reportName}`;
-    const config = {
-      body: uploadFormData,
-      headers: new Headers({ Accept: 'application/xml', 'Content-Type': 'multipart/form-data' }),
-      method: 'PUT',
-    };
-    const t = i18n.lang.beambox.popup;
-
-    try {
-      const r = await fetch(url, config);
-
-      if (r.status === 200) {
-        console.log('Success', r);
-        Alert.popUp({
-          message: t.successfully_uploaded,
-          type: AlertConstants.SHOW_POPUP_INFO,
-        });
-      } else {
-        console.log('Failed', r);
-        Alert.popUp({
-          message: `${t.upload_failed}\n${r.status}`,
-          type: AlertConstants.SHOW_POPUP_ERROR,
-        });
-      }
-    } catch (e) {
-      console.log(e);
-      Alert.popUp({
-        message: `${t.upload_failed}\n${e}`,
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
-    } finally {
-      Progress.popById('output-error-log');
-    }
-  },
 };

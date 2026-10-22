@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Muunna teksti poluksi...',
-      export_file_error_ask_for_upload: 'Vientitehtävän epäonnistui. Haluatko tarjota toimivan näkymän kehitystiimille vianraportointia varten?',
       retreive_image_data: 'Nouda kuvan tiedot...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Uusi vaihtoehto automaattiselle vaihtamiselle Tasojen ja Objektien paneelien välillä on lisätty Asetuksiin. Tämä vaihtoehto on oletusarvoisesti pois käytöstä. Haluatko ottaa automaattisen vaihtamisen käyttöön nyt? <br/>Voit muuttaa tätä asetusta milloin tahansa Asetuksissa.',
         title: 'Automaattinen Vaihto Tason ja Kohteen Paneelien Välillä',
       },
-      backend_connect_failed_ask_to_upload: '#802 Virheitä yhdistettäessä taustajärjestelmään. Haluatko lähettää vianraportin?',
+      backend_connect_failed: '#802 Virheitä yhdistettäessä taustajärjestelmään.',
       backend_error_hint: 'Ominaisuuksissa voi olla ongelmia taustajärjestelmän virheen takia.',
       both_power_and_speed_too_high: 'Matalampi laserteho pidentää laserputken käyttöikää. Liian korkea nopeus tällä resoluutiolla voi myös heikentää varjostuksen laatua.',
       bug_report: 'Vianraportti',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'SVG-tietoja ei voi ladata',
       import_file_contain_invalid_path: '#808 Tuodussa SVG-tiedostossa on virheellisiä kuvapolkuja. Varmista, että kaikki kuvatiedostot ovat olemassa tai upota kuvat tiedostoon.',
-      import_file_error_ask_for_upload: 'Tiedoston tuonti epäonnistui. Haluatko tarjota tiedoston kehitystiimille vianraporttia varten?',
       import_svg: {
         advice_message: 'Tämä voi aiheuttaa vakavaa viivettä tai tuonnin epäonnistumisen.',
         advice_message_2: 'On suositeltavaa yksinkertaistaa tiedosto ennen tuontia.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'Liian korkea nopeus polkuobjekteja sisältävissä kerroksissa voi heikentää leikkaustarkkuutta. Emme suosittele yli %(limit)s nopeutta leikattaessa.',
       too_fast_for_path_and_constrain: 'Seuraavat kerrokset: %(layers)s \nsisältävät vektoripolkuobjekteja yli %(limit)s nopeudella. Polkuobjektien leikkausnopeus rajoitetaan %(limit)s:iin. Voit poistaa rajoituksen asetuksista.',
       touchpad: 'Kosketuslevy',
-      upload_failed: '#819 Tiedoston lataus epäonnistui.',
-      upload_file_too_large: '#819 Tiedosto on liian suuri latausta varten.',
       vectorize_shading_image: 'Liukuvärit kuvissa altistuvat kohinalle. Poista kuvan liukuvärit ennen suorittamista.',
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Huomaa, että Beam Studio ei välttämättä toimi optimaalisesti laitteellasi. Paras kokemus saadaan näytöllä, jonka leveys on vähintään 1024 pikseliä.',
+  },
+  error_report: {
+    always: 'Lähetä aina',
+    ask: 'Kysy joka kerta',
+    consent_checkbox: 'Lähetä diagnostiikkatiedot FLUXille tämän virheen korjaamiseksi (ei suunnittelutiedostoja tai henkilötietoja)',
+    never: 'Älä koskaan lähetä',
+    prompt_caption: 'Lähetetäänkö automaattisesti?',
+    prompt_message: 'Lähetetäänkö diagnostiikkatiedot aina automaattisesti virheiden sattuessa? Voit muuttaa tätä milloin tahansa kohdassa Asetukset > Yksityisyys.',
+    sent: 'Kiitos! Diagnostiikkatiedot lähetetty.',
+    sent_automatically: 'Diagnostiikkatiedot lähetettiin automaattisesti FLUXille.',
+    setting_label: 'Virheraporttien lähetys',
   },
   flux_101: {
     badge_earned: '%(badge)s — suoritit luvun ”%(chapter)s”',

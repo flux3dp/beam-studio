@@ -14,6 +14,7 @@ import { doGetOffsetFromPicture } from '@core/helpers/camera-calibration-helper'
 import CheckDeviceStatus from '@core/helpers/check-device-status';
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import useI18n from '@core/helpers/useI18n';
 import VersionChecker from '@core/helpers/version-checker';
 import Browser from '@core/implementations/browser';
@@ -174,22 +175,27 @@ const StepRefocus = (): React.JSX.Element => {
 
       const errorMessage = error instanceof Error ? error.message : DeviceErrorHandler.translate(error as string);
 
-      Alert.popUp({
-        buttonLabels: [langAlert.ok, langAlert.learn_more],
-        callbacks: [
-          async () => {
-            const report = await DeviceMaster.getReport();
+      Alert.popUp(
+        withErrorReportConsent(
+          {
+            buttonLabels: [langAlert.ok, langAlert.learn_more],
+            callbacks: [
+              async () => {
+                const report = await DeviceMaster.getReport();
 
-            device.st_id = report.st_id;
-            await CheckDeviceStatus(device, false, true);
+                device.st_id = report.st_id;
+                await CheckDeviceStatus(device, false, true);
+              },
+              () => Browser.open(langCalibration.zendesk_link),
+            ],
+            id: 'camera-cali-err',
+            message: `#815 ${errorMessage || 'Fail to cut and capture'}`,
+            primaryButtonIndex: 0,
+            type: AlertConstants.SHOW_POPUP_ERROR,
           },
-          () => Browser.open(langCalibration.zendesk_link),
-        ],
-        id: 'camera-cali-err',
-        message: `#815 ${errorMessage || 'Fail to cut and capture'}`,
-        primaryButtonIndex: 0,
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
+          { device, errorCode: '#815' },
+        ),
+      );
     }
   };
 

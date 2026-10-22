@@ -14,7 +14,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import workareaManager from '@core/app/svgedit/workarea';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
-import AwsHelper from '@core/helpers/aws-helper';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
@@ -86,17 +86,12 @@ const popupError = (message: string): void => {
       type: AlertConstants.SHOW_POPUP_ERROR,
     });
   } else {
-    Alert.popUp({
-      buttonType: AlertConstants.YES_NO,
-      id: 'get-taskcode-error',
-      message: `#806 ${message}\n${i18n.lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
-      onYes: () => {
-        const svgString = svgCanvas.getSvgString();
-
-        AwsHelper.uploadToS3('output.bvg', svgString);
-      },
-      type: AlertConstants.SHOW_POPUP_ERROR,
-    });
+    Alert.popUp(
+      withErrorReportConsent(
+        { id: 'get-taskcode-error', message: `#806 ${message}`, type: AlertConstants.SHOW_POPUP_ERROR },
+        { errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
+      ),
+    );
   }
 };
 

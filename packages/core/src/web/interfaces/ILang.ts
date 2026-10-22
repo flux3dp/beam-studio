@@ -196,7 +196,6 @@ export interface ILang {
     };
     bottom_right_panel: {
       convert_text_to_path_before_export: string;
-      export_file_error_ask_for_upload: string;
       retreive_image_data: string;
     };
     context_menu: {
@@ -464,7 +463,7 @@ export interface ILang {
         message: string;
         title: string;
       };
-      backend_connect_failed_ask_to_upload: string;
+      backend_connect_failed: string;
       backend_error_hint: string;
       both_power_and_speed_too_high: string;
       bug_report: string;
@@ -487,7 +486,6 @@ export interface ILang {
       };
       failed_to_load_svg: string;
       import_file_contain_invalid_path: string;
-      import_file_error_ask_for_upload: string;
       import_svg: {
         advice_message: string;
         advice_message_2: string;
@@ -555,8 +553,6 @@ export interface ILang {
       too_fast_for_path: string;
       too_fast_for_path_and_constrain: string;
       touchpad: string;
-      upload_failed: string;
-      upload_file_too_large: string;
       vectorize_shading_image: string;
     };
     rating_panel: {
@@ -1379,6 +1375,17 @@ export interface ILang {
   };
   error_pages: {
     screen_size: string;
+  };
+  error_report: {
+    always: string;
+    ask: string;
+    consent_checkbox: string;
+    never: string;
+    prompt_caption: string;
+    prompt_message: string;
+    sent: string;
+    sent_automatically: string;
+    setting_label: string;
   };
   flux_101: {
     badge_earned: string;

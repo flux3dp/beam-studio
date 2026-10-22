@@ -196,7 +196,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Converti testo in percorso...',
-      export_file_error_ask_for_upload: 'Esportazione file non riuscita. Sei disposto a fornire la scena di lavoro al team di sviluppo per la segnalazione di bug?',
       retreive_image_data: 'Recupera dati immagine...',
     },
     context_menu: {
@@ -464,7 +463,7 @@ const lang: ILang = {
         message: 'Una nuova opzione per passare automaticamente tra il pannello Livelli e il pannello Oggetti è stata aggiunta alle Preferenze. Questa opzione è disabilitata per impostazione predefinita. Vuoi abilitare il cambio automatico ora? <br/>Puoi cambiare questa impostazione in qualsiasi momento nelle Preferenze.',
         title: 'Commutazione Automatica tra il Pannello dei Livelli e degli Oggetti',
       },
-      backend_connect_failed_ask_to_upload: '#802 Si sono verificati errori continui durante il tentativo di connessione al backend. Vuoi caricare il rapporto di bug?',
+      backend_connect_failed: '#802 Si verificano errori continui durante il tentativo di connessione al backend.',
       backend_error_hint: 'Le funzionalità potrebbero non funzionare correttamente a causa di errori backend.',
       both_power_and_speed_too_high: 'Utilizzare una potenza laser inferiore prolungherà la durata del tubo laser. Inoltre, una velocità troppo elevata a questa risoluzione può comportare una qualità inferiore della tonalità di incisione.',
       bug_report: 'Segnalazione di bug',
@@ -487,7 +486,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Impossibile caricare i dati SVG',
       import_file_contain_invalid_path: '#808 Il file SVG importato contiene percorsi immagine non validi. Assicurarsi che tutti i file immagine esistano o incorporare le immagini nel file',
-      import_file_error_ask_for_upload: 'Non è stato possibile importare il file SVG. Vuoi fornire il file al team di sviluppo per la segnalazione di bug?',
       import_svg: {
         advice_message: 'Questo potrebbe causare gravi rallentamenti o il fallimento dell’importazione.',
         advice_message_2: 'Si consiglia di semplificare il file prima dell’importazione.',
@@ -555,8 +553,6 @@ const lang: ILang = {
       too_fast_for_path: 'Una velocità troppo elevata negli strati contenenti oggetti tracciato può comportare una precisione inferiore durante il taglio. Non consigliamo di usare una velocità superiore a %(limit)s durante il taglio.',
       too_fast_for_path_and_constrain: 'I seguenti strati: %(layers)s contengono oggetti tracciato vettoriali e hanno una velocità che supera i %(limit)s. La velocità di taglio degli oggetti tracciato vettoriali sarà limitata a %(limit)s. È possibile rimuovere questo limite nelle impostazioni delle preferenze.',
       touchpad: 'Touchpad',
-      upload_failed: '#819 Caricamento file non riuscito.',
-      upload_file_too_large: '#819 Il file è troppo grande per il caricamento.',
       vectorize_shading_image: "Le immagini sfumate richiedono più tempo per essere tracciate e sono soggette a rumore. Disattiva il gradiente dell'immagine prima di eseguire.",
     },
     rating_panel: {
@@ -1377,6 +1373,17 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: "Si prega di notare che Beam Studio potrebbe non funzionare in modo ottimale sul dispositivo. Per un'esperienza ottimale, dovrebbe essere un dispositivo con una larghezza dello schermo di almeno 1024 pixel.",
+  },
+  error_report: {
+    always: 'Invia sempre',
+    ask: 'Chiedi ogni volta',
+    consent_checkbox: 'Invia dati diagnostici a FLUX per aiutare a correggere questo errore (senza file di progetto o dati personali)',
+    never: 'Non inviare mai',
+    prompt_caption: 'Inviare automaticamente?',
+    prompt_message: 'Inviare sempre automaticamente i dati diagnostici quando si verificano errori? Puoi cambiarlo in qualsiasi momento in Preferenze > Privacy.',
+    sent: 'Grazie! Dati diagnostici inviati.',
+    sent_automatically: 'Dati diagnostici inviati automaticamente a FLUX.',
+    setting_label: 'Invio dei rapporti di errore',
   },
   flux_101: {
     badge_earned: '%(badge)s — hai completato "%(chapter)s"',
