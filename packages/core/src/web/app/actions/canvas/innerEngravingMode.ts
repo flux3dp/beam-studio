@@ -1,5 +1,6 @@
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import {
   disableInnerEngraving,
@@ -7,6 +8,7 @@ import {
   isInnerEngravingActive,
 } from '@core/helpers/addOn/innerEngraving';
 import { disableOtherExclusiveModes } from '@core/helpers/exclusiveModes';
+import { attributeMap, initLayerConfig, innerEngravingConfigKeys } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
@@ -56,6 +58,21 @@ export const switchInnerEngravingMode = async (
 
   // The inner-engraving dimension must be stored before changeWorkarea reads it to resize the canvas.
   if (workarea) changeWorkarea(workarea);
+
+  // clearScene initialised the new document's first layer while the old mode, laser source and work
+  // area were still in force, so it carries the old document's defaults (2D speed and frequency in
+  // a 3D document, or the K9 crystal values in a 2D one): initialise it again now that the switch
+  // is complete. The ConfigPanel re-reads the layer when the mode flips, so the panel follows.
+  layerManager.getAllLayers().forEach((layer) => {
+    const group = layer.getGroup();
+
+    if (!group) return;
+
+    // the inner engraving keys are not in the 2D defaults, so leaving the mode has to drop them
+    if (!enabled) innerEngravingConfigKeys.forEach((key) => group.removeAttribute(attributeMap[key]));
+
+    initLayerConfig(group);
+  });
 
   return true;
 };
