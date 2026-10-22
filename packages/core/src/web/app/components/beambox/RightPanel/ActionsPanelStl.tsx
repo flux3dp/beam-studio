@@ -1,16 +1,19 @@
 import React from 'react';
 
+import { CodeSandboxOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import { useEngravableBox } from '@core/app/components/beambox/InnerEngraving/utils/engravable';
 import { fitObjectsTo, moveObjectsCenterTo } from '@core/app/components/beambox/InnerEngraving/utils/groupTransform';
+import { showPhotoTo3dModal } from '@core/app/components/dialogs/PhotoTo3dModal';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { isMobile } from '@core/app/stores/screenStore';
 import type { StlObject } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
+import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ActionsPanel.module.scss';
@@ -38,6 +41,9 @@ const ActionsPanelStl = ({ ids }: Props): React.JSX.Element => {
   const box = useEngravableBox();
   // no engravable area means the safety margin has eaten the whole workpiece: nothing to aim at
   const disabled = !box.isValid;
+  // a single photo plane that is still flat can be turned into a point cloud from its depth
+  const isFlatPhoto = useStlStore((state) => ids.length === 1 && state.objects[ids[0]]?.kind === 'photo');
+  const photo = isFlatPhoto ? document.getElementById(ids[0]) : null;
 
   const withObjects = (action: (objects: StlObject[]) => void) => () => {
     const { objects } = useStlStore.getState();
@@ -46,7 +52,13 @@ const ActionsPanelStl = ({ ids }: Props): React.JSX.Element => {
     if (selected.length > 0 && box.isValid) action(selected);
   };
 
-  const actions = [
+  const actions: Array<{
+    alwaysEnabled?: boolean;
+    icon: React.JSX.Element;
+    id: string;
+    label: string;
+    onClick: () => void;
+  }> = [
     {
       icon: <ObjectPanelIcons.HAlignMid />,
       id: 'stl-center',
@@ -59,16 +71,28 @@ const ActionsPanelStl = ({ ids }: Props): React.JSX.Element => {
       label: t.fit_to_engravable,
       onClick: withObjects((objects) => fitObjectsTo(objects, box)),
     },
+    ...(photo && isPhotoPlaneProjection(photo)
+      ? [
+          {
+            // not a placement: the engravable area does not matter
+            alwaysEnabled: true,
+            icon: <CodeSandboxOutlined />,
+            id: 'stl-photo-to-3d',
+            label: t.photo_to_3d,
+            onClick: () => showPhotoTo3dModal(photo as unknown as SVGImageElement),
+          },
+        ]
+      : []),
   ];
 
   if (isMobile()) {
     return (
       <div className={styles.container}>
         <ObjectPanelItem.Divider />
-        {actions.map(({ icon, id: actionId, label, onClick }) => (
+        {actions.map(({ alwaysEnabled, icon, id: actionId, label, onClick }) => (
           <ObjectPanelItem.Item
             content={icon}
-            disabled={disabled}
+            disabled={disabled && !alwaysEnabled}
             id={actionId}
             key={actionId}
             label={label}
@@ -85,13 +109,13 @@ const ActionsPanelStl = ({ ids }: Props): React.JSX.Element => {
         <div className={styles.section}>
           <div className={styles['section-title']}>ACTIONS</div>
           <div className={styles['btns-container']}>
-            {actions.map(({ icon, id: actionId, label, onClick }) => (
-              <Tooltip key={actionId} title={disabled ? t.no_engravable_area : undefined}>
+            {actions.map(({ alwaysEnabled, icon, id: actionId, label, onClick }) => (
+              <Tooltip key={actionId} title={disabled && !alwaysEnabled ? t.no_engravable_area : undefined}>
                 <div className={classNames(styles['btn-container'])}>
                   <Button
                     block
                     className={styles.btn}
-                    disabled={disabled}
+                    disabled={disabled && !alwaysEnabled}
                     icon={icon}
                     id={actionId}
                     onClick={onClick}

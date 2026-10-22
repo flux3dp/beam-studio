@@ -1,6 +1,6 @@
 import { useStlStore } from '@core/app/stores/stlStore';
 
-import { POINT_CLOUD_ATTR, STL_ATTR } from './constants';
+import { PHOTO_TO_3D_ATTR, POINT_CLOUD_ATTR, STL_ATTR } from './constants';
 
 /**
  * The mesh binary of every STL object that still has a projection rect in `svgcontent`, keyed by id.
@@ -36,6 +36,22 @@ export const getPointCloudSources = (): Record<string, ArrayBuffer> => {
 
     if (object?.kind === 'point-cloud' && object.pointCloudBuffer) result[id] = object.pointCloudBuffer;
     else console.error(`Point-cloud projection ${id} has no point data in the store, the object is not exported`);
+  });
+
+  return result;
+};
+
+/** Depth block 8 sources of photo-to-3D objects, keyed by their SVG projection id. */
+export const getDepthSources = (): Record<string, ArrayBuffer> => {
+  const { objects } = useStlStore.getState();
+  const result: Record<string, ArrayBuffer> = {};
+
+  document.querySelectorAll(`#svgcontent [${PHOTO_TO_3D_ATTR.marker}]`).forEach(({ id }) => {
+    const depthSource = objects[id]?.depthSource;
+
+    if (depthSource) result[id] = depthSource;
+    // the point cloud still ships; only recomputing it with other parameters is lost
+    else console.error(`Photo-to-3D projection ${id} has no depth in the store, it is not saved`);
   });
 
   return result;
