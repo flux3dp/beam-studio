@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | 進行中（2026-10-22）：P2-2 3D 多選已實作（框選除外，手勢待定）；P2-3 照片轉 3D 的 Beam Studio 與 Swiftray 已實作，flux-id API 未實作（§11）；P2-4 填充上下端面已實作；P2-5、P2-7 已完成。以上都待上機確認 |
+| **Status** | 進行中（2026-10-22）：P2-2 3D 多選已實作（框選除外，手勢待定）；P2-3 照片轉 3D 的 Beam Studio、Swiftray、flux-id 已實作（flux-id 只做了靜態檢查，§11）；P2-4 填充上下端面已實作；P2-5、P2-7 已完成。以上都待上機確認 |
 | **Author** | EstherFu（整理：Claude） |
 | **Created** | 2026-10-19 |
 | **Target product** | Beam Studio 桌面版（Promark `fpm1` UV） |
@@ -24,7 +24,7 @@ Phase 2 有七個新項目，加上 Phase 1 延續下來的三項。原本的 P2
 |---|---|---|---|
 | ~~P2-1~~ | ~~同一台機器保存多組場鏡參數~~ → 移到 [`promark-lens-profiles.md`](../promark-lens-profiles.md)（2026-10-19） | — | 新增（併入原 P2-6「UV 70mm 場域大小」） |
 | P2-2 | **3D 多選** | Beam Studio | 原 P2-1 |
-| P2-3 | **2D 照片轉 3D 點雲**（可選去背 + Depth Anything V3 Mono，扣點 0.06）。Beam Studio、Swiftray 已實作（2026-10-22），flux-id 未實作 | Beam Studio、flux-id、Swiftray | 原 P2-2 |
+| P2-3 | **2D 照片轉 3D 點雲**（可選去背 + Depth Anything V3 Mono，扣點 0.06）。Beam Studio、Swiftray、flux-id 已實作（2026-10-22） | Beam Studio、flux-id、Swiftray | 原 P2-2 |
 | P2-4 | 輪廓打線「**填充上下端面**」，已實作（2026-10-22） | Beam Studio、Swiftray | 原 P2-7 |
 | P2-5 | ~~三個頻率超出規格的預設參數重測~~ 已完成（2026-10-22）：維持 40kHz；PLA 加每行停留 | Beam Studio | 原 P2-8 |
 | P2-6 | 打散掃描順序效果測試 | 測試 | 原 P2-4 的一部分 |
@@ -268,11 +268,13 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 
 #### 6.2.5 資料與後端
 
-- **flux-id**（未實作，§11）：`POST /api/photo-to-3d`，同步，照 `ReplicateImageView`（`fluxid/apps/api/views/replicate_api.py`）的登入、點數檢查與錯誤處理。資料格式見 §7。
+- **flux-id**（2026-10-22 實作，branch `feat/photo-to-3d`，`PhotoTo3D` in `fluxid/apps/api/views/replicate_api.py`）：`POST /api/photo-to-3d`，同步，照 `ReplicateImageView`（`fluxid/apps/api/views/replicate_api.py`）的登入、點數檢查與錯誤處理。資料格式見 §7。
   - 輸入 multipart：`image`（原圖）、`remove_background`（`'1'` / `'0'`）。
   - 有去背時先跑 `RemoveBackground` 的同一個模型（`men1scus/birefnet:f74986db…`），再把去背圖送 DA3 Mono（`vufinder/depth-anything-v3-mono:2dad523…`，輸入 `processing_resolution: match_input`、`alpha_blend_onto: white`、`to_base64`，照測試頁 2026-10-14 的設定；欄位名稱要對 Replicate 的 schema 確認）。
   - DA3 的輸出 JSON 約 22MB（含一份 RGB 影像），伺服器只取深度與遮罩（`alpha_mask > 0` 且非 `sky_mask`），去掉 RGB，回傳約 1.4MP 照片 9MB 左右的 JSON。
   - 兩個模型都成功才 `use_credit` 0.06；任一步失敗不扣點（與現有 API 相同，先檢查餘額、成功後才扣）。
+  - 原本 `ReplicateImageView` 的重試迴圈抽成 `run_replicate`，去背、AI 放大照用，行為不變。
+  - 讀取 DA3 輸出（`read_depth_output`）時，不假設輸出的巢狀結構：在所有檔案裡找 `.json`，也接受直接是 tensor 的 dict。
 - **.beam**：block 8 `depthSource`，id → BSDM 二進位（深度 float32 + 遮罩 uint8，`photoTo3d/depthSource.ts`），寫在 block 7 之後、永遠最後；舊版讀到它時停止，點雲（block 7）仍完整。去背圖不另存：去背後照片本身就換成去背圖（和影像動作的去背一樣，`origImage` + `xlink:href`），隨 block 2 存。
 - **Swiftray 過近的點**（2026-10-22，Swiftray `b598726`）：點雲物件在準備階段、變換之後做 3D 過濾（`stl::removeClosePoints`，hash grid），距離小於圖層點間距 0.5 倍（`kPointCloudMinDistanceRatio`）的點丟掉，依輸入順序保留先出現的。在準備階段而不是 `flushBucket` 裡做，是為了跨 Z 桶也能比較。照片平面（photo）與 mesh 打點不過濾。
 
@@ -367,7 +369,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 | `data-stl-depth-sharpen` / `-radius` / `-round` | 銳化強度、半徑（點）、收邊（mm） | P2-3，物件參數 |
 | `data-stl-depth-thickness` | mm | 浮雕的 local 厚度（Z scale 之前） |
 | `data-stl-depth-grid` | `欄,列` | 點雲計算時的點格，用來判斷是否過期 |
-| `POST /api/photo-to-3d`（flux-id，未實作） | 輸入 multipart `image`、`remove_background`；成功回 `{status: 'ok', width, height, depth: base64 float32 LE（距離，越大越遠）, mask: base64 uint8（1 = 主體）, image: base64 PNG（有去背時）或 null}`；失敗回既有的 `{status: 'error', info, message}` | Beam Studio `processImageWithAiJson`、`depthSourceFromApi` 依此實作 |
+| `POST /api/photo-to-3d`（flux-id） | 輸入 multipart `image`、`remove_background`；成功回 `{status: 'ok', width, height, depth: base64 float32 LE（距離，越大越遠）, mask: base64 uint8（1 = 主體）, image: base64 PNG（有去背時）或 null}`；失敗回既有的 `{status: 'error', info, message}` | Beam Studio `processImageWithAiJson`、`depthSourceFromApi` 依此實作 |
 | Swiftray `-machine-z-bucket` | mm | P2-7，預設 0.01（Phase 1 已改）；只作用在打點 |
 | `fpm1_2_5` 預設參數 `fillDwellTime` | µs，負值 = 關閉 | P2-5，PLA 50000，其他 -50000 |
 
@@ -421,7 +423,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 17. 不去背時扣點是否減少（例如 0.06 → 0.04）？flux-id 端怎麼區分計價？**暫定**：Beam Studio 一律以 0.06 檢查與顯示（`PHOTO_TO_3D_COST`），實際扣多少由 flux-id 決定。
 18. 「是否去背」的預設：**暫定（2026-10-22，依建議值實作，待確認）**：依原圖自動判斷，超過 1% 的像素不是全不透明就預設不勾。
 19. 重新計算的「更新中」提示：**暫定（2026-10-22，依建議值實作，待確認）**：只放物件面板（超過 300ms 才出現），畫布保留舊點雲直到算完；沒有可取消的進度視窗（純 Node 實測約 2.5 秒）。
-21. flux-id `/api/photo-to-3d`：2026-10-22 實作時，修改扣點相關程式被 Claude Code 的權限檢查擋下，尚未實作（branch `feat/photo-to-3d` 已從 `origin/main` 切出，沒有修改）。介面以 §7 為準；DA3 的輸入欄位名稱（`processing_resolution`、`alpha_blend_onto`、`to_base64`）要對 Replicate 的 schema 確認。
+21. ~~flux-id `/api/photo-to-3d`~~ 2026-10-22 實作（branch `feat/photo-to-3d`）。依指示沒有開 docker、沒有跑測試，只做靜態檢查（ruff、py_compile、逐行對照）。仍待確認：DA3 的輸入欄位名稱（`processing_resolution`、`alpha_blend_onto`、`to_base64`）與輸出的檔案結構要對 Replicate 的 schema；`tests_photo_to_3d.py` 要用本機 MySQL 跑一次。
 
 **P2-11**
 20. UV 70mm 改用 70 之後，既有以 75 校正的參數用換算，還是要求重新校正？
@@ -431,7 +433,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 ## 11. Risks & follow-ups
 
 - **照片轉 3D 的點數**：百萬點級的點雲對前端顯示與 Swiftray 工時都是壓力；前端計算已量測（§6.2.7），顯示與工時待上機。
-- **照片轉 3D 還不能端到端使用**：flux-id API 尚未實作（§10 #21），Beam Studio 端以 §7 的格式寫好並測過，整條流程要等 API 完成後上機驗證。
+- **照片轉 3D 尚未端到端驗證**：flux-id API 只做了靜態檢查（§10 #21），DA3 的輸入、輸出結構若和推測不同，`read_depth_output` 會回 `API_ERROR`、不扣點。整條流程要上機驗證。
 - **付費取得但未用掉的深度只留在記憶體**：點數過多時保留深度供重試，但關閉 Beam Studio 後就沒了。
 - **收邊只測過 4mm**，而且是在寬 100mm 的條件下，其他尺寸要以比例換算。
 - **端面填充的能量累積**：端面填充的密度遠高於輪廓，可能在內雕材料中造成裂痕，要上機測試間隔下限。
@@ -461,10 +463,10 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
   - 端面：方塊內縮、帶孔、兩個 shell 貼合、傾斜 0.5° 與 30°。
   - 過近點過濾。
   - 打線不分桶只做語法編譯檢查，沒有單元測試：`outputLayerStlGcode` 需要整個 exporter。
-- **flux-id**（API 實作後補）：以 `unittest.mock.patch` 換掉 `replicate.run`，涵蓋：
+- **flux-id**（`fluxid/apps/api/tests_photo_to_3d.py`，已寫、未執行）：以 `unittest.mock.patch` 換掉 `replicate.run`，涵蓋：
   - 去背 / 不去背各呼叫哪些模型。
   - 遮罩合成（alpha 與 sky）。
-  - 只在成功後扣點，任一步失敗不扣。
+  - 只在成功後扣點，任一步失敗不扣；點數不足、沒有圖、未登入時都不呼叫模型。
 - **手動測試**：§4 的每個情境；Desktop / MOPA 跑一次 §5 的回歸合約。
 - **硬體測試**：
   - 照片轉 3D 實際雕刻，比較收邊 0 / 2 / 4 / 6mm。
