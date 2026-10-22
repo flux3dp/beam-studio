@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Mod Ukiran',
     euler_order: 'XYZ',
     fill: 'Isi',
+    fill_caps: 'Isi Permukaan Atas dan Bawah',
+    fill_caps_hint: 'Selain kontur setiap lapisan, turut mengisi permukaan yang menghadap terus ke atas atau ke bawah, mengikut selang isian. Lubang pada permukaan dibiarkan kosong.',
     fit_to_engravable: 'Muat ke Kawasan Boleh Ukir',
     flip: 'Terbalik',
     focus_reminder: 'Mesin tidak dapat membaca kedudukan Z. Fokuskan laser pada platform kerja secara manual sebelum memulakan tugas.',

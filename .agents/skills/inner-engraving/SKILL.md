@@ -175,17 +175,23 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
 | `stlLayerSpacing` | `data-stl-layer-spacing` | mm, line Z step and Thick Contour inward-shell step |
 | `stlMinLayerSpacing` | `data-stl-min-layer-spacing` | mm, > 0 = adaptive line slicing |
 | `stlSolid` | `data-stl-solid` | dot mode only, shown as **Thick Contour** (`inner_engraving_settings.thick_contour`): also dot up to 2 inward shells (Swiftray `max_shell_count` 3); the stored key keeps the old name |
+| `stlFillCaps` | `data-stl-fill-caps` | line mode only, **Fill Top and Bottom Faces** (`inner_engraving_settings.fill_caps`): also fill the faces leaning ≤ 1° from horizontal (Swiftray `Slicer::capFaces`), holes left empty, inset half an interval |
+| `stlCapInterval` | `data-stl-cap-interval` | mm, scan-line interval of that fill (`DEFAULT_CAP_INTERVAL` 0.01, `CAP_INTERVAL_LIMIT` like the 2D fill interval); the fill angle, bidirectional, cross hatch and UV heat options are the layer's 2D fill settings |
 
 - Swiftray reads them off the layer `<g>` (`createGNode` → `Layer::stl*`) and copies them onto each
   object when it is collected (`ToolpathExporter::resolveStlPlacement`); nothing is read off the
   rect. The defaults are the measured K9 values and match `kDefaultStl*` in `toolpath-exporter.cpp`.
-- Photos and point clouds are always dotted; meshes follow the mode. There is no line + fill mode.
+- Photos and point clouds are always dotted; meshes follow the mode. The only fill in line mode is the
+  top / bottom face fill; there is no solid line mode.
+- The face fill is not a preset key (not in `presetRelatedConfigs`): toggling it or its interval keeps the
+  layer's preset name, and applying a preset keeps the layer's face fill.
 - Written only while inner engraving is on: `getConfigKeys`, `getDefaultConfig` and the layer
   readers (`getLayerConfig` / `getLayersConfig` / `cloneLayerConfig`) leave them out otherwise, so
   2D layers never carry `data-stl-*`.
-- UI: `EngravingModeBlock`, `SolidBlock` and the point / layer spacing `NumberBlock`s in
-  `ConfigPanel`; adaptive spacing in `AdvancedSettingModal`. `getInnerEngravingBlocks` decides what
-  shows (a layer holding a photo, `layerStore.hasStlPhoto`, always shows the dot parameters). Speed
+- UI: `EngravingModeBlock`, `SolidBlock`, `FillCapsBlock` and the point / layer spacing / face fill
+  interval `NumberBlock`s in `ConfigPanel`; adaptive spacing in `AdvancedSettingModal`. `getInnerEngravingBlocks` decides what
+  shows (a layer holding a photo, `layerStore.hasStlPhoto`, always shows the dot parameters; the face
+  fill interval only while the face fill is on). Speed
   shows only in line mode, dotting time with the dot parameters. (Q pulse width in `DevBlock` is a general
   Promark UV dev field under `isDev()`, not an inner-engraving one.)
 - With the mode on, `getDefaultConfig` applies `innerEngravingDefaults` (110 kHz, dotting 150 µs,

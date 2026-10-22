@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: '彫刻モード',
     euler_order: 'XYZ',
     fill: '塗りつぶし',
+    fill_caps: '上下の端面を塗りつぶす',
+    fill_caps_hint: '各層の輪郭に加えて、真上または真下を向いた面も塗りつぶし間隔で塗りつぶします。面の穴は塗りつぶしません。',
     fit_to_engravable: '彫刻可能範囲に合わせる',
     flip: '反転',
     focus_reminder: '機械は現在の Z 軸位置を読み取れません。ジョブを開始する前に、手動でレーザーの焦点を作業台に合わせてください。',

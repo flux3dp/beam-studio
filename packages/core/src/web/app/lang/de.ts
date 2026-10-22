@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Graviermodus',
     euler_order: 'XYZ',
     fill: 'Füllen',
+    fill_caps: 'Ober- und Unterseite füllen',
+    fill_caps_hint: 'Füllt zusätzlich zur Kontur jeder Schicht die Flächen, die genau nach oben oder unten zeigen, im Füllabstand. Löcher in einer Fläche bleiben leer.',
     fit_to_engravable: 'An gravierbaren Bereich anpassen',
     flip: 'Spiegeln',
     focus_reminder: 'Die Maschine kann ihre Z-Position nicht lesen. Fokussieren Sie den Laser vor dem Start eines Auftrags manuell auf die Arbeitsplattform.',

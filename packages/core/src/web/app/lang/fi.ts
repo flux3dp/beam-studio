@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Kaiverrustila',
     euler_order: 'XYZ',
     fill: 'Täyttö',
+    fill_caps: 'Täytä ylä- ja alapinnat',
+    fill_caps_hint: 'Jokaisen kerroksen ääriviivan lisäksi täyttää myös suoraan ylös- tai alaspäin osoittavat pinnat täyttövälillä. Pinnan reiät jäävät tyhjiksi.',
     fit_to_engravable: 'Sovita kaiverrettavalle alueelle',
     flip: 'Käännä',
     focus_reminder: 'Laite ei pysty lukemaan Z-asemaansa. Tarkenna laser manuaalisesti työalustalle ennen työn aloittamista.',

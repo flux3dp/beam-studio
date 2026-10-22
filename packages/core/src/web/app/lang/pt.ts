@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Modo de Gravação',
     euler_order: 'XYZ',
     fill: 'Preenchimento',
+    fill_caps: 'Preencher faces superior e inferior',
+    fill_caps_hint: 'Além do contorno de cada camada, preenche também as faces voltadas diretamente para cima ou para baixo, com o intervalo de preenchimento. Os furos de uma face ficam vazios.',
     fit_to_engravable: 'Ajustar à Área Gravável',
     flip: 'Inverter',
     focus_reminder: 'A máquina não consegue ler sua posição Z. Foque o laser manualmente na plataforma de trabalho antes de iniciar um trabalho.',

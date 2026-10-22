@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Režim gravírování',
     euler_order: 'XYZ',
     fill: 'Výplň',
+    fill_caps: 'Vyplnit horní a spodní plochy',
+    fill_caps_hint: 'Kromě obrysu každé vrstvy vyplní i plochy směřující přímo nahoru nebo dolů, s intervalem výplně. Otvory v ploše zůstanou prázdné.',
     fit_to_engravable: 'Přizpůsobit oblasti pro gravírování',
     flip: 'Převrátit',
     focus_reminder: 'Stroj nemůže načíst svou polohu Z. Před spuštěním úlohy ručně zaostřete laser na pracovní platformu.',

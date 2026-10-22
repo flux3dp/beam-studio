@@ -149,6 +149,10 @@ type PromarkConfig = {
 
 /** Inner engraving (3D objects), written on the layer only while the mode is active */
 type InnerEngravingConfig = {
+  /** mm, scan-line interval of the top and bottom face fill */
+  stlCapInterval: number;
+  /** line mode only: also fill the top and bottom faces */
+  stlFillCaps: boolean;
   /** mm, Z step in line mode, inward-shell step in solid dot mode */
   stlLayerSpacing: number;
   /** mm, > 0 opts line-mode slicing into adaptive spacing down to this value, 0 for off */

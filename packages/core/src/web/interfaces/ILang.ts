@@ -1790,6 +1790,8 @@ export interface ILang {
     engraving_mode: string;
     euler_order: string;
     fill: string;
+    fill_caps: string;
+    fill_caps_hint: string;
     fit_to_engravable: string;
     flip: string;
     focus_reminder: string;

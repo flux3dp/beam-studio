@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Tryb grawerowania',
     euler_order: 'XYZ',
     fill: 'Wypełnienie',
+    fill_caps: 'Wypełnij górną i dolną powierzchnię',
+    fill_caps_hint: 'Oprócz konturu każdej warstwy wypełnia również powierzchnie skierowane prosto w górę lub w dół, z odstępem wypełnienia. Otwory w powierzchni pozostają puste.',
     fit_to_engravable: 'Dopasuj do obszaru grawerowania',
     flip: 'Odbij',
     focus_reminder: 'Maszyna nie może odczytać swojej pozycji Z. Przed rozpoczęciem zadania ręcznie ustaw ostrość lasera na platformie roboczej.',

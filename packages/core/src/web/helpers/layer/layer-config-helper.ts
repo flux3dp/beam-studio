@@ -2,7 +2,7 @@ import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
-import { DEFAULT_LAYER_SPACING, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
+import { DEFAULT_CAP_INTERVAL, DEFAULT_LAYER_SPACING, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import {
   fullColorModules,
@@ -99,6 +99,8 @@ export const attributeMap: Record<ConfigKey, string> = {
   speed: 'data-speed',
   split: 'data-split',
   // inner engraving: the same names Swiftray reads off the layer
+  stlCapInterval: 'data-stl-cap-interval',
+  stlFillCaps: 'data-stl-fill-caps',
   stlLayerSpacing: 'data-stl-layer-spacing',
   stlMinLayerSpacing: 'data-stl-min-layer-spacing',
   stlMode: 'data-stl-mode',
@@ -267,6 +269,7 @@ export const booleanConfig: ConfigKey[] = [
   'texture',
   'focusReverse',
   'focusStepReverse',
+  'stlFillCaps',
   'stlSolid',
 ] as const;
 export const optionalNumberConfigs: ConfigKey[] = ['printingTopPadding', 'printingBotPadding'] as const;
@@ -303,6 +306,8 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'stlLayerSpacing',
   'stlMinLayerSpacing',
   'stlSolid',
+  'stlFillCaps',
+  'stlCapInterval',
   // UV
   'interpolation',
   'rightPadding',
@@ -382,6 +387,8 @@ export const innerEngravingConfigKeys: ConfigKey[] = [
   'stlLayerSpacing',
   'stlMinLayerSpacing',
   'stlSolid',
+  'stlFillCaps',
+  'stlCapInterval',
 ] as const;
 
 /**
@@ -392,6 +399,8 @@ const innerEngravingDefaults: Partial<ConfigKeyTypeMap> = {
   dottingTime: 150,
   frequency: 110,
   speed: 180,
+  stlCapInterval: DEFAULT_CAP_INTERVAL,
+  stlFillCaps: false,
   stlLayerSpacing: DEFAULT_LAYER_SPACING,
   stlMinLayerSpacing: 0,
   stlMode: 'dot',
