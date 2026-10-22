@@ -9,7 +9,6 @@ const mockIsDev = jest.fn();
 jest.mock('@core/helpers/is-dev', () => ({
   __esModule: true,
   default: () => mockIsDev(),
-  isUvDev: () => true,
 }));
 
 jest.mock('@core/implementations/storage', () => ({
@@ -204,6 +203,22 @@ describe('test AdvancedSettingModal', () => {
     const { baseElement } = render(<AdvancedSettingModal onClose={mockOnClose} />);
 
     expect(baseElement.querySelector('#frequency')).toBeNull();
+  });
+
+  test('line dwell and scattered scan order are for UV only', () => {
+    const { baseElement, unmount } = render(<AdvancedSettingModal onClose={mockOnClose} />);
+
+    expect(baseElement.querySelector('#fillInterleave')).toBeNull();
+    expect(baseElement.querySelector('#fillDwell')).toBeNull();
+    unmount();
+
+    mockUseIsPromarkUV.mockReturnValue(true);
+    mockGetState.mockReturnValue({ ...mockGetState(), frequency: { hasMultiValue: false, value: 40 } });
+
+    const { baseElement: uvElement } = render(<AdvancedSettingModal onClose={mockOnClose} />);
+
+    expect(uvElement.querySelector('#fillInterleave')).not.toBeNull();
+    expect(uvElement.querySelector('#fillDwell')).not.toBeNull();
   });
 
   test('UV frequency writes the linked power', () => {
