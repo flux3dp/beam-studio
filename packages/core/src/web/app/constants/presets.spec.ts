@@ -44,4 +44,11 @@ describe('Promark UV presets', () => {
       expect(Object.keys(preset).some((key) => key.startsWith('stl'))).toBe(false);
     });
   });
+
+  test('only PLA pauses after each line; every other 2D UV preset turns the line dwell off', () => {
+    uv2d.forEach(([key, preset]) => {
+      if (key === 'pla_engraving') expect(preset.fillDwellTime).toBe(50000);
+      else expect(preset.fillDwellTime).toBeLessThan(0);
+    });
+  });
 });

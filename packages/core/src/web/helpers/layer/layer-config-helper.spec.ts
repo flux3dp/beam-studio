@@ -527,6 +527,15 @@ describe('test layer-config-helper', () => {
       expect(getData(layer, 'power')).toBe(15);
     });
 
+    test('a preset after PLA turns its line dwell off', () => {
+      const layer = createUvLayer();
+
+      applyPreset(layer, { fillDwellTime: 50000, frequency: 40, speed: 300 });
+      expect(getData(layer, 'fillDwellTime')).toBe(50000);
+      applyPreset(layer, { fillDwellTime: -50000, frequency: 40, speed: 400 });
+      expect(getData(layer, 'fillDwellTime')).toBe(-50000);
+    });
+
     test('applyPreset leaves other Promark sources alone', () => {
       mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.MOPA, watt: 60 });
 

@@ -10,7 +10,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import isDev, { isUvDev } from '@core/helpers/is-dev';
+import isDev from '@core/helpers/is-dev';
 import { CUSTOM_PRESET_CONSTANT, getPromarkLimit, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import { uvFrequencyToPower } from '@core/helpers/layer/uvPowerFrequency';
@@ -66,8 +66,6 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
   // UV sets its power through the frequency, so the frequency lives here instead of the main panel
   const isPromarkUV = useIsPromarkUV();
   const frequencyLimit = useMemo(() => getPromarkLimit().frequency, []);
-  // UV heat-accumulation test params, read by Swiftray but not settled for release yet
-  const showFillHeatTest = useMemo(() => isUvDev(), []);
   const repeat = state.repeat.value;
 
   const handleSave = () => {
@@ -396,7 +394,7 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
                 onChange={(value) => handleValueChange('crossHatch', value)}
               />
             </div>
-            {showFillHeatTest && (
+            {isPromarkUV && (
               <>
                 <div>
                   <span>
