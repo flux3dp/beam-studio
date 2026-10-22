@@ -3073,6 +3073,7 @@ export interface ILang {
       polygon: string;
       rect: string;
       stl: string;
+      stl_multi: string;
       svg: string;
       text: string;
       text_path: string;

@@ -24,6 +24,7 @@ import ActionsPanelStl from './ActionsPanelStl';
 import ConfigPanel from './ConfigPanel/ConfigPanel';
 import DimensionPanel from './DimensionPanel/DimensionPanel';
 import DimensionPanelStl from './DimensionPanel/DimensionPanelStl';
+import DimensionPanelStlMulti from './DimensionPanel/DimensionPanelStlMulti';
 import styles from './ObjectPanel.module.scss';
 import ObjectPanelItem from './ObjectPanelItem';
 import OptionsPanel from './OptionsPanel';
@@ -48,7 +49,10 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const elem = useSelectedElementStore((state) => state.selectedElement);
   // an STL object is a 3D mesh behind a projection rect: the rect's tagName says 'rect', so every
   // dispatch here has to go through nodeType instead
-  const isStl = useSelectedElementStore((state) => state.nodeType) === 'stl';
+  const nodeType = useSelectedElementStore((state) => state.nodeType);
+  const isStlMulti = nodeType === 'stl_multi';
+  const isStl = nodeType === 'stl' || isStlMulti;
+  const stlIds = useSelectedElementStore(useShallow((state) => state.selectedElements.map(({ id }) => id)));
   const sourceType = isPhotoPlaneProjection(elem) ? 'image' : elem ? getExtrusionSourceTagName(elem) : null;
   const groupAvailability = useSelectedElementStore(
     useShallow((state) => ({ group: state.canGroup, ungroup: state.canUngroup })),
@@ -314,28 +318,30 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const renderDimensionPanel = (): React.ReactNode => {
     // the 2D panel edits the projection rect's own x/y/w/h, which are derived values: the edit would
     // be thrown away by the next re-projection. The STL version edits the 3D transform instead
+    if (isStlMulti) return <DimensionPanelStlMulti ids={stlIds} />;
+
     if (isStl) return <DimensionPanelStl id={elem!.id} />;
 
     return <DimensionPanel elem={elem as SVGElement} />;
   };
 
-  const renderOptionPanel = (): React.JSX.Element => {
-    return <OptionsPanel elem={elem as SVGElement} />;
-  };
+  // the 3D options belong to one object's source (its text, its image), which a multi-selection has none of
+  const renderOptionPanel = (): null | React.JSX.Element =>
+    isStlMulti ? null : <OptionsPanel elem={elem as SVGElement} />;
 
   const renderActionPanel = (): React.JSX.Element =>
     isStl ? (
       <>
-        {sourceType && <ActionsPanel elem={elem as SVGElement} is3d typeOverride={sourceType} />}
-        <ActionsPanelStl id={elem!.id} />
+        {sourceType && !isStlMulti && <ActionsPanel elem={elem as SVGElement} is3d typeOverride={sourceType} />}
+        <ActionsPanelStl ids={stlIds} />
       </>
     ) : (
       <ActionsPanel elem={elem as SVGElement} />
     );
 
   // the tool row is entirely about arranging several objects relative to each other — align,
-  // distribute, group, boolean — and none of it applies to an STL object: group and boolean are
-  // 2D-only, and the 3D canvas has no multi-selection to align or distribute
+  // distribute, group, boolean — and none of it applies to STL objects: group and boolean are
+  // 2D-only, and they would move projection rects that the 3D objects do not follow
   const contents = isMobile ? (
     <>
       {renderCommonActionPanel()}

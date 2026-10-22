@@ -3173,6 +3173,7 @@ const lang: ILang = {
       polygon: '多邊形',
       rect: '矩形',
       stl: 'STL 物件',
+      stl_multi: '多個物件',
       svg: 'SVG 物件',
       text: '文字',
       text_path: '路徑文字',

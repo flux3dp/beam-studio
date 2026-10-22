@@ -42,6 +42,14 @@ jest.mock(
 );
 
 jest.mock(
+  './DimensionPanel/DimensionPanelStlMulti',
+  () =>
+    function DummyDimensionPanelStlMulti({ ids }: { ids: string[] }) {
+      return <div>This is dummy DimensionPanelStlMulti {ids.join(',')}</div>;
+    },
+);
+
+jest.mock(
   './OptionsPanel',
   () =>
     function DummyOptionsPanel() {
@@ -241,6 +249,31 @@ describe('should render correctly', () => {
 
       expect(getByText('This is dummy ActionsPanel')).toBeInTheDocument();
       expect(getByText('This is dummy ActionsPanelStl')).toBeInTheDocument();
+    });
+
+    test('several 3D objects get the 3D panels and none of the 2D tools', () => {
+      document.body.innerHTML = '<rect id="svg_1" data-stl="1" /><rect id="svg_2" data-stl="1" />';
+      useStlStore.setState({
+        objects: { svg_1: { id: 'svg_1' } as StlObject, svg_2: { id: 'svg_2' } as StlObject },
+      });
+
+      const elems = [document.getElementById('svg_1')!, document.getElementById('svg_2')!];
+
+      elems[0].setAttribute(
+        'data-stl-source',
+        JSON.stringify({ depth: 1, markup: '<text>Flux</text>', scale: 0.1, type: 'svg' }),
+      );
+      useSelectedElementStore.getState().setSelectedElement(elems[0], elems);
+      expect(useSelectedElementStore.getState()).toMatchObject({ canGroup: false, nodeType: 'stl_multi' });
+
+      const { container, getByText, queryByText } = render(<ObjectPanel />);
+
+      expect(getByText('This is dummy DimensionPanelStlMulti svg_1,svg_2')).toBeInTheDocument();
+      expect(getByText('This is dummy ActionsPanelStl')).toBeInTheDocument();
+      // the first object's source actions and options are not the selection's
+      expect(queryByText('This is dummy ActionsPanel')).toBeNull();
+      expect(queryByText('This is dummy OptionsPanel')).toBeNull();
+      expect(container.querySelector('button[title="Group"]')).toBeNull();
     });
 
     test('is g element', () => {

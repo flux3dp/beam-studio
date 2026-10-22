@@ -35,7 +35,10 @@ export interface DerivedData {
 interface SelectedElementStoreState {
   refreshState: () => void;
   selectedElement: Element | null;
-  setSelectedElement: (element: Element | null) => void;
+  /** Every selected element. Only inner engraving has more than one here: 2D gathers a
+   *  multi-selection into its temporary group, which is then the one `selectedElement`. */
+  selectedElements: Element[];
+  setSelectedElement: (element: Element | null, elements?: Element[]) => void;
 }
 
 const defaultElementState: DerivedData = {
@@ -46,11 +49,20 @@ const defaultElementState: DerivedData = {
   nodeType: 'no_selection',
 };
 
-const getNodeType = (elem: Element | null): { nodeCategory: CanvasNodeCategory; nodeType: CanvasNodeType } => {
+const isStlObject = (elem: Element): boolean =>
+  is3dProjection(elem) && Boolean(useStlStore.getState().objects[elem.id]);
+
+const getNodeType = (
+  elem: Element | null,
+  elements: Element[],
+): { nodeCategory: CanvasNodeCategory; nodeType: CanvasNodeType } => {
   let nodeType: CanvasNodeType = 'no_selection';
 
   if (elem) {
-    if (elem.getAttribute('data-tempgroup') === 'true') {
+    if (elements.length > 1 && elements.every(isStlObject)) {
+      // several 3D objects are selected side by side, without a temporary group (see SelectionManager)
+      nodeType = 'stl_multi';
+    } else if (elem.getAttribute('data-tempgroup') === 'true') {
       nodeType = 'multi_select';
     } else {
       if (elem.getAttribute('data-textpath-g')) {
@@ -61,7 +73,7 @@ const getNodeType = (elem: Element | null): { nodeCategory: CanvasNodeCategory; 
         nodeType = 'fit_text';
       } else if (elem.getAttribute('data-pass-through')) {
         nodeType = 'pass_through_object';
-      } else if (is3dProjection(elem) && Boolean(useStlStore.getState().objects[elem.id])) {
+      } else if (isStlObject(elem)) {
         nodeType = 'stl';
       } else if (elem.tagName.toLowerCase() !== 'use') {
         nodeType = elem.tagName.toLowerCase() as CanvasNodeType;
@@ -80,17 +92,20 @@ const getNodeType = (elem: Element | null): { nodeCategory: CanvasNodeCategory; 
   return { nodeCategory, nodeType };
 };
 
-export const getDerivedData = (selectedElement: Element | null): DerivedData => {
+export const getDerivedData = (
+  selectedElement: Element | null,
+  selectedElements: Element[] = selectedElement ? [selectedElement] : [],
+): DerivedData => {
   const state: DerivedData = { ...defaultElementState };
 
   if (!selectedElement) return state;
 
-  const { nodeCategory, nodeType } = getNodeType(selectedElement);
+  const { nodeCategory, nodeType } = getNodeType(selectedElement, selectedElements);
 
   state.nodeCategory = nodeCategory;
   state.nodeType = nodeType;
 
-  state.canGroup = !['g', 'pass_through_object', 'stl', 'text_path'].includes(nodeType);
+  state.canGroup = !['g', 'pass_through_object', 'stl', 'stl_multi', 'text_path'].includes(nodeType);
   state.canUngroup = nodeType === 'g';
   state.canUngroupOrDisassemble = state.canUngroup || nodeCategory === 'use';
 
@@ -100,11 +115,12 @@ export const getDerivedData = (selectedElement: Element | null): DerivedData => 
 export const useSelectedElementStore = create(
   subscribeWithSelector<DerivedData & SelectedElementStoreState>((set, get) => ({
     refreshState: () => {
-      set(getDerivedData(get().selectedElement));
+      set(getDerivedData(get().selectedElement, get().selectedElements));
     },
     selectedElement: null,
-    setSelectedElement: (element: Element | null) => {
-      set({ selectedElement: element, ...getDerivedData(element) });
+    selectedElements: [],
+    setSelectedElement: (element: Element | null, elements: Element[] = element ? [element] : []) => {
+      set({ selectedElement: element, selectedElements: elements, ...getDerivedData(element, elements) });
     },
     ...getDerivedData(null),
   })),

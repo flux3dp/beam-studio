@@ -3172,6 +3172,7 @@ const lang: ILang = {
       polygon: 'Veelhoek',
       rect: 'Rechthoek',
       stl: 'STL-object',
+      stl_multi: 'Meerdere objecten',
       svg: 'SVG-object',
       text: 'Tekst',
       text_path: 'Tekst op pad',

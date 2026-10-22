@@ -100,8 +100,9 @@ All paths under `packages/core/src/web/` unless noted.
 - `writeDataLayer(..., 'repeat', ...)` forces `1` when active (`helpers/layer/layer-config-helper.ts`);
   `ConfigPanel` hides `DpiBlock`, `FillIntervalBlock` and `RepeatBlock` (speed / dotting time follow
   `getInnerEngravingBlocks`, see below); `SvgEditor` hides `Ruler` and `DpiInfo`.
-- **Single selection**: `SelectionManager.setSelectedElements` / `addToSelection` /
-  `tempGroupSelectedElements` keep only the last element — no multi-select or temp groups.
+- **No temp groups**: a multi-selection stays a flat `selectedElements` list
+  (`SelectionManager.tempGroupSelectedElements` returns early), because moving projections into a
+  group would take them out of the layers each mesh reads its colour / lock / visibility from.
 - Path Preview is available (it draws the dots from the job's gcode, see the `path-preview`
   skill). The Generators drawer and left-panel button are
   hidden except under `isUvDev()` (`DrawingToolButtonGroup.tsx` `supportedIn3D`; `SvgEditor.tsx`
@@ -136,8 +137,18 @@ All paths under `packages/core/src/web/` unless noted.
   `collectStlObjects` walks into layer groups; `createClonedStlObjects` re-keys in-place copies
   (shares geometry/buffers). Clipboard: `stl/clipboard.ts` (`createPastedStlObject`,
   `syncStlTransformsFromRects`, `moveStlObjectsByCanvasDelta` for arrow keys in `svg-editor.ts`).
-- Selection: `selectStlObject(id)` (`utils/selection.ts`) sets `stlStore.selectedId` *and* svgedit
-  selection *and* the layer. Don't call `setSelectedId` directly from click handlers.
+- Selection: `selectStlObjects(ids)` / `selectStlObject(id)` / `toggleStlObjectSelection(id)`
+  (Shift-click) in `utils/selection.ts` set `stlStore.selectedIds` *and* svgedit selection *and*
+  the layers. Don't call `setSelectedIds` directly from click handlers; `InnerEngravingCanvas`
+  mirrors `selectedElementStore.selectedElements` back into it. Several selected 3D objects are
+  nodeType `stl_multi` (`ObjectPanel` → `DimensionPanelStlMulti`, `canGroup` false).
+- Multi-selection transforms: `utils/groupTransform.ts` — `transformInGroup` (one delta about a
+  pivot: `position' = pivot + t + Q·s·M·(position − pivot)`, `R' = Q·M·R·M`, uniform scale, mirror
+  toggles `flip`), `applyGroupTransform` (one `BatchCommand`), `moveObjectsCenterTo` /
+  `fitObjectsTo`, and the gizmo helpers used by `GroupTransformControls.tsx` (a proxy group at the
+  union-box centre). Euler angles come from `toEulerXYZ`, not three's `setFromRotationMatrix`, whose
+  gimbal-lock threshold drops Z within ~0.03° of Y = ±90°. `groupTransform.spec.ts` checks every
+  case against the plain delta matrix on mesh corners — keep it that way when touching the math.
 - Mesh colour/visibility/lock come from the projection's owning layer (`useObjectLayerState` /
   `getObjectLayerState` in `utils/useLayerColor.ts`, subscribed to `useLayerStore`), so any layer
   store update re-renders the meshes. Layer ops that change the DOM without one must publish it:
@@ -265,7 +276,7 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   store write + re-project + `StlTransformCommand` (pushed to `parentCmd` or `undoManager`). The
   command's `elements()` returns the rect; `restore` no-ops if the object is already gone.
 - Everything outside the gizmo moves objects through `setTransform` (`DimensionPanelStl`,
-  `ActionsPanelStl` → `fitObjectTo` / `moveObjectCenterTo`, clipboard corrections). A bare
+  `ActionsPanelStl` → `fitObjectsTo` / `moveObjectsCenterTo`, clipboard corrections). A bare
   `stlStore.setTransform` leaves the rect — and framing, export, .beam — stale.
 - `undoManager.appendCommandToLast(cmd, text, expectedElement?)` folds an async follow-up into the
   latest step, falling back to a new step if the pointer moved or the last step does not involve
@@ -319,9 +330,11 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   drawer/button in 3D (3D material-test generator); cylinder / sphere materials (offered in
   `InnerEngravingSettings`, and `getMaterialShape` in `InnerEngraving/utils/material.ts` reads a stored
   round shape as `box` otherwise — material geometry, settings dialog and framing all go through it);
-  UV heat-test params (`fillInterleave`, `fillDwellTime`, `fillDwellAdaptive`) in
-  `AdvancedSettingModal` and as 2D UV material-test axes; Swiftray dev config overrides and
-  `first_pulse_killer_enabled` in `svg-laser-parser.ts`.
+  Swiftray dev config overrides and `first_pulse_killer_enabled` in `svg-laser-parser.ts`.
+- Not gated: the UV fill heat options (`fillInterleave`, `fillDwellTime`, `fillDwellAdaptive`) show
+  in `AdvancedSettingModal` and as 2D UV material-test axes whenever the source is Promark UV. Every
+  `fpm1_2_5` preset sets `fillDwellTime` (PLA 50000, others -50000 = off) because `applyPreset`
+  keeps keys a preset omits.
 
 ## Invariants & gotchas
 

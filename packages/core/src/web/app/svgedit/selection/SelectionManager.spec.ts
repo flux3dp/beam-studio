@@ -41,7 +41,7 @@ const createElement = (id: string): SVGRectElement => {
   return elem;
 };
 
-describe('SelectionManager single selection in inner engraving', () => {
+describe('SelectionManager multi-selection in inner engraving', () => {
   const call = jest.fn();
   const collectAlignPoints = jest.fn();
   const addSvgElementFromJson = jest.fn();
@@ -54,7 +54,7 @@ describe('SelectionManager single selection in inner engraving', () => {
     manager.init({ addSvgElementFromJson, call, collectAlignPoints } as unknown as ISVGCanvas, {} as ISVGEditor);
   });
 
-  it('replaces an existing selection when another element is added in 3D mode', () => {
+  it('adds to an existing selection in 3D mode', () => {
     mockIsInnerEngravingActive.mockReturnValue(true);
 
     const first = createElement('first');
@@ -63,12 +63,12 @@ describe('SelectionManager single selection in inner engraving', () => {
     manager.addToSelection([first]);
     manager.addToSelection([second]);
 
-    expect(manager.getSelectedElements()).toEqual([second]);
-    expect(mockReleaseSelector).toHaveBeenCalledWith(first);
-    expect(call).toHaveBeenLastCalledWith('selected', [second]);
+    expect(manager.getSelectedElements()).toEqual(expect.arrayContaining([first, second]));
+    expect(manager.getSelectedElements()).toHaveLength(2);
+    expect(mockReleaseSelector).not.toHaveBeenCalled();
   });
 
-  it('reduces marquee selection to one object without creating a temporary group in 3D mode', () => {
+  it('keeps a marquee selection as a flat list without a temporary group in 3D mode', () => {
     mockIsInnerEngravingActive.mockReturnValue(true);
 
     const first = createElement('first');
@@ -76,20 +76,19 @@ describe('SelectionManager single selection in inner engraving', () => {
 
     manager.multiSelect([first, second]);
 
-    expect(manager.getSelectedElements()).toEqual([second]);
+    expect(manager.getSelectedElements()).toHaveLength(2);
     expect(manager.isMultiSelecting).toBe(false);
     expect(addSvgElementFromJson).not.toHaveBeenCalled();
   });
 
-  it('collapses a selection that existed before entering 3D mode', () => {
+  it('never groups a selection in 3D mode', () => {
     const first = createElement('first');
     const second = createElement('second');
 
     manager.setSelectedElements([first, second]);
     mockIsInnerEngravingActive.mockReturnValue(true);
-    manager.tempGroupSelectedElements();
 
-    expect(manager.getSelectedElements()).toEqual([second]);
+    expect(manager.tempGroupSelectedElements()).toEqual([first, second]);
     expect(addSvgElementFromJson).not.toHaveBeenCalled();
   });
 

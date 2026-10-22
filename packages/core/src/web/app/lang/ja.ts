@@ -3172,6 +3172,7 @@ const lang: ILang = {
       polygon: 'ポリゴン',
       rect: '矩形',
       stl: 'STLオブジェクト',
+      stl_multi: '複数オブジェクト',
       svg: 'SVGオブジェクト',
       text: 'テキスト',
       text_path: 'パステキスト',

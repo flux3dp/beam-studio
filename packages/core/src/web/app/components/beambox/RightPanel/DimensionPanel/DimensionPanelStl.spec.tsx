@@ -49,7 +49,7 @@ describe('DimensionPanelStl', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     document.body.innerHTML = '<svg><rect data-ratiofixed="true" id="stl" /></svg>';
-    useStlStore.setState({ objects: { stl: object }, selectedId: 'stl' });
+    useStlStore.setState({ objects: { stl: object }, selectedIds: ['stl'] });
     useViewStore.setState({ transformMode: 'translate' });
     mockChangeSelectedAttribute.mockImplementation((attr: string, value: string, elems: Element[]) => {
       elems.forEach((elem) => elem.setAttribute(attr, value));

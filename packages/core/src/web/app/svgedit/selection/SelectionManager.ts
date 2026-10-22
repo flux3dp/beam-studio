@@ -43,7 +43,7 @@ export class SelectionManager {
   }
 
   setSelectedElements(elems: SVGElement[]): void {
-    this.selectedElements = isInnerEngravingActive() ? elems.slice(-1) : elems;
+    this.selectedElements = elems;
   }
 
   // --- Selection operations ---
@@ -72,19 +72,6 @@ export class SelectionManager {
     elemsToAdd = elemsToAdd.filter(Boolean);
 
     if (elemsToAdd.length === 0) return;
-
-    if (isInnerEngravingActive()) {
-      // 3D transforms and the STL store have a single selected object. Replace the current
-      // selection here so Shift-click, marquee selection and layer-panel selection cannot create
-      // a hidden svgedit multi-selection behind the 3D canvas.
-      const elem = elemsToAdd.at(-1)!;
-
-      elemsToAdd = [elem];
-
-      if (this.selectedElements.length !== 1 || this.selectedElements[0] !== elem) {
-        this.clearSelection(true);
-      }
-    }
 
     // now add each element consecutively
     for (let i = elemsToAdd.length - 1; i >= 0; i -= 1) {
@@ -172,11 +159,10 @@ export class SelectionManager {
   // --- TempGroup operations ---
 
   tempGroupSelectedElements = (): SVGElement[] => {
-    if (isInnerEngravingActive() && this.selectedElements.length > 1) {
-      this.selectOnly(this.selectedElements.slice(-1), true);
-
-      return this.selectedElements;
-    }
+    // Inner engraving keeps a multi-selection as a flat list. Moving the projections into a group
+    // would take them out of their layers, which is where each 3D object reads its colour, lock and
+    // visibility from, and the 3D canvas transforms the objects as a whole by itself.
+    if (isInnerEngravingActive()) return this.selectedElements;
 
     if (this.selectedElements.length <= 1) {
       return this.selectedElements;

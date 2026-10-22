@@ -3172,6 +3172,7 @@ const lang: ILang = {
       polygon: 'Polygon',
       rect: 'Obdélník',
       stl: 'STL objekt',
+      stl_multi: 'Několik objektů',
       svg: 'SVG objekt',
       text: 'Text',
       text_path: 'Text na cestě',

@@ -3172,6 +3172,7 @@ const lang: ILang = {
       polygon: 'Vieleck',
       rect: 'Rechteck',
       stl: 'STL-Objekt',
+      stl_multi: 'Mehrfachauswahl',
       svg: 'SVG-Objekt',
       text: 'Text',
       text_path: 'Pfadtext',

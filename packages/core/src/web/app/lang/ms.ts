@@ -3172,6 +3172,7 @@ const lang: ILang = {
       polygon: 'Poligon',
       rect: 'Segi empat tepat',
       stl: 'Objek STL',
+      stl_multi: 'Beberapa Objek',
       svg: 'Objek SVG',
       text: 'Teks',
       text_path: 'Teks pada Laluan',

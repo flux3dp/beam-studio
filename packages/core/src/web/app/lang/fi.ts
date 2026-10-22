@@ -3172,6 +3172,7 @@ const lang: ILang = {
       polygon: 'Monikulmio',
       rect: 'Suorakaide',
       stl: 'STL-kohde',
+      stl_multi: 'Useita kohteita',
       svg: 'SVG-kohde',
       text: 'Teksti',
       text_path: 'Teksti polulla',

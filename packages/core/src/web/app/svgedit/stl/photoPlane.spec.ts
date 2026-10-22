@@ -39,7 +39,7 @@ describe('photoPlane', () => {
   beforeEach(() => {
     document.body.innerHTML = '<svg id="svgcontent"></svg>';
     mockUpdateProjectionRect.mockClear();
-    useStlStore.setState({ objects: {}, selectedId: null });
+    useStlStore.setState({ objects: {}, selectedIds: [] });
   });
 
   test('creates a zero-thickness textured plane at half the material height', () => {

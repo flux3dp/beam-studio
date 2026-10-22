@@ -3172,6 +3172,7 @@ const lang: ILang = {
       polygon: '다각형',
       rect: '직사각형',
       stl: 'STL 개체',
+      stl_multi: '여러 개체',
       svg: 'SVG 개체',
       text: '텍스트',
       text_path: '텍스트 경로',

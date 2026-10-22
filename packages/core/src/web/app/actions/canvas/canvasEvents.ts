@@ -4,9 +4,9 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
-export const setSelectedElement = (elem: Element | null): void => {
+export const setSelectedElement = (elem: Element | null, elems?: Element[]): void => {
   BeamboxGlobalInteraction.onObjectBlur();
-  useSelectedElementStore.getState().setSelectedElement(elem);
+  useSelectedElementStore.getState().setSelectedElement(elem, elems);
 
   // Note: onObjectFocus should be called after setSelectedElement to get correct store values
   if (elem) BeamboxGlobalInteraction.onObjectFocus([elem]);
