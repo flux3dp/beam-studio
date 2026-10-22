@@ -875,7 +875,7 @@ const lang: ILang = {
           disconnect: 'Desconectar',
           node_type: 'TIPO DE NODO',
           round: 'Circular',
-          sharp: 'Afilado',
+          sharp: 'Afilada',
         },
         right_align: 'Alinear a la derecha',
         subtract: 'Restar',
@@ -1524,7 +1524,7 @@ const lang: ILang = {
   },
   generators: {
     box_generator: 'Generador de cajas',
-    code_generator: 'Generador de código',
+    code_generator: 'Generador de códigos',
     general: {
       design_preview: 'Vista previa del diseño',
       exploded_view: 'Vista expandida',
@@ -2185,7 +2185,6 @@ const lang: ILang = {
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Error crítico: El subsistema no responde. Contacte con el servicio de asistencia de FLUX.', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: 'Algo salió mal.\nPor favor, reinicie la máquina.', // Deprecated in FW 3.3.1
     hour: 'h',
-    left: 'izquierda',
     MAINBOARD_OFFLINE: '#905 Error al conectarse a la placa base.\nPor favor, reinicie la máquina.',
     minute: 'm',
     monitor: 'MONITOR',
@@ -2207,6 +2206,7 @@ const lang: ILang = {
     },
     taskTab: 'Tarea',
     temperature: 'Temperatura',
+    time_left: 'Tiempo restante: %s',
     upload: 'Cargar',
     USER_OPERATION: 'Por favor, siga las instrucciones en el panel del dispositivo para continuar.',
     USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Cartucho vacío\nEl cartucho está sin tinta. Sustitúyalo para continuar imprimiendo.',
@@ -3056,7 +3056,7 @@ const lang: ILang = {
       end_alert: '¿Seguro que desea finalizar la introducción a la nueva interface de usuario?',
       flip: 'Voltear',
       group_controls: 'Controles de grupo',
-      layer_controls: 'Pulse el botón derecho para seleccionar los controles de capa:\nDuplicar / Combinar / Bloquear / Eliminar capas',
+      layer_controls: 'Pulse el botón derecho para seleccionar los controles de capa:\nDuplicar / Fusionar / Bloquear / Eliminar capas',
       object_actions: 'Acciones de objeto',
       pen_tool: 'Herramienta lápiz',
       rename_by_double_click: 'Renombrar mediante doble clic',

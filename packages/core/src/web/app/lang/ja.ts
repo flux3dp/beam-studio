@@ -2186,7 +2186,6 @@ const lang: ILang = {
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: '何かがうまくいかなかった\nマシンを再起動してください', // Deprecated in FW 3.3.1
     hour: 'h',
-    left: '左',
     MAINBOARD_OFFLINE: '#905 メインボードへの接続中にエラーが発生しました。\nマシンを再起動してください。',
     minute: 'm',
     monitor: 'モニター',
@@ -2208,6 +2207,7 @@ const lang: ILang = {
     },
     taskTab: 'タスク',
     temperature: '温度',
+    time_left: '残り %s',
     upload: 'アップロード',
     USER_OPERATION: '続行するためには、デバイスパネルの指示に従ってください。',
     USER_OPERATION_CARTRIDGE_INK_EMPTY: 'カートリッジ空\nカートリッジのインクがありません。続行するには交換してください。',

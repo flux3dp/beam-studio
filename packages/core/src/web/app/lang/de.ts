@@ -2186,7 +2186,6 @@ const lang: ILang = {
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritischer Fehler: Subsystem keine Antwort. Bitte wenden Sie sich an den FLUX Support', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: 'Etwas ist schief gelaufen\nBitte starte die Maschine neu', // Deprecated in FW 3.3.1
     hour: 'h',
-    left: 'übrig',
     MAINBOARD_OFFLINE: '#905 Fehler beim Verbinden mit dem Mainboard.\nBitte starte die Maschine neu.',
     minute: 'm',
     monitor: 'MONITOR',
@@ -2208,6 +2207,7 @@ const lang: ILang = {
     },
     taskTab: 'Datei',
     temperature: 'Temperatur',
+    time_left: 'Noch %s',
     upload: 'Hochladen',
     USER_OPERATION: 'Befolgen Sie bitte die Anweisungen auf dem Gerätepanel, um fortzufahren.',
     USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Cartridge leer\nDas Cartridge ist leer. Bitte ersetzen, um den Druck fortzusetzen.',
