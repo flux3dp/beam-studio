@@ -74,11 +74,11 @@ interface StlStore {
   objects: Record<string, StlObject>;
   remove: (id: string) => void;
   replaceGeometry: (id: string, buffer: ArrayBuffer, geometry: BufferGeometry) => void;
-  /** Selection inside the 3D canvas. Kept in step with svgedit's selection by
-   *  `InnerEngraving/utils/selection.ts` — never set it directly from a click handler. */
-  selectedId: null | string;
+  /** Selection inside the 3D canvas, in svgedit's selection order. Kept in step with svgedit's
+   *  selection by `InnerEngraving/utils/selection.ts` — never set it directly from a click handler. */
+  selectedIds: string[];
   set: (object: StlObject) => void;
-  setSelectedId: (id: null | string) => void;
+  setSelectedIds: (ids: string[]) => void;
   setTransform: (id: string, transform: StlTransform) => void;
 }
 
@@ -88,7 +88,7 @@ export const useStlStore = create<StlStore>((set) => ({
       // three.js does not free GPU buffers on garbage collection
       Object.values(state.objects).forEach(({ geometry }) => geometry.dispose());
 
-      return { objects: {}, selectedId: null };
+      return { objects: {}, selectedIds: [] };
     }),
   objects: {},
   remove: (id) =>
@@ -97,7 +97,7 @@ export const useStlStore = create<StlStore>((set) => ({
 
       removed?.geometry.dispose();
 
-      return { objects: rest, selectedId: state.selectedId === id ? null : state.selectedId };
+      return { objects: rest, selectedIds: state.selectedIds.filter((selectedId) => selectedId !== id) };
     }),
   replaceGeometry: (id, buffer, geometry) =>
     set((state) => {
@@ -109,9 +109,16 @@ export const useStlStore = create<StlStore>((set) => ({
 
       return { objects: { ...state.objects, [id]: { ...target, buffer, geometry } } };
     }),
-  selectedId: null,
+  selectedIds: [],
   set: (object) => set((state) => ({ objects: { ...state.objects, [object.id]: object } })),
-  setSelectedId: (selectedId) => set({ selectedId }),
+  // an unchanged list keeps its identity, so the canvas effect that mirrors svgedit's selection
+  // back into the store does not re-render every mesh for nothing
+  setSelectedIds: (ids) =>
+    set((state) =>
+      ids.length === state.selectedIds.length && ids.every((id, i) => id === state.selectedIds[i])
+        ? state
+        : { selectedIds: ids },
+    ),
   setTransform: (id, transform) =>
     set((state) => {
       const target = state.objects[id];

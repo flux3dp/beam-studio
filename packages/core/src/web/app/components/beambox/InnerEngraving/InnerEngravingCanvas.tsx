@@ -27,6 +27,7 @@ import {
   GRID_STEPS,
   TARGET_GRID_CELLS,
 } from './constants';
+import GroupTransformControls from './GroupTransformControls';
 import styles from './InnerEngravingCanvas.module.scss';
 import MaterialShape from './MaterialShape';
 import SceneGrid from './SceneGrid';
@@ -35,7 +36,7 @@ import StlMesh from './StlMesh';
 import { toCameraPreviewPoint } from './utils/cameraPreview';
 import { useEngravableBox } from './utils/engravable';
 import { getMaterial, useMaterial } from './utils/material';
-import { getSelectedStlId, selectStlObject } from './utils/selection';
+import { getSelectedStlIds, selectStlObject, toggleStlObjectSelection } from './utils/selection';
 import ViewController from './ViewController';
 import { CAMERA_FOV, DEFAULT_VIEW, getPresetPosition, useViewStore } from './viewStore';
 import ZoomController from './ZoomController';
@@ -172,10 +173,10 @@ const useAdaptiveStep = (center: [number, number, number]): number => {
 };
 
 const Scene = () => {
-  const { objects, selectedId } = useStlStore();
+  const { objects, selectedIds } = useStlStore();
   const spaceKey = useCanvasStore((state) => state.spaceKey);
   const mouseMode = useCanvasStore((state) => state.mouseMode);
-  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
+  const selectedElements = useSelectedElementStore((state) => state.selectedElements);
   const { height, width } = workareaManager;
   const material = useMaterial();
   const engravable = useEngravableBox();
@@ -220,20 +221,26 @@ const Scene = () => {
     };
   }, []);
 
-  // A document can enter 3D mode while a 2D multi-selection (including its temporary group) is
-  // still active. Tear that group down on mount and keep only its last object; all subsequent
-  // selection paths are constrained centrally by SelectionManager.
+  // A document can enter 3D mode while a 2D multi-selection is still gathered in its temporary
+  // group. Take the group apart on mount and select its objects as a flat list, which is how 3D
+  // keeps a multi-selection (see SelectionManager).
   useEffect(() => {
-    const selected = selectionManager.getSelectedElements(true);
+    if (!selectionManager.isMultiSelecting) return;
 
-    if (selected.length > 1) selectionManager.selectOnly(selected.slice(-1));
+    selectionManager.selectOnly(selectionManager.getSelectedElements(true));
   }, []);
 
-  // the other direction of the sync in `selectStlObject`: selecting through the layer panel, undo,
-  // or anything else that moves svgedit's selection has to light up the mesh too
+  // the other direction of the sync in `selectStlObjects`: selecting through the layer panel, undo,
+  // or anything else that moves svgedit's selection has to light up the meshes too
   useEffect(() => {
-    useStlStore.getState().setSelectedId(getSelectedStlId(selectedElement));
-  }, [selectedElement]);
+    useStlStore.getState().setSelectedIds(getSelectedStlIds(selectedElements));
+  }, [selectedElements]);
+
+  const selectedObjects = useMemo(() => selectedIds.map((id) => objects[id]).filter(Boolean), [objects, selectedIds]);
+  const handleSelect = (id: string, additive: boolean) => {
+    if (additive) toggleStlObjectSelection(id);
+    else selectStlObject(id);
+  };
 
   // true only between an OrbitControls pointer down and up, so a `change` can be attributed to the user
   const interacting = useRef(false);
@@ -267,13 +274,21 @@ const Scene = () => {
         <StlMesh
           key={object.id}
           object={object}
-          onSelect={selectStlObject}
+          onSelect={handleSelect}
           panning={spaceKey}
-          selected={object.id === selectedId}
+          selected={selectedIds.includes(object.id)}
+          showGizmo={selectedIds.length === 1}
           snapActive={snapActive}
           snapCenter={engravable.center}
         />
       ))}
+
+      <GroupTransformControls
+        objects={selectedObjects}
+        panning={spaceKey}
+        snapActive={snapActive}
+        snapCenter={engravable.center}
+      />
 
       <ViewController extent={viewExtent} target={viewTarget} />
       <ZoomController target={viewTarget} />

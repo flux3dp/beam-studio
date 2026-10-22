@@ -8,7 +8,6 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import type { ICommand } from '@core/interfaces/IHistory';
 
 import { MM_TO_SCENE } from './coordinates';
-import type { EngravableBox } from './engravable';
 import { updateProjectionRect } from './projection';
 
 /** A freshly imported mesh: original size, no rotation, no mirror. */
@@ -148,38 +147,4 @@ export const setTransform = (
 
   if (parentCmd) parentCmd.addSubCommand(cmd);
   else undoManager.addCommandToHistory(cmd);
-};
-
-/** Move the object so its centre lands on `target`, in scene space. */
-export const moveObjectCenterTo = (object: StlObject, target: [number, number, number]): void => {
-  setTransform(object, { ...object.transform, position: [...target] });
-};
-
-/**
- * Scale the object until it fills `box`, then centre it there.
- *
- * Unlike the fit on import this **also enlarges**: import keeps the model's real size unless it has
- * to shrink it, whereas asking for this is asking for the largest engraving the workpiece allows.
- *
- * The fit is measured on the world bounding box, so a rotated object still ends up inside the box.
- */
-export const fitObjectTo = (object: StlObject, box: EngravableBox): void => {
-  const size = getWorldBox(object).getSize(new Vector3());
-  // a flat model has a zero extent on some axis, which does not constrain the fit and must not turn
-  // the factor into Infinity or NaN
-  const factor = Math.min(
-    size.x > 0 ? box.width / size.x : Infinity,
-    size.y > 0 ? box.depth / size.y : Infinity,
-    size.z > 0 ? box.height / size.z : Infinity,
-  );
-
-  if (!Number.isFinite(factor) || factor <= 0) return;
-
-  const { scale } = object.transform;
-
-  setTransform(object, {
-    ...object.transform,
-    position: [...box.center],
-    scale: [scale[0] * factor, scale[1] * factor, scale[2] * factor],
-  });
 };

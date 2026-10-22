@@ -24,10 +24,14 @@ const MIN_SCALE = 1e-3;
 
 interface StlMeshProps {
   object: StlObject;
-  onSelect: (id: string) => void;
+  /** `additive`: Shift was held, so the object joins or leaves the selection instead of replacing it. */
+  onSelect: (id: string, additive: boolean) => void;
   /** Space is held: the drag belongs to the camera, so neither the gizmo nor selection may take it. */
   panning: boolean;
   selected: boolean;
+  /** Its own gizmo: only when it is the one selected object. A multi-selection shares one gizmo
+   *  (`GroupTransformControls`) and each object just keeps its outline. */
+  showGizmo: boolean;
   snapActive: boolean;
   snapCenter: [number, number, number];
 }
@@ -42,7 +46,15 @@ interface StlMeshProps {
  *   group's origin, so rotation and scaling happen about the object's centre rather than about
  *   whatever origin the STL's author happened to leave behind
  */
-const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }: StlMeshProps): React.JSX.Element => {
+const StlMesh = ({
+  object,
+  onSelect,
+  panning,
+  selected,
+  showGizmo,
+  snapActive,
+  snapCenter,
+}: StlMeshProps): React.JSX.Element => {
   // a callback ref rather than useRef: TransformControls needs the resolved Object3D, which is not
   // available on the first render
   const [anchor, setAnchor] = useState<Group | null>(null);
@@ -70,7 +82,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
       if (isLocked || !isVisible || panning) return;
 
       event.stopPropagation();
-      onSelect(id);
+      onSelect(id, event.shiftKey);
     },
     [id, isLocked, isVisible, onSelect, panning],
   );
@@ -262,21 +274,23 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
       </group>
       {selected && anchor && isVisible && !isLocked && (
         <>
-          <TransformControls
-            // the gizmo sits on top of everything, so leaving it live would swallow every pan that
-            // happened to start over it
-            enabled={!panning}
-            mode={transformMode}
-            object={anchor}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleDragEnd}
-            onObjectChange={handleObjectChange}
-            rotationSnap={snapActive ? ROTATION_SNAP_RAD : null}
-            showZ={object.kind !== 'photo' || transformMode !== 'scale'}
-            // arrows along the work area's axes, which is what "move in X / Y / Z" means here
-            space="world"
-            translationSnap={snapActive ? TRANSLATION_SNAP : null}
-          />
+          {showGizmo && (
+            <TransformControls
+              // the gizmo sits on top of everything, so leaving it live would swallow every pan that
+              // happened to start over it
+              enabled={!panning}
+              mode={transformMode}
+              object={anchor}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleDragEnd}
+              onObjectChange={handleObjectChange}
+              rotationSnap={snapActive ? ROTATION_SNAP_RAD : null}
+              showZ={object.kind !== 'photo' || transformMode !== 'scale'}
+              // arrows along the work area's axes, which is what "move in X / Y / Z" means here
+              space="world"
+              translationSnap={snapActive ? TRANSLATION_SNAP : null}
+            />
+          )}
           <BoundingBox color={SELECTION_COLOR} target={anchor} />
         </>
       )}

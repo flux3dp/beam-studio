@@ -259,7 +259,10 @@ const svgEditor = (window['svgEditor'] = (function () {
         RightPanelController.updatePathEditPanel();
       } else {
         canvasEvents.setPathEditing(false);
-        canvasEvents.setSelectedElement(elem);
+        canvasEvents.setSelectedElement(
+          elem,
+          elem ? selectionManager.getSelectedElements().filter((selected) => selected?.parentNode) : [],
+        );
       }
 
       if (elem != null) {
@@ -718,8 +721,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           Shortcuts.on(['Delete', 'Backspace'], () => deleteSelected());
           Shortcuts.on(['Fnkey+a'], (e) => {
             e.stopPropagation();
-            if (isInnerEngravingActive()) return;
-
             svgCanvas.selectAll();
           });
           Shortcuts.on(['ArrowUp'], (e) => {

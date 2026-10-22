@@ -53,7 +53,7 @@ describe('insertStlGeometry', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     projection.id = '';
-    useStlStore.setState({ objects: {}, selectedId: null });
+    useStlStore.setState({ objects: {}, selectedIds: [] });
     mockPopUp.mockImplementation(({ onYes }) => onYes());
   });
 

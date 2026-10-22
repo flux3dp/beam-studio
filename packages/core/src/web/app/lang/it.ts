@@ -3210,6 +3210,7 @@ const lang: ILang = {
       polygon: 'Poligono',
       rect: 'Rettangolo',
       stl: 'Oggetto STL',
+      stl_multi: 'Più oggetti',
       svg: 'Oggetto SVG',
       text: 'Testo',
       text_path: 'Testo su percorso',

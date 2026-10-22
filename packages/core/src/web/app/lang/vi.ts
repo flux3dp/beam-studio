@@ -3210,6 +3210,7 @@ const lang: ILang = {
       polygon: 'Đa giác',
       rect: 'Hình chữ nhật',
       stl: 'Đối tượng STL',
+      stl_multi: 'Nhiều đối tượng',
       svg: 'Đối tượng SVG',
       text: 'Văn bản',
       text_path: 'Văn bản trên đường dẫn',
