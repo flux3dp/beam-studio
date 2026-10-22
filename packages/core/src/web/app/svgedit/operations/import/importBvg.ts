@@ -18,6 +18,7 @@ import { downgradeInnerEngravingElements } from '@core/app/svgedit/stl/downgrade
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getInnerEngravingCustomizedDimension } from '@core/helpers/addOn/innerEngraving';
+import { MATERIAL_ATTRIBUTE, parseMaterial } from '@core/helpers/addOn/innerEngravingMaterial';
 import { applyExclusiveModePatch } from '@core/helpers/exclusiveModes';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
@@ -136,6 +137,15 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
       values: innerEngravingDimension ? { 'customized-dimension': innerEngravingDimension } : undefined,
       workarea: innerEngravingResult.workarea ?? currentWorkarea,
     });
+
+    // the material settings saved with the document win over the app's current ones: they decide
+    // the refraction compensation and the engravable Z range, so the file engraves the same depth
+    // wherever it is opened. A file that stays 2D (downgraded or not) leaves the settings alone.
+    if (innerEngravingResult.innerEngraving) {
+      const material = str.match(new RegExp(`${MATERIAL_ATTRIBUTE}="([^"]*)"`))?.[1];
+
+      Object.assign(newDocumentState, parseMaterial(material));
+    }
 
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 

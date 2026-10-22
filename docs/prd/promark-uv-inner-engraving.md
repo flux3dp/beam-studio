@@ -307,9 +307,9 @@
 | `common/ZoomBlock.tsx` | 2D 畫布的縮放比例計算結果不變 |
 | `OptionsBlocks/ImageOptions/index.tsx`、`operations/import/readBitmapFile.ts` | 2D 圖片的換圖、匯入（選取、undo、對齊的時機）和 main 相同；深度雕刻設定只在內雕模式隱藏 |
 | `actions/beambox/beambox-global-interaction.ts` | 2D 進入編輯器時的選單狀態和 main 相同；內雕關閉後，曲面雕刻與依選取而定的項目（拆解路徑等）回到各自的條件 |
-| `dialogs/RotarySettings.tsx`、`actions/canvas/curveEngravingModeController.ts`、`operations/import/importBvg.ts`（改用 `setExclusiveMode` / `applyExclusiveModePatch`） | 開啟旋轉軸、曲面雕刻、穿透、自動送料時關掉其他模式的結果和 main 相同；舊檔開啟時各模式的套用結果不變 |
+| `dialogs/RotarySettings.tsx`、`actions/canvas/curveEngravingModeController.ts`、`operations/import/importBvg.ts`（改用 `setExclusiveMode` / `applyExclusiveModePatch`） | 開啟旋轉軸、曲面雕刻、穿透、自動送料時關掉其他模式的結果和 main 相同；舊檔開啟時各模式的套用結果不變；2D 檔案（含降級的內雕檔）不改材料設定 |
 | `boundaryDrawer.ts`、`svgedit/workarea.ts`、`SvgEditor/Banner.tsx`、`ConfigPanel/SpeedBlock.tsx`、`helpers/addOn/rotary.ts`（`getAutoFeeder` / `getPassThrough` 改成物件參數） | 自動送料、穿透的判斷結果、邊界、Banner、速度上限不變 |
-| `svgedit/svgcanvas.ts` `getSvgString`、`clear` | 2D 文件存出的 SVG 不帶 `data-inner-engraving`；清空畫布的行為不變 |
+| `svgedit/svgcanvas.ts` `getSvgString`、`clear` | 2D 文件存出的 SVG 不帶 `data-inner-engraving` 與 `data-inner-engraving-material`；清空畫布的行為不變 |
 | `operations/clipboard/*`、`operations/delete.ts`、`helpers/layer/deleteLayer.ts` | 2D 的複製、貼上、陣列、刪除、刪除圖層及其 undo 不變；只有 3D 投影會同步 `stlStore` |
 | `export-funcs-swiftray.ts`、`export/generate-thumbnail.ts`、`file/export/utils/beam.ts` | 2D 工作不帶 `stlObjects` / `pointCloudObjects`（為 `undefined`），縮圖與 `.beam` 內容和 main 相同；framing 的上傳內容不變 |
 | `RightPanel/ObjectPanel.tsx`、`ActionsPanel.tsx`、`OptionsBlocks/{PolygonOptions,RectOptions,TextOptions/*}` | 2D 物件的尺寸面板、工具列、動作按鈕與選項不變（新增的 props 只有 3D 物件會傳） |
@@ -520,7 +520,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 
 ## 7. Data contracts
 
-- **`.beam`**：block 6（STL 來源）與 block 7（點雲 BSPC），以物件 id 為 key；header 依實際存在的區塊計算。misc JSON 帶 `innerEngraving: true`；`#svgcontent` 帶 `data-inner-engraving="true"`。
+- **`.beam`**：block 6（STL 來源）與 block 7（點雲 BSPC），以物件 id 為 key；header 依實際存在的區塊計算。misc JSON 帶 `innerEngraving: true`；`#svgcontent` 帶 `data-inner-engraving="true"` 與 `data-inner-engraving-material`（材料設定的 JSON：`baseHeight`、`depth`、`diameter`、`height`、`refractiveIndex`、`safetyMargin`、`shape`、`width`、`x`、`y`，mm；`helpers/addOn/innerEngravingMaterial.ts`）。讀檔時逐一驗證範圍，無效的 key 保留目前值；留在 2D 的檔案不動材料設定。
 - **Swiftray `loadSVG`**：`stlObjects`、`pointCloudObjects`（id → base64），由 `getStlObjects`、`getPointCloudObjects` 產生；回應帶 `failedStlObjects` / `failedPointCloudObjects`。
 - **BSPC v1**：`'BSPC'`、version 1、components 3、reserved 2 bytes、uint32 點數，接著每點三個 float32（local x, y, z，mm，little-endian）。
 - **投影元素屬性**（`sanitize.js` 的 `rect` / `image` 清單）：`data-stl`、`data-stl-kind`、`data-stl-matrix`（column-major、畫布座標）、`data-stl-transform`、`data-stl-source`；照片 `data-stl-photo`、`data-stl-photo-width`、`data-stl-photo-height`；點雲 `data-stl-point-cloud`（值為 BSPC 版本）。
