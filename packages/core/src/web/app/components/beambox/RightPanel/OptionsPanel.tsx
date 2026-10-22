@@ -4,6 +4,9 @@ import { match, P } from 'ts-pattern';
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import { useStlStore } from '@core/app/stores/stlStore';
+import { POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
+import { is3dProjection, isPhotoPlaneProjection, isStlProjection } from '@core/app/svgedit/stl/getters';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -18,6 +21,8 @@ import MultiColorOptions from './OptionsBlocks/MultiColorOptions';
 import PolygonOptions from './OptionsBlocks/PolygonOptions';
 import RectOptions from './OptionsBlocks/RectOptions';
 import TextOptions from './OptionsBlocks/TextOptions';
+import ThreeDOptions from './OptionsBlocks/ThreeDOptions';
+import useThreeDSourceOptions from './OptionsBlocks/useThreeDSourceOptions';
 import VariableTextBlock from './OptionsBlocks/VariableTextBlock';
 import styles from './OptionsPanel.module.scss';
 
@@ -32,6 +37,7 @@ interface Props {
 
 function OptionsPanel({ elem }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
+  const stlObjectKind = useStlStore((state) => (elem ? state.objects[elem.id]?.kind : undefined));
   const workarea = useWorkarea();
   const supportVariableBlock = useMemo(isVariableTextSupported, [workarea]);
   const showVariableBlock = useMemo(
@@ -39,6 +45,10 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
     [elem, supportVariableBlock, isMobile],
   );
   const [isFullColor, setIsFullColor] = useState(() => getIsFullColor(elem));
+  const threeDSourceOptions = useThreeDSourceOptions(
+    elem && isStlProjection(elem) && !isPhotoPlaneProjection(elem) ? elem : null,
+  );
+  const optionElem = threeDSourceOptions.sourceElem ?? elem;
 
   useEffect(() => {
     const handleUpdateFullColor = () => setIsFullColor(getIsFullColor(elem));
@@ -51,9 +61,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
     };
   }, [elem]);
 
-  const elemTagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
+  const elemTagName = useMemo(() => optionElem?.tagName.toLowerCase(), [optionElem]);
   const showColorPanel = useMemo(() => {
-    if (!elem || !CanvasElements.fillableWithContainers.includes(elemTagName!)) {
+    if (!elem || is3dProjection(elem) || !CanvasElements.fillableWithContainers.includes(elemTagName!)) {
       return false;
     }
 
@@ -63,18 +73,50 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
   const contents = useMemo(() => {
     if (!elem) return [];
 
-    const tagName = elem.tagName.toLowerCase();
-    const colorOrInfill = (key = 'infill') =>
-      showColorPanel ? <ColorPanel elem={elem} key="color" /> : <InFillBlock elems={[elem]} key={key} />;
+    // A point cloud is the final representation. A generated one's source bitmap remains in the
+    // SVG for save/rebuild purposes, but neither generated nor directly imported point clouds have
+    // editable source controls here.
+    if (stlObjectKind === 'point-cloud' || elem.hasAttribute(POINT_CLOUD_ATTR.marker)) return [];
 
-    return match(tagName)
-      .with('rect', () => [<RectOptions elem={elem} key="rect" />, colorOrInfill('fill')])
-      .with('polygon', () => [<PolygonOptions elem={elem} key="polygon" />, colorOrInfill('fill')])
+    if (isPhotoPlaneProjection(elem)) {
+      return [<ImageOptions elem={elem} key="image" />, <ThreeDOptions elem={elem} key="3d" />];
+    }
+
+    // a projection rect is a `rect`, so without this it would fall into the RectOptions branch below
+    // (corner radius). It has no infill either: how it is engraved, solid included, is set on its layer
+    if (isStlProjection(elem) && !threeDSourceOptions.sourceElem) return [];
+
+    const sourceElem = threeDSourceOptions.sourceElem;
+    const matchedElem = sourceElem ?? elem;
+    const tagName = matchedElem.tagName.toLowerCase();
+    const is3d = is3dProjection(elem);
+    // a 3D object's projection fill means nothing: solid is a layer parameter in inner engraving
+    const colorOrInfill = (key = 'infill') => {
+      if (showColorPanel) return <ColorPanel elem={elem} key="color" />;
+
+      return is3d ? null : <InFillBlock elems={[elem]} key={key} />;
+    };
+
+    const matchedOptions = match(tagName)
+      .with('rect', () => [
+        <RectOptions elem={elem} key="rect" roundedCorner={threeDSourceOptions.roundedCorner} />,
+        colorOrInfill('fill'),
+      ])
+      .with('polygon', () => [
+        <PolygonOptions elem={elem} key="polygon" sideControl={threeDSourceOptions.sideControl} />,
+        colorOrInfill('fill'),
+      ])
       .with('text', () => [
-        <TextOptions elem={elem} key="text" showColorPanel={showColorPanel} textElements={[elem as SVGTextElement]} />,
+        <TextOptions
+          elem={elem}
+          key="text"
+          onSourceChange={threeDSourceOptions.onTextChange}
+          showColorPanel={showColorPanel}
+          textElements={[matchedElem as SVGTextElement]}
+        />,
         showColorPanel ? (
           <ColorPanel elem={elem} key="color" />
-        ) : isMobile ? (
+        ) : isMobile && !is3d ? (
           <InFillBlock elems={[elem]} key="fill" />
         ) : null,
       ])
@@ -82,15 +124,15 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
         elem.getAttribute('data-fullcolor') === '1' ? [] : [<ImageOptions elem={elem} key="image" />],
       )
       .with('g', () => {
-        if (elem.getAttribute('data-textpath-g')) {
-          const textElem = elem.querySelector('text');
+        if (matchedElem.getAttribute('data-textpath-g')) {
+          const textElem = matchedElem.querySelector('text');
 
           return [<TextOptions elem={elem} isTextPath key="textpath" textElements={[textElem!]} />];
         }
 
-        if (!elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])')) {
-          const textElems = Array.from(elem.querySelectorAll('text'));
-          const includeTextPath = Boolean(elem.querySelector('g[data-textpath-g="1"]'));
+        if (!matchedElem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])')) {
+          const textElems = Array.from(matchedElem.querySelectorAll('text'));
+          const includeTextPath = Boolean(matchedElem.querySelector('g[data-textpath-g="1"]'));
 
           return [
             <TextOptions elem={elem} isTextPath={includeTextPath} key="textpath" textElements={textElems} />,
@@ -113,7 +155,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
         ) : null,
       ])
       .otherwise(() => [colorOrInfill()]);
-  }, [elem, showColorPanel, showVariableBlock, isMobile]);
+
+    return matchedOptions;
+  }, [elem, showColorPanel, showVariableBlock, isMobile, threeDSourceOptions, stlObjectKind]);
 
   return isMobile ? (
     <div className={styles.container}>

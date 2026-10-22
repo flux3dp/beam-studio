@@ -22,17 +22,19 @@ import styles from './SolvePnP.module.scss';
 import StepProgress from './StepProgress';
 import Title from './Title';
 import type { RenderWrapper } from './types';
+import type { CameraSource } from './useCamera';
 import useCamera from './useCamera';
 
 interface Props {
   animationSrcs?: Array<{ src: string; type: string }>;
   cameraIndex?: number;
+  /** Where the pictures come from, wifi by default */
+  cameraSource?: CameraSource;
   currentStep?: number;
   defaultPoints?: Array<[number, number]>;
   dh: number;
   doorChecker?: DoorChecker | null;
   hasNext?: boolean;
-  imgSource?: 'usb' | 'wifi';
   initExposure?: number;
   initialPoints?: Array<[number, number]>;
   initInterestArea?: { height: number; width: number; x: number; y: number };
@@ -56,12 +58,12 @@ type HandleImgOpts = {
 const SolvePnP = ({
   animationSrcs,
   cameraIndex,
+  cameraSource,
   currentStep,
   defaultPoints,
   dh,
   doorChecker,
   hasNext = false,
-  imgSource = 'wifi',
   initExposure,
   initialPoints,
   initInterestArea,
@@ -203,7 +205,7 @@ const SolvePnP = ({
     firstImageArgs: { shouldFindCorners: !initialPoints },
     index: cameraIndex,
     initExposure,
-    source: imgSource,
+    ...cameraSource,
   });
 
   const handleTakePicture = useCallback(

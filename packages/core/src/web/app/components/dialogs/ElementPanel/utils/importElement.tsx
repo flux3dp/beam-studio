@@ -8,8 +8,10 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { builtInElements } from '@core/app/constants/element-panel-constants';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import { importPathAsStl, importSvgElementAsStl } from '@core/app/svgedit/operations/import/importStl/importPath';
 import { fixEnd } from '@core/app/svgedit/operations/pathActions';
 import selectionManager from '@core/app/svgedit/selection';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getNPIconByID } from '@core/helpers/api/flux-id';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { collectPathItems } from '@core/helpers/generator/collectPathItems';
@@ -24,14 +26,14 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const TARGET_SIZE = 500;
+const TARGET_SIZE_SCENE = 500;
 const progressId = 'import-noun-project-svg';
 
 /**
  * Parse SVG string with paper.js, unite all paths into one, create element via addSvgElementFromJson.
- * Scale to fit 500x500 (matching builtInElements convention).
+ * Scale to fit 500x500 scene units (matching builtInElements convention).
  */
-const importSvgPaths = (svgString: string, isFromNounProject = false): void => {
+const importSvgPaths = async (svgString: string, isFromNounProject = false): Promise<void> => {
   const canvas = document.createElement('canvas');
   const project = new paper.Project(canvas);
 
@@ -52,15 +54,22 @@ const importSvgPaths = (svgString: string, isFromNounProject = false): void => {
       unitedPath = newPath;
     }
 
-    // Scale to fit TARGET_SIZE x TARGET_SIZE
+    // Scale to fit TARGET_SIZE_SCENE x TARGET_SIZE_SCENE
     const { bounds } = unitedPath;
-    const scale = Math.min(TARGET_SIZE / bounds.width, TARGET_SIZE / bounds.height);
+    const scale = Math.min(TARGET_SIZE_SCENE / bounds.width, TARGET_SIZE_SCENE / bounds.height);
 
     unitedPath.scale(scale, new paper.Point(bounds.x, bounds.y));
     unitedPath.bounds.left = 0;
     unitedPath.bounds.top = 0;
 
     const d = unitedPath.pathData;
+
+    if (isInnerEngravingActive()) {
+      await importPathAsStl(d, { preserveSource: true, unit: 'scene' });
+
+      return;
+    }
+
     const pathEl = svgCanvas.addSvgElementFromJson({
       attr: {
         d,
@@ -110,7 +119,7 @@ const importBuiltinIcon = async (key: string): Promise<void> => {
     'fill="none"',
   );
 
-  importSvgPaths(iconString);
+  await importSvgPaths(iconString);
 };
 
 /**
@@ -128,7 +137,7 @@ const importNPIcon = async (id: string): Promise<void> => {
     const res = await fetch(base64);
     const svgString = await res.text();
 
-    importSvgPaths(svgString, true);
+    await importSvgPaths(svgString, true);
   } finally {
     progressCaller.popById(progressId);
   }
@@ -153,6 +162,16 @@ export const importElementToCanvas = async (key: string): Promise<void> => {
   const fileName = key.includes('/') ? key.split('/').pop()! : key;
 
   if (builtInElements[fileName]) {
+    if (isInnerEngravingActive()) {
+      const source = builtInElements[fileName];
+      const elem = document.createElementNS('http://www.w3.org/2000/svg', source.element);
+
+      Object.entries(source.attr).forEach(([key, value]) => elem.setAttribute(key, String(value)));
+      await importSvgElementAsStl(elem, { preserveSource: true, unit: 'scene' });
+
+      return;
+    }
+
     importJsonElement(builtInElements[fileName]);
 
     return;

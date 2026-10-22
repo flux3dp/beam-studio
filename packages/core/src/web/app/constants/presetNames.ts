@@ -10,6 +10,7 @@ export interface PresetName {
 
 /** Curated inch labels for the thicknesses presets.ts uses (marketing fractions, not conversions). */
 export const inchLabels: Record<number, string> = {
+  0.8: '1/32″',
   1: '1/32″',
   2: '1/16″',
   3: '1/8″',
@@ -94,6 +95,34 @@ export const presetNames: Record<string, PresetName> = {
   black_abs: { material: 'black_abs', preset: 'marking' },
   opaque_acrylic: { material: 'opaque_acrylic', preset: 'marking' },
   stone: { material: 'stone', preset: 'marking' },
+  // promark UV
+  copper_dark: { material: 'copper', preset: 'marking_dark' },
+  copper_light: { material: 'copper', preset: 'marking_light' },
+  stainless_steel_304_dark: { material: 'stainless_steel_304', preset: 'marking_dark' },
+  stainless_steel_304_light: { material: 'stainless_steel_304', preset: 'marking_light' },
+  stainless_steel_430_dark: { material: 'stainless_steel_430', preset: 'marking_dark' },
+  stainless_steel_430_light: { material: 'stainless_steel_430', preset: 'marking_light' },
+  galvanized_steel_dark: { material: 'galvanized_steel', preset: 'marking_dark' },
+  galvanized_steel_light: { material: 'galvanized_steel', preset: 'marking_light' },
+  pu_leather_engraving: { material: 'pu_leather', preset: 'engraving' },
+  natural_leather_engraving: { material: 'natural_leather', preset: 'engraving' },
+  dark_brown_leather_engraving: { material: 'dark_brown_leather', preset: 'engraving' },
+  light_brown_leather_engraving: { material: 'light_brown_leather', preset: 'engraving' },
+  light_brown_leather_1mm_cutting: cut('light_brown_leather', 1),
+  canvas_engraving: { material: 'canvas', preset: 'engraving' },
+  canvas_0_8mm_cutting: cut('canvas', 0.8),
+  nonwoven_fabric_engraving: { material: 'nonwoven_fabric', preset: 'engraving' },
+  nonwoven_fabric_3mm_cutting: cut('nonwoven_fabric', 3),
+  rubber_2mm_cutting: cut('rubber', 2),
+  pla_engraving: { material: 'pla', preset: 'engraving' },
+  pvc_dark: { material: 'pvc', preset: 'marking_dark' },
+  pvc_light: { material: 'pvc', preset: 'marking_light' },
+  nylon_engraving: { material: 'nylon', preset: 'engraving' },
+  silicone_engraving: { material: 'silicone', preset: 'engraving' },
+  // promark UV inner engraving
+  k9_crystal_contour_dot: { material: 'k9_crystal', preset: 'contour_dotting' },
+  k9_crystal_contour_line: { material: 'k9_crystal', preset: 'contour_lines' },
+  k9_crystal_solid_dot: { material: 'k9_crystal', preset: 'thick_contour_dotting' },
   // printing
   wood_printing: { material: 'wood', preset: 'printing' },
   mdf_printing: { material: 'mdf', preset: 'printing' },

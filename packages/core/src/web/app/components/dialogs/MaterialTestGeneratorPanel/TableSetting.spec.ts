@@ -10,7 +10,20 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getPromarkLimit: () => mockGetPromarkLimit(),
 }));
 
+const mockIsUvDev = jest.fn();
+
+// isDev is also called while the constants load, so it is a jest.fn from the start
+jest.mock('@core/helpers/is-dev', () => ({
+  __esModule: true,
+  default: jest.fn(() => false),
+  isUvDev: () => mockIsUvDev(),
+}));
+
+import isDev from '@core/helpers/is-dev';
+
 import { getTableSetting } from './TableSetting';
+
+const mockIsDev = isDev as jest.Mock;
 
 const promarkLimit = {
   frequency: { max: 60, min: 27 },
@@ -21,6 +34,8 @@ describe('getTableSetting', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetPromarkLimit.mockReturnValue(promarkLimit);
+    mockIsDev.mockReturnValue(false);
+    mockIsUvDev.mockReturnValue(false);
   });
 
   describe('common (non-promark) laser model', () => {
@@ -92,6 +107,7 @@ describe('getTableSetting', () => {
       const { maxSpeed, minSpeed } = getWorkarea('fpm1');
 
       expect(setting.fillInterval).toEqual({
+        allowDecimal: true,
         default: 0.01,
         max: 100,
         maxValue: 1,
@@ -163,6 +179,58 @@ describe('getTableSetting', () => {
         min: 1,
         minValue: 1,
       });
+    });
+  });
+
+  describe('promark UV', () => {
+    const uvLimit = {
+      frequency: { max: 200, min: 30 },
+      power: { max: 100, min: 15.556 },
+      qPulseWidth: { max: 1365, min: 0.021 },
+    };
+
+    beforeEach(() => mockGetPromarkLimit.mockReturnValue(uvLimit));
+
+    test('power is the axis; frequency and pulse width are not separate params', () => {
+      const setting = getTableSetting('fpm1', { laserType: LaserType.UV });
+
+      expect(setting.frequency).toBeUndefined();
+      expect(setting.pulseWidth).toBeUndefined();
+      expect(setting.qPulseWidth).toBeUndefined();
+      expect(setting.fillInterleave).toBeUndefined();
+      expect(setting.fillDwellTime).toBeUndefined();
+      expect(setting.strength).toMatchObject({ default: 16, min: 16, minValue: 16 });
+    });
+
+    test('Q pulse width only in developer mode', () => {
+      mockIsDev.mockReturnValue(true);
+
+      expect(getTableSetting('fpm1', { laserType: LaserType.UV }).qPulseWidth).toMatchObject({ default: 1 });
+    });
+
+    test('scattered scan order and line dwell with uvDev, off by default', () => {
+      mockIsUvDev.mockReturnValue(true);
+
+      const setting = getTableSetting('fpm1', { laserType: LaserType.UV });
+
+      expect(setting.fillInterleave).toMatchObject({ default: 0, max: 1, min: 0, selected: 2 });
+      expect(setting.fillDwellTime).toMatchObject({ default: 0, min: 0, selected: 2 });
+      // other Promark sources never get them
+      expect(getTableSetting('fpm1', { laserType: LaserType.MOPA }).fillInterleave).toBeUndefined();
+    });
+
+    test('the inner engraving table varies the power, not the frequency, and has no fill or passes', () => {
+      mockIsUvDev.mockReturnValue(true);
+
+      const setting = getTableSetting('fpm1', { innerEngraving: true });
+
+      expect(setting.frequency).toBeUndefined();
+      // 110kHz, the contour-dotting preset
+      expect(setting.strength).toMatchObject({ default: 44, min: 16, minValue: 44, selected: 2 });
+      expect(setting.fillInterval).toBeUndefined();
+      expect(setting.fillInterleave).toBeUndefined();
+      expect(setting.fillDwellTime).toBeUndefined();
+      expect(setting.repeat).toBeUndefined();
     });
   });
 

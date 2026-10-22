@@ -10,7 +10,9 @@ import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import selectionManager from '@core/app/svgedit/selection';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import checkWebGL from '@core/helpers/check-webgl';
+import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import useI18n from '@core/helpers/useI18n';
@@ -25,8 +27,11 @@ function PathPreviewButton({ isDeviceConnected }: Props): ReactNode {
   const lang = useI18n().topbar;
   const isMobile = useIsMobile();
   const { mode, togglePathPreview } = useCanvasStore(useShallow((state) => pick(state, ['mode', 'togglePathPreview'])));
+  const isInnerEngraving = useInnerEngravingActive();
 
-  if (isMobile || !checkWebGL()) {
+  // path preview draws the 2D toolpath, so it is hidden in inner engraving mode and left available
+  // to devs
+  if (isMobile || !checkWebGL() || (isInnerEngraving && !isDev())) {
     return null;
   }
 

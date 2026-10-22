@@ -18,10 +18,16 @@ import initState from './initState';
 import NumberBlock from './NumberBlock';
 
 // TODO: add tests
-const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
+const FocusBlock = ({
+  isPromark = false,
+  type = 'default',
+}: {
+  isPromark?: boolean;
+  type?: 'default' | 'modal' | 'panel-item';
+}): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { change, focus, focusStep, repeat } = useConfigPanelStore();
+  const { change, focus, focusReverse, focusStep, focusStepReverse, repeat } = useConfigPanelStore();
   const isDevMode = useMemo(() => isDev(), []);
 
   const focusStepMax = useMemo(() => {
@@ -33,6 +39,18 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     return 10 / (repeat.value - 1);
   }, [repeat, isDevMode]);
+
+  const toggleBoolean = (key: 'focusReverse' | 'focusStepReverse') => {
+    const value = !useConfigPanelStore.getState()[key].value;
+
+    change({ [key]: value });
+
+    const batchCmd = new history.BatchCommand(`Toggle ${key}`);
+
+    useLayerStore.getState().selectedLayers.forEach((layerName) => writeData(layerName, key, value, { batchCmd }));
+    batchCmd.onAfter = initState;
+    undoManager.addCommandToHistory(batchCmd);
+  };
 
   const toggleFocusAdjust = () => {
     const value = -focus.value;
@@ -78,6 +96,18 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
             size="small"
           />
         </div>
+        {isDevMode && isPromark && focus.value >= 0 && (
+          <div className={classNames(styles.panel, styles.switch)}>
+            <label htmlFor="lower-focus-rev">{t.reverse}</label>
+            <Switch
+              checked={focusReverse.value}
+              className={styles.switch}
+              id="lower-focus-rev"
+              onChange={() => toggleBoolean('focusReverse')}
+              size="small"
+            />
+          </div>
+        )}
         {focus.value >= 0 && (
           <NumberBlock
             configKey="focus"
@@ -109,6 +139,18 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
               size="small"
             />
           </div>
+          {isDevMode && isPromark && focusStep.value >= 0 && (
+            <div className={classNames(styles.panel, styles.switch)}>
+              <label htmlFor="focus-step-rev">{t.reverse}</label>
+              <Switch
+                checked={focusStepReverse.value}
+                className={styles.switch}
+                id="focus-step-rev"
+                onChange={() => toggleBoolean('focusStepReverse')}
+                size="small"
+              />
+            </div>
+          )}
           {focusStep.value >= 0 && (
             <NumberBlock
               configKey="focusStep"

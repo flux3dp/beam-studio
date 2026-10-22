@@ -3,6 +3,7 @@ import { BatchCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import selectionManager from '@core/app/svgedit/selection';
+import { collectStlObjects, syncStlObjectsWithDom } from '@core/app/svgedit/stl/sync';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 import i18n from '../i18n';
@@ -15,7 +16,21 @@ export const deleteLayerByName = (
   layerName: string,
   opts: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
 ): ICommand | null => {
-  return layerManager.removeLayerByName(layerName, opts);
+  const layer = layerManager.getLayerByName(layerName);
+
+  if (!layer) return null;
+
+  // The mesh is outside the SVG DOM, so removing the layer group cannot remove it by itself. Keep
+  // the objects for undo, then mirror whether their projection rects are currently in the document.
+  const stlObjects = collectStlObjects([layer.getGroup()]);
+  const cmd = layerManager.removeLayerByName(layerName, opts);
+
+  if (cmd && stlObjects.length) {
+    syncStlObjectsWithDom(stlObjects);
+    cmd.onAfter = () => syncStlObjectsWithDom(stlObjects);
+  }
+
+  return cmd;
 };
 
 export const deleteLayers = (layerNames: string[]): void => {

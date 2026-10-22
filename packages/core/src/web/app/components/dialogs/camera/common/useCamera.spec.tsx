@@ -50,8 +50,21 @@ jest.mock('@core/app/actions/beambox/constant', () => ({
   supportCameraAutoExposureModels: ['fbb2', 'fhx2rf'],
 }));
 
-const MockComponent = ({ handleImg }: { handleImg: (blob: Blob) => boolean }) => {
-  const { autoExposure, exposureSetting, handleTakePicture } = useCamera(handleImg);
+const mockGetPicture = jest.fn();
+const mockConnectWebcam = jest.fn();
+
+jest.mock('@core/helpers/webcam-helper', () => ({
+  connectWebcam: (...args) => mockConnectWebcam(...args),
+}));
+
+const MockComponent = ({
+  handleImg,
+  options,
+}: {
+  handleImg: (blob: Blob) => boolean;
+  options?: Parameters<typeof useCamera>[1];
+}) => {
+  const { autoExposure, exposureSetting, handleTakePicture } = useCamera(handleImg, options);
 
   return (
     <div>
@@ -99,6 +112,17 @@ describe('test useCamera', () => {
     expect(mockDisconnectCamera).toHaveBeenCalledTimes(0);
     unmount();
     expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
+  });
+
+  test('usb camera passes the rotation to the webcam', async () => {
+    mockGetPicture.mockResolvedValue('mock-blob');
+    mockConnectWebcam.mockResolvedValue({ end: jest.fn(), getPicture: mockGetPicture });
+    mockHandleImg.mockReturnValue(true);
+
+    render(<MockComponent handleImg={mockHandleImg} options={{ rotate180: true, source: 'usb' }} />);
+    await waitFor(() => expect(mockHandleImg).toHaveBeenCalledWith('mock-blob', undefined));
+    expect(mockGetPicture).toHaveBeenCalledWith({ rotate180: true });
+    expect(mockConnectCamera).not.toHaveBeenCalled();
   });
 
   test('handleTakePicture', async () => {

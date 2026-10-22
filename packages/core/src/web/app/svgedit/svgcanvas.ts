@@ -43,9 +43,11 @@ import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useStlStore } from '@core/app/stores/stlStore';
 import elementIntersectsRect from '@core/app/svgedit/utils/elementIntersectsRect';
 import rectsIntersect from '@core/app/svgedit/utils/rectsIntersect';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { MATERIAL_ATTRIBUTE, serializeMaterial } from '@core/helpers/addOn/innerEngravingMaterial';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getAttributes } from '@core/helpers/element/attribute';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -1364,15 +1366,27 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
 
-    if (getAutoFeeder(addOnInfo)) {
+    if (getAutoFeeder({ addOnInfo })) {
       svgcontent.setAttribute('data-auto-feeder-height', documentState['auto-feeder-height']!.toFixed(2));
     }
 
-    if (getPassThrough(addOnInfo)) {
+    if (getPassThrough({ addOnInfo })) {
       svgcontent.setAttribute('data-pass_through', documentState['pass-through-height']!.toFixed(2));
     }
 
     svgcontent.setAttribute('data-workarea', workarea);
+
+    // inner engraving mode travels with the file the same way rotary does, so reopening a .beam
+    // brings back the 3D canvas rather than showing the projection rects as flat rectangles
+    if (documentState['inner-engraving']) {
+      svgcontent.setAttribute('data-inner-engraving', 'true');
+      // the material decides the refraction compensation and the Z range of every export, so it
+      // travels with the file too; svgToString escapes the JSON quotes
+      svgcontent.setAttribute(MATERIAL_ATTRIBUTE, serializeMaterial(documentState));
+    } else {
+      svgcontent.removeAttribute('data-inner-engraving');
+      svgcontent.removeAttribute(MATERIAL_ATTRIBUTE);
+    }
 
     const output = this.svgToString(svgcontent, 0, unit, fixTopExpansion);
 
@@ -1958,6 +1972,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // clear the svgcontent node
     canvas.clearSvgContentElement();
+
+    // the meshes of any STL objects go with it: their projection rects have just been thrown away,
+    // and the rect is what the rest of the app treats as the object's existence. Left behind they
+    // would keep holding GPU buffers and still be drawn on the 3D canvas
+    useStlStore.getState().clear();
 
     // create new document
     canvas.resetCurrentDrawing();

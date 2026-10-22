@@ -2,6 +2,7 @@ import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import { DEFAULT_LAYER_SPACING, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import {
   fullColorModules,
@@ -16,9 +17,16 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
+import {
+  UV_FREQUENCY_LIMIT,
+  UV_POWER_LIMIT,
+  uvFrequencyToPower,
+  uvPowerToFrequency,
+} from '@core/helpers/layer/uvPowerFrequency';
 import { getDefaultModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
@@ -45,9 +53,14 @@ export const attributeMap: Record<ConfigKey, string> = {
   dottingTime: 'data-dottingTime',
   dpi: 'data-dpi',
   fillAngle: 'data-fillAngle',
+  fillDwellAdaptive: 'data-fillDwellAdaptive',
+  fillDwellTime: 'data-fillDwellTime',
+  fillInterleave: 'data-fillInterleave',
   fillInterval: 'data-fillInterval',
   focus: 'data-focus',
+  focusReverse: 'data-focusRev',
   focusStep: 'data-focusStep',
+  focusStepReverse: 'data-focusStepRev',
   frequency: 'data-frequency',
   fullcolor: 'data-fullcolor',
   halftone: 'data-halftone',
@@ -72,6 +85,7 @@ export const attributeMap: Record<ConfigKey, string> = {
   printingStrength: 'data-printingStrength',
   printingTopPadding: 'data-printingTopPadding',
   pulseWidth: 'data-pulseWidth',
+  qPulseWidth: 'data-qPulseWidth',
   ref: 'data-ref',
   refreshInterval: 'data-refreshInterval',
   refreshThreshold: 'data-refreshThreshold',
@@ -83,6 +97,12 @@ export const attributeMap: Record<ConfigKey, string> = {
   scJerk: 'data-scJerk',
   speed: 'data-speed',
   split: 'data-split',
+  // inner engraving: the same names Swiftray reads off the layer
+  stlLayerSpacing: 'data-stl-layer-spacing',
+  stlMinLayerSpacing: 'data-stl-min-layer-spacing',
+  stlMode: 'data-stl-mode',
+  stlPointSpacing: 'data-stl-point-spacing',
+  stlSolid: 'data-stl-solid',
   texture: 'data-texture',
   textureMode: 'data-textureMode',
   textureRandomIntensity: 'data-textureRandomIntensity',
@@ -125,9 +145,15 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
     useGlobalPreferenceStore.getState().engrave_dpi,
   ),
   fillAngle: 0,
+  fillDwellAdaptive: false,
+  // negative keeps the last used value while the pause is off, like focus / wobble
+  fillDwellTime: -50000,
+  fillInterleave: false,
   fillInterval: 0.01,
   focus: -2,
+  focusReverse: false,
   focusStep: -2,
+  focusStepReverse: false,
   frequency: 27,
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
@@ -150,6 +176,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   printingSpeed: 60,
   printingStrength: 100,
   pulseWidth: 500,
+  qPulseWidth: 1,
   refreshInterval: 30,
   refreshThreshold: 0,
   repeat: 1,
@@ -227,6 +254,8 @@ export const booleanConfig: ConfigKey[] = [
   'split',
   'biDirectional',
   'crossHatch',
+  'fillDwellAdaptive',
+  'fillInterleave',
   'ceZHighSpeed',
   'scEnable',
   'uvCuringAfter',
@@ -234,6 +263,9 @@ export const booleanConfig: ConfigKey[] = [
   'oneWayEngraving',
   'oneWayEngravingReverse',
   'texture',
+  'focusReverse',
+  'focusStepReverse',
+  'stlSolid',
 ] as const;
 export const optionalNumberConfigs: ConfigKey[] = ['printingTopPadding', 'printingBotPadding'] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
@@ -258,8 +290,17 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'fillAngle',
   'biDirectional',
   'crossHatch',
+  'fillInterleave',
+  'fillDwellTime',
+  'fillDwellAdaptive',
   'wobbleDiameter',
   'wobbleStep',
+  // inner engraving
+  'stlMode',
+  'stlPointSpacing',
+  'stlLayerSpacing',
+  'stlMinLayerSpacing',
+  'stlSolid',
   // UV
   'interpolation',
   'rightPadding',
@@ -276,6 +317,11 @@ export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'dottingTime',
   'frequency',
   'pulseWidth',
+  'stlMode',
+  'stlPointSpacing',
+  'stlLayerSpacing',
+  'stlMinLayerSpacing',
+  'stlSolid',
 ]);
 
 export const laserConfigKeys: ConfigKey[] = [
@@ -311,17 +357,45 @@ export const promarkConfigKeys: ConfigKey[] = [
   'power',
   'repeat',
   'pulseWidth',
+  'qPulseWidth',
   'frequency',
   'fillInterval',
   'fillAngle',
   'biDirectional',
   'crossHatch',
+  'fillInterleave',
+  'fillDwellTime',
+  'fillDwellAdaptive',
   'focus',
   'focusStep',
   'dottingTime',
   'wobbleStep',
   'wobbleDiameter',
 ] as const;
+
+/** Written on Promark layers only while inner engraving is on, so 2D layers never carry them. */
+export const innerEngravingConfigKeys: ConfigKey[] = [
+  'stlMode',
+  'stlPointSpacing',
+  'stlLayerSpacing',
+  'stlMinLayerSpacing',
+  'stlSolid',
+] as const;
+
+/**
+ * Layer defaults while inner engraving is on: the K9 crystal contour-dotting preset. The frequency
+ * stands for the UV power (see uvPowerFrequency.ts), so the power is derived from it.
+ */
+const innerEngravingDefaults: Partial<ConfigKeyTypeMap> = {
+  dottingTime: 150,
+  frequency: 110,
+  speed: 180,
+  stlLayerSpacing: DEFAULT_LAYER_SPACING,
+  stlMinLayerSpacing: 0,
+  stlMode: 'dot',
+  stlPointSpacing: DEFAULT_POINT_SPACING,
+  stlSolid: false,
+};
 
 // Forced Keys: If not set, use default value
 export const forcedKeys = ['speed', 'power', 'ink', 'multipass', 'halftone', 'repeat'] as const;
@@ -348,6 +422,13 @@ export const getLayerDpmm = (layer: Element | null | undefined): number => {
 };
 
 /**
+ * Promark UV sets its output through the frequency, so power and frequency are written together
+ * (see uvPowerFrequency.ts).
+ */
+export const isPromarkUV = (): boolean =>
+  promarkModels.has(useDocumentStore.getState().workarea) && getPromarkInfo().laserType === LaserType.UV;
+
+/**
  * @returns Default config based on Promark laser type and watt
  */
 export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
@@ -356,8 +437,14 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
   const config = structuredClone(baseConfig);
 
   if (isPromark) {
+    const promarkInfo = getPromarkInfo();
+
     config.speed = 1000;
-    config.frequency = match(getPromarkInfo())
+    config.frequency = match(promarkInfo)
+      .when(
+        ({ laserType }) => laserType === LaserType.UV,
+        () => 40,
+      )
       .when(
         ({ laserType, watt }) => laserType === LaserType.MOPA && watt >= 100,
         () => 55,
@@ -378,7 +465,18 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
         ({ watt }) => watt >= 30,
         () => 30,
       )
-      .otherwise(() => 27);
+      .otherwise(() => config.frequency);
+    config.pulseWidth = match(promarkInfo)
+      .when(
+        ({ laserType }) => laserType === LaserType.UV,
+        () => 13,
+      )
+      .otherwise(() => config.pulseWidth);
+
+    if (isInnerEngravingActive()) Object.assign(config, innerEngravingDefaults);
+
+    // UV power stands for its frequency, so the two have to agree
+    if (promarkInfo.laserType === LaserType.UV) config.power = uvFrequencyToPower(config.frequency!);
   }
 
   return config;
@@ -413,7 +511,7 @@ export const getData = <T extends ConfigKey>(
     attr = attributeMap.printingSpeed;
   }
 
-  if (['clipRect', 'color', 'configName', 'dpi'].includes(key)) {
+  if (['clipRect', 'color', 'configName', 'dpi', 'stlMode'].includes(key)) {
     return (layer.getAttribute(attr) || defaultConfig[key]) as ConfigKeyTypeMap[T];
   }
 
@@ -474,6 +572,13 @@ export const writeDataLayer = <T extends ConfigKey>(
     printingModules.has(Number.parseInt(layer.getAttribute(attributeMap.module) ?? '', 10))
   ) {
     attr = attributeMap.printingSpeed;
+  }
+
+  // Inner engraving is fixed at one pass: a second one has to travel through the cracks the first
+  // left behind, which scatter it. The panel hides the control, and this is what keeps a
+  // preset — the one other way a layer gets its repeat — from putting a different number in.
+  if (key === 'repeat' && isInnerEngravingActive()) {
+    value = 1 as ConfigKeyTypeMap[T];
   }
 
   const originalValue = layer.getAttribute(attr);
@@ -608,6 +713,13 @@ export const initLayerConfig = (layer: Element): void => {
   }
 };
 
+/** Every key with an attribute, except the inner engraving ones outside inner engraving. */
+const getReadableConfigKeys = (): ConfigKey[] => {
+  const keys = Object.keys(attributeMap) as ConfigKey[];
+
+  return isInnerEngravingActive() ? keys : keys.filter((key) => !innerEngravingConfigKeys.includes(key));
+};
+
 /** @param base the base layer's name, or its group element — which may be a detached (e.g. just-deleted) node */
 export const cloneLayerConfig = (targetLayerName: string, base: Element | string): void => {
   const targetLayer = getLayerElementByName(targetLayerName);
@@ -619,7 +731,7 @@ export const cloneLayerConfig = (targetLayerName: string, base: Element | string
   if (!baseLayer) {
     initLayerConfig(targetLayer);
   } else {
-    const keys = Object.keys(attributeMap) as ConfigKey[];
+    const keys = getReadableConfigKeys();
 
     for (const key of keys) {
       if (booleanConfig.includes(key)) {
@@ -640,7 +752,7 @@ export const getLayerConfig = (layerName: string): ILayerConfig | null => {
   if (!layer) return null;
 
   const data: Partial<ILayerConfig> = {};
-  const keys = Object.keys(attributeMap) as ConfigKey[];
+  const keys = getReadableConfigKeys();
 
   for (const key of keys) {
     // @ts-expect-error type mismatch
@@ -654,7 +766,7 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
   const layers = layerNames.map((layerName) => getLayerElementByName(layerName)).filter(Boolean);
   const currentLayerIdx = currentLayerName ? layerNames.indexOf(currentLayerName) : -1;
   const data = {};
-  const keys = Object.keys(attributeMap) as ConfigKey[];
+  const keys = getReadableConfigKeys();
 
   for (const key of keys) {
     // @ts-expect-error type mismatch
@@ -711,7 +823,7 @@ export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
   const workarea = useDocumentStore.getState().workarea;
 
   if (promarkModels.has(workarea)) {
-    return promarkConfigKeys;
+    return isInnerEngravingActive() ? [...promarkConfigKeys, ...innerEngravingConfigKeys] : promarkConfigKeys;
   }
 
   if (printingModules.has(module)) {
@@ -723,10 +835,18 @@ export const getConfigKeys = (module: LayerModuleType): ConfigKey[] => {
 
 export const getPromarkLimit = (): {
   frequency?: { max: number; min: number };
+  /** Only UV narrows the power range; elsewhere it is 0–100. */
+  power?: { max: number; min: number };
   pulseWidth?: { max: number; min: number };
+  qPulseWidth?: { max: number; min: number };
 } =>
   // pulseWidth for M100 V1: 10~500, M20 V1: 2~350
   match(getPromarkInfo())
+    .with({ laserType: LaserType.UV }, () => ({
+      frequency: { ...UV_FREQUENCY_LIMIT },
+      power: { ...UV_POWER_LIMIT },
+      qPulseWidth: { max: 1365, min: 0.021 },
+    }))
     .with({ laserType: LaserType.MOPA, watt: 60 }, () => ({
       frequency: { max: 3000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
@@ -772,6 +892,16 @@ export const applyPreset = (
     }
 
     writeDataLayer(layer, key, value, { applyPrinting: printingModules.has(module), batchCmd });
+  }
+
+  // a UV preset may carry power, frequency or both; frequency is what the machine uses
+  if (isPromarkUV()) {
+    if (resolved.frequency !== undefined) {
+      writeDataLayer(layer, 'power', uvFrequencyToPower(resolved.frequency), { batchCmd });
+    } else {
+      // power is a forced key, so the default above was written when the preset has none
+      writeDataLayer(layer, 'frequency', uvPowerToFrequency(resolved.power ?? defaultConfig.power!), { batchCmd });
+    }
   }
 
   if (applyName) {

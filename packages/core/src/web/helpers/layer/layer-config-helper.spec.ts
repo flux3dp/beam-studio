@@ -15,23 +15,33 @@ jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
 }));
 
 const mockGetPromarkInfo = jest.fn();
+const mockIsInnerEngravingActive = jest.fn(() => false);
+
+jest.mock('@core/helpers/addOn/innerEngraving', () => ({
+  isInnerEngravingActive: () => mockIsInnerEngravingActive(),
+}));
 
 jest.mock('@core/helpers/device/promark/promark-info', () => ({
   getPromarkInfo: (...args) => mockGetPromarkInfo(...args),
 }));
 
 import {
+  applyPreset,
   baseConfig,
   booleanConfig,
   cloneLayerConfig,
   getConfigKeys,
+  getData,
+  getDefaultConfig,
   getLayerConfig,
   getLayerDpmm,
   getLayersConfig,
   getPromarkLimit,
   initLayerConfig,
+  innerEngravingConfigKeys,
   toggleModuleAfterWorkareaChange,
   writeData,
+  writeDataLayer,
 } from './layer-config-helper';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
@@ -77,6 +87,10 @@ optionalConfigs.forEach((key) => {
 
 booleanConfig.forEach((key) => {
   defaultConfigs[key] = { value: false };
+});
+// inner engraving keys are not read outside inner engraving
+innerEngravingConfigKeys.forEach((key) => {
+  delete defaultConfigs[key];
 });
 
 Object.assign(defaultConfigs, {
@@ -306,11 +320,15 @@ describe('test layer-config-helper', () => {
       'power',
       'repeat',
       'pulseWidth',
+      'qPulseWidth',
       'frequency',
       'fillInterval',
       'fillAngle',
       'biDirectional',
       'crossHatch',
+      'fillInterleave',
+      'fillDwellTime',
+      'fillDwellAdaptive',
       'focus',
       'focusStep',
       'dottingTime',
@@ -333,6 +351,103 @@ describe('test layer-config-helper', () => {
     expect(getPromarkLimit()).toEqual({
       frequency: { max: 4000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
+    });
+    mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.UV, watt: 5 });
+    expect(getPromarkLimit()).toEqual({
+      frequency: { max: 200, min: 30 },
+      power: { max: 100, min: expect.closeTo(15.556, 3) },
+      qPulseWidth: { max: 1365, min: 0.021 },
+    });
+  });
+
+  describe('inner engraving layer parameters', () => {
+    beforeEach(() => {
+      useDocumentStore.setState({ workarea: 'fpm1' });
+      mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.UV, watt: 5 });
+      mockIsInnerEngravingActive.mockReturnValue(true);
+    });
+
+    afterEach(() => mockIsInnerEngravingActive.mockReturnValue(false));
+
+    test('defaults are the contour-dotting preset, with the power its frequency stands for', () => {
+      expect(getDefaultConfig()).toMatchObject({
+        dottingTime: 150,
+        frequency: 110,
+        // halfway between 100kHz (2.2W) and 120kHz (1.8W) of 4.5W
+        power: expect.closeTo(44.444, 3),
+        speed: 180,
+        stlLayerSpacing: 0.04,
+        stlMinLayerSpacing: 0,
+        stlMode: 'dot',
+        stlPointSpacing: 0.03,
+        stlSolid: false,
+      });
+    });
+
+    test('the keys only join Promark layers while inner engraving is on', () => {
+      expect(getConfigKeys(LayerModule.LASER_UNIVERSAL)).toEqual(expect.arrayContaining(innerEngravingConfigKeys));
+
+      mockIsInnerEngravingActive.mockReturnValue(false);
+      expect(getConfigKeys(LayerModule.LASER_UNIVERSAL)).not.toContain('stlMode');
+      expect(getDefaultConfig()).not.toHaveProperty('stlMode');
+    });
+
+    test('reads and writes them on the layer under the Swiftray names', () => {
+      const layer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+      expect(getData(layer, 'stlMode')).toBe('dot');
+      writeDataLayer(layer, 'stlMode', 'line');
+      writeDataLayer(layer, 'stlLayerSpacing', 0.05);
+      writeDataLayer(layer, 'stlSolid', true);
+      expect(layer.getAttribute('data-stl-mode')).toBe('line');
+      expect(layer.getAttribute('data-stl-layer-spacing')).toBe('0.05');
+      expect(layer.getAttribute('data-stl-solid')).toBe('1');
+      expect(getData(layer, 'stlMode')).toBe('line');
+      expect(getData(layer, 'stlSolid')).toBe(true);
+    });
+  });
+
+  describe('Promark UV power and frequency', () => {
+    const createUvLayer = () => document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+    beforeEach(() => {
+      useDocumentStore.setState({ workarea: 'fpm1' });
+      mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.UV, watt: 5 });
+    });
+
+    test('defaults agree: 100% is 40kHz', () => {
+      expect(getDefaultConfig()).toMatchObject({ frequency: 40, power: 100, pulseWidth: 13, qPulseWidth: 1 });
+    });
+
+    test('Desktop defaults are unchanged', () => {
+      mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
+      expect(getDefaultConfig()).toMatchObject({ frequency: 27, power: 15 });
+    });
+
+    test('applyPreset derives the frequency from a preset with only power', () => {
+      const layer = createUvLayer();
+
+      applyPreset(layer, { power: 40, speed: 1000 });
+      expect(getData(layer, 'power')).toBe(40);
+      expect(getData(layer, 'frequency')).toBeCloseTo(120);
+    });
+
+    test('applyPreset derives the power from a preset frequency', () => {
+      const layer = createUvLayer();
+
+      applyPreset(layer, { frequency: 35, power: 20, speed: 1000 });
+      expect(getData(layer, 'frequency')).toBe(35);
+      expect(getData(layer, 'power')).toBe(100);
+    });
+
+    test('applyPreset leaves other Promark sources alone', () => {
+      mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.MOPA, watt: 60 });
+
+      const layer = createUvLayer();
+
+      applyPreset(layer, { power: 40, speed: 1000 });
+      expect(getData(layer, 'power')).toBe(40);
+      expect(layer.getAttribute('data-frequency')).toBeNull();
     });
   });
 

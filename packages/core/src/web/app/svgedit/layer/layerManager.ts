@@ -11,6 +11,7 @@ import NS from '@core/app/constants/namespaces';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useLayerStore } from '@core/app/stores/layer/layerStore';
+import { PHOTO_3D_ATTR } from '@core/app/svgedit/stl/constants';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
 import type { HistoryActionOptions, ICommand } from '@core/interfaces/IHistory';
 
@@ -243,16 +244,17 @@ export class LayerManager {
   };
 
   /**
-   * Recompute whether the selected layers contain gradient images (Promark models only).
+   * Recompute whether the selected layers contain gradient images and inner engraving photo planes
+   * (Promark models only).
    */
   public checkGradient = (workarea: WorkAreaModel = useDocumentStore.getState().workarea): void => {
     if (!promarkModels.has(workarea)) return;
 
-    const hasGradient = this.getState().selectedLayers.some((layerName) =>
-      Boolean(this.getLayerElementByName(layerName)?.querySelector('image[data-shading="true"]')),
-    );
+    const layers = this.getState().selectedLayers.map(this.getLayerElementByName);
+    const hasGradient = layers.some((layer) => Boolean(layer?.querySelector('image[data-shading="true"]')));
+    const hasStlPhoto = layers.some((layer) => Boolean(layer?.querySelector(`image[${PHOTO_3D_ATTR.marker}]`)));
 
-    useLayerStore.setState({ hasGradient });
+    useLayerStore.setState({ hasGradient, hasStlPhoto });
   };
 
   /**

@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Button, Spin } from 'antd';
+import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -27,6 +28,8 @@ type CalibrationData =
 type Props = CalibrationData & {
   cameraOptions?: Options;
   description?: string[];
+  /** Rendered below the exposure slider */
+  extra?: ReactNode;
   indicator?: { height: number | string; left: number | string; top: number | string; width: number | string };
   onBack?: () => void;
   onClose: (complete?: boolean) => void;
@@ -44,6 +47,7 @@ const Calibration = ({
   charuco,
   chessboard,
   description,
+  extra,
   indicator,
   onBack,
   onClose,
@@ -57,6 +61,7 @@ const Calibration = ({
   const imgRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isUsbCamera = useMemo(() => cameraOptions?.source === 'usb', [cameraOptions]);
+  const rotate180 = cameraOptions?.source === 'usb' && cameraOptions.rotate180;
   const {
     autoExposure,
     exposureSetting,
@@ -82,7 +87,7 @@ const Calibration = ({
     let success = false;
 
     try {
-      const imgBlob = isUsbCamera ? await webCamConnection?.getPicture()! : img!.blob;
+      const imgBlob = isUsbCamera ? await webCamConnection?.getPicture({ rotate180 })! : img!.blob;
       let calibrationRes: null | { d: number[][]; k: number[][]; ret: number; rvec: number[][]; tvec: number[][] } =
         null;
 
@@ -161,7 +166,7 @@ const Calibration = ({
     <div className={styles.imgContainer}>
       {img ? (
         isUsbCamera ? (
-          <video ref={videoRef} />
+          <video className={classNames({ [styles.rotate180]: rotate180 })} ref={videoRef} />
         ) : (
           <>
             <ContextMenu items={[{ key: 'download', label: t.monitor.download }]} onClick={handleDownload}>
@@ -197,6 +202,7 @@ const Calibration = ({
       <>
         {descriptionNode}
         {exposureSlider}
+        {extra}
       </>
     );
 
@@ -223,6 +229,7 @@ const Calibration = ({
         {descriptionNode}
         {media}
         {exposureSlider}
+        {extra}
       </div>
     </DraggableModal>
   );

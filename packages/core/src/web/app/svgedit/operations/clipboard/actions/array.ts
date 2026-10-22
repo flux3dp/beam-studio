@@ -2,6 +2,7 @@ import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selectionManager from '@core/app/svgedit/selection';
+import { syncStlTransformsFromRects } from '@core/app/svgedit/stl/clipboard';
 
 import undoManager from '../../../history/undoManager';
 
@@ -70,6 +71,9 @@ export const generateSelectedElementArray = async (
         if (moveCmd && !moveCmd.isEmpty()) {
           batchCmd.addSubCommand(moveCmd);
         }
+
+        // the grid interval was applied to the projection rects only; the 3D objects have to follow
+        syncStlTransformsFromRects(elems, batchCmd);
       }
     }
   }

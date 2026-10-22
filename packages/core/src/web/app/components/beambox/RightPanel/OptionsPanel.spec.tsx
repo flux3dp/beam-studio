@@ -13,6 +13,17 @@ jest.mock('./OptionsBlocks/InFillBlock', () => 'dummy-infill-block');
 jest.mock('./OptionsBlocks/RectOptions', () => 'dummy-rect-options');
 jest.mock('./OptionsBlocks/TextOptions', () => 'dummy-text-options');
 jest.mock('./OptionsBlocks/PolygonOptions', () => 'dummy-polygon-options');
+jest.mock('./OptionsBlocks/useThreeDSourceOptions', () => (elem: null | SVGElement) => {
+  if (!elem?.hasAttribute('data-stl-source')) return { sourceElem: null };
+
+  const sourceElem = document.createElementNS(
+    'http://www.w3.org/2000/svg',
+    elem.getAttribute('data-source-tag') || 'rect',
+  );
+
+  return { sourceElem };
+});
+jest.mock('./OptionsBlocks/ThreeDOptions', () => 'dummy-three-d-options');
 jest.mock('./OptionsBlocks/MultiColorOptions', () => 'dummy-multi-color-options');
 jest.mock('./OptionsBlocks/VariableTextBlock', () => 'dummy-variable-text-block');
 jest.mock('./ColorPanel', () => 'dummy-color-panel');
@@ -59,6 +70,56 @@ describe('should render correctly', () => {
     const { container } = render(<OptionsPanel elem={getElem('image')} />);
 
     expect(container).toMatchSnapshot();
+  });
+
+  test('3D photo keeps bitmap options', () => {
+    document.body.innerHTML = '<image id="image" data-stl-photo="1" />';
+
+    const { container } = render(<OptionsPanel elem={getElem('image')} />);
+
+    expect(container.querySelector('dummy-image-options')).toBeInTheDocument();
+    expect(container.querySelector('dummy-three-d-options')).toBeInTheDocument();
+    expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
+  });
+
+  test('generated photo point cloud has no option controls', () => {
+    document.body.innerHTML = '<image id="image" data-stl-photo="1" data-stl-point-cloud="1" />';
+
+    const { container } = render(<OptionsPanel elem={getElem('image')} />);
+
+    expect(container.querySelector('.panel')).not.toBeInTheDocument();
+    expect(container.querySelector('dummy-image-options')).not.toBeInTheDocument();
+    expect(container.querySelector('dummy-three-d-options')).not.toBeInTheDocument();
+  });
+
+  // how a 3D object is engraved, solid included, is set on its layer: no infill, no 3D options
+  test('pure STL has no object options', () => {
+    document.body.innerHTML = '<rect id="stl" data-stl="1" />';
+
+    const { container } = render(<OptionsPanel elem={getElem('stl')} />);
+
+    expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
+    expect(container.querySelector('dummy-three-d-options')).not.toBeInTheDocument();
+    expect(container.querySelector('dummy-rect-options')).not.toBeInTheDocument();
+  });
+
+  test('extruded 2D source keeps its source options without infill', () => {
+    document.body.innerHTML = '<rect id="stl" data-stl="1" data-stl-source="source" />';
+
+    const { container } = render(<OptionsPanel elem={getElem('stl')} />);
+
+    expect(container.querySelector('dummy-rect-options')).toBeInTheDocument();
+    expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
+    expect(container.querySelector('dummy-three-d-options')).not.toBeInTheDocument();
+  });
+
+  test('extruded text follows the original text match branch', () => {
+    document.body.innerHTML = '<rect id="stl" data-stl="1" data-stl-source="source" data-source-tag="text" />';
+
+    const { container } = render(<OptionsPanel elem={getElem('stl')} />);
+
+    expect(container.querySelector('dummy-text-options')).toBeInTheDocument();
+    expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
   });
 
   describe('polygon', () => {

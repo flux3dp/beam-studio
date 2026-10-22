@@ -130,7 +130,7 @@ export class WebCamConnection {
     return true;
   };
 
-  getPicture = async ({ flip = true }: { flip?: boolean } = {}): Promise<Blob> => {
+  getPicture = async ({ rotate180 }: { rotate180: boolean }): Promise<Blob> => {
     const canvas = document.createElement('canvas');
 
     canvas.width = this.video.videoWidth;
@@ -138,7 +138,7 @@ export class WebCamConnection {
 
     const context = canvas.getContext('2d')!;
 
-    if (flip) {
+    if (rotate180) {
       context.save();
       context.translate(canvas.width, canvas.height);
       context.scale(-1, -1);

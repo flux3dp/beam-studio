@@ -6,7 +6,9 @@
  */
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import NS from '@core/app/constants/namespaces';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { setAttributes } from '@core/helpers/element/attribute';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import round from '@core/helpers/math/round';
@@ -80,15 +82,17 @@ export class AutoAlignManager {
       this.updateWorkareaPoints();
       this.collectAlignPoints();
     });
-    useGlobalPreferenceStore.subscribe(
-      (state) => state.auto_align,
-      (enabled) => {
-        if (!enabled) this.clearAlignLines();
-      },
-    );
+    useGlobalPreferenceStore.subscribe((state) => state.auto_align, this.onEnabledChanged);
+    useDocumentStore.subscribe((state) => state['inner-engraving'], this.onEnabledChanged);
   };
 
-  isEnabled = (): boolean => useGlobalPreferenceStore.getState().auto_align;
+  private onEnabledChanged = (): void => {
+    if (!this.isEnabled()) this.clearAlignLines();
+  };
+
+  // 3D has no 2D neighbours to align against, and the alignment lines are drawn into the hidden SVG
+  // canvas where nobody would see them, so auto align is off for the whole of inner engraving mode.
+  isEnabled = (): boolean => useGlobalPreferenceStore.getState().auto_align && !isInnerEngravingActive();
 
   toggle = (): boolean => {
     const { auto_align: value, set } = useGlobalPreferenceStore.getState();

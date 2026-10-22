@@ -1,4 +1,4 @@
-import React, { memo, use, useMemo } from 'react';
+import React, { memo, use, useMemo, useRef } from 'react';
 
 import { Badge } from 'antd';
 import { match } from 'ts-pattern';
@@ -16,10 +16,13 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import insertDefaultTextAsStl from '@core/app/svgedit/operations/import/importStl/insertDefaultText';
 import selectionManager from '@core/app/svgedit/selection';
 import { createParamsLabel } from '@core/app/svgedit/text/paramsLabel';
-import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
-import { isParamsLabelDev } from '@core/helpers/is-dev';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
+import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
+import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
+import { isParamsLabelDev, isUvDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
@@ -33,6 +36,7 @@ type ToolButtonProps = {
   onClick: () => void;
   showBadge?: boolean;
   style?: React.CSSProperties;
+  supportedIn3D?: boolean;
 };
 
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
@@ -43,7 +47,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   } = lang;
   const { hasPassthroughExtension } = use(CanvasContext);
   const { isDrawing, isStarting } = useCameraPreviewStore();
-  const { drawerMode, mouseMode, toggleDrawerMode } = useCanvasStore();
+  const { drawerMode, mouseMode, setDrawerMode, toggleDrawerMode } = useCanvasStore();
   const lessonsLeft = LESSONS.length - completedCount(useFlux101Bucket());
   const activeButton = useMemo(
     () =>
@@ -58,6 +62,25 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         .otherwise(() => 'Cursor'),
     [mouseMode],
   );
+  const isInnerEngravingMode = useInnerEngravingActive();
+  const modeRef = useRef(isInnerEngravingMode);
+  const insertDefault3dText = (type: 'fit-text' | 'text') => {
+    selectionManager.clearSelection();
+    void insertDefaultTextAsStl(type);
+  };
+
+  useDidUpdateEffect(() => {
+    if (modeRef.current === isInnerEngravingMode) return;
+
+    modeRef.current = isInnerEngravingMode;
+
+    if (!isInnerEngravingMode) return;
+
+    setDrawerMode('none');
+    endPreviewMode();
+    // eslint-disable-next-line hooks/rules-of-hooks
+    FnWrapper.useSelectTool();
+  }, [isInnerEngravingMode]);
 
   const renderToolButton = ({
     className = undefined,
@@ -68,22 +91,24 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     onClick,
     showBadge = false,
     style = undefined,
-  }: ToolButtonProps) => (
-    <LeftPanelButton
-      active={activeButton === id}
-      className={className}
-      disabled={disabled}
-      icon={icon}
-      id={`left-${id}`}
-      onClick={() => {
-        selectionManager.clearSelection();
-        onClick();
-      }}
-      showBadge={showBadge}
-      style={style}
-      title={label}
-    />
-  );
+    supportedIn3D = false,
+  }: ToolButtonProps) =>
+    isInnerEngravingMode && !supportedIn3D ? null : (
+      <LeftPanelButton
+        active={activeButton === id}
+        className={className}
+        disabled={disabled}
+        icon={icon}
+        id={`left-${id}`}
+        onClick={() => {
+          selectionManager.clearSelection();
+          onClick();
+        }}
+        showBadge={showBadge}
+        style={style}
+        title={label}
+      />
+    );
 
   return (
     <div className={className}>
@@ -93,18 +118,21 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Preview',
         label: t.label.preview,
         onClick: async () => handlePreviewClick(),
+        supportedIn3D: true,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Cursor />,
         id: 'Cursor',
         label: `${t.label.cursor} (V)`,
         onClick: FnWrapper.useSelectTool,
+        supportedIn3D: true,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Photo />,
         id: 'Photo',
         label: `${t.label.photo} (I)`,
         onClick: FnWrapper.importImage,
+        supportedIn3D: true,
       })}
       <LeftPanelButtonGroup
         active={activeButton === 'Text' || activeButton === 'FitText'}
@@ -115,8 +143,12 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
             id: 'Text',
             label: t.label.text,
             onClick: () => {
-              selectionManager.clearSelection();
-              setMouseMode('text');
+              if (isInnerEngravingMode) {
+                insertDefault3dText('text');
+              } else {
+                selectionManager.clearSelection();
+                setMouseMode('text');
+              }
             },
             title: t.label.text,
           },
@@ -125,8 +157,12 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
             id: 'FitText',
             label: t.label.fit_text,
             onClick: () => {
-              selectionManager.clearSelection();
-              setMouseMode('fit-text');
+              if (isInnerEngravingMode) {
+                insertDefault3dText('fit-text');
+              } else {
+                selectionManager.clearSelection();
+                setMouseMode('fit-text');
+              }
             },
           },
         ]}
@@ -138,6 +174,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         label: `${t.label.elements} (E)`,
         onClick: () => toggleDrawerMode('element-panel'),
         style: { color: drawerMode === 'element-panel' ? '#000000' : undefined },
+        supportedIn3D: true,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Rect />,
@@ -182,6 +219,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         label: lang.generators.title,
         onClick: () => toggleDrawerMode('generator'),
         style: { color: drawerMode === 'generator' ? '#000000' : undefined },
+        // only the material test generator has a 3D version, and it is still in development
+        supportedIn3D: isUvDev(),
       })}
       {hasPassthroughExtension &&
         renderToolButton({
@@ -222,6 +261,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Beamy',
         onClick: () => toggleDrawerMode('ai-chat'),
         style: { color: drawerMode === 'ai-chat' ? '#1890ff' : undefined },
+        supportedIn3D: true,
       })}
     </div>
   );

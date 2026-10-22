@@ -125,6 +125,15 @@ jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
 }));
 
+const mockUseIsPromarkUV = jest.fn();
+const mockUsePromarkLimit = jest.fn();
+
+jest.mock('./usePromarkLimit', () => ({
+  __esModule: true,
+  default: () => mockUsePromarkLimit(),
+  useIsPromarkUV: () => mockUseIsPromarkUV(),
+}));
+
 import PowerBlock from './PowerBlock';
 
 const mockUseConfigPanelStore = jest.fn();
@@ -148,6 +157,8 @@ describe('test PowerBlock', () => {
     mockGetLayerByName.mockImplementation((name) => name);
     mockGetData.mockReturnValue(0);
     mockGetCurrentLayerName.mockReturnValue('layer1');
+    mockUseIsPromarkUV.mockReturnValue(false);
+    mockUsePromarkLimit.mockReturnValue({});
     batchCmd = { count: 0, onAfter: undefined };
   });
 
@@ -268,6 +279,50 @@ describe('test PowerBlock', () => {
     expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', power: 86 });
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith({ minPower: { value: 0 } });
+  });
+
+  describe('Promark UV', () => {
+    beforeEach(() => {
+      mockUseIsPromarkUV.mockReturnValue(true);
+      mockUsePromarkLimit.mockReturnValue({ power: { max: 100, min: 15.5 } });
+      mockUseConfigPanelStore.mockReturnValue({
+        change: mockChange,
+        frequency: { hasMultiValue: false, value: 120 },
+        power: { hasMultiValue: false, value: 87 },
+        update: mockUpdate,
+      });
+    });
+
+    test('shows the power its frequency stands for, within the UV range', () => {
+      const { getByText } = render(<PowerBlock />);
+
+      // 120kHz measured 1.8W of 4.5W
+      expect(getByText('value: 40')).toBeInTheDocument();
+      expect(getByText('min: 15.5')).toBeInTheDocument();
+      expect(getByText('max: 100')).toBeInTheDocument();
+    });
+
+    test('the slider starts at the next whole percent, the input keeps the decimal minimum', () => {
+      const { container } = render(<PowerBlock />);
+
+      expect(container.querySelector('#power_value')).toHaveAttribute('min', '16');
+    });
+
+    test('writes the linked frequency with the power', () => {
+      const { container } = render(<PowerBlock />);
+
+      // 50% lies between 80kHz (62.2%) and 100kHz (48.9%)
+      fireEvent.change(container.querySelector('input'), { target: { value: '50' } });
+      expect(mockChange).toHaveBeenLastCalledWith({
+        configName: 'CUSTOM_PRESET_CONSTANT',
+        frequency: expect.closeTo(98.333, 3),
+        power: 50,
+      });
+      expect(mockWriteDataLayer).toHaveBeenCalledWith('layer1', 'power', 50, { batchCmd });
+      expect(mockWriteDataLayer).toHaveBeenCalledWith('layer1', 'frequency', expect.closeTo(98.333, 3), { batchCmd });
+      expect(mockWriteDataLayer).toHaveBeenCalledWith('layer2', 'frequency', expect.closeTo(98.333, 3), { batchCmd });
+      expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    });
   });
 
   test('onChange of value display should work correctly', () => {

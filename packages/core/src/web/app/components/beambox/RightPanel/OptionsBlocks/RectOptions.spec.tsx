@@ -43,6 +43,21 @@ describe('should render correctly', () => {
     expect(updateDimensionValues).toHaveBeenCalledTimes(1);
     expect(updateDimensionValues).toHaveBeenNthCalledWith(1, { rx: 100 });
   });
+
+  test('delegates rounded corner changes for an editable 3D source', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <ObjectPanelContext.Provider value={{ dimensionValuesRef: { current: { rx: 0 } } } as any}>
+        <RectOptions elem={document.createElement('rect')} roundedCorner={{ onChange, valueMm: 2 }} />
+      </ObjectPanelContext.Provider>,
+    );
+
+    fireEvent.change(container.querySelector('input')!, { target: { value: 3 } });
+    fireEvent.blur(container.querySelector('input')!);
+
+    expect(onChange).toHaveBeenCalledWith(3);
+    expect(changeSelectedAttribute).not.toHaveBeenCalled();
+  });
 });
 
 describe('should render correctly in mobile', () => {

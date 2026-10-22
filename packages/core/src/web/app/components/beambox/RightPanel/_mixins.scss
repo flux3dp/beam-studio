@@ -61,6 +61,20 @@
   }
 }
 
+@mixin option-label() {
+  font-size: 12px;
+  height: 20px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #333333;
+
+  .icon {
+    width: 12px;
+    height: 12px;
+    margin: 4px 0 4px 4px;
+  }
+}
+
 @mixin option-block() {
   margin: 7px 0;
   width: 100%;
@@ -69,17 +83,7 @@
   align-items: center;
 
   .label {
-    font-size: 12px;
-    height: 20px;
-    line-height: 20px;
-    font-weight: 600;
-    color: #333333;
-
-    .icon {
-      width: 12px;
-      height: 12px;
-      margin: 4px 0 4px 4px;
-    }
+    @include option-label();
   }
 
   &.with-select {

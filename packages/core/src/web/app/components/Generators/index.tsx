@@ -4,6 +4,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import useI18n from '@core/helpers/useI18n';
 
@@ -14,7 +15,8 @@ const Generators = memo(() => {
   const t = useI18n().generators;
   const { setDrawerMode } = useCanvasStore();
   const workarea = useWorkarea();
-  const generators = getGenerators({ isMobile: false, workarea });
+  const isInnerEngraving = useInnerEngravingActive();
+  const generators = getGenerators({ isInnerEngraving, isMobile: false, workarea });
 
   const handleItemClick = (onClick: () => void) => {
     setDrawerMode('none');

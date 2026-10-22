@@ -1,0 +1,84 @@
+/**
+ * The inner engraving material: its shape, size, position and refractive index.
+ *
+ * All values are in **mm**, matching the other document settings (the scene converts to its own
+ * 0.1mm units at the render boundary). The material is a document setting rather than a canvas
+ * object. Its optical height and engravable Z interval are derived into Swiftray export params;
+ * shape and XY placement remain frontend-only.
+ */
+
+export const MATERIAL_SHAPES = ['box', 'cylinder', 'sphere'] as const;
+
+export type MaterialShape = (typeof MATERIAL_SHAPES)[number];
+
+/**
+ * Size limits, in mm.
+ *
+ * ⚠️ XY is deliberately **not** capped by the work area: a workpiece may be larger than the 70x70mm
+ * work area, only the part inside it can be engraved. The cap here is a sanity bound for the input,
+ * not a hardware limit. Height is capped per model by `getAddOnInfo(model).innerEngraving`.
+ */
+export const MATERIAL_SIZE_LIMIT = { max: 1000, min: 1 } as const;
+
+/**
+ * Position of the material's **centre**, in mm, from the work area origin.
+ *
+ * Centre rather than a bounding box corner because inner engraving wants the workpiece near the
+ * middle of the field, and because a corner anchor drifts off centre every time the size changes.
+ * A sphere or a cylinder has no meaningful corner either. The dialog can still show and edit the
+ * corner, but that is a view of this value, not a second source of truth.
+ */
+export const MATERIAL_POSITION_LIMIT = { max: 1000, min: -1000 } as const;
+
+/**
+ * Refractive index of the workpiece.
+ *
+ * The laser refracts at the surface, so the geometric depth and the actual focus depth differ; the
+ * value is only passed through to swiftray, which applies the compensation (depth / n). The default
+ * is measured on K9 crystal (DEFAULT_MATERIAL); ordinary crystal glass is 1.45~1.6.
+ */
+export const REFRACTIVE_INDEX_LIMIT = { max: 3, min: 1, precision: 3 } as const;
+
+/**
+ * Safety margin, in mm: how far engraving stays away from the material's surfaces.
+ *
+ * Cracking too close to a surface breaks it out, so both the fit-on-import check and the
+ * "centre in the engravable area" action inset the material by this much. xTool leaves 4mm.
+ * This setting is shown only in developer mode while the 4mm default is verified on real hardware.
+ * It remains a document setting so it travels with the file.
+ */
+export const DEFAULT_SAFETY_MARGIN = 4;
+export const SAFETY_MARGIN_LIMIT = { max: 50, min: 0 } as const;
+
+export const DEFAULT_MATERIAL = {
+  baseHeight: 0,
+  depth: 50,
+  diameter: 50,
+  height: 50,
+  // measured on the K9 crystal used for the 2026-10 tests
+  refractiveIndex: 1.537,
+  shape: 'box' as MaterialShape,
+  width: 50,
+  // centred on the 70x70mm work area: Promark UV is the only model with inner engraving, and
+  // starting centred is what the technique wants anyway
+  x: 35,
+  y: 35,
+} as const;
+
+/**
+ * Inner engraving parameters of a layer (data-stl-* on the layer group).
+ *
+ * They decide how every 3D object in the layer is engraved, because the dot / line choice decides
+ * which laser parameters fit. Swiftray reads them off the layer and has the same defaults for an
+ * absent attribute (toolpath-exporter.cpp), so the two must be kept in step. The defaults are the
+ * values measured on K9 crystal (2026-10).
+ */
+export const ENGRAVING_MODES = ['line', 'dot'] as const;
+
+export type EngravingMode = (typeof ENGRAVING_MODES)[number];
+
+/** Millimetres. The spacing is the Z step in line mode and the inward-shell step in solid dot mode. */
+export const DEFAULT_LAYER_SPACING = 0.04;
+export const DEFAULT_POINT_SPACING = 0.03;
+export const LAYER_SPACING_LIMIT = { max: 5, min: 0.001 } as const;
+export const POINT_SPACING_LIMIT = { max: 5, min: 0.001 } as const;

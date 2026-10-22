@@ -9,7 +9,9 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
+import { getPromarkFieldWorksize, getPromarkLaserSource, LaserType } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import storage from '@core/implementations/storage';
@@ -39,6 +41,7 @@ import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';
 import { showBb2FirmwareWarning } from './device/bb2FirmwareWarning';
 import promarkDataStore from './device/promark/promark-data-store';
+import { getPromarkInfo } from './device/promark/promark-info';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
 
@@ -1492,14 +1495,18 @@ class DeviceMaster {
 
   async setField(worksize: number, fieldData: Field = { angle: 0, offsetX: 0, offsetY: 0 }) {
     const controlSocket = await this.getControl();
+    const isPromarkUV = useDocumentStore.getState().workarea === 'fpm1' && getPromarkInfo().laserType === LaserType.UV;
 
-    return controlSocket.addTask(controlSocket.setField, worksize, fieldData);
+    const adjustedWorksize = getPromarkFieldWorksize(isPromarkUV ? LaserType.UV : LaserType.Desktop, worksize);
+
+    return controlSocket.addTask(controlSocket.setField, adjustedWorksize, fieldData);
   }
 
   async setGalvoParameters(data: GalvoParameters) {
     const controlSocket = await this.getControl();
+    const laserSource = getPromarkLaserSource(getPromarkInfo().laserType);
 
-    return controlSocket.addTask(controlSocket.setLensCorrection, data.x, data.y);
+    return controlSocket.addTask(controlSocket.setLensCorrection, data.x, data.y, laserSource);
   }
 
   async getDeviceDetailInfo(): Promise<IDeviceDetailInfo> {

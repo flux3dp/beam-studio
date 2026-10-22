@@ -1,7 +1,10 @@
 import { pipe } from 'remeda';
 
+import { renderInnerEngravingThumbnail } from '@core/app/components/beambox/InnerEngraving/utils/thumbnail';
+import { getPointCloudSources, getStlSources } from '@core/app/svgedit/stl/sources';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import beamFileHelper from '@core/helpers/beam-file-helper';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -17,6 +20,18 @@ getSVGAsync((globalSVG) => {
 });
 
 const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
+  // an inner engraving document's svgcontent holds nothing but flat projection rects, so the 2D
+  // path below would produce a picture of outlines rather than of the work
+  if (isInnerEngravingActive()) {
+    const canvas = await renderInnerEngravingThumbnail();
+
+    if (!canvas) return null;
+
+    const blob = await new Promise<Blob>((resolve) => canvas.toBlob((b) => resolve(b!), 'image/png', 1.0));
+
+    return blob.arrayBuffer();
+  }
+
   const { maxY, minY, width } = workareaManager;
   const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const bbox = await getSvgContentActualBBox();
@@ -73,8 +88,12 @@ export const generateBeamBuffer = async (): Promise<Buffer> =>
   pipe(
     {
       imageSource: await svgCanvas.getImageSource(),
+      pointCloudSource: getPointCloudSources(),
+      // inner engraving only: the meshes the `data-stl` placeholder rects in svgString stand for
+      stlSource: getStlSources(),
       svgString: svgCanvas.getSvgString(),
       thumbnail: (await generateBeamThumbnail()) || undefined,
     },
-    ({ imageSource, svgString, thumbnail }) => beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail),
+    ({ imageSource, pointCloudSource, stlSource, svgString, thumbnail }) =>
+      beamFileHelper.generateBeamBuffer(svgString, imageSource, thumbnail, stlSource, pointCloudSource),
   );

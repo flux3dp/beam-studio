@@ -67,6 +67,12 @@
         align-items: center;
         justify-content: flex-end;
         gap: 4px;
+
+        // a lone switch takes only its own width, leaving the rest of the row to the label
+        &:has(> :global(.ant-switch):only-child) {
+          min-width: auto;
+          margin-left: 12px;
+        }
       }
 
       .segmented {
