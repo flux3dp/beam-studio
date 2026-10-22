@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | 進行中：P2-5 與每行停留、打散掃描順序開放已實作（2026-10-22）；P2-7 已在 Phase 1 完成；P2-2 3D 多選已實作（框選除外，手勢待定），待上機確認 |
+| **Status** | 進行中（2026-10-22）：P2-2 3D 多選已實作（框選除外，手勢待定）；P2-3 照片轉 3D 的 Beam Studio 與 Swiftray 已實作，flux-id API 未實作（§11）；P2-4 填充上下端面已實作；P2-5、P2-7 已完成。以上都待上機確認 |
 | **Author** | EstherFu（整理：Claude） |
 | **Created** | 2026-10-19 |
 | **Target product** | Beam Studio 桌面版（Promark `fpm1` UV） |
@@ -24,11 +24,11 @@ Phase 2 有七個新項目，加上 Phase 1 延續下來的三項。原本的 P2
 |---|---|---|---|
 | ~~P2-1~~ | ~~同一台機器保存多組場鏡參數~~ → 移到 [`promark-lens-profiles.md`](../promark-lens-profiles.md)（2026-10-19） | — | 新增（併入原 P2-6「UV 70mm 場域大小」） |
 | P2-2 | **3D 多選** | Beam Studio | 原 P2-1 |
-| P2-3 | **2D 照片轉 3D 點雲**（可選去背 + Depth Anything V3 Mono，扣點 0.06） | Beam Studio、flux-id、Swiftray | 原 P2-2 |
-| P2-4 | 輪廓打線「**填充上下端面**」 | Beam Studio、Swiftray | 原 P2-7 |
+| P2-3 | **2D 照片轉 3D 點雲**（可選去背 + Depth Anything V3 Mono，扣點 0.06）。Beam Studio、Swiftray 已實作（2026-10-22），flux-id 未實作 | Beam Studio、flux-id、Swiftray | 原 P2-2 |
+| P2-4 | 輪廓打線「**填充上下端面**」，已實作（2026-10-22） | Beam Studio、Swiftray | 原 P2-7 |
 | P2-5 | ~~三個頻率超出規格的預設參數重測~~ 已完成（2026-10-22）：維持 40kHz；PLA 加每行停留 | Beam Studio | 原 P2-8 |
 | P2-6 | 打散掃描順序效果測試 | 測試 | 原 P2-4 的一部分 |
-| P2-7 | ~~`machine_z_bucket` 調整~~ Phase 1 已完成：Swiftray 預設改為 0.01mm（`af385ca`） | Beam Studio、Swiftray | 新增 |
+| P2-7 | ~~`machine_z_bucket` 調整~~ 已完成：預設 0.01mm（Phase 1，`af385ca`）；打線切片不分桶（2026-10-22，Swiftray `2b8a787`） | Beam Studio、Swiftray | 新增 |
 | P2-8 | 點雲檔案直接匯入（PLY / GLB / BSPC） | Beam Studio | 原 P2-3 |
 | P2-9 | 3D 材質測試、每行停留轉正式功能（每行停留與打散掃描順序已開放給 UV 一般使用者，2026-10-22） | Beam Studio | 原 P2-4 其餘 |
 | P2-10 | 球體 / 圓柱材料轉正式功能（**不在 Phase 2 release**） | Beam Studio | 原 P2-5 |
@@ -109,10 +109,13 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 收邊只在 uvDev 下顯示。
   - 存檔重開後仍能調整參數，不需重新呼叫後端。
   - 送出工作時點雲一起送出，Swiftray 略過過近的點（§6.2.5）。
+  - 改了圖層點間距或物件的 X / Y 尺寸後，點雲以新的點格重算：物件面板開著時約 0.5 秒後重算（併入造成它的那一步 undo），送出工作前一定重算（§6.2.7）。改 Z 尺寸只縮放浮雕，不重算。
 - 邊界：
   - 未登入：先要求登入。點數不足：顯示點數不足並提供購買連結。
   - 後端失敗、逾時：提示錯誤，不扣點、照片維持原狀。
-  - 原圖已有透明背景時，「是否去背」預設不勾（§6.2.3）；不去背且原圖沒有透明區域時，整張圖都會轉成點雲。
+  - 原圖已有透明背景（超過 1% 的像素不是全不透明）時，「是否去背」預設不勾（§6.2.3）；不去背且原圖沒有透明區域時，整張圖都會轉成點雲。
+  - 點格（物件寬 / 點間距 × 物件高 / 點間距）超過 1200 萬格：按「轉 3D」時就擋下，不扣點，提示加大點間距或縮小物件。算出來超過 300 萬點：提示同樣的內容，已取得的深度在這次開啟期間保留，改點間距或尺寸後再按「轉 3D」不會再扣點。
+  - 深度幾乎沒有變化、或沒有點落在照片上（全黑、全透明）：提示錯誤，照片維持原狀。
   - 重新計算期間繼續調整參數：只算最後一次的值，不會排隊跑多次。
   - undo 一次回到轉換前的照片平面。
   - 已轉換的物件不再顯示「轉 3D」。
@@ -127,9 +130,11 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 開啟時保留原本的輪廓路徑，另外產生頂面與底面的填充；填充範圍依模型實際幾何計算；填充內縮、不重複雕刻輪廓。
   - 填充間隔只影響端面填充；關閉後再開，恢復原本的值。
 - 邊界：
-  - 預設值與範圍沿用現有填充功能（§6.3）。
+  - 預設值與範圍沿用現有填充功能：0.01mm，0.0001–100mm（§6.3）。
   - 中空或有孔的端面不填孔。
-  - 階梯形物件中間的水平面算不算端面，見 §10 #14。
+  - 階梯形物件中間的水平面也算端面（朝上或朝下、傾斜不超過 1° 的面都算，§10 #14）。兩個 shell 貼在一起的交界（例如多個 body 匯出的 STL）不算。
+  - 只有打線模式顯示；點模式的圖層即使帶著這個參數也不填。
+  - 不是預設參數的一部分：切換開關或改間隔不會讓圖層變成自訂參數，套用其他預設參數也保留端面設定。
 
 ### P2-5 預設參數重測
 
@@ -146,7 +151,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 ### P2-7 `machine_z_bucket`
 
 - Phase 1 已完成：Swiftray 預設改為 0.01mm（`af385ca`），前端覆寫仍只在 uvDev。
-- 打線切片目前仍經過 bucket（`toolpath-exporter.cpp:1206`），層間距約 0.027mm 大於 0.01，不會合併相鄰切片；是否仍要讓打線完全不分桶見 §6.6。
+- 2026-10-22：打線切片不再分桶，每層用自己的機器 Z（§6.6）。結果：打點的 Z 移動次數不變；打線的每層 Z 與 bucket 大小無關。
 
 ### P2-11 UV 70mm 場域 70 / 75
 
@@ -166,17 +171,29 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 | `canvasEvents.setSelectedElement`、`svg-editor.ts` `updateContextPanel` | 多傳整份選取清單；2D 的 `selectedElement`（第一個或 tempGroup）不變 |
 | `svg-editor.ts` Ctrl / Cmd + A | 2D 不變；內雕模式原本略過，改為全選 |
 | `ObjectPanel`、`ElementTitle` | 2D 與單一 3D 物件的面板不變；`stl_multi` 走多選 3D 面板 |
-| `ActionsPanelStl`（`id` → `ids`）；`transform.ts` 的 `moveObjectCenterTo` / `fitObjectTo` 移到 `groupTransform.ts` 的 `moveObjectsCenterTo` / `fitObjectsTo` | 單一物件的置中、填滿結果與原本相同 |
+| `ActionsPanelStl`（`id` → `ids`）；`transform.ts` 的 `moveObjectCenterTo` / `fitObjectTo` 移到 `groupTransform.ts` 的 `moveObjectsCenterTo` / `fitObjectsTo` | 單一物件的置中、填滿結果與原本相同；多了只對單一未轉換照片平面出現的「轉 3D」，沒有可雕區時也能按 |
 | `stlStore.selectedId` → `selectedIds` | 單選時行為不變 |
 | `StlMesh` | 單選時 gizmo 與外框不變；多選時只留外框 |
-| Swiftray `outputLayerFillGcode` | 2D 填充路徑不變（端面填充若共用它，不能改到 2D 的行為） |
-| Swiftray `outputLayerStlGcode` | 打線物件的 Z 順序與 Phase 1 相同；`machine_z_bucket` 預設改變只影響打點 |
+| Swiftray `outputLayerFillGcode`（多了 `interval_mm` 參數，預設 0） | 2D 填充呼叫端不帶參數，間隔仍是圖層的 `fillInterval`，路徑不變 |
+| Swiftray `outputLayerStlGcode` | 打線物件由下往上的順序與 Phase 1 相同；打點仍依 `machine_z_bucket` 分桶，Z 移動次數不變；打線切片改用各自的機器 Z；端面填充只在 `data-stl-fill-caps="1"` 時出現 |
+| Swiftray 點雲（`StlPlacement::GeometryKind::PointCloud`） | 多了過近點過濾；照片平面（photo）、mesh 打點不過濾 |
+| Swiftray 圖層解析（`my_qsvg_handler_qt6.cpp`、`Layer`） | 只多讀 `data-stl-fill-caps`、`data-stl-cap-interval`，其他圖層參數不變 |
+| `layer-config-helper.ts`（`innerEngravingConfigKeys`、`innerEngravingDefaults`、`booleanConfig`、`timeRelatedConfigs`）、`ILayerConfig`、`paramsLabel.ts` | 新增 `stlFillCaps`、`stlCapInterval`，一樣只在內雕模式寫入；不在 `presetRelatedConfigs`；2D 圖層不帶 |
+| `ConfigPanel`、`getInnerEngravingBlocks` | 打線模式多了填充上下端面開關與間隔；點模式、2D 圖層面板不變 |
+| `sanitize.js` | `g` 清單加 `data-stl-fill-caps`、`data-stl-cap-interval`；`image` 清單加 `data-stl-depth*` |
+| `ai-image-process.ts`（`processImageWithAi` 拆出共用的 `sendAiRequest`，新增 `processImageWithAiJson`） | 去背、AI 放大的登入、點數、提醒、錯誤處理與回傳 PNG 不變 |
+| `beam-file-helper.ts`（block 8）、`helpers/file/export/utils/beam.ts`、`stl/sources.ts` | 沒有照片轉 3D 物件的檔案 bytes 不變（header 多一個 0 長度欄位除外）；block 7 不再是最後一個區塊，舊版讀到 block 8 時停止，點雲仍完整 |
+| `stlStore`（`depthSource`）、`stl/clipboard.ts` | 其他 3D 物件的複製貼上不變；照片轉 3D 物件貼上後帶著深度 |
+| `photoPointCloud.ts` `applyPhotoPointCloud`（多了 `depthSource`、`transform` 選項） | uvDev 測試點雲的呼叫不帶這兩個選項，行為不變 |
+| `photoPointCloudGenerator.ts`（`loadRasterData` 改為 export） | 測試點雲產生不變 |
+| `getPointCloudObjects.ts` | 送出前先重算過期的照片轉 3D 點雲；其他點雲的 payload 不變 |
+| `ThreeDOptions.tsx` | uvDev 的測試點雲按鈕不變；照片轉 3D 物件改顯示 `PhotoTo3dOptions` |
 | `presets.ts` | 頻率、速度等既有值不變；只有 `fpm1_2_5` 加上 `fillDwellTime`（PLA 50000，其他 -50000 = 關閉）。其他機型的預設參數不變 |
 | `AdvancedSettingModal.tsx` | 每行停留與打散掃描順序只在 Promark UV 顯示（原本是 uvDev）；Desktop / MOPA 與其他機型的進階設定不變 |
 | `MaterialTestGeneratorPanel/TableSetting.ts` | UV 2D 材質測試多了每行停留與打散掃描順序兩欄（原本是 uvDev）；內雕與其他雷射源的表格不變 |
 | `getPromarkFieldWorksize`（`promark-constants.ts:36-37`） | P2-11 決定前維持現狀：UV 70mm 送 75，其他送工作範圍本身 |
 
-實作時隨 diff 補齊。
+實作時隨 diff 補齊（2026-10-22 已對照 P2-2～P2-7 的 diff）。
 
 ---
 
@@ -238,22 +255,26 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 
 #### 6.2.3 確認視窗
 
-- 沿用 `processImageWithAi` 的流程：未登入要求登入、點數不足顯示購買、`ai_credit_reminder`（可勾選不再提醒）。
+- 沿用 `processImageWithAi` 的流程：未登入要求登入、點數不足顯示購買。確認視窗本身已列出扣點與餘額（照 AI 放大的 `UpscaleModal`），所以不再跳 `ai_credit_reminder`。
 - 選項：
-  - **是否去背**：預設依原圖判斷，原圖有透明像素（alpha < 255 的比例超過門檻）時預設不勾，否則預設勾選。去背結果是之後所有遮罩、收邊的依據，轉換後不能改。
+  - **是否去背**：預設依原圖判斷，原圖有透明像素（alpha < 255 的比例超過 1%，`PhotoTo3dModal/index.tsx` `hasTransparentBackground`）時預設不勾，否則預設勾選。去背結果是之後所有遮罩、收邊的依據，轉換後不能改。
   - **銳化強度、半徑**：預設 1.0 / 4.0，轉換後仍可在物件面板調整。
 - 不去背時扣點是否減少（去背目前是 0.02，`REMOVE_BACKGROUND_COST`）見 §10 #17。
 - 背景畫在圖裡、但不是透明的原圖（例如 `NOTES.md:259` 的棋盤格背景）判斷不出來，會預設勾選去背，這是預期行為。
 
 #### 6.2.4 等待期間
 
-- 去背目前用不顯示百分比的 `openNonstopProgress`（`image-edit.ts:363-403`）。照片轉 3D 冷啟動可能排隊到 2 分鐘，建議改用 AI Upscale 的 `openSteppingProgress` + 預估時間（`image-edit.ts:306-361`，上限 95%），文字分兩段：「去背中」、「產生深度中」。逾時沿用 3 分鐘。
+- 實作（2026-10-22）：`openSteppingProgress`，依經過時間對 60 秒的預估推進、停在 95%（同 AI Upscale）。去背與深度是同一個請求，前端分不出階段，所以只有一段文字「產生深度中，第一次使用可能需要排隊 1–2 分鐘」。逾時 4.5 分鐘（伺服器 gunicorn / nginx 是 300 秒；去背加冷啟動要放得下）。
 
 #### 6.2.5 資料與後端
 
-- **flux-id**：新 API（例如 `/api/photo-to-3d`），收圖片，回傳去背 PNG 與深度（16-bit PNG，或 float32 + 尺寸）。扣點 0.06，失敗不扣點。
-- **.beam**：深度圖與去背圖要存檔才能事後調參數。建議放進新的資料區塊（block 8），或併進 block 7 的點雲來源（§7）。
-- **Swiftray 過近的點**：目前完全沒有最小間距檢查（`readPointCloud` 只檢查格式）。建議在 `flushBucket` 建好每桶的 2D 點之後、`nearestPointOrder` 之前過濾（`Swiftray src/toolpath_exporter/toolpath-exporter.cpp:1129-1133`），門檻以點間距的比例決定（例如 0.5 倍，§10 #11）。限制：只能在同一個 Z 桶內比較；跨桶的過近點要在投影後、折射前做 3D 過濾。
+- **flux-id**（未實作，§11）：`POST /api/photo-to-3d`，同步，照 `ReplicateImageView`（`fluxid/apps/api/views/replicate_api.py`）的登入、點數檢查與錯誤處理。資料格式見 §7。
+  - 輸入 multipart：`image`（原圖）、`remove_background`（`'1'` / `'0'`）。
+  - 有去背時先跑 `RemoveBackground` 的同一個模型（`men1scus/birefnet:f74986db…`），再把去背圖送 DA3 Mono（`vufinder/depth-anything-v3-mono:2dad523…`，輸入 `processing_resolution: match_input`、`alpha_blend_onto: white`、`to_base64`，照測試頁 2026-10-14 的設定；欄位名稱要對 Replicate 的 schema 確認）。
+  - DA3 的輸出 JSON 約 22MB（含一份 RGB 影像），伺服器只取深度與遮罩（`alpha_mask > 0` 且非 `sky_mask`），去掉 RGB，回傳約 1.4MP 照片 9MB 左右的 JSON。
+  - 兩個模型都成功才 `use_credit` 0.06；任一步失敗不扣點（與現有 API 相同，先檢查餘額、成功後才扣）。
+- **.beam**：block 8 `depthSource`，id → BSDM 二進位（深度 float32 + 遮罩 uint8，`photoTo3d/depthSource.ts`），寫在 block 7 之後、永遠最後；舊版讀到它時停止，點雲（block 7）仍完整。去背圖不另存：去背後照片本身就換成去背圖（和影像動作的去背一樣，`origImage` + `xlink:href`），隨 block 2 存。
+- **Swiftray 過近的點**（2026-10-22，Swiftray `b598726`）：點雲物件在準備階段、變換之後做 3D 過濾（`stl::removeClosePoints`，hash grid），距離小於圖層點間距 0.5 倍（`kPointCloudMinDistanceRatio`）的點丟掉，依輸入順序保留先出現的。在準備階段而不是 `flushBucket` 裡做，是為了跨 Z 桶也能比較。照片平面（photo）與 mesh 打點不過濾。
 
 #### 6.2.6 轉換後重新計算
 
@@ -267,18 +288,46 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 重算結果與參數變更合成一個 undo 步驟（`undoManager.appendCommandToLast`）。
 - 送出工作前若仍在計算，等計算完成再送出，或提示「點雲更新中」。
 
+#### 6.2.7 實作（2026-10-22）
+
+- `app/svgedit/stl/photoTo3d/`：
+  - `depthSource.ts`：BSDM 格式、`depthSourceFromApi`。
+  - `dither.ts`：照片縮放到點格（比照片粗時取平均、比照片細時雙線性）、unsharp mask、Floyd–Steinberg。點格比照片細是常態：60mm 寬、點間距 0.03mm 是 2000 格，照片通常只有約 1000 像素寬。
+  - `depthField.ts`：1–99% 百分位、Catmull-Rom 取樣（遮罩邊退回雙線性）、只清輪廓的邊緣處理與收邊、補點投影（不補牆）。距離都以物件的世界尺寸（mm）計，坡度門檻與尺寸無關。
+  - `generate.ts`：串起上面三步，上限 300 萬點、1200 萬格（`MAX_PHOTO_TO_3D_POINTS`、`MAX_PHOTO_TO_3D_CELLS`）。
+  - `photoTo3d.worker.ts` + `runPhotoTo3d.ts`：在 Web Worker 計算；同一個物件再開一個計算時，終止舊的 worker（只算最後一次）。
+  - `index.ts`：`convertPhotoTo3d`、`updatePhotoTo3d`、`isPhotoTo3dStale`、`refreshStalePhotoTo3d`、`usePhotoTo3dBusy`。
+- 轉換（`convertPhotoTo3d`）：
+  - 可能失敗的步驟（深度、去背圖、點雲）都先算完，最後才改照片，所以失敗時照片原封不動。
+  - 一個 undo 步驟包含：去背圖、`data-stl-depth*` 屬性、`applyPhotoPointCloud`（`kind: 'point-cloud'`、`depthSource`、新的 transform）。
+  - 浮雕厚度：世界寬度 × 0.22，上限可雕區高度；Z 位置移到讓整個浮雕落在可雕區內。點雲的 local Z 以照片平面為中心（−厚度/2 ～ +厚度/2），Z scale 設為 1。
+  - 收邊：一般使用者 0；uvDev 下預設世界寬度的 4%。
+  - 付費取得、但還沒變成點雲的深度（例如點數過多）留在記憶體，以元素 id + 原圖為鍵，同一次開啟期間再按「轉 3D」不會重新呼叫 API。
+- 重算（`updatePhotoTo3d`）：從 `depthSource` 重跑 worker，不呼叫 API。
+  - 物件面板（`PhotoTo3dOptions`）改參數：獨立一個 undo 步驟。
+  - 點格過期（`data-stl-depth-grid` 和目前的「世界寬 / 點間距, 世界高 / 點間距」不同）：面板開著時 0.5 秒後重算，`appendCommandToLast` 併進造成它的那一步；`getPointCloudObjects` 送出前一定重算，不記 history。點雲只由屬性、尺寸、圖層決定，undo 之後再送出會再算一次，結果一致。
+- 量測（純 Node，test 6 去背版 1036×1372，世界寬 60mm、點間距 0.03mm、銳化 1 / 4）：
+  - 結果 198 萬點（dither 點 145 萬）。
+  - 耗時：dither 0.7s、銳化 0.5s、邊緣處理 0.4s、投影 0.6s，合計約 2.5s。
+  - Jest（jsdom + ts-jest）裡約慢 50 倍，只能拿來測正確性。
+
 ### 6.3 P2-4 填充上下端面
 
-- **圖層參數**：開關 `data-stlFillCaps`（名稱待定），間隔沿用圖層既有的 `fillInterval`（預設 0.01mm、範圍沿用現有填充）或另開 `data-stlCapInterval`，見 §10 #15。新屬性要加進 `packages/core/public/js/lib/svgeditor/sanitize.js` 的 `g` 清單。
-- **顯示位置**：規格寫「物件 > 輪廓打線模式」，但 Phase 1 起雕刻方式是圖層參數（`getInnerEngravingBlocks.ts`），建議放在圖層面板打線模式下，和層間距一起。
+- **圖層參數**（2026-10-22 實作）：開關 `stlFillCaps`（`data-stl-fill-caps`），間隔另開 `stlCapInterval`（`data-stl-cap-interval`，預設 `DEFAULT_CAP_INTERVAL` 0.01mm，範圍 `CAP_INTERVAL_LIMIT` 0.0001–100mm，同 2D 填充間隔），兩者都已加進 `sanitize.js` 的 `g` 清單（§10 #15）。
+- **顯示位置**：圖層面板打線模式下，層間距之後（`FillCapsBlock`，間隔欄只在開啟或多選混合時出現，`getInnerEngravingBlocks` 的 `fillCaps` / `capInterval`）。
+- **不是預設參數**：不在 `presetRelatedConfigs`，切換不會把圖層的預設參數名稱改成自訂。
 - **Swiftray**：
   - 切片：`Slicer::sliceAt`（`stl-utils.cpp:1306-1398`）會跳過平躺的三角形，所以現在沒有端面。
   - 找端面的兩種方式：
     - (a) 相鄰切片相減：第 k 層頂面 = 內部(k) − 內部(k+1)，底面 = 內部(k) − 內部(k−1)。缺點是斜面每層都會留下一圈細環，等於把斜面也填了。
     - (b) 用法向量接近 ±Z 的三角形投影到 XY。只會填真的水平面。
-    - 建議 (b)，或 (a) 加上「環寬小於 N 倍填充間隔就略過」的門檻。
-  - 填充：沿用 `outputLayerFillGcode`（`toolpath-exporter.cpp:1327-1616`），在 `flushBucket` 的打線分支旁加一個 caps 清單，填進 `layer_filled_polygons_` 後呼叫。要注意它的進度計數、`polygons_mutex_`、以及會用圖層的速度與功率。
-  - 不重複雕刻輪廓：填充區域往內縮半個填充間隔。
+    - 採用 (b)（Swiftray `75bc5ce`）：`Slicer::capFaces` 取傾斜不超過 1°（`kCapMaxTiltDeg`）的三角形，Z 相差半個層距以內的併成同一面（Z 取面積加權平均），用 Clipper 合併。朝上與朝下的面重疊處（兩個 shell 貼在一起）以 XOR 抵消。
+  - 填充：沿用 `outputLayerFillGcode`，多一個 `interval_mm` 參數。每個端面以 `PlaneRef::cap` 加進打線的 ladder，落在自己的機器 Z，`flushBucket` 先打該 Z 的切片輪廓再填端面。
+    - 進度：STL 輸出時 `progress_increment_scale_` 為 0，填充內的進度回報不影響 STL 自己的進度。
+    - 速度、功率：用圖層的。
+    - 填充角度、雙向、交叉、打散順序、每行停留：用圖層的 2D 填充設定，Promark UV 的熱處理選項一樣生效。
+  - 不重複雕刻輪廓：填充區域往內縮半個填充間隔（`ClipperOffset`），比兩倍內縮還窄的區域消失。
+  - 驗證：`tests/test_stl_utils.h` 的方塊、帶孔框、兩個 shell 疊成的階梯、傾斜 0.5° 與 30° 的方塊。本機沒有 gtest，以替身 header 實際編譯跑過；Swiftray 本體只做語法編譯檢查（本機 Qt 6.7.2 與 macOS 26 SDK 不相容，無法完整建置）。
 
 ### 6.4 P2-5 預設參數
 
@@ -292,11 +341,12 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 
 ### 6.6 P2-7 `machine_z_bucket`
 
-- 目前 bucket **同時套用到打點與打線**：打線的每層切片也是放進 `buckets[bucketKey(machineZ(z))]`（`toolpath-exporter.cpp:1204-1208`）。bucket 大於層距（約 0.04 / 折射率 ≈ 0.027mm）時，相鄰的切片會被合併到同一個 Z，失去深度解析度。
-- 改法：打線的切片不分桶，每層直接用自己的機器 Z；打點仍用 bucket。
+- 原本 bucket **同時套用到打點與打線**：打線的每層切片也放進 `buckets[bucketKey(machineZ(z))]`。bucket 大於層距（約 0.04 / 折射率 ≈ 0.027mm）時，相鄰的切片會被合併到同一個 Z，失去深度解析度。
+- 2026-10-22 已改（Swiftray `2b8a787`）：打線切片不分桶，每層用自己的機器 Z；打點仍用 bucket。
+  - 實作上 bucket map 的 key 改成以 0.0001mm（產生器的 Z 精度，`kStlZPrecisionMm`）為單位：打點落在所屬 bucket 的 Z，打線落在自己的 Z，同一個 map 由下往上輸出。
+  - 「下一個幾何」可能是會往下捨入到 bucket 的點，所以可以輸出的範圍取 bucket 與精確 Z 兩者較小的。
 - 打點時 Z 移動次數 ≈ min(不同 Z 的數量, Z 範圍 / bucket)，每次約 50ms 加上移動時間（`Swiftray src/constants.h:65`、`src/promark_timing.h:55-70`）。0.001 → 0.01 理論上 Z 移動次數最多減少 10 倍；代價是同一桶的點最多有 0.01mm 的焦點誤差。
 - 預設值：Phase 1 已改為 0.01mm（Swiftray `af385ca`）；前端的 localStorage 覆寫維持 uvDev。
-- 打線不分桶尚未做：目前層間距（約 0.027mm 機器 Z）大於 0.01，相鄰切片不會被合併，只有層間距小於 bucket 時才有影響。
 
 ### 6.7 P2-11 UV 70mm 場域 70 / 75
 
@@ -310,18 +360,23 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 
 | 位置 | 欄位 | 說明 |
 |---|---|---|
-| 圖層 `data-stlFillCaps` | `'1'` / 無 | P2-4，名稱待定；`sanitize.js` |
-| .beam 新區塊 | 照片轉 3D 的去背圖與深度圖 | P2-3，id → 檔案 |
-| 照片物件屬性 | 深度、銳化、半徑、收邊 | P2-3，物件或圖層參數待定；`sanitize.js` 的 `image` 清單 |
-| Swiftray `-machine-z-bucket` | mm | P2-7，預設 0.01（Phase 1 已改） |
+| 圖層 `data-stl-fill-caps` | `'1'` / 無 | P2-4；`sanitize.js` 的 `g` 清單；Swiftray `Layer::stlFillCaps` |
+| 圖層 `data-stl-cap-interval` | mm，<= 0 用預設 0.01 | P2-4；Swiftray `kDefaultStlCapIntervalMm` |
+| .beam block 8 `depthSource` | id → BSDM v1：`BSDM`、版本 u8、保留 3 bytes、寬 u32、高 u32、深度 float32 LE × 寬 × 高、遮罩 u8 × 寬 × 高 | P2-3，`photoTo3d/depthSource.ts` |
+| 照片 `<image>` 的 `data-stl-depth` | BSDM 版本 | P2-3，有此屬性才是照片轉 3D 物件 |
+| `data-stl-depth-sharpen` / `-radius` / `-round` | 銳化強度、半徑（點）、收邊（mm） | P2-3，物件參數 |
+| `data-stl-depth-thickness` | mm | 浮雕的 local 厚度（Z scale 之前） |
+| `data-stl-depth-grid` | `欄,列` | 點雲計算時的點格，用來判斷是否過期 |
+| `POST /api/photo-to-3d`（flux-id，未實作） | 輸入 multipart `image`、`remove_background`；成功回 `{status: 'ok', width, height, depth: base64 float32 LE（距離，越大越遠）, mask: base64 uint8（1 = 主體）, image: base64 PNG（有去背時）或 null}`；失敗回既有的 `{status: 'error', info, message}` | Beam Studio `processImageWithAiJson`、`depthSourceFromApi` 依此實作 |
+| Swiftray `-machine-z-bucket` | mm | P2-7，預設 0.01（Phase 1 已改）；只作用在打點 |
 | `fpm1_2_5` 預設參數 `fillDwellTime` | µs，負值 = 關閉 | P2-5，PLA 50000，其他 -50000 |
 
 ---
 
 ## 8. Performance
 
-- P2-3：點數與點間距平方成反比。以點間距 0.03mm、100mm 寬的照片估計約 100 萬點，前端計算、3D 顯示、BSPC 大小與 Swiftray 工時都要量測。邊緣處理與收邊會再多 30–50%。
-- P2-3 重新計算（§6.2.6）：量測改銳化 / 點間距（重跑 dither 與投影）的耗時，以及主執行緒被佔用的時間，確認放進 Worker 後操作畫布不卡。
+- P2-3：點數與點間距平方成反比。實測（§6.2.7）：60mm 寬、點間距 0.03mm 約 200 萬點，純 Node 計算約 2.5 秒；BSPC 約 24MB。3D 顯示與 Swiftray 工時仍待上機量測。
+- P2-3 重新計算（§6.2.6）：計算在 Worker，主執行緒只做 BSPC 編碼與換 geometry；上機確認操作畫布不卡。
 
 ---
 
@@ -350,22 +405,23 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 9. ~~框選、3D 對齊與分佈~~ 2026-10-22：框選要做，對齊與分佈不做。2026-10-22：Shift + 點物件改為加入 / 移除選取，其他手勢不變。框選的觸發手勢待定：左鍵拖曳空白處是旋轉視角，Shift / Ctrl / Cmd + 左鍵拖曳是 OrbitControls 內建的平移。
 
 **P2-3 照片轉 3D**
-10. 收邊預設值：~~正式功能的預設值~~ 2026-10-19 決定收邊用 uvDev 擋住，一般使用者固定 0；uvDev 下建議 4mm（物件寬的 4%），需上機比較 0 / 2 / 4 / 6mm 後決定是否開放。
-11. 點數上限與過近點門檻：點間距 0.03mm 時一張照片約百萬點，上限多少？Swiftray 略過的門檻是點間距的幾倍？
+10. 收邊預設值：~~正式功能的預設值~~ 2026-10-19 決定收邊用 uvDev 擋住，一般使用者固定 0；uvDev 下預設物件寬的 4%（2026-10-22 已實作），需上機比較 0 / 2 / 4 / 6mm 後決定是否開放。
+11. 點數上限與過近點門檻：**暫定（2026-10-22，依建議值實作，待確認）**：上限 300 萬點、1200 萬格（實測 60mm、0.03mm 約 200 萬點）；Swiftray 丟掉距離小於點間距 0.5 倍的點（3D 距離，跨 Z 桶）。上限是否合適要看上機的顯示與工時。
 12. ~~可調參數放物件還是圖層？~~ 2026-10-19：點間距沿用圖層，深度（Z 軸厚度）與銳化放物件。
-13. ~~確認視窗要不要提供選項？~~ 2026-10-19：提供「是否去背」與「銳化強度、半徑」，其他參數固定。是否加上去背結果預覽仍待定。
+13. ~~確認視窗要不要提供選項？~~ 2026-10-19：提供「是否去背」與「銳化強度、半徑」，其他參數固定。是否加上去背結果預覽仍待定（2026-10-22 未做）。
 
 **P2-4 填充上下端面**
-14. 「端面」的定義：只有水平面（法向量），還是所有向上 / 向下露出的面？階梯形物件中間的水平面算不算？
-15. 填充間隔共用圖層的 `fillInterval`，還是另開一個參數？開關放圖層還是物件？
+14. 「端面」的定義：**暫定（2026-10-22，依建議值實作，待確認）**：以法向量判斷，傾斜不超過 1° 的朝上或朝下面都算，所以階梯形物件中間的水平面也算；兩個 shell 貼合處不算（§6.3）。
+15. 填充間隔：**暫定（2026-10-22，依建議值實作，待確認）**：另開 `stlCapInterval`（只影響端面，符合規格「關閉後再開恢復原本的值」），開關與間隔都放圖層；不屬於預設參數。
 
 **P2-5**
 16. ~~要重測的是哪三組預設參數？~~ 2026-10-22：三組維持 40kHz；另外 PLA 加每行停留 50000µs，其他 UV 平面預設參數寫入關閉值（§6.4）。
 
 **P2-3 照片轉 3D（續）**
-17. 不去背時扣點是否減少（例如 0.06 → 0.04）？flux-id 端怎麼區分計價？
-18. 「是否去背」的預設：依原圖透明像素自動判斷，還是一律預設勾選？透明像素比例的門檻多少？
-19. 重新計算的「更新中」提示：放在物件上、物件面板、還是兩者？重算超過幾秒要改成可取消的進度視窗？
+17. 不去背時扣點是否減少（例如 0.06 → 0.04）？flux-id 端怎麼區分計價？**暫定**：Beam Studio 一律以 0.06 檢查與顯示（`PHOTO_TO_3D_COST`），實際扣多少由 flux-id 決定。
+18. 「是否去背」的預設：**暫定（2026-10-22，依建議值實作，待確認）**：依原圖自動判斷，超過 1% 的像素不是全不透明就預設不勾。
+19. 重新計算的「更新中」提示：**暫定（2026-10-22，依建議值實作，待確認）**：只放物件面板（超過 300ms 才出現），畫布保留舊點雲直到算完；沒有可取消的進度視窗（純 Node 實測約 2.5 秒）。
+21. flux-id `/api/photo-to-3d`：2026-10-22 實作時，修改扣點相關程式被 Claude Code 的權限檢查擋下，尚未實作（branch `feat/photo-to-3d` 已從 `origin/main` 切出，沒有修改）。介面以 §7 為準；DA3 的輸入欄位名稱（`processing_resolution`、`alpha_blend_onto`、`to_base64`）要對 Replicate 的 schema 確認。
 
 **P2-11**
 20. UV 70mm 改用 70 之後，既有以 75 校正的參數用換算，還是要求重新校正？
@@ -374,7 +430,9 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 
 ## 11. Risks & follow-ups
 
-- **照片轉 3D 的點數**：百萬點級的點雲對前端顯示與 Swiftray 工時都是壓力，需要先量測。
+- **照片轉 3D 的點數**：百萬點級的點雲對前端顯示與 Swiftray 工時都是壓力；前端計算已量測（§6.2.7），顯示與工時待上機。
+- **照片轉 3D 還不能端到端使用**：flux-id API 尚未實作（§10 #21），Beam Studio 端以 §7 的格式寫好並測過，整條流程要等 API 完成後上機驗證。
+- **付費取得但未用掉的深度只留在記憶體**：點數過多時保留深度供重試，但關閉 Beam Studio 後就沒了。
 - **收邊只測過 4mm**，而且是在寬 100mm 的條件下，其他尺寸要以比例換算。
 - **端面填充的能量累積**：端面填充的密度遠高於輪廓，可能在內雕材料中造成裂痕，要上機測試間隔下限。
 - **Z 分桶 0.01mm**：同一桶的點有最多 0.01mm 的焦點誤差，細節是否可接受要上機比較。
@@ -388,9 +446,25 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
   - P2-2：`SelectionManager.spec`（內雕多選不建 tempGroup）、`selectedElementStore.spec`（`stl_multi`）、`InnerEngraving/utils/selection.spec`（同步、Shift + 點、圖層）、`ObjectPanel.spec`（多選面板）、`DimensionPanelStlMulti.spec`。
   - P2-2 旋轉驗算（`groupTransform.spec`）：對含 flip、非等比 scale、多軸旋轉、接近萬向鎖的物件，比較變換後網格八個角的世界座標與直接套用 delta 矩陣的結果（相對容差 1e-6）；涵蓋面板的旋轉、縮放、翻轉、組合，gizmo 拖曳的位移、旋轉、縮放，六次 60° 轉回原位，以及 undo 一步還原。
   - P2-5：`presets.spec.ts`（只有 PLA 開每行停留）、`layer-config-helper.spec.ts`（PLA 之後套其他預設參數會關閉）、`AdvancedSettingModal.spec.tsx`（只有 UV 顯示）、`TableSetting.spec.ts`（UV 材質測試有兩欄）。
-  - P2-3：dither、投影、收邊的純函式；銳化不改變點的 Z；去背預設值的判斷；重新計算時只套用最後一次的結果；`applyPhotoPointCloud` 的 undo；.beam 新區塊讀寫。
-  - P2-4：圖層參數的讀寫與顯示規則（`getInnerEngravingBlocks.spec`）。
-- **Swiftray**：端面偵測與填充、過近點過濾、打線不受 `machine_z_bucket` 影響（`tests/test_stl_utils.h`）。
+  - P2-3（已寫）：
+    - `photoTo3d/algorithm.spec`：BSDM 讀寫、API 回應解碼、dither（亮處打點、去背處不打、比照片細的點格）、百分位、取樣器、近處抬高、透明處無效、收邊、上限。
+    - `photoTo3d/index.spec`：
+      - 轉換：扣點參數、浮雕厚度與 Z 位置、world → local、屬性、一個 undo 步驟。
+      - 去背：照片換成去背圖。
+      - 失敗：照片不變，重試不再扣點。
+      - 過期判斷；重算的三種 history 模式；送出前重算。
+    - `PhotoTo3dModal.spec`：選項、去背預設、重試、點數不足、登入、點格上限。
+    - `PhotoTo3dOptions.spec`：顯示、提交、更新中延遲、過期重算。
+    - `ActionsPanelStl.spec`、`ThreeDOptions.spec`、`ai-image-process.spec`（JSON 版本）、`beam-file-helper.spec`（block 8）。
+  - P2-4（已寫）：`getInnerEngravingBlocks.spec`（顯示規則）、`FillCapsBlock.spec`（寫入、不改預設參數名稱）。
+- **Swiftray**（`tests/test_stl_utils.h`，已寫）：
+  - 端面：方塊內縮、帶孔、兩個 shell 貼合、傾斜 0.5° 與 30°。
+  - 過近點過濾。
+  - 打線不分桶只做語法編譯檢查，沒有單元測試：`outputLayerStlGcode` 需要整個 exporter。
+- **flux-id**（API 實作後補）：以 `unittest.mock.patch` 換掉 `replicate.run`，涵蓋：
+  - 去背 / 不去背各呼叫哪些模型。
+  - 遮罩合成（alpha 與 sky）。
+  - 只在成功後扣點，任一步失敗不扣。
 - **手動測試**：§4 的每個情境；Desktop / MOPA 跑一次 §5 的回歸合約。
 - **硬體測試**：
   - 照片轉 3D 實際雕刻，比較收邊 0 / 2 / 4 / 6mm。
