@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Graveermodus',
     euler_order: 'XYZ',
     fill: 'Vulling',
+    fill_caps: 'Boven- en onderkant vullen',
+    fill_caps_hint: 'Vult naast de contour van elke laag ook de vlakken die recht naar boven of beneden wijzen, met de vulafstand. Gaten in een vlak blijven leeg.',
     fit_to_engravable: 'Passend maken in graveerbaar gebied',
     flip: 'Spiegelen',
     focus_reminder: 'De machine kan haar Z-positie niet uitlezen. Focus de laser handmatig op het werkplatform voordat u een taak start.',

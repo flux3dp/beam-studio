@@ -170,6 +170,8 @@ export const configUnitMap: Record<ParamsLabelKey, string> = {
   scJerk: 'mm/s³',
   speed: 'mm/s',
   split: '',
+  stlCapInterval: 'mm',
+  stlFillCaps: '',
   stlLayerSpacing: 'mm',
   stlMinLayerSpacing: 'mm',
   stlMode: '',

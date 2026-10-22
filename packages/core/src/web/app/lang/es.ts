@@ -1825,6 +1825,8 @@ const lang: ILang = {
     engraving_mode: 'Modo de grabado',
     euler_order: 'XYZ',
     fill: 'Relleno',
+    fill_caps: 'Rellenar caras superior e inferior',
+    fill_caps_hint: 'Además del contorno de cada capa, rellena las caras orientadas directamente hacia arriba o hacia abajo, con el intervalo de relleno. Los agujeros de una cara quedan vacíos.',
     fit_to_engravable: 'Ajustar al área grabable',
     flip: 'Voltear',
     focus_reminder: 'La máquina no puede leer su posición Z. Enfoque el láser manualmente sobre la plataforma de trabajo antes de iniciar un trabajo.',

@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Graveringsläge',
     euler_order: 'XYZ',
     fill: 'Fyllning',
+    fill_caps: 'Fyll topp- och bottenytor',
+    fill_caps_hint: 'Utöver konturen i varje lager fylls även ytor som är vända rakt uppåt eller nedåt, med fyllningsintervallet. Hål i en yta lämnas tomma.',
     fit_to_engravable: 'Anpassa till graverbart område',
     flip: 'Vänd',
     focus_reminder: 'Maskinen kan inte läsa sin Z-position. Fokusera lasern manuellt på arbetsplattformen innan du startar ett jobb.',

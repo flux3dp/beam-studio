@@ -11,7 +11,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import HighQualityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/HighQualityBlock';
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import { LAYER_SPACING_LIMIT, POINT_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
+import { CAP_INTERVAL_LIMIT, LAYER_SPACING_LIMIT, POINT_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
@@ -60,6 +60,7 @@ import DevBlock from './DevBlock';
 import DottingTimeBlock from './DottingTimeBlock';
 import DpiBlock from './DpiBlock';
 import EngravingModeBlock from './EngravingModeBlock';
+import FillCapsBlock from './FillCapsBlock';
 import FillIntervalBlock from './FillIntervalBlock';
 import FrequencyBlock from './FrequencyBlock';
 import getInnerEngravingBlocks from './getInnerEngravingBlocks';
@@ -338,6 +339,21 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
               ? tInnerEngraving.layer_height_hint_line
               : tInnerEngraving.layer_height_hint_dot_fill
           }
+          type={UIType}
+          unit="mm"
+        />
+      )}
+      {innerEngravingBlocks.fillCaps && <FillCapsBlock type={UIType} />}
+      {innerEngravingBlocks.capInterval && (
+        <NumberBlock
+          configKey="stlCapInterval"
+          forceUsePropsUnit
+          id="stlCapInterval"
+          max={CAP_INTERVAL_LIMIT.max}
+          min={CAP_INTERVAL_LIMIT.min}
+          precision={4}
+          step={0.0001}
+          title={lang.fill_interval}
           type={UIType}
           unit="mm"
         />

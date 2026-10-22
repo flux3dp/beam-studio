@@ -231,6 +231,8 @@
       'data-crossHatch',
       'data-dottingTime',
       // inner engraving
+      'data-stl-cap-interval',
+      'data-stl-fill-caps',
       'data-stl-layer-spacing',
       'data-stl-min-layer-spacing',
       'data-stl-mode',

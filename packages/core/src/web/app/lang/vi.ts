@@ -1826,6 +1826,8 @@ const lang: ILang = {
     engraving_mode: 'Chế độ khắc',
     euler_order: 'XYZ',
     fill: 'Tô đầy',
+    fill_caps: 'Tô đầy mặt trên và mặt dưới',
+    fill_caps_hint: 'Ngoài đường viền của mỗi lớp, còn tô đầy các mặt hướng thẳng lên hoặc xuống, theo khoảng cách tô. Các lỗ trên mặt được để trống.',
     fit_to_engravable: 'Vừa với vùng có thể khắc',
     flip: 'Lật',
     focus_reminder: 'Máy không thể đọc vị trí trục Z. Hãy lấy nét laser thủ công trên bàn làm việc trước khi bắt đầu công việc.',
