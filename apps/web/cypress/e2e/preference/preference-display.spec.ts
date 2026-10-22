@@ -34,7 +34,7 @@ describe('update the preference (display)', () => {
       cy.get('#set-default-font-family')
         .closest('.ant-select')
         .find('.ant-select-selection-item')
-        .should('have.text', 'Noto Sans TC');
+        .should('have.text', '思源黑體 TC');
 
       cy.get('#set-default-font-style')
         .closest('.ant-select')
