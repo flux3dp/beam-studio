@@ -50,6 +50,7 @@ export const createPastedStlObject = (elem: SVGElement, source: StlObject): StlO
   };
   const object: StlObject = {
     buffer: source.buffer,
+    depthSource: source.depthSource,
     geometry: source.geometry,
     id: elem.id,
     initialTransform,

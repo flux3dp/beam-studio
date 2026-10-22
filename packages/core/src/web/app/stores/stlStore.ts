@@ -42,6 +42,11 @@ export interface StlObject {
    * mean two different meshes for the same object, so the raw buffer stays the single source.
    */
   buffer?: ArrayBuffer;
+  /**
+   * BSDM binary (depth + mask) of a photo turned into a point cloud by photo-to-3D: what the point
+   * cloud is recomputed from when its parameters change. .beam block 8.
+   */
+  depthSource?: ArrayBuffer;
   /** Parsed mesh, in the STL file's own units (mm). Never mutated after import. */
   geometry: BufferGeometry;
   /** Element id of the projection rect. Also the key for the mesh binary in .beam block 6. */

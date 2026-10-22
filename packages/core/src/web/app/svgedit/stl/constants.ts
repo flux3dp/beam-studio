@@ -30,6 +30,24 @@ export const PHOTO_3D_ATTR = {
   width: 'data-stl-photo-width',
 } as const;
 
+/**
+ * A photo turned into a point cloud from its depth (photo-to-3D). The depth itself lives in .beam
+ * block 8; these are the parameters the point cloud was computed with, so it can be recomputed.
+ */
+export const PHOTO_TO_3D_ATTR = {
+  /** Roll-off radius along the cut-out, mm (uvDev). */
+  edgeRound: 'data-stl-depth-round',
+  /** `columns,rows` of the dot grid the point cloud was computed on. */
+  grid: 'data-stl-depth-grid',
+  /** Marks the photo; the value is the depth binary (BSDM) format version. */
+  marker: 'data-stl-depth',
+  sharpenAmount: 'data-stl-depth-sharpen',
+  /** In dots. */
+  sharpenRadius: 'data-stl-depth-radius',
+  /** Local Z thickness of the relief, mm, before the object's Z scale. */
+  thickness: 'data-stl-depth-thickness',
+} as const;
+
 /** Marks a photo whose 3D representation is a generated point cloud (BSPC, .beam block 7). */
 export const POINT_CLOUD_ATTR = {
   /**

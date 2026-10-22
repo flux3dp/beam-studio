@@ -24,7 +24,7 @@ jest.mock('@core/helpers/api/alert-config', () => ({
   write: (...args: any[]) => mockAlertConfigWrite(...args),
 }));
 
-import { estimateUpscaleMs, processImageWithAi } from './ai-image-process';
+import { estimateUpscaleMs, processImageWithAi, processImageWithAiJson } from './ai-image-process';
 
 const mockGetCurrentUser = getCurrentUser as jest.Mock;
 const mockPost = axiosFluxId.post as jest.Mock;
@@ -161,6 +161,44 @@ describe('processImageWithAi', () => {
 
       expect(await processImageWithAi(imageBlob, options)).toBeNull();
     });
+  });
+});
+
+describe('processImageWithAiJson', () => {
+  const jsonOptions = { cost: 0.06, endpoint: '/api/photo-to-3d', formData: { remove_background: '1' }, timeout: 1000 };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+    mockGetCurrentUser.mockReturnValue({ email: 'a@b.c', info: { credit: 1 } });
+  });
+
+  test('asks for JSON with its own timeout and returns the body on success', async () => {
+    mockPost.mockResolvedValue({ data: { depth: 'AAAA', status: 'ok' }, headers: {} });
+
+    expect(await processImageWithAiJson(imageBlob, jsonOptions)).toEqual({ depth: 'AAAA', status: 'ok' });
+
+    const [endpoint, form, config] = mockPost.mock.calls[0];
+
+    expect(endpoint).toBe('/api/photo-to-3d');
+    expect((form as FormData).get('remove_background')).toBe('1');
+    expect(config).toMatchObject({ responseType: 'json', timeout: 1000, withCredentials: true });
+  });
+
+  test('reports API errors like the image APIs do', async () => {
+    mockPost.mockResolvedValue({ data: { info: 'INSUFFICIENT_CREDITS', status: 'error' }, headers: {} });
+    expect(await processImageWithAiJson(imageBlob, jsonOptions)).toBeNull();
+    expect(mockPopUpCreditAlert).toHaveBeenCalledWith({ available: 1, required: '0.06' });
+
+    mockPost.mockResolvedValue({ data: { info: 'API_ERROR', message: 'boom', status: 'error' }, headers: {} });
+    expect(await processImageWithAiJson(imageBlob, jsonOptions)).toBeNull();
+    expect(mockPopUpError).toHaveBeenLastCalledWith({ message: 'API Error: boom' });
+  });
+
+  test('a failed request is reported with its detail', async () => {
+    mockPost.mockResolvedValue({ error: { message: 'timeout', response: { data: { detail: 'Bad' }, status: 500 } } });
+
+    expect(await processImageWithAiJson(imageBlob, jsonOptions)).toBeNull();
+    expect(mockPopUpError).toHaveBeenCalledWith({ message: 'Server Error: 500 Bad' });
   });
 });
 

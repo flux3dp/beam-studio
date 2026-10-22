@@ -9,25 +9,39 @@ import { axiosFluxId, getCurrentUser, getDefaultHeader } from '@core/helpers/api
 import type { ResponseWithError } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
 
+interface AiRequestOptions {
+  cost: number;
+  endpoint: string;
+  formData?: Record<string, string>;
+  /** Milliseconds; 3 minutes by default. */
+  timeout?: number;
+  warning?: { configKey: AlertConfigKey };
+}
+
+interface AiErrorBody {
+  info: string;
+  message?: string;
+  status: string;
+}
+
+const readBlobAsJson = <T>(blob: Blob): Promise<T> =>
+  new Promise<T>((resolve) => {
+    const reader = new FileReader();
+
+    reader.onloadend = (e) => resolve(JSON.parse(e.target!.result as string) as T);
+    reader.readAsText(blob);
+  });
+
 /**
- * Sends an image blob to a flux-id AI image API (remove-background, upscale).
- * Handles auth check, credit check, and warning dialog internally.
- * @returns The result PNG blob on success, null on cancel/error.
+ * Login, credit and (optionally) the cost reminder, then the request itself.
+ * @returns the response, or null when the user is not logged in, cannot pay, cancelled, or the request
+ * failed (already reported)
  */
-export const processImageWithAi = async (
+const sendAiRequest = async (
   imageBlob: Blob,
-  {
-    cost,
-    endpoint,
-    formData = {},
-    warning,
-  }: {
-    cost: number;
-    endpoint: string;
-    formData?: Record<string, string>;
-    warning?: { configKey: AlertConfigKey };
-  },
-): Promise<Blob | null> => {
+  { cost, endpoint, formData = {}, timeout = 1000 * 60 * 3, warning }: AiRequestOptions,
+  responseType: 'blob' | 'json',
+): Promise<null | { response: ResponseWithError; showBalanceAlert: () => void }> => {
   const user = getCurrentUser();
 
   if (!user) {
@@ -74,79 +88,73 @@ export const processImageWithAi = async (
   form.append('image', imageBlob);
   Object.entries(formData).forEach(([key, value]) => form.append(key, value));
 
-  try {
-    const result = (await axiosFluxId.post(endpoint, form, {
-      headers: getDefaultHeader(),
-      responseType: 'blob',
-      timeout: 1000 * 60 * 3, // 3 min
-      withCredentials: true,
-    })) as ResponseWithError;
+  const response = (await axiosFluxId.post(endpoint, form, {
+    headers: getDefaultHeader(),
+    responseType,
+    timeout,
+    withCredentials: true,
+  })) as ResponseWithError;
 
-    if (result.error) {
-      const { message, response: { data, status } = {} } = result.error;
-      let errorDetail = '';
+  if (response.error) {
+    const { message, response: { data, status } = {} } = response.error;
+    let errorDetail = '';
 
-      if (data instanceof Blob && data.type === 'application/json') {
-        errorDetail = await new Promise<string>((resolve) => {
-          const reader = new FileReader();
+    if (data instanceof Blob && data.type === 'application/json') {
+      errorDetail = (await readBlobAsJson<{ detail: string }>(data)).detail;
+    } else if (data && typeof data === 'object' && 'detail' in data) {
+      errorDetail = String((data as { detail: unknown }).detail);
+    }
 
-          reader.onloadend = (e) => {
-            const str = e.target!.result as string;
-            const d = JSON.parse(str) as any;
-
-            resolve(d.detail);
-          };
-          reader.readAsText(data);
-        });
-      }
-
-      if (status === 403 && errorDetail.startsWith('CSRF Failed')) {
-        alertCaller.popUp({
-          buttonType: alertConstants.CONFIRM_CANCEL,
-          message: i18n.lang.beambox.popup.ai_credit.relogin_to_use,
-          onConfirm: dialogCaller.showLoginDialog,
-        });
-
-        return null;
-      }
-
-      alertCaller.popUpError({
-        message: `Server Error: ${status} ${errorDetail || message}`,
+    if (status === 403 && errorDetail.startsWith('CSRF Failed')) {
+      alertCaller.popUp({
+        buttonType: alertConstants.CONFIRM_CANCEL,
+        message: i18n.lang.beambox.popup.ai_credit.relogin_to_use,
+        onConfirm: dialogCaller.showLoginDialog,
       });
 
       return null;
     }
 
+    alertCaller.popUpError({
+      message: `Server Error: ${status} ${errorDetail || message}`,
+    });
+
+    return null;
+  }
+
+  return { response, showBalanceAlert };
+};
+
+const reportAiError = ({ info, message }: AiErrorBody, showBalanceAlert: () => void): void => {
+  if (info === 'NOT_LOGGED_IN') {
+    dialogCaller.showLoginDialog();
+  } else if (info === 'INSUFFICIENT_CREDITS') {
+    showBalanceAlert();
+  } else if (info === 'API_ERROR') {
+    alertCaller.popUpError({ message: `API Error: ${message}` });
+  } else {
+    alertCaller.popUpError({ message: `Error: ${info}` });
+  }
+};
+
+/**
+ * Sends an image blob to a flux-id AI image API (remove-background, upscale).
+ * Handles auth check, credit check, and warning dialog internally.
+ * @returns The result PNG blob on success, null on cancel/error.
+ */
+export const processImageWithAi = async (imageBlob: Blob, options: AiRequestOptions): Promise<Blob | null> => {
+  try {
+    const sent = await sendAiRequest(imageBlob, options, 'blob');
+
+    if (!sent) return null;
+
+    const { response: result, showBalanceAlert } = sent;
     const contentType = result.headers['content-type'];
 
     if (contentType === 'application/json') {
-      const { info, message, status } = await new Promise<{
-        info: string;
-        message?: string;
-        status: string;
-      }>((resolve) => {
-        const reader = new FileReader();
+      const body = await readBlobAsJson<AiErrorBody>(result.data);
 
-        reader.onloadend = (e) => {
-          const str = e.target!.result as string;
-          const d = JSON.parse(str) as any;
-
-          resolve(d);
-        };
-        reader.readAsText(result.data);
-      });
-
-      if (status === 'error') {
-        if (info === 'NOT_LOGGED_IN') {
-          dialogCaller.showLoginDialog();
-        } else if (info === 'INSUFFICIENT_CREDITS') {
-          showBalanceAlert();
-        } else if (info === 'API_ERROR') {
-          alertCaller.popUpError({ message: `API Error: ${message}` });
-        } else {
-          alertCaller.popUpError({ message: `Error: ${info}` });
-        }
-      }
+      if (body.status === 'error') reportAiError(body, showBalanceAlert);
 
       return null;
     }
@@ -159,6 +167,32 @@ export const processImageWithAi = async (
     }
 
     return result.data as Blob;
+  } catch {
+    return null;
+  }
+};
+
+/**
+ * Like `processImageWithAi`, for an API that answers with JSON (photo-to-3d).
+ * @returns the JSON body on success (`status: 'ok'`), null on cancel/error (already reported)
+ */
+export const processImageWithAiJson = async <T extends object>(
+  imageBlob: Blob,
+  options: AiRequestOptions,
+): Promise<null | T> => {
+  try {
+    const sent = await sendAiRequest(imageBlob, options, 'json');
+
+    if (!sent) return null;
+
+    const body = sent.response.data as AiErrorBody | (T & { status: 'ok' });
+
+    if (body?.status === 'ok') return body as T;
+
+    if (body?.status === 'error') reportAiError(body as AiErrorBody, sent.showBalanceAlert);
+    else alertCaller.popUpError({ message: 'Unknown Response' });
+
+    return null;
   } catch {
     return null;
   }

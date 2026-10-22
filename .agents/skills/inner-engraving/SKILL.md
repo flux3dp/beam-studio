@@ -1,6 +1,6 @@
 ---
 name: inner-engraving
-description: Inner engraving (內雕) on Promark UV — the 3D canvas mode, the dual SVG-projection + stlStore representation of 3D objects, STL/extrusion/photo import (plus the dev photo→point-cloud), 3D transforms and undo, layer-level engraving params (`data-stl-*` on the layer `<g>`), .beam blocks 6/7, and the Swiftray stlObjects/pointCloudObjects payload. Use when working on components/beambox/InnerEngraving/, svgedit/stl/, operations/import/importStl/, stores/stlStore.ts, helpers/addOn/innerEngraving.ts, the inner engraving ConfigPanel blocks or MaterialTestGeneratorPanel/InnerEngraving/, or any code path that must behave differently for `data-stl` projections.
+description: Inner engraving (內雕) on Promark UV — the 3D canvas mode, the dual SVG-projection + stlStore representation of 3D objects, STL/extrusion/photo import, photo-to-3D (AI depth → point cloud) and the dev test point cloud, 3D transforms and undo, layer-level engraving params (`data-stl-*` on the layer `<g>`), .beam blocks 6/7/8, and the Swiftray stlObjects/pointCloudObjects payload. Use when working on components/beambox/InnerEngraving/, svgedit/stl/, operations/import/importStl/, stores/stlStore.ts, helpers/addOn/innerEngraving.ts, the inner engraving ConfigPanel blocks or MaterialTestGeneratorPanel/InnerEngraving/, or any code path that must behave differently for `data-stl` projections.
 ---
 
 # Inner Engraving (3D sub-surface engraving)
@@ -257,6 +257,23 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   `generatePhotoPointCloud` (`stl/photoPointCloudGenerator.ts`, grayscale → XYZ, 256 Z levels) →
   `applyPhotoPointCloud` (`PhotoPointCloudCommand`, keeps the image as source, adds
   `data-stl-point-cloud`). BSPC format: `stl/pointCloud.ts` (`'BSPC'`, version, XYZ float32 LE, no colour).
+- **Photo to 3D** (`stl/photoTo3d/`, P2-3 of `docs/prd/promark-uv-inner-engraving/phase2.md`):
+  - Entry and request:
+    - `ActionsPanelStl` shows "Convert to 3D" for one flat photo; it opens `showPhotoTo3dModal` (`components/dialogs/PhotoTo3dModal/`).
+    - The dialog asks for remove-background (default off when over 1% of the photo is not opaque) and the sharpening amount and radius.
+    - `convertPhotoTo3d` sends the original image to flux-id `/api/photo-to-3d` through `processImageWithAiJson` (0.06 credits; the API itself is not written yet). The response carries depth and mask, plus the cut-out PNG when the background was removed.
+  - Computation, in a Web Worker (`runPhotoTo3d`, only the latest job per object):
+    - `dither.ts` puts the photo onto the dot grid (world size / layer `stlPointSpacing`), sharpens it, then runs Floyd–Steinberg. Bright pixels become dots, because a dot shows white in the crystal.
+    - `depthField.ts` takes the 1–99% percentiles, cleans the depth along the cut-out only, and lifts each dot onto it. The near side is raised, so depth is inverted on the way to Z. Steep areas get extra dots.
+    - These are ported from the replicate-3d-compare test page.
+  - Result, in one undo step:
+    - The photo is swapped for the cut-out, if any, and the `data-stl-depth*` attributes are set (see `PHOTO_TO_3D_ATTR`).
+    - `applyPhotoPointCloud` gets `depthSource` (BSDM, `depthSource.ts`, .beam block 8) and a transform: relief depth = width × 0.22, capped by the engravable height and moved to fit it.
+    - Points are local mm, with Z centred on the plane.
+  - Later edits:
+    - The Z size is the relief depth: a plain scale, never recomputed.
+    - Sharpening, and under uvDev the roll-off, are edited in `PhotoTo3dOptions` and recomputed from the saved depth (`updatePhotoTo3d`, its own step).
+    - `isPhotoTo3dStale` compares `data-stl-depth-grid` with the current dot grid. A stale cloud is recomputed when the panel is open (`appendCommandToLast`) and always in `getPointCloudObjects` before a job (no history).
 - There is no direct point-cloud file import (`create3dObject` / `insertStlGeometry` only build
   meshes). Standalone point clouds exist only in .beam files from uv-dev builds: block 7 plus a
   `data-stl` rect of `data-stl-kind="point-cloud"`, rebuilt by `readPointCloudSource`.
@@ -290,9 +307,11 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
 
 ## Persistence (.beam)
 
-- Block 6 `stlSource` (id → original STL bytes) and block 7 `pointCloudSource` (id → BSPC), both
-  appended after the standard blocks; the header keeps block 5's zero-length slot. Header block list
-  is computed from what exists.
+- Block 6 `stlSource` (id → original STL bytes), block 7 `pointCloudSource` (id → BSPC) and block 8
+  `depthSource` (id → BSDM of photo-to-3D, `getDepthSources`), appended after the standard blocks in
+  that order, the newest last so an older reader stops at what it does not know; the header keeps
+  block 5's zero-length slot. Header block list is computed from what exists. Block 8 is attached to
+  the point clouds block 7 rebuilt (`readDepthSource`).
 - Read: meshes need a matching projection with a parseable `data-stl-transform`, otherwise
   skipped with a console warning. Photos rebuild from the SVG via `readPhotoPlaneObjects`. One
   `syncStlObjectsWithDom` in `postReadBeam` (also the load command's `onAfter`).

@@ -68,7 +68,7 @@ export const createPhotoPointPositions = (
   return new Float32Array(positions);
 };
 
-const loadRasterData = async (source: string): Promise<RasterData> => {
+export const loadRasterData = async (source: string): Promise<RasterData> => {
   const image = new Image();
 
   await new Promise<void>((resolve, reject) => {
