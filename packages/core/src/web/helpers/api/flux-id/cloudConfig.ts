@@ -17,7 +17,7 @@ import { axiosFluxId, formatErrorMessage, getCurrentUser } from './base';
 
 type CloudConfig = {
   promarkLaserSource: PromarkInfo;
-  /** the default lens profile, kept in the format older versions read */
+  /** written only by versions before lens profiles; read by newer ones only to upgrade */
   promarkLens: { field: Field; galvoParameters: GalvoParameters; redDot: RedDot };
   promarkLensProfiles: { defaultKey?: LensProfileKey; profiles: LensProfile[] };
 };
@@ -138,16 +138,39 @@ export const updateCloudConfig = async <T extends ConfigKey>(
   });
 };
 
-type UpdateItem = { [K in ConfigKey]: { data: CloudConfig[K]; key: K } }[ConfigKey];
+export type CloudConfigs = Partial<CloudConfig>;
 
-/** Uploads several keys of one machine after a single confirmation; resolves whether every key was uploaded. */
+/**
+ * Reads several keys of one machine in one request, without asking; resolves the saved ones, or null
+ * when the request failed. Unlike a single `promarkLens` read, the server returns only what is stored.
+ */
+export const readCloudConfigs = async (
+  { hash, keys, serialNumber }: Omit<BasicData<ConfigKey>, 'key'> & { keys: ConfigKey[] },
+  { checkHash = true }: Options = {},
+): Promise<CloudConfigs | null> => {
+  if (checkHash && !hash) return null;
+
+  const response = (await axiosFluxId.post(
+    '/machine/config/read',
+    { hashed_serial_number: hash, keys, serial_number: serialNumber },
+    { withCredentials: true },
+  )) as ResponseWithError;
+
+  if (response.error || response.status !== 200 || response.data?.status !== 'ok') {
+    return null;
+  }
+
+  return (response.data?.data as CloudConfigs) ?? {};
+};
+
+/** Uploads several keys of one machine in one request after a single confirmation; resolves whether it succeeded. */
 export const updateCloudConfigs = async (
   {
+    configs,
     hash,
-    items,
     model,
     serialNumber,
-  }: Omit<BasicData<ConfigKey>, 'key'> & { items: UpdateItem[]; model?: WorkAreaModel },
+  }: Omit<BasicData<ConfigKey>, 'key'> & { configs: CloudConfigs; model?: WorkAreaModel },
   { checkHash = true, checkLogin = true }: Options = {},
 ): Promise<boolean> => {
   if (checkHash && !hash) return false;
@@ -160,18 +183,15 @@ export const updateCloudConfigs = async (
       message: i18n.lang.cloud_sync.sync_config,
       onNo: () => resolve(false),
       onYes: async () => {
-        const errors: string[] = [];
+        const response = (await axiosFluxId.post(
+          '/machine/config/update',
+          { configs, hashed_serial_number: hash, model, serial_number: serialNumber },
+          { withCredentials: true },
+        )) as ResponseWithError;
+        const success = !response.error && response.status === 200 && response.data?.status === 'ok';
 
-        for (const { data, key } of items) {
-          const { errorMsg, success } = await postCloudConfig({ data, hash, key, model, serialNumber } as UpdateData<
-            typeof key
-          >);
-
-          if (!success) errors.push(errorMsg);
-        }
-
-        showUpdateResult({ errorMsg: errors.filter(Boolean).join('\n'), success: errors.length === 0 });
-        resolve(errors.length === 0);
+        showUpdateResult({ errorMsg: success ? '' : (formatErrorMessage(response.error) ?? ''), success });
+        resolve(success);
       },
     });
   });

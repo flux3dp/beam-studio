@@ -267,7 +267,7 @@ describe('test PromarkSettings', () => {
       redDot: factoryRedDot,
     });
     expect(mockUploadLensCloudData).toHaveBeenCalledWith(
-      expect.objectContaining({ hash: 'hash', includeLegacy: true, model: 'fpm1', serial: '123' }),
+      expect.objectContaining({ hash: 'hash', model: 'fpm1', serial: '123' }),
     );
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
@@ -276,6 +276,7 @@ describe('test PromarkSettings', () => {
     const legacyField = { angle: 1, offsetX: 1, offsetY: 1 };
     const innerField = { angle: 2, offsetX: 2, offsetY: 2 };
     const cloudField = { angle: 3, offsetX: 3, offsetY: 3 };
+    const factoryField = { angle: 0, offsetX: 0, offsetY: 0 };
     const initData = {
       field: legacyField,
       info: { laserType: 2, watt: 5 },
@@ -297,9 +298,10 @@ describe('test PromarkSettings', () => {
       expect(await findByText(/Mock LensProfileBlock 70 true saved/)).toBeInTheDocument();
       expect(getByText(`Mock FieldBlock ${JSON.stringify(innerField)}`, { exact: false })).toBeInTheDocument();
 
+      // the legacy set is not used once profiles exist
       fireEvent.click(getByText('lens-200'));
-      expect(getByText(/Mock LensProfileBlock 200 false saved legacy/)).toBeInTheDocument();
-      expect(getByText(`Mock FieldBlock ${JSON.stringify(legacyField)}`, { exact: false })).toBeInTheDocument();
+      expect(getByText(/Mock LensProfileBlock 200 false unset/)).toBeInTheDocument();
+      expect(getByText(`Mock FieldBlock ${JSON.stringify(factoryField)}`, { exact: false })).toBeInTheDocument();
 
       fireEvent.click(getByText('offset-6'));
       expect(getByText(/Mock LensProfileBlock 200 false edited/)).toBeInTheDocument();
@@ -309,6 +311,39 @@ describe('test PromarkSettings', () => {
 
       fireEvent.click(getByText('lens-200'));
       expect(getByText(/Mock LensProfileBlock 200 false edited/)).toBeInTheDocument();
+    });
+
+    test('without profiles, every lens shows the legacy set', async () => {
+      const legacyOnly = { field: legacyField, info: initData.info };
+
+      mockPromarkGet.mockReturnValue(legacyOnly);
+
+      const { findByText, getByText } = render(
+        <PromarkSettings device={mockDevice} initData={legacyOnly as never} onClose={mockOnClose} />,
+      );
+
+      expect(await findByText(/Mock LensProfileBlock 70 true saved legacy/)).toBeInTheDocument();
+      fireEvent.click(getByText('lens-200'));
+      expect(getByText(/Mock LensProfileBlock 200 false saved legacy/)).toBeInTheDocument();
+      expect(getByText(`Mock FieldBlock ${JSON.stringify(legacyField)}`, { exact: false })).toBeInTheDocument();
+    });
+
+    test('a default saved under another laser type counts as no default', async () => {
+      const desktopDefault = {
+        ...initData,
+        defaultLensProfile: { innerEngraving: false, workarea: 220 },
+        lensProfiles: [...initData.lensProfiles, { field: cloudField, innerEngraving: false, workarea: 220 }],
+      };
+
+      mockPromarkGet.mockReturnValue(desktopDefault);
+
+      const { findByText, getByText } = render(
+        <PromarkSettings device={mockDevice} initData={desktopDefault as never} onClose={mockOnClose} />,
+      );
+
+      fireEvent.click(await findByText('lens-200'));
+      expect(getByText(/Mock LensProfileBlock 200 false unset\s+default/)).toBeInTheDocument();
+      expect(getByText(`Mock FieldBlock ${JSON.stringify(factoryField)}`, { exact: false })).toBeInTheDocument();
     });
 
     test('Save stores the shown and edited lenses and applies the document lens', async () => {
@@ -324,7 +359,7 @@ describe('test PromarkSettings', () => {
       expect(mockPopUp).toHaveBeenCalledWith(expect.objectContaining({ messageIcon: 'warning' }));
       expect(savedLenses()).toEqual([
         expect.objectContaining({ field: innerField, innerEngraving: true, workarea: 70 }),
-        expect.objectContaining({ field: { ...legacyField, offsetX: 6 }, innerEngraving: false, workarea: 200 }),
+        expect.objectContaining({ field: { ...factoryField, offsetX: 6 }, innerEngraving: false, workarea: 200 }),
       ]);
       expect(mockPromarkUpdate.mock.lastCall[1].defaultLensProfile).toEqual({ innerEngraving: true, workarea: 70 });
       expect(mockSetField).toHaveBeenLastCalledWith(150, innerField);
@@ -378,11 +413,11 @@ describe('test PromarkSettings', () => {
 
       fireEvent.click(getByText('lens-200'));
       fireEvent.click(getByText('set-default'));
-      expect(getByText(/Mock LensProfileBlock 200 false saved legacy default/)).toBeInTheDocument();
+      expect(getByText(/Mock LensProfileBlock 200 false unset\s+default/)).toBeInTheDocument();
       await act(async () => fireEvent.click(await findByText('Save')));
       expect(mockPromarkUpdate.mock.lastCall[1]).toMatchObject({
         defaultLensProfile: { innerEngraving: false, workarea: 200 },
-        field: legacyField,
+        field: factoryField,
       });
     });
 

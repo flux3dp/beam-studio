@@ -2536,6 +2536,7 @@ const lang: ILang = {
   promark_settings: {
     angle: '각도',
     bulge: '볼록함',
+    cached_task_lens_mismatch: 'The last job was generated for %s, but Document Settings use %s. Which parameters should be applied?',
     cloud_lens_differs: 'The cloud parameters differ from this computer for: %s\nUse the cloud parameters? They are filled in and saved when you click Save.',
     engraving_mode: 'Engraving Mode',
     field: '필드',
@@ -2575,7 +2576,9 @@ const lang: ILang = {
     switchXY: 'X/Y 전환',
     title: 'Promark 설정',
     trapezoid: '사다리꼴',
+    use_cached_lens_parameters: 'Use Parameters of the Last Job',
     use_cloud_parameters: 'Use Cloud Parameters',
+    use_document_lens_parameters: 'Use Parameters of Document Settings',
     workarea_hint: '작업 영역은 "문서 설정"에서 변경할 수 있습니다.',
     z_axis_adjustment: {
       section1: 'Z축 높이를 조정하여 초점을 미세 조정합니다.',

@@ -2536,6 +2536,7 @@ const lang: ILang = {
   promark_settings: {
     angle: '角度',
     bulge: '桶形',
+    cached_task_lens_mismatch: '上次发送的工作是依 %s 生成的，但当前文档设置是 %s。要套用哪一组参数？',
     cloud_lens_differs: '以下组别的云端参数和本机不同：%s\n是否使用云端参数？参数会填入画面，按保存后才会写入。',
     engraving_mode: '雕刻模式',
     field: '区域',
@@ -2575,7 +2576,9 @@ const lang: ILang = {
     switchXY: '切换 X/Y',
     title: 'Promark设置',
     trapezoid: '梯形',
+    use_cached_lens_parameters: '使用缓存对应的参数',
     use_cloud_parameters: '使用云端参数',
+    use_document_lens_parameters: '使用文档设置对应的参数',
     workarea_hint: '您可以在“文档设置”中更改工作区域。',
     z_axis_adjustment: {
       section1: '调整Z轴高度以微调焦点。',

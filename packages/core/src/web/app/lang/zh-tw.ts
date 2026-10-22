@@ -2537,6 +2537,7 @@ const lang: ILang = {
   promark_settings: {
     angle: '角度',
     bulge: '桶形',
+    cached_task_lens_mismatch: '上次送出的工作是依 %s 產生的，但目前文件設定是 %s。要套用哪一組參數？',
     cloud_lens_differs: '以下組別的雲端參數和本機不同：%s\n是否使用雲端參數？參數會填入畫面，按保存後才會寫入。',
     engraving_mode: '雕刻模式',
     field: '區域',
@@ -2576,7 +2577,9 @@ const lang: ILang = {
     switchXY: '切換 X/Y',
     title: 'Promark 設定',
     trapezoid: '梯形',
+    use_cached_lens_parameters: '使用快取對應的參數',
     use_cloud_parameters: '使用雲端參數',
+    use_document_lens_parameters: '使用文件設定對應的參數',
     workarea_hint: '您可以在「文件設定」中更改工作範圍。',
     z_axis_adjustment: {
       section1: '調整Z軸高度以微調焦點。',

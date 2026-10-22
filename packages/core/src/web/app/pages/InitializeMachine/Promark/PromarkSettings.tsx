@@ -49,8 +49,8 @@ export default function PromarkSettings(): React.JSX.Element {
   const handleUpdateParameter = async (): Promise<boolean> => {
     if (!(await confirmLensWarnings(lens.getSaveWarnings(), info.laserType, isInch))) return false;
 
-    const { includeLegacy, store: saved } = lens.save();
-    const applied = resolveLensProfile(saved, initialKey);
+    const saved = lens.save();
+    const applied = resolveLensProfile(saved, initialKey, info.laserType);
 
     try {
       await deviceMaster.setField(width, applied.field ?? defaultField);
@@ -59,7 +59,7 @@ export default function PromarkSettings(): React.JSX.Element {
       console.error('Failed to apply promark settings state', error);
     }
 
-    await uploadLensCloudData({ hash: hashedSerial, includeLegacy, info, model: 'fpm1', serial, store: saved });
+    await uploadLensCloudData({ hash: hashedSerial, info, model: 'fpm1', serial, store: saved });
 
     return true;
   };

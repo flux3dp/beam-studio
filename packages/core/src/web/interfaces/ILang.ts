@@ -2442,6 +2442,7 @@ export interface ILang {
   promark_settings: {
     angle: string;
     bulge: string;
+    cached_task_lens_mismatch: string;
     cloud_lens_differs: string;
     engraving_mode: string;
     field: string;
@@ -2481,7 +2482,9 @@ export interface ILang {
     switchXY: string;
     title: string;
     trapezoid: string;
+    use_cached_lens_parameters: string;
     use_cloud_parameters: string;
+    use_document_lens_parameters: string;
     workarea_hint: string;
     z_axis_adjustment: {
       section1: string;

@@ -13,11 +13,11 @@ import {
 jest.mock('@core/app/stores/documentStore', () => ({ useDocumentStore: { getState: () => ({}) } }));
 jest.mock('@core/helpers/addOn/innerEngraving', () => ({ isInnerEngravingActive: () => false }));
 
-const mockReadCloudConfig = jest.fn();
+const mockReadCloudConfigs = jest.fn();
 const mockUpdateCloudConfigs = jest.fn();
 
 jest.mock('@core/helpers/api/flux-id/cloudConfig', () => ({
-  readCloudConfig: (...args) => mockReadCloudConfig(...args),
+  readCloudConfigs: (...args) => mockReadCloudConfigs(...args),
   updateCloudConfigs: (...args) => mockUpdateCloudConfigs(...args),
 }));
 
@@ -36,43 +36,46 @@ const store: PromarkStore = {
     { ...flat200, field: fieldA },
   ],
 };
-const getLocal = (key) => resolveLensProfile(store, key);
+const getLocal = (key) => resolveLensProfile(store, key, LaserType.UV);
 
 describe('test lens-profiles-cloud', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
-  test('reads both keys without asking', async () => {
-    mockReadCloudConfig
-      .mockResolvedValueOnce({ defaultKey: flat70, profiles: [] })
-      .mockResolvedValueOnce({ field: fieldA });
+  test('reads both keys in one request', async () => {
+    mockReadCloudConfigs.mockResolvedValueOnce({
+      promarkLens: { field: fieldA },
+      promarkLensProfiles: { defaultKey: flat70, profiles: [] },
+    });
 
     expect(await readLensCloudData('hash', 'serial')).toEqual({
       defaultKey: flat70,
       legacy: { field: fieldA },
       profiles: [],
     });
-    expect(mockReadCloudConfig).toHaveBeenCalledWith(
-      { hash: 'hash', key: 'promarkLensProfiles', serialNumber: 'serial' },
-      undefined,
-      { askUser: false },
-    );
-    expect(mockReadCloudConfig).toHaveBeenCalledWith(
-      { hash: 'hash', key: 'promarkLens', serialNumber: 'serial' },
-      undefined,
-      { askUser: false },
-    );
+    expect(mockReadCloudConfigs).toHaveBeenCalledWith({
+      hash: 'hash',
+      keys: ['promarkLensProfiles', 'promarkLens'],
+      serialNumber: 'serial',
+    });
   });
 
-  test('resolves null when the cloud has nothing', async () => {
-    mockReadCloudConfig.mockResolvedValue(null);
+  test('resolves null when the cloud has nothing or the request failed', async () => {
+    mockReadCloudConfigs.mockResolvedValueOnce({});
+    expect(await readLensCloudData('hash', 'serial')).toBeNull();
+    mockReadCloudConfigs.mockResolvedValueOnce(null);
     expect(await readLensCloudData('hash', 'serial')).toBeNull();
   });
 
-  test('the legacy set stands for every lens when the cloud has no profiles', () => {
-    expect(getCloudLensParameters({ legacy: { field: fieldB } }, flat200)).toEqual({ field: fieldB });
-    expect(getCloudLensParameters({ legacy: { field: fieldB }, profiles: [] }, flat200)).toBeUndefined();
+  test('the cloud legacy set stands for every lens only while neither side has profiles', () => {
+    expect(getCloudLensParameters({ legacy: { field: fieldB } }, {}, flat200)).toEqual({ field: fieldB });
+    expect(getCloudLensParameters({ legacy: { field: fieldB } }, store, flat200)).toBeUndefined();
+    expect(getCloudLensParameters({ legacy: { field: fieldB }, profiles: [] }, {}, flat200)).toBeUndefined();
+    expect(getCloudLensParameters({ profiles: [{ ...flat200, field: fieldB }] }, store, flat200)).toEqual({
+      ...flat200,
+      field: fieldB,
+    });
   });
 
   test('lists the lenses whose cloud copy differs, but not those only saved locally', () => {
@@ -108,37 +111,48 @@ describe('test lens-profiles-cloud', () => {
     expect(getLensCloudDifferences({ defaultKey: flat200, profiles: [] }, store, keys, getLocal).defaultKey).toBe(true);
   });
 
-  test('only the legacy set is compared when the cloud has no profiles', () => {
-    expect(getLensCloudDifferences({ legacy: { field: fieldA } }, store, keys, getLocal)).toEqual({
-      defaultKey: false,
-      keys: [],
-      legacy: false,
-    });
-    expect(getLensCloudDifferences({ legacy: { field: fieldB } }, store, keys, getLocal).legacy).toBe(true);
+  test('the cloud legacy set is compared only while nothing local has profiles', () => {
+    const legacyStore = { field: fieldA };
+
+    expect(getLensCloudDifferences({ legacy: { field: fieldA } }, legacyStore, keys, getLocal).legacy).toBe(false);
+    expect(getLensCloudDifferences({ legacy: { field: fieldB } }, legacyStore, keys, getLocal).legacy).toBe(true);
+    expect(hasLensCloudDifferences(getLensCloudDifferences({ legacy: { field: fieldB } }, store, keys, getLocal))).toBe(
+      false,
+    );
   });
 
-  test('uploads the profiles, the laser source and, when asked, the legacy set', async () => {
+  test('a default saved under another laser type is no difference', () => {
+    expect(
+      getLensCloudDifferences(
+        { defaultKey: { innerEngraving: false, workarea: 220 }, profiles: [] },
+        store,
+        keys,
+        getLocal,
+      ).defaultKey,
+    ).toBe(false);
+    expect(
+      getLensCloudDifferences(
+        { defaultKey: flat70, profiles: [] },
+        { ...store, defaultLensProfile: { innerEngraving: false, workarea: 220 } },
+        keys,
+        getLocal,
+      ).defaultKey,
+    ).toBe(true);
+  });
+
+  test('uploads the profiles and laser source in one request, never the legacy set', async () => {
     const info = { laserType: LaserType.UV, watt: 5 };
 
     mockUpdateCloudConfigs.mockResolvedValue(true);
-    expect(
-      await uploadLensCloudData({ hash: 'hash', includeLegacy: true, info, model: 'fpm1', serial: 'serial', store }),
-    ).toBe(true);
+    expect(await uploadLensCloudData({ hash: 'hash', info, model: 'fpm1', serial: 'serial', store })).toBe(true);
     expect(mockUpdateCloudConfigs).toHaveBeenCalledWith({
+      configs: {
+        promarkLaserSource: info,
+        promarkLensProfiles: { defaultKey: flat70, profiles: store.lensProfiles },
+      },
       hash: 'hash',
-      items: [
-        { data: { defaultKey: flat70, profiles: store.lensProfiles }, key: 'promarkLensProfiles' },
-        { data: info, key: 'promarkLaserSource' },
-        {
-          data: expect.objectContaining({ field: fieldA, redDot: { offsetX: 0, offsetY: 0, scaleX: 1, scaleY: 1 } }),
-          key: 'promarkLens',
-        },
-      ],
       model: 'fpm1',
       serialNumber: 'serial',
     });
-
-    await uploadLensCloudData({ hash: 'hash', includeLegacy: false, info, model: 'fpm1', serial: 'serial', store });
-    expect(mockUpdateCloudConfigs.mock.lastCall[0].items).toHaveLength(2);
   });
 });

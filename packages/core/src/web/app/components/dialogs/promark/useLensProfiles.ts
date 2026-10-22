@@ -8,6 +8,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { LaserType } from '@core/app/constants/promark-constants';
 import type { FullLensParameters, LensProfileSource } from '@core/helpers/device/promark/lens-profiles';
 import {
+  getAvailableDefaultKey,
   getLensProfileId,
   getLensProfileKeys,
   isSameLensParameters,
@@ -139,17 +140,19 @@ export const useLensProfiles = ({
   const [lensKey, setLensKey] = useState<LensProfileKey>(initialKey);
   // values shown for each visited lens, keyed by `getLensProfileId`
   const [drafts, setDrafts] = useState<Record<string, FullLensParameters>>({});
+  // a default saved under another laser type counts as no default
   const [defaultKey, setDefaultKey] = useState<LensProfileKey | undefined>(
-    initialDefaultKey ?? store.defaultLensProfile,
+    initialDefaultKey ?? getAvailableDefaultKey(store, info.laserType),
   );
   const [cloud, setCloud] = useState<LensCloudData | null>(null);
   // true once the cloud copy was read and, if it differed, the user answered
   const [isCloudChecked, setIsCloudChecked] = useState(false);
-  const keys = useMemo(() => getLensProfileKeys(info.laserType), [info.laserType]);
+  const { laserType } = info;
+  const keys = useMemo(() => getLensProfileKeys(laserType), [laserType]);
 
   const getSaved = useCallback(
-    (key: LensProfileKey): FullLensParameters => withDefaultParameters(resolveLensProfile(base, key)),
-    [base],
+    (key: LensProfileKey): FullLensParameters => withDefaultParameters(resolveLensProfile(base, key, laserType)),
+    [base, laserType],
   );
   const getCurrent = useCallback(
     (key: LensProfileKey): FullLensParameters => drafts[getLensProfileId(key)] ?? getSaved(key),
@@ -176,10 +179,10 @@ export const useLensProfiles = ({
 
       if (data) {
         const differences = getLensCloudDifferences(data, store, keys, (key) =>
-          withDefaultParameters(resolveLensProfile(store, key)),
+          withDefaultParameters(resolveLensProfile(store, key, laserType)),
         );
 
-        if (hasLensCloudDifferences(differences) && (await askUseCloud(differences, info.laserType)) && !cancelled) {
+        if (hasLensCloudDifferences(differences) && (await askUseCloud(differences, laserType)) && !cancelled) {
           if (differences.legacy && data.legacy) {
             setBase((prev) => ({ ...prev, ...withDefaultParameters(data.legacy!) }));
           }
@@ -188,7 +191,7 @@ export const useLensProfiles = ({
             const next = { ...prev };
 
             differences.keys.forEach((key) => {
-              next[getLensProfileId(key)] = withDefaultParameters(getCloudLensParameters(data, key)!);
+              next[getLensProfileId(key)] = withDefaultParameters(getCloudLensParameters(data, store, key)!);
             });
 
             return next;
@@ -206,7 +209,7 @@ export const useLensProfiles = ({
     return () => {
       cancelled = true;
     };
-  }, [hashedSerial, keys, serial, store]);
+  }, [hashedSerial, keys, laserType, serial, store]);
 
   const updateCurrent = useCallback(
     <K extends keyof FullLensParameters>(name: K, action: SetStateAction<FullLensParameters[K]>) => {
@@ -237,14 +240,14 @@ export const useLensProfiles = ({
   const getStatus = (key: LensProfileKey): LensProfileStatus => {
     if (isEdited(key)) return { state: 'edited' };
 
-    const { source } = resolveLensProfile(base, key);
+    const { source } = resolveLensProfile(base, key, laserType);
 
     if (source === 'fallback') return { state: 'unset' };
 
     return { inherited: source === 'exact' ? undefined : source, state: 'saved' };
   };
 
-  const cloudParameters = cloud ? getCloudLensParameters(cloud, lensKey) : undefined;
+  const cloudParameters = cloud ? getCloudLensParameters(cloud, base, lensKey) : undefined;
   const current = getCurrent(lensKey);
   const isSynced = Boolean(cloudParameters) && isSameLensParameters(cloudParameters!, current);
 
@@ -257,7 +260,7 @@ export const useLensProfiles = ({
 
     keys.filter(isEdited).forEach(add);
 
-    if (resolveLensProfile(base, effectiveDefaultKey).source !== 'exact') add(effectiveDefaultKey);
+    if (resolveLensProfile(base, effectiveDefaultKey, laserType).source !== 'exact') add(effectiveDefaultKey);
 
     return toSave.map((key) => ({ ...key, ...getCurrent(key) }));
   };
@@ -273,7 +276,7 @@ export const useLensProfiles = ({
       ...keys
         .filter(
           (key) =>
-            resolveLensProfile(base, key).source === 'exact' &&
+            resolveLensProfile(base, key, laserType).source === 'exact' &&
             !profilesToSave.some((p) => isSameLensProfileKey(p, key)),
         )
         .map((key) => ({ ...key, ...getCurrent(key) })),
@@ -288,15 +291,8 @@ export const useLensProfiles = ({
         })),
       );
 
-  /** Saves locally; `includeLegacy` tells whether the default profile, kept in the legacy format, changed. */
-  const save = (): { includeLegacy: boolean; store: PromarkStore } => {
-    const includeLegacy =
-      !store.defaultLensProfile ||
-      !isSameLensProfileKey(store.defaultLensProfile, effectiveDefaultKey) ||
-      profilesToSave.some((p) => isSameLensProfileKey(p, effectiveDefaultKey));
-
-    return { includeLegacy, store: saveLensProfiles(serial, profilesToSave, effectiveDefaultKey) };
-  };
+  /** Saves locally and returns the updated store. */
+  const save = (): PromarkStore => saveLensProfiles(serial, profilesToSave, effectiveDefaultKey);
 
   return {
     applyCloudParameters: () => {

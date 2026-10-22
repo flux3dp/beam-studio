@@ -2,6 +2,7 @@ import { LaserType } from '@core/app/constants/promark-constants';
 import type { PromarkStore } from '@core/interfaces/Promark';
 
 import {
+  getAvailableDefaultKey,
   getDocumentLensProfile,
   getDocumentLensProfileKey,
   getLensProfileKeys,
@@ -72,7 +73,7 @@ describe('test lens-profiles', () => {
     expect(normalizeLensProfileKey(LaserType.MOPA, { innerEngraving: true, workarea: 70 }).innerEngraving).toBe(false);
   });
 
-  test('resolves an exact profile, then the default profile, the legacy set, then factory values', () => {
+  test('with profiles: the exact profile, then the default profile, then factory values', () => {
     expect(resolveLensProfile(store, { innerEngraving: true, workarea: 70 })).toMatchObject({
       field: innerField,
       source: 'exact',
@@ -81,9 +82,10 @@ describe('test lens-profiles', () => {
       field: flatField,
       source: 'exact',
     });
-    expect(resolveLensProfile(store, { innerEngraving: false, workarea: 200 })).toMatchObject({
-      field: legacyField,
-      source: 'legacy',
+    // the legacy set belongs to older versions once profiles exist
+    expect(resolveLensProfile(store, { innerEngraving: false, workarea: 200 })).toEqual({
+      key: { innerEngraving: false, workarea: 200 },
+      source: 'fallback',
     });
     expect(
       resolveLensProfile(
@@ -96,8 +98,36 @@ describe('test lens-profiles', () => {
       resolveLensProfile(
         { ...store, defaultLensProfile: { innerEngraving: false, workarea: 200 } },
         { innerEngraving: false, workarea: 200 },
-      ),
-    ).toMatchObject({ field: legacyField, source: 'legacy' });
+      ).source,
+    ).toBe('fallback');
+  });
+
+  test('profiles and defaults saved under another laser type are not used', () => {
+    const desktopStore: PromarkStore = {
+      defaultLensProfile: { innerEngraving: false, workarea: 220 },
+      field: legacyField,
+      lensProfiles: [{ field: flatField, innerEngraving: false, workarea: 220 }],
+    };
+
+    expect(resolveLensProfile(desktopStore, { innerEngraving: false, workarea: 70 }, LaserType.UV).source).toBe(
+      'fallback',
+    );
+    expect(resolveLensProfile(desktopStore, { innerEngraving: false, workarea: 110 }, LaserType.MOPA)).toMatchObject({
+      field: flatField,
+      source: 'default',
+    });
+    expect(resolveLensProfile(store, { innerEngraving: true, workarea: 70 }, LaserType.MOPA).source).toBe('fallback');
+    expect(getAvailableDefaultKey(desktopStore, LaserType.UV)).toBeUndefined();
+    expect(getAvailableDefaultKey(desktopStore, LaserType.Desktop)).toEqual({ innerEngraving: false, workarea: 220 });
+  });
+
+  test('without profiles: the legacy set, then factory values', () => {
+    expect(
+      resolveLensProfile({ field: legacyField, info: uvInfo }, { innerEngraving: false, workarea: 200 }),
+    ).toMatchObject({
+      field: legacyField,
+      source: 'legacy',
+    });
     expect(resolveLensProfile({ info: uvInfo }, { innerEngraving: false, workarea: 200 })).toEqual({
       key: { innerEngraving: false, workarea: 200 },
       source: 'fallback',

@@ -44,7 +44,9 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
   const isInch = useStorageStore((state) => state.isInch);
   const info = useMemo<PromarkInfo>(() => initData.info ?? { laserType: LaserType.Desktop, watt: 20 }, [initData.info]);
   // what the current document applies, which is also what is on the machine when the dialog opens
-  const [documentProfile] = useState(() => resolveLensProfile(initData, getDocumentLensProfileKey(info)));
+  const [documentProfile] = useState(() =>
+    resolveLensProfile(initData, getDocumentLensProfileKey(info), info.laserType),
+  );
   const lens = useLensProfiles({
     hashedSerial,
     info,
@@ -149,7 +151,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
   const handleSave = async () => {
     if (!(await confirmLensWarnings(lens.getSaveWarnings(), info.laserType, isInch))) return;
 
-    const { includeLegacy, store } = lens.save();
+    const store = lens.save();
 
     try {
       if (isPreviewing) {
@@ -157,7 +159,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
       }
 
       // the machine keeps what the current document applies, whichever lens was edited
-      const applied = resolveLensProfile(store, documentProfile.key);
+      const applied = resolveLensProfile(store, documentProfile.key, info.laserType);
 
       await deviceMaster.setField(documentWidth, applied.field ?? defaultField);
       await deviceMaster.setGalvoParameters(applied.galvoParameters ?? defaultGalvoParameters);
@@ -165,7 +167,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
       console.error('Failed to apply promark settings state', error);
     }
 
-    await uploadLensCloudData({ hash: hashedSerial, includeLegacy, info, model, serial, store });
+    await uploadLensCloudData({ hash: hashedSerial, info, model, serial, store });
 
     onClose();
   };

@@ -27,8 +27,9 @@ import promarkDataStore from './promark-data-store';
  * Which set of saved parameters was picked for a lens:
  * - `exact`: a profile saved for this work area and engraving mode
  * - `default`: the profile marked as the default
- * - `legacy`: the single set saved before profiles existed, which has no work area
- * - `fallback`: nothing saved, factory values
+ * - `legacy`: the single set saved before profiles existed, which has no work area; used only while
+ *   no profile is saved, since older versions keep writing it on their own
+ * - `fallback`: nothing usable saved, factory values
  */
 export type LensProfileSource = 'default' | 'exact' | 'fallback' | 'legacy';
 
@@ -87,15 +88,37 @@ const pickParameters = ({ field, galvoParameters, redDot }: LensParameters): Len
 const findProfile = (profiles: LensProfile[] | undefined, key: LensProfileKey): LensProfile | undefined =>
   profiles?.find((p) => isSameLensProfileKey(p, key));
 
-/** Picks the parameters for `key`: an exact profile, the default profile, the legacy set, then nothing. */
-export const resolveLensProfile = (store: PromarkStore, key: LensProfileKey): ResolvedLensProfile => {
-  const profile = findProfile(store.lensProfiles, key);
+/** Whether `key` is one of the lenses `laserType` offers; profiles saved under another laser type stay unused. */
+export const isLensProfileKeyAvailable = (laserType: LaserType, key: LensProfileKey): boolean =>
+  getLensProfileKeys(laserType).some((k) => isSameLensProfileKey(k, key));
 
-  if (profile) return { ...pickParameters(profile), key, source: 'exact' };
+/** The default lens when it is one `laserType` offers. */
+export const getAvailableDefaultKey = (store: PromarkStore, laserType: LaserType): LensProfileKey | undefined =>
+  store.defaultLensProfile && isLensProfileKeyAvailable(laserType, store.defaultLensProfile)
+    ? store.defaultLensProfile
+    : undefined;
 
-  const defaultProfile = store.defaultLensProfile && findProfile(store.lensProfiles, store.defaultLensProfile);
+/**
+ * Picks the parameters for `key`. With saved profiles: the exact profile, then the default profile
+ * when `laserType` offers it, then nothing. Without: the legacy set, then nothing.
+ */
+export const resolveLensProfile = (
+  store: PromarkStore,
+  key: LensProfileKey,
+  laserType: LaserType = store.info?.laserType ?? LaserType.Desktop,
+): ResolvedLensProfile => {
+  if (store.lensProfiles?.length) {
+    const profile = isLensProfileKeyAvailable(laserType, key) ? findProfile(store.lensProfiles, key) : undefined;
 
-  if (defaultProfile) return { ...pickParameters(defaultProfile), key, source: 'default' };
+    if (profile) return { ...pickParameters(profile), key, source: 'exact' };
+
+    const defaultKey = getAvailableDefaultKey(store, laserType);
+    const defaultProfile = defaultKey && findProfile(store.lensProfiles, defaultKey);
+
+    if (defaultProfile) return { ...pickParameters(defaultProfile), key, source: 'default' };
+
+    return { key, source: 'fallback' };
+  }
 
   if (hasLegacyParameters(store)) return { ...pickParameters(store), key, source: 'legacy' };
 
@@ -131,21 +154,28 @@ export const isSameLensParameters = (a: LensParameters, b: LensParameters): bool
   );
 };
 
+const getStoreInfo = (store: PromarkStore, info?: PromarkInfo): PromarkInfo =>
+  info ?? store.info ?? { laserType: LaserType.Desktop, watt: 20 };
+
 /** The parameters saved for `serial` and `key`. */
-export const getLensProfile = (serial: string, key: LensProfileKey): ResolvedLensProfile =>
-  resolveLensProfile(promarkDataStore.get(serial), key);
+export const getLensProfile = (serial: string, key: LensProfileKey): ResolvedLensProfile => {
+  const store = promarkDataStore.get(serial);
+
+  return resolveLensProfile(store, key, getStoreInfo(store).laserType);
+};
 
 /** The parameters to apply to `serial` for the current document. */
 export const getDocumentLensProfile = (serial: string, info?: PromarkInfo): ResolvedLensProfile => {
   const store = promarkDataStore.get(serial);
-  const promarkInfo = info ?? store.info ?? { laserType: LaserType.Desktop, watt: 20 };
+  const promarkInfo = getStoreInfo(store, info);
 
-  return resolveLensProfile(store, getDocumentLensProfileKey(promarkInfo));
+  return resolveLensProfile(store, getDocumentLensProfileKey(promarkInfo), promarkInfo.laserType);
 };
 
 /**
  * Merges `profiles` into `store`, replacing those with the same key, and marks `defaultKey` as the
- * default. The legacy set becomes a copy of the default profile, which is what older versions read.
+ * default. The local legacy set becomes a copy of the default profile, so an older version opened on
+ * this computer still finds usable values; the cloud legacy set is left to older versions.
  */
 export const mergeLensProfiles = (
   store: PromarkStore,

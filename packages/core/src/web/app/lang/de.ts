@@ -2536,6 +2536,7 @@ const lang: ILang = {
   promark_settings: {
     angle: 'Winkel',
     bulge: 'Wölbung',
+    cached_task_lens_mismatch: 'The last job was generated for %s, but Document Settings use %s. Which parameters should be applied?',
     cloud_lens_differs: 'The cloud parameters differ from this computer for: %s\nUse the cloud parameters? They are filled in and saved when you click Save.',
     engraving_mode: 'Engraving Mode',
     field: 'Feld',
@@ -2575,7 +2576,9 @@ const lang: ILang = {
     switchXY: 'X/Y wechseln',
     title: 'Promark-Einstellungen',
     trapezoid: 'Trapez',
+    use_cached_lens_parameters: 'Use Parameters of the Last Job',
     use_cloud_parameters: 'Use Cloud Parameters',
+    use_document_lens_parameters: 'Use Parameters of Document Settings',
     workarea_hint: 'Sie können den Arbeitsbereich in den "Dokumenteinstellungen" ändern.',
     z_axis_adjustment: {
       section1: 'Passen Sie die Höhe der Z-Achse an, um den Fokus fein abzustimmen.',
