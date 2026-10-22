@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Built — 2026-10-15, flux-id PR #683; R2 buckets, tokens, lifecycle rules, Slack webhook and Cloudflare rate limit rule set 2026-10-15; deploy, logrotate copy and baseline week pending |
+| **Status** | Merged — flux-id PR #683, built 2026-10-15, merged 2026-10-19; R2 buckets, tokens, lifecycle rules, Slack webhook and Cloudflare rate limit rule set 2026-10-15; production logrotate copy and baseline week pending |
 | **Created** | 2026-10-06 |
 | **Owner** | flux-id repo (`../flux-id`, Django 4.2.27 / DRF 3.16 / gunicorn 23 / celery 5.6) |
 | **Companion of** | [Error Report Upload](error-report-upload.md) (Beam Studio client; owns the UX, consent, scrub, throttle and cooldown, and the request contract in its §7.5 / §8) |
