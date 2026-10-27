@@ -2192,7 +2192,6 @@ const lang: ILang = {
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 子系统没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: '固件发生错误\n请重新启动机器', // Deprecated in FW 3.3.1
     hour: '小时',
-    left: '完成',
     MAINBOARD_OFFLINE: '#905 连接主板时发生错误\n请重新启动机器。',
     minute: '分',
     monitor: 'MONITOR',
@@ -2214,6 +2213,7 @@ const lang: ILang = {
     },
     taskTab: '工作',
     temperature: '温度',
+    time_left: '剩余 %s',
     upload: '上传',
     USER_OPERATION: '请遵循设备面板上的指示以继续。',
     USER_OPERATION_CARTRIDGE_INK_EMPTY: '墨盒已空\n墨盒无墨水。请更换后继续打印。',

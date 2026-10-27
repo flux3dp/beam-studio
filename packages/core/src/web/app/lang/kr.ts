@@ -2192,7 +2192,6 @@ const lang: ILang = {
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 치명적인 오류: 하위 시스템 응답 없음. FLUX 지원팀에 문의하세요.', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: '문제가 발생했습니다. 기계를 다시 시작하세요.', // Deprecated in FW 3.3.1
     hour: '시',
-    left: '남음',
     MAINBOARD_OFFLINE: '#905 메인보드 연결 오류. 기계를 다시 시작하세요.',
     minute: '분',
     monitor: 'MONITOR',
@@ -2214,6 +2213,7 @@ const lang: ILang = {
     },
     taskTab: '작업',
     temperature: '온도',
+    time_left: '%s 남음',
     upload: '업로드',
     USER_OPERATION: '계속하려면 장치 패널의 지시 사항을 따르세요.',
     USER_OPERATION_CARTRIDGE_INK_EMPTY: '카트리지 비어 있음\n카트리지 잉크가 없습니다. 교체 후 인쇄를 계속하세요.',

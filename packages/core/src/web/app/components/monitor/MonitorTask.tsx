@@ -3,6 +3,7 @@ import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'r
 import { ClockCircleOutlined, FileOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ProgressProps } from 'antd';
 import { Button, Col, Progress, Row } from 'antd';
+import { sprintf } from 'sprintf-js';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import DeviceConstants from '@core/app/constants/device-constants';
@@ -59,9 +60,11 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     if (isFramingTask) {
       jobTimeStr = `${FormatDuration(Math.max(totalTaskTime, 1))}`;
     } else if (isWorking && report?.prog && totalTaskTime) {
-      jobTimeStr = `${FormatDuration(Math.max(totalTaskTime * (1 - report.prog), 1))} ${tMonitor.left}`;
+      jobTimeStr = sprintf(tMonitor.time_left, FormatDuration(Math.max(totalTaskTime * (1 - report.prog), 1)));
     } else if (totalTaskTime) {
-      jobTimeStr = `${FormatDuration(Math.max(totalTaskTime, 1))} ${isWorking ? tMonitor.left : ''}`;
+      const duration = FormatDuration(Math.max(totalTaskTime, 1));
+
+      jobTimeStr = isWorking ? sprintf(tMonitor.time_left, duration) : duration;
     }
 
     return jobTimeStr ? (

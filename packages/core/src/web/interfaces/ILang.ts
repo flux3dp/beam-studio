@@ -2097,7 +2097,6 @@ export interface ILang {
     HARDWARE_ERROR_SUBSYSTEM_ERROR: string;
     HARDWARE_FAILURE: string;
     hour: string;
-    left: string;
     MAINBOARD_OFFLINE: string;
     minute: string;
     monitor: string;
@@ -2119,6 +2118,7 @@ export interface ILang {
     };
     taskTab: string;
     temperature: string;
+    time_left: string;
     upload: string;
     USER_OPERATION: string;
     USER_OPERATION_CARTRIDGE_INK_EMPTY: string;
