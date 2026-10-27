@@ -222,6 +222,10 @@ const getAdvancedBlockKeys = (module: LayerModuleType, workarea: WorkAreaModel):
   // TextureBlock, focus / height keys are already part of laserConfigKeys
   if (workarea !== 'fuv1') keys.push(...textureKeys);
 
+  if (getWorkarea(workarea).defaultLaserFrequency && module === LayerModule.LASER_UNIVERSAL) {
+    keys.push('laserFrequency');
+  }
+
   if (getAddOnInfo(workarea).hybridLaser && useDocumentStore.getState()['enable-diode']) keys.push('diode');
 
   if (useCurveEngravingStore.getState().hasData && getWorkarea(workarea).curveSpeedLimit?.zRegular) {
