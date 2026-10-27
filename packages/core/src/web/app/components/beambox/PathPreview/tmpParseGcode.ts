@@ -50,15 +50,16 @@ export class ParsedGcode {
 }
 
 /**
- * Drawn size of one inner engraving dot when the spacing to its neighbour gives no better answer,
- * and the range an inferred spacing is trusted within. A dot has no size in the gcode: it is a
- * point of deposited energy, so it is drawn at the pitch of the grid it belongs to (the layer's
- * point spacing, read off the distance to the previous dot). Same idea as the galvo dots in
- * parseFcode.
+ * Drawn size of one inner engraving dot. A dot has no size in the gcode: it is a point of
+ * deposited energy, so it is drawn at the layer's point spacing, which the gcode does not carry
+ * either. The dots are blue-noise samples visited in nearest-neighbour order, so the distance to
+ * the previous dot is at least the spacing and often more; the smallest distance seen so far is
+ * the spacing itself. Starts at the default point spacing until a smaller gap is seen, and an
+ * inferred value is only trusted within the range below. Same idea as the galvo dots in parseFcode.
  */
-const DOT_MM = 0.1;
-const DOT_MIN_MM = 0.02;
-const DOT_MAX_MM = 0.5;
+const DOT_MM = 0.03;
+const DOT_MIN_MM = 0.005;
+const DOT_MAX_MM = 0.1;
 /** Sim time is kept in minutes, and the dotting time (T) arrives in microseconds. */
 const US_TO_MIN = 1 / 60000000;
 
@@ -266,11 +267,11 @@ export function parseGcode(gcode: string, isPromark = false): ParsedGcode {
         (!Number.isNaN(x) || !Number.isNaN(y) || powerSet);
 
       if (isDot) {
-        // the pitch comes from the grid the dots sit on; the default only covers the first dot
+        // the smallest gap seen so far is the layer's point spacing (see DOT_MM)
         if (!Number.isNaN(lastDotX)) {
           const gap = Math.hypot(lastX - lastDotX, lastY - lastDotY);
 
-          if (gap >= DOT_MIN_MM && gap <= DOT_MAX_MM) dotPitch = gap;
+          if (gap >= DOT_MIN_MM && gap <= DOT_MAX_MM) dotPitch = Math.min(dotPitch, gap);
         }
 
         lastDotX = lastX;

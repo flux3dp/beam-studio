@@ -14,8 +14,8 @@ const innerEngravingDots = [
   'M3S0',
   'G1F240000X10Y20S0',
   'F1200S150',
-  'X10.03',
-  'X10.06',
+  'X10.02',
+  'X10.07',
   'M2',
 ].join('\n');
 
@@ -32,11 +32,12 @@ describe('parseGcode', () => {
 
     expect(dots).toHaveLength(3);
 
-    // the first dot knows no pitch yet and is drawn 0.1 mm wide; the next ones measure 0.03 mm to
-    // their neighbour. Each mark starts half a pitch before the dot and ends half a pitch after it
-    expect(dots[0][1]).toBeCloseTo(10.05);
-    expect(dots[1][1]).toBeCloseTo(10.045);
-    expect(dots[2][1]).toBeCloseTo(10.075);
+    // the first dot is drawn at the default 0.03 mm spacing; the second measures 0.02 mm to its
+    // neighbour, which becomes the spacing from then on, and the 0.05 mm gap to the third does not
+    // widen it again. Each mark starts half a pitch before the dot and ends half a pitch after it
+    expect(dots[0][1]).toBeCloseTo(10.015);
+    expect(dots[1][1]).toBeCloseTo(10.03);
+    expect(dots[2][1]).toBeCloseTo(10.08);
     // y is negated into preview space
     expect(dots[0][2]).toBeCloseTo(-20);
 
@@ -52,7 +53,7 @@ describe('parseGcode', () => {
     const travels = records.filter((r, k) => records[k + 1]?.[0] === 1 && r[0] === 0);
 
     expect(travels).toHaveLength(3);
-    expect(travels[1][1]).toBeCloseTo(10.015);
+    expect(travels[1][1]).toBeCloseTo(10.01);
     expect(travels[1][7]).toBe(0);
   });
 

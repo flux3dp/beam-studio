@@ -54,8 +54,9 @@ Swiftray for a 3D document): while the dotting time `T` is set, every laser-on m
 fired on arrival, not a line. Swiftray writes the same gcode for the preview and the job (no
 mock dots), so parseGcode draws them: per dot a travel record to half a pitch before the dot
 (g=0 on arrival → the jump between dots shows as red traversal) and a feedrate-less mark
-(g=1, f=NaN) one pitch wide that carries `T` in µs as its dwell. The pitch is the distance to
-the previous dot when it is within 0.02–0.5 mm, else 0.1 mm. 2D Promark gcode (no flag) is
+(g=1, f=NaN) one pitch wide that carries `T` in µs as its dwell. The pitch is the layer's point
+spacing, which the gcode does not carry: it is taken as the smallest gap between consecutive dots
+seen so far (within 0.005–0.1 mm), starting from the 0.03 mm default. 2D Promark gcode (no flag) is
 parsed as before: a laser-on move with `T` set is a line whose dots are costed along it.
 
 ## Task code routing (`updateTaskCode`)
