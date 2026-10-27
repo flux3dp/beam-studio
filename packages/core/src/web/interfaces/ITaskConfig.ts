@@ -77,6 +77,11 @@ export type TFcodeOptionalConfig = Partial<{
    * 4C ink color order by cartridge slot, e.g. 'cymk' (default cmyk)
    */
   ico: string;
+  /**
+   * Inner engraving: send ";CONFIG INNER_ENGRAVING=1" so Swiftray estimates the job with its inner
+   * engraving time model. Jobs without it keep the pre-inner-engraving estimate. 1 for a 3D document.
+   */
+  inner_engraving: number;
   /** Promark: send ";CONFIG UV=1" so the controller runs the job as a UV source. 1 for UV. */
   is_uv_light: number;
   job_origin: [number, number];

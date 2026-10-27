@@ -293,8 +293,10 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   level of params; logs `failedStlObjects` / `failedPointCloudObjects`.
 - `svg-laser-parser.ts` `getExportOpt`: when active sets `refractive_index`, `material_height`,
   `material_min_z/max_z` (Swiftray applies an axial refraction model, depth / n)
-  and the Promark controller config `INNER_ENGRAVING_CONTROLLER_CONFIG` (`is_uv_light: 1`, jump
-  delays 1000us, laser on/off delays 150us). Under `isUvDev()` on fpm1 + UV (inner engraving or
+  and the Promark controller config `INNER_ENGRAVING_CONTROLLER_CONFIG` (`inner_engraving: 1`,
+  `is_uv_light: 1`, jump delays 1000us, laser on/off delays 150us). `inner_engraving: 1` is what
+  switches Swiftray to its inner engraving time model (`;CONFIG INNER_ENGRAVING=1`); 2D jobs,
+  UV included, keep the pre-inner-engraving estimate, so never send it outside this gate. Under `isUvDev()` on fpm1 + UV (inner engraving or
   not), numeric localStorage keys (`laser_on_delay`, `laser_off_delay`, `marking_delay`,
   `corner_delay`, `jump_speed`, `jump_delay_min/max`, `is_uv_light`, `machine_z_bucket`, the last
   floored at `MIN_MACHINE_Z_BUCKET_MM = 0.001`) override them. Separately, `isUvDev()` +

@@ -53,9 +53,12 @@ const MIN_MACHINE_Z_BUCKET_MM = 0.001;
 /**
  * Promark UV controller settings for inner engraving: delays in us (measured 2026-10-13), and
  * is_uv_light=1 runs the job as a UV source. Sent as job parameters, which Swiftray writes as
- * ";CONFIG" lines for the controller.
+ * ";CONFIG" lines for the controller. inner_engraving=1 is what selects Swiftray's inner engraving
+ * time model (MachineJob and the BSL controller); every other job keeps the pre-inner-engraving
+ * estimate, so it must only ever be sent for a 3D document.
  */
 const INNER_ENGRAVING_CONTROLLER_CONFIG = {
+  inner_engraving: 1,
   is_uv_light: 1,
   jump_delay_max: 1000,
   jump_delay_min: 1000,

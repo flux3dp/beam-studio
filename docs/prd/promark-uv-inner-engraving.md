@@ -539,7 +539,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
   | `data-fillDwellTime` | µs，負值關閉 | −50000 |
   | `data-fillDwellAdaptive` | 布林 | 關閉 |
 
-- **上傳參數**（`svg-laser-parser.ts` → Swiftray `convert`）：內雕時帶 `refractive_index`、`material_height`、`material_min_z`、`material_max_z`，以及 `is_uv_light=1`、`jump_delay_min` / `jump_delay_max`=1000µs、`laser_on_delay` / `laser_off_delay`=150µs（Swiftray 寫成大寫的 `;CONFIG` 行）。uvDev 下可再帶 `jump_speed`、`marking_delay`、`corner_delay`、`machine_z_bucket`、`first_pulse_killer_enabled`（`ITaskConfig.ts`）。
+- **上傳參數**（`svg-laser-parser.ts` → Swiftray `convert`）：內雕時帶 `refractive_index`、`material_height`、`material_min_z`、`material_max_z`，以及 `inner_engraving=1`（Swiftray 以 `;CONFIG INNER_ENGRAVING=1` 選用內雕的時間模型，沒有它的工作一律用內雕之前的舊算法）、`is_uv_light=1`、`jump_delay_min` / `jump_delay_max`=1000µs、`laser_on_delay` / `laser_off_delay`=150µs（Swiftray 寫成大寫的 `;CONFIG` 行）。uvDev 下可再帶 `jump_speed`、`marking_delay`、`corner_delay`、`machine_z_bucket`、`first_pulse_killer_enabled`（`ITaskConfig.ts`）。
 - **Promark 相機參數**（localStorage `promark-store[serial].cameraParameters`，型別 `PromarkCameraParameters`）：V3 fisheye 參數加上 `rotate180?: boolean`。新校正一定寫入；沒有時視為 `true`。
 - **舊檔相容**：投影 rect 上的物件層級參數（`data-stl-mode`、`data-stl-layer-height`、`data-stl-min-layer-height`、`data-stl-point-spacing`）不在白名單，開檔時被移除，後端也不再讀取。
 
