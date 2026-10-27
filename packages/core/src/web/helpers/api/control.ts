@@ -738,6 +738,8 @@ class Control extends EventEmitter implements IControlSocket {
   downloadLog = (logName: string, idleTimeout?: number) =>
     new Promise<[string, Blob]>((resolve, reject) => {
       let metadata: any = null;
+      let data: Blob | undefined;
+      let isOkReceived = false;
       let timeoutTimer: NodeJS.Timeout | undefined;
       const arm = () => {
         if (timeoutTimer) clearTimeout(timeoutTimer);
@@ -756,14 +758,19 @@ class Control extends EventEmitter implements IControlSocket {
 
         if (response.status === 'transfer') {
           this.emit(EVENT_COMMAND_PROGRESS, response);
+        } else if (response.status === 'ok') {
+          isOkReceived = true;
+        } else if (response instanceof Blob) {
+          data = response;
         } else if (!Object.keys(response).includes('completed')) {
           metadata = response;
         }
 
-        if (response instanceof Blob) {
+        // fetch_log sends a final ok after the binary frame. Consume it before releasing the queue.
+        if (data && isOkReceived) {
           clearTimeout(timeoutTimer);
           this.removeCommandListeners();
-          resolve([metadata, response]);
+          resolve([metadata, data]);
         }
       });
       this.setDefaultErrorResponse(fail);

@@ -76,10 +76,17 @@
 | A9 | 封鎖 proxy 主機，一律自動 下觸發錯誤。 | 嘗試 3 次後靜默；不跳新視窗。 | — |
 | A10 | 匯出時 fluxghost 回傳錯誤（`#806`）。 | 視窗文字與現在相同，但以同意 checkbox 取代 是/否 上傳詢問；SVG 附於資料包。 | 不論是否已有機器連線，序號均為 `none`、韌體版本為空、不下載機器 log，並套用無裝置的上限。`aws-helper.ts` 已不存在；`uploadToS3` 無呼叫者。 |
 | A11 | 一律自動 下，一小時內觸發同一裝置錯誤 5 次，隔天再觸發 1 次。 | 第一天只送 1 次請求（之後的視窗無狀態列）；第二天的視窗送 1 次請求，其 `occurrences_since_last` 為 4；第三天若無變化則不送（冷卻已延長為 7 天）。 | 不同 `error_code`、新的 app 版本或新的韌體版本會產生新指紋。每次詢問 下，冷卻期間 checkbox 隱藏，與每日上限相同。 |
+| A12 | 連接閒置機器，同時呼叫 `DeviceMaster.downloadLog('fluxrobotd.log', undefined, 10000)` 與 `DeviceMaster.getReport()`，再交換順序重做。 | 兩者皆完成，第二個控制請求只在第一個完成後送出；下載進度仍回傳給對應 callback。 | 排隊中的下載不得覆蓋目前指令的進度 listener；log 錯誤或閒置逾時後佇列仍可執行下一項。不必上傳診斷 HTTP 請求即可驗證。 |
 
 ## 6. 不得改變的事項
 
 功能資料夾以外會被碰到的共用檔案，以及必須維持原行為的呼叫者：
+
+- `helpers/api/control.ts` `downloadLog` — `DeviceMaster.downloadLog`：保留 log Blob 與進度回報；收到 Blob 與結尾 `ok` 後才完成，避免下一個指令誤收下載回覆。
+- `helpers/device-master.ts` `downloadLog` — `menuDeviceActions.tsx` 手動下載 log：檔案與進度 callback 不變，改經控制佇列依序執行。
+- `helpers/device-master.ts` `downloadLog` — `getLogsTexts`：結果與錯誤處理不變，每個檔案經控制佇列執行。
+- `helpers/device-master.ts` `getLogsTexts` — `MonitorContext.tsx` 手動 Bug Report：下載檔案與進度不變。
+- `helpers/device-master.ts` `getLogsTexts` — `helpers/error-report/index.ts`：背景抓 log 不得與佇列中的控制指令重疊。
 
 - `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — 下載仍產出完整、未清除的報告；`MonitorContext.tsx:548` `handleReport` — 同上；`websocket.ts` — 不再呼叫任何上傳函式；`uploadBackendErrorLog` 已刪除，由 `#802` 視窗的同意勾選框負責上傳。
 - `app/components/dialogs/Alert.tsx` — 所有既有 `checkbox:` 呼叫者（`retryWithRemoveBackground.ts:25`、`retakeContourPreview.ts:77`、`importSvg/index.tsx:46`、`importDxf.ts:52,120`、`AutoFocusButton/index.tsx:140`、`BasePreviewManager.tsx:279`、`handleExportAlerts.ts:150`）— callback 語意不變。2026-10-12 有動到：`Alert.tsx` 現在會渲染 `IAlert` 自 2021 年起就宣告、但改用 antd 後不再渲染的 `children` 欄位；S3 的狀態列用它。wave 1/2 的觸發點都沒有傳 `children`。唯一有傳的既有呼叫者 `NetworkTestingPanel.tsx:104`（網路測試正常後的三條說明提示，至今被默默丟棄，其 sass 仍掛在已失效的 `.modal-alert` 選擇器下）另開小分支修正：改用 `links` 並刪除該段 sass，於本功能的合併 PR 之前先進。
@@ -113,6 +120,8 @@
 ### 7.1.1 隔離原則
 
 `helpers/error-report/` 內的任何東西都不得改變它所裝飾的錯誤視窗的結果。具體而言：`withErrorReportConsent` 每一步都包在 try/catch 內，任何失敗都原樣回傳輸入的 `IAlert`；`uploadErrorReport` 為 fire-and-forget（`void`），捕捉包含 `getLogsTexts` 與 `machineId` 在內的所有錯誤，只寫入 generic logger；checkbox 的 callback 只有一行 `void uploadErrorReport(...)`。上傳路徑壞掉時，重試 / 確認 / 取消 必須與 `main` 分支行為完全一致。以單元測試驗證：讓每個相依都拋出例外，斷言回傳的警示設定與輸入深度相等。
+
+Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必須同時收到 Blob 與結尾 `ok` 才完成；fluxghost 的 `fetch_log` 在二進位資料後仍會送出 `ok`（`../fluxghost/fluxghost/api/control.py`），不能在 Blob 到達時提早釋放佇列。`DeviceMaster.downloadLog` 將進度 listener 設定與傳輸包在同一個 task，因此不會消耗或清除其他佇列指令的 listener。按鈕 callback 仍立即執行，但其中排隊的機器指令可能等待正在下載的 log；共用佇列方案接受這項延遲。10 秒為下載 task 開始後的閒置逾時，不是整次下載或排隊等待的時間上限。其他未使用 `addTask` 的舊方法不在這次序列化範圍內。
 
 ### 7.2 資料包內容與清除
 
@@ -267,5 +276,6 @@
 ## 13. 測試計畫
 
 - 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`consent.spec.tsx`（三種偏好 × checkbox 是否出現、既有 checkbox 保留、冷卻或每日上限期間 checkbox 隱藏、callback 啟動上傳、**所有相依拋出例外 → 原樣回傳輸入的警示設定**）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
-- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A11，另以匯出途中關閉 fluxghost 觸發 `#806`。
+- 佇列回歸：`helpers/device-master.spec.ts` 使用真實 `Control` 佇列與指令 handler，搭配假傳輸；涵蓋兩種請求順序、Blob 後等待結尾 `ok`、進度 listener 歸屬、log 錯誤／逾時（包括缺少結尾 `ok`）後繼續執行。
+- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A12，另以匯出途中關閉 fluxghost 觸發 `#806`。
 - 回歸：§6 所列既有 `checkbox:` 警示呼叫者行為不變；說明 → Bug Report 下載仍包含 `recent_files`。

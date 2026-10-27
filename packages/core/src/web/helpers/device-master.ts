@@ -1038,11 +1038,13 @@ class DeviceMaster {
   async downloadLog(log: string, onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
     const controlSocket = await this.getControl();
 
-    if (onProgress) {
+    // Log transfers share command listeners with other control requests. Install the progress
+    // listener only when this task starts, so waiting downloads cannot overwrite an active task's.
+    return controlSocket.addTask(() => {
       controlSocket.setProgressListener(onProgress);
-    }
 
-    return controlSocket.downloadLog(log, idleTimeout);
+      return controlSocket.downloadLog(log, idleTimeout);
+    });
   }
 
   async fetchCameraCalibImage(fileName: string, onProgress: (...args: any[]) => void = () => {}) {

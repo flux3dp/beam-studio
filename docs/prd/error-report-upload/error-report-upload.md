@@ -74,10 +74,17 @@ When a whitelisted error popup appears, Beam Studio offers to send a diagnostic 
 | A9 | Block the proxy host, trigger error under Always. | 3 attempts, then silence; no new alert. | — |
 | A10 | Export with fluxghost returning an error (`#806`). | Same alert text as today, but with the consent checkbox instead of the Yes/No upload question; SVG included in the bundle. | With or without a connected machine, serial is `none`, firmware version is empty, no system log is downloaded, and the no-device throttle applies. `aws-helper.ts` no longer exists; `uploadToS3` has no callers. |
 | A11 | Under Always, trigger the same device error 5 times within an hour, then once the next day. | Exactly 1 request on day 1 (later alerts show no status line); day-2 alert sends 1 request whose `occurrences_since_last` is 4; a third day without change sends nothing (cooldown now 7 days). | A different `error_code`, a new app version, or a new firmware version starts a fresh fingerprint. Under Ask, the checkbox is hidden while cooling down, same as the daily limit. |
+| A12 | With a connected idle machine, start `DeviceMaster.downloadLog('fluxrobotd.log', undefined, 10000)` and `DeviceMaster.getReport()` concurrently; repeat in reverse order. | Both complete; the second control request is sent only after the first completes. Log progress belongs to the download. | A queued download does not replace the active command's progress listener. A log error or idle timeout releases the queue for the next request. No diagnostic HTTP upload is needed for this check. |
 
 ## 6. Must not change
 
 Shared files touched outside the feature's own folder, with the callers that must keep behaving:
+
+- `helpers/api/control.ts` `downloadLog` — `DeviceMaster.downloadLog`: preserves the log Blob and progress; completes only after both the Blob and final `ok`, preventing the next command from consuming the download reply.
+- `helpers/device-master.ts` `downloadLog` — `menuDeviceActions.tsx` manual log download: same file and progress callback, now serialized through the control queue.
+- `helpers/device-master.ts` `downloadLog` — `getLogsTexts`: same result and error handling, each file uses the control queue.
+- `helpers/device-master.ts` `getLogsTexts` — `MonitorContext.tsx` manual Bug Report: same downloaded files and progress.
+- `helpers/device-master.ts` `getLogsTexts` — `helpers/error-report/index.ts`: background log collection must not overlap queued control commands.
 
 - `helpers/output-error.ts` — `menuActions.ts:64` `BUG_REPORT` — download still produces the full, un-scrubbed report; `MonitorContext.tsx:548` `handleReport` — same; `websocket.ts` — no longer calls any upload function; `uploadBackendErrorLog` is deleted and the `#802` alert's consent checkbox does the upload.
 - `app/components/dialogs/Alert.tsx` — every existing `checkbox:` caller (`retryWithRemoveBackground.ts:25`, `retakeContourPreview.ts:77`, `importSvg/index.tsx:46`, `importDxf.ts:52,120`, `AutoFocusButton/index.tsx:140`, `BasePreviewManager.tsx:279`, `handleExportAlerts.ts:150`) — unchanged callback semantics. Touched 2026-10-12: `Alert.tsx` now renders the `children` field that `IAlert` has declared since 2021 but the antd rewrite stopped rendering; the status line for S3 uses it. No wave-1/2 caller passes `children`. The one existing caller that does, `NetworkTestingPanel.tsx:104` (three help hints after a healthy test, silently dropped until now, with their sass still under a dead `.modal-alert` selector), is fixed in a separate small branch that moves the hints to `links` and deletes that sass; it lands before this feature's combined PR.
@@ -111,6 +118,8 @@ New `packages/core/src/web/helpers/error-report/` (own folder, colocated spec):
 ### 7.1.1 Isolation rule
 
 Nothing in `helpers/error-report/` may change the outcome of the error popup it decorates. Concretely: `withErrorReportConsent` wraps every step in try/catch and returns the original `IAlert` untouched on any failure; `uploadErrorReport` is fire-and-forget (`void`), catches everything including `getLogsTexts` and `machineId` failures, and only logs to the generic logger; the checkbox callback is a one-line `void uploadErrorReport(...)`. A broken upload path must leave Retry / Confirm / Cancel behaving exactly as on `main`. This is verified by a unit test that makes every dependency throw and asserts the returned alert config deep-equals the input.
+
+Log collection shares the existing control task queue (2026-10-27). `Control.downloadLog` waits for both the Blob and final `ok`: fluxghost sends `ok` after the binary frame in `fetch_log` (`../fluxghost/fluxghost/api/control.py`), so receiving the Blob alone must not release the queue. `DeviceMaster.downloadLog` enqueues both progress-listener setup and the transfer in one task, so it cannot consume or clear another queued command's listeners. Button callbacks still run immediately, but their queued device commands may wait for an active log transfer; this latency is accepted for the shared-queue approach. The 10 s timeout is an idle timeout starting when the download task runs, not a total download or queue-wait limit. This does not serialize other legacy methods that bypass `addTask`.
 
 ### 7.2 Bundle contents and scrub
 
@@ -265,5 +274,6 @@ Procedure: record the baseline column for one week before step 6 of §10 ships; 
 ## 13. Test plan
 
 - Unit: `scrub.spec.ts` (fixtures for macOS, Windows, Linux home paths, a ws-section `> select_font /Users/x/Library/Fonts/a.ttf` line and the fluxghost `--debug` config line; denylist keys removed; manual path untouched), `throttle.spec.ts` (daily limit, reset at local midnight, failures not counted, per-serial; cooldown doubling 1 h → 24 h → 7 d → 30 d, skipped count carried and reset, new fingerprint on version change, pruning), `consent.spec.tsx` (three preferences × checkbox presence, existing checkbox kept, checkbox hidden during cooldown or daily limit, callback starts the upload, **every dependency throwing → input alert returned unchanged**), `installationId.spec.ts` (machineId success → hashed value, machineId `''` or throw → stored UUID, stable across calls).
-- Manual: A1–A11 above on a desktop build against a device that can raise a non-hardware Monitor error, plus `#806` by killing fluxghost mid-export.
+- Queue regression: `helpers/device-master.spec.ts` uses the real `Control` queue and command handlers with a fake transport; covers both request orders, waiting for the final `ok` after the Blob, progress-listener ownership, and release after log errors/timeouts (including a missing final `ok`).
+- Manual: A1–A12 above on a desktop build against a device that can raise a non-hardware Monitor error, plus `#806` by killing fluxghost mid-export.
 - Regression: existing `checkbox:` alert callers listed in §6 behave as before; Help → Bug Report download still contains `recent_files`.
