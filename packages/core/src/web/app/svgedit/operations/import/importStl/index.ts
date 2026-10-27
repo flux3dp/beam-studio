@@ -229,6 +229,20 @@ const importStl = async (file: File): Promise<void> => {
       throw new Error(`Failed to read geometry from ${file.name}`);
     }
 
+    // STLLoader parses a binary file whose header starts with "solid" but whose length does not
+    // match as ASCII and gets nothing: an empty object on the canvas that Swiftray would reject
+    if (geometry.getAttribute('position')?.count === 0) {
+      geometry.dispose();
+      alertCaller.popUp({
+        caption: i18n.lang.beambox.svg_editor.unnsupported_file_type,
+        id: 'stl-empty-mesh',
+        message: t.empty_mesh,
+        type: alertConstants.SHOW_POPUP_WARNING,
+      });
+
+      return;
+    }
+
     progressCaller.update(PROGRESS_ID, { caption: t.placing_object, percentage: 90 });
     await yieldToUi();
   } finally {

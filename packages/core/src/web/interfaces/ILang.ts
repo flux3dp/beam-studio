@@ -1745,6 +1745,7 @@ export interface ILang {
     continue_export: string;
     disable_mode: string;
     disable_mode_for_rotary: string;
+    empty_mesh: string;
     enable_mode: string;
     enable_mode_with_workarea: string;
     export_warning_title: string;
@@ -1753,6 +1754,7 @@ export interface ILang {
     mode_switch_title: string;
     mode_unavailable: string;
     objects_below_previous_layer: string;
+    objects_failed_to_load: string;
     objects_out_of_range: string;
     objects_overlap: string;
     parsing_mesh: string;

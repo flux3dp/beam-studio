@@ -440,6 +440,11 @@ class SwiftrayClient extends EventEmitter {
 
     if (!uploadRes.success) {
       eventListeners.onError(uploadRes.error?.message ?? 'Unknown error');
+    } else if (uploadRes.failedStlObjects?.length || uploadRes.failedPointCloudObjects?.length) {
+      // Swiftray skips an object it could not read and still reports success, which would send a
+      // job missing something that is on the canvas. The ids mean nothing to the user, so the
+      // alert only says that it happened; the details are in the console above.
+      eventListeners.onError(i18n.lang.inner_engraving.objects_failed_to_load);
     }
 
     return uploadRes;
