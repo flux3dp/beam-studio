@@ -7,7 +7,7 @@ description: Path Preview subsystem — the stride-9 record pipeline, WebGL task
 
 Location: `packages/core/src/web/app/components/beambox/PathPreview/` (component) and
 `packages/core/src/web/helpers/path-preview/` (WebGL draw commands). The renderer core
-(`tmpParseGcode.js`, `draw-commands/`) derives from Todd Fleming's LaserWeb (AGPL) —
+(`tmpParseGcode.ts`, `draw-commands/`) derives from Todd Fleming's LaserWeb (AGPL) —
 keep changes to those files minimal; new logic goes in sibling TS files.
 
 For the fcode binary format, `parseFcode.ts`, and `sliceFcode.ts` internals, see the
@@ -28,6 +28,11 @@ Record contract (`ParsedGcode`, a chunked array dodging V8 length limits):
   from record i+1** — the arrival record. Emitting "cut to P" means: travel record,
   then record at P with g=1.
 - `y` is negated into preview space by both parsers (machine +y down → preview -y).
+- `e`: the **dwell** in minutes — time the beam spends on this record with nothing moving.
+  Only a dot sets it: a Promark inner engraving dot (parseGcode, below) or a galvo dot
+  (parseFcode). `GcodePreview` costs such a record `tc = dwell`, counts it even though its
+  `f` is NaN, and adds no distance for it. 0 everywhere else. (The feedrate backfill for
+  the records before the first `F` writes slot 5, not this slot.)
 - `a`: parseFcode leaves it NaN until the task moves the A axis (fluxclient NAN=absent);
   parseGcode leaves it 0. Rotary/auto-feeder tasks carry y in rotary space
   (`y' = axisY + (y - axisY) * ratio`, on A for fcode v2, on Y itself after the cmd-6
@@ -41,8 +46,17 @@ Record contract (`ParsedGcode`, a chunked array dodging V8 length limits):
   with `s` = pixel power 0-255 so PWM engraving previews as grayscale; vector records
   keep `t = 0`.
 
-Two parsers produce this: `tmpParseGcode.js` (gcode text; Promark wobble, `$H`,
+Two parsers produce this: `tmpParseGcode.ts` (gcode text; Promark wobble, `$H`,
 `G1S0/V0`) and `parseFcode.ts` (fcode binary; also returns the slicing extras).
+
+**Promark inner engraving dots** (`;CONFIG INNER_ENGRAVING=1` in the gcode header, written by
+Swiftray for a 3D document): while the dotting time `T` is set, every laser-on move is one dot
+fired on arrival, not a line. Swiftray writes the same gcode for the preview and the job (no
+mock dots), so parseGcode draws them: per dot a travel record to half a pitch before the dot
+(g=0 on arrival → the jump between dots shows as red traversal) and a feedrate-less mark
+(g=1, f=NaN) one pitch wide that carries `T` in µs as its dwell. The pitch is the distance to
+the previous dot when it is within 0.02–0.5 mm, else 0.1 mm. 2D Promark gcode (no flag) is
+parsed as before: a laser-on move with `T` set is a line whose dots are costed along it.
 
 ## Task code routing (`updateTaskCode`)
 

@@ -115,7 +115,7 @@
   - 每次送出都提醒手動對焦。
   - STL 與點雲用獨立 payload 傳給 Swiftray；上傳參數帶折射參數與內雕控制器設定（§7）。
 - **`.beam`**：新增 STL 來源區塊（block 6）與點雲區塊（block 7）；misc 帶 `innerEngraving`。
-- **路徑預覽**：內雕模式下只在 dev 開關（`isDev()`）顯示。
+- **路徑預覽**：內雕模式下只在 dev 開關（`isDev()`）顯示。預覽用的 gcode 與實際工作相同（Swiftray 不再為預覽產生 mock 打點），由 `PathPreview/tmpParseGcode.ts` 依 `;CONFIG INNER_ENGRAVING=1` 自行把每個打點畫成一個點、點與點之間的跳躍畫成紅色路徑，工時估計也因此與實際工作一致。
 - **擠出精度**：曲線依誤差切段，上限是 2000 DPI 的半個像素（0.00625mm）。
 
 **Swiftray（1.5.0）**
