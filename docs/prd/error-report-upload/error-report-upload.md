@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Status** | In review — PR 1 (#1021) merged 2026-10-19; PRs 2–5 combined in #1028 (opened 2026-10-20); flux-id #683 merged 2026-10-19, production end-to-end check pending (§10 step 6) |
+| **Status** | In review — PR 1 (#1021) merged 2026-10-19; PRs 2–5 combined in #1028 (opened 2026-10-20); flux-id #683 merged 2026-10-19, DevTools integration acceptance passed 2026-10-27 (scope in §13); production error-entry smoke tests remain unverified manually |
 | **Author** | Product (zh-tw source PRD v1.1) + engineering scoping |
 | **Created** | 2026-10-06 |
-| **Revised** | 2026-10-20 (status and §10 after #1021 / #683 merged and #1028 opened); 2026-10-14 (§7.4 wired and corrected while building steps 3–5; 2026-10-08 full error-site sweep, D4 settled; D1–D5 on 2026-10-06, see §11) |
+| **Revised** | 2026-10-27 (DevTools integration acceptance recorded); 2026-10-20 (status and §10 after #1021 / #683 merged and #1028 opened); 2026-10-14 (§7.4 wired and corrected while building steps 3–5; 2026-10-08 full error-site sweep, D4 settled; D1–D5 on 2026-10-06, see §11) |
 | **Tracking** | ClickUp: TBD (attach the zh-tw source PRD v1.1 there; it is intentionally not in this repo) |
 | **Translation** | [繁體中文版](error-report-upload.zh-tw.md) — English is the source of truth; regenerate the translation when a section changes |
 | **Companion PRD** | [Error Report Upload — flux-id backend](backend.md): endpoint, storage alias, folder cap, dedupe, lifecycle, impact matrix (owned by the flux-id repo) |
@@ -283,6 +283,8 @@ Procedure: record the baseline column for one week before step 6 of §10 ships; 
 - ~~Follow-up: `#812` branches in `export-funcs-swiftray.ts` must be classified one by one when wiring.~~ Classified 2026-10-13: the file has no `#812`; all its errors go through `popupError`, which is silent on `cancel`, an info popup on `busy` (excluded, machine in use) and `#806` otherwise (wired). `#812` exists only as an unused lang string (`message.device_not_found.message`); its caption is an info toast in `get-device.ts`.
 
 ## 13. Test plan
+
+Acceptance record (2026-10-27): the tester confirmed consent UI, preferences, throttling, uploaded contents and backend storage paths using a temporary DevTools `popErrorReportTest` hook. All three report variants passed: scene attached with no device context; device serial retained without device logs; device serial retained with device logs. Scene reports used `error-report/no-device/{installation_id}/`; both device variants used `error-report/{serial}/`. This verifies the consent/upload integration, not the real export/import error entry points or extraction of the actual design. The temporary hook was removed after verification; it is not a shipped API.
 
 - `helpers/error-report/index.spec.ts`: false skips logs even after reconnection to an idle machine, retains metadata and device counters/cooldown; omitted/true retains downloads.
 
