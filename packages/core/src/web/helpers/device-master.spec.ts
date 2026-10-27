@@ -15,7 +15,10 @@ jest.mock('./device/bb2FirmwareWarning', () => ({}));
 jest.mock('./device/promark/promark-data-store', () => ({}));
 jest.mock('./version-checker', () => ({}));
 jest.mock('@core/helpers/rsa-key', () => ({}));
-jest.mock('@core/helpers/websocket', () => ({}));
+jest.mock('@core/helpers/websocket', () => jest.fn());
+
+import Websocket from '@core/helpers/websocket';
+import type { Option } from '@core/interfaces/WebSocket';
 
 import Control from './api/control';
 import deviceMaster from './device-master';
@@ -23,16 +26,27 @@ import deviceMaster from './device-master';
 describe('deviceMaster log downloads share the control queue', () => {
   let control: Control;
   const send = jest.fn();
+  const close = jest.fn();
+  let transport: Option;
   const status = { st_id: DeviceConstants.status.IDLE };
   const replyToReport = () =>
     control.emit('command-message', { cmd: 'play report', device_status: status, status: 'ok' });
   const finishLog = () => control.emit('command-message', { cmd: 'fetch_log fluxrobotd.log', status: 'ok' });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     jest.clearAllMocks();
     jest.useFakeTimers();
     control = new Control('test-device');
-    Object.assign(control, { ws: { send } });
+    jest.mocked(Websocket).mockImplementation((options) => {
+      transport = options;
+
+      return { close, send } as unknown as ReturnType<typeof Websocket>;
+    });
+
+    const connecting = control.connect();
+
+    transport.onMessage!({ status: 'connected' });
+    await connecting;
     jest.spyOn(deviceMaster, 'getControl').mockResolvedValue(control);
     jest.spyOn(console, 'error').mockImplementation(() => {});
   });
@@ -103,28 +117,82 @@ describe('deviceMaster log downloads share the control queue', () => {
     expect(jest.getTimerCount()).toBe(0);
   });
 
-  test.each(['error', 'timeout', 'missing final ok'])('the queue continues after a log %s', async (failure) => {
+  test('the queue continues after a terminal log error', async () => {
     const log = deviceMaster.downloadLog('fluxrobotd.log', undefined, 10_000);
-    const expectedError = { error: failure === 'error' ? 'NOT_FOUND' : 'TIMEOUT', status: 'error' };
-    const rejectedLog = expect(log).rejects.toMatchObject(expectedError);
+    const rejectedLog = expect(log).rejects.toMatchObject({ error: 'NOT_FOUND' });
     const report = deviceMaster.getReport();
 
     await Promise.resolve();
-
-    if (failure === 'missing final ok') {
-      control.emit('command-message', new Blob(['log']));
-    }
-
-    if (failure !== 'error') {
-      jest.advanceTimersByTime(10_000);
-    } else {
-      control.emit('command-error', expectedError);
-    }
-
+    control.emit('command-error', { error: 'NOT_FOUND', status: 'error' });
     await rejectedLog;
     expect(send.mock.calls).toEqual([['fetch_log fluxrobotd.log'], ['play report']]);
     replyToReport();
     await expect(report).resolves.toEqual(status);
+    expect(close).not.toHaveBeenCalled();
     expect(jest.getTimerCount()).toBe(0);
   });
+
+  test.each(['transfer', 'final ok'])(
+    'a timeout waiting for %s retires the socket and rejects queued commands',
+    async (stage) => {
+      const log = deviceMaster.downloadLog('fluxrobotd.log', undefined, 10_000);
+      const rejectedLog = expect(log).rejects.toMatchObject({ error: 'TIMEOUT' });
+      const report = deviceMaster.getReport();
+      const reportOutcome = report.then(
+        (value) => ({ value }),
+        (error: unknown) => ({ error }),
+      );
+
+      // DeviceMaster awaits getControl before it adds the log and report tasks.
+      await Promise.resolve();
+
+      const nextTask = jest.fn();
+      const queued = control.addTask(nextTask);
+      const queuedOutcome = queued.then(
+        (value) => ({ value }),
+        (error: unknown) => ({ error }),
+      );
+
+      if (stage === 'final ok') transport.onMessage!(new Blob(['log']));
+
+      await jest.advanceTimersByTimeAsync(10_000);
+      await rejectedLog;
+
+      const onMessage = jest.fn();
+
+      control.on('message', onMessage);
+      transport.onMessage!({ completed: 3, size: 3, status: 'transfer' });
+      transport.onMessage!({ mimetype: 'binary', size: 3, status: 'binary' });
+      transport.onMessage!(new Blob(['late log']));
+      transport.onMessage!({ cmd: 'fetch_log fluxrobotd.log', status: 'ok' });
+
+      expect(await reportOutcome).toMatchObject({ error: { error: 'TIMEOUT' } });
+      expect(await queuedOutcome).toMatchObject({ error: { error: 'TIMEOUT' } });
+      expect(nextTask).not.toHaveBeenCalled();
+      expect(onMessage).not.toHaveBeenCalled();
+      expect(send.mock.calls).toEqual([['fetch_log fluxrobotd.log']]);
+      expect(close).toHaveBeenCalledTimes(1);
+      expect(control.isConnected).toBe(false);
+      await expect(control.addTask(control.report)).rejects.toMatchObject({ error: 'TIMEOUT' });
+      expect(jest.getTimerCount()).toBe(0);
+
+      // A new connection is independent of the retired transport, including its late final ok.
+      const oldTransport = transport;
+      const fresh = new Control('test-device');
+      const connecting = fresh.connect();
+
+      transport.onMessage!({ status: 'connected' });
+      await connecting;
+      jest.mocked(deviceMaster.getControl).mockResolvedValue(fresh);
+
+      const freshReport = deviceMaster.getReport();
+
+      await Promise.resolve();
+      oldTransport.onMessage!({ cmd: 'fetch_log fluxrobotd.log', status: 'ok' });
+      transport.onMessage!({ cmd: 'play report', device_status: status, status: 'ok' });
+      await expect(freshReport).resolves.toEqual(status);
+      expect(send.mock.calls).toEqual([['fetch_log fluxrobotd.log'], ['play report']]);
+      expect(jest.getTimerCount()).toBe(0);
+    },
+  );
 });

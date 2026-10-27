@@ -76,14 +76,16 @@
 | A9 | 封鎖 proxy 主機，一律自動 下觸發錯誤。 | 嘗試 3 次後靜默；不跳新視窗。 | — |
 | A10 | 匯出時 fluxghost 回傳錯誤（`#806`）。 | 視窗文字與現在相同，但以同意 checkbox 取代 是/否 上傳詢問；勾選設計檔同意後 SVG 才附於資料包（A13）。 | 不論是否已有機器連線，序號均為 `none`、韌體版本為空、不下載機器 log，並套用無裝置的上限。`aws-helper.ts` 已不存在；`uploadToS3` 無呼叫者。 |
 | A11 | 一律自動 下，一小時內觸發同一裝置錯誤 5 次，隔天再觸發 1 次。 | 第一天只送 1 次請求（之後的視窗無狀態列）；第二天的視窗送 1 次請求，其 `occurrences_since_last` 為 4；第三天若無變化則不送（冷卻已延長為 7 天）。 | 不同 `error_code`、新的 app 版本或新的韌體版本會產生新指紋。每次詢問 下，冷卻期間 checkbox 隱藏，與每日上限相同。 |
-| A12 | 連接閒置機器，同時呼叫 `DeviceMaster.downloadLog('fluxrobotd.log', undefined, 10000)` 與 `DeviceMaster.getReport()`，再交換順序重做。 | 兩者皆完成，第二個控制請求只在第一個完成後送出；下載進度仍回傳給對應 callback。 | 排隊中的下載不得覆蓋目前指令的進度 listener；log 錯誤或閒置逾時後佇列仍可執行下一項。不必上傳診斷 HTTP 請求即可驗證。 |
+| A12 | 連接閒置機器，同時呼叫 `DeviceMaster.downloadLog('fluxrobotd.log', undefined, 10000)` 與 `DeviceMaster.getReport()`，再交換順序重做。 | 兩者皆完成，第二個控制請求只在第一個完成後送出；下載進度仍回傳給對應 callback。 | 排隊中的下載不得覆蓋目前指令的進度 listener；log 終止錯誤後佇列仍可執行下一項；閒置逾時則關閉該 control 連線，下載與待執行項目都以 TIMEOUT 失敗，不向舊連線送下一條指令。不必上傳診斷 HTTP 請求即可驗證。 |
 | A13 | 在每次詢問、總是傳送下各觸發 `#806` 與 `#809`；先不勾選關閉，再於未被 throttle 阻擋時勾選確認。另測不傳送、冷卻與每日上限。 | 前兩種設定皆顯示未勾選的專用 checkbox，說明將傳送此次處理的設計檔；不勾選不傳，勾選才一起傳診斷與檔案。不顯示自動傳送狀態列，成功後不跳自動傳送提示、不改偏好。 | 不傳送或 throttle 阻擋時不詢問、不上傳。依 `scene` 判斷而非只列錯誤碼；既有 checkbox 保留且不得繞過設計同意。 |
+| A14 | 閒置機器上開始 log 下載並排入狀態查詢；模擬 10 秒無訊息，之後再送出舊下載的 transfer、binary、Blob 與 `ok`。重新連線後再查詢狀態。 | 下載與舊佇列的待執行請求收到 TIMEOUT；舊 socket 關閉，不送出排隊中的 `play report`，遲到封包不觸發重試或被當成狀態回覆。新連線的狀態查詢正常。 | 同時測試傳輸途中停頓、已收到 Blob 但缺最後 `ok`。對已失效 Control 新加 task 立即失敗；沒有殘留 timer 或 pending task。 |
 
 ## 6. 不得改變的事項
 
 功能資料夾以外會被碰到的共用檔案，以及必須維持原行為的呼叫者：
 
 - `app/lang/*.ts`、`interfaces/ILang.ts` — `consent.tsx`：新增設計／匯入檔案同意文案，23 種語言鍵值齊全；一般診斷 checkbox 文案保持不變。
+- `helpers/api/control.ts` `addTask`／`createWs` — 所有 DeviceMaster 排隊呼叫：正常行為不變；log 逾時後舊 Control 的待執行／新加入請求明確失敗，舊 transport 的訊息不再派發。
 - `helpers/api/control.ts` `downloadLog` — `DeviceMaster.downloadLog`：保留 log Blob 與進度回報；收到 Blob 與結尾 `ok` 後才完成，避免下一個指令誤收下載回覆。
 - `helpers/device-master.ts` `downloadLog` — `menuDeviceActions.tsx` 手動下載 log：檔案與進度 callback 不變，改經控制佇列依序執行。
 - `helpers/device-master.ts` `downloadLog` — `getLogsTexts`：結果與錯誤處理不變，每個檔案經控制佇列執行。
@@ -123,7 +125,7 @@
 
 `helpers/error-report/` 內的任何東西都不得改變它所裝飾的錯誤視窗的結果。具體而言：`withErrorReportConsent` 每一步都包在 try/catch 內，任何失敗都原樣回傳輸入的 `IAlert`；`uploadErrorReport` 為 fire-and-forget（`void`），捕捉包含 `getLogsTexts` 與 `machineId` 在內的所有錯誤，只寫入 generic logger；checkbox 的 callback 只有一行 `void uploadErrorReport(...)`。上傳路徑壞掉時，重試 / 確認 / 取消 必須與 `main` 分支行為完全一致。以單元測試驗證：讓每個相依都拋出例外，斷言回傳的警示設定與輸入深度相等。
 
-Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必須同時收到 Blob 與結尾 `ok` 才完成；fluxghost 的 `fetch_log` 在二進位資料後仍會送出 `ok`（`../fluxghost/fluxghost/api/control.py`），不能在 Blob 到達時提早釋放佇列。`DeviceMaster.downloadLog` 將進度 listener 設定與傳輸包在同一個 task，因此不會消耗或清除其他佇列指令的 listener。按鈕 callback 仍立即執行，但其中排隊的機器指令可能等待正在下載的 log；共用佇列方案接受這項延遲。10 秒為下載 task 開始後的閒置逾時，不是整次下載或排隊等待的時間上限。其他未使用 `addTask` 的舊方法不在這次序列化範圍內。
+Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必須同時收到 Blob 與結尾 `ok` 才完成；fluxghost 的 `fetch_log` 在二進位資料後仍會送出 `ok`（`../fluxghost/fluxghost/api/control.py`），不能在 Blob 到達時提早釋放佇列。`DeviceMaster.downloadLog` 將進度 listener 設定與傳輸包在同一個 task，因此不會消耗或清除其他佇列指令的 listener。按鈕 callback 仍立即執行，但其中排隊的機器指令可能等待正在下載的 log；共用佇列方案接受這項延遲。10 秒為下載 task 開始後的閒置逾時，不是整次下載或排隊等待的時間上限。逾時不代表後端已停止下載：逾時後標記該 Control 不可再使用、關閉 socket、拒絕待執行 task 並忽略遲到訊息。新加入舊 Control 的 task 也立即失敗；不自動重播機器指令。關閉事件沿用 DeviceMaster 的連線清理／重連流程，後續操作使用新的 Control。其他未使用 `addTask` 的舊方法不在這次序列化範圍內。
 
 ### 7.2 資料包內容與清除
 
@@ -280,6 +282,6 @@ Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必�
 ## 13. 測試計畫
 
 - 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`consent.spec.tsx`（三種偏好 × checkbox 是否出現、既有 checkbox 保留、冷卻或每日上限期間 checkbox 隱藏、callback 啟動上傳、**所有相依拋出例外 → 原樣回傳輸入的警示設定**、有 scene 在 Ask／Always 都需同意且成功後無自動傳送提示）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
-- 佇列回歸：`helpers/device-master.spec.ts` 使用真實 `Control` 佇列與指令 handler，搭配假傳輸；涵蓋兩種請求順序、Blob 後等待結尾 `ok`、進度 listener 歸屬、log 錯誤／逾時（包括缺少結尾 `ok`）後繼續執行。
-- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A13，另以匯出途中關閉 fluxghost 觸發 `#806`。
+- 佇列回歸：`helpers/device-master.spec.ts` 使用真實 `Control` 佇列與指令 handler，搭配假傳輸；涵蓋兩種請求順序、Blob 後等待結尾 `ok`、進度 listener 歸屬、log 終止錯誤後繼續執行；傳輸中或等待結尾 `ok` 逾時後拒絕排隊指令、關閉連線；舊連線遲到的 transfer／binary／Blob／ok 不得污染新連線。
+- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A14，另以匯出途中關閉 fluxghost 觸發 `#806`。
 - 回歸：§6 所列既有 `checkbox:` 警示呼叫者行為不變；說明 → Bug Report 下載仍包含 `recent_files`。
