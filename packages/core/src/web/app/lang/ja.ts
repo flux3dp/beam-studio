@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: '常に送信',
     ask: '毎回確認',
     consent_checkbox: 'このエラーの修正に役立てるため、診断データを FLUX に送信する（デザインファイルや個人情報は含みません）',
+    consent_design_checkbox: 'このエラーの調査のため、診断データと処理中のデザインファイルを FLUX に送信する',
     never: '送信しない',
     prompt_caption: '自動的に送信しますか？',
     prompt_message: 'エラー発生時に診断データを常に自動送信しますか？この設定は 設定 > プライバシー でいつでも変更できます。',

@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Luôn gửi',
     ask: 'Hỏi mỗi lần',
     consent_checkbox: 'Gửi dữ liệu chẩn đoán cho FLUX để giúp khắc phục lỗi này (không bao gồm tệp thiết kế hoặc dữ liệu cá nhân)',
+    consent_design_checkbox: 'Gửi dữ liệu chẩn đoán và tệp thiết kế đang được xử lý đến FLUX để giúp điều tra lỗi này',
     never: 'Không bao giờ gửi',
     prompt_caption: 'Tự động gửi?',
     prompt_message: 'Luôn tự động gửi dữ liệu chẩn đoán khi xảy ra lỗi? Bạn có thể thay đổi bất cứ lúc nào trong Tùy chọn > Quyền riêng tư.',

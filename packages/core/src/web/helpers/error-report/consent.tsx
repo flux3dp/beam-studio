@@ -54,7 +54,7 @@ const uploadWithFeedback = async (options: UploadErrorReportOptions): Promise<vo
     });
 
     // checked after the upload: a value picked in Settings meanwhile must not be overwritten
-    if (!hasChosenErrorReportPreference()) promptAlways();
+    if (!options.scene && !hasChosenErrorReportPreference()) promptAlways();
   } catch (error) {
     logger.append(`error-report feedback skipped ${options.errorCode}: ${error}`);
   }
@@ -66,7 +66,8 @@ export const withErrorReportConsent = (alert: IAlert, options: UploadErrorReport
 
     if (preference === 'never' || getUploadBlock(options)) return alert;
 
-    return match(preference)
+    // Attaching a design always requires explicit consent, even under automatic uploads.
+    return match(options.scene ? 'ask' : preference)
       .with('always', () => {
         void uploadErrorReport(options);
 
@@ -90,7 +91,9 @@ export const withErrorReportConsent = (alert: IAlert, options: UploadErrorReport
               checkbox: {
                 // function form: runs on any button, and the button's own onClick still runs after it
                 callbacks: () => void uploadWithFeedback(options),
-                text: i18n.lang.error_report.consent_checkbox,
+                text: options.scene
+                  ? i18n.lang.error_report.consent_design_checkbox
+                  : i18n.lang.error_report.consent_checkbox,
               },
             },
       )

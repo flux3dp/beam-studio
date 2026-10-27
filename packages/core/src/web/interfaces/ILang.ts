@@ -1380,6 +1380,7 @@ export interface ILang {
     always: string;
     ask: string;
     consent_checkbox: string;
+    consent_design_checkbox: string;
     never: string;
     prompt_caption: string;
     prompt_message: string;

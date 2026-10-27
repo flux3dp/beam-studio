@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: '总是发送',
     ask: '每次询问',
     consent_checkbox: '发送诊断数据给 FLUX 以协助修复此错误（不含设计文件或个人数据）',
+    consent_design_checkbox: '发送诊断数据与此次处理的设计文件给 FLUX，协助排查此错误',
     never: '不发送',
     prompt_caption: '要自动发送吗？',
     prompt_message: '发生错误时是否一律自动发送诊断数据？您随时可以在「偏好设定 > 隐私」中更改。',

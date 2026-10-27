@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Enviar siempre',
     ask: 'Preguntar cada vez',
     consent_checkbox: 'Enviar datos de diagnóstico a FLUX para ayudar a corregir este error (sin archivos de diseño ni datos personales)',
+    consent_design_checkbox: 'Enviar datos de diagnóstico y el archivo de diseño que se está procesando a FLUX para investigar este error',
     never: 'No enviar nunca',
     prompt_caption: '¿Enviar automáticamente?',
     prompt_message: '¿Enviar siempre los datos de diagnóstico automáticamente cuando ocurran errores? Puede cambiarlo en cualquier momento en Preferencias > Privacidad.',

@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: '항상 보내기',
     ask: '매번 묻기',
     consent_checkbox: '이 오류 수정에 도움이 되도록 진단 데이터를 FLUX에 보냅니다 (디자인 파일 및 개인 정보 제외)',
+    consent_design_checkbox: '오류 조사를 위해 진단 데이터와 처리 중인 디자인 파일을 FLUX에 전송',
     never: '보내지 않기',
     prompt_caption: '자동으로 보낼까요?',
     prompt_message: '오류가 발생하면 진단 데이터를 항상 자동으로 보낼까요? 환경설정 > 개인 정보에서 언제든지 변경할 수 있습니다.',

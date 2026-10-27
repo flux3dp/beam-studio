@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Vždy odeslat',
     ask: 'Pokaždé se zeptat',
     consent_checkbox: 'Odeslat diagnostická data společnosti FLUX pro pomoc s opravou této chyby (bez souborů návrhů a osobních údajů)',
+    consent_design_checkbox: 'Odeslat diagnostická data a zpracovávaný soubor návrhu společnosti FLUX k prošetření této chyby',
     never: 'Nikdy neodesílat',
     prompt_caption: 'Odesílat automaticky?',
     prompt_message: 'Odesílat diagnostická data při chybách vždy automaticky? Můžete to kdykoli změnit v Vlastnosti > Soukromí.',

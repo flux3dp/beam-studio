@@ -166,6 +166,75 @@ describe('withErrorReportConsent', () => {
     expect(container.textContent).toBe('Diagnostic data sent to FLUX automatically.');
   });
 
+  test.each(['ask', 'always'])(
+    'design under %s: waits for consent and never offers automatic uploads',
+    async (preference) => {
+      mockGetErrorReportPreference.mockReturnValue(preference);
+      mockHasChosen.mockReturnValue(false);
+
+      for (const errorCode of ['#806', '#809', 'FUTURE_DESIGN_ERROR']) {
+        mockUploadErrorReport.mockClear();
+
+        const scene = jest.fn(() => ({ content: '<svg/>', name: 'design.svg' }));
+        const designOptions = { device: null, errorCode, scene };
+        const input = alert();
+        const result = withErrorReportConsent(input, designOptions);
+
+        expect(result.checkbox?.text).toBe(
+          'Send diagnostic data and the design file being processed to FLUX to help investigate this error',
+        );
+        expect(result.alwaysTriggerCheckboxCallbacks).toBe(true);
+        expect(result.onRetry).toBe(input.onRetry);
+        expect(result.children).toBeUndefined();
+        expect(mockUploadErrorReport).not.toHaveBeenCalled();
+        expect(scene).not.toHaveBeenCalled();
+
+        (result.checkbox!.callbacks as () => void)();
+        await Promise.resolve();
+        expect(mockUploadErrorReport).toHaveBeenCalledWith(designOptions);
+        expect(mockOpenMessage).toHaveBeenCalled();
+        expect(mockPopUp).not.toHaveBeenCalled();
+        expect(mockSetPreference).not.toHaveBeenCalled();
+      }
+    },
+  );
+
+  test.each(['ask', 'always'])('design under %s: respects throttle and existing checkboxes', (preference) => {
+    mockGetErrorReportPreference.mockReturnValue(preference);
+
+    const scene = jest.fn(() => ({ content: '<svg/>', name: 'design.svg' }));
+    const designOptions = { errorCode: '#806', scene };
+
+    for (const reason of ['cooldown', 'daily-limit']) {
+      mockGetUploadBlock.mockReturnValue(reason);
+
+      const input = alert();
+
+      expect(withErrorReportConsent(input, designOptions)).toBe(input);
+      expect(mockGetUploadBlock).toHaveBeenLastCalledWith(designOptions);
+    }
+
+    mockGetUploadBlock.mockReturnValue(null);
+
+    const input = { ...alert(), checkbox: { callbacks: jest.fn(), text: 'Existing choice' } };
+
+    expect(withErrorReportConsent(input, designOptions)).toBe(input);
+    expect(mockUploadErrorReport).not.toHaveBeenCalled();
+    expect(scene).not.toHaveBeenCalled();
+  });
+
+  test('design under never: neither asks nor uploads', () => {
+    mockGetErrorReportPreference.mockReturnValue('never');
+
+    const input = alert();
+    const scene = jest.fn(() => ({ content: '<svg/>', name: 'design.svg' }));
+
+    expect(withErrorReportConsent(input, { errorCode: '#809', scene })).toBe(input);
+    expect(mockGetUploadBlock).not.toHaveBeenCalled();
+    expect(mockUploadErrorReport).not.toHaveBeenCalled();
+    expect(scene).not.toHaveBeenCalled();
+  });
+
   test('isolation: every dependency throwing returns the input alert unchanged', () => {
     mockGetErrorReportPreference.mockImplementation(() => {
       throw new Error('storage broken');

@@ -51,13 +51,13 @@
 
 ## 4. 情境
 
-- **S1 每次詢問（預設），使用者勾選後按 重試/確認/取消** → 視窗如常關閉；背景上傳；成功後顯示中性 toast「感謝您！診斷資料已傳送。」。尚未選擇偏好時的首次成功 → 跳出一次性提示「要自動傳送嗎？」，按鈕 [每次詢問] / [總是傳送]，總是傳送為右側主要按鈕（警示視窗慣例）。
+- **S1 每次詢問（預設），使用者勾選後按 重試/確認/取消** → 視窗如常關閉；背景上傳；成功後顯示中性 toast「感謝您！診斷資料已傳送。」。尚未選擇偏好時，無設計檔報告的首次成功 → 跳出一次性提示「要自動傳送嗎？」，按鈕 [每次詢問] / [總是傳送]，總是傳送為右側主要按鈕（警示視窗慣例）。
 - **S2 每次詢問，使用者未勾選** → 不上傳、無 toast、無提示。
-- **S3 一律自動** → 無 checkbox；視窗開啟時即開始上傳；視窗底部一行小灰字「診斷資料已自動傳送」。
+- **S3 一律自動（無設計檔）** → 無 checkbox；視窗開啟時即開始上傳；視窗底部一行小灰字「診斷資料已自動傳送」。
 - **S4 永不** → 視窗與現在完全相同。
 - **S5 達每日上限** → checkbox 隱藏（每次詢問）或不上傳且無狀態列（一律自動）；在 generic logger 寫一筆「已略過（達每日上限）」。
 - **S6 連線類錯誤** → 資料包只含錯誤報告；裝置 Log 部分是略過，不是失敗。兩種子情況：`#802` 後端警示完全沒有裝置（歸檔於 `no-device/{installation_id}/`）；`popConnectionError`（`device-master.ts:580`）在 `select` 失敗後觸發，此時雖無控制 socket，但從探索結果已知含序號與韌體版本的 `deviceInfo`（歸檔於 `{serial}/`）。
-- **S7 匯出/匯入失敗**（`#806`/`#809`）→ 場景 SVG / 匯入檔案隨軟體錯誤報告附上，不帶機器序號、韌體版本或裝置系統 log，以同一同意列取代現在 `uploadToS3` 的 是/否 詢問視窗。
+- **S7 匯出/匯入失敗**（`#806`/`#809`）→ 有 `scene` 的報告不受自動傳送同意涵蓋；每次詢問／總是傳送皆顯示預設未勾選的設計檔同意 checkbox。不傳送時不詢問、不上傳。仍遵守 throttle；勾選後才一起傳送診斷資料與場景 SVG／匯入檔案，維持 `device: null`。成功後不顯示自動傳送提示。
 - **S8 上傳失敗 3 次** → 靜默；不另跳錯誤視窗（使用者已經有一個錯誤要處理）。記錄到 generic logger。
 - **S9 同一錯誤重複發生**（使用者對同一連線失敗按五次重試，或同一 LAN 問題隔天再現）→ 只有第一次上傳；之後的只在本地計數，且指紋冷卻期間 checkbox 隱藏（§7.7）。該指紋的下一次上傳會帶 `occurrences_since_last`，頻率資訊不會遺失。
 
@@ -68,20 +68,22 @@
 | A1 | 設定 → 隱私。 | 存在「錯誤報告上傳」下拉選單，選項 一律自動 / 每次詢問 / 永不；預設 每次詢問；重啟後保留。 | 值以 `'always' \| 'ask' \| 'never'` 存於 storage 鍵 `error-report-upload`。 |
 | A2 | 設為 每次詢問。在 Monitor 觸發非硬體類裝置錯誤（例如損壞的工作檔），或在連線途中將機器斷電以觸發 `popConnectionError`（或 §7.4 任一觸發點）。 | 既有視窗顯示，按鈕上方有未勾選的 checkbox；按鈕文字/順序不變。 | ALARM/FATAL 單按鈕視窗也有同樣 checkbox（原始 PRD §3.7）。 |
 | A3 | 勾選，按 取消。 | 有上傳（network 面板可見一次對 proxy 的請求）；toast「感謝您！診斷資料已傳送。」 | 取消與重試在上傳行為上完全相同。 |
-| A4 | 每次詢問 下首次成功上傳。 | 一次性 一律自動/每次詢問 提示；選 一律自動 會改變 A1 的選單值。 | 提示不再出現：它會把 `'always'` 或 `'ask'` 寫入 `error-report-upload`，只有未設定（`null`）時才允許提示（§7.6）。按 Escape 關閉不寫入，下次上傳後可能再出現。 |
-| A5 | 設為 一律自動。觸發錯誤。 | 無 checkbox；底部灰色狀態列；不需使用者操作即送出請求。 | 達每日上限時不顯示狀態列。 |
+| A4 | 每次詢問 下首次成功上傳不含設計檔的報告。 | 一次性 一律自動/每次詢問 提示；選 一律自動 會改變 A1 的選單值。 | 提示不再出現：它會把 `'always'` 或 `'ask'` 寫入 `error-report-upload`，只有未設定（`null`）時才允許提示（§7.6）。按 Escape 關閉不寫入，下次上傳後可能再出現。 |
+| A5 | 設為 一律自動。觸發不帶設計檔的錯誤。 | 無 checkbox；底部灰色狀態列；不需使用者操作即送出請求。 | 達每日上限時不顯示狀態列。 |
 | A6 | 設為 永不。 | 視窗與 main 分支像素級相同。 | — |
 | A7 | 檢視上傳的 bug_report。 | 無 `recent_files`、`auto-save-config`、`ador-backup-path`；任何位置（含 fluxghost log 段落）都無 `/Users/<name>` 或 `C:\Users\<name>`；探索清單中的裝置以型號取代使用者自訂名稱。 | 手動 說明 → Bug Report 下載不變（仍包含上述內容）。 |
 | A8 | 一律自動 下，於同一本地日觸發 11 次白名單錯誤。 | 送出 10 次請求；第 11 次無狀態列，generic log 有「已略過（達每日上限）」；本地午夜後計數重置。 | 失敗的嘗試不計入。計數以序號為單位；無裝置的連線錯誤計在序號 `none` 下。 |
 | A9 | 封鎖 proxy 主機，一律自動 下觸發錯誤。 | 嘗試 3 次後靜默；不跳新視窗。 | — |
-| A10 | 匯出時 fluxghost 回傳錯誤（`#806`）。 | 視窗文字與現在相同，但以同意 checkbox 取代 是/否 上傳詢問；SVG 附於資料包。 | 不論是否已有機器連線，序號均為 `none`、韌體版本為空、不下載機器 log，並套用無裝置的上限。`aws-helper.ts` 已不存在；`uploadToS3` 無呼叫者。 |
+| A10 | 匯出時 fluxghost 回傳錯誤（`#806`）。 | 視窗文字與現在相同，但以同意 checkbox 取代 是/否 上傳詢問；勾選設計檔同意後 SVG 才附於資料包（A13）。 | 不論是否已有機器連線，序號均為 `none`、韌體版本為空、不下載機器 log，並套用無裝置的上限。`aws-helper.ts` 已不存在；`uploadToS3` 無呼叫者。 |
 | A11 | 一律自動 下，一小時內觸發同一裝置錯誤 5 次，隔天再觸發 1 次。 | 第一天只送 1 次請求（之後的視窗無狀態列）；第二天的視窗送 1 次請求，其 `occurrences_since_last` 為 4；第三天若無變化則不送（冷卻已延長為 7 天）。 | 不同 `error_code`、新的 app 版本或新的韌體版本會產生新指紋。每次詢問 下，冷卻期間 checkbox 隱藏，與每日上限相同。 |
 | A12 | 連接閒置機器，同時呼叫 `DeviceMaster.downloadLog('fluxrobotd.log', undefined, 10000)` 與 `DeviceMaster.getReport()`，再交換順序重做。 | 兩者皆完成，第二個控制請求只在第一個完成後送出；下載進度仍回傳給對應 callback。 | 排隊中的下載不得覆蓋目前指令的進度 listener；log 錯誤或閒置逾時後佇列仍可執行下一項。不必上傳診斷 HTTP 請求即可驗證。 |
+| A13 | 在每次詢問、總是傳送下各觸發 `#806` 與 `#809`；先不勾選關閉，再於未被 throttle 阻擋時勾選確認。另測不傳送、冷卻與每日上限。 | 前兩種設定皆顯示未勾選的專用 checkbox，說明將傳送此次處理的設計檔；不勾選不傳，勾選才一起傳診斷與檔案。不顯示自動傳送狀態列，成功後不跳自動傳送提示、不改偏好。 | 不傳送或 throttle 阻擋時不詢問、不上傳。依 `scene` 判斷而非只列錯誤碼；既有 checkbox 保留且不得繞過設計同意。 |
 
 ## 6. 不得改變的事項
 
 功能資料夾以外會被碰到的共用檔案，以及必須維持原行為的呼叫者：
 
+- `app/lang/*.ts`、`interfaces/ILang.ts` — `consent.tsx`：新增設計／匯入檔案同意文案，23 種語言鍵值齊全；一般診斷 checkbox 文案保持不變。
 - `helpers/api/control.ts` `downloadLog` — `DeviceMaster.downloadLog`：保留 log Blob 與進度回報；收到 Blob 與結尾 `ok` 後才完成，避免下一個指令誤收下載回覆。
 - `helpers/device-master.ts` `downloadLog` — `menuDeviceActions.tsx` 手動下載 log：檔案與進度 callback 不變，改經控制佇列依序執行。
 - `helpers/device-master.ts` `downloadLog` — `getLogsTexts`：結果與錯誤處理不變，每個檔案經控制佇列執行。
@@ -128,7 +130,7 @@ Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必�
 - `bug_report.txt` = `getOutput({ includeImages: false, scrub: true })`。`scrub`（`getOutput` 的新選項）移除 storage 鍵 `recent_files`、`auto-save-config`、`ador-backup-path`，把探索清單的 `name` 換成 `model`，再對合併後的字串跑 `scrubReport`。即使有排除清單仍需要正規表示式，因為家目錄會從 `storage` 以外的地方進入報告：websocket 段落記錄每一筆送出的指令（`websocket.ts:325`），而字型指令帶有使用者自行安裝字型的絕對路徑（`utils-ws.ts:152` 的 `select_font` / `check_exist` / `upload_to`，`fontHelper.ts:236,325`），macOS 在 `~/Library/Fonts`、Windows 在 `%LOCALAPPDATA%\Microsoft\Windows\Fonts`。fluxghost log 預設為 INFO 等級（`../fluxghost/fluxghost/launcher.py:10`），其含家目錄的 debug 行只在 `--debug` 時出現；正規表示式也一併涵蓋。
 - `system_log.txt` = `getLogsTexts` 結果串接，只在 `deviceMaster.currentDevice?.control` 存在時附上。
 - `scene.svg`（僅 S7）= `svgCanvas.getSvgString()` 或匯入檔案文字。
-- 同意文案寫「不含個人資料；包含機器序號、電腦識別碼與錯誤紀錄，匯出或匯入錯誤時另包含正在處理的設計」，而非「匿名」。不得承諾「不含設計檔案」：S7 會為 `#806` / `#809` / `#812` 附上 `scene.svg` / 匯入檔案，§9.1 也讓該檔案優先於機器 log。序號是 FLUX 可對應到銷售紀錄的裝置識別碼，誠實的說法是「化名」。「我們不會主動聯繫您」的承諾不受影響。
+- 一般診斷文案維持不附設計檔；有 `scene` 時使用專用文案：「傳送診斷資料與此次處理的設計檔給 FLUX，協助排查此錯誤」（匯出與匯入共用 `consent_design_checkbox`）。設計檔文案不得承諾不含設計檔或個人資料，因檔案內容可能包含個人資料。序號與電腦識別碼可用於關聯報告，不應宣稱匿名。
 
 ### 7.3 網頁版的裝置 Log
 
@@ -166,7 +168,7 @@ Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必�
 | `DiodeCalibration/Component.tsx:251,344`、`CameraCalibration/StepRefocus.tsx:189`、`StepAskReadjust.tsx:56` | `#815` | 校正移動 / 拍攝時的裝置錯誤 |
 | `CameraCalibration/StepBeforeAnalyzePicture.tsx:247` | `#816` | 分析失敗 |
 
-**已定義 `checkbox` 的視窗規則**（目前接線的觸發點都沒有；`BasePreviewManager.tsx:273` 的相機線材警告已排除，§6 的八個呼叫者不是錯誤觸發點）：`withErrorReportConsent` 絕不取代既有 `checkbox`。每次詢問 下原樣回傳；一律自動 下靜默上傳並只加狀態列。一個視窗只有一個 checkbox。
+**已定義 `checkbox` 的視窗規則**（目前接線的觸發點都沒有；`BasePreviewManager.tsx:273` 的相機線材警告已排除，§6 的八個呼叫者不是錯誤觸發點）：`withErrorReportConsent` 絕不取代既有 `checkbox`。每次詢問 或帶 scene 的一律自動 下原樣回傳且不上傳；無 scene 的一律自動 下靜默上傳並只加狀態列。一個視窗只有一個 checkbox。
 
 **Message toast 無法承載同意**（`AbstractMenu.ts:66` 以 `MessageCaller` toast 顯示 `#805`）：排除；同一逾時在下次選擇裝置時會進到 `popConnectionError`。
 
@@ -197,9 +199,11 @@ Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必�
 
 ### 7.6 偏好設定與提示
 
+凡 `UploadErrorReportOptions.scene` 存在，`consent.tsx` 先套用不傳送與 throttle，再將總是傳送視為每次詢問；不呼叫 scene thunk，直到使用者勾選後進入實際上傳。已有 checkbox 時原樣返回且不傳送。有 scene 的成功上傳只顯示感謝 toast，永不觸發自動傳送提示。以下自動傳送與首次提示規則只適用無 scene 的報告。
+
 - `error-report-upload: 'always' | 'ask' | 'never' | null`。`null`（從未選擇）行為同 `'ask'`，且是唯一允許顯示一次性提示的狀態；`'ask'` 代表使用者在提示或設定中選過，不再提示。2026-10-12 修訂：取消獨立的 `error-report-upload-prompted` 旗標，因為未設定值已經帶有這個資訊，與 `enable-sentry` 的慣例相同。此鍵刻意**不**放進 `useSettingStore` 的 `DEFAULT_CONFIG`：router 啟動時會把那張表的鍵全部寫進 storage，會在任何上傳之前就把 `null` 變成 `'ask'`。
 - 提示為 `Alert.popUp`，在 `null` 下首次成功上傳後顯示：標題「自動傳送？」，訊息「要每次發生錯誤時都自動傳送診斷資料嗎？您可隨時在「偏好設定 > 隱私權」中更改。」，按鈕 [每次詢問] / [總是傳送]（總是傳送為右側主要按鈕，依警示視窗慣例）分別寫入 `'ask'` / `'always'`。按 Escape 不寫入。「尚未選擇」的判斷在上傳完成後才做，所以上傳期間在設定中選好的值不會被覆寫；因此提示會在上傳結束時出現，在三次重試的路徑上可能是錯誤發生後數分鐘（2026-10-14 接受）。
-- 成功後的 toast（僅每次詢問）：「感謝您！診斷資料已傳送。」依產品規則用中性措辭：不得暗示開單或回覆。
+- 成功後的 toast（每次詢問，包含設計檔強制詢問）：「感謝您！診斷資料已傳送。」依產品規則用中性措辭：不得暗示開單或回覆。
 
 ### 7.7 重複抑制（指紋冷卻）
 
@@ -219,7 +223,7 @@ Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必�
 - `IOperatingSystem.machineId(): string` — Electron 回傳 OS 機器 GUID 的 sha256（內嵌實作，§7.1），網頁版回傳 `''`。
 - 不新增相依；`machineId` 約 25 行，寫在既有 os 實作內，以 `crypto.createHash` 雜湊各 OS 指令的輸出；指令在模組載入時用非同步 `child_process.exec`（2 秒逾時）啟動，renderer 不會被卡住；`execSync` 只留作報告搶在結果回來之前觸發時的後備。
 - 上傳請求：§7.5 multipart，3 分鐘逾時。回應 `{ status: 'ok' }` → 已送出；`{ status: 'duplicate' }` → 視同已送出；沒有回應或 5xx → 重試（最多 3 次）；任何 4xx 或無法辨識的 2xx 內容 → 立即失敗。
-- i18n：`en.ts`/`zh-tw.ts` 新增命名空間 `error_report`（實作版本）：`consent_checkbox`、`sent`、`sent_automatically`、`prompt_caption`、`prompt_message`、`setting_label`、`always`、`ask`、`never`（後三者同時用於隱私設定的下拉選單與提示按鈕）。
+- i18n：`en.ts`/`zh-tw.ts` 新增命名空間 `error_report`（實作版本）：`consent_checkbox`、`consent_design_checkbox`、`sent`、`sent_automatically`、`prompt_caption`、`prompt_message`、`setting_label`、`always`、`ask`、`never`（後三者同時用於隱私設定的下拉選單與提示按鈕）。
 
 ## 9. 效能
 
@@ -260,7 +264,7 @@ Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必�
 
 1. ~~D1 後端與儲存。~~ 2026-10-06 定案：端點放 flux-id（重用流量限制、部署；供應商可透過 `STORAGES` 別名切換），儲存用 Cloudflare R2（已有帳號、無流出費用、原生生命週期）。S3 否決；Google Drive 於 v1 否決（需共用雲端硬碟＋服務帳號＋cron 清理），但日後可作為同一別名後的自訂 storage 類別。flux-id 影響依 §9.2 量測。
 2. ~~D2 離線佇列。~~ 2026-10-06 定案：v1 不做（payload 可達 10 MB，`storage` 為 JSON）；只做 3 次程序內重試。
-3. ~~D3 清除 vs.「匿名」文案。~~ 2026-10-06 定案：依 §7.2 清除，文案改為「不含設計檔案與個人資料」。2026-10-19 修正：「不含設計檔案」與 S7 衝突，文案改為點名匯出／匯入錯誤時包含設計（§7.2）。
+3. ~~D3 清除 vs.「匿名」文案。~~ 2026-10-06 定案：依 §7.2 清除，文案改為「不含設計檔案與個人資料」。2026-10-19 修正：「不含設計檔案」與 S7 衝突，文案改為點名匯出／匯入錯誤時包含設計（§7.2）。 2026-10-27 定案：依是否帶 `scene` 分開同意；設計檔每次詢問（不傳送與 throttle 優先），不受自動傳送涵蓋，見 S7。
 4. ~~D4 相機/校正白名單。~~ 2026-10-08 定案：由程式碼全面掃描列出（§7.4 第二波）；不需韌體對照表，因為 Monitor 錯誤以 `error.join('_')` 原樣透傳。
 5. ~~D5 每序號 20 MB 上限。~~ 2026-10-06 定案：**保留**，為每資料夾總量（非每檔案），可由 flux-id 設定調整，同時適用於 `{serial}/` 與 `no-device/{installation_id}/`。成本低，因為物件鍵依時間由舊到新排序，且列舉與去重檢查共用；每份報告大小受 client 10 MB 截斷限制。見 [backend.md §4](backend.md)。
 
@@ -275,7 +279,7 @@ Log 收集共用既有控制佇列（2026-10-27）。`Control.downloadLog` 必�
 
 ## 13. 測試計畫
 
-- 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`consent.spec.tsx`（三種偏好 × checkbox 是否出現、既有 checkbox 保留、冷卻或每日上限期間 checkbox 隱藏、callback 啟動上傳、**所有相依拋出例外 → 原樣回傳輸入的警示設定**）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
+- 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`consent.spec.tsx`（三種偏好 × checkbox 是否出現、既有 checkbox 保留、冷卻或每日上限期間 checkbox 隱藏、callback 啟動上傳、**所有相依拋出例外 → 原樣回傳輸入的警示設定**、有 scene 在 Ask／Always 都需同意且成功後無自動傳送提示）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
 - 佇列回歸：`helpers/device-master.spec.ts` 使用真實 `Control` 佇列與指令 handler，搭配假傳輸；涵蓋兩種請求順序、Blob 後等待結尾 `ok`、進度 listener 歸屬、log 錯誤／逾時（包括缺少結尾 `ok`）後繼續執行。
-- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A12，另以匯出途中關閉 fluxghost 觸發 `#806`。
+- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A13，另以匯出途中關閉 fluxghost 觸發 `#806`。
 - 回歸：§6 所列既有 `checkbox:` 警示呼叫者行為不變；說明 → Bug Report 下載仍包含 `recent_files`。

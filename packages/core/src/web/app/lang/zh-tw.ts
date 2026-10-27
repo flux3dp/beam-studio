@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: '總是傳送',
     ask: '每次詢問',
     consent_checkbox: '傳送診斷資料給 FLUX 協助修復此錯誤（不含設計檔案或個人資料）',
+    consent_design_checkbox: '傳送診斷資料與此次處理的設計檔給 FLUX，協助排查此錯誤',
     never: '不傳送',
     prompt_caption: '要自動傳送嗎？',
     prompt_message: '發生錯誤時是否一律自動傳送診斷資料？您隨時可以在「偏好設定 > 隱私」中更改。',

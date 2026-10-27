@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Sentiasa hantar',
     ask: 'Tanya setiap kali',
     consent_checkbox: 'Hantar data diagnostik kepada FLUX untuk membantu membetulkan ralat ini (tiada fail reka bentuk atau data peribadi)',
+    consent_design_checkbox: 'Hantar data diagnostik dan fail reka bentuk yang sedang diproses kepada FLUX untuk membantu menyiasat ralat ini',
     never: 'Jangan hantar',
     prompt_caption: 'Hantar secara automatik?',
     prompt_message: 'Sentiasa hantar data diagnostik secara automatik apabila ralat berlaku? Anda boleh mengubahnya pada bila-bila masa di Keutamaan > Privasi.',

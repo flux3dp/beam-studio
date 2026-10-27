@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Altijd verzenden',
     ask: 'Elke keer vragen',
     consent_checkbox: 'Diagnostische gegevens naar FLUX sturen om deze fout te helpen oplossen (geen ontwerpbestanden of persoonlijke gegevens)',
+    consent_design_checkbox: 'Diagnostische gegevens en het ontwerpbestand dat wordt verwerkt naar FLUX sturen om deze fout te onderzoeken',
     never: 'Nooit verzenden',
     prompt_caption: 'Automatisch verzenden?',
     prompt_message: 'Diagnostische gegevens altijd automatisch verzenden bij fouten? U kunt dit altijd wijzigen onder Voorkeuren > Privacy.',

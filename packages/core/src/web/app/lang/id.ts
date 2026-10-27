@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Selalu kirim',
     ask: 'Tanya setiap kali',
     consent_checkbox: 'Kirim data diagnostik ke FLUX untuk membantu memperbaiki kesalahan ini (tanpa file desain atau data pribadi)',
+    consent_design_checkbox: 'Kirim data diagnostik dan file desain yang sedang diproses ke FLUX untuk membantu menyelidiki kesalahan ini',
     never: 'Jangan pernah kirim',
     prompt_caption: 'Kirim secara otomatis?',
     prompt_message: 'Selalu kirim data diagnostik secara otomatis saat terjadi kesalahan? Anda dapat mengubahnya kapan saja di Preferensi > Privasi.',

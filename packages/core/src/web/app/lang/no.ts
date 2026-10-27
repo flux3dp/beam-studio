@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Send alltid',
     ask: 'Spør hver gang',
     consent_checkbox: 'Send diagnosedata til FLUX for å hjelpe med å rette denne feilen (ingen designfiler eller personopplysninger)',
+    consent_design_checkbox: 'Send diagnosedata og designfilen som behandles til FLUX for å undersøke denne feilen',
     never: 'Send aldri',
     prompt_caption: 'Send automatisk?',
     prompt_message: 'Skal diagnosedata alltid sendes automatisk når feil oppstår? Du kan når som helst endre dette under Innstillinger > Personvern.',

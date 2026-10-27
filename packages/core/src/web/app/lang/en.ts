@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Always send',
     ask: 'Ask each time',
     consent_checkbox: 'Send diagnostic data to FLUX to help fix this error (no design files or personal data)',
+    consent_design_checkbox: 'Send diagnostic data and the design file being processed to FLUX to help investigate this error',
     never: 'Never send',
     prompt_caption: 'Send automatically?',
     prompt_message: 'Always send diagnostic data automatically when errors occur? You can change this anytime in Preferences > Privacy.',

@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Lähetä aina',
     ask: 'Kysy joka kerta',
     consent_checkbox: 'Lähetä diagnostiikkatiedot FLUXille tämän virheen korjaamiseksi (ei suunnittelutiedostoja tai henkilötietoja)',
+    consent_design_checkbox: 'Lähetä diagnostiikkatiedot ja käsiteltävä suunnittelutiedosto FLUXille tämän virheen tutkimiseksi',
     never: 'Älä koskaan lähetä',
     prompt_caption: 'Lähetetäänkö automaattisesti?',
     prompt_message: 'Lähetetäänkö diagnostiikkatiedot aina automaattisesti virheiden sattuessa? Voit muuttaa tätä milloin tahansa kohdassa Asetukset > Yksityisyys.',

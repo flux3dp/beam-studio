@@ -1378,6 +1378,7 @@ const lang: ILang = {
     always: 'Immer senden',
     ask: 'Jedes Mal fragen',
     consent_checkbox: 'Diagnosedaten an FLUX senden, um diesen Fehler beheben zu helfen (keine Designdateien oder persönlichen Daten)',
+    consent_design_checkbox: 'Diagnosedaten und die gerade verarbeitete Entwurfsdatei zur Untersuchung dieses Fehlers an FLUX senden',
     never: 'Nie senden',
     prompt_caption: 'Automatisch senden?',
     prompt_message: 'Diagnosedaten bei Fehlern immer automatisch senden? Du kannst das jederzeit unter Einstellungen > Privatsphäre ändern.',
