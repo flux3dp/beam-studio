@@ -17,8 +17,8 @@
 ## 1. Summary
 
 Only Promark exposes a frequency setting today; on CO2 machines the laser control frequency is fixed
-by firmware. A Japanese distributor reported wavy, uneven depth on beamo II line engraving; raising
-the control frequency to 72 kHz made the result close to beamo.
+by firmware. A Japanese distributor reported wavy, uneven depth on beamo II line engraving (vector
+paths, run the same way as cutting); raising the control frequency to 72 kHz made the result close to beamo.
 
 This feature adds **Laser Frequency** to the layer Advanced settings: per layer, a switch plus a
 20–500 kHz value (slider + input). When any exported layer enables it, the task code carries
@@ -36,6 +36,9 @@ executes them.
 | HEXA RF | `fhx2rf` | 25 kHz |
 | beamo | `fbm1` | 72 kHz |
 | HEXA | `fhexa1` | 336 kHz |
+
+Only the fcode v2 models `fbm2`, `fbb2`, `fhx2rf` support the commands. beamo and HEXA (fcode v1,
+4.x firmware) and Ador (fcode v2) do not — see D1/D2. Their defaults are listed for reference only.
 
 ### 2.2 Firmware commands (firmware ≥ 6.5.3)
 
@@ -77,7 +80,9 @@ executes them.
 ## 3. Goals & non-goals
 
 **Goals**
-- **G1** CO2 laser layers on supported models can set their own laser frequency (20–500 kHz).
+- **G1** CO2 laser layers on supported models can set their own laser frequency (20–500 kHz). The
+  setting applies to everything the layer outputs — vector paths (line engraving, cutting) and
+  fill / bitmap engraving alike.
 - **G2** Tasks with no layer enabling it produce task code identical to today.
 - **G3** When firmware cannot run the command, the user is told to update before the task is sent.
 
@@ -88,8 +93,10 @@ executes them.
 
 ## 4. Scenarios
 
-- **S1** beamo II line engraving shows wavy depth; the user raises the engraving layer's frequency.
-- **S2** A file has engraving and cutting layers; only the engraving layer changes frequency.
+- **S1** beamo II line engraving (vector paths) shows wavy depth; the user raises that layer's
+  frequency.
+- **S2** A file has several CO2 layers; only some of them change frequency, the rest keep the
+  machine default. A layer's setting covers both its vector paths and its fills / images.
 - **S3** A machine on older firmware receives a task with laser frequency enabled.
 
 ## 5. Acceptance criteria
@@ -105,17 +112,28 @@ executes them.
 
 **S2 — task code**
 - Layer 1 on at 72 kHz, Layer 2 off, export to a firmware-6.5.3 machine (or inspect task code):
-  `M137P158Q72000` before Layer 1, `M137P159` before Layer 2, `M137P159` at job end.
-- No layer enabled → no `M137P158` / `M137P159` anywhere (byte-identical to today for the same
-  input).
+  `M137P158Q72000` at Layer 1 start, `M137P159` at Layer 1 cleanup; Layer 2 output is unchanged
+  (no M137P158/P159 around it).
+- Layer 1 contains both paths and a filled shape / image: the single `M137P158Q72000` precedes all
+  of Layer 1's output (vector and raster), with no reset between them.
+- A layer with laser frequency off is byte-identical to today, whether or not other layers enable
+  it; no layer enabled → the whole task is byte-identical to today.
 
 **S3 — firmware check**
 - A layer has laser frequency on and device firmware < required version: popup
   `laser_frequency_unavailable`; Confirm opens firmware update, Cancel closes; neither sends.
 - Hidden layers do not trigger the check.
+- Target device model unsupported (e.g. a beamo II file with 72 kHz layers exported to Ador): no
+  alert, task sent; the backend writes no commands.
+
+**Workarea switch (D4)**
+- beamo II layer at 72 kHz → switch workarea to HEXA RF: still 72 kHz, caption "Machine default:
+  25 kHz".
+- beamo II layer at 72 kHz → switch to Ador: block hidden, attribute kept; switch back to beamo II:
+  72 kHz shown again.
 
 **Visibility edge cases**
-- Workarea not in §2.1 (e.g. Ador, Beambox, Promark): block not shown; an existing
+- Workarea other than `fbm2` / `fbb2` / `fhx2rf` (e.g. beamo, HEXA, Ador, Beambox, Promark): block not shown; an existing
   `data-laserFrequency` on a layer emits nothing.
 - Layer module printing or 1064 nm: block not shown; nothing emitted for that layer.
 - Curve engraving mode: same as normal (block still shown for laser layers).
@@ -131,7 +149,7 @@ executes them.
 | `handleExportAlerts.ts` | `handleExportClick.ts:58` — existing alerts and order unchanged; new check only when a visible layer enables the feature |
 | `version-checker.ts` `requirement` | all `meetRequirement` callers — new key only |
 | `sanitize.js` `g` whitelist | file load — only adds `data-laserFrequency` |
-| fluxclient `toolpath.py` layer loop / `xMIN 0004` | all fcode exports — no new commands unless a layer has the attr and the model has `LASER_FREQUENCY` |
+| fluxclient `toolpath.py` layer loop (MAIN block start / cleanup) | all fcode exports — no new commands unless a layer has the attr and the model has `LASER_FREQUENCY` |
 | Swiftray `toolpath-exporter-fcode.cpp` `convertLayer` / `convertStack` | all non-Promark fcode exports — same as above |
 
 ## 7. Design
@@ -140,8 +158,8 @@ executes them.
 
 - New config key `laserFrequency` → `data-laserFrequency`, **kHz integer, `0` = off**. Default
   `baseConfig.laserFrequency = 0`. One attribute, no separate enable flag.
-- Supported models and their default: new optional `WorkArea.defaultLaserFrequency` (kHz) on the
-  five models in §2.1. Presence = supported (R1), value = initial value when toggled on and the
+- Supported models and their default: new optional `WorkArea.defaultLaserFrequency` (kHz) on
+  `fbm2` (20), `fbb2` (20), `fhx2rf` (25). Presence = supported (R1), value = initial value when toggled on and the
   "Machine default" caption.
 - Whitelist `data-laserFrequency` in `sanitize.js` `g` list.
 - Not in `presetRelatedConfigs`, not in `timeRelatedConfigs`.
@@ -158,8 +176,9 @@ executes them.
 
 ### 7.3 Export check
 
-- `version-checker.ts`: `LASER_FREQUENCY: '6.5.3'` (see open decision D1 for beamo / HEXA).
-- `handleExportAlerts.ts`: after the PWM check, if any visible layer has
+- `version-checker.ts`: `LASER_FREQUENCY: '6.5.3'` (all supported models are on the 6.x line).
+- `handleExportAlerts.ts`: after the PWM check, if `getWorkarea(device.model).defaultLaserFrequency`
+  is set (same model rule as UI and backends, D4) and any visible layer has
   `data-laserFrequency > 0` and `!vc.meetRequirement('LASER_FREQUENCY')`, show the
   `pwm_unavailable`-style popup with `laser_frequency_unavailable` and return `false`.
 
@@ -167,20 +186,21 @@ executes them.
 
 - Parse `data-laserFrequency` (kHz, default 0).
 - Gate on a new per-model feature flag `LASER_FREQUENCY` (fluxclient `HWFeature`, Swiftray
-  `SupportInfo`) for the five models, and on a CO2 laser module (not printing, not 1064 nm). The
+  `SupportInfo`) for `fbm2`, `fbb2`, `fhx2rf`, and on a CO2 laser module (not printing, not 1064 nm). The
   attribute survives model/module switches in the file, so the backend gate is what keeps R1/R2.
-- `any_enabled` = any exported, gated layer with value > 0. If false, emit nothing (G2).
-- If true: at each layer start (beside laser delay) emit `sync_motion_type2(158, kHz × 1000)` when
-  the layer's value > 0, else `M137P159`; in the `xMIN 0004` post-task block emit `M137P159`.
-- v1 fcode models (`fbm1`, `fhexa1`) have no script blocks; the commands go inline at the same
-  points.
+- Per layer, self-contained (D3): when the gated layer's value > 0, emit
+  `sync_motion_type2(158, kHz × 1000)` at layer start (after `MAIN` starts, before any vector or
+  raster output) and `M137P159` at layer cleanup (beside the focus move-back, before
+  `end_task_script_block()`). Layers with value 0 emit nothing (G2). No job-end command.
+- Same set/restore pairing as existing per-layer state: focus adjust (`184` down / back) and
+  acceleration (`151` reset).
 
 ## 8. Data contracts
 
 | Where | Contract |
 |---|---|
 | Layer `<g>` | `data-laserFrequency="<int kHz>"`, `0` or absent = off |
-| Task code | `M137P158Q<Hz>` (Hz = kHz × 1000) per layer when on; `M137P159` per layer when off; `M137P159` at job end; nothing when no layer is on |
+| Task code | For each layer that is on: `M137P158Q<Hz>` (Hz = kHz × 1000) at layer start, `M137P159` at layer cleanup; nothing for layers that are off |
 | i18n | `beambox.right_panel.laser_panel.laser_frequency`, `laser_frequency_desc`, `laser_frequency_default` (`%s` kHz); `topbar.alerts.laser_frequency_unavailable`; reuses `frequency` |
 
 ## 9. Rollout (PR plan)
@@ -193,11 +213,21 @@ executes them.
 
 ## 10. Open decisions
 
-1. **D1** beamo (`fbm1`) and HEXA (`fhexa1`) run the legacy 4.x firmware line
-   (`legacyBeamSeriesModelsArray`, `JOB_ORIGIN: '4.3.5'`). A single `>= 6.5.3` check would always
-   block them. Need the minimum version for these two, or drop them from this release.
-2. **D2** Should Ador (`ado1`) or Beambox (`fbb1b`/`fbb1p`) be included? Not in the product PRD;
-   excluded for now.
+1. ~~**D1** Minimum firmware for beamo (`fbm1`) and HEXA (`fhexa1`), which run the legacy 4.x
+   line.~~ **Decided 2026-10-27:** fcode v1 machines (4.x firmware) do not support the command;
+   both are out of scope.
+2. ~~**D2** Should Ador (`ado1`) or Beambox (`fbb1b`/`fbb1p`) be included?~~ **Decided
+   2026-10-27:** no. Ador is fcode v2 but its firmware does not support the command; Beambox is
+   fcode v1. Supported set is `fbm2`, `fbb2`, `fhx2rf`.
+3. ~~**D3** Command placement: product PRD R8 writes P158/P159 at every layer start plus P159 at
+   job end whenever any layer is on.~~ **Decided 2026-10-27:** P158 at layer start and P159 at
+   layer cleanup, only for layers that are on. Off layers stay byte-identical, no task-wide pass,
+   no job-end command.
+4. ~~**D4** What happens to the value on a workarea switch?~~ **Decided 2026-10-27:** keep it as
+   is (absolute kHz, same 20–500 range on all supported models); no reset in
+   `postPresetChange()`. Unsupported models ignore it everywhere — UI hides it, backends gate on
+   `LASER_FREQUENCY`, and the export check only runs for supported device models, so a kept value
+   never blocks an export.
 
 ## 11. Risks & follow-ups
 
@@ -205,6 +235,9 @@ executes them.
   printing padding overrides.
 - Old firmware ignoring `M137P158` silently is impossible to detect from task code; the export
   check is the only guard.
+- A task aborted mid-layer never reaches the layer's `M137P159`. Firmware must restore the default
+  frequency when a task ends or is aborted (confirm with firmware team); the product PRD's job-end
+  reset had the same gap.
 
 ## 12. Test plan
 
@@ -213,6 +246,6 @@ executes them.
 | S1 UI, clamp, undo, multi-value | `LaserFrequencyBlock.spec.tsx`; manual on beamo II workarea |
 | S1 persistence | manual save/reopen; sanitize whitelist |
 | S1 visibility edges | `AdvancedBlock.spec.tsx` for unsupported model / 1064 / printing |
-| S2 task code | fluxclient `tests/toolpath/test_laser_frequency.py` (on/off/none); Swiftray manual convert + fcode inspection |
+| S2 task code | fluxclient `tests/toolpath/test_laser_frequency.py` (on/off/mixed: off layers unchanged); Swiftray manual convert + fcode inspection |
 | S3 firmware check | `handleExportAlerts.spec.ts` (old firmware + enabled → alert, hidden layer → no alert) |
 | G2 regression | fluxclient test: no attr → no P158/P159 |

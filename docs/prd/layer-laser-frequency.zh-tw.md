@@ -17,7 +17,7 @@
 
 ## 1. Summary
 
-目前只有 Promark 開放頻率設定；CO2 機型的雷射控制頻率由韌體固定。日本代理商回報 beamo II 線段雕刻出現波浪狀深淺不均，將控制頻率調到 72 kHz 後結果接近 beamo。
+目前只有 Promark 開放頻率設定；CO2 機型的雷射控制頻率由韌體固定。日本代理商回報 beamo II 線段雕刻（向量路徑，走法與切割相同）出現波浪狀深淺不均，將控制頻率調到 72 kHz 後結果接近 beamo。
 
 本功能在圖層「進階設定」新增 **雷射頻率**：依圖層以開關加 20–500 kHz 數值（滑桿＋輸入）設定。任一輸出圖層開啟時，工作檔寫入韌體指令 `M137P158Q<Hz>`（設定）／`M137P159`（回到機器預設），由韌體 6.5.3 執行。
 
@@ -32,6 +32,8 @@
 | HEXA RF | `fhx2rf` | 25 kHz |
 | beamo | `fbm1` | 72 kHz |
 | HEXA | `fhexa1` | 336 kHz |
+
+只有 fcode v2 機型 `fbm2`、`fbb2`、`fhx2rf` 支援這些指令。beamo 與 HEXA（fcode v1、4.x 韌體）及 Ador（fcode v2）不支援 — 見 D1/D2。其預設值僅供參考。
 
 ### 2.2 韌體指令（韌體 ≥ 6.5.3）
 
@@ -57,7 +59,7 @@
 ## 3. Goals & non-goals
 
 **Goals**
-- **G1** 支援機型的 CO2 雷射圖層可各自設定雷射頻率（20–500 kHz）。
+- **G1** 支援機型的 CO2 雷射圖層可各自設定雷射頻率（20–500 kHz）。設定套用於圖層的所有輸出 — 向量路徑（線段雕刻、切割）與填充／點陣雕刻皆同。
 - **G2** 沒有任何圖層開啟時，產生的工作檔與現行相同。
 - **G3** 韌體不支援時，送出前提示使用者更新韌體。
 
@@ -68,8 +70,8 @@
 
 ## 4. 情境
 
-- **S1** beamo II 線段雕刻出現波浪狀深淺，使用者調高雕刻圖層的頻率。
-- **S2** 檔案同時有雕刻與切割圖層，只有雕刻圖層調整頻率。
+- **S1** beamo II 線段雕刻（向量路徑）出現波浪狀深淺，使用者調高該圖層的頻率。
+- **S2** 檔案有多個 CO2 圖層，只有部分圖層調整頻率，其餘維持機器預設。圖層的設定同時涵蓋其向量路徑與填充／圖片。
 - **S3** 舊韌體機器收到開啟雷射頻率的工作。
 
 ## 5. Acceptance criteria
@@ -82,15 +84,21 @@
 - 多選數值不同的圖層時，沿用面板既有的多值顯示。
 
 **S2 — 工作檔**
-- Layer 1 開啟 72 kHz、Layer 2 關閉，送至韌體 6.5.3 機器（或檢查工作檔）：Layer 1 前 `M137P158Q72000`、Layer 2 前 `M137P159`、工作結束 `M137P159`。
-- 沒有圖層開啟 → 任何位置都沒有 `M137P158` / `M137P159`（同樣輸入下與現行逐位元組相同）。
+- Layer 1 開啟 72 kHz、Layer 2 關閉，送至韌體 6.5.3 機器（或檢查工作檔）：Layer 1 開始 `M137P158Q72000`、Layer 1 清理時 `M137P159`；Layer 2 的輸出不變（前後沒有 M137P158/P159）。
+- Layer 1 同時含路徑與填充圖形／圖片：單一 `M137P158Q72000` 位於 Layer 1 所有輸出（向量與點陣）之前，中間不重設。
+- 關閉雷射頻率的圖層與現行逐位元組相同，不論其他圖層是否開啟；沒有圖層開啟 → 整個工作與現行逐位元組相同。
 
 **S3 — 韌體檢查**
 - 有圖層開啟雷射頻率且韌體低於需求版本：顯示 `laser_frequency_unavailable`；Confirm 進入韌體更新，Cancel 關閉；兩者皆不送出。
 - 隱藏圖層不觸發檢查。
+- 目標機型不支援（如帶 72 kHz 圖層的 beamo II 檔案送至 Ador）：不提示，照常送出；後端不寫入指令。
+
+**切換工作區（D4）**
+- beamo II 圖層 72 kHz → 切換工作區為 HEXA RF：仍為 72 kHz，說明為「機器預設：25 kHz」。
+- beamo II 圖層 72 kHz → 切換為 Ador：區塊隱藏、屬性保留；切回 beamo II：重新顯示 72 kHz。
 
 **顯示的邊界情況**
-- 工作區不在 §2.1（如 Ador、Beambox、Promark）：不顯示；圖層既有的 `data-laserFrequency` 不寫入任何指令。
+- 工作區不是 `fbm2` / `fbb2` / `fhx2rf`（如 beamo、HEXA、Ador、Beambox、Promark）：不顯示；圖層既有的 `data-laserFrequency` 不寫入任何指令。
 - 圖層模組為列印或 1064 nm：不顯示；該圖層不寫入指令。
 - 曲面雕刻模式：與一般相同（雷射圖層仍顯示）。
 
@@ -105,7 +113,7 @@
 | `handleExportAlerts.ts` | `handleExportClick.ts:58` — 既有提示與順序不變；只有可見圖層開啟時才檢查 |
 | `version-checker.ts` `requirement` | 所有 `meetRequirement` 呼叫端 — 只新增 key |
 | `sanitize.js` `g` 白名單 | 開檔 — 只新增 `data-laserFrequency` |
-| fluxclient `toolpath.py` 圖層迴圈 / `xMIN 0004` | 所有 fcode 輸出 — 除非圖層帶屬性且機型具 `LASER_FREQUENCY`，否則不新增指令 |
+| fluxclient `toolpath.py` 圖層迴圈（MAIN 區塊開始 / 清理） | 所有 fcode 輸出 — 除非圖層帶屬性且機型具 `LASER_FREQUENCY`，否則不新增指令 |
 | Swiftray `toolpath-exporter-fcode.cpp` `convertLayer` / `convertStack` | 所有非 Promark fcode 輸出 — 同上 |
 
 ## 7. Design
@@ -113,7 +121,7 @@
 ### 7.1 資料模型（beam-studio）
 
 - 新 config key `laserFrequency` → `data-laserFrequency`，**kHz 整數，`0` = 關閉**。預設 `baseConfig.laserFrequency = 0`。單一屬性，不另設開關旗標。
-- 支援機型與預設值：在 §2.1 五個機型加上 optional `WorkArea.defaultLaserFrequency`（kHz）。有此欄位 = 支援（R1）；其值 = 開啟時的初始值與「機器預設」說明。
+- 支援機型與預設值：在 `fbm2`（20）、`fbb2`（20）、`fhx2rf`（25）加上 optional `WorkArea.defaultLaserFrequency`（kHz）。有此欄位 = 支援（R1）；其值 = 開啟時的初始值與「機器預設」說明。
 - `sanitize.js` `g` 白名單加入 `data-laserFrequency`。
 - 不加入 `presetRelatedConfigs`、`timeRelatedConfigs`。
 
@@ -125,23 +133,22 @@
 
 ### 7.3 匯出檢查
 
-- `version-checker.ts`：`LASER_FREQUENCY: '6.5.3'`（beamo / HEXA 見待決 D1）。
-- `handleExportAlerts.ts`：於 PWM 檢查之後，若任一可見圖層 `data-laserFrequency > 0` 且 `!vc.meetRequirement('LASER_FREQUENCY')`，以 `pwm_unavailable` 相同流程顯示 `laser_frequency_unavailable` 並回傳 `false`。
+- `version-checker.ts`：`LASER_FREQUENCY: '6.5.3'`（支援機型皆為 6.x 韌體線）。
+- `handleExportAlerts.ts`：於 PWM 檢查之後，若 `getWorkarea(device.model).defaultLaserFrequency` 存在（與 UI、後端相同的機型規則，D4），且任一可見圖層 `data-laserFrequency > 0` 且 `!vc.meetRequirement('LASER_FREQUENCY')`，以 `pwm_unavailable` 相同流程顯示 `laser_frequency_unavailable` 並回傳 `false`。
 
 ### 7.4 後端（fluxclient 與 Swiftray 規則相同）
 
 - 解析 `data-laserFrequency`（kHz，預設 0）。
-- 以新的機型功能旗標 `LASER_FREQUENCY`（fluxclient `HWFeature`、Swiftray `SupportInfo`）限定五個機型，並限定 CO2 雷射模組（非列印、非 1064 nm）。檔案中的屬性在切換機型或模組後仍會保留，因此由後端限制來確保 R1/R2。
-- `any_enabled` = 任一輸出且符合限制的圖層值 > 0。為 false 時不寫入任何指令（G2）。
-- 為 true 時：每個圖層開始（laser delay 旁）值 > 0 寫入 `sync_motion_type2(158, kHz × 1000)`，否則寫入 `M137P159`；於 `xMIN 0004` 結束區塊寫入 `M137P159`。
-- v1 fcode 機型（`fbm1`、`fhexa1`）沒有 script block，指令直接寫在相同位置。
+- 以新的機型功能旗標 `LASER_FREQUENCY`（fluxclient `HWFeature`、Swiftray `SupportInfo`）限定 `fbm2`、`fbb2`、`fhx2rf`，並限定 CO2 雷射模組（非列印、非 1064 nm）。檔案中的屬性在切換機型或模組後仍會保留，因此由後端限制來確保 R1/R2。
+- 逐圖層獨立處理（D3）：符合限制的圖層值 > 0 時，於圖層開始（`MAIN` 開始後、任何向量或點陣輸出之前）寫入 `sync_motion_type2(158, kHz × 1000)`，於圖層清理（focus 移回旁、`end_task_script_block()` 之前）寫入 `M137P159`。值為 0 的圖層不寫入任何指令（G2）。工作結束不另寫指令。
+- 與既有逐圖層狀態相同的設定／還原配對：focus adjust（`184` 下移 / 移回）、加速度（`151` 重設）。
 
 ## 8. Data contracts
 
 | 位置 | 約定 |
 |---|---|
 | 圖層 `<g>` | `data-laserFrequency="<整數 kHz>"`，`0` 或不存在 = 關閉 |
-| 工作檔 | 開啟的圖層前 `M137P158Q<Hz>`（Hz = kHz × 1000）；關閉的圖層前 `M137P159`；工作結束 `M137P159`；沒有圖層開啟時不寫入 |
+| 工作檔 | 每個開啟的圖層：圖層開始 `M137P158Q<Hz>`（Hz = kHz × 1000）、圖層清理 `M137P159`；關閉的圖層不寫入 |
 | i18n | `beambox.right_panel.laser_panel.laser_frequency`、`laser_frequency_desc`、`laser_frequency_default`（`%s` kHz）；`topbar.alerts.laser_frequency_unavailable`；沿用 `frequency` |
 
 ## 9. Rollout（PR 規劃）
@@ -153,13 +160,16 @@
 
 ## 10. 待決事項
 
-1. **D1** beamo（`fbm1`）與 HEXA（`fhexa1`）使用舊的 4.x 韌體線（`legacyBeamSeriesModelsArray`、`JOB_ORIGIN: '4.3.5'`）。單一 `>= 6.5.3` 檢查會永遠擋住這兩台。需要這兩台的最低版本，或從本次釋出移除。
-2. **D2** 是否納入 Ador（`ado1`）或 Beambox（`fbb1b`/`fbb1p`）？產品 PRD 未提及，目前排除。
+1. ~~**D1** beamo（`fbm1`）與 HEXA（`fhexa1`）使用舊的 4.x 韌體線，最低版本為何？~~ **2026-10-27 決定：** fcode v1 機器（4.x 韌體）不支援此指令，兩台皆不納入。
+2. ~~**D2** 是否納入 Ador（`ado1`）或 Beambox（`fbb1b`/`fbb1p`）？~~ **2026-10-27 決定：** 否。Ador 雖為 fcode v2，但韌體不支援此指令；Beambox 為 fcode v1。支援機型為 `fbm2`、`fbb2`、`fhx2rf`。
+3. ~~**D3** 指令位置：產品 PRD R8 在任一圖層開啟時，每個圖層開始都寫入 P158/P159，工作結束再寫 P159。~~ **2026-10-27 決定：** 只有開啟的圖層在圖層開始寫 P158、圖層清理寫 P159。關閉的圖層逐位元組不變，不需整體掃描，工作結束不另寫指令。
+4. ~~**D4** 切換工作區時數值如何處理？~~ **2026-10-27 決定：** 保留原值（絕對 kHz，所有支援機型範圍皆為 20–500）；`postPresetChange()` 不重設。不支援的機型一律忽略 — UI 隱藏、後端以 `LASER_FREQUENCY` 限制、匯出檢查只對支援的裝置機型執行，因此保留的值不會擋住送出。
 
 ## 11. 風險與後續
 
 - 網頁版使用者若本機 FLUX API 過舊，不會寫入指令（屬性被忽略）— 與列印 padding 覆寫相同的已接受風險。
 - 舊韌體若默默忽略 `M137P158`，無法從工作檔偵測；匯出檢查是唯一防護。
+- 工作在圖層中途中止時不會執行該圖層的 `M137P159`。韌體須在工作結束或中止時恢復預設頻率（待與韌體確認）；產品 PRD 的工作結束重設也有相同缺口。
 
 ## 12. Test plan
 
@@ -168,6 +178,6 @@
 | S1 UI、限制範圍、undo、多值 | `LaserFrequencyBlock.spec.tsx`；beamo II 工作區手動測試 |
 | S1 儲存 | 手動儲存/重開；sanitize 白名單 |
 | S1 顯示邊界 | `AdvancedBlock.spec.tsx`：不支援機型 / 1064 / 列印 |
-| S2 工作檔 | fluxclient `tests/toolpath/test_laser_frequency.py`（開/關/無）；Swiftray 手動轉檔並檢查 fcode |
+| S2 工作檔 | fluxclient `tests/toolpath/test_laser_frequency.py`（開/關/混合：關閉的圖層不變）；Swiftray 手動轉檔並檢查 fcode |
 | S3 韌體檢查 | `handleExportAlerts.spec.ts`（舊韌體＋開啟 → 提示；隱藏圖層 → 不提示） |
 | G2 回歸 | fluxclient 測試：無屬性 → 無 P158/P159 |
