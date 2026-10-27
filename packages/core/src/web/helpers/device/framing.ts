@@ -13,6 +13,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import deviceConstants from '@core/app/constants/device-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
+import { defaultField, defaultGalvoParameters } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -434,10 +435,14 @@ class FramingTaskManager extends EventEmitter {
     if (!this.hasAppliedRedLight) {
       this.showMessage(i18n.lang.message.connecting);
 
-      const { field, galvoParameters, redDot } = promarkDataStore.get(this.device?.serial) as PromarkStore;
+      const {
+        field = defaultField,
+        galvoParameters = defaultGalvoParameters,
+        redDot,
+      } = promarkDataStore.get(this.device?.serial) as PromarkStore;
 
       if (redDot) {
-        const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field!, galvoParameters!);
+        const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
         const { width } = getWorkarea(this.device.model);
 
         await deviceMaster.setField(width, newField);
@@ -506,14 +511,17 @@ class FramingTaskManager extends EventEmitter {
 
   public resetPromarkParams = async (): Promise<void> => {
     if (this.hasAppliedRedLight) {
-      const { field, galvoParameters, redDot } = promarkDataStore.get(this.device?.serial) as PromarkStore;
+      const {
+        field = defaultField,
+        galvoParameters = defaultGalvoParameters,
+        redDot,
+      } = promarkDataStore.get(this.device?.serial) as PromarkStore;
 
       if (redDot) {
         const { width } = getWorkarea(this.device.model);
 
         await deviceMaster.setField(width, field);
-
-        if (galvoParameters) await deviceMaster.setGalvoParameters(galvoParameters);
+        await deviceMaster.setGalvoParameters(galvoParameters);
       }
 
       this.hasAppliedRedLight = false;

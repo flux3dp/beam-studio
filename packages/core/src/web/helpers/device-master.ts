@@ -9,7 +9,13 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
-import { getPromarkFieldWorksize, getPromarkLaserSource, LaserType } from '@core/app/constants/promark-constants';
+import {
+  defaultField,
+  defaultGalvoParameters,
+  getPromarkFieldWorksize,
+  getPromarkLaserSource,
+  LaserType,
+} from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
@@ -495,15 +501,17 @@ class DeviceMaster {
       }
 
       if (promarkModels.has(device.info.model)) {
-        const { field, galvoParameters } = promarkDataStore.get(device.info.serial);
+        const { field = defaultField, galvoParameters = defaultGalvoParameters } = promarkDataStore.get(
+          device.info.serial,
+        );
         const { width } = getWorkarea(device.info.model);
 
+        // Always sent, defaults included: the backend keeps whatever the previous machine set, and
+        // the correction also carries the laser source it is for, so a machine without local
+        // calibration data would otherwise run with another machine's lens and source.
         await this.setField(width, field);
         console.log('Applying', galvoParameters);
-
-        if (galvoParameters) {
-          await this.setGalvoParameters(galvoParameters);
-        }
+        await this.setGalvoParameters(galvoParameters);
       }
 
       Progress.popById('select-device');
@@ -1493,7 +1501,7 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.setDeviceSetting, name, value);
   }
 
-  async setField(worksize: number, fieldData: Field = { angle: 0, offsetX: 0, offsetY: 0 }) {
+  async setField(worksize: number, fieldData: Field = defaultField) {
     const controlSocket = await this.getControl();
     const isPromarkUV = useDocumentStore.getState().workarea === 'fpm1' && getPromarkInfo().laserType === LaserType.UV;
 
