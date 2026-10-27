@@ -222,7 +222,7 @@ export async function handleAutoConnect(): Promise<boolean> {
           message: i18n.lang.initialize.connect_machine_ip.connection_failed_hint,
           messageIcon: 'warning',
         },
-        { errorCode: 'QR_AUTOCONNECT_FAILED' },
+        { device: null, errorCode: 'QR_AUTOCONNECT_FAILED' },
       ),
     );
 

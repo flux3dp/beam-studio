@@ -89,7 +89,7 @@ const popupError = (message: string): void => {
     Alert.popUp(
       withErrorReportConsent(
         { id: 'get-taskcode-error', message: `#806 ${message}`, type: AlertConstants.SHOW_POPUP_ERROR },
-        { errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
+        { device: null, errorCode: '#806', scene: () => ({ content: svgCanvas.getSvgString(), name: 'output.bvg' }) },
       ),
     );
   }

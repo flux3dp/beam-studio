@@ -57,7 +57,7 @@
 - **S4 永不** → 視窗與現在完全相同。
 - **S5 達每日上限** → checkbox 隱藏（每次詢問）或不上傳且無狀態列（一律自動）；在 generic logger 寫一筆「已略過（達每日上限）」。
 - **S6 連線類錯誤** → 資料包只含錯誤報告；裝置 Log 部分是略過，不是失敗。兩種子情況：`#802` 後端警示完全沒有裝置（歸檔於 `no-device/{installation_id}/`）；`popConnectionError`（`device-master.ts:580`）在 `select` 失敗後觸發，此時雖無控制 socket，但從探索結果已知含序號與韌體版本的 `deviceInfo`（歸檔於 `{serial}/`）。
-- **S7 匯出/匯入失敗**（`#806`/`#809`）→ 場景 SVG / 匯入檔案作為第三個檔案附上，以同一同意列取代現在 `uploadToS3` 的 是/否 詢問視窗。
+- **S7 匯出/匯入失敗**（`#806`/`#809`）→ 場景 SVG / 匯入檔案隨軟體錯誤報告附上，不帶機器序號、韌體版本或裝置系統 log，以同一同意列取代現在 `uploadToS3` 的 是/否 詢問視窗。
 - **S8 上傳失敗 3 次** → 靜默；不另跳錯誤視窗（使用者已經有一個錯誤要處理）。記錄到 generic logger。
 - **S9 同一錯誤重複發生**（使用者對同一連線失敗按五次重試，或同一 LAN 問題隔天再現）→ 只有第一次上傳；之後的只在本地計數，且指紋冷卻期間 checkbox 隱藏（§7.7）。該指紋的下一次上傳會帶 `occurrences_since_last`，頻率資訊不會遺失。
 
@@ -74,7 +74,7 @@
 | A7 | 檢視上傳的 bug_report。 | 無 `recent_files`、`auto-save-config`、`ador-backup-path`；任何位置（含 fluxghost log 段落）都無 `/Users/<name>` 或 `C:\Users\<name>`；探索清單中的裝置以型號取代使用者自訂名稱。 | 手動 說明 → Bug Report 下載不變（仍包含上述內容）。 |
 | A8 | 一律自動 下，於同一本地日觸發 11 次白名單錯誤。 | 送出 10 次請求；第 11 次無狀態列，generic log 有「已略過（達每日上限）」；本地午夜後計數重置。 | 失敗的嘗試不計入。計數以序號為單位；無裝置的連線錯誤計在序號 `none` 下。 |
 | A9 | 封鎖 proxy 主機，一律自動 下觸發錯誤。 | 嘗試 3 次後靜默；不跳新視窗。 | — |
-| A10 | 匯出時 fluxghost 回傳錯誤（`#806`）。 | 視窗文字與現在相同，但以同意 checkbox 取代 是/否 上傳詢問；SVG 附於資料包。 | `aws-helper.ts` 已不存在；`uploadToS3` 無呼叫者。 |
+| A10 | 匯出時 fluxghost 回傳錯誤（`#806`）。 | 視窗文字與現在相同，但以同意 checkbox 取代 是/否 上傳詢問；SVG 附於資料包。 | 不論是否已有機器連線，序號均為 `none`、韌體版本為空、不下載機器 log，並套用無裝置的上限。`aws-helper.ts` 已不存在；`uploadToS3` 無呼叫者。 |
 | A11 | 一律自動 下，一小時內觸發同一裝置錯誤 5 次，隔天再觸發 1 次。 | 第一天只送 1 次請求（之後的視窗無狀態列）；第二天的視窗送 1 次請求，其 `occurrences_since_last` 為 4；第三天若無變化則不送（冷卻已延長為 7 天）。 | 不同 `error_code`、新的 app 版本或新的韌體版本會產生新指紋。每次詢問 下，冷卻期間 checkbox 隱藏，與每日上限相同。 |
 
 ## 6. 不得改變的事項
@@ -97,6 +97,8 @@
 ## 7. 設計
 
 ### 7.1 模組
+
+裝置來源須明確區分：省略 `device` 使用目前機器，傳入 `IDeviceInfo` 使用指定機器，`device: null` 表示無裝置。`#802`、`#806`、`#809` 與 QR 自動連線錯誤即使已有其他機器連線也傳入 null：序號為 `none`、韌體版本為空、不下載裝置 log，並使用無裝置的指紋與計數套用上限。
 
 新增 `packages/core/src/web/helpers/error-report/`（獨立資料夾，spec 同置）：
 
@@ -139,7 +141,7 @@
 | `device-master.ts:580` `popConnectionError`（呼叫者 `select` :410、`selectDeviceWithSwiftray` :530） | `CONNECTION_TIMEOUT`、`CONNECTION_DISCONNECTED`（`#891`/`#892`）、`CONNECTION_UNKNOWN_DEVICE`，default 分支則為 `CONNECTION_` + fluxghost 原始代碼。排除 `NOT_FOUND`：機器從探索清單消失，通常是關機。僅有「確認」按鈕的視窗（原始 PRD §3.7）。 | 有 |
 | `device-master.ts:266` 密碼正確但連線失敗 | 僅 `#810`；`#811` 密碼錯誤排除 | 有 |
 | `export-funcs.ts:778` 在 Monitor 開啟工作失敗 | `#807` | 有 |
-| `export-funcs.ts:257,315,503`、`export-funcs-swiftray.ts:89` 工作產生失敗 | `#806`（＋ scene.svg） | 已連線時有 |
+| `export-funcs.ts:257,315,503`、`export-funcs-swiftray.ts:89` 工作產生失敗 | `#806`（＋ scene.svg） | 無 |
 | `websocket.ts:28` 後端連線失敗 | `#802` | none |
 | `handleAutoConnect.ts:216` QR 自動連線失敗 | `QR_AUTOCONNECT_FAILED` | none |
 | `uploadAndDivideSvg.ts:31` 匯入失敗 | `#809`（＋ 匯入檔案） | none |
@@ -176,7 +178,7 @@
 - 端點：`POST {FLUXID_HOST}/api/beam-studio/error-report`，multipart，欄位 `serial`、`installation_id`、`error_code`、`app_version`、`os`、`firmware_version`、`occurrences_since_last`，檔案 `bug_report`、`system_log`、`scene`。回應 `{ status: 'ok' }`。不需驗證（`csrf_exempt_auth_classes`，同 `flux101.py`），不需 FLUX 帳號。
 - view 內驗證：整體 body ≤ 20 MB（nginx 已限 32 MB），`serial` 符合 `^[A-Za-z0-9-]{1,32}$` 或 `none`，`error_code` ≤ 64 字元，只接受三個已知檔案欄位，忽略各檔案的 content type，統一存為 `text/plain` / `image/svg+xml`。
 - 儲存：Django 4.2 的 `STORAGES['error_report']` 別名，指向 `storages.backends.s3boto3.S3Boto3Storage`，`endpoint_url = https://<account>.r2.cloudflarestorage.com`，bucket `flux-id`（正式環境以外為 `flux-id-test`），置於 `error-report/` location 前綴下，`default_acl = private`。view 只呼叫 `storages['error_report'].save(path, file)`。**切換供應商＝改那一筆設定**（S3、B2、GCS、MinIO 都相容 S3；Google Drive 需在同一別名後面放自訂 `Storage` 子類）。程式碼不新增抽象層；`django-storages` 本身就是。
-- 物件鍵（`{code}` 為去掉 `#` 的 `error_code`，`#806` → `806`）：只要有已知裝置就是 `{serial}/{ISO ts}_{code}_bug_report.txt`、`_system_log.txt`、`_scene.svg`；完全沒有機器的三個觸發點（`#802`、`#809`、QR 自動連線）為 `no-device/{installation_id}/{ISO ts}_{code}_...`。不做序號驗證：曾考慮已驗證/未驗證分級，因 flux-id 序號表涵蓋的現役機器太少而放棄（backend.md §10 B3）。序號格式只做寬鬆驗證（`^[A-Za-z0-9-]{1,32}$`），不綁定目前的 10 字元長度。
+- 物件鍵（`{code}` 為去掉 `#` 的 `error_code`，`#806` → `806`）：只要有已知裝置就是 `{serial}/{ISO ts}_{code}_bug_report.txt`、`_system_log.txt`、`_scene.svg`；無裝置來源的錯誤（`#802`、`#806`、`#809`、QR 自動連線）為 `no-device/{installation_id}/{ISO ts}_{code}_...`。不做序號驗證：曾考慮已驗證/未驗證分級，因 flux-id 序號表涵蓋的現役機器太少而放棄（backend.md §10 B3）。序號格式只做寬鬆驗證（`^[A-Za-z0-9-]{1,32}$`），不綁定目前的 10 字元長度。
 - 伺服器端去重（client 冷卻表被清除時的後備）：儲存前先列出 `{serial}/` 或 `no-device/{installation_id}/` 前綴；若已有相同 `{code}` 且 `ts` 在最近 24 小時內的物件，回應 `{ status: 'duplicate' }` 且不儲存。每次上傳一次 R2 Class B list 呼叫。client 把 `duplicate` 視為成功（計入上限與冷卻），但不顯示「已傳送」toast。
 - 防濫用與儲存上界，共五層（細節見 [backend.md §6](backend.md)）：Cloudflare WAF 每 IP 流量限制規則；DRF 每 IP 限流 `6/hour` 與 `20/day`，單一 IP 即使捏造序號每天最多 20 × 20 MB = 400 MB；**全域每日位元組預算**（2 GB/日，超過回 `429 { status: 'budget' }`），不論攻擊者用多少 IP 或偽造多少序號，bucket 最壞情況約 360 GB；每資料夾上限與 24 小時去重；client 端每日上限與指紋冷卻（§7.7）。`429` 對 client 而言就是失敗：不重試（只有沒有回應與 5xx 會重試）、靜默，冷卻不推進。
 - 保留：R2 物件生命週期規則，180 天後刪除。不需 cron 程式。

@@ -36,7 +36,7 @@ const popBackendErrorAlert = () => {
   alertCaller.popUp(
     withErrorReportConsent(
       { id: 'backend-error', message: LANG.backend_connect_failed, type: alertConstants.SHOW_POPUP_ERROR },
-      { errorCode: '#802' },
+      { device: null, errorCode: '#802' },
     ),
   );
   MessageCaller.openMessage({

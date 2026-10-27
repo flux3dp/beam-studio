@@ -37,9 +37,10 @@ export type UploadResult = 'duplicate' | 'failed' | 'sent' | BlockReason;
 export interface UploadErrorReportOptions {
   /**
    * Machine the error belongs to when it is not `deviceMaster.currentDevice`, e.g. a failed
-   * `select` (§6 S6). The device log is read only when the current control socket is this machine's.
+   * `select` (§6 S6). Omit to use the current device; null explicitly means no device.
+   * The device log is read only when the current control socket is this machine's.
    */
-  device?: IDeviceInfo;
+  device?: IDeviceInfo | null;
   /** real code, e.g. `HARDWARE_ERROR_OVERHEAT`, `#806`, `CONNECTION_TIMEOUT` (§7.4) */
   errorCode: string;
   /**
@@ -117,7 +118,7 @@ const post = async (form: FormData): Promise<'duplicate' | 'sent'> => {
 };
 
 const getContext = ({ device, errorCode }: UploadErrorReportOptions) => {
-  const info = device ?? deviceMaster.currentDevice?.info;
+  const info = device === undefined ? deviceMaster.currentDevice?.info : device;
   const serial = info?.serial || 'none';
   const firmwareVersion = info?.version ?? '';
   const appVersion = window.FLUX.version;

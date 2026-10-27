@@ -103,6 +103,27 @@ describe('uploadErrorReport', () => {
     expect(mockGetLogsTexts).not.toHaveBeenCalled();
   });
 
+  test.each(['#802', '#806', '#809', 'QR_AUTOCONNECT_FAILED'])(
+    'explicit no device for %s: ignores the connected machine and uses a separate throttle',
+    async (errorCode) => {
+      await expect(uploadErrorReport({ errorCode })).resolves.toBe('sent');
+      mockPost.mockClear();
+      mockGetLogsTexts.mockClear();
+
+      await expect(uploadErrorReport({ device: null, errorCode })).resolves.toBe('sent');
+
+      const form = mockPost.mock.calls[0][1] as FormData;
+
+      expect(form.get('serial')).toBe('none');
+      expect(form.get('firmware_version')).toBe('');
+      expect(form.has('system_log')).toBe(false);
+      expect(mockGetLogsTexts).not.toHaveBeenCalled();
+      expect(storage.get('error-report-counter')).toMatchObject({ counts: { none: 1, SN12345678: 1 } });
+      await expect(uploadErrorReport({ device: null, errorCode })).resolves.toBe('cooldown');
+      expect(mockPost).toHaveBeenCalledTimes(1);
+    },
+  );
+
   test('busy device: system_log skipped, upload still sent', async () => {
     mockCurrentDevice.mockReturnValue({ ...idleDevice(), control: { getMode: () => 'raw' } });
 
@@ -197,13 +218,21 @@ describe('uploadErrorReport', () => {
     expect(mockAppend).toHaveBeenCalledWith(expect.stringContaining('device log dropped'));
   });
 
-  test('scene is attached as svg with its name', async () => {
-    await uploadErrorReport({ errorCode: '#806', scene: () => ({ content: '<svg/>', name: 'output.bvg' }) });
+  test('export without a device still attaches the scene while another machine is connected', async () => {
+    await uploadErrorReport({
+      device: null,
+      errorCode: '#806',
+      scene: () => ({ content: '<svg/>', name: 'output.bvg' }),
+    });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
     expect((form.get('scene') as File).name).toBe('output.bvg');
     expect(fields(form).scene).toBe('blob:image/svg+xml');
+    expect(form.get('serial')).toBe('none');
+    expect(form.get('firmware_version')).toBe('');
+    expect(form.has('system_log')).toBe(false);
+    expect(mockGetLogsTexts).not.toHaveBeenCalled();
   });
 
   test('scene thunk is not called for a blocked upload', async () => {
