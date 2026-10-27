@@ -186,7 +186,7 @@ exports[`PromarkInputs inner engraving dot mode shows the dot parameters and nei
           <input
             data-testid="stlPointSpacing"
             max="5"
-            min="0.001"
+            min="0.01"
             value="0.03"
           />
         </div>

@@ -484,7 +484,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 | repeat 強制為 1，欄位隱藏 | 1 | `layer-config-helper.ts`（`writeDataLayer`）、`ConfigPanel.tsx` | **PM 08/06** |
 | DPI 隱藏；送出時沿用圖層原本的 DPI | – | `ConfigPanel.tsx` | 2026-10-05 決定 |
 | 內雕圖層預設：模式、點間距、層間距、打點時間、頻率、速度 | 打點 / 0.03 / 0.04mm / 150µs / 110kHz / 180mm/s | `layer-config-helper.ts`；Swiftray `kDefaultStl*` | 實測 K9 |
-| 點間距、層間距範圍 | 0.001–5mm | `app/constants/innerEngraving.ts` | 註解（暫定） |
+| 點間距、層間距範圍 | 0.01–5mm | `app/constants/innerEngraving.ts` | 註解（暫定；下限 0.01 是為了避免照片與實心打點的點數爆量，Swiftray 端不再設取樣上限） |
 | 加厚輪廓的層數（表面＋往內兩層） | 3 | Swiftray `stl-utils.h` `max_shell_count` | 2026-10-12 決定 |
 | UV 預設功率、頻率 | 100% / 40kHz | `layer-config-helper.ts` `getDefaultConfig` | 2026-10-09 決定 |
 | UV 脈寬固定隱藏；Q pulse 預設 1，只在 Developer Settings | 13 / 1 | `layer-config-helper.ts`、`ConfigPanel/DevBlock.tsx` | 實測 2026-10-12 |

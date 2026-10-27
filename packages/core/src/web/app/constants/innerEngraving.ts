@@ -80,5 +80,9 @@ export type EngravingMode = (typeof ENGRAVING_MODES)[number];
 /** Millimetres. The spacing is the Z step in line mode and the inward-shell step in solid dot mode. */
 export const DEFAULT_LAYER_SPACING = 0.04;
 export const DEFAULT_POINT_SPACING = 0.03;
-export const LAYER_SPACING_LIMIT = { max: 5, min: 0.001 } as const;
-export const POINT_SPACING_LIMIT = { max: 5, min: 0.001 } as const;
+/**
+ * 0.01 mm is the floor: below it a photo or a solid dot fill runs into tens of millions of points
+ * (a 40 × 40 mm photo at 0.01 mm is already 16 M samples) for no visible gain.
+ */
+export const LAYER_SPACING_LIMIT = { max: 5, min: 0.01 } as const;
+export const POINT_SPACING_LIMIT = { max: 5, min: 0.01 } as const;
