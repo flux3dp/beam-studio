@@ -1055,11 +1055,9 @@ export interface ILang {
     elevate_and_cut: string;
     elevate_and_cut_step_1: string;
     elevate_and_cut_step_1_prism_lift: string;
-    failed_to_calibrate_camera: string;
     failed_to_calibrate_chessboard: string;
     failed_to_calibrate_with_pictures: string;
     failed_to_detect_calibration_pattern: string;
-    failed_to_download_pictures: string;
     failed_to_move_laser_head: string;
     failed_to_parse_checkpoint: string;
     failed_to_save_calibration_results: string;
