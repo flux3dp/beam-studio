@@ -1,5 +1,6 @@
 import { axiosFluxId } from '@core/helpers/api/flux-id';
 import storage from '@core/implementations/storage';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const mockCurrentDevice = jest.fn();
 const mockGetLogsTexts = jest.fn();
@@ -123,6 +124,38 @@ describe('uploadErrorReport', () => {
       expect(mockPost).toHaveBeenCalledTimes(1);
     },
   );
+
+  test.each(['CONNECTION_TIMEOUT', 'CONNECTION_DISCONNECTED', '#810', '#805', '#850'])(
+    '%s: opting out of device logs preserves metadata and device throttle after reconnection',
+    async (errorCode) => {
+      const device = idleDevice();
+
+      // The failed machine is connected and idle again when the user consents.
+      mockCurrentDevice.mockReturnValue(device);
+      await expect(
+        uploadErrorReport({ device: device.info as IDeviceInfo, errorCode, includeDeviceLog: false }),
+      ).resolves.toBe('sent');
+
+      const form = mockPost.mock.calls[0][1] as FormData;
+
+      expect(form.get('serial')).toBe(device.info.serial);
+      expect(form.get('firmware_version')).toBe(device.info.version);
+      expect(form.has('system_log')).toBe(false);
+      expect(form.has('bug_report')).toBe(true);
+      expect(mockGetLogsTexts).not.toHaveBeenCalled();
+      expect(mockMeetRequirement).not.toHaveBeenCalled();
+      expect(storage.get('error-report-counter')).toMatchObject({ counts: { SN12345678: 1 } });
+      // Changing the log option does not create another fingerprint or bypass cooldown.
+      await expect(uploadErrorReport({ errorCode, includeDeviceLog: true })).resolves.toBe('cooldown');
+      expect(mockPost).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  test('explicitly enabling device logs retains the default download behavior', async () => {
+    await expect(uploadErrorReport({ errorCode: 'X', includeDeviceLog: true })).resolves.toBe('sent');
+    expect(mockGetLogsTexts).toHaveBeenCalledWith(['playerd.log', 'fluxrobotd.log'], undefined, 10_000);
+    expect((mockPost.mock.calls[0][1] as FormData).has('system_log')).toBe(true);
+  });
 
   test('busy device: system_log skipped, upload still sent', async () => {
     mockCurrentDevice.mockReturnValue({ ...idleDevice(), control: { getMode: () => 'raw' } });

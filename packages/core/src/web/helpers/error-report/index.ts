@@ -43,6 +43,8 @@ export interface UploadErrorReportOptions {
   device?: IDeviceInfo | null;
   /** real code, e.g. `HARDWARE_ERROR_OVERHEAT`, `#806`, `CONNECTION_TIMEOUT` (§7.4) */
   errorCode: string;
+  /** Defaults to true. False skips device logs without dropping device metadata or changing throttle. */
+  includeDeviceLog?: boolean;
   /**
    * scene SVG (`#806`) or the imported file itself (`#809`); a thunk so the serialisation runs only
    * for an upload that actually happens, after the preference and throttle checks (§7.1.1)
@@ -151,7 +153,7 @@ export const getUploadBlock = (options: UploadErrorReportOptions): BlockReason |
 };
 
 export const uploadErrorReport = async (options: UploadErrorReportOptions): Promise<UploadResult> => {
-  const { errorCode, scene } = options;
+  const { errorCode, includeDeviceLog = true, scene } = options;
 
   try {
     const blocked = getUploadBlock(options);
@@ -197,7 +199,7 @@ export const uploadErrorReport = async (options: UploadErrorReportOptions): Prom
       }
 
       try {
-        const deviceLog = await readDeviceLog(uuid);
+        const deviceLog = includeDeviceLog ? await readDeviceLog(uuid) : null;
 
         if (deviceLog && budget > 0) {
           form.append('system_log', tail(deviceLog, Math.min(MAX_FILE_BYTES, budget)), 'system_log.txt');

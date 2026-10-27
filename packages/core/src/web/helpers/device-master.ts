@@ -269,7 +269,11 @@ class DeviceMaster {
 
       Alert.popById('device-auth-fail');
       // #811 wrong password is the user's state, not a defect
-      Alert.popUp(reachable ? alert : withErrorReportConsent(alert, { device: device.info, errorCode: '#810' }));
+      Alert.popUp(
+        reachable
+          ? alert
+          : withErrorReportConsent(alert, { device: device.info, errorCode: '#810', includeDeviceLog: false }),
+      );
 
       // Display the dialog again
       const res = await this.showAuthDialog(device.info.uuid);
@@ -618,7 +622,11 @@ class DeviceMaster {
     Alert.popUp(
       errorCode === ConnectionError.NOT_FOUND
         ? alert
-        : withErrorReportConsent(alert, { device: alertDevice, errorCode: `CONNECTION_${errorCode}` }),
+        : withErrorReportConsent(alert, {
+            device: alertDevice ?? null,
+            errorCode: `CONNECTION_${errorCode}`,
+            includeDeviceLog: false,
+          }),
     );
   }
 

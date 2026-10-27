@@ -56,7 +56,7 @@
 - **S3 一律自動（無設計檔）** → 無 checkbox；視窗開啟時即開始上傳；視窗底部一行小灰字「診斷資料已自動傳送」。
 - **S4 永不** → 視窗與現在完全相同。
 - **S5 達每日上限** → checkbox 隱藏（每次詢問）或不上傳且無狀態列（一律自動）；在 generic logger 寫一筆「已略過（達每日上限）」。
-- **S6 連線類錯誤** → 資料包只含錯誤報告；裝置 Log 部分是略過，不是失敗。兩種子情況：`#802` 後端警示完全沒有裝置（歸檔於 `no-device/{installation_id}/`）；`popConnectionError`（`device-master.ts:580`）在 `select` 失敗後觸發，此時雖無控制 socket，但從探索結果已知含序號與韌體版本的 `deviceInfo`（歸檔於 `{serial}/`）。
+- **S6 機器連線類錯誤** → 資料包只含錯誤報告；`CONNECTION_*`、`#810`、`#805`、`#850` 明確傳入 `includeDeviceLog: false`，即使同意上傳時已重新連線也不下載裝置 log。已知序號、韌體與裝置 throttle 保留；裝置 Log 部分是略過，不是失敗。兩種子情況：`#802` 後端警示完全沒有裝置（歸檔於 `no-device/{installation_id}/`）；`popConnectionError`（`device-master.ts:580`）在 `select` 失敗後觸發，此時雖無控制 socket，但從探索結果已知含序號與韌體版本的 `deviceInfo`（歸檔於 `{serial}/`）。
 - **S7 匯出/匯入失敗**（`#806`/`#809`）→ 有 `scene` 的報告不受自動傳送同意涵蓋；每次詢問／總是傳送皆顯示預設未勾選的設計檔同意 checkbox。不傳送時不詢問、不上傳。仍遵守 throttle；勾選後才一起傳送診斷資料與場景 SVG／匯入檔案，維持 `device: null`。成功後不顯示自動傳送提示。
 - **S8 上傳失敗 3 次** → 靜默；不另跳錯誤視窗（使用者已經有一個錯誤要處理）。記錄到 generic logger。
 - **S9 同一錯誤重複發生**（使用者對同一連線失敗按五次重試，或同一 LAN 問題隔天再現）→ 只有第一次上傳；之後的只在本地計數，且指紋冷卻期間 checkbox 隱藏（§7.7）。該指紋的下一次上傳會帶 `occurrences_since_last`，頻率資訊不會遺失。
@@ -80,6 +80,7 @@
 | A13 | 在每次詢問、總是傳送下各觸發 `#806` 與 `#809`；先不勾選關閉，再於未被 throttle 阻擋時勾選確認。另測不傳送、冷卻與每日上限。 | 前兩種設定皆顯示未勾選的專用 checkbox，說明將傳送此次處理的設計檔；不勾選不傳，勾選才一起傳診斷與檔案。不顯示自動傳送狀態列，成功後不跳自動傳送提示、不改偏好。 | 不傳送或 throttle 阻擋時不詢問、不上傳。依 `scene` 判斷而非只列錯誤碼；既有 checkbox 保留且不得繞過設計同意。 |
 | A14 | 閒置機器上開始 log 下載並排入狀態查詢；模擬 10 秒無訊息，之後再送出舊下載的 transfer、binary、Blob 與 `ok`。重新連線後再查詢狀態。 | 下載與舊佇列的待執行請求收到 TIMEOUT；舊 socket 關閉，不送出排隊中的 `play report`，遲到封包不觸發重試或被當成狀態回覆。新連線的狀態查詢正常。 | 同時測試傳輸途中停頓、已收到 Blob 但缺最後 `ok`。對已失效 Control 新加 task 立即失敗；沒有殘留 timer 或 pending task。 |
 | A15 | 連接機器 A，開始收集 player 與 robot log；第一份仍在下載時切換到已連接的 B，再讓 A 完成下載。 | 兩份 log 都從開始時取得的 A control 下載；B 不收到這次收集的任何 `fetch_log`，報告不混入 B 的內容。 | 取得原 control 失敗或下載失敗時保留原本的失敗註記，不改用 B；TIMEOUT 仍中止剩餘收集。每份檔案仍各自排隊，保留進度 callback。 |
+| A16 | 分別觸發 `CONNECTION_*`、`#810`、`#805`、`#850`，在同意前恢復原機器連線，再勾選傳送。 | 報告保留已知序號與韌體，附 `bug_report` 但不附 `system_log`；不發出 `fetch_log`，使用原裝置的 throttle。 | 原裝置資訊未知時不借用目前另一台資訊；非連線錯誤省略此選項或傳 true 時仍可下載 log。更改此選項不得繞過冷卻。 |
 
 ## 6. 不得改變的事項
 
@@ -107,6 +108,9 @@
 - `components/settings/shared/hooks/useSettingStore.ts` `getConfig` — 鍵未設定時，只在 `DEFAULT_CONFIG` 有預設值才把預設值寫回儲存；其他鍵的行為不變（都有預設值）。若不改，開啟 設定 → 隱私 會為 `error-report-upload` 寫入 `undefined`，在 electron-store 會拋錯、在 web 會存成字串 `"undefined"`（2026-10-14 審閱發現）。由 `useSettingStore.spec.ts` 涵蓋。
 
 ## 7. 設計
+
+`UploadErrorReportOptions.includeDeviceLog?: boolean` 預設為 true；false 僅略過裝置 log 讀取與 `system_log` 附件，不改變裝置 metadata、fingerprint 或計數。機器連線類入口明確設定 false；相機預覽／校正錯誤維持既有 log 行為。`popConnectionError` 找不到原裝置資訊時使用 `device: null`，不得回退成另一台目前機器。
+
 
 ### 7.1 模組
 
@@ -282,7 +286,9 @@ Log 收集共用既有控制佇列（2026-10-27）。`DeviceMaster.getLogsTexts`
 
 ## 13. 測試計畫
 
+- `helpers/error-report/index.spec.ts`：連線已恢復且閒置時，false 仍不讀 log、保留 metadata 與原裝置計數／冷卻；省略或 true 維持下載。
+
 - 單元測試：`scrub.spec.ts`（macOS、Windows、Linux 家目錄路徑、ws 段落的 `> select_font /Users/x/Library/Fonts/a.ttf` 行、fluxghost `--debug` 設定行的樣本；排除鍵已移除；手動路徑不受影響）、`throttle.spec.ts`（每日上限、本地午夜重置、失敗不計入、以序號為單位；冷卻加倍 1 小時 → 24 小時 → 7 天 → 30 天、略過次數帶出並歸零、版本變更產生新指紋、修剪）、`consent.spec.tsx`（三種偏好 × checkbox 是否出現、既有 checkbox 保留、冷卻或每日上限期間 checkbox 隱藏、callback 啟動上傳、**所有相依拋出例外 → 原樣回傳輸入的警示設定**、有 scene 在 Ask／Always 都需同意且成功後無自動傳送提示）、`installationId.spec.ts`（machineId 成功 → 雜湊值、machineId 為 `''` 或拋出 → 儲存的 UUID、多次呼叫結果穩定）。
 - 佇列回歸：`helpers/device-master.spec.ts` 使用真實 `Control` 佇列與指令 handler，搭配假傳輸；涵蓋兩種請求順序、Blob 後等待結尾 `ok`、進度 listener 歸屬、log 終止錯誤後繼續執行；傳輸中或等待結尾 `ok` 逾時後拒絕排隊指令、關閉連線；舊連線遲到的 transfer／binary／Blob／ok 不得污染新連線；收集途中切換機器仍固定原 control，取得連線失敗不得改抓另一台。
-- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A15，另以匯出途中關閉 fluxghost 觸發 `#806`。
+- 手動：在桌面版對可引發非硬體類 Monitor 錯誤的裝置執行上述 A1–A16，另以匯出途中關閉 fluxghost 觸發 `#806`。
 - 回歸：§6 所列既有 `checkbox:` 警示呼叫者行為不變；說明 → Bug Report 下載仍包含 `recent_files`。

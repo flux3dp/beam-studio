@@ -315,7 +315,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
       Alert.popUp(
         withErrorReportConsent(
           { id, message: i18n.lang.message.promark_disconnected },
-          { device: this.props.device, errorCode: '#850' },
+          { device: this.props.device, errorCode: '#850', includeDeviceLog: false },
         ),
       );
     } else if (type === 'disconnected') {
@@ -503,7 +503,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
               message: LANG.message.connectionTimeout,
               type: AlertConstants.SHOW_POPUP_ERROR,
             },
-            { device, errorCode: '#805' },
+            { device, errorCode: '#805', includeDeviceLog: false },
           ),
         );
 
