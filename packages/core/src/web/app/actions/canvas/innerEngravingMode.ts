@@ -7,6 +7,7 @@ import {
   enableInnerEngraving,
   isInnerEngravingActive,
 } from '@core/helpers/addOn/innerEngraving';
+import { setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { disableOtherExclusiveModes } from '@core/helpers/exclusiveModes';
 import { attributeMap, initLayerConfig, innerEngravingConfigKeys } from '@core/helpers/layer/layer-config-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -34,7 +35,9 @@ getSVGAsync(({ Editor }) => {
  * @param promarkInfo a Promark laser source to apply after the current document is cleared
  * @param workarea a work area to move to at the same time, for turning the mode on from a machine
  *   that cannot do it. Both options are applied after the clear, so the save prompt still offers
- *   the old document.
+ *   the old document — and before the new document's first layer is initialised, so a caller that
+ *   changes the machine in the same step (document settings) must pass them, or the layer gets the
+ *   old machine's defaults.
  * @returns whether the switch happened
  */
 export const switchInnerEngravingMode = async (
@@ -54,6 +57,9 @@ export const switchInnerEngravingMode = async (
     enableInnerEngraving({ promarkInfo });
   } else {
     disableInnerEngraving();
+
+    // so the layer initialisation below sees the source the caller is switching to as well
+    if (promarkInfo) setPromarkInfo(promarkInfo);
   }
 
   // The inner-engraving dimension must be stored before changeWorkarea reads it to resize the canvas.

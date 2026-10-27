@@ -99,6 +99,20 @@ describe('switchInnerEngravingMode', () => {
     expect(mockInitLayerConfig).toHaveBeenCalledWith(layerGroup);
   });
 
+  test('applies the target laser source and work area before initialising the layer when leaving the mode', async () => {
+    mockIsInnerEngravingActive.mockReturnValue(true);
+    useDocumentStore.setState({ 'inner-engraving': true, workarea: 'fpm1' });
+    setPromarkInfo(uvInfo);
+    mockInitLayerConfig.mockImplementationOnce(() => {
+      expect(getPromarkInfo()).toEqual(desktopInfo);
+      expect(mockChangeWorkarea).toHaveBeenCalledWith('fbb1b');
+    });
+
+    await expect(switchInnerEngravingMode(false, { promarkInfo: desktopInfo, workarea: 'fbb1b' })).resolves.toBe(true);
+
+    expect(mockInitLayerConfig).toHaveBeenCalledTimes(1);
+  });
+
   test('does not change the work area, laser source, or mode when clearing is cancelled', async () => {
     mockClearScene.mockResolvedValue(false);
 

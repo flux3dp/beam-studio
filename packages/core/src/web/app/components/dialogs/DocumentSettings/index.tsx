@@ -46,6 +46,7 @@ import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helper
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { applyExclusiveModePatch, type ExclusiveMode } from '@core/helpers/exclusiveModes';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { syncUvLayerFrequency } from '@core/helpers/layer/syncUvLayerFrequency';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
   getDefaultModule,
@@ -294,12 +295,28 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     const rotaryChanged = rotaryMode !== origState.rotary_mode;
     const newInnerEngraving = Boolean(supportsInnerEngraving && innerEngraving);
+    const modeChanged = newInnerEngraving !== Boolean(origState['inner-engraving']);
+    const isPromark = promarkModels.has(workarea);
+    const wasUV = promarkModels.has(origWorkarea) && getPromarkInfo().laserType === LaserType.UV;
+    const becomesUV = isPromark && pmInfo.laserType === LaserType.UV;
 
     // first, because it starts a new document: 2D and 3D hold different things, so the canvas, the
-    // meshes and the undo stack all go. Nothing else may be applied if the user backs out of that
-    if (newInnerEngraving !== Boolean(origState['inner-engraving'])) {
-      if (!(await switchInnerEngravingMode(newInnerEngraving))) return false;
+    // meshes and the undo stack all go. Nothing else may be applied if the user backs out of that.
+    // The target machine goes with it: the switch initialises the new document's first layer, and
+    // its defaults depend on the laser source and the work area being switched to
+    if (modeChanged) {
+      const switched = await switchInnerEngravingMode(newInnerEngraving, {
+        promarkInfo: isPromark ? pmInfo : undefined,
+        workarea: workareaChanged ? workarea : undefined,
+      });
+
+      if (!switched) return false;
     }
+
+    // a layer brought over from another source keeps its power: on UV the frequency has to be
+    // derived from it, or the layer fires at whatever its old frequency means on UV. A document
+    // that just switched to 3D has freshly initialised layers instead
+    if (becomesUV && !wasUV && !newInnerEngraving) syncUvLayerFrequency();
 
     const newState: Partial<DocumentState> = {
       borderless: Boolean(addOnInfo.openBottom && borderless),
@@ -393,7 +410,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || autoFeederChanged) {
-      changeWorkarea(workarea, { toggleModule: workareaChanged });
+      // the mode switch above already moved a changed work area
+      const workareaPending = workareaChanged && !modeChanged;
+
+      if (workareaPending || customDimensionChanged || rotaryChanged || passThroughChanged || autoFeederChanged) {
+        changeWorkarea(workarea, { toggleModule: workareaPending });
+      }
 
       rotaryAxis.toggleDisplay();
     }

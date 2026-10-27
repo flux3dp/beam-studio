@@ -176,6 +176,18 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   writeDataLayer: (...args) => mockWriteDataLayer(...args),
 }));
 
+const mockSyncUvLayerFrequency = jest.fn();
+
+jest.mock('@core/helpers/layer/syncUvLayerFrequency', () => ({
+  syncUvLayerFrequency: () => mockSyncUvLayerFrequency(),
+}));
+
+const mockSwitchInnerEngravingMode = jest.fn();
+
+jest.mock('@core/app/actions/canvas/innerEngravingMode', () => ({
+  switchInnerEngravingMode: (...args) => mockSwitchInnerEngravingMode(...args),
+}));
+
 const mockUnmount = jest.fn();
 
 import DocumentSettings from './index';
