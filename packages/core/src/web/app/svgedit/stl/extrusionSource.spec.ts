@@ -103,6 +103,40 @@ describe('extrusionSource', () => {
     built!.geometry.dispose();
   });
 
+  test('the y flip keeps every face pointing outward', () => {
+    const shape = new Shape();
+
+    shape.moveTo(0, 0);
+    shape.lineTo(10, 0);
+    shape.lineTo(10, 10);
+    shape.lineTo(0, 10);
+    shape.closePath();
+    mockParseSvg.mockReturnValue({ paths: [{ shapes: [shape] }] });
+
+    const built = buildExtrusion({ depth: 1, markup: '<rect />', scale: 1, type: 'svg' });
+    const position = built!.geometry.getAttribute('position');
+    // non-indexed: three vertices per triangle. The signed volume is positive when the triangles
+    // wind counter-clockwise seen from outside, negative for a mesh turned inside out by a mirror.
+    let signedVolume = 0;
+
+    for (let i = 0; i < position.count; i += 3) {
+      const a = new Vector3().fromBufferAttribute(position, i);
+      const b = new Vector3().fromBufferAttribute(position, i + 1);
+      const c = new Vector3().fromBufferAttribute(position, i + 2);
+
+      signedVolume += a.dot(b.clone().cross(c)) / 6;
+    }
+
+    expect(signedVolume).toBeCloseTo(100);
+    // the shape still lands at y <= 0 and z in 0..depth
+    expect(built!.geometry.boundingBox!.min.y).toBeCloseTo(-10);
+    expect(built!.geometry.boundingBox!.max.y).toBeCloseTo(0);
+    expect(built!.geometry.boundingBox!.min.z).toBeCloseTo(0);
+    expect(built!.geometry.boundingBox!.max.z).toBeCloseTo(1);
+
+    built!.geometry.dispose();
+  });
+
   test('flattens a circle within half a pixel at 2000 DPI instead of a fixed segment count', () => {
     // the Element panel circle: r = 250 scene units = 25mm
     const circle = new Shape();

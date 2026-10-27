@@ -177,7 +177,13 @@ export const buildExtrusion = (
     { bevelEnabled: false, curveSegments: 1, depth: source.depth },
   );
 
-  geometry.scale(source.scale, -source.scale, 1);
+  // SVG is y-down and the scene is y-up. A negative y scale would mirror the mesh and turn every
+  // triangle inside out, so the flip is a half turn around x instead (y -> -y, z -> -z), with the
+  // extrusion moved back up to 0..depth: the solid is symmetric along z, so it is the same shape
+  // with its faces still pointing outward.
+  geometry.rotateX(Math.PI);
+  geometry.translate(0, 0, source.depth);
+  geometry.scale(source.scale, source.scale, 1);
   geometry.computeVertexNormals();
   geometry.computeBoundingBox();
 
