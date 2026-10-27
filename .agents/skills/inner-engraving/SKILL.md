@@ -102,7 +102,8 @@ All paths under `packages/core/src/web/` unless noted.
   `getInnerEngravingBlocks`, see below); `SvgEditor` hides `Ruler` and `DpiInfo`.
 - **Single selection**: `SelectionManager.setSelectedElements` / `addToSelection` /
   `tempGroupSelectedElements` keep only the last element — no multi-select or temp groups.
-- Path Preview button hidden unless `isDev()`. The Generators drawer and left-panel button are
+- Path Preview is available (it draws the dots from the job's gcode, see the `path-preview`
+  skill). The Generators drawer and left-panel button are
   hidden except under `isUvDev()` (`DrawingToolButtonGroup.tsx` `supportedIn3D`; `SvgEditor.tsx`
   also requires a non-mobile layout for the drawer), where `getGenerators({ isInnerEngraving: true })` lists only the 3D material test.
 
