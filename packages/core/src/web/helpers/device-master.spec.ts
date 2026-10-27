@@ -117,6 +117,53 @@ describe('deviceMaster log downloads share the control queue', () => {
     expect(jest.getTimerCount()).toBe(0);
   });
 
+  test('a multi-file log collection keeps its original control after switching machines', async () => {
+    const otherControl = new Control('other-device');
+    const otherSend = jest.fn();
+
+    Object.assign(otherControl, { ws: { send: otherSend } });
+
+    const logs = deviceMaster.getLogsTexts(['playerd.log', 'fluxrobotd.log'], undefined, 10_000);
+
+    await jest.advanceTimersByTimeAsync(0);
+    expect(send.mock.calls).toEqual([['fetch_log playerd.log']]);
+
+    // Selecting B changes the control returned by DeviceMaster while A's first file is in flight.
+    jest.mocked(deviceMaster.getControl).mockResolvedValue(otherControl);
+
+    const first = new Blob(['A player log']);
+    const second = new Blob(['A robot log']);
+
+    control.emit('command-message', first);
+    control.emit('command-message', { cmd: 'fetch_log playerd.log', status: 'ok' });
+    await jest.advanceTimersByTimeAsync(0);
+    expect(otherSend).not.toHaveBeenCalled();
+    expect(send.mock.calls).toEqual([['fetch_log playerd.log'], ['fetch_log fluxrobotd.log']]);
+    control.emit('command-message', second);
+    finishLog();
+
+    const result = await logs;
+
+    expect(result['playerd.log'][1]).toBe(first);
+    expect(result['fluxrobotd.log'][1]).toBe(second);
+    expect(jest.getTimerCount()).toBe(0);
+  });
+
+  test('a failed original connection never falls back to the newly selected machine', async () => {
+    jest.mocked(deviceMaster.getControl).mockRejectedValueOnce(new Error('A disconnected'));
+
+    const logs = deviceMaster.getLogsTexts(['playerd.log', 'fluxrobotd.log']);
+
+    // Subsequent getControl calls would now succeed on another machine.
+    await jest.advanceTimersByTimeAsync(0);
+    expect(send).not.toHaveBeenCalled();
+    await expect(logs).resolves.toEqual({
+      'fluxrobotd.log': ['<fluxrobotd.log not downloaded: Error: A disconnected>\n'],
+      'playerd.log': ['<playerd.log not downloaded: Error: A disconnected>\n'],
+    });
+    expect(send).not.toHaveBeenCalled();
+  });
+
   test('the queue continues after a terminal log error', async () => {
     const log = deviceMaster.downloadLog('fluxrobotd.log', undefined, 10_000);
     const rejectedLog = expect(log).rejects.toMatchObject({ error: 'NOT_FOUND' });

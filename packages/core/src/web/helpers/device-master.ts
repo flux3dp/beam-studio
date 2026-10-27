@@ -1038,6 +1038,15 @@ class DeviceMaster {
   async downloadLog(log: string, onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
     const controlSocket = await this.getControl();
 
+    return this.downloadLogFromControl(controlSocket, log, onProgress, idleTimeout);
+  }
+
+  private downloadLogFromControl = (
+    controlSocket: IControlSocket,
+    log: string,
+    onProgress: (...args: any[]) => void,
+    idleTimeout?: number,
+  ) => {
     // Log transfers share command listeners with other control requests. Install the progress
     // listener only when this task starts, so waiting downloads cannot overwrite an active task's.
     return controlSocket.addTask(() => {
@@ -1045,7 +1054,7 @@ class DeviceMaster {
 
       return controlSocket.downloadLog(log, idleTimeout);
     });
-  }
+  };
 
   async fetchCameraCalibImage(fileName: string, onProgress: (...args: any[]) => void = () => {}) {
     const controlSocket = await this.getControl();
@@ -1078,11 +1087,17 @@ class DeviceMaster {
   async getLogsTexts(logs: string[], onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
     const res: Record<string, Array<Blob | string>> = {};
 
+    if (!logs.length) return res;
+
+    // Bind the entire collection to one connection, including a failed connection attempt.
+    // Selecting another machine between files must never change the source of this report.
+    const controlSocket = this.getControl();
+
     for (let i = 0; i < logs.length; i += 1) {
       const log = logs[i];
 
       try {
-        const logFile = await this.downloadLog(log, onProgress, idleTimeout);
+        const logFile = await this.downloadLogFromControl(await controlSocket, log, onProgress, idleTimeout);
 
         res[log] = logFile;
       } catch (e) {
