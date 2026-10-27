@@ -442,8 +442,9 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
     config.speed = 1000;
     config.frequency = match(promarkInfo)
       .when(
+        // the weakest output (about 15.6%), so a new layer starts safe; the power follows below
         ({ laserType }) => laserType === LaserType.UV,
-        () => 40,
+        () => 200,
       )
       .when(
         ({ laserType, watt }) => laserType === LaserType.MOPA && watt >= 100,

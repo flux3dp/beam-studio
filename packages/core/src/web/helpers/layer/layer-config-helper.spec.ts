@@ -415,8 +415,13 @@ describe('test layer-config-helper', () => {
       mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.UV, watt: 5 });
     });
 
-    test('defaults agree: 100% is 40kHz', () => {
-      expect(getDefaultConfig()).toMatchObject({ frequency: 40, power: 100, pulseWidth: 13, qPulseWidth: 1 });
+    test('defaults agree: the weakest output, 200kHz', () => {
+      expect(getDefaultConfig()).toMatchObject({
+        frequency: 200,
+        power: expect.closeTo(15.56, 1),
+        pulseWidth: 13,
+        qPulseWidth: 1,
+      });
     });
 
     test('Desktop defaults are unchanged', () => {
