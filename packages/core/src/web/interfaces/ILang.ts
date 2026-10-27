@@ -2824,6 +2824,7 @@ export interface ILang {
       install_correct_headtype: string;
       job_origin_unavailable: string;
       job_origin_warning: string;
+      laser_frequency_unavailable: string;
       object_outside_moving_area: string;
       power_too_high: string;
       power_too_high_confirm: string;
