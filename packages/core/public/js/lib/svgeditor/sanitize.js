@@ -276,6 +276,7 @@
       'data-textureStripeAngle',
       'data-textureStripeIntensity',
       'data-textureStripeInterval',
+      'data-laserFrequency',
       'data-pnc-cut',
       'data-pnc-hidden',
     ],

@@ -142,6 +142,7 @@ export const configUnitMap: Record<ParamsLabelKey, string> = {
   ink: '',
   interpolation: '',
   kRatio: '%',
+  laserFrequency: 'kHz',
   [layerNameKey]: '',
   minPadding: 'mm',
   minPower: '%',

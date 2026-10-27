@@ -31,6 +31,8 @@ type LaserConfig = {
   focusStep: number;
   height: number;
   highQuality: boolean;
+  /** laser control frequency in kHz, 0 for machine default, fcode v2 CO2 models only */
+  laserFrequency: number;
   minPower: number;
   oneWayEngraving: boolean;
   oneWayEngravingReverse: boolean;
