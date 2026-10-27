@@ -2,7 +2,6 @@ import React, { memo, useEffect, useMemo, useState } from 'react';
 
 import { ConfigProvider, Modal } from 'antd';
 import classNames from 'classnames';
-import { piped } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -169,7 +168,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
 
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
-    const updatePromarkInfo = piped(postPresetChange, () => initState());
+    // the document itself (field size, layer values for the new source) is updated by
+    // registerPromarkInfoListener, which runs first; this only re-reads the layers into the panel
+    const updatePromarkInfo = () => initState();
 
     canvasEvents.on('promark-info-changed', updatePromarkInfo);
 

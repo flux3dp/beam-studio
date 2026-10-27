@@ -16,6 +16,7 @@ import { uvFrequencyToPower, uvPowerToFrequency } from './uvPowerFrequency';
  * rewritten to the value that frequency stands for (the two then agree, within the UV range).
  *
  * Layers on a default preset are left alone: postPresetChange re-applies the UV preset to them.
+ * Called from the document settings and from registerPromarkInfoListener (machine selection).
  */
 export const syncUvLayerFrequency = (): void => {
   const presets = getAllPresets();
