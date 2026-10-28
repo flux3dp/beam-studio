@@ -2325,7 +2325,6 @@ const lang: ILang = {
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritická chyba: Subsystém neodpovídá. Kontaktujte prosím FLUX podporu.', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: 'Něco je v nepořádku\nRestartujte prosím přístroj', // Deprecated in FW 3.3.1
     hour: 'h',
-    left: 'zbývá',
     MAINBOARD_OFFLINE: '#905 Chyba při připojování k základní desce.\nRestartujte prosím přístroj.',
     minute: 'm',
     monitor: 'MONITOR',
@@ -2347,6 +2346,7 @@ const lang: ILang = {
     },
     taskTab: 'Úloha',
     temperature: 'Teplota',
+    time_left: 'Zbývá %s',
     upload: 'Nahrát',
     USER_OPERATION: 'Pro pokračování prosím následujte instrukce na panelu zařízení.',
     USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Prázdná kazeta\nV kazetě došel inkoust. Vyměňte kazetu, abyste mohli pokračovat v tisku.',

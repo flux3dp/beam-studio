@@ -2325,7 +2325,6 @@ const lang: ILang = {
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Błąd krytyczny: Brak odpowiedzi podsystemu. Skontaktuj się z pomocą techniczną FLUX.', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: 'Coś poszło nie tak\nProszę ponownie uruchomić komputer', // Deprecated in FW 3.3.1
     hour: 'h',
-    left: 'Pozostało',
     MAINBOARD_OFFLINE: '#905 Błąd podczas łączenia z płytą główną.\nPlease restart the machine. ',
     minute: 'm',
     monitor: 'MONITOR',
@@ -2347,6 +2346,7 @@ const lang: ILang = {
     },
     taskTab: 'Zadanie',
     temperature: 'Temperatura',
+    time_left: 'Pozostało %s',
     upload: 'Wgraj',
     USER_OPERATION: 'Aby kontynuować, postępuj zgodnie z instrukcjami na panelu urządzenia.',
     USER_OPERATION_CARTRIDGE_INK_EMPTY: 'Pusty wkład\nWe wkładzie skończył się atrament. Wymień wkład, aby kontynuować drukowanie.',
