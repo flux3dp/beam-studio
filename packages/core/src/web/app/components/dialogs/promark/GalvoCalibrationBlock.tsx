@@ -168,7 +168,18 @@ const GalvoCalibrationBlock = ({
         setStep('Solving');
 
         const params = buildSolveParams(captured, config, { center });
-        const { annotated, result } = await getOpenCV().solveGalvoCoupon<SolveResult>(captured.blob, params);
+        let answer: { annotated: Blob | null; result: SolveResult };
+
+        try {
+          answer = await getOpenCV().solveGalvoCoupon<SolveResult>(captured.blob, params);
+        } catch (error) {
+          // fluxghost's refusals carry a reason the generic formatter drops (RULER_INVALID: why)
+          const { info, reason } = (error ?? {}) as { info?: string; reason?: string };
+
+          throw info ? new Error(`${info}${reason ? `: ${reason}` : ''}`) : error;
+        }
+
+        const { annotated, result } = answer;
         const sent = markedWith.current ?? {
           scaleX: config.galvoParameters.x.scale,
           scaleY: config.galvoParameters.y.scale,
@@ -360,8 +371,11 @@ const GalvoCalibrationBlock = ({
               </td>
             </tr>
             <tr>
-              <td>skew</td>
-              <td>{fmt(result.skew_deg, 3)}°</td>
+              <td>skew / rotation</td>
+              <td>
+                {fmt(result.skew_deg, 3)}° / {fmt(result.rotation_deg, 3)}°{result.mirrored ? ' (mirrored)' : ''}
+                {result.orientation ? ` — orientation from ${result.orientation.source}` : ''}
+              </td>
             </tr>
             <tr>
               <td>Affine residual RMS / max</td>

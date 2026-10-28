@@ -80,9 +80,14 @@ export interface SolveResult {
   affine_rms: null | number;
   /** The lens centre in the L frame's coordinates, mm relative to the designed centre. */
   field_center_mm: [number, number] | null;
+  /** The affine map turned the pattern over (det < 0): an axis is mirrored relative to the guess. */
+  mirrored?: boolean;
   nodes_found: number;
+  orientation?: { identity_distance_mm: null | number; matches_invert: boolean; source: 'identity' | 'invert' };
   raw_max: null | number;
   raw_rms: null | number;
+  /** The galvo axes' angle relative to the L frame, degrees; what field.angle would take out. */
+  rotation_deg?: null | number;
   ruler: SolveRuler;
   scale_x: null | number;
   scale_y: null | number;
