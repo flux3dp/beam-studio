@@ -75,7 +75,7 @@ const PromarkInputs = ({
   const handlePowerChange = (value: number) => {
     handleChange('power', value);
 
-    if (isUV) handleChange('frequency', uvPowerToFrequency(value));
+    if (isUV) handleChange('frequency', uvPowerToFrequency(value, uvFrequency));
   };
   const handleFrequencyChange = (value: number) => {
     handleChange('frequency', value);

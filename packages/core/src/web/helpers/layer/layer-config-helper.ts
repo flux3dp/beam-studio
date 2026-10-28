@@ -557,6 +557,15 @@ export const writeDataLayer = <T extends ConfigKey>(
     shouldApplyModuleBaseConfig = true,
   }: { applyPrinting?: boolean; batchCmd?: IBatchCommand; shouldApplyModuleBaseConfig?: boolean } = {},
 ): void => {
+  console.warn('writeDataLayer called with:', {
+    applyPrinting,
+    batchCmd,
+    key,
+    layer,
+    shouldApplyModuleBaseConfig,
+    value,
+  });
+
   if (!layer) {
     return;
   }
@@ -860,11 +869,39 @@ export const getPromarkLimit = (): {
     .with({ watt: 30 }, () => ({ frequency: { max: 60, min: 30 } }))
     .otherwise(() => ({ frequency: { max: 60, min: 27 } }));
 
+/**
+ * Write a UV layer's power and frequency so the two agree.
+ *
+ * UV realises power through the frequency (uvPowerFrequency.ts), so a layer always carries both.
+ * The power is the value the user sets and sees, so it is the source: clamped to the UV range,
+ * the frequency is derived from it and the power rewritten to what that frequency stands for.
+ * Without a power (the default UV presets carry a frequency only) the power follows the frequency.
+ */
+export const writeUvPowerFrequency = (
+  layer: Element,
+  { frequency, power }: { frequency?: number; power?: number },
+  opts: { batchCmd?: IBatchCommand } = {},
+): void => {
+  console.log('writeUvPowerFrequency called with:', { frequency, power });
+
+  if (power !== undefined) {
+    const clampedPower = Math.max(UV_POWER_LIMIT.min, Math.min(power, UV_POWER_LIMIT.max));
+    const uvFrequency = uvPowerToFrequency(clampedPower);
+
+    writeDataLayer(layer, 'frequency', uvFrequency, opts);
+    writeDataLayer(layer, 'power', uvFrequencyToPower(uvFrequency), opts);
+  } else if (frequency !== undefined) {
+    writeDataLayer(layer, 'power', uvFrequencyToPower(frequency), opts);
+  }
+};
+
 export const applyPreset = (
   layer: Element,
   preset: Preset,
   opts: { applyName?: boolean; batchCmd?: IBatchCommand } = {},
 ): void => {
+  console.warn('Applying preset:', preset);
+
   const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const { applyName = true, batchCmd } = opts;
@@ -895,14 +932,12 @@ export const applyPreset = (
     writeDataLayer(layer, key, value, { applyPrinting: printingModules.has(module), batchCmd });
   }
 
-  // a UV preset may carry power, frequency or both; frequency is what the machine uses
+  // a UV preset may carry power, frequency or both: the power is what the user set, so it wins
+  // (see writeUvPowerFrequency); the default UV presets carry a frequency only
   if (isPromarkUV()) {
-    if (resolved.frequency !== undefined) {
-      writeDataLayer(layer, 'power', uvFrequencyToPower(resolved.frequency), { batchCmd });
-    } else {
-      // power is a forced key, so the default above was written when the preset has none
-      writeDataLayer(layer, 'frequency', uvPowerToFrequency(resolved.power ?? defaultConfig.power!), { batchCmd });
-    }
+    writeUvPowerFrequency(layer, resolved.power === undefined ? { frequency: resolved.frequency } : resolved, {
+      batchCmd,
+    });
   }
 
   if (applyName) {
@@ -915,6 +950,8 @@ export const applyPreset = (
  */
 export const postPresetChange = (): void => {
   // TODO: add test
+  console.warn('Post preset change triggered');
+
   const workarea = useDocumentStore.getState().workarea;
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const isPromark = promarkModels.has(workarea);
@@ -966,7 +1003,10 @@ export const postPresetChange = (): void => {
     }
 
     if (isPromark) {
-      if (promarkLimit?.frequency) {
+      if (isPromarkUV()) {
+        // the power is the source on UV: clamped to its range, and the frequency follows it
+        writeUvPowerFrequency(layerElement, { power: getData(layerElement, 'power') as number });
+      } else if (promarkLimit?.frequency) {
         const frequency = getData(layerElement, 'frequency') as number;
 
         if (frequency < promarkLimit.frequency.min) {

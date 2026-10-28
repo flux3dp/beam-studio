@@ -165,10 +165,11 @@
   - 功率改成 50%，進階設定裡的頻率變成 98.3kHz；改成 15.6% 變成 200kHz。功率可以輸入小數。
   - 進階設定把頻率改成 120kHz，功率變成 40%。頻率不能輸入小數。
   - 改功率或頻率都是一步 undo，兩個值一起還原。
-  - 預設參數下拉選單出現 UV 5W 的預設參數，套用後功率依頻率換算。
+  - 預設參數下拉選單出現 UV 5W 的預設參數，套用後功率依頻率換算；自訂參數帶功率時以功率為主、頻率跟著換算。
 - **邊界情況**：
   - 功率不能低於 15.6%（200kHz）。
   - 頻率設成 30–40kHz 時功率顯示 100%；之後再改功率，頻率回到 40–200kHz 的換算值。
+  - 從 Desktop / MOPA 或其他機型切到 UV（文件設定或選機器）時，每個自訂／無名稱圖層的頻率依它原本的功率換算，功率低於 15.6% 的夾到 15.6%（200kHz）。
   - 從 UV 切回 Desktop 或 MOPA 時重新套用預設參數，頻率回到主面板，範圍回到原本的設定。
 
 ### S2. UV 材質測試（2D）
@@ -307,7 +308,7 @@
 | `common/ZoomBlock.tsx` | 2D 畫布的縮放比例計算結果不變 |
 | `OptionsBlocks/ImageOptions/index.tsx`、`operations/import/readBitmapFile.ts` | 2D 圖片的換圖、匯入（選取、undo、對齊的時機）和 main 相同；深度雕刻設定只在內雕模式隱藏 |
 | `actions/beambox/beambox-global-interaction.ts` | 2D 進入編輯器時的選單狀態和 main 相同；內雕關閉後，曲面雕刻與依選取而定的項目（拆解路徑等）回到各自的條件 |
-| `dialogs/RotarySettings.tsx`、`actions/canvas/curveEngravingModeController.ts`、`operations/import/importBvg.ts`（改用 `setExclusiveMode` / `applyExclusiveModePatch`） | 開啟旋轉軸、曲面雕刻、穿透、自動送料時關掉其他模式的結果和 main 相同；舊檔開啟時各模式的套用結果不變；2D 檔案（含降級的內雕檔）不改材料設定 |
+| `dialogs/RotarySettings.tsx`、`actions/canvas/curveEngravingModeController.ts`、`operations/import/importBvg.ts`（改用 `setExclusiveMode` / `applyExclusiveModePatch`） | 開啟旋轉軸、曲面雕刻、穿透、自動送料時關掉其他模式的結果和 main 相同；舊檔開啟時各模式的套用結果不變；2D 檔案（含降級的內雕檔）不改材料設定；非 UV 文件開檔時不跑 `postPresetChange`（只有 Promark UV 會在開檔後把每層頻率對齊功率） |
 | `boundaryDrawer.ts`、`svgedit/workarea.ts`、`SvgEditor/Banner.tsx`、`ConfigPanel/SpeedBlock.tsx`、`helpers/addOn/rotary.ts`（`getAutoFeeder` / `getPassThrough` 改成物件參數） | 自動送料、穿透的判斷結果、邊界、Banner、速度上限不變 |
 | `svgedit/svgcanvas.ts` `getSvgString`、`clear` | 2D 文件存出的 SVG 不帶 `data-inner-engraving` 與 `data-inner-engraving-material`；清空畫布的行為不變 |
 | `operations/clipboard/*`、`operations/delete.ts`、`helpers/layer/deleteLayer.ts` | 2D 的複製、貼上、陣列、刪除、刪除圖層及其 undo 不變；只有 3D 投影會同步 `stlStore` |
@@ -389,9 +390,10 @@ UV 雷射的功率 API 不生效，實際輸出由頻率決定（2026-10-09 實�
 | 功率 % | 100 | 88.9 | 80 | 62.2 | 48.9 | 40 | 28.9 | 20 | 15.6 |
 
 - 換算放在純函式模組 `helpers/layer/uvPowerFrequency.ts`（資料表 + 雙向換算），面板、預設參數、材質測試共用。相鄰兩點線性內插。30kHz 實測也是 4.5W，不放進表內，避免 100% 對到兩個頻率。
-- **改功率**：可輸入小數，換算出的頻率保留小數寫入；後端接受小數並四捨五入。
+- **改功率**：可輸入小數，換算出的頻率保留小數寫入；後端接受小數並四捨五入。功率是 source of truth；改到 100% 時，若原本的頻率已在 30–40kHz 內就沿用，超出或缺值則用 40kHz（`uvPowerToFrequency(power, currentFrequency)`，所有從功率換算頻率的地方共用）。
 - **改頻率**（進階設定）：只能輸入整數，30–200kHz。40–200 依表換回功率；30–40 時功率顯示 100%。
-- 功率和頻率在同一個 BatchCommand 寫入，undo 一步。頻率是後端實際使用的值；讀到兩者不一致的圖層時，以頻率反推功率顯示。
+- 功率和頻率在同一個 BatchCommand 寫入，undo 一步。頻率是後端實際使用的值；面板讀到兩者不一致的圖層時，以頻率反推功率顯示。
+- **功率為主**（2026-10-27 定案，`layer-config-helper.ts` `writeUvPowerFrequency`）：圖層被重新整理時（`postPresetChange`：換光源、換機型、改預設參數、開啟 UV 文件）以及套用帶功率的自訂參數時，功率是來源，先夾到 15.6–100% 再換算頻率；只帶頻率的 UV 預設參數則由頻率換算功率。從其他光源或機型帶過來的圖層（例如 beamo 的 27kHz 會被夾到 30kHz、讀成 100%）因此保留使用者設定的功率，而不是變成全功率。選機器自動切到 UV 也走同一條路（`registerPromarkInfoListener`）。
 - **功率下限** 15.6% 放在 `getPromarkLimit` 的 UV 分支，讓 `PowerBlock` 的輸入框和滑桿直接限制。機型的 `minPower` 只顯示低功率警告，也分不出雷射源，所以不沿用。
 - Promark 不支援 PWM，漸層點陣圖的圖層 `minPower` 不受影響。
 

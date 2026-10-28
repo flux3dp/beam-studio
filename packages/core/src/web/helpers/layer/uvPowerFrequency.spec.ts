@@ -42,6 +42,17 @@ describe('test uvPowerFrequency', () => {
     expect(uvPowerToFrequency(100)).toBe(40);
   });
 
+  test('100% keeps a current frequency in the 30–40kHz band, otherwise 40kHz', () => {
+    expect(uvPowerToFrequency(100, 35)).toBe(35);
+    expect(uvPowerToFrequency(100, 30)).toBe(30);
+    expect(uvPowerToFrequency(100, 40)).toBe(40);
+    expect(uvPowerToFrequency(100, 27)).toBe(40);
+    expect(uvPowerToFrequency(100, 110)).toBe(40);
+    expect(uvPowerToFrequency(100, undefined)).toBe(40);
+    // below 100% the current frequency has no say
+    expect(uvPowerToFrequency(50, 35)).toBeCloseTo(98.333, 3);
+  });
+
   test('clamps outside the measured range', () => {
     expect(uvPowerToFrequency(120)).toBe(40);
     expect(uvPowerToFrequency(5)).toBe(200);

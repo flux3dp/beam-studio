@@ -39,6 +39,7 @@ import {
   getPromarkLimit,
   initLayerConfig,
   innerEngravingConfigKeys,
+  postPresetChange,
   toggleModuleAfterWorkareaChange,
   writeData,
   writeDataLayer,
@@ -437,12 +438,64 @@ describe('test layer-config-helper', () => {
       expect(getData(layer, 'frequency')).toBeCloseTo(120);
     });
 
-    test('applyPreset derives the power from a preset frequency', () => {
+    test('applyPreset lets the power win over the frequency a custom preset also carries', () => {
       const layer = createUvLayer();
 
-      applyPreset(layer, { frequency: 35, power: 20, speed: 1000 });
-      expect(getData(layer, 'frequency')).toBe(35);
-      expect(getData(layer, 'power')).toBe(100);
+      // a custom preset saved on another source: 30 kHz would read as 100% on UV
+      applyPreset(layer, { frequency: 30, power: 20, speed: 1000 });
+      expect(getData(layer, 'frequency')).toBeCloseTo(180);
+      expect(getData(layer, 'power')).toBeCloseTo(20);
+    });
+
+    test('applyPreset derives the power from a frequency-only preset, as the default UV presets are', () => {
+      const layer = createUvLayer();
+
+      applyPreset(layer, { frequency: 110, speed: 1000 });
+      expect(getData(layer, 'frequency')).toBe(110);
+      expect(getData(layer, 'power')).toBeCloseTo(44.4, 1);
+    });
+
+    test('applyPreset clamps a power below the weakest UV output', () => {
+      const layer = createUvLayer();
+
+      applyPreset(layer, { power: 5, speed: 1000 });
+      expect(getData(layer, 'frequency')).toBe(200);
+      expect(getData(layer, 'power')).toBeCloseTo(15.56, 1);
+    });
+
+    test('postPresetChange makes every UV layer follow its power, clamped to the UV range', () => {
+      const low = createUvLayer();
+      const mid = createUvLayer();
+
+      writeDataLayer(low, 'power', 15);
+      writeDataLayer(low, 'frequency', 27);
+      writeDataLayer(mid, 'power', 50);
+      writeDataLayer(mid, 'frequency', 30);
+      mockGetAllLayers.mockReturnValue([{ getGroup: () => low }, { getGroup: () => mid }]);
+      mockGetAllPresets.mockReturnValue([]);
+
+      postPresetChange();
+
+      expect(getData(low, 'frequency')).toBe(200);
+      expect(getData(low, 'power')).toBeCloseTo(15.56, 1);
+      expect(getData(mid, 'frequency')).toBeCloseTo(98.3, 1);
+      expect(getData(mid, 'power')).toBe(50);
+    });
+
+    test('postPresetChange only clamps the frequency on the other Promark sources', () => {
+      mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
+
+      const layer = createUvLayer();
+
+      writeDataLayer(layer, 'power', 15);
+      writeDataLayer(layer, 'frequency', 10);
+      mockGetAllLayers.mockReturnValue([{ getGroup: () => layer }]);
+      mockGetAllPresets.mockReturnValue([]);
+
+      postPresetChange();
+
+      expect(getData(layer, 'frequency')).toBe(27);
+      expect(getData(layer, 'power')).toBe(15);
     });
 
     test('applyPreset leaves other Promark sources alone', () => {

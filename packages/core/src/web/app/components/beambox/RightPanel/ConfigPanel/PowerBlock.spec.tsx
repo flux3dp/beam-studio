@@ -323,6 +323,20 @@ describe('test PowerBlock', () => {
       expect(mockWriteDataLayer).toHaveBeenCalledWith('layer2', 'frequency', expect.closeTo(98.333, 3), { batchCmd });
       expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     });
+
+    test('100% keeps a layer frequency already in the 30–40kHz band, per layer', () => {
+      // the panel shows the current layer's 110kHz (44%); layer1 sits at 35kHz, layer2 at 110kHz
+      mockGetData.mockImplementation((layer: string, key: string) =>
+        key === 'frequency' ? (layer === 'layer1' ? 35 : 110) : undefined,
+      );
+
+      const { container } = render(<PowerBlock />);
+
+      fireEvent.change(container.querySelector('input'), { target: { value: '100' } });
+      expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', frequency: 40, power: 100 });
+      expect(mockWriteDataLayer).toHaveBeenCalledWith('layer1', 'frequency', 35, { batchCmd });
+      expect(mockWriteDataLayer).toHaveBeenCalledWith('layer2', 'frequency', 40, { batchCmd });
+    });
   });
 
   test('onChange of value display should work correctly', () => {

@@ -189,6 +189,13 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   Switching the mode keeps every other value; applying the other preset is how to change them.
   `applyPreset` leaves non-forced keys a preset omits untouched, so each preset sets every option of
   its mode: contour dot sets `stlSolid: false`, contour line sets `stlMinLayerSpacing: 0`.
+- UV power and frequency on a layer are kept in step by `writeUvPowerFrequency`
+  (`layer-config-helper.ts`): the **power wins** when there is one (clamped to 15.6–100 %, the
+  frequency derived from it), so `postPresetChange` (source / machine / preset change) and a custom
+  preset that carries both never turn a layer brought over from another source into 100 %; only the
+  frequency-only default UV presets go the other way. `syncUvLayerFrequency` applies the same rule
+  when the source becomes UV (document settings, or `registerPromarkInfoListener` on machine
+  selection).
 - 3D material test (`MaterialTestGeneratorPanel/InnerEngraving/`, generator drawer under `isUvDev()`):
   `TableSetting.ts` `getInnerEngravingTableSetting` is the only table with a `dottingTime` axis, plus
   `pointSpacing`; it has no repeat, fill interval or UV heat axes. Blocks go on `stlMode: 'dot'` layers,

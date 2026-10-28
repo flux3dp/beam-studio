@@ -32,9 +32,22 @@ export const UV_POWER_LIMIT = { max: 100, min: LAST.power } as const;
 const interpolate = (x: number, x0: number, x1: number, y0: number, y1: number): number =>
   y0 + ((x - x0) / (x1 - x0)) * (y1 - y0);
 
-/** Power in % to frequency in kHz, by linear interpolation between the measured points. */
-export const uvPowerToFrequency = (power: number): number => {
-  if (power >= FIRST.power) return FIRST.frequency;
+/**
+ * Power in % to frequency in kHz, by linear interpolation between the measured points.
+ *
+ * The power is the source of truth. 100% is the one value several frequencies stand for (30–40kHz
+ * all measured the full 4.5W), so at 100% a `currentFrequency` already in that range is kept;
+ * anything else, or no current value, is 40kHz.
+ */
+export const uvPowerToFrequency = (power: number, currentFrequency?: number): number => {
+  if (power >= FIRST.power) {
+    const keepsCurrent =
+      currentFrequency !== undefined &&
+      currentFrequency >= UV_FREQUENCY_LIMIT.min &&
+      currentFrequency <= FIRST.frequency;
+
+    return keepsCurrent ? currentFrequency : FIRST.frequency;
+  }
 
   if (power <= LAST.power) return LAST.frequency;
 

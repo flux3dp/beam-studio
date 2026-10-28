@@ -13,7 +13,12 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import checkPwmImages from '@core/helpers/layer/check-pwm-images';
-import { CUSTOM_PRESET_CONSTANT, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import {
+  CUSTOM_PRESET_CONSTANT,
+  getData,
+  getMultiSelectData,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import { uvFrequencyToPower, uvPowerToFrequency } from '@core/helpers/layer/uvPowerFrequency';
 import useI18n from '@core/helpers/useI18n';
@@ -73,8 +78,9 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }, [selectedLayers]);
 
   const handleChange = (value: number) => {
-    // kept with its decimals: the backend rounds the frequency itself
-    const uvFrequency = isPromarkUV ? uvPowerToFrequency(value) : undefined;
+    // kept with its decimals: the backend rounds the frequency itself. At 100% a frequency already
+    // in the 30–40kHz band is kept (uvPowerToFrequency): the panel's here, each layer's own below
+    const uvFrequency = isPromarkUV ? uvPowerToFrequency(value, frequency.value) : undefined;
 
     change({
       configName: CUSTOM_PRESET_CONSTANT,
@@ -91,7 +97,11 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         writeDataLayer(layer, 'power', value, { batchCmd });
         writeDataLayer(layer, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
 
-        if (uvFrequency !== undefined) writeDataLayer(layer, 'frequency', uvFrequency, { batchCmd });
+        if (uvFrequency !== undefined) {
+          writeDataLayer(layer, 'frequency', uvPowerToFrequency(value, getData(layer, 'frequency') as number), {
+            batchCmd,
+          });
+        }
 
         minPowerChanged = clearMinPower(layer, value, batchCmd) || minPowerChanged;
       });
