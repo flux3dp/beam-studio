@@ -2161,6 +2161,7 @@ const lang: ILang = {
   },
   manual_config: {
     clear: '清除',
+    modules_desc: '各模組相對於 CO2 雷射的偏移，單位 mm，以出廠預設值為基準。X 正值為右，Y 正值為下。',
     pnc_desc: '雷射相對於列印的落點，單位 mm，右、下為正。由精準對位校正量測；精準對位對齊時會以其負值移動切割。',
     pnc_not_set: '此機器尚未儲存偏移。',
     save_failed: '儲存失敗。',

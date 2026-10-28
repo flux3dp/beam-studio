@@ -2161,6 +2161,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
   },
   manual_config: {
     clear: 'Clear',
+    modules_desc: 'Offset of each module from the CO2 laser, in mm, relative to the factory default. Positive X is to the right, positive Y is below.',
     pnc_desc: 'Where the laser lands relative to the print, in mm, right and down positive. Measured by Print and Cut calibration; Print and Cut alignment moves the cut by its negation.',
     pnc_not_set: 'No offset stored for this machine.',
     save_failed: 'Failed to save.',

@@ -13,6 +13,23 @@
   font-size: 12px;
 }
 
+// the scrolling part of a tab; .actions stays below it
+.content {
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+// one card per module; as many per row as the modal width allows
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px 24px;
+}
+
+.label {
+  margin-bottom: 8px;
+}
+
 .inputs {
   display: grid;
   grid-template-columns: auto 1fr;

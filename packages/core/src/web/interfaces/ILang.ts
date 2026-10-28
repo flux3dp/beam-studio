@@ -2063,6 +2063,7 @@ export interface ILang {
   };
   manual_config: {
     clear: string;
+    modules_desc: string;
     pnc_desc: string;
     pnc_not_set: string;
     save_failed: string;
