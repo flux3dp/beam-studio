@@ -31,11 +31,13 @@ export const PHOTO_TO_3D_COST = 0.06;
 export const DEFAULT_SHARPEN = { amount: 1, radius: 4 } as const;
 export const SHARPEN_AMOUNT_LIMIT = { max: 5, min: 0 } as const;
 export const SHARPEN_RADIUS_LIMIT = { max: 20, min: 0.5 } as const;
+
 /**
  * The roll-off is a uvDev option. Under uvDev it starts at 4% of the photo's width: 4 mm, the only
  * value tested, was on a 100 mm photo.
  */
 const DEV_EDGE_ROUND_RATIO = 0.04;
+
 export const EDGE_ROUND_LIMIT = { max: 10, min: 0 } as const;
 
 /** The relief's default depth as a share of its width, capped by the engravable height. */
