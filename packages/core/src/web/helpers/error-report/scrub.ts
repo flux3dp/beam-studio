@@ -4,8 +4,18 @@
  */
 import type { StorageKey } from '@core/interfaces/IStorage';
 
-/** storage keys that embed user file paths; dropped from the automatic report */
-export const SCRUBBED_STORAGE_KEYS: StorageKey[] = ['recent_files', 'auto-save-config', 'ador-backup-path'];
+/**
+ * Storage keys dropped from the automatic report: the first three embed user file paths,
+ * `flux-101` is keyed by FLUX ID email, `maintenance-records` carries the machine nickname and
+ * the account that ticked each task.
+ */
+export const SCRUBBED_STORAGE_KEYS: StorageKey[] = [
+  'recent_files',
+  'auto-save-config',
+  'ador-backup-path',
+  'flux-101',
+  'maintenance-records',
+];
 
 /**
  * Home-directory forms that can appear anywhere in the joined report text (storage dump,

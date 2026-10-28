@@ -39,7 +39,13 @@ describe('scrubReport', () => {
 });
 
 describe('SCRUBBED_STORAGE_KEYS', () => {
-  test('covers the three keys that embed user paths', () => {
-    expect(SCRUBBED_STORAGE_KEYS).toEqual(['recent_files', 'auto-save-config', 'ador-backup-path']);
+  test('covers the keys that embed user paths, the FLUX ID email or the machine nickname', () => {
+    expect(SCRUBBED_STORAGE_KEYS).toEqual([
+      'recent_files',
+      'auto-save-config',
+      'ador-backup-path',
+      'flux-101',
+      'maintenance-records',
+    ]);
   });
 });

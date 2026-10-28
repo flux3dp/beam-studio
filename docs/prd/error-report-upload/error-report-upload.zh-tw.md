@@ -134,7 +134,7 @@ Log 收集共用既有控制佇列（2026-10-27）。`DeviceMaster.getLogsTexts`
 
 ### 7.2 資料包內容與清除
 
-- `bug_report.txt` = `getOutput({ includeImages: false, scrub: true })`。`scrub`（`getOutput` 的新選項）移除 storage 鍵 `recent_files`、`auto-save-config`、`ador-backup-path`，把探索清單的 `name` 換成 `model`，再對合併後的字串跑 `scrubReport`。即使有排除清單仍需要正規表示式，因為家目錄會從 `storage` 以外的地方進入報告：websocket 段落記錄每一筆送出的指令（`websocket.ts:325`），而字型指令帶有使用者自行安裝字型的絕對路徑（`utils-ws.ts:152` 的 `select_font` / `check_exist` / `upload_to`，`fontHelper.ts:236,325`），macOS 在 `~/Library/Fonts`、Windows 在 `%LOCALAPPDATA%\Microsoft\Windows\Fonts`。fluxghost log 預設為 INFO 等級（`../fluxghost/fluxghost/launcher.py:10`），其含家目錄的 debug 行只在 `--debug` 時出現；正規表示式也一併涵蓋。
+- `bug_report.txt` = `getOutput({ includeImages: false, scrub: true })`。`scrub`（`getOutput` 的新選項）移除 storage 鍵 `recent_files`、`auto-save-config`、`ador-backup-path`（使用者路徑）、`flux-101`（以 FLUX ID email 為鍵）與 `maintenance-records`（機器暱稱、任務紀錄的 `by`），把探索清單的 `name` 換成 `model`，再對合併後的字串跑 `scrubReport`。即使有排除清單仍需要正規表示式，因為家目錄會從 `storage` 以外的地方進入報告：websocket 段落記錄每一筆送出的指令（`websocket.ts:325`），而字型指令帶有使用者自行安裝字型的絕對路徑（`utils-ws.ts:152` 的 `select_font` / `check_exist` / `upload_to`，`fontHelper.ts:236,325`），macOS 在 `~/Library/Fonts`、Windows 在 `%LOCALAPPDATA%\Microsoft\Windows\Fonts`。fluxghost log 預設為 INFO 等級（`../fluxghost/fluxghost/launcher.py:10`），其含家目錄的 debug 行只在 `--debug` 時出現；正規表示式也一併涵蓋。
 - `system_log.txt` = `getLogsTexts` 結果串接，只在 `deviceMaster.currentDevice?.control` 存在時附上。
 - `scene.svg`（僅 S7）= `svgCanvas.getSvgString()` 或匯入檔案文字。
 - 一般診斷文案維持不附設計檔；有 `scene` 時使用專用文案：「傳送診斷資料與此次處理的設計檔給 FLUX，協助排查此錯誤」（匯出與匯入共用 `consent_design_checkbox`）。設計檔文案不得承諾不含設計檔或個人資料，因檔案內容可能包含個人資料。序號與電腦識別碼可用於關聯報告，不應宣稱匿名。
