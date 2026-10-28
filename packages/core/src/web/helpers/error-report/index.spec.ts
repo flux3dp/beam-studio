@@ -1,5 +1,6 @@
 import { axiosFluxId } from '@core/helpers/api/flux-id';
 import storage from '@core/implementations/storage';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const mockCurrentDevice = jest.fn();
 const mockGetLogsTexts = jest.fn();
@@ -38,7 +39,7 @@ const fields = (form: FormData) =>
   Object.fromEntries([...form.entries()].map(([k, v]) => [k, v instanceof Blob ? `blob:${v.type}` : v]));
 const idleDevice = (serial = 'SN12345678') => ({
   control: { getMode: () => '' },
-  info: { serial, version: '6.5.3' },
+  info: { serial, uuid: 'uuid-1', version: '6.5.3' },
 });
 
 describe('uploadErrorReport', () => {
@@ -103,6 +104,59 @@ describe('uploadErrorReport', () => {
     expect(mockGetLogsTexts).not.toHaveBeenCalled();
   });
 
+  test.each(['#802', '#806', '#809', 'QR_AUTOCONNECT_FAILED'])(
+    'explicit no device for %s: ignores the connected machine and uses a separate throttle',
+    async (errorCode) => {
+      await expect(uploadErrorReport({ errorCode })).resolves.toBe('sent');
+      mockPost.mockClear();
+      mockGetLogsTexts.mockClear();
+
+      await expect(uploadErrorReport({ device: null, errorCode })).resolves.toBe('sent');
+
+      const form = mockPost.mock.calls[0][1] as FormData;
+
+      expect(form.get('serial')).toBe('none');
+      expect(form.get('firmware_version')).toBe('');
+      expect(form.has('system_log')).toBe(false);
+      expect(mockGetLogsTexts).not.toHaveBeenCalled();
+      expect(storage.get('error-report-counter')).toMatchObject({ counts: { none: 1, SN12345678: 1 } });
+      await expect(uploadErrorReport({ device: null, errorCode })).resolves.toBe('cooldown');
+      expect(mockPost).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  test.each(['CONNECTION_TIMEOUT', 'CONNECTION_DISCONNECTED', '#810', '#805', '#850'])(
+    '%s: opting out of device logs preserves metadata and device throttle after reconnection',
+    async (errorCode) => {
+      const device = idleDevice();
+
+      // The failed machine is connected and idle again when the user consents.
+      mockCurrentDevice.mockReturnValue(device);
+      await expect(
+        uploadErrorReport({ device: device.info as IDeviceInfo, errorCode, includeDeviceLog: false }),
+      ).resolves.toBe('sent');
+
+      const form = mockPost.mock.calls[0][1] as FormData;
+
+      expect(form.get('serial')).toBe(device.info.serial);
+      expect(form.get('firmware_version')).toBe(device.info.version);
+      expect(form.has('system_log')).toBe(false);
+      expect(form.has('bug_report')).toBe(true);
+      expect(mockGetLogsTexts).not.toHaveBeenCalled();
+      expect(mockMeetRequirement).not.toHaveBeenCalled();
+      expect(storage.get('error-report-counter')).toMatchObject({ counts: { SN12345678: 1 } });
+      // Changing the log option does not create another fingerprint or bypass cooldown.
+      await expect(uploadErrorReport({ errorCode, includeDeviceLog: true })).resolves.toBe('cooldown');
+      expect(mockPost).toHaveBeenCalledTimes(1);
+    },
+  );
+
+  test('explicitly enabling device logs retains the default download behavior', async () => {
+    await expect(uploadErrorReport({ errorCode: 'X', includeDeviceLog: true })).resolves.toBe('sent');
+    expect(mockGetLogsTexts).toHaveBeenCalledWith(['playerd.log', 'fluxrobotd.log'], undefined, 10_000);
+    expect((mockPost.mock.calls[0][1] as FormData).has('system_log')).toBe(true);
+  });
+
   test('busy device: system_log skipped, upload still sent', async () => {
     mockCurrentDevice.mockReturnValue({ ...idleDevice(), control: { getMode: () => 'raw' } });
 
@@ -125,6 +179,22 @@ describe('uploadErrorReport', () => {
     );
   });
 
+  test('device override: its serial and firmware are used, log of another machine never read', async () => {
+    await expect(
+      uploadErrorReport({
+        device: { serial: 'SN-OTHER', uuid: 'uuid-2', version: '5.0.0' } as any,
+        errorCode: 'CONNECTION_TIMEOUT',
+      }),
+    ).resolves.toBe('sent');
+
+    const form = mockPost.mock.calls[0][1] as FormData;
+
+    expect(form.get('serial')).toBe('SN-OTHER');
+    expect(form.get('firmware_version')).toBe('5.0.0');
+    expect(form.has('system_log')).toBe(false);
+    expect(mockGetLogsTexts).not.toHaveBeenCalled();
+  });
+
   test('device log failure is logged and does not block the upload', async () => {
     mockGetLogsTexts.mockRejectedValue(new Error('timeout'));
 
@@ -145,7 +215,7 @@ describe('uploadErrorReport', () => {
   });
 
   test('scene over 10 MB is dropped, the rest still uploads', async () => {
-    await uploadErrorReport({ errorCode: '#806', scene: { content: 'x'.repeat(10 * MB + 1), name: 's.bvg' } });
+    await uploadErrorReport({ errorCode: '#806', scene: () => ({ content: 'x'.repeat(10 * MB + 1), name: 's.bvg' }) });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
@@ -158,7 +228,7 @@ describe('uploadErrorReport', () => {
     mockGetOutput.mockReturnValue(['x'.repeat(10 * MB)]);
     mockGetLogsTexts.mockResolvedValue({ 'fluxrobotd.log': [new Blob(['y'.repeat(5 * MB)])] });
 
-    await uploadErrorReport({ errorCode: '#806', scene: { content: 'z'.repeat(8 * MB), name: 's.bvg' } });
+    await uploadErrorReport({ errorCode: '#806', scene: () => ({ content: 'z'.repeat(8 * MB), name: 's.bvg' }) });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
@@ -169,7 +239,10 @@ describe('uploadErrorReport', () => {
   test('system_log is dropped when bug_report and scene leave no room', async () => {
     mockGetOutput.mockReturnValue(['x'.repeat(10 * MB)]);
 
-    await uploadErrorReport({ errorCode: '#806', scene: { content: 'z'.repeat(10 * MB - 64 * 1024), name: 's.bvg' } });
+    await uploadErrorReport({
+      errorCode: '#806',
+      scene: () => ({ content: 'z'.repeat(10 * MB - 64 * 1024), name: 's.bvg' }),
+    });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
@@ -178,13 +251,30 @@ describe('uploadErrorReport', () => {
     expect(mockAppend).toHaveBeenCalledWith(expect.stringContaining('device log dropped'));
   });
 
-  test('scene is attached as svg with its name', async () => {
-    await uploadErrorReport({ errorCode: '#806', scene: { content: '<svg/>', name: 'output.bvg' } });
+  test('export without a device still attaches the scene while another machine is connected', async () => {
+    await uploadErrorReport({
+      device: null,
+      errorCode: '#806',
+      scene: () => ({ content: '<svg/>', name: 'output.bvg' }),
+    });
 
     const form = mockPost.mock.calls[0][1] as FormData;
 
     expect((form.get('scene') as File).name).toBe('output.bvg');
     expect(fields(form).scene).toBe('blob:image/svg+xml');
+    expect(form.get('serial')).toBe('none');
+    expect(form.get('firmware_version')).toBe('');
+    expect(form.has('system_log')).toBe(false);
+    expect(mockGetLogsTexts).not.toHaveBeenCalled();
+  });
+
+  test('scene thunk is not called for a blocked upload', async () => {
+    const scene = jest.fn(() => ({ content: '<svg/>', name: 'output.bvg' }));
+
+    // first upload starts the cooldown window for this fingerprint
+    await expect(uploadErrorReport({ errorCode: '#806' })).resolves.toBe('sent');
+    await expect(uploadErrorReport({ errorCode: '#806', scene })).resolves.toBe('cooldown');
+    expect(scene).not.toHaveBeenCalled();
   });
 
   // axiosFluxId never rejects: its interceptor resolves with { error } (flux-id/base.ts)

@@ -13,6 +13,7 @@ import { STEP_FINISH, STEP_REFOCUS } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { sendPictureThenSetConfig } from '@core/helpers/camera-calibration-helper';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import useI18n from '@core/helpers/useI18n';
 import type { CameraConfig } from '@core/interfaces/Camera';
 
@@ -241,12 +242,17 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
       gotoNextStep(STEP_FINISH);
     } catch (error) {
       console.log(error);
-      Alert.popUp({
-        callbacks: () => gotoNextStep(STEP_REFOCUS),
-        id: 'menu-item',
-        message: `#816 ${(error as string).toString().replace('Error: ', '')}`,
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
+      Alert.popUp(
+        withErrorReportConsent(
+          {
+            callbacks: () => gotoNextStep(STEP_REFOCUS),
+            id: 'menu-item',
+            message: `#816 ${(error as string).toString().replace('Error: ', '')}`,
+            type: AlertConstants.SHOW_POPUP_ERROR,
+          },
+          { device, errorCode: '#816' },
+        ),
+      );
     }
   };
 

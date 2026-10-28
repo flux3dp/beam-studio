@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Convertir text a traçat...',
-      export_file_error_ask_for_upload: "Error al exportar la tasca. Estàs disposat a proporcionar l'escena de treball a l'equip de desenvolupament per a l'informe d'errors?",
       retreive_image_data: "Recuperar dades d'imatge...",
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: "S'ha afegit una nova opció per canviar automàticament entre el panell de Capes i el panell d'Objectes a Preferències. Aquesta opció està desactivada per defecte. Vols habilitar el canvi automàtic ara?<br/>Pots canviar aquesta configuració en qualsevol moment a Preferències.",
         title: 'Canvi automàtic panell Capa i Objecte',
       },
-      backend_connect_failed_ask_to_upload: "#802 Es produeixen errors en intentar connectar al backend. Vols pujar el teu registre d'informe d'errors?",
+      backend_connect_failed: '#802 Es produeixen errors en intentar connectar al backend.',
       backend_error_hint: "Les funcions poden no funcionar correctament a causa d'un error de backend.",
       both_power_and_speed_too_high: 'Utilitzar una potència làser més baixa allargarà la vida útil del tub làser.\nA més, una velocitat massa alta en aquesta resolució pot resultar en una qualitat inferior del gravat ombrejat.',
       bug_report: "Informe d'errors",
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: "No s'han pogut carregar les dades SVG",
       import_file_contain_invalid_path: "#808 El fitxer SVG importat conté una ruta d'imatge no vàlida. Si us plau, assegura't que tots els fitxers d'imatge existeixin o incrusta la imatge al fitxer",
-      import_file_error_ask_for_upload: "Error al importar fitxer SVG. Estàs disposat a proporcionar el fitxer a l'equip de desenvolupament per a l'informe d'errors?",
       import_stl: {
         advice_message: "La importació pot trigar molt i és possible que l'aplicació deixi de respondre mentrestant.",
         advice_message_strong: "Aquest model és molt gran. Es recomana encaridament simplificar-lo abans d'importar-lo.",
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: 'Utilitzar una velocitat massa alta en capes que contenen objectes de traçat pot resultar en una precisió inferior en tallar.\nNo recomanem utilitzar una velocitat superior a %(limit)s quan es talla.',
       too_fast_for_path_and_constrain: 'Les següents capes: %(layers)s \ncontenen objectes de traçat vectorial, i tenen una velocitat superior a %(limit)s.\nLa velocitat de tall dels objectes de traçat vectorial es restringirà a %(limit)s.\nPots eliminar aquest límit a Configuració de preferències.',
       touchpad: 'Panell tàctil',
-      upload_failed: '#819 Error de pujada de fitxer.',
-      upload_file_too_large: '#819 El fitxer és massa gran per pujar.',
       vectorize_shading_image: "Les imatges amb degradat triguen més temps a traçar i són propenses al soroll. Si us plau, desactiva el degradat de la imatge abans d'executar.",
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: 'Elevar i tallar',
     elevate_and_cut_step_1: "Col·loca una fusta de color clar de mida A4 o Letter al centre de l'espai de treball, elevada a 20mm.",
     elevate_and_cut_step_1_prism_lift: "Utilitza Ador Prism Lift a 14mm de longitud màxima amb una fusta d'almenys 6mm de gruix.",
-    failed_to_calibrate_camera: '#848 Error al calibrar la càmera, si us plau contacta amb el suport de FLUX.',
     failed_to_calibrate_chessboard: "Error al calibrar amb la imatge del tauler d'escacs.",
     failed_to_calibrate_with_pictures: '#848 Error al calibrar amb imatges del dispositiu.',
     failed_to_detect_calibration_pattern: "Error al detectar el patró de calibratge. Si us plau, ajusta l'exposició de la càmera o reposiciona el patró de calibratge i torna-ho a provar.",
-    failed_to_download_pictures: '#848 Error al descarregar imatges, si us plau contacta amb el suport de FLUX.',
     failed_to_move_laser_head: 'Error al moure el capçal làser.',
     failed_to_parse_checkpoint: 'Error al analitzar les dades del punt de control.',
     failed_to_save_calibration_results: '#849 Error en desar els resultats del calibratge, si us plau torna-ho a provar. Si això continua passant, si us plau contacta amb el suport de FLUX.',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: "Si us plau, tingues en compte que Beam Studio pot no funcionar de manera òptima al teu dispositiu. Per a una experiència òptima, hauria de ser un dispositiu amb una amplada de pantalla d'almenys 1024 píxels.",
+  },
+  error_report: {
+    always: 'Envia sempre',
+    ask: 'Pregunta cada vegada',
+    consent_checkbox: 'Envia dades de diagnòstic a FLUX per ajudar a corregir aquest error (sense fitxers de disseny ni dades personals)',
+    consent_design_checkbox: 'Envia les dades de diagnòstic i el fitxer de disseny que s’està processant a FLUX per investigar aquest error',
+    never: 'No enviïs mai',
+    prompt_caption: 'Enviar automàticament?',
+    prompt_message: 'Vols enviar sempre les dades de diagnòstic automàticament quan es produeixin errors? Ho pots canviar en qualsevol moment a Preferències > Privadesa.',
+    sent: 'Gràcies! Dades de diagnòstic enviades.',
+    sent_automatically: 'Dades de diagnòstic enviades automàticament a FLUX.',
+    setting_label: "Pujada d'informes d'error",
   },
   flux_101: {
     badge_earned: '%(badge)s — has completat «%(chapter)s»',

@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Převést text na cestu...',
-      export_file_error_ask_for_upload: 'Nepodařilo se exportovat úlohu. Jste ochotni při hlášení chyby poskytnout vývojářům pracovní oblast?',
       retreive_image_data: 'Získat data z obrázku...',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: 'Do Předvoleb byla přidána nová možnost pro automatické přepínání mezi panelem Vrstvy a panelem Objekty. Tato možnost je ve výchozím nastavení vypnutá. Chcete nyní povolit automatické přepínání?<br/>Toto nastavení můžete kdykoli změnit v Předvolbách.',
         title: 'Automatické přepínání panelu vrstev a objektů',
       },
-      backend_connect_failed_ask_to_upload: '#802 Objevují se chyby při snaze připojit se k backendu. Přejete si nahrát záznamy z hlášení o chybě?',
+      backend_connect_failed: '#802 Objevují se chyby při snaze připojit se k backendu.',
       backend_error_hint: 'Funkce nemusí správně pracovat kvůli chybě v backendu.',
       both_power_and_speed_too_high: 'Využívání laseru nízké intenzity prodlouží životnost laserové trubice.\nA příliš vysoká rychlost může u tohoto rozlišení vyústit v nízkou kvalitu gravírovaného stínování.',
       bug_report: 'Nahlášení chyby',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Nelze načíst data SVG',
       import_file_contain_invalid_path: '#808 Importovaný SVG soubor obsahuje nesprávnou cestu k obrázku. Ujistěte se prosím, že všechny soubory obrázků existují nebo do souboru vložte obrázek',
-      import_file_error_ask_for_upload: 'Nepodařilo se importovat SVG soubor. Jste ochotní soubor poskytnout vývojářskému týmu pro nahlášení chyby?',
       import_stl: {
         advice_message: 'Import může trvat dlouho a aplikace během něj nemusí reagovat.',
         advice_message_strong: 'Tento model je velmi velký. Důrazně doporučujeme jej před importem zjednodušit.',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: 'Využívání příliš vysoké rychlosti u vrstev obsahující objekty cest může vyústit v nízkou přesnost při řezání.\nNedoporučujeme při řezání využívat rychlost vyšší než %(limit)s.',
       too_fast_for_path_and_constrain: 'Následující vrstvy: %(layers)s \nobsahují vektorové objekty cest a jejich rychlost převyšuje %(limit)s.\nRychlost řezání vektorových objektů cest bude omezena na %(limit)s.\nTento limit můžete odstranit v Nastavení.',
       touchpad: 'TouchPad',
-      upload_failed: '#819 Nepodařilo se nahrát soubor.',
-      upload_file_too_large: '#819 Soubor je pro nahrání příliš velký.',
       vectorize_shading_image: 'Obrázky s přechodem trvají delší dobu obkreslit a může dojít k zvýšenému hluku. Vypněte prosím obrázky s přechodem před zahájením.',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: 'Zvednout a řezat',
     elevate_and_cut_step_1: 'Umístěte světlou dřevěnou desku velikosti A4 nebo obálky do pracovní oblasti pozvednuté na 20 mm.',
     elevate_and_cut_step_1_prism_lift: 'Použijte Ador Prism Lift o maximální délce 14 mm s  minimálně 6 mm širokou dřevěnou deskou.',
-    failed_to_calibrate_camera: '#848 Nepodařilo se kalibrovat kameru. Kontaktujte prosím FLUX podporu.',
     failed_to_calibrate_chessboard: 'Kalibrace s obrázkem šachovnice se nezdařila.',
     failed_to_calibrate_with_pictures: '#848 Nepodařilo se kalibrovat s obrázky zařízení.',
     failed_to_detect_calibration_pattern: 'Nepodařilo se detekovat kalibrační vzor. Upravte expozici kamery nebo přemístěte kalibrační vzor a zkuste to znovu.',
-    failed_to_download_pictures: '#848 Nepodařilo se stáhnout obrázky. Kontaktujte prosím FLUX podporu.',
     failed_to_move_laser_head: 'Nepodařilo se pohnout laserovou hlavou.',
     failed_to_parse_checkpoint: 'Nepodařilo se rozebrat data kontrolního bodu.',
     failed_to_save_calibration_results: '#849 Nepodařilo se uložit výsledky kalibrace, zkuste to prosím znovu. Pokud bude problém přetrvávat, kontaktujte prosím FLUX podporu.',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Je možné, že Beam Studio nebude na vašem zařízení správně fungovat. Pro optimální zážitek by měla mít obrazovka minimální šířku 1024 pixelů.',
+  },
+  error_report: {
+    always: 'Vždy odeslat',
+    ask: 'Pokaždé se zeptat',
+    consent_checkbox: 'Odeslat diagnostická data společnosti FLUX pro pomoc s opravou této chyby (bez souborů návrhů a osobních údajů)',
+    consent_design_checkbox: 'Odeslat diagnostická data a zpracovávaný soubor návrhu společnosti FLUX k prošetření této chyby',
+    never: 'Nikdy neodesílat',
+    prompt_caption: 'Odesílat automaticky?',
+    prompt_message: 'Odesílat diagnostická data při chybách vždy automaticky? Můžete to kdykoli změnit v Vlastnosti > Soukromí.',
+    sent: 'Děkujeme! Diagnostická data byla odeslána.',
+    sent_automatically: 'Diagnostická data byla automaticky odeslána společnosti FLUX.',
+    setting_label: 'Nahrávání hlášení o chybách',
   },
   flux_101: {
     badge_earned: '%(badge)s — dokončili jste „%(chapter)s“',

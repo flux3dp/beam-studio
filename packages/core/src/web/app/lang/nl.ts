@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Tekst naar pad omzetten...',
-      export_file_error_ask_for_upload: 'Export mislukt. Wilt u de werkende scène naar het ontwikkelteam sturen voor een bugrapport?',
       retreive_image_data: 'Gegevens ophalen...',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: 'Een nieuwe optie om automatisch te schakelen tussen het lagenpaneel en het objectenpaneel is toegevoegd aan de Voorkeuren. Deze optie is standaard uitgeschakeld. Wilt u automatische schakeling nu inschakelen? <br/>U kunt deze instelling op elk moment wijzigen in Voorkeuren.',
         title: 'Automatisch Wisselen Tussen Lagen- en Objectenpaneel',
       },
-      backend_connect_failed_ask_to_upload: '#802 Fouten blijven optreden bij verbinden met de backend. Wilt u uw bugrapport uploaden?',
+      backend_connect_failed: '#802 Fouten blijven optreden bij verbinden met de backend.',
       backend_error_hint: 'Functies werken mogelijk niet goed vanwege een backendfout.',
       both_power_and_speed_too_high: 'Gebruik van lagere lasersterkte verlengt de levensduur van de laserbuis.\nTe hoge snelheid bij deze resolutie kan resulteren in lagere kwaliteit van arcering.',
       bug_report: 'Bugrapportage',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Kan SVG-gegevens niet laden',
       import_file_contain_invalid_path: '#808 Geïmporteerd SVG-bestand bevat ongeldig pad naar afbeelding. Zorg ervoor dat alle afbeeldingen bestaan of inbed de afbeelding in het bestand',
-      import_file_error_ask_for_upload: 'Importeren van SVG-bestand mislukt. Wilt u het bestand beschikbaar stellen aan het ontwikkelteam voor bugrapportage?',
       import_stl: {
         advice_message: 'Importeren kan lang duren en de app reageert tijdens het verwerken mogelijk niet.',
         advice_message_strong: 'Dit model is erg groot. Het wordt sterk aanbevolen het model vóór het importeren te vereenvoudigen.',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: 'Te hoge snelheid in lagen met padobjecten kan resulteren in lagere precisie bij snijden.\nWe raden geen snelheid hoger dan %(limit)s aan bij snijden.',
       too_fast_for_path_and_constrain: 'De volgende lagen: %(layers)s \nbevatten vector padobjecten, en hebben een snelheid hoger dan %(limit)s.\nDe snijsnelheid van vector padobjecten wordt beperkt tot %(limit)s.\nU kunt deze beperking opheffen bij de voorkeuren.',
       touchpad: 'Touchpad',
-      upload_failed: '#819 Uploaden van bestand mislukt.',
-      upload_file_too_large: '#819 Bestand is te groot om te uploaden.',
       vectorize_shading_image: 'Gradientafbeeldingen vergen meer verwerkingstijd voor vectorisatie en zijn gevoelig voor ruis. Schakel de afbeeldingsgradiënt uit voordat u verdergaat.',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: 'Optillen en Snijden',
     elevate_and_cut_step_1: 'Plaats een A4-formaat lichtgekleurd hout in het midden van de werkruimte en verhoog het tot 20mm.',
     elevate_and_cut_step_1_prism_lift: 'Gebruik Ador Prism Lift met een maximale lengte van 14mm samen met een houten plank van minstens 6mm dikte om het hout tot een hoogte van 20mm te verhogen.',
-    failed_to_calibrate_camera: '#848 Fout bij camera kalibratie, neem contact op met FLUX Support.',
     failed_to_calibrate_chessboard: 'Mislukt kalibreren met het schaakbordbeeld.',
     failed_to_calibrate_with_pictures: "#848 Kalibratie met apparaatfoto's mislukt.",
     failed_to_detect_calibration_pattern: 'Het kalibratiepatroon kon niet worden gedetecteerd. Pas de belichting van de camera aan of verplaats het patroon en probeer het opnieuw.',
-    failed_to_download_pictures: "#848 Fout bij downloaden foto's, neem contact op met FLUX Support.",
     failed_to_move_laser_head: 'Kon de laserhoofdkop niet verplaatsen.',
     failed_to_parse_checkpoint: 'Kan de controlepuntgegevens niet analyseren.',
     failed_to_save_calibration_results: '#849 Fout bij opslaan kalibratieresultaten, probeer opnieuw. Neem contact op met FLUX Support als dit blijft gebeuren.',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Houd er rekening mee dat Beam Studio mogelijk niet optimaal werkt op uw apparaat. Voor een optimale ervaring moet het een apparaat zijn met een schermbreedte van minimaal 1024 pixels.',
+  },
+  error_report: {
+    always: 'Altijd verzenden',
+    ask: 'Elke keer vragen',
+    consent_checkbox: 'Diagnostische gegevens naar FLUX sturen om deze fout te helpen oplossen (geen ontwerpbestanden of persoonlijke gegevens)',
+    consent_design_checkbox: 'Diagnostische gegevens en het ontwerpbestand dat wordt verwerkt naar FLUX sturen om deze fout te onderzoeken',
+    never: 'Nooit verzenden',
+    prompt_caption: 'Automatisch verzenden?',
+    prompt_message: 'Diagnostische gegevens altijd automatisch verzenden bij fouten? U kunt dit altijd wijzigen onder Voorkeuren > Privacy.',
+    sent: 'Bedankt! Diagnostische gegevens verzonden.',
+    sent_automatically: 'Diagnostische gegevens automatisch naar FLUX verzonden.',
+    setting_label: 'Foutrapporten uploaden',
   },
   flux_101: {
     badge_earned: '%(badge)s — je hebt "%(chapter)s" afgerond',

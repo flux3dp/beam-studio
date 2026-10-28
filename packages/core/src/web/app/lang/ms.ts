@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Tukar Teks ke Laluan...',
-      export_file_error_ask_for_upload: 'Gagal eksport tugas. Adakah anda bersedia untuk memberikan adegan kerja kepada pasukan pembangunan untuk laporan pepijat?',
       retreive_image_data: 'Dapatkan Data Imej...',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: 'Pilihan baru untuk menukar secara automatik antara panel Lapisan dan panel Objek telah ditambah dalam Keutamaan. Pilihan ini dilumpuhkan secara lalai. Adakah anda ingin mengaktifkan penukaran automatik sekarang? <br/>Anda boleh menukar tetapan ini pada bila-bila masa dalam Keutamaan.',
         title: 'Tukar Automatik Panel Lapisan dan Objek',
       },
-      backend_connect_failed_ask_to_upload: '#802 Ralat berterusan berlaku semasa cuba menyambung ke backend. Adakah anda mahu memuat naik laporan pepijat log anda?',
+      backend_connect_failed: '#802 Ralat berterusan berlaku semasa cuba menyambung ke backend.',
       backend_error_hint: 'Ciri-ciri mungkin tidak berfungsi dengan betul disebabkan ralat backend.',
       both_power_and_speed_too_high: 'Menggunakan kuasa laser yang lebih rendah akan melanjutkan jangka hayat tiub laser. Juga, kelajuan yang terlalu tinggi pada resolusi ini boleh mengakibatkan kualiti ukiran bayangan yang lebih rendah.',
       bug_report: 'Laporan Pepijat',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Tidak dapat memuat data SVG',
       import_file_contain_invalid_path: '#808 Fail SVG yang diimport mengandungi laluan imej yang tidak sah. Sila pastikan semua fail imej wujud atau benam imej dalam fail',
-      import_file_error_ask_for_upload: 'Gagal untuk Imported SVG file. Adakah anda bersedia untuk menyediakan fail kepada pasukan pembangunan untuk laporan pepijat ?',
       import_stl: {
         advice_message: 'Import mungkin mengambil masa yang lama, dan aplikasi mungkin tidak bertindak balas semasa proses berjalan.',
         advice_message_strong: 'Model ini sangat besar. Sangat disyorkan untuk mempermudah model sebelum mengimport.',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: 'Menggunakan kelajuan yang terlalu tinggi dalam lapisan yang mengandungi objek laluan boleh mengakibatkan ketepatan yang lebih rendah semasa memotong. Kami tidak mengesyorkan menggunakan kelajuan lebih pantas daripada %(limit)s semasa memotong.',
       too_fast_for_path_and_constrain: 'Lapisan berikut: %(layers)s\n mengandungi objek laluan vektor, dan mempunyai kelajuan melebihi %(limit)s. Kelajuan pemotongan objek laluan vektor akan dihadkan kepada %(limit)s. Anda boleh mengalih keluar had ini di Tetapan Keutamaan.',
       touchpad: 'Pad Sentuh',
-      upload_failed: '#819 Gagal memuat naik fail.',
-      upload_file_too_large: '#819 Fail terlalu besar untuk dimuat naik.',
       vectorize_shading_image: 'Imej gradien mengambil lebih masa untuk mengesan dan cenderung kepada hingar. Sila matikan gradien imej sebelum melaksanakan.',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: 'Angkat dan Potong',
     elevate_and_cut_step_1: 'Letakkan sekeping kayu berwarna terang berukuran A4 di tengah-tengah ruang kerja, diangkat hingga 20mm.',
     elevate_and_cut_step_1_prism_lift: 'Gunakan Ador Prism Lift dengan panjang maksimum 14mm bersama dengan sekeping kayu yang sekurang-kurangnya 6mm tebal.',
-    failed_to_calibrate_camera: '#848 Gagal menentusahkan kamera, hubungi Sokongan FLUX.',
     failed_to_calibrate_chessboard: 'Gagal mengkalibrasi dengan gambar papan dam.',
     failed_to_calibrate_with_pictures: '#848 Gagal mengkalibrasi dengan gambar peranti.',
     failed_to_detect_calibration_pattern: 'Gagal mengesan corak penentukuran. Sila laraskan pendedahan kamera atau ubah kedudukan corak dan cuba lagi.',
-    failed_to_download_pictures: '#848 Gagal memuat turun gambar, hubungi Sokongan FLUX.',
     failed_to_move_laser_head: 'Gagal menggerakkan kepala laser.',
     failed_to_parse_checkpoint: 'Gagal mengurai data kawalan titik.',
     failed_to_save_calibration_results: '#849 Gagal menyimpan keputusan penentusahan, cuba lagi. Jika masalah berterusan, hubungi Sokongan FLUX.',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Sila ambil perhatian bahawa Beam Studio mungkin tidak berfungsi dengan optimum pada peranti anda. Untuk pengalaman yang terbaik, ia memerlukan peranti dengan lebar skrin minimum 1024 piksel.',
+  },
+  error_report: {
+    always: 'Sentiasa hantar',
+    ask: 'Tanya setiap kali',
+    consent_checkbox: 'Hantar data diagnostik kepada FLUX untuk membantu membetulkan ralat ini (tiada fail reka bentuk atau data peribadi)',
+    consent_design_checkbox: 'Hantar data diagnostik dan fail reka bentuk yang sedang diproses kepada FLUX untuk membantu menyiasat ralat ini',
+    never: 'Jangan hantar',
+    prompt_caption: 'Hantar secara automatik?',
+    prompt_message: 'Sentiasa hantar data diagnostik secara automatik apabila ralat berlaku? Anda boleh mengubahnya pada bila-bila masa di Keutamaan > Privasi.',
+    sent: 'Terima kasih! Data diagnostik telah dihantar.',
+    sent_automatically: 'Data diagnostik dihantar kepada FLUX secara automatik.',
+    setting_label: 'Muat Naik Laporan Ralat',
   },
   flux_101: {
     badge_earned: '%(badge)s — anda telah menamatkan "%(chapter)s"',

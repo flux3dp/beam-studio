@@ -23,6 +23,12 @@ const CONNECTION_TIMEOUT_ERROR = {
   status: 'error',
 };
 
+interface ControlTimeoutError {
+  error: 'TIMEOUT';
+  status: 'error';
+  text: 'TIMEOUT';
+}
+
 class Control extends EventEmitter implements IControlSocket {
   public isConnected = false;
 
@@ -43,6 +49,8 @@ class Control extends EventEmitter implements IControlSocket {
       } = undefined;
 
   private isProcessingTask = false;
+
+  private invalidationReason?: ControlTimeoutError;
 
   private ws!: WrappedWebSocket;
 
@@ -93,6 +101,8 @@ class Control extends EventEmitter implements IControlSocket {
   }
 
   addTask<T>(taskFunction: (...args: any[]) => T, ...args: any[]): Promise<T> {
+    if (this.invalidationReason) return Promise.reject(this.invalidationReason);
+
     if (this.taskQueue.length > MAX_TASK_QUEUE) {
       console.error(`Control ${this.uuid} task queue exceeds max queue length. Clear queue and then send task`);
       this.taskQueue = [];
@@ -163,6 +173,9 @@ class Control extends EventEmitter implements IControlSocket {
           this.emit(EVENT_COMMAND_FATAL, response);
         },
         onMessage: (data) => {
+          // A timed-out transfer can still deliver frames while its socket is closing.
+          if (this.invalidationReason) return;
+
           switch (data.status) {
             case 'connecting':
               clearTimeout(timeoutTimer);
@@ -219,7 +232,21 @@ class Control extends EventEmitter implements IControlSocket {
     this.removeAllListeners(EVENT_COMMAND_PROGRESS);
   }
 
-  setTimeoutTimer(reject: Function, timeout = 30000) {
+  private retireAfterLogTimeout = (reason: ControlTimeoutError) => {
+    this.invalidationReason = reason;
+    this.isConnected = false;
+
+    // The backend may still be streaming. Never run or replay queued commands on this socket.
+    for (const task of this.taskQueue.splice(0)) task.reject(reason);
+
+    try {
+      this.ws.close();
+    } catch (error) {
+      console.error(`Control ${this.uuid} close after log timeout failed:`, error);
+    }
+  };
+
+  setTimeoutTimer(reject: (reason: ControlTimeoutError) => void, timeout = 30000) {
     return setTimeout(() => {
       this.removeCommandListeners();
       reject({ error: 'TIMEOUT', status: 'error', text: 'TIMEOUT' });
@@ -738,11 +765,18 @@ class Control extends EventEmitter implements IControlSocket {
   downloadLog = (logName: string, idleTimeout?: number) =>
     new Promise<[string, Blob]>((resolve, reject) => {
       let metadata: any = null;
+      let data: Blob | undefined;
+      let isOkReceived = false;
       let timeoutTimer: NodeJS.Timeout | undefined;
       const arm = () => {
         if (timeoutTimer) clearTimeout(timeoutTimer);
 
-        timeoutTimer = idleTimeout ? this.setTimeoutTimer(reject, idleTimeout) : undefined;
+        timeoutTimer = idleTimeout
+          ? this.setTimeoutTimer((reason) => {
+              this.retireAfterLogTimeout(reason);
+              reject(reason);
+            }, idleTimeout)
+          : undefined;
       };
       // the timer is re-armed, so error/fatal clear whichever one is live, not the one they were handed
       const fail = (response: unknown) => {
@@ -756,14 +790,19 @@ class Control extends EventEmitter implements IControlSocket {
 
         if (response.status === 'transfer') {
           this.emit(EVENT_COMMAND_PROGRESS, response);
+        } else if (response.status === 'ok') {
+          isOkReceived = true;
+        } else if (response instanceof Blob) {
+          data = response;
         } else if (!Object.keys(response).includes('completed')) {
           metadata = response;
         }
 
-        if (response instanceof Blob) {
+        // fetch_log sends a final ok after the binary frame. Consume it before releasing the queue.
+        if (data && isOkReceived) {
           clearTimeout(timeoutTimer);
           this.removeCommandListeners();
-          resolve([metadata, response]);
+          resolve([metadata, data]);
         }
       });
       this.setDefaultErrorResponse(fail);

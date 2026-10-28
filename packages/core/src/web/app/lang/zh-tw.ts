@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: '部分字型在不同系統間有差異，輸出前請將字體轉換成路徑，以確保文字正確顯示。轉換文字至路徑中...',
-      export_file_error_ask_for_upload: '匯出工作時發生錯誤，是否願意上傳工作場景回報錯誤給開發團隊？',
       retreive_image_data: '擷取影像資料中...',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: '已在偏好設定中新增在圖層面板和物件面板之間自動切換的新選項。此選項預設為關閉。是否要啟用自動切換？ <br/>您可以隨時在偏好設定中更改此設定。',
         title: '自動切換圖層和物件面板',
       },
-      backend_connect_failed_ask_to_upload: '#802 連接後端程式時持續發生錯誤，請問您是否要將錯誤報告上傳到雲端?',
+      backend_connect_failed: '#802 連接後端程式時持續發生錯誤。',
       backend_error_hint: '後端程式無法連接，部分功能可能無法使用。',
       both_power_and_speed_too_high: '雷射管在高功率下耗損較快，使用低功率可以延長雷試管使用壽命。<br/>並且在此雕刻解析度使用過快的速度可能導致漸層雕刻的品質較差。',
       bug_report: '錯誤回報',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: '無法載入 SVG 資料',
       import_file_contain_invalid_path: '#808 匯入的SVG檔案中含有不存在的圖片路徑，請確認檔案中所有連結之圖片皆存在，或改將圖片嵌入檔案中。',
-      import_file_error_ask_for_upload: '讀取 SVG 檔時發生錯誤，是否願意上傳檔案回報錯誤給開發團隊？',
       import_stl: {
         advice_message: '匯入可能需要較長時間，過程中軟體可能沒有回應。',
         advice_message_strong: '此模型非常大，強烈建議先簡化模型再匯入。',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: '含有路徑物件的圖層速度過快，可能導致切割時位置誤差。<br/>不建議超過在切割路徑時超過 %(limit)s 。',
       too_fast_for_path_and_constrain: '以下圖層： <strong>%(layers)s</strong><br/>含有向量路徑物件且速度超過 %(limit)s，為維持雕刻的精度，向量路徑速度將被限制在 %(limit)s ，您可以在偏好設定解除此限制。',
       touchpad: '觸控板',
-      upload_failed: '#819 檔案上傳失敗。',
-      upload_file_too_large: '#819 檔案大小過大，請聯絡客服。',
       vectorize_shading_image: '漸層影像在向量化時將花費較多時間，且容易有雜點，請將影像漸層關閉後再執行。',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: '抬升和切割',
     elevate_and_cut_step_1: '請將 A4 尺寸的淺色木板放在工作區的中央，並將其墊高至 20mm 高。',
     elevate_and_cut_step_1_prism_lift: '使用 Ador 刀條的最長邊約 14mm 搭配 6mm 以上木板，將其墊高至 20mm 高。',
-    failed_to_calibrate_camera: '#848 校正相機失敗，請聯絡 FLUX 客服。',
     failed_to_calibrate_chessboard: '無法使用棋盤圖片進行校正。',
     failed_to_calibrate_with_pictures: '#848 使用機器照片進行校正失敗。',
     failed_to_detect_calibration_pattern: '無法偵測到校正圖案。請調整相機曝光值或重新擺放校正圖案並再試一次。',
-    failed_to_download_pictures: '#848 下載圖片失敗，請聯絡 FLUX 客服。',
     failed_to_move_laser_head: '無法移動雷射頭。',
     failed_to_parse_checkpoint: '無法解析檢查點資料.',
     failed_to_save_calibration_results: '#849 儲存校正結果失敗，請再試一次。若此錯誤持續發生，請聯絡 FLUX 客服。',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: '請注意，Beam Studio 無法在您的裝置上順利執行。若要獲得最佳使用體驗，裝置螢幕寬度至少應有 1024 像素。',
+  },
+  error_report: {
+    always: '總是傳送',
+    ask: '每次詢問',
+    consent_checkbox: '傳送診斷資料給 FLUX 協助修復此錯誤（不含設計檔案或個人資料）',
+    consent_design_checkbox: '傳送診斷資料與此次處理的設計檔給 FLUX，協助排查此錯誤',
+    never: '不傳送',
+    prompt_caption: '要自動傳送嗎？',
+    prompt_message: '發生錯誤時是否一律自動傳送診斷資料？您隨時可以在「偏好設定 > 隱私」中更改。',
+    sent: '感謝您！診斷資料已傳送。',
+    sent_automatically: '診斷資料已自動傳送給 FLUX。',
+    setting_label: '錯誤報告上傳',
   },
   flux_101: {
     badge_earned: '%(badge)s：已看完「%(chapter)s」',

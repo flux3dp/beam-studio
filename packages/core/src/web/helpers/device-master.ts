@@ -20,6 +20,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import storage from '@core/implementations/storage';
 import type {
   FisheyeCameraParameters,
@@ -268,16 +269,20 @@ class DeviceMaster {
     }
 
     if (authResult.data !== 'cancel') {
-      const message = authResult.data.reachable
-        ? lang.select_device.auth_failure
-        : lang.select_device.unable_to_connect;
+      const { reachable } = authResult.data;
+      const alert = {
+        id: 'device-auth-fail',
+        message: reachable ? lang.select_device.auth_failure : lang.select_device.unable_to_connect,
+        type: AlertConstants.SHOW_POPUP_ERROR,
+      };
 
       Alert.popById('device-auth-fail');
-      Alert.popUp({
-        id: 'device-auth-fail',
-        message,
-        type: AlertConstants.SHOW_POPUP_ERROR,
-      });
+      // #811 wrong password is the user's state, not a defect
+      Alert.popUp(
+        reachable
+          ? alert
+          : withErrorReportConsent(alert, { device: device.info, errorCode: '#810', includeDeviceLog: false }),
+      );
 
       // Display the dialog again
       const res = await this.showAuthDialog(device.info.uuid);
@@ -614,14 +619,26 @@ class DeviceMaster {
       default:
         errMessage = `${t.unknown_error} ${errorCode}`;
     }
-    Alert.popById('connection-error');
-    Alert.popUp({
+
+    const alertDevice = device ?? this.discoveredDevices.find((d) => d.uuid === uuid);
+    const alert = {
       caption: errCaption,
-      device: device ?? this.discoveredDevices.find((d) => d.uuid === uuid),
+      device: alertDevice,
       id: 'connection-error',
       message: errMessage,
       type: AlertConstants.SHOW_POPUP_ERROR,
-    });
+    };
+
+    Alert.popById('connection-error');
+    Alert.popUp(
+      errorCode === ConnectionError.NOT_FOUND
+        ? alert
+        : withErrorReportConsent(alert, {
+            device: alertDevice ?? null,
+            errorCode: `CONNECTION_${errorCode}`,
+            includeDeviceLog: false,
+          }),
+    );
   }
 
   async getControl(): Promise<IControlSocket> {
@@ -1040,12 +1057,23 @@ class DeviceMaster {
   async downloadLog(log: string, onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
     const controlSocket = await this.getControl();
 
-    if (onProgress) {
-      controlSocket.setProgressListener(onProgress);
-    }
-
-    return controlSocket.downloadLog(log, idleTimeout);
+    return this.downloadLogFromControl(controlSocket, log, onProgress, idleTimeout);
   }
+
+  private downloadLogFromControl = (
+    controlSocket: IControlSocket,
+    log: string,
+    onProgress: (...args: any[]) => void,
+    idleTimeout?: number,
+  ) => {
+    // Log transfers share command listeners with other control requests. Install the progress
+    // listener only when this task starts, so waiting downloads cannot overwrite an active task's.
+    return controlSocket.addTask(() => {
+      controlSocket.setProgressListener(onProgress);
+
+      return controlSocket.downloadLog(log, idleTimeout);
+    });
+  };
 
   async fetchCameraCalibImage(fileName: string, onProgress: (...args: any[]) => void = () => {}) {
     const controlSocket = await this.getControl();
@@ -1078,11 +1106,17 @@ class DeviceMaster {
   async getLogsTexts(logs: string[], onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
     const res: Record<string, Array<Blob | string>> = {};
 
+    if (!logs.length) return res;
+
+    // Bind the entire collection to one connection, including a failed connection attempt.
+    // Selecting another machine between files must never change the source of this report.
+    const controlSocket = this.getControl();
+
     for (let i = 0; i < logs.length; i += 1) {
       const log = logs[i];
 
       try {
-        const logFile = await this.downloadLog(log, onProgress, idleTimeout);
+        const logFile = await this.downloadLogFromControl(await controlSocket, log, onProgress, idleTimeout);
 
         res[log] = logFile;
       } catch (e) {

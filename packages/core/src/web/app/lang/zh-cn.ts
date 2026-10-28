@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: '部分字体在不同系统间有差异，输出前请将字体转换成路径，以确保文本正确显示。转换文本至路径中...',
-      export_file_error_ask_for_upload: '汇出工作时发生错误，是否愿意上传工作场景回报错误给开发团队？',
       retreive_image_data: '撷取影像资料中...',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: '已在首选项中添加了在图层面板和对象面板之间自动切换的新选项。此选项默认情况下处于禁用状态。是否要现在启用自动切换？ <br/>您可以随时在首选项中更改此设置。',
         title: '自动切换图层和物件面板',
       },
-      backend_connect_failed_ask_to_upload: '#802 连接后端程式时持续发生错误，请问您是否要将错误报告上传到云端?',
+      backend_connect_failed: '#802 连接后端程序时持续发生错误。',
       backend_error_hint: '后端程式无法连接，部分功能可能无法使用。',
       both_power_and_speed_too_high: '激光管在高功率下耗损较快，使用低功率可以延长雷试管使用寿命。\n同时在此雕刻分辨率使用过高速度，可能导致渐层雕刻較差品质。',
       bug_report: '错误回报',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: '无法加载 SVG 数据',
       import_file_contain_invalid_path: '#808 汇入的SVG档案中含有不存在的图片路径，请确认档案中所有连结之图片皆存在，或改将图片嵌入档案中。',
-      import_file_error_ask_for_upload: '读取 SVG 档时发生错误，是否愿意上传档案回报错误给开发团队？',
       import_stl: {
         advice_message: '导入可能需要较长时间，过程中软件可能没有响应。',
         advice_message_strong: '此模型非常大，强烈建议先简化模型再导入。',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: '含有路径物件的图层速度过快，可能导致切割时位置误差。\n不建议超过在切割路径时超过 %(limit)s。',
       too_fast_for_path_and_constrain: '以下图层： %(layers)s \n含有向量路径物件且速度超过 %(limit)s，为维持雕刻的精度，向量路径速度将被限制在 %(limit)s，您可以在偏好设定解除此限制。',
       touchpad: '触摸板',
-      upload_failed: '#819 档案上传失败。',
-      upload_file_too_large: '#819 档案大小过大，请联络客服。',
       vectorize_shading_image: '渐层影像在向量化时将花费较多时间，且容易有杂点，请将影像渐层关闭后再执行。',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: '抬升和裁剪',
     elevate_and_cut_step_1: '将一块A4大小的浅色木材放置在工作区中心，并将其抬高至20mm。',
     elevate_and_cut_step_1_prism_lift: '使用Ador Prism Lift，最大长度为14mm，搭配至少6mm厚度的木材。',
-    failed_to_calibrate_camera: '#848 相机校准失败，请联系FLUX支持。',
     failed_to_calibrate_chessboard: '无法使用棋盘图片进行校准。',
     failed_to_calibrate_with_pictures: '#848 使用设备图片进行校准失败。',
     failed_to_detect_calibration_pattern: '未能检测到校准图案。请调整相机曝光或重新放置图案后重试。',
-    failed_to_download_pictures: '#848 图片下载失败，请联系FLUX支持。',
     failed_to_move_laser_head: '无法移动激光头。',
     failed_to_parse_checkpoint: '无法解析检查点数据。',
     failed_to_save_calibration_results: '#849 保存校准结果失败，请重试。如果问题持续发生，请联系FLUX支持。',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: '请注意，Beam Studio 无法在您的装置上顺利执行。若要获得最佳使用体验，装置萤幕宽度至少应有 1024 像素。',
+  },
+  error_report: {
+    always: '总是发送',
+    ask: '每次询问',
+    consent_checkbox: '发送诊断数据给 FLUX 以协助修复此错误（不含设计文件或个人数据）',
+    consent_design_checkbox: '发送诊断数据与此次处理的设计文件给 FLUX，协助排查此错误',
+    never: '不发送',
+    prompt_caption: '要自动发送吗？',
+    prompt_message: '发生错误时是否一律自动发送诊断数据？您随时可以在「偏好设定 > 隐私」中更改。',
+    sent: '感谢您！诊断数据已发送。',
+    sent_automatically: '诊断数据已自动发送给 FLUX。',
+    setting_label: '错误报告上传',
   },
   flux_101: {
     badge_earned: '%(badge)s：已看完「%(chapter)s」',

@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Convert Text to Path...',
-      export_file_error_ask_for_upload: 'Failed to export task. Are you willing to provide working scene to develop team for bug report?',
       retreive_image_data: 'Retrieve Image Data...',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: 'A new option to automatically switch between the Layers panel and the Objects panel has been added to Preferences. This option is disabled by default. Would you like to enable automatic switching now?<br/>You can change this setting anytime in Preferences.',
         title: 'Auto Switching Layer and Object Panel',
       },
-      backend_connect_failed_ask_to_upload: '#802 Errors keeps occurring when trying to connect to the backend. Do you want to upload your bug report log?',
+      backend_connect_failed: '#802 Errors keep occurring when trying to connect to the backend.',
       backend_error_hint: 'Features might be not working properly due to backend error.',
       both_power_and_speed_too_high: "Using lower laser power will extends laser tube's lifetime.\nAlso, too high speed at this resolution may result in the lower quality of shading engraving.",
       bug_report: 'Bug Report',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Unable to load SVG data',
       import_file_contain_invalid_path: '#808 Imported SVG file contains invalid image path. Please make sure all image files exist or embed image in the file',
-      import_file_error_ask_for_upload: 'Failed to Imported SVG file. Are you willing to provide file to develop team for bug report ?',
       import_stl: {
         advice_message: 'Importing may take a long time, and the app may stop responding while it works.',
         advice_message_strong: 'This model is very large. Simplifying it before importing is strongly recommended.',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: "Using too high speed in layers containing path objects may result in lower precision when cutting.\nWe don't recommend using speed faster than %(limit)s when cutting.",
       too_fast_for_path_and_constrain: 'Following layers: %(layers)s \ncontain vector path objects, and have speed exceeding %(limit)s.\nThe cutting speed of vector path objects will be constrained to %(limit)s.\nYou can remove this limit at Preferences Settings.',
       touchpad: 'TouchPad',
-      upload_failed: '#819 File upload failed.',
-      upload_file_too_large: '#819 File is too large for upload.',
       vectorize_shading_image: 'Gradient images takes more time to trace and are prone to noise. Please kindly turn off the image gradient before executing.',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: 'Elevate and Cut',
     elevate_and_cut_step_1: 'Place an A4 or Letter size light-colored wooden in the workspace center, elevated to 20mm.',
     elevate_and_cut_step_1_prism_lift: 'Use Ador Prism Lift at 14mm max length with a wooden at least 6mm thick.',
-    failed_to_calibrate_camera: '#848 Failed to calibrate camera, please contact FLUX Support.',
     failed_to_calibrate_chessboard: 'Failed to calibrate with the chessboard picture.',
     failed_to_calibrate_with_pictures: '#848 Failed to calibrate with device pictures.',
     failed_to_detect_calibration_pattern: 'Failed to detect the calibration pattern. Please adjust the camera exposure or reposition the calibration pattern and try again.',
-    failed_to_download_pictures: '#848 Failed to download pictures, please contact FLUX Support.',
     failed_to_move_laser_head: 'Failed to move the laser head.',
     failed_to_parse_checkpoint: 'Failed to parse the checkpoint data.',
     failed_to_save_calibration_results: '#849 Failed to save calibration results, please try again. If this keeps happening, please contact FLUX Support.',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Please note that Beam Studio may not work optimally on your device. For an optimal experience, it should be a device with a screen width of at least 1024 pixels width.',
+  },
+  error_report: {
+    always: 'Always send',
+    ask: 'Ask each time',
+    consent_checkbox: 'Send diagnostic data to FLUX to help fix this error (no design files or personal data)',
+    consent_design_checkbox: 'Send diagnostic data and the design file being processed to FLUX to help investigate this error',
+    never: 'Never send',
+    prompt_caption: 'Send automatically?',
+    prompt_message: 'Always send diagnostic data automatically when errors occur? You can change this anytime in Preferences > Privacy.',
+    sent: 'Thanks! Diagnostic data sent.',
+    sent_automatically: 'Diagnostic data sent to FLUX automatically.',
+    setting_label: 'Error Report Upload',
   },
   flux_101: {
     badge_earned: '%(badge)s — you completed "%(chapter)s"',

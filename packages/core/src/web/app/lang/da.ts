@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Konverter tekst til sti...',
-      export_file_error_ask_for_upload: 'Kunne ikke eksportere opgave. Er du villig til at dele arbejdsscenen med udviklingsholdet til fejlrapportering?',
       retreive_image_data: 'Henter billeddata...',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: 'En ny mulighed for automatisk at skifte mellem lagpanelet og objektpanelet er blevet tilføjet i Præferencer. Denne mulighed er deaktiveret som standard. Vil du aktivere automatisk skift nu? <br/>Du kan ændre denne indstilling når som helst i Præferencer.',
         title: 'Automatisk Skift mellem Lag- og Objektpanel',
       },
-      backend_connect_failed_ask_to_upload: '#802 Fejl opstår hele tiden, når der forsøges forbindelse til backend. Vil du uploade din fejlrapportlog?',
+      backend_connect_failed: '#802 Fejl opstår hele tiden, når der forsøges forbindelse til backend.',
       backend_error_hint: 'Funktioner fungerer muligvis ikke korrekt på grund af backend-fejl.',
       both_power_and_speed_too_high: 'At bruge lavere laserstyrke forlænger laserens levetid. Desuden kan for høj hastighed ved denne opløsning resultere i ringere skyggegraveringskvalitet.',
       bug_report: 'Fejlrapport',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Kan ikke indlæse SVG-data',
       import_file_contain_invalid_path: '#808 Importeret SVG-fil indeholder ugyldig billedsti. Sørg for, at alle billedfiler findes, eller indsæt billede i filen',
-      import_file_error_ask_for_upload: 'Kunne ikke importere SVG-fil. Er du villig til at give filen til udviklingsholdet til fejlrapport?',
       import_stl: {
         advice_message: 'Importen kan tage lang tid, og appen reagerer muligvis ikke imens.',
         advice_message_strong: 'Denne model er meget stor. Det anbefales kraftigt at forenkle den før import.',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: 'At bruge for høj hastighed i lag, der indeholder stivektor-objekter, kan resultere i ringere præcision ved skæring. Vi anbefaler ikke at bruge hastigheder over %(limit)s. ved skæring.',
       too_fast_for_path_and_constrain: 'Følgende lag: %(layers)s \nindeholder stivektor-stibaner og har hastigheder over %(limit)s. Skærehastigheden for stivektor-stibaner vil blive begrænset til %(limit)s. Du kan fjerne denne begrænsning under Indstillinger.',
       touchpad: 'Touchpad',
-      upload_failed: '#819 Upload af fil mislykkedes.',
-      upload_file_too_large: '#819 Filen er for stor til upload.',
       vectorize_shading_image: 'Gradientbilleder tager længere tid at spore og er tilbøjelige til støj. Slå venligst billedgradienten fra, før du fortsætter.',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: 'Hæv og Skær',
     elevate_and_cut_step_1: 'Placer et A4-størrelse lyst træ midt i arbejdsområdet, hævet til 20mm.',
     elevate_and_cut_step_1_prism_lift: 'Brug Ador Prism Lift med en maksimal længde på 14mm sammen med et træ på mindst 6mm tykkelse.',
-    failed_to_calibrate_camera: '#848 Kunne ikke kalibrere kamera, kontakt venligst FLUX-support.',
     failed_to_calibrate_chessboard: 'Kunne ikke kalibrere med skakbræt billedet.',
     failed_to_calibrate_with_pictures: '#848 Kunne ikke kalibrere med enhedens billeder.',
     failed_to_detect_calibration_pattern: 'Det var ikke muligt at finde kalibreringsmønsteret. Justér kameraets eksponering eller flyt mønsteret og prøv igen.',
-    failed_to_download_pictures: '#848 Kunne ikke downloade billeder, kontakt venligst FLUX-support.',
     failed_to_move_laser_head: 'Kunne ikke flytte laserhovedet.',
     failed_to_parse_checkpoint: 'Kunne ikke analysere kontrolpunktdata.',
     failed_to_save_calibration_results: '#849 Kunne ikke gemme kalibreringsresultater, prøv igen. Hvis dette bliver ved med at ske, skal du kontakte FLUX-support.',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Bemærk venligst at Beam Studio muligvis ikke fungerer optimalt på din enhed. For en optimal oplevelse bør det være en enhed med en skærm bredde på mindst 1024 pixels.',
+  },
+  error_report: {
+    always: 'Send altid',
+    ask: 'Spørg hver gang',
+    consent_checkbox: 'Send diagnosedata til FLUX for at hjælpe med at rette denne fejl (ingen designfiler eller personlige data)',
+    consent_design_checkbox: 'Send diagnosedata og den designfil, der behandles, til FLUX for at undersøge denne fejl',
+    never: 'Send aldrig',
+    prompt_caption: 'Send automatisk?',
+    prompt_message: 'Skal diagnosedata altid sendes automatisk, når der opstår fejl? Du kan altid ændre dette under Indstillinger > Privacy.',
+    sent: 'Tak! Diagnosedata er sendt.',
+    sent_automatically: 'Diagnosedata er automatisk sendt til FLUX.',
+    setting_label: 'Upload af fejlrapporter',
   },
   flux_101: {
     badge_earned: '%(badge)s — du har gennemført "%(chapter)s"',

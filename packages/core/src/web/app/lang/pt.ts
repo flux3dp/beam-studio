@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'Converter Texto em Caminho...',
-      export_file_error_ask_for_upload: 'Falha ao exportar tarefa. Deseja fornecer a cena de trabalho para a equipe de desenvolvimento relatar bugs?',
       retreive_image_data: 'Recuperar Dados de Imagem...',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: 'Uma nova opção para alternar automaticamente entre o painel de Camadas e o painel de Objetos foi adicionada às Preferências. Esta opção está desativada por padrão. Gostaria de ativar a troca automática agora? <br/>Você pode alterar esta configuração a qualquer momento nas Preferências.',
         title: 'Alternância Automática Entre o Painel de Camadas e Objetos',
       },
-      backend_connect_failed_ask_to_upload: '#802 Erros continuam ocorrendo ao tentar conectar ao backend. Deseja enviar seu registro de relatório de erros?',
+      backend_connect_failed: '#802 Erros continuam ocorrendo ao tentar conectar ao backend.',
       backend_error_hint: 'Recursos podem não estar funcionando corretamente devido a um erro no backend.',
       both_power_and_speed_too_high: 'Usar menor potência do laser estenderá a vida útil do tubo de laser. Além disso, velocidade muito alta nesta resolução pode resultar em menor qualidade de gravação sombreada.',
       bug_report: 'Relatório de erros',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'Não foi possível carregar os dados SVG',
       import_file_contain_invalid_path: '#808 O arquivo SVG importado contém caminho de imagem inválido. Certifique-se de que todas as imagens existam ou incorpore a imagem no arquivo',
-      import_file_error_ask_for_upload: 'Falha ao importar arquivo SVG. Deseja enviar o arquivo à equipe de desenvolvimento para relatar erros?',
       import_stl: {
         advice_message: 'A importação pode demorar bastante, e o aplicativo pode parar de responder durante o processo.',
         advice_message_strong: 'Este modelo é muito grande. É altamente recomendável simplificá-lo antes de importar.',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: 'Usar velocidade muito alta em camadas contendo objetos de caminho pode resultar em menor precisão ao cortar. Não recomendamos usar velocidade superior a %(limit)s ao cortar.',
       too_fast_for_path_and_constrain: 'As seguintes camadas: %(layers)s \ncontêm objetos de caminho vetorial e têm velocidade superior a %(limit)s. A velocidade de corte dos objetos de caminho vetorial será limitada a %(limit)s. Você pode remover este limite nas Configurações de Preferências.',
       touchpad: 'TouchPad',
-      upload_failed: '#819 Falha no upload do arquivo.',
-      upload_file_too_large: '#819 O arquivo é muito grande para upload.',
       vectorize_shading_image: 'Imagens com gradiente levam mais tempo para traçar e são propensas a ruído. Por favor, desative o gradiente da imagem antes de executar.',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: 'Elevar e Cortar',
     elevate_and_cut_step_1: 'Coloque um pedaço de madeira de cor clara de tamanho A4 no centro da área de trabalho, elevado a 20mm.',
     elevate_and_cut_step_1_prism_lift: 'Use o Ador Prism Lift com seu comprimento máximo de 14 mm junto com uma madeira com pelo menos 6 mm de espessura para elevar a madeira a uma altura de 20 mm.',
-    failed_to_calibrate_camera: '#848 Falha ao calibrar a câmera, entre em contato com o suporte FLUX.',
     failed_to_calibrate_chessboard: 'Falha na calibração com a imagem do tabuleiro de xadrez.',
     failed_to_calibrate_with_pictures: '#848 Falha ao calibrar com imagens do dispositivo.',
     failed_to_detect_calibration_pattern: 'Falha ao detectar o padrão de calibração. Ajuste a exposição da câmera ou reposicione o padrão e tente novamente.',
-    failed_to_download_pictures: '#848 Falha ao baixar imagens, entre em contato com o Suporte FLUX.',
     failed_to_move_laser_head: 'Falha ao mover a cabeça do laser.',
     failed_to_parse_checkpoint: 'Falha ao analisar os dados do ponto de verificação.',
     failed_to_save_calibration_results: '#849 Falha ao salvar resultados de calibração, tente novamente. Se isso continuar acontecendo, entre em contato com o suporte FLUX.',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Observe que o Beam Studio pode não funcionar idealmente no seu dispositivo. Para uma experiência ideal, o dispositivo deve ter uma largura de tela de pelo menos 1024 pixels.',
+  },
+  error_report: {
+    always: 'Enviar sempre',
+    ask: 'Perguntar a cada vez',
+    consent_checkbox: 'Enviar dados de diagnóstico à FLUX para ajudar a corrigir este erro (sem arquivos de design ou dados pessoais)',
+    consent_design_checkbox: 'Enviar dados de diagnóstico e o ficheiro de desenho em processamento para a FLUX para investigar este erro',
+    never: 'Nunca enviar',
+    prompt_caption: 'Enviar automaticamente?',
+    prompt_message: 'Enviar sempre os dados de diagnóstico automaticamente quando ocorrerem erros? Você pode alterar isso a qualquer momento em Preferências > Privacidade.',
+    sent: 'Obrigado! Dados de diagnóstico enviados.',
+    sent_automatically: 'Dados de diagnóstico enviados automaticamente à FLUX.',
+    setting_label: 'Envio de relatórios de erro',
   },
   flux_101: {
     badge_earned: '%(badge)s — você concluiu "%(chapter)s"',

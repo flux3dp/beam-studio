@@ -68,7 +68,8 @@ export const useSettingStore = create<Action & State>(
             .with({ key: P.string, value: P.nullish }, ({ key }) => {
               const defaultValue = (DEFAULT_CONFIG as any)[key];
 
-              setStorage(key as StorageKey, defaultValue);
+              // a key with no default stays unset: storage.set(undefined) throws on electron-store
+              if (key in DEFAULT_CONFIG) setStorage(key as StorageKey, defaultValue);
 
               return defaultValue;
             })

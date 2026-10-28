@@ -1,6 +1,5 @@
 import { sprintf } from 'sprintf-js';
 
-import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -16,6 +15,7 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import callWithRetry from './callWithRetry';
+import handlePreviewSetupError from './handlePreviewSetupError';
 
 // TODO: Add tests
 class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
@@ -79,16 +79,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     } catch (error) {
       await this.end();
       console.log('Error in setup', error);
-
-      if ((error as Error).message && (error as Error).message.startsWith('Camera WS')) {
-        alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${(error as Error).message || ''}`,
-        });
-      } else {
-        alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${(error as Error).message || ''}`,
-        });
-      }
+      handlePreviewSetupError(this.device, error);
 
       return false;
     } finally {

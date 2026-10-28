@@ -5,6 +5,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { finishWithDevice } from '@core/app/pages/InitializeMachine/ConnectMachineIp/utils/finishWithDevice';
 import checkIPFormat from '@core/helpers/check-ip-format';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import i18n from '@core/helpers/i18n';
 import isJson from '@core/helpers/is-json';
 import { connectWebSocket } from '@core/helpers/sslIpHelper';
@@ -214,11 +215,16 @@ export async function handleAutoConnect(): Promise<boolean> {
     const msg = error instanceof Error ? error.message : i18n.lang.message.unknown_error;
 
     console.error('QR Auto-Connect Failed:', msg);
-    alertCaller.popUp({
-      caption: msg,
-      message: i18n.lang.initialize.connect_machine_ip.connection_failed_hint,
-      messageIcon: 'warning',
-    });
+    alertCaller.popUp(
+      withErrorReportConsent(
+        {
+          caption: msg,
+          message: i18n.lang.initialize.connect_machine_ip.connection_failed_hint,
+          messageIcon: 'warning',
+        },
+        { device: null, errorCode: 'QR_AUTOCONNECT_FAILED' },
+      ),
+    );
 
     return false;
   } finally {

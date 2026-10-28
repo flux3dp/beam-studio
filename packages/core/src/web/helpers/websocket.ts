@@ -2,12 +2,12 @@ import alertCaller from '@core/app/actions/alert-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import blobSegments from '@core/helpers/blob-segments';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import i18n from '@core/helpers/i18n';
 import type InsecureWebsocket from '@core/helpers/InsecureWebsocket';
 import isJson from '@core/helpers/is-json';
 import isWeb from '@core/helpers/is-web';
 import Logger from '@core/helpers/logger';
-import outputError from '@core/helpers/output-error';
 import { connectWebSocket } from '@core/helpers/sslIpHelper';
 import storage from '@core/implementations/storage';
 import type { Option, WrappedWebSocket } from '@core/interfaces/WebSocket';
@@ -33,15 +33,12 @@ const popBackendErrorAlert = () => {
   const LANG = i18n.lang.beambox.popup;
 
   alertCaller.popById('backend-error');
-  alertCaller.popUp({
-    buttonType: alertConstants.YES_NO,
-    id: 'backend-error',
-    message: LANG.backend_connect_failed_ask_to_upload,
-    onYes: () => {
-      outputError.uploadBackendErrorLog();
-    },
-    type: alertConstants.SHOW_POPUP_ERROR,
-  });
+  alertCaller.popUp(
+    withErrorReportConsent(
+      { id: 'backend-error', message: LANG.backend_connect_failed, type: alertConstants.SHOW_POPUP_ERROR },
+      { device: null, errorCode: '#802' },
+    ),
+  );
   MessageCaller.openMessage({
     content: LANG.backend_error_hint,
     duration: 0,

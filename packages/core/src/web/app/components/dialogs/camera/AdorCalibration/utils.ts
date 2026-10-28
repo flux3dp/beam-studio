@@ -12,6 +12,7 @@ import {
 import { uploadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import durationFormatter from '@core/helpers/duration-formatter';
+import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
 
@@ -119,7 +120,9 @@ export const calibrateWithDevicePictures = async (): Promise<FisheyeCameraParame
     };
   } catch (error) {
     console.error(error);
-    alertCaller.popUpError({ message: tCali.failed_to_calibrate_with_pictures });
+    alertCaller.popUpError(
+      withErrorReportConsent({ message: tCali.failed_to_calibrate_with_pictures }, { errorCode: '#848' }),
+    );
 
     return null;
   } finally {

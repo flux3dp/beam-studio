@@ -197,7 +197,6 @@ const lang: ILang = {
     },
     bottom_right_panel: {
       convert_text_to_path_before_export: 'テキストをパスに変換…',
-      export_file_error_ask_for_upload: 'Failed to export task. Are you willing to provide working scene to develop team for bug report?',
       retreive_image_data: '画像データを読み出す…',
     },
     context_menu: {
@@ -466,7 +465,7 @@ const lang: ILang = {
         message: 'レイヤーパネルとオブジェクトパネルの間を自動的に切り替える新しいオプションが環境設定に追加されました。このオプションはデフォルトではオフになっています。自動切り替えを今すぐオンにしますか？ <br/>この設定はいつでも環境設定で変更できます。',
         title: 'レイヤーとオブジェクトパネルの自動切り替え',
       },
-      backend_connect_failed_ask_to_upload: '#802 バックエンドに接続しようとすると、エラーが発生し続けます。バグレポートログをアップロードしますか？',
+      backend_connect_failed: '#802 バックエンドに接続しようとすると、エラーが発生し続けます。',
       backend_error_hint: 'バックエンドのエラーのため、機能が正しく動作しない可能性があります。',
       both_power_and_speed_too_high: 'より低いレーザー出力を使用すると、レーザー管の寿命が延びます。\nまた、この解像度で速度が速すぎると、シェーディング彫刻の品質が低下する場合があります。',
       bug_report: 'バグ報告',
@@ -489,7 +488,6 @@ const lang: ILang = {
       },
       failed_to_load_svg: 'SVGデータを読み込めません',
       import_file_contain_invalid_path: '#808 インポートされたSVGファイルに無効は画像パスが含まれています。すべての画像ファイルが存在することを確認するか、ファイルに画像を埋め込んでください',
-      import_file_error_ask_for_upload: 'インポートされたSVGファイルに失敗しました。バグレポート用のチームを開発するためのファイルを提供してもよろしいですか？',
       import_stl: {
         advice_message: 'インポートには時間がかかる場合があり、処理中はアプリが応答しなくなることがあります。',
         advice_message_strong: 'このモデルは非常に大きいです。インポート前にモデルを簡略化することを強く推奨します。',
@@ -567,8 +565,6 @@ const lang: ILang = {
       too_fast_for_path: 'パスオブジェクトを含む層で速すぎる速度を使用すると、切断時に精度が低下する場合があります。\n切断時に %(limit)s より速い速度を使用することはお勧めしません。',
       too_fast_for_path_and_constrain: '次のレイヤー：%(layers)s \nベクトルパスオブジェクトが含まれていて、速度が %(limit)sを超えています。\nベクトルパスオブジェクトの切断速度は %(limit)s に制限されます。\nこの制限は[好み]で削除できます。',
       touchpad: 'タッチパッド',
-      upload_failed: '#819 ファイルのアップロードに失敗しました。',
-      upload_file_too_large: '#819 ファイルが大きすぎてアップロードできません。',
       vectorize_shading_image: 'シェーディング画像はベクトル化に時間がかかり、ノイズが発生しやすくなります。実行する前に画像のシェーディングをオフにしてください。',
     },
     rating_panel: {
@@ -1095,11 +1091,9 @@ const lang: ILang = {
     elevate_and_cut: '高さを上げて切り取る',
     elevate_and_cut_step_1: 'A4サイズの明るい木材を作業スペースの中心に置き、20mmに高くします。',
     elevate_and_cut_step_1_prism_lift: 'Ador Prism Liftを最大14mmの長さで、少なくとも6mmの厚さの木材と一緒に使用します。',
-    failed_to_calibrate_camera: '#848 カメラのキャリブレーションに失敗しました。FLUX サポートにご連絡ください。',
     failed_to_calibrate_chessboard: 'チェッカーボード画像でのキャリブレーションに失敗しました。',
     failed_to_calibrate_with_pictures: '#848 デバイスの写真でのキャリブレーションに失敗しました。',
     failed_to_detect_calibration_pattern: 'キャリブレーションパターンを検出できませんでした。カメラの露出を調整するか、パターンの位置を変えて再試行してください。',
-    failed_to_download_pictures: '#848 画像のダウンロードに失敗しました。FLUX サポートにご連絡ください。 ',
     failed_to_move_laser_head: 'レーザーヘッドの移動に失敗しました。',
     failed_to_parse_checkpoint: 'チェックポイントデータの解析に失敗しました。',
     failed_to_save_calibration_results: '#849 キャリブレーション結果の保存に失敗しました。再試行してください。これが続く場合、FLUX サポートにご連絡ください。',
@@ -1418,6 +1412,18 @@ const lang: ILang = {
   },
   error_pages: {
     screen_size: 'Please note that Beam Studio may not work optimally on your device. For an optimal experience, it should be a device with a screen width of at least 1024 pixels width.',
+  },
+  error_report: {
+    always: '常に送信',
+    ask: '毎回確認',
+    consent_checkbox: 'このエラーの修正に役立てるため、診断データを FLUX に送信する（デザインファイルや個人情報は含みません）',
+    consent_design_checkbox: 'このエラーの調査のため、診断データと処理中のデザインファイルを FLUX に送信する',
+    never: '送信しない',
+    prompt_caption: '自動的に送信しますか？',
+    prompt_message: 'エラー発生時に診断データを常に自動送信しますか？この設定は 設定 > プライバシー でいつでも変更できます。',
+    sent: 'ありがとうございます。診断データを送信しました。',
+    sent_automatically: '診断データを FLUX に自動送信しました。',
+    setting_label: 'エラーレポートの送信',
   },
   flux_101: {
     badge_earned: '%(badge)s：「%(chapter)s」を修了しました',
