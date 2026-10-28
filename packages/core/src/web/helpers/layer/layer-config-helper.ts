@@ -873,9 +873,10 @@ export const getPromarkLimit = (): {
  * Write a UV layer's power and frequency so the two agree.
  *
  * UV realises power through the frequency (uvPowerFrequency.ts), so a layer always carries both.
- * The power is the value the user sets and sees, so it is the source: clamped to the UV range,
- * the frequency is derived from it and the power rewritten to what that frequency stands for.
- * Without a power (the default UV presets carry a frequency only) the power follows the frequency.
+ * The power is the source of truth: clamped to the UV range, the frequency is derived from it and
+ * the power rewritten to what that frequency stands for. At 100% the frequency given (or the
+ * layer's own) is kept when it is already in the 30–40kHz band, see uvPowerToFrequency. Without a
+ * power (the default UV presets carry a frequency only) the power follows the frequency.
  */
 export const writeUvPowerFrequency = (
   layer: Element,
@@ -886,7 +887,9 @@ export const writeUvPowerFrequency = (
 
   if (power !== undefined) {
     const clampedPower = Math.max(UV_POWER_LIMIT.min, Math.min(power, UV_POWER_LIMIT.max));
-    const uvFrequency = uvPowerToFrequency(clampedPower);
+    // at 100% the frequency given (the preset's, or the layer's own) stays when it is already in
+    // the 30–40kHz band, see uvPowerToFrequency
+    const uvFrequency = uvPowerToFrequency(clampedPower, frequency ?? (getData(layer, 'frequency') as number));
 
     writeDataLayer(layer, 'frequency', uvFrequency, opts);
     writeDataLayer(layer, 'power', uvFrequencyToPower(uvFrequency), opts);
@@ -1005,7 +1008,10 @@ export const postPresetChange = (): void => {
     if (isPromark) {
       if (isPromarkUV()) {
         // the power is the source on UV: clamped to its range, and the frequency follows it
-        writeUvPowerFrequency(layerElement, { power: getData(layerElement, 'power') as number });
+        writeUvPowerFrequency(layerElement, {
+          frequency: getData(layerElement, 'frequency') as number,
+          power: getData(layerElement, 'power') as number,
+        });
       } else if (promarkLimit?.frequency) {
         const frequency = getData(layerElement, 'frequency') as number;
 

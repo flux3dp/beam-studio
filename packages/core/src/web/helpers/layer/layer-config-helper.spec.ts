@@ -482,6 +482,35 @@ describe('test layer-config-helper', () => {
       expect(getData(mid, 'power')).toBe(50);
     });
 
+    test('at 100% a frequency already in the 30–40kHz band is kept, elsewhere it becomes 40kHz', () => {
+      const kept = createUvLayer();
+      const reset = createUvLayer();
+      const applied = createUvLayer();
+
+      writeDataLayer(kept, 'power', 100);
+      writeDataLayer(kept, 'frequency', 35);
+      writeDataLayer(reset, 'power', 100);
+      writeDataLayer(reset, 'frequency', 27);
+      writeDataLayer(applied, 'frequency', 32);
+      mockGetAllLayers.mockReturnValue([{ getGroup: () => kept }, { getGroup: () => reset }]);
+      mockGetAllPresets.mockReturnValue([]);
+
+      // what opening a file runs (importBvg)
+      postPresetChange();
+      expect(getData(kept, 'frequency')).toBe(35);
+      expect(getData(kept, 'power')).toBe(100);
+      expect(getData(reset, 'frequency')).toBe(40);
+
+      // a power-only preset at 100% keeps the layer's own in-band frequency
+      applyPreset(applied, { power: 100, speed: 1000 });
+      expect(getData(applied, 'frequency')).toBe(32);
+      expect(getData(applied, 'power')).toBe(100);
+
+      // a custom preset carrying both keeps its own in-band frequency
+      applyPreset(applied, { frequency: 38, power: 100, speed: 1000 });
+      expect(getData(applied, 'frequency')).toBe(38);
+    });
+
     test('postPresetChange only clamps the frequency on the other Promark sources', () => {
       mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
 

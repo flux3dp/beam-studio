@@ -50,6 +50,18 @@ describe('syncUvLayerFrequency', () => {
     expect(mockWriteDataLayer).toHaveBeenCalledWith(unnamed.group, 'power', 100);
   });
 
+  test('100% keeps a frequency already in the 30–40kHz band', () => {
+    const layer = makeLayer({ configName: undefined, frequency: 35, power: 100 });
+
+    mockGetAllLayers.mockReturnValue([layer.layer]);
+    mockGetData.mockImplementation((_group: Element, key: string) => layer.values[key]);
+
+    syncUvLayerFrequency();
+
+    expect(mockWriteDataLayer).toHaveBeenCalledWith(layer.group, 'frequency', 35);
+    expect(mockWriteDataLayer).toHaveBeenCalledWith(layer.group, 'power', 100);
+  });
+
   test('leaves a layer on a default preset to postPresetChange', () => {
     const preset = makeLayer({ configName: 'wood_3mm_cutting', power: 60 });
 

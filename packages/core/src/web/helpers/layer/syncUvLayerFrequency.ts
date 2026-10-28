@@ -31,7 +31,8 @@ export const syncUvLayerFrequency = (): void => {
 
     if (preset?.isDefault) return;
 
-    const frequency = uvPowerToFrequency(getData(group, 'power') as number);
+    // at 100% a frequency already in the 30–40kHz band is kept, so no entry turns a legal 35kHz into 40
+    const frequency = uvPowerToFrequency(getData(group, 'power') as number, getData(group, 'frequency') as number);
 
     writeDataLayer(group, 'frequency', frequency);
     writeDataLayer(group, 'power', uvFrequencyToPower(frequency));
