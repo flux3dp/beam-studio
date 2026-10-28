@@ -185,8 +185,8 @@ Only the fcode v2 models `fbm2`, `fbb2`, `fhx2rf` support the commands. beamo an
 ### 7.4 Backends (fluxclient and Swiftray, same rule)
 
 - Parse `data-laserFrequency` (kHz, default 0).
-- Gate on a new per-model feature flag `LASER_FREQUENCY` (fluxclient `HWFeature`, Swiftray
-  `SupportInfo`) for `fbm2`, `fbb2`, `fhx2rf`, and on a CO2 laser module (not printing, not 1064 nm). The
+- Gate on a new feature flag `LASER_FREQUENCY` (fluxclient `HWFeature`, Swiftray `SupportInfo`)
+  for `fbm2`, `fbb2`, `fhx2rf` (D5), and on a CO2 laser module (not printing, not 1064 nm). The
   attribute survives model/module switches in the file, so the backend gate is what keeps R1/R2.
 - Per layer, self-contained (D3): when the gated layer's value > 0, emit
   `sync_motion_type2(158, kHz × 1000)` at layer start (after `MAIN` starts, before any vector or
@@ -228,6 +228,10 @@ Only the fcode v2 models `fbm2`, `fbb2`, `fhx2rf` support the commands. beamo an
    `postPresetChange()`. Unsupported models ignore it everywhere — UI hides it, backends gate on
    `LASER_FREQUENCY`, and the export check only runs for supported device models, so a kept value
    never blocks an export.
+5. ~~**D5** Backend support table: list the three models, or treat `LASER_FREQUENCY` as a firmware
+   feature that is on for every model outside a legacy-firmware list?~~ **Decided 2026-10-28:** list
+   it per model in `SUPPORT_INFO` (`fbm2`, `fbb2`, `fhx2rf`) like the other flags; the
+   firmware-vs-hardware split is deferred (see §11).
 
 ## 11. Risks & follow-ups
 
@@ -235,6 +239,10 @@ Only the fcode v2 models `fbm2`, `fbb2`, `fhx2rf` support the commands. beamo an
   printing padding overrides.
 - Old firmware ignoring `M137P158` silently is impossible to detect from task code; the export
   check is the only guard.
+- Follow-up (D5): split backend support tables into hardware features (opt-in per model) and
+  firmware features (on for every model outside a closed `LEGACY_FIRMWARE_MODELS` set), so new
+  machines get firmware features without per-model entries. Do it in fluxclient and Swiftray together
+  when a second firmware feature appears.
 - A task aborted mid-layer never reaches the layer's `M137P159`. Firmware must restore the default
   frequency when a task ends or is aborted (confirm with firmware team); the product PRD's job-end
   reset had the same gap.
