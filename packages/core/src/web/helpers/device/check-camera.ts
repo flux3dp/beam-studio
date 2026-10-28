@@ -47,7 +47,8 @@ const checkCameraPromark = async (_device: IDeviceInfo): Promise<CheckCameraResu
     let hasGoodPicture = false;
 
     for (let i = 0; i < 3; i++) {
-      const pic = await webcam.getPicture();
+      // only the size is checked, so the orientation does not matter
+      const pic = await webcam.getPicture({ rotate180: false });
 
       // size bigger than PROMARK_GOOD_PICTURE_THRESHOLD is considered as a good picture
       if (pic.size > PROMARK_GOOD_PICTURE_THRESHOLD) {

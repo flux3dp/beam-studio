@@ -143,7 +143,7 @@ When the category is `text` or `icon-text-*`:
 ## Testing
 
 ```bash
-pnpm test packages/core/src/web/app/components/dialogs/KeyChainGenerator/builders
+pnpm test --runInBand packages/core/src/web/app/components/dialogs/KeyChainGenerator/builders
 ```
 
 Paper.js is fully mocked in tests (MockPath, MockCompoundPath, MockCircle, MockLine). The mock lives inline in the spec file via `jest.mock('paper', ...)`.

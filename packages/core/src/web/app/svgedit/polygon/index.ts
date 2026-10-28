@@ -22,7 +22,13 @@ let polygonSides = 5;
 let started = false;
 let newPoly: null | SVGPolygonElement = null;
 
-const computePolygonPoints = (cx: number, cy: number, edge: number, angleOffset: number, sides: number): string => {
+export const computePolygonPoints = (
+  cx: number,
+  cy: number,
+  edge: number,
+  angleOffset: number,
+  sides: number,
+): string => {
   const inRadius = edge / 2 / Math.tan(Math.PI / sides);
   const circumRadius = inRadius / Math.cos(Math.PI / sides);
   const points: string[] = [];

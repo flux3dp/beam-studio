@@ -2,9 +2,12 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
-import { ObjectPanelContext } from './contexts/ObjectPanelContext';
 import { useScreenStore } from '@core/app/stores/screenStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import type { StlObject } from '@core/app/stores/stlStore';
+import { useStlStore } from '@core/app/stores/stlStore';
+
+import { ObjectPanelContext } from './contexts/ObjectPanelContext';
 
 jest.mock(
   './ActionsPanel',
@@ -15,10 +18,26 @@ jest.mock(
 );
 
 jest.mock(
+  './ActionsPanelStl',
+  () =>
+    function DummyActionsPanelStl() {
+      return <div>This is dummy ActionsPanelStl</div>;
+    },
+);
+
+jest.mock(
   './DimensionPanel/DimensionPanel',
   () =>
     function DummyDimensionPanel() {
       return <div>This is dummy DimensionPanel</div>;
+    },
+);
+
+jest.mock(
+  './DimensionPanel/DimensionPanelStl',
+  () =>
+    function DummyDimensionPanelStl() {
+      return <div>This is dummy DimensionPanelStl</div>;
     },
 );
 
@@ -136,6 +155,7 @@ import ObjectPanel from './ObjectPanel';
 describe('should render correctly', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    useStlStore.setState({ objects: {} });
   });
 
   test('no elements', () => {
@@ -202,6 +222,25 @@ describe('should render correctly', () => {
       expect(alignRight).toHaveBeenCalledTimes(1);
       fireEvent.click(container.querySelector('button[title="Group"]'));
       expect(groupSelectedElements).toHaveBeenCalledTimes(1);
+    });
+
+    test('shows retained 2D actions together with 3D placement actions', () => {
+      document.body.innerHTML = '<rect id="svg_1" data-stl="1" />';
+
+      const elem = document.getElementById('svg_1')!;
+
+      useStlStore.setState({ objects: { svg_1: { id: 'svg_1' } as StlObject } });
+
+      elem.setAttribute(
+        'data-stl-source',
+        JSON.stringify({ depth: 1, markup: '<text>Flux</text>', scale: 0.1, type: 'svg' }),
+      );
+      useSelectedElementStore.getState().setSelectedElement(elem);
+
+      const { getByText } = render(<ObjectPanel />);
+
+      expect(getByText('This is dummy ActionsPanel')).toBeInTheDocument();
+      expect(getByText('This is dummy ActionsPanelStl')).toBeInTheDocument();
     });
 
     test('is g element', () => {

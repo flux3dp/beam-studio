@@ -40,11 +40,12 @@ pnpm nx run web:start    # Start web dev server (http://localhost:8080)
 pnpm nx run app:build    # Build Electron app
 pnpm nx run web:build    # Build web app
 
-# Testing
+# Testing (agents: always add --runInBand, see Critical Rules)
 pnpm nx run core:test    # Test core package
 pnpm test         # Test all projects
 pnpm test -u      # Test all projects and update snapshots
 pnpm test <filename>     # Run specific unit test file
+npx jest -c packages/core/jest.config.ts --runInBand <paths>   # Run specific specs directly (from repo root)
 pnpm nx run web:cy:dev   # Run web E2E tests (Cypress)
 
 # Linting & Type Checking
@@ -160,6 +161,15 @@ decided/pending decision log), `docs/prd/maintenance-checklist.md` (phased statu
    whitelisted in `packages/core/public/js/lib/svgeditor/sanitize.js` (per element tag —
    layer-group attributes go in the `g` list). `sanitizeSvg` runs on file load, so an unlisted
    attribute works during the session but is silently stripped when a saved file is reopened.
+
+6. **Jest runs in band (agents)**: Coding agents must pass `--runInBand` to every Jest run —
+   `pnpm test --runInBand ...`, `npx jest -c packages/core/jest.config.ts --runInBand <paths>`.
+   Jest's default worker pool spreads across all cores and kept node above 100% CPU for whole
+   sessions; in band, the same 104 suites used ~128% CPU instead of ~500% (30s instead of 75s of
+   CPU time) at ~1.6× the wall time. Two related gotchas: run `npx jest` from the repo root (the
+   global setup resolves `packages/core/tsconfig.spec.json` relative to cwd), and Jest 30 renamed
+   `--testPathPattern` to `--testPathPatterns` — the old flag is silently ignored and the whole
+   suite runs.
 
 ### TypeScript
 

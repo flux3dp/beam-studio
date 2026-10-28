@@ -18,6 +18,7 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
+import { uvPowerToFrequency } from '@core/helpers/layer/uvPowerFrequency';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -29,6 +30,7 @@ import BlockSettingForm from './BlockSettingForm';
 import type { SvgInfo } from './generateSvgInfo';
 import generateSvgInfo from './generateSvgInfo';
 import styles from './index.module.scss';
+import { paramString } from './paramString';
 import { getTableSetting } from './TableSetting';
 import TableSettingForm from './TableSettingForm';
 import { getTextSetting } from './TextSetting';
@@ -47,21 +49,17 @@ getSVGAsync(({ Canvas }) => {
 
 const { dpmm } = constant;
 
+/** Rendered width of each paramString title, in mm, to centre it over its axis. */
 const paramWidth = {
+  fillDwellTime: 87.3,
+  fillInterleave: 141.62,
   fillInterval: 96.77,
   frequency: 97.31,
   pulseWidth: 97.79,
+  qPulseWidth: 79.22,
   repeat: 42.63,
   speed: 81.61,
   strength: 60.66,
-} as const;
-const paramString = {
-  fillInterval: 'Fill Interval (mm)',
-  frequency: 'Frequency (kHz)',
-  pulseWidth: 'Pulse Width (ns)',
-  repeat: 'Passes',
-  speed: 'Speed (mm/s)',
-  strength: 'Power (%)',
 } as const;
 
 const getTextAdjustment = (rawText: number | string) => (rawText.toString().length * 2.7) / 2;
@@ -73,10 +71,11 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const isInch = useStorageStore((state) => state.isInch);
   const { laserType } = getPromarkInfo();
   const workarea = useDocumentStore((state) => state.workarea);
-  const { isMopa, isPromark } = useMemo(
+  const { isPromark, isPromarkUV } = useMemo(
     () => ({
-      isMopa: laserType === LaserType.MOPA,
       isPromark: promarkModels.has(workarea),
+      // UV power has no effect on its own: each block gets the frequency its power stands for
+      isPromarkUV: promarkModels.has(workarea) && laserType === LaserType.UV,
     }),
     [laserType, workarea],
   );
@@ -133,6 +132,9 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
 
     writeDataLayer(infoLayer, 'power', textSetting.power);
     writeDataLayer(infoLayer, 'speed', textSetting.speed);
+
+    if (isPromarkUV) writeDataLayer(infoLayer, 'frequency', uvPowerToFrequency(textSetting.power));
+
     // rowText
     createNewText(
       (startPadding + (right - startPadding) / 2 - paramWidth[rowParam[0]] / 2) * dpmm,
@@ -200,51 +202,82 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
     const [right, bottom] = [row, column].map((block) => getEnd(startPadding, block) + 10);
     let [x, y] = [right, bottom].map((value) => value * dpmm);
 
-    [...svgInfos].reverse().forEach(({ fillInterval, frequency, name, pulseWidth, repeat, speed, strength }, index) => {
-      const { layer } = createLayer(name, { initConfig: true, parentCmd: batchCmd });
+    [...svgInfos]
+      .reverse()
+      .forEach(
+        (
+          {
+            fillDwellTime,
+            fillInterleave,
+            fillInterval,
+            frequency,
+            name,
+            pulseWidth,
+            qPulseWidth,
+            repeat,
+            speed,
+            strength,
+          },
+          index,
+        ) => {
+          const { layer } = createLayer(name, { initConfig: true, parentCmd: batchCmd });
 
-      writeDataLayer(layer, 'power', strength);
-      writeDataLayer(layer, 'speed', speed);
-      writeDataLayer(layer, 'repeat', repeat);
+          writeDataLayer(layer, 'power', strength);
+          writeDataLayer(layer, 'speed', speed);
+          writeDataLayer(layer, 'repeat', repeat);
 
-      if (isPromark) {
-        writeDataLayer(layer, 'fillInterval', fillInterval);
-        writeDataLayer(layer, 'frequency', frequency);
-      }
+          if (isPromark) writeDataLayer(layer, 'fillInterval', fillInterval);
 
-      if (isMopa) {
-        writeDataLayer(layer, 'pulseWidth', pulseWidth);
-      }
+          // UV: the power stands in for the frequency, which is what the machine uses
+          if (isPromarkUV) writeDataLayer(layer, 'frequency', uvPowerToFrequency(strength));
+          else if (isPromark) writeDataLayer(layer, 'frequency', frequency);
 
-      const newRect = svgCanvas.addSvgElementFromJson({
-        attr: {
-          fill: blockOption === 'engrave' ? '#000' : 'none',
-          'fill-opacity': blockOption === 'engrave' ? 1 : 0,
-          height,
-          id: svgCanvas.getNextId(),
-          opacity: 1,
-          stroke: '#000',
-          width,
-          x,
-          y,
+          if (tableSetting.pulseWidth) {
+            writeDataLayer(layer, 'pulseWidth', pulseWidth);
+          }
+
+          if (tableSetting.qPulseWidth) {
+            writeDataLayer(layer, 'qPulseWidth', qPulseWidth);
+          }
+
+          // they spread the fill of an engraved block; a cut block has none
+          if (blockOption === 'engrave') {
+            if (tableSetting.fillInterleave) writeDataLayer(layer, 'fillInterleave', Boolean(fillInterleave));
+
+            // 0 is off; the layer stores off as a negative duration
+            if (tableSetting.fillDwellTime) writeDataLayer(layer, 'fillDwellTime', fillDwellTime || -50000);
+          }
+
+          const newRect = svgCanvas.addSvgElementFromJson({
+            attr: {
+              fill: blockOption === 'engrave' ? '#000' : 'none',
+              'fill-opacity': blockOption === 'engrave' ? 1 : 0,
+              height,
+              id: svgCanvas.getNextId(),
+              opacity: 1,
+              stroke: '#000',
+              width,
+              x,
+              y,
+            },
+            curStyles: false,
+            element: 'rect',
+          });
+
+          if ((index + 1) % row.count.value === 0) {
+            x = right * dpmm;
+            y -= (column.size.value + column.spacing.value) * dpmm;
+          } else {
+            x -= (row.size.value + row.spacing.value) * dpmm;
+          }
+
+          updateElementColor(newRect);
         },
-        curStyles: false,
-        element: 'rect',
-      });
-
-      if ((index + 1) % row.count.value === 0) {
-        x = right * dpmm;
-        y -= (column.size.value + column.spacing.value) * dpmm;
-      } else {
-        x -= (row.size.value + row.spacing.value) * dpmm;
-      }
-
-      updateElementColor(newRect);
-    });
+      );
   };
 
   const handlePreview = () => {
-    const svgInfos = generateSvgInfo({ blockSetting, tableSetting });
+    const svgInfos = generateSvgInfo({ blockSetting, tableSetting, withStaticParams: isPromarkUV });
 
     batchCmd.current.unapply();
     // to prevent layer id conflict

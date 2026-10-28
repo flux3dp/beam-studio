@@ -1,5 +1,6 @@
 import type { PreviewSpeedLevelType } from '@core/app/actions/beambox/constant';
 import type { RotaryType } from '@core/app/constants/addOn';
+import type { MaterialShape } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/moduleOffsets';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
@@ -22,6 +23,28 @@ export type DocumentState = {
   'enable-job-origin': boolean;
   'extend-rotary-workarea': boolean;
   'frame-before-start': boolean;
+  'inner-engraving': boolean;
+  /** Height from the work platform to the sphere's lowest point, in mm. Sphere only. */
+  'inner-engraving-base-height': number;
+  /** Material depth (Y) in mm, box only. */
+  'inner-engraving-depth': number;
+  /** Material diameter in mm, cylinder and sphere only. */
+  'inner-engraving-diameter': number;
+  /** Lens focal length in mm. A machine property, but swiftray has nowhere else to receive it. */
+  /** Material height (Z) in mm. For a sphere this is the liquid surface height above the platform. */
+  'inner-engraving-height': number;
+  'inner-engraving-refractive-index': number;
+  /** How far engraving keeps away from the material surfaces, in mm. */
+  'inner-engraving-safety-margin': number;
+  'inner-engraving-shape': MaterialShape;
+  /** Material width (X) in mm, box only. */
+  'inner-engraving-width': number;
+  /**
+   * Material **centre** in mm from the work area's near-left corner, in scene axes (X right, Y
+   * towards the back; see InnerEngraving/utils/coordinates.ts).
+   */
+  'inner-engraving-x': number;
+  'inner-engraving-y': number;
   'job-origin': number;
   'pass-through': boolean;
   'pass-through-height'?: number;

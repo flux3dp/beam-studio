@@ -233,8 +233,8 @@ describe('manipulate laser panel', () => {
     // Wait for file to be downloaded by checking it exists
     cy.readFile(cypressDownloadPath, { timeout: 15000 })
       .its('presets')
-      .should('have.length', 82)
-      .its('81')
+      .should('have.length', 108)
+      .its('107')
       .its('name')
       .should('eq', 'Hi Flux');
   });

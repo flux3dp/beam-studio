@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import AiGenerate from '@core/app/components/AiGenerate';
 import MobileAiGenerate from '@core/app/components/AiGenerate/mobile/MobileAiGenerate';
+import InnerEngravingCanvas from '@core/app/components/beambox/InnerEngraving/InnerEngravingCanvas';
 import PathPreview from '@core/app/components/beambox/PathPreview';
 import Chat from '@core/app/components/Chat';
 import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel';
@@ -16,8 +17,10 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import setupTextInputEvents from '@core/app/svgedit/text/setupTextInputEvents';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
+import { isUvDev } from '@core/helpers/is-dev';
 import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
 
 import Generators from '../../Generators';
@@ -35,6 +38,7 @@ import Workarea from './Workarea';
 const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
   const { drawerMode, mode } = useCanvasStore();
+  const innerEngraving = useInnerEngravingActive();
   const osName = useMemo(() => getOS(), []);
 
   useEffect(() => {
@@ -62,10 +66,17 @@ const SvgEditor = (): ReactNode => {
         <Banner />
         <div className={styles['workarea-container']} id="workarea-container">
           <ElementTitle />
-          <Ruler />
+          {!innerEngraving && <Ruler />}
+          {/* svgcontent still holds the layers and the projection rects, so the SVG canvas stays
+              mounted underneath the 3D canvas rather than being unmounted */}
           <Workarea
-            className={classNames(styles.workarea, { mac: osName === 'MacOS', [styles.mac]: osName === 'MacOS' })}
+            className={classNames(styles.workarea, {
+              mac: osName === 'MacOS',
+              [styles.hidden]: innerEngraving,
+              [styles.mac]: osName === 'MacOS',
+            })}
           />
+          {innerEngraving && <InnerEngravingCanvas />}
         </div>
         <div className={styles['invisible-tools']}>
           <div id="tool_import" style={{ display: 'none' }} />
@@ -75,7 +86,7 @@ const SvgEditor = (): ReactNode => {
         {mode !== CanvasMode.PathPreview && (
           <>
             {!isMobile && <PreviewFloatingBar />}
-            <DpiInfo />
+            {!innerEngraving && <DpiInfo />}
             <div className={styles['bottom-right']}>
               <div className={styles.controls}>
                 <TimeEstimationButtonContextProvider>
@@ -94,13 +105,17 @@ const SvgEditor = (): ReactNode => {
             <AiGenerate />
           </ToolBarDrawer>
         )}
-        {isMobile ? (
-          drawerMode === 'generator' && <MobileGenerators />
-        ) : (
-          <ToolBarDrawer enableResizable={false} mode="generator">
-            <Generators />
-          </ToolBarDrawer>
-        )}
+        {/* the generators all produce 2D artwork (boxgen, code, keychain, puzzle...), which an inner
+            engraving document has nowhere to put — V1 only holds STL objects. The only exception is
+            the 3D material test, still in development */}
+        {(!innerEngraving || (!isMobile && isUvDev())) &&
+          (isMobile ? (
+            drawerMode === 'generator' && <MobileGenerators />
+          ) : (
+            <ToolBarDrawer enableResizable={false} mode="generator">
+              <Generators />
+            </ToolBarDrawer>
+          ))}
         <ToolBarDrawer enableResizable={{ right: true }} mode="ai-chat">
           <Chat />
         </ToolBarDrawer>

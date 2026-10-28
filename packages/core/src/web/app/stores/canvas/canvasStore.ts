@@ -41,6 +41,15 @@ interface CanvasStore {
   mouseMode: CanvasMouseMode;
   setDrawerMode: (mode: CanvasDrawerMode) => void;
   setMode: (mode: CanvasMode) => void;
+  setSpaceKey: (spaceKey: boolean) => void;
+  /**
+   * Whether the space bar is being held down — the canvas-wide "pan instead" modifier.
+   *
+   * Owned by `svg-editor.ts`, which listens for the key on `document`, and read by both canvases:
+   * the SVG one pans on left drag, the inner engraving one swaps its orbit and pan buttons so the
+   * same gesture means the same thing in 3D.
+   */
+  spaceKey: boolean;
   toggleDrawerMode: (mode: CanvasDrawerMode) => void;
   togglePathPreview: () => void;
   /** TODO: Laser watt for hexa rf, not sure if we should add another store for this or not? */
@@ -54,6 +63,8 @@ export const useCanvasStore = create(
     mouseMode: 'select',
     setDrawerMode: (mode: CanvasDrawerMode) => set({ drawerMode: mode }),
     setMode: (mode: CanvasMode) => set({ mode }),
+    setSpaceKey: (spaceKey: boolean) => set({ spaceKey }),
+    spaceKey: false,
     toggleDrawerMode: (mode: CanvasDrawerMode) =>
       set((state) => ({ drawerMode: state.drawerMode === mode ? 'none' : mode })),
     togglePathPreview: () =>

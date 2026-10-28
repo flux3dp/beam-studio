@@ -3,6 +3,7 @@ import type { LayerStoreState } from '@core/app/stores/layer/layerStore';
 const state: LayerStoreState = {
   currentLayerName: 'layer1',
   hasGradient: false,
+  hasStlPhoto: false,
   hasVector: false,
   layers: [],
   selectedLayers: ['layer1'],

@@ -24,7 +24,6 @@ import { clearResumeConfig } from '@core/app/components/dialogs/PrintAndCut/resu
 import AlertConstants from '@core/app/constants/alert-constants';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import { addPolygonSides, decreasePolygonSides } from '@core/app/svgedit/polygon';
@@ -39,8 +38,13 @@ import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
 import { importDxfFromText, looksLikeDxfText } from '@core/app/svgedit/operations/import/importDxfFromClipboard';
+import importStl from '@core/app/svgedit/operations/import/importStl';
+import importSvgFileAsStl from '@core/app/svgedit/operations/import/importStl/importSvgFile';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
+import { ensureModeForImport } from '@core/app/svgedit/operations/import/innerEngravingGate';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
+import { moveStlObjectsByCanvasDelta } from '@core/app/svgedit/stl/clipboard';
+import { changeExtrusionPolygonSides } from '@core/app/svgedit/stl/extrusionSource';
 import svgCanvasClass from '@core/app/svgedit/svgcanvas';
 import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
@@ -53,6 +57,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { updateRecentFiles } from '@core/helpers/file/recentFiles';
 import i18n from '@core/helpers/i18n';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';
@@ -70,7 +75,7 @@ import Progress from '../progress-caller';
 
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
-import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import {
   getMouseMode,
@@ -121,7 +126,8 @@ declare global {
 
 export interface ISVGEditor {
   canvas: any;
-  clearScene: () => Promise<void>;
+  /** @returns whether the scene was actually cleared — false when the user cancelled the save prompt */
+  clearScene: () => Promise<boolean>;
   clickSelect: (clearSelection?: boolean) => void;
   copySelected: () => void;
   curConfig: ISVGConfig;
@@ -139,7 +145,7 @@ const svgEditor = (window['svgEditor'] = (function () {
   // STATE MAINTENANCE PROPERTIES
   const editor: ISVGEditor = {
     canvas: null,
-    clearScene: async () => {},
+    clearScene: async () => false,
     clickSelect: () => {},
     copySelected: () => {},
     curConfig: null as any,
@@ -417,12 +423,20 @@ const svgEditor = (window['svgEditor'] = (function () {
         panning = false;
       });
 
+      // published to the store as well as to svgCanvas, because the inner engraving canvas is a
+      // React tree that cannot watch a plain property: it swaps its orbit / pan mouse buttons so
+      // that space + left drag pans there too
+      const setSpaceKey = (active: boolean) => {
+        svgCanvas.spaceKey = keypan = active;
+        useCanvasStore.getState().setSpaceKey(active);
+      };
+
       // FIXME: use document.addEventListener('keydown', (evt) => { ... })
       // because shortcuts only works with a strict key combinations match
       document.addEventListener('keydown', (evt) => {
         if (isFocusingOnInputs()) return;
         if (evt.key === ' ') {
-          svgCanvas.spaceKey = keypan = true;
+          setSpaceKey(true);
           setCursor('grab');
           evt.preventDefault(); // prevent page from scrolling
         }
@@ -433,13 +447,14 @@ const svgEditor = (window['svgEditor'] = (function () {
         if (isFocusingOnInputs()) return;
         if (evt.key === ' ') {
           setCursorAccordingToMouseMode();
-          svgCanvas.spaceKey = keypan = false;
+          setSpaceKey(false);
         }
       });
+      // the key is watched on `document`, but a blurred window never delivers the keyup — without
+      // this, tabbing away mid-pan leaves both canvases stuck in pan mode
+      window.addEventListener('blur', () => setSpaceKey(false));
 
-      editor.setPanning = function (active) {
-        svgCanvas.spaceKey = keypan = active;
-      };
+      editor.setPanning = setSpaceKey;
     })();
     // Unfocus text input when workarea is mousedowned.
     (function () {
@@ -558,6 +573,9 @@ const svgEditor = (window['svgEditor'] = (function () {
             importedFromClipboard = true;
           }
         } else if (looksLikeDxfText(plainText)) {
+          // same gate as a .dxf file dropped on the canvas: 2D artwork has nowhere to go in 3D
+          if (isInnerEngravingActive() && !(await ensureModeForImport(false))) return;
+
           importedFromClipboard = await importDxfFromText(plainText);
 
           if (!importedFromClipboard) {
@@ -582,6 +600,14 @@ const svgEditor = (window['svgEditor'] = (function () {
 
                 if (res.ok) {
                   const resBlob = await res.blob();
+
+                  if (isInnerEngravingActive()) {
+                    // the file path lays an image flat as a photo plane; a bare <image> would be
+                    // invisible behind the 3D canvas yet still sent to the machine
+                    svgEditor.handleFile(new File([resBlob], 'clipboard-image.png', { type: resBlob.type }));
+                    continue;
+                  }
+
                   const blobSrc = URL.createObjectURL(resBlob);
 
                   ImageData(blobSrc, {
@@ -634,7 +660,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       const res = await toggleUnsavedChangedDialog();
 
       if (!res) {
-        return;
+        return false;
       }
 
       setMouseMode('select');
@@ -645,6 +671,8 @@ const svgEditor = (window['svgEditor'] = (function () {
       layerManager.resync();
       updateContextPanel();
       svgedit.transformlist.resetListMap();
+
+      return true;
     };
 
     editor.clearScene = clearScene;
@@ -679,15 +707,24 @@ const svgEditor = (window['svgEditor'] = (function () {
       return {
         setAll: function () {
           const moveUnit = getStorage('isInch') ? 25.4 : 10; // 0.1 in : 1 mm
+          const moveSelection = (dx: number, dy: number) => {
+            const selected = selectionManager.getSelectedElements();
+
+            if (isInnerEngravingActive() && moveStlObjectsByCanvasDelta(selected, dx, dy)) return;
+
+            moveSelectedElements([dx], [dy]);
+          };
 
           Shortcuts.on(['Delete', 'Backspace'], () => deleteSelected());
           Shortcuts.on(['Fnkey+a'], (e) => {
             e.stopPropagation();
+            if (isInnerEngravingActive()) return;
+
             svgCanvas.selectAll();
           });
           Shortcuts.on(['ArrowUp'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([0], [-moveUnit]);
+              moveSelection(0, -moveUnit);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -696,7 +733,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowUp'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([0], [-moveUnit * 10]);
+              moveSelection(0, -moveUnit * 10);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -705,7 +742,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowDown'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([0], [moveUnit]);
+              moveSelection(0, moveUnit);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -714,7 +751,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowDown'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([0], [moveUnit * 10]);
+              moveSelection(0, moveUnit * 10);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -723,7 +760,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowLeft'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([-moveUnit], [0]);
+              moveSelection(-moveUnit, 0);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -732,7 +769,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowLeft'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([-moveUnit * 10], [0]);
+              moveSelection(-moveUnit * 10, 0);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -741,7 +778,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowRight'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([moveUnit], [0]);
+              moveSelection(moveUnit, 0);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -750,7 +787,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowRight'], (e) => {
             if (selectionManager.getSelectedElements().length > 0) {
-              moveSelectedElements([moveUnit * 10], [0]);
+              moveSelection(moveUnit * 10, 0);
             } else {
               const workArea = document.getElementById('workarea')!;
 
@@ -761,6 +798,14 @@ const svgEditor = (window['svgEditor'] = (function () {
             ['+', '='],
             () => {
               const selectedElement = selectionManager.getSelectedElements()[0];
+              const extrusionSides = selectedElement ? changeExtrusionPolygonSides(selectedElement, 1) : 0;
+
+              if (extrusionSides) {
+                ObjectPanelController.updatePolygonSides(extrusionSides);
+
+                return;
+              }
+
               if (selectedElement?.tagName === 'polygon') {
                 const newSides = addPolygonSides();
                 ObjectPanelController.updatePolygonSides(newSides);
@@ -770,6 +815,14 @@ const svgEditor = (window['svgEditor'] = (function () {
           );
           Shortcuts.on(['-'], () => {
             const selectedElement = selectionManager.getSelectedElements()[0];
+            const extrusionSides = selectedElement ? changeExtrusionPolygonSides(selectedElement, -1) : 0;
+
+            if (extrusionSides) {
+              ObjectPanelController.updatePolygonSides(extrusionSides);
+
+              return;
+            }
+
             if (selectedElement?.tagName === 'polygon') {
               const newSides = decreasePolygonSides();
               ObjectPanelController.updatePolygonSides(newSides);
@@ -925,14 +978,20 @@ const svgEditor = (window['svgEditor'] = (function () {
         $(this).attr('value', '');
       };
 
+      /**
+       * Whether each canvas-content file type requires inner engraving mode to be on. SVG is not
+       * gated: in 3D it is extruded (importSvgFileAsStl).
+       */
+      const MODE_GATED_TYPES: Record<string, boolean> = {
+        ai: false,
+        dxf: false,
+        pdf: false,
+        stl: true,
+      };
+
       const handleFile = async (file: File) => {
         const lang = i18n.lang.beambox;
         const path = fileSystem.getPathForFile(file as File);
-        await Progress.openNonstopProgress({
-          caption: lang.popup.loading_image,
-          id: 'loading_image',
-        });
-        selectionManager.clearSelection();
 
         const fileType = (() => {
           if (file.name.toLowerCase().endsWith('.beam')) {
@@ -945,6 +1004,10 @@ const svgEditor = (window['svgEditor'] = (function () {
 
           if (file.name.toLowerCase().endsWith('.dxf')) {
             return 'dxf';
+          }
+
+          if (file.name.toLowerCase().endsWith('.stl')) {
+            return 'stl';
           }
 
           if (file.type.toLowerCase().includes('image')) {
@@ -978,6 +1041,23 @@ const svgEditor = (window['svgEditor'] = (function () {
 
         console.log('File type name:', fileType);
 
+        // AI / PDF / DXF have nowhere to go in an inner engraving document, and an STL has nowhere
+        // to go in a 2D one, so both directions are gated — with an offer to switch mode rather
+        // than a dead end. Bitmap and SVG are intentionally not gated: in 3D a bitmap becomes a
+        // zero-thickness photo plane and an SVG is extruded. .beam / .bvg carry the mode in the file
+        // itself and are resolved inside importBvgString; the rest (js / json) are not canvas
+        // content and are not gated at all.
+        // Asked before the spinner goes up: a question behind "loading, please wait" reads as a bug.
+        if (fileType in MODE_GATED_TYPES && !(await ensureModeForImport(MODE_GATED_TYPES[fileType]))) {
+          return;
+        }
+
+        await Progress.openNonstopProgress({
+          caption: lang.popup.loading_image,
+          id: 'loading_image',
+        });
+        selectionManager.clearSelection();
+
         switch (fileType) {
           case 'bvg':
             await importBvg(file);
@@ -988,7 +1068,8 @@ const svgEditor = (window['svgEditor'] = (function () {
             break;
           case 'svg':
             await webNeedConnectionWrapper(async () => {
-              await importSvg(file);
+              if (isInnerEngravingActive()) await importSvgFileAsStl(file);
+              else await importSvg(file);
             });
             // remove the loading toast if loaded or no machine connection
             Progress.popById('loading_image');
@@ -1000,6 +1081,12 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'dxf':
             await importDxf(file);
             Progress.popById('loading_image');
+            break;
+          case 'stl':
+            // STL imports currently assume millimetres and Z-up; Blender commonly exports Y-up.
+            // importStl runs its own pre-checks and progress, so the generic spinner goes first
+            Progress.popById('loading_image');
+            await importStl(file);
             break;
           case 'pdf':
           case 'ai':
@@ -1060,15 +1147,20 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       editor.handleFile = handleFile;
 
-      workarea[0].addEventListener('dragenter', onDragEnter, false);
-      workarea[0].addEventListener('dragover', onDragOver, false);
-      workarea[0].addEventListener('dragleave', onDragLeave, false);
-      workarea[0].addEventListener('drop', importImage, false);
+      // the container rather than #workarea itself: in inner engraving mode the 3D canvas is laid
+      // over the (hidden) SVG workarea as a sibling, so the container is the only ancestor both
+      // canvases have. Dropping a file has to import it wherever it lands.
+      const dropTarget = document.getElementById('workarea-container') ?? workarea[0];
+
+      dropTarget.addEventListener('dragenter', onDragEnter, false);
+      dropTarget.addEventListener('dragover', onDragOver, false);
+      dropTarget.addEventListener('dragleave', onDragLeave, false);
+      dropTarget.addEventListener('drop', importImage, false);
 
       // Keep for e2e import image
       // enable beambox-global-interaction to click (data-file-input, trigger_file_input_click)
       var imgImport = $(
-        '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf" data-file-input="import_image">',
+        '<input type="file" accept=".svg,.bvg,.jpg,.png,.dxf,.js,.beam,.ai,.pdf,.stl" data-file-input="import_image">',
       ).change(importImage);
 
       $('#tool_import').show().prepend(imgImport);

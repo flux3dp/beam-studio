@@ -24,6 +24,9 @@ interface Props {
 
 type TableParams = (typeof tableParams)[number];
 
+/** Params of the fill, which only an engraved (filled) block has. */
+const ENGRAVE_ONLY_PARAMS = new Set(['fillDwellTime', 'fillInterleave', 'fillInterval']);
+
 function camelToSnake(str: string): string {
   return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 }
@@ -41,18 +44,25 @@ export default function TableSettingForm({
     beambox: {
       right_panel: { laser_panel: tLaserPanel },
     },
+    inner_engraving_settings: tInnerEngraving,
     material_test_generator: tMaterial,
   } = useI18n();
   const lengthUnit = isInch ? 'in' : 'mm';
-  const { options, settingEntries } = useMemo(
-    () => ({
+  const { options, settingEntries } = useMemo(() => {
+    // params whose label is not the laser panel key of the same name
+    const labels: Record<string, string> = {
+      fillDwellTime: tLaserPanel.fill_dwell,
+      pointSpacing: tInnerEngraving.point_spacing,
+    };
+    const getLabel = (key: string): string => labels[key] ?? tLaserPanel[camelToSnake(key)] ?? tLaserPanel[key];
+
+    return {
       options: Object.keys(tableSetting)
-        .filter((key) => blockOption === 'engrave' || key !== 'fillInterval')
-        .map((value) => ({ label: tLaserPanel[camelToSnake(value)], value })),
+        .filter((key) => blockOption === 'engrave' || !ENGRAVE_ONLY_PARAMS.has(key))
+        .map((value) => ({ label: getLabel(value), value })),
       settingEntries: Object.entries(tableSetting) as Array<[TableParams, Detail]>,
-    }),
-    [blockOption, tLaserPanel, tableSetting],
-  );
+    };
+  }, [blockOption, tInnerEngraving, tLaserPanel, tableSetting]);
 
   const handleOptionChange = () => {
     const availableOptions = new Set(options.map(({ value }) => value));
@@ -140,15 +150,24 @@ export default function TableSettingForm({
               case 'speed':
                 return `${lengthUnit}/s`;
               case 'fillInterval':
+              case 'pointSpacing':
                 return 'mm';
+              case 'dottingTime':
+              case 'fillDwellTime':
+              case 'qPulseWidth':
+                return 'us';
+              case 'frequency':
+                return 'kHz';
+              case 'pulseWidth':
+                return 'ns';
               default:
                 return '';
             }
           };
 
-          const precision = useInch || key === 'fillInterval' ? 4 : 0;
+          const precision = useInch || detail?.allowDecimal ? 4 : 0;
           const step = () => {
-            if (key === 'fillInterval') {
+            if (detail?.allowDecimal) {
               return 0.0001;
             }
 

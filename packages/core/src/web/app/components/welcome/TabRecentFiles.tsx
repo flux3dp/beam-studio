@@ -37,10 +37,13 @@ const TabRecentFiles = () => {
         const blob = (await resp.blob()) as File;
         let thumbnail: string | undefined;
         let workarea: null | string = null;
+        // read from the .beam header, so the 3D thumbnails get their own backdrop without guessing
+        // from the work area (a Promark UV file is not necessarily an inner engraving one)
+        let innerEngraving = false;
 
         if (filePath.endsWith('.beam')) {
           try {
-            ({ thumbnail, workarea } = await beamFileHelper.readBeamFileInfo(blob));
+            ({ innerEngraving, thumbnail, workarea } = await beamFileHelper.readBeamFileInfo(blob));
           } catch (error) {
             console.error('Error reading beam file info:', filePath, error);
           }
@@ -59,6 +62,7 @@ const TabRecentFiles = () => {
 
           fileInfos.push({
             created_at: '',
+            innerEngraving,
             last_modified_at: mtime,
             name: currentFileManager.extractFileName(filePath),
             size,

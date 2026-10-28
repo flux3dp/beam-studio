@@ -26,6 +26,9 @@ const getInitDocumentStore = (): DocumentState => {
   const isDiodeEnabled = Boolean(preference['default-diode'] && addOnInfo.hybridLaser);
   const isBorderlessEnabled = Boolean(preference['default-borderless'] && addOnInfo.openBottom);
   const isRotaryEnabled = Boolean(preference.rotary_mode && addOnInfo.rotary);
+  // Not normalized here: the helper reads this store and PromarkInfo, so callers combine the
+  // document toggle with the current machine capability.
+  const isInnerEngravingEnabled = Boolean(preference['inner-engraving']);
 
   // Write default values to BeamboxPreference, may not need because the value will always reset by getInitDocumentStore
   beamboxPreference.write('workarea', defaultWorkarea, false);
@@ -33,6 +36,7 @@ const getInitDocumentStore = (): DocumentState => {
   beamboxPreference.write('enable-diode', isDiodeEnabled, false);
   beamboxPreference.write('borderless', isBorderlessEnabled, false);
   beamboxPreference.write('rotary_mode', isRotaryEnabled, false);
+  beamboxPreference.write('inner-engraving', isInnerEngravingEnabled, false);
   beamboxPreference.write('workarea-annotation', preference['model-annotation'] ?? {}, false);
 
   return {
@@ -50,6 +54,19 @@ const getInitDocumentStore = (): DocumentState => {
     'enable-job-origin': preference['enable-job-origin'],
     'extend-rotary-workarea': preference['extend-rotary-workarea'],
     'frame-before-start': preference['frame-before-start'],
+    'inner-engraving': isInnerEngravingEnabled,
+    // material settings are document-local preferences; selected values are converted into the
+    // refraction and engravable-Z parameters sent to swiftray during export
+    'inner-engraving-base-height': preference['inner-engraving-base-height'] ?? 0,
+    'inner-engraving-depth': preference['inner-engraving-depth'],
+    'inner-engraving-diameter': preference['inner-engraving-diameter'],
+    'inner-engraving-height': preference['inner-engraving-height'],
+    'inner-engraving-refractive-index': preference['inner-engraving-refractive-index'],
+    'inner-engraving-safety-margin': preference['inner-engraving-safety-margin'],
+    'inner-engraving-shape': preference['inner-engraving-shape'],
+    'inner-engraving-width': preference['inner-engraving-width'],
+    'inner-engraving-x': preference['inner-engraving-x'],
+    'inner-engraving-y': preference['inner-engraving-y'],
     'job-origin': preference['job-origin'],
     'pass-through': preference['pass-through'],
     'pass-through-height': preference['pass-through-height'],

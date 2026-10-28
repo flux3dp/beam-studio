@@ -9,9 +9,11 @@ import constant, { dpmm, modelsWithModules, modelsWithPrinter4C } from '@core/ap
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
+import { getMaterialHeightMm, getMaterialZRangeMm } from '@core/app/components/beambox/InnerEngraving/utils/material';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { LaserType } from '@core/app/constants/promark-constants';
 import { type EngraveDpiOption, getEngraveDpmm } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -20,12 +22,14 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
+import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
+import isDev, { isUvDev } from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
@@ -39,6 +43,28 @@ import type { IBaseConfig, IFcodeConfig, TAccelerationOverride } from '@core/int
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 import versionChecker from '../version-checker';
+
+/**
+ * Smallest machine-Z bucket the backend accepts for inner engraving, in mm. Below this the job has
+ * been observed to stall at runtime; the Z axis resolves 0.000625mm per pulse anyway.
+ */
+const MIN_MACHINE_Z_BUCKET_MM = 0.001;
+
+/**
+ * Promark UV controller settings for inner engraving: delays in us (measured 2026-10-13), and
+ * is_uv_light=1 runs the job as a UV source. Sent as job parameters, which Swiftray writes as
+ * ";CONFIG" lines for the controller. inner_engraving=1 is what selects Swiftray's inner engraving
+ * time model (MachineJob and the BSL controller); every other job keeps the pre-inner-engraving
+ * estimate, so it must only ever be sent for a 3D document.
+ */
+const INNER_ENGRAVING_CONTROLLER_CONFIG = {
+  inner_engraving: 1,
+  is_uv_light: 1,
+  jump_delay_max: 1000,
+  jump_delay_min: 1000,
+  laser_off_delay: 150,
+  laser_on_delay: 150,
+} as const;
 
 export const getExportOpt = async (
   opt: IBaseConfig,
@@ -107,7 +133,7 @@ export const getExportOpt = async (
     forceY: config.job_origin ? config.job_origin[1] * constant.dpmm : undefined,
   });
   const rotaryMode = Boolean(rotaryInfo);
-  const autoFeeder = getAutoFeeder(addOnInfo);
+  const autoFeeder = getAutoFeeder({ addOnInfo });
   const spinningAxis = getSpinningAxis(model, { jobOriginY: config.job_origin?.[1], reverse: config.rev });
 
   if (spinningAxis) {
@@ -266,6 +292,26 @@ export const getExportOpt = async (
     config.csl = workareaObj.curveSpeedLimit.x * 60;
   }
 
+  // inner engraving: everything the backend needs to compensate for refraction at the workpiece's
+  // surface. Gated on the mode rather than on the presence of STL objects, because these describe
+  // the material and the optics, not the artwork — a document in this mode has no other kind of job
+  if (isInnerEngravingActive()) {
+    const materialZRange = getMaterialZRangeMm();
+
+    config.refractive_index = documentState['inner-engraving-refractive-index'];
+    config.material_height = getMaterialHeightMm();
+    config.material_min_z = materialZRange.min;
+    config.material_max_z = materialZRange.max;
+    // Promark UV controller settings for inner engraving (uvDev localStorage still overrides them)
+    Object.assign(config, INNER_ENGRAVING_CONTROLLER_CONFIG);
+  }
+
+  // Developer opt-in. Omit the parameter unless explicitly enabled so older backends keep their
+  // default behavior and do not have to accept a new CLI flag for ordinary jobs.
+  if (isUvDev() && localStorage.getItem('first_pulse_killer_enabled') === 'true') {
+    config.first_pulse_killer_enabled = true;
+  }
+
   if (globalPreference['vector_speed_constraint']) {
     const vectorSpeedLimit = (autoFeeder && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
 
@@ -301,7 +347,7 @@ export const getExportOpt = async (
 
   const isPassThroughTask =
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
-    getPassThrough(addOnInfo);
+    getPassThrough({ addOnInfo });
 
   if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) {
     config.mep = 30;
@@ -314,6 +360,40 @@ export const getExportOpt = async (
     } else if (model === 'fbm1' && supportAccOverrideV1) {
       updateAccOverride({ fill: { y: 100 }, path: { y: 100 } });
     }
+  }
+
+  if (isUvDev() && model === 'fpm1' && getPromarkInfo().laserType === LaserType.UV) {
+    const devConfig = [
+      'laser_on_delay',
+      'laser_off_delay',
+      'marking_delay',
+      'corner_delay',
+      'jump_speed',
+      'jump_delay_min',
+      'jump_delay_max',
+      'is_uv_light',
+      'machine_z_bucket',
+    ] as const;
+    let storageValue: null | string = null;
+    const overwrite: Record<string, number> = {};
+
+    devConfig.forEach((key) => {
+      storageValue = localStorage.getItem(key);
+
+      if (storageValue && !Number.isNaN(Number(storageValue))) {
+        config[key] = Number(storageValue);
+        overwrite[key] = Number(storageValue);
+      }
+    });
+
+    // mirrors the backend clamp, so the logged override shows the value actually used
+    if (config.machine_z_bucket !== undefined && config.machine_z_bucket < MIN_MACHINE_Z_BUCKET_MM) {
+      console.warn(`machine_z_bucket ${config.machine_z_bucket} is below the floor, using ${MIN_MACHINE_Z_BUCKET_MM}`);
+      config.machine_z_bucket = MIN_MACHINE_Z_BUCKET_MM;
+      overwrite.machine_z_bucket = MIN_MACHINE_Z_BUCKET_MM;
+    }
+
+    if (Object.keys(overwrite).length > 0) console.warn('Using UV dev config', overwrite);
   }
 
   if (isDevMode) {

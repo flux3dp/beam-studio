@@ -1,0 +1,63 @@
+@use '@core/styles/mixins' as mixins;
+
+.container {
+  box-sizing: border-box;
+  @include mixins.viewport-size(70, $property: max-height);
+  margin: 28px 0 0;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  .table {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-auto-rows: minmax(22px, auto);
+    column-gap: 12px;
+    row-gap: 20px;
+    align-items: center;
+
+    .input {
+      width: 140px;
+    }
+
+    .row {
+      grid-column: 1 / 3;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .hint {
+      color: #999;
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .inputLabel {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .tooltip {
+      color: #999;
+      cursor: help;
+    }
+
+    .sphereAlert {
+      width: 100%;
+    }
+
+    .sub-items {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      grid-auto-rows: minmax(22px, auto);
+      column-gap: 12px;
+      row-gap: 8px;
+    }
+  }
+
+  .reminder {
+    margin-top: 24px;
+  }
+}

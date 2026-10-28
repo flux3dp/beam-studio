@@ -242,6 +242,10 @@ export class GcodePreview {
         // segment power: next record's s (raster pixel power, see RASTER_T in parseFcode)
         const s = parsed.getItem(i * parsedStride + 16);
         const t = parsed.getItem(i * parsedStride + 8);
+        // minutes the beam dwells on arrival with nothing moving: an inner engraving dot's dotting
+        // time (parseGcode) or a galvo dot's LASER_ON period (parseFcode), carried in the
+        // otherwise unused e slot. 0 everywhere else.
+        const dwell = parsed.getItem(i * parsedStride + 13);
 
         if (g) {
           this.minX = Math.min(this.minX, x1, x2);
@@ -263,7 +267,11 @@ export class GcodePreview {
         array[i * drawStride * 2 + 8] = s;
         const dist = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2 + (isPromark ? 0 : z2 - z1) ** 2);
         let tc = 0;
-        if (isPromark) {
+        if (isPromark && dwell > 0) {
+          // an inner engraving dot: the beam stands still and burns, so its cost is the dwell
+          // itself. The jump that placed it is the previous record, costed as a jump below.
+          tc = dwell;
+        } else if (isPromark) {
           if (z2 !== z1) {
             // Z move
             tc = Math.abs(z2 - z1) / controlConfig.zSpeed / 60;
@@ -286,7 +294,7 @@ export class GcodePreview {
             }
           }
           lastDottingTime = t;
-        } else if (!Number.isNaN(f) && dist !== 0) {
+        } else if (!Number.isNaN(f) && dist !== 0 && !Number.isNaN(dist)) {
           const acc = Math.abs(y2 - y1) > 0 ? accX : accY;
           const direction = Math.atan2(y2 - y1, x2 - x1);
           const lastVel = lastFeedrate * Math.cos(direction - lastDirection);
@@ -295,25 +303,34 @@ export class GcodePreview {
           tc = Math.abs(estimateVel - lastVel) / acc + dist / estimateVel;
           lastFeedrate = estimateVel;
           lastDirection = direction;
+        } else if (dwell > 0) {
+          // a galvo dot (parseFcode): same as the Promark branch above, per dot
+          tc = dwell;
         }
 
         // f = NaN marks synthetic zero-time records (printer swath content, see
-        // parseFcode) - not head motion, so they add no distance or time
-        if (g && !Number.isNaN(f)) {
+        // parseFcode) - not head motion, so they add no distance or time. A dot is the
+        // exception: it has no feedrate either, but it does take time.
+        const counts = !Number.isNaN(f) || dwell > 0;
+        // A dot's drawn width is the display pitch of its grid, not travel: it costs time
+        // without covering ground.
+        const moved = Number.isNaN(f) ? 0 : dist;
+
+        if (g && counts) {
           g1Time += tc;
-          g1Dist += dist;
+          g1Dist += moved;
           g1TimeReal += tc;
-          g1DistReal += dist;
-        } else if (!g && !Number.isNaN(f)) {
+          g1DistReal += moved;
+        } else if (!g && counts) {
           if (f === 7500) {
             g0Time += tc;
-            g0Dist += dist;
+            g0Dist += moved;
           } else {
             g1Time += tc;
-            g1Dist += dist;
+            g1Dist += moved;
           }
           g0TimeReal += tc;
-          g0DistReal += dist;
+          g0DistReal += moved;
         }
 
         this.timeInterval.push(g1Time + g0Time);

@@ -60,15 +60,23 @@ describe('generateSvgInfo', () => {
     expect(speeds).toEqual([20, 115, 210, 305, 400]);
   });
 
-  test('static params are attached (as their default) via the spread', () => {
+  test('static params are attached under their own name, as their default, when asked', () => {
+    const result = generateSvgInfo({
+      blockSetting: makeBlockSetting(2, 2),
+      tableSetting: commonTableSetting,
+      withStaticParams: true,
+    });
+
+    expect(result.every((r) => r.repeat === 1)).toBe(true);
+  });
+
+  test('static params are left out by default, so the layer keeps its own defaults', () => {
     const result = generateSvgInfo({
       blockSetting: makeBlockSetting(2, 2),
       tableSetting: commonTableSetting,
     });
 
-    // Static params (here: repeat) are spread from an array, so they land under
-    // numeric index keys rather than top-level named fields. Assert actual output.
-    expect(result.every((r) => (r as any)[0].repeat === 1)).toBe(true);
+    expect(result.every((r) => !('repeat' in r))).toBe(true);
   });
 
   test('names encode column and row values with the naming map', () => {
@@ -128,13 +136,12 @@ describe('generateSvgInfo', () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({ name: 'P15-S20', speed: 20, strength: 15 });
-    expect((result[0] as any)[0].repeat).toBe(1);
   });
 
   test('rounds fillInterval to 4 decimal places while ceil-ing integer params', () => {
     // Put fillInterval on the column axis (selected 0) to exercise the rounding branch.
     const tableSetting: TableSetting = {
-      fillInterval: makeDetail({ default: 0.01, maxValue: 1, minValue: 0.01, selected: 0 }),
+      fillInterval: makeDetail({ allowDecimal: true, default: 0.01, maxValue: 1, minValue: 0.01, selected: 0 }),
       frequency: makeDetail({ default: 27, maxValue: 60, minValue: 27, selected: 2 }),
       repeat: makeDetail({ default: 1, maxValue: 5, minValue: 1, selected: 2 }),
       speed: makeDetail({ default: 1000, maxValue: 10000, minValue: 500, selected: 1 }),
@@ -144,6 +151,7 @@ describe('generateSvgInfo', () => {
     const result = generateSvgInfo({
       blockSetting: makeBlockSetting(3, 1),
       tableSetting,
+      withStaticParams: true,
     });
 
     // fillInterval column: min 0.01, max 1, length 3 -> 0.01, 0.505, 1
@@ -151,12 +159,9 @@ describe('generateSvgInfo', () => {
 
     expect(fillIntervals).toEqual([0.01, 0.505, 1]);
 
-    // static params (frequency, repeat, strength) keep their defaults, spread under
-    // numeric index keys in sorted-by-`selected` order.
+    // static params (frequency, repeat, strength) keep their defaults
     result.forEach((r) => {
-      const staticValues = Object.assign({}, (r as any)[0], (r as any)[1], (r as any)[2]);
-
-      expect(staticValues).toEqual({ frequency: 27, repeat: 1, strength: 15 });
+      expect(r).toMatchObject({ frequency: 27, repeat: 1, strength: 15 });
     });
   });
 });

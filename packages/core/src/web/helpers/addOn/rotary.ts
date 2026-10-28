@@ -4,8 +4,16 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { getAutoFeeder } from '@core/helpers/addOn';
 import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
+
+import { getAutoFeeder } from './autoFeeder';
+import {
+  type AddOnModeContext,
+  type AddOnModeMutationOptions,
+  resolveAddOnInfo,
+  resolveDocumentValue,
+  updateDocumentMode,
+} from './types';
 
 export type RotaryInfo = null | {
   useAAxis: boolean;
@@ -14,6 +22,22 @@ export type RotaryInfo = null | {
   yRatio: number;
   ySplit?: number;
 };
+
+type RotaryContext = AddOnModeContext & {
+  values?: AddOnModeContext['values'] & { rotaryMode?: boolean };
+};
+
+export const checkRotary = (context: AddOnModeContext = {}): boolean => Boolean(resolveAddOnInfo(context)?.rotary);
+
+/** Whether rotary is supported and currently enabled. */
+export const getRotary = (context: RotaryContext = {}): boolean =>
+  checkRotary(context) && Boolean(context.values?.rotaryMode ?? resolveDocumentValue('rotary_mode', context));
+
+export const enableRotary = (options: AddOnModeMutationOptions = {}): void =>
+  updateDocumentMode({ rotary_mode: true }, options);
+
+export const disableRotary = (options: AddOnModeMutationOptions = {}): void =>
+  updateDocumentMode({ rotary_mode: false }, options);
 
 export const getRotaryInfo = (
   workarea?: WorkAreaModel,
@@ -37,7 +61,7 @@ export const getRotaryInfo = (
   if (!rotaryMode) return null;
 
   const info: RotaryInfo = {
-    useAAxis: constant.fcodeV2Models.has(workarea),
+    useAAxis: (constant.fcodeV2Models as ReadonlySet<string>).has(workarea),
     y: forceY !== undefined ? forceY : rotaryAxis.getPosition(axisInMm),
     yRatio: getRotaryRatio(addOnInfo),
   };
@@ -75,7 +99,7 @@ export const getSpinningAxis = (
 
   if (rotaryInfo) return { ratio: rotaryInfo.yRatio, spin: rotaryInfo.y };
 
-  if (!getAutoFeeder(addOnInfo)) return null;
+  if (!getAutoFeeder({ addOnInfo })) return null;
 
   const { minY = 0, rotaryRatio } = addOnInfo.autoFeeder!;
   let spin = minY;

@@ -16,7 +16,7 @@ getSVGAsync(({ Canvas }) => {
 
 const getBasename = (path: string) => path.match(/(.+)[/\\].+/)?.[1] ?? '';
 
-function preprocessSvgString(rawSvgString: string, type: ImportType, filePath?: string): string {
+export function preprocessSvgString(rawSvgString: string, type: ImportType, filePath?: string): string {
   let svgString = rawSvgString;
 
   if (!['color', 'layer'].includes(type)) {

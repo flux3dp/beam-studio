@@ -124,4 +124,21 @@ describe('test PolygonOptions', () => {
     expect(mockUpdatePolygonSides).toHaveBeenCalledTimes(1);
     expect(mockUpdatePolygonSides).toHaveBeenLastCalledWith(expect.anything(), -2, { parentCmd: mockBatchCmd });
   });
+
+  test('delegates side changes for an editable 3D source', () => {
+    const onChange = jest.fn();
+    const { container } = render(
+      <ObjectPanelContext value={{ polygonSides: 0 } as any}>
+        <PolygonOptions elem={document.createElement('polygon')} sideControl={{ onChange, value: 5 }} />
+      </ObjectPanelContext>,
+    );
+
+    const input = container.querySelector('input')!;
+
+    fireEvent.change(input, { target: { value: 8 } });
+    fireEvent.blur(input);
+
+    expect(onChange).toHaveBeenCalledWith(8);
+    expect(mockUpdatePolygonSides).not.toHaveBeenCalled();
+  });
 });

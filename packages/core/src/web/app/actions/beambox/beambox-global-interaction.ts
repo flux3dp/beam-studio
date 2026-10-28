@@ -1,8 +1,14 @@
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import selectionManager from '@core/app/svgedit/selection';
+import {
+  INNER_ENGRAVING_DISABLED_MENU_ITEMS,
+  isInnerEngravingActive,
+  resolveInnerEngravingActive,
+} from '@core/helpers/addOn/innerEngraving';
 import { isAtPage } from '@core/helpers/hashHelper';
 import menu from '@core/implementations/menu';
 
@@ -11,6 +17,30 @@ class BeamboxGlobalInteraction {
     tabController.onFocused(() => {
       this.attach();
     });
+    // both menus are toggled by id (native menu / menuItemStatusStore), so the mode has to push its
+    // changes when it flips
+    // outside the editor `attach` decides the menu, and applies the mode when the editor is entered
+    useDocumentStore.subscribe(resolveInnerEngravingActive, (active) => {
+      if (isAtPage('editor')) this.onInnerEngravingChange(active);
+    });
+  }
+
+  /**
+   * Switch off what inner engraving mode cannot do — see the list for why each item is there.
+   */
+  onInnerEngravingChange(active = isInnerEngravingActive()) {
+    if (active) {
+      menu.disable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
+    } else {
+      menu.enable(INNER_ENGRAVING_DISABLED_MENU_ITEMS);
+      // curve engraving (rotary, pass-through, auto-feeder), rotary setup (curve engraving) and
+      // decompose path (selection) have conditions of their own, which the blanket enable above
+      // would trample
+      menu.checkCurveEngraving();
+      menu.checkRotarySetup();
+      this.onObjectBlur();
+      this.onObjectFocus();
+    }
   }
 
   attach = () => {
@@ -20,9 +50,13 @@ class BeamboxGlobalInteraction {
       // enable all
       menu.attach();
       menu.checkCurveEngraving();
+      menu.checkRotarySetup();
       this.onObjectBlur();
       this.onObjectFocus();
       this.onCanvasModeChange();
+
+      // `menu.attach()` above has just enabled everything, so the mode has to be applied after it
+      if (isInnerEngravingActive()) this.onInnerEngravingChange(true);
     } else {
       // disable all
       menu.attach([]);

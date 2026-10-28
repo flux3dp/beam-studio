@@ -19,10 +19,11 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './TextContentBlock.module.scss';
 
 interface Props {
+  onSourceChange?: () => void;
   textElement: SVGTextElement;
 }
 
-function TextContentBlock({ textElement }: Props): ReactNode {
+function TextContentBlock({ onSourceChange, textElement }: Props): ReactNode {
   const { beambox, params_label: tLabel } = useI18n();
   const t = beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
@@ -104,6 +105,7 @@ function TextContentBlock({ textElement }: Props): ReactNode {
             }
 
             undoManager.addCommandToHistory(batchCmd);
+            onSourceChange?.();
           }
         }}
         onChange={(e) => {

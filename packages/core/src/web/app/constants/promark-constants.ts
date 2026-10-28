@@ -1,18 +1,50 @@
 import type { Field, GalvoParameters, RedDot } from '@core/interfaces/Promark';
 
-export const workareaOptions = [110, 150, 220] as const;
 export const promarkWatts = [20, 30, 50] as const;
 export const mopaWatts = [20, 60, 100] as const;
+export const uvWatts = [5] as const;
 
-export const laserSourceWattMap = { Desktop: promarkWatts, MOPA: mopaWatts } as const;
+export const laserSourceWattMap = { Desktop: promarkWatts, MOPA: mopaWatts, UV: uvWatts } as const;
+export const laserTypes = ['Desktop', 'MOPA', 'UV'] as const;
 
 export enum LaserType {
   Desktop = 0,
   MOPA = 1,
+  UV = 2,
 }
 
+export const MOPA_WORKAREA_OPTIONS = [110, 150, 220] as const;
+export const UV_INNER_ENGRAVING_WORKAREA = 70;
+export const UV_WORKAREA_OPTIONS = [UV_INNER_ENGRAVING_WORKAREA, 200] as const;
+
+export type PromarkLaserSource = 'MOPA' | 'UV';
+
+/** Work areas compatible with the selected Promark laser source. */
+export const getPromarkWorkareaOptions = (laserType: LaserType): ReadonlyArray<number> =>
+  laserType === LaserType.UV ? UV_WORKAREA_OPTIONS : MOPA_WORKAREA_OPTIONS;
+
+/** Default work area shared by initialization and document settings. */
+export const getDefaultPromarkWorkarea = ({ laserType, watt }: { laserType: LaserType; watt: number }): number => {
+  if (laserType === LaserType.UV) return UV_INNER_ENGRAVING_WORKAREA;
+
+  if (laserType === LaserType.MOPA && watt === 20) return MOPA_WORKAREA_OPTIONS[0];
+
+  return MOPA_WORKAREA_OPTIONS.at(-1)!;
+};
+
+/** The 70 mm UV lens uses a 75 mm backend correction field; other UV fields use their real size. */
+export const getPromarkFieldWorksize = (laserType: LaserType, worksize: number): number =>
+  laserType === LaserType.UV && worksize === UV_INNER_ENGRAVING_WORKAREA ? 75 : worksize;
+
+export const isPromarkWorkareaCompatible = (laserType: LaserType, size: number): boolean =>
+  getPromarkWorkareaOptions(laserType).includes(size);
+
+/** Swiftray currently distinguishes UV from all MOPA-family sources. */
+export const getPromarkLaserSource = (laserType: unknown): PromarkLaserSource =>
+  laserType === LaserType.UV ? 'UV' : 'MOPA';
+
 // Recommended layer parameters for the Promark example file, keyed by laser type and watt.
-// pulseWidth only applies to MOPA sources.
+// pulseWidth only applies to MOPA sources. UV stays empty until hardware defaults are available.
 export const promarkExampleParams: Record<
   LaserType,
   Record<number, { frequency: number; power: number; pulseWidth?: number; speed: number }>
@@ -27,6 +59,7 @@ export const promarkExampleParams: Record<
     60: { frequency: 25, power: 45, pulseWidth: 350, speed: 2500 },
     100: { frequency: 55, power: 55, pulseWidth: 500, speed: 3500 },
   },
+  [LaserType.UV]: {},
 };
 
 export const defaultField: Field = { angle: 0, offsetX: 0, offsetY: 0 };
@@ -47,5 +80,5 @@ export const controlConfig = {
 export default {
   mopaWatts,
   promarkWatts,
-  workareaOptions,
+  uvWatts,
 };
