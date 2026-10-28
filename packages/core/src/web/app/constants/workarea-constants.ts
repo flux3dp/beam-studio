@@ -68,6 +68,8 @@ export interface WorkArea {
     zRegular?: number; // mm/s
   };
   deep?: number; // mm
+  /** machine default laser control frequency in kHz, set only on models supporting the per-layer override */
+  defaultLaserFrequency?: number;
   dimensionCustomizable?: boolean;
   // extra displayHeight for modules
   displayHeight?: number; // mm
@@ -150,6 +152,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       zHighSpeed: 300,
       zRegular: 140,
     },
+    defaultLaserFrequency: 20,
     height: 375,
     label: 'Beambox II',
     maxSpeed: 900,
@@ -182,6 +185,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       x: 100,
       zRegular: 1800,
     },
+    defaultLaserFrequency: 20,
     height: 240,
     label: 'beamo II',
     maxSpeed: 750,
@@ -224,6 +228,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
       zHighSpeed: 300,
       zRegular: 140,
     },
+    defaultLaserFrequency: 25,
     engraveDpiOptions: ['low', 'medium', 'high', 'detailed', 'ultra'],
     height: 410,
     label: 'HEXA RF',

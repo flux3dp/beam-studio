@@ -101,6 +101,32 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     }
   }
 
+  // Unsupported models ignore data-laserFrequency entirely, so a value kept from another workarea must not block them
+  if (workareaObj.defaultLaserFrequency && !vc.meetRequirement('LASER_FREQUENCY')) {
+    const hasLaserFrequency = layers.some(
+      (layer) =>
+        getData(layer, 'module') === LayerModule.LASER_UNIVERSAL && (getData(layer, 'laserFrequency') ?? 0) > 0,
+    );
+
+    if (hasLaserFrequency) {
+      const res = await new Promise((resolve) => {
+        alertCaller.popUp({
+          buttonType: alertConstants.CONFIRM_CANCEL,
+          message: lang.topbar.alerts.laser_frequency_unavailable,
+          onCancel: () => resolve(false),
+          onConfirm: () => resolve(true),
+          type: alertConstants.SHOW_POPUP_ERROR,
+        });
+      });
+
+      if (res) {
+        executeFirmwareUpdate(device);
+      }
+
+      return false;
+    }
+  }
+
   let hasJobOrigin = false;
   const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
 

@@ -29,6 +29,7 @@ jest.mock('./AmDensityBlock', () => () => <div>Mock AmDensityBlock</div>);
 jest.mock('./AutoFocus', () => () => <div>Mock AutoFocus</div>);
 jest.mock('./CurveEngravingZHighSpeed', () => () => <div>Mock CurveEngravingZHighSpeed</div>);
 jest.mock('./Diode', () => () => <div>Mock Diode</div>);
+jest.mock('./LaserFrequencyBlock', () => () => <div>Mock LaserFrequencyBlock</div>);
 jest.mock('./FocusBlock', () => ({ type }: { type: string }) => <div>Mock FocusBlock: {type}</div>);
 jest.mock('./SingleColorBlock', () => () => <div>Mock SingleColorBlock</div>);
 jest.mock('./TextureBlock', () => () => <div>Mock TextureBlock</div>);
@@ -118,5 +119,20 @@ describe('test AdvancedBlock', () => {
 
     fireEvent.click(collapseHeader);
     expect(container).toMatchSnapshot();
+  });
+
+  it.each([
+    ['fbm2', LayerModule.LASER_UNIVERSAL, true],
+    ['fbm2', LayerModule.LASER_1064, false],
+    ['ado1', LayerModule.LASER_UNIVERSAL, false],
+  ])('should render laser frequency for %s module %s: %s', (workarea, module, expected) => {
+    mockGetAddOnInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: false });
+    mockUseWorkarea.mockReturnValue(workarea);
+    mockUseConfigPanelStore.mockReturnValue({ module: { value: module } });
+
+    const { container } = render(<AdvancedBlock />);
+
+    fireEvent.click(container.querySelector('.ant-collapse-header')!);
+    expect(container.textContent?.includes('Mock LaserFrequencyBlock')).toBe(expected);
   });
 });

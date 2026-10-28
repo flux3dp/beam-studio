@@ -682,6 +682,9 @@ export interface ILang {
         high_quality: string;
         high_quality_desc: string;
         ink_saturation: string;
+        laser_frequency: string;
+        laser_frequency_default: string;
+        laser_frequency_desc: string;
         low_air_assist_warning: string;
         low_power_warning: string;
         low_speed_warning: string;
@@ -2821,6 +2824,7 @@ export interface ILang {
       install_correct_headtype: string;
       job_origin_unavailable: string;
       job_origin_warning: string;
+      laser_frequency_unavailable: string;
       object_outside_moving_area: string;
       power_too_high: string;
       power_too_high_confirm: string;

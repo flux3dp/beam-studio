@@ -388,6 +388,9 @@ exports[`test AdvancedBlock should render correctly with curve engraving 1`] = `
             <div>
               Mock TextureBlock
             </div>
+            <div>
+              Mock LaserFrequencyBlock
+            </div>
           </div>
         </div>
       </div>

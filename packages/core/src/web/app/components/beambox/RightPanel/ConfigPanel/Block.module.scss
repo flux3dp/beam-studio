@@ -14,6 +14,13 @@
   @include mixins.hint-overlay;
 }
 
+// secondary note under a control
+.caption {
+  font-size: 12px;
+  line-height: 20px;
+  color: #949494;
+}
+
 button.display-btn[class*='number-item'] {
   min-width: 60px;
 }

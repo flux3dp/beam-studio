@@ -19,6 +19,7 @@ import AutoFocus from './AutoFocus';
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
 import Diode from './Diode';
 import FocusBlock from './FocusBlock';
+import LaserFrequencyBlock from './LaserFrequencyBlock';
 import RefreshIntervalBlock from './RefreshIntervalBlock';
 import SingleColorBlock from './SingleColorBlock';
 import TextureBlock from './TextureBlock';
@@ -64,6 +65,10 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
     if (workarea !== 'fuv1') {
       contents.push(<TextureBlock key="texture-block" type={type} />);
+    }
+
+    if (workareaObject.defaultLaserFrequency && module.value === LayerModule.LASER_UNIVERSAL) {
+      contents.push(<LaserFrequencyBlock key="laser-frequency-block" type={type} />);
     }
   } else {
     if (module.value === LayerModule.PRINTER_4C) {
