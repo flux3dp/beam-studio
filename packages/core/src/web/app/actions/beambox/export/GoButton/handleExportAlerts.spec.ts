@@ -27,6 +27,11 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 }));
 jest.mock('@core/helpers/layer/layer-helper', () => ({ getLayerName: jest.fn() }));
 jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({ hasModuleLayer: () => false }));
+// never reached (inner engraving is off for these models); importing it drags undoManager → camera.ts → p-queue ESM
+jest.mock('./checkInnerEngravingObjects', () => ({
+  checkInnerEngravingObjects: jest.fn(),
+  hasInnerEngravingObjectWarnings: () => false,
+}));
 
 const lang = {
   beambox: { popup: {} },
