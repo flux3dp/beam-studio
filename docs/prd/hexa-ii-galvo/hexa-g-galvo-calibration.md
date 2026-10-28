@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft，2026-10-28。整條閉環尚未實作；目的是一口氣做完、在實機驗證「用雷射頭相機取代平台掃描機」最終是否可行 |
+| **Status** | Implemented (unverified on hardware)，2026-10-28。PR A（BeamOS `paths` + `mb_exec`）、PR B/D（Beam Studio）、PR C（fluxghost）已寫完並通過單元測試；整條閉環尚未上機，目的是一口氣在實機驗證「用雷射頭相機取代平台掃描機」是否可行 |
 | **Author** | EstherFu |
 | **Created** | 2026-10-28 |
 | **Target product** | Beam Studio（desktop + web），機型 `fhx2galvo`（HEXA G） |
@@ -39,7 +39,7 @@
 
 - **直接驅動振鏡卡**：`galvoExec.ts` 透過 control_task 的 `galvo_exec` 送 JSON，機器端 `galvo_exec.py:build_records()` 展開成 BSL list。目前只有 `goto`、`frame`、`dot` 三種 op。每次都帶完整 optics（15 個鍵），所以可以用畫面上的參數試打而不存檔（`toGalvoOptics`，`galvoExec.ts:28`）。
 - **串聯／解聯**：`galvoLaserMode.ts` 的 `connectGalvoHead` / `disconnectGalvoHead` / `ensureGalvoHeadDisconnected`。機器端 `control_task.py:609` 的 `galvo_mode` 會歸零、過床、串聯、`$HX`、釋放馬達，再設 `M136P259Q10`、`M136P174`、`M136P310Q1`、`M136P311Q1`；限位已到位時跳過機械動作只重送授權位元。**它不碰氣閥 `M136P312` 也不開泵 `M136P3`**。
-- **主板直通**：`control_task.py:700` 接受 `MB:<gcode>` 直送主板，回覆以 `MB:` 前綴送回（`:742`）。Beam Studio 目前沒有用它。
+- **主板直通**：`control_task.py:700` 接受 `MB:<gcode>` 直送主板，但主板的回覆走 `_send_to_handler`，在 TCP 介面（fluxghost 連機器用的就是 TCP）整個被丟掉（`control_task.py:798-820`），所以 Beam Studio 送了也收不到回覆。本 PRD 因此在 control_task 加了 `mb_exec <gcode>`（§7.5b）：送一行、用既有 `running` / `last_result` 機制等主板 ok，結果由 `get_result` 讀回。`MB:` 直通本身不動。
 - **Raw 模式**：`control.ts` 有 `rawHome`、`rawMove({x,y,f})`（11 處呼叫）、`rawSetLaser({on,s})`、`M136P173/174` 的雷射模式指令（`control.ts:1626`）、`rawSetAirPump`、`rawLooseMotor`。`rawMove` 不帶 S。
 - **模組偏移**：振鏡場心相對噴嘴就是 `toolhead_shift`，對話框開啟時用 `getModuleOffsets({ module })` 讀進來（`GalvoSettings.tsx:301`），每顆頭各一組；預設值在 `moduleOffsets.ts:40-42`，CO2 與 MOPA 目前都是 `[0, 0]` 佔位（TODO 待確認）。`field.offsetX/Y` 在 HEXA G 固定為 0（`galvoConfig.ts:16`）。
 - **兩顆振鏡頭**：對話框依模組開啟（`showGalvoSettings(device, module)`，`menuDeviceActions.tsx:359,362`），整份 state 與每個指令都帶 `module`。差異只有四處：串聯模式 `connectGalvoHead(module)` 對應 `galvo_mode` / `mopa_mode`（`galvoLaserMode.ts:19-20`；`mopa_mode` 送 `M136P259Q11` 與 `M136P310Q0`，且機器未偵測到 MOPA 頭時回 `error: not a mopa head`，`control_task.py:646-657`）；`galvo_exec` 的 `head` 帶模組 id 12 / 13，脈衝由 `galvo_exec.py:pulse_for` 依頭別決定（MOPA 25 kHz、350 ns，功率直接給卡）；機器上的設定鍵 `galvo_co2` / `galvo_mopa`（`galvoConfig.ts:59-60`）；軸向預設 CO2 `invertX = invertY = true`、MOPA 全 `false`（`galvoConfig.ts:72-73`）。龍門行程 `getGantryTravelRange(model)` 是兩顆頭邊界的聯集（`module-boundary.ts:27-28`，CO2 右扣 50、MOPA 右扣 100，皆為佔位），不分模組。
@@ -129,21 +129,29 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 | 共用檔案 | 改動 | 呼叫者 — 必須維持的行為 |
 |---|---|---|
 | `helpers/api/control.ts` `rawMove` | 新增可選 `s` | `camera/common/moveLaserHead.ts`、`LaserHeadFisheyeCalibration.tsx` 的預覽外框、`SolvePnP.tsx`，共 11 處 — 不傳 `s` 時送出字串逐字相同 |
-| `helpers/api/control.ts` | 新增 `controlTaskMainboard` | `setGalvoLaserMode` / `galvoExec` / `galvoStop` / `getControlTaskResult` / `stopControlTask` 不受影響；`useWaitAnyResponse` 配對邏輯不改 |
+| `helpers/api/control.ts` | 新增 `controlTaskMainboard`（送 `mb_exec <gcode>`） | `setGalvoLaserMode` / `galvoExec` / `galvoStop` / `getControlTaskResult` / `stopControlTask` 不受影響；`useWaitAnyResponse` 配對邏輯不改 |
 | `helpers/api/swiftray-control.ts` | 新增 `controlTaskMainboard` 丟出不支援 | Promark 經 swiftray 的流程不受影響 |
 | `interfaces/IControlSocket.d.ts` | 新增方法宣告 | 兩個實作都補 |
 | `helpers/device-master.ts` | 新增 `controlTaskMainboard` 轉呼叫 | 其他 galvo 轉呼叫（`:1175-1190`）不變 |
-| `helpers/device/galvoExec.ts` | 新增 `galvoPaths` | `GalvoSettings.tsx` 的 `galvoFrame` / `galvoGoto` / `galvoDot` payload 逐鍵相同 |
-| `helpers/api/camera.ts` | `getPhotoFromMachine` 新增 `{ dpmm }` 選項 | `Bb2Hx2PreviewManager.ts:347`、`Beamo2PreviewManager.ts:254,264`、`AdorPreviewManager.ts:88` — 不傳時送 `require_frame` 原字串 |
+| `helpers/device/galvoExec.ts` | 新增 `galvoPaths`、`mainboardLine`、`awaitControlTaskResult`（`awaitGalvoResult` 改為包它）；`galvoFrame` 新增可選 `size` | `GalvoSettings.tsx` 的 `galvoFrame` / `galvoGoto` / `galvoDot` payload 逐鍵相同（不傳 `size` 時 rect 仍是整個 workarea）；`galvoLaserMode.ts` 的 `resetGalvoGoto` 不變 |
+| `helpers/api/camera.ts` | `sendOneShot` / `oneShot` 新增第二參數 `dpmm` | `getLiveStreamSource` 的輪詢、`device-master.takeOnePicture` 不傳時送 `require_frame` / `require_frame l` 原字串 |
+| `helpers/device-master.ts` | `TakePictureOptions` 加 `dpmm`，`takeOnePicture` 透傳給 `oneShot` | `Bb2Hx2PreviewManager.ts:347`、`Beamo2PreviewManager.ts:254,264`、`AdorPreviewManager.ts:88` 與所有 `takeOnePicture()` 呼叫 — 不傳時行為不變 |
+| `actions/camera/preview-helper/BasePreviewManager.tsx` | `getPhotoAfterMoveTo(x, y, opts?)` 透傳 `opts` 給 `getPhotoFromMachine` | `RegionPreviewMixin.regionPreviewAtPoint`、`BeamPreviewManager.ts:236`、`retakeContourPreview.ts:119`、`DiodeCalibration`、`CameraCalibration` 三步 — 不傳時行為不變 |
+| `actions/beambox/preview-mode-controller.ts` `getPhotoAfterMoveTo` | 多一個可選 `opts` 透傳 | 既有六處呼叫者不傳 — 行為不變 |
+| `interfaces/PreviewManager.d.ts` | `getPhotoAfterMoveTo` 簽名加可選 `opts` | 實作它的 manager 都只多一個可選參數 |
 | `helpers/api/open-cv.ts` | 新增 `solveGalvoCoupon` | `detectBlobs` / `imageContour` / `sharpen` 與 `need_upload` 重送流程不變；Print and Cut 不受影響 |
 | `components/dialogs/promark/GalvoSettings.tsx` | 加入新區塊、`GalvoAction` 多五個值 | 既有六個 handler、`run()` 的狀態檢查、關閉時 `releaseGalvoControl` 不變 |
-| `actions/camera/preview-helper/RegionPreviewMixin.ts` | `getPhotoAfterMoveTo` 透傳 `{ dpmm }` | `regionPreviewAtPoint`、`regionPreviewArea` 不傳時行為不變 |
 | fluxghost `api/camera.py` `require_frame` | 新選項 `d<dpmm>` | `require_frame` / `require_frame l` 的輸出與現在逐位元組相同（`preview_downsample`、低解析度路徑不改） |
 | fluxghost `utils/camera/perspective.py` `apply_perspective_points_transform` | 新 kwarg `dpmm=DPMM` | 所有既有呼叫者不傳 → 輸出不變 |
+| fluxghost `api/fisheye_camera_mixin.py` `handle_fisheye_image` | 新 kwarg `dpmm=DPMM`：v1 參數轉給 `apply_perspective_points_transform(dpmm=)`，v2/3/4（HEXA 用的 V4）轉給 `corner_detection/apply_points.py` 既有的 `perspective_pixel_per_mm=` | 不傳時兩條路徑輸出不變；v2 的 150 px padding 是像素單位，不隨 dpmm 縮放 |
 | fluxghost `api/opencv.py` | 新增 `solve_galvo_coupon` | 既有四個指令不變；`cmd_mapping` 只加不改 |
-| BeamOS `galvo_exec.py` `build_records` | 新增 `paths` 分支 | `goto` / `frame` / `dot` 與 `_prologue` 不變；`control_task.py` 不改 |
+| BeamOS `galvo_exec.py` `build_records` | 新增 `paths` 分支；`estimate_ms` 計入 ENABLE/DISABLE 的 moDelay（本檔送 0，估值不變） | `goto` / `frame` / `dot` 與 `_prologue` 不變（測試有 snapshot） |
+| BeamOS `control_task.py` | 新增 `mb_exec` 指令與 `mb_exec_lines` 狀態；`on_mainboard_message` 在 mb_exec 進行中先交給它 | `galvo_mode` / `mopa_mode` / `default_mode` / `galvo_exec` / `get_result` / `stop` / `MB:` 直通不變；非 mb_exec 時主板訊息走原路 |
+| `interfaces/IStorage.d.ts` | 新增 `'galvo-fix-backlash'?: boolean` | 其他鍵不變 |
 
-不碰：`galvoLaserMode.ts`、`galvoConfig.ts`、`moduleOffsets.ts`、`gantryTravelRange.ts`、`galvo-dev-settings.ts`（backlash 旗標不放這裡，見 §7.11）、Print and Cut 的任何檔案（只引用 `previewSession.ts`）。
+不碰：`galvoLaserMode.ts`、`galvoConfig.ts`、`moduleOffsets.ts`、`gantryTravelRange.ts`、`galvo-dev-settings.ts`（backlash 旗標不放這裡，見 §7.11）、`RegionPreviewMixin.ts`、Print and Cut 的任何檔案（只引用 `previewSession.ts`）。
+
+新增檔案（不在上表）：`helpers/device/galvoCoupon.ts`（+spec）、`helpers/device/galvoCalibration/{backlash,mark,capture,captureGrid,solve}.ts`（backlash / captureGrid / solve 有 spec）、`components/dialogs/promark/GalvoCalibrationBlock.tsx`；BeamOS `fluxmonitor/controller/tasks/mb_exec.py`（+tests）。
 
 ## 7. Design
 
@@ -157,7 +165,7 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 - 第三列：**Stitch test**（用標記參數的功率、速度）。
 - 「Fix backlash」勾選框，預設開。
 - 結果區：拼接影像縮圖（可點開大圖）、解算輸出表（§7.9）、輪次歷史表（輪次、送出的 scaleX / scaleY、量到的 scale_x / scale_y / skew / 殘差 RMS）。
-- `GalvoAction` 新增 `'coupon' | 'lframe' | 'capture' | 'solve' | 'stitch'`，全部走既有 `run(action, label, body)`。
+- `GalvoAction` 新增 `'coupon' | 'lframe' | 'capture' | 'solve' | 'stitch'`，全部走既有 `run(action, label, body)`；區塊是 `GalvoCalibrationBlock.tsx`，由 `GalvoSettings` 傳入 `run`、`pending`、`config`、`offsets`、`parameters` 與 `onApplyScales`。進行中的步驟文字顯示在按鈕列下方。
 - 區塊從對話框 props 拿 `module`、`offsets`、`config`，不自己讀機器；串聯、`galvoPaths`、`galvoFrame`、建議值、輪次歷史全部以這個 `module` 為準。MOPA 對話框的區塊與 CO2 的是同一個元件，沒有分支 UI。建議標記參數的說明文字依模組顯示（CO2 25% / 500 mm/s；MOPA 待實測，決策 12）。
 
 ### 7.2 圖樣規格（由工廠文件轉寫）
@@ -177,27 +185,27 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 
 **極值**：49.5 + 3.5/√2 + 2/√2 = 53.39 mm，在 ±55 內；產生器的 spec 要斷言。
 
-產生器 `helpers/device/galvoCoupon.ts` 匯出 `buildCouponPaths(): GalvoPoint[][]`（純函式，折線不含 roll，roll 由機器端 `lead_mm` 加）以及 `couponFeatures`（每個特徵的種類與中心，給 C 階段當期望座標、給 B 階段算拍照範圍）。
+產生器 `helpers/device/galvoCoupon.ts` 匯出 `buildCouponPaths(): GalvoPoint[][]`（純函式，折線不含 roll，roll 由機器端 `lead_mm` 加）、`couponFeatures`（每個特徵的種類與中心，給 C 階段當期望座標）、`buildLFrameMarks(center)`（8 個 L 的 X 臂端 → 頂點 → Y 臂端），以及各尺寸常數。
 
 ### 7.3 A-1「打 coupon」序列
 
 全程留在 control_task。
 
 1. `connectGalvoHead(module)`：CO2 走 `galvo_mode`、MOPA 走 `mopa_mode`，兩者的機械串聯動作相同，只差雷射選擇與啟用位元。已串聯時機器只重送授權位元，這同時處理工廠文件的「sleep 會清掉授權」。MOPA 頭未安裝時這步就失敗，後面不執行。
-2. 站位移動：`controlTaskMainboard('G1 F<cap> X<sx> Y<sy>')`，`cap` 取 `getGalvoHeadConnectedFeedrate()`；再送 `M137P0` 等移動完成（協定 §10）。`fixBacklash` 開啟時依 §7.11 先過衝。
-3. 氣：`M136P312Q2`、`M136P3Q1000`（決策 3 未定，預設開；MOPA 頭是否共用同一個 galvo 氣閥見決策 12，先照 CO2 做）。
+2. 站位移動：`mainboardLine('G1F<cap>X<sx>Y<sy>')`（經 `controlTaskMainboard` 送 `mb_exec`，§7.5b），`cap` 取 `getGalvoHeadConnectedFeedrate()`；再送 `M137P0`，它在前一個移動完成後才回 ok（協定 §10）。`fixBacklash` 開啟時依 §7.11 先過衝；串聯後龍門位置未知，所以兩軸都過衝。站位超出 `getGantryTravelRange` 時在串聯前就拒絕。
+3. 氣：`M136P312Q2`、`M136P3Q1000`（決策 3 未定，預設開，常數 `COUPON_AIR_ASSIST`；MOPA 頭是否共用同一個 galvo 氣閥見決策 12，先照 CO2 做）。
 4. `galvoPaths({ config, module, power, speed, paths: buildCouponPaths() })` → `awaitGalvoResult`。payload 的 `head` 就是 `module`（12 / 13），機器端 `pulse_for` 依此選 CO2 或 MOPA 脈衝，Beam Studio 不另外處理功率換算。
-5. 授權讀回：`controlTaskMainboard('M136P311')`，回覆不含封閉域已授權則丟錯「這張紙作廢」。
+5. 授權讀回：`mainboardLine('M136P311')` 拿到主板在 ok 之前回報的 `Open laser: …, Enclosed laser: …`，Enclosed 不是 on/1/enabled 之類就丟錯「這張紙作廢」。確切字串待實機看一次（§13）。
 6. `M136P4`、`M136P312Q3`。4、5 任一失敗也要走到這步。
 7. 頭維持串聯、龍門留在站位。
 
 ### 7.4 A-2「打 L 框」序列
 
 1. `ensureGalvoHeadDisconnected(model, { onSlow })`，沿用「解聯中」進度提示。
-2. `enterRawMode` → `rawHome` → `rawStartLineCheckMode` → `M136P173` → `rawSetAirPump(true)` → `rawSetLaser({ on: true, s: 0 })`。
+2. `enterRawMode` → `rawHome` → `rawStartLineCheckMode` → `rawSet24V(true)`（送 `M136P173`，既有方法，名字是歷史包袱）→ `rawSetAirPump(true)` → `rawSetLaser({ on: true, s: 0 })`（`M3S0`；工廠腳本用 `M4`，差別只在加減速期間的功率是否隨速度變，L 臂 8 mm 在 F1200 下可忽略，先用既有 API）。
 3. 以場心落點 C 為中心，8 個頂點 V = C + {(±70, ±70), (0, ±70), (±70, 0)}，臂長 8。每個 L：`rawMove({ f: 6000, s: 0, ...X 臂末端 })` → `rawMove({ f: 1200, s: S, ...V })` → `rawMove({ f: 1200, s: S, ...Y 臂末端 })`。S = power% × 1000（決策 2）。角上的 L 兩臂朝中心；邊中點的 L 在自己所在軸上那一臂一律朝 +，另一臂朝中心，例如 (0, +70) 是 X 臂 +8、Y 臂 −8。這個不對稱是刻意的，不要改。S0 的定位移動在 `fixBacklash` 開啟時依 §7.11 過衝。
 4. 每趟前 `rawHome`，共 `passes` 趟。
-5. `rawSetLaser({ on: false })` → `M136P174` → `rawSetAirPump(false)` → `rawEndLineCheckMode` → `rawLooseMotor` → `endSubTask`。任何失敗都在 finally 做這段。
+5. `rawSetLaser({ on: false })` → `rawSet24V(false)` → `rawSetAirPump(false)` → `rawEndLineCheckMode` → `rawLooseMotor` → `endSubTask`。任何失敗都在 finally 做這段，每步各自 catch。8 個 L 的三個點有任何一個超出行程就在解聯前拒絕。
 
 ### 7.5 機器端：`galvo_exec.py` 新增 `op: "paths"`
 
@@ -224,27 +232,38 @@ MARK_ABS   Pn + lead·dn
 
 全部折線後 `JUMP_ABS 0 0`，再接既有尾端 `DISABLE_LASER`。前導沿用 `_prologue`。preview 分支與 `frame` 相同：逐點 jump、不 arm。機器端不知道 coupon，只收折線。
 
+### 7.5b 機器端：`control_task.py` 新增 `mb_exec <gcode>`
+
+`MB:` 直通在 TCP 上沒有回覆（§2.2），所以加一個有回覆的版本。契約：
+
+- 請求 `mb_exec <一行 gcode>`，不含換行；送主板時補 `\n`。空行或多行回 `fail BAD_ARGS`。
+- 立即回覆 `ok`（已送出）、`error busy running`（序列或 galvo 在跑）、`error: not a galvo model`。
+- 完成由 `get_result` 輪詢：`wait` → 主板 ok 後 `ok <ok 之前的其他行以 | 接起來>`（沒有就是 `ok`）；主板 `error…` / `ALARM…` → `fail <那一行>`，不斷線、不送 `\x18`。
+- 實作走既有 `_start_mode` / `on_mainboard_ok` / `last_result`，期間 `running` 為真；`stop` 可中止。純邏輯在 `mb_exec.py`（`parse_line` / `reply`），有單元測試；`control_task.py` 的接線只過 `py_compile`，要上機驗（§13）。
+
+Beam Studio 端 `galvoExec.mainboardLine(gcode, action)` 把「送 mb_exec → 等 get_result ok → 取 ok 後面的文字」包成一個呼叫。
+
 ### 7.6 B「拍照」序列
 
 目標：一張床座標 mm、20 px/mm 的拼接影像，覆蓋 C ± 90 mm（含 L 框與外緣），每個像素來自某張照片的中央區域。
 
 1. `ensureGalvoHeadDisconnected`。相機在雷射頭上，頭串聯時可以拍但要降速，而且 L 框之後本來就是解聯狀態。
-2. `ensurePreviewMode` + `ensureRegionPreview`（引用 Print and Cut 的 `previewSession.ts`），取得 `Bb2Hx2PreviewManager` 實例。
+2. `ensureRegionPreview`（引用 Print and Cut 的 `previewSession.ts`，內含 `ensurePreviewMode`），用 `previewModeController.previewManager` 的 `getPreviewPosition` 與 `getPhotoAfterMoveTo`。
 3. 拍照格：以 C 為中心，間距 `CAPTURE_PITCH_MM = 40`，覆蓋 C ± 90 → 每軸 5 點（C − 80 … C + 80），共 25 張，蛇行。每一格：
-   - 相機中心對準該點：`getPreviewPosition(x, y)` 已把頭的實際位置算好並限縮在行程內；若被限縮超過 5 mm，這格記為「拍不到」並中止（AC5）。
-   - `getPhotoAfterMoveTo(cx, cy, { dpmm: 20 })` 取回 20 px/mm 的透視校正影像（§7.7）。
-   - 只取影像中以拍照點為中心、`PATCH_MM = 50` 見方的區塊（間距 40 所以相鄰格各重疊 5 mm），貼到離屏 canvas 上對應的床座標位置。後貼的蓋前貼的；重疊帶的像素來自較近中心的那張，與 `refineMarkPatches` 的理由相同。
+   - 相機中心對準該點：`getPreviewPosition(px)` 已把頭的實際位置算好並限縮在行程內；與 `{ clipByWorkArea: false }` 的結果相減就是被限縮的量，超過 5 mm 這格記為「拍不到」並中止（AC5）；小於 5 mm 時照片中心跟著位移，貼圖位置用實際中心。
+   - `getPhotoAfterMoveTo(cx, cy, { dpmm: 20 })` 取回 20 px/mm 的透視校正影像（§7.7）；影像中心像素就是照片中心（區域預覽格對 offset 對稱）。
+   - 只取影像中央 `PATCH_MM = 50` 見方的區塊（間距 40 所以相鄰格各重疊 5 mm），`drawImage` 到離屏 canvas 上對應的床座標位置。後貼的蓋前貼的；重疊帶的像素來自較近中心的那張，與 `refineMarkPatches` 的理由相同。
    - 進度 i/25，ESC 設取消旗標，當前格完成後停。
 4. 離屏 canvas 3600×3600 轉 PNG blob，存對話框 state；縮圖顯示在結果區。
 5. `endPreviewMode`。
 
-`CAPTURE_PITCH_MM` / `PATCH_MM` 先寫成常數；實機若發現 50 mm 的中央區域仍不夠平，改小間距即可，拍照張數跟著變。
+`CAPTURE_PITCH_MM` / `PATCH_MM` / `CAPTURE_HALF_SPAN_MM` 是 `galvoCalibration/captureGrid.ts` 的常數，拍照點數由它們算出（每側 ⌈(90 − 25)/40⌉ = 2，共 5×5）；實機若發現 50 mm 的中央區域仍不夠平，改小間距即可，拍照張數跟著變。
 
 ### 7.7 fluxghost：高解析度重映射 `require_frame d<dpmm>`
 
-`api/camera.py` 的 `require_frame` 目前接受無參數或 `l`。新增 `d<dpmm>`（例如 `d20`）：這一張影像走 `handle_fisheye_image` 時把 `dpmm` 傳給 `apply_perspective_points_transform(..., dpmm=20)`，`unit_length = dpmm * 10`、輸出尺寸同比例放大。不傳時維持 `DPMM = 5`。20 px/mm 高於原生 5 到 7 px/mm，沒有多出資訊，但不再把原生資訊砍掉一半，而且讓 C 的門檻值（連通區塊大小、環半徑）可以用固定的 mm 轉 px。
+`api/camera.py` 的 `require_frame` 目前接受無參數或 `l`。新增 `d<dpmm>`（例如 `d20`，須為正整數，壞參數視同無參數）：這一張影像走 `handle_fisheye_image(dpmm=20)`，v1 參數轉給 `apply_perspective_points_transform(dpmm=)`（`unit_length = dpmm * 10`），v2/3/4 轉給 `apply_points(perspective_pixel_per_mm=)`，輸出尺寸同比例放大。不傳時維持 `DPMM = 5`。20 px/mm 高於原生 5 到 7 px/mm，沒有多出資訊，但不再把原生資訊砍掉一半，而且讓 C 的門檻值（連通區塊大小、環半徑）可以用固定的 mm 轉 px。
 
-Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_frame d20`；`RegionPreviewMixin.getPhotoAfterMoveTo` 透傳。`preview_downsample` 的 OOM 重試路徑不動：20 px/mm 的全幅輸出約 3200×2000（160×100 mm 視野），與現在的 5 px/mm 相比大 16 倍，記憶體要在實機確認，必要時 B 階段改成只要求 fluxghost 回傳 patch 區域（加 `crop` 參數）。
+Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require_frame d20`（`dpmm` 優先於低解析度旗標）；`device-master.takeOnePicture({ dpmm })` → `BasePreviewManager.getPhotoFromMachine(opts)` → `getPhotoAfterMoveTo(x, y, opts)` 一路透傳。`preview_downsample` 的 OOM 重試路徑不動：20 px/mm 的全幅輸出約 3200×2000（160×100 mm 視野），與現在的 5 px/mm 相比大 16 倍，記憶體要在實機確認，必要時 B 階段改成只要求 fluxghost 回傳 patch 區域（加 `crop` 參數）。
 
 ### 7.8 C「解算」：fluxghost `solve_galvo_coupon`
 
@@ -254,7 +273,7 @@ Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_f
 → solve_galvo_coupon <file_length> <json_params>
 ← {"status": "continue"}
 → <binary PNG>
-← {"status": "ok", ...結果 JSON（§7.9）}  或  {"status": "fail", "info": "RULER_INVALID", "reason": "..."}
+← {"status": "ok", ...結果 JSON（§7.9）}  或  {"status": "fail", "info": "RULER_INVALID" | "GRID_INVALID", "reason": "..."}
 ```
 
 `json_params`：
@@ -285,6 +304,8 @@ Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_f
 6. **場心位置**：另外保留 L 框完整的 px→mm 轉換，算振鏡原點在 L 框座標系中的位置，這就是「場心相對噴嘴」的量測值，與 `toolhead_shift` 比對。
 7. `annotate` 為真時，JSON 之後再送一張標註圖（偵測到的頂點、node、殘差向量）。
 
+實作（`fluxghost/utils/camera/galvo_coupon.py`）與上面的差異：L 框搜尋限制在以 `expected_center_px` 為中心、切比雪夫距離 59–82 mm 的環狀 ROI 內（相機能不能靠顏色分離未知，所以加幾何限制），用到的頂點 < 8 且尺規原點與宣告中心差 > 2 mm 時以尺規原點重搜一次；node 像素用完整的 `A⁻¹(px − b)` 轉成 L 框 mm，不是各軸除以 px/mm，所以拼接影像本身的旋轉與非等向比例不會混進 skew；建不出 9×9 格或 node < 6 回 `GRID_INVALID`。`invert` 的語意是：`[true, true]`（CO2 預設）時 +X 沿影像 +x、+Y 沿 +y，旗標不同則鏡像該軸，只在找不到 identity 小環時使用（決策 14）。
+
 合成測試：用 §7.2 的幾何在 Python 端渲染一張 20 px/mm、已知仿射（例如 scale 1.02 / 0.98、skew 0.3°、旋轉 5°）的影像，解算要回到 0.1% 與 0.02° 內；這個測試不需要實機，也是 `ws_smoke` 的一個案例。
 
 ### 7.9 C 的輸出與 D「套用建議」
@@ -299,6 +320,7 @@ Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_f
 | `raw_rms`, `raw_max` | (p − t) 轉回後減 c，保留尺度與 skew | 打點離指令位置多遠 |
 | `validation_affine`, `validation_bilinear` | 8 個驗證圓的誤差 | 內插誤差 |
 | `field_center_mm` | 振鏡原點在 L 框座標系的位置 | 與這顆頭的 toolhead_shift 的差 |
+| `rotation_deg`、`mirrored`、`orientation` | 振鏡軸相對 L 框的角度（對應 `field.angle`）；det L < 0；方向判定來源（identity / invert）與是否符合 invert 先驗 | 實作多回的，表外 |
 
 **建議值**：
 
@@ -306,12 +328,12 @@ Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_f
 - scaleY：卡上編碼未知（文件預測 94.98 卻收斂在 79.3）。第一輪借 scaleX 的斜率；從第二輪起用輪次歷史最近兩輪的割線斜率 Δscale_y / ΔscaleY。
 - 其他六項不自動建議，顯示 skew 與殘差讓人判斷；旋轉放 `field.angle`，paralleX/Y 只修剪切（文件：資料決定不了兩者各自是多少，只有差是物理量）。
 
-「Apply suggestion」把 x.scale、y.scale 寫到對話框 `config` state（不是機器），輪次歷史多一列。使用者按儲存才寫機器。
+「Apply suggestion」把 x.scale、y.scale 寫到對話框 `config` state（不是機器）；輪次歷史在 Solve 時多一列，`sent` 記的是按「Mark coupon」當下畫面上的 scale（不是 Solve 當下的）。使用者按儲存才寫機器。建議值的純函式是 `galvoCalibration/solve.ts` 的 `suggestScales`，割線斜率只在 0.001–0.1 之間才採用，否則退回借用。
 
 ### 7.10 E「拼接驗證」序列
 
 1. `connectGalvoHead(module)`。
-2. 三個站位：站位₀ = 落點 − 模組偏移 + (0, 0)、站位₁ = + (100, 0)、站位₂ = + (100, 100)。每個：`MB:` G1 移到站位（§7.11 過衝）→ `M137P0` → `galvoFrame({ rect: 100×100 置中 })` → `awaitGalvoResult`。
+2. 三個站位：站位₀ = 落點 − 模組偏移 + (0, 0)、站位₁ = + (100, 0)、站位₂ = + (100, 100)。每個：`mainboardLine` G1 移到站位（§7.11 過衝，第一站兩軸都過衝、之後只過衝往負走的軸）→ `M137P0` → `galvoFrame({ size: 100 })` → `awaitGalvoResult`。三個站位有任何一個超出行程就停用按鈕。
 3. 氣與授權讀回同 §7.3。
 4. 結果：第一個方框左上角在 C + (−50, −50)，第二個在 C + (50, −50)，第三個在 C + (50, 50)；共用邊重合即通過。本階段用目視或尺量，相機量測列為後續（決策 11）。
 
@@ -323,11 +345,11 @@ Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_f
 
 ## 8. Data contracts
 
-- **Beam Studio → 機器（control_task）**：`galvo_exec <json>`，新 op `paths`（§7.5）；`MB:<gcode>\n` 直通，回覆 `MB:<line>`；`get_result` 語意不變。
+- **Beam Studio → 機器（control_task）**：`galvo_exec <json>`，新 op `paths`（§7.5）；`mb_exec <gcode>` 立即回 `ok` / `error busy running` / `fail BAD_ARGS`，完成走 `get_result`，回 `ok[ <lines>]` 或 `fail <line>`（§7.5b）；`get_result` 語意不變。
 - **機器 → 卡**：list opcode 照 `HX2_GALVO_PROTOCOL.md` §4.2，不新增 opcode。
 - **Beam Studio → fluxghost camera**：`require_frame d<dpmm>`（§7.7）。
 - **Beam Studio → fluxghost opencv**：`solve_galvo_coupon <file_length> <json_params>`（§7.8），回 JSON，`annotate` 時再一張二進位 JPEG。兩個新字串都進 `cmd_mapping`，不改既有字串。
-- **Beam Studio 內部**：`galvoPaths` payload 鍵 `head`（模組 id 12 / 13）、`op`、`optics`、`paths`、`lead_mm`、`power`、`speed`；`rawMove` 新增 `s?: number`；`getPhotoFromMachine({ dpmm? })`；`solveGalvoCoupon(blob, params)`。
+- **Beam Studio 內部**：`galvoPaths` payload 鍵 `head`（模組 id 12 / 13）、`op`、`optics`、`paths`、`lead_mm`、`power`、`speed`；`rawMove` 新增 `s?: number`（行尾 `S<整數>`）；`takeOnePicture({ dpmm? })` / `getPhotoAfterMoveTo(x, y, { dpmm? })`；`solveGalvoCoupon(blob, params)` 回 `{ result, annotated }`。
 - **對話框 state**：`captured: { blob, originMm: [x, y], pxPerMm: 20 } | null`、`solved: SolveResult | null`、`rounds: Array<{ sent: {scaleX, scaleY}, measured: {scale_x, scale_y, skew_deg, affine_rms} }>`。不持久化。
 
 ## 9. Performance / packaging
@@ -339,10 +361,10 @@ Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_f
 
 ## 10. Rollout (PR plan)
 
-1. **PR A（BeamOS_NX_backend）**：`galvo_exec.py` 加 `paths` op 與單元測試。獨立可合併。
-2. **PR B（beam-studio，A + E）**：`galvoCoupon.ts` + spec、`galvoExec.galvoPaths`、`controlTaskMainboard`、`rawMove` 的 `s`、backlash 旗標、區塊的 Mark coupon / Mark L frame / Stitch test。依賴 PR A 才能實機打。
-3. **PR C（fluxghost）**：`require_frame d<dpmm>`、`solve_galvo_coupon` 與合成影像測試、`ws_smoke` 案例。獨立可合併。
-4. **PR D（beam-studio，B + C + D）**：`camera.ts` 的 `dpmm`、`RegionPreviewMixin` 透傳、拍照拼接、`open-cv.ts` 的 `solveGalvoCoupon`、結果區、Apply suggestion、輪次歷史。依賴 PR C。
+1. **PR A（BeamOS_NX_backend，分支 `promark-updates`）**：✅ `9085072` `paths` op + `tests/controller/tasks/test_galvo_exec.py`（19 個）；✅ `aa55972` `mb_exec` + `mb_exec.py` + `test_mb_exec.py`（12 個）。`docs/api/galvo-control.md` 已補。未 push。
+2. **PR B（beam-studio，A + E）**：✅ 與 PR D 合在同一個 commit（兩者共用 `GalvoCalibrationBlock`）。
+3. **PR C（fluxghost，分支 `dev/hx2-g`）**：✅ `86bdf50` `require_frame d<dpmm>`（+ `tests/usage/test_camera_dpmm.py`）；✅ `f2411b9` `solve_galvo_coupon`（`utils/camera/galvo_coupon.py`、合成渲染器 `tests/usage/galvo_coupon_synth.py`、9 個測試、`ws_smoke` 兩個案例，`ALL PASS`）。合成影像的誤差：scale 1e-5、skew 3e-4°、affine_rms 0.003 mm，單張 0.1–0.2 s。未 push。
+4. **PR D（beam-studio，B + C + D）**：✅ 同上。
 5. 實機驗證順序：PR A+B 打一張紙 → 送掃描機跑工廠腳本（S3 的基準）→ PR C+D 拍照解算 → 比對 → 決定相機路徑是否成立（決策 8）→ 迭代到收斂 → 拼接驗證。
 6. 體驗後決定決策 6，再決定正式版 UI 的 PRD 要擴寫本份還是另開。
 
@@ -360,6 +382,8 @@ Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_f
 10. 相機門檻值：工廠的綠色通道 > 150 與 L 框門檻序列是掃描機的；相機的白平衡與曝光不同，`thresholds` 先開成參數，實機拍一張後定預設值。曝光是否要固定（`v4l2` exposure）一併看。
 11. 拼接驗證的量測：目視／尺量先行；若要相機量，拍兩條共用邊各一張 20 px/mm 近拍，量邊的偏移即可，用 §7.8 的直線擬合就能做。
 12. MOPA 頭的三個未知數：氣閥 `M136P312Q2` 是否也供 MOPA 頭、打紙的建議功率與速度、scaleX 斜率是否與 CO2 的 0.007753 相近。流程不因此分支，實測後只改常數與說明文字。預設模組偏移 `moduleOffsets.ts:40-42` 兩顆頭都還是佔位，§7.8 第 6 步量到的 `field_center_mm` 可回填。
+13. `M136P311` 無 Q 的回報字串：文件寫 `Open laser: …, Enclosed laser: …`，值的寫法未知；目前接受 on / 1 / en… / true / high 開頭，實機看一次後收緊。
+14. `invert` 先驗的語意（§7.8）與 20 px/mm 全幅重映射的記憶體：第一張實機 coupon 確認；identity 小環找得到時先驗不會用到。
 
 ## 12. Risks & follow-ups
 
@@ -398,6 +422,8 @@ Beam Studio 端：`camera.ts` 的 `getPhotoFromMachine({ dpmm })` 送 `require_f
 - fluxghost：合成 coupon 影像的解算回到已知仿射（§7.8）；`RULER_INVALID` 路徑；`require_frame d20` 輸出尺寸；`ws_smoke` 全綠。
 
 **實機**
+
+- `mb_exec`：`mb_exec M136P311` 的 `get_result` 要帶到狀態行；`mb_exec G1…` + `mb_exec M137P0` 要等到移動完成；主板 error 時回 `fail <line>` 且連線不斷。串聯後（`RELEASE_MOTOR` 之後）`G1` 是否會動要先看。
 
 - AC3、AC4：打一張送掃描機跑工廠腳本，node 81 / L 頂點 ≥ 6 / 方向可判。這張也是 S3 的基準。
 - AC5：拍完看縮圖，25 格都有內容、L 框 8 個都在。
