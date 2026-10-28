@@ -78,10 +78,8 @@ const LaserFrequencyBlock = ({ type = 'default' }: Props): React.JSX.Element => 
             type={type}
             unit="kHz"
           />
-          <div className={styles.panel}>
-            <span className={classNames(styles.title, styles.light)}>
-              {sprintf(t.laser_frequency_default, defaultFrequency)}
-            </span>
+          <div className={classNames(styles.panel, styles.caption)}>
+            {sprintf(t.laser_frequency_default, defaultFrequency)}
           </div>
         </>
       )}
