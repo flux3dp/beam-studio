@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Status** | 審查中 — beam-studio `feat/layer-laser-frequency`、fluxclient PR #70（2.10.5）、Swiftray PR #535（1.5.0）；firmware 6.5.3 實機測試待辦（§12） |
+| **Status** | 已於 2.7.3 實作 — beam-studio #1035、fluxclient #70（2.10.5）、Swiftray #535（1.5.0）。待辦：firmware 6.5.3 實機驗證（§12）、支援表重構（§11） |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-27 |
 | **Target product** | Beam Studio 2.7.3，機器韌體 6.5.3 |

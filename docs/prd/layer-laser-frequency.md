@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | In review — beam-studio `feat/layer-laser-frequency`, fluxclient PR #70 (2.10.5), Swiftray PR #535 (1.5.0); hardware test on firmware 6.5.3 pending (§12) |
+| **Status** | Implemented in 2.7.3 — beam-studio #1035, fluxclient #70 (2.10.5), Swiftray #535 (1.5.0). Pending: hardware verification on firmware 6.5.3 (§12), support-table refactor (§11) |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-27 |
 | **Target product** | Beam Studio 2.7.3, machine firmware 6.5.3 |
