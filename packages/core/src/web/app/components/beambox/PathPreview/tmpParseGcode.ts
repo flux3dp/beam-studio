@@ -16,72 +16,121 @@
 'use strict';
 
 export class ParsedGcode {
-  chunks = [[]];
+  chunks: number[][] = [[]];
 
   maxChunkSize = 1000000;
 
   length = 0;
 
-  push = (item) => {
+  push = (item: number): void => {
     const curIndex = this.chunks.length - 1;
+
     if (this.chunks[curIndex].length < this.maxChunkSize) {
       this.chunks[curIndex].push(item);
     } else {
       this.chunks.push([item]);
     }
+
     this.length += 1;
   };
 
-  getItem = (index) => {
+  getItem = (index: number): number => {
     const chunkId = Math.floor(index / this.maxChunkSize);
     const i = index % this.maxChunkSize;
+
     return this.chunks[chunkId][i];
   };
 
-  setItem = (index, item) => {
+  setItem = (index: number, item: number): void => {
     const chunkId = Math.floor(index / this.maxChunkSize);
     const i = index % this.maxChunkSize;
+
     this.chunks[chunkId][i] = item;
   };
 }
 
-export function parseGcode(gcode, isPromark = false) {
+/**
+ * Drawn size of one inner engraving dot. A dot has no size in the gcode: it is a point of
+ * deposited energy, so it is drawn at the layer's point spacing, which the gcode does not carry
+ * either. The dots are blue-noise samples visited in nearest-neighbour order, so the distance to
+ * the previous dot is at least the spacing and often more; the smallest distance seen so far is
+ * the spacing itself. Starts at the default point spacing until a smaller gap is seen, and an
+ * inferred value is only trusted within the range below. Same idea as the galvo dots in parseFcode.
+ */
+const DOT_MM = 0.03;
+const DOT_MIN_MM = 0.005;
+const DOT_MAX_MM = 0.1;
+/** Sim time is kept in minutes, and the dotting time (T) arrives in microseconds. */
+const US_TO_MIN = 1 / 60000000;
+
+export function parseGcode(gcode: string, isPromark = false): ParsedGcode {
   const parsedGcode = new ParsedGcode();
-  let lastG = NaN,
-    lastX = NaN,
-    lastY = NaN,
-    lastZ = NaN,
-    lastA = NaN,
-    lastF = NaN,
+  let lastG = Number.NaN,
+    lastX = Number.NaN,
+    lastY = Number.NaN,
+    lastZ = Number.NaN,
+    lastA = Number.NaN,
+    lastF = Number.NaN,
     lastS = 0,
     lastT = 0;
   let stride = 9;
   let i = 0;
-  /*
-  let g = NaN, x = NaN, y = NaN, z = NaN, a = NaN, f = NaN;
-  for (let i = 0; i < gcodeList.length; ++i) {
-
-  }*/
-
   let laserEnabled = false;
   let useRelative = false;
   // calculate task time with wobble by decreasing feedrate instead of calculating real moving distance
   let wobbleFactor = 1;
+  // Inner engraving (";CONFIG INNER_ENGRAVING=1", written by Swiftray for a 3D document): while the
+  // dotting time T is set, every laser-on move is one dot fired on arrival, not a line. Swiftray
+  // writes the same gcode for the preview and the job, so the dots are drawn here: a travel record
+  // to the dot (the jump, red) and a feedrate-less mark one pitch wide that carries the dotting
+  // time as its dwell (the e slot, see GcodePreview). 2D Promark gcode is left alone.
+  let innerEngraving = false;
+  let dotPitch = DOT_MM;
+  let lastDotX = Number.NaN;
+  let lastDotY = Number.NaN;
+
+  const pushRecord = (
+    g: number,
+    x: number,
+    y: number,
+    z: number,
+    e: number,
+    f: number,
+    a: number,
+    s: number,
+    t: number,
+  ) => {
+    parsedGcode.push(g);
+    parsedGcode.push(x);
+    parsedGcode.push(y);
+    parsedGcode.push(z);
+    parsedGcode.push(e);
+    parsedGcode.push(f);
+    parsedGcode.push(a);
+    parsedGcode.push(s);
+    parsedGcode.push(t);
+  };
 
   while (i < gcode.length) {
     function parse() {
       ++i;
       while (i < gcode.length && (gcode[i] === ' ' || gcode[i] === '\t')) ++i;
+
       let begin = i;
-      while (i < gcode.length && '+-.0123456789'.indexOf(gcode[i]) != -1) ++i;
+
+      while (i < gcode.length && '+-.0123456789'.includes(gcode[i])) ++i;
+
       return Number(gcode.substr(begin, i - begin));
     }
-    let g = NaN,
-      x = NaN,
-      y = NaN,
-      z = NaN,
-      a = NaN,
-      f = NaN;
+
+    let g = Number.NaN,
+      x = Number.NaN,
+      y = Number.NaN,
+      z = Number.NaN,
+      a = Number.NaN,
+      f = Number.NaN;
+    let powerSet = false;
+
     while (i < gcode.length && gcode[i] !== ';' && gcode[i] !== '\r' && gcode[i] !== '\n') {
       if (gcode[i] === 'G' || gcode[i] === 'g') {
         if (gcode[i + 2] === 'S') {
@@ -92,12 +141,14 @@ export function parseGcode(gcode, isPromark = false) {
           i += 3;
         } else {
           const gCmd = parse();
+
           if (gCmd === 90) {
             useRelative = false;
           } else if (gCmd === 91) {
             useRelative = true;
           }
         }
+
         g = laserEnabled ? 1 : 0;
       } else if (gcode[i] === 'X' || gcode[i] === 'x') {
         x = useRelative ? lastX + parse() : parse();
@@ -105,15 +156,19 @@ export function parseGcode(gcode, isPromark = false) {
         y = useRelative ? lastY - parse() : -1 * parse();
       } else if (gcode[i] === 'Z' || gcode[i] === 'z') {
         z = parse();
+
         if (isPromark) z = lastZ + z;
-      } else if (gcode[i] === 'A' || gcode[i] === 'a') a = parse();
-      else if (gcode[i] === 'F' || gcode[i] === 'f') {
+      } else if (gcode[i] === 'A' || gcode[i] === 'a') {
+        a = parse();
+      } else if (gcode[i] === 'F' || gcode[i] === 'f') {
         f = parse() / wobbleFactor;
       } else if (gcode[i] === 'S' || gcode[i] === 's') {
         lastS = parse();
         g = lastS > 0 ? 1 : 0;
-      } else if (gcode[i] === 'T' || gcode[i] === 't') lastT = parse();
-      else if (gcode[i] === 'M' && gcode[i + 1] === '2') {
+        powerSet = true;
+      } else if (gcode[i] === 'T' || gcode[i] === 't') {
+        lastT = parse();
+      } else if (gcode[i] === 'M' && gcode[i + 1] === '2') {
         // For Swiftray GCode
         // M2: End of program
         g = 0;
@@ -126,98 +181,148 @@ export function parseGcode(gcode, isPromark = false) {
         y = 0;
         z = 0;
         i += 3;
-      } else ++i;
+      } else {
+        ++i;
+      }
     }
+
     if (gcode.slice(i, i + 9) === ';WOBBLE K') {
       // For Swiftray GCode
       // ;WOBBLE K[float]\n: Estimated wobble time multiplier
       i += 9;
       wobbleFactor = parse();
+    } else if (gcode.slice(i, i + 25) === ';CONFIG INNER_ENGRAVING=1') {
+      innerEngraving = true;
     }
-    if (g === 0 || g === 1 || !isNaN(x) || !isNaN(y) || !isNaN(z) || !isNaN(a) || !isNaN(f)) {
+
+    if (
+      g === 0 ||
+      g === 1 ||
+      !Number.isNaN(x) ||
+      !Number.isNaN(y) ||
+      !Number.isNaN(z) ||
+      !Number.isNaN(a) ||
+      !Number.isNaN(f)
+    ) {
       if (g === 0 || g === 1) lastG = g;
-      if (!isNaN(x)) {
-        if (isNaN(lastX)) {
+
+      if (!Number.isNaN(x)) {
+        if (Number.isNaN(lastX)) {
           for (let j = 1; j < parsedGcode.length; j += stride) {
             parsedGcode.setItem(j, x);
           }
         }
+
         lastX = x;
       }
-      if (!isNaN(y)) {
-        if (isNaN(lastY)) {
+
+      if (!Number.isNaN(y)) {
+        if (Number.isNaN(lastY)) {
           for (let j = 2; j < parsedGcode.length; j += stride) {
             parsedGcode.setItem(j, y);
           }
         }
+
         lastY = y;
       }
-      if (!isNaN(z)) {
-        if (isNaN(lastZ)) {
+
+      if (!Number.isNaN(z)) {
+        if (Number.isNaN(lastZ)) {
           for (let j = 3; j < parsedGcode.length; j += stride) {
             parsedGcode.setItem(j, z);
           }
         }
+
         lastZ = z;
       }
-      if (!isNaN(a)) {
-        if (isNaN(lastA)) {
+
+      if (!Number.isNaN(a)) {
+        if (Number.isNaN(lastA)) {
           for (let j = 6; j < parsedGcode.length; j += stride) {
             parsedGcode.setItem(j, a);
           }
         }
+
         lastA = a;
       }
-      if (!isNaN(f)) {
-        if (isNaN(lastF)) {
-          for (let j = 4; j < parsedGcode.length; j += stride) {
+
+      if (!Number.isNaN(f)) {
+        if (Number.isNaN(lastF)) {
+          // f is slot 5 (slot 4 is e, the dwell): the records before the first F take its value
+          for (let j = 5; j < parsedGcode.length; j += stride) {
             parsedGcode.setItem(j, f);
           }
         }
+
         lastF = f;
       }
-      if (!isNaN(lastG)) {
-        parsedGcode.push(lastG || lastS > 0 ? 1 : 0);
-        parsedGcode.push(lastX);
-        parsedGcode.push(lastY);
-        parsedGcode.push(lastZ);
-        parsedGcode.push(0); // E
-        parsedGcode.push(lastF);
-        parsedGcode.push(lastA);
-        parsedGcode.push(lastS);
-        parsedGcode.push(lastT);
+
+      const isDot =
+        isPromark &&
+        innerEngraving &&
+        lastT > 0 &&
+        lastS > 0 &&
+        Number.isNaN(z) &&
+        Number.isNaN(a) &&
+        (!Number.isNaN(x) || !Number.isNaN(y) || powerSet);
+
+      if (isDot) {
+        // the smallest gap seen so far is the layer's point spacing (see DOT_MM)
+        if (!Number.isNaN(lastDotX)) {
+          const gap = Math.hypot(lastX - lastDotX, lastY - lastDotY);
+
+          if (gap >= DOT_MIN_MM && gap <= DOT_MAX_MM) dotPitch = Math.min(dotPitch, gap);
+        }
+
+        lastDotX = lastX;
+        lastDotY = lastY;
+
+        const half = dotPitch / 2;
+
+        // the jump to the dot (g=0 on arrival: drawn as traversal), then the dot itself
+        pushRecord(0, lastX - half, lastY, lastZ, 0, lastF, lastA, 0, lastT);
+        pushRecord(1, lastX + half, lastY, lastZ, lastT * US_TO_MIN, Number.NaN, lastA, lastS, lastT);
+      } else if (!Number.isNaN(lastG)) {
+        pushRecord(lastG || lastS > 0 ? 1 : 0, lastX, lastY, lastZ, 0, lastF, lastA, lastS, lastT);
       }
     }
+
     while (i < gcode.length && gcode[i] !== '\r' && gcode[i] !== '\n') ++i;
     while (i < gcode.length && (gcode[i] === '\r' || gcode[i] === '\n')) ++i;
   }
 
-  if (isNaN(lastX)) {
+  if (Number.isNaN(lastX)) {
     for (let j = 1; j < parsedGcode.length; j += stride) {
       parsedGcode.setItem(j, 0);
     }
   }
-  if (isNaN(lastY)) {
+
+  if (Number.isNaN(lastY)) {
     for (let j = 2; j < parsedGcode.length; j += stride) {
       parsedGcode.setItem(j, 0);
     }
   }
-  if (isNaN(lastZ)) {
+
+  if (Number.isNaN(lastZ)) {
     for (let j = 3; j < parsedGcode.length; j += stride) {
       parsedGcode.setItem(j, 0);
     }
   }
-  if (isNaN(lastF)) {
-    for (let j = 4; j < parsedGcode.length; j += stride) {
+
+  if (Number.isNaN(lastF)) {
+    for (let j = 5; j < parsedGcode.length; j += stride) {
       parsedGcode.setItem(j, 1000);
     }
   }
-  if (isNaN(lastA)) {
+
+  if (Number.isNaN(lastA)) {
     for (let j = 6; j < parsedGcode.length; j += stride) {
       parsedGcode.setItem(j, 0);
     }
   }
+
   console.log('Parsed GCode', parsedGcode);
+
   return parsedGcode;
 }
 

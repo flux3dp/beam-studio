@@ -22,7 +22,13 @@ labels are plain text plus a marker attribute, and only text-on-path has a diffe
 A params label renders the params of the layer it sits on and is regenerated before a task is
 sent, so its text is never edited by hand: double-clicking it refreshes the content instead of
 entering the text editor, and TextContentBlock shows update / settings buttons in place of the
-textarea.
+textarea. `configUnitMap: Record<ParamsLabelKey, string>` in `paramsLabel.ts` needs an entry for
+every label-able layer config key (every `ConfigKey` not in its `hiddenKeys`), so adding a layer
+config key means adding its unit there (empty string for unitless).
+
+In inner-engraving mode, text becomes a 3D extrusion: the `<text>` is kept as an offscreen editable
+source in the projection's `data-stl-source`, and `TextOptions` / `TextContentBlock` receive an
+`onSourceChange` prop (which also hides the variable-text block). See the `inner-engraving` skill.
 
 All text content uses `\u0085` as the internal line separator (in the hidden `#text` input and `renderText` val parameter). The `<tspan>` children each hold one line's text content.
 
@@ -38,11 +44,11 @@ text/
 │   └── renderText.ts    # Rendering: renderTspan, renderFitTextTspan, renderTextPath
 ├── textactions.ts       # In-place canvas editing (cursor, selection, keyboard)
 ├── createNewText.ts     # Creates new plain text elements
-├── paramsLabel/         # Params labels: layer params rendered as text
-│   ├── index.ts         # Create, render (keeps the label's size, undo), config key selection
-│   └── ParamsLabelSettings.tsx  # Key picker modal
+├── paramsLabel.ts       # Params labels: create, render (keeps the label's size, undo), config key selection, `configUnitMap`
 └── fitText.ts           # Creates new fitText elements + resize transform handler
 ```
+
+Params label key picker modal: `app/components/beambox/RightPanel/OptionsBlocks/TextOptions/components/ParamsLabelSettings.tsx`.
 
 ## Text Element Attributes
 

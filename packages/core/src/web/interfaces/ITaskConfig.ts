@@ -43,6 +43,8 @@ export type TFcodeOptionalConfig = Partial<{
    * custom backlash
    */
   cbl: boolean;
+  /** Promark: delay between two mark vectors, in us. */
+  corner_delay: number;
   /**
    * curve speed limit
    */
@@ -68,21 +70,62 @@ export type TFcodeOptionalConfig = Partial<{
   engraving_erode?: number;
   expected_module?: number;
   fg: boolean;
+  /** Apply first-pulse suppression when the Promark controller starts each list. */
+  first_pulse_killer_enabled: boolean;
   gc: boolean; // output gcode
   /**
    * 4C ink color order by cartridge slot, e.g. 'cymk' (default cmyk)
    */
   ico: string;
+  /**
+   * Inner engraving: send ";CONFIG INNER_ENGRAVING=1" so Swiftray estimates the job with its inner
+   * engraving time model. Jobs without it keep the pre-inner-engraving estimate. 1 for a 3D document.
+   */
+  inner_engraving: number;
+  /** Promark: send ";CONFIG UV=1" so the controller runs the job as a UV source. 1 for UV. */
+  is_uv_light: number;
   job_origin: [number, number];
+  /** Promark: shortest and longest jump delays in us, scaled by jump length in between. */
+  jump_delay_max: number;
+  jump_delay_min: number;
+  /** Promark: galvo jump speed in mm/s. */
+  jump_speed: number;
+  /** Promark: laser on / off delays in us. */
+  laser_off_delay: number;
+  laser_on_delay: number;
   loop_compensation: number;
   /**
    * json string, current storing data for beamo 2 sliding table
    */
   machine_limit_position: string;
   /**
+   * Inner engraving: machine-Z quantisation of the STL output, in mm.
+   *
+   * Every engraved point is snapped to a multiple of this and each distinct value costs one Z
+   * move, which on the Promark is dominated by a fixed ~50ms command overhead — so this sets the
+   * floor on how long an inner-carving job takes. Coarser buckets trade depth resolution for
+   * time. Omit it to keep the backend default (0.01mm). The floor is 0.001mm: smaller values are
+   * clamped up to it on both sides, because finer buckets stall the job at runtime.
+   */
+  machine_z_bucket?: number;
+  /** Promark: delay after the last mark vector, in us. */
+  marking_delay: number;
+  /**
    * clipping mask in [top right bottom left]
    */
   mask: [number, number, number, number];
+  /**
+   * Inner engraving: how high the workpiece's top surface sits above the focus origin, in mm.
+   *
+   * Where the beam enters the material, so the refraction compensation is impossible without it.
+   * Shape and XY position stay on the frontend; the backend also receives a separate model-Z
+   * interval for clipping.
+   */
+  material_height: number;
+  /** Inner engraving: inclusive upper model-Z bound, before refraction compensation, in mm. */
+  material_max_z: number;
+  /** Inner engraving: inclusive lower model-Z bound, before refraction compensation, in mm. */
+  material_min_z: number;
   /**
    * min engraving padding in mm
    */
@@ -134,6 +177,13 @@ export type TFcodeOptionalConfig = Partial<{
    * path travel speed
    */
   pts: number; //
+  /**
+   * Inner engraving: the workpiece's refractive index n.
+   *
+   * The beam bends at the surface, so the geometric depth and the real focus depth differ. The
+   * compensation itself is the backend's (depth / n); <= 1 means no compensation.
+   */
+  refractive_index: number;
   rev: boolean; // reverse engraving
   /**
    * rotary split overlap, mm

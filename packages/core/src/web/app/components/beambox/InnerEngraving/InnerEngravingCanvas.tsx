@@ -1,0 +1,391 @@
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+
+import { GizmoHelper, GizmoViewport, OrbitControls } from '@react-three/drei';
+import type { ThreeEvent } from '@react-three/fiber';
+import { Canvas, useFrame } from '@react-three/fiber';
+import classNames from 'classnames';
+import type { Texture } from 'three';
+import { FrontSide, MOUSE, SRGBColorSpace, TextureLoader, Vector3 } from 'three';
+
+import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { setCursorAccordingToMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useStlStore } from '@core/app/stores/stlStore';
+import selectionManager from '@core/app/svgedit/selection';
+import workareaManager from '@core/app/svgedit/workarea';
+import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
+
+import {
+  AXIS_COLORS,
+  BACKGROUND_COLOR,
+  FLOOR_COLOR,
+  FLOOR_MARGIN,
+  FLOOR_Z,
+  GRID_STEPS,
+  TARGET_GRID_CELLS,
+} from './constants';
+import styles from './InnerEngravingCanvas.module.scss';
+import MaterialShape from './MaterialShape';
+import SceneGrid from './SceneGrid';
+import SceneRuler from './SceneRuler';
+import StlMesh from './StlMesh';
+import { toCameraPreviewPoint } from './utils/cameraPreview';
+import { useEngravableBox } from './utils/engravable';
+import { getMaterial, useMaterial } from './utils/material';
+import { getSelectedStlId, selectStlObject } from './utils/selection';
+import ViewController from './ViewController';
+import { CAMERA_FOV, DEFAULT_VIEW, getPresetPosition, useViewStore } from './viewStore';
+import ZoomController from './ZoomController';
+
+/** Orbit on the left button, pan on the right — the three.js default, and the 3D convention. */
+const MOUSE_BUTTONS = { LEFT: MOUSE.ROTATE, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.PAN };
+/**
+ * The two swapped, for as long as the space bar is held.
+ *
+ * Space + left drag pans the SVG canvas, and it has to mean the same thing here or the one gesture
+ * shared by both canvases would do opposite things depending on the mode. The right button picks up
+ * what the left gave away rather than being disabled, so orbiting is still reachable mid-pan.
+ */
+const SPACE_MOUSE_BUTTONS = { LEFT: MOUSE.PAN, MIDDLE: MOUSE.DOLLY, RIGHT: MOUSE.ROTATE };
+
+const CameraPreviewFloor = ({ height, width }: { height: number; width: number }): null | React.JSX.Element => {
+  const backgroundUrl = useCameraPreviewStore((state) => state.backgroundUrl);
+  const opacity = useCameraPreviewStore((state) => state.bgOpacity);
+  const [texture, setTexture] = useState<null | Texture>(null);
+
+  useEffect(() => {
+    if (!backgroundUrl) {
+      setTexture(null);
+
+      return;
+    }
+
+    let active = true;
+    let loadedTexture: null | Texture = null;
+
+    new TextureLoader().load(backgroundUrl, (nextTexture) => {
+      loadedTexture = nextTexture;
+      nextTexture.colorSpace = SRGBColorSpace;
+
+      if (active) setTexture(nextTexture);
+      else nextTexture.dispose();
+    });
+
+    return () => {
+      active = false;
+      loadedTexture?.dispose();
+    };
+  }, [backgroundUrl]);
+
+  if (!texture) return null;
+
+  return (
+    <mesh position={[width / 2, height / 2, 0]} renderOrder={-1}>
+      <planeGeometry args={[width, height]} />
+      <meshBasicMaterial
+        map={texture}
+        opacity={opacity}
+        polygonOffset
+        polygonOffsetFactor={1}
+        side={FrontSide}
+        // Keep blending enabled even at 100%. Toggling `transparent` at runtime changes the
+        // material program; keeping it stable lets bgOpacity updates apply immediately.
+        transparent
+      />
+    </mesh>
+  );
+};
+
+const PreviewInteractionPlane = ({ height, width }: { height: number; width: number }): null | React.JSX.Element => {
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
+  const start = useRef<[number, number] | null>(null);
+  const active = mouseMode === 'pre_preview' || mouseMode === 'preview';
+
+  if (!active) return null;
+
+  const getCameraPoint = (event: ThreeEvent<PointerEvent>): [number, number] =>
+    toCameraPreviewPoint(event.point, { height, width });
+
+  const runPreview = (from: [number, number], to: [number, number]) => {
+    if (!previewModeController.isPreviewMode) return;
+
+    if (from[0] === to[0] && from[1] === to[1]) {
+      previewModeController.preview(to[0], to[1], { last: true });
+    } else {
+      previewModeController.previewRegion(from[0], from[1], to[0], to[1]);
+    }
+  };
+
+  return (
+    <mesh
+      onPointerDown={(event) => {
+        event.stopPropagation();
+        start.current = getCameraPoint(event);
+        event.target.setPointerCapture(event.pointerId);
+      }}
+      onPointerUp={(event) => {
+        event.stopPropagation();
+
+        const from = start.current;
+
+        start.current = null;
+        event.target.releasePointerCapture(event.pointerId);
+
+        if (!from) return;
+
+        const to = getCameraPoint(event);
+        const currentMode = useCanvasStore.getState().mouseMode;
+
+        setMouseMode('select');
+
+        if (currentMode === 'pre_preview') setupPreviewMode({ callback: () => runPreview(from, to) });
+        else runPreview(from, to);
+      }}
+      position={[width / 2, height / 2, 0]}
+    >
+      <planeGeometry args={[width, height]} />
+      <meshBasicMaterial depthWrite={false} opacity={0} transparent />
+    </mesh>
+  );
+};
+
+/**
+ * Grid/ruler spacing that follows the zoom level, so the spacing stays readable instead of turning
+ * into a solid block when zoomed out or a single cell when zoomed in.
+ */
+const useAdaptiveStep = (center: [number, number, number]): number => {
+  const [step, setStep] = useState(GRID_STEPS[2]);
+  const target = useMemo(() => new Vector3(...center), [center]);
+
+  useFrame(({ camera }) => {
+    const ideal = camera.position.distanceTo(target) / TARGET_GRID_CELLS;
+    const next = GRID_STEPS.find((candidate) => candidate >= ideal) ?? GRID_STEPS[GRID_STEPS.length - 1];
+
+    // only crosses a threshold occasionally, so this does not re-render every frame
+    if (next !== step) setStep(next);
+  });
+
+  return step;
+};
+
+const Scene = () => {
+  const { objects, selectedId } = useStlStore();
+  const spaceKey = useCanvasStore((state) => state.spaceKey);
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
+  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
+  const { height, width } = workareaManager;
+  const material = useMaterial();
+  const engravable = useEngravableBox();
+  const [snapActive, setSnapActive] = useState(false);
+  // The numeric extents match SVG, but physical Y is reversed: scene y=max and SVG y=0 are both
+  // the far side of the machine. Imported geometry and camera interaction convert at the boundary.
+  const center = useMemo<[number, number, number]>(() => [width / 2, height / 2, 0], [height, width]);
+  // the camera aims at the middle of the material rather than the floor: the material can be taller
+  // than the work area is wide, so orbiting the floor leaves it running off the top of the screen
+  const viewTarget = useMemo<[number, number, number]>(
+    () => [width / 2, height / 2, material.height / 2],
+    [height, material.height, width],
+  );
+  const viewExtent = useMemo(
+    () => Math.max(width, height, material.height, material.maxZ),
+    [height, material.height, material.maxZ, width],
+  );
+  const diagonal = useMemo(() => Math.hypot(width, height), [height, width]);
+  const step = useAdaptiveStep(center);
+  // the same two View menu items the 2D canvas answers to, so one setting means one thing in both
+  const showGrids = useGlobalPreferenceStore((state) => state.show_grids);
+  const showRulers = useGlobalPreferenceStore((state) => state.show_rulers);
+  // walls tall enough for the workpiece, and never a degenerate zero-height box
+  const wallHeight = useMemo(
+    () => Math.max(material.height, material.maxZ, step),
+    [material.height, material.maxZ, step],
+  );
+  const previewInteraction = mouseMode === 'pre_preview' || mouseMode === 'preview';
+
+  useEffect(() => {
+    const handleKey = (event: KeyboardEvent) => setSnapActive(event.shiftKey);
+    const clear = () => setSnapActive(false);
+
+    document.addEventListener('keydown', handleKey);
+    document.addEventListener('keyup', handleKey);
+    window.addEventListener('blur', clear);
+
+    return () => {
+      document.removeEventListener('keydown', handleKey);
+      document.removeEventListener('keyup', handleKey);
+      window.removeEventListener('blur', clear);
+    };
+  }, []);
+
+  // A document can enter 3D mode while a 2D multi-selection (including its temporary group) is
+  // still active. Tear that group down on mount and keep only its last object; all subsequent
+  // selection paths are constrained centrally by SelectionManager.
+  useEffect(() => {
+    const selected = selectionManager.getSelectedElements(true);
+
+    if (selected.length > 1) selectionManager.selectOnly(selected.slice(-1));
+  }, []);
+
+  // the other direction of the sync in `selectStlObject`: selecting through the layer panel, undo,
+  // or anything else that moves svgedit's selection has to light up the mesh too
+  useEffect(() => {
+    useStlStore.getState().setSelectedId(getSelectedStlId(selectedElement));
+  }, [selectedElement]);
+
+  // true only between an OrbitControls pointer down and up, so a `change` can be attributed to the user
+  const interacting = useRef(false);
+
+  return (
+    <>
+      <color args={[BACKGROUND_COLOR]} attach="background" />
+      <ambientLight intensity={1.2} />
+      <directionalLight intensity={2} position={[width, -height, diagonal]} />
+      {/* reaches past the work area so its edge is not flush with the boundary */}
+      {/* Render the white foundation before the camera image without writing it into the depth
+          buffer. At a grazing camera angle the two almost-parallel planes otherwise quantize to
+          the same depth, making the distant image alternate with white as the camera moves. */}
+      <mesh position={[center[0], center[1], FLOOR_Z]} renderOrder={-2}>
+        <planeGeometry args={[width + FLOOR_MARGIN * 2, height + FLOOR_MARGIN * 2]} />
+        {/* Unlit: the work area floor is a flat #fff backdrop like the 2D canvas, not a lit surface.
+            Single-sided so that it simply is not there when the camera goes below it — seen from
+            underneath it is not a backdrop at all, just an opaque sheet between the user and the
+            work area. Back-face culling costs nothing and needs no per-frame test to decide. */}
+        <meshBasicMaterial color={FLOOR_COLOR} depthWrite={false} side={FrontSide} />
+      </mesh>
+      <CameraPreviewFloor height={height} width={width} />
+      <PreviewInteractionPlane height={height} width={width} />
+      {showGrids && <SceneGrid depth={wallHeight} height={height} step={step} width={width} />}
+      {showRulers && <SceneRuler depth={wallHeight} height={height} step={step} width={width} />}
+
+      {/* the workpiece, positioned by InnerEngravingSettings and not movable on the canvas */}
+      <MaterialShape material={material} />
+
+      {Object.values(objects).map((object) => (
+        <StlMesh
+          key={object.id}
+          object={object}
+          onSelect={selectStlObject}
+          panning={spaceKey}
+          selected={object.id === selectedId}
+          snapActive={snapActive}
+          snapCenter={engravable.center}
+        />
+      ))}
+
+      <ViewController extent={viewExtent} target={viewTarget} />
+      <ZoomController target={viewTarget} />
+      {/* the axes indicator, grouped with the grids because it is the same kind of guide. Clicking
+          an axis flies the camera there, which is a view the presets know nothing about, so the
+          highlight has to be cleared the same way an orbit clears it */}
+      {showGrids && (
+        <GizmoHelper alignment="bottom-left" margin={[80, 80]} onUpdate={useViewStore.getState().markViewCustom}>
+          <GizmoViewport axisColors={AXIS_COLORS as unknown as [string, string, string]} labelColor="#fff" />
+        </GizmoHelper>
+      )}
+      {/* Free to orbit right under the work area: an inner engraving lives inside the workpiece, and
+          the underside is a face like any other. The floor is single-sided so it does not stand in
+          the way once the camera is below it.
+
+          Dropping out of a preset needs both signals: `start`/`end` say an interaction is in flight,
+          `change` says the camera actually moved. `start` alone fires on any pointer down, so
+          clicking an object or dragging its gizmo would clear the preset; `change` alone fires on
+          the programmatic `update()` the presets themselves do. */}
+      <OrbitControls
+        enabled={!previewInteraction || spaceKey}
+        makeDefault
+        mouseButtons={spaceKey ? SPACE_MOUSE_BUTTONS : MOUSE_BUTTONS}
+        onChange={() => {
+          if (interacting.current) useViewStore.getState().markViewCustom();
+        }}
+        onEnd={() => {
+          interacting.current = false;
+        }}
+        onStart={() => {
+          interacting.current = true;
+        }}
+        target={viewTarget}
+      />
+    </>
+  );
+};
+
+/**
+ * The 3D canvas shown in place of the SVG canvas while inner engraving mode is on.
+ *
+ * The SVG canvas stays mounted underneath (hidden) because `svgcontent` still holds the layers and
+ * the projection rects; this canvas renders the STL 3D objects those rects stand for.
+ */
+const InnerEngravingCanvas = (): React.JSX.Element => {
+  const { height, width } = workareaManager;
+  const spaceKey = useCanvasStore((state) => state.spaceKey);
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
+  // read once rather than subscribed: this only seeds the first frame, after which the camera
+  // belongs to OrbitControls and re-seeding it would yank the view out from under the user
+  const materialHeight = useMemo(() => {
+    const material = getMaterial();
+
+    return Math.max(material.height, material.maxZ);
+  }, []);
+  // matches ViewController's isometric preset, so the first frame is already the default view
+  const viewTarget = useMemo<[number, number, number]>(
+    () => [width / 2, height / 2, materialHeight / 2],
+    [height, materialHeight, width],
+  );
+  // same helper ViewController uses, so the first frame already matches the default preset exactly
+  const cameraPosition = useMemo<[number, number, number]>(
+    () => getPresetPosition(DEFAULT_VIEW, viewTarget, Math.max(width, height, materialHeight)),
+    [height, materialHeight, viewTarget, width],
+  );
+
+  // The global mouse-mode subscription may have run before the 3D canvas was mounted. Apply the
+  // same centralized cursor rule once here and on subsequent mode changes.
+  useEffect(() => setCursorAccordingToMouseMode(mouseMode), [mouseMode]);
+
+  return (
+    <div className={classNames(styles.container, { [styles.panning]: spaceKey })} id="inner-engraving-canvas">
+      <Canvas
+        camera={{
+          // a tight near/far range keeps depth precision usable; with near = 1 (0.1mm) almost the
+          // whole depth buffer would be spent on the first few millimetres in front of the camera
+          far: Math.max(width, height) * 20,
+          // written down rather than left to r3f's default: the zoom control works the framing out
+          // from it before this canvas exists, so the two have to be reading the same number
+          fov: CAMERA_FOV,
+          near: 10,
+          position: cameraPosition,
+        }}
+        // no tone mapping: r3f defaults to ACES filmic, which renders #fff as a washed-out grey and
+        // shifts every colour away from the value written here
+        flat
+        // per-material clipping planes, which is how MaterialShape separates the part of the
+        // workpiece the machine can reach from the part outside the work area
+        gl={{ localClippingEnabled: true }}
+        /**
+         * Z is up. This has to happen here rather than through the `camera` prop above: r3f applies
+         * those props and orients the camera before a late `up` would be picked up, leaving the
+         * camera's rotation built against the default Y-up vector, which looks almost right but
+         * leaves the transform gizmo's axes skewed. Setting `up` and re-running `lookAt` once the
+         * camera exists rebuilds the orientation from the right vector, and OrbitControls then reads
+         * the same `up` on every update.
+         */
+        onCreated={({ camera }) => {
+          camera.up.set(0, 0, 1);
+          camera.lookAt(...viewTarget);
+        }}
+        // a pan that starts on empty space is not a click on empty space: it must not deselect
+        onPointerMissed={() => {
+          const { mouseMode, spaceKey } = useCanvasStore.getState();
+
+          if (!spaceKey && mouseMode !== 'pre_preview' && mouseMode !== 'preview') selectStlObject(null);
+        }}
+      >
+        <Scene />
+      </Canvas>
+    </div>
+  );
+};
+
+export default InnerEngravingCanvas;

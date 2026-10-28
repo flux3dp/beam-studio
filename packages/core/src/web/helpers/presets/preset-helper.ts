@@ -12,6 +12,7 @@ import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getStorage, removeFromStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -158,6 +159,9 @@ initStorageListeners();
 
 export const getPresetModel = (model: PresetModel): PresetModel => {
   if (promarkModels.has(model)) {
+    // 3D objects are dotted or traced through slices: none of the 2D UV presets fit them
+    if (isInnerEngravingActive()) return 'fpm1_inner_engraving';
+
     const info = getPromarkInfo();
 
     return `fpm1_${info.laserType}_${info.watt}` as PresetModel;

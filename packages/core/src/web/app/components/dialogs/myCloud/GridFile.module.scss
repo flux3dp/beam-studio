@@ -32,6 +32,12 @@
       position: relative;
       width: 100%;
       height: 100%;
+      // an inner engraving thumbnail is a 3D render on a transparent background, and the guide-lines
+      // picture stands for the 2D canvas — which such a document does not have. The same light grey
+      // the text cards use, so a mixed grid still reads as one set of cards.
+      &.plain {
+        background: #f7f7f7;
+      }
       display: flex;
       justify-content: center;
       align-items: center;

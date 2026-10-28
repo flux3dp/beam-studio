@@ -24,6 +24,8 @@ const UnmemorizedLeftPanel = () => {
 
   useEffect(() => registerCanvasShortcuts(), []);
 
+  // inner engraving keeps the group but hides the 2D-only tools; DrawingToolButtonGroup decides,
+  // per button, what still means something in 3D
   return match(mode)
     .with(CanvasMode.CurveEngraving, () => <CurveEngravingTool className={styles.container} />)
     .with(CanvasMode.PathPreview, () => (

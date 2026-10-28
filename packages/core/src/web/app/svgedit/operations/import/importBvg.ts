@@ -1,7 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithPrinter4C } from '@core/app/actions/beambox/constant';
 import { registerDocumentLocalFontFaces } from '@core/app/actions/beambox/font-funcs';
-import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -10,14 +9,25 @@ import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-mod
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
+import { useStlStore } from '@core/app/stores/stlStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
+import { resolveInnerEngravingForFile } from '@core/app/svgedit/operations/import/innerEngravingGate';
+import { downgradeInnerEngravingElements } from '@core/app/svgedit/stl/downgrade';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
+import { getInnerEngravingCustomizedDimension } from '@core/helpers/addOn/innerEngraving';
+import { MATERIAL_ATTRIBUTE, parseMaterial } from '@core/helpers/addOn/innerEngravingMaterial';
+import { applyExclusiveModePatch } from '@core/helpers/exclusiveModes';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
-import { toggleModuleAfterWorkareaChange, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import {
+  isPromarkUV,
+  postPresetChange,
+  toggleModuleAfterWorkareaChange,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import { getDefaultModule, getLayersByModule, hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
@@ -57,7 +67,14 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
 
   if (!setContentCmd.isEmpty()) batchCmd.addSubCommand(setContentCmd);
 
+  // svgcontent has just been replaced, so every projection rect of the previous document is gone.
+  // The meshes are not in the DOM and would otherwise sit in the store holding GPU buffers.
+  // ⚠️ Known limit: undoing a file load restores the previous rects but not their meshes.
+  useStlStore.getState().clear();
+
   const currentWorkarea: WorkAreaModel = workareaManager.model;
+  // set while reading the document state below, and consumed by the work area decision further down
+  let innerEngravingWorkarea: null | WorkAreaModel = null;
 
   // loadFromString will lose data-xform and data-wireframe of `use` so set it back here
   if (typeof str === 'string') {
@@ -92,16 +109,47 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
       }
 
       if (addOnInfo.rotary) {
-        newDocumentState['rotary_mode'] = rotaryMode === 'true';
+        const enabled = rotaryMode === 'true';
 
-        if (rotaryMode === 'true') {
-          newDocumentState['auto-feeder'] = false;
-          newDocumentState['pass-through'] = false;
-          curveEngravingModeController.clearArea(false);
-        }
+        applyExclusiveModePatch(newDocumentState, 'rotary', enabled, {
+          addOnInfo,
+          applyRuntime: enabled,
+          workarea: currentWorkarea,
+        });
       } else {
-        newDocumentState['rotary_mode'] = false;
+        applyExclusiveModePatch(newDocumentState, 'rotary', false);
       }
+    }
+
+    // inner engraving mode, gated by the model: a file made on Promark UV opened elsewhere must not
+    // switch the app into a mode the machine cannot do. When the machine *is* available the user is
+    // asked, because saying yes changes the document's work area — see `innerEngravingGate`
+    const innerEngraving = str.match(/data-inner-engraving="([a-z]+)"/)?.[1] === 'true';
+    const innerEngravingResult = await resolveInnerEngravingForFile(innerEngraving, currentWorkarea);
+
+    innerEngravingWorkarea = innerEngravingResult.workarea;
+
+    if (innerEngraving && !innerEngravingResult.innerEngraving) {
+      downgradeInnerEngravingElements(document.getElementById('svgcontent')!);
+    }
+
+    const innerEngravingDimension = innerEngravingResult.innerEngraving
+      ? getInnerEngravingCustomizedDimension()
+      : undefined;
+
+    applyExclusiveModePatch(newDocumentState, 'inner-engraving', innerEngravingResult.innerEngraving, {
+      applyRuntime: innerEngravingResult.innerEngraving,
+      values: innerEngravingDimension ? { 'customized-dimension': innerEngravingDimension } : undefined,
+      workarea: innerEngravingResult.workarea ?? currentWorkarea,
+    });
+
+    // the material settings saved with the document win over the app's current ones: they decide
+    // the refraction compensation and the engravable Z range, so the file engraves the same depth
+    // wherever it is opened. A file that stays 2D (downgraded or not) leaves the settings alone.
+    if (innerEngravingResult.innerEngraving) {
+      const material = str.match(new RegExp(`${MATERIAL_ATTRIBUTE}="([^"]*)"`))?.[1];
+
+      Object.assign(newDocumentState, parseMaterial(material));
     }
 
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
@@ -146,11 +194,12 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          newDocumentState['pass-through'] = true;
+          applyExclusiveModePatch(newDocumentState, 'pass-through', true, {
+            addOnInfo,
+            applyRuntime: true,
+            workarea: currentWorkarea,
+          });
           newDocumentState['pass-through-height'] = height;
-          newDocumentState['auto-feeder'] = false;
-          newDocumentState['rotary_mode'] = false;
-          curveEngravingModeController.clearArea(false);
         }
       }
     }
@@ -162,11 +211,12 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
         const height = Number.parseFloat(matched[1]);
 
         if (!Number.isNaN(height) && height > 0) {
-          newDocumentState['auto-feeder'] = true;
+          applyExclusiveModePatch(newDocumentState, 'auto-feeder', true, {
+            addOnInfo,
+            applyRuntime: true,
+            workarea: currentWorkarea,
+          });
           newDocumentState['auto-feeder-height'] = height;
-          newDocumentState['pass-through'] = false;
-          newDocumentState['rotary_mode'] = false;
-          curveEngravingModeController.clearArea(false);
         }
       }
     }
@@ -183,7 +233,9 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
   }
 
   const { lang } = i18n;
-  let newWorkarea = currentWorkarea;
+  // an inner engraving document holds no 2D artwork at all, so it can never be one of the printing
+  // cases below — the two branches cannot both want a work area
+  let newWorkarea = innerEngravingWorkarea ?? currentWorkarea;
   const hasPrintingLayer = hasModuleLayer([LayerModule.PRINTER]);
   const shouldChangeToAdor = currentWorkarea !== 'ado1' && hasPrintingLayer;
   const has4CLayer = hasModuleLayer(fullColorHeadModules);
@@ -252,6 +304,13 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
 
     // Change modules not supported to default module of the new workarea
     toggleModuleAfterWorkareaChange();
+
+    // A UV layer's frequency has to be the one its power stands for (power is the source of truth,
+    // see writeUvPowerFrequency). A file may carry the pair out of step: saved before the rule,
+    // hand-edited, or written on another source. Nothing else re-reads the layers when the work
+    // area is unchanged, so the file is brought in line here.
+    if (isPromarkUV()) postPresetChange();
+
     presprayArea.togglePresprayArea();
     layerManager.setSelectedLayers([]);
 

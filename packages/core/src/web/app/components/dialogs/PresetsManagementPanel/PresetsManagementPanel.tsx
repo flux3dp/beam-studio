@@ -186,21 +186,22 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
       return;
     }
 
-    const editing = editingValues[name] || {};
-    const origValue = selectedPreset?.[key];
+    // a functional update, so the inputs that write two keys at once (UV power and frequency) do
+    // not lose the first one
+    setEditingValues((current) => {
+      const editing: Preset = { ...current[name] };
+      const origValue = selectedPreset?.[key];
 
-    if (origValue === value) {
-      delete editing[key];
+      if (origValue === value) delete editing[key];
+      else editing[key] = value;
 
-      if (Object.keys(editing).length === 0) {
-        delete editingValues[name];
-      }
-    } else {
-      editing[key] = value;
-      editingValues[name] = editing;
-    }
+      const next = { ...current };
 
-    setEditingValues({ ...editingValues });
+      if (Object.keys(editing).length === 0) delete next[name];
+      else next[name] = editing;
+
+      return next;
+    });
   };
 
   const toggleHidePreset = (preset: Preset) => {

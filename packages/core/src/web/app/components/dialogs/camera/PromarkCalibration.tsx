@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
-import { Segmented } from 'antd';
+import { Checkbox, Segmented } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -10,11 +10,13 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
+import { getInitialCameraRotation, isCameraRotated } from '@core/helpers/device/promark/camera-rotation';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { PromarkCameraParameters } from '@core/interfaces/Promark';
 
 import styles from './Calibration.module.scss';
 import Calibration from './common/Calibration';
@@ -37,7 +39,7 @@ enum Steps {
 /* eslint-enable perfectionist/sort-enums */
 
 interface Props {
-  currentData?: FisheyeCameraParametersV3;
+  currentData?: PromarkCameraParameters;
   device: IDeviceInfo;
   onBack?: () => void;
   onClose: (completed?: boolean) => void;
@@ -58,6 +60,8 @@ const PromarkCalibration = ({
   const { height: workareaHeight, width: workareaWidth } = useMemo(() => getWorkarea(model), [model]);
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
   const [withSafe, setWithSafe] = useState(false);
+  // the parameters are computed on frames in this orientation, so it is only chosen while calibrating from scratch
+  const [rotate180, setRotate180] = useState(() => getInitialCameraRotation(serial));
   const [steps, setSteps] = useState<Steps[]>([Steps.PRE_CHESSBOARD]);
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
@@ -107,6 +111,7 @@ const PromarkCalibration = ({
             onClick: async () => {
               await cameraCalibrationApi.updateData(currentData);
               updateParam(currentData);
+              setRotate180(isCameraRotated(currentData));
               setStep(Steps.PUT_PAPER);
             },
           },
@@ -147,13 +152,18 @@ const PromarkCalibration = ({
   if (step === Steps.CALIBRATION) {
     return (
       <Calibration
-        cameraOptions={{ source: 'usb' }}
+        cameraOptions={{ rotate180, source: 'usb' }}
         charuco={[15, 10]}
         chessboard={[18, 18]}
         description={[
           tCali.put_chessboard_promark_1,
           withSafe ? tCali.put_charuco_promark_2 : tCali.put_chessboard_promark_2,
         ]}
+        extra={
+          <Checkbox checked={rotate180} onChange={(e) => setRotate180(e.target.checked)}>
+            {tCali.rotate_image_180}
+          </Checkbox>
+        }
         onBack={handleStepBack}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
@@ -252,9 +262,9 @@ const PromarkCalibration = ({
   if (step === Steps.SOLVE_PNP) {
     return (
       <SolvePnP
+        cameraSource={{ rotate180, source: 'usb' }}
         dh={0}
         hasNext
-        imgSource="usb"
         onBack={handleStepBack}
         onClose={onClose}
         onNext={async (rvec, tvec) => {
@@ -274,9 +284,10 @@ const PromarkCalibration = ({
   }
 
   if (step === Steps.CHECK_PNP) {
-    const params: FisheyeCameraParametersV3 = {
+    const params: PromarkCameraParameters = {
       d: calibratingParam.current.d!,
       k: calibratingParam.current.k!,
+      rotate180,
       rvec: calibratingParam.current.rvec!,
       tvec: calibratingParam.current.tvec!,
       v: 3,
@@ -284,7 +295,7 @@ const PromarkCalibration = ({
 
     return (
       <CheckPnP
-        cameraOptions={{ source: 'usb' }}
+        cameraOptions={{ rotate180, source: 'usb' }}
         dh={0}
         grid={{ x: [0, workareaWidth, 10], y: [0, workareaHeight, 10] }}
         onBack={handleStepBack}

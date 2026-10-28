@@ -57,7 +57,17 @@ jest.mock('@core/app/stores/storageStore', () => ({
   },
 }));
 
-import presetHelper, { exportPresets, importPresets } from './preset-helper';
+const mockIsInnerEngravingActive = jest.fn();
+const mockGetPromarkInfo = jest.fn();
+
+jest.mock('@core/helpers/addOn/innerEngraving', () => ({
+  isInnerEngravingActive: () => mockIsInnerEngravingActive(),
+}));
+jest.mock('@core/helpers/device/promark/promark-info', () => ({
+  getPromarkInfo: () => mockGetPromarkInfo(),
+}));
+
+import presetHelper, { exportPresets, getPresetModel, importPresets } from './preset-helper';
 
 let mockStorage = {};
 
@@ -118,6 +128,17 @@ describe('test preset-helper', () => {
     expect(presetHelper.modelHasPreset('fbm1', 'pre3')).toBeFalsy();
     expect(presetHelper.modelHasPreset('ado1', 'pre1')).toBeTruthy();
     expect(presetHelper.modelHasPreset('ado1', 'pre3')).toBeFalsy();
+  });
+
+  test('getPresetModel: Promark by laser source, inner engraving on its own', () => {
+    mockIsInnerEngravingActive.mockReturnValue(false);
+    mockGetPromarkInfo.mockReturnValue({ laserType: 2, watt: 5 });
+    expect(getPresetModel('fpm1')).toBe('fpm1_2_5');
+
+    mockIsInnerEngravingActive.mockReturnValue(true);
+    expect(getPresetModel('fpm1')).toBe('fpm1_inner_engraving');
+    // never for other machines
+    expect(getPresetModel('fbm1')).toBe('fbm1');
   });
 
   test('exportPresets', async () => {

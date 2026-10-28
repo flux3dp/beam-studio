@@ -25,7 +25,10 @@ alias is also lint-banned — always `import { useLayerStore } from '@core/app/s
 - `packages/core/src/web/app/stores/layer/layerStore.ts` — passive state container, NO actions
 - `packages/core/src/web/helpers/layer/layer-helper.ts` — high-level operations (clone/merge/move/lock, UI alerts, history batches)
 - `packages/core/src/web/helpers/layer/deleteLayer.ts` — delete flows + default-layer fallback
-- `packages/core/src/web/helpers/layer/layer-config-helper.ts` — per-layer `data-*` config read/write
+- `packages/core/src/web/helpers/layer/layer-config-helper.ts` — per-layer `data-*` config read/write;
+  the `data-stl-*` inner-engraving keys (`innerEngravingConfigKeys`) are read, written and cloned only
+  while the mode is active (`getReadableConfigKeys`), and `repeat` is forced to 1 then. A new layer key
+  needs a `sanitize.js` `g`-list entry and a unit in `configUnitMap` (`app/svgedit/text/paramsLabel.ts`)
 
 ## State Shape (layerStore)
 
@@ -34,7 +37,7 @@ alias is also lint-banned — always `import { useLayerStore } from '@core/app/s
 | `layers: Layer[]` | all layers, bottom → top, mirrors DOM order |
 | `currentLayerName: null \| string` | layer receiving new elements |
 | `selectedLayers: string[]` | panel selection (`setSelectedLayers` leaves it empty only when no layer exists) |
-| `hasVector`, `hasGradient` | derived flags for the selected layers (gradient = Promark only) |
+| `hasVector`, `hasGradient`, `hasStlPhoto` | derived flags for the selected layers (gradient and `hasStlPhoto` = Promark only; `hasStlPhoto` = a selected layer holds an inner-engraving photo plane, read by `getInnerEngravingBlocks`) |
 
 ## How to Access Layer State
 
@@ -66,8 +69,12 @@ never subscribes (e.g. a class component like LayerPanel) should not import the 
   selection when the names survive (dead current → first surviving selected → top layer; empty
   selection → `[current]`). Use after undo/redo or any operation that mutated layer groups behind the
   manager's back. Undo/redo already calls it centrally in `svgedit/history/utils/index.ts` — do NOT
-  add `cmd.onAfter = resync` sprinkles or re-call it after undoable commands.
-- `checkVector()` / `checkGradient(workarea?)` — recompute the derived flags; auto-run on selection
+  add `cmd.onAfter = resync` sprinkles or re-call it after undoable commands. (Exception:
+  `setLayerVisibility` calls `resync()` right after acting and as `onAfter`, only while inner
+  engraving is active, because the meshes re-render on layer store updates and a visibility toggle
+  changes the DOM without publishing — see the `inner-engraving` skill.)
+- `checkVector()` / `checkGradient(workarea?)` — recompute the derived flags (`checkGradient` sets
+  both `hasGradient` and `hasStlPhoto`, from `image[data-stl-photo]`); auto-run on selection
   change, call manually only after mutating layer content in place (e.g. infill toggle).
 - `createLayer(name?, historyOptions?)` — creates group + title in the DOM, registers it, makes it
   current. Prefer `layer-helper`'s `createLayer` wrapper when you need color/config/fullcolor init.
@@ -77,7 +84,9 @@ never subscribes (e.g. a class component like LayerPanel) should not import the 
   is dropped from the selection (falling back to current) — callers need no selection cleanup. It
   does NOT recreate a default layer when the last layer is removed; delete flows should go through
   `deleteLayers` in `helpers/layer/deleteLayer.ts`, which does (the `deleteLayerByName` helper
-  there is a thin delegate without that guard).
+  there delegates without that guard). `deleteLayerByName` and `cloneLayer` also sync the
+  `stlStore` for 3D projection rects inside the layer (`svgedit/stl/sync.ts`); any new flow that
+  removes or copies layer groups must do the same (see the `inner-engraving` skill).
 - `reset(svgContent, identifyLayers?)` — repoint at a new `#svgcontent` (document swap).
 
 `Layer` objects expose `getGroup()`, `setVisible`, `setName`, `setColor`, `setOpacity`,

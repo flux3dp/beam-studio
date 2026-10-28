@@ -1,6 +1,6 @@
 ---
 name: camera-calibration
-description: Camera calibration flows and camera data structures — fisheye parameter versions (V2/V3/V4), storage files, per-model dialog steps, SolvePnP and CheckPnP. Use when working on calibration dialogs under components/dialogs/camera/ or on cameraCalibrationApi.
+description: Camera calibration flows and camera data structures — fisheye parameter versions (V2/V3/V4), storage files, per-model dialog steps, SolvePnP and CheckPnP. Use when working on calibration dialogs under components/dialogs/camera/, on cameraCalibrationApi, or on Promark camera parameters and rotation (helpers/device/promark/camera-rotation.ts, webcam-helper getPicture).
 ---
 
 # Camera Calibration & Camera Data
@@ -37,7 +37,8 @@ Common to all: `d` (distortion), `k` (intrinsics matrix), `rvec`/`tvec` (extrins
 - **`fisheye_params.json`** — active saved params (written by `setFisheyeConfig`). Default source for `getCheckpointData`.
 - **`checkpoint.json`** — intermediate snapshot (`saveCheckPoint` in `AdorCalibration/utils.ts`); the `allowCheckPoint` fallback. Lets a slow computation be reused next run.
 - **`wide-angle.json`** — V4 wide-angle params (WideAngle reads via `getData`, writes via `uploadJson`).
-- **Promark** is different: params live in **localStorage** `promark-store` via `promarkDataStore.get/set(serial, 'cameraParameters')` (V3), NOT on the device.
+- **Promark** is different: params live in **localStorage** `promark-store` via `promarkDataStore.get/set(serial, 'cameraParameters')`, NOT on the device.
+  The type is `PromarkCameraParameters` (`interfaces/Promark.d.ts`) = V3 + optional `rotate180`, see below.
 
 `cameraCalibrationApi.updateData(data)` uploads params to the calibration backend (image remap);
 `setFisheyeConfig(param)` (`camera-calibration-helper`) writes the final `fisheye_params.json`.
@@ -96,11 +97,36 @@ No-data handling:
 Starts at PRE_CHESSBOARD with a **Skip** button (when `currentData`) → PUT_PAPER. CALIBRATION(`Calibration`)
 → PUT_PAPER → SOLVE_PNP → CHECK_PNP → `promarkDataStore.set`. Has a `with/without_promark_safe_plus` toggle
 and supports an embedded `renderWrapper` (used by `InitializeMachine/Promark/InitCameraCalibration`).
+PUT_PAPER engraves `assets/fcode/promark-calibration-<width>.bvg` via `loadCameraCalibrationTask(model, width)`
+(`helpers/device/promark/calibration.ts`; widths 70/110/150/200/220, each with matching
+`promarkPnPPoints[width]` in `fisheyeCameraConstants.ts` for SolvePnP). A UV source engraves at its weakest
+output: `frequency = UV_FREQUENCY_LIMIT.max`, `power = UV_POWER_LIMIT.min` (`helpers/layer/uvPowerFrequency.ts`).
+
+### Promark camera rotation (`rotate180`)
+
+Desktop/MOPA Promark webcams are mounted upside down, UV ones are not, and the laser source the user
+picked is not reliable enough to decide it. So the 180° rotation is a calibration choice stored **with
+the camera parameters** — d/k/rvec/tvec are computed on frames in that orientation, so the flag must
+never change without recalibrating.
+
+- `helpers/device/promark/camera-rotation.ts`: `isCameraRotated(params)` = `params.rotate180 ?? true`
+  (parameters saved before the flag existed are old machines → rotate); `getInitialCameraRotation(serial)`
+  = stored choice when calibrated, else `laserType !== UV`. No migration rewrites storage; never backfill
+  the flag from the laser source.
+- `PromarkCalibration`: `rotate180` state from `getInitialCameraRotation`; the checkbox
+  (`calibration.rotate_image_180`) sits in the CALIBRATION step via `Calibration`'s `extra` slot; Skip
+  resets it to `isCameraRotated(currentData)` (it reuses the old intrinsics); CHECK_PNP saves it in params.
+- `WebCamConnection.getPicture({ rotate180 })` — the argument is required. `useCamera` `Options` is a
+  `CameraSource` union: `{ source: 'usb'; rotate180: boolean }` or wifi without it; `SolvePnP` takes
+  `cameraSource`, `Calibration`/`CheckPnP` take `cameraOptions`. The live `<video>` gets the
+  `.rotate180` class in `Calibration.tsx` (no hard-coded CSS rotation).
+- `PromarkPreviewManager.preview` rotates by `isCameraRotated(fisheyeParams)`. `check-camera.ts` passes
+  `false` (only the picture size matters).
 
 ## Shared step components (`common/`)
 
 - **`ChArUco`** — capture ChArUco board at N positions → `updateParam({ d, k, rvec, tvec, ret, is_fisheye })`.
-- **`Calibration`** — chessboard/charuco capture wrapper (Promark).
+- **`Calibration`** — chessboard/charuco capture wrapper (Promark); `extra` renders below the exposure slider.
 - **`SolvePnP`** — drag marker points → `onNext(rvec, tvec, point)`. `defaultPoints` (per model/region,
   hard-coded image points for a typical placement) feeds the dev-only Reset Points button and, with
   `initPoseWithDefaultPoints` (callers pass `isAdvanced`), seeds `rvec`/`tvec` via `solve_pnp_calculate`
@@ -117,10 +143,10 @@ and supports an embedded `renderWrapper` (used by `InitializeMachine/Promark/Ini
 - `common/checkpointData.ts` — `getCheckpointData`, `applyCheckpointData`
 - `AdorCalibration/{index,AdorCalibration,CalibrateChessBoard,utils}.tsx` (`utils.ts`: `calibrateWithDevicePictures`, `calibrateFromDevicePictures`, `saveCheckPoint`, `getMaterialHeight`)
 - `beamo2Calibration/{index,Beamo2Calibration}.tsx`, `WideAngleCamera/index.tsx`, `PromarkCalibration.tsx`
-- `interfaces/FisheyePreview.d.ts`, `helpers/api/camera-calibration.ts`, `helpers/device/jsonDataHelper.ts`, `helpers/device/promark/promark-data-store.ts`
+- `interfaces/FisheyePreview.d.ts`, `helpers/api/camera-calibration.ts`, `helpers/device/jsonDataHelper.ts`, `helpers/device/promark/promark-data-store.ts`, `helpers/device/promark/camera-rotation.ts`, `helpers/webcam-helper.ts`
 
 ## Maintenance
 
-Update this doc when: a parameter version changes (new `Vn`), the storage files/keys change, the
+Update this doc when the Promark rotation rule changes, or when: a parameter version changes (new `Vn`), the storage files/keys change, the
 data-fetch-before-dialog pattern or the `getCheckpointData`/`applyCheckpointData`/`calibrateFromDevicePictures`
 helpers change, or a machine family's step flow/modes change.

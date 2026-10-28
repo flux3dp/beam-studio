@@ -2,7 +2,6 @@ import React, { memo, useEffect, useMemo, useState } from 'react';
 
 import { ConfigProvider, Modal } from 'antd';
 import classNames from 'classnames';
-import { piped } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -12,6 +11,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import HighQualityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/HighQualityBlock';
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import { LAYER_SPACING_LIMIT, POINT_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
@@ -24,6 +24,7 @@ import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
@@ -58,19 +59,24 @@ import styles from './ConfigPanel.module.scss';
 import DevBlock from './DevBlock';
 import DottingTimeBlock from './DottingTimeBlock';
 import DpiBlock from './DpiBlock';
+import EngravingModeBlock from './EngravingModeBlock';
 import FillIntervalBlock from './FillIntervalBlock';
 import FrequencyBlock from './FrequencyBlock';
+import getInnerEngravingBlocks from './getInnerEngravingBlocks';
 import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
 import InkBlock from './InkBlock';
 import ModuleBlock from './ModuleBlock';
 import MultipassBlock from './MultipassBlock';
+import NumberBlock from './NumberBlock';
 import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import PulseWidthBlock from './PulseWidthBlock';
 import RepeatBlock from './RepeatBlock';
 import { applyDpiOverrides, applyFullColor, clearMinPower } from './sideEffects';
+import SolidBlock from './SolidBlock';
 import SpeedBlock from './SpeedBlock';
+import { useIsPromarkUV } from './usePromarkLimit';
 import UVLightConfigs from './UVConfigs/UVLightConfigs';
 import UVPrintingConfigs from './UVConfigs/UVPrintingConfigs';
 
@@ -91,7 +97,9 @@ interface Props {
 // TODO: add test
 const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
-  const lang = useI18n().beambox.right_panel.laser_panel;
+  const fullLang = useI18n();
+  const lang = fullLang.beambox.right_panel.laser_panel;
+  const tInnerEngraving = fullLang.inner_engraving_settings;
   const workarea = useWorkarea();
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const forceUpdate = useForceUpdate();
@@ -126,6 +134,17 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     };
   }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  // UV fixes the pulse width and sets its power through the frequency, which moves to the advanced
+  // settings; Q pulse width is a tuning parameter in the developer settings (DevBlock)
+  const isPromarkUV = useIsPromarkUV();
+  const isInnerEngraving = useInnerEngravingActive();
+  const hasStlPhoto = useLayerStore((s) => s.hasStlPhoto);
+  // until the panel state has been re-read after the mode turned on, it has no inner engraving keys
+  const isInnerEngravingReady = isInnerEngraving && state.stlMode !== undefined;
+  const innerEngravingBlocks = getInnerEngravingBlocks(state, {
+    hasStlPhoto,
+    isInnerEngraving: isInnerEngravingReady,
+  });
 
   useEffect(() => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
@@ -149,7 +168,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     }
 
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
-    const updatePromarkInfo = piped(postPresetChange, () => initState());
+    // the document itself (field size, layer values for the new source) is updated by
+    // registerPromarkInfoListener, which runs first; this only re-reads the layers into the panel
+    const updatePromarkInfo = () => initState();
 
     canvasEvents.on('promark-info-changed', updatePromarkInfo);
 
@@ -158,12 +179,14 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     };
   }, [isPromark]);
 
+  // the inner engraving keys are only read while the mode is on, so turning it on or off re-reads
+  // the layers, as does its own preset model
   useEffect(() => {
     postPresetChange();
     presprayArea.togglePresprayArea();
     initState();
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [workarea, initState]);
+  }, [workarea, initState, isInnerEngraving]);
 
   useEffect(() => {
     initState(selectedLayers);
@@ -284,16 +307,49 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {(isPrinting || isUV) && <HalftoneBlock type={UIType} />}
       {isLaser && <PowerBlock type={UIType} />}
       {(isPrinting || isUV) && <InkBlock type={UIType} />}
-      <SpeedBlock type={UIType} />
-      {isLaser && <DpiBlock type={UIType} />}
-      {isPromark && <DottingTimeBlock type={UIType} />}
-      {isPromark && <FillIntervalBlock type={UIType} />}
+      {isInnerEngravingReady && <EngravingModeBlock type={UIType} />}
+      {/* a dot has no speed; in inner engraving only slice contours are travelled */}
+      {(!isInnerEngraving || innerEngravingBlocks.line) && <SpeedBlock type={UIType} />}
+      {isLaser && !isInnerEngraving && <DpiBlock type={UIType} />}
+      {isPromark && (!isInnerEngraving || innerEngravingBlocks.dot) && <DottingTimeBlock type={UIType} />}
+      {innerEngravingBlocks.dot && (
+        <NumberBlock
+          configKey="stlPointSpacing"
+          id="stlPointSpacing"
+          max={POINT_SPACING_LIMIT.max}
+          min={POINT_SPACING_LIMIT.min}
+          precision={3}
+          title={tInnerEngraving.point_spacing}
+          type={UIType}
+          unit="mm"
+        />
+      )}
+      {innerEngravingBlocks.solid && <SolidBlock type={UIType} />}
+      {innerEngravingBlocks.layerSpacing && (
+        <NumberBlock
+          configKey="stlLayerSpacing"
+          id="stlLayerSpacing"
+          max={LAYER_SPACING_LIMIT.max}
+          min={LAYER_SPACING_LIMIT.min}
+          precision={3}
+          title={tInnerEngraving.layer_height}
+          tooltip={
+            innerEngravingBlocks.line
+              ? tInnerEngraving.layer_height_hint_line
+              : tInnerEngraving.layer_height_hint_dot_fill
+          }
+          type={UIType}
+          unit="mm"
+        />
+      )}
+      {/* only paths are filled, and an inner engraving layer holds none */}
+      {isPromark && !isInnerEngraving && <FillIntervalBlock type={UIType} />}
       {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
-      {isPromark && <PulseWidthBlock type={UIType} />}
-      {isPromark && <FrequencyBlock type={UIType} />}
-      <RepeatBlock type={UIType} />
+      {isPromark && !isPromarkUV && <PulseWidthBlock type={UIType} />}
+      {isPromark && !isPromarkUV && <FrequencyBlock type={UIType} />}
+      {!isInnerEngraving && <RepeatBlock type={UIType} />}
       {isPromark && <AdvancedSettingButton type={UIType} />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}

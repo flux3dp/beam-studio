@@ -14,7 +14,9 @@ import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage } from '@core/app/stores/storageStore';
+import { PHOTO_3D_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { getAutoFeeder } from '@core/helpers/addOn';
+import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -26,13 +28,15 @@ import VersionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
 
+import { checkInnerEngravingObjects, hasInnerEngravingObjectWarnings } from './checkInnerEngravingObjects';
+
 export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Promise<boolean> => {
   const workarea = device.model;
   const isPromark = promarkModels.has(workarea);
   const workareaObj = getWorkarea(workarea);
   const layers = [...document.querySelectorAll('#svgcontent > g.layer:not([display="none"])')];
   const addOnInfo = getAddOnInfo(workarea);
-  const isAutoFeederTask = getAutoFeeder(addOnInfo);
+  const isAutoFeederTask = getAutoFeeder({ addOnInfo });
   const isCurveEngravingTask = curveEngravingModeController.hasArea() && addOnInfo.curveEngraving;
 
   if (
@@ -157,6 +161,72 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
         message: lang.beambox.popup.auto_feeder_origin,
       });
     });
+  }
+
+  if (isInnerEngravingActive()) {
+    const warnings = checkInnerEngravingObjects();
+
+    if (hasInnerEngravingObjectWarnings(warnings)) {
+      const details = [
+        warnings.hasInvalidEngravableArea ? lang.inner_engraving.invalid_engraving_area : '',
+        warnings.outOfRange ? sprintf(lang.inner_engraving.objects_out_of_range, { count: warnings.outOfRange }) : '',
+        warnings.overlaps ? sprintf(lang.inner_engraving.objects_overlap, { count: warnings.overlaps }) : '',
+        warnings.wrongLayerOrder
+          ? sprintf(lang.inner_engraving.objects_below_previous_layer, { count: warnings.wrongLayerOrder })
+          : '',
+      ].filter(Boolean);
+      const confirmed = await new Promise<boolean>((resolve) => {
+        alertCaller.popUp({
+          buttonType: alertConstants.CONFIRM_CANCEL,
+          caption: lang.inner_engraving.export_warning_title,
+          id: 'inner-engraving-export-warning',
+          message: `${details.join('\n')}\n\n${lang.inner_engraving.continue_export}`,
+          messageIcon: 'warning',
+          onCancel: () => resolve(false),
+          onConfirm: () => resolve(true),
+        });
+      });
+
+      if (!confirmed) return false;
+    }
+  }
+
+  // The machine cannot read its Z position, so the focus is entirely the user's to set and getting
+  // it wrong ruins the whole workpiece — the single largest operational risk in this feature. Shown
+  // here rather than only in the material settings because this is the last moment it can still be
+  // acted on. Confirm-only, with the usual opt-out: it is a reminder, not a decision.
+  if (isInnerEngravingActive() && !alertConfig.read('skip-inner-engraving-focus-reminder')) {
+    await new Promise<void>((resolve) => {
+      alertCaller.popUp({
+        callbacks: resolve,
+        caption: lang.beambox.document_panel.inner_engraving,
+        checkbox: {
+          callbacks: () => {
+            alertConfig.write('skip-inner-engraving-focus-reminder', true);
+            resolve();
+          },
+          text: lang.alert.dont_show_again,
+        },
+        message: lang.inner_engraving_settings.focus_reminder,
+        messageIcon: 'warning',
+      });
+    });
+  }
+
+  // inner engraving: an old swiftray silently ignores stlObjects and would engrave nothing, so check
+  // before the (potentially tens of MB) mesh payload is even built. checkVersion shows its own alert
+  if (
+    document.querySelector(`#svgcontent [${STL_ATTR.marker}]`) &&
+    !swiftrayClient.checkVersion('SWIFTRAY_SUPPORT_STL')
+  ) {
+    return false;
+  }
+
+  if (
+    document.querySelector(`#svgcontent [${PHOTO_3D_ATTR.marker}]`) &&
+    !swiftrayClient.checkVersion('SWIFTRAY_SUPPORT_POINT_CLOUD')
+  ) {
+    return false;
   }
 
   if (isPromark) {

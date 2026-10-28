@@ -23,25 +23,33 @@ getSVGAsync((globalSVG) => {
 
 interface Props {
   elem: Element;
+  roundedCorner?: { onChange: (valueMm: number) => void; valueMm: number };
 }
 
-function RectOptions({ elem }: Props): React.JSX.Element {
+function RectOptions({ elem, roundedCorner }: Props): React.JSX.Element {
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const { dimensionValuesRef, updateDimensionValues } = use(ObjectPanelContext);
   const { rx: dimensionValuesRx } = dimensionValuesRef.current;
   const isInch = useStorageStore((state) => state.isInch);
-  const [rx, setRx] = useState(dimensionValuesRx || 0);
+  const [rx, setRx] = useState(roundedCorner ? roundedCorner.valueMm * Constant.dpmm : dimensionValuesRx || 0);
 
   useEffect(() => {
-    setRx(dimensionValuesRx || 0);
-  }, [dimensionValuesRx]);
+    setRx(roundedCorner ? roundedCorner.valueMm * Constant.dpmm : dimensionValuesRx || 0);
+  }, [dimensionValuesRx, roundedCorner]);
 
   const handleRoundedCornerChange = (val: null | number) => {
     if (val === null) return;
 
     val *= Constant.dpmm;
     setRx(val);
+
+    if (roundedCorner) {
+      roundedCorner.onChange(val / Constant.dpmm);
+
+      return;
+    }
+
     svgCanvas.changeSelectedAttribute('rx', val, [elem]);
     updateDimensionValues({ rx: val });
   };

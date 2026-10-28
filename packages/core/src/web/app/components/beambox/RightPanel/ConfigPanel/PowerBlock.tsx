@@ -13,8 +13,14 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import checkPwmImages from '@core/helpers/layer/check-pwm-images';
-import { CUSTOM_PRESET_CONSTANT, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import {
+  CUSTOM_PRESET_CONSTANT,
+  getData,
+  getMultiSelectData,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
+import { uvFrequencyToPower, uvPowerToFrequency } from '@core/helpers/layer/uvPowerFrequency';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
@@ -29,6 +35,7 @@ import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
 import { clearMinPower } from './sideEffects';
+import usePromarkLimit, { useIsPromarkUV } from './usePromarkLimit';
 
 const MAX_VALUE = 100;
 const MIN_VALUE = 0;
@@ -36,7 +43,19 @@ const MIN_VALUE = 0;
 function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
-  const { change, power, update } = useConfigPanelStore();
+  const { change, frequency, power: layerPower, update } = useConfigPanelStore();
+  const isPromarkUV = useIsPromarkUV();
+  const { power: promarkPowerLimit } = usePromarkLimit();
+  const { max, min } = (isPromarkUV && promarkPowerLimit) || { max: MAX_VALUE, min: MIN_VALUE };
+  // UV power stands for its frequency, which is what the machine uses: show the power the frequency
+  // gives, so a layer whose two values disagree (or a frequency set below 40kHz) reads correctly
+  const power = useMemo<ConfigItem<number>>(
+    () =>
+      isPromarkUV
+        ? { hasMultiValue: frequency.hasMultiValue, value: Math.round(uvFrequencyToPower(frequency.value) * 10) / 10 }
+        : layerPower,
+    [isPromarkUV, frequency, layerPower],
+  );
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const { activeKey } = use(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
@@ -59,7 +78,15 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }, [selectedLayers]);
 
   const handleChange = (value: number) => {
-    change({ configName: CUSTOM_PRESET_CONSTANT, power: value });
+    // kept with its decimals: the backend rounds the frequency itself. At 100% a frequency already
+    // in the 30–40kHz band is kept (uvPowerToFrequency): the panel's here, each layer's own below
+    const uvFrequency = isPromarkUV ? uvPowerToFrequency(value, frequency.value) : undefined;
+
+    change({
+      configName: CUSTOM_PRESET_CONSTANT,
+      power: value,
+      ...(uvFrequency !== undefined && { frequency: uvFrequency }),
+    });
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change power');
@@ -69,6 +96,12 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       layers.forEach((layer) => {
         writeDataLayer(layer, 'power', value, { batchCmd });
         writeDataLayer(layer, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
+
+        if (uvFrequency !== undefined) {
+          writeDataLayer(layer, 'frequency', uvPowerToFrequency(value, getData(layer, 'frequency') as number), {
+            batchCmd,
+          });
+        }
 
         minPowerChanged = clearMinPower(layer, value, batchCmd) || minPowerChanged;
       });
@@ -102,8 +135,8 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         decimal={1}
         hasMultiValue={power.hasMultiValue}
         inputId="power-input"
-        max={MAX_VALUE}
-        min={MIN_VALUE}
+        max={max}
+        min={min}
         onChange={handleChange}
         type={type}
         unit="%"
@@ -112,10 +145,11 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       <ConfigSlider
         id="power_value"
         isGradient
-        max={MAX_VALUE}
-        min={MIN_VALUE}
+        max={max}
+        // the slider counts whole steps from its min, so UV (from ~15.6%) starts at 16; decimals
+        // down to the real minimum are typed into the input
+        min={Math.ceil(min)}
         onChange={handleChange}
-        step={1}
         value={power.value}
       />
       {power.value < (workareaObj.minPower ?? -1) && (

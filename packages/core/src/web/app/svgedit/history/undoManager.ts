@@ -96,6 +96,39 @@ export class UndoManager implements IUndoManager {
     }
   }
 
+  /**
+   * Merge an already-applied follow-up into the latest undo step, or add it as a new step if the
+   * pointer moved or the last step does not involve `expectedElement`.
+   */
+  appendCommandToLast(cmd: BaseHistoryCommand, text: string, expectedElement?: Element): void {
+    const previous = this.undoStack[this.undoStack.length - 1];
+
+    if (this.undoStackPointer !== this.undoStack.length || this.undoStackPointer === 0) {
+      this.addCommandToHistory(cmd);
+
+      return;
+    }
+
+    // Outline conversion is asynchronous. If the user managed to create another history entry
+    // while it was running, never fold the conversion into that unrelated action.
+    if (expectedElement && !previous.elements().includes(expectedElement)) {
+      this.addCommandToHistory(cmd);
+
+      return;
+    }
+
+    this.undoStack.pop();
+
+    const batch = new history.BatchCommand(text);
+
+    batch.addSubCommand(previous);
+    batch.addSubCommand(cmd);
+    this.undoStack.push(batch);
+    this.undoStackPointer = this.undoStack.length;
+    currentFileManager.setHasUnsavedChanges(true);
+    autoAlign.collectAlignPoints();
+  }
+
   beginUndoableChange(attrName: string, elems: Element[]): void {
     this.undoChangeStackPointer += 1;
 

@@ -17,6 +17,9 @@ jest.mock('@core/helpers/fileImportHelper', () => ({
 }));
 
 jest.mock('@core/app/components/beambox/PathPreview', () => () => <div>MockPathPreview</div>);
+jest.mock('@core/app/components/beambox/InnerEngraving/InnerEngravingCanvas', () => () => (
+  <div>MockInnerEngravingCanvas</div>
+));
 jest.mock('./CanvasControl', () => () => <div>MockCanvasControl</div>);
 jest.mock('@core/app/widgets/dockable/ToolBarDrawer', () => ({ children }) => <div>{children}</div>);
 jest.mock('@core/app/components/Chat', () => () => <div>MockChat</div>);

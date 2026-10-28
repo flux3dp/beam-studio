@@ -16,8 +16,8 @@ For Cypress E2E specs (release-test automation under `apps/web/cypress/`), see
 - **Runner**: Jest 30 with `ts-jest`, environment `jsdom`
 - **Assertion/DOM**: `@testing-library/react`, `@testing-library/jest-dom`
 - **Test files**: `*.spec.tsx` / `*.spec.ts`, colocated next to the source file
-- **Run**: `pnpm test <filename>` (e.g. `pnpm test FontSizeBlock`)
-- **Update snapshots**: `pnpm test <filename> -u`
+- **Run**: `pnpm test --runInBand <filename>` (e.g. `pnpm test --runInBand FontSizeBlock`). Agents always add `--runInBand` — see AGENTS.md Critical Rules
+- **Update snapshots**: `pnpm test --runInBand <filename> -u`
 
 ### Environment facts (from `jest.config.ts` + `setupTests.ts` — already set up, do NOT redo)
 
@@ -81,10 +81,10 @@ Location: `packages/core/src/__mocks__/`
 |---|---|
 | `zustand` | Wraps real `create`/`createStore` with auto-reset after each test |
 | `@core/helpers/i18n` | Returns `{ lang: langEn, getActiveLang: () => 'en' }` using real `en.ts` |
-| `@core/helpers/checkFeature` | `jest.fn()` |
+| `@core/helpers/checkFeature` | every `check*` (incl. `checkFpm1UV`) returns `true` |
 | `@core/helpers/getOS` | `jest.fn()` |
 | `@core/helpers/locale-helper` | all `is*` region flags `false` (mutable — reset in `beforeEach`); real module imports ESM-only `bcp-47` that Jest can't parse |
-| `@core/helpers/is-dev` | `jest.fn()` returns `false` |
+| `@core/helpers/is-dev` | default `isDev` returns `true`; `isUvDev` returns `true`; `isParamsLabelDev` is `jest.fn(() => false)` |
 | `@core/helpers/symbolMaker` | no-op |
 | `@core/helpers/api/flux-id` | stubs for auth functions |
 | `@core/helpers/layer/layer-config-helper` | stubs |
@@ -92,9 +92,9 @@ Location: `packages/core/src/__mocks__/`
 | `@core/implementations/communicator` | stub `send`/`sendSync`/`on`/`once` |
 | `@core/implementations/storage` | in-memory get/set |
 | `@core/app/stores/storageStore` | full in-memory store with `useStorageStore`, `getStorage`, `setStorage` |
-| `@core/app/stores/documentStore` | full in-memory store |
+| `@core/app/stores/documentStore` | full in-memory store (includes the `inner-engraving*` defaults with `'inner-engraving': false`; the `fpm1` customized dimension is 150×150, so the real `isInnerEngravingActive()` is false — specs toggle the mode by mocking `@core/helpers/addOn/innerEngraving`) |
 | `@core/app/stores/globalPreferenceStore` | full in-memory store |
-| `@core/app/stores/layer/layerStore` | state-only in-memory store (no actions; seed with `useLayerStore.setState({...})` — layer mutations live on `layerManager`, mock that inline per spec) |
+| `@core/app/stores/layer/layerStore` | state-only in-memory store (`hasStlPhoto: false` among the defaults; no actions; seed with `useLayerStore.setState({...})` — layer mutations live on `layerManager`, mock that inline per spec) |
 | `@core/app/pages/Settings/useSettingStore` | in-memory settings store |
 | `@core/app/contexts/CanvasContext` | stub context provider |
 | `@core/app/widgets/UnitInput` | renders real `<input>` with `onChange` wired to `Number(e.target.value)` |
@@ -415,7 +415,7 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
 - A snapshot test **never replaces** behavioral assertions (`toHaveBeenCalledWith`, DOM
   queries). Add both.
 - When a snapshot fails: read the diff. If the change is intended, run
-  `pnpm test <file> -u` and eyeball the updated `.snap`. If you cannot explain the diff,
+  `pnpm test --runInBand <file> -u` and eyeball the updated `.snap`. If you cannot explain the diff,
   the test caught a bug — do not blindly update.
 - Antd hash noise and `transform-origin: NaNpx` are already normalized by serializers.
 
@@ -451,7 +451,7 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
 
 5. **SCSS modules** — `identity-obj-proxy` returns the class name string as-is. `styles['font-size']` returns `'font-size'` in tests.
 
-6. **Snapshot tests** — when adding/removing UI elements, run `pnpm test <file> -u` to update snapshots (see Snapshot Policy).
+6. **Snapshot tests** — when adding/removing UI elements, run `pnpm test --runInBand <file> -u` to update snapshots (see Snapshot Policy).
 
 7. **Antd components** — often need mocking because they have complex internals. Mock only the components you use:
    ```ts
@@ -530,7 +530,7 @@ Snapshots are heavily used (~600 `toMatchSnapshot` calls) but easy to abuse:
 
 Before declaring a test done:
 
-- [ ] `pnpm test <filename>` passes locally (all tests, not just the new one)
+- [ ] `pnpm test --runInBand <filename>` passes locally (all tests, not just the new one)
 - [ ] No module from the `__mocks__` table is re-mocked inline
 - [ ] No default-only mock wrapped in `{ __esModule: true, default: X }` — collapsed to `() => X` (§Pattern 2)
 - [ ] `jest.clearAllMocks()` in `beforeEach`; `jest.useRealTimers()` restored if faked

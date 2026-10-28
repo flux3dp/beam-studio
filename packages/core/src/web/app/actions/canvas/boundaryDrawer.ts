@@ -166,7 +166,7 @@ export class BoundaryDrawer {
     const addOnInfo = getAddOnInfo(model);
     const { autoFeeder } = addOnInfo;
 
-    if (!getAutoFeeder(addOnInfo)) {
+    if (!getAutoFeeder({ addOnInfo })) {
       this.boundaries.autoFeeder = undefined;
 
       return;
@@ -187,7 +187,7 @@ export class BoundaryDrawer {
     const addOnInfo = getAddOnInfo(model);
     const { passThrough } = addOnInfo;
 
-    if (!getPassThrough(addOnInfo)) {
+    if (!getPassThrough({ addOnInfo })) {
       this.boundaries.passThrough = undefined;
 
       return;
@@ -288,7 +288,7 @@ export class BoundaryDrawer {
     const { maxY: workareaBottom, minY: workareaTop, model, width: w } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
     const isRotary = Boolean(useDocumentStore.getState()['rotary_mode'] && addOnInfo.rotary);
-    const isAutoFeeder = getAutoFeeder(addOnInfo);
+    const isAutoFeeder = getAutoFeeder({ addOnInfo });
     const finalBoundary: TBoundary = { bottom: 0, left: 0, right: 0, top: 0 };
     let { bottom, left, right, top } = finalBoundary;
     const [offsetX, offsetY] = await getModuleOffsets({ module: currentModule, workarea: model });

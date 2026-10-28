@@ -88,6 +88,7 @@ const isGoogleFontLoaded = (
 interface Props {
   elem: SVGElement;
   isTextPath?: boolean;
+  onSourceChange?: () => void;
   showColorPanel?: boolean;
   textElements: SVGTextElement[];
 }
@@ -101,7 +102,7 @@ const defaultTextConfigs: TextConfig = {
   verticalAlign: { hasMultiValue: false, value: VerticalAlign.MIDDLE },
 };
 
-const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
+const TextOptions = ({ elem, isTextPath, onSourceChange, showColorPanel, textElements }: Props) => {
   const lang = useI18n();
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
@@ -120,7 +121,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     selector.getSelectorManager().resizeSelectors([elem]);
     ObjectPanelController.updateDimensionValues(getBBox(elem));
     ObjectPanelController.updateObjectPanel();
-  }, [elem]);
+    onSourceChange?.();
+  }, [elem, onSourceChange]);
 
   const onConfigChange = useCallback(
     <T extends keyof TextOption>(key: T, value: TextOption[T]) => {
@@ -435,7 +437,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       return null;
     }
 
-    return <TextContentBlock textElement={textElements[0]} />;
+    return <TextContentBlock onSourceChange={onSourceChange} textElement={textElements[0]} />;
   };
 
   const renderFontFamilyBlock = (): ReactNode => {
@@ -614,7 +616,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
             </div>
             {isAllFitText && <div className={styles.row}>{<FitTextAlignBlock textElements={textElements} />}</div>}
             {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
-            {!isTextPath && showVariableText && (
+            {!isTextPath && showVariableText && !onSourceChange && (
               <VariableTextBlock elems={textElements} id={configs.id.value} withDivider />
             )}
           </div>

@@ -191,6 +191,7 @@ export interface ILang {
         remindLater: string;
         updateNow: string;
       };
+      inner_engraving: string;
       pass_through: string;
       rotary: string;
     };
@@ -233,6 +234,7 @@ export interface ILang {
       extend_y_area: string;
       frame_before_start: string;
       frame_before_start_url: string;
+      inner_engraving: string;
       job_origin: string;
       laser_source: string;
       machine: string;
@@ -488,6 +490,16 @@ export interface ILang {
       failed_to_load_svg: string;
       import_file_contain_invalid_path: string;
       import_file_error_ask_for_upload: string;
+      import_stl: {
+        advice_message: string;
+        advice_message_strong: string;
+        confirmation_message: string;
+        face_count_warning: string;
+        file_size_warning: string;
+        intro_message: string;
+        scene_face_count_warning: string;
+        title: string;
+      };
       import_svg: {
         advice_message: string;
         advice_message_2: string;
@@ -598,22 +610,35 @@ export interface ILang {
             cardstock: string;
             copper: string;
             cork: string;
+            dark_brown_leather: string;
             denim: string;
             fabric: string;
             flat_stone: string;
+            galvanized_steel: string;
             glass: string;
             gloss_leather: string;
             gold: string;
             iron: string;
+            k9_crystal: string;
             leather: string;
+            light_brown_leather: string;
             mdf: string;
             metal: string;
+            natural_leather: string;
+            nonwoven_fabric: string;
+            nylon: string;
             opaque_acrylic: string;
             pc: string;
+            pla: string;
+            pu_leather: string;
+            pvc: string;
             rubber: string;
+            silicone: string;
             silver: string;
             slate: string;
             stainless_steel: string;
+            stainless_steel_304: string;
+            stainless_steel_430: string;
             sticker: string;
             stone: string;
             titanium: string;
@@ -624,6 +649,8 @@ export interface ILang {
           };
           parameters: string;
           presets: {
+            contour_dotting: string;
+            contour_lines: string;
             cutting: string;
             engraving: string;
             engraving_diode: string;
@@ -632,17 +659,26 @@ export interface ILang {
             marking_dark: string;
             marking_light: string;
             printing: string;
+            thick_contour_dotting: string;
           };
           save: string;
         };
         engrave: string;
         existing_name: string;
         fill_angle: string;
+        fill_dwell: string;
+        fill_dwell_adaptive: string;
+        fill_dwell_adaptive_hint: string;
+        fill_dwell_hint: string;
+        fill_dwell_time: string;
+        fill_interleave: string;
+        fill_interleave_hint: string;
         fill_interval: string;
         fill_setting: string;
         filled_path_only: string;
         focus_adjustment: string;
         frequency: string;
+        frequency_hint_uv: string;
         gradient_only: string;
         halftone: string;
         halftone_link: string;
@@ -688,9 +724,11 @@ export interface ILang {
         pwm_advanced_desc: string;
         pwm_advanced_hint: string;
         pwm_advanced_setting: string;
+        q_pulse_width: string;
         refresh_interval: string;
         refresh_printer: string;
         repeat: string;
+        reverse: string;
         single_color: string;
         single_color_desc: string;
         slider: {
@@ -1138,6 +1176,7 @@ export interface ILang {
     res_poor: string;
     reset_points: string;
     retake: string;
+    rotate_image_180: string;
     rotation_angle: string;
     show_last_config: string;
     solve_pnp_bm2: string;
@@ -1188,6 +1227,8 @@ export interface ILang {
     calculate: string;
     canvas_zoom: string;
     exposure: string;
+    inner_engraving_object_control: string;
+    inner_engraving_view_control: string;
     not_supported: string;
     opacity: string;
   };
@@ -1476,6 +1517,8 @@ export interface ILang {
     hull_desc: string;
     low_laser: string;
     low_laser_desc: string;
+    material: string;
+    material_desc: string;
     repeat: string;
     rotate_axis: string;
     rotateaxis_desc: string;
@@ -1680,6 +1723,98 @@ export interface ILang {
     };
     skip: string;
     start: string;
+  };
+  inner_engraving: {
+    auto_fit_message: string;
+    auto_fit_title: string;
+    canvas_controls: {
+      back: string;
+      bottom: string;
+      custom: string;
+      front: string;
+      isometric: string;
+      left: string;
+      move: string;
+      orthographic: string;
+      perspective: string;
+      right: string;
+      rotate: string;
+      scale: string;
+      top: string;
+    };
+    continue_export: string;
+    disable_mode: string;
+    disable_mode_for_rotary: string;
+    empty_mesh: string;
+    enable_mode: string;
+    enable_mode_with_workarea: string;
+    export_warning_title: string;
+    file_needs_workarea: string;
+    invalid_engraving_area: string;
+    mode_switch_title: string;
+    mode_unavailable: string;
+    objects_below_previous_layer: string;
+    objects_failed_to_load: string;
+    objects_out_of_range: string;
+    objects_overlap: string;
+    parsing_mesh: string;
+    paste_from_other_tab: string;
+    paste_no_2d_version: string;
+    paste_not_extrudable: string;
+    placing_object: string;
+    reading_file: string;
+  };
+  inner_engraving_settings: {
+    adaptive_layer_height: string;
+    adaptive_layer_height_hint: string;
+    adjust_hint: string;
+    anchor: string;
+    bottom_left: string;
+    center: string;
+    center_on_engravable: string;
+    center_on_workarea: string;
+    circumference: string;
+    depth: string;
+    diameter: string;
+    engraving_mode: string;
+    euler_order: string;
+    fill: string;
+    fit_to_engravable: string;
+    flip: string;
+    focus_reminder: string;
+    generate_test_point_cloud?: string;
+    height: string;
+    layer_height: string;
+    layer_height_hint_dot_fill: string;
+    layer_height_hint_line: string;
+    material_position: string;
+    material_shape: string;
+    material_size: string;
+    min_layer_height: string;
+    min_layer_height_hint: string;
+    mode_dot: string;
+    mode_line: string;
+    no_engravable_area: string;
+    point_spacing: string;
+    position: string;
+    range: string;
+    refractive_index: string;
+    refractive_index_hint: string;
+    reset: string;
+    rotation: string;
+    safety_margin: string;
+    shape_box: string;
+    shape_cylinder: string;
+    shape_sphere: string;
+    size: string;
+    sphere_base_height: string;
+    sphere_base_height_hint: string;
+    sphere_height_hint: string;
+    sphere_liquid_alert: string;
+    thick_contour: string;
+    thick_contour_hint: string;
+    title: string;
+    width: string;
   };
   input_machine_password: {
     connect: string;
@@ -1924,11 +2059,16 @@ export interface ILang {
     | 'cut'
     | 'engrave'
     | 'export'
+    | 'force_offset'
+    | 'force_scale'
+    | 'force_transform'
     | 'max'
     | 'min'
     | 'parameter'
     // table setting form
     | 'rows'
+    | 'scaled_block_size'
+    | 'scaled_block_spacing'
     | 'size'
     | 'spacing'
     // block setting form
@@ -2893,6 +3033,7 @@ export interface ILang {
       path: string;
       polygon: string;
       rect: string;
+      stl: string;
       svg: string;
       text: string;
       text_path: string;

@@ -83,7 +83,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     useShallow((state) => pick(state, ['auto-feeder', 'borderless'])),
   );
   const isAutoFeederOn = useMemo(
-    () => getAutoFeeder(addOnInfo, { autoFeeder, borderless }),
+    () => getAutoFeeder({ addOnInfo, values: { autoFeeder, borderless } }),
     [addOnInfo, autoFeeder, borderless],
   );
   const {

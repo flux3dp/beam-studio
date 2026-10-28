@@ -12,6 +12,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Banner.module.scss';
@@ -36,11 +37,11 @@ const Banner = (): React.ReactNode => {
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isRotary = rotaryMode && addOnInfo.rotary;
   const isAutoFeeder = useMemo(
-    () => getAutoFeeder(addOnInfo, { autoFeeder, borderless: isBorderless }),
+    () => getAutoFeeder({ addOnInfo, values: { autoFeeder, borderless: isBorderless } }),
     [addOnInfo, autoFeeder, isBorderless],
   );
   const isPassThrough = useMemo(
-    () => getPassThrough(addOnInfo, { borderless: isBorderless, passThrough }),
+    () => getPassThrough({ addOnInfo, values: { borderless: isBorderless, passThrough } }),
     [addOnInfo, passThrough, isBorderless],
   );
   const isBorderlessPreview = useMemo(
@@ -52,13 +53,21 @@ const Banner = (): React.ReactNode => {
     [hasCurveEngravingData, mode],
   );
   const isAutoFocus = useMemo(() => mode === CanvasMode.AutoFocus, [mode]);
+  const isInnerEngraving = useInnerEngravingActive();
   const isNeedBanner =
-    isAutoFeeder || isBorderlessPreview || isCurveEngraving || isPassThrough || isRotary || isAutoFocus;
+    isAutoFeeder ||
+    isBorderlessPreview ||
+    isCurveEngraving ||
+    isInnerEngraving ||
+    isPassThrough ||
+    isRotary ||
+    isAutoFocus;
   const messageMap = {
     autoFeeder: lang.beambox.banner.auto_feeder,
     autofocus1: lang.beambox.banner.autofocus1,
     autofocus2: lang.beambox.banner.autofocus2,
     curveEngraving: lang.beambox.banner.curve_engraving,
+    innerEngraving: lang.beambox.banner.inner_engraving,
     openBottomPreview: `${lang.global.preview} ${lang.beambox.banner.camera_preview_borderless_mode}`,
     passThrough: lang.beambox.banner.pass_through,
     rotary: lang.beambox.banner.rotary,
@@ -69,8 +78,10 @@ const Banner = (): React.ReactNode => {
 
     if (isBorderlessPreview) list.push(messageMap.openBottomPreview);
 
-    // exclusive
-    if (isAutoFeeder) list.push(messageMap.autoFeeder);
+    // exclusive; inner engraving first because it wins when an old file has several modes on
+    // (exclusiveModes)
+    if (isInnerEngraving) list.push(messageMap.innerEngraving);
+    else if (isAutoFeeder) list.push(messageMap.autoFeeder);
     else if (isPassThrough) list.push(messageMap.passThrough);
     else if (isCurveEngraving) list.push(messageMap.curveEngraving);
     else if (isRotary) list.push(messageMap.rotary);

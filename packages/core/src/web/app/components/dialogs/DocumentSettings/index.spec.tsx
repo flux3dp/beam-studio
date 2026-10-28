@@ -1,6 +1,6 @@
 import React, { act } from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import alertConstants from '@core/app/constants/alert-constants';
 import { LaserType } from '@core/app/constants/promark-constants';
@@ -176,6 +176,18 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   writeDataLayer: (...args) => mockWriteDataLayer(...args),
 }));
 
+const mockSyncUvLayerFrequency = jest.fn();
+
+jest.mock('@core/helpers/layer/syncUvLayerFrequency', () => ({
+  syncUvLayerFrequency: () => mockSyncUvLayerFrequency(),
+}));
+
+const mockSwitchInnerEngravingMode = jest.fn();
+
+jest.mock('@core/app/actions/canvas/innerEngravingMode', () => ({
+  switchInnerEngravingMode: (...args) => mockSwitchInnerEngravingMode(...args),
+}));
+
 const mockUnmount = jest.fn();
 
 import DocumentSettings from './index';
@@ -258,6 +270,7 @@ describe('test DocumentSettings', () => {
       'enable-autofocus': true,
       'enable-diode': true,
       'enable-job-origin': true,
+      'inner-engraving': false,
       'job-origin': 1,
       'pass-through': false,
       'rotary-type': 0,
@@ -308,6 +321,33 @@ describe('test DocumentSettings', () => {
     );
     expect(mockSetPromarkInfo).toHaveBeenCalledTimes(1);
     expect(mockSetPromarkInfo).toHaveBeenLastCalledWith({ laserType: LaserType.MOPA, watt: 60 });
+  });
+
+  it('shows the laser source before its compatible work areas and switches an invalid area to the default', async () => {
+    mockGetState.mockReturnValue({ ...mockDocumentState, workarea: 'fpm1' });
+
+    const { baseElement } = render(<DocumentSettings unmount={mockUnmount} />);
+    const laserSource = baseElement.querySelector('input#pm-laser-source')!;
+    const customDimension = baseElement.querySelector('input#customDimension')!;
+
+    expect(laserSource.compareDocumentPosition(customDimension) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(baseElement.querySelector('button#innerEngraving')).not.toBeInTheDocument();
+
+    fireEvent.mouseDown(laserSource);
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="UV - 5W"]'));
+
+    await waitFor(() => {
+      expect(baseElement.querySelector('.ant-select-selection-item[title="70 x 70 mm"]')).toBeInTheDocument();
+      expect(baseElement.querySelector('button#innerEngraving')).toBeInTheDocument();
+    });
+
+    fireEvent.mouseDown(customDimension);
+
+    const options = Array.from(baseElement.querySelectorAll('#customDimension_list [role="option"]')).map((option) =>
+      option.getAttribute('title'),
+    );
+
+    expect(options).toEqual(['70 x 70 mm', '200 x 200 mm']);
   });
 
   it('should render correctly for beamo 2', async () => {

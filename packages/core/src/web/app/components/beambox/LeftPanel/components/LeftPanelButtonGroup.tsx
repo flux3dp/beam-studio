@@ -26,7 +26,10 @@ interface Props {
 }
 
 function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props): React.JSX.Element {
-  const [selectedOption, setSelectedOption] = useState(options[0]);
+  // Keep only the id: the options' onClick closures change with the parent's state (e.g. inner
+  // engraving mode), so the option itself must be read from the latest props.
+  const [selectedId, setSelectedId] = useState(options[0]?.id);
+  const selectedOption = options.find((option) => option.id === selectedId) ?? options[0];
   const [popoverOpen, setPopoverOpen] = useState(false);
   const pressTimerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
   // Set once the press passes LONG_PRESS_DELAY, so the click that follows the
@@ -95,7 +98,7 @@ function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props):
   }, []);
 
   const handleOptionSelect = useCallback((option: ToolOption) => {
-    setSelectedOption(option);
+    setSelectedId(option.id);
     setPopoverOpen(false);
     option.onClick();
   }, []);

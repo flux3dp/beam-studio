@@ -8,6 +8,10 @@ import ThresholdBlock from '@core/app/components/beambox/RightPanel/OptionsBlock
 import { useIsMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
+import { photoPlaneEvents } from '@core/app/svgedit/stl/photoPlane';
+import { setHref } from '@core/app/svgedit/utils/href';
+import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { useAsyncTask } from '@core/helpers/hooks/useAsyncTask';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import ImageData from '@core/helpers/image-data';
@@ -26,6 +30,7 @@ interface Props {
 
 const ImageOptions = ({ elem }: Props): React.ReactNode => {
   const isMobile = useIsMobile();
+  const isInnerEngravingMode = useInnerEngravingActive();
   const { updateObjectPanel } = use(ObjectPanelContext);
   // thresholdCache: index 0 means gradient, 1-255 means threshold value
   const thresholdCache = useRef(Array.from<null | string>({ length: 256 }).fill(null));
@@ -48,7 +53,14 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
       const batchCommand: IBatchCommand = new history.BatchCommand('Image Option Panel');
       const setAttribute = (key: string, value: boolean | number | string) => {
         undoManager.beginUndoableChange(key, [elem]);
-        elem.setAttribute(key, value as string);
+
+        if (key === 'xlink:href' && isPhotoPlaneProjection(elem)) {
+          // the 3D canvas reads the texture through the namespaced href
+          setHref(elem as SVGElement, String(value));
+          photoPlaneEvents.emit('texture-changed', elem.id, String(value));
+        } else {
+          elem.setAttribute(key, value as string);
+        }
 
         const cmd = undoManager.finishUndoableChange();
 
@@ -125,7 +137,7 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
 
     if (isGradient) {
       if (isPromark) {
-        if (!isMobile) {
+        if (!isMobile && !isInnerEngravingMode) {
           blocks.push(<DepthBlock changeAttribute={changeAttribute} elem={elem} key="depth" />);
         }
       } else {
@@ -143,7 +155,7 @@ const ImageOptions = ({ elem }: Props): React.ReactNode => {
     }
 
     return blocks;
-  }, [changeAttribute, generateImageData, isGradient, isPromark, isMobile, elem, threshold]);
+  }, [changeAttribute, generateImageData, isGradient, isPromark, isMobile, isInnerEngravingMode, elem, threshold]);
 
   return isMobile ? content : <div className={styles.options}>{content}</div>;
 };

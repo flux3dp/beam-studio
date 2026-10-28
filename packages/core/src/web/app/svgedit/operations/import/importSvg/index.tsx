@@ -87,7 +87,7 @@ function getPathDComplexity(
   return { isTooManyCommands, totalCommands };
 }
 
-async function performSvgPreChecks(
+export async function performSvgPreChecks(
   file: Blob,
   lang: ILang, // _lang is still passed, but not used directly in this revised snippet's messages
   sizeThresholdMaxBytes: number = MAX_SVG_FILE_SIZE_BYTES,

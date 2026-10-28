@@ -18,6 +18,8 @@ jest.mock('../history/history', () => ({
   RemoveElementCommand: jest.fn(),
 }));
 
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
+
 import { LayerManager } from './layerManager';
 import { Layer } from './layer';
 
@@ -241,6 +243,38 @@ describe('LayerManager', () => {
       layerManager.createLayer('Test Layer', { addToHistory: false });
 
       expect(mockAddCommandToHistory).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('checkGradient', () => {
+    const makeLayer = (inner: string) => {
+      const layer = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+
+      layer.innerHTML = inner;
+
+      return layer;
+    };
+
+    it('flags gradient images and inner engraving photo planes in the selected layers', () => {
+      const layers: Record<string, SVGGElement> = {
+        gradient: makeLayer('<image data-shading="true" />'),
+        photo: makeLayer('<image data-stl-photo="1" />'),
+        plain: makeLayer('<rect />'),
+      };
+
+      jest.spyOn(layerManager, 'getLayerElementByName').mockImplementation((name: string) => layers[name]);
+
+      useLayerStore.setState({ selectedLayers: ['plain'] });
+      layerManager.checkGradient('fpm1');
+      expect(useLayerStore.getState()).toMatchObject({ hasGradient: false, hasStlPhoto: false });
+
+      useLayerStore.setState({ selectedLayers: ['plain', 'photo'] });
+      layerManager.checkGradient('fpm1');
+      expect(useLayerStore.getState()).toMatchObject({ hasGradient: false, hasStlPhoto: true });
+
+      useLayerStore.setState({ selectedLayers: ['gradient'] });
+      layerManager.checkGradient('fpm1');
+      expect(useLayerStore.getState()).toMatchObject({ hasGradient: true, hasStlPhoto: false });
     });
   });
 

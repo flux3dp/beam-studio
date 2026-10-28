@@ -297,6 +297,14 @@ class SwiftrayClient extends EventEmitter {
           payload.params.file = '[file object]';
         }
 
+        if (payload.params?.stlObjects) {
+          payload.params.stlObjects = `[${Object.keys(payload.params.stlObjects).length} stl objects]`;
+        }
+
+        if (payload.params?.pointCloudObjects) {
+          payload.params.pointCloudObjects = `[${Object.keys(payload.params.pointCloudObjects).length} point-cloud objects]`;
+        }
+
         if (payload.params?.image) {
           payload.params.image = `[image, ${payload.params.image.length} chars]`;
         }
@@ -386,20 +394,57 @@ class SwiftrayClient extends EventEmitter {
       model: string;
       rotaryMode: boolean;
     },
-  ): Promise<{ error?: ErrorObject; success: boolean }> {
+  ): Promise<{
+    error?: ErrorObject;
+    /** Inner engraving: BSPC payloads swiftray could not parse */
+    failedPointCloudObjects?: Array<{ error: string; id: string }>;
+    /** Inner engraving: meshes swiftray could not parse */
+    failedStlObjects?: Array<{ error: string; id: string }>;
+    /** Inner engraving: number of BSPC point clouds swiftray accepted */
+    loadedPointCloudObjects?: number;
+    /** Inner engraving: number of meshes swiftray accepted */
+    loadedStlObjects?: number;
+    success: boolean;
+  }> {
     const defaultConfig: any = getDefaultConfig();
 
     booleanConfig.forEach((key) => delete defaultConfig[key]);
 
-    const uploadRes = await this.action<{ error?: ErrorObject; success: boolean }>('/parser', 'loadSVG', {
+    // swiftray reads 3D binaries from the top level of params, not from inside file
+    // (the SWIFTRAY_SUPPORT_STL check happens up in handleExportAlerts, before the payload is built)
+    const { pointCloudObjects, stlObjects, ...taskFile } = file;
+
+    const uploadRes = await this.action<{
+      error?: ErrorObject;
+      failedPointCloudObjects?: Array<{ error: string; id: string }>;
+      failedStlObjects?: Array<{ error: string; id: string }>;
+      loadedPointCloudObjects?: number;
+      loadedStlObjects?: number;
+      success: boolean;
+    }>('/parser', 'loadSVG', {
       defaultConfig,
-      file,
+      file: taskFile,
       model: loadOptions.model,
       rotaryMode: loadOptions.rotaryMode,
+      ...(pointCloudObjects ? { pointCloudObjects } : {}),
+      ...(stlObjects ? { stlObjects } : {}),
     });
+
+    if (uploadRes.failedStlObjects?.length) {
+      console.error('Failed to load STL objects', uploadRes.failedStlObjects);
+    }
+
+    if (uploadRes.failedPointCloudObjects?.length) {
+      console.error('Failed to load point-cloud objects', uploadRes.failedPointCloudObjects);
+    }
 
     if (!uploadRes.success) {
       eventListeners.onError(uploadRes.error?.message ?? 'Unknown error');
+    } else if (uploadRes.failedStlObjects?.length || uploadRes.failedPointCloudObjects?.length) {
+      // Swiftray skips an object it could not read and still reports success, which would send a
+      // job missing something that is on the canvas. The ids mean nothing to the user, so the
+      // alert only says that it happened; the details are in the console above.
+      eventListeners.onError(i18n.lang.inner_engraving.objects_failed_to_load);
     }
 
     return uploadRes;
@@ -564,7 +609,7 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'setScanaheadParams', params);
   }
 
-  public async setDeviceCorrection(data: { [key: string]: number }): Promise<boolean> {
+  public async setDeviceCorrection(data: Record<string, number | string>): Promise<boolean> {
     return this.action(`/devices/${this.port}`, 'setCorrection', data);
   }
 

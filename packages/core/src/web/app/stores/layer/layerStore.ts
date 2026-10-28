@@ -7,6 +7,8 @@ export interface LayerStoreState {
   /** Name of the layer receiving new elements; mirrors the DOM */
   currentLayerName: null | string;
   hasGradient: boolean;
+  /** Selected layers hold an inner engraving photo plane, which is always dotted */
+  hasStlPhoto: boolean;
   hasVector: boolean;
   /** All layers, bottom to top */
   layers: Layer[];
@@ -24,6 +26,7 @@ export const useLayerStore = create(
   subscribeWithSelector<LayerStoreState>(() => ({
     currentLayerName: null,
     hasGradient: false,
+    hasStlPhoto: false,
     hasVector: false,
     layers: [],
     selectedLayers: [],
