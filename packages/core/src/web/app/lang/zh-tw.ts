@@ -2159,6 +2159,12 @@ const lang: ILang = {
     },
     title: '維護檢查表',
   },
+  manual_config: {
+    tab_camera: '相機',
+    tab_modules: '模組',
+    tab_print_and_cut: '精準對位',
+    title: '手動輸入',
+  },
   material_test_generator: {
     block_settings: '區塊設定',
     columns: '行',
@@ -3095,6 +3101,7 @@ const lang: ILang = {
       machines: '機器',
       maintenance_checklist: '維護檢查表',
       manage_account: '管理我的帳號',
+      manual_configuration: '手動輸入',
       material_test: '材質測試',
       minimize: '最小化',
       my_account: '我的帳號',

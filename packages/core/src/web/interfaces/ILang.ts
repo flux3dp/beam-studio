@@ -2061,6 +2061,12 @@ export interface ILang {
     >;
     title: string;
   };
+  manual_config: {
+    tab_camera: string;
+    tab_modules: string;
+    tab_print_and_cut: string;
+    title: string;
+  };
   material_test_generator: Record<
     | 'block_settings'
     | 'columns'
@@ -2995,6 +3001,7 @@ export interface ILang {
       machines: string;
       maintenance_checklist: string;
       manage_account: string;
+      manual_configuration: string;
       material_test: string;
       minimize: string;
       my_account: string;

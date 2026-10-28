@@ -52,6 +52,12 @@ export interface FisheyeCameraParametersV2 {
   is_fisheye?: boolean;
   k: number[][];
   levelingData?: Record<string, number>;
+  /**
+   * Manual bed-plane correction in mm, right/down positive: where the laser landed relative to the
+   * object seen in the preview. fluxghost adds it to every grid object point before projection.
+   * Edited in Manual Configuration; absent = [0, 0]. Rewritten (dropped) by every recalibration.
+   */
+  offset?: [number, number];
   refHeight: number;
   rvec: number[][];
   rvec_polyfit: number[][];
@@ -68,6 +74,12 @@ export interface FisheyeCameraParametersV3 {
   d: number[][];
   is_fisheye?: boolean;
   k: number[][];
+  /**
+   * Manual bed-plane correction in mm, right/down positive: where the laser landed relative to the
+   * object seen in the preview. fluxghost adds it to every grid object point before projection.
+   * Edited in Manual Configuration; absent = [0, 0]. Rewritten (dropped) by every recalibration.
+   */
+  offset?: [number, number];
   rvec: number[][];
   rvecs?: number[][][];
   tvec: number[][];
@@ -107,6 +119,17 @@ export interface FisheyeCameraParametersV4<Region = WideAngleRegion> {
   grids?: PerspectiveGrid;
   is_fisheye?: boolean;
   k: number[][];
+  /**
+   * Manual bed-plane correction in mm, right/down positive: where the laser landed relative to the
+   * object seen in the preview. fluxghost adds it to every grid object point before projection.
+   * Edited in Manual Configuration; absent = [0, 0]. Rewritten (dropped) by every recalibration.
+   */
+  offset?: [number, number];
+  /**
+   * Per-region override of `offset` for full-area preview, keyed like the polyfits. Its presence is the
+   * "per region" mode; fluxghost picks the region from the unshifted point and falls back to `offset`.
+   */
+  region_offsets?: Record<Region, [number, number]>;
   ret?: number;
   rvec: number[][];
   rvec_polyfits: Record<Region, number[][]>;
