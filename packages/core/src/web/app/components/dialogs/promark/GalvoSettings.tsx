@@ -25,6 +25,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import blockStyles from './Block.module.scss';
 import FieldBlock from './FieldBlock';
 import GalvoAxisBlock from './GalvoAxisBlock';
+import GalvoCalibrationBlock from './GalvoCalibrationBlock';
 import type { GalvoAction } from './GalvoManualBlock';
 import GalvoManualBlock from './GalvoManualBlock';
 import GalvoModuleBlock from './GalvoModuleBlock';
@@ -163,6 +164,15 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
   };
   const update = <K extends keyof GalvoConfig>(key: K, value: GalvoConfig[K]) =>
     setConfig((cur) => ({ ...cur, [key]: value }));
+  /** The calibration's suggestion lands on screen like a typed value; saving is still a choice. */
+  const applyScales = ({ scaleX, scaleY }: { scaleX: number; scaleY: number }) =>
+    setConfig((cur) => ({
+      ...cur,
+      galvoParameters: {
+        x: { ...cur.galvoParameters.x, scale: scaleX },
+        y: { ...cur.galvoParameters.y, scale: scaleY },
+      },
+    }));
   const setFieldValue: Dispatch<SetStateAction<GalvoConfig['field']>> = (value) =>
     setConfig((cur) => ({ ...cur, field: typeof value === 'function' ? value(cur.field) : value }));
 
@@ -278,6 +288,19 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
             setTuning={setTuning}
             spot={spot}
             tuning={tuning}
+          />
+        )}
+        {checkHexa2GalvoDev() && (
+          <GalvoCalibrationBlock
+            config={config}
+            device={device}
+            isInch={isInch}
+            module={module}
+            offsets={offsets}
+            onApplyScales={applyScales}
+            parameters={parameters}
+            pending={isPreviewing ? 'preview' : pending}
+            run={run}
           />
         )}
       </div>

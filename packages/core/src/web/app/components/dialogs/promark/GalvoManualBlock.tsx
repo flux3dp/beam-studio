@@ -15,7 +15,18 @@ export interface GalvoSpot {
 }
 
 /** Which action is in flight, so only that button spins and the rest simply wait. */
-export type GalvoAction = 'connect' | 'disconnect' | 'dot' | 'mark' | 'move' | 'preview';
+export type GalvoAction =
+  | 'capture'
+  | 'connect'
+  | 'coupon'
+  | 'disconnect'
+  | 'dot'
+  | 'lframe'
+  | 'mark'
+  | 'move'
+  | 'preview'
+  | 'solve'
+  | 'stitch';
 
 interface Props {
   isInch: boolean;

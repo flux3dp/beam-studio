@@ -67,6 +67,11 @@ export interface Storage {
    */
   'galvo-dev-settings'?: GalvoDevOverrides;
   /**
+   * DEVELOPMENT ONLY. Whether the galvo calibration's gantry moves approach every target from
+   * the negative side, to take the gantry's backlash out of the picture. Not sent to swiftray.
+   */
+  'galvo-fix-backlash'?: boolean;
+  /**
    * DEVELOPMENT ONLY. The near edges of the HEXA II gantry's travel, which the machine does not
    * store. Goes away with the rest of the work-range path; see helpers/device/galvoWorkRange.
    */

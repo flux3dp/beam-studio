@@ -192,6 +192,61 @@ class OpenCVWebSocket extends EventEmitter {
     });
   }
 
+  /**
+   * Solve a photographed galvo calibration coupon: the field's scale, orthogonality and
+   * residuals, measured against the L-frame ruler cut around it. Answers the result JSON and,
+   * when `params.annotate` is set, the annotated image fluxghost sends right after it. A ruler
+   * that fails its self-check comes back as a rejection with `info: 'RULER_INVALID'`.
+   */
+  async solveGalvoCoupon<T extends object>(
+    imgBlob: Blob,
+    params: object & { annotate?: boolean },
+  ): Promise<{ annotated: Blob | null; result: T }> {
+    const data = await imgBlob.arrayBuffer();
+
+    return this.enqueue(async () => {
+      await this.waitForOpen();
+
+      return new Promise((resolve, reject) => {
+        let result: null | T = null;
+
+        this.removeCommandListeners();
+        this.setDefaultErrorResponse(reject);
+        this.setDefaultFatalResponse(reject);
+        this.on('message', (response: Blob | (T & { status: string })) => {
+          if (response instanceof Blob) {
+            if (result) {
+              this.removeCommandListeners();
+              resolve({ annotated: response, result });
+            }
+
+            return;
+          }
+
+          const { status } = response;
+
+          if (status === 'continue') {
+            this.ws.send(data);
+          } else if (status === 'ok') {
+            result = response;
+
+            if (!params.annotate) {
+              this.removeCommandListeners();
+              resolve({ annotated: null, result });
+            }
+            // 'Error' (capital) is fluxghost's undefined-command reply (BAD_PARAM_TYPE)
+          } else if (['Error', 'fail', 'none'].includes(status)) {
+            this.removeCommandListeners();
+            reject(response);
+          } else {
+            console.log('strange message from /ws/opencv', response);
+          }
+        });
+        this.ws.send(`solve_galvo_coupon ${data.byteLength} ${JSON.stringify(params)}`);
+      });
+    });
+  }
+
   async sharpen(imgUrl: string, sharpness: number, radius: number): Promise<Blob> {
     // shares the socket with the other commands, so it has to take its turn: `removeCommandListeners`
     // is global, and running alongside an in-flight command would strand that command's listeners

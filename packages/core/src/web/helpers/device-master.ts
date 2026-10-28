@@ -46,7 +46,8 @@ import { getPromarkInfo } from './device/promark/promark-info';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
 
-export type TakePictureOptions = { timeout?: number; useLowResolution?: boolean };
+/** `dpmm`: ask for the corrected frame at this many px per mm instead of fluxghost's default 5. */
+export type TakePictureOptions = { dpmm?: number; timeout?: number; useLowResolution?: boolean };
 
 const deviceEventEmitter = eventEmitterFactory.createEventEmitter('device');
 
@@ -1228,6 +1229,12 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.galvoStop);
   }
 
+  async controlTaskMainboard(gcode: string) {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.controlTaskMainboard, gcode);
+  }
+
   async getControlTaskResult() {
     const controlSocket = await this.getControl();
 
@@ -1315,7 +1322,7 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.rawEndLineCheckMode);
   }
 
-  async rawMove(args: { a?: number; f?: number; x?: number; y?: number; z?: number }) {
+  async rawMove(args: { a?: number; f?: number; s?: number; x?: number; y?: number; z?: number }) {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.rawMove, args);
@@ -1730,10 +1737,7 @@ class DeviceMaster {
     return res;
   }
 
-  async takeOnePicture({
-    timeout = 30,
-    useLowResolution = false,
-  }: { timeout?: number; useLowResolution?: boolean } = {}): Promise<null | {
+  async takeOnePicture({ dpmm, timeout = 30, useLowResolution = false }: TakePictureOptions = {}): Promise<null | {
     imgBlob?: Blob;
     needCameraCableAlert?: boolean;
   }> {
@@ -1744,7 +1748,7 @@ class DeviceMaster {
 
     while (Date.now() - startTime < timeout * 1000) {
       try {
-        const res = await this.currentDevice!.camera!.oneShot(useLowResolution);
+        const res = await this.currentDevice!.camera!.oneShot(useLowResolution, dpmm);
 
         if (res) {
           return res;

@@ -431,8 +431,8 @@ class PreviewModeController {
   }
 
   // movementX, movementY in mm
-  async getPhotoAfterMoveTo(movementX: number, movementY: number) {
-    const imgUrl = await this.previewManager!.getPhotoAfterMoveTo?.(movementX, movementY);
+  async getPhotoAfterMoveTo(movementX: number, movementY: number, opts?: { dpmm?: number }) {
+    const imgUrl = await this.previewManager!.getPhotoAfterMoveTo?.(movementX, movementY, opts);
 
     return imgUrl;
   }

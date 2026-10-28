@@ -15,7 +15,8 @@ export interface PreviewManager {
 
   getCameraOffsetStandard?: () => CameraConfig;
 
-  getPhotoAfterMoveTo?: (x: number, y: number) => Promise<string>;
+  /** `opts.dpmm` asks for the frame at that resolution; left out, the frame is the preview's. */
+  getPhotoAfterMoveTo?: (x: number, y: number, opts?: { dpmm?: number }) => Promise<string>;
 
   getPreviewPosition?: (x: number, y: number, opts?: { clipByWorkArea?: boolean }) => { x: number; y: number };
 

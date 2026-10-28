@@ -1201,6 +1201,21 @@ class Control extends EventEmitter implements IControlSocket {
     return (await this.useWaitAnyResponse('stop'))?.data;
   };
 
+  /**
+   * Send one line of G-code to the mainboard from inside the control task, where raw mode is not
+   * available because the task holds the machine. Answers `ok` once the line is on its way, or
+   * `error busy running`; the mainboard's own answer comes from getControlTaskResult: `ok` with
+   * whatever it reported before the ok joined by `|`, or `fail <line>` on an error or alarm.
+   * A `M137P0` sent this way answers only once the previous move has finished.
+   */
+  controlTaskMainboard = async (gcode: string): Promise<string> => {
+    if (this.mode !== 'control_task') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return (await this.useWaitAnyResponse(`mb_exec ${gcode}`))?.data;
+  };
+
   enterRawMode = async () => {
     const res = await this.useWaitAnyResponse('task raw');
 
@@ -1468,7 +1483,11 @@ class Control extends EventEmitter implements IControlSocket {
     });
   };
 
-  rawMove = (args: { a?: number; f?: number; x?: number; y?: number; z?: number }) => {
+  /**
+   * One G1. `s` is the laser power word for a move that marks while it travels (the CO2 head in
+   * its M136P173 laser mode fires at `S` during G1); left out, the command is what it always was.
+   */
+  rawMove = (args: { a?: number; f?: number; s?: number; x?: number; y?: number; z?: number }) => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
@@ -1492,6 +1511,10 @@ class Control extends EventEmitter implements IControlSocket {
 
     if (typeof args.a !== 'undefined') {
       command += `A${Math.round(args.a * 1000) / 1000}`;
+    }
+
+    if (typeof args.s !== 'undefined') {
+      command += `S${Math.round(args.s)}`;
     }
 
     if (!this._isLineCheckMode) {

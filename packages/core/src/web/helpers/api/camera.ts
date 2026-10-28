@@ -407,9 +407,16 @@ class Camera {
     return res.status === 'ok';
   };
 
-  async sendOneShot(useLowResolution = true): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
+  /**
+   * One corrected frame. `dpmm` asks fluxghost to remap at that many px per mm instead of its
+   * default 5 (`require_frame d<dpmm>`); it is for measuring, not previewing, and wins over the
+   * low-resolution flag. Without it the command is the one every preview has always sent.
+   */
+  async sendOneShot(useLowResolution = true, dpmm?: number): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
     try {
-      this.lastRequireCommand = useLowResolution ? 'require_frame l' : 'require_frame';
+      if (dpmm) this.lastRequireCommand = `require_frame d${Math.round(dpmm)}`;
+      else this.lastRequireCommand = useLowResolution ? 'require_frame l' : 'require_frame';
+
       this.ws.send(this.lastRequireCommand);
 
       const data = await lastValueFrom(this.source.pipe(take(1)).pipe(timeout(this.imageTimeout)));
@@ -429,8 +436,11 @@ class Camera {
     }
   }
 
-  oneShot = async (useLowResolution = true): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> => {
-    return this.commandQueue.add(() => this.sendOneShot(useLowResolution));
+  oneShot = async (
+    useLowResolution = true,
+    dpmm?: number,
+  ): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> => {
+    return this.commandQueue.add(() => this.sendOneShot(useLowResolution, dpmm));
   };
 
   getLiveStreamSource(useLowResolution = false): Observable<{ imgBlob: Blob; needCameraCableAlert: boolean }> {

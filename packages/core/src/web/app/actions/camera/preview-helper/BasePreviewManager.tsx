@@ -215,16 +215,17 @@ class BasePreviewManager implements PreviewManager {
    * getPhotoAfterMoveTo
    * @param movementX x in mm
    * @param movementY y in mm
+   * @param opts passed on to the capture; a preview passes nothing and gets the usual frame
    * @returns image blob url of the photo taken
    */
-  async getPhotoAfterMoveTo(movementX: number, movementY: number): Promise<string> {
+  async getPhotoAfterMoveTo(movementX: number, movementY: number, opts: TakePictureOptions = {}): Promise<string> {
     const moveRes = await this.moveTo(movementX, movementY);
 
     if (!moveRes) {
       return null;
     }
 
-    return this.getPhotoFromMachine();
+    return this.getPhotoFromMachine(opts);
   }
 
   /**

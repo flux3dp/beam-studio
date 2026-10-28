@@ -85,10 +85,11 @@ const exec = async (payload: Record<string, unknown>, action: string): Promise<v
   expectOk(await deviceMaster.galvoExec(payload), action);
 
 /**
- * Wait for the last operation to finish. Never call this after starting a preview: that loops
- * until it is stopped, so `wait` is all it will ever answer.
+ * Wait for the last control-task operation to finish and hand back its `ok ...` answer, which
+ * for a mainboard line carries what the board reported before its ok. Never call this after
+ * starting a preview: that loops until it is stopped, so `wait` is all it will ever answer.
  */
-export const awaitGalvoResult = async (action: string): Promise<void> => {
+export const awaitControlTaskResult = async (action: string): Promise<string> => {
   const deadline = Date.now() + POLL_TIMEOUT;
 
   for (;;) {
@@ -96,7 +97,7 @@ export const awaitGalvoResult = async (action: string): Promise<void> => {
 
     const answer = await deviceMaster.getControlTaskResult();
 
-    if (answer?.startsWith('ok')) return;
+    if (answer?.startsWith('ok')) return answer;
 
     if (!answer?.startsWith('wait')) throw new Error(`${action}: ${answer ?? 'no response'}`);
 
@@ -105,6 +106,24 @@ export const awaitGalvoResult = async (action: string): Promise<void> => {
       throw new Error(`${action} timed out`);
     }
   }
+};
+
+/** Wait for the last galvo operation to finish. */
+export const awaitGalvoResult = async (action: string): Promise<void> => {
+  await awaitControlTaskResult(action);
+};
+
+/**
+ * Send one G-code line to the mainboard through the control task and wait for the board's ok.
+ * Returns whatever the board reported before that ok (the part after `ok`, trimmed), which is
+ * how a query such as `M136P311` reads back.
+ */
+export const mainboardLine = async (gcode: string, action: string): Promise<string> => {
+  expectOk(await deviceMaster.controlTaskMainboard(gcode), action);
+
+  const answer = await awaitControlTaskResult(action);
+
+  return answer.slice('ok'.length).trim();
 };
 
 /**
@@ -120,6 +139,7 @@ export const galvoFrame = async ({
   module,
   power,
   preview = false,
+  size = config.workarea,
   speed,
   tuning = {},
 }: {
@@ -127,10 +147,11 @@ export const galvoFrame = async ({
   module: GalvoModule;
   power: number;
   preview?: boolean;
+  /** Side of the square, mm, centred on the lens. Defaults to the whole field. */
+  size?: number;
   speed: number;
   tuning?: GalvoPreviewTuning;
 }): Promise<void> => {
-  const size = config.workarea;
   const half = size / 2;
 
   await exec(
@@ -224,6 +245,40 @@ export const galvoDot = async ({
       power,
     },
     'Dot',
+  );
+
+/**
+ * Mark a list of polylines, each as one stroke with the laser enabled only between its first and
+ * last point; the machine adds `leadMm` of unlit travel before and after each along the stroke's
+ * own direction, so the mark starts and ends at full speed. Nothing is cut into blocks and no
+ * gantry moves: the whole list lands at one station, which is what a calibration pattern needs.
+ */
+export const galvoPaths = async ({
+  config,
+  leadMm,
+  module,
+  paths,
+  power,
+  speed,
+}: {
+  config: GalvoConfig;
+  leadMm?: number;
+  module: GalvoModule;
+  paths: GalvoPoint[][];
+  power: number;
+  speed: number;
+}): Promise<void> =>
+  exec(
+    {
+      head: module,
+      op: 'paths',
+      optics: toGalvoOptics(config),
+      paths: paths.map((path) => path.map(({ x, y }) => [x, y])),
+      power,
+      speed,
+      ...(leadMm === undefined ? {} : { lead_mm: leadMm }),
+    },
+    'Paths',
   );
 
 /** End a preview loop and release the card. Always answers ok; leaves the red light on. */

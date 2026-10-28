@@ -92,6 +92,9 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
   stopControlTask(): Promise<string> {
     throw new Error('Method not implemented.');
   }
+  controlTaskMainboard(): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
   zSpeedLimitTestSetSpeed(speed: number): Promise<boolean> {
     throw new Error('Method not implemented.');
   }
@@ -846,7 +849,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     });
   };
 
-  rawMove = (args: { f?: number; x?: number; y?: number; z?: number }) => {
+  rawMove = (args: { f?: number; s?: number; x?: number; y?: number; z?: number }) => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }

@@ -26,6 +26,7 @@ interface IControlSocket extends EventEmitter {
   checkTaskAlive?: () => Promise<boolean>;
   connect(): Promise<void>;
   connection: null | SwiftrayClient | WrappedWebSocket;
+  controlTaskMainboard(gcode: string): Promise<string>;
   deleteDeviceSetting(name: string): Promise<unknown>;
   deleteFile(fileNameWithPath: string): Promise<unknown>;
   deviceDetailInfo(): Promise<IDeviceDetailInfo>;
@@ -81,7 +82,7 @@ interface IControlSocket extends EventEmitter {
   rawLooseMotor(fcodeVersion?: number): Promise<string>;
   rawLooseMotorOld: () => Promise<string>;
   rawMeasureHeight: (baseZ: number | undefined, timeout?: number) => Promise<number>;
-  rawMove(args: { f?: number; x?: number; y?: number; z?: number }): Promise<unknown>;
+  rawMove(args: { f?: number; s?: number; x?: number; y?: number; z?: number }): Promise<unknown>;
   rawMoveZRel(z: number): Promise<unknown>;
   rawMoveZRelToLastHome(z: number): Promise<unknown>;
   rawSet24V(on: boolean): Promise<unknown>;
