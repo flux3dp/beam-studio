@@ -22,7 +22,12 @@ import { MATERIAL_ATTRIBUTE, parseMaterial } from '@core/helpers/addOn/innerEngr
 import { applyExclusiveModePatch } from '@core/helpers/exclusiveModes';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
-import { toggleModuleAfterWorkareaChange, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import {
+  isPromarkUV,
+  postPresetChange,
+  toggleModuleAfterWorkareaChange,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import { getDefaultModule, getLayersByModule, hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
@@ -299,6 +304,13 @@ export const importBvgString = async (str: string, opts: HistoryActionOptions = 
 
     // Change modules not supported to default module of the new workarea
     toggleModuleAfterWorkareaChange();
+
+    // A UV layer's frequency has to be the one its power stands for (power is the source of truth,
+    // see writeUvPowerFrequency). A file may carry the pair out of step: saved before the rule,
+    // hand-edited, or written on another source. Nothing else re-reads the layers when the work
+    // area is unchanged, so the file is brought in line here.
+    if (isPromarkUV()) postPresetChange();
+
     presprayArea.togglePresprayArea();
     layerManager.setSelectedLayers([]);
 
