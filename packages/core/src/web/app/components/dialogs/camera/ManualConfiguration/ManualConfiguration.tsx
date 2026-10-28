@@ -12,6 +12,8 @@ import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import PrintAndCutTab from './PrintAndCutTab';
+
 export interface ManualConfigurationProps {
   device: IDeviceInfo;
   onClose: () => void;
@@ -32,7 +34,9 @@ const ManualConfiguration = ({ device, onClose }: ManualConfigurationProps): Rea
   const items = [
     ...(tabs.camera ? [{ children: null, key: 'camera', label: t.tab_camera }] : []),
     ...(tabs.modules ? [{ children: null, key: 'modules', label: t.tab_modules }] : []),
-    ...(tabs.printAndCut ? [{ children: null, key: 'printAndCut', label: t.tab_print_and_cut }] : []),
+    ...(tabs.printAndCut
+      ? [{ children: <PrintAndCutTab serial={device.serial} />, key: 'printAndCut', label: t.tab_print_and_cut }]
+      : []),
   ];
 
   return (

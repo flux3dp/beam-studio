@@ -2160,6 +2160,10 @@ const lang: ILang = {
     title: '維護檢查表',
   },
   manual_config: {
+    clear: '清除',
+    pnc_desc: '雷射相對於列印的落點，單位 mm，右、下為正。由精準對位校正量測；精準對位對齊時會以其負值移動切割。',
+    pnc_not_set: '此機器尚未儲存偏移。',
+    save_failed: '儲存失敗。',
     tab_camera: '相機',
     tab_modules: '模組',
     tab_print_and_cut: '精準對位',

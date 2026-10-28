@@ -2062,6 +2062,10 @@ export interface ILang {
     title: string;
   };
   manual_config: {
+    clear: string;
+    pnc_desc: string;
+    pnc_not_set: string;
+    save_failed: string;
     tab_camera: string;
     tab_modules: string;
     tab_print_and_cut: string;

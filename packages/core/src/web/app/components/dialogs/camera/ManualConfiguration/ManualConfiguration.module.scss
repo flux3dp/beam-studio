@@ -1,0 +1,36 @@
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.desc {
+  color: #7f7f7f;
+}
+
+.hint {
+  color: #7f7f7f;
+  font-size: 12px;
+}
+
+.inputs {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 10px 20px;
+  width: 160px;
+
+  .input {
+    width: fit-content;
+  }
+
+  .unit {
+    right: 24px;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
