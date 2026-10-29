@@ -5,10 +5,13 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Dialog from '@core/app/actions/dialog-caller';
+import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
+import { describeLensProfileKey } from '@core/app/components/dialogs/promark/useLensProfiles';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { getWarningSpeed } from '@core/app/constants/curveEngraving';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import { LaserType } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -19,6 +22,8 @@ import { getAutoFeeder } from '@core/helpers/addOn';
 import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { getDocumentLensProfile } from '@core/helpers/device/promark/lens-profiles';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
@@ -258,6 +263,45 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
   if (isPromark) {
     if (rotaryMode && !swiftrayClient.checkVersion('PROMARK_ROTARY')) {
       return false;
+    }
+
+    const lensProfile = getDocumentLensProfile(device.serial);
+
+    if (lensProfile.source === 'fallback' && !alertConfig.read('skip-lens-not-calibrated-warning')) {
+      const t = lang.promark_settings;
+      const choice = await new Promise<'cancel' | 'settings' | 'skip'>((resolve) => {
+        alertCaller.popUp({
+          buttonLabels: [t.go_to_settings, lang.global.skip],
+          callbacks: [() => resolve('settings'), () => resolve('skip')],
+          caption: t.lens_not_calibrated_caption,
+          checkbox: {
+            callbacks: [
+              () => resolve('settings'),
+              () => {
+                alertConfig.write('skip-lens-not-calibrated-warning', true);
+                resolve('skip');
+              },
+            ],
+            text: lang.alert.dont_show_again,
+          },
+          id: 'lens-not-calibrated',
+          message: sprintf(
+            t.lens_not_calibrated,
+            describeLensProfileKey(
+              lensProfile.key,
+              promarkDataStore.get(device.serial, 'info')?.laserType ?? LaserType.Desktop,
+              t,
+            ),
+          ),
+          messageIcon: 'warning',
+          onClose: () => resolve('cancel'),
+          primaryButtonIndex: 0,
+        });
+      });
+
+      if (choice === 'settings') showPromarkSettings(device);
+
+      if (choice !== 'skip') return false;
     }
 
     // Skip speed check for promark

@@ -75,7 +75,50 @@ exports[`test PromarkSettings should render correctly 1`] = `
                   class="container"
                 >
                   <div>
-                    Mock FieldBlock
+                    Mock LensProfileBlock 
+                    150
+                     
+                    false
+                     
+                    unset
+                     
+                     default
+                     not-synced
+                    <button
+                      type="button"
+                    >
+                      lens-200
+                    </button>
+                    <button
+                      type="button"
+                    >
+                      lens-70-inner
+                    </button>
+                    <button
+                      type="button"
+                    >
+                      set-default
+                    </button>
+                    <button
+                      type="button"
+                    >
+                      use-cloud
+                    </button>
+                  </div>
+                  <div>
+                    Mock FieldBlock 
+                    {"angle":0,"offsetX":0,"offsetY":0}
+                     
+                    <button
+                      type="button"
+                    >
+                      offset-6
+                    </button>
+                    <button
+                      type="button"
+                    >
+                      offset-100
+                    </button>
                   </div>
                   <div>
                     Mock RedDotBlock

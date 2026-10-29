@@ -9,7 +9,11 @@ import { UV_FREQUENCY_LIMIT, UV_POWER_LIMIT } from '@core/helpers/layer/uvPowerF
 
 import { getPromarkInfo } from './promark-info';
 
-export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel): Promise<void> => {
+/**
+ * Loads `scene` and converts it. `width` is the field size the scene was drawn for, in mm; without
+ * it the document size is used, which clips a calibration pattern drawn for another lens.
+ */
+export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel, width?: number): Promise<void> => {
   const uploadRes = await swiftrayClient.loadSVG(
     {
       data: scene,
@@ -29,7 +33,7 @@ export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel): P
   const convertRes = await swiftrayClient.convert(
     'gcode',
     { onError: () => {}, onFinished: () => {}, onProgressing: () => {} },
-    { isPromark: true, model, travelSpeed: 4000 },
+    { isPromark: true, model, travelSpeed: 4000, ...(width ? { workarea: { height: width, width } } : {}) },
   );
 
   if (!convertRes.success) {
@@ -81,7 +85,7 @@ export const loadCameraCalibrationTask = async (model: WorkAreaModel, width: num
   }
 
   scene = sprintf(scene, params);
-  await loadTaskToSwiftray(scene, model);
+  await loadTaskToSwiftray(scene, model, width);
 };
 
 export default { loadCameraCalibrationTask };

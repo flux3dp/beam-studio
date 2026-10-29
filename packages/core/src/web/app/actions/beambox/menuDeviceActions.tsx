@@ -24,6 +24,7 @@ import { Mode } from '@core/app/constants/monitor-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { backUpCalibrationData } from '@core/helpers/device/camera/backUpCalibrationData';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
+import { confirmCachedTaskLensProfile } from '@core/helpers/device/promark/cached-task-lens';
 import checkFirmware from '@core/helpers/device/updateFirmware/checkFirmware';
 import firmwareUpdater from '@core/helpers/device/updateFirmware/firmwareUpdater';
 import DeviceMaster from '@core/helpers/device-master';
@@ -331,6 +332,8 @@ export default {
       const isPromark = promarkModels.has(device.model);
       const isIdle = device.st_id <= 0;
       const previewTask = isIdle && isPromark ? exportFuncs.getCachedPromarkTask(device.serial) : undefined;
+
+      if (!(await confirmCachedTaskLensProfile(device.serial, previewTask?.lensProfileKey))) return;
 
       await MonitorController.showMonitor(
         device,

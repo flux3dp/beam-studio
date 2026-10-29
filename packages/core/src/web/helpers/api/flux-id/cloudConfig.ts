@@ -3,13 +3,23 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import i18n from '@core/helpers/i18n';
-import type { Field, GalvoParameters, RedDot } from '@core/interfaces/Promark';
+import type {
+  Field,
+  GalvoParameters,
+  LensProfile,
+  LensProfileKey,
+  PromarkInfo,
+  RedDot,
+} from '@core/interfaces/Promark';
 
 import type { ResponseWithError } from './base';
 import { axiosFluxId, formatErrorMessage, getCurrentUser } from './base';
 
 type CloudConfig = {
+  promarkLaserSource: PromarkInfo;
+  /** written only by versions before lens profiles; read by newer ones only to upgrade */
   promarkLens: { field: Field; galvoParameters: GalvoParameters; redDot: RedDot };
+  promarkLensProfiles: { defaultKey?: LensProfileKey; profiles: LensProfile[] };
 };
 export type ConfigKey = keyof CloudConfig;
 
@@ -64,9 +74,11 @@ export const readCloudConfig = async <T extends ConfigKey>(
   return config;
 };
 
-export const updateCloudConfigApi = async <T extends ConfigKey>(
-  data: BasicData<T> & { data: CloudConfig[T]; model?: WorkAreaModel },
-): Promise<void> => {
+type UpdateData<T extends ConfigKey> = BasicData<T> & { data: CloudConfig[T]; model?: WorkAreaModel };
+
+const postCloudConfig = async <T extends ConfigKey>(
+  data: UpdateData<T>,
+): Promise<{ errorMsg: string; success: boolean }> => {
   const response = (await axiosFluxId.post(
     '/machine/config/update',
     {
@@ -81,16 +93,22 @@ export const updateCloudConfigApi = async <T extends ConfigKey>(
 
   const success = !response.error && response.status === 200 && response.data?.status === 'ok';
 
+  return { errorMsg: success ? '' : (formatErrorMessage(response.error) ?? ''), success };
+};
+
+const showUpdateResult = ({ errorMsg, success }: { errorMsg: string; success: boolean }): void => {
   if (success) {
     MessageCaller.openMessage({
       content: i18n.lang.cloud_sync.sync_success,
       level: MessageLevel.SUCCESS,
     });
   } else {
-    const errorMsg = formatErrorMessage(response.error) ?? '';
-
     alertCaller.popUpError({ message: `${i18n.lang.cloud_sync.sync_failed}\n${errorMsg}` });
   }
+};
+
+export const updateCloudConfigApi = async <T extends ConfigKey>(data: UpdateData<T>): Promise<void> => {
+  showUpdateResult(await postCloudConfig(data));
 };
 
 export const updateCloudConfig = async <T extends ConfigKey>(
@@ -115,6 +133,65 @@ export const updateCloudConfig = async <T extends ConfigKey>(
       onYes: async () => {
         await updateCloudConfigApi(data);
         resolve();
+      },
+    });
+  });
+};
+
+export type CloudConfigs = Partial<CloudConfig>;
+
+/**
+ * Reads several keys of one machine in one request, without asking; resolves the saved ones, or null
+ * when the request failed. Unlike a single `promarkLens` read, the server returns only what is stored.
+ */
+export const readCloudConfigs = async (
+  { hash, keys, serialNumber }: Omit<BasicData<ConfigKey>, 'key'> & { keys: ConfigKey[] },
+  { checkHash = true }: Options = {},
+): Promise<CloudConfigs | null> => {
+  if (checkHash && !hash) return null;
+
+  const response = (await axiosFluxId.post(
+    '/machine/config/read',
+    { hashed_serial_number: hash, keys, serial_number: serialNumber },
+    { withCredentials: true },
+  )) as ResponseWithError;
+
+  if (response.error || response.status !== 200 || response.data?.status !== 'ok') {
+    return null;
+  }
+
+  return (response.data?.data as CloudConfigs) ?? {};
+};
+
+/** Uploads several keys of one machine in one request after a single confirmation; resolves whether it succeeded. */
+export const updateCloudConfigs = async (
+  {
+    configs,
+    hash,
+    model,
+    serialNumber,
+  }: Omit<BasicData<ConfigKey>, 'key'> & { configs: CloudConfigs; model?: WorkAreaModel },
+  { checkHash = true, checkLogin = true }: Options = {},
+): Promise<boolean> => {
+  if (checkHash && !hash) return false;
+
+  if (checkLogin && !getCurrentUser()) return false;
+
+  return new Promise<boolean>((resolve) => {
+    alertCaller.popUp({
+      buttonType: alertConstants.YES_NO,
+      message: i18n.lang.cloud_sync.sync_config,
+      onNo: () => resolve(false),
+      onYes: async () => {
+        const response = (await axiosFluxId.post(
+          '/machine/config/update',
+          { configs, hashed_serial_number: hash, model, serial_number: serialNumber },
+          { withCredentials: true },
+        )) as ResponseWithError;
+        const success = !response.error && response.status === 200 && response.data?.status === 'ok';
+
+        showUpdateResult({ errorMsg: success ? '' : (formatErrorMessage(response.error) ?? ''), success });
+        resolve(success);
       },
     });
   });

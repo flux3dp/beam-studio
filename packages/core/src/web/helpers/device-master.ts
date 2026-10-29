@@ -11,12 +11,10 @@ import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
 import {
   defaultField,
-  defaultGalvoParameters,
   getPromarkFieldWorksize,
   getPromarkLaserSource,
   LaserType,
 } from '@core/app/constants/promark-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
@@ -47,7 +45,7 @@ import { swiftrayClient } from './api/swiftray-client';
 import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';
 import { showBb2FirmwareWarning } from './device/bb2FirmwareWarning';
-import promarkDataStore from './device/promark/promark-data-store';
+import { applyDocumentLensProfile } from './device/promark/apply-lens-profile';
 import { getPromarkInfo } from './device/promark/promark-info';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
@@ -506,17 +504,7 @@ class DeviceMaster {
       }
 
       if (promarkModels.has(device.info.model)) {
-        const { field = defaultField, galvoParameters = defaultGalvoParameters } = promarkDataStore.get(
-          device.info.serial,
-        );
-        const { width } = getWorkarea(device.info.model);
-
-        // Always sent, defaults included: the backend keeps whatever the previous machine set, and
-        // the correction also carries the laser source it is for, so a machine without local
-        // calibration data would otherwise run with another machine's lens and source.
-        await this.setField(width, field);
-        console.log('Applying', galvoParameters);
-        await this.setGalvoParameters(galvoParameters);
+        await applyDocumentLensProfile(this, device.info);
       }
 
       Progress.popById('select-device');

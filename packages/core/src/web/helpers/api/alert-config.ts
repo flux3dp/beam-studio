@@ -9,6 +9,7 @@ export type AlertConfigKey =
   | 'skip-inner-engraving-focus-reminder'
   | 'skip-interface-tutorial'
   | 'skip-job-origin-warning'
+  | 'skip-lens-not-calibrated-warning'
   | 'skip-old-firmware-hint-2'
   | 'skip-social-media-invitation'
   | 'skip-stl-import-warning'
