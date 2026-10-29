@@ -11,6 +11,7 @@ import { getPhotoTextureUrl, photoPlaneEvents } from '@core/app/svgedit/stl/phot
 import BoundingBox from './BoundingBox';
 import { SELECTION_COLOR } from './constants';
 import { MM_TO_SCENE } from './utils/coordinates';
+import { consumeGizmoDragged, markGizmoDragged } from './utils/gizmoDrag';
 import { createLayerColorUniform, getLayerColorOffset, injectLayerColor } from './utils/photoLayerColor';
 import { updateProjectionRect } from './utils/projection';
 import { ROTATION_SNAP_RAD, snapPosition, snapScale, TRANSLATION_SNAP } from './utils/snapping';
@@ -82,6 +83,10 @@ const StlMesh = ({
       if (isLocked || !isVisible || panning) return;
 
       event.stopPropagation();
+
+      // letting go of a gizmo over this object is a click on it too, and not a selection
+      if (consumeGizmoDragged()) return;
+
       onSelect(id, event.shiftKey);
     },
     [id, isLocked, isVisible, onSelect, panning],
@@ -204,6 +209,7 @@ const StlMesh = ({
     if (!anchor || !hasDragged.current) return;
 
     hasDragged.current = false;
+    markGizmoDragged();
 
     // read the parts back rather than decomposing a matrix: the mirror lives on the child mesh, so
     // the group's own scale stays positive and means exactly what the panel shows

@@ -9,6 +9,7 @@ import type { StlObject, StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 
 import { SELECTION_COLOR } from './constants';
+import { markGizmoDragged } from './utils/gizmoDrag';
 import type { GroupDragStart } from './utils/groupTransform';
 import { commitGroupDrag, getGroupBox, getGroupDragTransforms, getUniformFactor } from './utils/groupTransform';
 import { updateProjectionRect } from './utils/projection';
@@ -121,7 +122,10 @@ const GroupTransformControls = ({ objects, panning, snapActive, snapCenter }: Pr
 
     if (!proxy || !start) return;
 
-    if (hasDragged.current) commitGroupDrag(start, getNextTransforms());
+    if (hasDragged.current) {
+      commitGroupDrag(start, getNextTransforms());
+      markGizmoDragged();
+    }
 
     dragStart.current = null;
     hasDragged.current = false;
