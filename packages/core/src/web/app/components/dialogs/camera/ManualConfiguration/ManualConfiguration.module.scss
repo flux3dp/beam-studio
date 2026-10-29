@@ -46,11 +46,12 @@
   margin-bottom: 8px;
 }
 
-// X and Y pairs, 100px inputs without steppers; they sit on one row when there is room and wrap otherwise
+// X above Y everywhere, 100px inputs without steppers: the same shape in a module card, a 3×3 cell and a
+// full-width tab, instead of wrapping only where the column is narrow
 .inputs {
   display: flex;
-  flex-wrap: wrap;
-  gap: 10px 20px;
+  flex-direction: column;
+  gap: 10px;
 
   .pair {
     display: flex;
