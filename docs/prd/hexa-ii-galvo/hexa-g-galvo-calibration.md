@@ -385,6 +385,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 13. `M136P311` 無 Q 的回報字串：文件寫 `Open laser: …, Enclosed laser: …`，值的寫法未知；目前接受 on / 1 / en… / true / high 開頭，實機看一次後收緊。
 14. `invert` 先驗的語意（§7.8）與 20 px/mm 全幅重映射的記憶體：第一張實機 coupon 確認；identity 小環找得到時先驗不會用到。
 15. ~~相機 EXIF 方向旗標~~（2026-10-29 決定）：HEXA II Galvo 頭的相機倒裝，機器端只在 JPEG 加 EXIF Orientation=3 不轉像素（`fluxmonitor/hal/camera/orientation.py`）。fluxghost 原本只有預覽路徑套 `exif_transpose`，`camera-calibration` / `camera-transform` / `opencv` 都解到倒轉的像素，相機校正算出的 k/d/rvec/tvec 與預覽不相容。改為所有讀相機像素的端點都走 `utils/camera/general.py` 的 `open_frame`（fluxghost `e26a188`）。在此之前在這顆頭上做的相機校正參數要重做（主點鏡像）。
+16. ~~`galvo_exec paths` 的 payload 大小~~（2026-10-29 決定）：coupon 的 JSON 有 66,440 bytes，而 control_task 是 binary mode，每個 recv（≤ 4096、走網路約 1400 bytes）就當一條指令，所以第一段回 `fail BAD_JSON`、其餘段變成垃圾指令並可能吃掉下一條 `mb_exec`，讓收尾卡到逾時。新增裝置端 `chunk_begin <total> <piece>` 分段協定（BeamOS `chunked.py`、`docs/api/galvo-control.md` §2），Beam Studio `control.ts` 的 `galvoExec` 超過 1024 字元時自動分段，每段等 ok。沒有改成多個 list：一張 coupon 仍是一次 TRYLOCK、一份 list。
 
 ## 12. Risks & follow-ups
 

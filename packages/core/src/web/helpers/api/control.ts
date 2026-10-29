@@ -1175,12 +1175,47 @@ class Control extends EventEmitter implements IControlSocket {
    * The payload is sent as it stands: the sub-task path hands the message to the machine verbatim,
    * so unlike `config set` there is no shlex layer to escape the quotes for.
    */
+  /**
+   * The control task reads its socket raw, one recv() per command: at most 4096 bytes, and over
+   * a real network one TCP segment. A command longer than this is sent in pieces after a
+   * `chunk_begin <total> <piece>`, each piece answered with ok and the last with the command's
+   * own reply (BeamOS control_task.py, chunked.py). Below the limit a command goes as it always
+   * has, so nothing else on this socket changes.
+   */
+  private static readonly CONTROL_TASK_FRAME_MAX = 1024;
+
+  private sendControlTaskCommand = async (command: string): Promise<string> => {
+    const piece = Control.CONTROL_TASK_FRAME_MAX;
+
+    if (command.length <= piece) return (await this.useWaitAnyResponse(command))?.data;
+
+    // The device counts bytes and the pieces are cut by character: only the same when every
+    // character is one byte. JSON.stringify of numbers and ASCII keys always is.
+    if (/[^\x20-\x7E]/.test(command)) throw new Error('Control task command must be ASCII');
+
+    const begin: string = (await this.useWaitAnyResponse(`chunk_begin ${command.length} ${piece}`))?.data ?? '';
+
+    if (!begin.startsWith('ok')) return begin;
+
+    let answer = '';
+
+    for (let start = 0; start < command.length; start += piece) {
+      answer = (await this.useWaitAnyResponse(command.slice(start, start + piece)))?.data ?? '';
+
+      const isLast = start + piece >= command.length;
+
+      if (!isLast && !answer.startsWith('ok')) return answer;
+    }
+
+    return answer;
+  };
+
   galvoExec = async (payload: unknown): Promise<string> => {
     if (this.mode !== 'control_task') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
-    return (await this.useWaitAnyResponse(`galvo_exec ${JSON.stringify(payload)}`))?.data;
+    return this.sendControlTaskCommand(`galvo_exec ${JSON.stringify(payload)}`);
   };
 
   /** End a preview loop and release the galvo card. Leaves the red light on. */
