@@ -215,6 +215,15 @@ const enableCo2 = async (home: () => Promise<unknown>, onStep?: OnStep): Promise
 /** Feed rates for the nozzle's L frame, mm/min: travel between marks, and marking. */
 const L_FRAME_TRAVEL_FEEDRATE = 6000;
 const L_FRAME_MARK_FEEDRATE = 1200;
+/**
+ * A stroke cut at the L power before the first L, outside the solver's ring (Chebyshev 82 of the
+ * centre) but on a 180 mm sheet: the first marks of the first frame on the machine came out as
+ * wide, faint smears while the rest were crisp, which is a beam that has not settled yet. Back
+ * and forth, so the tube runs for L_FRAME_WARM_UP_MM * 2 / 1200 mm/min before anything that
+ * counts.
+ */
+const L_FRAME_WARM_UP_MM = 30;
+const L_FRAME_WARM_UP_FROM_CENTRE_MM = { x: -85, y: -86 };
 
 /**
  * The S word at 100% power. It is the controller's $30, which Beam Studio has no way to read;
@@ -222,9 +231,20 @@ const L_FRAME_MARK_FEEDRATE = 1200;
  */
 export const L_FRAME_S_AT_FULL_POWER = 1000;
 
+/** Where the warm-up stroke runs, bed mm: along the top edge of the ring, left of the frame. */
+export const warmUpStroke = (center: GalvoPoint): { from: GalvoPoint; to: GalvoPoint } => {
+  const from = {
+    x: round3(center.x + L_FRAME_WARM_UP_FROM_CENTRE_MM.x),
+    y: round3(center.y + L_FRAME_WARM_UP_FROM_CENTRE_MM.y),
+  };
+
+  return { from, to: { x: round3(from.x + L_FRAME_WARM_UP_MM), y: from.y } };
+};
+
 /**
  * Cut the 8 L marks with the nozzle, in raw mode with the galvo head parked. `passes` repeats the
- * whole frame, homing before each pass so the passes land on top of each other.
+ * whole frame, homing before each pass. One pass is the default: on the machine a second pass
+ * landed 1 to 3 mm beside the first and only added a ghost of every L.
  */
 export const markLFrame = async ({
   center,
@@ -236,9 +256,10 @@ export const markLFrame = async ({
 }: Omit<MarkSite, 'offsets'> & { onStep?: OnStep; passes: number; power: number }): Promise<void> => {
   const { minX, minY } = getGantryTravelRange(model);
   const marks = buildLFrameMarks(center);
-  const unreachable = marks
-    .flatMap(({ end, start, vertex }) => [start, vertex, end])
-    .find((p) => stationProblem(model, p));
+  const warmUp = warmUpStroke(center);
+  const unreachable = [warmUp.from, warmUp.to, ...marks.flatMap(({ end, start, vertex }) => [start, vertex, end])].find(
+    (p) => stationProblem(model, p),
+  );
 
   if (unreachable) throw new Error(stationProblem(model, unreachable)!);
 
@@ -265,6 +286,19 @@ export const markLFrame = async ({
       if (pass > 0) await deviceMaster.rawHome();
 
       let from: GalvoPoint = { x: 0, y: 0 };
+
+      if (pass === 0) {
+        onStep?.('Warming the laser up');
+
+        for (const point of approachPoints(warmUp.from, { fix: fixBacklash, from, min: { x: minX, y: minY } })) {
+          await deviceMaster.rawMove({ f: L_FRAME_TRAVEL_FEEDRATE, s: 0, x: point.x, y: point.y });
+        }
+
+        await deviceMaster.rawMove({ f: L_FRAME_MARK_FEEDRATE, s, x: warmUp.to.x, y: warmUp.to.y });
+        await deviceMaster.rawMove({ f: L_FRAME_MARK_FEEDRATE, s, x: warmUp.from.x, y: warmUp.from.y });
+        from = warmUp.from;
+        onStep?.(`Cutting the L frame, pass ${pass + 1}/${passes}`);
+      }
 
       for (const { end, start, vertex } of marks) {
         for (const point of approachPoints(start, { fix: fixBacklash, from, min: { x: minX, y: minY } })) {
