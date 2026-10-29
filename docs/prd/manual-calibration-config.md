@@ -182,7 +182,10 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
   1 mm further **left** on the canvas (it was drawn too far right). Verified on fbm2 (§12).
 - Block titles: "Region Preview Offset" and "Wide-Angle Preview Offset" when both exist (bb2 / hx2 / fbm2),
   "Preview Offset" when there is only one (ado1, Promark); the legacy block is "Camera Offset".
-- The wide-angle block (fbm2, and bb2 / hx2 when `wide-angle.json` exists) edits `region_offsets` with a
+- The wide-angle block (fbm2 and hx2 always, the camera is standard there; bb2 only when
+  `getWideAngleCameraData` finds it: firmware `BB2_WIDE_ANGLE_CAMERA`, camera count ≥ 2 — a bb2 without it
+  shows no wide-angle block, one with the camera but no `wide-angle.json` says calibrate first) edits
+  `region_offsets` with a
   Segmented "One offset / Per region". One offset writes the same pair into all nine regions; a stored
   table whose nine pairs are equal loads as one offset. Switching to per region prefills the nine cells
   (3×3 like the bed, topLeft … bottomRight) with the single value. The region block edits `offset`; the
@@ -377,6 +380,11 @@ Ship order: fluxghost tag → bump in beam-studio CD → PR A.
    rare; an old backend ignores the field.
 2. ~~D2 Offset applied in Beam Studio (grid shift) or fluxghost~~ — **fluxghost**, decided 2026-10-28:
    covers V2 Ador and keeps one implementation for all versions.
+   Revisited 2026-10-29, kept. A grid shift only exists for V3 (V2 builds its grid inside fluxghost, V4 reads
+   it from the params file). The real Beam Studio alternative is translating the **warped** output by −offset
+   (it is already in bed mm, so this is exactly equivalent; per region = nine clipped draws with the same seams),
+   which would drop the fluxghost release dependency but touch every preview manager's draw / crop path.
+   Worth doing only if old-backend users become a problem; the stored fields would stay as they are.
 3. ~~D3 Print and Cut → region preview as a checkbox or an import~~ — **import button**, decided
    2026-10-28: no runtime flag, no double-apply paths in `alignByCamera` / the PnC calibration.
 4. ~~D4 Modal during preview~~ — **allow, applies next session**, decided 2026-10-28: zero code, since

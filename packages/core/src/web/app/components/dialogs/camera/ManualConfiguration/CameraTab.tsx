@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
-import { legacyBeamSeriesModels, modelsWithWideAngleCamera, promarkModels } from '@core/app/actions/beambox/constant';
+import { legacyBeamSeriesModels, promarkModels } from '@core/app/actions/beambox/constant';
+import { getWideAngleCameraData } from '@core/app/actions/camera/preview-helper/getWideAngleCameraData';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
@@ -30,8 +31,16 @@ const CameraTab = ({ device }: CameraTabProps): React.JSX.Element => {
   const { model, serial } = device;
   const isLegacy = legacyBeamSeriesModels.has(model);
   const isPromark = promarkModels.has(model);
-  const hasWideAngle = modelsWithWideAngleCamera.includes(model) || model === 'fbm2';
+  // the wide-angle camera is standard on fbm2 and hx2 but optional on bb2: there the same probe the preview
+  // uses (firmware, camera count) decides whether the wide-angle block exists at all
+  const [hasWideAngle, setHasWideAngle] = useState(model === 'fbm2' || model === 'fhx2rf');
   const pnc = useManualConfigStore((state) => state.pnc) ?? undefined;
+
+  useEffect(() => {
+    if (model === 'fbb2') {
+      getWideAngleCameraData(device).then(({ hasWideAngleCamera }) => setHasWideAngle(hasWideAngleCamera));
+    }
+  }, [device, model]);
 
   // a manual save keeps the Print and Cut offset (unlike a calibration): only a save that applied the pnc
   // toggle clears it, through onPncApplied, since the offset absorbed it then
