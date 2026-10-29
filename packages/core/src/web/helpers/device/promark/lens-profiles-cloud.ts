@@ -2,7 +2,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { readCloudConfigs, updateCloudConfigs } from '@core/helpers/api/flux-id/cloudConfig';
 import type { LensProfile, LensProfileKey, PromarkInfo, PromarkStore } from '@core/interfaces/Promark';
 
-import type { LensParameters } from './lens-profiles';
+import type { LensParameters, ResolvedLensProfile } from './lens-profiles';
 import { isSameLensParameters, isSameLensProfileKey } from './lens-profiles';
 
 /**
@@ -58,13 +58,14 @@ export interface LensCloudDifferences {
 
 /**
  * Where the cloud differs from what is saved locally. A lens only saved locally is not a difference,
- * since there is nothing in the cloud to use instead.
+ * since there is nothing in the cloud to use instead. A lens only saved in the cloud is one even
+ * when its values match what this computer falls back to: saved here, it stops following the default.
  */
 export const getLensCloudDifferences = (
   cloud: LensCloudData,
   store: PromarkStore,
   keys: LensProfileKey[],
-  getLocal: (key: LensProfileKey) => LensParameters,
+  getLocal: (key: LensProfileKey) => ResolvedLensProfile,
 ): LensCloudDifferences => {
   if (!cloud.profiles) {
     return {
@@ -85,7 +86,11 @@ export const getLensCloudDifferences = (
     keys: keys.filter((key) => {
       const profile = profiles.find((p) => isSameLensProfileKey(p, key));
 
-      return profile && !isSameLensParameters(profile, getLocal(key));
+      if (!profile) return false;
+
+      const local = getLocal(key);
+
+      return local.source !== 'exact' || !isSameLensParameters(profile, local);
     }),
     legacy: false,
   };

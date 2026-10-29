@@ -140,6 +140,9 @@ export const useLensProfiles = ({
   const [lensKey, setLensKey] = useState<LensProfileKey>(initialKey);
   // values shown for each visited lens, keyed by `getLensProfileId`
   const [drafts, setDrafts] = useState<Record<string, FullLensParameters>>({});
+  // lenses whose draft was taken from the cloud: saved even when it matches what the lens inherits,
+  // since the cloud holds them as their own profiles
+  const [cloudKeys, setCloudKeys] = useState<LensProfileKey[]>([]);
   // a default saved under another laser type counts as no default
   const [defaultKey, setDefaultKey] = useState<LensProfileKey | undefined>(
     initialDefaultKey ?? getAvailableDefaultKey(store, info.laserType),
@@ -162,9 +165,16 @@ export const useLensProfiles = ({
     (key: LensProfileKey): boolean => {
       const draft = drafts[getLensProfileId(key)];
 
-      return Boolean(draft) && !isSameLensParameters(draft, getSaved(key));
+      if (!draft) return false;
+
+      return cloudKeys.some((k) => isSameLensProfileKey(k, key)) || !isSameLensParameters(draft, getSaved(key));
     },
-    [drafts, getSaved],
+    [cloudKeys, drafts, getSaved],
+  );
+  const addCloudKey = useCallback(
+    (key: LensProfileKey) =>
+      setCloudKeys((prev) => (prev.some((k) => isSameLensProfileKey(k, key)) ? prev : [...prev, key])),
+    [],
   );
 
   useEffect(() => {
@@ -179,7 +189,7 @@ export const useLensProfiles = ({
 
       if (data) {
         const differences = getLensCloudDifferences(data, store, keys, (key) =>
-          withDefaultParameters(resolveLensProfile(store, key, laserType)),
+          resolveLensProfile(store, key, laserType),
         );
 
         if (hasLensCloudDifferences(differences) && (await askUseCloud(differences, laserType)) && !cancelled) {
@@ -196,6 +206,7 @@ export const useLensProfiles = ({
 
             return next;
           });
+          differences.keys.forEach(addCloudKey);
 
           if (differences.defaultKey) setDefaultKey(data.defaultKey);
         }
@@ -209,7 +220,7 @@ export const useLensProfiles = ({
     return () => {
       cancelled = true;
     };
-  }, [hashedSerial, keys, laserType, serial, store]);
+  }, [addCloudKey, hashedSerial, keys, laserType, serial, store]);
 
   const updateCurrent = useCallback(
     <K extends keyof FullLensParameters>(name: K, action: SetStateAction<FullLensParameters[K]>) => {
@@ -298,6 +309,7 @@ export const useLensProfiles = ({
     applyCloudParameters: () => {
       if (cloudParameters) {
         setDrafts((prev) => ({ ...prev, [getLensProfileId(lensKey)]: withDefaultParameters(cloudParameters) }));
+        addCloudKey(lensKey);
       }
     },
     canUseCloud: isCloudChecked && Boolean(cloudParameters) && !isSynced,

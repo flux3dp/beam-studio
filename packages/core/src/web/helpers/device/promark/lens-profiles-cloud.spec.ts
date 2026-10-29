@@ -96,6 +96,24 @@ describe('test lens-profiles-cloud', () => {
     expect(hasLensCloudDifferences(differences)).toBe(true);
   });
 
+  test('a lens only saved in the cloud is a difference even when it matches what the lens inherits', () => {
+    // inner70 is not saved locally and inherits fieldA from the default; the cloud holds it on its own
+    const differences = getLensCloudDifferences(
+      { defaultKey: flat70, profiles: [{ ...inner70, field: fieldA }] },
+      store,
+      keys,
+      getLocal,
+    );
+
+    expect(differences.keys).toEqual([inner70]);
+    // with no local data at all, a cloud profile equal to the factory values is still a difference
+    expect(
+      getLensCloudDifferences({ defaultKey: flat70, profiles: [{ ...flat200 }] }, {}, keys, (key) =>
+        resolveLensProfile({}, key, LaserType.UV),
+      ).keys,
+    ).toEqual([flat200]);
+  });
+
   test('the same cloud copy has no difference', () => {
     const differences = getLensCloudDifferences(
       { defaultKey: flat70, profiles: [{ ...flat70, field: fieldA }] },
