@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | 進行中（2026-10-22）：P2-2 3D 多選已實作（框選除外，手勢待定）；P2-3 照片轉 3D 的 Beam Studio、Swiftray、flux-id 已實作（flux-id 只做了靜態檢查，§11）；P2-4 填充上下端面已實作；P2-5、P2-7 已完成。以上都待上機確認 |
+| **Status** | 進行中（2026-10-22）：P2-2 3D 多選已實作（框選除外，手勢待定）；P2-3 照片轉 3D 的 Beam Studio、Swiftray、flux-id 已實作（flux-id 只做了靜態檢查，§11）；P2-4 填充水平面已實作；P2-5、P2-7 已完成。以上都待上機確認 |
 | **Author** | EstherFu（整理：Claude） |
 | **Created** | 2026-10-19 |
 | **Target product** | Beam Studio 桌面版（Promark `fpm1` UV） |
@@ -25,7 +25,7 @@ Phase 2 有七個新項目，加上 Phase 1 延續下來的三項。原本的 P2
 | ~~P2-1~~ | ~~同一台機器保存多組場鏡參數~~ → 移到 [`promark-lens-profiles.md`](../promark-lens-profiles.md)（2026-10-19） | — | 新增（併入原 P2-6「UV 70mm 場域大小」） |
 | P2-2 | **3D 多選** | Beam Studio | 原 P2-1 |
 | P2-3 | **2D 照片轉 3D 點雲**（可選去背 + Depth Anything V3 Mono，扣點 0.06）。Beam Studio、Swiftray、flux-id 已實作（2026-10-22） | Beam Studio、flux-id、Swiftray | 原 P2-2 |
-| P2-4 | 輪廓打線「**填充上下端面**」，已實作（2026-10-22） | Beam Studio、Swiftray | 原 P2-7 |
+| P2-4 | 輪廓打線「**填充水平面**」，已實作（2026-10-22） | Beam Studio、Swiftray | 原 P2-7 |
 | P2-5 | ~~三個頻率超出規格的預設參數重測~~ 已完成（2026-10-22）：維持 40kHz；PLA 加每行停留 | Beam Studio | 原 P2-8 |
 | P2-6 | 打散掃描順序效果測試 | 測試 | 原 P2-4 的一部分 |
 | P2-7 | ~~`machine_z_bucket` 調整~~ 已完成：預設 0.01mm（Phase 1，`af385ca`）；打線切片不分桶（2026-10-22，Swiftray `2b8a787`） | Beam Studio、Swiftray | 新增 |
@@ -65,7 +65,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 
 - 3D 物件可以多選並整體編輯。
 - 使用者匯入照片後，一個按鈕就能轉成可內雕的點雲，參數可以事後調整、不重複扣點。
-- 輪廓打線的物件可以把上下端面填滿。
+- 輪廓打線的物件可以把水平面填滿。
 - 縮短打點工作的 Z 移動時間，不影響打線。
 
 ### 3.2 Non-goals
@@ -120,11 +120,11 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - undo 一次回到轉換前的照片平面。
   - 已轉換的物件不再顯示「轉 3D」。
 
-### P2-4 填充上下端面
+### P2-4 填充水平面
 
 依需求規格（2026-10-19）：
 
-- 操作：輪廓打線的圖層打開「填充上下端面」，出現「填充間隔」(mm)。
+- 操作：輪廓打線的圖層打開「填充水平面」，出現「填充間隔」(mm)。
 - 結果：
   - 關閉時與現有結果完全相同，填充間隔欄位隱藏。
   - 開啟時保留原本的輪廓路徑，另外產生頂面與底面的填充；填充範圍依模型實際幾何計算；填充內縮、不重複雕刻輪廓。
@@ -179,7 +179,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 | Swiftray 點雲（`StlPlacement::GeometryKind::PointCloud`） | 多了過近點過濾；照片平面（photo）、mesh 打點不過濾 |
 | Swiftray 圖層解析（`my_qsvg_handler_qt6.cpp`、`Layer`） | 只多讀 `data-stl-fill-caps`、`data-stl-cap-interval`，其他圖層參數不變 |
 | `layer-config-helper.ts`（`innerEngravingConfigKeys`、`innerEngravingDefaults`、`booleanConfig`、`timeRelatedConfigs`）、`ILayerConfig`、`paramsLabel.ts` | 新增 `stlFillCaps`、`stlCapInterval`，一樣只在內雕模式寫入；不在 `presetRelatedConfigs`；2D 圖層不帶 |
-| `ConfigPanel`、`getInnerEngravingBlocks` | 打線模式多了填充上下端面開關與間隔；點模式、2D 圖層面板不變 |
+| `ConfigPanel`、`getInnerEngravingBlocks` | 打線模式多了填充水平面開關與間隔；點模式、2D 圖層面板不變 |
 | `sanitize.js` | `g` 清單加 `data-stl-fill-caps`、`data-stl-cap-interval`；`image` 清單加 `data-stl-depth*` |
 | `ai-image-process.ts`（`processImageWithAi` 拆出共用的 `sendAiRequest`，新增 `processImageWithAiJson`） | 去背、AI 放大的登入、點數、提醒、錯誤處理與回傳 PNG 不變 |
 | `beam-file-helper.ts`（block 8）、`helpers/file/export/utils/beam.ts`、`stl/sources.ts` | 沒有照片轉 3D 物件的檔案 bytes 不變（header 多一個 0 長度欄位除外）；block 7 不再是最後一個區塊，舊版讀到 block 8 時停止，點雲仍完整 |
@@ -313,7 +313,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 耗時：dither 0.7s、銳化 0.5s、邊緣處理 0.4s、投影 0.6s，合計約 2.5s。
   - Jest（jsdom + ts-jest）裡約慢 50 倍，只能拿來測正確性。
 
-### 6.3 P2-4 填充上下端面
+### 6.3 P2-4 填充水平面
 
 - **圖層參數**（2026-10-22 實作）：開關 `stlFillCaps`（`data-stl-fill-caps`），間隔另開 `stlCapInterval`（`data-stl-cap-interval`，預設 `DEFAULT_CAP_INTERVAL` 0.01mm，範圍 `CAP_INTERVAL_LIMIT` 0.0001–100mm，同 2D 填充間隔），兩者都已加進 `sanitize.js` 的 `g` 清單（§10 #15）。
 - **顯示位置**：圖層面板打線模式下，層間距之後（`FillCapsBlock`，間隔欄只在開啟或多選混合時出現，`getInnerEngravingBlocks` 的 `fillCaps` / `capInterval`）。
@@ -392,7 +392,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 |---|---|---|
 | PR-B | P2-2 3D 多選 | Beam Studio |
 | PR-C | P2-3 照片轉 3D | Beam Studio、flux-id、Swiftray（過近點過濾） |
-| PR-D | P2-4 填充上下端面 | Beam Studio、Swiftray |
+| PR-D | P2-4 填充水平面 | Beam Studio、Swiftray |
 | PR-E | P2-5 預設參數、每行停留與打散掃描順序開放 | Beam Studio |
 
 ---
@@ -412,8 +412,8 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 12. ~~可調參數放物件還是圖層？~~ 2026-10-19：點間距沿用圖層，深度（Z 軸厚度）與銳化放物件。
 13. ~~確認視窗要不要提供選項？~~ 2026-10-19：提供「是否去背」與「銳化強度、半徑」，其他參數固定。是否加上去背結果預覽仍待定（2026-10-22 未做）。
 
-**P2-4 填充上下端面**
-14. 「端面」的定義：**暫定（2026-10-22，依建議值實作，待確認）**：以法向量判斷，傾斜不超過 1° 的朝上或朝下面都算，所以階梯形物件中間的水平面也算；兩個 shell 貼合處不算（§6.3）。
+**P2-4 填充水平面**
+14. 「端面」的定義：**暫定（2026-10-22，依建議值實作，待確認）**：以法向量判斷，傾斜不超過 1° 的朝上或朝下面都算，所以階梯形物件中間的水平面也算；兩個 shell 貼合處不算（§6.3）。2026-10-29：定義不變，功能改名為「填充水平面」（en `Fill Horizontal Faces`，23 種語言同步），提示補上階梯形物件中間平面的說明，避免「上下端面」被理解成只有最頂與最底兩面；參數名 `stlFillCaps` / `data-stl-fill-caps` 不變。
 15. 填充間隔：**暫定（2026-10-22，依建議值實作，待確認）**：另開 `stlCapInterval`（只影響端面，符合規格「關閉後再開恢復原本的值」），開關與間隔都放圖層；不屬於預設參數。
 
 **P2-5**
@@ -470,7 +470,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 - **手動測試**：§4 的每個情境；Desktop / MOPA 跑一次 §5 的回歸合約。
 - **硬體測試**：
   - 照片轉 3D 實際雕刻，比較收邊 0 / 2 / 4 / 6mm。
-  - 填充上下端面的方塊、圓柱，以及不同填充間隔。
+  - 填充水平面的方塊、圓柱，以及不同填充間隔。
   - PLA 每行停留 50000µs 的成品。
   - UV 70mm 以 worksize 70 / 75 各校正一次，比較標準圖形尺寸。
   - 打散掃描順序開 / 關的熱累積。

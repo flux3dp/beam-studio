@@ -17,8 +17,8 @@ import styles from './Block.module.scss';
 import initState from './initState';
 
 /**
- * Inner engraving, line mode: besides the slice contours, also fill the faces that look straight up or
- * down, at the face fill interval.
+ * Inner engraving, line mode: besides the slice contours, also fill every face that looks straight up
+ * or down (the flat steps of a stepped object included), at the face fill interval.
  *
  * Not part of a preset: it is a choice about the shape, not the material, so the layer keeps its preset
  * and applying another preset keeps it.
