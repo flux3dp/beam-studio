@@ -73,7 +73,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
       previewTask.current = await generateCalibrationTaskString({ width });
     }
 
-    await loadTaskToSwiftray(previewTask.current, model);
+    await loadTaskToSwiftray(previewTask.current, model, width);
   }, [model, width]);
 
   useEffect(() => {
@@ -85,7 +85,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
       markTask.current = await generateCalibrationTaskString({ power, speed, width });
     }
 
-    await loadTaskToSwiftray(markTask.current, model);
+    await loadTaskToSwiftray(markTask.current, model, width);
   }, [model, width, power, speed]);
 
   const handleUpdateParameter = async (shouldApplyRedDot = false) => {

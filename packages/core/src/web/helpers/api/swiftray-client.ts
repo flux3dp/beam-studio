@@ -467,6 +467,8 @@ class SwiftrayClient extends EventEmitter {
       shouldUseFastGradient?: boolean;
       travelSpeed?: number;
       useActualWorkarea?: boolean;
+      /** The size to convert for, in mm, instead of the one the document gives `model` (e.g. a Promark lens being calibrated) */
+      workarea?: { height: number; width: number };
     },
   ): Promise<{
     error?: ErrorObject;
@@ -476,10 +478,13 @@ class SwiftrayClient extends EventEmitter {
     let height: number;
     let width: number;
 
-    const workarea = getWorkarea(convertOptions.model);
+    const { workarea: workareaOverride, ...options } = convertOptions;
+    const workarea = getWorkarea(options.model);
     const deviceHeight = workarea.displayHeight || workarea.height;
 
-    if (convertOptions.useActualWorkarea) {
+    if (workareaOverride) {
+      ({ height, width } = workareaOverride);
+    } else if (options.useActualWorkarea) {
       width = workareaManager.width / constant.dpmm;
       height =
         workareaManager.expansionType === ExpansionType.PASS_THROUGH
@@ -511,7 +516,7 @@ class SwiftrayClient extends EventEmitter {
           height,
           width,
         },
-        ...convertOptions,
+        ...options,
       },
       [
         { handler: eventListeners.onProgressing, type: 'progress' },

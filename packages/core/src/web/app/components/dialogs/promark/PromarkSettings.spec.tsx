@@ -205,7 +205,7 @@ describe('test PromarkSettings', () => {
       width: 150,
     });
     expect(mockLoadTaskToSwiftray).toHaveBeenCalledTimes(1);
-    expect(mockLoadTaskToSwiftray).toHaveBeenCalledWith('task', 'fpm1');
+    expect(mockLoadTaskToSwiftray).toHaveBeenCalledWith('task', 'fpm1', 150);
     expect(mockStartFraming).toHaveBeenCalledTimes(1);
     expect(mockStopFraming).not.toHaveBeenCalled();
     await act(async () => fireEvent.click(previewBtn));
@@ -229,7 +229,7 @@ describe('test PromarkSettings', () => {
       width: 150,
     });
     expect(mockLoadTaskToSwiftray).toHaveBeenCalledTimes(1);
-    expect(mockLoadTaskToSwiftray).toHaveBeenCalledWith('task', 'fpm1');
+    expect(mockLoadTaskToSwiftray).toHaveBeenCalledWith('task', 'fpm1', 150);
     expect(mockDoPromarkCalibration).toHaveBeenCalledTimes(1);
     expect(mockStartFraming).not.toHaveBeenCalled();
   });
@@ -449,6 +449,34 @@ describe('test PromarkSettings', () => {
         expect(mockPopUp.mock.lastCall[0].message).toContain('70 mm・Inner Engraving、Default lens');
         expect(getByText(`Mock FieldBlock ${JSON.stringify(cloudField)}`, { exact: false })).toBeInTheDocument();
         expect(mockPromarkUpdate).not.toHaveBeenCalled();
+      });
+
+      test('an accepted cloud lens is saved even when its values match what it would inherit', async () => {
+        // nothing local; the cloud default is the 70 mm inner lens and 200 mm holds the factory values on its own
+        mockPromarkGet.mockReturnValue({ info: initData.info });
+        mockReadLensCloudData.mockResolvedValue({
+          ...cloud,
+          profiles: [...cloud.profiles, { field: factoryField, innerEngraving: false, workarea: 200 }],
+        });
+        mockPopUp.mockImplementation(({ onYes }) => onYes());
+
+        const { findByText, getByText } = render(
+          <PromarkSettings device={mockDevice} initData={{ info: initData.info }} onClose={mockOnClose} />,
+        );
+
+        expect(await findByText(/Mock LensProfileBlock 70 true edited\s+default synced/)).toBeInTheDocument();
+        expect(mockPopUp.mock.lastCall[0].message).toContain('70 mm・Inner Engraving、200 mm・Flat');
+        fireEvent.click(getByText('lens-200'));
+        expect(getByText(/Mock LensProfileBlock 200 false edited\s+synced/)).toBeInTheDocument();
+        // cloudField is outside the common range, so saving asks first
+        mockPopUp.mockImplementation(({ onConfirm }) => onConfirm());
+        await act(async () => fireEvent.click(await findByText('Save')));
+
+        // 200 mm keeps its own factory values instead of following the default's cloudField later on
+        expect(savedLenses()).toEqual([
+          expect.objectContaining({ field: factoryField, innerEngraving: false, workarea: 200 }),
+          expect.objectContaining({ field: cloudField, innerEngraving: true, workarea: 70 }),
+        ]);
       });
 
       test('after declining, the cloud parameters can be used per lens', async () => {
