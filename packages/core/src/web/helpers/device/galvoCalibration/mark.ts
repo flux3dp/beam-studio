@@ -157,6 +157,61 @@ const CO2_WORK_ON = ['M136P173', 'M136P259Q15', 'M136P310Q0', 'M136P311Q1'];
 /** The player's tail: enclosed laser off, 24 V off. */
 const CO2_WORK_OFF = ['M136P311Q0', 'M136P174'];
 
+const delay = (ms: number): Promise<void> => new Promise((resolve) => setTimeout(resolve, ms));
+
+const sendCo2WorkOn = async (): Promise<void> => {
+  for (const line of CO2_WORK_ON) {
+    const reply = await deviceMaster.rawGcode(line);
+
+    console.log(`Galvo calibration: ${line} -> ${reply.trim()}`);
+  }
+};
+
+/**
+ * What the board says about the enclosed laser enable, read back in raw mode: true, false, or
+ * null when the reply carried no `Enclosed laser:` field to read.
+ */
+const readCo2Enabled = async (): Promise<boolean | null> => {
+  const report = await deviceMaster.rawGcode('M136P311');
+
+  console.log(`Galvo calibration: M136P311 -> ${report.trim()}`);
+
+  const enclosed = /enclosed laser:\s*([^,|\r\n]+)/i.exec(report)?.[1].trim();
+
+  if (!enclosed) return null;
+
+  return /^(1|on|en|true|high)/i.test(enclosed);
+};
+
+/**
+ * Enable the CO2 laser and make sure it took. The second L frame of a session has moved without
+ * cutting: its 24 V was switched off at the end of the first, and the enable that follows the
+ * switch-on straight away may land before the rail is up. So the enable goes out before homing
+ * (as in a job, where the transient list precedes everything) to give it that time, is read back
+ * afterwards, and is sent once more after a pause when the board says it is still off.
+ */
+const enableCo2 = async (home: () => Promise<unknown>, onStep?: OnStep): Promise<void> => {
+  onStep?.('Enabling the CO2 laser');
+  await sendCo2WorkOn();
+  onStep?.('Homing');
+  await home();
+
+  let enabled = await readCo2Enabled();
+
+  if (enabled === false) {
+    onStep?.('The CO2 laser did not enable, trying again');
+    await delay(1000);
+    await sendCo2WorkOn();
+    enabled = await readCo2Enabled();
+  }
+
+  if (enabled === false) {
+    throw new Error('The CO2 laser did not enable (M136P311 still reports it off), so the frame would not cut');
+  }
+
+  if (enabled === null) console.warn('Galvo calibration: M136P311 gave nothing to read the CO2 enable from');
+};
+
 /** Feed rates for the nozzle's L frame, mm/min: travel between marks, and marking. */
 const L_FRAME_TRAVEL_FEEDRATE = 6000;
 const L_FRAME_MARK_FEEDRATE = 1200;
@@ -195,16 +250,11 @@ export const markLFrame = async ({
   let pump = false;
 
   try {
-    onStep?.('Homing');
     await deviceMaster.enterRawMode();
-    await deviceMaster.rawHome();
     await deviceMaster.rawStartLineCheckMode();
     lineCheck = true;
-    onStep?.('Enabling the CO2 laser');
-
-    for (const line of CO2_WORK_ON) await deviceMaster.rawGcode(line);
-
     laserMode = true;
+    await enableCo2(() => deviceMaster.rawHome(), onStep);
     await deviceMaster.rawSetAirPump(true);
     pump = true;
     await deviceMaster.rawSetLaser({ on: true, s: 0 });
