@@ -32,6 +32,8 @@ export interface FisheyeOffsetBlockProps {
    * `regions`: the wide-angle preview's nine `region_offsets`, edited as one value or per region.
    */
   kind: 'offset' | 'regions';
+  /** called after a save made with the pnc toggle on: the offset absorbed pnc, so the caller clears it */
+  onPncApplied?: () => Promise<void>;
   /** the stored Print and Cut offset; when given, a toggle previews `stored + pnc` as the value to save */
   pnc?: PncOffset;
   source: ParamsSource;
@@ -43,7 +45,14 @@ export interface FisheyeOffsetBlockProps {
  * points before projection (docs/prd/manual-calibration-config.md §7.3); the params file is written whole
  * by the shared source, this block only patches its field.
  */
-const FisheyeOffsetBlock = ({ id, kind, pnc, source, title }: FisheyeOffsetBlockProps): React.JSX.Element => {
+const FisheyeOffsetBlock = ({
+  id,
+  kind,
+  onPncApplied,
+  pnc,
+  source,
+  title,
+}: FisheyeOffsetBlockProps): React.JSX.Element => {
   const {
     global: tGlobal,
     manual_config: t,
@@ -99,7 +108,11 @@ const FisheyeOffsetBlock = ({ id, kind, pnc, source, title }: FisheyeOffsetBlock
       if (kind === 'offset') {
         await source.save({ offset: [value.x, value.y] });
         setStored({ value });
-        setUsePnc(false); // the write cleared pnc.json, the toggle has nothing left to apply
+
+        if (usePnc) {
+          await onPncApplied?.();
+          setUsePnc(false);
+        }
       } else {
         const next = nextRegions();
 
@@ -116,6 +129,18 @@ const FisheyeOffsetBlock = ({ id, kind, pnc, source, title }: FisheyeOffsetBlock
   };
 
   useRegisterSaver(id, changed, handleSave);
+
+  // the Print and Cut tab may save or clear pnc while the toggle is on: follow it
+  useEffect(() => {
+    if (!usePnc) return;
+
+    if (pnc) {
+      setValue({ x: stored.value.x + pnc.x, y: stored.value.y + pnc.y });
+    } else {
+      setUsePnc(false);
+      setValue(stored.value);
+    }
+  }, [pnc, stored.value, usePnc]);
 
   // on: drop unsaved edits and show what the machine holds plus the residual the vernier measured; off: back to stored
   const togglePnc = (on: boolean) => {

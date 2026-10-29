@@ -142,19 +142,20 @@ UI 的「精準對位」即 Print and Cut。
   （訊息同 `calibrate_camera_before_calibrate_modules`）。
 - 儲存時將參數連同 `offset`（分區時再加 `region_offsets`）用當初校正用的同一個寫入者寫回
   （`setFisheyeConfig`、`uploadJson('fisheye','wide-angle.json')`、`promarkDataStore.set`）。其他欄位除 `setFisheyeConfig`
-  既有的數字捨入外一律不動。儲存會清除 pnc.json（既有規則，經 `setFisheyeConfig`；廣角與 Promark 寫入者需明確呼叫 `clearPncOffset`）。
-- **正負號**：偏移 = 雷射相對於預覽中所見物件的落點，右/下為正（與 `PncOffset` 同一慣例）。儲存 X = +1 後，下一次預覽該物件在畫布上比先前右移 1 mm。
-  每個相機家族各做一次實機確認（§12）。
+  既有的數字捨入外一律不動。儲存**不會**清除 pnc.json（`setFisheyeConfig(…, { clearPnc: false })`，與校正不同）：只有打開精準對位切換後的儲存會清除，因為偏移已把 pnc 吸收進去。單純手動修改後留下的 pnc 可能過時，由使用者自行判斷（需求方 2026-10-29 決定）。
+- **正負號**：偏移 = 雷射相對於預覽中所見物件的落點，右/下為正（與 `PncOffset` 同一慣例）；說明文字寫成「預覽結果相對於物件的位置」，數值相同。
+  儲存 X = +1 後，下一次預覽該物件在畫布上**左移** 1 mm（先前畫得太右）。fbm2 實機確認（§12）。
+- 區塊標題：兩者並存時（bb2 / hx2 / fbm2）叫「局部預覽偏移」與「廣角預覽偏移」，只有一個時（ado1、Promark）叫「預覽偏移」；舊款區塊叫「相機偏移」。
 - 廣角區塊（fbm2，以及有 `wide-angle.json` 的 bb2 / hx2）編輯 `region_offsets`，用 Segmented「單一 / 分區」切換。單一會把同一組值寫進九區；
   讀到九區相同的表就顯示為單一。切到分區時以單一值預填九格（3×3 如同床面，topLeft … bottomRight）。區域區塊編輯 `offset`；兩者是獨立的值（D7），共用一顆儲存。
 - 區域區塊的「套用精準對位偏移」切換：`fetchPncOffset(serial)` 有值時顯示，旁邊列出該值。打開：丟掉未儲存的修改、欄位鎖定並顯示 **機器上的值 + pnc**
-  （游標尺是透過已帶著目前偏移的預覽讀到的，所以是殘差）；關閉：回到機器上的值。儲存會清除 pnc.json，切換隨之消失。
+  （游標尺是透過已帶著目前偏移的預覽讀到的，所以是殘差）；關閉：回到機器上的值。切換打開時的儲存會清除 pnc.json，切換隨之消失；關閉時的儲存不動 pnc。pnc 值放在 Modal 的 store，與精準對位 Tab 共用：那邊儲存或清除會立即反映到切換上，反之亦然。
 - 不設後端閘門（D1）：欄位一律顯示；Tab 說明註明偏移需要出貨 §7.3 的 fluxghost 版本。
 
 **相機 Tab，舊款**
 - 以 `BeamPreviewManager` 的正規表示式（`parseCameraOffset`）載入 `camera_offset`（`getAddOnInfo(model).openBottom` 時再載 `camera_offset_borderless`）。
-  只顯示 `X`、`Y` 的絕對 mm 值，**不設上下限**：存的值也不能當中心（已校正的 beamo 讀到 X 8.9 / Y 37.9，離出廠常數 20 / 30 有段距離，而且校正壞掉的值必須能被改回來）；`R`、`SX`、`SY` 留在記憶體供寫回使用，不顯示（D6）。兩列放在同一區塊、一顆儲存。
-- 儲存透過 `sendPictureThenSetConfig` → `doSetConfigTask` 寫入，帶著未變的 `R`/`SX`/`SY`，維持 `S` 與 `SX/SY` 的韌體分支及 pnc.json 清除。
+  顯示整組設定，**不設上下限**：`X`、`Y` 為絕對 mm 值（存的值不能當中心：已校正的 beamo 讀到 X 8.9 / Y 37.9，離出廠常數 20 / 30 有段距離，而且校正壞掉的值必須能被改回來），`R` 以度顯示（儲存為弧度），`SX`／`SY` 為原始比例（D6 重開）。標籤沿用 `calibration.rotation_angle`／`x_ratio`／`y_ratio`。兩列放在同一區塊、一顆儲存。
+- 儲存透過 `sendPictureThenSetConfig` → `doSetConfigTask` 寫入五個值，維持 `S` 與 `SX/SY` 的韌體分支，pnc.json 保留（`clearPnc: false`）。
   不擋任何值，也不推斷「已校正」狀態：從未校正的機器回的是韌體預設 `X0 Y0 R0 SX1 SY1`（`fluxmonitor/storage.py:391`），該列照樣顯示；不論存了什麼，`BeamPreviewManager` 仍把 `0, 0` 當成「用理想常數」，而這種狀態的機器本來就需要校正。
 - 每列一個 **翻轉切換**（「翻轉影像」），來自設定值的 `F:` 旗標（`parseCameraFlip`）。部分舊機器的相機是反向安裝的，而韌體在設定檔從未寫入時把 `F` 預設為 1（`fluxmonitor/storage.py:391`），照片因此整張顛倒。
   儲存有變動的翻轉時送出部分設定 `config set camera_offset F:0|1`：韌體會合併部分設定（`command_task.py:1105`、`storage.py:395`），X/Y/R/S 不受影響。同時清除 pnc.json（翻轉會移動照片中所有東西），並寫入 `deviceMaster.currentDevice.cameraNeedsFlip`，也就是 `connectCamera` 每次連線只讀一次的快取，讓下一次預覽不必重連就用新方向。
@@ -189,6 +190,7 @@ UI 的「精準對位」即 Print and Cut。
 | `jsonDataHelper.ts` `FileMap` | 不變（所需檔案皆已列出） |
 | `BeamPreviewManager.ts` camera_offset 解析 | 舊款機型預覽 — 同樣的正規表示式，搬到 `helpers/device/camera/cameraOffset.ts`（`parseCameraOffset`）；0,0 回退留在 manager |
 | `device-master.ts` `currentDevice.cameraNeedsFlip` | `connectCamera` — 仍是每次連線讀一次；舊款區塊只在儲存 `F` 變更後覆寫快取值 |
+| `camera-calibration-helper.ts` `setFisheyeConfig`／`sendPictureThenSetConfig` | 校正對話框（LaserHeadFisheyeCalibration、Beamo2Calibration、AdorCalibration、StepBeforeAnalyzePicture）— 預設仍清除 pnc.json；只有手動輸入傳 `{ clearPnc: false }` |
 | fluxghost `set_fisheye_matrix` | 所有客戶端 — 不含 `offset` 的參數行為與以前完全相同（偏移預設 0） |
 | fluxghost `calculate_regional_perspective_points` | `set_fisheye_height` v4、`cmd_check_pnp`？ — 新的選填 kwargs 預設不平移；CheckPnP 維持不傳（校正流程不帶手動偏移） |
 | fluxghost `ws_smoke.py` | 仍須以 `ALL PASS` 結束；新增一個帶 `offset`、一個帶 `region_offsets` 的案例 |
@@ -279,7 +281,7 @@ components/dialogs/camera/ManualConfiguration/
 - `fisheye_params.json` / `wide-angle.json` / `promark-store.cameraParameters`：`offset?: [x, y]` mm；V4 `region_offsets?: {topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight: [x, y]}` mm。缺省 = 0。讀取者須容許缺省（fluxghost `.get`）。
 - `set_fisheye_matrix` JSON 多出同樣兩個選填欄位；其餘不變。
 - `camera_offset` 機器設定：格式不變；`X`/`Y` 以完整字串寫入，`F` 以部分設定 `F:0|1` 寫入，由韌體合併。
-- `camera_calib/pnc.json`：格式不變；相機偏移儲存與匯入時清除。
+- `camera_calib/pnc.json`：格式不變；只在相機儲存套用了精準對位切換、舊款翻轉、以及精準對位 Tab 的清除時清除。
 
 ## 9. 推出計畫（PR 規劃）
 
@@ -295,11 +297,11 @@ components/dialogs/camera/ManualConfiguration/
 2. ~~D2 偏移在 Beam Studio（平移網格）或 fluxghost 套用~~ — **fluxghost**，2026-10-28 決定：涵蓋 V2 Ador，且所有版本只有一份實作。
 3. ~~D3 精準對位 → 局部預覽用核取方塊或匯入~~ — **匯入按鈕**，2026-10-28 決定：沒有執行期旗標，`alignByCamera` / 精準對位校正也沒有重複套用的路徑。
 4. ~~D4 預覽中開啟 Modal~~ — **允許開啟，下次預覽生效**，2026-10-28 決定：不需寫程式，每次 `start` 都重新讀參數。
-5. ~~D5 匯入語意~~ — **加到**目前偏移，2026-10-28 決定：儲存偏移會清掉 pnc.json，所以存在的 pnc 只可能是在已套用目前偏移的預覽下量到的，是其上的殘差。偏移為零時加與取代相同。§12 案例 6 確認。
+5. ~~D5 匯入語意~~ — **加到**目前偏移，2026-10-28 決定：儲存偏移會清掉 pnc.json，所以存在的 pnc 只可能是在已套用目前偏移的預覽下量到的，是其上的殘差。偏移為零時加與取代相同。§12 案例 6 確認。（2026-10-29：單純手動儲存不再清 pnc；「加到」規則仍成立，因為切換本身的儲存會清。）
 6. ~~D6 舊款 `R`/`SX`/`SY`~~ — **不顯示**，2026-10-28 決定：只開放 `X`、`Y`。旋轉與縮放與其手動調整不如重新校正；有具體需求再開放。
+   **2026-10-29 依需求方回饋重開**：五個值全部可編輯（`R` 以度、`SX`／`SY` 原始比例），區塊改名「相機偏移」，魚眼區塊對應改名「…預覽偏移」。
 7. ~~D7 fbm2 的區域與廣角偏移~~ — **獨立**，2026-10-29 決定：拍的不是同一張照片（雷射頭移到目標點上方 vs 固定在相機中心；bb2 / hx2 更是不同相機），
    所以 `offset` = 區域、`region_offsets` = 廣角，「單一」以九組相同值儲存。先前的「與區域相同」選項取消。
-   **2026-10-29 依需求方回饋重開**：五個值全部可編輯（`R` 以度、`SX`／`SY` 原始比例），區塊改名「相機偏移」，魚眼區塊對應改名「…預覽偏移」。
 
 ## 11. 風險與後續
 
@@ -313,7 +315,7 @@ components/dialogs/camera/ManualConfiguration/
 
 單元測試（jest，`--runInBand`）：
 - `ManualConfiguration` 各機型 Tab 顯示（§5 表）。
-- CameraTab 各存放處的儲存 payload：未改欄位保留、加上 `offset`、`region_offsets` 隨單選鈕增減、pnc 清除。
+- CameraTab 各存放處的儲存 payload：未改欄位保留、加上 `offset`、`region_offsets` 隨單選鈕增減、只在切換打開時清除 pnc。
 - 舊款區塊：`camera_offset` 正規表示式解析、`doSetConfigTask` 收到未變的 `R/SX/SY`。
 - `FisheyePreviewManagerV4` 在 `useRegionOffsets` 為 false 時去掉 `region_offsets`。
 
@@ -327,5 +329,5 @@ fluxghost：`ws_smoke.py` 案例；一個單元測試驗證 `offset = (1, 0)` �
 4. ado1 單一偏移。__
 5. fpm1 單一偏移。__
 6. fbm2 精準對位匯入：游標尺 → 匯入 → 重跑精準對位對齊，切割落在列印上（決定 D5）。__
-7. beamo：切割落在預覽物件下方 1 mm → `Y` 減 1 → 對齊。正負號確認／相反：__
+7. beamo：切割落在預覽物件下方 1 mm → `Y` 減 1 → 對齊。2026-10-29 確認：+X／+Y 讓預覽右移／下移，與魚眼偏移相反，如 §5 推導（X／Y 是相機位置，不是修正量）。__
 8. 舊 fluxghost（2.5.6）：可儲存、預覽無變化、無錯誤。__

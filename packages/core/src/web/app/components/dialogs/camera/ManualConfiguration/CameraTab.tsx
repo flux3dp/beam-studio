@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { legacyBeamSeriesModels, modelsWithWideAngleCamera, promarkModels } from '@core/app/actions/beambox/constant';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
@@ -8,12 +8,13 @@ import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PromarkCameraParameters } from '@core/interfaces/Promark';
 
-import { clearPncOffset, fetchPncOffset, type PncOffset } from '../../PrintAndCut/calibration/offsetStore';
+import { clearPncOffset } from '../../PrintAndCut/calibration/offsetStore';
 
 import FisheyeOffsetBlock from './FisheyeOffsetBlock';
 import LegacyCameraBlock from './LegacyCameraBlock';
 import styles from './ManualConfiguration.module.scss';
 import { createParamsSource, type OffsetParams } from './offsetParams';
+import { useManualConfigStore } from './store';
 
 export interface CameraTabProps {
   device: IDeviceInfo;
@@ -30,35 +31,27 @@ const CameraTab = ({ device }: CameraTabProps): React.JSX.Element => {
   const isLegacy = legacyBeamSeriesModels.has(model);
   const isPromark = promarkModels.has(model);
   const hasWideAngle = modelsWithWideAngleCamera.includes(model) || model === 'fbm2';
-  const [pnc, setPnc] = useState<PncOffset | undefined>();
+  const pnc = useManualConfigStore((state) => state.pnc) ?? undefined;
 
-  useEffect(() => {
-    if (!isLegacy) fetchPncOffset(serial).then(setPnc);
-  }, [isLegacy, serial]);
-
-  // every camera write clears the Print and Cut offset (setFisheyeConfig does it itself), so the toggle goes away
+  // a manual save keeps the Print and Cut offset (unlike a calibration): only a save that applied the pnc
+  // toggle clears it, through onPncApplied, since the offset absorbed it then
   const { main, wide } = useMemo(() => {
     const promark = createParamsSource(
       async () => promarkDataStore.get(serial, 'cameraParameters'),
       async (params: OffsetParams) => {
         promarkDataStore.set(serial, 'cameraParameters', params as PromarkCameraParameters);
-        await clearPncOffset(serial);
-        setPnc(undefined);
       },
     );
     const fisheye = createParamsSource(
       () => loadJson('fisheye', 'fisheye_params.json'),
       async (params) => {
-        await setFisheyeConfig(params);
-        setPnc(undefined);
+        await setFisheyeConfig(params, { clearPnc: false });
       },
     );
     const wideAngle = createParamsSource(
       () => loadJson('fisheye', 'wide-angle.json'),
       async (params) => {
         await uploadJson(params, 'fisheye', 'wide-angle.json');
-        await clearPncOffset(serial);
-        setPnc(undefined);
       },
     );
 
@@ -80,6 +73,10 @@ const CameraTab = ({ device }: CameraTabProps): React.JSX.Element => {
       <FisheyeOffsetBlock
         id="camera.main"
         kind="offset"
+        onPncApplied={async () => {
+          await clearPncOffset(serial);
+          useManualConfigStore.getState().setPnc(undefined);
+        }}
         pnc={pnc}
         source={main}
         title={hasWideAngle ? t.fisheye_region : t.fisheye_offset}

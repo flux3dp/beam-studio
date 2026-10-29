@@ -13,6 +13,8 @@ import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import { fetchPncOffset } from '../../PrintAndCut/calibration/offsetStore';
+
 import CameraTab from './CameraTab';
 import styles from './ManualConfiguration.module.scss';
 import ModulesTab from './ModulesTab';
@@ -45,7 +47,11 @@ const ManualConfiguration = ({ device, onClose }: ManualConfigurationProps): Rea
   );
   const canSave = savers.some((saver) => saver.changed);
 
-  useEffect(() => () => useManualConfigStore.getState().reset(), []);
+  useEffect(() => {
+    fetchPncOffset(device.serial).then((pnc) => useManualConfigStore.getState().setPnc(pnc));
+
+    return () => useManualConfigStore.getState().reset();
+  }, [device.serial]);
 
   const handleSave = async () => {
     setSaving(true);

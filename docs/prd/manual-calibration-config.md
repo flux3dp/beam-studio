@@ -172,11 +172,16 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 - Save writes the params back with `offset` (and `region_offsets` when per-region) through the same
   writer the calibration used (`setFisheyeConfig`, `uploadJson('fisheye','wide-angle.json')`,
   `promarkDataStore.set`). All other fields byte-for-byte unchanged apart from number rounding already
-  applied by `setFisheyeConfig`. Saving clears pnc.json (existing rule, via `setFisheyeConfig`; the
-  wide-angle and Promark writers call `clearPncOffset` explicitly).
+  applied by `setFisheyeConfig`. Saving does **not** clear pnc.json (`setFisheyeConfig(…, { clearPnc: false })`,
+  unlike a calibration): only a save made with the Print and Cut toggle on clears it, since the offset
+  absorbed the pnc then. A pnc left behind by a plain manual edit may be stale; that is the user's call
+  (stakeholder decision 2026-10-29).
 - **Sign**: offset = where the laser landed relative to the object seen in the preview, right/down
-  positive (same convention as `PncOffset`). After saving X = +1, the next preview shows the object 1 mm
-  further right on the canvas than before. Verified on hardware once per camera family (§12).
+  positive (same convention as `PncOffset`); the description words it as "where the preview appears relative
+  to the actual object", which is the same number. After saving X = +1, the next preview shows the object
+  1 mm further **left** on the canvas (it was drawn too far right). Verified on fbm2 (§12).
+- Block titles: "Region Preview Offset" and "Wide-Angle Preview Offset" when both exist (bb2 / hx2 / fbm2),
+  "Preview Offset" when there is only one (ado1, Promark); the legacy block is "Camera Offset".
 - The wide-angle block (fbm2, and bb2 / hx2 when `wide-angle.json` exists) edits `region_offsets` with a
   Segmented "One offset / Per region". One offset writes the same pair into all nine regions; a stored
   table whose nine pairs are equal loads as one offset. Switching to per region prefills the nine cells
@@ -185,18 +190,21 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 - "Apply the Print and Cut offset" toggle on the region block, shown when `fetchPncOffset(serial)` has a
   value, with the value beside it. On: unsaved edits are dropped, the inputs lock and show **stored +
   pnc** (the vernier was read through a preview that already carried the stored offset, so pnc is a
-  residual); off: back to the stored value. Saving clears pnc.json, so the toggle disappears.
+  residual); off: back to the stored value. A save with the toggle on clears pnc.json, so the toggle
+  disappears; a save with it off leaves pnc alone. The pnc value lives in the modal store, shared with the
+  Print and Cut tab: a save or clear there updates the toggle at once, and vice versa.
 - No backend gate (D1): the fields are always shown; the tab description notes that the offset needs the
   fluxghost release that ships §7.3.
 
 **Camera tab, legacy**
 - Loads `camera_offset` (and `camera_offset_borderless` when `getAddOnInfo(model).openBottom`) with the
-  regexes `BeamPreviewManager` uses (`parseCameraOffset`). Shows only `X`, `Y` as absolute mm, **unbounded**:
-  the stored value is no anchor either (a calibrated beamo reads X 8.9 / Y 37.9 against the 20 / 30 factory
-  constants, and a bad calibration must be correctable); `R`, `SX`, `SY` are kept in memory for the
-  write-back and never shown (D6). Both rows sit in one block with one Save.
-- Save writes through `sendPictureThenSetConfig` → `doSetConfigTask` with the unchanged `R`/`SX`/`SY`, so
-  the `S` vs `SX/SY` firmware split and the pnc.json clearing stay as they are. No value is rejected and no
+  regexes `BeamPreviewManager` uses (`parseCameraOffset`). Shows the whole setting, **unbounded**: `X`, `Y` as
+  absolute mm (the stored value is no anchor: a calibrated beamo reads X 8.9 / Y 37.9 against the 20 / 30
+  factory constants, and a bad calibration must be correctable), `R` in degrees (stored in rad), `SX` / `SY`
+  as raw ratios (D6, reopened). Labels reuse `calibration.rotation_angle` / `x_ratio` / `y_ratio`. Both rows
+  sit in one block with one Save.
+- Save writes through `sendPictureThenSetConfig` → `doSetConfigTask` with all five values, so
+  the `S` vs `SX/SY` firmware split stays as it is and pnc.json is kept (`clearPnc: false`). No value is rejected and no
   "calibrated" state is inferred: a never-calibrated machine answers the firmware default `X0 Y0 R0 SX1 SY1`
   (`fluxmonitor/storage.py:391`) and the row simply shows it; whatever is saved, `BeamPreviewManager` keeps
   treating `0, 0` as "use the ideal constants", and a machine in that state needs a calibration anyway.
@@ -244,6 +252,7 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 | `jsonDataHelper.ts` `FileMap` | unchanged (all needed files already listed) |
 | `BeamPreviewManager.ts` camera_offset parsing | preview on legacy models — same regexes, moved to `helpers/device/camera/cameraOffset.ts` (`parseCameraOffset`); 0,0 fallback stays in the manager |
 | `device-master.ts` `currentDevice.cameraNeedsFlip` | `connectCamera` — still read once per connection; the legacy block only overwrites the cached value after a saved `F` change |
+| `camera-calibration-helper.ts` `setFisheyeConfig` / `sendPictureThenSetConfig` | calibration dialogs (LaserHeadFisheyeCalibration, Beamo2Calibration, AdorCalibration, StepBeforeAnalyzePicture) — still clear pnc.json by default; only Manual Configuration passes `{ clearPnc: false }` |
 | fluxghost `set_fisheye_matrix` | all clients — params without `offset` behave exactly as before (offset defaults to 0) |
 | fluxghost `calculate_regional_perspective_points` | `set_fisheye_height` v4, `cmd_check_pnp`? — new optional kwargs default to no shift; CheckPnP keeps passing nothing (calibration runs without manual offset) |
 | fluxghost `ws_smoke.py` | must still end `ALL PASS`; add a case with `offset` and one with `region_offsets` |
@@ -349,7 +358,8 @@ New namespace `manual_config` in `en.ts` / `zh-tw.ts`: `title`, `tab_camera`, `t
 - `set_fisheye_matrix` JSON gains the same two optional keys; everything else unchanged.
 - `camera_offset` device setting: format unchanged; `X`/`Y` written through the full string, `F` through a
   partial `F:0|1` set that the firmware merges.
-- `camera_calib/pnc.json`: unchanged format; cleared on camera-offset save and on import.
+- `camera_calib/pnc.json`: unchanged format; cleared only by a camera save that applied the Print and Cut
+  toggle, by a legacy flip, and by the Print and Cut tab's Clear.
 
 ## 9. Rollout (PR plan)
 
@@ -374,8 +384,12 @@ Ship order: fluxghost tag → bump in beam-studio CD → PR A.
 5. ~~D5 Import semantics~~ — **add** to the current offset, decided 2026-10-28: saving an offset clears
    pnc.json, so a stored pnc can only have been measured through a preview already carrying the current
    offset; it is the residual on top of it. With a zero offset add and replace coincide. §12 case 6 confirms.
+   (2026-10-29: a plain manual save no longer clears pnc; the add rule still holds because the toggle's own
+   save does.)
 6. ~~D6 Legacy `R`/`SX`/`SY`~~ — **not shown**, decided 2026-10-28: only `X`, `Y` are exposed. Rotation and
    scale are better fixed by recalibrating than by hand; open later only on a concrete request.
+   **Reopened 2026-10-29** on stakeholder feedback: all five values are editable (`R` in degrees, `SX` / `SY`
+   raw ratios), the block is named "Camera Offset", and the fisheye blocks "… Preview Offset" to match.
 7. ~~D7 Region vs wide-angle offset on fbm2~~ — **independent**, decided 2026-10-29: different shots
    (head over the point vs fixed camera centre; different cameras on bb2 / hx2), so `offset` = region
    and `region_offsets` = wide-angle, with "one offset" stored as nine equal pairs. Drops the earlier
@@ -388,8 +402,6 @@ Ship order: fluxghost tag → bump in beam-studio CD → PR A.
 - fbm2 shares one file for region and full-area; a user who only tunes full-area per-region gets no
   region-preview change. The tab labels make this explicit.
 - A manual offset is lost on recalibration by design; mention it in the tab description.
-   **Reopened 2026-10-29** on stakeholder feedback: all five values are editable (`R` in degrees, `SX` / `SY`
-   raw ratios), the block is named "Camera Offset", and the fisheye blocks "… Preview Offset" to match.
 - Follow-up: expose `levelingData`/height for ado1 if support needs it.
 - Follow-up: Promark `rotate180` stays in the calibration dialog.
 
@@ -398,7 +410,7 @@ Ship order: fluxghost tag → bump in beam-studio CD → PR A.
 Unit (jest, `--runInBand`):
 - `ManualConfiguration` tab visibility per model (table in §5).
 - CameraTab save payload per store: unchanged fields preserved, `offset` added, `region_offsets`
-  added/dropped by the radio, pnc cleared.
+  added/dropped by the radio, pnc cleared only when the toggle was on.
 - Legacy block: regex parse of `camera_offset`, `doSetConfigTask` called with unchanged `R/SX/SY`.
 - `FisheyePreviewManagerV4` strips `region_offsets` when `useRegionOffsets` is false.
 
@@ -416,5 +428,7 @@ Hardware (record results here):
 4. ado1 single offset. __
 5. fpm1 single offset. __
 6. Print and Cut import on fbm2: vernier → import → re-run PnC alignment, cut lands on the print (settles D5). __
-7. beamo: cut lands 1 mm below the previewed object → decrease `Y` by 1 → aligned. Sign confirmed/flipped: __
+7. beamo: cut lands 1 mm below the previewed object → decrease `Y` by 1 → aligned. Confirmed 2026-10-29: +X / +Y
+   move the preview right / down, the opposite of the fisheye offset, as §5 derives (X / Y are the camera
+   position, not a correction). __
 8. Old fluxghost (2.5.6): save works, preview unchanged, no error. __

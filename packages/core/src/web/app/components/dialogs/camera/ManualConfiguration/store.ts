@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 
 import { create } from 'zustand';
 
+import type { PncOffset } from '../../PrintAndCut/calibration/offsetStore';
+
 /**
  * Savers of the Manual Configuration modal. Every editable block registers itself under
  * `<tab>.<block>`; the modal footer's single Save button acts on the savers of the active tab.
@@ -12,18 +14,23 @@ export interface Saver {
 }
 
 interface ManualConfigState {
+  /** the device's Print and Cut offset, read once by the modal and kept in step by whichever tab writes it; null = loading */
+  pnc: null | PncOffset | undefined;
   remove: (id: string) => void;
   reset: () => void;
   savers: Record<string, Saver>;
   set: (id: string, saver: Saver) => void;
+  setPnc: (pnc: PncOffset | undefined) => void;
 }
 
 export const useManualConfigStore = create<ManualConfigState>((setState) => ({
+  pnc: null,
   remove: (id) =>
     setState((state) => ({ savers: Object.fromEntries(Object.entries(state.savers).filter(([key]) => key !== id)) })),
-  reset: () => setState({ savers: {} }),
+  reset: () => setState({ pnc: null, savers: {} }),
   savers: {},
   set: (id, saver) => setState((state) => ({ savers: { ...state.savers, [id]: saver } })),
+  setPnc: (pnc) => setState({ pnc }),
 }));
 
 /** Savers of one tab, by id prefix (a plain helper: a selector returning a fresh array would re-render forever) */

@@ -16,7 +16,7 @@ import { clearPncOffset } from '../../PrintAndCut/calibration/offsetStore';
 
 import styles from './ManualConfiguration.module.scss';
 import NumberField from './NumberField';
-import { useRegisterSaver } from './store';
+import { useManualConfigStore, useRegisterSaver } from './store';
 
 const PROGRESS_ID = 'manual-configuration-legacy-camera';
 
@@ -83,6 +83,7 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
             { R: angle, SX: scaleRatioX, SY: scaleRatioY, X: x, Y: y },
             device,
             row.borderless,
+            { clearPnc: false },
           );
         }
 
@@ -91,6 +92,7 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
           // so the Print and Cut offset measured under the old orientation is void
           await deviceMaster.setDeviceSetting(settingName(row.borderless), `F:${row.flip ? 1 : 0}`);
           await clearPncOffset(device.serial);
+          useManualConfigStore.getState().setPnc(undefined);
 
           // connectCamera reads F once per connection and caches it here; keep the next preview in sync
           if (!row.borderless && deviceMaster.currentDevice) deviceMaster.currentDevice.cameraNeedsFlip = row.flip;
@@ -110,8 +112,6 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
 
   useRegisterSaver('camera.legacy', Boolean(rows) && changed.length > 0, handleSave);
 
-  return (
-    <div className={styles.block}>
   const update = (i: number, patch: Partial<CameraParameters> & { flip?: boolean }) =>
     setRows((prev) =>
       prev!.map((row, j) => {
@@ -123,6 +123,8 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
       }),
     );
 
+  return (
+    <div className={styles.block}>
       <div className={styles.grid}>
         {rows?.map((row, i) => (
           <div key={String(row.borderless)}>
