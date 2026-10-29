@@ -15,19 +15,22 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { clearPncOffset } from '../../PrintAndCut/calibration/offsetStore';
 
 import styles from './ManualConfiguration.module.scss';
+import NumberField from './NumberField';
 import { useRegisterSaver } from './store';
-import XyInputs from './XyInputs';
 
 const PROGRESS_ID = 'manual-configuration-legacy-camera';
 
-type Xy = { x: number; y: number };
 /** one row per device setting: `camera_offset`, plus `camera_offset_borderless` on open-bottom models */
 type Row = {
   borderless: boolean;
   flip: boolean;
   stored: (CameraParameters & { flip: boolean }) | undefined;
-  value: Xy;
+  value: CameraParameters;
 };
+
+const KEYS = ['x', 'y', 'angle', 'scaleRatioX', 'scaleRatioY'] as const;
+const DEG = 180 / Math.PI;
+const ZERO: CameraParameters = { angle: 0, scaleRatioX: 1, scaleRatioY: 1, x: 0, y: 0 };
 
 const settingName = (borderless: boolean) => (borderless ? 'camera_offset_borderless' : 'camera_offset');
 
@@ -38,22 +41,22 @@ export interface LegacyCameraBlockProps {
 const readRow = async (borderless: boolean): Promise<Row> => {
   try {
     const res = await deviceMaster.getDeviceSetting(settingName(borderless));
-    const stored = { ...parseCameraOffset(res.value), flip: parseCameraFlip(res.value) };
+    const { flip, ...value } = { ...parseCameraOffset(res.value), flip: parseCameraFlip(res.value) };
 
-    return { borderless, flip: stored.flip, stored, value: { x: stored.x, y: stored.y } };
+    return { borderless, flip, stored: { ...value, flip }, value };
   } catch (error) {
     console.error('manual configuration: camera_offset read failed', error);
 
-    return { borderless, flip: false, stored: undefined, value: { x: 0, y: 0 } };
+    return { borderless, flip: false, stored: undefined, value: ZERO };
   }
 };
 
 /**
- * Legacy pinhole camera (beamo, Beambox, HEXA): X / Y of the `camera_offset` setting are a pure
- * translation in mm, so they are the manual offset. R, SX, SY are kept as read and written back unchanged.
+ * Legacy pinhole camera (beamo, Beambox, HEXA): the whole `camera_offset` setting is editable. X / Y position
+ * the camera relative to the head in mm, R rotates the photo (stored in rad, edited in degrees), SX / SY scale it.
  */
 const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Element => {
-  const { global: tGlobal, manual_config: t } = useI18n();
+  const { calibration: tCal, global: tGlobal, manual_config: t } = useI18n();
   const [rows, setRows] = useState<null | Row[]>(null); // null = loading
 
   useEffect(() => {
@@ -66,17 +69,16 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
     rows?.filter((row) => {
       if (!row.stored) return false;
 
-      return row.value.x !== row.stored!.x || row.value.y !== row.stored!.y || row.flip !== row.stored!.flip;
+      return KEYS.some((key) => row.value[key] !== row.stored![key]) || row.flip !== row.stored!.flip;
     }) ?? [];
 
   const handleSave = async () => {
     progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tGlobal.saving });
     try {
       for (const row of changed) {
-        const { angle, flip, scaleRatioX, scaleRatioY } = row.stored!;
-        const { x, y } = row.value;
+        const { angle, scaleRatioX, scaleRatioY, x, y } = row.value;
 
-        if (x !== row.stored!.x || y !== row.stored!.y) {
+        if (KEYS.some((key) => row.value[key] !== row.stored![key])) {
           await sendPictureThenSetConfig(
             { R: angle, SX: scaleRatioX, SY: scaleRatioY, X: x, Y: y },
             device,
@@ -84,7 +86,7 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
           );
         }
 
-        if (row.flip !== flip) {
+        if (row.flip !== row.stored!.flip) {
           // the firmware merges partial sets, so only F changes; the flip moves everything in the photo,
           // so the Print and Cut offset measured under the old orientation is void
           await deviceMaster.setDeviceSetting(settingName(row.borderless), `F:${row.flip ? 1 : 0}`);
@@ -110,23 +112,44 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
 
   return (
     <div className={styles.block}>
+  const update = (i: number, patch: Partial<CameraParameters> & { flip?: boolean }) =>
+    setRows((prev) =>
+      prev!.map((row, j) => {
+        if (i !== j) return row;
+
+        const { flip = row.flip, ...value } = patch;
+
+        return { ...row, flip, value: { ...row.value, ...value } };
+      }),
+    );
+
       <div className={styles.grid}>
         {rows?.map((row, i) => (
           <div key={String(row.borderless)}>
             <div className={styles.label}>{row.borderless ? t.legacy_borderless : t.legacy_camera}</div>
             {!row.stored && <div className={styles.hint}>{t.camera_load_failed}</div>}
-            <XyInputs
-              disabled={!row.stored}
-              onChange={(value) => setRows((prev) => prev!.map((r, j) => (i === j ? { ...r, value } : r)))}
-              value={row.value}
-            />
+            <div className={styles.inputs}>
+              {(
+                [
+                  ['x', 'X', 'mm', 1],
+                  ['y', 'Y', 'mm', 1],
+                  ['angle', tCal.rotation_angle, 'deg', DEG],
+                  ['scaleRatioX', tCal.x_ratio, 'ratio', 1],
+                  ['scaleRatioY', tCal.y_ratio, 'ratio', 1],
+                ] as const
+              ).map(([key, label, kind, scale]) => (
+                <NumberField
+                  disabled={!row.stored}
+                  key={key}
+                  kind={kind}
+                  label={label}
+                  onChange={(next) => update(i, { [key]: next / scale })}
+                  value={row.value[key] * scale}
+                />
+              ))}
+            </div>
             <label className={styles.switch}>
-              <Switch
-                checked={row.flip}
-                disabled={!row.stored}
-                onChange={(flip) => setRows((prev) => prev!.map((r, j) => (i === j ? { ...r, flip } : r)))}
-                size="small"
-              />
+              <Switch checked={row.flip} disabled={!row.stored} onChange={(flip) => update(i, { flip })} size="small" />
               {t.legacy_flip}
             </label>
           </div>

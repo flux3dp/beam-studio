@@ -20,6 +20,14 @@
   gap: 16px;
 }
 
+// device name and model under the modal title
+.subtitle {
+  margin-top: 2px;
+  color: #7f7f7f;
+  font-size: 12px;
+  font-weight: normal;
+}
+
 .desc {
   color: #7f7f7f;
 }
@@ -46,17 +54,16 @@
   margin-bottom: 8px;
 }
 
-// X above Y everywhere, 100px inputs without steppers: the same shape in a module card, a 3×3 cell and a
-// full-width tab, instead of wrapping only where the column is narrow
+// one labelled 100px input per row: a two-column grid whose label column takes the widest label of
+// that block (one letter for X / Y, "Rotation" on legacy), so inputs line up without a fixed label width
 .inputs {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: max-content 100px;
+  gap: 10px 8px;
+  align-items: center;
 
   .pair {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    display: contents;
   }
 
   .input {

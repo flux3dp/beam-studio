@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Status** | 草稿 — 設計與 D1–D6 於 2026-10-28 定案，尚未寫程式 |
+| **Status** | 開發中 — D1–D7 定案，分支 `feat/manual-calibration-config`；2026-10-29 fbm2 實機驗證通過、需求方回饋已納入 |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-28 |
 | **Target product** | Beam Studio（桌面版 + 網頁版）、fluxghost（2.5.6 之後的下一版） |
@@ -121,7 +121,7 @@ UI 的「精準對位」即 Print and Cut。
 - 點擊：`checkDeviceStatus` + `deviceMaster.select`，然後開 Modal。機器忙碌時以一般警示拒絕。預覽階段進行中也可開啟 Modal；儲存的值從下一次預覽階段起生效，因為 `previewModeController.start` 每次都建立新的 manager 並重新讀參數（D4）。
 
 **Modal**
-- `DraggableModal`，標題「手動輸入」，antd `Tabs`。各機型顯示的 Tab：
+- `DraggableModal`，標題「手動輸入」，標題下以淺灰 helper text 顯示裝置名稱與機型（`getWorkarea(model).label`），antd `Tabs`。各機型顯示的 Tab：
 
 | 機型 | 相機 | 模組 | 精準對位 |
 |---|---|---|---|
@@ -299,6 +299,7 @@ components/dialogs/camera/ManualConfiguration/
 6. ~~D6 舊款 `R`/`SX`/`SY`~~ — **不顯示**，2026-10-28 決定：只開放 `X`、`Y`。旋轉與縮放與其手動調整不如重新校正；有具體需求再開放。
 7. ~~D7 fbm2 的區域與廣角偏移~~ — **獨立**，2026-10-29 決定：拍的不是同一張照片（雷射頭移到目標點上方 vs 固定在相機中心；bb2 / hx2 更是不同相機），
    所以 `offset` = 區域、`region_offsets` = 廣角，「單一」以九組相同值儲存。先前的「與區域相同」選項取消。
+   **2026-10-29 依需求方回饋重開**：五個值全部可編輯（`R` 以度、`SX`／`SY` 原始比例），區塊改名「相機偏移」，魚眼區塊對應改名「…預覽偏移」。
 
 ## 11. 風險與後續
 

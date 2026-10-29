@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft — design and D1–D6 settled 2026-10-28, no code yet |
+| **Status** | In development — D1–D7 settled, branch `feat/manual-calibration-config`; fbm2 verified on hardware 2026-10-29, stakeholder feedback round folded in |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-28 |
 | **Target product** | Beam Studio (desktop + web), fluxghost (next release after 2.5.6) |
@@ -146,7 +146,8 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
   session, because `previewModeController.start` creates a new manager that refetches the params (D4).
 
 **Modal**
-- `DraggableModal`, title "Manual Configuration", antd `Tabs`. Tabs shown per model:
+- `DraggableModal`, title "Manual Configuration" with the device name and model label (`getWorkarea(model).label`)
+  as grey helper text under it, antd `Tabs`. Tabs shown per model:
 
 | Model | Camera | Modules | Print and Cut |
 |---|---|---|---|
@@ -387,6 +388,8 @@ Ship order: fluxghost tag → bump in beam-studio CD → PR A.
 - fbm2 shares one file for region and full-area; a user who only tunes full-area per-region gets no
   region-preview change. The tab labels make this explicit.
 - A manual offset is lost on recalibration by design; mention it in the tab description.
+   **Reopened 2026-10-29** on stakeholder feedback: all five values are editable (`R` in degrees, `SX` / `SY`
+   raw ratios), the block is named "Camera Offset", and the fisheye blocks "… Preview Offset" to match.
 - Follow-up: expose `levelingData`/height for ado1 if support needs it.
 - Follow-up: Promark `rotate180` stays in the calibration dialog.
 

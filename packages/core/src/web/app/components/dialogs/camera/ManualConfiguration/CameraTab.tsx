@@ -82,7 +82,7 @@ const CameraTab = ({ device }: CameraTabProps): React.JSX.Element => {
         kind="offset"
         pnc={pnc}
         source={main}
-        title={hasWideAngle ? t.fisheye_region : undefined}
+        title={hasWideAngle ? t.fisheye_region : t.fisheye_offset}
       />
       {hasWideAngle && <FisheyeOffsetBlock id="camera.wide" kind="regions" source={wide} title={t.fisheye_full_area} />}
     </div>

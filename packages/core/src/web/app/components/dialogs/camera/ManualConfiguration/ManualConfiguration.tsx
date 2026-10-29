@@ -8,6 +8,7 @@ import {
   modelsWithModules,
   promarkModels,
 } from '@core/app/actions/beambox/constant';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -94,7 +95,12 @@ const ManualConfiguration = ({ device, onClose }: ManualConfigurationProps): Rea
       onCancel={onClose}
       onOk={handleSave}
       open
-      title={t.title}
+      title={
+        <>
+          {t.title}
+          <div className={styles.subtitle}>{`${device.name} (${getWorkarea(device.model).label})`}</div>
+        </>
+      }
       width={720}
     >
       <Tabs activeKey={activeKey} className={styles.tabs} items={items} onChange={setActiveKey} />

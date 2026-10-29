@@ -2070,6 +2070,7 @@ export interface ILang {
     clear: string;
     fisheye_desc: string;
     fisheye_full_area: string;
+    fisheye_offset: string;
     fisheye_region: string;
     legacy_borderless: string;
     legacy_camera: string;
