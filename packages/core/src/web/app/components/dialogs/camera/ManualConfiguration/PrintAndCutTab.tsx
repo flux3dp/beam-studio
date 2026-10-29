@@ -14,6 +14,7 @@ import {
 } from '../../PrintAndCut/calibration/offsetStore';
 
 import styles from './ManualConfiguration.module.scss';
+import { useRegisterSaver } from './store';
 import XyInputs from './XyInputs';
 
 const PROGRESS_ID = 'manual-configuration-pnc';
@@ -51,18 +52,24 @@ const PrintAndCutTab = ({ serial }: PrintAndCutTabProps): React.JSX.Element => {
   };
 
   const loading = stored === null;
+  const base = stored ?? ZERO;
+  const changed = !loading && (value.x !== base.x || value.y !== base.y);
+
+  useRegisterSaver('printAndCut.offset', changed, () => run(() => savePncOffset(serial, value), value));
 
   return (
     <div className={styles.tab}>
       <div className={styles.desc}>{t.pnc_desc}</div>
       {stored === undefined && <div className={styles.hint}>{t.pnc_not_set}</div>}
       <XyInputs disabled={loading} onChange={setValue} value={value} />
-      <div className={styles.actions}>
-        <Button disabled={loading || stored === undefined} onClick={() => run(() => clearPncOffset(serial), undefined)}>
+      <div>
+        <Button
+          className={styles.inlineButton}
+          disabled={loading || stored === undefined}
+          onClick={() => run(() => clearPncOffset(serial), undefined)}
+          size="small"
+        >
           {t.clear}
-        </Button>
-        <Button disabled={loading} onClick={() => run(() => savePncOffset(serial, value), value)} type="primary">
-          {tGlobal.save}
         </Button>
       </div>
     </div>

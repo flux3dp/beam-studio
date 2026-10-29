@@ -62,15 +62,18 @@
   }
 }
 
+.inlineButton {
+  margin-top: 10px;
+}
+
 .switch {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-top: 10px;
-}
+  white-space: nowrap;
 
-.actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
+  + .hint {
+    margin-top: 4px;
+  }
 }

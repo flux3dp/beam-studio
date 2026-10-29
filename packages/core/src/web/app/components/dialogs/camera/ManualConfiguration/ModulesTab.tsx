@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Button } from 'antd';
-
 import alertCaller from '@core/app/actions/alert-caller';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -13,6 +11,7 @@ import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ManualConfiguration.module.scss';
+import { useRegisterSaver } from './store';
 import XyInputs from './XyInputs';
 
 const PROGRESS_ID = 'manual-configuration-modules';
@@ -61,13 +60,13 @@ const ModulesTab = ({ model }: ModulesTabProps): React.JSX.Element => {
     });
   }, [model, modules]);
 
+  const changed = stored
+    ? modules.filter((module) => values[module]!.x !== stored[module]!.x || values[module]!.y !== stored[module]!.y)
+    : [];
+
   const handleSave = async () => {
     progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tGlobal.saving });
     try {
-      const changed = modules.filter(
-        (module) => values[module]!.x !== stored![module]!.x || values[module]!.y !== stored![module]!.y,
-      );
-
       for (const module of changed) {
         const { x, y } = values[module]!;
         const ok = await updateModuleOffsets([x, y], { isRelative: true, module, shouldWrite: true, workarea: model });
@@ -88,6 +87,8 @@ const ModulesTab = ({ model }: ModulesTabProps): React.JSX.Element => {
 
   const loading = stored === null;
 
+  useRegisterSaver('modules.offsets', changed.length > 0, handleSave);
+
   return (
     <div className={styles.tab}>
       <div className={styles.desc}>{t.modules_desc}</div>
@@ -102,11 +103,6 @@ const ModulesTab = ({ model }: ModulesTabProps): React.JSX.Element => {
             />
           </div>
         ))}
-      </div>
-      <div className={styles.actions}>
-        <Button disabled={loading} onClick={handleSave} type="primary">
-          {tGlobal.save}
-        </Button>
       </div>
     </div>
   );

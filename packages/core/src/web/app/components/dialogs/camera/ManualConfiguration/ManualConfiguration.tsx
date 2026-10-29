@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { Tabs } from 'antd';
 
@@ -16,6 +16,7 @@ import CameraTab from './CameraTab';
 import styles from './ManualConfiguration.module.scss';
 import ModulesTab from './ModulesTab';
 import PrintAndCutTab from './PrintAndCutTab';
+import { tabSavers, useManualConfigStore } from './store';
 
 export interface ManualConfigurationProps {
   device: IDeviceInfo;
@@ -29,22 +30,74 @@ const getManualConfigurationTabs = (model: string) => ({
   printAndCut: true,
 });
 
+const TAB_KEYS = ['camera', 'modules', 'printAndCut'] as const;
+
 const ManualConfiguration = ({ device, onClose }: ManualConfigurationProps): React.JSX.Element => {
-  const t = useI18n().manual_config;
+  const { global: tGlobal, manual_config: t } = useI18n();
   const tabs = useMemo(() => getManualConfigurationTabs(device.model), [device.model]);
+  const [activeKey, setActiveKey] = useState<string>(() => TAB_KEYS.find((key) => tabs[key]) ?? 'printAndCut');
+  const [saving, setSaving] = useState(false);
+  // blocks register their savers in the store; the footer button acts on the active tab's
+  const savers = tabSavers(
+    useManualConfigStore((state) => state.savers),
+    activeKey,
+  );
+  const canSave = savers.some((saver) => saver.changed);
+
+  useEffect(() => () => useManualConfigStore.getState().reset(), []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      for (const saver of savers) if (saver.changed) await saver.save();
+    } finally {
+      setSaving(false);
+    }
+  };
 
   // each tab owns its own loading and Save; the modal only hosts them
   const items = [
-    ...(tabs.camera ? [{ children: <CameraTab device={device} />, key: 'camera', label: t.tab_camera }] : []),
-    ...(tabs.modules ? [{ children: <ModulesTab model={device.model} />, key: 'modules', label: t.tab_modules }] : []),
+    ...(tabs.camera
+      ? [
+          {
+            children: <CameraTab device={device} />,
+            key: 'camera',
+            label: t.tab_camera,
+          },
+        ]
+      : []),
+    ...(tabs.modules
+      ? [
+          {
+            children: <ModulesTab model={device.model} />,
+            key: 'modules',
+            label: t.tab_modules,
+          },
+        ]
+      : []),
     ...(tabs.printAndCut
-      ? [{ children: <PrintAndCutTab serial={device.serial} />, key: 'printAndCut', label: t.tab_print_and_cut }]
+      ? [
+          {
+            children: <PrintAndCutTab serial={device.serial} />,
+            key: 'printAndCut',
+            label: t.tab_print_and_cut,
+          },
+        ]
       : []),
   ];
 
   return (
-    <DraggableModal footer={null} onCancel={onClose} open title={t.title} width={720}>
-      <Tabs className={styles.tabs} items={items} />
+    <DraggableModal
+      cancelText={tGlobal.cancel}
+      okButtonProps={{ disabled: !canSave, loading: saving }}
+      okText={tGlobal.save}
+      onCancel={onClose}
+      onOk={handleSave}
+      open
+      title={t.title}
+      width={720}
+    >
+      <Tabs activeKey={activeKey} className={styles.tabs} items={items} onChange={setActiveKey} />
     </DraggableModal>
   );
 };

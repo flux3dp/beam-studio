@@ -2062,9 +2062,14 @@ export interface ILang {
     title: string;
   };
   manual_config: {
+    apply_pnc: string;
     camera_load_failed: string;
     camera_not_calibrated: string;
     clear: string;
+    fisheye_camera: string;
+    fisheye_desc: string;
+    fisheye_full_area: string;
+    fisheye_region: string;
     legacy_borderless: string;
     legacy_camera: string;
     legacy_desc: string;

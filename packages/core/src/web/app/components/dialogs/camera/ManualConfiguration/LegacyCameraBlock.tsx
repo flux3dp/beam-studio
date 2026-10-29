@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Switch } from 'antd';
+import { Switch } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -15,6 +15,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { clearPncOffset } from '../../PrintAndCut/calibration/offsetStore';
 
 import styles from './ManualConfiguration.module.scss';
+import { useRegisterSaver } from './store';
 import XyInputs from './XyInputs';
 
 const PROGRESS_ID = 'manual-configuration-legacy-camera';
@@ -114,6 +115,8 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
     }
   };
 
+  useRegisterSaver('camera.legacy', Boolean(rows) && !hasZero && changed.length > 0, handleSave);
+
   return (
     <div className={styles.block}>
       <div className={styles.grid}>
@@ -142,11 +145,6 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
         ))}
       </div>
       {hasZero && <div className={styles.hint}>{t.legacy_zero_rejected}</div>}
-      <div className={styles.actions}>
-        <Button disabled={!rows || hasZero || changed.length === 0} onClick={handleSave} type="primary">
-          {tGlobal.save}
-        </Button>
-      </div>
     </div>
   );
 };
