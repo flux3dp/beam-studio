@@ -35,6 +35,7 @@ import SceneRuler from './SceneRuler';
 import StlMesh from './StlMesh';
 import { toCameraPreviewPoint } from './utils/cameraPreview';
 import { useEngravableBox } from './utils/engravable';
+import { resetGizmoDragged } from './utils/gizmoDrag';
 import { getMaterial, useMaterial } from './utils/material';
 import { getSelectedStlIds, selectStlObject, toggleStlObjectSelection } from './utils/selection';
 import ViewController from './ViewController';
@@ -360,7 +361,12 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
   useEffect(() => setCursorAccordingToMouseMode(mouseMode), [mouseMode]);
 
   return (
-    <div className={classNames(styles.container, { [styles.panning]: spaceKey })} id="inner-engraving-canvas">
+    <div
+      className={classNames(styles.container, { [styles.panning]: spaceKey })}
+      id="inner-engraving-canvas"
+      // a drag whose click never came must not swallow the next real click
+      onPointerDown={resetGizmoDragged}
+    >
       <Canvas
         camera={{
           // a tight near/far range keeps depth precision usable; with near = 1 (0.1mm) almost the

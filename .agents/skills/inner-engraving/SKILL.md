@@ -141,7 +141,9 @@ All paths under `packages/core/src/web/` unless noted.
   (Shift-click) in `utils/selection.ts` set `stlStore.selectedIds` *and* svgedit selection *and*
   the layers. Don't call `setSelectedIds` directly from click handlers; `InnerEngravingCanvas`
   mirrors `selectedElementStore.selectedElements` back into it. Several selected 3D objects are
-  nodeType `stl_multi` (`ObjectPanel` → `DimensionPanelStlMulti`, `canGroup` false).
+  nodeType `stl_multi` (`ObjectPanel` → `DimensionPanelStlMulti`, `canGroup` false). Letting go of a
+  gizmo over an object is also an r3f `onClick` on it (no distance threshold), so both gizmos mark
+  the drag in `utils/gizmoDrag.ts` and `StlMesh`'s click handler skips that one click.
 - Multi-selection transforms: `utils/groupTransform.ts` — `transformInGroup` (one delta about a
   pivot: `position' = pivot + t + Q·s·M·(position − pivot)`, `R' = Q·M·R·M`, uniform scale, mirror
   toggles `flip`), `applyGroupTransform` (one `BatchCommand`), `moveObjectsCenterTo` /
