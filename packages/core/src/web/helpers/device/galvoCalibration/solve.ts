@@ -32,16 +32,29 @@ export interface SolveParams {
   /** The axis mirroring the card applies, as a first guess at which way the pattern lies. */
   invert: [boolean, boolean];
   l_frame: { arm: number; half: number };
+  /** Find the coupon first; px_per_mm and expected_center_px are then only a starting point. */
+  locate?: boolean;
   node_r: number;
   pitch: number;
   px_per_mm: number;
+  /** 'affine' for a stitched capture; 'auto' lets a hand-held photograph's perspective through. */
+  ruler_model?: 'affine' | 'auto' | 'projective';
   validation: Array<[number, number]>;
 }
 
 export const buildSolveParams = (
   captured: CapturedCoupon,
   config: GalvoConfig,
-  { annotate = true, center }: { annotate?: boolean; center: { x: number; y: number } },
+  {
+    annotate = true,
+    center,
+    photograph = false,
+  }: {
+    annotate?: boolean;
+    center: { x: number; y: number };
+    /** The image is a photograph from elsewhere, of unknown scale and perspective, not a capture. */
+    photograph?: boolean;
+  },
 ): SolveParams => {
   const centerPx = toCanvasPx(center, captured.originMm, captured.pxPerMm);
   const of = (kind: 'discovery' | 'validation'): Array<[number, number]> =>
@@ -61,6 +74,7 @@ export const buildSolveParams = (
     pitch: COUPON_PITCH,
     px_per_mm: captured.pxPerMm,
     validation: of('validation'),
+    ...(photograph ? { locate: true, ruler_model: 'auto' as const } : {}),
   };
 };
 
@@ -68,6 +82,8 @@ export const buildSolveParams = (
 export const discoveryArm = DISCOVERY_ARM;
 
 export interface SolveRuler {
+  /** 'affine' or 'projective': what the ruler was fitted as. */
+  model?: string;
   px_per_mm_x: number;
   px_per_mm_y: number;
   rms_mm: number;
@@ -80,6 +96,8 @@ export interface SolveResult {
   affine_rms: null | number;
   /** The lens centre in the L frame's coordinates, mm relative to the designed centre. */
   field_center_mm: [number, number] | null;
+  /** Where the solver found the coupon when asked to locate it (a photograph). */
+  located?: null | { center_px: [number, number]; px_per_mm: number };
   /** The affine map turned the pattern over (det < 0): an axis is mirrored relative to the guess. */
   mirrored?: boolean;
   nodes_found: number;

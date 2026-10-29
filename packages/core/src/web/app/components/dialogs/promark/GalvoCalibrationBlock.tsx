@@ -11,6 +11,7 @@ import { captureCoupon } from '@core/helpers/device/galvoCalibration/capture';
 import type { CapturedCoupon } from '@core/helpers/device/galvoCalibration/captureGrid';
 import { CAPTURE_AIM_INSET_MM } from '@core/helpers/device/galvoCalibration/captureGrid';
 import {
+  L_FRAME_MARK_FEEDRATE,
   markCoupon,
   markLFrame,
   stationFor,
@@ -67,7 +68,10 @@ const GalvoCalibrationBlock = ({
 }: Props): React.JSX.Element => {
   const model = device.model as WorkAreaModel;
   const [center, setCenter] = useState<GalvoPoint>(DEFAULT_CENTER);
-  const [lFrame, setLFrame] = useState({ passes: 1, power: 3 });
+  const [lFrame, setLFrame] = useState({ feedrate: L_FRAME_MARK_FEEDRATE, passes: 1, power: 3 });
+  /** The result on screen is a photograph loaded from a file, not a capture: solved as one. */
+  const [isPhotograph, setIsPhotograph] = useState(false);
+  const photoInput = useRef<HTMLInputElement>(null);
   const [fixBacklash, setFix] = useState(getFixBacklash);
   const [step, setStep] = useState<null | string>(null);
   const [captured, setCaptured] = useState<CapturedCoupon | null>(null);
@@ -139,7 +143,15 @@ const GalvoCalibrationBlock = ({
 
   const handleLFrame = () =>
     run('lframe', 'Mark L frame', () =>
-      withStep(() => markLFrame({ ...site, onStep: setStep, passes: lFrame.passes, power: lFrame.power })),
+      withStep(() =>
+        markLFrame({
+          ...site,
+          feedrate: lFrame.feedrate,
+          onStep: setStep,
+          passes: lFrame.passes,
+          power: lFrame.power,
+        }),
+      ),
     );
 
   const handleCapture = () =>
@@ -161,11 +173,44 @@ const GalvoCalibrationBlock = ({
 
         if (result) {
           setCaptured(result);
+          setIsPhotograph(false);
           setSolved(null);
           setAnnotatedUrl(null);
         }
       }),
     );
+
+  /**
+   * A photograph of the sheet from any camera, a phone included: the solver finds the coupon
+   * and fits a projective ruler, so the scale and origin given here are only a starting point
+   * (an image of about 250 mm across, centred on the sheet).
+   */
+  const handlePhotograph = async (file: File | null | undefined) => {
+    if (!file) return;
+
+    const url = URL.createObjectURL(file);
+    const { height, width } = await new Promise<{ height: number; width: number }>((resolve, reject) => {
+      const img = new Image();
+
+      img.onload = () => resolve({ height: img.naturalHeight, width: img.naturalWidth });
+      img.onerror = () => reject(new Error('Not an image'));
+      img.src = url;
+    });
+    const pxPerMm = Math.max(width, height) / 250;
+
+    setCaptured({
+      blob: file,
+      heightPx: height,
+      originMm: { x: center.x - width / 2 / pxPerMm, y: center.y - height / 2 / pxPerMm },
+      pxPerMm,
+      url,
+      widthPx: width,
+    });
+    setIsPhotograph(true);
+    setCaptureWarnings([]);
+    setSolved(null);
+    setAnnotatedUrl(null);
+  };
 
   const handleSolve = () =>
     run('solve', 'Solve', () =>
@@ -174,7 +219,7 @@ const GalvoCalibrationBlock = ({
 
         setStep('Solving');
 
-        const params = buildSolveParams(captured, config, { center });
+        const params = buildSolveParams(captured, config, { center, photograph: isPhotograph });
         let answer: { annotated: Blob | null; result: SolveResult };
 
         try {
@@ -291,6 +336,20 @@ const GalvoCalibrationBlock = ({
           />
         </Flex>
         <Flex align="center" className={blockStyles.row} gap={8}>
+          <span className={blockStyles.label}>Feed</span>
+          <InputNumber
+            addonAfter="mm/min"
+            className={classNames(blockStyles.input, blockStyles.short)}
+            data-testid="lframe-feedrate"
+            max={6000}
+            min={100}
+            onChange={(value) => setLFrame({ ...lFrame, feedrate: value ?? L_FRAME_MARK_FEEDRATE })}
+            precision={0}
+            size="small"
+            value={lFrame.feedrate}
+          />
+        </Flex>
+        <Flex align="center" className={blockStyles.row} gap={8}>
           <span className={blockStyles.label}>Passes</span>
           <InputNumber
             className={classNames(blockStyles.input, blockStyles.short)}
@@ -332,6 +391,20 @@ const GalvoCalibrationBlock = ({
             value={aimInset}
           />
         </Flex>
+        <Button data-testid="load-photograph" disabled={busy} onClick={() => photoInput.current?.click()} size="small">
+          Load photograph
+        </Button>
+        <input
+          accept="image/*"
+          data-testid="photograph-input"
+          hidden
+          onChange={(e) => {
+            handlePhotograph(e.target.files?.[0]);
+            e.target.value = '';
+          }}
+          ref={photoInput}
+          type="file"
+        />
         <Button
           data-testid="solve"
           disabled={busy || !captured}
@@ -399,6 +472,8 @@ const GalvoCalibrationBlock = ({
               <td>
                 {fmt(result.ruler.px_per_mm_x, 3)} / {fmt(result.ruler.px_per_mm_y, 3)} px/mm,{' '}
                 {result.ruler.vertices_used} vertices, RMS {fmt(result.ruler.rms_mm, 3)} mm
+                {result.ruler.model ? ` (${result.ruler.model})` : ''}
+                {result.located ? `, coupon located at ${fmt(result.located.px_per_mm, 2)} px/mm` : ''}
               </td>
             </tr>
             <tr>

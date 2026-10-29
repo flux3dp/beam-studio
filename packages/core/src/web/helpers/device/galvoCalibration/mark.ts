@@ -212,9 +212,19 @@ const enableCo2 = async (home: () => Promise<unknown>, onStep?: OnStep): Promise
   if (enabled === null) console.warn('Galvo calibration: M136P311 gave nothing to read the CO2 enable from');
 };
 
-/** Feed rates for the nozzle's L frame, mm/min: travel between marks, and marking. */
+/** Feed rates for the nozzle's L frame, mm/min: travel between marks, and marking by default. */
 const L_FRAME_TRAVEL_FEEDRATE = 6000;
-const L_FRAME_MARK_FEEDRATE = 1200;
+
+export const L_FRAME_MARK_FEEDRATE = 3000;
+
+/**
+ * Each L stroke starts this far beyond the tip of its first arm and ends this far beyond the tip
+ * of its second, so that the beam switches on and off there: the controller stops the gantry to
+ * change the laser power, and the beam dwelling on the sheet meanwhile burns a 3 to 4 mm blob.
+ * Off the arms, the blob does not change what the solver measures (it samples the arms 2 to
+ * 6.5 mm from the vertex).
+ */
+const L_FRAME_LEAD_MM = 4;
 /**
  * A stroke cut at the L power before the first L, outside the solver's ring (Chebyshev 82 of the
  * centre) but on a 180 mm sheet: the first marks of the first frame on the machine came out as
@@ -246,20 +256,43 @@ export const warmUpStroke = (center: GalvoPoint): { from: GalvoPoint; to: GalvoP
  * whole frame, homing before each pass. One pass is the default: on the machine a second pass
  * landed 1 to 3 mm beside the first and only added a ghost of every L.
  */
+/** A point `lead` mm beyond `tip`, away from `vertex`, along the arm. */
+const beyond = (vertex: GalvoPoint, tip: GalvoPoint, lead: number): GalvoPoint => {
+  const length = Math.hypot(tip.x - vertex.x, tip.y - vertex.y) || 1;
+
+  return {
+    x: round3(tip.x + ((tip.x - vertex.x) / length) * lead),
+    y: round3(tip.y + ((tip.y - vertex.y) / length) * lead),
+  };
+};
+
 export const markLFrame = async ({
   center,
+  feedrate = L_FRAME_MARK_FEEDRATE,
   fixBacklash,
   model,
   onStep,
   passes,
   power,
-}: Omit<MarkSite, 'offsets'> & { onStep?: OnStep; passes: number; power: number }): Promise<void> => {
+}: Omit<MarkSite, 'offsets'> & {
+  /** Marking feed rate, mm/min. */
+  feedrate?: number;
+  onStep?: OnStep;
+  passes: number;
+  power: number;
+}): Promise<void> => {
   const { minX, minY } = getGantryTravelRange(model);
-  const marks = buildLFrameMarks(center);
+  const marks = buildLFrameMarks(center).map((mark) => ({
+    ...mark,
+    leadIn: beyond(mark.vertex, mark.start, L_FRAME_LEAD_MM),
+    leadOut: beyond(mark.vertex, mark.end, L_FRAME_LEAD_MM),
+  }));
   const warmUp = warmUpStroke(center);
-  const unreachable = [warmUp.from, warmUp.to, ...marks.flatMap(({ end, start, vertex }) => [start, vertex, end])].find(
-    (p) => stationProblem(model, p),
-  );
+  const unreachable = [
+    warmUp.from,
+    warmUp.to,
+    ...marks.flatMap(({ end, leadIn, leadOut, start, vertex }) => [leadIn, start, vertex, end, leadOut]),
+  ].find((p) => stationProblem(model, p));
 
   if (unreachable) throw new Error(stationProblem(model, unreachable)!);
 
@@ -294,20 +327,23 @@ export const markLFrame = async ({
           await deviceMaster.rawMove({ f: L_FRAME_TRAVEL_FEEDRATE, s: 0, x: point.x, y: point.y });
         }
 
-        await deviceMaster.rawMove({ f: L_FRAME_MARK_FEEDRATE, s, x: warmUp.to.x, y: warmUp.to.y });
-        await deviceMaster.rawMove({ f: L_FRAME_MARK_FEEDRATE, s, x: warmUp.from.x, y: warmUp.from.y });
+        await deviceMaster.rawMove({ f: feedrate, s, x: warmUp.to.x, y: warmUp.to.y });
+        await deviceMaster.rawMove({ f: feedrate, s, x: warmUp.from.x, y: warmUp.from.y });
         from = warmUp.from;
         onStep?.(`Cutting the L frame, pass ${pass + 1}/${passes}`);
       }
 
-      for (const { end, start, vertex } of marks) {
-        for (const point of approachPoints(start, { fix: fixBacklash, from, min: { x: minX, y: minY } })) {
+      for (const { end, leadIn, leadOut, start, vertex } of marks) {
+        for (const point of approachPoints(leadIn, { fix: fixBacklash, from, min: { x: minX, y: minY } })) {
           await deviceMaster.rawMove({ f: L_FRAME_TRAVEL_FEEDRATE, s: 0, x: point.x, y: point.y });
         }
 
-        await deviceMaster.rawMove({ f: L_FRAME_MARK_FEEDRATE, s, x: vertex.x, y: vertex.y });
-        await deviceMaster.rawMove({ f: L_FRAME_MARK_FEEDRATE, s, x: end.x, y: end.y });
-        from = end;
+        // one stroke, lead-in to lead-out: the beam comes on and goes off beyond the arms
+        for (const point of [start, vertex, end, leadOut]) {
+          await deviceMaster.rawMove({ f: feedrate, s, x: point.x, y: point.y });
+        }
+
+        from = leadOut;
       }
     }
   } finally {
