@@ -270,7 +270,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 
 - **flux-id**（2026-10-22 實作，branch `feat/photo-to-3d`，`PhotoTo3D` in `fluxid/apps/api/views/replicate_api.py`）：`POST /api/photo-to-3d`，同步，照 `ReplicateImageView`（`fluxid/apps/api/views/replicate_api.py`）的登入、點數檢查與錯誤處理。資料格式見 §7。
   - 輸入 multipart：`image`（原圖）、`remove_background`（`'1'` / `'0'`）。
-  - 有去背時先跑 `RemoveBackground` 的同一個模型（`men1scus/birefnet:f74986db…`），再把去背圖送 DA3 Mono（`vufinder/depth-anything-v3-mono:2dad523…`，輸入 `processing_resolution: match_input`、`alpha_blend_onto: white`、`to_base64`，照測試頁 2026-10-14 的設定；欄位名稱要對 Replicate 的 schema 確認）。
+  - 有去背時先跑 `RemoveBackground` 的同一個模型（`men1scus/birefnet:f74986db…`），再把去背圖送 DA3 Mono（`vufinder/depth-anything-v3-mono:2dad523…`，輸入 `images: [圖]`（schema 的影像欄位是陣列，一張圖對應一個輸出 JSON；2026-10-29 送 `image` 被 422 `images is required` 退回後修正）、`processing_resolution: match_input`、`alpha_blend_onto: white`、`to_base64`，照測試頁 2026-10-14 的設定）。
   - DA3 的輸出 JSON 約 22MB（含一份 RGB 影像），伺服器只取深度與遮罩（`alpha_mask > 0` 且非 `sky_mask`），去掉 RGB，回傳約 1.4MP 照片 9MB 左右的 JSON。
   - 兩個模型都成功才 `use_credit` 0.06；任一步失敗不扣點（與現有 API 相同，先檢查餘額、成功後才扣）。
   - 原本 `ReplicateImageView` 的重試迴圈抽成 `run_replicate`，去背、AI 放大照用，行為不變。
