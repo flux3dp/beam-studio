@@ -177,7 +177,7 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
 | `stlLayerSpacing` | `data-stl-layer-spacing` | mm, line Z step and Thick Contour inward-shell step |
 | `stlMinLayerSpacing` | `data-stl-min-layer-spacing` | mm, > 0 = adaptive line slicing |
 | `stlSolid` | `data-stl-solid` | dot mode only, shown as **Thick Contour** (`inner_engraving_settings.thick_contour`): also dot up to 2 inward shells (Swiftray `max_shell_count` 3); the stored key keeps the old name |
-| `stlFillCaps` | `data-stl-fill-caps` | line mode only, **Fill Top and Bottom Faces** (`inner_engraving_settings.fill_caps`): also fill the faces leaning ≤ 1° from horizontal (Swiftray `Slicer::capFaces`), holes left empty, inset half an interval |
+| `stlFillCaps` | `data-stl-fill-caps` | line mode only, **Fill Horizontal Faces** (`inner_engraving_settings.fill_caps`): also fill every face leaning ≤ 1° from horizontal, the flat steps in the middle of a stepped object included (Swiftray `Slicer::capFaces`), holes left empty, inset half an interval |
 | `stlCapInterval` | `data-stl-cap-interval` | mm, scan-line interval of that fill (`DEFAULT_CAP_INTERVAL` 0.01, `CAP_INTERVAL_LIMIT` like the 2D fill interval); the fill angle, bidirectional, cross hatch and UV heat options are the layer's 2D fill settings |
 
 - Swiftray reads them off the layer `<g>` (`createGNode` → `Layer::stl*`) and copies them onto each

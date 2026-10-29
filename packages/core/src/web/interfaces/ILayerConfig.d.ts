@@ -151,7 +151,7 @@ type PromarkConfig = {
 type InnerEngravingConfig = {
   /** mm, scan-line interval of the top and bottom face fill */
   stlCapInterval: number;
-  /** line mode only: also fill the top and bottom faces */
+  /** line mode only: also fill the horizontal faces (every face looking straight up or down) */
   stlFillCaps: boolean;
   /** mm, Z step in line mode, inward-shell step in solid dot mode */
   stlLayerSpacing: number;

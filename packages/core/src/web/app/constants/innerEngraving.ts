@@ -86,6 +86,6 @@ export const DEFAULT_POINT_SPACING = 0.03;
  */
 export const LAYER_SPACING_LIMIT = { max: 5, min: 0.01 } as const;
 export const POINT_SPACING_LIMIT = { max: 5, min: 0.01 } as const;
-/** Millimetres. The fill of the top and bottom faces in line mode, like the 2D fill interval. */
+/** Millimetres. The fill of the horizontal faces in line mode, like the 2D fill interval. */
 export const DEFAULT_CAP_INTERVAL = 0.01;
 export const CAP_INTERVAL_LIMIT = { max: 100, min: 0.0001 } as const;
