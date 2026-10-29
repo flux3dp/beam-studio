@@ -266,7 +266,7 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   - Entry and request:
     - `ActionsPanelStl` shows "Convert to 3D" for one flat photo; it opens `showPhotoTo3dModal` (`components/dialogs/PhotoTo3dModal/`).
     - The dialog asks for remove-background (default off when over 1% of the photo is not opaque) and the sharpening amount and radius.
-    - `convertPhotoTo3d` sends the original image to flux-id `/api/photo-to-3d` through `processImageWithAiJson` (0.06 credits; flux-id `PhotoTo3D` in `replicate_api.py` runs the depth model with `images: [photo]`, the schema's array field). The response carries depth and mask, plus the cut-out PNG when the background was removed.
+    - `convertPhotoTo3d` sends the original image to flux-id `/api/photo-to-3d` through `processImageWithAiJson` (0.06 credits; flux-id `PhotoTo3D` in `replicate_api.py` runs the depth model with `images: [photo]`, the schema's array field; the data URL names the image's MIME type because cog names the file after it and the model picks inputs by extension). The response carries depth and mask, plus the cut-out PNG when the background was removed.
   - Computation, in a Web Worker (`runPhotoTo3d`, only the latest job per object):
     - `dither.ts` puts the photo onto the dot grid (world size / layer `stlPointSpacing`), sharpens it, then runs Floyd–Steinberg. Bright pixels become dots, because a dot shows white in the crystal.
     - `depthField.ts` takes the 1–99% percentiles, cleans the depth along the cut-out only, and lifts each dot onto it. The near side is raised, so depth is inverted on the way to Z. Steep areas get extra dots.
