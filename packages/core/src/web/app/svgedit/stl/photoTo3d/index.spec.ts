@@ -66,14 +66,12 @@ jest.mock('../photoPointCloud', () => ({
 }));
 
 const mockAddCommandToHistory = jest.fn();
-const mockAppendCommandToLast = jest.fn();
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
   addCommandToHistory: (...args: unknown[]) => mockAddCommandToHistory(...args),
-  appendCommandToLast: (...args: unknown[]) => mockAppendCommandToLast(...args),
 }));
 
-import { convertPhotoTo3d, isPhotoTo3dStale, refreshStalePhotoTo3d, updatePhotoTo3d } from '.';
+import { convertPhotoTo3d, updatePhotoTo3d } from '.';
 
 const toBase64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes));
 const response = (image: null | string = null) => ({
@@ -150,7 +148,6 @@ describe('photo to 3D', () => {
     expect(elem.getAttribute('data-stl-depth-sharpen')).toBe('1');
     expect(elem.getAttribute('data-stl-depth-radius')).toBe('4');
     expect(elem.getAttribute('data-stl-depth-round')).toBe('0');
-    expect(elem.getAttribute('data-stl-depth-grid')).toBe('40,20');
     expect(Number(elem.getAttribute('data-stl-depth-thickness'))).toBeCloseTo(4.4);
     // the image stays as it was
     expect(elem.getAttribute('xlink:href')).toBe('data:image/png;base64,photo');
@@ -205,7 +202,6 @@ describe('photo to 3D', () => {
     beforeEach(() => {
       Object.entries({
         'data-stl-depth': '1',
-        'data-stl-depth-grid': '40,20',
         'data-stl-depth-radius': '4',
         'data-stl-depth-round': '0',
         'data-stl-depth-sharpen': '1',
@@ -218,24 +214,8 @@ describe('photo to 3D', () => {
       });
     });
 
-    const resize = (scale: [number, number, number]) =>
-      useStlStore.setState(({ objects }) => ({
-        objects: { photo: { ...objects.photo, transform: { ...objects.photo.transform, scale } } },
-      }));
-
-    test('goes stale when its X or Y size or its layer point spacing changes, not its Z size', () => {
-      expect(isPhotoTo3dStale(elem)).toBe(false);
-      resize([0.5, 0.5, 3]);
-      expect(isPhotoTo3dStale(elem)).toBe(false);
-      resize([0.6, 0.5, 1]);
-      expect(isPhotoTo3dStale(elem)).toBe(true);
-      resize([0.5, 0.5, 1]);
-      mockPointSpacing.mockReturnValue(0.25);
-      expect(isPhotoTo3dStale(elem)).toBe(true);
-    });
-
     test('recomputes from the saved depth with the changed setting, as its own undo step', async () => {
-      await updatePhotoTo3d(elem, { sharpenAmount: 2 }, 'new');
+      await updatePhotoTo3d(elem, { sharpenAmount: 2 });
 
       expect(mockProcessImageWithAiJson).not.toHaveBeenCalled();
       expect(mockRunPhotoTo3d.mock.lastCall[1].params.sharpenAmount).toBe(2);
@@ -244,23 +224,18 @@ describe('photo to 3D', () => {
       expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     });
 
-    test('a stale point cloud folds into the step that made it stale, or into nothing before a job', async () => {
-      resize([1, 1, 1]);
-      await updatePhotoTo3d(elem, {}, 'append');
+    test('a changed layer point spacing or size on its own recomputes nothing', async () => {
+      mockPointSpacing.mockReturnValue(0.25);
+      useStlStore.setState(({ objects }) => ({
+        objects: { photo: { ...objects.photo, transform: { ...objects.photo.transform, scale: [1, 1, 1] } } },
+      }));
 
-      expect(elem.getAttribute('data-stl-depth-grid')).toBe('80,40');
-      expect(mockAppendCommandToLast).toHaveBeenCalledWith(expect.anything(), 'Update photo to 3D', elem);
-
-      mockPointSpacing.mockReturnValue(1);
-      await refreshStalePhotoTo3d();
-
-      expect(elem.getAttribute('data-stl-depth-grid')).toBe('40,20');
-      expect(mockAddCommandToHistory).not.toHaveBeenCalled();
-      expect(mockAppendCommandToLast).toHaveBeenCalledTimes(1);
-
-      mockRunPhotoTo3d.mockClear();
-      await refreshStalePhotoTo3d();
       expect(mockRunPhotoTo3d).not.toHaveBeenCalled();
+
+      // the next edit computes on the grid of the size and spacing of that moment
+      await updatePhotoTo3d(elem, { sharpenAmount: 2 });
+      expect(mockRunPhotoTo3d.mock.lastCall[1].params.pointSpacing).toBe(0.25);
+      expect(mockRunPhotoTo3d.mock.lastCall[1].size.width).toBeCloseTo(40);
     });
   });
 });

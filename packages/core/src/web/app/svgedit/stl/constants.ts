@@ -37,8 +37,6 @@ export const PHOTO_3D_ATTR = {
 export const PHOTO_TO_3D_ATTR = {
   /** Roll-off radius along the cut-out, mm (uvDev). */
   edgeRound: 'data-stl-depth-round',
-  /** `columns,rows` of the dot grid the point cloud was computed on. */
-  grid: 'data-stl-depth-grid',
   /** Marks the photo; the value is the depth binary (BSDM) format version. */
   marker: 'data-stl-depth',
   sharpenAmount: 'data-stl-depth-sharpen',
