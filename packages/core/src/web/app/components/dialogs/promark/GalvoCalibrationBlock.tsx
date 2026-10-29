@@ -9,6 +9,7 @@ import getOpenCV from '@core/helpers/api/open-cv';
 import { getFixBacklash, setFixBacklash } from '@core/helpers/device/galvoCalibration/backlash';
 import { captureCoupon } from '@core/helpers/device/galvoCalibration/capture';
 import type { CapturedCoupon } from '@core/helpers/device/galvoCalibration/captureGrid';
+import { CAPTURE_AIM_INSET_MM } from '@core/helpers/device/galvoCalibration/captureGrid';
 import {
   markCoupon,
   markLFrame,
@@ -71,6 +72,7 @@ const GalvoCalibrationBlock = ({
   const [step, setStep] = useState<null | string>(null);
   const [captured, setCaptured] = useState<CapturedCoupon | null>(null);
   const [captureWarnings, setCaptureWarnings] = useState<string[]>([]);
+  const [aimInset, setAimInset] = useState(CAPTURE_AIM_INSET_MM);
   const [solved, setSolved] = useState<null | { result: SolveResult; suggestion: ScaleSuggestion }>(null);
   const [annotatedUrl, setAnnotatedUrl] = useState<null | string>(null);
   const [rounds, setRounds] = useState<CalibrationRound[]>([]);
@@ -148,6 +150,7 @@ const GalvoCalibrationBlock = ({
         setCaptureWarnings([]);
 
         const result = await captureCoupon({
+          aimInsetMm: aimInset,
           center,
           isCancelled: () => cancelRequested.current,
           model,
@@ -311,6 +314,24 @@ const GalvoCalibrationBlock = ({
         >
           Capture
         </Button>
+        <Flex align="center" className={blockStyles.row} gap={8}>
+          <span
+            className={blockStyles.label}
+            title="Where in the frame each tile is aimed: mm in from the edge nearest the head"
+          >
+            Aim inset
+          </span>
+          <InputNumber
+            addonAfter="mm"
+            className={classNames(blockStyles.input, blockStyles.short)}
+            data-testid="capture-aim-inset"
+            max={200}
+            min={25}
+            onChange={(value) => setAimInset(value ?? CAPTURE_AIM_INSET_MM)}
+            size="small"
+            value={aimInset}
+          />
+        </Flex>
         <Button
           data-testid="solve"
           disabled={busy || !captured}
@@ -357,7 +378,16 @@ const GalvoCalibrationBlock = ({
           )}
           <span>
             {captured.widthPx}×{captured.heightPx} px, {captured.pxPerMm} px/mm, origin ({captured.originMm.x},{' '}
-            {captured.originMm.y})
+            {captured.originMm.y}){' '}
+            <a data-testid="save-stitched" download="galvo-coupon-stitched.png" href={captured.url}>
+              Save PNG
+            </a>
+            {captured.savedTo && (
+              <>
+                <br />
+                Frames, patches and this image kept in {captured.savedTo}
+              </>
+            )}
           </span>
         </Flex>
       )}

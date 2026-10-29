@@ -1,3 +1,5 @@
+import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
+
 import type { GalvoPoint } from '../galvoExec';
 
 /**
@@ -9,10 +11,19 @@ import type { GalvoPoint } from '../galvoExec';
 export const CAPTURE_PX_PER_MM = 20;
 /** Distance between photo centres, mm. */
 export const CAPTURE_PITCH_MM = 40;
-/** Side of the square kept out of the middle of each photo; 50 on a 40 pitch overlaps 5 each way. */
+/** Side of the square kept out of each photo; 50 on a 40 pitch overlaps 5 each way. */
 export const PATCH_MM = 50;
 /** Half the side of the stitched image, mm around the lens centre: covers the ±70 L frame. */
 export const CAPTURE_HALF_SPAN_MM = 90;
+/**
+ * Where in the frame a tile is aimed: this far, in mm, from the edge of the region preview grid
+ * that is nearest the nozzle. The HEXA II head camera looks obliquely at the bed to the left of
+ * the nozzle (hx2GalvoPerspectiveGridWide spans x −260..0 of the head), and the frame is best
+ * resolved and best corrected on the side nearest the head; the far side is the most oblique
+ * view and the first to lose the thin L grooves. 60 keeps a 50 mm patch (±25) inside the
+ * calibrated region, which hx2GalvoPnPPoints end at x = −20.
+ */
+export const CAPTURE_AIM_INSET_MM = 60;
 
 export interface CapturedCoupon {
   blob: Blob;
@@ -20,6 +31,8 @@ export interface CapturedCoupon {
   /** Bed mm at the image's top-left pixel. */
   originMm: GalvoPoint;
   pxPerMm: number;
+  /** The folder on the fluxghost computer holding the frames, patches and this image, if kept. */
+  savedTo?: string;
   /** Object URL of `blob`, for showing it; the owner revokes it. */
   url: string;
   widthPx: number;
@@ -38,11 +51,68 @@ export const capturePoints = (center: GalvoPoint): GalvoPoint[] => {
   );
 };
 
+/** The point of the grid, mm from the head, that is put on a tile's centre. */
+export const captureAim = (grid: PerspectiveGrid, insetMm = CAPTURE_AIM_INSET_MM): GalvoPoint => ({
+  x: grid.x[1] - insetMm,
+  y: (grid.y[0] + grid.y[1]) / 2,
+});
+
+/** The size fluxghost's remap of the grid comes back at: grid span × px/mm, no padding (v3). */
+export const expectedPhotoSize = (
+  grid: PerspectiveGrid,
+  pxPerMm = CAPTURE_PX_PER_MM,
+): { height: number; width: number } => ({
+  height: (grid.y[1] - grid.y[0]) * pxPerMm,
+  width: (grid.x[1] - grid.x[0]) * pxPerMm,
+});
+
+export interface TravelRange {
+  maxX: number;
+  maxY: number;
+  minX: number;
+  minY: number;
+}
+
+export interface TilePlan {
+  /** Where in the photo the tile's centre lands when the gantry got where it was sent, px. */
+  anchor: GalvoPoint;
+  /** Where the gantry is sent, bed mm. */
+  camera: GalvoPoint;
+  /** How far the gantry stopped short of where it was wanted, mm; the tile is -shift from anchor. */
+  shift: GalvoPoint;
+}
+
+const clamp = (value: number, min: number, max: number): number => Math.min(Math.max(value, min), max);
+
+/**
+ * Where to send the gantry so that the aim point of the frame lands on the tile, and where in the
+ * photo to look for the tile afterwards. The gantry is held to its travel and nothing else: the
+ * preview's own rule of keeping the whole frame on the bed would push the camera 130 mm right of
+ * every tile in the left half of the field and hand their patches to the far, oblique side of the
+ * frame (PRD §11 decision 19).
+ */
+export const planTile = (
+  point: GalvoPoint,
+  grid: PerspectiveGrid,
+  travel: TravelRange,
+  { aimInsetMm = CAPTURE_AIM_INSET_MM, pxPerMm = CAPTURE_PX_PER_MM }: { aimInsetMm?: number; pxPerMm?: number } = {},
+): TilePlan => {
+  const aim = captureAim(grid, aimInsetMm);
+  const wanted = { x: point.x - aim.x, y: point.y - aim.y };
+  const camera = { x: clamp(wanted.x, travel.minX, travel.maxX), y: clamp(wanted.y, travel.minY, travel.maxY) };
+
+  return {
+    anchor: { x: (aim.x - grid.x[0]) * pxPerMm, y: (aim.y - grid.y[0]) * pxPerMm },
+    camera,
+    shift: { x: camera.x - wanted.x, y: camera.y - wanted.y },
+  };
+};
+
 export interface PatchRect {
   /** Where in the stitched image the kept part lands, px from the patch's top-left. */
   dx: number;
   dy: number;
-  /** How far the patch's centre sits from the photo's, mm; what the caller may want to report. */
+  /** How far the patch's centre sits from the aim point, mm; what the caller may want to report. */
   offCentreMm: number;
   /** The part of the photo to keep, px. */
   sh: number;
@@ -52,22 +122,26 @@ export interface PatchRect {
 }
 
 /**
- * The square of the photo to keep for a tile whose centre the camera could not be put on:
- * the camera landed `shift` mm away (photo centre = tile centre + shift), so the tile centre
- * sits `-shift` from the middle of the photo and the patch is cut around it there. A patch
- * that runs past the photo's edge is clipped to what the photo has; null when none of it is in
- * the photo. The patch is then more distorted than one from the middle, which is accepted so
- * that a tile near the edge of the bed is photographed rather than refused (PRD §11 decision 18).
+ * The square of the photo to keep for a tile: the tile's centre sits at `anchor` (the middle of
+ * the photo unless told otherwise) less `shift`, the distance the camera stopped short, and the
+ * patch is cut around it there. A patch that runs past the photo's edge is clipped to what the
+ * photo has; null when none of it is in the photo. The patch is then more oblique than one from
+ * the aim point, which is accepted so that a tile at the edge of the travel is photographed
+ * rather than refused (PRD §11 decision 18).
  */
 export const patchSource = (
   shift: GalvoPoint,
   photo: { height: number; width: number },
-  pxPerMm = CAPTURE_PX_PER_MM,
-  patchMm = PATCH_MM,
+  {
+    anchor,
+    patchMm = PATCH_MM,
+    pxPerMm = CAPTURE_PX_PER_MM,
+  }: { anchor?: GalvoPoint; patchMm?: number; pxPerMm?: number } = {},
 ): null | PatchRect => {
+  const at = anchor ?? { x: photo.width / 2, y: photo.height / 2 };
   const patchPx = patchMm * pxPerMm;
-  const left = photo.width / 2 - shift.x * pxPerMm - patchPx / 2;
-  const top = photo.height / 2 - shift.y * pxPerMm - patchPx / 2;
+  const left = at.x - shift.x * pxPerMm - patchPx / 2;
+  const top = at.y - shift.y * pxPerMm - patchPx / 2;
   const sx = Math.max(0, left);
   const sy = Math.max(0, top);
   const sw = Math.min(photo.width, left + patchPx) - sx;

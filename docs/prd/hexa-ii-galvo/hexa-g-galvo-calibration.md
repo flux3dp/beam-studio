@@ -108,7 +108,7 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 
 **AC4 打 L 框**：依 §7.4 執行；8 個 L 頂點在場心落點 ±70 的方框上，角上兩臂朝中心、邊中點在自己所在軸上那一臂朝 +；趟數 n 時每趟前 `$H`，n 趟疊在同一位置。
 
-**AC5 拍照**：依 §7.6 執行；進度顯示 i/n；ESC 可取消，取消在當前那格拍完後生效；完成後對話框內顯示拼接影像縮圖，影像為 20 px/mm、覆蓋場心落點 ±90 mm；任何一格失敗則整次失敗並指出是哪一格。
+**AC5 拍照**：依 §7.6 執行；進度顯示 i/n；ESC 可取消，取消在當前那格拍完後生效；完成後對話框內顯示拼接影像縮圖，影像為 20 px/mm、覆蓋場心落點 ±90 mm，並列出被行程擋住而偏離瞄準點或整格留白的格子（不中止）；相機傳回的影像尺寸不是格寬 × 20 px/mm 時整次失敗並說明是 fluxghost 太舊。拍完後每個階段的影像都留在執行 fluxghost 那台電腦的 `~/Downloads/fluxghost-frames/<時間>/`：原始 JPEG、校正後的 remap、各格裁下的 patch、拼接圖與 capture.json；對話框顯示該資料夾。
 
 **AC6 解算**：依 §7.8 執行；成功時顯示 §7.9 的全部輸出量；L 框自我檢查不過時顯示「尺規無效」與原因（頂點數、跨距、RMS），不顯示尺度數字。
 
@@ -250,10 +250,11 @@ Beam Studio 端 `galvoExec.mainboardLine(gcode, action)` 把「送 mb_exec → �
 1. `ensureGalvoHeadDisconnected`。相機在雷射頭上，頭串聯時可以拍但要降速，而且 L 框之後本來就是解聯狀態。
 2. `ensureRegionPreview`（引用 Print and Cut 的 `previewSession.ts`，內含 `ensurePreviewMode`），用 `previewModeController.previewManager` 的 `getPreviewPosition` 與 `getPhotoAfterMoveTo`。
 3. 拍照格：以 C 為中心，間距 `CAPTURE_PITCH_MM = 40`，覆蓋 C ± 90 → 每軸 5 點（C − 80 … C + 80），共 25 張，蛇行。每一格：
-   - 相機中心對準該點：`getPreviewPosition(px)` 已把頭的實際位置算好並限縮在行程內；與 `{ clipByWorkArea: false }` 的結果相減就是被限縮的量 `shift`。不中止：patch 仍以該格中心為中心，從照片中「中心 − shift」處裁下（`captureGrid.ts` 的 `patchSource`），超出照片的部分留白；偏離超過 5 mm 或整格不在照片內時以 `onWarning` 回報，對話框列出。邊緣 patch 來自照片周邊、畸變較大，先接受，由解算的自我檢查決定夠不夠（§11 決策 18）。
-   - `getPhotoAfterMoveTo(cx, cy, { dpmm: 20 })` 取回 20 px/mm 的透視校正影像（§7.7）；影像中心像素就是照片中心（區域預覽格對 offset 對稱）。
-   - 只取影像中央 `PATCH_MM = 50` 見方的區塊（間距 40 所以相鄰格各重疊 5 mm），`drawImage` 到離屏 canvas 上對應的床座標位置。後貼的蓋前貼的；重疊帶的像素來自較近中心的那張，與 `refineMarkPatches` 的理由相同。
-   - 進度 i/25，ESC 設取消旗標，當前格完成後停。
+   - 瞄準點：HEXA II 頭相機斜看噴嘴左側（區域預覽格 `hx2GalvoPerspectiveGridWide` 是頭的 x −260..0、y 0..145），畫面靠近頭那一側解析度最高、校正最準，遠側最斜。所以不是把該格放在照片正中央，而是放在離格子靠頭那一邊 `CAPTURE_AIM_INSET_MM = 60` mm 處（y 取格子中線）：`captureGrid.ts` 的 `captureAim(grid)`；對話框有「Aim inset」欄位可以不重 build 就掃不同值。
+   - 龍門位置：`planTile(point, grid, travel)` = 該格 − 瞄準點，只用 `getGantryTravelRange` 夾在行程內（**不用** `getPreviewPosition` 的夾法：預覽為了把整張照片留在床內，會把相機推到該格右邊 130 mm 以上，左半場每一格的 patch 都落到畫面最斜的遠側）。被夾住的量是 `shift`，該格在照片裡的位置就是瞄準點像素 `anchor` − shift。
+   - `getPhotoAfterMoveTo(cx, cy, { dpmm: 20 })` 取回 20 px/mm 的透視校正影像（§7.7）；影像是整個格子的重映射，尺寸必須等於格寬 × 20（`expectedPhotoSize`），差超過 2 px 就整次失敗並指出是 fluxghost 太舊，因為 5 px/mm 的舊影像拼起來尺度差四倍、L 一定找不到。
+   - 從 anchor − shift 處裁 `PATCH_MM = 50` 見方（`patchSource(shift, photo, { anchor })`；間距 40 所以相鄰格各重疊 5 mm），`drawImage` 到離屏 canvas 上該格的床座標位置。超出照片的部分留白；偏離瞄準點超過 5 mm 或整格不在照片內時以 `onWarning` 回報、對話框列出，不中止（§11 決策 18）。後貼的蓋前貼的。
+   - 進度 i/25，ESC 設取消旗標，當前格完成後停。每格的龍門位置、shift、anchor、裁切矩形都記下來，拍完連同拼接圖送 fluxghost `save_galvo_capture` 留底（§7.7）。
 4. 離屏 canvas 3600×3600 轉 PNG blob，存對話框 state；縮圖顯示在結果區。
 5. `endPreviewMode`。
 
@@ -264,6 +265,8 @@ Beam Studio 端 `galvoExec.mainboardLine(gcode, action)` 把「送 mb_exec → �
 `api/camera.py` 的 `require_frame` 目前接受無參數或 `l`。新增 `d<dpmm>`（例如 `d20`，須為正整數，壞參數視同無參數）：這一張影像走 `handle_fisheye_image(dpmm=20)`，v1 參數轉給 `apply_perspective_points_transform(dpmm=)`（`unit_length = dpmm * 10`），v2/3/4 轉給 `apply_points(perspective_pixel_per_mm=)`，輸出尺寸同比例放大。不傳時維持 `DPMM = 5`。20 px/mm 高於原生 5 到 7 px/mm，沒有多出資訊，但不再把原生資訊砍掉一半，而且讓 C 的門檻值（連通區塊大小、環半徑）可以用固定的 mm 轉 px。
 
 Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require_frame d20`（`dpmm` 優先於低解析度旗標）；`device-master.takeOnePicture({ dpmm })` → `BasePreviewManager.getPhotoFromMachine(opts)` → `getPhotoAfterMoveTo(x, y, opts)` 一路透傳。`preview_downsample` 的 OOM 重試路徑不動：20 px/mm 的全幅輸出約 3200×2000（160×100 mm 視野），與現在的 5 px/mm 相比大 16 倍，記憶體要在實機確認，必要時 B 階段改成只要求 fluxghost 回傳 patch 區域（加 `crop` 參數）。
+
+留底：每一張 `d<dpmm>` 影像 fluxghost 都存在執行它那台電腦的 `~/Downloads/fluxghost-frames/<YYYYmmdd-HHMMSS>/`（`utils/camera/frame_dump.py`）：`NN-raw.jpg` 是機器送來的原始 bytes（含 EXIF 旗標、未校正）、`NN-remap-20ppm.jpg` 是送回 Beam Studio 的校正影像；一次相機連線一個資料夾，一般預覽不存。`FLUXGHOST_FRAME_DUMP=0` 關閉、`FLUXGHOST_FRAME_DUMP_DIR` 改位置。Beam Studio 拍完後把拼接圖與每格的紀錄送 opencv 端點的 `save_galvo_capture <len> <json>`，fluxghost 寫進同一個資料夾：`stitched.png`、`capture.json`（center、grid、aim inset、每格的 point／camera／shift／anchor／rect、警告），並依 rect 從存下的 remap 裁出 `NN-patch.png`——就是拼進去的那些像素。三個階段並排，可以直接檢查 L 與 node 在哪一階段還認得出來、原始圖能不能直接用。失敗（舊 fluxghost、關閉留底）只記 console，不影響拍照。
 
 ### 7.8 C「解算」：fluxghost `solve_galvo_coupon`
 
@@ -388,6 +391,9 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 16. ~~`galvo_exec paths` 的 payload 大小~~（2026-10-29 決定）：coupon 的 JSON 有 66,440 bytes，而 control_task 是 binary mode，每個 recv（≤ 4096、走網路約 1400 bytes）就當一條指令，所以第一段回 `fail BAD_JSON`、其餘段變成垃圾指令並可能吃掉下一條 `mb_exec`，讓收尾卡到逾時。新增裝置端 `chunk_begin <total> <piece>` 分段協定（BeamOS `chunked.py`、`docs/api/galvo-control.md` §2），Beam Studio `control.ts` 的 `galvoExec` 超過 1024 字元時自動分段，每段等 ok。沒有改成多個 list：一張 coupon 仍是一次 TRYLOCK、一份 list。
 17. ~~L 框不出光~~（2026-10-29 決定）：第一次實機 Mark L 有移動沒出光。原序列只送 `M136P173`；CO2 從噴嘴出光還需要 `M136P259Q15`、`M136P310Q0`、`M136P311Q1`（韌體確認）。`default_mode` 雖然會送這三條，但頭已停妥時整段跳過，而且離開 control_task 時裝置送 `\x18` 重置主板，所以 raw 模式一律自己送四條，收尾送 `M136P311Q0`、`M136P174`。新增 `deviceMaster.rawGcode(line)`（line-check 感知）。
 18. ~~拍照格被相機行程夾住時中止~~（2026-10-29 決定）：實機上有一格被夾超過 5 mm 就整段中止，後面無法進行。改為照片中心到哪就從哪裁 patch，裁不到的留白、記警告不中止，先把整條流程跑完再決定雷射頭相機夠不夠。
+19. ~~拍照位置離雕刻區太遠、patch 來自畫面最斜處~~（2026-10-29 決定）：實機第一次完整拍照，25 格 L 頂點全部 0 個。原做法把每格放在照片正中央，而預覽的 `getPreviewPosition` 又會為了讓整張照片留在床內把相機再往右推，左半場的格子都裁自畫面最遠、最斜的一側。改為：瞄準點放在靠頭那一側 60 mm 處（`captureAim`，對話框可調）、龍門只夾行程不夾床（`planTile`），並檢查回傳影像尺寸等於格寬 × 20 px/mm（舊 fluxghost 回 5 px/mm 影像時尺度差四倍，L 必然找不到）。瞄準點該放哪沒有量測依據，是實機觀察「靠頭那邊比較準」；用 Aim inset 掃過再定。
+20. ~~每個階段的影像沒有留底~~（2026-10-29 決定）：fluxghost 把每張 `d<dpmm>` 影像的原始 JPEG 與校正後影像存到 `~/Downloads/fluxghost-frames/<時間>/`，Beam Studio 拍完把拼接圖與每格紀錄送 `save_galvo_capture`，fluxghost 再依紀錄裁出每格 patch（§7.7）。方便逐階段看 L 與 node 的辨識狀況，也看原始圖能不能直接拿來用（§12 風險「改走原始影像」）。
+21. ~~第二輪 L 框又不出光~~（2026-10-29 決定，待驗）：第一輪（剛從 default_mode 退出）有出光，第二輪（頭已停妥、直接進 raw）動了但似乎沒出光。差別是第一輪結束時送了 `M136P174` 把 24 V 關掉，第二輪的 `M136P173` 緊接著 `M136P311Q1`，軌可能還沒起來。改為：四條指令在歸零**之前**送（和工作一樣，transient list 在最前面），歸零後用 `M136P311` 讀回 enclosed laser 狀態，是 off 就等 1 s 重送一次，還是 off 就報錯不切；讀不到欄位只記 console。五條指令的回覆都印在 console，第二輪再不出光把那幾行貼回來。
 
 ## 12. Risks & follow-ups
 

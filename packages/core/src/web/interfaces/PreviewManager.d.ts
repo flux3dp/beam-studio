@@ -1,6 +1,7 @@
 import type { PreviewMode } from '@core/app/constants/cameraConstants';
 
 import type { CameraConfig, CameraParameters } from './Camera';
+import type { PerspectiveGrid } from './FisheyePreview';
 
 export interface PreviewManager {
   /**
@@ -19,6 +20,12 @@ export interface PreviewManager {
   getPhotoAfterMoveTo?: (x: number, y: number, opts?: { dpmm?: number }) => Promise<string>;
 
   getPreviewPosition?: (x: number, y: number, opts?: { clipByWorkArea?: boolean }) => { x: number; y: number };
+
+  /**
+   * The grid a region preview frame is remapped over, mm from the head: the frame's pixel
+   * (0, 0) is the grid's (x[0], y[0]) and its size is the grid's span times the px/mm asked for
+   */
+  getRegionPreviewGrid?: () => PerspectiveGrid;
 
   /**
    * Serpentine capture points covering the region (rows top to bottom, odd

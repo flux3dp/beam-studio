@@ -247,6 +247,41 @@ class OpenCVWebSocket extends EventEmitter {
     });
   }
 
+  /**
+   * Put the stitched galvo calibration capture, with where each tile came from, next to the
+   * frames fluxghost kept for it on this computer (`save_galvo_capture`, frame_dump.py). For
+   * looking at a failed solve afterwards; nothing is computed from it. Resolves to the folder.
+   */
+  async saveGalvoCapture(imgBlob: Blob, meta: object): Promise<{ folder: string; written: string[] }> {
+    const data = await imgBlob.arrayBuffer();
+
+    return this.enqueue(async () => {
+      await this.waitForOpen();
+
+      return new Promise((resolve, reject) => {
+        this.removeCommandListeners();
+        this.setDefaultErrorResponse(reject);
+        this.setDefaultFatalResponse(reject);
+        this.on('message', (response: { folder?: string; status: string; written?: string[] }) => {
+          const { status } = response;
+
+          if (status === 'continue') {
+            this.ws.send(data);
+          } else if (status === 'ok') {
+            this.removeCommandListeners();
+            resolve({ folder: response.folder ?? '', written: response.written ?? [] });
+          } else if (['Error', 'fail', 'none'].includes(status)) {
+            this.removeCommandListeners();
+            reject(response);
+          } else {
+            console.log('strange message from /ws/opencv', response);
+          }
+        });
+        this.ws.send(`save_galvo_capture ${data.byteLength} ${JSON.stringify(meta)}`);
+      });
+    });
+  }
+
   async sharpen(imgUrl: string, sharpness: number, radius: number): Promise<Blob> {
     // shares the socket with the other commands, so it has to take its turn: `removeCommandListeners`
     // is global, and running alongside an in-flight command would strand that command's listeners

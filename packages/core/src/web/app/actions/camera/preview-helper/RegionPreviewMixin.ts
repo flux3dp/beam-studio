@@ -31,6 +31,9 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       };
     }
 
+    /** The grid the frames are remapped over, mm from the head; what a frame's pixels mean. */
+    getRegionPreviewGrid = (): PerspectiveGrid => this.regionPreviewGrid;
+
     setRegionPreviewGrid = (grid: PerspectiveGrid) => {
       this.regionPreviewGrid = grid;
       this.regionPreviewOffset = {
