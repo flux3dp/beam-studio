@@ -153,9 +153,9 @@ UI 的「精準對位」即 Print and Cut。
 
 **相機 Tab，舊款**
 - 以 `BeamPreviewManager` 的正規表示式（`parseCameraOffset`）載入 `camera_offset`（`getAddOnInfo(model).openBottom` 時再載 `camera_offset_borderless`）。
-  只顯示 `X`、`Y` 的絕對 mm 值，可在 **校正值 ±10 mm** 內調整（出廠常數 20 / 30 不能當中心：已校正的 beamo 讀到 X 8.9 / Y 37.9）；`R`、`SX`、`SY` 留在記憶體供寫回使用，不顯示（D6）。兩列放在同一區塊、一顆儲存。
+  只顯示 `X`、`Y` 的絕對 mm 值，**不設上下限**：存的值也不能當中心（已校正的 beamo 讀到 X 8.9 / Y 37.9，離出廠常數 20 / 30 有段距離，而且校正壞掉的值必須能被改回來）；`R`、`SX`、`SY` 留在記憶體供寫回使用，不顯示（D6）。兩列放在同一區塊、一顆儲存。
 - 儲存透過 `sendPictureThenSetConfig` → `doSetConfigTask` 寫入，帶著未變的 `R`/`SX`/`SY`，維持 `S` 與 `SX/SY` 的韌體分支及 pnc.json 清除。
-  存的值若是 `0, 0`，那是韌體的「未校正」哨兵值（`BeamPreviewManager` 會退回理想常數）：該列停用並顯示「請先校正相機」，哨兵值不可能被微調成假位置；已校正的列也不能存成 `0, 0`（提示 + 儲存停用），否則下一次預覽連已存的 `R`/`SX`/`SY` 都會一起丟掉。
+  不擋任何值，也不推斷「已校正」狀態：從未校正的機器回的是韌體預設 `X0 Y0 R0 SX1 SY1`（`fluxmonitor/storage.py:391`），該列照樣顯示；不論存了什麼，`BeamPreviewManager` 仍把 `0, 0` 當成「用理想常數」，而這種狀態的機器本來就需要校正。
 - 每列一個 **翻轉切換**（「翻轉影像」），來自設定值的 `F:` 旗標（`parseCameraFlip`）。部分舊機器的相機是反向安裝的，而韌體在設定檔從未寫入時把 `F` 預設為 1（`fluxmonitor/storage.py:391`），照片因此整張顛倒。
   儲存有變動的翻轉時送出部分設定 `config set camera_offset F:0|1`：韌體會合併部分設定（`command_task.py:1105`、`storage.py:395`），X/Y/R/S 不受影響。同時清除 pnc.json（翻轉會移動照片中所有東西），並寫入 `deviceMaster.currentDevice.cameraNeedsFlip`，也就是 `connectCamera` 每次連線只讀一次的快取，讓下一次預覽不必重連就用新方向。
 - **正負號**（與魚眼偏移相反，因為 `X`/`Y` 是相機位置而不是修正量）：雷射頭移到 `canvas − (X, Y)`，所以切割落在預覽物件右側 `e` 代表 `X` 多了 `e`：把 `X` 減少 `e`；落在下方則減少 `Y`。實機確認（§12 案例 7）。
@@ -313,7 +313,7 @@ components/dialogs/camera/ManualConfiguration/
 單元測試（jest，`--runInBand`）：
 - `ManualConfiguration` 各機型 Tab 顯示（§5 表）。
 - CameraTab 各存放處的儲存 payload：未改欄位保留、加上 `offset`、`region_offsets` 隨單選鈕增減、pnc 清除。
-- 舊款區塊：`camera_offset` 正規表示式解析、`0,0` 拒絕、`doSetConfigTask` 收到未變的 `R/SX/SY`。
+- 舊款區塊：`camera_offset` 正規表示式解析、`doSetConfigTask` 收到未變的 `R/SX/SY`。
 - `FisheyePreviewManagerV4` 在 `useRegionOffsets` 為 false 時去掉 `region_offsets`。
 
 fluxghost：`ws_smoke.py` 案例；一個單元測試驗證 `offset = (1, 0)` 讓每個投影點平移 1 mm 步進的投影量。

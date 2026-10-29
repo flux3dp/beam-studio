@@ -31,12 +31,6 @@ type Row = {
 
 const settingName = (borderless: boolean) => (borderless ? 'camera_offset_borderless' : 'camera_offset');
 
-// absolute X/Y, editable within ±10 mm of the calibrated value: a nudge, not a recalibration. The factory
-// position is no anchor (a calibrated beamo reads X 8.9 / Y 37.9 against the 20 / 30 constants).
-const RANGE = 10;
-// 0,0 is the firmware's "never calibrated" marker (preview falls back to the ideal constants): nothing to nudge
-const isCalibrated = (stored: CameraParameters | undefined) => Boolean(stored && (stored.x !== 0 || stored.y !== 0));
-
 export interface LegacyCameraBlockProps {
   device: IDeviceInfo;
 }
@@ -70,13 +64,10 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
 
   const changed =
     rows?.filter((row) => {
-      if (!isCalibrated(row.stored)) return false;
+      if (!row.stored) return false;
 
       return row.value.x !== row.stored!.x || row.value.y !== row.stored!.y || row.flip !== row.stored!.flip;
     }) ?? [];
-
-  // writing the marker back would make the next preview drop R/SX/SY too and use the ideal constants
-  const hasZero = rows?.some((row) => isCalibrated(row.stored) && row.value.x === 0 && row.value.y === 0) ?? false;
 
   const handleSave = async () => {
     progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tGlobal.saving });
@@ -115,7 +106,7 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
     }
   };
 
-  useRegisterSaver('camera.legacy', Boolean(rows) && !hasZero && changed.length > 0, handleSave);
+  useRegisterSaver('camera.legacy', Boolean(rows) && changed.length > 0, handleSave);
 
   return (
     <div className={styles.block}>
@@ -124,18 +115,15 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
           <div key={String(row.borderless)}>
             <div className={styles.label}>{row.borderless ? t.legacy_borderless : t.legacy_camera}</div>
             {!row.stored && <div className={styles.hint}>{t.camera_load_failed}</div>}
-            {row.stored && !isCalibrated(row.stored) && <div className={styles.hint}>{t.camera_not_calibrated}</div>}
             <XyInputs
-              disabled={!isCalibrated(row.stored)}
-              max={[(row.stored?.x ?? 0) + RANGE, (row.stored?.y ?? 0) + RANGE]}
-              min={[(row.stored?.x ?? 0) - RANGE, (row.stored?.y ?? 0) - RANGE]}
+              disabled={!row.stored}
               onChange={(value) => setRows((prev) => prev!.map((r, j) => (i === j ? { ...r, value } : r)))}
               value={row.value}
             />
             <label className={styles.switch}>
               <Switch
                 checked={row.flip}
-                disabled={!isCalibrated(row.stored)}
+                disabled={!row.stored}
                 onChange={(flip) => setRows((prev) => prev!.map((r, j) => (i === j ? { ...r, flip } : r)))}
                 size="small"
               />
@@ -144,7 +132,6 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
           </div>
         ))}
       </div>
-      {hasZero && <div className={styles.hint}>{t.legacy_zero_rejected}</div>}
     </div>
   );
 };

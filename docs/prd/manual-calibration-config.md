@@ -190,16 +190,15 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 
 **Camera tab, legacy**
 - Loads `camera_offset` (and `camera_offset_borderless` when `getAddOnInfo(model).openBottom`) with the
-  regexes `BeamPreviewManager` uses (`parseCameraOffset`). Shows only `X`, `Y` as absolute mm, editable
-  within **±10 mm of the calibrated value** (the factory constants 20 / 30 are no anchor: a calibrated beamo
-  reads X 8.9 / Y 37.9); `R`, `SX`, `SY` are kept in memory for the write-back and never shown (D6). Both
-  rows sit in one block with one Save.
+  regexes `BeamPreviewManager` uses (`parseCameraOffset`). Shows only `X`, `Y` as absolute mm, **unbounded**:
+  the stored value is no anchor either (a calibrated beamo reads X 8.9 / Y 37.9 against the 20 / 30 factory
+  constants, and a bad calibration must be correctable); `R`, `SX`, `SY` are kept in memory for the
+  write-back and never shown (D6). Both rows sit in one block with one Save.
 - Save writes through `sendPictureThenSetConfig` → `doSetConfigTask` with the unchanged `R`/`SX`/`SY`, so
-  the `S` vs `SX/SY` firmware split and the pnc.json clearing stay as they are. A stored `0, 0` is the
-  firmware's "never calibrated" marker (`BeamPreviewManager` falls back to the ideal constants): the row
-  is disabled with "calibrate the camera first", so the marker can never be nudged into a bogus position;
-  and a calibrated row cannot be saved as `0, 0` either (hint + Save disabled), since the next preview would
-  then also drop the stored `R`/`SX`/`SY`.
+  the `S` vs `SX/SY` firmware split and the pnc.json clearing stay as they are. No value is rejected and no
+  "calibrated" state is inferred: a never-calibrated machine answers the firmware default `X0 Y0 R0 SX1 SY1`
+  (`fluxmonitor/storage.py:391`) and the row simply shows it; whatever is saved, `BeamPreviewManager` keeps
+  treating `0, 0` as "use the ideal constants", and a machine in that state needs a calibration anyway.
 - **Flip toggle** per row ("Flip image"), from the setting's `F:` flag (`parseCameraFlip`). Some old machines
   have the camera mounted the other way, and the firmware defaults `F` to 1 when the setting file was never
   written (`fluxmonitor/storage.py:391`), so their photos come out upside down. Saving a changed flip sends a
@@ -397,8 +396,7 @@ Unit (jest, `--runInBand`):
 - `ManualConfiguration` tab visibility per model (table in §5).
 - CameraTab save payload per store: unchanged fields preserved, `offset` added, `region_offsets`
   added/dropped by the radio, pnc cleared.
-- Legacy block: regex parse of `camera_offset`, `0,0` rejected, `doSetConfigTask` called with unchanged
-  `R/SX/SY`.
+- Legacy block: regex parse of `camera_offset`, `doSetConfigTask` called with unchanged `R/SX/SY`.
 - `FisheyePreviewManagerV4` strips `region_offsets` when `useRegionOffsets` is false.
 
 fluxghost: `ws_smoke.py` cases; a unit asserting that `offset = (1, 0)` shifts every projected point by
