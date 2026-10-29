@@ -10,7 +10,14 @@ import type { GalvoPoint } from '../galvoExec';
 import { ensureGalvoHeadDisconnected } from '../galvoLaserMode';
 
 import type { CapturedCoupon } from './captureGrid';
-import { CAPTURE_HALF_SPAN_MM, CAPTURE_PX_PER_MM, capturePoints, PATCH_MM, toCanvasPx } from './captureGrid';
+import {
+  CAPTURE_HALF_SPAN_MM,
+  CAPTURE_PX_PER_MM,
+  capturePoints,
+  PATCH_MM,
+  patchSource,
+  toCanvasPx,
+} from './captureGrid';
 
 /**
  * Photograph the coupon and its L frame with the laser head camera, tile by tile, into one image
@@ -26,8 +33,8 @@ import { CAPTURE_HALF_SPAN_MM, CAPTURE_PX_PER_MM, capturePoints, PATCH_MM, toCan
 
 export type { CapturedCoupon } from './captureGrid';
 
-/** A photo whose centre had to be pulled further than this from where it was wanted is no use. */
-const MAX_CLAMP_MM = 5;
+/** Beyond this the patch comes from the photo's periphery; said on screen, not refused. */
+const OFF_CENTRE_WARN_MM = 5;
 
 const loadImage = (url: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
@@ -44,6 +51,7 @@ export const captureCoupon = async ({
   model,
   onProgress,
   onStep,
+  onWarning,
 }: {
   center: GalvoPoint;
   /** Polled between photos; the one in progress finishes first. */
@@ -51,6 +59,8 @@ export const captureCoupon = async ({
   model: WorkAreaModel;
   onProgress?: (done: number, total: number) => void;
   onStep?: (step: string) => void;
+  /** Tiles the camera could not centre on, or reach at all; the capture carries on without. */
+  onWarning?: (message: string) => void;
 }): Promise<CapturedCoupon | null> => {
   await ensureGalvoHeadDisconnected(model, { onSlow: () => onStep?.('Parking the galvo head') });
 
@@ -88,25 +98,31 @@ export const captureCoupon = async ({
       const wanted = manager.getPreviewPosition(px.x, px.y, { clipByWorkArea: false });
       const cameraPosition = manager.getPreviewPosition(px.x, px.y);
       const shift = { x: cameraPosition.x - wanted.x, y: cameraPosition.y - wanted.y };
-
-      if (Math.abs(shift.x) > MAX_CLAMP_MM || Math.abs(shift.y) > MAX_CLAMP_MM) {
-        throw new Error(`Tile ${i + 1}/${points.length} at (${point.x}, ${point.y}) is out of the camera's reach`);
-      }
-
-      const photoCenter = { x: point.x + shift.x, y: point.y + shift.y };
+      const tile = `Tile ${i + 1}/${points.length} at (${point.x}, ${point.y})`;
       const url = await manager.getPhotoAfterMoveTo(cameraPosition.x, cameraPosition.y, { dpmm: CAPTURE_PX_PER_MM });
 
-      if (!url) throw new Error(`Tile ${i + 1}/${points.length} at (${point.x}, ${point.y}) could not be photographed`);
+      if (!url) throw new Error(`${tile} could not be photographed`);
 
       try {
         const img = await loadImage(url);
-        // The frame is centred on the camera's point, so its middle pixel is photoCenter.
-        const patchPx = PATCH_MM * CAPTURE_PX_PER_MM;
-        const sx = img.width / 2 - patchPx / 2;
-        const sy = img.height / 2 - patchPx / 2;
-        const dest = toCanvasPx({ x: photoCenter.x - PATCH_MM / 2, y: photoCenter.y - PATCH_MM / 2 }, originMm);
+        // The frame is centred on where the camera landed, point + shift; the patch stays centred
+        // on the tile, so it is cut from the photo -shift away from the middle, and clipped to the
+        // photo when the camera had to stop short. A tile the photo does not reach at all is left
+        // blank, and the solver's self-check decides whether that mattered.
+        const rect = patchSource(shift, img);
 
-        ctx.drawImage(img, sx, sy, patchPx, patchPx, dest.x, dest.y, patchPx, patchPx);
+        if (!rect) {
+          onWarning?.(`${tile} is out of the camera's reach and was left blank`);
+          continue;
+        }
+
+        if (rect.offCentreMm > OFF_CENTRE_WARN_MM) {
+          onWarning?.(`${tile} was photographed ${rect.offCentreMm.toFixed(1)} mm off centre`);
+        }
+
+        const dest = toCanvasPx({ x: point.x - PATCH_MM / 2, y: point.y - PATCH_MM / 2 }, originMm);
+
+        ctx.drawImage(img, rect.sx, rect.sy, rect.sw, rect.sh, dest.x + rect.dx, dest.y + rect.dy, rect.sw, rect.sh);
       } finally {
         URL.revokeObjectURL(url);
       }

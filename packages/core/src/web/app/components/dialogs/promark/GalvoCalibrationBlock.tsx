@@ -70,6 +70,7 @@ const GalvoCalibrationBlock = ({
   const [fixBacklash, setFix] = useState(getFixBacklash);
   const [step, setStep] = useState<null | string>(null);
   const [captured, setCaptured] = useState<CapturedCoupon | null>(null);
+  const [captureWarnings, setCaptureWarnings] = useState<string[]>([]);
   const [solved, setSolved] = useState<null | { result: SolveResult; suggestion: ScaleSuggestion }>(null);
   const [annotatedUrl, setAnnotatedUrl] = useState<null | string>(null);
   const [rounds, setRounds] = useState<CalibrationRound[]>([]);
@@ -144,12 +145,15 @@ const GalvoCalibrationBlock = ({
       withStep(async () => {
         cancelRequested.current = false;
 
+        setCaptureWarnings([]);
+
         const result = await captureCoupon({
           center,
           isCancelled: () => cancelRequested.current,
           model,
           onProgress: (done, total) => setStep(`Capturing ${done}/${total} (Esc to stop)`),
           onStep: setStep,
+          onWarning: (message) => setCaptureWarnings((warnings) => [...warnings, message]),
         });
 
         if (result) {
@@ -334,6 +338,13 @@ const GalvoCalibrationBlock = ({
         </Checkbox>
       </Flex>
       {step && <div data-testid="calibration-step">{step}</div>}
+      {captureWarnings.length > 0 && (
+        <ul data-testid="capture-warnings" style={{ color: '#b45309', margin: 0, paddingLeft: 20 }}>
+          {captureWarnings.map((message) => (
+            <li key={message}>{message}</li>
+          ))}
+        </ul>
+      )}
       {captured && (
         <Flex align="flex-start" gap={16}>
           <a href={captured.url} rel="noreferrer" target="_blank">

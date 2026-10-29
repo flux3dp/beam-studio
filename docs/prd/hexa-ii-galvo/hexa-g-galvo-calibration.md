@@ -250,7 +250,7 @@ Beam Studio 端 `galvoExec.mainboardLine(gcode, action)` 把「送 mb_exec → �
 1. `ensureGalvoHeadDisconnected`。相機在雷射頭上，頭串聯時可以拍但要降速，而且 L 框之後本來就是解聯狀態。
 2. `ensureRegionPreview`（引用 Print and Cut 的 `previewSession.ts`，內含 `ensurePreviewMode`），用 `previewModeController.previewManager` 的 `getPreviewPosition` 與 `getPhotoAfterMoveTo`。
 3. 拍照格：以 C 為中心，間距 `CAPTURE_PITCH_MM = 40`，覆蓋 C ± 90 → 每軸 5 點（C − 80 … C + 80），共 25 張，蛇行。每一格：
-   - 相機中心對準該點：`getPreviewPosition(px)` 已把頭的實際位置算好並限縮在行程內；與 `{ clipByWorkArea: false }` 的結果相減就是被限縮的量，超過 5 mm 這格記為「拍不到」並中止（AC5）；小於 5 mm 時照片中心跟著位移，貼圖位置用實際中心。
+   - 相機中心對準該點：`getPreviewPosition(px)` 已把頭的實際位置算好並限縮在行程內；與 `{ clipByWorkArea: false }` 的結果相減就是被限縮的量 `shift`。不中止：patch 仍以該格中心為中心，從照片中「中心 − shift」處裁下（`captureGrid.ts` 的 `patchSource`），超出照片的部分留白；偏離超過 5 mm 或整格不在照片內時以 `onWarning` 回報，對話框列出。邊緣 patch 來自照片周邊、畸變較大，先接受，由解算的自我檢查決定夠不夠（§11 決策 18）。
    - `getPhotoAfterMoveTo(cx, cy, { dpmm: 20 })` 取回 20 px/mm 的透視校正影像（§7.7）；影像中心像素就是照片中心（區域預覽格對 offset 對稱）。
    - 只取影像中央 `PATCH_MM = 50` 見方的區塊（間距 40 所以相鄰格各重疊 5 mm），`drawImage` 到離屏 canvas 上對應的床座標位置。後貼的蓋前貼的；重疊帶的像素來自較近中心的那張，與 `refineMarkPatches` 的理由相同。
    - 進度 i/25，ESC 設取消旗標，當前格完成後停。
@@ -387,6 +387,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 15. ~~相機 EXIF 方向旗標~~（2026-10-29 決定）：HEXA II Galvo 頭的相機倒裝，機器端只在 JPEG 加 EXIF Orientation=3 不轉像素（`fluxmonitor/hal/camera/orientation.py`）。fluxghost 原本只有預覽路徑套 `exif_transpose`，`camera-calibration` / `camera-transform` / `opencv` 都解到倒轉的像素，相機校正算出的 k/d/rvec/tvec 與預覽不相容。改為所有讀相機像素的端點都走 `utils/camera/general.py` 的 `open_frame`（fluxghost `e26a188`）。在此之前在這顆頭上做的相機校正參數要重做（主點鏡像）。
 16. ~~`galvo_exec paths` 的 payload 大小~~（2026-10-29 決定）：coupon 的 JSON 有 66,440 bytes，而 control_task 是 binary mode，每個 recv（≤ 4096、走網路約 1400 bytes）就當一條指令，所以第一段回 `fail BAD_JSON`、其餘段變成垃圾指令並可能吃掉下一條 `mb_exec`，讓收尾卡到逾時。新增裝置端 `chunk_begin <total> <piece>` 分段協定（BeamOS `chunked.py`、`docs/api/galvo-control.md` §2），Beam Studio `control.ts` 的 `galvoExec` 超過 1024 字元時自動分段，每段等 ok。沒有改成多個 list：一張 coupon 仍是一次 TRYLOCK、一份 list。
 17. ~~L 框不出光~~（2026-10-29 決定）：第一次實機 Mark L 有移動沒出光。原序列只送 `M136P173`；CO2 從噴嘴出光還需要 `M136P259Q15`、`M136P310Q0`、`M136P311Q1`（韌體確認）。`default_mode` 雖然會送這三條，但頭已停妥時整段跳過，而且離開 control_task 時裝置送 `\x18` 重置主板，所以 raw 模式一律自己送四條，收尾送 `M136P311Q0`、`M136P174`。新增 `deviceMaster.rawGcode(line)`（line-check 感知）。
+18. ~~拍照格被相機行程夾住時中止~~（2026-10-29 決定）：實機上有一格被夾超過 5 mm 就整段中止，後面無法進行。改為照片中心到哪就從哪裁 patch，裁不到的留白、記警告不中止，先把整條流程跑完再決定雷射頭相機夠不夠。
 
 ## 12. Risks & follow-ups
 

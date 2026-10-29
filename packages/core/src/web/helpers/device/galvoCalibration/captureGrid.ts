@@ -38,6 +38,46 @@ export const capturePoints = (center: GalvoPoint): GalvoPoint[] => {
   );
 };
 
+export interface PatchRect {
+  /** Where in the stitched image the kept part lands, px from the patch's top-left. */
+  dx: number;
+  dy: number;
+  /** How far the patch's centre sits from the photo's, mm; what the caller may want to report. */
+  offCentreMm: number;
+  /** The part of the photo to keep, px. */
+  sh: number;
+  sw: number;
+  sx: number;
+  sy: number;
+}
+
+/**
+ * The square of the photo to keep for a tile whose centre the camera could not be put on:
+ * the camera landed `shift` mm away (photo centre = tile centre + shift), so the tile centre
+ * sits `-shift` from the middle of the photo and the patch is cut around it there. A patch
+ * that runs past the photo's edge is clipped to what the photo has; null when none of it is in
+ * the photo. The patch is then more distorted than one from the middle, which is accepted so
+ * that a tile near the edge of the bed is photographed rather than refused (PRD §11 decision 18).
+ */
+export const patchSource = (
+  shift: GalvoPoint,
+  photo: { height: number; width: number },
+  pxPerMm = CAPTURE_PX_PER_MM,
+  patchMm = PATCH_MM,
+): null | PatchRect => {
+  const patchPx = patchMm * pxPerMm;
+  const left = photo.width / 2 - shift.x * pxPerMm - patchPx / 2;
+  const top = photo.height / 2 - shift.y * pxPerMm - patchPx / 2;
+  const sx = Math.max(0, left);
+  const sy = Math.max(0, top);
+  const sw = Math.min(photo.width, left + patchPx) - sx;
+  const sh = Math.min(photo.height, top + patchPx) - sy;
+
+  if (sw <= 0 || sh <= 0) return null;
+
+  return { dx: sx - left, dy: sy - top, offCentreMm: Math.hypot(shift.x, shift.y), sh, sw, sx, sy };
+};
+
 /** Where in the stitched image a bed point lands, px. */
 export const toCanvasPx = (point: GalvoPoint, originMm: GalvoPoint, pxPerMm = CAPTURE_PX_PER_MM): GalvoPoint => ({
   x: (point.x - originMm.x) * pxPerMm,
