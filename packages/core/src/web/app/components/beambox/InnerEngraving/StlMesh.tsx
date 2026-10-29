@@ -10,6 +10,7 @@ import { getPhotoTextureUrl, photoPlaneEvents } from '@core/app/svgedit/stl/phot
 
 import BoundingBox from './BoundingBox';
 import { SELECTION_COLOR } from './constants';
+import { registerAnchor } from './utils/anchors';
 import { MM_TO_SCENE } from './utils/coordinates';
 import { consumeGizmoDragged, markGizmoDragged } from './utils/gizmoDrag';
 import { createLayerColorUniform, getLayerColorOffset, injectLayerColor } from './utils/photoLayerColor';
@@ -61,6 +62,14 @@ const StlMesh = ({
   const [anchor, setAnchor] = useState<Group | null>(null);
   const objectRef = useRef<Mesh | Points>(null);
   const { geometry, id, transform } = object;
+  // the group gizmo moves the anchor directly while dragging a multi-selection
+  const handleAnchorRef = useCallback(
+    (group: Group | null) => {
+      setAnchor(group);
+      registerAnchor(id, group);
+    },
+    [id],
+  );
   const { flip, position, rotation, scale } = transform;
   const transformMode = useViewStore((state) => state.transformMode);
   const ratioLocked = useRatioLocked(id);
@@ -227,7 +236,7 @@ const StlMesh = ({
     <>
       <group
         position={position}
-        ref={setAnchor}
+        ref={handleAnchorRef}
         rotation={rotation}
         scale={[scale[0] * MM_TO_SCENE, scale[1] * MM_TO_SCENE, scale[2] * MM_TO_SCENE]}
         visible={isVisible}

@@ -9,6 +9,7 @@ import type { StlObject, StlTransform } from '@core/app/stores/stlStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 
 import { SELECTION_COLOR } from './constants';
+import { applyTransformToAnchor, getAnchor } from './utils/anchors';
 import { markGizmoDragged } from './utils/gizmoDrag';
 import type { GroupDragStart } from './utils/groupTransform';
 import { commitGroupDrag, getGroupBox, getGroupDragTransforms, getUniformFactor } from './utils/groupTransform';
@@ -32,8 +33,9 @@ interface Props {
  * The gizmo is attached to a proxy group sitting at the centre of the selection's union box, not to
  * any object. Every frame of a drag reads the proxy's offset, rotation and (uniform) scale as one
  * delta and moves each object by it about that centre (`transformInGroup`), so the selection behaves
- * like a single body. The store is written as the drag goes, which redraws the meshes; the rects are
- * re-projected without history; letting go records one undo step for the whole selection.
+ * like a single body. As with one object's gizmo, the drag moves the meshes' anchors directly and
+ * re-projects the rects without history; the store, and with it the dimension panel, is written
+ * once on release, as one undo step for the whole selection.
  */
 const GroupTransformControls = ({ objects, panning, snapActive, snapCenter }: Props): null | React.JSX.Element => {
   const [proxy, setProxy] = useState<Group | null>(null);
@@ -103,19 +105,24 @@ const GroupTransformControls = ({ objects, panning, snapActive, snapCenter }: Pr
     if (snapActive && transformMode === 'translate') snapPosition(proxy.position, snapCenter);
 
     const next = getNextTransforms();
-    const { objects: stored, setTransform: storeTransform } = useStlStore.getState();
+    const { objects: stored } = useStlStore.getState();
+    const moved: StlObject[] = [];
 
     Object.entries(next).forEach(([id, transform]) => {
       const object = stored[id];
+      const anchor = getAnchor(id);
       const elem = document.getElementById(id) as null | SVGElement;
 
       if (!object) return;
 
-      storeTransform(id, transform);
+      if (anchor) applyTransformToAnchor(anchor, transform);
 
       if (elem) updateProjectionRect(elem, object.geometry, getMatrix({ ...object, transform }));
+
+      moved.push({ ...object, transform });
     });
-  }, [getNextTransforms, proxy, snapActive, snapCenter, transformMode]);
+    helper.box.copy(getGroupBox(moved));
+  }, [getNextTransforms, helper, proxy, snapActive, snapCenter, transformMode]);
 
   const handleDragEnd = useCallback(() => {
     const start = dragStart.current;

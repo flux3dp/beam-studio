@@ -148,7 +148,10 @@ All paths under `packages/core/src/web/` unless noted.
   pivot: `position' = pivot + t + Q·s·M·(position − pivot)`, `R' = Q·M·R·M`, uniform scale, mirror
   toggles `flip`), `applyGroupTransform` (one `BatchCommand`), `moveObjectsCenterTo` /
   `fitObjectsTo`, and the gizmo helpers used by `GroupTransformControls.tsx` (a proxy group at the
-  union-box centre). Euler angles come from `toEulerXYZ`, not three's `setFromRotationMatrix`, whose
+  union-box centre). While that gizmo drags, it moves each mesh's anchor directly through the
+  `utils/anchors.ts` registry (`StlMesh` registers its anchor group) and re-projects the rects; the
+  store is written once on release, like a single object's gizmo, so the dimension panel and the
+  meshes do not re-render every frame. Euler angles come from `toEulerXYZ`, not three's `setFromRotationMatrix`, whose
   gimbal-lock threshold drops Z within ~0.03° of Y = ±90°. `groupTransform.spec.ts` checks every
   case against the plain delta matrix on mesh corners — keep it that way when touching the math.
 - Mesh colour/visibility/lock come from the projection's owning layer (`useObjectLayerState` /
