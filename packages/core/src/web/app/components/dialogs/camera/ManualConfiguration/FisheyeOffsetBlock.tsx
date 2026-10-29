@@ -123,11 +123,12 @@ const FisheyeOffsetBlock = ({ id, kind, pnc, source, title }: FisheyeOffsetBlock
     setValue(on ? { x: stored.value.x + pnc!.x, y: stored.value.y + pnc!.y } : stored.value);
   };
 
-  // switching to per region starts from the single value, so nothing jumps
+  // switching to per region starts from the single value, so nothing jumps; a grid that already
+  // differs per region is kept, so single → per region → single is a round trip
   const switchMode = (mode: string) => {
     const toRegions = mode === 'regions';
 
-    if (toRegions && !perRegion) setRegions(sameForAll([value.x, value.y]));
+    if (toRegions && !perRegion && isUniform(regions)) setRegions(sameForAll([value.x, value.y]));
 
     setPerRegion(toRegions);
   };

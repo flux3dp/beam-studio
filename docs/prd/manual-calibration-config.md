@@ -403,8 +403,12 @@ fluxghost: `ws_smoke.py` cases; a unit asserting that `offset = (1, 0)` shifts e
 the projection of a 1 mm step.
 
 Hardware (record results here):
-1. fbm2 region: save X = +1, preview the same object, canvas shows it 1 mm right. Sign confirmed/flipped: __
-2. fbm2 full-area single, then per-region with one corner at +1: only that corner moves. __
+1. fbm2 region: save X = +1, Y = +1, preview the same object: it moves 1 mm **left and up** on the canvas
+   (a positive offset says the cut landed right/down of the previewed object, so the preview was drawn
+   too far right/down and must move back). __
+2. fbm2 full-area single: same check. Sign confirmed 2026-10-29 (+X/+Y → left/up). Then per-region with one
+   corner at +1: only that corner moves. Passed 2026-10-29, as did the D7 independence check (a wide-angle
+   edit leaves the region preview untouched and vice versa) and the Print and Cut toggle. __
 3. fbb2 wide-angle per-region. __
 4. ado1 single offset. __
 5. fpm1 single offset. __
