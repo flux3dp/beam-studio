@@ -474,6 +474,7 @@ const GalvoCalibrationBlock = ({
                 {result.ruler.vertices_used} vertices, RMS {fmt(result.ruler.rms_mm, 3)} mm
                 {result.ruler.model ? ` (${result.ruler.model})` : ''}
                 {result.located ? `, coupon located at ${fmt(result.located.px_per_mm, 2)} px/mm` : ''}
+                {result.rotated_deg ? `, image turned ${result.rotated_deg}°` : ''}
               </td>
             </tr>
             <tr>

@@ -37,6 +37,8 @@ export interface SolveParams {
   node_r: number;
   pitch: number;
   px_per_mm: number;
+  /** 'auto' tries the four ways up and keeps the one whose identity ring lands where it belongs. */
+  rotate?: 'auto' | 'none';
   /** 'affine' for a stitched capture; 'auto' lets a hand-held photograph's perspective through. */
   ruler_model?: 'affine' | 'auto' | 'projective';
   validation: Array<[number, number]>;
@@ -74,7 +76,7 @@ export const buildSolveParams = (
     pitch: COUPON_PITCH,
     px_per_mm: captured.pxPerMm,
     validation: of('validation'),
-    ...(photograph ? { locate: true, ruler_model: 'auto' as const } : {}),
+    ...(photograph ? { locate: true, rotate: 'auto' as const, ruler_model: 'auto' as const } : {}),
   };
 };
 
@@ -104,6 +106,8 @@ export interface SolveResult {
   orientation?: { identity_distance_mm: null | number; matches_invert: boolean; source: 'identity' | 'invert' };
   raw_max: null | number;
   raw_rms: null | number;
+  /** How the image was turned before solving, degrees clockwise; 0 unless `rotate: 'auto'` turned it. */
+  rotated_deg?: number;
   /** The galvo axes' angle relative to the L frame, degrees; what field.angle would take out. */
   rotation_deg?: null | number;
   ruler: SolveRuler;
