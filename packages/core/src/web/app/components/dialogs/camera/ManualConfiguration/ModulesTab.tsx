@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { Button } from 'antd';
-import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
@@ -92,7 +91,7 @@ const ModulesTab = ({ model }: ModulesTabProps): React.JSX.Element => {
   return (
     <div className={styles.tab}>
       <div className={styles.desc}>{t.modules_desc}</div>
-      <div className={classNames(styles.content, styles.grid)}>
+      <div className={styles.grid}>
         {modules.map((module) => (
           <div key={module}>
             <div className={styles.label}>{names[module]}</div>

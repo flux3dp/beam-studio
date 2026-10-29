@@ -12,6 +12,8 @@ import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import CameraTab from './CameraTab';
+import styles from './ManualConfiguration.module.scss';
 import ModulesTab from './ModulesTab';
 import PrintAndCutTab from './PrintAndCutTab';
 
@@ -33,7 +35,7 @@ const ManualConfiguration = ({ device, onClose }: ManualConfigurationProps): Rea
 
   // each tab owns its own loading and Save; the modal only hosts them
   const items = [
-    ...(tabs.camera ? [{ children: null, key: 'camera', label: t.tab_camera }] : []),
+    ...(tabs.camera ? [{ children: <CameraTab device={device} />, key: 'camera', label: t.tab_camera }] : []),
     ...(tabs.modules ? [{ children: <ModulesTab model={device.model} />, key: 'modules', label: t.tab_modules }] : []),
     ...(tabs.printAndCut
       ? [{ children: <PrintAndCutTab serial={device.serial} />, key: 'printAndCut', label: t.tab_print_and_cut }]
@@ -42,7 +44,7 @@ const ManualConfiguration = ({ device, onClose }: ManualConfigurationProps): Rea
 
   return (
     <DraggableModal footer={null} onCancel={onClose} open title={t.title} width={720}>
-      <Tabs items={items} />
+      <Tabs className={styles.tabs} items={items} />
     </DraggableModal>
   );
 };

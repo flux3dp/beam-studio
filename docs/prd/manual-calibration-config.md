@@ -188,11 +188,26 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 
 **Camera tab, legacy**
 - Loads `camera_offset` (and `camera_offset_borderless` when `getAddOnInfo(model).openBottom`) with the
-  regexes `BeamPreviewManager` uses. Shows only `X`, `Y`; `R`, `SX`, `SY` are kept in memory for the
-  write-back and never shown (D6).
-- Save writes through `doSetConfigTask` with the unchanged `R`/`SX`/`SY`, so the `S` vs `SX/SY` firmware
-  split and the pnc.json clearing stay as they are. `X = 0 && Y = 0` is rejected with a validation message
-  (it would trigger the ideal-constants fallback).
+  regexes `BeamPreviewManager` uses (`parseCameraOffset`). Shows only `X`, `Y` as absolute mm, editable
+  within **±10 mm of the calibrated value** (the factory constants 20 / 30 are no anchor: a calibrated beamo
+  reads X 8.9 / Y 37.9); `R`, `SX`, `SY` are kept in memory for the write-back and never shown (D6). Both
+  rows sit in one block with one Save.
+- Save writes through `sendPictureThenSetConfig` → `doSetConfigTask` with the unchanged `R`/`SX`/`SY`, so
+  the `S` vs `SX/SY` firmware split and the pnc.json clearing stay as they are. A stored `0, 0` is the
+  firmware's "never calibrated" marker (`BeamPreviewManager` falls back to the ideal constants): the row
+  is disabled with "calibrate the camera first", so the marker can never be nudged into a bogus position;
+  and a calibrated row cannot be saved as `0, 0` either (hint + Save disabled), since the next preview would
+  then also drop the stored `R`/`SX`/`SY`.
+- **Flip toggle** per row ("Flip image"), from the setting's `F:` flag (`parseCameraFlip`). Some old machines
+  have the camera mounted the other way, and the firmware defaults `F` to 1 when the setting file was never
+  written (`fluxmonitor/storage.py:391`), so their photos come out upside down. Saving a changed flip sends a
+  partial `config set camera_offset F:0|1`: the firmware merges partial sets (`command_task.py:1105`,
+  `storage.py:395`), so X/Y/R/S stay. It also clears pnc.json (the flip moves everything in the photo) and
+  writes `deviceMaster.currentDevice.cameraNeedsFlip`, the once-per-connection cache `connectCamera` reads,
+  so the next preview flips the new way without reconnecting.
+- **Sign** (opposite to the fisheye offset, because `X`/`Y` are the camera position, not a correction):
+  the head moves to `canvas − (X, Y)`, so a cut landing `e` to the right of the previewed object means
+  `X` is too large by `e`: decrease `X` by `e`; below → decrease `Y`. Verified on hardware (§12 case 7).
 
 **Modules tab**
 - One row per module in `getWorkarea(model).supportedModules` excluding `LASER_UNIVERSAL`, each with
@@ -225,6 +240,8 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 | `offsetStore.ts` | `alignByCamera`, PnC calibration dialog — read/write/clear semantics unchanged |
 | `moduleOffsets.ts` | ConfigPanel boundary, module calibration, export — unchanged; reused |
 | `jsonDataHelper.ts` `FileMap` | unchanged (all needed files already listed) |
+| `BeamPreviewManager.ts` camera_offset parsing | preview on legacy models — same regexes, moved to `helpers/device/camera/cameraOffset.ts` (`parseCameraOffset`); 0,0 fallback stays in the manager |
+| `device-master.ts` `currentDevice.cameraNeedsFlip` | `connectCamera` — still read once per connection; the legacy block only overwrites the cached value after a saved `F` change |
 | fluxghost `set_fisheye_matrix` | all clients — params without `offset` behave exactly as before (offset defaults to 0) |
 | fluxghost `calculate_regional_perspective_points` | `set_fisheye_height` v4, `cmd_check_pnp`? — new optional kwargs default to no shift; CheckPnP keeps passing nothing (calibration runs without manual offset) |
 | fluxghost `ws_smoke.py` | must still end `ALL PASS`; add a case with `offset` and one with `region_offsets` |
@@ -312,7 +329,7 @@ form state in React.
 
 New namespace `manual_config` in `en.ts` / `zh-tw.ts`: `title`, `tab_camera`, `tab_modules`,
 `tab_print_and_cut`, `region_offset`, `full_area_offset`, `single_offset`, `per_region`, `import_pnc`,
-`import_pnc_desc`, `legacy_zero_rejected`, region names reuse existing
+`import_pnc_desc`, region names reuse existing
 `calibration` keys where present. Menu key `menu.manual_configuration` = "Manual Configuration" /
 "手動輸入". Remaining 21 languages before PR.
 
@@ -322,7 +339,8 @@ New namespace `manual_config` in `en.ts` / `zh-tw.ts`: `title`, `tab_camera`, `t
   V4 `region_offsets?: {topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight:
   [x, y]}` mm. Absent = 0. Readers must tolerate absence (fluxghost `.get`).
 - `set_fisheye_matrix` JSON gains the same two optional keys; everything else unchanged.
-- `camera_offset` device setting: format unchanged, only `X`/`Y` values change.
+- `camera_offset` device setting: format unchanged; `X`/`Y` written through the full string, `F` through a
+  partial `F:0|1` set that the firmware merges.
 - `camera_calib/pnc.json`: unchanged format; cleared on camera-offset save and on import.
 
 ## 9. Rollout (PR plan)
@@ -381,5 +399,5 @@ Hardware (record results here):
 4. ado1 single offset. __
 5. fpm1 single offset. __
 6. Print and Cut import on fbm2: vernier → import → re-run PnC alignment, cut lands on the print (settles D5). __
-7. beamo `Y` edit. __
+7. beamo: cut lands 1 mm below the previewed object → decrease `Y` by 1 → aligned. Sign confirmed/flipped: __
 8. Old fluxghost (2.5.6): save works, preview unchanged, no error. __

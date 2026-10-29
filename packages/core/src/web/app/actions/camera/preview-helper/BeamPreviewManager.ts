@@ -5,6 +5,7 @@ import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import ErrorConstants from '@core/app/constants/error-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { parseCameraOffset } from '@core/helpers/device/camera/cameraOffset';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import versionChecker from '@core/helpers/version-checker';
@@ -165,14 +166,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     const resp = await deviceMaster.getDeviceSetting(configName);
 
     console.log(`Reading ${configName}\nResp = ${resp.value}`);
-    resp.value = ` ${resp.value}`;
-    this.cameraOffset = {
-      angle: Number(/R:\s?(-?\d+\.?\d+)/.exec(resp.value)![1]),
-      scaleRatioX: Number((/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))![1]),
-      scaleRatioY: Number((/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))![1]),
-      x: Number(/ X:\s?(-?\d+\.?\d+)/.exec(resp.value)![1]),
-      y: Number(/ Y:\s?(-?\d+\.?\d+)/.exec(resp.value)![1]),
-    };
+    this.cameraOffset = parseCameraOffset(resp.value);
 
     if (this.cameraOffset.x === 0 && this.cameraOffset.y === 0) {
       this.cameraOffset = {

@@ -2062,7 +2062,14 @@ export interface ILang {
     title: string;
   };
   manual_config: {
+    camera_load_failed: string;
+    camera_not_calibrated: string;
     clear: string;
+    legacy_borderless: string;
+    legacy_camera: string;
+    legacy_desc: string;
+    legacy_flip: string;
+    legacy_zero_rejected: string;
     modules_desc: string;
     pnc_desc: string;
     pnc_not_set: string;

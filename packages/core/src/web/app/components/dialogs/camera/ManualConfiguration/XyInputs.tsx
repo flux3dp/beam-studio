@@ -7,9 +7,9 @@ import styles from './ManualConfiguration.module.scss';
 
 export interface XyInputsProps {
   disabled?: boolean;
-  /** mm; shown in inch when the document unit is inch (same rule as ModuleCalibration/OffsetSettings) */
-  max?: number;
-  min?: number;
+  /** mm; a number applies to both axes, a pair is [x, y] */
+  max?: [number, number] | number;
+  min?: [number, number] | number;
   onChange: (value: { x: number; y: number }) => void;
   value: { x: number; y: number };
 }
@@ -22,24 +22,27 @@ const XyInputs = ({ disabled, max, min, onChange, value }: XyInputsProps): React
     () => (isInch ? { precision: 3, step: 0.254, unit: 'in' } : { precision: 2, step: 0.1, unit: 'mm' }),
     [isInch],
   );
-  const shared = {
-    className: styles.input,
-    disabled,
-    isInch,
-    max,
-    min,
-    precision,
-    step,
-    unit,
-    unitClassName: styles.unit,
-  };
+  const shared = { className: styles.input, disabled, isInch, precision, step, unit, unitClassName: styles.unit };
+  const bound = (b: [number, number] | number | undefined, axis: 0 | 1) => (Array.isArray(b) ? b[axis] : b);
 
   return (
     <div className={styles.inputs}>
       <label>X</label>
-      <UnitInput {...shared} onChange={(x) => x !== null && onChange({ ...value, x })} value={value.x} />
+      <UnitInput
+        {...shared}
+        max={bound(max, 0)}
+        min={bound(min, 0)}
+        onChange={(x) => x !== null && onChange({ ...value, x })}
+        value={value.x}
+      />
       <label>Y</label>
-      <UnitInput {...shared} onChange={(y) => y !== null && onChange({ ...value, y })} value={value.y} />
+      <UnitInput
+        {...shared}
+        max={bound(max, 1)}
+        min={bound(min, 1)}
+        onChange={(y) => y !== null && onChange({ ...value, y })}
+        value={value.y}
+      />
     </div>
   );
 };

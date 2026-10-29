@@ -1,3 +1,19 @@
+@use '@core/styles/mixins' as mixins;
+
+// fixed height so the modal centres once and stays put while tabs load their values async;
+// the tab bar is pinned and only the pane scrolls
+.tabs {
+  @include mixins.viewport-size(60);
+
+  @include mixins.is-mobile {
+    @include mixins.viewport-size(80);
+  }
+
+  :global(.ant-tabs-content-holder) {
+    overflow-y: auto;
+  }
+}
+
 .tab {
   display: flex;
   flex-direction: column;
@@ -13,17 +29,17 @@
   font-size: 12px;
 }
 
-// the scrolling part of a tab; .actions stays below it
-.content {
-  max-height: 50vh;
-  overflow-y: auto;
-}
-
 // one card per module; as many per row as the modal width allows
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px 24px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .label {
@@ -44,6 +60,13 @@
   .unit {
     right: 24px;
   }
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
 }
 
 .actions {
