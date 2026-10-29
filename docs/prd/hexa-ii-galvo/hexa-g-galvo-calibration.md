@@ -384,6 +384,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 12. MOPA 頭的三個未知數：氣閥 `M136P312Q2` 是否也供 MOPA 頭、打紙的建議功率與速度、scaleX 斜率是否與 CO2 的 0.007753 相近。流程不因此分支，實測後只改常數與說明文字。預設模組偏移 `moduleOffsets.ts:40-42` 兩顆頭都還是佔位，§7.8 第 6 步量到的 `field_center_mm` 可回填。
 13. `M136P311` 無 Q 的回報字串：文件寫 `Open laser: …, Enclosed laser: …`，值的寫法未知；目前接受 on / 1 / en… / true / high 開頭，實機看一次後收緊。
 14. `invert` 先驗的語意（§7.8）與 20 px/mm 全幅重映射的記憶體：第一張實機 coupon 確認；identity 小環找得到時先驗不會用到。
+15. ~~相機 EXIF 方向旗標~~（2026-10-29 決定）：HEXA II Galvo 頭的相機倒裝，機器端只在 JPEG 加 EXIF Orientation=3 不轉像素（`fluxmonitor/hal/camera/orientation.py`）。fluxghost 原本只有預覽路徑套 `exif_transpose`，`camera-calibration` / `camera-transform` / `opencv` 都解到倒轉的像素，相機校正算出的 k/d/rvec/tvec 與預覽不相容。改為所有讀相機像素的端點都走 `utils/camera/general.py` 的 `open_frame`（fluxghost `e26a188`）。在此之前在這顆頭上做的相機校正參數要重做（主點鏡像）。
 
 ## 12. Risks & follow-ups
 
@@ -393,6 +394,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 - **修正值無法一次到位**：八項只有 scaleX 有公式；工廠紀錄三輪才收斂。流程設計成迭代，但每輪要換紙、重打、重拍，約 10 分鐘。
 - **scale 的中性值**：工廠文件實測 scaleX 歸零值約 86.5，Beam Studio 預設 100 會放大約 10%；第一輪的 coupon 會比較大，仍在卡的指令範圍內，但靠近 110 場鏡的可用邊緣。
 - list 一次送 6,400 筆的 socket 行為、串聯狀態下 `MB:` G1 在 `RELEASE_MOTOR` 之後的行為、20 px/mm 連拍 25 張的記憶體，三項都要實機看。
+- **相機校正參數的方向**：本流程的 B「拍照」用預覽路徑（`open_frame` 後上正），所以裝置上的 `fisheye_params.json` 必須是 `open_frame` 之後校的；舊參數會讓拼接影像整張偏掉，L 框自我檢查會先擋下（§11 決策 15）。
 - 授權在長時間閒置後掉落：每顆振鏡按鈕都先 `connectGalvoHead`，已串聯時成本只有幾個 M-code。
 
 **後續階段（本 PRD 不含）**
