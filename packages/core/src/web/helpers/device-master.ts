@@ -1398,6 +1398,13 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.rawSet24V, on);
   }
 
+  /** One G-code line in raw mode; honours line-check mode. */
+  async rawGcode(command: string) {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.rawGcode, command);
+  }
+
   async rawAutoFocus() {
     const controlSocket = await this.getControl();
 

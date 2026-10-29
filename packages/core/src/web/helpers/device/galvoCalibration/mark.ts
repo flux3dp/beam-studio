@@ -146,6 +146,17 @@ export const markCoupon = async ({
   }
 };
 
+/**
+ * What the CO2 beam needs before it will come out of the nozzle, in the order the player sends
+ * them at the start of every CO2 job (BeamOS transient_cmd_list.cpp): 24 V on, CO2 the active
+ * module, laser control to the STM, enclosed laser enabled. The control task's default_mode sends
+ * the last three too, but it is skipped when the head is already parked, and leaving the task
+ * resets the board anyway, so raw mode starts from nothing either way. Confirmed with firmware.
+ */
+const CO2_WORK_ON = ['M136P173', 'M136P259Q15', 'M136P310Q0', 'M136P311Q1'];
+/** The player's tail: enclosed laser off, 24 V off. */
+const CO2_WORK_OFF = ['M136P311Q0', 'M136P174'];
+
 /** Feed rates for the nozzle's L frame, mm/min: travel between marks, and marking. */
 const L_FRAME_TRAVEL_FEEDRATE = 6000;
 const L_FRAME_MARK_FEEDRATE = 1200;
@@ -189,7 +200,10 @@ export const markLFrame = async ({
     await deviceMaster.rawHome();
     await deviceMaster.rawStartLineCheckMode();
     lineCheck = true;
-    await deviceMaster.rawSet24V(true);
+    onStep?.('Enabling the CO2 laser');
+
+    for (const line of CO2_WORK_ON) await deviceMaster.rawGcode(line);
+
     laserMode = true;
     await deviceMaster.rawSetAirPump(true);
     pump = true;
@@ -224,7 +238,7 @@ export const markLFrame = async ({
     if (deviceMaster.currentControlMode === 'raw') {
       await tidy(() => deviceMaster.rawSetLaser({ on: false }));
 
-      if (laserMode) await tidy(() => deviceMaster.rawSet24V(false));
+      if (laserMode) for (const line of CO2_WORK_OFF) await tidy(() => deviceMaster.rawGcode(line));
 
       if (pump) await tidy(() => deviceMaster.rawSetAirPump(false));
 

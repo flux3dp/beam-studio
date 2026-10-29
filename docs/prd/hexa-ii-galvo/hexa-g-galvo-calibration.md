@@ -202,10 +202,10 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 ### 7.4 A-2「打 L 框」序列
 
 1. `ensureGalvoHeadDisconnected(model, { onSlow })`，沿用「解聯中」進度提示。
-2. `enterRawMode` → `rawHome` → `rawStartLineCheckMode` → `rawSet24V(true)`（送 `M136P173`，既有方法，名字是歷史包袱）→ `rawSetAirPump(true)` → `rawSetLaser({ on: true, s: 0 })`（`M3S0`；工廠腳本用 `M4`，差別只在加減速期間的功率是否隨速度變，L 臂 8 mm 在 F1200 下可忽略，先用既有 API）。
+2. `enterRawMode` → `rawHome` → `rawStartLineCheckMode` → 依序 `rawGcode` 送 `M136P173`、`M136P259Q15`、`M136P310Q0`、`M136P311Q1`（CO2 工作出光的四條，與 player 開 CO2 工作相同順序，韌體確認；見 §11 決策 17）→ `rawSetAirPump(true)` → `rawSetLaser({ on: true, s: 0 })`（`M3S0`；工廠腳本用 `M4`，差別只在加減速期間的功率是否隨速度變，L 臂 8 mm 在 F1200 下可忽略，先用既有 API）。
 3. 以場心落點 C 為中心，8 個頂點 V = C + {(±70, ±70), (0, ±70), (±70, 0)}，臂長 8。每個 L：`rawMove({ f: 6000, s: 0, ...X 臂末端 })` → `rawMove({ f: 1200, s: S, ...V })` → `rawMove({ f: 1200, s: S, ...Y 臂末端 })`。S = power% × 1000（決策 2）。角上的 L 兩臂朝中心；邊中點的 L 在自己所在軸上那一臂一律朝 +，另一臂朝中心，例如 (0, +70) 是 X 臂 +8、Y 臂 −8。這個不對稱是刻意的，不要改。S0 的定位移動在 `fixBacklash` 開啟時依 §7.11 過衝。
 4. 每趟前 `rawHome`，共 `passes` 趟。
-5. `rawSetLaser({ on: false })` → `rawSet24V(false)` → `rawSetAirPump(false)` → `rawEndLineCheckMode` → `rawLooseMotor` → `endSubTask`。任何失敗都在 finally 做這段，每步各自 catch。8 個 L 的三個點有任何一個超出行程就在解聯前拒絕。
+5. `rawSetLaser({ on: false })` → `M136P311Q0`、`M136P174` → `rawSetAirPump(false)` → `rawEndLineCheckMode` → `rawLooseMotor` → `endSubTask`。任何失敗都在 finally 做這段，每步各自 catch。8 個 L 的三個點有任何一個超出行程就在解聯前拒絕。
 
 ### 7.5 機器端：`galvo_exec.py` 新增 `op: "paths"`
 
@@ -386,6 +386,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 14. `invert` 先驗的語意（§7.8）與 20 px/mm 全幅重映射的記憶體：第一張實機 coupon 確認；identity 小環找得到時先驗不會用到。
 15. ~~相機 EXIF 方向旗標~~（2026-10-29 決定）：HEXA II Galvo 頭的相機倒裝，機器端只在 JPEG 加 EXIF Orientation=3 不轉像素（`fluxmonitor/hal/camera/orientation.py`）。fluxghost 原本只有預覽路徑套 `exif_transpose`，`camera-calibration` / `camera-transform` / `opencv` 都解到倒轉的像素，相機校正算出的 k/d/rvec/tvec 與預覽不相容。改為所有讀相機像素的端點都走 `utils/camera/general.py` 的 `open_frame`（fluxghost `e26a188`）。在此之前在這顆頭上做的相機校正參數要重做（主點鏡像）。
 16. ~~`galvo_exec paths` 的 payload 大小~~（2026-10-29 決定）：coupon 的 JSON 有 66,440 bytes，而 control_task 是 binary mode，每個 recv（≤ 4096、走網路約 1400 bytes）就當一條指令，所以第一段回 `fail BAD_JSON`、其餘段變成垃圾指令並可能吃掉下一條 `mb_exec`，讓收尾卡到逾時。新增裝置端 `chunk_begin <total> <piece>` 分段協定（BeamOS `chunked.py`、`docs/api/galvo-control.md` §2），Beam Studio `control.ts` 的 `galvoExec` 超過 1024 字元時自動分段，每段等 ok。沒有改成多個 list：一張 coupon 仍是一次 TRYLOCK、一份 list。
+17. ~~L 框不出光~~（2026-10-29 決定）：第一次實機 Mark L 有移動沒出光。原序列只送 `M136P173`；CO2 從噴嘴出光還需要 `M136P259Q15`、`M136P310Q0`、`M136P311Q1`（韌體確認）。`default_mode` 雖然會送這三條，但頭已停妥時整段跳過，而且離開 control_task 時裝置送 `\x18` 重置主板，所以 raw 模式一律自己送四條，收尾送 `M136P311Q0`、`M136P174`。新增 `deviceMaster.rawGcode(line)`（line-check 感知）。
 
 ## 12. Risks & follow-ups
 
@@ -395,6 +396,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 - **修正值無法一次到位**：八項只有 scaleX 有公式；工廠紀錄三輪才收斂。流程設計成迭代，但每輪要換紙、重打、重拍，約 10 分鐘。
 - **scale 的中性值**：工廠文件實測 scaleX 歸零值約 86.5，Beam Studio 預設 100 會放大約 10%；第一輪的 coupon 會比較大，仍在卡的指令範圍內，但靠近 110 場鏡的可用邊緣。
 - list 一次送 6,400 筆的 socket 行為、串聯狀態下 `MB:` G1 在 `RELEASE_MOTOR` 之後的行為、20 px/mm 連拍 25 張的記憶體，三項都要實機看。
+- **coupon 邊緣較淡**（2026-10-29 實機觀察）：第一張 coupon 靠近場域邊緣的 node 比中央淡，與先前打框時看到的一致。先記錄；是否要對邊緣補功率（例如依半徑加權的 power）或接受，等解算的 nodes_found 與 affine_rms 看過再決定。
 - **相機校正參數的方向**：本流程的 B「拍照」用預覽路徑（`open_frame` 後上正），所以裝置上的 `fisheye_params.json` 必須是 `open_frame` 之後校的；舊參數會讓拼接影像整張偏掉，L 框自我檢查會先擋下（§11 決策 15）。
 - 授權在長時間閒置後掉落：每顆振鏡按鈕都先 `connectGalvoHead`，已串聯時成本只有幾個 M-code。
 

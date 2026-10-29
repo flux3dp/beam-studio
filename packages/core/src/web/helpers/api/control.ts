@@ -1723,12 +1723,13 @@ class Control extends EventEmitter implements IControlSocket {
     return this.useRawLineCheckCommand(command);
   };
 
-  rawSet24V = (on: boolean) => {
+  rawSet24V = (on: boolean) => this.rawGcode(on ? 'M136P173' : 'M136P174');
+
+  /** One G-code line in raw mode, numbered and checksummed when line check is on. */
+  rawGcode = (command: string) => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
-
-    const command = on ? 'M136P173' : 'M136P174';
 
     if (!this._isLineCheckMode) {
       return this.useRawWaitOKResponse(command);

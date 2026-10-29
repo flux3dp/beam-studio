@@ -69,6 +69,7 @@ interface IControlSocket extends EventEmitter {
   quitTask(): Promise<unknown>;
   rawAutoFocus(timeout?: number): Promise<void>;
   rawEndLineCheckMode(): Promise<void>;
+  rawGcode(command: string): Promise<string>;
   rawGetDoorOpen: () => Promise<{
     backCover: number;
     bottomCover: number;
