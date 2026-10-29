@@ -1,5 +1,7 @@
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 
+import type { WideAngleRegion } from './FisheyePreview';
+
 export interface ILang {
   alert: {
     abort: string;
@@ -2066,7 +2068,6 @@ export interface ILang {
     camera_load_failed: string;
     camera_not_calibrated: string;
     clear: string;
-    fisheye_camera: string;
     fisheye_desc: string;
     fisheye_full_area: string;
     fisheye_region: string;
@@ -2078,11 +2079,14 @@ export interface ILang {
     modules_desc: string;
     pnc_desc: string;
     pnc_not_set: string;
+    region: Record<WideAngleRegion, string>;
     save_failed: string;
     tab_camera: string;
     tab_modules: string;
     tab_print_and_cut: string;
     title: string;
+    wide_angle_per_region: string;
+    wide_angle_single: string;
   };
   material_test_generator: Record<
     | 'block_settings'

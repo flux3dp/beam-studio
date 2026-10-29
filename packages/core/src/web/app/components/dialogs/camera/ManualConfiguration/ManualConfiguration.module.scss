@@ -46,24 +46,51 @@
   margin-bottom: 8px;
 }
 
+// X and Y pairs, 100px inputs without steppers; they sit on one row when there is room and wrap otherwise
 .inputs {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px 20px;
-  width: 160px;
+
+  .pair {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
 
   .input {
-    width: fit-content;
+    width: 100px;
   }
 
   .unit {
-    right: 24px;
+    right: 8px;
   }
 }
 
 .inlineButton {
   margin-top: 10px;
+}
+
+// one full-width section per camera: title (and the wide-angle mode switch) on one row, inputs below
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 24px;
+  font-weight: 500;
+}
+
+// nine cells laid out like the bed, filling the width; each cell's X / Y stretch with the column
+.regions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 20px;
 }
 
 .switch {

@@ -125,8 +125,8 @@ UI 的「精準對位」即 Print and Cut。
 
 | 機型 | 相機 | 模組 | 精準對位 |
 |---|---|---|---|
-| fbm2 | 局部偏移 + 全區（單一 / 分區） | 有 | 有 |
-| fbb2、fhx2rf | 局部偏移（雷射頭相機）+ 全區（單一 / 分區，僅在 `wide-angle.json` 存在時） | 無 | 有 |
+| fbm2 | 一組「相機偏移」（局部預覽用；全區未分區時也用）+ 單選鈕「全區：與局部相同 / 分區」與 3×3 表 | 有 | 有 |
+| fbb2、fhx2rf | 「局部預覽偏移」（雷射頭相機）+「全區預覽偏移」（廣角相機）與單選鈕「單一 / 分區」；全區區塊僅在 `wide-angle.json` 存在時顯示 | 無 | 有 |
 | ado1 | 單一偏移 | 有 | 有 |
 | fpm1 | 單一偏移 | 無 | 有 |
 | beamo、Beambox、HEXA | 只有 `X`、`Y`（`R`、`SX`、`SY` 不顯示）；可開底機型多一列 `camera_offset_borderless` | 無 | 有 |
@@ -145,9 +145,10 @@ UI 的「精準對位」即 Print and Cut。
   既有的數字捨入外一律不動。儲存會清除 pnc.json（既有規則，經 `setFisheyeConfig`；廣角與 Promark 寫入者需明確呼叫 `clearPncOffset`）。
 - **正負號**：偏移 = 雷射相對於預覽中所見物件的落點，右/下為正（與 `PncOffset` 同一慣例）。儲存 X = +1 後，下一次預覽該物件在畫布上比先前右移 1 mm。
   每個相機家族各做一次實機確認（§12）。
-- 分區單選鈕：切到「分區」時以單一值預填九格；切回時保留單一欄位，儲存時丟棄 `region_offsets`。九格以 3×3 排列如同工作區（topLeft … bottomRight）。
-- 「從精準對位匯入」：`fetchPncOffset(serial)` 有值時啟用；把局部偏移欄位（fbm2 / fbb2 / fhx2rf）或單一偏移（ado1、fpm1）設為 **目前值 + pnc**
-  （游標尺是透過已帶著目前偏移的預覽量到的，所以是殘差），儲存時一併清除 pnc.json。此按鈕只改欄位；儲存前不寫入任何東西。
+- 廣角區塊（fbm2，以及有 `wide-angle.json` 的 bb2 / hx2）編輯 `region_offsets`，用 Segmented「單一 / 分區」切換。單一會把同一組值寫進九區；
+  讀到九區相同的表就顯示為單一。切到分區時以單一值預填九格（3×3 如同床面，topLeft … bottomRight）。區域區塊編輯 `offset`；兩者是獨立的值（D7），共用一顆儲存。
+- 區域區塊的「套用精準對位偏移」切換：`fetchPncOffset(serial)` 有值時顯示，旁邊列出該值。打開：丟掉未儲存的修改、欄位鎖定並顯示 **機器上的值 + pnc**
+  （游標尺是透過已帶著目前偏移的預覽讀到的，所以是殘差）；關閉：回到機器上的值。儲存會清除 pnc.json，切換隨之消失。
 - 不設後端閘門（D1）：欄位一律顯示；Tab 說明註明偏移需要出貨 §7.3 的 fluxghost 版本。
 
 **相機 Tab，舊款**
@@ -200,18 +201,20 @@ UI 的「精準對位」即 Print and Cut。
 // FisheyePreview.d.ts — 加到 V2、V3、V4（PromarkCameraParameters 繼承自 V3）
 offset?: [number, number];                                   // mm，機器座標，右/下為正
 // 僅 V4
-region_offsets?: Record<WideAngleRegion, [number, number]>;  // 存在即代表分區模式
+region_offsets?: Record<WideAngleRegion, [number, number]>;  // 廣角預覽，一律九區齊全
 ```
 
-規則：`offset` 套用到每個網格點；`region_offsets` 存在時，V4 的點改依區域取代 `offset`。沒有獨立的模式旗標。
+規則（D7）：`offset` 是 **區域預覽** 的偏移（ado1 / Promark 沒有區域模式，就是整個預覽）。`region_offsets` 是 **廣角預覽** 的偏移，
+一律寫滿九區：「單一」模式把同一組值存九次，讀到九區相同就顯示為單一，所以不需要模式旗標。fluxghost 逐點以 `region_offsets[region]`
+優先於 `offset`，兩者不會混用。
 
 ### 7.2 各數值的使用位置
 
 | 預覽 | 送出的參數 | fluxghost 套用的偏移 |
 |---|---|---|
 | fbb2/fhx2rf REGION、PRECISE_REGION | V3 `fisheye_params.json` | `set_fisheye_grid` 內的 `offset` |
-| fbb2/fhx2rf FULL_AREA | V4 `wide-angle.json` | `set_fisheye_height` 內的 `region_offsets[region]`，否則 `offset` |
-| fbm2 FULL_AREA | V4 `fisheye_params.json` | 同上 |
+| fbb2/fhx2rf FULL_AREA | V4 `wide-angle.json` | `set_fisheye_height` 內的 `region_offsets[region]`（它的 `offset` 不會被寫入） |
+| fbm2 FULL_AREA | V4 `fisheye_params.json` | `region_offsets[region]`（與區域 `offset` 同一個檔案） |
 | fbm2 REGION | V4 `fisheye_params.json`，**去掉 `region_offsets`** | `offset` |
 | ado1 | V2 | `set_fisheye_height` 內的 `offset` |
 | fpm1 | V3，經 camera-transform | `set_fisheye_grid` 內的 `offset` |
@@ -219,6 +222,9 @@ region_offsets?: Record<WideAngleRegion, [number, number]>;  // 存在即代表�
 fbm2 去除：`FisheyePreviewManagerV4` 的 `setupFisheyePreview` 與 `updateGrid` 新增選項 `useRegionOffsets: boolean`，
 送出 `{ ...params, region_offsets: useRegionOffsets ? params.region_offsets : undefined }`。`Beamo2PreviewManager`
 傳 `mode === PreviewMode.FULL_AREA`。`Bb2Hx2PreviewManager` 一律傳 `true`（它的 V4 參數只屬於廣角相機）。
+
+共用檔案：fbm2 的兩個區塊改的是 `fisheye_params.json` 的不同欄位，所以 `CameraTab` 給它們同一個 `createParamsSource`（`offsetParams.ts`）：
+只讀一次，每次儲存都先併進快取副本再整份寫入，第二個區塊緊接著儲存時不會把舊欄位寫回去。
 
 正負號推導：若校正把它以為是世界座標 W 的像素，實際對應到 W − e，雷射會落在預覽物件的 +e 處，所以存的偏移是 e，
 網格點必須以 W + e 投影。fluxghost 在 `project_points` 之前把偏移加到物件點上。
@@ -291,6 +297,8 @@ components/dialogs/camera/ManualConfiguration/
 4. ~~D4 預覽中開啟 Modal~~ — **允許開啟，下次預覽生效**，2026-10-28 決定：不需寫程式，每次 `start` 都重新讀參數。
 5. ~~D5 匯入語意~~ — **加到**目前偏移，2026-10-28 決定：儲存偏移會清掉 pnc.json，所以存在的 pnc 只可能是在已套用目前偏移的預覽下量到的，是其上的殘差。偏移為零時加與取代相同。§12 案例 6 確認。
 6. ~~D6 舊款 `R`/`SX`/`SY`~~ — **不顯示**，2026-10-28 決定：只開放 `X`、`Y`。旋轉與縮放與其手動調整不如重新校正；有具體需求再開放。
+7. ~~D7 fbm2 的區域與廣角偏移~~ — **獨立**，2026-10-29 決定：拍的不是同一張照片（雷射頭移到目標點上方 vs 固定在相機中心；bb2 / hx2 更是不同相機），
+   所以 `offset` = 區域、`region_offsets` = 廣角，「單一」以九組相同值儲存。先前的「與區域相同」選項取消。
 
 ## 11. 風險與後續
 

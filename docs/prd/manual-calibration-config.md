@@ -150,8 +150,8 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 
 | Model | Camera | Modules | Print and Cut |
 |---|---|---|---|
-| fbm2 | region offset + full-area (single / per-region) | yes | yes |
-| fbb2, fhx2rf | region offset (laser-head cam) + full-area (single / per-region, only when `wide-angle.json` exists) | no | yes |
+| fbm2 | one "Camera offset" (region preview, and full-area unless per-region) + radio "full-area: same as region / per region" with the 3×3 table | yes | yes |
+| fbb2, fhx2rf | "Region preview offset" (laser-head cam) + "Full-area preview offset" (wide-angle cam) with radio "one offset / per region"; the full-area block only when `wide-angle.json` exists | no | yes |
 | ado1 | single offset | yes | yes |
 | fpm1 | single offset | no | yes |
 | beamo, Beambox, HEXA | `X`, `Y` only (`R`, `SX`, `SY` not shown); second row for `camera_offset_borderless` on open-bottom models | no | yes |
@@ -176,13 +176,15 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 - **Sign**: offset = where the laser landed relative to the object seen in the preview, right/down
   positive (same convention as `PncOffset`). After saving X = +1, the next preview shows the object 1 mm
   further right on the canvas than before. Verified on hardware once per camera family (§12).
-- Per-region radio: switching to "per region" prefills the nine cells with the single value; switching
-  back keeps the single field and drops `region_offsets` on save. The nine cells are laid out 3×3 like the
-  bed (topLeft … bottomRight).
-- "Import from Print and Cut": enabled when `fetchPncOffset(serial)` returns a value; sets the region
-  offset fields (fbm2 / fbb2 / fhx2rf) or the single offset (ado1, fpm1) to **current + pnc** (the
-  vernier was measured through a preview that already carried the current offset, so it is a residual),
-  and on Save also clears pnc.json. The button is a field edit; nothing is written until Save.
+- The wide-angle block (fbm2, and bb2 / hx2 when `wide-angle.json` exists) edits `region_offsets` with a
+  Segmented "One offset / Per region". One offset writes the same pair into all nine regions; a stored
+  table whose nine pairs are equal loads as one offset. Switching to per region prefills the nine cells
+  (3×3 like the bed, topLeft … bottomRight) with the single value. The region block edits `offset`; the
+  two are independent values (D7) and share one Save.
+- "Apply the Print and Cut offset" toggle on the region block, shown when `fetchPncOffset(serial)` has a
+  value, with the value beside it. On: unsaved edits are dropped, the inputs lock and show **stored +
+  pnc** (the vernier was read through a preview that already carried the stored offset, so pnc is a
+  residual); off: back to the stored value. Saving clears pnc.json, so the toggle disappears.
 - No backend gate (D1): the fields are always shown; the tab description notes that the offset needs the
   fluxghost release that ships §7.3.
 
@@ -254,19 +256,21 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 // FisheyePreview.d.ts — added to V2, V3, V4 (PromarkCameraParameters inherits from V3)
 offset?: [number, number];                                   // mm, machine frame, right/down positive
 // V4 only
-region_offsets?: Record<WideAngleRegion, [number, number]>;  // presence = per-region mode
+region_offsets?: Record<WideAngleRegion, [number, number]>;  // wide-angle preview, always all nine
 ```
 
-Rules: `offset` applies to every grid point; when `region_offsets` is present it replaces `offset` for
-V4 points, per region. No separate mode flag.
+Rules (D7): `offset` is the **region preview** offset (the whole preview on ado1 / Promark, which have no
+region mode). `region_offsets` is the **wide-angle preview** offset and is always written complete: the
+"one offset" mode stores the same pair nine times, and a uniform table loads as one offset, so there is
+no mode flag. In fluxghost `region_offsets[region]` wins over `offset` per point, so the two never mix.
 
 ### 7.2 Where each value is used
 
 | Preview | Params sent | Offset applied by fluxghost |
 |---|---|---|
 | fbb2/fhx2rf REGION, PRECISE_REGION | V3 `fisheye_params.json` | `offset` in `set_fisheye_grid` |
-| fbb2/fhx2rf FULL_AREA | V4 `wide-angle.json` | `region_offsets[region]` else `offset` in `set_fisheye_height` |
-| fbm2 FULL_AREA | V4 `fisheye_params.json` | same as above |
+| fbb2/fhx2rf FULL_AREA | V4 `wide-angle.json` | `region_offsets[region]` in `set_fisheye_height` (its `offset` is never written) |
+| fbm2 FULL_AREA | V4 `fisheye_params.json` | `region_offsets[region]` (same file as the region `offset`) |
 | fbm2 REGION | V4 `fisheye_params.json` **with `region_offsets` stripped** | `offset` |
 | ado1 | V2 | `offset` in `set_fisheye_height` |
 | fpm1 | V3 over camera-transform | `offset` in `set_fisheye_grid` |
@@ -275,6 +279,10 @@ fbm2 strip: `FisheyePreviewManagerV4` gains an option `useRegionOffsets: boolean
 `setupFisheyePreview` and `updateGrid`; it sends `{ ...params, region_offsets: useRegionOffsets ?
 params.region_offsets : undefined }`. `Beamo2PreviewManager` passes `mode === PreviewMode.FULL_AREA`.
 `Bb2Hx2PreviewManager` always passes `true` (its V4 params are the wide-angle camera only).
+
+Shared file: fbm2's two blocks patch different fields of `fisheye_params.json`, so `CameraTab` gives them one
+`createParamsSource` (`offsetParams.ts`) that loads once and merges every save into its cached copy before
+writing the whole file; a second save right after the first cannot write stale fields back.
 
 Sign derivation: if calibration maps the pixel it believes is world W to true world W − e, the laser
 lands +e from the previewed object, so the stored offset is e and the grid point must be projected at
@@ -368,6 +376,10 @@ Ship order: fluxghost tag → bump in beam-studio CD → PR A.
    offset; it is the residual on top of it. With a zero offset add and replace coincide. §12 case 6 confirms.
 6. ~~D6 Legacy `R`/`SX`/`SY`~~ — **not shown**, decided 2026-10-28: only `X`, `Y` are exposed. Rotation and
    scale are better fixed by recalibrating than by hand; open later only on a concrete request.
+7. ~~D7 Region vs wide-angle offset on fbm2~~ — **independent**, decided 2026-10-29: different shots
+   (head over the point vs fixed camera centre; different cameras on bb2 / hx2), so `offset` = region
+   and `region_offsets` = wide-angle, with "one offset" stored as nine equal pairs. Drops the earlier
+   "same as region" option.
 
 ## 11. Risks & follow-ups
 

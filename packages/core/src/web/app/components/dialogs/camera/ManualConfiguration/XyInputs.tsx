@@ -22,27 +22,40 @@ const XyInputs = ({ disabled, max, min, onChange, value }: XyInputsProps): React
     () => (isInch ? { precision: 3, step: 0.254, unit: 'in' } : { precision: 2, step: 0.1, unit: 'mm' }),
     [isInch],
   );
-  const shared = { className: styles.input, disabled, isInch, precision, step, unit, unitClassName: styles.unit };
+  const shared = {
+    className: styles.input,
+    controls: false,
+    disabled,
+    isInch,
+    precision,
+    step,
+    unit,
+    unitClassName: styles.unit,
+  };
   const bound = (b: [number, number] | number | undefined, axis: 0 | 1) => (Array.isArray(b) ? b[axis] : b);
 
   return (
     <div className={styles.inputs}>
-      <label>X</label>
-      <UnitInput
-        {...shared}
-        max={bound(max, 0)}
-        min={bound(min, 0)}
-        onChange={(x) => x !== null && onChange({ ...value, x })}
-        value={value.x}
-      />
-      <label>Y</label>
-      <UnitInput
-        {...shared}
-        max={bound(max, 1)}
-        min={bound(min, 1)}
-        onChange={(y) => y !== null && onChange({ ...value, y })}
-        value={value.y}
-      />
+      <label className={styles.pair}>
+        X
+        <UnitInput
+          {...shared}
+          max={bound(max, 0)}
+          min={bound(min, 0)}
+          onChange={(x) => x !== null && onChange({ ...value, x })}
+          value={value.x}
+        />
+      </label>
+      <label className={styles.pair}>
+        Y
+        <UnitInput
+          {...shared}
+          max={bound(max, 1)}
+          min={bound(min, 1)}
+          onChange={(y) => y !== null && onChange({ ...value, y })}
+          value={value.y}
+        />
+      </label>
     </div>
   );
 };

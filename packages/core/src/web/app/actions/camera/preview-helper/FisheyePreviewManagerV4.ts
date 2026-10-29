@@ -17,6 +17,8 @@ import rawAndHome from './rawAndHome';
 class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements FisheyePreviewManager {
   declare params: FisheyeCameraParametersV4;
   private grids: PerspectiveGrid;
+  /** fbm2 sends the same params for region and full-area preview; the per-region table is full-area only */
+  private useRegionOffsets = true;
 
   constructor(device: IDeviceInfo, params: FisheyeCameraParametersV4, grids: PerspectiveGrid) {
     super();
@@ -34,10 +36,21 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       movementFeedrate?: number;
       shouldKeepInRawMode?: boolean;
       updateMessage?: (message: string) => void;
+      useRegionOffsets?: boolean;
     } = {},
   ): Promise<boolean> {
     const { lang } = i18n;
-    const { cameraPosition, fallbackHeight = 0, height, movementFeedrate = 7500, shouldKeepInRawMode = false } = args;
+    const {
+      cameraPosition,
+      fallbackHeight = 0,
+      height,
+      movementFeedrate = 7500,
+      shouldKeepInRawMode = false,
+      useRegionOffsets = true,
+    } = args;
+
+    this.useRegionOffsets = useRegionOffsets;
+
     const showMessage = args.updateMessage ? null : () => progressCaller.openNonstopProgress({ id: this.progressId });
     const updateMessage =
       args.updateMessage || ((message: string) => progressCaller.update(this.progressId, { message }));
@@ -85,21 +98,26 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     params.grids = this.grids;
     updateMessage(lang.message.connectingCamera);
     // non-await to send with next command together
-    deviceMaster.setFisheyeParam(params);
+    deviceMaster.setFisheyeParam(this.paramsToSend());
     await this.onObjectHeightChanged();
     closeMessage?.();
 
     return true;
   }
 
-  async updateGrid(perspectiveGrid: PerspectiveGrid): Promise<void> {
+  async updateGrid(perspectiveGrid: PerspectiveGrid, useRegionOffsets = this.useRegionOffsets): Promise<void> {
     this.grids = perspectiveGrid;
     this.params.grids = perspectiveGrid;
+    this.useRegionOffsets = useRegionOffsets;
 
     // non-await to send with next command together
-    deviceMaster.setFisheyeParam(this.params);
+    deviceMaster.setFisheyeParam(this.paramsToSend());
     await this.onObjectHeightChanged();
   }
+
+  /** JSON.stringify drops the undefined key, so fluxghost falls back to the single `offset` */
+  private paramsToSend = (): FisheyeCameraParametersV4 =>
+    this.useRegionOffsets ? this.params : { ...this.params, region_offsets: undefined };
 
   onObjectHeightChanged = async (): Promise<void> => {
     await deviceMaster.setFisheyeObjectHeight(this.objectHeight);
