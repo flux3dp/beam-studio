@@ -63,8 +63,9 @@ down / sets up the other camera.
 
 Manual offsets (`offset` / `region_offsets` in the fisheye params, see camera-calibration skill) are
 applied by fluxghost, so managers only decide which keys to send. `FisheyePreviewManagerV4`
-takes `useRegionOffsets` in `setupFisheyePreview` / `updateGrid`; when false, `paramsToSend` strips
-`region_offsets` so fluxghost falls back to the single `offset`. `Beamo2PreviewManager` passes
+takes `useRegionOffsets` in `setupFisheyePreview` / `updateGrid`; `paramsToSend` strips `region_offsets`
+when false and `offset` when true, so each preview only carries its own key (a missing table is 0 in
+fluxghost, never the region offset). `Beamo2PreviewManager` passes
 `useRegionOffsets: previewMode === FULL_AREA` because fbm2 keeps both previews in one
 `fisheye_params.json`; `Bb2Hx2PreviewManager` leaves the default (`true`) since `wide-angle.json`
 only ever serves FULL_AREA. Offsets saved while a preview is running apply on the next setup.

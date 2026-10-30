@@ -95,7 +95,7 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
           useManualConfigStore.getState().setPnc(undefined);
 
           // connectCamera reads F once per connection and caches it here; keep the next preview in sync
-          if (!row.borderless && deviceMaster.currentDevice) deviceMaster.currentDevice.cameraNeedsFlip = row.flip;
+          if (deviceMaster.currentDevice) deviceMaster.currentDevice.cameraNeedsFlip = row.flip;
         }
       }
 
@@ -150,10 +150,18 @@ const LegacyCameraBlock = ({ device }: LegacyCameraBlockProps): React.JSX.Elemen
                 />
               ))}
             </div>
-            <label className={styles.switch}>
-              <Switch checked={row.flip} disabled={!row.stored} onChange={(flip) => update(i, { flip })} size="small" />
-              {t.legacy_flip}
-            </label>
+            {/* only camera_offset's F flips the photo: connectCamera never reads the open-lid setting's F */}
+            {!row.borderless && (
+              <label className={styles.switch}>
+                <Switch
+                  checked={row.flip}
+                  disabled={!row.stored}
+                  onChange={(flip) => update(i, { flip })}
+                  size="small"
+                />
+                {t.legacy_flip}
+              </label>
+            )}
           </div>
         ))}
       </div>

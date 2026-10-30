@@ -217,7 +217,9 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
   "calibrated" state is inferred: a never-calibrated machine answers the firmware default `X0 Y0 R0 SX1 SY1`
   (`fluxmonitor/storage.py:391`) and the row simply shows it; whatever is saved, `BeamPreviewManager` keeps
   treating `0, 0` as "use the ideal constants", and a machine in that state needs a calibration anyway.
-- **Flip toggle** per row ("Flip image"), from the setting's `F:` flag (`parseCameraFlip`). Some old machines
+- **Flip toggle** on the normal row only ("Flip image"), from the setting's `F:` flag (`parseCameraFlip`). Beam
+  Studio flips photos from `camera_offset`'s `F` alone: `connectCamera` reads it once per connection and never
+  consults `camera_offset_borderless`, so an open-lid toggle would write a value nothing reads. Some old machines
   have the camera mounted the other way, and the firmware defaults `F` to 1 when the setting file was never
   written (`fluxmonitor/storage.py:391`), so their photos come out upside down. Saving a changed flip sends a
   partial `config set camera_offset F:0|1`: the firmware merges partial sets (`command_task.py:1105`,
@@ -253,7 +255,8 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 | `useMenuData.ts` `calibrationChildren`, `menu-manager.ts` calibration submenu | all device submenus — existing items, order and gating unchanged; one appended item |
 | `menuDeviceActions.tsx` | menu click dispatch — existing handlers unchanged; one new key |
 | `FisheyePreview.d.ts` V2/V3/V4 (+ `PromarkCameraParameters`) | every params reader — new fields optional, nothing required |
-| `FisheyePreviewManagerV4.setupFisheyePreview` / `updateGrid` | `Beamo2PreviewManager`, `Bb2Hx2PreviewManager` wide-angle — same commands in the same order; only the params payload may omit `region_offsets` in fbm2 REGION mode |
+| `FisheyePreviewManagerV4.setupFisheyePreview` / `updateGrid` | `Beamo2PreviewManager`, `Bb2Hx2PreviewManager` wide-angle — same commands in the same order; the params payload omits `region_offsets` in REGION mode and `offset` in FULL_AREA mode (D7), nothing else changes |
+| `ModuleCalibration/OffsetSettings.tsx` | `ModuleCalibration.tsx` dialog — same mm values stored; the inch display now converts through `UnitInput` (precision 3, step 0.254 mm) instead of showing mm digits as inches; reused by `ModulesTab` |
 | `Beamo2PreviewManager.switchPreviewMode` | PreviewFloatingBar → `previewModeController.switchPreviewMode` — grid choice, mask-image merge, head move unchanged |
 | `camera-calibration-helper.ts` `setFisheyeConfig`, `doSetConfigTask` | calibration dialogs — unchanged; reused as writers |
 | `offsetStore.ts` | `alignByCamera`, PnC calibration dialog — read/write/clear semantics unchanged |
@@ -291,14 +294,16 @@ together with the table and ignored when the nine pairs are equal.
 |---|---|---|
 | fbb2/fhx2rf REGION, PRECISE_REGION | V3 `fisheye_params.json` | `offset` in `set_fisheye_grid` |
 | fbb2/fhx2rf FULL_AREA | V4 `wide-angle.json` | `region_offsets[region]` in `set_fisheye_height` (its `offset` is never written) |
-| fbm2 FULL_AREA | V4 `fisheye_params.json` | `region_offsets[region]` (same file as the region `offset`) |
+| fbm2 FULL_AREA | V4 `fisheye_params.json` **with `offset` stripped** | `region_offsets[region]` (same file as the region `offset`; absent table = 0, never the region offset) |
 | fbm2 REGION | V4 `fisheye_params.json` **with `region_offsets` stripped** | `offset` |
 | ado1 | V2 | `offset` in `set_fisheye_height` |
 | fpm1 | V3 over camera-transform | `offset` in `set_fisheye_grid` |
 
 fbm2 strip: `FisheyePreviewManagerV4` gains an option `useRegionOffsets: boolean` on
-`setupFisheyePreview` and `updateGrid`; it sends `{ ...params, region_offsets: useRegionOffsets ?
-params.region_offsets : undefined }`. `Beamo2PreviewManager` passes `mode === PreviewMode.FULL_AREA`.
+`setupFisheyePreview` and `updateGrid`; it sends `{ ...params, offset: undefined }` when true and
+`{ ...params, region_offsets: undefined }` when false, so each preview only ever carries its own key (a
+region-only edit on a machine with no wide-angle table must not move the full-area preview; review finding
+2026-10-30). `Beamo2PreviewManager` passes `mode === PreviewMode.FULL_AREA`.
 `Bb2Hx2PreviewManager` always passes `true` (its V4 params are the wide-angle camera only).
 
 Shared file: fbm2's two blocks patch different fields of `fisheye_params.json`, so `CameraTab` gives them one
@@ -471,7 +476,7 @@ Unit (jest, `--runInBand`):
 - CameraTab save payload per store: unchanged fields preserved, `offset` added, `region_offsets`
   added/dropped by the radio, pnc cleared only when the toggle was on.
 - Legacy block: regex parse of `camera_offset`, `doSetConfigTask` called with unchanged `R/SX/SY`.
-- `FisheyePreviewManagerV4` strips `region_offsets` when `useRegionOffsets` is false.
+- `FisheyePreviewManagerV4` strips `region_offsets` when `useRegionOffsets` is false and `offset` when true.
 - Blend: the switch is hidden in one-offset mode, loads from `region_offsets.blend` (absent → on), and
   the save payload carries it inside `region_offsets`.
 
@@ -486,7 +491,9 @@ Hardware (record results here):
    too far right/down and must move back). __
 2. fbm2 full-area single: same check. Sign confirmed 2026-10-29 (+X/+Y → left/up). Then per-region with one
    corner at +1: only that corner moves. Passed 2026-10-29, as did the D7 independence check (a wide-angle
-   edit leaves the region preview untouched and vice versa) and the Print and Cut toggle. __
+   edit leaves the region preview untouched and vice versa) and the Print and Cut toggle. Re-check with **no**
+   wide-angle table stored (fresh calibration): set only the region offset, the full-area preview must not move
+   (review finding 2026-10-30). __
 3. fbb2 wide-angle per-region. fhx2rf full-area passed 2026-10-29 (same `Bb2Hx2PreviewManager` → V4 path and
    `wide-angle.json`; bb2 differs only in the optional-camera probe). No bb2 at hand 2026-10-29; left for
    the next unit that passes through. __

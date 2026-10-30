@@ -161,7 +161,7 @@ UI 的「精準對位」即 Print and Cut。
   顯示整組設定，**不設上下限**：`X`、`Y` 為絕對 mm 值（存的值不能當中心：已校正的 beamo 讀到 X 8.9 / Y 37.9，離出廠常數 20 / 30 有段距離，而且校正壞掉的值必須能被改回來），`R` 以度顯示（儲存為弧度），`SX`／`SY` 為原始比例（D6 重開）。標籤沿用 `calibration.rotation_angle`／`x_ratio`／`y_ratio`。兩列放在同一區塊、一顆儲存。
 - 儲存透過 `sendPictureThenSetConfig` → `doSetConfigTask` 寫入五個值，維持 `S` 與 `SX/SY` 的韌體分支，pnc.json 保留（`clearPnc: false`）。
   不擋任何值，也不推斷「已校正」狀態：從未校正的機器回的是韌體預設 `X0 Y0 R0 SX1 SY1`（`fluxmonitor/storage.py:391`），該列照樣顯示；不論存了什麼，`BeamPreviewManager` 仍把 `0, 0` 當成「用理想常數」，而這種狀態的機器本來就需要校正。
-- 每列一個 **翻轉切換**（「翻轉影像」），來自設定值的 `F:` 旗標（`parseCameraFlip`）。部分舊機器的相機是反向安裝的，而韌體在設定檔從未寫入時把 `F` 預設為 1（`fluxmonitor/storage.py:391`），照片因此整張顛倒。
+- **翻轉切換**（「翻轉影像」）只在一般列，來自設定值的 `F:` 旗標（`parseCameraFlip`）。Beam Studio 只用 `camera_offset` 的 `F` 翻轉照片：`connectCamera` 每次連線讀一次，從不讀 `camera_offset_borderless` 的 `F`，開蓋列若有切換會寫入一個沒人讀的值。部分舊機器的相機是反向安裝的，而韌體在設定檔從未寫入時把 `F` 預設為 1（`fluxmonitor/storage.py:391`），照片因此整張顛倒。
   儲存有變動的翻轉時送出部分設定 `config set camera_offset F:0|1`：韌體會合併部分設定（`command_task.py:1105`、`storage.py:395`），X/Y/R/S 不受影響。同時清除 pnc.json（翻轉會移動照片中所有東西），並寫入 `deviceMaster.currentDevice.cameraNeedsFlip`，也就是 `connectCamera` 每次連線只讀一次的快取，讓下一次預覽不必重連就用新方向。
 - **正負號**（與魚眼偏移相反，因為 `X`/`Y` 是相機位置而不是修正量）：雷射頭移到 `canvas − (X, Y)`，所以切割落在預覽物件右側 `e` 代表 `X` 多了 `e`：把 `X` 減少 `e`；落在下方則減少 `Y`。實機確認（§12 案例 7）。
 
@@ -186,7 +186,8 @@ UI 的「精準對位」即 Print and Cut。
 | `useMenuData.ts` `calibrationChildren`、`menu-manager.ts` 校正子選單 | 所有機器子選單 — 既有項目、順序與條件不變；僅末尾新增一項 |
 | `menuDeviceActions.tsx` | 選單點擊分派 — 既有 handler 不變；新增一個 key |
 | `FisheyePreview.d.ts` V2/V3/V4（+ `PromarkCameraParameters`） | 所有參數讀取者 — 新欄位皆為選填，無必填 |
-| `FisheyePreviewManagerV4.setupFisheyePreview` / `updateGrid` | `Beamo2PreviewManager`、`Bb2Hx2PreviewManager` 廣角 — 同樣的指令、同樣的順序；僅 fbm2 REGION 模式的參數 payload 可省略 `region_offsets` |
+| `FisheyePreviewManagerV4.setupFisheyePreview` / `updateGrid` | `Beamo2PreviewManager`、`Bb2Hx2PreviewManager` 廣角 — 同樣的指令、同樣的順序；參數 payload 在 REGION 模式省略 `region_offsets`、在 FULL_AREA 模式省略 `offset`（D7），其餘不變 |
+| `ModuleCalibration/OffsetSettings.tsx` | `ModuleCalibration.tsx` 對話框 — 儲存的 mm 值不變；inch 顯示改由 `UnitInput` 換算（精度 3、步進 0.254 mm），不再把 mm 數字當 inch 顯示；`ModulesTab` 重用 |
 | `Beamo2PreviewManager.switchPreviewMode` | PreviewFloatingBar → `previewModeController.switchPreviewMode` — 網格選擇、遮罩合併、雷射頭移動不變 |
 | `camera-calibration-helper.ts` `setFisheyeConfig`、`doSetConfigTask` | 校正對話框 — 不變；僅作為寫入者重用 |
 | `offsetStore.ts` | `alignByCamera`、精準對位校正對話框 — 讀/寫/清除語意不變 |
@@ -222,13 +223,14 @@ region_offsets?: Record<WideAngleRegion, [number, number]>;  // 廣角預覽，�
 |---|---|---|
 | fbb2/fhx2rf REGION、PRECISE_REGION | V3 `fisheye_params.json` | `set_fisheye_grid` 內的 `offset` |
 | fbb2/fhx2rf FULL_AREA | V4 `wide-angle.json` | `set_fisheye_height` 內的 `region_offsets[region]`（它的 `offset` 不會被寫入） |
-| fbm2 FULL_AREA | V4 `fisheye_params.json` | `region_offsets[region]`（與區域 `offset` 同一個檔案） |
+| fbm2 FULL_AREA | V4 `fisheye_params.json` **去掉 `offset`** | `region_offsets[region]`（與區域 `offset` 同一個檔案；沒有表時為 0，絕不沿用區域偏移） |
 | fbm2 REGION | V4 `fisheye_params.json`，**去掉 `region_offsets`** | `offset` |
 | ado1 | V2 | `set_fisheye_height` 內的 `offset` |
 | fpm1 | V3，經 camera-transform | `set_fisheye_grid` 內的 `offset` |
 
 fbm2 去除：`FisheyePreviewManagerV4` 的 `setupFisheyePreview` 與 `updateGrid` 新增選項 `useRegionOffsets: boolean`，
-送出 `{ ...params, region_offsets: useRegionOffsets ? params.region_offsets : undefined }`。`Beamo2PreviewManager`
+為 true 時送出 `{ ...params, offset: undefined }`、為 false 時送出 `{ ...params, region_offsets: undefined }`，
+讓每種預覽只帶自己的欄位（沒有廣角表的機器只改區域偏移時，全區預覽不能跟著動；2026-10-30 review 發現）。`Beamo2PreviewManager`
 傳 `mode === PreviewMode.FULL_AREA`。`Bb2Hx2PreviewManager` 一律傳 `true`（它的 V4 參數只屬於廣角相機）。
 
 共用檔案：fbm2 的兩個區塊改的是 `fisheye_params.json` 的不同欄位，所以 `CameraTab` 給它們同一個 `createParamsSource`（`offsetParams.ts`）：
@@ -350,7 +352,7 @@ topLeft／top 邊界上的點平移 0.5 mm 的投影量、topLeft 中心的點�
 - `ManualConfiguration` 各機型 Tab 顯示（§5 表）。
 - CameraTab 各存放處的儲存 payload：未改欄位保留、加上 `offset`、`region_offsets` 隨單選鈕增減、只在切換打開時清除 pnc。
 - 舊款區塊：`camera_offset` 正規表示式解析、`doSetConfigTask` 收到未變的 `R/SX/SY`。
-- `FisheyePreviewManagerV4` 在 `useRegionOffsets` 為 false 時去掉 `region_offsets`。
+- `FisheyePreviewManagerV4` 在 `useRegionOffsets` 為 false 時去掉 `region_offsets`、為 true 時去掉 `offset`。
 - 漸變：單一模式隱藏開關、從 `region_offsets.blend` 載入（缺省 → 開）、儲存 payload 在 `region_offsets` 內帶上它。
 
 fluxghost：`ws_smoke.py` 案例；一個單元測試驗證 `offset = (1, 0)` 讓每個投影點平移 1 mm 步進的投影量。
@@ -359,7 +361,7 @@ fluxghost：`ws_smoke.py` 案例；一個單元測試驗證 `offset = (1, 0)` �
 實機（結果記錄於此）：
 1. fbm2 局部：存 X = +1、Y = +1，預覽同一物件：畫布上**左移、上移** 1 mm（正值表示切割落在預覽物件的
    右下方，即預覽畫得太右、太下，必須往回搬）。__
-2. fbm2 全區單一：同上檢查。正負號已於 2026-10-29 確認（+X/+Y → 左／上）。再分區且僅一角 +1：只有該角移動。2026-10-29 通過；D7 獨立性（改廣角值不影響局部預覽，反之亦然）與精準對位 toggle 亦通過。__
+2. fbm2 全區單一：同上檢查。正負號已於 2026-10-29 確認（+X/+Y → 左／上）。再分區且僅一角 +1：只有該角移動。2026-10-29 通過；D7 獨立性（改廣角值不影響局部預覽，反之亦然）與精準對位 toggle 亦通過。需在**沒有**廣角表（剛校正完）的狀態重測：只設區域偏移，全區預覽不得移動（2026-10-30 review 發現）。__
 3. fbb2 廣角分區。fhx2rf 全區 2026-10-29 通過（同一條 `Bb2Hx2PreviewManager` → V4 路徑與 `wide-angle.json`；bb2 只差在相機是選配的偵測）。2026-10-29 手邊沒有 bb2，留待下一台經手時補測。__
 4. ado1 單一偏移。2026-10-29 通過（V2 路徑）。__
 5. fpm1 單一偏移。2026-10-29 手邊沒有 Promark；同一個 mixin 經 camera-transform，保留待測。__

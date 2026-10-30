@@ -115,9 +115,9 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     await this.onObjectHeightChanged();
   }
 
-  /** JSON.stringify drops the undefined key, so fluxghost falls back to the single `offset` */
+  /** full-area uses `region_offsets`, region uses `offset`; the other key is dropped so it cannot leak (D7) */
   private paramsToSend = (): FisheyeCameraParametersV4 =>
-    this.useRegionOffsets ? this.params : { ...this.params, region_offsets: undefined };
+    this.useRegionOffsets ? { ...this.params, offset: undefined } : { ...this.params, region_offsets: undefined };
 
   onObjectHeightChanged = async (): Promise<void> => {
     await deviceMaster.setFisheyeObjectHeight(this.objectHeight);
