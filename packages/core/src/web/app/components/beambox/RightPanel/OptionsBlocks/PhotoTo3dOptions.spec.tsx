@@ -4,7 +4,6 @@ import { act, fireEvent, render } from '@testing-library/react';
 
 const mockUpdatePhotoTo3d = jest.fn();
 const mockAlertPhotoTo3dError = jest.fn();
-const mockIsUvDev = jest.fn();
 
 jest.mock('@core/app/svgedit/stl/photoTo3d', () => {
   const { create } = jest.requireActual('zustand');
@@ -24,7 +23,6 @@ jest.mock('@core/app/svgedit/stl/photoTo3d', () => {
   };
 });
 jest.mock('@core/app/svgedit/stl/photoTo3d/runPhotoTo3d', () => ({ PhotoTo3dCancelledError: class extends Error {} }));
-jest.mock('@core/helpers/is-dev', () => ({ isUvDev: () => mockIsUvDev() }));
 
 import { usePhotoTo3dBusy } from '@core/app/svgedit/stl/photoTo3d';
 
@@ -45,21 +43,16 @@ describe('PhotoTo3dOptions', () => {
   beforeEach(() => {
     jest.useFakeTimers();
     jest.clearAllMocks();
-    mockIsUvDev.mockReturnValue(false);
     mockUpdatePhotoTo3d.mockResolvedValue(true);
   });
 
   afterEach(() => jest.useRealTimers());
 
-  test('shows the saved sharpening; the roll-off only under uvDev', () => {
-    const { container, rerender } = render(<PhotoTo3dOptions elem={makeElem()} />);
+  test('shows the saved sharpening and roll-off', () => {
+    const { container } = render(<PhotoTo3dOptions elem={makeElem()} />);
 
     expect(container.querySelector<HTMLInputElement>('#photo-to-3d-sharpenAmount')!.value).toBe('1.0');
     expect(container.querySelector<HTMLInputElement>('#photo-to-3d-sharpenRadius')!.value).toBe('4.0');
-    expect(container.querySelector('#photo-to-3d-edgeRoundMm')).toBeNull();
-
-    mockIsUvDev.mockReturnValue(true);
-    rerender(<PhotoTo3dOptions elem={makeElem()} />);
     expect(container.querySelector<HTMLInputElement>('#photo-to-3d-edgeRoundMm')!.value).toBe('2.0');
   });
 

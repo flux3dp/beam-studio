@@ -144,7 +144,7 @@ describe('photo to 3D', () => {
     expect(job.size.width).toBeCloseTo(20);
     expect(job.size.height).toBeCloseTo(10);
     expect(job.size.depth).toBeCloseTo(4.4);
-    expect(job.params).toEqual({ edgeRoundMm: 0, pointSpacing: 0.5, sharpenAmount: 1, sharpenRadius: 4 });
+    expect(job.params).toEqual({ edgeRoundMm: 0.8, pointSpacing: 0.5, sharpenAmount: 1, sharpenRadius: 4 });
 
     const [id, buffer, options] = mockApplyPhotoPointCloud.mock.lastCall;
 
@@ -161,7 +161,7 @@ describe('photo to 3D', () => {
     expect(elem.getAttribute('data-stl-depth')).toBe('1');
     expect(elem.getAttribute('data-stl-depth-sharpen')).toBe('1');
     expect(elem.getAttribute('data-stl-depth-radius')).toBe('4');
-    expect(elem.getAttribute('data-stl-depth-round')).toBe('0');
+    expect(elem.getAttribute('data-stl-depth-round')).toBe('0.8');
     expect(elem.getAttribute('data-stl-depth-grid')).toBe('40,20');
     expect(Number(elem.getAttribute('data-stl-depth-thickness'))).toBeCloseTo(4.4);
     // the image stays as it was
@@ -179,8 +179,7 @@ describe('photo to 3D', () => {
     expect(elem.getAttribute('data-no-bg')).toBe('true');
   });
 
-  test('under uvDev the edge roll-off starts at 4% of the width', async () => {
-    mockIsUvDev.mockReturnValue(true);
+  test('the edge roll-off starts at 4% of the width', async () => {
     mockProcessImageWithAiJson.mockResolvedValue(response());
 
     await convert();
