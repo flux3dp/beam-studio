@@ -114,10 +114,10 @@ const PhotoTo3dOptions = ({ elem }: Props): React.JSX.Element => {
         precision: 1,
         step: 0.5,
       })}
-      {renderField('edgeRoundMm', t.photo_to_3d_edge_round, t.photo_to_3d_edge_round_hint, EDGE_ROUND_LIMIT, {
+      {renderField('edgeRoundPercent', t.photo_to_3d_edge_round, t.photo_to_3d_edge_round_hint, EDGE_ROUND_LIMIT, {
         precision: 1,
         step: 0.5,
-        unit: 'mm',
+        unit: '%',
       })}
       {showBusy && (
         <div className={styles.row} id="photo-to-3d-updating">

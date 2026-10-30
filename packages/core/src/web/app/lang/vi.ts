@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI ước tính độ sâu của ảnh và chuyển thành đám mây điểm để khắc bên trong. Sau đó bạn vẫn có thể đổi độ sâu (kích thước Z) và độ sắc nét mà không bị trừ điểm lại.',
     photo_to_3d_done: 'Đã chuyển thành đám mây điểm 3D',
     photo_to_3d_edge_round: 'Bo tròn mép',
-    photo_to_3d_edge_round_hint: 'Bo tròn phù điêu về phía mép đã tách nền trong khoảng cách này. 0 là tắt.',
+    photo_to_3d_edge_round_hint: 'Bo tròn phù điêu về phía mép đã tách nền trong khoảng bằng tỷ lệ này của chiều rộng đối tượng. 0 là tắt.',
     photo_to_3d_failed: 'Chuyển đổi thất bại',
     photo_to_3d_flat: 'Ảnh hầu như không có thay đổi độ sâu nên không thể chuyển sang 3D.',
     photo_to_3d_insufficient_credit: 'Không đủ điểm AI để chuyển sang 3D.',

@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'A IA estima a profundidade da foto e a converte em uma nuvem de pontos para gravação interna. Depois, você ainda pode alterar a profundidade (tamanho Z) e a nitidez sem nova cobrança.',
     photo_to_3d_done: 'Convertido em nuvem de pontos 3D',
     photo_to_3d_edge_round: 'Arredondamento da borda',
-    photo_to_3d_edge_round_hint: 'Arredonda o relevo em direção à borda recortada nesta distância. 0 desativa.',
+    photo_to_3d_edge_round_hint: 'Arredonda o relevo em direção à borda recortada nesta porcentagem da largura do objeto. 0 desativa.',
     photo_to_3d_failed: 'Falha na conversão',
     photo_to_3d_flat: 'A foto quase não tem variação de profundidade e não pode ser convertida em 3D.',
     photo_to_3d_insufficient_credit: 'Créditos de IA insuficientes para converter em 3D.',

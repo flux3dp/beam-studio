@@ -161,7 +161,7 @@ describe('photo to 3D', () => {
     expect(elem.getAttribute('data-stl-depth')).toBe('1');
     expect(elem.getAttribute('data-stl-depth-sharpen')).toBe('1');
     expect(elem.getAttribute('data-stl-depth-radius')).toBe('4');
-    expect(elem.getAttribute('data-stl-depth-round')).toBe('0.8');
+    expect(elem.getAttribute('data-stl-depth-round-percent')).toBe('4');
     expect(elem.getAttribute('data-stl-depth-grid')).toBe('40,20');
     expect(Number(elem.getAttribute('data-stl-depth-thickness'))).toBeCloseTo(4.4);
     // the image stays as it was
@@ -179,7 +179,7 @@ describe('photo to 3D', () => {
     expect(elem.getAttribute('data-no-bg')).toBe('true');
   });
 
-  test('the edge roll-off starts at 4% of the width', async () => {
+  test('the edge roll-off is 4% of the width, in mm for the algorithm', async () => {
     mockProcessImageWithAiJson.mockResolvedValue(response());
 
     await convert();
@@ -218,7 +218,7 @@ describe('photo to 3D', () => {
         'data-stl-depth': '1',
         'data-stl-depth-grid': '40,20',
         'data-stl-depth-radius': '4',
-        'data-stl-depth-round': '0',
+        'data-stl-depth-round-percent': '0',
         'data-stl-depth-sharpen': '1',
         'data-stl-depth-thickness': '4',
       }).forEach(([key, value]) => elem.setAttribute(key, value));
@@ -243,6 +243,17 @@ describe('photo to 3D', () => {
       resize([0.5, 0.5, 1]);
       mockPointSpacing.mockReturnValue(0.25);
       expect(isPhotoTo3dStale(elem)).toBe(true);
+    });
+
+    test('the roll-off follows the size it is computed at', async () => {
+      await updatePhotoTo3d(elem, { edgeRoundPercent: 5 }, 'new');
+      // 5% of the 20 mm world width
+      expect(mockRunPhotoTo3d.mock.lastCall[1].params.edgeRoundMm).toBeCloseTo(1);
+      expect(elem.getAttribute('data-stl-depth-round-percent')).toBe('5');
+
+      resize([1, 1, 1]);
+      await updatePhotoTo3d(elem, {}, 'append');
+      expect(mockRunPhotoTo3d.mock.lastCall[1].params.edgeRoundMm).toBeCloseTo(2);
     });
 
     test('recomputes from the saved depth with the changed setting, as its own undo step', async () => {
