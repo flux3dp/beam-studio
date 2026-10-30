@@ -251,7 +251,7 @@ const StlMesh = ({
           >
             {/* Screen-space size keeps a relief readable without turning its points into large
                 world-space spheres when the camera zooms in. Colour comes from the layer only. */}
-            <pointsMaterial color={color} size={2} sizeAttenuation={false} />
+            <pointsMaterial color={color} size={1} sizeAttenuation={false} />
           </points>
         ) : (
           <mesh
