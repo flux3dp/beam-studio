@@ -74,6 +74,28 @@ describe('PhotoTo3dOptions', () => {
     expect(mockUpdatePhotoTo3d).toHaveBeenCalledWith(elem, { sharpenAmount: 2.5 }, 'new');
   });
 
+  test('a typed value stays while the cloud is computed, and is read back from the element after', () => {
+    const elem = makeElem();
+    const { container } = render(<PhotoTo3dOptions elem={elem} />);
+    const query = () => container.querySelector<HTMLInputElement>('#photo-to-3d-sharpenAmount')!;
+
+    fireEvent.change(query(), { target: { value: '2.5' } });
+    fireEvent.blur(query());
+    act(() => usePhotoTo3dBusy.setState({ ids: ['photo'] }));
+    expect(query().value).toBe('2.5');
+
+    elem.setAttribute('data-stl-depth-sharpen', '2.5');
+    act(() => usePhotoTo3dBusy.setState({ ids: [] }));
+    expect(query().value).toBe('2.5');
+
+    // a computation that failed leaves the element as it was, and the field follows it
+    fireEvent.change(query(), { target: { value: '3' } });
+    fireEvent.blur(query());
+    act(() => usePhotoTo3dBusy.setState({ ids: ['photo'] }));
+    act(() => usePhotoTo3dBusy.setState({ ids: [] }));
+    expect(query().value).toBe('2.5');
+  });
+
   test('shows updating only for a computation that takes a while', () => {
     const { container } = render(<PhotoTo3dOptions elem={makeElem()} />);
 

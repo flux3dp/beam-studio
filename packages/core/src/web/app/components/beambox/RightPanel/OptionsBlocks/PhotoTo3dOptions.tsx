@@ -47,7 +47,11 @@ const PhotoTo3dOptions = ({ elem }: Props): React.JSX.Element => {
   const [showBusy, setShowBusy] = useState(false);
   const [settings, setSettings] = useState<PhotoTo3dSettings>(() => getPhotoTo3dSettings(elem));
 
-  useEffect(() => setSettings(getPhotoTo3dSettings(elem)), [elem, isBusy]);
+  // the element carries the settings only once a computation has ended; until then the fields keep
+  // what was typed
+  useEffect(() => {
+    if (!isBusy) setSettings(getPhotoTo3dSettings(elem));
+  }, [elem, isBusy]);
 
   useEffect(() => {
     if (!isBusy) {
