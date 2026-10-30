@@ -2,12 +2,6 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { Tabs } from 'antd';
 
-import {
-  fisheyeModels,
-  legacyBeamSeriesModels,
-  modelsWithModules,
-  promarkModels,
-} from '@core/app/actions/beambox/constant';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
@@ -20,18 +14,12 @@ import styles from './ManualConfiguration.module.scss';
 import ModulesTab from './ModulesTab';
 import PrintAndCutTab from './PrintAndCutTab';
 import { tabSavers, useManualConfigStore } from './store';
+import { getManualConfigurationTabs } from './tabs';
 
 export interface ManualConfigurationProps {
   device: IDeviceInfo;
   onClose: () => void;
 }
-
-/** Which tabs a model gets; see docs/prd/manual-calibration-config.md §5 */
-const getManualConfigurationTabs = (model: string) => ({
-  camera: fisheyeModels.has(model) || model === 'fbm2' || promarkModels.has(model) || legacyBeamSeriesModels.has(model),
-  modules: modelsWithModules.has(model),
-  printAndCut: true,
-});
 
 const TAB_KEYS = ['camera', 'modules', 'printAndCut'] as const;
 
@@ -48,9 +36,17 @@ const ManualConfiguration = ({ device, onClose }: ManualConfigurationProps): Rea
   const canSave = savers.some((saver) => saver.changed);
 
   useEffect(() => {
-    fetchPncOffset(device.serial).then((pnc) => useManualConfigStore.getState().setPnc(pnc));
+    // the store outlives the modal: a fetch that lands after close must not seed the next device's modal
+    let active = true;
 
-    return () => useManualConfigStore.getState().reset();
+    fetchPncOffset(device.serial).then((pnc) => {
+      if (active) useManualConfigStore.getState().setPnc(pnc);
+    });
+
+    return () => {
+      active = false;
+      useManualConfigStore.getState().reset();
+    };
   }, [device.serial]);
 
   const handleSave = async () => {

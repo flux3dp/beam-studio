@@ -142,8 +142,9 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
   both web and Electron, all models. Enabled on mobile (no laser or motion involved), unlike the other
   calibration items.
 - Click: `checkDeviceStatus` + `deviceMaster.select`, then the modal. Refused with the usual alert if the
-  device is busy. The modal may open during a preview session; saved values apply from the next preview
-  session, because `previewModeController.start` creates a new manager that refetches the params (D4).
+  device is busy. Opening it while that device is previewing goes through `checkDeviceStatus`'s usual
+  "device is in use" prompt: Yes ends the preview, No cancels the modal (D4). The captured images stay on the
+  canvas, and the next preview session refetches the params, so saved values show there.
 
 **Modal**
 - `DraggableModal`, title "Manual Configuration" with the device name and model label (`getWorkarea(model).label`)
@@ -202,8 +203,9 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
   residual); off: back to the stored value. A save with the toggle on clears pnc.json, so the toggle
   disappears; a save with it off leaves pnc alone. The pnc value lives in the modal store, shared with the
   Print and Cut tab: a save or clear there updates the toggle at once, and vice versa.
-- No backend gate (D1): the fields are always shown; the tab description notes that the offset needs the
-  fluxghost release that ships §7.3.
+- No backend gate and no version hint (D1): the fields are always shown and the tab description does not
+  mention a backend version. Beam Studio never names fluxghost to users, and only the web app can meet an
+  older one; there the offset saves and takes effect once the local backend is updated (S7).
 
 **Camera tab, legacy**
 - Loads `camera_offset` (and `camera_offset_borderless` when `getAddOnInfo(model).openBottom`) with the
@@ -422,7 +424,8 @@ Ship order: fluxghost tag → bump in beam-studio CD → fluxghost blend → re-
 ## 10. Open decisions
 
 1. ~~D1 Backend gate~~ — **always show**, decided 2026-10-28: desktop bundles its fluxghost, so skew is
-   rare; an old backend ignores the field.
+   rare; an old backend ignores the field. 2026-10-30: no version hint in the UI either, since Beam Studio never
+   names fluxghost to users; the skew case is the web app only.
 2. ~~D2 Offset applied in Beam Studio (grid shift) or fluxghost~~ — **fluxghost**, decided 2026-10-28:
    covers V2 Ador and keeps one implementation for all versions.
    Revisited 2026-10-29, kept. A grid shift only exists for V3 (V2 builds its grid inside fluxghost, V4 reads
@@ -433,7 +436,13 @@ Ship order: fluxghost tag → bump in beam-studio CD → fluxghost blend → re-
 3. ~~D3 Print and Cut → region preview as a checkbox or an import~~ — **import button**, decided
    2026-10-28: no runtime flag, no double-apply paths in `alignByCamera` / the PnC calibration.
 4. ~~D4 Modal during preview~~ — **allow, applies next session**, decided 2026-10-28: zero code, since
-   each `start` refetches params.
+   each `start` refetches params. **Revised 2026-10-30 (review finding): the modal ends the preview first.**
+   The 2026-10-28 reasoning missed raw mode: beamo / Beambox / HEXA, fbm2 and fbb2 / fhx2rf hold raw mode for
+   the whole session (homed, line check on, rotary and fans off), and settings and file transfers cannot run
+   in raw mode, while the modal reads and writes both. Keeping the session would need a suspend / resume in
+   each of those managers that leaves raw mode and then re-runs the raw setup, homing included, which is the
+   same cost as ending and restarting the preview, and saved values apply only at the next setup anyway.
+   Ador and Promark do not hold raw mode, but one rule for all models beats a per-model exception.
 5. ~~D5 Import semantics~~ — **add** to the current offset, decided 2026-10-28: saving an offset clears
    pnc.json, so a stored pnc can only have been measured through a preview already carrying the current
    offset; it is the residual on top of it. With a zero offset add and replace coincide. §12 case 6 confirmed 2026-10-30.

@@ -11,7 +11,8 @@ export const MANUAL_CONFIGURATION_DIALOG_ID = 'manual-configuration';
 
 /**
  * Calibration ▸ Manual Configuration: edit stored calibration values by hand, no laser, no motion.
- * May open during a preview session; saved values apply from the next session, which refetches them.
+ * A preview on the same device is ended first (checkDeviceStatus asks): previews hold raw mode, and the modal
+ * reads and writes device settings and files, which raw mode blocks. The next preview refetches the values.
  */
 export const showManualConfiguration = async (device: IDeviceInfo): Promise<void> => {
   if (isIdExist(MANUAL_CONFIGURATION_DIALOG_ID)) return;
