@@ -38,8 +38,11 @@ see `.agents/skills/unit-test/SKILL.md`). Coverage roadmap: `docs/testing/test-c
   label enables recording and upload (including passing jobs), retained for 3 days.
   Label changes apply to the next fresh PR run, not an old run's retry. See
   `docs/testing/cypress-ci.md` for reproduction and rollout checks.
-- The separate `web.ready-for-deployment.yml` tag workflow still records to Cypress Cloud;
-  this migration covers PR/manual `e2e` runs only.
+- `web.ready-for-deployment.yml` keeps its deployment job and three macOS runners.
+  Post-deployment tests use the same shard script with `cypress.config.prod.ts`,
+  `record: false`, and JUnit/artifact reporting. Reports/screenshots last 7 days;
+  the repository Actions variable `E2E_DEBUG_ARTIFACTS=true` enables videos for 3 days.
+  It runs against production only after the existing `web-*` tag deployment succeeds.
 - **No FLUXGhost and no machine exist in CI.** Anything needing a backend or device must
   self-skip (pattern below) and is exercised only in local runs.
 - Unit tests/lint run separately in `global.ci.yml` (`nx affected`).

@@ -60,7 +60,29 @@ runner usage and artifact storage still count against the GitHub account's quota
 4. Push twice to a test PR while its run is active; confirm the older run is cancelled.
 5. Compare total runner time and the slowest shard with the previous workflow.
 
-The tag-triggered `web.ready-for-deployment.yml` is unchanged and still uses Cloud.
-Do not cancel the Cloud subscription until that workflow and any other recording
-clients have been migrated. To roll this trial back, revert the migration commit;
-retain the existing Cloud secret until the rollout is complete.
+## Production post-deployment tests
+
+`web.ready-for-deployment.yml` still triggers only on `web-*` tags. Its deployment
+job is unchanged. After deployment succeeds, three `macos-latest` runners use the
+same shard script, with Node 24 and pnpm, from `apps/web`. They run against the
+existing `http://studio.flux3dp.com` base URL in `cypress.config.prod.ts`; no local
+web server is started. The production config's environment, spec pattern, viewport,
+plugin hooks and retry behavior are unchanged. JUnit reporting is enabled there.
+
+Cloud recording and orchestration are disabled for this job too. The production
+artifacts use a `production-e2e-` prefix. Reports and screenshots are retained for
+7 days. Videos are disabled unless the repository Actions variable
+`E2E_DEBUG_ARTIFACTS` is set to `true`; debug videos are uploaded even on successful
+runs and retained for 3 days. Reset that variable after debugging. The PR/manual
+workflow continues to use its own input/label controls.
+
+Do not create a release tag just to test this configuration: that runs the existing
+production deployment. On the next intended release, verify three nonempty,
+disjoint manifests, JUnit output, `record: false`, and the artifact retention dates.
+Local validation of this migration does not exercise the deployment job or the
+production website. The deployment job still uses its original Node 16/Yarn and
+external core checkout; compatibility of those legacy steps is a separate concern.
+
+After both workflows have been verified, check for any other clients recording to
+Cloud before downgrading/cancelling the subscription. Older tagged revisions and
+reruns of old workflows can still use their previous Cloud configuration.

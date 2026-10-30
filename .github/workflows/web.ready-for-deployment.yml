@@ -40,22 +40,66 @@ jobs:
   post-deployment-test:
     needs: deployment
     runs-on: macos-latest
+    env:
+      DEBUG_ARTIFACTS: ${{ vars.E2E_DEBUG_ARTIFACTS == 'true' }}
     strategy:
       fail-fast: false
       matrix:
         containers: [1, 2, 3]
     steps:
       - uses: actions/checkout@v5
+
+      - name: Setup Pnpm
+        uses: pnpm/action-setup@v6
+        with:
+          run_install: false
+
+      - name: Setup Node 24
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: "pnpm"
+
+      - name: Install dependencies
+        working-directory: apps/web
+        run: |
+          pnpm install --filter=web --filter=core
+          pnpm exec cypress install
+
+      - name: Select specs for this runner
+        id: specs
+        working-directory: apps/web
+        run: node scripts/cy-shard.mjs ${{ matrix.containers }} ${{ strategy.job-total }}
+
       - name: Run e2e test against the production environment
-        uses: cypress-io/github-action@v5
+        uses: cypress-io/github-action@v7
         env:
           CYPRESS_username: ${{ secrets.CYPRESS_USERNAME }}
           CYPRESS_password: ${{ secrets.CYPRESS_PASSWORD }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         with:
-          group: "Group"
+          install: false
+          working-directory: apps/web
           config-file: cypress.config.prod.ts
-          record: true
-          parallel: true
-          start: |
-            yarn install
+          record: false
+          spec: ${{ steps.specs.outputs.specs }}
+          config: video=${{ env.DEBUG_ARTIFACTS }}
+
+      - name: Upload test results and screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-e2e-results-${{ matrix.containers }}-attempt-${{ github.run_attempt }}
+          path: |
+            apps/web/cypress/results/
+            apps/web/cypress/screenshots/
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Upload debug videos
+        if: ${{ always() && env.DEBUG_ARTIFACTS == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: production-e2e-videos-${{ matrix.containers }}-attempt-${{ github.run_attempt }}
+          path: apps/web/cypress/videos/
+          retention-days: 3
+          if-no-files-found: ignore
