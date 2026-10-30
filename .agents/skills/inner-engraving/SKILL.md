@@ -278,7 +278,7 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   - Later edits:
     - The Z size is the relief depth: a plain scale, never recomputed.
     - Sharpening, and under uvDev the roll-off, are edited in `PhotoTo3dOptions` and recomputed from the saved depth (`updatePhotoTo3d`, its own step).
-    - A later resize or layer point-spacing change recomputes nothing (decided 2026-10-29): the cloud stays as shown and ships as shown, and the next edit computes on the size and spacing of that moment. There is no stale check and no `data-stl-depth-grid`.
+    - `isPhotoTo3dStale` compares `data-stl-depth-grid` with the current dot grid. A stale cloud is recomputed when the panel is open (`appendCommandToLast`) and always in `getPointCloudObjects` before a job (no history).
 - There is no direct point-cloud file import (`create3dObject` / `insertStlGeometry` only build
   meshes). Standalone point clouds exist only in .beam files from uv-dev builds: block 7 plus a
   `data-stl` rect of `data-stl-kind="point-cloud"`, rebuilt by `readPointCloudSource`.

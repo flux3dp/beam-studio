@@ -91,9 +91,23 @@ const getGrid = ({ height, width }: PhotoTo3dSize, pointSpacing: number) =>
   `${Math.max(1, Math.round(width / pointSpacing))},${Math.max(1, Math.round(height / pointSpacing))}`;
 
 /**
- * Compute the BSPC point cloud of a photo from its depth, on the dot grid of its current size and
- * its layer's point spacing. Only an explicit conversion or edit calls this: a later resize or point
- * spacing change leaves the cloud as it is shown, and Swiftray drops the dots that come too close.
+ * Whether the point cloud no longer matches its dot grid: the layer's point spacing changed, or the
+ * object was resized in X or Y. A Z resize only scales the relief and never needs a recompute.
+ */
+export const isPhotoTo3dStale = (elem: Element): boolean => {
+  const object = useStlStore.getState().objects[elem.id];
+
+  if (!isPhotoTo3d(elem) || !object?.depthSource) return false;
+
+  const thickness = readNumber(elem, PHOTO_TO_3D_ATTR.thickness, 1);
+  const size = getWorldSize(elem, object.transform, thickness);
+
+  return elem.getAttribute(PHOTO_TO_3D_ATTR.grid) !== getGrid(size, getStlEngravingParams(elem).pointSpacing);
+};
+
+/**
+ * Compute the BSPC point cloud of a photo from its depth.
+ * @returns the binary and the dot grid it was computed on
  */
 const computeCloud = async (
   elem: SVGImageElement,
@@ -102,7 +116,7 @@ const computeCloud = async (
   thickness: number,
   settings: PhotoTo3dSettings,
   source = getPhotoTextureUrl(elem),
-): Promise<ArrayBuffer> => {
+): Promise<{ buffer: ArrayBuffer; grid: string }> => {
   if (!source) throw new Error('Photo has no image source');
 
   const { pointSpacing } = getStlEngravingParams(elem);
@@ -128,7 +142,7 @@ const computeCloud = async (
       points[i + 2] = points[i + 2] / sz - thickness / 2;
     }
 
-    return encodePointCloud(points);
+    return { buffer: encodePointCloud(points), grid: getGrid(size, pointSpacing) };
   } finally {
     setBusy(elem.id, false);
   }
@@ -305,7 +319,7 @@ export const convertPhotoTo3d = async (
       sharpenAmount,
       sharpenRadius,
     };
-    const buffer = await computeCloud(
+    const { buffer, grid } = await computeCloud(
       elem,
       depth.depthSource,
       transform,
@@ -319,6 +333,7 @@ export const convertPhotoTo3d = async (
 
     setAttributes(batch, elem, {
       ...settingAttrs(settings),
+      [PHOTO_TO_3D_ATTR.grid]: grid,
       [PHOTO_TO_3D_ATTR.marker]: String(DEPTH_SOURCE_FORMAT_VERSION),
       [PHOTO_TO_3D_ATTR.thickness]: String(thickness),
     });
@@ -336,22 +351,46 @@ export const convertPhotoTo3d = async (
 };
 
 /**
- * Recompute a converted photo's point cloud with changed settings, as its own undo step. The dot grid
- * is the object's current size and its layer's current point spacing.
+ * Recompute a converted photo's point cloud with changed settings, or for its current point spacing
+ * and size when `changes` is empty.
+ * @param mode `new` records its own undo step; `append` folds into the latest one (the resize or
+ * spacing change that made the cloud stale); `none` records nothing (right before sending a job: the
+ * cloud is a function of the settings, the size and the layer, so undo stays consistent)
  */
-export const updatePhotoTo3d = async (elem: SVGImageElement, changes: Partial<PhotoTo3dSettings>): Promise<boolean> => {
+export const updatePhotoTo3d = async (
+  elem: SVGImageElement,
+  changes: Partial<PhotoTo3dSettings>,
+  mode: 'append' | 'new' | 'none',
+): Promise<boolean> => {
   const object: StlObject | undefined = useStlStore.getState().objects[elem.id];
 
   if (!object?.depthSource || !isPhotoTo3d(elem)) return false;
 
   const settings = { ...getPhotoTo3dSettings(elem), ...changes };
   const thickness = readNumber(elem, PHOTO_TO_3D_ATTR.thickness, 1);
-  const buffer = await computeCloud(elem, object.depthSource, object.transform, thickness, settings);
+  const { buffer, grid } = await computeCloud(elem, object.depthSource, object.transform, thickness, settings);
   const batch = new history.BatchCommand('Update photo to 3D');
 
-  setAttributes(batch, elem, settingAttrs(settings));
+  setAttributes(batch, elem, { ...settingAttrs(settings), [PHOTO_TO_3D_ATTR.grid]: grid });
   applyPhotoPointCloud(elem.id, buffer, { parentCmd: batch });
-  undoManager.addCommandToHistory(batch);
+
+  if (mode === 'new') undoManager.addCommandToHistory(batch);
+  else if (mode === 'append') undoManager.appendCommandToLast(batch, batch.getText(), elem);
 
   return true;
+};
+
+/** Bring every stale photo-to-3D point cloud up to date, before a job is sent. */
+export const refreshStalePhotoTo3d = async (): Promise<void> => {
+  const stale = Array.from(
+    document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_TO_3D_ATTR.marker}]`),
+  ).filter(isPhotoTo3dStale);
+
+  for (const elem of stale) {
+    try {
+      await updatePhotoTo3d(elem, {}, 'none');
+    } catch (error) {
+      console.error(`Failed to update the point cloud of ${elem.id}`, error);
+    }
+  }
 };
