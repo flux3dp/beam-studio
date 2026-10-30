@@ -1,0 +1,98 @@
+import React, { useEffect, useMemo, useState } from 'react';
+
+import { legacyBeamSeriesModels, promarkModels } from '@core/app/actions/beambox/constant';
+import { getWideAngleCameraData } from '@core/app/actions/camera/preview-helper/getWideAngleCameraData';
+import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
+import { loadJson, uploadJson } from '@core/helpers/device/jsonDataHelper';
+import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
+import useI18n from '@core/helpers/useI18n';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { PromarkCameraParameters } from '@core/interfaces/Promark';
+
+import { clearPncOffset } from '../../PrintAndCut/calibration/offsetStore';
+
+import FisheyeOffsetBlock from './FisheyeOffsetBlock';
+import LegacyCameraBlock from './LegacyCameraBlock';
+import styles from './ManualConfiguration.module.scss';
+import { createParamsSource, type OffsetParams } from './offsetParams';
+import { useManualConfigStore } from './store';
+
+export interface CameraTabProps {
+  device: IDeviceInfo;
+}
+
+/**
+ * Camera offsets per model, see docs/prd/manual-calibration-config.md §7.2:
+ * `offset` of fisheye_params.json is the region preview (the whole preview on ado1 / Promark),
+ * `region_offsets` is the wide-angle preview: fbm2 keeps it in the same file, bb2 / hx2 in wide-angle.json.
+ */
+const CameraTab = ({ device }: CameraTabProps): React.JSX.Element => {
+  const t = useI18n().manual_config;
+  const { model, serial } = device;
+  const isLegacy = legacyBeamSeriesModels.has(model);
+  const isPromark = promarkModels.has(model);
+  // the wide-angle camera is standard on fbm2 and hx2 but optional on bb2: there the same probe the preview
+  // uses (firmware, camera count) decides whether the wide-angle block exists at all
+  const [hasWideAngle, setHasWideAngle] = useState(model === 'fbm2' || model === 'fhx2rf');
+  const pnc = useManualConfigStore((state) => state.pnc) ?? undefined;
+
+  useEffect(() => {
+    if (model === 'fbb2') {
+      getWideAngleCameraData(device).then(({ hasWideAngleCamera }) => setHasWideAngle(hasWideAngleCamera));
+    }
+  }, [device, model]);
+
+  // a manual save keeps the Print and Cut offset (unlike a calibration): only a save that applied the pnc
+  // toggle clears it, through onPncApplied, since the offset absorbed it then
+  const { main, wide } = useMemo(() => {
+    const promark = createParamsSource(
+      async () => promarkDataStore.get(serial, 'cameraParameters'),
+      async (params: OffsetParams) => {
+        promarkDataStore.set(serial, 'cameraParameters', params as PromarkCameraParameters);
+      },
+    );
+    const fisheye = createParamsSource(
+      () => loadJson('fisheye', 'fisheye_params.json'),
+      async (params) => {
+        await setFisheyeConfig(params, { clearPnc: false });
+      },
+    );
+    const wideAngle = createParamsSource(
+      () => loadJson('fisheye', 'wide-angle.json'),
+      async (params) => {
+        await uploadJson(params, 'fisheye', 'wide-angle.json');
+      },
+    );
+
+    return { main: isPromark ? promark : fisheye, wide: model === 'fbm2' ? fisheye : wideAngle };
+  }, [isPromark, model, serial]);
+
+  if (isLegacy) {
+    return (
+      <div className={styles.tab}>
+        <div className={styles.desc}>{t.legacy_desc}</div>
+        <LegacyCameraBlock device={device} />
+      </div>
+    );
+  }
+
+  return (
+    <div className={styles.tab}>
+      <div className={styles.desc}>{t.fisheye_desc}</div>
+      <FisheyeOffsetBlock
+        id="camera.main"
+        kind="offset"
+        onPncApplied={async () => {
+          await clearPncOffset(serial);
+          useManualConfigStore.getState().setPnc(undefined);
+        }}
+        pnc={pnc}
+        source={main}
+        title={hasWideAngle ? t.fisheye_region : t.fisheye_offset}
+      />
+      {hasWideAngle && <FisheyeOffsetBlock id="camera.wide" kind="regions" source={wide} title={t.fisheye_full_area} />}
+    </div>
+  );
+};
+
+export default CameraTab;

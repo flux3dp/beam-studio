@@ -88,6 +88,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           movementFeedrate: this.getMovementSpeed(),
           shouldKeepInRawMode: true,
           updateMessage: (message: string) => this.showMessage({ content: message }),
+          useRegionOffsets: this._previewMode === PreviewMode.FULL_AREA,
         }),
       );
     } catch (error) {
@@ -332,7 +333,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     }
 
     try {
-      await this.fisheyePreviewManager?.updateGrid(grid);
+      await this.fisheyePreviewManager?.updateGrid(grid, mode === PreviewMode.FULL_AREA);
       this._previewMode = mode;
     } finally {
       this.closeMessage();

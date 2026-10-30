@@ -1504,7 +1504,8 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
     const res = await controlSocket.addTask(controlSocket.getDeviceSetting, name);
 
-    if (currentDevice!.cameraNeedsFlip === null && ['camera_offset', 'camera_offset_borderless'].includes(name)) {
+    // F is read from camera_offset only, so the flip does not depend on which setting a preview asked for first
+    if (currentDevice!.cameraNeedsFlip === null && name === 'camera_offset') {
       if (res.status === 'ok' && !currentDevice!.info.model.includes('delta-')) {
         this.checkCameraNeedFlip(res.value);
       }

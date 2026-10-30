@@ -61,6 +61,15 @@ REGION ↔ PRECISE_REGION only swaps the fisheye perspective grid on the same ca
 (`bb2PerspectiveGridWide` vs `bb2PerspectiveGrid`); crossing the FULL_AREA boundary tears
 down / sets up the other camera.
 
+Manual offsets (`offset` / `region_offsets` in the fisheye params, see camera-calibration skill) are
+applied by fluxghost, so managers only decide which keys to send. `FisheyePreviewManagerV4`
+takes `useRegionOffsets` in `setupFisheyePreview` / `updateGrid`; `paramsToSend` strips `region_offsets`
+when false and `offset` when true, so each preview only carries its own key (a missing table is 0 in
+fluxghost, never the region offset). `Beamo2PreviewManager` passes
+`useRegionOffsets: previewMode === FULL_AREA` because fbm2 keeps both previews in one
+`fisheye_params.json`; `Bb2Hx2PreviewManager` leaves the default (`true`) since `wide-angle.json`
+only ever serves FULL_AREA. Offsets saved while a preview is running apply on the next setup.
+
 Beamo2 FULL_AREA capture manages exposure itself: shoots a light image at
 `originalExposure + 500` and a dark image at original, sets the dark one as mask image
 (`setMaskImage`), restoring auto-exposure afterwards.

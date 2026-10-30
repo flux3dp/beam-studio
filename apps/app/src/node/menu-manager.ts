@@ -188,6 +188,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
             label: 'Cartridge Chip Setting',
           },
         { click: handleClick, id: 'CALIBRATE_PRINT_AND_CUT', label: r.calibrate_print_and_cut },
+        { click: handleClick, id: 'MANUAL_CONFIGURATION', label: r.manual_configuration },
       ].filter(Boolean),
     },
     !isPromark && { type: 'separator' },
