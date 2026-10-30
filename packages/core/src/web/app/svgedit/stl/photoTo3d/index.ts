@@ -22,7 +22,7 @@ import { loadRasterData } from '../photoPointCloudGenerator';
 import { encodePointCloud } from '../pointCloud';
 
 import { DEPTH_SOURCE_FORMAT_VERSION, depthSourceFromApi, encodeDepthSource } from './depthSource';
-import type { PhotoTo3dParams, PhotoTo3dSize } from './generate';
+import type { PhotoTo3dSize } from './generate';
 import { MAX_PHOTO_TO_3D_CELLS, PhotoTo3dError } from './generate';
 import { PhotoTo3dCancelledError, runPhotoTo3d } from './runPhotoTo3d';
 
@@ -32,15 +32,21 @@ export const DEFAULT_SHARPEN = { amount: 1, radius: 4 } as const;
 export const SHARPEN_AMOUNT_LIMIT = { max: 5, min: 0 } as const;
 export const SHARPEN_RADIUS_LIMIT = { max: 20, min: 0.5 } as const;
 
-/** The roll-off starts at 4% of the photo's width: 4 mm, the only value tested, was on a 100 mm photo. */
-const EDGE_ROUND_RATIO = 0.04;
-
+/** The roll-off is a share of the photo's width: 4 mm, the only value tested, was on a 100 mm photo. */
+export const DEFAULT_EDGE_ROUND_PERCENT = 4;
+/** % of the width; 10 mm on that 100 mm photo. */
 export const EDGE_ROUND_LIMIT = { max: 10, min: 0 } as const;
 
 /** The relief's default depth as a share of its width, capped by the engravable height. */
 const THICKNESS_RATIO = 0.22;
 
-export type PhotoTo3dSettings = Omit<PhotoTo3dParams, 'pointSpacing'>;
+/** The object's own parameters; the point spacing comes from its layer. */
+export interface PhotoTo3dSettings {
+  /** Roll-off width as a share of the object's width, in %, so a resize keeps the look. */
+  edgeRoundPercent: number;
+  sharpenAmount: number;
+  sharpenRadius: number;
+}
 
 interface PhotoTo3dResponse {
   depth: string;
@@ -68,7 +74,7 @@ const readNumber = (elem: Element, attr: string, fallback: number) => {
 };
 
 export const getPhotoTo3dSettings = (elem: Element): PhotoTo3dSettings => ({
-  edgeRoundMm: readNumber(elem, PHOTO_TO_3D_ATTR.edgeRound, 0),
+  edgeRoundPercent: readNumber(elem, PHOTO_TO_3D_ATTR.edgeRound, 0),
   sharpenAmount: readNumber(elem, PHOTO_TO_3D_ATTR.sharpenAmount, DEFAULT_SHARPEN.amount),
   sharpenRadius: readNumber(elem, PHOTO_TO_3D_ATTR.sharpenRadius, DEFAULT_SHARPEN.radius),
 });
@@ -126,9 +132,10 @@ const computeCloud = async (
   const size = getWorldSize(elem, transform, thickness);
   const image = await loadRasterData(source);
   const pixels = { data: image.data, height: image.height, width: image.width };
+  const { edgeRoundPercent, ...sharpen } = settings;
   const points = await runPhotoTo3d(elem.id, {
     depthSource,
-    params: { ...settings, pointSpacing },
+    params: { ...sharpen, edgeRoundMm: (size.width * edgeRoundPercent) / 100, pointSpacing },
     pixels,
     size,
   });
@@ -155,7 +162,7 @@ const setAttributes = (batch: IBatchCommand, elem: Element, attrs: Record<string
 };
 
 const settingAttrs = (settings: PhotoTo3dSettings): Record<string, string> => ({
-  [PHOTO_TO_3D_ATTR.edgeRound]: String(settings.edgeRoundMm),
+  [PHOTO_TO_3D_ATTR.edgeRound]: String(settings.edgeRoundPercent),
   [PHOTO_TO_3D_ATTR.sharpenAmount]: String(settings.sharpenAmount),
   [PHOTO_TO_3D_ATTR.sharpenRadius]: String(settings.sharpenRadius),
 });
@@ -311,7 +318,7 @@ export const convertPhotoTo3d = async (
       scale: [object.transform.scale[0], object.transform.scale[1], 1],
     };
     const settings: PhotoTo3dSettings = {
-      edgeRoundMm: Math.round(widthMm * EDGE_ROUND_RATIO * 10) / 10,
+      edgeRoundPercent: DEFAULT_EDGE_ROUND_PERCENT,
       sharpenAmount,
       sharpenRadius,
     };

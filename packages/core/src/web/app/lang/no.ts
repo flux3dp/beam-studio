@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI anslår dybden i bildet og gjør det om til en punktsky for innvendig gravering. Etterpå kan du fortsatt endre dybde (Z-størrelse) og skarphet uten å bli belastet på nytt.',
     photo_to_3d_done: 'Konvertert til en 3D-punktsky',
     photo_to_3d_edge_round: 'Kantavrunding',
-    photo_to_3d_edge_round_hint: 'Runder av relieffet mot den utskårne kanten over denne avstanden. 0 er av.',
+    photo_to_3d_edge_round_hint: 'Runder av relieffet mot den utskårne kanten over denne andelen av objektets bredde. 0 er av.',
     photo_to_3d_failed: 'Konverteringen mislyktes',
     photo_to_3d_flat: 'Bildet har nesten ingen dybdevariasjon og kan ikke konverteres til 3D.',
     photo_to_3d_insufficient_credit: 'Ikke nok AI-kreditter til å konvertere til 3D.',

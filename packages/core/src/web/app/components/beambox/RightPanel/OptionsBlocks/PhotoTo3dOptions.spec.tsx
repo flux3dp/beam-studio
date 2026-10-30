@@ -12,7 +12,7 @@ jest.mock('@core/app/svgedit/stl/photoTo3d', () => {
     alertPhotoTo3dError: (...args: unknown[]) => mockAlertPhotoTo3dError(...args),
     EDGE_ROUND_LIMIT: { max: 10, min: 0 },
     getPhotoTo3dSettings: (elem: Element) => ({
-      edgeRoundMm: Number(elem.getAttribute('data-stl-depth-round')),
+      edgeRoundPercent: Number(elem.getAttribute('data-stl-depth-round-percent')),
       sharpenAmount: Number(elem.getAttribute('data-stl-depth-sharpen')),
       sharpenRadius: Number(elem.getAttribute('data-stl-depth-radius')),
     }),
@@ -34,7 +34,7 @@ const makeElem = () => {
   elem.id = 'photo';
   elem.setAttribute('data-stl-depth-sharpen', '1');
   elem.setAttribute('data-stl-depth-radius', '4');
-  elem.setAttribute('data-stl-depth-round', '2');
+  elem.setAttribute('data-stl-depth-round-percent', '2');
 
   return elem;
 };
@@ -53,7 +53,7 @@ describe('PhotoTo3dOptions', () => {
 
     expect(container.querySelector<HTMLInputElement>('#photo-to-3d-sharpenAmount')!.value).toBe('1.0');
     expect(container.querySelector<HTMLInputElement>('#photo-to-3d-sharpenRadius')!.value).toBe('4.0');
-    expect(container.querySelector<HTMLInputElement>('#photo-to-3d-edgeRoundMm')!.value).toBe('2.0');
+    expect(container.querySelector<HTMLInputElement>('#photo-to-3d-edgeRoundPercent')!.value).toBe('2.0');
   });
 
   test('a finished edit recomputes the point cloud as its own undo step', () => {

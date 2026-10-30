@@ -35,8 +35,8 @@ export const PHOTO_3D_ATTR = {
  * block 8; these are the parameters the point cloud was computed with, so it can be recomputed.
  */
 export const PHOTO_TO_3D_ATTR = {
-  /** Roll-off radius along the cut-out, mm. */
-  edgeRound: 'data-stl-depth-round',
+  /** Roll-off width along the cut-out, % of the object's width. */
+  edgeRound: 'data-stl-depth-round-percent',
   /** `columns,rows` of the dot grid the point cloud was computed on. */
   grid: 'data-stl-depth-grid',
   /** Marks the photo; the value is the depth binary (BSDM) format version. */

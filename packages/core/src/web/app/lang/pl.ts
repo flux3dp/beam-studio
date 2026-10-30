@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI szacuje głębię zdjęcia i zamienia je w chmurę punktów do grawerowania wewnętrznego. Potem nadal możesz zmieniać głębokość (rozmiar Z) i wyostrzenie bez ponownego obciążenia.',
     photo_to_3d_done: 'Przekonwertowano na chmurę punktów 3D',
     photo_to_3d_edge_round: 'Zaokrąglenie krawędzi',
-    photo_to_3d_edge_round_hint: 'Zaokrągla relief w stronę wyciętej krawędzi na tej odległości. 0 wyłącza.',
+    photo_to_3d_edge_round_hint: 'Zaokrągla relief w stronę wyciętej krawędzi na tym procencie szerokości obiektu. 0 wyłącza.',
     photo_to_3d_failed: 'Konwersja nie powiodła się',
     photo_to_3d_flat: 'Zdjęcie prawie nie ma zmian głębi i nie można go przekonwertować na 3D.',
     photo_to_3d_insufficient_credit: 'Za mało kredytów AI, aby przekonwertować na 3D.',

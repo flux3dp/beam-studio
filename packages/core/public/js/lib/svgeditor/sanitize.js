@@ -314,7 +314,7 @@
       'data-stl-depth',
       'data-stl-depth-grid',
       'data-stl-depth-radius',
-      'data-stl-depth-round',
+      'data-stl-depth-round-percent',
       'data-stl-depth-sharpen',
       'data-stl-depth-thickness',
       'data-stl-matrix',
