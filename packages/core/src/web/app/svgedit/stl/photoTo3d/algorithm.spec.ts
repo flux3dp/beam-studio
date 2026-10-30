@@ -125,6 +125,47 @@ describe('depth field', () => {
     expect(Array.from(field.mask.slice(0, 8))).toEqual([0, 0, 0, 0, 1, 1, 1, 1]);
   });
 
+  // 100 × 8, the left 10 columns cut out: a rim 4 px wide (4% of the width), levelled against the
+  // nearest surface within 8 px. depth 1 is near (Z 10), 2 is far (Z 0)
+  const rimPhoto = () => {
+    const pixels = solid(100, 8, 200);
+
+    for (let i = 0; i < 800; i += 1) if (i % 100 < 10) pixels.data[i * 4 + 3] = 0;
+
+    return pixels;
+  };
+  const rimStats = { lower: 1, upper: 2, valid: 720 };
+  const z = (field: { depth: Float32Array }, x: number, y: number) => (1 - (field.depth[y * 100 + x] - 1)) * 10;
+
+  test('background the cut-out kept, at the far end of the depth, is removed from the rim', () => {
+    const source = { ...ramp(100, 8), depth: new Float32Array(800).fill(1) };
+
+    // a strip of background depth along the whole cut-out
+    for (let i = 0; i < 800; i += 1) if (i % 100 >= 10 && i % 100 < 14) source.depth[i] = 2;
+
+    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, roundMm: 0, widthMm: 100 });
+
+    expect(field.mask[3 * 100 + 10]).toBe(0);
+    expect(field.mask[3 * 100 + 14]).toBe(1);
+    expect(z(field, 50, 3)).toBeCloseTo(10);
+  });
+
+  test('a rim behind its surroundings is lifted to their level, fully on the cut-out and fading inward', () => {
+    const source = { ...ramp(100, 8), depth: new Float32Array(800).fill(1) };
+
+    // the lower half of the rim sits 3 mm behind the rest
+    for (let i = 0; i < 800; i += 1) if (i >= 400 && i % 100 >= 10 && i % 100 < 14) source.depth[i] = 1.3;
+
+    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, roundMm: 0, widthMm: 100 });
+
+    expect(field.mask[6 * 100 + 10]).toBe(1);
+    expect(z(field, 10, 6)).toBeCloseTo(10);
+    expect(z(field, 12, 6)).toBeCloseTo(8.5);
+    expect(z(field, 40, 6)).toBeCloseTo(10);
+    // the rim that already is at the level, and the inside, do not move
+    expect(z(field, 10, 1)).toBeCloseTo(10);
+  });
+
   test('the roll-off lowers the surface next to the cut-out only', () => {
     const source = { ...ramp(20, 1), depth: new Float32Array(20).fill(1) };
 

@@ -28,6 +28,14 @@ const EDGE_ISLAND = 0.0015;
 const EDGE_MAX_AREA = 6.1;
 /** The roll-off ends where the quarter circle's slope reaches 4 (≈ 76°). */
 const EDGE_ROUND_T = 4 / Math.sqrt(17);
+/** Width of the rim that is levelled, as a share of the photo's width. */
+const EDGE_LEVEL_RATIO = 0.04;
+/** The level a rim pixel is held to is the nearest its surroundings reach within this many rims. */
+const EDGE_LEVEL_REACH = 2;
+/** A rim pixel this far behind its level (share of the relief depth) is background, not subject... */
+const EDGE_LEVEL_REMOVE = 0.4;
+/** ...provided it also sits within this share of the depth from the far end. */
+const EDGE_LEVEL_FAR = 0.15;
 /** Extra dots per dot cell at most. */
 const EDGE_MAX_EXTRA = 60;
 
@@ -152,16 +160,71 @@ const N8 = [
 ] as const;
 
 /**
+ * Sliding-window maximum along every row (`horizontal`) or column, window `[k − w, k + w]`.
+ * Pixels that do not count hold -Infinity.
+ */
+const maxFilter = (src: Float32Array, dst: Float32Array, w: number, fw: number, fh: number, horizontal: boolean) => {
+  const len = horizontal ? fw : fh;
+  const lines = horizontal ? fh : fw;
+  const at = (line: number, k: number) => (horizontal ? line * fw + k : k * fw + line);
+  const deque = new Int32Array(len);
+
+  for (let line = 0; line < lines; line += 1) {
+    let head = 0;
+    let tail = 0;
+
+    for (let k = 0; k < len + w; k += 1) {
+      if (k < len) {
+        const value = src[at(line, k)];
+
+        while (tail > head && src[at(line, deque[tail - 1])] <= value) tail -= 1;
+
+        deque[tail++] = k;
+      }
+
+      const out = k - w;
+
+      if (out < 0) continue;
+
+      while (deque[head] < out - w) head += 1;
+
+      dst[at(line, out)] = src[at(line, deque[head])];
+    }
+  }
+};
+
+/** Sliding-window sum along every row or column, window `[k − w, k + w]`, in place. */
+const sumFilter = (src: Float32Array, w: number, fw: number, fh: number, horizontal: boolean) => {
+  const len = horizontal ? fw : fh;
+  const lines = horizontal ? fh : fw;
+  const at = (line: number, k: number) => (horizontal ? line * fw + k : k * fw + line);
+  const prefix = new Float64Array(len + 1);
+
+  for (let line = 0; line < lines; line += 1) {
+    for (let k = 0; k < len; k += 1) prefix[k + 1] = prefix[k] + src[at(line, k)];
+
+    for (let k = 0; k < len; k += 1) {
+      src[at(line, k)] = prefix[Math.min(len, k + w + 1)] - prefix[Math.max(0, k - w)];
+    }
+  }
+};
+
+/**
  * Clean the depth along the cut-out, where single-image depth models smear the subject into the
- * background. Every step except the fringe and the roll-off works within EDGE_BAND pixels of the
- * cut-out only, so ramps inside the subject stay ramps:
+ * background. Every step except the fringe, the levelling and the roll-off works within EDGE_BAND
+ * pixels of the cut-out only, so ramps inside the subject stay ramps:
  *   1. isolated outliers → median of their neighbours
  *   2. occlusion ramps: where the depth drops steeply and the colours on the two sides differ, each
  *      ramp pixel takes the depth of the side its colour matches
  *   3. fringe: within EDGE_FRINGE pixels of the cut-out the surface may not sink faster than
  *      EDGE_STEEP toward it
  *   4. small islands cut off by depth jumps are shifted onto their surroundings
- *   5. optional roll-off: within `roundMm` of the cut-out the surface bends back on a quarter circle
+ *   5. levelling: within EDGE_LEVEL_RATIO × width of the cut-out, each pixel is held to the level
+ *      its surroundings reach (their windowed nearest, smoothed). A pixel far behind it, near the far
+ *      end of the depth, is background the cut-out kept and is removed; one behind it is lifted to
+ *      it, fully at the cut-out and not at all at the rim's inner edge, so the rim is level in depth
+ *      and joins the inside without a step
+ *   6. optional roll-off: within `roundMm` of the cut-out the surface bends back on a quarter circle
  * Transparent pixels of the photo become invalid. A photo without transparency has no cut-out, and
  * nothing changes but that.
  */
@@ -443,7 +506,79 @@ export const cleanDepthEdges = (
 
   for (let i = 0; i < n; i += 1) if (comp[i] >= 0 && shiftN[comp[i]]) z2[i] += shift[comp[i]] / shiftN[comp[i]];
 
-  // 5. roll-off: quarter circle of radius R (mm) at the cut-out edge
+  // 5. levelling of the rim
+  const rimPx = EDGE_LEVEL_RATIO * fw;
+
+  if (rimPx >= 1 && validCount) {
+    // a 3 × 3 mean first, so one spiked pixel cannot set the level of a whole stretch of rim
+    const smooth = new Float32Array(n).fill(-Infinity);
+
+    for (let i = 0; i < n; i += 1) {
+      if (!valid[i]) continue;
+
+      const x = i % fw;
+      const y = (i - x) / fw;
+      let sum = z2[i];
+      let count = 1;
+
+      for (const [dx, dy] of N8) {
+        const xx = x + dx;
+        const yy = y + dy;
+
+        if (xx < 0 || yy < 0 || xx >= fw || yy >= fh) continue;
+
+        const j = yy * fw + xx;
+
+        if (!valid[j]) continue;
+
+        sum += z2[j];
+        count += 1;
+      }
+
+      smooth[i] = sum / count;
+    }
+
+    // the nearest level within reach, then its mean over the rim's width so the level has no steps
+    const reach = Math.round(EDGE_LEVEL_REACH * rimPx);
+    const level = new Float32Array(n);
+    const count = new Float32Array(n);
+
+    maxFilter(smooth, level, reach, fw, fh, true);
+    maxFilter(level, smooth, reach, fw, fh, false);
+
+    for (let i = 0; i < n; i += 1) {
+      const counts = valid[i] && Number.isFinite(smooth[i]);
+
+      level[i] = counts ? smooth[i] : 0;
+      count[i] = counts ? 1 : 0;
+    }
+
+    const span = Math.round(rimPx);
+
+    sumFilter(level, span, fw, fh, true);
+    sumFilter(level, span, fw, fh, false);
+    sumFilter(count, span, fw, fh, true);
+    sumFilter(count, span, fw, fh, false);
+
+    for (let i = 0; i < n; i += 1) {
+      if (!valid[i] || !count[i] || dist[i] > rimPx + 1) continue;
+
+      const behind = level[i] / count[i] - z2[i];
+
+      if (behind <= 0) continue;
+
+      if (behind > EDGE_LEVEL_REMOVE * depthMm && z2[i] < EDGE_LEVEL_FAR * depthMm) {
+        valid[i] = 0;
+        validCount -= 1;
+        continue;
+      }
+
+      // the pixel on the cut-out is levelled in full; the lift fades out across the rim
+      z2[i] += behind * Math.min(1, Math.max(0, 1 - (dist[i] - 1) / rimPx));
+    }
+  }
+
+  // 6. roll-off: quarter circle of radius R (mm) at the cut-out edge
   if (roundMm > 0) {
     const rPx = roundMm / pxMm;
 
