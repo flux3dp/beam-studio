@@ -12,6 +12,7 @@ jest.mock('@core/helpers/api/ai-image-process', () => ({
 const mockRunPhotoTo3d = jest.fn();
 
 jest.mock('./runPhotoTo3d', () => ({
+  PhotoTo3dCancelledError: class extends Error {},
   runPhotoTo3d: (...args: unknown[]) => mockRunPhotoTo3d(...args),
 }));
 jest.mock('../photoPointCloudGenerator', () => ({
@@ -84,6 +85,7 @@ import {
   usePhotoTo3dBusy,
   watchStalePhotoTo3d,
 } from '.';
+import { PhotoTo3dError } from './generate';
 
 const toBase64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes));
 const response = (image: null | string = null) => ({
@@ -302,6 +304,37 @@ describe('photo to 3D', () => {
         document.getElementById('svgcontent')!.setAttribute('data-stl-point-spacing', '1');
         await flush();
         expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(1);
+      });
+
+      test('a grid the cloud cannot be computed on is reported once, until the grid changes again', async () => {
+        const stop = watchStalePhotoTo3d();
+
+        mockRunPhotoTo3d.mockRejectedValue(new PhotoTo3dError('too-many-points', 'too many'));
+        mockPointSpacing.mockReturnValue(0.25);
+        document.getElementById('svgcontent')!.setAttribute('data-stl-point-spacing', '0.25');
+        await flush();
+        await flush();
+        await flush();
+        expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(1);
+        expect(mockPopUpError).toHaveBeenCalledTimes(1);
+        expect(mockPopUpError).toHaveBeenCalledWith({ message: 'too many' });
+        expect(elem.getAttribute('data-stl-depth-grid')).toBe('40,20');
+
+        // another grid is tried again, and reported again when it fails too
+        mockPointSpacing.mockReturnValue(0.2);
+        document.getElementById('svgcontent')!.setAttribute('data-stl-point-spacing', '0.2');
+        await flush();
+        expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(2);
+        expect(mockPopUpError).toHaveBeenCalledTimes(2);
+
+        // a grid that fits is computed and clears the failure
+        mockRunPhotoTo3d.mockResolvedValue(Float32Array.from([10, -5, 0, -10, 5, 4.4]));
+        mockPointSpacing.mockReturnValue(1);
+        document.getElementById('svgcontent')!.setAttribute('data-stl-point-spacing', '1');
+        await flush();
+        expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(3);
+        expect(elem.getAttribute('data-stl-depth-grid')).toBe('20,10');
+        stop();
       });
 
       test('a resize recomputes the cloud too; a busy cloud waits for its computation', async () => {

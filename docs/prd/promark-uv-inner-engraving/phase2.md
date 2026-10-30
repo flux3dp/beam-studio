@@ -307,7 +307,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 付費取得、但還沒變成點雲的深度（例如點數過多）留在記憶體，以元素 id + 原圖為鍵，同一次開啟期間再按「轉 3D」不會重新呼叫 API。
 - 重算（`updatePhotoTo3d`）：從 `depthSource` 重跑 worker，不呼叫 API。
   - 物件面板（`PhotoTo3dOptions`）改參數：獨立一個 undo 步驟。
-  - 點格過期（`data-stl-depth-grid` 和目前的「世界寬 / 點間距, 世界高 / 點間距」不同）：`InnerEngravingCanvas` 掛載時啟動 `watchStalePhotoTo3d`，用 MutationObserver 監聽 `#svgcontent` 底下的 `data-stl-point-spacing`（含 preset、undo、開檔），並訂閱 `stlStore` 的物件變動；停下 0.5 秒後把每個過期的點雲重算，`appendCommandToLast` 併進造成它的那一步，計算中的物件等它算完再看。`getPointCloudObjects` 送出前一定重算，不記 history。點雲只由屬性、尺寸、圖層決定，undo 之後再送出會再算一次，結果一致。~~原本由 `PhotoTo3dOptions` 在面板開著時做~~ 2026-10-30 改到畫布（§10 #17）。
+  - 點格過期（`data-stl-depth-grid` 和目前的「世界寬 / 點間距, 世界高 / 點間距」不同）：`InnerEngravingCanvas` 掛載時啟動 `watchStalePhotoTo3d`，用 MutationObserver 監聽 `#svgcontent` 底下的 `data-stl-point-spacing`（含 preset、undo、開檔），並訂閱 `stlStore` 的物件變動；停下 0.5 秒後把每個過期的點雲重算，`appendCommandToLast` 併進造成它的那一步，計算中的物件等它算完再看。算不出來的點格（點數過多）只提示一次，點間距或尺寸再改之前不重試（2026-10-30 實測原本會無限跳出提示），點雲維持過期、送出前再試一次。`getPointCloudObjects` 送出前一定重算，不記 history。點雲只由屬性、尺寸、圖層決定，undo 之後再送出會再算一次，結果一致。~~原本由 `PhotoTo3dOptions` 在面板開著時做~~ 2026-10-30 改到畫布（§10 #17）。
 - 量測（純 Node，test 6 去背版 1036×1372，世界寬 60mm、點間距 0.03mm、銳化 1 / 4）：
   - 結果 198 萬點（dither 點 145 萬）。
   - 耗時：dither 0.7s、銳化 0.5s、邊緣處理 0.4s、投影 0.6s，合計約 2.5s。
@@ -458,7 +458,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
       - 過期判斷；重算的三種 history 模式；送出前重算。
     - `PhotoTo3dModal.spec`：選項、去背預設、重試、點數不足、登入、點格上限。
     - `PhotoTo3dOptions.spec`：顯示、提交、更新中延遲。
-    - `photoTo3d/index.spec`「while the canvas watches」：點間距屬性變動後 0.5 秒重算並併入前一步、其他屬性不觸發、停止監聽後不觸發；尺寸變動也重算、計算中的物件等算完再重算。
+    - `photoTo3d/index.spec`「while the canvas watches」：點間距屬性變動後 0.5 秒重算並併入前一步、其他屬性不觸發、停止監聽後不觸發；算不出來的點格只提示一次、換點格再試；尺寸變動也重算、計算中的物件等算完再重算。
     - `ActionsPanelStl.spec`、`ThreeDOptions.spec`、`ai-image-process.spec`（JSON 版本）、`beam-file-helper.spec`（block 8）。
   - P2-4（已寫）：`getInnerEngravingBlocks.spec`（顯示規則）、`FillCapsBlock.spec`（寫入、不改預設參數名稱）。
 - **Swiftray**（`tests/test_stl_utils.h`，已寫）：
