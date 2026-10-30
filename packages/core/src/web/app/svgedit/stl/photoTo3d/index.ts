@@ -11,7 +11,6 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { processImageWithAiJson } from '@core/helpers/api/ai-image-process';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
-import { isUvDev } from '@core/helpers/is-dev';
 import { attributeMap } from '@core/helpers/layer/layer-config-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
@@ -33,11 +32,8 @@ export const DEFAULT_SHARPEN = { amount: 1, radius: 4 } as const;
 export const SHARPEN_AMOUNT_LIMIT = { max: 5, min: 0 } as const;
 export const SHARPEN_RADIUS_LIMIT = { max: 20, min: 0.5 } as const;
 
-/**
- * The roll-off is a uvDev option. Under uvDev it starts at 4% of the photo's width: 4 mm, the only
- * value tested, was on a 100 mm photo.
- */
-const DEV_EDGE_ROUND_RATIO = 0.04;
+/** The roll-off starts at 4% of the photo's width: 4 mm, the only value tested, was on a 100 mm photo. */
+const EDGE_ROUND_RATIO = 0.04;
 
 export const EDGE_ROUND_LIMIT = { max: 10, min: 0 } as const;
 
@@ -315,7 +311,7 @@ export const convertPhotoTo3d = async (
       scale: [object.transform.scale[0], object.transform.scale[1], 1],
     };
     const settings: PhotoTo3dSettings = {
-      edgeRoundMm: isUvDev() ? Math.round(widthMm * DEV_EDGE_ROUND_RATIO * 10) / 10 : 0,
+      edgeRoundMm: Math.round(widthMm * EDGE_ROUND_RATIO * 10) / 10,
       sharpenAmount,
       sharpenRadius,
     };

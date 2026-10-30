@@ -14,7 +14,6 @@ import {
   usePhotoTo3dBusy,
 } from '@core/app/svgedit/stl/photoTo3d';
 import { PhotoTo3dCancelledError } from '@core/app/svgedit/stl/photoTo3d/runPhotoTo3d';
-import { isUvDev } from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ThreeDOptions.module.scss';
@@ -35,8 +34,8 @@ const run = async (task: Promise<unknown>) => {
 };
 
 /**
- * The parameters of a photo turned into 3D that change its point cloud: sharpening, and under uvDev
- * the edge roll-off. Each change recomputes the point cloud from the saved depth (never the API) in one
+ * The parameters of a photo turned into 3D that change its point cloud: sharpening and the edge
+ * roll-off. Each change recomputes the point cloud from the saved depth (never the API) in one
  * undo step; the depth itself is the object's Z size, in the dimension panel. A resize or a new layer
  * point spacing is followed by the canvas (`watchStalePhotoTo3d`), not here: the spacing is edited on
  * the layer tab, where this panel is not mounted.
@@ -115,12 +114,11 @@ const PhotoTo3dOptions = ({ elem }: Props): React.JSX.Element => {
         precision: 1,
         step: 0.5,
       })}
-      {isUvDev() &&
-        renderField('edgeRoundMm', t.photo_to_3d_edge_round, t.photo_to_3d_edge_round_hint, EDGE_ROUND_LIMIT, {
-          precision: 1,
-          step: 0.5,
-          unit: 'mm',
-        })}
+      {renderField('edgeRoundMm', t.photo_to_3d_edge_round, t.photo_to_3d_edge_round_hint, EDGE_ROUND_LIMIT, {
+        precision: 1,
+        step: 0.5,
+        unit: 'mm',
+      })}
       {showBusy && (
         <div className={styles.row} id="photo-to-3d-updating">
           <span className={styles.label}>
