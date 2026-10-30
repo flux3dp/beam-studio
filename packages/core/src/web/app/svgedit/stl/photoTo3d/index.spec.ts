@@ -51,6 +51,9 @@ jest.mock('@core/helpers/is-dev', () => ({ __esModule: true, default: () => fals
 
 const mockPointSpacing = jest.fn();
 
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
+  attributeMap: { stlPointSpacing: 'data-stl-point-spacing' },
+}));
 jest.mock('../engravingParams', () => ({
   getStlEngravingParams: () => ({ pointSpacing: mockPointSpacing() }),
 }));
@@ -73,7 +76,14 @@ jest.mock('@core/app/svgedit/history/undoManager', () => ({
   appendCommandToLast: (...args: unknown[]) => mockAppendCommandToLast(...args),
 }));
 
-import { convertPhotoTo3d, isPhotoTo3dStale, refreshStalePhotoTo3d, updatePhotoTo3d } from '.';
+import {
+  convertPhotoTo3d,
+  isPhotoTo3dStale,
+  refreshStalePhotoTo3d,
+  updatePhotoTo3d,
+  usePhotoTo3dBusy,
+  watchStalePhotoTo3d,
+} from '.';
 
 const toBase64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes));
 const response = (image: null | string = null) => ({
@@ -261,6 +271,53 @@ describe('photo to 3D', () => {
       mockRunPhotoTo3d.mockClear();
       await refreshStalePhotoTo3d();
       expect(mockRunPhotoTo3d).not.toHaveBeenCalled();
+    });
+
+    describe('while the canvas watches', () => {
+      const flush = () => jest.advanceTimersByTimeAsync(500);
+
+      beforeEach(() => jest.useFakeTimers());
+      afterEach(() => jest.useRealTimers());
+
+      test('a changed layer point spacing recomputes the cloud once it settles, folded into that step', async () => {
+        const stop = watchStalePhotoTo3d();
+
+        mockPointSpacing.mockReturnValue(0.25);
+        document.getElementById('svgcontent')!.setAttribute('data-stl-point-spacing', '0.25');
+        await jest.advanceTimersByTimeAsync(100);
+        expect(mockRunPhotoTo3d).not.toHaveBeenCalled();
+        await flush();
+        expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(1);
+        expect(mockRunPhotoTo3d.mock.lastCall[1].params.pointSpacing).toBe(0.25);
+        expect(elem.getAttribute('data-stl-depth-grid')).toBe('80,40');
+        expect(mockAppendCommandToLast).toHaveBeenCalledWith(expect.anything(), 'Update photo to 3D', elem);
+
+        // another attribute, or a spacing the cloud already matches, recomputes nothing
+        document.getElementById('svgcontent')!.setAttribute('data-stl-layer-spacing', '1');
+        await flush();
+        expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(1);
+
+        stop();
+        mockPointSpacing.mockReturnValue(1);
+        document.getElementById('svgcontent')!.setAttribute('data-stl-point-spacing', '1');
+        await flush();
+        expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(1);
+      });
+
+      test('a resize recomputes the cloud too; a busy cloud waits for its computation', async () => {
+        const stop = watchStalePhotoTo3d();
+
+        usePhotoTo3dBusy.setState({ ids: ['photo'] });
+        resize([1, 1, 1]);
+        await flush();
+        expect(mockRunPhotoTo3d).not.toHaveBeenCalled();
+
+        usePhotoTo3dBusy.setState({ ids: [] });
+        await flush();
+        expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(1);
+        expect(mockRunPhotoTo3d.mock.lastCall[1].size.width).toBeCloseTo(40);
+        stop();
+      });
     });
   });
 });

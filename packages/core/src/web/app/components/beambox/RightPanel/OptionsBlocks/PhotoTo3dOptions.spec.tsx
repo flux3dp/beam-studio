@@ -2,10 +2,7 @@ import React from 'react';
 
 import { act, fireEvent, render } from '@testing-library/react';
 
-import { useStlStore } from '@core/app/stores/stlStore';
-
 const mockUpdatePhotoTo3d = jest.fn();
-const mockIsPhotoTo3dStale = jest.fn();
 const mockAlertPhotoTo3dError = jest.fn();
 const mockIsUvDev = jest.fn();
 
@@ -20,7 +17,6 @@ jest.mock('@core/app/svgedit/stl/photoTo3d', () => {
       sharpenAmount: Number(elem.getAttribute('data-stl-depth-sharpen')),
       sharpenRadius: Number(elem.getAttribute('data-stl-depth-radius')),
     }),
-    isPhotoTo3dStale: (...args: unknown[]) => mockIsPhotoTo3dStale(...args),
     SHARPEN_AMOUNT_LIMIT: { max: 5, min: 0 },
     SHARPEN_RADIUS_LIMIT: { max: 20, min: 0.5 },
     updatePhotoTo3d: (...args: unknown[]) => mockUpdatePhotoTo3d(...args),
@@ -28,7 +24,6 @@ jest.mock('@core/app/svgedit/stl/photoTo3d', () => {
   };
 });
 jest.mock('@core/app/svgedit/stl/photoTo3d/runPhotoTo3d', () => ({ PhotoTo3dCancelledError: class extends Error {} }));
-jest.mock('@core/app/stores/layer/layerStore', () => ({ useLayerStore: () => ({}) }));
 jest.mock('@core/helpers/is-dev', () => ({ isUvDev: () => mockIsUvDev() }));
 
 import { usePhotoTo3dBusy } from '@core/app/svgedit/stl/photoTo3d';
@@ -51,9 +46,7 @@ describe('PhotoTo3dOptions', () => {
     jest.useFakeTimers();
     jest.clearAllMocks();
     mockIsUvDev.mockReturnValue(false);
-    mockIsPhotoTo3dStale.mockReturnValue(false);
     mockUpdatePhotoTo3d.mockResolvedValue(true);
-    useStlStore.setState({ objects: {} });
   });
 
   afterEach(() => jest.useRealTimers());
@@ -90,16 +83,5 @@ describe('PhotoTo3dOptions', () => {
     expect(container.querySelector('#photo-to-3d-updating')).not.toBeNull();
     act(() => usePhotoTo3dBusy.setState({ ids: [] }));
     expect(container.querySelector('#photo-to-3d-updating')).toBeNull();
-  });
-
-  test('a stale point cloud is recomputed once the change settles, folded into that step', () => {
-    const elem = makeElem();
-
-    mockIsPhotoTo3dStale.mockReturnValue(true);
-    render(<PhotoTo3dOptions elem={elem} />);
-
-    expect(mockUpdatePhotoTo3d).not.toHaveBeenCalled();
-    act(() => jest.advanceTimersByTime(500));
-    expect(mockUpdatePhotoTo3d).toHaveBeenCalledWith(elem, {}, 'append');
   });
 });
