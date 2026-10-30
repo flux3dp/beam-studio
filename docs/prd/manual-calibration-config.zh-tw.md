@@ -4,10 +4,10 @@
 
 | | |
 |---|---|
-| **Status** | 開發中 — D1–D7 定案，分支 `feat/manual-calibration-config`；2026-10-29 fbm2 實機驗證通過、需求方回饋已納入 |
+| **Status** | 已於 2.7.3 實作 — beam-studio #1037、fluxghost #123（2.5.7）。D1–D7 定案。待辦：fbb2／fpm1 實機、精準對位匯入實測（§12 第 3、5、6 項） |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-28 |
-| **Target product** | Beam Studio（桌面版 + 網頁版）、fluxghost（2.5.6 之後的下一版） |
+| **Target product** | Beam Studio（桌面版 + 網頁版）、fluxghost 2.5.7 |
 | **Owner area** | 校正選單、相機預覽（魚眼重映射）、模組偏移、精準對位偏移 |
 | **Related code** | 見英文版 |
 | **External repos** | fluxghost（`fluxghost/api/fisheye_camera_mixin.py`、`fluxghost/utils/camera/perspective.py`、`docs/api/camera.md`、`tools/ws_smoke.py`） |

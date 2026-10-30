@@ -2,10 +2,10 @@
 
 | | |
 |---|---|
-| **Status** | In development — D1–D7 settled, branch `feat/manual-calibration-config`; fbm2 verified on hardware 2026-10-29, stakeholder feedback round folded in |
+| **Status** | Implemented in 2.7.3 — beam-studio #1037, fluxghost #123 (2.5.7). D1–D7 settled. Pending: hardware on fbb2 / fpm1 and the Print and Cut import run (§12 items 3, 5, 6) |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-28 |
-| **Target product** | Beam Studio (desktop + web), fluxghost (next release after 2.5.6) |
+| **Target product** | Beam Studio (desktop + web), fluxghost 2.5.7 |
 | **Owner area** | Calibration menu, camera preview (fisheye remap), module offsets, Print and Cut offset |
 | **Related code** | Menus: `packages/core/src/web/app/components/beambox/TopBar/useMenuData.ts`, `apps/app/src/node/menu-manager.ts`, `packages/core/src/web/app/actions/beambox/menuDeviceActions.tsx`; camera params: `packages/core/src/web/interfaces/FisheyePreview.d.ts`, `packages/core/src/web/helpers/camera-calibration-helper.ts` (`setFisheyeConfig`, `doSetConfigTask`), `packages/core/src/web/helpers/device/jsonDataHelper.ts`, `packages/core/src/web/helpers/device/promark/promark-data-store.ts`; preview: `packages/core/src/web/app/actions/camera/preview-helper/Beamo2PreviewManager.ts`, `FisheyePreviewManagerV4.ts`, `BeamPreviewManager.ts`; module offsets: `packages/core/src/web/helpers/device/moduleOffsets.ts`, `packages/core/src/web/app/components/dialogs/camera/ModuleCalibration/OffsetSettings.tsx`; Print and Cut offset: `packages/core/src/web/app/components/dialogs/PrintAndCut/calibration/offsetStore.ts`, `PrintAndCut/utils/align/alignByCamera.ts` |
 | **External repos** | fluxghost (`fluxghost/api/fisheye_camera_mixin.py`, `fluxghost/utils/camera/perspective.py`, `docs/api/camera.md`, `tools/ws_smoke.py`) |
