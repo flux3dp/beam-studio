@@ -432,11 +432,15 @@ Hardware (record results here):
 2. fbm2 full-area single: same check. Sign confirmed 2026-10-29 (+X/+Y → left/up). Then per-region with one
    corner at +1: only that corner moves. Passed 2026-10-29, as did the D7 independence check (a wide-angle
    edit leaves the region preview untouched and vice versa) and the Print and Cut toggle. __
-3. fbb2 wide-angle per-region. __
-4. ado1 single offset. __
-5. fpm1 single offset. __
+3. fbb2 wide-angle per-region. fhx2rf full-area passed 2026-10-29 (same `Bb2Hx2PreviewManager` → V4 path and
+   `wide-angle.json`; bb2 differs only in the optional-camera probe). No bb2 at hand 2026-10-29; left for
+   the next unit that passes through. __
+4. ado1 single offset. Passed 2026-10-29 (V2 path). __
+5. fpm1 single offset. No Promark at hand 2026-10-29; same mixin over camera-transform, left open. __
 6. Print and Cut import on fbm2: vernier → import → re-run PnC alignment, cut lands on the print (settles D5). __
 7. beamo: cut lands 1 mm below the previewed object → decrease `Y` by 1 → aligned. Confirmed 2026-10-29: +X / +Y
    move the preview right / down, the opposite of the fisheye offset, as §5 derives (X / Y are the camera
    position, not a correction). __
-8. Old fluxghost (2.5.6): save works, preview unchanged, no error. __
+8. Old fluxghost (2.5.6): save works, preview unchanged, no error. Verified by code 2026-10-29, no hardware run:
+   2.5.6 `set_fisheye_matrix` rebuilds the params dict from known keys only, so `offset` / `region_offsets` are
+   dropped silently (V2 / V3 / V4 and Promark through the same mixin); the file upload never goes through fluxghost.
