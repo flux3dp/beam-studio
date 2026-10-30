@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI uppskattar fotots djup och gör om det till ett punktmoln för invändig gravering. Efteråt kan du fortfarande ändra djup (Z-storlek) och skärpa utan att debiteras igen.',
     photo_to_3d_done: 'Konverterat till ett 3D-punktmoln',
     photo_to_3d_edge_round: 'Kantavrundning',
-    photo_to_3d_edge_round_hint: 'Jämnar ut reliefens djup längs den utskurna kanten och rundar av den mot kanten över denna andel av objektets bredd. 0 är av.',
+    photo_to_3d_edge_round_hint: 'Tar bort lösa bakgrundspunkter längs den utskurna kanten och jämnar ut kantens djup över denna andel av objektets bredd. 0 är av.',
     photo_to_3d_failed: 'Konverteringen misslyckades',
     photo_to_3d_flat: 'Fotot har nästan ingen djupvariation och kan inte konverteras till 3D.',
     photo_to_3d_insufficient_credit: 'Inte tillräckligt med AI-krediter för att konvertera till 3D.',

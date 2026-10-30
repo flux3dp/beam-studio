@@ -130,8 +130,8 @@ describe('depth field', () => {
     expect(Array.from(field.mask.slice(0, 8))).toEqual([0, 0, 0, 0, 1, 1, 1, 1]);
   });
 
-  // 100 × 8, the left 10 columns cut out: a rim 4 px wide (levelMm 4 at 1 mm per px), background told
-  // by the nearest surface within 8 px. depth 1 is near (Z 10), 2 is far (Z 0)
+  // 100 × 8 pixels over 10 mm (0.1 mm each), the left 10 columns cut out, so the rim of 0.4 mm is
+  // columns 10–13. depth 1 is near (Z 10 mm), 2 is far (Z 0)
   const rimPhoto = () => {
     const pixels = solid(100, 8, 200);
 
@@ -140,68 +140,72 @@ describe('depth field', () => {
     return pixels;
   };
   const rimStats = { lower: 1, upper: 2, valid: 720 };
+  const rimDepth = (zAt: (x: number, y: number) => number) => {
+    const source = { ...ramp(100, 8), depth: new Float32Array(800) };
+
+    for (let i = 0; i < 800; i += 1) source.depth[i] = 1 + (10 - zAt(i % 100, Math.floor(i / 100))) / 10;
+
+    return source;
+  };
   const z = (field: { depth: Float32Array }, x: number, y: number) => (1 - (field.depth[y * 100 + x] - 1)) * 10;
+  const clean = (source: ReturnType<typeof rimDepth>, levelMm: number, roundMm: number) =>
+    cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, levelMm, roundMm, widthMm: 10 });
 
-  test('background the cut-out kept, at the far end of the depth, is removed from the rim', () => {
-    const source = { ...ramp(100, 8), depth: new Float32Array(800).fill(1) };
-
+  test('background the cut-out kept is removed from the rim, and its dots with it', () => {
     // a strip of background depth along the whole cut-out
-    for (let i = 0; i < 800; i += 1) if (i % 100 >= 10 && i % 100 < 14) source.depth[i] = 2;
-
-    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, levelMm: 4, roundMm: 0, widthMm: 100 });
+    const source = rimDepth((x) => (x < 14 ? 0 : 10));
+    const field = clean(source, 0.4, 0);
 
     expect(field.mask[3 * 100 + 10]).toBe(0);
+    expect(field.mask[3 * 100 + 13]).toBe(0);
+    expect(field.drop![3 * 100 + 13]).toBe(1);
     expect(field.mask[3 * 100 + 14]).toBe(1);
     expect(z(field, 50, 3)).toBeCloseTo(10);
+
+    // with the setting at 0 nothing is removed
+    expect(clean(source, 0, 0).mask[3 * 100 + 13]).toBe(1);
+
+    // a removed pixel's dot is left out rather than put on the far plane
+    const dots = new Uint8Array(800);
+
+    for (let i = 0; i < 800; i += 1) if (i % 100 >= 10) dots[i] = 1;
+
+    const points = liftDots(
+      field,
+      rimStats,
+      { dots, height: 8, width: 100 },
+      { depthMm: 10, heightMm: 0.8, widthMm: 10 },
+    );
+
+    expect(points.length).toBeGreaterThan(0);
+
+    for (let i = 2; i < points.length; i += 3) expect(points[i]).toBeGreaterThan(5);
   });
 
-  test('a stretch of rim behind the rest of the rim is lifted toward its mean, fully on the cut-out and fading inward', () => {
-    const source = { ...ramp(100, 8), depth: new Float32Array(800).fill(1) };
+  test('a rim that recedes no faster than the steep slope is kept as it is', () => {
+    // 0.2 mm lower per pixel toward the cut-out: a slope of 2, under EDGE_STEEP
+    const source = rimDepth((x) => (x < 14 ? 10 - 0.2 * (14 - x) : 10));
+    const field = clean(source, 0.4, 0);
 
-    // the lower half of the rim sits 3 mm behind the rest
-    for (let i = 0; i < 800; i += 1) if (i >= 400 && i % 100 >= 10 && i % 100 < 14) source.depth[i] = 1.3;
-
-    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, levelMm: 4, roundMm: 0, widthMm: 100 });
-
-    expect(field.mask[6 * 100 + 10]).toBe(1);
-    expect(z(field, 10, 6)).toBeGreaterThan(7.5);
-    expect(z(field, 10, 6)).toBeLessThan(10);
-    expect(z(field, 12, 6)).toBeGreaterThan(7);
-    expect(z(field, 12, 6)).toBeLessThan(z(field, 10, 6));
-    expect(z(field, 40, 6)).toBeCloseTo(10);
-    // the rim that already is at the level, and the inside, do not move
-    expect(z(field, 10, 1)).toBeCloseTo(10);
+    for (let x = 10; x < 14; x += 1) {
+      expect(field.mask[3 * 100 + x]).toBe(1);
+      expect(z(field, x, 3)).toBeCloseTo(10 - 0.2 * (14 - x), 4);
+    }
   });
 
-  test('a rim that recedes evenly stays behind the surface inside it', () => {
-    const source = { ...ramp(100, 8), depth: new Float32Array(800).fill(1) };
+  test('the smoothing evens a jagged rim along the contour, fading out across the rim', () => {
+    // every other row of the rim sits 0.2 mm behind: jagged along the cut-out
+    const source = rimDepth((x, y) => (x < 14 && y % 2 ? 9.8 : 10));
+    const plain = clean(source, 0, 0);
+    const smoothed = clean(source, 0, 0.4);
+    const spread = (field: typeof plain, x: number) => Math.abs(z(field, x, 2) - z(field, x, 3));
 
-    for (let i = 0; i < 800; i += 1) if (i % 100 >= 10 && i % 100 < 14) source.depth[i] = 1.3;
-
-    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, levelMm: 4, roundMm: 0, widthMm: 100 });
-
-    // the fringe step alone bends the rim's last pixels up toward the inside
-    expect(z(field, 10, 4)).toBeLessThan(7.6);
-    expect(z(field, 11, 4)).toBeLessThan(7.6);
-    expect(z(field, 40, 4)).toBeCloseTo(10);
-  });
-
-  test('the roll-off lowers the surface next to the cut-out only', () => {
-    const source = { ...ramp(20, 1), depth: new Float32Array(20).fill(1) };
-
-    source.depth[19] = 2;
-
-    const pixels = solid(20, 1, 200);
-
-    pixels.data[3] = 0;
-
-    const stats = { lower: 1, upper: 2, valid: 20 };
-    const plain = cleanDepthEdges(source, stats, pixels, { depthMm: 10, levelMm: 0, roundMm: 0, widthMm: 20 });
-    const rounded = cleanDepthEdges(source, stats, pixels, { depthMm: 10, levelMm: 0, roundMm: 4, widthMm: 20 });
-
-    // farther depth = lower Z: the pixel next to the cut-out moves away, the far end does not
-    expect(rounded.depth[1]).toBeGreaterThan(plain.depth[1]);
-    expect(rounded.depth[15]).toBeCloseTo(plain.depth[15]);
+    expect(spread(smoothed, 10)).toBeLessThan(spread(plain, 10) / 2);
+    // less on the rim's inner side, nothing inside it
+    expect(spread(smoothed, 13)).toBeGreaterThan(spread(smoothed, 10));
+    expect(z(smoothed, 40, 3)).toBeCloseTo(10);
+    // the inside does not pull the rim forward: on the cut-out it lands between the two levels
+    expect(z(smoothed, 10, 3)).toBeLessThan(10);
   });
 });
 
