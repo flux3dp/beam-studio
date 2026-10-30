@@ -2191,6 +2191,8 @@ const lang: ILang = {
     tab_modules: '模組',
     tab_print_and_cut: '精準對位',
     title: '手動輸入',
+    wide_angle_blend: '區域間漸變',
+    wide_angle_blend_desc: '開啟：在交界處混合相鄰區域的偏移以減少扭曲，但交界附近的偏移不會剛好等於設定值。\n關閉：直接套用設定值，交界處可能出現扭曲。',
     wide_angle_per_region: '分區',
     wide_angle_single: '單一',
   },

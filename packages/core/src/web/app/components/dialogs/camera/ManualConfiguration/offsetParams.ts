@@ -11,7 +11,8 @@ export type OffsetParams = FisheyeCameraParametersV2 | FisheyeCameraParametersV3
 export const isOffsetParams = (data: unknown): data is OffsetParams =>
   typeof data === 'object' && data !== null && [2, 3, 4].includes((data as OffsetParams).v);
 
-export type RegionOffsets = Record<WideAngleRegion, [number, number]>;
+/** iterate with `REGIONS`, never `Object.values`: the table also carries the `blend` flag */
+export type RegionOffsets = Record<WideAngleRegion, [number, number]> & { blend?: boolean };
 
 /** laid out like the bed, row by row; same keys as the V4 polyfits */
 export const REGIONS: WideAngleRegion[] = [
@@ -27,7 +28,7 @@ export const REGIONS: WideAngleRegion[] = [
 ];
 
 export const sameForAll = (xy: [number, number]): RegionOffsets =>
-  Object.fromEntries(REGIONS.map((region) => [region, xy])) as RegionOffsets;
+  Object.fromEntries(REGIONS.map((region) => [region, xy])) as Record<WideAngleRegion, [number, number]>;
 
 /** all nine regions carry the same pair: the table was written from the single-offset mode */
 export const isUniform = (regions: RegionOffsets): boolean =>

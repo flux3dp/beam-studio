@@ -128,8 +128,9 @@ export interface FisheyeCameraParametersV4<Region = WideAngleRegion> {
   /**
    * Per-region override of `offset` for full-area preview, keyed like the polyfits. Its presence is the
    * "per region" mode; fluxghost picks the region from the unshifted point and falls back to `offset`.
+   * `blend` (absent = true) ramps the table across a band at each region border instead of stepping.
    */
-  region_offsets?: Record<Region, [number, number]>;
+  region_offsets?: Record<Region, [number, number]> & { blend?: boolean };
   ret?: number;
   rvec: number[][];
   rvec_polyfits: Record<Region, number[][]>;

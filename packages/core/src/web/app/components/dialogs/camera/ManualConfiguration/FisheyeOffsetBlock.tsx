@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
-import { Segmented, Switch } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Segmented, Switch, Tooltip } from 'antd';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -64,6 +65,7 @@ const FisheyeOffsetBlock = ({
   const [value, setValue] = useState<Xy>(ZERO);
   const [regions, setRegions] = useState<RegionOffsets>(() => sameForAll([0, 0]));
   const [perRegion, setPerRegion] = useState(false);
+  const [blend, setBlend] = useState(true);
   const [usePnc, setUsePnc] = useState(false);
 
   useEffect(() => {
@@ -86,16 +88,19 @@ const FisheyeOffsetBlock = ({
         setValue(xy);
         setRegions(storedRegions ?? sameForAll([0, 0]));
         setPerRegion(!uniform);
+        setBlend(storedRegions?.blend ?? true);
       }
     });
   }, [source, kind]);
 
-  const nextRegions = (): RegionOffsets => (perRegion ? regions : sameForAll([value.x, value.y]));
+  // one offset writes nine equal pairs and no flag: blending a uniform table is a no-op
+  const nextRegions = (): RegionOffsets => (perRegion ? { ...regions, blend } : sameForAll([value.x, value.y]));
   const changed =
     loaded === true &&
     (kind === 'offset'
       ? value.x !== stored.value.x || value.y !== stored.value.y
-      : REGIONS.some((r) => {
+      : (perRegion && blend !== (stored.regions?.blend ?? true)) ||
+        REGIONS.some((r) => {
           const [x, y] = nextRegions()[r];
           const [sx, sy] = stored.regions?.[r] ?? [0, 0];
 
@@ -180,7 +185,18 @@ const FisheyeOffsetBlock = ({
       )}
       {loaded === false && <div className={styles.hint}>{t.camera_not_calibrated}</div>}
       {kind === 'regions' && perRegion ? (
-        <RegionOffsetGrid disabled={disabled} max={RANGE} min={-RANGE} onChange={setRegions} value={regions} />
+        <>
+          <div className={styles.blend}>
+            <label className={styles.switch}>
+              <Switch checked={blend} disabled={disabled} onChange={setBlend} size="small" />
+              {t.wide_angle_blend}
+            </label>
+            <Tooltip title={<div className={styles.tooltip}>{t.wide_angle_blend_desc}</div>}>
+              <QuestionCircleOutlined className={styles.hint} />
+            </Tooltip>
+          </div>
+          <RegionOffsetGrid disabled={disabled} max={RANGE} min={-RANGE} onChange={setRegions} value={regions} />
+        </>
       ) : (
         <XyInputs disabled={disabled || usePnc} max={RANGE} min={-RANGE} onChange={setValue} value={value} />
       )}

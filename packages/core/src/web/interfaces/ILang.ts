@@ -2085,6 +2085,8 @@ export interface ILang {
     tab_modules: string;
     tab_print_and_cut: string;
     title: string;
+    wide_angle_blend: string;
+    wide_angle_blend_desc: string;
     wide_angle_per_region: string;
     wide_angle_single: string;
   };

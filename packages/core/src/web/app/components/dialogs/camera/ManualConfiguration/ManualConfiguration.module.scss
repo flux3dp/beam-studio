@@ -112,3 +112,20 @@
     margin-top: 4px;
   }
 }
+
+// blend toggle above the region grid: the help icon sits outside the label so it does not flip the switch
+.blend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .switch {
+    margin-top: 0;
+  }
+}
+
+// the blend help text is two sentences, one per line
+.tooltip {
+  white-space: pre-line;
+}

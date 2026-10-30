@@ -191,9 +191,9 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
   (3×3 like the bed, topLeft … bottomRight) with the single value. The region block edits `offset`; the
   two are independent values (D7) and share one Save.
 - Per region shows a **"Blend between regions"** switch above the grid, default on, with a `?` icon. Tooltip
-  (plain language, the geometry stays in §7.3): "On: neighbouring regions are blended near their borders
-  to reduce distortion where regions meet, but the offset near a border will not exactly equal the value
-  you set. Off: the offset you set is applied as is, but the image may be distorted where regions meet."
+  (plain language, two lines, the geometry stays in §7.3): "On: neighbouring offsets are blended near the
+  borders to reduce distortion, but the offset near a border will not exactly match the value you set."
+  / "Off: values are applied as set; the image may be distorted where regions meet."
   Off is the 2.5.7 behaviour. Stored as `region_offsets.blend` (D8); hidden in one-offset mode, where it
   has no effect. Flipping the switch marks the block dirty like any edit.
 - "Apply the Print and Cut offset" toggle on the region block, shown when `fetchPncOffset(serial)` has a
