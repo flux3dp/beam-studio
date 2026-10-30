@@ -130,29 +130,22 @@ const computeCloud = async (
   const size = getWorldSize(elem, transform, thickness);
   const image = await loadRasterData(source);
   const pixels = { data: image.data, height: image.height, width: image.width };
+  const points = await runPhotoTo3d(elem.id, {
+    depthSource,
+    params: { ...settings, pointSpacing },
+    pixels,
+    size,
+  });
+  const [sx, sy, sz] = transform.scale.map(Math.abs);
 
-  setBusy(elem.id, true);
-
-  try {
-    const points = await runPhotoTo3d(elem.id, {
-      depthSource,
-      params: { ...settings, pointSpacing },
-      pixels,
-      size,
-    });
-    const [sx, sy, sz] = transform.scale.map(Math.abs);
-
-    // world mm → the object's local mm, Z centred on the photo plane's position
-    for (let i = 0; i < points.length; i += 3) {
-      points[i] /= sx;
-      points[i + 1] /= sy;
-      points[i + 2] = points[i + 2] / sz - thickness / 2;
-    }
-
-    return { buffer: encodePointCloud(points), grid: getGrid(size, pointSpacing) };
-  } finally {
-    setBusy(elem.id, false);
+  // world mm → the object's local mm, Z centred on the photo plane's position
+  for (let i = 0; i < points.length; i += 3) {
+    points[i] /= sx;
+    points[i + 1] /= sy;
+    points[i + 2] = points[i + 2] / sz - thickness / 2;
   }
+
+  return { buffer: encodePointCloud(points), grid: getGrid(size, pointSpacing) };
 };
 
 const setAttributes = (batch: IBatchCommand, elem: Element, attrs: Record<string, string>) => {
@@ -375,14 +368,22 @@ export const updatePhotoTo3d = async (
 
   const settings = { ...getPhotoTo3dSettings(elem), ...changes };
   const thickness = readNumber(elem, PHOTO_TO_3D_ATTR.thickness, 1);
-  const { buffer, grid } = await computeCloud(elem, object.depthSource, object.transform, thickness, settings);
-  const batch = new history.BatchCommand('Update photo to 3D');
 
-  setAttributes(batch, elem, { ...settingAttrs(settings), [PHOTO_TO_3D_ATTR.grid]: grid });
-  applyPhotoPointCloud(elem.id, buffer, { parentCmd: batch });
+  // busy until the new settings are on the element: the options panel reads them back when it ends
+  setBusy(elem.id, true);
 
-  if (mode === 'new') undoManager.addCommandToHistory(batch);
-  else if (mode === 'append') undoManager.appendCommandToLast(batch, batch.getText(), elem);
+  try {
+    const { buffer, grid } = await computeCloud(elem, object.depthSource, object.transform, thickness, settings);
+    const batch = new history.BatchCommand('Update photo to 3D');
+
+    setAttributes(batch, elem, { ...settingAttrs(settings), [PHOTO_TO_3D_ATTR.grid]: grid });
+    applyPhotoPointCloud(elem.id, buffer, { parentCmd: batch });
+
+    if (mode === 'new') undoManager.addCommandToHistory(batch);
+    else if (mode === 'append') undoManager.appendCommandToLast(batch, batch.getText(), elem);
+  } finally {
+    setBusy(elem.id, false);
+  }
 
   return true;
 };
