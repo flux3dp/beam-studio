@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Moduulit',
     tab_print_and_cut: 'Tulosta ja leikkaa',
     title: 'Manuaalinen määritys',
+    wide_angle_blend: 'Sekoita alueiden välillä',
+    wide_angle_blend_desc: 'Päällä: viereisten alueiden siirtymät sekoitetaan rajojen lähellä vääristymän vähentämiseksi, mutta siirtymä rajan lähellä ei vastaa tarkasti asetettua arvoa.\nPois: arvot käytetään sellaisinaan; kuva voi vääristyä alueiden rajalla.',
     wide_angle_per_region: 'Alueittain',
     wide_angle_single: 'Yksi siirtymä',
   },

@@ -2189,6 +2189,8 @@ const lang: ILang = {
     tab_modules: 'Módulos',
     tab_print_and_cut: 'Imprimir y cortar',
     title: 'Configuración manual',
+    wide_angle_blend: 'Fusionar entre zonas',
+    wide_angle_blend_desc: 'Activado: los desplazamientos de las zonas vecinas se fusionan cerca de los límites para reducir la distorsión, pero el desplazamiento cerca de un límite no coincidirá exactamente con el valor definido.\nDesactivado: los valores se aplican tal como se definieron; la imagen puede distorsionarse donde se unen las zonas.',
     wide_angle_per_region: 'Por zona',
     wide_angle_single: 'Un desplazamiento',
   },

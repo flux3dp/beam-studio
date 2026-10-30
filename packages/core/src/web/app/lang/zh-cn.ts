@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: '模块',
     tab_print_and_cut: '精准对位',
     title: '手动输入',
+    wide_angle_blend: '区域间渐变',
+    wide_angle_blend_desc: '开启：在交界处混合相邻区域的偏移以减少扭曲，但交界附近的偏移不会刚好等于设定值。\n关闭：直接套用设定值，交界处可能出现扭曲。',
     wide_angle_per_region: '分区',
     wide_angle_single: '单一',
   },

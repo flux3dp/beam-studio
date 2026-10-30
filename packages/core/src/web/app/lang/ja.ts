@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'モジュール',
     tab_print_and_cut: 'プリント＆カット',
     title: '手動設定',
+    wide_angle_blend: '領域間をブレンド',
+    wide_angle_blend_desc: 'オン：境界付近で隣接領域のオフセットをブレンドして歪みを減らしますが、境界付近のオフセットは設定値と正確には一致しません。\nオフ：設定値をそのまま適用しますが、領域の境界で画像が歪むことがあります。',
     wide_angle_per_region: '領域ごと',
     wide_angle_single: '一括',
   },

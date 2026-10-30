@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Mô-đun',
     tab_print_and_cut: 'In và cắt',
     title: 'Cấu hình thủ công',
+    wide_angle_blend: 'Hòa trộn giữa các vùng',
+    wide_angle_blend_desc: 'Bật: độ lệch của các vùng lân cận được hòa trộn gần ranh giới để giảm méo, nhưng độ lệch gần ranh giới sẽ không đúng bằng giá trị đã đặt.\nTắt: áp dụng đúng giá trị đã đặt; hình ảnh có thể bị méo ở chỗ các vùng tiếp giáp.',
     wide_angle_per_region: 'Theo vùng',
     wide_angle_single: 'Một độ lệch',
   },

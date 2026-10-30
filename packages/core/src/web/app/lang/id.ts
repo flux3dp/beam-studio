@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Modul',
     tab_print_and_cut: 'Cetak dan Potong',
     title: 'Konfigurasi Manual',
+    wide_angle_blend: 'Padukan antar wilayah',
+    wide_angle_blend_desc: 'Aktif: offset wilayah tetangga dipadukan di dekat batas untuk mengurangi distorsi, tetapi offset di dekat batas tidak akan persis sama dengan nilai yang diatur.\nNonaktif: nilai diterapkan apa adanya; gambar bisa terdistorsi di pertemuan wilayah.',
     wide_angle_per_region: 'Per wilayah',
     wide_angle_single: 'Satu offset',
   },

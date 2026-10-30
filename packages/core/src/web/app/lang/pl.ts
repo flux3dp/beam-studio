@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Moduły',
     tab_print_and_cut: 'Drukuj i tnij',
     title: 'Konfiguracja ręczna',
+    wide_angle_blend: 'Przenikanie między obszarami',
+    wide_angle_blend_desc: 'Wł.: przesunięcia sąsiednich obszarów są mieszane przy granicach, aby zmniejszyć zniekształcenia, ale przesunięcie przy granicy nie będzie dokładnie równe ustawionej wartości.\nWył.: wartości są stosowane bez zmian; obraz może być zniekształcony na styku obszarów.',
     wide_angle_per_region: 'Na obszar',
     wide_angle_single: 'Jedno przesunięcie',
   },

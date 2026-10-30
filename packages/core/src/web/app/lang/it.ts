@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Moduli',
     tab_print_and_cut: 'Stampa e taglia',
     title: 'Configurazione manuale',
+    wide_angle_blend: 'Sfuma tra le zone',
+    wide_angle_blend_desc: "Attivo: gli offset delle zone adiacenti vengono sfumati vicino ai confini per ridurre la distorsione, ma l'offset vicino a un confine non corrisponderà esattamente al valore impostato.\nDisattivo: i valori vengono applicati così come impostati; l'immagine può risultare distorta dove le zone si incontrano.",
     wide_angle_per_region: 'Per zona',
     wide_angle_single: 'Un solo offset',
   },

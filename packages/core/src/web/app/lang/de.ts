@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Module',
     tab_print_and_cut: 'Drucken und Schneiden',
     title: 'Manuelle Konfiguration',
+    wide_angle_blend: 'Zwischen Bereichen überblenden',
+    wide_angle_blend_desc: 'Ein: Die Offsets benachbarter Bereiche werden nahe der Grenzen überblendet, um Verzerrungen zu verringern; der Offset nahe einer Grenze entspricht dann nicht genau dem eingestellten Wert.\nAus: Die Werte werden unverändert angewendet; das Bild kann an den Bereichsgrenzen verzerrt sein.',
     wide_angle_per_region: 'Pro Bereich',
     wide_angle_single: 'Ein Offset',
   },

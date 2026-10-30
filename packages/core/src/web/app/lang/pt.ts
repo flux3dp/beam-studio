@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Módulos',
     tab_print_and_cut: 'Imprimir e cortar',
     title: 'Configuração manual',
+    wide_angle_blend: 'Mesclar entre regiões',
+    wide_angle_blend_desc: 'Ligado: os deslocamentos das regiões vizinhas são mesclados perto dos limites para reduzir a distorção, mas o deslocamento perto de um limite não corresponderá exatamente ao valor definido.\nDesligado: os valores são aplicados como definidos; a imagem pode ficar distorcida onde as regiões se encontram.',
     wide_angle_per_region: 'Por região',
     wide_angle_single: 'Um deslocamento',
   },

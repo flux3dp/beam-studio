@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Moduler',
     tab_print_and_cut: 'Skriv ut och skär',
     title: 'Manuell konfiguration',
+    wide_angle_blend: 'Blanda mellan områden',
+    wide_angle_blend_desc: 'På: angränsande områdens offset blandas nära gränserna för att minska förvrängning, men offset nära en gräns kommer inte exakt att motsvara det inställda värdet.\nAv: värdena används som de är inställda; bilden kan bli förvrängd där områdena möts.',
     wide_angle_per_region: 'Per område',
     wide_angle_single: 'En offset',
   },

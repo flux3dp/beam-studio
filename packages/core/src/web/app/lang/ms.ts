@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Modul',
     tab_print_and_cut: 'Cetak dan Potong',
     title: 'Konfigurasi Manual',
+    wide_angle_blend: 'Adun antara kawasan',
+    wide_angle_blend_desc: 'Hidup: offset kawasan bersebelahan diadun berhampiran sempadan untuk mengurangkan herotan, tetapi offset berhampiran sempadan tidak akan sama tepat dengan nilai yang ditetapkan.\nMati: nilai digunakan seperti yang ditetapkan; imej mungkin herot di pertemuan kawasan.',
     wide_angle_per_region: 'Mengikut kawasan',
     wide_angle_single: 'Satu offset',
   },

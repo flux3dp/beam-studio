@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Modules',
     tab_print_and_cut: 'Impression et découpe',
     title: 'Configuration manuelle',
+    wide_angle_blend: 'Fondre entre les zones',
+    wide_angle_blend_desc: "Activé : les décalages des zones voisines sont fondus près des limites pour réduire la distorsion, mais le décalage près d'une limite ne correspondra pas exactement à la valeur saisie.\nDésactivé : les valeurs sont appliquées telles quelles ; l'image peut être déformée à la jonction des zones.",
     wide_angle_per_region: 'Par zone',
     wide_angle_single: 'Un seul décalage',
   },

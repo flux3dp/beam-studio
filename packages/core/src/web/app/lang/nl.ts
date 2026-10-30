@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Modules',
     tab_print_and_cut: 'Printen en snijden',
     title: 'Handmatige configuratie',
+    wide_angle_blend: 'Overvloeien tussen gebieden',
+    wide_angle_blend_desc: 'Aan: offsets van aangrenzende gebieden vloeien bij de grenzen in elkaar over om vervorming te verminderen, maar de offset bij een grens komt niet precies overeen met de ingestelde waarde.\nUit: waarden worden toegepast zoals ingesteld; het beeld kan vervormd zijn waar gebieden samenkomen.',
     wide_angle_per_region: 'Per gebied',
     wide_angle_single: 'Eén offset',
   },

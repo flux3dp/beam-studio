@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: '모듈',
     tab_print_and_cut: '인쇄 후 커팅',
     title: '수동 설정',
+    wide_angle_blend: '영역 간 블렌딩',
+    wide_angle_blend_desc: '켬: 경계 부근에서 인접 영역의 오프셋을 섞어 왜곡을 줄이지만, 경계 부근의 오프셋은 설정값과 정확히 일치하지 않습니다.\n끔: 설정값을 그대로 적용하지만, 영역이 만나는 곳에서 이미지가 왜곡될 수 있습니다.',
     wide_angle_per_region: '영역별',
     wide_angle_single: '단일',
   },

@@ -2190,6 +2190,8 @@ const lang: ILang = {
     tab_modules: 'Moduly',
     tab_print_and_cut: 'Tisk a řez',
     title: 'Ruční nastavení',
+    wide_angle_blend: 'Prolnout mezi oblastmi',
+    wide_angle_blend_desc: 'Zapnuto: posuny sousedních oblastí se u hranic prolínají, aby se omezilo zkreslení, ale posun u hranice nebude přesně odpovídat zadané hodnotě.\nVypnuto: hodnoty se použijí tak, jak jsou zadané; na rozhraní oblastí může být obraz zkreslený.',
     wide_angle_per_region: 'Po oblastech',
     wide_angle_single: 'Jeden posun',
   },
