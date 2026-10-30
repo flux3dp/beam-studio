@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Status** | 已於 2.7.3 實作 — beam-studio #1037、fluxghost #123（2.5.7）。D1–D7 定案。待辦：fbb2／fpm1 實機、精準對位匯入實測（§12 第 3、5、6 項） |
+| **Status** | 已於 2.7.3 實作 — beam-studio #1037、fluxghost #123（2.5.7）。D1–D7 定案。待辦：fbb2／fpm1 實機、精準對位匯入實測（§12 第 3、5、6 項）。**區域間漸變（D8）開發中，隨 #1037 出貨** |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-28 |
 | **Target product** | Beam Studio（桌面版 + 網頁版）、fluxghost 2.5.7 |
@@ -148,6 +148,10 @@ UI 的「精準對位」即 Print and Cut。
 - 區塊標題：兩者並存時（bb2 / hx2 / fbm2）叫「局部預覽偏移」與「廣角預覽偏移」，只有一個時（ado1、Promark）叫「預覽偏移」；舊款區塊叫「相機偏移」。
 - 廣角區塊（fbm2 與 hx2 一律有，廣角相機是標配；bb2 只在 `getWideAngleCameraData` 偵測到相機時才有：韌體 `BB2_WIDE_ANGLE_CAMERA`、相機數 ≥ 2——沒裝廣角相機的 bb2 不顯示此區塊，有相機但沒有 `wide-angle.json` 則顯示請先校正）編輯 `region_offsets`，用 Segmented「單一 / 分區」切換。單一會把同一組值寫進九區；
   讀到九區相同的表就顯示為單一。切到分區時以單一值預填九格（3×3 如同床面，topLeft … bottomRight）。區域區塊編輯 `offset`；兩者是獨立的值（D7），共用一顆儲存。
+- 分區模式在九宮格上方顯示 **「區域間漸變」** 開關，預設開啟，旁邊有 `?` 圖示。tooltip（白話，幾何細節留在 §7.3）：
+  「開啟時，在邊界混合相鄰區域的偏移，以減少區域交界處的扭曲，但邊界附近的偏移將不剛好等於設定值。
+  關閉時，直接套用設定的偏移值，但不同區域的交界處可能會有扭曲。」關閉即 2.5.7 的行為。
+  以 `region_offsets.blend` 儲存（D8）；單一模式下隱藏（沒有作用）。切換開關與其他編輯一樣會讓區塊變成待儲存。
 - 區域區塊的「套用精準對位偏移」切換：`fetchPncOffset(serial)` 有值時顯示，旁邊列出該值。打開：丟掉未儲存的修改、欄位鎖定並顯示 **機器上的值 + pnc**
   （游標尺是透過已帶著目前偏移的預覽讀到的，所以是殘差）；關閉：回到機器上的值。切換打開時的儲存會清除 pnc.json，切換隨之消失；關閉時的儲存不動 pnc。pnc 值放在 Modal 的 store，與精準對位 Tab 共用：那邊儲存或清除會立即反映到切換上，反之亦然。
 - 不設後端閘門（D1）：欄位一律顯示；Tab 說明註明偏移需要出貨 §7.3 的 fluxghost 版本。
@@ -204,11 +208,13 @@ UI 的「精準對位」即 Print and Cut。
 offset?: [number, number];                                   // mm，機器座標，右/下為正
 // 僅 V4
 region_offsets?: Record<WideAngleRegion, [number, number]>;  // 廣角預覽，一律九區齊全
+// D8：`region_offsets` 另帶 `blend?: boolean`（缺省 = true）；型別為 `& { blend?: boolean }`
 ```
 
 規則（D7）：`offset` 是 **區域預覽** 的偏移（ado1 / Promark 沒有區域模式，就是整個預覽）。`region_offsets` 是 **廣角預覽** 的偏移，
 一律寫滿九區：「單一」模式把同一組值存九次，讀到九區相同就顯示為單一，所以不需要模式旗標。fluxghost 逐點以 `region_offsets[region]`
-優先於 `offset`，兩者不會混用。
+優先於 `offset`，兩者不會混用。`region_offsets.blend`（D8）只改變表格在區域之間的取樣方式；
+與表格一起寫入，九區相同時沒有作用。
 
 ### 7.2 各數值的使用位置
 
@@ -243,6 +249,16 @@ fbm2 去除：`FisheyePreviewManagerV4` 的 `setupFisheyePreview` 與 `updateGri
 區域以 **未加偏移的** `(x, y)` 判斷，所以表格中一格的意思是「床面這一區顯示的像素要移多少」，與使用者看到的一致；
 平移後的點即使跨過區域邊界，仍用原區的外參投影。
 
+漸變（D8，`region_offsets.blend` 缺省或 true）：表格不再以階梯取樣，而是「平台 + 斜坡」曲面。每個軸上，令區域寬度 `w = total / 3`、
+帶寬 `b = w / 3`，把未加偏移的座標映射成分數區域索引 `u ∈ [0, 2]`：在區域 `i` 中間三分之二內 `u = i`，在帶狀範圍
+`[border − b/2, border + b/2]` 內從 `i` 線性升到 `i + 1`。y 軸同樣算出 `v`，再對 `(u, v)` 周圍四格做雙線性混合（缺少的格先以 `offset` 補上）。
+外參仍取自階梯判定的區域。性質：每個區域中心與中間三分之二精確、邊界上恰為兩鄰區的中點、處處連續、床面邊緣不變、
+九區相同時與階梯完全一樣。比例 1/3 是模組常數（`REGION_OFFSET_BLEND_BAND = 1 / 3`），不是參數。`blend: false` 保留階梯查表。
+
+為何用帶狀而不是中心間全幅雙線性：全幅混合除了九個中心以外到處都改值，在中心以外量到的偏移都會被稀釋。
+帶狀讓量測值在區域大部分範圍保持精確，把拉伸集中在邊界——原本階梯在那裡本來就會撕裂影像。
+最差情況是 fbm2 短軸（區域 80 mm、帶寬 27 mm）：鄰區相差 2 mm 變成 7 % 的局部拉伸，預覽照片看不出來。
+
 偏移大小：`project_points` 是完整的正向模型，任何大小的偏移都精確投影；唯一殘餘是二階項（校正比例誤差 × 偏移，2 % × 5 mm 約 0.1 mm）。
 因此採用上面的 ±5 mm 上限，而不需要更小的步進或不同公式。
 
@@ -274,11 +290,15 @@ components/dialogs/camera/ManualConfiguration/
 `en.ts` / `zh-tw.ts` 新增命名空間 `manual_config`：`title`、`tab_camera`、`tab_modules`、`tab_print_and_cut`、
 `region_offset`、`full_area_offset`、`single_offset`、`per_region`、`import_pnc`、`import_pnc_desc`、
 區域名稱盡量重用 `calibration` 既有 key。選單 key `menu.manual_configuration` = "Manual Configuration" /「手動輸入」。
-其餘 21 種語言於 PR 前補齊。
+其餘 21 種語言於 PR 前補齊。漸變步驟新增 `wide_angle_blend`（"Blend between regions"／「區域間漸變」）與
+`wide_angle_blend_desc`（§5 的 tooltip）。
+
+漸變步驟在 `docs/api/camera.md` 與 `ws_smoke.py` 加上 `region_offsets.blend`，smoke 案例驗證 `topLeft = [1, 0]`、其餘 `[0, 0]` 時，
+topLeft／top 邊界上的點平移 0.5 mm 的投影量、topLeft 中心的點平移 1 mm。
 
 ## 8. 資料契約
 
-- `fisheye_params.json` / `wide-angle.json` / `promark-store.cameraParameters`：`offset?: [x, y]` mm；V4 `region_offsets?: {topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight: [x, y]}` mm。缺省 = 0。讀取者須容許缺省（fluxghost `.get`）。
+- `fisheye_params.json` / `wide-angle.json` / `promark-store.cameraParameters`：`offset?: [x, y]` mm；V4 `region_offsets?: {topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight: [x, y]}` mm。缺省 = 0。讀取者須容許缺省（fluxghost `.get`）。V4 `region_offsets.blend?: boolean`，缺省 = true（D8）；fluxghost ≤ 2.5.7 會丟棄並維持階梯。
 - `set_fisheye_matrix` JSON 多出同樣兩個選填欄位；其餘不變。
 - `camera_offset` 機器設定：格式不變；`X`/`Y` 以完整字串寫入，`F` 以部分設定 `F:0|1` 寫入，由韌體合併。
 - `camera_calib/pnc.json`：格式不變；只在相機儲存套用了精準對位切換、舊款翻轉、以及精準對位 Tab 的清除時清除。
@@ -289,7 +309,11 @@ components/dialogs/camera/ManualConfiguration/
 2. **beam-studio PR A** — 型別、選單項（兩套選單）、含模組與精準對位 Tab 的 Modal、舊款相機區塊、魚眼相機區塊、fbm2 去除。en + zh-tw。
 3. **同一 PR 合併前的補充** — 21 種語言、§12 記錄實機正負號確認、翻 Status 列。
 
-出貨順序：fluxghost tag → beam-studio CD 升版 → PR A。
+4. **fluxghost 漸變** — `perspective.py` 的帶狀取樣、mixin 的 `region_offsets.blend`、文件、smoke 案例。**不升版**（2026-10-30 決定）：
+   合併後把 tag `2.5.7` 移到新的 main，beam-studio CD 不用改 workflow 就會帶到。
+5. **beam-studio，併入 PR A（#1037）合併前** — 型別、`FisheyeOffsetBlock` 的開關 + tooltip、兩個 i18n key 共 23 種語言、§12 第 9 項。
+
+出貨順序：fluxghost tag → beam-studio CD 升版 → fluxghost 漸變 → 重打 2.5.7 → PR A（含漸變）。
 
 ## 10. 待決事項
 
@@ -305,12 +329,18 @@ components/dialogs/camera/ManualConfiguration/
    **2026-10-29 依需求方回饋重開**：五個值全部可編輯（`R` 以度、`SX`／`SY` 原始比例），區塊改名「相機偏移」，魚眼區塊對應改名「…預覽偏移」。
 7. ~~D7 fbm2 的區域與廣角偏移~~ — **獨立**，2026-10-29 決定：拍的不是同一張照片（雷射頭移到目標點上方 vs 固定在相機中心；bb2 / hx2 更是不同相機），
    所以 `offset` = 區域、`region_offsets` = 廣角，「單一」以九組相同值儲存。先前的「與區域相同」選項取消。
+8. ~~D8 區域間漸變~~ — **平台 + 固定 1/3 區域帶寬，開關預設開啟**，2026-10-30 決定。需求：相鄰區域偏移差很多時，
+   階梯會讓兩側平移量不同而在邊界撕裂全區影像。選項有中心之間的全幅雙線性（沒有常數，但輸入值只在九個中心成立）
+   與帶狀平台（區域大部分精確、一個固定比例）。選帶狀；比例在 1/4（fbm2 短軸 10 % 拉伸）與 1/2（平台縮到半個區域）之間取 1/3。
+   已知並接受的代價：在帶狀範圍內量到的偏移是兩格的混合；tooltip 請使用者在區域中心量測，九字十字測試板的記號正好在那裡。
+   key `region_offsets.blend`，缺省 = true（放在表內，隨表一起存取與去除），開關預設與檔案預設一致、不需遷移。關閉開關仍可回到階梯行為。fluxghost 不升版，移動 tag `2.5.7`。
 
 ## 11. 風險與後續
 
 - 精準對位偏移在紙張座標（依擬合角度旋轉）套用，相機偏移在機器座標。匯入只複製數字；紙張對齊軸向時兩者相同。
 - fbm2 局部與全區共用一個檔案；只調全區分區的使用者不會看到局部預覽改變。Tab 標籤要講明。
 - 手動偏移在重新校正時刻意遺失；Tab 說明要提到。
+- 漸變（D8）：在邊界帶內量到的值會被鄰區稀釋；tooltip 與測試板都指向區域中心。外參仍逐區跳階，偏移漸變後校正本身的接縫可能殘留。
 - 後續：客服需要時再開放 ado1 的 `levelingData`／高度。
 - 後續：Promark `rotate180` 維持在校正對話框。
 
@@ -321,8 +351,10 @@ components/dialogs/camera/ManualConfiguration/
 - CameraTab 各存放處的儲存 payload：未改欄位保留、加上 `offset`、`region_offsets` 隨單選鈕增減、只在切換打開時清除 pnc。
 - 舊款區塊：`camera_offset` 正規表示式解析、`doSetConfigTask` 收到未變的 `R/SX/SY`。
 - `FisheyePreviewManagerV4` 在 `useRegionOffsets` 為 false 時去掉 `region_offsets`。
+- 漸變：單一模式隱藏開關、從 `region_offsets.blend` 載入（缺省 → 開）、儲存 payload 在 `region_offsets` 內帶上它。
 
 fluxghost：`ws_smoke.py` 案例；一個單元測試驗證 `offset = (1, 0)` 讓每個投影點平移 1 mm 步進的投影量。
+漸變：帶狀取樣器的單元測試——中心與距中心 ±1/3 區域處精確、邊界上為 0.5、九區相同不變、`blend: false` 重現階梯。
 
 實機（結果記錄於此）：
 1. fbm2 局部：存 X = +1、Y = +1，預覽同一物件：畫布上**左移、上移** 1 mm（正值表示切割落在預覽物件的
@@ -334,3 +366,5 @@ fluxghost：`ws_smoke.py` 案例；一個單元測試驗證 `offset = (1, 0)` �
 6. fbm2 精準對位匯入：游標尺 → 匯入 → 重跑精準對位對齊，切割落在列印上（決定 D5）。__
 7. beamo：切割落在預覽物件下方 1 mm → `Y` 減 1 → 對齊。2026-10-29 確認：+X／+Y 讓預覽右移／下移，與魚眼偏移相反，如 §5 推導（X／Y 是相機位置，不是修正量）。__
 8. 舊 fluxghost（2.5.6）：可儲存、預覽無變化、無錯誤。2026-10-29 以程式碼確認，不做實機：2.5.6 的 `set_fisheye_matrix` 只用已知欄位重建參數 dict，`offset`／`region_offsets` 會被靜默丟棄（V2／V3／V4 與 Promark 走同一個 mixin）；檔案上傳本來就不經過 fluxghost。
+9. fbm2 全區漸變（D8）：topLeft = +2、其餘 0、開關開啟 → 測試板 topLeft 十字移動 2 mm，top 與 left 十字不動，
+   topLeft 邊界沒有撕裂（跨越邊界的直線保持連續）。關閉 → 同一條線在邊界出現 2 mm 的跳階。__

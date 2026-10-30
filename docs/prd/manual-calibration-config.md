@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.3 — beam-studio #1037, fluxghost #123 (2.5.7). D1–D7 settled. Pending: hardware on fbb2 / fpm1 and the Print and Cut import run (§12 items 3, 5, 6) |
+| **Status** | Implemented in 2.7.3 — beam-studio #1037, fluxghost #123 (2.5.7). D1–D7 settled. Pending: hardware on fbb2 / fpm1 and the Print and Cut import run (§12 items 3, 5, 6). **Blend between regions (D8) in development, ships in #1037** |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-28 |
 | **Target product** | Beam Studio (desktop + web), fluxghost 2.5.7 |
@@ -190,6 +190,12 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
   table whose nine pairs are equal loads as one offset. Switching to per region prefills the nine cells
   (3×3 like the bed, topLeft … bottomRight) with the single value. The region block edits `offset`; the
   two are independent values (D7) and share one Save.
+- Per region shows a **"Blend between regions"** switch above the grid, default on, with a `?` icon. Tooltip
+  (plain language, the geometry stays in §7.3): "On: neighbouring regions are blended near their borders
+  to reduce distortion where regions meet, but the offset near a border will not exactly equal the value
+  you set. Off: the offset you set is applied as is, but the image may be distorted where regions meet."
+  Off is the 2.5.7 behaviour. Stored as `region_offsets.blend` (D8); hidden in one-offset mode, where it
+  has no effect. Flipping the switch marks the block dirty like any edit.
 - "Apply the Print and Cut offset" toggle on the region block, shown when `fetchPncOffset(serial)` has a
   value, with the value beside it. On: unsaved edits are dropped, the inputs lock and show **stored +
   pnc** (the vernier was read through a preview that already carried the stored offset, so pnc is a
@@ -269,12 +275,15 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 offset?: [number, number];                                   // mm, machine frame, right/down positive
 // V4 only
 region_offsets?: Record<WideAngleRegion, [number, number]>;  // wide-angle preview, always all nine
+// D8: `region_offsets` also carries `blend?: boolean` (absent = true); typed as `& { blend?: boolean }`
 ```
 
 Rules (D7): `offset` is the **region preview** offset (the whole preview on ado1 / Promark, which have no
 region mode). `region_offsets` is the **wide-angle preview** offset and is always written complete: the
 "one offset" mode stores the same pair nine times, and a uniform table loads as one offset, so there is
 no mode flag. In fluxghost `region_offsets[region]` wins over `offset` per point, so the two never mix.
+`region_offsets.blend` (D8) only changes how the table is sampled between regions; it is written
+together with the table and ignored when the nine pairs are equal.
 
 ### 7.2 Where each value is used
 
@@ -315,6 +324,23 @@ per-point loop, `ox, oy = region_offsets.get(region, offset) if region_offsets e
 means "the pixels displayed in this part of the bed move by this much", matching what the user sees;
 the shifted point is still projected with that region's extrinsics even if it crosses a region border.
 
+Blend (D8, `region_offsets.blend` absent or true): the table is sampled as a plateau-and-ramp surface
+instead of a step. Per axis, with region width `w = total / 3` and band `b = w / 3`, map the unshifted
+coordinate to a fractional region index `u ∈ [0, 2]`: `u = i` inside the middle two thirds of region
+`i`, rising linearly from `i` to `i + 1` across the band `[border − b/2, border + b/2]`. Do the same for
+`v` on y, then bilinearly mix the four table entries around `(u, v)` (missing entries fall back to
+`offset` first). The extrinsics still come from the step region. Properties: exact at every region
+centre and over the middle two thirds of each region, the midpoint of the two neighbours exactly on a
+border, continuous everywhere, no change at the bed edges, and identical to the step when all nine
+pairs are equal. The ratio 1/3 is a module constant (`REGION_OFFSET_BLEND_BAND = 1 / 3`), not a
+parameter. `blend: false` keeps the step lookup.
+
+Why a band and not a full bilinear between centres: a full blend changes the value everywhere except
+the nine centres, so an offset measured anywhere off-centre is diluted. The band keeps the measured
+value exact over most of the region and confines the stretch to the border, where the step tore the
+image anyway. Worst case is the fbm2 short axis (region 80 mm, band 27 mm): a 2 mm difference between
+neighbours becomes a 7 % local stretch, below what a preview photo shows.
+
 Offset size: `project_points` is the full forward model, so any offset is projected exactly; the only
 residual is second order (calibration scale error × offset, about 0.1 mm for 2 % × 5 mm). Hence the ±5 mm
 cap above rather than a smaller step or a different formula.
@@ -327,6 +353,9 @@ point and yields an exact bed-plane translation after the warp. The cached looku
 invalidates naturally.
 
 `docs/api/camera.md`: document the two keys under `set_fisheye_matrix`. `ws_smoke.py`: two cases.
+The blend step adds `region_offsets.blend` to both, plus a smoke case asserting that with `topLeft = [1, 0]` and
+the rest `[0, 0]`, a point on the topLeft / top border shifts by the projection of 0.5 mm and a point at
+the topLeft centre by 1 mm.
 
 ### 7.4 Beam Studio UI
 
@@ -335,7 +364,7 @@ components/dialogs/camera/ManualConfiguration/
 ├── index.tsx            # showManualConfiguration(device): guards, select, addDialogComponent
 ├── ManualConfiguration.tsx  # DraggableModal + Tabs, tab visibility table (§5)
 ├── CameraTab.tsx        # fisheye block(s), legacy block, import button
-├── RegionOffsetGrid.tsx # 3×3 UnitInput pairs
+├── RegionOffsetGrid.tsx # 3×3 UnitInput pairs; the blend switch + tooltip sit above it in FisheyeOffsetBlock
 ├── ModulesTab.tsx       # rows over getModuleOffsets / updateModuleOffsets
 └── PrintAndCutTab.tsx   # fetch / save / clear over offsetStore
 ```
@@ -351,13 +380,15 @@ New namespace `manual_config` in `en.ts` / `zh-tw.ts`: `title`, `tab_camera`, `t
 `tab_print_and_cut`, `region_offset`, `full_area_offset`, `single_offset`, `per_region`, `import_pnc`,
 `import_pnc_desc`, region names reuse existing
 `calibration` keys where present. Menu key `menu.manual_configuration` = "Manual Configuration" /
-"手動輸入". Remaining 21 languages before PR.
+"手動輸入". Remaining 21 languages before PR. The blend step adds `wide_angle_blend` ("Blend between regions" /
+「區域間漸變」) and `wide_angle_blend_desc` (the tooltip in §5).
 
 ## 8. Data contracts
 
 - `fisheye_params.json` / `wide-angle.json` / `promark-store.cameraParameters`: `offset?: [x, y]` mm;
   V4 `region_offsets?: {topLeft, top, topRight, left, center, right, bottomLeft, bottom, bottomRight:
-  [x, y]}` mm. Absent = 0. Readers must tolerate absence (fluxghost `.get`).
+  [x, y]}` mm. Absent = 0. Readers must tolerate absence (fluxghost `.get`). V4
+  `region_offsets.blend?: boolean`, absent = true (D8); fluxghost ≤ 2.5.7 drops it and steps.
 - `set_fisheye_matrix` JSON gains the same two optional keys; everything else unchanged.
 - `camera_offset` device setting: format unchanged; `X`/`Y` written through the full string, `F` through a
   partial `F:0|1` set that the firmware merges.
@@ -372,7 +403,13 @@ New namespace `manual_config` in `en.ts` / `zh-tw.ts`: `title`, `tab_camera`, `t
 3. **beam-studio PR A follow-up in the same PR before merge** — 21 languages, hardware sign check
    recorded in §12, Status row flipped.
 
-Ship order: fluxghost tag → bump in beam-studio CD → PR A.
+4. **fluxghost blend** — band sampling in `perspective.py`, `region_offsets.blend` in
+   the mixin, docs, smoke case. **No version bump** (decided 2026-10-30): after merge, move tag `2.5.7`
+   to the new main head so beam-studio CD picks it up without a workflow change.
+5. **beam-studio, in PR A (#1037) before merge** — type, switch + tooltip in `FisheyeOffsetBlock`, two i18n keys in 23 languages,
+   §12 item 9.
+
+Ship order: fluxghost tag → bump in beam-studio CD → fluxghost blend → re-tag 2.5.7 → PR A (with the blend).
 
 ## 10. Open decisions
 
@@ -402,6 +439,17 @@ Ship order: fluxghost tag → bump in beam-studio CD → PR A.
    (head over the point vs fixed camera centre; different cameras on bb2 / hx2), so `offset` = region
    and `region_offsets` = wide-angle, with "one offset" stored as nine equal pairs. Drops the earlier
    "same as region" option.
+8. ~~D8 Blend between regions~~ — **plateau + fixed band of 1/3 region, toggle default on**, decided
+   2026-10-30. Need: neighbouring regions with very different offsets tear the full-area image at the
+   border, because the step shifts the two sides by different amounts. Options were a full bilinear
+   blend between region centres (no constant, but the typed value only holds at the nine centres) and a
+   plateau with a blend band (exact over most of the region, one fixed ratio). Chose the band; ratio 1/3
+   after weighing 1/4 (10 % stretch on the fbm2 short axis) and 1/2 (plateau shrinks to half a region).
+   Known cost, accepted: an offset measured inside the band reads as a mix of two cells; the tooltip says
+   to measure at region centres, which is where the 9-crosshair test board puts its marks. Key
+   `region_offsets.blend`, absent = true (nested so it travels with the table it modifies), so the toggle default and the file default agree and nothing
+   migrates. Step behaviour stays reachable with the switch off. fluxghost ships it without a version
+   bump; tag `2.5.7` moves.
 
 ## 11. Risks & follow-ups
 
@@ -410,6 +458,9 @@ Ship order: fluxghost tag → bump in beam-studio CD → PR A.
 - fbm2 shares one file for region and full-area; a user who only tunes full-area per-region gets no
   region-preview change. The tab labels make this explicit.
 - A manual offset is lost on recalibration by design; mention it in the tab description.
+- Blend (D8): a value measured inside a border band is diluted by the neighbour; the tooltip and the
+  test board both point at region centres. The extrinsics still step per region, so a residual seam
+  from the calibration itself can remain after the offsets are blended.
 - Follow-up: expose `levelingData`/height for ado1 if support needs it.
 - Follow-up: Promark `rotate180` stays in the calibration dialog.
 
@@ -421,9 +472,13 @@ Unit (jest, `--runInBand`):
   added/dropped by the radio, pnc cleared only when the toggle was on.
 - Legacy block: regex parse of `camera_offset`, `doSetConfigTask` called with unchanged `R/SX/SY`.
 - `FisheyePreviewManagerV4` strips `region_offsets` when `useRegionOffsets` is false.
+- Blend: the switch is hidden in one-offset mode, loads from `region_offsets.blend` (absent → on), and
+  the save payload carries it inside `region_offsets`.
 
 fluxghost: `ws_smoke.py` cases; a unit asserting that `offset = (1, 0)` shifts every projected point by
-the projection of a 1 mm step.
+the projection of a 1 mm step. Blend: a unit on the band sampler — exact at centres and at ±1/3 region
+from a centre, 0.5 on the border, equal-table invariance, `blend: false` reproduces the
+step.
 
 Hardware (record results here):
 1. fbm2 region: save X = +1, Y = +1, preview the same object: it moves 1 mm **left and up** on the canvas
@@ -444,3 +499,7 @@ Hardware (record results here):
 8. Old fluxghost (2.5.6): save works, preview unchanged, no error. Verified by code 2026-10-29, no hardware run:
    2.5.6 `set_fisheye_matrix` rebuilds the params dict from known keys only, so `offset` / `region_offsets` are
    dropped silently (V2 / V3 / V4 and Promark through the same mixin); the file upload never goes through fluxghost.
+9. fbm2 full-area blend (D8): topLeft = +2, the rest 0, switch on → the test board's topLeft crosshair
+   moves 2 mm, the top and left crosshairs do not move, and the image has no tear along the topLeft
+   borders (a straight engraved line crossing the border stays continuous). Switch off → the same line
+   shows a 2 mm step at the border. __
