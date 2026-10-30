@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI odhadne hloubku fotografie a převede ji na mračno bodů pro vnitřní gravírování. Poté můžete stále měnit hloubku (velikost Z) a doostření bez dalšího strhnutí kreditů.',
     photo_to_3d_done: 'Převedeno na 3D mračno bodů',
     photo_to_3d_edge_round: 'Zaoblení okraje',
-    photo_to_3d_edge_round_hint: 'Zaoblí reliéf směrem k vyříznutému okraji na tomto podílu šířky objektu. 0 vypne.',
+    photo_to_3d_edge_round_hint: 'Vyrovná hloubku reliéfu podél vyříznutého okraje a zaoblí jej směrem k okraji na tomto podílu šířky objektu. 0 vypne.',
     photo_to_3d_failed: 'Převod se nezdařil',
     photo_to_3d_flat: 'Fotografie nemá téměř žádné změny hloubky a nelze ji převést na 3D.',
     photo_to_3d_insufficient_credit: 'Nedostatek AI kreditů pro převod na 3D.',

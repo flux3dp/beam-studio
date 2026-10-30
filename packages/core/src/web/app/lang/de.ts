@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'Die KI schätzt die Tiefe des Fotos und wandelt es in eine Punktwolke für die Innengravur um. Danach können Sie Tiefe (Z-Größe) und Schärfung weiter ändern, ohne erneut belastet zu werden.',
     photo_to_3d_done: 'In eine 3D-Punktwolke umgewandelt',
     photo_to_3d_edge_round: 'Randabrundung',
-    photo_to_3d_edge_round_hint: 'Rundet das Relief über diesen Anteil der Objektbreite zur Freistellungskante hin ab. 0 ist aus.',
+    photo_to_3d_edge_round_hint: 'Gleicht die Tiefe des Reliefs entlang der Freistellungskante aus und rundet es über diesen Anteil der Objektbreite zur Kante hin ab. 0 ist aus.',
     photo_to_3d_failed: 'Umwandlung fehlgeschlagen',
     photo_to_3d_flat: 'Das Foto hat kaum Tiefenunterschiede und kann nicht in 3D umgewandelt werden.',
     photo_to_3d_insufficient_credit: 'Nicht genügend AI-Credits für die Umwandlung in 3D.',

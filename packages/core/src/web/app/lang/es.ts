@@ -1846,7 +1846,7 @@ const lang: ILang = {
     photo_to_3d_description: 'La IA estima la profundidad de la foto y la convierte en una nube de puntos para grabado interior. Después aún puede cambiar su profundidad (tamaño Z) y la nitidez sin un nuevo cargo.',
     photo_to_3d_done: 'Convertido en nube de puntos 3D',
     photo_to_3d_edge_round: 'Redondeo del borde',
-    photo_to_3d_edge_round_hint: 'Redondea el relieve hacia el borde recortado en este porcentaje del ancho del objeto. 0 lo desactiva.',
+    photo_to_3d_edge_round_hint: 'Iguala la profundidad del relieve a lo largo del borde recortado y lo redondea hacia el borde en este porcentaje del ancho del objeto. 0 lo desactiva.',
     photo_to_3d_failed: 'Error en la conversión',
     photo_to_3d_flat: 'La foto casi no tiene variación de profundidad y no se puede convertir a 3D.',
     photo_to_3d_insufficient_credit: 'No hay suficientes créditos de IA para convertir a 3D.',

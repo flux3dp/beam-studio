@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'L’IA stima la profondità della foto e la converte in una nuvola di punti per l’incisione interna. Dopo puoi ancora modificare profondità (dimensione Z) e nitidezza senza ulteriori addebiti.',
     photo_to_3d_done: 'Convertita in nuvola di punti 3D',
     photo_to_3d_edge_round: 'Arrotondamento bordo',
-    photo_to_3d_edge_round_hint: "Arrotonda il rilievo verso il bordo scontornato per questa quota della larghezza dell'oggetto. 0 disattiva.",
+    photo_to_3d_edge_round_hint: "Uniforma la profondità del rilievo lungo il bordo scontornato e lo arrotonda verso il bordo per questa quota della larghezza dell'oggetto. 0 disattiva.",
     photo_to_3d_failed: 'Conversione non riuscita',
     photo_to_3d_flat: 'La foto non ha quasi variazioni di profondità e non può essere convertita in 3D.',
     photo_to_3d_insufficient_credit: 'Crediti IA insufficienti per convertire in 3D.',

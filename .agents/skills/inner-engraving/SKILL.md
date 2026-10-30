@@ -275,7 +275,7 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
     - The photo is swapped for the cut-out, if any, and the `data-stl-depth*` attributes are set (see `PHOTO_TO_3D_ATTR`).
     - `applyPhotoPointCloud` gets `depthSource` (BSDM, `depthSource.ts`, .beam block 8) and a transform: relief depth = width × 0.22, capped by the engravable height and moved to fit it.
     - Points are local mm, with Z centred on the plane.
-    - The depth is cleaned along the cut-out first (`depthField.ts` `cleanDepthEdges`, the six steps in its doc comment): background the cut-out kept (far behind the nearest surface around it, near the far end) is removed from the rim, 4% of the width; the rim is then evened against its own mean level (never the inside's, or the rim would come forward as a lip), then the roll-off bends it back.
+    - The depth is cleaned along the cut-out first (`depthField.ts` `cleanDepthEdges`, the six steps in its doc comment): background the cut-out kept (far behind the nearest surface around it, near the far end) is removed from the rim, as wide as the roll-off (the one `%` setting drives both, 0 turns both off); the rim is then evened against its own mean level (never the inside's, or the rim would come forward as a lip), then the roll-off bends it back.
   - Later edits:
     - The Z size is the relief depth: a plain scale, never recomputed.
     - Sharpening and the roll-off (`data-stl-depth-round-percent`, % of the width, default 4, turned into mm at compute time) are edited in `PhotoTo3dOptions` and recomputed from the saved depth (`updatePhotoTo3d`, its own step). `OptionsPanel` dispatches a converted photo (`data-stl-depth`) to `ThreeDOptions` before its point-cloud early return, and without `ImageOptions`.

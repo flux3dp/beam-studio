@@ -1848,7 +1848,7 @@ const lang: ILang = {
     photo_to_3d_description: '以 AI 估計照片的深度，轉成可內雕的立體點雲。轉換後仍可調整深度（Z 尺寸）與銳化，不會再扣點。',
     photo_to_3d_done: '已轉成 3D 點雲',
     photo_to_3d_edge_round: '收邊',
-    photo_to_3d_edge_round_hint: '在去背輪廓內、物件寬度這個百分比的距離把浮雕往後收。0 為關閉。',
+    photo_to_3d_edge_round_hint: '在去背輪廓內、物件寬度這個百分比的距離，整平浮雕邊緣的深度並往後收圓。0 為關閉。',
     photo_to_3d_failed: '轉換失敗',
     photo_to_3d_flat: '照片的深度幾乎沒有變化，無法轉成 3D。',
     photo_to_3d_insufficient_credit: 'AI 點數不足，無法轉 3D。',

@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'L’IA estime la profondeur de la photo et la convertit en nuage de points pour la gravure intérieure. Ensuite, vous pouvez encore modifier sa profondeur (taille Z) et sa netteté sans être débité à nouveau.',
     photo_to_3d_done: 'Converti en nuage de points 3D',
     photo_to_3d_edge_round: 'Arrondi du bord',
-    photo_to_3d_edge_round_hint: "Arrondit le relief vers le bord détouré sur cette part de la largeur de l'objet. 0 désactive.",
+    photo_to_3d_edge_round_hint: "Égalise la profondeur du relief le long du bord détouré et l'arrondit vers le bord sur cette part de la largeur de l'objet. 0 désactive.",
     photo_to_3d_failed: 'Échec de la conversion',
     photo_to_3d_flat: 'La photo n’a presque aucune variation de profondeur et ne peut pas être convertie en 3D.',
     photo_to_3d_insufficient_credit: 'Crédits IA insuffisants pour convertir en 3D.',

@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI가 사진의 깊이를 추정해 내부 조각용 입체 포인트 클라우드로 변환합니다. 변환 후에도 깊이(Z 크기)와 선명도를 조정할 수 있으며 크레딧이 다시 차감되지 않습니다.',
     photo_to_3d_done: '3D 포인트 클라우드로 변환했습니다',
     photo_to_3d_edge_round: '가장자리 둥글리기',
-    photo_to_3d_edge_round_hint: '잘라낸 윤곽에서 개체 너비의 이 비율만큼 부조를 뒤로 둥글게 처리합니다. 0은 끔.',
+    photo_to_3d_edge_round_hint: '잘라낸 윤곽에서 개체 너비의 이 비율만큼 부조 가장자리의 깊이를 고르게 한 뒤 뒤로 둥글게 처리합니다. 0은 끔.',
     photo_to_3d_failed: '변환 실패',
     photo_to_3d_flat: '사진의 깊이 변화가 거의 없어 3D로 변환할 수 없습니다.',
     photo_to_3d_insufficient_credit: 'AI 크레딧이 부족해 3D로 변환할 수 없습니다.',
