@@ -150,7 +150,7 @@ describe('depth field', () => {
     expect(z(field, 50, 3)).toBeCloseTo(10);
   });
 
-  test('a rim behind its surroundings is lifted to their level, fully on the cut-out and fading inward', () => {
+  test('a stretch of rim behind the rest of the rim is lifted toward its mean, fully on the cut-out and fading inward', () => {
     const source = { ...ramp(100, 8), depth: new Float32Array(800).fill(1) };
 
     // the lower half of the rim sits 3 mm behind the rest
@@ -159,11 +159,26 @@ describe('depth field', () => {
     const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, roundMm: 0, widthMm: 100 });
 
     expect(field.mask[6 * 100 + 10]).toBe(1);
-    expect(z(field, 10, 6)).toBeCloseTo(10);
-    expect(z(field, 12, 6)).toBeCloseTo(8.5);
+    expect(z(field, 10, 6)).toBeGreaterThan(7.5);
+    expect(z(field, 10, 6)).toBeLessThan(10);
+    expect(z(field, 12, 6)).toBeGreaterThan(7);
+    expect(z(field, 12, 6)).toBeLessThan(z(field, 10, 6));
     expect(z(field, 40, 6)).toBeCloseTo(10);
     // the rim that already is at the level, and the inside, do not move
     expect(z(field, 10, 1)).toBeCloseTo(10);
+  });
+
+  test('a rim that recedes evenly stays behind the surface inside it', () => {
+    const source = { ...ramp(100, 8), depth: new Float32Array(800).fill(1) };
+
+    for (let i = 0; i < 800; i += 1) if (i % 100 >= 10 && i % 100 < 14) source.depth[i] = 1.3;
+
+    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, roundMm: 0, widthMm: 100 });
+
+    // the fringe step alone bends the rim's last pixels up toward the inside
+    expect(z(field, 10, 4)).toBeLessThan(7.6);
+    expect(z(field, 11, 4)).toBeLessThan(7.6);
+    expect(z(field, 40, 4)).toBeCloseTo(10);
   });
 
   test('the roll-off lowers the surface next to the cut-out only', () => {

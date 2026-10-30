@@ -30,9 +30,9 @@ const EDGE_MAX_AREA = 6.1;
 const EDGE_ROUND_T = 4 / Math.sqrt(17);
 /** Width of the rim that is levelled, as a share of the photo's width. */
 const EDGE_LEVEL_RATIO = 0.04;
-/** The level a rim pixel is held to is the nearest its surroundings reach within this many rims. */
+/** Background the cut-out kept is told by the nearest surface within this many rims of it. */
 const EDGE_LEVEL_REACH = 2;
-/** A rim pixel this far behind its level (share of the relief depth) is background, not subject... */
+/** A rim pixel this far behind that surface (share of the relief depth) is background, not subject... */
 const EDGE_LEVEL_REMOVE = 0.4;
 /** ...provided it also sits within this share of the depth from the far end. */
 const EDGE_LEVEL_FAR = 0.15;
@@ -219,11 +219,12 @@ const sumFilter = (src: Float32Array, w: number, fw: number, fh: number, horizon
  *   3. fringe: within EDGE_FRINGE pixels of the cut-out the surface may not sink faster than
  *      EDGE_STEEP toward it
  *   4. small islands cut off by depth jumps are shifted onto their surroundings
- *   5. levelling: within EDGE_LEVEL_RATIO × width of the cut-out, each pixel is held to the level
- *      its surroundings reach (their windowed nearest, smoothed). A pixel far behind it, near the far
- *      end of the depth, is background the cut-out kept and is removed; one behind it is lifted to
- *      it, fully at the cut-out and not at all at the rim's inner edge, so the rim is level in depth
- *      and joins the inside without a step
+ *   5. levelling of the rim, EDGE_LEVEL_RATIO × width inside the cut-out: a rim pixel far behind the
+ *      nearest surface around it, near the far end of the depth, is background the cut-out kept and
+ *      is removed; one behind the rim's own mean level around it (the far-end pixels left out) is
+ *      lifted to that mean, fully at the cut-out and not at all at the rim's inner edge, so the rim
+ *      is even in depth and joins the inside without a step. The mean is the rim's own, never the
+ *      inside's, so a rim that recedes stays behind the surface inside it
  *   6. optional roll-off: within `roundMm` of the cut-out the surface bends back on a quarter circle
  * Transparent pixels of the photo become invalid. A photo without transparency has no cut-out, and
  * nothing changes but that.
@@ -538,22 +539,34 @@ export const cleanDepthEdges = (
       smooth[i] = sum / count;
     }
 
-    // the nearest level within reach, then its mean over the rim's width so the level has no steps
+    const inRim = (i: number) => valid[i] && dist[i] <= rimPx + 1;
+    const far = (i: number) => z2[i] < EDGE_LEVEL_FAR * depthMm;
+
+    // background the cut-out kept: far behind the nearest surface within reach, at the far end
     const reach = Math.round(EDGE_LEVEL_REACH * rimPx);
+    const nearest = new Float32Array(n);
+
+    maxFilter(smooth, nearest, reach, fw, fh, true);
+    maxFilter(nearest, smooth, reach, fw, fh, false);
+
+    for (let i = 0; i < n; i += 1) {
+      if (!inRim(i) || !far(i) || !(smooth[i] - z2[i] > EDGE_LEVEL_REMOVE * depthMm)) continue;
+
+      valid[i] = 0;
+      validCount -= 1;
+    }
+
+    // the rim's own mean level over its width, the far-end pixels it is about to lift left out
+    const span = Math.round(rimPx);
     const level = new Float32Array(n);
     const count = new Float32Array(n);
 
-    maxFilter(smooth, level, reach, fw, fh, true);
-    maxFilter(level, smooth, reach, fw, fh, false);
-
     for (let i = 0; i < n; i += 1) {
-      const counts = valid[i] && Number.isFinite(smooth[i]);
+      if (!inRim(i) || far(i)) continue;
 
-      level[i] = counts ? smooth[i] : 0;
-      count[i] = counts ? 1 : 0;
+      level[i] = z2[i];
+      count[i] = 1;
     }
-
-    const span = Math.round(rimPx);
 
     sumFilter(level, span, fw, fh, true);
     sumFilter(level, span, fw, fh, false);
@@ -561,17 +574,11 @@ export const cleanDepthEdges = (
     sumFilter(count, span, fw, fh, false);
 
     for (let i = 0; i < n; i += 1) {
-      if (!valid[i] || !count[i] || dist[i] > rimPx + 1) continue;
+      if (!inRim(i) || !count[i]) continue;
 
       const behind = level[i] / count[i] - z2[i];
 
       if (behind <= 0) continue;
-
-      if (behind > EDGE_LEVEL_REMOVE * depthMm && z2[i] < EDGE_LEVEL_FAR * depthMm) {
-        valid[i] = 0;
-        validCount -= 1;
-        continue;
-      }
 
       // the pixel on the cut-out is levelled in full; the lift fades out across the rim
       z2[i] += behind * Math.min(1, Math.max(0, 1 - (dist[i] - 1) / rimPx));
