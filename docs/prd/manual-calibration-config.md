@@ -218,8 +218,10 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
   (`fluxmonitor/storage.py:391`) and the row simply shows it; whatever is saved, `BeamPreviewManager` keeps
   treating `0, 0` as "use the ideal constants", and a machine in that state needs a calibration anyway.
 - **Flip toggle** on the normal row only ("Flip image"), from the setting's `F:` flag (`parseCameraFlip`). Beam
-  Studio flips photos from `camera_offset`'s `F` alone: `connectCamera` reads it once per connection and never
-  consults `camera_offset_borderless`, so an open-lid toggle would write a value nothing reads. Some old machines
+  Studio flips photos from `camera_offset`'s `F` alone: `getDeviceSetting` seeds the per-connection flip cache
+  only from that setting (it used to seed from whichever of the two was read first, so an open-lid preview on a
+  fresh connection took the open-lid file's `F`; review finding 2026-10-30), and `connectCamera` reads it when
+  the cache is empty. An open-lid toggle would therefore write a value nothing reads. Some old machines
   have the camera mounted the other way, and the firmware defaults `F` to 1 when the setting file was never
   written (`fluxmonitor/storage.py:391`), so their photos come out upside down. Saving a changed flip sends a
   partial `config set camera_offset F:0|1`: the firmware merges partial sets (`command_task.py:1105`,
@@ -263,7 +265,8 @@ and applies the negation after the fit (`correctByCalibration`); the calibration
 | `moduleOffsets.ts` | ConfigPanel boundary, module calibration, export — unchanged; reused |
 | `jsonDataHelper.ts` `FileMap` | unchanged (all needed files already listed) |
 | `BeamPreviewManager.ts` camera_offset parsing | preview on legacy models — same regexes, moved to `helpers/device/camera/cameraOffset.ts` (`parseCameraOffset`); 0,0 fallback stays in the manager |
-| `device-master.ts` `currentDevice.cameraNeedsFlip` | `connectCamera` — still read once per connection; the legacy block only overwrites the cached value after a saved `F` change |
+| `BeamPreviewManager.retrieveCameraOffset` | legacy preview setup — same reads in the same place (before raw mode); when the document is open-lid and the flip cache is empty it first reads `camera_offset` so the cache is seeded before `connectCamera`, which cannot read settings in raw mode and would otherwise let `Camera` open an unclosed control socket per preview |
+| `device-master.ts` `getDeviceSetting` / `currentDevice.cameraNeedsFlip` | `connectCamera`, `BeamPreviewManager.retrieveCameraOffset` — still read once per connection; the cache is now seeded from `camera_offset` only (an open-lid-first connection makes one extra `config get camera_offset`, issued by `retrieveCameraOffset` before raw mode), the legacy block overwrites it after a saved `F` change. Calibration never writes `F`, so files only differ once this toggle has been used |
 | `camera-calibration-helper.ts` `setFisheyeConfig` / `sendPictureThenSetConfig` | calibration dialogs (LaserHeadFisheyeCalibration, Beamo2Calibration, AdorCalibration, StepBeforeAnalyzePicture) — still clear pnc.json by default; only Manual Configuration passes `{ clearPnc: false }` |
 | fluxghost `set_fisheye_matrix` | all clients — params without `offset` behave exactly as before (offset defaults to 0) |
 | fluxghost `calculate_regional_perspective_points` | `set_fisheye_height` v4, `cmd_check_pnp`? — new optional kwargs default to no shift; CheckPnP keeps passing nothing (calibration runs without manual offset) |

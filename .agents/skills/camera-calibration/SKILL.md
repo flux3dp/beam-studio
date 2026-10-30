@@ -149,7 +149,7 @@ edit stored values directly, no engraving. Tabs: Camera, Modules (bm2/ado1/fuv1 
 and Cut (view/edit/clear the pnc offset). Zustand `store.ts` holds the per-tab saver (one footer Save)
 and the shared pnc value, so a Print and Cut save updates the Camera tab's toggle immediately.
 
-Camera tab per model: legacy → `LegacyCameraBlock` (X, Y, R in degrees, SX, SY; F flip on the normal row only, `connectCamera` never reads the open-lid F; normal +
+Camera tab per model: legacy → `LegacyCameraBlock` (X, Y, R in degrees, SX, SY; F flip on the normal row only: `getDeviceSetting` seeds `cameraNeedsFlip` from `camera_offset` alone, never from the open-lid setting; normal +
 open-lid rows; any value saves, no range guard); fisheye → `FisheyeOffsetBlock` per params file via
 `createParamsSource` (`offsetParams.ts`: load once, merge patches, write the whole file). fbm2 /
 fhx2rf / fbb2 show two blocks — "局部預覽偏移" (`offset`) and "廣角預覽偏移" (`region_offsets`, single

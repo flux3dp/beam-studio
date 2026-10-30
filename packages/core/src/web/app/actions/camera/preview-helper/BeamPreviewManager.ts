@@ -163,6 +163,12 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
 
     this.showMessage({ content: lang.message.retrievingCameraOffset });
 
+    // the flip cache seeds from camera_offset only; read it here, before raw mode, or connectCamera cannot
+    // and the Camera class opens its own control socket for it
+    if (configName !== 'camera_offset' && deviceMaster.currentDevice?.cameraNeedsFlip === null) {
+      await deviceMaster.getDeviceSetting('camera_offset');
+    }
+
     const resp = await deviceMaster.getDeviceSetting(configName);
 
     console.log(`Reading ${configName}\nResp = ${resp.value}`);

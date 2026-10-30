@@ -161,7 +161,7 @@ UI 的「精準對位」即 Print and Cut。
   顯示整組設定，**不設上下限**：`X`、`Y` 為絕對 mm 值（存的值不能當中心：已校正的 beamo 讀到 X 8.9 / Y 37.9，離出廠常數 20 / 30 有段距離，而且校正壞掉的值必須能被改回來），`R` 以度顯示（儲存為弧度），`SX`／`SY` 為原始比例（D6 重開）。標籤沿用 `calibration.rotation_angle`／`x_ratio`／`y_ratio`。兩列放在同一區塊、一顆儲存。
 - 儲存透過 `sendPictureThenSetConfig` → `doSetConfigTask` 寫入五個值，維持 `S` 與 `SX/SY` 的韌體分支，pnc.json 保留（`clearPnc: false`）。
   不擋任何值，也不推斷「已校正」狀態：從未校正的機器回的是韌體預設 `X0 Y0 R0 SX1 SY1`（`fluxmonitor/storage.py:391`），該列照樣顯示；不論存了什麼，`BeamPreviewManager` 仍把 `0, 0` 當成「用理想常數」，而這種狀態的機器本來就需要校正。
-- **翻轉切換**（「翻轉影像」）只在一般列，來自設定值的 `F:` 旗標（`parseCameraFlip`）。Beam Studio 只用 `camera_offset` 的 `F` 翻轉照片：`connectCamera` 每次連線讀一次，從不讀 `camera_offset_borderless` 的 `F`，開蓋列若有切換會寫入一個沒人讀的值。部分舊機器的相機是反向安裝的，而韌體在設定檔從未寫入時把 `F` 預設為 1（`fluxmonitor/storage.py:391`），照片因此整張顛倒。
+- **翻轉切換**（「翻轉影像」）只在一般列，來自設定值的 `F:` 旗標（`parseCameraFlip`）。Beam Studio 只用 `camera_offset` 的 `F` 翻轉照片：`getDeviceSetting` 只從這個設定初始化每次連線的翻轉快取（原本是兩個設定誰先被讀到就用誰的，所以新連線直接進開蓋預覽會用開蓋檔的 `F`；2026-10-30 review 發現），快取為空時由 `connectCamera` 讀取。開蓋列若有切換會寫入一個沒人讀的值。部分舊機器的相機是反向安裝的，而韌體在設定檔從未寫入時把 `F` 預設為 1（`fluxmonitor/storage.py:391`），照片因此整張顛倒。
   儲存有變動的翻轉時送出部分設定 `config set camera_offset F:0|1`：韌體會合併部分設定（`command_task.py:1105`、`storage.py:395`），X/Y/R/S 不受影響。同時清除 pnc.json（翻轉會移動照片中所有東西），並寫入 `deviceMaster.currentDevice.cameraNeedsFlip`，也就是 `connectCamera` 每次連線只讀一次的快取，讓下一次預覽不必重連就用新方向。
 - **正負號**（與魚眼偏移相反，因為 `X`/`Y` 是相機位置而不是修正量）：雷射頭移到 `canvas − (X, Y)`，所以切割落在預覽物件右側 `e` 代表 `X` 多了 `e`：把 `X` 減少 `e`；落在下方則減少 `Y`。實機確認（§12 案例 7）。
 
@@ -193,8 +193,9 @@ UI 的「精準對位」即 Print and Cut。
 | `offsetStore.ts` | `alignByCamera`、精準對位校正對話框 — 讀/寫/清除語意不變 |
 | `moduleOffsets.ts` | ConfigPanel 邊界、模組校正、匯出 — 不變；重用 |
 | `jsonDataHelper.ts` `FileMap` | 不變（所需檔案皆已列出） |
+| `BeamPreviewManager.retrieveCameraOffset` | 舊款預覽 setup — 同樣的讀取、同樣的位置（raw mode 之前）；文件為開蓋且翻轉快取為空時先讀 `camera_offset` 把快取填好，否則 `connectCamera` 在 raw mode 讀不到設定，`Camera` 會每次預覽自己開一條不關閉的控制連線 |
 | `BeamPreviewManager.ts` camera_offset 解析 | 舊款機型預覽 — 同樣的正規表示式，搬到 `helpers/device/camera/cameraOffset.ts`（`parseCameraOffset`）；0,0 回退留在 manager |
-| `device-master.ts` `currentDevice.cameraNeedsFlip` | `connectCamera` — 仍是每次連線讀一次；舊款區塊只在儲存 `F` 變更後覆寫快取值 |
+| `device-master.ts` `getDeviceSetting` / `currentDevice.cameraNeedsFlip` | `connectCamera`、`BeamPreviewManager.retrieveCameraOffset` — 仍是每次連線讀一次；快取現在只從 `camera_offset` 初始化（先進開蓋預覽的連線會多一次 `config get camera_offset`，由 `retrieveCameraOffset` 在 raw mode 前發出），舊款區塊在儲存 `F` 變更後覆寫。校正從不寫 `F`，兩檔只有在用過這個切換後才會不同 |
 | `camera-calibration-helper.ts` `setFisheyeConfig`／`sendPictureThenSetConfig` | 校正對話框（LaserHeadFisheyeCalibration、Beamo2Calibration、AdorCalibration、StepBeforeAnalyzePicture）— 預設仍清除 pnc.json；只有手動輸入傳 `{ clearPnc: false }` |
 | fluxghost `set_fisheye_matrix` | 所有客戶端 — 不含 `offset` 的參數行為與以前完全相同（偏移預設 0） |
 | fluxghost `calculate_regional_perspective_points` | `set_fisheye_height` v4、`cmd_check_pnp`？ — 新的選填 kwargs 預設不平移；CheckPnP 維持不傳（校正流程不帶手動偏移） |
