@@ -2,6 +2,11 @@ import config, { envVariables } from './cypress.config';
 
 export default {
   ...config,
+  reporter: 'junit',
+  reporterOptions: {
+    mochaFile: 'cypress/results/junit-[hash].xml',
+    toConsole: true,
+  },
   env: {
     ...envVariables,
     envType: 'github',

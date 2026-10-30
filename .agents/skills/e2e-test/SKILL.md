@@ -29,8 +29,17 @@ see `.agents/skills/unit-test/SKILL.md`). Coverage roadmap: `docs/testing/test-c
 ## CI Reality (know this before writing a spec)
 
 - `.github/workflows/web.e2e.yml`: builds web dist once, then **5 parallel Windows
-  containers** run the whole suite via Cypress Cloud (`record: true, parallel: true`) against
-  `serve dist -l 8080`. There is **no spec tagging/grep** — every spec file runs in CI.
+  runners** run disjoint spec lists against `serve dist -l 8080`, without Cypress Cloud
+  (`record: false`). `apps/web/scripts/cy-shard.mjs` sorts the complete spec list and assigns
+  files round-robin; keep its glob aligned with `cypress.config.ts`. There is **no spec
+  tagging/grep** — every spec file runs once across the runners. New pushes cancel older
+  runs for the same PR. JUnit reports, spec manifests and screenshots are uploaded for 7
+  days. Videos are disabled by default; manual `debug_artifacts` or the PR's `e2e-debug`
+  label enables recording and upload (including passing jobs), retained for 3 days.
+  Label changes apply to the next fresh PR run, not an old run's retry. See
+  `docs/testing/cypress-ci.md` for reproduction and rollout checks.
+- The separate `web.ready-for-deployment.yml` tag workflow still records to Cypress Cloud;
+  this migration covers PR/manual `e2e` runs only.
 - **No FLUXGhost and no machine exist in CI.** Anything needing a backend or device must
   self-skip (pattern below) and is exercised only in local runs.
 - Unit tests/lint run separately in `global.ci.yml` (`nx affected`).

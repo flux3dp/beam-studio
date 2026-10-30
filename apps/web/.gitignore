@@ -3,3 +3,6 @@ dist
 cypress/downloads
 cypress/screenshots
 cypress/videos
+
+# CI reports and shard manifests
+/cypress/results/

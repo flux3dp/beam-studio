@@ -3,6 +3,16 @@ name: e2e
 on:
   pull_request:
   workflow_dispatch:
+    inputs:
+      debug_artifacts:
+        description: Record and upload Cypress videos
+        type: boolean
+        default: false
+
+
+concurrency:
+  group: e2e-${{ github.event_name }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
 
 jobs:
   # Build job - runs once and shares artifact with all test machines
@@ -42,12 +52,13 @@ jobs:
     needs: build
     runs-on: windows-latest
     env:
+      DEBUG_ARTIFACTS: ${{ (github.event_name == 'workflow_dispatch' && inputs.debug_artifacts) || (github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'e2e-debug')) }}
       CYPRESS_CACHE_FOLDER: C:/Users/runneradmin/AppData/Local/Cypress/Cache
     strategy:
       fail-fast: false
       matrix:
         node-version: [24]
-        # run copies of the current job in parallel
+        # Each runner receives a disjoint spec list (no Cypress Cloud).
         containers: [1, 2, 3, 4, 5]
     steps:
       - uses: actions/checkout@v5
@@ -85,19 +96,43 @@ jobs:
       - name: Install serve
         run: npm install -g serve
 
+      - name: Select specs for this runner
+        id: specs
+        working-directory: apps/web
+        run: node scripts/cy-shard.mjs ${{ matrix.containers }} ${{ strategy.job-total }}
+
       - name: Run e2e tests
         uses: cypress-io/github-action@v7
         env:
           CYPRESS_username: ${{ secrets.CYPRESS_USERNAME }}
           CYPRESS_password: ${{ secrets.CYPRESS_PASSWORD }}
-          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         with:
           install: false
           working-directory: apps/web
           config-file: cypress.config.ci.ts
-          record: true
-          group: "Actions"
-          parallel: true
+          record: false
+          spec: ${{ steps.specs.outputs.specs }}
+          config: video=${{ env.DEBUG_ARTIFACTS }}
           start: serve dist -l 8080 -s
           wait-on: "http://localhost:8080"
           wait-on-timeout: 60
+
+      - name: Upload test results and screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-results-${{ matrix.containers }}-attempt-${{ github.run_attempt }}
+          path: |
+            apps/web/cypress/results/
+            apps/web/cypress/screenshots/
+          retention-days: 7
+          if-no-files-found: warn
+
+      - name: Upload debug videos
+        if: ${{ always() && env.DEBUG_ARTIFACTS == 'true' }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: e2e-videos-${{ matrix.containers }}-attempt-${{ github.run_attempt }}
+          path: apps/web/cypress/videos/
+          retention-days: 3
+          if-no-files-found: ignore
