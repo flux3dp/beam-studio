@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI が写真の奥行きを推定し、内部彫刻用の立体点群に変換します。変換後も奥行き（Z サイズ）とシャープを調整でき、再度クレジットは消費されません。',
     photo_to_3d_done: '3D 点群に変換しました',
     photo_to_3d_edge_round: '縁の丸め',
-    photo_to_3d_edge_round_hint: '切り抜きの輪郭から、オブジェクト幅に対するこの割合の距離でレリーフを後ろへ丸めます。0 でオフ。',
+    photo_to_3d_edge_round_hint: '切り抜きの輪郭から、オブジェクト幅に対するこの割合の距離で、レリーフ縁の深さを均してから後ろへ丸めます。0 でオフ。',
     photo_to_3d_failed: '変換に失敗しました',
     photo_to_3d_flat: '写真の奥行きの変化がほとんどないため、3D に変換できません。',
     photo_to_3d_insufficient_credit: 'AI クレジットが不足しているため、3D に変換できません。',

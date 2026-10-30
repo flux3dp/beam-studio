@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'Tekoäly arvioi kuvan syvyyden ja muuntaa sen pistepilveksi sisäkaiverrusta varten. Sen jälkeen voit yhä muuttaa syvyyttä (Z-koko) ja terävöintiä ilman uutta veloitusta.',
     photo_to_3d_done: 'Muunnettu 3D-pistepilveksi',
     photo_to_3d_edge_round: 'Reunan pyöristys',
-    photo_to_3d_edge_round_hint: 'Pyöristää reliefiä rajattua reunaa kohti tällä osuudella kohteen leveydestä. 0 on pois.',
+    photo_to_3d_edge_round_hint: 'Tasoittaa reliefin syvyyden rajattua reunaa pitkin ja pyöristää sen reunaa kohti tällä osuudella kohteen leveydestä. 0 on pois.',
     photo_to_3d_failed: 'Muunnos epäonnistui',
     photo_to_3d_flat: 'Kuvassa ei ole juuri syvyyseroja, joten sitä ei voi muuntaa 3D:ksi.',
     photo_to_3d_insufficient_credit: 'AI-krediittejä ei ole tarpeeksi 3D-muunnokseen.',

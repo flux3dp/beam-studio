@@ -70,6 +70,7 @@ export const generatePhotoTo3dPoints = (
   const dither = ditherPhoto(pixels, columns, rows, { amount: sharpenAmount, radius: sharpenRadius });
   const field = cleanDepthEdges(source, stats, pixels, {
     depthMm: size.depth,
+    levelMm: edgeRoundMm,
     roundMm: edgeRoundMm,
     widthMm: size.width,
   });

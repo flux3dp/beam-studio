@@ -120,13 +120,18 @@ describe('depth field', () => {
     // the left half is cut out
     for (let i = 0; i < 64; i += 1) if (i % 8 < 4) pixels.data[i * 4 + 3] = 0;
 
-    const field = cleanDepthEdges(source, getDepthStats(source), pixels, { depthMm: 5, roundMm: 0, widthMm: 8 });
+    const field = cleanDepthEdges(source, getDepthStats(source), pixels, {
+      depthMm: 5,
+      levelMm: 0,
+      roundMm: 0,
+      widthMm: 8,
+    });
 
     expect(Array.from(field.mask.slice(0, 8))).toEqual([0, 0, 0, 0, 1, 1, 1, 1]);
   });
 
-  // 100 × 8, the left 10 columns cut out: a rim 4 px wide (4% of the width), levelled against the
-  // nearest surface within 8 px. depth 1 is near (Z 10), 2 is far (Z 0)
+  // 100 × 8, the left 10 columns cut out: a rim 4 px wide (levelMm 4 at 1 mm per px), background told
+  // by the nearest surface within 8 px. depth 1 is near (Z 10), 2 is far (Z 0)
   const rimPhoto = () => {
     const pixels = solid(100, 8, 200);
 
@@ -143,7 +148,7 @@ describe('depth field', () => {
     // a strip of background depth along the whole cut-out
     for (let i = 0; i < 800; i += 1) if (i % 100 >= 10 && i % 100 < 14) source.depth[i] = 2;
 
-    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, roundMm: 0, widthMm: 100 });
+    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, levelMm: 4, roundMm: 0, widthMm: 100 });
 
     expect(field.mask[3 * 100 + 10]).toBe(0);
     expect(field.mask[3 * 100 + 14]).toBe(1);
@@ -156,7 +161,7 @@ describe('depth field', () => {
     // the lower half of the rim sits 3 mm behind the rest
     for (let i = 0; i < 800; i += 1) if (i >= 400 && i % 100 >= 10 && i % 100 < 14) source.depth[i] = 1.3;
 
-    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, roundMm: 0, widthMm: 100 });
+    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, levelMm: 4, roundMm: 0, widthMm: 100 });
 
     expect(field.mask[6 * 100 + 10]).toBe(1);
     expect(z(field, 10, 6)).toBeGreaterThan(7.5);
@@ -173,7 +178,7 @@ describe('depth field', () => {
 
     for (let i = 0; i < 800; i += 1) if (i % 100 >= 10 && i % 100 < 14) source.depth[i] = 1.3;
 
-    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, roundMm: 0, widthMm: 100 });
+    const field = cleanDepthEdges(source, rimStats, rimPhoto(), { depthMm: 10, levelMm: 4, roundMm: 0, widthMm: 100 });
 
     // the fringe step alone bends the rim's last pixels up toward the inside
     expect(z(field, 10, 4)).toBeLessThan(7.6);
@@ -191,8 +196,8 @@ describe('depth field', () => {
     pixels.data[3] = 0;
 
     const stats = { lower: 1, upper: 2, valid: 20 };
-    const plain = cleanDepthEdges(source, stats, pixels, { depthMm: 10, roundMm: 0, widthMm: 20 });
-    const rounded = cleanDepthEdges(source, stats, pixels, { depthMm: 10, roundMm: 4, widthMm: 20 });
+    const plain = cleanDepthEdges(source, stats, pixels, { depthMm: 10, levelMm: 0, roundMm: 0, widthMm: 20 });
+    const rounded = cleanDepthEdges(source, stats, pixels, { depthMm: 10, levelMm: 0, roundMm: 4, widthMm: 20 });
 
     // farther depth = lower Z: the pixel next to the cut-out moves away, the far end does not
     expect(rounded.depth[1]).toBeGreaterThan(plain.depth[1]);

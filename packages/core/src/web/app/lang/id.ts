@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI memperkirakan kedalaman foto dan mengubahnya menjadi awan titik untuk ukiran dalam. Setelah itu Anda masih dapat mengubah kedalaman (ukuran Z) dan penajaman tanpa ditagih lagi.',
     photo_to_3d_done: 'Diubah menjadi awan titik 3D',
     photo_to_3d_edge_round: 'Pembulatan Tepi',
-    photo_to_3d_edge_round_hint: 'Membulatkan relief ke arah tepi potongan sejauh persentase lebar objek ini. 0 berarti mati.',
+    photo_to_3d_edge_round_hint: 'Meratakan kedalaman relief di sepanjang tepi potongan dan membulatkannya ke arah tepi sejauh persentase lebar objek ini. 0 berarti mati.',
     photo_to_3d_failed: 'Konversi gagal',
     photo_to_3d_flat: 'Foto hampir tidak memiliki variasi kedalaman dan tidak dapat diubah ke 3D.',
     photo_to_3d_insufficient_credit: 'Kredit AI tidak cukup untuk mengubah ke 3D.',

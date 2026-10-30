@@ -28,8 +28,6 @@ const EDGE_ISLAND = 0.0015;
 const EDGE_MAX_AREA = 6.1;
 /** The roll-off ends where the quarter circle's slope reaches 4 (≈ 76°). */
 const EDGE_ROUND_T = 4 / Math.sqrt(17);
-/** Width of the rim that is levelled, as a share of the photo's width. */
-const EDGE_LEVEL_RATIO = 0.04;
 /** Background the cut-out kept is told by the nearest surface within this many rims of it. */
 const EDGE_LEVEL_REACH = 2;
 /** A rim pixel this far behind that surface (share of the relief depth) is background, not subject... */
@@ -219,7 +217,7 @@ const sumFilter = (src: Float32Array, w: number, fw: number, fh: number, horizon
  *   3. fringe: within EDGE_FRINGE pixels of the cut-out the surface may not sink faster than
  *      EDGE_STEEP toward it
  *   4. small islands cut off by depth jumps are shifted onto their surroundings
- *   5. levelling of the rim, EDGE_LEVEL_RATIO × width inside the cut-out: a rim pixel far behind the
+ *   5. optional levelling of the rim, `levelMm` inside the cut-out: a rim pixel far behind the
  *      nearest surface around it, near the far end of the depth, is background the cut-out kept and
  *      is removed; one behind the rim's own mean level around it (the far-end pixels left out) is
  *      lifted to that mean, fully at the cut-out and not at all at the rim's inner edge, so the rim
@@ -233,7 +231,7 @@ export const cleanDepthEdges = (
   source: DepthSource,
   stats: DepthStats,
   pixels: RasterData,
-  { depthMm, roundMm, widthMm }: { depthMm: number; roundMm: number; widthMm: number },
+  { depthMm, levelMm, roundMm, widthMm }: { depthMm: number; levelMm: number; roundMm: number; widthMm: number },
 ): DepthField => {
   const { depth: data, height: fh, mask, width: fw } = source;
   const W = pixels.width;
@@ -508,9 +506,9 @@ export const cleanDepthEdges = (
   for (let i = 0; i < n; i += 1) if (comp[i] >= 0 && shiftN[comp[i]]) z2[i] += shift[comp[i]] / shiftN[comp[i]];
 
   // 5. levelling of the rim
-  const rimPx = EDGE_LEVEL_RATIO * fw;
+  const rimPx = levelMm / pxMm;
 
-  if (rimPx >= 1 && validCount) {
+  if (levelMm > 0 && rimPx >= 1 && validCount) {
     // a 3 × 3 mean first, so one spiked pixel cannot set the level of a whole stretch of rim
     const smooth = new Float32Array(n).fill(-Infinity);
 
