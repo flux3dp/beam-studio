@@ -91,19 +91,25 @@ const getWorldSize = (elem: Element, transform: StlTransform, thickness: number)
 const getGrid = ({ height, width }: PhotoTo3dSize, pointSpacing: number) =>
   `${Math.max(1, Math.round(width / pointSpacing))},${Math.max(1, Math.round(height / pointSpacing))}`;
 
+/** The dot grid a converted photo's cloud should be on now; null for anything else. */
+const getCurrentGrid = (elem: Element): null | string => {
+  const object = useStlStore.getState().objects[elem.id];
+
+  if (!isPhotoTo3d(elem) || !object?.depthSource) return null;
+
+  const thickness = readNumber(elem, PHOTO_TO_3D_ATTR.thickness, 1);
+
+  return getGrid(getWorldSize(elem, object.transform, thickness), getStlEngravingParams(elem).pointSpacing);
+};
+
 /**
  * Whether the point cloud no longer matches its dot grid: the layer's point spacing changed, or the
  * object was resized in X or Y. A Z resize only scales the relief and never needs a recompute.
  */
 export const isPhotoTo3dStale = (elem: Element): boolean => {
-  const object = useStlStore.getState().objects[elem.id];
+  const grid = getCurrentGrid(elem);
 
-  if (!isPhotoTo3d(elem) || !object?.depthSource) return false;
-
-  const thickness = readNumber(elem, PHOTO_TO_3D_ATTR.thickness, 1);
-  const size = getWorldSize(elem, object.transform, thickness);
-
-  return elem.getAttribute(PHOTO_TO_3D_ATTR.grid) !== getGrid(size, getStlEngravingParams(elem).pointSpacing);
+  return grid !== null && elem.getAttribute(PHOTO_TO_3D_ATTR.grid) !== grid;
 };
 
 /**
@@ -405,10 +411,13 @@ export const STALE_DELAY_MS = 500;
  * object's size has settled, every stale cloud is recomputed and folded into the step that made it
  * stale. The spacing is edited on the layer tab, where no object panel is mounted, so a component of
  * the selected object could not do this. An object whose cloud is still being computed waits for it.
+ * A grid the cloud could not be computed on (too many points) is reported once and left alone until
+ * the spacing or the size changes again; the cloud stays stale and is tried once more before a job.
  * @returns a function that stops watching
  */
 export const watchStalePhotoTo3d = (): (() => void) => {
   let timer: null | ReturnType<typeof setTimeout> = null;
+  const failed = new Map<string, string>();
 
   const refresh = () => {
     timer = null;
@@ -416,12 +425,17 @@ export const watchStalePhotoTo3d = (): (() => void) => {
     const { ids: busy } = usePhotoTo3dBusy.getState();
 
     findStale()
-      .filter((elem) => !busy.includes(elem.id))
-      .forEach(async (elem) => {
+      .map((elem) => ({ elem, grid: getCurrentGrid(elem) as string }))
+      .filter(({ elem, grid }) => !busy.includes(elem.id) && failed.get(elem.id) !== grid)
+      .forEach(async ({ elem, grid }) => {
         try {
           await updatePhotoTo3d(elem, {}, 'append');
+          failed.delete(elem.id);
         } catch (error) {
-          if (!(error instanceof PhotoTo3dCancelledError)) alertPhotoTo3dError(error);
+          if (error instanceof PhotoTo3dCancelledError) return;
+
+          failed.set(elem.id, grid);
+          alertPhotoTo3dError(error);
         }
       });
   };
