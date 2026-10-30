@@ -1847,7 +1847,7 @@ const lang: ILang = {
     photo_to_3d_description: 'AI schat de diepte van de foto en zet hem om in een puntenwolk voor binnengravure. Daarna kunt u diepte (Z-grootte) en verscherping nog aanpassen zonder opnieuw te betalen.',
     photo_to_3d_done: 'Omgezet naar een 3D-puntenwolk',
     photo_to_3d_edge_round: 'Randafronding',
-    photo_to_3d_edge_round_hint: 'Egaliseert de diepte van het reliëf langs de uitgesneden rand en rondt het af naar de rand over dit deel van de objectbreedte. 0 is uit.',
+    photo_to_3d_edge_round_hint: 'Verwijdert losse achtergrondpunten langs de uitgesneden rand en maakt de diepte van de rand glad over dit deel van de objectbreedte. 0 is uit.',
     photo_to_3d_failed: 'Omzetten mislukt',
     photo_to_3d_flat: 'De foto heeft bijna geen diepteverschil en kan niet naar 3D worden omgezet.',
     photo_to_3d_insufficient_credit: 'Onvoldoende AI-credits om naar 3D om te zetten.',

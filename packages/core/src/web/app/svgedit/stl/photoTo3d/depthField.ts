@@ -26,14 +26,15 @@ const EDGE_BAND = 10;
 const EDGE_ISLAND = 0.0015;
 /** Area factor (slope ≈ 80.5°) above which a dot cell spans a depth jump instead of a surface. */
 const EDGE_MAX_AREA = 6.1;
-/** The roll-off ends where the quarter circle's slope reaches 4 (≈ 76°). */
-const EDGE_ROUND_T = 4 / Math.sqrt(17);
-/** Background the cut-out kept is told by the nearest surface within this many rims of it. */
-const EDGE_LEVEL_REACH = 2;
-/** A rim pixel this far behind that surface (share of the relief depth) is background, not subject... */
-const EDGE_LEVEL_REMOVE = 0.4;
-/** ...provided it also sits within this share of the depth from the far end. */
-const EDGE_LEVEL_FAR = 0.15;
+/**
+ * A rim pixel this far (share of the relief depth) behind the surface inside it, which may sink no
+ * faster than EDGE_STEEP toward the cut-out, is background the cut-out kept and is removed.
+ */
+const EDGE_DROP_JUMP = 0.08;
+/** The smoothing may move a rim pixel this far (share of the relief depth); one farther behind goes. */
+const EDGE_SMOOTH_MAX = 0.08;
+/** The rim is smoothed in at most this many contour bands, however wide it is. */
+const EDGE_SMOOTH_BANDS = 16;
 /** Extra dots per dot cell at most. */
 const EDGE_MAX_EXTRA = 60;
 
@@ -47,6 +48,8 @@ export interface DepthStats {
 
 export interface DepthField {
   depth: Float32Array;
+  /** 1 where the cleanup removed the subject's pixel: its dots are left out, not put on the far plane. */
+  drop?: Uint8Array;
   height: number;
   mask: Uint8Array;
   width: number;
@@ -157,40 +160,6 @@ const N8 = [
   [1, 1],
 ] as const;
 
-/**
- * Sliding-window maximum along every row (`horizontal`) or column, window `[k − w, k + w]`.
- * Pixels that do not count hold -Infinity.
- */
-const maxFilter = (src: Float32Array, dst: Float32Array, w: number, fw: number, fh: number, horizontal: boolean) => {
-  const len = horizontal ? fw : fh;
-  const lines = horizontal ? fh : fw;
-  const at = (line: number, k: number) => (horizontal ? line * fw + k : k * fw + line);
-  const deque = new Int32Array(len);
-
-  for (let line = 0; line < lines; line += 1) {
-    let head = 0;
-    let tail = 0;
-
-    for (let k = 0; k < len + w; k += 1) {
-      if (k < len) {
-        const value = src[at(line, k)];
-
-        while (tail > head && src[at(line, deque[tail - 1])] <= value) tail -= 1;
-
-        deque[tail++] = k;
-      }
-
-      const out = k - w;
-
-      if (out < 0) continue;
-
-      while (deque[head] < out - w) head += 1;
-
-      dst[at(line, out)] = src[at(line, deque[head])];
-    }
-  }
-};
-
 /** Sliding-window sum along every row or column, window `[k − w, k + w]`, in place. */
 const sumFilter = (src: Float32Array, w: number, fw: number, fh: number, horizontal: boolean) => {
   const len = horizontal ? fw : fh;
@@ -209,23 +178,25 @@ const sumFilter = (src: Float32Array, w: number, fw: number, fh: number, horizon
 
 /**
  * Clean the depth along the cut-out, where single-image depth models smear the subject into the
- * background. Every step except the fringe, the levelling and the roll-off works within EDGE_BAND
- * pixels of the cut-out only, so ramps inside the subject stay ramps:
+ * background. Steps 1, 2 and 5 work within EDGE_BAND pixels of the cut-out only, so ramps inside the
+ * subject stay ramps:
  *   1. isolated outliers → median of their neighbours
  *   2. occlusion ramps: where the depth drops steeply and the colours on the two sides differ, each
  *      ramp pixel takes the depth of the side its colour matches
- *   3. fringe: within EDGE_FRINGE pixels of the cut-out the surface may not sink faster than
+ *   3. optional removal, within `levelMm` of the cut-out, inward → outward: the surface inside a rim
+ *      pixel is carried toward the cut-out sinking no faster than EDGE_STEEP; a pixel more than
+ *      EDGE_DROP_JUMP of the depth behind it is background the cut-out kept and is removed, and so is
+ *      one with only removed pixels inside it. Nothing is moved
+ *   4. fringe: within EDGE_FRINGE pixels of the cut-out the surface may not sink faster than
  *      EDGE_STEEP toward it
- *   4. small islands cut off by depth jumps are shifted onto their surroundings
- *   5. optional levelling of the rim, `levelMm` inside the cut-out: a rim pixel far behind the
- *      nearest surface around it, near the far end of the depth, is background the cut-out kept and
- *      is removed; one behind the rim's own mean level around it (the far-end pixels left out) is
- *      lifted to that mean, fully at the cut-out and not at all at the rim's inner edge, so the rim
- *      is even in depth and joins the inside without a step. The mean is the rim's own, never the
- *      inside's, so a rim that recedes stays behind the surface inside it
- *   6. optional roll-off: within `roundMm` of the cut-out the surface bends back on a quarter circle
- * Transparent pixels of the photo become invalid. A photo without transparency has no cut-out, and
- * nothing changes but that.
+ *   5. small islands cut off by depth jumps are shifted onto their surroundings
+ *   6. optional smoothing, within `roundMm` of the cut-out: each pixel moves toward the mean depth of
+ *      the rim around it at the same distance from the cut-out (along the contour, so the inside does
+ *      not pull it forward), fully on the cut-out and not at all at the rim's inner edge, so it stays
+ *      joined to the inside. It moves EDGE_SMOOTH_MAX of the depth at most; one in the outer half
+ *      farther behind than that is removed
+ * Removed pixels are listed in `drop`, so their dots go too. Transparent pixels of the photo become
+ * invalid. A photo without transparency has no cut-out, and nothing changes but that.
  */
 export const cleanDepthEdges = (
   source: DepthSource,
@@ -409,7 +380,65 @@ export const cleanDepthEdges = (
     else if (dd < EDGE_COLOR_RATIO * du) z2[i] = z1[down];
   }
 
-  // 3. cut-out fringe: limit the slope toward the edge, working inward → outward
+  // 3. removal of background the cut-out kept, inward → outward
+  const dropped = new Uint8Array(n);
+  const drop = (i: number) => {
+    valid[i] = 0;
+    dropped[i] = 1;
+    validCount -= 1;
+  };
+  const rimPx = levelMm / pxMm;
+
+  if (levelMm > 0 && rimPx >= 1) {
+    const jump = Math.max(EDGE_DROP_JUMP * depthMm, 4 * tolPx);
+    // the surface carried toward the cut-out, sinking no faster than EDGE_STEEP
+    const carried = Float32Array.from(z2);
+    const rim: number[] = [];
+
+    for (let i = 0; i < n; i += 1) if (valid[i] && dist[i] <= rimPx) rim.push(i);
+
+    rim.sort((a, b) => dist[b] - dist[a]);
+
+    for (const i of rim) {
+      const x = i % fw;
+      const y = (i - x) / fw;
+      let sum = 0;
+      let count = 0;
+      let inward = 0;
+
+      for (const [dx, dy] of N8) {
+        const xx = x + dx;
+        const yy = y + dy;
+
+        if (xx < 0 || yy < 0 || xx >= fw || yy >= fh) continue;
+
+        const j = yy * fw + xx;
+
+        if (dist[j] <= dist[i] + 0.25 || !(valid[j] || dropped[j])) continue;
+
+        inward += 1;
+
+        if (!valid[j]) continue;
+
+        sum += carried[j] - tolPx * Math.hypot(dx, dy);
+        count += 1;
+      }
+
+      if (!inward) continue;
+
+      if (!count) {
+        drop(i);
+        continue;
+      }
+
+      const surface = sum / count;
+
+      if (surface - z2[i] > jump) drop(i);
+      else carried[i] = Math.max(z2[i], surface);
+    }
+  }
+
+  // 4. cut-out fringe: limit the slope toward the edge, working inward → outward
   const band: number[] = [];
 
   for (let i = 0; i < n; i += 1) if (valid[i] && dist[i] <= EDGE_FRINGE) band.push(i);
@@ -439,7 +468,7 @@ export const cleanDepthEdges = (
     if (count && sum / count > z2[i] + 1e-6) z2[i] = sum / count;
   }
 
-  // 4. small islands (4-connected without a jump) shifted onto their surroundings
+  // 5. small islands (4-connected without a jump) shifted onto their surroundings
   const comp = new Int32Array(n).fill(-1);
   const sizes: number[] = [];
   const queue = new Int32Array(n);
@@ -505,95 +534,51 @@ export const cleanDepthEdges = (
 
   for (let i = 0; i < n; i += 1) if (comp[i] >= 0 && shiftN[comp[i]]) z2[i] += shift[comp[i]] / shiftN[comp[i]];
 
-  // 5. levelling of the rim
-  const rimPx = levelMm / pxMm;
+  // 6. smoothing along the contour
+  const smoothPx = roundMm / pxMm;
 
-  if (levelMm > 0 && rimPx >= 1 && validCount) {
-    // a 3 × 3 mean first, so one spiked pixel cannot set the level of a whole stretch of rim
-    const smooth = new Float32Array(n).fill(-Infinity);
+  if (roundMm > 0 && smoothPx >= 1) {
+    const step = Math.max(1, Math.ceil(smoothPx / EDGE_SMOOTH_BANDS));
+    const radius = Math.max(1, Math.round(smoothPx));
+    const target = new Float32Array(n).fill(Number.NaN);
+    const sum = new Float32Array(n);
+    const count = new Float32Array(n);
+    const band = (i: number) => Math.floor((dist[i] - 0.5) / step);
 
-    for (let i = 0; i < n; i += 1) {
-      if (!valid[i]) continue;
+    // one pass per band of distance: the mean over the pixels at about the same distance only
+    for (let b = 0; b * step < smoothPx; b += 1) {
+      for (let i = 0; i < n; i += 1) {
+        const near = valid[i] && Math.abs(dist[i] - 0.5 - (b + 0.5) * step) <= step;
 
-      const x = i % fw;
-      const y = (i - x) / fw;
-      let sum = z2[i];
-      let count = 1;
-
-      for (const [dx, dy] of N8) {
-        const xx = x + dx;
-        const yy = y + dy;
-
-        if (xx < 0 || yy < 0 || xx >= fw || yy >= fh) continue;
-
-        const j = yy * fw + xx;
-
-        if (!valid[j]) continue;
-
-        sum += z2[j];
-        count += 1;
+        sum[i] = near ? z2[i] : 0;
+        count[i] = near ? 1 : 0;
       }
 
-      smooth[i] = sum / count;
+      sumFilter(sum, radius, fw, fh, true);
+      sumFilter(sum, radius, fw, fh, false);
+      sumFilter(count, radius, fw, fh, true);
+      sumFilter(count, radius, fw, fh, false);
+
+      for (let i = 0; i < n; i += 1) {
+        if (valid[i] && dist[i] <= smoothPx + 0.5 && band(i) === b && count[i]) target[i] = sum[i] / count[i];
+      }
     }
 
-    const inRim = (i: number) => valid[i] && dist[i] <= rimPx + 1;
-    const far = (i: number) => z2[i] < EDGE_LEVEL_FAR * depthMm;
-
-    // background the cut-out kept: far behind the nearest surface within reach, at the far end
-    const reach = Math.round(EDGE_LEVEL_REACH * rimPx);
-    const nearest = new Float32Array(n);
-
-    maxFilter(smooth, nearest, reach, fw, fh, true);
-    maxFilter(nearest, smooth, reach, fw, fh, false);
+    const maxMove = EDGE_SMOOTH_MAX * depthMm;
 
     for (let i = 0; i < n; i += 1) {
-      if (!inRim(i) || !far(i) || !(smooth[i] - z2[i] > EDGE_LEVEL_REMOVE * depthMm)) continue;
+      if (!Number.isFinite(target[i])) continue;
 
-      valid[i] = 0;
-      validCount -= 1;
-    }
+      // the pixel on the cut-out follows the contour in full; the move fades out across the rim
+      const weight = Math.min(1, Math.max(0, 1 - (dist[i] - 1) / smoothPx));
+      const move = target[i] - z2[i];
 
-    // the rim's own mean level over its width, the far-end pixels it is about to lift left out
-    const span = Math.round(rimPx);
-    const level = new Float32Array(n);
-    const count = new Float32Array(n);
+      if (move > maxMove && weight > 0.5) {
+        drop(i);
+        continue;
+      }
 
-    for (let i = 0; i < n; i += 1) {
-      if (!inRim(i) || far(i)) continue;
-
-      level[i] = z2[i];
-      count[i] = 1;
-    }
-
-    sumFilter(level, span, fw, fh, true);
-    sumFilter(level, span, fw, fh, false);
-    sumFilter(count, span, fw, fh, true);
-    sumFilter(count, span, fw, fh, false);
-
-    for (let i = 0; i < n; i += 1) {
-      if (!inRim(i) || !count[i]) continue;
-
-      const behind = level[i] / count[i] - z2[i];
-
-      if (behind <= 0) continue;
-
-      // the pixel on the cut-out is levelled in full; the lift fades out across the rim
-      z2[i] += behind * Math.min(1, Math.max(0, 1 - (dist[i] - 1) / rimPx));
-    }
-  }
-
-  // 6. roll-off: quarter circle of radius R (mm) at the cut-out edge
-  if (roundMm > 0) {
-    const rPx = roundMm / pxMm;
-
-    for (let i = 0; i < n; i += 1) {
-      if (!valid[i] || dist[i] - 0.5 >= rPx) continue;
-
-      // stop short of vertical so the dither treats the rim as surface, not a jump
-      const t = Math.min(EDGE_ROUND_T, 1 - Math.max(0, dist[i] - 0.5) / rPx);
-
-      z2[i] -= roundMm * (1 - Math.sqrt(1 - t * t));
+      z2[i] += weight * Math.min(maxMove, Math.max(-maxMove, move));
     }
   }
 
@@ -608,7 +593,7 @@ export const cleanDepthEdges = (
     outMask[i] = 1;
   }
 
-  return { depth: out, height: fh, mask: outMask, width: fw };
+  return { depth: out, drop: dropped, height: fh, mask: outMask, width: fw };
 };
 
 /** Deterministic 0–1 hash, so the same input always gives the same extra dots. */
@@ -644,6 +629,14 @@ export const liftDots = (
   const depthAt = (x: number, y: number) =>
     sample(((x + 0.5) / w) * field.width - 0.5, ((y + 0.5) / h) * field.height - 0.5);
   const toZ = (d: number) => (1 - Math.min(1, Math.max(0, (d - stats.lower) / range))) * depthMm;
+  const isDropped = (x: number, y: number) => {
+    if (!field.drop) return false;
+
+    const fx = Math.min(field.width - 1, Math.max(0, Math.floor(((x + 0.5) / w) * field.width)));
+    const fy = Math.min(field.height - 1, Math.max(0, Math.floor(((y + 0.5) / h) * field.height)));
+
+    return field.drop[fy * field.width + fx] === 1;
+  };
   // grown by doubling: the count is only known at the end, and a plain array of millions of numbers
   // is many times slower
   let points = new Float32Array(Math.max(3, dither.dots.length * 3));
@@ -667,6 +660,10 @@ export const liftDots = (
 
     const x = i % w;
     const y = (i - x) / w;
+
+    // the cleanup removed what is under it: background the cut-out kept
+    if (isDropped(x, y)) continue;
+
     const d = depthAt(x, y);
 
     // a dot the depth does not reach (masked out by the depth model) stays on the far plane
@@ -693,7 +690,7 @@ export const liftDots = (
       const jy = y + hash01(i, 3 + 2 * k) - 0.5;
       const dj = depthAt(jx, jy);
 
-      if (Number.isFinite(dj)) push(jx, jy, toZ(dj));
+      if (Number.isFinite(dj) && !isDropped(jx, jy)) push(jx, jy, toZ(dj));
     }
   }
 
