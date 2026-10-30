@@ -277,7 +277,7 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
     - Points are local mm, with Z centred on the plane.
   - Later edits:
     - The Z size is the relief depth: a plain scale, never recomputed.
-    - Sharpening, and under uvDev the roll-off, are edited in `PhotoTo3dOptions` and recomputed from the saved depth (`updatePhotoTo3d`, its own step).
+    - Sharpening, and under uvDev the roll-off, are edited in `PhotoTo3dOptions` and recomputed from the saved depth (`updatePhotoTo3d`, its own step). `OptionsPanel` dispatches a converted photo (`data-stl-depth`) to `ThreeDOptions` before its point-cloud early return, and without `ImageOptions`.
     - `isPhotoTo3dStale` compares `data-stl-depth-grid` with the current dot grid. `InnerEngravingCanvas` runs `watchStalePhotoTo3d` while mounted: a MutationObserver on `data-stl-point-spacing` under `#svgcontent` plus a `stlStore` objects subscription, and 0.5 s after the last change every stale cloud is recomputed (`appendCommandToLast`, busy ones once their computation ends; a grid that failed, e.g. too many points, is reported once and not retried until the grid changes). The spacing is edited on the layer tab, where no object panel is mounted, which is why this is not in `PhotoTo3dOptions`. `getPointCloudObjects` still recomputes before a job (no history).
 - There is no direct point-cloud file import (`create3dObject` / `insertStlGeometry` only build
   meshes). Standalone point clouds exist only in .beam files from uv-dev builds: block 7 plus a

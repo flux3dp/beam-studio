@@ -188,6 +188,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 | `photoPointCloudGenerator.ts`（`loadRasterData` 改為 export） | 測試點雲產生不變 |
 | `getPointCloudObjects.ts` | 送出前先重算過期的照片轉 3D 點雲；其他點雲的 payload 不變 |
 | `ThreeDOptions.tsx` | uvDev 的測試點雲按鈕不變；照片轉 3D 物件改顯示 `PhotoTo3dOptions` |
+| `OptionsPanel.tsx` | 照片轉 3D 物件（有 `data-stl-depth`）顯示 `ThreeDOptions`、不顯示點陣圖選項；uvDev 測試點雲與其他點雲仍沒有選項（2026-10-30 補：原本點雲一律不顯示選項，`PhotoTo3dOptions` 從未出現過） |
 | `presets.ts` | 頻率、速度等既有值不變；只有 `fpm1_2_5` 加上 `fillDwellTime`（PLA 50000，其他 -50000 = 關閉）。其他機型的預設參數不變 |
 | `AdvancedSettingModal.tsx` | 每行停留與打散掃描順序只在 Promark UV 顯示（原本是 uvDev）；Desktop / MOPA 與其他機型的進階設定不變 |
 | `MaterialTestGeneratorPanel/TableSetting.ts` | UV 2D 材質測試多了每行停留與打散掃描順序兩欄（原本是 uvDev）；內雕與其他雷射源的表格不變 |
@@ -457,7 +458,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
       - 失敗：照片不變，重試不再扣點。
       - 過期判斷；重算的三種 history 模式；送出前重算。
     - `PhotoTo3dModal.spec`：選項、去背預設、重試、點數不足、登入、點格上限。
-    - `PhotoTo3dOptions.spec`：顯示、提交、更新中延遲。
+    - `PhotoTo3dOptions.spec`：顯示、提交、更新中延遲。`OptionsPanel.spec`：照片轉 3D 物件顯示 3D 選項、不顯示點陣圖選項。
     - `photoTo3d/index.spec`「while the canvas watches」：點間距屬性變動後 0.5 秒重算並併入前一步、其他屬性不觸發、停止監聽後不觸發；算不出來的點格只提示一次、換點格再試；尺寸變動也重算、計算中的物件等算完再重算。
     - `ActionsPanelStl.spec`、`ThreeDOptions.spec`、`ai-image-process.spec`（JSON 版本）、`beam-file-helper.spec`（block 8）。
   - P2-4（已寫）：`getInnerEngravingBlocks.spec`（顯示規則）、`FillCapsBlock.spec`（寫入、不改預設參數名稱）。

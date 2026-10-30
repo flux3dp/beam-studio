@@ -82,6 +82,15 @@ describe('should render correctly', () => {
     expect(container.querySelector('dummy-infill-block')).not.toBeInTheDocument();
   });
 
+  test('a photo turned into 3D shows its own options, not the bitmap ones', () => {
+    document.body.innerHTML = '<image id="image" data-stl-photo="1" data-stl-point-cloud="1" data-stl-depth="1" />';
+
+    const { container } = render(<OptionsPanel elem={getElem('image')} />);
+
+    expect(container.querySelector('dummy-three-d-options')).toBeInTheDocument();
+    expect(container.querySelector('dummy-image-options')).not.toBeInTheDocument();
+  });
+
   test('generated photo point cloud has no option controls', () => {
     document.body.innerHTML = '<image id="image" data-stl-photo="1" data-stl-point-cloud="1" />';
 
