@@ -160,12 +160,12 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 放在 `GalvoManualBlock` 之後，同樣的 `blockStyles.block` + `full-row`，標題「Calibration (dev)」。由上到下：
 
 - 場心落點 X / Y（`UnitInput`，mm，預設 100 / 100）；唯讀一行 `Gantry station: (x, y)`，超出行程時紅字並停用 A、E 的按鈕。
-- 第一列按鈕：**Mark coupon**（功率、速度沿用上方「標記參數」，說明註明建議 25% / 500 mm/s）、**Mark L frame**（旁邊 Power % 預設 3、Passes 預設 2）。
+- 第一列按鈕：**Mark coupon**（功率、速度沿用上方「標記參數」，說明註明建議 25% / 500 mm/s）、**Mark 100 mm square**（同一站位、同一組標記參數，打 stitch test 的第一個方框，讓 ±50 的邊和 coupon 在同一張紙上直接量到；決策 31）、**Mark L frame**（旁邊 Power % 預設 3、Passes 預設 2）。
 - 第二列：**Capture**、**Solve**、**Apply suggestion**。Solve 要有拍完的影像才啟用，Apply 要有解算結果才啟用。
 - 第三列：**Stitch test**（用標記參數的功率、速度）。
 - 「Fix backlash」勾選框，預設開。
 - 結果區：拼接影像縮圖（可點開大圖）、解算輸出表（§7.9）、輪次歷史表（輪次、送出的 scaleX / scaleY、量到的 scale_x / scale_y / skew / 殘差 RMS）。
-- `GalvoAction` 新增 `'coupon' | 'lframe' | 'capture' | 'solve' | 'stitch'`，全部走既有 `run(action, label, body)`；區塊是 `GalvoCalibrationBlock.tsx`，由 `GalvoSettings` 傳入 `run`、`pending`、`config`、`offsets`、`parameters` 與 `onApplyScales`。進行中的步驟文字顯示在按鈕列下方。
+- `GalvoAction` 新增 `'coupon' | 'square' | 'lframe' | 'capture' | 'solve' | 'stitch'`，全部走既有 `run(action, label, body)`；區塊是 `GalvoCalibrationBlock.tsx`，由 `GalvoSettings` 傳入 `run`、`pending`、`config`、`offsets`、`parameters` 與 `onApplyScales`。進行中的步驟文字顯示在按鈕列下方。
 - 區塊從對話框 props 拿 `module`、`offsets`、`config`，不自己讀機器；串聯、`galvoPaths`、`galvoFrame`、建議值、輪次歷史全部以這個 `module` 為準。MOPA 對話框的區塊與 CO2 的是同一個元件，沒有分支 UI。建議標記參數的說明文字依模組顯示（CO2 25% / 500 mm/s；MOPA 待實測，決策 12）。
 
 ### 7.2 圖樣規格（由工廠文件轉寫）

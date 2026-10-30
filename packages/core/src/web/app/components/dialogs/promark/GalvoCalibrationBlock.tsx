@@ -14,8 +14,10 @@ import {
   L_FRAME_MARK_FEEDRATE,
   markCoupon,
   markLFrame,
+  markSquare,
   stationFor,
   stationProblem,
+  STITCH_SQUARE_MM,
   stitchStations,
   stitchTest,
 } from '@core/helpers/device/galvoCalibration/mark';
@@ -139,6 +141,11 @@ const GalvoCalibrationBlock = ({
         await markCoupon({ ...site, config, module, onStep: setStep, power, speed });
         markedWith.current = { scaleX: config.galvoParameters.x.scale, scaleY: config.galvoParameters.y.scale };
       }),
+    );
+
+  const handleSquare = () =>
+    run('square', 'Mark square', () =>
+      withStep(() => markSquare({ ...site, config, module, onStep: setStep, power, speed })),
     );
 
   const handleLFrame = () =>
@@ -311,6 +318,15 @@ const GalvoCalibrationBlock = ({
           size="small"
         >
           Mark coupon
+        </Button>
+        <Button
+          data-testid="mark-square"
+          disabled={busy || Boolean(problem)}
+          loading={pending === 'square'}
+          onClick={handleSquare}
+          size="small"
+        >
+          Mark {STITCH_SQUARE_MM} mm square
         </Button>
         <span>(mark parameters above; factory used 25% / 500 mm/s)</span>
         <Button

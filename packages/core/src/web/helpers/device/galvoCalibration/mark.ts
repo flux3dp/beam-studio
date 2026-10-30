@@ -352,6 +352,51 @@ export const stitchStations = (center: GalvoPoint, offsets: GalvoPoint): GalvoPo
   ];
 };
 
+/**
+ * Mark one STITCH_SQUARE_MM square with the lens centred on `center`: the first square of the
+ * stitch test on its own, on the sheet the coupon is on. Its edges sit at +-50 mm, beyond the
+ * node grid (+-44) and inside the L frame (62 to 70), where the f-theta cubic has pushed them
+ * 0.4 to 0.9 mm out on every sheet so far; measuring them directly is what decides the scale
+ * (PRD §11 decision 31), and the solver reads a coupon with the square on it unchanged.
+ */
+export const markSquare = async ({
+  center,
+  config,
+  fixBacklash,
+  model,
+  module,
+  offsets,
+  onStep,
+  power,
+  speed,
+}: MarkSite & {
+  config: GalvoConfig;
+  module: GalvoModule;
+  onStep?: OnStep;
+  power: number;
+  speed: number;
+}): Promise<void> => {
+  const station = stationFor(center, offsets);
+  const problem = stationProblem(model, station);
+
+  if (problem) throw new Error(problem);
+
+  onStep?.('Coupling the galvo head');
+  await connectGalvoHead(module);
+  onStep?.('Moving the gantry to the station');
+  await moveGantry(station, { fixBacklash, model });
+  await setAir(true);
+
+  try {
+    onStep?.(`Marking the ${STITCH_SQUARE_MM} mm square`);
+    await galvoFrame({ config, module, power, size: STITCH_SQUARE_MM, speed });
+    await awaitGalvoResult('Mark square');
+    await assertStillAuthorised();
+  } finally {
+    await setAir(false).catch((error) => console.warn('Galvo calibration: air assist off failed', error));
+  }
+};
+
 export const stitchTest = async ({
   center,
   config,

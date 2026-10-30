@@ -26,6 +26,7 @@ export type GalvoAction =
   | 'move'
   | 'preview'
   | 'solve'
+  | 'square'
   | 'stitch';
 
 interface Props {
