@@ -252,7 +252,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 - **銳化只影響點的疏密，不影響深度**：測試頁的銳化是 unsharp mask（原圖 +（原圖 − 模糊）× 強度），作用在「縮到 dither 網格、反相之前」的灰階上（`index.html:1376-1414`）。灰階經 Floyd–Steinberg 轉成「哪些格子打點」，所以銳化只改變點在 XY 的分布：亮暗交界兩側的疏密對比變大、細節更明顯。每個點的 Z 是之後投影時另外從深度圖取的（`projectDither`），和銳化無關。半徑以 dither 點為單位（Gaussian σ），點間距 0.03mm 時半徑 4 約等於 0.12mm。強度 0 = 關閉。
 - **銳化 1.0、半徑 4.0**：沿用目前設定當預設。
 - **收邊**：測試頁只有一個參數 `edgeRound`（0–10mm，四分之一圓弧收邊的半徑），只有 4mm 測試過（`NOTES.md:345-386`）。uvDev 下建議預設 **4mm（以寬 100mm 為準，即物件寬的 4%）**，範圍 0–10mm；收邊只作用在透明遮罩的輪廓上，不去背且原圖沒有透明區域時只作用在圖片外框。正式值要上機比較 0 / 2 / 4 / 6mm 後決定（§10 #10）。收邊會增加點數（測試 6、7 只清輪廓 + 收邊 4mm 分別多 18%、13%）。
-- 測試頁的邊緣處理常數（`EDGE_STEEP` 2.5、`EDGE_REACH` 6、`EDGE_FRINGE` 4、`EDGE_BAND` 10、`EDGE_ISLAND` 0.15%、`EDGE_ROUND_T` 4/√17，`index.html:1664-1673`）照搬寫死。這些是以像素計的，換成以點間距計要再確認。
+- 測試頁的邊緣處理常數（`EDGE_STEEP` 2.5、`EDGE_REACH` 6、`EDGE_FRINGE` 4、`EDGE_BAND` 10、`EDGE_ISLAND` 0.15%、`EDGE_ROUND_T` 4/√17，`index.html:1664-1673`）照搬寫死。這些是以像素計的，換成以點間距計要再確認。2026-10-30 另加邊緣整平的常數（`EDGE_LEVEL_RATIO` 4%、`EDGE_LEVEL_REACH` 2、`EDGE_LEVEL_REMOVE` 40%、`EDGE_LEVEL_FAR` 15%，§10 #22），以寬度與浮雕深度的比例計。
 
 #### 6.2.3 確認視窗
 
@@ -296,7 +296,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 - `app/svgedit/stl/photoTo3d/`：
   - `depthSource.ts`：BSDM 格式、`depthSourceFromApi`。
   - `dither.ts`：照片縮放到點格（比照片粗時取平均、比照片細時雙線性）、unsharp mask、Floyd–Steinberg。點格比照片細是常態：60mm 寬、點間距 0.03mm 是 2000 格，照片通常只有約 1000 像素寬。
-  - `depthField.ts`：1–99% 百分位、Catmull-Rom 取樣（遮罩邊退回雙線性）、只清輪廓的邊緣處理與收邊、補點投影（不補牆）。距離都以物件的世界尺寸（mm）計，坡度門檻與尺寸無關。
+  - `depthField.ts`：1–99% 百分位、Catmull-Rom 取樣（遮罩邊退回雙線性）、只清輪廓的邊緣處理、邊緣整平（§10 #22）與收邊、補點投影（不補牆）。距離都以物件的世界尺寸（mm）計，坡度門檻與尺寸無關。
   - `generate.ts`：串起上面三步，上限 300 萬點、1200 萬格（`MAX_PHOTO_TO_3D_POINTS`、`MAX_PHOTO_TO_3D_CELLS`）。
   - `photoTo3d.worker.ts` + `runPhotoTo3d.ts`：在 Web Worker 計算；同一個物件再開一個計算時，終止舊的 worker（只算最後一次）。
   - `index.ts`：`convertPhotoTo3d`、`updatePhotoTo3d`、`isPhotoTo3dStale`、`refreshStalePhotoTo3d`、`watchStalePhotoTo3d`、`usePhotoTo3dBusy`。
@@ -425,6 +425,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 17. 不去背時扣點是否減少（例如 0.06 → 0.04）？flux-id 端怎麼區分計價？**暫定**：Beam Studio 一律以 0.06 檢查與顯示（`PHOTO_TO_3D_COST`），實際扣多少由 flux-id 決定。
 18. 「是否去背」的預設：**暫定（2026-10-22，依建議值實作，待確認）**：依原圖自動判斷，超過 1% 的像素不是全不透明就預設不勾。
 19. 重新計算的「更新中」提示：**暫定（2026-10-22，依建議值實作，待確認）**：只放物件面板（超過 300ms 才出現），畫布保留舊點雲直到算完；沒有可取消的進度視窗（純 Node 實測約 2.5 秒）。
+22. 邊緣整平：**暫定（2026-10-30，門檻待上機確認）**。EstherFu 實測收邊後輪廓一圈深淺不一：去背保留但深度判為背景的孤立點，以及輪廓各處 Z 忽前忽後。收邊本身只把輪廓那面牆的頂端削圓最多 0.76 R（三張測試照實測輪廓帶 Z 中位數只降 0.4–0.8mm），不是原因也不是解法。新增 `cleanDepthEdges` 第 5 步（收邊之前）：輪廓內寬度 4% 的邊緣帶，每個像素對照周圍 2 倍邊緣帶內最近的水平（3×3 平均後取窗內最大值，再以邊緣帶寬度平滑）；落後該水平超過浮雕深度 40% 且本身在最遠 15% 內的視為去背留下的背景、移除，其餘落後的抬到該水平，輪廓上完全抬平、往內線性漸弱到邊緣帶內緣，所以和內部接合不會有台階。實測（60mm 寬、深 13.2mm）：輪廓像素 Z 的 p10–p90：test-8 7.0→4.5mm、test-7 3.7→2.8、test-6 7.6→7.1；移除輪廓像素 0–0.6%；清理耗時 +40–80ms。剩下的分布是輪廓各段本來的前後差（例如頭頂對下巴），不在整平範圍。
 21. ~~flux-id `/api/photo-to-3d`~~ 2026-10-22 實作（branch `feat/photo-to-3d`）。依指示沒有開 docker、沒有跑測試，只做靜態檢查（ruff、py_compile、逐行對照）。仍待確認：DA3 的輸入欄位名稱（`processing_resolution`、`alpha_blend_onto`、`to_base64`）與輸出的檔案結構要對 Replicate 的 schema；`tests_photo_to_3d.py` 要用本機 MySQL 跑一次。
 
 **P2-11**
@@ -451,7 +452,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
   - P2-2 旋轉驗算（`groupTransform.spec`）：對含 flip、非等比 scale、多軸旋轉、接近萬向鎖的物件，比較變換後網格八個角的世界座標與直接套用 delta 矩陣的結果（相對容差 1e-6）；涵蓋面板的旋轉、縮放、翻轉、組合，gizmo 拖曳的位移、旋轉、縮放，六次 60° 轉回原位，以及 undo 一步還原。
   - P2-5：`presets.spec.ts`（只有 PLA 開每行停留）、`layer-config-helper.spec.ts`（PLA 之後套其他預設參數會關閉）、`AdvancedSettingModal.spec.tsx`（只有 UV 顯示）、`TableSetting.spec.ts`（UV 材質測試有兩欄）。
   - P2-3（已寫）：
-    - `photoTo3d/algorithm.spec`：BSDM 讀寫、API 回應解碼、dither（亮處打點、去背處不打、比照片細的點格）、百分位、取樣器、近處抬高、透明處無效、收邊、上限。
+    - `photoTo3d/algorithm.spec`：BSDM 讀寫、API 回應解碼、dither（亮處打點、去背處不打、比照片細的點格）、百分位、取樣器、近處抬高、透明處無效、邊緣整平（背景條移除、落後的輪廓抬平並往內漸弱）、收邊、上限。
     - `photoTo3d/index.spec`：
       - 轉換：扣點參數、浮雕厚度與 Z 位置、world → local、屬性、一個 undo 步驟。
       - 去背：照片換成去背圖。
