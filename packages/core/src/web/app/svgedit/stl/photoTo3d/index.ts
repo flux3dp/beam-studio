@@ -12,6 +12,7 @@ import { processImageWithAiJson } from '@core/helpers/api/ai-image-process';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
 import { isUvDev } from '@core/helpers/is-dev';
+import { attributeMap } from '@core/helpers/layer/layer-config-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { PHOTO_3D_ATTR, PHOTO_TO_3D_ATTR } from '../constants';
@@ -24,7 +25,7 @@ import { encodePointCloud } from '../pointCloud';
 import { DEPTH_SOURCE_FORMAT_VERSION, depthSourceFromApi, encodeDepthSource } from './depthSource';
 import type { PhotoTo3dParams, PhotoTo3dSize } from './generate';
 import { MAX_PHOTO_TO_3D_CELLS, PhotoTo3dError } from './generate';
-import { runPhotoTo3d } from './runPhotoTo3d';
+import { PhotoTo3dCancelledError, runPhotoTo3d } from './runPhotoTo3d';
 
 /** AI credits for one conversion; recomputing with other parameters is free. */
 export const PHOTO_TO_3D_COST = 0.06;
@@ -380,17 +381,76 @@ export const updatePhotoTo3d = async (
   return true;
 };
 
+const findStale = (): SVGImageElement[] =>
+  Array.from(document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_TO_3D_ATTR.marker}]`)).filter(
+    isPhotoTo3dStale,
+  );
+
 /** Bring every stale photo-to-3D point cloud up to date, before a job is sent. */
 export const refreshStalePhotoTo3d = async (): Promise<void> => {
-  const stale = Array.from(
-    document.querySelectorAll<SVGImageElement>(`#svgcontent image[${PHOTO_TO_3D_ATTR.marker}]`),
-  ).filter(isPhotoTo3dStale);
-
-  for (const elem of stale) {
+  for (const elem of findStale()) {
     try {
       await updatePhotoTo3d(elem, {}, 'none');
     } catch (error) {
       console.error(`Failed to update the point cloud of ${elem.id}`, error);
     }
   }
+};
+
+/** A resize or a spacing change settles before the point cloud follows it. */
+export const STALE_DELAY_MS = 500;
+
+/**
+ * Keep the point clouds current while the 3D canvas is mounted: once a layer's point spacing or an
+ * object's size has settled, every stale cloud is recomputed and folded into the step that made it
+ * stale. The spacing is edited on the layer tab, where no object panel is mounted, so a component of
+ * the selected object could not do this. An object whose cloud is still being computed waits for it.
+ * @returns a function that stops watching
+ */
+export const watchStalePhotoTo3d = (): (() => void) => {
+  let timer: null | ReturnType<typeof setTimeout> = null;
+
+  const refresh = () => {
+    timer = null;
+
+    const { ids: busy } = usePhotoTo3dBusy.getState();
+
+    findStale()
+      .filter((elem) => !busy.includes(elem.id))
+      .forEach(async (elem) => {
+        try {
+          await updatePhotoTo3d(elem, {}, 'append');
+        } catch (error) {
+          if (!(error instanceof PhotoTo3dCancelledError)) alertPhotoTo3dError(error);
+        }
+      });
+  };
+  const schedule = () => {
+    if (timer) clearTimeout(timer);
+
+    timer = setTimeout(refresh, STALE_DELAY_MS);
+  };
+  const observer = new MutationObserver(schedule);
+
+  observer.observe(document.getElementById('svgcontent') ?? document.body, {
+    attributeFilter: [attributeMap.stlPointSpacing],
+    attributes: true,
+    subtree: true,
+  });
+
+  const unsubscribeObjects = useStlStore.subscribe((state, previous) => {
+    if (state.objects !== previous.objects) schedule();
+  });
+  // a cloud that was busy when its turn came is looked at again once the computation is over
+  const unsubscribeBusy = usePhotoTo3dBusy.subscribe((state, previous) => {
+    if (state.ids.length < previous.ids.length) schedule();
+  });
+
+  return () => {
+    observer.disconnect();
+    unsubscribeObjects();
+    unsubscribeBusy();
+
+    if (timer) clearTimeout(timer);
+  };
 };

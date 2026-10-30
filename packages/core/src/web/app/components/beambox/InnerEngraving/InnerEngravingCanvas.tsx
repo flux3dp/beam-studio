@@ -15,6 +15,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import selectionManager from '@core/app/svgedit/selection';
+import { watchStalePhotoTo3d } from '@core/app/svgedit/stl/photoTo3d';
 import workareaManager from '@core/app/svgedit/workarea';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 
@@ -221,6 +222,9 @@ const Scene = () => {
       window.removeEventListener('blur', clear);
     };
   }, []);
+
+  // a photo's point cloud follows its layer's point spacing and its size while the canvas is up
+  useEffect(() => watchStalePhotoTo3d(), []);
 
   // A document can enter 3D mode while a 2D multi-selection is still gathered in its temporary
   // group. Take the group apart on mount and select its objects as a flat list, which is how 3D

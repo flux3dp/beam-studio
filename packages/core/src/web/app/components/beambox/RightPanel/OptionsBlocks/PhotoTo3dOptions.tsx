@@ -3,14 +3,11 @@ import React, { useEffect, useState } from 'react';
 import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { InputNumber, Tooltip } from 'antd';
 
-import { useLayerStore } from '@core/app/stores/layer/layerStore';
-import { useStlStore } from '@core/app/stores/stlStore';
 import type { PhotoTo3dSettings } from '@core/app/svgedit/stl/photoTo3d';
 import {
   alertPhotoTo3dError,
   EDGE_ROUND_LIMIT,
   getPhotoTo3dSettings,
-  isPhotoTo3dStale,
   SHARPEN_AMOUNT_LIMIT,
   SHARPEN_RADIUS_LIMIT,
   updatePhotoTo3d,
@@ -24,8 +21,6 @@ import styles from './ThreeDOptions.module.scss';
 
 /** Only a computation that outlasts this shows as updating, so quick ones do not flicker. */
 const BUSY_DELAY_MS = 300;
-/** A resize settles before the point cloud follows it. */
-const STALE_DELAY_MS = 500;
 
 interface Props {
   elem: SVGImageElement;
@@ -43,18 +38,14 @@ const run = async (task: Promise<unknown>) => {
  * The parameters of a photo turned into 3D that change its point cloud: sharpening, and under uvDev
  * the edge roll-off. Each change recomputes the point cloud from the saved depth (never the API) in one
  * undo step; the depth itself is the object's Z size, in the dimension panel. A resize or a new layer
- * point spacing makes the dot grid stale: it is recomputed here when that settles, folded into the
- * step that caused it, and in any case before a job is sent.
+ * point spacing is followed by the canvas (`watchStalePhotoTo3d`), not here: the spacing is edited on
+ * the layer tab, where this panel is not mounted.
  */
 const PhotoTo3dOptions = ({ elem }: Props): React.JSX.Element => {
   const { inner_engraving_settings: t } = useI18n();
   const isBusy = usePhotoTo3dBusy((state) => state.ids.includes(elem.id));
-  const transform = useStlStore((state) => state.objects[elem.id]?.transform);
   const [showBusy, setShowBusy] = useState(false);
   const [settings, setSettings] = useState<PhotoTo3dSettings>(() => getPhotoTo3dSettings(elem));
-
-  // the layer's point spacing lives on the layer
-  useLayerStore();
 
   useEffect(() => setSettings(getPhotoTo3dSettings(elem)), [elem, isBusy]);
 
@@ -69,16 +60,6 @@ const PhotoTo3dOptions = ({ elem }: Props): React.JSX.Element => {
 
     return () => clearTimeout(timer);
   }, [isBusy]);
-
-  const stale = isPhotoTo3dStale(elem);
-
-  useEffect(() => {
-    if (!stale || isBusy) return undefined;
-
-    const timer = setTimeout(() => run(updatePhotoTo3d(elem, {}, 'append')), STALE_DELAY_MS);
-
-    return () => clearTimeout(timer);
-  }, [elem, isBusy, stale, transform]);
 
   const commit = (key: keyof PhotoTo3dSettings, value: null | number) => {
     if (value === null || value === settings[key]) return;

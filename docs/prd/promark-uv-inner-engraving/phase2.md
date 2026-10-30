@@ -109,7 +109,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 收邊只在 uvDev 下顯示。
   - 存檔重開後仍能調整參數，不需重新呼叫後端。
   - 送出工作時點雲一起送出，Swiftray 略過過近的點（§6.2.5）。
-  - 改了圖層點間距或物件的 X / Y 尺寸後，點雲以新的點格重算：物件面板開著時約 0.5 秒後重算（併入造成它的那一步 undo），送出工作前一定重算（§6.2.7）。改 Z 尺寸只縮放浮雕，不重算。
+  - 改了圖層點間距或物件的 X / Y 尺寸後，點雲以新的點格重算：3D 畫布掛載期間監聽圖層的點間距屬性與物件尺寸，變動停下約 0.5 秒後重算（併入造成它的那一步 undo），不限物件面板是否開著；送出工作前仍一定重算（§6.2.7）。改 Z 尺寸只縮放浮雕，不重算。
 - 邊界：
   - 未登入：先要求登入。點數不足：顯示點數不足並提供購買連結。
   - 後端失敗、逾時：提示錯誤，不扣點、照片維持原狀。
@@ -298,7 +298,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - `depthField.ts`：1–99% 百分位、Catmull-Rom 取樣（遮罩邊退回雙線性）、只清輪廓的邊緣處理與收邊、補點投影（不補牆）。距離都以物件的世界尺寸（mm）計，坡度門檻與尺寸無關。
   - `generate.ts`：串起上面三步，上限 300 萬點、1200 萬格（`MAX_PHOTO_TO_3D_POINTS`、`MAX_PHOTO_TO_3D_CELLS`）。
   - `photoTo3d.worker.ts` + `runPhotoTo3d.ts`：在 Web Worker 計算；同一個物件再開一個計算時，終止舊的 worker（只算最後一次）。
-  - `index.ts`：`convertPhotoTo3d`、`updatePhotoTo3d`、`isPhotoTo3dStale`、`refreshStalePhotoTo3d`、`usePhotoTo3dBusy`。
+  - `index.ts`：`convertPhotoTo3d`、`updatePhotoTo3d`、`isPhotoTo3dStale`、`refreshStalePhotoTo3d`、`watchStalePhotoTo3d`、`usePhotoTo3dBusy`。
 - 轉換（`convertPhotoTo3d`）：
   - 可能失敗的步驟（深度、去背圖、點雲）都先算完，最後才改照片，所以失敗時照片原封不動。
   - 一個 undo 步驟包含：去背圖、`data-stl-depth*` 屬性、`applyPhotoPointCloud`（`kind: 'point-cloud'`、`depthSource`、新的 transform）。
@@ -307,7 +307,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 付費取得、但還沒變成點雲的深度（例如點數過多）留在記憶體，以元素 id + 原圖為鍵，同一次開啟期間再按「轉 3D」不會重新呼叫 API。
 - 重算（`updatePhotoTo3d`）：從 `depthSource` 重跑 worker，不呼叫 API。
   - 物件面板（`PhotoTo3dOptions`）改參數：獨立一個 undo 步驟。
-  - 點格過期（`data-stl-depth-grid` 和目前的「世界寬 / 點間距, 世界高 / 點間距」不同）：面板開著時 0.5 秒後重算，`appendCommandToLast` 併進造成它的那一步；`getPointCloudObjects` 送出前一定重算，不記 history。點雲只由屬性、尺寸、圖層決定，undo 之後再送出會再算一次，結果一致。
+  - 點格過期（`data-stl-depth-grid` 和目前的「世界寬 / 點間距, 世界高 / 點間距」不同）：`InnerEngravingCanvas` 掛載時啟動 `watchStalePhotoTo3d`，用 MutationObserver 監聽 `#svgcontent` 底下的 `data-stl-point-spacing`（含 preset、undo、開檔），並訂閱 `stlStore` 的物件變動；停下 0.5 秒後把每個過期的點雲重算，`appendCommandToLast` 併進造成它的那一步，計算中的物件等它算完再看。`getPointCloudObjects` 送出前一定重算，不記 history。點雲只由屬性、尺寸、圖層決定，undo 之後再送出會再算一次，結果一致。~~原本由 `PhotoTo3dOptions` 在面板開著時做~~ 2026-10-30 改到畫布（§10 #17）。
 - 量測（純 Node，test 6 去背版 1036×1372，世界寬 60mm、點間距 0.03mm、銳化 1 / 4）：
   - 結果 198 萬點（dither 點 145 萬）。
   - 耗時：dither 0.7s、銳化 0.5s、邊緣處理 0.4s、投影 0.6s，合計約 2.5s。
@@ -411,6 +411,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 11. 點數上限與過近點門檻：**暫定（2026-10-22，依建議值實作，待確認）**：上限 300 萬點、1200 萬格（實測 60mm、0.03mm 約 200 萬點）；Swiftray 丟掉距離小於點間距 0.5 倍的點（3D 距離，跨 Z 桶）。上限是否合適要看上機的顯示與工時。
 12. ~~可調參數放物件還是圖層？~~ 2026-10-19：點間距沿用圖層，深度（Z 軸厚度）與銳化放物件。
 13. ~~確認視窗要不要提供選項？~~ 2026-10-19：提供「是否去背」與「銳化強度、半徑」，其他參數固定。是否加上去背結果預覽仍待定（2026-10-22 未做）。
+17. ~~改圖層點間距後點雲何時重算？~~ 2026-10-30：維持前端重算。原本只在 `PhotoTo3dOptions` 面板開著時做，但點間距是在圖層分頁改的，面板沒掛載，點雲要等送出算圖回來才變（EstherFu 2026-10-29 實測）。曾考慮改成顯示不變、或固定以最細間距算一份由 Swiftray 疏化，後者點數撞上限且距離過濾會壓縮 dither 的明暗對比，不採用。改為 3D 畫布掛載期間監聽圖層點間距與物件尺寸（`watchStalePhotoTo3d`）。
 
 **P2-4 填充水平面**
 14. 「端面」的定義：**暫定（2026-10-22，依建議值實作，待確認）**：以法向量判斷，傾斜不超過 1° 的朝上或朝下面都算，所以階梯形物件中間的水平面也算；兩個 shell 貼合處不算（§6.3）。2026-10-29：定義不變，功能改名為「填充水平面」（en `Fill Horizontal Faces`，23 種語言同步），提示補上階梯形物件中間平面的說明，避免「上下端面」被理解成只有最頂與最底兩面；參數名 `stlFillCaps` / `data-stl-fill-caps` 不變。
@@ -456,7 +457,8 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
       - 失敗：照片不變，重試不再扣點。
       - 過期判斷；重算的三種 history 模式；送出前重算。
     - `PhotoTo3dModal.spec`：選項、去背預設、重試、點數不足、登入、點格上限。
-    - `PhotoTo3dOptions.spec`：顯示、提交、更新中延遲、過期重算。
+    - `PhotoTo3dOptions.spec`：顯示、提交、更新中延遲。
+    - `photoTo3d/index.spec`「while the canvas watches」：點間距屬性變動後 0.5 秒重算並併入前一步、其他屬性不觸發、停止監聽後不觸發；尺寸變動也重算、計算中的物件等算完再重算。
     - `ActionsPanelStl.spec`、`ThreeDOptions.spec`、`ai-image-process.spec`（JSON 版本）、`beam-file-helper.spec`（block 8）。
   - P2-4（已寫）：`getInnerEngravingBlocks.spec`（顯示規則）、`FillCapsBlock.spec`（寫入、不改預設參數名稱）。
 - **Swiftray**（`tests/test_stl_utils.h`，已寫）：
