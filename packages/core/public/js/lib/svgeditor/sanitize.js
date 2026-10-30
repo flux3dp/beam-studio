@@ -312,6 +312,7 @@
       'data-pass',
       'data-zstep',
       'data-stl-depth',
+      'data-stl-depth-grid',
       'data-stl-depth-radius',
       'data-stl-depth-round',
       'data-stl-depth-sharpen',

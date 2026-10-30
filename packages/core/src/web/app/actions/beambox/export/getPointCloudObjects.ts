@@ -1,14 +1,17 @@
 import { useStlStore } from '@core/app/stores/stlStore';
 import { POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
+import { refreshStalePhotoTo3d } from '@core/app/svgedit/stl/photoTo3d';
 
 import { toBase64 } from './getStlObjects';
 
 /**
  * Build the BSPC payload for photos turned into point clouds.
  * Plain photos remain SVG image projections and are sampled by Swiftray. A photo-to-3D point cloud
- * ships as it is shown, whatever its layer's point spacing is now.
+ * whose layer spacing or size changed since it was computed is recomputed first.
  */
 const getPointCloudObjects = async (): Promise<Record<string, string> | undefined> => {
+  await refreshStalePhotoTo3d();
+
   const { objects } = useStlStore.getState();
   const projections = Array.from(document.querySelectorAll(`#svgcontent [${POINT_CLOUD_ATTR.marker}]`));
 
