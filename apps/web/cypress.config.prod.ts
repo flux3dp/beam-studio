@@ -2,6 +2,11 @@ import { defineConfig } from 'cypress'
 
 export default defineConfig({
   projectId: 'fc84dg',
+  reporter: 'junit',
+  reporterOptions: {
+    mochaFile: 'cypress/results/junit-[hash].xml',
+    toConsole: true,
+  },
   env: {
     cypressDownloadPath: './cypress/downloads/download.json',
     cypressDownloadBeamPath: './cypress/downloads/untitled.beam',
