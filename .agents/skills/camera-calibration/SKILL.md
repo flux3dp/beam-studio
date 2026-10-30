@@ -35,8 +35,11 @@ Common to all: `d` (distortion), `k` (intrinsics matrix), `rvec`/`tvec` (extrins
 fluxghost to the bed-plane object points before `project_points` (+X/+Y moves the preview left/up).
 V4 adds `region_offsets: Record<WideAngleRegion, [x, y]>`, picked by the region of the *unshifted*
 point, falling back to `offset`. Storage rule (D7 in the PRD): `offset` = region preview,
-`region_offsets` = wide-angle/full-area preview, nine equal values = "single" mode. fluxghost 2.5.6
-drops both keys silently, so saving against an old backend is harmless.
+`region_offsets` = wide-angle/full-area preview, nine equal values = "single" mode. The table also carries
+`blend?: boolean` (absent = true, D8): fluxghost ramps the offsets across a band one third of a region wide
+at each border instead of stepping, exact over the middle two thirds of each region — so iterate the table
+with `REGIONS`, never `Object.values`. fluxghost 2.5.6 drops both keys silently, so saving against an old
+backend is harmless; 2.5.7 before fluxghost #125 ignores `blend` and steps.
 
 ## Storage
 
@@ -150,7 +153,7 @@ Camera tab per model: legacy → `LegacyCameraBlock` (X, Y, R in degrees, SX, SY
 open-lid rows; any value saves, no range guard); fisheye → `FisheyeOffsetBlock` per params file via
 `createParamsSource` (`offsetParams.ts`: load once, merge patches, write the whole file). fbm2 /
 fhx2rf / fbb2 show two blocks — "局部預覽偏移" (`offset`) and "廣角預覽偏移" (`region_offsets`, single
-or per-region `RegionOffsetGrid`); fbb2 probes `getWideAngleCameraData` first, fbm2 and fhx2rf always
+or per-region `RegionOffsetGrid` with the "Blend between regions" switch above it); fbb2 probes `getWideAngleCameraData` first, fbm2 and fhx2rf always
 show it. A single block is titled "預覽偏移" (ado1, Promark via `promarkDataStore`). UI caps the offset
 at ±5 mm. The Print and Cut toggle on the region block disables the inputs, shows stored + pnc, and
 on Save writes that sum and clears pnc.
