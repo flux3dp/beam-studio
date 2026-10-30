@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Status** | 已於 2.7.3 實作 — beam-studio #1037、fluxghost #123（2.5.7）。D1–D7 定案。待辦：fbb2／fpm1 實機、精準對位匯入實測（§12 第 3、5、6 項）。**區域間漸變（D8）開發中，隨 #1037 出貨** |
+| **Status** | 已於 2.7.3 實作 — beam-studio #1037、fluxghost #123（2.5.7）。D1–D7 定案。D8 漸變已在 fluxghost #125（tag 2.5.7 於 2026-10-30 移動）。待辦：fbb2／fpm1 實機、漸變實測（§12 第 3、5、9 項） |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-28 |
 | **Target product** | Beam Studio（桌面版 + 網頁版）、fluxghost 2.5.7 |
@@ -310,7 +310,7 @@ topLeft／top 邊界上的點平移 0.5 mm 的投影量、topLeft 中心的點�
 3. **同一 PR 合併前的補充** — 21 種語言、§12 記錄實機正負號確認、翻 Status 列。
 
 4. **fluxghost 漸變** — `perspective.py` 的帶狀取樣、mixin 的 `region_offsets.blend`、文件、smoke 案例。**不升版**（2026-10-30 決定）：
-   合併後把 tag `2.5.7` 移到新的 main，beam-studio CD 不用改 workflow 就會帶到。
+   合併後把 tag `2.5.7` 移到新的 main，beam-studio CD 不用改 workflow 就會帶到。2026-10-30 已完成（`e01193b`）。
 5. **beam-studio，併入 PR A（#1037）合併前** — 型別、`FisheyeOffsetBlock` 的開關 + tooltip、兩個 i18n key 共 23 種語言、§12 第 9 項。
 
 出貨順序：fluxghost tag → beam-studio CD 升版 → fluxghost 漸變 → 重打 2.5.7 → PR A（含漸變）。
@@ -363,7 +363,7 @@ fluxghost：`ws_smoke.py` 案例；一個單元測試驗證 `offset = (1, 0)` �
 3. fbb2 廣角分區。fhx2rf 全區 2026-10-29 通過（同一條 `Bb2Hx2PreviewManager` → V4 路徑與 `wide-angle.json`；bb2 只差在相機是選配的偵測）。2026-10-29 手邊沒有 bb2，留待下一台經手時補測。__
 4. ado1 單一偏移。2026-10-29 通過（V2 路徑）。__
 5. fpm1 單一偏移。2026-10-29 手邊沒有 Promark；同一個 mixin 經 camera-transform，保留待測。__
-6. fbm2 精準對位匯入：游標尺 → 匯入 → 重跑精準對位對齊，切割落在列印上（決定 D5）。__
+6. fbm2 精準對位匯入：游標尺 → 匯入 → 重跑精準對位對齊，切割落在列印上（決定 D5）。2026-10-30 通過。__
 7. beamo：切割落在預覽物件下方 1 mm → `Y` 減 1 → 對齊。2026-10-29 確認：+X／+Y 讓預覽右移／下移，與魚眼偏移相反，如 §5 推導（X／Y 是相機位置，不是修正量）。__
 8. 舊 fluxghost（2.5.6）：可儲存、預覽無變化、無錯誤。2026-10-29 以程式碼確認，不做實機：2.5.6 的 `set_fisheye_matrix` 只用已知欄位重建參數 dict，`offset`／`region_offsets` 會被靜默丟棄（V2／V3／V4 與 Promark 走同一個 mixin）；檔案上傳本來就不經過 fluxghost。
 9. fbm2 全區漸變（D8）：topLeft = +2、其餘 0、開關開啟 → 測試板 topLeft 十字移動 2 mm，top 與 left 十字不動，

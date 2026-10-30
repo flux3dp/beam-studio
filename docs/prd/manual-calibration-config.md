@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.3 — beam-studio #1037, fluxghost #123 (2.5.7). D1–D7 settled. Pending: hardware on fbb2 / fpm1 and the Print and Cut import run (§12 items 3, 5, 6). **Blend between regions (D8) in development, ships in #1037** |
+| **Status** | Implemented in 2.7.3 — beam-studio #1037, fluxghost #123 (2.5.7). D1–D7 settled. D8 blend in fluxghost #125 (tag 2.5.7 moved 2026-10-30). Pending: hardware on fbb2 / fpm1 and the blend check (§12 items 3, 5, 9) |
 | **Author** | Product + Beam Studio team |
 | **Created** | 2026-10-28 |
 | **Target product** | Beam Studio (desktop + web), fluxghost 2.5.7 |
@@ -405,7 +405,7 @@ New namespace `manual_config` in `en.ts` / `zh-tw.ts`: `title`, `tab_camera`, `t
 
 4. **fluxghost blend** — band sampling in `perspective.py`, `region_offsets.blend` in
    the mixin, docs, smoke case. **No version bump** (decided 2026-10-30): after merge, move tag `2.5.7`
-   to the new main head so beam-studio CD picks it up without a workflow change.
+   to the new main head so beam-studio CD picks it up without a workflow change. Done 2026-10-30 (`e01193b`).
 5. **beam-studio, in PR A (#1037) before merge** — type, switch + tooltip in `FisheyeOffsetBlock`, two i18n keys in 23 languages,
    §12 item 9.
 
@@ -428,7 +428,7 @@ Ship order: fluxghost tag → bump in beam-studio CD → fluxghost blend → re-
    each `start` refetches params.
 5. ~~D5 Import semantics~~ — **add** to the current offset, decided 2026-10-28: saving an offset clears
    pnc.json, so a stored pnc can only have been measured through a preview already carrying the current
-   offset; it is the residual on top of it. With a zero offset add and replace coincide. §12 case 6 confirms.
+   offset; it is the residual on top of it. With a zero offset add and replace coincide. §12 case 6 confirmed 2026-10-30.
    (2026-10-29: a plain manual save no longer clears pnc; the add rule still holds because the toggle's own
    save does.)
 6. ~~D6 Legacy `R`/`SX`/`SY`~~ — **not shown**, decided 2026-10-28: only `X`, `Y` are exposed. Rotation and
@@ -492,7 +492,8 @@ Hardware (record results here):
    the next unit that passes through. __
 4. ado1 single offset. Passed 2026-10-29 (V2 path). __
 5. fpm1 single offset. No Promark at hand 2026-10-29; same mixin over camera-transform, left open. __
-6. Print and Cut import on fbm2: vernier → import → re-run PnC alignment, cut lands on the print (settles D5). __
+6. Print and Cut import on fbm2: vernier → import → re-run PnC alignment, cut lands on the print (settles D5).
+   Passed 2026-10-30. __
 7. beamo: cut lands 1 mm below the previewed object → decrease `Y` by 1 → aligned. Confirmed 2026-10-29: +X / +Y
    move the preview right / down, the opposite of the fisheye offset, as §5 derives (X / Y are the camera
    position, not a correction). __
