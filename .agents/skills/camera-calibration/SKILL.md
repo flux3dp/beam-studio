@@ -31,6 +31,13 @@ required fields and a `v` tag, which is what gets saved.
 `WideAngleRegion` = `top|bottom|left|right|center|topLeft|topRight|bottomLeft|bottomRight`.
 Common to all: `d` (distortion), `k` (intrinsics matrix), `rvec`/`tvec` (extrinsics), `is_fisheye`.
 
+**Manual offset** (all versions, fluxghost ≥ 2.5.7): optional `offset: [x, y]` in mm, applied by
+fluxghost to the bed-plane object points before `project_points` (+X/+Y moves the preview left/up).
+V4 adds `region_offsets: Record<WideAngleRegion, [x, y]>`, picked by the region of the *unshifted*
+point, falling back to `offset`. Storage rule (D7 in the PRD): `offset` = region preview,
+`region_offsets` = wide-angle/full-area preview, nine equal values = "single" mode. fluxghost 2.5.6
+drops both keys silently, so saving against an old backend is harmless.
+
 ## Storage
 
 `loadJson`/`uploadJson` (`helpers/device/jsonDataHelper.ts`) read/write the device `fisheye` dir:
@@ -41,7 +48,16 @@ Common to all: `d` (distortion), `k` (intrinsics matrix), `rvec`/`tvec` (extrins
   The type is `PromarkCameraParameters` (`interfaces/Promark.d.ts`) = V3 + optional `rotate180`, see below.
 
 `cameraCalibrationApi.updateData(data)` uploads params to the calibration backend (image remap);
-`setFisheyeConfig(param)` (`camera-calibration-helper`) writes the final `fisheye_params.json`.
+`setFisheyeConfig(param, { clearPnc })` (`camera-calibration-helper`) writes the final `fisheye_params.json`.
+`setFisheyeConfig` and `sendPictureThenSetConfig` (legacy `camera_offset`) clear the Print and Cut offset
+(`camera_calib/pnc.json`) by default because a recalibration invalidates it; Manual Configuration passes
+`{ clearPnc: false }` and clears it itself only when the user applies the Print and Cut toggle.
+
+**Legacy `camera_offset`** (beamo / Beambox / HEXA, `BeamPreviewManager`): device setting string
+`X Y R F SX SY` (`camera_offset`, `camera_offset_borderless` for open-lid). Firmware defaults to
+`X0 Y0 R0 F1 S1 SX1 SY1` when no file exists and merges partial sets; `BeamPreviewManager` treats
+`0,0` as "uncalibrated" and falls back to ideal `20/30/1.625`. X/Y are the camera position, so +X/+Y
+move the preview right/down — the opposite sign of the fisheye `offset`.
 
 ## Entry point & modes
 
@@ -123,6 +139,22 @@ never change without recalibrating.
 - `PromarkPreviewManager.preview` rotates by `isCameraRotated(fisheyeParams)`. `check-camera.ts` passes
   `false` (only the picture size matters).
 
+## Manual Configuration (`ManualConfiguration/`)
+
+"手動輸入" at the bottom of the Calibration menu (`menuDeviceActions.tsx` → `showManualConfiguration`):
+edit stored values directly, no engraving. Tabs: Camera, Modules (bm2/ado1/fuv1 module offsets), Print
+and Cut (view/edit/clear the pnc offset). Zustand `store.ts` holds the per-tab saver (one footer Save)
+and the shared pnc value, so a Print and Cut save updates the Camera tab's toggle immediately.
+
+Camera tab per model: legacy → `LegacyCameraBlock` (X, Y, R in degrees, SX, SY, F flip; normal +
+open-lid rows; any value saves, no range guard); fisheye → `FisheyeOffsetBlock` per params file via
+`createParamsSource` (`offsetParams.ts`: load once, merge patches, write the whole file). fbm2 /
+fhx2rf / fbb2 show two blocks — "局部預覽偏移" (`offset`) and "廣角預覽偏移" (`region_offsets`, single
+or per-region `RegionOffsetGrid`); fbb2 probes `getWideAngleCameraData` first, fbm2 and fhx2rf always
+show it. A single block is titled "預覽偏移" (ado1, Promark via `promarkDataStore`). UI caps the offset
+at ±5 mm. The Print and Cut toggle on the region block disables the inputs, shows stored + pnc, and
+on Save writes that sum and clears pnc.
+
 ## Shared step components (`common/`)
 
 - **`ChArUco`** — capture ChArUco board at N positions → `updateParam({ d, k, rvec, tvec, ret, is_fisheye })`.
@@ -143,10 +175,12 @@ never change without recalibrating.
 - `common/checkpointData.ts` — `getCheckpointData`, `applyCheckpointData`
 - `AdorCalibration/{index,AdorCalibration,CalibrateChessBoard,utils}.tsx` (`utils.ts`: `calibrateWithDevicePictures`, `calibrateFromDevicePictures`, `saveCheckPoint`, `getMaterialHeight`)
 - `beamo2Calibration/{index,Beamo2Calibration}.tsx`, `WideAngleCamera/index.tsx`, `PromarkCalibration.tsx`
+- `ManualConfiguration/{ManualConfiguration,CameraTab,FisheyeOffsetBlock,RegionOffsetGrid,LegacyCameraBlock,ModulesTab,PrintAndCutTab}.tsx`, `store.ts`, `offsetParams.ts` — PRD `docs/prd/manual-calibration-config.md`
 - `interfaces/FisheyePreview.d.ts`, `helpers/api/camera-calibration.ts`, `helpers/device/jsonDataHelper.ts`, `helpers/device/promark/promark-data-store.ts`, `helpers/device/promark/camera-rotation.ts`, `helpers/webcam-helper.ts`
 
 ## Maintenance
 
 Update this doc when the Promark rotation rule changes, or when: a parameter version changes (new `Vn`), the storage files/keys change, the
 data-fetch-before-dialog pattern or the `getCheckpointData`/`applyCheckpointData`/`calibrateFromDevicePictures`
-helpers change, or a machine family's step flow/modes change.
+helpers change, a machine family's step flow/modes change, or the manual `offset` / `region_offsets`
+contract (storage rule, sign, fluxghost fallback) or the `clearPnc` rule changes.
