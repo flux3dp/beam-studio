@@ -21,6 +21,7 @@ import cloud from '@core/helpers/api/cloud';
 import { discoverManager } from '@core/helpers/api/discover';
 import fluxId, { recordMachines } from '@core/helpers/api/flux-id';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
+import { registerPromarkButtonHandler } from '@core/helpers/device/promark/promark-button-handler';
 import registerPromarkInfoListener from '@core/helpers/device/promark/registerPromarkInfoListener';
 import { initializeAllFonts } from '@core/helpers/fonts/fontInitialization';
 import i18n from '@core/helpers/i18n';
@@ -68,6 +69,7 @@ class BeamboxInit {
     boundaryDrawer.registerEvents();
     registerImageSymbolEvents();
     registerPromarkInfoListener();
+    registerPromarkButtonHandler();
     registerConnectionIssueGuide();
     registerMaintenanceUsageTracker();
     initCurText();

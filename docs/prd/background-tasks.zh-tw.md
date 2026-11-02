@@ -9,7 +9,7 @@
 | **建立日期** | 2026-10-30 |
 | **目標產品** | Beam Studio 桌面版（Electron）與網頁版。所有機型。 |
 | **負責領域** | 機器通訊 |
-| **相關程式碼** | 管理器（新增）：`packages/core/src/web/helpers/device/background/`；第一個成員：`helpers/device/promark/promark-button-handler.ts`；前景守門：`helpers/check-device-status.ts`；Modal 查詢：`app/contexts/DialogContext.tsx`、`app/contexts/AlertProgressContext.tsx`、`app/actions/dialog-caller.tsx`；情境來源：`app/components/beambox/TopBar/contexts/TopBarController.tsx`、`app/contexts/CanvasContext.tsx`、`app/stores/canvas/canvasStore.ts`、`app/stores/documentStore.ts`、`app/actions/tabController.ts`（僅讀取）；機器：`helpers/device-master.ts` |
+| **相關程式碼** | 管理器（新增）：`packages/core/src/web/helpers/device/background/`；第一個成員：`helpers/device/promark/promark-button-handler.ts`；前景守門：`helpers/check-device-status.ts`；Modal 查詢：`app/contexts/DialogContext.tsx`、`app/contexts/AlertProgressContext.tsx`、`app/actions/dialog-caller.tsx`；情境來源：`app/components/beambox/TopBar/contexts/TopBarController.tsx`、`app/contexts/CanvasContext.tsx`、`app/stores/canvas/canvasStore.ts`、`app/stores/documentStore.ts`、`app/actions/tabController.ts`（僅讀取）；啟動註冊：`app/actions/beambox/beambox-init.ts`；機器：`helpers/device-master.ts` |
 | **配套 PRD** | `docs/prd/auto-full-area-preview.md`（第二個成員） |
 
 ---
@@ -122,6 +122,8 @@
   - `exportTask.ts:131` `setStatus('uploading')`：效果相同。
   - `MonitorContext.tsx:1002,1017` `setStatus('listening')`：效果相同。
   - B1/B2 的實體按鈕行為：完全相同，包括先框選的計數與 200 ms 間隔。
+- `app/actions/beambox/beambox-init.ts`（constructor 呼叫 `registerPromarkButtonHandler()`）
+  - 其他啟動註冊：不變，順序相同。
 - `app/components/beambox/TopBar/GoButton.tsx`（effect 改呼叫 `backgroundTasks.setDevice(selectedDevice)`，取代 `promarkButtonHandler.onContextChanged(mode, selectedDevice)`；模式改由 store 取得）
   - 點開始、F2 快捷鍵、`setExportFn`：不變。
   - `GoButton.spec.tsx`：mock 管理器，預期呼叫 `setDevice(selectedDevice)`。
@@ -168,6 +170,8 @@ interface BackgroundTask {
 ```
 
 永遠不會忙碌的任務（Promark）讓 `isBusy` 回傳 `false`，`abort` 什麼都不做。
+
+**註冊**：每個任務模組匯出 `register<Task>()`，建立任務自己的 store 訂閱並呼叫 `backgroundTasks.register(task)`；由 `BeamboxInit` 的 constructor（`app/actions/beambox/beambox-init.ts`）和其他啟動註冊一起呼叫一次。import 任務模組沒有副作用，所以啟動清單集中在一個檔案，import 順序也不會讓任務提早啟動或消失。
 
 **優先級**集中在一張表，不放在任務上，所以整個順序在同一處審閱，新增任務時也一定得決定它的排名：
 
@@ -250,8 +254,9 @@ backgroundTasks.isCurrent(task) &&
 | `checkButton` tick | 不變，另加 `if (!backgroundTasks.isCurrent(this)) return;` |
 | `setStatus`、`handleTaskFinish`、`setExportFn` | 公開 API 不變 |
 | — | `isBusy = () => false`、`abort = async () => {}`、優先級 20 |
+| 第一次被 import 時順帶註冊 | `registerPromarkButtonHandler()`（訂閱 + `register`），由 `BeamboxInit` 呼叫一次；import 模組本身沒有副作用 |
 
-檔案留在 `helpers/device/promark/`；只改它的接線。
+檔案留在 `helpers/device/promark/`；只改它的接線。所有任務都用這個方式註冊（§7.2）。
 
 ---
 
