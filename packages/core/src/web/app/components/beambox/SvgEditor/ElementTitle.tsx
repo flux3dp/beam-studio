@@ -13,8 +13,9 @@ function ElementTitle(): React.ReactNode {
   let content = '';
 
   if (nodeType !== 'no_selection') {
-    if (nodeType === 'multi_select') {
-      content = t.tag_names.multi_select;
+    if (nodeType === 'multi_select' || nodeType === 'stl_multi') {
+      // the objects may sit on different layers, so no layer name
+      content = t.tag_names[nodeType];
     } else {
       const layer = getObjectLayer(selectedElement as SVGElement);
       const layerName = layer ? layer.title : '';

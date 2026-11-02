@@ -51,12 +51,16 @@ export class PhotoPointCloudCommand extends BaseHistoryCommand implements IComma
 
 interface ApplyPhotoPointCloudOptions {
   addToHistory?: boolean;
+  /** Photo-to-3D: the depth the point cloud was computed from, kept for recomputing it. */
+  depthSource?: ArrayBuffer;
   parentCmd?: { addSubCommand: (command: ICommand) => void };
+  /** Replaces the object's transform, in the same step (photo-to-3D gives the relief its Z scale). */
+  transform?: StlObject['transform'];
 }
 
 /**
- * Replace a photo plane's 3D representation with a point cloud generated from it (currently the
- * uvDev test generator).
+ * Replace a photo plane's 3D representation with a point cloud generated from it (photo-to-3D, or
+ * the uvDev test generator).
  *
  * The SVG image stays in place as the preserved source, although its controls are hidden once the
  * point cloud exists. Only the runtime geometry and a marker pointing to .beam block 7 change, so
@@ -65,7 +69,7 @@ interface ApplyPhotoPointCloudOptions {
 export const applyPhotoPointCloud = (
   id: string,
   pointCloudBuffer: ArrayBuffer,
-  { addToHistory = true, parentCmd }: ApplyPhotoPointCloudOptions = {},
+  { addToHistory = true, depthSource, parentCmd, transform }: ApplyPhotoPointCloudOptions = {},
 ): StlObject => {
   const elem = document.getElementById(id);
   const oldObject = useStlStore.getState().objects[id];
@@ -84,6 +88,8 @@ export const applyPhotoPointCloud = (
     geometry,
     kind: 'point-cloud',
     pointCloudBuffer,
+    ...(depthSource && { depthSource }),
+    ...(transform && { transform }),
   };
   const command = new PhotoPointCloudCommand(oldObject, newObject);
 

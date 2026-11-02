@@ -64,7 +64,7 @@ describe('manipulate file', () => {
 
   it('save file', () => {
     cy.getMenuItem(['File'], 'Save').click();
-    checkCrc32(Cypress.env('cypressDownloadBeamPath'), { default: -1821750263 });
+    checkCrc32(Cypress.env('cypressDownloadBeamPath'), { default: 687563755 });
   });
 
   it('save as file', () => {
@@ -87,7 +87,7 @@ describe('manipulate file', () => {
 
       cy.getMenuItem(['File'], 'Save As...').click();
       // "Save As" also saves to untitled.beam (same as "Save"), so use the same path
-      checkCrc32(downloadPath, { default: -1884697830 });
+      checkCrc32(downloadPath, { default: 1190607309 });
     });
   });
 

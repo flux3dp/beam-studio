@@ -5,7 +5,7 @@ import { match, P } from 'ts-pattern';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStlStore } from '@core/app/stores/stlStore';
-import { POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
+import { PHOTO_TO_3D_ATTR, POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
 import { is3dProjection, isPhotoPlaneProjection, isStlProjection } from '@core/app/svgedit/stl/getters';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
@@ -72,6 +72,13 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
 
   const contents = useMemo(() => {
     if (!elem) return [];
+
+    // a photo turned into 3D is a point cloud too, but one recomputed from its depth: its own
+    // parameters (ThreeDOptions → PhotoTo3dOptions) and not the bitmap options, which would change
+    // the image under the dots without touching them
+    if (isPhotoPlaneProjection(elem) && elem.hasAttribute(PHOTO_TO_3D_ATTR.marker)) {
+      return [<ThreeDOptions elem={elem} key="3d" />];
+    }
 
     // A point cloud is the final representation. A generated one's source bitmap remains in the
     // SVG for save/rebuild purposes, but neither generated nor directly imported point clouds have

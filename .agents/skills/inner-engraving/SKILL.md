@@ -1,6 +1,6 @@
 ---
 name: inner-engraving
-description: Inner engraving (內雕) on Promark UV — the 3D canvas mode, the dual SVG-projection + stlStore representation of 3D objects, STL/extrusion/photo import (plus the dev photo→point-cloud), 3D transforms and undo, layer-level engraving params (`data-stl-*` on the layer `<g>`), .beam blocks 6/7, and the Swiftray stlObjects/pointCloudObjects payload. Use when working on components/beambox/InnerEngraving/, svgedit/stl/, operations/import/importStl/, stores/stlStore.ts, helpers/addOn/innerEngraving.ts, the inner engraving ConfigPanel blocks or MaterialTestGeneratorPanel/InnerEngraving/, or any code path that must behave differently for `data-stl` projections.
+description: Inner engraving (內雕) on Promark UV — the 3D canvas mode, the dual SVG-projection + stlStore representation of 3D objects, STL/extrusion/photo import, photo-to-3D (AI depth → point cloud) and the dev test point cloud, 3D transforms and undo, layer-level engraving params (`data-stl-*` on the layer `<g>`), .beam blocks 6/7/8, and the Swiftray stlObjects/pointCloudObjects payload. Use when working on components/beambox/InnerEngraving/, svgedit/stl/, operations/import/importStl/, stores/stlStore.ts, helpers/addOn/innerEngraving.ts, the inner engraving ConfigPanel blocks or MaterialTestGeneratorPanel/InnerEngraving/, or any code path that must behave differently for `data-stl` projections.
 ---
 
 # Inner Engraving (3D sub-surface engraving)
@@ -65,7 +65,8 @@ All paths under `packages/core/src/web/` unless noted.
   `useDocumentStore` `'inner-engraving'` directly to decide behaviour — call
   `isInnerEngravingActive()` / `useInnerEngravingActive()` so a UV document opened on another
   machine stays 2D.
-- `checkFpm1UV()` (`helpers/checkFeature.ts`) is `!isWeb() && (enableAllMachines || isDev())`,
+- `checkFpm1UV()` (`helpers/checkFeature.ts`) is `!isWeb()` and any of `enableAllMachines`, `isDev()`,
+  `localeHelper.isTw`, `localeHelper.isPs`, or local time on/after 2027-01-01 (`FPM1_UV_RELEASE`),
   so the mode is desktop-only.
 - `enableInnerEngraving` writes the 70 mm customized dimension + flag and (unless
   `applyRuntime: false`) calls `setPromarkInfo(PROMARK_UV_INFO)`.
@@ -100,8 +101,9 @@ All paths under `packages/core/src/web/` unless noted.
 - `writeDataLayer(..., 'repeat', ...)` forces `1` when active (`helpers/layer/layer-config-helper.ts`);
   `ConfigPanel` hides `DpiBlock`, `FillIntervalBlock` and `RepeatBlock` (speed / dotting time follow
   `getInnerEngravingBlocks`, see below); `SvgEditor` hides `Ruler` and `DpiInfo`.
-- **Single selection**: `SelectionManager.setSelectedElements` / `addToSelection` /
-  `tempGroupSelectedElements` keep only the last element — no multi-select or temp groups.
+- **No temp groups**: a multi-selection stays a flat `selectedElements` list
+  (`SelectionManager.tempGroupSelectedElements` returns early), because moving projections into a
+  group would take them out of the layers each mesh reads its colour / lock / visibility from.
 - Path Preview is available (it draws the dots from the job's gcode, see the `path-preview`
   skill). The Generators drawer and left-panel button are
   hidden except under `isUvDev()` (`DrawingToolButtonGroup.tsx` `supportedIn3D`; `SvgEditor.tsx`
@@ -136,8 +138,23 @@ All paths under `packages/core/src/web/` unless noted.
   `collectStlObjects` walks into layer groups; `createClonedStlObjects` re-keys in-place copies
   (shares geometry/buffers). Clipboard: `stl/clipboard.ts` (`createPastedStlObject`,
   `syncStlTransformsFromRects`, `moveStlObjectsByCanvasDelta` for arrow keys in `svg-editor.ts`).
-- Selection: `selectStlObject(id)` (`utils/selection.ts`) sets `stlStore.selectedId` *and* svgedit
-  selection *and* the layer. Don't call `setSelectedId` directly from click handlers.
+- Selection: `selectStlObjects(ids)` / `selectStlObject(id)` / `toggleStlObjectSelection(id)`
+  (Shift-click) in `utils/selection.ts` set `stlStore.selectedIds` *and* svgedit selection *and*
+  the layers. Don't call `setSelectedIds` directly from click handlers; `InnerEngravingCanvas`
+  mirrors `selectedElementStore.selectedElements` back into it. Several selected 3D objects are
+  nodeType `stl_multi` (`ObjectPanel` → `DimensionPanelStlMulti`, `canGroup` false). Letting go of a
+  gizmo over an object is also an r3f `onClick` on it (no distance threshold), so both gizmos mark
+  the drag in `utils/gizmoDrag.ts` and `StlMesh`'s click handler skips that one click.
+- Multi-selection transforms: `utils/groupTransform.ts` — `transformInGroup` (one delta about a
+  pivot: `position' = pivot + t + Q·s·M·(position − pivot)`, `R' = Q·M·R·M`, uniform scale, mirror
+  toggles `flip`), `applyGroupTransform` (one `BatchCommand`), `moveObjectsCenterTo` /
+  `fitObjectsTo`, and the gizmo helpers used by `GroupTransformControls.tsx` (a proxy group at the
+  union-box centre). While that gizmo drags, it moves each mesh's anchor directly through the
+  `utils/anchors.ts` registry (`StlMesh` registers its anchor group) and re-projects the rects; the
+  store is written once on release, like a single object's gizmo, so the dimension panel and the
+  meshes do not re-render every frame. Euler angles come from `toEulerXYZ`, not three's `setFromRotationMatrix`, whose
+  gimbal-lock threshold drops Z within ~0.03° of Y = ±90°. `groupTransform.spec.ts` checks every
+  case against the plain delta matrix on mesh corners — keep it that way when touching the math.
 - Mesh colour/visibility/lock come from the projection's owning layer (`useObjectLayerState` /
   `getObjectLayerState` in `utils/useLayerColor.ts`, subscribed to `useLayerStore`), so any layer
   store update re-renders the meshes. Layer ops that change the DOM without one must publish it:
@@ -164,17 +181,23 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
 | `stlLayerSpacing` | `data-stl-layer-spacing` | mm, line Z step and Thick Contour inward-shell step |
 | `stlMinLayerSpacing` | `data-stl-min-layer-spacing` | mm, > 0 = adaptive line slicing |
 | `stlSolid` | `data-stl-solid` | dot mode only, shown as **Thick Contour** (`inner_engraving_settings.thick_contour`): also dot up to 2 inward shells (Swiftray `max_shell_count` 3); the stored key keeps the old name |
+| `stlFillCaps` | `data-stl-fill-caps` | line mode only, **Fill Horizontal Faces** (`inner_engraving_settings.fill_caps`): also fill every face leaning ≤ 1° from horizontal, the flat steps in the middle of a stepped object included (Swiftray `Slicer::capFaces`), holes left empty, inset half an interval |
+| `stlCapInterval` | `data-stl-cap-interval` | mm, scan-line interval of that fill (`DEFAULT_CAP_INTERVAL` 0.01, `CAP_INTERVAL_LIMIT` like the 2D fill interval); the fill angle, bidirectional, cross hatch and UV heat options are the layer's 2D fill settings |
 
 - Swiftray reads them off the layer `<g>` (`createGNode` → `Layer::stl*`) and copies them onto each
   object when it is collected (`ToolpathExporter::resolveStlPlacement`); nothing is read off the
   rect. The defaults are the measured K9 values and match `kDefaultStl*` in `toolpath-exporter.cpp`.
-- Photos and point clouds are always dotted; meshes follow the mode. There is no line + fill mode.
+- Photos and point clouds are always dotted; meshes follow the mode. The only fill in line mode is the
+  top / bottom face fill; there is no solid line mode.
+- The face fill is not a preset key (not in `presetRelatedConfigs`): toggling it or its interval keeps the
+  layer's preset name, and applying a preset keeps the layer's face fill.
 - Written only while inner engraving is on: `getConfigKeys`, `getDefaultConfig` and the layer
   readers (`getLayerConfig` / `getLayersConfig` / `cloneLayerConfig`) leave them out otherwise, so
   2D layers never carry `data-stl-*`.
-- UI: `EngravingModeBlock`, `SolidBlock` and the point / layer spacing `NumberBlock`s in
-  `ConfigPanel`; adaptive spacing in `AdvancedSettingModal`. `getInnerEngravingBlocks` decides what
-  shows (a layer holding a photo, `layerStore.hasStlPhoto`, always shows the dot parameters). Speed
+- UI: `EngravingModeBlock`, `SolidBlock`, `FillCapsBlock` and the point / layer spacing / face fill
+  interval `NumberBlock`s in `ConfigPanel`; adaptive spacing in `AdvancedSettingModal`. `getInnerEngravingBlocks` decides what
+  shows (a layer holding a photo, `layerStore.hasStlPhoto`, always shows the dot parameters; the face
+  fill interval only while the face fill is on). Speed
   shows only in line mode, dotting time with the dot parameters. (Q pulse width in `DevBlock` is a general
   Promark UV dev field under `isDev()`, not an inner-engraving one.)
 - With the mode on, `getDefaultConfig` applies `innerEngravingDefaults` (110 kHz, dotting 150 µs,
@@ -240,6 +263,24 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   `generatePhotoPointCloud` (`stl/photoPointCloudGenerator.ts`, grayscale → XYZ, 256 Z levels) →
   `applyPhotoPointCloud` (`PhotoPointCloudCommand`, keeps the image as source, adds
   `data-stl-point-cloud`). BSPC format: `stl/pointCloud.ts` (`'BSPC'`, version, XYZ float32 LE, no colour).
+- **Photo to 3D** (`stl/photoTo3d/`, P2-3 of `docs/prd/promark-uv-inner-engraving/phase2.md`):
+  - Entry and request:
+    - `ActionsPanelStl` shows "Convert to 3D" for one flat photo; it opens `showPhotoTo3dModal` (`components/dialogs/PhotoTo3dModal/`).
+    - The dialog asks for remove-background (default off when over 1% of the photo is not opaque) and the sharpening amount and radius.
+    - `convertPhotoTo3d` sends the original image to flux-id `/api/photo-to-3d` through `processImageWithAiJson` (0.06 credits; flux-id `PhotoTo3D` in `replicate_api.py` runs the depth model with `images: [photo]`, the schema's array field; the data URL names the image's MIME type because cog names the file after it and the model picks inputs by extension). The response carries depth and mask, plus the cut-out PNG when the background was removed.
+  - Computation, in a Web Worker (`runPhotoTo3d`, only the latest job per object):
+    - `dither.ts` puts the photo onto the dot grid (world size / layer `stlPointSpacing`), sharpens it, then runs Floyd–Steinberg. Bright pixels become dots, because a dot shows white in the crystal.
+    - `depthField.ts` takes the 1–99% percentiles, cleans the depth along the cut-out only, and lifts each dot onto it. The near side is raised, so depth is inverted on the way to Z. Steep areas get extra dots.
+    - These are ported from the replicate-3d-compare test page.
+  - Result, in one undo step:
+    - The photo is swapped for the cut-out, if any, and the `data-stl-depth*` attributes are set (see `PHOTO_TO_3D_ATTR`).
+    - `applyPhotoPointCloud` gets `depthSource` (BSDM, `depthSource.ts`, .beam block 8) and a transform: relief depth = width × 0.22, capped by the engravable height and moved to fit it.
+    - Points are local mm, with Z centred on the plane.
+    - The depth is cleaned along the cut-out first (`depthField.ts` `cleanDepthEdges`, the six steps in its doc comment): within the `%` setting of the cut-out (0 turns it off), background the cut-out kept is removed (behind the inside surface carried outward at the steep slope by more than 8% of the depth), and the rim is smoothed along the contour toward the mean at the same distance from the cut-out (never the inside's, or it comes forward as a lip), moving 8% of the depth at most. Removed pixels go in `DepthField.drop` and `liftDots` skips their dots: a dot without depth otherwise lands on the far plane.
+  - Later edits:
+    - The Z size is the relief depth: a plain scale, never recomputed.
+    - Sharpening and the roll-off (`data-stl-depth-round-percent`, % of the width, default 0, turned into mm at compute time) are edited in `PhotoTo3dOptions` and recomputed from the saved depth (`updatePhotoTo3d`, its own step). `OptionsPanel` dispatches a converted photo (`data-stl-depth`) to `ThreeDOptions` before its point-cloud early return, and without `ImageOptions`; `ObjectPanel` likewise drops the bitmap `ActionsPanel` once the store object is `kind: 'point-cloud'`, leaving only `ActionsPanelStl`.
+    - `isPhotoTo3dStale` compares `data-stl-depth-grid` with the current dot grid. `InnerEngravingCanvas` runs `watchStalePhotoTo3d` while mounted: a MutationObserver on `data-stl-point-spacing` under `#svgcontent` plus a `stlStore` objects subscription, and 0.5 s after the last change every stale cloud is recomputed (`appendCommandToLast` with the image **and its layer `<g>`** as expected elements — a resize is recorded on the image, the spacing change on the layer — so one undo reverts both; busy ones once their computation ends; a grid that failed, e.g. too many points, is reported once and not retried until the grid changes). The spacing is edited on the layer tab, where no object panel is mounted, which is why this is not in `PhotoTo3dOptions`. `updatePhotoTo3d` applies only an object's latest computation, and only if its inputs (marker, settings, thickness, scale, spacing, depth source) are unchanged when it ends — an undo during the computation, or a newer one, makes it throw `PhotoTo3dCancelledError` and change nothing; the object stays busy until the newest one ends. `PhotoTo3dOptions` sends every typed value, not only the edited one. Before a job, `getPointCloudObjects` → `refreshStalePhotoTo3d` waits until nothing is busy, then recomputes the stale clouds (no history); a failure throws, so `export-funcs-swiftray` reverts, alerts (`alertPhotoTo3dError`) and sends nothing instead of the old cloud.
 - There is no direct point-cloud file import (`create3dObject` / `insertStlGeometry` only build
   meshes). Standalone point clouds exist only in .beam files from uv-dev builds: block 7 plus a
   `data-stl` rect of `data-stl-kind="point-cloud"`, rebuilt by `readPointCloudSource`.
@@ -265,7 +306,7 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
   store write + re-project + `StlTransformCommand` (pushed to `parentCmd` or `undoManager`). The
   command's `elements()` returns the rect; `restore` no-ops if the object is already gone.
 - Everything outside the gizmo moves objects through `setTransform` (`DimensionPanelStl`,
-  `ActionsPanelStl` → `fitObjectTo` / `moveObjectCenterTo`, clipboard corrections). A bare
+  `ActionsPanelStl` → `fitObjectsTo` / `moveObjectsCenterTo`, clipboard corrections). A bare
   `stlStore.setTransform` leaves the rect — and framing, export, .beam — stale.
 - `undoManager.appendCommandToLast(cmd, text, expectedElement?)` folds an async follow-up into the
   latest step, falling back to a new step if the pointer moved or the last step does not involve
@@ -273,9 +314,11 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
 
 ## Persistence (.beam)
 
-- Block 6 `stlSource` (id → original STL bytes) and block 7 `pointCloudSource` (id → BSPC), both
-  appended after the standard blocks; the header keeps block 5's zero-length slot. Header block list
-  is computed from what exists.
+- Block 6 `stlSource` (id → original STL bytes), block 7 `pointCloudSource` (id → BSPC) and block 8
+  `depthSource` (id → BSDM of photo-to-3D, `getDepthSources`), appended after the standard blocks in
+  that order, the newest last so an older reader stops at what it does not know; the header keeps
+  block 5's zero-length slot. Header block list is computed from what exists. Block 8 is attached to
+  the point clouds block 7 rebuilt (`readDepthSource`).
 - Read: meshes need a matching projection with a parseable `data-stl-transform`, otherwise
   skipped with a console warning. Photos rebuild from the SVG via `readPhotoPlaneObjects`. One
   `syncStlObjectsWithDom` in `postReadBeam` (also the load command's `onAfter`).
@@ -314,14 +357,16 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
 
 ## Dev gates (`helpers/is-dev.ts`)
 
-- UV / inner engraving availability itself is `checkFpm1UV()`, gated on the shared `isDev()` (or `enableAllMachines`).
+- UV / inner engraving availability itself is `checkFpm1UV()`, gated on the shared `isDev()` (or `enableAllMachines`, Taiwan / Palestine, or from 2027-01-01).
 - `isUvDev()` = `localStorage.uvDev === 'true'`: test point cloud in `ThreeDOptions`; the Generators
   drawer/button in 3D (3D material-test generator); cylinder / sphere materials (offered in
   `InnerEngravingSettings`, and `getMaterialShape` in `InnerEngraving/utils/material.ts` reads a stored
   round shape as `box` otherwise — material geometry, settings dialog and framing all go through it);
-  UV heat-test params (`fillInterleave`, `fillDwellTime`, `fillDwellAdaptive`) in
-  `AdvancedSettingModal` and as 2D UV material-test axes; Swiftray dev config overrides and
-  `first_pulse_killer_enabled` in `svg-laser-parser.ts`.
+  Swiftray dev config overrides and `first_pulse_killer_enabled` in `svg-laser-parser.ts`.
+- Not gated: the UV fill heat options (`fillInterleave`, `fillDwellTime`, `fillDwellAdaptive`) show
+  in `AdvancedSettingModal` and as 2D UV material-test axes whenever the source is Promark UV. Every
+  `fpm1_2_5` preset sets `fillDwellTime` (PLA 50000, others -50000 = off) because `applyPreset`
+  keeps keys a preset omits.
 
 ## Invariants & gotchas
 

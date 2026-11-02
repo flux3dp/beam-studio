@@ -10,7 +10,9 @@ import { getPhotoTextureUrl, photoPlaneEvents } from '@core/app/svgedit/stl/phot
 
 import BoundingBox from './BoundingBox';
 import { SELECTION_COLOR } from './constants';
+import { registerAnchor } from './utils/anchors';
 import { MM_TO_SCENE } from './utils/coordinates';
+import { consumeGizmoDragged, markGizmoDragged } from './utils/gizmoDrag';
 import { createLayerColorUniform, getLayerColorOffset, injectLayerColor } from './utils/photoLayerColor';
 import { updateProjectionRect } from './utils/projection';
 import { ROTATION_SNAP_RAD, snapPosition, snapScale, TRANSLATION_SNAP } from './utils/snapping';
@@ -24,10 +26,14 @@ const MIN_SCALE = 1e-3;
 
 interface StlMeshProps {
   object: StlObject;
-  onSelect: (id: string) => void;
+  /** `additive`: Shift was held, so the object joins or leaves the selection instead of replacing it. */
+  onSelect: (id: string, additive: boolean) => void;
   /** Space is held: the drag belongs to the camera, so neither the gizmo nor selection may take it. */
   panning: boolean;
   selected: boolean;
+  /** Its own gizmo: only when it is the one selected object. A multi-selection shares one gizmo
+   *  (`GroupTransformControls`) and each object just keeps its outline. */
+  showGizmo: boolean;
   snapActive: boolean;
   snapCenter: [number, number, number];
 }
@@ -42,12 +48,28 @@ interface StlMeshProps {
  *   group's origin, so rotation and scaling happen about the object's centre rather than about
  *   whatever origin the STL's author happened to leave behind
  */
-const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }: StlMeshProps): React.JSX.Element => {
+const StlMesh = ({
+  object,
+  onSelect,
+  panning,
+  selected,
+  showGizmo,
+  snapActive,
+  snapCenter,
+}: StlMeshProps): React.JSX.Element => {
   // a callback ref rather than useRef: TransformControls needs the resolved Object3D, which is not
   // available on the first render
   const [anchor, setAnchor] = useState<Group | null>(null);
   const objectRef = useRef<Mesh | Points>(null);
   const { geometry, id, transform } = object;
+  // the group gizmo moves the anchor directly while dragging a multi-selection
+  const handleAnchorRef = useCallback(
+    (group: Group | null) => {
+      setAnchor(group);
+      registerAnchor(id, group);
+    },
+    [id],
+  );
   const { flip, position, rotation, scale } = transform;
   const transformMode = useViewStore((state) => state.transformMode);
   const ratioLocked = useRatioLocked(id);
@@ -70,7 +92,11 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
       if (isLocked || !isVisible || panning) return;
 
       event.stopPropagation();
-      onSelect(id);
+
+      // letting go of a gizmo over this object is a click on it too, and not a selection
+      if (consumeGizmoDragged()) return;
+
+      onSelect(id, event.shiftKey);
     },
     [id, isLocked, isVisible, onSelect, panning],
   );
@@ -192,6 +218,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
     if (!anchor || !hasDragged.current) return;
 
     hasDragged.current = false;
+    markGizmoDragged();
 
     // read the parts back rather than decomposing a matrix: the mirror lives on the child mesh, so
     // the group's own scale stays positive and means exactly what the panel shows
@@ -209,7 +236,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
     <>
       <group
         position={position}
-        ref={setAnchor}
+        ref={handleAnchorRef}
         rotation={rotation}
         scale={[scale[0] * MM_TO_SCENE, scale[1] * MM_TO_SCENE, scale[2] * MM_TO_SCENE]}
         visible={isVisible}
@@ -224,7 +251,7 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
           >
             {/* Screen-space size keeps a relief readable without turning its points into large
                 world-space spheres when the camera zooms in. Colour comes from the layer only. */}
-            <pointsMaterial color={color} size={0.5} sizeAttenuation={false} />
+            <pointsMaterial color={color} size={1} sizeAttenuation={false} />
           </points>
         ) : (
           <mesh
@@ -262,21 +289,23 @@ const StlMesh = ({ object, onSelect, panning, selected, snapActive, snapCenter }
       </group>
       {selected && anchor && isVisible && !isLocked && (
         <>
-          <TransformControls
-            // the gizmo sits on top of everything, so leaving it live would swallow every pan that
-            // happened to start over it
-            enabled={!panning}
-            mode={transformMode}
-            object={anchor}
-            onMouseDown={handleMouseDown}
-            onMouseUp={handleDragEnd}
-            onObjectChange={handleObjectChange}
-            rotationSnap={snapActive ? ROTATION_SNAP_RAD : null}
-            showZ={object.kind !== 'photo' || transformMode !== 'scale'}
-            // arrows along the work area's axes, which is what "move in X / Y / Z" means here
-            space="world"
-            translationSnap={snapActive ? TRANSLATION_SNAP : null}
-          />
+          {showGizmo && (
+            <TransformControls
+              // the gizmo sits on top of everything, so leaving it live would swallow every pan that
+              // happened to start over it
+              enabled={!panning}
+              mode={transformMode}
+              object={anchor}
+              onMouseDown={handleMouseDown}
+              onMouseUp={handleDragEnd}
+              onObjectChange={handleObjectChange}
+              rotationSnap={snapActive ? ROTATION_SNAP_RAD : null}
+              showZ={object.kind !== 'photo' || transformMode !== 'scale'}
+              // arrows along the work area's axes, which is what "move in X / Y / Z" means here
+              space="world"
+              translationSnap={snapActive ? TRANSLATION_SNAP : null}
+            />
+          )}
           <BoundingBox color={SELECTION_COLOR} target={anchor} />
         </>
       )}

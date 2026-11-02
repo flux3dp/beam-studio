@@ -98,7 +98,23 @@
    ---------------------------------------------------------------------------------
   |     binary     |      ...     | BSPC v1: XYZ Float32 LE, local millimetres      |
    ---------------------------------------------------------------------------------
-  ⚠️ Must stay last for the same forward-compatibility reason as block 6 before it.
+  ⚠️ Must stay after block 7 for the same forward-compatibility reason as block 6 before it.
+
+   =================================================================================
+  |  Depth Source  |      ...     | Depth of photo-to-3D point clouds               |
+   =================================================================================
+   ---------------------------------------------------------------------------------
+  |   block type   |    1 Bytes   | 0x08                                            |
+   ---------------------------------------------------------------------------------
+  |     length     |     VINT     | indicate size of remaining block                |
+   ---------------------------------------------------------------------------------
+  |      entries   |      ...     | Same repeated id + binary layout as block 6     |
+   ---------------------------------------------------------------------------------
+  |     binary     |      ...     | BSDM v1: depth Float32 LE + mask uint8          |
+   ---------------------------------------------------------------------------------
+  The point cloud itself is in block 7; this only lets it be recomputed with other parameters, so a
+  reader that stops before it still opens the file with every point cloud.
+  ⚠️ Must stay last.
 
    =================================================================================
   | MISC DATA(JSON)|  content len |    Block Containing json string of Misc. Data   |
@@ -125,7 +141,7 @@ import { useVariableTextState, type VariableTextState } from '@core/app/stores/v
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
-import { PHOTO_3D_ATTR, POINT_CLOUD_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
+import { PHOTO_3D_ATTR, PHOTO_TO_3D_ATTR, POINT_CLOUD_ATTR, STL_ATTR } from '@core/app/svgedit/stl/constants';
 import { isStlProjection } from '@core/app/svgedit/stl/getters';
 import { readPhotoPlaneObjects } from '@core/app/svgedit/stl/photoPlane';
 import { createPointCloudGeometry, decodePointCloud } from '@core/app/svgedit/stl/pointCloud';
@@ -183,7 +199,7 @@ const readVInt = (buffer, offset = 0) => {
 };
 
 const localHeaderTypeBuffer = (
-  type: 'imageSource' | 'miscData' | 'pointCloudSource' | 'stlSource' | 'svgContent' | 'thumbnail',
+  type: 'depthSource' | 'imageSource' | 'miscData' | 'pointCloudSource' | 'stlSource' | 'svgContent' | 'thumbnail',
 ): Buffer => {
   switch (type) {
     case 'svgContent':
@@ -199,6 +215,8 @@ const localHeaderTypeBuffer = (
       return Buffer.from([0x06]);
     case 'pointCloudSource':
       return Buffer.from([0x07]);
+    case 'depthSource':
+      return Buffer.from([0x08]);
     default:
       break;
   }
@@ -220,7 +238,7 @@ const generateSvgBlockBuffer = (svgString: string) => {
  * blocks: 1 byte id length, id, vint binary length, binary.
  */
 const generateBinarySourceBlockBuffer = (
-  type: 'imageSource' | 'pointCloudSource' | 'stlSource',
+  type: 'depthSource' | 'imageSource' | 'pointCloudSource' | 'stlSource',
   sources: { [id: string]: ArrayBuffer },
 ) => {
   let tempbuffer = Buffer.alloc(0);
@@ -265,6 +283,7 @@ const generateBeamBuffer = (
   thumbnail?: ArrayBuffer,
   stlSources: { [id: string]: ArrayBuffer } = {},
   pointCloudSources: { [id: string]: ArrayBuffer } = {},
+  depthSources: { [id: string]: ArrayBuffer } = {},
 ): Buffer => {
   const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]); // Bvg{version in uint} max to 255
   const svgBlockBuf = generateSvgBlockBuffer(svgString);
@@ -277,6 +296,8 @@ const generateBeamBuffer = (
   const pointCloudSourceBlockBuffer = hasPointCloud
     ? generateBinarySourceBlockBuffer('pointCloudSource', pointCloudSources)
     : null;
+  const depthSourceBlockBuffer =
+    Object.keys(depthSources).length > 0 ? generateBinarySourceBlockBuffer('depthSource', depthSources) : null;
   const thumbnailBlockBuffer = thumbnail ? generateThumbnailBlockBuffer(thumbnail) : null;
   const miscData: MiscData = {};
 
@@ -305,6 +326,7 @@ const generateBeamBuffer = (
       4,
       ...(stlSourceBlockBuffer ? [6] : []),
       ...(pointCloudSourceBlockBuffer ? [7] : []),
+      ...(depthSourceBlockBuffer ? [8] : []),
     ],
     // read by readBeamFileInfo without parsing any block, the same way workarea is
     innerEngraving: hasStl || hasPhotoPlane || hasPointCloud || undefined,
@@ -325,6 +347,7 @@ const generateBeamBuffer = (
     valueToVIntBuffer(0),
     valueToVIntBuffer(stlSourceBlockBuffer?.length || 0),
     valueToVIntBuffer(pointCloudSourceBlockBuffer?.length || 0),
+    valueToVIntBuffer(depthSourceBlockBuffer?.length || 0),
   ]);
   const headerSizeBuf = valueToVIntBuffer(headerBuffer.length);
   const buffer = Buffer.concat([
@@ -336,8 +359,9 @@ const generateBeamBuffer = (
     thumbnailBlockBuffer || Buffer.from([]),
     miscDataBuffer,
     stlSourceBlockBuffer || Buffer.from([]),
-    // Always last: old readers stop safely here after preserving every block they understand.
     pointCloudSourceBlockBuffer || Buffer.from([]),
+    // Always last: old readers stop safely here after preserving every block they understand.
+    depthSourceBlockBuffer || Buffer.from([]),
     Buffer.from([0x00]),
   ]);
 
@@ -530,6 +554,38 @@ const readPointCloudSource = (buf: Buffer, offset: number, end: number, loaded: 
   }
 };
 
+/**
+ * Attach block 8's depth to the photo point clouds block 7 already rebuilt; a depth whose point cloud
+ * is missing is a leftover and is skipped.
+ */
+const readDepthSource = (buf: Buffer, offset: number, end: number, pointClouds: StlObject[]) => {
+  let currentOffset = offset;
+
+  while (currentOffset < end) {
+    const idSize = buf.readUInt8(currentOffset);
+
+    currentOffset += 1;
+
+    const id = buf.toString('utf-8', currentOffset, currentOffset + idSize);
+
+    currentOffset += idSize;
+
+    const { offset: newOffset, value: size } = readVInt(buf, currentOffset);
+    const start = newOffset;
+
+    currentOffset = newOffset + size;
+
+    const object = pointClouds.find((candidate) => candidate.id === id);
+
+    if (!object || !document.getElementById(id)?.hasAttribute(PHOTO_TO_3D_ATTR.marker)) {
+      console.warn(`Depth ${id} has no photo-to-3D point cloud, skipped`);
+      continue;
+    }
+
+    object.depthSource = new Uint8Array(buf.subarray(start, start + size)).buffer;
+  }
+};
+
 const readBlocks = async (
   buf: Buffer,
   offset: number,
@@ -628,6 +684,14 @@ const readBlocks = async (
     currentOffset = newOffset;
     console.log('Size', value);
     readPointCloudSource(buf, currentOffset, currentOffset + value, pointCloudObjects);
+    currentOffset += value;
+  } else if (blockType === 8) {
+    console.log('Depth Source Block');
+
+    const { offset: newOffset, value } = readVInt(buf, currentOffset);
+
+    currentOffset = newOffset;
+    readDepthSource(buf, currentOffset, currentOffset + value, pointCloudObjects);
     currentOffset += value;
   } else {
     console.error(`Unknown Block Type: ${blockType}`);

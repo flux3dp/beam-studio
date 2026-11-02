@@ -34,7 +34,7 @@ jest.mock('three/examples/jsm/loaders/STLLoader.js', () => ({
 
 import { Buffer } from 'buffer';
 
-import { POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
+import { PHOTO_TO_3D_ATTR, POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
 import { encodePointCloud } from '@core/app/svgedit/stl/pointCloud';
 
 import beamFileHelper from './beam-file-helper';
@@ -149,6 +149,58 @@ describe('beam-file-helper point cloud block', () => {
     });
     expect(object.geometry.getAttribute('position').count).toBe(2);
     expect(Array.from(new Uint8Array(object.pointCloudBuffer))).toEqual(Array.from(new Uint8Array(pointCloud)));
+  });
+
+  test('writes the photo-to-3D depth as block 8, after block 7, and attaches it when read', async () => {
+    const transform = {
+      initialTransform: { flip: [false, false, false], position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+      transform: { flip: [false, false, false], position: [0, 0, 0], rotation: [0, 0, 0], scale: [1, 1, 1] },
+    };
+    const pointCloud = encodePointCloud(new Float32Array([0, 0, 0]));
+    const depth = new Uint8Array([9, 8, 7, 6]).buffer;
+    const beam = beamFileHelper.generateBeamBuffer(
+      '<svg/>',
+      {},
+      undefined,
+      {},
+      { photo: pointCloud },
+      { photo: depth },
+    );
+    const headerLength = readVInt(beam, 5);
+    const metadataLength = readVInt(beam, headerLength.offset);
+    const metadata = JSON.parse(
+      beam.toString('utf8', metadataLength.offset, metadataLength.offset + metadataLength.value),
+    );
+    const blockTypes: number[] = [];
+    let offset = headerLength.offset + headerLength.value;
+
+    while (beam.readUInt8(offset) !== 0) {
+      blockTypes.push(beam.readUInt8(offset++));
+
+      const length = readVInt(beam, offset);
+
+      offset = length.offset + length.value;
+    }
+
+    expect(metadata.contents).toEqual([1, 2, 4, 7, 8]);
+    expect(blockTypes).toEqual([1, 2, 4, 7, 8]);
+
+    mockImportBvgString.mockImplementation(async () => {
+      const image = document.createElementNS('http://www.w3.org/2000/svg', 'image');
+
+      image.id = 'photo';
+      image.setAttribute('data-stl-photo', '1');
+      image.setAttribute(POINT_CLOUD_ATTR.marker, '1');
+      image.setAttribute(PHOTO_TO_3D_ATTR.marker, '1');
+      image.setAttribute('data-stl-transform', JSON.stringify(transform));
+      document.getElementById('svgcontent')!.appendChild(image);
+    });
+    document.body.innerHTML = '<svg id="svgcontent"></svg>';
+    await beamFileHelper.readBeam(new File([beam], 'relief.beam'));
+
+    const [[object]] = mockSyncStlObjectsWithDom.mock.calls[0];
+
+    expect(Array.from(new Uint8Array(object.depthSource))).toEqual([9, 8, 7, 6]);
   });
 
   test('does not materialize binary 3D data after the SVG projections were downgraded to 2D', async () => {

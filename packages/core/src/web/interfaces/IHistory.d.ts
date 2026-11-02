@@ -28,7 +28,7 @@ export interface IHistoryHandler {
 
 export interface IUndoManager {
   addCommandToHistory: (cmd: ICommand) => void;
-  appendCommandToLast: (cmd: ICommand, text: string, expectedElement?: Element) => void;
+  appendCommandToLast: (cmd: ICommand, text: string, expectedElement?: Element | Element[]) => void;
   beginUndoableChange: (attrName: string, elems: Element[]) => void;
   finishUndoableChange: () => IBatchCommand;
   getNextRedoCommandText: () => string;

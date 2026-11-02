@@ -80,6 +80,22 @@ describe('selectedElementStore', () => {
       expect(getDerivedData(projection)).toMatchObject({ nodeCategory: 'stl', nodeType: 'stl' });
     });
 
+    it('should classify several loaded 3D objects as stl_multi, which cannot be grouped', () => {
+      const first = makeElem('rect', { 'data-stl': '1', id: 'a' });
+      const second = makeElem('rect', { 'data-stl': '1', id: 'b' });
+
+      useStlStore.setState({ objects: { a: { id: 'a' } as StlObject, b: { id: 'b' } as StlObject } });
+
+      expect(getDerivedData(first, [first, second])).toMatchObject({
+        canGroup: false,
+        nodeCategory: 'stl_multi',
+        nodeType: 'stl_multi',
+      });
+      // one of them not loaded: not a 3D multi-selection
+      useStlStore.setState({ objects: { a: { id: 'a' } as StlObject } });
+      expect(getDerivedData(first, [first, second]).nodeType).toBe('stl');
+    });
+
     it.each([
       ['rect', 'shape'],
       ['ellipse', 'shape'],

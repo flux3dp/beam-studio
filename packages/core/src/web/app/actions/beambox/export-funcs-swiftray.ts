@@ -12,6 +12,8 @@ import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { preparePhotoPlaneElementsForExport } from '@core/app/svgedit/stl/photoPlane';
+import { alertPhotoTo3dError } from '@core/app/svgedit/stl/photoTo3d';
+import { PhotoTo3dCancelledError } from '@core/app/svgedit/stl/photoTo3d/runPhotoTo3d';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
@@ -263,12 +265,16 @@ const fetchTaskCodeSwiftray = async (
   try {
     pointCloudObjects = await getPointCloudObjects();
   } catch (error) {
-    // a point-cloud projection without its store object: the canvas has already been prepared for
-    // export (text outlined, image symbols swapped), so put it back before giving up
+    // a photo-to-3D cloud that could not be brought up to date (too many points for the current
+    // spacing or size, say), or a point-cloud projection without its store object: the canvas has
+    // already been prepared for export (text outlined, image symbols swapped), so put it back before
+    // giving up
     console.error('Failed to collect point-cloud objects', error);
     revertFunctions.toReversed().forEach((revert) => revert());
     SymbolMaker.switchImageSymbolForAll(true);
     Progress.popById('fetch-task-code');
+
+    if (!(error instanceof PhotoTo3dCancelledError)) alertPhotoTo3dError(error);
 
     return {};
   }

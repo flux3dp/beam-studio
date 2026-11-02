@@ -15,6 +15,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
 import { useStlStore } from '@core/app/stores/stlStore';
 import selectionManager from '@core/app/svgedit/selection';
+import { watchStalePhotoTo3d } from '@core/app/svgedit/stl/photoTo3d';
 import workareaManager from '@core/app/svgedit/workarea';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 
@@ -27,6 +28,7 @@ import {
   GRID_STEPS,
   TARGET_GRID_CELLS,
 } from './constants';
+import GroupTransformControls from './GroupTransformControls';
 import styles from './InnerEngravingCanvas.module.scss';
 import MaterialShape from './MaterialShape';
 import SceneGrid from './SceneGrid';
@@ -34,8 +36,9 @@ import SceneRuler from './SceneRuler';
 import StlMesh from './StlMesh';
 import { toCameraPreviewPoint } from './utils/cameraPreview';
 import { useEngravableBox } from './utils/engravable';
+import { resetGizmoDragged } from './utils/gizmoDrag';
 import { getMaterial, useMaterial } from './utils/material';
-import { getSelectedStlId, selectStlObject } from './utils/selection';
+import { getSelectedStlIds, selectStlObject, toggleStlObjectSelection } from './utils/selection';
 import ViewController from './ViewController';
 import { CAMERA_FOV, DEFAULT_VIEW, getPresetPosition, useViewStore } from './viewStore';
 import ZoomController from './ZoomController';
@@ -172,10 +175,10 @@ const useAdaptiveStep = (center: [number, number, number]): number => {
 };
 
 const Scene = () => {
-  const { objects, selectedId } = useStlStore();
+  const { objects, selectedIds } = useStlStore();
   const spaceKey = useCanvasStore((state) => state.spaceKey);
   const mouseMode = useCanvasStore((state) => state.mouseMode);
-  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
+  const selectedElements = useSelectedElementStore((state) => state.selectedElements);
   const { height, width } = workareaManager;
   const material = useMaterial();
   const engravable = useEngravableBox();
@@ -220,20 +223,29 @@ const Scene = () => {
     };
   }, []);
 
-  // A document can enter 3D mode while a 2D multi-selection (including its temporary group) is
-  // still active. Tear that group down on mount and keep only its last object; all subsequent
-  // selection paths are constrained centrally by SelectionManager.
-  useEffect(() => {
-    const selected = selectionManager.getSelectedElements(true);
+  // a photo's point cloud follows its layer's point spacing and its size while the canvas is up
+  useEffect(() => watchStalePhotoTo3d(), []);
 
-    if (selected.length > 1) selectionManager.selectOnly(selected.slice(-1));
+  // A document can enter 3D mode while a 2D multi-selection is still gathered in its temporary
+  // group. Take the group apart on mount and select its objects as a flat list, which is how 3D
+  // keeps a multi-selection (see SelectionManager).
+  useEffect(() => {
+    if (!selectionManager.isMultiSelecting) return;
+
+    selectionManager.selectOnly(selectionManager.getSelectedElements(true));
   }, []);
 
-  // the other direction of the sync in `selectStlObject`: selecting through the layer panel, undo,
-  // or anything else that moves svgedit's selection has to light up the mesh too
+  // the other direction of the sync in `selectStlObjects`: selecting through the layer panel, undo,
+  // or anything else that moves svgedit's selection has to light up the meshes too
   useEffect(() => {
-    useStlStore.getState().setSelectedId(getSelectedStlId(selectedElement));
-  }, [selectedElement]);
+    useStlStore.getState().setSelectedIds(getSelectedStlIds(selectedElements));
+  }, [selectedElements]);
+
+  const selectedObjects = useMemo(() => selectedIds.map((id) => objects[id]).filter(Boolean), [objects, selectedIds]);
+  const handleSelect = (id: string, additive: boolean) => {
+    if (additive) toggleStlObjectSelection(id);
+    else selectStlObject(id);
+  };
 
   // true only between an OrbitControls pointer down and up, so a `change` can be attributed to the user
   const interacting = useRef(false);
@@ -267,13 +279,21 @@ const Scene = () => {
         <StlMesh
           key={object.id}
           object={object}
-          onSelect={selectStlObject}
+          onSelect={handleSelect}
           panning={spaceKey}
-          selected={object.id === selectedId}
+          selected={selectedIds.includes(object.id)}
+          showGizmo={selectedIds.length === 1}
           snapActive={snapActive}
           snapCenter={engravable.center}
         />
       ))}
+
+      <GroupTransformControls
+        objects={selectedObjects}
+        panning={spaceKey}
+        snapActive={snapActive}
+        snapCenter={engravable.center}
+      />
 
       <ViewController extent={viewExtent} target={viewTarget} />
       <ZoomController target={viewTarget} />
@@ -345,7 +365,12 @@ const InnerEngravingCanvas = (): React.JSX.Element => {
   useEffect(() => setCursorAccordingToMouseMode(mouseMode), [mouseMode]);
 
   return (
-    <div className={classNames(styles.container, { [styles.panning]: spaceKey })} id="inner-engraving-canvas">
+    <div
+      className={classNames(styles.container, { [styles.panning]: spaceKey })}
+      id="inner-engraving-canvas"
+      // a drag whose click never came must not swallow the next real click
+      onPointerDown={resetGizmoDragged}
+    >
       <Canvas
         camera={{
           // a tight near/far range keeps depth precision usable; with near = 1 (0.1mm) almost the

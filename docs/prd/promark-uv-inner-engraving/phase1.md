@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Phase 1 實作完成（branch `promark-3d-inner-carving` + Swiftray `codex/promark-3d-inner-carving-pr`），待送審。Phase 2 未開始（§3.4） |
+| **Status** | Phase 1 實作完成（branch `promark-3d-inner-carving` + Swiftray `codex/promark-3d-inner-carving-pr`），待送審。Phase 2 見 [`phase2.md`](phase2.md) |
 | **Author** | EstherFu（整理：Claude） |
 | **Created** | 2026-10-13 |
 | **Target product** | Beam Studio 桌面版（Promark `fpm1` + UV 雷射源）。網頁版不支援 |
@@ -141,18 +141,9 @@
 - 打線＋填充（`kLineFill`）：移除，投影物件的填充不影響雕刻。
 - 照片打線：照片平面可以在 3D 中傾斜，Z 是平台移動、不能邊打線邊動。
 
-### 3.4 Phase 2（待規劃）
+### 3.4 Phase 2
 
-| # | 項目 | 備註 |
-|---|---|---|
-| P2-1 | **3D 多選** | 選取同步、整體 transform、尺寸面板，以及 2D 按鈕分流。待決：多選時的旋轉方式、填充開關、框選與對齊分佈。計畫在 `TODO-multi-select.md` |
-| P2-2 | 照片轉點雲轉正式功能 | 目前只在 uvDev，需要合適的深度估計模型 |
-| P2-3 | 點雲檔案直接匯入（PLY / GLB / BSPC） | 確認模型後討論支援範圍 |
-| P2-4 | 3D 材質測試、UV 填充熱分散參數轉正式功能 | 目前只在 uvDev，等上機結果 |
-| P2-5 | 球體 / 圓柱材料轉正式功能 | 目前只在 uvDev，待測試實際效果後再考慮開放 |
-| P2-6 | **UV 70mm 場域大小** | 目前 UV 70mm 送給後端時當作 75mm 場域，而且是依「目前開啟的文件」判斷是否為 UV（`device-master.ts` `setField`），開著其他機型的文件連線時會送 70。要確認 UV 能否直接使用 70 的場域；若改成 70，需要修正既有的場鏡畸變校正參數（舊參數是以 75 校正的） |
-| P2-7 | 輪廓打線新增「填充上下端面」 | 待實作 & 測試 |
-| P2-8 | 確認 3 個超出規格的預設參數 | 待測試 & 更新 |
+移到 [`phase2.md`](phase2.md)。原本列在這裡的 P2-1～P2-8 都已併入，編號改用 Phase 2 PRD 的；其中 UV 70mm 場域大小（原 P2-6）併進多組場鏡參數，在 [`../promark-lens-profiles.md`](../promark-lens-profiles.md)。
 
 ---
 
@@ -376,7 +367,7 @@
 `helpers/exclusiveModes.ts` 統一管理內雕、旋轉軸、穿透、自動送料、曲面雕刻的互斥。讀到同時開了多種模式的舊檔時，內雕優先。曲面雕刻的可用性（`canStartCurveEngraving`）同時用在原生選單與網頁選單。
 
 ### 6.4 Dev gate
-- 發佈開關：`checkFpm1UV()` = 桌面版，且 `isDev()`（`localStorage.dev`）或 `enableAllMachines`（`helpers/checkFeature.ts:8`）。
+- 發佈開關：`checkFpm1UV()` = 桌面版，且 `isDev()`（`localStorage.dev`）或 `enableAllMachines`（`helpers/checkFeature.ts`）。2026-11-02 起台灣（`localeHelper.isTw`）、巴勒斯坦（`localeHelper.isPs`）也開放；其他地區從 2027-01-01（使用者本地時間）開放。
 - `isUvDev()` 讀 `localStorage.uvDev`，只擋 UV 調參與開發中的 3D 工具（§3.2 清單）；和 `isDev()` 分開，避免開了 dev 的人都看到半成品。
 - Q pulse 在 `DevBlock`，跟著 `isDev()`。
 - 下降焦距 / 逐層焦距的「反向」開關（`focusReverse`、`focusStepReverse`）只在 `isDev()` 顯示，Desktop / MOPA / UV 都有（`ConfigPanel/FocusBlock.tsx`、`AdvancedSettingModal.tsx`）。
