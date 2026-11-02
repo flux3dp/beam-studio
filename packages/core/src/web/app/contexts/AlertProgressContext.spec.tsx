@@ -57,7 +57,7 @@ test('should render correctly', async () => {
   );
 
   expect(container).toMatchSnapshot();
-  expect(eventEmitter.eventNames().length).toBe(9);
+  expect(eventEmitter.eventNames().length).toBe(10);
   act(() => {
     eventEmitter.emit('OPEN_PROGRESS', {
       caption: 'preparing',
