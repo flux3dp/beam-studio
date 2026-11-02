@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 
 import { useScreenStore } from '@core/app/stores/screenStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
@@ -248,6 +248,23 @@ describe('should render correctly', () => {
       const { getByText } = render(<ObjectPanel />);
 
       expect(getByText('This is dummy ActionsPanel')).toBeInTheDocument();
+      expect(getByText('This is dummy ActionsPanelStl')).toBeInTheDocument();
+    });
+
+    test('a photo turned into a point cloud keeps only the 3D actions', () => {
+      document.body.innerHTML = '<image id="svg_1" data-stl-photo="1" data-stl-depth="1" />';
+
+      const elem = document.getElementById('svg_1')!;
+
+      useStlStore.setState({ objects: { svg_1: { id: 'svg_1', kind: 'photo' } as StlObject } });
+      useSelectedElementStore.getState().setSelectedElement(elem);
+
+      const { getByText, queryByText } = render(<ObjectPanel />);
+
+      expect(getByText('This is dummy ActionsPanel')).toBeInTheDocument();
+
+      act(() => useStlStore.setState({ objects: { svg_1: { id: 'svg_1', kind: 'point-cloud' } as StlObject } }));
+      expect(queryByText('This is dummy ActionsPanel')).toBeNull();
       expect(getByText('This is dummy ActionsPanelStl')).toBeInTheDocument();
     });
 

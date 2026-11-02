@@ -12,6 +12,7 @@ import { CanvasElements } from '@core/app/constants/canvasElements';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { useSelectedElementStore } from '@core/app/stores/selectedElementStore';
+import { useStlStore } from '@core/app/stores/stlStore';
 import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
 import { isPhotoPlaneProjection } from '@core/app/svgedit/stl/getters';
 import { getExtrusionSourceTagName } from '@core/app/svgedit/stl/sourceType';
@@ -53,7 +54,15 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const isStlMulti = nodeType === 'stl_multi';
   const isStl = nodeType === 'stl' || isStlMulti;
   const stlIds = useSelectedElementStore(useShallow((state) => state.selectedElements.map(({ id }) => id)));
-  const sourceType = isPhotoPlaneProjection(elem) ? 'image' : elem ? getExtrusionSourceTagName(elem) : null;
+  // a photo turned into a point cloud is no image any more: none of the bitmap actions apply to it
+  const isPhotoCloud = useStlStore((state) => !!elem && state.objects[elem.id]?.kind === 'point-cloud');
+  const sourceType = isPhotoPlaneProjection(elem)
+    ? isPhotoCloud
+      ? null
+      : 'image'
+    : elem
+      ? getExtrusionSourceTagName(elem)
+      : null;
   const groupAvailability = useSelectedElementStore(
     useShallow((state) => ({ group: state.canGroup, ungroup: state.canUngroup })),
   );
