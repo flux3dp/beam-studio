@@ -345,7 +345,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 
 龍門往返相同距離可能有微小位置差。規則：任何**定位**動作（雷射關），若目標在某軸比目前位置小，先走到該軸「目標 − 5 mm」（不低於行程下限），再往正方向走到目標。套用在 §7.3 步驟 2、§7.4 步驟 3 的 S0 移動、§7.10 的站位移動；出光中的 L 臂方向由圖樣決定，不補償；B 階段的相機移動由預覽管理器負責，不補償。
 
-存放：本機 storage 鍵 `galvo-fix-backlash`，預設 `true`，區塊內勾選框。不放進 `galvo-dev-settings.ts`，因為那裡每個鍵都會送進 fcode 給 swiftray。後續 swiftray 的 tile 順序變更（蛇行改一律由左到右，每列第一個 tile 前先退到它左邊的 tile）可以讀同一個鍵；正式版若機構確認不需要，旗標與程式一起移除。
+存放：本機 storage 鍵 `galvo-fix-backlash`，預設 `true`，區塊內勾選框。不放進 `galvo-dev-settings.ts`，因為那裡每個鍵都會送進 fcode 給 swiftray。swiftray 的 tile 順序讀同一個鍵（2026-11-02）：匯出時 `svg-laser-parser.ts` 把它送成 `galvo_fix_backlash`（swiftray 預設 `true`）。開：每列一律由左到右，列內第一個真的有內容的 tile 停靠前，龍門先走到「整批 tile 最左欄再往左一欄」（不低於行程左界），只是龍門移動、不開 galvo list；關：舊的蛇行。正式版若機構確認不需要，旗標與程式一起移除。
 
 ## 8. Data contracts
 
@@ -476,7 +476,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 | 對焦 | 韌體有 `M136P304` 讀 SP100、`M137P184Q` 手動 Z；`rawMoveZRel` 已有 | 本 PRD 的 `controlTaskMainboard` 讓打線、移 Z、讀 SP100 可在同一 session 內做；對焦基準值每種場鏡各存一份 |
 | 原始場（identity grid） | bsl 無 `set_gridcor` | 第一輪用目前 manual 值起算；9×9 網格表不進 v1 |
 | 機台常數 | 站位、SP100 偏移無存放處 | 場心相對噴嘴 = `toolhead_shift`，§7.8 第 6 步會量出來，可回填模組偏移 |
-| swiftray tile 順序 | 蛇行 | 改一律由左到右並退回一格，讀 `galvo-fix-backlash` |
+| swiftray tile 順序 | ~~蛇行~~ 已改一律由左到右並退回一格，讀 `galvo-fix-backlash`（2026-11-02，swiftray `dev/hx2-galvo-blend`） | 未上機實測；Y 方向（換層後回到第一列是 −Y）尚未處理 |
 
 ## 13. Test plan
 

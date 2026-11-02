@@ -9,8 +9,9 @@ import type { GalvoPoint } from '../galvoExec';
  * +X and +Y -- overshoot past the target on the negative side, then come back.
  *
  * Development flag: whether the mechanics need this is still being measured (PRD §11 decision 7).
- * It lives in its own storage key rather than galvo-dev-settings because everything there is sent
- * to swiftray with the job, and this is not a job setting.
+ * It lives in its own storage key rather than galvo-dev-settings, whose every key goes to swiftray
+ * verbatim. The export sends it on its own as `galvo_fix_backlash`, where it decides the order the
+ * galvo blocks are parked in (see svg-laser-parser).
  */
 const STORAGE_KEY = 'galvo-fix-backlash';
 

@@ -106,6 +106,11 @@ export type TFcodeOptionalConfig = Partial<{
    * split at all, so it has to be the lens that is actually fitted.
    */
   galvo_field: GalvoWorkarea;
+  /**
+   * Walk every row of blocks left to right, from a park a column left of the batch, instead of
+   * as a serpentine. Read from the `galvo-fix-backlash` storage key, not the dev settings.
+   */
+  galvo_fix_backlash: boolean;
   galvo_jump_speed: number;
   galvo_laser_off_delay: number;
   galvo_laser_on_delay: number;

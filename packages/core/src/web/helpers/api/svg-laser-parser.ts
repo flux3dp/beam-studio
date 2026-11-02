@@ -30,6 +30,7 @@ import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { isInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
+import { getFixBacklash } from '@core/helpers/device/galvoCalibration/backlash';
 import { getGalvoConfig } from '@core/helpers/device/galvoConfig';
 import { getGantryTravelBoundary } from '@core/helpers/device/gantryTravelRange';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
@@ -142,6 +143,11 @@ export const getExportOpt = async (
     // say nothing about it. Unioned across the modules this document supports, the same way the
     // canvas boundary is -- a head parked on the machine limits travel whatever this job uses.
     config.galvo_boundary = getGantryTravelBoundary(model);
+
+    // The same flag the field-lens calibration overshoots by: on, every row of blocks runs left to
+    // right from a park a column left of the batch, so the gantry takes up its backlash the same
+    // way at every park; off, the rows run as a serpentine.
+    config.galvo_fix_backlash = getFixBacklash();
 
     // Everything else that governs splitting and seam blending has a default inside the
     // exporter, so only what a developer has actually overridden is sent -- an absent key means
