@@ -5,6 +5,11 @@ const mockDeviceMaster = { currentDevice: null as null | { info: { serial: strin
 
 jest.mock('@core/helpers/device-master', () => mockDeviceMaster);
 jest.mock('@core/helpers/is-web', () => () => false);
+
+const mockPopUp = jest.fn();
+
+jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args) => mockPopUp(...args) }));
+jest.mock('@core/helpers/i18n', () => ({ lang: { message: { device_is_used: 'device is used' } } }));
 jest.mock('@core/app/actions/tabController', () => ({ isFocused: true, onBlurred: jest.fn(), onFocused: jest.fn() }));
 jest.mock('@core/app/stores/canvas/canvasStore', () => ({
   useCanvasStore: { getState: () => ({ mode: 1 }), subscribe: jest.fn() },
@@ -15,21 +20,25 @@ jest.mock('@core/app/stores/documentStore', () => ({
 
 const makeTask = (id: BackgroundTaskId, log: string[]) => {
   const task = {
-    abort: jest.fn(),
+    abort: jest.fn(async () => {
+      log.push(`abort ${id}`);
+    }),
+    busy: false,
+    busyMessage: () => `${id} is busy`,
     enabled: true,
     id,
-    isBusy: () => false,
+    isBusy: () => task.busy,
     isEnabled: () => task.enabled,
     models: new Set(['fpm1']),
     start: jest.fn(() => log.push(`start ${id}`)),
     stop: jest.fn(() => log.push(`stop ${id}`)),
   };
 
-  return task as BackgroundTask & { enabled: boolean };
+  return task as BackgroundTask & { busy: boolean; enabled: boolean };
 };
 
-const deviceA = { model: 'fpm1', serial: 'A' } as any;
-const deviceB = { model: 'fpm1', serial: 'B' } as any;
+const deviceA = { model: 'fpm1', serial: 'A', uuid: 'a' } as any;
+const deviceB = { model: 'fpm1', serial: 'B', uuid: 'b' } as any;
 
 describe('backgroundTasks', () => {
   let backgroundTasks: typeof backgroundTasksType;
@@ -40,6 +49,7 @@ describe('backgroundTasks', () => {
     jest.spyOn(console, 'warn').mockImplementation(() => {});
     mockDeviceMaster.currentDevice = null;
     mockDeviceMaster.select.mockReset();
+    mockPopUp.mockReset();
     backgroundTasks = require('./index').default;
     log = [];
   });
@@ -95,5 +105,46 @@ describe('backgroundTasks', () => {
     expect(backgroundTasks.isCurrent(task)).toBe(false);
     mockDeviceMaster.currentDevice = { info: { serial: 'A' } };
     expect(backgroundTasks.isCurrent(task)).toBe(true);
+  });
+
+  describe('yieldTo', () => {
+    const setup = () => {
+      const task = makeTask('promark-button', log);
+
+      backgroundTasks.register(task);
+      backgroundTasks.setDevice(deviceA);
+      log.length = 0;
+
+      return task;
+    };
+
+    test('resolves true without asking when no task is busy', async () => {
+      setup();
+      expect(await backgroundTasks.yieldTo(deviceA)).toBe(true);
+      expect(mockPopUp).not.toHaveBeenCalled();
+      expect(log).toEqual([]);
+    });
+
+    test('a busy task on another machine is aborted without asking', async () => {
+      setup().busy = true;
+      expect(await backgroundTasks.yieldTo(deviceB)).toBe(true);
+      expect(mockPopUp).not.toHaveBeenCalled();
+      expect(log).toEqual(['abort promark-button']);
+    });
+
+    test('a busy task on the same machine asks; Yes aborts', async () => {
+      setup().busy = true;
+      mockPopUp.mockImplementation(({ onYes }) => onYes());
+      expect(await backgroundTasks.yieldTo(deviceA)).toBe(true);
+      expect(mockPopUp).toHaveBeenCalledWith(expect.objectContaining({ message: 'promark-button is busy' }));
+      expect(log).toEqual(['abort promark-button']);
+    });
+
+    test('No keeps the task running and cancels the action', async () => {
+      setup().busy = true;
+      mockPopUp.mockImplementation(({ onNo }) => onNo());
+      expect(await backgroundTasks.yieldTo(deviceA)).toBe(false);
+      expect(log).toEqual([]);
+    });
   });
 });

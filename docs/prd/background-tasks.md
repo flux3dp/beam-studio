@@ -192,6 +192,8 @@ backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // highe
 
 **Context**: `device` is fed by `GoButton`'s effect on `CanvasContext.selectedDevice` (`backgroundTasks.setDevice`), which also sees the startup default that never goes through `SET_SELECTED_DEVICE` (§2.3). The manager subscribes itself to `useCanvasStore` `mode`, `useDocumentStore` `workarea`, and tab focus (§7.5).
 
+The subscriptions are made on first use (first `register`, `setDevice` or `refresh`), not at import: `check-device-status.ts` imports the manager, and reading `tabController` or the stores while an import cycle is still loading would see `undefined`.
+
 **Evaluation** on every context change and `refresh()`:
 
 ```
