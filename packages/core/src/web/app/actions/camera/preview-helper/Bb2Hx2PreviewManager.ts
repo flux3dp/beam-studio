@@ -66,7 +66,9 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
   private handleSetupError = async (error: unknown): Promise<void> => {
     await this.end();
-    handlePreviewSetupError(this.device, error);
+
+    if (this.silent) console.log('Error when setting up Bb2Hx2 Preview Manager', error);
+    else handlePreviewSetupError(this.device, error);
   };
 
   switchPreviewMode = async (mode: PreviewMode): Promise<PreviewMode> => {
@@ -219,8 +221,15 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     }
   };
 
-  public setup = async ({ progressId }: { progressId?: string } = {}): Promise<boolean> => {
+  public setup = async ({
+    messagePrefix = '',
+    progressId,
+    silent = false,
+  }: { messagePrefix?: string; progressId?: string; silent?: boolean } = {}): Promise<boolean> => {
     if (progressId) this.progressId = progressId;
+
+    this.silent = silent;
+    this.messagePrefix = messagePrefix;
 
     const { lang } = i18n;
 

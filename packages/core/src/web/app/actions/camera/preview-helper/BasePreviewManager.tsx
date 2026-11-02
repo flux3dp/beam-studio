@@ -36,6 +36,10 @@ class BasePreviewManager implements PreviewManager {
   protected workarea: WorkAreaModel;
   protected workareaObj: WorkArea;
   protected ended = false;
+  /** Background use: log instead of popping alerts */
+  protected silent = false;
+  /** Prepended to string message contents, e.g. "Auto preview: " */
+  protected messagePrefix = '';
   protected lastPosition: [number, number] = [0, 0];
   protected movementSpeed: null | number = null; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
@@ -63,6 +67,7 @@ class BasePreviewManager implements PreviewManager {
     MessageCaller.openMessage({
       ...defaultData,
       ...data,
+      content: typeof data.content === 'string' ? this.messagePrefix + data.content : data.content,
     });
   };
 
@@ -271,7 +276,7 @@ class BasePreviewManager implements PreviewManager {
 
     if (!imgBlob) {
       throw new Error(lang.message.camera.ws_closed_unexpectedly);
-    } else if (needCameraCableAlert && !alertConfig.read('skip_camera_cable_alert')) {
+    } else if (needCameraCableAlert && !this.silent && !alertConfig.read('skip_camera_cable_alert')) {
       const shouldContinue = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({
           buttonLabels: [lang.message.camera.abort_preview, lang.message.camera.continue_preview],
