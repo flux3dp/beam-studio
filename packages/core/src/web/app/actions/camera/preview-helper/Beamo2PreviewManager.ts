@@ -33,6 +33,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private fullAreaGrid = bm2FullAreaPerspectiveGrid;
   private doorChecker = new DoorChecker();
   private originalExposure: null | number = null;
+  /** Set by cancel(): finish the in-flight camera step but draw nothing */
+  private cancelled = false;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
   protected progressType = ProgressTypes.STEPPING;
   protected _supportedPreviewModes = [PreviewMode.REGION, PreviewMode.FULL_AREA];
@@ -163,6 +165,11 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     }
   };
 
+  /** Discard the photo of an in-flight previewFullWorkarea; call end() once it returns */
+  cancel = (): void => {
+    this.cancelled = true;
+  };
+
   end = async (): Promise<void> => {
     this.ended = true;
     this.doorChecker.destroy();
@@ -254,6 +261,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       }
 
       const takePictures = async (useLowResolution = false) => {
+        if (this.cancelled) return;
+
         if (this.originalExposure !== null) {
           try {
             await deviceMaster.setCameraExposure(this.originalExposure + 500);
@@ -274,6 +283,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
           darkImageUrl = await this.getPhotoFromMachine({ useLowResolution });
         }
+
+        if (this.cancelled) return;
 
         await new Promise<void>((resolve) => previewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
 
@@ -296,6 +307,12 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         }
 
         this.originalExposure = null;
+      }
+
+      if (this.cancelled) {
+        this.closeMessage();
+
+        return false;
       }
 
       this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });

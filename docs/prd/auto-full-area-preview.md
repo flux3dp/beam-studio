@@ -145,7 +145,7 @@ Shared files the design touches, with each caller and the behaviour that must st
 - `app/actions/camera/preview-helper/BasePreviewManager.tsx` (`showMessage`, new `silent` / `messagePrefix` options, default off)
   - `PreviewModeController.start` (manual preview, all managers) — messages unchanged, alerts unchanged.
   - `Bb2Hx2PreviewManager`, `Beamo2PreviewManager`, `BeamPreviewManager`, `AdorPreviewManager`, `PromarkPreviewManager` — unchanged defaults.
-- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts` (honour `silent` in `DoorChecker` calls and `handleSetupError`)
+- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts` (honour `silent` in `DoorChecker` calls and `handleSetupError`; new `cancel()`, checked only in `previewFullWorkarea`)
   - `PreviewModeController` manual fbm2 preview — `door_opened` alert and setup-error alerts still pop.
   - `BeamPreviewManager` reuse of `handlePreviewSetupError` (error-report PR) — untouched.
 - `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts` (honour `silent`; `previewWithWideAngleCamera` optionally returns the image URL without drawing)
@@ -194,7 +194,7 @@ capturing/looping: abort() from §7.5 or socket close → discard → polling
 
 ### 7.2 Manager options
 
-`BasePreviewManager` gains `protected silent = false` and `protected messagePrefix = ''`, set through `setup({ silent, messagePrefix })`. `showMessage` prepends `messagePrefix` to `content` when it is a string. `Beamo2PreviewManager.handleSetupError` and its `DoorChecker` calls pass `showError = !this.silent`; `Bb2Hx2PreviewManager.handleSetupError` likewise. Alerts from `handlePreviewSetupError` are skipped when silent (logged instead), and so is the camera-cable warning in `getPhotoFromMachine` (the capture continues). Nothing else in the managers changes.
+`BasePreviewManager` gains `protected silent = false` and `protected messagePrefix = ''`, set through `setup({ silent, messagePrefix })`. `showMessage` prepends `messagePrefix` to `content` when it is a string. `Beamo2PreviewManager.handleSetupError` and its `DoorChecker` calls pass `showError = !this.silent`; `Bb2Hx2PreviewManager.handleSetupError` likewise. Alerts from `handlePreviewSetupError` are skipped when silent (logged instead), and so is the camera-cable warning in `getPhotoFromMachine` (the capture continues). `Beamo2PreviewManager.cancel()` sets a flag that `previewFullWorkarea` checks before each pass and before drawing: once set, the in-flight camera step finishes, nothing is drawn, the success toast is skipped and it returns `false`. Never called by the manual flow. Nothing else in the managers changes.
 
 ### 7.3 Open-lid loop (fbb2 / fhx2rf)
 
@@ -221,7 +221,7 @@ Provided by the background-task manager (`background-tasks.md` §7.4) and used t
 
 `checkDeviceStatus` asks the manager (`backgroundTasks.yieldTo(device)`, `background-tasks.md` §7.3); while this task `isBusy()`, the same machine gets a Yes/No prompt with `message.auto_preview.abort_to_continue`, another machine gets a silent abort.
 
-`abort()`: set the abort flag, await the in-flight manager call, run `manager.end()` (fbm2: park, loose motor, exit raw; bb2/hx: disconnect camera), discard the partial photo, return. `isBusy()` is false while merely polling, so idle callers never see the prompt; `canTouchMachine` then stops new captures while the caller's dialog, progress, preview mode or sub-task is active.
+`abort()`: set the abort flag and call `manager.cancel()` (§7.2), await the in-flight manager call (raw commands must not interleave, so `end()` never runs concurrently with it), run `manager.end()` (fbm2: park, loose motor, exit raw; bb2/hx: disconnect camera), discard the partial photo, return. `isBusy()` is false while merely polling, so idle callers never see the prompt; `canTouchMachine` then stops new captures while the caller's dialog, progress, preview mode or sub-task is active.
 
 ### 7.6 Tab focus
 
