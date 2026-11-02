@@ -206,7 +206,7 @@ for task in priority order (highest first):
 
 **Two meanings of "selected".** The *target* machine of every task is the one the user selected in the top bar (`ctx.device`, from `SET_SELECTED_DEVICE`). `deviceMaster.select()` only decides which machine the shared control connection currently talks to; foreground flows call it for other machines (the monitor of B opened from the menu) without changing the top bar. Tasks follow the top bar, never `deviceMaster`'s current device.
 
-**Device ownership**: only the manager calls `deviceMaster.select` for a task. Before each tick a task calls `backgroundTasks.isCurrent(this)` and skips the tick when false. When a running task's device is not current, the manager reselects it once every `RESELECT_MS = 5000` as long as no modal is open, manual preview is off, and `deviceMaster.currentControlMode === ''` — that is, when no foreground action can be using the other machine. A failed select is retried on the same schedule.
+**Device ownership**: only the manager calls `deviceMaster.select` for a task. Before each tick a task calls `backgroundTasks.isCurrent(this)` and skips the tick when false. When a running task's device is not current, the manager reselects it once every `RESELECT_MS = 5000` as long as no modal is open, manual preview is off, the other machine is not in a sub-task (`!deviceMaster.currentControlMode`) — that is, when no foreground action can be using it — and the top-bar machine is in `deviceMaster.getAvailableDevices()`. The online check matters: `select()` shows a "connecting" progress, and retrying an offline machine every 5 s would flash it forever. A failed select is retried on the same schedule.
 
 **Foreground yield**: `checkDeviceStatus` adds, right after the manual-preview block:
 
@@ -223,7 +223,7 @@ The shared pre-flight check a task runs before it starts busy work (it is not a 
 ```ts
 !hasAnyModal() &&
 !previewModeController.isPreviewMode && !previewModeController.isStarting &&
-deviceMaster.currentControlMode === '' &&
+!deviceMaster.currentControlMode &&   // null after a kick is fine: the next command reconnects
 backgroundTasks.isCurrent(task) &&
 (await deviceMaster.getReport()).st_id === DeviceConstants.status.IDLE
 ```

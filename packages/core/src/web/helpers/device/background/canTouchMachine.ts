@@ -16,7 +16,8 @@ const canTouchMachine = async (task: BackgroundTask): Promise<boolean> => {
     dialogCaller.hasAnyModal() ||
     previewModeController.isPreviewMode ||
     previewModeController.isStarting ||
-    deviceMaster.currentControlMode !== '' ||
+    // null = no control socket (e.g. after a kick); the next command reconnects, so only a sub-task blocks
+    deviceMaster.currentControlMode ||
     !backgroundTasks.isCurrent(task)
   ) {
     return false;

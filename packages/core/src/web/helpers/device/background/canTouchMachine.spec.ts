@@ -45,6 +45,11 @@ describe('canTouchMachine', () => {
     expect(mockIsCurrent).toHaveBeenCalledWith(task);
   });
 
+  test('true after a kick dropped the control socket', async () => {
+    mockDeviceMaster.currentControlMode = null as any;
+    expect(await canTouchMachine(task)).toBe(true);
+  });
+
   test.each([
     ['a modal is open', () => mockHasAnyModal.mockReturnValue(true)],
     ['manual preview is on', () => (mockPreview.isPreviewMode = true)],
