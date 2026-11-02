@@ -1,4 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import dialogCaller from '@core/app/actions/dialog-caller';
 import tabController from '@core/app/actions/tabController';
 import alertConstants from '@core/app/constants/alert-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -10,6 +12,8 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import type { BackgroundContext, BackgroundTask, BackgroundTaskId } from './types';
 import { BACKGROUND_TASK_PRIORITY } from './types';
+
+const RESELECT_MS = 5000;
 
 const isVisible = (): boolean => document.visibilityState === 'visible';
 
@@ -24,6 +28,7 @@ class BackgroundTasks {
   private ctx: BackgroundContext | null = null;
   /** `winner>loser` pairs already reported */
   private warned = new Set<string>();
+  private isReselecting = false;
 
   /**
    * Subscribe on first use instead of at import: check-device-status imports this module, and reading
@@ -54,6 +59,8 @@ class BackgroundTasks {
       tabController.onFocused(() => this.update({ tabFocused: true }));
       tabController.onBlurred(() => this.update({ tabFocused: false }));
     }
+
+    setInterval(this.reselect, RESELECT_MS);
 
     return this.ctx;
   };
@@ -153,6 +160,37 @@ class BackgroundTasks {
 
     this.warned.add(key);
     console.warn(`[backgroundTasks] ${loser} yields the machine to higher-priority ${winner}`);
+  };
+
+  /**
+   * A foreground flow may point deviceMaster at another machine (e.g. the monitor of B opened from the menu)
+   * without changing the top bar. Once nothing in the app can be using that machine, point it back.
+   */
+  private reselect = async (): Promise<void> => {
+    // Every running task targets the top-bar machine, so the first one tells which machine that is
+    const device = this.running.values().next().value;
+
+    if (!device || this.isReselecting || deviceMaster.currentDevice?.info.serial === device.serial) return;
+
+    const isQuiet =
+      !dialogCaller.hasAnyModal() &&
+      !previewModeController.isPreviewMode &&
+      !previewModeController.isStarting &&
+      !deviceMaster.currentControlMode;
+    // select() shows a "connecting" progress; retrying an offline machine every 5 s would flash it forever
+    const isOnline = deviceMaster.getAvailableDevices().some(({ uuid }) => uuid === device.uuid);
+
+    if (!isQuiet || !isOnline) return;
+
+    this.isReselecting = true;
+
+    try {
+      await deviceMaster.select(device);
+    } catch (error) {
+      console.warn('[backgroundTasks] reselect failed', error);
+    } finally {
+      this.isReselecting = false;
+    }
   };
 
   private startTask = (task: BackgroundTask, device: IDeviceInfo): void => {

@@ -208,7 +208,7 @@ backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // 優�
 
 **「選取」的兩種意思。** 每個任務的*目標*機器是使用者在頂欄選的那台（`ctx.device`，來自 `SET_SELECTED_DEVICE`）。`deviceMaster.select()` 只決定共用的控制連線目前和哪台機器溝通；前景流程會為其他機器呼叫它（例如從選單打開 B 的監控視窗），但不會改變頂欄。任務跟著頂欄走，從不跟著 `deviceMaster` 的目前機器走。
 
-**機器擁有權**：只有管理器能為任務呼叫 `deviceMaster.select`。任務每次 tick 前呼叫 `backgroundTasks.isCurrent(this)`，為 false 就跳過這次 tick。正在跑的任務其機器不是目前機器時，只要沒有 modal 開著、手動預覽關閉、且 `deviceMaster.currentControlMode === ''`（也就是沒有前景動作可能正在用另一台機器），管理器每 `RESELECT_MS = 5000` 重新選取一次。選取失敗依同一頻率重試。
+**機器擁有權**：只有管理器能為任務呼叫 `deviceMaster.select`。任務每次 tick 前呼叫 `backgroundTasks.isCurrent(this)`，為 false 就跳過這次 tick。正在跑的任務其機器不是目前機器時，只要沒有 modal 開著、手動預覽關閉、另一台機器不在子任務中（`!deviceMaster.currentControlMode`，也就是沒有前景動作可能正在用它），而且頂欄的機器在 `deviceMaster.getAvailableDevices()` 裡，管理器每 `RESELECT_MS = 5000` 重新選取一次。上線檢查很重要：`select()` 會顯示「連線中」的 progress，對離線機器每 5 秒重試會讓它一直閃。選取失敗依同一頻率重試。
 
 **前景讓路**：`checkDeviceStatus` 在手動預覽區塊之後加上：
 
@@ -225,7 +225,7 @@ if (!(await backgroundTasks.yieldTo(device))) return false;
 ```ts
 !hasAnyModal() &&
 !previewModeController.isPreviewMode && !previewModeController.isStarting &&
-deviceMaster.currentControlMode === '' &&
+!deviceMaster.currentControlMode &&   // 被踢後的 null 沒關係：下一個指令會重新連線
 backgroundTasks.isCurrent(task) &&
 (await deviceMaster.getReport()).st_id === DeviceConstants.status.IDLE
 ```

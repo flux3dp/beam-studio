@@ -1,9 +1,39 @@
 import type backgroundTasksType from './index';
 import type { BackgroundTask, BackgroundTaskId } from './types';
 
-const mockDeviceMaster = { currentDevice: null as null | { info: { serial: string } }, select: jest.fn() };
+const mockDeviceMaster = {
+  available: [] as Array<{ uuid: string }>,
+  currentControlMode: '' as null | string,
+  currentDevice: null as null | { info: { serial: string } },
+  getAvailableDevices: () => mockDeviceMaster.available,
+  select: jest.fn(),
+};
 
-jest.mock('@core/helpers/device-master', () => mockDeviceMaster);
+jest.mock('@core/helpers/device-master', () => ({
+  get currentControlMode() {
+    return mockDeviceMaster.currentControlMode;
+  },
+  get currentDevice() {
+    return mockDeviceMaster.currentDevice;
+  },
+  getAvailableDevices: () => mockDeviceMaster.getAvailableDevices(),
+  select: (...args) => mockDeviceMaster.select(...args),
+}));
+
+const mockHasAnyModal = jest.fn();
+
+jest.mock('@core/app/actions/dialog-caller', () => ({ hasAnyModal: () => mockHasAnyModal() }));
+
+const mockPreview = { isPreviewMode: false, isStarting: false };
+
+jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
+  get isPreviewMode() {
+    return mockPreview.isPreviewMode;
+  },
+  get isStarting() {
+    return mockPreview.isStarting;
+  },
+}));
 jest.mock('@core/helpers/is-web', () => () => false);
 
 const mockPopUp = jest.fn();
@@ -48,6 +78,11 @@ describe('backgroundTasks', () => {
     jest.resetModules();
     jest.spyOn(console, 'warn').mockImplementation(() => {});
     mockDeviceMaster.currentDevice = null;
+    mockDeviceMaster.currentControlMode = '';
+    mockDeviceMaster.available = [];
+    mockHasAnyModal.mockReturnValue(false);
+    mockPreview.isPreviewMode = false;
+    mockPreview.isStarting = false;
     mockDeviceMaster.select.mockReset();
     mockPopUp.mockReset();
     backgroundTasks = require('./index').default;
@@ -145,6 +180,49 @@ describe('backgroundTasks', () => {
       mockPopUp.mockImplementation(({ onNo }) => onNo());
       expect(await backgroundTasks.yieldTo(deviceA)).toBe(false);
       expect(log).toEqual([]);
+    });
+  });
+
+  describe('reselect', () => {
+    beforeEach(() => jest.useFakeTimers());
+    afterEach(() => jest.useRealTimers());
+
+    const setup = () => {
+      backgroundTasks.register(makeTask('promark-button', log));
+      backgroundTasks.setDevice(deviceA);
+      mockDeviceMaster.select.mockClear();
+      // a foreground flow moved deviceMaster to B
+      mockDeviceMaster.currentDevice = { info: { serial: 'B' } };
+      mockDeviceMaster.available = [{ uuid: 'a' }];
+    };
+
+    test('points deviceMaster back at the top-bar machine once quiet', async () => {
+      setup();
+      mockHasAnyModal.mockReturnValue(true);
+      await jest.advanceTimersByTimeAsync(5000);
+      expect(mockDeviceMaster.select).not.toHaveBeenCalled();
+
+      mockHasAnyModal.mockReturnValue(false);
+      await jest.advanceTimersByTimeAsync(5000);
+      expect(mockDeviceMaster.select).toHaveBeenCalledWith(deviceA);
+    });
+
+    test.each([
+      ['manual preview is on', () => (mockPreview.isPreviewMode = true)],
+      ['the other machine is in a sub-task', () => (mockDeviceMaster.currentControlMode = 'raw')],
+      ['the top-bar machine is offline', () => (mockDeviceMaster.available = [])],
+    ])('waits while %s', async (_, arrange) => {
+      setup();
+      arrange();
+      await jest.advanceTimersByTimeAsync(10000);
+      expect(mockDeviceMaster.select).not.toHaveBeenCalled();
+    });
+
+    test('does nothing while deviceMaster already talks to the top-bar machine', async () => {
+      setup();
+      mockDeviceMaster.currentDevice = { info: { serial: 'A' } };
+      await jest.advanceTimersByTimeAsync(10000);
+      expect(mockDeviceMaster.select).not.toHaveBeenCalled();
     });
   });
 });
