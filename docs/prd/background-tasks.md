@@ -59,7 +59,7 @@ Foreground pollers start and stop with a user action and are already serialised 
 
 ### 2.3 Shared state the tasks touch
 
-- **Selected device**: `TopBarController.tsx:31` emits `SET_SELECTED_DEVICE` on the `top-bar` emitter; `CanvasContext.tsx:63` stores it. `ExposureControl.tsx:129` already subscribes to the same event outside React.
+- **Selected device**: `TopBarController.tsx:31` emits `SET_SELECTED_DEVICE` on the `top-bar` emitter; `CanvasContext.tsx:63` stores it. The startup default is not emitted: `TopBar.tsx:62` calls the context setter directly, so a listener on the event alone misses it. Reading `CanvasContext.selectedDevice` from a component (as `GoButton.tsx:38-40` does) sees both.
 - **Current device is global**: `deviceMaster.select(device)` switches the one control connection every caller uses. A background task that assumes "the current device is mine" breaks as soon as a foreground action selects another machine; Promark's `checkButton` would then poll the wrong machine.
 - **Foreground guard**: `check-device-status.ts:18-35` already handles one in-app session, manual preview: another device → end it silently; same device → Yes/No `device_is_used`. 21 callers (export, every machine-menu action, framing, calibration dialogs, curve measurer, Print and Cut, path preview, `preview-mode-controller.ts:85`).
 - **Modals**: `DialogContext.tsx:21-46` (`dialogComponents`, `CHECK_ID_EXIST`), `AlertProgressContext.tsx:112-116` (`alertProgressStack`). No "is anything open" query exists.
@@ -120,9 +120,9 @@ Foreground pollers start and stop with a user action and are already serialised 
   - `exportTask.ts:131` `setStatus('uploading')` — same effect.
   - `MonitorContext.tsx:1002,1017` `setStatus('listening')` — same effect.
   - Physical-button behaviour in B1/B2 — identical, including frame-first counting and the 200 ms interval.
-- `app/components/beambox/TopBar/GoButton.tsx` (drop the `onContextChanged` effect; the manager subscribes to the selected device itself)
+- `app/components/beambox/TopBar/GoButton.tsx` (the effect now calls `backgroundTasks.setDevice(selectedDevice)` instead of `promarkButtonHandler.onContextChanged(mode, selectedDevice)`; mode comes from the store)
   - Go click, F2 shortcut, `setExportFn` — unchanged.
-  - `GoButton.spec.tsx` mock of the handler — updated to the new import.
+  - `GoButton.spec.tsx` — mocks the manager and expects `setDevice(selectedDevice)`.
 - `helpers/check-device-status.ts` (one block after the manual-preview block, delegating to the manager)
   - All 21 callers — with no busy task, identical behaviour, including `device_is_used`, kick, abort, quit and `device_busy`.
   - `preview-mode-controller.ts:85` — manual preview start now also stops a busy task on the same machine (after a prompt); intended.
@@ -190,7 +190,7 @@ backgroundTasks.isCurrent(task): boolean      // current device is the task's de
 backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // highest priority first
 ```
 
-**Context**: subscribes once to `topBarEventEmitter` `SET_SELECTED_DEVICE` (as `ExposureControl.tsx:129` does), `useCanvasStore` `mode`, `useDocumentStore` `workarea`, and `tabController.onFocused/onBlurred`. Initial device from `TopBarController.getSelectedDevice()`.
+**Context**: `device` is fed by `GoButton`'s effect on `CanvasContext.selectedDevice` (`backgroundTasks.setDevice`), which also sees the startup default that never goes through `SET_SELECTED_DEVICE` (§2.3). The manager subscribes itself to `useCanvasStore` `mode`, `useDocumentStore` `workarea`, and tab focus (§7.5).
 
 **Evaluation** on every context change and `refresh()`:
 
@@ -239,9 +239,10 @@ backgroundTasks.isCurrent(task) &&
 | `requirements.context`: mode Draw/PathPreview + Promark device | `models = promarkModels`; `isEnabled`: `mode ∈ {Draw, PathPreview}` |
 | `requirements.workarea` | `isEnabled`: `promarkModels.has(ctx.workarea)` |
 | `requirements.enabled` | `isEnabled`: `useDocumentStore.getState()['promark-start-button']`; its subscription calls `backgroundTasks.refresh()` |
+| `shouldFrameFirst` + `frame-before-start` subscription | read `useDocumentStore.getState()['frame-before-start']` at the press |
 | `requirements.tab` | manager (`ctx.tabFocused`) |
 | `startListening` select | manager |
-| `onContextChanged` via `GoButton.tsx:38-40` | manager subscription; GoButton effect removed |
+| `onContextChanged(mode, device)` via `GoButton.tsx:38-40` | GoButton's effect calls `backgroundTasks.setDevice(device)`; mode from the store |
 | `checkButton` tick | unchanged, plus `if (!backgroundTasks.isCurrent(this)) return;` |
 | `setStatus`, `handleTaskFinish`, `setExportFn` | unchanged public API |
 | — | `isBusy = () => false`, `abort = async () => {}`, priority 20 |
@@ -260,7 +261,7 @@ None persisted. The task contract in §7.2 is the only interface.
 
 One PR, merged before the auto-preview PR, in reviewable chunks:
 
-1. `background/` manager, types, `list()`; Promark migrated; GoButton effect removed. Behaviour-neutral.
+1. `background/` manager, types, `list()`; Promark migrated; GoButton effect feeds the manager. Behaviour-neutral.
 2. `hasAnyModal()`, `canTouchMachine`.
 3. `checkDeviceStatus` → `yieldTo`. No member is ever busy yet, so behaviour-neutral until auto preview lands.
 4. `background-tasks` skill (contract, rules, how to add a task).
@@ -283,6 +284,7 @@ One PR, merged before the auto-preview PR, in reviewable chunks:
 - **R2 Reselect fights the user.** If the "quiet" check misses a foreground flow that switched machines without a modal or sub-task, the manager could switch back under it. Mitigation: 5 s interval, and every foreground machine action goes through `checkDeviceStatus` first; list any exception found in §6.
 - **R3 Web tab focus change.** Background tasks on web, Promark included, pause in hidden tabs from now on. Accepted; nothing outside the manager changes.
 - **F1 Tick helper.** If a third task appears with the same `setInterval` + skip-while-pending + `isCurrent` boilerplate, add `backgroundTasks.every(task, ms, fn)`.
+- **F2 Read-only tasks in parallel.** Today every task is treated as exclusive: one per machine, decided by priority. That is right for tasks that hold resources, but a future read-only poller (usage counters for maintenance reminders, temperature or water-cooling monitoring, firmware notices) would needlessly push out, or be pushed out by, auto preview. When the first such task appears: add `exclusive?: boolean` (default `true`) to the task contract; only exclusive tasks take part in the `claimedBy` priority claim in `refresh()`, read-only ones run alongside; `yieldTo` needs no change (a read-only task's `isBusy` is always `false`); add a spec with one exclusive and one read-only task on the same machine. Control-socket commands from parallel tasks are already serialised by `addTask`. **Rule of thumb**: a task is exclusive if it enters raw mode, moves the head, changes camera settings, or starts an action on the machine (Promark counts: its button starts an export); otherwise it is read-only. Not built now: no read-only task exists to verify it, and all-exclusive is the safe default (worst case one task waits, never two collide).
 
 ---
 
@@ -294,7 +296,7 @@ Hardware-free (Jest, `unit-test` skill):
 - `canTouchMachine.spec.ts`: each condition false → false.
 - `promark-button-handler.spec.ts` (new): isEnabled mapping from §7.6; tick skipped when not current; existing press/frame-first counting unchanged.
 - `check-device-status.spec.ts`: `yieldTo` false → returns false before the status switch; true → existing flow.
-- `GoButton.spec.tsx`: updated mock, no `onContextChanged` call.
+- `GoButton.spec.tsx`: mocks the manager, expects `setDevice(selectedDevice)`.
 - Web focus in `background/index.spec.ts`: `visibilitychange` to hidden stops tasks, back to visible restarts them; Electron path uses `tabController` events.
 
 Hardware (pending a machine; map to §5): Promark B1, B2, B6. B4/B5 with the auto-preview companion on fbm2.

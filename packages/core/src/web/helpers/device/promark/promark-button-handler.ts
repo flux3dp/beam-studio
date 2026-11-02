@@ -1,14 +1,13 @@
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import dialogCaller from '@core/app/actions/dialog-caller';
-import tabController from '@core/app/actions/tabController';
 import { showFramingModal } from '@core/app/components/dialogs/FramingModal';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import FullWindowPanelStyles from '@core/app/widgets/FullWindowPanel/FullWindowPanel.module.scss';
+import backgroundTasks from '@core/helpers/device/background';
+import type { BackgroundContext, BackgroundTask } from '@core/helpers/device/background/types';
 import deviceMaster from '@core/helpers/device-master';
-import isWeb from '@core/helpers/is-web';
-import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 type TStatus =
   | 'idle'
@@ -32,93 +31,39 @@ const closeFrame = async () => {
   }
 };
 
-class PromarkButtonHandler {
-  private requirements = {
-    context: false, // In safe CanvasMode and Selecting Promark
-    enabled: false, // promark-start-button Enabled
-    tab: false, // Current tab is focused
-    workarea: false, // Using Promark workarea
-  };
-  private shouldFrameFirst = false;
-  private device: IDeviceInfo | null = null;
+class PromarkButtonHandler implements BackgroundTask {
+  readonly id = 'promark-button';
+  readonly models = promarkModels;
   private status: TStatus = 'idle';
   private timer: NodeJS.Timeout | null = null;
   private counter = 0;
   private exportFn: (byManager: boolean) => Promise<void> = async () => {};
 
   constructor() {
-    useDocumentStore.subscribe((state) => state['promark-start-button'], this.onDocChanged);
-    useDocumentStore.subscribe((state) => state['frame-before-start'], this.onDocChanged);
-    useDocumentStore.subscribe((state) => state.workarea, this.onModelChanged);
-    this.onDocChanged();
-    this.onModelChanged();
-    this.updateRequirement('tab', isWeb() || tabController.isFocused);
-    tabController.onFocused(this.onTabFocused);
-    tabController.onBlurred(this.onTabBlurred);
+    useDocumentStore.subscribe((state) => state['promark-start-button'], backgroundTasks.refresh);
   }
 
   setExportFn = (exportFn: (byManager: boolean) => Promise<void>): void => {
     this.exportFn = exportFn;
   };
 
-  onContextChanged = (mode: CanvasMode, device: IDeviceInfo | null): void => {
-    this.device = device;
-    this.updateRequirement(
-      'context',
-      Boolean(
-        (mode === CanvasMode.Draw || mode === CanvasMode.PathPreview) &&
-          this.device &&
-          promarkModels.has(this.device.model),
-      ),
-    );
-  };
+  isEnabled = ({ mode, workarea }: BackgroundContext): boolean =>
+    (mode === CanvasMode.Draw || mode === CanvasMode.PathPreview) &&
+    promarkModels.has(workarea) &&
+    useDocumentStore.getState()['promark-start-button'];
 
-  onDocChanged = (): void => {
-    const { 'frame-before-start': frameBeforeStart, 'promark-start-button': promarkStartButton } =
-      useDocumentStore.getState();
+  // Never blocks a foreground action: the button's own export is the foreground action
+  isBusy = (): boolean => false;
 
-    this.shouldFrameFirst = frameBeforeStart;
-    this.updateRequirement('enabled', promarkStartButton);
-  };
+  abort = async (): Promise<void> => {};
 
-  onModelChanged = (): void => {
-    const { workarea } = useDocumentStore.getState();
-
-    this.updateRequirement('workarea', promarkModels.has(workarea));
-  };
-
-  onTabFocused = (): void => {
-    this.updateRequirement('tab', true);
-  };
-
-  onTabBlurred = (): void => {
-    this.updateRequirement('tab', false);
-  };
-
-  updateRequirement = (key: keyof typeof this.requirements, val: boolean): void => {
-    this.requirements = { ...this.requirements, [key]: val };
-
-    const isEnable = Object.values(this.requirements).every(Boolean);
-
-    if (!isEnable) {
-      this.stopListening();
-    } else if (this.status === 'idle') {
-      this.startListening();
-    }
-  };
-
-  startListening = (): void => {
-    this.stopListening();
-
-    if (deviceMaster.currentDevice?.info?.serial !== this.device!.serial) {
-      deviceMaster.select(this.device!);
-    }
-
+  start = (): void => {
+    this.stop();
     this.status = 'listening';
     this.timer = setInterval(this.checkButton, interval);
   };
 
-  stopListening = (): void => {
+  stop = (): void => {
     this.status = 'idle';
     this.counter = 0;
 
@@ -141,7 +86,7 @@ class PromarkButtonHandler {
   };
 
   shouldListen = (): boolean => {
-    if (this.status !== 'listening') {
+    if (this.status !== 'listening' || !backgroundTasks.isCurrent(this)) {
       return false;
     }
 
@@ -176,7 +121,7 @@ class PromarkButtonHandler {
 
     this.counter += 1;
 
-    if (this.shouldFrameFirst) {
+    if (useDocumentStore.getState()['frame-before-start']) {
       if (this.counter === 1) {
         // Force framing on first press
         await closeFrame();
@@ -208,5 +153,7 @@ class PromarkButtonHandler {
 }
 
 const promarkButtonHandler = new PromarkButtonHandler();
+
+backgroundTasks.register(promarkButtonHandler);
 
 export default promarkButtonHandler;

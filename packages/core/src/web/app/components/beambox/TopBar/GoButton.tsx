@@ -8,6 +8,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import backgroundTasks from '@core/helpers/device/background';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
@@ -36,8 +37,9 @@ const GoButton = ({ hasDiscoverdMachine }: Props): React.JSX.Element => {
   }, [lang]);
 
   useEffect(() => {
-    promarkButtonHandler.onContextChanged(mode, selectedDevice);
-  }, [mode, selectedDevice]);
+    // The top bar's default device is set straight into CanvasContext, without SET_SELECTED_DEVICE
+    backgroundTasks.setDevice(selectedDevice);
+  }, [selectedDevice]);
 
   return (
     <div
