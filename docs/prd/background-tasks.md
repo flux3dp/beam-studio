@@ -7,7 +7,7 @@
 | **Created** | 2026-10-30 |
 | **Target product** | Beam Studio desktop (Electron) and web. All models. |
 | **Owner area** | Device communication |
-| **Related code** | Manager (new): `packages/core/src/web/helpers/device/background/`; First member: `helpers/device/promark/promark-button-handler.ts`; Foreground guard: `helpers/check-device-status.ts`; Modal query: `app/contexts/DialogContext.tsx`, `app/contexts/AlertProgressContext.tsx`, `app/actions/dialog-caller.tsx`; Context sources: `app/components/beambox/TopBar/contexts/TopBarController.tsx`, `app/contexts/CanvasContext.tsx`, `app/stores/canvas/canvasStore.ts`, `app/stores/documentStore.ts`, `app/actions/tabController.ts` (read only); Device: `helpers/device-master.ts` |
+| **Related code** | Manager (new): `packages/core/src/web/helpers/device/background/`; First member: `helpers/device/promark/promark-button-handler.ts`; Foreground guard: `helpers/check-device-status.ts`; Modal query: `app/contexts/DialogContext.tsx`, `app/contexts/AlertProgressContext.tsx`, `app/actions/dialog-caller.tsx`; Context sources: `app/components/beambox/TopBar/contexts/TopBarController.tsx`, `app/contexts/CanvasContext.tsx`, `app/stores/canvas/canvasStore.ts`, `app/stores/documentStore.ts`, `app/actions/tabController.ts` (read only); Startup registration: `app/actions/beambox/beambox-init.ts`; Device: `helpers/device-master.ts` |
 | **Companion PRD** | `docs/prd/auto-full-area-preview.md` (second member) |
 
 ---
@@ -120,6 +120,8 @@ Foreground pollers start and stop with a user action and are already serialised 
   - `exportTask.ts:131` `setStatus('uploading')` — same effect.
   - `MonitorContext.tsx:1002,1017` `setStatus('listening')` — same effect.
   - Physical-button behaviour in B1/B2 — identical, including frame-first counting and the 200 ms interval.
+- `app/actions/beambox/beambox-init.ts` (constructor calls `registerPromarkButtonHandler()`)
+  - Every other startup registration — unchanged, same order.
 - `app/components/beambox/TopBar/GoButton.tsx` (the effect now calls `backgroundTasks.setDevice(selectedDevice)` instead of `promarkButtonHandler.onContextChanged(mode, selectedDevice)`; mode comes from the store)
   - Go click, F2 shortcut, `setExportFn` — unchanged.
   - `GoButton.spec.tsx` — mocks the manager and expects `setDevice(selectedDevice)`.
@@ -166,6 +168,8 @@ interface BackgroundTask {
 ```
 
 A task that is never busy (Promark) returns `false` from `isBusy` and makes `abort` a no-op.
+
+**Registration**: each task module exports `register<Task>()`, which makes the task's own store subscriptions and calls `backgroundTasks.register(task)`; the `BeamboxInit` constructor (`app/actions/beambox/beambox-init.ts`) calls it once, next to the other startup registrations. Importing a task module has no side effects, so the startup list lives in one file and no import order can start or drop a task.
 
 **Priority** lives in one table, not on the task, so the whole ordering is reviewed in one place and a new task cannot be added without choosing its rank:
 
@@ -248,8 +252,9 @@ backgroundTasks.isCurrent(task) &&
 | `checkButton` tick | unchanged, plus `if (!backgroundTasks.isCurrent(this)) return;` |
 | `setStatus`, `handleTaskFinish`, `setExportFn` | unchanged public API |
 | — | `isBusy = () => false`, `abort = async () => {}`, priority 20 |
+| registered as a side effect of the first import | `registerPromarkButtonHandler()` (subscription + `register`), called once from `BeamboxInit`; importing the module has no side effects |
 
-The file stays in `helpers/device/promark/`; only its wiring changes.
+The file stays in `helpers/device/promark/`; only its wiring changes. Every task registers this way (§7.2).
 
 ---
 

@@ -39,10 +39,6 @@ class PromarkButtonHandler implements BackgroundTask {
   private counter = 0;
   private exportFn: (byManager: boolean) => Promise<void> = async () => {};
 
-  constructor() {
-    useDocumentStore.subscribe((state) => state['promark-start-button'], backgroundTasks.refresh);
-  }
-
   setExportFn = (exportFn: (byManager: boolean) => Promise<void>): void => {
     this.exportFn = exportFn;
   };
@@ -154,6 +150,10 @@ class PromarkButtonHandler implements BackgroundTask {
 
 const promarkButtonHandler = new PromarkButtonHandler();
 
-backgroundTasks.register(promarkButtonHandler);
+/** Called once at startup (BeamboxInit) */
+export const registerPromarkButtonHandler = (): void => {
+  useDocumentStore.subscribe((state) => state['promark-start-button'], backgroundTasks.refresh);
+  backgroundTasks.register(promarkButtonHandler);
+};
 
 export default promarkButtonHandler;
