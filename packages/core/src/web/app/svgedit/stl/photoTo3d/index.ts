@@ -33,7 +33,7 @@ export const SHARPEN_AMOUNT_LIMIT = { max: 5, min: 0 } as const;
 export const SHARPEN_RADIUS_LIMIT = { max: 20, min: 0.5 } as const;
 
 /** The roll-off is a share of the photo's width: 4 mm, the only value tested, was on a 100 mm photo. */
-export const DEFAULT_EDGE_ROUND_PERCENT = 4;
+export const DEFAULT_EDGE_ROUND_PERCENT = 0;
 /** % of the width; 10 mm on that 100 mm photo. */
 export const EDGE_ROUND_LIMIT = { max: 10, min: 0 } as const;
 

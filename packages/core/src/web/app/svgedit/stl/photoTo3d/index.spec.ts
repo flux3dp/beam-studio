@@ -144,7 +144,7 @@ describe('photo to 3D', () => {
     expect(job.size.width).toBeCloseTo(20);
     expect(job.size.height).toBeCloseTo(10);
     expect(job.size.depth).toBeCloseTo(4.4);
-    expect(job.params).toEqual({ edgeRoundMm: 0.8, pointSpacing: 0.5, sharpenAmount: 1, sharpenRadius: 4 });
+    expect(job.params).toEqual({ edgeRoundMm: 0, pointSpacing: 0.5, sharpenAmount: 1, sharpenRadius: 4 });
 
     const [id, buffer, options] = mockApplyPhotoPointCloud.mock.lastCall;
 
@@ -161,7 +161,7 @@ describe('photo to 3D', () => {
     expect(elem.getAttribute('data-stl-depth')).toBe('1');
     expect(elem.getAttribute('data-stl-depth-sharpen')).toBe('1');
     expect(elem.getAttribute('data-stl-depth-radius')).toBe('4');
-    expect(elem.getAttribute('data-stl-depth-round-percent')).toBe('4');
+    expect(elem.getAttribute('data-stl-depth-round-percent')).toBe('0');
     expect(elem.getAttribute('data-stl-depth-grid')).toBe('40,20');
     expect(Number(elem.getAttribute('data-stl-depth-thickness'))).toBeCloseTo(4.4);
     // the image stays as it was
@@ -179,13 +179,12 @@ describe('photo to 3D', () => {
     expect(elem.getAttribute('data-no-bg')).toBe('true');
   });
 
-  test('the edge roll-off is 4% of the width, in mm for the algorithm', async () => {
+  test('the edge processing starts off', async () => {
     mockProcessImageWithAiJson.mockResolvedValue(response());
 
     await convert();
 
-    // 4 mm on a 100 mm photo; this one is 20 mm wide
-    expect(mockRunPhotoTo3d.mock.lastCall[1].params.edgeRoundMm).toBe(0.8);
+    expect(mockRunPhotoTo3d.mock.lastCall[1].params.edgeRoundMm).toBe(0);
   });
 
   test('nothing changes when the API gives nothing (cancelled, no credit, failed)', async () => {
