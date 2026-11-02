@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Fokus Auto',
       warning_at_coordinates: 'Po włączeniu trybu automatycznego ogniskowania głowica laserowa zostanie zresetowana i przesunięta do określonej pozycji w celu ogniskowania.\nUpewnij się, że pozycja docelowa znajduje się na materiale i że nie ma przeszkód na ścieżce ruchu.',
     },
+    auto_preview: {
+      abort_to_continue: 'Maszyna wykonuje zdjęcie obszaru roboczego do automatycznego podglądu. Przerwać i kontynuować?',
+      prefix: 'Automatyczny podgląd: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analizowanie SVG - %d%% ...',
       calculating_task_path: 'Obliczanie ścieżki zadania - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Używa modelu AI do wykrywania obiektów w podglądzie kamery. Dokładniejsze na materiałach z teksturą, ale wolniejsze na starszych komputerach; wyłącz, aby użyć klasycznego wykrywania. Używane przez: Dopasowanie Automatyczne.',
     anti_aliasing: 'Wygładzanie krawędzi',
     auto_connect: 'Automatycznie wybierz jedyną maszynę',
+    auto_full_area_preview: 'Automatyczny podgląd całego obszaru',
     auto_switch_tab: 'Automatyczne przełączanie między panelem warstw a panelem obiektów',
     autofocus_offset: 'Przesunięcie autofokusa',
     autosave_enabled: 'Automatyczne zapisywanie',

@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Autofokus',
       warning_at_coordinates: 'Etter å ha gått inn i autofokusmodus vil laserhodet bli tilbakestilt og flyttet til den angitte posisjonen for fokusering.\nSørg for at målposisjonen er på materialet og at det ikke er hindringer i bevegelsebanen.',
     },
+    auto_preview: {
+      abort_to_continue: 'Maskinen tar bilde av arbeidsområdet for automatisk forhåndsvisning. Stoppe opptaket og fortsette?',
+      prefix: 'Automatisk forhåndsvisning: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analyserer SVG - %d%% ...',
       calculating_task_path: 'Beregner oppgavesti - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Bruker en AI-modell til å finne objekter i kameraforhåndsvisningen. Mer nøyaktig på teksturerte materialer, men tregere på eldre datamaskiner; slå av for å bruke klassisk gjenkjenning. Brukes av: Automatisk Tilpasning.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Velg automatisk den eneste maskinen',
+    auto_full_area_preview: 'Automatisk forhåndsvisning av hele området',
     auto_switch_tab: 'Automatisk bytte mellom lag- og objektpanel',
     autofocus_offset: 'Autofokusforskyvning',
     autosave_enabled: 'Autoslagre',

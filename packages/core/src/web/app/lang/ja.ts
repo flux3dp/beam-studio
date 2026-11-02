@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'オートフォーカス',
       warning_at_coordinates: 'オートフォーカスモードに入ると、レーザーヘッドがリセットされ、指定位置に移動してフォーカスを行います。\n対象位置が材料上にあり、移動経路に障害物がないことを確認してください。',
     },
+    auto_preview: {
+      abort_to_continue: '自動プレビューのため作業エリアを撮影中です。撮影を中止して続行しますか？',
+      prefix: '自動プレビュー：',
+    },
     backend_calculation: {
       analyzing_svg: 'SVGを解析中 - %d%% ...',
       calculating_task_path: 'タスクパスを計算中 - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'AI モデルでカメラプレビュー内の対象物を検出します。質感のある素材でより正確ですが、古いパソコンでは処理が遅くなります。オフにすると従来の検出方式を使用します。自動フィットで使用されます。',
     anti_aliasing: 'アンチエイリアス',
     auto_connect: '自動的に唯一のマシンを選択する',
+    auto_full_area_preview: '全範囲自動プレビュー',
     auto_switch_tab: 'レイヤーとオブジェクトパネルの自動切り替え',
     autofocus_offset: 'オートフォーカスオフセット',
     autosave_enabled: '自動保存',

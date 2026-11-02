@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Fokus Otomatis',
       warning_at_coordinates: 'Setelah memasuki mode fokus otomatis, kepala laser akan direset dan dipindahkan ke posisi yang ditentukan untuk memfokuskan.\nPastikan posisi target berada di atas material dan tidak ada rintangan di jalur pergerakan.',
     },
+    auto_preview: {
+      abort_to_continue: 'Mesin sedang memotret area kerja untuk pratinjau otomatis. Hentikan pemotretan dan lanjutkan?',
+      prefix: 'Pratinjau otomatis: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Menganalisis SVG - %d%% ...',
       calculating_task_path: 'Menghitung jalur tugas - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Menggunakan model AI untuk menemukan objek pada pratinjau kamera. Lebih akurat pada material bertekstur, tetapi lebih lambat di komputer lama; matikan untuk menggunakan deteksi klasik. Digunakan oleh: Pas Otomatis.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Pilih otomatis satu-satunya mesin',
+    auto_full_area_preview: 'Pratinjau Otomatis Seluruh Area',
     auto_switch_tab: 'Sakelar Otomatis Panel Lapisan dan Objek',
     autofocus_offset: 'Offset Fokus Otomatis',
     autosave_enabled: 'Simpan Otomatis',

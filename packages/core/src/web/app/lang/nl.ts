@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Auto scherpstellen',
       warning_at_coordinates: 'Na het activeren van de automatische focusmodus wordt de laserkop gereset en naar de opgegeven positie bewogen om scherp te stellen.\nZorg ervoor dat de doelpositie op het materiaal ligt en dat er geen obstakels in het bewegingspad zijn.',
     },
+    auto_preview: {
+      abort_to_continue: 'De machine maakt opnamen van het werkgebied voor het automatische voorbeeld. Opname stoppen en doorgaan?',
+      prefix: 'Automatisch voorbeeld: ',
+    },
     backend_calculation: {
       analyzing_svg: 'SVG analyseren - %d%% ...',
       calculating_task_path: 'Taakpad berekenen - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Gebruikt een AI-model om objecten in het cameravoorbeeld te vinden. Nauwkeuriger op materialen met textuur, maar langzamer op oudere computers; schakel uit om klassieke detectie te gebruiken. Gebruikt door: Auto Aanpassen.',
     anti_aliasing: 'Antialiasing',
     auto_connect: 'Selecteer automatisch de enige machine',
+    auto_full_area_preview: 'Automatisch voorbeeld van volledig gebied',
     auto_switch_tab: 'Automatisch schakelen tussen laag- en objectpaneel',
     autofocus_offset: 'Autofocus offset',
     autosave_enabled: 'Automatisch opslaan',

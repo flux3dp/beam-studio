@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: '自动对焦',
       warning_at_coordinates: '进入自动对焦模式后，激光头将重置并移动到指定位置进行对焦。\n请确保目标位置在材料上，且移动路径中没有障碍物。',
     },
+    auto_preview: {
+      abort_to_continue: '机器正在自动拍摄工作区域，是否中止拍摄并继续？',
+      prefix: '自动预览：',
+    },
     backend_calculation: {
       analyzing_svg: '正在解析 SVG - %d%% ...',
       calculating_task_path: '正在计算任务路径 - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: '使用 AI 模型在相机预览中寻找物件。在有纹理的材料上更准确，但在较旧的电脑上速度较慢；关闭则使用传统检测。用于自动适配功能。',
     anti_aliasing: '抗锯齿',
     auto_connect: '自动选择唯一机器',
+    auto_full_area_preview: '自动全范围拍照',
     auto_switch_tab: '自动切换图层和物件面板',
     autofocus_offset: '自动对焦高度补偿',
     autosave_enabled: '自动储存',

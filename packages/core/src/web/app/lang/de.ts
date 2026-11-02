@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Autofokus',
       warning_at_coordinates: 'Nach dem Aktivieren des Autofokus-Modus wird der Laserkopf zurückgesetzt und zur angegebenen Position bewegt, um zu fokussieren.\nStellen Sie sicher, dass sich die Zielposition auf dem Material befindet und keine Hindernisse im Bewegungsweg sind.',
     },
+    auto_preview: {
+      abort_to_continue: 'Die Maschine nimmt den Arbeitsbereich für die automatische Vorschau auf. Aufnahme abbrechen und fortfahren?',
+      prefix: 'Automatische Vorschau: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analysiere SVG - %d%% ...',
       calculating_task_path: 'Berechne Aufgabenpfad - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Erkennt Objekte in der Kameravorschau mit einem KI-Modell. Genauer auf strukturierten Materialien, aber langsamer auf älteren Computern; ausschalten, um die klassische Erkennung zu verwenden. Verwendet von: Automatische Anpassung.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Wählen Sie automatisch die einzige Maschine aus',
+    auto_full_area_preview: 'Automatische Vorschau des gesamten Bereichs',
     auto_switch_tab: 'Automatisches Umschalten von Ebenen- und Objektpanel',
     autofocus_offset: 'Autofokus-Versatz',
     autosave_enabled: 'Automatisch Speichern',

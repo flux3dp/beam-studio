@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: '오토포커스',
       warning_at_coordinates: '자동 초점 모드에 들어가면 레이저 헤드가 재설정되고 지정된 위치로 이동하여 초점을 맞춐니다.\n대상 위치가 재료 위에 있고 이동 경로에 장애물이 없는지 확인하십시오.',
     },
+    auto_preview: {
+      abort_to_continue: '자동 미리보기를 위해 작업 영역을 촬영 중입니다. 촬영을 중지하고 계속하시겠습니까?',
+      prefix: '자동 미리보기: ',
+    },
     backend_calculation: {
       analyzing_svg: 'SVG 분석 중 - %d%% ...',
       calculating_task_path: '작업 경로 계산 중 - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'AI 모델로 카메라 미리보기에서 물체를 찾습니다. 질감이 있는 소재에서 더 정확하지만 구형 컴퓨터에서는 느립니다. 끄면 기존 감지 방식을 사용합니다. 자동 맞춤에 사용됩니다.',
     anti_aliasing: '앤티앨리어싱',
     auto_connect: '유일한 기계 자동 선택',
+    auto_full_area_preview: '전체 영역 자동 미리보기',
     auto_switch_tab: '레이어 및 객체 패널 자동 전환',
     autofocus_offset: '자동 초점 오프셋',
     autosave_enabled: '자동 저장',

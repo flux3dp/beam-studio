@@ -74,6 +74,7 @@ export type DocumentStateKey = keyof DocumentState;
 export type GlobalPreference = {
   'af-offset': number;
   'anti-aliasing': boolean;
+  'auto-full-area-preview': boolean;
   'auto-switch-tab': boolean;
   auto_align: boolean;
   continuous_drawing: boolean;

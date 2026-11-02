@@ -2148,6 +2148,10 @@ export interface ILang {
       title: string;
       warning_at_coordinates: string;
     };
+    auto_preview: {
+      abort_to_continue: string;
+      prefix: string;
+    };
     backend_calculation: {
       analyzing_svg: string;
       calculating_task_path: string;
@@ -2629,6 +2633,7 @@ export interface ILang {
     ai_contour_detection_tooltip: string;
     anti_aliasing: string;
     auto_connect: string;
+    auto_full_area_preview: string;
     auto_switch_tab: string;
     autofocus_offset: string;
     autosave_enabled: string;
