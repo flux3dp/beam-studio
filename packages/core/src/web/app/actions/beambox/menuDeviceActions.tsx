@@ -8,6 +8,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
 import { calibrateCamera, showModuleCalibration } from '@core/app/components/dialogs/camera';
+import { showManualConfiguration } from '@core/app/components/dialogs/camera/ManualConfiguration';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showDiodeCalibration } from '@core/app/components/dialogs/DiodeCalibration';
 import { showLaserDelaySettingPanel } from '@core/app/components/dialogs/LaserDelay';
@@ -507,6 +508,11 @@ export default {
       primaryButtonIndex: 1,
       type: AlertConstants.SHOW_POPUP_INFO,
     });
+  },
+  MANUAL_CONFIGURATION: async (device: IDeviceInfo): Promise<void> => {
+    if (!checkIsAtEditor()) return;
+
+    showManualConfiguration(device);
   },
   PROMARK_SETTINGS: async (device: IDeviceInfo): Promise<void> => {
     showPromarkSettings(device);

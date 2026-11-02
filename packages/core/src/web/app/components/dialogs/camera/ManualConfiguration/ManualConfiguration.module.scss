@@ -1,0 +1,131 @@
+@use '@core/styles/mixins' as mixins;
+
+// fixed height so the modal centres once and stays put while tabs load their values async;
+// the tab bar is pinned and only the pane scrolls
+.tabs {
+  @include mixins.viewport-size(60);
+
+  @include mixins.is-mobile {
+    @include mixins.viewport-size(80);
+  }
+
+  :global(.ant-tabs-content-holder) {
+    overflow-y: auto;
+  }
+}
+
+.tab {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+// device name and model under the modal title
+.subtitle {
+  margin-top: 2px;
+  color: #7f7f7f;
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.desc {
+  color: #7f7f7f;
+}
+
+.hint {
+  color: #7f7f7f;
+  font-size: 12px;
+}
+
+// one card per module; as many per row as the modal width allows
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px 24px;
+}
+
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.label {
+  margin-bottom: 8px;
+}
+
+// one labelled 100px input per row: a two-column grid whose label column takes the widest label of
+// that block (one letter for X / Y, "Rotation" on legacy), so inputs line up without a fixed label width
+.inputs {
+  display: grid;
+  grid-template-columns: max-content 100px;
+  gap: 10px 8px;
+  align-items: center;
+
+  .pair {
+    display: contents;
+  }
+
+  .input {
+    width: 100px;
+  }
+
+  .unit {
+    right: 8px;
+  }
+}
+
+.inlineButton {
+  margin-top: 10px;
+}
+
+// one full-width section per camera: title (and the wide-angle mode switch) on one row, inputs below
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-height: 24px;
+  font-weight: 500;
+}
+
+// nine cells laid out like the bed, filling the width; each cell's X / Y stretch with the column
+.regions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px 20px;
+}
+
+.switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  white-space: nowrap;
+
+  + .hint {
+    margin-top: 4px;
+  }
+}
+
+// blend toggle above the region grid: the help icon sits outside the label so it does not flip the switch
+.blend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  .switch {
+    margin-top: 0;
+  }
+}
+
+// the blend help text is two sentences, one per line
+.tooltip {
+  white-space: pre-line;
+}

@@ -196,6 +196,8 @@ const useMenuData = (email?: string): MenuNode[] => {
         label: menuCms.calibrate_print_and_cut,
         type: 'item',
       },
+      // no laser or motion involved, so it stays enabled on mobile unlike the calibration flows
+      { device, id: 'MANUAL_CONFIGURATION', label: menuCms.manual_configuration, type: 'item' },
     ];
 
     const children: MenuNode[] = [

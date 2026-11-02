@@ -123,7 +123,10 @@ export const doGetOffsetFromPicture = async (
   return true;
 };
 
-const doSetConfigTask = async (device, data: CameraConfig, borderless) => {
+/** A new calibration voids the Print and Cut offset measured under the old one; Manual Configuration opts out */
+type WriteOptions = { clearPnc?: boolean };
+
+const doSetConfigTask = async (device, data: CameraConfig, borderless, clearPnc = true) => {
   const { R, SX, SY, X, Y } = data;
   const parameterName = borderless ? 'camera_offset_borderless' : 'camera_offset';
   const vc = VersionChecker(device.version);
@@ -134,13 +137,14 @@ const doSetConfigTask = async (device, data: CameraConfig, borderless) => {
     await deviceMaster.setDeviceSetting(parameterName, `Y:${Y} X:${X} R:${R} S:${(SX + SY) / 2}`);
   }
 
-  await clearPncOffset(device.serial);
+  if (clearPnc) await clearPncOffset(device.serial);
 };
 
 export const sendPictureThenSetConfig = async (
   result: CameraConfig,
   device: IDeviceInfo,
   borderless: boolean,
+  { clearPnc = true }: WriteOptions = {},
 ): Promise<void> => {
   console.log('Setting camera_offset', borderless ? 'borderless' : '', result);
 
@@ -153,6 +157,7 @@ export const sendPictureThenSetConfig = async (
         Y: Math.round(result.Y * 10) / 10,
       },
       borderless,
+      clearPnc,
     );
   } else {
     throw new Error(i18n.lang.calibration.analyze_result_fail);
@@ -165,7 +170,10 @@ export const addFisheyeCalibrateImg = (height: number, imgBlob: Blob): Promise<b
 export const doFishEyeCalibration = (onProgress?: (val: number) => void): Promise<FisheyeCameraParametersV2Cali> =>
   cameraCalibrationApi.doFisheyeCalibration(onProgress);
 
-export const setFisheyeConfig = async (data: FisheyeCameraParameters): Promise<{ status: string }> => {
+export const setFisheyeConfig = async (
+  data: FisheyeCameraParameters,
+  { clearPnc = true }: WriteOptions = {},
+): Promise<{ status: string }> => {
   const strData = JSON.stringify(data, (key, val) => {
     if (typeof val === 'number') {
       return Math.round(val * 1e6) / 1e6;
@@ -176,7 +184,7 @@ export const setFisheyeConfig = async (data: FisheyeCameraParameters): Promise<{
   const res = await deviceMaster.uploadFisheyeParams(strData, () => {});
   const serial = deviceMaster.currentDevice?.info.serial;
 
-  if (serial) await clearPncOffset(serial);
+  if (clearPnc && serial) await clearPncOffset(serial);
 
   return res;
 };

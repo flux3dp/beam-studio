@@ -30,13 +30,11 @@ export const OffsetSettings = ({ layerModule, onClose }: Props) => {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
   const isInch = useStorageStore((state) => state.isInch);
-  const { precision, step, unit } = useMemo(() => {
-    if (isInch) {
-      return { precision: 4, step: 0.0254, unit: 'in' };
-    }
-
-    return { precision: 2, step: 0.1, unit: 'mm' };
-  }, [isInch]);
+  // UnitInput keeps the value in mm and converts the display when isInch; step is in mm (0.254 mm = 0.01 in)
+  const { precision, step, unit } = useMemo(
+    () => (isInch ? { precision: 3, step: 0.254, unit: 'in' } : { precision: 2, step: 0.1, unit: 'mm' }),
+    [isInch],
+  );
 
   useEffect(() => {
     getModuleOffsets({
@@ -89,6 +87,7 @@ export const OffsetSettings = ({ layerModule, onClose }: Props) => {
             <label>X</label>
             <UnitInput
               className={styles.input}
+              isInch={isInch}
               onChange={(val) => {
                 if (val !== null) setX(val);
               }}
@@ -101,6 +100,7 @@ export const OffsetSettings = ({ layerModule, onClose }: Props) => {
             <label>Y</label>
             <UnitInput
               className={styles.input}
+              isInch={isInch}
               onChange={(val) => {
                 if (val !== null) setY(val);
               }}
