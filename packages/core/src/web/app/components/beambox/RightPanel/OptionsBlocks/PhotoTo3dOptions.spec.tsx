@@ -64,7 +64,33 @@ describe('PhotoTo3dOptions', () => {
     fireEvent.change(input, { target: { value: '2.5' } });
     expect(mockUpdatePhotoTo3d).not.toHaveBeenCalled();
     fireEvent.blur(input);
-    expect(mockUpdatePhotoTo3d).toHaveBeenCalledWith(elem, { sharpenAmount: 2.5 }, 'new');
+    expect(mockUpdatePhotoTo3d).toHaveBeenCalledWith(
+      elem,
+      { edgeRoundPercent: 2, sharpenAmount: 2.5, sharpenRadius: 4 },
+      'new',
+    );
+  });
+
+  test('an edit made while the previous one computes keeps that one too', () => {
+    const elem = makeElem();
+    const { container } = render(<PhotoTo3dOptions elem={elem} />);
+    const amount = container.querySelector<HTMLInputElement>('#photo-to-3d-sharpenAmount')!;
+
+    fireEvent.change(amount, { target: { value: '2.5' } });
+    fireEvent.blur(amount);
+    act(() => usePhotoTo3dBusy.setState({ ids: ['photo'] }));
+
+    // the element still has the old amount: the newer computation replaces the first one
+    const radius = container.querySelector<HTMLInputElement>('#photo-to-3d-sharpenRadius')!;
+
+    fireEvent.change(radius, { target: { value: '6' } });
+    fireEvent.blur(radius);
+    expect(mockUpdatePhotoTo3d).toHaveBeenLastCalledWith(
+      elem,
+      { edgeRoundPercent: 2, sharpenAmount: 2.5, sharpenRadius: 6 },
+      'new',
+    );
+    act(() => usePhotoTo3dBusy.setState({ ids: [] }));
   });
 
   test('a typed value stays while the cloud is computed, and is read back from the element after', () => {

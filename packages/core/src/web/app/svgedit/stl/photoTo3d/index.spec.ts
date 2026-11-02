@@ -12,7 +12,7 @@ jest.mock('@core/helpers/api/ai-image-process', () => ({
 const mockRunPhotoTo3d = jest.fn();
 
 jest.mock('./runPhotoTo3d', () => ({
-  PhotoTo3dCancelledError: class extends Error {},
+  PhotoTo3dCancelledError: class PhotoTo3dCancelledError extends Error {},
   runPhotoTo3d: (...args: unknown[]) => mockRunPhotoTo3d(...args),
 }));
 jest.mock('../photoPointCloudGenerator', () => ({
@@ -55,6 +55,12 @@ const mockPointSpacing = jest.fn();
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   attributeMap: { stlPointSpacing: 'data-stl-point-spacing' },
 }));
+
+const mockGetObjectLayer = jest.fn();
+
+jest.mock('@core/helpers/layer/layer-helper', () => ({
+  getObjectLayer: (...args: unknown[]) => mockGetObjectLayer(...args),
+}));
 jest.mock('../engravingParams', () => ({
   getStlEngravingParams: () => ({ pointSpacing: mockPointSpacing() }),
 }));
@@ -86,6 +92,7 @@ import {
   watchStalePhotoTo3d,
 } from '.';
 import { PhotoTo3dError } from './generate';
+import { PhotoTo3dCancelledError } from './runPhotoTo3d';
 
 const toBase64 = (bytes: Uint8Array) => btoa(String.fromCharCode(...bytes));
 const response = (image: null | string = null) => ({
@@ -112,6 +119,7 @@ describe('photo to 3D', () => {
     jest.clearAllMocks();
     mockIsUvDev.mockReturnValue(false);
     mockPointSpacing.mockReturnValue(0.5);
+    mockGetObjectLayer.mockReturnValue(undefined);
     // world points: X and Y centred on the 20 × 10 mm photo, Z within its 4.4 mm relief
     mockRunPhotoTo3d.mockResolvedValue(Float32Array.from([10, -5, 0, -10, 5, 4.4]));
     URL.createObjectURL = jest.fn(() => 'blob:cut-out');
@@ -284,6 +292,136 @@ describe('photo to 3D', () => {
       expect(mockRunPhotoTo3d).not.toHaveBeenCalled();
     });
 
+    describe('a computation that ends late', () => {
+      const deferred = () => {
+        let resolve: (points: Float32Array) => void = () => {};
+        const promise = new Promise<Float32Array>((res) => {
+          resolve = res;
+        });
+
+        return { promise, resolve };
+      };
+      const points = Float32Array.from([10, -5, 0, -10, 5, 4.4]);
+
+      test('is dropped when the conversion was undone meanwhile', async () => {
+        const run = deferred();
+
+        mockRunPhotoTo3d.mockReturnValueOnce(run.promise);
+
+        const update = updatePhotoTo3d(elem, { sharpenAmount: 2 }, 'new');
+
+        await Promise.resolve();
+        expect(usePhotoTo3dBusy.getState().ids).toEqual(['photo']);
+        // undoing the conversion takes the marker off and makes the object a plain photo again
+        elem.removeAttribute('data-stl-depth');
+        useStlStore.setState({ objects: { photo } });
+        run.resolve(points);
+
+        await expect(update).rejects.toBeInstanceOf(PhotoTo3dCancelledError);
+        expect(mockApplyPhotoPointCloud).not.toHaveBeenCalled();
+        expect(mockAddCommandToHistory).not.toHaveBeenCalled();
+        expect(elem.getAttribute('data-stl-depth-sharpen')).toBe('1');
+        expect(usePhotoTo3dBusy.getState().ids).toEqual([]);
+      });
+
+      test('is dropped when its size was undone meanwhile', async () => {
+        const run = deferred();
+
+        resize([1, 1, 1]);
+        mockRunPhotoTo3d.mockReturnValueOnce(run.promise);
+
+        const update = updatePhotoTo3d(elem, {}, 'append');
+
+        await Promise.resolve();
+        resize([0.5, 0.5, 1]);
+        run.resolve(points);
+
+        await expect(update).rejects.toBeInstanceOf(PhotoTo3dCancelledError);
+        expect(mockAppendCommandToLast).not.toHaveBeenCalled();
+        expect(elem.getAttribute('data-stl-depth-grid')).toBe('40,20');
+      });
+
+      test('is dropped when a newer one started, even when it ends after the newer one', async () => {
+        const first = deferred();
+        const second = deferred();
+
+        mockRunPhotoTo3d.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+
+        const older = updatePhotoTo3d(elem, { sharpenAmount: 2 }, 'new');
+
+        await new Promise((resolve) => setTimeout(resolve));
+
+        const newer = updatePhotoTo3d(elem, { sharpenAmount: 2, sharpenRadius: 6 }, 'new');
+
+        await new Promise((resolve) => setTimeout(resolve));
+        second.resolve(points);
+        await expect(newer).resolves.toBe(true);
+        first.resolve(points);
+        await expect(older).rejects.toBeInstanceOf(PhotoTo3dCancelledError);
+
+        expect(mockApplyPhotoPointCloud).toHaveBeenCalledTimes(1);
+        expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+        expect(elem.getAttribute('data-stl-depth-sharpen')).toBe('2');
+        expect(elem.getAttribute('data-stl-depth-radius')).toBe('6');
+      });
+
+      test('keeps the object busy until the newest one ends', async () => {
+        const first = deferred();
+        const second = deferred();
+
+        mockRunPhotoTo3d.mockReturnValueOnce(first.promise).mockReturnValueOnce(second.promise);
+
+        const older = updatePhotoTo3d(elem, { sharpenAmount: 2 }, 'new');
+        const newer = updatePhotoTo3d(elem, { sharpenAmount: 3 }, 'new');
+
+        await new Promise((resolve) => setTimeout(resolve));
+        first.resolve(points);
+        await expect(older).rejects.toBeInstanceOf(PhotoTo3dCancelledError);
+        expect(usePhotoTo3dBusy.getState().ids).toEqual(['photo']);
+
+        second.resolve(points);
+        await newer;
+        expect(usePhotoTo3dBusy.getState().ids).toEqual([]);
+        expect(elem.getAttribute('data-stl-depth-sharpen')).toBe('3');
+      });
+    });
+
+    describe('before a job', () => {
+      test('waits for a computation still going, so the job sends its result', async () => {
+        let resolveRun: (points: Float32Array) => void = () => {};
+
+        mockRunPhotoTo3d.mockReturnValueOnce(
+          new Promise<Float32Array>((resolve) => {
+            resolveRun = resolve;
+          }),
+        );
+
+        const update = updatePhotoTo3d(elem, { sharpenAmount: 2 }, 'new');
+        let refreshed = false;
+        const refresh = refreshStalePhotoTo3d().then(() => {
+          refreshed = true;
+        });
+
+        await new Promise((resolve) => setTimeout(resolve));
+        expect(refreshed).toBe(false);
+
+        resolveRun(Float32Array.from([10, -5, 0, -10, 5, 4.4]));
+        await update;
+        await refresh;
+        expect(refreshed).toBe(true);
+        expect(mockApplyPhotoPointCloud).toHaveBeenCalledTimes(1);
+      });
+
+      test('a stale cloud that cannot be recomputed fails the job instead of sending the old cloud', async () => {
+        mockRunPhotoTo3d.mockRejectedValue(new PhotoTo3dError('too-many-points', 'too many'));
+        mockPointSpacing.mockReturnValue(0.01);
+
+        await expect(refreshStalePhotoTo3d()).rejects.toBeInstanceOf(PhotoTo3dError);
+        expect(mockApplyPhotoPointCloud).not.toHaveBeenCalled();
+        expect(elem.getAttribute('data-stl-depth-grid')).toBe('40,20');
+      });
+    });
+
     describe('while the canvas watches', () => {
       const flush = () => jest.advanceTimersByTimeAsync(500);
 
@@ -291,7 +429,10 @@ describe('photo to 3D', () => {
       afterEach(() => jest.useRealTimers());
 
       test('a changed layer point spacing recomputes the cloud once it settles, folded into that step', async () => {
+        const layer = document.getElementById('svgcontent')!;
         const stop = watchStalePhotoTo3d();
+
+        mockGetObjectLayer.mockReturnValue({ elem: layer });
 
         mockPointSpacing.mockReturnValue(0.25);
         document.getElementById('svgcontent')!.setAttribute('data-stl-point-spacing', '0.25');
@@ -301,7 +442,8 @@ describe('photo to 3D', () => {
         expect(mockRunPhotoTo3d).toHaveBeenCalledTimes(1);
         expect(mockRunPhotoTo3d.mock.lastCall[1].params.pointSpacing).toBe(0.25);
         expect(elem.getAttribute('data-stl-depth-grid')).toBe('80,40');
-        expect(mockAppendCommandToLast).toHaveBeenCalledWith(expect.anything(), 'Update photo to 3D', elem);
+        // the spacing step was recorded on the layer, a resize on the object: either one takes it
+        expect(mockAppendCommandToLast).toHaveBeenCalledWith(expect.anything(), 'Update photo to 3D', [elem, layer]);
 
         // another attribute, or a spacing the cloud already matches, recomputes nothing
         document.getElementById('svgcontent')!.setAttribute('data-stl-layer-spacing', '1');

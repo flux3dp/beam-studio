@@ -98,9 +98,9 @@ export class UndoManager implements IUndoManager {
 
   /**
    * Merge an already-applied follow-up into the latest undo step, or add it as a new step if the
-   * pointer moved or the last step does not involve `expectedElement`.
+   * pointer moved or the last step involves none of `expectedElement`.
    */
-  appendCommandToLast(cmd: BaseHistoryCommand, text: string, expectedElement?: Element): void {
+  appendCommandToLast(cmd: BaseHistoryCommand, text: string, expectedElement?: Element | Element[]): void {
     const previous = this.undoStack[this.undoStack.length - 1];
 
     if (this.undoStackPointer !== this.undoStack.length || this.undoStackPointer === 0) {
@@ -111,7 +111,7 @@ export class UndoManager implements IUndoManager {
 
     // Outline conversion is asynchronous. If the user managed to create another history entry
     // while it was running, never fold the conversion into that unrelated action.
-    if (expectedElement && !previous.elements().includes(expectedElement)) {
+    if (expectedElement && !previous.elements().some((elem) => [expectedElement].flat().includes(elem))) {
       this.addCommandToHistory(cmd);
 
       return;

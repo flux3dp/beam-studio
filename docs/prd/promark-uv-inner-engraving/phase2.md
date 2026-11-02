@@ -187,6 +187,8 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 | `photoPointCloud.ts` `applyPhotoPointCloud`（多了 `depthSource`、`transform` 選項） | uvDev 測試點雲的呼叫不帶這兩個選項，行為不變 |
 | `photoPointCloudGenerator.ts`（`loadRasterData` 改為 export） | 測試點雲產生不變 |
 | `getPointCloudObjects.ts` | 送出前先重算過期的照片轉 3D 點雲；其他點雲的 payload 不變 |
+| `export-funcs-swiftray.ts` 取點雲失敗的處理 | 仍還原畫布、關進度條、不送出；多了錯誤提示（照片轉 3D 點雲重算失敗時才會發生，2026-11-02） |
+| `undoManager.appendCommandToLast`、`IUndoManager`（`expectedElement` 可傳陣列，任一個在上一步裡就合併） | `extrusionSource.ts`、`importStl` 傳單一元素，行為不變 |
 | `ThreeDOptions.tsx` | uvDev 的測試點雲按鈕不變；照片轉 3D 物件改顯示 `PhotoTo3dOptions` |
 | `OptionsPanel.tsx` | 照片轉 3D 物件（有 `data-stl-depth`）顯示 `ThreeDOptions`、不顯示點陣圖選項；uvDev 測試點雲與其他點雲仍沒有選項（2026-10-30 補：原本點雲一律不顯示選項，`PhotoTo3dOptions` 從未出現過） |
 | `presets.ts` | 頻率、速度等既有值不變；只有 `fpm1_2_5` 加上 `fillDwellTime`（PLA 50000，其他 -50000 = 關閉）。其他機型的預設參數不變 |
@@ -308,7 +310,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 付費取得、但還沒變成點雲的深度（例如點數過多）留在記憶體，以元素 id + 原圖為鍵，同一次開啟期間再按「轉 3D」不會重新呼叫 API。
 - 重算（`updatePhotoTo3d`）：從 `depthSource` 重跑 worker，不呼叫 API。
   - 物件面板（`PhotoTo3dOptions`）改參數：獨立一個 undo 步驟。
-  - 點格過期（`data-stl-depth-grid` 和目前的「世界寬 / 點間距, 世界高 / 點間距」不同）：`InnerEngravingCanvas` 掛載時啟動 `watchStalePhotoTo3d`，用 MutationObserver 監聽 `#svgcontent` 底下的 `data-stl-point-spacing`（含 preset、undo、開檔），並訂閱 `stlStore` 的物件變動；停下 0.5 秒後把每個過期的點雲重算，`appendCommandToLast` 併進造成它的那一步，計算中的物件等它算完再看。算不出來的點格（點數過多）只提示一次，點間距或尺寸再改之前不重試（2026-10-30 實測原本會無限跳出提示），點雲維持過期、送出前再試一次。`getPointCloudObjects` 送出前一定重算，不記 history。點雲只由屬性、尺寸、圖層決定，undo 之後再送出會再算一次，結果一致。~~原本由 `PhotoTo3dOptions` 在面板開著時做~~ 2026-10-30 改到畫布（§10 #17）。
+  - 點格過期（`data-stl-depth-grid` 和目前的「世界寬 / 點間距, 世界高 / 點間距」不同）：`InnerEngravingCanvas` 掛載時啟動 `watchStalePhotoTo3d`，用 MutationObserver 監聽 `#svgcontent` 底下的 `data-stl-point-spacing`（含 preset、undo、開檔），並訂閱 `stlStore` 的物件變動；停下 0.5 秒後把每個過期的點雲重算，`appendCommandToLast` 併進造成它的那一步（期望元素是照片和它的圖層 `<g>`：尺寸記在照片上、點間距記在圖層上；2026-11-02 review 前只比照片，點間距的重算會另成一步，undo 一次只退點雲），計算中的物件等它算完再看。算不出來的點格（點數過多）只提示一次，點間距或尺寸再改之前不重試（2026-10-30 實測原本會無限跳出提示），點雲維持過期、送出前再試一次。每個物件只套用最新一次計算，且算完時輸入（轉換標記、銳化／收邊、厚度、縮放、點間距、深度資料）必須沒變；計算中按了 undo 或又開始新的計算，結果丟棄、不動 history（2026-11-02 review：原本晚到的結果會把已 undo 回照片的物件再變成點雲並清掉 redo）。物件面板送出所有欄位目前的值，連續改兩欄不會漏掉前一個。送出時 `getPointCloudObjects` 先等所有計算結束，再重算過期點雲，不記 history；重算失敗會中止送出並提示，不再送出舊點雲（2026-11-02 review）。點雲只由屬性、尺寸、圖層決定，undo 之後再送出會再算一次，結果一致。~~原本由 `PhotoTo3dOptions` 在面板開著時做~~ 2026-10-30 改到畫布（§10 #17）。
 - 量測（純 Node，test 6 去背版 1036×1372，世界寬 60mm、點間距 0.03mm、銳化 1 / 4）：
   - 結果 198 萬點（dither 點 145 萬）。
   - 耗時：dither 0.7s、銳化 0.5s、邊緣處理 0.4s、投影 0.6s，合計約 2.5s。

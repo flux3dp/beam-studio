@@ -12,6 +12,7 @@ import { processImageWithAiJson } from '@core/helpers/api/ai-image-process';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
 import { attributeMap } from '@core/helpers/layer/layer-config-helper';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { PHOTO_3D_ATTR, PHOTO_TO_3D_ATTR } from '../constants';
@@ -353,9 +354,35 @@ export const convertPhotoTo3d = async (
   }
 };
 
+/** Each object's latest point cloud computation: an earlier one that ends after it is dropped. */
+const latestRuns = new Map<string, symbol>();
+
+/**
+ * What a converted photo's point cloud is computed from, besides settings passed in: when any of it
+ * changes while the cloud computes (an undo of the conversion or of a resize, say), the result is for
+ * an object that is no longer there.
+ */
+const getInputs = (elem: SVGImageElement) => {
+  const object = useStlStore.getState().objects[elem.id];
+
+  return {
+    depthSource: object?.depthSource,
+    key: JSON.stringify([
+      elem.isConnected && isPhotoTo3d(elem),
+      getPhotoTo3dSettings(elem),
+      readNumber(elem, PHOTO_TO_3D_ATTR.thickness, 1),
+      object?.transform.scale,
+      getStlEngravingParams(elem).pointSpacing,
+    ]),
+  };
+};
+
 /**
  * Recompute a converted photo's point cloud with changed settings, or for its current point spacing
  * and size when `changes` is empty.
+ *
+ * Only the latest computation of an object is applied, and only if the object is still what it was
+ * computed for; any other ends with `PhotoTo3dCancelledError` and changes nothing.
  * @param mode `new` records its own undo step; `append` folds into the latest one (the resize or
  * spacing change that made the cloud stale); `none` records nothing (right before sending a job: the
  * cloud is a function of the settings, the size and the layer, so undo stays consistent)
@@ -371,21 +398,41 @@ export const updatePhotoTo3d = async (
 
   const settings = { ...getPhotoTo3dSettings(elem), ...changes };
   const thickness = readNumber(elem, PHOTO_TO_3D_ATTR.thickness, 1);
+  const run = Symbol(elem.id);
+  const inputs = getInputs(elem);
 
+  latestRuns.set(elem.id, run);
   // busy until the new settings are on the element: the options panel reads them back when it ends
   setBusy(elem.id, true);
 
   try {
     const { buffer, grid } = await computeCloud(elem, object.depthSource, object.transform, thickness, settings);
+    const current = getInputs(elem);
+
+    if (latestRuns.get(elem.id) !== run || current.depthSource !== inputs.depthSource || current.key !== inputs.key) {
+      throw new PhotoTo3dCancelledError();
+    }
+
     const batch = new history.BatchCommand('Update photo to 3D');
 
     setAttributes(batch, elem, { ...settingAttrs(settings), [PHOTO_TO_3D_ATTR.grid]: grid });
     applyPhotoPointCloud(elem.id, buffer, { parentCmd: batch });
 
-    if (mode === 'new') undoManager.addCommandToHistory(batch);
-    else if (mode === 'append') undoManager.appendCommandToLast(batch, batch.getText(), elem);
+    if (mode === 'new') {
+      undoManager.addCommandToHistory(batch);
+    } else if (mode === 'append') {
+      // the step that made the cloud stale was recorded on the object (a resize) or on its layer (the
+      // point spacing)
+      const layer = getObjectLayer(elem)?.elem;
+
+      undoManager.appendCommandToLast(batch, batch.getText(), layer ? [elem, layer] : elem);
+    }
   } finally {
-    setBusy(elem.id, false);
+    // a newer computation keeps the object busy until it ends
+    if (latestRuns.get(elem.id) === run) {
+      latestRuns.delete(elem.id);
+      setBusy(elem.id, false);
+    }
   }
 
   return true;
@@ -396,14 +443,34 @@ const findStale = (): SVGImageElement[] =>
     isPhotoTo3dStale,
   );
 
-/** Bring every stale photo-to-3D point cloud up to date, before a job is sent. */
-export const refreshStalePhotoTo3d = async (): Promise<void> => {
-  for (const elem of findStale()) {
-    try {
-      await updatePhotoTo3d(elem, {}, 'none');
-    } catch (error) {
-      console.error(`Failed to update the point cloud of ${elem.id}`, error);
+/** Resolves once no point cloud is being computed. */
+const waitForIdle = (): Promise<void> =>
+  new Promise((resolve) => {
+    if (usePhotoTo3dBusy.getState().ids.length === 0) {
+      resolve();
+
+      return;
     }
+
+    const unsubscribe = usePhotoTo3dBusy.subscribe(({ ids }) => {
+      if (ids.length > 0) return;
+
+      unsubscribe();
+      resolve();
+    });
+  });
+
+/**
+ * Bring every photo-to-3D point cloud up to date before a job is sent: wait for the ones being
+ * computed (a value just typed in the options panel, a resize just made), then recompute the stale
+ * ones. A cloud that cannot be computed throws, so the job fails rather than sending an old cloud
+ * that no longer matches the object.
+ */
+export const refreshStalePhotoTo3d = async (): Promise<void> => {
+  await waitForIdle();
+
+  for (const elem of findStale()) {
+    await updatePhotoTo3d(elem, {}, 'none');
   }
 };
 

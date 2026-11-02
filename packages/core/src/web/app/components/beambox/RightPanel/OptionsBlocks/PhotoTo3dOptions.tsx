@@ -67,8 +67,11 @@ const PhotoTo3dOptions = ({ elem }: Props): React.JSX.Element => {
   const commit = (key: keyof PhotoTo3dSettings, value: null | number) => {
     if (value === null || value === settings[key]) return;
 
-    setSettings((current) => ({ ...current, [key]: value }));
-    run(updatePhotoTo3d(elem, { [key]: value }, 'new'));
+    const next = { ...settings, [key]: value };
+
+    setSettings(next);
+    // every typed value, not only this one: one typed just before is not on the element while it computes
+    run(updatePhotoTo3d(elem, next, 'new'));
   };
 
   const renderField = (
