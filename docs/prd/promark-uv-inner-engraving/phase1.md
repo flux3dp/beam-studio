@@ -367,7 +367,7 @@
 `helpers/exclusiveModes.ts` 統一管理內雕、旋轉軸、穿透、自動送料、曲面雕刻的互斥。讀到同時開了多種模式的舊檔時，內雕優先。曲面雕刻的可用性（`canStartCurveEngraving`）同時用在原生選單與網頁選單。
 
 ### 6.4 Dev gate
-- 發佈開關：`checkFpm1UV()` = 桌面版，且 `isDev()`（`localStorage.dev`）或 `enableAllMachines`（`helpers/checkFeature.ts:8`）。
+- 發佈開關：`checkFpm1UV()` = 桌面版，且 `isDev()`（`localStorage.dev`）或 `enableAllMachines`（`helpers/checkFeature.ts`）。2026-11-02 起台灣（`localeHelper.isTw`）、巴勒斯坦（`localeHelper.isPs`）也開放；其他地區從 2027-01-01（使用者本地時間）開放。
 - `isUvDev()` 讀 `localStorage.uvDev`，只擋 UV 調參與開發中的 3D 工具（§3.2 清單）；和 `isDev()` 分開，避免開了 dev 的人都看到半成品。
 - Q pulse 在 `DevBlock`，跟著 `isDev()`。
 - 下降焦距 / 逐層焦距的「反向」開關（`focusReverse`、`focusStepReverse`）只在 `isDev()` 顯示，Desktop / MOPA / UV 都有（`ConfigPanel/FocusBlock.tsx`、`AdvancedSettingModal.tsx`）。

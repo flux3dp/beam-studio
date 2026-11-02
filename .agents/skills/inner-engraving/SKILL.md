@@ -65,7 +65,8 @@ All paths under `packages/core/src/web/` unless noted.
   `useDocumentStore` `'inner-engraving'` directly to decide behaviour — call
   `isInnerEngravingActive()` / `useInnerEngravingActive()` so a UV document opened on another
   machine stays 2D.
-- `checkFpm1UV()` (`helpers/checkFeature.ts`) is `!isWeb() && (enableAllMachines || isDev())`,
+- `checkFpm1UV()` (`helpers/checkFeature.ts`) is `!isWeb()` and any of `enableAllMachines`, `isDev()`,
+  `localeHelper.isTw`, `localeHelper.isPs`, or local time on/after 2027-01-01 (`FPM1_UV_RELEASE`),
   so the mode is desktop-only.
 - `enableInnerEngraving` writes the 70 mm customized dimension + flag and (unless
   `applyRuntime: false`) calls `setPromarkInfo(PROMARK_UV_INFO)`.
@@ -356,7 +357,7 @@ in `helpers/layer/layer-config-helper.ts`), because dot / line decides which las
 
 ## Dev gates (`helpers/is-dev.ts`)
 
-- UV / inner engraving availability itself is `checkFpm1UV()`, gated on the shared `isDev()` (or `enableAllMachines`).
+- UV / inner engraving availability itself is `checkFpm1UV()`, gated on the shared `isDev()` (or `enableAllMachines`, Taiwan / Palestine, or from 2027-01-01).
 - `isUvDev()` = `localStorage.uvDev === 'true'`: test point cloud in `ThreeDOptions`; the Generators
   drawer/button in 3D (3D material-test generator); cylinder / sphere materials (offered in
   `InnerEngravingSettings`, and `getMaterialShape` in `InnerEngraving/utils/material.ts` reads a stored
