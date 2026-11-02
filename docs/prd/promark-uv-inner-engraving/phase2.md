@@ -133,6 +133,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 預設值與範圍沿用現有填充功能：0.01mm，0.0001–100mm（§6.3）。
   - 中空或有孔的端面不填孔。
   - 階梯形物件中間的水平面也算端面（朝上或朝下、傾斜不超過 1° 的面都算，§10 #14）。兩個 shell 貼在一起的交界（例如多個 body 匯出的 STL）不算。
+  - 比半個層距還薄的板子（例如層距 1 mm、厚 0.4 mm），上下兩面合成一個填充，不會互相抵消（2026-11-02 review 前會整片沒有填充）。
   - 只有打線模式顯示；點模式的圖層即使帶著這個參數也不填。
   - 不是預設參數的一部分：切換開關或改間隔不會讓圖層變成自訂參數，套用其他預設參數也保留端面設定。
 
@@ -176,6 +177,8 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 | `StlMesh` | 單選時 gizmo 與外框不變；多選時只留外框 |
 | Swiftray `outputLayerFillGcode`（多了 `interval_mm` 參數，預設 0） | 2D 填充呼叫端不帶參數，間隔仍是圖層的 `fillInterval`，路徑不變 |
 | Swiftray `outputLayerStlGcode` | 打線物件由下往上的順序與 Phase 1 相同；打點仍依 `machine_z_bucket` 分桶，Z 移動次數不變；打線切片改用各自的機器 Z；端面填充只在 `data-stl-fill-caps="1"` 時出現 |
+| Swiftray `ToolpathExporter::moveStlFocusZ`（目標對齊到整數個 Z pulse，1/1600 mm） | 每次 STL Z move 至少 1 pulse；對齊到同一個 pulse 的打點桶與切片合成一次移動，其餘 Z 順序不變（2026-11-02 review：切片不分桶後可能和點桶只差 0.0001 mm） |
+| Swiftray `BSLMotionController::handleGcode` Z move | 四捨五入後 0 pulse 的 Z move 不送 `lcs_set_axis_move`，距離留到下一次；其他 Z／A 移動、時間估算不變 |
 | Swiftray 點雲（`StlPlacement::GeometryKind::PointCloud`） | 多了過近點過濾；照片平面（photo）、mesh 打點不過濾 |
 | Swiftray 圖層解析（`my_qsvg_handler_qt6.cpp`、`Layer`） | 只多讀 `data-stl-fill-caps`、`data-stl-cap-interval`，其他圖層參數不變 |
 | `layer-config-helper.ts`（`innerEngravingConfigKeys`、`innerEngravingDefaults`、`booleanConfig`、`timeRelatedConfigs`）、`ILayerConfig`、`paramsLabel.ts` | 新增 `stlFillCaps`、`stlCapInterval`，一樣只在內雕模式寫入；不在 `presetRelatedConfigs`；2D 圖層不帶 |
@@ -326,7 +329,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
   - 找端面的兩種方式：
     - (a) 相鄰切片相減：第 k 層頂面 = 內部(k) − 內部(k+1)，底面 = 內部(k) − 內部(k−1)。缺點是斜面每層都會留下一圈細環，等於把斜面也填了。
     - (b) 用法向量接近 ±Z 的三角形投影到 XY。只會填真的水平面。
-    - 採用 (b)（Swiftray `75bc5ce`）：`Slicer::capFaces` 取傾斜不超過 1°（`kCapMaxTiltDeg`）的三角形，Z 相差半個層距以內的併成同一面（Z 取面積加權平均），用 Clipper 合併。朝上與朝下的面重疊處（兩個 shell 貼在一起）以 XOR 抵消。
+    - 採用 (b)（Swiftray `75bc5ce`）：`Slicer::capFaces` 取傾斜不超過 1°（`kCapMaxTiltDeg`）的三角形，Z 相差半個層距以內的併成同一面（Z 取面積加權平均），用 Clipper 合併。朝上與朝下的面重疊處（兩個 shell 貼在一起）以 XOR 抵消；只比較 Z 範圍相接的面（2026-11-02 review，Swiftray `9fcb94c`），原本半個層距內一律比較，薄板上下面會被當成接觸而全部抵消。合併面與點雲過濾都接上進度與取消。
   - 填充：沿用 `outputLayerFillGcode`，多一個 `interval_mm` 參數。每個端面以 `PlaneRef::cap` 加進打線的 ladder，落在自己的機器 Z，`flushBucket` 先打該 Z 的切片輪廓再填端面。
     - 進度：STL 輸出時 `progress_increment_scale_` 為 0，填充內的進度回報不影響 STL 自己的進度。
     - 速度、功率：用圖層的。
