@@ -5,9 +5,11 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 const mockSetup = jest.fn();
 const mockPreviewFullWorkarea = jest.fn();
 const mockEnd = jest.fn();
+const mockCancel = jest.fn();
 
 jest.mock('@core/app/actions/camera/preview-helper/Beamo2PreviewManager', () =>
   jest.fn().mockImplementation(() => ({
+    cancel: (...args) => mockCancel(...args),
     end: (...args) => mockEnd(...args),
     previewFullWorkarea: (...args) => mockPreviewFullWorkarea(...args),
     setup: (...args) => mockSetup(...args),
@@ -195,6 +197,22 @@ describe('autoFullAreaPreview', () => {
       finishSetup(true);
       await aborting;
       expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
+      expect(mockEnd).toHaveBeenCalledTimes(1);
+      expect(autoFullAreaPreview.isBusy()).toBe(false);
+    });
+
+    test('abort during the photo cancels the manager, then ends', async () => {
+      let finishPhoto: (ok: boolean) => void = () => {};
+
+      mockPreviewFullWorkarea.mockReturnValue(new Promise((resolve) => (finishPhoto = resolve)));
+      await cycle(2000, 1500);
+
+      const aborting = autoFullAreaPreview.abort();
+
+      expect(mockCancel).toHaveBeenCalledTimes(1);
+      expect(mockEnd).not.toHaveBeenCalled();
+      finishPhoto(false);
+      await aborting;
       expect(mockEnd).toHaveBeenCalledTimes(1);
       expect(autoFullAreaPreview.isBusy()).toBe(false);
     });

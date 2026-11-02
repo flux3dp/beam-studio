@@ -147,7 +147,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - `app/actions/camera/preview-helper/BasePreviewManager.tsx`（`showMessage`，新增 `silent`／`messagePrefix` 選項，預設關閉）
   - `PreviewModeController.start`（手動預覽，所有 manager）：訊息不變、alert 不變。
   - `Bb2Hx2PreviewManager`、`Beamo2PreviewManager`、`BeamPreviewManager`、`AdorPreviewManager`、`PromarkPreviewManager`：預設值不變。
-- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts`（`DoorChecker` 呼叫與 `handleSetupError` 尊重 `silent`）
+- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts`（`DoorChecker` 呼叫與 `handleSetupError` 尊重 `silent`；新增 `cancel()`，只在 `previewFullWorkarea` 檢查）
   - `PreviewModeController` 手動 fbm2 預覽：`door_opened` alert 與設定錯誤 alert 仍會跳。
   - `BeamPreviewManager` 重用 `handlePreviewSetupError`（錯誤回報 PR）：不動。
 - `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts`（尊重 `silent`；`previewWithWideAngleCamera` 可選擇只回傳影像 URL 不繪製）
@@ -196,7 +196,7 @@ capturing/looping: §7.5 的 abort() 或 socket 關閉 → 丟棄 → polling
 
 ### 7.2 Manager 選項
 
-`BasePreviewManager` 新增 `protected silent = false` 與 `protected messagePrefix = ''`，透過 `setup({ silent, messagePrefix })` 設定。`showMessage` 在 `content` 為字串時前置 `messagePrefix`。`Beamo2PreviewManager.handleSetupError` 與其 `DoorChecker` 呼叫傳 `showError = !this.silent`；`Bb2Hx2PreviewManager.handleSetupError` 亦同。`silent` 時跳過 `handlePreviewSetupError` 的 alert（改為 log），`getPhotoFromMachine` 的相機排線警告也一併跳過（繼續拍攝）。Manager 其他部分不變。
+`BasePreviewManager` 新增 `protected silent = false` 與 `protected messagePrefix = ''`，透過 `setup({ silent, messagePrefix })` 設定。`showMessage` 在 `content` 為字串時前置 `messagePrefix`。`Beamo2PreviewManager.handleSetupError` 與其 `DoorChecker` 呼叫傳 `showError = !this.silent`；`Bb2Hx2PreviewManager.handleSetupError` 亦同。`silent` 時跳過 `handlePreviewSetupError` 的 alert（改為 log），`getPhotoFromMachine` 的相機排線警告也一併跳過（繼續拍攝）。`Beamo2PreviewManager.cancel()` 設一個旗標，`previewFullWorkarea` 在每輪拍攝前與繪製前檢查：設定後，進行中的相機步驟照常結束，但不繪製、不顯示成功訊息，並回傳 `false`。手動流程不會呼叫它。Manager 其他部分不變。
 
 ### 7.3 開蓋迴圈（fbb2 / fhx2rf）
 
@@ -223,7 +223,7 @@ await sleep(LOOP_GUARD_MS = 200)               // 拍攝錯誤 → sleep 1000
 
 `checkDeviceStatus` 詢問管理器（`backgroundTasks.yieldTo(device)`，`background-tasks.md` §7.3）；本任務 `isBusy()` 期間，同一台機器會跳出 `message.auto_preview.abort_to_continue` 的是／否提示，另一台機器則靜默中止。
 
-`abort()`：設中止旗標，等待進行中的 manager 呼叫，執行 `manager.end()`（fbm2：停回、鬆馬達、離開 raw；bb2/hx：斷相機），丟棄部分照片，回傳。只在輪詢時 `isBusy()` 為 false，所以閒置時呼叫者永遠看不到提示；`canTouchMachine` 接著在呼叫者的對話框、progress、預覽模式或子任務活躍期間阻止新的拍攝。
+`abort()`：設中止旗標並呼叫 `manager.cancel()`（§7.2），等待進行中的 manager 呼叫（raw 指令不能交錯，所以 `end()` 絕不與它同時執行），執行 `manager.end()`（fbm2：停回、鬆馬達、離開 raw；bb2/hx：斷相機），丟棄部分照片，回傳。只在輪詢時 `isBusy()` 為 false，所以閒置時呼叫者永遠看不到提示；`canTouchMachine` 接著在呼叫者的對話框、progress、預覽模式或子任務活躍期間阻止新的拍攝。
 
 ### 7.6 分頁焦點
 
