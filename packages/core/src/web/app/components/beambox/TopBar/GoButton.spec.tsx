@@ -2,7 +2,6 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import GoButton from './GoButton';
@@ -111,13 +110,16 @@ jest.mock(
 const mockSetStatus = jest.fn();
 const mockHandleFinish = jest.fn();
 const mockSetExportFn = jest.fn();
-const mockOnContextChanged = jest.fn();
+const mockSetDevice = jest.fn();
 
 jest.mock('@core/helpers/device/promark/promark-button-handler', () => ({
   handleFinish: (...args) => mockHandleFinish(...args),
-  onContextChanged: (...args) => mockOnContextChanged(...args),
   setExportFn: (...args) => mockSetExportFn(...args),
   setStatus: (...args) => mockSetStatus(...args),
+}));
+
+jest.mock('@core/helpers/device/background', () => ({
+  setDevice: (...args) => mockSetDevice(...args),
 }));
 
 const mockHandleExportClick = jest.fn();
@@ -141,8 +143,8 @@ describe('test GoButton', () => {
 
     expect(container).toMatchSnapshot();
     expect(mockSetExportFn).toHaveBeenCalledTimes(1);
-    expect(mockOnContextChanged).toHaveBeenCalledTimes(1);
-    expect(mockOnContextChanged).toHaveBeenCalledWith(CanvasMode.Draw, mockDevice);
+    expect(mockSetDevice).toHaveBeenCalledTimes(1);
+    expect(mockSetDevice).toHaveBeenCalledWith(mockDevice);
 
     expect(mockExport).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('.button'));

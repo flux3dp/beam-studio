@@ -61,7 +61,7 @@
 
 ### 2.3 任務會碰到的共享狀態
 
-- **所選機器**：`TopBarController.tsx:31` 在 `top-bar` emitter 上發出 `SET_SELECTED_DEVICE`；`CanvasContext.tsx:63` 儲存它。`ExposureControl.tsx:129` 已經在 React 外訂閱同一個事件。
+- **所選機器**：`TopBarController.tsx:31` 在 `top-bar` emitter 上發出 `SET_SELECTED_DEVICE`；`CanvasContext.tsx:63` 儲存它。啟動時的預設機器不會發出事件：`TopBar.tsx:62` 直接呼叫 context 的 setter，所以只聽事件會漏掉它。像 `GoButton.tsx:38-40` 那樣在元件裡讀 `CanvasContext.selectedDevice`，兩者都看得到。
 - **目前機器是全域的**：`deviceMaster.select(device)` 切換的是所有呼叫者共用的那一條控制連線。假設「目前機器就是我的」的背景任務，一旦前景動作選了另一台機器就會出錯；Promark 的 `checkButton` 會去輪詢錯的機器。
 - **前景守門**：`check-device-status.ts:18-35` 已經處理一種 app 內工作階段，即手動預覽：其他機器 → 靜默結束；同一台 → 是／否的 `device_is_used`。21 個呼叫者（匯出、所有機器選單動作、框選、校正對話框、曲面量測、Print and Cut、路徑預覽、`preview-mode-controller.ts:85`）。
 - **Modal**：`DialogContext.tsx:21-46`（`dialogComponents`、`CHECK_ID_EXIST`）、`AlertProgressContext.tsx:112-116`（`alertProgressStack`）。沒有「有沒有任何東西開著」的查詢。
@@ -122,9 +122,9 @@
   - `exportTask.ts:131` `setStatus('uploading')`：效果相同。
   - `MonitorContext.tsx:1002,1017` `setStatus('listening')`：效果相同。
   - B1/B2 的實體按鈕行為：完全相同，包括先框選的計數與 200 ms 間隔。
-- `app/components/beambox/TopBar/GoButton.tsx`（移除 `onContextChanged` effect；管理器自己訂閱所選機器）
+- `app/components/beambox/TopBar/GoButton.tsx`（effect 改呼叫 `backgroundTasks.setDevice(selectedDevice)`，取代 `promarkButtonHandler.onContextChanged(mode, selectedDevice)`；模式改由 store 取得）
   - 點開始、F2 快捷鍵、`setExportFn`：不變。
-  - `GoButton.spec.tsx` 對 handler 的 mock：改成新的 import。
+  - `GoButton.spec.tsx`：mock 管理器，預期呼叫 `setDevice(selectedDevice)`。
 - `helpers/check-device-status.ts`（在手動預覽區塊後加一段，交給管理器）
   - 全部 21 個呼叫者：沒有任務忙碌時行為完全相同，包括 `device_is_used`、kick、abort、quit 與 `device_busy`。
   - `preview-mode-controller.ts:85`：手動預覽開始時，現在也會（在提示後）停下同一台機器上忙碌的任務；這是預期行為。
@@ -192,7 +192,7 @@ backgroundTasks.isCurrent(task): boolean           // 目前機器是否為任�
 backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // 優先級高的在前
 ```
 
-**情境**：只訂閱一次：`topBarEventEmitter` 的 `SET_SELECTED_DEVICE`（和 `ExposureControl.tsx:129` 一樣）、`useCanvasStore` 的 `mode`、`useDocumentStore` 的 `workarea`、以及 `tabController.onFocused/onBlurred`。初始機器取自 `TopBarController.getSelectedDevice()`。
+**情境**：`device` 由 `GoButton` 對 `CanvasContext.selectedDevice` 的 effect 餵入（`backgroundTasks.setDevice`），這樣也看得到不經 `SET_SELECTED_DEVICE` 的啟動預設機器（§2.3）。管理器自己訂閱 `useCanvasStore` 的 `mode`、`useDocumentStore` 的 `workarea` 與分頁焦點（§7.5）。
 
 **判斷**，在每次情境改變與 `refresh()` 時：
 
@@ -241,9 +241,10 @@ backgroundTasks.isCurrent(task) &&
 | `requirements.context`：模式 Draw/PathPreview + Promark 機器 | `models = promarkModels`；`isEnabled`：`mode ∈ {Draw, PathPreview}` |
 | `requirements.workarea` | `isEnabled`：`promarkModels.has(ctx.workarea)` |
 | `requirements.enabled` | `isEnabled`：`useDocumentStore.getState()['promark-start-button']`；它的訂閱呼叫 `backgroundTasks.refresh()` |
+| `shouldFrameFirst` 與 `frame-before-start` 訂閱 | 按下時直接讀 `useDocumentStore.getState()['frame-before-start']` |
 | `requirements.tab` | 管理器（`ctx.tabFocused`） |
 | `startListening` 的 select | 管理器 |
-| 經由 `GoButton.tsx:38-40` 的 `onContextChanged` | 管理器訂閱；移除 GoButton 的 effect |
+| 經由 `GoButton.tsx:38-40` 的 `onContextChanged(mode, device)` | GoButton 的 effect 呼叫 `backgroundTasks.setDevice(device)`；模式由 store 取得 |
 | `checkButton` tick | 不變，另加 `if (!backgroundTasks.isCurrent(this)) return;` |
 | `setStatus`、`handleTaskFinish`、`setExportFn` | 公開 API 不變 |
 | — | `isBusy = () => false`、`abort = async () => {}`、優先級 20 |
@@ -262,7 +263,7 @@ backgroundTasks.isCurrent(task) &&
 
 一個 PR，在自動預覽的 PR 之前合併，分成可審閱的小塊：
 
-1. `background/` 管理器、型別、`list()`；Promark 遷移；移除 GoButton effect。行為不變。
+1. `background/` 管理器、型別、`list()`；Promark 遷移；GoButton effect 改餵管理器。行為不變。
 2. `hasAnyModal()`、`canTouchMachine`。
 3. `checkDeviceStatus` → `yieldTo`。此時還沒有任何成員會忙碌，所以在自動預覽上線前行為不變。
 4. `background-tasks` skill（契約、規則、如何新增任務）。
@@ -285,6 +286,7 @@ backgroundTasks.isCurrent(task) &&
 - **R2 重新選取和使用者打架。** 若「安靜」檢查漏掉某個不經 modal 或子任務就切換機器的前景流程，管理器可能在它底下切回去。緩解：5 秒間隔，且所有前景機器動作都先經過 `checkDeviceStatus`；發現例外就列入 §6。
 - **R3 網頁版分頁焦點改變。** 網頁版的背景任務（含 Promark）從此在隱藏分頁時暫停。接受；管理器以外沒有任何改變。
 - **F1 tick 輔助函式。** 若出現第三個任務帶著同樣的 `setInterval` + 等待中跳過 + `isCurrent` 樣板，就加 `backgroundTasks.every(task, ms, fn)`。
+- **F2 唯讀型任務可並行。** 目前所有任務都視為獨佔型：一台機器一個，由優先級決定。這對會佔用資源的任務是對的，但未來的唯讀型輪詢（保養提醒讀取使用時數、溫度或水冷監控、韌體通知）會無謂地擠掉自動預覽，或被它擠掉。出現第一個這類任務時：在任務契約加 `exclusive?: boolean`（預設 `true`）；只有獨佔型參與 `refresh()` 裡 `claimedBy` 的優先級搶佔，唯讀型與之並行；`yieldTo` 不用改（唯讀型任務的 `isBusy` 永遠是 `false`）；加一個 spec，讓一個獨佔型與一個唯讀型任務在同一台機器上同時跑。並行任務送出的 control socket 指令本來就由 `addTask` 依序排隊。**判斷準則**：會進 raw 模式、移動雷射頭、改相機設定，或在機器上發起動作的任務是獨佔型（Promark 算在內：它的按鈕會發起匯出）；其他都是唯讀型。現在不做：沒有唯讀型任務可以驗證，而且全部視為獨佔型是安全的預設（最壞只是一個任務等待，不會兩個撞在一起）。
 
 ---
 
@@ -296,7 +298,7 @@ backgroundTasks.isCurrent(task) &&
 - `canTouchMachine.spec.ts`：每個條件為 false → false。
 - `promark-button-handler.spec.ts`（新增）：§7.6 的 isEnabled 對應；不是目前機器時跳過 tick；既有的按下／先框選計數不變。
 - `check-device-status.spec.ts`：`yieldTo` 為 false → 在狀態 switch 之前回傳 false；為 true → 既有流程。
-- `GoButton.spec.tsx`：更新 mock，不再呼叫 `onContextChanged`。
+- `GoButton.spec.tsx`：mock 管理器，預期呼叫 `setDevice(selectedDevice)`。
 - `background/index.spec.ts` 的網頁版焦點：`visibilitychange` 變成 hidden 時停止任務，回到 visible 時重新啟動；Electron 路徑使用 `tabController` 事件。
 
 硬體（待機器；對應 §5）：Promark 的 B1、B2、B6。B4/B5 搭配 fbm2 上的自動預覽配套功能。
