@@ -31,6 +31,7 @@ class AutoFullAreaPreview implements BackgroundTask {
   /** fbm2: closed at (ms) after a long enough open; capture CLOSE_DELAY_MS later */
   private armedAt: null | number = null;
   private capture: null | Promise<void> = null;
+  private manager: Beamo2PreviewManager | null = null;
   private aborted = false;
 
   isEnabled = ({ device, mode, workarea }: BackgroundContext): boolean =>
@@ -43,9 +44,10 @@ class AutoFullAreaPreview implements BackgroundTask {
 
   busyMessage = (): string => i18n.lang.message.auto_preview.abort_to_continue;
 
-  // ponytail: waits for the in-flight manager step; a yield during the photo step may still draw that photo
+  /** Waits for the in-flight manager step (raw commands must not interleave), then ends without drawing */
   abort = async (): Promise<void> => {
     this.aborted = true;
+    this.manager?.cancel();
     await this.capture;
   };
 
@@ -121,17 +123,23 @@ class AutoFullAreaPreview implements BackgroundTask {
 
     const manager = new Beamo2PreviewManager(this.device!);
 
-    // setup ends the manager itself on failure
-    if (!(await manager.setup({ messagePrefix: i18n.lang.message.auto_preview.prefix, silent: true }))) return;
+    this.manager = manager;
 
     try {
-      if (!this.aborted) await manager.previewFullWorkarea();
-    } catch (error) {
-      log('capture failed', error);
+      // setup ends the manager itself on failure
+      if (!(await manager.setup({ messagePrefix: i18n.lang.message.auto_preview.prefix, silent: true }))) return;
+
+      try {
+        if (!this.aborted) await manager.previewFullWorkarea();
+      } catch (error) {
+        log('capture failed', error);
+      } finally {
+        // null = control socket closed (kicked): end() would reconnect and kick the other client
+        if (deviceMaster.currentControlMode === null) deviceMaster.disconnectCamera();
+        else await manager.end();
+      }
     } finally {
-      // null = control socket closed (kicked): end() would reconnect and kick the other client
-      if (deviceMaster.currentControlMode === null) deviceMaster.disconnectCamera();
-      else await manager.end();
+      this.manager = null;
     }
   };
 }
