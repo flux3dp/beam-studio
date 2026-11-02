@@ -150,8 +150,9 @@ Shared files the design touches, with each caller and the behaviour that must st
   - `BeamPreviewManager` reuse of `handlePreviewSetupError` (error-report PR) — untouched.
 - `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts` (honour `silent`; `previewWithWideAngleCamera` optionally returns the image URL without drawing)
   - Manual fbb2/fhx2rf preview — draws as today; door-closed alert still pops on manual switch to FULL_AREA.
-- `app/actions/camera/preview-helper/DoorChecker.ts` (`showError` already a parameter; no change expected — listed because the fbm2 manager's use of it changes)
-  - `Beamo2PreviewManager` manual flow — unchanged.
+- `app/actions/camera/preview-helper/DoorChecker.ts` (`doorClosedWrapper(callback, showError = true)`: the hard-coded `true` becomes a parameter)
+  - `Beamo2PreviewManager` manual flow — `door_opened` alert still pops.
+  - `SolvePnP.tsx`, `Beamo2Calibration.tsx`, `ModuleCalibration/Align.tsx` (×2) — default `true`, alert still pops.
 - `interfaces/Preference.d.ts`, `beambox-preference.ts`, `globalPreferenceStore.ts`, `settings/categories/Camera.tsx` (one key, one switch)
   - All other preference keys — unchanged.
 - `app/lang/*.ts`, `interfaces/ILang.ts` (new keys under `settings` and `message.auto_preview`)
@@ -193,7 +194,7 @@ capturing/looping: abort() from §7.5 or socket close → discard → polling
 
 ### 7.2 Manager options
 
-`BasePreviewManager` gains `protected silent = false` and `protected messagePrefix = ''`, set through `setup({ silent, messagePrefix })`. `showMessage` prepends `messagePrefix` to `content` when it is a string. `Beamo2PreviewManager.handleSetupError` and its `DoorChecker` calls pass `showError = !this.silent`; `Bb2Hx2PreviewManager.handleSetupError` likewise. Alerts from `handlePreviewSetupError` are skipped when silent (logged instead). Nothing else in the managers changes.
+`BasePreviewManager` gains `protected silent = false` and `protected messagePrefix = ''`, set through `setup({ silent, messagePrefix })`. `showMessage` prepends `messagePrefix` to `content` when it is a string. `Beamo2PreviewManager.handleSetupError` and its `DoorChecker` calls pass `showError = !this.silent`; `Bb2Hx2PreviewManager.handleSetupError` likewise. Alerts from `handlePreviewSetupError` are skipped when silent (logged instead), and so is the camera-cable warning in `getPhotoFromMachine` (the capture continues). Nothing else in the managers changes.
 
 ### 7.3 Open-lid loop (fbb2 / fhx2rf)
 

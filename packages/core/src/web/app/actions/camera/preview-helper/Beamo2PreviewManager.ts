@@ -56,7 +56,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private handleSetupError = async (error: unknown): Promise<void> => {
     await this.end();
     console.log('Error when setting up beamo2 Preview Manager', error);
-    handlePreviewSetupError(this.device, error);
+
+    if (!this.silent) handlePreviewSetupError(this.device, error);
   };
 
   private setUpCamera = async (): Promise<boolean> => {
@@ -80,16 +81,18 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
       const { cameraCenter } = workarea;
 
-      return await this.doorChecker.doorClosedWrapper(() =>
-        this.fisheyePreviewManager!.setupFisheyePreview({
-          cameraPosition: cameraCenter,
-          closeMessage: () => this.closeMessage(),
-          height: 0,
-          movementFeedrate: this.getMovementSpeed(),
-          shouldKeepInRawMode: true,
-          updateMessage: (message: string) => this.showMessage({ content: message }),
-          useRegionOffsets: this._previewMode === PreviewMode.FULL_AREA,
-        }),
+      return await this.doorChecker.doorClosedWrapper(
+        () =>
+          this.fisheyePreviewManager!.setupFisheyePreview({
+            cameraPosition: cameraCenter,
+            closeMessage: () => this.closeMessage(),
+            height: 0,
+            movementFeedrate: this.getMovementSpeed(),
+            shouldKeepInRawMode: true,
+            updateMessage: (message: string) => this.showMessage({ content: message }),
+            useRegionOffsets: this._previewMode === PreviewMode.FULL_AREA,
+          }),
+        !this.silent,
       );
     } catch (error) {
       await this.handleSetupError(error);
@@ -98,8 +101,15 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     }
   };
 
-  public setup = async ({ progressId }: { progressId?: string } = {}): Promise<boolean> => {
+  public setup = async ({
+    messagePrefix = '',
+    progressId,
+    silent = false,
+  }: { messagePrefix?: string; progressId?: string; silent?: boolean } = {}): Promise<boolean> => {
     if (progressId) this.progressId = progressId;
+
+    this.silent = silent;
+    this.messagePrefix = messagePrefix;
 
     const { lang } = i18n;
 

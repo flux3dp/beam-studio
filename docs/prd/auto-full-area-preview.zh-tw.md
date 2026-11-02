@@ -152,8 +152,9 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
   - `BeamPreviewManager` 重用 `handlePreviewSetupError`（錯誤回報 PR）：不動。
 - `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts`（尊重 `silent`；`previewWithWideAngleCamera` 可選擇只回傳影像 URL 不繪製）
   - 手動 fbb2/fhx2rf 預覽：照舊繪製；手動切到 FULL_AREA 時門蓋關閉的 alert 仍會跳。
-- `app/actions/camera/preview-helper/DoorChecker.ts`（`showError` 本來就是參數；預期不改，列出是因為 fbm2 manager 的用法改變）
-  - `Beamo2PreviewManager` 手動流程：不變。
+- `app/actions/camera/preview-helper/DoorChecker.ts`（`doorClosedWrapper(callback, showError = true)`：寫死的 `true` 改為參數）
+  - `Beamo2PreviewManager` 手動流程：`door_opened` alert 照常跳出。
+  - `SolvePnP.tsx`、`Beamo2Calibration.tsx`、`ModuleCalibration/Align.tsx`（兩處）：預設 `true`，alert 照常跳出。
 - `interfaces/Preference.d.ts`、`beambox-preference.ts`、`globalPreferenceStore.ts`、`settings/categories/Camera.tsx`（一個 key、一個開關）
   - 其他所有偏好 key：不變。
 - `app/lang/*.ts`、`interfaces/ILang.ts`（`settings` 與 `message.auto_preview` 下新增 key）
@@ -195,7 +196,7 @@ capturing/looping: §7.5 的 abort() 或 socket 關閉 → 丟棄 → polling
 
 ### 7.2 Manager 選項
 
-`BasePreviewManager` 新增 `protected silent = false` 與 `protected messagePrefix = ''`，透過 `setup({ silent, messagePrefix })` 設定。`showMessage` 在 `content` 為字串時前置 `messagePrefix`。`Beamo2PreviewManager.handleSetupError` 與其 `DoorChecker` 呼叫傳 `showError = !this.silent`；`Bb2Hx2PreviewManager.handleSetupError` 亦同。`silent` 時跳過 `handlePreviewSetupError` 的 alert（改為 log）。Manager 其他部分不變。
+`BasePreviewManager` 新增 `protected silent = false` 與 `protected messagePrefix = ''`，透過 `setup({ silent, messagePrefix })` 設定。`showMessage` 在 `content` 為字串時前置 `messagePrefix`。`Beamo2PreviewManager.handleSetupError` 與其 `DoorChecker` 呼叫傳 `showError = !this.silent`；`Bb2Hx2PreviewManager.handleSetupError` 亦同。`silent` 時跳過 `handlePreviewSetupError` 的 alert（改為 log），`getPhotoFromMachine` 的相機排線警告也一併跳過（繼續拍攝）。Manager 其他部分不變。
 
 ### 7.3 開蓋迴圈（fbb2 / fhx2rf）
 
