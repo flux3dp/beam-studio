@@ -194,6 +194,8 @@ backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // 優�
 
 **情境**：`device` 由 `GoButton` 對 `CanvasContext.selectedDevice` 的 effect 餵入（`backgroundTasks.setDevice`），這樣也看得到不經 `SET_SELECTED_DEVICE` 的啟動預設機器（§2.3）。管理器自己訂閱 `useCanvasStore` 的 `mode`、`useDocumentStore` 的 `workarea` 與分頁焦點（§7.5）。
 
+訂閱在第一次使用時（第一次 `register`、`setDevice` 或 `refresh`）才建立，而不是在 import 時：`check-device-status.ts` 會 import 管理器，若在循環 import 尚未載入完成時就讀 `tabController` 或 store，會拿到 `undefined`。
+
 **判斷**，在每次情境改變與 `refresh()` 時：
 
 ```

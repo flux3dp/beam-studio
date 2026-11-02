@@ -1,7 +1,10 @@
+import alertCaller from '@core/app/actions/alert-caller';
 import tabController from '@core/app/actions/tabController';
+import alertConstants from '@core/app/constants/alert-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -18,11 +21,17 @@ class BackgroundTasks {
   private tasks: BackgroundTask[] = [];
   /** task id → the machine it was started on */
   private running = new Map<BackgroundTaskId, IDeviceInfo>();
-  private ctx: BackgroundContext;
+  private ctx: BackgroundContext | null = null;
   /** `winner>loser` pairs already reported */
   private warned = new Set<string>();
 
-  constructor() {
+  /**
+   * Subscribe on first use instead of at import: check-device-status imports this module, and reading
+   * tabController or the stores while an import cycle is still loading would see undefined.
+   */
+  private init = (): BackgroundContext => {
+    if (this.ctx) return this.ctx;
+
     this.ctx = {
       device: null,
       mode: useCanvasStore.getState().mode,
@@ -45,7 +54,9 @@ class BackgroundTasks {
       tabController.onFocused(() => this.update({ tabFocused: true }));
       tabController.onBlurred(() => this.update({ tabFocused: false }));
     }
-  }
+
+    return this.ctx;
+  };
 
   /** Fed from the top bar's selected device */
   setDevice = (device: IDeviceInfo | null): void => {
@@ -64,6 +75,35 @@ class BackgroundTasks {
     return Boolean(device) && deviceMaster.currentDevice?.info.serial === device!.serial;
   };
 
+  /**
+   * Called by checkDeviceStatus before a foreground machine action. A busy task on another machine is
+   * aborted silently; on the same machine the user confirms first. Resolves false when the user declines.
+   */
+  yieldTo = async (device: IDeviceInfo): Promise<boolean> => {
+    for (const task of this.tasks) {
+      const runningOn = this.running.get(task.id);
+
+      if (!runningOn || !task.isBusy()) continue;
+
+      if (runningOn.uuid === device.uuid) {
+        const confirmed = await new Promise<boolean>((resolve) => {
+          alertCaller.popUp({
+            buttonType: alertConstants.YES_NO,
+            message: task.busyMessage?.() ?? i18n.lang.message.device_is_used,
+            onNo: () => resolve(false),
+            onYes: () => resolve(true),
+          });
+        });
+
+        if (!confirmed) return false;
+      }
+
+      await task.abort();
+    }
+
+    return true;
+  };
+
   list = () =>
     this.tasks.map((task) => ({
       busy: task.isBusy(),
@@ -75,14 +115,15 @@ class BackgroundTasks {
 
   /** Re-evaluate every task; call when a task's own setting changed */
   refresh = (): void => {
-    const { device, tabFocused } = this.ctx;
+    const ctx = this.init();
+    const { device, tabFocused } = ctx;
     // Tasks are sorted by priority, so the first one to want a machine claims it
     const claimedBy = new Map<string, BackgroundTaskId>();
     // Start only after every stop, so a machine never has two tasks at once
     const toStart: BackgroundTask[] = [];
 
     for (const task of this.tasks) {
-      let want = Boolean(device && tabFocused && task.models.has(device.model) && task.isEnabled(this.ctx));
+      let want = Boolean(device && tabFocused && task.models.has(device.model) && task.isEnabled(ctx));
 
       if (want) {
         const owner = claimedBy.get(device!.serial);
@@ -129,7 +170,7 @@ class BackgroundTasks {
   };
 
   private update = (patch: Partial<BackgroundContext>): void => {
-    this.ctx = { ...this.ctx, ...patch };
+    this.ctx = { ...this.init(), ...patch };
     this.refresh();
   };
 }

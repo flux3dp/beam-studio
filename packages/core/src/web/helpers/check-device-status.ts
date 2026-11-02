@@ -1,6 +1,7 @@
 /**
  * check device status and action
  */
+import backgroundTasks from '@core/helpers/device/background';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -33,6 +34,8 @@ export default async function (device: IDeviceInfo, allowPause?: boolean, forceA
       });
     }
   }
+
+  if (!(await backgroundTasks.yieldTo(device))) return false;
 
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<boolean>(async (resolve) => {
