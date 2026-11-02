@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft (2026-10-30). Design proposed; implementation not started. |
+| **Status** | Implemented in 2.7.3 (manager, Promark migration, foreground yield, reselect). Pending: Promark hardware check of B1, B2, B6; B4/B5 get verified once auto full-area preview, the first task that can be busy, lands. |
 | **Author** | Product with the software team |
 | **Created** | 2026-10-30 |
 | **Target product** | Beam Studio desktop (Electron) and web. All models. |
