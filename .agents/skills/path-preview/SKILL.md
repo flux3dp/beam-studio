@@ -138,6 +138,13 @@ leave a hole.
 
 ## Debugging
 
+**Dev open**: with `localStorage.dev = 'true'`, shift-clicking the top-bar Path Preview
+button (works on an empty canvas) or the side panel's "Open FCode" picks a `.fc` from
+disk and previews it instead of converting the canvas (`externalFcodeStore.ts`). The
+file's own FILE `time_cost` drives the time display; the canvas workarea still sets the
+bed size, so match it to the file's model. Start Here is refused for an opened file,
+but its shift-click slice export still works. The file is dropped when the preview closes.
+
 Export a real task (`.fc` or shift-click dev export), run the parsers standalone with
 `npx tsx`, and validate structure/CRC with a short python script — see the fcode skill.
 The preview's console logs `Parsed FCode`/`Parsed GCode` with the record array.

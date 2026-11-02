@@ -7,9 +7,11 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getOS } from '@core/helpers/getOS';
+import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 
+import { openExternalFcode, useExternalFcodeStore } from './externalFcodeStore';
 import styles from './SidePanel.module.scss';
 
 interface Props {
@@ -37,6 +39,7 @@ function SidePanel({
 }: Props): React.JSX.Element {
   const togglePathPreview = useCanvasStore((state) => state.togglePathPreview);
   const LANG = useI18n().beambox.path_preview;
+  const externalFcodeName = useExternalFcodeStore((state) => state.file?.name);
   const renderDataBlock = (label: string, value: string): React.JSX.Element => (
     <div className={styles['data-block']}>
       <div className={styles.item}>{label}</div>
@@ -68,6 +71,8 @@ function SidePanel({
         {renderDataBlock(LANG.current_position, currentPosition)}
       </div>
       <div className={styles.remark}>{LANG.remark}</div>
+      {/* dev-only, so its labels are not translated */}
+      {externalFcodeName && <div className={styles.remark}>FCode: {externalFcodeName}</div>}
       <div className={styles.buttons}>
         {isStartHereHidden || (
           <Button
@@ -78,6 +83,11 @@ function SidePanel({
             variant="solid"
           >
             {LANG.start_here}
+          </Button>
+        )}
+        {isDev() && (
+          <Button className={styles.btn} color="default" onClick={openExternalFcode} variant="outlined">
+            Open FCode
           </Button>
         )}
         <Button className={styles.btn} color="default" onClick={togglePathPreview} variant="outlined">

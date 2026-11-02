@@ -43,6 +43,7 @@ import {
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 
+import { useExternalFcodeStore } from './externalFcodeStore';
 import { parseFcode } from './parseFcode';
 import styles from './PathPreview.module.scss';
 import Pointable from './Pointable';
@@ -616,6 +617,7 @@ class PathPreview extends React.Component<Props, State> {
   private spaceKey: boolean = false;
   private jobOrigin?: { x: number; y: number };
   private resizeHandler: () => void;
+  private unsubscribeExternalFcode?: () => void;
 
   constructor(props: Props) {
     super(props);
@@ -683,6 +685,10 @@ class PathPreview extends React.Component<Props, State> {
     this.updateTaskCode();
 
     canvasEventEmitter.on('canvas-change', this.onDeviceChange);
+    // dev: a file opened while the preview is up replaces what it shows
+    this.unsubscribeExternalFcode = useExternalFcodeStore.subscribe((state, prev) => {
+      if (state.file && state.file !== prev.file) this.updateTaskCode();
+    });
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State): boolean {
@@ -707,6 +713,8 @@ class PathPreview extends React.Component<Props, State> {
     window.removeEventListener('resize', this.resizeHandler);
 
     canvasEventEmitter.off('canvas-change', this.onDeviceChange);
+    this.unsubscribeExternalFcode?.();
+    useExternalFcodeStore.getState().clear();
   }
 
   setCameraAttrs = (attrs: {
@@ -774,6 +782,15 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   updateTaskCode = async (): Promise<void> => {
+    const externalFcode = useExternalFcodeStore.getState().file;
+
+    // dev: preview an fcode opened from disk instead of converting the canvas
+    if (externalFcode) {
+      await this.updateFcode(externalFcode.buffer);
+
+      return;
+    }
+
     // Promark previews rely on gcode-only behavior (wobble, dotting, variable text);
     // everything else previews the fcode directly.
     if (promarkModels.has(workareaManager.model)) {
@@ -860,13 +877,15 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   // FLUXGhost machines: parse the fcode binary directly, no extra gcode generation.
-  updateFcode = async (): Promise<void> => {
+  updateFcode = async (externalBuffer?: ArrayBuffer): Promise<void> => {
     const { togglePathPreview } = useCanvasStore.getState();
 
     // Variable text is Promark-only (isVariableTextSupported), so no VT handling here.
-    const { fcodeBlob, fileTimeCost } = await exportFuncs.getFcode();
+    const { fcodeBlob, fileTimeCost: exportedTimeCost } = externalBuffer
+      ? { fcodeBlob: null, fileTimeCost: 0 }
+      : await exportFuncs.getFcode();
 
-    if (!fcodeBlob) {
+    if (!externalBuffer && !fcodeBlob) {
       togglePathPreview();
 
       return;
@@ -880,8 +899,23 @@ class PathPreview extends React.Component<Props, State> {
 
     this.gcodeString = '';
 
-    const arrayBuffer = await fcodeBlob.arrayBuffer();
-    const { metadata, parsedGcode, ...sliceExtras } = parseFcode(arrayBuffer);
+    const arrayBuffer = externalBuffer ?? (await fcodeBlob!.arrayBuffer());
+    let parsed: ReturnType<typeof parseFcode>;
+
+    try {
+      parsed = parseFcode(arrayBuffer);
+    } catch (error) {
+      if (!externalBuffer) throw error;
+
+      progressCaller.popById('parsing-gcode');
+      alertCaller.popUpError({ message: `Failed to parse FCode: ${(error as Error).message}` });
+
+      return;
+    }
+
+    const { metadata, parsedGcode, ...sliceExtras } = parsed;
+    // an opened file carries its own estimate: time_cost in v2 FILE json, TIME_COST in v1 metadata
+    const fileTimeCost = externalBuffer ? Number(metadata.time_cost ?? metadata.TIME_COST) || 0 : exportedTimeCost;
 
     // Cached so "start here" can slice the fcode directly instead of regenerating gcode.
     this.fcodeTask = parsedGcode.length > 0 ? { buffer: arrayBuffer, parsedGcode, ...sliceExtras } : null;
@@ -914,7 +948,8 @@ class PathPreview extends React.Component<Props, State> {
       this.simTimeMax =
         Math.ceil((this.gcodePreview.g1Time + this.gcodePreview.g0Time) / SIM_TIME_MINUTE) * SIM_TIME_MINUTE +
         SIM_TIME_MINUTE / 2;
-      this.timeDisplayRatio = fileTimeCost / (60 * this.simTimeMax);
+      // an opened file without an estimate falls back to the preview's own sim time
+      this.timeDisplayRatio = externalBuffer && fileTimeCost <= 0 ? 1 : fileTimeCost / (60 * this.simTimeMax);
       this.handleSimTimeChange(this.simTimeMax);
     }
 
@@ -1497,6 +1532,15 @@ class PathPreview extends React.Component<Props, State> {
       } else {
         alertCaller.popUpError({ message: 'sliceFcode returned null; see console.' });
       }
+
+      return;
+    }
+
+    // dev: an opened file is not the canvas, so the canvas upload/slice flow below does not apply
+    if (useExternalFcodeStore.getState().file) {
+      alertCaller.popUpError({
+        message: 'Start Here is unavailable for an opened FCode; shift-click to export the slice.',
+      });
 
       return;
     }

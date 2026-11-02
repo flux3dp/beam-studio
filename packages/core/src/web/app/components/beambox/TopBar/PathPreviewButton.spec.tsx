@@ -21,6 +21,16 @@ jest.mock('@core/app/svgedit/selection', () => ({
   clearSelection,
 }));
 
+const mockIsDev = jest.fn(() => false);
+
+jest.mock('@core/helpers/is-dev', () => () => mockIsDev());
+
+const mockOpenExternalFcode = jest.fn();
+
+jest.mock('@core/app/components/beambox/PathPreview/externalFcodeStore', () => ({
+  openExternalFcode: () => mockOpenExternalFcode(),
+}));
+
 import PathPreviewButton from './PathPreviewButton';
 
 describe('test PathPreviewButton', () => {
@@ -100,6 +110,30 @@ describe('test PathPreviewButton', () => {
           fireEvent.click(container.querySelector('div[class*="button"]')!);
           expect(isCanvasEmpty).toHaveBeenCalledTimes(1);
           expect(clearSelection).toHaveBeenCalledTimes(1);
+          expect(useCanvasStore.getState().mode).toBe(CanvasMode.PathPreview);
+        });
+
+        test('shift-click opens an fcode file in dev mode, even with an empty canvas', () => {
+          checkWebGL.mockReturnValue(true);
+          isCanvasEmpty.mockReturnValue(true);
+          mockIsDev.mockReturnValue(true);
+
+          const { container } = render(<PathPreviewButton isDeviceConnected />);
+
+          fireEvent.click(container.querySelector('div[class*="button"]')!, { shiftKey: true });
+          expect(mockOpenExternalFcode).toHaveBeenCalledTimes(1);
+          expect(isCanvasEmpty).not.toHaveBeenCalled();
+        });
+
+        test('shift-click previews the canvas outside dev mode', () => {
+          checkWebGL.mockReturnValue(true);
+          isCanvasEmpty.mockReturnValue(false);
+          mockIsDev.mockReturnValue(false);
+
+          const { container } = render(<PathPreviewButton isDeviceConnected />);
+
+          fireEvent.click(container.querySelector('div[class*="button"]')!, { shiftKey: true });
+          expect(mockOpenExternalFcode).not.toHaveBeenCalled();
           expect(useCanvasStore.getState().mode).toBe(CanvasMode.PathPreview);
         });
       });

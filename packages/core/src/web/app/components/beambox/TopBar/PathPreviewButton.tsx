@@ -5,12 +5,14 @@ import classNames from 'classnames';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/shallow';
 
+import { openExternalFcode } from '@core/app/components/beambox/PathPreview/externalFcodeStore';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import selectionManager from '@core/app/svgedit/selection';
 import checkWebGL from '@core/helpers/check-webgl';
+import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import useI18n from '@core/helpers/useI18n';
@@ -30,7 +32,14 @@ function PathPreviewButton({ isDeviceConnected }: Props): ReactNode {
     return null;
   }
 
-  const changeToPathPreviewMode = (): void => {
+  const changeToPathPreviewMode = (e: React.MouseEvent): void => {
+    // dev: shift-click previews an fcode file from disk, even on an empty canvas
+    if (isDev() && e.shiftKey) {
+      openExternalFcode();
+
+      return;
+    }
+
     if (mode !== CanvasMode.PathPreview && !isCanvasEmpty()) {
       selectionManager.clearSelection();
       togglePathPreview();
