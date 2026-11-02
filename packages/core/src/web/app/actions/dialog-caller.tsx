@@ -75,6 +75,17 @@ const isIdExist = (id: string): boolean => {
   return response.isIdExist;
 };
 
+/** True while any dialog, alert or progress is open */
+const hasAnyModal = (): boolean => {
+  const dialog = { result: false };
+  const alertProgress = { result: false };
+
+  eventEmitter.emit('CHECK_ANY_DIALOG', dialog);
+  eventEmitterFactory.createEventEmitter('alert-progress').emit('CHECK_ANY_ALERT_PROGRESS', alertProgress);
+
+  return dialog.result || alertProgress.result;
+};
+
 const popDialogById = (id: string): void => {
   eventEmitter.emit('POP_DIALOG_BY_ID', id);
 };
@@ -186,6 +197,7 @@ export default {
 
       promptDialog({ ...args, onCancel, onYes });
     }),
+  hasAnyModal,
   isIdExist,
   popDialogById,
   promptDialog,
