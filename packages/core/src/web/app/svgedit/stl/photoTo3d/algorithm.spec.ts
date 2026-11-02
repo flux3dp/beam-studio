@@ -182,6 +182,27 @@ describe('depth field', () => {
     for (let i = 2; i < points.length; i += 3) expect(points[i]).toBeGreaterThan(5);
   });
 
+  test('a dot over the cut-out that the depth does not reach is left out, not put on the far plane', () => {
+    const field = clean(
+      rimDepth(() => 10),
+      0,
+      0,
+    );
+    // dots on a 50 × 4 grid: each covers 2 × 2 pixels, so the dot at column 4 sits on pixels 8–9,
+    // transparent with only transparent neighbours
+    const dots = new Uint8Array(200).fill(1);
+    const lift = (depthField: typeof field) =>
+      liftDots(depthField, rimStats, { dots, height: 4, width: 50 }, { depthMm: 10, heightMm: 0.8, widthMm: 10 });
+    const points = lift(field);
+
+    for (let i = 2; i < points.length; i += 3) expect(points[i]).toBeCloseTo(10);
+
+    // without the photo's transparency (a depth model mask, say) such a dot keeps the far plane
+    const masked = lift({ ...field, cut: undefined });
+
+    expect(Array.from({ length: masked.length / 3 }, (_, i) => masked[i * 3 + 2])).toContain(0);
+  });
+
   test('a rim that recedes no faster than the steep slope is kept as it is', () => {
     // 0.2 mm lower per pixel toward the cut-out: a slope of 2, under EDGE_STEEP
     const source = rimDepth((x) => (x < 14 ? 10 - 0.2 * (14 - x) : 10));

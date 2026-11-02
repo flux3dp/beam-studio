@@ -47,6 +47,8 @@ export interface DepthStats {
 }
 
 export interface DepthField {
+  /** 1 where the photo is transparent: a dot there that the depth does not reach is left out. */
+  cut?: Uint8Array;
   depth: Float32Array;
   /** 1 where the cleanup removed the subject's pixel: its dots are left out, not put on the far plane. */
   drop?: Uint8Array;
@@ -593,7 +595,7 @@ export const cleanDepthEdges = (
     outMask[i] = 1;
   }
 
-  return { depth: out, drop: dropped, height: fh, mask: outMask, width: fw };
+  return { cut, depth: out, drop: dropped, height: fh, mask: outMask, width: fw };
 };
 
 /** Deterministic 0–1 hash, so the same input always gives the same extra dots. */
@@ -629,14 +631,13 @@ export const liftDots = (
   const depthAt = (x: number, y: number) =>
     sample(((x + 0.5) / w) * field.width - 0.5, ((y + 0.5) / h) * field.height - 0.5);
   const toZ = (d: number) => (1 - Math.min(1, Math.max(0, (d - stats.lower) / range))) * depthMm;
-  const isDropped = (x: number, y: number) => {
-    if (!field.drop) return false;
-
+  const pixelAt = (x: number, y: number) => {
     const fx = Math.min(field.width - 1, Math.max(0, Math.floor(((x + 0.5) / w) * field.width)));
     const fy = Math.min(field.height - 1, Math.max(0, Math.floor(((y + 0.5) / h) * field.height)));
 
-    return field.drop[fy * field.width + fx] === 1;
+    return fy * field.width + fx;
   };
+  const isDropped = (x: number, y: number) => field.drop?.[pixelAt(x, y)] === 1;
   // grown by doubling: the count is only known at the end, and a plain array of millions of numbers
   // is many times slower
   let points = new Float32Array(Math.max(3, dither.dots.length * 3));
@@ -666,8 +667,15 @@ export const liftDots = (
 
     const d = depthAt(x, y);
 
-    // a dot the depth does not reach (masked out by the depth model) stays on the far plane
-    push(x, y, Number.isFinite(d) ? toZ(d) : 0);
+    if (!Number.isFinite(d)) {
+      // a dot on the cut-out's edge whose depth was all cut or removed is no part of the subject; one
+      // the depth model masked out (sky, say) stays on the far plane
+      if (field.cut?.[pixelAt(x, y)] !== 1) push(x, y, 0);
+
+      continue;
+    }
+
+    push(x, y, toZ(d));
 
     const dl = depthAt(x - 0.5, y);
     const dr = depthAt(x + 0.5, y);
