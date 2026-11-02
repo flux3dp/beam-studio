@@ -31,7 +31,7 @@ describe('should render correctly', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(eventEmitter.eventNames().length).toBe(4);
+    expect(eventEmitter.eventNames().length).toBe(5);
 
     act(() => {
       eventEmitter.emit('ADD_DIALOG_COMPONENT', '12345', <div>Hello World</div>);
