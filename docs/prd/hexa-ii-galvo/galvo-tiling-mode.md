@@ -83,7 +83,7 @@
 
 **A5 停靠順序與 backlash**
 - 操作：情境 1 的 fcode，列出所有 gantry 移動。
-- 結果：停靠點依 Y 由小到大、Y 相同再依 X 由小到大；任何一次 Y 都不往負方向移動（同一批次內）；每次下一個停靠點的 X 比目前小時，先走到「整批最左停靠點 X − `kGalvoBacklashOvershootMm`（5 mm）」，不小於行程左界，再往右走到停靠點。
+- 結果：停靠點依 Y 由小到大、Y 相同再依 X 由小到大；任何一次 Y 都不往負方向移動（同一批次內）；每次下一個停靠點的 X 比目前小時，先走到「整批最左停靠點 X − `kGalvoBacklashOvershootMm`（5 mm）」，且離行程左界至少 `kGalvoBacklashTravelClearanceMm`（1 mm），再往右走到停靠點。
 - 邊界：整批第一個停靠點一律先走安全起點；`galvo_fix_backlash` 關閉時不加安全起點，但仍依 Y、X 排序。
 
 **A6 後端防線**
@@ -165,7 +165,7 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 
 - **每個 cluster 一組 factory**：`preprocessLaserLayer()` 拆出「用一組 Shape 建 factory」的部分，「依物件」時每個 cluster 建一組（path／hatch／raster／depth bitmaps），只建一次，所有重複遍數共用。
 - **每個 cluster 一個 block**：`region = clip = 聯集外框`（不設 clip，`blocks.size() == 1` 時 `emitGalvoBlocks` 本來就不設 clip、不混合），內容由該 cluster 的 factory 產生。外框重疊的物件因此不會互相切到。
-- **停靠移動**：新增 `kGalvoBacklashOvershootMm = 5`。整批開始前算出所有停靠點的最小 X，安全起點 X = `max(travel.left(), minParkX − kGalvoBacklashOvershootMm)`。每次停靠時，若是整批第一個或停靠點 X 小於目前 X，先移到 (安全起點 X, 停靠點 Y) 再到停靠點；`galvo_fix_backlash` 關閉時省略。沿用格點模式的延遲停靠（沒有內容的停靠點不移動）。
+- **停靠移動**：沿用格點模式已有的 `kGalvoBacklashOvershootMm = 5`、`kGalvoBacklashTravelClearanceMm = 1`（`toolpath-exporter-fcode.cpp`，swiftray `258489a`）。整批開始前算出所有停靠點的最小 X，安全起點 X = `max(travel.left() + kGalvoBacklashTravelClearanceMm, minParkX − kGalvoBacklashOvershootMm)`；不能走到行程左界，龍門碰到底會回彈、讓後面的停靠點偏移（2026-11-02 實測）。每次停靠時，若是整批第一個或停靠點 X 小於目前 X，先移到 (安全起點 X, 停靠點 Y) 再到停靠點；`galvo_fix_backlash` 關閉時省略。沿用格點模式的延遲停靠（沒有內容的停靠點不移動）。
 - **深度雕刻**：cluster 內的深度圖沿用 `convertGalvoDepthBitmaps()` 的逐圖流程，但使用 cluster 的停靠點而不是重新規劃 tile。
 - **重複**：維持 `convertLayer()` 現有的外層迴圈，每一遍跑完所有 cluster。
 - **debug 圖**：`writeGalvoDebugImage()` 畫出 cluster 的停靠點與外框。
@@ -215,7 +215,7 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 - **前後端外框差異**：前端用瀏覽器 `getBBox`，後端用 Qt `QPainterPath::boundingRect`；bitmap 在 swiftray 轉換後尺寸會取整到像素。後端檢查刻意用 Shape 的向量外框而不是 factory 輸出，避免 0.001 mm 容差被像素取整吃掉；實際打出的 bitmap 可能多出不到一個像素，落在場鏡外時由 `GalvoListWriter` 的 out-of-field 計數記錄。
 - **匯出前的暫時轉換**：`convertAllTextToPath`、`convertShapeToBitmap`、`convertClipPath`、image symbol 切換、多選暫時群組（`data-tempgroup`）若改變第一層結構，前後端的「物件」定義會不同 — 列入測試。
 - **`item_key` 用節點位址**：只在單次解析內有效，不可存檔。
-- **格點模式的 backlash 規則**（`8b4034a`，每列退一欄）與本 PRD 的規則（整批最左 − 5 mm）不同；機構實測後可考慮統一。
+- ~~**格點模式的 backlash 規則**（`8b4034a`，每列退一欄）與本 PRD 的規則不同~~ → 已統一：格點模式也改成整批最左停靠點 − 5 mm、離行程左界至少 1 mm（swiftray `258489a`，2026-11-02）。原本退一欄時，第一欄的批次會退到行程左界，實測龍門會回彈。
 - 後續：bitmap 內連通區塊、混合模式（見 swiftray `docs/galvo-content-blocks.md` Phase 2）。
 
 ## 13. Test plan
