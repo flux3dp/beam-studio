@@ -97,6 +97,7 @@ export type TFcodeOptionalConfig = Partial<{
    */
   galvo_boundary: { bottom: number; left: number; right: number; top: number };
   galvo_debug_image: string;
+  galvo_dot_blend_grain: number;
   galvo_dot_blend_line_core: boolean;
   galvo_dot_blend_overlap: number;
   galvo_dot_blend_profile: GalvoBlendProfile;

@@ -36,6 +36,8 @@ export interface GalvoDevConfig {
   galvo_block: [number, number];
   /** Path a debug image of the block layout is written to. Empty disables it. */
   galvo_debug_image: string;
+  /** Side of the square a dithered image's dots change owner in across the band, mm. 0 is per dot. */
+  galvo_dot_blend_grain: number;
   /** Two-pass seam: runs for the core, blended dots for the band. */
   galvo_dot_blend_line_core: boolean;
   /** Width of the band a dithered image fades across, mm. 0 hard-seams the dots. */
@@ -246,6 +248,22 @@ export const GALVO_DEV_SETTING_FIELDS: GalvoDevSettingField[] = [
       '一個區塊的佔比在帶內如何遞減。simple 全程固定一半，最粗糙。' +
       'granular 分四段走 0.75 / 0.5 / 0.5 / 0.25。' +
       'super-granular 分十段從 0.9 降到 0.1，最平滑但收斂最慢。',
+  },
+  {
+    default: 0,
+    group: 'blend',
+    key: 'galvo_dot_blend_grain',
+    kind: 'number',
+    label: '點陣換手格大小',
+    min: 0,
+    step: 0.5,
+    tooltip:
+      '漸層點陣圖在重疊帶裡以多大的方格為單位換手。填 0 則逐點換手（預設）。' +
+      '逐點換手會把每個區塊的點抽稀到它的佔比，但實測點密度低於約一半時幾乎不顯色，' +
+      '兩個區塊分開打的點也疊不出原本的深度，接縫因此變淡。' +
+      '設成例如 2 mm 時，每一格都由單一區塊用原本的密度整格打完，佔比改成「拿到幾格」。' +
+      '格線從機器原點起算。',
+    unit: 'mm',
   },
   {
     default: 10,
