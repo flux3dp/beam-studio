@@ -51,5 +51,9 @@ describe('test Camera settings', () => {
     fireEvent.click(switchControls[1]);
     expect(mockSetPreference).toHaveBeenCalledTimes(2);
     expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'keep-preview-result', true);
+
+    fireEvent.click(switchControls[2]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(3);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'auto-full-area-preview', true);
   });
 });

@@ -2249,6 +2249,10 @@ const lang: ILang = {
       title: 'Enfoque automático',
       warning_at_coordinates: 'Después de entrar en el modo de enfoque automático, el cabezal láser se reiniciará y se moverá a la posición especificada para enfocar.\nAsegúrese de que la posición de destino esté sobre el material y de que no haya obstáculos en la trayectoria.',
     },
+    auto_preview: {
+      abort_to_continue: 'La máquina está capturando el área de trabajo para la vista previa automática. ¿Detener la captura y continuar?',
+      prefix: 'Vista previa automática: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analizando SVG - %d%% ...',
       calculating_task_path: 'Calculando trayectoria - %d%% ...',
@@ -2735,6 +2739,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Usa un modelo de IA para detectar objetos en la vista previa de la cámara. Más preciso en materiales con textura, pero más lento en equipos antiguos; desactívalo para usar la detección clásica. Usado por: Ajuste automático.',
     anti_aliasing: 'Suavizado',
     auto_connect: 'Seleccionar automáticamente la única máquina',
+    auto_full_area_preview: 'Vista previa automática del área completa',
     auto_switch_tab: 'Cambio automático entre capa y panel de objetos',
     autofocus_offset: 'Desplazamiento del enfoque automático',
     autosave_enabled: 'Guardado automático',

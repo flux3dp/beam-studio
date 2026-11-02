@@ -2251,6 +2251,10 @@ const lang: ILang = {
       title: '自動對焦',
       warning_at_coordinates: '進入自動對焦模式後，雷射頭將重置並移動到指定位置進行對焦。\n請確保目標位置在材料上，且移動路徑中沒有障礙物。',
     },
+    auto_preview: {
+      abort_to_continue: '機器正在自動拍攝工作區域，是否中止拍攝並繼續？',
+      prefix: '自動預覽：',
+    },
     backend_calculation: {
       analyzing_svg: '正在解析 SVG - %d%% ...',
       calculating_task_path: '正在計算工作路徑 - %d%% ...',
@@ -2737,6 +2741,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: '使用 AI 模型在相機預覽中尋找物件。在有紋理的材料上更準確，但在較舊的電腦上速度較慢；關閉則使用傳統偵測。使用於自動對位功能。',
     anti_aliasing: '反鋸齒',
     auto_connect: '自動選擇唯一機器',
+    auto_full_area_preview: '自動全範圍拍照',
     auto_switch_tab: '自動切換圖層與物件面板',
     autofocus_offset: '自動對焦高度補償',
     autosave_enabled: '自動儲存',

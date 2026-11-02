@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Mise au point automatique',
       warning_at_coordinates: "Après avoir activé le mode de mise au point automatique, la tête laser sera réinitialisée et déplacée vers la position spécifiée pour faire la mise au point.\nAssurez-vous que la position cible est sur le matériau et qu'il n'y a pas d'obstacles dans le chemin de déplacement.",
     },
+    auto_preview: {
+      abort_to_continue: 'La machine capture la zone de travail pour l’aperçu automatique. Arrêter la capture et continuer ?',
+      prefix: 'Aperçu automatique : ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analyse du SVG - %d%% ...',
       calculating_task_path: 'Calcul du chemin de tâche - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Utilise un modèle d’IA pour repérer les objets dans l’aperçu caméra. Plus précis sur les matériaux texturés, mais plus lent sur les ordinateurs anciens ; désactivez pour utiliser la détection classique. Utilisé par : Ajustement Automatique.',
     anti_aliasing: 'Anticrénelage',
     auto_connect: 'Sélectionner automatiquement la seule machine',
+    auto_full_area_preview: 'Aperçu automatique de toute la zone',
     auto_switch_tab: "Changement automatique entre le panneau de calques et d'objets",
     autofocus_offset: 'Décalage de la mise au point automatique',
     autosave_enabled: 'Sauvegarde automatique',

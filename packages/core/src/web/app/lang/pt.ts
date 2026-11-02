@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Foco Automático',
       warning_at_coordinates: 'Após entrar no modo de foco automático, a cabeça do laser será reiniciada e movida para a posição especificada para focar.\nCertifique-se de que a posição alvo esteja no material e que não haja obstáculos no caminho de movimento.',
     },
+    auto_preview: {
+      abort_to_continue: 'A máquina está capturando a área de trabalho para a pré-visualização automática. Parar a captura e continuar?',
+      prefix: 'Pré-visualização automática: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analisando SVG - %d%% ...',
       calculating_task_path: 'Calculando caminho da tarefa - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Usa um modelo de IA para localizar objetos na pré-visualização da câmera. Mais preciso em materiais com textura, porém mais lento em computadores antigos; desative para usar a detecção clássica. Usado por: Ajuste Automático.',
     anti_aliasing: 'Suavização de serrilhado',
     auto_connect: 'Selecionar automaticamente a única máquina',
+    auto_full_area_preview: 'Pré-visualização automática da área completa',
     auto_switch_tab: 'Troca automática entre painel de camadas e objetos',
     autofocus_offset: 'Compensação de foco automático',
     autosave_enabled: 'Salvamento automático ativado',

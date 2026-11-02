@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Automaattitarkennus',
       warning_at_coordinates: 'Automaattitarkennustilaan siirtymisen jälkeen laserpää nollataan ja siirretään määriteltyyn asentoon tarkentamista varten.\nVarmista, että kohdeasento on materiaalilla ja ettei liikereitässä ole esteitä.',
     },
+    auto_preview: {
+      abort_to_continue: 'Laite kuvaa työaluetta automaattista esikatselua varten. Lopetetaanko kuvaus ja jatketaan?',
+      prefix: 'Automaattinen esikatselu: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analysoidaan SVG - %d%% ...',
       calculating_task_path: 'Lasketaan tehtävän reittiä - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Käyttää tekoälymallia kohteiden tunnistamiseen kameran esikatselusta. Tarkempi kuvioiduilla materiaaleilla, mutta hitaampi vanhemmilla tietokoneilla; poista käytöstä käyttääksesi perinteistä tunnistusta. Käytössä: Automaattinen Sovitus.',
     anti_aliasing: 'Anti-Aliasing',
     auto_connect: 'Valitse automaattisesti ainoa laite',
+    auto_full_area_preview: 'Koko alueen automaattinen esikatselu',
     auto_switch_tab: 'Automaattinen vaihto kerros- ja objektipaneelin välillä',
     autofocus_offset: 'Automaattitarkennuksen siirtymä',
     autosave_enabled: 'Automaattinen tallennus',

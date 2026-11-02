@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Messa a fuoco automatica',
       warning_at_coordinates: 'Dopo essere entrati nella modalità di messa a fuoco automatica, la testa laser verrà ripristinata e spostata nella posizione specificata per la messa a fuoco.\nAssicurarsi che la posizione target sia sul materiale e che non ci siano ostacoli nel percorso di movimento.',
     },
+    auto_preview: {
+      abort_to_continue: 'La macchina sta acquisendo l’area di lavoro per l’anteprima automatica. Interrompere l’acquisizione e continuare?',
+      prefix: 'Anteprima automatica: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analisi SVG - %d%% ...',
       calculating_task_path: 'Calcolo percorso attività - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Usa un modello di IA per individuare gli oggetti nell’anteprima della fotocamera. Più preciso su materiali con texture, ma più lento su computer datati; disattivalo per usare il rilevamento classico. Usato da: Adattamento Automatico.',
     anti_aliasing: 'Anti-aliasing',
     auto_connect: "Seleziona automaticamente l'unica macchina",
+    auto_full_area_preview: 'Anteprima automatica dell’intera area',
     auto_switch_tab: 'Commutazione automatica tra pannello livelli e oggetti',
     autofocus_offset: 'Offset messa a fuoco automatica',
     autosave_enabled: 'Salvataggio automatico',

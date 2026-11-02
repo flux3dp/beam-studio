@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Lấy nét tự động',
       warning_at_coordinates: 'Sau khi vào chế độ lấy nét tự động, đầu laser sẽ được đặt lại và di chuyển đến vị trí được chỉ định để lấy nét.\nHãy đảm bảo rằng vị trí mục tiêu nằm trên vật liệu và không có chướng ngại vật trong đường di chuyển.',
     },
+    auto_preview: {
+      abort_to_continue: 'Máy đang chụp vùng làm việc để xem trước tự động. Dừng chụp và tiếp tục?',
+      prefix: 'Xem trước tự động: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Đang phân tích SVG - %d%% ...',
       calculating_task_path: 'Đang tính toán đường dẫn tác vụ - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Dùng mô hình AI để tìm vật thể trong bản xem trước camera. Chính xác hơn trên vật liệu có vân, nhưng chậm hơn trên máy tính cũ; tắt để dùng phát hiện truyền thống. Dùng cho: Tự Động Vừa Khít.',
     anti_aliasing: 'Làm mịn cạnh',
     auto_connect: 'Tự động kết nối máy duy nhất',
+    auto_full_area_preview: 'Tự động xem trước toàn vùng',
     auto_switch_tab: 'Chuyển đổi tự động giữa bảng Lớp và Đối tượng',
     autofocus_offset: 'Bù đắp Lấy nét tự động',
     autosave_enabled: 'Tự động lưu',

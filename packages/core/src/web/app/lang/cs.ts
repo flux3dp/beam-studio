@@ -2250,6 +2250,10 @@ const lang: ILang = {
       title: 'Autofokus',
       warning_at_coordinates: 'Po aktivaci režimu automatického zaostřování se laserová hlava resetuje a přesune na určenou pozici pro zaostření.\nUjistěte se, že cílová pozice je na materiálu a že v cestě pohybu nejsou žádné překážky.',
     },
+    auto_preview: {
+      abort_to_continue: 'Stroj snímá pracovní plochu pro automatický náhled. Zastavit snímání a pokračovat?',
+      prefix: 'Automatický náhled: ',
+    },
     backend_calculation: {
       analyzing_svg: 'Analýza SVG - %d%% ...',
       calculating_task_path: 'Výpočet dráhy úlohy - %d%% ...',
@@ -2736,6 +2740,7 @@ const lang: ILang = {
     ai_contour_detection_tooltip: 'Používá model AI k nalezení objektů v náhledu kamery. Přesnější na texturovaných materiálech, ale pomalejší na starších počítačích; vypněte pro klasickou detekci. Používá: Automaticky přizpůsobit.',
     anti_aliasing: 'Vyhlazování',
     auto_connect: 'Automaticky vybrat jediný přístroj',
+    auto_full_area_preview: 'Automatický náhled celé plochy',
     auto_switch_tab: 'Automatický přepínač panelu vrstev a objektů',
     autofocus_offset: 'Ofset autofokusu',
     autosave_enabled: 'Automatické ukládání',
