@@ -95,7 +95,8 @@ export const ensureObjectTilingFits = async (): Promise<boolean> => {
   Alert.popUp({
     buttonLabels: [t.select_objects],
     buttonType: AlertConstants.CUSTOM_CANCEL,
-    callbacks: () => selectionManager.selectOnly(items, true),
+    // multiSelect, not selectOnly: only the temp group it builds makes several objects one selection
+    callbacks: () => selectionManager.multiSelect(items),
     id: 'galvo-tiling-oversize',
     message: sprintf(t.oversize, items.length, field),
     type: AlertConstants.SHOW_POPUP_ERROR,

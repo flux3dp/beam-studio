@@ -10,10 +10,10 @@ jest.mock('@core/app/stores/documentStore', () => ({
   useDocumentStore: { getState: () => ({ workarea: mockWorkarea() }) },
 }));
 
-const mockSelectOnly = jest.fn();
+const mockMultiSelect = jest.fn();
 
 jest.mock('@core/app/svgedit/selection', () => ({
-  selectOnly: (...args) => mockSelectOnly(...args),
+  multiSelect: (...args) => mockMultiSelect(...args),
 }));
 
 const mockGetBBox = jest.fn();
@@ -142,6 +142,6 @@ describe('test galvoTiling', () => {
     expect(message).toContain('1');
     expect(message).toContain('110');
     callbacks();
-    expect(mockSelectOnly).toHaveBeenCalledWith([document.getElementById('L1-0')], true);
+    expect(mockMultiSelect).toHaveBeenCalledWith([document.getElementById('L1-0')]);
   });
 });

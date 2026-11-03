@@ -16,11 +16,9 @@ jest.mock('@core/implementations/storage', () => ({
 }));
 
 const mockWriteDataLayer = jest.fn();
-const mockGetData = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
-  getData: (...args) => mockGetData(...args),
   getPromarkLimit: () => ({ frequency: { max: 200, min: 30 } }),
   writeDataLayer: (...args) => mockWriteDataLayer(...args),
 }));
@@ -34,12 +32,6 @@ jest.mock('@core/helpers/addOn/innerEngraving', () => ({
 
 jest.mock('./usePromarkLimit', () => ({
   useIsPromarkUV: () => mockUseIsPromarkUV(),
-}));
-
-const mockWorkarea = jest.fn();
-
-jest.mock('@core/app/stores/documentStore', () => ({
-  useDocumentStore: (selector) => selector({ workarea: mockWorkarea() }),
 }));
 
 const mockGetLayerByName = jest.fn();
@@ -141,7 +133,6 @@ describe('test AdvancedSettingModal', () => {
       focusReverse: { hasMultiValue: false, value: false },
       focusStep: { hasMultiValue: false, value: -2 },
       focusStepReverse: { hasMultiValue: false, value: false },
-      galvoTiling: { hasMultiValue: false, value: 'grid' },
       repeat: { hasMultiValue: false, value: 2 },
       wobbleDiameter: { hasMultiValue: false, value: -0.2 },
       wobbleStep: { hasMultiValue: false, value: -0.05 },
@@ -150,8 +141,6 @@ describe('test AdvancedSettingModal', () => {
     mockUseIsPromarkUV.mockReturnValue(false);
     mockUseInnerEngravingActive.mockReturnValue(false);
     mockIsDev.mockReturnValue(true);
-    mockWorkarea.mockReturnValue('fbb1b');
-    mockGetData.mockReturnValue(1);
   });
 
   it('should render correctly', () => {
@@ -200,7 +189,6 @@ describe('test AdvancedSettingModal', () => {
       focusReverse: { hasMultiValue: false, value: false },
       focusStep: { hasMultiValue: false, value: -2 },
       focusStepReverse: { hasMultiValue: false, value: false },
-      galvoTiling: { hasMultiValue: false, value: 'grid' },
       wobbleDiameter: { hasMultiValue: false, value: 0.2 },
       wobbleStep: { hasMultiValue: false, value: 0.05 },
     });
@@ -322,45 +310,6 @@ describe('test AdvancedSettingModal', () => {
 
     expect(nonDev.querySelector('#lower-focus-rev')).toBeNull();
     expect(nonDev.querySelector('#focus-step-rev')).toBeNull();
-  });
-
-  describe('tiling', () => {
-    test('is hidden outside HEXA G', () => {
-      const { baseElement } = render(<AdvancedSettingModal onClose={mockOnClose} />);
-
-      expect(baseElement.querySelector('#galvoTiling')).toBeNull();
-    });
-
-    test('is hidden when a selected HEXA G layer is not a galvo one', () => {
-      mockWorkarea.mockReturnValue('fhx2galvo');
-      // 12 is the CO2 galvo head, 1 the universal laser
-      mockGetData.mockImplementation((layer: string) => (layer === 'layer1' ? 12 : 1));
-
-      const { baseElement } = render(<AdvancedSettingModal onClose={mockOnClose} />);
-
-      expect(baseElement.querySelector('#galvoTiling')).toBeNull();
-    });
-
-    test('is saved to every selected galvo layer', () => {
-      mockWorkarea.mockReturnValue('fhx2galvo');
-      mockGetData.mockReturnValue(12);
-
-      const { baseElement, getByText } = render(<AdvancedSettingModal onClose={mockOnClose} />);
-      const select = baseElement.querySelector('#galvoTiling');
-
-      expect(select).not.toBeNull();
-      fireEvent.mouseDown(select);
-      fireEvent.click(getByText('By Object'));
-      fireEvent.click(getByText('Save'));
-
-      expect(mockWriteDataLayer).toHaveBeenCalledTimes(2);
-      expect(mockWriteDataLayer).toHaveBeenNthCalledWith(1, 'layer1', 'galvoTiling', 'object', {
-        batchCmd: mockBatchCmd,
-      });
-      expect(mockWriteDataLayer).toHaveBeenNthCalledWith(2, 'layer2', 'galvoTiling', 'object', {
-        batchCmd: mockBatchCmd,
-      });
-    });
   });
 
   test('cancel should work', () => {

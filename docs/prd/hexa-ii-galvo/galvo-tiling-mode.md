@@ -7,7 +7,7 @@
 | **Created** | 2026-11-02 |
 | **Target product** | Beam Studio（desktop + web），機型 `fhx2galvo`（HEXA G）；swiftray daemon |
 | **Owner area** | 圖層參數（`components/beambox/RightPanel/ConfigPanel/`、`helpers/layer/layer-config-helper.ts`）、匯出（`actions/beambox/export-funcs-swiftray.ts`）；swiftray SVG 解析（`src/parser/`）與 fcode 匯出（`src/toolpath_exporter/toolpath-exporter-fcode.cpp`） |
-| **Related code** | 圖層屬性：`packages/core/src/web/helpers/layer/layer-config-helper.ts`、`packages/core/public/js/lib/svgeditor/sanitize.js`、`packages/core/src/web/interfaces/ILayerConfig.d.ts`；UI：`packages/core/src/web/app/components/beambox/RightPanel/ConfigPanel/AdvancedSettingModal.tsx`；轉檔入口：`packages/core/src/web/app/actions/beambox/export-funcs-swiftray.ts`（`fetchTaskCodeSwiftray`）、`export-funcs.ts`（`getConvertEngine`）；場鏡尺寸：`packages/core/src/web/helpers/device/galvoConfig.ts` |
+| **Related code** | 圖層屬性：`packages/core/src/web/helpers/layer/layer-config-helper.ts`、`packages/core/public/js/lib/svgeditor/sanitize.js`、`packages/core/src/web/interfaces/ILayerConfig.d.ts`；UI：`packages/core/src/web/app/components/beambox/RightPanel/ConfigPanel/GalvoTilingBlock.tsx`（放在 `ConfigPanel.tsx` 的解析度下方）；轉檔入口：`packages/core/src/web/app/actions/beambox/export-funcs-swiftray.ts`（`fetchTaskCodeSwiftray`）、`export-funcs.ts`（`getConvertEngine`）；場鏡尺寸：`packages/core/src/web/helpers/device/galvoConfig.ts` |
 | **External repos** | `swiftray`（branch `dev/hx2-galvo-blend`）：`src/parser/my_qsvg_handler_qt6.cpp`（`createGNode`、node→Shape 迴圈）、`src/parser/mysvg/mysvg-functions.h`（`processMySVGNode`、`processUse`）、`src/parser/mysvg/mysvg-types.h`、`src/shape/shape.h`、`src/layer.{h,cpp}`、`src/toolpath_exporter/toolpath-exporter-fcode.{h,cpp}`；相關未實作規格 `docs/galvo-content-blocks.md`（自動 content mode，本 PRD 取代其中「item＝polygon」的定義） |
 | **Companion PRD** | `docs/prd/hexa-ii-galvo/hexa-g-galvo-calibration.md`（§7.11 backlash 旗標、tile 順序） |
 
@@ -62,13 +62,13 @@
 ## 5. Acceptance criteria
 
 **A1 圖層參數**
-- 操作：HEXA G 文件、選一個振鏡模組（`fhx2galvo` 的 galvo CO2／MOPA）圖層 → 進階設定 → 「分塊方式」選「依物件」。
+- 操作：HEXA G 文件、選一個振鏡模組（`fhx2galvo` 的 galvo CO2／MOPA）圖層 → 圖層參數面板「解析度」下方的「分塊方式」選「依物件」。
 - 結果：選項寫進圖層 `data-galvoTiling="object"`（選「固定格點」寫 `grid`）；存檔、關閉、重開檔案後仍保留；undo／redo 可還原；沒有這個屬性的舊檔顯示「固定格點」。
 - 邊界：Promark 文件、HEXA G 的非振鏡圖層看不到這個選項；多選圖層值不同時顯示混合狀態，存檔時只寫有改動的圖層。
 
 **A2 前端大小檢查**
 - 操作：「依物件」圖層中放一個寬或高超過場鏡尺寸的物件（例如 110 mm 場鏡放 111 mm 的矩形），分別按送出、匯出 fcode、預估時間、路徑預覽。
-- 結果：四個入口都在轉檔前跳出提示，列出超過的物件數與場鏡尺寸，可「選取這些物件」；不送出任何東西給 swiftray。
+- 結果：四個入口都在轉檔前跳出提示，列出超過的物件數與場鏡尺寸，可「選取這些物件」（`multiSelect`，全部選中）；不送出任何東西給 swiftray。
 - 邊界：剛好 110.000 mm 的物件通過（容許 0.001 mm）；旋轉 45° 的 80 mm 正方形以軸向外框 113 mm 判斷，會被擋下；隱藏圖層、「固定格點」圖層不檢查；群組、`<use>`、文字、圖片都以第一層元素整體的外框判斷。
 
 **A3 物件整個在一個停靠點完成**
@@ -103,8 +103,9 @@
   - `sanitizeSvg` 開檔 — 其他屬性的保留／移除不變。
 - `app/svgedit/text/paramsLabel.ts`（`hiddenKeys` 加 `galvoTiling`）
   - 參數標籤的可選欄位與既有標籤內容 — 不變；`galvoTiling` 不是雕刻參數，不提供顯示。
-- `ConfigPanel/AdvancedSettingModal.tsx`
-  - Promark 圖層 — 進階設定內容與存檔行為不變（分塊方式不顯示）。
+- `ConfigPanel/ConfigPanel.tsx`（解析度下方加 `GalvoTilingBlock`）
+  - 非 HEXA G、非振鏡模組圖層、Promark — 面板內容與順序不變（分塊方式不顯示）。
+  - 多圖層 modal（`UIType === 'modal'`）— 分塊方式只改 store，存檔時由 modal 統一寫入，與其他欄位相同。
   - HEXA G 振鏡圖層 — 既有 `biDirectional`、`crossHatch`、`fillAngle`、wobble、focus 的存檔與 undo 不變。
 - `actions/beambox/export-funcs-swiftray.ts`（`fetchTaskCodeSwiftray` 開頭加檢查）
   - `export-funcs.ts` 的 `estimateTime`、`exportFcode`、gcode 系列、`MonitorContext` — 非 HEXA G、或沒有「依物件」圖層時流程與結果完全不變；檢查失敗時在任何畫布暫時修改（文字轉路徑等）之前返回，不留下殘留。
@@ -128,7 +129,7 @@
 ### 7.1 圖層參數（前端）
 
 - ConfigKey `galvoTiling: 'grid' | 'object'`（`as const` 物件定義值），屬性 `data-galvoTiling`，預設 `'grid'`；加進 `ILayerConfig.d.ts`、`layer-config-helper.ts` 的屬性對照與預設、`sanitize.js` 的 `g` 白名單。
-- UI：`AdvancedSettingModal` 新增「分塊方式」（Tiling），antd `Segmented` 或 `Select`，選項「固定格點」（Grid）／「依物件」（By Object），只在 `workarea === 'fhx2galvo'` 且選取的圖層都是振鏡模組時顯示。
+- UI：圖層參數面板的「解析度」下方新增「分塊方式」（Tiling，`GalvoTilingBlock`），`Select`，選項「固定格點」（Grid）／「依物件」（By Object），只在 `workarea === 'fhx2galvo'` 且目前圖層是振鏡模組時顯示；多圖層值不同時顯示「-」。原本放在進階設定 modal，2026-11-03 依使用者要求移出。
 - 說明文字（依物件）：「每個物件完整在一個場鏡範圍內雕刻，不會被 tile 切開，適合批量生產多個獨立物件。每個物件都必須小於場鏡尺寸。」
 - i18n：`beambox.right_panel.laser_panel.galvo_tiling`（`title`、`grid`、`object`、`object_hint`），en／zh-tw 先寫，其他語言發 PR 前補齊。
 
@@ -229,7 +230,7 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 
 ## 13. Test plan
 
-- **beam-studio 單元測試**：`galvoTiling.spec.ts` — 合格／超過／剛好等於／旋轉、群組、`<use>`、隱藏圖層、「固定格點」圖層（A2）；`AdvancedSettingModal.spec.tsx` — 分塊方式的顯示條件、舊檔預設與存檔（A1）；`export-funcs-swiftray` — 檢查失敗時不呼叫上傳、不留下暫時修改（A2、Must not change）。
+- **beam-studio 單元測試**：`galvoTiling.spec.ts` — 合格／超過／剛好等於／旋轉、群組、`<use>`、隱藏圖層、「固定格點」圖層（A2）；`GalvoTilingBlock.spec.tsx` — 選擇後寫入每個選取圖層並可 undo、modal 模式只改 store、多值顯示（A1）；`export-funcs-swiftray` — 檢查失敗時不呼叫上傳、不留下暫時修改（A2、Must not change）。
 - **swiftray**：以固定 SVG 匯出 fcode 比對
   - 情境 1／2／3 的停靠點數、每個物件只出現在一個 block（A3、A4）；
   - gantry 移動序列的 Y 單調、X 往左必經安全起點（A5）；

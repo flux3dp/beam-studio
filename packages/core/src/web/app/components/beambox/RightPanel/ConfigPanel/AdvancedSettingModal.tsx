@@ -1,25 +1,17 @@
 import React, { useMemo, useState } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Modal, Select, Switch, Tooltip } from 'antd';
+import { Modal, Switch, Tooltip } from 'antd';
 
-import { GalvoTiling } from '@core/app/constants/galvo-tiling';
-import { galvoModules } from '@core/app/constants/layer-module/layer-modules';
 import { DEFAULT_LAYER_SPACING, LAYER_SPACING_LIMIT } from '@core/app/constants/innerEngraving';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { useInnerEngravingActive } from '@core/helpers/addOn/innerEngraving';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
-import {
-  CUSTOM_PRESET_CONSTANT,
-  getData,
-  getPromarkLimit,
-  writeDataLayer,
-} from '@core/helpers/layer/layer-config-helper';
+import { CUSTOM_PRESET_CONSTANT, getPromarkLimit, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import { uvFrequencyToPower } from '@core/helpers/layer/uvPowerFrequency';
 import useI18n from '@core/helpers/useI18n';
@@ -58,7 +50,6 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
     focusStep: state.focusStep,
     focusStepReverse: state.focusStepReverse,
     frequency: state.frequency,
-    galvoTiling: state.galvoTiling,
     // absent outside inner engraving, where they are neither shown nor saved
     ...(isInnerEngraving && { stlMinLayerSpacing: state.stlMinLayerSpacing }),
     wobbleDiameter: state.wobbleDiameter,
@@ -76,17 +67,6 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
   const isPromarkUV = useIsPromarkUV();
   const frequencyLimit = useMemo(() => getPromarkLimit().frequency, []);
   const repeat = state.repeat.value;
-  const workarea = useDocumentStore((s) => s.workarea);
-  // Tiling is a HEXA G gantry notion: a Promark never moves its head, and a non-galvo layer is
-  // not tiled at all. Every selected layer has to be a galvo one for the setting to mean anything.
-  const showTiling = useMemo(
-    () =>
-      workarea === 'fhx2galvo' &&
-      layerManager
-        .getSelectedLayers()
-        .every((layerName) => galvoModules.has(getData(getLayerByName(layerName), 'module')!)),
-    [workarea],
-  );
 
   const handleSave = () => {
     const keys = [
@@ -103,7 +83,6 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
       'focusStep',
       'focusStepReverse',
       ...(isInnerEngraving ? (['stlMinLayerSpacing'] as const) : []),
-      'galvoTiling',
     ] as const;
 
     const batchCmd = new history.BatchCommand('Change advanced setting');
@@ -223,27 +202,6 @@ const AdvancedSettingModal = ({ onClose }: Props): React.JSX.Element => {
               precision={0}
               unit="kHz"
               value={draftValue.frequency.value}
-            />
-          </div>
-        )}
-        {showTiling && (
-          <div>
-            <span>
-              <label htmlFor="galvoTiling">{t.galvo_tiling.title}</label>
-              <Tooltip title={t.galvo_tiling.object_hint}>
-                <QuestionCircleOutlined className={styles.hint} />
-              </Tooltip>
-            </span>
-            <Select
-              className={styles.select}
-              id="galvoTiling"
-              onChange={(value) => handleValueChange('galvoTiling', value)}
-              options={[
-                { label: t.galvo_tiling.grid, value: GalvoTiling.Grid },
-                { label: t.galvo_tiling.object, value: GalvoTiling.Object },
-              ]}
-              placeholder="-"
-              value={draftValue.galvoTiling.hasMultiValue ? undefined : draftValue.galvoTiling.value}
             />
           </div>
         )}

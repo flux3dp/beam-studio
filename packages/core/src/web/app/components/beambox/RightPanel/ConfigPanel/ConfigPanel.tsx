@@ -63,6 +63,7 @@ import EngravingModeBlock from './EngravingModeBlock';
 import FillCapsBlock from './FillCapsBlock';
 import FillIntervalBlock from './FillIntervalBlock';
 import FrequencyBlock from './FrequencyBlock';
+import GalvoTilingBlock from './GalvoTilingBlock';
 import getInnerEngravingBlocks from './getInnerEngravingBlocks';
 import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
@@ -315,6 +316,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {/* a dot has no speed; in inner engraving only slice contours are travelled */}
       {(!isInnerEngraving || innerEngravingBlocks.line) && <SpeedBlock type={UIType} />}
       {isLaser && !isInnerEngraving && <DpiBlock type={UIType} />}
+      {isGalvo && workarea === 'fhx2galvo' && <GalvoTilingBlock type={UIType} />}
       {hasGalvoParams && (!isInnerEngraving || innerEngravingBlocks.dot) && <DottingTimeBlock type={UIType} />}
       {innerEngravingBlocks.dot && (
         <NumberBlock
