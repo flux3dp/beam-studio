@@ -132,6 +132,8 @@
   - `preview-mode-controller.ts:85`：手動預覽開始時，現在也會（在提示後）停下同一台機器上忙碌的任務；這是預期行為。
 - `app/contexts/DialogContext.tsx`、`app/contexts/AlertProgressContext.tsx`、`app/actions/dialog-caller.tsx`（新增「是否有任何開著」的查詢）
   - `dialogCaller.isIdExist`、`alertCaller.checkIdExist`、`progressCaller.checkIdExist`：不變。
+- `helpers/device-master.ts`（`select(device, { silent })`，預設 `false`；silent 時不顯示「連線中」progress、連線錯誤 alert 與密碼對話框）
+  - 所有前景呼叫者（`checkDeviceStatus`、`getControl` → `reconnect`、`get-device`、framing、校正、韌體更新…）：不傳選項，progress、alert 與密碼對話框照舊。
 - `app/actions/tabController.ts`：**不修改**；管理器讀 `isFocused`，並像今天的 Promark 監聽一樣訂閱 `onFocused`／`onBlurred`。網頁版可見性在管理器內處理（§7.5），所以 `beambox-global-interaction`、`Tabs`、`TabRecentFiles`、`ai-extension`、dockable 版面儲存與 `fileImportHelper` 都不受影響。
 
 ---
@@ -212,7 +214,7 @@ backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // 優�
 
 **「選取」的兩種意思。** 每個任務的*目標*機器是使用者在頂欄選的那台（`ctx.device`，來自 `SET_SELECTED_DEVICE`）。`deviceMaster.select()` 只決定共用的控制連線目前和哪台機器溝通；前景流程會為其他機器呼叫它（例如從選單打開 B 的監控視窗），但不會改變頂欄。任務跟著頂欄走，從不跟著 `deviceMaster` 的目前機器走。
 
-**機器擁有權**：只有管理器能為任務呼叫 `deviceMaster.select`。任務每次 tick 前呼叫 `backgroundTasks.isCurrent(this)`，為 false 就跳過這次 tick。正在跑的任務其機器不是目前機器時，只要沒有 modal 開著、手動預覽關閉、另一台機器不在子任務中（`!deviceMaster.currentControlMode`，也就是沒有前景動作可能正在用它），而且頂欄的機器在 `deviceMaster.getAvailableDevices()` 裡，管理器每 `RESELECT_MS = 5000` 重新選取一次。上線檢查很重要：`select()` 會顯示「連線中」的 progress，對離線機器每 5 秒重試會讓它一直閃。選取失敗依同一頻率重試。
+**機器擁有權**：只有管理器能為任務呼叫 `deviceMaster.select`。任務每次 tick 前呼叫 `backgroundTasks.isCurrent(this)`，為 false 就跳過這次 tick。正在跑的任務其機器不是目前機器，或是目前機器但沒有控制 socket（`currentControlMode === null`：重新整理後從未連線、斷線或被踢）時，只要沒有 modal 開著、手動預覽關閉、另一台機器不在子任務中（`!deviceMaster.currentControlMode`，也就是沒有前景動作可能正在用它），而且頂欄的機器在 `deviceMaster.getAvailableDevices()` 裡，管理器每 `RESELECT_MS = 5000` 選取一次。管理器所有的 select（這裡與 `startTask`）都傳 `{ silent: true }`：使用者沒有要求，失敗時不能跳「連線中」progress、#891/#892 或密碼對話框；沒有這個選項時，連不上的機器每 5 秒就跳一次 alert。上線檢查用來省掉無意義的嘗試。選取失敗依同一頻率重試。任務不自己重新連線：沒有 socket 時跳過 tick（指令會經過不 silent 的 `getControl()` → `reconnect()`），等管理器處理。
 
 **前景讓路**：`checkDeviceStatus` 在手動預覽區塊之後加上：
 
@@ -229,10 +231,12 @@ if (!(await backgroundTasks.yieldTo(device))) return false;
 ```ts
 !hasAnyModal() &&
 !previewModeController.isPreviewMode && !previewModeController.isStarting &&
-!deviceMaster.currentControlMode &&   // 被踢後的 null 沒關係：下一個指令會重新連線
+deviceMaster.currentControlMode === '' &&   // 子任務，或 null = 沒有 socket：等管理器的 silent 重新連線
 backgroundTasks.isCurrent(task) &&
 (await deviceMaster.getReport()).st_id === DeviceConstants.status.IDLE
 ```
+
+回傳 false 時記錄第一個不通過的檢查（`[backgroundTasks] <task> cannot touch machine: modal=true`、`controlMode=no socket`、`st_id=…`），讓測試機上被跳過的執行能從 console 看出原因。
 
 `hasAnyModal()`：`DialogContext.tsx` 回答新事件 `CHECK_ANY_DIALOG`，回 `dialogComponents.length > 0`；`AlertProgressContext.tsx` 回答 `CHECK_ANY_ALERT_PROGRESS`，回 `alertProgressStack.length > 0`；`dialogCaller.hasAnyModal()` 取兩者的 OR。與 `CHECK_ID_EXIST` 同一套 emitter 寫法（`DialogContext.tsx:31-33,46`）。
 
@@ -282,7 +286,7 @@ backgroundTasks.isCurrent(task) &&
 1. ~~獨立 PRD 還是自動預覽 PRD 的一節~~ → 獨立 PRD（2026-10-30）。
 2. ~~現在就遷移 Promark~~ → 是，`isBusy = false`；第二個成員能證明契約通用（2026-10-30）。
 3. ~~兩個任務要同一台機器~~ → 明確的優先級，集中在一張表 `BACKGROUND_TASK_PRIORITY`（§7.2）；輸的那個被停止，忙碌中則中止（2026-10-30）。不採用註冊順序：它取決於 import 順序。
-4. ~~前景動作把 `deviceMaster` 的目前機器切到另一台之後的重新選取~~ → 安靜之後，管理器每 5 秒以 `deviceMaster.select` 選回頂欄的機器，任務恢復（2026-10-30，§7.3）。頂欄的選擇才是目標；前景流程操作其他機器只是暫時的。不採用「永不重新選取」：任務會一直暫停，直到某個無關的動作剛好選回頂欄的機器。這不是指同一台機器的控制權被拿走：被踢時目前機器不變，下一個指令由 `getControl()` 重新連線；同一台機器上的前景子任務則由 tick 的 `currentControlMode` 檢查與 `canTouchMachine` 等它結束。
+4. ~~前景動作把 `deviceMaster` 的目前機器切到另一台之後的重新選取~~ → 安靜之後，管理器每 5 秒以 `deviceMaster.select` 選回頂欄的機器，任務恢復（2026-10-30，§7.3）。頂欄的選擇才是目標；前景流程操作其他機器只是暫時的。不採用「永不重新選取」：任務會一直暫停，直到某個無關的動作剛好選回頂欄的機器。同一台機器失去 socket（被踢、斷線、或重新整理後從未連線）由同一個計時器以 silent select 處理（2026-11-03；`getControl()` 的重新連線不是 silent，經由它輪詢的任務每幾秒就跳一次 #892）；同一台機器上的前景子任務則由 tick 的 `currentControlMode` 檢查與 `canTouchMachine` 等它結束。
 5. ~~獨立 PR 還是自動預覽 PR 的前幾塊~~ → 獨立的前置 PR，在自動預覽之前合併（2026-10-30，§9）。
 
 ---
@@ -301,7 +305,7 @@ backgroundTasks.isCurrent(task) &&
 
 免硬體（Jest，依 `unit-test` skill）：
 
-- `background/index.spec.ts`：每個情境欄位的啟動／停止；`models` 過濾；`isEnabled` 為 false 時停止；優先級互斥（高者勝、輸者停止或中止、警告）；`BACKGROUND_TASK_PRIORITY` 不得有相同值；`refresh()` 重新判斷；`yieldTo` 在沒有任務忙碌、同一台機器忙碌（是／否）、另一台機器忙碌時的行為；只在安靜時重新選取、最多每 5 秒一次；`list()` 的各列。
+- `background/index.spec.ts`：每個情境欄位的啟動／停止；`models` 過濾；`isEnabled` 為 false 時停止；優先級互斥（高者勝、輸者停止或中止、警告）；`BACKGROUND_TASK_PRIORITY` 不得有相同值；`refresh()` 重新判斷；`yieldTo` 在沒有任務忙碌、同一台機器忙碌（是／否）、另一台機器忙碌時的行為；只在安靜時重新選取、最多每 5 秒一次、一律 `silent`；頂欄機器沒有 socket 時 silent 重新連線；`list()` 的各列。
 - `canTouchMachine.spec.ts`：每個條件為 false → false。
 - `promark-button-handler.spec.ts`（新增）：§7.6 的 isEnabled 對應；不是目前機器時跳過 tick；既有的按下／先框選計數不變。
 - `check-device-status.spec.ts`：`yieldTo` 為 false → 在狀態 switch 之前回傳 false；為 true → 既有流程。

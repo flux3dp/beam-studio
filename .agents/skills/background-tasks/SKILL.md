@@ -16,7 +16,7 @@ Design and decision log: `docs/prd/background-tasks.md`
 A **task** polls the machine on its own timer; the **manager** decides when it runs and on which machine.
 
 - **Target machine** = the one selected in the top bar. `GoButton.tsx` feeds it via `backgroundTasks.setDevice(selectedDevice)` from `CanvasContext`. The startup default is set straight into the context (`TopBar.tsx`), never through `SET_SELECTED_DEVICE`, so a listener on that event alone misses it.
-- **`deviceMaster.select()`** only points the one shared control connection at a machine. Foreground flows point it elsewhere (monitor of another machine from the menu) without touching the top bar. Tasks follow the top bar; the manager points `deviceMaster` back every 5 s once quiet and the machine is discovered.
+- **`deviceMaster.select()`** only points the one shared control connection at a machine. Foreground flows point it elsewhere (monitor of another machine from the menu) without touching the top bar. Tasks follow the top bar; the manager points `deviceMaster` back every 5 s once quiet and the machine is discovered, and reconnects it the same way when its socket is gone (after a reload, a drop or a kick).
 - **Context** (`device`, `mode`, `workarea`, `tabFocused`) is subscribed on first use, not at import: `check-device-status.ts` imports the manager, and an import cycle can expose half-loaded modules. Web focus comes from `visibilitychange` inside the manager; `tabController` stays untouched (making it emit on web re-attaches menus and refetches recent files).
 - **Exclusive**: one task per machine. Tasks are evaluated highest priority first; the first that wants the machine claims it, the rest are stopped (aborted if busy). Stops happen before starts in one `refresh()`.
 
@@ -32,11 +32,11 @@ A **task** polls the machine on its own timer; the **manager** decides when it r
 
 - **Busy** means work a foreground action must not overlap. While busy, `checkDeviceStatus` → `yieldTo(device)` asks the user on the same machine (No cancels the action) and aborts silently on another machine. A task that never blocks (Promark: its button export is itself a foreground action) returns `false`.
 - Only the manager calls `deviceMaster.select` for a task.
-- `deviceMaster.currentControlMode` is `null` once a kick drops the socket; treat only a truthy mode (a sub-task) as blocking, since the next command reconnects through `getControl()`.
-- `select()` shows a "connecting" progress; anything that retries selection must skip offline machines.
+- `deviceMaster.currentControlMode` is `''` when the socket is usable, a mode name in a sub-task, and `null` with no socket. A task polls only on `''`: with `null`, any command goes through `getControl()` → `reconnect()`, which shows the connecting progress and #891/#892 on failure, every tick. Leave reconnecting to the manager.
+- Background code calls `deviceMaster.select(device, { silent: true })` (no progress, no connection-error alert, no password dialog); a plain `select()` is for user actions only.
 
 ## Debugging
 
-`backgroundTasks.list()` in devtools: `{ id, priority, running, device, busy }`, highest priority first. A task that should run but does not: check `running` (context or `isEnabled` false, or a higher task claimed the machine — a one-time console warning names both), then `isCurrent` (deviceMaster on another machine, reselect waiting for quiet).
+`backgroundTasks.list()` in devtools: `{ id, priority, running, device, busy }`, highest priority first. A task that should run but does not: check `running` (context or `isEnabled` false, or a higher task claimed the machine — a one-time console warning names both), then `isCurrent` (deviceMaster on another machine, reselect waiting for quiet). `canTouchMachine` logs the first check that failed (`cannot touch machine: controlMode=no socket`, `modal=true`, `st_id=…`).
 
 Read-only tasks running in parallel are a planned extension (`exclusive?: boolean`), PRD §11 F2.

@@ -99,7 +99,7 @@ describe('backgroundTasks', () => {
     backgroundTasks.refresh();
 
     expect(log).toEqual(['start promark-button']);
-    expect(mockDeviceMaster.select).toHaveBeenCalledWith(deviceA);
+    expect(mockDeviceMaster.select).toHaveBeenCalledWith(deviceA, { silent: true });
     expect(console.warn).toHaveBeenCalledTimes(1);
     expect(backgroundTasks.list().map(({ id, running }) => [id, running])).toEqual([
       ['promark-button', true],
@@ -204,7 +204,7 @@ describe('backgroundTasks', () => {
 
       mockHasAnyModal.mockReturnValue(false);
       await jest.advanceTimersByTimeAsync(5000);
-      expect(mockDeviceMaster.select).toHaveBeenCalledWith(deviceA);
+      expect(mockDeviceMaster.select).toHaveBeenCalledWith(deviceA, { silent: true });
     });
 
     test.each([
@@ -223,6 +223,14 @@ describe('backgroundTasks', () => {
       mockDeviceMaster.currentDevice = { info: { serial: 'A' } };
       await jest.advanceTimersByTimeAsync(10000);
       expect(mockDeviceMaster.select).not.toHaveBeenCalled();
+    });
+
+    test('silently reconnects the top-bar machine after its socket dropped', async () => {
+      setup();
+      mockDeviceMaster.currentDevice = { info: { serial: 'A' } };
+      mockDeviceMaster.currentControlMode = null;
+      await jest.advanceTimersByTimeAsync(5000);
+      expect(mockDeviceMaster.select).toHaveBeenCalledWith(deviceA, { silent: true });
     });
   });
 });

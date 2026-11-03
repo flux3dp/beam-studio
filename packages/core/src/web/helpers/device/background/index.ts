@@ -170,7 +170,11 @@ class BackgroundTasks {
     // Every running task targets the top-bar machine, so the first one tells which machine that is
     const device = this.running.values().next().value;
 
-    if (!device || this.isReselecting || deviceMaster.currentDevice?.info.serial === device.serial) return;
+    if (!device || this.isReselecting) return;
+
+    // Same machine with a live socket: nothing to do. Without one (never connected, dropped or kicked), tasks wait
+    // for this reconnect
+    if (deviceMaster.currentDevice?.info.serial === device.serial && deviceMaster.currentControlMode !== null) return;
 
     const isQuiet =
       !dialogCaller.hasAnyModal() &&
@@ -185,7 +189,7 @@ class BackgroundTasks {
     this.isReselecting = true;
 
     try {
-      await deviceMaster.select(device);
+      await deviceMaster.select(device, { silent: true });
     } catch (error) {
       console.warn('[backgroundTasks] reselect failed', error);
     } finally {
@@ -194,8 +198,9 @@ class BackgroundTasks {
   };
 
   private startTask = (task: BackgroundTask, device: IDeviceInfo): void => {
+    // Background selects never pop the connecting progress or a connection error the user did not ask for
     if (deviceMaster.currentDevice?.info.serial !== device.serial) {
-      deviceMaster.select(device);
+      deviceMaster.select(device, { silent: true });
     }
 
     this.running.set(task.id, device);
