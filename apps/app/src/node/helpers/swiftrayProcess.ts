@@ -128,7 +128,7 @@ export const killStaleSwiftray = (): void => {
   }
 };
 
-/** Kill a Swiftray we spawned. On Windows `pid` is the cmd.exe wrapper, so the whole tree must go. */
+/** Kill a Swiftray we spawned, with any children of its own. */
 export const killSwiftrayPid = (pid: number): void => {
   console.log(`Killing Swiftray process tree (pid ${pid})`);
   killPid(pid);
