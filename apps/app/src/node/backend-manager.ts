@@ -94,7 +94,7 @@ class BackendManager extends EventEmitter {
       throw new Error('backend location not given');
     }
 
-    this.ghostLocation = options.location;
+    this.ghostLocation = path.resolve(options.location);
 
     if (options.trace_pid) {
       this.args = this.args.concat(['--trace-pid', options.trace_pid.toString()]);
@@ -259,7 +259,7 @@ class BackendManager extends EventEmitter {
     killStaleSwiftray();
 
     try {
-      this.swiftrayProc = spawn(path.join(paths.dir, paths.exec), ['--daemon'], { cwd: paths.dir });
+      this.swiftrayProc = spawn(path.resolve(paths.dir, paths.exec), ['--daemon'], { cwd: paths.dir });
     } catch (error) {
       // ponytail: no retry on a spawn-level failure; the 'exit' path below still recovers crashes.
       console.error('Swiftray failed to start:', error);
