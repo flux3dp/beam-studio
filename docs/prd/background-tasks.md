@@ -130,6 +130,8 @@ Foreground pollers start and stop with a user action and are already serialised 
   - `preview-mode-controller.ts:85` — manual preview start now also stops a busy task on the same machine (after a prompt); intended.
 - `app/contexts/DialogContext.tsx`, `app/contexts/AlertProgressContext.tsx`, `app/actions/dialog-caller.tsx` (new any-open query)
   - `dialogCaller.isIdExist`, `alertCaller.checkIdExist`, `progressCaller.checkIdExist` — unchanged.
+- `helpers/device-master.ts` (`select(device, { silent })`, default `false`; silent skips the "connecting" progress, the connection-error alert and the password dialog)
+  - Every foreground caller (`checkDeviceStatus`, `getControl` → `reconnect`, `get-device`, framing, calibration, firmware update, …) — no option passed, same progress, alerts and password dialog.
 - `app/actions/tabController.ts` — **not modified**; the manager reads `isFocused` and subscribes to `onFocused` / `onBlurred` like the Promark listener does today. Web visibility is handled inside the manager (§7.5), so `beambox-global-interaction`, `Tabs`, `TabRecentFiles`, `ai-extension`, dockable layout saving and `fileImportHelper` see no change.
 
 ---
@@ -210,7 +212,7 @@ for task in priority order (highest first):
 
 **Two meanings of "selected".** The *target* machine of every task is the one the user selected in the top bar (`ctx.device`, from `SET_SELECTED_DEVICE`). `deviceMaster.select()` only decides which machine the shared control connection currently talks to; foreground flows call it for other machines (the monitor of B opened from the menu) without changing the top bar. Tasks follow the top bar, never `deviceMaster`'s current device.
 
-**Device ownership**: only the manager calls `deviceMaster.select` for a task. Before each tick a task calls `backgroundTasks.isCurrent(this)` and skips the tick when false. When a running task's device is not current, the manager reselects it once every `RESELECT_MS = 5000` as long as no modal is open, manual preview is off, the other machine is not in a sub-task (`!deviceMaster.currentControlMode`) — that is, when no foreground action can be using it — and the top-bar machine is in `deviceMaster.getAvailableDevices()`. The online check matters: `select()` shows a "connecting" progress, and retrying an offline machine every 5 s would flash it forever. A failed select is retried on the same schedule.
+**Device ownership**: only the manager calls `deviceMaster.select` for a task. Before each tick a task calls `backgroundTasks.isCurrent(this)` and skips the tick when false. When a running task's device is not current, or is current but has no control socket (`currentControlMode === null`: never connected after a reload, dropped, or kicked), the manager selects it once every `RESELECT_MS = 5000` as long as no modal is open, manual preview is off, the other machine is not in a sub-task (`!deviceMaster.currentControlMode`) — that is, when no foreground action can be using it — and the top-bar machine is in `deviceMaster.getAvailableDevices()`. Every manager select (this one and `startTask`'s) passes `{ silent: true }`: the user did not ask for it, so a failure must not show the "connecting" progress, #891/#892 or the password dialog — without it an unreachable machine popped an alert every 5 s. The online check skips pointless attempts. A failed select is retried on the same schedule. Tasks never reconnect themselves: with no socket they skip their tick (a command would go through `getControl()` → `reconnect()`, which is not silent) and wait for this.
 
 **Foreground yield**: `checkDeviceStatus` adds, right after the manual-preview block:
 
@@ -227,10 +229,12 @@ The shared pre-flight check a task runs before it starts busy work (it is not a 
 ```ts
 !hasAnyModal() &&
 !previewModeController.isPreviewMode && !previewModeController.isStarting &&
-!deviceMaster.currentControlMode &&   // null after a kick is fine: the next command reconnects
+deviceMaster.currentControlMode === '' &&   // sub-task, or null = no socket: wait for the manager's silent reconnect
 backgroundTasks.isCurrent(task) &&
 (await deviceMaster.getReport()).st_id === DeviceConstants.status.IDLE
 ```
+
+When it returns false it logs the first failing check (`[backgroundTasks] <task> cannot touch machine: modal=true`, `controlMode=no socket`, `st_id=…`), so a skipped run can be explained from the console on a test machine.
 
 `hasAnyModal()`: `DialogContext.tsx` answers a new `CHECK_ANY_DIALOG` event with `dialogComponents.length > 0`; `AlertProgressContext.tsx` answers `CHECK_ANY_ALERT_PROGRESS` with `alertProgressStack.length > 0`; `dialogCaller.hasAnyModal()` ORs both. Same emitter pattern as `CHECK_ID_EXIST` (`DialogContext.tsx:31-33,46`).
 
@@ -280,7 +284,7 @@ One PR, merged before the auto-preview PR, in reviewable chunks:
 1. ~~Own PRD or a section of the auto-preview PRD~~ → own PRD (2026-10-30).
 2. ~~Migrate Promark now~~ → yes, with `isBusy = false`; a second member proves the contract (2026-10-30).
 3. ~~Two tasks on the same machine~~ → explicit priority in one table, `BACKGROUND_TASK_PRIORITY` (§7.2); the loser is stopped, aborted if busy (2026-10-30). Registration order rejected: it depends on import order.
-4. ~~Reselecting after a foreground action switched `deviceMaster`'s current device to another machine~~ → the manager `deviceMaster.select`s the top-bar machine again every 5 s once quiet, and tasks resume (2026-10-30, §7.3). The top-bar selection is the target; a foreground flow on another machine is temporary. "Never reselect" rejected: tasks would stay paused until an unrelated action happened to select the top-bar machine. Not about losing control of the same machine: a kick leaves the current device unchanged and `getControl()` reconnects on the next command; a foreground sub-task on the same machine is waited out by the `currentControlMode` tick check and `canTouchMachine`.
+4. ~~Reselecting after a foreground action switched `deviceMaster`'s current device to another machine~~ → the manager `deviceMaster.select`s the top-bar machine again every 5 s once quiet, and tasks resume (2026-10-30, §7.3). The top-bar selection is the target; a foreground flow on another machine is temporary. "Never reselect" rejected: tasks would stay paused until an unrelated action happened to select the top-bar machine. Losing the socket of the same machine (kick, network drop, or never connected after a reload) is covered by the same timer with a silent select (2026-11-03; `getControl()`'s reconnect was not silent and a task polling through it popped #892 every few seconds); a foreground sub-task on the same machine is waited out by the `currentControlMode` tick check and `canTouchMachine`.
 5. ~~Separate PR or first chunks of the auto-preview PR~~ → separate prerequisite PR, merged before auto preview (2026-10-30, §9).
 
 ---
@@ -299,7 +303,7 @@ One PR, merged before the auto-preview PR, in reviewable chunks:
 
 Hardware-free (Jest, `unit-test` skill):
 
-- `background/index.spec.ts`: start/stop for each context field; `models` filter; `isEnabled` false stops; priority exclusivity (higher wins, loser stopped or aborted, warning); no two equal priorities in `BACKGROUND_TASK_PRIORITY`; `refresh()` re-evaluates; `yieldTo` with no busy task, busy on same device (Yes/No), busy on another device; reselect only when quiet, at most every 5 s; `list()` rows.
+- `background/index.spec.ts`: start/stop for each context field; `models` filter; `isEnabled` false stops; priority exclusivity (higher wins, loser stopped or aborted, warning); no two equal priorities in `BACKGROUND_TASK_PRIORITY`; `refresh()` re-evaluates; `yieldTo` with no busy task, busy on same device (Yes/No), busy on another device; reselect only when quiet, at most every 5 s, always `silent`; silent reconnect of the top-bar machine when its socket is gone; `list()` rows.
 - `canTouchMachine.spec.ts`: each condition false → false.
 - `promark-button-handler.spec.ts` (new): isEnabled mapping from §7.6; tick skipped when not current; existing press/frame-first counting unchanged.
 - `check-device-status.spec.ts`: `yieldTo` false → returns false before the status switch; true → existing flow.

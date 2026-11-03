@@ -314,14 +314,17 @@ class DeviceMaster {
     return res;
   }
 
-  async select(deviceInfo: IDeviceInfo): Promise<SelectionResult> {
+  /**
+   * @param silent for background callers: no connecting progress, no connection-error alert, no password dialog
+   */
+  async select(deviceInfo: IDeviceInfo, { silent = false }: { silent?: boolean } = {}): Promise<SelectionResult> {
     console.log('selecting ', deviceInfo);
 
     if (deviceInfo.source === 'swiftray') {
-      return this.selectDeviceWithSwiftray(deviceInfo);
+      return this.selectDeviceWithSwiftray(deviceInfo, silent);
     }
 
-    const res = await this.selectDeviceWithGhost(deviceInfo);
+    const res = await this.selectDeviceWithGhost(deviceInfo, silent);
 
     // Check not in any sub-mode
     if (res.success && res.isDeviceChanged && !this.currentDevice?.control?.getMode()) {
@@ -335,7 +338,7 @@ class DeviceMaster {
     return res;
   }
 
-  async selectDeviceWithGhost(deviceInfo: IDeviceInfo): Promise<SelectionResult> {
+  async selectDeviceWithGhost(deviceInfo: IDeviceInfo, silent = false): Promise<SelectionResult> {
     // Match the device from the newest received device list
     if (!deviceInfo || !checkSoftwareForAdor(deviceInfo)) {
       return { success: false };
@@ -354,11 +357,14 @@ class DeviceMaster {
 
     console.log('Selecting', deviceInfo, device);
     Progress.popById('select-device');
-    Progress.openNonstopProgress({
-      id: 'select-device',
-      message: sprintf(i18n.lang.message.connectingMachine, device.info.name || deviceInfo.name),
-      timeout: 30000,
-    });
+
+    if (!silent) {
+      Progress.openNonstopProgress({
+        id: 'select-device',
+        message: sprintf(i18n.lang.message.connectingMachine, device.info.name || deviceInfo.name),
+        timeout: 30000,
+      });
+    }
 
     if (device.control && device.control.isConnected) {
       try {
@@ -409,11 +415,11 @@ class DeviceMaster {
       }
 
       // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
-      if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
+      if (!silent && [ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
         return { ...(await this.runAuthProcess(uuid, device, deviceInfo)), isDeviceChanged };
       }
 
-      this.popConnectionError(uuid, errorCode as ConnectionError, deviceInfo);
+      if (!silent) this.popConnectionError(uuid, errorCode as ConnectionError, deviceInfo);
 
       return {
         error: errorCode as ConnectionError,
@@ -424,7 +430,7 @@ class DeviceMaster {
     }
   }
 
-  async selectDeviceWithSwiftray(deviceInfo: IDeviceInfo): Promise<SelectionResult> {
+  async selectDeviceWithSwiftray(deviceInfo: IDeviceInfo, silent = false): Promise<SelectionResult> {
     // Match the device from the newest received device list
     if (!deviceInfo) {
       return { success: false };
@@ -442,11 +448,14 @@ class DeviceMaster {
     const device: IDeviceConnection = this.getDeviceByUUID(uuid);
 
     console.log('Selecting', deviceInfo, device);
-    Progress.openNonstopProgress({
-      id: 'select-device',
-      message: sprintf(i18n.lang.message.connectingMachine, device.info.name || deviceInfo.name),
-      timeout: 30000,
-    });
+
+    if (!silent) {
+      Progress.openNonstopProgress({
+        id: 'select-device',
+        message: sprintf(i18n.lang.message.connectingMachine, device.info.name || deviceInfo.name),
+        timeout: 30000,
+      });
+    }
 
     try {
       const controlSocket = await this.createDeviceControlSocketSwiftray(uuid);
@@ -521,11 +530,11 @@ class DeviceMaster {
       }
 
       // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
-      if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
+      if (!silent && [ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
         return { ...(await this.runAuthProcess(uuid, device, deviceInfo)), isDeviceChanged };
       }
 
-      this.popConnectionError(uuid, errorCode as ConnectionError, deviceInfo);
+      if (!silent) this.popConnectionError(uuid, errorCode as ConnectionError, deviceInfo);
 
       return {
         error: errorCode as ConnectionError,
