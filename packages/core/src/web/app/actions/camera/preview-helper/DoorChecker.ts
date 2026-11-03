@@ -44,8 +44,22 @@ class DoorChecker {
   startDoorCheck = (): void => {
     this.keepClosed = true;
     this.stopDoorCheck();
+
+    let isChecking = false;
+
     this.timer = setInterval(async () => {
-      await this.checkDoorClosed();
+      // A check can hang until the 10s control timeout; don't pile more onto the device task queue meanwhile
+      if (isChecking) return;
+
+      isChecking = true;
+
+      try {
+        await this.checkDoorClosed();
+      } catch (error) {
+        console.error('Fail to check door', error);
+      } finally {
+        isChecking = false;
+      }
     }, 1000);
   };
 

@@ -1110,11 +1110,12 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
         if (response && response.status === 'raw') {
           if (silent) console.log(`raw ${command}:\t`, response.text);
 
-          responseString += response.text;
+          // Firmware sometimes garbles replies: overlapping copies split by NUL bytes, `ok` glued to a cut-off line
+          responseString += response.text.replaceAll('\0', '');
         }
 
         const responses = responseString.split(/\r?\n/);
-        const i = responses.findIndex((r) => r === 'ok');
+        const i = responses.findIndex((r) => r.endsWith('ok'));
 
         if (i >= 0) {
           const resIdx = responses.findIndex((r) => r.match(regex));
@@ -1126,6 +1127,12 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
             this.removeCommandListeners();
 
             resolve(handler(match!));
+          } else if (retryTimes < 5) {
+            // Callers are read-only queries, so asking again is safe
+            responseString = '';
+            retryTimes += 1;
+            timeoutTimer = this.setTimeoutTimer(reject, 10000);
+            this.sc.sendGCode(command);
           } else {
             this.removeCommandListeners();
             reject(response);
