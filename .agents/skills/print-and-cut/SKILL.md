@@ -147,7 +147,7 @@ the re-traced path arrives via `setContourPathD`. All other geometry
 (`getGridBBox` / `getGridOffsets` / `getContentBBoxFromState` /
 `getPaperDimensionsMm` / `getPaperRect`, `MarkPosition`) lives in
 `utils/layout.ts` — pure functions over the state, no store access; store.ts
-holds only state, actions and `withFullBBox`.
+holds only state, actions, `withFullBBox` and the `isContourCurrent` predicate.
 
 ## Contour tracing (outline mode)
 
@@ -166,8 +166,11 @@ orientation filter drops the inner band/holes; inward (delta <= 0, UI range −3
 for bleed) must use **etClosedPolygon** — a band around a line has no inside to
 shrink — and erodes parts narrower than 2·|offset| → `buildSvgPathD`.
 An inset that erases the whole design returns `null` (StepSetup warns
-`offset_swallows_design`; Next is disabled in outline mode while `contourPathD`
-is null). Fallback on any other failure: `fallbackRectD` (rounded rect around
+`offset_swallows_design`). Setup cannot be left (button AND `nextStep`) until
+`isContourCurrent`: in outline mode a non-null path whose `contourPathOffset` (the
+offset it was traced with, ephemeral) equals the current `offsetDistance` — an
+offset change leaves the old path stale while the re-trace is pending, and
+StepSetup drops a result whose offset is no longer the input. Fallback on any other failure: `fallbackRectD` (rounded rect around
 bbox + offset, or a plain inset rect / null for inward).
 StepSetup drives it through a remeda `funnel` (300 ms, leading+trailing) with a
 `runIdRef` guard against out-of-order completion.

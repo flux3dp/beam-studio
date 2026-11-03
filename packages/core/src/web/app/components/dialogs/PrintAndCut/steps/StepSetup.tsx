@@ -21,6 +21,7 @@ const StepSetup = (): React.JSX.Element => {
   const tOffset = beambox.tool_panels._offset;
   const contourLayerName = usePrintAndCutStore((state) => state.contourLayerName);
   const contourPathD = usePrintAndCutStore((state) => state.contourPathD);
+  const contourPathOffset = usePrintAndCutStore((state) => state.contourPathOffset);
   const contourSource = usePrintAndCutStore((state) => state.contourSource);
   const offsetDistance = usePrintAndCutStore((state) => state.offsetDistance);
   const printingContentsBBox = usePrintAndCutStore((state) => state.printingContentsBBox);
@@ -60,8 +61,12 @@ const StepSetup = (): React.JSX.Element => {
           const contourPathD = await computeContourPathD(printingContentsBBox, offsetDistance);
 
           // a superseded run can still resolve after a newer one; only the
-          // latest may commit its result
-          if (runIdRef.current === runId) setContourPathD(contourPathD);
+          // latest may commit its result, and only while its offset is still the
+          // input (else a trace for a reverted offset could land after Next and
+          // overwrite the current path once the funnel is cancelled on unmount)
+          if (runIdRef.current === runId && usePrintAndCutStore.getState().offsetDistance === offsetDistance) {
+            setContourPathD(contourPathD, offsetDistance);
+          }
         },
         { minQuietPeriodMs: 300, triggerAt: 'both' },
       ),
@@ -135,8 +140,10 @@ const StepSetup = (): React.JSX.Element => {
               value={offsetDistance}
             />
           </div>
-          {/* the path is only replaced when a trace resolves, so null + inward means the inset ate it */}
-          {offsetDistance < 0 && !contourPathD && <Alert message={t.offset_swallows_design} showIcon type="warning" />}
+          {/* a null path traced for the current inward offset means the inset ate the design */}
+          {offsetDistance < 0 && contourPathOffset === offsetDistance && !contourPathD && (
+            <Alert message={t.offset_swallows_design} showIcon type="warning" />
+          )}
         </>
       ) : (
         <div className={styles.row}>

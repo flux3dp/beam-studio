@@ -18,7 +18,7 @@ import StepExport from './steps/StepExport';
 import StepPaper from './steps/StepPaper';
 import StepResume from './steps/StepResume';
 import StepSetup from './steps/StepSetup';
-import { usePrintAndCutStore } from './store';
+import { isContourCurrent, usePrintAndCutStore } from './store';
 import { generateAlignedCutLayer } from './utils/generateCutLayer';
 
 interface Props {
@@ -30,10 +30,8 @@ const PrintAndCut = ({ onClose }: Props): React.JSX.Element => {
 
   const { buttons: tButtons, print_and_cut: t } = useI18n();
   const isProcessing = usePrintAndCutStore((state) => state.isProcessing);
-  // outline mode has nothing to cut until a path is traced (or after an inset swallowed the design)
-  const isMissingContour = usePrintAndCutStore(
-    (state) => state.step === 'setup' && state.contourSource === 'outline' && !state.contourPathD,
-  );
+  // outline mode has nothing to cut until a path is traced for the current offset
+  const isMissingContour = usePrintAndCutStore((state) => state.step === 'setup' && !isContourCurrent(state));
   const isResume = usePrintAndCutStore((state) => state.isResume);
   const nextStep = usePrintAndCutStore((state) => state.nextStep);
   const prevStep = usePrintAndCutStore((state) => state.prevStep);
