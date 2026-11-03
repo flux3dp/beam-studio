@@ -148,8 +148,8 @@ class BeamboxPreferenceClass {
       // and handle new keys in nested objects
       deepApplyDefaults(preference, DEFAULT_PREFERENCE);
     } else {
-      // init beambox-preference
-      preference = DEFAULT_PREFERENCE;
+      // init beambox-preference; fresh installs default to the V2 ink cartridge, upgrades keep V1
+      preference = { ...DEFAULT_PREFERENCE, 'swap-4c-ink-order': true };
     }
 
     console.log('startup preference', preference);

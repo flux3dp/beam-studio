@@ -160,3 +160,12 @@ test('test beambox-preference', () => {
   expect(mockGet).toHaveBeenNthCalledWith(3, 'beambox-preference');
   expect(mockSet).toHaveBeenNthCalledWith(2, 'beambox-preference', { mouse_input_device: 'MOUSE' });
 });
+
+test('fresh install defaults to V2 ink cartridge', () => {
+  mockGet.mockReset().mockReturnValue(undefined);
+  mockSet.mockReset();
+  jest.isolateModules(() => {
+    require('./beambox-preference');
+  });
+  expect(mockSet).toHaveBeenCalledWith('beambox-preference', expect.objectContaining({ 'swap-4c-ink-order': true }));
+});
