@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { InputNumber, Radio, Tooltip } from 'antd';
+import { Alert, InputNumber, Radio, Tooltip } from 'antd';
 import { funnel } from 'remeda';
 
 import { laserModules } from '@core/app/constants/layer-module/layer-modules';
@@ -20,6 +20,7 @@ const StepSetup = (): React.JSX.Element => {
   const { beambox, print_and_cut: t } = useI18n();
   const tOffset = beambox.tool_panels._offset;
   const contourLayerName = usePrintAndCutStore((state) => state.contourLayerName);
+  const contourPathD = usePrintAndCutStore((state) => state.contourPathD);
   const contourSource = usePrintAndCutStore((state) => state.contourSource);
   const offsetDistance = usePrintAndCutStore((state) => state.offsetDistance);
   const printingContentsBBox = usePrintAndCutStore((state) => state.printingContentsBBox);
@@ -119,19 +120,24 @@ const StepSetup = (): React.JSX.Element => {
         value={contourSource}
       />
       {contourSource === 'outline' ? (
-        <div className={styles.row}>
-          <span className={styles.label}>{tOffset.dist}</span>
-          <InputNumber
-            addonAfter="mm"
-            max={20}
-            min={0.1}
-            onChange={(value) => {
-              if (value) setOffsetDistance(value);
-            }}
-            step={0.5}
-            value={offsetDistance}
-          />
-        </div>
+        <>
+          <div className={styles.row}>
+            <span className={styles.label}>{tOffset.dist}</span>
+            <InputNumber
+              addonAfter="mm"
+              max={20}
+              min={-3}
+              onChange={(value) => {
+                // negative insets the cut inside the print edge (bleed); 0 cuts on the edge
+                if (value !== null) setOffsetDistance(value);
+              }}
+              step={0.5}
+              value={offsetDistance}
+            />
+          </div>
+          {/* the path is only replaced when a trace resolves, so null + inward means the inset ate it */}
+          {offsetDistance < 0 && !contourPathD && <Alert message={t.offset_swallows_design} showIcon type="warning" />}
+        </>
       ) : (
         <div className={styles.row}>
           <span className={styles.label}>{t.select_cut_layer}</span>

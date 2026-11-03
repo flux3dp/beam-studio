@@ -2449,6 +2449,7 @@ export interface ILang {
     no_content: string;
     no_layer_with_path: string;
     no_uv_layer: string;
+    offset_swallows_design: string;
     open_preferences: string;
     orientation: string;
     orientation_landscape: string;

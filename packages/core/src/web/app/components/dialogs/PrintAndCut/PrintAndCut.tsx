@@ -30,6 +30,10 @@ const PrintAndCut = ({ onClose }: Props): React.JSX.Element => {
 
   const { buttons: tButtons, print_and_cut: t } = useI18n();
   const isProcessing = usePrintAndCutStore((state) => state.isProcessing);
+  // outline mode has nothing to cut until a path is traced (or after an inset swallowed the design)
+  const isMissingContour = usePrintAndCutStore(
+    (state) => state.step === 'setup' && state.contourSource === 'outline' && !state.contourPathD,
+  );
   const isResume = usePrintAndCutStore((state) => state.isResume);
   const nextStep = usePrintAndCutStore((state) => state.nextStep);
   const prevStep = usePrintAndCutStore((state) => state.prevStep);
@@ -86,7 +90,7 @@ const PrintAndCut = ({ onClose }: Props): React.JSX.Element => {
                     {t.finish}
                   </Button>
                 ) : (
-                  <Button onClick={nextStep} type="primary">
+                  <Button disabled={isMissingContour} onClick={nextStep} type="primary">
                     {tButtons.next}
                   </Button>
                 )}
