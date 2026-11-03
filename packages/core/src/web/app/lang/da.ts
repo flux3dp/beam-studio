@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Der er intet indhold i UV-printlagene. Tilføj dit design til et UV-printlag, før du bruger Print og skær.',
     no_layer_with_path: 'Intet laserlag indeholder en vektorsti. Forbered et laserlag med skærestien for at bruge det som kontur.',
     no_uv_layer: 'Der blev ikke fundet noget UV-printlag. Skift designlagets modul til "UV Print" for at bruge Print og skær.',
+    offset_swallows_design: 'Forskydningen indad er større end designet, så der er intet tilbage at skære. Reducer forskydningen.',
     open_preferences: 'Åbn indstillinger',
     orientation: 'Retning',
     orientation_landscape: 'Liggende',

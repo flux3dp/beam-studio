@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Det er ikke noe innhold i UV-utskriftslagene. Legg designet ditt til et UV-utskriftslag før du bruker Skriv ut og skjær.',
     no_layer_with_path: 'Ingen laserlag inneholder en vektorbane. Forbered et laserlag med skjærebanen for å bruke det som kontur.',
     no_uv_layer: 'Fant ikke noe UV-utskriftslag. Endre modulen til designlaget ditt til "UV-utskrift" for å bruke Skriv ut og skjær.',
+    offset_swallows_design: 'Forskyvningen innover er større enn designet, så det er ingenting igjen å skjære. Reduser forskyvningen.',
     open_preferences: 'Åpne innstillinger',
     orientation: 'Retning',
     orientation_landscape: 'Liggende',

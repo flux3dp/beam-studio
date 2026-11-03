@@ -23,11 +23,13 @@ interface BBox {
 }
 
 /**
- * Offset closed contour polygons outward by `delta` (scaled units) with round
- * joins, filling concavities narrower than 2 × `delta` and unioning overlaps.
- * Uses etClosedLine (not etClosedPolygon) to avoid spike artifacts at small
- * deltas; the resulting band is filtered to outer boundaries only, matching the
- * backend's RETR_EXTERNAL silhouettes. Returns null on failure.
+ * Offset closed contour polygons by `delta` (scaled units) with round joins.
+ * Outward (delta > 0) fills concavities narrower than 2 × `delta` and unions
+ * overlaps, using etClosedLine (not etClosedPolygon) to avoid spike artifacts at
+ * small deltas; the resulting band is filtered to outer boundaries only, matching
+ * the backend's RETR_EXTERNAL silhouettes. Inward (delta <= 0) erodes the
+ * silhouettes as polygons, so parts narrower than 2 × |delta| disappear.
+ * Returns [] when nothing survives the erosion, null on failure.
  */
 const offsetContourPaths = async (paths: Path[], delta: number): Promise<null | Path[]> => {
   const ClipperLib = getClipperLib();
@@ -37,7 +39,10 @@ const offsetContourPaths = async (paths: Path[], delta: number): Promise<null | 
     const clipper = new ClipperBase('offset', MITER_LIMIT, ARC_TOLERANCE);
 
     try {
-      await clipper.addPaths(paths, ClipperLib.JoinType.jtRound, ClipperLib.EndType.etClosedLine);
+      // a band around a line has no inside, so only a polygon offset can shrink
+      const endType = delta > 0 ? ClipperLib.EndType.etClosedLine : ClipperLib.EndType.etClosedPolygon;
+
+      await clipper.addPaths(paths, ClipperLib.JoinType.jtRound, endType);
       result = (await clipper.execute([], delta)) as Path[];
     } finally {
       clipper.terminate();
@@ -49,7 +54,7 @@ const offsetContourPaths = async (paths: Path[], delta: number): Promise<null | 
     result = ClipperLib.Clipper.CleanPolygons(result, 0.05 * SCALE_FACTOR) as Path[];
     result = result.filter((path) => path.length > 2);
 
-    return result.length > 0 ? result : null;
+    return result;
   } catch (error) {
     console.warn('Failed to offset contour with clipper', error);
 
@@ -142,12 +147,28 @@ const traceDesignContours = async (printingContentsBBox: BBox): Promise<Array<Ar
   // default min_area (100 px²) would drop them; epsilon keeps its default (1)
   const { contours } = await getOpenCV().imageContour(blob, { min_area: 1 });
 
-  return contours.map((contour) => contour.map(([px, py]) => [rasterBBox.x + px, rasterBBox.y + py]));
+  // findContours returns boundary pixel indices; pixel i spans [i, i + 1), so its centre is i + 0.5
+  return contours.map((contour) => contour.map(([px, py]) => [rasterBBox.x + px + 0.5, rasterBBox.y + py + 0.5]));
 };
 
-/** Round-cornered rectangle around the design bbox, used when the backend is unavailable */
-const fallbackRectD = (printingContentsBBox: BBox, distancePx: number): string => {
+/**
+ * Rectangle around the design bbox, used when the backend is unavailable: round-cornered for an
+ * outward offset, a plain inset for an inward one (null when the inset leaves nothing)
+ */
+const fallbackRectD = (printingContentsBBox: BBox, distancePx: number): null | string => {
   const { height, width, x, y } = printingContentsBBox;
+
+  if (distancePx <= 0) {
+    const inset = -distancePx;
+    const w = width - 2 * inset;
+    const h = height - 2 * inset;
+
+    // a zero-area rectangle has nothing to cut around (thin line at offset 0 included)
+    if (w <= 0 || h <= 0) return null;
+
+    return `M${x + inset},${y + inset} h${w} v${h} h-${w} Z`;
+  }
+
   const r = distancePx;
 
   return (
@@ -169,7 +190,7 @@ export const computeContourPathD = async (
 ): Promise<null | string> => {
   if (!printingContentsBBox || (printingContentsBBox.width === 0 && printingContentsBBox.height === 0)) return null;
 
-  const distancePx = Math.max(1, Math.round(distanceMm * dpmm));
+  const distancePx = Math.round(distanceMm * dpmm);
 
   try {
     if (!cachedContours) {
@@ -189,9 +210,14 @@ export const computeContourPathD = async (
     const solutionPaths: Path[] = contours.map((contour) =>
       contour.map(([x, y]) => ({ X: Math.round(x * SCALE_FACTOR), Y: Math.round(y * SCALE_FACTOR) })),
     );
-    const offsetPaths = await offsetContourPaths(solutionPaths, Math.round(distanceMm * dpmm * SCALE_FACTOR));
+    // the traced pixel centres sit half a raster px (1 px = 1 canvas unit) inside the real edge:
+    // grow by it so offset 0 cuts on the edge (a 5 mm square otherwise traced to 4.9 mm)
+    const offsetPaths = await offsetContourPaths(solutionPaths, Math.round((distanceMm * dpmm + 0.5) * SCALE_FACTOR));
 
     if (!offsetPaths) return fallbackRectD(printingContentsBBox, distancePx);
+
+    // the inset swallowed the whole design: no cut path, not a fallback rectangle
+    if (offsetPaths.length === 0) return null;
 
     return buildSvgPathD(offsetPaths, useGlobalPreferenceStore.getState()['simplify_clipper_path']) || null;
   } catch (error) {

@@ -95,6 +95,12 @@ export interface SheetSetupState extends ContourState {
 /** Printing contents, grid, paper and contour configuration edited on the canvas */
 interface CanvasState extends SheetSetupState {
   /**
+   * Offset distance the current outline `contourPathD` was traced with; a path traced for another
+   * offset is stale (a re-trace is pending), see isContourCurrent. Not persisted: a resumed run
+   * never re-enters setup.
+   */
+  contourPathOffset: null | number;
+  /**
    * Box the printed sheet is laid out around (marks, grid pitch, paper): the
    * contour's extent — see computeFullBBox; null until a design is collected
    */
@@ -130,6 +136,7 @@ const initialState: State = {
   contourElements: null,
   contourLayerName: null,
   contourPathD: null,
+  contourPathOffset: null,
   contourSource: 'outline',
   detectedMarkCenters: null,
   fullBBox: null,
@@ -181,6 +188,9 @@ export const usePrintAndCutStore = create(
     },
     nextStep: (): void => {
       const { step } = get();
+
+      if (step === 'setup' && !isContourCurrent(get())) return;
+
       const index = printAndCutSteps.indexOf(step);
 
       if (index < printAndCutSteps.length - 1) set({ step: printAndCutSteps[index + 1] });
@@ -207,14 +217,16 @@ export const usePrintAndCutStore = create(
     setCameraImageUrl: (cameraImageUrl: null | string): void => set({ cameraImageUrl }),
     setContourLayerName: (contourLayerName: null | string): void =>
       set((state) => withFullBBox(state, { contourLayerName })),
-    setContourPathD: (contourPathD: null | string): void => set((state) => withFullBBox(state, { contourPathD })),
+    setContourPathD: (contourPathD: null | string, contourPathOffset: null | number = null): void =>
+      set((state) => withFullBBox(state, { contourPathD, contourPathOffset })),
     setContourSource: (contourSource: ContourSource): void => set((state) => withFullBBox(state, { contourSource })),
     setDetectedMarkCenters: (detectedMarkCenters: null | Point[]): void => set({ detectedMarkCenters }),
     setGrid: (grid: Partial<Pick<State, 'gridColumns' | 'gridGapMm' | 'gridRows'>>): void =>
       set((state) => withFullBBox(state, grid)),
     setIsProcessing: (isProcessing: boolean): void => set({ isProcessing }),
     // the marks do not move with the distance itself: they follow the re-traced
-    // path, which arrives through setContourPathD
+    // path, which arrives through setContourPathD; until then the old path is stale
+    // (contourPathOffset no longer matches) and setup cannot be left
     setOffsetDistance: (offsetDistance: number): void => set({ offsetDistance }),
     setOrientation: (orientation: 'landscape' | 'portrait'): void => set({ orientation }),
     setPaperKey: (paperKey: PaperSelection): void => set({ paperKey }),
@@ -222,6 +234,18 @@ export const usePrintAndCutStore = create(
     setWhiteMarkBase: (whiteMarkBase: boolean): void => set({ whiteMarkBase }),
   })),
 );
+
+/**
+ * Whether setup has a cut path for its current inputs. Layer mode reads the chosen layer
+ * directly; outline mode needs a traced path for the CURRENT offset — while a re-trace is
+ * pending the old path still exists but no longer matches, and the new one may be null
+ * (an inset that swallows the design).
+ */
+export const isContourCurrent = (
+  state: Pick<CanvasState, 'contourPathD' | 'contourPathOffset' | 'contourSource' | 'offsetDistance'>,
+): boolean =>
+  state.contourSource !== 'outline' ||
+  (state.contourPathD !== null && state.contourPathOffset === state.offsetDistance);
 
 /**
  * The patch plus the full box and marks recomputed from the patched state:

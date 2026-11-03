@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Er staat geen inhoud in de UV-printlagen. Voeg je ontwerp toe aan een UV-printlaag voordat je Printen en snijden gebruikt.',
     no_layer_with_path: 'Geen enkele laserlaag bevat een vectorpad. Bereid een laserlaag met het snijpad voor om deze als contour te gebruiken.',
     no_uv_layer: 'Geen UV-printlaag gevonden. Wijzig de module van je ontwerplaag naar "UV-print" om Printen en snijden te gebruiken.',
+    offset_swallows_design: 'De offset naar binnen is groter dan het ontwerp, waardoor er niets overblijft om te snijden. Verklein de offset.',
     open_preferences: 'Voorkeuren openen',
     orientation: 'Oriëntatie',
     orientation_landscape: 'Liggend',
