@@ -22,8 +22,14 @@ import {
   stitchTest,
 } from '@core/helpers/device/galvoCalibration/mark';
 import type { CalibrationRound, ScaleSuggestion, SolveResult } from '@core/helpers/device/galvoCalibration/solve';
-import { buildSolveParams, suggestScales } from '@core/helpers/device/galvoCalibration/solve';
-import type { GalvoConfig, GalvoModule } from '@core/helpers/device/galvoConfig';
+import {
+  buildSolveParams,
+  composeGridCorrection,
+  gridMaxShift,
+  suggestScales,
+} from '@core/helpers/device/galvoCalibration/solve';
+import type { GalvoConfig, GalvoGridCorrection, GalvoModule } from '@core/helpers/device/galvoConfig';
+import { getGalvoConfig } from '@core/helpers/device/galvoConfig';
 import type { GalvoPoint } from '@core/helpers/device/galvoExec';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -37,6 +43,8 @@ interface Props {
   isInch: boolean;
   module: GalvoModule;
   offsets: GalvoPoint;
+  /** Put a grid correction table (null: none) into the settings on screen (not the machine). */
+  onApplyGrid: (grid: GalvoGridCorrection | null) => void;
   /** Apply the suggested scales to the settings on screen (not to the machine). */
   onApplyScales: (scales: { scaleX: number; scaleY: number }) => void;
   parameters: MarkParameters;
@@ -63,6 +71,7 @@ const GalvoCalibrationBlock = ({
   isInch,
   module,
   offsets,
+  onApplyGrid,
   onApplyScales,
   parameters,
   pending,
@@ -82,8 +91,13 @@ const GalvoCalibrationBlock = ({
   const [solved, setSolved] = useState<null | { result: SolveResult; suggestion: ScaleSuggestion }>(null);
   const [annotatedUrl, setAnnotatedUrl] = useState<null | string>(null);
   const [rounds, setRounds] = useState<CalibrationRound[]>([]);
-  /** The scales the coupon on the bed was marked with; what a solved round records as "sent". */
-  const markedWith = useRef<null | { scaleX: number; scaleY: number }>(null);
+  /**
+   * What the coupon on the bed was marked with: the scales a solved round records as "sent", and
+   * the grid table the machine held -- the saved one, since that is what the control task sends.
+   */
+  const markedWith = useRef<null | { grid: GalvoGridCorrection | null | undefined; scaleX: number; scaleY: number }>(
+    null,
+  );
   const cancelRequested = useRef(false);
 
   const busy = pending !== null;
@@ -138,8 +152,14 @@ const GalvoCalibrationBlock = ({
   const handleCoupon = () =>
     run('coupon', 'Mark coupon', () =>
       withStep(async () => {
+        const saved = await getGalvoConfig(module);
+
         await markCoupon({ ...site, config, module, onStep: setStep, power, speed });
-        markedWith.current = { scaleX: config.galvoParameters.x.scale, scaleY: config.galvoParameters.y.scale };
+        markedWith.current = {
+          grid: saved.gridCorrection,
+          scaleX: config.galvoParameters.x.scale,
+          scaleY: config.galvoParameters.y.scale,
+        };
       }),
     );
 
@@ -268,6 +288,18 @@ const GalvoCalibrationBlock = ({
       scaleX: scaleX ?? config.galvoParameters.x.scale,
       scaleY: scaleY ?? config.galvoParameters.y.scale,
     });
+  };
+
+  /**
+   * The measured table added to the one the coupon was marked with. A loaded photograph has no
+   * record of that, so the saved table stands in for it.
+   */
+  const handleApplyGrid = async () => {
+    if (!solved?.result.grid) return;
+
+    const marked = markedWith.current ? markedWith.current.grid : (await getGalvoConfig(module)).gridCorrection;
+
+    onApplyGrid(composeGridCorrection(marked, solved.result.grid));
   };
 
   const handleStitch = () =>
@@ -434,6 +466,15 @@ const GalvoCalibrationBlock = ({
           Apply suggestion
         </Button>
         <Button
+          data-testid="apply-grid"
+          disabled={busy || !solved?.result.grid}
+          onClick={handleApplyGrid}
+          size="small"
+          title="Scale is in the table too: apply this or the scale suggestion from one solve, not both"
+        >
+          Apply grid table
+        </Button>
+        <Button
           data-testid="stitch-test"
           disabled={busy || Boolean(stitchProblem)}
           loading={pending === 'stitch'}
@@ -446,6 +487,25 @@ const GalvoCalibrationBlock = ({
         <Checkbox checked={fixBacklash} data-testid="fix-backlash" onChange={(e) => toggleFix(e.target.checked)}>
           Fix backlash
         </Checkbox>
+      </Flex>
+      <Flex align="center" gap={8} wrap>
+        <span data-testid="grid-status">
+          Grid table:{' '}
+          {config.gridCorrection
+            ? `${config.gridCorrection.size}×${config.gridCorrection.size} over ${config.gridCorrection.field} mm, largest shift ${fmt(gridMaxShift(config.gridCorrection), 3)} mm${config.gridCorrection.fitRmsMm === undefined ? '' : `, fit RMS ${fmt(config.gridCorrection.fitRmsMm, 3)} mm`}${config.gridCorrection.createdAt ? `, ${config.gridCorrection.createdAt.slice(0, 16).replace('T', ' ')}` : ''}`
+            : config.gridCorrection === null
+              ? 'none (cleared on Save)'
+              : 'none'}
+        </span>
+        <Button
+          data-testid="clear-grid"
+          disabled={busy || !config.gridCorrection}
+          onClick={() => onApplyGrid(null)}
+          size="small"
+        >
+          Clear grid table
+        </Button>
+        <span>(takes effect on Save, like every value here)</span>
       </Flex>
       {step && <div data-testid="calibration-step">{step}</div>}
       {captureWarnings.length > 0 && (
@@ -534,6 +594,14 @@ const GalvoCalibrationBlock = ({
                 {result.field_center_mm
                   ? `(${fmt(result.field_center_mm[0], 3)}, ${fmt(result.field_center_mm[1], 3)}) mm from the designed centre`
                   : '—'}
+              </td>
+            </tr>
+            <tr>
+              <td>Grid table</td>
+              <td data-testid="grid-result">
+                {result.grid
+                  ? `${result.grid.size}×${result.grid.size}, largest shift ${fmt(gridMaxShift(result.grid), 3)} mm, cubic fit RMS / max ${fmt(result.grid.fit_rms_mm, 3)} / ${fmt(result.grid.fit_max_mm, 3)} mm, ${result.grid.extrapolated} points extrapolated`
+                  : '— (solver too old, or too few nodes)'}
               </td>
             </tr>
             <tr>

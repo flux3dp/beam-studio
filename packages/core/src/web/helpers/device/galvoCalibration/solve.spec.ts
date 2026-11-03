@@ -1,8 +1,15 @@
-import type { GalvoConfig } from '@core/helpers/device/galvoConfig';
+import type { GalvoConfig, GalvoGridCorrection } from '@core/helpers/device/galvoConfig';
 
 import type { CapturedCoupon } from './captureGrid';
-import type { CalibrationRound } from './solve';
-import { buildSolveParams, SCALE_X_SLOPE, suggestScales } from './solve';
+import type { CalibrationRound, SolveGrid } from './solve';
+import {
+  buildSolveParams,
+  composeGridCorrection,
+  GRID_SIGN,
+  gridMaxShift,
+  SCALE_X_SLOPE,
+  suggestScales,
+} from './solve';
 
 const captured: CapturedCoupon = {
   blob: new Blob(),
@@ -42,6 +49,8 @@ describe('galvoCalibration solve', () => {
         arm: [2, 4.5],
         expected_center_px: [1800, 1800],
         grid: 9,
+        grid_field: 110,
+        grid_size: 9,
         identity: [-44, -51],
         identity_r: 0.5,
         invert: [true, true],
@@ -100,6 +109,54 @@ describe('galvoCalibration solve', () => {
 
       expect(suggestion.scaleX).toBeNull();
       expect(suggestion.scaleY).toBeNull();
+    });
+  });
+
+  describe('composeGridCorrection', () => {
+    const measured = (dx: number[], dy: number[], extra: Partial<SolveGrid> = {}): SolveGrid => ({
+      dx,
+      dy,
+      extrapolated: 0,
+      field: 110,
+      fit_max_mm: 0.02,
+      fit_rms_mm: 0.01,
+      size: 2,
+      ...extra,
+    });
+
+    it('starts from nothing when the coupon was marked without a table', () => {
+      const grid = composeGridCorrection(undefined, measured([0.1, 0, 0, -0.2], [0, 0.3, 0, 0]), 'T');
+
+      expect(grid).toEqual({
+        createdAt: 'T',
+        dx: [0.1, 0, 0, -0.2].map((v) => GRID_SIGN * v),
+        dy: [0, 0.3, 0, 0].map((v) => GRID_SIGN * v),
+        field: 110,
+        fitRmsMm: 0.01,
+        size: 2,
+      });
+      expect(composeGridCorrection(null, measured([1, 1, 1, 1], [0, 0, 0, 0]), 'T').dx).toEqual(
+        Array(4).fill(GRID_SIGN),
+      );
+    });
+
+    it('adds what is left to the table the coupon was marked with, keeping its flags', () => {
+      const marked: GalvoGridCorrection = { dx: [1, 2, 3, 4], dy: [0, 0, 0, 0], field: 110, invertY: true, size: 2 };
+      const grid = composeGridCorrection(marked, measured([0.1, 0.1, 0.1, 0.1], [0.05, 0, 0, 0]), 'T');
+
+      expect(grid.dx).toEqual([1, 2, 3, 4].map((v) => Math.round((v + GRID_SIGN * 0.1) * 1e4) / 1e4));
+      expect(grid.dy[0]).toBeCloseTo(GRID_SIGN * 0.05);
+      expect(grid.invertY).toBe(true);
+    });
+
+    it('replaces a table of another size or field instead of adding to it', () => {
+      const marked: GalvoGridCorrection = { dx: [9, 9, 9, 9], dy: [9, 9, 9, 9], field: 70, size: 2 };
+
+      expect(composeGridCorrection(marked, measured([0, 0, 0, 0], [0, 0, 0, 0]), 'T').dx).toEqual([0, 0, 0, 0]);
+    });
+
+    it('measures a table by its largest shift', () => {
+      expect(gridMaxShift({ dx: [0.3, 0, -0.6], dy: [0.4, 0.1, 0.8] })).toBeCloseTo(1);
     });
   });
 });

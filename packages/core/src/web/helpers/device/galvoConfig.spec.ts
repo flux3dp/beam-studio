@@ -54,6 +54,19 @@ describe('test galvoConfig', () => {
 
   // Mounting, not calibration: the CO2 head sits mirrored and the MOPA one does not, so the two
   // heads must not share one fallback.
+  it('should keep the grid table as stored, absent, null or set', async () => {
+    const grid = { dx: [0.1, 0, 0, 0], dy: [0, 0, 0, 0], field: 110, size: 2 };
+
+    mockGetDeviceSetting.mockResolvedValueOnce({ status: 'ok', value: JSON.stringify({ workarea: 110 }) });
+    expect(await getGalvoConfig(LayerModule.GALVO_CO2, { useCache: false })).not.toHaveProperty('gridCorrection');
+
+    mockGetDeviceSetting.mockResolvedValueOnce({ status: 'ok', value: JSON.stringify({ gridCorrection: null }) });
+    expect((await getGalvoConfig(LayerModule.GALVO_CO2, { useCache: false })).gridCorrection).toBeNull();
+
+    mockGetDeviceSetting.mockResolvedValueOnce({ status: 'ok', value: JSON.stringify({ gridCorrection: grid }) });
+    expect((await getGalvoConfig(LayerModule.GALVO_CO2, { useCache: false })).gridCorrection).toEqual(grid);
+  });
+
   it('should default the axes per head', () => {
     expect(getDefaultGalvoConfig(LayerModule.GALVO_CO2).field).toMatchObject({
       invertX: true,

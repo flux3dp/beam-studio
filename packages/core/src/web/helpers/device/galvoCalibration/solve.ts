@@ -1,4 +1,4 @@
-import type { GalvoConfig } from '../galvoConfig';
+import type { GalvoConfig, GalvoGridCorrection } from '../galvoConfig';
 import {
   COUPON_GRID,
   COUPON_PITCH,
@@ -27,6 +27,10 @@ export interface SolveParams {
   /** Where the lens centre is in the image, px. */
   expected_center_px: [number, number];
   grid: number;
+  /** The field the proposed grid correction table spans, mm: the lens's, not the coupon's. */
+  grid_field: number;
+  /** Points per axis of the proposed grid correction table. */
+  grid_size: number;
   identity: [number, number];
   identity_r: number;
   /** The axis mirroring the card applies, as a first guess at which way the pattern lies. */
@@ -68,6 +72,8 @@ export const buildSolveParams = (
     discovery: of('discovery'),
     expected_center_px: [centerPx.x, centerPx.y],
     grid: COUPON_GRID,
+    grid_field: config.workarea,
+    grid_size: GRID_TABLE_SIZE,
     identity: [IDENTITY_CENTER.x, IDENTITY_CENTER.y],
     identity_r: IDENTITY_RADIUS,
     invert: [Boolean(config.field.invertX), Boolean(config.field.invertY)],
@@ -98,6 +104,12 @@ export interface SolveResult {
   affine_rms: null | number;
   /** The lens centre in the L frame's coordinates, mm relative to the designed centre. */
   field_center_mm: [number, number] | null;
+  /**
+   * The proposed grid correction table: where each point of the card's grid lands minus where it
+   * was commanded, with translation and rotation taken out. Absent from an older fluxghost, null
+   * with too few nodes to fit.
+   */
+  grid?: null | SolveGrid;
   /** Where the solver found the coupon when asked to locate it (a photograph). */
   located?: null | { center_px: [number, number]; px_per_mm: number };
   /** The affine map turned the pattern over (det < 0): an axis is mirrored relative to the guess. */
@@ -117,6 +129,59 @@ export interface SolveResult {
   validation_affine: null | number;
   validation_bilinear: null | number;
 }
+
+export interface SolveGrid {
+  dx: number[];
+  dy: number[];
+  /** Grid points outside the coupon's nodes, whose values the cubic extrapolates. */
+  extrapolated: number;
+  field: number;
+  fit_max_mm: null | number;
+  fit_rms_mm: null | number;
+  size: number;
+}
+
+export const GRID_TABLE_SIZE = 9;
+
+/**
+ * +1 if the card's "actual" coordinates are where a commanded point lands -- what the solver
+ * measures -- and -1 if they are where to aim instead. The SDK does not say; the one-point probe
+ * (PRD galvo-grid-correction.md §7.4, decision 1) settles it. Until then +1, the reading of the
+ * SDK's own words ("theoretical" / "actual").
+ */
+export const GRID_SIGN: -1 | 1 = 1;
+
+/**
+ * The table to apply after a coupon marked with `marked` (the table the machine held then; null
+ * or absent for none) measured `measured`. The measurement is what is left with `marked` in
+ * force, so it adds to it: to first order the card's model of the field becomes the field.
+ * A table of a different size or field cannot be added to and is replaced.
+ */
+export const composeGridCorrection = (
+  marked: GalvoGridCorrection | null | undefined,
+  measured: SolveGrid,
+  createdAt = new Date().toISOString(),
+): GalvoGridCorrection => {
+  const base = marked && marked.size === measured.size && marked.field === measured.field ? marked : null;
+  const add = (from: number[] | undefined, d: number[]) =>
+    d.map((v, i) => Math.round(((from?.[i] ?? 0) + GRID_SIGN * v) * 1e4) / 1e4);
+
+  return {
+    createdAt,
+    dx: add(base?.dx, measured.dx),
+    dy: add(base?.dy, measured.dy),
+    field: measured.field,
+    ...(measured.fit_rms_mm === null ? {} : { fitRmsMm: measured.fit_rms_mm }),
+    ...(base?.flip ? { flip: true } : {}),
+    ...(base?.invertX ? { invertX: true } : {}),
+    ...(base?.invertY ? { invertY: true } : {}),
+    size: measured.size,
+  };
+};
+
+/** The largest displacement in a table, mm: a one-glance size for the settings to show. */
+export const gridMaxShift = (grid: Pick<GalvoGridCorrection, 'dx' | 'dy'>): number =>
+  grid.dx.reduce((max, dx, i) => Math.max(max, Math.hypot(dx, grid.dy[i] ?? 0)), 0);
 
 /** One marked-and-solved coupon, for the secant estimate of the next round. */
 export interface CalibrationRound {

@@ -11,6 +11,27 @@ export const galvoWorkareaOptions = [70, 110] as const;
 export type GalvoWorkarea = (typeof galvoWorkareaOptions)[number];
 
 /**
+ * The card's grid correction table (PRD docs/prd/hexa-ii-galvo/galvo-grid-correction.md): for each
+ * point of a size x size grid over the field, where a mark commanded there lands minus where it was
+ * commanded, mm. Points run row-major from (-field/2, -field/2), X fastest; the commanded grid is
+ * implied. The player and the control task turn it into bsl's `;CONFIG gridcor`.
+ */
+export interface GalvoGridCorrection {
+  /** ISO time the table was made, for the settings to show; the machine ignores it. */
+  createdAt?: string;
+  dx: number[];
+  dy: number[];
+  field: number;
+  /** RMS of the cubic fit through the coupon's nodes, mm; shown, not sent. */
+  fitRmsMm?: number;
+  /** set_gridcor_params' bXyFlip / bXInvert / bYInvert; absent is false. */
+  flip?: boolean;
+  invertX?: boolean;
+  invertY?: boolean;
+  size: number;
+}
+
+/**
  * Settings of one galvo module head, stored on the machine.
  *
  * field.offsetX and field.offsetY stay zero on HEXA II: the head's position relative to the nozzle
@@ -22,6 +43,11 @@ export interface GalvoConfig {
   /** distance from the lens to the focal plane, in mm */
   focusHeight: number;
   galvoParameters: GalvoParameters;
+  /**
+   * Absent: never set, and the machine leaves the card's table alone (one set by hand with
+   * BeamOS tools/bsl-gridcor.py survives). null: cleared, and the machine clears the card's.
+   */
+  gridCorrection?: GalvoGridCorrection | null;
   /**
    * Red dot alignment, stored and written back untouched: HEXA II's pointer lands where the laser
    * does, so there is nothing to correct and the settings dialog shows no controls for it.
