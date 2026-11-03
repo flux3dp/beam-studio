@@ -129,7 +129,9 @@ Key naming (post-2026-07-30 rename — keep consistent):
 - `fullBBox` = the box the sheet is laid out around — **the contour's extent**,
   not the design layers' bbox (an image's transparent padding inflates its element
   bbox; the traced path hugs opaque pixels). Computed by `computeFullBBox`:
-  outline mode → `getPathBBox(contourPathD)` (contents bbox stands in pre-trace);
+  outline mode → `getPathBBox(contourPathD)` (contents bbox stands in pre-trace;
+  a negative `offsetDistance` unions the contents bbox in, since the artwork
+  then overhangs the cut);
   layer mode → contents ∪ `getContourLayerBBox`.
 - "cut" is reserved for the laser output: `CUT_COLOR`, `data-pnc-cut`
   (`PRINT_AND_CUT_LAYER_ATTR`), `generateCutLayer`, `cutting_layer_name`.
@@ -154,10 +156,16 @@ raster all design layers at 1px = 1 canvas unit (`switchSymbolWrapper` for image
 symbols; box = contents bbox padded by half of `getMaxStrokeWidth` (symbol-helper),
 since getBBox ignores strokes; contours come back in canvas coords) → fluxghost `image_contour` (`min_area: 1`, alpha/luminance silhouette,
 RETR_EXTERNAL — no holes) → **contours cached as a promise per dialog run**
-(`cachedContours`, cleared by `clearRasterCache` in `startFreshRun`) → one outward
-`ClipperOffset` pass (jtRound + **etClosedLine**, NOT etClosedPolygon — spikes at
-small deltas) → orientation filter drops inner band/holes → `buildSvgPathD`.
-Fallback on any failure: `fallbackRectD` (rounded rect around bbox + offset).
+(`cachedContours`, cleared by `clearRasterCache` in `startFreshRun`) → one
+`ClipperOffset` pass with jtRound: outward (`offsetDistance > 0`) uses
+**etClosedLine**, NOT etClosedPolygon (spikes at small deltas), and the
+orientation filter drops the inner band/holes; inward (`<= 0`, UI range −3…20 mm,
+for bleed) must use **etClosedPolygon** — a band around a line has no inside to
+shrink — and erodes parts narrower than 2·|offset| → `buildSvgPathD`.
+An inset that erases the whole design returns `null` (StepSetup warns
+`offset_swallows_design`; Next is disabled in outline mode while `contourPathD`
+is null). Fallback on any other failure: `fallbackRectD` (rounded rect around
+bbox + offset, or a plain inset rect / null for inward).
 StepSetup drives it through a remeda `funnel` (300 ms, leading+trailing) with a
 `runIdRef` guard against out-of-order completion.
 

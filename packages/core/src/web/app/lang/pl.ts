@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Warstwy druku UV nie zawierają żadnej zawartości. Dodaj swój projekt do warstwy druku UV przed użyciem funkcji Drukuj i tnij.',
     no_layer_with_path: 'Żadna warstwa laserowa nie zawiera ścieżki wektorowej. Przygotuj warstwę laserową ze ścieżką cięcia, aby użyć jej jako konturu.',
     no_uv_layer: 'Nie znaleziono warstwy druku UV. Zmień moduł warstwy projektu na „Druk UV”, aby użyć funkcji Drukuj i tnij.',
+    offset_swallows_design: 'Przesunięcie do wewnątrz jest większe niż projekt, więc nie pozostało nic do wycięcia. Zmniejsz przesunięcie.',
     open_preferences: 'Otwórz preferencje',
     orientation: 'Orientacja',
     orientation_landscape: 'Pozioma',

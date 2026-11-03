@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Không có nội dung trong các lớp In UV. Vui lòng thêm thiết kế của bạn vào lớp In UV trước khi dùng In và cắt.',
     no_layer_with_path: 'Không có lớp laser nào chứa đường vector. Hãy chuẩn bị một lớp laser có đường cắt để dùng làm đường viền.',
     no_uv_layer: 'Không tìm thấy lớp In UV. Vui lòng đổi mô-đun của lớp thiết kế thành "In UV" để dùng In và cắt.',
+    offset_swallows_design: 'Độ lệch vào trong lớn hơn thiết kế nên không còn gì để cắt. Vui lòng giảm độ lệch.',
     open_preferences: 'Mở tùy chọn',
     orientation: 'Hướng',
     orientation_landscape: 'Ngang',

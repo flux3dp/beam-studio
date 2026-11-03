@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'UV-tulostustasoilla ei ole sisältöä. Lisää suunnitelmasi UV-tulostustasolle ennen Tulosta ja leikkaa -toiminnon käyttöä.',
     no_layer_with_path: 'Missään lasertasossa ei ole vektoripolkua. Valmistele lasertaso, jossa on leikkausreitti, jotta voit käyttää sitä ääriviivana.',
     no_uv_layer: 'UV-tulostustasoa ei löytynyt. Vaihda suunnittelutason moduuliksi "UV-tulostus" käyttääksesi Tulosta ja leikkaa -toimintoa.',
+    offset_swallows_design: 'Sisäänpäin suuntautuva siirtymä on suurempi kuin malli, joten leikattavaa ei jää. Pienennä siirtymää.',
     open_preferences: 'Avaa asetukset',
     orientation: 'Suunta',
     orientation_landscape: 'Vaaka',

@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Ve vrstvách UV tisku není žádný obsah. Před použitím funkce Tisk a řez přidejte svůj návrh do vrstvy UV tisku.',
     no_layer_with_path: 'Žádná laserová vrstva neobsahuje vektorovou dráhu. Připravte laserovou vrstvu s řezací dráhou, abyste ji mohli použít jako obrys.',
     no_uv_layer: 'Nebyla nalezena žádná vrstva UV tisku. Chcete-li použít funkci Tisk a řez, změňte modul vrstvy s návrhem na „UV Tisk“.',
+    offset_swallows_design: 'Odsazení dovnitř je větší než návrh, takže nezbývá nic k řezání. Zmenšete odsazení.',
     open_preferences: 'Otevřít vlastnosti',
     orientation: 'Orientace',
     orientation_landscape: 'Na šířku',

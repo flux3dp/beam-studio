@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Tiada kandungan pada lapisan Cetakan UV. Sila tambah reka bentuk anda ke lapisan Cetakan UV sebelum menggunakan Cetak dan Potong.',
     no_layer_with_path: 'Tiada lapisan laser yang mengandungi laluan vektor. Sediakan lapisan laser dengan laluan potong untuk menggunakannya sebagai kontur.',
     no_uv_layer: 'Tiada lapisan Cetakan UV dijumpai. Sila tukar modul lapisan reka bentuk anda kepada "Cetakan UV" untuk menggunakan Cetak dan Potong.',
+    offset_swallows_design: 'Ofset ke dalam lebih besar daripada reka bentuk, jadi tiada apa-apa yang tinggal untuk dipotong. Sila kurangkan ofset.',
     open_preferences: 'Buka Keutamaan',
     orientation: 'Orientasi',
     orientation_landscape: 'Landskap',

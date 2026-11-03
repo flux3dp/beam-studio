@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Não há conteúdo nas camadas de impressão UV. Adicione seu design a uma camada de impressão UV antes de usar Imprimir e cortar.',
     no_layer_with_path: 'Nenhuma camada a laser contém um caminho vetorial. Prepare uma camada a laser com o caminho de corte para usá-la como contorno.',
     no_uv_layer: 'Nenhuma camada de impressão UV encontrada. Altere o módulo da sua camada de design para "Impressão UV" para usar Imprimir e cortar.',
+    offset_swallows_design: 'O deslocamento para dentro é maior que o design, portanto não resta nada para cortar. Reduza o deslocamento.',
     open_preferences: 'Abrir preferências',
     orientation: 'Orientação',
     orientation_landscape: 'Paisagem',
