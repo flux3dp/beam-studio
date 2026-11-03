@@ -78,6 +78,14 @@ describe('test AdvancedBlock', () => {
     expect(container).toMatchSnapshot();
   });
 
+  it('should render nothing for a galvo head layer, which has its own advanced settings modal', () => {
+    mockUseConfigPanelStore.mockReturnValue({ module: { value: LayerModule.GALVO_CO2 } });
+
+    const { container } = render(<AdvancedBlock />);
+
+    expect(container).toBeEmptyDOMElement();
+  });
+
   it('should render correctly for printer', () => {
     mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: true, lowerFocus: true });
     mockUseConfigPanelStore.mockReturnValue({ module: { value: LayerModule.PRINTER } });

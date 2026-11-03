@@ -5,7 +5,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { galvoModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
@@ -41,8 +41,9 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     })),
   );
 
-  // Promark advanced settings are presented as a button + modal (AdvancedSettingButton) instead
-  if (isPromark) return null;
+  // Promark and galvo-head layers present their advanced settings as a button + modal
+  // (AdvancedSettingButton) instead
+  if (isPromark || galvoModules.has(module.value)) return null;
 
   const contents = [];
 
