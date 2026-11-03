@@ -81,7 +81,7 @@ coupon 含 roll 後跨 ±53.39 mm，超過 `galvo_block` 預設 100×100，會�
 **Non-goals**
 
 - 平整度量測、對焦（SP100、Z 軸）、振鏡 X/Y offset 的能量平衡。工廠流程的「準備」段，之後另開。
-- 9×9 網格表（`set_gridcor`）：bsl 沒有實作，工廠文件也列為未完成。
+- 9×9 網格表（`set_gridcor`）：bsl 沒有實作，工廠文件也列為未完成。另開 `galvo-grid-correction.md`（2026-11-03）。
 - 正式版的分步驟彈窗、i18n（dev 區塊沿用未翻譯慣例）。
 - swiftray 的 tile 順序變更。
 - 解算的第二種做法「原始影像上找特徵、逐點經相機模型映射」，只在 §12 當 B 失敗時的備案。
@@ -474,7 +474,7 @@ Beam Studio 端：`camera.ts` 的 `oneShot(useLowResolution, dpmm)` 送 `require
 | 振鏡 X/Y offset（能量平衡） | `field.offsetX/Y` 已隨 optics 送卡 | 沒有感測器，只能給操作按鈕由人判斷；改 offset 會移動場心，必須排在場鏡校正前 |
 | 雷射頭相機校正 | `LaserHeadFisheyeCalibration` 已有 `fhx2galvo` profile | ChArUco 步驟不移動龍門；HEXA G 頭馬達鎖死，要改成解聯後移到工作範圍中心、由使用者搬棋盤格，並改指引文字 |
 | 對焦 | 韌體有 `M136P304` 讀 SP100、`M137P184Q` 手動 Z；`rawMoveZRel` 已有 | 本 PRD 的 `controlTaskMainboard` 讓打線、移 Z、讀 SP100 可在同一 session 內做；對焦基準值每種場鏡各存一份 |
-| 原始場（identity grid） | bsl 無 `set_gridcor` | 第一輪用目前 manual 值起算；9×9 網格表不進 v1 |
+| 原始場（identity grid） | bsl 無 `set_gridcor` | 第一輪用目前 manual 值起算；9×9 網格表不進 v1，見 `galvo-grid-correction.md` |
 | 機台常數 | 站位、SP100 偏移無存放處 | 場心相對噴嘴 = `toolhead_shift`，§7.8 第 6 步會量出來，可回填模組偏移 |
 | swiftray tile 順序 | ~~蛇行~~ 已改一律由左到右並退回一格，讀 `galvo-fix-backlash`（2026-11-02，swiftray `dev/hx2-galvo-blend`） | 未上機實測；Y 方向（換層後回到第一列是 −Y）尚未處理 |
 
