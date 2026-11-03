@@ -677,6 +677,14 @@ export interface ILang {
         focus_adjustment: string;
         frequency: string;
         frequency_hint_uv: string;
+        galvo_tiling: {
+          grid: string;
+          object: string;
+          object_hint: string;
+          oversize: string;
+          select_objects: string;
+          title: string;
+        };
         gradient_only: string;
         halftone: string;
         halftone_link: string;

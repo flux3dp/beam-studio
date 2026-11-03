@@ -1,3 +1,4 @@
+import type { GalvoTilingType } from '@core/app/constants/galvo-tiling';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { LaserType, mopaWatts, promarkWatts, uvWatts } from '@core/app/constants/promark-constants';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
@@ -29,6 +30,8 @@ type LaserConfig = {
   dpi: EngraveDpiOption;
   focus: number;
   focusStep: number;
+  /** HEXA G galvo layers only: how the layer is divided between gantry stops */
+  galvoTiling: GalvoTilingType;
   height: number;
   highQuality: boolean;
   /** laser control frequency in kHz, 0 for machine default, fcode v2 CO2 models only */

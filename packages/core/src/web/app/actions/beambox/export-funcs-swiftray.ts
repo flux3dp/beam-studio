@@ -17,6 +17,7 @@ import { PhotoTo3dCancelledError } from '@core/app/svgedit/stl/photoTo3d/runPhot
 import workareaManager from '@core/app/svgedit/workarea';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { ensureObjectTilingFits } from '@core/helpers/device/galvoTiling';
 import { withErrorReportConsent } from '@core/helpers/error-report/consent';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
@@ -229,6 +230,9 @@ const fetchTaskCodeSwiftray = async (
       thumbnailBlobURL: string;
     }
 > => {
+  // Before anything below touches the canvas: a refused task leaves nothing to revert.
+  if (!(await ensureObjectTilingFits())) return {};
+
   let isCanceled = false;
 
   svgCanvas.removeUnusedDefs();

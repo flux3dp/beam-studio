@@ -218,6 +218,7 @@
       'data-focusRev',
       'data-focusStep',
       'data-focusStepRev',
+      'data-galvoTiling',
       'data-fillInterval',
       'data-fillInterleave',
       'data-fillDwellTime',

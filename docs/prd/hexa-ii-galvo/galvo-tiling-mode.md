@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft，2026-11-02。「依物件」決策已定（§11），尚未實作；「置中格點」只記錄（§7.6），未排程 |
+| **Status** | 「依物件」已實作，未上機（2026-11-03）：swiftray `3ce9f62`、`0c4964f`，beam-studio 見 §10。swiftray 本機無法 link，只做過編譯檢查，fcode 比對（§13）尚未跑。「置中格點」只記錄（§7.6），未排程 |
 | **Author** | EstherFu |
 | **Created** | 2026-11-02 |
 | **Target product** | Beam Studio（desktop + web），機型 `fhx2galvo`（HEXA G）；swiftray daemon |
@@ -101,6 +101,8 @@
   - 所有讀寫圖層參數的地方（`getData`／`writeDataLayer`／`initState`）— 既有 key 的預設值與讀寫不變；新 key 不進 `presetRelatedConfigs`，套用預設參數不會改到它。
 - `public/js/lib/svgeditor/sanitize.js`（`g` 白名單加一項）
   - `sanitizeSvg` 開檔 — 其他屬性的保留／移除不變。
+- `app/svgedit/text/paramsLabel.ts`（`hiddenKeys` 加 `galvoTiling`）
+  - 參數標籤的可選欄位與既有標籤內容 — 不變；`galvoTiling` 不是雕刻參數，不提供顯示。
 - `ConfigPanel/AdvancedSettingModal.tsx`
   - Promark 圖層 — 進階設定內容與存檔行為不變（分塊方式不顯示）。
   - HEXA G 振鏡圖層 — 既有 `biDirectional`、`crossHatch`、`fillAngle`、wobble、focus 的存檔與 undo 不變。
@@ -112,13 +114,14 @@
   - GUI 開檔、daemon `parse` — 產生的 Shape、圖層歸屬、transform 不變。
 - `src/parser/my_qsvg_handler_qt6.cpp`（`createGNode` 讀新屬性；node→Shape 帶 `item_key`）
   - 所有圖層參數解析 — 不變。
-- `src/shape/shape.h` / `shape.cpp`（新欄位，`clone()` 複製）
+- `src/shape/shape.h` / `shape.cpp` / `group-shape.cpp`（新欄位，`clone()` 複製；`GroupShape::clone()` 手動帶上）
   - 所有 Shape 子類、文件序列化（`document-serializer.h`）— 不序列化新欄位，`.swiftray` 檔格式不變。
 - `src/layer.{h,cpp}`（新參數）
   - `setParameters` 的其他欄位 — 不變。
 - `src/toolpath_exporter/toolpath-exporter-fcode.{h,cpp}`
   - 非振鏡圖層、Promark、「固定格點」的振鏡圖層 — 產出的 fcode 逐位元組相同（以同一份 SVG 前後比對）。
   - `planGalvoBlocks()`、`emitGalvoBlocks()` 的格點模式 — 不變。
+  - `preprocessLaserLayer()` 振鏡分支改呼叫 `createGalvoFactories()`，建立順序與參數和原本逐行相同；`convertGalvoDepthBitmaps()` 加了預設參數，預設值下行為不變。
 
 ## 7. Design
 
@@ -194,9 +197,14 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 
 ## 10. Rollout (PR plan)
 
-1. swiftray：解析 `item_key` + Shape 欄位 + 圖層參數（不改匯出，行為不變）。
-2. swiftray：「依物件」的規劃、輸出、停靠順序、失敗回報。
-3. beam-studio：圖層參數、UI、i18n、sanitize、前端檢查。
+1. swiftray：解析 `item_key` + Shape 欄位 + 圖層參數（不改匯出，行為不變）— `3ce9f62`。
+2. swiftray：「依物件」的規劃、輸出、停靠順序、失敗回報 — `0c4964f`。
+3. beam-studio：圖層參數、UI、i18n（23 種語言已補齊）、sanitize、前端檢查 — branch `machine/hx2`。
+
+實作與設計的差異（2026-11-03）：
+- 前端檢查另外把多選暫時群組（`#svgcontent > g[data-tempgroup]`，元素帶 `data-original-layer`）裡的物件算回原圖層：多選時元素不在圖層下，要到 `getSvgString()` 才放回去。
+- swiftray 收集物件外框時，零寬或零高的外框（單點、水平線）不能用 `QRectF::united()`，會被當成空矩形丟掉，改成手動取 min／max。
+- 深度圖若在同一個停靠點有多個 pass，backlash 進場只做第一次。
 
 ## 11. Open decisions
 
@@ -217,6 +225,7 @@ checkObjectTilingItems(): Promise<{ field: number; items: SVGGraphicsElement[] }
 - **`item_key` 用節點位址**：只在單次解析內有效，不可存檔。
 - ~~**格點模式的 backlash 規則**（`8b4034a`，每列退一欄）與本 PRD 的規則不同~~ → 已統一：格點模式也改成整批最左停靠點 − 5 mm、離行程左界至少 1 mm（swiftray `258489a`，2026-11-02）。原本退一欄時，第一欄的批次會退到行程左界，實測龍門會回彈。
 - 後續：bitmap 內連通區塊、混合模式（見 swiftray `docs/galvo-content-blocks.md` Phase 2）。
+- **格點模式既有問題（實作時發現，未修）**：`convertGalvoLaserLayer()` 每一遍重複都呼叫 `prepareGalvoBitmaps()`，把圖片再加進同一個 `laser_raster_factory_`（`add_bitmap()` 只會累加），深度圖也會再 append 進 `galvo_depth_bitmaps_`。重複 ≥ 2 的格點圖層，第 r 遍的 factory 裡有 r 份同樣的圖。點陣圖會經 `mergedEntries()` 合成一張，重疊的份數是否因此只打一次未確認；深度圖沒有合併，第二遍起確定會重打。需要上機或 fcode 比對確認後另外修。「依物件」的 factory 只建一次，沒有這個問題。
 
 ## 13. Test plan
 

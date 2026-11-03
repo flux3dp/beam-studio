@@ -2,6 +2,7 @@ import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import { GalvoTiling } from '@core/app/constants/galvo-tiling';
 import { DEFAULT_CAP_INTERVAL, DEFAULT_LAYER_SPACING, DEFAULT_POINT_SPACING } from '@core/app/constants/innerEngraving';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import {
@@ -66,6 +67,7 @@ export const attributeMap: Record<ConfigKey, string> = {
   focusStepReverse: 'data-focusStepRev',
   frequency: 'data-frequency',
   fullcolor: 'data-fullcolor',
+  galvoTiling: 'data-galvoTiling',
   halftone: 'data-halftone',
   height: 'data-height',
   highQuality: 'data-highQuality',
@@ -161,6 +163,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   focusStep: -2,
   focusStepReverse: false,
   frequency: 27,
+  galvoTiling: GalvoTiling.Grid,
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
   highQuality: false,
@@ -320,6 +323,8 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'stlSolid',
   'stlFillCaps',
   'stlCapInterval',
+  // HEXA G
+  'galvoTiling',
   // UV
   'interpolation',
   'rightPadding',
@@ -535,7 +540,7 @@ export const getData = <T extends ConfigKey>(
     attr = attributeMap.printingSpeed;
   }
 
-  if (['clipRect', 'color', 'configName', 'dpi', 'stlMode'].includes(key)) {
+  if (['clipRect', 'color', 'configName', 'dpi', 'galvoTiling', 'stlMode'].includes(key)) {
     return (layer.getAttribute(attr) || defaultConfig[key]) as ConfigKeyTypeMap[T];
   }
 

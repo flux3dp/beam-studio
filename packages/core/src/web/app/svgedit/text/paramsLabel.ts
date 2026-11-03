@@ -51,6 +51,8 @@ const hiddenKeys = [
   'printingSpeed',
   'ref',
   'fullcolor',
+  // how a HEXA G layer is split between gantry stops, not a value engraved into the material
+  'galvoTiling',
 ] as const satisfies ReadonlyArray<ConfigKey>;
 
 /** Keys only reachable through DevBlock, so only offered in dev mode */
