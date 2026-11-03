@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft，2026-11-03。尚未實作；先做 §10 決策 1 的機器語意探測 |
+| **Status** | In progress，2026-11-03。bsl 端已實作（BeamOS `1746707`，未部署）；下一步是 §10 決策 1 的機器語意探測 |
 | **Author** | EstherFu |
 | **Created** | 2026-11-03 |
 | **Target product** | Beam Studio（desktop + web），機型 `fhx2galvo`（HEXA G） |
@@ -104,10 +104,13 @@
 
 ### 7.3 bsl：保存與套用
 
-- 新指令 `;CONFIG gridcor <json>`：json 內容是 `{size, field, flip, invert_x, invert_y, theory, actual}`；`;CONFIG gridcor clear` 清除。表長度超過一次接收的上限時，走既有的分段機制（`chunk_begin`）。
-- 保存在 `BslController` 成員（與 `correction_params_` 同一把鎖），`applyGalvoParams()` 在 manual 參數之後呼叫 `set_gridcor_params` 與 `set_gridcor_layer`；沒有表時呼叫 `clear_gridcor_layer`。
-- 每個 job 結束不會清掉網格表（它是校正資料，不是一次性的預覽設定）。
-- 第一階段（探測用）只做 `;CONFIG gridcor`，不改 Beam Studio。
+- 新指令 `;CONFIG gridcor <size> <field> <flip> <invert_x> <invert_y>`，後面接每個點的 `tx ty ax ay`（共 size² 組）。用純數字而不是 JSON：bsl 沒有 JSON 解析器，數字格式也和其他 `;CONFIG` 一致。`;CONFIG gridcor clear` 清除，不帶參數是讀回。frame 有長度前綴、上限 4 MB，9×9 表約 6 KB，不用分段。
+- 保存在 `BslController::grid_correction_`（與 `correction_params_` 同一把鎖）。`applyGalvoParams()` 在 manual 參數之後依序呼叫 `set_gridcor_params(field, 65535, flip, invert_x, invert_y)`、`clear_gridcor_layer`、`set_gridcor_layer`。
+- 沒有表時不呼叫任何 gridcor API。只有「送過表、之後被清掉」的情況，才補送一次 `clear_gridcor_layer`（用 `grid_on_card_` 記錄），所以從沒用過網格表的機器，送卡的指令和現在完全相同。
+- 每個 job 結束不會清掉網格表（它是校正資料，不是一次性的預覽設定）。但表只存在 bsl_app 的記憶體，bsl_app 重啟就消失；正式版由 Beam Studio 或 player 負責重送（§10 決策 4）。
+- 只有在振鏡參數設定過之後（`galvo_params_configured_`），`setUpTaskCtrl` 才會呼叫 `applyGalvoParams`。player 和 `galvo_exec` 每次都會先送振鏡參數，所以實務上一定會套用。
+- 機器端工具 `tools/bsl-gridcor.py`，提供 `--show`／`--clear`／`--probe DX`／`--file` 四種用法。點的順序是從 (−f/2, −f/2) 開始、X 先變的列優先；這個順序對不對，由探測決定。
+- 第一階段（探測用）只做 `;CONFIG gridcor`，不改 Beam Studio。實作在 BeamOS `1746707`（未 push、未部署）。
 
 ### 7.4 探測表（決策 1 用）
 
@@ -119,14 +122,17 @@
 ### 7.5 Beam Studio
 
 - `GalvoConfig` 新增可選欄位 `gridCorrection`（size、field、theory、actual、建立時間、fit_rms）。
-- 送出：`toGalvoOptics` 送完之後，有表時加送 `gridcor`，沒有表時送 `gridcor clear`。
+- 送出：`toGalvoOptics` 送完之後，有表時加送 `gridcor`；在設定裡清除表時送 `gridcor clear`。
 - 振鏡設定（dev 區塊）顯示「網格表：有／無、RMS、建立時間」，提供清除按鈕；「套用建議」在解算有輸出 `grid` 時一併更新。
 
 ## 8. Data contracts
 
-- `;CONFIG gridcor <json>` → `ok` / `fail GRIDCOR_INVALID`（size 不在 3/5/9/17/33/65、陣列長度不符、數值非有限）/ `fail BUSY`。
-- `;CONFIG gridcor clear` → `ok`。
-- `;CONFIG gridcor ?` → 回傳目前保存的表（json）或 `none`。
+- `;CONFIG gridcor <size> <field> <flip> <invert_x> <invert_y> <tx ty ax ay>…` → 回 `CONFIG gridcor …`（存下的表，全精度）。
+  - 格式錯：`ERR: CONFIG gridcor expects …`
+  - size 不在 3/5/9/17/33/65、field 不在 (0, 1000]、數值非有限：`ERR: CONFIG gridcor value out of range`
+  - 振鏡忙碌：`ERR: CONFIG gridcor refused, the galvo is busy`
+- `;CONFIG gridcor clear` → `CONFIG gridcor none`。
+- `;CONFIG gridcor` → 目前的表，或 `CONFIG gridcor none`。
 - fluxghost `solve_galvo_coupon` 回傳新增 `grid` 欄位（§7.2）。
 
 ## 9. Rollout (PR plan)
@@ -152,7 +158,7 @@
 
 ## 12. Test plan
 
-- BeamOS：`;CONFIG gridcor` 解析（合法、size 錯、長度錯、NaN）、`?` 回讀、`clear`；lcs-stub trace 確認 `applyGalvoParams` 在有表時送 `set_gridcor_params` + `set_gridcor_layer`、無表時送 `clear_gridcor_layer`，且無表時其他 trace 與現在相同。
+- BeamOS：`;CONFIG gridcor` 解析（合法、size 錯、長度錯、NaN）、`?` 回讀、`clear`；lcs-stub trace 確認 `applyGalvoParams` 在有表時送 `set_gridcor_params` + `clear_gridcor_layer` + `set_gridcor_layer`、清表後的下一個區塊送一次 `clear_gridcor_layer`、從未有表時 trace 與現在完全相同。
 - fluxghost：合成的 81 node（已知三次畸變）→ 產生的表在網格點上誤差 < 0.01 mm；identity 輸入 → identity 表；`ws_smoke.py` ALL PASS。
 - Beam Studio（jest，`--runInBand`，只跑受影響路徑）：`galvoExec.spec.ts` 的 15 欄位 snapshot 不變、有表時多送 `gridcor`；`galvoConfig` 讀舊設定得到「無表」。
 - 上機：§5 全部場景。
