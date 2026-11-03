@@ -147,7 +147,8 @@ const traceDesignContours = async (printingContentsBBox: BBox): Promise<Array<Ar
   // default min_area (100 px²) would drop them; epsilon keeps its default (1)
   const { contours } = await getOpenCV().imageContour(blob, { min_area: 1 });
 
-  return contours.map((contour) => contour.map(([px, py]) => [rasterBBox.x + px, rasterBBox.y + py]));
+  // findContours returns boundary pixel indices; pixel i spans [i, i + 1), so its centre is i + 0.5
+  return contours.map((contour) => contour.map(([px, py]) => [rasterBBox.x + px + 0.5, rasterBBox.y + py + 0.5]));
 };
 
 /**
@@ -209,7 +210,9 @@ export const computeContourPathD = async (
     const solutionPaths: Path[] = contours.map((contour) =>
       contour.map(([x, y]) => ({ X: Math.round(x * SCALE_FACTOR), Y: Math.round(y * SCALE_FACTOR) })),
     );
-    const offsetPaths = await offsetContourPaths(solutionPaths, Math.round(distanceMm * dpmm * SCALE_FACTOR));
+    // the traced pixel centres sit half a raster px (1 px = 1 canvas unit) inside the real edge:
+    // grow by it so offset 0 cuts on the edge (a 5 mm square otherwise traced to 4.9 mm)
+    const offsetPaths = await offsetContourPaths(solutionPaths, Math.round((distanceMm * dpmm + 0.5) * SCALE_FACTOR));
 
     if (!offsetPaths) return fallbackRectD(printingContentsBBox, distancePx);
 

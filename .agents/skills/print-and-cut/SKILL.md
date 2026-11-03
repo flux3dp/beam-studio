@@ -154,12 +154,15 @@ holds only state, actions and `withFullBBox`.
 `computeContourPathD(printingContentsBBox, offsetDistance)`:
 raster all design layers at 1px = 1 canvas unit (`switchSymbolWrapper` for image
 symbols; box = contents bbox padded by half of `getMaxStrokeWidth` (symbol-helper),
-since getBBox ignores strokes; contours come back in canvas coords) → fluxghost `image_contour` (`min_area: 1`, alpha/luminance silhouette,
+since getBBox ignores strokes; contours come back as boundary pixel indices, mapped
+to their CENTRES in canvas coords: `rasterBBox.x + px + 0.5`) → fluxghost `image_contour` (`min_area: 1`, alpha/luminance silhouette,
 RETR_EXTERNAL — no holes) → **contours cached as a promise per dialog run**
 (`cachedContours`, cleared by `clearRasterCache` in `startFreshRun`) → one
-`ClipperOffset` pass with jtRound: outward (`offsetDistance > 0`) uses
+`ClipperOffset` pass with jtRound, by `offsetDistance` + 0.5 px (findContours
+traces boundary pixel CENTERS, half a px inside the edge — without it a 5 mm
+square cuts at 4.9 mm on offset 0): outward (delta > 0, offset 0 included) uses
 **etClosedLine**, NOT etClosedPolygon (spikes at small deltas), and the
-orientation filter drops the inner band/holes; inward (`<= 0`, UI range −3…20 mm,
+orientation filter drops the inner band/holes; inward (delta <= 0, UI range −3…20 mm,
 for bleed) must use **etClosedPolygon** — a band around a line has no inside to
 shrink — and erodes parts narrower than 2·|offset| → `buildSvgPathD`.
 An inset that erases the whole design returns `null` (StepSetup warns
