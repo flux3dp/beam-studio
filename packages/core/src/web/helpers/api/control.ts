@@ -982,7 +982,11 @@ class Control extends EventEmitter implements IControlSocket {
     throw new Error('Method not implemented.');
   };
 
-  getDoorOpen = async () => (await this.useWaitOKResponse('play get_door_open')).response;
+  getDoorOpen = async () => {
+    if (this.mode === 'raw') throw new Error('play get_door_open is not available in raw mode');
+
+    return (await this.useWaitOKResponse('play get_door_open')).response;
+  };
 
   getDeviceSetting = (name: string) => this.useWaitAnyResponse(`config get ${name}`);
 
