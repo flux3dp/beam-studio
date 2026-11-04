@@ -164,6 +164,20 @@ describe('deviceMaster log downloads share the control queue', () => {
     expect(send).not.toHaveBeenCalled();
   });
 
+  test('fetchFisheyeParams waits for the command ahead of it', async () => {
+    const report = deviceMaster.getReport();
+    const params = deviceMaster.fetchFisheyeParams();
+
+    await Promise.resolve();
+    expect(send.mock.calls).toEqual([['play report']]);
+    replyToReport();
+    await expect(report).resolves.toEqual(status);
+    expect(send.mock.calls).toEqual([['play report'], ['fetch_fisheye_params']]);
+    control.emit('command-message', new Blob([JSON.stringify({ k: [1] })]));
+    control.emit('command-message', { cmd: 'fetch_fisheye_params', status: 'ok' });
+    await expect(params).resolves.toEqual({ k: [1] });
+  });
+
   test('the queue continues after a terminal log error', async () => {
     const log = deviceMaster.downloadLog('fluxrobotd.log', undefined, 10_000);
     const rejectedLog = expect(log).rejects.toMatchObject({ error: 'NOT_FOUND' });
