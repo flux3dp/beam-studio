@@ -6,7 +6,7 @@ import isWeb from '@core/helpers/is-web';
 import switchProtocol from '@core/helpers/switch-protocol';
 import browser from '@core/implementations/browser';
 
-const wrappedSockets = {};
+const wrappedSockets: Record<string, InsecureWebsocket> = {};
 
 let fluxTunnelLoaded = false;
 
@@ -77,13 +77,13 @@ class InsecureWebsocket {
 
   protocol: string;
 
-  onopen: () => void;
+  onopen: ((event: Event) => void) | null;
 
-  onerror: () => void;
+  onerror: ((event: Event) => void) | null;
 
-  onmessage: (message: string) => void;
+  onmessage: ((event: MessageEvent) => void) | null;
 
-  onclose: (data: { code?: number; reason: string }) => void;
+  onclose: ((event: CloseEvent) => void) | null;
 
   readyState = 0;
 
@@ -104,8 +104,10 @@ class InsecureWebsocket {
     if (!checkFluxTunnel()) {
       console.warn('FluxTunnel is not loaded');
       setTimeout(() => {
-        this.onerror();
-        this.onclose({ reason: 'FluxTunnel is not loaded' });
+        this.readyState = 3;
+        delete wrappedSockets[id];
+        this.onerror?.(new Event('error'));
+        this.onclose?.(new CloseEvent('close', { reason: 'FluxTunnel is not loaded' }));
       }, 100);
     } else {
       console.log('Creating websocket in insecure websocket', id, 'url:', url, protocol);
@@ -123,6 +125,8 @@ class InsecureWebsocket {
   }
 
   close(): void {
+    if (this.readyState >= 2) return;
+
     this.readyState = 2;
 
     const event = new CustomEvent('CloseWebsocket', { detail: { id: this.id } });
@@ -145,17 +149,22 @@ window.addEventListener('InsecureWebsocket', (e: any) => {
       break;
     case 'WEBSOCKET_OPENED':
       wrappedSockets[id].readyState = 1;
-      wrappedSockets[id].onopen();
+      wrappedSockets[id].onopen?.(new Event('open'));
       break;
     case 'WEBSOCKET_MESSAGE':
-      wrappedSockets[id].onmessage({ data: message });
+      wrappedSockets[id].onmessage?.(new MessageEvent('message', { data: message }));
       break;
     case 'WEBSOCKET_CLOSED':
       wrappedSockets[id].readyState = 3;
-      wrappedSockets[id].onclose();
+      {
+        const socket = wrappedSockets[id];
+
+        delete wrappedSockets[id];
+        socket.onclose?.(new CloseEvent('close'));
+      }
       break;
     case 'WEBSOCKET_ERROR':
-      wrappedSockets[id].onerror(message);
+      wrappedSockets[id].onerror?.(new Event('error'));
       break;
     default:
       console.warn('InsecureWebsocket Unknown event type', type);
