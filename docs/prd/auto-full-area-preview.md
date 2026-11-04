@@ -42,10 +42,10 @@ The feature is on by default and switchable in Settings → Camera. It is a back
 | Manager | `Beamo2PreviewManager` | `Bb2Hx2PreviewManager` |
 | Camera | one camera on the laser head | wide-angle camera on the lid (`setCamera(1)`) |
 | Door | must be **closed** (`DoorChecker.doorClosedWrapper`, `Beamo2PreviewManager.ts:82`) | must be **open** (`Bb2Hx2PreviewManager.ts:105-121`, `getWideAngleCameraData.ts:58`) |
-| Setup | `connectCamera` → `setupFisheyePreview({ cameraPosition: cameraCenter, shouldKeepInRawMode: true })` (`FisheyePreviewManagerV4.ts:40-82`): enters raw mode, homes, `rawMove` to `workarea.cameraCenter` | `connectCamera` → `getWideAngleCameraData` (V4 params, firmware ≥ `BB2_WIDE_ANGLE_CAMERA` 6.0.12) → `setCamera(1)` → `setupFisheyePreview()` with no movement, no raw mode (`:130-165`) |
+| Setup | `connectCamera` → `setupFisheyePreview({ cameraPosition: cameraCenter, shouldKeepInRawMode: true })` (`FisheyePreviewManagerV4.ts:40-82`): enters raw mode, homes, `rawMove` to `workarea.cameraCenter` | `connectCamera` → `getWideAngleCameraData` (V4 params, firmware ≥ `BB2_WIDE_ANGLE_CAMERA` 6.0.12) → `setCamera(1)` → `setupFisheyePreview()` (`:130-165`): no `cameraPosition`, but still `rawAndHome` and `getFocalDistance` in raw mode, then `endSubTask` |
 | Capture | `previewFullWorkarea` (`:198-281`): disables auto-exposure, shoots light (`exposure + 500`) and dark frames, draws light as background, dark as mask | `previewWithWideAngleCamera` (`:318-333`): one `getPhotoFromMachine`, `drawFullWorkarea` |
 | End | `endCameraPreview` (`:119-147`): `rawMove` to `cameraRestPosition`, `rawLooseMotor`, `endSubTask`, disconnect camera, restore exposure, `kick` | no raw task to end; disconnect camera |
-| Homing | yes, inside `setupFisheyePreview` | **none** — the "no homing for BB2/RF" requirement already holds |
+| Homing | yes, inside `setupFisheyePreview` | **yes**, also inside `setupFisheyePreview` (`rawAndHome`), which is why the auto loop does not reuse it (§7.3) |
 
 Frames from the camera socket are already undistorted and flattened: fluxghost `camera.py:107-120` runs `handle_fisheye_image` (`fisheye_camera_mixin.py:311`) on every frame for `fbb2`/`fbm2`/`fhx2rf` once `set_fisheye_matrix` has been sent (`FisheyePreviewManagerV4.ts:88`). For V4 it remaps through `apply_points` onto the perspective grid at 5 px/mm (`fluxghost/utils/camera/constants.py:4`); with `hx2FullAreaPerspectiveGrid` (x 0–740, y 0–410 mm, `fisheyeCameraConstants.ts:102`) the photo Beam Studio receives is 3700×2050 and covers exactly the workarea.
 
@@ -108,7 +108,7 @@ fhx2rf and fbm2 honeycomb boards carry four ArUco markers at the corners; fbb2 b
 - **S6 Door opens mid-capture (fbm2).** `DoorChecker` fails the capture; the partial result is discarded; the head parks; the listener waits for the next cycle. No alert.
 - **S7 Export during capture.** User clicks Go while S1 is running. Alert: "The machine is capturing the work area for auto preview. Stop capturing and continue?" Yes: the capture stops at the next safe point, the head parks, export proceeds. No: export is cancelled, capture continues.
 - **S8 Machine busy elsewhere.** Another computer is running a job or holds raw mode: door cycles do nothing on this computer (status not IDLE / `RESOURCE_BUSY`). Nothing is shown.
-- **S9 Kicked mid-capture.** Another computer kicks this one: the control socket closes, the partial photo is dropped, no `end()` is attempted, the task's next tick reconnects through `deviceMaster.getControl()` (`device-master.ts`, reconnects when the control socket is gone) and polling resumes.
+- **S9 Kicked mid-capture.** Another computer kicks this one: the control socket closes, the partial photo is dropped, no `end()` is attempted, ticks skip while there is no socket, the background-task manager reconnects silently within ~5 s once the machine is free, and polling resumes. No progress or connection alert at any point.
 - **S10 No wide-angle calibration (fbb2 / fhx2rf).** The open-lid loop does not start; door cycles do nothing, nothing is shown. Manual preview behaves as today.
 - **S11 Preference off / job origin on / document workarea ≠ machine / other tab focused / canvas not in Draw mode.** No polling, no capture.
 - **S12 Manual preview after an auto photo.** The manual session starts exactly as today; with `keep-preview-result` off the auto photo is cleared by `start()` as any previous result would be.
@@ -148,11 +148,17 @@ Shared files the design touches, with each caller and the behaviour that must st
 - `app/actions/camera/preview-helper/Beamo2PreviewManager.ts` (honour `silent` in `DoorChecker` calls and `handleSetupError`; new `cancel()`, checked only in `previewFullWorkarea`)
   - `PreviewModeController` manual fbm2 preview — `door_opened` alert and setup-error alerts still pop.
   - `BeamPreviewManager` reuse of `handlePreviewSetupError` (error-report PR) — untouched.
-- `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts` (honour `silent`; `previewWithWideAngleCamera` optionally returns the image URL without drawing)
+- `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts` (honour `silent` in `handleSetupError`; the auto loop does not use this manager)
   - Manual fbb2/fhx2rf preview — draws as today; door-closed alert still pops on manual switch to FULL_AREA.
 - `app/actions/camera/preview-helper/DoorChecker.ts` (`doorClosedWrapper(callback, showError = true)`: the hard-coded `true` becomes a parameter)
   - `Beamo2PreviewManager` manual flow — `door_opened` alert still pops.
   - `SolvePnP.tsx`, `Beamo2Calibration.tsx`, `ModuleCalibration/Align.tsx` (×2) — default `true`, alert still pops.
+- `helpers/api/control.ts` (`getDoorOpen` throws at once when the queued task runs in raw mode, instead of waiting out the 30 s timeout on `error:2`)
+  - `DoorChecker.checkDoorClosed`, `framing.ts` (×2), `getWideAngleCameraData`, `Bb2Hx2PreviewManager` — normal mode: same `play get_door_open` and reply.
+- `helpers/device-master.ts` (`fetchFisheyeParams`, `fetchCameraCalibrateImage`, `fetchFisheye3DRotation`, `fetchAutoLevelingData` go through `control.addTask` like every other command; before, they ran beside whatever was queued, and the first reply to arrive detached both listeners through `removeCommandListeners`, so the fetch never settled. A door poll beside the fbm2 setup's `fetchFisheyeParams` did exactly that)
+  - `Beamo2PreviewManager`, `Bb2Hx2PreviewManager`, `AdorPreviewManager`, `ModuleCalibration.tsx` (`fetchFisheyeParams`); `getLevelingData.ts`, `getPerspectiveForAlign.ts` (`fetchAutoLevelingData`, `fetchFisheye3DRotation`); `loadCamera3dRotation.ts` — same command and reply, now serialised behind the queue.
+- `app/actions/beambox/preview-mode-background-drawer.ts` (`drawFullWorkarea` draws directly when no `start()`…`end()` session is open; before, the image went into a subject nobody consumed and only the fbm2 dark mask updated)
+  - `Beamo2PreviewManager`, `Bb2Hx2PreviewManager`, `AdorPreviewManager`, `PromarkPreviewManager` inside manual preview — session open, same queued draw.
 - `interfaces/Preference.d.ts`, `beambox-preference.ts`, `globalPreferenceStore.ts`, `settings/categories/Camera.tsx` (one key, one switch)
   - All other preference keys — unchanged.
 - `app/lang/*.ts`, `interfaces/ILang.ts` (new keys under `settings` and `message.auto_preview`)
@@ -172,7 +178,7 @@ A background task (`background-tasks.md` §7.2), registered at startup:
 - `start(device)` / `stop()`: begin / end the door poll; `stop()` while capturing aborts.
 - `isBusy()` = capturing or looping (§7.3); `abort()` as in §7.5; `busyMessage()` = `message.auto_preview.abort_to_continue`.
 
-**Polling**: `setInterval(DOOR_POLL_MS = 500)`, skip a tick while the previous call is pending, while `!backgroundTasks.isCurrent(this)`, or while `deviceMaster.currentControlMode` is truthy (raw-mode commands differ; it is `null` after a kick, which `getControl()` recovers). Device selection and reselection are the manager's.
+**Polling**: `setInterval(DOOR_POLL_MS = 500)`, skip a tick while the previous call is pending, while `!backgroundTasks.isCurrent(this)`, or while `deviceMaster.currentControlMode !== ''`: a sub-task answers door queries differently, and `null` (no socket after a reload, drop or kick) would make `getDoorOpen` reconnect through `getControl()`, which shows the connecting progress and #892 on every failed tick. Device selection and silent reconnection are the manager's (`background-tasks.md` §7.3).
 
 **Capture gate** (right before a capture): `await canTouchMachine(this)` (`background-tasks.md` §7.4) and mouse mode ∉ `{preview, pre_preview}`. Any failure skips the cycle with a `console.log`.
 
@@ -188,9 +194,9 @@ polling: door closed→open at t0
 capturing/looping: abort() from §7.5 or socket close → discard → polling
 ```
 
-**fbm2 capture**: `new Beamo2PreviewManager(device)`, `manager.setup({ silent: true, messagePrefix })` → `manager.previewFullWorkarea()` → `manager.end()`. The manager draws the background itself (as the manual flow does). `end()` always runs, also on failure.
+**fbm2 capture**: `new Beamo2PreviewManager(device)`, `manager.setup({ silent: true, messagePrefix })` → `manager.previewFullWorkarea()` → `manager.end()`. The manager draws the background itself (as the manual flow does). `end()` always runs, also on failure. `setup()` returning `false` has two meanings: an error (the manager already ended itself) or the door open at its final `DoorChecker` check, where it returns without ending and the machine stays in raw mode. The task tells them apart by `deviceMaster.currentControlMode === 'raw'` and calls `end()` in the second case; otherwise polling would stay paused for good. The door poll pauses for the whole fbm2 capture (`this.capture`): the manager's `DoorChecker` owns the door meanwhile, and setup runs normal-mode commands before raw mode that polls would only queue behind.
 
-**Control-socket close** during capture (kick or disconnect): the task keeps the default close listener (`device-master.ts:186-194`), not reconnect-on-close; on close it drops any partial photo, skips `end()`, and returns to polling; the next command reconnects through `getControl()`, since the current device is unchanged by a kick.
+**Control-socket close** during capture (kick or disconnect): the task keeps the default close listener (`device-master.ts:186-194`), not reconnect-on-close; on close it drops any partial photo, skips `end()`, and returns to polling; the manager's silent reconnect restores the socket, since the current device is unchanged by a kick.
 
 ### 7.2 Manager options
 
@@ -198,12 +204,12 @@ capturing/looping: abort() from §7.5 or socket close → discard → polling
 
 ### 7.3 Open-lid loop (fbb2 / fhx2rf)
 
-Setup once at door-open: `new Bb2Hx2PreviewManager(device)`, `setup({ silent: true })` with the manager in FULL_AREA (it already picks FULL_AREA when wide-angle data exists). If the device has no wide-angle calibration (`hasWideAngleCamera === false` or `setup` fails), the loop does not start; the listener stays silent for this machine.
+Setup once at door-open, after the capture gate, **without raw mode and without homing**: `getWideAngleCameraData(device)` → `connectCamera` → `setCamera(1)` → `setFisheyeParam({ ...params, grids: <model full-area grid>, offset: undefined })` (as `FisheyePreviewManagerV4.paramsToSend` does for full area) → `setFisheyeObjectHeight(0)`, assuming the material is focused. `Bb2Hx2PreviewManager.setup()` is not reused: its wide-angle path homes (§2.2), and it re-reads the door and falls back to the head camera (raw mode, head movement) if the lid closes meanwhile. No wide-angle calibration (`hasWideAngleCamera === false` or no parameters) → the loop does not start, nothing is shown. The camera is disconnected when the loop ends.
 
-Loop while the door reads open:
+Loop until the door poll (§7.1, which keeps running) sees the close, or `abort()`:
 
 ```
-url = await manager.getPhotoFromMachine()      // flattened JPEG object URL (§2.2)
+url = takeOnePicture({ timeout: 5 }) → object URL // flattened JPEG (§2.2); no camera-cable alert
 t   = Date.now()                               // time the photo finished
 push {url, t}; keep the last N = 4 entries, revoke dropped URLs
 await sleep(LOOP_GUARD_MS = 200)               // capture error → sleep 1000
@@ -211,7 +217,7 @@ await sleep(LOOP_GUARD_MS = 200)               // capture error → sleep 1000
 
 On door close, both models: newest entry with `t ≤ t_close − SETTLE_MS (1500)`; none → newest entry; no entry at all → do nothing.
 
-Then `previewModeBackgroundDrawer.drawFullWorkarea(url)` (`preview-mode-background-drawer.ts:116`), show "Auto preview: Successfully previewed" (3 s), `manager.end()`.
+Then `previewModeBackgroundDrawer.drawFullWorkarea(url)` (`preview-mode-background-drawer.ts:116`; outside a preview session it draws directly, and `start()` is not called because it clears the background and draws the preview boundary), show "Auto preview: Successfully previewed" (3 s). Unpicked URLs are revoked; `abort()` draws nothing and revokes all.
 
 ### 7.4 `hasAnyModal()`
 
@@ -268,6 +274,7 @@ Settled during design (2026-10-16), kept for the record:
 7. ~~fhx2rf with no valid photo~~ → do nothing (2026-10-16). Moot since 2026-10-30: fhx2rf follows the fbb2 rule, including the newest-photo fallback.
 8. ~~Deferred retry when the machine was busy~~ → not in v1 (§11 F1).
 9. ~~Own listener or shared infrastructure~~ → shared: this feature is the second task of the background-task manager, Promark the first (2026-10-30, `background-tasks.md`).
+10. ~~Material height for the fbb2/fhx2rf flattening~~ → 0, assuming the material is focused (2026-11-02). Reading it needs raw mode, and the manual wide-angle setup also homes; the requirement is no homing, so the loop never enters raw mode (§7.3).
 
 Pending facts (not decisions): how long a normal lid close takes on fbb2 and fhx2rf, to confirm `SETTLE_MS = 1500`.
 
@@ -279,6 +286,7 @@ Pending facts (not decisions): how long a normal lid close takes on fbb2 and fhx
 - **R2 Timing rule is heuristic (fbb2 and fhx2rf).** A lid closed very slowly can still yield a tilted "settled" photo. Accepted (product decision); manual preview remains.
 - **R3 Shared exposure on the camera service.** Two computers looping on the same fbb2/fhx2rf interleave frames; neither changes exposure in the wide-angle flow, so no corruption expected. fbm2's exposure dance is inside the exclusive raw task.
 - **R4 Door poll in raw mode.** `play get_door_open` is not valid in raw mode; the task pauses polling while any sub-task is open. If a future flow leaves raw mode open for long, auto preview silently waits.
+- **R5 Height 0 on fbb2/fhx2rf.** Unfocused thick material is flattened slightly off scale. Accepted (decision 10); a manual preview reads the real height.
 - **F1 Turn-taking across computers.** When a cycle is skipped because the machine is busy, remember one pending capture and fire it once `st_id` returns to IDLE within a window, so several computers get their preview in turn. One flag plus a deadline; deferred.
 - **F2 Marker validity, revisited.** Start from the facts in §2.6. Workable shape: "any marker found at its own expected position counts", falling back to the timing rule when none is found. Prerequisites: markers inside the flattened frame (wider grid plus a crop before drawing), the platform height to compute expected positions, and a machine to measure detection rates under real lighting.
 

@@ -16,6 +16,26 @@ jest.mock('@core/app/actions/camera/preview-helper/Beamo2PreviewManager', () =>
   })),
 );
 
+const mockDrawFullWorkarea = jest.fn((_url: string, callback: () => void) => callback());
+
+jest.mock('@core/app/actions/beambox/preview-mode-background-drawer', () => ({
+  drawFullWorkarea: (...args) => mockDrawFullWorkarea(...args),
+}));
+
+const mockGetWideAngleCameraData = jest.fn();
+
+jest.mock('@core/app/actions/camera/preview-helper/getWideAngleCameraData', () => ({
+  getWideAngleCameraData: (...args) => mockGetWideAngleCameraData(...args),
+}));
+
+const mockOpenMessage = jest.fn();
+
+jest.mock('@core/app/actions/message-caller', () => ({
+  __esModule: true,
+  default: { openMessage: (...args) => mockOpenMessage(...args) },
+  MessageLevel: { SUCCESS: 'success' },
+}));
+
 const mockGlobalPreference = { 'auto-full-area-preview': true };
 const mockDocument = { 'enable-job-origin': false };
 const mockCanvas = { mouseMode: 'select' };
@@ -50,23 +70,36 @@ jest.mock(
 
 const mockGetDoorOpen = jest.fn();
 const mockDisconnectCamera = jest.fn();
+const mockConnectCamera = jest.fn();
+const mockSetCamera = jest.fn();
+const mockSetFisheyeParam = jest.fn();
+const mockSetFisheyeObjectHeight = jest.fn();
+const mockTakeOnePicture = jest.fn();
 const mockDeviceMaster = { currentControlMode: '' as null | string };
 
 jest.mock('@core/helpers/device-master', () => ({
+  connectCamera: (...args) => mockConnectCamera(...args),
   get currentControlMode() {
     return mockDeviceMaster.currentControlMode;
   },
   disconnectCamera: (...args) => mockDisconnectCamera(...args),
   getDoorOpen: (...args) => mockGetDoorOpen(...args),
+  setCamera: (...args) => mockSetCamera(...args),
+  setFisheyeObjectHeight: (...args) => mockSetFisheyeObjectHeight(...args),
+  setFisheyeParam: (...args) => mockSetFisheyeParam(...args),
+  takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
 jest.mock('@core/helpers/i18n', () => ({
-  lang: { message: { auto_preview: { abort_to_continue: 'abort?', prefix: 'Auto: ' } } },
+  lang: {
+    message: { auto_preview: { abort_to_continue: 'abort?', prefix: 'Auto: ' }, preview: { succeeded: 'done' } },
+  },
 }));
 
-import autoFullAreaPreview, { registerAutoFullAreaPreview } from './autoFullAreaPreview';
+import autoFullAreaPreview, { pickPhoto, registerAutoFullAreaPreview } from './autoFullAreaPreview';
 
 const fbm2 = { model: 'fbm2' } as IDeviceInfo;
+const fhx2rf = { model: 'fhx2rf' } as IDeviceInfo;
 const door = (isOpen: boolean) => mockGetDoorOpen.mockResolvedValue({ value: isOpen ? '1' : '0' });
 const wait = (ms: number) => jest.advanceTimersByTimeAsync(ms);
 
@@ -146,11 +179,13 @@ describe('autoFullAreaPreview', () => {
       expect(mockSetup).not.toHaveBeenCalled();
     });
 
-    test('skips ticks while not current or in a sub-task', async () => {
+    test('skips ticks while not current, in a sub-task or without a control socket', async () => {
       mockIsCurrent.mockReturnValue(false);
       await cycle(2000, 2000);
       mockIsCurrent.mockReturnValue(true);
       mockDeviceMaster.currentControlMode = 'raw';
+      await wait(2000);
+      mockDeviceMaster.currentControlMode = null;
       await wait(2000);
       expect(mockGetDoorOpen).not.toHaveBeenCalled();
     });
@@ -168,11 +203,23 @@ describe('autoFullAreaPreview', () => {
       expect(mockSetup).not.toHaveBeenCalled();
     });
 
-    test('failed setup does not end again', async () => {
+    test('setup that failed with an error (already ended) only releases the camera', async () => {
       mockSetup.mockResolvedValue(false);
       await cycle(2000, 1500);
       expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
       expect(mockEnd).not.toHaveBeenCalled();
+      expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
+    });
+
+    test('setup that stopped on an open door (still raw) ends the manager', async () => {
+      mockSetup.mockImplementation(async () => {
+        mockDeviceMaster.currentControlMode = 'raw';
+
+        return false;
+      });
+      await cycle(2000, 1500);
+      expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
+      expect(mockEnd).toHaveBeenCalledTimes(1);
     });
 
     test('kicked mid-capture: no end(), camera disconnected', async () => {
@@ -191,6 +238,12 @@ describe('autoFullAreaPreview', () => {
       mockSetup.mockReturnValue(new Promise((resolve) => (finishSetup = resolve)));
       await cycle(2000, 1500);
       expect(autoFullAreaPreview.isBusy()).toBe(true);
+
+      // fbm2 does not poll the door during its capture: a poll beside the (queued) setup commands is useless
+      const pollsBefore = mockGetDoorOpen.mock.calls.length;
+
+      await wait(2000);
+      expect(mockGetDoorOpen).toHaveBeenCalledTimes(pollsBefore);
 
       const aborting = autoFullAreaPreview.abort();
 
@@ -215,6 +268,79 @@ describe('autoFullAreaPreview', () => {
       await aborting;
       expect(mockEnd).toHaveBeenCalledTimes(1);
       expect(autoFullAreaPreview.isBusy()).toBe(false);
+    });
+  });
+
+  test('pickPhoto: newest settled photo, else the newest, else none', () => {
+    const photos = [1000, 2000, 3000, 3500].map((finishedAt) => ({ finishedAt, url: `u${finishedAt}` }));
+
+    expect(pickPhoto(photos, 4000)?.url).toBe('u2000');
+    expect(pickPhoto(photos, 2000)?.url).toBe('u3500');
+    expect(pickPhoto([], 3000)).toBeUndefined();
+  });
+
+  describe('fbb2/fhx2rf open-lid loop', () => {
+    let shots = 0;
+
+    beforeEach(() => {
+      shots = 0;
+      global.URL.createObjectURL = jest.fn(() => `url${(shots += 1)}`);
+      global.URL.revokeObjectURL = jest.fn();
+      mockGetWideAngleCameraData.mockResolvedValue({ hasWideAngleCamera: true, parameters: { k: [], offset: [1, 2] } });
+      mockSetCamera.mockResolvedValue(true);
+      // each photo takes 500 ms
+      mockTakeOnePicture.mockImplementation(() => sleepFake(500).then(() => ({ imgBlob: 'blob' })));
+    });
+
+    const sleepFake = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    test('shoots while open without raw mode, draws a settled photo at close', async () => {
+      autoFullAreaPreview.start(fhx2rf);
+      door(true);
+      await wait(5000);
+      expect(mockSetCamera).toHaveBeenCalledWith(1);
+      expect(mockSetFisheyeParam).toHaveBeenCalledWith(expect.objectContaining({ offset: undefined }));
+      expect(mockSetFisheyeObjectHeight).toHaveBeenCalledWith(0);
+      expect(mockOpenMessage).not.toHaveBeenCalled();
+
+      door(false);
+      await wait(1500);
+
+      const drawn = mockDrawFullWorkarea.mock.calls[0][0];
+      const urls = (URL.createObjectURL as jest.Mock).mock.results.map(({ value }) => value);
+
+      expect(mockDrawFullWorkarea).toHaveBeenCalledTimes(1);
+      // not the newest: that one finished within SETTLE_MS of the close
+      expect(drawn).not.toBe(urls.at(-1));
+      expect(URL.revokeObjectURL).not.toHaveBeenCalledWith(drawn);
+      expect(mockOpenMessage).toHaveBeenCalledWith(expect.objectContaining({ content: 'Auto: done' }));
+      expect(mockDisconnectCamera).toHaveBeenCalled();
+      expect(autoFullAreaPreview.isBusy()).toBe(false);
+    });
+
+    test('without wide-angle calibration it does nothing', async () => {
+      mockGetWideAngleCameraData.mockResolvedValue({ hasWideAngleCamera: true });
+      autoFullAreaPreview.start(fhx2rf);
+      door(true);
+      await wait(2000);
+      door(false);
+      await wait(1500);
+      expect(mockConnectCamera).not.toHaveBeenCalled();
+      expect(mockDrawFullWorkarea).not.toHaveBeenCalled();
+    });
+
+    test('abort while open draws nothing and revokes every photo', async () => {
+      autoFullAreaPreview.start(fhx2rf);
+      door(true);
+      await wait(3000);
+      expect(autoFullAreaPreview.isBusy()).toBe(true);
+
+      const aborting = autoFullAreaPreview.abort();
+
+      await wait(1000);
+      await aborting;
+      expect(mockDrawFullWorkarea).not.toHaveBeenCalled();
+      expect(URL.revokeObjectURL).toHaveBeenCalledTimes(shots);
     });
   });
 });
