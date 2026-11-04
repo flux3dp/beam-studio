@@ -35,9 +35,15 @@ interface Photo {
   url: string;
 }
 
-/** Newest photo finished SETTLE_MS before the close, else the newest one */
-export const pickPhoto = (photos: Photo[], closedAt: number): Photo | undefined =>
-  [...photos].reverse().find(({ finishedAt }) => finishedAt <= closedAt - SETTLE_MS) ?? photos.at(-1);
+/**
+ * Newest photo finished SETTLE_MS before the close, else the newest one finished while the door still read open
+ * (`lastOpenAt`): a photo in flight at the close finishes after it and shows the closed lid
+ */
+export const pickPhoto = (photos: Photo[], closedAt: number, lastOpenAt: number): Photo | undefined => {
+  const whileOpen = photos.filter(({ finishedAt }) => finishedAt <= lastOpenAt);
+
+  return [...whileOpen].reverse().find(({ finishedAt }) => finishedAt <= closedAt - SETTLE_MS) ?? whileOpen.at(-1);
+};
 
 /** Captures a full-area photo when the user closes the machine door (docs/prd/auto-full-area-preview.md) */
 class AutoFullAreaPreview implements BackgroundTask {
@@ -52,6 +58,8 @@ class AutoFullAreaPreview implements BackgroundTask {
   private armedAt: null | number = null;
   /** fbb2/fhx2rf: lid closed at (ms); ends the open-lid loop */
   private closedAt: null | number = null;
+  /** Sent time (ms) of the newest poll that read the door open */
+  private lastOpenAt = 0;
   private capture: null | Promise<void> = null;
   private manager: Beamo2PreviewManager | null = null;
   private aborted = false;
@@ -127,6 +135,8 @@ class AutoFullAreaPreview implements BackgroundTask {
 
       // A slow answer means the control queue was busy; the door state is as of `now`, not `sentAt`
       if (now - sentAt > DOOR_POLL_MS) log(`getDoorOpen took ${now - sentAt}ms`);
+
+      if (value === '1') this.lastOpenAt = sentAt;
 
       this.onDoor(value === '1', now);
     } catch (error) {
@@ -288,7 +298,8 @@ class AutoFullAreaPreview implements BackgroundTask {
       deviceMaster.disconnectCamera();
     }
 
-    const picked = this.aborted || this.closedAt === null ? undefined : pickPhoto(photos, this.closedAt);
+    const picked =
+      this.aborted || this.closedAt === null ? undefined : pickPhoto(photos, this.closedAt, this.lastOpenAt);
 
     log(`${photos.length} photos, picked ${picked ? `${this.closedAt! - picked.finishedAt}ms before close` : 'none'}`);
     photos.forEach((photo) => photo !== picked && URL.revokeObjectURL(photo.url));

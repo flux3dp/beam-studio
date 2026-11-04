@@ -21,7 +21,7 @@ Three design choices drive everything else:
 
 1. **The door is the trigger, and it is poll-only.** Firmware has no push for door state; Beam Studio polls `play get_door_open` on the control socket it already holds for the selected machine. fbm2 captures *after* the door closes (its camera is on the head and needs a closed door). fbb2/fhx2rf capture *while* the door is open (their wide-angle camera sits on the lid and needs it open), then draw the best photo at close.
 2. **A capture is a one-shot reuse of the existing preview managers**, run outside preview mode. No floating bar, no mouse-mode change, no `PreviewModeController`. The managers gain two options: `silent` (never pop alerts) and `messagePrefix` (so the usual "Capturing image…" sequence reads "Auto preview: Capturing image…").
-3. **A half-closed lid should not become the background.** fbb2 and fhx2rf use the same timing rule: at close, draw the newest photo that finished at least 1.5 s before the close event, else the newest photo. The ArUco markers on the fhx2rf honeycomb were evaluated as a validity signal and rejected for v1 (§2.6, §10 decision 1).
+3. **A half-closed lid should not become the background.** fbb2 and fhx2rf use the same timing rule: at close, draw the newest photo that finished at least 1.5 s before the close event, else the newest photo that finished while the door still read open. The ArUco markers on the fhx2rf honeycomb were evaluated as a validity signal and rejected for v1 (§2.6, §10 decision 1).
 
 The feature is on by default and switchable in Settings → Camera. It is a background task in the sense of `docs/prd/background-tasks.md`: it only ever runs when the machine is idle and nothing else in this Beam Studio instance is using the machine; if the user starts an export, framing or calibration mid-capture, the manager's foreground yield in `checkDeviceStatus` shows this task's prompt: "The machine is capturing the work area for auto preview. Stop capturing and continue?".
 
@@ -103,7 +103,7 @@ fhx2rf and fbm2 honeycomb boards carry four ArUco markers at the corners; fbb2 b
 - **S1 fbm2, place material.** Door opens for ≥ 2 s, closes. 1 s later the toasts "Auto preview: Connecting…", "… Entering raw mode…", "… Homing…", "… Moving to preview position…", "… Capturing image…" run, the head parks, "Auto preview: Successfully previewed" shows for 3 s, the canvas background is the new photo.
 - **S2 fbb2 / fhx2rf, place material.** Door opens; while it is open the listener keeps taking photos back to back (§7.3) without showing anything. Door closes; the loop stops, within about a second "Auto preview: Successfully previewed" shows and the background is the newest photo that finished ≥ 1.5 s before the close.
 - **S3 Slow close (fbb2 / fhx2rf).** The lid swings shut over more than 1.5 s: the picked photo may show the lid partly closed. Accepted (R2); a manual preview replaces it.
-- **S4 Quick peek.** fbm2 door opens for 1 s and closes: nothing happens. fhx2rf/fbb2: the loop ran briefly; if it finished a photo, close draws the newest one (fallback); if not, nothing.
+- **S4 Quick peek.** fbm2 door opens for 1 s and closes: nothing happens. fhx2rf/fbb2: the loop ran briefly; if a photo finished while the door still read open, close draws the newest such photo (fallback); a photo still in flight at the close is never used; if none, nothing.
 - **S5 Reopen during the 1 s wait (fbm2).** The pending capture is cancelled; a new ≥ 2 s open re-arms it.
 - **S6 Door opens mid-capture (fbm2).** `DoorChecker` fails the capture; the partial result is discarded; the head parks; the listener waits for the next cycle. No alert.
 - **S7 Export during capture.** User clicks Go while S1 is running. Alert: "The machine is capturing the work area for auto preview. Stop capturing and continue?" Yes: the capture stops at the next safe point, the head parks, export proceeds. No: export is cancelled, capture continues.
@@ -122,7 +122,7 @@ Each criterion names how to operate it and what proves it. "Toast" means the top
 | # | Operate | Expected | Edge cases |
 |---|---|---|---|
 | A1 | fbm2 selected, document fbm2, preference on, canvas idle. Open door, wait 3 s, close. | After ~1 s the prefixed toast sequence runs; head moves to camera centre and back; background updates; success toast 3 s. | Open < 2 s: nothing. Reopen within 1 s of close: nothing until the next ≥ 2 s open. |
-| A2 | fbb2 or fhx2rf, lid open 5 s with the material placed, close at normal speed (< 1 s swing). | No toast while open. Within ~2 s of close: success toast, background = a photo of the fully open view (finished ≥ 1.5 s before close). | Open only 1 s and close: the newest photo is used (fallback). Slow close (≈ 3 s swing): a partly closed view is possible and accepted (R2). |
+| A2 | fbb2 or fhx2rf, lid open 5 s with the material placed, close at normal speed (< 1 s swing). | No toast while open. Within ~2 s of close: success toast, background = a photo of the fully open view (finished ≥ 1.5 s before close). | Open only 1 s and close: the newest photo finished before the last open reading is used (fallback); one that finished after the close is never shown. Slow close (≈ 3 s swing): a partly closed view is possible and accepted (R2). |
 | A3 | fbb2 or fhx2rf without wide-angle calibration. Cycle the door. | Nothing, no alert. | — |
 | A4 | During A1's capture, click Go. | Alert with the auto-preview text, Yes/No. Yes → head parks, no background change from this capture, export continues. No → export cancelled, capture completes normally. | Same from Framing, Calibrate camera (menu), Monitor. |
 | A5 | During A1, open the door. | Capture aborts silently, head parks, no alert, background unchanged. | — |
@@ -215,7 +215,7 @@ push {url, t}; keep the last N = 4 entries, revoke dropped URLs
 await sleep(LOOP_GUARD_MS = 200)               // capture error → sleep 1000
 ```
 
-On door close, both models: newest entry with `t ≤ t_close − SETTLE_MS (1500)`; none → newest entry; no entry at all → do nothing.
+On door close, both models, among entries with `t ≤ t_last_open` (sent time of the last poll that read the door open; a photo in flight at the close finishes after it and shows the closed lid): newest entry with `t ≤ t_close − SETTLE_MS (1500)`; none → newest such entry; no entry at all → do nothing.
 
 Then `previewModeBackgroundDrawer.drawFullWorkarea(url)` (`preview-mode-background-drawer.ts:116`; outside a preview session it draws directly, and `start()` is not called because it clears the background and draws the preview boundary), show "Auto preview: Successfully previewed" (3 s). Unpicked URLs are revoked; `abort()` draws nothing and revokes all.
 
@@ -265,7 +265,7 @@ Key `auto-full-area-preview: boolean`, default `true`, added to `Preference.d.ts
 
 Settled during design (2026-10-16), kept for the record:
 
-1. ~~Validity signal for open-lid photos~~ → 2026-10-16: ArUco markers on honeycomb corners (fhx2rf), timing rule (fbb2, no markers in the field). Stable-pair image diff rejected: first-frame bootstrap problem. **Revised 2026-10-30: timing rule for both fbb2 and fhx2rf**; markers rejected for v1 because they fall outside the flattened frame, read only under favourable lighting, are hidden by the head at its origin, and move with the platform (§2.6).
+1. ~~Validity signal for open-lid photos~~ → 2026-10-16: ArUco markers on honeycomb corners (fhx2rf), timing rule (fbb2, no markers in the field). Stable-pair image diff rejected: first-frame bootstrap problem. **Revised 2026-10-30: timing rule for both fbb2 and fhx2rf**; markers rejected for v1 because they fall outside the flattened frame, read only under favourable lighting, are hidden by the head at its origin, and move with the platform (§2.6). **2026-11-04 (fhx2rf hardware):** a fast close with only a photo or two taken drew the photo still in flight at the close, i.e. the closed lid; the fallback now only considers photos finished before the last poll that read the door open.
 2. ~~Absolute marker positions~~ → relative rectangle check only (2026-10-16). Moot since 2026-10-30: no marker check in v1. A future revisit would need "any marker at its expected position", which depends on the platform height (§11 F2).
 3. ~~Where the busy prompt lives~~ → `checkDeviceStatus`, not `getDevice()` (menu actions bypass `getDevice`). Since 2026-10-30 through the background-task manager's `yieldTo`, not a hard-coded block.
 4. ~~"Any dialog" vs a curated id list~~ → any dialog, alert or progress. Since 2026-10-30 implemented by the background-task manager's `canTouchMachine`.
@@ -296,7 +296,7 @@ Pending facts (not decisions): how long a normal lid close takes on fbb2 and fhx
 
 Hardware-free (Jest, `unit-test` skill conventions; manager, `checkDeviceStatus` and tab-focus tests live in `background-tasks.md` §12):
 
-- `autoFullAreaPreview.spec.ts`: requirements gating (each requirement toggled), fbm2 debounce (open < 2 s, reopen within 1 s, happy path with fake timers), gate failures skip, abort during capture calls `end()` and discards, socket close skips `end()` and resumes polling, `isEnabled` mapping, open-lid pick rule (settled photo, newest fallback, empty list does nothing).
+- `autoFullAreaPreview.spec.ts`: requirements gating (each requirement toggled), fbm2 debounce (open < 2 s, reopen within 1 s, happy path with fake timers), gate failures skip, abort during capture calls `end()` and discards, socket close skips `end()` and resumes polling, `isEnabled` mapping, open-lid pick rule (settled photo, newest-while-open fallback, photo in flight at the close excluded, empty list does nothing).
 - `BasePreviewManager.spec.tsx`: `messagePrefix` prepends; `silent` suppresses alerts in `Beamo2PreviewManager` / `Bb2Hx2PreviewManager` setup errors.
 
 Hardware (pending a machine; map to §5):

@@ -271,12 +271,15 @@ describe('autoFullAreaPreview', () => {
     });
   });
 
-  test('pickPhoto: newest settled photo, else the newest, else none', () => {
+  test('pickPhoto: newest settled photo, else the newest taken while open, else none', () => {
     const photos = [1000, 2000, 3000, 3500].map((finishedAt) => ({ finishedAt, url: `u${finishedAt}` }));
 
-    expect(pickPhoto(photos, 4000)?.url).toBe('u2000');
-    expect(pickPhoto(photos, 2000)?.url).toBe('u3500');
-    expect(pickPhoto([], 3000)).toBeUndefined();
+    expect(pickPhoto(photos, 4000, 3600)?.url).toBe('u2000');
+    // nothing settled: newest that finished while the door still read open, not the ones in flight at the close
+    expect(pickPhoto(photos, 2400, 2300)?.url).toBe('u2000');
+    expect(pickPhoto(photos, 2000, 1500)?.url).toBe('u1000');
+    expect(pickPhoto(photos, 1000, 500)).toBeUndefined();
+    expect(pickPhoto([], 3000, 2500)).toBeUndefined();
   });
 
   describe('fbb2/fhx2rf open-lid loop', () => {
@@ -293,6 +296,19 @@ describe('autoFullAreaPreview', () => {
     });
 
     const sleepFake = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+    test('fast close: the photo in flight at the close is never drawn', async () => {
+      autoFullAreaPreview.start(fhx2rf);
+      door(true);
+      // tick 500: open, loop starts; photo 1 done ~1000; photo 2 starts ~1200
+      await wait(1300);
+      door(false);
+      // tick 1500: closed; photo 2 finishes ~1700, after the last open poll
+      await wait(1500);
+
+      expect(mockDrawFullWorkarea).toHaveBeenCalledTimes(1);
+      expect(mockDrawFullWorkarea.mock.calls[0][0]).toBe('url1');
+    });
 
     test('shoots while open without raw mode, draws a settled photo at close', async () => {
       autoFullAreaPreview.start(fhx2rf);
