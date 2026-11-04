@@ -243,3 +243,19 @@ describe('deviceMaster log downloads share the control queue', () => {
     },
   );
 });
+
+describe('deviceMaster.setField', () => {
+  afterEach(() => {
+    jest.restoreAllMocks();
+  });
+
+  test.each([70, 75, 110, 200])('sends the %i mm work area to the machine unchanged', async (worksize) => {
+    const field = { angle: 1, offsetX: 2, offsetY: 3 };
+    const control = { addTask: jest.fn().mockResolvedValue(undefined), setField: jest.fn() };
+
+    jest.spyOn(deviceMaster, 'getControl').mockResolvedValue(control as unknown as Control);
+    await deviceMaster.setField(worksize, field);
+
+    expect(control.addTask).toHaveBeenCalledWith(control.setField, worksize, field);
+  });
+});

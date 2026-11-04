@@ -32,7 +32,7 @@ Phase 2 有七個新項目，加上 Phase 1 延續下來的三項。原本的 P2
 | P2-8 | 點雲檔案直接匯入（PLY / GLB / BSPC） | Beam Studio | 原 P2-3 |
 | P2-9 | 3D 材質測試、每行停留轉正式功能（每行停留與打散掃描順序已開放給 UV 一般使用者，2026-10-22） | Beam Studio | 原 P2-4 其餘 |
 | P2-10 | 球體 / 圓柱材料轉正式功能（**不在 Phase 2 release**） | Beam Studio | 原 P2-5 |
-| P2-11 | UV 70mm 場域 70 / 75 的差異 | Beam Studio | 原 P2-6；2026-10-20 從多組場鏡 PRD 移回 |
+| P2-11 | ~~UV 70mm 場域 70 / 75 的差異~~ 2026-11-03：移除 70 → 75 的改寫，UV 70mm 直接送 70 | Beam Studio | 原 P2-6；2026-10-20 從多組場鏡 PRD 移回 |
 
 P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev 擋著），等上機結果再排。P2-10 已確認不在 Phase 2 release（2026-10-19）：相關程式與文件保持原樣、不刪除，等之後有時間上機測試實際效果再決定。
 
@@ -156,9 +156,13 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 
 ### P2-11 UV 70mm 場域 70 / 75
 
-- 操作：UV 70mm 分別以 worksize 70 與 75 校正並打標準圖形（例如 60mm 方格）。
-- 結果：確認 UV 能否直接用 70；結果記錄後決定是否改 `getPromarkFieldWorksize`。
-- 邊界：若改成 70，既有以 75 校正的參數（含多組場鏡的各組）要轉換或提示重新校正（§10 #20）。
+2026-11-03：移除 `getPromarkFieldWorksize`，`deviceMaster.setField` 直接送呼叫端給的工作範圍。
+
+- 操作：Promark UV、工作範圍 70mm，開啟 Promark 設定按「套用」，或連線初始化、Framing、送出工作。
+- 結果：送給後端 `setField` 的 worksize 是 70，不是 75；200mm 送 200；Desktop / MOPA 不變。
+- 邊界：
+  - 結果和「目前開啟的文件」無關（原本只有開著 `fpm1` UV 文件才會改成 75）。
+  - 既有以 75 校正的參數（含多組場鏡的各組）不做換算，數值原樣送出；只有實驗機受影響，手動把縮放 × 70 / 75（§10 #20）。
 
 ---
 
@@ -197,7 +201,7 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 | `presets.ts` | 頻率、速度等既有值不變；只有 `fpm1_2_5` 加上 `fillDwellTime`（PLA 50000，其他 -50000 = 關閉）。其他機型的預設參數不變 |
 | `AdvancedSettingModal.tsx` | 每行停留與打散掃描順序只在 Promark UV 顯示（原本是 uvDev）；Desktop / MOPA 與其他機型的進階設定不變 |
 | `MaterialTestGeneratorPanel/TableSetting.ts` | UV 2D 材質測試多了每行停留與打散掃描順序兩欄（原本是 uvDev）；內雕與其他雷射源的表格不變 |
-| `getPromarkFieldWorksize`（`promark-constants.ts:36-37`） | P2-11 決定前維持現狀：UV 70mm 送 75，其他送工作範圍本身 |
+| `deviceMaster.setField`（移除 `getPromarkFieldWorksize`，2026-11-03） | 所有呼叫端（`dialogs/promark/PromarkSettings.tsx`、`pages/InitializeMachine/Promark/PromarkSettings.tsx`、`device/framing.ts`、`device/promark/cached-task-lens.ts`、`device/promark/apply-lens-profile.ts`）— 送出的 worksize 就是傳入的工作範圍；除了 UV 70mm 由 75 改為 70，其他雷射源與工作範圍的值不變 |
 
 實作時隨 diff 補齊（2026-10-22 已對照 P2-2～P2-7 的 diff）。
 
@@ -358,7 +362,8 @@ P2-8～P2-10 除了已開放的每行停留，維持 Phase 1 的狀態（uvDev �
 
 ### 6.7 P2-11 UV 70mm 場域 70 / 75
 
-- 目前 `setField` 依「目前開啟的文件」判斷是否為 UV，UV 70mm 送 75（`getPromarkFieldWorksize`，`promark-constants.ts:36-37`）；開著其他機型的文件連線時會送 70。
+- 原本 `setField` 依「目前開啟的文件」判斷是否為 UV，UV 70mm 送 75（`getPromarkFieldWorksize`）；開著其他機型的文件連線時會送 70，同一台機器的場域因此會隨開啟的文件改變。
+- 2026-11-03：移除 `getPromarkFieldWorksize`，`deviceMaster.setField` 不再讀 `documentStore` 與雷射源，直接送傳入的 worksize。
 - 要確認 UV 能否直接用 70；若改成 70，既有以 75 校正的參數要轉換（例如 scale × 75 / 70）或重新校正。
 - 多組場鏡（[`promark-lens-profiles.md`](../promark-lens-profiles.md)）之後，worksize 應依組別的雷射源與工作範圍決定，不再依目前開啟的文件；多組場鏡的 PR 維持現狀，由本項處理。
 
@@ -438,7 +443,7 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
 21. ~~flux-id `/api/photo-to-3d`~~ 2026-10-22 實作（branch `feat/photo-to-3d`）。依指示沒有開 docker、沒有跑測試，只做靜態檢查（ruff、py_compile、逐行對照）。仍待確認：DA3 的輸入欄位名稱（`processing_resolution`、`alpha_blend_onto`、`to_base64`）與輸出的檔案結構要對 Replicate 的 schema；`tests_photo_to_3d.py` 要用本機 MySQL 跑一次。
 
 **P2-11**
-20. UV 70mm 改用 70 之後，既有以 75 校正的參數用換算，還是要求重新校正？
+20. ~~UV 70mm 改用 70 之後，既有以 75 校正的參數用換算，還是要求重新校正？~~ 2026-11-03：以 75 校正過的只有實驗機，程式不做換算也不提示。實驗機手動調整：振鏡 X / Y 縮放 × 70 / 75（≈ 0.9333），其餘參數先不變，再打標準圖形確認。
 
 ---
 
@@ -485,5 +490,5 @@ Phase 2 branch：`promark-3d-inner-carving-phase2`（從 Phase 1 branch 切出�
   - 照片轉 3D 實際雕刻，比較收邊 0 / 2 / 4 / 6mm。
   - 填充水平面的方塊、圓柱，以及不同填充間隔。
   - PLA 每行停留 50000µs 的成品。
-  - UV 70mm 以 worksize 70 / 75 各校正一次，比較標準圖形尺寸。
+  - UV 70mm 以 worksize 70 校正並打標準圖形（例如 60mm 方格），確認尺寸正確；再用改版前以 75 校正的參數打一次，確認 §10 #20 的影響。
   - 打散掃描順序開 / 關的熱累積。

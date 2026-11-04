@@ -32,10 +32,6 @@ export const getDefaultPromarkWorkarea = ({ laserType, watt }: { laserType: Lase
   return MOPA_WORKAREA_OPTIONS.at(-1)!;
 };
 
-/** The 70 mm UV lens uses a 75 mm backend correction field; other UV fields use their real size. */
-export const getPromarkFieldWorksize = (laserType: LaserType, worksize: number): number =>
-  laserType === LaserType.UV && worksize === UV_INNER_ENGRAVING_WORKAREA ? 75 : worksize;
-
 export const isPromarkWorkareaCompatible = (laserType: LaserType, size: number): boolean =>
   getPromarkWorkareaOptions(laserType).includes(size);
 

@@ -28,7 +28,7 @@ L-2 不依賴 L-1。兩者都適用所有 Promark 雷射源。
 
 **未來可能的變動**
 - **HEXA II Galvo**：CO2 振鏡與 MOPA 振鏡的參數會以 config 格式存在機器記憶體。若之後需要在本機 / 雲端也保存紀錄，組別的 key 可能要多一個 CO2 / MOPA 欄位（§6.1 的 key 要能擴充）。
-- **UV 場域 70 / 75**：由內雕 Phase 2 處理（`promark-uv-inner-engraving/phase2.md` P2-11），本 PRD 維持現狀（§10 #7）。
+- **UV 場域 70 / 75**：由內雕 Phase 2 處理（`promark-uv-inner-engraving/phase2.md` P2-11），本 PRD 維持現狀（§10 #7）。2026-11-03 P2-11 已移除 70 → 75 的改寫。
 
 ---
 
@@ -45,7 +45,7 @@ L-2 不依賴 L-1。兩者都適用所有 Promark 雷射源。
   - 機器實體按鈕：`promark-button-handler.ts` 的再次執行走 `exportFn`，等同重新送出，也會 `select`。
   - 選單【機器】→ 儀表板：`menuDeviceActions.tsx:327-333` 先 `select`，再把上次送出的快取工作（`promarkTaskCache`，只在記憶體）交給工作監控，可以直接重跑。這時套用的是目前開啟文件的參數，不一定是快取工作當初的參數（§6.5）。
 - Swiftray 不保存參數：`CorrectionParams`、`ScanaheadParams` 只在記憶體（`Swiftray src/periph/motion_controller/bsl_motion_controller.cpp:24-40`），斷線重連時重送，所以每次連線都得由 Beam Studio 推。
-- 場域大小：`setField` 依「目前開啟的文件」判斷是否為 UV，UV 70mm 送 75（`getPromarkFieldWorksize`，`promark-constants.ts:36-37`）；開著其他機型的文件連線時會送 70。
+- 場域大小：`setField` 依「目前開啟的文件」判斷是否為 UV，UV 70mm 送 75（`getPromarkFieldWorksize`）；開著其他機型的文件連線時會送 70。2026-11-03 起由 P2-11 改為一律送傳入的工作範圍。
 - 機器初始化：`SelectPromarkLaserSource.tsx` 選雷射源與工作範圍，寫進文件的 `customized-dimension.fpm1` 與 `setPromarkInfo`；下一頁 `InitializeMachine/Promark/PromarkSettings.tsx` 用 `getWorkarea('fpm1').width` 套用並上傳雲端。
 - 工廠設定檢視頁（flux-id，#685 已合併到 main）：`POST /machine/config/search` 依序號、上傳者、日期查詢，`frontend/src/factory/config/PromarkLensView.tsx` 以唯讀方式顯示 `promarkLens`。它顯示的 `field.width` 在 Beam Studio 的 `Field` 裡不存在，永遠是「未保存」。
 - 雲端同步狀態的既有做法（FLUX 101，`app/components/dialogs/Flux101/`）：視窗標題列的一個 antd `Tag`。已登入時顯示綠色「Synced」（`CloudOutlined`）或灰色「Not synced」（`CloudSyncOutlined`），依本次 session 最後一次上傳的結果（`flux101Store.synced`，第一次上傳前是 `undefined`、不顯示，登出時重設）；未登入時顯示可點的「登入」Tag（`UserOutlined`，tooltip 說明登入後才會同步），點了開 FLUX ID 登入（`Flux101Dialog.tsx:73-93`、`sync.ts:41-48`）。

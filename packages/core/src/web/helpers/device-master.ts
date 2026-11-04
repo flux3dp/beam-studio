@@ -9,13 +9,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
-import {
-  defaultField,
-  getPromarkFieldWorksize,
-  getPromarkLaserSource,
-  LaserType,
-} from '@core/app/constants/promark-constants';
-import { useDocumentStore } from '@core/app/stores/documentStore';
+import { defaultField, getPromarkLaserSource } from '@core/app/constants/promark-constants';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { withErrorReportConsent } from '@core/helpers/error-report/consent';
@@ -1526,11 +1520,8 @@ class DeviceMaster {
 
   async setField(worksize: number, fieldData: Field = defaultField) {
     const controlSocket = await this.getControl();
-    const isPromarkUV = useDocumentStore.getState().workarea === 'fpm1' && getPromarkInfo().laserType === LaserType.UV;
 
-    const adjustedWorksize = getPromarkFieldWorksize(isPromarkUV ? LaserType.UV : LaserType.Desktop, worksize);
-
-    return controlSocket.addTask(controlSocket.setField, adjustedWorksize, fieldData);
+    return controlSocket.addTask(controlSocket.setField, worksize, fieldData);
   }
 
   async setGalvoParameters(data: GalvoParameters) {

@@ -67,7 +67,7 @@
 ### 3.2 Phase 1 範圍
 
 **UV 雷射源**
-- 雷射源選項加入 UV（只有 5W），工作範圍 70 / 200，預設 70。70mm 送給後端時當作 75mm 場域。
+- 雷射源選項加入 UV（只有 5W），工作範圍 70 / 200，預設 70。~~70mm 送給後端時當作 75mm 場域~~（2026-11-03 由 Phase 2 P2-11 移除，改送 70）。
 - 送給後端的場鏡畸變參數帶光源類型：Desktop 和 MOPA 都當作 MOPA 光源（Q pulse 0），UV 是 1。
 - UV 圖層參數（§6.5）：
   - 脈寬不顯示，固定 13。Q pulse（UV 新增）固定 1，只在開發者模式的「Developer Settings」區塊（`DevBlock`）顯示，標題「Q 開關」。
@@ -501,7 +501,7 @@ Desktop / MOPA 的 Promark 相機是倒裝的，UV 相機是正裝的。使用�
 | 行為 | 值 | 位置 | 依據 |
 |---|---|---|---|
 | UV 只有 5W | `[5]` | `promark-constants.ts` | – |
-| UV 70mm 送給後端當作 75mm 場域 | 75 | `promark-constants.ts`、`device-master.ts` | 註解 |
+| ~~UV 70mm 送給後端當作 75mm 場域~~ 2026-11-03 移除（Phase 2 P2-11） | ~~75~~ | ~~`promark-constants.ts`、`device-master.ts`~~ | 註解 |
 | Desktop 雷射源送給 Swiftray 時當作 MOPA | – | `promark-constants.ts`、`device-master.ts` | 註解 |
 | UV 相機校正雕刻用最弱的頻率 | 200kHz | `helpers/device/promark/calibration.ts` | 2026-10-12 決定 |
 | 校正參數沒有 `rotate180` 時影像旋轉 180° | `true` | `camera-rotation.ts` `isCameraRotated` | 2026-10-13 決定 |
