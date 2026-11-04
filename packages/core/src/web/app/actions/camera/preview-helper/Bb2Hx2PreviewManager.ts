@@ -9,6 +9,7 @@ import {
   bb2FullAreaPerspectiveGrid,
   getRegionPreviewGrid,
   hx2FullAreaPerspectiveGrid,
+  hx2GalvoFullAreaPerspectiveGrid,
 } from '@core/app/constants/fisheyeCameraConstants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { checkCameraOblique, getSupportedPreviewModes } from '@core/helpers/device/camera/previewMode';
@@ -52,7 +53,8 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
     if (hexa2Models.has(device.model)) {
       this.isCameraOblique = true;
-      this.fullAreaGrid = hx2FullAreaPerspectiveGrid;
+      // The two beds differ (740x410 vs 920x520), so the full-area footprint cannot be shared.
+      this.fullAreaGrid = device.model === 'fhx2galvo' ? hx2GalvoFullAreaPerspectiveGrid : hx2FullAreaPerspectiveGrid;
     }
   }
 

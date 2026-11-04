@@ -10,6 +10,8 @@ import {
   bb2WideAngleCameraPnpPoints,
   getRegionalPoints,
   hx2FullAreaPerspectiveGrid,
+  hx2GalvoFullAreaPerspectiveGrid,
+  hx2GalvoWideAngleCameraPnpPoints,
   hx2WideAngleCameraPnpPoints,
 } from '@core/app/constants/fisheyeCameraConstants';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
@@ -69,16 +71,23 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
   const deviceModel = useMemo(() => deviceMaster.currentDevice!.info.model, []);
   const isHexa2Series = useMemo(() => hexa2Models.has(deviceModel), [deviceModel]);
   /**
-   * Still HEXA RF's for both machines of the series: these points are laid out for a 740x410 bed and
-   * HEXA G's is 920x520, so its four corner regions would land well inside the bed instead of at its
-   * corners. The machine with that camera is still in transit; nothing can be measured until it is.
-   * TODO: measure a HEXA G set, alongside a 920x520 wide-angle pattern.
+   * Each pattern is laid out for its own bed, so the points and the full-area grid go with the
+   * fcode the PUT_PAPER step cuts: HEXA G's is 920x520, HEXA RF's 740x410, Beambox II's 600x375.
    */
-  const solvePnPPoints = useMemo(() => {
-    if (isHexa2Series) return hx2WideAngleCameraPnpPoints;
-
-    return bb2WideAngleCameraPnpPoints;
-  }, [isHexa2Series]);
+  const { fullAreaGrid, solvePnPPoints } = useMemo(
+    () =>
+      match(deviceModel)
+        .with('fhx2galvo', () => ({
+          fullAreaGrid: hx2GalvoFullAreaPerspectiveGrid,
+          solvePnPPoints: hx2GalvoWideAngleCameraPnpPoints,
+        }))
+        .with('fhx2rf', () => ({
+          fullAreaGrid: hx2FullAreaPerspectiveGrid,
+          solvePnPPoints: hx2WideAngleCameraPnpPoints,
+        }))
+        .otherwise(() => ({ fullAreaGrid: bb2FullAreaPerspectiveGrid, solvePnPPoints: bb2WideAngleCameraPnpPoints })),
+    [deviceModel],
+  );
 
   const calibratingParam = useRef<FisheyeCameraParametersV4Cali>({});
   const handleClose = (res?: boolean) => {
@@ -457,7 +466,7 @@ const WideAngleCamera = ({ currentData, onClose }: Props): ReactNode => {
         <CheckPnP
           cameraOptions={{ index: 1 }}
           dh={dh!}
-          grid={isHexa2Series ? hx2FullAreaPerspectiveGrid : bb2FullAreaPerspectiveGrid}
+          grid={fullAreaGrid}
           hasNext
           onBack={() => setStep(step === Step.CHECK_PNP_1 ? Step.SOLVE_PNP_TL_1 : Step.SOLVE_PNP_TL_2)}
           onClose={onClose}

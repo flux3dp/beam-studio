@@ -990,13 +990,13 @@ class DeviceMaster {
    * the side rather than straight down, and the nozzle blocks part of that view, so the dots sit
    * elsewhere and much further apart.
    *
-   * The wide-angle pattern is still HEXA RF's, sized for a 740x410 bed rather than 920x520.
-   * TODO: cut a 920x520 wide-angle pattern; the machine with that camera is still in transit.
+   * The wide-angle pattern is its own too, laid out for the 920x520 bed: 16 dots in four corner
+   * squares, listed in hx2GalvoWideAngleCameraPnpPoints.
    */
   async doHexaGCalibration(type: '' | 'wide-angle' = '') {
     const fileName = match(type)
       .with('', () => 'fcode/hexa-g-calibration.fc')
-      .with('wide-angle', () => 'fcode/hx2-calibration-wide-angle.fc')
+      .with('wide-angle', () => 'fcode/hexa-g-calibration-wide-angle.fc')
       .exhaustive();
 
     await this.doCalibration({ fcodeSource: fileName });

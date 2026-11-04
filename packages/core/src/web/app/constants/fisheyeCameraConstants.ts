@@ -134,6 +134,45 @@ export const hx2FullAreaPerspectiveGrid: PerspectiveGrid = {
   y: [0, 410, 20],
 } as const;
 
+/**
+ * Where fcode/hexa-g-calibration-wide-angle.fc puts its 16 dots, in machine mm on the 920x520 bed:
+ * a 140x100mm square of four in each corner, 100mm in from the left, 120mm in from the right,
+ * 40mm from the top and 70mm from the bottom. Labels A-D are engraved beside them in the same
+ * order as the dialog's steps (top-left, top-right, bottom-left, bottom-right). Preliminary
+ * placement from 2026-11-04; the fcode and this table move together.
+ */
+export const hx2GalvoWideAngleCameraPnpPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = {
+  bottomLeft: [
+    [100, 350],
+    [240, 350],
+    [100, 450],
+    [240, 450],
+  ] as const,
+  bottomRight: [
+    [660, 350],
+    [800, 350],
+    [660, 450],
+    [800, 450],
+  ] as const,
+  topLeft: [
+    [100, 40],
+    [240, 40],
+    [100, 140],
+    [240, 140],
+  ] as const,
+  topRight: [
+    [660, 40],
+    [800, 40],
+    [660, 140],
+    [800, 140],
+  ] as const,
+} as const;
+
+export const hx2GalvoFullAreaPerspectiveGrid: PerspectiveGrid = {
+  x: [0, 920, 20],
+  y: [0, 520, 20],
+} as const;
+
 export const bm2PnPPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = {
   bottomLeft: [
     [30, 150],
