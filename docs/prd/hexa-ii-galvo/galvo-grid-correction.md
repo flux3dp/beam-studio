@@ -166,6 +166,9 @@
 ## 10. Open decisions
 
 1. SDK 語意：網格表與 manual 參數、scanahead（angle、offset、invert、swap）的套用順序；陣列順序；「實際」的定義；是否需要 `select_cor_table` 才會生效。由 §7.4 探測決定。
+   - 2026-11-04 第一次探測（`~/Downloads/fluxghost-frames/1104-grid-test/` test1 不帶表、test2 帶 `--probe 1`）：不需要 `select_cor_table`，表會直接生效。但**載入表之後，八項 manual 參數和 scanahead 的 invert 都失效了**：coupon 變成 X ×1.161、Y ×1.246（manual scale 100/87.14 = 1.148、100/79 = 1.266），超出可達範圍，右側和 identity 環被切掉；雕刻也改成從右下角開始。所以網格表必須是**完整的校正**，invert 要放在 `set_gridcor_params` 的旗標裡。
+   - 第二次探測：`bsl-gridcor.py --scale 1.1476 1.2658 --invert-x 1 --invert-y 1`，打 coupon 加 L 框。大小正確代表「實際」= 落點；比例再放大代表正負號相反；X、Y 比例對調代表順序被轉置；解算出的 rotation 和場心位置，可以判斷 angle 和區域偏移在網格模式下還有沒有作用。
+   - 已確認的部分要改的程式：表要帶 invert 旗標（取 `config.field`）；第一張表不能用 manual 模式下量到的資料起算，要從「純比例表」起算，再用帶表打的 coupon 迭代。
 2. 外插：±44 → ±55 用三次擬合外插，或改 coupon 版面把 node 打到 ±55。第一輪先外插，殘差在邊緣不達標再改版面。
 3. 網格表與八項參數的關係：保留目前的最終參數，表只修殘差（預設）；或把八項歸零、全部交給表。視決策 1 而定。
 4. ~~保存位置~~（2026-11-03 決定）：存在機器的振鏡設定 `galvo_co2.json`／`galvo_mopa.json`，和其他振鏡參數一樣由 player 和 control task 在每次操作時送出。不用 `save_correction_file`：那是卡上的檔案，換卡或重裝時不會跟著機器設定走。
