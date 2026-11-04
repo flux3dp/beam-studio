@@ -1073,25 +1073,27 @@ class DeviceMaster {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.fetchCameraCalibrateImage!(fileName);
+    // Queued like every other command: run beside one, the first reply would detach both listeners and this would
+    // never settle (fetchFisheyeParams vs. a door poll did that)
+    return controlSocket.addTask(controlSocket.fetchCameraCalibrateImage!, fileName);
   }
 
   async fetchFisheyeParams(): Promise<FisheyeCameraParameters> {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchFisheyeParams!() as Promise<FisheyeCameraParameters>;
+    return controlSocket.addTask(controlSocket.fetchFisheyeParams!);
   }
 
   async fetchFisheye3DRotation(): Promise<RotationParameters3D> {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchFisheye3DRotation!();
+    return controlSocket.addTask(controlSocket.fetchFisheye3DRotation!);
   }
 
   async fetchAutoLevelingData(dataType: 'bottom_cover' | 'hexa_platform' | 'offset') {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchAutoLevelingData!(dataType);
+    return controlSocket.addTask(controlSocket.fetchAutoLevelingData!, dataType);
   }
 
   async getLogsTexts(logs: string[], onProgress: (...args: any[]) => void = () => {}, idleTimeout?: number) {
