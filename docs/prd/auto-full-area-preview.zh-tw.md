@@ -44,10 +44,10 @@
 | Manager | `Beamo2PreviewManager` | `Bb2Hx2PreviewManager` |
 | 相機 | 雷射頭上的單一相機 | 門蓋上的廣角相機（`setCamera(1)`） |
 | 門蓋 | 必須**關閉**（`DoorChecker.doorClosedWrapper`，`Beamo2PreviewManager.ts:82`） | 必須**打開**（`Bb2Hx2PreviewManager.ts:105-121`、`getWideAngleCameraData.ts:58`） |
-| 設定 | `connectCamera` → `setupFisheyePreview({ cameraPosition: cameraCenter, shouldKeepInRawMode: true })`（`FisheyePreviewManagerV4.ts:40-82`）：進 raw 模式、歸零、`rawMove` 到 `workarea.cameraCenter` | `connectCamera` → `getWideAngleCameraData`（V4 參數，韌體 ≥ `BB2_WIDE_ANGLE_CAMERA` 6.0.12）→ `setCamera(1)` → `setupFisheyePreview()`，不移動、不進 raw 模式（`:130-165`） |
+| 設定 | `connectCamera` → `setupFisheyePreview({ cameraPosition: cameraCenter, shouldKeepInRawMode: true })`（`FisheyePreviewManagerV4.ts:40-82`）：進 raw 模式、歸零、`rawMove` 到 `workarea.cameraCenter` | `connectCamera` → `getWideAngleCameraData`（V4 參數，韌體 ≥ `BB2_WIDE_ANGLE_CAMERA` 6.0.12）→ `setCamera(1)` → `setupFisheyePreview()`（`:130-165`）：沒有 `cameraPosition`，但仍在 raw 模式下 `rawAndHome` 與 `getFocalDistance`，再 `endSubTask` |
 | 拍攝 | `previewFullWorkarea`（`:198-281`）：關自動曝光，拍亮（`exposure + 500`）與暗兩張，亮的畫背景、暗的當遮罩 | `previewWithWideAngleCamera`（`:318-333`）：一次 `getPhotoFromMachine`、`drawFullWorkarea` |
 | 結束 | `endCameraPreview`（`:119-147`）：`rawMove` 到 `cameraRestPosition`、`rawLooseMotor`、`endSubTask`、斷相機、還原曝光、`kick` | 沒有 raw task 要結束；斷相機 |
-| 歸零 | 有，在 `setupFisheyePreview` 裡 | **無**：「BB2/RF 不自動歸零」的需求本來就成立 |
+| 歸零 | 有，在 `setupFisheyePreview` 裡 | **有**，同樣在 `setupFisheyePreview`（`rawAndHome`）裡，所以自動迴圈不重用它（§7.3） |
 
 相機 socket 送來的影格已經去過畸變並攤平：fluxghost `camera.py:107-120` 在 `set_fisheye_matrix` 送出後（`FisheyePreviewManagerV4.ts:88`）對 `fbb2`/`fbm2`/`fhx2rf` 的每張影格跑 `handle_fisheye_image`（`fisheye_camera_mixin.py:311`）。V4 會經 `apply_points` 以 5 px/mm（`fluxghost/utils/camera/constants.py:4`）重映射到透視格線上；搭配 `hx2FullAreaPerspectiveGrid`（x 0–740、y 0–410 mm，`fisheyeCameraConstants.ts:102`），Beam Studio 收到的照片是 3700×2050，剛好涵蓋整個工作區。
 
@@ -110,7 +110,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - **S6 拍攝中途開門（fbm2）。** `DoorChecker` 讓拍攝失敗；部分結果丟棄；雷射頭停回；監聽器等待下一個週期。不跳 alert。
 - **S7 拍攝中匯出。** S1 進行中使用者點「開始」。Alert：「機器正在自動拍攝工作區域，是否中止拍攝並繼續？」是：拍攝在下一個安全點停止，雷射頭停回，匯出繼續。否：匯出取消，拍攝繼續。
 - **S8 機器在別處忙碌。** 另一台電腦正在跑工作或持有 raw 模式：這台電腦的門蓋週期什麼都不做（狀態非 IDLE／`RESOURCE_BUSY`）。什麼都不顯示。
-- **S9 拍攝中被踢。** 另一台電腦踢掉這台：control socket 關閉，部分照片丟棄，不嘗試 `end()`，任務的下一次 tick 透過 `deviceMaster.getControl()` 重新連線（`device-master.ts`，control socket 不在時會重連），輪詢恢復。
+- **S9 拍攝中被踢。** 另一台電腦踢掉這台：control socket 關閉，部分照片丟棄，不嘗試 `end()`，沒有 socket 時 tick 跳過，機器空出來後背景任務管理器約 5 秒內 silent 重新連線，輪詢恢復。全程不跳 progress 或連線 alert。
 - **S10 沒有廣角校正（fbb2／fhx2rf）。** 開蓋迴圈不啟動；開關門無動作，不顯示任何東西。手動預覽與今天相同。
 - **S11 偏好設定關閉／工作原點啟用／文件工作區 ≠ 機器／焦點在其他分頁／畫布不在 Draw 模式。** 不輪詢、不拍攝。
 - **S12 自動照片之後手動預覽。** 手動工作階段和今天一樣啟動；`keep-preview-result` 關閉時自動照片會被 `start()` 清掉，和任何先前結果一樣。
@@ -150,11 +150,17 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - `app/actions/camera/preview-helper/Beamo2PreviewManager.ts`（`DoorChecker` 呼叫與 `handleSetupError` 尊重 `silent`；新增 `cancel()`，只在 `previewFullWorkarea` 檢查）
   - `PreviewModeController` 手動 fbm2 預覽：`door_opened` alert 與設定錯誤 alert 仍會跳。
   - `BeamPreviewManager` 重用 `handlePreviewSetupError`（錯誤回報 PR）：不動。
-- `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts`（尊重 `silent`；`previewWithWideAngleCamera` 可選擇只回傳影像 URL 不繪製）
+- `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts`（`handleSetupError` 尊重 `silent`；自動迴圈不使用這個 manager）
   - 手動 fbb2/fhx2rf 預覽：照舊繪製；手動切到 FULL_AREA 時門蓋關閉的 alert 仍會跳。
 - `app/actions/camera/preview-helper/DoorChecker.ts`（`doorClosedWrapper(callback, showError = true)`：寫死的 `true` 改為參數）
   - `Beamo2PreviewManager` 手動流程：`door_opened` alert 照常跳出。
   - `SolvePnP.tsx`、`Beamo2Calibration.tsx`、`ModuleCalibration/Align.tsx`（兩處）：預設 `true`，alert 照常跳出。
+- `helpers/api/control.ts`（`getDoorOpen` 在排隊的任務執行時若已是 raw mode 就立即 throw，不再收到 `error:2` 後等 30 秒 timeout）
+  - `DoorChecker.checkDoorClosed`、`framing.ts`（兩處）、`getWideAngleCameraData`、`Bb2Hx2PreviewManager`：normal mode 下送出的 `play get_door_open` 與回應不變。
+- `helpers/device-master.ts`（`fetchFisheyeParams`、`fetchCameraCalibrateImage`、`fetchFisheye3DRotation`、`fetchAutoLevelingData` 改為和其他指令一樣經過 `control.addTask`；原本它們和排隊中的指令並行，先到的任一回應會透過 `removeCommandListeners` 同時拆掉兩邊的 listener，fetch 就永遠不會結束。fbm2 setup 的 `fetchFisheyeParams` 旁邊剛好有一次門蓋輪詢，就是這樣卡住的）
+  - `Beamo2PreviewManager`、`Bb2Hx2PreviewManager`、`AdorPreviewManager`、`ModuleCalibration.tsx`（`fetchFisheyeParams`）；`getLevelingData.ts`、`getPerspectiveForAlign.ts`（`fetchAutoLevelingData`、`fetchFisheye3DRotation`）；`loadCamera3dRotation.ts`：指令與回應不變，只是改為在佇列中依序執行。
+- `app/actions/beambox/preview-mode-background-drawer.ts`（沒有 `start()`…`end()` 預覽工作階段時，`drawFullWorkarea` 直接繪製；原本影像送進沒人訂閱的 subject，只有 fbm2 的暗部遮罩會更新）
+  - 手動預覽中的 `Beamo2PreviewManager`、`Bb2Hx2PreviewManager`、`AdorPreviewManager`、`PromarkPreviewManager`：工作階段開著，照舊排隊繪製。
 - `interfaces/Preference.d.ts`、`beambox-preference.ts`、`globalPreferenceStore.ts`、`settings/categories/Camera.tsx`（一個 key、一個開關）
   - 其他所有偏好 key：不變。
 - `app/lang/*.ts`、`interfaces/ILang.ts`（`settings` 與 `message.auto_preview` 下新增 key）
@@ -174,7 +180,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - `start(device)`／`stop()`：開始／結束門蓋輪詢；拍攝中 `stop()` 會中止。
 - `isBusy()` = 拍攝中或迴圈中（§7.3）；`abort()` 見 §7.5；`busyMessage()` = `message.auto_preview.abort_to_continue`。
 
-**輪詢**：`setInterval(DOOR_POLL_MS = 500)`，前一次呼叫未回來、`!backgroundTasks.isCurrent(this)`、或 `deviceMaster.currentControlMode` 為 truthy（raw 模式的指令不同；被踢後它是 `null`，由 `getControl()` 恢復）時跳過該 tick。選機器與重新選取由管理器負責。
+**輪詢**：`setInterval(DOOR_POLL_MS = 500)`，前一次呼叫未回來、`!backgroundTasks.isCurrent(this)`、或 `deviceMaster.currentControlMode !== ''` 時跳過該 tick：子任務回應門蓋查詢的方式不同，而 `null`（重新整理、斷線或被踢後沒有 socket）會讓 `getDoorOpen` 經 `getControl()` 重新連線，每次失敗的 tick 都跳「連線中」progress 與 #892。選機器與 silent 重新連線由管理器負責（`background-tasks.zh-tw.md` §7.3）。
 
 **拍攝守門**（拍攝前）：`await canTouchMachine(this)`（`background-tasks.md` §7.4），且滑鼠模式 ∉ `{preview, pre_preview}`。任一不成立就跳過該週期並 `console.log`。
 
@@ -190,9 +196,9 @@ polling: 門蓋 關→開 於 t0
 capturing/looping: §7.5 的 abort() 或 socket 關閉 → 丟棄 → polling
 ```
 
-**fbm2 拍攝**：`new Beamo2PreviewManager(device)`，`manager.setup({ silent: true, messagePrefix })` → `manager.previewFullWorkarea()` → `manager.end()`。Manager 自己繪製背景（和手動流程一樣）。`end()` 永遠執行，失敗時也是。
+**fbm2 拍攝**：`new Beamo2PreviewManager(device)`，`manager.setup({ silent: true, messagePrefix })` → `manager.previewFullWorkarea()` → `manager.end()`。Manager 自己繪製背景（和手動流程一樣）。`end()` 永遠執行，失敗時也是。`setup()` 回傳 `false` 有兩種意思：發生錯誤（manager 已自行 end）或最後一次 `DoorChecker` 檢查時門是開的，這時它直接回傳、不 end，機器停在 raw 模式。任務用 `deviceMaster.currentControlMode === 'raw'` 區分，第二種情況才呼叫 `end()`；否則輪詢會永遠暫停。整個 fbm2 拍攝期間（`this.capture`）門蓋輪詢暫停：這段時間由 manager 的 `DoorChecker` 負責門蓋，而且 setup 進 raw 模式前會送 normal mode 指令，輪詢只會排在後面佔佇列。
 
-拍攝中 **control socket 關閉**（被踢或斷線）：任務維持預設關閉 listener（`device-master.ts:186-194`），不用關閉即重連；關閉時丟棄部分照片、跳過 `end()`、回到輪詢；下一個指令會透過 `getControl()` 重新連線，因為被踢不會改變目前機器。
+拍攝中 **control socket 關閉**（被踢或斷線）：任務維持預設關閉 listener（`device-master.ts:186-194`），不用關閉即重連；關閉時丟棄部分照片、跳過 `end()`、回到輪詢；管理器的 silent 重新連線會恢復 socket，因為被踢不會改變目前機器。
 
 ### 7.2 Manager 選項
 
@@ -200,12 +206,12 @@ capturing/looping: §7.5 的 abort() 或 socket 關閉 → 丟棄 → polling
 
 ### 7.3 開蓋迴圈（fbb2 / fhx2rf）
 
-開門時設定一次：`new Bb2Hx2PreviewManager(device)`，`setup({ silent: true })`，manager 處於 FULL_AREA（有廣角資料時它本來就選 FULL_AREA）。若機器沒有廣角校正（`hasWideAngleCamera === false` 或 `setup` 失敗），迴圈不啟動；監聽器對這台機器保持靜默。
+開門時、通過拍攝守門後設定一次，**不進 raw 模式、不歸零**：`getWideAngleCameraData(device)` → `connectCamera` → `setCamera(1)` → `setFisheyeParam({ ...params, grids: <機型的全範圍 grid>, offset: undefined })`（與 `FisheyePreviewManagerV4.paramsToSend` 對全範圍的處理相同）→ `setFisheyeObjectHeight(0)`，假設材料已對焦。不重用 `Bb2Hx2PreviewManager.setup()`：它的廣角流程會歸零（§2.2），而且會重讀門蓋，若此時門已關上就改走雷射頭相機（raw 模式、移動雷射頭）。沒有廣角校正（`hasWideAngleCamera === false` 或沒有參數）→ 迴圈不啟動，不顯示任何東西。迴圈結束時斷開相機。
 
-門蓋讀為開啟期間迴圈：
+迴圈直到門蓋輪詢（§7.1，持續進行）看到關門，或 `abort()`：
 
 ```
-url = await manager.getPhotoFromMachine()      // 攤平後的 JPEG object URL（§2.2）
+url = takeOnePicture({ timeout: 5 }) → object URL // 攤平後的 JPEG（§2.2）；不跳相機排線警告
 t   = Date.now()                               // 照片完成的時間
 push {url, t}; 保留最後 N = 4 筆，釋放被丟掉的 URL
 await sleep(LOOP_GUARD_MS = 200)               // 拍攝錯誤 → sleep 1000
@@ -213,7 +219,7 @@ await sleep(LOOP_GUARD_MS = 200)               // 拍攝錯誤 → sleep 1000
 
 關門時，兩機型相同：最新且 `t ≤ t_close − SETTLE_MS (1500)` 的一筆；沒有 → 最新一筆；一筆都沒有 → 什麼都不做。
 
-接著 `previewModeBackgroundDrawer.drawFullWorkarea(url)`（`preview-mode-background-drawer.ts:116`），顯示「自動預覽：預覽成功」（3 秒），`manager.end()`。
+接著 `previewModeBackgroundDrawer.drawFullWorkarea(url)`（`preview-mode-background-drawer.ts:116`；不在預覽工作階段時直接繪製，不呼叫 `start()`，因為它會清掉背景並畫出預覽邊界），顯示「自動預覽：預覽成功」（3 秒）。未選中的 URL 一律釋放；`abort()` 不繪製並釋放全部。
 
 ### 7.4 `hasAnyModal()`
 
@@ -270,6 +276,7 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 7. ~~fhx2rf 無有效照片~~ → 什麼都不做（2026-10-16）。2026-10-30 起不適用：fhx2rf 改用 fbb2 規則，包括最新一張的退路。
 8. ~~機器忙碌時的延後重試~~ → v1 不做（§11 F1）。
 9. ~~自己的監聽器還是共用基礎設施~~ → 共用：本功能是背景任務管理器的第二個任務，Promark 是第一個（2026-10-30，`background-tasks.md`）。
+10. ~~fbb2/fhx2rf 攤平用的材料高度~~ → 0，假設材料已對焦（2026-11-02）。讀取高度需要 raw 模式，手動廣角設定還會歸零；需求是不歸零，所以迴圈完全不進 raw 模式（§7.3）。
 
 待定事實（非決策）：fbb2 與 fhx2rf 正常關蓋要花多久，用來確認 `SETTLE_MS = 1500`。
 
@@ -281,6 +288,7 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 - **R2 時間規則是經驗法則（fbb2 與 fhx2rf）。** 非常慢地關蓋仍可能得到傾斜的「靜置」照片。接受（產品決定）；手動預覽仍在。
 - **R3 相機服務的共享曝光。** 兩台電腦在同一台 fbb2/fhx2rf 上跑迴圈會交錯影格；廣角流程兩邊都不改曝光，預期不會損壞。fbm2 的曝光切換在互斥的 raw task 內。
 - **R4 raw 模式下的門蓋輪詢。** `play get_door_open` 在 raw 模式無效；任何子任務開著時任務暫停輪詢。若未來某流程長時間停在 raw 模式，自動預覽會靜默等待。
+- **R5 fbb2/fhx2rf 高度為 0。** 未對焦的厚材料攤平後比例會略有偏差。接受（決策 10）；手動預覽會讀取實際高度。
 - **F1 多台電腦輪流。** 因機器忙碌而跳過週期時，記住一次待拍，在時限內 `st_id` 回到 IDLE 就補拍，讓多台電腦輪流拿到預覽。一個旗標加一個期限；延後。
 - **F2 重新評估標記判斷。** 從 §2.6 的事實出發。可行的形式：「找到的任一標記落在它自己的預期位置就算有效」，一個都找不到時退回時間規則。前提：標記在攤平影格內（放大格線、繪製前裁切）、有平台高度可算預期位置、有機器能在真實光線下量偵測率。
 
