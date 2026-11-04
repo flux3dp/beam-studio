@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'Die UV-Druck-Ebenen enthalten keinen Inhalt. Bitte fügen Sie Ihr Design einer UV-Druck-Ebene hinzu, bevor Sie Drucken und Schneiden verwenden.',
     no_layer_with_path: 'Keine Laser-Ebene enthält einen Vektorpfad. Bereiten Sie eine Laser-Ebene mit dem Schneidpfad vor, um sie als Kontur zu verwenden.',
     no_uv_layer: 'Keine UV-Druck-Ebene gefunden. Bitte stellen Sie das Modul Ihrer Design-Ebene auf „UV-Druck“ um, um Drucken und Schneiden zu verwenden.',
+    offset_swallows_design: 'Der Versatz nach innen ist größer als das Design, sodass nichts mehr zum Schneiden übrig bleibt. Bitte verringern Sie den Versatz.',
     open_preferences: 'Einstellungen öffnen',
     orientation: 'Ausrichtung',
     orientation_landscape: 'Querformat',

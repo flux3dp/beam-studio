@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
-import { InputNumber, Radio, Tooltip } from 'antd';
+import { Alert, InputNumber, Radio, Tooltip } from 'antd';
 import { funnel } from 'remeda';
 
 import { laserModules } from '@core/app/constants/layer-module/layer-modules';
@@ -20,6 +20,8 @@ const StepSetup = (): React.JSX.Element => {
   const { beambox, print_and_cut: t } = useI18n();
   const tOffset = beambox.tool_panels._offset;
   const contourLayerName = usePrintAndCutStore((state) => state.contourLayerName);
+  const contourPathD = usePrintAndCutStore((state) => state.contourPathD);
+  const contourPathOffset = usePrintAndCutStore((state) => state.contourPathOffset);
   const contourSource = usePrintAndCutStore((state) => state.contourSource);
   const offsetDistance = usePrintAndCutStore((state) => state.offsetDistance);
   const printingContentsBBox = usePrintAndCutStore((state) => state.printingContentsBBox);
@@ -59,8 +61,12 @@ const StepSetup = (): React.JSX.Element => {
           const contourPathD = await computeContourPathD(printingContentsBBox, offsetDistance);
 
           // a superseded run can still resolve after a newer one; only the
-          // latest may commit its result
-          if (runIdRef.current === runId) setContourPathD(contourPathD);
+          // latest may commit its result, and only while its offset is still the
+          // input (else a trace for a reverted offset could land after Next and
+          // overwrite the current path once the funnel is cancelled on unmount)
+          if (runIdRef.current === runId && usePrintAndCutStore.getState().offsetDistance === offsetDistance) {
+            setContourPathD(contourPathD, offsetDistance);
+          }
         },
         { minQuietPeriodMs: 300, triggerAt: 'both' },
       ),
@@ -119,19 +125,26 @@ const StepSetup = (): React.JSX.Element => {
         value={contourSource}
       />
       {contourSource === 'outline' ? (
-        <div className={styles.row}>
-          <span className={styles.label}>{tOffset.dist}</span>
-          <InputNumber
-            addonAfter="mm"
-            max={20}
-            min={0.1}
-            onChange={(value) => {
-              if (value) setOffsetDistance(value);
-            }}
-            step={0.5}
-            value={offsetDistance}
-          />
-        </div>
+        <>
+          <div className={styles.row}>
+            <span className={styles.label}>{tOffset.dist}</span>
+            <InputNumber
+              addonAfter="mm"
+              max={20}
+              min={-3}
+              onChange={(value) => {
+                // negative insets the cut inside the print edge (bleed); 0 cuts on the edge
+                if (value !== null) setOffsetDistance(value);
+              }}
+              step={0.5}
+              value={offsetDistance}
+            />
+          </div>
+          {/* a null path traced for the current inward offset means the inset ate the design */}
+          {offsetDistance < 0 && contourPathOffset === offsetDistance && !contourPathD && (
+            <Alert message={t.offset_swallows_design} showIcon type="warning" />
+          )}
+        </>
       ) : (
         <div className={styles.row}>
           <span className={styles.label}>{t.select_cut_layer}</span>

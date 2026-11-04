@@ -2551,6 +2551,7 @@ const lang: ILang = {
     no_content: 'UV 打印图层中没有内容，请先将设计加入 UV 打印图层再使用精准对位。',
     no_layer_with_path: '没有包含路径的激光图层，请先准备含切割路径的激光图层才能作为切割路径使用。',
     no_uv_layer: '找不到 UV 打印图层，请先将设计图层的模块切换为“UV打印”再使用精准对位。',
+    offset_swallows_design: '向内的偏移距离大于设计，已无可切割的路径，请缩小偏移距离。',
     open_preferences: '打开偏好设定',
     orientation: '方向',
     orientation_landscape: '横向',
