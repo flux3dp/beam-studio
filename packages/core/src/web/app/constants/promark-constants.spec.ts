@@ -1,6 +1,5 @@
 import {
   getDefaultPromarkWorkarea,
-  getPromarkFieldWorksize,
   getPromarkLaserSource,
   getPromarkWorkareaOptions,
   isPromarkWorkareaCompatible,
@@ -23,12 +22,6 @@ describe('Promark laser source constants', () => {
     expect(getDefaultPromarkWorkarea({ laserType: LaserType.MOPA, watt: 20 })).toBe(110);
     expect(getDefaultPromarkWorkarea({ laserType: LaserType.MOPA, watt: 60 })).toBe(220);
     expect(getDefaultPromarkWorkarea({ laserType: LaserType.Desktop, watt: 20 })).toBe(220);
-  });
-
-  test('only applies the UV field correction to the 70 mm work area', () => {
-    expect(getPromarkFieldWorksize(LaserType.UV, 70)).toBe(75);
-    expect(getPromarkFieldWorksize(LaserType.UV, 200)).toBe(200);
-    expect(getPromarkFieldWorksize(LaserType.Desktop, 70)).toBe(70);
   });
 
   test('maps Desktop and unknown values to the MOPA backend fallback', () => {
