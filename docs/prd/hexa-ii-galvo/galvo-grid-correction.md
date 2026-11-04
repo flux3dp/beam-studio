@@ -1,18 +1,36 @@
-# PRD: HEXA G 振鏡網格校正表（9×9 grid correction）
+# PRD: HEXA G 振鏡場內畸變修正（網格表 → 軟體預扭曲）
 
 | | |
 |---|---|
-| **Status** | Implemented (unverified on hardware)，2026-11-03。bsl（BeamOS `1746707`、`81e1352`）、player 與 control task（BeamOS `0610bd9`）、fluxghost 解算（`8c40e71`）、Beam Studio 設定與校正區塊都已完成，皆未 push、未部署。下一步是 §10 決策 1 的機器語意探測 |
+| **Status** | In progress，2026-11-04。**改為軟體預扭曲**（§0）：swiftray `4c8ed97`、Beam Studio（`fieldCorrection`）、BeamOS `89e45fb`，皆未 push。下一步：部署 Python 套件、build swiftray 與 Beam Studio，在目前參數下打 coupon 加 L 框建第一版修正表。下面 §1–§12 描述的卡上網格表已實作，但不使用 |
 | **Author** | EstherFu |
 | **Created** | 2026-11-03 |
 | **Target product** | Beam Studio（desktop + web），機型 `fhx2galvo`（HEXA G） |
 | **Owner area** | 振鏡設定（`components/dialogs/promark/`）、裝置通訊（`helpers/device/`） |
-| **Related code** | 振鏡設定與型別：`packages/core/src/web/helpers/device/galvoConfig.ts`（`GalvoGridCorrection`、`gridCorrection`）、`packages/core/src/web/app/components/dialogs/promark/GalvoSettings.tsx`；校正區塊：`packages/core/src/web/app/components/dialogs/promark/GalvoCalibrationBlock.tsx`；解算參數與表的合成：`packages/core/src/web/helpers/device/galvoCalibration/solve.ts`（`composeGridCorrection`、`GRID_SIGN`）；振鏡參數送卡（不改）：`packages/core/src/web/helpers/device/galvoExec.ts` |
+| **Related code** | 修正本體：`packages/core/src/web/helpers/device/galvoFieldCorrection.ts`（`predistort`、`predistortPath`）；設定與型別：`packages/core/src/web/helpers/device/galvoConfig.ts`（`GalvoFieldCorrection`、`fieldCorrection`）、`packages/core/src/web/app/components/dialogs/promark/GalvoSettings.tsx`；自行打標套用修正：`packages/core/src/web/helpers/device/galvoExec.ts`（`galvoPaths`、`galvoDot`）；送給 swiftray：`packages/core/src/web/helpers/api/svg-laser-parser.ts`、`packages/core/src/web/interfaces/ITaskConfig.ts`（`galvo_field_correction`）；校正區塊：`packages/core/src/web/app/components/dialogs/promark/GalvoCalibrationBlock.tsx`；表的合成：`packages/core/src/web/helpers/device/galvoCalibration/solve.ts`（`composeFieldCorrection`、`GRID_TABLE_SIZE` 17） |
 | **Companion PRD** | `docs/prd/hexa-ii-galvo/hexa-g-galvo-calibration.md`：本 PRD 是它 §3 Non-goals 與 §12「原始場（identity grid）」列為後續的 9×9 網格表；圖樣、掃描、解算都沿用它 |
 | **External repos** | `BeamOS_NX_backend`（`promark-updates`）：`src/bsl/bsl_controller.{h,cpp}`（`applyGalvoParams`、`setGalvoParam`）、`src/bsl/bsl_socket.cpp`（`;CONFIG`）、`src/bsl/liblcs/lcsApi.h`（`set_gridcor_params`、`set_gridcor_layer`、`clear_gridcor_layer`）、`src/player_v4/include/galvo_optics.h`（`gridLine`）、`fluxmonitor/controller/tasks/galvo_exec.py`（`grid_command`）、`control_task.py`、`fluxmonitor/storage.py`（`galvo_key_list`）、`tools/bsl-gridcor.py`；協定 `docs/agents/HX2_GALVO_PROTOCOL.md`。`fluxghost`（`dev/hx2-g`）：`fluxghost/utils/camera/galvo_coupon.py`、`fluxghost/api/opencv.py`，改完跑 `uv run python tools/ws_smoke.py`。`swiftray`：不改 |
 | **Measurements** | test7 照片與總覽照：session scratchpad `check7/`（`final.py`、`ov/homo.py`）；原始照片 `~/Downloads/step chain/` |
 
 ---
+
+## 0. 2026-11-04 改為軟體預扭曲
+
+卡上的網格表實測不可用（§10 決策 1、6）：
+- 一載入表，八項 manual 參數與 scanahead invert 就失效。
+- 純比例表的效果正確；但非線性表（test4）只修了約三分之一（仿射殘差 0.38 → 0.24 mm），整體還縮小約 3%，並出現局部對摺。每格扭曲 ≤ 0.3 mm 且對稱，表本身的形狀解釋不了。
+
+因此改成：卡維持八項 manual 模式，剩下的場畸變（f-theta 三次項，0.3–0.5 mm）在送出座標前由軟體修掉。
+
+- **表的定義**：`fieldCorrection {size, field, dx, dy}`，存在機器的 `galvo_co2.json`／`galvo_mopa.json`（BeamOS `89e45fb` 加進 `galvo_key_list`，機器端不讀）。dx/dy 是在 manual 模式下「指令打在 c，實際落點 − c」，17×17、從 (−f/2, −f/2) 開始 X 先變。
+- **修正方式**：要落在 c，就把雷射瞄準在 c′，使 c′ + D(c′) = c。D 用雙線性內插（格子外沿用邊格的平面），定點迭代三次。swiftray `galvo-field-correction.h` 和 Beam Studio `galvoFieldCorrection.ts` 是同一套演算法，兩邊算出的 c′ 一致。
+- **為什麼用 17×17**：在三次曲面上雙線性內插的最大誤差，9×9 是 0.053 mm，17×17 是 0.013 mm（兩邊的測試都量過）。
+- **swiftray**（`4c8ed97`）：所有寫進 fcode 的振鏡座標都經過 `toField` → `predistort`。線段切成 ≤ 4 mm 的小段；packed dot 記錄的長度限制在 4 mm 內，記錄兩端修正、步距跟著兩端走。4 mm 弦長和修正後曲線的偏差約 3 µm。clip、場外判斷、時間估計都用修正前的座標。沒有這個參數時，輸出和原本完全相同。
+- **Beam Studio**：
+  - 雕刻時，`svg-laser-parser` 讀機器設定，有表就送 `galvo_field_correction` 給 swiftray。
+  - 自己打的 coupon、方框、拼接測試、打點（`galvoPaths`、`galvoDot`）也用同一套修正，所以 coupon 量到的就是「修正後還剩下的誤差」。
+  - 「Apply field correction」：新表 = 打 coupon 時畫面上的修正 + 本次量到的位移；沒有修正時就直接用本次量到的位移。manual 模式不需要純比例表起算，也不需要 invert 旗標。
+- **校正流程**：在目前的 manual 參數下打 coupon 加 L 框 → 解算 → Apply field correction → Save → 再打一張 coupon 驗證，視需要再疊加一輪。10/30 的 `1030-1801` 掃描是用第 3 輪參數打的（梯形 Y 1.025，現在是 1.005），角落的 dy 差約 0.6 mm，**不能**拿來建表。
 
 ## 1. Summary
 
@@ -176,7 +194,8 @@
 2. 外插：±44 → ±55 用三次擬合外插，或改 coupon 版面把 node 打到 ±55。第一輪先外插，殘差在邊緣不達標再改版面。
 3. ~~網格表與八項參數的關係~~（2026-11-04，由決策 1 決定）：載入表時卡不使用八項參數，所以表是完整的校正。八項參數保留在設定裡，清除網格表後回到原本的 manual 模式。
 4. ~~保存位置~~（2026-11-03 決定）：存在機器的振鏡設定 `galvo_co2.json`／`galvo_mopa.json`，和其他振鏡參數一樣由 player 和 control task 在每次操作時送出。不用 `save_correction_file`：那是卡上的檔案，換卡或重裝時不會跟著機器設定走。
-5. ~~`GRID_SIGN`（`solve.ts`）~~（2026-11-04）：+1，第二次探測確認。
+5. ~~`GRID_SIGN`（`solve.ts`）~~（2026-11-04）：+1，第二次探測確認。（之後改為軟體修正，這個常數已移除。）
+6. ~~卡上網格表或軟體預扭曲~~（2026-11-04 決定）：改用軟體預扭曲（§0）。卡上網格表的 bsl／player／control task 程式保留，但 Beam Studio 不再寫入 `gridCorrection`。
 
 ## 11. Risks & follow-ups
 

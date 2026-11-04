@@ -24,12 +24,11 @@ import {
 import type { CalibrationRound, ScaleSuggestion, SolveResult } from '@core/helpers/device/galvoCalibration/solve';
 import {
   buildSolveParams,
-  composeGridCorrection,
+  composeFieldCorrection,
   gridMaxShift,
   suggestScales,
 } from '@core/helpers/device/galvoCalibration/solve';
-import type { GalvoConfig, GalvoGridCorrection, GalvoModule } from '@core/helpers/device/galvoConfig';
-import { getGalvoConfig } from '@core/helpers/device/galvoConfig';
+import type { GalvoConfig, GalvoFieldCorrection, GalvoModule } from '@core/helpers/device/galvoConfig';
 import type { GalvoPoint } from '@core/helpers/device/galvoExec';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -43,8 +42,8 @@ interface Props {
   isInch: boolean;
   module: GalvoModule;
   offsets: GalvoPoint;
-  /** Put a grid correction table (null: none) into the settings on screen (not the machine). */
-  onApplyGrid: (grid: GalvoGridCorrection | null) => void;
+  /** Put a field correction (null: none) into the settings on screen (not the machine). */
+  onApplyGrid: (correction: GalvoFieldCorrection | null) => void;
   /** Apply the suggested scales to the settings on screen (not to the machine). */
   onApplyScales: (scales: { scaleX: number; scaleY: number }) => void;
   parameters: MarkParameters;
@@ -90,16 +89,17 @@ const GalvoCalibrationBlock = ({
   const [aimInset, setAimInset] = useState(CAPTURE_AIM_INSET_MM);
   const [solved, setSolved] = useState<null | { result: SolveResult; suggestion: ScaleSuggestion }>(null);
   const [annotatedUrl, setAnnotatedUrl] = useState<null | string>(null);
-  /** What the last Apply grid table did, when it was not the plain next round. */
-  const [gridNote, setGridNote] = useState<null | string>(null);
   const [rounds, setRounds] = useState<CalibrationRound[]>([]);
   /**
    * What the coupon on the bed was marked with: the scales a solved round records as "sent", and
-   * the grid table the machine held -- the saved one, since that is what the control task sends.
+   * the field correction its points were pre-distorted with -- the one on screen, since Beam Studio
+   * applies it itself before anything reaches the machine.
    */
-  const markedWith = useRef<null | { grid: GalvoGridCorrection | null | undefined; scaleX: number; scaleY: number }>(
-    null,
-  );
+  const markedWith = useRef<null | {
+    correction: GalvoFieldCorrection | null | undefined;
+    scaleX: number;
+    scaleY: number;
+  }>(null);
   const cancelRequested = useRef(false);
 
   const busy = pending !== null;
@@ -154,11 +154,9 @@ const GalvoCalibrationBlock = ({
   const handleCoupon = () =>
     run('coupon', 'Mark coupon', () =>
       withStep(async () => {
-        const saved = await getGalvoConfig(module);
-
         await markCoupon({ ...site, config, module, onStep: setStep, power, speed });
         markedWith.current = {
-          grid: saved.gridCorrection,
+          correction: config.fieldCorrection,
           scaleX: config.galvoParameters.x.scale,
           scaleY: config.galvoParameters.y.scale,
         };
@@ -293,22 +291,15 @@ const GalvoCalibrationBlock = ({
   };
 
   /**
-   * The measured table added to the one the coupon was marked with. A loaded photograph has no
-   * record of that, so the saved table stands in for it.
+   * The measured residual added to the correction the coupon was marked with. A loaded photograph
+   * has no record of that, so the correction on screen stands in for it.
    */
-  const handleApplyGrid = async () => {
+  const handleApplyGrid = () => {
     if (!solved?.result.grid) return;
 
-    const marked = markedWith.current ? markedWith.current.grid : (await getGalvoConfig(module)).gridCorrection;
+    const marked = markedWith.current ? markedWith.current.correction : config.fieldCorrection;
 
-    const { fromScales, grid } = composeGridCorrection(marked, solved.result.grid, config);
-
-    onApplyGrid(grid);
-    setGridNote(
-      fromScales
-        ? 'First table: the manual scales only (a table switches the manual coefficients off, so this coupon cannot be added to). Save, mark a coupon with it, solve, and apply again.'
-        : null,
-    );
+    onApplyGrid(composeFieldCorrection(marked, solved.result.grid));
   };
 
   const handleStitch = () =>
@@ -479,9 +470,9 @@ const GalvoCalibrationBlock = ({
           disabled={busy || !solved?.result.grid}
           onClick={handleApplyGrid}
           size="small"
-          title="Scale is in the table too: apply this or the scale suggestion from one solve, not both"
+          title="Scale is in the correction too: apply this or the scale suggestion from one solve, not both"
         >
-          Apply grid table
+          Apply field correction
         </Button>
         <Button
           data-testid="stitch-test"
@@ -499,31 +490,21 @@ const GalvoCalibrationBlock = ({
       </Flex>
       <Flex align="center" gap={8} wrap>
         <span data-testid="grid-status">
-          Grid table:{' '}
-          {config.gridCorrection
-            ? `${config.gridCorrection.size}×${config.gridCorrection.size} over ${config.gridCorrection.field} mm, largest shift ${fmt(gridMaxShift(config.gridCorrection), 3)} mm${config.gridCorrection.fitRmsMm === undefined ? '' : `, fit RMS ${fmt(config.gridCorrection.fitRmsMm, 3)} mm`}${config.gridCorrection.createdAt ? `, ${config.gridCorrection.createdAt.slice(0, 16).replace('T', ' ')}` : ''}`
-            : config.gridCorrection === null
-              ? 'none (cleared on Save)'
-              : 'none'}
+          Field correction:{' '}
+          {config.fieldCorrection
+            ? `${config.fieldCorrection.size}×${config.fieldCorrection.size} over ${config.fieldCorrection.field} mm, largest shift ${fmt(gridMaxShift(config.fieldCorrection), 3)} mm${config.fieldCorrection.fitRmsMm === undefined ? '' : `, fit RMS ${fmt(config.fieldCorrection.fitRmsMm, 3)} mm`}${config.fieldCorrection.createdAt ? `, ${config.fieldCorrection.createdAt.slice(0, 16).replace('T', ' ')}` : ''}`
+            : 'none'}
         </span>
         <Button
           data-testid="clear-grid"
-          disabled={busy || !config.gridCorrection}
-          onClick={() => {
-            onApplyGrid(null);
-            setGridNote(null);
-          }}
+          disabled={busy || !config.fieldCorrection}
+          onClick={() => onApplyGrid(null)}
           size="small"
         >
-          Clear grid table
+          Clear field correction
         </Button>
-        <span>(takes effect on Save, like every value here)</span>
+        <span>(coupons marked here use it at once; jobs after Save)</span>
       </Flex>
-      {gridNote && (
-        <div data-testid="grid-note" style={{ color: '#b45309' }}>
-          {gridNote}
-        </div>
-      )}
       {step && <div data-testid="calibration-step">{step}</div>}
       {captureWarnings.length > 0 && (
         <ul data-testid="capture-warnings" style={{ color: '#b45309', margin: 0, paddingLeft: 20 }}>
@@ -614,7 +595,7 @@ const GalvoCalibrationBlock = ({
               </td>
             </tr>
             <tr>
-              <td>Grid table</td>
+              <td>Field correction</td>
               <td data-testid="grid-result">
                 {result.grid
                   ? `${result.grid.size}×${result.grid.size}, largest shift ${fmt(gridMaxShift(result.grid), 3)} mm, cubic fit RMS / max ${fmt(result.grid.fit_rms_mm, 3)} / ${fmt(result.grid.fit_max_mm, 3)} mm, ${result.grid.extrapolated} points extrapolated`

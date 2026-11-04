@@ -1,4 +1,5 @@
 import type { GalvoConfig, GalvoModule } from '@core/helpers/device/galvoConfig';
+import { predistort, predistortPath } from '@core/helpers/device/galvoFieldCorrection';
 import deviceMaster from '@core/helpers/device-master';
 
 /**
@@ -241,7 +242,7 @@ export const galvoDot = async ({
       head: module,
       op: 'dot',
       optics: toGalvoOptics(config),
-      points: points.map(({ x, y }) => [x, y]),
+      points: points.map((point) => predistort(config.fieldCorrection, point)).map(({ x, y }) => [x, y]),
       power,
     },
     'Dot',
@@ -273,7 +274,8 @@ export const galvoPaths = async ({
       head: module,
       op: 'paths',
       optics: toGalvoOptics(config),
-      paths: paths.map((path) => path.map(({ x, y }) => [x, y])),
+      // marked the way a job is: through the field correction, so a coupon measures what is left
+      paths: paths.map((path) => predistortPath(config.fieldCorrection, path).map(({ x, y }) => [x, y])),
       power,
       speed,
       ...(leadMm === undefined ? {} : { lead_mm: leadMm }),

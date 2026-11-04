@@ -108,6 +108,11 @@ export type TFcodeOptionalConfig = Partial<{
    */
   galvo_field: GalvoWorkarea;
   /**
+   * The mounted head's field distortion from its config on the machine, which the exporter
+   * pre-distorts every galvo coordinate against (swiftray galvo-field-correction.h). Absent: none.
+   */
+  galvo_field_correction: { dx: number[]; dy: number[]; field: number; size: number };
+  /**
    * Walk every row of blocks left to right, from a park a column left of the batch, instead of
    * as a serpentine. Read from the `galvo-fix-backlash` storage key, not the dev settings.
    */

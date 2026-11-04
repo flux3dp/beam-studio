@@ -1,4 +1,4 @@
-import type { GalvoConfig, GalvoGridCorrection } from '../galvoConfig';
+import type { GalvoConfig, GalvoFieldCorrection } from '../galvoConfig';
 import {
   COUPON_GRID,
   COUPON_PITCH,
@@ -27,9 +27,9 @@ export interface SolveParams {
   /** Where the lens centre is in the image, px. */
   expected_center_px: [number, number];
   grid: number;
-  /** The field the proposed grid correction table spans, mm: the lens's, not the coupon's. */
+  /** The field the proposed correction table spans, mm: the lens's, not the coupon's. */
   grid_field: number;
-  /** Points per axis of the proposed grid correction table. */
+  /** Points per axis of the proposed correction table. */
   grid_size: number;
   identity: [number, number];
   identity_r: number;
@@ -105,7 +105,7 @@ export interface SolveResult {
   /** The lens centre in the L frame's coordinates, mm relative to the designed centre. */
   field_center_mm: [number, number] | null;
   /**
-   * The proposed grid correction table: where each point of the card's grid lands minus where it
+   * The proposed field correction table: where each point of a grid over the field lands minus where it
    * was commanded, with translation and rotation taken out. Absent from an older fluxghost, null
    * with too few nodes to fit.
    */
@@ -141,93 +141,42 @@ export interface SolveGrid {
   size: number;
 }
 
-export const GRID_TABLE_SIZE = 9;
-
 /**
- * +1: the card's "actual" coordinates are where a commanded point lands, which is what the solver
- * measures. Settled 2026-11-04 (PRD galvo-grid-correction.md decision 1): a table of
- * actual = theory x (100 / scale) brought a coupon back to its size, scale 1.007 / 0.990.
+ * Points per axis of the field correction table. 17 rather than 9: the table is interpolated
+ * bilinearly, and on the measured cubic field a 13.75 mm cell strays 0.05 mm from it where a
+ * 6.9 mm one strays 0.013 mm.
  */
-export const GRID_SIGN: -1 | 1 = 1;
+export const GRID_TABLE_SIZE = 17;
 
-// || 0: a -0 from a negative coordinate times a zero scale reads as noise in the stored JSON
+// || 0: a -0 from rounding a tiny negative reads as noise in the stored JSON
 const round4 = (value: number): number => Math.round(value * 1e4) / 1e4 || 0;
 
 /**
- * The table that stands in for the manual scales. A loaded table makes the card drop the eight
- * manual coefficients and the scanahead inversion (probe, 2026-11-04), so the first table is the
- * scale those coefficients carried, 100 / scale on each axis -- the rest of what they did (barrel,
- * trapezoid, ...) is what the next coupon measures.
+ * The field correction to apply after a coupon marked with `marked` (the correction Beam Studio
+ * pre-distorted that coupon with; null or absent for none) measured `measured`. What a coupon
+ * measures is what that correction left, so it adds to it: to first order the correction's model
+ * of the field becomes the field. One of another size or field cannot be added to and is replaced.
  */
-export const scaleGridCorrection = (
-  config: Pick<GalvoConfig, 'field' | 'galvoParameters' | 'workarea'>,
-  size = GRID_TABLE_SIZE,
-): Pick<GalvoGridCorrection, 'dx' | 'dy' | 'field' | 'size'> => {
-  const field = config.workarea;
-  const sx = 100 / config.galvoParameters.x.scale - 1;
-  const sy = 100 / config.galvoParameters.y.scale - 1;
-  const dx: number[] = [];
-  const dy: number[] = [];
-
-  for (let row = 0; row < size; row += 1) {
-    for (let col = 0; col < size; col += 1) {
-      dx.push(round4((-field / 2 + (col * field) / (size - 1)) * sx));
-      dy.push(round4((-field / 2 + (row * field) / (size - 1)) * sy));
-    }
-  }
-
-  return { dx, dy, field, size };
-};
-
-/**
- * The table to apply after a coupon marked with `marked` (the table the machine held then; null
- * or absent for none) measured `measured`.
- *
- * With a table in force the measurement is what that table leaves, so it adds to it: to first
- * order the card's model of the field becomes the field. A coupon marked WITHOUT a table was
- * marked through the manual coefficients, which a table switches off, so its measurement says
- * nothing about the field a table works on: the result is then the scale table alone
- * (`fromScales`), to be marked and solved before anything is added. A table of a different size
- * or field cannot be added to either and is treated the same way.
- *
- * The axis flags are the head's own, from `config.field`: the card takes them from the table's
- * parameters once one is loaded, not from the scanahead it otherwise uses.
- */
-export const composeGridCorrection = (
-  marked: GalvoGridCorrection | null | undefined,
+export const composeFieldCorrection = (
+  marked: GalvoFieldCorrection | null | undefined,
   measured: SolveGrid,
-  config: Pick<GalvoConfig, 'field' | 'galvoParameters' | 'workarea'>,
   createdAt = new Date().toISOString(),
-): { fromScales: boolean; grid: GalvoGridCorrection } => {
+): GalvoFieldCorrection => {
   const base = marked && marked.size === measured.size && marked.field === measured.field ? marked : null;
-  const flags = {
-    ...(config.field.swapXY ? { flip: true } : {}),
-    ...(config.field.invertX ? { invertX: true } : {}),
-    ...(config.field.invertY ? { invertY: true } : {}),
-  };
-
-  if (!base) {
-    return { fromScales: true, grid: { createdAt, ...scaleGridCorrection(config, measured.size), ...flags } };
-  }
-
-  const add = (from: number[], d: number[]) => d.map((v, i) => round4((from[i] ?? 0) + GRID_SIGN * v));
+  const add = (from: number[] | undefined, d: number[]) => d.map((v, i) => round4((from?.[i] ?? 0) + v));
 
   return {
-    fromScales: false,
-    grid: {
-      createdAt,
-      dx: add(base.dx, measured.dx),
-      dy: add(base.dy, measured.dy),
-      field: measured.field,
-      ...(measured.fit_rms_mm === null ? {} : { fitRmsMm: measured.fit_rms_mm }),
-      ...flags,
-      size: measured.size,
-    },
+    createdAt,
+    dx: add(base?.dx, measured.dx),
+    dy: add(base?.dy, measured.dy),
+    field: measured.field,
+    ...(measured.fit_rms_mm === null ? {} : { fitRmsMm: measured.fit_rms_mm }),
+    size: measured.size,
   };
 };
 
 /** The largest displacement in a table, mm: a one-glance size for the settings to show. */
-export const gridMaxShift = (grid: Pick<GalvoGridCorrection, 'dx' | 'dy'>): number =>
+export const gridMaxShift = (grid: Pick<GalvoFieldCorrection, 'dx' | 'dy'>): number =>
   grid.dx.reduce((max, dx, i) => Math.max(max, Math.hypot(dx, grid.dy[i] ?? 0)), 0);
 
 /** One marked-and-solved coupon, for the secant estimate of the next round. */

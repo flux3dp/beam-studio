@@ -173,8 +173,9 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
         y: { ...cur.galvoParameters.y, scale: scaleY },
       },
     }));
-  /** Likewise a grid correction table, or null to clear the machine's on Save. */
-  const applyGrid = (gridCorrection: GalvoConfig['gridCorrection']) => setConfig((cur) => ({ ...cur, gridCorrection }));
+  /** Likewise a field correction, or null for none. */
+  const applyGrid = (fieldCorrection: GalvoConfig['fieldCorrection']) =>
+    setConfig((cur) => ({ ...cur, fieldCorrection }));
   const setFieldValue: Dispatch<SetStateAction<GalvoConfig['field']>> = (value) =>
     setConfig((cur) => ({ ...cur, field: typeof value === 'function' ? value(cur.field) : value }));
 

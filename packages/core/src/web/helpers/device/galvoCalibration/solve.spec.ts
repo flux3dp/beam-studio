@@ -1,16 +1,8 @@
-import type { GalvoConfig, GalvoGridCorrection } from '@core/helpers/device/galvoConfig';
+import type { GalvoConfig, GalvoFieldCorrection } from '@core/helpers/device/galvoConfig';
 
 import type { CapturedCoupon } from './captureGrid';
 import type { CalibrationRound, SolveGrid } from './solve';
-import {
-  buildSolveParams,
-  composeGridCorrection,
-  GRID_SIGN,
-  gridMaxShift,
-  SCALE_X_SLOPE,
-  scaleGridCorrection,
-  suggestScales,
-} from './solve';
+import { buildSolveParams, composeFieldCorrection, gridMaxShift, SCALE_X_SLOPE, suggestScales } from './solve';
 
 const captured: CapturedCoupon = {
   blob: new Blob(),
@@ -51,7 +43,7 @@ describe('galvoCalibration solve', () => {
         expected_center_px: [1800, 1800],
         grid: 9,
         grid_field: 110,
-        grid_size: 9,
+        grid_size: 17,
         identity: [-44, -51],
         identity_r: 0.5,
         invert: [true, true],
@@ -113,7 +105,7 @@ describe('galvoCalibration solve', () => {
     });
   });
 
-  describe('composeGridCorrection', () => {
+  describe('composeFieldCorrection', () => {
     const measured = (dx: number[], dy: number[], extra: Partial<SolveGrid> = {}): SolveGrid => ({
       dx,
       dy,
@@ -125,57 +117,32 @@ describe('galvoCalibration solve', () => {
       ...extra,
     });
 
-    // the CO2 head: mirrored on both axes, manual scales 87.14 / 79 (the 2026-10-30 calibration)
-    const co2 = {
-      ...configWith(true, true),
-      galvoParameters: {
-        x: { bulge: 1, scale: 87.14, skew: 1, trapezoid: 1 },
-        y: { bulge: 1, scale: 79, skew: 1, trapezoid: 1 },
-      },
-    };
+    it('starts from the measurement when the coupon had no correction', () => {
+      const correction = composeFieldCorrection(undefined, measured([0.1, 0, 0, -0.2], [0, 0.3, 0, 0]), 'T');
 
-    it('starts from the manual scales, not the measurement, when the coupon had no table', () => {
-      const { fromScales, grid } = composeGridCorrection(undefined, measured([9, 9, 9, 9], [9, 9, 9, 9]), co2, 'T');
-
-      expect(fromScales).toBe(true);
-      // 2 x 2 over 110: the corners, -55 and +55 on each axis, X fastest
-      expect(grid.dx).toEqual([-55, 55, -55, 55].map((x) => Math.round(x * (100 / 87.14 - 1) * 1e4) / 1e4));
-      expect(grid.dy).toEqual([-55, -55, 55, 55].map((y) => Math.round(y * (100 / 79 - 1) * 1e4) / 1e4));
-      expect(grid).toMatchObject({ createdAt: 'T', field: 110, invertX: true, invertY: true, size: 2 });
-      expect(grid).not.toHaveProperty('flip');
-      expect(composeGridCorrection(null, measured([1, 1, 1, 1], [0, 0, 0, 0]), co2, 'T').fromScales).toBe(true);
-    });
-
-    it('adds what is left to the table the coupon was marked with', () => {
-      const marked: GalvoGridCorrection = { dx: [1, 2, 3, 4], dy: [0, 0, 0, 0], field: 110, size: 2 };
-      const { fromScales, grid } = composeGridCorrection(
-        marked,
-        measured([0.1, 0.1, 0.1, 0.1], [0.05, 0, 0, 0]),
-        co2,
-        'T',
-      );
-
-      expect(fromScales).toBe(false);
-      expect(grid.dx).toEqual([1, 2, 3, 4].map((v) => Math.round((v + GRID_SIGN * 0.1) * 1e4) / 1e4));
-      expect(grid.dy[0]).toBeCloseTo(GRID_SIGN * 0.05);
-      expect(grid.fitRmsMm).toBe(0.01);
-      // the flags are the head's, whatever the marked table carried
-      expect(grid).toMatchObject({ invertX: true, invertY: true });
-    });
-
-    it('starts over from the scales for a table of another size or field', () => {
-      const marked: GalvoGridCorrection = { dx: [9, 9, 9, 9], dy: [9, 9, 9, 9], field: 70, size: 2 };
-
-      expect(composeGridCorrection(marked, measured([0, 0, 0, 0], [0, 0, 0, 0]), co2, 'T').fromScales).toBe(true);
-    });
-
-    it('makes an identity table from neutral scales', () => {
-      expect(scaleGridCorrection(configWith(false, false), 3)).toEqual({
-        dx: Array(9).fill(0),
-        dy: Array(9).fill(0),
+      expect(correction).toEqual({
+        createdAt: 'T',
+        dx: [0.1, 0, 0, -0.2],
+        dy: [0, 0.3, 0, 0],
         field: 110,
-        size: 3,
+        fitRmsMm: 0.01,
+        size: 2,
       });
+      expect(composeFieldCorrection(null, measured([1, 1, 1, 1], [0, 0, 0, 0]), 'T').dx).toEqual([1, 1, 1, 1]);
+    });
+
+    it('adds what is left to the correction the coupon was marked with', () => {
+      const marked: GalvoFieldCorrection = { dx: [1, 2, 3, 4], dy: [0, 0, 0, 0], field: 110, size: 2 };
+      const correction = composeFieldCorrection(marked, measured([0.1, 0.1, 0.1, 0.1], [0.05, 0, 0, 0]), 'T');
+
+      expect(correction.dx).toEqual([1.1, 2.1, 3.1, 4.1]);
+      expect(correction.dy).toEqual([0.05, 0, 0, 0]);
+    });
+
+    it('replaces a correction of another size or field instead of adding to it', () => {
+      const marked: GalvoFieldCorrection = { dx: [9, 9, 9, 9], dy: [9, 9, 9, 9], field: 70, size: 2 };
+
+      expect(composeFieldCorrection(marked, measured([0, 0, 0, 0], [0, 0, 0, 0]), 'T').dx).toEqual([0, 0, 0, 0]);
     });
 
     it('measures a table by its largest shift', () => {

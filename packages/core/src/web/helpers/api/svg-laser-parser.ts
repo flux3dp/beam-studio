@@ -32,6 +32,7 @@ import { getRotaryInfo, getSpinningAxis } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
 import { getFixBacklash } from '@core/helpers/device/galvoCalibration/backlash';
 import { getGalvoConfig } from '@core/helpers/device/galvoConfig';
+import { isFieldCorrectionUsable } from '@core/helpers/device/galvoFieldCorrection';
 import { getGantryTravelBoundary } from '@core/helpers/device/gantryTravelRange';
 import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -136,7 +137,19 @@ export const getExportOpt = async (
       hasModuleLayer([module], { checkRepeat: true, checkVisible: true }),
     );
 
-    if (galvoModule) config.galvo_field = (await getGalvoConfig(galvoModule)).workarea;
+    if (galvoModule) {
+      const galvoConfig = await getGalvoConfig(galvoModule);
+
+      config.galvo_field = galvoConfig.workarea;
+
+      // The head's measured field distortion, pre-distorted away by the exporter. Only the table
+      // goes: when it was made and how well it fitted are for the settings to show.
+      if (isFieldCorrectionUsable(galvoConfig.fieldCorrection)) {
+        const { dx, dy, field, size } = galvoConfig.fieldCorrection!;
+
+        config.galvo_field_correction = { dx, dy, field, size };
+      }
+    }
 
     // What the parked heads cost the gantry, before any galvo reach is added back: the exporter
     // subtracts half a field itself, so sending the widened value would take it off twice and
