@@ -105,7 +105,10 @@
 1. 沿用 `solve_galvo_coupon` 的 node 結果：每個 node 的指令座標（±44、間距 11）與 L 框座標系下的量測座標，扣掉場心偏移與旋轉（這兩項由 offset 與 angle 處理，不放進表裡）。
 2. 對兩個軸各擬合一個雙變數三次多項式（10 項），取值到 9×9 網格點。±44 之外是外插，殘差另外標註。
 3. 輸出 `grid: { size, field, dx: [size²], dy: [size²], fit_rms_mm, fit_max_mm, extrapolated }`。`dx`、`dy` 是每個網格點的「落點 − 指令」位移，順序是從 (−f/2, −f/2) 開始、X 先變的列優先；`extrapolated` 是超出 coupon 範圍、靠外插得到的點數（110 場是 81 − 49 = 32）。`grid_size`（預設 9）、`grid_field`（預設 110，Beam Studio 傳 `config.workarea`）由參數決定。實作：`galvo_coupon.grid_table`，fluxghost `8c40e71`。
-4. 已經帶表時（S3），由 Beam Studio 合成新表（`composeGridCorrection`）：新表 = 打 coupon 當時機器上的表 + `GRID_SIGN` × 本次量到的位移。這次量到的是「帶著舊表還剩下的誤差」，所以一階近似下直接相加即可。`GRID_SIGN` 暫定 +1（照 SDK「理論／實際」的字面意思），由 §7.4 探測確認。大小或場不同的舊表無法相加，直接取代。
+4. 由 Beam Studio 合成新表（`composeGridCorrection`）：
+   - 打 coupon 時已經帶表：新表 = 當時機器上的表 + `GRID_SIGN`（+1）× 本次量到的位移。這次量到的是「帶著舊表還剩下的誤差」，所以一階近似下直接相加即可。
+   - 打 coupon 時沒有表，或舊表的大小、場不同：那張 coupon 是用八項參數打的，而載入表後八項參數會失效（決策 1），所以它的量測不能用。新表改成「純比例表」（`scaleGridCorrection`，100 / scale），要先帶這張表再打一次 coupon。
+   - invert／flip 旗標一律取 `config.field`。
 
 ### 7.3 bsl：保存與套用
 
@@ -165,14 +168,15 @@
 
 ## 10. Open decisions
 
-1. SDK 語意：網格表與 manual 參數、scanahead（angle、offset、invert、swap）的套用順序；陣列順序；「實際」的定義；是否需要 `select_cor_table` 才會生效。由 §7.4 探測決定。
+1. ~~SDK 語意~~（2026-11-04 決定，兩次探測）：網格表與 manual 參數、scanahead（angle、offset、invert、swap）的套用順序；陣列順序；「實際」的定義；是否需要 `select_cor_table` 才會生效。結論：不需要 `select_cor_table`；載入表後八項 manual 參數與 scanahead invert 失效，invert 改由 gridcor 旗標決定；區域偏移仍有作用；「實際」= 落點（`GRID_SIGN` +1）；陣列是 X 先變的列優先。angle 很可能仍有作用：第二次探測量到 rotation 0.067°，如果失效預期約 0.16°；剩下的旋轉在網格模式下由 angle 處理。
    - 2026-11-04 第一次探測（`~/Downloads/fluxghost-frames/1104-grid-test/` test1 不帶表、test2 帶 `--probe 1`）：不需要 `select_cor_table`，表會直接生效。但**載入表之後，八項 manual 參數和 scanahead 的 invert 都失效了**：coupon 變成 X ×1.161、Y ×1.246（manual scale 100/87.14 = 1.148、100/79 = 1.266），超出可達範圍，右側和 identity 環被切掉；雕刻也改成從右下角開始。所以網格表必須是**完整的校正**，invert 要放在 `set_gridcor_params` 的旗標裡。
    - 第二次探測：`bsl-gridcor.py --scale 1.1476 1.2658 --invert-x 1 --invert-y 1`，打 coupon 加 L 框。大小正確代表「實際」= 落點；比例再放大代表正負號相反；X、Y 比例對調代表順序被轉置；解算出的 rotation 和場心位置，可以判斷 angle 和區域偏移在網格模式下還有沒有作用。
-   - 已確認的部分要改的程式：表要帶 invert 旗標（取 `config.field`）；第一張表不能用 manual 模式下量到的資料起算，要從「純比例表」起算，再用帶表打的 coupon 迭代。
+   - 第二次探測結果（test3）：scale 1.0066 / 0.9899、skew −0.05°、rotation 0.067°、場心 (−0.07, −0.01) mm、identity 環方向和 invert 一致；原始誤差 RMS / max 0.51 / 1.68 mm（純比例，沒有桶形等修正）；三次擬合 RMS / max 0.050 / 0.087 mm。第一張完整的表 = 比例表 + 本次位移，存在 `~/Downloads/fluxghost-frames/1104-grid-test/grid-round1.json`。
+   - 程式已改：`composeGridCorrection` 的 invert／flip 旗標取 `config.field`；打 coupon 時如果機器上沒有表，就改用 `scaleGridCorrection`（100 / scale）產生第一張表，不使用這次量到的位移，畫面會提示要先帶這張表再打一次 coupon。
 2. 外插：±44 → ±55 用三次擬合外插，或改 coupon 版面把 node 打到 ±55。第一輪先外插，殘差在邊緣不達標再改版面。
-3. 網格表與八項參數的關係：保留目前的最終參數，表只修殘差（預設）；或把八項歸零、全部交給表。視決策 1 而定。
+3. ~~網格表與八項參數的關係~~（2026-11-04，由決策 1 決定）：載入表時卡不使用八項參數，所以表是完整的校正。八項參數保留在設定裡，清除網格表後回到原本的 manual 模式。
 4. ~~保存位置~~（2026-11-03 決定）：存在機器的振鏡設定 `galvo_co2.json`／`galvo_mopa.json`，和其他振鏡參數一樣由 player 和 control task 在每次操作時送出。不用 `save_correction_file`：那是卡上的檔案，換卡或重裝時不會跟著機器設定走。
-5. `GRID_SIGN`（`solve.ts`）：暫定 +1，探測後確認。
+5. ~~`GRID_SIGN`（`solve.ts`）~~（2026-11-04）：+1，第二次探測確認。
 
 ## 11. Risks & follow-ups
 

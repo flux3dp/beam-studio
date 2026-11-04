@@ -8,6 +8,7 @@ import {
   GRID_SIGN,
   gridMaxShift,
   SCALE_X_SLOPE,
+  scaleGridCorrection,
   suggestScales,
 } from './solve';
 
@@ -124,35 +125,57 @@ describe('galvoCalibration solve', () => {
       ...extra,
     });
 
-    it('starts from nothing when the coupon was marked without a table', () => {
-      const grid = composeGridCorrection(undefined, measured([0.1, 0, 0, -0.2], [0, 0.3, 0, 0]), 'T');
+    // the CO2 head: mirrored on both axes, manual scales 87.14 / 79 (the 2026-10-30 calibration)
+    const co2 = {
+      ...configWith(true, true),
+      galvoParameters: {
+        x: { bulge: 1, scale: 87.14, skew: 1, trapezoid: 1 },
+        y: { bulge: 1, scale: 79, skew: 1, trapezoid: 1 },
+      },
+    };
 
-      expect(grid).toEqual({
-        createdAt: 'T',
-        dx: [0.1, 0, 0, -0.2].map((v) => GRID_SIGN * v),
-        dy: [0, 0.3, 0, 0].map((v) => GRID_SIGN * v),
-        field: 110,
-        fitRmsMm: 0.01,
-        size: 2,
-      });
-      expect(composeGridCorrection(null, measured([1, 1, 1, 1], [0, 0, 0, 0]), 'T').dx).toEqual(
-        Array(4).fill(GRID_SIGN),
-      );
+    it('starts from the manual scales, not the measurement, when the coupon had no table', () => {
+      const { fromScales, grid } = composeGridCorrection(undefined, measured([9, 9, 9, 9], [9, 9, 9, 9]), co2, 'T');
+
+      expect(fromScales).toBe(true);
+      // 2 x 2 over 110: the corners, -55 and +55 on each axis, X fastest
+      expect(grid.dx).toEqual([-55, 55, -55, 55].map((x) => Math.round(x * (100 / 87.14 - 1) * 1e4) / 1e4));
+      expect(grid.dy).toEqual([-55, -55, 55, 55].map((y) => Math.round(y * (100 / 79 - 1) * 1e4) / 1e4));
+      expect(grid).toMatchObject({ createdAt: 'T', field: 110, invertX: true, invertY: true, size: 2 });
+      expect(grid).not.toHaveProperty('flip');
+      expect(composeGridCorrection(null, measured([1, 1, 1, 1], [0, 0, 0, 0]), co2, 'T').fromScales).toBe(true);
     });
 
-    it('adds what is left to the table the coupon was marked with, keeping its flags', () => {
-      const marked: GalvoGridCorrection = { dx: [1, 2, 3, 4], dy: [0, 0, 0, 0], field: 110, invertY: true, size: 2 };
-      const grid = composeGridCorrection(marked, measured([0.1, 0.1, 0.1, 0.1], [0.05, 0, 0, 0]), 'T');
+    it('adds what is left to the table the coupon was marked with', () => {
+      const marked: GalvoGridCorrection = { dx: [1, 2, 3, 4], dy: [0, 0, 0, 0], field: 110, size: 2 };
+      const { fromScales, grid } = composeGridCorrection(
+        marked,
+        measured([0.1, 0.1, 0.1, 0.1], [0.05, 0, 0, 0]),
+        co2,
+        'T',
+      );
 
+      expect(fromScales).toBe(false);
       expect(grid.dx).toEqual([1, 2, 3, 4].map((v) => Math.round((v + GRID_SIGN * 0.1) * 1e4) / 1e4));
       expect(grid.dy[0]).toBeCloseTo(GRID_SIGN * 0.05);
-      expect(grid.invertY).toBe(true);
+      expect(grid.fitRmsMm).toBe(0.01);
+      // the flags are the head's, whatever the marked table carried
+      expect(grid).toMatchObject({ invertX: true, invertY: true });
     });
 
-    it('replaces a table of another size or field instead of adding to it', () => {
+    it('starts over from the scales for a table of another size or field', () => {
       const marked: GalvoGridCorrection = { dx: [9, 9, 9, 9], dy: [9, 9, 9, 9], field: 70, size: 2 };
 
-      expect(composeGridCorrection(marked, measured([0, 0, 0, 0], [0, 0, 0, 0]), 'T').dx).toEqual([0, 0, 0, 0]);
+      expect(composeGridCorrection(marked, measured([0, 0, 0, 0], [0, 0, 0, 0]), co2, 'T').fromScales).toBe(true);
+    });
+
+    it('makes an identity table from neutral scales', () => {
+      expect(scaleGridCorrection(configWith(false, false), 3)).toEqual({
+        dx: Array(9).fill(0),
+        dy: Array(9).fill(0),
+        field: 110,
+        size: 3,
+      });
     });
 
     it('measures a table by its largest shift', () => {

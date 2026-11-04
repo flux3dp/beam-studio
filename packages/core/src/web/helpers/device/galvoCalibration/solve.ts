@@ -144,38 +144,85 @@ export interface SolveGrid {
 export const GRID_TABLE_SIZE = 9;
 
 /**
- * +1 if the card's "actual" coordinates are where a commanded point lands -- what the solver
- * measures -- and -1 if they are where to aim instead. The SDK does not say; the one-point probe
- * (PRD galvo-grid-correction.md §7.4, decision 1) settles it. Until then +1, the reading of the
- * SDK's own words ("theoretical" / "actual").
+ * +1: the card's "actual" coordinates are where a commanded point lands, which is what the solver
+ * measures. Settled 2026-11-04 (PRD galvo-grid-correction.md decision 1): a table of
+ * actual = theory x (100 / scale) brought a coupon back to its size, scale 1.007 / 0.990.
  */
 export const GRID_SIGN: -1 | 1 = 1;
 
+// || 0: a -0 from a negative coordinate times a zero scale reads as noise in the stored JSON
+const round4 = (value: number): number => Math.round(value * 1e4) / 1e4 || 0;
+
+/**
+ * The table that stands in for the manual scales. A loaded table makes the card drop the eight
+ * manual coefficients and the scanahead inversion (probe, 2026-11-04), so the first table is the
+ * scale those coefficients carried, 100 / scale on each axis -- the rest of what they did (barrel,
+ * trapezoid, ...) is what the next coupon measures.
+ */
+export const scaleGridCorrection = (
+  config: Pick<GalvoConfig, 'field' | 'galvoParameters' | 'workarea'>,
+  size = GRID_TABLE_SIZE,
+): Pick<GalvoGridCorrection, 'dx' | 'dy' | 'field' | 'size'> => {
+  const field = config.workarea;
+  const sx = 100 / config.galvoParameters.x.scale - 1;
+  const sy = 100 / config.galvoParameters.y.scale - 1;
+  const dx: number[] = [];
+  const dy: number[] = [];
+
+  for (let row = 0; row < size; row += 1) {
+    for (let col = 0; col < size; col += 1) {
+      dx.push(round4((-field / 2 + (col * field) / (size - 1)) * sx));
+      dy.push(round4((-field / 2 + (row * field) / (size - 1)) * sy));
+    }
+  }
+
+  return { dx, dy, field, size };
+};
+
 /**
  * The table to apply after a coupon marked with `marked` (the table the machine held then; null
- * or absent for none) measured `measured`. The measurement is what is left with `marked` in
- * force, so it adds to it: to first order the card's model of the field becomes the field.
- * A table of a different size or field cannot be added to and is replaced.
+ * or absent for none) measured `measured`.
+ *
+ * With a table in force the measurement is what that table leaves, so it adds to it: to first
+ * order the card's model of the field becomes the field. A coupon marked WITHOUT a table was
+ * marked through the manual coefficients, which a table switches off, so its measurement says
+ * nothing about the field a table works on: the result is then the scale table alone
+ * (`fromScales`), to be marked and solved before anything is added. A table of a different size
+ * or field cannot be added to either and is treated the same way.
+ *
+ * The axis flags are the head's own, from `config.field`: the card takes them from the table's
+ * parameters once one is loaded, not from the scanahead it otherwise uses.
  */
 export const composeGridCorrection = (
   marked: GalvoGridCorrection | null | undefined,
   measured: SolveGrid,
+  config: Pick<GalvoConfig, 'field' | 'galvoParameters' | 'workarea'>,
   createdAt = new Date().toISOString(),
-): GalvoGridCorrection => {
+): { fromScales: boolean; grid: GalvoGridCorrection } => {
   const base = marked && marked.size === measured.size && marked.field === measured.field ? marked : null;
-  const add = (from: number[] | undefined, d: number[]) =>
-    d.map((v, i) => Math.round(((from?.[i] ?? 0) + GRID_SIGN * v) * 1e4) / 1e4);
+  const flags = {
+    ...(config.field.swapXY ? { flip: true } : {}),
+    ...(config.field.invertX ? { invertX: true } : {}),
+    ...(config.field.invertY ? { invertY: true } : {}),
+  };
+
+  if (!base) {
+    return { fromScales: true, grid: { createdAt, ...scaleGridCorrection(config, measured.size), ...flags } };
+  }
+
+  const add = (from: number[], d: number[]) => d.map((v, i) => round4((from[i] ?? 0) + GRID_SIGN * v));
 
   return {
-    createdAt,
-    dx: add(base?.dx, measured.dx),
-    dy: add(base?.dy, measured.dy),
-    field: measured.field,
-    ...(measured.fit_rms_mm === null ? {} : { fitRmsMm: measured.fit_rms_mm }),
-    ...(base?.flip ? { flip: true } : {}),
-    ...(base?.invertX ? { invertX: true } : {}),
-    ...(base?.invertY ? { invertY: true } : {}),
-    size: measured.size,
+    fromScales: false,
+    grid: {
+      createdAt,
+      dx: add(base.dx, measured.dx),
+      dy: add(base.dy, measured.dy),
+      field: measured.field,
+      ...(measured.fit_rms_mm === null ? {} : { fitRmsMm: measured.fit_rms_mm }),
+      ...flags,
+      size: measured.size,
+    },
   };
 };
 

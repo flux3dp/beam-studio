@@ -90,6 +90,8 @@ const GalvoCalibrationBlock = ({
   const [aimInset, setAimInset] = useState(CAPTURE_AIM_INSET_MM);
   const [solved, setSolved] = useState<null | { result: SolveResult; suggestion: ScaleSuggestion }>(null);
   const [annotatedUrl, setAnnotatedUrl] = useState<null | string>(null);
+  /** What the last Apply grid table did, when it was not the plain next round. */
+  const [gridNote, setGridNote] = useState<null | string>(null);
   const [rounds, setRounds] = useState<CalibrationRound[]>([]);
   /**
    * What the coupon on the bed was marked with: the scales a solved round records as "sent", and
@@ -299,7 +301,14 @@ const GalvoCalibrationBlock = ({
 
     const marked = markedWith.current ? markedWith.current.grid : (await getGalvoConfig(module)).gridCorrection;
 
-    onApplyGrid(composeGridCorrection(marked, solved.result.grid));
+    const { fromScales, grid } = composeGridCorrection(marked, solved.result.grid, config);
+
+    onApplyGrid(grid);
+    setGridNote(
+      fromScales
+        ? 'First table: the manual scales only (a table switches the manual coefficients off, so this coupon cannot be added to). Save, mark a coupon with it, solve, and apply again.'
+        : null,
+    );
   };
 
   const handleStitch = () =>
@@ -500,13 +509,21 @@ const GalvoCalibrationBlock = ({
         <Button
           data-testid="clear-grid"
           disabled={busy || !config.gridCorrection}
-          onClick={() => onApplyGrid(null)}
+          onClick={() => {
+            onApplyGrid(null);
+            setGridNote(null);
+          }}
           size="small"
         >
           Clear grid table
         </Button>
         <span>(takes effect on Save, like every value here)</span>
       </Flex>
+      {gridNote && (
+        <div data-testid="grid-note" style={{ color: '#b45309' }}>
+          {gridNote}
+        </div>
+      )}
       {step && <div data-testid="calibration-step">{step}</div>}
       {captureWarnings.length > 0 && (
         <ul data-testid="capture-warnings" style={{ color: '#b45309', margin: 0, paddingLeft: 20 }}>
