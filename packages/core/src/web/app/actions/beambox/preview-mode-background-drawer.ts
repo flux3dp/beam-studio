@@ -41,6 +41,8 @@ class PreviewModeBackgroundDrawer {
   protected coordinates: { maxX: number; maxY: number; minX: number; minY: number };
   protected cameraOffset: CameraParameters | null;
   protected backgroundDrawerSubject: Subject<ObservableInput<Blob>>;
+  /** Between start() and end(): draws go through backgroundDrawerSubject */
+  private isSessionOpen = false;
 
   constructor() {
     this.canvas = document.createElement('canvas');
@@ -107,15 +109,28 @@ class PreviewModeBackgroundDrawer {
 
     this.backgroundDrawerSubject = new Subject();
     this.backgroundDrawerSubject.pipe(concatMap((o) => from(o))).subscribe(this.drawBlobToBackground);
+    this.isSessionOpen = true;
   }
 
   end() {
     this.backgroundDrawerSubject?.complete();
+    this.isSessionOpen = false;
   }
 
   async drawFullWorkarea(imgUrl: string, callBack = () => {}) {
     this._isFullWorkareaDrawn = true;
-    this.backgroundDrawerSubject.next(this.preprocessFullWorkareaImg(imgUrl, callBack));
+
+    const blob = this.preprocessFullWorkareaImg(imgUrl, callBack);
+
+    // Outside a preview session (e.g. auto full-area preview) nothing consumes the subject, so draw directly.
+    // start() is not used for that: it clears the background and draws the preview boundary.
+    if (!this.isSessionOpen) {
+      this.drawBlobToBackground(await blob);
+
+      return;
+    }
+
+    this.backgroundDrawerSubject.next(blob);
   }
 
   /**
