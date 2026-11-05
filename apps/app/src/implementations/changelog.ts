@@ -1,43 +1,40 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.7.2 beta
+// 2.7.3 beta
 const CHANGES_TW = {
   added: [
-    '新增 FLUX 101 新手課程（含學習進度、徽章與 AI 點數獎勵）。',
-    '新增 物件中心吸附功能：拖曳或旋轉時可吸附至相機預覽中偵測到的物件。',
-    '新增 自動對位 AI 輪廓偵測引擎（可於 設定 > 相機 切換）。',
-    '新增 多選時可一次解散多個圖檔。',
-    '新增 下載 LightBurn 記錄檔選項。',
+    '新增 Promark UV 雷射源與內雕（3D）模式。',
+    '新增 校正 > 手動輸入：直接編輯相機預覽偏移（魚眼機種含廣角分區偏移與區域漸變）、模組偏移與精準對位偏移。',
+    '新增 beamo II / Beambox II / HEXA RF 圖層進階設定「雷射頻率」（20–500 kHz，需韌體 6.5.3 以上）。',
+    '新增 Promark 多組場鏡參數：每個工作範圍各自保存場鏡、振鏡與紅點參數，選機時自動套用並檢查參數範圍。',
+    '新增 精準對位偏移距離支援負值（最小 −3 mm），切割線可內縮作出血。',
+    '新增 錯誤回報自動上傳：錯誤視窗可選擇附上診斷資訊，並可於 設定 > 隱私權 選擇每次詢問、自動傳送或不傳送。',
   ],
   changed: [
-    '變更 beamo II 預設參數，並將木材拆分為合板與實木，新增有膜壓克力。',
-    '變更 beamo II 相機韌體 6.5.3 以上不再執行低解析度預熱拍攝，加快全區預覽。',
-    '變更 Windows 與網頁版圖示，與新版 macOS 圖示一致。',
+    '變更 全新安裝時 beamo II 4C 墨水匣版本預設為 V2。',
+    '變更 Windows 防火牆規則改由安裝程式加入，啟動時不再要求系統管理員權限。',
   ],
   fixed: [
-    '修正 轉換或匯出點陣圖時未依圖層 DPI 取樣，導致解析度不足的問題。',
-    '修正 裁切路徑後鏤空區域被填滿的問題。',
-    '修正 新版韌體下儀表板相機畫面空白的問題。',
+    '修正 beamo II 相機校正時門蓋檢查堆積導致流程卡住的問題。',
+    '修正 西班牙文翻譯錯誤，並改善各語言剩餘時間的顯示方式。',
   ],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added FLUX 101, an in-app beginner course with progress tracking, badges, and AI credit rewards.',
-    'Added Snap to Object Center: snap designs to objects detected in the camera preview while moving or rotating.',
-    'Added an AI contour detection engine for Auto Fit (toggle in Settings > Camera).',
-    'Added disassembling multiple selected imported SVGs at once.',
-    'Added a LightBurn log download option.',
+    'Added Calibration > Manual Configuration to edit camera preview offsets (incl. per-region wide-angle offsets with blending on fisheye models), module offsets and the Print and Cut offset directly.',
+    'Added a per-layer Laser Frequency advanced setting (20–500 kHz) for beamo II / Beambox II / HEXA RF (firmware 6.5.3 or later).',
+    'Added Promark lens profiles: field, galvo and red-dot parameters are stored per work area, applied automatically on machine selection and range-checked.',
+    'Added negative Print and Cut offsets (down to −3 mm) to inset the cut line for bleed.',
+    'Added error report upload: error dialogs can attach diagnostics, with Ask / Always / Never in Settings > Privacy.',
   ],
   changed: [
-    'Updated beamo II presets, split Wood into Plywood and Solid Wood, and added Acrylic (With Film).',
-    'Skipped the low-resolution warm-up capture on beamo II camera firmware 6.5.3 or later for faster full-area preview.',
-    'Updated the Windows and web icons to match the new macOS icon.',
+    'Fresh installs default the beamo II 4C ink cartridge version to V2.',
+    'The Windows firewall rule is now added by the installer, so launching no longer requires administrator rights.',
   ],
   fixed: [
-    'Fixed converted and exported bitmaps not being rasterized at the layer DPI.',
-    'Fixed holes being filled after clipping paths.',
-    'Fixed blank dashboard camera view on newer firmware.',
+    'Fixed beamo II camera calibration stalling when door checks piled up.',
+    'Fixed Spanish translations and improved the remaining-time display in all languages.',
   ],
 };
 
