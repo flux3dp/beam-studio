@@ -35,7 +35,8 @@ describe('galvoCalibration capture', () => {
   });
 
   describe('planTile', () => {
-    // hx2GalvoPerspectiveGridWide: the camera looks 260 mm to the left of the head
+    // A grid like hx2GalvoPerspectiveGridWide's (the camera looks to the left of the head), wider
+    // than today's so the numbers below stay round.
     const grid = { x: [-260, 0, 10] as [number, number, number], y: [0, 145, 10] as [number, number, number] };
     const travel = { maxX: 600, maxY: 520, minX: 0, minY: 0 };
 

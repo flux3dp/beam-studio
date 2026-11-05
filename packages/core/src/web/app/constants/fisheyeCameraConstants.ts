@@ -29,23 +29,25 @@ export const bb2PnPPoints: Points = [
 ];
 
 /**
- * Where fcode/hx2galvo-calibration.fc puts its dots, relative to the head parked at cameraCenter
- * [440, 180] -- absolute x 200/420 with 255/365 inside, y 200/300 with 225/275 inside.
+ * Where fcode/hexa-g-calibration.fc puts its dots, relative to the head parked at cameraCenter
+ * [440, 180] -- absolute x 275/420 with 310/385 inside, y 200/300 with 225/275 inside.
  *
- * Wider than Beambox II's set because HEXA II's head camera sees about 260mm across while the
- * nozzle blocks the right of that view: the pattern has to reach left to sit centred in what is
- * left. The first attempt kept Beambox II's 120x80mm pattern, which left 130mm of the view with no
- * control points at all -- the distortion that showed up on the left of the preview.
+ * Spans the region preview grid (hx2GalvoPerspectiveGridWide, x -180..0) with a margin, since the
+ * nozzle blocks the right of the camera's view and the pattern has to sit centred in what is left.
+ * The first attempt kept Beambox II's 120x80mm pattern, which left most of the view with no control
+ * points -- the distortion that showed up on the left of the preview. The second reached out to
+ * x -240, into the far third of the frame, which is too blurred to place a dot in and dragged the
+ * fit of the sharp part with it; the grid was cut back to -180 and the dots with it (2026-11-05).
  */
 export const hx2GalvoPnPPoints: Points = [
-  [-240, 20],
+  [-165, 20],
   [-20, 20],
-  [-240, 120],
+  [-165, 120],
   [-20, 120],
-  [-185, 45],
-  [-75, 45],
-  [-185, 95],
-  [-75, 95],
+  [-130, 45],
+  [-55, 45],
+  [-130, 95],
+  [-55, 95],
 ];
 
 // Share with hexa 2
@@ -54,8 +56,13 @@ export const bb2PerspectiveGrid: PerspectiveGrid = {
   y: [0, 100, 10],
 } as const;
 
+/**
+ * HEXA G's head camera looks to the left of the nozzle, so both of its grids sit at x <= 0. The far
+ * (left) end of the frame is too blurred to be worth showing: the wide grid once reached -260 and
+ * was cut to -180, the plain one from -160 to -120. See hx2GalvoPnPPoints for what moves with it.
+ */
 export const hx2GalvoPerspectiveGrid: PerspectiveGrid = {
-  x: [-160, 0, 10],
+  x: [-120, 0, 10],
   y: [0, 100, 10],
 } as const;
 
@@ -66,7 +73,7 @@ export const bb2PerspectiveGridWide: PerspectiveGrid = {
 } as const;
 
 export const hx2GalvoPerspectiveGridWide: PerspectiveGrid = {
-  x: [-260, 0, 10],
+  x: [-180, 0, 10],
   y: [0, 145, 10],
 } as const;
 

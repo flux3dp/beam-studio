@@ -251,7 +251,7 @@ Beam Studio 端 `galvoExec.mainboardLine(gcode, action)` 把「送 mb_exec → �
 1. `ensureGalvoHeadDisconnected`。相機在雷射頭上，頭串聯時可以拍但要降速，而且 L 框之後本來就是解聯狀態。
 2. `ensureRegionPreview`（引用 Print and Cut 的 `previewSession.ts`，內含 `ensurePreviewMode`），用 `previewModeController.previewManager` 的 `getPreviewPosition` 與 `getPhotoAfterMoveTo`。
 3. 拍照格：以 C 為中心，間距 `CAPTURE_PITCH_MM = 40`，覆蓋 C ± 90 → 每軸 5 點（C − 80 … C + 80），共 25 張，蛇行。每一格：
-   - 瞄準點：HEXA II 頭相機斜看噴嘴左側（區域預覽格 `hx2GalvoPerspectiveGridWide` 是頭的 x −260..0、y 0..145），畫面靠近頭那一側解析度最高、校正最準，遠側最斜。所以不是把該格放在照片正中央，而是放在離格子靠頭那一邊 `CAPTURE_AIM_INSET_MM = 60` mm 處（y 取格子中線）：`captureGrid.ts` 的 `captureAim(grid)`；對話框有「Aim inset」欄位可以不重 build 就掃不同值。
+   - 瞄準點：HEXA II 頭相機斜看噴嘴左側（區域預覽格 `hx2GalvoPerspectiveGridWide` 是頭的 x −180..0、y 0..145，2026-11-05 之前是 −260..0），畫面靠近頭那一側解析度最高、校正最準，遠側最斜。所以不是把該格放在照片正中央，而是放在離格子靠頭那一邊 `CAPTURE_AIM_INSET_MM = 60` mm 處（y 取格子中線）：`captureGrid.ts` 的 `captureAim(grid)`；對話框有「Aim inset」欄位可以不重 build 就掃不同值。
    - 龍門位置：`planTile(point, grid, travel)` = 該格 − 瞄準點，只用 `getGantryTravelRange` 夾在行程內（**不用** `getPreviewPosition` 的夾法：預覽為了把整張照片留在床內，會把相機推到該格右邊 130 mm 以上，左半場每一格的 patch 都落到畫面最斜的遠側）。被夾住的量是 `shift`，該格在照片裡的位置就是瞄準點像素 `anchor` − shift。
    - `getPhotoAfterMoveTo(cx, cy, { dpmm: 20 })` 取回 20 px/mm 的透視校正影像（§7.7）；影像是整個格子的重映射，尺寸必須等於格寬 × 20（`expectedPhotoSize`），差超過 2 px 就整次失敗並指出是 fluxghost 太舊，因為 5 px/mm 的舊影像拼起來尺度差四倍、L 一定找不到。
    - 從 anchor − shift 處裁 `PATCH_MM = 50` 見方（`patchSource(shift, photo, { anchor })`；間距 40 所以相鄰格各重疊 5 mm），`drawImage` 到離屏 canvas 上該格的床座標位置。超出照片的部分留白；偏離瞄準點超過 5 mm 或整格不在照片內時以 `onWarning` 回報、對話框列出，不中止（§11 決策 18）。後貼的蓋前貼的。

@@ -95,18 +95,20 @@ const BB2_IMAGE_POINTS_OBLIQUE: Points = [
 ];
 
 /**
- * Read off a HEXA G after a calibration whose error was accepted, rounded to whole pixels -- this
- * only seeds a pose, so sub-pixel is noise. Upright (x rises right, y downwards), like the mm order.
+ * Where hx2GalvoPnPPoints land in a 3264x2448 frame, rounded to whole pixels -- this only seeds a
+ * pose, so sub-pixel is noise. Upright (x rises right, y downwards), like the mm order. Projected
+ * through a homography fitted to the set read off a machine for the previous, wider pattern
+ * (residual ~2 px); not yet read off a machine for this one.
  */
 const HEXA_G_IMAGE_POINTS: Points = [
-  [1487, 1990],
-  [3030, 2004],
-  [1789, 2490],
+  [2003, 1994],
+  [3030, 2003],
+  [2190, 2498],
   [2984, 2512],
-  [1930, 2143],
-  [2650, 2152],
-  [2035, 2395],
-  [2671, 2402],
+  [2287, 2148],
+  [2782, 2154],
+  [2352, 2398],
+  [2788, 2405],
 ];
 
 const profiles: Record<string, LaserHeadCalibrationProfile> = {
@@ -120,8 +122,8 @@ const profiles: Record<string, LaserHeadCalibrationProfile> = {
     alwaysOblique: true,
     /**
      * Mid-bed in x, near the front in y. With the light on mark B the board lies in the 200mm to
-     * the left of the head, which is where this camera looks (hx2GalvoPerspectiveGridWide: x -260
-     * to 0). The shift is the A-to-B distance on the printed sheet, so the second picture is the
+     * the left of the head, which is where this camera looks (the raw frame reaches well past the
+     * -180 of hx2GalvoPerspectiveGridWide). The shift is the A-to-B distance on the sheet, so the second picture is the
      * same view the other machines get with the light on mark A -- the board deliberately runs
      * out of frame on the left. 460 + 190 stays inside the gantry's travel (x up to 820 with the
      * MOPA head parked). Position and settle time have not been tuned on a machine yet.
@@ -131,13 +133,13 @@ const profiles: Record<string, LaserHeadCalibrationProfile> = {
     /**
      * The outer four dots of hx2GalvoPnPPoints in machine mm, not the fcode's own bounding box:
      * raster sweeps run ~9mm past each dot to accelerate, with the laser off, so the file's
-     * metadata reads x 190.7-429.3 while nothing is engraved out there.
+     * metadata reads x 265.7-429.3 while nothing is engraved out there.
      *
      * RELEASE GATE: whether the dots belong in this part of the bed at all is still open. Somebody
      * placing a sheet without the preview below has no landmark to go by, so the pattern may want
      * to move to a corner, or gain a printed outline. Decide before the shipping fcode is cut.
      */
-    engraveArea: { maxX: 420, maxY: 300, minX: 200, minY: 200 },
+    engraveArea: { maxX: 420, maxY: 300, minX: 275, minY: 200 },
     imagePoints: { oblique: HEXA_G_IMAGE_POINTS, plain: HEXA_G_IMAGE_POINTS },
     pnpPoints: hx2GalvoPnPPoints,
   },

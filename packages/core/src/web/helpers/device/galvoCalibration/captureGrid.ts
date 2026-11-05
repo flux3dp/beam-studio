@@ -18,7 +18,7 @@ export const CAPTURE_HALF_SPAN_MM = 90;
 /**
  * Where in the frame a tile is aimed: this far, in mm, from the edge of the region preview grid
  * that is nearest the nozzle. The HEXA II head camera looks obliquely at the bed to the left of
- * the nozzle (hx2GalvoPerspectiveGridWide spans x −260..0 of the head), and the frame is best
+ * the nozzle (hx2GalvoPerspectiveGridWide spans x −180..0 of the head), and the frame is best
  * resolved and best corrected on the side nearest the head; the far side is the most oblique
  * view and the first to lose the thin L grooves. 60 keeps a 50 mm patch (±25) inside the
  * calibrated region, which hx2GalvoPnPPoints end at x = −20.

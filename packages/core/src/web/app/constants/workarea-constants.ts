@@ -232,7 +232,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     /**
      * Where moveLaserHead() parks the gantry to photograph the calibration marks, so it is fixed
      * by whichever fcode engraves them -- not by the bed centre. HEXA G has its own
-     * fcode/hexa-g-calibration.fc, whose dots sit at x 200-420, y 200-300, and its head camera
+     * fcode/hexa-g-calibration.fc, whose dots sit at x 275-420, y 200-300, and its head camera
      * looks to the left of the head rather than straight down at it (see hx2GalvoPerspectiveGrid,
      * whose x range is negative), which is why the head parks to the right of them. Set from a
      * real machine; three things have to move together -- that fcode, this, and hx2GalvoPnPPoints,
