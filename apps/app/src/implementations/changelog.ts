@@ -3,7 +3,7 @@ import type { IChangeLog } from '@core/interfaces/IChangeLog';
 // 2.7.3 beta
 const CHANGES_TW = {
   added: [
-    '新增 Promark UV 雷射源與內雕（3D）模式：可匯入 STL、擠出 2D 圖形與文字、照片轉 3D 點雲，支援 3D 多選與填充水平面。',
+    '新增 Promark UV 雷射源與內雕（3D）模式。',
     '新增 校正 > 手動輸入：直接編輯相機預覽偏移（魚眼機種含廣角分區偏移與區域漸變）、模組偏移與精準對位偏移。',
     '新增 beamo II / Beambox II / HEXA RF 圖層進階設定「雷射頻率」（20–500 kHz，需韌體 6.5.3 以上）。',
     '新增 Promark 多組場鏡參數：每個工作範圍各自保存場鏡、振鏡與紅點參數，選機時自動套用並檢查參數範圍。',
