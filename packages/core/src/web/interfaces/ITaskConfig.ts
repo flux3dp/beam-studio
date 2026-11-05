@@ -143,6 +143,9 @@ export type TFcodeOptionalConfig = Partial<{
    * Read before the individual keys above, so one of them still overrides it.
    */
   galvo_strategy: GalvoStrategy;
+  /** Tone remap of a gradient image before dithering: darkness t -> min + (max - min) x t. */
+  galvo_tone_max: number;
+  galvo_tone_min: number;
   /** gantry travel speed while a galvo layer runs, mm/min; ordinary layers keep using `ts` */
   galvo_ts: number;
   gc: boolean; // output gcode

@@ -86,6 +86,12 @@ export interface GalvoDevConfig {
   galvo_standby_width: number;
   /** One of the simulator's strategy ids, which settles the whole seam at once. */
   galvo_strategy: GalvoStrategy;
+  /**
+   * Where a gradient image's tone lands as dot density: darkness t (0 white .. 1 black) becomes
+   * min + (max - min) x t before dithering, white staying white. 0 / 1 leave the tone alone.
+   */
+  galvo_tone_max: number;
+  galvo_tone_min: number;
   /** Gantry travel speed while a galvo layer is running, mm/min. */
   galvo_ts: number;
 }
@@ -264,6 +270,33 @@ export const GALVO_DEV_SETTING_FIELDS: GalvoDevSettingField[] = [
       '設成例如 2 mm 時，每一格都由單一區塊用原本的密度整格打完，佔比改成「拿到幾格」。' +
       '格線從機器原點起算。',
     unit: 'mm',
+  },
+  {
+    default: 0,
+    group: 'blend',
+    key: 'galvo_tone_min',
+    kind: 'number',
+    label: '點陣密度下限',
+    max: 1,
+    min: 0,
+    step: 0.05,
+    tooltip:
+      '漸層點陣圖抖色前的色調重新對應：像素的黑度 t（0 白到 1 黑）變成 下限 + (上限 − 下限) × t，' +
+      '純白維持純白。CO2 管只有在前幾毫秒持續出光時每顆點才成立，密度太低的點會變弱甚至不顯色，' +
+      '下限讓淺色區維持足夠的點密度。填 0 則不抬。',
+  },
+  {
+    default: 1,
+    group: 'blend',
+    key: 'galvo_tone_max',
+    kind: 'number',
+    label: '點陣密度上限',
+    max: 1,
+    min: 0,
+    step: 0.05,
+    tooltip:
+      '同上的上限。材料在某個密度之後顏色不再變黑、只會更深更焦（木板約 0.8），' +
+      '上限把純黑壓在那個密度。填 1 則不壓。',
   },
   {
     default: 10,
