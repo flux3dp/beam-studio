@@ -133,6 +133,7 @@
     },
     "win": {
       "icon": "app-icons/win-icon.ico",
+      "signExts": [".dll"],
       "signtoolOptions": {
         "sign": "./customCodeSign.windows.js",
         "certificateSubjectName": "FLUX TECHNOLOGY INC.",
