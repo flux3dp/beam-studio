@@ -136,6 +136,7 @@
       "signExts": [".dll"],
       "signtoolOptions": {
         "sign": "./customCodeSign.windows.js",
+        "signingHashAlgorithms": ["sha256"],
         "certificateSubjectName": "FLUX TECHNOLOGY INC.",
         "publisherName": "FLUX TECHNOLOGY INC."
       }
