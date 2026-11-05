@@ -111,6 +111,7 @@ fhx2rf and fbm2 honeycomb boards carry four ArUco markers at the corners; fbb2 b
 - **S9 Kicked mid-capture.** Another computer kicks this one: the control socket closes, the partial photo is dropped, no `end()` is attempted, ticks skip while there is no socket, the background-task manager reconnects silently within ~5 s once the machine is free, and polling resumes. No progress or connection alert at any point.
 - **S10 No wide-angle calibration (fbb2 / fhx2rf).** The open-lid loop does not start; door cycles do nothing, nothing is shown. Manual preview behaves as today.
 - **S11 Preference off / job origin on / document workarea ≠ machine / other tab focused / canvas not in Draw mode.** No polling, no capture.
+- **S13 Snap to Object Center after an auto photo.** With the snap preference on and Swiftray up, the auto photo is detected as soon as it is drawn ("Detecting objects…" toast, then "Objects detected"), and dragging a design snaps to the detected objects exactly as after a manual preview.
 - **S12 Manual preview after an auto photo.** The manual session starts exactly as today; with `keep-preview-result` off the auto photo is cleared by `start()` as any previous result would be.
 
 ---
@@ -135,6 +136,7 @@ Each criterion names how to operate it and what proves it. "Toast" means the top
 | A12 | Open any dialog (Preferences, Array, Monitor) and cycle the door. | Nothing until the dialog closes. | Alert or progress popup open: same. |
 | A13 | fhx2rf with the honeycomb removed (rotary). | Same as A2: the honeycomb plays no part in the pick. | — |
 | A14 | Manual preview button after an auto photo, `keep-preview-result` off. | Manual session starts; canvas cleared as today. | `keep-preview-result` on: photo kept. |
+| A15 | Snap to Object Center on, Swiftray running. Cycle the door (any model). | Right after the photo is drawn: "Detecting objects…" then "Objects detected"; dragging a design snaps to the objects on the bed. | Preference off or Swiftray down: photo drawn, no detection, as for manual preview. Manual preview afterwards: detection still runs once per batch. |
 
 ---
 
@@ -159,6 +161,8 @@ Shared files the design touches, with each caller and the behaviour that must st
   - `Beamo2PreviewManager`, `Bb2Hx2PreviewManager`, `AdorPreviewManager`, `ModuleCalibration.tsx` (`fetchFisheyeParams`); `getLevelingData.ts`, `getPerspectiveForAlign.ts` (`fetchAutoLevelingData`, `fetchFisheye3DRotation`); `loadCamera3dRotation.ts` — same command and reply, now serialised behind the queue.
 - `app/actions/beambox/preview-mode-background-drawer.ts` (`drawFullWorkarea` draws directly when no `start()`…`end()` session is open; before, the image went into a subject nobody consumed and only the fbm2 dark mask updated)
   - `Beamo2PreviewManager`, `Bb2Hx2PreviewManager`, `AdorPreviewManager`, `PromarkPreviewManager` inside manual preview — session open, same queued draw.
+- `app/svgedit/autoAlign/imageContourDetection.ts` (a `preview-background-updated` that lands while no batch is open runs the detection at once; before, it only marked the preview dirty and waited for `isDrawing` to flip, which auto preview never does)
+  - Manual preview batches (region sweep, single shot, full area) — tiles land while `isDrawing` is true, so detection still runs once at the batch end; live mode still waits for live mode to stop.
 - `interfaces/Preference.d.ts`, `beambox-preference.ts`, `globalPreferenceStore.ts`, `settings/categories/Camera.tsx` (one key, one switch)
   - All other preference keys — unchanged.
 - `app/lang/*.ts`, `interfaces/ILang.ts` (new keys under `settings` and `message.auto_preview`)
@@ -297,6 +301,7 @@ Pending facts (not decisions): how long a normal lid close takes on fbb2 and fhx
 Hardware-free (Jest, `unit-test` skill conventions; manager, `checkDeviceStatus` and tab-focus tests live in `background-tasks.md` §12):
 
 - `autoFullAreaPreview.spec.ts`: requirements gating (each requirement toggled), fbm2 debounce (open < 2 s, reopen within 1 s, happy path with fake timers), gate failures skip, abort during capture calls `end()` and discards, socket close skips `end()` and resumes polling, `isEnabled` mapping, open-lid pick rule (settled photo, newest-while-open fallback, photo in flight at the close excluded, empty list does nothing).
+- `imageContourDetection.spec.ts`: a draw outside a batch is detected at once; batch and live-mode holds unchanged.
 - `BasePreviewManager.spec.tsx`: `messagePrefix` prepends; `silent` suppresses alerts in `Beamo2PreviewManager` / `Bb2Hx2PreviewManager` setup errors.
 
 Hardware (pending a machine; map to §5):
