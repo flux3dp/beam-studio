@@ -23,6 +23,7 @@ import { loadRasterData } from '../photoPointCloudGenerator';
 import { encodePointCloud } from '../pointCloud';
 
 import { DEPTH_SOURCE_FORMAT_VERSION, depthSourceFromApi, encodeDepthSource } from './depthSource';
+import { downscalePhoto } from './downscalePhoto';
 import type { PhotoTo3dSize } from './generate';
 import { MAX_PHOTO_TO_3D_CELLS, PhotoTo3dError } from './generate';
 import { PhotoTo3dCancelledError, runPhotoTo3d } from './runPhotoTo3d';
@@ -229,7 +230,8 @@ const fetchDepth = async (
   }, 500);
 
   try {
-    const blob = await (await fetch(source)).blob();
+    // the depth is sampled by position, so the photo goes up small; the canvas keeps the full one
+    const blob = await downscalePhoto(await (await fetch(source)).blob());
     const response = await processImageWithAiJson<PhotoTo3dResponse>(blob, {
       cost: PHOTO_TO_3D_COST,
       endpoint: '/api/photo-to-3d',

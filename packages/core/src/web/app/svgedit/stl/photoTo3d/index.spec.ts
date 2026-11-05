@@ -9,6 +9,12 @@ jest.mock('@core/helpers/api/ai-image-process', () => ({
   processImageWithAiJson: (...args: unknown[]) => mockProcessImageWithAiJson(...args),
 }));
 
+const mockDownscalePhoto = jest.fn();
+
+jest.mock('./downscalePhoto', () => ({
+  downscalePhoto: (...args: unknown[]) => mockDownscalePhoto(...args),
+}));
+
 const mockRunPhotoTo3d = jest.fn();
 
 jest.mock('./runPhotoTo3d', () => ({
@@ -128,6 +134,7 @@ describe('photo to 3D', () => {
     elem = document.getElementById('photo') as unknown as SVGImageElement;
     useStlStore.setState({ objects: { photo } });
     global.fetch = jest.fn(async () => ({ blob: async () => new Blob(['photo']) })) as unknown as typeof fetch;
+    mockDownscalePhoto.mockImplementation(async (blob: Blob) => blob);
   });
 
   const convert = (removeBackground = false) =>
@@ -185,6 +192,19 @@ describe('photo to 3D', () => {
     expect(elem.getAttribute('origImage')).toBe('blob:cut-out');
     expect(elem.getAttribute('xlink:href')).toBe('data:image/png;base64,cut-out');
     expect(elem.getAttribute('data-no-bg')).toBe('true');
+  });
+
+  test('the photo is sent downscaled, and the canvas keeps the full one', async () => {
+    const small = new Blob(['small']);
+
+    mockDownscalePhoto.mockResolvedValue(small);
+    mockProcessImageWithAiJson.mockResolvedValue(response());
+
+    await expect(convert()).resolves.toBe(true);
+
+    expect(mockDownscalePhoto).toHaveBeenCalledTimes(1);
+    expect(mockProcessImageWithAiJson.mock.lastCall[0]).toBe(small);
+    expect(elem.getAttribute('xlink:href')).toBe('data:image/png;base64,photo');
   });
 
   test('the edge processing starts off', async () => {
