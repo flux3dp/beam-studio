@@ -20,6 +20,13 @@ import StepProgress from './StepProgress';
 import useLiveFeed from './useLiveFeed';
 
 interface Props {
+  /**
+   * Take every capture on one click instead of one per step: before capture `i`, `prepare(i)` puts
+   * the machine where that capture is taken from (false aborts), then the camera is given `settleMs`
+   * to catch up with the move before the frame is fetched. The user sees a single step, described
+   * by `steps[0]`; `steps` still lists one entry per capture.
+   */
+  autoCapture?: { prepare: (index: number) => Promise<boolean>; settleMs: number };
   calibrationThresholds?: { average?: number; good?: number };
   cameraIndex?: number;
   isFisheye?: boolean;
@@ -34,6 +41,7 @@ interface Props {
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
 const ChArUco = ({
+  autoCapture,
   calibrationThresholds: { average: averageThreshold = 2, good: goodThreshold = 1.5 } = {},
   cameraIndex,
   isFisheye = true,
@@ -47,10 +55,18 @@ const ChArUco = ({
 }: Props) => {
   const [step, setStep] = useState(0);
   const tCali = useI18n().calibration;
-  const { autoExposure, exposureSetting, img, pauseLive, restartLive, setAutoExposure, setExposureSetting } =
-    useLiveFeed({
-      index: cameraIndex,
-    });
+  const {
+    autoExposure,
+    exposureSetting,
+    img,
+    pauseLive,
+    restartLive,
+    setAutoExposure,
+    setExposureSetting,
+    takePicture,
+  } = useLiveFeed({
+    index: cameraIndex,
+  });
   const imgRef = useRef<HTMLImageElement>(null);
   const data = useRef<Array<{ imgp: number[][]; objp: number[][] }>>([]);
 
@@ -64,26 +80,59 @@ const ChArUco = ({
 
   const { descriptions, imageUrl, name } = useMemo(() => steps[step], [step, steps]);
 
+  const detect = useCallback(
+    async (blob: Blob, index: number): Promise<boolean> => {
+      const res = await cameraCalibrationApi.detectChAruCo(blob, 15, 10, { is_vertical: isVertical });
+
+      console.log(`Detect ChArUco at ${index}:`, res);
+
+      if (!res.success || res.ratio < 0.5) {
+        alertCaller.popUp({ message: tCali.failed_to_detect_calibration_pattern });
+
+        return false;
+      }
+
+      data.current[index] = { imgp: res.imgp, objp: res.objp };
+
+      return true;
+    },
+    [isVertical, tCali],
+  );
+
   const handleNext = useCallback(async () => {
     pauseLive();
     progressCaller.openNonstopProgress({ id: 'detect-charuco' });
 
-    const res = await cameraCalibrationApi.detectChAruCo(img!.blob, 15, 10, { is_vertical: isVertical });
+    if (autoCapture) {
+      // Every capture in one go; a failure leaves the machine wherever it got to, and the next
+      // attempt's prepare(0) brings it back.
+      for (let i = 0; i < steps.length; i++) {
+        if (!(await autoCapture.prepare(i))) {
+          restartLive();
+          progressCaller.popById('detect-charuco');
 
-    console.log(`Detect ChArUco at ${step}:`, res);
+          return;
+        }
 
-    if (!res.success || res.ratio < 0.5) {
-      alertCaller.popUp({ message: tCali.failed_to_detect_calibration_pattern });
+        await new Promise((resolve) => setTimeout(resolve, autoCapture.settleMs));
+
+        const blob = await takePicture();
+
+        if (!blob || !(await detect(blob, i))) {
+          restartLive();
+          progressCaller.popById('detect-charuco');
+
+          return;
+        }
+      }
+    } else if (!(await detect(img!.blob, step))) {
       restartLive();
-
       progressCaller.popById('detect-charuco');
 
       return;
     }
 
-    data.current[step] = { imgp: res.imgp, objp: res.objp };
-
-    if (step !== steps.length - 1) {
+    if (!autoCapture && step !== steps.length - 1) {
       progressCaller.popById('detect-charuco');
       setStep((s) => s + 1);
       restartLive();
@@ -137,16 +186,17 @@ const ChArUco = ({
       onNext();
     }
   }, [
-    tCali,
+    autoCapture,
+    detect,
     steps,
     step,
     img,
     pauseLive,
     restartLive,
+    takePicture,
     onNext,
     updateParam,
     isFisheye,
-    isVertical,
     averageThreshold,
     goodThreshold,
   ]);
@@ -189,7 +239,9 @@ const ChArUco = ({
         </ol>
         <Flex align="center" className={styles.content} justify="space-between">
           <div className={styles.left}>
-            <StepProgress className={styles.progress} currentStep={step} steps={steps.map((s) => s.name)} />
+            {!autoCapture && (
+              <StepProgress className={styles.progress} currentStep={step} steps={steps.map((s) => s.name)} />
+            )}
             <div className={styles.imgContainer}>
               {img ? (
                 <>

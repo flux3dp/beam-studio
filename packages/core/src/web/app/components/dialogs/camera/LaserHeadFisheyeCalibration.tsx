@@ -57,6 +57,14 @@ type Points = Array<[number, number]>;
  */
 interface LaserHeadCalibrationProfile {
   alwaysOblique?: boolean;
+  /**
+   * The ChArUco step driven by the machine instead of by hand: the head parks at `headPosition`
+   * with its red light on, the user slides the board until mark B sits under the light, and one
+   * click takes both pictures -- the second after the head moves `shift` mm to the right and the
+   * camera has had `settleMs` to catch up. For a machine whose head cannot be pushed around by hand
+   * and whose nozzle hides the board from the camera when the light is on mark A.
+   */
+  charuco?: { headPosition: [number, number]; settleMs: number; shift: number };
   engrave: () => Promise<void>;
   engraveArea?: { maxX: number; maxY: number; minX: number; minY: number };
   imagePoints: { oblique: Points; plain: Points };
@@ -110,6 +118,13 @@ const profiles: Record<string, LaserHeadCalibrationProfile> = {
   fhx2galvo: {
     // Its camera is oblique whatever the device setting says, and it has no upright pixel set.
     alwaysOblique: true,
+    /**
+     * Mid-bed in x, near the front in y. With the light on mark B the board lies in the 200mm to
+     * the left of the head, which is where this camera looks (hx2GalvoPerspectiveGridWide: x -260
+     * to 0), and the 50mm shift keeps all of it in view for the second picture. Neither number has
+     * been tuned on a machine yet.
+     */
+    charuco: { headPosition: [460, 100], settleMs: 3000, shift: 50 },
     engrave: () => deviceMaster.doHexaGCalibration(),
     /**
      * The outer four dots of hx2GalvoPnPPoints in machine mm, not the fcode's own bounding box:
@@ -173,6 +188,82 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
     }
   }, [model, lang.message.disconnectingGalvoHead]);
 
+  /**
+   * Where the head is while the machine-driven ChArUco step holds it in raw mode, or null when it
+   * is not held. Held from the move in PRE_CHESSBOARD to whichever way the step is left, so every
+   * exit of that step releases it.
+   */
+  const heldHeadX = useRef<null | number>(null);
+
+  /** Park the head for the ChArUco step: raw mode kept, motors held, red light on. */
+  const holdHead = useCallback(async (): Promise<boolean> => {
+    const { headPosition } = profile.charuco!;
+
+    if (!(await parkGalvoHead())) return false;
+
+    if (!(await moveLaserHead(headPosition, { shouldKeepPosition: true }))) return false;
+
+    try {
+      await deviceMaster.rawSetRedLight(true);
+    } catch (error) {
+      // The light only helps the user aim; the pictures do not need it.
+      console.error('Failed to turn on the red light', error);
+    }
+
+    heldHeadX.current = headPosition[0];
+
+    return true;
+  }, [parkGalvoHead, profile]);
+
+  const releaseHead = useCallback(async (): Promise<void> => {
+    heldHeadX.current = null;
+
+    if (deviceMaster.currentControlMode !== 'raw') return;
+
+    try {
+      await deviceMaster.rawSetRedLight(false).catch(() => {});
+      await deviceMaster.rawLooseMotor();
+      await deviceMaster.endSubTask();
+    } catch (error) {
+      console.error('Failed to release the laser head', error);
+    }
+  }, []);
+
+  /** Put the held head where ChArUco capture `index` is taken from. */
+  const prepareCharucoCapture = useCallback(
+    async (index: number): Promise<boolean> => {
+      const { headPosition, shift } = profile.charuco!;
+      const targetX = headPosition[0] + (index === 0 ? 0 : shift);
+
+      if (heldHeadX.current === null && !(await holdHead())) return false;
+
+      if (heldHeadX.current === targetX) return true;
+
+      try {
+        progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_laser_head });
+        await deviceMaster.rawStartLineCheckMode();
+        await deviceMaster.rawMove({ f: FRAME_FEEDRATE, x: targetX, y: headPosition[1] });
+
+        const dist = Math.abs(targetX - heldHeadX.current!);
+
+        heldHeadX.current = targetX;
+        await new Promise((resolve) => setTimeout(resolve, (dist / (FRAME_FEEDRATE / 60)) * 2 * 1000));
+        await deviceMaster.rawEndLineCheckMode();
+
+        return true;
+      } catch (error) {
+        console.error(error);
+        alertCaller.popUpError({ message: tCali.failed_to_move_laser_head });
+        await releaseHead();
+
+        return false;
+      } finally {
+        progressCaller.popById(PROGRESS_ID);
+      }
+    },
+    [holdHead, profile, releaseHead, tCali],
+  );
+
   if (step === Steps.PRE_CHESSBOARD) {
     return (
       <Instruction
@@ -184,19 +275,63 @@ const LaserHeadFisheyeCalibration = ({ currentData, isAdvanced, isOblique, onClo
           {
             label: tCali.next,
             onClick: async () => {
-              if (await parkGalvoHead()) setStep(Steps.CHESSBOARD);
+              if (profile.charuco) {
+                if (await holdHead()) setStep(Steps.CHESSBOARD);
+              } else if (await parkGalvoHead()) {
+                setStep(Steps.CHESSBOARD);
+              }
             },
             type: 'primary',
           },
         ]}
         onClose={onClose}
-        steps={[tCali.put_charuco_1, tCali.put_charuco_2, tCali.put_charuco_3]}
+        steps={
+          profile.charuco
+            ? [tCali.put_charuco_1, tCali.put_charuco_2, tCali.put_charuco_galvo_3, tCali.put_charuco_galvo_4]
+            : [tCali.put_charuco_1, tCali.put_charuco_2, tCali.put_charuco_3]
+        }
         title={tCali.put_charuco}
       >
         <div className={styles.link} onClick={() => downloadCalibrationFile('assets/charuco-15-10-with-mark.pdf')}>
           {tCali.download_calibration_pattern}
         </div>
       </Instruction>
+    );
+  }
+
+  if (step === Steps.CHESSBOARD && profile.charuco) {
+    return (
+      <ChArUco
+        autoCapture={{ prepare: prepareCharucoCapture, settleMs: profile.charuco.settleMs }}
+        calibrationThresholds={{ average: 3.5, good: 2.8 }}
+        cameraIndex={0}
+        isFisheye
+        isVertical
+        onClose={async (completed) => {
+          await releaseHead();
+          onClose(completed);
+        }}
+        onNext={async () => {
+          await releaseHead();
+          setStep(Steps.PUT_PAPER);
+        }}
+        onPrev={async () => {
+          await releaseHead();
+          setStep(Steps.PRE_CHESSBOARD);
+        }}
+        steps={[
+          {
+            descriptions: [tCali.charuco_align_point_b_to_red_light, tCali.charuco_capture_auto],
+            imageUrl: 'core-img/calibration/charuco-b.jpg',
+            key: 'left',
+            name: 'B',
+          },
+          // The same spot seen from `shift` mm further right; its description is never shown.
+          { key: 'right', name: 'B' },
+        ]}
+        title={tCali.title_capture_calibration_pattern}
+        updateParam={updateParam}
+      />
     );
   }
 

@@ -1073,8 +1073,10 @@ export interface ILang {
     camera_calibration: string;
     camera_parameter_saved_successfully: string;
     cancel: string;
+    charuco_align_point_b_to_red_light: string;
     charuco_auto_focus: string;
     charuco_capture: string;
+    charuco_capture_auto: string;
     charuco_move_to_point_a: string;
     charuco_move_to_point_b: string;
     charuco_place_charuco_horizontal: string;
@@ -1156,6 +1158,8 @@ export interface ILang {
     put_charuco_3: string;
     put_charuco_bm2_1: string;
     put_charuco_bm2_2: string;
+    put_charuco_galvo_3: string;
+    put_charuco_galvo_4: string;
     put_charuco_promark_2: string;
     put_charuco_promark_desc_1: string;
     put_charuco_promark_desc_2: string;

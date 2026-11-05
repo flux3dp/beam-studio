@@ -75,6 +75,19 @@ const useLiveFeed = (opts?: Options) => {
     setLiveTimeout();
   }, [setLiveTimeout, source, videoElement]);
 
+  /**
+   * One fresh frame, now, outside the live loop: for a caller that has just moved something and
+   * cannot use `img`, which is whatever the loop last fetched. The frame is shown like a live one.
+   */
+  const takePicture = useCallback(async (): Promise<Blob | null> => {
+    if (isTakingPicture.current) {
+      // Let the in-flight live frame finish rather than racing it on the camera socket.
+      await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+
+    return handleTakePicture({ silent: true });
+  }, [handleTakePicture]);
+
   return {
     autoExposure,
     exposureSetting,
@@ -83,6 +96,7 @@ const useLiveFeed = (opts?: Options) => {
     restartLive,
     setAutoExposure,
     setExposureSetting,
+    takePicture,
     webCamConnection,
   };
 };
