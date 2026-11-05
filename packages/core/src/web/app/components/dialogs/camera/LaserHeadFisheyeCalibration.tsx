@@ -121,10 +121,12 @@ const profiles: Record<string, LaserHeadCalibrationProfile> = {
     /**
      * Mid-bed in x, near the front in y. With the light on mark B the board lies in the 200mm to
      * the left of the head, which is where this camera looks (hx2GalvoPerspectiveGridWide: x -260
-     * to 0), and the 50mm shift keeps all of it in view for the second picture. Neither number has
-     * been tuned on a machine yet.
+     * to 0). The shift is the A-to-B distance on the printed sheet, so the second picture is the
+     * same view the other machines get with the light on mark A -- the board deliberately runs
+     * out of frame on the left. 460 + 190 stays inside the gantry's travel (x up to 820 with the
+     * MOPA head parked). Position and settle time have not been tuned on a machine yet.
      */
-    charuco: { headPosition: [460, 100], settleMs: 3000, shift: 50 },
+    charuco: { headPosition: [460, 100], settleMs: 3000, shift: 190 },
     engrave: () => deviceMaster.doHexaGCalibration(),
     /**
      * The outer four dots of hx2GalvoPnPPoints in machine mm, not the fcode's own bounding box:
