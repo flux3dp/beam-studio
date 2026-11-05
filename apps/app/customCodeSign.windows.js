@@ -12,6 +12,11 @@ module.exports = async function customSign(configuration, packager) {
     return Promise.resolve();
   }
 
+  // Only sign dlls under backend/swiftray (Smart App Control blocks unsigned Qt dlls); exe files are signed as before.
+  if (configuration.path.endsWith('.dll') && !configuration.path.split(path.sep).includes('swiftray')) {
+    return Promise.resolve();
+  }
+
   return new Promise((resolve, reject) => {
     let retryTime = 0;
 
