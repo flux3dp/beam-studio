@@ -2,8 +2,9 @@
  * Snap to object center: detect the objects in the camera preview once a preview batch has landed
  * and hand them to autoAlign as snap targets. Any tile stamped during a batch (region sweep, single
  * shot, full area) marks the preview dirty; when the batch ends (cameraPreview.isDrawing -> false,
- * outside live mode) the whole preview canvas is re-detected and the list replaced. The model
- * rescales every input to the same size, so a full pass costs the same as a crop (§7).
+ * outside live mode) the whole preview canvas is re-detected and the list replaced. A draw that lands
+ * while no batch is open (auto full-area preview) is a batch of its own and is detected at once. The
+ * model rescales every input to the same size, so a full pass costs the same as a crop (§7).
  * Batches landing during a run are drained by the same loop.
  * ONNX only (decided 2026-10-16): the OpenCV engine was too unstable for silent snapping, so the
  * feature is off whenever Swiftray is unavailable (web, old Swiftray, socket down); the next
@@ -122,6 +123,8 @@ export class ImageContourDetector {
 
   private onBackgroundUpdated = (): void => {
     this.dirty = true;
+    // No batch open (auto full-area preview draws outside the controller): this draw is the batch
+    this.onBatchEnded();
   };
 
   /** A batch is over when the controller stops drawing; live mode re-draws every second, so wait for it to stop. */
