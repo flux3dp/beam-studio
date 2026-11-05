@@ -5,6 +5,7 @@ import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBa
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import checkSoftwareForAdor from '@core/helpers/check-software';
+import backgroundTasks from '@core/helpers/device/background';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import storage from '@core/implementations/storage';
@@ -22,6 +23,10 @@ const getDevice = async (showModal = false): Promise<{ device: IDeviceInfo | nul
   let isWorkareaMatched = undefined;
 
   if (device) {
+    // endSubTask/getReport below would break a background task mid-capture (auto preview in raw mode): ask first.
+    // checkDeviceStatus asks too, for the menu actions that skip getDevice; the task is no longer busy by then.
+    if (!(await backgroundTasks.yieldTo(device))) return { device: null };
+
     let selectRes: SelectionResult = { success: true };
     let statusRes;
 

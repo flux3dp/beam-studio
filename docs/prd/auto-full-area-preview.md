@@ -125,7 +125,7 @@ Each criterion names how to operate it and what proves it. "Toast" means the top
 | A1 | fbm2 selected, document fbm2, preference on, canvas idle. Open door, wait 3 s, close. | After ~1 s the prefixed toast sequence runs; head moves to camera centre and back; background updates; success toast 3 s. | Open < 2 s: nothing. Reopen within 1 s of close: nothing until the next ≥ 2 s open. |
 | A2 | fbb2 or fhx2rf, lid open 5 s with the material placed, close at normal speed (< 1 s swing). | No toast while open. Within ~2 s of close: success toast, background = a photo of the fully open view (finished ≥ 1.5 s before close). | Open only 1 s and close: the newest photo finished before the last open reading is used (fallback); one that finished after the close is never shown. Slow close (≈ 3 s swing): a partly closed view is possible and accepted (R2). |
 | A3 | fbb2 or fhx2rf without wide-angle calibration. Cycle the door. | Nothing, no alert. | — |
-| A4 | During A1's capture, click Go. | Alert with the auto-preview text, Yes/No. Yes → head parks, no background change from this capture, export continues. No → export cancelled, capture completes normally. | Same from Framing, Calibrate camera (menu), Monitor. |
+| A4 | During A1's capture, click Go. | Alert with the auto-preview text, Yes/No. Yes → head stays where the in-flight step left it (no park move, the job homes anyway), no background change from this capture, export continues. No → export cancelled, capture completes normally. | Same from Framing, Calibrate camera (menu), Monitor. Prompt left unanswered until the capture completes: it closes by itself, the photo is drawn, export continues. Yes while entering raw mode or homing: the in-flight step finishes, raw mode ends, the head does not go to the camera or rest position (fbm2's rest position is 13 mm from the camera position). |
 | A5 | During A1, open the door. | Capture aborts silently, head parks, no alert, background unchanged. | — |
 | A6 | Second computer running a job on the same machine. Cycle the door on the first. | Nothing happens; console log only. | Second computer in raw mode (calibration): same. |
 | A7 | Kick this computer from another one during A1. | No alert; within ~5 s after the other side releases the machine, door cycles work again. | — |
@@ -147,7 +147,9 @@ Shared files the design touches, with each caller and the behaviour that must st
 - `app/actions/camera/preview-helper/BasePreviewManager.tsx` (`showMessage`, new `silent` / `messagePrefix` options, default off)
   - `PreviewModeController.start` (manual preview, all managers) — messages unchanged, alerts unchanged.
   - `Bb2Hx2PreviewManager`, `Beamo2PreviewManager`, `BeamPreviewManager`, `AdorPreviewManager`, `PromarkPreviewManager` — unchanged defaults.
-- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts` (honour `silent` in `DoorChecker` calls and `handleSetupError`; new `cancel()`, checked only in `previewFullWorkarea`)
+- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts` (honour `silent` in `DoorChecker` calls and `handleSetupError`; new `cancel()`, checked in `previewFullWorkarea`, after `connectCamera` in `setup`, and handed to `setupFisheyePreview` as `isCancelled`)
+- `app/actions/camera/preview-helper/FisheyePreviewManagerV4.ts` (`setupFisheyePreview` takes an optional `isCancelled` and returns `false` after homing or after the move when it reads true)
+  - `Beamo2PreviewManager` manual preview, `Bb2Hx2PreviewManager` — no `isCancelled` passed: setup runs to the end as before.
   - `PreviewModeController` manual fbm2 preview — `door_opened` alert and setup-error alerts still pop.
   - `BeamPreviewManager` reuse of `handlePreviewSetupError` (error-report PR) — untouched.
 - `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts` (honour `silent` in `handleSetupError`; the auto loop does not use this manager)
@@ -168,6 +170,8 @@ Shared files the design touches, with each caller and the behaviour that must st
 - `app/lang/*.ts`, `interfaces/ILang.ts` (new keys under `settings` and `message.auto_preview`)
   - Existing keys — unchanged.
 - `checkDeviceStatus`, `DialogContext` / `AlertProgressContext`, `GoButton`, `promark-button-handler` — changed by the companion PRD, listed in `background-tasks.md` §6. This feature only adds a task.
+- `helpers/device/get-device.ts` (`backgroundTasks.yieldTo(device)` before it ends a sub-task or reads the report; No → `{ device: null }`, which every caller already treats as "stop here")
+  - Export (`handleExportClick.ts`), framing, manual preview (`previewMode.ts`), path preview, curve engraving, tutorials, first-calibration dialog, Print and Cut exposure, select-machine button — no background task busy: unchanged; busy on the selected machine: one Yes/No prompt before anything touches the machine, and `checkDeviceStatus` afterwards shows no second prompt.
 
 ---
 
@@ -204,7 +208,7 @@ capturing/looping: abort() from §7.5 or socket close → discard → polling
 
 ### 7.2 Manager options
 
-`BasePreviewManager` gains `protected silent = false` and `protected messagePrefix = ''`, set through `setup({ silent, messagePrefix })`. `showMessage` prepends `messagePrefix` to `content` when it is a string. `Beamo2PreviewManager.handleSetupError` and its `DoorChecker` calls pass `showError = !this.silent`; `Bb2Hx2PreviewManager.handleSetupError` likewise. Alerts from `handlePreviewSetupError` are skipped when silent (logged instead), and so is the camera-cable warning in `getPhotoFromMachine` (the capture continues). `Beamo2PreviewManager.cancel()` sets a flag that `previewFullWorkarea` checks before each pass and before drawing: once set, the in-flight camera step finishes, nothing is drawn, the success toast is skipped and it returns `false`. Never called by the manual flow. Nothing else in the managers changes.
+`BasePreviewManager` gains `protected silent = false` and `protected messagePrefix = ''`, set through `setup({ silent, messagePrefix })`. `showMessage` prepends `messagePrefix` to `content` when it is a string. `Beamo2PreviewManager.handleSetupError` and its `DoorChecker` calls pass `showError = !this.silent`; `Bb2Hx2PreviewManager.handleSetupError` likewise. Alerts from `handlePreviewSetupError` are skipped when silent (logged instead), and so is the camera-cable warning in `getPhotoFromMachine` (the capture continues). `Beamo2PreviewManager.cancel()` sets a flag that `previewFullWorkarea` checks before each pass and before drawing: once set, the in-flight camera step finishes, nothing is drawn, the success toast is skipped and it returns `false`. `setup` checks the same flag after `connectCamera` and passes it to `setupFisheyePreview` as `isCancelled`, which checks it after homing and after the move to the camera position; a cancelled setup returns `false` with raw mode still open, and `end()` skips the rest-position move while `cancelled` is set, so the head stays where the last step left it (added 2026-11-05, fbm2 A4: before, Yes still rode out the whole setup to the camera position, and the park to `cameraRestPosition` looked the same). Never called by the manual flow. Nothing else in the managers changes.
 
 ### 7.3 Open-lid loop (fbb2 / fhx2rf)
 
@@ -231,7 +235,7 @@ Provided by the background-task manager (`background-tasks.md` §7.4) and used t
 
 `checkDeviceStatus` asks the manager (`backgroundTasks.yieldTo(device)`, `background-tasks.md` §7.3); while this task `isBusy()`, the same machine gets a Yes/No prompt with `message.auto_preview.abort_to_continue`, another machine gets a silent abort.
 
-`abort()`: set the abort flag and call `manager.cancel()` (§7.2), await the in-flight manager call (raw commands must not interleave, so `end()` never runs concurrently with it), run `manager.end()` (fbm2: park, loose motor, exit raw; bb2/hx: disconnect camera), discard the partial photo, return. `isBusy()` is false while merely polling, so idle callers never see the prompt; `canTouchMachine` then stops new captures while the caller's dialog, progress, preview mode or sub-task is active.
+`abort()`: set the abort flag and call `manager.cancel()` (§7.2), await the in-flight manager call (raw commands must not interleave, so `end()` never runs concurrently with it; a setup stops at its next step boundary, so Yes during homing waits for the homing only), run `manager.end()` (fbm2: loose motor, exit raw, no park move since `cancelled` is set and the rest position sits 13 mm from the camera position; bb2/hx: disconnect camera), discard the partial photo, return. `isBusy()` is false while merely polling, so idle callers never see the prompt; `canTouchMachine` then stops new captures while the caller's dialog, progress, preview mode or sub-task is active.
 
 ### 7.6 Tab focus
 
@@ -271,7 +275,7 @@ Settled during design (2026-10-16), kept for the record:
 
 1. ~~Validity signal for open-lid photos~~ → 2026-10-16: ArUco markers on honeycomb corners (fhx2rf), timing rule (fbb2, no markers in the field). Stable-pair image diff rejected: first-frame bootstrap problem. **Revised 2026-10-30: timing rule for both fbb2 and fhx2rf**; markers rejected for v1 because they fall outside the flattened frame, read only under favourable lighting, are hidden by the head at its origin, and move with the platform (§2.6). **2026-11-04 (fhx2rf hardware):** a fast close with only a photo or two taken drew the photo still in flight at the close, i.e. the closed lid; the fallback now only considers photos finished before the last poll that read the door open.
 2. ~~Absolute marker positions~~ → relative rectangle check only (2026-10-16). Moot since 2026-10-30: no marker check in v1. A future revisit would need "any marker at its expected position", which depends on the platform height (§11 F2).
-3. ~~Where the busy prompt lives~~ → `checkDeviceStatus`, not `getDevice()` (menu actions bypass `getDevice`). Since 2026-10-30 through the background-task manager's `yieldTo`, not a hard-coded block.
+3. ~~Where the busy prompt lives~~ → `checkDeviceStatus`, not `getDevice()` (menu actions bypass `getDevice`). Since 2026-10-30 through the background-task manager's `yieldTo`, not a hard-coded block. Amended 2026-11-05 (fbm2 A4): `getDevice()` runs before `checkDeviceStatus` in export, framing and manual preview, and its `endSubTask()` / `getReport()` broke the raw-mode capture (and sometimes popped `device_not_found`) before the prompt appeared, so No could not resume. Both now call `yieldTo`: `getDevice()` first, `checkDeviceStatus` for the callers that skip it; the second call finds no busy task.
 4. ~~"Any dialog" vs a curated id list~~ → any dialog, alert or progress. Since 2026-10-30 implemented by the background-task manager's `canTouchMachine`.
 5. ~~Message style~~ → original sequence with "Auto preview:" prefix, connecting step included; bb2/hx silent until the success toast.
 6. ~~Job origin~~ → listener off for all models while enabled.
@@ -302,6 +306,8 @@ Hardware-free (Jest, `unit-test` skill conventions; manager, `checkDeviceStatus`
 
 - `autoFullAreaPreview.spec.ts`: requirements gating (each requirement toggled), fbm2 debounce (open < 2 s, reopen within 1 s, happy path with fake timers), gate failures skip, abort during capture calls `end()` and discards, socket close skips `end()` and resumes polling, `isEnabled` mapping, open-lid pick rule (settled photo, newest-while-open fallback, photo in flight at the close excluded, empty list does nothing).
 - `imageContourDetection.spec.ts`: a draw outside a batch is detected at once; batch and live-mode holds unchanged.
+- `get-device.spec.ts`: `yieldTo` runs before `endSubTask`; declined → `{ device: null }` with no machine command and no `device_not_found` message.
+- `FisheyePreviewManagerV4.spec.ts`: `isCancelled` true after homing → `false`, no `rawMove`, no fisheye params sent.
 - `BasePreviewManager.spec.tsx`: `messagePrefix` prepends; `silent` suppresses alerts in `Beamo2PreviewManager` / `Bb2Hx2PreviewManager` setup errors.
 
 Hardware (pending a machine; map to §5):
