@@ -32,7 +32,6 @@ import fontHelper from './font-helper';
 import checkMacOsBuild from './helpers/checkMacOsBuild';
 import { setTabManager } from './helpers/tabHelper';
 import MenuManager from './menu-manager';
-import MonitorManager from './monitor-manager';
 import networkHelper from './network-helper';
 import TabManager from './tabManager';
 import { UpdateManager } from './updateManager';
@@ -185,17 +184,6 @@ const backendManager = new BackendManager({
 
 backendManager.start();
 
-// Run monitorexe api
-let monitorManager: MonitorManager | null = null;
-
-if (gotTheLock && process.argv.includes('--monitor')) {
-  console.log('Starting Monitor');
-  monitorManager = new MonitorManager({ location: process.env.BACKEND || '' });
-  // kill process first, in case last time shut down
-  monitorManager.killProcSync();
-  monitorManager.startProc();
-}
-
 let shadowWindow: BrowserWindow;
 let shouldCloseShadowWindow = false;
 
@@ -241,7 +229,6 @@ function createMainWindow() {
   let isCloseConfirmed = false;
 
   const doClose = () => {
-    monitorManager?.killProc();
     backendManager.stop();
     shouldCloseShadowWindow = true;
 
@@ -526,6 +513,5 @@ app.on('window-all-closed', () => {
 // restart). 'will-quit' rather than 'before-quit': the latter fires before windows are asked to
 // close, so cancelling the unsaved-changes dialog would leave the app alive with a dead backend.
 app.on('will-quit', () => {
-  monitorManager?.killProc();
   backendManager.stop();
 });
