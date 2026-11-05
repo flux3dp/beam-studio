@@ -26,6 +26,7 @@ import { DEPTH_SOURCE_FORMAT_VERSION, depthSourceFromApi, encodeDepthSource } fr
 import { downscalePhoto } from './downscalePhoto';
 import type { PhotoTo3dSize } from './generate';
 import { MAX_PHOTO_TO_3D_CELLS, PhotoTo3dError } from './generate';
+import { restoreCutOut } from './restoreCutOut';
 import { PhotoTo3dCancelledError, runPhotoTo3d } from './runPhotoTo3d';
 
 /** AI credits for one conversion; recomputing with other parameters is free. */
@@ -203,11 +204,14 @@ export const checkPhotoTo3dSize = (elem: SVGImageElement): boolean => {
  */
 const unusedDepth = new Map<string, { depthSource: ArrayBuffer; image: null | string; source: string }>();
 
+const getPhotoSource = (elem: SVGImageElement): null | string =>
+  elem.getAttribute('origImage') || getPhotoTextureUrl(elem);
+
 const fetchDepth = async (
   elem: SVGImageElement,
   removeBackground: boolean,
 ): Promise<null | { depthSource: ArrayBuffer; image: null | string }> => {
-  const source = elem.getAttribute('origImage') || getPhotoTextureUrl(elem);
+  const source = getPhotoSource(elem);
 
   if (!source) return null;
 
@@ -253,13 +257,13 @@ const fetchDepth = async (
   }
 };
 
-const toPngUrl = (base64: string): string => {
+const toPngBlob = (base64: string): Blob => {
   const binary = atob(base64);
   const bytes = new Uint8Array(binary.length);
 
   for (let index = 0; index < binary.length; index += 1) bytes[index] = binary.charCodeAt(index);
 
-  return URL.createObjectURL(new Blob([bytes], { type: 'image/png' }));
+  return new Blob([bytes], { type: 'image/png' });
 };
 
 /**
@@ -293,7 +297,9 @@ export const convertPhotoTo3d = async (
 
     if (depth.image) {
       const { isFullColor } = imageEdit.getImageAttributes(elem);
-      const blobUrl = toPngUrl(depth.image);
+      // the cut-out is as small as the photo was sent; its transparency goes onto the full photo
+      const photo = await (await fetch(getPhotoSource(elem)!)).blob();
+      const blobUrl = URL.createObjectURL(await restoreCutOut(photo, toPngBlob(depth.image)));
       const threshold = 254;
       const base64Img = await imageEdit.generateBase64Image(blobUrl, true, threshold, isFullColor);
 

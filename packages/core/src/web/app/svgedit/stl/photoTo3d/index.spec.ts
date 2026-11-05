@@ -15,6 +15,12 @@ jest.mock('./downscalePhoto', () => ({
   downscalePhoto: (...args: unknown[]) => mockDownscalePhoto(...args),
 }));
 
+const mockRestoreCutOut = jest.fn();
+
+jest.mock('./restoreCutOut', () => ({
+  restoreCutOut: (...args: unknown[]) => mockRestoreCutOut(...args),
+}));
+
 const mockRunPhotoTo3d = jest.fn();
 
 jest.mock('./runPhotoTo3d', () => ({
@@ -135,6 +141,7 @@ describe('photo to 3D', () => {
     useStlStore.setState({ objects: { photo } });
     global.fetch = jest.fn(async () => ({ blob: async () => new Blob(['photo']) })) as unknown as typeof fetch;
     mockDownscalePhoto.mockImplementation(async (blob: Blob) => blob);
+    mockRestoreCutOut.mockImplementation(async (_photo: Blob, cutOut: Blob) => cutOut);
   });
 
   const convert = (removeBackground = false) =>
@@ -205,6 +212,25 @@ describe('photo to 3D', () => {
     expect(mockDownscalePhoto).toHaveBeenCalledTimes(1);
     expect(mockProcessImageWithAiJson.mock.lastCall[0]).toBe(small);
     expect(elem.getAttribute('xlink:href')).toBe('data:image/png;base64,photo');
+  });
+
+  test('with the background removed, the cut-out is put back on the full photo', async () => {
+    const full = new Blob(['photo']);
+    const restored = new Blob(['restored'], { type: 'image/png' });
+
+    global.fetch = jest.fn(async () => ({ blob: async () => full })) as unknown as typeof fetch;
+    mockDownscalePhoto.mockResolvedValue(new Blob(['small']));
+    mockProcessImageWithAiJson.mockResolvedValue(response('iVBORw0KGgo='));
+    mockRestoreCutOut.mockResolvedValue(restored);
+
+    await expect(convert(true)).resolves.toBe(true);
+
+    const [photo, cutOut] = mockRestoreCutOut.mock.lastCall;
+
+    expect(photo).toBe(full);
+    expect(cutOut.type).toBe('image/png');
+    expect(URL.createObjectURL).toHaveBeenCalledWith(restored);
+    expect(elem.getAttribute('origImage')).toBe('blob:cut-out');
   });
 
   test('the edge processing starts off', async () => {
