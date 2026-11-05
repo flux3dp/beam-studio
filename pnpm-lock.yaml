@@ -182,13 +182,13 @@ importers:
     dependencies:
       '@electron/remote':
         specifier: 2.1.3
-        version: 2.1.3(electron@43.5.0)
+        version: 2.1.3(electron@43.8.1)
       '@sentry/electron':
         specifier: 7.7.1
         version: 7.7.1
       custom-electron-titlebar:
         specifier: ^4.2.8
-        version: 4.2.8(electron@43.5.0)
+        version: 4.2.8(electron@43.8.1)
       electron-store:
         specifier: ^8.2.0
         version: 8.2.0
@@ -278,8 +278,8 @@ importers:
         specifier: ^5.2.7
         version: 5.2.7(webpack@5.104.1)
       electron:
-        specifier: 43.5.0
-        version: 43.5.0
+        specifier: 43.8.1
+        version: 43.8.1
       electron-builder:
         specifier: 26.15.3
         version: 26.15.3(electron-builder-squirrel-windows@26.15.3)
@@ -6980,8 +6980,8 @@ packages:
     resolution: {integrity: sha512-bO3y10YikuUwUuDUQRM4KfwNkKhnpVO7IPdbsrejwN9/AABJzzTQ4GeHwyzNSrVO+tEH3/Np255a3sVZpZDjvg==}
     engines: {node: '>=8.0.0'}
 
-  electron@43.5.0:
-    resolution: {integrity: sha512-nV2aWuKatmUrxrAWP2pNIynNX7dy83TCAz+6KnsbK7hDVLE+6fa2iouOtir41AboZTa+J5w2UgicWHAqUaaUJw==}
+  electron@43.8.1:
+    resolution: {integrity: sha512-Qa6/xXODEn60oIkyuV8jXmyX84z6nicuBh7BOkPHVZlTTCG1MeTYjAkmxX+1B/kEkErPjs3WCP+JdtwkRaKRcQ==}
     engines: {node: '>= 22.12.0'}
     hasBin: true
 
@@ -11870,8 +11870,8 @@ packages:
     resolution: {integrity: sha512-JJoOEKTfL1urb1mDoEblhD9NhEbWmq9jHEMEnxoC4ujUaZ4itA8vKgwkFAyNClgxplLi9tsUKX+EduK0p/l7sg==}
     engines: {node: ^14.18.0 || >=16.0.0}
 
-  systeminformation@5.33.15:
-    resolution: {integrity: sha512-s5RloL0F7xhN0ZjfHtLGnbf7EW74EI0N8NFL+1xR7Oxz9QA33obNZsl7lyfnJOhN04E/kGFPoJPlvY7TZ5fzmw==}
+  systeminformation@5.33.19:
+    resolution: {integrity: sha512-Zm7wGeCG7PqfvzegMJIzrxICopWqYCeLATVmvxOOci1isLcNVKgY4Fr0hhYQzvc7cgtK3377jQVChTFAnznOiA==}
     engines: {node: '>=10.0.0'}
     os: [darwin, linux, win32, freebsd, openbsd, netbsd, sunos, android]
     hasBin: true
@@ -12355,8 +12355,8 @@ packages:
   undici-types@8.9.0:
     resolution: {integrity: sha512-KTDyRTYX8sWmKXAikPHHSyc63CRPETMctyjKFupcC6OBLXT3xsN0e9aF7m+mIXutFWpUXuedtowG7iLOzp0kQg==}
 
-  undici@6.29.0:
-    resolution: {integrity: sha512-R+RODBqp6i2pPflGdq+xIOUkl+RNfGgHwoinecKu/JCuf2uO06cOKoDbI2P7Dn6KcswdKwrczbU6IYJ6K8X+wg==}
+  undici@6.29.1:
+    resolution: {integrity: sha512-EvRlUt/QqAEvXdQeRMYUfwOQsfzpDztykrG2owGEE/rBOBoYv9uF39ZzsNDh4lTFHhTr2XOZjKkYgueD12ZmGA==}
     engines: {node: '>=18.17'}
 
   undici@7.29.0:
@@ -14274,9 +14274,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@electron/remote@2.1.3(electron@43.5.0)':
+  '@electron/remote@2.1.3(electron@43.8.1)':
     dependencies:
-      electron: 43.5.0
+      electron: 43.8.1
 
   '@electron/universal@2.0.3':
     dependencies:
@@ -18072,7 +18072,7 @@ snapshots:
 
   '@types/fs-extra@9.0.13':
     dependencies:
-      '@types/node': 26.6.5
+      '@types/node': 24.10.10
 
   '@types/hammerjs@2.0.46': {}
 
@@ -18140,6 +18140,7 @@ snapshots:
   '@types/node@26.6.5':
     dependencies:
       undici-types: 8.9.0
+    optional: true
 
   '@types/normalize-package-data@2.4.4': {}
 
@@ -20516,9 +20517,9 @@ snapshots:
 
   csstype@3.2.3: {}
 
-  custom-electron-titlebar@4.2.8(electron@43.5.0):
+  custom-electron-titlebar@4.2.8(electron@43.8.1):
     dependencies:
-      electron: 43.5.0
+      electron: 43.8.1
 
   cypress-file-upload@5.0.8(cypress@15.16.0):
     dependencies:
@@ -20565,7 +20566,7 @@ snapshots:
       proxy-from-env: 1.0.0
       request-progress: 3.0.0
       supports-color: 8.1.1
-      systeminformation: 5.33.15
+      systeminformation: 5.33.19
       tmp: 0.2.7
       tree-kill: 1.2.2
       tslib: 1.14.1
@@ -21004,7 +21005,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  electron@43.5.0:
+  electron@43.8.1:
     dependencies:
       '@electron-internal/extract-zip': 1.0.5
       '@electron/get': 5.1.0
@@ -22232,7 +22233,7 @@ snapshots:
       es6-error: 4.1.1
       matcher: 3.0.0
       roarr: 2.15.4
-      semver: 7.7.4
+      semver: 7.8.5
       serialize-error: 7.0.1
     optional: true
 
@@ -24280,7 +24281,7 @@ snapshots:
 
   node-abi@4.37.0:
     dependencies:
-      semver: 7.7.4
+      semver: 7.8.5
 
   node-abort-controller@3.1.1: {}
 
@@ -24291,7 +24292,7 @@ snapshots:
 
   node-api-version@0.2.1:
     dependencies:
-      semver: 7.7.4
+      semver: 7.8.5
 
   node-domexception@1.0.0: {}
 
@@ -24314,10 +24315,10 @@ snapshots:
       graceful-fs: 4.2.11
       nopt: 9.0.0
       proc-log: 6.1.0
-      semver: 7.7.4
+      semver: 7.8.5
       tar: 7.5.22
       tinyglobby: 0.2.17
-      undici: 6.29.0
+      undici: 6.29.1
       which: 6.0.1
 
   node-int64@0.4.0: {}
@@ -27019,7 +27020,7 @@ snapshots:
       '@pkgr/core': 0.1.2
       tslib: 2.8.1
 
-  systeminformation@5.33.15: {}
+  systeminformation@5.33.19: {}
 
   tapable@2.2.2: {}
 
@@ -27537,9 +27538,10 @@ snapshots:
 
   undici-types@7.16.0: {}
 
-  undici-types@8.9.0: {}
+  undici-types@8.9.0:
+    optional: true
 
-  undici@6.29.0: {}
+  undici@6.29.1: {}
 
   undici@7.29.0: {}
 
