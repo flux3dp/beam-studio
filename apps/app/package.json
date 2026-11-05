@@ -1,6 +1,6 @@
 {
   "name": "@beam-studio/app",
-  "version": "2.7.3-alpha",
+  "version": "2.7.3-beta",
   "license": "AGPL-3.0-only",
   "homepage": "https://github.com/flux3dp/beam-studio",
   "description": "Beam Studio Electron App",
@@ -133,10 +133,14 @@
     },
     "win": {
       "icon": "app-icons/win-icon.ico",
-      "signExts": [".dll"],
+      "signExts": [
+        ".dll"
+      ],
       "signtoolOptions": {
         "sign": "./customCodeSign.windows.js",
-        "signingHashAlgorithms": ["sha256"],
+        "signingHashAlgorithms": [
+          "sha256"
+        ],
         "certificateSubjectName": "FLUX TECHNOLOGY INC.",
         "publisherName": "FLUX TECHNOLOGY INC."
       }
