@@ -3,8 +3,10 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const mockSetFisheyeParam = jest.fn();
 const mockSetFisheyeObjectHeight = jest.fn();
+const mockRawMove = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
+  rawMove: (...args: any[]) => mockRawMove(...args),
   setFisheyeObjectHeight: (...args: any[]) => mockSetFisheyeObjectHeight(...args),
   setFisheyeParam: (...args: any[]) => mockSetFisheyeParam(...args),
 }));
@@ -62,5 +64,27 @@ describe('FisheyePreviewManagerV4 manual offsets (PRD D7)', () => {
     expect(stored.offset).toEqual([1, 0.5]);
     expect(stored.region_offsets).toEqual({ blend: true, topLeft: [2, 0] });
     expect(mockSetFisheyeParam.mock.calls[1][0].offset).toEqual([1, 0.5]);
+  });
+});
+
+describe('FisheyePreviewManagerV4 setup cancellation (auto full-area preview)', () => {
+  beforeEach(() => jest.clearAllMocks());
+
+  test('stops after homing when cancelled, without moving to the camera position', async () => {
+    const manager = new FisheyePreviewManagerV4({} as IDeviceInfo, { ...params }, grid);
+    const closeMessage = jest.fn();
+
+    const res = await manager.setupFisheyePreview({
+      cameraPosition: [100, 100],
+      closeMessage,
+      height: 0,
+      isCancelled: () => true,
+      updateMessage: jest.fn(),
+    });
+
+    expect(res).toBe(false);
+    expect(mockRawMove).not.toHaveBeenCalled();
+    expect(mockSetFisheyeParam).not.toHaveBeenCalled();
+    expect(closeMessage).toHaveBeenCalled();
   });
 });

@@ -221,7 +221,7 @@ class AutoFullAreaPreview implements BackgroundTask {
 
     try {
       if (!(await manager.setup({ messagePrefix: i18n.lang.message.auto_preview.prefix, silent: true }))) {
-        log('setup failed');
+        log(this.aborted ? 'setup aborted' : 'setup failed');
 
         // setup ends the manager on an error, but not when the door was open at its final check: the machine would
         // stay in raw mode (polling paused for good) with the camera socket open

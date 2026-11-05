@@ -33,7 +33,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private fullAreaGrid = bm2FullAreaPerspectiveGrid;
   private doorChecker = new DoorChecker();
   private originalExposure: null | number = null;
-  /** Set by cancel(): finish the in-flight camera step but draw nothing */
+  /** Set by cancel(): stop setup at its next step boundary, or finish the in-flight camera step but draw nothing */
   private cancelled = false;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
   protected progressType = ProgressTypes.STEPPING;
@@ -89,6 +89,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
             cameraPosition: cameraCenter,
             closeMessage: () => this.closeMessage(),
             height: 0,
+            isCancelled: () => this.cancelled,
             movementFeedrate: this.getMovementSpeed(),
             shouldKeepInRawMode: true,
             updateMessage: (message: string) => this.showMessage({ content: message }),
@@ -120,6 +121,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
       await callWithRetry(() => deviceMaster.connectCamera());
 
+      if (this.cancelled) return false;
+
       const res = await this.setUpCamera();
 
       return res;
@@ -140,7 +143,9 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         const workarea = getWorkarea(this.device.model, 'fbm2');
         const { cameraRestPosition } = workarea;
 
-        if (cameraRestPosition) {
+        // The park keeps the head out of the camera's view after a preview; a cancelled capture has none, and the
+        // rest position is 13 mm from the camera position, so parking would look like driving to the photo spot
+        if (cameraRestPosition && !this.cancelled) {
           await deviceMaster.rawMove({
             f: this.getMovementSpeed(),
             x: cameraRestPosition[0],
@@ -165,7 +170,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     }
   };
 
-  /** Discard the photo of an in-flight previewFullWorkarea; call end() once it returns */
+  /** Stop an in-flight setup at its next step (returns false) or discard previewFullWorkarea's photo; call end() once it returns */
   cancel = (): void => {
     this.cancelled = true;
   };
