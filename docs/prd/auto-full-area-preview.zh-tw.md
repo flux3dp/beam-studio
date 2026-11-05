@@ -127,7 +127,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 | A1 | 選 fbm2、文件為 fbm2、偏好開啟、畫布閒置。開門、等 3 秒、關門。 | 約 1 秒後帶前綴的 toast 序列跑完；雷射頭移到相機中心再回來；背景更新；成功 toast 3 秒。 | 開 < 2 秒：無動作。關門後 1 秒內重開：直到下一次 ≥ 2 秒開門前無動作。 |
 | A2 | fbb2 或 fhx2rf，開蓋 5 秒放材料，以正常速度關蓋（< 1 秒）。 | 開著時沒有 toast。關門後約 2 秒內：成功 toast，背景 = 完全開蓋的畫面（關門前 ≥ 1.5 秒完成）。 | 只開 1 秒就關：用最後一次讀到開啟之前完成的最新一張（退路）；關門後才完成的那張絕不顯示。慢慢關蓋（約 3 秒）：可能得到半關畫面，接受（R2）。 |
 | A3 | fbb2 或 fhx2rf 沒有廣角校正。開關門。 | 無動作，不跳 alert。 | — |
-| A4 | A1 拍攝中點「開始」。 | 出現自動預覽文字的 alert，是／否。是 → 雷射頭停回，此次拍攝不改背景，匯出繼續。否 → 匯出取消，拍攝正常完成。 | 從框選、校正相機（選單）、監控視窗觸發亦同。 |
+| A4 | A1 拍攝中點「開始」。 | 出現自動預覽文字的 alert，是／否。是 → 雷射頭留在進行中步驟結束的位置（不停回，工作本來就會歸零），此次拍攝不改背景，匯出繼續。否 → 匯出取消，拍攝正常完成。 | 從框選、校正相機（選單）、監控視窗觸發亦同。提示放著不答、拍攝先完成：提示自動關閉、照片畫上、匯出繼續。進 raw 模式或歸零中按是：進行中的步驟做完、離開 raw 模式，雷射頭不去相機位置也不去停回位置（fbm2 的停回位置離相機位置只有 13 mm）。 |
 | A5 | A1 進行中開門。 | 拍攝靜默中止，雷射頭停回，不跳 alert，背景不變。 | — |
 | A6 | 第二台電腦在同一台機器跑工作。在第一台開關門。 | 無動作；只有 console log。 | 第二台在 raw 模式（校正）：同。 |
 | A7 | A1 進行中從另一台電腦踢掉這台。 | 不跳 alert；對方釋放機器後約 5 秒內，門蓋週期恢復運作。 | — |
@@ -149,7 +149,9 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - `app/actions/camera/preview-helper/BasePreviewManager.tsx`（`showMessage`，新增 `silent`／`messagePrefix` 選項，預設關閉）
   - `PreviewModeController.start`（手動預覽，所有 manager）：訊息不變、alert 不變。
   - `Bb2Hx2PreviewManager`、`Beamo2PreviewManager`、`BeamPreviewManager`、`AdorPreviewManager`、`PromarkPreviewManager`：預設值不變。
-- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts`（`DoorChecker` 呼叫與 `handleSetupError` 尊重 `silent`；新增 `cancel()`，只在 `previewFullWorkarea` 檢查）
+- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts`（`DoorChecker` 呼叫與 `handleSetupError` 尊重 `silent`；新增 `cancel()`，在 `previewFullWorkarea`、`setup` 的 `connectCamera` 之後檢查，並以 `isCancelled` 交給 `setupFisheyePreview`）
+- `app/actions/camera/preview-helper/FisheyePreviewManagerV4.ts`（`setupFisheyePreview` 多一個選用的 `isCancelled`，歸零後或移動後讀到 true 就回傳 `false`）
+  - `Beamo2PreviewManager` 手動預覽、`Bb2Hx2PreviewManager`：沒有傳 `isCancelled`，設定照舊跑到底。
   - `PreviewModeController` 手動 fbm2 預覽：`door_opened` alert 與設定錯誤 alert 仍會跳。
   - `BeamPreviewManager` 重用 `handlePreviewSetupError`（錯誤回報 PR）：不動。
 - `app/actions/camera/preview-helper/Bb2Hx2PreviewManager.ts`（`handleSetupError` 尊重 `silent`；自動迴圈不使用這個 manager）
@@ -170,6 +172,8 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - `app/lang/*.ts`、`interfaces/ILang.ts`（`settings` 與 `message.auto_preview` 下新增 key）
   - 既有 key：不變。
 - `checkDeviceStatus`、`DialogContext`／`AlertProgressContext`、`GoButton`、`promark-button-handler`：由配套 PRD 修改，列在 `background-tasks.md` §6。本功能只新增一個任務。
+- `helpers/device/get-device.ts`（在結束子任務或讀取狀態之前先 `backgroundTasks.yieldTo(device)`；否 → `{ device: null }`，所有呼叫者本來就把它當「到此為止」）
+  - 匯出（`handleExportClick.ts`）、框選、手動預覽（`previewMode.ts`）、路徑預覽、曲面雕刻、教學、首次校正對話框、Print and Cut 曝光、選擇機器按鈕：沒有背景任務忙碌時不變；所選機器上有任務忙碌時，在碰機器之前先跳一次是／否，之後 `checkDeviceStatus` 不會再問第二次。
 
 ---
 
@@ -206,7 +210,7 @@ capturing/looping: §7.5 的 abort() 或 socket 關閉 → 丟棄 → polling
 
 ### 7.2 Manager 選項
 
-`BasePreviewManager` 新增 `protected silent = false` 與 `protected messagePrefix = ''`，透過 `setup({ silent, messagePrefix })` 設定。`showMessage` 在 `content` 為字串時前置 `messagePrefix`。`Beamo2PreviewManager.handleSetupError` 與其 `DoorChecker` 呼叫傳 `showError = !this.silent`；`Bb2Hx2PreviewManager.handleSetupError` 亦同。`silent` 時跳過 `handlePreviewSetupError` 的 alert（改為 log），`getPhotoFromMachine` 的相機排線警告也一併跳過（繼續拍攝）。`Beamo2PreviewManager.cancel()` 設一個旗標，`previewFullWorkarea` 在每輪拍攝前與繪製前檢查：設定後，進行中的相機步驟照常結束，但不繪製、不顯示成功訊息，並回傳 `false`。手動流程不會呼叫它。Manager 其他部分不變。
+`BasePreviewManager` 新增 `protected silent = false` 與 `protected messagePrefix = ''`，透過 `setup({ silent, messagePrefix })` 設定。`showMessage` 在 `content` 為字串時前置 `messagePrefix`。`Beamo2PreviewManager.handleSetupError` 與其 `DoorChecker` 呼叫傳 `showError = !this.silent`；`Bb2Hx2PreviewManager.handleSetupError` 亦同。`silent` 時跳過 `handlePreviewSetupError` 的 alert（改為 log），`getPhotoFromMachine` 的相機排線警告也一併跳過（繼續拍攝）。`Beamo2PreviewManager.cancel()` 設一個旗標，`previewFullWorkarea` 在每輪拍攝前與繪製前檢查：設定後，進行中的相機步驟照常結束，但不繪製、不顯示成功訊息，並回傳 `false`。`setup` 在 `connectCamera` 之後檢查同一個旗標，並以 `isCancelled` 傳給 `setupFisheyePreview`，後者在歸零後與移動到相機位置後各檢查一次；被取消的設定回傳 `false` 且 raw 模式仍開著，而 `end()` 在 `cancelled` 時跳過停回移動，所以雷射頭留在最後一步結束的位置（2026-11-05 新增，fbm2 A4：原本按是仍會把整段設定跑到相機位置，而停回 `cameraRestPosition` 看起來也一樣）。手動流程不會呼叫它。Manager 其他部分不變。
 
 ### 7.3 開蓋迴圈（fbb2 / fhx2rf）
 
@@ -233,7 +237,7 @@ await sleep(LOOP_GUARD_MS = 200)               // 拍攝錯誤 → sleep 1000
 
 `checkDeviceStatus` 詢問管理器（`backgroundTasks.yieldTo(device)`，`background-tasks.md` §7.3）；本任務 `isBusy()` 期間，同一台機器會跳出 `message.auto_preview.abort_to_continue` 的是／否提示，另一台機器則靜默中止。
 
-`abort()`：設中止旗標並呼叫 `manager.cancel()`（§7.2），等待進行中的 manager 呼叫（raw 指令不能交錯，所以 `end()` 絕不與它同時執行），執行 `manager.end()`（fbm2：停回、鬆馬達、離開 raw；bb2/hx：斷相機），丟棄部分照片，回傳。只在輪詢時 `isBusy()` 為 false，所以閒置時呼叫者永遠看不到提示；`canTouchMachine` 接著在呼叫者的對話框、progress、預覽模式或子任務活躍期間阻止新的拍攝。
+`abort()`：設中止旗標並呼叫 `manager.cancel()`（§7.2），等待進行中的 manager 呼叫（raw 指令不能交錯，所以 `end()` 絕不與它同時執行；設定會在下一個步驟邊界停下，所以歸零中按是只等歸零結束），執行 `manager.end()`（fbm2：鬆馬達、離開 raw，`cancelled` 時不做停回移動，因為停回位置離相機位置只有 13 mm；bb2/hx：斷相機），丟棄部分照片，回傳。只在輪詢時 `isBusy()` 為 false，所以閒置時呼叫者永遠看不到提示；`canTouchMachine` 接著在呼叫者的對話框、progress、預覽模式或子任務活躍期間阻止新的拍攝。
 
 ### 7.6 分頁焦點
 
@@ -273,7 +277,7 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 
 1. ~~開蓋照片的有效性訊號~~ → 2026-10-16：蜂巢板四角 ArUco 標記（fhx2rf）、時間規則（fbb2，市場機器無標記）。影像差異的穩定配對法被否決：第一張無從判斷。**2026-10-30 修訂：fbb2 與 fhx2rf 都用時間規則**；v1 不採用標記，因為它們落在攤平影格之外、只在光線有利時讀得到、雷射頭在原點時會被擋住、且會隨平台升降移動（§2.6）。**2026-11-04（fhx2rf 硬體）：** 快速關蓋且只拍到一兩張時，畫出的是關門當下還在拍的那張，也就是關上的門蓋；退路現在只考慮最後一次讀到開啟之前完成的照片。
 2. ~~標記絕對位置~~ → 只做相對矩形檢查（2026-10-16）。2026-10-30 起不適用：v1 沒有標記檢查。日後重啟需改成「任一標記落在其預期位置」，而這取決於平台高度（§11 F2）。
-3. ~~忙碌提示放哪~~ → `checkDeviceStatus`，不是 `getDevice()`（選單動作繞過 `getDevice`）。2026-10-30 起改由背景任務管理器的 `yieldTo` 處理，不再寫死一段。
+3. ~~忙碌提示放哪~~ → `checkDeviceStatus`，不是 `getDevice()`（選單動作繞過 `getDevice`）。2026-10-30 起改由背景任務管理器的 `yieldTo` 處理，不再寫死一段。2026-11-05 修訂（fbm2 A4）：匯出、框選、手動預覽都先跑 `getDevice()` 再跑 `checkDeviceStatus`，它的 `endSubTask()`／`getReport()` 在提示出現前就把 raw 模式的拍攝弄壞（有時還跳 `device_not_found`），所以按否也無法繼續。現在兩邊都呼叫 `yieldTo`：`getDevice()` 先問，`checkDeviceStatus` 負責繞過它的呼叫者；第二次呼叫時任務已不忙碌。
 4. ~~「任何對話框」vs 精選 id 清單~~ → 任何對話框、alert 或 progress。2026-10-30 起由背景任務管理器的 `canTouchMachine` 實作。
 5. ~~訊息樣式~~ → 原序列加「自動預覽：」前綴，含連線步驟；bb2/hx 在成功 toast 前靜默。
 6. ~~工作原點~~ → 啟用時所有機型都關閉監聽器。
@@ -304,6 +308,8 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 
 - `autoFullAreaPreview.spec.ts`：條件守門（逐一切換每個條件）、fbm2 去抖（開 < 2 秒、關門 1 秒內重開、用假計時器跑正常路徑）、守門失敗跳過、拍攝中 abort 會呼叫 `end()` 並丟棄、socket 關閉跳過 `end()` 並回到輪詢、`isEnabled` 對應、開蓋挑選規則（靜置照片、開啟中最新一張的退路、排除關門當下還在拍的那張、空清單不動作）。
 - `imageContourDetection.spec.ts`：批次外的繪製立刻偵測；批次與 live 模式的等待不變。
+- `get-device.spec.ts`：`yieldTo` 在 `endSubTask` 之前執行；拒絕 → `{ device: null }`，不送任何機器指令、不跳 `device_not_found`。
+- `FisheyePreviewManagerV4.spec.ts`：歸零後 `isCancelled` 為 true → 回傳 `false`，不 `rawMove`、不送 fisheye 參數。
 - `BasePreviewManager.spec.tsx`：`messagePrefix` 會前置；`silent` 抑制 `Beamo2PreviewManager`／`Bb2Hx2PreviewManager` 設定錯誤的 alert。
 
 硬體（待機器；對應 §5）：

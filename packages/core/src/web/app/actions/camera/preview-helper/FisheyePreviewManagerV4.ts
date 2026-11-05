@@ -33,6 +33,8 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       closeMessage?: () => void;
       fallbackHeight?: number;
       height?: number;
+      /** Polled between steps; true stops the setup there and returns false (raw mode is left as is) */
+      isCancelled?: () => boolean;
       movementFeedrate?: number;
       shouldKeepInRawMode?: boolean;
       updateMessage?: (message: string) => void;
@@ -44,6 +46,7 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       cameraPosition,
       fallbackHeight = 0,
       height,
+      isCancelled,
       movementFeedrate = 7500,
       shouldKeepInRawMode = false,
       useRegionOffsets = true,
@@ -61,6 +64,13 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     const { params } = this;
 
     await rawAndHome(updateMessage);
+
+    if (isCancelled?.()) {
+      closeMessage?.();
+
+      return false;
+    }
+
     updateMessage(lang.message.preview.moving_to_preview_position);
 
     if (cameraPosition) {
@@ -72,6 +82,12 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       const time = (dist / (movementFeedrate / 60)) * 2; // safety factor 2
 
       await new Promise((resolve) => setTimeout(resolve, time * 1000));
+    }
+
+    if (isCancelled?.()) {
+      closeMessage?.();
+
+      return false;
     }
 
     if (height === undefined) {
