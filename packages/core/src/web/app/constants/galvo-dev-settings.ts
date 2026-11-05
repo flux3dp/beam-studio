@@ -199,8 +199,10 @@ export const GALVO_DEV_SETTING_FIELDS: GalvoDevSettingField[] = [
     kind: 'text',
     label: 'Debug 圖輸出路徑',
     tooltip:
-      '執行 swiftray 那台電腦上的資料夾。填了之後每次匯出都會在那裡畫一張分塊示意圖：' +
-      '龍門停位是點，該停位的場鏡可達範圍是填色方塊，實際負責雕的格子是外框。留空就不輸出。',
+      '執行 swiftray 那台電腦上的路徑前綴，例如 /tmp/galvo。填了之後每次匯出都會在那裡畫一張分塊示意圖' +
+      '（<前綴>-layerN.png）：龍門停位是點，該停位的場鏡可達範圍是填色方塊，實際負責雕的格子是外框。' +
+      '每張點陣圖也會存三個階段：原圖、密度 remap 後、抖色後（<前綴>-layerN-bitmapK-1-source / 2-remapped / 3-dithered.png）。' +
+      '留空就不輸出。',
   },
 
   // --- seam blending -----------------------------------------------------
