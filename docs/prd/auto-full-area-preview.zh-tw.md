@@ -113,6 +113,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - **S9 拍攝中被踢。** 另一台電腦踢掉這台：control socket 關閉，部分照片丟棄，不嘗試 `end()`，沒有 socket 時 tick 跳過，機器空出來後背景任務管理器約 5 秒內 silent 重新連線，輪詢恢復。全程不跳 progress 或連線 alert。
 - **S10 沒有廣角校正（fbb2／fhx2rf）。** 開蓋迴圈不啟動；開關門無動作，不顯示任何東西。手動預覽與今天相同。
 - **S11 偏好設定關閉／工作原點啟用／文件工作區 ≠ 機器／焦點在其他分頁／畫布不在 Draw 模式。** 不輪詢、不拍攝。
+- **S13 自動照片之後的物件中心吸附。** 吸附偏好開啟且 Swiftray 在線時，自動照片一畫上去就會偵測（「偵測物件中…」toast，接著「已偵測到物件」），拖曳設計時會吸附到偵測到的物件，和手動預覽之後完全一樣。
 - **S12 自動照片之後手動預覽。** 手動工作階段和今天一樣啟動；`keep-preview-result` 關閉時自動照片會被 `start()` 清掉，和任何先前結果一樣。
 
 ---
@@ -137,6 +138,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 | A12 | 開任何對話框（偏好設定、陣列、監控）後開關門。 | 直到對話框關閉前無動作。 | Alert 或 progress 彈窗開著：同。 |
 | A13 | fhx2rf 拆掉蜂巢板（旋轉軸）。 | 同 A2：蜂巢板不影響挑選。 | — |
 | A14 | 自動照片之後按手動預覽，`keep-preview-result` 關閉。 | 手動工作階段啟動；畫布如今天一樣清空。 | `keep-preview-result` 開啟：照片保留。 |
+| A15 | 物件中心吸附開啟、Swiftray 執行中。開關門蓋（任一機型）。 | 照片畫上去後立刻出現「偵測物件中…」再「已偵測到物件」；拖曳設計會吸附到床台上的物件。 | 偏好關閉或 Swiftray 離線：照片照畫、不偵測，和手動預覽相同。之後手動預覽：仍是每批偵測一次。 |
 
 ---
 
@@ -161,6 +163,8 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
   - `Beamo2PreviewManager`、`Bb2Hx2PreviewManager`、`AdorPreviewManager`、`ModuleCalibration.tsx`（`fetchFisheyeParams`）；`getLevelingData.ts`、`getPerspectiveForAlign.ts`（`fetchAutoLevelingData`、`fetchFisheye3DRotation`）；`loadCamera3dRotation.ts`：指令與回應不變，只是改為在佇列中依序執行。
 - `app/actions/beambox/preview-mode-background-drawer.ts`（沒有 `start()`…`end()` 預覽工作階段時，`drawFullWorkarea` 直接繪製；原本影像送進沒人訂閱的 subject，只有 fbm2 的暗部遮罩會更新）
   - 手動預覽中的 `Beamo2PreviewManager`、`Bb2Hx2PreviewManager`、`AdorPreviewManager`、`PromarkPreviewManager`：工作階段開著，照舊排隊繪製。
+- `app/svgedit/autoAlign/imageContourDetection.ts`（沒有批次進行中時收到 `preview-background-updated` 就立刻偵測；原本只標記 dirty、等 `isDrawing` 翻轉，而自動預覽從不翻轉它）
+  - 手動預覽批次（區域掃描、單張、全範圍）：tile 都在 `isDrawing` 為 true 時落地，所以仍是批次結束時偵測一次；live 模式仍等 live 結束。
 - `interfaces/Preference.d.ts`、`beambox-preference.ts`、`globalPreferenceStore.ts`、`settings/categories/Camera.tsx`（一個 key、一個開關）
   - 其他所有偏好 key：不變。
 - `app/lang/*.ts`、`interfaces/ILang.ts`（`settings` 與 `message.auto_preview` 下新增 key）
@@ -299,6 +303,7 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 免硬體（Jest，依 `unit-test` skill 慣例；管理器、`checkDeviceStatus` 與分頁焦點的測試在 `background-tasks.md` §12）：
 
 - `autoFullAreaPreview.spec.ts`：條件守門（逐一切換每個條件）、fbm2 去抖（開 < 2 秒、關門 1 秒內重開、用假計時器跑正常路徑）、守門失敗跳過、拍攝中 abort 會呼叫 `end()` 並丟棄、socket 關閉跳過 `end()` 並回到輪詢、`isEnabled` 對應、開蓋挑選規則（靜置照片、開啟中最新一張的退路、排除關門當下還在拍的那張、空清單不動作）。
+- `imageContourDetection.spec.ts`：批次外的繪製立刻偵測；批次與 live 模式的等待不變。
 - `BasePreviewManager.spec.tsx`：`messagePrefix` 會前置；`silent` 抑制 `Beamo2PreviewManager`／`Bb2Hx2PreviewManager` 設定錯誤的 alert。
 
 硬體（待機器；對應 §5）：
