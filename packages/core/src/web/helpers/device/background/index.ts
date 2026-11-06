@@ -86,8 +86,9 @@ class BackgroundTasks {
   };
 
   /**
-   * Called by checkDeviceStatus before a foreground machine action. A busy task on another machine is
-   * aborted silently; on the same machine the user confirms first. Resolves false when the user declines.
+   * Called by getDevice and checkDeviceStatus before a foreground machine action. A busy task on another machine
+   * is aborted silently; on the same machine the user confirms first, unless the task says it is cheap to stop
+   * (busyMessage() null). Resolves false when the user declines.
    */
   yieldTo = async (device: IDeviceInfo): Promise<boolean> => {
     for (const task of this.tasks) {
@@ -95,7 +96,9 @@ class BackgroundTasks {
 
       if (!runningOn || !task.isBusy()) continue;
 
-      if (runningOn.uuid === device.uuid) {
+      const message = task.busyMessage ? task.busyMessage() : i18n.lang.message.device_is_used;
+
+      if (runningOn.uuid === device.uuid && message !== null) {
         const confirmed = await new Promise<boolean>((resolve) => {
           // The task keeps working behind the prompt; once it finishes there is nothing to stop, so the action goes on
           const watcher = setInterval(() => {
@@ -113,7 +116,7 @@ class BackgroundTasks {
           alertCaller.popUp({
             buttonType: alertConstants.YES_NO,
             id: YIELD_PROMPT_ID,
-            message: task.busyMessage?.() ?? i18n.lang.message.device_is_used,
+            message,
             onNo: () => answer(false),
             onYes: () => answer(true),
           });

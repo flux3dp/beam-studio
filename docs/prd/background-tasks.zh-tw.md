@@ -167,7 +167,7 @@ interface BackgroundTask {
   stop: () => void;                               // 停止輪詢；忙碌中則中止，不等待
   isBusy: () => boolean;                          // 正在做前景動作不能重疊的事
   abort: () => Promise<void>;                     // 停止忙碌的工作，並讓機器回到乾淨狀態
-  busyMessage?: () => string;                     // 提示文字；isBusy 可能為 true 時必填
+  busyMessage?: () => null | string;              // 提示文字；isBusy 可能為 true 時必填；null = 不問直接中斷
 }
 ```
 
@@ -222,7 +222,7 @@ backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // 優�
 if (!(await backgroundTasks.yieldTo(device))) return false;
 ```
 
-`yieldTo(device)`：對每個忙碌中的任務：在另一台機器上 → `await task.abort()`；在同一台機器上 → 以 `task.busyMessage()` 跳是／否提示，是 → `await task.abort()`，否 → 回傳 `false`；提示開著時若任務自己結束忙碌（每 500 ms 檢查一次，2026-11-05 新增：自動預覽在提示後面拍完就沒有東西可以中斷），提示會自動關閉並視為 `true`。沒有任務忙碌 → 立即回 `true`。只是在輪詢的任務繼續輪詢；前景動作自己的對話框或子任務會透過 `canTouchMachine` 擋住它們。
+`yieldTo(device)`：對每個忙碌中的任務：在另一台機器上 → `await task.abort()`；在同一台機器上 → 以 `task.busyMessage()` 跳是／否提示，是 → `await task.abort()`，否 → 回傳 `false`；訊息為 `null` 表示任務隨時可停（機器上沒有進行中的動作），不提示直接中斷（2026-11-06 為自動預覽的開蓋迴圈新增）；提示開著時若任務自己結束忙碌（每 500 ms 檢查一次，2026-11-05 新增：自動預覽在提示後面拍完就沒有東西可以中斷），提示會自動關閉並視為 `true`。沒有任務忙碌 → 立即回 `true`。只是在輪詢的任務繼續輪詢；前景動作自己的對話框或子任務會透過 `canTouchMachine` 擋住它們。
 
 ### 7.4 `canTouchMachine(task)`
 
