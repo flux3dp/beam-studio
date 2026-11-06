@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.3 (manager, Promark migration, foreground yield, reselect). Hardware: Promark B1 and B2 passed 2026-11-06 (frame-before-start press, hold to the run threshold, plain press; stop and resume on mode, machine, workarea, setting and tab focus). Pending: B6; B4/B5 get verified once auto full-area preview, the first task that can be busy, lands. |
+| **Status** | Implemented in 2.7.3 (manager, Promark migration, foreground yield, reselect). Hardware: Promark B1, B2 and B6 passed 2026-11-06 (frame-before-start press, hold to the run threshold, plain press; stop and resume on mode, machine, workarea, setting and tab focus; silent reselect after another machine's monitor). Pending: B4/B5 get verified once auto full-area preview, the first task that can be busy, lands. |
 | **Author** | Product with the software team |
 | **Created** | 2026-10-30 |
 | **Target product** | Beam Studio desktop (Electron) and web. All models. |
@@ -314,4 +314,4 @@ Hardware-free (Jest, `unit-test` skill):
 - `GoButton.spec.tsx`: mocks the manager, expects `setDevice(selectedDevice)`.
 - Web focus in `background/index.spec.ts`: `visibilitychange` to hidden stops tasks, back to visible restarts them; Electron path uses `tabController` events.
 
-Hardware (map to §5): Promark B1 and B2 (passed 2026-11-06), B6. B4/B5 with the auto-preview companion on fbm2.
+Hardware (map to §5): Promark B1, B2 and B6 (passed 2026-11-06). B4/B5 with the auto-preview companion on fbm2.
