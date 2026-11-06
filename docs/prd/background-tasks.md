@@ -128,6 +128,8 @@ Foreground pollers start and stop with a user action and are already serialised 
 - `helpers/check-device-status.ts` (one block after the manual-preview block, delegating to the manager)
   - All 21 callers — with no busy task, identical behaviour, including `device_is_used`, kick, abort, quit and `device_busy`.
   - `preview-mode-controller.ts:85` — manual preview start now also stops a busy task on the same machine (after a prompt); intended.
+- `helpers/device/get-device.ts` (`backgroundTasks.yieldTo(device)` before it ends a sub-task or reads the report; No → `{ device: null }`, which every caller already treats as "stop here")
+  - Export (`handleExportClick.ts`), framing, manual preview (`previewMode.ts`), path preview, curve engraving, tutorials, first-calibration dialog, Print and Cut exposure, select-machine button — no busy task: unchanged; busy task on the selected machine: one Yes/No prompt before anything touches the machine, and `checkDeviceStatus` afterwards finds nothing busy, so no second prompt.
 - `app/contexts/DialogContext.tsx`, `app/contexts/AlertProgressContext.tsx`, `app/actions/dialog-caller.tsx` (new any-open query)
   - `dialogCaller.isIdExist`, `alertCaller.checkIdExist`, `progressCaller.checkIdExist` — unchanged.
 - `helpers/device-master.ts` (`select(device, { silent })`, default `false`; silent skips the "connecting" progress, the connection-error alert and the password dialog)
@@ -307,6 +309,8 @@ Hardware-free (Jest, `unit-test` skill):
 - `canTouchMachine.spec.ts`: each condition false → false.
 - `promark-button-handler.spec.ts` (new): isEnabled mapping from §7.6; tick skipped when not current; existing press/frame-first counting unchanged.
 - `check-device-status.spec.ts`: `yieldTo` false → returns false before the status switch; true → existing flow.
+- `get-device.spec.ts`: `yieldTo` runs before `endSubTask`; declined → `{ device: null }` with no machine command and no `device_not_found` message.
+- `background/index.spec.ts` yield cases: Yes aborts, No keeps the task; the prompt closes itself and the action continues when the task finishes behind it; a task whose `busyMessage()` is `null` is aborted without a prompt.
 - `GoButton.spec.tsx`: mocks the manager, expects `setDevice(selectedDevice)`.
 - Web focus in `background/index.spec.ts`: `visibilitychange` to hidden stops tasks, back to visible restarts them; Electron path uses `tabController` events.
 
