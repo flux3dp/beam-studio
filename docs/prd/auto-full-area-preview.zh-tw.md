@@ -4,13 +4,13 @@
 
 | | |
 |---|---|
-| **狀態** | 已於 2.7.4 實作，建立在背景任務管理器（`background-tasks.md`）與 fluxghost 門蓋姿態檢查（`auto-full-area-preview-lid-pose.md`，fluxghost 2.5.8）之上。已做硬體驗證：fbm2 A1、A4、A5、A6、A11 與 A12、fhx2rf 快速關蓋挑選（2026-11-04）、正常速度關蓋的 A2、A10 與 A14（2026-11-05；A13 由 A2 涵蓋）、fhx2rf 門蓋姿態研究（2026-11-06，配套 §2.3）。待辦：fbm2 A7；fbb2 A2；A3；門蓋姿態 L1–L6（§12）。 |
+| **狀態** | 已於 2.7.4 實作，建立在背景任務管理器（`background-tasks.md`）與 fluxghost 姿態檢查（`auto-full-area-preview-pose-check.md`，fluxghost 2.5.8）之上。已做硬體驗證：fbm2 A1、A4、A5、A6、A11 與 A12、fhx2rf 快速關蓋挑選（2026-11-04）、正常速度關蓋的 A2、A10 與 A14（2026-11-05；A13 由 A2 涵蓋）、fhx2rf 姿態檢查研究（2026-11-06，配套 §2.3）。待辦：fbm2 A7；fbb2 A2；A3；姿態檢查 L1–L6（§12）。 |
 | **作者** | 產品與軟體團隊 |
 | **建立日期** | 2026-10-19 |
 | **目標產品** | Beam Studio 桌面版（Electron）與網頁版。機型：`fbm2`（beamo II）、`fbb2`（Beambox II）、`fhx2rf`（HEXA RF）。 |
 | **負責領域** | 相機預覽、機器通訊 |
 | **相關程式碼** | 監聽器（新增）：`packages/core/src/web/helpers/device/camera/autoFullAreaPreview.ts`；Manager：`app/actions/camera/preview-helper/Beamo2PreviewManager.ts`、`Bb2Hx2PreviewManager.ts`、`BasePreviewManager.tsx`、`DoorChecker.ts`、`handlePreviewSetupError.tsx`、`FisheyePreviewManagerV4.ts`；背景任務管理器（配套）：`helpers/device/background/`；門蓋／狀態：`helpers/device-master.ts`、`helpers/api/control.ts`；背景繪製：`app/actions/beambox/preview-mode-background-drawer.ts`；偏好設定：`interfaces/Preference.d.ts`、`app/actions/beambox/beambox-preference.ts`、`app/stores/globalPreferenceStore.ts`、`app/components/settings/categories/Camera.tsx`；先例：`helpers/device/promark/promark-button-handler.ts` |
-| **配套 PRD** | `docs/prd/background-tasks.md`：本功能註冊的管理器（情境、選機器、前景讓路、`canTouchMachine`）。先上線。`docs/prd/auto-full-area-preview-lid-pose.md`：開蓋挑片的 fluxghost 半邊（原始影格上的門蓋姿態檢查）；與本功能一起上線。 |
+| **配套 PRD** | `docs/prd/background-tasks.md`：本功能註冊的管理器（情境、選機器、前景讓路、`canTouchMachine`）。先上線。`docs/prd/auto-full-area-preview-pose-check.md`：開蓋挑片的 fluxghost 半邊（原始影格上的姿態檢查）；與本功能一起上線。 |
 | **外部 repo** | 皆不修改。韌體事實取自 `../BeamOS_NX_backend`，影格處理事實取自 `../fluxghost`（皆僅閱讀）。 |
 
 ---
@@ -94,7 +94,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 **目標**
 
 - G1. 使用者關上閒置、已選取的 fbm2/fbb2/fhx2rf 門蓋後，畫布背景不用點任何東西就更新為新的全範圍照片。
-- G2. 照片是門蓋在校正止點時拍的，否則就沒有照片（fbb2/fhx2rf：門蓋姿態檢查；fbm2：關門後拍）。
+- G2. 照片是門蓋在校正止點時拍的，否則就沒有照片（fbb2/fhx2rf：姿態檢查；fbm2：關門後拍）。
 - G3. 本功能永不干擾使用者操作：任何需要機器的動作，不是看到監聽器閒置，就是得到「是否中止拍攝」的是／否提示。
 - G4. 偏好設定關閉、選到其他機型、或啟用工作原點時，行為零變化。
 
@@ -110,9 +110,9 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 ## 4. 情境
 
 - **S1 fbm2 放材料。** 門蓋開啟 ≥ 2 秒後關上。1 秒後出現「自動預覽：連接中…」「…進入機器控制模式…」「…歸零中…」「…移動至預覽位置…」「…擷取影像中…」，雷射頭停回休息位，「自動預覽：預覽成功」顯示 3 秒，畫布背景是新照片。
-- **S2 fbb2／fhx2rf 放材料。** 門蓋打開；開著期間監聽器一張接一張持續拍照（§7.3），但不顯示任何東西。關門後迴圈停止，約一秒內出現「自動預覽：預覽成功」，背景是通過門蓋姿態檢查的最新一張。
-- **S3 慢慢關蓋（fbb2／fhx2rf）。** 門蓋花數秒放下：下降途中拍的照片不通過門蓋姿態檢查，畫出最後一張在止點拍的。門蓋只開一半、從未到止點：沒有照片通過，什麼都不畫，只記 console log（R2）。
-- **S4 快速探頭。** fbm2 門蓋開 1 秒就關：什麼都不發生。fhx2rf/fbb2：迴圈短暫跑過；若有 lid-OK 的照片在門蓋仍讀到開啟時完成，關門時畫出其中最新一張；關門當下還在拍的那張絕不使用；一張都沒有就什麼都不畫。
+- **S2 fbb2／fhx2rf 放材料。** 門蓋打開；開著期間監聽器一張接一張持續拍照（§7.3），但不顯示任何東西。關門後迴圈停止，約一秒內出現「自動預覽：預覽成功」，背景是通過姿態檢查的最新一張。
+- **S3 慢慢關蓋（fbb2／fhx2rf）。** 門蓋花數秒放下：下降途中拍的照片不通過姿態檢查，畫出最後一張在止點拍的。門蓋只開一半、從未到止點：沒有照片通過，什麼都不畫，只記 console log（R2）。
+- **S4 快速探頭。** fbm2 門蓋開 1 秒就關：什麼都不發生。fhx2rf/fbb2：迴圈短暫跑過；若有 pose-OK 的照片在門蓋仍讀到開啟時完成，關門時畫出其中最新一張；關門當下還在拍的那張絕不使用；一張都沒有就什麼都不畫。
 - **S5 等待 1 秒期間重新開門（fbm2）。** 待拍取消；下一次 ≥ 2 秒的開門重新進入待拍。
 - **S6 拍攝中途開門（fbm2）。** `DoorChecker` 讓拍攝失敗；部分結果丟棄；雷射頭停回；監聽器等待下一個週期。不跳 alert。
 - **S7 拍攝中匯出。** S1 進行中使用者點「開始」。Alert：「機器正在自動拍攝工作區域，是否中止拍攝並繼續？」是：拍攝在下一個安全點停止，雷射頭停回，匯出繼續。否：匯出取消，拍攝繼續。
@@ -132,7 +132,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 | # | 操作 | 預期 | 邊界情況 |
 |---|---|---|---|
 | A1 | 選 fbm2、文件為 fbm2、偏好開啟、畫布閒置。開門、等 3 秒、關門。 | 約 1 秒後帶前綴的 toast 序列跑完；雷射頭移到相機中心再回來；背景更新；成功 toast 3 秒。 | 開 < 2 秒：無動作。關門後 1 秒內重開：直到下一次 ≥ 2 秒開門前無動作。 |
-| A2 | fbb2 或 fhx2rf，開蓋 5 秒放材料，以正常速度關蓋（< 1 秒）。 | 開著時沒有 toast。關門後約 2 秒內：成功 toast，背景 = 完全開蓋的畫面（通過門蓋姿態檢查，console log `lid ok`）。 | 只開 1 秒就關：最後一次讀到開啟之前完成的 lid-OK 照片有就畫、沒有就不畫；關門後才完成的那張絕不顯示。慢慢關蓋（約 3 秒）：下降途中拍的是 `lid no`，畫最後一張在止點拍的（配套 L2）。 |
+| A2 | fbb2 或 fhx2rf，開蓋 5 秒放材料，以正常速度關蓋（< 1 秒）。 | 開著時沒有 toast。關門後約 2 秒內：成功 toast，背景 = 完全開蓋的畫面（通過姿態檢查，console log `pose ok`）。 | 只開 1 秒就關：最後一次讀到開啟之前完成的 pose-OK 照片有就畫、沒有就不畫；關門後才完成的那張絕不顯示。慢慢關蓋（約 3 秒）：下降途中拍的是 `pose no`，畫最後一張在止點拍的（配套 L2）。 |
 | A3 | fbb2 或 fhx2rf 沒有廣角校正。開關門。 | 無動作，不跳 alert。 | — |
 | A4 | A1 拍攝中點「開始」。 | 出現自動預覽文字的 alert，是／否。是 → 雷射頭留在進行中步驟結束的位置（不停回，工作本來就會歸零），此次拍攝不改背景，匯出繼續。否 → 匯出取消，拍攝正常完成。 | 從框選、校正相機（選單）、監控視窗觸發亦同。提示放著不答、拍攝先完成：提示自動關閉、照片畫上、匯出繼續。進 raw 模式或歸零中按是：進行中的步驟做完、離開 raw 模式，雷射頭不去相機位置也不去停回位置（fbm2 的停回位置離相機位置只有 13 mm）。 |
 | A5 | A1 進行中開門。 | 拍攝靜默中止，雷射頭停回，不跳 alert，背景不變。 | — |
@@ -180,7 +180,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - `app/lang/*.ts`、`interfaces/ILang.ts`（`settings` 與 `message.auto_preview` 下新增 key）
   - 既有 key：不變。
 - `checkDeviceStatus`、`DialogContext`／`AlertProgressContext`、`GoButton`、`promark-button-handler`：由配套 PRD 修改，列在 `background-tasks.md` §6。本功能只新增一個任務。
-- `helpers/api/camera.ts`（`sendOneShot` 附上選填的 `lid` 判定）、`helpers/device-master.ts`（`takeOnePicture` 原樣傳出）— 其他所有呼叫端拿到相同的結果形狀；呼叫端列在配套 PRD §6。
+- `helpers/api/camera.ts`（`sendOneShot` 附上選填的 `pose` 判定）、`helpers/device-master.ts`（`takeOnePicture` 原樣傳出）— 其他所有呼叫端拿到相同的結果形狀；呼叫端列在配套 PRD §6。
 - `helpers/device/get-device.ts`（在結束子任務或讀取狀態之前先 `backgroundTasks.yieldTo(device)`；否 → `{ device: null }`，所有呼叫者本來就把它當「到此為止」）
   - 匯出（`handleExportClick.ts`）、框選、手動預覽（`previewMode.ts`）、路徑預覽、曲面雕刻、教學、首次校正對話框、Print and Cut 曝光、選擇機器按鈕：沒有背景任務忙碌時不變；所選機器上有任務忙碌時，在碰機器之前先跳一次是／否，之後 `checkDeviceStatus` 不會再問第二次。
 
@@ -223,18 +223,18 @@ capturing/looping: §7.5 的 abort() 或 socket 關閉 → 丟棄 → polling
 
 ### 7.3 開蓋迴圈（fbb2 / fhx2rf）
 
-開門時、通過拍攝守門後設定一次，**不進 raw 模式、不歸零**：`getWideAngleCameraData(device)` → `connectCamera` → `setCamera(1)` → `setFisheyeParam({ ...params, grids: <機型的全範圍 grid>, offset: undefined })`（與 `FisheyePreviewManagerV4.paramsToSend` 對全範圍的處理相同）→ `setFisheyeObjectHeight(0)`，假設材料已對焦 → `setLidCheck(true)`（配套 §7.3；回 false 則在拍任何照片前結束迴圈並記 log，和沒有校正一樣）。不重用 `Bb2Hx2PreviewManager.setup()`：它的廣角流程會歸零（§2.2），而且會重讀門蓋，若此時門已關上就改走雷射頭相機（raw 模式、移動雷射頭）。沒有廣角校正（`hasWideAngleCamera === false` 或沒有參數）→ 迴圈不啟動，不顯示任何東西。迴圈結束時斷開相機。
+開門時、通過拍攝守門後設定一次，**不進 raw 模式、不歸零**：`getWideAngleCameraData(device)` → `connectCamera` → `setCamera(1)` → `setFisheyeParam({ ...params, grids: <機型的全範圍 grid>, offset: undefined })`（與 `FisheyePreviewManagerV4.paramsToSend` 對全範圍的處理相同）→ `setFisheyeObjectHeight(0)`，假設材料已對焦 → `setPoseCheck(true)`（配套 §7.3；回 false 則在拍任何照片前結束迴圈並記 log，和沒有校正一樣）。不重用 `Bb2Hx2PreviewManager.setup()`：它的廣角流程會歸零（§2.2），而且會重讀門蓋，若此時門已關上就改走雷射頭相機（raw 模式、移動雷射頭）。沒有廣角校正（`hasWideAngleCamera === false` 或沒有參數）→ 迴圈不啟動，不顯示任何東西。迴圈結束時斷開相機。
 
 迴圈直到門蓋輪詢（§7.1，持續進行）看到關門，或 `abort()`：
 
 ```
-{ imgBlob, lid } = takeOnePicture({ timeout: 5 }) // 攤平後的 JPEG（§2.2）；不跳相機排線警告
+{ imgBlob, pose } = takeOnePicture({ timeout: 5 }) // 攤平後的 JPEG（§2.2）；不跳相機排線警告
 url = object URL；t = Date.now()                 // 照片完成的時間
-push {url, t, lidOk: lid?.ok}; 保留最後 N = 4 筆，釋放被丟掉的 URL
+push {url, t, poseOk: pose?.ok}; 保留最後 N = 4 筆，釋放被丟掉的 URL
 await sleep(LOOP_GUARD_MS = 200)               // 拍攝錯誤 → sleep 1000
 ```
 
-關門時，兩機型相同，只看 `t ≤ t_last_open` 的項目（最後一次讀到門蓋開啟的輪詢送出時間；關門當下還在拍的那張會在關門後才完成，拍到的是關上的門蓋）：最新且 `lidOk === true` 的一筆；沒有 → 什麼都不做。每筆連同判定記 log，硬體測試可直接從 console 讀。
+關門時，兩機型相同，只看 `t ≤ t_last_open` 的項目（最後一次讀到門蓋開啟的輪詢送出時間；關門當下還在拍的那張會在關門後才完成，拍到的是關上的門蓋）：最新且 `poseOk === true` 的一筆；沒有 → 什麼都不做。每筆連同判定記 log，硬體測試可直接從 console 讀。
 
 接著 `previewModeBackgroundDrawer.drawFullWorkarea(url)`（`preview-mode-background-drawer.ts:116`；不在預覽工作階段時直接繪製，不呼叫 `start()`，因為它會清掉背景並畫出預覽邊界），顯示「自動預覽：預覽成功」（3 秒）。未選中的 URL 一律釋放；`abort()` 不繪製並釋放全部。
 
@@ -290,12 +290,12 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 4. ~~「任何對話框」vs 精選 id 清單~~ → 任何對話框、alert 或 progress。2026-10-30 起由背景任務管理器的 `canTouchMachine` 實作。
 5. ~~訊息樣式~~ → 原序列加「自動預覽：」前綴，含連線步驟；bb2/hx 在成功 toast 前靜默。
 6. ~~工作原點~~ → 啟用時所有機型都關閉監聽器。
-7. ~~關門時沒有有效照片（fbb2／fhx2rf）~~ → 什麼都不做，只記 console log（2026-10-16，2026-11-06 為門蓋姿態檢查再次確認：被拒絕的照片不會當盡力而為畫出）。「門蓋未完全打開」之類的 toast 留待硬體測試看出發生頻率後再決定（§11 F3）。
+7. ~~關門時沒有有效照片（fbb2／fhx2rf）~~ → 什麼都不做，只記 console log（2026-10-16，2026-11-06 為姿態檢查再次確認：被拒絕的照片不會當盡力而為畫出）。「門蓋未完全打開」之類的 toast 留待硬體測試看出發生頻率後再決定（§11 F3）。
 8. ~~機器忙碌時的延後重試~~ → v1 不做（§11 F1）。
 9. ~~自己的監聽器還是共用基礎設施~~ → 共用：本功能是背景任務管理器的第二個任務，Promark 是第一個（2026-10-30，`background-tasks.md`）。
 10. ~~fbb2/fhx2rf 攤平用的材料高度~~ → 0，假設材料已對焦（2026-11-02）。讀取高度需要 raw 模式，手動廣角設定還會歸零；需求是不歸零，所以迴圈完全不進 raw 模式（§7.3）。
 
-待定事實（非決策）：fbb2 的門蓋姿態資料（配套決策 3）。
+待定事實（非決策）：fbb2 的姿態檢查資料（配套決策 3）。
 
 ---
 
@@ -306,8 +306,8 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 - **R4 raw 模式下的門蓋輪詢。** `play get_door_open` 在 raw 模式無效；任何子任務開著時任務暫停輪詢。若未來某流程長時間停在 raw 模式，自動預覽會靜默等待。
 - **R5 fbb2/fhx2rf 高度為 0。** 未對焦的厚材料攤平後比例會略有偏差。接受（決策 10）；手動預覽會讀取實際高度。
 - **F1 多台電腦輪流。** 因機器忙碌而跳過週期時，記住一次待拍，在時限內 `st_id` 回到 IDLE 就補拍，讓多台電腦輪流拿到預覽。一個旗標加一個期限；延後。
-- **F2 重新評估標記判斷。** 從 §2.6 的事實出發。有效性已由門蓋姿態檢查取代；標記只剩平台高度訊號的用途（決策 10）。若日後需要，可行的形式：「找到的任一標記落在它自己的預期位置就算有效」。前提：標記在攤平影格內（放大格線、繪製前裁切）、有平台高度可算預期位置、有機器能在真實光線下量偵測率。
-- **F3 「門蓋未完全打開」toast。** 一次開關門沒有任何 lid-OK 照片時（決策 7），告訴使用者原因而不是保持沉默。23 種語言各一個 i18n key；等第一輪硬體測試看出發生頻率再決定。
+- **F2 重新評估標記判斷。** 從 §2.6 的事實出發。有效性已由姿態檢查取代；標記只剩平台高度訊號的用途（決策 10）。若日後需要，可行的形式：「找到的任一標記落在它自己的預期位置就算有效」。前提：標記在攤平影格內（放大格線、繪製前裁切）、有平台高度可算預期位置、有機器能在真實光線下量偵測率。
+- **F3 「門蓋未完全打開」toast。** 一次開關門沒有任何 pose-OK 照片時（決策 7），告訴使用者原因而不是保持沉默。23 種語言各一個 i18n key；等第一輪硬體測試看出發生頻率再決定。
 
 ---
 
@@ -315,7 +315,7 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 
 免硬體（Jest，依 `unit-test` skill 慣例；管理器、`checkDeviceStatus` 與分頁焦點的測試在 `background-tasks.md` §12）：
 
-- `autoFullAreaPreview.spec.ts`：條件守門（逐一切換每個條件）、fbm2 去抖（開 < 2 秒、關門 1 秒內重開、用假計時器跑正常路徑）、守門失敗跳過、拍攝中 abort 會呼叫 `end()` 並丟棄、socket 關閉跳過 `end()` 並回到輪詢、`isEnabled` 對應、開蓋挑選規則（門蓋仍讀到開啟時完成的最新 lid-OK 照片、沒有 lid-OK 照片就不畫、排除關門當下還在拍的那張、空清單不動作）、`setLidCheck` 失敗結束迴圈、記 log、不畫照片。
+- `autoFullAreaPreview.spec.ts`：條件守門（逐一切換每個條件）、fbm2 去抖（開 < 2 秒、關門 1 秒內重開、用假計時器跑正常路徑）、守門失敗跳過、拍攝中 abort 會呼叫 `end()` 並丟棄、socket 關閉跳過 `end()` 並回到輪詢、`isEnabled` 對應、開蓋挑選規則（門蓋仍讀到開啟時完成的最新 pose-OK 照片、沒有 pose-OK 照片就不畫、排除關門當下還在拍的那張、空清單不動作）、`setPoseCheck` 失敗結束迴圈、記 log、不畫照片。
 - `imageContourDetection.spec.ts`：批次外的繪製立刻偵測；批次與 live 模式的等待不變。
 - `get-device.spec.ts`：`yieldTo` 在 `endSubTask` 之前執行；拒絕 → `{ device: null }`，不送任何機器指令、不跳 `device_not_found`。
 - `FisheyePreviewManagerV4.spec.ts`：歸零後 `isCancelled` 為 true → 回傳 `false`，不 `rawMove`、不送 fisheye 參數。
@@ -324,6 +324,6 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 硬體（待機器；對應 §5）：
 
 - fbm2：A1、A4（匯出、框選、選單校正）、A5、A7、A8、A9、A11、A12、A14。
-- fhx2rf：A2（含慢關情境）、A3、A4、A6、A10、門蓋姿態 L1–L6（配套 §5）；A13 只在任務日後加入標記或旋轉軸檢查時才需要。
-- fbb2：A2、A3、A4、門蓋姿態 L1–L4。
+- fhx2rf：A2（含慢關情境）、A3、A4、A6、A10、姿態檢查 L1–L6（配套 §5）；A13 只在任務日後加入標記或旋轉軸檢查時才需要。
+- fbb2：A2、A3、A4、姿態檢查 L1–L4。
 - 網頁版：A11 的瀏覽器分頁變體。
