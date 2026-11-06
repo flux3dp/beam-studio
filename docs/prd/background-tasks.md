@@ -109,7 +109,6 @@ Foreground pollers start and stop with a user action and are already serialised 
 | B4 | With a busy task (auto preview capturing), trigger each `checkDeviceStatus` entry point on the same machine: Go, Framing, a machine-menu action, a calibration dialog. | Yes/No prompt with the task's text. Yes → task aborted, action proceeds. No → action cancelled, task continues. | Busy on another machine → no prompt, task aborted, action proceeds. |
 | B5 | No task busy; same entry points as B4. | No new prompt; existing `device_is_used` / kick / abort prompts unchanged. | Manual preview active → existing preview prompt first, as today. |
 | B6 | Task running on A; open the monitor of B (select B), close it. | Within ~5 s of the last modal closing, the manager reselects A and the task resumes. | While the monitor is open, the task skips its ticks (no command reaches B). |
-| B7 | Devtools: `backgroundTasks.list()`. | Rows `{ id, priority, running, device, busy }` for every registered task, highest priority first. | — |
 
 ---
 
