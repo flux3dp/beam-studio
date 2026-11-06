@@ -39,6 +39,7 @@ import type {
 } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
+import type { CameraPose } from './api/camera';
 import Camera from './api/camera';
 import Control from './api/control';
 import { discoverManager } from './api/discover';
@@ -1721,6 +1722,10 @@ class DeviceMaster {
     return res;
   }
 
+  async setPoseCheck(enabled: boolean) {
+    return this.currentDevice!.camera!.setPoseCheck(enabled);
+  }
+
   async setFisheyePerspectiveGrid(data: PerspectiveGrid) {
     const res = await this.currentDevice!.camera!.setFisheyePerspectiveGrid(data);
 
@@ -1745,6 +1750,7 @@ class DeviceMaster {
   }: { timeout?: number; useLowResolution?: boolean } = {}): Promise<null | {
     imgBlob?: Blob;
     needCameraCableAlert?: boolean;
+    pose?: CameraPose;
   }> {
     const startTime = Date.now();
     const cameraFishEyeSetting = this.currentDevice!.camera?.getFisheyeSetting();

@@ -22,6 +22,22 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+/** fluxghost's per-frame camera pose verdict (`set_pose_check`, docs/api/camera.md): angles in degrees from vertical */
+export interface CameraPose {
+  expected_left: null | number;
+  expected_right: null | number;
+  left: null | number;
+  ok: boolean;
+  right: null | number;
+}
+
+export interface CameraShot {
+  imgBlob: Blob;
+  needCameraCableAlert: boolean;
+  /** Present when the pose check is on: fluxghost sends it right before the frame */
+  pose?: CameraPose;
+}
+
 const TIMEOUT = 120000;
 // fisheye models transmit larger images; 2 min is not enough for IMAGE_TRANSMISSION_FAIL_THRESHOLD retries
 const FISHEYE_TIMEOUT = 300000;
@@ -66,8 +82,10 @@ class Camera {
   };
   private ws: any;
   private wsSubject: Subject<Blob | { status: string }>;
-  private source: Observable<{ imgBlob: Blob; needCameraCableAlert: boolean }>;
+  private source: Observable<CameraShot>;
   private nonBinarySource: Observable<{ status: string }>;
+  /** fluxghost sends the pose message right before its frame: held until that frame arrives */
+  private lastPose: CameraPose | null = null;
   private requireFrameRetry: number;
   private fishEyeSetting: null | {
     levelingData?: Record<string, number>;
@@ -107,6 +125,11 @@ class Camera {
     this.source = binary
       .pipe(
         map(async (blob: Blob) => {
+          // Paired by arrival order, synchronously, before the awaits below
+          const pose = this.lastPose;
+
+          this.lastPose = null;
+
           const isImage = await checkBlobIsImage(blob);
           const t = i18n.lang.message;
 
@@ -138,12 +161,15 @@ class Camera {
 
           const imgBlob = await this.preprocessImage(blob);
 
-          return { imgBlob, needCameraCableAlert };
+          return pose ? { imgBlob, needCameraCableAlert, pose } : { imgBlob, needCameraCableAlert };
         }),
       )
       .pipe(concatMap((p) => from(p)))
       .pipe(filter((res) => res !== null));
     this.nonBinarySource = nonBinary as Observable<{ status: string }>;
+    this.nonBinarySource
+      .pipe(filter((res) => res.status === 'frame'))
+      .subscribe((res) => (this.lastPose = (res as unknown as { pose: CameraPose }).pose));
   }
 
   // let subject get response from websocket
@@ -407,7 +433,7 @@ class Camera {
     return res.status === 'ok';
   };
 
-  async sendOneShot(useLowResolution = true): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
+  async sendOneShot(useLowResolution = true): Promise<CameraShot> {
     try {
       this.lastRequireCommand = useLowResolution ? 'require_frame l' : 'require_frame';
       this.ws.send(this.lastRequireCommand);
@@ -429,8 +455,20 @@ class Camera {
     }
   }
 
-  oneShot = async (useLowResolution = true): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> => {
+  oneShot = async (useLowResolution = true): Promise<CameraShot> => {
     return this.commandQueue.add(() => this.sendOneShot(useLowResolution));
+  };
+
+  /**
+   * Ask fluxghost to judge on every frame whether the camera is at its calibrated pose (`pose` on the shot).
+   * Needs v4 fisheye parameters set; false when fluxghost cannot do it.
+   */
+  setPoseCheck = async (enabled: boolean, toleranceDeg?: number): Promise<boolean> => {
+    const res = await this.sendCommandWithNonBinaryResult(
+      `set_pose_check ${JSON.stringify({ enabled, tolerance_deg: toleranceDeg })}`,
+    );
+
+    return res.status === 'ok';
   };
 
   getLiveStreamSource(useLowResolution = false): Observable<{ imgBlob: Blob; needCameraCableAlert: boolean }> {

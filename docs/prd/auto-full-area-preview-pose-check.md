@@ -116,7 +116,7 @@ Thresholds (`CANNY`, Hough, bands) are module constants, named and commented; th
 
 ### 7.3 Client (Beam Studio)
 
-- `Camera` (`helpers/api/camera.ts`): `setPoseCheck(enabled)` through `sendCommandWithNonBinaryResult`. `sendOneShot` subscribes to the non-binary stream for the first `{status: 'frame'}` after it sends `require_frame` and attaches it as `pose` on the result; absent when none arrived before the frame.
+- `Camera` (`helpers/api/camera.ts`): `setPoseCheck(enabled)` through `sendCommandWithNonBinaryResult`. The non-binary stream keeps the latest `{status: 'frame'}` message and the binary stream consumes it when the next blob arrives, so the pairing follows arrival order (fluxghost sends the message right before its frame) and is independent of request timing; the shot carries it as `pose`, absent when no message preceded the frame.
 - `device-master.ts` `takeOnePicture` passes `pose` through.
 - `autoFullAreaPreview.ts`: after `setFisheyeObjectHeight(0)`, `await deviceMaster.setPoseCheck(true)`; a false result is logged (`pose check unavailable`) and the loop ends before any photo, like a missing calibration. `Photo` gains `poseOk: boolean`. `pickPhoto(photos, lastOpenAt)`: among the photos finished while the door read open, the newest with `poseOk`; none → nothing is drawn (parent decision 7). Each photo is logged with its verdict and angles so a hardware run can be read from the console.
 
