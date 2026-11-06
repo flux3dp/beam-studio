@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **狀態** | 已於 2.7.3 實作（管理器、Promark 遷移、前景讓路、重新選取）。硬體：Promark B1 於 2026-11-06 通過（先預覽後執行的按壓、按住到執行門檻、一般按壓）。待辦：B2、B6；B4/B5 待第一個會忙碌的任務（自動全範圍預覽）上線後驗證。 |
+| **狀態** | 已於 2.7.3 實作（管理器、Promark 遷移、前景讓路、重新選取）。硬體：Promark B1 與 B2 於 2026-11-06 通過（先預覽後執行的按壓、按住到執行門檻、一般按壓；模式、機器、工作區、設定與分頁焦點的停止與恢復）。待辦：B6；B4/B5 待第一個會忙碌的任務（自動全範圍預覽）上線後驗證。 |
 | **作者** | 產品與軟體團隊 |
 | **建立日期** | 2026-10-30 |
 | **目標產品** | Beam Studio 桌面版（Electron）與網頁版。所有機型。 |
@@ -316,4 +316,4 @@ backgroundTasks.isCurrent(task) &&
 - `GoButton.spec.tsx`：mock 管理器，預期呼叫 `setDevice(selectedDevice)`。
 - `background/index.spec.ts` 的網頁版焦點：`visibilitychange` 變成 hidden 時停止任務，回到 visible 時重新啟動；Electron 路徑使用 `tabController` 事件。
 
-硬體（對應 §5）：Promark 的 B1（2026-11-06 通過）、B2、B6。B4/B5 搭配 fbm2 上的自動預覽配套功能。
+硬體（對應 §5）：Promark 的 B1 與 B2（2026-11-06 通過）、B6。B4/B5 搭配 fbm2 上的自動預覽配套功能。
