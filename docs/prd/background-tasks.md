@@ -165,7 +165,7 @@ interface BackgroundTask {
   stop: () => void;                               // stop polling; if busy, abort without waiting
   isBusy: () => boolean;                          // doing something a foreground action must not overlap
   abort: () => Promise<void>;                     // stop busy work and leave the machine clean
-  busyMessage?: () => string;                     // prompt text; required when isBusy can be true
+  busyMessage?: () => null | string;              // prompt text; required when isBusy can be true; null = abort without asking
 }
 ```
 
@@ -220,7 +220,7 @@ for task in priority order (highest first):
 if (!(await backgroundTasks.yieldTo(device))) return false;
 ```
 
-`yieldTo(device)`: for each busy task — on another device: `await task.abort()`; on the same device: Yes/No prompt with `task.busyMessage()`, Yes → `await task.abort()`, No → return `false`; the prompt is closed and treated as `true` if the task stops being busy on its own while it is open (polled every 500 ms, added 2026-11-05: an auto-preview capture that completes behind the prompt leaves nothing to stop). No busy task → `true` immediately. Tasks that are merely polling keep polling; the foreground action's own dialog or sub-task then holds them off through `canTouchMachine`.
+`yieldTo(device)`: for each busy task — on another device: `await task.abort()`; on the same device: Yes/No prompt with `task.busyMessage()`, Yes → `await task.abort()`, No → return `false`; a `null` message means the task is cheap to stop (nothing in flight on the machine) and it is aborted without a prompt (added 2026-11-06 for the auto-preview open-lid loop); the prompt is closed and treated as `true` if the task stops being busy on its own while it is open (polled every 500 ms, added 2026-11-05: an auto-preview capture that completes behind the prompt leaves nothing to stop). No busy task → `true` immediately. Tasks that are merely polling keep polling; the foreground action's own dialog or sub-task then holds them off through `canTouchMachine`.
 
 ### 7.4 `canTouchMachine(task)`
 

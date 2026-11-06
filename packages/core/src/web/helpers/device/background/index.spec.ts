@@ -186,6 +186,16 @@ describe('backgroundTasks', () => {
       expect(log).toEqual([]);
     });
 
+    test('a busy task that is cheap to stop is aborted without asking', async () => {
+      const task = setup();
+
+      task.busy = true;
+      task.busyMessage = () => null;
+      expect(await backgroundTasks.yieldTo(deviceA)).toBe(true);
+      expect(mockPopUp).not.toHaveBeenCalled();
+      expect(log).toEqual(['abort promark-button']);
+    });
+
     test('closes the prompt and continues when the task finishes before an answer', async () => {
       jest.useFakeTimers();
 

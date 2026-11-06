@@ -23,7 +23,7 @@ A **task** polls the machine on its own timer; the **manager** decides when it r
 ## Adding a task
 
 1. Add its id and rank to `BACKGROUND_TASK_PRIORITY` (spaced by 10, no ties). The id type comes from this table, so the rank is chosen up front.
-2. Implement `BackgroundTask`: `models`, `isEnabled(ctx)` with only the task's own rules (canvas modes, workarea rule, preferences), `start(device)` / `stop()` for its timer, `isBusy()`, `abort()`, and `busyMessage()` if it can be busy.
+2. Implement `BackgroundTask`: `models`, `isEnabled(ctx)` with only the task's own rules (canvas modes, workarea rule, preferences), `start(device)` / `stop()` for its timer, `isBusy()`, `abort()`, and `busyMessage()` if it can be busy (return `null` while the busy work is cheap to stop: the manager then aborts it without asking).
 3. Export a `register<Task>()` that subscribes to the task's own settings (calling `backgroundTasks.refresh()` on change) and calls `backgroundTasks.register(task)`; call it once from the `BeamboxInit` constructor (`app/actions/beambox/beambox-init.ts`). Importing the task module must have no side effects.
 4. In each tick, return early unless `backgroundTasks.isCurrent(this)`; before busy work (raw mode, moving the head, capturing), require `await canTouchMachine(this)`.
 5. Done when: the task starts and stops with every context field, a foreground action on the same machine shows its `busyMessage` while busy, and `backgroundTasks.list()` shows it with the right priority.

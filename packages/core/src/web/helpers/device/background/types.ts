@@ -25,8 +25,8 @@ export interface BackgroundContext {
 export interface BackgroundTask {
   /** Stop busy work and leave the machine clean */
   abort: () => Promise<void>;
-  /** Prompt text for the foreground yield; required when isBusy can be true */
-  busyMessage?: () => string;
+  /** Prompt text for the foreground yield; required when isBusy can be true. null = cheap to stop: abort without asking */
+  busyMessage?: () => null | string;
   id: BackgroundTaskId;
   /** Doing something a foreground machine action must not overlap */
   isBusy: () => boolean;
