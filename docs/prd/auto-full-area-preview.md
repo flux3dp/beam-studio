@@ -137,6 +137,7 @@ Each criterion names how to operate it and what proves it. "Toast" means the top
 | A13 | fhx2rf with the honeycomb removed (rotary). | Same as A2: the honeycomb plays no part in the pick. | Covered by A2, no separate run (2026-11-05): the task reads nothing from the photo and has no rotary branch, so the row only guards against a marker check coming back. |
 | A14 | Manual preview button after an auto photo, `keep-preview-result` off. | Manual session starts; canvas cleared as today. | `keep-preview-result` on: photo kept. |
 | A15 | Snap to Object Center on, Swiftray running. Cycle the door (any model). | Right after the photo is drawn: "Detecting objects…" then "Objects detected"; dragging a design snaps to the objects on the bed. | Preference off or Swiftray down: photo drawn, no detection, as for manual preview. Manual preview afterwards: detection still runs once per batch. |
+| A16 | fbb2 / fhx2rf, lid open (loop running). Click the manual preview button, or Go. | No prompt: the loop stops, the action starts as if the task were idle; no auto photo for this cycle. | fbm2 during its capture: prompt as in A4. |
 
 ---
 
@@ -184,7 +185,7 @@ A background task (`background-tasks.md` §7.2), registered at startup:
 - `id = 'auto-full-area-preview'` (priority 10, the lowest: it is a convenience and may always yield), `models = {fbm2, fbb2, fhx2rf}`.
 - `isEnabled(ctx)`: preference `auto-full-area-preview` on; `ctx.workarea === ctx.device.model`; `ctx.mode === Draw`; `enable-job-origin` off. Its own subscriptions (`globalPreferenceStore`, `useDocumentStore` `enable-job-origin`) call `backgroundTasks.refresh()`. Selected device, canvas mode, workarea and tab focus come from the manager.
 - `start(device)` / `stop()`: begin / end the door poll; `stop()` while capturing aborts.
-- `isBusy()` = capturing or looping (§7.3); `abort()` as in §7.5; `busyMessage()` = `message.auto_preview.abort_to_continue`.
+- `isBusy()` = capturing or looping (§7.3); `abort()` as in §7.5; `busyMessage()` = `message.auto_preview.abort_to_continue` during the fbm2 capture (a raw-mode move may be in flight), `null` otherwise: the open-lid loop and the draw are stopped without a prompt, since on fbb2/fhx2rf the task is busy for as long as the lid is open and a manual preview with the lid open would otherwise ask every time (2026-11-06).
 
 **Polling**: `setInterval(DOOR_POLL_MS = 500)`, skip a tick while the previous call is pending, while `!backgroundTasks.isCurrent(this)`, or while `deviceMaster.currentControlMode !== ''`: a sub-task answers door queries differently, and `null` (no socket after a reload, drop or kick) would make `getDoorOpen` reconnect through `getControl()`, which shows the connecting progress and #892 on every failed tick. Device selection and silent reconnection are the manager's (`background-tasks.md` §7.3).
 
