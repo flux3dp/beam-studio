@@ -30,7 +30,7 @@ A **task** polls the machine on its own timer; the **manager** decides when it r
 
 ## Rules
 
-- **Busy** means work a foreground action must not overlap. While busy, `checkDeviceStatus` → `yieldTo(device)` asks the user on the same machine (No cancels the action) and aborts silently on another machine. A task that never blocks (Promark: its button export is itself a foreground action) returns `false`.
+- **Busy** means work a foreground action must not overlap. While busy, `getDevice` and then `checkDeviceStatus` → `yieldTo(device)` ask the user on the same machine (No cancels the action; the prompt closes itself and the action continues if the task finishes first) and abort silently on another machine; `getDevice` goes first because its `endSubTask` would otherwise break a raw-mode capture before the prompt. A task that never blocks (Promark: its button export is itself a foreground action) returns `false`.
 - Only the manager calls `deviceMaster.select` for a task.
 - `deviceMaster.currentControlMode` is `''` when the socket is usable, a mode name in a sub-task, and `null` with no socket. A task polls only on `''`: with `null`, any command goes through `getControl()` → `reconnect()`, which shows the connecting progress and #891/#892 on failure, every tick. Leave reconnecting to the manager.
 - Background code calls `deviceMaster.select(device, { silent: true })` (no progress, no connection-error alert, no password dialog); a plain `select()` is for user actions only.

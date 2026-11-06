@@ -191,7 +191,7 @@ Values are spaced by 10 so a new task can slot between two existing ones without
 ```ts
 backgroundTasks.register(task): void
 backgroundTasks.refresh(): void               // a task's own setting changed
-backgroundTasks.yieldTo(device): Promise<boolean>  // called by checkDeviceStatus
+backgroundTasks.yieldTo(device): Promise<boolean>  // called by getDevice, then checkDeviceStatus
 backgroundTasks.isCurrent(task): boolean      // current device is the task's device
 backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // highest priority first
 ```
@@ -220,7 +220,7 @@ for task in priority order (highest first):
 if (!(await backgroundTasks.yieldTo(device))) return false;
 ```
 
-`yieldTo(device)`: for each busy task — on another device: `await task.abort()`; on the same device: Yes/No prompt with `task.busyMessage()`, Yes → `await task.abort()`, No → return `false`. No busy task → `true` immediately. Tasks that are merely polling keep polling; the foreground action's own dialog or sub-task then holds them off through `canTouchMachine`.
+`yieldTo(device)`: for each busy task — on another device: `await task.abort()`; on the same device: Yes/No prompt with `task.busyMessage()`, Yes → `await task.abort()`, No → return `false`; the prompt is closed and treated as `true` if the task stops being busy on its own while it is open (polled every 500 ms, added 2026-11-05: an auto-preview capture that completes behind the prompt leaves nothing to stop). No busy task → `true` immediately. Tasks that are merely polling keep polling; the foreground action's own dialog or sub-task then holds them off through `canTouchMachine`.
 
 ### 7.4 `canTouchMachine(task)`
 
