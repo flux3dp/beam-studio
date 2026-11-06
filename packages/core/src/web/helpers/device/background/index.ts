@@ -14,6 +14,9 @@ import type { BackgroundContext, BackgroundTask, BackgroundTaskId } from './type
 import { BACKGROUND_TASK_PRIORITY } from './types';
 
 const RESELECT_MS = 5000;
+const YIELD_PROMPT_ID = 'background-task-yield';
+/** How often the yield prompt checks whether the task finished on its own */
+const YIELD_WATCH_MS = 500;
 
 const isVisible = (): boolean => document.visibilityState === 'visible';
 
@@ -94,16 +97,33 @@ class BackgroundTasks {
 
       if (runningOn.uuid === device.uuid) {
         const confirmed = await new Promise<boolean>((resolve) => {
+          // The task keeps working behind the prompt; once it finishes there is nothing to stop, so the action goes on
+          const watcher = setInterval(() => {
+            if (task.isBusy()) return;
+
+            clearInterval(watcher);
+            alertCaller.popById(YIELD_PROMPT_ID);
+            resolve(true);
+          }, YIELD_WATCH_MS);
+          const answer = (value: boolean) => {
+            clearInterval(watcher);
+            resolve(value);
+          };
+
           alertCaller.popUp({
             buttonType: alertConstants.YES_NO,
+            id: YIELD_PROMPT_ID,
             message: task.busyMessage?.() ?? i18n.lang.message.device_is_used,
-            onNo: () => resolve(false),
-            onYes: () => resolve(true),
+            onNo: () => answer(false),
+            onYes: () => answer(true),
           });
         });
 
         if (!confirmed) return false;
       }
+
+      // Finished while the prompt was open: nothing left to stop
+      if (!task.isBusy()) continue;
 
       await task.abort();
     }

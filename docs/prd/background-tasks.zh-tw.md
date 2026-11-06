@@ -193,7 +193,7 @@ export type BackgroundTaskId = keyof typeof BACKGROUND_TASK_PRIORITY;
 ```ts
 backgroundTasks.register(task): void
 backgroundTasks.refresh(): void                    // 任務自己的設定改變了
-backgroundTasks.yieldTo(device): Promise<boolean>  // 由 checkDeviceStatus 呼叫
+backgroundTasks.yieldTo(device): Promise<boolean>  // 由 getDevice 呼叫，之後 checkDeviceStatus 再呼叫一次
 backgroundTasks.isCurrent(task): boolean           // 目前機器是否為任務的機器
 backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // 優先級高的在前
 ```
@@ -222,7 +222,7 @@ backgroundTasks.list(): Array<{ id; priority; running; device; busy }>  // 優�
 if (!(await backgroundTasks.yieldTo(device))) return false;
 ```
 
-`yieldTo(device)`：對每個忙碌中的任務：在另一台機器上 → `await task.abort()`；在同一台機器上 → 以 `task.busyMessage()` 跳是／否提示，是 → `await task.abort()`，否 → 回傳 `false`。沒有任務忙碌 → 立即回 `true`。只是在輪詢的任務繼續輪詢；前景動作自己的對話框或子任務會透過 `canTouchMachine` 擋住它們。
+`yieldTo(device)`：對每個忙碌中的任務：在另一台機器上 → `await task.abort()`；在同一台機器上 → 以 `task.busyMessage()` 跳是／否提示，是 → `await task.abort()`，否 → 回傳 `false`；提示開著時若任務自己結束忙碌（每 500 ms 檢查一次，2026-11-05 新增：自動預覽在提示後面拍完就沒有東西可以中斷），提示會自動關閉並視為 `true`。沒有任務忙碌 → 立即回 `true`。只是在輪詢的任務繼續輪詢；前景動作自己的對話框或子任務會透過 `canTouchMachine` 擋住它們。
 
 ### 7.4 `canTouchMachine(task)`
 

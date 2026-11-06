@@ -37,8 +37,12 @@ jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
 jest.mock('@core/helpers/is-web', () => () => false);
 
 const mockPopUp = jest.fn();
+const mockPopById = jest.fn();
 
-jest.mock('@core/app/actions/alert-caller', () => ({ popUp: (...args) => mockPopUp(...args) }));
+jest.mock('@core/app/actions/alert-caller', () => ({
+  popById: (...args) => mockPopById(...args),
+  popUp: (...args) => mockPopUp(...args),
+}));
 jest.mock('@core/helpers/i18n', () => ({ lang: { message: { device_is_used: 'device is used' } } }));
 jest.mock('@core/app/actions/tabController', () => ({ isFocused: true, onBlurred: jest.fn(), onFocused: jest.fn() }));
 jest.mock('@core/app/stores/canvas/canvasStore', () => ({
@@ -180,6 +184,26 @@ describe('backgroundTasks', () => {
       mockPopUp.mockImplementation(({ onNo }) => onNo());
       expect(await backgroundTasks.yieldTo(deviceA)).toBe(false);
       expect(log).toEqual([]);
+    });
+
+    test('closes the prompt and continues when the task finishes before an answer', async () => {
+      jest.useFakeTimers();
+
+      const task = setup();
+
+      task.busy = true;
+
+      const result = backgroundTasks.yieldTo(deviceA);
+
+      await jest.advanceTimersByTimeAsync(1000);
+      expect(mockPopById).not.toHaveBeenCalled();
+
+      task.busy = false;
+      await jest.advanceTimersByTimeAsync(500);
+      expect(mockPopById).toHaveBeenCalledWith('background-task-yield');
+      expect(await result).toBe(true);
+      expect(log).toEqual([]);
+      jest.useRealTimers();
     });
   });
 
