@@ -179,10 +179,8 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
   - 其他所有偏好 key：不變。
 - `app/lang/*.ts`、`interfaces/ILang.ts`（`settings` 與 `message.auto_preview` 下新增 key）
   - 既有 key：不變。
-- `checkDeviceStatus`、`DialogContext`／`AlertProgressContext`、`GoButton`、`promark-button-handler`：由配套 PRD 修改，列在 `background-tasks.md` §6。本功能只新增一個任務。
+- `checkDeviceStatus`、`getDevice`、`DialogContext`／`AlertProgressContext`、`GoButton`、`promark-button-handler`：由配套 PRD 修改，列在 `background-tasks.md` §6（`getDevice` 在結束子任務前先向忙碌中的任務讓路；讓路提示在任務結束時自動關閉；任務可以不提示直接讓路）。本功能只新增一個任務。
 - `helpers/api/camera.ts`（`sendOneShot` 附上選填的 `pose` 判定）、`helpers/device-master.ts`（`takeOnePicture` 原樣傳出）— 其他所有呼叫端拿到相同的結果形狀；呼叫端列在配套 PRD §6。
-- `helpers/device/get-device.ts`（在結束子任務或讀取狀態之前先 `backgroundTasks.yieldTo(device)`；否 → `{ device: null }`，所有呼叫者本來就把它當「到此為止」）
-  - 匯出（`handleExportClick.ts`）、框選、手動預覽（`previewMode.ts`）、路徑預覽、曲面雕刻、教學、首次校正對話框、Print and Cut 曝光、選擇機器按鈕：沒有背景任務忙碌時不變；所選機器上有任務忙碌時，在碰機器之前先跳一次是／否，之後 `checkDeviceStatus` 不會再問第二次。
 
 ---
 
@@ -317,7 +315,6 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 
 - `autoFullAreaPreview.spec.ts`：條件守門（逐一切換每個條件）、fbm2 去抖（開 < 2 秒、關門 1 秒內重開、用假計時器跑正常路徑）、守門失敗跳過、拍攝中 abort 會呼叫 `end()` 並丟棄、socket 關閉跳過 `end()` 並回到輪詢、`isEnabled` 對應、開蓋挑選規則（門蓋仍讀到開啟時完成的最新 pose-OK 照片、沒有 pose-OK 照片就不畫、排除關門當下還在拍的那張、空清單不動作）、`setPoseCheck` 失敗結束迴圈、記 log、不畫照片。
 - `imageContourDetection.spec.ts`：批次外的繪製立刻偵測；批次與 live 模式的等待不變。
-- `get-device.spec.ts`：`yieldTo` 在 `endSubTask` 之前執行；拒絕 → `{ device: null }`，不送任何機器指令、不跳 `device_not_found`。
 - `FisheyePreviewManagerV4.spec.ts`：歸零後 `isCancelled` 為 true → 回傳 `false`，不 `rawMove`、不送 fisheye 參數。
 - `BasePreviewManager.spec.tsx`：`messagePrefix` 會前置；`silent` 抑制 `Beamo2PreviewManager`／`Bb2Hx2PreviewManager` 設定錯誤的 alert。
 
