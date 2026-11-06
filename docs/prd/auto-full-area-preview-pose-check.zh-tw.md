@@ -94,7 +94,7 @@ fluxghost
 
 Beam Studio
 
-- `helpers/api/camera.ts` `sendOneShot` / `oneShot` — 所有呼叫端（預覽管理器、校正對話框、`takeOnePicture`）拿到同樣的 `{ imgBlob, needCameraCableAlert }`；多出來的 `lid` 欄位為選填，檢查未啟用時不存在。
+- `helpers/api/camera.ts` `sendOneShot` / `oneShot` — 所有呼叫端（預覽管理器、校正對話框、`takeOnePicture`）拿到同樣的 `{ imgBlob, needCameraCableAlert }`；多出來的 `pose` 欄位為選填，檢查未啟用時不存在。
 - `sendCommandWithNonBinaryResult` — `frame` 訊息只會在 `require_frame` 與其影格之間送出，而 `oneShot` 與其他指令共用同一個 command queue，所以不會有指令回覆被誤認。
 - `helpers/device-master.ts` `takeOnePicture` — 回傳型別只多一個選填欄位。
 - `autoFullAreaPreview.ts` `captureOpenLid` — 開蓋迴圈的相機設定與收尾維持原樣；啟用失敗走和沒有校正相同的出口。
@@ -118,7 +118,7 @@ Beam Studio
 
 ### 7.3 客戶端（Beam Studio）
 
-- `Camera`（`helpers/api/camera.ts`）：`setPoseCheck(enabled)` 透過 `sendCommandWithNonBinaryResult`。`sendOneShot` 送出 `require_frame` 後訂閱非 binary 流的第一則 `{status: 'frame'}`，附在結果的 `lid`；影格前沒收到則不存在。
+- `Camera`（`helpers/api/camera.ts`）：`setPoseCheck(enabled)` 透過 `sendCommandWithNonBinaryResult`。非 binary 流保留最新一則 `{status: 'frame'}`，binary 流在下一個 blob 到達時取走它，所以配對依到達順序（fluxghost 在影格前一刻送出訊息），與請求時間無關；結果帶 `pose`，影格前沒有訊息則不存在。
 - `device-master.ts` `takeOnePicture` 把 `pose` 傳出去。
 - `autoFullAreaPreview.ts`：`setFisheyeObjectHeight(0)` 之後 `await deviceMaster.setPoseCheck(true)`；回 false 記 log（`pose check unavailable`）、在拍任何照片前結束迴圈，和沒有校正一樣。`Photo` 加 `poseOk: boolean`。`pickPhoto(photos, lastOpenAt)`：門仍回報開啟時完成的照片中，最新一張 `poseOk` 的；沒有 → 什麼都不畫（母 PRD 決策 7）。每張照片連同判定與角度記 log，硬體測試可直接從 console 讀。
 

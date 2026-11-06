@@ -21,8 +21,6 @@ const DOOR_POLL_MS = 500;
 const OPEN_MIN_MS = 2000;
 /** fbm2: wait this long after the close; reopening in between cancels */
 const CLOSE_DELAY_MS = 1000;
-/** fbb2/fhx2rf: a photo must have finished this long before the close to count as taken with the lid open */
-const SETTLE_MS = 1500;
 const KEEP_PHOTOS = 4;
 const LOOP_GUARD_MS = 200;
 const LOOP_ERROR_MS = 1000;
@@ -32,18 +30,17 @@ const sleep = (ms: number) => new Promise<void>((resolve) => setTimeout(resolve,
 
 interface Photo {
   finishedAt: number;
+  /** fluxghost saw the camera at its calibrated pose, i.e. the lid at its stop (pose-check PRD) */
+  poseOk: boolean;
   url: string;
 }
 
 /**
- * Newest photo finished SETTLE_MS before the close, else the newest one finished while the door still read open
- * (`lastOpenAt`): a photo in flight at the close finishes after it and shows the closed lid
+ * Newest pose-OK photo finished while the door still read open (`lastOpenAt`); a photo in flight at the close
+ * finishes after it and can show the closed lid. None → nothing is drawn: a rejected photo is never a best effort.
  */
-export const pickPhoto = (photos: Photo[], closedAt: number, lastOpenAt: number): Photo | undefined => {
-  const whileOpen = photos.filter(({ finishedAt }) => finishedAt <= lastOpenAt);
-
-  return [...whileOpen].reverse().find(({ finishedAt }) => finishedAt <= closedAt - SETTLE_MS) ?? whileOpen.at(-1);
-};
+export const pickPhoto = (photos: Photo[], lastOpenAt: number): Photo | undefined =>
+  [...photos].reverse().find(({ finishedAt, poseOk }) => poseOk && finishedAt <= lastOpenAt);
 
 /** Captures a full-area photo when the user closes the machine door (docs/prd/auto-full-area-preview.md) */
 class AutoFullAreaPreview implements BackgroundTask {
@@ -278,12 +275,25 @@ class AutoFullAreaPreview implements BackgroundTask {
       // Height 0 assumes the material is focused; reading it would need raw mode
       await deviceMaster.setFisheyeObjectHeight(0);
 
+      // Without the verdict no photo can be trusted: end as without a calibration (pose-check PRD S5)
+      if (!(await deviceMaster.setPoseCheck(true))) {
+        log('pose check unavailable');
+
+        return;
+      }
+
       while (this.closedAt === null && !this.aborted) {
         try {
-          const { imgBlob } = (await deviceMaster.takeOnePicture({ timeout: 5 })) ?? {};
+          const { imgBlob, pose } = (await deviceMaster.takeOnePicture({ timeout: 5 })) ?? {};
 
           if (imgBlob) {
-            photos.push({ finishedAt: Date.now(), url: URL.createObjectURL(imgBlob) });
+            const poseOk = pose?.ok === true;
+
+            log(
+              `photo ${poseOk ? 'pose ok' : 'pose no'}: left ${pose?.left ?? '-'} right ${pose?.right ?? '-'}, ` +
+                `expected ${pose?.expected_left ?? '-'} / ${pose?.expected_right ?? '-'}`,
+            );
+            photos.push({ finishedAt: Date.now(), poseOk, url: URL.createObjectURL(imgBlob) });
 
             if (photos.length > KEEP_PHOTOS) URL.revokeObjectURL(photos.shift()!.url);
           }
@@ -300,10 +310,12 @@ class AutoFullAreaPreview implements BackgroundTask {
       deviceMaster.disconnectCamera();
     }
 
-    const picked =
-      this.aborted || this.closedAt === null ? undefined : pickPhoto(photos, this.closedAt, this.lastOpenAt);
+    const picked = this.aborted || this.closedAt === null ? undefined : pickPhoto(photos, this.lastOpenAt);
 
-    log(`${photos.length} photos, picked ${picked ? `${this.closedAt! - picked.finishedAt}ms before close` : 'none'}`);
+    log(
+      `${photos.length} photos, picked ${picked ? `${this.closedAt! - picked.finishedAt}ms before close` : 'none'}` +
+        (!picked && !this.aborted && photos.length ? ' (no pose-ok photo)' : ''),
+    );
     photos.forEach((photo) => photo !== picked && URL.revokeObjectURL(photo.url));
 
     if (!picked) return;

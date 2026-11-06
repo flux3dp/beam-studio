@@ -73,6 +73,7 @@ const mockDisconnectCamera = jest.fn();
 const mockConnectCamera = jest.fn();
 const mockSetCamera = jest.fn();
 const mockSetFisheyeParam = jest.fn();
+const mockSetPoseCheck = jest.fn();
 const mockSetFisheyeObjectHeight = jest.fn();
 const mockTakeOnePicture = jest.fn();
 const mockDeviceMaster = { currentControlMode: '' as null | string };
@@ -87,6 +88,7 @@ jest.mock('@core/helpers/device-master', () => ({
   setCamera: (...args) => mockSetCamera(...args),
   setFisheyeObjectHeight: (...args) => mockSetFisheyeObjectHeight(...args),
   setFisheyeParam: (...args) => mockSetFisheyeParam(...args),
+  setPoseCheck: (...args) => mockSetPoseCheck(...args),
   takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
@@ -271,15 +273,26 @@ describe('autoFullAreaPreview', () => {
     });
   });
 
-  test('pickPhoto: newest settled photo, else the newest taken while open, else none', () => {
-    const photos = [1000, 2000, 3000, 3500].map((finishedAt) => ({ finishedAt, url: `u${finishedAt}` }));
+  test('pickPhoto: newest pose-OK photo finished while the door still read open, else none', () => {
+    const photos = [
+      { finishedAt: 1000, poseOk: true, url: 'u1000' },
+      { finishedAt: 2000, poseOk: true, url: 'u2000' },
+      { finishedAt: 3000, poseOk: false, url: 'u3000' }, // lid on its way down
+      { finishedAt: 3500, poseOk: true, url: 'u3500' }, // in flight at the close
+    ];
 
-    expect(pickPhoto(photos, 4000, 3600)?.url).toBe('u2000');
-    // nothing settled: newest that finished while the door still read open, not the ones in flight at the close
-    expect(pickPhoto(photos, 2400, 2300)?.url).toBe('u2000');
-    expect(pickPhoto(photos, 2000, 1500)?.url).toBe('u1000');
-    expect(pickPhoto(photos, 1000, 500)).toBeUndefined();
-    expect(pickPhoto([], 3000, 2500)).toBeUndefined();
+    expect(pickPhoto(photos, 3200)?.url).toBe('u2000');
+    expect(pickPhoto(photos, 3600)?.url).toBe('u3500');
+    expect(pickPhoto(photos, 1500)?.url).toBe('u1000');
+    expect(pickPhoto(photos, 500)).toBeUndefined();
+    // every photo rejected: nothing, never a best effort
+    expect(
+      pickPhoto(
+        photos.map((p) => ({ ...p, poseOk: false })),
+        4000,
+      ),
+    ).toBeUndefined();
+    expect(pickPhoto([], 2500)).toBeUndefined();
   });
 
   describe('fbb2/fhx2rf open-lid loop', () => {
@@ -291,8 +304,11 @@ describe('autoFullAreaPreview', () => {
       global.URL.revokeObjectURL = jest.fn();
       mockGetWideAngleCameraData.mockResolvedValue({ hasWideAngleCamera: true, parameters: { k: [], offset: [1, 2] } });
       mockSetCamera.mockResolvedValue(true);
-      // each photo takes 500 ms
-      mockTakeOnePicture.mockImplementation(() => sleepFake(500).then(() => ({ imgBlob: 'blob' })));
+      mockSetPoseCheck.mockResolvedValue(true);
+      // each photo takes 500 ms, lid at its stop
+      mockTakeOnePicture.mockImplementation(() =>
+        sleepFake(500).then(() => ({ imgBlob: 'blob', pose: { left: 2, ok: true, right: -2 } })),
+      );
     });
 
     const sleepFake = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -310,28 +326,60 @@ describe('autoFullAreaPreview', () => {
       expect(mockDrawFullWorkarea.mock.calls[0][0]).toBe('url1');
     });
 
-    test('shoots while open without raw mode, draws a settled photo at close', async () => {
+    test('shoots while open without raw mode, draws the newest pose-OK photo at close', async () => {
+      let shot = 0;
+
+      // the lid starts down after photo 5: later photos are rejected by fluxghost (only the last 4 are kept)
+      mockTakeOnePicture.mockImplementation(() =>
+        sleepFake(500).then(() => ({ imgBlob: 'blob', pose: { ok: (shot += 1) <= 5 } })),
+      );
       autoFullAreaPreview.start(fhx2rf);
       door(true);
       await wait(5000);
       expect(mockSetCamera).toHaveBeenCalledWith(1);
       expect(mockSetFisheyeParam).toHaveBeenCalledWith(expect.objectContaining({ offset: undefined }));
       expect(mockSetFisheyeObjectHeight).toHaveBeenCalledWith(0);
+      expect(mockSetPoseCheck).toHaveBeenCalledWith(true);
       expect(mockOpenMessage).not.toHaveBeenCalled();
 
       door(false);
       await wait(1500);
 
       const drawn = mockDrawFullWorkarea.mock.calls[0][0];
-      const urls = (URL.createObjectURL as jest.Mock).mock.results.map(({ value }) => value);
 
       expect(mockDrawFullWorkarea).toHaveBeenCalledTimes(1);
-      // not the newest: that one finished within SETTLE_MS of the close
-      expect(drawn).not.toBe(urls.at(-1));
+      expect(drawn).toBe('url5');
       expect(URL.revokeObjectURL).not.toHaveBeenCalledWith(drawn);
       expect(mockOpenMessage).toHaveBeenCalledWith(expect.objectContaining({ content: 'Auto: done' }));
       expect(mockDisconnectCamera).toHaveBeenCalled();
       expect(autoFullAreaPreview.isBusy()).toBe(false);
+    });
+
+    test('no pose-OK photo: nothing is drawn, no toast', async () => {
+      mockTakeOnePicture.mockImplementation(() =>
+        sleepFake(500).then(() => ({ imgBlob: 'blob', pose: { ok: false } })),
+      );
+      autoFullAreaPreview.start(fhx2rf);
+      door(true);
+      await wait(3000);
+      door(false);
+      await wait(1500);
+      expect(mockDrawFullWorkarea).not.toHaveBeenCalled();
+      expect(mockOpenMessage).not.toHaveBeenCalled();
+      expect(URL.revokeObjectURL).toHaveBeenCalledTimes(shots);
+      expect(mockDisconnectCamera).toHaveBeenCalled();
+    });
+
+    test('pose check unavailable: the loop ends before any photo', async () => {
+      mockSetPoseCheck.mockResolvedValue(false);
+      autoFullAreaPreview.start(fhx2rf);
+      door(true);
+      await wait(3000);
+      door(false);
+      await wait(1500);
+      expect(mockTakeOnePicture).not.toHaveBeenCalled();
+      expect(mockDrawFullWorkarea).not.toHaveBeenCalled();
+      expect(mockDisconnectCamera).toHaveBeenCalled();
     });
 
     test('without wide-angle calibration it does nothing', async () => {
