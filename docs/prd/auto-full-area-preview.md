@@ -177,10 +177,8 @@ Shared files the design touches, with each caller and the behaviour that must st
   - All other preference keys — unchanged.
 - `app/lang/*.ts`, `interfaces/ILang.ts` (new keys under `settings` and `message.auto_preview`)
   - Existing keys — unchanged.
-- `checkDeviceStatus`, `DialogContext` / `AlertProgressContext`, `GoButton`, `promark-button-handler` — changed by the companion PRD, listed in `background-tasks.md` §6. This feature only adds a task.
+- `checkDeviceStatus`, `getDevice`, `DialogContext` / `AlertProgressContext`, `GoButton`, `promark-button-handler` — changed by the companion PRD, listed in `background-tasks.md` §6 (`getDevice` yields to a busy task before it ends a sub-task; the yield prompt closes itself when the task finishes; a task may yield silently). This feature only adds a task.
 - `helpers/api/camera.ts` (`sendOneShot` attaches the optional `pose` verdict), `helpers/device-master.ts` (`takeOnePicture` passes it through) — every other caller sees the same result shape; listed with callers in the companion PRD §6.
-- `helpers/device/get-device.ts` (`backgroundTasks.yieldTo(device)` before it ends a sub-task or reads the report; No → `{ device: null }`, which every caller already treats as "stop here")
-  - Export (`handleExportClick.ts`), framing, manual preview (`previewMode.ts`), path preview, curve engraving, tutorials, first-calibration dialog, Print and Cut exposure, select-machine button — no background task busy: unchanged; busy on the selected machine: one Yes/No prompt before anything touches the machine, and `checkDeviceStatus` afterwards shows no second prompt.
 
 ---
 
@@ -315,7 +313,6 @@ Hardware-free (Jest, `unit-test` skill conventions; manager, `checkDeviceStatus`
 
 - `autoFullAreaPreview.spec.ts`: requirements gating (each requirement toggled), fbm2 debounce (open < 2 s, reopen within 1 s, happy path with fake timers), gate failures skip, abort during capture calls `end()` and discards, socket close skips `end()` and resumes polling, `isEnabled` mapping, open-lid pick rule (newest pose-OK photo finished while the door read open, no pose-OK photo draws nothing, photo in flight at the close excluded, empty list does nothing), `setPoseCheck` failure ends the loop with a log and no photo.
 - `imageContourDetection.spec.ts`: a draw outside a batch is detected at once; batch and live-mode holds unchanged.
-- `get-device.spec.ts`: `yieldTo` runs before `endSubTask`; declined → `{ device: null }` with no machine command and no `device_not_found` message.
 - `FisheyePreviewManagerV4.spec.ts`: `isCancelled` true after homing → `false`, no `rawMove`, no fisheye params sent.
 - `BasePreviewManager.spec.tsx`: `messagePrefix` prepends; `silent` suppresses alerts in `Beamo2PreviewManager` / `Bb2Hx2PreviewManager` setup errors.
 
