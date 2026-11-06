@@ -74,7 +74,9 @@ class AutoFullAreaPreview implements BackgroundTask {
 
   isBusy = (): boolean => this.capture !== null;
 
-  busyMessage = (): string => i18n.lang.message.auto_preview.abort_to_continue;
+  /** Only the fbm2 capture has a raw-mode move in flight; the open-lid loop just stops asking for frames */
+  busyMessage = (): null | string =>
+    this.device?.model === 'fbm2' ? i18n.lang.message.auto_preview.abort_to_continue : null;
 
   /** Waits for the in-flight step (raw commands must not interleave), then ends without drawing */
   abort = async (): Promise<void> => {

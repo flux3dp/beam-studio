@@ -139,6 +139,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 | A13 | fhx2rf 拆掉蜂巢板（旋轉軸）。 | 同 A2：蜂巢板不影響挑選。 | 由 A2 涵蓋，不另外測（2026-11-05）：任務不讀照片內容、也沒有旋轉軸分支，這列只防止日後加回標記檢查。 |
 | A14 | 自動照片之後按手動預覽，`keep-preview-result` 關閉。 | 手動工作階段啟動；畫布如今天一樣清空。 | `keep-preview-result` 開啟：照片保留。 |
 | A15 | 物件中心吸附開啟、Swiftray 執行中。開關門蓋（任一機型）。 | 照片畫上去後立刻出現「偵測物件中…」再「已偵測到物件」；拖曳設計會吸附到床台上的物件。 | 偏好關閉或 Swiftray 離線：照片照畫、不偵測，和手動預覽相同。之後手動預覽：仍是每批偵測一次。 |
+| A16 | fbb2 / fhx2rf 開著蓋（迴圈執行中）按手動預覽或「開始」。 | 不提示：迴圈停止、動作如任務閒置時一樣開始；這次開關門沒有自動照片。 | fbm2 拍攝中：如 A4 提示。 |
 
 ---
 
@@ -186,7 +187,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - `id = 'auto-full-area-preview'`（優先級 10，最低：它是便利功能，永遠可以讓路）、`models = {fbm2, fbb2, fhx2rf}`。
 - `isEnabled(ctx)`：偏好 `auto-full-area-preview` 開啟；`ctx.workarea === ctx.device.model`；`ctx.mode === Draw`；`enable-job-origin` 關閉。自己的訂閱（`globalPreferenceStore`、`useDocumentStore` 的 `enable-job-origin`）呼叫 `backgroundTasks.refresh()`。所選機器、畫布模式、工作區與分頁焦點由管理器提供。
 - `start(device)`／`stop()`：開始／結束門蓋輪詢；拍攝中 `stop()` 會中止。
-- `isBusy()` = 拍攝中或迴圈中（§7.3）；`abort()` 見 §7.5；`busyMessage()` = `message.auto_preview.abort_to_continue`。
+- `isBusy()` = 拍攝中或迴圈中（§7.3）；`abort()` 見 §7.5；`busyMessage()` 在 fbm2 拍攝中 = `message.auto_preview.abort_to_continue`（可能有 raw 模式的移動進行中），其餘回 `null`：開蓋迴圈與畫圖不提示直接停，因為 fbb2/fhx2rf 開蓋期間任務都算忙碌，開著蓋按手動預覽會每次都被問（2026-11-06）。
 
 **輪詢**：`setInterval(DOOR_POLL_MS = 500)`，前一次呼叫未回來、`!backgroundTasks.isCurrent(this)`、或 `deviceMaster.currentControlMode !== ''` 時跳過該 tick：子任務回應門蓋查詢的方式不同，而 `null`（重新整理、斷線或被踢後沒有 socket）會讓 `getDoorOpen` 經 `getControl()` 重新連線，每次失敗的 tick 都跳「連線中」progress 與 #892。選機器與 silent 重新連線由管理器負責（`background-tasks.zh-tw.md` §7.3）。
 
