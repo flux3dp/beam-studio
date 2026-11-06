@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft (2026-10-19; open-lid validity revised 2026-10-30). Design settled; implementation not started. Hardware acceptance pending — no test machine available. |
+| **Status** | Implemented in 2.7.4, on top of the background-task manager (`background-tasks.md`). Hardware so far: fbm2 A1, A4, A5, A6, A11 and A12, fhx2rf fast-close pick (2026-11-04), A2 at normal close speed, A10 and A14 (2026-11-05, `SETTLE_MS` confirmed on fhx2rf; A13 covered by A2). Pending: fbm2 A7; fbb2 A2; A3 (§12). |
 | **Author** | Product with the software team |
 | **Created** | 2026-10-19 |
 | **Target product** | Beam Studio desktop (Electron) and web. Models: `fbm2` (beamo II), `fbb2` (Beambox II), `fhx2rf` (HEXA RF). |
@@ -134,7 +134,7 @@ Each criterion names how to operate it and what proves it. "Toast" means the top
 | A10 | Document workarea set to another model than the selected machine. | Nothing. | — |
 | A11 | Electron: open a second tab, focus it, cycle the door. | Nothing in the first tab; the second tab (same machine selected) captures. Web: switch browser tab away → nothing; back → next cycle works. | — |
 | A12 | Open any dialog (Preferences, Array, Monitor) and cycle the door. | Nothing until the dialog closes. | Alert or progress popup open: same. |
-| A13 | fhx2rf with the honeycomb removed (rotary). | Same as A2: the honeycomb plays no part in the pick. | — |
+| A13 | fhx2rf with the honeycomb removed (rotary). | Same as A2: the honeycomb plays no part in the pick. | Covered by A2, no separate run (2026-11-05): the task reads nothing from the photo and has no rotary branch, so the row only guards against a marker check coming back. |
 | A14 | Manual preview button after an auto photo, `keep-preview-result` off. | Manual session starts; canvas cleared as today. | `keep-preview-result` on: photo kept. |
 | A15 | Snap to Object Center on, Swiftray running. Cycle the door (any model). | Right after the photo is drawn: "Detecting objects…" then "Objects detected"; dragging a design snaps to the objects on the bed. | Preference off or Swiftray down: photo drawn, no detection, as for manual preview. Manual preview afterwards: detection still runs once per batch. |
 
@@ -284,13 +284,13 @@ Settled during design (2026-10-16), kept for the record:
 9. ~~Own listener or shared infrastructure~~ → shared: this feature is the second task of the background-task manager, Promark the first (2026-10-30, `background-tasks.md`).
 10. ~~Material height for the fbb2/fhx2rf flattening~~ → 0, assuming the material is focused (2026-11-02). Reading it needs raw mode, and the manual wide-angle setup also homes; the requirement is no homing, so the loop never enters raw mode (§7.3).
 
-Pending facts (not decisions): how long a normal lid close takes on fbb2 and fhx2rf, to confirm `SETTLE_MS = 1500`.
+Pending facts (not decisions): how long a normal lid close takes on fbb2, to confirm `SETTLE_MS = 1500` there too (fhx2rf confirmed 2026-11-05, A2).
 
 ---
 
 ## 11. Risks & follow-ups
 
-- **R1 `SETTLE_MS` untested on hardware.** No machine is available; 1.5 s is a guess at how long a normal close takes. Mitigation: one constant; hardware rows in §12 stay pending.
+- **R1 `SETTLE_MS` untested on fbb2.** 1.5 s was a guess at how long a normal close takes; fhx2rf A2 confirmed it 2026-11-05. Mitigation: one constant; the fbb2 row in §12 stays pending.
 - **R2 Timing rule is heuristic (fbb2 and fhx2rf).** A lid closed very slowly can still yield a tilted "settled" photo. Accepted (product decision); manual preview remains.
 - **R3 Shared exposure on the camera service.** Two computers looping on the same fbb2/fhx2rf interleave frames; neither changes exposure in the wide-angle flow, so no corruption expected. fbm2's exposure dance is inside the exclusive raw task.
 - **R4 Door poll in raw mode.** `play get_door_open` is not valid in raw mode; the task pauses polling while any sub-task is open. If a future flow leaves raw mode open for long, auto preview silently waits.
@@ -313,6 +313,6 @@ Hardware-free (Jest, `unit-test` skill conventions; manager, `checkDeviceStatus`
 Hardware (pending a machine; map to §5):
 
 - fbm2: A1, A4 (export, framing, menu calibration), A5, A7, A8, A9, A11, A12, A14.
-- fhx2rf: A2 (including the slow-close case), A3, A4, A6, A10, A13.
+- fhx2rf: A2 (including the slow-close case), A3, A4, A6, A10; A13 only if a marker or rotary check is ever added to the task.
 - fbb2: A2, A3, A4.
 - Web build: A11 browser-tab variant.
