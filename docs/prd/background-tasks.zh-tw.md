@@ -130,6 +130,8 @@
 - `helpers/check-device-status.ts`（在手動預覽區塊後加一段，交給管理器）
   - 全部 21 個呼叫者：沒有任務忙碌時行為完全相同，包括 `device_is_used`、kick、abort、quit 與 `device_busy`。
   - `preview-mode-controller.ts:85`：手動預覽開始時，現在也會（在提示後）停下同一台機器上忙碌的任務；這是預期行為。
+- `helpers/device/get-device.ts`（在結束子任務或讀取狀態之前先 `backgroundTasks.yieldTo(device)`；否 → `{ device: null }`，所有呼叫者本來就把它當「到此為止」）
+  - 匯出（`handleExportClick.ts`）、框選、手動預覽（`previewMode.ts`）、路徑預覽、曲面雕刻、教學、首次校正對話框、Print and Cut 曝光、選擇機器按鈕：沒有任務忙碌時不變；所選機器上有任務忙碌時，在碰機器之前先跳一次是／否，之後 `checkDeviceStatus` 找不到忙碌中的任務，不會問第二次。
 - `app/contexts/DialogContext.tsx`、`app/contexts/AlertProgressContext.tsx`、`app/actions/dialog-caller.tsx`（新增「是否有任何開著」的查詢）
   - `dialogCaller.isIdExist`、`alertCaller.checkIdExist`、`progressCaller.checkIdExist`：不變。
 - `helpers/device-master.ts`（`select(device, { silent })`，預設 `false`；silent 時不顯示「連線中」progress、連線錯誤 alert 與密碼對話框）
@@ -309,6 +311,8 @@ backgroundTasks.isCurrent(task) &&
 - `canTouchMachine.spec.ts`：每個條件為 false → false。
 - `promark-button-handler.spec.ts`（新增）：§7.6 的 isEnabled 對應；不是目前機器時跳過 tick；既有的按下／先框選計數不變。
 - `check-device-status.spec.ts`：`yieldTo` 為 false → 在狀態 switch 之前回傳 false；為 true → 既有流程。
+- `get-device.spec.ts`：`yieldTo` 在 `endSubTask` 之前執行；拒絕 → `{ device: null }`，不送任何機器指令、不跳 `device_not_found`。
+- `background/index.spec.ts` 的讓路案例：是 → 中止、否 → 任務保留；任務在提示後面自己結束時提示自動關閉、動作繼續；`busyMessage()` 回 `null` 的任務不提示直接中止。
 - `GoButton.spec.tsx`：mock 管理器，預期呼叫 `setDevice(selectedDevice)`。
 - `background/index.spec.ts` 的網頁版焦點：`visibilitychange` 變成 hidden 時停止任務，回到 visible 時重新啟動；Electron 路徑使用 `tabController` 事件。
 
