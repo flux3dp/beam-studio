@@ -65,6 +65,7 @@ jest.mock('@core/helpers/checkFeature', () => ({
   checkFpm1: () => true,
   checkFpm1UV: () => true,
   checkFUV1: () => false,
+  checkHexa2Galvo: () => false,
   checkHxRf: () => false,
 }));
 
