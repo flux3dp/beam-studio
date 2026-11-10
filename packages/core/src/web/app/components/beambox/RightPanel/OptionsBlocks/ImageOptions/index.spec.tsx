@@ -13,6 +13,10 @@ jest.mock('@core/helpers/hooks/useWorkarea', () => () => 'fpm1');
 jest.mock('@core/helpers/addOn/innerEngraving', () => ({
   useInnerEngravingActive: () => mockUseInnerEngravingActive(),
 }));
+// the layer's module decides whether depth applies; 15 is the universal laser, not a galvo head
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (selector: (state: Record<string, unknown>) => unknown) => selector({ module: { value: 15 } }),
+}));
 jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: jest.fn(() => ({ addSubCommand: mockBatchAddSubCommand, isEmpty: () => false })),
 }));
