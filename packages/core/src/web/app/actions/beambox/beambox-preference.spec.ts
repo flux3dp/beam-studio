@@ -143,6 +143,7 @@ test('test beambox-preference', () => {
     'swap-4c-ink-order': false,
     'use-real-boundary': false,
     'use-union-boundary': true,
+    'use-union-boundary-hx2': true,
     use_ga_reorder: true,
     use_layer_color: true,
     vector_speed_constraint: true,
