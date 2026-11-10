@@ -175,14 +175,19 @@ apart, so old promark files and new ones must not share a machine.
 
 Traps:
 
-- **Each list is self-sufficient and indivisible.** It opens with the prologue
-  (`SET_STANDBY` → `SET_JUMP_SPEED` → `SET_MARK_SPEED` → `SET_LASER_DELAYS` →
-  `SET_SCANNER_DELAYS` → `SET_LASER_POWER` → `SET_LASER_PULSES` → `ENABLE_LASER(0)`)
-  and closes with `DISABLE_LASER(0)` → `SET_END_OF_LIST`. The board frames every list
-  with its own disable_laser and replays nothing across the boundary, so a list that
-  starts mid-stream marks with whatever the previous job left behind, or not at all.
-  Anything that splices fcode must cut on a list edge — `parseFcode` returns
-  `galvoLists` for exactly this.
+- **Each list is indivisible, and the laser enable is per block.** A list opens
+  with the prologue (`SET_STANDBY` → `SET_JUMP_SPEED` → `SET_MARK_SPEED` →
+  `SET_LASER_DELAYS` → `SET_SCANNER_DELAYS` → `SET_LASER_POWER` → `SET_LASER_PULSES`)
+  and closes with `SET_END_OF_LIST`. Since 2026-11-10 swiftray sends `ENABLE_LASER(mo
+  delay us)` once, right after the prologue of a block's first list (followed by the
+  block-start `LONG_DELAY`), and `DISABLE_LASER(0)` once, before the last list's
+  `SET_END_OF_LIST`; the lists in between carry neither, and bsl no longer frames lists
+  with a disable_laser of its own, so the MO stays on through the block. Older files
+  have the pair in every list, which is still valid. Anything that splices fcode must
+  cut on a list edge — `parseFcode` returns `galvoLists` for exactly this — and a
+  slice that resumes at a later list of a block must splice the block's enable bytes
+  in ahead of the list's first move or dot: `galvoListInfo` (parallel to `galvoLists`)
+  carries the byte spans, and `sliceFcode` does it.
 - **opcode 12 took 2 parameters before 2026-09-18** and takes 3 now. The third is a
   real Mopa pulse width in ns (1..65535), not a flag. A CO2 head derives the second
   from its power and re-sends the whole record after every power change; a Mopa head

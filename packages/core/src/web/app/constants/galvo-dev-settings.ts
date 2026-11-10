@@ -60,6 +60,8 @@ export interface GalvoDevConfig {
   galvo_line_blend_segment: number;
   /** Command cap per galvo list. 0 means no cap. */
   galvo_max_list_commands: number;
+  /** ENABLE_LASER's MO delay, us: how long the card waits after switching the laser on, once per block. */
+  galvo_mo_delay: number;
   /** Mopa pulse length, us. Ignored on a CO2 head, which derives it from power. */
   galvo_mopa_pulse_length: number;
   /**
@@ -531,6 +533,19 @@ export const GALVO_DEV_SETTING_FIELDS: GalvoDevSettingField[] = [
     min: 1,
     tooltip:
       '單一待機脈衝的寬度。SDK 只接受整數微秒，所以會四捨五入並且下限為 1——' + '小於 0.5 的值送到板子上會變成 0。',
+    unit: 'us',
+  },
+  {
+    default: 8000,
+    group: 'prologue',
+    key: 'galvo_mo_delay',
+    kind: 'number',
+    label: '開雷射等待（MO delay）',
+    min: 0,
+    tooltip:
+      'ENABLE_LASER 的參數：板卡打開雷射主振盪器（MO）後等多久才繼續。每個區塊只開一次、' +
+      '結尾才關，中間的 list 不再重複開關。Mopa 模組頭需要這段暖機：工廠實測 5 ms 略有缺點、' +
+      '10 ms 完整，業界建議 8 ms。CO2 模組頭沒有 MO，這個值沒有作用。',
     unit: 'us',
   },
   {

@@ -125,6 +125,7 @@ export type TFcodeOptionalConfig = Partial<{
   galvo_line_blend_profile: GalvoBlendProfile;
   galvo_line_blend_segment: number;
   galvo_max_list_commands: number;
+  galvo_mo_delay: number;
   galvo_mopa_pulse_length: number;
   galvo_process_dot_jump_speed: number;
   galvo_process_dot_laser_off_delay: number;

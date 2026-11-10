@@ -41,6 +41,7 @@ const RIGHT_NOZZLE_X_GAP = 0.55035;
  * skill and HX2_GALVO_PROTOCOL.md §19.
  */
 const GALVO_OP = {
+  AXIS_MOVE: 0x21,
   DISABLE_LASER: 15,
   ENABLE_LASER: 14,
   END_OF_LIST: 19,
@@ -48,6 +49,7 @@ const GALVO_OP = {
   JUMP_REL: 2,
   /** Dot: its one parameter is the dwell in microseconds (the dotting time). */
   LASER_ON: 5,
+  LONG_DELAY: 6,
   MARK_ABS: 3,
   MARK_REL: 4,
   /**
@@ -56,6 +58,7 @@ const GALVO_OP = {
    * docs/galvo-packed-dots.md, HX2_GALVO_PROTOCOL.md §4.4).
    */
   PACKED_DOTS: 0x20,
+  SET_IO: 0x22,
   SET_JUMP_SPEED: 7,
   SET_LASER_POWER: 11,
   SET_MARK_SPEED: 8,
@@ -234,13 +237,31 @@ interface RasterState {
  * so `beam = park + local` (§19.4, field-local mm about the lens centre).
  */
 interface GalvoState {
+  /** record index the block's first list started at */
+  blockFirstRecord: number;
+  /** byte offset of the block's first list's first command */
+  blockStart: number;
   /** mm, field-local, machine frame (y down) */
   dotPitch: number;
+  /**
+   * ENABLE_LASER is sent once per block (swiftray galvo-list.cpp, 2026-11-10) and the
+   * state carries across its lists: bsl frames nothing of its own around a list.
+   */
   enabled: boolean;
+  /** bytes of the block's ENABLE_LASER plus the LONG_DELAY that may follow it */
+  enableSpan: [number, number] | null;
+  /** the last command was the block's ENABLE_LASER, so a LONG_DELAY next extends the span */
+  enableTail: boolean;
+  /** byte offset of the current list's first move, dot or IO command */
+  geomStart: null | number;
   jumpF: number;
   lastDot: [number, number] | null;
   /** record index the current list started at */
   listFirstRecord: number;
+  /** the current list carries an ENABLE_LASER of its own (every list did before 2026-11-10) */
+  listHasEnable: boolean;
+  /** byte offset of the current list's first command; null until it opens */
+  listStart: null | number;
   markF: number;
   /** preview-space park position the field is centred on */
   originX: number;
@@ -386,6 +407,21 @@ export function walkContentEntries(buffer: ArrayBuffer, start: number, end: numb
   return entries;
 }
 
+export interface GalvoListInfo {
+  /** record index of the block's first list's first record; the record before it is the park move */
+  blockFirstRecord: number;
+  /** byte offset of the block's first list's first command (after the park move and sync) */
+  blockStart: number;
+  /** bytes of the block's ENABLE_LASER (+ LONG_DELAY), to splice into a list that has none */
+  enableSpan: [number, number] | null;
+  /** byte offset of the list's first move, dot or IO command; null if it has none */
+  geomStart: null | number;
+  /** the list carries its own ENABLE_LASER */
+  hasEnable: boolean;
+  /** byte offset of the list's first command */
+  listStart: number;
+}
+
 export interface ParsedFcode {
   /**
    * [recordIndex, [startOffset, endOffset]]: M137 type-1 acceleration-override commands
@@ -400,11 +436,18 @@ export interface ParsedFcode {
    */
   blockPrologues: Array<[number, number]>;
   /**
+   * One entry per `galvoLists` span, what a slice that resumes at that list needs
+   * beyond its own bytes. ENABLE_LASER goes out once per block, in its first list
+   * (with the block-start LONG_DELAY after it), so a later list resumed on its own
+   * has to get those bytes spliced in before its first move or dot.
+   */
+  galvoListInfo: GalvoListInfo[];
+  /**
    * [firstRecordIndex, lastRecordIndex] per galvo list (fcode byte 23), in order.
-   * A list is self-sufficient and indivisible: it opens with the prologue that
-   * sets speed, power and pulses and closes with SET_END_OF_LIST, and the board
-   * keeps no state across the boundary, so start-here slicing may only cut on a
-   * list edge (§19.3).
+   * A list is indivisible: it opens with the prologue that sets speed, power and
+   * pulses and closes with SET_END_OF_LIST, so start-here slicing may only cut on a
+   * list edge (§19.3). The laser enable is the one thing a list may not carry
+   * itself -- see `galvoListInfo`.
    */
   galvoLists: Array<[number, number]>;
   /** [recordIndex, resolutionChar | null]: gradient print mode changes, sparse */
@@ -442,6 +485,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   const sCurveEvents: Array<[number, number, [number, number] | null]> = [];
   const pauseEvents: Array<[number, number]> = [];
   const galvoLists: Array<[number, number]> = [];
+  const galvoListInfo: GalvoListInfo[] = [];
   let pendingBlock: null | { bodyStart: number; recordCount: number } = null;
   const reader = new Reader(buffer);
 
@@ -645,13 +689,20 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   // The gantry does not move for the whole run, so the park position at its start
   // is the field centre every local coordinate is measured from.
 
-  const beginGalvoRun = () => {
+  const beginGalvoRun = (cmdStart: number) => {
     galvo = {
+      blockFirstRecord: recordOffsets.length,
+      blockStart: cmdStart,
       dotPitch: GALVO_DOT_MM,
       enabled: false,
+      enableSpan: null,
+      enableTail: false,
+      geomStart: null,
       jumpF: 4000 * 60,
       lastDot: null,
       listFirstRecord: recordOffsets.length,
+      listHasEnable: false,
+      listStart: cmdStart,
       markF: state.f,
       originX: state.x,
       originY: state.y,
@@ -668,11 +719,24 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
 
     const last = recordOffsets.length - 1;
 
-    if (last >= galvo.listFirstRecord) galvoLists.push([galvo.listFirstRecord, last]);
+    if (last >= galvo.listFirstRecord) {
+      galvoLists.push([galvo.listFirstRecord, last]);
+      galvoListInfo.push({
+        blockFirstRecord: galvo.blockFirstRecord,
+        blockStart: galvo.blockStart,
+        enableSpan: galvo.enableSpan,
+        geomStart: galvo.geomStart,
+        hasEnable: galvo.listHasEnable,
+        listStart: galvo.listStart ?? galvo.blockStart,
+      });
+    }
 
     galvo.listFirstRecord = recordOffsets.length;
-    // the board frames every list with disable_laser, so nothing carries over
-    galvo.enabled = false;
+    galvo.listStart = null;
+    galvo.geomStart = null;
+    galvo.listHasEnable = false;
+    galvo.enableTail = false;
+    // `enabled` stays: the block's one ENABLE_LASER covers every list in it
     galvo.lastDot = null;
   };
 
@@ -791,8 +855,6 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   };
 
   const handleGalvoCommand = (opcode: number, params: number[]) => {
-    if (!galvo) beginGalvoRun();
-
     switch (opcode) {
       case GALVO_OP.JUMP_ABS:
       case GALVO_OP.MARK_ABS:
@@ -819,6 +881,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         break;
       case GALVO_OP.ENABLE_LASER:
         galvo!.enabled = true;
+        galvo!.listHasEnable = true;
         break;
       case GALVO_OP.DISABLE_LASER:
         galvo!.enabled = false;
@@ -1033,6 +1096,17 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         const opcode = reader.u16();
         const count = reader.u8();
 
+        if (!galvo) beginGalvoRun(cmdStart);
+        else if (galvo.listStart === null) galvo.listStart = cmdStart;
+
+        const isGeometry =
+          (opcode >= GALVO_OP.JUMP_ABS && opcode <= GALVO_OP.LASER_ON) ||
+          opcode === GALVO_OP.PACKED_DOTS ||
+          opcode === GALVO_OP.AXIS_MOVE ||
+          opcode === GALVO_OP.SET_IO;
+
+        if (isGeometry && galvo!.geomStart === null) galvo!.geomStart = cmdStart;
+
         if (opcode === GALVO_OP.PACKED_DOTS) {
           if (count < PACKED_DOTS_HEADER_PARAMS) {
             throw new Error(`Malformed galvo packed-dots record: ${count} params, need at least 7`);
@@ -1054,8 +1128,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
 
           if (issue) throw new Error(`Malformed galvo packed-dots record (${issue})`);
 
-          if (!galvo) beginGalvoRun();
-
+          galvo!.enableTail = false;
           emitPackedDots(header, mask);
           break;
         }
@@ -1063,6 +1136,18 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
         const params: number[] = [];
 
         for (let i = 0; i < count; i += 1) params.push(reader.f64());
+
+        // The block's ENABLE_LASER and the LONG_DELAY swiftray puts right after it are what
+        // a slice resuming at a later list of the block has to replay (galvoListInfo).
+        if (opcode === GALVO_OP.ENABLE_LASER && galvo!.enableSpan === null) {
+          galvo!.enableSpan = [cmdStart, reader.pos];
+          galvo!.enableTail = true;
+        } else if (opcode === GALVO_OP.LONG_DELAY && galvo!.enableTail) {
+          galvo!.enableSpan![1] = reader.pos;
+          galvo!.enableTail = false;
+        } else {
+          galvo!.enableTail = false;
+        }
 
         handleGalvoCommand(opcode, params);
         break;
@@ -1201,6 +1286,7 @@ export const parseFcode = (buffer: ArrayBuffer): ParsedFcode => {
   return {
     accelEvents,
     blockPrologues,
+    galvoListInfo,
     galvoLists,
     gradientEvents,
     metadata,

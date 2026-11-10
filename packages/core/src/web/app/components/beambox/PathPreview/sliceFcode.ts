@@ -202,6 +202,7 @@ export const sliceFcode = (
       accelEvents,
       blockPrologues,
       buffer,
+      galvoListInfo,
       galvoLists,
       gradientEvents,
       moduleEvents,
@@ -217,17 +218,20 @@ export const sliceFcode = (
     if (cutAfter < 0 || cutAfter + 1 >= recordCount) return null;
 
     // A galvo list is indivisible: its prologue sets the speed, power and pulses
-    // for everything after it, and the board keeps nothing across the boundary
-    // (§19.3), so a cut landing inside one would resume with the laser never
-    // enabled. Fall back to the list's own start -- that re-marks at most one
-    // list, where skipping to the next would leave a hole. The record before it
-    // is the gantry move that parked the head, so the sync that follows and the
-    // list's prologue are both inside the copied bytes.
+    // for everything after it (§19.3), so a cut landing inside one falls back to
+    // the list's own start -- that re-marks at most one list, where skipping to
+    // the next would leave a hole. The bytes replayed are the block's park move
+    // and sync, then the list from its first command; a list other than the
+    // block's first has no ENABLE_LASER of its own (swiftray sends it once per
+    // block), so the block's enable bytes are spliced in ahead of the list's
+    // first move or dot. The record before the block's first list is the gantry
+    // move that parked the head, which is where the position restore goes.
     const containingList = galvoLists.find(([first, last]) => cutAfter + 1 >= first && cutAfter + 1 <= last);
+    const listInfo = containingList ? galvoListInfo?.[galvoLists.indexOf(containingList)] : undefined;
     let position = simTimeInfo.position;
 
     if (containingList) {
-      cutAfter = containingList[0] - 1;
+      cutAfter = (listInfo ? listInfo.blockFirstRecord : containingList[0]) - 1;
 
       if (cutAfter < 0) return null;
 
@@ -239,6 +243,23 @@ export const sliceFcode = (
 
     const arrival = cutAfter + 1;
     const cutOffset = recordOffsets[cutAfter];
+    /** The bytes that run from the cut to `end`: everything after the cut, or for a galvo list the block's head plus that list. */
+    const tailFrom = (end: number): Array<Uint8Array<ArrayBuffer>> => {
+      if (!listInfo || listInfo.listStart === listInfo.blockStart) return [bytes.subarray(cutOffset, end)];
+
+      const head = bytes.subarray(cutOffset, listInfo.blockStart);
+
+      if (listInfo.hasEnable || !listInfo.enableSpan || listInfo.geomStart === null) {
+        return [head, bytes.subarray(listInfo.listStart, end)];
+      }
+
+      return [
+        head,
+        bytes.subarray(listInfo.listStart, listInfo.geomStart),
+        bytes.subarray(listInfo.enableSpan[0], listInfo.enableSpan[1]),
+        bytes.subarray(listInfo.geomStart, end),
+      ];
+    };
     const record = (field: number) => parsedGcode.getItem(arrival * 9 + field);
     const isRaster = record(8) === RASTER_T;
     const bytes = new Uint8Array(buffer);
@@ -301,7 +322,7 @@ export const sliceFcode = (
         accelBytes,
         sCurveBytes,
         restore,
-        bytes.subarray(cutOffset, scriptEnd),
+        ...tailFrom(scriptEnd),
       ]);
       const parts: Array<Uint8Array<ArrayBuffer>> = [
         bytes.subarray(0, 8),
@@ -392,14 +413,18 @@ export const sliceFcode = (
         const prefixLength = parts.reduce((sum, p) => sum + p.length, 0);
         const prologue = bytes.subarray(containing.bodyStart, prologueEnd);
 
-        parts.push(prologue, accelBytes, sCurveBytes, restore, bytes.subarray(cutOffset, contentEnd));
+        const tail = tailFrom(contentEnd);
+        // the block runs to its own end; whatever the tail holds past it belongs to the next entries
+        const tailInBlock = tail.reduce((sum, t) => sum + t.length, 0) - (contentEnd - containing.end);
+
+        parts.push(prologue, accelBytes, sCurveBytes, restore, ...tail);
 
         const newContent = concatBytes(parts);
 
         // patch the containing block's length (its u32 sits right before bodyStart)
         new DataView(newContent.buffer).setUint32(
           prefixLength - 4,
-          prologue.length + accelBytes.length + sCurveBytes.length + restore.length + (containing.end - cutOffset),
+          prologue.length + accelBytes.length + sCurveBytes.length + restore.length + tailInBlock,
           true,
         );
 
