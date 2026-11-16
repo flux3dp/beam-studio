@@ -12,7 +12,14 @@ import DeviceConstants from '@core/app/constants/device-constants';
 import { defaultField, getPromarkLaserSource } from '@core/app/constants/promark-constants';
 import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
+import {
+  alertTaskError,
+  createTaskPausePrompt,
+  isResumablePause,
+  toErrorList,
+} from '@core/helpers/device/taskPausePrompt';
 import { withErrorReportConsent } from '@core/helpers/error-report/consent';
+import { addFcodeMetadata } from '@core/helpers/fcode/addFcodeMetadata';
 import storage from '@core/implementations/storage';
 import type {
   FisheyeCameraParameters,
@@ -760,58 +767,106 @@ class DeviceMaster {
   }
 
   // Calibration and Machine test functions
+  /**
+   * Poll the player until `predicate` matches, then quit the task. A pause on an error (air assist
+   * below 50%, filter expired…) asks the user to stop or resume and keeps polling, so a resume from
+   * the machine panel carries on too. Rejects with the device error list when the task ends on an
+   * error (an empty list for a plain abort), or with an Error when the report cannot be read 10
+   * times in a row.
+   */
   async waitTillStatusPredicate({
     onProgress,
     predicate = (status) => status === DeviceConstants.status.COMPLETED,
   }: {
     onProgress?: (progress: number) => void;
     predicate?: (status: number) => boolean;
-  }) {
-    return new Promise((resolve, reject) => {
-      const otherStatus = [
-        DeviceConstants.status.ABORTED,
-        DeviceConstants.status.COMPLETED,
-        DeviceConstants.status.PAUSED_FROM_STARTING,
-      ].filter((s) => !predicate(s));
-      let statusChanged = false;
+  }): Promise<null> {
+    const { ABORTED, ALARM, COMPLETED, FATAL, IDLE } = DeviceConstants.status;
+    const failedStatus = [ABORTED, ALARM, COMPLETED, FATAL].filter((s) => !predicate(s));
+    let statusChanged = false;
+    let stoppedByUser = false;
+    const pausePrompt = createTaskPausePrompt({
+      onResume: () => this.resume(),
+      onStop: () => {
+        stoppedByUser = true;
 
-      const statusCheckInterval = setInterval(async () => {
-        const controlSocket = await this.getControl();
-        const r = await controlSocket.addTask(controlSocket.report);
-        const { error, prog, st_id: stId } = r.device_status;
+        return this.stop();
+      },
+    });
+    const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    // 10 polls in a row, about 10 seconds without a report: the task state is unknown
+    const maxReportFailures = 10;
+    let reportFailures = 0;
+
+    try {
+      while (true) {
+        await wait(1000);
+
+        let report: { error?: string | string[]; prog?: number; st_id: number };
+
+        try {
+          const controlSocket = await this.getControl();
+
+          report = (await controlSocket.addTask(controlSocket.report)).device_status;
+        } catch (err) {
+          console.error('Failed to get device report', err);
+          reportFailures += 1;
+
+          if (reportFailures >= maxReportFailures) {
+            throw new Error(i18n.lang.message.unable_to_get_task_status);
+          }
+
+          // a missed report is retried on the next poll
+          continue;
+        }
+
+        reportFailures = 0;
+
+        const { prog, st_id: stId } = report;
+        const error = toErrorList(report.error);
 
         if (predicate(stId)) {
-          clearInterval(statusCheckInterval);
-          await new Promise((resolve2) => setTimeout(resolve2, 1000));
+          pausePrompt.close();
+          await wait(1000);
+
           try {
             await this.quit();
-            resolve(null);
           } catch (err) {
             console.error(err);
-            reject(new Error('Quit failed'));
+            throw new Error('Quit failed');
           }
-        } else if (otherStatus.includes(stId) && error && error.length > 0) {
-          // Error occurred
-          clearInterval(statusCheckInterval);
-          reject(error);
-        } else if (stId === DeviceConstants.status.ABORTED) {
-          clearInterval(statusCheckInterval);
-          reject(error);
-        } else if (stId === DeviceConstants.status.IDLE) {
+
+          return null;
+        }
+
+        if (isResumablePause(stId, error)) {
+          statusChanged = true;
+          pausePrompt.show(error);
+          continue;
+        }
+
+        pausePrompt.close();
+
+        if (stId === ABORTED) {
+          throw stoppedByUser ? [] : error;
+        }
+
+        if (failedStatus.includes(stId) && error.length > 0) {
+          throw error;
+        }
+
+        if (stId === IDLE) {
           // Resolve if the status was running and some how skipped the completed part
-          if (statusChanged) {
-            clearInterval(statusCheckInterval);
-            resolve(null);
-          }
+          if (statusChanged) return null;
         } else {
           statusChanged = true;
 
-          if (prog) {
-            onProgress?.(prog);
-          }
+          if (prog) onProgress?.(prog);
         }
-      }, 1000);
-    });
+      }
+    } finally {
+      pausePrompt.close();
+    }
   }
 
   async runBeamboxCameraTest() {
@@ -888,12 +943,16 @@ class DeviceMaster {
     }
   }
 
-  /** @param onProgress receive the run progress (0–1) instead of the progress dialog */
+  /**
+   * @param onProgress receive the run progress (0–1) instead of the progress dialog
+   * @param silent the caller reports a failed task itself instead of the error alert shown here
+   */
   doCalibration = async ({
     blob,
     fcodeSource,
     onProgress,
-  }: { blob?: Blob; fcodeSource?: string; onProgress?: (progress: number) => void } = {}) => {
+    silent = false,
+  }: { blob?: Blob; fcodeSource?: string; onProgress?: (progress: number) => void; silent?: boolean } = {}) => {
     const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (fcodeSource) {
@@ -904,6 +963,10 @@ class DeviceMaster {
       // fake data to upload for swiftray
       blob = new Blob(['']);
     }
+
+    // Calibration tasks may run with air assist off on purpose (e.g. drawing on paper); tell the
+    // firmware not to pause for it. Only v2+ fcode carries this metadata, others are sent as is.
+    blob = await addFcodeMetadata(blob, { IGNORE_AIR_ASSIST_WARNING: '1' });
 
     if (vc.meetRequirement('RELOCATE_ORIGIN')) {
       await this.setOriginX(0);
@@ -919,7 +982,11 @@ class DeviceMaster {
     try {
       await this.go(blob);
     } catch {
-      throw new Error('UPLOAD_FAILED');
+      const err = new Error('UPLOAD_FAILED');
+
+      if (!silent) alertTaskError(err);
+
+      throw err;
     }
 
     if (!onProgress) {
@@ -938,6 +1005,10 @@ class DeviceMaster {
 
     try {
       await this.waitTillStatusPredicate({ onProgress: reportProgress });
+    } catch (err) {
+      if (!silent) alertTaskError(err);
+
+      throw err;
     } finally {
       if (!onProgress) Progress.popById('cali-task');
     }
@@ -991,7 +1062,8 @@ class DeviceMaster {
   }
 
   async doPromarkCalibration() {
-    await this.doCalibration();
+    // the Promark dialogs handle the door-opened error themselves
+    await this.doCalibration({ silent: true });
   }
 
   // fs functions
