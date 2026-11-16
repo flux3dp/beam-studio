@@ -39,6 +39,8 @@ class BackgroundTasks {
   private warned = new Set<string>();
   /** The manager's own select still connecting; a foreground select must not race it (yieldTo waits) */
   private selecting: null | Promise<void> = null;
+  /** Counts foreground actions (yieldTo calls); canTouchMachine's pre-flight is void if it changed while awaiting */
+  foregroundActions = 0;
 
   /**
    * Subscribe on first use instead of at import: check-device-status imports this module, and reading
@@ -105,6 +107,8 @@ class BackgroundTasks {
    * (busyMessage() null). Resolves false when the user declines.
    */
   yieldTo = async (device: IDeviceInfo): Promise<boolean> => {
+    this.foregroundActions += 1;
+
     for (const task of this.tasks) {
       const runningOn = this.running.get(task.id);
 

@@ -37,6 +37,6 @@ A **task** polls the machine on its own timer; the **manager** decides when it r
 
 ## Debugging
 
-`backgroundTasks.list()` (from a spec, or a devtools breakpoint in any module that imports the manager; it is not on `window`): `{ id, priority, running, device, busy }`, highest priority first. A task that should run but does not: check `running` (context or `isEnabled` false, or a higher task claimed the machine — a one-time console warning names both), then `isCurrent` (deviceMaster on another machine or without a socket, reselect waiting for quiet). `canTouchMachine` logs the first check that failed (`cannot touch machine: controlMode=no socket`, `modal=true`, `st_id=…`).
+`backgroundTasks.list()` (from a spec, or a devtools breakpoint in any module that imports the manager; it is not on `window`): `{ id, priority, running, device, busy }`, highest priority first. A task that should run but does not: check `running` (context or `isEnabled` false, or a higher task claimed the machine — a one-time console warning names both), then `isCurrent` (deviceMaster on another machine or without a socket, reselect waiting for quiet). `canTouchMachine` logs the first check that failed (`cannot touch machine: controlMode=no socket`, `modal=true`, `foreground action started during pre-flight`, `st_id=…`).
 
 Read-only tasks running in parallel are a planned extension (`exclusive?: boolean`), PRD §11 F2.

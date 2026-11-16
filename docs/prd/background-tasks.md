@@ -232,8 +232,11 @@ The shared pre-flight check a task runs before it starts busy work (it is not a 
 !previewModeController.isPreviewMode && !previewModeController.isStarting &&
 deviceMaster.currentControlMode === '' &&   // sub-task, or null = no socket: wait for the manager's silent reconnect
 backgroundTasks.isCurrent(task) &&
-(await deviceMaster.getReport()).st_id === DeviceConstants.status.IDLE
+(await deviceMaster.getReport()).st_id === DeviceConstants.status.IDLE &&
+backgroundTasks.foregroundActions === <value before the await>   // no yieldTo ran while the report was pending
 ```
+
+The last line closes the pre-flight race (added 2026-11-16): while the report is pending the task is not busy yet, so a foreground action going through `yieldTo` at that moment passes without waiting; `yieldTo` increments `foregroundActions` and the pre-flight returns false when it changed, so the two never control the machine at once.
 
 When it returns false it logs the first failing check (`[backgroundTasks] <task> cannot touch machine: modal=true`, `controlMode=no socket`, `st_id=…`), so a skipped run can be explained from the console on a test machine.
 
@@ -305,7 +308,7 @@ One PR, merged before the auto-preview PR, in reviewable chunks:
 Hardware-free (Jest, `unit-test` skill):
 
 - `background/index.spec.ts`: start/stop for each context field; `models` filter; `isEnabled` false stops; priority exclusivity (higher wins, loser stopped or aborted, warning); no two equal priorities in `BACKGROUND_TASK_PRIORITY`; `refresh()` re-evaluates; `yieldTo` with no busy task, busy on same device (Yes/No), busy on another device; reselect only when quiet, at most every 5 s, always `silent`; silent reconnect of the top-bar machine when its socket is gone; `isCurrent` false without a socket; `yieldTo` waits for a background select still connecting and for a chained second select; a stuck select is given up after 30 s and reselect retries; `list()` rows.
-- `canTouchMachine.spec.ts`: each condition false → false.
+- `canTouchMachine.spec.ts`: each condition false → false; a `yieldTo` (foregroundActions bump) while the report is pending → false.
 - `promark-button-handler.spec.ts` (new): isEnabled mapping from §7.6; tick skipped when not current; existing press/frame-first counting unchanged.
 - `check-device-status.spec.ts`: `yieldTo` false → returns false before the status switch; true → existing flow.
 - `get-device.spec.ts`: `yieldTo` runs before `endSubTask`; declined → `{ device: null }` with no machine command and no `device_not_found` message.

@@ -28,8 +28,17 @@ const canTouchMachine = async (task: BackgroundTask): Promise<boolean> => {
     return false;
   }
 
+  const { foregroundActions } = backgroundTasks;
+
   try {
     const { st_id } = await deviceMaster.getReport();
+
+    // A foreground action that went through yieldTo meanwhile saw the task as not busy and did not wait for it
+    if (backgroundTasks.foregroundActions !== foregroundActions) {
+      console.log(`[backgroundTasks] ${task.id} cannot touch machine: foreground action started during pre-flight`);
+
+      return false;
+    }
 
     if (st_id !== DeviceConstants.status.IDLE) {
       console.log(`[backgroundTasks] ${task.id} cannot touch machine: st_id=${st_id}`);

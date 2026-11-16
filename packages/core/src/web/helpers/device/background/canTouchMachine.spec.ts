@@ -25,8 +25,14 @@ jest.mock('@core/helpers/device-master', () => ({
 }));
 
 const mockIsCurrent = jest.fn();
+const mockBackgroundTasks = { foregroundActions: 0 };
 
-jest.mock('./index', () => ({ isCurrent: (...args) => mockIsCurrent(...args) }));
+jest.mock('./index', () => ({
+  get foregroundActions() {
+    return mockBackgroundTasks.foregroundActions;
+  },
+  isCurrent: (...args) => mockIsCurrent(...args),
+}));
 
 const task = { id: 'auto-full-area-preview' } as any;
 
@@ -38,6 +44,20 @@ describe('canTouchMachine', () => {
     mockDeviceMaster.currentControlMode = '';
     mockDeviceMaster.getReport.mockResolvedValue({ st_id: 0 });
     mockIsCurrent.mockReturnValue(true);
+  });
+
+  test('false when a foreground action started while the report was pending', async () => {
+    let report = (_: { st_id: number }) => {};
+
+    mockDeviceMaster.getReport.mockImplementation(() => new Promise((resolve) => (report = resolve)));
+
+    const result = canTouchMachine(task);
+
+    await Promise.resolve();
+    // yieldTo ran: the task was not busy yet, so the foreground action went ahead
+    mockBackgroundTasks.foregroundActions += 1;
+    report({ st_id: 0 });
+    expect(await result).toBe(false);
   });
 
   test('true when nothing holds the machine and it is idle', async () => {
