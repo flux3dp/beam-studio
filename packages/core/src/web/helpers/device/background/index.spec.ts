@@ -215,6 +215,32 @@ describe('backgroundTasks', () => {
       expect(log).toEqual([]);
       jest.useRealTimers();
     });
+
+    test('waits for a background select still connecting, so the caller selects after it', async () => {
+      jest.useFakeTimers();
+      setup();
+      mockDeviceMaster.select.mockClear();
+      // a foreground flow moved deviceMaster to B; the next tick reselects A
+      mockDeviceMaster.currentDevice = { info: { serial: 'B' } };
+      mockDeviceMaster.available = [{ uuid: 'a' }];
+
+      let finishSelect = () => {};
+
+      mockDeviceMaster.select.mockImplementation(() => new Promise<void>((resolve) => (finishSelect = resolve)));
+      await jest.advanceTimersByTimeAsync(5000);
+      expect(mockDeviceMaster.select).toHaveBeenCalledTimes(1);
+
+      let yielded = false;
+
+      backgroundTasks.yieldTo(deviceB).then(() => (yielded = true));
+      await jest.advanceTimersByTimeAsync(0);
+      expect(yielded).toBe(false);
+
+      finishSelect();
+      await jest.advanceTimersByTimeAsync(0);
+      expect(yielded).toBe(true);
+      jest.useRealTimers();
+    });
   });
 
   describe('reselect', () => {

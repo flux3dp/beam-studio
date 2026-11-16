@@ -31,7 +31,8 @@ class BackgroundTasks {
   private ctx: BackgroundContext | null = null;
   /** `winner>loser` pairs already reported */
   private warned = new Set<string>();
-  private isReselecting = false;
+  /** The manager's own select still connecting; a foreground select must not race it (yieldTo waits) */
+  private selecting: null | Promise<void> = null;
 
   /**
    * Subscribe on first use instead of at import: check-device-status imports this module, and reading
@@ -131,6 +132,10 @@ class BackgroundTasks {
       await task.abort();
     }
 
+    // A background select that completes after the caller's own select would point deviceMaster back at the
+    // top-bar machine while the user works on another one
+    await this.selecting;
+
     return true;
   };
 
@@ -193,7 +198,7 @@ class BackgroundTasks {
     // Every running task targets the top-bar machine, so the first one tells which machine that is
     const device = this.running.values().next().value;
 
-    if (!device || this.isReselecting) return;
+    if (!device || this.selecting) return;
 
     // Same machine with a live socket: nothing to do. Without one (never connected, dropped or kicked), tasks wait
     // for this reconnect
@@ -209,22 +214,26 @@ class BackgroundTasks {
 
     if (!isQuiet || !isOnline) return;
 
-    this.isReselecting = true;
+    await this.select(device);
+  };
 
-    try {
-      await deviceMaster.select(device, { silent: true });
-    } catch (error) {
-      console.warn('[backgroundTasks] reselect failed', error);
-    } finally {
-      this.isReselecting = false;
-    }
+  /** Background selects never pop the connecting progress or a connection error the user did not ask for */
+  private select = (device: IDeviceInfo): Promise<void> => {
+    this.selecting = (async () => {
+      try {
+        await deviceMaster.select(device, { silent: true });
+      } catch (error) {
+        console.warn('[backgroundTasks] select failed', error);
+      } finally {
+        this.selecting = null;
+      }
+    })();
+
+    return this.selecting;
   };
 
   private startTask = (task: BackgroundTask, device: IDeviceInfo): void => {
-    // Background selects never pop the connecting progress or a connection error the user did not ask for
-    if (deviceMaster.currentDevice?.info.serial !== device.serial) {
-      deviceMaster.select(device, { silent: true });
-    }
+    if (deviceMaster.currentDevice?.info.serial !== device.serial) this.select(device);
 
     this.running.set(task.id, device);
     task.start(device);
