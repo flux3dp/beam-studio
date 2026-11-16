@@ -121,6 +121,12 @@ PUT_PAPER engraves `assets/fcode/promark-calibration-<width>.bvg` via `loadCamer
 `promarkPnPPoints[width]` in `fisheyeCameraConstants.ts` for SolvePnP). A UV source engraves at its weakest
 output: `frequency = UV_FREQUENCY_LIMIT.max`, `power = UV_POWER_LIMIT.min` (`helpers/layer/uvPowerFrequency.ts`).
 
+**Calibration task files**: the PUT_PAPER tasks are pre-exported fcode in `assets/fcode/*.fc`, sent by
+`deviceMaster.doCalibration` (which adds `IGNORE_AIR_ASSIST_WARNING` to v2+ FILE metadata at send time).
+The source `.beam` of `bm2-calibration.fc`, `bb2-calibration-wide-angle.fc` and
+`hx2-calibration-wide-angle.fc` (the ones with A–D labels, single-line, air assist 0%) live in
+`resources/calibration-tasks/` (named after the `.fc`, not bundled); edit there and re-export.
+
 ### Promark camera rotation (`rotate180`)
 
 Desktop/MOPA Promark webcams are mounted upside down, UV ones are not, and the laser source the user
