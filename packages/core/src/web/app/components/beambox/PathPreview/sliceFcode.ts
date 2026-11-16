@@ -1,3 +1,5 @@
+import { crc32 } from '@core/helpers/fcode/crc32';
+
 import type { ParsedFcode } from './parseFcode';
 import { RASTER_T, Reader, walkContentEntries } from './parseFcode';
 
@@ -24,22 +26,6 @@ export interface FcodeTask extends Omit<ParsedFcode, 'metadata'> {
 
 const TRAVEL_FEEDRATE = 7500; // mm/min, matches the gcode start-here preparation
 const A_TRAVEL_FEEDRATE = 2400; // mm/min, rotary a-axis travel speed
-
-const CRC_TABLE = new Uint32Array(256).map((_, n) => {
-  let c = n;
-
-  for (let k = 0; k < 8; k += 1) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-
-  return c;
-});
-
-const crc32 = (bytes: Uint8Array): number => {
-  let c = 0xffffffff;
-
-  for (let i = 0; i < bytes.length; i += 1) c = CRC_TABLE[(c ^ bytes[i]) & 0xff] ^ (c >>> 8);
-
-  return (c ^ 0xffffffff) >>> 0;
-};
 
 class ByteWriter {
   bytes: number[] = [];
