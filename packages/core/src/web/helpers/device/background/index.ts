@@ -17,6 +17,12 @@ const RESELECT_MS = 5000;
 const YIELD_PROMPT_ID = 'background-task-yield';
 /** How often the yield prompt checks whether the task finished on its own */
 const YIELD_WATCH_MS = 500;
+/**
+ * A background select is given up after this long. The ghost connect times out after 30 s on its own, a Swiftray
+ * connect never does (its action() only rejects when the socket closes); a stuck one must not block the foreground
+ * (yieldTo waits for the select) or the manager (reselect and later selects wait for it) until the app is reloaded
+ */
+const SELECT_TIMEOUT_MS = 30_000;
 
 const isVisible = (): boolean => document.visibilityState === 'visible';
 
@@ -140,8 +146,8 @@ class BackgroundTasks {
     }
 
     // A background select that completes after the caller's own select would point deviceMaster back at the
-    // top-bar machine while the user works on another one
-    await this.selecting;
+    // top-bar machine while the user works on another one. Loop: a top-bar change while waiting chains a new one
+    while (this.selecting) await this.selecting;
 
     return true;
   };
@@ -224,19 +230,34 @@ class BackgroundTasks {
     await this.select(device);
   };
 
-  /** Background selects never pop the connecting progress or a connection error the user did not ask for */
+  /**
+   * Silent (no progress or error the user did not ask for), chained so two selects finish in order and only the last
+   * clears `selecting`, given up after SELECT_TIMEOUT_MS so reselect can retry (the underlying select is not cancelled)
+   */
   private select = (device: IDeviceInfo): Promise<void> => {
-    this.selecting = (async () => {
-      try {
-        await deviceMaster.select(device, { silent: true });
-      } catch (error) {
-        console.warn('[backgroundTasks] select failed', error);
-      } finally {
-        this.selecting = null;
-      }
-    })();
+    const run = async () => {
+      let timer: NodeJS.Timeout | undefined;
 
-    return this.selecting;
+      try {
+        await Promise.race([
+          deviceMaster.select(device, { silent: true }),
+          new Promise<never>((_, reject) => {
+            timer = setTimeout(() => reject(new Error('select timeout')), SELECT_TIMEOUT_MS);
+          }),
+        ]);
+      } finally {
+        clearTimeout(timer);
+      }
+    };
+    const promise: Promise<void> = (this.selecting ? this.selecting.then(run) : run())
+      .catch((error) => console.warn('[backgroundTasks] select failed', error))
+      .then(() => {
+        if (this.selecting === promise) this.selecting = null;
+      });
+
+    this.selecting = promise;
+
+    return promise;
   };
 
   private startTask = (task: BackgroundTask, device: IDeviceInfo): void => {

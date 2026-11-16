@@ -244,6 +244,79 @@ describe('backgroundTasks', () => {
       expect(yielded).toBe(true);
       jest.useRealTimers();
     });
+
+    test('a stuck background connect is given up after 30 s: the foreground goes on and reselect retries', async () => {
+      jest.useFakeTimers();
+      setup();
+      mockDeviceMaster.select.mockClear();
+      mockDeviceMaster.currentDevice = { info: { serial: 'B' } };
+      mockDeviceMaster.available = [{ uuid: 'a' }];
+      mockDeviceMaster.select.mockImplementation(() => new Promise(() => {}));
+      await jest.advanceTimersByTimeAsync(5000);
+      expect(mockDeviceMaster.select).toHaveBeenCalledTimes(1);
+
+      let yielded = false;
+
+      backgroundTasks.yieldTo(deviceB).then(() => (yielded = true));
+      await jest.advanceTimersByTimeAsync(29_000);
+      expect(yielded).toBe(false);
+      await jest.advanceTimersByTimeAsync(1000);
+      expect(yielded).toBe(true);
+      expect(console.warn).toHaveBeenCalledWith('[backgroundTasks] select failed', expect.any(Error));
+
+      // the tracking is clear again, so the next tick retries
+      await jest.advanceTimersByTimeAsync(5000);
+      expect(mockDeviceMaster.select).toHaveBeenCalledTimes(2);
+      jest.useRealTimers();
+    });
+
+    test('a second background select waits for the first and stays tracked after it', async () => {
+      const task = makeTask('promark-button', log);
+      const finish: Array<() => void> = [];
+
+      mockDeviceMaster.select.mockImplementation(() => new Promise<void>((resolve) => finish.push(resolve)));
+      backgroundTasks.register(task);
+      // top bar A → B while A still connects
+      backgroundTasks.setDevice(deviceA);
+      backgroundTasks.setDevice(deviceB);
+      await Promise.resolve();
+      expect(mockDeviceMaster.select).toHaveBeenCalledTimes(1);
+      expect(mockDeviceMaster.select).toHaveBeenCalledWith(deviceA, { silent: true });
+
+      let yielded = false;
+
+      backgroundTasks.yieldTo(deviceA).then(() => (yielded = true));
+      finish[0]();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(mockDeviceMaster.select).toHaveBeenLastCalledWith(deviceB, { silent: true });
+      expect(yielded).toBe(false);
+
+      finish[1]();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(yielded).toBe(true);
+    });
+
+    test('a select chained while yieldTo already waits is waited for too', async () => {
+      const task = makeTask('promark-button', log);
+      const finish: Array<() => void> = [];
+
+      mockDeviceMaster.select.mockImplementation(() => new Promise<void>((resolve) => finish.push(resolve)));
+      backgroundTasks.register(task);
+      backgroundTasks.setDevice(deviceA);
+
+      let yielded = false;
+
+      backgroundTasks.yieldTo(deviceA).then(() => (yielded = true));
+      // top bar A → B while the foreground action waits
+      backgroundTasks.setDevice(deviceB);
+      finish[0]();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(yielded).toBe(false);
+
+      finish[1]();
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(yielded).toBe(true);
+    });
   });
 
   describe('reselect', () => {
