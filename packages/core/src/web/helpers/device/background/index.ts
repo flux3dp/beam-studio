@@ -79,11 +79,18 @@ class BackgroundTasks {
     this.refresh();
   };
 
-  /** True when deviceMaster currently talks to the machine the task was started on */
+  /**
+   * True when deviceMaster currently talks to the machine the task was started on. False without a control socket:
+   * a command would go through getControl() → reconnect(), which is not silent, so the tick waits for reselect
+   */
   isCurrent = (task: BackgroundTask): boolean => {
     const device = this.running.get(task.id);
 
-    return Boolean(device) && deviceMaster.currentDevice?.info.serial === device!.serial;
+    return (
+      Boolean(device) &&
+      deviceMaster.currentDevice?.info.serial === device!.serial &&
+      deviceMaster.currentControlMode !== null
+    );
   };
 
   /**

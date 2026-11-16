@@ -144,6 +144,9 @@ describe('backgroundTasks', () => {
     expect(backgroundTasks.isCurrent(task)).toBe(false);
     mockDeviceMaster.currentDevice = { info: { serial: 'A' } };
     expect(backgroundTasks.isCurrent(task)).toBe(true);
+    // no control socket: a tick's command would reconnect with the connecting progress; wait for reselect instead
+    mockDeviceMaster.currentControlMode = null;
+    expect(backgroundTasks.isCurrent(task)).toBe(false);
   });
 
   describe('yieldTo', () => {
