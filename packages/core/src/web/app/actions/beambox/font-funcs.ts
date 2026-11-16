@@ -24,6 +24,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { getBundledFont } from '@core/helpers/fonts/bundledFonts';
 import fontHelper from '@core/helpers/fonts/fontHelper';
+import { CLOSE_GAP_RATIO, isSingleLineFont, pathToOpenSvg } from '@core/helpers/fonts/singleLineFont';
 import { getOS } from '@core/helpers/getOS';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -327,6 +328,10 @@ export const convertTextToPathByFontkit = (
 
     const fontSize = textedit.getFontSize(textElem as SVGTextElement);
     const sizeRatio = fontSize / fontObj.unitsPerEm;
+    // Single-line fonts draw open strokes; fontkit's toSVG would close each one with an extra line.
+    const isSingleLine = isSingleLineFont(textElem);
+    const closeGap = fontSize * CLOSE_GAP_RATIO;
+    const toSvg = (path: fontkit.Path) => (isSingleLine ? pathToOpenSvg(path, closeGap) : path.toSVG());
     let d: string[] = [];
     const textPaths = textElem.querySelectorAll('textPath');
 
@@ -389,13 +394,14 @@ export const convertTextToPathByFontkit = (
           const advance = (end.x - start.x) * Math.cos(rot) + (end.y - start.y) * Math.sin(rot);
           const { x, y } = advance < 0 ? end : start;
 
-          return char.path
-            .translate(pos.xOffset, pos.yOffset)
-            .scale(sizeRatio, -sizeRatio * glyphScaleY)
-            .translate(0, alignOffset * glyphScaleY)
-            .rotate(rot)
-            .translate(x, y)
-            .toSVG();
+          return toSvg(
+            char.path
+              .translate(pos.xOffset, pos.yOffset)
+              .scale(sizeRatio, -sizeRatio * glyphScaleY)
+              .translate(0, alignOffset * glyphScaleY)
+              .rotate(rot)
+              .translate(x, y),
+          );
         }),
       );
     });
@@ -442,11 +448,12 @@ export const convertTextToPathByFontkit = (
           // browser has resolved bidi, so a latin word or digit run inside rtl text runs the other way.
           const { x, y } = start.x > end.x ? end : start;
 
-          return char.path
-            .translate(pos.xOffset, pos.yOffset)
-            .scale(sizeRatio, -sizeRatio * glyphScaleY)
-            .translate(x, y)
-            .toSVG();
+          return toSvg(
+            char.path
+              .translate(pos.xOffset, pos.yOffset)
+              .scale(sizeRatio, -sizeRatio * glyphScaleY)
+              .translate(x, y),
+          );
         }),
       );
     });
@@ -798,7 +805,9 @@ const convertTextToPath = async (
     await document.fonts.ready;
 
     let res: IConvertInfo = null;
-    let preferGhost = !pathPerChar && globalPreference['font-convert'] === '1.0';
+    const isSingleLine = isSingleLineFont(textElement);
+    // fluxsvg closes every contour, so a single-line font always goes through fontkit.
+    let preferGhost = !pathPerChar && !isSingleLine && globalPreference['font-convert'] === '1.0';
 
     if (preferGhost && fontObj) {
       try {
@@ -848,7 +857,8 @@ const convertTextToPath = async (
       }
 
       if (typeof d === 'string') {
-        if (weldingTexts) {
+        // Welding unites filled areas; open strokes have none and would come out closed.
+        if (weldingTexts && !isSingleLine) {
           d = weldPath(d);
         }
 

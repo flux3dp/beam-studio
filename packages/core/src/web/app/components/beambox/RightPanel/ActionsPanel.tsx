@@ -28,6 +28,7 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import { isNounProjectElement } from '@core/app/svgedit/utils/nounProject';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
+import { isSingleLineFont } from '@core/helpers/fonts/singleLineFont';
 import imageEdit from '@core/helpers/image-edit';
 import {
   convertSvgToPath,
@@ -396,6 +397,8 @@ const ActionsPanel = ({ elem, is3d, typeOverride }: Props): React.JSX.Element =>
   const renderTextActions = (): Section[] => {
     const isVariableText = getVariableTextType(elem) !== VariableTextType.NONE;
     const tooltipIfDisabled = lang.disabled_by_variable_text;
+    // welding unites filled areas, which open single-line strokes do not have
+    const isSingleLine = isSingleLineFont(elem);
 
     return [
       {
@@ -408,7 +411,11 @@ const ActionsPanel = ({ elem, is3d, typeOverride }: Props): React.JSX.Element =>
             () => convertTextToPath(elem, { isToSelect: true, weldingTexts: true }),
             <ActionPanelIcons.WeldText />,
             <ActionPanelIcons.WeldText />,
-            { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
+            {
+              isDisabled: isVariableText || isSingleLine,
+              isFullLine: true,
+              tooltipIfDisabled: isVariableText ? tooltipIfDisabled : lang.disabled_by_single_line_font,
+            },
           ),
         ],
         title: 'ACTIONS',

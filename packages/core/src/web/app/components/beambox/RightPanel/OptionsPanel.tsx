@@ -8,6 +8,7 @@ import { useStlStore } from '@core/app/stores/stlStore';
 import { PHOTO_TO_3D_ATTR, POINT_CLOUD_ATTR } from '@core/app/svgedit/stl/constants';
 import { is3dProjection, isPhotoPlaneProjection, isStlProjection } from '@core/app/svgedit/stl/getters';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { isAllSingleLineFont, isSingleLineFont } from '@core/helpers/fonts/singleLineFont';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
@@ -123,7 +124,7 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
         />,
         showColorPanel ? (
           <ColorPanel elem={elem} key="color" />
-        ) : isMobile && !is3d ? (
+        ) : isMobile && !is3d && !isSingleLineFont(matchedElem) ? (
           <InFillBlock elems={[elem]} key="fill" />
         ) : null,
       ])
@@ -143,7 +144,9 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
 
           return [
             <TextOptions elem={elem} isTextPath={includeTextPath} key="textpath" textElements={textElems} />,
-            !includeTextPath && isMobile ? <InFillBlock elems={[elem]} key="fill" /> : null,
+            !includeTextPath && isMobile && !isAllSingleLineFont(textElems) ? (
+              <InFillBlock elems={[elem]} key="fill" />
+            ) : null,
           ];
         }
 
