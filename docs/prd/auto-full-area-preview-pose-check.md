@@ -87,7 +87,7 @@ Non-goals
 fluxghost
 
 - `fluxghost/api/camera.py` `on_image` — every existing caller path (manual preview, calibration, Promark, streaming on legacy firmware): frame bytes, order and the absence of any JSON before a frame stay as they are unless `set_pose_check` enabled the check on that connection.
-- `fluxghost/api/fisheye_camera_mixin.py` `set_fisheye_height` — recomputes the expected rims only when the check is enabled; perspective points and timing unchanged otherwise.
+- `fluxghost/api/fisheye_camera_mixin.py` `set_fisheye_height` — additionally stores the region `rvecs` / `tvecs` it already computes (read only by the pose check, which projects the expected rims per frame while enabled); perspective points and timing unchanged.
 - `cmd_mapping` strings — `set_pose_check` is new; nothing renamed.
 
 Beam Studio
