@@ -835,6 +835,7 @@ export interface ILang {
           disabled_by_infilled: string;
           disabled_by_infilled_and_variable_text: string;
           disabled_by_noun_project: string;
+          disabled_by_single_line_font: string;
           disabled_by_variable_text: string;
           disassemble_use: string;
           disassembling: string;
@@ -891,6 +892,7 @@ export interface ILang {
           rounded_corner: string;
           shading: string;
           sides: string;
+          single_line_font: string;
           start_offset: string;
           stroke: string;
           stroke_color: string;

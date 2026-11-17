@@ -37,7 +37,9 @@ import {
   getFontFamilyOptions,
   renderTextOptions,
 } from '@core/helpers/fonts/renderTextOptions';
+import { isAllSingleLineFont } from '@core/helpers/fonts/singleLineFont';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { isSingleLineFontDev } from '@core/helpers/is-dev';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
 import { isVariableTextSupported } from '@core/helpers/variableText';
@@ -52,6 +54,7 @@ import FitTextAlignBlock from './components/FitTextAlignBlock';
 import FontSizeBlock from './components/FontSizeBlock';
 import LetterSpacingBlock from './components/LetterSpacingBlock';
 import LineSpacingBlock from './components/LineSpacingBlock';
+import SingleLineFontBlock from './components/SingleLineFontBlock';
 import StartOffsetBlock from './components/StartOffsetBlock';
 import TextContentBlock from './components/TextContentBlock';
 import VerticalAlignBlock from './components/VerticalAlignBlock';
@@ -116,6 +119,13 @@ const TextOptions = ({ elem, isTextPath, onSourceChange, showColorPanel, textEle
     () => textElements.length > 0 && textElements.every((element) => isFitText(element)),
     [textElements],
   );
+  const showSingleLineFont = useMemo(isSingleLineFontDev, []);
+  // The attribute rules even when the dev switch is hidden, so the fill options follow it either way.
+  const [isSingleLine, setIsSingleLine] = useState(() => isAllSingleLineFont(textElements));
+
+  useEffect(() => {
+    setIsSingleLine(isAllSingleLineFont(textElements));
+  }, [textElements]);
 
   const handleSizeChange = useCallback(() => {
     selector.getSelectorManager().resizeSelectors([elem]);
@@ -567,7 +577,7 @@ const TextOptions = ({ elem, isTextPath, onSourceChange, showColorPanel, textEle
       <LineSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
       <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
       {renderVerticalTextSwitch()}
-      {!showColorPanel && !isMobile && <InFillBlock elems={[elem]} />}
+      {!showColorPanel && !isMobile && !isSingleLine && <InFillBlock elems={[elem]} />}
     </>
   );
 
@@ -588,11 +598,16 @@ const TextOptions = ({ elem, isTextPath, onSourceChange, showColorPanel, textEle
           onValueChange={handleVerticalAlignChange}
           value={verticalAlign.value}
         />
-        <InFillBlock elems={textElements} label={langOptionPanel.text_infill} />
+        {!isSingleLine && <InFillBlock elems={textElements} label={langOptionPanel.text_infill} />}
         <InFillBlock elems={path} id="path_infill" label={langOptionPanel.path_infill} />
       </>
     );
   };
+
+  const renderSingleLineFontBlock = (): ReactNode =>
+    showSingleLineFont && (
+      <SingleLineFontBlock checked={isSingleLine} onChange={setIsSingleLine} textElements={textElements} />
+    );
 
   return (
     <>
@@ -604,6 +619,7 @@ const TextOptions = ({ elem, isTextPath, onSourceChange, showColorPanel, textEle
           <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
           {isAllFitText && <FitTextAlignBlock textElements={textElements} />}
           {isTextPath ? renderTextPathOptions() : renderMultiLineTextOptions()}
+          {renderSingleLineFontBlock()}
         </>
       ) : (
         <ConfigProvider theme={selectTheme}>
@@ -616,6 +632,7 @@ const TextOptions = ({ elem, isTextPath, onSourceChange, showColorPanel, textEle
             </div>
             {isAllFitText && <div className={styles.row}>{<FitTextAlignBlock textElements={textElements} />}</div>}
             {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
+            {renderSingleLineFontBlock()}
             {!isTextPath && showVariableText && !onSourceChange && (
               <VariableTextBlock elems={textElements} id={configs.id.value} withDivider />
             )}

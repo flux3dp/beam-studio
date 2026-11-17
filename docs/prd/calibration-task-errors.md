@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | 已於 #1055 實作（Beam Studio `fix/camera-calibration-resumable-errors`）；單線字型為 dev 功能，在 Beam Studio `dev/single-line-font`。吹氣自動繼續已在本地實機測試過，其餘尚未實機測試 |
+| **Status** | 已於 #1055 實作；單線字型（dev 功能）已於 #1056 實作。吹氣自動繼續已在本地實機測試過，其餘尚未實機測試 |
 | **Author** | Beam Studio 前端 |
 | **Created** | 2026-11-13 |
 | **Target product** | Beam Studio（桌面版 + 網頁版） |
@@ -186,7 +186,7 @@ report，遇到 `ABORTED`、`COMPLETED`、`PAUSED_FROM_STARTING` 且帶錯誤時
   四個字母位置不變；FILE 無 `IGNORE_AIR_ASSIST_WARNING`、`FORBIDDEN_HEADTYPE`（與 main 相同）。
 - 三個檔案的單線字原檔放在 `resources/calibration-tasks/`，檔名與 `.fc` 相同。
 
-### 7.5 單線字型文字轉路徑（dev 功能，`singleLineFont.ts`，分支 `dev/single-line-font`）
+### 7.5 單線字型文字轉路徑（dev 功能，`singleLineFont.ts`，#1056）
 
 TrueType 輪廓一定是封閉的，fontkit 的 `toSVG` 也一律補上 `Z`，所以 stroke 字型的每一筆都會多一段連回
 起點的線。
@@ -212,9 +212,9 @@ TrueType 輪廓一定是封閉的，fontkit 的 `toSVG` 也一律補上 `Z`，�
 
 ## 9. 上線計畫
 
-1. Beam Studio PR `fix/camera-calibration-resumable-errors`：輪詢與提示、吹氣自動繼續、metadata、校正檔、
+1. Beam Studio #1055（已合併）：輪詢與提示、吹氣自動繼續、metadata、校正檔、
    i18n。
-2. Beam Studio PR `dev/single-line-font`（dev 功能，非修正）。
+2. Beam Studio #1056：單線字型（dev 功能，非修正）。
 3. 韌體 `766cdd2` 隨 `release/v6.5.4` 發布。
 
 ## 10. 待決事項

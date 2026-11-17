@@ -8,3 +8,7 @@ export default isDev;
 
 // Promark UV tuning and in-development 3D tools, kept out of the general dev mode that already unlocks UV itself
 export const isUvDev = (): boolean => window?.localStorage?.getItem('uvDev') === 'true';
+
+// Single-line font switch on text objects: not released yet, so only dev mode shows it. Converting to path follows
+// the text's data-single-line attribute whether or not this is on.
+export const isSingleLineFontDev = (): boolean => isDev();

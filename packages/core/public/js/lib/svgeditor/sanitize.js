@@ -615,6 +615,7 @@
     ],
     text: [
       'data-ratiofixed',
+      'data-single-line',
       'data-np',
       'data-textpath',
       'data-origx',
