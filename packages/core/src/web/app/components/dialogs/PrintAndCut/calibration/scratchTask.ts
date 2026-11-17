@@ -148,6 +148,8 @@ export const runScratchTask = async (
   await deviceMaster.doCalibration({
     blob: fcodeBlob,
     onProgress: (progress) => onProgress({ message, percentage: Math.round(progress * 100) }),
+    // PrintAndCutCalibration reports the failure itself
+    silent: true,
   });
 
   return true;

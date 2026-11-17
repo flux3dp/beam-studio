@@ -2235,6 +2235,7 @@ export interface ILang {
     turningOffAirPump: string;
     turningOffFan: string;
     unable_to_find_machine: string;
+    unable_to_get_task_status: string;
     unable_to_start: string;
     unavailableWorkarea: string;
     unknown_device: string;
@@ -2261,6 +2262,7 @@ export interface ILang {
     forceStop: string;
     go: string;
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: string;
+    HARDWARE_ERROR_AIR_ASSIST_OUT_OF_RANGE: string;
     HARDWARE_ERROR_BOTTOM_OPENED: string;
     HARDWARE_ERROR_CARTRIDGE_OVERHEAT: string;
     HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: string;
@@ -2268,6 +2270,7 @@ export interface ILang {
     HARDWARE_ERROR_COVER_NOT_OPENED: string;
     HARDWARE_ERROR_DOOR_OPENED: string;
     HARDWARE_ERROR_DRAWER_OPENED: string;
+    HARDWARE_ERROR_FILTER_EXPIRED: string;
     HARDWARE_ERROR_FIRE_DETECTED: string;
     HARDWARE_ERROR_HEADTYPE_MISMATCH: string;
     HARDWARE_ERROR_HEADTYPE_NONE: string;

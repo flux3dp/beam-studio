@@ -1,0 +1,139 @@
+Beam5.{"contents":[1,2,3,4],"version":"2.6.1-alpha"}Ÿ`½œ`<svg id="svgcontent" width="7400" height="4100" viewBox="0 0 7400 4100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" data-workarea="fhx2rf" data-en_af="false" data-en_diode="false" data-rotary_mode="false" data-engrave_dpi="medium">
+ <defs>
+  <symbol data-image-symbol="svg_50_image" data-bbox="{&quot;height&quot;:32,&quot;width&quot;:32.01471,&quot;x&quot;:8.99999,&quot;y&quot;:9}" id="svg_50">
+   <defs>
+    <style>#svg_50 *[data-color] ellipse[fill=none],
+        #svg_50 *[data-color] circle[fill=none],
+        #svg_50 *[data-color] rect[fill=none],
+        #svg_50 *[data-color] path[fill=none],
+        #svg_50 *[data-color] polygon[fill=none] {
+            fill-opacity: 0 !important;
+            stroke-width: 1px !important;
+            stroke-opacity: 1 !important;
+            vector-effect: non-scaling-stroke !important;
+        }
+
+        #svg_50 *[data-color] ellipse[stroke=none],
+        #svg_50 *[data-color] circle[stroke=none],
+        #svg_50 *[data-color] rect[stroke=none],
+        #svg_50 *[data-color] path[stroke=none],
+        #svg_50 *[data-color] polygon[stroke=none],
+        #svg_50 *[data-color] ellipse:not([stroke]),
+        #svg_50 *[data-color] circle:not([stroke]),
+        #svg_50 *[data-color] rect:not([stroke]),
+        #svg_50 *[data-color] path:not([stroke]),
+        #svg_50 *[data-color] polygon:not([stroke]) {
+            fill-opacity: 1 !important;
+            stroke-width: 0 !important;
+        }
+
+        *[data-wireframe] {
+            stroke-width: 1px !important;
+            stroke-opacity: 1.0 !important;
+            stroke-dasharray: 0 !important;
+            opacity: 1 !important;
+            vector-effect: non-scaling-stroke !important;
+            filter: none !important;
+        }
+
+        #svg_50 {
+            overflow: visible;
+        }</style>
+   </defs>
+   <g style="cursor: move;" transform="scale(1, 1) ">
+    <path d="m41.0147,25.0147l-15.9853,15.9853l-4.2426,-4.2426l7.7574,-7.7574l-19.54421,0l0,-8l19.54421,0l-7.7574,-7.7574l4.2426,-4.2426l15.9853,16.0147z"/>
+   </g>
+  </symbol>
+  <symbol data-origin-symbol="svg_50" id="svg_50_image" overflow="visible">
+   <image height="32" width="32.01471" y="9" x="8.99999" filter="url(#filter#13A8A8)"/>
+  </symbol>
+ </defs>
+ <g style="cursor: move;" display="inline" data-yRatio="100" data-wSpeed="100" data-wRepeat="1" data-wobbleStep="-0.05" data-wobbleDiameter="-0.2" data-wMultipass="3" data-wInk="-9" data-speed="100" data-repeat="1" data-refreshInterval="20" data-pulseWidth="500" data-printingStrength="100" data-printingSpeed="60" data-strength="20" data-multipass="3" data-mRatio="100" data-module="15" data-kRatio="100" data-ink="3" data-height="-3" data-halftone="1" data-frequency="27" data-focusStep="-2" data-focus="-2" data-fillInterval="0.01" data-dottingTime="100" data-cRatio="100" data-configName="0" data-amDensity="2" data-color="#13A8A8" class="layer" data-airAssist="0" data-delay="1550">
+  <title>rb</title>
+  <filter id="filter#13A8A8" color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox">
+   <feColorMatrix id="svg_19" values="1 0 0 0 0.07450980392156863, 0 1 0 0 0.6588235294117647, 0 0 1 0 0.6588235294117647, 0 0 0 1 0" type="matrix"/>
+  </filter>
+  <ellipse id="svg_20" data-ratiofixed="false" data-original-layer="rb" vector-effect="non-scaling-stroke" fill="#13A8A8" stroke="#13A8A8" ry="5" rx="5" cy="2700" cx="5000"/>
+  <ellipse id="svg_21" data-ratiofixed="false" data-original-layer="rb" vector-effect="non-scaling-stroke" fill="#13A8A8" stroke="#13A8A8" ry="6" rx="6" cy="3700" cx="5000"/>
+  <ellipse id="svg_22" data-ratiofixed="false" data-original-layer="rb" vector-effect="non-scaling-stroke" fill="#13A8A8" stroke="#13A8A8" ry="5" rx="5" cy="2700" cx="6400"/>
+  <ellipse id="svg_23" data-ratiofixed="false" data-original-layer="rb" vector-effect="non-scaling-stroke" fill="#13A8A8" stroke="#13A8A8" ry="6" rx="6" cy="3700" cx="6400"/>
+ </g>
+ <g style="cursor: move;" data-yRatio="100" data-wSpeed="100" data-wRepeat="1" data-wobbleStep="-0.05" data-wobbleDiameter="-0.2" data-wMultipass="3" data-wInk="-9" data-speed="100" data-repeat="1" data-refreshInterval="20" data-pulseWidth="500" data-printingStrength="100" data-printingSpeed="60" data-strength="20" data-multipass="3" data-mRatio="100" data-module="15" data-kRatio="100" data-ink="3" data-height="-3" data-halftone="1" data-frequency="27" data-focusStep="-2" data-focus="-2" data-fillInterval="0.01" data-dottingTime="100" data-cRatio="100" data-configName="0" data-amDensity="2" data-color="#1677FF" class="layer" data-airAssist="0" display="inline" data-delay="1550">
+  <title>lb</title>
+  <filter id="filter#1677FF" color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox">
+   <feColorMatrix id="svg_33" values="1 0 0 0 0.08627450980392157, 0 1 0 0 0.4666666666666667, 0 0 1 0 1, 0 0 0 1 0" type="matrix"/>
+  </filter>
+  <ellipse id="svg_35" data-ratiofixed="false" data-original-layer="lb" vector-effect="non-scaling-stroke" fill="#1677FF" stroke="#1677FF" ry="5" rx="5" cy="2700" cx="1000"/>
+  <ellipse id="svg_36" data-ratiofixed="false" data-original-layer="lb" vector-effect="non-scaling-stroke" fill="#1677FF" stroke="#1677FF" ry="6" rx="6" cy="3700" cx="1000"/>
+  <ellipse id="svg_37" data-ratiofixed="false" data-original-layer="lb" vector-effect="non-scaling-stroke" fill="#1677FF" stroke="#1677FF" ry="5" rx="5" cy="2700" cx="2400"/>
+  <ellipse id="svg_38" data-ratiofixed="false" data-original-layer="lb" vector-effect="non-scaling-stroke" fill="#1677FF" stroke="#1677FF" ry="6" rx="6" cy="3700" cx="2400"/>
+ </g>
+ <g style="cursor: move;" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-multipass="3" data-backlash="0" data-module="15" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="20" data-printingSpeed="60" data-speed="100" clip-path="url(#scene_mask)" data-color="#FA8C16" class="layer" display="inline" data-configName="0" data-airAssist="0" data-delay="1550">
+  <title>rt</title>
+  <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#FA8C16">
+   <feColorMatrix values="1 0 0 0 0.9803921568627451, 0 1 0 0 0.5490196078431373, 0 0 1 0 0.08627450980392157, 0 0 0 1 0" type="matrix"/>
+  </filter>
+  <ellipse id="svg_11" data-ratiofixed="false" data-original-layer="rt" vector-effect="non-scaling-stroke" fill="#FA8C16" stroke="#FA8C16" ry="6" rx="6" cy="399.99999" cx="5000"/>
+  <ellipse id="svg_34" data-ratiofixed="false" data-original-layer="rt" vector-effect="non-scaling-stroke" fill="#FA8C16" stroke="#FA8C16" ry="5" rx="5" cy="1400" cx="5000"/>
+  <ellipse id="svg_42" data-ratiofixed="false" data-original-layer="rt" vector-effect="non-scaling-stroke" fill="#FA8C16" stroke="#FA8C16" ry="6" rx="6" cy="399.99999" cx="6400"/>
+  <ellipse id="svg_45" data-ratiofixed="false" data-original-layer="rt" vector-effect="non-scaling-stroke" fill="#FA8C16" stroke="#FA8C16" ry="5" rx="5" cy="1400" cx="6400"/>
+ </g>
+ <g style="cursor: move;" display="inline" data-yRatio="100" data-wSpeed="100" data-wRepeat="1" data-wobbleStep="-0.05" data-wobbleDiameter="-0.2" data-wMultipass="3" data-wInk="-9" data-speed="100" data-repeat="1" data-refreshInterval="20" data-pulseWidth="500" data-printingStrength="100" data-printingSpeed="60" data-strength="20" data-multipass="3" data-mRatio="100" data-module="15" data-kRatio="100" data-ink="3" data-height="-3" data-halftone="1" data-frequency="27" data-focusStep="-2" data-focus="-2" data-fillInterval="0.01" data-dottingTime="100" data-cRatio="100" data-configName="0" data-amDensity="2" data-color="#F5222D" class="layer" data-airAssist="0" data-delay="1550">
+  <title>lt</title>
+  <filter id="filter#F5222D" color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox">
+   <feColorMatrix id="svg_6" values="1 0 0 0 0.9607843137254902, 0 1 0 0 0.13333333333333333, 0 0 1 0 0.17647058823529413, 0 0 0 1 0" type="matrix"/>
+  </filter>
+  <ellipse id="svg_7" data-ratiofixed="false" data-original-layer="lt" vector-effect="non-scaling-stroke" fill="#F5222D" stroke="#F5222D" ry="6" rx="6" cy="399.99999" cx="1000"/>
+  <ellipse id="svg_8" data-ratiofixed="false" data-original-layer="lt" vector-effect="non-scaling-stroke" fill="#F5222D" stroke="#F5222D" ry="5" rx="5" cy="1400" cx="1000"/>
+  <ellipse id="svg_9" data-ratiofixed="false" data-original-layer="lt" vector-effect="non-scaling-stroke" fill="#F5222D" stroke="#F5222D" ry="6" rx="6" cy="399.99999" cx="2400"/>
+  <ellipse id="svg_10" data-ratiofixed="false" data-original-layer="lt" vector-effect="non-scaling-stroke" fill="#F5222D" stroke="#F5222D" ry="5" rx="5" cy="1400" cx="2400"/>
+ </g>
+ <g style="cursor: move;" data-zstep="0" data-yRatio="100" data-wSpeed="100" data-wRepeat="1" data-wobbleStep="-0.05" data-wobbleDiameter="-0.2" data-wMultipass="3" data-wInk="-12" data-speed="30" data-repeat="1" data-refreshInterval="20" data-pulseWidth="500" data-printingStrength="100" data-printingSpeed="60" data-strength="2" data-multipass="3" data-mRatio="100" data-module="15" data-minPower="0" data-kRatio="100" data-ink="3" data-height="-3" data-halftone="1" data-frequency="27" data-focusStep="-2" data-focus="-2" data-fillInterval="0.01" data-fillAngle="0" data-dottingTime="100" data-diode="0" data-cRatio="100" data-configName="0" data-biDirectional="1" data-backlash="0" data-amDensity="2" data-color="#2196F3" class="layer" display="inline" data-airAssist="0">
+  <title>label</title>
+  <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#2196F3">
+   <feColorMatrix values="1 0 0 0 0.12941176470588237, 0 1 0 0 0.5882352941176471, 0 0 1 0 0.9529411764705882, 0 0 0 1 0" type="matrix"/>
+  </filter>
+  <path data-ratiofixed="true" fill="none" fill-opacity="0" stroke="#2196F3" d="M1673.983 916.86L1725.156 916.86M1736.869 946.56L1712.196 883.475M1710.375 878.818L1700.058 852.44L1699.5 852.44L1689.025 878.823M1687.18 883.47L1662.131 946.56" id="svg_60" vector-effect="non-scaling-stroke" data-original-layer="label"/>
+  <path data-ratiofixed="true" fill="none" fill-opacity="0" stroke="#2196F3" d="M5672.538 946.34L5695.532 946.34Q5704.758 946.34 5711.074 944.424Q5717.391 942.508 5721.223 939.243Q5725.056 935.978 5726.759 931.436Q5728.462 926.894 5728.462 921.643Q5728.462 920.213 5728.338 918.858M5727.412 913.952Q5725.665 908.068 5721.01 903.9Q5713.558 897.229 5696.668 897.229L5672.538 897.229M5699.506 897.229Q5704.758 897.229 5709.442 895.952Q5714.126 894.674 5717.746 891.906Q5721.365 889.138 5723.494 884.88Q5724.035 883.799 5724.438 882.608M5725.471 877.726Q5725.623 876.254 5725.623 874.661Q5725.623 870.544 5724.275 866.57Q5722.926 862.596 5719.52 859.473Q5716.113 856.35 5710.294 854.505Q5704.474 852.66 5695.39 852.66L5672.538 852.66L5672.538 946.34" data-original-layer="label" vector-effect="non-scaling-stroke" id="svg_65"/>
+  <path data-ratiofixed="true" fill="none" fill-opacity="0" stroke="#2196F3" d="M1732.486 3172.492Q1724.525 3152.161 1702.915 3152.161Q1693.815 3152.161 1686.849 3155.645Q1679.883 3159.128 1675.12 3165.454Q1670.357 3171.781 1667.94 3180.667Q1665.523 3189.553 1665.523 3200.358Q1665.523 3212.3 1668.367 3221.399Q1671.21 3230.498 1676.257 3236.541Q1681.304 3242.583 1688.129 3245.711Q1694.953 3248.839 1702.915 3248.839Q1709.17 3248.839 1714.288 3247.062Q1719.407 3245.284 1723.387 3242.299Q1727.368 3239.313 1730.212 3235.403Q1733.055 3231.494 1734.477 3227.086" id="svg_70" vector-effect="non-scaling-stroke" data-original-layer="label"/>
+  <path data-ratiofixed="true" fill="none" fill-opacity="0" stroke="#2196F3" d="M5666.786 3247.34L5666.786 3203M5666.786 3198L5666.786 3153.66L5687.651 3153.66Q5698.155 3153.66 5706.6 3156.925Q5715.046 3160.189 5721.007 3166.293Q5726.968 3172.396 5730.091 3181.054Q5733.214 3189.713 5733.214 3200.642Q5733.214 3213.133 5729.027 3222.004Q5724.839 3230.875 5718.026 3236.553Q5711.213 3242.23 5702.342 3244.785Q5693.471 3247.34 5683.819 3247.34L5667.07 3247.34L5666.786 3247.34" vector-effect="non-scaling-stroke" id="svg_75" data-original-layer="label"/>
+ </g>
+</svg> º‰PNG
+
+   IHDR  ,   ¸   YıÑ”   sRGB ®Îé  tIDATx^íİolÕWÇñïùİRJooËYÿ¡scáÆ?YŒ‹FÃL|bBÆbbÂ–@/Å9…-Y$&
+8$k'Ì?—IÊ²,‹3ÙâÍf¢Q#‘ŞvMF)åŞò§½ı}My`|`'œó½çÍãs{¾ß×çô“ŞG¸k½kşÒ2=ù şİ’À5¯ÏÎº³­ïœì¿¥pÿ˜~vñá,“Î¦'/m æÖô`Û²üúü7İ®5kç:ykãÔœ€®xÿr)¹IwöìDğĞ]Ò"Í¥¢{ºÊ	xºgñZçq£ €@P
++(?—#€€ …å£ÅY*@aåçrğ °|´8‹ A(¬ ü\ >–g@ ¨ …”ŸË@ÀG€ÂòÑâ, °‚òs9øPX>ZœE  VP~.G 
+ËG‹³ T€Â
+ÊÏå à#@aùhq‚
+PXAù¹|(,-Î"€@P
++(?—#€€ …å£ÅY*@aåçrğ °|´8‹ A(¬ ü\ >ÑÖŠ#Z,^“¦s[Ü¤ÏBœE ¹ß·µÚ‡uFgê¹8Öß~Æÿ§ÜşOD[X=ƒÕã*®sdiñ²ÑMß~
+n@ ]Şê@.ú:7áTn8§‡+åöŸÆ&eaõ^ı˜äõWÄ9çD¾5¼­ô\lpÌƒ@#	tÔTÑâÜÏèUte>›í;¿½íDL{FYX½µ©h§ª\r"k+ı¥ûcBcM`îˆ[/’½%’ß#ù¬Vú;>ÛqÖ`UÕÉ)QWÉ—k^øâHñ±á1"p³°Tî'×Ed©¨ûW­¥øé‹ºjL;FWXİÏ_ÙìT¶ˆdËTtÌi6O\ş§J¹Ô³ ĞH=“OÔ¥ğ‘óMÅÇ:g«Ÿ-äÙ´½:Ò×z<¦=£+¬ÁêŸ¸ÕÃå¶ùsP½W~/.[?\n›³ ĞHİƒµWUtu¦2#"*¢gkyaëÅíÅ1íUa}à ÎŸnšú¦Já—ï”üfê®ƒÕeó3·O³âã£e7³ Ğ(]38©?å¤>åDG§Uvõ·Ç¶_T…ó €@\V\y0ü
+‹ç f(,3Q1(PX¼0#@a™‰ŠA@€Ââ €€
+ËLTŠ o ÌPXf¢bP °x `F€Â2ƒ"€ …Å@ 3–™¨(,Ş ˜ °ÌDÅ  @añ@ÀŒ …e&*E 
+‹7€ f(,3Q1(PX¼0#@a™‰ŠA@€Ââ €€w­gí‹-•“›HnfêÀƒÖº>´ÓÕõtñÂß^	<
+×¨ïéØXwÒİ²còYƒãYwI–—üÄMw­>Ğ<zú«A¦0zéÔÊ{·ªÎœm»pî£+0v@İÓş¹iêjŞyé…€c˜»Z÷-ù_	ÍÅÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æ(,s‘10é
+PXéfÏæ˜ °ÌEÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æ(,s‘10é
+PXéfÏæ˜ °ÌEÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æ(,s‘10é
+PXéfÏæ˜ °ÌEÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æ(,s‘10é
+PXéfÏæ˜ °ÌEÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æ(,s‘10é
+PXéfÏæ˜ °ÌEÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æ(,s‘10é
+PXéfÏæ˜ °ÌEÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æ(,s‘10é
+PXéfÏæ˜ °ÌEÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æ(,s‘10é
+PXéfÏæ˜ °ÌEÆÀ¤+@a¥›=›#`N€Â2#® …•nöl€9
+Ë\dŒ@ºVºÙ³9æÜâºÿÒ^÷„¹É¼èëÚ—×åï“ûİÇàj£­/½´!kjê¬=üğa£+{áÑ£Ü’zd||YÄi)^ºèkºCUÎ\ŞïŸ‘´½üòÆ‚s]“›6}/ğ(v®Wuû_	íDÆ¤$/@a%ÿ @À …e'+&E y
++ù'  v(,;Y1)ÉPXÉ? °#@aÙÉŠIH^€ÂJş	 €€
+ËNVLŠ@òVòO  ìPXv²bR’ °’  `G€Â²““"¼ …•ü  ;–¬˜ä(¬äŸ  Ø °ìdÅ¤$/@a%ÿ @À …e'+&E y
++ù'  v(,;Y1)ÉPXÉ? °#@aÙÉŠIH^ ÚÂê¼òX=ÏV²ü®,oŞs®¿åLòi€Àmè¨>ãœ~\Õ‹sÿ)·}ÿ6]õ~l”…Õ;X}AÕ­SÕ?¸Lu‡+ÛÚO›òaøßCZèy·:­YvŞiç.ÍT/TÊ¥M±‘EWX½ƒ×¾”KŞ'ùìk#ıíßYuH;Î‰\•-n&6<æA !nVmÚ‰üzx[é3ÏMõeY¾Ñ‰{½RnÛÓÑVÏóÕ-ªîz={jì+­çcÂbR`—fİK«'²Ì.—6.ı±–J×§çNß)—‰içè
+«w°úm÷yÕ¬<²­õ­˜°˜†Ø¥YÏòê»¢îXe[iëİ?¼~Ï¼|æ5ım¥Ü¾9¦£+¬•ëçIÓ/ÄÉ)ÕÂ>—åŸ¼,Å£—û\%&8fA aşó•Pÿš‹çr""y¥Üñ»˜öŒ®°æpî>P»¿©Yˆf"ù}¹s/–ÛvÇÇ,4ŒÀÍ¯„µ™sEu¢¢úÏzî¶œßŞv"¶£,¬9¤U‡´kF¯.ÏênŞHëÛ±Á1$ğ¾C×ºšê3]My6yî¾âiyĞÕcÜ/ÚÂŠ‹™@ ¬ …ÖŸÛ@ÀC€ÂòÀâ(„ °Âús;xPXXE °VXnG 
+Ë‹£ V€Â
+ëÏí à!@ay`qÂ
+PXaı¹<(,,"€@X
++¬?·#€€‡ …åÅQ+@a…õçvğ °<°8Š a(¬°şÜ –G@ ¬ …ÖŸÛ@ÀC€ÂòÀâ(„ °Âús;xPXXE °VXnG ·h‡®›Øë¢ûÿÇ<v¸ãG‹OëŠ©f™”]îú¿œí-(ÕëÅê#\´¿ÌÛ`ÑĞĞ:·äzb¼ Ÿ’İnüÎ]mû¦%;ôW¢rfü»n»íM˜>„@ÇĞĞ¡lv¶kbÓ¦!î7yçĞĞ²…ªoş†nö#då    IEND®B`‚{} 
