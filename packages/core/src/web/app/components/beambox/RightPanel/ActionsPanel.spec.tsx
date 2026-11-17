@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { fireEvent, getAllByText, render } from '@testing-library/react';
+import { act, fireEvent, getAllByText, render } from '@testing-library/react';
 
 import i18n from '@core/helpers/i18n';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
@@ -293,6 +293,29 @@ describe('should render correctly', () => {
     mockGetVariableTextType.mockReturnValue(VariableTextType.NUMBER);
     rerender(<ActionsPanel elem={document.getElementById('svg_1') as unknown as SVGElement} />);
     expect(container).toMatchSnapshot();
+  });
+
+  test('text turned into a single-line font disables welding', async () => {
+    document.body.innerHTML = '<text id="svg_1" />';
+
+    const text = document.getElementById('svg_1') as unknown as SVGElement;
+    const { getByText } = render(<ActionsPanel elem={text} />);
+    const weldButton = () => getByText(tActionPanel.weld_text).closest('button');
+
+    expect(weldButton()).not.toBeDisabled();
+
+    // set from the text options panel, not through a rerender of this panel
+    await act(async () => {
+      text.setAttribute('data-single-line', 'true');
+      await tick();
+    });
+    expect(weldButton()).toBeDisabled();
+
+    await act(async () => {
+      text.removeAttribute('data-single-line');
+      await tick();
+    });
+    expect(weldButton()).not.toBeDisabled();
   });
 
   test('path from the Noun Project cannot be edited', () => {

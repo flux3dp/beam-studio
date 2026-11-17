@@ -28,7 +28,7 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import { isNounProjectElement } from '@core/app/svgedit/utils/nounProject';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
-import { isSingleLineFont } from '@core/helpers/fonts/singleLineFont';
+import { isSingleLineFont, SINGLE_LINE_FONT_ATTR } from '@core/helpers/fonts/singleLineFont';
 import imageEdit from '@core/helpers/image-edit';
 import {
   convertSvgToPath,
@@ -742,13 +742,16 @@ const ActionsPanel = ({ elem, is3d, typeOverride }: Props): React.JSX.Element =>
     )
     .otherwise(() => null);
 
-  // Watch for changes in the `fill` attribute for path and `data-shading` attribute for image
+  // Watch for changes in the `fill` attribute for path, `data-shading` for image, and variable text and
+  // single-line font for text (both disable welding)
   useEffect(() => {
     const observer = new MutationObserver(() => {
       forceUpdate();
     });
 
-    if (elem) observer.observe(elem, { attributeFilter: ['fill', 'data-shading', 'data-vt-type'] });
+    if (elem) {
+      observer.observe(elem, { attributeFilter: ['fill', 'data-shading', 'data-vt-type', SINGLE_LINE_FONT_ATTR] });
+    }
 
     return () => observer.disconnect(); // Cleanup
   }, [elem, forceUpdate]);
