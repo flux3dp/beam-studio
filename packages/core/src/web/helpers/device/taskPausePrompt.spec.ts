@@ -13,7 +13,7 @@ jest.mock('@core/helpers/device-error-handler', () => ({
 }));
 
 jest.mock('@core/helpers/i18n', () => ({
-  lang: { monitor: { resume: 'Resume', stop: 'Stop' } },
+  lang: { monitor: { resume: 'Resume', stop: 'Stop', USER_OPERATION_REMOVE_CARTRIDGE_X: 'known' } },
 }));
 
 import DeviceConstants from '@core/app/constants/device-constants';
@@ -25,6 +25,7 @@ import {
   isResumablePause,
   TASK_PAUSED_ALERT_ID,
   toErrorList,
+  translateTaskError,
 } from './taskPausePrompt';
 
 const AIR_ASSIST = ['HARDWARE_ERROR', 'AIR_ASSIST_OUT_OF_RANGE'];
@@ -142,6 +143,31 @@ describe('test taskPausePrompt', () => {
     prompt.show([...AIR_ASSIST, 'DOOR_OPENED']);
     expect(onResume).not.toHaveBeenCalled();
     expect(mockPopUp).toHaveBeenCalledTimes(1);
+    expect(mockPopUp.mock.calls[0][0].message).toBe(
+      'HARDWARE_ERROR AIR_ASSIST_OUT_OF_RANGE\n\nHARDWARE_ERROR DOOR_OPENED',
+    );
+  });
+
+  test('closes the prompt when the remaining pause is the air assist warning alone', () => {
+    const onResume = jest.fn().mockResolvedValue(undefined);
+    const prompt = createTaskPausePrompt({ onResume, onStop: jest.fn() });
+
+    prompt.show([...AIR_ASSIST, 'DOOR_OPENED']);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
+
+    // the door was closed from the machine side
+    prompt.show(AIR_ASSIST);
+    expect(mockPopById).toHaveBeenCalledWith(TASK_PAUSED_ALERT_ID);
+    expect(onResume).toHaveBeenCalledTimes(1);
+  });
+
+  test('translateTaskError', () => {
+    expect(translateTaskError(AIR_ASSIST)).toBe('HARDWARE_ERROR AIR_ASSIST_OUT_OF_RANGE');
+    expect(translateTaskError([...AIR_ASSIST, 'DOOR_OPENED'])).toBe(
+      'HARDWARE_ERROR AIR_ASSIST_OUT_OF_RANGE\n\nHARDWARE_ERROR DOOR_OPENED',
+    );
+    // a known multi-part key stays one message
+    expect(translateTaskError(['USER_OPERATION', 'REMOVE_CARTRIDGE', 'X'])).toBe('USER_OPERATION REMOVE_CARTRIDGE X');
   });
 
   test('alertTaskError', () => {

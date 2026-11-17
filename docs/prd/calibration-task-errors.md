@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | 已在分支上實作，尚未合併。Beam Studio `fix/camera-calibration-resumable-errors`；單線字型為 dev 功能，在 Beam Studio `dev/single-line-font`。吹氣自動繼續已在本地實機測試過，其餘尚未實機測試 |
+| **Status** | 已於 #1055 實作（Beam Studio `fix/camera-calibration-resumable-errors`）；單線字型為 dev 功能，在 Beam Studio `dev/single-line-font`。吹氣自動繼續已在本地實機測試過，其餘尚未實機測試 |
 | **Author** | Beam Studio 前端 |
 | **Created** | 2026-11-13 |
 | **Target product** | Beam Studio（桌面版 + 網頁版） |
@@ -148,9 +148,13 @@ report，遇到 `ABORTED`、`COMPLETED`、`PAUSED_FROM_STARTING` 且帶錯誤時
   `USER_OPERATION` 用說明樣式，其他用錯誤樣式。按下按鈕後 3 秒內（`ACTION_GRACE_MS`）不再詢問，因為
   機器可能還會回報一兩輪舊的暫停。
 - **吹氣自動繼續（S2）**：`show` 收到的錯誤若 `isAirAssistWarningOnly`（`taskPausePrompt.ts:33`，錯誤清單
-  恰好是 `HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE`），直接 resume、不跳提示（`taskPausePrompt.ts:85`）。
+  恰好是 `HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE`），直接 resume、不跳提示（`taskPausePrompt.ts:102`）。
   程式註解標明這相當於在舊韌體上用軟體做 `IGNORE_AIR_ASSIST_WARNING`。吹氣加上其他錯誤（例如門蓋開啟）
-  仍然詢問。目前只有校正工作會用到這個提示。
+  仍然詢問；之後若只剩吹氣警告（門蓋已從機器端關上），先關掉原本的提示再 resume，避免留下失效的按鈕。
+  目前只有校正工作會用到這個提示。
+- **多個錯誤（`translateTaskError`）**：錯誤清單是累加的，`DeviceErrorHandler.translate` 只比對最長的已知
+  前綴，`HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE, DOOR_OPENED` 只會顯示吹氣警告。整串不是已知 key 且帶兩個
+  以上細項時，逐一翻譯 `[main, detail]`、去重後以空行串接，提示與 `alertTaskError` 都用它。
 - `alertTaskError` 回報最終錯誤（`Error.message` 或翻譯後的錯誤清單）；空清單（單純中止）不顯示。
   `doCalibration(silent)` 讓自行回報的呼叫端略過。
 
@@ -228,8 +232,8 @@ TrueType 輪廓一定是封閉的，fontkit 的 `toSVG` 也一律補上 `Z`，�
 | 情境 | 自動測試 | 手動測試 |
 |---|---|---|
 | S1 | `addFcodeMetadata.spec.ts`（v2／v3 合併、crc、其餘位元組不變、實際的 `bm2-4c.fc`、v1／空／截斷／壞 json 原樣回傳）；`device-master.spec.ts` › `doCalibration` 上傳的是補過 metadata 的 blob | fbm2 + 新韌體 |
-| S2 | `taskPausePrompt.spec.ts` › `isAirAssistWarningOnly`、只有吹氣警告時不詢問直接 resume、grace 後重試、吹氣加門蓋時詢問 | fbm2 + 不認得 key 的韌體（已本地測試） |
+| S2 | `taskPausePrompt.spec.ts` › `isAirAssistWarningOnly`、只有吹氣警告時不詢問直接 resume、grace 後重試、吹氣加門蓋時詢問、門蓋關上後只剩吹氣時關掉提示 | fbm2 + 不認得 key 的韌體（已本地測試） |
 | S3 | — | 目前正式版 |
-| S4 | `taskPausePrompt.spec.ts`（每個錯誤只問一次、關閉、按鈕、grace）；`device-master.spec.ts` › 可繼續的暫停持續輪詢、提示按鈕 | 開門蓋／探針 |
+| S4 | `taskPausePrompt.spec.ts`（每個錯誤只問一次、關閉、按鈕、grace、`translateTaskError` 多個錯誤分開翻譯）；`device-master.spec.ts` › 可繼續的暫停持續輪詢、提示按鈕 | 開門蓋／探針 |
 | S5 | `device-master.spec.ts` › 帶錯誤時 reject、連續 10 次讀取失敗、重試會歸零；`taskPausePrompt.spec.ts` › `alertTaskError` | alarm、斷線 |
 | Label／字型 | `singleLineFont.spec.ts` | 在白紙上印 bm2 校正 |

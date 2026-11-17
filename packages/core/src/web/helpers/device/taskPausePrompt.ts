@@ -33,6 +33,23 @@ const AIR_ASSIST_WARNING = ['HARDWARE_ERROR', 'AIR_ASSIST_OUT_OF_RANGE'];
 export const isAirAssistWarningOnly = (error: string[]): boolean =>
   error.length === AIR_ASSIST_WARNING.length && AIR_ASSIST_WARNING.every((e, i) => error[i] === e);
 
+type MonitorKey = keyof typeof i18n.lang.monitor;
+
+/**
+ * The error list accumulates (firmware `status.h`), e.g. `['HARDWARE_ERROR', 'AIR_ASSIST_OUT_OF_RANGE',
+ * 'DOOR_OPENED']`, while DeviceErrorHandler.translate matches the longest known prefix and so names only
+ * the first cause. Translate each detail on its own so every cause the user must act on is shown.
+ */
+export const translateTaskError = (error: string[]): string => {
+  const [main, ...details] = error;
+
+  if (details.length < 2 || i18n.lang.monitor[error.join('_') as MonitorKey]) {
+    return DeviceErrorHandler.translate(error);
+  }
+
+  return [...new Set(details.map((detail) => DeviceErrorHandler.translate([main, detail])))].join('\n\n');
+};
+
 export interface TaskPausePrompt {
   /** Close the prompt, e.g. the task was resumed from the machine panel. */
   close: () => void;
@@ -83,6 +100,8 @@ export const createTaskPausePrompt = ({
     // calibration tasks run with air assist off on purpose, so resume the pause without asking.
     // Only when it is the sole error; air assist plus e.g. an open door still asks.
     if (isAirAssistWarningOnly(error)) {
+      // e.g. air assist + open door, then the door was closed: the prompt for both must go
+      close();
       runAction(onResume)();
 
       return;
@@ -97,7 +116,7 @@ export const createTaskPausePrompt = ({
       buttonLabels: [tMonitor.stop, tMonitor.resume],
       callbacks: [runAction(onStop), runAction(onResume)],
       id: TASK_PAUSED_ALERT_ID,
-      message: DeviceErrorHandler.translate(error),
+      message: translateTaskError(error),
       // Dismissed with Esc: keep the task paused and stop asking about this error; the machine panel
       // can still resume or stop it, and a new error asks again.
       onClose: () => {},
@@ -114,7 +133,7 @@ export const createTaskPausePrompt = ({
  * error and is not reported.
  */
 export const alertTaskError = (error: unknown): void => {
-  const message = error instanceof Error ? error.message : DeviceErrorHandler.translate(toErrorList(error));
+  const message = error instanceof Error ? error.message : translateTaskError(toErrorList(error));
 
   if (!message) return;
 
