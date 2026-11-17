@@ -61,7 +61,7 @@ export interface TaskPausePrompt {
  * The Stop / Resume prompt shown while a machine task is paused on an error. The caller keeps polling
  * the report and calls `show` for every poll in a resumable pause and `close` otherwise, so a task
  * resumed or stopped from the machine panel closes the prompt by itself. A pause on the air assist
- * warning alone is resumed without asking (see `show`).
+ * warning alone is resumed without asking, unless the same pause already asked (see `show`).
  */
 export const createTaskPausePrompt = ({
   onResume,
@@ -72,12 +72,19 @@ export const createTaskPausePrompt = ({
 }): TaskPausePrompt => {
   let shownErrorId: null | string = null;
   let actionAt = 0;
+  // Whether this pause has already asked the user; reset once the task is no longer paused.
+  let hasAsked = false;
 
-  const close = () => {
+  const dismiss = () => {
     if (shownErrorId === null) return;
 
     shownErrorId = null;
     Alert.popById(TASK_PAUSED_ALERT_ID);
+  };
+
+  const close = () => {
+    dismiss();
+    hasAsked = false;
   };
 
   const runAction = (action: () => Promise<unknown>) => async () => {
@@ -98,17 +105,17 @@ export const createTaskPausePrompt = ({
 
     // Software IGNORE_AIR_ASSIST_WARNING for firmware that does not read the metadata yet: the
     // calibration tasks run with air assist off on purpose, so resume the pause without asking.
-    // Only when it is the sole error; air assist plus e.g. an open door still asks.
-    if (isAirAssistWarningOnly(error)) {
-      // e.g. air assist + open door, then the door was closed: the prompt for both must go
-      close();
+    // Only when it is the sole error from the start of the pause; air assist plus e.g. an open door
+    // asks, and keeps asking after the firmware clears the door error: the user resumes by hand.
+    if (isAirAssistWarningOnly(error) && !hasAsked) {
       runAction(onResume)();
 
       return;
     }
 
-    close();
+    dismiss();
     shownErrorId = errorId;
+    hasAsked = true;
 
     const { monitor: tMonitor } = i18n.lang;
 

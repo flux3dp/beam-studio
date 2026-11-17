@@ -92,7 +92,7 @@ report，遇到 `ABORTED`、`COMPLETED`、`PAUSED_FROM_STARTING` 且帶錯誤時
 | # | Beam Studio | 韌體 | 行為 |
 |---|---|---|---|
 | S1 | 新 | 新 | `doCalibration` 送出前在 FILE json 加上 `IGNORE_AIR_ASSIST_WARNING "1"`，韌體略過檢查，工作不暫停 |
-| S2 | 新 | 舊（有檢查、不認得這個 key） | 韌體暫停並報 `AIR_ASSIST_OUT_OF_RANGE`；若這是唯一的錯誤，Beam Studio 自動下 resume 並繼續監聽，等於用軟體在舊韌體上做到 `IGNORE_AIR_ASSIST_WARNING`。期間面板會維持吹氣警告 |
+| S2 | 新 | 舊（有檢查、不認得這個 key） | 韌體暫停並報 `AIR_ASSIST_OUT_OF_RANGE`；若從暫停開始就只有這個錯誤，Beam Studio 自動下 resume 並繼續監聽，等於用軟體在舊韌體上做到 `IGNORE_AIR_ASSIST_WARNING`。期間面板會維持吹氣警告 |
 | S3 | 舊 | 新或舊 | fcode 不含檔名或任何可辨識為校正檔的資訊，韌體照常暫停並警告。使用者可從面板繼續；Beam Studio 已停止監聽，可用校正對話框的「跳過雕刻」（`handleNext(false)`）避免完全卡住 |
 | S4 | 新 | 任一 | 其他可繼續的暫停（濾網到期、探針露出、門蓋開啟…），或吹氣警告同時帶有其他錯誤：顯示翻譯後的錯誤與「停止」、「繼續」按鈕，持續監聽；工作從面板繼續或停止時，提示自動關閉 |
 | S5 | 新 | 任一 | 工作真的失敗（alarm、fatal、帶錯誤的 abort、上傳失敗、連續 10 次讀不到 report）：顯示錯誤 |
@@ -148,9 +148,10 @@ report，遇到 `ABORTED`、`COMPLETED`、`PAUSED_FROM_STARTING` 且帶錯誤時
   `USER_OPERATION` 用說明樣式，其他用錯誤樣式。按下按鈕後 3 秒內（`ACTION_GRACE_MS`）不再詢問，因為
   機器可能還會回報一兩輪舊的暫停。
 - **吹氣自動繼續（S2）**：`show` 收到的錯誤若 `isAirAssistWarningOnly`（`taskPausePrompt.ts:33`，錯誤清單
-  恰好是 `HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE`），直接 resume、不跳提示（`taskPausePrompt.ts:102`）。
+  恰好是 `HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE`），直接 resume、不跳提示（`taskPausePrompt.ts:110`）。
   程式註解標明這相當於在舊韌體上用軟體做 `IGNORE_AIR_ASSIST_WARNING`。吹氣加上其他錯誤（例如門蓋開啟）
-  仍然詢問；之後若只剩吹氣警告（門蓋已從機器端關上），先關掉原本的提示再 resume，避免留下失效的按鈕。
+  仍然詢問；同一次暫停中已詢問過時，即使之後只剩吹氣警告（韌體在門蓋關上後清掉門蓋錯誤），也不自動
+  resume，而是把提示換成吹氣警告，由使用者手動按「繼續」。暫停結束（`close`）後才重新允許自動繼續。
   目前只有校正工作會用到這個提示。
 - **多個錯誤（`translateTaskError`）**：錯誤清單是累加的，`DeviceErrorHandler.translate` 只比對最長的已知
   前綴，`HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE, DOOR_OPENED` 只會顯示吹氣警告。整串不是已知 key 且帶兩個
@@ -232,7 +233,7 @@ TrueType 輪廓一定是封閉的，fontkit 的 `toSVG` 也一律補上 `Z`，�
 | 情境 | 自動測試 | 手動測試 |
 |---|---|---|
 | S1 | `addFcodeMetadata.spec.ts`（v2／v3 合併、crc、其餘位元組不變、實際的 `bm2-4c.fc`、v1／空／截斷／壞 json 原樣回傳）；`device-master.spec.ts` › `doCalibration` 上傳的是補過 metadata 的 blob | fbm2 + 新韌體 |
-| S2 | `taskPausePrompt.spec.ts` › `isAirAssistWarningOnly`、只有吹氣警告時不詢問直接 resume、grace 後重試、吹氣加門蓋時詢問、門蓋關上後只剩吹氣時關掉提示 | fbm2 + 不認得 key 的韌體（已本地測試） |
+| S2 | `taskPausePrompt.spec.ts` › `isAirAssistWarningOnly`、只有吹氣警告時不詢問直接 resume、grace 後重試、吹氣加門蓋時詢問、門蓋關上後只剩吹氣時仍需手動繼續 | fbm2 + 不認得 key 的韌體（已本地測試） |
 | S3 | — | 目前正式版 |
 | S4 | `taskPausePrompt.spec.ts`（每個錯誤只問一次、關閉、按鈕、grace、`translateTaskError` 多個錯誤分開翻譯）；`device-master.spec.ts` › 可繼續的暫停持續輪詢、提示按鈕 | 開門蓋／探針 |
 | S5 | `device-master.spec.ts` › 帶錯誤時 reject、連續 10 次讀取失敗、重試會歸零；`taskPausePrompt.spec.ts` › `alertTaskError` | alarm、斷線 |

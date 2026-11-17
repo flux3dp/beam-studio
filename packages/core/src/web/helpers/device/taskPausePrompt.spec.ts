@@ -148,17 +148,25 @@ describe('test taskPausePrompt', () => {
     );
   });
 
-  test('closes the prompt when the remaining pause is the air assist warning alone', () => {
+  test('keeps asking when the pause drops to the air assist warning alone', () => {
     const onResume = jest.fn().mockResolvedValue(undefined);
     const prompt = createTaskPausePrompt({ onResume, onStop: jest.fn() });
 
     prompt.show([...AIR_ASSIST, 'DOOR_OPENED']);
     expect(mockPopUp).toHaveBeenCalledTimes(1);
 
-    // the door was closed from the machine side
+    // the door was closed from the machine side: the user still resumes by hand
     prompt.show(AIR_ASSIST);
+    expect(onResume).not.toHaveBeenCalled();
     expect(mockPopById).toHaveBeenCalledWith(TASK_PAUSED_ALERT_ID);
+    expect(mockPopUp).toHaveBeenCalledTimes(2);
+    expect(mockPopUp.mock.calls[1][0].message).toBe('HARDWARE_ERROR AIR_ASSIST_OUT_OF_RANGE');
+
+    // once the pause is over, a new pause on the air assist warning alone resumes by itself
+    prompt.close();
+    prompt.show(AIR_ASSIST);
     expect(onResume).toHaveBeenCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledTimes(2);
   });
 
   test('translateTaskError', () => {
