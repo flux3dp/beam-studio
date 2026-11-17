@@ -22,7 +22,10 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-/** fluxghost's per-frame camera pose verdict (`set_pose_check`, docs/api/camera.md): angles in degrees from vertical */
+/**
+ * fluxghost's per-frame camera pose verdict (`set_pose_check`, docs/api/camera.md): rim angles in degrees from vertical
+ * on pinhole cameras (fhx2rf), chassis-highlight scores against a threshold on fisheye ones (fbb2). Only `ok` is acted on.
+ */
 export interface CameraPose {
   expected_left: null | number;
   expected_right: null | number;
