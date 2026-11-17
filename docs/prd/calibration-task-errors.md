@@ -148,14 +148,21 @@ report，遇到 `ABORTED`、`COMPLETED`、`PAUSED_FROM_STARTING` 且帶錯誤時
   `USER_OPERATION` 用說明樣式，其他用錯誤樣式。按下按鈕後 3 秒內（`ACTION_GRACE_MS`）不再詢問，因為
   機器可能還會回報一兩輪舊的暫停。
 - **吹氣自動繼續（S2）**：`show` 收到的錯誤若 `isAirAssistWarningOnly`（`taskPausePrompt.ts:33`，錯誤清單
-  恰好是 `HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE`），直接 resume、不跳提示（`taskPausePrompt.ts:110`）。
+  恰好是 `HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE`），直接 resume、不跳提示（`taskPausePrompt.ts:162`）。
   程式註解標明這相當於在舊韌體上用軟體做 `IGNORE_AIR_ASSIST_WARNING`。吹氣加上其他錯誤（例如門蓋開啟）
   仍然詢問；同一次暫停中已詢問過時，即使之後只剩吹氣警告（韌體在門蓋關上後清掉門蓋錯誤），也不自動
   resume，而是把提示換成吹氣警告，由使用者手動按「繼續」。暫停結束（`close`）後才重新允許自動繼續。
   目前只有校正工作會用到這個提示。
 - **多個錯誤（`translateTaskError`）**：錯誤清單是累加的，`DeviceErrorHandler.translate` 只比對最長的已知
-  前綴，`HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE, DOOR_OPENED` 只會顯示吹氣警告。整串不是已知 key 且帶兩個
-  以上細項時，逐一翻譯 `[main, detail]`、去重後以空行串接，提示與 `alertTaskError` 都用它。
+  前綴，只會顯示第一個原因。韌體的實際格式（`player_v4/src/periph_controllers/motion_controller.cpp`）：
+  先放累積的錯誤再補一組 `HARDWARE_ERROR` 與細項（`:349-354`，類別 key 會出現在清單中間，例如
+  `HARDWARE_ERROR, AIR_ASSIST_OUT_OF_RANGE, HARDWARE_ERROR, DOOR_OPENED`）；`USER_OPERATION, ROTARY_PAUSE`
+  後接 `HARDWARE_ERROR, …`（`:422-427`）；限位開關不在加 `HARDWARE_ERROR` 的條件內（`:352`、`:426`），
+  單獨觸發時只有 `LIMIT_SWITCH_TRIGGERED`。做法：以 `HARDWARE_ERROR`、`USER_OPERATION` 切成多組，開頭沒有
+  類別的細項視為 `HARDWARE_ERROR`；每組從左到右取最長的已知 key（例如 `CHANGE_TOOLHEAD, HEADTYPE_NONE`
+  仍是一句），找不到時試 `HARDWARE_ERROR_<細項>`，該組完全沒有已知 key 時才退回 `DeviceErrorHandler.translate`。
+  整串本身是已知 key（或 `generic_error`）時直接用 `DeviceErrorHandler.translate`，與 Monitor 相同。去重後以
+  空行串接，提示與 `alertTaskError` 都用它。`DeviceErrorHandler` 不變，Monitor 等其他呼叫端的文字不受影響。
 - `alertTaskError` 回報最終錯誤（`Error.message` 或翻譯後的錯誤清單）；空清單（單純中止）不顯示。
   `doCalibration(silent)` 讓自行回報的呼叫端略過。
 
@@ -235,6 +242,6 @@ TrueType 輪廓一定是封閉的，fontkit 的 `toSVG` 也一律補上 `Z`，�
 | S1 | `addFcodeMetadata.spec.ts`（v2／v3 合併、crc、其餘位元組不變、實際的 `bm2-4c.fc`、v1／空／截斷／壞 json 原樣回傳）；`device-master.spec.ts` › `doCalibration` 上傳的是補過 metadata 的 blob | fbm2 + 新韌體 |
 | S2 | `taskPausePrompt.spec.ts` › `isAirAssistWarningOnly`、只有吹氣警告時不詢問直接 resume、grace 後重試、吹氣加門蓋時詢問、門蓋關上後只剩吹氣時仍需手動繼續 | fbm2 + 不認得 key 的韌體（已本地測試） |
 | S3 | — | 目前正式版 |
-| S4 | `taskPausePrompt.spec.ts`（每個錯誤只問一次、關閉、按鈕、grace、`translateTaskError` 多個錯誤分開翻譯）；`device-master.spec.ts` › 可繼續的暫停持續輪詢、提示按鈕 | 開門蓋／探針 |
+| S4 | `taskPausePrompt.spec.ts`（每個錯誤只問一次、關閉、按鈕、grace、`translateTaskError` 單一原因與 Monitor 相同、累積清單、類別 key 在中間、沒有類別的細項）；`device-master.spec.ts` › 可繼續的暫停持續輪詢、提示按鈕 | 開門蓋／探針 |
 | S5 | `device-master.spec.ts` › 帶錯誤時 reject、連續 10 次讀取失敗、重試會歸零；`taskPausePrompt.spec.ts` › `alertTaskError` | alarm、斷線 |
 | Label／字型 | `singleLineFont.spec.ts` | 在白紙上印 bm2 校正 |

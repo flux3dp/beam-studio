@@ -35,19 +35,71 @@ export const isAirAssistWarningOnly = (error: string[]): boolean =>
 
 type MonitorKey = keyof typeof i18n.lang.monitor;
 
+/** Category keys the firmware puts in front of the error details. */
+const ERROR_HEADERS: ReadonlyArray<string> = ['HARDWARE_ERROR', 'USER_OPERATION'];
+
 /**
- * The error list accumulates (firmware `status.h`), e.g. `['HARDWARE_ERROR', 'AIR_ASSIST_OUT_OF_RANGE',
- * 'DOOR_OPENED']`, while DeviceErrorHandler.translate matches the longest known prefix and so names only
- * the first cause. Translate each detail on its own so every cause the user must act on is shown.
+ * Split a firmware error list into one list per category. The list accumulates (player
+ * `status.h`), so a category key can show up again mid-list, e.g. `HARDWARE_ERROR,
+ * AIR_ASSIST_OUT_OF_RANGE, HARDWARE_ERROR, DOOR_OPENED` or `USER_OPERATION, ROTARY_PAUSE,
+ * HARDWARE_ERROR, DOOR_OPENED`, and some details come with no category at all (a limit switch alone
+ * reports just `LIMIT_SWITCH_TRIGGERED`); those count as hardware errors.
+ */
+const splitErrorGroups = (error: string[]): string[][] => {
+  const groups: string[][] = [];
+
+  error.forEach((key) => {
+    if (ERROR_HEADERS.includes(key)) groups.push([key]);
+    else if (groups.length === 0) groups.push(['HARDWARE_ERROR', key]);
+    else groups.at(-1)!.push(key);
+  });
+
+  return groups;
+};
+
+/** Messages for one category: the longest known key from each detail on, e.g. a sub key plus detail. */
+const translateErrorGroup = ([main, ...details]: string[]): string[] => {
+  const { monitor } = i18n.lang;
+  const messages: string[] = [];
+
+  for (let i = 0; i < details.length; ) {
+    let next = i + 1;
+    let message: string | undefined;
+
+    for (let j = details.length; j > i && !message; j -= 1) {
+      message = monitor[[main, ...details.slice(i, j)].join('_') as MonitorKey] as string | undefined;
+      next = j;
+    }
+
+    // firmware may report the same detail under another category, as DeviceErrorHandler does
+    message ??= monitor[`HARDWARE_ERROR_${details[i]}` as MonitorKey] as string | undefined;
+
+    if (message) messages.push(message);
+
+    i = message ? next : i + 1;
+  }
+
+  // nothing known in this category: fall back to what the monitor would show for it
+  return messages.length > 0 ? messages : [DeviceErrorHandler.translate([main, ...details])];
+};
+
+/**
+ * DeviceErrorHandler.translate (what the monitor shows) names only the first cause of an accumulated
+ * error list. The pause prompt asks the user to act, so translate each cause; a list the monitor
+ * already knows as one key, or a single cause, reads the same as in the monitor.
  */
 export const translateTaskError = (error: string[]): string => {
-  const [main, ...details] = error;
+  if (error.length === 0) return '';
 
-  if (details.length < 2 || i18n.lang.monitor[error.join('_') as MonitorKey]) {
+  const { generic_error: genericError, monitor } = i18n.lang;
+
+  if (genericError[error[0] as keyof typeof genericError] || monitor[error.join('_') as MonitorKey]) {
     return DeviceErrorHandler.translate(error);
   }
 
-  return [...new Set(details.map((detail) => DeviceErrorHandler.translate([main, detail])))].join('\n\n');
+  const groups = splitErrorGroups(error).filter((group, _, all) => group.length > 1 || all.length === 1);
+
+  return [...new Set(groups.flatMap(translateErrorGroup))].join('\n\n');
 };
 
 export interface TaskPausePrompt {

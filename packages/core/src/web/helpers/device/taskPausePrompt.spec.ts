@@ -13,7 +13,21 @@ jest.mock('@core/helpers/device-error-handler', () => ({
 }));
 
 jest.mock('@core/helpers/i18n', () => ({
-  lang: { monitor: { resume: 'Resume', stop: 'Stop', USER_OPERATION_REMOVE_CARTRIDGE_X: 'known' } },
+  lang: {
+    generic_error: { UNKNOWN_ERROR: 'Unknown error' },
+    monitor: {
+      HARDWARE_ERROR: 'Hardware error',
+      HARDWARE_ERROR_AIR_ASSIST_OUT_OF_RANGE: 'Air assist low',
+      HARDWARE_ERROR_DOOR_OPENED: 'Close the door',
+      HARDWARE_ERROR_LIMIT_SWITCH_TRIGGERED: 'Limit switch',
+      resume: 'Resume',
+      stop: 'Stop',
+      USER_OPERATION: 'Follow the panel',
+      USER_OPERATION_CHANGE_TOOLHEAD: 'Change the module',
+      USER_OPERATION_CHANGE_TOOLHEAD_HEADTYPE_NONE: 'No module',
+      USER_OPERATION_ROTARY_PAUSE: 'Switch to rotary',
+    },
+  },
 }));
 
 import DeviceConstants from '@core/app/constants/device-constants';
@@ -143,9 +157,7 @@ describe('test taskPausePrompt', () => {
     prompt.show([...AIR_ASSIST, 'DOOR_OPENED']);
     expect(onResume).not.toHaveBeenCalled();
     expect(mockPopUp).toHaveBeenCalledTimes(1);
-    expect(mockPopUp.mock.calls[0][0].message).toBe(
-      'HARDWARE_ERROR AIR_ASSIST_OUT_OF_RANGE\n\nHARDWARE_ERROR DOOR_OPENED',
-    );
+    expect(mockPopUp.mock.calls[0][0].message).toBe('Air assist low\n\nClose the door');
   });
 
   test('keeps asking when the pause drops to the air assist warning alone', () => {
@@ -169,13 +181,41 @@ describe('test taskPausePrompt', () => {
     expect(mockPopUp).toHaveBeenCalledTimes(2);
   });
 
-  test('translateTaskError', () => {
+  test('translateTaskError keeps what the monitor shows for a single cause', () => {
+    // DeviceErrorHandler.translate is mocked as join(' ')
+    expect(translateTaskError([])).toBe('');
     expect(translateTaskError(AIR_ASSIST)).toBe('HARDWARE_ERROR AIR_ASSIST_OUT_OF_RANGE');
-    expect(translateTaskError([...AIR_ASSIST, 'DOOR_OPENED'])).toBe(
-      'HARDWARE_ERROR AIR_ASSIST_OUT_OF_RANGE\n\nHARDWARE_ERROR DOOR_OPENED',
+    expect(translateTaskError(['UNKNOWN_ERROR', 'X'])).toBe('UNKNOWN_ERROR X');
+    expect(translateTaskError(['USER_OPERATION', 'CHANGE_TOOLHEAD', 'HEADTYPE_NONE'])).toBe(
+      'USER_OPERATION CHANGE_TOOLHEAD HEADTYPE_NONE',
     );
-    // a known multi-part key stays one message
-    expect(translateTaskError(['USER_OPERATION', 'REMOVE_CARTRIDGE', 'X'])).toBe('USER_OPERATION REMOVE_CARTRIDGE X');
+    // nothing known: the same fallback as the monitor
+    expect(translateTaskError(['HARDWARE_ERROR', 'NEW_ERROR', 'OTHER'])).toBe('HARDWARE_ERROR NEW_ERROR OTHER');
+  });
+
+  test('translateTaskError names every cause of an accumulated list', () => {
+    expect(translateTaskError([...AIR_ASSIST, 'DOOR_OPENED'])).toBe('Air assist low\n\nClose the door');
+    // the category key again mid-list (appended errors, then the status report)
+    expect(translateTaskError([...AIR_ASSIST, 'HARDWARE_ERROR', 'DOOR_OPENED'])).toBe(
+      'Air assist low\n\nClose the door',
+    );
+    expect(translateTaskError(['USER_OPERATION', 'ROTARY_PAUSE', 'HARDWARE_ERROR', 'DOOR_OPENED'])).toBe(
+      'Switch to rotary\n\nClose the door',
+    );
+    // a sub key plus detail stays one message
+    expect(
+      translateTaskError(['USER_OPERATION', 'CHANGE_TOOLHEAD', 'HEADTYPE_NONE', 'HARDWARE_ERROR', 'DOOR_OPENED']),
+    ).toBe('No module\n\nClose the door');
+    // an unknown detail is left out when its category has a known one
+    expect(translateTaskError(['HARDWARE_ERROR', 'NEW_ERROR', 'DOOR_OPENED'])).toBe('Close the door');
+  });
+
+  test('translateTaskError reads details without a category as hardware errors', () => {
+    expect(translateTaskError(['LIMIT_SWITCH_TRIGGERED'])).toBe('Limit switch');
+    expect(translateTaskError(['LIMIT_SWITCH_TRIGGERED', 'HARDWARE_ERROR', 'DOOR_OPENED'])).toBe(
+      'Limit switch\n\nClose the door',
+    );
+    expect(translateTaskError(['HARDWARE_ERROR'])).toBe('HARDWARE_ERROR');
   });
 
   test('alertTaskError', () => {
