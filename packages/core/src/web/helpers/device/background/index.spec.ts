@@ -245,31 +245,6 @@ describe('backgroundTasks', () => {
       jest.useRealTimers();
     });
 
-    test('a stuck background connect is given up after 30 s: the foreground goes on and reselect retries', async () => {
-      jest.useFakeTimers();
-      setup();
-      mockDeviceMaster.select.mockClear();
-      mockDeviceMaster.currentDevice = { info: { serial: 'B' } };
-      mockDeviceMaster.available = [{ uuid: 'a' }];
-      mockDeviceMaster.select.mockImplementation(() => new Promise(() => {}));
-      await jest.advanceTimersByTimeAsync(5000);
-      expect(mockDeviceMaster.select).toHaveBeenCalledTimes(1);
-
-      let yielded = false;
-
-      backgroundTasks.yieldTo(deviceB).then(() => (yielded = true));
-      await jest.advanceTimersByTimeAsync(29_000);
-      expect(yielded).toBe(false);
-      await jest.advanceTimersByTimeAsync(1000);
-      expect(yielded).toBe(true);
-      expect(console.warn).toHaveBeenCalledWith('[backgroundTasks] select failed', expect.any(Error));
-
-      // the tracking is clear again, so the next tick retries
-      await jest.advanceTimersByTimeAsync(5000);
-      expect(mockDeviceMaster.select).toHaveBeenCalledTimes(2);
-      jest.useRealTimers();
-    });
-
     test('a second background select waits for the first and stays tracked after it', async () => {
       const task = makeTask('promark-button', log);
       const finish: Array<() => void> = [];

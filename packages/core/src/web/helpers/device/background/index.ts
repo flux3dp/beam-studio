@@ -17,12 +17,6 @@ const RESELECT_MS = 5000;
 const YIELD_PROMPT_ID = 'background-task-yield';
 /** How often the yield prompt checks whether the task finished on its own */
 const YIELD_WATCH_MS = 500;
-/**
- * A background select is given up after this long. The ghost connect times out after 30 s on its own, a Swiftray
- * connect never does (its action() only rejects when the socket closes); a stuck one must not block the foreground
- * (yieldTo waits for the select) or the manager (reselect and later selects wait for it) until the app is reloaded
- */
-const SELECT_TIMEOUT_MS = 30_000;
 
 const isVisible = (): boolean => document.visibilityState === 'visible';
 
@@ -236,22 +230,12 @@ class BackgroundTasks {
 
   /**
    * Silent (no progress or error the user did not ask for), chained so two selects finish in order and only the last
-   * clears `selecting`, given up after SELECT_TIMEOUT_MS so reselect can retry (the underlying select is not cancelled)
+   * clears `selecting`. Not raced against a timer: a select given up here would still write currentDevice when it
+   * completes later, so both connects time out at the transport instead (control.ts, swiftray-client connectDevice)
    */
   private select = (device: IDeviceInfo): Promise<void> => {
     const run = async () => {
-      let timer: NodeJS.Timeout | undefined;
-
-      try {
-        await Promise.race([
-          deviceMaster.select(device, { silent: true }),
-          new Promise<never>((_, reject) => {
-            timer = setTimeout(() => reject(new Error('select timeout')), SELECT_TIMEOUT_MS);
-          }),
-        ]);
-      } finally {
-        clearTimeout(timer);
-      }
+      await deviceMaster.select(device, { silent: true });
     };
     const promise: Promise<void> = (this.selecting ? this.selecting.then(run) : run())
       .catch((error) => console.warn('[backgroundTasks] select failed', error))
