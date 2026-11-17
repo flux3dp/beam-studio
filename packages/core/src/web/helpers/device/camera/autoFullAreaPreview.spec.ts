@@ -234,6 +234,22 @@ describe('autoFullAreaPreview', () => {
       expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
     });
 
+    test('abort during the pre-flight starts nothing', async () => {
+      let finishPreflight: (ok: boolean) => void = () => {};
+
+      mockCanTouchMachine.mockReturnValue(new Promise((resolve) => (finishPreflight = resolve)));
+      await cycle(2000, 1500);
+      expect(autoFullAreaPreview.isBusy()).toBe(true);
+
+      const aborting = autoFullAreaPreview.abort();
+
+      finishPreflight(true);
+      await aborting;
+      expect(mockSetup).not.toHaveBeenCalled();
+      expect(mockEnd).not.toHaveBeenCalled();
+      expect(autoFullAreaPreview.isBusy()).toBe(false);
+    });
+
     test('abort during setup skips the photo and ends', async () => {
       let finishSetup: (ok: boolean) => void = () => {};
 

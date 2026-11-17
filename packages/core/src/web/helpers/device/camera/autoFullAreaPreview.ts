@@ -204,7 +204,9 @@ class AutoFullAreaPreview implements BackgroundTask {
       return false;
     }
 
-    return canTouchMachine(this);
+    // The task is busy from startCapture on, so a foreground yieldTo during this pre-flight calls abort(): nothing
+    // has touched the machine yet, and nothing should
+    return (await canTouchMachine(this)) && !this.aborted;
   };
 
   private captureFbm2 = async (): Promise<void> => {
