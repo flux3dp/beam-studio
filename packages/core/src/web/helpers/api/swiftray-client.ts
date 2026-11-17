@@ -97,6 +97,9 @@ const blobToBase64 = (blob: Blob): Promise<string> =>
     reader.readAsDataURL(blob);
   });
 
+/** Same as the ghost connect timeout (control.ts CONNECTION_TIMEOUT); the connecting progress closes at 30 s too */
+const CONNECT_TIMEOUT_MS = 30_000;
+
 class SwiftrayClient extends EventEmitter {
   private socket?: WebSocket; // The websocket here is the browser websocket, not wrapped FLUX websocket
 
@@ -271,15 +274,20 @@ class SwiftrayClient extends EventEmitter {
     action: string,
     params?: any,
     handlers?: Array<{ handler: (data: any) => void; type: string }>,
+    /** Reject after this long without a 'callback', for requests Swiftray may never answer while its socket stays open */
+    timeout?: number,
   ): Promise<T> {
     const eventListeners: Array<{ listener: (data: any) => void; type: string }> = [];
     const id = Math.random().toString(36).substr(2, 9);
+    let timer: NodeJS.Timeout | undefined;
 
     try {
       return await new Promise<T>((resolve, reject) => {
         const payload = { action, id, params };
 
         this.pending.set(id, reject);
+
+        if (timeout) timer = setTimeout(() => reject(new Error(`Swiftray ${action} timeout`)), timeout);
 
         if (this.readyState !== WebSocket.OPEN && action !== 'list') {
           MessageCaller.openMessage({
@@ -346,6 +354,7 @@ class SwiftrayClient extends EventEmitter {
         this.addListener('callback', callback);
       });
     } finally {
+      clearTimeout(timer);
       this.pending.delete(id);
       eventListeners.forEach(({ listener, type }) => {
         this.removeListener(type, listener);
@@ -583,7 +592,7 @@ class SwiftrayClient extends EventEmitter {
   public async connectDevice(port: string): Promise<{ error?: ErrorObject; success: boolean }> {
     this.port = port;
 
-    return this.action(`/devices/${port}`, 'connect');
+    return this.action(`/devices/${port}`, 'connect', undefined, undefined, CONNECT_TIMEOUT_MS);
   }
 
   public async startTask(taskTime?: number): Promise<{ error?: ErrorObject; success: boolean }> {

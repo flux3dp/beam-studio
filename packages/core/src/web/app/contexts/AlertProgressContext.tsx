@@ -153,6 +153,10 @@ export const AlertProgressContextProvider = ({
     response.idExist = res.length > 0;
   }, []);
 
+  const checkAnyAlertProgress = useCallback((response: { result: boolean }) => {
+    response.result = stackRef.current.length > 0;
+  }, []);
+
   const checkProgressExist = useCallback((id: string, response: { result: boolean }) => {
     const res = stackRef.current.filter((item) => item.id === id && item.isProgress);
 
@@ -285,6 +289,7 @@ export const AlertProgressContextProvider = ({
     eventEmitter.on('POP_UP', popUp);
     eventEmitter.on('CHECK_ID_EXIST', checkIdExist);
     eventEmitter.on('CHECK_PROGRESS_EXIST', checkProgressExist);
+    eventEmitter.on('CHECK_ANY_ALERT_PROGRESS', checkAnyAlertProgress);
 
     return () => {
       eventEmitter.removeListener('OPEN_PROGRESS', openProgress);
@@ -296,6 +301,7 @@ export const AlertProgressContextProvider = ({
       eventEmitter.removeListener('POP_UP', popUp);
       eventEmitter.removeListener('CHECK_ID_EXIST', checkIdExist);
       eventEmitter.removeListener('CHECK_PROGRESS_EXIST', checkProgressExist);
+      eventEmitter.removeListener('CHECK_ANY_ALERT_PROGRESS', checkAnyAlertProgress);
     };
   }, [
     openProgress,
@@ -307,6 +313,7 @@ export const AlertProgressContextProvider = ({
     popUp,
     checkIdExist,
     checkProgressExist,
+    checkAnyAlertProgress,
   ]);
 
   const value = useMemo(

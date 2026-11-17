@@ -32,6 +32,10 @@ export const DialogContextProvider = ({ children }: DialogContextProviderProps):
     response.isIdExist = dialogComponentsRef.current.some((dialog) => dialog.id === id);
   }, []);
 
+  const checkAnyDialog = useCallback((response: { result: boolean }) => {
+    response.result = dialogComponentsRef.current.length > 0;
+  }, []);
+
   const popDialogById = useCallback((id: string) => {
     setDialogComponents((prev) => prev.filter((dialog) => dialog.id !== id));
   }, []);
@@ -44,15 +48,17 @@ export const DialogContextProvider = ({ children }: DialogContextProviderProps):
     eventEmitter.on('ADD_DIALOG_COMPONENT', addDialogComponent);
     eventEmitter.on('CLEAR_ALL_DIALOG_COMPONENTS', clearAllDialogComponents);
     eventEmitter.on('CHECK_ID_EXIST', isIdExist);
+    eventEmitter.on('CHECK_ANY_DIALOG', checkAnyDialog);
     eventEmitter.on('POP_DIALOG_BY_ID', popDialogById);
 
     return () => {
       eventEmitter.off('ADD_DIALOG_COMPONENT', addDialogComponent);
       eventEmitter.off('CLEAR_ALL_DIALOG_COMPONENTS', clearAllDialogComponents);
       eventEmitter.off('CHECK_ID_EXIST', isIdExist);
+      eventEmitter.off('CHECK_ANY_DIALOG', checkAnyDialog);
       eventEmitter.off('POP_DIALOG_BY_ID', popDialogById);
     };
-  }, [addDialogComponent, clearAllDialogComponents, isIdExist, popDialogById]);
+  }, [addDialogComponent, checkAnyDialog, clearAllDialogComponents, isIdExist, popDialogById]);
 
   const value = useMemo(() => ({ dialogComponents }), [dialogComponents]);
 
