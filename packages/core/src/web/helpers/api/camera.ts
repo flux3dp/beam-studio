@@ -92,6 +92,8 @@ class Camera {
     matrix?: FisheyeMatrix;
     objectHeight?: number;
     param?: FisheyeCameraParameters;
+    /** Remembered like the parameters so takeOnePicture's reconnect can turn the check back on */
+    poseCheck?: boolean;
     shouldCrop?: boolean;
   } = null;
   private rotationAngles?: RotationParameters3DGhostApi;
@@ -464,6 +466,8 @@ class Camera {
    * Needs v4 fisheye parameters set; false when fluxghost cannot do it.
    */
   setPoseCheck = async (enabled: boolean, toleranceDeg?: number): Promise<boolean> => {
+    this.fishEyeSetting = { ...this.fishEyeSetting, poseCheck: enabled };
+
     const res = await this.sendCommandWithNonBinaryResult(
       `set_pose_check ${JSON.stringify({ enabled, tolerance_deg: toleranceDeg })}`,
     );

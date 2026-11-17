@@ -178,7 +178,7 @@ Shared files the design touches, with each caller and the behaviour that must st
 - `app/lang/*.ts`, `interfaces/ILang.ts` (new keys under `settings` and `message.auto_preview`)
   - Existing keys — unchanged.
 - `checkDeviceStatus`, `getDevice`, `DialogContext` / `AlertProgressContext`, `GoButton`, `promark-button-handler` — changed by the companion PRD, listed in `background-tasks.md` §6 (`getDevice` yields to a busy task before it ends a sub-task; the yield prompt closes itself when the task finishes; a task may yield silently). This feature only adds a task.
-- `helpers/api/camera.ts` (`sendOneShot` attaches the optional `pose` verdict), `helpers/device-master.ts` (`takeOnePicture` passes it through) — every other caller sees the same result shape; listed with callers in the companion PRD §6.
+- `helpers/api/camera.ts` (`sendOneShot` attaches the optional `pose` verdict), `helpers/device-master.ts` (`takeOnePicture` passes it through, and its reconnect after a failed shot re-enables the pose check together with the parameters it already restored — added 2026-11-17 after a review traced that a reconnect mid-loop silently dropped the verdict) — every other caller sees the same result shape and, never having enabled the check, the same restore sequence; listed with callers in the companion PRD §6.
 
 ---
 

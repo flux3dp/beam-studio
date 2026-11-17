@@ -1791,6 +1791,11 @@ class DeviceMaster {
           if (cameraFishEyeSetting.levelingData) {
             await this.setFisheyeLevelingData(cameraFishEyeSetting.levelingData);
           }
+
+          // A new camera connection starts without the check; the next shots would carry no pose verdict
+          if (cameraFishEyeSetting.poseCheck) {
+            await this.setPoseCheck(true);
+          }
         }
       }
     }

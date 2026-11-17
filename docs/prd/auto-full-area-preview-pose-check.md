@@ -94,7 +94,7 @@ Beam Studio
 
 - `helpers/api/camera.ts` `sendOneShot` / `oneShot` — all callers (preview managers, calibration dialogs, `takeOnePicture`) get the same `{ imgBlob, needCameraCableAlert }`; the extra `pose` field is optional and absent unless the check is on.
 - `sendCommandWithNonBinaryResult` — the `frame` message is sent only between a `require_frame` and its frame, and `oneShot` runs on the same command queue as the other commands, so no command reply can be mistaken for it.
-- `helpers/device-master.ts` `takeOnePicture` — return shape widened by an optional field only.
+- `helpers/device-master.ts` `takeOnePicture` — return shape widened by an optional field only; its reconnect-after-failed-shot block also re-sends `set_pose_check` when the camera's fisheye setting remembers one (callers that never enabled it: unchanged).
 - `autoFullAreaPreview.ts` `captureOpenLid` — the open-lid loop's camera setup and teardown stay as they are; enabling failure takes the same exit as a missing calibration.
 
 ## 7. Design
@@ -116,7 +116,7 @@ Thresholds (`CANNY`, Hough, bands) are module constants, named and commented; th
 
 ### 7.3 Client (Beam Studio)
 
-- `Camera` (`helpers/api/camera.ts`): `setPoseCheck(enabled)` through `sendCommandWithNonBinaryResult`. The non-binary stream keeps the latest `{status: 'frame'}` message and the binary stream consumes it when the next blob arrives, so the pairing follows arrival order (fluxghost sends the message right before its frame) and is independent of request timing; the shot carries it as `pose`, absent when no message preceded the frame.
+- `Camera` (`helpers/api/camera.ts`): `setPoseCheck(enabled)` through `sendCommandWithNonBinaryResult`; remembered in the camera's fisheye setting next to the parameters, height and leveling, so `takeOnePicture`'s reconnect restores it (2026-11-17: before, a failed shot mid-loop reconnected without it and every later photo lacked `pose`, failing the pick and evicting earlier good photos). The non-binary stream keeps the latest `{status: 'frame'}` message and the binary stream consumes it when the next blob arrives, so the pairing follows arrival order (fluxghost sends the message right before its frame) and is independent of request timing; the shot carries it as `pose`, absent when no message preceded the frame.
 - `device-master.ts` `takeOnePicture` passes `pose` through.
 - `autoFullAreaPreview.ts`: after `setFisheyeObjectHeight(0)`, `await deviceMaster.setPoseCheck(true)`; a false result is logged (`pose check unavailable`) and the loop ends before any photo, like a missing calibration. `Photo` gains `poseOk: boolean`. `pickPhoto(photos, lastOpenAt)`: among the photos finished while the door read open, the newest with `poseOk`; none → nothing is drawn (parent decision 7). Each photo is logged with its verdict and angles so a hardware run can be read from the console.
 
@@ -162,5 +162,5 @@ Until one lands, a blurred frame that passes the angle test can be drawn.
 ## 13. Test plan
 
 - fluxghost: `pose_check` unit test on the four fixtures (expected rims from a stored v4 parameter set; `ok` true / false / false); `ws_smoke.py` camera case with the check enabled (message precedes the frame) and disabled (no message). `uv run python tools/ws_smoke.py` must end `ALL PASS`.
-- Beam Studio: `camera.spec.ts` — `sendOneShot` attaches `pose` when a `frame` message precedes the blob and leaves it absent otherwise; `autoFullAreaPreview.spec.ts` — `pickPhoto` returns the newest pose-OK photo and nothing when none, enable failure logged and the loop ends without a photo.
+- Beam Studio: `camera.spec.ts` — `sendOneShot` attaches `pose` when a `frame` message precedes the blob and leaves it absent otherwise, `setPoseCheck` remembers / forgets the check in the fisheye setting; `device-master.spec.ts` — `takeOnePicture` restores the pose check after a reconnect; `autoFullAreaPreview.spec.ts` — `pickPhoto` returns the newest pose-OK photo and nothing when none, enable failure logged and the loop ends without a photo.
 - Hardware: L1–L6 on fhx2rf, then L1–L4 on fbb2; rerun the 14-cycle dump set through the fluxghost module and confirm the verdicts match the study table.

@@ -278,6 +278,38 @@ describe('deviceMaster log downloads share the control queue', () => {
   );
 });
 
+describe('deviceMaster.takeOnePicture', () => {
+  afterEach(() => jest.restoreAllMocks());
+
+  test('a reconnect after a failed shot restores the pose check with the parameters', async () => {
+    const setting = { param: { v: 4 }, poseCheck: true };
+    const restored: string[] = [];
+    const makeCamera = (oneShot: jest.Mock) => ({
+      closeWs: jest.fn(),
+      getFisheyeSetting: () => setting,
+      getRotationAngles: () => undefined,
+      oneShot,
+      setFisheyeParam: jest.fn(async () => restored.push('param')),
+      setPoseCheck: jest.fn(async (enabled: boolean) => restored.push(`pose ${enabled}`)),
+    });
+    const dropped = makeCamera(jest.fn().mockRejectedValue(new Error('socket closed')));
+    const fresh = makeCamera(jest.fn().mockResolvedValue({ imgBlob: new Blob(['jpeg']) }));
+
+    jest.spyOn(console, 'log').mockImplementation(() => {});
+    deviceMaster.currentDevice = { camera: dropped } as any;
+    jest.spyOn(deviceMaster, 'connectCamera').mockImplementation(async () => {
+      deviceMaster.currentDevice!.camera = fresh as any;
+    });
+
+    const res = await deviceMaster.takeOnePicture({ timeout: 5 });
+
+    expect(dropped.closeWs).toHaveBeenCalledTimes(1);
+    expect(restored).toEqual(['param', 'pose true']);
+    expect(fresh.oneShot).toHaveBeenCalledTimes(1);
+    expect(res?.imgBlob).toBeInstanceOf(Blob);
+  });
+});
+
 describe('deviceMaster.setField', () => {
   afterEach(() => {
     jest.restoreAllMocks();

@@ -97,6 +97,7 @@ describe('Camera', () => {
       expect(mockSend).toHaveBeenCalledWith('set_pose_check {"enabled":true,"tolerance_deg":2}');
       receive({ status: 'ok' });
       await expect(enabling).resolves.toBe(true);
+      expect(camera.getFisheyeSetting()).toEqual(expect.objectContaining({ poseCheck: true }));
 
       const disabling = camera.setPoseCheck(false);
 
@@ -104,6 +105,7 @@ describe('Camera', () => {
       expect(mockSend).toHaveBeenLastCalledWith('set_pose_check {"enabled":false}');
       receive({ error: ['No fisheye params'], status: 'error' });
       await expect(disabling).resolves.toBe(false);
+      expect(camera.getFisheyeSetting()!.poseCheck).toBe(false);
     });
   });
 });
