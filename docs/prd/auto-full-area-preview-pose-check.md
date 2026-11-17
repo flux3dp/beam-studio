@@ -67,7 +67,7 @@ Non-goals
 - **S1 Normal close.** Lid open at its stop, material placed, lid closed at a normal speed. The photo drawn is the newest one shot at the stop; the frame in flight at the close, blurred or tilted, is never drawn.
 - **S2 Slow close.** The lid is lowered over several seconds. The frames shot on the way down fail the check; the photo drawn is the last one shot at the stop, however long ago, as long as it is within the photos kept (`KEEP_PHOTOS`).
 - **S3 Lid not at the stop.** The user opens the lid only part way, places material, closes. No frame passes; nothing is drawn, no toast. The console log says why.
-- **S4 Hand at the rim.** A hand or sheet covers one ruler in a frame. That frame fails (rim not found) and an older frame at the stop is drawn.
+- **S4 Hand at the rim.** A hand or sheet covers one rim in a frame. On fhx2rf that frame fails (rim not found) and an older frame at the stop is drawn. On fbb2 the other side's highlight still proves the pose, so the frame passes; covering both sides fails it.
 - **S5 No pose in the calibration.** Parameters are not v4 or the check cannot be enabled: fluxghost replies with an error, Beam Studio logs it and ends the loop without a photo, as it does without a wide-angle calibration.
 - **S6 Manual preview, calibration dialogs, Promark.** Unchanged: they never enable the check and see no new message.
 
@@ -75,10 +75,10 @@ Non-goals
 
 | # | Steps | Expected | Edge |
 |---|---|---|---|
-| L1 | fhx2rf, auto preview on. Open the lid to its stop, wait 6 s, close normally. | Console log lists each photo with `pose ok` / `pose no` and the measured and expected angles; the drawn photo is the newest `pose ok`; the photo in flight at the close is `pose no` or absent. | Fast close: same; the last photo may be the only `pose no`. |
+| L1 | fhx2rf, auto preview on. Open the lid to its stop, wait 6 s, close normally. | Console log lists each photo with `pose ok` / `pose no` and the measured and expected values (rim angles on fhx2rf, highlight scores against 30 on fbb2); the drawn photo is the newest `pose ok`; the photo in flight at the close is `pose no` or absent. | Fast close: same; the last photo may be the only `pose no`. |
 | L2 | Same, close over about 4 s. | The photos shot while the lid moved are `pose no`; the drawn photo is the last one at the stop. | Hold the lid still at a small tilt for 5 s before closing: those photos are `pose no`. |
 | L3 | Open the lid half way only, place material, close. | All photos `pose no`; log says `no pose-ok photo`; background unchanged, no toast. | — |
-| L4 | Keep a hand on the left ruler while a photo is taken. | That photo is `pose no` (left rim not found); an earlier photo is drawn. | Hand over the honeycomb only: `pose ok`. |
+| L4 | Keep a hand on the left rim while a photo is taken. | fhx2rf: that photo is `pose no` (left rim not found); an earlier photo is drawn. fbb2: `pose ok` with the left score below 30 and the right above (one side is enough). | fbb2, hands over both rims: `pose no`. Hand over the honeycomb only: `pose ok` on both models. |
 | L5 | Manual preview (full area) on the same machine. | No `frame` JSON in the websocket trace; frames identical in size and timing to a build without this change. | Camera calibration dialog: same. |
 | L6 | fluxghost `set_pose_check` without v4 parameters set. | `{"status": "error", "error": ["No fisheye params"]}`; a following `require_frame` still returns the frame. | Beam Studio side: log `pose check unavailable`, loop ends, no photo. |
 
