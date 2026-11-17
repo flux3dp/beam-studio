@@ -136,6 +136,7 @@ Foreground pollers start and stop with a user action and are already serialised 
 - `helpers/api/swiftray-client.ts` (`action()` takes an optional `timeout`; only `connectDevice` passes it, 30 s)
   - Every other `action()` caller (list, start, pause, convert, upload, …) — no timeout passed, unchanged.
   - Foreground Promark select (`selectDeviceWithSwiftray` → `SwiftrayControl.connect` → `getDeviceClient`) — a connect Swiftray never answers now fails after 30 s with the connection-error alert instead of hanging behind a progress that closes itself at 30 s; intended.
+  - Known, deferred (review 2026-11-17): `connectDevice` sets `this.port` before the result, so a failed or timed-out connect to A leaves the shared client's later `/devices/${port}` calls pointing at A while `currentDevice` stays B; `getDeviceClient` also ignores a `{ success: false }` connect. Pre-existing, and only observable when one Swiftray serves more than one machine, which it does not today (one Promark). Fix when that changes: set `port` only on success and make `getDeviceClient` throw on failure.
 - `app/actions/tabController.ts` — **not modified**; the manager reads `isFocused` and subscribes to `onFocused` / `onBlurred` like the Promark listener does today. Web visibility is handled inside the manager (§7.5), so `beambox-global-interaction`, `Tabs`, `TabRecentFiles`, `ai-extension`, dockable layout saving and `fileImportHelper` see no change.
 
 ---
