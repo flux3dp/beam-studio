@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.4, on top of the background-task manager (`background-tasks.md`) and the fluxghost pose check (`auto-full-area-preview-pose-check.md`, fluxghost 2.5.8). Hardware so far: fbm2 A1, A4, A5, A6, A11 and A12, fhx2rf fast-close pick (2026-11-04), A2 at normal close speed, A10 and A14 (2026-11-05; A13 covered by A2), pose-check study on fhx2rf (2026-11-06, companion §2.3), fbb2 pose check on 8 frame-dump runs plus a live run (2026-11-17, companion §7.1), fbb2 A2 and A3 (2026-11-18). Pending: fbm2 A7; pose-check L1–L6 (§12). |
+| **Status** | Implemented in 2.7.4, on top of the background-task manager (`background-tasks.md`) and the fluxghost pose check (`auto-full-area-preview-pose-check.md`, fluxghost 2.5.8). Hardware so far: fbm2 A1, A4, A5, A6, A11 and A12, fhx2rf fast-close pick (2026-11-04), A2 at normal close speed, A10 and A14 (2026-11-05; A13 covered by A2), pose-check study on fhx2rf (2026-11-06, companion §2.3), fbb2 pose check on 8 frame-dump runs plus a live run (2026-11-17, companion §7.1), fbb2 A2 and A3, fbm2 A7 and A17 (2026-11-18). Pending: pose-check L1–L6 (§12). |
 | **Author** | Product with the software team |
 | **Created** | 2026-10-19 |
 | **Target product** | Beam Studio desktop (Electron) and web. Models: `fbm2` (beamo II), `fbb2` (Beambox II), `fhx2rf` (HEXA RF). |
@@ -120,6 +120,7 @@ fhx2rf and fbm2 honeycomb boards carry four ArUco markers at the corners; fbb2 b
 - **S11 Preference off / job origin on / document workarea ≠ machine / other tab focused / canvas not in Draw mode.** No polling, no capture.
 - **S13 Snap to Object Center after an auto photo.** With the snap preference on and Swiftray up, the auto photo is detected as soon as it is drawn ("Detecting objects…" toast, then "Objects detected"), and dragging a design snaps to the detected objects exactly as after a manual preview.
 - **S12 Manual preview after an auto photo.** The manual session starts exactly as today; with `keep-preview-result` off the auto photo is cleared by `start()` as any previous result would be.
+- **S14 Two Beam Studios with auto preview on (fbm2).** Both see the door close and start a capture; the firmware gives `task raw` to one. That one captures as usual; the other gets `RESOURCE_BUSY`, logs `setup failed` and ends without a kick, an alert or a photo. Kicking on the way out would take raw mode away from the winner, and neither would capture (found 2026-11-18).
 
 ---
 
@@ -145,6 +146,7 @@ Each criterion names how to operate it and what proves it. "Toast" means the top
 | A14 | Manual preview button after an auto photo, `keep-preview-result` off. | Manual session starts; canvas cleared as today. | `keep-preview-result` on: photo kept. |
 | A15 | Snap to Object Center on, Swiftray running. Cycle the door (any model). | Right after the photo is drawn: "Detecting objects…" then "Objects detected"; dragging a design snaps to the objects on the bed. | Preference off or Swiftray down: photo drawn, no detection, as for manual preview. Manual preview afterwards: detection still runs once per batch. |
 | A16 | fbb2 / fhx2rf, lid open (loop running). Click the manual preview button, or Go. | No prompt: the loop stops, the action starts as if the task were idle; no auto photo for this cycle. | fbm2 during its capture: prompt as in A4. |
+| A17 | fbm2 selected in two computers, auto preview on in both. Cycle the door. | One computer homes and draws its photo; the other logs `setup failed` (`RESOURCE_BUSY`), shows no alert and does not interrupt the first. | — |
 
 ---
 
@@ -155,7 +157,8 @@ Shared files the design touches, with each caller and the behaviour that must st
 - `app/actions/camera/preview-helper/BasePreviewManager.tsx` (`showMessage`, new `silent` / `messagePrefix` options, default off)
   - `PreviewModeController.start` (manual preview, all managers) — messages unchanged, alerts unchanged.
   - `Bb2Hx2PreviewManager`, `Beamo2PreviewManager`, `BeamPreviewManager`, `AdorPreviewManager`, `PromarkPreviewManager` — unchanged defaults.
-- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts` (honour `silent` in `DoorChecker` calls and `handleSetupError`; new `cancel()`, checked in `previewFullWorkarea`, after `connectCamera` in `setup`, and handed to `setupFisheyePreview` as `isCancelled`)
+- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts` (honour `silent` in `DoorChecker` calls and `handleSetupError`; new `cancel()`, checked in `previewFullWorkarea`, after `connectCamera` in `setup`, and handed to `setupFisheyePreview` as `isCancelled`; `endCameraPreview` skips `kick` when silent)
+  - Manual fbm2 preview and every other non-silent caller — still kick when the preview ends.
 - `app/actions/camera/preview-helper/FisheyePreviewManagerV4.ts` (`setupFisheyePreview` takes an optional `isCancelled` and returns `false` after homing or after the move when it reads true)
   - `Beamo2PreviewManager` manual preview, `Bb2Hx2PreviewManager` — no `isCancelled` passed: setup runs to the end as before.
   - `PreviewModeController` manual fbm2 preview — `door_opened` alert and setup-error alerts still pop.
@@ -315,6 +318,7 @@ Hardware-free (Jest, `unit-test` skill conventions; manager, `checkDeviceStatus`
 - `imageContourDetection.spec.ts`: a draw outside a batch is detected at once; batch and live-mode holds unchanged.
 - `FisheyePreviewManagerV4.spec.ts`: `isCancelled` true after homing → `false`, no `rawMove`, no fisheye params sent.
 - `BasePreviewManager.spec.tsx`: `messagePrefix` prepends; `silent` suppresses alerts in `Beamo2PreviewManager` / `Bb2Hx2PreviewManager` setup errors.
+- `Beamo2PreviewManager.spec.ts`: a silent setup failure ends without `kick`; a user-started one still kicks and shows the error.
 
 Hardware (pending a machine; map to §5):
 

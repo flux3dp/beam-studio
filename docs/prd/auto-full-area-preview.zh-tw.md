@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **狀態** | 已於 2.7.4 實作，建立在背景任務管理器（`background-tasks.md`）與 fluxghost 姿態檢查（`auto-full-area-preview-pose-check.md`，fluxghost 2.5.8）之上。已做硬體驗證：fbm2 A1、A4、A5、A6、A11 與 A12、fhx2rf 快速關蓋挑選（2026-11-04）、正常速度關蓋的 A2、A10 與 A14（2026-11-05；A13 由 A2 涵蓋）、fhx2rf 姿態檢查研究（2026-11-06，配套 §2.3）、fbb2 姿態檢查於 8 組 frame dump 加一次實機（2026-11-17，配套 §7.1）、fbb2 A2 與 A3（2026-11-18）。待辦：fbm2 A7；姿態檢查 L1–L6（§12）。 |
+| **狀態** | 已於 2.7.4 實作，建立在背景任務管理器（`background-tasks.md`）與 fluxghost 姿態檢查（`auto-full-area-preview-pose-check.md`，fluxghost 2.5.8）之上。已做硬體驗證：fbm2 A1、A4、A5、A6、A11 與 A12、fhx2rf 快速關蓋挑選（2026-11-04）、正常速度關蓋的 A2、A10 與 A14（2026-11-05；A13 由 A2 涵蓋）、fhx2rf 姿態檢查研究（2026-11-06，配套 §2.3）、fbb2 姿態檢查於 8 組 frame dump 加一次實機（2026-11-17，配套 §7.1）、fbb2 A2 與 A3、fbm2 A7 與 A17（2026-11-18）。待辦：姿態檢查 L1–L6（§12）。 |
 | **作者** | 產品與軟體團隊 |
 | **建立日期** | 2026-10-19 |
 | **目標產品** | Beam Studio 桌面版（Electron）與網頁版。機型：`fbm2`（beamo II）、`fbb2`（Beambox II）、`fhx2rf`（HEXA RF）。 |
@@ -122,6 +122,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - **S11 偏好設定關閉／工作原點啟用／文件工作區 ≠ 機器／焦點在其他分頁／畫布不在 Draw 模式。** 不輪詢、不拍攝。
 - **S13 自動照片之後的物件中心吸附。** 吸附偏好開啟且 Swiftray 在線時，自動照片一畫上去就會偵測（「偵測物件中…」toast，接著「已偵測到物件」），拖曳設計時會吸附到偵測到的物件，和手動預覽之後完全一樣。
 - **S12 自動照片之後手動預覽。** 手動工作階段和今天一樣啟動；`keep-preview-result` 關閉時自動照片會被 `start()` 清掉，和任何先前結果一樣。
+- **S14 兩台 Beam Studio 都開著自動預覽（fbm2）。** 兩台都看到關門並開始拍攝；韌體只把 `task raw` 給其中一台。那台照常拍攝；另一台拿到 `RESOURCE_BUSY`，記 `setup failed` 後結束，不 kick、不跳 alert、不畫照片。若在結束時 kick，會把 raw 模式從贏的那台搶走，兩台都拍不到（2026-11-18 發現）。
 
 ---
 
@@ -147,6 +148,7 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 | A14 | 自動照片之後按手動預覽，`keep-preview-result` 關閉。 | 手動工作階段啟動；畫布如今天一樣清空。 | `keep-preview-result` 開啟：照片保留。 |
 | A15 | 物件中心吸附開啟、Swiftray 執行中。開關門蓋（任一機型）。 | 照片畫上去後立刻出現「偵測物件中…」再「已偵測到物件」；拖曳設計會吸附到床台上的物件。 | 偏好關閉或 Swiftray 離線：照片照畫、不偵測，和手動預覽相同。之後手動預覽：仍是每批偵測一次。 |
 | A16 | fbb2 / fhx2rf 開著蓋（迴圈執行中）按手動預覽或「開始」。 | 不提示：迴圈停止、動作如任務閒置時一樣開始；這次開關門沒有自動照片。 | fbm2 拍攝中：如 A4 提示。 |
+| A17 | 兩台電腦都選同一台 fbm2，且都開著自動預覽。開關門。 | 一台歸零並畫出照片；另一台記 `setup failed`（`RESOURCE_BUSY`），不跳 alert，也不打斷第一台。 | — |
 
 ---
 
@@ -157,7 +159,8 @@ fhx2rf 與 fbm2 的蜂巢板四角有四個 ArUco 標記；fbb2 的沒有，而�
 - `app/actions/camera/preview-helper/BasePreviewManager.tsx`（`showMessage`，新增 `silent`／`messagePrefix` 選項，預設關閉）
   - `PreviewModeController.start`（手動預覽，所有 manager）：訊息不變、alert 不變。
   - `Bb2Hx2PreviewManager`、`Beamo2PreviewManager`、`BeamPreviewManager`、`AdorPreviewManager`、`PromarkPreviewManager`：預設值不變。
-- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts`（`DoorChecker` 呼叫與 `handleSetupError` 尊重 `silent`；新增 `cancel()`，在 `previewFullWorkarea`、`setup` 的 `connectCamera` 之後檢查，並以 `isCancelled` 交給 `setupFisheyePreview`）
+- `app/actions/camera/preview-helper/Beamo2PreviewManager.ts`（`DoorChecker` 呼叫與 `handleSetupError` 尊重 `silent`；新增 `cancel()`，在 `previewFullWorkarea`、`setup` 的 `connectCamera` 之後檢查，並以 `isCancelled` 交給 `setupFisheyePreview`；`endCameraPreview` 在 silent 時不 kick）
+  - 手動 fbm2 預覽與其他非 silent 呼叫端 — 預覽結束時照樣 kick。
 - `app/actions/camera/preview-helper/FisheyePreviewManagerV4.ts`（`setupFisheyePreview` 多一個選用的 `isCancelled`，歸零後或移動後讀到 true 就回傳 `false`）
   - `Beamo2PreviewManager` 手動預覽、`Bb2Hx2PreviewManager`：沒有傳 `isCancelled`，設定照舊跑到底。
   - `PreviewModeController` 手動 fbm2 預覽：`door_opened` alert 與設定錯誤 alert 仍會跳。
@@ -317,6 +320,7 @@ Key `auto-full-area-preview: boolean`，預設 `true`，加到 `Preference.d.ts`
 - `imageContourDetection.spec.ts`：批次外的繪製立刻偵測；批次與 live 模式的等待不變。
 - `FisheyePreviewManagerV4.spec.ts`：歸零後 `isCancelled` 為 true → 回傳 `false`，不 `rawMove`、不送 fisheye 參數。
 - `BasePreviewManager.spec.tsx`：`messagePrefix` 會前置；`silent` 抑制 `Beamo2PreviewManager`／`Bb2Hx2PreviewManager` 設定錯誤的 alert。
+- `Beamo2PreviewManager.spec.ts`：silent 的設定失敗結束時不 `kick`；使用者啟動的仍會 kick 並顯示錯誤。
 
 硬體（待機器；對應 §5）：
 
