@@ -192,6 +192,20 @@ describe('autoFullAreaPreview', () => {
       expect(mockGetDoorOpen).not.toHaveBeenCalled();
     });
 
+    test('logs a run of poll failures once, then the recovery', async () => {
+      const logSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
+      const logged = (text: string) => logSpy.mock.calls.filter(([, msg]) => String(msg).startsWith(text)).length;
+
+      autoFullAreaPreview.start(fbm2);
+      mockGetDoorOpen.mockRejectedValue(new Error('error:2'));
+      await wait(2000);
+      door(false);
+      await wait(500);
+      expect(logged('getDoorOpen failed')).toBe(1);
+      expect(logSpy).toHaveBeenCalledWith('[autoFullAreaPreview]', 'getDoorOpen recovered after 4 failures');
+      logSpy.mockRestore();
+    });
+
     test('skips the capture when the machine is not free', async () => {
       mockCanTouchMachine.mockResolvedValue(false);
       await cycle(2000, 1500);

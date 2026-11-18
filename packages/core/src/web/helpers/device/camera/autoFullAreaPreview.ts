@@ -62,6 +62,8 @@ class AutoFullAreaPreview implements BackgroundTask {
   private aborted = false;
   /** Why the last tick skipped polling; logged only when it changes */
   private pauseReason = '';
+  /** Polls failed in a row; only the first is logged, then the recovery */
+  private doorFailures = 0;
 
   isEnabled = ({ device, mode, workarea }: BackgroundContext): boolean =>
     mode === CanvasMode.Draw &&
@@ -95,6 +97,7 @@ class AutoFullAreaPreview implements BackgroundTask {
     this.timer = null;
     this.openedAt = null;
     this.armedAt = null;
+    this.doorFailures = 0;
 
     if (this.capture) this.abort();
   };
@@ -132,6 +135,10 @@ class AutoFullAreaPreview implements BackgroundTask {
       const { value } = await deviceMaster.getDoorOpen();
       const now = Date.now();
 
+      if (this.doorFailures) log(`getDoorOpen recovered after ${this.doorFailures} failures`);
+
+      this.doorFailures = 0;
+
       // A slow answer means the control queue was busy; the door state is as of `now`, not `sentAt`
       if (now - sentAt > DOOR_POLL_MS) log(`getDoorOpen took ${now - sentAt}ms`);
 
@@ -139,7 +146,10 @@ class AutoFullAreaPreview implements BackgroundTask {
 
       this.onDoor(value === '1', now);
     } catch (error) {
-      log('getDoorOpen failed', error);
+      // A socket that keeps erroring would otherwise print every tick
+      if (this.doorFailures === 0) log('getDoorOpen failed', error);
+
+      this.doorFailures += 1;
     } finally {
       this.polling = false;
     }
