@@ -3,6 +3,22 @@ const { exec } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
+// True when the PE file already carries an embedded Authenticode signature (non-empty
+// certificate table, data directory 4). Swiftray's zip ships with its Qt dlls pre-signed.
+const hasEmbeddedSignature = (filePath) => {
+  const header = Buffer.alloc(4096);
+  const fd = fs.openSync(filePath, 'r');
+  try {
+    fs.readSync(fd, header, 0, header.length, 0);
+  } finally {
+    fs.closeSync(fd);
+  }
+  const optionalHeader = header.readUInt32LE(0x3c) + 24;
+  const isPe32Plus = header.readUInt16LE(optionalHeader) === 0x20b;
+  const certificateTable = optionalHeader + (isPe32Plus ? 112 : 96) + 4 * 8;
+  return header.readUInt32LE(certificateTable + 4) > 0;
+};
+
 module.exports = async function customSign(configuration, packager) {
   const timeout = parseInt(process.env.SIGNTOOL_TIMEOUT, 10) || 10 * 60 * 60 * 1000; // 10 hours
   const { exec } = require('child_process');
@@ -14,6 +30,12 @@ module.exports = async function customSign(configuration, packager) {
 
   // Only sign dlls under backend/swiftray (Smart App Control blocks unsigned Qt dlls); exe files are signed as before.
   if (configuration.path.endsWith('.dll') && !configuration.path.split(path.sep).includes('swiftray')) {
+    return Promise.resolve();
+  }
+
+  // Signing a pre-signed dll again only costs an upload per file and replaces Microsoft's own signatures
+  if (configuration.path.endsWith('.dll') && hasEmbeddedSignature(configuration.path)) {
+    console.log('Already signed, skipping:', configuration.path);
     return Promise.resolve();
   }
 
