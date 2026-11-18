@@ -343,6 +343,21 @@ describe('autoFullAreaPreview', () => {
 
     const sleepFake = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
+    test('a poll answered after stop/start is dropped, not read as the new machine', async () => {
+      let answer!: (res: { value: string }) => void;
+
+      mockGetDoorOpen.mockImplementationOnce(() => new Promise((resolve) => (answer = resolve)));
+      autoFullAreaPreview.start(fhx2rf);
+      // tick 500: poll for machine A in flight
+      await wait(500);
+      door(false);
+      autoFullAreaPreview.start({ model: 'fhx2rf', serial: 'B' } as IDeviceInfo);
+      answer({ value: '1' });
+      await wait(1000);
+
+      expect(mockGetWideAngleCameraData).not.toHaveBeenCalled();
+    });
+
     test('fast close: the photo in flight at the close is never drawn', async () => {
       autoFullAreaPreview.start(fhx2rf);
       door(true);

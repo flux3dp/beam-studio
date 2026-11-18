@@ -64,6 +64,8 @@ class AutoFullAreaPreview implements BackgroundTask {
   private pauseReason = '';
   /** Polls failed in a row; only the first is logged, then the recovery */
   private doorFailures = 0;
+  /** Bumped by stop(): a poll still in flight from before belongs to the old session (maybe another machine) */
+  private session = 0;
 
   isEnabled = ({ device, mode, workarea }: BackgroundContext): boolean =>
     mode === CanvasMode.Draw &&
@@ -95,6 +97,7 @@ class AutoFullAreaPreview implements BackgroundTask {
     if (this.timer) clearInterval(this.timer);
 
     this.timer = null;
+    this.session += 1;
     this.openedAt = null;
     this.armedAt = null;
     this.doorFailures = 0;
@@ -130,10 +133,15 @@ class AutoFullAreaPreview implements BackgroundTask {
     if (pauseReason) return;
 
     this.polling = true;
+
+    const { session } = this;
+
     try {
       const sentAt = Date.now();
       const { value } = await deviceMaster.getDoorOpen();
       const now = Date.now();
+
+      if (session !== this.session) return;
 
       if (this.doorFailures) log(`getDoorOpen recovered after ${this.doorFailures} failures`);
 
@@ -146,6 +154,8 @@ class AutoFullAreaPreview implements BackgroundTask {
 
       this.onDoor(value === '1', now);
     } catch (error) {
+      if (session !== this.session) return;
+
       // A socket that keeps erroring would otherwise print every tick
       if (this.doorFailures === 0) log('getDoorOpen failed', error);
 
