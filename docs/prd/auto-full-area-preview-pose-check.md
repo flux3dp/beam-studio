@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft (2026-11-06). Study data collected on fhx2rf (14 door cycles, 103 raw frames); design agreed; no code yet. |
+| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#126). Hardware: fhx2rf L1–L5 (2026-11-18; L2 passes with the slow-close bend of R6); fbb2 L1, L2 and L4 on frame dumps and a live run (2026-11-17); L6 hardware-free (`ws_smoke.py`, `autoFullAreaPreview.spec.ts`). Pending: fbb2 L3; second-unit offset check (R4). |
 | **Author** | FLUX software team |
 | **Created** | 2026-11-06 |
 | **Target product** | Beam Studio 2.7.x + fluxghost 2.5.8, fbb2 and fhx2rf |
@@ -148,10 +148,10 @@ Until one lands, a blurred frame that passes the angle test can be drawn.
 
 ## 11. Open decisions
 
-1. **Tolerance.** Proposed 1.5° per rim. fhx2rf data: open spread under 1°, the very small tilt reads 3° off on the left rim and 2° on the right, the small tilt 6° off. Settle after the fbb2 pass (3).
-2. **Blur gate** (§7.4): rim-band difference versus rim-band sharpness, or none. Measure both on the existing dump with `tools/lid_angle.py` before the fluxghost PR.
-3. **fbb2 pass.** No fbb2 frames yet. Collect the same cycle set on fbb2, confirm the rims are in the field of view at the stop, and record the ruler offset from the workarea edge for both models.
-4. **Projection fit.** Straight-line fit to the projected points versus the chord the Hough segment measures on the fisheye arc. Expected difference under 0.5° at the band lengths seen; verify on the fixtures and widen the tolerance if not.
+1. ~~**Tolerance.** Proposed 1.5° per rim. fhx2rf data: open spread under 1°, the very small tilt reads 3° off on the left rim and 2° on the right, the small tilt 6° off. Settle after the fbb2 pass (3).~~ 1.5° kept for fhx2rf: L1–L5 passed with stop photos within 1.1° (2026-11-18). fbb2 does not use it (§7.1, `RIDGE_MIN`).
+2. **Blur gate** (§7.4): rim-band difference versus rim-band sharpness, or none. Measure both on the existing dump with `tools/lid_angle.py` before the fluxghost PR. 2026-11-18: on fhx2rf, a photo shot as the lid starts to move shows as a slight bend of the rims (rolling shutter), not blur, and passes the angle test (R6); a sharpness gate would likely miss it too.
+3. ~~**fbb2 pass.** No fbb2 frames yet. Collect the same cycle set on fbb2, confirm the rims are in the field of view at the stop, and record the ruler offset from the workarea edge for both models.~~ Done 2026-11-17: the rim angles do not hold on fbb2; it checks the chassis-edge highlight instead, `RIM_OFFSET_MM` fitted on one unit (§7.1, R4).
+4. ~~**Projection fit.** Straight-line fit to the projected points versus the chord the Hough segment measures on the fisheye arc. Expected difference under 0.5° at the band lengths seen; verify on the fixtures and widen the tolerance if not.~~ Measured 2026-11-17: on fbb2 the fit read −32.8° against −30° at the stop, so `measure_rims` compares each segment against the projected curve's chord over its rows (§7.1).
 
 ## 12. Risks & follow-ups
 
@@ -160,6 +160,7 @@ Until one lands, a blurred frame that passes the angle test can be drawn.
 - **R3 Calibration without region extrinsics.** Pre-v4 parameters cannot enable the check (S5). All wide-angle calibrations are v4, so this is a defensive path only.
 - **R4 fbb2 chassis offset from one unit.** `RIM_OFFSET_MM` was fitted on one fbb2, and its lid rests a few px differently after a wobble (right highlight 3 to 9 px off). Replay a second unit's open frames before release; a unit that misses by more than the 3 px search window fails every frame as in R2.
 - **R5 Exposure (fbb2).** The highlight check runs at whatever exposure the camera holds. Checked 2026-11-17 at the default exposure (frame mean ≈ 6) and with the preview slider raised (≈ 16), plus white paper on the bed (≈ 150): every open frame passed, every lowered or shut frame failed.
+- **R6 Slow close (fhx2rf).** When the lid closes over several seconds, the newest stop photo can be shot as the lid starts to move; the rolling shutter bends the rims slightly while their chord angle still matches, so the photo passes and is drawn a little bent near the edges (L2, 2026-11-18). Accepted: a normal close (under 1 s) leaves too short a window. Upgrade if reported: count a pose-OK photo only when the next photo is pose-OK too, at the cost of an older photo (more likely to show the hand or miss the material) and none at all after a short open.
 - **F1** Once the blur gate (decision 2) holds on both models, count how often a cycle ends with no pose-OK photo on real machines and decide parent F3 (toast).
 
 ## 13. Test plan
