@@ -6,7 +6,8 @@ import deviceMaster from '../device-master';
 
 import { stringifyDeviceSettingJson } from './deviceSettingJson';
 
-export const galvoWorkareaOptions = [70, 110] as const;
+/** Every field lens size a galvo head can be fitted with, mm. */
+export const galvoWorkareaOptions = [70, 90, 110] as const;
 
 export type GalvoWorkarea = (typeof galvoWorkareaOptions)[number];
 
@@ -84,6 +85,15 @@ const configKeys = {
 } as const;
 
 export type GalvoModule = keyof typeof configKeys;
+
+/**
+ * The field lenses each head is offered with. The 90 mm lens is a MOPA option only; swiftray pairs
+ * it with an 80 x 80 mm block (get_galvo_block_size), as it pairs 110 with 100 and 70 with 60.
+ */
+export const galvoWorkareaOptionsByModule = {
+  [LayerModule.GALVO_CO2]: [70, 110],
+  [LayerModule.GALVO_MOPA]: [70, 90, 110],
+} as const satisfies Record<GalvoModule, readonly GalvoWorkarea[]>;
 
 export const isGalvoModule = (module: LayerModuleType): module is GalvoModule => module in configKeys;
 

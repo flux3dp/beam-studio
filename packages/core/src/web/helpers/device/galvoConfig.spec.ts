@@ -15,6 +15,7 @@ jest.mock('../device-master', () => ({
 import {
   defaultGalvoConfig,
   getDefaultGalvoConfig,
+  galvoWorkareaOptionsByModule,
   getGalvoConfig,
   hasGalvoConfig,
   isGalvoModule,
@@ -31,6 +32,11 @@ describe('test galvoConfig', () => {
     expect(isGalvoModule(LayerModule.GALVO_CO2)).toBe(true);
     expect(isGalvoModule(LayerModule.GALVO_MOPA)).toBe(true);
     expect(isGalvoModule(LayerModule.LASER_UNIVERSAL)).toBe(false);
+  });
+
+  it('should offer the 90 mm lens on the MOPA head only', () => {
+    expect(galvoWorkareaOptionsByModule[LayerModule.GALVO_CO2]).toEqual([70, 110]);
+    expect(galvoWorkareaOptionsByModule[LayerModule.GALVO_MOPA]).toEqual([70, 90, 110]);
   });
 
   it('should read each module from its own config key', async () => {

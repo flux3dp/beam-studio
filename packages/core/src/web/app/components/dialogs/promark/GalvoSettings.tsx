@@ -12,7 +12,7 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkHexa2GalvoDev } from '@core/helpers/checkFeature';
 import { describeControlSocketError } from '@core/helpers/device/controlSocketError';
 import type { GalvoConfig, GalvoModule, GalvoWorkarea } from '@core/helpers/device/galvoConfig';
-import { galvoWorkareaOptions, getGalvoConfig, updateGalvoConfig } from '@core/helpers/device/galvoConfig';
+import { galvoWorkareaOptionsByModule, getGalvoConfig, updateGalvoConfig } from '@core/helpers/device/galvoConfig';
 import type { GalvoPreviewTuning } from '@core/helpers/device/galvoExec';
 import { awaitGalvoResult, galvoDot, galvoFrame, galvoGoto, stopGalvo } from '@core/helpers/device/galvoExec';
 import { connectGalvoHead, disconnectGalvoHead, releaseGalvoControl } from '@core/helpers/device/galvoLaserMode';
@@ -254,7 +254,7 @@ export const GalvoSettings = ({ device, initData, initOffsets, module, onClose }
           onWidthChange={(value) => update('workarea', value as GalvoWorkarea)}
           setField={setFieldValue}
           width={config.workarea}
-          widthOptions={galvoWorkareaOptions}
+          widthOptions={galvoWorkareaOptionsByModule[module]}
         />
         <GalvoModuleBlock
           focusHeight={config.focusHeight}
