@@ -5,6 +5,7 @@ const path = require('path');
 
 // True when the PE file already carries an embedded Authenticode signature (non-empty
 // certificate table, data directory 4). Swiftray's zip ships with its Qt dlls pre-signed.
+// .pyd files are PE dlls too, so the same header layout applies.
 const hasEmbeddedSignature = (filePath) => {
   const header = Buffer.alloc(4096);
   const fd = fs.openSync(filePath, 'r');
@@ -28,13 +29,16 @@ module.exports = async function customSign(configuration, packager) {
     return Promise.resolve();
   }
 
-  // Only sign dlls under backend/swiftray (Smart App Control blocks unsigned Qt dlls); exe files are signed as before.
-  if (configuration.path.endsWith('.dll') && !configuration.path.split(path.sep).includes('swiftray')) {
+  // Smart App Control blocks unsigned dlls and Python .pyd modules (Bad Image 0xc0e90002), so sign the ones
+  // under backend/ (Swiftray, flux_api). Exe files are signed as before.
+  const isLibrary = ['.dll', '.pyd'].some((ext) => configuration.path.endsWith(ext));
+
+  if (isLibrary && !configuration.path.split(path.sep).includes('backend')) {
     return Promise.resolve();
   }
 
-  // Signing a pre-signed dll again only costs an upload per file and replaces Microsoft's own signatures
-  if (configuration.path.endsWith('.dll') && hasEmbeddedSignature(configuration.path)) {
+  // Signing a pre-signed file again only costs an upload and replaces Microsoft's or Python's own signatures
+  if (isLibrary && hasEmbeddedSignature(configuration.path)) {
     console.log('Already signed, skipping:', configuration.path);
     return Promise.resolve();
   }
