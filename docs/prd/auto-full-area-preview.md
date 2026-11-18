@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.4, on top of the background-task manager (`background-tasks.md`) and the fluxghost pose check (`auto-full-area-preview-pose-check.md`, fluxghost 2.5.8). Hardware so far: fbm2 A1, A4, A5, A6, A11 and A12, fhx2rf fast-close pick (2026-11-04), A2 at normal close speed, A10 and A14 (2026-11-05; A13 covered by A2), pose-check study on fhx2rf (2026-11-06, companion §2.3). Pending: fbm2 A7; fbb2 A2; A3; pose-check L1–L6 (§12). |
+| **Status** | Implemented in 2.7.4, on top of the background-task manager (`background-tasks.md`) and the fluxghost pose check (`auto-full-area-preview-pose-check.md`, fluxghost 2.5.8). Hardware so far: fbm2 A1, A4, A5, A6, A11 and A12, fhx2rf fast-close pick (2026-11-04), A2 at normal close speed, A10 and A14 (2026-11-05; A13 covered by A2), pose-check study on fhx2rf (2026-11-06, companion §2.3), fbb2 pose check on 8 frame-dump runs plus a live run (2026-11-17, companion §7.1), fbb2 A2 and A3 (2026-11-18). Pending: fbm2 A7; pose-check L1–L6 (§12). |
 | **Author** | Product with the software team |
 | **Created** | 2026-10-19 |
 | **Target product** | Beam Studio desktop (Electron) and web. Models: `fbm2` (beamo II), `fbb2` (Beambox II), `fhx2rf` (HEXA RF). |
