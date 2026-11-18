@@ -1,12 +1,11 @@
 // customSign.js
-const { exec } = require('child_process');
+const { exec, spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-// True when the PE file already carries an embedded Authenticode signature (non-empty
-// certificate table, data directory 4). Swiftray's zip ships with its Qt dlls pre-signed.
-// .pyd files are PE dlls too, so the same header layout applies.
-const hasEmbeddedSignature = (filePath) => {
+// True when the PE file has a non-empty certificate table (data directory 4). Cheap first pass:
+// most unsigned files fail here without spawning signtool. .pyd files are PE dlls too.
+const hasCertificateTable = (filePath) => {
   const header = Buffer.alloc(4096);
   const fd = fs.openSync(filePath, 'r');
   try {
@@ -18,6 +17,32 @@ const hasEmbeddedSignature = (filePath) => {
   const isPe32Plus = header.readUInt16LE(optionalHeader) === 0x20b;
   const certificateTable = optionalHeader + (isPe32Plus ? 112 : 96) + 4 * 8;
   return header.readUInt32LE(certificateTable + 4) > 0;
+};
+
+// windows-latest has the Windows SDK but not on PATH; take the newest versioned signtool
+const findSignTool = () => {
+  const sdkBin = path.join(process.env['ProgramFiles(x86)'] || 'C:\\Program Files (x86)', 'Windows Kits', '10', 'bin');
+  const candidates = fs.existsSync(sdkBin)
+    ? fs
+        .readdirSync(sdkBin)
+        .filter((dir) => dir.startsWith('10.'))
+        .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }))
+        .map((dir) => path.join(sdkBin, dir, 'x64', 'signtool.exe'))
+    : [];
+
+  return candidates.reverse().find((candidate) => fs.existsSync(candidate)) || 'signtool';
+};
+
+let signTool;
+
+// True only for a valid, trusted Authenticode signature; a stale or corrupt certificate table gets re-signed.
+// Files that keep a valid signature: Swiftray's pre-signed Qt dlls, Python's and Microsoft's own dlls.
+const hasValidSignature = (filePath) => {
+  if (!hasCertificateTable(filePath)) return false;
+
+  signTool ??= findSignTool();
+
+  return spawnSync(signTool, ['verify', '/pa', '/q', filePath]).status === 0;
 };
 
 module.exports = async function customSign(configuration, packager) {
@@ -38,7 +63,7 @@ module.exports = async function customSign(configuration, packager) {
   }
 
   // Signing a pre-signed file again only costs an upload and replaces Microsoft's or Python's own signatures
-  if (isLibrary && hasEmbeddedSignature(configuration.path)) {
+  if (isLibrary && hasValidSignature(configuration.path)) {
     console.log('Already signed, skipping:', configuration.path);
     return Promise.resolve();
   }
