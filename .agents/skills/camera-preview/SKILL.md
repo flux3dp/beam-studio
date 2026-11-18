@@ -100,6 +100,24 @@ Write from outside React via
 manager's `progressId` as Ant Design message key, so they replace each other — a
 non-silent per-point message would stomp the batch counter.
 
+## Background (silent) setup
+
+A different `silent` from the per-call one above: `setup({ silent, messagePrefix })` on
+`BasePreviewManager` (stored as `this.silent` / `this.messagePrefix`). Only the auto full-area
+preview (`helpers/device/camera/autoFullAreaPreview.ts`, PRD `docs/prd/auto-full-area-preview.md`)
+sets it, running `Beamo2PreviewManager` once per door cycle **outside** `PreviewModeController`.
+
+- `messagePrefix` is prepended to every string `showMessage` content ("Auto preview: …").
+- `silent` pops no alert: `handleSetupError` logs instead of `handlePreviewSetupError`,
+  `DoorChecker` calls skip `door_opened`, the camera-cable alert is skipped.
+- `silent` never kicks: `Beamo2PreviewManager.endCameraPreview` sends `kick` only when not silent.
+  `kick` acts on whoever holds the machine's task, so a background capture that lost `task raw`
+  to another Beam Studio (`RESOURCE_BUSY`) would take raw mode away from the winner.
+- `Beamo2PreviewManager.cancel()` stops setup at its next step (also passed to
+  `setupFisheyePreview` as `isCancelled`) or discards the in-flight photo; call `end()` after.
+- `drawFullWorkarea` draws straight to the background when no preview session is open
+  (`start()` would clear the background and draw the preview boundary).
+
 ## Preview region indicator
 
 `preview-region-indicator.ts` draws a dashed rect (`#previewRegionIndicator` in
@@ -167,5 +185,6 @@ because its capture flow sets exposure itself.
 
 `endPreviewMode` (`previewMode.ts`) → `controller.end()`: clears background drawer
 boundary, restores device close listener, `manager.end()` (managers restore raw-mode
-state, loose motor, disconnect camera), then `reset()` which clears the store
+state, loose motor, disconnect camera; Base, Beam, Beamo2 and Bb2Hx2 then `kick` to release the
+machine, except a silent Beamo2 manager, see above), then `reset()` which clears the store
 (`previewMode: REGION`, `previewCameraIndex: undefined`, `pendingPreviewMode: undefined`).
