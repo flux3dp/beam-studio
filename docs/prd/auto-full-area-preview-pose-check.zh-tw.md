@@ -69,7 +69,7 @@ fbb2 與 fhx2rf 的自動全範圍預覽在開蓋期間連拍，關門時畫一�
 - **S1 正常關門。** 門蓋開到止點、放材料、正常速度關門。畫出的是在止點拍的最新一張；關門瞬間還在傳的那張（模糊或傾斜）永遠不會被畫。
 - **S2 慢關。** 門蓋花數秒放下。下降途中拍的影格不通過；畫出的是最後一張在止點拍的，不論多久以前，只要還在保留的照片內（`KEEP_PHOTOS`）。
 - **S3 門蓋沒到止點。** 使用者只開一半、放材料、關門。沒有影格通過；什麼都不畫、沒有 toast。console log 說明原因。
-- **S4 手在邊框上。** 某張影格有手或板子蓋住一側尺規。那張失敗（找不到邊框），畫更早一張在止點拍的。
+- **S4 手在邊框上。** 某張影格有手或板子蓋住一側邊框。fhx2rf 上那張失敗（找不到邊框），畫更早一張在止點拍的。fbb2 上另一側的亮線仍能證明姿態，所以那張通過；兩側都蓋住才失敗。
 - **S5 校正沒有姿態。** 參數不是 v4 或無法啟用檢查：fluxghost 回錯誤，Beam Studio 記 log、結束迴圈不拍照，和沒有廣角校正時一樣。
 - **S6 手動預覽、校正對話框、Promark。** 不變：從不啟用檢查，看不到任何新訊息。
 
@@ -77,10 +77,10 @@ fbb2 與 fhx2rf 的自動全範圍預覽在開蓋期間連拍，關門時畫一�
 
 | # | 步驟 | 預期 | 邊界 |
 |---|---|---|---|
-| L1 | fhx2rf，自動預覽開啟。門蓋開到止點，等 6 秒，正常關門。 | console log 列出每張照片的 `pose ok` / `pose no` 與量測、預期角度；畫出的是最新的 `pose ok`；關門瞬間在傳的那張是 `pose no` 或不存在。 | 快關：同；最後一張可能是唯一的 `pose no`。 |
+| L1 | fhx2rf，自動預覽開啟。門蓋開到止點，等 6 秒，正常關門。 | console log 列出每張照片的 `pose ok` / `pose no` 與量測、預期值（fhx2rf 為邊框角度，fbb2 為亮線分數對門檻 30）；畫出的是最新的 `pose ok`；關門瞬間在傳的那張是 `pose no` 或不存在。 | 快關：同；最後一張可能是唯一的 `pose no`。 |
 | L2 | 同上，花約 4 秒關門。 | 門蓋移動中拍的照片是 `pose no`；畫出的是最後一張在止點拍的。 | 關門前讓門蓋停在小傾角 5 秒：那些照片是 `pose no`。 |
 | L3 | 門蓋只開一半，放材料，關門。 | 所有照片 `pose no`；log 寫 `no pose-ok photo`；背景不變、沒有 toast。 | — |
-| L4 | 拍照時把手放在左尺規上。 | 那張是 `pose no`（找不到左邊框）；畫更早一張。 | 手只在蜂巢板上：`pose ok`。 |
+| L4 | 拍照時把手放在左側邊框上。 | fhx2rf：那張是 `pose no`（找不到左邊框）；畫更早一張。fbb2：`pose ok`，左側分數低於 30、右側高於 30（一側即可）。 | fbb2 兩手蓋住兩側邊框：`pose no`。手只在蜂巢板上：兩機型都是 `pose ok`。 |
 | L5 | 同一台機器做手動預覽（全範圍）。 | websocket 紀錄裡沒有 `frame` JSON；影格大小與時間和沒有這個改動的版本相同。 | 相機校正對話框：同。 |
 | L6 | fluxghost 在沒設 v4 參數時收到 `set_pose_check`。 | `{"status": "error", "error": ["No fisheye params"]}`；之後的 `require_frame` 仍正常回影格。 | Beam Studio 端：log `pose check unavailable`、迴圈結束、沒有照片。 |
 
@@ -89,14 +89,14 @@ fbb2 與 fhx2rf 的自動全範圍預覽在開蓋期間連拍，關門時畫一�
 fluxghost
 
 - `fluxghost/api/camera.py` `on_image` — 所有既有呼叫路徑（手動預覽、校正、Promark、舊韌體的串流）：影格位元組、順序、影格前沒有任何 JSON，除非該連線用 `set_pose_check` 啟用了檢查。
-- `fluxghost/api/fisheye_camera_mixin.py` `set_fisheye_height` — 只在檢查啟用時重算預期邊框；其餘情況透視點與時間不變。
+- `fluxghost/api/fisheye_camera_mixin.py` `set_fisheye_height` — 另外存下它本來就算出的分區 `rvecs` / `tvecs`（只有姿態檢查會讀，檢查啟用時逐張影格投影預期邊框）；透視點與時間不變。
 - `cmd_mapping` 字串 — `set_pose_check` 是新增；沒有任何改名。
 
 Beam Studio
 
 - `helpers/api/camera.ts` `sendOneShot` / `oneShot` — 所有呼叫端（預覽管理器、校正對話框、`takeOnePicture`）拿到同樣的 `{ imgBlob, needCameraCableAlert }`；多出來的 `pose` 欄位為選填，檢查未啟用時不存在。
 - `sendCommandWithNonBinaryResult` — `frame` 訊息只會在 `require_frame` 與其影格之間送出，而 `oneShot` 與其他指令共用同一個 command queue，所以不會有指令回覆被誤認。
-- `helpers/device-master.ts` `takeOnePicture` — 回傳型別只多一個選填欄位。
+- `helpers/device-master.ts` `takeOnePicture` — 回傳型別只多一個選填欄位；拍照失敗後的重連區塊在相機的 fisheye 設定記著姿態檢查時，也會重送 `set_pose_check`（從未啟用的呼叫端：不變）。
 - `autoFullAreaPreview.ts` `captureOpenLid` — 開蓋迴圈的相機設定與收尾維持原樣；啟用失敗走和沒有校正相同的出口。
 
 ## 7. 設計
@@ -105,8 +105,9 @@ Beam Studio
 
 新檔 `fluxghost/utils/camera/pose_check.py`：
 
-- `expected_rims(k, d, rvecs, tvecs, bed_w, bed_h, is_fisheye)`：把床台兩側邊 x = 0 與 x = bed_w 取成點 (x, y, 0)，y 從 0 到 bed_h 每 10 mm 一點，分別用 `left` 與 `right` 分區外參（`set_fisheye_height` 算出的 `rvecs['left']` / `rvecs['right']`）經 `project_points` 投影。對每組投影點做最小平方直線擬合，得到預期的與垂直夾角與中高處的預期影像 x，單位是原始影格像素。尺規位於工作區邊緣稍外側；全開姿態下兩側邊近乎平行，偏 20 mm 只讓預期角度變約 0.1°，低於容差。量到實際偏移後記錄之（開放決策 3）。
-- `measure_rims(gray, expected, tolerance_deg)`：縮到 1280 px 寬（與重投影相同的 `preview_downsample` 策略）、高斯模糊 5、Canny 50/150、`HoughLinesP`（1 px、1°、門檻 80、最短長度為寬的 8%、間隙 10 px）。每側保留中點距預期 x 在寬度 5% 以內、角度與預期差 10° 以內的線段，取最長者回報角度。結果 `{ok, left, right, expected_left, expected_right}`，兩側都找到且各自與預期差在 `tolerance_deg` 內時 `ok` 為 true。
+- `expected_rims(k, d, rvecs, tvecs, bed_w, bed_h, is_fisheye)`：把床台兩側邊 x = 0 與 x = bed_w 取成點 (x, y, 0)，y 從 0 到 bed_h 每 10 mm 一點，分別用 `left` 與 `right` 分區外參（`set_fisheye_height` 算出的 `rvecs['left']` / `rvecs['right']`）經 `project_points` 投影。每組投影點（原始影格像素、依列排序）就是邊框應該走的線；找不到邊框時回報穿過它的最小平方擬合。尺規位於工作區邊緣稍外側；全開姿態下兩側邊近乎平行，偏 20 mm 只讓預期角度變約 0.1°，低於容差。量到實際偏移後記錄之（開放決策 3）。
+- `measure_rims(gray, expected, tolerance_deg)`：縮到 1280 px 寬（與重投影相同的 `preview_downsample` 策略）、高斯模糊 5、Canny 50/150、`HoughLinesP`（1 px、1°、門檻 80、最短長度為寬的 8%、間隙 10 px）。每條線段取預期曲線在該線段所在列範圍的弦；保留中點距弦中點在寬度 5% 以內、角度與弦差 10° 以內的線段，取最長者回報角度，並以該弦的角度作為預期值。結果 `{ok, left, right, expected_left, expected_right}`，兩側都找到且各自與預期差在 `tolerance_deg` 內時 `ok` 為 true。
+- 魚眼（fbb2）改用 `measure_ridges`（fluxghost 依 `is_fisheye` 選擇）。fbb2 在預覽曝光下，空蜂巢板的邊緣沒有對比，邊框又彎成比 Hough 最短長度還短的片段，所以角度檢查抓到的是外側機殼邊或什麼都沒有。`expected_rims` 改投影機殼邊，自床台邊偏 `RIM_OFFSET_MM` =（向外 10 mm、z −15 mm），由一台 fbb2 的開蓋影格兩側同時擬合；`ridge_score` 沿該曲線逐列取 3 px 內最亮像素減去周圍 31 px 平均，再取平均。機殼邊在畫面上是一條細的 LED 反光線。任一側 ≥ `RIDGE_MIN`（30）即 `ok`：反光是鏡面反射，門蓋在止點時也可能一側消失。8 組 fbb2 資料（120 張：白紙、空床、晃動、調高曝光、一次實機）中，較強一側在開蓋止點 ≥ 51.9、放下或關上 ≤ 14.1、晃動中 ≤ 12.0；全解析度每張約 5 ms。訊息格式不變，`left` / `right` 放分數，`expected_*` 放門檻。
 
 門檻（`CANNY`、Hough、帶寬）為具名並附註解的模組常數；數值與研究工具在 fhx2rf 資料上用的相同，工具與模組可以互相驗證。
 
@@ -118,7 +119,7 @@ Beam Studio
 
 ### 7.3 客戶端（Beam Studio）
 
-- `Camera`（`helpers/api/camera.ts`）：`setPoseCheck(enabled)` 透過 `sendCommandWithNonBinaryResult`。非 binary 流保留最新一則 `{status: 'frame'}`，binary 流在下一個 blob 到達時取走它，所以配對依到達順序（fluxghost 在影格前一刻送出訊息），與請求時間無關；結果帶 `pose`，影格前沒有訊息則不存在。
+- `Camera`（`helpers/api/camera.ts`）：`setPoseCheck(enabled)` 透過 `sendCommandWithNonBinaryResult`；與參數、高度、水平校正一起記在相機的 fisheye 設定裡，所以 `takeOnePicture` 重連時會還原（2026-11-17：之前迴圈中途拍照失敗會在沒有檢查的情況下重連，之後每張都缺 `pose`，挑選失敗，還把先前的好照片擠掉）。非 binary 流保留最新一則 `{status: 'frame'}`，binary 流在下一個 blob 到達時取走它，所以配對依到達順序（fluxghost 在影格前一刻送出訊息），與請求時間無關；結果帶 `pose`，影格前沒有訊息則不存在。
 - `device-master.ts` `takeOnePicture` 把 `pose` 傳出去。
 - `autoFullAreaPreview.ts`：`setFisheyeObjectHeight(0)` 之後 `await deviceMaster.setPoseCheck(true)`；回 false 記 log（`pose check unavailable`）、在拍任何照片前結束迴圈，和沒有校正一樣。`Photo` 加 `poseOk: boolean`。`pickPhoto(photos, lastOpenAt)`：門仍回報開啟時完成的照片中，最新一張 `poseOk` 的；沒有 → 什麼都不畫（母 PRD 決策 7）。每張照片連同判定與角度記 log，硬體測試可直接從 console 讀。
 
@@ -159,10 +160,13 @@ Beam Studio
 - **R1 節奏。** 每 3 到 4 秒一張，快關可能只剩一張或零張 OK 照片；零張就是這次沒有照片。用低解析度迴圈影格可提高節奏但改變預覽解析度；不在範圍內。
 - **R2 止點漂移。** 門蓋不再停在校正姿態的機器每張都失敗，默默不畫。逐張 log 看得出來；支援文件應說明要重新校正，母 PRD F3 可能補 toast。
 - **R3 沒有分區外參的校正。** v4 之前的參數無法啟用檢查（S5）。廣角校正全是 v4，這只是防禦路徑。
+- **R4 fbb2 機殼偏移只來自一台。** `RIM_OFFSET_MM` 是在一台 fbb2 上擬合的，而且門蓋晃動後停的位置會差幾個 px（右側亮線偏 3 到 9 px）。上線前用第二台的開蓋影格重播驗證；偏差超過 3 px 搜尋窗的機器會像 R2 一樣每張都失敗。
+- **R5 曝光（fbb2）。** 亮線檢查使用相機當下的曝光。2026-11-17 在預設曝光（影格平均 ≈ 6）、預覽滑桿調高（≈ 16）、床上放白紙（≈ 150）下檢查：所有開蓋影格通過，所有放下或關上的影格失敗。
 - **F1** 模糊門檻（決策 2）在兩機型都站得住後，統計真實機器上多常有一次開關門沒有 pose-OK 照片，據此決定母 PRD F3（toast）。
 
 ## 13. 測試計畫
 
 - fluxghost：`pose_check` 單元測試用四張固定樣本（預期邊框來自一組儲存的 v4 參數；`ok` true / false / false）；`ws_smoke.py` camera 案例啟用檢查（訊息先於影格）與未啟用（沒有訊息）。`uv run python tools/ws_smoke.py` 必須以 `ALL PASS` 結束。
-- Beam Studio：`camera.spec.ts` — `sendOneShot` 在 `frame` 訊息先於 blob 時附上 `pose`，否則不存在；`autoFullAreaPreview.spec.ts` — `pickPhoto` 回最新 pose-OK 照片、沒有就不畫、啟用失敗記 log 且迴圈結束不拍照。
+- Beam Studio：`camera.spec.ts` — `sendOneShot` 在 `frame` 訊息先於 blob 時附上 `pose`，否則不存在，`setPoseCheck` 在 fisheye 設定中記住／忘記檢查；`device-master.spec.ts` — `takeOnePicture` 重連後還原姿態檢查；`autoFullAreaPreview.spec.ts` — `pickPhoto` 回最新 pose-OK 照片、沒有就不畫、啟用失敗記 log 且迴圈結束不拍照。
+- fluxghost（fbb2）：`measure_ridges` 單元測試（兩側、單側、亮線偏 20 px、曲線在畫面外）與 `test_camera_pose_check.py` 的魚眼分派；2026-11-17 的 fbb2 傾印資料（白紙、空床、晃動、調高曝光）重播過 `measure_ridges`，沒有誤判 OK。
 - 硬體：fhx2rf 跑 L1–L6，再在 fbb2 跑 L1–L4；把 14 次傾印資料重新餵給 fluxghost 模組，確認判定與研究表一致。
