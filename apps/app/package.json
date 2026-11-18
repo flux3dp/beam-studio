@@ -135,7 +135,8 @@
       "icon": "app-icons/win-icon.ico",
       "signExts": [
         ".dll",
-        ".pyd"
+        ".pyd",
+        ".node"
       ],
       "signtoolOptions": {
         "sign": "./customCodeSign.windows.js",

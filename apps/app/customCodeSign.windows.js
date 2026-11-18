@@ -54,11 +54,12 @@ module.exports = async function customSign(configuration, packager) {
     return Promise.resolve();
   }
 
-  // Smart App Control blocks unsigned dlls and Python .pyd modules (Bad Image 0xc0e90002), so sign the ones
-  // under backend/ (Swiftray, flux_api). Exe files are signed as before.
-  const isLibrary = ['.dll', '.pyd'].some((ext) => configuration.path.endsWith(ext));
+  // Smart App Control blocks unsigned libraries (Bad Image 0xc0e90002): dlls and Python .pyd modules under
+  // backend/ (Swiftray, flux_api with fluxclient/beamify) and native node modules in app.asar.unpacked
+  // (fontmanager.node). Dlls outside backend/ are Electron's own and stay as they are. Exe files are always signed.
+  const isLibrary = ['.dll', '.pyd', '.node'].some((ext) => configuration.path.endsWith(ext));
 
-  if (isLibrary && !configuration.path.split(path.sep).includes('backend')) {
+  if (configuration.path.endsWith('.dll') && !configuration.path.split(path.sep).includes('backend')) {
     return Promise.resolve();
   }
 
