@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Draft. No product code yet. Step 0 started 2026-11-17 on one `fbm2` and one `fbb2` wide-angle camera (§11); prior-free matcher prototyped (§7.3, decision 2 settled); more units pending |
+| **Status** | Draft. No product code yet. Step 0 done on two `fbm2` units and one `fbb2` wide-angle camera (§11); prior-free matcher prototyped (§7.3, decision 2 settled); on `fbm2` another unit's `k` / `d` works without ChArUco (decision 8); more units pending |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio (desktop + web), fluxghost (next tag after 2.5.8) |
@@ -171,7 +171,9 @@ warped preview the marks sit within the tolerance the manual flow achieves on th
 (measure the manual flow first, record both in §11). Measured by running fluxghost's
 `calculate_regional_perspective_points` + `apply_points` at the `h` the preview sends on a
 photo of the marks and locating them in the warped image; a visual check in Beam Studio
-confirms it.
+confirms it. The marks used for the solve only give a lower bound (each region pose is fitted
+to them), so the number that counts comes from check marks engraved afterwards at positions
+between the calibration marks, measured the same way.
 
 **A7 Diagnosability.** On success and on failure, the console has one summary line per run:
 exposures used, blobs found per exposure, marks matched, rejected count, RMS residual per
@@ -430,8 +432,10 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
      point is a prediction, not a measurement, so this is the last resort.
 6. ~~**CHECK_PNP.**~~ **Settled 2026-11-16:** keep the visual confirmation.
 7. **Exposure bracket values.** `fbm2` first unit: 75 + 200 covers all 16 marks, today's
-   350 / 100 do not. `fbb2` wide-angle first unit: any single exposure from 75 to 125 covers
-   all 16. Final values from the remaining units of step 0.
+   350 / 100 do not. `fbm2` second unit: 75 alone covers all 16, 200 finds 8, 350 finds 7, so
+   the pair differs between units and the low value carries most of it. `fbb2` wide-angle
+   first unit: any single exposure from 75 to 125 covers all 16. Final values from the
+   remaining units of step 0.
 8. **Refine the intrinsics from the marks.** Proposed: after matching, refine the intrinsics
    (`cv2.fisheye.calibrate`, one view) on the 16 marks, then solve the region poses with the
    refined values. On the `fbb2` unit this beat the stored manual calibration (§11) and the
@@ -463,6 +467,30 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
      experiment 2 (rms of a start that cannot be recovered vs a normal one).
    - Still open besides the above: the refine leaves the area outside the mark grid
      unconstrained (the `fbb2` top corners), see decision 9.
+   - **Result on `fbm2` (2026-11-18, experiment 1, one direction, §11).** Two findings that
+     change the proposal for this model:
+     - Borrowing works without any refine. Unit B's marks with unit A's `k` / `d` and poses
+       only: 0.71 mm fit / 0.87 mm leave-one-out on a single pose, against 0.65 / 0.83 with
+       unit B's own ChArUco values. The principal points of the two units differ by 37 and
+       64 px, and the pose absorbs it. Through fluxghost's warp with the nine region poses the
+       marks land within 0.13 mm mean, 0.42 mm max, and the Beam Studio preview was judged at
+       least as good as the unit's manual calibration.
+     - Refining is not reliable here. Every variant that frees the focal length moves it by
+       6 to 30 % (1339 → 1430 to 1760) while the fit improves by tenths of a millimetre, and
+       the leave-one-out maximum grows to 5 to 9 mm when distortion is free as well. One view
+       of a plane seen at about 22° cannot separate focal length from camera distance.
+       `CALIB_FIX_K1` on or off makes no difference to this. (The flag exists in the ChArUco
+       step because without it the calibration error jumps to tens or hundreds with the few
+       photos a user takes.)
+     - Both directions hold over the whole bed in a no-photo test (§11): one unit's stored
+       camera taken as the truth, its 16 mark positions synthesised, the nine region poses
+       solved from them with the other unit's `k` / `d`, error sampled every 10 mm. Mean 0.38
+       and 0.18 mm, 0.80 and 0.35 mm at most inside the mark grid, 1.11 mm at most on the
+       border in both directions.
+     Proposal for `fbm2`: ship a per-model `k` / `d` (skew 0, see §11), solve poses only, no
+     refine, ChArUco stays as the advanced path. Before settling: a third unit, and check
+     marks that are not used for the solve (A6). `fbb2` keeps the refine as an open option until photos at a second
+     height show whether its result holds off the plane.
 9. **Marks near the corners.** Proposed experiment on `fbb2`: engrave one row of marks at
    y ≈ 10 to 20 mm to find the camera's real top field of view (the model puts the top corners
    outside the frame), and larger marks at the bottom corners (2.3 to 2.7 px per mm there
@@ -535,6 +563,63 @@ All preview errors above were measured with fluxghost's own warp on the capture 
 16 mark positions only. Mark identities in the parameter file came from the hand assignment;
 the matcher reproduces it exactly on this photo. The top corners of the work area are outside
 the mark grid and unconstrained (decision 9).
+
+**Third-unit findings (second `fbm2`, 2026-11-18, exploratory).** Raw photos at exposures 50
+to 500, locked motors, lid closed; the unit's own manual calibration from the same day as the
+reference; `k` / `d` borrowed from the first `fbm2`.
+
+| Finding | Value |
+|---|---|
+| Marks found per exposure (of 16) | 50: 14 · 75: 16 · 100: 14 · 150: 11 · 200: 8 · 350: 7 · 500: 7 |
+| Matcher with own vs borrowed `k` / `d` for undistortion | Same assignment at every exposure that shows all 16 |
+| Principal point, own vs borrowed | (2799, 2076) vs (2837, 2140) |
+| Single pose, no refine, fit / leave-one-out mean / max | own 0.65 / 0.83 / 1.92 mm · borrowed 0.71 / 0.87 / 1.54 mm |
+| Refine focal + distortion from the borrowed values | fit 0.50 mm, leave-one-out 1.36 mm mean, 9.02 mm max, focal 1339 → 1593 |
+| Preview error at the 16 marks, fluxghost warp, manual calibration | mean 0.42 mm, max 1.39 mm (bottom left; bottom two rows carry the error) |
+| Preview error at the 16 marks, borrowed `k` / `d` + automatic marks | mean 0.13 mm, max 0.42 mm |
+| Visual check in Beam Studio | borrowed version at least as good; bottom-left quadrant better than the hand-dragged one |
+
+Both parameter sets were solved from the same 16 marks, so the last three rows compare hand
+placement plus own intrinsics against automatic centroids plus borrowed intrinsics, at the
+solve points only. Not explained: refining the principal point alone with focal length and
+distortion fixed gave a 5 to 8 mm fit, which looks like a flag interaction rather than data.
+
+**Cross-unit test without photos (two `fbm2`, 2026-11-18).** Truth = one unit's stored `k`,
+`d` and global pose; marks synthesised from it; region poses solved with the other unit's
+`k` / `d` and fluxghost's region pick; error over the bed on a 10 mm grid (925 points).
+
+| Truth unit | Whole bed mean / max | Inside the mark grid mean / max | Border mean / max |
+|---|---|---|---|
+| first `fbm2` | 0.38 / 1.11 mm | 0.32 / 0.80 mm | 0.48 / 1.11 mm |
+| second `fbm2` | 0.18 / 1.11 mm | 0.14 / 0.35 mm | 0.25 / 1.11 mm |
+
+This measures the difference between two stored parameter sets, each with its own error, not
+absolute accuracy. It assumes one physical camera pose per unit.
+
+**Stored intrinsics of the office units (2026-11-18).** Read from
+`/var/static_data/fisheye/` on each machine. The fisheye cameras are meant to share one lens.
+
+| Unit and camera | `fx` / `fy` | `cx` / `cy` | Skew `k[0][1]` |
+|---|---|---|---|
+| first `fbm2` | 1339 / 1362 | 2837 / 2140 | +0.06 |
+| second `fbm2` | 1357 / 1382 | 2799 / 2076 | -7.13 |
+| `fbb2` laser head (another unit) | 1339 / 1338 | 2820 / 2124 | -0.38 |
+| `fbb2` wide-angle | 1349 / 1434 | 2831 / 2099 | -3.67 |
+| `fhx2rf` laser head | 1308 / 1321 | 2840 / 2147 | +4.41 |
+| `fhx2rf` wide-angle (pinhole model, for contrast) | 1178 / 1175 | 1620 / 1190 | 0 |
+
+- The five fisheye cameras agree within 4 % on focal length and within 41 / 71 px on the
+  principal point, across three models. One `k` / `d` for all of them, not one per model, is
+  worth testing (decision 8).
+- **Skew.** The ChArUco step fits a skew term that nothing downstream uses. It ranges from
+  -7.1 to +4.4 with no pattern, and it is large where `fx` and `fy` also disagree, which reads
+  as a calibration that did not settle rather than a lens property. The pinhole path never
+  fits one. With a non-zero skew fluxghost's `solve_pnp` was not the inverse of
+  `project_points` (about 0.3 mm mean, 0.9 mm max over the bed on the second `fbm2`, with the
+  unit's own parameters). Fixed in fluxghost (`fix/solve-pnp-skew`: solve in normalised
+  coordinates, `CALIB_FIX_SKEW` in the ChArUco step; not yet verified on hardware). A shared
+  `k` ships with skew 0, and "`fx` close to `fy`, skew close to 0" is a usable filter when
+  picking which calibrations to derive it from.
 
 Measured numbers (fill in as work lands): per-mark detection rate, R_MAX, tolerances, pose range, bracket values,
 A6 manual vs automatic accuracy, A8 spread, capture time.
