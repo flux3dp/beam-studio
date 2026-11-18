@@ -166,7 +166,9 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
       if (this.originalExposure !== null) await setExposure(this.originalExposure);
 
-      deviceMaster.kick();
+      // kick acts on whoever holds the machine's task: a silent (background) capture that lost `task raw` to another
+      // client would take it away from them, so only a user-started preview releases the machine this way
+      if (!this.silent) deviceMaster.kick();
     }
   };
 
