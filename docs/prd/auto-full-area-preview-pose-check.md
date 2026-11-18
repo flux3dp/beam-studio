@@ -2,7 +2,7 @@
 
 | | |
 |---|---|
-| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#126). Hardware: fhx2rf L1–L5 (2026-11-18; L2 passes with the slow-close bend of R6); fbb2 L1, L2 and L4 on frame dumps and a live run (2026-11-17); L6 hardware-free (`ws_smoke.py`, `autoFullAreaPreview.spec.ts`). Pending: fbb2 L3; second-unit offset check (R4). |
+| **Status** | Implemented in 2.7.4 with fluxghost 2.5.8 (flux3dp/fluxghost#126). Hardware: fhx2rf L1–L5 (2026-11-18; L2 passes with the slow-close bend of R6); fbb2 L1, L2 and L4 on frame dumps and a live run (2026-11-17), L3 (2026-11-18); L6 hardware-free (`ws_smoke.py`, `autoFullAreaPreview.spec.ts`). Pending before release: second-unit offset check (R4). |
 | **Author** | FLUX software team |
 | **Created** | 2026-11-06 |
 | **Target product** | Beam Studio 2.7.x + fluxghost 2.5.8, fbb2 and fhx2rf |

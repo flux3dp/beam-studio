@@ -4,7 +4,7 @@
 
 | | |
 |---|---|
-| **Status** | 已於 2.7.4 實作，搭配 fluxghost 2.5.8（flux3dp/fluxghost#126）。硬體：fhx2rf L1–L5（2026-11-18；L2 通過，但有 R6 的慢關彎曲）；fbb2 L1、L2、L4 以 frame dump 與一次實機驗證（2026-11-17）；L6 免硬體（`ws_smoke.py`、`autoFullAreaPreview.spec.ts`）。待辦：fbb2 L3；第二台的偏移檢查（R4）。 |
+| **Status** | 已於 2.7.4 實作，搭配 fluxghost 2.5.8（flux3dp/fluxghost#126）。硬體：fhx2rf L1–L5（2026-11-18；L2 通過，但有 R6 的慢關彎曲）；fbb2 L1、L2、L4 以 frame dump 與一次實機驗證（2026-11-17），L3（2026-11-18）；L6 免硬體（`ws_smoke.py`、`autoFullAreaPreview.spec.ts`）。上線前待辦：第二台的偏移檢查（R4）。 |
 | **Author** | FLUX software team |
 | **Created** | 2026-11-06 |
 | **Target product** | Beam Studio 2.7.x + fluxghost 2.5.8，fbb2 與 fhx2rf |
