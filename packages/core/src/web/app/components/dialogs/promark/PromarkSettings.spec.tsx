@@ -46,11 +46,18 @@ jest.mock(
 jest.mock('./RedDotBlock', () => () => <div>Mock RedDotBlock</div>);
 jest.mock('./LensBlock', () => () => <div>Mock LensBlock</div>);
 jest.mock('./ParametersBlock', () => () => <div>Mock ParametersBlock</div>);
-jest.mock('./DevControlBlock', () => ({ serial, width }) => (
-  <div>
-    Mock DevControlBlock {serial} {width}
-  </div>
-));
+
+const mockDevProps: { applyParameters?: (shouldApplyRedDot: boolean) => Promise<boolean> } = {};
+
+jest.mock('./DevControlBlock', () => ({ applyParameters, serial, width }) => {
+  mockDevProps.applyParameters = applyParameters;
+
+  return (
+    <div>
+      Mock DevControlBlock {serial} {width}
+    </div>
+  );
+});
 
 // some modules read the flag at import time, before a `const mockIsDev` would be initialized
 jest.mock('@core/helpers/is-dev', () => ({
@@ -270,6 +277,53 @@ describe('test PromarkSettings', () => {
     expect(mockOnClose).not.toHaveBeenCalled();
     fireEvent.click(cancelBtn);
     expect(mockOnClose).toHaveBeenCalledTimes(1);
+  });
+
+  describe('lens writes against closing the dialog', () => {
+    beforeEach(() => mockIsDev.mockReturnValue(true));
+    afterEach(() => mockIsDev.mockReturnValue(false));
+
+    test('the restore of Cancel waits for a write in flight and lands last', async () => {
+      let finishField: () => void = () => {};
+
+      mockSetField.mockReturnValueOnce(
+        new Promise<void>((resolve) => {
+          finishField = resolve;
+        }),
+      );
+
+      const { findByText } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
+      const cancelBtn = await findByText('Cancel');
+      let applied: Promise<boolean>;
+
+      // started: waiting on its field
+      await act(async () => {
+        applied = mockDevProps.applyParameters!(true);
+      });
+      fireEvent.click(cancelBtn);
+      // the restore has not overtaken the write still waiting on its field
+      expect(mockSetField).toHaveBeenCalledTimes(1);
+
+      await act(async () => finishField());
+      await expect(applied!).resolves.toBe(true);
+      expect(mockSetField).toHaveBeenCalledTimes(2);
+      expect(mockSetGalvoParameters).toHaveBeenCalledTimes(2);
+      // the edited galvo went out before the restored field
+      expect(mockSetGalvoParameters.mock.invocationCallOrder[0]).toBeLessThan(mockSetField.mock.invocationCallOrder[1]);
+    });
+
+    test('a write asked for after Cancel sends nothing', async () => {
+      const { findByText } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
+      const applyParameters = mockDevProps.applyParameters!;
+
+      fireEvent.click(await findByText('Cancel'));
+      await act(async () => {
+        await expect(applyParameters(true)).resolves.toBe(false);
+      });
+      // only the restore
+      expect(mockSetField).toHaveBeenCalledTimes(1);
+      expect(mockSetGalvoParameters).toHaveBeenCalledTimes(1);
+    });
   });
 
   test('Save button', async () => {

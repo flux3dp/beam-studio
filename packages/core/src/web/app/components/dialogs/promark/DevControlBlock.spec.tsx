@@ -89,6 +89,7 @@ describe('test DevControlBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     jest.useFakeTimers();
+    mockApplyParameters.mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -281,6 +282,59 @@ describe('test DevControlBlock', () => {
       unmount();
       await act(async () => finishStopPreview());
       expect(command).not.toHaveBeenCalled();
+    });
+
+    it('should not start an axis move that Stop cancelled while it waited', async () => {
+      const finishStopPreview = deferStopPreview();
+      const { getByTestId } = renderBlock();
+
+      await act(async () => fireEvent.click(getByTestId('dev-z-negative')));
+      await act(async () => fireEvent.click(getByTestId('dev-z-stop')));
+      expect(mockStop).toHaveBeenCalledTimes(1);
+      await act(async () => finishStopPreview());
+      expect(mockAdjustZAxis).not.toHaveBeenCalled();
+      expect(getByTestId('dev-z-stop')).toBeDisabled();
+    });
+
+    it('should stop again when Stop came while the move was being sent', async () => {
+      let sent: () => void = () => {};
+
+      mockAdjustZAxis.mockReturnValueOnce(
+        new Promise<void>((r) => {
+          sent = r;
+        }),
+      );
+
+      const { getByTestId } = renderBlock();
+
+      await act(async () => fireEvent.click(getByTestId('dev-z-negative')));
+      await act(async () => fireEvent.click(getByTestId('dev-z-stop')));
+      expect(mockStop).toHaveBeenCalledTimes(1);
+      await act(async () => sent());
+      // the first stop may have reached the machine before the move (stop, upload, start)
+      expect(mockStop).toHaveBeenCalledTimes(2);
+    });
+
+    it.each([
+      ['dev-move-go', mockGo],
+      ['dev-pulse-fire', mockDoCalibration],
+    ])('should not send %s when the lens could not be applied', async (testId, command) => {
+      mockApplyParameters.mockResolvedValueOnce(false);
+
+      const { getByTestId } = renderBlock();
+
+      await act(async () => fireEvent.click(getByTestId(testId)));
+      expect(command).not.toHaveBeenCalled();
+    });
+
+    it('should not apply the lens once the dialog closed during the preview stop', async () => {
+      const finishStopPreview = deferStopPreview();
+      const { getByTestId, unmount } = renderBlock();
+
+      await act(async () => fireEvent.click(getByTestId('dev-move-go')));
+      unmount();
+      await act(async () => finishStopPreview());
+      expect(mockApplyParameters).not.toHaveBeenCalled();
     });
 
     it('should not offer a door retry from a closed dialog', async () => {

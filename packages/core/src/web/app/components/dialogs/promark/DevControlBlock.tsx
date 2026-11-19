@@ -129,9 +129,9 @@ const NumberCell = ({ max, min = 0, onChange, precision, testId, title, unit, va
 interface Props {
   /**
    * sends the lens parameters being edited to the machine, with the red dot parameters applied on top
-   * for the red light, or the laser's own for marking
+   * for the red light, or the laser's own for marking; false when nothing was sent (dialog closing)
    */
-  applyParameters: (shouldApplyRedDot: boolean) => Promise<void>;
+  applyParameters: (shouldApplyRedDot: boolean) => Promise<boolean>;
   field: Field;
   galvoParameters: GalvoParameters;
   info: PromarkInfo;
@@ -146,11 +146,11 @@ interface Props {
 }
 
 // Dev-only tools for the production line
-const stopOnClose = async () => {
+const stopMachine = async () => {
   try {
     await deviceMaster.stop();
   } catch (error) {
-    console.error('Failed to stop the machine on close', error);
+    console.error('Failed to stop the machine', error);
   }
 };
 
@@ -180,6 +180,9 @@ const DevControlBlock = ({
   // Handlers await (stopping the preview, applying the lens) before they send their command; a dialog
   // closed meanwhile must not get an axis moving or a pulse fired after it is gone.
   const isUnmountedRef = useRef(false);
+  // Bumped by every axis move and by Stop: a move whose id is no longer current was stopped (or
+  // replaced) while it waited, and must not start
+  const moveIdRef = useRef(0);
   const isBusy = movingAxis !== null || isRunning;
 
   const setMoving = (axis: 'a' | 'z' | null) => {
@@ -194,26 +197,29 @@ const DevControlBlock = ({
 
       // An axis move runs for as long as its distance takes (up to about half a minute) and only this
       // block can stop it: closing the dialog or switching the lens mid-move must not leave it running.
-      if (isMovingRef.current) stopOnClose();
+      if (isMovingRef.current) stopMachine();
     },
     [],
   );
 
   const handleMove = async (axis: 'a' | 'z', distance: number) => {
     const speed = axis === 'z' ? controlConfig.zSpeed : A_SPEED;
+    const id = ++moveIdRef.current;
+    const isCancelled = () => isUnmountedRef.current || moveIdRef.current !== id;
 
     setMoving(axis);
     try {
       await stopPreview();
 
-      if (isUnmountedRef.current) return;
+      if (isCancelled()) return;
 
       if (axis === 'z') await deviceMaster.adjustZAxis(distance);
       else await deviceMaster.adjustAAxis(distance);
 
-      // closed while the move was being sent: the stop from the cleanup may have reached the machine first
-      if (isUnmountedRef.current) {
-        await stopOnClose();
+      // Stopped or closed while the move was being sent: that stop may have reached the machine before
+      // the move did, so stop once more
+      if (isCancelled()) {
+        await stopMachine();
 
         return;
       }
@@ -226,6 +232,8 @@ const DevControlBlock = ({
   };
 
   const handleStop = async () => {
+    // cancels a move still waiting to be sent
+    moveIdRef.current += 1;
     try {
       await deviceMaster.stop();
       await deviceMaster.waitTillStatusPredicate({
@@ -243,10 +251,11 @@ const DevControlBlock = ({
     setIsRunning(true);
     try {
       await stopPreview();
-      // the red light lands where the red dot parameters put it
-      await applyParameters(true);
 
       if (isUnmountedRef.current) return;
+
+      // the red light lands where the red dot parameters put it
+      if (!(await applyParameters(true)) || isUnmountedRef.current) return;
 
       await deviceMaster.go(new Blob([generateMoveTask({ ...position, width })]));
     } catch (error) {
@@ -267,9 +276,10 @@ const DevControlBlock = ({
     setIsRunning(true);
     try {
       await stopPreview();
-      await applyParameters(false);
 
       if (isUnmountedRef.current) return;
+
+      if (!(await applyParameters(false)) || isUnmountedRef.current) return;
 
       await deviceMaster.doCalibration({ blob: new Blob([task]) });
     } catch (error) {

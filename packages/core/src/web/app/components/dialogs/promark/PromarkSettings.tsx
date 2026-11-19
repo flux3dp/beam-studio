@@ -94,17 +94,36 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
     await loadTaskToSwiftray(markTask.current, model, width);
   }, [model, width, power, speed]);
 
-  const handleUpdateParameter = async (shouldApplyRedDot = false) => {
-    if (shouldApplyRedDot) {
-      const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
+  // Lens writes run one at a time, and none starts once the dialog is closing: a write still waiting
+  // (e.g. a dev Move behind its preview stop) must not land after the restore of Cancel or Save.
+  const isClosingRef = useRef(false);
+  const lensWriteQueue = useRef<Promise<unknown>>(Promise.resolve());
 
-      await deviceMaster.setField(width, newField);
-      await deviceMaster.setGalvoParameters(newGalvo);
-    } else {
-      await deviceMaster.setField(width, field);
-      await deviceMaster.setGalvoParameters(galvoParameters);
-    }
+  const queueLensWrite = <T,>(write: () => Promise<T>): Promise<T> => {
+    const run = lensWriteQueue.current.then(write, write);
+
+    lensWriteQueue.current = run.catch(() => {});
+
+    return run;
   };
+
+  /** @returns false when the dialog is closing and nothing was sent */
+  const handleUpdateParameter = (shouldApplyRedDot = false): Promise<boolean> =>
+    queueLensWrite(async () => {
+      if (isClosingRef.current) return false;
+
+      if (shouldApplyRedDot) {
+        const { field: newField, galvoParameters: newGalvo } = applyRedDot(redDot, field, galvoParameters);
+
+        await deviceMaster.setField(width, newField);
+        await deviceMaster.setGalvoParameters(newGalvo);
+      } else {
+        await deviceMaster.setField(width, field);
+        await deviceMaster.setGalvoParameters(galvoParameters);
+      }
+
+      return true;
+    });
 
   useEffect(() => {
     const abortPreview = () => setIsPreviewing(false);
@@ -162,19 +181,22 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
 
     const store = lens.save();
 
-    try {
-      if (isPreviewing) {
-        await deviceMaster.stopFraming();
+    isClosingRef.current = true;
+    await queueLensWrite(async () => {
+      try {
+        if (isPreviewing) {
+          await deviceMaster.stopFraming();
+        }
+
+        // the machine keeps what the current document applies, whichever lens was edited
+        const applied = resolveLensProfile(store, documentProfile.key, info.laserType);
+
+        await deviceMaster.setField(documentWidth, applied.field ?? defaultField);
+        await deviceMaster.setGalvoParameters(applied.galvoParameters ?? defaultGalvoParameters);
+      } catch (error) {
+        console.error('Failed to apply promark settings state', error);
       }
-
-      // the machine keeps what the current document applies, whichever lens was edited
-      const applied = resolveLensProfile(store, documentProfile.key, info.laserType);
-
-      await deviceMaster.setField(documentWidth, applied.field ?? defaultField);
-      await deviceMaster.setGalvoParameters(applied.galvoParameters ?? defaultGalvoParameters);
-    } catch (error) {
-      console.error('Failed to apply promark settings state', error);
-    }
+    });
 
     await uploadLensCloudData({ hash: hashedSerial, info, model, serial, store });
 
@@ -195,7 +217,8 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
       }
     };
 
-    restore();
+    isClosingRef.current = true;
+    queueLensWrite(restore);
     onClose();
   };
 
