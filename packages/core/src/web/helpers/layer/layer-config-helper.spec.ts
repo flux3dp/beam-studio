@@ -430,6 +430,19 @@ describe('test layer-config-helper', () => {
       expect(getDefaultConfig()).toMatchObject({ frequency: 27, power: 15 });
     });
 
+    test.each([
+      [LaserType.Desktop, 20, 27, 500],
+      [LaserType.Desktop, 30, 30, 500],
+      [LaserType.Desktop, 50, 45, 500],
+      [LaserType.MOPA, 20, 25, 500],
+      [LaserType.MOPA, 60, 40, 500],
+      [LaserType.MOPA, 100, 55, 500],
+      [LaserType.UV, 5, 200, 13],
+    ])('source defaults of laser type %p %pW', (laserType, watt, frequency, pulseWidth) => {
+      mockGetPromarkInfo.mockReturnValue({ laserType, watt });
+      expect(getDefaultConfig()).toMatchObject({ frequency, pulseWidth });
+    });
+
     test('applyPreset derives the frequency from a preset with only power', () => {
       const layer = createUvLayer();
 

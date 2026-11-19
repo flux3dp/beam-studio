@@ -10,12 +10,16 @@ import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import deviceConstants from '@core/app/constants/device-constants';
-import { controlConfig, LaserType } from '@core/app/constants/promark-constants';
+import { controlConfig } from '@core/app/constants/promark-constants';
 import UnitInput from '@core/app/widgets/UnitInput';
-import { calculateGalvoScale, generateMoveTask, generatePulseTask } from '@core/helpers/device/promark/dev-control';
+import {
+  calculateGalvoScale,
+  generateMoveTask,
+  generatePulseTask,
+  getPulseLaserSettings,
+} from '@core/helpers/device/promark/dev-control';
 import { generateFactoryTestCard, getFactoryTestCardName } from '@core/helpers/device/promark/factory-test-card';
 import deviceMaster from '@core/helpers/device-master';
-import { getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { Field, GalvoParameters, PromarkInfo, RedDot } from '@core/interfaces/Promark';
@@ -163,24 +167,50 @@ const DevControlBlock = ({
   const [pulse, setPulse] = useState({ power: 50, time: 100 });
   const [measured, setMeasured] = useState({ x: width, y: width });
   const movingTimeout = useRef<NodeJS.Timeout>(undefined);
+  // read by the unmount cleanup, which only sees the state of the first render
+  const isMovingRef = useRef(false);
   const isBusy = movingAxis !== null || isRunning;
 
-  useEffect(() => () => clearTimeout(movingTimeout.current), []);
+  const setMoving = (axis: 'a' | 'z' | null) => {
+    isMovingRef.current = axis !== null;
+    setMovingAxis(axis);
+  };
+
+  useEffect(
+    () => () => {
+      clearTimeout(movingTimeout.current);
+
+      // An axis move runs for as long as its distance takes (up to about half a minute) and only this
+      // block can stop it: closing the dialog or switching the lens mid-move must not leave it running.
+      if (isMovingRef.current) {
+        const stop = async () => {
+          try {
+            await deviceMaster.stop();
+          } catch (error) {
+            console.error('Failed to stop the axis on close', error);
+          }
+        };
+
+        stop();
+      }
+    },
+    [],
+  );
 
   const handleMove = async (axis: 'a' | 'z', distance: number) => {
     const speed = axis === 'z' ? controlConfig.zSpeed : A_SPEED;
 
-    setMovingAxis(axis);
+    setMoving(axis);
     try {
       await stopPreview();
 
       if (axis === 'z') await deviceMaster.adjustZAxis(distance);
       else await deviceMaster.adjustAAxis(distance);
 
-      movingTimeout.current = setTimeout(() => setMovingAxis(null), (Math.abs(distance) * 1000) / speed + 500);
+      movingTimeout.current = setTimeout(() => setMoving(null), (Math.abs(distance) * 1000) / speed + 500);
     } catch (error) {
       console.error('Failed to move the axis', axis, error);
-      setMovingAxis(null);
+      setMoving(null);
     }
   };
 
@@ -194,7 +224,7 @@ const DevControlBlock = ({
       console.error('Failed to stop the axis', error);
     } finally {
       clearTimeout(movingTimeout.current);
-      setMovingAxis(null);
+      setMoving(null);
     }
   };
 
@@ -213,12 +243,10 @@ const DevControlBlock = ({
   };
 
   const handlePulse = async () => {
-    const defaultConfig = getDefaultConfig();
     const task = generatePulseTask({
       ...position,
       ...pulse,
-      frequency: defaultConfig.frequency ?? 27,
-      pulseWidth: info.laserType === LaserType.MOPA ? (defaultConfig.pulseWidth ?? 500) : undefined,
+      ...getPulseLaserSettings(info, pulse.power),
       width,
     });
 

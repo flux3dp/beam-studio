@@ -1,5 +1,6 @@
-import { controlConfig } from '@core/app/constants/promark-constants';
-import type { GalvoParameters } from '@core/interfaces/Promark';
+import { controlConfig, getPromarkSourceDefaults, LaserType } from '@core/app/constants/promark-constants';
+import { uvPowerToFrequency } from '@core/helpers/layer/uvPowerFrequency';
+import type { GalvoParameters, PromarkInfo } from '@core/interfaces/Promark';
 
 export interface PulseParameters {
   /** kHz */
@@ -16,6 +17,24 @@ export interface PulseParameters {
   x: number;
   y: number;
 }
+
+/**
+ * Frequency and pulse width of a pulse at `power` % on the machine being set up, from its laser source
+ * rather than the current document. UV sets its output through the frequency (it ignores the power
+ * value, and anything at or below 40kHz is full output), so its frequency follows the power.
+ */
+export const getPulseLaserSettings = (
+  info: PromarkInfo,
+  power: number,
+): Pick<PulseParameters, 'frequency' | 'pulseWidth'> => {
+  const { frequency, pulseWidth } = getPromarkSourceDefaults(info);
+
+  if (info.laserType === LaserType.UV) {
+    return { frequency: Number(uvPowerToFrequency(power).toFixed(2)), pulseWidth };
+  }
+
+  return { frequency, pulseWidth: info.laserType === LaserType.MOPA ? pulseWidth : undefined };
+};
 
 /** mm, see getJumpLines */
 const APPROACH_OFFSET = 0.1;

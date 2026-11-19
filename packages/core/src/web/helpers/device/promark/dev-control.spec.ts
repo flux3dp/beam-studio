@@ -1,4 +1,6 @@
-import { calculateGalvoScale, generateMoveTask, generatePulseTask } from './dev-control';
+import { LaserType } from '@core/app/constants/promark-constants';
+
+import { calculateGalvoScale, generateMoveTask, generatePulseTask, getPulseLaserSettings } from './dev-control';
 
 describe('test promark dev-control', () => {
   test('generatePulseTask', () => {
@@ -11,6 +13,25 @@ describe('test promark dev-control', () => {
     expect(generatePulseTask({ frequency: 30, power: 12.5, time: 50, width: 70, x: 0, y: 70 })).toBe(
       'M104\nM5\nG90\nW70\nM3S0\nQ30\nT50\nG1F240000X0.1Y69.9S0\nG1F240000X0Y70S0\nS125\nT0\nM2\n',
     );
+  });
+
+  test('getPulseLaserSettings follows the machine, not the document', () => {
+    expect(getPulseLaserSettings({ laserType: LaserType.MOPA, watt: 60 }, 50)).toEqual({
+      frequency: 40,
+      pulseWidth: 500,
+    });
+    expect(getPulseLaserSettings({ laserType: LaserType.Desktop, watt: 20 }, 50)).toEqual({
+      frequency: 27,
+      pulseWidth: undefined,
+    });
+  });
+
+  test('getPulseLaserSettings sets the UV output through the frequency', () => {
+    // full output is 40kHz; anything at or below it would fire at 100%
+    expect(getPulseLaserSettings({ laserType: LaserType.UV, watt: 5 }, 100)).toEqual({ frequency: 40, pulseWidth: 13 });
+    // halfway between 100kHz (2.2W) and 120kHz (1.8W) of 4.5W
+    expect(getPulseLaserSettings({ laserType: LaserType.UV, watt: 5 }, 44.444).frequency).toBeCloseTo(110, 1);
+    expect(getPulseLaserSettings({ laserType: LaserType.UV, watt: 5 }, 1)).toEqual({ frequency: 200, pulseWidth: 13 });
   });
 
   test('generateMoveTask', () => {

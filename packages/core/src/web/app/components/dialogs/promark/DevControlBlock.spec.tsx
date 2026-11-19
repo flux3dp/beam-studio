@@ -22,10 +22,6 @@ jest.mock('@core/helpers/device-master', () => ({
   waitTillStatusPredicate: (...args) => mockWaitTillStatusPredicate(...args),
 }));
 
-jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  getDefaultConfig: () => ({ frequency: 30, pulseWidth: 350 }),
-}));
-
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
 
@@ -153,7 +149,7 @@ describe('test DevControlBlock', () => {
     const { blob } = mockDoCalibration.mock.calls[0][0];
 
     expect(await readBlob(blob)).toBe(
-      'M104\nM5\nG90\nW110\nM3S0\nQ30\nP350\nT100\nG1F240000X54.9Y54.9S0\nG1F240000X55Y55S0\nS500\nT0\nM2\n',
+      'M104\nM5\nG90\nW110\nM3S0\nQ40\nP500\nT100\nG1F240000X54.9Y54.9S0\nG1F240000X55Y55S0\nS500\nT0\nM2\n',
     );
   });
 
@@ -197,6 +193,48 @@ describe('test DevControlBlock', () => {
     fireEvent.change(getByTestId('dev-move-x'), { target: { value: '0' } });
     fireEvent.blur(getByTestId('dev-move-x'));
     expect(getByTestId('dev-move-point-6')).toBeChecked();
+  });
+
+  it('should fire a UV pulse at the frequency its power stands for', async () => {
+    const { getByTestId } = render(
+      <DevControlBlock
+        applyParameters={mockApplyParameters}
+        field={field}
+        galvoParameters={galvoParameters}
+        info={{ laserType: LaserType.UV, watt: 5 }}
+        redDot={redDot}
+        serial="CARD1234"
+        setGalvoParameters={mockSetGalvoParameters}
+        stopPreview={mockStopPreview}
+        width={70}
+      />,
+    );
+
+    fireEvent.change(getByTestId('dev-pulse-power'), { target: { value: '15.6' } });
+    fireEvent.blur(getByTestId('dev-pulse-power'));
+    await act(async () => fireEvent.click(getByTestId('dev-pulse-fire')));
+
+    const task = (await readBlob(mockDoCalibration.mock.calls[0][0].blob)) as string;
+
+    expect(task).toMatch(/\nQ19\d(\.\d+)?\nP13\n/);
+    expect(task).not.toMatch(/\nQ([0-3]\d|40)\n/);
+  });
+
+  it('should stop a moving axis when the block is closed', async () => {
+    const { getByTestId, unmount } = renderBlock();
+
+    await act(async () => fireEvent.click(getByTestId('dev-z-positive')));
+    unmount();
+    expect(mockStop).toHaveBeenCalledTimes(1);
+  });
+
+  it('should not stop the machine on close when no axis is moving', async () => {
+    const { getByTestId, unmount } = renderBlock();
+
+    await act(async () => fireEvent.click(getByTestId('dev-z-positive')));
+    act(() => jest.runAllTimers());
+    unmount();
+    expect(mockStop).not.toHaveBeenCalled();
   });
 
   it('should ask to retry when the door is open', async () => {
