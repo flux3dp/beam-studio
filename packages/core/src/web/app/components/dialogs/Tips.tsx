@@ -1,6 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react';
 
 import { Carousel } from 'antd';
+import { flushSync } from 'react-dom';
 
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
@@ -51,15 +52,46 @@ const Tips = () => {
   const lang = useI18n().tips;
   const workarea = useWorkarea();
   const tips = useMemo(() => getTips(workarea).map((key) => lang[key]), [workarea, lang]);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [hasWidth, setHasWidth] = useState(false);
+
+  // The carousel measures its width once when it mounts and gives every slide that width. A modal
+  // renders its content while still hidden, so it would measure 0 and stack the text one character
+  // per line until its debounced resize handler runs, which can wait for seconds while the export
+  // keeps the main thread busy. Mount it only once the container has been laid out.
+  useLayoutEffect(() => {
+    const container = containerRef.current;
+
+    if (!container || container.offsetWidth > 0 || typeof ResizeObserver === 'undefined') {
+      setHasWidth(true);
+
+      return undefined;
+    }
+
+    const observer = new ResizeObserver(() => {
+      if (container.offsetWidth === 0) return;
+
+      observer.disconnect();
+      flushSync(() => setHasWidth(true));
+    });
+
+    observer.observe(container);
+
+    return () => observer.disconnect();
+  }, []);
 
   return (
-    <Carousel autoplay autoplaySpeed={10000} className={styles.tips} dots={false} fade speed={300}>
-      {tips.map((tip, i) => (
-        <div key={i}>
-          {lang.tips} {tip}
-        </div>
-      ))}
-    </Carousel>
+    <div className={styles.tips} ref={containerRef}>
+      {hasWidth && (
+        <Carousel autoplay autoplaySpeed={10000} dots={false} fade speed={300}>
+          {tips.map((tip, i) => (
+            <div key={i}>
+              {lang.tips} {tip}
+            </div>
+          ))}
+        </Carousel>
+      )}
+    </div>
   );
 };
 
