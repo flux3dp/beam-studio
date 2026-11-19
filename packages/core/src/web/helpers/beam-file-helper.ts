@@ -368,6 +368,37 @@ const generateBeamBuffer = (
   return buffer;
 };
 
+/**
+ * A .beam holding only `svgString`, with no image sources, thumbnail or misc data. Unlike
+ * generateBeamBuffer it reads nothing from the open document, so it can build a file that was never
+ * on the canvas.
+ */
+const generateSvgOnlyBeamBuffer = (svgString: string): Buffer => {
+  const signatureBuffer = Buffer.from([66, 101, 97, 109, 2]);
+  const svgBlockBuf = generateSvgBlockBuffer(svgString);
+  const imageSourceBlockBuffer = generateBinarySourceBlockBuffer('imageSource', {});
+  const miscDataBuffer = generateMiscDataBlockBuffer({});
+  const metaDataBuf = Buffer.from(JSON.stringify({ contents: [1, 2, 4], version: window.FLUX?.version }));
+  const headerBuffer = Buffer.concat([
+    valueToVIntBuffer(metaDataBuf.length),
+    metaDataBuf,
+    valueToVIntBuffer(svgBlockBuf.length),
+    valueToVIntBuffer(imageSourceBlockBuffer.length),
+    valueToVIntBuffer(0),
+    valueToVIntBuffer(miscDataBuffer.length),
+  ]);
+
+  return Buffer.concat([
+    signatureBuffer,
+    valueToVIntBuffer(headerBuffer.length),
+    headerBuffer,
+    svgBlockBuf,
+    imageSourceBlockBuffer,
+    miscDataBuffer,
+    Buffer.from([0x00]),
+  ]);
+};
+
 const readHeader = (headerBuf: Buffer) => {
   let vInt;
   let offset = 0;
@@ -825,6 +856,7 @@ const readBvgFileInfo = async (file: File): Promise<{ thumbnail: string; workare
 
 export default {
   generateBeamBuffer,
+  generateSvgOnlyBeamBuffer,
   readBeam,
   readBeamFileInfo,
   readBvgFileInfo,

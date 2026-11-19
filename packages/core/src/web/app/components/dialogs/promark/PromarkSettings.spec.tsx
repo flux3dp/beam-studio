@@ -2,6 +2,7 @@ import React, { act } from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import isDev from '@core/helpers/is-dev';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import PromarkSettings from './PromarkSettings';
@@ -45,6 +46,21 @@ jest.mock(
 jest.mock('./RedDotBlock', () => () => <div>Mock RedDotBlock</div>);
 jest.mock('./LensBlock', () => () => <div>Mock LensBlock</div>);
 jest.mock('./ParametersBlock', () => () => <div>Mock ParametersBlock</div>);
+jest.mock('./DevControlBlock', () => ({ serial, width }) => (
+  <div>
+    Mock DevControlBlock {serial} {width}
+  </div>
+));
+
+// some modules read the flag at import time, before a `const mockIsDev` would be initialized
+jest.mock('@core/helpers/is-dev', () => ({
+  __esModule: true,
+  default: jest.fn(() => false),
+  isParamsLabelDev: () => false,
+  isUvDev: () => true,
+}));
+
+const mockIsDev = isDev as jest.Mock;
 
 const mockCheckDeviceStatus = jest.fn();
 
@@ -155,6 +171,19 @@ describe('test PromarkSettings', () => {
     mockPromarkGet.mockReturnValue({});
     mockReadLensCloudData.mockResolvedValue(null);
     mockPopUp.mockReset();
+    mockIsDev.mockReturnValue(false);
+  });
+
+  it('should show the machine control block only in dev mode', () => {
+    const { queryByText, rerender } = render(
+      <PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />,
+    );
+
+    expect(queryByText(/Mock DevControlBlock/)).not.toBeInTheDocument();
+
+    mockIsDev.mockReturnValue(true);
+    rerender(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
+    expect(queryByText(`Mock DevControlBlock ${mockDevice.serial} 150`)).toBeInTheDocument();
   });
 
   it('should render correctly', () => {

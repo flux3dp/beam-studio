@@ -14,15 +14,21 @@ import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import applyRedDot from '@core/helpers/device/promark/apply-red-dot';
 import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers/device/promark/calibration';
-import { getDocumentLensProfileKey, resolveLensProfile } from '@core/helpers/device/promark/lens-profiles';
+import {
+  getDocumentLensProfileKey,
+  getLensProfileId,
+  resolveLensProfile,
+} from '@core/helpers/device/promark/lens-profiles';
 import { uploadLensCloudData } from '@core/helpers/device/promark/lens-profiles-cloud';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
+import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PromarkInfo, PromarkStore } from '@core/interfaces/Promark';
 
 import blockStyles from './Block.module.scss';
+import DevControlBlock from './DevControlBlock';
 import FieldBlock from './FieldBlock';
 import LensBlock from './LensBlock';
 import LensProfileBlock from './LensProfileBlock';
@@ -122,14 +128,17 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
     }
   };
 
-  const handleMark = async () => {
-    if (isPreviewing) {
-      await deviceMaster.stopFraming();
-      setIsPreviewing(false);
-      // Wait 0.5s to ensure stop before start in swiftray
-      await new Promise((resolve) => setTimeout(resolve, 500));
-    }
+  const stopPreview = async () => {
+    if (!isPreviewing) return;
 
+    await deviceMaster.stopFraming();
+    setIsPreviewing(false);
+    // Wait 0.5s to ensure stop before start in swiftray
+    await new Promise((resolve) => setTimeout(resolve, 500));
+  };
+
+  const handleMark = async () => {
+    await stopPreview();
     await uploadMarkTask();
     await handleUpdateParameter();
     try {
@@ -229,6 +238,10 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
       maskClosable={false}
       onCancel={handleCancel}
       open
+      styles={{
+        body: { flex: '1 1 auto', minHeight: 0, overflowX: 'hidden', overflowY: 'auto' },
+        content: { display: 'flex', flexDirection: 'column', maxHeight: '80vh' },
+      }}
       title={t.title}
       width={620}
     >
@@ -252,6 +265,20 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
           <div className={blockStyles.title}>{t.mark_parameters}</div>
           <ParametersBlock isInch={isInch} parameters={parameters} setParameters={setParameters} />
         </Flex>
+        {isDev() && (
+          <DevControlBlock
+            applyParameters={handleUpdateParameter}
+            field={field}
+            galvoParameters={galvoParameters}
+            info={info}
+            key={getLensProfileId(lens.lensKey)}
+            redDot={redDot}
+            serial={serial}
+            setGalvoParameters={lens.setGalvoParameters}
+            stopPreview={stopPreview}
+            width={width}
+          />
+        )}
       </div>
     </Modal>
   );

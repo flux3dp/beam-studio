@@ -71,6 +71,11 @@
     &::after {
       content: ':';
     }
+
+    // no break between CJK characters (功率 would wrap into two lines); spaced languages still wrap
+    &.keep-words {
+      word-break: keep-all;
+    }
   }
 
   .tooltip {

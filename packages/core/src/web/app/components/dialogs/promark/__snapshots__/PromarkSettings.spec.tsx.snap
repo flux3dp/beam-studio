@@ -27,6 +27,7 @@ exports[`test PromarkSettings should render correctly 1`] = `
           >
             <div
               class="ant-modal-content"
+              style="display: flex; flex-direction: column; max-height: 80vh;"
             >
               <button
                 aria-label="Close"
@@ -70,6 +71,7 @@ exports[`test PromarkSettings should render correctly 1`] = `
               </div>
               <div
                 class="ant-modal-body"
+                style="flex: 1 1 auto; min-height: 0; overflow-x: hidden; overflow-y: auto;"
               >
                 <div
                   class="container"

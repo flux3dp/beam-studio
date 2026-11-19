@@ -1,0 +1,40 @@
+.label {
+  flex: 0 0 60px;
+  font-weight: bold;
+}
+
+.serial {
+  font-family: monospace;
+  user-select: text;
+}
+
+.test-card {
+  margin-left: auto;
+}
+
+.input {
+  width: 100px;
+}
+
+// label | title | input | title | input | button, so the titles and inputs of every row line up
+.grid {
+  display: grid;
+  grid-template-columns: 60px auto auto auto auto auto;
+  justify-content: start;
+  align-items: center;
+  gap: 12px 8px;
+
+  .hint {
+    grid-column: 1 / -1;
+  }
+
+  // the scale rows put the change where the second title and input are in the other rows
+  .scale-change {
+    grid-column: span 2;
+  }
+
+  .scale-apply {
+    grid-column: 6;
+    grid-row: span 2;
+  }
+}

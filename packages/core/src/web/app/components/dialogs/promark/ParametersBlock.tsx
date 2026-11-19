@@ -31,7 +31,7 @@ const ParametersBlock = ({ isInch, parameters: { power, speed }, setParameters }
     <>
       <Flex align="center" gap={20} justify="space-between">
         <Flex align="center" className={styles.row} gap={12} justify="space-between">
-          <span className={styles.label}>{tLaserPanel.strength}</span>
+          <span className={classNames(styles.label, styles['keep-words'])}>{tLaserPanel.strength}</span>
           <UnitInput
             addonAfter="%"
             className={classNames(styles.input, styles.short)}
@@ -45,7 +45,7 @@ const ParametersBlock = ({ isInch, parameters: { power, speed }, setParameters }
           />
         </Flex>
         <Flex align="center" className={styles.row} gap={12} justify="space-between">
-          <span className={styles.label}>{tLaserPanel.speed}</span>
+          <span className={classNames(styles.label, styles['keep-words'])}>{tLaserPanel.speed}</span>
           <UnitInput
             addonAfter={isInch ? 'in/s' : 'mm/s'}
             className={styles.input}

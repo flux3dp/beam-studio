@@ -1894,6 +1894,13 @@ class DeviceMaster {
     await this.go(blob);
   };
 
+  public adjustAAxis = async (a: number) => {
+    // the A position restarts from 0 with every M3, so A is the distance of this move
+    const blob: Blob = new Blob([`M103\nM3\nM101\nA${a}\nM2\n`]);
+
+    await this.go(blob);
+  };
+
   public checkButton = async () => {
     const controlSocket = await this.getControl();
 

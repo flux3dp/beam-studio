@@ -11,7 +11,7 @@ exports[`test ParametersBlock should render correctly 1`] = `
       style="gap: 12px;"
     >
       <span
-        class="label"
+        class="label keep-words"
       >
         Power
       </span>
@@ -40,7 +40,7 @@ exports[`test ParametersBlock should render correctly 1`] = `
       style="gap: 12px;"
     >
       <span
-        class="label"
+        class="label keep-words"
       >
         Speed
       </span>

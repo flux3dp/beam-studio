@@ -223,3 +223,44 @@ describe('beam-file-helper point cloud block', () => {
     expect(mockSyncStlObjectsWithDom).toHaveBeenCalledWith([]);
   });
 });
+
+describe('beam-file-helper generateSvgOnlyBeamBuffer', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('writes only the svg, empty image source and misc blocks, and reads back the svg', async () => {
+    const svgString = '<svg id="svgcontent"><text>測試 1.005</text></svg>';
+    const beam = beamFileHelper.generateSvgOnlyBeamBuffer(svgString);
+
+    expect(beam.toString('utf8', 0, 4)).toBe('Beam');
+
+    const headerLength = readVInt(beam, 5);
+    const metadataLength = readVInt(beam, headerLength.offset);
+    const metadata = JSON.parse(
+      beam.toString('utf8', metadataLength.offset, metadataLength.offset + metadataLength.value),
+    );
+
+    expect(metadata.contents).toEqual([1, 2, 4]);
+
+    const blockTypes: number[] = [];
+    let offset = headerLength.offset + headerLength.value;
+
+    while (beam.readUInt8(offset) !== 0) {
+      const type = beam.readUInt8(offset++);
+      const length = readVInt(beam, offset);
+
+      blockTypes.push(type);
+      offset = length.offset + length.value;
+    }
+
+    expect(blockTypes).toEqual([1, 2, 4]);
+    expect(offset).toBe(beam.length - 1);
+
+    document.body.innerHTML = '<svg id="svgcontent"></svg>';
+    await beamFileHelper.readBeam(new File([beam], 'card.beam'));
+
+    expect(mockImportBvgString).toHaveBeenCalledTimes(1);
+    expect(mockImportBvgString.mock.calls[0][0]).toBe(svgString);
+  });
+});
