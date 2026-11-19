@@ -2,13 +2,13 @@
 
 | | |
 |---|---|
-| **Status** | Draft. No product code yet. Step 0 done on two `fbm2` units and one `fbb2` wide-angle camera (§11); prior-free matcher prototyped (§7.3, decision 2 settled); on `fbm2` another unit's `k` / `d` works without ChArUco (decision 8); more units pending |
+| **Status** | In progress. `fbm2` implemented on `feat/auto-solve-pnp` (beam-studio) and `feat/auto-pnp` (fluxghost) and passed on the three office units with each unit's own `k` / `d` (§11). The matcher also handles the 8-mark layouts, checked offline on photos of one `fbb2`, one `fhx2rf` and one `ado1`; their dialogs are not wired yet. Pending: other languages, Jest spec, the untested failure paths (§12), decisions 8 and 10 to 12 (Promark needs detector work) |
 | **Author** | Beam Studio team |
 | **Created** | 2026-11-16 |
 | **Target product** | Beam Studio (desktop + web), fluxghost (next tag after 2.5.8) |
 | **Owner area** | Camera calibration dialogs, fluxghost camera calibration API |
-| **Related code** | Dialog: `packages/core/src/web/app/components/dialogs/camera/beamo2Calibration/Beamo2Calibration.tsx`, `camera/common/SolvePnP.tsx`, `camera/common/useCamera.ts`, `camera/common/ProcessingDialog.tsx`, `camera/common/CheckPnP.tsx`; API client: `packages/core/src/web/helpers/api/camera-calibration.ts`; constants: `packages/core/src/web/app/constants/fisheyeCameraConstants.ts` (`bm2PnPPoints`, `getRegionalPoints`); exposure: `packages/core/src/web/helpers/device/camera/cameraExposure.ts`; engraving task: `packages/core/src/web/helpers/device-master.ts` (`doBeamo2Calibration`, `fcode/bm2-calibration.fc`) |
-| **External repos** | fluxghost: `fluxghost/api/camera_calibration.py`, `fluxghost/utils/camera/corner_detection/find_corners.py`, `corner_detection/match_points.py`, `utils/camera/solve_pnp.py`, `docs/api/camera-calibration.md`, `tests/usage/test_camera_match_points.py`, `tools/ws_smoke.py` |
+| **Related code** | Dialog: `packages/core/src/web/app/components/dialogs/camera/beamo2Calibration/Beamo2Calibration.tsx`, `beamo2Calibration/autoSolvePnP.ts`, `camera/common/SolvePnP.tsx`, `camera/common/useCamera.ts`, `camera/common/ProcessingDialog.tsx`, `camera/common/CheckPnP.tsx`; API client: `packages/core/src/web/helpers/api/camera-calibration.ts`; constants: `packages/core/src/web/app/constants/fisheyeCameraConstants.ts` (`bm2PnPPoints`, `getRegionalPoints`); exposure: `packages/core/src/web/helpers/device/camera/cameraExposure.ts`; engraving task: `packages/core/src/web/helpers/device-master.ts` (`doBeamo2Calibration`, `fcode/bm2-calibration.fc`, source `resources/calibration-tasks/bm2-calibration.beam`) |
+| **External repos** | fluxghost: `fluxghost/utils/camera/auto_pnp.py`, `tests/usage/test_auto_pnp.py`, `fluxghost/api/camera_calibration.py`, `fluxghost/utils/camera/corner_detection/find_corners.py`, `corner_detection/match_points.py`, `utils/camera/solve_pnp.py`, `docs/api/camera-calibration.md`, `tests/usage/test_camera_match_points.py`, `tools/ws_smoke.py` |
 
 ---
 
@@ -20,8 +20,9 @@ laser coordinate to compute the camera pose (`rvec`, `tvec`). Today the pairing 
 semi-automatic. fluxghost proposes mark positions and the user confirms or drags each one. On
 beamo II (`fbm2`) that is four dialogs of four marks each.
 
-This PRD makes the pairing fully automatic on beamo II first: one engraving, a few photos at
-different exposures, no user interaction between "Start Engrave" and the final check. There is
+This PRD makes the pairing fully automatic on beamo II first: one engraving, two photos at
+different exposures (five more only when marks are missing), no user interaction between
+"Start Engrave" and the final check. There is
 no manual-drag fallback. The outcome is either a solved calibration or a failure with a stated
 reason and a retry.
 
@@ -33,8 +34,8 @@ Three design choices drive the rest:
    new engraving pattern is needed.
 2. **Guard in bed coordinates, not in image pixels.** Camera mounting varies per unit, so a
    pixel region of interest cannot be tight and always includes parts of the enclosure. The
-   guards are the reprojection residual against the planar model and the bed position of each
-   blob. Both are independent of the mounting angle.
+   guards are the distance of each blob from a mark position on the bed and the residual
+   against the planar model. Both are independent of the mounting angle.
 3. **New fluxghost commands, existing ones untouched.** The manual flow of the other machines
    keeps `solve_pnp_find_corners` and `solve_pnp_calculate` exactly as they are.
 
@@ -120,10 +121,11 @@ quality measure and it is not returned.
 **Non-goals**
 
 - Changing the intrinsic calibration (ChArUco) step.
-- Changing the engraved pattern or generating the task at run time (decision 3).
+- Changing the engraved pattern or generating the task at run time (decision 3). The mark
+  size is a separate question (decision 11).
 - Other machines in the first release (see §9 and open decision 1).
 - Removing the `SolvePnP` component. Other dialogs keep using it.
-- Automatic exposure search. A fixed bracket per model is enough.
+- Automatic exposure search. Two fixed rounds per model are enough (decision 7).
 
 ---
 
@@ -175,9 +177,9 @@ confirms it. The marks used for the solve only give a lower bound (each region p
 to them), so the number that counts comes from check marks engraved afterwards at positions
 between the calibration marks, measured the same way.
 
-**A7 Diagnosability.** On success and on failure, the console has one summary line per run:
-exposures used, blobs found per exposure, marks matched, rejected count, RMS residual per
-region. With fluxghost debug images enabled, the annotated photo is written like today
+**A7 Diagnosability.** On success and on failure, the console has one `[auto solve pnp]` line
+per matching attempt: number of exposures, marks matched, marks filled from weak blobs, RMS
+residual, failure reason. fluxghost logs the same as `[auto_pnp] match: ...`. With fluxghost debug images enabled, the annotated photo is written like today
 (`debug_imwrite`).
 
 **A8 Repeatability.** Run A1 five times on one unit without moving the paper. Result: the nine
@@ -192,8 +194,8 @@ Edge cases and expected behaviour:
 
 | Case | Expected |
 |---|---|
-| One mark hidden or burnt through | Fails with `NOT_ENOUGH_MARKS`, the missing mark is listed (open decision 5) |
-| Marks found at only one exposure | Solve proceeds on the union; fails by mark count if not enough |
+| One mark hidden or burnt through | Fails with `NOT_ENOUGH_MARKS`; the message gives the number of marks found (decision 5) |
+| Marks missing after the first round | The second round is shot and the match repeated on all photos; fails by mark count if still not enough |
 | Camera returns a frame error | Existing `useCamera` retry (2 attempts), then failure alert |
 | User closes the dialog during capture | Capture stops, machine released (`releaseMachine`), nothing saved |
 | Exposure cannot be set | Failure alert, exposure restored to its previous value |
@@ -209,15 +211,15 @@ Edge cases and expected behaviour:
 | `Beamo2Calibration.tsx` (solve steps replaced) | PRE_CHESSBOARD, CHESSBOARD, PUT_PAPER, SOLVE_OTHER_PNP, CHECK_PNP and the saved V4 parameter shape unchanged |
 | | `releaseMachine` on unmount and `DoorChecker` usage unchanged |
 | `fisheyeCameraConstants.ts` (read only, or a bracket table added) | `bm2PnPPoints`, `getRegionalPoints` — values and order unchanged, they define the saved region poses |
-| fluxghost `find_corners.py` (read only: the dark-blob filter is the existing `filterByColor` / `blobColor` arguments) | `camera_calibration.py:306,310` (manual find-corners) and `opencv.py:78` (`detect_blobs`, Print and Cut mark detection) — untouched |
+| fluxghost `find_corners.py` (not touched: `auto_pnp.py` builds its own detector with the same parameters plus the dark-blob filter) | `camera_calibration.py` manual find-corners and `opencv.py` (`detect_blobs`, Print and Cut mark detection) — untouched |
 | fluxghost `camera_calibration.py` (commands added, `solve_pnp_calculate` returns `rms`) | `solve_pnp_find_corners`, `solve_pnp_calculate` — command strings, arguments, existing response keys and the silent projected-point fallback unchanged |
 | | `tools/ws_smoke.py` — still ends `ALL PASS` |
 | `packages/core/src/web/app/lang/*.ts` (keys added) | No existing key renamed or removed |
 
 Not touched: `SolvePnP.tsx`, `LaserHeadFisheyeCalibration.tsx`, `WideAngleCamera/`,
-`AdorCalibration/`, `PromarkCalibration.tsx`, `device-master.ts`, `fcode/bm2-calibration.fc`,
-`match_points.py` (`match_projected_points` keeps its signature; the new matcher is a new
-function).
+`AdorCalibration/`, `PromarkCalibration.tsx`, `device-master.ts`, `match_points.py`
+(`match_projected_points` keeps its signature; the new matcher is a new module).
+`fcode/bm2-calibration.fc` changes only if decision 11 is taken; the mark positions stay.
 
 ---
 
@@ -229,15 +231,25 @@ SOLVE_PNP_INSTRUCTION and the four SOLVE_PNP_xx steps collapse into one AUTO_SOL
 built on `ProcessingDialog`:
 
 1. Door check and `moveLaserHead` as SOLVE_PNP_INSTRUCTION does today.
-2. For each exposure in the model's bracket: set exposure, take a photo, send it to
-   `auto_pnp_detect`, keep the returned blob list.
-3. Send all blob lists and the 16 reference points to `auto_pnp_match`.
+2. `autoSolvePnP` (`beamo2Calibration/autoSolvePnP.ts`) shoots in rounds, `EXPOSURE_ROUNDS` =
+   `[75, 200]` then `[50, 125, 350, 500, 800]`. For each exposure of a round: set exposure,
+   take a photo, send it to `auto_pnp_detect`, keep the returned `blobs` and `weak` lists.
+3. After each round, send every list collected so far and the 16 reference points to
+   `auto_pnp_match`. The second round is shot only when the first one ends with
+   `NOT_ENOUGH_MARKS`.
 4. On acceptance, write the 16 image points into `imgPoints1` grouped by quadrant exactly as the
    manual steps do, call `solvePnPCalculate` for the four quadrants, then continue to the
-   unchanged SOLVE_OTHER_PNP and CHECK_PNP.
+   unchanged SOLVE_OTHER_PNP and CHECK_PNP. CHECK_PNP's Back returns to PUT_PAPER when the pose
+   came from this step.
 5. On rejection, show the reason and return to PUT_PAPER.
 
-The exposure is restored in a `finally` block.
+The decision between this step and the manual ones is made inside `Beamo2Calibration.tsx` from
+the call's result: a backend that does not know `auto_pnp_detect` answers `UNSUPPORTED` and the
+flow continues at SOLVE_PNP_INSTRUCTION (decision 4). There is no switch to force the manual
+steps. The exposure is restored and the camera disconnected in a `finally` block.
+
+A run that ends with marks missing after seven photos spends 8 to 9 s in the matcher, which
+was accepted; a successful match takes no measurable time.
 
 **Gantry invariant.** On `fbm2` the camera rides on the gantry, so a pose is valid only for the
 gantry position the photos were taken at. Capture happens with the motors held at the position
@@ -255,91 +267,118 @@ preview will send at capture time and solves every pose with the marks at z = -h
 the polyfits are constant (slope rows all zero): the camera does not move with the bed, and a
 different object height is handled by z = -h geometrically. Ignoring the convention on the
 `fbb2` unit (marks at z = 0 while the preview sent h = -2.5) scaled the whole preview by about
-1.6% (§11).
+1.6% (§11). On `fbm2` the preview sends `height: 0` (`Beamo2PreviewManager.ts`), so the
+implemented flow solves at 0; the convention matters from the `fbb2` wide-angle camera on.
 
 ### 7.2 Blob detection (`auto_pnp_detect`)
 
 - Detection runs on the raw frame. No image remap: only the blob centres are undistorted
   (`cv2.fisheye.undistortPoints` with the frame padding applied), which is all the matcher
   needs.
-- `find_blob_centers` with today's parameters, restricted to dark blobs. No local contrast
-  normalisation: on the first unit it found the same marks and several times more stray blobs
-  (§11). `SimpleBlobDetector` already sweeps thresholds 10–200, so the brightness gradient
-  inside a photo is not what hides marks; over- and under-exposure are, and only another
-  exposure recovers those.
+- `SimpleBlobDetector` with the parameters of `find_blob_centers` (thresholds 10 to 200 in
+  steps of 10, area 15 to 1000 px, circularity ≥ 0.64, convexity ≥ 0.85), restricted to dark
+  blobs. No local contrast normalisation: on the first unit it found the same marks and
+  several times more stray blobs (§11). The detector already sweeps thresholds, so the
+  brightness gradient inside a photo is not what hides marks; over- and under-exposure are,
+  and only another exposure recovers those.
 - No interest-area crop. The whole frame is searched; filtering happens in §7.3.
-- Returns blob centres with their size and a contrast figure (background minus blob
-  brightness, with the background not saturated).
+- Returns `blobs`: centres with their size and a contrast figure (brightness of a ring around
+  the blob minus the blob).
+- Also returns `weak`: the same detection with the minimum area lowered from 15 to 4 px
+  (`WEAK_MIN_AREA`), nothing else changed. It holds the marks the normal detector misses
+  among hundreds of noise blobs (18 strong against 526 weak on one photo), and is only used
+  next to a predicted position (§7.3 step 4). Relaxing circularity and convexity found no
+  more faint marks; halving the threshold step found them at more exposures but quadrupled
+  the noise. Both were dropped.
 
-Bracketing covers the gradient between photos. Blobs from different exposures closer than a few
-pixels are the same mark. Keep the one from the exposure where it has the best contrast, not
-the first one seen: a mark is detectable over a wide exposure range (16× on the first unit) but
-its edge is clean only in the middle of that range.
+Bracketing covers the gradient between photos. Blobs from different exposures within 8 px
+(`SAME_MARK_PX`) are the same mark. Keep the one from the exposure where it has the best
+contrast, not the first one seen: a mark is detectable over a wide exposure range (16× on the
+first unit) but its edge is clean only in the middle of that range.
 
 ### 7.3 Matching and gating (`auto_pnp_match`)
 
 The bed is a plane, so undistorted image points and bed coordinates are related by one
-homography. That model needs no pose prior and no pixel constants.
+homography. That model needs no pose prior and no pixel constants. `match_marks` in
+`fluxghost/utils/camera/auto_pnp.py`:
 
-1. **Coarse association, prior-free.** Undistort the blob centres with `k`, `d`. Every
-   hypothesis is one grid cell: a blob, its right and lower neighbours among its nearest eight,
-   and the blob closest to the fourth corner of the parallelogram they span. Four points give a
-   homography from that cell's bed corners, for each cell position of the grid. Four points
-   rather than a three-point affine seed, because the lid camera's perspective is strong (the
-   top row of the `fbb2` grid is twice as wide as the bottom row after undistortion) and an
-   affine seed extrapolates onto wrong blobs and never recovers. No per-model pixel constants,
-   no pose prior.
-2. **Fit and re-associate.** Map every blob onto the bed through the hypothesis, give each
-   grid position its nearest blob within 15 mm (each blob used once), refit the homography on
-   the assigned pairs, repeat until the assignment is stable. Keep the hypothesis with the most
-   marks, then the lowest residual. **Upright check**: at the grid centre, bed +x must run
-   mostly along image +x and bed +y along image +y, on every hypothesis and on the final
-   model. A grid can be similar to its own transpose (`fbb2` wide-angle spacings 120 / 180 /
-   120 and 80 / 120 / 80 mm), and without the check the 90° rotated assignment fit the
-   `fbb2` photos better than the true one. The only physical assumption is that a model's
-   image is not mirrored or rotated by 90°, a per-model constant if that ever changes.
-3. **Bed-coordinate filter.** Map every blob back to the bed through the fitted homography.
-   Blobs outside the work area, or further than a tolerance from every reference point, are
-   rejected. This is the per-unit, non-rectangular region of interest, derived instead of
-   hard-coded.
-4. **Gates**, all required:
-   - all 16 marks matched (each region pose needs its four marks; open decision 5),
-   - RMS residual to the homography ≤ R_MAX,
-   - the pose of each quadrant from `solve_pnp_calculate` is physically sane: camera above the
-     bed, height within a wide per-model range. This range is loose on purpose because mounting
-     varies; it only catches gross failures.
-5. **Cross-check.** Each quadrant's `solve_pnp_calculate` returns an RMS reprojection error
-   (per-point distance, replacing the cancelling mean at `camera_calibration.py:400` in the log
-   and added to the response).
+1. **Seeds, prior-free.** A cell is a mark with the next mark to its right, the next one
+   below, and the mark closing the rectangle. On a full lattice these are the lattice cells
+   (nine on the 4×4 grid); on the 8-mark layouts, two concentric rectangles, they are the two
+   rectangles. In the image, a seed is a blob, a blob to its right, a blob below, and the blob
+   closest to the fourth corner of the parallelogram they span, taken among the blob's 16
+   nearest neighbours on a lattice and among all blobs otherwise (the inner rectangle and any
+   stray sit between an outer rectangle's corners). Each seed is tried against each cell: four
+   points give a homography. Four points rather than a three-point affine seed, because the
+   lid camera's perspective is strong (the top row of the `fbb2` grid is twice as wide as the
+   bottom row after undistortion) and an affine seed extrapolates onto wrong blobs and never
+   recovers. Seeds whose side ratio is more than 2.5× off every cell's (`SEED_ASPECT`), or
+   whose predicted marks have too few blobs nearby (KD-tree check), are skipped.
+2. **Grow, then settle.** Map every blob onto the bed through the hypothesis, give each mark
+   position its nearest blob within 15 mm (`ASSIGN_TOL_MM`, each blob used once), refit the
+   homography on the assigned pairs, repeat until the assignment is stable. Then repeat at
+   3 mm (`TIGHT_TOL_MM`), starting from a RANSAC fit of the loose assignment. The loose stage
+   is needed because one cell extrapolates badly; the tight stage because a stray swept in on
+   the way would otherwise count as a mark (§11, covered-marks test). Keep the hypothesis with
+   the most marks, then the lowest residual; return at once when every mark is matched within
+   R_MAX.
+3. **Upright check**: at the centre of the marks, bed +x must run mostly along image +x and
+   bed +y along image +y, on every hypothesis and on the final model. A homography absorbs any
+   aspect ratio, so the 90° rotated assignment of a 4×4 lattice or of a square pattern fits as
+   well as the true one (it fitted the `fbb2` photos better). The residual cannot tell them
+   apart. The only physical assumption is that a model's image is not mirrored or rotated by
+   90°; it held on `fbm2`, the `fbb2` and `fhx2rf` laser heads and `ado1`, and is unchecked on
+   Promark, whose camera has a rotation setting (decision 12).
+4. **Faint marks.** When at least 7 in 8 of the marks are matched (`FILL_MIN_FRACTION`: 14 of
+   16, 7 of 8), each missing mark is predicted from the homography of the matched ones and
+   takes the median of the `weak` blobs within 2 mm of that position (`FILL_TOL_MM`). Weak
+   blobs never take part in the matching itself. A filled centre is a measurement taken where
+   a prediction pointed, with about 0.2 mm more uncertainty than a normal one; on paper a
+   random position has a weak blob that close in about 2 % of cases.
+5. **Gates**, both required:
+   - every mark matched (each region pose needs its four marks; decision 5), else
+     `NOT_ENOUGH_MARKS`,
+   - RMS residual to the homography ≤ R_MAX (`R_MAX_MM`, 0.75 mm for now; decision 10), else
+     `HIGH_RESIDUAL`.
+6. **Cross-check.** Each quadrant's `solve_pnp_calculate` returns an RMS reprojection error
+   (per-point distance, replacing the cancelling mean in the log and added to the response).
 
-Prototype result (`fbm2` and `fbb2` units, every exposure): every mark visible in a photo was
-assigned correctly, 0.1 to 1.4 s per run in Python. It only went wrong on photos with 9 or fewer
-visible marks, which the all-16 gate rejects anyway.
+Not implemented, and not needed so far: a filter by work-area bounds (the 3 mm tolerance does
+that job) and a physical-sanity check of the solved poses.
 
-R_MAX, tolerances and the pose range are tuned on the step 0 photo set and recorded in
-§11. The single-homography residual is expected to be non-zero even for correct matches (that
-inaccuracy is why the V4 format has per-region poses), so R_MAX is a stray-blob gate, not an
-accuracy gate. Accuracy is A6, measured through fluxghost's own preview warp (§12 T6), never a
-separately written projection: one convention difference (§7.1 height) made a hand-written
-check report the opposite of what the preview showed.
+The single-homography residual is non-zero even for correct matches on a bed-wide grid (that
+inaccuracy is why the V4 format has per-region poses): 0.38 to 0.47 mm on the three `fbm2`
+units, against 0.03 to 0.10 mm for the 8-mark layouts, whose marks sit in the middle of the
+frame. So R_MAX is a gate against strays and against intrinsics that describe the camera
+poorly, not an accuracy figure. In simulation the preview error inside the mark grid is about
+equal to the gate value at most (0.6 to 1.5×) and about 0.4× of it on average over the bed; the
+border outside the mark grid is not constrained by it. Accuracy is A6, measured through
+fluxghost's own preview warp (§12 T6), never a separately written projection: one convention
+difference (§7.1 height) made a hand-written check report the opposite of what the preview
+showed.
+
+Cost: no measurable time when all marks are there (early return); 1 to 2 s with marks missing
+after two exposures; 8 to 9 s after seven (about 95 blobs); up to 5 s for an 8-mark photo with
+40 blobs and one mark hidden.
 
 ### 7.4 Failure handling
 
-No drag screen. Reasons returned by `auto_pnp_match` map to messages:
+No drag screen when the backend has the commands. Results map to:
 
-| Reason | Message points the user to |
+| Result | What the user sees |
 |---|---|
-| `NOT_ENOUGH_MARKS` | Check the paper covers the area and the marks are visible, engrave again |
-| `AMBIGUOUS` / `HIGH_RESIDUAL` | Remove other objects from the bed, close the lid, engrave again on fresh paper |
-| `BAD_POSE` | Restart calibration (advanced) |
+| `NOT_ENOUGH_MARKS` (after both rounds) | `auto_solve_pnp_not_enough_marks` with the number of marks found, then PUT_PAPER |
+| `HIGH_RESIDUAL` | `auto_solve_pnp_high_residual`, then PUT_PAPER |
+| `UNSUPPORTED` (backend without the commands) | No message: SOLVE_PNP_INSTRUCTION and the manual steps (decision 4) |
+| `NO_IMAGE`, `SOLVE_PNP_FAILED`, anything else | `failed_to_calibrate_with_pictures` with the reason, then PUT_PAPER |
 
-Every failure returns to PUT_PAPER. Retrying re-runs the same task file.
+Retrying re-runs the same task file.
 
 ### 7.5 i18n
 
-New keys under `calibration.*` for the progress text and the three failure messages, in `en.ts`
-and `zh-tw.ts` first, the other languages before the PR. `solve_pnp_step1..3` stay; other
-dialogs use them.
+`calibration.auto_solve_pnp_locating` (progress text), `auto_solve_pnp_not_enough_marks`
+(takes the number found) and `auto_solve_pnp_high_residual`, in `en.ts` and `zh-tw.ts`; the
+other languages before the PR. `solve_pnp_step1..3` stay; other dialogs use them.
 
 ---
 
@@ -351,23 +390,28 @@ Both commands live on the existing `camera-calibration` websocket and need `k` /
 ```
 → auto_pnp_detect <file_length>
 ← {"status": "continue"}            → binary upload
-← {"status": "ok", "blobs": [[x, y, size, contrast], ...]}   // undistorted px
+← {"status": "ok",
+   "blobs": [[x, y, size, contrast], ...],       // undistorted px
+   "weak":  [[x, y, size, contrast], ...]}       // same, minimum area 4 px
 
 → auto_pnp_match <args_json>
-   args: { "ref_points": [[x, y], ...],          // mm, bed coordinates
+   args: { "ref_points": [[x, y], ...],          // mm, a full lattice or nested rectangles
            "blobs": [[[x, y, size, contrast], ...], ...],  // one list per exposure
-           "workarea": [width, height],          // mm
-           "prior_points": [[x, y], ...] | null } // undistorted px, optional seed
+           "weak":  [[[x, y, size, contrast], ...], ...] } // optional, one list per exposure
 ← {"status": "ok",
-   "points": [[x, y] | null, ...],               // per ref point, undistorted px
-   "residuals": [number | null, ...],
-   "rms": number, "matched": number, "rejected": number}
-← {"status": "fail", "reason": "NOT_ENOUGH_MARKS" | "AMBIGUOUS" | "HIGH_RESIDUAL",
-   "matched": number, "rms": number | null}
+   "points": [[x, y], ...],                      // per ref point, undistorted px
+   "matched": number, "filled": number, "rms": number}
+← {"status": "fail", "reason": "NOT_ENOUGH_MARKS" | "HIGH_RESIDUAL",
+   "matched": number, "filled": number, "rms": number | null}
 
 → solve_pnp_calculate ...            // unchanged request
 ← {"status": "ok", "rvec": ..., "tvec": ..., "rms": number}   // rms is new
 ```
+
+`filled` counts the marks taken from `weak`. The first draft also had `workarea`,
+`prior_points`, per-point `residuals`, a `rejected` count and an `AMBIGUOUS` reason; none was
+needed and none exists. The client (`autoPnPDetect`, `autoPnPMatch` in
+`helpers/api/camera-calibration.ts`) turns an unknown-command error into `UNSUPPORTED`.
 
 Both new commands are stateless apart from `k` / `d`, so they run offline against saved photos.
 Command names are final once fluxghost's `cmd_mapping` has them; do not rename afterwards.
@@ -389,16 +433,23 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
    - the same sweep under each A4 disturbance.
 
    Stored as fluxghost fixtures (`tests/usage/fixtures/auto_pnp/`) with the unit and capture
-   conditions. Decisions 2, 5 and 7 are made from this set. Report, per mark position and per
+   conditions: blob lists rather than photos where possible (one photo is kept for the
+   detector test); the raw photos stay outside the repo. Decisions 2, 5 and 7 are made from this set. Report, per mark position and per
    exposure, the detection rate; the bracket is the smallest
    set of exposures that covers every mark on every unit. Units available: several `fbm2`; one
    each of `fbb2`, `fhx2rf` and `ado1`.
-1. fluxghost: `auto_pnp_detect`, `auto_pnp_match`, `rms` in `solve_pnp_calculate`, fixture
-   tests, `docs/api/camera-calibration.md`, `ws_smoke.py` entries. Tag.
-2. beam-studio: API client methods, AUTO_SOLVE_PNP step in `Beamo2Calibration.tsx`, bracket
-   table, i18n, CD bump, `camera-calibration` skill update.
-3. Hardware pass (§12), thresholds recorded in §11.
-4. Follow-up PRs per machine (open decision 1).
+1. fluxghost (`feat/auto-pnp`, done except the tag): `auto_pnp_detect`, `auto_pnp_match`,
+   `rms` in `solve_pnp_calculate`, fixture tests, `docs/api/camera-calibration.md`,
+   `ws_smoke.py` entries. Tag.
+2. beam-studio (`feat/auto-solve-pnp`): API client methods, `autoSolvePnP.ts`, AUTO_SOLVE_PNP
+   step in `Beamo2Calibration.tsx`, en / zh-tw strings (done); other languages, Jest spec,
+   CD bump, `camera-calibration` skill update (pending).
+3. Hardware pass (§12), thresholds recorded in §11. Done for the happy path and missing marks
+   on three `fbm2`; `HIGH_RESIDUAL`, the old-backend path and the exposure restore are not
+   tested yet.
+4. Follow-up PRs per machine (decision 1). The matcher already takes the 8-mark layouts
+   (§11); each machine still needs its dialog wired, and Promark needs detector work first
+   (decision 12).
 
 ---
 
@@ -420,7 +471,12 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
    when the backend does not know `auto_pnp_detect`, run the existing manual steps unchanged.
    This is the only path to the drag screen; a backend that has the commands never falls back
    to it, whatever the failure.
-5. **A mark that is not found.** Every region pose is solved from exactly four marks
+5. ~~**A mark that is not found.**~~ **Settled 2026-11-19: every mark is required.** A mark
+   the normal detector misses may be taken from the weak blobs next to its predicted position
+   when at least 7 in 8 of the marks are matched (§7.3 step 4). Preferred over filling in the
+   predicted position itself, over a stronger engraving, and over failing; ranked in that
+   order. A third `fbm2` needed it for two marks until the marks were enlarged (decision 11).
+   Original text: Every region pose is solved from exactly four marks
    (`bm2PnPPoints` quadrants, then `getRegionalPoints`), so one missing mark breaks up to four
    regions. The redundancy of 16 marks serves outlier rejection, not missing marks. Working
    rule until step 0: all 16 must be matched, otherwise fail. Decide from the per-mark detection
@@ -431,12 +487,20 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
      marks only, limit it to one mark per run, and report it in the summary line. A filled
      point is a prediction, not a measurement, so this is the last resort.
 6. ~~**CHECK_PNP.**~~ **Settled 2026-11-16:** keep the visual confirmation.
-7. **Exposure bracket values.** `fbm2` first unit: 75 + 200 covers all 16 marks, today's
+7. ~~**Exposure bracket values.**~~ **Settled 2026-11-19 for `fbm2`: two rounds**, 75 + 200,
+   then 50 / 125 / 350 / 500 / 800 only when marks are missing (§7.1). All three office units
+   pass in the first round. A camera module with another exposure scale (§11, third `fbm2`)
+   has not needed its own values. Step 0 data: `fbm2` first unit: 75 + 200 covers all 16 marks, today's
    350 / 100 do not. `fbm2` second unit: 75 alone covers all 16, 200 finds 8, 350 finds 7, so
    the pair differs between units and the low value carries most of it. `fbb2` wide-angle
    first unit: any single exposure from 75 to 125 covers all 16. Final values from the
    remaining units of step 0.
-8. **Refine the intrinsics from the marks.** Proposed: after matching, refine the intrinsics
+8. **Shared `k` / `d`, and refining the intrinsics from the marks.** **Deferred 2026-11-19:
+   the first version uses each unit's own ChArUco `k` / `d`** and does not refine. The office
+   does not have enough cameras to show that shared values hold on every unit, and an outlier
+   camera with shared values and no refine would be worse off than today. What is known so
+   far follows; shared values, if they come, are keyed by camera module, not by machine model
+   (§11, third `fbm2`). Proposed: after matching, refine the intrinsics
    (`cv2.fisheye.calibrate`, one view) on the 16 marks, then solve the region poses with the
    refined values. On the `fbb2` unit this beat the stored manual calibration (§11) and the
    preview looked better than the ChArUco result.
@@ -487,16 +551,45 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
        solved from them with the other unit's `k` / `d`, error sampled every 10 mm. Mean 0.38
        and 0.18 mm, 0.80 and 0.35 mm at most inside the mark grid, 1.11 mm at most on the
        border in both directions.
-     Proposal for `fbm2`: ship a per-model `k` / `d` (skew 0, see §11), solve poses only, no
-     refine, ChArUco stays as the advanced path. Before settling: a third unit, and check
-     marks that are not used for the solve (A6). `fbb2` keeps the refine as an open option until photos at a second
-     height show whether its result holds off the plane.
+     - The same lens is on other models, and their intrinsics work just as well: on the
+       second `fbm2`'s marks, the `fbb2` and `fhx2rf` laser-head values fit to 0.64 and
+       0.72 mm, the other `fbm2`'s to 0.71 mm, the unit's own to 0.54 mm (§11). One shared
+       `k` / `d` for every camera with this lens is the working assumption, not one per model.
+     Proposal for `fbm2`: ship a shared `k` / `d` (skew 0, see §11), solve poses only, no
+     refine, ChArUco stays as the advanced path. Before settling: a third unit, check marks
+     that are not used for the solve (A6), and how the shared values are derived (candidates
+     are scored by solving other units' marks with them, as in §11). `fbb2` wide-angle: the 2026-11-17 result needs a second reading. The
+     stored calibration it beat is an outlier (`fy` 6 % above `fx`, distortion unlike the
+     other four cameras, 3.25 mm on the `fbm2` marks where the others give 0.5 to 0.7 mm), so
+     the refine probably repaired a poor ChArUco result rather than improved a good one. Next
+     on that unit: poses only with the shared `k` / `d`, before any refine.
 9. **Marks near the corners.** Proposed experiment on `fbb2`: engrave one row of marks at
    y ≈ 10 to 20 mm to find the camera's real top field of view (the model puts the top corners
    outside the frame), and larger marks at the bottom corners (2.3 to 2.7 px per mm there
    against 5.8 in the centre, so a centre-size mark falls under the detector's 15 px area).
    Corner marks also bring back the exposure bracket (bottom-left needs about 200, the rest
    75 to 125).
+10. **R_MAX.** 0.75 mm for now, chosen low on purpose to see how many units it blocks: a
+    calibration that keeps failing costs the user more than a preview that is slightly off,
+    so the value is revisited with field data rather than set from the three office units
+    (0.38 to 0.47 mm). For the 8-mark layouts 0.75 mm gates almost nothing (correct matches
+    give 0.03 to 0.10 mm); they need their own value before their dialogs are wired.
+11. **Mark size.** The `fbm2` marks have a 0.3 mm radius and show as about 1.0 mm (burn
+    spread plus blur): 5 to 6 px across in the bottom two rows, an area of about 20 px against
+    the detector's minimum of 15. At a 0.5 mm radius every mark of the third unit is found by
+    the normal detector (no weak fill). Proposed: 0.5 mm in `bm2-calibration.beam` / `.fc`,
+    all 16 marks, since the flare position is not fixed per unit. Not in the repo yet. `ado1`
+    marks are as small (4.7 to 6.5 px) and should follow.
+12. **8-mark layouts** (`fbb2` / `fhx2rf` laser head, `ado1`, Promark). The layout stays: two
+    concentric rectangles carry a fixed 1 : 2 ratio that a row of old marks cannot imitate,
+    and a 4×4 grid would only add room for filling. Open before wiring them:
+    - Promark: the marks are bright dots on a dark sheet, about 2.4 px across, and the dark
+      detector finds none (§11). Needs a bright-blob detector, a larger mark, and a check of
+      the upright assumption against the camera rotation setting.
+    - Matching cost without a full lattice grows with the cube of the blob count when a mark
+      is missing: 5 s at 40 blobs, 41 s at 54. Bound it before more than one exposure is
+      merged on these machines.
+    - `ado1` solves at two heights; the flow runs twice.
 
 ---
 
@@ -506,8 +599,15 @@ Command names are final once fluxghost's `cmd_mapping` has them; do not rename a
   step 0 shows misses, decision 3 names the way out (scene-file engraving
   with adjustable power).
 - **Lattice ambiguity**: a 4×4 grid shifted by one pitch still looks like a grid when the outer
-  row is hidden and stray blobs line up. The bed-coordinate filter and the all-16 rule guard this; step 0
-  must include a partially covered case.
+  row is hidden and stray blobs line up. Seen on hardware (below); the tight stage and the
+  every-mark rule guard it.
+- **A stray within 3 mm of a missing mark** is still taken as that mark. With every other mark
+  present the residual barely moves, so nothing catches it; CHECK_PNP is the last guard.
+- **Projective self-similarity of the 8-mark pattern**: with two marks missing, a homography
+  that squeezes the pattern along a diagonal fits six real marks to wrong positions with no
+  residual. Harmless while every mark is required; it is why the weak fill needs 7 of 8.
+- **Border of the bed**: the gate constrains the area inside the mark grid; outside it the
+  preview is extrapolated.
 - **Homography residual too large on some units** for one R_MAX to separate marks from strays.
   Fallback: gate per quadrant instead of globally.
 - **Height convention**: the `h` recorded at capture must be the one the preview sends later. If
@@ -596,6 +696,24 @@ distortion fixed gave a 5 to 8 mm fit, which looks like a flag interaction rathe
 This measures the difference between two stored parameter sets, each with its own error, not
 absolute accuracy. It assumes one physical camera pose per unit.
 
+**Candidate `k` / `d` scored on the second `fbm2`'s marks (2026-11-18).** Poses only, one
+pose for all 16 marks, no refine.
+
+| `k` / `d` from | Fit | Leave-one-out mean / max |
+|---|---|---|
+| the unit itself, ChArUco with `CALIB_FIX_SKEW` | 0.54 mm | 0.67 / 1.34 mm |
+| the unit itself, ChArUco before the flag (skew -7.13) | 0.65 mm | 0.83 / 1.92 mm |
+| `fbb2` laser head | 0.64 mm | 0.78 / 1.95 mm |
+| first `fbm2` | 0.71 mm | 0.87 / 1.54 mm |
+| `fhx2rf` laser head | 0.72 mm | 0.88 / 1.66 mm |
+| `fbb2` wide-angle (stored calibration) | 3.25 mm | 4.35 / 10.71 mm |
+
+One unit's marks, one sample per candidate. The marks took no part in any of the ChArUco
+runs, so the first two rows are an independent check of the flag. End to end on the same
+unit and the same engraved marks, the hand-placed calibration went from 0.42 mm mean /
+1.39 mm max (morning, skew -7.13) to 0.21 / 0.47 mm (new `k` / `d`, points placed again);
+automatic marks with the first `fbm2`'s `k` / `d` gave 0.13 / 0.42 mm on the same photo.
+
 **Stored intrinsics of the office units (2026-11-18).** Read from
 `/var/static_data/fisheye/` on each machine. The fisheye cameras are meant to share one lens.
 
@@ -616,13 +734,60 @@ absolute accuracy. It assumes one physical camera pose per unit.
   as a calibration that did not settle rather than a lens property. The pinhole path never
   fits one. With a non-zero skew fluxghost's `solve_pnp` was not the inverse of
   `project_points` (about 0.3 mm mean, 0.9 mm max over the bed on the second `fbm2`, with the
-  unit's own parameters). Fixed in fluxghost (`fix/solve-pnp-skew`: solve in normalised
-  coordinates, `CALIB_FIX_SKEW` in the ChArUco step; not yet verified on hardware). A shared
+  unit's own parameters). Fixed in fluxghost 2.5.8 (#127: solve in normalised coordinates,
+  `CALIB_FIX_SKEW` in the ChArUco step), verified on the second `fbm2` with a new ChArUco run
+  (table above). A shared
   `k` ships with skew 0, and "`fx` close to `fy`, skew close to 0" is a usable filter when
   picking which calibrations to derive it from.
 
-Measured numbers (fill in as work lands): per-mark detection rate, R_MAX, tolerances, pose range, bracket values,
-A6 manual vs automatic accuracy, A8 spread, capture time.
+**Implementation results on hardware (three `fbm2`, 2026-11-19).** The shipped flow, each
+unit's own `k` / `d`, clean paper, lid closed.
+
+| Unit | Camera module | Exposures | Matched (filled) | RMS |
+|---|---|---|---|---|
+| first `fbm2` | `GP_Flip_Mirror` | 2 | 16 (0) | 0.449 mm |
+| second `fbm2` | `GP_Flip_Mirror` | 2 | 16 (0) | 0.468 mm |
+| third `fbm2`, 0.3 mm marks | `USB 2.0 Camera` | 2 | 16 (2) | 0.382 mm |
+| third `fbm2`, 0.5 mm marks | `USB 2.0 Camera` | 2 | 16 (0) | not recorded |
+
+- **Covered marks (second unit, a board over two marks).** First implementation: 15 of 16
+  with RMS 3.5 mm, a blob on the board 7 mm from a covered mark taken as that mark; with
+  seven exposures merged, 11 of 16 at 4.2 mm, a lattice shifted by one row. Both are
+  rejected anyway, but the count shown to the user was wrong. Fixed by the tight stage and 16
+  neighbours per seed: 14 of 16, RMS 0.37 mm, `NOT_ENOUGH_MARKS`, in both rounds.
+- **Third unit.** Another camera module (exposure range 1 to 5000 instead of 50 to 10000,
+  focal length 1394 against 1331 to 1357). Lens flare from the light panel leaves the two
+  bottom-left marks at about a tenth of the usual contrast at every exposure from 5 to 1200,
+  so no exposure recovers them; covering the panel helps partly. They are 3.6 and 5.2 px
+  across. Found by the weak fill, and aligned on CHECK_PNP. This unit's photos with the other
+  two units' `k` / `d` fit to 0.57 to 0.64 mm against 0.37 to 0.38 mm with its own: the first
+  real cross-module number, and the reason shared values would be keyed by module.
+
+**8-mark layouts, offline (2026-11-19).** One photo per unit from the manual flow, the unit's
+own `k` / `d`, matched by the committed code. The sheets were reused `fbm2` calibration sheets,
+so every photo carries old marks of the same look.
+
+| Unit | Blobs | Matched | RMS | Mark size | Notes |
+|---|---|---|---|---|---|
+| `fbb2` laser head | 16 | 8 of 8 | 0.031 mm | 7.5 to 12.3 px | 8 old marks in a row through the pattern; half the sheet in shadow |
+| `fhx2rf` laser head | 12 | 8 of 8 | 0.10 mm | 8.5 to 12.5 px | oblique view; stored `k` still has skew 4.41 |
+| `ado1`, first height | 40 | 8 of 8 | 0.042 mm | 4.7 to 6.5 px | whole chassis in view |
+| `ado1`, second height | 39 | 8 of 8 | 0.050 mm | 4.7 to 6.5 px | one mark on the stroke of an engraved letter, still found |
+| Promark, 220 mm lens | 54 | 0 of 8 | n/a | about 2.4 px, bright | dark detector finds no mark |
+
+- With any one mark hidden, every case returns 7 marks and `NOT_ENOUGH_MARKS`; no old mark is
+  ever taken for a missing one. Two faults found on the way and fixed: an old mark 14 mm from
+  a missing one dragged the loose fit until a real mark lost its place (now a RANSAC start for
+  the tight stage), and the self-similar six-mark fit above.
+- The points confirmed by hand in the manual flow are within 0.5 px of the automatic ones,
+  but they are snapped to the same detector, so they confirm the choice of blobs, not the
+  position accuracy.
+- The upright assumption holds on all four machines, including this Promark.
+- Promark: a bright-blob detector with a minimum area of 4 px finds 7 of the 8 marks within
+  1 px of the hand-placed points, among 85 blobs. The image has 2.4 px per mm.
+
+Still to measure: A6 manual vs automatic accuracy on check marks, A8 spread, capture time, the
+number of field units R_MAX blocks.
 
 ---
 
@@ -630,15 +795,15 @@ A6 manual vs automatic accuracy, A8 spread, capture time.
 
 | Item | Covers | How |
 |---|---|---|
-| T1 | A1, A7 | Hardware, `fbm2`, basic mode |
+| T1 | A1, A7 | Hardware, `fbm2`, basic mode. Passed on three units (§11) |
 | T2 | A2 | Hardware, advanced mode, tilted ChArUco captures |
-| T3 | A3 | Hardware: Skip on blank paper; paper removed; paper shifted |
+| T3 | A3 | Hardware: Skip on blank paper; paper removed; paper shifted. Covered-marks variant passed on one unit (§11) |
 | T4 | A4 | Hardware: printed dots, lights off, lights on |
 | T5 | A5 | Hardware: open the door during capture |
 | T6 | A6 | Hardware: photo of the marks, warped with fluxghost's preview code at the sent `h`, manual vs automatic on the same unit; plus a visual check in Beam Studio |
 | T7 | A8 | Hardware: five runs, compare poses |
-| T8 | §7.2, §7.3 | fluxghost unit tests on the step 0 fixtures: every fixture matches its ground-truth points or fails with the expected reason |
+| T8 | §7.2, §7.3 | fluxghost `tests/usage/test_auto_pnp.py` (21 tests): `fbm2` exposures, covered marks, faint marks, the 8-mark photos, the websocket commands. Passing |
 | T9 | §6 | `ws_smoke.py` ends `ALL PASS`; `test_camera_match_points.py` unchanged and passing; manual calibration on `fbb2` or `fhx2rf` still works |
 | T10 | §6 | Print and Cut mark detection (`detect_blobs`) unchanged on one alignment run |
 | T11 | Edge cases table | Jest spec for the AUTO_SOLVE_PNP step: failure reasons, exposure restored, close during capture |
-| T12 | A9 | Beam Studio against fluxghost 2.5.8: manual steps appear; against the new tag with a forced failure: they do not |
+| T12 | A9 | Beam Studio against fluxghost 2.5.8: manual steps appear; against the new tag with a forced failure: they do not. Not run yet |
