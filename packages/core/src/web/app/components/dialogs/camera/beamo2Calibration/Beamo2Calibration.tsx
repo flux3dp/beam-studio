@@ -1,5 +1,6 @@
 import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
 
+import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -31,6 +32,8 @@ import moveLaserHead from '../common/moveLaserHead';
 import ProcessingDialog from '../common/ProcessingDialog';
 import SolvePnP from '../common/SolvePnP';
 
+import autoSolvePnP from './autoSolvePnP';
+
 /* eslint-disable perfectionist/sort-objects */
 const Steps = {
   PRE_CHESSBOARD: 1,
@@ -43,6 +46,8 @@ const Steps = {
   SOLVE_PNP_BR: 8,
   SOLVE_OTHER_PNP: 9,
   CHECK_PNP: 10,
+  // out of sequence on purpose: next() / prev() step through the manual steps 5 to 10 by number
+  AUTO_SOLVE_PNP: 11,
 } as const;
 /* eslint-enable perfectionist/sort-objects */
 
@@ -93,6 +98,8 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
   const next = useCallback(() => setStep((step) => (step + 1) as StepsType), []);
   const prev = useCallback(() => setStep((step) => (step - 1) as StepsType), []);
   const doorChecker = useRef<DoorChecker | null>(null);
+  // whether the quadrant poses came from the automatic step, to know where Back leads from CHECK_PNP
+  const isAutoSolved = useRef(false);
   const releaseMachine = useCallback(async () => {
     if (deviceMaster.currentControlMode === 'raw') {
       progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: i18n.lang.message.endingRawMode });
@@ -184,7 +191,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
 
           if (doEngraving) await deviceMaster.doBeamo2Calibration();
 
-          setStep(Steps.SOLVE_PNP_INSTRUCTION);
+          setStep(Steps.AUTO_SOLVE_PNP);
         } catch (err) {
           console.error(err);
         } finally {
@@ -216,6 +223,70 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
             tCalibration.put_paper_bm2_4,
           ]}
           title={tCalibration.put_paper}
+        />
+      );
+    })
+    .with(Steps.AUTO_SOLVE_PNP, () => {
+      return (
+        <ProcessingDialog
+          onClose={onClose}
+          onNext={() => {}}
+          process={async () => {
+            const moved = await doorChecker.current?.doorClosedWrapper(() =>
+              moveLaserHead(undefined, { shouldKeepPosition: true }),
+            );
+
+            if (!moved) {
+              setStep(Steps.PUT_PAPER);
+
+              return;
+            }
+
+            progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCalibration.auto_solve_pnp_locating });
+
+            let res: Awaited<ReturnType<typeof autoSolvePnP>>;
+
+            try {
+              res = await autoSolvePnP(calibratingParam.current);
+            } finally {
+              progressCaller.popById(PROGRESS_ID);
+            }
+
+            if (res.success) {
+              const { imgPoints, rvecs, tvecs } = res;
+
+              isAutoSolved.current = true;
+              updateParam({
+                imgPoints1: imgPoints,
+                rvec: rvecs.bottomRight,
+                rvecs1: rvecs,
+                tvec: tvecs.bottomRight,
+                tvecs1: tvecs,
+              });
+              setStep(Steps.SOLVE_OTHER_PNP);
+
+              return;
+            }
+
+            isAutoSolved.current = false;
+            match(res.reason)
+              // backend without the commands: the manual steps still work
+              .with('UNSUPPORTED', () => setStep(Steps.SOLVE_PNP_INSTRUCTION))
+              .with('NOT_ENOUGH_MARKS', () => {
+                alertCaller.popUpError({
+                  message: sprintf(tCalibration.auto_solve_pnp_not_enough_marks, res.matched ?? 0),
+                });
+                setStep(Steps.PUT_PAPER);
+              })
+              .with('HIGH_RESIDUAL', () => {
+                alertCaller.popUpError({ message: tCalibration.auto_solve_pnp_high_residual });
+                setStep(Steps.PUT_PAPER);
+              })
+              .otherwise((reason) => {
+                alertCaller.popUpError({ message: `${tCalibration.failed_to_calibrate_with_pictures} (${reason})` });
+                setStep(Steps.PUT_PAPER);
+              });
+          }}
         />
       );
     })
@@ -362,7 +433,7 @@ const Beamo2Calibration = ({ currentData, isAdvanced, onClose }: Props): ReactNo
         <CheckPnP
           dh={0}
           grid={bm2FullAreaPerspectiveGrid}
-          onBack={() => setStep(Steps.SOLVE_PNP_BR)}
+          onBack={() => setStep(isAutoSolved.current ? Steps.PUT_PAPER : Steps.SOLVE_PNP_BR)}
           onClose={onClose}
           onNext={async () => {
             const rvecPolyfits: Record<WideAngleRegion, number[][]> = {} as any;

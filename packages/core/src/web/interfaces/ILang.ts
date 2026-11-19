@@ -1061,6 +1061,9 @@ export interface ILang {
     ask_for_skip_printing_task: string;
     at_focus_height: string;
     at_lower_height: string;
+    auto_solve_pnp_high_residual: string;
+    auto_solve_pnp_locating: string;
+    auto_solve_pnp_not_enough_marks: string;
     back: string;
     beamo2_autofocus_material: string;
     calculating_camera_matrix: string;

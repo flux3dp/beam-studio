@@ -326,12 +326,16 @@ class CameraCalibrationApi {
    */
   autoPnPDetect = (
     img: ArrayBuffer | Blob,
-  ): Promise<{ blobs: AutoPnPBlob[]; success: true } | { reason: string; success: false }> =>
+  ): Promise<{ blobs: AutoPnPBlob[]; success: true; weak: AutoPnPBlob[] } | { reason: string; success: false }> =>
     new Promise((resolve, reject) => {
       this.events.onMessage = (response) => {
-        if (response.status === 'continue') this.ws.send(img);
-        else if (response.status === 'ok') resolve({ blobs: response.blobs, success: true });
-        else if (response.status === 'fail') resolve({ reason: response.info ?? response.reason, success: false });
+        if (response.status === 'continue') {
+          this.ws.send(img);
+        } else if (response.status === 'ok') {
+          resolve({ blobs: response.blobs, success: true, weak: response.weak ?? [] });
+        } else if (response.status === 'fail') {
+          resolve({ reason: response.info ?? response.reason, success: false });
+        }
       };
       // an unknown command is answered with an error, not a fail
       this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
@@ -343,15 +347,17 @@ class CameraCalibrationApi {
     });
 
   /**
-   * Tell which blob is which mark. `blobs` is one `autoPnPDetect` result per exposure;
-   * `points` comes back ordered like `refPoints` and feeds `solvePnPCalculate`.
+   * Tell which blob is which mark. `blobs` and `weak` are one `autoPnPDetect` result per exposure;
+   * `points` comes back ordered like `refPoints` and feeds `solvePnPCalculate`. `filled` counts the
+   * marks that were only found among the weak candidates, next to their predicted position.
    */
   autoPnPMatch = (
     refPoints: Array<[number, number]>,
     blobs: AutoPnPBlob[][],
+    weak: AutoPnPBlob[][] = [],
   ): Promise<
-    | { matched: number; points: Array<[number, number]>; rms: number; success: true }
-    | { matched?: number; reason: AutoPnPFailReason; rms?: null | number; success: false }
+    | { filled: number; matched: number; points: Array<[number, number]>; rms: number; success: true }
+    | { filled?: number; matched?: number; reason: AutoPnPFailReason; rms?: null | number; success: false }
   > =>
     new Promise((resolve, reject) => {
       this.events.onMessage = ({ status, ...rest }) => {
@@ -360,7 +366,7 @@ class CameraCalibrationApi {
       };
       this.events.onError = () => resolve({ reason: 'UNSUPPORTED', success: false });
       this.events.onFatal = (response) => reject(response);
-      this.ws.send(`auto_pnp_match ${JSON.stringify({ blobs, ref_points: refPoints })}`);
+      this.ws.send(`auto_pnp_match ${JSON.stringify({ blobs, ref_points: refPoints, weak })}`);
     });
 
   checkPnP = (
